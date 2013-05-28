@@ -16,11 +16,14 @@
  */
 package org.apache.camel.processor;
 
+import org.apache.camel.AsyncCallback;
+import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.Processor;
 import org.apache.camel.spi.ExchangeFormatter;
 import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.util.AsyncProcessorHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,7 +37,7 @@ import org.slf4j.LoggerFactory;
  * @deprecated This class has been split up into org.apache.camel.util.CamelLogger and org.apache.camel.processor.CamelLogProcessor 
  */
 @Deprecated
-public class CamelLogger extends ServiceSupport implements Processor {
+public class CamelLogger extends ServiceSupport implements AsyncProcessor {
     private Logger log;
     private LoggingLevel level;
     private ExchangeFormatter formatter;
@@ -71,7 +74,11 @@ public class CamelLogger extends ServiceSupport implements Processor {
         return "Logger[" + log + "]";
     }
 
-    public void process(Exchange exchange) {
+    public void process(Exchange exchange) throws Exception {
+        AsyncProcessorHelper.process(this, exchange);
+    }
+
+    public boolean process(Exchange exchange, AsyncCallback callback) {
         switch (level) {
         case DEBUG:
             if (log.isDebugEnabled()) {
@@ -103,6 +110,9 @@ public class CamelLogger extends ServiceSupport implements Processor {
         default:
             log.error("Unknown level: " + level + " when trying to log exchange: " + logMessage(exchange));
         }
+
+        callback.done(true);
+        return true;
     }
 
     public void process(Exchange exchange, Throwable exception) {

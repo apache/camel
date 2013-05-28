@@ -59,9 +59,5 @@ public abstract class QueueLoadBalancer extends LoadBalancerSupport {
         return true;
     }
 
-    public void process(Exchange exchange) throws Exception {
-        AsyncProcessorHelper.process(this, exchange);
-    }
-
     protected abstract Processor chooseProcessor(List<Processor> processors, Exchange exchange);
 }

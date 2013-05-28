@@ -16,10 +16,13 @@
  */
 package org.apache.camel.processor;
 
+import org.apache.camel.AsyncCallback;
+import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.Processor;
 import org.apache.camel.spi.ExchangeFormatter;
+import org.apache.camel.util.AsyncProcessorHelper;
 import org.apache.camel.util.CamelLogger;
 
 /**
@@ -31,7 +34,7 @@ import org.apache.camel.util.CamelLogger;
  *
  * @version 
  */
-public class CamelLogProcessor implements Processor {
+public class CamelLogProcessor implements AsyncProcessor {
     private CamelLogger log;
     private ExchangeFormatter formatter;
 
@@ -54,12 +57,18 @@ public class CamelLogProcessor implements Processor {
         return "Logger[" + log + "]";
     }
 
-    public void process(Exchange exchange) {
+    public void process(Exchange exchange) throws Exception {
+        AsyncProcessorHelper.process(this, exchange);
+    }
+
+    public boolean process(Exchange exchange, AsyncCallback callback) {
         if (log.shouldLog()) {
             log.log(formatter.format(exchange));
         }
+        callback.done(true);
+        return true;
     }
-    
+
     public void process(Exchange exchange, Throwable exception) {
         if (log.shouldLog()) {
             log.log(formatter.format(exchange), exception);

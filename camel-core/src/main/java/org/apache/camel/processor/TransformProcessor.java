@@ -16,19 +16,21 @@
  */
 package org.apache.camel.processor;
 
+import org.apache.camel.AsyncCallback;
+import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Message;
-import org.apache.camel.Processor;
 import org.apache.camel.Traceable;
 import org.apache.camel.impl.DefaultMessage;
 import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.util.AsyncProcessorHelper;
 import org.apache.camel.util.ObjectHelper;
 
 /**
  * A processor which sets the body on the OUT message with an {@link Expression}
  */
-public class TransformProcessor extends ServiceSupport implements Processor, Traceable {
+public class TransformProcessor extends ServiceSupport implements AsyncProcessor, Traceable {
     private final Expression expression;
 
     public TransformProcessor(Expression expression) {
@@ -37,15 +39,26 @@ public class TransformProcessor extends ServiceSupport implements Processor, Tra
     }
 
     public void process(Exchange exchange) throws Exception {
-        Object newBody = expression.evaluate(exchange, Object.class);
+        AsyncProcessorHelper.process(this, exchange);
+    }
 
-        Message old = exchange.getIn();
+    public boolean process(Exchange exchange, AsyncCallback callback) {
+        try {
+            Object newBody = expression.evaluate(exchange, Object.class);
 
-        // create a new message container so we do not drag specialized message objects along
-        Message msg = new DefaultMessage();
-        msg.copyFrom(old);
-        msg.setBody(newBody);
-        exchange.setOut(msg);
+            Message old = exchange.getIn();
+
+            // create a new message container so we do not drag specialized message objects along
+            Message msg = new DefaultMessage();
+            msg.copyFrom(old);
+            msg.setBody(newBody);
+            exchange.setOut(msg);
+        } catch (Exception e) {
+            exchange.setException(e);
+        }
+
+        callback.done(true);
+        return true;
     }
 
     @Override

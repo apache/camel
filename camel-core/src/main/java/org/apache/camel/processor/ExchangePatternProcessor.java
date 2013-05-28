@@ -16,12 +16,14 @@
  */
 package org.apache.camel.processor;
 
+import org.apache.camel.AsyncCallback;
+import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
-import org.apache.camel.Processor;
 import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.util.AsyncProcessorHelper;
 
-public class ExchangePatternProcessor extends ServiceSupport implements Processor {
+public class ExchangePatternProcessor extends ServiceSupport implements AsyncProcessor {
     private ExchangePattern exchangePattern = ExchangePattern.InOnly;
     
     public ExchangePatternProcessor() {
@@ -34,9 +36,15 @@ public class ExchangePatternProcessor extends ServiceSupport implements Processo
     public void setExchangePattern(ExchangePattern ep) {
         exchangePattern = ep;
     }
-   
+
     public void process(Exchange exchange) throws Exception {
+        AsyncProcessorHelper.process(this, exchange);
+    }
+
+    public boolean process(Exchange exchange, AsyncCallback callback) {
         exchange.setPattern(exchangePattern);
+        callback.done(true);
+        return true;
     }
 
     @Override

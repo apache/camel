@@ -16,20 +16,29 @@
  */
 package org.apache.camel.processor;
 
+import org.apache.camel.AsyncCallback;
+import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.util.AsyncProcessorHelper;
 
 /**
  * Stops continue processing the route and marks it as complete.
  *
  * @version 
  */
-public class StopProcessor extends ServiceSupport implements Processor {
+public class StopProcessor extends ServiceSupport implements AsyncProcessor {
 
     public void process(Exchange exchange) throws Exception {
+        AsyncProcessorHelper.process(this, exchange);
+    }
+
+    public boolean process(Exchange exchange, AsyncCallback callback) {
         // mark the exchange to stop continue routing
         exchange.setProperty(Exchange.ROUTE_STOP, Boolean.TRUE);
+
+        callback.done(true);
+        return true;
     }
 
     @Override

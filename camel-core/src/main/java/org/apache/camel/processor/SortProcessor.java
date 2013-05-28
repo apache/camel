@@ -20,16 +20,18 @@ import java.util.Collections;
 import java.util.Comparator;
 import java.util.List;
 
+import org.apache.camel.AsyncCallback;
+import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Message;
-import org.apache.camel.Processor;
 import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.util.AsyncProcessorHelper;
 
 /**
  * A processor that sorts the expression using a comparator
  */
-public class SortProcessor<T> extends ServiceSupport implements Processor {
+public class SortProcessor<T> extends ServiceSupport implements AsyncProcessor {
 
     private final Expression expression;
     private final Comparator<? super T> comparator;
@@ -40,19 +42,31 @@ public class SortProcessor<T> extends ServiceSupport implements Processor {
     }
 
     public void process(Exchange exchange) throws Exception {
-        Message in = exchange.getIn();
+        AsyncProcessorHelper.process(this, exchange);
+    }
 
-        @SuppressWarnings("unchecked")
-        List<T> list = expression.evaluate(exchange, List.class);
-        Collections.sort(list, comparator);
+    @Override
+    public boolean process(Exchange exchange, AsyncCallback callback) {
+        try {
+            Message in = exchange.getIn();
 
-        if (exchange.getPattern().isOutCapable()) {
-            Message out = exchange.getOut();
-            out.copyFrom(in);
-            out.setBody(list);
-        } else {
-            in.setBody(list);
+            @SuppressWarnings("unchecked")
+            List<T> list = expression.evaluate(exchange, List.class);
+            Collections.sort(list, comparator);
+
+            if (exchange.getPattern().isOutCapable()) {
+                Message out = exchange.getOut();
+                out.copyFrom(in);
+                out.setBody(list);
+            } else {
+                in.setBody(list);
+            }
+        } catch (Exception e) {
+            exchange.setException(e);
         }
+
+        callback.done(true);
+        return true;
     }
 
     public String toString() {

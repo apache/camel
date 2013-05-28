@@ -18,14 +18,16 @@ package org.apache.camel.processor;
 
 import java.io.ByteArrayOutputStream;
 
+import org.apache.camel.AsyncCallback;
+import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
-import org.apache.camel.Processor;
 import org.apache.camel.Traceable;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.util.AsyncProcessorHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
 
@@ -35,7 +37,7 @@ import org.apache.camel.util.ServiceHelper;
  *
  * @version 
  */
-public class MarshalProcessor extends ServiceSupport implements Processor, Traceable, CamelContextAware {
+public class MarshalProcessor extends ServiceSupport implements AsyncProcessor, Traceable, CamelContextAware {
     private CamelContext camelContext;
     private final DataFormat dataFormat;
 
@@ -44,6 +46,10 @@ public class MarshalProcessor extends ServiceSupport implements Processor, Trace
     }
 
     public void process(Exchange exchange) throws Exception {
+        AsyncProcessorHelper.process(this, exchange);
+    }
+
+    public boolean process(Exchange exchange, AsyncCallback callback) {
         ObjectHelper.notNull(dataFormat, "dataFormat");
 
         ByteArrayOutputStream buffer = new ByteArrayOutputStream();
@@ -62,8 +68,11 @@ public class MarshalProcessor extends ServiceSupport implements Processor, Trace
         } catch (Exception e) {
             // remove OUT message, as an exception occurred
             exchange.setOut(null);
-            throw e;
+            exchange.setException(e);
         }
+
+        callback.done(true);
+        return true;
     }
 
     @Override

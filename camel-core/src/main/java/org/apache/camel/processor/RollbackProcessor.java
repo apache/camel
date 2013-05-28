@@ -16,18 +16,20 @@
  */
 package org.apache.camel.processor;
 
+import org.apache.camel.AsyncCallback;
+import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.RollbackExchangeException;
 import org.apache.camel.Traceable;
 import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.util.AsyncProcessorHelper;
 
 /**
  * Processor for marking an {@link org.apache.camel.Exchange} to rollback.
  *
  * @version 
  */
-public class RollbackProcessor extends ServiceSupport implements Processor, Traceable {
+public class RollbackProcessor extends ServiceSupport implements AsyncProcessor, Traceable {
 
     private boolean markRollbackOnly;
     private boolean markRollbackOnlyLast;
@@ -41,6 +43,10 @@ public class RollbackProcessor extends ServiceSupport implements Processor, Trac
     }
 
     public void process(Exchange exchange) throws Exception {
+        AsyncProcessorHelper.process(this, exchange);
+    }
+
+    public boolean process(Exchange exchange, AsyncCallback callback) {
         if (isMarkRollbackOnlyLast()) {
             // only mark the last route (current) as rollback
             // this is needed when you have multiple transactions in play
@@ -52,15 +58,19 @@ public class RollbackProcessor extends ServiceSupport implements Processor, Trac
 
         if (markRollbackOnly || markRollbackOnlyLast) {
             // do not do anything more as we should only mark the rollback
-            return;
+            callback.done(true);
+            return true;
         }
 
         // throw exception to rollback
         if (message != null) {
-            throw new RollbackExchangeException(message, exchange);
+            exchange.setException(new RollbackExchangeException(message, exchange));
         } else {
-            throw new RollbackExchangeException(exchange);
+            exchange.setException(new RollbackExchangeException(exchange));
         }
+
+        callback.done(true);
+        return true;
     }
 
     @Override

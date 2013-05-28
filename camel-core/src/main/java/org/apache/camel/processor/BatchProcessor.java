@@ -28,6 +28,8 @@ import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
+import org.apache.camel.AsyncCallback;
+import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
@@ -38,6 +40,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.impl.LoggingExceptionHandler;
 import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.util.AsyncProcessorHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
 import org.slf4j.Logger;
@@ -50,7 +53,7 @@ import org.slf4j.LoggerFactory;
  * @deprecated may be removed in the future when we overhaul the resequencer EIP
  */
 @Deprecated
-public class BatchProcessor extends ServiceSupport implements Processor, Navigate<Processor> {
+public class BatchProcessor extends ServiceSupport implements AsyncProcessor, Navigate<Processor> {
 
     public static final long DEFAULT_BATCH_TIMEOUT = 1000L;
     public static final int DEFAULT_BATCH_SIZE = 100;
@@ -240,33 +243,41 @@ public class BatchProcessor extends ServiceSupport implements Processor, Navigat
         collection.clear();
     }
 
+    public void process(Exchange exchange) throws Exception {
+        AsyncProcessorHelper.process(this, exchange);
+    }
+
     /**
      * Enqueues an exchange for later batch processing.
      */
-    public void process(Exchange exchange) throws Exception {
-
-        // if batch consumer is enabled then we need to adjust the batch size
-        // with the size from the batch consumer
-        if (isBatchConsumer()) {
-            int size = exchange.getProperty(Exchange.BATCH_SIZE, Integer.class);
-            if (batchSize != size) {
-                batchSize = size;
-                LOG.trace("Using batch consumer completion, so setting batch size to: {}", batchSize);
+    public boolean process(Exchange exchange, AsyncCallback callback) {
+        try {
+            // if batch consumer is enabled then we need to adjust the batch size
+            // with the size from the batch consumer
+            if (isBatchConsumer()) {
+                int size = exchange.getProperty(Exchange.BATCH_SIZE, Integer.class);
+                if (batchSize != size) {
+                    batchSize = size;
+                    LOG.trace("Using batch consumer completion, so setting batch size to: {}", batchSize);
+                }
             }
-        }
 
-        // validate that the exchange can be used
-        if (!isValid(exchange)) {
-            if (isIgnoreInvalidExchanges()) {
-                LOG.debug("Invalid Exchange. This Exchange will be ignored: {}", exchange);
-                return;
+            // validate that the exchange can be used
+            if (!isValid(exchange)) {
+                if (isIgnoreInvalidExchanges()) {
+                    LOG.debug("Invalid Exchange. This Exchange will be ignored: {}", exchange);
+                } else {
+                    throw new CamelExchangeException("Exchange is not valid to be used by the BatchProcessor", exchange);
+                }
             } else {
-                throw new CamelExchangeException("Exchange is not valid to be used by the BatchProcessor", exchange);
+                // exchange is valid so enqueue the exchange
+                sender.enqueueExchange(exchange);
             }
+        } catch (Throwable e) {
+            exchange.setException(e);
         }
-
-        // exchange is valid so enqueue the exchange
-        sender.enqueueExchange(exchange);
+        callback.done(true);
+        return true;
     }
 
     /**

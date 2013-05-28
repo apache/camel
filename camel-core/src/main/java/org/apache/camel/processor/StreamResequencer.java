@@ -23,6 +23,8 @@ import java.util.concurrent.locks.Condition;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
+import org.apache.camel.AsyncCallback;
+import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
@@ -35,6 +37,7 @@ import org.apache.camel.processor.resequencer.SequenceElementComparator;
 import org.apache.camel.processor.resequencer.SequenceSender;
 import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.util.AsyncProcessorHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
 import org.slf4j.Logger;
@@ -62,7 +65,7 @@ import org.slf4j.LoggerFactory;
  * 
  * @see ResequencerEngine
  */
-public class StreamResequencer extends ServiceSupport implements SequenceSender<Exchange>, Processor, Navigate<Processor>, Traceable {
+public class StreamResequencer extends ServiceSupport implements SequenceSender<Exchange>, AsyncProcessor, Navigate<Processor>, Traceable {
 
     private static final long DELIVERY_ATTEMPT_INTERVAL = 1000L;
     private static final Logger LOG = LoggerFactory.getLogger(StreamResequencer.class);
@@ -190,21 +193,34 @@ public class StreamResequencer extends ServiceSupport implements SequenceSender<
     }
 
     public void process(Exchange exchange) throws Exception {
+        AsyncProcessorHelper.process(this, exchange);
+    }
+
+    public boolean process(Exchange exchange, AsyncCallback callback) {
         while (engine.size() >= capacity) {
-            Thread.sleep(getTimeout());
+            try {
+                Thread.sleep(getTimeout());
+            } catch (InterruptedException e) {
+                // we was interrupted so break out
+                exchange.setException(e);
+                callback.done(true);
+                return true;
+            }
         }
 
         try {
             engine.insert(exchange);
             delivery.request();
-        } catch (IllegalArgumentException e) {
+        } catch (Exception e) {
             if (isIgnoreInvalidExchanges()) {
                 LOG.debug("Invalid Exchange. This Exchange will be ignored: {}", exchange);
-                return;
             } else {
-                throw new CamelExchangeException("Error processing Exchange in StreamResequencer", exchange, e);
+                exchange.setException(new CamelExchangeException("Error processing Exchange in StreamResequencer", exchange, e));
             }
         }
+
+        callback.done(true);
+        return true;
     }
 
     public boolean hasNext() {

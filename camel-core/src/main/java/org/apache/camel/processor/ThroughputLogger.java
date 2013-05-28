@@ -21,10 +21,12 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.apache.camel.AsyncCallback;
+import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.util.AsyncProcessorHelper;
 import org.apache.camel.util.CamelLogger;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -35,7 +37,7 @@ import org.slf4j.LoggerFactory;
  *
  * @version 
  */
-public class ThroughputLogger extends ServiceSupport implements Processor {
+public class ThroughputLogger extends ServiceSupport implements AsyncProcessor {
     private static final Logger LOG = LoggerFactory.getLogger(ThroughputLogger.class);
 
     private final AtomicInteger receivedCounter = new AtomicInteger();
@@ -74,8 +76,11 @@ public class ThroughputLogger extends ServiceSupport implements Processor {
         }
     }
 
-    @Override
-    public void process(Exchange exchange) {
+    public void process(Exchange exchange) throws Exception {
+        AsyncProcessorHelper.process(this, exchange);
+    }
+
+    public boolean process(Exchange exchange, AsyncCallback callback) {
         if (startTime == 0) {
             startTime = System.currentTimeMillis();
         }
@@ -88,6 +93,9 @@ public class ThroughputLogger extends ServiceSupport implements Processor {
                 log.log(lastLogMessage);
             }
         }
+
+        callback.done(true);
+        return true;
     }
 
     public Integer getGroupSize() {

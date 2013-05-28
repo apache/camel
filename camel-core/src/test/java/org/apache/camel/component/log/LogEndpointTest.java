@@ -32,7 +32,7 @@ public class LogEndpointTest extends ContextTestSupport {
     private static class MyLogger extends CamelLogProcessor {
 
         @Override
-        public void process(Exchange exchange) {
+        public void process(Exchange exchange) throws Exception {
             super.process(exchange);
             logged = exchange;
         }

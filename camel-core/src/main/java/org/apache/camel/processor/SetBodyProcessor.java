@@ -16,18 +16,20 @@
  */
 package org.apache.camel.processor;
 
+import org.apache.camel.AsyncCallback;
+import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Message;
-import org.apache.camel.Processor;
 import org.apache.camel.Traceable;
 import org.apache.camel.impl.DefaultMessage;
 import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.util.AsyncProcessorHelper;
 
 /**
  * A processor which sets the body on the IN or OUT message with an {@link Expression}
  */
-public class SetBodyProcessor extends ServiceSupport implements Processor, Traceable {
+public class SetBodyProcessor extends ServiceSupport implements AsyncProcessor, Traceable {
     private final Expression expression;
 
     public SetBodyProcessor(Expression expression) {
@@ -35,21 +37,33 @@ public class SetBodyProcessor extends ServiceSupport implements Processor, Trace
     }
 
     public void process(Exchange exchange) throws Exception {
-        Object newBody = expression.evaluate(exchange, Object.class);
+        AsyncProcessorHelper.process(this, exchange);
+    }
 
-        boolean out = exchange.hasOut();
-        Message old = out ? exchange.getOut() : exchange.getIn();
+    @Override
+    public boolean process(Exchange exchange, AsyncCallback callback) {
+        try {
+            Object newBody = expression.evaluate(exchange, Object.class);
 
-        // create a new message container so we do not drag specialized message objects along
-        Message msg = new DefaultMessage();
-        msg.copyFrom(old);
-        msg.setBody(newBody);
+            boolean out = exchange.hasOut();
+            Message old = out ? exchange.getOut() : exchange.getIn();
 
-        if (out) {
-            exchange.setOut(msg);
-        } else {
-            exchange.setIn(msg);
+            // create a new message container so we do not drag specialized message objects along
+            Message msg = new DefaultMessage();
+            msg.copyFrom(old);
+            msg.setBody(newBody);
+
+            if (out) {
+                exchange.setOut(msg);
+            } else {
+                exchange.setIn(msg);
+            }
+        } catch (Exception e) {
+            exchange.setException(e);
         }
+
+        callback.done(true);
+        return true;
     }
 
     @Override

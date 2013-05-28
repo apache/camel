@@ -23,7 +23,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.TestSupport;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultMessage;
@@ -46,12 +45,11 @@ public class UnmarshalProcessorTest extends TestSupport {
         Exchange exchange2 = createExchangeWithBody(context, "body2");
         Processor processor = new UnmarshalProcessor(new MyDataFormat(exchange2));
 
-        try {
-            processor.process(exchange);
-            fail("Should have thrown exception");
-        } catch (RuntimeCamelException e) {
-            assertEquals("The returned exchange " + exchange2 + " is not the same as " + exchange + " provided to the DataFormat", e.getMessage());
-        }
+        processor.process(exchange);
+
+        Exception e = exchange.getException();
+        assertNotNull(e);
+        assertEquals("The returned exchange " + exchange2 + " is not the same as " + exchange + " provided to the DataFormat", e.getMessage());
     }
 
     public void testDataFormatReturnsMessage() throws Exception {

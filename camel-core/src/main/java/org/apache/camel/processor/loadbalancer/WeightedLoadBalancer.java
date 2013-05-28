@@ -33,8 +33,7 @@ public abstract class WeightedLoadBalancer extends QueueLoadBalancer {
             this.distributionRatioList.add(value);
         }
     }
-    
-    
+
     @Override
     protected void doStart() throws Exception {
         super.doStart();

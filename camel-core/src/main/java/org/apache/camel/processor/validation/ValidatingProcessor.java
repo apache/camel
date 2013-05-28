@@ -37,26 +37,27 @@ import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
 
+import org.apache.camel.AsyncCallback;
+import org.apache.camel.AsyncProcessor;
+import org.apache.camel.Exchange;
+import org.apache.camel.ExpectedBodyTypeException;
+import org.apache.camel.RuntimeTransformException;
+import org.apache.camel.TypeConverter;
+import org.apache.camel.converter.jaxp.XmlConverter;
+import org.apache.camel.util.AsyncProcessorHelper;
+import org.apache.camel.util.IOHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.w3c.dom.Node;
 import org.w3c.dom.ls.LSResourceResolver;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.ExpectedBodyTypeException;
-import org.apache.camel.Processor;
-import org.apache.camel.RuntimeTransformException;
-import org.apache.camel.TypeConverter;
-import org.apache.camel.converter.jaxp.XmlConverter;
-import org.apache.camel.util.IOHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  * A processor which validates the XML version of the inbound message body
  * against some schema either in XSD or RelaxNG
  */
-public class ValidatingProcessor implements Processor {
+public class ValidatingProcessor implements AsyncProcessor {
     private static final Logger LOG = LoggerFactory.getLogger(ValidatingProcessor.class);
     private XmlConverter converter = new XmlConverter();
     private String schemaLanguage = XMLConstants.W3C_XML_SCHEMA_NS_URI;
@@ -74,6 +75,20 @@ public class ValidatingProcessor implements Processor {
     private String headerName;
 
     public void process(Exchange exchange) throws Exception {
+        AsyncProcessorHelper.process(this, exchange);
+    }
+
+    public boolean process(Exchange exchange, AsyncCallback callback) {
+        try {
+            doProcess(exchange);
+        } catch (Exception e) {
+            exchange.setException(e);
+        }
+        callback.done(true);
+        return true;
+    }
+
+    protected void doProcess(Exchange exchange) throws Exception {
         Schema schema;
         if (isUseSharedSchema()) {
             schema = getSchema();

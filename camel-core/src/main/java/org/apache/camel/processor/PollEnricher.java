@@ -16,12 +16,14 @@
  */
 package org.apache.camel.processor;
 
+import org.apache.camel.AsyncCallback;
+import org.apache.camel.AsyncProcessor;
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.PollingConsumer;
-import org.apache.camel.Processor;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.util.AsyncProcessorHelper;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ServiceHelper;
 import org.slf4j.Logger;
@@ -41,7 +43,7 @@ import static org.apache.camel.util.ExchangeHelper.copyResultsPreservePattern;
  *
  * @see Enricher
  */
-public class PollEnricher extends ServiceSupport implements Processor {
+public class PollEnricher extends ServiceSupport implements AsyncProcessor {
 
     private static final transient Logger LOG = LoggerFactory.getLogger(PollEnricher.class);
     private AggregationStrategy aggregationStrategy;
@@ -100,6 +102,10 @@ public class PollEnricher extends ServiceSupport implements Processor {
         this.timeout = timeout;
     }
 
+    public void process(Exchange exchange) throws Exception {
+        AsyncProcessorHelper.process(this, exchange);
+    }
+
     /**
      * Enriches the input data (<code>exchange</code>) by first obtaining
      * additional data from an endpoint represented by an endpoint
@@ -112,8 +118,15 @@ public class PollEnricher extends ServiceSupport implements Processor {
      *
      * @param exchange input data.
      */
-    public void process(Exchange exchange) throws Exception {
-        preCheckPoll(exchange);
+    @Override
+    public boolean process(Exchange exchange, AsyncCallback callback) {
+        try {
+            preCheckPoll(exchange);
+        } catch (Exception e) {
+            exchange.setException(new CamelExchangeException("Error during pre poll check", exchange, e));
+            callback.done(true);
+            return true;
+        }
 
         Exchange resourceExchange;
         if (timeout < 0) {
@@ -153,7 +166,9 @@ public class PollEnricher extends ServiceSupport implements Processor {
                     }
                 }
             } catch (Throwable e) {
-                throw new CamelExchangeException("Error occurred during aggregation", exchange, e);
+                exchange.setException(new CamelExchangeException("Error occurred during aggregation", exchange, e));
+                callback.done(true);
+                return true;
             }
         }
 
@@ -163,6 +178,9 @@ public class PollEnricher extends ServiceSupport implements Processor {
         } else {
             exchange.getIn().setHeader(Exchange.TO_ENDPOINT, consumer.getEndpoint().getEndpointUri());
         }
+
+        callback.done(true);
+        return true;
     }
 
     /**

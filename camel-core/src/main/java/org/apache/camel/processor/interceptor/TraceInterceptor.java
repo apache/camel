@@ -281,7 +281,7 @@ public class TraceInterceptor extends DelegateAsyncProcessor implements Exchange
         return tracer;
     }
 
-    protected void logExchange(Exchange exchange) {
+    protected void logExchange(Exchange exchange) throws Exception {
         // process the exchange that formats and logs it
         logger.process(exchange);
     }

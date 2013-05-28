@@ -20,7 +20,6 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicBoolean;
 
-import org.apache.camel.CamelExchangeException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
@@ -352,12 +351,10 @@ public class AggregateProcessorTest extends ContextTestSupport {
 
         ap.process(e1);
 
-        try {
-            ap.process(e2);
-            fail("Should have thrown an exception");
-        } catch (CamelExchangeException e) {
-            assertEquals("Invalid correlation key. Exchange[Message: B]", e.getMessage());
-        }
+        ap.process(e2);
+        Exception e = e2.getException();
+        assertNotNull(e);
+        assertEquals("Invalid correlation key. Exchange[Message: B]", e.getMessage());
 
         ap.process(e3);
         ap.process(e4);
@@ -402,12 +399,10 @@ public class AggregateProcessorTest extends ContextTestSupport {
         ap.process(e2);
         ap.process(e3);
 
-        try {
-            ap.process(e4);
-            fail("Should have thrown an exception");
-        } catch (CamelExchangeException e) {
-            assertEquals("The correlation key [123] has been closed. Exchange[Message: C]", e.getMessage());
-        }
+        ap.process(e4);
+        Exception e = e4.getException();
+        assertNotNull(e);
+        assertEquals("The correlation key [123] has been closed. Exchange[Message: C]", e.getMessage());
 
         assertMockEndpointsSatisfied();
 

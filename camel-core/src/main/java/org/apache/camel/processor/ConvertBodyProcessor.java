@@ -16,11 +16,13 @@
  */
 package org.apache.camel.processor;
 
+import org.apache.camel.AsyncCallback;
+import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
-import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultMessage;
 import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.util.AsyncProcessorHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 
@@ -31,7 +33,7 @@ import org.apache.camel.util.ObjectHelper;
  *
  * @version 
  */
-public class ConvertBodyProcessor extends ServiceSupport implements Processor {
+public class ConvertBodyProcessor extends ServiceSupport implements AsyncProcessor {
     private final Class<?> type;
     private final String charset;
 
@@ -53,10 +55,16 @@ public class ConvertBodyProcessor extends ServiceSupport implements Processor {
     }
 
     public void process(Exchange exchange) throws Exception {
+        AsyncProcessorHelper.process(this, exchange);
+    }
+
+    @Override
+    public boolean process(Exchange exchange, AsyncCallback callback) {
         Message in = exchange.getIn();
         if (in.getBody() == null) {
             // only convert if the is a body
-            return;
+            callback.done(true);
+            return true;
         }
 
         if (charset != null) {
@@ -65,7 +73,14 @@ public class ConvertBodyProcessor extends ServiceSupport implements Processor {
             exchange.setProperty(Exchange.CHARSET_NAME, charset);
         }
         // use mandatory conversion
-        Object value = in.getMandatoryBody(type);
+        Object value;
+        try {
+            value = in.getMandatoryBody(type);
+        } catch (Exception e) {
+            exchange.setException(e);
+            callback.done(true);
+            return true;
+        }
 
         // create a new message container so we do not drag specialized message objects along
         Message msg = new DefaultMessage();
@@ -83,6 +98,9 @@ public class ConvertBodyProcessor extends ServiceSupport implements Processor {
         if (charset != null) {
             exchange.removeProperty(Exchange.CHARSET_NAME);
         }
+
+        callback.done(true);
+        return true;
     }
 
     public Class<?> getType() {
