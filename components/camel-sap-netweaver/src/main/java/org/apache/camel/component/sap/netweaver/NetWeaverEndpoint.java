@@ -24,6 +24,8 @@ import org.apache.camel.impl.DefaultEndpoint;
 
 public class NetWeaverEndpoint extends DefaultEndpoint {
 
+    private boolean json;
+    private String url;
     private String username;
     private String password;
 
@@ -46,6 +48,14 @@ public class NetWeaverEndpoint extends DefaultEndpoint {
         return true;
     }
 
+    public String getUrl() {
+        return url;
+    }
+
+    public void setUrl(String url) {
+        this.url = url;
+    }
+
     public String getUsername() {
         return username;
     }
@@ -60,5 +70,13 @@ public class NetWeaverEndpoint extends DefaultEndpoint {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public boolean isJson() {
+        return json;
+    }
+
+    public void setJson(boolean json) {
+        this.json = json;
     }
 }

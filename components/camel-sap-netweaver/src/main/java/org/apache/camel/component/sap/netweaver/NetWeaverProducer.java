@@ -22,15 +22,13 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ServiceHelper;
 import org.codehaus.jackson.map.ObjectMapper;
 
 public class NetWeaverProducer extends DefaultProducer {
 
     private Producer http;
-
-    private String url = "https://sapes1.sapdevcenter.com/sap/opu/odata/IWBEP/RMTSAMPLEFLIGHT_2/"
-            + "FlightCollection(AirLineID='AA',FlightConnectionID='0017',FlightDate=datetime'2012-08-29T00%3A00%3A00')/FlightBooking";
 
     public NetWeaverProducer(Endpoint endpoint) {
         super(endpoint);
@@ -43,11 +41,15 @@ public class NetWeaverProducer extends DefaultProducer {
 
     @Override
     public void process(Exchange exchange) throws Exception {
-        // call net weaver, and use json data format
+        String command = ExchangeHelper.getMandatoryHeader(exchange, NetWeaverConstants.COMMAND, String.class);
 
         Exchange dummy = getEndpoint().createExchange();
-        dummy.getIn().setHeader("Accept", "application/json");
-        log.info("Calling SAP Net-Weaver");
+        dummy.getIn().setHeader(Exchange.HTTP_PATH, command);
+        if (getEndpoint().isJson()) {
+            dummy.getIn().setHeader("Accept", "application/json");
+        }
+
+        log.debug("Calling SAP Net-Weaver {} with command {}", http, command);
         http.process(dummy);
 
         String json = dummy.hasOut() ? dummy.getOut().getBody(String.class) : dummy.getIn().getBody(String.class);
@@ -63,10 +65,10 @@ public class NetWeaverProducer extends DefaultProducer {
 
     @Override
     protected void doStart() throws Exception {
-        String s = url + "?authUsername=" + getEndpoint().getUsername() + "&authPassword=" + getEndpoint().getPassword() + "&authMethod=Basic";
-        log.info("Using url: {}", s);
-        http = getEndpoint().getCamelContext().getEndpoint(s).createProducer();
+        String url = getEndpoint().getUrl() + "?authUsername=" + getEndpoint().getUsername() + "&authPassword=" + getEndpoint().getPassword() + "&authMethod=Basic";
+        log.info("Creating NetWeaverProducer using url: {}", url);
 
+        http = getEndpoint().getCamelContext().getEndpoint(url).createProducer();
         ServiceHelper.startService(http);
     }
 

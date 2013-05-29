@@ -22,11 +22,16 @@ import org.junit.Test;
 
 public class NetWeaverFlightDataTest extends CamelTestSupport {
 
+    private String username = "P1909969254";
+    private String password = "TODO";
+    private String url = "https://sapes1.sapdevcenter.com/sap/opu/odata/IWBEP/RMTSAMPLEFLIGHT_2/";
+    private String command = "FlightCollection(AirLineID='AA',FlightConnectionID='0017',FlightDate=datetime'2012-08-29T00%3A00%3A00')/FlightBooking";
+
     @Test
     public void testNetWeaverFlight() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
 
-        template.sendBody("direct:start", "Dummy");
+        template.sendBodyAndHeader("direct:start", "Dummy", NetWeaverConstants.COMMAND, command);
 
         assertMockEndpointsSatisfied();
     }
@@ -37,7 +42,7 @@ public class NetWeaverFlightDataTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start").streamCaching()
-                    .to("sap-netweaver:foo?username=P1909969254&password=TODO")
+                    .toF("sap-netweaver:%s?username=%s&password=%s", url, username, password)
                     .to("log:response?showStreams=true")
                     .to("mock:result");
             }

@@ -23,14 +23,17 @@ import org.apache.camel.impl.DefaultComponent;
 
 public class NetWeaverComponent extends DefaultComponent {
 
+    private boolean json = true;
     private String username;
     private String password;
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         NetWeaverEndpoint endpoint = new NetWeaverEndpoint(uri, this);
+        endpoint.setUrl(remaining);
         endpoint.setUsername(username);
         endpoint.setPassword(password);
+        endpoint.setJson(json);
         setProperties(endpoint, parameters);
         return endpoint;
     }
@@ -49,5 +52,13 @@ public class NetWeaverComponent extends DefaultComponent {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public boolean isJson() {
+        return json;
+    }
+
+    public void setJson(boolean json) {
+        this.json = json;
     }
 }
