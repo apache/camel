@@ -17,13 +17,10 @@
 package org.apache.camel.component.weather;
 
 /**
- * The Weather constants
+ * The possible output modes of the weather information
  */
-public final class WeatherConstants {
+public enum WeatherMode {
 
-    public static final String WEATHER_QUERY = "CamelWeatherQuery";
-
-    private WeatherConstants() {
-    }
+    HTML, JSON, XML;
 
 }

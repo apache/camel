@@ -23,6 +23,7 @@ import org.apache.camel.spi.UriParam;
 import org.codehaus.jackson.JsonNode;
 import org.codehaus.jackson.map.ObjectMapper;
 
+import static org.apache.camel.component.weather.WeatherMode.JSON;
 import static org.apache.camel.component.weather.WeatherUnits.METRIC;
 import static org.apache.camel.util.ObjectHelper.isEmpty;
 import static org.apache.camel.util.ObjectHelper.notNull;
@@ -33,6 +34,8 @@ public class WeatherConfiguration {
     private String location = "";
     @UriParam
     private String period = "";
+    @UriParam
+    private WeatherMode mode = JSON;
     @UriParam
     private WeatherUnits units = METRIC;
     private final WeatherComponent component;
@@ -56,6 +59,14 @@ public class WeatherConfiguration {
         if (result != 0) {
             this.period = "" + result;
         }
+    }
+
+    public WeatherMode getMode() {
+        return mode;
+    }
+
+    public void setMode(WeatherMode mode) {
+        this.mode = notNull(mode, "mode");
     }
 
     public WeatherUnits getUnits() {
@@ -90,7 +101,16 @@ public class WeatherConfiguration {
         } else {
             answer += "forecast/daily?" + location + "&cnt=" + getPeriod();
         }
-        answer += "&units=" + units.name().toLowerCase();
+
+        // append the desired measurement unit if not the default (which is metric)
+        if (getUnits() != METRIC) {
+            answer += "&units=" + getUnits().name().toLowerCase();
+        }
+
+        // append the desired output mode if not the default (which is json)
+        if (getMode() != JSON) {
+            answer += "&mode=" + getMode().name().toLowerCase();
+        }
 
         return answer;
     }
@@ -98,7 +118,7 @@ public class WeatherConfiguration {
     private String getGeoLocation() throws Exception {
         String geoLocation = component.getCamelContext().getTypeConverter().mandatoryConvertTo(String.class, new URL("http://freegeoip.net/json/"));
         if (isEmpty(geoLocation)) {
-            throw new IllegalStateException("Retrieved an unexpected value: '" + geoLocation + "' for the geographical location");
+            throw new IllegalStateException("Got the unexpected value '" + geoLocation + "' for the geolocation");
         }
 
         ObjectMapper mapper = new ObjectMapper();

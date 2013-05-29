@@ -37,11 +37,11 @@ public class WeatherConsumer extends ScheduledPollConsumer {
 
     @Override
     protected int poll() throws Exception {
-        LOG.debug("Going to execute the query '{}'", query);
+        LOG.debug("Going to execute the Weather query {}", query);
         String weather = getEndpoint().getCamelContext().getTypeConverter().mandatoryConvertTo(String.class, new URL(query));
-        LOG.debug("Got back the answer '{}'", weather);
+        LOG.debug("Got back the Weather information {}", weather);
         if (ObjectHelper.isEmpty(weather)) {
-            throw new IllegalStateException("Got the empty string '" + weather + "' as the result of the query '" + query + "'");
+            throw new IllegalStateException("Got the unexpected value '" + weather + "' as the result of the query '" + query + "'");
         }
 
         Exchange exchange = getEndpoint().createExchange();

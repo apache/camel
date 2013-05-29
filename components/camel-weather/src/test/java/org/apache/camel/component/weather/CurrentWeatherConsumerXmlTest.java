@@ -16,14 +16,27 @@
  */
 package org.apache.camel.component.weather;
 
-/**
- * The Weather constants
- */
-public final class WeatherConstants {
+import org.apache.camel.builder.RouteBuilder;
 
-    public static final String WEATHER_QUERY = "CamelWeatherQuery";
+public class CurrentWeatherConsumerXmlTest extends BaseWeatherConsumerTest {
 
-    private WeatherConstants() {
+    @Override
+    protected void checkWeatherContent(String weather) {
+        log.debug("The weather in {} format is {}{}", new Object[] {WeatherMode.XML, LS, weather});
+
+        assertStringContains(weather, "<?xml version=\"1.0\" encoding=\"utf-8\"?>");
+        assertStringContains(weather, "<coord");
+        assertStringContains(weather, "<temperature");
+    }
+
+    @Override
+    protected RouteBuilder createRouteBuilder() throws Exception {
+        return new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("weather:foo?mode=XML").to("mock:result");
+            }
+        };
     }
 
 }

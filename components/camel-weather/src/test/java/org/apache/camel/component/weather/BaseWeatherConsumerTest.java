@@ -24,6 +24,12 @@ import org.junit.Test;
 
 public abstract class BaseWeatherConsumerTest extends CamelTestSupport {
 
+    protected void checkWeatherContent(String weather) {
+        // the default mode is json
+        assertStringContains(weather, "\"coord\":{");
+        assertStringContains(weather, "temp");
+    }
+
     @Test
     public void testGrabbingListOfEntries() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
@@ -35,10 +41,9 @@ public abstract class BaseWeatherConsumerTest extends CamelTestSupport {
         assertNotNull(exchange);
         Message in = exchange.getIn();
         assertNotNull(in);
-        assertNotNull(in.getBody());
-        String body = assertIsInstanceOf(String.class, in.getBody());
-        assertStringContains(body, "\"coord\":{");
-        assertStringContains(body, "temp");
+        String weather = assertIsInstanceOf(String.class, in.getBody());
+
+        checkWeatherContent(weather);
     }
 
 }
