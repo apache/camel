@@ -26,6 +26,8 @@ public abstract class BaseWeatherConsumerTest extends CamelTestSupport {
 
     protected void checkWeatherContent(String weather) {
         // the default mode is json
+        log.debug("The weather in {} format is {}{}", new Object[] {WeatherMode.JSON, LS, weather});
+
         assertStringContains(weather, "\"coord\":{");
         assertStringContains(weather, "temp");
     }
