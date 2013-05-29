@@ -23,6 +23,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.util.ExchangeHelper;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
 import org.codehaus.jackson.map.ObjectMapper;
 
@@ -43,23 +44,31 @@ public class NetWeaverProducer extends DefaultProducer {
     public void process(Exchange exchange) throws Exception {
         String command = ExchangeHelper.getMandatoryHeader(exchange, NetWeaverConstants.COMMAND, String.class);
 
-        Exchange dummy = getEndpoint().createExchange();
-        dummy.getIn().setHeader(Exchange.HTTP_PATH, command);
+        Exchange httpExchange = getEndpoint().createExchange();
+        httpExchange.getIn().setHeader(Exchange.HTTP_PATH, command);
         if (getEndpoint().isJson()) {
-            dummy.getIn().setHeader("Accept", "application/json");
+            httpExchange.getIn().setHeader("Accept", "application/json");
         }
 
         log.debug("Calling SAP Net-Weaver {} with command {}", http, command);
-        http.process(dummy);
+        http.process(httpExchange);
 
-        String json = dummy.hasOut() ? dummy.getOut().getBody(String.class) : dummy.getIn().getBody(String.class);
+        String data = httpExchange.getOut().getBody(String.class);
 
-        // map json string to json map
-        if (json != null) {
+        if (data != null && getEndpoint().isJsonAsMap()) {
+            // map json string to json map
             ObjectMapper mapper = new ObjectMapper();
-            Map map = mapper.readValue(json, Map.class);
+            Map map = mapper.readValue(data, Map.class);
 
-            exchange.getIn().setBody(map);
+            // if we only have one entry in the map, then put that as root (as it tends to return a single instance "d"
+            if (map.size() == 1 && getEndpoint().isFlatternMap()) {
+                exchange.getIn().setBody(map.values().iterator().next());
+            } else {
+                exchange.getIn().setBody(map);
+            }
+        } else {
+            // store data as is
+            exchange.getIn().setBody(data);
         }
     }
 

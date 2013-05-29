@@ -33,8 +33,7 @@
 
     <properties>
         <camel.osgi.export.pkg>org.apache.camel.component.sap.netweaver.*</camel.osgi.export.pkg>
-        <camel.osgi.export.service>org.apache.camel.spi.ComponentResolver;component=sap-netweaver
-        </camel.osgi.export.service>
+        <camel.osgi.export.service>org.apache.camel.spi.ComponentResolver;component=sap-netweaver</camel.osgi.export.service>
     </properties>
 
     <dependencies>
@@ -56,6 +55,16 @@
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-test</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-test-spring</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-velocity</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>

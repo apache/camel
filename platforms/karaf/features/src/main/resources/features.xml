@@ -731,6 +731,12 @@
     <bundle>mvn:com.netflix.rxjava/rxjava-core/${rxjava-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-rx/${project.version}</bundle>
   </feature>
+  <feature name='camel-sap-netweaver' version='${project.version}' resolver='(obr)' start-level='50'>
+    <feature version='${project.version}'>camel-http</feature>
+    <bundle dependency='true'>mvn:org.codehaus.jackson/jackson-core-asl/${jackson-version}</bundle>
+    <bundle dependency='true'>mvn:org.codehaus.jackson/jackson-mapper-asl/${jackson-version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-sap-netweaver/${project.version}</bundle>
+  </feature>
   <feature name='camel-saxon' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.xmlresolver/${xmlresolver-bundle-version}</bundle>

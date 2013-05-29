@@ -1,0 +1,11 @@
+<html>
+  <body>
+  Flight information:
+
+  <p/>
+  <br/>Airline ID: $body["AirLineID"]
+  <br/>Aircraft Type: $body["AirCraftType"]
+  <br/>Departure city: $body["FlightDetails"]["DepartureCity"]
+  <br/>Departure airport: $body["FlightDetails"]["DepartureAirPort"]
+  <br/>Destination city: $body["FlightDetails"]["DestinationCity"]
+  <br/>Destination airport: $body["FlightDetails"]["DestinationAirPort"]

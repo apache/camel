@@ -25,6 +25,8 @@ import org.apache.camel.impl.DefaultEndpoint;
 public class NetWeaverEndpoint extends DefaultEndpoint {
 
     private boolean json;
+    private boolean jsonAsMap;
+    private boolean flatternMap;
     private String url;
     private String username;
     private String password;
@@ -78,5 +80,21 @@ public class NetWeaverEndpoint extends DefaultEndpoint {
 
     public void setJson(boolean json) {
         this.json = json;
+    }
+
+    public boolean isJsonAsMap() {
+        return jsonAsMap;
+    }
+
+    public void setJsonAsMap(boolean jsonAsMap) {
+        this.jsonAsMap = jsonAsMap;
+    }
+
+    public boolean isFlatternMap() {
+        return flatternMap;
+    }
+
+    public void setFlatternMap(boolean flatternMap) {
+        this.flatternMap = flatternMap;
     }
 }

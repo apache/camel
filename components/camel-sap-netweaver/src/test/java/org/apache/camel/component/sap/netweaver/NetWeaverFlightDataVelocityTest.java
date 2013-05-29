@@ -20,28 +20,18 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-public class NetWeaverFlightDataTest extends CamelTestSupport {
+public class NetWeaverFlightDataVelocityTest extends CamelTestSupport {
 
     private String username = "P1909969254";
     private String password = "TODO";
     private String url = "https://sapes1.sapdevcenter.com/sap/opu/odata/IWBEP/RMTSAMPLEFLIGHT_2/";
     private String command = "FlightCollection(AirLineID='AA',FlightConnectionID='0017',FlightDate=datetime'2012-08-29T00%3A00%3A00')";
-    private String command2 = "FlightCollection(AirLineID='AA',FlightConnectionID='0017',FlightDate=datetime'2012-08-29T00%3A00%3A00')/FlightBooking";
 
     @Test
     public void testNetWeaverFlight() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
 
         template.sendBodyAndHeader("direct:start", "Dummy", NetWeaverConstants.COMMAND, command);
-
-        assertMockEndpointsSatisfied();
-    }
-
-    @Test
-    public void testNetWeaverFlight2() throws Exception {
-        getMockEndpoint("mock:result").expectedMessageCount(1);
-
-        template.sendBodyAndHeader("direct:start", "Dummy", NetWeaverConstants.COMMAND, command2);
 
         assertMockEndpointsSatisfied();
     }
@@ -54,6 +44,8 @@ public class NetWeaverFlightDataTest extends CamelTestSupport {
                 from("direct:start").streamCaching()
                     .toF("sap-netweaver:%s?username=%s&password=%s", url, username, password)
                     .to("log:response?showStreams=true")
+                    .to("velocity:flight-info.vm")
+                    .to("log:info")
                     .to("mock:result");
             }
         };

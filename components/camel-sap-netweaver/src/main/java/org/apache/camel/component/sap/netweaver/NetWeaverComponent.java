@@ -24,6 +24,8 @@ import org.apache.camel.impl.DefaultComponent;
 public class NetWeaverComponent extends DefaultComponent {
 
     private boolean json = true;
+    private boolean jsonAsMap = true;
+    private boolean flatternMap = true;
     private String username;
     private String password;
 
@@ -34,6 +36,8 @@ public class NetWeaverComponent extends DefaultComponent {
         endpoint.setUsername(username);
         endpoint.setPassword(password);
         endpoint.setJson(json);
+        endpoint.setJsonAsMap(jsonAsMap);
+        endpoint.setFlatternMap(flatternMap);
         setProperties(endpoint, parameters);
         return endpoint;
     }
@@ -60,5 +64,21 @@ public class NetWeaverComponent extends DefaultComponent {
 
     public void setJson(boolean json) {
         this.json = json;
+    }
+
+    public boolean isJsonAsMap() {
+        return jsonAsMap;
+    }
+
+    public void setJsonAsMap(boolean jsonAsMap) {
+        this.jsonAsMap = jsonAsMap;
+    }
+
+    public boolean isFlatternMap() {
+        return flatternMap;
+    }
+
+    public void setFlatternMap(boolean flatternMap) {
+        this.flatternMap = flatternMap;
     }
 }
