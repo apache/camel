@@ -41,9 +41,9 @@ public class NetWeaverFlightDataVelocityTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").streamCaching()
+                from("direct:start")
                     .toF("sap-netweaver:%s?username=%s&password=%s", url, username, password)
-                    .to("log:response?showStreams=true")
+                    .to("log:response")
                     .to("velocity:flight-info.vm")
                     .to("log:info")
                     .to("mock:result");

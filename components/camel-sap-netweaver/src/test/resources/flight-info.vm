@@ -9,3 +9,6 @@
   <br/>Departure airport: $body["FlightDetails"]["DepartureAirPort"]
   <br/>Destination city: $body["FlightDetails"]["DestinationCity"]
   <br/>Destination airport: $body["FlightDetails"]["DestinationAirPort"]
+
+  </body>
+</html>
