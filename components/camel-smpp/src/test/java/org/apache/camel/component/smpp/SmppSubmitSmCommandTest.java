@@ -31,8 +31,6 @@ import org.jsmpp.bean.DataCoding;
 import org.jsmpp.bean.ESMClass;
 import org.jsmpp.bean.NumberingPlanIndicator;
 import org.jsmpp.bean.OptionalParameter;
-import org.jsmpp.bean.OptionalParameter.COctetString;
-import org.jsmpp.bean.OptionalParameter.OctetString;
 import org.jsmpp.bean.OptionalParameter.Tag;
 import org.jsmpp.bean.RegisteredDelivery;
 import org.jsmpp.bean.ReplaceIfPresentFlag;
@@ -46,15 +44,14 @@ import org.junit.Ignore;
 import org.junit.Test;
 
 import static org.easymock.EasyMock.aryEq;
+import static org.easymock.EasyMock.createMock;
 import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.isNull;
 import static org.easymock.EasyMock.not;
-import static org.easymock.classextension.EasyMock.createMock;
-import static org.easymock.classextension.EasyMock.replay;
-import static org.easymock.classextension.EasyMock.verify;
+import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.verify;
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertSame;
 
 public class SmppSubmitSmCommandTest {
 
@@ -74,7 +71,7 @@ public class SmppSubmitSmCommandTest {
     @AfterClass
     public static void tearDownAfterClass() {
         if (defaultTimeZone != null) {
-            TimeZone.setDefault(defaultTimeZone);            
+            TimeZone.setDefault(defaultTimeZone);
         }
     }
 
@@ -491,15 +488,5 @@ public class SmppSubmitSmCommandTest {
         command.execute(exchange);
 
         verify(session);
-    }
-
-    @Test
-    public void determineTypeClass() throws Exception {
-        assertSame(OctetString.class, command.determineTypeClass(Tag.SOURCE_SUBADDRESS));
-        assertSame(COctetString.class, command.determineTypeClass(Tag.ADDITIONAL_STATUS_INFO_TEXT));
-        assertSame(org.jsmpp.bean.OptionalParameter.Byte.class, command.determineTypeClass(Tag.DEST_ADDR_SUBUNIT));
-        assertSame(org.jsmpp.bean.OptionalParameter.Short.class, command.determineTypeClass(Tag.DEST_TELEMATICS_ID));
-        assertSame(org.jsmpp.bean.OptionalParameter.Int.class, command.determineTypeClass(Tag.QOS_TIME_TO_LIVE));
-        assertSame(org.jsmpp.bean.OptionalParameter.Null.class, command.determineTypeClass(Tag.ALERT_ON_MESSAGE_DELIVERY));
     }
 }

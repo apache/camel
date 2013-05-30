@@ -20,6 +20,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultExchange;
+import org.jsmpp.bean.OptionalParameter.COctetString;
+import org.jsmpp.bean.OptionalParameter.OctetString;
+import org.jsmpp.bean.OptionalParameter.Tag;
 import org.jsmpp.session.SMPPSession;
 import org.junit.Before;
 import org.junit.Test;
@@ -57,5 +60,15 @@ public class AbstractSmppCommandTest {
         
         assertSame(inOnlyExchange.getIn(), command.getResponseMessage(inOnlyExchange));
         assertSame(inOutExchange.getOut(), command.getResponseMessage(inOutExchange));
+    }
+
+    @Test
+    public void determineTypeClass() throws Exception {
+        assertSame(OctetString.class, command.determineTypeClass(Tag.SOURCE_SUBADDRESS));
+        assertSame(COctetString.class, command.determineTypeClass(Tag.ADDITIONAL_STATUS_INFO_TEXT));
+        assertSame(org.jsmpp.bean.OptionalParameter.Byte.class, command.determineTypeClass(Tag.DEST_ADDR_SUBUNIT));
+        assertSame(org.jsmpp.bean.OptionalParameter.Short.class, command.determineTypeClass(Tag.DEST_TELEMATICS_ID));
+        assertSame(org.jsmpp.bean.OptionalParameter.Int.class, command.determineTypeClass(Tag.QOS_TIME_TO_LIVE));
+        assertSame(org.jsmpp.bean.OptionalParameter.Null.class, command.determineTypeClass(Tag.ALERT_ON_MESSAGE_DELIVERY));
     }
 }

@@ -16,12 +16,24 @@
  */
 package org.apache.camel.component.smpp;
 
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.jsmpp.bean.DataCoding;
 import org.jsmpp.bean.DataSm;
 import org.jsmpp.bean.ESMClass;
 import org.jsmpp.bean.NumberingPlanIndicator;
+import org.jsmpp.bean.OptionalParameter;
+import org.jsmpp.bean.OptionalParameter.Byte;
+import org.jsmpp.bean.OptionalParameter.COctetString;
+import org.jsmpp.bean.OptionalParameter.Int;
+import org.jsmpp.bean.OptionalParameter.Null;
+import org.jsmpp.bean.OptionalParameter.OctetString;
+import org.jsmpp.bean.OptionalParameter.Short;
+import org.jsmpp.bean.OptionalParameter.Tag;
 import org.jsmpp.bean.RegisteredDelivery;
 import org.jsmpp.bean.TypeOfNumber;
 import org.jsmpp.session.DataSmResult;
@@ -40,7 +52,7 @@ public class SmppDataSmCommand extends AbstractSmppCommand {
         if (log.isDebugEnabled()) {
             log.debug("Sending a data short message for exchange id '{}'...", exchange.getExchangeId());
         }
-        
+
         DataSmResult result;
         try {
             result = session.dataShortMessage(
@@ -53,7 +65,8 @@ public class SmppDataSmCommand extends AbstractSmppCommand {
                     dataSm.getDestAddress(),
                     new ESMClass(dataSm.getEsmClass()),
                     new RegisteredDelivery(dataSm.getRegisteredDelivery()),
-                    DataCoding.newInstance(dataSm.getDataCoding()));
+                    DataCoding.newInstance(dataSm.getDataCoding()),
+                    dataSm.getOptionalParametes());
         } catch (Exception e) {
             throw new SmppException(e);
         }
@@ -65,14 +78,44 @@ public class SmppDataSmCommand extends AbstractSmppCommand {
 
         Message message = getResponseMessage(exchange);
         message.setHeader(SmppConstants.ID, result.getMessageId());
+        message.setHeader(SmppConstants.OPTIONAL_PARAMETERS, getOptionalParametersAsMap(result.getOptionalParameters()));
     }
 
+    protected Map<String, String> getOptionalParametersAsMap(OptionalParameter[] optionalParameters) {
+        if (optionalParameters == null) {
+            return null;
+        }
+
+        Map<String, String> optParams = new HashMap<String, String>();
+        for (OptionalParameter optionalParameter : optionalParameters) {
+
+            String value = null;
+            if (optionalParameter instanceof COctetString) {
+                value = ((COctetString) optionalParameter).getValueAsString();
+            } else if (optionalParameter instanceof OctetString) {
+                value = ((OctetString) optionalParameter).getValueAsString();
+            } else if (optionalParameter instanceof Int) {
+                value = String.valueOf(((Int) optionalParameter).getValue());
+            } else if (optionalParameter instanceof Short) {
+                value = String.valueOf(((Short) optionalParameter).getValue());
+            } else if (optionalParameter instanceof Byte) {
+                value = String.valueOf(((Byte) optionalParameter).getValue());
+            } else if (optionalParameter instanceof Null) {
+                value = null;
+            }
+            optParams.put(Tag.valueOf(optionalParameter.tag).name(), value);
+        }
+
+        return optParams;
+    }
+
+    @SuppressWarnings({"unchecked"})
     protected DataSm createDataSm(Exchange exchange) {
         Message in = exchange.getIn();
         DataSm dataSm = new DataSm();
 
         if (in.getHeaders().containsKey(SmppConstants.DATA_CODING)) {
-            dataSm.setDataCoding(in.getHeader(SmppConstants.DATA_CODING, Byte.class));
+            dataSm.setDataCoding(in.getHeader(SmppConstants.DATA_CODING, java.lang.Byte.class));
         } else {
             dataSm.setDataCoding(config.getDataCoding());
         }
@@ -84,13 +127,13 @@ public class SmppDataSmCommand extends AbstractSmppCommand {
         }
 
         if (in.getHeaders().containsKey(SmppConstants.DEST_ADDR_TON)) {
-            dataSm.setDestAddrTon(in.getHeader(SmppConstants.DEST_ADDR_TON, Byte.class));
+            dataSm.setDestAddrTon(in.getHeader(SmppConstants.DEST_ADDR_TON, java.lang.Byte.class));
         } else {
             dataSm.setDestAddrTon(config.getDestAddrTon());
         }
 
         if (in.getHeaders().containsKey(SmppConstants.DEST_ADDR_NPI)) {
-            dataSm.setDestAddrNpi(in.getHeader(SmppConstants.DEST_ADDR_NPI, Byte.class));
+            dataSm.setDestAddrNpi(in.getHeader(SmppConstants.DEST_ADDR_NPI, java.lang.Byte.class));
         } else {
             dataSm.setDestAddrNpi(config.getDestAddrNpi());
         }
@@ -102,13 +145,13 @@ public class SmppDataSmCommand extends AbstractSmppCommand {
         }
 
         if (in.getHeaders().containsKey(SmppConstants.SOURCE_ADDR_TON)) {
-            dataSm.setSourceAddrTon(in.getHeader(SmppConstants.SOURCE_ADDR_TON, Byte.class));
+            dataSm.setSourceAddrTon(in.getHeader(SmppConstants.SOURCE_ADDR_TON, java.lang.Byte.class));
         } else {
             dataSm.setSourceAddrTon(config.getSourceAddrTon());
         }
 
         if (in.getHeaders().containsKey(SmppConstants.SOURCE_ADDR_NPI)) {
-            dataSm.setSourceAddrNpi(in.getHeader(SmppConstants.SOURCE_ADDR_NPI, Byte.class));
+            dataSm.setSourceAddrNpi(in.getHeader(SmppConstants.SOURCE_ADDR_NPI, java.lang.Byte.class));
         } else {
             dataSm.setSourceAddrNpi(config.getSourceAddrNpi());
         }
@@ -120,9 +163,17 @@ public class SmppDataSmCommand extends AbstractSmppCommand {
         }
 
         if (in.getHeaders().containsKey(SmppConstants.REGISTERED_DELIVERY)) {
-            dataSm.setRegisteredDelivery(in.getHeader(SmppConstants.REGISTERED_DELIVERY, Byte.class));
+            dataSm.setRegisteredDelivery(in.getHeader(SmppConstants.REGISTERED_DELIVERY, java.lang.Byte.class));
         } else {
             dataSm.setRegisteredDelivery(config.getRegisteredDelivery());
+        }
+
+        Map<String, String> optinalParamaters = in.getHeader(SmppConstants.OPTIONAL_PARAMETERS, Map.class);
+        if (optinalParamaters != null) {
+            List<OptionalParameter> optParams = createOptionalParameters(optinalParamaters);
+            dataSm.setOptionalParametes(optParams.toArray(new OptionalParameter[optParams.size()]));
+        } else {
+            dataSm.setOptionalParametes();
         }
 
         return dataSm;
