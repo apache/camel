@@ -74,6 +74,7 @@ public class SedaEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
     private volatile boolean multicastStarted;
     private boolean blockWhenFull;
     private int pollTimeout = 1000;
+    private boolean purgeWhenStopping;
 
     public SedaEndpoint() {
     }
@@ -249,6 +250,15 @@ public class SedaEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
         this.pollTimeout = pollTimeout;
     }
 
+    @ManagedAttribute
+    public boolean isPurgeWhenStopping() {
+        return purgeWhenStopping;
+    }
+
+    public void setPurgeWhenStopping(boolean purgeWhenStopping) {
+        this.purgeWhenStopping = purgeWhenStopping;
+    }
+
     public boolean isSingleton() {
         return true;
     }
@@ -270,6 +280,7 @@ public class SedaEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
      */
     @ManagedOperation(description = "Purges the seda queue")
     public void purgeQueue() {
+        LOG.debug("Purging queue with {} exchanges", queue.size());
         queue.clear();
     }
 
