@@ -18,6 +18,8 @@ package org.apache.camel.component.smpp;
 
 import java.util.Arrays;
 import java.util.Date;
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.TimeZone;
 
 import org.apache.camel.Exchange;
@@ -30,6 +32,7 @@ import org.jsmpp.bean.DataCoding;
 import org.jsmpp.bean.ESMClass;
 import org.jsmpp.bean.NumberingPlanIndicator;
 import org.jsmpp.bean.OptionalParameter;
+import org.jsmpp.bean.OptionalParameter.Tag;
 import org.jsmpp.bean.RegisteredDelivery;
 import org.jsmpp.bean.ReplaceIfPresentFlag;
 import org.jsmpp.bean.SMSCDeliveryReceipt;
@@ -54,27 +57,27 @@ import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertNull;
 
 public class SmppSubmitMultiCommandTest {
-    
+
     private static TimeZone defaultTimeZone;
 
     private SMPPSession session;
     private SmppConfiguration config;
     private SmppSubmitMultiCommand command;
-    
+
     @BeforeClass
     public static void setUpBeforeClass() {
         defaultTimeZone = TimeZone.getDefault();
         
         TimeZone.setDefault(TimeZone.getTimeZone("GMT"));
     }
-    
+
     @AfterClass
     public static void tearDownAfterClass() {
         if (defaultTimeZone != null) {
             TimeZone.setDefault(defaultTimeZone);            
         }
     }
-    
+
     @Before
     public void setUp() {
         session = createMock(SMPPSession.class);
@@ -82,7 +85,7 @@ public class SmppSubmitMultiCommandTest {
         
         command = new SmppSubmitMultiCommand(session, config);
     }
-    
+
     @Test
     public void executeWithConfigurationData() throws Exception {
         Exchange exchange = new DefaultExchange(new DefaultCamelContext(), ExchangePattern.InOut);
@@ -95,18 +98,18 @@ public class SmppSubmitMultiCommandTest {
                 eq(ReplaceIfPresentFlag.DEFAULT), eq(DataCoding.newInstance((byte) 0)), eq((byte) 0), aryEq("short message body".getBytes()),
                 aryEq(new OptionalParameter[0])))
                 .andReturn(new SubmitMultiResult("1", new UnsuccessDelivery(new Address(TypeOfNumber.UNKNOWN, NumberingPlanIndicator.UNKNOWN, "1717"), 0)));
-        
+
         replay(session);
-        
+
         command.execute(exchange);
-        
+
         verify(session);
-        
+
         assertEquals(Arrays.asList("1"), exchange.getOut().getHeader(SmppConstants.ID));
         assertEquals(1, exchange.getOut().getHeader(SmppConstants.SENT_MESSAGE_COUNT));
         assertNotNull(exchange.getOut().getHeader(SmppConstants.ERROR));
     }
-    
+
     @Test
     public void execute() throws Exception {
         Exchange exchange = new DefaultExchange(new DefaultCamelContext(), ExchangePattern.InOut);
@@ -131,18 +134,18 @@ public class SmppSubmitMultiCommandTest {
                 eq(ReplaceIfPresentFlag.REPLACE), eq(DataCoding.newInstance((byte) 0)), eq((byte) 0), aryEq("short message body".getBytes()),
                 aryEq(new OptionalParameter[0])))
                 .andReturn(new SubmitMultiResult("1"));
-        
+
         replay(session);
-        
+
         command.execute(exchange);
-        
+
         verify(session);
-        
+
         assertEquals(Arrays.asList("1"), exchange.getOut().getHeader(SmppConstants.ID));
         assertEquals(1, exchange.getOut().getHeader(SmppConstants.SENT_MESSAGE_COUNT));
         assertNull(exchange.getOut().getHeader(SmppConstants.ERROR));
     }
-    
+
     @Test
     public void executeWithValidityPeriodAsString() throws Exception {
         Exchange exchange = new DefaultExchange(new DefaultCamelContext(), ExchangePattern.InOut);
@@ -167,13 +170,13 @@ public class SmppSubmitMultiCommandTest {
                 eq(ReplaceIfPresentFlag.REPLACE), eq(DataCoding.newInstance((byte) 0)), eq((byte) 0), aryEq("short message body".getBytes()),
                 aryEq(new OptionalParameter[0])))
                 .andReturn(new SubmitMultiResult("1"));
-        
+
         replay(session);
-        
+
         command.execute(exchange);
-        
+
         verify(session);
-        
+
         assertEquals(Arrays.asList("1"), exchange.getOut().getHeader(SmppConstants.ID));
         assertEquals(1, exchange.getOut().getHeader(SmppConstants.SENT_MESSAGE_COUNT));
         assertNull(exchange.getOut().getHeader(SmppConstants.ERROR));
@@ -212,11 +215,11 @@ public class SmppSubmitMultiCommandTest {
                                       aryEq(bodyNarrowed),
                                       aryEq(new OptionalParameter[0])))
             .andReturn(new SubmitMultiResult("1"));
-        
+
         replay(session);
-        
+
         command.execute(exchange);
-        
+
         verify(session);
     }
 
@@ -253,11 +256,11 @@ public class SmppSubmitMultiCommandTest {
                                       aryEq(bodyNarrowed),
                                       aryEq(new OptionalParameter[0])))
             .andReturn(new SubmitMultiResult("1"));
-        
+
         replay(session);
-        
+
         command.execute(exchange);
-        
+
         verify(session);
     }
 
@@ -293,11 +296,11 @@ public class SmppSubmitMultiCommandTest {
                                       aryEq(body),
                                       aryEq(new OptionalParameter[0])))
             .andReturn(new SubmitMultiResult("1"));
-        
+
         replay(session);
-        
+
         command.execute(exchange);
-        
+
         verify(session);
     }
 
@@ -333,11 +336,11 @@ public class SmppSubmitMultiCommandTest {
                                       aryEq(body),
                                       aryEq(new OptionalParameter[0])))
             .andReturn(new SubmitMultiResult("1"));
-        
+
         replay(session);
-        
+
         command.execute(exchange);
-        
+
         verify(session);
     }
 
@@ -374,11 +377,11 @@ public class SmppSubmitMultiCommandTest {
                                       aryEq(body),
                                       aryEq(new OptionalParameter[0])))
             .andReturn(new SubmitMultiResult("1"));
-        
+
         replay(session);
-        
+
         command.execute(exchange);
-        
+
         verify(session);
     }
 
@@ -416,11 +419,58 @@ public class SmppSubmitMultiCommandTest {
                                       aryEq(bodyNarrowed),
                                       aryEq(new OptionalParameter[0])))
             .andReturn(new SubmitMultiResult("1"));
-        
+
         replay(session);
-        
+
         command.execute(exchange);
-        
+
         verify(session);
+    }
+
+    @Test
+    public void executeWithOptionalParameter() throws Exception {
+        Exchange exchange = new DefaultExchange(new DefaultCamelContext(), ExchangePattern.InOut);
+        exchange.getIn().setHeader(SmppConstants.COMMAND, "SubmitMulti");
+        exchange.getIn().setHeader(SmppConstants.ID, "1");
+        exchange.getIn().setHeader(SmppConstants.SOURCE_ADDR_TON, TypeOfNumber.NATIONAL.value());
+        exchange.getIn().setHeader(SmppConstants.SOURCE_ADDR_NPI, NumberingPlanIndicator.NATIONAL.value());
+        exchange.getIn().setHeader(SmppConstants.SOURCE_ADDR, "1818");
+        exchange.getIn().setHeader(SmppConstants.DEST_ADDR_TON, TypeOfNumber.INTERNATIONAL.value());
+        exchange.getIn().setHeader(SmppConstants.DEST_ADDR_NPI, NumberingPlanIndicator.INTERNET.value());
+        exchange.getIn().setHeader(SmppConstants.DEST_ADDR, Arrays.asList("1919"));
+        exchange.getIn().setHeader(SmppConstants.SCHEDULE_DELIVERY_TIME, new Date(1111111));
+        exchange.getIn().setHeader(SmppConstants.VALIDITY_PERIOD, new Date(2222222));
+        exchange.getIn().setHeader(SmppConstants.PROTOCOL_ID, (byte) 1);
+        exchange.getIn().setHeader(SmppConstants.PRIORITY_FLAG, (byte) 2);
+        exchange.getIn().setHeader(SmppConstants.REGISTERED_DELIVERY, new RegisteredDelivery(SMSCDeliveryReceipt.SUCCESS).value());
+        exchange.getIn().setHeader(SmppConstants.REPLACE_IF_PRESENT_FLAG, ReplaceIfPresentFlag.REPLACE.value());
+        Map<String, String> optionalParameters = new LinkedHashMap<String, String>();
+        optionalParameters.put("SOURCE_SUBADDRESS", "1292");
+        optionalParameters.put("ADDITIONAL_STATUS_INFO_TEXT", "urgent");
+        optionalParameters.put("DEST_ADDR_SUBUNIT", "4");
+        optionalParameters.put("DEST_TELEMATICS_ID", "2");
+        optionalParameters.put("QOS_TIME_TO_LIVE", "3600000");
+        optionalParameters.put("ALERT_ON_MESSAGE_DELIVERY", null);
+        exchange.getIn().setHeader(SmppConstants.OPTIONAL_PARAMETERS, optionalParameters);
+        exchange.getIn().setBody("short message body");
+        expect(session.submitMultiple(eq("CMT"), eq(TypeOfNumber.NATIONAL), eq(NumberingPlanIndicator.NATIONAL), eq("1818"),
+                aryEq(new Address[]{new Address(TypeOfNumber.INTERNATIONAL, NumberingPlanIndicator.INTERNET, "1919")}),
+                eq(new ESMClass()), eq((byte) 1), eq((byte) 2), eq("-300101001831100-"), eq("-300101003702200-"), eq(new RegisteredDelivery(SMSCDeliveryReceipt.SUCCESS)),
+                eq(ReplaceIfPresentFlag.REPLACE), eq(DataCoding.newInstance((byte) 0)), eq((byte) 0), aryEq("short message body".getBytes()),
+                aryEq(new OptionalParameter[]{new OptionalParameter.OctetString(Tag.SOURCE_SUBADDRESS, "1292"),
+                    new OptionalParameter.COctetString(Tag.ADDITIONAL_STATUS_INFO_TEXT.code(), "urgent"), new OptionalParameter.Byte(Tag.DEST_ADDR_SUBUNIT, (byte) 4),
+                    new OptionalParameter.Short(Tag.DEST_TELEMATICS_ID.code(), (short) 2), new OptionalParameter.Int(Tag.QOS_TIME_TO_LIVE, 3600000),
+                    new OptionalParameter.Null(Tag.ALERT_ON_MESSAGE_DELIVERY)})))
+                .andReturn(new SubmitMultiResult("1"));
+
+        replay(session);
+
+        command.execute(exchange);
+
+        verify(session);
+
+        assertEquals(Arrays.asList("1"), exchange.getOut().getHeader(SmppConstants.ID));
+        assertEquals(1, exchange.getOut().getHeader(SmppConstants.SENT_MESSAGE_COUNT));
+        assertNull(exchange.getOut().getHeader(SmppConstants.ERROR));
     }
 }

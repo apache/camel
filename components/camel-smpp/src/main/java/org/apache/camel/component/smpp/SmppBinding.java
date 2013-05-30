@@ -134,8 +134,7 @@ public class SmppBinding {
                 if (SmppUtils.parseAlphabetFromDataCoding(deliverSm.getDataCoding()) == Alphabet.ALPHA_8_BIT) {
                     smppMessage.setBody(deliverSm.getShortMessage());
                 } else {
-                    smppMessage.setBody(String.valueOf(new String(deliverSm.getShortMessage(),
-                                                                  configuration.getEncoding())));
+                    smppMessage.setBody(String.valueOf(new String(deliverSm.getShortMessage(), configuration.getEncoding())));
                 }
             } else if (deliverSm.getOptionalParametes() != null && deliverSm.getOptionalParametes().length > 0) {
                 List<OptionalParameter> oplist = Arrays.asList(deliverSm.getOptionalParametes());

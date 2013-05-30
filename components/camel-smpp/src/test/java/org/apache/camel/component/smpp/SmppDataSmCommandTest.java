@@ -1,0 +1,171 @@
+/**
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.apache.camel.component.smpp;
+
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.TimeZone;
+
+import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePattern;
+import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.impl.DefaultExchange;
+import org.jsmpp.bean.DataCoding;
+import org.jsmpp.bean.ESMClass;
+import org.jsmpp.bean.NumberingPlanIndicator;
+import org.jsmpp.bean.OptionalParameter;
+import org.jsmpp.bean.OptionalParameter.Tag;
+import org.jsmpp.bean.RegisteredDelivery;
+import org.jsmpp.bean.SMSCDeliveryReceipt;
+import org.jsmpp.bean.TypeOfNumber;
+import org.jsmpp.session.DataSmResult;
+import org.jsmpp.session.SMPPSession;
+import org.jsmpp.util.MessageId;
+import org.junit.AfterClass;
+import org.junit.Before;
+import org.junit.BeforeClass;
+import org.junit.Test;
+
+import static org.easymock.EasyMock.createMock;
+import static org.easymock.EasyMock.eq;
+import static org.easymock.EasyMock.expect;
+import static org.easymock.EasyMock.replay;
+import static org.easymock.EasyMock.verify;
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+
+public class SmppDataSmCommandTest {
+
+    private static TimeZone defaultTimeZone;
+
+    private SMPPSession session;
+    private SmppConfiguration config;
+    private SmppDataSmCommand command;
+
+    @BeforeClass
+    public static void setUpBeforeClass() {
+        defaultTimeZone = TimeZone.getDefault();
+        
+        TimeZone.setDefault(TimeZone.getTimeZone("GMT"));
+    }
+
+    @AfterClass
+    public static void tearDownAfterClass() {
+        if (defaultTimeZone != null) {
+            TimeZone.setDefault(defaultTimeZone);
+        }
+    }
+
+    @Before
+    public void setUp() {
+        session = createMock(SMPPSession.class);
+        config = new SmppConfiguration();
+
+        command = new SmppDataSmCommand(session, config);
+    }
+
+    @Test
+    public void executeWithConfigurationData() throws Exception {
+        Exchange exchange = new DefaultExchange(new DefaultCamelContext(), ExchangePattern.InOut);
+        exchange.getIn().setHeader(SmppConstants.COMMAND, "DataSm");
+        expect(session.dataShortMessage(eq("CMT"), eq(TypeOfNumber.UNKNOWN), eq(NumberingPlanIndicator.UNKNOWN), eq("1616"),
+                eq(TypeOfNumber.UNKNOWN), eq(NumberingPlanIndicator.UNKNOWN), eq("1717"), eq(new ESMClass()),
+                eq(new RegisteredDelivery((byte) 1)), eq(DataCoding.newInstance((byte) 0))))
+            .andReturn(new DataSmResult(new MessageId("1"), null));
+
+        replay(session);
+
+        command.execute(exchange);
+
+        verify(session);
+
+        assertEquals("1", exchange.getOut().getHeader(SmppConstants.ID));
+        assertNull(exchange.getOut().getHeader(SmppConstants.OPTIONAL_PARAMETERS));
+    }
+
+    @Test
+    public void execute() throws Exception {
+        Exchange exchange = new DefaultExchange(new DefaultCamelContext(), ExchangePattern.InOut);
+        exchange.getIn().setHeader(SmppConstants.COMMAND, "DataSm");
+        exchange.getIn().setHeader(SmppConstants.SERVICE_TYPE, "XXX");
+        exchange.getIn().setHeader(SmppConstants.SOURCE_ADDR_TON, TypeOfNumber.NATIONAL.value());
+        exchange.getIn().setHeader(SmppConstants.SOURCE_ADDR_NPI, NumberingPlanIndicator.NATIONAL.value());
+        exchange.getIn().setHeader(SmppConstants.SOURCE_ADDR, "1818");
+        exchange.getIn().setHeader(SmppConstants.DEST_ADDR_TON, TypeOfNumber.INTERNATIONAL.value());
+        exchange.getIn().setHeader(SmppConstants.DEST_ADDR_NPI, NumberingPlanIndicator.INTERNET.value());
+        exchange.getIn().setHeader(SmppConstants.DEST_ADDR, "1919");
+        exchange.getIn().setHeader(SmppConstants.REGISTERED_DELIVERY, new RegisteredDelivery(SMSCDeliveryReceipt.SUCCESS).value());
+        expect(session.dataShortMessage(eq("XXX"), eq(TypeOfNumber.NATIONAL), eq(NumberingPlanIndicator.NATIONAL), eq("1818"),
+                eq(TypeOfNumber.INTERNATIONAL), eq(NumberingPlanIndicator.INTERNET), eq("1919"), eq(new ESMClass()),
+                eq(new RegisteredDelivery((byte) 2)), eq(DataCoding.newInstance((byte) 0))))
+            .andReturn(new DataSmResult(new MessageId("1"), null));
+
+        replay(session);
+
+        command.execute(exchange);
+
+        verify(session);
+
+        assertEquals("1", exchange.getOut().getHeader(SmppConstants.ID));
+        assertNull(exchange.getOut().getHeader(SmppConstants.OPTIONAL_PARAMETERS));
+    }
+
+    @SuppressWarnings("unchecked")
+    @Test
+    public void executeWithOptionalParameter() throws Exception {
+        Exchange exchange = new DefaultExchange(new DefaultCamelContext(), ExchangePattern.InOut);
+        exchange.getIn().setHeader(SmppConstants.COMMAND, "DataSm");
+        Map<String, String> optionalParameters = new LinkedHashMap<String, String>();
+        optionalParameters.put("SOURCE_SUBADDRESS", "1292");
+        optionalParameters.put("ADDITIONAL_STATUS_INFO_TEXT", "urgent");
+        optionalParameters.put("DEST_ADDR_SUBUNIT", "4");
+        optionalParameters.put("DEST_TELEMATICS_ID", "2");
+        optionalParameters.put("QOS_TIME_TO_LIVE", "3600000");
+        optionalParameters.put("ALERT_ON_MESSAGE_DELIVERY", null);
+        exchange.getIn().setHeader(SmppConstants.OPTIONAL_PARAMETERS, optionalParameters);
+        expect(session.dataShortMessage(eq("CMT"), eq(TypeOfNumber.UNKNOWN), eq(NumberingPlanIndicator.UNKNOWN), eq("1616"),
+                eq(TypeOfNumber.UNKNOWN), eq(NumberingPlanIndicator.UNKNOWN), eq("1717"), eq(new ESMClass()),
+                eq(new RegisteredDelivery((byte) 1)), eq(DataCoding.newInstance((byte) 0)),
+                eq(new OptionalParameter.OctetString(Tag.SOURCE_SUBADDRESS, "1292")),
+                eq(new OptionalParameter.COctetString(Tag.ADDITIONAL_STATUS_INFO_TEXT.code(), "urgent")),
+                eq(new OptionalParameter.Byte(Tag.DEST_ADDR_SUBUNIT, (byte) 4)),
+                eq(new OptionalParameter.Short(Tag.DEST_TELEMATICS_ID.code(), (short) 2)),
+                eq(new OptionalParameter.Int(Tag.QOS_TIME_TO_LIVE, 3600000)),
+                eq(new OptionalParameter.Null(Tag.ALERT_ON_MESSAGE_DELIVERY))))
+            .andReturn(new DataSmResult(new MessageId("1"), new OptionalParameter[]{
+                new OptionalParameter.OctetString(Tag.SOURCE_SUBADDRESS, "1292"), new OptionalParameter.COctetString(Tag.ADDITIONAL_STATUS_INFO_TEXT.code(), "urgent"),
+                new OptionalParameter.Byte(Tag.DEST_ADDR_SUBUNIT, (byte) 4), new OptionalParameter.Short(Tag.DEST_TELEMATICS_ID.code(), (short) 2),
+                new OptionalParameter.Int(Tag.QOS_TIME_TO_LIVE, 3600000), new OptionalParameter.Null(Tag.ALERT_ON_MESSAGE_DELIVERY)}));
+
+        replay(session);
+
+        command.execute(exchange);
+
+        verify(session);
+
+        assertEquals("1", exchange.getOut().getHeader(SmppConstants.ID));
+        Map<String, String> optParamMap = exchange.getOut().getHeader(SmppConstants.OPTIONAL_PARAMETERS, Map.class);
+        assertEquals(6, optParamMap.size());
+        assertEquals("1292", optParamMap.get("SOURCE_SUBADDRESS"));
+        // FIXME: fix required in JSMPP. See http://code.google.com/p/jsmpp/issues/detail?id=140
+        //assertEquals("urgent", optParamMap.get("ADDITIONAL_STATUS_INFO_TEXT"));
+        assertEquals("4", optParamMap.get("DEST_ADDR_SUBUNIT"));
+        assertEquals("2", optParamMap.get("DEST_TELEMATICS_ID"));
+        assertEquals("3600000", optParamMap.get("QOS_TIME_TO_LIVE"));
+        assertNull(optParamMap.get("ALERT_ON_MESSAGE_DELIVERY"));
+    }
+}

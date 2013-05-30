@@ -75,7 +75,7 @@ public class SmppSubmitMultiCommand extends SmppSmCommand {
                         DataCoding.newInstance(submitMulti.getDataCoding()),
                         submitMulti.getSmDefaultMsgId(),
                         submitMulti.getShortMessage(),
-                        new OptionalParameter[0]);
+                        submitMulti.getOptionalParameters());
                 results.add(result);
             } catch (Exception e) {
                 throw new SmppException(e);
@@ -145,7 +145,7 @@ public class SmppSubmitMultiCommand extends SmppSmCommand {
         return submitMulties;
     }
 
-    @SuppressWarnings("unchecked")
+    @SuppressWarnings({"unchecked"})
     protected SubmitMulti createSubmitMultiTemplate(Exchange exchange) {
         Message in = exchange.getIn();
         SubmitMulti submitMulti = new SubmitMulti();
@@ -244,6 +244,14 @@ public class SmppSubmitMultiCommand extends SmppSmCommand {
             submitMulti.setReplaceIfPresentFlag(in.getHeader(SmppConstants.REPLACE_IF_PRESENT_FLAG, Byte.class));
         } else {
             submitMulti.setReplaceIfPresentFlag(config.getReplaceIfPresentFlag());
+        }
+
+        Map<String, String> optinalParamaters = in.getHeader(SmppConstants.OPTIONAL_PARAMETERS, Map.class);
+        if (optinalParamaters != null) {
+            List<OptionalParameter> optParams = createOptionalParameters(optinalParamaters);
+            submitMulti.setOptionalParameters(optParams.toArray(new OptionalParameter[optParams.size()]));
+        } else {
+            submitMulti.setOptionalParameters(new OptionalParameter[]{});
         }
 
         return submitMulti;
