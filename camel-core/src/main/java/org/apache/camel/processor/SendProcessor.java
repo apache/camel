@@ -105,7 +105,9 @@ public class SendProcessor extends ServiceSupport implements AsyncProcessor, Tra
 
     public boolean process(Exchange exchange, final AsyncCallback callback) {
         if (!isStarted()) {
-            throw new IllegalStateException("SendProcessor has not been started: " + this);
+            exchange.setException(new IllegalStateException("SendProcessor has not been started: " + this));
+            callback.done(true);
+            return true;
         }
 
         // we should preserve existing MEP so remember old MEP
