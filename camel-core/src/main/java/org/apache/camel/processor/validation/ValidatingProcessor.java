@@ -37,6 +37,11 @@ import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 import javax.xml.validation.Validator;
 
+import org.w3c.dom.Node;
+import org.w3c.dom.ls.LSResourceResolver;
+import org.xml.sax.SAXException;
+import org.xml.sax.SAXParseException;
+
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
@@ -46,12 +51,9 @@ import org.apache.camel.TypeConverter;
 import org.apache.camel.converter.jaxp.XmlConverter;
 import org.apache.camel.util.AsyncProcessorHelper;
 import org.apache.camel.util.IOHelper;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.w3c.dom.Node;
-import org.w3c.dom.ls.LSResourceResolver;
-import org.xml.sax.SAXException;
-import org.xml.sax.SAXParseException;
 
 /**
  * A processor which validates the XML version of the inbound message body

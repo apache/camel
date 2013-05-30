@@ -16,10 +16,6 @@
  */
 package org.apache.camel.processor;
 
-import java.io.PrintWriter;
-import java.io.StringWriter;
-import java.util.Scanner;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -62,19 +58,8 @@ public class ReduceStacksNeededDuringRoutingTest extends ContextTestSupport {
                                 try {
                                     throw new IllegalArgumentException("Forced to dump stacktrace");
                                 } catch (Exception e) {
-                                    StringWriter sw = new StringWriter();
-                                    PrintWriter pw = new PrintWriter(sw);
-                                    e.printStackTrace(pw);
-
-                                    String s = sw.toString();
-                                    Scanner scanner = new Scanner(s);
-                                    scanner.useDelimiter("\n");
-                                    int count = 0;
-                                    while (scanner.hasNext()) {
-                                        scanner.next();
-                                        count++;
-                                    }
-                                    log.info("There is " + count + " lines in the stacktrace");
+                                    e.fillInStackTrace();
+                                    log.info("There are " + e.getStackTrace().length + " lines in the stacktrace");
                                     log.error("Dump stacktrace to log", e);
                                 }
                             }
