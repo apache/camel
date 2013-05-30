@@ -103,7 +103,11 @@ public class SedaConsumer extends ServiceSupport implements Consumer, Runnable, 
     }
 
     public int getPendingExchangesSize() {
-        // number of pending messages on the queue
+        // the route is shutting down, so either we should purge the queue,
+        // or return how many exchanges are still on the queue
+        if (endpoint.isPurgeWhenStopping()) {
+            endpoint.purgeQueue();
+        }
         return endpoint.getQueue().size();
     }
 
@@ -315,6 +319,11 @@ public class SedaConsumer extends ServiceSupport implements Consumer, Runnable, 
     }
 
     protected void doStop() throws Exception {
+        // ensure queue is purged if we stop the consumer
+        if (endpoint.isPurgeWhenStopping()) {
+            endpoint.purgeQueue();
+        }
+
         endpoint.onStopped(this);
         
         shutdownExecutor();
