@@ -16,12 +16,12 @@
  */
 package org.apache.camel.language.mvel;
 
+import java.util.Map;
+
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ResourceHelper;
-
-import java.util.Map;
 
 /**
  * An <a href="http://camel.apache.org/mvel.html">Mvel Component</a>
