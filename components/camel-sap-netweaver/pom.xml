@@ -28,7 +28,7 @@
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-sap-netweaver</artifactId>
     <packaging>bundle</packaging>
-    <name>Camel :: Weather</name>
+    <name>Camel :: SAP NetWeaver</name>
     <description>Camel SAP NetWeaver support</description>
 
     <properties>

@@ -23,62 +23,12 @@ import org.apache.camel.impl.DefaultComponent;
 
 public class NetWeaverComponent extends DefaultComponent {
 
-    private boolean json = true;
-    private boolean jsonAsMap = true;
-    private boolean flatternMap = true;
-    private String username;
-    private String password;
-
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         NetWeaverEndpoint endpoint = new NetWeaverEndpoint(uri, this);
         endpoint.setUrl(remaining);
-        endpoint.setUsername(username);
-        endpoint.setPassword(password);
-        endpoint.setJson(json);
-        endpoint.setJsonAsMap(jsonAsMap);
-        endpoint.setFlatternMap(flatternMap);
         setProperties(endpoint, parameters);
         return endpoint;
     }
 
-    public String getUsername() {
-        return username;
-    }
-
-    public void setUsername(String username) {
-        this.username = username;
-    }
-
-    public String getPassword() {
-        return password;
-    }
-
-    public void setPassword(String password) {
-        this.password = password;
-    }
-
-    public boolean isJson() {
-        return json;
-    }
-
-    public void setJson(boolean json) {
-        this.json = json;
-    }
-
-    public boolean isJsonAsMap() {
-        return jsonAsMap;
-    }
-
-    public void setJsonAsMap(boolean jsonAsMap) {
-        this.jsonAsMap = jsonAsMap;
-    }
-
-    public boolean isFlatternMap() {
-        return flatternMap;
-    }
-
-    public void setFlatternMap(boolean flatternMap) {
-        this.flatternMap = flatternMap;
-    }
 }
