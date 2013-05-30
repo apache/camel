@@ -19,7 +19,7 @@ package org.apache.camel.processor;
 import org.apache.camel.Exchange;
 
 /**
- * A task to execute cross cutting functionality in the Camel routing engine.
+ * An advice (before and after) to execute cross cutting functionality in the Camel routing engine.
  * <p/>
  * The Camel routing engine will execute the {@link #before(org.apache.camel.Exchange)} and
  * {@link #after(org.apache.camel.Exchange, Object)} methods during routing in correct order.
@@ -27,7 +27,7 @@ import org.apache.camel.Exchange;
  * @param <T>
  * @see CamelInternalProcessor
  */
-public interface CamelInternalProcessorTask<T> {
+public interface CamelInternalProcessorAdvice<T> {
 
     /**
      * Callback executed before processing a step in the route.

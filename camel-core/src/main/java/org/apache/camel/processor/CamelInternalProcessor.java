@@ -58,9 +58,9 @@ import org.slf4j.LoggerFactory;
  * </ul>
  * ... and more.
  * <p/>
- * This implementation executes this cross cutting functionality as a {@link CamelInternalProcessorTask} task
- * by executing the {@link CamelInternalProcessorTask#before(org.apache.camel.Exchange)} and
- * {@link CamelInternalProcessorTask#after(org.apache.camel.Exchange, Object)} callbacks in correct order during routing.
+ * This implementation executes this cross cutting functionality as a {@link CamelInternalProcessorAdvice} advice (before and after advice)
+ * by executing the {@link CamelInternalProcessorAdvice#before(org.apache.camel.Exchange)} and
+ * {@link CamelInternalProcessorAdvice#after(org.apache.camel.Exchange, Object)} callbacks in correct order during routing.
  * This reduces number of stack frames needed during routing, and reduce the number of lines in stacktraces, as well
  * makes debugging the routing engine easier for end users.
  * <p/>
@@ -71,7 +71,7 @@ import org.slf4j.LoggerFactory;
 public class CamelInternalProcessor extends DelegateAsyncProcessor {
 
     private static final Logger LOG = LoggerFactory.getLogger(CamelInternalProcessor.class);
-    private final List<CamelInternalProcessorTask> tasks = new ArrayList<CamelInternalProcessorTask>();
+    private final List<CamelInternalProcessorAdvice> advices = new ArrayList<CamelInternalProcessorAdvice>();
 
     public CamelInternalProcessor() {
     }
@@ -80,12 +80,23 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
         super(processor);
     }
 
-    public void addTask(CamelInternalProcessorTask task) {
-        tasks.add(task);
+    /**
+     * Adds an {@link CamelInternalProcessorAdvice} advice to the list of advices to execute by this internal processor.
+     *
+     * @param advice  the advice to add
+     */
+    public void addAdvice(CamelInternalProcessorAdvice advice) {
+        advices.add(advice);
     }
 
-    public <T> T getTask(Class<T> type) {
-        for (CamelInternalProcessorTask task : tasks) {
+    /**
+     * Gets the advice with the given type.
+     *
+     * @param type  the type of the advice
+     * @return the advice if exists, or <tt>null</tt> if no advices has been added with the given type.
+     */
+    public <T> T getAdvice(Class<T> type) {
+        for (CamelInternalProcessorAdvice task : advices) {
             if (type.isInstance(task)) {
                 return type.cast(task);
             }
@@ -116,8 +127,8 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
             return true;
         }
 
-        final List<Object> states = new ArrayList<Object>(tasks.size());
-        for (CamelInternalProcessorTask task : tasks) {
+        final List<Object> states = new ArrayList<Object>(advices.size());
+        for (CamelInternalProcessorAdvice task : advices) {
             try {
                 Object state = task.before(exchange);
                 states.add(state);
@@ -128,7 +139,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
             }
         }
 
-        // create internal callback which will execute the tasks in reverse order when done
+        // create internal callback which will execute the advices in reverse order when done
         callback = new InternalCallback(states, exchange, callback);
 
         // UNIT_OF_WORK_PROCESS_SYNC is @deprecated and we should remove it from Camel 3.0
@@ -194,6 +205,9 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
         return processor != null ? processor.toString() : super.toString();
     }
 
+    /**
+     * Internal callback that executes the after advices.
+     */
     private final class InternalCallback implements AsyncCallback {
 
         private final List<Object> states;
@@ -213,14 +227,14 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
 
             // we should call after in reverse order
             try {
-                for (int i = tasks.size() - 1; i >= 0; i--) {
-                    CamelInternalProcessorTask task = tasks.get(i);
+                for (int i = advices.size() - 1; i >= 0; i--) {
+                    CamelInternalProcessorAdvice task = advices.get(i);
                     Object state = states.get(i);
                     try {
                         task.after(exchange, state);
                     } catch (Exception e) {
                         exchange.setException(e);
-                        // allow all tasks to complete even if there was an exception
+                        // allow all advices to complete even if there was an exception
                     }
                 }
             } finally {
@@ -263,12 +277,20 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
         return true;
     }
 
-    public static class InstrumentationTask implements CamelInternalProcessorTask<StopWatch> {
+    /**
+     * Advice for JMX instrumentation of the process being invoked.
+     * <p/>
+     * This advice keeps track of JMX metrics for performance statistics.
+     * <p/>
+     * The current implementation of this advice is only used for route level statistics. For processor levels
+     * they are still wrapped in the route processor chains.
+     */
+    public static class InstrumentationAdvice implements CamelInternalProcessorAdvice<StopWatch> {
 
         private PerformanceCounter counter;
         private String type;
 
-        public InstrumentationTask(String type) {
+        public InstrumentationAdvice(String type) {
             this.type = type;
         }
 
@@ -322,11 +344,14 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
         }
     }
 
-    public static class RouteContextTask implements CamelInternalProcessorTask<UnitOfWork> {
+    /**
+     * Advice to inject the current {@link RouteContext} into the {@link UnitOfWork} on the {@link Exchange}
+     */
+    public static class RouteContextAdvice implements CamelInternalProcessorAdvice<UnitOfWork> {
 
         private final RouteContext routeContext;
 
-        public RouteContextTask(RouteContext routeContext) {
+        public RouteContextAdvice(RouteContext routeContext) {
             this.routeContext = routeContext;
         }
 
@@ -348,12 +373,15 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
         }
     }
 
-    public static class RouteInflightRepositoryTask implements CamelInternalProcessorTask {
+    /**
+     * Advice to keep the {@link InflightRepository} up to date.
+     */
+    public static class RouteInflightRepositoryAdvice implements CamelInternalProcessorAdvice {
 
         private final InflightRepository inflightRepository;
         private final String id;
 
-        public RouteInflightRepositoryTask(InflightRepository inflightRepository, String id) {
+        public RouteInflightRepositoryAdvice(InflightRepository inflightRepository, String id) {
             this.inflightRepository = inflightRepository;
             this.id = id;
         }
@@ -370,12 +398,15 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
         }
     }
 
-    public static class RoutePolicyTask implements CamelInternalProcessorTask {
+    /**
+     * Advice to execute any {@link RoutePolicy} a route may have been configured with.
+     */
+    public static class RoutePolicyAdvice implements CamelInternalProcessorAdvice {
 
         private final List<RoutePolicy> routePolicies;
         private Route route;
 
-        public RoutePolicyTask(List<RoutePolicy> routePolicies) {
+        public RoutePolicyAdvice(List<RoutePolicy> routePolicies) {
             this.routePolicies = routePolicies;
         }
 
@@ -442,7 +473,10 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
         }
     }
 
-    public static final class BacklogTracerTask implements CamelInternalProcessorTask {
+    /**
+     * Advice to execute the {@link BacklogTracer} if enabled.
+     */
+    public static final class BacklogTracerAdvice implements CamelInternalProcessorAdvice {
 
         private final Queue<DefaultBacklogTracerEventMessage> queue;
         private final BacklogTracer backlogTracer;
@@ -450,8 +484,8 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
         private final ProcessorDefinition<?> routeDefinition;
         private final boolean first;
 
-        public BacklogTracerTask(Queue<DefaultBacklogTracerEventMessage> queue, BacklogTracer backlogTracer,
-                                 ProcessorDefinition<?> processorDefinition, ProcessorDefinition<?> routeDefinition, boolean first) {
+        public BacklogTracerAdvice(Queue<DefaultBacklogTracerEventMessage> queue, BacklogTracer backlogTracer,
+                                   ProcessorDefinition<?> processorDefinition, ProcessorDefinition<?> routeDefinition, boolean first) {
             this.queue = queue;
             this.backlogTracer = backlogTracer;
             this.processorDefinition = processorDefinition;
@@ -498,14 +532,17 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
         }
     }
 
-    public static final class BacklogDebuggerTask implements CamelInternalProcessorTask<StopWatch> {
+    /**
+     * Advice to execute the {@link org.apache.camel.processor.interceptor.BacklogDebugger} if enabled.
+     */
+    public static final class BacklogDebuggerAdvice implements CamelInternalProcessorAdvice<StopWatch> {
 
         private final BacklogDebugger backlogDebugger;
         private final Processor target;
         private final ProcessorDefinition<?> definition;
         private final String nodeId;
 
-        public BacklogDebuggerTask(BacklogDebugger backlogDebugger, Processor target, ProcessorDefinition<?> definition) {
+        public BacklogDebuggerAdvice(BacklogDebugger backlogDebugger, Processor target, ProcessorDefinition<?> definition) {
             this.backlogDebugger = backlogDebugger;
             this.target = target;
             this.definition = definition;
@@ -531,11 +568,15 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
         }
     }
 
-    public static class UnitOfWorkProcessorTask implements CamelInternalProcessorTask<UnitOfWork> {
+    /**
+     * Advice to inject new {@link UnitOfWork} to the {@link Exchange} if needed, and as well to ensure
+     * the {@link UnitOfWork} is done and stopped.
+     */
+    public static class UnitOfWorkProcessorAdvice implements CamelInternalProcessorAdvice<UnitOfWork> {
 
         private final String routeId;
 
-        public UnitOfWorkProcessorTask(String routeId) {
+        public UnitOfWorkProcessorAdvice(String routeId) {
             this.routeId = routeId;
         }
 
@@ -601,11 +642,14 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
 
     }
 
-    public static class ChildUnitOfWorkProcessorTask extends UnitOfWorkProcessorTask {
+    /**
+     * Advice when an EIP uses the <tt>shareUnitOfWork</tt> functionality.
+     */
+    public static class ChildUnitOfWorkProcessorAdvice extends UnitOfWorkProcessorAdvice {
 
         private final UnitOfWork parent;
 
-        public ChildUnitOfWorkProcessorTask(String routeId, UnitOfWork parent) {
+        public ChildUnitOfWorkProcessorAdvice(String routeId, UnitOfWork parent) {
             super(routeId);
             this.parent = parent;
         }
@@ -618,7 +662,10 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
 
     }
 
-    public static class SubUnitOfWorkProcessorTask implements CamelInternalProcessorTask<UnitOfWork> {
+    /**
+     * Advice when an EIP uses the <tt>shareUnitOfWork</tt> functionality.
+     */
+    public static class SubUnitOfWorkProcessorAdvice implements CamelInternalProcessorAdvice<UnitOfWork> {
 
         @Override
         public UnitOfWork before(Exchange exchange) throws Exception {

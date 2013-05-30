@@ -163,7 +163,7 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
 
         // wrap the aggregate route in a unit of work processor
         CamelInternalProcessor internal = new CamelInternalProcessor(childProcessor);
-        internal.addTask(new CamelInternalProcessor.UnitOfWorkProcessorTask(routeId));
+        internal.addAdvice(new CamelInternalProcessor.UnitOfWorkProcessorAdvice(routeId));
 
         Expression correlation = getExpression().createExpression(routeContext);
         AggregationStrategy strategy = createAggregationStrategy(routeContext);

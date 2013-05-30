@@ -130,7 +130,7 @@ public class CamelPostProcessorHelper implements CamelContextAware {
         BeanProcessor answer = new BeanProcessor(pojo, info);
         // must ensure the consumer is being executed in an unit of work so synchronization callbacks etc is invoked
         CamelInternalProcessor internal = new CamelInternalProcessor(answer);
-        internal.addTask(new CamelInternalProcessor.UnitOfWorkProcessorTask(null));
+        internal.addAdvice(new CamelInternalProcessor.UnitOfWorkProcessorAdvice(null));
         return internal;
     }
 

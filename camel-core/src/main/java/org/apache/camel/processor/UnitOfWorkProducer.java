@@ -48,7 +48,7 @@ public final class UnitOfWorkProducer implements Producer {
         this.producer = producer;
         // wrap in unit of work
         CamelInternalProcessor internal = new CamelInternalProcessor(producer);
-        internal.addTask(new CamelInternalProcessor.UnitOfWorkProcessorTask(null));
+        internal.addAdvice(new CamelInternalProcessor.UnitOfWorkProcessorAdvice(null));
         this.processor = internal;
     }
 

@@ -122,7 +122,7 @@ public class OnCompletionDefinition extends ProcessorDefinition<OnCompletionDefi
 
         // wrap the on completion route in a unit of work processor
         CamelInternalProcessor internal = new CamelInternalProcessor(childProcessor);
-        internal.addTask(new CamelInternalProcessor.UnitOfWorkProcessorTask(routeId));
+        internal.addAdvice(new CamelInternalProcessor.UnitOfWorkProcessorAdvice(routeId));
 
         onCompletions.put(routeId, internal);
 

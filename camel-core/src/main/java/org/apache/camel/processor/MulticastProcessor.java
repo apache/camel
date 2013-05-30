@@ -908,9 +908,9 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
 
         UnitOfWork parent = exchange.getProperty(Exchange.PARENT_UNIT_OF_WORK, UnitOfWork.class);
         if (parent != null) {
-            internal.addTask(new CamelInternalProcessor.ChildUnitOfWorkProcessorTask(routeId, parent));
+            internal.addAdvice(new CamelInternalProcessor.ChildUnitOfWorkProcessorAdvice(routeId, parent));
         } else {
-            internal.addTask(new CamelInternalProcessor.UnitOfWorkProcessorTask(routeId));
+            internal.addAdvice(new CamelInternalProcessor.UnitOfWorkProcessorAdvice(routeId));
         }
         return internal;
     }

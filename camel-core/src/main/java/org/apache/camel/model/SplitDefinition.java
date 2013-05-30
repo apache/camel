@@ -114,7 +114,7 @@ public class SplitDefinition extends ExpressionNode implements ExecutorServiceAw
         if (isShareUnitOfWork()) {
             // wrap answer in a sub unit of work, since we share the unit of work
             CamelInternalProcessor internalProcessor = new CamelInternalProcessor(answer);
-            internalProcessor.addTask(new CamelInternalProcessor.SubUnitOfWorkProcessorTask());
+            internalProcessor.addAdvice(new CamelInternalProcessor.SubUnitOfWorkProcessorAdvice());
             return internalProcessor;
         }
         return answer;

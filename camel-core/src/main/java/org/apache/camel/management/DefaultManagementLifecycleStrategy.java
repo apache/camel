@@ -533,7 +533,7 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
                     CamelInternalProcessor internal = (CamelInternalProcessor) processor;
                     ManagedRoute routeMBean = (ManagedRoute) mr;
 
-                    CamelInternalProcessor.InstrumentationTask task = internal.getTask(CamelInternalProcessor.InstrumentationTask.class);
+                    CamelInternalProcessor.InstrumentationAdvice task = internal.getAdvice(CamelInternalProcessor.InstrumentationAdvice.class);
                     if (task != null) {
                         // we need to wrap the counter with the camel context so we get stats updated on the context as well
                         if (camelContextMBean != null) {

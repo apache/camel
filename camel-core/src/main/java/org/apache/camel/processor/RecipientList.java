@@ -145,7 +145,7 @@ public class RecipientList extends ServiceSupport implements AsyncProcessor {
         if (isShareUnitOfWork()) {
             // wrap answer in a sub unit of work, since we share the unit of work
             CamelInternalProcessor internalProcessor = new CamelInternalProcessor(rlp);
-            internalProcessor.addTask(new CamelInternalProcessor.SubUnitOfWorkProcessorTask());
+            internalProcessor.addAdvice(new CamelInternalProcessor.SubUnitOfWorkProcessorAdvice());
             target = internalProcessor;
         }
 

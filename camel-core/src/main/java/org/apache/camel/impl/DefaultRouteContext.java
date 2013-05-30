@@ -152,10 +152,10 @@ public class DefaultRouteContext implements RouteContext {
 
             // and wrap it in a unit of work so the UoW is on the top, so the entire route will be in the same UoW
             CamelInternalProcessor internal = new CamelInternalProcessor(target);
-            internal.addTask(new CamelInternalProcessor.UnitOfWorkProcessorTask(routeId));
+            internal.addAdvice(new CamelInternalProcessor.UnitOfWorkProcessorAdvice(routeId));
 
             // and then in route context so we can keep track which route this is at runtime
-            internal.addTask(new CamelInternalProcessor.RouteContextTask(this));
+            internal.addAdvice(new CamelInternalProcessor.RouteContextAdvice(this));
 
             // and then optionally add route policy processor if a custom policy is set
             List<RoutePolicy> routePolicyList = getRoutePolicyList();
@@ -172,14 +172,14 @@ public class DefaultRouteContext implements RouteContext {
                     }
                 }
 
-                internal.addTask(new CamelInternalProcessor.RoutePolicyTask(routePolicyList));
+                internal.addAdvice(new CamelInternalProcessor.RoutePolicyAdvice(routePolicyList));
             }
 
             // wrap in route inflight processor to track number of inflight exchanges for the route
-            internal.addTask(new CamelInternalProcessor.RouteInflightRepositoryTask(camelContext.getInflightRepository(), routeId));
+            internal.addAdvice(new CamelInternalProcessor.RouteInflightRepositoryAdvice(camelContext.getInflightRepository(), routeId));
 
             // wrap in JMX instrumentation processor that is used for performance stats
-            internal.addTask(new CamelInternalProcessor.InstrumentationTask("route"));
+            internal.addAdvice(new CamelInternalProcessor.InstrumentationAdvice("route"));
 
             // and create the route that wraps the UoW
             Route edcr = new EventDrivenConsumerRoute(this, getEndpoint(), internal);
@@ -190,7 +190,7 @@ public class DefaultRouteContext implements RouteContext {
             }
 
             // after the route is created then set the route on the policy processor so we get hold of it
-            CamelInternalProcessor.RoutePolicyTask task = internal.getTask(CamelInternalProcessor.RoutePolicyTask.class);
+            CamelInternalProcessor.RoutePolicyAdvice task = internal.getAdvice(CamelInternalProcessor.RoutePolicyAdvice.class);
             if (task != null) {
                 task.setRoute(edcr);
             }
