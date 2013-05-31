@@ -329,7 +329,7 @@
     <serp-bundle-version>1.14.1_1</serp-bundle-version>
     <servicemix-specs-version>2.2.0</servicemix-specs-version>
     <servlet-api-2.5-version>1.1.2</servlet-api-2.5-version>
-    <shiro-version>1.2.1</shiro-version>
+    <shiro-version>1.2.2</shiro-version>
     <!-- use slf4j-api 1.6.x to be easy compatible with older Camel releases -->
     <slf4j-api-version>1.6.6</slf4j-api-version>
     <slf4j-version>1.7.5</slf4j-version>
