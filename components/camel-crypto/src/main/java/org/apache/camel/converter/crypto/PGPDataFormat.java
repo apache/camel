@@ -58,6 +58,12 @@ import org.bouncycastle.openpgp.PGPSignatureGenerator;
 import org.bouncycastle.openpgp.PGPSignatureList;
 import org.bouncycastle.openpgp.PGPSignatureSubpacketGenerator;
 import org.bouncycastle.openpgp.PGPUtil;
+import org.bouncycastle.openpgp.operator.jcajce.JcaPGPContentSignerBuilder;
+import org.bouncycastle.openpgp.operator.jcajce.JcaPGPContentVerifierBuilderProvider;
+import org.bouncycastle.openpgp.operator.jcajce.JcePBESecretKeyDecryptorBuilder;
+import org.bouncycastle.openpgp.operator.jcajce.JcePGPDataEncryptorBuilder;
+import org.bouncycastle.openpgp.operator.jcajce.JcePublicKeyDataDecryptorFactoryBuilder;
+import org.bouncycastle.openpgp.operator.jcajce.JcePublicKeyKeyEncryptionMethodGenerator;
 import org.bouncycastle.util.io.Streams;
 
 /**
@@ -130,8 +136,12 @@ public class PGPDataFormat implements DataFormat {
             outputStream = new ArmoredOutputStream(outputStream);
         }
 
-        PGPEncryptedDataGenerator encGen = new PGPEncryptedDataGenerator(PGPEncryptedData.CAST5, integrity, new SecureRandom(), "BC");
-        encGen.addMethod(key);
+        SecureRandom random = new SecureRandom();
+        PGPEncryptedDataGenerator encGen = new PGPEncryptedDataGenerator(new JcePGPDataEncryptorBuilder(PGPEncryptedData.CAST5).
+                                                                             setWithIntegrityPacket(integrity).
+                                                                             setSecureRandom(random).
+                                                                             setProvider("BC"));
+        encGen.addMethod(new JcePublicKeyKeyEncryptionMethodGenerator(key));
         OutputStream encOut = encGen.open(outputStream, new byte[BUFFER_SIZE]);
 
         PGPCompressedDataGenerator comData = new PGPCompressedDataGenerator(CompressionAlgorithmTags.ZIP);
@@ -183,7 +193,7 @@ public class PGPDataFormat implements DataFormat {
             throw new IllegalArgumentException("Signature secret key is null, cannot proceed");
         }
 
-        PGPPrivateKey sigPrivateKey = sigSecretKey.extractPrivateKey(sigKeyPassword.toCharArray(), "BC");
+        PGPPrivateKey sigPrivateKey = sigSecretKey.extractPrivateKey(new JcePBESecretKeyDecryptorBuilder().setProvider("BC").build(sigKeyPassword.toCharArray()));
         if (sigPrivateKey == null) {
             throw new IllegalArgumentException("Signature private key is null, cannot proceed");
         }
@@ -192,8 +202,8 @@ public class PGPDataFormat implements DataFormat {
         spGen.setSignerUserID(false, sigKeyUserid);
 
         int algorithm = sigSecretKey.getPublicKey().getAlgorithm();
-        PGPSignatureGenerator sigGen = new PGPSignatureGenerator(algorithm, HashAlgorithmTags.SHA1, "BC");
-        sigGen.initSign(PGPSignature.BINARY_DOCUMENT, sigPrivateKey);
+        PGPSignatureGenerator sigGen = new PGPSignatureGenerator(new JcaPGPContentSignerBuilder(algorithm, HashAlgorithmTags.SHA1).setProvider("BC"));
+        sigGen.init(PGPSignature.BINARY_DOCUMENT, sigPrivateKey);
         sigGen.setHashedSubpackets(spGen.generate());
         sigGen.generateOnePassVersion(false).encode(out);
         return sigGen;
@@ -231,8 +241,7 @@ public class PGPDataFormat implements DataFormat {
         IOHelper.close(in);
 
         PGPPublicKeyEncryptedData pbe = (PGPPublicKeyEncryptedData) enc.get(0);
-        InputStream encData = pbe.getDataStream(key, "BC");
-
+        InputStream encData = pbe.getDataStream(new JcePublicKeyDataDecryptorFactoryBuilder().setProvider("BC").build(key));
         pgpFactory = new PGPObjectFactory(encData);
         PGPCompressedData comData = (PGPCompressedData) pgpFactory.nextObject();
 
@@ -277,7 +286,7 @@ public class PGPDataFormat implements DataFormat {
         }
 
         PGPOnePassSignature signature = signatureList.get(0);
-        signature.initVerify(sigPublicKey, "BC");
+        signature.init(new JcaPGPContentVerifierBuilderProvider().setProvider("BC"), sigPublicKey);
         return signature;
     }
 

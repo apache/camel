@@ -36,6 +36,7 @@ import org.bouncycastle.openpgp.PGPSecretKey;
 import org.bouncycastle.openpgp.PGPSecretKeyRing;
 import org.bouncycastle.openpgp.PGPSecretKeyRingCollection;
 import org.bouncycastle.openpgp.PGPUtil;
+import org.bouncycastle.openpgp.operator.jcajce.JcePBESecretKeyDecryptorBuilder;
 
 import static org.bouncycastle.bcpg.PublicKeyAlgorithmTags.DSA;
 import static org.bouncycastle.bcpg.PublicKeyAlgorithmTags.ECDSA;
@@ -127,7 +128,7 @@ public final class PGPDataFormatUtil {
         while (privateKey == null && encryptedDataObjects.hasNext()) {
             encryptedData = (PGPPublicKeyEncryptedData) encryptedDataObjects.next();
             PGPSecretKey pgpSecKey = pgpSec.getSecretKey(encryptedData.getKeyID());
-            privateKey = pgpSecKey.extractPrivateKey(passphrase.toCharArray(), "BC");
+            privateKey = pgpSecKey.extractPrivateKey(new JcePBESecretKeyDecryptorBuilder().setProvider("BC").build(passphrase.toCharArray()));
         }
         return privateKey;
     }
@@ -154,7 +155,7 @@ public final class PGPDataFormatUtil {
             if (data instanceof PGPSecretKeyRing) {
                 PGPSecretKeyRing keyring = (PGPSecretKeyRing) data;
                 PGPSecretKey secKey = keyring.getSecretKey();
-                PGPPrivateKey privateKey = secKey.extractPrivateKey(passphrase.toCharArray(), "BC");
+                PGPPrivateKey privateKey = secKey.extractPrivateKey(new JcePBESecretKeyDecryptorBuilder().setProvider("BC").build(passphrase.toCharArray()));
                 if (privateKey != null) {
                     pgpSecKey = secKey;
                 }

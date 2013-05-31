@@ -25,7 +25,6 @@ import javax.crypto.SecretKey;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
-import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -88,11 +87,11 @@ public class CryptoDataFormatTest extends CamelTestSupport {
         assertTrue(!ex.getIn().getHeaders().containsKey(CryptoDataFormat.KEY) || "".equals(header) || header == null);
     }
 
-    private void doRoundTripEncryptionTests(String endpointUri) throws Exception, InterruptedException, InvalidPayloadException {
+    private void doRoundTripEncryptionTests(String endpointUri) throws Exception {
         doRoundTripEncryptionTests(endpointUri, Collections.<String, Object>emptyMap());
     }
 
-    private void doRoundTripEncryptionTests(String endpoint, Map<String, Object> headers) throws Exception, InterruptedException, InvalidPayloadException {
+    private void doRoundTripEncryptionTests(String endpoint, Map<String, Object> headers) throws Exception {
         MockEndpoint encrypted = setupExpectations(context, 3, "mock:encrypted");
         MockEndpoint unencrypted = setupExpectations(context, 3, "mock:unencrypted");
 
@@ -104,7 +103,7 @@ public class CryptoDataFormatTest extends CamelTestSupport {
         assertMocksSatisfied(encrypted, unencrypted, payload);
     }
 
-    private void assertMocksSatisfied(MockEndpoint encrypted, MockEndpoint unencrypted, String payload) throws InterruptedException, InvalidPayloadException {
+    private void assertMocksSatisfied(MockEndpoint encrypted, MockEndpoint unencrypted, String payload) throws Exception {
         awaitAndAssert(unencrypted);
         awaitAndAssert(encrypted);
         for (Exchange e : unencrypted.getReceivedExchanges()) {

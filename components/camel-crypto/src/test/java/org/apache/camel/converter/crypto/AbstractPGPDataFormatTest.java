@@ -22,7 +22,6 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
-import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
 
@@ -45,7 +44,7 @@ public abstract class AbstractPGPDataFormatTest extends CamelTestSupport {
         return new HashMap<String, Object>();
     }
 
-    protected void assertMocksSatisfied(MockEndpoint encrypted, MockEndpoint unencrypted, String payload) throws InterruptedException, InvalidPayloadException {
+    protected void assertMocksSatisfied(MockEndpoint encrypted, MockEndpoint unencrypted, String payload) throws Exception {
         awaitAndAssert(unencrypted);
         awaitAndAssert(encrypted);
         for (Exchange e : unencrypted.getReceivedExchanges()) {
