@@ -194,6 +194,11 @@ public class DefaultErrorHandlerBuilder extends ErrorHandlerBuilderSupport {
         return this;
     }
 
+    public DefaultErrorHandlerBuilder logExhaustedMessageHistory(boolean logExhaustedMessageHistory) {
+        getRedeliveryPolicy().setLogExhaustedMessageHistory(logExhaustedMessageHistory);
+        return this;
+    }
+
     /**
      * Will allow asynchronous delayed redeliveries.
      *
