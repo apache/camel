@@ -53,6 +53,11 @@ public class ThreadPoolProfileDefinition extends OptionalIdentifiedDefinition<Th
     public ThreadPoolProfileDefinition() {
     }
 
+    @Override
+    public String getLabel() {
+        return "ThreadPoolProfile " + getId();
+    }
+
     public ThreadPoolProfileDefinition poolSize(int poolSize) {
         return poolSize("" + poolSize);
     }

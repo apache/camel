@@ -16,28 +16,36 @@
  */
 package org.apache.camel;
 
-public interface NamedNode {
+import java.util.Date;
+
+/**
+ * Represents the history of a Camel {@link Message} how it was routed by the Camel routing engine.
+ */
+public interface MessageHistory {
 
     /**
-     * Gets the value of the id property.
+     * Gets the route id at the point of this history.
      */
-    String getId();
+    String getRouteId();
 
     /**
-     * Returns a short name for this node which can be useful for ID generation or referring to related resources like images
-     *
-     * @return defaults to "node" but derived nodes should overload this to provide a unique name
+     * Gets the node at the point of this history.
      */
-    String getShortName();
+    NamedNode getNode();
 
     /**
-     * Returns a label to describe this node such as the expression if some kind of expression node
+     * Gets the timestamp at the point of this history.
      */
-    String getLabel();
+    Date getTimestamp();
 
     /**
-     * Returns the description text or null if there is no description text associated with this node
+     * Gets the elapsed time in millis processing the node took
      */
-    String getDescriptionText();
+    long getElapsed();
+
+    /**
+     * Used for signalling that processing of the node is done.
+     */
+    void nodeProcessingDone();
 
 }

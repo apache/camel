@@ -25,15 +25,18 @@ import java.util.concurrent.RejectedExecutionException;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.MessageHistory;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.StatefulService;
 import org.apache.camel.api.management.PerformanceCounter;
+import org.apache.camel.impl.DefaultMessageHistory;
 import org.apache.camel.impl.DefaultUnitOfWork;
 import org.apache.camel.impl.MDCUnitOfWork;
 import org.apache.camel.management.DelegatePerformanceCounter;
 import org.apache.camel.management.mbean.ManagedPerformanceCounter;
 import org.apache.camel.model.ProcessorDefinition;
+import org.apache.camel.model.ProcessorDefinitionHelper;
 import org.apache.camel.processor.interceptor.BacklogDebugger;
 import org.apache.camel.processor.interceptor.BacklogTracer;
 import org.apache.camel.processor.interceptor.DefaultBacklogTracerEventMessage;
@@ -55,6 +58,7 @@ import org.slf4j.LoggerFactory;
  *     <li>Gather JMX performance statics</li>
  *     <li>Tracing</li>
  *     <li>Debugging</li>
+ *     <li>Message History</li>
  * </ul>
  * ... and more.
  * <p/>
@@ -681,31 +685,38 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
         }
     }
 
-    public static class MessageHistoryAdvice implements CamelInternalProcessorAdvice {
+    /**
+     * Advice when Message History has been enabled.
+     */
+    @SuppressWarnings("unchecked")
+    public static class MessageHistoryAdvice implements CamelInternalProcessorAdvice<MessageHistory> {
 
         private final ProcessorDefinition<?> definition;
+        private final String routeId;
 
         public MessageHistoryAdvice(ProcessorDefinition<?> definition) {
             this.definition = definition;
+            this.routeId = ProcessorDefinitionHelper.getRouteId(definition);
         }
 
         @Override
-        @SuppressWarnings("unchecked")
-        public Object before(Exchange exchange) throws Exception {
-            List<ProcessorDefinition<?>> history = exchange.getProperty("CamelMessageHistory", List.class);
-            if (history == null) {
-                history = new ArrayList<ProcessorDefinition<?>>();
-                exchange.setProperty("CamelMessageHistory", history);
+        public MessageHistory before(Exchange exchange) throws Exception {
+            List<MessageHistory> list = exchange.getProperty(Exchange.MESSAGE_HISTORY, List.class);
+            if (list == null) {
+                list = new ArrayList<MessageHistory>();
+                exchange.setProperty(Exchange.MESSAGE_HISTORY, list);
             }
-            history.add(definition);
-            return null;
+            MessageHistory history = new DefaultMessageHistory(routeId, definition, new Date());
+            list.add(history);
+            return history;
         }
 
         @Override
-        public void after(Exchange exchange, Object data) throws Exception {
-            // noop
+        public void after(Exchange exchange, MessageHistory history) throws Exception {
+            if (history != null) {
+                history.nodeProcessingDone();
+            }
         }
-
     }
 
 }

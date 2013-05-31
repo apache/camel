@@ -153,6 +153,7 @@ public interface Exchange {
 
     String MAXIMUM_CACHE_POOL_SIZE     = "CamelMaximumCachePoolSize";
     String MAXIMUM_ENDPOINT_CACHE_SIZE = "CamelMaximumEndpointCacheSize";
+    String MESSAGE_HISTORY             = "CamelMessageHistory";
     String MULTICAST_INDEX             = "CamelMulticastIndex";
     String MULTICAST_COMPLETE          = "CamelMulticastComplete";
 

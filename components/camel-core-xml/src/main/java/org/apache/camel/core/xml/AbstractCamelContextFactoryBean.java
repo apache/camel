@@ -468,6 +468,8 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
 
     public abstract String getTrace();
 
+    public abstract String getMessageHistory();
+
     public abstract String getStreamCache();
 
     public abstract String getDelayer();
@@ -529,6 +531,9 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         }
         if (getTrace() != null) {
             ctx.setTracing(CamelContextHelper.parseBoolean(getContext(), getTrace()));
+        }
+        if (getMessageHistory() != null) {
+            ctx.setMessageHistory(CamelContextHelper.parseBoolean(getContext(), getMessageHistory()));
         }
         if (getDelayer() != null) {
             ctx.setDelayer(CamelContextHelper.parseLong(getContext(), getDelayer()));

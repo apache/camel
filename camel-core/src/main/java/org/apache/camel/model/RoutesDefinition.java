@@ -65,6 +65,10 @@ public class RoutesDefinition extends OptionalIdentifiedDefinition<RoutesDefinit
         return "routes";
     }
 
+    public String getLabel() {
+        return "Route " + getId();
+    }
+
     // Properties
     //-----------------------------------------------------------------------
     public List<RouteDefinition> getRoutes() {

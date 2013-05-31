@@ -79,6 +79,8 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Blu
     @XmlAttribute(required = false)
     private String trace;
     @XmlAttribute(required = false)
+    private String messageHistory;
+    @XmlAttribute(required = false)
     private String streamCache = "false";
     @XmlAttribute(required = false)
     private String delayer;
@@ -423,6 +425,14 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Blu
 
     public void setTrace(String trace) {
         this.trace = trace;
+    }
+
+    public String getMessageHistory() {
+        return messageHistory;
+    }
+
+    public void setMessageHistory(String messageHistory) {
+        this.messageHistory = messageHistory;
     }
 
     public String getStreamCache() {

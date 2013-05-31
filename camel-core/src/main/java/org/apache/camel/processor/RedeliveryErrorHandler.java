@@ -30,7 +30,6 @@ import org.apache.camel.Message;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.model.OnExceptionDefinition;
-import org.apache.camel.model.ProcessorDefinitionHelper;
 import org.apache.camel.spi.ShutdownPrepared;
 import org.apache.camel.spi.SubUnitOfWorkCallback;
 import org.apache.camel.spi.UnitOfWork;
@@ -959,7 +958,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
 
             // should we include message history
             if (!shouldRedeliver && data.currentRedeliveryPolicy.isLogExhaustedMessageHistory()) {
-                String routeStackTrace = ProcessorDefinitionHelper.dumpMessageHistoryStacktrace(exchange, false);
+                String routeStackTrace = MessageHelper.dumpMessageHistoryStacktrace(exchange, false);
                 if (routeStackTrace != null) {
                     msg = msg + "\n" + routeStackTrace;
                 }
@@ -976,7 +975,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
             String msg = message;
             // should we include message history
             if (!shouldRedeliver && data.currentRedeliveryPolicy.isLogExhaustedMessageHistory()) {
-                String routeStackTrace = ProcessorDefinitionHelper.dumpMessageHistoryStacktrace(exchange, e != null && logStackTrace);
+                String routeStackTrace = MessageHelper.dumpMessageHistoryStacktrace(exchange, e != null && logStackTrace);
                 if (routeStackTrace != null) {
                     msg = msg + "\n" + routeStackTrace;
                 }

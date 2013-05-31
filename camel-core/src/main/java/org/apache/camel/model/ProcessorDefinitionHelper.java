@@ -24,7 +24,6 @@ import java.util.Set;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
 
-import org.apache.camel.Exchange;
 import org.apache.camel.spi.ExecutorServiceManager;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ObjectHelper;
@@ -465,40 +464,6 @@ public final class ProcessorDefinitionHelper {
         }
 
         return null;
-    }
-
-    @SuppressWarnings("unchecked")
-    public static String dumpMessageHistoryStacktrace(Exchange exchange, boolean logStackTrace) {
-        List<ProcessorDefinition<?>> list = exchange.getProperty("CamelMessageHistory", List.class);
-        if (list == null || list.isEmpty()) {
-            return null;
-        }
-
-        final String HEADER_FORMAT = "%-20s %-20s %-80s";
-        final String OUTPUT_FORMAT = "[%-18.18s] [%-18.18s] [%-78.78s]";
-
-        StringBuilder sb = new StringBuilder();
-        sb.append("\n");
-        sb.append("Message History\n");
-        sb.append("--------------------------------------------------------------------------------------------------------------------------\n");
-        sb.append(String.format(HEADER_FORMAT, "RouteId", "ProcessorId", "Processor"));
-        sb.append("\n");
-
-        for (ProcessorDefinition<?> node : list) {
-
-            String routeId = getRouteId(node);
-            String id = node.getId();
-            String label = node.getLabel();
-
-            sb.append(String.format(OUTPUT_FORMAT, routeId, id, label));
-            sb.append("\n");
-        }
-
-        if (logStackTrace) {
-            sb.append("\nStacktrace\n");
-            sb.append("--------------------------------------------------------------------------------------------------------------------------");
-        }
-        return sb.toString();
     }
 
 }

@@ -21,14 +21,15 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Reader;
 import java.io.Writer;
+import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 import javax.xml.transform.Source;
-import javax.xml.transform.stream.StreamSource;
 
 import org.apache.camel.BytesSource;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.MessageHistory;
 import org.apache.camel.StreamCache;
 import org.apache.camel.StringSource;
 import org.apache.camel.WrappedFile;
@@ -39,6 +40,9 @@ import org.apache.camel.WrappedFile;
  * @version
  */
 public final class MessageHelper {
+
+    private static final String MESSAGE_HISTORY_HEADER = "%-20s %-20s %-80s %-12s";
+    private static final String MESSAGE_HISTORY_OUTPUT = "[%-18.18s] [%-18.18s] [%-78.78s] [%10.10s]";
 
     /**
      * Utility classes should not have a public constructor.
@@ -390,6 +394,44 @@ public final class MessageHelper {
                 target.setHeader(key, value);
             }
         }
+    }
+
+    /**
+     * Dumps the {@link MessageHistory} from the {@link Exchange} in a human readable format.
+     *
+     * @param exchange       the exchange
+     * @param logStackTrace  whether to include a header for the stacktrace, to be added (not included in this dump).
+     * @return a human readable message history as a table
+     */
+    public static String dumpMessageHistoryStacktrace(Exchange exchange, boolean logStackTrace) {
+        List<MessageHistory> list = exchange.getProperty(Exchange.MESSAGE_HISTORY, List.class);
+        if (list == null || list.isEmpty()) {
+            return null;
+        }
+
+        StringBuilder sb = new StringBuilder();
+        sb.append("\n");
+        sb.append("Message History\n");
+        sb.append("---------------------------------------------------------------------------------------------------------------------------------------\n");
+        sb.append(String.format(MESSAGE_HISTORY_HEADER, "RouteId", "ProcessorId", "Processor", "Elapsed (ms)"));
+        sb.append("\n");
+
+        for (MessageHistory history : list) {
+
+            String routeId = history.getRouteId();
+            String id = history.getNode().getId();
+            String label = history.getNode().getLabel();
+            long elapsed = history.getElapsed();
+
+            sb.append(String.format(MESSAGE_HISTORY_OUTPUT, routeId, id, label, elapsed));
+            sb.append("\n");
+        }
+
+        if (logStackTrace) {
+            sb.append("\nStacktrace\n");
+            sb.append("---------------------------------------------------------------------------------------------------------------------------------------");
+        }
+        return sb.toString();
     }
 
 }
