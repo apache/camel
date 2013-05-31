@@ -640,6 +640,7 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
         return messageHistory;
     }
 
+    @XmlAttribute
     public void setMessageHistory(String messageHistory) {
         this.messageHistory = messageHistory;
     }
