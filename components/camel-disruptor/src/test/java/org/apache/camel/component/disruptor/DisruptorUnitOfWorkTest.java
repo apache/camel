@@ -41,15 +41,12 @@ public class DisruptorUnitOfWorkTest extends CamelTestSupport {
 
         final MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
-        
-        
+
+
         template.sendBody("direct:start", "Hello World");
 
         assertMockEndpointsSatisfied();
         notify.matchesMockWaitTime();
-        // need to sleep a while to wait for the calling of onComplete
-        Thread.sleep(200);
-        
 
         assertEquals("onCompleteA", sync);
         assertEquals("onCompleteA", lastOne);

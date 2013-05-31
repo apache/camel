@@ -17,15 +17,7 @@
 
 package org.apache.camel.component.disruptor;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicReference;
-
 import org.apache.camel.Exchange;
-import org.apache.camel.util.UnitOfWorkHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * This is a mutable reference to an {@link Exchange}, used as contents of the Disruptors ringbuffer

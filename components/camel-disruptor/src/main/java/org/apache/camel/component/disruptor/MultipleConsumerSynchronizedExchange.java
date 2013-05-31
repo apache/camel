@@ -23,7 +23,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.util.ExchangeHelper;
 
 /**
- * TODO: documentation
+ * Implementation of the {@link SynchronizedExchange} interface that correctly handles all completion
+ * synchronisation courtesies for multiple consumers.
  */
 public class MultipleConsumerSynchronizedExchange extends AbstractSynchronizedExchange {
 

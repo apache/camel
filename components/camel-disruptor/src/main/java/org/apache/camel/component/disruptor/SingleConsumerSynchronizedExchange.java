@@ -16,22 +16,16 @@
  */
 package org.apache.camel.component.disruptor;
 
-import java.util.List;
-
 import org.apache.camel.Exchange;
-import org.apache.camel.spi.Synchronization;
 import org.apache.camel.util.ExchangeHelper;
 
 /**
- * TODO: documentation
+ * Implementation of the {@link SynchronizedExchange} interface optimized for single consumers.
  */
 public class SingleConsumerSynchronizedExchange extends  AbstractSynchronizedExchange {
 
-    private final List<Synchronization> synchronizations;
-
     public SingleConsumerSynchronizedExchange(Exchange exchange) {
         super(exchange);
-        synchronizations = exchange.handoverCompletions();
     }
 
     @Override

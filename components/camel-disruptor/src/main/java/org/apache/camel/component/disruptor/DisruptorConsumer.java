@@ -30,9 +30,9 @@ import org.apache.camel.SuspendableService;
 import org.apache.camel.impl.LoggingExceptionHandler;
 import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.spi.ShutdownAware;
+import org.apache.camel.spi.Synchronization;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.AsyncProcessorConverterHelper;
-import org.apache.camel.util.AsyncProcessorHelper;
 import org.apache.camel.util.ExchangeHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,6 +43,13 @@ import org.slf4j.LoggerFactory;
 public class DisruptorConsumer extends ServiceSupport implements Consumer, SuspendableService, ShutdownAware {
 
     private static final Logger LOGGER = LoggerFactory.getLogger(DisruptorConsumer.class);
+
+    private static final AsyncCallback NOOP_ASYNC_CALLBACK = new AsyncCallback() {
+        @Override
+        public void done(boolean doneSync) {
+            //Noop
+        }
+    };
 
     private final DisruptorEndpoint endpoint;
     private final AsyncProcessor processor;
@@ -145,14 +152,29 @@ public class DisruptorConsumer extends ServiceSupport implements Consumer, Suspe
 
             // send a new copied exchange with new camel context
             final Exchange result = prepareExchange(exchange);
-            // use the regular processor and use the asynchronous routing engine to support it
-            AsyncCallback callback = new AsyncCallback() {
+
+            // We need to be notified when the exchange processing is complete to synchronize the original exchange
+            // This is however the last part of the processing of this exchange and as such can't be done
+            // in the AsyncCallback as that is called *AFTER* processing is considered to be done
+            // (see org.apache.camel.processor.CamelInternalProcessor.InternalCallback#done).
+            // To solve this problem, a new synchronization is set on the exchange that is to be
+            // processed
+            result.addOnCompletion(new Synchronization() {
                 @Override
-                public void done(boolean doneSync) {
+                public void onComplete(Exchange exchange) {
                     synchronizedExchange.consumed(result);
                 }
-            };
-            AsyncProcessorHelper.process(processor, result, callback);
+
+                @Override
+                public void onFailure(Exchange exchange) {
+                    synchronizedExchange.consumed(result);
+                }
+            });
+
+            // As the necessary post-processing of the exchange is done by the registered Synchronization,
+            // we can suffice with a no-op AsyncCallback
+            processor.process(result, NOOP_ASYNC_CALLBACK);
+
         } catch (Exception e) {
             Exchange exchange = synchronizedExchange.getExchange();
 
