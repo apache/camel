@@ -49,6 +49,7 @@ import org.slf4j.LoggerFactory;
  *   <li>logStackTrace = true</li>
  *   <li>logHandled = false</li>
  *   <li>logExhausted = true</li>
+ *   <li>logExhaustedMessageHistory = true</li>
  * </ul>
  * <p/>
  * Setting the maximumRedeliveries to a negative value such as -1 will then always redeliver (unlimited).
@@ -93,6 +94,7 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
     protected boolean logHandled;
     protected boolean logContinued;
     protected boolean logExhausted = true;
+    protected boolean logExhaustedMessageHistory = true;
     protected boolean logRetryAttempted = true;
     protected String delayPattern;
     protected boolean asyncDelayedRedelivery;
@@ -116,6 +118,7 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
             + ", logHandled=" + logHandled
             + ", logContinued=" + logContinued
             + ", logExhausted=" + logExhausted
+            + ", logExhaustedMessageHistory=" + logExhaustedMessageHistory
             + ", useExponentialBackOff="  + useExponentialBackOff
             + ", backOffMultiplier=" + backOffMultiplier
             + ", useCollisionAvoidance=" + useCollisionAvoidance
@@ -380,6 +383,14 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
     }
 
     /**
+     * Sets whether to log exhausted errors including message history
+     */
+    public RedeliveryPolicy logExhaustedMessageHistory(boolean logExhaustedMessageHistory) {
+        setLogExhaustedMessageHistory(logExhaustedMessageHistory);
+        return this;
+    }
+
+    /**
      * Sets the delay pattern with delay intervals.
      */
     public RedeliveryPolicy delayPattern(String delayPattern) {
@@ -637,6 +648,17 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
      */
     public void setLogExhausted(boolean logExhausted) {
         this.logExhausted = logExhausted;
+    }
+
+    public boolean isLogExhaustedMessageHistory() {
+        return logExhaustedMessageHistory;
+    }
+
+    /**
+     * Sets whether exhausted exceptions should be logged with message history included.
+     */
+    public void setLogExhaustedMessageHistory(boolean logExhaustedMessageHistory) {
+        this.logExhaustedMessageHistory = logExhaustedMessageHistory;
     }
 
     public boolean isAsyncDelayedRedelivery() {

@@ -681,4 +681,31 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
         }
     }
 
+    public static class MessageHistoryAdvice implements CamelInternalProcessorAdvice {
+
+        private final ProcessorDefinition<?> definition;
+
+        public MessageHistoryAdvice(ProcessorDefinition<?> definition) {
+            this.definition = definition;
+        }
+
+        @Override
+        @SuppressWarnings("unchecked")
+        public Object before(Exchange exchange) throws Exception {
+            List<ProcessorDefinition<?>> history = exchange.getProperty("CamelMessageHistory", List.class);
+            if (history == null) {
+                history = new ArrayList<ProcessorDefinition<?>>();
+                exchange.setProperty("CamelMessageHistory", history);
+            }
+            history.add(definition);
+            return null;
+        }
+
+        @Override
+        public void after(Exchange exchange, Object data) throws Exception {
+            // noop
+        }
+
+    }
+
 }

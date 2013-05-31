@@ -30,6 +30,7 @@ import org.apache.camel.Message;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.model.OnExceptionDefinition;
+import org.apache.camel.model.ProcessorDefinitionHelper;
 import org.apache.camel.spi.ShutdownPrepared;
 import org.apache.camel.spi.SubUnitOfWorkCallback;
 import org.apache.camel.spi.UnitOfWork;
@@ -955,6 +956,15 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
             if (cause != null) {
                 msg = msg + " due: " + cause.getMessage();
             }
+
+            // should we include message history
+            if (!shouldRedeliver && data.currentRedeliveryPolicy.isLogExhaustedMessageHistory()) {
+                String routeStackTrace = ProcessorDefinitionHelper.dumpMessageHistoryStacktrace(exchange, false);
+                if (routeStackTrace != null) {
+                    msg = msg + "\n" + routeStackTrace;
+                }
+            }
+
             if (newLogLevel == LoggingLevel.ERROR) {
                 // log intended rollback on maximum WARN level (no ERROR)
                 logger.log(msg, LoggingLevel.WARN);
@@ -962,10 +972,21 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
                 // otherwise use the desired logging level
                 logger.log(msg, newLogLevel);
             }
-        } else if (e != null && logStackTrace) {
-            logger.log(message, e, newLogLevel);
         } else {
-            logger.log(message, newLogLevel);
+            String msg = message;
+            // should we include message history
+            if (!shouldRedeliver && data.currentRedeliveryPolicy.isLogExhaustedMessageHistory()) {
+                String routeStackTrace = ProcessorDefinitionHelper.dumpMessageHistoryStacktrace(exchange, e != null && logStackTrace);
+                if (routeStackTrace != null) {
+                    msg = msg + "\n" + routeStackTrace;
+                }
+            }
+
+            if (e != null && logStackTrace) {
+                logger.log(msg, e, newLogLevel);
+            } else {
+                logger.log(msg, newLogLevel);
+            }
         }
     }
 

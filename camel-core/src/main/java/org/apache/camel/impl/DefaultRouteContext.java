@@ -58,6 +58,7 @@ public class DefaultRouteContext implements RouteContext {
     private InterceptStrategy managedInterceptStrategy;
     private boolean routeAdded;
     private Boolean trace;
+    private Boolean messageHistory;
     private Boolean streamCache;
     private Boolean handleFault;
     private Long delay;
@@ -248,6 +249,19 @@ public class DefaultRouteContext implements RouteContext {
         } else {
             // fallback to the option from camel context
             return getCamelContext().isTracing();
+        }
+    }
+
+    public void setMessageHistory(Boolean messageHistory) {
+        this.messageHistory = messageHistory;
+    }
+
+    public Boolean isMessageHistory() {
+        if (messageHistory != null) {
+            return messageHistory;
+        } else {
+            // fallback to the option from camel context
+            return getCamelContext().isMessageHistory();
         }
     }
 

@@ -68,6 +68,7 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
     private String group;
     private String streamCache;
     private String trace;
+    private String messageHistory;
     private String handleFault;
     private String delayer;
     private String autoStartup;
@@ -402,6 +403,26 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
     }
 
     /**
+     * Enable message history for this route.
+     *
+     * @return the builder
+     */
+    public RouteDefinition messageHistory() {
+        setMessageHistory("true");
+        return this;
+    }
+
+    /**
+     * Disable message history for this route.
+     *
+     * @return the builder
+     */
+    public RouteDefinition noMessageHistory() {
+        setMessageHistory("false");
+        return this;
+    }
+
+    /**
      * Disable handle fault for this route.
      *
      * @return the builder
@@ -615,6 +636,14 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
         this.trace = trace;
     }
 
+    public String getMessageHistory() {
+        return messageHistory;
+    }
+
+    public void setMessageHistory(String messageHistory) {
+        this.messageHistory = messageHistory;
+    }
+
     public String getHandleFault() {
         return handleFault;
     }
@@ -773,6 +802,17 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
                 if (isTrace) {
                     log.debug("Tracing is enabled on route: {}", getId());
                     // tracing is added in the DefaultChannel so we can enable it on the fly
+                }
+            }
+        }
+
+        // configure message history
+        if (messageHistory != null) {
+            Boolean isMessageHistory = CamelContextHelper.parseBoolean(camelContext, getMessageHistory());
+            if (isMessageHistory != null) {
+                routeContext.setMessageHistory(isMessageHistory);
+                if (isMessageHistory) {
+                    log.debug("Message history is enabled on route: {}", getId());
                 }
             }
         }

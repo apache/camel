@@ -173,6 +173,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     private final ThreadLocal<Boolean> isStartingRoutes = new ThreadLocal<Boolean>();
     private Boolean autoStartup = Boolean.TRUE;
     private Boolean trace = Boolean.FALSE;
+    private Boolean messageHistory = Boolean.FALSE;
     private Boolean streamCache = Boolean.FALSE;
     private Boolean handleFault = Boolean.FALSE;
     private Boolean disableJMX = Boolean.FALSE;
@@ -1288,6 +1289,14 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
 
     public Boolean isTracing() {
         return trace;
+    }
+
+    public Boolean isMessageHistory() {
+        return messageHistory;
+    }
+
+    public void setMessageHistory(Boolean messageHistory) {
+        this.messageHistory = messageHistory;
     }
 
     public Boolean isHandleFault() {

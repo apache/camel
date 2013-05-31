@@ -575,6 +575,22 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
     }
 
     /**
+     * Sets whether to log exhausted exceptions with message history
+     */
+    public OnExceptionDefinition logExhaustedMessageHistory(boolean logExhaustedMessageHistory) {
+        getOrCreateRedeliveryPolicy().logExhaustedMessageHistory(logExhaustedMessageHistory);
+        return this;
+    }
+
+    /**
+     * Sets whether to log exhausted exceptions with message history
+     */
+    public OnExceptionDefinition logExhaustedMessageHistory(String logExhaustedMessageHistory) {
+        getOrCreateRedeliveryPolicy().logExhaustedMessageHistory(logExhaustedMessageHistory);
+        return this;
+    }
+
+    /**
      * Sets the maximum redeliveries
      * <ul>
      * <li>5 = default value</li>

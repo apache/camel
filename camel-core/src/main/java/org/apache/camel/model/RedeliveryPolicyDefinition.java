@@ -68,6 +68,8 @@ public class RedeliveryPolicyDefinition {
     @XmlAttribute
     private String logExhausted;
     @XmlAttribute
+    private String logExhaustedMessageHistory;
+    @XmlAttribute
     private String disableRedelivery;
     @XmlAttribute
     private String delayPattern;
@@ -135,6 +137,9 @@ public class RedeliveryPolicyDefinition {
             }
             if (logExhausted != null) {
                 answer.setLogExhausted(CamelContextHelper.parseBoolean(context, logExhausted));
+            }
+            if (logExhaustedMessageHistory != null) {
+                answer.setLogExhaustedMessageHistory(CamelContextHelper.parseBoolean(context, logExhaustedMessageHistory));
             }
             if (disableRedelivery != null) {
                 if (CamelContextHelper.parseBoolean(context, disableRedelivery)) {
@@ -428,6 +433,30 @@ public class RedeliveryPolicyDefinition {
     }
 
     /**
+     * Sets whether exhausted exceptions should be logged including message history or not (supports property placeholders).
+     * Can be used to include or reduce verbose.
+     *
+     * @param logExhaustedMessageHistory  whether exhausted exceptions should be logged with message history
+     * @return the builder
+     */
+    public RedeliveryPolicyDefinition logExhaustedMessageHistory(boolean logExhaustedMessageHistory) {
+        setLogExhaustedMessageHistory(Boolean.toString(logExhaustedMessageHistory));
+        return this;
+    }
+
+    /**
+     * Sets whether exhausted exceptions should be logged including message history or not (supports property placeholders).
+     * Can be used to include or reduce verbose.
+     *
+     * @param logExhaustedMessageHistory  whether exhausted exceptions should be logged with message history
+     * @return the builder
+     */
+    public RedeliveryPolicyDefinition logExhaustedMessageHistory(String logExhaustedMessageHistory) {
+        setLogExhaustedMessageHistory(logExhaustedMessageHistory);
+        return this;
+    }
+
+    /**
      * Sets the maximum redeliveries
      * <ul>
      *   <li>x = redeliver at most x times</li>
@@ -651,6 +680,14 @@ public class RedeliveryPolicyDefinition {
 
     public void setLogExhausted(String logExhausted) {
         this.logExhausted = logExhausted;
+    }
+
+    public String getLogExhaustedMessageHistory() {
+        return logExhaustedMessageHistory;
+    }
+
+    public void setLogExhaustedMessageHistory(String logExhaustedMessageHistory) {
+        this.logExhaustedMessageHistory = logExhaustedMessageHistory;
     }
 
     public String getDisableRedelivery() {

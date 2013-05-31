@@ -220,6 +220,11 @@ public class DefaultChannel extends CamelInternalProcessor implements ModelChann
             }
         }
 
+        if (routeContext.isMessageHistory()) {
+            // add message history advice
+            addAdvice(new MessageHistoryAdvice(targetOutputDef));
+        }
+
         // the regular tracer is not a task on internalProcessor as this is not really needed
         // end users have to explicit enable the tracer to use it, and then its okay if we wrap
         // the processors (but by default tracer is disabled, and therefore we do not wrap processors)
