@@ -115,7 +115,7 @@
     <dozer-version>5.4.0</dozer-version>
     <easymock-version>3.1</easymock-version>
     <eclipse-equinox-common-version>3.3.0-v20070426</eclipse-equinox-common-version>
-    <ehcache-bundle-version>2.6.5_1</ehcache-bundle-version>
+    <ehcache-version>2.7.0</ehcache-version>
     <!-- The 0.20 bundle is flawed, see SMX4-1372 -->
     <elasticsearch-bundle-version>0.19.10_1</elasticsearch-bundle-version>
     <elasticsearch-version>0.20.5</elasticsearch-version>
@@ -1771,11 +1771,11 @@
         <version>${openjpa-version}</version>
       </dependency>
 
-      <!-- optional EHCache -->
+      <!-- optional Ehcache -->
       <dependency>
-        <groupId>org.apache.servicemix.bundles</groupId>
-        <artifactId>org.apache.servicemix.bundles.ehcache</artifactId>
-        <version>${ehcache-bundle-version}</version>
+        <groupId>net.sf.ehcache</groupId>
+        <artifactId>ehcache</artifactId>
+        <version>${ehcache-version}</version>
       </dependency>
 
       <!-- Hadoop, Hbase -->

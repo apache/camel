@@ -148,7 +148,7 @@
   </feature>
   <feature name='camel-cache' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
-    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.ehcache/${ehcache-bundle-version}</bundle>
+    <bundle dependency='true'>mvn:net.sf.ehcache/ehcache/${ehcache-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.jdom/${jdom-bundle-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-cache/${project.version}</bundle>
   </feature>

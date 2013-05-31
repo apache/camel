@@ -23,7 +23,6 @@ import java.util.concurrent.TimeUnit;
 import net.sf.ehcache.Cache;
 import net.sf.ehcache.CacheException;
 import net.sf.ehcache.Element;
-import net.sf.ehcache.ElementEvictionData;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
@@ -35,6 +34,7 @@ import org.apache.camel.component.BaseCacheTest;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.IOConverter;
 import org.apache.camel.util.IOHelper;
+import org.apache.camel.util.ReflectionHelper;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -689,10 +689,11 @@ public class CacheProducerTest extends BaseCacheTest {
         LOG.debug("------------Beginning CacheProducer Check An Element Does Not Exist After Expiry Test---------------");
         sendOriginalFile();
 
-        // Alter the cache element so it appears "expired" (without having to wait for it to happen)
+        // simulate the cache element to appear as "expired" (without having to wait for it to happen)
+        // however as there's no public API to do so we're forced to make use of the reflection API here
         Cache testCache = cache.getCacheManagerFactory().getInstance().getCache("TestCache1");
         Element element = testCache.getQuiet("Ralph_Waldo_Emerson");
-        element.getElementEvictionData().setCreationTime(System.currentTimeMillis() - 10000);
+        ReflectionHelper.setField(Element.class.getDeclaredField("creationTime"), element, System.currentTimeMillis() - 10000);
         testCache.putQuiet(element);
 
         // Check that the element is not found when expired

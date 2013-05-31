@@ -104,9 +104,8 @@ public class CacheRegistryRefTest extends BaseCacheTest {
         //Expecting 1 loader to be configured via spring
         assertEquals("configuredLoaderRegistry size", 1, configuredLoaderRegistry.size());
 
-        //Expecting 2 listeners- one added by us: TestCacheEventListener and
-        //one added by ehcache by cfg file.
-        assertEquals("Number of registered listeners", 2, ehcacheEventListners.size());
+        //Expecting 1 listener added by us: TestCacheEventListener
+        assertEquals("Number of registered listeners", 1, ehcacheEventListners.size());
 
         assertEquals("Number of registered loaders", 1, cacheLoaders.size());
 
@@ -132,7 +131,7 @@ public class CacheRegistryRefTest extends BaseCacheTest {
         }
     }
 
-    public class TestLoader implements CacheLoaderWrapper {
+    public static class TestLoader implements CacheLoaderWrapper {
 
         protected Ehcache cache;
         private Status status;
@@ -196,7 +195,7 @@ public class CacheRegistryRefTest extends BaseCacheTest {
     }
 
     //Test event lister that will help us to count put method invocations.
-    public class TestCacheEventListener implements CacheEventListener {
+    public static class TestCacheEventListener implements CacheEventListener {
         private int numberOfPuts;
 
         @Override
