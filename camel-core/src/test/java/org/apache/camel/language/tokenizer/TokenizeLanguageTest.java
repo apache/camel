@@ -18,12 +18,9 @@ package org.apache.camel.language.tokenizer;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Ignore;
-import org.junit.Test;
 
 public class TokenizeLanguageTest extends ContextTestSupport {
 
-    @Test
     public void testSendClosedTagMessageToTokenize() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("<child some_attr='a' anotherAttr='a'></child>", "<child some_attr='b' anotherAttr='b'></child>");
 
@@ -33,7 +30,6 @@ public class TokenizeLanguageTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-    @Test
     public void testSendClosedTagWithLineBreaksMessageToTokenize() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("<child some_attr='a' anotherAttr='a'>\n</child>", "<child some_attr='b' anotherAttr='b'>\n</child>");
 
@@ -49,9 +45,8 @@ public class TokenizeLanguageTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-    @Test
-    @Ignore
-    public void testSendSelfClosingTagMessageToTokenize() throws Exception {
+    public void xxxTestSendSelfClosingTagMessageToTokenize() throws Exception {
+        // TODO: ignored test as it does not work, there is a CAMEL ticket about this
         getMockEndpoint("mock:result").expectedBodiesReceived("<child some_attr='a' anotherAttr='a' />", "<child some_attr='b' anotherAttr='b' />");
 
         template.sendBody("direct:start",
