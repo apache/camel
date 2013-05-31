@@ -662,7 +662,10 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
             } else if (dataFormat.dealias() == DataFormat.RAW) {
                 answer = message.getContent(InputStream.class);
                 
-            } else if (dataFormat.dealias() == DataFormat.CXF_MESSAGE) {
+            } else if (dataFormat.dealias() == DataFormat.CXF_MESSAGE 
+                && message.getContent(List.class) != null) {
+                // CAMEL-6404 added check point of message content
+                // The message content of list could be null if there is a fault message is received
                 answer = message.getContent(List.class).get(0);
             }
 
