@@ -67,9 +67,12 @@ public class CacheProducerTest extends BaseCacheTest {
             public void process(Exchange exchange) throws Exception {
                 // Set the property of the charset encoding
                 exchange.setProperty(Exchange.CHARSET_NAME, "UTF-8");
+
+                // Read in the file content using the exchange charset
+                byte[] fileContent = context.getTypeConverter().mandatoryConvertTo(byte[].class, exchange, new File(path));
+
                 Message in = exchange.getIn();
-                byte buffer[] = context.getTypeConverter().mandatoryConvertTo(byte[].class, new File(path));
-                in.setBody(buffer);
+                in.setBody(fileContent);
             }
         });
     }
