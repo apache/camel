@@ -35,6 +35,13 @@
       <name>Public online Restlet repository</name>
       <url>http://maven.restlet.org</url>
     </repository>
+
+    <!-- required for validator tests -->
+    <repository>
+      <id>camel-validator-test-repo</id>
+      <name>This project repository contains camel-validator-test-resources-1.0.0.jar</name>
+      <url>file://${basedir}/lib</url>
+    </repository>
   </repositories>
 
   <dependencies>
@@ -176,7 +183,7 @@
       <scope>test</scope>
     </dependency>
 
-	  <dependency>
+    <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-ftp</artifactId>
       <scope>test</scope>
@@ -327,13 +334,11 @@
       <scope>test</scope>
     </dependency>
   	
-    <!-- for validator tests -->
+    <!-- for validator tests, the artifact itself is included inside the project repository 'camel-validator-test-repo' above -->
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-validator-test-resources</artifactId>
       <version>1.0.0</version>
-      <scope>system</scope>
-      <systemPath>${basedir}/src/test/lib/camel-validator-test-resources.jar</systemPath>
     </dependency>
 
     <!-- atomikos XA TX manager -->
