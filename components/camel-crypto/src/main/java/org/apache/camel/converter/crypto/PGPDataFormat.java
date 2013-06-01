@@ -136,10 +136,9 @@ public class PGPDataFormat implements DataFormat {
             outputStream = new ArmoredOutputStream(outputStream);
         }
 
-        SecureRandom random = new SecureRandom();
         PGPEncryptedDataGenerator encGen = new PGPEncryptedDataGenerator(new JcePGPDataEncryptorBuilder(PGPEncryptedData.CAST5).
                                                                              setWithIntegrityPacket(integrity).
-                                                                             setSecureRandom(random).
+                                                                             setSecureRandom(new SecureRandom()).
                                                                              setProvider("BC"));
         encGen.addMethod(new JcePublicKeyKeyEncryptionMethodGenerator(key));
         OutputStream encOut = encGen.open(outputStream, new byte[BUFFER_SIZE]);

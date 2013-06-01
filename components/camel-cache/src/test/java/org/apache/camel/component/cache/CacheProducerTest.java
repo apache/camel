@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.cache;
 
+import java.io.File;
 import java.io.FileInputStream;
 import java.io.InputStream;
 import java.util.concurrent.TimeUnit;
@@ -36,8 +37,6 @@ import org.apache.camel.converter.IOConverter;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ReflectionHelper;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class CacheProducerTest extends BaseCacheTest {
     private static final Poetry POETRY;
@@ -45,8 +44,6 @@ public class CacheProducerTest extends BaseCacheTest {
     private static final String FILEPATH_UPDATEDTEST_TXT = "src/test/resources/updatedtest.txt";
 
     private static final String FILEPATH_TEST_TXT = "src/test/resources/test.txt";
-
-    private static final transient Logger LOG = LoggerFactory.getLogger(CacheProducerTest.class);
 
     @EndpointInject(uri = "mock:CacheProducerTest.result")
     protected MockEndpoint resultEndpoint;
@@ -68,15 +65,10 @@ public class CacheProducerTest extends BaseCacheTest {
     private void sendFile(final String path) throws Exception {
         template.send("direct:a", new Processor() {
             public void process(Exchange exchange) throws Exception {
-                // Read from an input stream
-                InputStream is = IOHelper.buffered(new FileInputStream(path));
-
-                byte buffer[] = IOConverter.toBytes(is);
-                is.close();
-
                 // Set the property of the charset encoding
                 exchange.setProperty(Exchange.CHARSET_NAME, "UTF-8");
                 Message in = exchange.getIn();
+                byte buffer[] = context.getTypeConverter().mandatoryConvertTo(byte[].class, new File(path));
                 in.setBody(buffer);
             }
         });
@@ -131,7 +123,7 @@ public class CacheProducerTest extends BaseCacheTest {
             }
         });
         context.start();
-        LOG.debug("------------Beginning CacheProducer Add Test---------------");
+        log.debug("------------Beginning CacheProducer Add Test---------------");
         sendOriginalFile();
     }
 
@@ -148,7 +140,7 @@ public class CacheProducerTest extends BaseCacheTest {
         context.start();
         NotifyBuilder notify = new NotifyBuilder(context).whenExactlyDone(1).create();
 
-        LOG.debug("------------Beginning CacheProducer Add Test---------------");
+        log.debug("------------Beginning CacheProducer Add Test---------------");
         sendOriginalFile();
 
         notify.matches(10, TimeUnit.SECONDS);
@@ -167,7 +159,7 @@ public class CacheProducerTest extends BaseCacheTest {
             }
         });
         context.start();
-        LOG.debug("------------Beginning CacheProducer Add Test---------------");
+        log.debug("------------Beginning CacheProducer Add Test---------------");
         sendOriginalFile();
         Element element = fetchElement("Ralph_Waldo_Emerson");
         assertTrue(element.isEternal());
@@ -185,7 +177,7 @@ public class CacheProducerTest extends BaseCacheTest {
             }
         });
         context.start();
-        LOG.debug("------------Beginning CacheProducer Add Test---------------");
+        log.debug("------------Beginning CacheProducer Add Test---------------");
         sendOriginalFile();
         Element element = fetchElement("Ralph_Waldo_Emerson");
         assertEquals(24, element.getTimeToIdle());
@@ -203,7 +195,7 @@ public class CacheProducerTest extends BaseCacheTest {
             }
         });
         context.start();
-        LOG.debug("------------Beginning CacheProducer Add Test---------------");
+        log.debug("------------Beginning CacheProducer Add Test---------------");
         sendOriginalFile();
         Element element = fetchElement("Ralph_Waldo_Emerson");
         assertEquals(42, element.getTimeToLive());
@@ -233,7 +225,7 @@ public class CacheProducerTest extends BaseCacheTest {
         resultEndpoint.expectedMessageCount(0);
         cacheExceptionEndpoint.expectedMessageCount(1);
         context.start();
-        LOG.debug("------------Beginning CacheProducer Add Does Fail On Empty Body Test---------------");
+        log.debug("------------Beginning CacheProducer Add Does Fail On Empty Body Test---------------");
         sendEmptyBody();
         resultEndpoint.assertIsSatisfied();
         cacheExceptionEndpoint.assertIsSatisfied();
@@ -250,7 +242,7 @@ public class CacheProducerTest extends BaseCacheTest {
             }
         });
         context.start();
-        LOG.debug("------------Beginning CacheProducer Add Test---------------");
+        log.debug("------------Beginning CacheProducer Add Test---------------");
         sendOriginalFile();
     }
 
@@ -265,7 +257,7 @@ public class CacheProducerTest extends BaseCacheTest {
             }
         });
         context.start();
-        LOG.debug("------------Beginning CacheProducer Update Test---------------");
+        log.debug("------------Beginning CacheProducer Update Test---------------");
         sendSerializedData();
     }
 
@@ -286,7 +278,7 @@ public class CacheProducerTest extends BaseCacheTest {
         });
         cacheExceptionEndpoint.expectedMessageCount(1);
         context.start();
-        LOG.debug("------------Beginning CacheProducer Update Does Fail On Empty Body Test---------------");
+        log.debug("------------Beginning CacheProducer Update Does Fail On Empty Body Test---------------");
         sendEmptyBody();
         cacheExceptionEndpoint.assertIsSatisfied();
     }
@@ -302,7 +294,7 @@ public class CacheProducerTest extends BaseCacheTest {
             }
         });
         context.start();
-        LOG.debug("------------Beginning CacheProducer Delete Test---------------");
+        log.debug("------------Beginning CacheProducer Delete Test---------------");
         sendUpdatedFile();
     }
 
@@ -323,7 +315,7 @@ public class CacheProducerTest extends BaseCacheTest {
         });
         cacheExceptionEndpoint.expectedMessageCount(0);
         context.start();
-        LOG.debug("------------Beginning CacheProducer Delete Does Not Fail On Empty Body Test---------------");
+        log.debug("------------Beginning CacheProducer Delete Does Not Fail On Empty Body Test---------------");
         sendEmptyBody();
         cacheExceptionEndpoint.assertIsSatisfied();
     }
@@ -338,7 +330,7 @@ public class CacheProducerTest extends BaseCacheTest {
             }
         });
         context.start();
-        LOG.debug("------------Beginning CacheProducer Delete All Elements Test---------------");
+        log.debug("------------Beginning CacheProducer Delete All Elements Test---------------");
         sendUpdatedFile();
     }
 
@@ -358,7 +350,7 @@ public class CacheProducerTest extends BaseCacheTest {
         });
         cacheExceptionEndpoint.expectedMessageCount(0);
         context.start();
-        LOG.debug("------------Beginning CacheProducer Delete All Elements Does Not Fail On Empty Body Test---------------");
+        log.debug("------------Beginning CacheProducer Delete All Elements Does Not Fail On Empty Body Test---------------");
         sendEmptyBody();
         cacheExceptionEndpoint.assertIsSatisfied();
     }
@@ -382,7 +374,7 @@ public class CacheProducerTest extends BaseCacheTest {
         resultEndpoint.expectedMessageCount(0);
         cacheExceptionEndpoint.expectedMessageCount(1);
         context.start();
-        LOG.debug("------------Beginning CacheProducer Query An Elements Test---------------");
+        log.debug("------------Beginning CacheProducer Query An Elements Test---------------");
         sendUpdatedFile();
         resultEndpoint.assertIsSatisfied();
         cacheExceptionEndpoint.assertIsSatisfied();
@@ -410,7 +402,7 @@ public class CacheProducerTest extends BaseCacheTest {
         resultEndpoint.expectedMessageCount(0);
         cacheExceptionEndpoint.expectedMessageCount(1);
         context.start();
-        LOG.debug("------------Beginning CacheProducer Query An Elements Does Fail On Empty Body Test---------------");
+        log.debug("------------Beginning CacheProducer Query An Elements Does Fail On Empty Body Test---------------");
         sendEmptyBody();
         resultEndpoint.assertIsSatisfied();
         cacheExceptionEndpoint.assertIsSatisfied();
@@ -438,7 +430,7 @@ public class CacheProducerTest extends BaseCacheTest {
         resultEndpoint.expectedMessageCount(0);
         cacheExceptionEndpoint.expectedMessageCount(0);
         context.start();
-        LOG.debug("------------Beginning CacheProducer Query An Elements Test---------------");
+        log.debug("------------Beginning CacheProducer Query An Elements Test---------------");
         sendUpdatedFile();
         resultEndpoint.assertIsSatisfied();
         cacheExceptionEndpoint.assertIsSatisfied();
@@ -466,7 +458,7 @@ public class CacheProducerTest extends BaseCacheTest {
         resultEndpoint.expectedMessageCount(0);
         cacheExceptionEndpoint.expectedMessageCount(0);
         context.start();
-        LOG.debug("------------Beginning CacheProducer Query An Elements Does Not Fail On Empty Body Test---------------");
+        log.debug("------------Beginning CacheProducer Query An Elements Does Not Fail On Empty Body Test---------------");
         sendEmptyBody();
         resultEndpoint.assertIsSatisfied();
         cacheExceptionEndpoint.assertIsSatisfied();
@@ -499,7 +491,7 @@ public class CacheProducerTest extends BaseCacheTest {
         String body = new String(getFileAsByteArray(FILEPATH_UPDATEDTEST_TXT), "UTF-8");
         resultEndpoint.expectedBodiesReceived(body);
         context.start();
-        LOG.debug("------------Beginning CacheProducer Query An Elements Test---------------");
+        log.debug("------------Beginning CacheProducer Query An Elements Test---------------");
         sendUpdatedFile();
         resultEndpoint.assertIsSatisfied();
         cacheExceptionEndpoint.assertIsSatisfied();
@@ -527,7 +519,7 @@ public class CacheProducerTest extends BaseCacheTest {
         cacheExceptionEndpoint.expectedMessageCount(0);
         resultEndpoint.expectedBodiesReceived(POETRY);
         context.start();
-        LOG.debug("------------Beginning CacheProducer Query An Elements Test---------------");
+        log.debug("------------Beginning CacheProducer Query An Elements Test---------------");
         sendSerializedData();
         resultEndpoint.assertIsSatisfied();
         cacheExceptionEndpoint.assertIsSatisfied();
@@ -557,7 +549,7 @@ public class CacheProducerTest extends BaseCacheTest {
         cacheExceptionEndpoint.expectedMessageCount(0);
         resultEndpoint.expectedBodiesReceived(POETRY);
         context.start();
-        LOG.debug("------------Beginning CacheProducer Query An Elements Test---------------");
+        log.debug("------------Beginning CacheProducer Query An Elements Test---------------");
         sendSerializedData();
         resultEndpoint.assertIsSatisfied();
         cacheExceptionEndpoint.assertIsSatisfied();
@@ -589,7 +581,7 @@ public class CacheProducerTest extends BaseCacheTest {
         cacheExceptionEndpoint.expectedMessageCount(0);
         resultEndpoint.expectedBodiesReceived(POETRY);
         context.start();
-        LOG.debug("------------Beginning CacheProducer Query An Elements Test---------------");
+        log.debug("------------Beginning CacheProducer Query An Elements Test---------------");
         sendSerializedData();
         resultEndpoint.assertIsSatisfied();
         cacheExceptionEndpoint.assertIsSatisfied();
@@ -621,7 +613,7 @@ public class CacheProducerTest extends BaseCacheTest {
         cacheExceptionEndpoint.expectedMessageCount(0);
         resultEndpoint.expectedBodiesReceived("Test body");
         context.start();
-        LOG.debug("------------Beginning CacheProducer Check An Element Exists Test---------------");
+        log.debug("------------Beginning CacheProducer Check An Element Exists Test---------------");
         sendOriginalFile();
         resultEndpoint.assertIsSatisfied();
         cacheExceptionEndpoint.assertIsSatisfied();
@@ -652,7 +644,7 @@ public class CacheProducerTest extends BaseCacheTest {
         resultEndpoint.expectedMessageCount(0);
         cacheExceptionEndpoint.expectedMessageCount(0);
         context.start();
-        LOG.debug("------------Beginning CacheProducer Check An Element Does Not Exist Test---------------");
+        log.debug("------------Beginning CacheProducer Check An Element Does Not Exist Test---------------");
         sendOriginalFile();
         resultEndpoint.assertIsSatisfied();
         cacheExceptionEndpoint.assertIsSatisfied();
@@ -686,7 +678,7 @@ public class CacheProducerTest extends BaseCacheTest {
         resultEndpoint.expectedMessageCount(1);
         cacheExceptionEndpoint.expectedMessageCount(0);
         context.start();
-        LOG.debug("------------Beginning CacheProducer Check An Element Does Not Exist After Expiry Test---------------");
+        log.debug("------------Beginning CacheProducer Check An Element Does Not Exist After Expiry Test---------------");
         sendOriginalFile();
 
         // simulate the cache element to appear as "expired" (without having to wait for it to happen)

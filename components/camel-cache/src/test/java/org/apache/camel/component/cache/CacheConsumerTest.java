@@ -29,11 +29,8 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.BaseCacheTest;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class CacheConsumerTest extends BaseCacheTest {
-    protected static final transient Logger LOG = LoggerFactory.getLogger(CacheConsumerTest.class);
 
     @EndpointInject(uri = "mock:result")
     protected MockEndpoint resultEndpoint;
@@ -42,7 +39,7 @@ public class CacheConsumerTest extends BaseCacheTest {
 
     @Test
     public void testReceivingFileFromCache() throws Exception {
-        LOG.debug("Beginning Test ---> testReceivingFileFromCache()");
+        log.debug("Beginning Test ---> testReceivingFileFromCache()");
 
         resultEndpoint.expectedMessageCount(3);
 
@@ -63,12 +60,12 @@ public class CacheConsumerTest extends BaseCacheTest {
         }
 
         resultEndpoint.assertIsSatisfied();
-        LOG.debug("Completed Test ---> testReceivingFileFromCache()");
+        log.debug("Completed Test ---> testReceivingFileFromCache()");
     }
 
     @Test
     public void testReceivingSerializedObjectFromCache() throws Exception {
-        LOG.debug("Beginning Test ---> testReceivingSerializedObjectFromCache()");
+        log.debug("Beginning Test ---> testReceivingSerializedObjectFromCache()");
 
         resultEndpoint.expectedMessageCount(3);
 
@@ -93,7 +90,7 @@ public class CacheConsumerTest extends BaseCacheTest {
         }
 
         resultEndpoint.assertIsSatisfied();
-        LOG.debug("Completed Test ---> testReceivingFileFromCache()");
+        log.debug("Completed Test ---> testReceivingFileFromCache()");
     }
 
     @Override
@@ -107,13 +104,13 @@ public class CacheConsumerTest extends BaseCacheTest {
                         Object body = exchange.getIn().getBody();
                         String data = exchange.getContext().getTypeConverter().convertTo(String.class, body);
 
-                        if (LOG.isDebugEnabled()) {
-                            LOG.debug("------- Cache Event Notification ---------");
-                            LOG.debug("Received notification for the following activity in cache TestCache1:");
-                            LOG.debug("Operation = {}", operation);
-                            LOG.debug("key = {}", key);
-                            LOG.debug("value = {}", data);
-                            LOG.debug("------ End Cache Event Notification ------");
+                        if (log.isDebugEnabled()) {
+                            log.debug("------- Cache Event Notification ---------");
+                            log.debug("Received notification for the following activity in cache TestCache1:");
+                            log.debug("Operation = {}", operation);
+                            log.debug("key = {}", key);
+                            log.debug("value = {}", data);
+                            log.debug("------ End Cache Event Notification ------");
                         }
                     }
 

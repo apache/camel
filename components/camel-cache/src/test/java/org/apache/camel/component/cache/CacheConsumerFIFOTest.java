@@ -33,13 +33,13 @@ public class CacheConsumerFIFOTest extends CacheConsumerTest {
                         Object body = exchange.getIn().getBody();
                         String data = exchange.getContext().getTypeConverter().convertTo(String.class, body);
 
-                        if (LOG.isDebugEnabled()) {
-                            LOG.debug("------- Cache Event Notification ---------");
-                            LOG.debug("Received notification for the following activity in cache TestCache1:");
-                            LOG.debug("Operation = {}", operation);
-                            LOG.debug("key = {}", key);
-                            LOG.debug("value = {}", data);
-                            LOG.debug("------ End Cache Event Notification ------");
+                        if (log.isDebugEnabled()) {
+                            log.debug("------- Cache Event Notification ---------");
+                            log.debug("Received notification for the following activity in cache TestCache1:");
+                            log.debug("Operation = {}", operation);
+                            log.debug("key = {}", key);
+                            log.debug("value = {}", data);
+                            log.debug("------ End Cache Event Notification ------");
                         }
                     }
 

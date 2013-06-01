@@ -16,24 +16,24 @@
  */
 package org.apache.camel.converter.crypto;
 
-import org.junit.Assert;
+import org.apache.camel.test.junit4.TestSupport;
 import org.junit.Test;
 
 import static org.apache.camel.converter.crypto.HexUtils.byteArrayToHexString;
 import static org.apache.camel.converter.crypto.HexUtils.hexToByteArray;
 
-public class HexUtilsTest {
+public class HexUtilsTest extends TestSupport {
 
     byte[] array = {(byte)0x01, (byte)0x23, (byte)0x45, (byte)0x67, (byte)0x89, (byte)0xAB, (byte)0xCD, (byte)0xEF};
 
     @Test
     public void testByteArrayToHex() throws Exception {
-        Assert.assertEquals("0123456789abcdef", byteArrayToHexString(array));
+        assertEquals("0123456789abcdef", byteArrayToHexString(array));
     }
 
     @Test
     public void roundtripArray() {
-        Assert.assertArrayEquals(array, hexToByteArray(byteArrayToHexString(array)));
+        assertArrayEquals(array, hexToByteArray(byteArrayToHexString(array)));
     }
 
     @Test
@@ -50,9 +50,9 @@ public class HexUtilsTest {
             String hexString = b.toString().toLowerCase();
             if (b.length() % 2 > 0) {
                 // add the padded byte if odd
-                Assert.assertEquals(hexString + '0', byteArrayToHexString(hexToByteArray(hexString)));
+                assertEquals(hexString + '0', byteArrayToHexString(hexToByteArray(hexString)));
             } else {
-                Assert.assertEquals(hexString, byteArrayToHexString(hexToByteArray(hexString)));
+                assertEquals(hexString, byteArrayToHexString(hexToByteArray(hexString)));
             }
 
         }

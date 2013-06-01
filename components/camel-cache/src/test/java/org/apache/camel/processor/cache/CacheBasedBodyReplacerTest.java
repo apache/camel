@@ -30,11 +30,8 @@ import org.apache.camel.component.BaseCacheTest;
 import org.apache.camel.component.cache.CacheConstants;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class CacheBasedBodyReplacerTest extends BaseCacheTest {
-    private static final transient Logger LOG = LoggerFactory.getLogger(CacheBasedBodyReplacerTest.class);
 
     @EndpointInject(uri = "mock:result")
     protected MockEndpoint resultEndpoint;
@@ -44,7 +41,7 @@ public class CacheBasedBodyReplacerTest extends BaseCacheTest {
 
     @Test
     public void testCacheBasedBodyReplacer() throws Exception {
-        LOG.debug("Beginning Test ---> testCacheBasedBodyReplacer()");
+        log.debug("Beginning Test ---> testCacheBasedBodyReplacer()");
 
         resultEndpoint.expectedMessageCount(1);
 
@@ -68,7 +65,7 @@ public class CacheBasedBodyReplacerTest extends BaseCacheTest {
         }
 
         resultEndpoint.assertIsSatisfied();
-        LOG.debug("Completed Test ---> testCacheBasedBodyReplacer()");
+        log.debug("Completed Test ---> testCacheBasedBodyReplacer()");
 
     }
 
@@ -86,13 +83,13 @@ public class CacheBasedBodyReplacerTest extends BaseCacheTest {
                         Object body = exchange.getIn().getBody();
                         String data = exchange.getContext().getTypeConverter().convertTo(String.class, body);
 
-                        if (LOG.isDebugEnabled()) {
-                            LOG.debug("------- Payload Replacement Results ---------");
-                            LOG.debug("The following Payload was replaced from Cache: TestCache1");
-                            LOG.debug("key = {}", key);
-                            LOG.debug("Before value = Hello World");
-                            LOG.debug("After value = {}", data);
-                            LOG.debug("------ End  ------");
+                        if (log.isDebugEnabled()) {
+                            log.debug("------- Payload Replacement Results ---------");
+                            log.debug("The following Payload was replaced from Cache: TestCache1");
+                            log.debug("key = {}", key);
+                            log.debug("Before value = Hello World");
+                            log.debug("After value = {}", data);
+                            log.debug("------ End  ------");
                         }
                     }
                 }).to("mock:result");
