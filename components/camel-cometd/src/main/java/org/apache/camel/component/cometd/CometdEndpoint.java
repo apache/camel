@@ -44,6 +44,7 @@ public class CometdEndpoint extends DefaultEndpoint {
     private boolean crossOriginFilterOn;
     private String allowedOrigins;
     private String filterPath;
+    private boolean disconnectLocalSession = true;
 
     public CometdEndpoint(CometdComponent component, String uri, String remaining, Map<String, Object> parameters) {
         super(uri, component);
@@ -192,5 +193,13 @@ public class CometdEndpoint extends DefaultEndpoint {
 
     public void setFilterPath(String filterPath) {
         this.filterPath = filterPath;
+    }
+
+    public boolean isDisconnectLocalSession() {
+        return disconnectLocalSession;
+    }
+
+    public void setDisconnectLocalSession(boolean disconnectLocalSession) {
+        this.disconnectLocalSession = disconnectLocalSession;
     }
 }
