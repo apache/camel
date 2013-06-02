@@ -26,7 +26,7 @@ import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
 
 /**
- * @version 
+ * @version
  */
 public class JdbcEndpoint extends DefaultEndpoint {
     private int readSize;
@@ -35,6 +35,9 @@ public class JdbcEndpoint extends DefaultEndpoint {
     private DataSource dataSource;
     private Map<String, Object> parameters;
     private boolean useJDBC4ColumnNameAndLabelSemantics = true;
+    private JdbcPrepareStatementStrategy prepareStatementStrategy = new DefaultJdbcPrepareStatementStrategy();
+    private boolean allowNamedParameters = true;
+    private boolean useHeadersAsParameters;
 
     public JdbcEndpoint() {
     }
@@ -53,7 +56,7 @@ public class JdbcEndpoint extends DefaultEndpoint {
     }
 
     public Producer createProducer() throws Exception {
-        return new JdbcProducer(this, dataSource, readSize,  parameters);
+        return new JdbcProducer(this, dataSource, readSize, parameters);
     }
 
     public int getReadSize() {
@@ -96,7 +99,7 @@ public class JdbcEndpoint extends DefaultEndpoint {
      * Optional parameters to the {@link java.sql.Statement}.
      * <p/>
      * For example to set maxRows, fetchSize etc.
-     * 
+     *
      * @param parameters parameters which will be set using reflection
      */
     public void setParameters(Map<String, Object> parameters) {
@@ -116,10 +119,35 @@ public class JdbcEndpoint extends DefaultEndpoint {
      * <p/>
      * This option is default <tt>true</tt>.
      *
-     * @param useJDBC4ColumnNameAndLabelSemantics  <tt>true</tt> to use JDBC 4.0 semantics, <tt>false</tt> to use JDBC 3.0.
+     * @param useJDBC4ColumnNameAndLabelSemantics
+     *         <tt>true</tt> to use JDBC 4.0 semantics, <tt>false</tt> to use JDBC 3.0.
      */
     public void setUseJDBC4ColumnNameAndLabelSemantics(boolean useJDBC4ColumnNameAndLabelSemantics) {
         this.useJDBC4ColumnNameAndLabelSemantics = useJDBC4ColumnNameAndLabelSemantics;
+    }
+
+    public JdbcPrepareStatementStrategy getPrepareStatementStrategy() {
+        return prepareStatementStrategy;
+    }
+
+    public void setPrepareStatementStrategy(JdbcPrepareStatementStrategy prepareStatementStrategy) {
+        this.prepareStatementStrategy = prepareStatementStrategy;
+    }
+
+    public boolean isAllowNamedParameters() {
+        return allowNamedParameters;
+    }
+
+    public void setAllowNamedParameters(boolean allowNamedParameters) {
+        this.allowNamedParameters = allowNamedParameters;
+    }
+
+    public boolean isUseHeadersAsParameters() {
+        return useHeadersAsParameters;
+    }
+
+    public void setUseHeadersAsParameters(boolean useHeadersAsParameters) {
+        this.useHeadersAsParameters = useHeadersAsParameters;
     }
 
     @Override

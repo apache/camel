@@ -26,7 +26,7 @@ import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.IntrospectionSupport;
 
 /**
- * @version 
+ * @version
  */
 public class JdbcComponent extends DefaultComponent {
     private DataSource ds;

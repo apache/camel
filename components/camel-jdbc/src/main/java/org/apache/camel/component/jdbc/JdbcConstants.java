@@ -27,6 +27,8 @@ public final class JdbcConstants {
 
     public static final String JDBC_COLUMN_NAMES = "CamelJdbcColumnNames";
 
+    public static final String JDBC_PARAMETERS = "CamelJdbcParameters";
+
     /**
      * Boolean input header.
      * Set its value to true to retrieve generated keys, default is false
@@ -36,10 +38,11 @@ public final class JdbcConstants {
     /**
      * <tt>String[]</tt> or <tt>int[]</tt> input header - optional
      * Set it to specify the expected generated columns, see:
+     *
      * @see <a href="http://docs.oracle.com/javase/6/docs/api/java/sql/Statement.html#execute(java.lang.String, int[])">
-     *     java.sql.Statement.execute(java.lang.String, int[])</a>
+     *      java.sql.Statement.execute(java.lang.String, int[])</a>
      * @see <a href="http://docs.oracle.com/javase/6/docs/api/java/sql/Statement.html#execute(java.lang.String, java.lang.String[])">
-     *     java.sql.Statement.execute(java.lang.String, java.lang.String[])</a>
+     *      java.sql.Statement.execute(java.lang.String, java.lang.String[])</a>
      */
     public static final String JDBC_GENERATED_COLUMNS = "CamelGeneratedColumns";
 

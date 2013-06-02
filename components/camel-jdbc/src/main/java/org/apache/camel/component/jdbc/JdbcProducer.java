@@ -17,12 +17,14 @@
 package org.apache.camel.component.jdbc;
 
 import java.sql.Connection;
+import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Types;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -109,8 +111,47 @@ public class JdbcProducer extends DefaultProducer {
     }
 
     private void createAndExecuteSqlStatement(Exchange exchange, String sql, Connection conn) throws Exception {
+        if (getEndpoint().isUseHeadersAsParameters()) {
+            doCreateAndExecuteSqlStatementWithHeaders(exchange, sql, conn);
+        } else {
+            doCreateAndExecuteSqlStatement(exchange, sql, conn);
+        }
+    }
+
+    private void doCreateAndExecuteSqlStatementWithHeaders(Exchange exchange, String sql, Connection conn) throws Exception {
+        PreparedStatement ps = null;
+        ResultSet rs = null;
+
+        try {
+            final String preparedQuery = getEndpoint().getPrepareStatementStrategy().prepareQuery(sql, getEndpoint().isAllowNamedParameters());
+            ps = conn.prepareStatement(preparedQuery);
+            int expectedCount = ps.getParameterMetaData().getParameterCount();
+
+            if (expectedCount > 0) {
+                Iterator<?> it = getEndpoint().getPrepareStatementStrategy().createPopulateIterator(sql, preparedQuery, expectedCount, exchange, exchange.getIn().getBody());
+                getEndpoint().getPrepareStatementStrategy().populateStatement(ps, it, expectedCount);
+            }
+
+            LOG.debug("Executing JDBC PreparedStatement: {}", sql);
+
+            boolean stmtExecutionResult = ps.execute();
+            if (stmtExecutionResult) {
+                rs = ps.getResultSet();
+                setResultSet(exchange, rs);
+            } else {
+                int updateCount = ps.getUpdateCount();
+                exchange.getOut().setHeader(JdbcConstants.JDBC_UPDATE_COUNT, updateCount);
+            }
+        } finally {
+            closeQuietly(rs);
+            closeQuietly(ps);
+        }
+    }
+
+    private void doCreateAndExecuteSqlStatement(Exchange exchange, String sql, Connection conn) throws Exception {
         Statement stmt = null;
         ResultSet rs = null;
+
         try {
             stmt = conn.createStatement();
 
@@ -118,7 +159,7 @@ public class JdbcProducer extends DefaultProducer {
                 IntrospectionSupport.setProperties(stmt, parameters);
             }
 
-            LOG.debug("Executing JDBC statement: {}", sql);
+            LOG.debug("Executing JDBC Statement: {}", sql);
 
             Boolean shouldRetrieveGeneratedKeys =
                     exchange.getIn().getHeader(JdbcConstants.JDBC_RETRIEVE_GENERATED_KEYS, false, Boolean.class);
@@ -135,7 +176,7 @@ public class JdbcProducer extends DefaultProducer {
                 } else {
                     throw new IllegalArgumentException(
                             "Header specifying expected returning columns isn't an instance of String[] or int[] but "
-                            + expectedGeneratedColumns.getClass());
+                                    + expectedGeneratedColumns.getClass());
                 }
             } else {
                 stmtExecutionResult = stmt.execute(sql);
@@ -204,7 +245,7 @@ public class JdbcProducer extends DefaultProducer {
      * - {@link JdbcConstants#JDBC_GENERATED_KEYS_ROW_COUNT} : the row count of generated keys
      * - {@link JdbcConstants#JDBC_GENERATED_KEYS_DATA} : the generated keys data
      *
-     * @param exchange The exchange where to store the generated keys
+     * @param exchange      The exchange where to store the generated keys
      * @param generatedKeys The result set containing the generated keys
      */
     protected void setGeneratedKeys(Exchange exchange, ResultSet generatedKeys) throws SQLException {
@@ -223,7 +264,9 @@ public class JdbcProducer extends DefaultProducer {
         List<Map<String, Object>> data = extractResultSetData(rs);
 
         exchange.getOut().setHeader(JdbcConstants.JDBC_ROW_COUNT, data.size());
-        exchange.getOut().setHeader(JdbcConstants.JDBC_COLUMN_NAMES, data.get(0).keySet());
+        if (!data.isEmpty()) {
+            exchange.getOut().setHeader(JdbcConstants.JDBC_COLUMN_NAMES, data.get(0).keySet());
+        }
         exchange.getOut().setBody(data);
     }
 
