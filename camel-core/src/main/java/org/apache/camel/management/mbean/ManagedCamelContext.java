@@ -109,6 +109,10 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
         context.setTracing(tracing);
     }
 
+    public Boolean getMessageHistory() {
+        return context.isMessageHistory();
+    }
+
     public Integer getInflightExchanges() {
         return context.getInflightRepository().size();
     }

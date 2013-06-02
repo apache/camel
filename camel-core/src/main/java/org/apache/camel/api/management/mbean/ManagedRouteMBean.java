@@ -45,6 +45,9 @@ public interface ManagedRouteMBean extends ManagedPerformanceCounterMBean {
     @ManagedAttribute(description = "Tracing")
     void setTracing(Boolean tracing);
 
+    @ManagedAttribute(description = "Message History")
+    Boolean getMessageHistory();
+
     @ManagedAttribute(description = "Route Policy List")
     String getRoutePolicyList();
 
