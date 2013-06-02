@@ -50,7 +50,7 @@ public class CometdProducer extends DefaultProducer implements CometdProducerCon
         endpoint.connect(this);
         // should probably look into synchronization for this.
         if (service == null) {
-            service = new ProducerService(getBayeux(), new CometdBinding(bayeux), endpoint.getPath(), this);
+            service = new ProducerService(getBayeux(), new CometdBinding(bayeux), endpoint.getPath(), this, getEndpoint().isDisconnectLocalSession());
         }
     }
 
@@ -84,12 +84,14 @@ public class CometdProducer extends DefaultProducer implements CometdProducerCon
 
         private final CometdProducer producer;
         private final CometdBinding binding;
+        private final boolean  disconnectLocalSession;
 
         public ProducerService(BayeuxServer bayeux, CometdBinding cometdBinding, String channel,
-                               CometdProducer producer) {
+                               CometdProducer producer, boolean disconnectLocalSession) {
             super(bayeux, channel);
             this.producer = producer;
             this.binding = cometdBinding;
+            this.disconnectLocalSession = disconnectLocalSession;
         }
 
         public void process(final Exchange exchange) {
@@ -98,11 +100,18 @@ public class CometdProducer extends DefaultProducer implements CometdProducerCon
             ServerChannel channel = bayeux.getChannel(channelName);
             ServerSession serverSession = getServerSession();
 
-            if (channel != null) {
-                logDelivery(exchange, channel);
-                ServerMessage.Mutable mutable = binding.createCometdMessage(channel, serverSession,
-                                                                            exchange.getIn());
-                channel.publish(serverSession, mutable);
+            try {
+                if (channel != null) {
+                    logDelivery(exchange, channel);
+                    ServerMessage.Mutable mutable = binding.createCometdMessage(channel, serverSession,
+                                                                                exchange.getIn());
+                    channel.publish(serverSession, mutable);
+                }
+            } finally {
+                if (disconnectLocalSession && serverSession.isLocalSession()) {
+                    LOG.trace("Disconnection local session {}", serverSession);
+                    serverSession.disconnect();
+                }
             }
         }
 
