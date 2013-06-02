@@ -31,7 +31,6 @@ public class GenericFileRenameProcessStrategy<T> extends GenericFileProcessStrat
 
     @Override
     public boolean begin(GenericFileOperations<T> operations, GenericFileEndpoint<T> endpoint, Exchange exchange, GenericFile<T> file) throws Exception {
-
         // must invoke super
         boolean result = super.begin(operations, endpoint, exchange, file);
         if (!result) {
@@ -52,37 +51,45 @@ public class GenericFileRenameProcessStrategy<T> extends GenericFileProcessStrat
 
     @Override
     public void rollback(GenericFileOperations<T> operations, GenericFileEndpoint<T> endpoint, Exchange exchange, GenericFile<T> file) throws Exception {
-        // must invoke super
-        super.rollback(operations, endpoint, exchange, file);
+        try {
+            operations.releaseRetreivedFileResources(exchange);
 
-        if (failureRenamer != null) {
-            // create a copy and bind the file to the exchange to be used by the renamer to evaluate the file name
-            Exchange copy = exchange.copy();
-            file.bindToExchange(copy);
-            // must preserve message id
-            copy.getIn().setMessageId(exchange.getIn().getMessageId());
-            copy.setExchangeId(exchange.getExchangeId());
+            if (failureRenamer != null) {
+                // create a copy and bind the file to the exchange to be used by the renamer to evaluate the file name
+                Exchange copy = exchange.copy();
+                file.bindToExchange(copy);
+                // must preserve message id
+                copy.getIn().setMessageId(exchange.getIn().getMessageId());
+                copy.setExchangeId(exchange.getExchangeId());
 
-            GenericFile<T> newName = failureRenamer.renameFile(copy, file);
-            renameFile(operations, file, newName);
+                GenericFile<T> newName = failureRenamer.renameFile(copy, file);
+                renameFile(operations, file, newName);
+            }
+        } finally {
+            if (exclusiveReadLockStrategy != null) {
+                exclusiveReadLockStrategy.releaseExclusiveReadLock(operations, file, exchange);
+            }
+            deleteLocalWorkFile(exchange);
         }
     }
 
     @Override
     public void commit(GenericFileOperations<T> operations, GenericFileEndpoint<T> endpoint, Exchange exchange, GenericFile<T> file) throws Exception {
-        // must invoke super
-        super.commit(operations, endpoint, exchange, file);
+        try {
+            if (commitRenamer != null) {
+                // create a copy and bind the file to the exchange to be used by the renamer to evaluate the file name
+                Exchange copy = exchange.copy();
+                file.bindToExchange(copy);
+                // must preserve message id
+                copy.getIn().setMessageId(exchange.getIn().getMessageId());
+                copy.setExchangeId(exchange.getExchangeId());
 
-        if (commitRenamer != null) {
-            // create a copy and bind the file to the exchange to be used by the renamer to evaluate the file name
-            Exchange copy = exchange.copy();
-            file.bindToExchange(copy);
-            // must preserve message id
-            copy.getIn().setMessageId(exchange.getIn().getMessageId());
-            copy.setExchangeId(exchange.getExchangeId());
-
-            GenericFile<T> newName = commitRenamer.renameFile(copy, file);
-            renameFile(operations, file, newName);
+                GenericFile<T> newName = commitRenamer.renameFile(copy, file);
+                renameFile(operations, file, newName);
+            }
+        } finally {
+            // must invoke super
+            super.commit(operations, endpoint, exchange, file);
         }
     }
 

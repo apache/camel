@@ -50,54 +50,67 @@ public class GenericFileDeleteProcessStrategy<T> extends GenericFileProcessStrat
 
     @Override
     public void commit(GenericFileOperations<T> operations, GenericFileEndpoint<T> endpoint, Exchange exchange, GenericFile<T> file) throws Exception {
-        // must invoke super
-        super.commit(operations, endpoint, exchange, file);
+        try {
+            deleteLocalWorkFile(exchange);
+            operations.releaseRetreivedFileResources(exchange);
 
-        int retries = 3;
-        boolean deleted = false;
+            int retries = 3;
+            boolean deleted = false;
 
-        while (retries > 0 && !deleted) {
-            retries--;
+            while (retries > 0 && !deleted) {
+                retries--;
 
-            if (operations.deleteFile(file.getAbsoluteFilePath())) {
-                // file is deleted
-                deleted = true;
-                break;
+                if (operations.deleteFile(file.getAbsoluteFilePath())) {
+                    // file is deleted
+                    deleted = true;
+                    break;
+                }
+
+                // some OS can report false when deleting but the file is still deleted
+                // use exists to check instead
+                boolean exits = operations.existsFile(file.getAbsoluteFilePath());
+                if (!exits) {
+                    deleted = true;
+                } else {
+                    log.trace("File was not deleted at this attempt will try again in 1 sec.: {}", file);
+                    // sleep a bit and try again
+                    Thread.sleep(1000);
+                }
             }
-
-            // some OS can report false when deleting but the file is still deleted
-            // use exists to check instead
-            boolean exits = operations.existsFile(file.getAbsoluteFilePath());
-            if (!exits) {
-                deleted = true;
-            } else {
-                log.trace("File was not deleted at this attempt will try again in 1 sec.: {}", file);
-                // sleep a bit and try again
-                Thread.sleep(1000);
+            if (!deleted) {
+                throw new GenericFileOperationFailedException("Cannot delete file: " + file);
             }
-        }
-
-        if (!deleted) {
-            throw new GenericFileOperationFailedException("Cannot delete file: " + file);
+        } finally {
+            // must release lock last
+            if (exclusiveReadLockStrategy != null) {
+                exclusiveReadLockStrategy.releaseExclusiveReadLock(operations, file, exchange);
+            }
         }
     }
 
     @Override
     public void rollback(GenericFileOperations<T> operations, GenericFileEndpoint<T> endpoint, Exchange exchange, GenericFile<T> file) throws Exception {
-        // must invoke super
-        super.rollback(operations, endpoint, exchange, file);
+        try {
+            deleteLocalWorkFile(exchange);
+            operations.releaseRetreivedFileResources(exchange);
 
-        // moved the failed file if specifying the moveFailed option
-        if (failureRenamer != null) {
-            // create a copy and bind the file to the exchange to be used by the renamer to evaluate the file name
-            Exchange copy = exchange.copy();
-            file.bindToExchange(copy);
-            // must preserve message id
-            copy.getIn().setMessageId(exchange.getIn().getMessageId());
-            copy.setExchangeId(exchange.getExchangeId());
+            // moved the failed file if specifying the moveFailed option
+            if (failureRenamer != null) {
+                // create a copy and bind the file to the exchange to be used by the renamer to evaluate the file name
+                Exchange copy = exchange.copy();
+                file.bindToExchange(copy);
+                // must preserve message id
+                copy.getIn().setMessageId(exchange.getIn().getMessageId());
+                copy.setExchangeId(exchange.getExchangeId());
 
-            GenericFile<T> newName = failureRenamer.renameFile(copy, file);
-            renameFile(operations, file, newName);
+                GenericFile<T> newName = failureRenamer.renameFile(copy, file);
+                renameFile(operations, file, newName);
+            }
+        } finally {
+            // must release lock last
+            if (exclusiveReadLockStrategy != null) {
+                exclusiveReadLockStrategy.releaseExclusiveReadLock(operations, file, exchange);
+            }
         }
     }
 

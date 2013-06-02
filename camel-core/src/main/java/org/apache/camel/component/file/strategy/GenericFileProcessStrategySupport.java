@@ -57,30 +57,33 @@ public abstract class GenericFileProcessStrategySupport<T> implements GenericFil
     }
 
     public void abort(GenericFileOperations<T> operations, GenericFileEndpoint<T> endpoint, Exchange exchange, GenericFile<T> file) throws Exception {
+        deleteLocalWorkFile(exchange);
+        operations.releaseRetreivedFileResources(exchange);
+
+        // must release lock last
         if (exclusiveReadLockStrategy != null) {
             exclusiveReadLockStrategy.releaseExclusiveReadLock(operations, file, exchange);
         }
-
-        deleteLocalWorkFile(exchange);
-        operations.releaseRetreivedFileResources(exchange);
     }
 
     public void commit(GenericFileOperations<T> operations, GenericFileEndpoint<T> endpoint, Exchange exchange, GenericFile<T> file) throws Exception {
+        deleteLocalWorkFile(exchange);
+        operations.releaseRetreivedFileResources(exchange);
+
+        // must release lock last
         if (exclusiveReadLockStrategy != null) {
             exclusiveReadLockStrategy.releaseExclusiveReadLock(operations, file, exchange);
         }
-
-        deleteLocalWorkFile(exchange);
-        operations.releaseRetreivedFileResources(exchange);
     }
 
     public void rollback(GenericFileOperations<T> operations, GenericFileEndpoint<T> endpoint, Exchange exchange, GenericFile<T> file) throws Exception {
+        deleteLocalWorkFile(exchange);
+        operations.releaseRetreivedFileResources(exchange);
+
+        // must release lock last
         if (exclusiveReadLockStrategy != null) {
             exclusiveReadLockStrategy.releaseExclusiveReadLock(operations, file, exchange);
         }
-
-        deleteLocalWorkFile(exchange);
-        operations.releaseRetreivedFileResources(exchange);
     }
 
     public GenericFileExclusiveReadLockStrategy<T> getExclusiveReadLockStrategy() {
@@ -115,7 +118,7 @@ public abstract class GenericFileProcessStrategySupport<T> implements GenericFil
         return to;
     }
 
-    private void deleteLocalWorkFile(Exchange exchange) {
+    protected void deleteLocalWorkFile(Exchange exchange) {
         // delete local work file, if it was used (eg by ftp component)
         File local = exchange.getIn().getHeader(Exchange.FILE_LOCAL_WORK_PATH, File.class);
         if (local != null && local.exists()) {
