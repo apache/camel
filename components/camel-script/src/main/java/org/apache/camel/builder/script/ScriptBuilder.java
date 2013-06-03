@@ -344,8 +344,12 @@ public class ScriptBuilder implements Expression, Predicate, Processor {
         } catch (ScriptException e) {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Script evaluation failed: " + e.getMessage(), e);
+            } 
+            if (e.getCause()!= null) {
+                throw createScriptEvaluationException(e.getCause());
+            } else {
+                throw createScriptEvaluationException(e);
             }
-            throw createScriptEvaluationException(e.getCause());
         } catch (IOException e) {
             throw createScriptEvaluationException(e);
         }
