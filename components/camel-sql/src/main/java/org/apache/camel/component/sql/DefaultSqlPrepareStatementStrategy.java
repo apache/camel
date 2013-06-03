@@ -18,13 +18,16 @@ package org.apache.camel.component.sql;
 
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.Arrays;
 import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeExchangeException;
+import org.apache.camel.util.StringQuoteHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -34,6 +37,15 @@ import org.slf4j.LoggerFactory;
 public class DefaultSqlPrepareStatementStrategy implements SqlPrepareStatementStrategy {
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultSqlPrepareStatementStrategy.class);
+    private final char separator;
+
+    public DefaultSqlPrepareStatementStrategy() {
+        this(',');
+    }
+
+    public DefaultSqlPrepareStatementStrategy(char separator) {
+        this.separator = separator;
+    }
 
     @Override
     public String prepareQuery(String query, boolean allowNamedParameters) throws SQLException {
@@ -111,8 +123,16 @@ public class DefaultSqlPrepareStatementStrategy implements SqlPrepareStatementSt
 
 
         } else {
-            // just use a regular iterator
-            return exchange.getContext().getTypeConverter().convertTo(Iterator.class, value);
+            // is the body a String
+            if (value instanceof String) {
+                // if the body is a String then honor quotes etc.
+                String[] tokens = StringQuoteHelper.splitSafeQuote((String)value, separator, true);
+                List<String> list = Arrays.asList(tokens);
+                return list.iterator();
+            } else {
+                // just use a regular iterator
+                return exchange.getContext().getTypeConverter().convertTo(Iterator.class, value);
+            }
         }
     }
 

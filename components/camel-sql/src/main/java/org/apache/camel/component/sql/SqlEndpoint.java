@@ -42,9 +42,9 @@ public class SqlEndpoint extends DefaultPollingEndpoint {
     @UriParam
     private int maxMessagesPerPoll;
     @UriParam
-    private SqlProcessingStrategy processingStrategy = new DefaultSqlProcessingStrategy();
+    private SqlProcessingStrategy processingStrategy;
     @UriParam
-    private SqlPrepareStatementStrategy prepareStatementStrategy = new DefaultSqlPrepareStatementStrategy();
+    private SqlPrepareStatementStrategy prepareStatementStrategy;
     @UriParam
     private String onConsume;
     @UriParam
@@ -55,6 +55,8 @@ public class SqlEndpoint extends DefaultPollingEndpoint {
     private boolean allowNamedParameters = true;
     @UriParam
     private boolean alwaysPopulateStatement;
+    @UriParam
+    private char separator = ',';
 
     public SqlEndpoint() {
     }
@@ -66,7 +68,9 @@ public class SqlEndpoint extends DefaultPollingEndpoint {
     }
 
     public Consumer createConsumer(Processor processor) throws Exception {
-        SqlConsumer consumer = new SqlConsumer(this, processor, jdbcTemplate, query);
+        SqlPrepareStatementStrategy prepareStrategy = prepareStatementStrategy != null ? prepareStatementStrategy : new DefaultSqlPrepareStatementStrategy(separator);
+        SqlProcessingStrategy proStrategy = processingStrategy != null ? processingStrategy : new DefaultSqlProcessingStrategy(prepareStrategy);
+        SqlConsumer consumer = new SqlConsumer(this, processor, jdbcTemplate, query, prepareStrategy, proStrategy);
         consumer.setMaxMessagesPerPoll(getMaxMessagesPerPoll());
         consumer.setOnConsume(getOnConsume());
         consumer.setOnConsumeFailed(getOnConsumeFailed());
@@ -76,7 +80,8 @@ public class SqlEndpoint extends DefaultPollingEndpoint {
     }
 
     public Producer createProducer() throws Exception {
-        return new SqlProducer(this, query, jdbcTemplate, batch, alwaysPopulateStatement);
+        SqlPrepareStatementStrategy prepareStrategy = prepareStatementStrategy != null ? prepareStatementStrategy : new DefaultSqlPrepareStatementStrategy(separator);
+        return new SqlProducer(this, query, jdbcTemplate, prepareStrategy, batch, alwaysPopulateStatement);
     }
 
     public boolean isSingleton() {
@@ -178,6 +183,14 @@ public class SqlEndpoint extends DefaultPollingEndpoint {
 
     public void setAlwaysPopulateStatement(boolean alwaysPopulateStatement) {
         this.alwaysPopulateStatement = alwaysPopulateStatement;
+    }
+
+    public char getSeparator() {
+        return separator;
+    }
+
+    public void setSeparator(char separator) {
+        this.separator = separator;
     }
 
     @Override

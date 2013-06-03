@@ -45,6 +45,8 @@ public class SqlConsumer extends ScheduledBatchPollingConsumer {
 
     private final String query;
     private final JdbcTemplate jdbcTemplate;
+    private final SqlPrepareStatementStrategy sqlPrepareStatementStrategy;
+    private final SqlProcessingStrategy sqlProcessingStrategy;
 
     @UriParam
     private String onConsume;
@@ -69,10 +71,13 @@ public class SqlConsumer extends ScheduledBatchPollingConsumer {
         }
     }
 
-    public SqlConsumer(SqlEndpoint endpoint, Processor processor, JdbcTemplate jdbcTemplate, String query) {
+    public SqlConsumer(SqlEndpoint endpoint, Processor processor, JdbcTemplate jdbcTemplate, String query,
+                       SqlPrepareStatementStrategy sqlPrepareStatementStrategy, SqlProcessingStrategy sqlProcessingStrategy) {
         super(endpoint, processor);
         this.jdbcTemplate = jdbcTemplate;
         this.query = query;
+        this.sqlPrepareStatementStrategy = sqlPrepareStatementStrategy;
+        this.sqlProcessingStrategy = sqlProcessingStrategy;
     }
 
     @Override
@@ -86,7 +91,7 @@ public class SqlConsumer extends ScheduledBatchPollingConsumer {
         shutdownRunningTask = null;
         pendingExchanges = 0;
 
-        final String preparedQuery = getEndpoint().getPrepareStatementStrategy().prepareQuery(query, getEndpoint().isAllowNamedParameters());
+        final String preparedQuery = sqlPrepareStatementStrategy.prepareQuery(query, getEndpoint().isAllowNamedParameters());
 
         Integer messagePolled = jdbcTemplate.execute(preparedQuery, new PreparedStatementCallback<Integer>() {
             @Override
@@ -179,7 +184,7 @@ public class SqlConsumer extends ScheduledBatchPollingConsumer {
             try {
                 // we can only run on consume if there was data
                 if (data != null && sql != null) {
-                    int updateCount = getEndpoint().getProcessingStrategy().commit(getEndpoint(), exchange, data, jdbcTemplate, sql);
+                    int updateCount = sqlProcessingStrategy.commit(getEndpoint(), exchange, data, jdbcTemplate, sql);
                     if (expectedUpdateCount > -1 && updateCount != expectedUpdateCount) {
                         String msg = "Expected update count " + expectedUpdateCount + " but was " + updateCount + " executing query: " + sql;
                         throw new SQLException(msg);
@@ -196,7 +201,7 @@ public class SqlConsumer extends ScheduledBatchPollingConsumer {
 
         try {
             if (onConsumeBatchComplete != null) {
-                int updateCount = getEndpoint().getProcessingStrategy().commitBatchComplete(getEndpoint(), jdbcTemplate, onConsumeBatchComplete);
+                int updateCount = sqlProcessingStrategy.commitBatchComplete(getEndpoint(), jdbcTemplate, onConsumeBatchComplete);
                 log.debug("onConsumeBatchComplete update count {}", updateCount);
             }
         } catch (Exception e) {
