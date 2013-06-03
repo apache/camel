@@ -35,9 +35,13 @@ public class DirectComponent extends DefaultComponent {
     // later in case the DirectEndpoint was re-created due the old was evicted from the endpoints LRUCache
     // on DefaultCamelContext
     private final Map<String, DirectConsumer> consumers = new HashMap<String, DirectConsumer>();
+    private boolean block;
+    private long timeout = 30000L;
 
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        Endpoint endpoint = new DirectEndpoint(uri, this, consumers);
+        DirectEndpoint endpoint = new DirectEndpoint(uri, this, consumers);
+        endpoint.setBlock(block);
+        endpoint.setTimeout(timeout);
         setProperties(endpoint, parameters);
         return endpoint;
     }
@@ -47,5 +51,21 @@ public class DirectComponent extends DefaultComponent {
         ServiceHelper.stopServices(consumers);
         consumers.clear();
         super.doStop();
+    }
+
+    public boolean isBlock() {
+        return block;
+    }
+
+    public void setBlock(boolean block) {
+        this.block = block;
+    }
+
+    public long getTimeout() {
+        return timeout;
+    }
+
+    public void setTimeout(long timeout) {
+        this.timeout = timeout;
     }
 }
