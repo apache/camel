@@ -32,19 +32,24 @@ import org.springframework.jdbc.core.PreparedStatementCallback;
 public class DefaultSqlProcessingStrategy implements SqlProcessingStrategy {
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultSqlProcessingStrategy.class);
+    private final SqlPrepareStatementStrategy sqlPrepareStatementStrategy;
+
+    public DefaultSqlProcessingStrategy(SqlPrepareStatementStrategy sqlPrepareStatementStrategy) {
+        this.sqlPrepareStatementStrategy = sqlPrepareStatementStrategy;
+    }
 
     @Override
     public int commit(final SqlEndpoint endpoint, final Exchange exchange, final Object data, final JdbcTemplate jdbcTemplate, final String query) throws Exception {
 
-        final String preparedQuery = endpoint.getPrepareStatementStrategy().prepareQuery(query, endpoint.isAllowNamedParameters());
+        final String preparedQuery = sqlPrepareStatementStrategy.prepareQuery(query, endpoint.isAllowNamedParameters());
 
         return jdbcTemplate.execute(preparedQuery, new PreparedStatementCallback<Integer>() {
             public Integer doInPreparedStatement(PreparedStatement ps) throws SQLException {
                 int expected = ps.getParameterMetaData().getParameterCount();
 
-                Iterator<?> iterator = endpoint.getPrepareStatementStrategy().createPopulateIterator(query, preparedQuery, expected, exchange, data);
+                Iterator<?> iterator = sqlPrepareStatementStrategy.createPopulateIterator(query, preparedQuery, expected, exchange, data);
                 if (iterator != null) {
-                    endpoint.getPrepareStatementStrategy().populateStatement(ps, iterator, expected);
+                    sqlPrepareStatementStrategy.populateStatement(ps, iterator, expected);
                     LOG.trace("Execute query {}", query);
                     ps.execute();
 
@@ -62,7 +67,7 @@ public class DefaultSqlProcessingStrategy implements SqlProcessingStrategy {
 
     @Override
     public int commitBatchComplete(final SqlEndpoint endpoint, final JdbcTemplate jdbcTemplate, final String query) throws Exception {
-        final String preparedQuery = endpoint.getPrepareStatementStrategy().prepareQuery(query, endpoint.isAllowNamedParameters());
+        final String preparedQuery = sqlPrepareStatementStrategy.prepareQuery(query, endpoint.isAllowNamedParameters());
 
         return jdbcTemplate.execute(preparedQuery, new PreparedStatementCallback<Integer>() {
             public Integer doInPreparedStatement(PreparedStatement ps) throws SQLException {
