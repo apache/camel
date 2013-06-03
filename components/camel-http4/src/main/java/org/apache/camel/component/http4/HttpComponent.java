@@ -26,6 +26,7 @@ import org.apache.camel.component.http4.helper.HttpHelper;
 import org.apache.camel.impl.HeaderFilterStrategyComponent;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.util.IntrospectionSupport;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.jsse.SSLContextParameters;
 import org.apache.http.auth.params.AuthParamBean;
@@ -68,6 +69,8 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
     // options to the default created http connection manager
     protected int maxTotalConnections = 200;
     protected int connectionsPerRoute = 20;
+
+    private volatile SSLContextParameters usedSslContextParams;
 
     /**
      * Connects the URL specified on the endpoint to the specified processor.
@@ -281,6 +284,19 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
     
     @SuppressWarnings("deprecation")
     protected void registerPort(boolean secure, X509HostnameVerifier x509HostnameVerifier, int port, SSLContextParameters sslContextParams) throws Exception {
+        if (usedSslContextParams == null) {
+            usedSslContextParams = sslContextParams;
+        }
+
+        // we must use same SSLContextParameters for this component.
+        if (usedSslContextParams != sslContextParams) {
+            // use identity hashcode in exception message
+            Object previous = ObjectHelper.getIdentityHashCode(usedSslContextParams);
+            Object next = ObjectHelper.getIdentityHashCode(sslContextParams);
+            throw new IllegalArgumentException("Only same instance of SSLContextParameters is supported. Cannot use a different instance."
+                    + " Previous instance hashcode: " + previous + ", New instance hashcode: " + next);
+        }
+
         SchemeRegistry registry = clientConnectionManager.getSchemeRegistry();
         if (secure) {
             SSLSocketFactory socketFactory;
@@ -289,7 +305,7 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
             } else {
                 socketFactory = new SSLSocketFactory(sslContextParams.createSSLContext());
             }
-            
+
             socketFactory.setHostnameVerifier(x509HostnameVerifier);
             // must register both https and https4
             registry.register(new Scheme("https", port, socketFactory));
@@ -433,6 +449,7 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
             clientConnectionManager.shutdown();
             clientConnectionManager = null;
         }
+        usedSslContextParams = null;
         super.doStop();
     }
 }
