@@ -39,9 +39,12 @@ import org.slf4j.LoggerFactory;
 
 /**
  * This output stream will store the content into a File if the stream context size is exceed the
- * THRESHOLD which's default value is 64K. The temp file will store in the temp directory, you 
- * can configure it by setting the TEMP_DIR property. If you don't set the TEMP_DIR property,
- * it will choose the directory which is set by the system property of "java.io.tmpdir".
+ * THRESHOLD which's default value is {@link StreamCache#DEFAULT_SPOOL_THRESHOLD} bytes .
+ * <p/>
+ * The temp file will store in the temp directory, you can configure it by setting the TEMP_DIR property.
+ * If you don't set the TEMP_DIR property, it will choose the directory which is set by the
+ * system property of "java.io.tmpdir".
+ * <p/>
  * You can get a cached input stream of this stream. The temp file which is created with this 
  * output stream will be deleted when you close this output stream or the all cached 
  * fileInputStream is closed after the exchange is completed.
@@ -59,7 +62,7 @@ public class CachedOutputStream extends OutputStream {
     private File tempFile;
     private FileInputStreamCache fileInputStreamCache;
 
-    private long threshold = 64 * 1024;
+    private long threshold = StreamCache.DEFAULT_SPOOL_THRESHOLD;
     private int bufferSize = 2 * 1024;
     private File outputDir;
     private String cipherTransformation;
