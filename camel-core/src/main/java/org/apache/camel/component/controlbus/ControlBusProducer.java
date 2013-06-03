@@ -16,11 +16,17 @@
  */
 package org.apache.camel.component.controlbus;
 
+import javax.management.MBeanServer;
+import javax.management.ObjectName;
+
 import org.apache.camel.AsyncCallback;
+import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
+import org.apache.camel.Route;
 import org.apache.camel.ServiceStatus;
+import org.apache.camel.api.management.mbean.ManagedCamelContextMBean;
 import org.apache.camel.impl.DefaultAsyncProducer;
 import org.apache.camel.spi.Language;
 import org.apache.camel.util.CamelLogger;
@@ -155,6 +161,31 @@ public class ControlBusProducer extends DefaultAsyncProducer {
                     ServiceStatus status = getEndpoint().getCamelContext().getRouteStatus(id);
                     if (status != null) {
                         result = status.name();
+                    }
+                } else if ("stats".equals(action)) {
+
+                    // camel context or per route
+                    String name = getEndpoint().getCamelContext().getManagementName();
+                    if (name == null) {
+                        result = "JMX is disabled, cannot get stats";
+                    } else {
+                        ObjectName on;
+                        String operation;
+                        if (id == null) {
+                            CamelContext camelContext = getEndpoint().getCamelContext();
+                            on = getEndpoint().getCamelContext().getManagementStrategy().getManagementNamingStrategy().getObjectNameForCamelContext(camelContext);
+                            operation = "dumpRoutesStatsAsXml";
+                        } else {
+                            Route route = getEndpoint().getCamelContext().getRoute(id);
+                            on = getEndpoint().getCamelContext().getManagementStrategy().getManagementNamingStrategy().getObjectNameForRoute(route);
+                            operation = "dumpRouteStatsAsXml";
+                        }
+                        if (on != null) {
+                            MBeanServer server = getEndpoint().getCamelContext().getManagementStrategy().getManagementAgent().getMBeanServer();
+                            result = server.invoke(on, operation, new Object[]{true, true}, new String[]{"boolean", "boolean"});
+                        } else {
+                            result = "Cannot lookup route with id " + id;
+                        }
                     }
                 }
 
