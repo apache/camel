@@ -26,7 +26,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Route;
 import org.apache.camel.ServiceStatus;
-import org.apache.camel.api.management.mbean.ManagedCamelContextMBean;
 import org.apache.camel.impl.DefaultAsyncProducer;
 import org.apache.camel.spi.Language;
 import org.apache.camel.util.CamelLogger;
