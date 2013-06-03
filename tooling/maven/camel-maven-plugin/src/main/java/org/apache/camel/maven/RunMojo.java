@@ -103,21 +103,23 @@ public class RunMojo extends AbstractExecMojo {
     /**
      * Allows the DOT file generation to be enabled
      *
-     * @parameter property="false"
+     * @parameter property="camel.usdDot"
+     *            default-value="false"
      */
     protected boolean useDot;
 
     /**
      * Whether to log the classpath when starting
      *
-     * @parameter property="false"
+     * @parameter property="camel.logClasspath"
+     *            default-value="false"
      */
     protected boolean logClasspath;
 
     /**
      * Whether to use Blueprint when running, instead of Spring
      *
-     * @parameter property="camel.blueprint"
+     * @parameter property="camel.useBlueprint"
      *            default-value="false"
      */
     protected boolean useBlueprint;
@@ -125,7 +127,7 @@ public class RunMojo extends AbstractExecMojo {
     /**
      * Whether to use CDI when running, instead of Spring
      *
-     * @parameter property="camel.cdi"
+     * @parameter property="camel.useCDI"
      *            default-value="false"
      */
     protected boolean useCDI;
