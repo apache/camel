@@ -18,6 +18,7 @@ package org.apache.camel.component.http4;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.http4.handler.BasicValidationHandler;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.http.conn.ssl.AllowAllHostnameVerifier;
