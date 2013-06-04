@@ -371,6 +371,102 @@ public class BacklogDebuggerTest extends ManagementTestSupport {
         assertEquals("Should not be in step mode", Boolean.FALSE, stepMode);
     }
 
+    @SuppressWarnings("unchecked")
+    public void testBacklogDebuggerStepCurrentNode() throws Exception {
+        MBeanServer mbeanServer = getMBeanServer();
+        ObjectName on = new ObjectName("org.apache.camel:context=localhost/camel-1,type=tracer,name=BacklogDebugger");
+        assertNotNull(on);
+        mbeanServer.isRegistered(on);
+
+        Boolean enabled = (Boolean) mbeanServer.getAttribute(on, "Enabled");
+        assertEquals("Should not be enabled", Boolean.FALSE, enabled);
+
+        // enable debugger
+        mbeanServer.invoke(on, "enableDebugger", null, null);
+
+        enabled = (Boolean) mbeanServer.getAttribute(on, "Enabled");
+        assertEquals("Should be enabled", Boolean.TRUE, enabled);
+
+        // add breakpoint at bar
+        mbeanServer.invoke(on, "addBreakpoint", new Object[]{"foo"}, new String[]{"java.lang.String"});
+
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMessageCount(0);
+        mock.setSleepForEmptyTest(1000);
+
+        template.sendBody("seda:start", "Hello World");
+
+        assertMockEndpointsSatisfied();
+
+        // add breakpoint at bar
+        Set<String> nodes = (Set<String>) mbeanServer.invoke(on, "getSuspendedBreakpointNodeIds", null, null);
+        assertNotNull(nodes);
+        assertEquals(1, nodes.size());
+        assertEquals("foo", nodes.iterator().next());
+
+        Boolean stepMode = (Boolean) mbeanServer.getAttribute(on, "SingleStepMode");
+        assertEquals("Should not be in step mode", Boolean.FALSE, stepMode);
+
+        // step breakpoint
+        mbeanServer.invoke(on, "stepBreakpoint", new Object[]{"foo"}, new String[]{"java.lang.String"});
+
+        // then at bar now
+        Thread.sleep(1000);
+        nodes = (Set<String>) mbeanServer.invoke(on, "getSuspendedBreakpointNodeIds", null, null);
+        assertNotNull(nodes);
+        assertEquals(1, nodes.size());
+        assertEquals("bar", nodes.iterator().next());
+        stepMode = (Boolean) mbeanServer.getAttribute(on, "SingleStepMode");
+        assertEquals("Should be in step mode", Boolean.TRUE, stepMode);
+
+        // step
+        mbeanServer.invoke(on, "stepBreakpoint", new Object[]{"bar"}, new String[]{"java.lang.String"});
+
+        // then at transform now
+        Thread.sleep(1000);
+        nodes = (Set<String>) mbeanServer.invoke(on, "getSuspendedBreakpointNodeIds", null, null);
+        assertNotNull(nodes);
+        assertEquals(1, nodes.size());
+        assertEquals("transform", nodes.iterator().next());
+        stepMode = (Boolean) mbeanServer.getAttribute(on, "SingleStepMode");
+        assertEquals("Should be in step mode", Boolean.TRUE, stepMode);
+
+        // step
+        mbeanServer.invoke(on, "stepBreakpoint", new Object[]{"transform"}, new String[]{"java.lang.String"});
+
+        // then at cheese now
+        Thread.sleep(1000);
+        nodes = (Set<String>) mbeanServer.invoke(on, "getSuspendedBreakpointNodeIds", null, null);
+        assertNotNull(nodes);
+        assertEquals(1, nodes.size());
+        assertEquals("cheese", nodes.iterator().next());
+        stepMode = (Boolean) mbeanServer.getAttribute(on, "SingleStepMode");
+        assertEquals("Should be in step mode", Boolean.TRUE, stepMode);
+
+        // step
+        mbeanServer.invoke(on, "stepBreakpoint", new Object[]{"cheese"}, new String[]{"java.lang.String"});
+
+        // then at result now
+        Thread.sleep(1000);
+        nodes = (Set<String>) mbeanServer.invoke(on, "getSuspendedBreakpointNodeIds", null, null);
+        assertNotNull(nodes);
+        assertEquals(1, nodes.size());
+        assertEquals("result", nodes.iterator().next());
+        stepMode = (Boolean) mbeanServer.getAttribute(on, "SingleStepMode");
+        assertEquals("Should be in step mode", Boolean.TRUE, stepMode);
+
+        // step
+        mbeanServer.invoke(on, "stepBreakpoint", new Object[]{"result"}, new String[]{"java.lang.String"});
+
+        // then the exchange is completed
+        Thread.sleep(1000);
+        nodes = (Set<String>) mbeanServer.invoke(on, "getSuspendedBreakpointNodeIds", null, null);
+        assertNotNull(nodes);
+        assertEquals(0, nodes.size());
+        stepMode = (Boolean) mbeanServer.getAttribute(on, "SingleStepMode");
+        assertEquals("Should not be in step mode", Boolean.FALSE, stepMode);
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {

@@ -299,6 +299,12 @@ public class BacklogDebugger extends ServiceSupport implements InterceptStrategy
     }
 
     public void stepBreakpoint(String nodeId) {
+        // if we are already in single step mode, then infer stepping
+        if (isSingleStepMode()) {
+            logger.log("stepBreakpoint " + nodeId + " is already in single step mode, so stepping instead.");
+            step();
+        }
+
         logger.log("Step breakpoint " + nodeId);
         // we want to step current exchange to next
         BacklogTracerEventMessage msg = suspendedBreakpointMessages.get(nodeId);
