@@ -25,7 +25,6 @@ import org.apache.camel.component.netty.NettyConsumer;
 import org.apache.camel.component.netty.NettyHelper;
 import org.apache.camel.component.netty.NettyPayloadHelper;
 import org.apache.camel.util.CamelLogger;
-import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.IOHelper;
 import org.jboss.netty.channel.ChannelFutureListener;
 import org.jboss.netty.channel.ChannelHandlerContext;
@@ -42,8 +41,8 @@ import org.slf4j.LoggerFactory;
 public class ServerChannelHandler extends SimpleChannelUpstreamHandler {
     // use NettyConsumer as logger to make it easier to read the logs as this is part of the consumer
     private static final transient Logger LOG = LoggerFactory.getLogger(NettyConsumer.class);
-    private NettyConsumer consumer;
-    private CamelLogger noReplyLogger;
+    private final NettyConsumer consumer;
+    private final CamelLogger noReplyLogger;
 
     public ServerChannelHandler(NettyConsumer consumer) {
         this.consumer = consumer;    
@@ -72,8 +71,8 @@ public class ServerChannelHandler extends SimpleChannelUpstreamHandler {
     public void exceptionCaught(ChannelHandlerContext ctx, ExceptionEvent exceptionEvent) throws Exception {
         // only close if we are still allowed to run
         if (consumer.isRunAllowed()) {
-            LOG.warn("Closing channel as an exception was thrown from Netty", exceptionEvent.getCause());
-
+            // let the exception handler deal with it
+            consumer.getExceptionHandler().handleException("Closing channel as an exception was thrown from Netty", exceptionEvent.getCause());
             // close channel in case an exception was thrown
             NettyHelper.close(exceptionEvent.getChannel());
         }

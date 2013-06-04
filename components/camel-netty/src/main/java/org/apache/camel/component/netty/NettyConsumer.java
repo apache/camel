@@ -56,6 +56,7 @@ public class NettyConsumer extends DefaultConsumer {
         this.context = this.getEndpoint().getCamelContext();
         this.configuration = configuration;
         this.allChannels = new DefaultChannelGroup("NettyConsumer-" + nettyEndpoint.getEndpointUri());
+        setExceptionHandler(new NettyConsumerExceptionHandler(this));
     }
 
     @Override
