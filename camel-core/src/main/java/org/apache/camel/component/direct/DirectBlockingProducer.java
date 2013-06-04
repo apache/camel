@@ -58,7 +58,7 @@ public class DirectBlockingProducer extends DefaultAsyncProducer {
         }
     }
 
-   protected DirectConsumer getConsumer(Exchange exchange) throws Exception {
+    protected DirectConsumer getConsumer(Exchange exchange) throws Exception {
         DirectConsumer answer = endpoint.getConsumer();
         if (answer == null) {
             // okay then await until we have a consumer or we timed out
