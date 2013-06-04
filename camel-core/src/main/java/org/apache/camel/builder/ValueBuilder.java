@@ -177,6 +177,16 @@ public class ValueBuilder implements Expression, Predicate {
         return new ValueBuilder(newExp);
     }
 
+    public ValueBuilder tokenizeXML(String tagName, String inheritNamespaceTagName) {
+        Expression newExp = ExpressionBuilder.tokenizeXMLExpression(tagName, inheritNamespaceTagName);
+        return new ValueBuilder(newExp);
+    }
+
+    public ValueBuilder tokenizePair(String startToken, String endToken, boolean includeTokens) {
+        Expression newExp = ExpressionBuilder.tokenizePairExpression(startToken, endToken, includeTokens);
+        return new ValueBuilder(newExp);
+    }
+
     /**
      * Tokenizes the string conversion of this expression using the given
      * regular expression
