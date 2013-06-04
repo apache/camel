@@ -31,15 +31,10 @@ import org.osgi.service.blueprint.container.BlueprintContainer;
 public class SSLContextParametersFactoryBean extends AbstractSSLContextParametersFactoryBean {
     
     private KeyManagersParametersFactoryBean keyManagers;
-    
     private TrustManagersParametersFactoryBean trustManagers;
-        
     private SecureRandomParametersFactoryBean secureRandom;
-    
     private SSLContextClientParametersFactoryBean clientParameters;
-    
     private SSLContextServerParametersFactoryBean serverParameters;
-    
     @XmlTransient
     private BlueprintContainer blueprintContainer;
 
