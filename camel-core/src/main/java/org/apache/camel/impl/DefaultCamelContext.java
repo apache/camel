@@ -184,6 +184,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     private Boolean useBreadcrumb = Boolean.TRUE;
     private Long delay;
     private ErrorHandlerFactory errorHandlerBuilder;
+    private final Object errorHandlerExecutorServiceLock = new Object();
     private ScheduledExecutorService errorHandlerExecutorService;
     private Map<String, DataFormatDefinition> dataFormats = new HashMap<String, DataFormatDefinition>();
     private DataFormatResolver dataFormatResolver = new DefaultDataFormatResolver();
@@ -1358,10 +1359,12 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         this.errorHandlerBuilder = errorHandlerBuilder;
     }
 
-    public synchronized ScheduledExecutorService getErrorHandlerExecutorService() {
-        if (errorHandlerExecutorService == null) {
-            // setup default thread pool for error handler
-            errorHandlerExecutorService = getExecutorServiceManager().newDefaultScheduledThreadPool("ErrorHandlerRedeliveryThreadPool", "ErrorHandlerRedeliveryTask");
+    public ScheduledExecutorService getErrorHandlerExecutorService() {
+        synchronized (errorHandlerExecutorServiceLock) {
+            if (errorHandlerExecutorService == null) {
+                // setup default thread pool for error handler
+                errorHandlerExecutorService = getExecutorServiceManager().newDefaultScheduledThreadPool("ErrorHandlerRedeliveryThreadPool", "ErrorHandlerRedeliveryTask");
+            }
         }
         return errorHandlerExecutorService;
     }
