@@ -39,8 +39,6 @@ public class NettyHttpComponent extends NettyComponent implements HeaderFilterSt
     // TODO: producer
     // - add support for HTTP_URI / HTTP_QUERY overrides
     // - add actual url to state so we know exactly which url we called also for done callback
-    // - add support for connection timeout
-    // - add support for request timeout
 
     private NettyHttpBinding nettyHttpBinding;
     private HeaderFilterStrategy headerFilterStrategy;
