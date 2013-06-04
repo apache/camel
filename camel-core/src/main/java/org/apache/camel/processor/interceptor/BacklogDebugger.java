@@ -39,6 +39,7 @@ import org.apache.camel.impl.DefaultDebugger;
 import org.apache.camel.management.event.ExchangeCompletedEvent;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.ProcessorDefinitionHelper;
+import org.apache.camel.spi.Breakpoint;
 import org.apache.camel.spi.Condition;
 import org.apache.camel.spi.Debugger;
 import org.apache.camel.spi.InterceptStrategy;
@@ -230,6 +231,15 @@ public class BacklogDebugger extends ServiceSupport implements InterceptStrategy
         }
         if (se != null) {
             se.getLatch().countDown();
+        }
+    }
+
+    public void removeAllBreakpoints() {
+        // stop single stepping
+        singleStepExchangeId = null;
+
+        for (String nodeId : getSuspendedBreakpointNodeIds()) {
+            removeBreakpoint(nodeId);
         }
     }
 

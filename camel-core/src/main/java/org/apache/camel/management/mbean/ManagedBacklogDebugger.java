@@ -80,6 +80,10 @@ public class ManagedBacklogDebugger implements ManagedBacklogDebuggerMBean {
         backlogDebugger.removeBreakpoint(nodeId);
     }
 
+    public void removeAllBreakpoints() {
+        backlogDebugger.removeAllBreakpoints();
+    }
+
     public Set<String> getBreakpoints() {
         return backlogDebugger.getBreakpoints();
     }
