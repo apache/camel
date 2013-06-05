@@ -30,6 +30,7 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.spi.HasId;
+import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.EndpointHelper;
 import org.apache.camel.util.IntrospectionSupport;
@@ -55,9 +56,11 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
     private EndpointConfiguration endpointConfiguration;
     private CamelContext camelContext;
     private Component component;
+    @UriParam
     private ExchangePattern exchangePattern = ExchangePattern.InOnly;
     // option to allow end user to dictate whether async processing should be
     // used or not (if possible)
+    @UriParam
     private boolean synchronous;
     private final String id = EndpointHelper.createEndpointId();
     private Map<String, Object> consumerProperties;

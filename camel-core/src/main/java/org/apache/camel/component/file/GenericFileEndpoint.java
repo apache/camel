@@ -37,6 +37,7 @@ import org.apache.camel.spi.BrowsableEndpoint;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.spi.Language;
+import org.apache.camel.spi.UriParam;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -55,49 +56,91 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
 
     protected final transient Logger log = LoggerFactory.getLogger(getClass());
 
-    protected GenericFileProcessStrategy<T> processStrategy;
     protected GenericFileConfiguration configuration;
 
+    @UriParam
+    protected GenericFileProcessStrategy<T> processStrategy;
+    @UriParam
     protected IdempotentRepository<String> inProgressRepository = new MemoryIdempotentRepository();
+    @UriParam
     protected String localWorkDirectory;
+    @UriParam
     protected boolean autoCreate = true;
+    @UriParam
     protected boolean startingDirectoryMustExist;
+    @UriParam
     protected boolean directoryMustExist;
+    @UriParam
     protected int bufferSize = FileUtil.BUFFER_SIZE;
+    @UriParam
     protected GenericFileExist fileExist = GenericFileExist.Override;
+    @UriParam
     protected boolean noop;
+    @UriParam
     protected boolean recursive;
+    @UriParam
     protected boolean delete;
+    @UriParam
     protected boolean flatten;
+    @UriParam
     protected int maxMessagesPerPoll;
+    @UriParam
     protected boolean eagerMaxMessagesPerPoll = true;
+    @UriParam
     protected int maxDepth = Integer.MAX_VALUE;
+    @UriParam
     protected int minDepth;
+    @UriParam
     protected String tempPrefix;
+    @UriParam
     protected Expression tempFileName;
+    @UriParam
     protected boolean eagerDeleteTargetFile = true;
+    @UriParam
     protected String include;
+    @UriParam
     protected String exclude;
+    @UriParam
     protected String charset;
+    @UriParam
     protected Expression fileName;
+    @UriParam
     protected Expression move;
+    @UriParam
     protected Expression moveFailed;
+    @UriParam
     protected Expression preMove;
+    @UriParam
     protected Expression moveExisting;
+    @UriParam
     protected Boolean idempotent;
+    @UriParam
     protected Expression idempotentKey;
+    @UriParam
     protected IdempotentRepository<String> idempotentRepository;
+    @UriParam
     protected GenericFileFilter<T> filter;
+    @UriParam
     protected AntPathMatcherGenericFileFilter<T> antFilter;
+    @UriParam
     protected Comparator<GenericFile<T>> sorter;
+    @UriParam
     protected Comparator<Exchange> sortBy;
+    @UriParam
     protected String readLock = "none";
+    @UriParam
     protected long readLockCheckInterval = 1000;
+    @UriParam
     protected long readLockTimeout = 10000;
+    @UriParam
     protected long readLockMinLength = 1;
+    @UriParam
     protected GenericFileExclusiveReadLockStrategy<T> exclusiveReadLockStrategy;
+    @UriParam
     protected boolean keepLastModified;
+    @UriParam
     protected String doneFileName;
+    @UriParam
     protected boolean allowNullBody;
 
     public GenericFileEndpoint() {

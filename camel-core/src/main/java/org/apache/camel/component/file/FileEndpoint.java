@@ -35,10 +35,7 @@ import org.apache.camel.util.ObjectHelper;
 @UriEndpoint(scheme = "file", consumerClass = FileConsumer.class)
 public class FileEndpoint extends GenericFileEndpoint<File> {
 
-    private FileOperations operations = new FileOperations(this);
-    /**
-     *
-     */
+    private final FileOperations operations = new FileOperations(this);
     @UriPath
     private File file;
     @UriParam
