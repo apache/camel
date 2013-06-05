@@ -23,6 +23,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultProducer;
 import org.springframework.batch.core.Job;
+import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.JobParametersBuilder;
 import org.springframework.batch.core.launch.JobLauncher;
@@ -42,7 +43,8 @@ public class SpringBatchProducer extends DefaultProducer {
     @Override
     public void process(Exchange exchange) throws Exception {
         JobParameters jobParameters = prepareJobParameters(exchange.getIn().getHeaders());
-        jobLauncher.run(job, jobParameters);
+        JobExecution jobExecution = jobLauncher.run(job, jobParameters);
+        exchange.getOut().setBody(jobExecution);
     }
 
     protected JobParameters prepareJobParameters(Map<String, Object> headers) {
