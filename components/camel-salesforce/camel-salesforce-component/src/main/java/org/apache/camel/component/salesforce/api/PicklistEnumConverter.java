@@ -37,7 +37,7 @@ public class PicklistEnumConverter implements Converter {
         try {
             Method getterMethod = aClass.getMethod("value");
             writer.setValue((String) getterMethod.invoke(o));
-        } catch (ReflectiveOperationException e) {
+        } catch (Exception e) {
             throw new IllegalArgumentException(
                     String.format("Exception writing pick list value %s of type %s: %s",
                             o, o.getClass().getName(), e.getMessage()),
@@ -53,14 +53,14 @@ public class PicklistEnumConverter implements Converter {
             Method factoryMethod = requiredType.getMethod(FACTORY_METHOD, String.class);
             // use factory method to create object
             return factoryMethod.invoke(null, value);
-        } catch (ReflectiveOperationException e) {
-            throw new IllegalArgumentException(
-                    String.format("Exception reading pick list value %s of type %s: %s",
-                            value, context.getRequiredType().getName(), e.getMessage()),
-                    e);
         } catch (SecurityException e) {
             throw new IllegalArgumentException(
                     String.format("Security Exception reading pick list value %s of type %s: %s",
+                            value, context.getRequiredType().getName(), e.getMessage()),
+                    e);
+        } catch (Exception e) {
+            throw new IllegalArgumentException(
+                    String.format("Exception reading pick list value %s of type %s: %s",
                             value, context.getRequiredType().getName(), e.getMessage()),
                     e);
         }
