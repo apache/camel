@@ -20,13 +20,16 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.spi.UriParam;
 
 /**
  * The direct-vm endpoint.
  */
 public class DirectVmEndpoint extends DefaultEndpoint {
 
+    @UriParam
     private boolean block;
+    @UriParam
     private long timeout = 30000L;
 
     public DirectVmEndpoint(String endpointUri, DirectVmComponent component) {

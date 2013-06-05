@@ -24,6 +24,7 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.spi.UriParam;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -35,7 +36,9 @@ import org.apache.camel.util.ObjectHelper;
 public class DirectEndpoint extends DefaultEndpoint {
 
     private volatile Map<String, DirectConsumer> consumers;
+    @UriParam
     private boolean block;
+    @UriParam
     private long timeout = 30000L;
 
     public DirectEndpoint() {
