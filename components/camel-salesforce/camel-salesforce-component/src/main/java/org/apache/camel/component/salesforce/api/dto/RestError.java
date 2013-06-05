@@ -16,9 +16,9 @@
  */
 package org.apache.camel.component.salesforce.api.dto;
 
-import com.thoughtworks.xstream.annotations.XStreamImplicit;
-
 import java.util.List;
+
+import com.thoughtworks.xstream.annotations.XStreamImplicit;
 
 public class RestError extends AbstractDTOBase {
     private String errorCode;

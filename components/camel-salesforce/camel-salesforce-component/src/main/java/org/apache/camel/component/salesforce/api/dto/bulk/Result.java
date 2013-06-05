@@ -16,18 +16,18 @@
  */
 package org.apache.camel.component.salesforce.api.dto.bulk;
 
+import java.util.ArrayList;
+import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlType;
-import java.util.ArrayList;
-import java.util.List;
 
 
 /**
  * <p>Java class for Result complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="Result">
  *   &lt;complexContent>
@@ -42,15 +42,13 @@ import java.util.List;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "Result", propOrder = {
-    "errors",
-    "id",
-    "success",
-    "created"
+        "errors",
+        "id",
+        "success",
+        "created"
 })
 public class Result {
 
@@ -61,25 +59,23 @@ public class Result {
 
     /**
      * Gets the value of the errors property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * This accessor method returns a reference to the live list,
      * not a snapshot. Therefore any modification you make to the
      * returned list will be present inside the JAXB object.
      * This is why there is not a <CODE>set</CODE> method for the errors property.
-     * 
-     * <p>
+     * <p/>
+     * <p/>
      * For example, to add a new item, do as follows:
      * <pre>
      *    getErrors().add(newItem);
      * </pre>
-     * 
-     * 
-     * <p>
+     * <p/>
+     * <p/>
+     * <p/>
      * Objects of the following type(s) are allowed in the list
      * {@link ResultError }
-     * 
-     * 
      */
     public List<ResultError> getErrors() {
         if (errors == null) {
@@ -90,11 +86,9 @@ public class Result {
 
     /**
      * Gets the value of the id property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     *         {@link String }
      */
     public String getId() {
         return id;
@@ -102,11 +96,9 @@ public class Result {
 
     /**
      * Sets the value of the id property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
     public void setId(String value) {
         this.id = value;
@@ -114,7 +106,6 @@ public class Result {
 
     /**
      * Gets the value of the success property.
-     * 
      */
     public boolean isSuccess() {
         return success;
@@ -122,7 +113,6 @@ public class Result {
 
     /**
      * Sets the value of the success property.
-     * 
      */
     public void setSuccess(boolean value) {
         this.success = value;
@@ -130,7 +120,6 @@ public class Result {
 
     /**
      * Gets the value of the created property.
-     * 
      */
     public boolean isCreated() {
         return created;
@@ -138,7 +127,6 @@ public class Result {
 
     /**
      * Sets the value of the created property.
-     * 
      */
     public void setCreated(boolean value) {
         this.created = value;

@@ -16,11 +16,11 @@
  */
 package org.apache.camel.component.salesforce.internal.dto;
 
+import java.util.List;
+
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamImplicit;
 import org.apache.camel.component.salesforce.api.dto.RestError;
-
-import java.util.List;
 
 /**
  * DTO for Salesforce REST errors

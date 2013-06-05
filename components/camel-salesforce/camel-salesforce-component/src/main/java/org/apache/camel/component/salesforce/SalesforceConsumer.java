@@ -16,31 +16,32 @@
  */
 package org.apache.camel.component.salesforce;
 
+import java.io.IOException;
+import java.io.StringReader;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.component.salesforce.internal.client.DefaultRestClient;
+import org.apache.camel.component.salesforce.internal.client.RestClient;
+import org.apache.camel.component.salesforce.internal.streaming.PushTopicHelper;
+import org.apache.camel.component.salesforce.internal.streaming.SubscriptionHelper;
 import org.apache.camel.impl.DefaultConsumer;
 import org.apache.camel.util.ServiceHelper;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.cometd.bayeux.Message;
 import org.cometd.bayeux.client.ClientSessionChannel;
-import org.apache.camel.component.salesforce.internal.client.DefaultRestClient;
-import org.apache.camel.component.salesforce.internal.streaming.PushTopicHelper;
-import org.apache.camel.component.salesforce.internal.client.RestClient;
-import org.apache.camel.component.salesforce.internal.streaming.SubscriptionHelper;
-
-import java.io.IOException;
-import java.io.StringReader;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * The Salesforce consumer.
  */
 public class SalesforceConsumer extends DefaultConsumer {
 
-    private static final ObjectMapper objectMapper = new ObjectMapper();
+
+    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
     private static final String EVENT_PROPERTY = "event";
     private static final String TYPE_PROPERTY = "type";
     private static final String CREATED_DATE_PROPERTY = "createdDate";
@@ -48,11 +49,12 @@ public class SalesforceConsumer extends DefaultConsumer {
     private static final double MINIMUM_VERSION = 24.0;
 
     private final SalesforceEndpoint endpoint;
-    public final SubscriptionHelper subscriptionHelper;
+    private final SubscriptionHelper subscriptionHelper;
 
     private final String topicName;
     private final Class<?> sObjectClass;
     private boolean subscribed;
+
 
     public SalesforceConsumer(SalesforceEndpoint endpoint, Processor processor, SubscriptionHelper helper) {
         super(endpoint, processor);
@@ -100,7 +102,7 @@ public class SalesforceConsumer extends DefaultConsumer {
             // create REST client for PushTopic operations
             SalesforceComponent component = endpoint.getComponent();
             RestClient restClient = new DefaultRestClient(component.getConfig().getHttpClient(),
-                endpoint.getConfiguration().getApiVersion(), "json", component.getSession());
+                    endpoint.getConfiguration().getApiVersion(), "json", component.getSession());
             // don't forget to start the client
             ServiceHelper.startService(restClient);
 
@@ -144,7 +146,7 @@ public class SalesforceConsumer extends DefaultConsumer {
         Object createdDate = event.get(CREATED_DATE_PROPERTY);
         if (log.isDebugEnabled()) {
             log.debug(String.format("Received event %s on channel %s created on %s",
-                eventType, channel.getChannelId(), createdDate));
+                    eventType, channel.getChannelId(), createdDate));
         }
 
         in.setHeader("CamelSalesforceEventType", eventType);
@@ -155,7 +157,7 @@ public class SalesforceConsumer extends DefaultConsumer {
         final Map<String, Object> sObject = (Map<String, Object>) data.get(SOBJECT_PROPERTY);
         try {
 
-            final String sObjectString = objectMapper.writeValueAsString(sObject);
+            final String sObjectString = OBJECT_MAPPER.writeValueAsString(sObject);
             log.debug("Received SObject: {}", sObjectString);
 
             if (sObjectClass == null) {
@@ -163,12 +165,12 @@ public class SalesforceConsumer extends DefaultConsumer {
                 in.setBody(sObject);
             } else {
                 // create the expected SObject
-                in.setBody(objectMapper.readValue(
-                    new StringReader(sObjectString), sObjectClass));
+                in.setBody(OBJECT_MAPPER.readValue(
+                        new StringReader(sObjectString), sObjectClass));
             }
         } catch (IOException e) {
             final String msg = String.format("Error parsing message [%s] from Topic %s: %s",
-                message, topicName, e.getMessage());
+                    message, topicName, e.getMessage());
             handleException(msg, new RuntimeCamelException(msg, e));
         }
 
@@ -178,7 +180,7 @@ public class SalesforceConsumer extends DefaultConsumer {
                     // noop
                     if (log.isTraceEnabled()) {
                         log.trace("Done processing event: {} {}", eventType.toString(),
-                            doneSync ? "synchronously" : "asynchronously");
+                                doneSync ? "synchronously" : "asynchronously");
                     }
                 }
             });

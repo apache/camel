@@ -16,15 +16,19 @@
  */
 package org.apache.camel.component.salesforce.api.dto.bulk;
 
-import javax.xml.bind.annotation.*;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlSchemaType;
+import javax.xml.bind.annotation.XmlType;
 import javax.xml.datatype.XMLGregorianCalendar;
 
 
 /**
  * <p>Java class for BatchInfo complex type.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * 
+ * <p/>
  * <pre>
  * &lt;complexType name="BatchInfo">
  *   &lt;complexContent>
@@ -46,22 +50,20 @@ import javax.xml.datatype.XMLGregorianCalendar;
  *   &lt;/complexContent>
  * &lt;/complexType>
  * </pre>
- * 
- * 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "BatchInfo", propOrder = {
-    "id",
-    "jobId",
-    "state",
-    "stateMessage",
-    "createdDate",
-    "systemModstamp",
-    "numberRecordsProcessed",
-    "numberRecordsFailed",
-    "totalProcessingTime",
-    "apiActiveProcessingTime",
-    "apexProcessingTime"
+        "id",
+        "jobId",
+        "state",
+        "stateMessage",
+        "createdDate",
+        "systemModstamp",
+        "numberRecordsProcessed",
+        "numberRecordsFailed",
+        "totalProcessingTime",
+        "apiActiveProcessingTime",
+        "apexProcessingTime"
 })
 public class BatchInfo {
 
@@ -85,11 +87,9 @@ public class BatchInfo {
 
     /**
      * Gets the value of the id property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     *         {@link String }
      */
     public String getId() {
         return id;
@@ -97,11 +97,9 @@ public class BatchInfo {
 
     /**
      * Sets the value of the id property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
     public void setId(String value) {
         this.id = value;
@@ -109,11 +107,9 @@ public class BatchInfo {
 
     /**
      * Gets the value of the jobId property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link String }
-     *     
+     *
+     * @return possible object is
+     *         {@link String }
      */
     public String getJobId() {
         return jobId;
@@ -121,11 +117,9 @@ public class BatchInfo {
 
     /**
      * Sets the value of the jobId property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link String }
      */
     public void setJobId(String value) {
         this.jobId = value;
@@ -133,11 +127,9 @@ public class BatchInfo {
 
     /**
      * Gets the value of the state property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link BatchStateEnum }
      *
+     * @return possible object is
+     *         {@link BatchStateEnum }
      */
     public BatchStateEnum getState() {
         return state;
@@ -146,10 +138,8 @@ public class BatchInfo {
     /**
      * Sets the value of the state property.
      *
-     * @param value
-     *     allowed object is
-     *     {@link BatchStateEnum }
-     *
+     * @param value allowed object is
+     *              {@link BatchStateEnum }
      */
     public void setState(BatchStateEnum value) {
         this.state = value;
@@ -158,10 +148,8 @@ public class BatchInfo {
     /**
      * Gets the value of the stateMessage property.
      *
-     * @return
-     *     possible object is
-     *     {@link String }
-     *
+     * @return possible object is
+     *         {@link String }
      */
     public String getStateMessage() {
         return stateMessage;
@@ -170,10 +158,8 @@ public class BatchInfo {
     /**
      * Sets the value of the stateMessage property.
      *
-     * @param value
-     *     allowed object is
-     *     {@link String }
-     *
+     * @param value allowed object is
+     *              {@link String }
      */
     public void setStateMessage(String value) {
         this.stateMessage = value;
@@ -182,10 +168,8 @@ public class BatchInfo {
     /**
      * Gets the value of the createdDate property.
      *
-     * @return
-     *     possible object is
-     *     {@link javax.xml.datatype.XMLGregorianCalendar }
-     *
+     * @return possible object is
+     *         {@link javax.xml.datatype.XMLGregorianCalendar }
      */
     public XMLGregorianCalendar getCreatedDate() {
         return createdDate;
@@ -194,10 +178,8 @@ public class BatchInfo {
     /**
      * Sets the value of the createdDate property.
      *
-     * @param value
-     *     allowed object is
-     *     {@link javax.xml.datatype.XMLGregorianCalendar }
-     *
+     * @param value allowed object is
+     *              {@link javax.xml.datatype.XMLGregorianCalendar }
      */
     public void setCreatedDate(XMLGregorianCalendar value) {
         this.createdDate = value;
@@ -206,10 +188,8 @@ public class BatchInfo {
     /**
      * Gets the value of the systemModstamp property.
      *
-     * @return
-     *     possible object is
-     *     {@link javax.xml.datatype.XMLGregorianCalendar }
-     *
+     * @return possible object is
+     *         {@link javax.xml.datatype.XMLGregorianCalendar }
      */
     public XMLGregorianCalendar getSystemModstamp() {
         return systemModstamp;
@@ -218,10 +198,8 @@ public class BatchInfo {
     /**
      * Sets the value of the systemModstamp property.
      *
-     * @param value
-     *     allowed object is
-     *     {@link javax.xml.datatype.XMLGregorianCalendar }
-     *     
+     * @param value allowed object is
+     *              {@link javax.xml.datatype.XMLGregorianCalendar }
      */
     public void setSystemModstamp(XMLGregorianCalendar value) {
         this.systemModstamp = value;
@@ -229,7 +207,6 @@ public class BatchInfo {
 
     /**
      * Gets the value of the numberRecordsProcessed property.
-     * 
      */
     public int getNumberRecordsProcessed() {
         return numberRecordsProcessed;
@@ -237,7 +214,6 @@ public class BatchInfo {
 
     /**
      * Sets the value of the numberRecordsProcessed property.
-     * 
      */
     public void setNumberRecordsProcessed(int value) {
         this.numberRecordsProcessed = value;
@@ -245,11 +221,9 @@ public class BatchInfo {
 
     /**
      * Gets the value of the numberRecordsFailed property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Integer }
-     *     
+     *
+     * @return possible object is
+     *         {@link Integer }
      */
     public Integer getNumberRecordsFailed() {
         return numberRecordsFailed;
@@ -257,11 +231,9 @@ public class BatchInfo {
 
     /**
      * Sets the value of the numberRecordsFailed property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Integer }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link Integer }
      */
     public void setNumberRecordsFailed(Integer value) {
         this.numberRecordsFailed = value;
@@ -269,11 +241,9 @@ public class BatchInfo {
 
     /**
      * Gets the value of the totalProcessingTime property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Long }
-     *     
+     *
+     * @return possible object is
+     *         {@link Long }
      */
     public Long getTotalProcessingTime() {
         return totalProcessingTime;
@@ -281,11 +251,9 @@ public class BatchInfo {
 
     /**
      * Sets the value of the totalProcessingTime property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Long }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link Long }
      */
     public void setTotalProcessingTime(Long value) {
         this.totalProcessingTime = value;
@@ -293,11 +261,9 @@ public class BatchInfo {
 
     /**
      * Gets the value of the apiActiveProcessingTime property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Long }
-     *     
+     *
+     * @return possible object is
+     *         {@link Long }
      */
     public Long getApiActiveProcessingTime() {
         return apiActiveProcessingTime;
@@ -305,11 +271,9 @@ public class BatchInfo {
 
     /**
      * Sets the value of the apiActiveProcessingTime property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Long }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link Long }
      */
     public void setApiActiveProcessingTime(Long value) {
         this.apiActiveProcessingTime = value;
@@ -317,11 +281,9 @@ public class BatchInfo {
 
     /**
      * Gets the value of the apexProcessingTime property.
-     * 
-     * @return
-     *     possible object is
-     *     {@link Long }
-     *     
+     *
+     * @return possible object is
+     *         {@link Long }
      */
     public Long getApexProcessingTime() {
         return apexProcessingTime;
@@ -329,11 +291,9 @@ public class BatchInfo {
 
     /**
      * Sets the value of the apexProcessingTime property.
-     * 
-     * @param value
-     *     allowed object is
-     *     {@link Long }
-     *     
+     *
+     * @param value allowed object is
+     *              {@link Long }
      */
     public void setApexProcessingTime(Long value) {
         this.apexProcessingTime = value;

@@ -22,9 +22,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for ContentType.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p>
+ * <p/>
  * <pre>
  * &lt;simpleType name="ContentType">
  *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">
@@ -35,7 +35,6 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/restriction>
  * &lt;/simpleType>
  * </pre>
- * 
  */
 @XmlType(name = "ContentType")
 @XmlEnum

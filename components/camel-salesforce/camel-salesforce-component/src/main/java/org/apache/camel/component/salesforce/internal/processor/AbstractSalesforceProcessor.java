@@ -16,18 +16,18 @@
  */
 package org.apache.camel.component.salesforce.internal.processor;
 
+import java.util.Map;
+
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
-import org.eclipse.jetty.client.HttpClient;
 import org.apache.camel.component.salesforce.SalesforceComponent;
 import org.apache.camel.component.salesforce.SalesforceEndpoint;
 import org.apache.camel.component.salesforce.api.SalesforceException;
 import org.apache.camel.component.salesforce.internal.OperationName;
 import org.apache.camel.component.salesforce.internal.SalesforceSession;
+import org.eclipse.jetty.client.HttpClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.Map;
 
 public abstract class AbstractSalesforceProcessor implements SalesforceProcessor {
 
@@ -60,12 +60,13 @@ public abstract class AbstractSalesforceProcessor implements SalesforceProcessor
     /**
      * Gets value for a parameter from header, endpoint config, or exchange body (optional).
      *
-     * @param exchange exchange to inspect
+     * @param exchange      exchange to inspect
      * @param convertInBody converts In body to String value if true
-     * @param propName name of property
-     * @param optional if {@code true} returns null, otherwise throws RestException
+     * @param propName      name of property
+     * @param optional      if {@code true} returns null, otherwise throws RestException
      * @return value of property, or {@code null} for optional parameters if not found.
-     * @throws org.apache.camel.component.salesforce.api.SalesforceException if the property can't be found.
+     * @throws org.apache.camel.component.salesforce.api.SalesforceException
+     *          if the property can't be found.
      */
     protected final String getParameter(String propName, Exchange exchange, boolean convertInBody, boolean optional) throws SalesforceException {
         String propValue = exchange.getIn().getHeader(propName, String.class);

@@ -16,21 +16,32 @@
  */
 package org.apache.camel.component.salesforce.internal.processor;
 
-import org.apache.camel.*;
-import org.apache.camel.converter.stream.StreamCacheConverter;
-import org.apache.camel.util.ServiceHelper;
-import org.apache.camel.component.salesforce.SalesforceEndpoint;
-import org.apache.camel.component.salesforce.SalesforceEndpointConfig;
-import org.apache.camel.component.salesforce.api.SalesforceException;
-import org.apache.camel.component.salesforce.api.dto.bulk.*;
-import org.apache.camel.component.salesforce.internal.client.BulkApiClient;
-import org.apache.camel.component.salesforce.internal.client.DefaultBulkApiClient;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
 
-import static org.apache.camel.component.salesforce.SalesforceEndpointConfig.*;
+import org.apache.camel.AsyncCallback;
+import org.apache.camel.CamelException;
+import org.apache.camel.Exchange;
+import org.apache.camel.InvalidPayloadException;
+import org.apache.camel.Message;
+import org.apache.camel.StreamCache;
+import org.apache.camel.component.salesforce.SalesforceEndpoint;
+import org.apache.camel.component.salesforce.SalesforceEndpointConfig;
+import org.apache.camel.component.salesforce.api.SalesforceException;
+import org.apache.camel.component.salesforce.api.dto.bulk.BatchInfo;
+import org.apache.camel.component.salesforce.api.dto.bulk.ContentType;
+import org.apache.camel.component.salesforce.api.dto.bulk.JobInfo;
+import org.apache.camel.component.salesforce.internal.client.BulkApiClient;
+import org.apache.camel.component.salesforce.internal.client.DefaultBulkApiClient;
+import org.apache.camel.converter.stream.StreamCacheConverter;
+import org.apache.camel.util.ServiceHelper;
+
+import static org.apache.camel.component.salesforce.SalesforceEndpointConfig.BATCH_ID;
+import static org.apache.camel.component.salesforce.SalesforceEndpointConfig.CONTENT_TYPE;
+import static org.apache.camel.component.salesforce.SalesforceEndpointConfig.JOB_ID;
+import static org.apache.camel.component.salesforce.SalesforceEndpointConfig.RESULT_ID;
+import static org.apache.camel.component.salesforce.SalesforceEndpointConfig.SOBJECT_QUERY;
 
 public class BulkApiProcessor extends AbstractSalesforceProcessor {
 
@@ -40,7 +51,7 @@ public class BulkApiProcessor extends AbstractSalesforceProcessor {
         super(endpoint);
 
         this.bulkClient = new DefaultBulkApiClient(
-            endpointConfigMap.get(SalesforceEndpointConfig.API_VERSION), session, httpClient);
+                endpointConfigMap.get(SalesforceEndpointConfig.API_VERSION), session, httpClient);
     }
 
     @Override
@@ -112,7 +123,7 @@ public class BulkApiProcessor extends AbstractSalesforceProcessor {
                 case CREATE_BATCH:
                     // since request is in the body, use headers or endpoint params
                     ContentType contentType = ContentType.fromValue(
-                        getParameter(CONTENT_TYPE, exchange, IGNORE_BODY, NOT_OPTIONAL));
+                            getParameter(CONTENT_TYPE, exchange, IGNORE_BODY, NOT_OPTIONAL));
                     jobId = getParameter(JOB_ID, exchange, IGNORE_BODY, NOT_OPTIONAL);
 
                     InputStream request;
@@ -249,17 +260,17 @@ public class BulkApiProcessor extends AbstractSalesforceProcessor {
                     } else {
                         jobId = getParameter(JOB_ID, exchange, IGNORE_BODY, NOT_OPTIONAL);
                         contentType = ContentType.fromValue(
-                            getParameter(CONTENT_TYPE, exchange, IGNORE_BODY, NOT_OPTIONAL));
+                                getParameter(CONTENT_TYPE, exchange, IGNORE_BODY, NOT_OPTIONAL));
                         // reuse SOBJECT_QUERY property
                         soqlQuery = getParameter(SOBJECT_QUERY, exchange, USE_BODY, NOT_OPTIONAL);
                     }
                     bulkClient.createBatchQuery(jobId, soqlQuery, contentType,
-                        new BulkApiClient.BatchInfoResponseCallback() {
-                        @Override
-                        public void onResponse(BatchInfo batchInfo, SalesforceException ex) {
-                            processResponse(exchange, batchInfo, ex, callback);
-                        }
-                    });
+                            new BulkApiClient.BatchInfoResponseCallback() {
+                                @Override
+                                public void onResponse(BatchInfo batchInfo, SalesforceException ex) {
+                                    processResponse(exchange, batchInfo, ex, callback);
+                                }
+                            });
 
                     break;
 
@@ -323,23 +334,23 @@ public class BulkApiProcessor extends AbstractSalesforceProcessor {
 
         } catch (SalesforceException e) {
             exchange.setException(new SalesforceException(
-                String.format("Error processing %s: [%s] \"%s\"",
-                    operationName, e.getStatusCode(), e.getMessage()),
-                e));
+                    String.format("Error processing %s: [%s] \"%s\"",
+                            operationName, e.getStatusCode(), e.getMessage()),
+                    e));
             callback.done(true);
             done = true;
         } catch (InvalidPayloadException e) {
             exchange.setException(new SalesforceException(
-                String.format("Unexpected Error processing %s: \"%s\"",
-                    operationName, e.getMessage()),
-                e));
+                    String.format("Unexpected Error processing %s: \"%s\"",
+                            operationName, e.getMessage()),
+                    e));
             callback.done(true);
             done = true;
         } catch (RuntimeException e) {
             exchange.setException(new SalesforceException(
-                String.format("Unexpected Error processing %s: \"%s\"",
-                    operationName, e.getMessage()),
-                e));
+                    String.format("Unexpected Error processing %s: \"%s\"",
+                            operationName, e.getMessage()),
+                    e));
             callback.done(true);
             done = true;
         }

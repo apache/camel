@@ -16,18 +16,18 @@
  */
 package org.apache.camel.component.salesforce.internal.client;
 
+import java.io.IOException;
+
+import org.apache.camel.component.salesforce.api.SalesforceException;
+import org.apache.camel.component.salesforce.internal.SalesforceSession;
 import org.eclipse.jetty.client.HttpDestination;
 import org.eclipse.jetty.client.HttpEventListenerWrapper;
 import org.eclipse.jetty.client.HttpExchange;
 import org.eclipse.jetty.http.HttpHeaders;
 import org.eclipse.jetty.http.HttpStatus;
 import org.eclipse.jetty.io.Buffer;
-import org.apache.camel.component.salesforce.api.SalesforceException;
-import org.apache.camel.component.salesforce.internal.SalesforceSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.IOException;
 
 public class SalesforceSecurityListener extends HttpEventListenerWrapper {
 
@@ -55,7 +55,7 @@ public class SalesforceSecurityListener extends HttpEventListenerWrapper {
     @Override
     public void onResponseStatus(Buffer version, int status, Buffer reason) throws IOException {
         if (status == HttpStatus.UNAUTHORIZED_401 &&
-            retries < destination.getHttpClient().maxRetries()) {
+                retries < destination.getHttpClient().maxRetries()) {
 
             LOG.warn("Retrying on Salesforce authentication error [{}]: [{}]", status, reason);
             setDelegatingRequests(false);
@@ -106,7 +106,7 @@ public class SalesforceSecurityListener extends HttpEventListenerWrapper {
                     client.setAccessToken(exchange);
                 } else {
                     exchange.addRequestHeader(HttpHeaders.AUTHORIZATION,
-                        "OAuth " + currentToken);
+                            "OAuth " + currentToken);
                 }
 
                 // TODO handle a change in Salesforce instanceUrl, right now we retry with the same destination

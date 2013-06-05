@@ -16,22 +16,29 @@
  */
 package org.apache.camel.component.salesforce.internal.processor;
 
-import org.apache.camel.AsyncCallback;
-import org.apache.camel.Exchange;
-import org.apache.camel.Message;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.map.SerializationConfig;
-import org.codehaus.jackson.type.TypeReference;
-import org.eclipse.jetty.util.StringUtil;
-import org.apache.camel.component.salesforce.SalesforceEndpoint;
-import org.apache.camel.component.salesforce.api.SalesforceException;
-import org.apache.camel.component.salesforce.api.dto.*;
-
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.List;
+
+import org.apache.camel.AsyncCallback;
+import org.apache.camel.Exchange;
+import org.apache.camel.Message;
+import org.apache.camel.component.salesforce.SalesforceEndpoint;
+import org.apache.camel.component.salesforce.api.SalesforceException;
+import org.apache.camel.component.salesforce.api.dto.AbstractSObjectBase;
+import org.apache.camel.component.salesforce.api.dto.CreateSObjectResult;
+import org.apache.camel.component.salesforce.api.dto.GlobalObjects;
+import org.apache.camel.component.salesforce.api.dto.RestResources;
+import org.apache.camel.component.salesforce.api.dto.SObjectBasicInfo;
+import org.apache.camel.component.salesforce.api.dto.SObjectDescription;
+import org.apache.camel.component.salesforce.api.dto.SearchResult;
+import org.apache.camel.component.salesforce.api.dto.Version;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.map.SerializationConfig;
+import org.codehaus.jackson.type.TypeReference;
+import org.eclipse.jetty.util.StringUtil;
 
 public class JsonRestProcessor extends AbstractRestProcessor {
 
@@ -53,7 +60,8 @@ public class JsonRestProcessor extends AbstractRestProcessor {
         switch (operationName) {
             case GET_VERSIONS:
                 // handle in built response types
-                exchange.setProperty(RESPONSE_TYPE, new TypeReference<List<Version>>() {});
+                exchange.setProperty(RESPONSE_TYPE, new TypeReference<List<Version>>() {
+                });
                 break;
 
             case GET_RESOURCES:
@@ -88,7 +96,8 @@ public class JsonRestProcessor extends AbstractRestProcessor {
 
             case SEARCH:
                 // handle known response type
-                exchange.setProperty(RESPONSE_TYPE, new TypeReference<List<SearchResult>>() {});
+                exchange.setProperty(RESPONSE_TYPE, new TypeReference<List<SearchResult>>() {
+                });
                 break;
 
         }
@@ -112,7 +121,7 @@ public class JsonRestProcessor extends AbstractRestProcessor {
                     final String body = in.getBody(String.class);
                     if (null == body) {
                         String msg = "Unsupported request message body " +
-                            (in.getBody() == null ? null : in.getBody().getClass());
+                                (in.getBody() == null ? null : in.getBody().getClass());
                         throw new SalesforceException(msg, null);
                     } else {
                         request = new ByteArrayInputStream(body.getBytes(StringUtil.__UTF8_CHARSET));

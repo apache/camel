@@ -16,22 +16,31 @@
  */
 package org.apache.camel.component.salesforce.internal.processor;
 
+import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.Map;
+
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
-import org.apache.camel.util.ServiceHelper;
 import org.apache.camel.component.salesforce.SalesforceEndpoint;
 import org.apache.camel.component.salesforce.api.SalesforceException;
 import org.apache.camel.component.salesforce.api.dto.AbstractSObjectBase;
 import org.apache.camel.component.salesforce.internal.PayloadFormat;
 import org.apache.camel.component.salesforce.internal.client.DefaultRestClient;
 import org.apache.camel.component.salesforce.internal.client.RestClient;
+import org.apache.camel.util.ServiceHelper;
 
-import java.io.InputStream;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.Map;
-
-import static org.apache.camel.component.salesforce.SalesforceEndpointConfig.*;
+import static org.apache.camel.component.salesforce.SalesforceEndpointConfig.API_VERSION;
+import static org.apache.camel.component.salesforce.SalesforceEndpointConfig.SOBJECT_BLOB_FIELD_NAME;
+import static org.apache.camel.component.salesforce.SalesforceEndpointConfig.SOBJECT_CLASS;
+import static org.apache.camel.component.salesforce.SalesforceEndpointConfig.SOBJECT_EXT_ID_NAME;
+import static org.apache.camel.component.salesforce.SalesforceEndpointConfig.SOBJECT_EXT_ID_VALUE;
+import static org.apache.camel.component.salesforce.SalesforceEndpointConfig.SOBJECT_FIELDS;
+import static org.apache.camel.component.salesforce.SalesforceEndpointConfig.SOBJECT_ID;
+import static org.apache.camel.component.salesforce.SalesforceEndpointConfig.SOBJECT_NAME;
+import static org.apache.camel.component.salesforce.SalesforceEndpointConfig.SOBJECT_QUERY;
+import static org.apache.camel.component.salesforce.SalesforceEndpointConfig.SOBJECT_SEARCH;
 
 public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor {
 
@@ -46,7 +55,7 @@ public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor 
         final PayloadFormat payloadFormat = endpoint.getConfiguration().getPayloadFormat();
 
         this.restClient = new DefaultRestClient(httpClient, endpointConfigMap.get(API_VERSION),
-            payloadFormat.toString().toLowerCase() , session);
+                payloadFormat.toString().toLowerCase(), session);
 
         this.classMap = endpoint.getComponent().getClassMap();
     }
@@ -130,8 +139,7 @@ public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor 
                     });
                     break;
 
-                case GET_SOBJECT:
-                {
+                case GET_SOBJECT: {
                     String sObjectIdValue;
                     // determine parameters from input AbstractSObject
                     final AbstractSObjectBase sObjectBase = exchange.getIn().getBody(AbstractSObjectBase.class);
@@ -165,8 +173,7 @@ public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor 
                     break;
                 }
 
-                case CREATE_SOBJECT:
-                {
+                case CREATE_SOBJECT: {
                     // determine parameters from input AbstractSObject
                     AbstractSObjectBase sObjectBase = exchange.getIn().getBody(AbstractSObjectBase.class);
                     if (sObjectBase != null) {
@@ -176,18 +183,17 @@ public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor 
                     }
 
                     restClient.createSObject(sObjectName, getRequestStream(exchange),
-                        new RestClient.ResponseCallback() {
-                        @Override
-                        public void onResponse(InputStream response, SalesforceException exception) {
-                            processResponse(exchange, response, exception, callback);
-                        }
-                    });
+                            new RestClient.ResponseCallback() {
+                                @Override
+                                public void onResponse(InputStream response, SalesforceException exception) {
+                                    processResponse(exchange, response, exception, callback);
+                                }
+                            });
 
                     break;
                 }
 
-                case UPDATE_SOBJECT:
-                {
+                case UPDATE_SOBJECT: {
                     // determine parameters from input AbstractSObject
                     final AbstractSObjectBase sObjectBase = exchange.getIn().getBody(AbstractSObjectBase.class);
                     String sObjectId;
@@ -204,19 +210,18 @@ public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor 
 
                     final String finalsObjectId = sObjectId;
                     restClient.updateSObject(sObjectName, sObjectId, getRequestStream(exchange),
-                        new RestClient.ResponseCallback() {
-                            @Override
-                            public void onResponse(InputStream response, SalesforceException exception) {
-                                processResponse(exchange, response, exception, callback);
-                                restoreFields(exchange, sObjectBase, finalsObjectId, null, null);
-                            }
-                        });
+                            new RestClient.ResponseCallback() {
+                                @Override
+                                public void onResponse(InputStream response, SalesforceException exception) {
+                                    processResponse(exchange, response, exception, callback);
+                                    restoreFields(exchange, sObjectBase, finalsObjectId, null, null);
+                                }
+                            });
 
                     break;
                 }
 
-                case DELETE_SOBJECT:
-                {
+                case DELETE_SOBJECT: {
                     // determine parameters from input AbstractSObject
                     final AbstractSObjectBase sObjectBase = exchange.getIn().getBody(AbstractSObjectBase.class);
                     String sObjectIdValue;
@@ -239,12 +244,11 @@ public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor 
                     break;
                 }
 
-                case GET_SOBJECT_WITH_ID:
-                {
+                case GET_SOBJECT_WITH_ID: {
                     Object oldValue = null;
                     String sObjectExtIdValue;
                     final String sObjectExtIdName = getParameter(SOBJECT_EXT_ID_NAME,
-                        exchange, IGNORE_BODY, NOT_OPTIONAL);
+                            exchange, IGNORE_BODY, NOT_OPTIONAL);
 
                     // determine parameters from input AbstractSObject
                     final AbstractSObjectBase sObjectBase = exchange.getIn().getBody(AbstractSObjectBase.class);
@@ -262,22 +266,21 @@ public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor 
 
                     final Object finalOldValue = oldValue;
                     restClient.getSObjectWithId(sObjectName, sObjectExtIdName, sObjectExtIdValue,
-                        new RestClient.ResponseCallback() {
-                            @Override
-                            public void onResponse(InputStream response, SalesforceException exception) {
-                                processResponse(exchange, response, exception, callback);
-                                restoreFields(exchange, sObjectBase, null, sObjectExtIdName, finalOldValue);
-                            }
-                        });
+                            new RestClient.ResponseCallback() {
+                                @Override
+                                public void onResponse(InputStream response, SalesforceException exception) {
+                                    processResponse(exchange, response, exception, callback);
+                                    restoreFields(exchange, sObjectBase, null, sObjectExtIdName, finalOldValue);
+                                }
+                            });
 
                     break;
                 }
 
-                case UPSERT_SOBJECT:
-                {
+                case UPSERT_SOBJECT: {
                     String sObjectExtIdValue;
                     final String sObjectExtIdName = getParameter(SOBJECT_EXT_ID_NAME, exchange,
-                        IGNORE_BODY, NOT_OPTIONAL);
+                            IGNORE_BODY, NOT_OPTIONAL);
 
                     // determine parameters from input AbstractSObject
                     Object oldValue = null;
@@ -295,7 +298,7 @@ public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor 
 
                     final Object finalOldValue = oldValue;
                     restClient.upsertSObject(sObjectName, sObjectExtIdName, sObjectExtIdValue,
-                        getRequestStream(exchange), new RestClient.ResponseCallback() {
+                            getRequestStream(exchange), new RestClient.ResponseCallback() {
                         @Override
                         public void onResponse(InputStream response, SalesforceException exception) {
                             processResponse(exchange, response, exception, callback);
@@ -306,8 +309,7 @@ public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor 
                     break;
                 }
 
-                case DELETE_SOBJECT_WITH_ID:
-                {
+                case DELETE_SOBJECT_WITH_ID: {
                     final String sObjectExtIdName = getParameter(SOBJECT_EXT_ID_NAME, exchange, IGNORE_BODY, NOT_OPTIONAL);
 
                     // determine parameters from input AbstractSObject
@@ -325,22 +327,21 @@ public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor 
 
                     final Object finalOldValue = oldValue;
                     restClient.deleteSObjectWithId(sObjectName, sObjectExtIdName, sObjectExtIdValue,
-                        new RestClient.ResponseCallback() {
-                            @Override
-                            public void onResponse(InputStream response, SalesforceException exception) {
-                                processResponse(exchange, response, exception, callback);
-                                restoreFields(exchange, sObjectBase, null, sObjectExtIdName, finalOldValue);
-                            }
-                        });
+                            new RestClient.ResponseCallback() {
+                                @Override
+                                public void onResponse(InputStream response, SalesforceException exception) {
+                                    processResponse(exchange, response, exception, callback);
+                                    restoreFields(exchange, sObjectBase, null, sObjectExtIdName, finalOldValue);
+                                }
+                            });
 
                     break;
                 }
 
-                case GET_BLOB_FIELD:
-                {
+                case GET_BLOB_FIELD: {
                     // get blob field name
                     final String sObjectBlobFieldName = getParameter(SOBJECT_BLOB_FIELD_NAME,
-                        exchange, IGNORE_BODY, NOT_OPTIONAL);
+                            exchange, IGNORE_BODY, NOT_OPTIONAL);
 
                     // determine parameters from input AbstractSObject
                     final AbstractSObjectBase sObjectBase = exchange.getIn().getBody(AbstractSObjectBase.class);
@@ -355,13 +356,13 @@ public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor 
                     final String sObjectId = sObjectIdValue;
 
                     restClient.getBlobField(sObjectName, sObjectId, sObjectBlobFieldName,
-                        new RestClient.ResponseCallback() {
-                            @Override
-                            public void onResponse(InputStream response, SalesforceException exception) {
-                                processResponse(exchange, response, exception, callback);
-                                restoreFields(exchange, sObjectBase, sObjectId, null, null);
-                            }
-                        });
+                            new RestClient.ResponseCallback() {
+                                @Override
+                                public void onResponse(InputStream response, SalesforceException exception) {
+                                    processResponse(exchange, response, exception, callback);
+                                    restoreFields(exchange, sObjectBase, sObjectId, null, null);
+                                }
+                            });
                     break;
                 }
 
@@ -409,16 +410,16 @@ public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor 
 
         } catch (SalesforceException e) {
             exchange.setException(new SalesforceException(
-                String.format("Error processing %s: [%s] \"%s\"",
-                    operationName, e.getStatusCode(), e.getMessage()),
-                e));
+                    String.format("Error processing %s: [%s] \"%s\"",
+                            operationName, e.getStatusCode(), e.getMessage()),
+                    e));
             callback.done(true);
             return true;
         } catch (RuntimeException e) {
             exchange.setException(new SalesforceException(
-                String.format("Unexpected Error processing %s: \"%s\"",
-                    operationName, e.getMessage()),
-                e));
+                    String.format("Unexpected Error processing %s: \"%s\"",
+                            operationName, e.getMessage()),
+                    e));
             callback.done(true);
             return true;
         }
@@ -454,19 +455,19 @@ public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor 
             setMethod.invoke(sObjectBase, value);
         } catch (NoSuchMethodException e) {
             throw new SalesforceException(
-                String.format("SObject %s does not have a field %s",
-                    sObjectBase.getClass().getName(), name),
-                e);
+                    String.format("SObject %s does not have a field %s",
+                            sObjectBase.getClass().getName(), name),
+                    e);
         } catch (InvocationTargetException e) {
             throw new SalesforceException(
-                String.format("Error setting value %s.%s",
-                    sObjectBase.getClass().getSimpleName(), name),
-                e);
+                    String.format("Error setting value %s.%s",
+                            sObjectBase.getClass().getSimpleName(), name),
+                    e);
         } catch (IllegalAccessException e) {
             throw new SalesforceException(
-                String.format("Error accessing value %s.%s",
-                    sObjectBase.getClass().getSimpleName(), name),
-                e);
+                    String.format("Error accessing value %s.%s",
+                            sObjectBase.getClass().getSimpleName(), name),
+                    e);
         }
     }
 
@@ -478,24 +479,24 @@ public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor 
 
             // clear the value with the set method
             Method setMethod = sObjectBase.getClass().getMethod("set" + propertyName, getMethod.getReturnType());
-            setMethod.invoke(sObjectBase, new Object[] { null });
+            setMethod.invoke(sObjectBase, new Object[]{null});
 
             return value;
         } catch (NoSuchMethodException e) {
             throw new SalesforceException(
-                String.format("SObject %s does not have a field %s",
-                    sObjectBase.getClass().getSimpleName(), propertyName),
-                e);
+                    String.format("SObject %s does not have a field %s",
+                            sObjectBase.getClass().getSimpleName(), propertyName),
+                    e);
         } catch (InvocationTargetException e) {
             throw new SalesforceException(
-                String.format("Error getting/setting value %s.%s",
-                    sObjectBase.getClass().getSimpleName(), propertyName),
-                e);
+                    String.format("Error getting/setting value %s.%s",
+                            sObjectBase.getClass().getSimpleName(), propertyName),
+                    e);
         } catch (IllegalAccessException e) {
             throw new SalesforceException(
-                String.format("Error accessing value %s.%s",
-                    sObjectBase.getClass().getSimpleName(), propertyName),
-                e);
+                    String.format("Error accessing value %s.%s",
+                            sObjectBase.getClass().getSimpleName(), propertyName),
+                    e);
         }
     }
 
@@ -521,12 +522,12 @@ public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor 
             final String className = getParameter(SOBJECT_CLASS, exchange, IGNORE_BODY, NOT_OPTIONAL);
             try {
                 sObjectClass = endpoint.getComponent().getCamelContext()
-                    .getClassResolver().resolveMandatoryClass(className);
+                        .getClassResolver().resolveMandatoryClass(className);
             } catch (ClassNotFoundException e) {
                 throw new SalesforceException(
-                    String.format("SObject class not found %s, %s",
-                        className, e.getMessage()),
-                    e);
+                        String.format("SObject class not found %s, %s",
+                                className, e.getMessage()),
+                        e);
             }
         }
         exchange.setProperty(RESPONSE_CLASS, sObjectClass);

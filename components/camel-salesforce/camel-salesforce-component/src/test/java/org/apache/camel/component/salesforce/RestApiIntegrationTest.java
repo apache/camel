@@ -16,16 +16,6 @@
  */
 package org.apache.camel.component.salesforce;
 
-import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.salesforce.api.dto.*;
-import org.apache.camel.component.salesforce.dto.Document;
-import org.apache.camel.component.salesforce.dto.Line_Item__c;
-import org.apache.camel.component.salesforce.dto.Merchandise__c;
-import org.apache.camel.component.salesforce.dto.QueryRecordsLine_Item__c;
-import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.nio.channels.Channels;
@@ -33,6 +23,24 @@ import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
 import java.util.HashMap;
 import java.util.List;
+
+import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.salesforce.api.dto.CreateSObjectResult;
+import org.apache.camel.component.salesforce.api.dto.GlobalObjects;
+import org.apache.camel.component.salesforce.api.dto.RestResources;
+import org.apache.camel.component.salesforce.api.dto.SObjectBasicInfo;
+import org.apache.camel.component.salesforce.api.dto.SObjectDescription;
+import org.apache.camel.component.salesforce.api.dto.SearchResult;
+import org.apache.camel.component.salesforce.api.dto.SearchResults;
+import org.apache.camel.component.salesforce.api.dto.Version;
+import org.apache.camel.component.salesforce.api.dto.Versions;
+import org.apache.camel.component.salesforce.dto.Document;
+import org.apache.camel.component.salesforce.dto.Line_Item__c;
+import org.apache.camel.component.salesforce.dto.Merchandise__c;
+import org.apache.camel.component.salesforce.dto.QueryRecordsLine_Item__c;
+import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class RestApiIntegrationTest extends AbstractSalesforceTestBase {
 
@@ -153,27 +161,27 @@ public class RestApiIntegrationTest extends AbstractSalesforceTestBase {
     }
 
     private void doTestCreateUpdateDelete(String suffix) throws InterruptedException {
-        Merchandise__c merchandise__c = new Merchandise__c();
-        merchandise__c.setName("Wee Wee Wee Plane");
-        merchandise__c.setDescription__c("Microlite plane");
-        merchandise__c.setPrice__c(2000.0);
-        merchandise__c.setTotal_Inventory__c(50.0);
+        Merchandise__c merchandise = new Merchandise__c();
+        merchandise.setName("Wee Wee Wee Plane");
+        merchandise.setDescription__c("Microlite plane");
+        merchandise.setPrice__c(2000.0);
+        merchandise.setTotal_Inventory__c(50.0);
         CreateSObjectResult result = template().requestBody("direct:CreateSObject" + suffix,
-            merchandise__c, CreateSObjectResult.class);
+            merchandise, CreateSObjectResult.class);
         assertNotNull(result);
         assertTrue("Create success", result.getSuccess());
         LOG.debug("Create: " + result);
 
         // test JSON update
         // make the plane cheaper
-        merchandise__c.setPrice__c(1500.0);
+        merchandise.setPrice__c(1500.0);
         // change inventory to half
-        merchandise__c.setTotal_Inventory__c(25.0);
+        merchandise.setTotal_Inventory__c(25.0);
         // also need to set the Id
-        merchandise__c.setId(result.getId());
+        merchandise.setId(result.getId());
 
         assertNull(template().requestBodyAndHeader("direct:UpdateSObject" + suffix,
-            merchandise__c, SalesforceEndpointConfig.SOBJECT_ID, result.getId()));
+            merchandise, SalesforceEndpointConfig.SOBJECT_ID, result.getId()));
         LOG.debug("Update successful");
 
         // delete the newly created SObject
@@ -189,34 +197,34 @@ public class RestApiIntegrationTest extends AbstractSalesforceTestBase {
 
     private void doTestCreateUpdateDeleteWithId(String suffix) throws InterruptedException {
         // get line item with Name 1
-        Line_Item__c line_item__c = template().requestBody("direct:getSObjectWithId" + suffix, TEST_LINE_ITEM_ID,
+        Line_Item__c lineItem = template().requestBody("direct:getSObjectWithId" + suffix, TEST_LINE_ITEM_ID,
             Line_Item__c.class);
-        assertNotNull(line_item__c);
-        LOG.debug("GetWithId: {}", line_item__c);
+        assertNotNull(lineItem);
+        LOG.debug("GetWithId: {}", lineItem);
 
         // test insert with id
         // set the unit price and sold
-        line_item__c.setUnit_Price__c(1000.0);
-        line_item__c.setUnits_Sold__c(50.0);
+        lineItem.setUnit_Price__c(1000.0);
+        lineItem.setUnits_Sold__c(50.0);
         // update line item with Name NEW_LINE_ITEM_ID
-        line_item__c.setName(NEW_LINE_ITEM_ID);
+        lineItem.setName(NEW_LINE_ITEM_ID);
 
         CreateSObjectResult result = template().requestBodyAndHeader("direct:upsertSObject" + suffix,
-            line_item__c, SalesforceEndpointConfig.SOBJECT_EXT_ID_VALUE, NEW_LINE_ITEM_ID,
+            lineItem, SalesforceEndpointConfig.SOBJECT_EXT_ID_VALUE, NEW_LINE_ITEM_ID,
             CreateSObjectResult.class);
         assertNotNull(result);
         assertTrue(result.getSuccess());
         LOG.debug("CreateWithId: {}", result);
 
         // clear read only parent type fields
-        line_item__c.setInvoice_Statement__c(null);
-        line_item__c.setMerchandise__c(null);
+        lineItem.setInvoice_Statement__c(null);
+        lineItem.setMerchandise__c(null);
         // change the units sold
-        line_item__c.setUnits_Sold__c(25.0);
+        lineItem.setUnits_Sold__c(25.0);
 
         // update line item with Name NEW_LINE_ITEM_ID
         result = template().requestBodyAndHeader("direct:upsertSObject" + suffix,
-            line_item__c, SalesforceEndpointConfig.SOBJECT_EXT_ID_VALUE, NEW_LINE_ITEM_ID,
+            lineItem, SalesforceEndpointConfig.SOBJECT_EXT_ID_VALUE, NEW_LINE_ITEM_ID,
             CreateSObjectResult.class);
         assertNull(result);
         LOG.debug("UpdateWithId: {}", result);

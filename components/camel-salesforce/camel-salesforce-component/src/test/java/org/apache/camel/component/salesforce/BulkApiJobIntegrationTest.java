@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.salesforce;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.apache.camel.component.salesforce.api.dto.bulk.ContentType;
 import org.apache.camel.component.salesforce.api.dto.bulk.JobInfo;
 import org.apache.camel.component.salesforce.api.dto.bulk.JobStateEnum;
@@ -23,9 +26,6 @@ import org.apache.camel.component.salesforce.api.dto.bulk.OperationEnum;
 import org.apache.camel.component.salesforce.dto.Merchandise__c;
 import org.junit.experimental.theories.DataPoints;
 import org.junit.experimental.theories.Theory;
-
-import java.util.ArrayList;
-import java.util.List;
 
 public class BulkApiJobIntegrationTest extends AbstractBulkApiTestBase {
 

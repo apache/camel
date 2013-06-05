@@ -16,10 +16,10 @@
  */
 package org.apache.camel.component.salesforce.api.dto;
 
+import java.util.List;
+
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamImplicit;
-
-import java.util.List;
 
 /**
  * DTO for Salesforce SOSL Search results.

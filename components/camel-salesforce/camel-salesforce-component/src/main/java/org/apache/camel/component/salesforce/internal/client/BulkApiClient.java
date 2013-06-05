@@ -16,11 +16,13 @@
  */
 package org.apache.camel.component.salesforce.internal.client;
 
-import org.apache.camel.component.salesforce.api.SalesforceException;
-import org.apache.camel.component.salesforce.api.dto.bulk.*;
-
 import java.io.InputStream;
 import java.util.List;
+
+import org.apache.camel.component.salesforce.api.SalesforceException;
+import org.apache.camel.component.salesforce.api.dto.bulk.BatchInfo;
+import org.apache.camel.component.salesforce.api.dto.bulk.ContentType;
+import org.apache.camel.component.salesforce.api.dto.bulk.JobInfo;
 
 /**
  * Client interface for Salesforce Bulk API
@@ -50,7 +52,7 @@ public interface BulkApiClient {
     /**
      * Creates a Bulk Job
      *
-     * @param jobInfo {@link JobInfo} with required fields
+     * @param jobInfo  {@link JobInfo} with required fields
      * @param callback {@link JobInfoResponseCallback} to be invoked on response or error
      */
     void createJob(JobInfo jobInfo,

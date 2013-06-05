@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.salesforce.api;
 
+import java.lang.reflect.Method;
+
 import com.thoughtworks.xstream.converters.Converter;
 import com.thoughtworks.xstream.converters.MarshallingContext;
 import com.thoughtworks.xstream.converters.UnmarshallingContext;
@@ -23,8 +25,6 @@ import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.lang.reflect.Method;
 
 public class PicklistEnumConverter implements Converter {
     private static final Logger LOG = LoggerFactory.getLogger(PicklistEnumConverter.class);
@@ -39,9 +39,9 @@ public class PicklistEnumConverter implements Converter {
             writer.setValue((String) getterMethod.invoke(o));
         } catch (ReflectiveOperationException e) {
             throw new IllegalArgumentException(
-                String.format("Exception writing pick list value %s of type %s: %s",
-                    o, o.getClass().getName(), e.getMessage()),
-                e);
+                    String.format("Exception writing pick list value %s of type %s: %s",
+                            o, o.getClass().getName(), e.getMessage()),
+                    e);
         }
     }
 
@@ -55,14 +55,14 @@ public class PicklistEnumConverter implements Converter {
             return factoryMethod.invoke(null, value);
         } catch (ReflectiveOperationException e) {
             throw new IllegalArgumentException(
-                String.format("Exception reading pick list value %s of type %s: %s",
-                    value, context.getRequiredType().getName(), e.getMessage()),
-                e);
+                    String.format("Exception reading pick list value %s of type %s: %s",
+                            value, context.getRequiredType().getName(), e.getMessage()),
+                    e);
         } catch (SecurityException e) {
             throw new IllegalArgumentException(
-                String.format("Security Exception reading pick list value %s of type %s: %s",
-                    value, context.getRequiredType().getName(), e.getMessage()),
-                e);
+                    String.format("Security Exception reading pick list value %s of type %s: %s",
+                            value, context.getRequiredType().getName(), e.getMessage()),
+                    e);
         }
     }
 
@@ -71,7 +71,7 @@ public class PicklistEnumConverter implements Converter {
     public boolean canConvert(Class aClass) {
         try {
             return Enum.class.isAssignableFrom(aClass) &&
-                aClass.getMethod(FACTORY_METHOD, String.class) != null;
+                    aClass.getMethod(FACTORY_METHOD, String.class) != null;
         } catch (NoSuchMethodException e) {
             return false;
         }

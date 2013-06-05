@@ -14,9 +14,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.maven;
 
+import java.io.BufferedWriter;
+import java.io.File;
+import java.io.FileWriter;
+import java.io.IOException;
+import java.lang.reflect.Field;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Properties;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
+import java.util.regex.Pattern;
+
+import org.apache.camel.component.salesforce.SalesforceLoginConfig;
+import org.apache.camel.component.salesforce.api.SalesforceException;
+import org.apache.camel.component.salesforce.api.dto.AbstractSObjectBase;
+import org.apache.camel.component.salesforce.api.dto.GlobalObjects;
+import org.apache.camel.component.salesforce.api.dto.PickListValue;
+import org.apache.camel.component.salesforce.api.dto.SObject;
+import org.apache.camel.component.salesforce.api.dto.SObjectDescription;
+import org.apache.camel.component.salesforce.api.dto.SObjectField;
+import org.apache.camel.component.salesforce.internal.SalesforceSession;
+import org.apache.camel.component.salesforce.internal.client.DefaultRestClient;
+import org.apache.camel.component.salesforce.internal.client.RestClient;
+import org.apache.camel.component.salesforce.internal.client.SyncResponseCallback;
 import org.apache.log4j.Logger;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -29,33 +55,14 @@ import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.eclipse.jetty.client.HttpClient;
 import org.eclipse.jetty.client.RedirectListener;
-import org.apache.camel.component.salesforce.SalesforceLoginConfig;
-import org.apache.camel.component.salesforce.api.SalesforceException;
-import org.apache.camel.component.salesforce.api.dto.*;
-import org.apache.camel.component.salesforce.internal.SalesforceSession;
-import org.apache.camel.component.salesforce.internal.client.DefaultRestClient;
-import org.apache.camel.component.salesforce.internal.client.RestClient;
-import org.apache.camel.component.salesforce.internal.client.SyncResponseCallback;
-
-import java.io.BufferedWriter;
-import java.io.File;
-import java.io.FileWriter;
-import java.io.IOException;
-import java.lang.reflect.Field;
-import java.util.*;
-import java.util.concurrent.TimeUnit;
-import java.util.regex.Pattern;
 
 /**
  * Goal which generates POJOs for Salesforce SObjects
  *
  * @goal generate
- * 
  * @phase generate-sources
- *
  */
-public class CamelSalesforceMojo extends AbstractMojo
-{
+public class CamelSalesforceMojo extends AbstractMojo {
     private static final String JAVA_EXT = ".java";
     private static final String PACKAGE_NAME_PATTERN = "^[a-z]+(\\.[a-z][a-z0-9]*)*$";
     private static final String SOBJECT_POJO_VM = "/sobject-pojo.vm";
@@ -68,6 +75,7 @@ public class CamelSalesforceMojo extends AbstractMojo
 
     /**
      * Salesforce client id
+     *
      * @parameter property="${clientId}"
      * @required
      */
@@ -75,6 +83,7 @@ public class CamelSalesforceMojo extends AbstractMojo
 
     /**
      * Salesforce client secret
+     *
      * @parameter property="${clientSecret}"
      * @required
      */
@@ -82,6 +91,7 @@ public class CamelSalesforceMojo extends AbstractMojo
 
     /**
      * Salesforce user name
+     *
      * @parameter property="${userName}"
      * @required
      */
@@ -89,6 +99,7 @@ public class CamelSalesforceMojo extends AbstractMojo
 
     /**
      * Salesforce password
+     *
      * @parameter property="${password}"
      * @required
      */
@@ -96,12 +107,14 @@ public class CamelSalesforceMojo extends AbstractMojo
 
     /**
      * Salesforce version
+     *
      * @parameter property="${version}" default-value="25.0"
      */
     protected String version;
 
     /**
      * Location of the file.
+     *
      * @parameter property="${outputDirectory}" default-value="${project.build.directory}/generated-sources/camel-salesforce"
      * @required
      */
@@ -109,30 +122,35 @@ public class CamelSalesforceMojo extends AbstractMojo
 
     /**
      * Names of Salesforce SObject for which POJOs must be generated
+     *
      * @parameter
      */
     protected String[] includes;
 
     /**
      * Do NOT generate POJOs for these Salesforce SObjects
+     *
      * @parameter
      */
     protected String[] excludes;
 
     /**
      * Include Salesforce SObjects that match pattern
+     *
      * @parameter property="${includePattern}"
      */
     protected String includePattern;
 
     /**
      * Exclude Salesforce SObjects that match pattern
+     *
      * @parameter property="${excludePattern}"
      */
     protected String excludePattern;
 
     /**
      * Java package name for generated POJOs
+     *
      * @parameter property="${packageName}" default-value="org.apache.camel.salesforce.dto"
      */
     protected String packageName;
@@ -141,11 +159,11 @@ public class CamelSalesforceMojo extends AbstractMojo
 
     /**
      * Execute the mojo to generate SObject POJOs
+     *
      * @throws MojoExecutionException
      */
-    public void execute()
-        throws MojoExecutionException
-    {
+    // CHECKSTYLE:OFF
+    public void execute() throws MojoExecutionException {
         // initialize velocity to load resources from class loader and use Log4J
         Properties velocityProperties = new Properties();
         velocityProperties.setProperty(RuntimeConstants.RESOURCE_LOADER, "cloader");
@@ -156,8 +174,7 @@ public class CamelSalesforceMojo extends AbstractMojo
         engine.init();
 
         // make sure we can load both templates
-        if (!engine.resourceExists(SOBJECT_POJO_VM) ||
-            !engine.resourceExists(SOBJECT_QUERY_RECORDS_VM)) {
+        if (!engine.resourceExists(SOBJECT_POJO_VM) || !engine.resourceExists(SOBJECT_QUERY_RECORDS_VM)) {
             throw new MojoExecutionException("Velocity templates not found");
         }
 
@@ -173,8 +190,8 @@ public class CamelSalesforceMojo extends AbstractMojo
         }
 
         final SalesforceSession session = new SalesforceSession(httpClient,
-            new SalesforceLoginConfig(SalesforceLoginConfig.DEFAULT_LOGIN_URL,
-            clientId, clientSecret, userName, password, false));
+                new SalesforceLoginConfig(SalesforceLoginConfig.DEFAULT_LOGIN_URL,
+                        clientId, clientSecret, userName, password, false));
 
         getLog().info("Salesforce login...");
         try {
@@ -189,9 +206,9 @@ public class CamelSalesforceMojo extends AbstractMojo
         RestClient restClient = null;
         try {
             restClient = new DefaultRestClient(httpClient,
-                version, "json", session);
+                    version, "json", session);
             // remember to start the active client object
-            ((DefaultRestClient)restClient).start();
+            ((DefaultRestClient) restClient).start();
         } catch (Exception e) {
             final String msg = "Unexpected exception creating Rest client: " + e.getMessage();
             throw new MojoExecutionException(msg, e);
@@ -215,7 +232,7 @@ public class CamelSalesforceMojo extends AbstractMojo
                     throw ex;
                 }
                 final GlobalObjects globalObjects = mapper.readValue(callback.getResponse(),
-                    GlobalObjects.class);
+                        GlobalObjects.class);
 
                 // create a list of object names
                 for (SObject sObject : globalObjects.getSobjects()) {
@@ -227,10 +244,10 @@ public class CamelSalesforceMojo extends AbstractMojo
             }
 
             // check if we are generating POJOs for all objects or not
-            if ((includes != null && includes.length > 0) ||
-                (excludes != null && excludes.length > 0) ||
-                (includePattern != null && !includePattern.trim().isEmpty()) ||
-                (excludePattern != null && !excludePattern.trim().isEmpty())) {
+            if ((includes != null && includes.length > 0)
+                    || (excludes != null && excludes.length > 0)
+                    || (includePattern != null && !includePattern.trim().isEmpty())
+                    || (excludePattern != null && !excludePattern.trim().isEmpty())) {
 
                 getLog().info("Looking for matching Object names...");
                 // create a list of accepted names
@@ -281,9 +298,8 @@ public class CamelSalesforceMojo extends AbstractMojo
                 for (String name : objectNames) {
                     // name is included, or matches include pattern
                     // and is not excluded and does not match exclude pattern
-                    if ((includedNames.contains(name) || incPattern.matcher(name).matches()) &&
-                        !excludedNames.contains(name) &&
-                        !excPattern.matcher(name).matches()) {
+                    if ((includedNames.contains(name) || incPattern.matcher(name).matches())
+                            && !excludedNames.contains(name) && !excPattern.matcher(name).matches()) {
                         acceptedNames.add(name);
                     }
                 }
@@ -291,15 +307,12 @@ public class CamelSalesforceMojo extends AbstractMojo
                 objectNames.addAll(acceptedNames);
 
                 getLog().info(String.format("Found %s matching Objects", objectNames.size()));
-
             } else {
-                getLog().warn(String.format("Generating Java classes for all %s Objects, this may take a while...",
-                    objectNames.size()));
+                getLog().warn(String.format("Generating Java classes for all %s Objects, this may take a while...", objectNames.size()));
             }
 
             // for every accepted name, get SObject description
-            final Set<SObjectDescription> descriptions =
-                new HashSet<SObjectDescription>();
+            final Set<SObjectDescription> descriptions = new HashSet<SObjectDescription>();
 
             try {
                 getLog().info("Retrieving Object descriptions...");
@@ -307,15 +320,13 @@ public class CamelSalesforceMojo extends AbstractMojo
                     callback.reset();
                     restClient.getDescription(name, callback);
                     if (!callback.await(TIMEOUT, TimeUnit.MILLISECONDS)) {
-                        throw new MojoExecutionException(
-                            "Timeout waiting for getDescription for sObject " + name);
+                        throw new MojoExecutionException("Timeout waiting for getDescription for sObject " + name);
                     }
                     final SalesforceException ex = callback.getException();
                     if (ex != null) {
                         throw ex;
                     }
-                    descriptions.add(mapper.readValue(callback.getResponse(),
-                            SObjectDescription.class));
+                    descriptions.add(mapper.readValue(callback.getResponse(), SObjectDescription.class));
                 }
             } catch (Exception e) {
                 String msg = "Error getting SObject description " + e.getMessage();
@@ -342,26 +353,29 @@ public class CamelSalesforceMojo extends AbstractMojo
             for (SObjectDescription description : descriptions) {
                 processDescription(pkgDir, description, utility, generatedDate);
             }
-
-            getLog().info(String.format("Successfully generated %s Java Classes", (descriptions.size() * 2)));
+            getLog().info(String.format("Successfully generated %s Java Classes", descriptions.size() * 2));
 
         } finally {
             // remember to stop the client
             try {
-                ((DefaultRestClient)restClient).stop();
-            } catch (Exception ignore) {}
+                ((DefaultRestClient) restClient).stop();
+            } catch (Exception ignore) {
+            }
 
             // Salesforce session stop
             try {
                 session.stop();
-            } catch (Exception ignore) {}
+            } catch (Exception ignore) {
+            }
 
             // release HttpConnections
             try {
                 httpClient.stop();
-            } catch (Exception ignore) {}
+            } catch (Exception ignore) {
+            }
         }
     }
+    // CHECKSTYLE:ON
 
     private void processDescription(File pkgDir, SObjectDescription description, GeneratorUtility utility, String generatedDate) throws MojoExecutionException {
         // generate a source file for SObject
@@ -426,27 +440,28 @@ public class CamelSalesforceMojo extends AbstractMojo
             if (writer != null) {
                 try {
                     writer.close();
-                } catch (IOException ignore) {}
+                } catch (IOException ignore) {
+                }
             }
         }
     }
 
     public static class GeneratorUtility {
 
-        private static final Set<String> baseFields;
-        private static final Map<String, String> lookupMap;
+        private static final Set<String> BASE_FIELDS;
+        private static final Map<String, String> LOOKUP_MAP;
 
         static {
-            baseFields = new HashSet<String>();
+            BASE_FIELDS = new HashSet<String>();
             for (Field field : AbstractSObjectBase.class.getDeclaredFields()) {
-                baseFields.add(field.getName());
+                BASE_FIELDS.add(field.getName());
             }
 
             // create a type map
             // using JAXB mapping, for the most part
             // uses Joda time instead of XmlGregorianCalendar
             // TODO do we need support for commented types???
-            final String[][] typeMap = new String[][] {
+            final String[][] typeMap = new String[][]{
                 {"ID", "String"}, // mapping for tns:ID SOAP type
                 {"string", "String"},
                 {"integer", "java.math.BigInteger"},
@@ -463,7 +478,7 @@ public class CamelSalesforceMojo extends AbstractMojo
 //                {"dateTime", "javax.xml.datatype.XMLGregorianCalendar"},
                 {"dateTime", "org.joda.time.DateTime"},
 
-                // the blob base64Binary type is mapped to String URL for retrieving the blob
+                    // the blob base64Binary type is mapped to String URL for retrieving the blob
                 {"base64Binary", "String"},
 //                {"hexBinary", "byte[]"},
 
@@ -478,7 +493,7 @@ public class CamelSalesforceMojo extends AbstractMojo
 //                {"g", "javax.xml.datatype.XMLGregorianCalendar"},
                 {"g", "org.joda.time.DateTime"},
 
-                // Salesforce maps any types like string, picklist, reference, etc. to string
+                    // Salesforce maps any types like string, picklist, reference, etc. to string
                 {"anyType", "String"},
 /*
                 {"anySimpleType", "java.lang.Object"},
@@ -487,9 +502,9 @@ public class CamelSalesforceMojo extends AbstractMojo
                 {"NOTATION", "javax.xml.namespace.QName"}
 */
             };
-            lookupMap = new HashMap<String, String>();
+            LOOKUP_MAP = new HashMap<String, String>();
             for (String[] entry : typeMap) {
-                lookupMap.put(entry[0], entry[1]);
+                LOOKUP_MAP.put(entry[0], entry[1]);
             }
         }
 
@@ -497,11 +512,11 @@ public class CamelSalesforceMojo extends AbstractMojo
 
         public boolean isBlobField(SObjectField field) {
             final String soapType = field.getSoapType();
-            return BASE64BINARY.equals(soapType.substring(soapType.indexOf(':')+1));
+            return BASE64BINARY.equals(soapType.substring(soapType.indexOf(':') + 1));
         }
 
         public boolean notBaseField(String name) {
-            return !baseFields.contains(name);
+            return !BASE_FIELDS.contains(name);
         }
 
         public String getFieldType(SObjectField field) throws MojoExecutionException {
@@ -512,10 +527,10 @@ public class CamelSalesforceMojo extends AbstractMojo
             } else {
                 // map field to Java type
                 final String soapType = field.getSoapType();
-                final String type = lookupMap.get(soapType.substring(soapType.indexOf(':')+1));
+                final String type = LOOKUP_MAP.get(soapType.substring(soapType.indexOf(':') + 1));
                 if (type == null) {
                     throw new MojoExecutionException(
-                        String.format("Unsupported type %s for field %s", soapType, field.getName()));
+                            String.format("Unsupported type %s for field %s", soapType, field.getName()));
                 }
                 return type;
             }

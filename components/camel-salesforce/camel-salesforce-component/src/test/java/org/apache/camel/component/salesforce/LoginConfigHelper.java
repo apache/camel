@@ -16,12 +16,12 @@
  */
 package org.apache.camel.component.salesforce;
 
-import org.junit.Assert;
-
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
+
+import org.junit.Assert;
 
 public class LoginConfigHelper extends Assert {
 
@@ -33,9 +33,9 @@ public class LoginConfigHelper extends Assert {
         Properties properties = new Properties();
         InputStream stream = new FileInputStream(TEST_LOGIN_PROPERTIES);
         if (null == stream) {
-            throw new IllegalArgumentException("Create a properties file named " +
-                TEST_LOGIN_PROPERTIES + " with clientId, clientSecret, userName, and password" +
-                " for a Salesforce account with the Merchandise object from Salesforce Guides.");
+            throw new IllegalArgumentException("Create a properties file named "
+                + TEST_LOGIN_PROPERTIES + " with clientId, clientSecret, userName, and password"
+                + " for a Salesforce account with the Merchandise object from Salesforce Guides.");
         }
         properties.load(stream);
 

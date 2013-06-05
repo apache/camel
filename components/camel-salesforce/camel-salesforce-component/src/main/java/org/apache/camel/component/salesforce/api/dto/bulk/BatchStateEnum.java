@@ -23,9 +23,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for BatchStateEnum.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p>
+ * <p/>
  * <pre>
  * &lt;simpleType name="BatchStateEnum">
  *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">
@@ -37,7 +37,6 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/restriction>
  * &lt;/simpleType>
  * </pre>
- * 
  */
 @XmlType(name = "BatchStateEnum")
 @XmlEnum
@@ -64,7 +63,7 @@ public enum BatchStateEnum {
     }
 
     public static BatchStateEnum fromValue(String v) {
-        for (BatchStateEnum c: BatchStateEnum.values()) {
+        for (BatchStateEnum c : BatchStateEnum.values()) {
             if (c.value.equals(v)) {
                 return c;
             }

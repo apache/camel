@@ -16,9 +16,9 @@
  */
 package org.apache.camel.component.salesforce.internal;
 
+import org.apache.camel.component.salesforce.LoginConfigHelper;
 import org.eclipse.jetty.client.HttpClient;
 import org.eclipse.jetty.client.RedirectListener;
-import org.apache.camel.component.salesforce.LoginConfigHelper;
 import org.junit.Assert;
 import org.junit.Test;
 import org.slf4j.Logger;

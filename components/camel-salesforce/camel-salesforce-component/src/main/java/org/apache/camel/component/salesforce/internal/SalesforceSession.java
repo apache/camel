@@ -16,7 +16,18 @@
  */
 package org.apache.camel.component.salesforce.internal;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Set;
+import java.util.concurrent.CopyOnWriteArraySet;
+
 import org.apache.camel.Service;
+import org.apache.camel.component.salesforce.SalesforceLoginConfig;
+import org.apache.camel.component.salesforce.api.SalesforceException;
+import org.apache.camel.component.salesforce.api.dto.RestError;
+import org.apache.camel.component.salesforce.internal.dto.LoginError;
+import org.apache.camel.component.salesforce.internal.dto.LoginToken;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.eclipse.jetty.client.ContentExchange;
 import org.eclipse.jetty.client.HttpClient;
@@ -27,17 +38,8 @@ import org.eclipse.jetty.io.Buffer;
 import org.eclipse.jetty.io.ByteArrayBuffer;
 import org.eclipse.jetty.util.StringUtil;
 import org.eclipse.jetty.util.UrlEncoded;
-import org.apache.camel.component.salesforce.SalesforceLoginConfig;
-import org.apache.camel.component.salesforce.api.SalesforceException;
-import org.apache.camel.component.salesforce.api.dto.RestError;
-import org.apache.camel.component.salesforce.internal.dto.LoginError;
-import org.apache.camel.component.salesforce.internal.dto.LoginToken;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.IOException;
-import java.util.*;
-import java.util.concurrent.CopyOnWriteArraySet;
 
 public class SalesforceSession implements Service {
 
@@ -120,7 +122,7 @@ public class SalesforceSession implements Service {
 
                 // set form content
                 loginPost.setRequestContent(new ByteArrayBuffer(
-                    nvps.encode(StringUtil.__UTF8, true).getBytes(StringUtil.__UTF8)));
+                        nvps.encode(StringUtil.__UTF8, true).getBytes(StringUtil.__UTF8)));
                 httpClient.send(loginPost);
 
                 // wait for the login to finish
@@ -135,7 +137,7 @@ public class SalesforceSession implements Service {
                             case HttpStatus.OK_200:
                                 // parse the response to get token
                                 LoginToken token = objectMapper.readValue(responseContent,
-                                    LoginToken.class);
+                                        LoginToken.class);
 
                                 // don't log token or instance URL for security reasons
                                 LOG.info("Login successful");
@@ -156,26 +158,26 @@ public class SalesforceSession implements Service {
                             case HttpStatus.BAD_REQUEST_400:
                                 // parse the response to get error
                                 final LoginError error = objectMapper.readValue(responseContent,
-                                    LoginError.class);
+                                        LoginError.class);
                                 final String msg = String.format("Login error code:[%s] description:[%s]",
-                                    error.getError(), error.getErrorDescription());
+                                        error.getError(), error.getErrorDescription());
                                 final List<RestError> errors = new ArrayList<RestError>();
                                 errors.add(new RestError(msg, error.getErrorDescription()));
                                 throw new SalesforceException(errors, HttpStatus.BAD_REQUEST_400);
 
                             default:
                                 throw new SalesforceException(
-                                    String.format("Login error status:[%s] reason:[%s]",
-                                        responseStatus, loginPost.getReason()),
-                                    responseStatus);
+                                        String.format("Login error status:[%s] reason:[%s]",
+                                                responseStatus, loginPost.getReason()),
+                                        responseStatus);
                         }
                         break;
 
                     case HttpExchange.STATUS_EXCEPTED:
                         final Throwable ex = loginPost.getException();
                         throw new SalesforceException(
-                            String.format("Unexpected login exception: %s", ex.getMessage()),
-                            ex);
+                                String.format("Unexpected login exception: %s", ex.getMessage()),
+                                ex);
 
                     case HttpExchange.STATUS_CANCELLED:
                         throw new SalesforceException("Login request CANCELLED!", null);
@@ -219,9 +221,9 @@ public class SalesforceSession implements Service {
                         LOG.info("Logout successful");
                     } else {
                         throw new SalesforceException(
-                            String.format("Logout error, code: [%s] reason: [%s]",
-                                statusCode, reason),
-                            statusCode);
+                                String.format("Logout error, code: [%s] reason: [%s]",
+                                        statusCode, reason),
+                                statusCode);
                     }
                     break;
 
@@ -330,6 +332,7 @@ public class SalesforceSession implements Service {
 
     public static interface SalesforceSessionListener {
         void onLogin(String accessToken, String instanceUrl);
+
         void onLogout();
     }
 

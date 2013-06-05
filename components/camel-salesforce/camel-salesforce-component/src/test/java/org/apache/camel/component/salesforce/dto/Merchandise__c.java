@@ -17,8 +17,8 @@
 package org.apache.camel.component.salesforce.dto;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
-import org.codehaus.jackson.annotate.JsonProperty;
 import org.apache.camel.component.salesforce.api.dto.AbstractSObjectBase;
+import org.codehaus.jackson.annotate.JsonProperty;
 
 @XStreamAlias("Merchandise__c")
 public class Merchandise__c extends AbstractSObjectBase {

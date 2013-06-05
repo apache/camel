@@ -23,9 +23,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for OperationEnum.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p>
+ * <p/>
  * <pre>
  * &lt;simpleType name="OperationEnum">
  *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">
@@ -38,7 +38,6 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/restriction>
  * &lt;/simpleType>
  * </pre>
- * 
  */
 @XmlType(name = "OperationEnum")
 @XmlEnum
@@ -67,7 +66,7 @@ public enum OperationEnum {
     }
 
     public static OperationEnum fromValue(String v) {
-        for (OperationEnum c: OperationEnum.values()) {
+        for (OperationEnum c : OperationEnum.values()) {
             if (c.value.equals(v)) {
                 return c;
             }

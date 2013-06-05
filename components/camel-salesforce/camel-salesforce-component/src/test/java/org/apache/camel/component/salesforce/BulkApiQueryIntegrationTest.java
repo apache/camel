@@ -16,13 +16,17 @@
  */
 package org.apache.camel.component.salesforce;
 
-import org.apache.camel.component.salesforce.api.dto.bulk.*;
+import java.io.InputStream;
+import java.util.List;
+
+import org.apache.camel.component.salesforce.api.dto.bulk.BatchInfo;
+import org.apache.camel.component.salesforce.api.dto.bulk.BatchStateEnum;
+import org.apache.camel.component.salesforce.api.dto.bulk.ContentType;
+import org.apache.camel.component.salesforce.api.dto.bulk.JobInfo;
+import org.apache.camel.component.salesforce.api.dto.bulk.OperationEnum;
 import org.apache.camel.component.salesforce.dto.Merchandise__c;
 import org.junit.experimental.theories.DataPoints;
 import org.junit.experimental.theories.Theory;
-
-import java.io.InputStream;
-import java.util.List;
 
 public class BulkApiQueryIntegrationTest extends AbstractBulkApiTestBase {
 

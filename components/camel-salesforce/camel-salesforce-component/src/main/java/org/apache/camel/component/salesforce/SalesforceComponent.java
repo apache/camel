@@ -16,24 +16,24 @@
  */
 package org.apache.camel.component.salesforce;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Set;
+
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.DefaultComponent;
-import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.ServiceHelper;
-import org.eclipse.jetty.client.HttpClient;
-import org.eclipse.jetty.client.RedirectListener;
 import org.apache.camel.component.salesforce.api.SalesforceException;
 import org.apache.camel.component.salesforce.api.dto.AbstractSObjectBase;
 import org.apache.camel.component.salesforce.internal.OperationName;
 import org.apache.camel.component.salesforce.internal.SalesforceSession;
 import org.apache.camel.component.salesforce.internal.streaming.SubscriptionHelper;
+import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.ServiceHelper;
+import org.eclipse.jetty.client.HttpClient;
+import org.eclipse.jetty.client.RedirectListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.Set;
 
 /**
  * Represents the component that manages {@link SalesforceEndpoint}.
@@ -84,7 +84,7 @@ public class SalesforceComponent extends DefaultComponent {
         setProperties(copy, parameters);
 
         final SalesforceEndpoint endpoint = new SalesforceEndpoint(uri, this, copy,
-            operationName, topicName);
+                operationName, topicName);
 
         // map remaining parameters to endpoint (specifically, synchronous)
         setProperties(endpoint, parameters);
@@ -115,8 +115,8 @@ public class SalesforceComponent extends DefaultComponent {
         // add redirect listener to handle Salesforce redirects
         // this is ok to do since the RedirectListener is in the same classloader as Jetty client
         String listenerClass = RedirectListener.class.getName();
-        if (httpClient.getRegisteredListeners() == null ||
-            !httpClient.getRegisteredListeners().contains(listenerClass)) {
+        if (httpClient.getRegisteredListeners() == null
+                || !httpClient.getRegisteredListeners().contains(listenerClass)) {
             httpClient.registerListener(listenerClass);
         }
         // SalesforceSecurityListener can't be registered the same way

@@ -16,8 +16,18 @@
  */
 package org.apache.camel.component.salesforce.internal.streaming;
 
+import java.io.IOException;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CountDownLatch;
+
 import org.apache.camel.CamelException;
 import org.apache.camel.Service;
+import org.apache.camel.component.salesforce.SalesforceComponent;
+import org.apache.camel.component.salesforce.SalesforceConsumer;
+import org.apache.camel.component.salesforce.internal.SalesforceSession;
+import org.apache.camel.component.salesforce.internal.client.SalesforceSecurityListener;
 import org.cometd.bayeux.Message;
 import org.cometd.bayeux.client.ClientSessionChannel;
 import org.cometd.client.BayeuxClient;
@@ -27,22 +37,15 @@ import org.eclipse.jetty.client.ContentExchange;
 import org.eclipse.jetty.client.HttpClient;
 import org.eclipse.jetty.http.HttpHeaders;
 import org.eclipse.jetty.http.HttpSchemes;
-import org.apache.camel.component.salesforce.SalesforceComponent;
-import org.apache.camel.component.salesforce.SalesforceConsumer;
-import org.apache.camel.component.salesforce.internal.SalesforceSession;
-import org.apache.camel.component.salesforce.internal.client.SalesforceSecurityListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.CountDownLatch;
-
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 import static java.util.concurrent.TimeUnit.SECONDS;
-import static org.cometd.bayeux.Channel.*;
+import static org.cometd.bayeux.Channel.META_CONNECT;
+import static org.cometd.bayeux.Channel.META_HANDSHAKE;
+import static org.cometd.bayeux.Channel.META_SUBSCRIBE;
+import static org.cometd.bayeux.Channel.META_UNSUBSCRIBE;
 import static org.cometd.bayeux.Message.ERROR_FIELD;
 import static org.cometd.bayeux.Message.SUBSCRIPTION_FIELD;
 
@@ -128,11 +131,11 @@ public class SubscriptionHelper implements Service {
                         LOG.debug("Refreshing subscriptions to {} channels on reconnect", listenerMap.size());
                         // reconnected to Salesforce, subscribe to existing channels
                         final Map<SalesforceConsumer, ClientSessionChannel.MessageListener> map =
-                            new HashMap<SalesforceConsumer, ClientSessionChannel.MessageListener>();
+                                new HashMap<SalesforceConsumer, ClientSessionChannel.MessageListener>();
                         map.putAll(listenerMap);
                         listenerMap.clear();
                         for (Map.Entry<SalesforceConsumer, ClientSessionChannel.MessageListener> entry :
-                            map.entrySet()) {
+                                map.entrySet()) {
                             final SalesforceConsumer consumer = entry.getKey();
                             final String topicName = consumer.getTopicName();
                             try {
@@ -140,9 +143,9 @@ public class SubscriptionHelper implements Service {
                             } catch (CamelException e) {
                                 // let the consumer handle the exception
                                 consumer.handleException(
-                                    String.format("Error refreshing subscription to topic [%s]: %s",
-                                        topicName, e.getMessage()),
-                                    e);
+                                        String.format("Error refreshing subscription to topic [%s]: %s",
+                                                topicName, e.getMessage()),
+                                        e);
                             }
                         }
 
@@ -159,15 +162,15 @@ public class SubscriptionHelper implements Service {
         if (!client.waitFor(waitMs, BayeuxClient.State.CONNECTED)) {
             if (handshakeException != null) {
                 throw new CamelException(
-                    String.format("Exception during HANDSHAKE: %s", handshakeException.getMessage()),
-                    handshakeException);
+                        String.format("Exception during HANDSHAKE: %s", handshakeException.getMessage()),
+                        handshakeException);
             } else if (handshakeError != null) {
                 throw new CamelException(String.format("Error during HANDSHAKE: %s", handshakeError));
             } else if (connectError != null) {
                 throw new CamelException(String.format("Error during CONNECT: %s", connectError));
             } else {
                 throw new CamelException(
-                    String.format("Handshake request timeout after %s seconds", CONNECT_TIMEOUT));
+                        String.format("Handshake request timeout after %s seconds", CONNECT_TIMEOUT));
             }
         }
 
@@ -207,17 +210,17 @@ public class SubscriptionHelper implements Service {
                 try {
                     final boolean isHttps = HttpSchemes.HTTPS.equals(String.valueOf(exchange.getScheme()));
                     exchange.setEventListener(new SalesforceSecurityListener(
-                        httpClient.getDestination(exchange.getAddress(), isHttps),
-                        exchange, session, accessToken));
+                            httpClient.getDestination(exchange.getAddress(), isHttps),
+                            exchange, session, accessToken));
                 } catch (IOException e) {
                     throw new RuntimeException(
-                        String.format("Error adding SalesforceSecurityListener to exchange %s", e.getMessage()),
-                        e);
+                            String.format("Error adding SalesforceSecurityListener to exchange %s", e.getMessage()),
+                            e);
                 }
 
                 // add current security token obtained from session
                 exchange.addRequestHeader(HttpHeaders.AUTHORIZATION,
-                "OAuth " + accessToken);
+                        "OAuth " + accessToken);
             }
         };
 
@@ -280,10 +283,10 @@ public class SubscriptionHelper implements Service {
                     String message;
                     if (subscribeError[0] != null) {
                         message = String.format("Error subscribing to topic %s: %s",
-                            topicName, subscribeError[0]);
+                                topicName, subscribeError[0]);
                     } else {
                         message = String.format("Timeout error subscribing to topic %s after %s seconds",
-                            topicName, CHANNEL_TIMEOUT);
+                                topicName, CHANNEL_TIMEOUT);
                     }
                     throw new CamelException(message);
                 }
@@ -347,10 +350,10 @@ public class SubscriptionHelper implements Service {
                         String message;
                         if (unsubscribeError[0] != null) {
                             message = String.format("Error unsubscribing from topic %s: %s",
-                                topicName, unsubscribeError[0]);
+                                    topicName, unsubscribeError[0]);
                         } else {
                             message = String.format("Timeout error unsubscribing from topic %s after %s seconds",
-                                topicName, CHANNEL_TIMEOUT);
+                                    topicName, CHANNEL_TIMEOUT);
                         }
                         throw new CamelException(message);
                     }

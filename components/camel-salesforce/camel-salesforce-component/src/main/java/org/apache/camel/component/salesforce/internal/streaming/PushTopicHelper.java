@@ -16,9 +16,11 @@
  */
 package org.apache.camel.component.salesforce.internal.streaming;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.CamelException;
-import org.codehaus.jackson.map.ObjectMapper;
-import org.eclipse.jetty.http.HttpStatus;
 import org.apache.camel.component.salesforce.SalesforceEndpointConfig;
 import org.apache.camel.component.salesforce.api.SalesforceException;
 import org.apache.camel.component.salesforce.api.dto.CreateSObjectResult;
@@ -26,12 +28,10 @@ import org.apache.camel.component.salesforce.internal.client.RestClient;
 import org.apache.camel.component.salesforce.internal.client.SyncResponseCallback;
 import org.apache.camel.component.salesforce.internal.dto.PushTopic;
 import org.apache.camel.component.salesforce.internal.dto.QueryRecordsPushTopic;
+import org.codehaus.jackson.map.ObjectMapper;
+import org.eclipse.jetty.http.HttpStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.util.concurrent.TimeUnit;
 
 public class PushTopicHelper {
     private static final Logger LOG = LoggerFactory.getLogger(PushTopicHelper.class);
@@ -56,9 +56,9 @@ public class PushTopicHelper {
         try {
             // use SOQL to lookup Topic, since Name is not an external ID!!!
             restClient.query("SELECT Id, Name, Query, ApiVersion, IsActive, " +
-                "NotifyForFields, NotifyForOperations, Description " +
-                "FROM PushTopic WHERE Name = '" + topicName + "'",
-                callback);
+                    "NotifyForFields, NotifyForOperations, Description " +
+                    "FROM PushTopic WHERE Name = '" + topicName + "'",
+                    callback);
 
             if (!callback.await(API_TIMEOUT, TimeUnit.SECONDS)) {
                 throw new SalesforceException("API call timeout!", null);
@@ -67,7 +67,7 @@ public class PushTopicHelper {
                 throw callback.getException();
             }
             QueryRecordsPushTopic records = objectMapper.readValue(callback.getResponse(),
-                QueryRecordsPushTopic.class);
+                    QueryRecordsPushTopic.class);
             if (records.getTotalSize() == 1) {
 
                 PushTopic topic = records.getRecords().get(0);
@@ -75,11 +75,11 @@ public class PushTopicHelper {
 
                 // check if we need to update topic query, notifyForFields or notifyForOperations
                 if (!query.equals(topic.getQuery()) ||
-                    (config.getNotifyForFields() != null &&
-                        !config.getNotifyForFields().equals(topic.getNotifyForFields())) ||
-                    (config.getNotifyForOperations() != null &&
-                        !config.getNotifyForOperations().equals(topic.getNotifyForOperations()))
-                    ) {
+                        (config.getNotifyForFields() != null &&
+                                !config.getNotifyForFields().equals(topic.getNotifyForFields())) ||
+                        (config.getNotifyForOperations() != null &&
+                                !config.getNotifyForOperations().equals(topic.getNotifyForOperations()))
+                        ) {
 
                     if (!config.isUpdateTopic()) {
                         String msg = "Query doesn't match existing Topic and updateTopic is set to false";
@@ -96,17 +96,17 @@ public class PushTopicHelper {
 
         } catch (SalesforceException e) {
             throw new CamelException(
-                String.format("Error retrieving Topic %s: %s", topicName, e.getMessage()),
-                e);
+                    String.format("Error retrieving Topic %s: %s", topicName, e.getMessage()),
+                    e);
         } catch (IOException e) {
             throw new CamelException(
-                String.format("Un-marshaling error retrieving Topic %s: %s", topicName, e.getMessage()),
-                e);
+                    String.format("Un-marshaling error retrieving Topic %s: %s", topicName, e.getMessage()),
+                    e);
         } catch (InterruptedException e) {
             Thread.currentThread().interrupt();
             throw new CamelException(
-                String.format("Un-marshaling error retrieving Topic %s: %s", topicName, e.getMessage()),
-                e);
+                    String.format("Un-marshaling error retrieving Topic %s: %s", topicName, e.getMessage()),
+                    e);
         } finally {
             // close stream to close HttpConnection
             if (callback.getResponse() != null) {
@@ -132,7 +132,7 @@ public class PushTopicHelper {
         final SyncResponseCallback callback = new SyncResponseCallback();
         try {
             restClient.createSObject(PUSH_TOPIC_OBJECT_NAME,
-                new ByteArrayInputStream(objectMapper.writeValueAsBytes(topic)), callback);
+                    new ByteArrayInputStream(objectMapper.writeValueAsBytes(topic)), callback);
 
             if (!callback.await(API_TIMEOUT, TimeUnit.SECONDS)) {
                 throw new SalesforceException("API call timeout!", null);
@@ -144,23 +144,23 @@ public class PushTopicHelper {
             CreateSObjectResult result = objectMapper.readValue(callback.getResponse(), CreateSObjectResult.class);
             if (!result.getSuccess()) {
                 final SalesforceException salesforceException = new SalesforceException(
-                    result.getErrors(), HttpStatus.BAD_REQUEST_400);
+                        result.getErrors(), HttpStatus.BAD_REQUEST_400);
                 throw new CamelException(
-                    String.format("Error creating Topic %s: %s", topicName, result.getErrors()),
-                    salesforceException);
+                        String.format("Error creating Topic %s: %s", topicName, result.getErrors()),
+                        salesforceException);
             }
         } catch (SalesforceException e) {
             throw new CamelException(
-                String.format("Error creating Topic %s: %s", topicName, e.getMessage()),
-                e);
+                    String.format("Error creating Topic %s: %s", topicName, e.getMessage()),
+                    e);
         } catch (IOException e) {
             throw new CamelException(
-                String.format("Un-marshaling error creating Topic %s: %s", topicName, e.getMessage()),
-                e);
+                    String.format("Un-marshaling error creating Topic %s: %s", topicName, e.getMessage()),
+                    e);
         } catch (InterruptedException e) {
             throw new CamelException(
-                String.format("Un-marshaling error creating Topic %s: %s", topicName, e.getMessage()),
-                e);
+                    String.format("Un-marshaling error creating Topic %s: %s", topicName, e.getMessage()),
+                    e);
         } finally {
             if (callback.getResponse() != null) {
                 try {
@@ -185,8 +185,8 @@ public class PushTopicHelper {
             topic.setNotifyForOperations(config.getNotifyForOperations());
 
             restClient.updateSObject("PushTopic", topicId,
-                new ByteArrayInputStream(objectMapper.writeValueAsBytes(topic)),
-                callback);
+                    new ByteArrayInputStream(objectMapper.writeValueAsBytes(topic)),
+                    callback);
 
             if (!callback.await(API_TIMEOUT, TimeUnit.SECONDS)) {
                 throw new SalesforceException("API call timeout!", null);
@@ -197,18 +197,18 @@ public class PushTopicHelper {
 
         } catch (SalesforceException e) {
             throw new CamelException(
-                String.format("Error updating topic %s with query [%s] : %s", topicName, query, e.getMessage()),
-                e);
+                    String.format("Error updating topic %s with query [%s] : %s", topicName, query, e.getMessage()),
+                    e);
         } catch (InterruptedException e) {
             // reset interrupt status
             Thread.currentThread().interrupt();
             throw new CamelException(
-                String.format("Error updating topic %s with query [%s] : %s", topicName, query, e.getMessage()),
-                e);
+                    String.format("Error updating topic %s with query [%s] : %s", topicName, query, e.getMessage()),
+                    e);
         } catch (IOException e) {
             throw new CamelException(
-                String.format("Error updating topic %s with query [%s] : %s", topicName, query, e.getMessage()),
-                e);
+                    String.format("Error updating topic %s with query [%s] : %s", topicName, query, e.getMessage()),
+                    e);
         } finally {
             if (callback.getResponse() != null) {
                 try {

@@ -16,6 +16,13 @@
  */
 package org.apache.camel.component.salesforce.internal.processor;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStreamWriter;
+import java.io.Writer;
+
 import com.thoughtworks.xstream.XStream;
 import com.thoughtworks.xstream.XStreamException;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
@@ -27,13 +34,18 @@ import com.thoughtworks.xstream.mapper.CannotResolveClassException;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
-import org.eclipse.jetty.util.StringUtil;
 import org.apache.camel.component.salesforce.SalesforceEndpoint;
 import org.apache.camel.component.salesforce.api.JodaTimeConverter;
 import org.apache.camel.component.salesforce.api.SalesforceException;
-import org.apache.camel.component.salesforce.api.dto.*;
-
-import java.io.*;
+import org.apache.camel.component.salesforce.api.dto.AbstractSObjectBase;
+import org.apache.camel.component.salesforce.api.dto.CreateSObjectResult;
+import org.apache.camel.component.salesforce.api.dto.GlobalObjects;
+import org.apache.camel.component.salesforce.api.dto.RestResources;
+import org.apache.camel.component.salesforce.api.dto.SObjectBasicInfo;
+import org.apache.camel.component.salesforce.api.dto.SObjectDescription;
+import org.apache.camel.component.salesforce.api.dto.SearchResults;
+import org.apache.camel.component.salesforce.api.dto.Versions;
+import org.eclipse.jetty.util.StringUtil;
 
 import static org.apache.camel.component.salesforce.SalesforceEndpointConfig.SOBJECT_NAME;
 
@@ -44,22 +56,22 @@ public class XmlRestProcessor extends AbstractRestProcessor {
     // not very efficient when both JSON and XML are used together with a single Thread pool
     // but this will do for now
     private static ThreadLocal<XStream> xStream =
-        new ThreadLocal<XStream>() {
-            @Override
-            protected XStream initialValue() {
-                // use NoNameCoder to avoid escaping __ in custom field names
-                // and CompactWriter to avoid pretty printing
-                XStream result = new XStream(new XppDriver(new NoNameCoder()) {
-                    @Override
-                    public HierarchicalStreamWriter createWriter(Writer out) {
-                        return new CompactWriter(out, getNameCoder());
-                    }
+            new ThreadLocal<XStream>() {
+                @Override
+                protected XStream initialValue() {
+                    // use NoNameCoder to avoid escaping __ in custom field names
+                    // and CompactWriter to avoid pretty printing
+                    XStream result = new XStream(new XppDriver(new NoNameCoder()) {
+                        @Override
+                        public HierarchicalStreamWriter createWriter(Writer out) {
+                            return new CompactWriter(out, getNameCoder());
+                        }
 
-                });
-                result.registerConverter(new JodaTimeConverter());
-                return result;
-            }
-        };
+                    });
+                    result.registerConverter(new JodaTimeConverter());
+                    return result;
+                }
+            };
 
     private static final String RESPONSE_ALIAS = XmlRestProcessor.class.getName() + ".responseAlias";
 
@@ -91,7 +103,7 @@ public class XmlRestProcessor extends AbstractRestProcessor {
 
                 // need to add alias for Salesforce XML that uses SObject name as root element
                 exchange.setProperty(RESPONSE_ALIAS,
-                    getParameter(SOBJECT_NAME, exchange, USE_BODY, NOT_OPTIONAL));
+                        getParameter(SOBJECT_NAME, exchange, USE_BODY, NOT_OPTIONAL));
                 break;
 
             case GET_DESCRIPTION:
@@ -100,13 +112,13 @@ public class XmlRestProcessor extends AbstractRestProcessor {
 
                 // need to add alias for Salesforce XML that uses SObject name as root element
                 exchange.setProperty(RESPONSE_ALIAS,
-                    getParameter(SOBJECT_NAME, exchange, USE_BODY, NOT_OPTIONAL));
+                        getParameter(SOBJECT_NAME, exchange, USE_BODY, NOT_OPTIONAL));
                 break;
 
             case GET_SOBJECT:
                 // need to add alias for Salesforce XML that uses SObject name as root element
                 exchange.setProperty(RESPONSE_ALIAS,
-                    getParameter(SOBJECT_NAME, exchange, IGNORE_BODY, NOT_OPTIONAL));
+                        getParameter(SOBJECT_NAME, exchange, IGNORE_BODY, NOT_OPTIONAL));
                 break;
 
             case CREATE_SOBJECT:
@@ -117,7 +129,7 @@ public class XmlRestProcessor extends AbstractRestProcessor {
             case GET_SOBJECT_WITH_ID:
                 // need to add alias for Salesforce XML that uses SObject name as root element
                 exchange.setProperty(RESPONSE_ALIAS,
-                    getParameter(SOBJECT_NAME, exchange, IGNORE_BODY, NOT_OPTIONAL));
+                        getParameter(SOBJECT_NAME, exchange, IGNORE_BODY, NOT_OPTIONAL));
                 break;
 
             case UPSERT_SOBJECT:
@@ -129,7 +141,7 @@ public class XmlRestProcessor extends AbstractRestProcessor {
             case QUERY_MORE:
                 // need to add alias for Salesforce XML that uses SObject name as root element
                 exchange.setProperty(RESPONSE_ALIAS,
-                    "QueryResult");
+                        "QueryResult");
                 break;
 
             case SEARCH:
@@ -162,7 +174,7 @@ public class XmlRestProcessor extends AbstractRestProcessor {
                     final String body = in.getBody(String.class);
                     if (null == body) {
                         String msg = "Unsupported request message body " +
-                            (in.getBody() == null ? null : in.getBody().getClass());
+                                (in.getBody() == null ? null : in.getBody().getClass());
                         throw new SalesforceException(msg, null);
                     } else {
                         request = new ByteArrayInputStream(body.getBytes(StringUtil.__UTF8_CHARSET));

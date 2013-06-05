@@ -16,11 +16,11 @@
  */
 package org.apache.camel.component.salesforce.internal.client;
 
-import org.apache.camel.component.salesforce.api.SalesforceException;
-
 import java.io.InputStream;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
+
+import org.apache.camel.component.salesforce.api.SalesforceException;
 
 /**
  * Thin wrapper to handle callbacks for {@link RestClient.ResponseCallback} and allow waiting for results

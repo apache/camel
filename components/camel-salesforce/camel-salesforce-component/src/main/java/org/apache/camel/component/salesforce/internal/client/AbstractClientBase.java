@@ -16,7 +16,13 @@
  */
 package org.apache.camel.component.salesforce.internal.client;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+
 import org.apache.camel.Service;
+import org.apache.camel.component.salesforce.api.SalesforceException;
+import org.apache.camel.component.salesforce.internal.SalesforceSession;
 import org.eclipse.jetty.client.ContentExchange;
 import org.eclipse.jetty.client.HttpClient;
 import org.eclipse.jetty.client.HttpEventListenerWrapper;
@@ -25,14 +31,8 @@ import org.eclipse.jetty.http.HttpSchemes;
 import org.eclipse.jetty.http.HttpStatus;
 import org.eclipse.jetty.io.Buffer;
 import org.eclipse.jetty.util.StringUtil;
-import org.apache.camel.component.salesforce.api.SalesforceException;
-import org.apache.camel.component.salesforce.internal.SalesforceSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.InputStream;
 
 public abstract class AbstractClientBase implements SalesforceSession.SalesforceSessionListener, Service {
 
@@ -107,13 +107,13 @@ public abstract class AbstractClientBase implements SalesforceSession.Salesforce
         try {
             final boolean isHttps = HttpSchemes.HTTPS.equals(String.valueOf(request.getScheme()));
             request.setEventListener(new SalesforceSecurityListener(
-                httpClient.getDestination(request.getAddress(), isHttps),
-                request, session, accessToken));
+                    httpClient.getDestination(request.getAddress(), isHttps),
+                    request, session, accessToken));
         } catch (IOException e) {
             // propagate exception
             callback.onResponse(null, new SalesforceException(
-                String.format("Error registering security listener: %s", e.getMessage()),
-                e));
+                    String.format("Error registering security listener: %s", e.getMessage()),
+                    e));
         }
 
         // use HttpEventListener for lifecycle events
@@ -125,21 +125,21 @@ public abstract class AbstractClientBase implements SalesforceSession.Salesforce
             public void onConnectionFailed(Throwable ex) {
                 super.onConnectionFailed(ex);
                 callback.onResponse(null,
-                    new SalesforceException("Connection error: " + ex.getMessage(), ex));
+                        new SalesforceException("Connection error: " + ex.getMessage(), ex));
             }
 
             @Override
             public void onException(Throwable ex) {
                 super.onException(ex);
                 callback.onResponse(null,
-                    new SalesforceException("Unexpected exception: " + ex.getMessage(), ex));
+                        new SalesforceException("Unexpected exception: " + ex.getMessage(), ex));
             }
 
             @Override
             public void onExpire() {
                 super.onExpire();
                 callback.onResponse(null,
-                    new SalesforceException("Request expired", null));
+                        new SalesforceException("Request expired", null));
             }
 
             @Override
@@ -149,7 +149,7 @@ public abstract class AbstractClientBase implements SalesforceSession.Salesforce
                 final int responseStatus = request.getResponseStatus();
                 if (responseStatus < HttpStatus.OK_200 || responseStatus >= HttpStatus.MULTIPLE_CHOICES_300) {
                     final String msg = String.format("Error {%s:%s} executing {%s:%s}",
-                        responseStatus, reason, request.getMethod(), request.getRequestURI());
+                            responseStatus, reason, request.getMethod(), request.getRequestURI());
                     final SalesforceException exception = new SalesforceException(msg, createRestException(request));
                     exception.setStatusCode(responseStatus);
                     callback.onResponse(null, exception);

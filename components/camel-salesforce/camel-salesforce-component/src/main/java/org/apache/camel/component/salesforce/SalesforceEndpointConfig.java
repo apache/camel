@@ -16,22 +16,22 @@
  */
 package org.apache.camel.component.salesforce;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.camel.RuntimeCamelException;
-import org.eclipse.jetty.client.HttpClient;
 import org.apache.camel.component.salesforce.api.dto.bulk.ContentType;
 import org.apache.camel.component.salesforce.api.dto.bulk.OperationEnum;
 import org.apache.camel.component.salesforce.internal.PayloadFormat;
 import org.apache.camel.component.salesforce.internal.dto.NotifyForFieldsEnum;
 import org.apache.camel.component.salesforce.internal.dto.NotifyForOperationsEnum;
-
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
+import org.eclipse.jetty.client.HttpClient;
 
 public class SalesforceEndpointConfig implements Cloneable {
 
     // default API version
-    static final String DEFAULT_VERSION = "27.0";
+    public static final String DEFAULT_VERSION = "27.0";
 
     // general parameter
     public static final String API_VERSION = "apiVersion";

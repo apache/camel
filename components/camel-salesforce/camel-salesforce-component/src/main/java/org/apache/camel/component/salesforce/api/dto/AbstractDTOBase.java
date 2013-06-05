@@ -16,11 +16,11 @@
  */
 package org.apache.camel.component.salesforce.api.dto;
 
-import org.codehaus.jackson.map.ObjectMapper;
-import org.codehaus.jackson.map.annotate.JsonSerialize;
-
 import java.io.IOException;
 import java.io.StringWriter;
+
+import org.codehaus.jackson.map.ObjectMapper;
+import org.codehaus.jackson.map.annotate.JsonSerialize;
 
 // disable null values in json output
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)

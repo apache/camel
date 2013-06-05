@@ -16,12 +16,12 @@
  */
 package org.apache.camel.component.salesforce.api;
 
-import org.apache.camel.CamelException;
-import org.apache.camel.component.salesforce.api.dto.RestError;
-
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
+
+import org.apache.camel.CamelException;
+import org.apache.camel.component.salesforce.api.dto.RestError;
 
 public class SalesforceException extends CamelException {
 

@@ -16,7 +16,17 @@
  */
 package org.apache.camel.component.salesforce.internal.client;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.util.List;
+
 import com.thoughtworks.xstream.XStream;
+import org.apache.camel.component.salesforce.api.SalesforceException;
+import org.apache.camel.component.salesforce.api.dto.RestError;
+import org.apache.camel.component.salesforce.internal.SalesforceSession;
+import org.apache.camel.component.salesforce.internal.dto.RestErrors;
 import org.codehaus.jackson.map.ObjectMapper;
 import org.codehaus.jackson.type.TypeReference;
 import org.eclipse.jetty.client.ContentExchange;
@@ -25,16 +35,6 @@ import org.eclipse.jetty.client.HttpExchange;
 import org.eclipse.jetty.http.HttpHeaders;
 import org.eclipse.jetty.http.HttpMethods;
 import org.eclipse.jetty.util.StringUtil;
-import org.apache.camel.component.salesforce.api.SalesforceException;
-import org.apache.camel.component.salesforce.api.dto.RestError;
-import org.apache.camel.component.salesforce.internal.SalesforceSession;
-import org.apache.camel.component.salesforce.internal.dto.RestErrors;
-
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.util.List;
 
 public class DefaultRestClient extends AbstractClientBase implements RestClient {
 
@@ -75,7 +75,7 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
         try {
             if ("json".equals(format)) {
                 List<RestError> restErrors = objectMapper.readValue(
-                    httpExchange.getResponseContent(), new TypeReference<List<RestError>>() {
+                        httpExchange.getResponseContent(), new TypeReference<List<RestError>>() {
                 });
                 return new SalesforceException(restErrors, httpExchange.getResponseStatus());
             } else {
@@ -211,7 +211,7 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
     public void getSObjectWithId(String sObjectName, String fieldName, String fieldValue,
                                  ResponseCallback callback) {
         final ContentExchange get = getContentExchange(HttpMethods.GET,
-            sobjectsExternalIdUrl(sObjectName, fieldName, fieldValue));
+                sobjectsExternalIdUrl(sObjectName, fieldName, fieldValue));
 
         // requires authorization token
         setAccessToken(get);
@@ -223,7 +223,7 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
     public void upsertSObject(String sObjectName, String fieldName, String fieldValue, InputStream sObject,
                               ResponseCallback callback) {
         final ContentExchange patch = getContentExchange("PATCH",
-            sobjectsExternalIdUrl(sObjectName, fieldName, fieldValue));
+                sobjectsExternalIdUrl(sObjectName, fieldName, fieldValue));
 
         // requires authorization token
         setAccessToken(patch);
@@ -240,7 +240,7 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
     public void deleteSObjectWithId(String sObjectName, String fieldName, String fieldValue,
                                     ResponseCallback callback) {
         final ContentExchange delete = getContentExchange(HttpMethods.DELETE,
-            sobjectsExternalIdUrl(sObjectName, fieldName, fieldValue));
+                sobjectsExternalIdUrl(sObjectName, fieldName, fieldValue));
 
         // requires authorization token
         setAccessToken(delete);
@@ -251,7 +251,7 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
     @Override
     public void getBlobField(String sObjectName, String id, String blobFieldName, ResponseCallback callback) {
         final ContentExchange get = getContentExchange(HttpMethods.GET,
-            sobjectsUrl(sObjectName + "/" + id +"/" + blobFieldName));
+                sobjectsUrl(sObjectName + "/" + id + "/" + blobFieldName));
         // TODO this doesn't seem to be required, the response is always the content binary stream
         //get.setRequestHeader(HttpHeaders.ACCEPT_ENCODING, "base64");
 

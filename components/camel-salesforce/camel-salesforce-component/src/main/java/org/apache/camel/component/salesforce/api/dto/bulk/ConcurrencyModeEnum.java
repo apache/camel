@@ -23,9 +23,9 @@ import javax.xml.bind.annotation.XmlType;
 
 /**
  * <p>Java class for ConcurrencyModeEnum.
- * 
+ * <p/>
  * <p>The following schema fragment specifies the expected content contained within this class.
- * <p>
+ * <p/>
  * <pre>
  * &lt;simpleType name="ConcurrencyModeEnum">
  *   &lt;restriction base="{http://www.w3.org/2001/XMLSchema}string">
@@ -34,7 +34,6 @@ import javax.xml.bind.annotation.XmlType;
  *   &lt;/restriction>
  * &lt;/simpleType>
  * </pre>
- * 
  */
 @XmlType(name = "ConcurrencyModeEnum")
 @XmlEnum
@@ -55,7 +54,7 @@ public enum ConcurrencyModeEnum {
     }
 
     public static ConcurrencyModeEnum fromValue(String v) {
-        for (ConcurrencyModeEnum c: ConcurrencyModeEnum.values()) {
+        for (ConcurrencyModeEnum c : ConcurrencyModeEnum.values()) {
             if (c.value.equals(v)) {
                 return c;
             }

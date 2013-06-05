@@ -16,15 +16,15 @@
  */
 package org.apache.camel.maven;
 
-import org.apache.maven.plugin.logging.SystemStreamLog;
-import org.junit.Assert;
-import org.junit.Test;
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
+
+import org.apache.maven.plugin.logging.SystemStreamLog;
+import org.junit.Assert;
+import org.junit.Test;
 
 public class CamelSalesforceMojoIntegrationTest {
 
@@ -71,15 +71,15 @@ public class CamelSalesforceMojoIntegrationTest {
         Properties properties = new Properties();
         InputStream stream = new FileInputStream(TEST_LOGIN_PROPERTIES);
         if (null == stream) {
-            throw new IllegalAccessException("Create a properties file named " +
-                TEST_LOGIN_PROPERTIES + " with clientId, clientSecret, userName, password and a testId" +
-                " for a Salesforce account with the Merchandise object from Salesforce Guides.");
+            throw new IllegalAccessException("Create a properties file named "
+                    + TEST_LOGIN_PROPERTIES + " with clientId, clientSecret, userName, password and a testId"
+                    + " for a Salesforce account with the Merchandise object from Salesforce Guides.");
         }
         properties.load(stream);
-        mojo.clientId= properties.getProperty("clientId");
-        mojo.clientSecret= properties.getProperty("clientSecret");
-        mojo.userName= properties.getProperty("userName");
-        mojo.password= properties.getProperty("password");
+        mojo.clientId = properties.getProperty("clientId");
+        mojo.clientSecret = properties.getProperty("clientSecret");
+        mojo.userName = properties.getProperty("userName");
+        mojo.password = properties.getProperty("password");
     }
 
 }

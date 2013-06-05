@@ -16,10 +16,10 @@
  */
 package org.apache.camel.component.salesforce.dto;
 
+import java.util.List;
+
 import com.thoughtworks.xstream.annotations.XStreamImplicit;
 import org.apache.camel.component.salesforce.api.dto.AbstractQueryRecordsBase;
-
-import java.util.List;
 
 public class QueryRecordsLine_Item__c extends AbstractQueryRecordsBase {
     @XStreamImplicit

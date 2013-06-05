@@ -16,6 +16,29 @@
  */
 package org.apache.camel.component.salesforce.internal.client;
 
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
+import java.io.InputStream;
+import java.util.Arrays;
+import java.util.Collections;
+import javax.xml.bind.JAXBContext;
+import javax.xml.bind.JAXBElement;
+import javax.xml.bind.JAXBException;
+import javax.xml.bind.Marshaller;
+import javax.xml.bind.Unmarshaller;
+import javax.xml.transform.stream.StreamSource;
+
+import org.apache.camel.component.salesforce.api.SalesforceException;
+import org.apache.camel.component.salesforce.api.dto.RestError;
+import org.apache.camel.component.salesforce.api.dto.bulk.BatchInfo;
+import org.apache.camel.component.salesforce.api.dto.bulk.BatchInfoList;
+import org.apache.camel.component.salesforce.api.dto.bulk.ContentType;
+import org.apache.camel.component.salesforce.api.dto.bulk.Error;
+import org.apache.camel.component.salesforce.api.dto.bulk.JobInfo;
+import org.apache.camel.component.salesforce.api.dto.bulk.JobStateEnum;
+import org.apache.camel.component.salesforce.api.dto.bulk.ObjectFactory;
+import org.apache.camel.component.salesforce.api.dto.bulk.QueryResultList;
+import org.apache.camel.component.salesforce.internal.SalesforceSession;
 import org.eclipse.jetty.client.ContentExchange;
 import org.eclipse.jetty.client.HttpClient;
 import org.eclipse.jetty.client.HttpExchange;
@@ -23,19 +46,6 @@ import org.eclipse.jetty.http.HttpHeaders;
 import org.eclipse.jetty.http.HttpMethods;
 import org.eclipse.jetty.io.ByteArrayBuffer;
 import org.eclipse.jetty.util.StringUtil;
-import org.apache.camel.component.salesforce.api.SalesforceException;
-import org.apache.camel.component.salesforce.api.dto.RestError;
-import org.apache.camel.component.salesforce.api.dto.bulk.*;
-import org.apache.camel.component.salesforce.api.dto.bulk.Error;
-import org.apache.camel.component.salesforce.internal.SalesforceSession;
-
-import javax.xml.bind.*;
-import javax.xml.transform.stream.StreamSource;
-import java.io.ByteArrayInputStream;
-import java.io.ByteArrayOutputStream;
-import java.io.InputStream;
-import java.util.Arrays;
-import java.util.Collections;
 
 public class DefaultBulkApiClient extends AbstractClientBase implements BulkApiClient {
 
@@ -330,7 +340,7 @@ public class DefaultBulkApiClient extends AbstractClientBase implements BulkApiC
                     ex = e;
                 }
                 callback.onResponse(value != null ? Collections.unmodifiableList(value.getResult()) : null,
-                    ex);
+                        ex);
             }
         });
 
@@ -401,7 +411,7 @@ public class DefaultBulkApiClient extends AbstractClientBase implements BulkApiC
         // this must be of type Error
         try {
             final Error error = unmarshalResponse(new ByteArrayInputStream(request.getResponseContentBytes()),
-                request, Error.class);
+                    request, Error.class);
 
             final RestError restError = new RestError();
             restError.setErrorCode(error.getExceptionCode());
@@ -415,26 +425,26 @@ public class DefaultBulkApiClient extends AbstractClientBase implements BulkApiC
     }
 
     private <T> T unmarshalResponse(InputStream response, ContentExchange request, Class<T> resultClass)
-        throws SalesforceException {
+            throws SalesforceException {
         try {
             Unmarshaller unmarshaller = context.createUnmarshaller();
             JAXBElement<T> result = unmarshaller.unmarshal(new StreamSource(response), resultClass);
             return result.getValue();
         } catch (JAXBException e) {
             throw new SalesforceException(
-                String.format("Error unmarshaling response {%s:%s} : %s",
-                    request.getMethod(), request.getRequestURI(), e.getMessage()),
-                e);
+                    String.format("Error unmarshaling response {%s:%s} : %s",
+                            request.getMethod(), request.getRequestURI(), e.getMessage()),
+                    e);
         } catch (IllegalArgumentException e) {
             throw new SalesforceException(
-                String.format("Error unmarshaling response for {%s:%s} : %s",
-                    request.getMethod(), request.getRequestURI(), e.getMessage()),
-                e);
+                    String.format("Error unmarshaling response for {%s:%s} : %s",
+                            request.getMethod(), request.getRequestURI(), e.getMessage()),
+                    e);
         }
     }
 
     private void marshalRequest(Object input, ContentExchange request, String contentType)
-        throws SalesforceException {
+            throws SalesforceException {
         try {
             Marshaller marshaller = context.createMarshaller();
             ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
@@ -443,14 +453,14 @@ public class DefaultBulkApiClient extends AbstractClientBase implements BulkApiC
             request.setRequestContentType(contentType);
         } catch (JAXBException e) {
             throw new SalesforceException(
-                String.format("Error marshaling request for {%s:%s} : %s",
-                    request.getMethod(), request.getRequestURI(), e.getMessage()),
-                e);
+                    String.format("Error marshaling request for {%s:%s} : %s",
+                            request.getMethod(), request.getRequestURI(), e.getMessage()),
+                    e);
         } catch (IllegalArgumentException e) {
             throw new SalesforceException(
-                String.format("Error marshaling request for {%s:%s} : %s",
-                    request.getMethod(), request.getRequestURI(), e.getMessage()),
-                e);
+                    String.format("Error marshaling request for {%s:%s} : %s",
+                            request.getMethod(), request.getRequestURI(), e.getMessage()),
+                    e);
         }
     }
 

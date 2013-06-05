@@ -18,8 +18,6 @@ package org.apache.camel.component.salesforce;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
-import org.apache.camel.impl.DefaultAsyncProducer;
-import org.apache.camel.util.ServiceHelper;
 import org.apache.camel.component.salesforce.api.SalesforceException;
 import org.apache.camel.component.salesforce.internal.OperationName;
 import org.apache.camel.component.salesforce.internal.PayloadFormat;
@@ -27,6 +25,8 @@ import org.apache.camel.component.salesforce.internal.processor.BulkApiProcessor
 import org.apache.camel.component.salesforce.internal.processor.JsonRestProcessor;
 import org.apache.camel.component.salesforce.internal.processor.SalesforceProcessor;
 import org.apache.camel.component.salesforce.internal.processor.XmlRestProcessor;
+import org.apache.camel.impl.DefaultAsyncProducer;
+import org.apache.camel.util.ServiceHelper;
 
 /**
  * The Salesforce producer.
@@ -57,29 +57,28 @@ public class SalesforceProducer extends DefaultAsyncProducer {
 
     private boolean isBulkOperation(OperationName operationName) {
         switch (operationName) {
-            case CREATE_JOB:
-            case GET_JOB:
-            case CLOSE_JOB:
-            case ABORT_JOB:
-            case CREATE_BATCH:
-            case GET_BATCH:
-            case GET_ALL_BATCHES:
-            case GET_REQUEST:
-            case GET_RESULTS:
-            case CREATE_BATCH_QUERY:
-            case GET_QUERY_RESULT_IDS:
-            case GET_QUERY_RESULT:
-                return true;
-
-            default:
-                return false;
+        case CREATE_JOB:
+        case GET_JOB:
+        case CLOSE_JOB:
+        case ABORT_JOB:
+        case CREATE_BATCH:
+        case GET_BATCH:
+        case GET_ALL_BATCHES:
+        case GET_REQUEST:
+        case GET_RESULTS:
+        case CREATE_BATCH_QUERY:
+        case GET_QUERY_RESULT_IDS:
+        case GET_QUERY_RESULT:
+            return true;
+        default:
+            return false;
         }
     }
 
     @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
         log.debug("Processing {}",
-            ((SalesforceEndpoint) getEndpoint()).getOperationName());
+                ((SalesforceEndpoint) getEndpoint()).getOperationName());
         return processor.process(exchange, callback);
     }
 

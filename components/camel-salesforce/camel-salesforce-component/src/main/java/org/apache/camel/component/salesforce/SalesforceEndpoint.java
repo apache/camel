@@ -19,9 +19,9 @@ package org.apache.camel.component.salesforce;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.component.salesforce.internal.OperationName;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.impl.SynchronousDelegateProducer;
-import org.apache.camel.component.salesforce.internal.OperationName;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -63,11 +63,11 @@ public class SalesforceEndpoint extends DefaultEndpoint {
         // consumer requires a topicName, operation name must be the invalid topic name
         if (topicName == null) {
             throw new IllegalArgumentException(String.format("Invalid topic name %s, matches a producer operation name",
-                operationName.value()));
+                    operationName.value()));
         }
 
         return new SalesforceConsumer(this, processor,
-            getComponent().getSubscriptionHelper());
+                getComponent().getSubscriptionHelper());
     }
 
     @Override

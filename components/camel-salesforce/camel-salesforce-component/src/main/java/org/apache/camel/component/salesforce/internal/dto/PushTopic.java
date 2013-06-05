@@ -18,9 +18,9 @@ package org.apache.camel.component.salesforce.internal.dto;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamConverter;
-import org.codehaus.jackson.annotate.JsonProperty;
 import org.apache.camel.component.salesforce.api.PicklistEnumConverter;
 import org.apache.camel.component.salesforce.api.dto.AbstractSObjectBase;
+import org.codehaus.jackson.annotate.JsonProperty;
 
 /**
  * Salesforce DTO for SObject PushTopic

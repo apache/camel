@@ -37,8 +37,7 @@ public class StreamingApiIntegrationTest extends AbstractSalesforceTestBase {
 
         Merchandise__c merchandise = new Merchandise__c();
         merchandise.setName("TestNotification");
-        merchandise.setDescription__c("Merchandise for testing Streaming API updated on " +
-            new DateTime().toString());
+        merchandise.setDescription__c("Merchandise for testing Streaming API updated on " + new DateTime().toString());
         merchandise.setPrice__c(9.99);
         merchandise.setTotal_Inventory__c(1000.0);
         CreateSObjectResult result = template().requestBody(
@@ -80,10 +79,9 @@ public class StreamingApiIntegrationTest extends AbstractSalesforceTestBase {
             public void configure() throws Exception {
 
                 // test topic subscription
-                from("salesforce:CamelTestTopic?notifyForFields=ALL&notifyForOperations=ALL&" +
-//                    "sObjectClass=org.apache.camel.component.salesforce.dto.Merchandise__c&" +
-                    "sObjectName=Merchandise__c&" +
-                    "updateTopic=true&sObjectQuery=SELECT Id, Name FROM Merchandise__c").
+                from("salesforce:CamelTestTopic?notifyForFields=ALL&notifyForOperations=ALL&"
+                    + "sObjectName=Merchandise__c&"
+                    + "updateTopic=true&sObjectQuery=SELECT Id, Name FROM Merchandise__c").
                     to("mock:CamelTestTopic");
 
                 // route for creating test record
@@ -92,8 +90,8 @@ public class StreamingApiIntegrationTest extends AbstractSalesforceTestBase {
 
                 // route for finding test topic
                 from("direct:query").
-                    to("salesforce:query?sObjectQuery=SELECT Id FROM PushTopic WHERE Name = 'CamelTestTopic'&" +
-                        "sObjectClass=org.apache.camel.component.salesforce.internal.dto.QueryRecordsPushTopic");
+                    to("salesforce:query?sObjectQuery=SELECT Id FROM PushTopic WHERE Name = 'CamelTestTopic'&"
+                        + "sObjectClass=org.apache.camel.component.salesforce.internal.dto.QueryRecordsPushTopic");
 
                 // route for removing test record
                 from("direct:deleteSObjectWithId").
