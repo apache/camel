@@ -75,7 +75,9 @@ public class SpringBatchProducer extends DefaultProducer {
                 parametersBuilder.addString(headerKey, null);
             }
         }
-        return parametersBuilder.toJobParameters();
+        JobParameters jobParameters = parametersBuilder.toJobParameters();
+        log.debug("Prepared parameters for Spring Batch job: {}", jobParameters);
+        return jobParameters;
     }
 
 }
