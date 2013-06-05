@@ -19,7 +19,6 @@ package org.apache.camel.component.spring.batch;
 import java.util.Date;
 import java.util.Map;
 
-import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultProducer;
 import org.springframework.batch.core.Job;
@@ -37,7 +36,7 @@ public class SpringBatchProducer extends DefaultProducer {
 
     private final Job job;
 
-    public SpringBatchProducer(Endpoint endpoint, JobLauncher jobLauncher, Job job) {
+    public SpringBatchProducer(SpringBatchEndpoint endpoint, JobLauncher jobLauncher, Job job) {
         super(endpoint);
         this.job = job;
         this.jobLauncher = jobLauncher;
