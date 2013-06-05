@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<sObjects xmlns="http://www.force.com/2009/06/asyncapi/dataload">
+  <sObject>
+    <Description__c>Created from Bulk API</Description__c>
+    <Price__c>15.0</Price__c>
+    <Total_Inventory__c>30.0</Total_Inventory__c>
+    <Name>[Bulk API] Merchandise 0 (batch 0)</Name>
+  </sObject>
+  <sObject>
+    <Description__c>Created from Bulk API</Description__c>
+    <Price__c>30.0</Price__c>
+    <Total_Inventory__c>60.0</Total_Inventory__c>
+    <Name>[Bulk API] Merchandise 1 (batch 0)</Name>
+  </sObject>
+</sObjects>

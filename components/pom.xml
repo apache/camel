@@ -143,6 +143,7 @@
     <module>camel-rx</module>
     <module>camel-sap-netweaver</module>
     <module>camel-saxon</module>
+    <module>camel-salesforce</module>
     <module>camel-script</module>
     <module>camel-servlet</module>
     <module>camel-servletlistener</module>

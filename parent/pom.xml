@@ -72,6 +72,7 @@
     <cglib-version>2.2</cglib-version>
     <cmis-version>0.8.0</cmis-version>
     <cometd-bayeux-version>6.1.11</cometd-bayeux-version>
+    <cometd-java-client-version>2.4.3</cometd-java-client-version>
     <cometd-java-server-bundle-version>2.3.1_2</cometd-java-server-bundle-version>
     <cometd-java-server>2.3.1</cometd-java-server>
     <commons-beanutils-bundle-version>1.8.3_1</commons-beanutils-bundle-version>
@@ -959,6 +960,11 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-sap-netweaver</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-salesforce</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>

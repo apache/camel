@@ -9,4 +9,5 @@ target
 .settings
 .checkstyle
 *.log
+test-salesforce-login.properties
 dependency-reduced-pom.xml

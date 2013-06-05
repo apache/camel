@@ -120,6 +120,7 @@
         <include>org.apache.camel:camel-rss</include>
         <include>org.apache.camel:camel-ruby</include>
         <include>org.apache.camel:camel-rx</include>
+        <include>org.apache.camel:camel-salesforce</include>
         <include>org.apache.camel:camel-sap-netweaver</include>
         <include>org.apache.camel:camel-saxon</include>
         <include>org.apache.camel:camel-scala</include>
