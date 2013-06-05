@@ -28,6 +28,9 @@ import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.JobParametersBuilder;
 import org.springframework.batch.core.launch.JobLauncher;
 
+/**
+ * Spring Batch Producer triggering the execution of the jobs.
+ */
 public class SpringBatchProducer extends DefaultProducer {
 
     private final JobLauncher jobLauncher;
@@ -47,6 +50,14 @@ public class SpringBatchProducer extends DefaultProducer {
         exchange.getOut().setBody(jobExecution);
     }
 
+    /**
+     * Helper method converting the Camel message headers into the Spring Batch parameters map. Date, Long and Double
+     * header values are converted to the appropriate types. All the other header values are converted to string
+     * representation.
+     *
+     * @param headers Camel message header to be converted
+     * @return Camel message headers converted into the Spring Batch parameters map
+     */
     protected JobParameters prepareJobParameters(Map<String, Object> headers) {
         JobParametersBuilder parametersBuilder = new JobParametersBuilder();
         for (Map.Entry<String, Object> headerEntry : headers.entrySet()) {
