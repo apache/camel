@@ -20,6 +20,7 @@ import org.apache.camel.Component;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.ProcessorEndpoint;
+import org.apache.camel.spi.UriParam;
 import org.apache.camel.util.ServiceHelper;
 
 /**
@@ -27,7 +28,19 @@ import org.apache.camel.util.ServiceHelper;
  */
 public class LogEndpoint extends ProcessorEndpoint {
 
-    private Processor logger;
+    private volatile Processor logger;
+    @UriParam
+    private String level;
+    @UriParam
+    private String marker;
+    @UriParam
+    private Integer groupSize;
+    @UriParam
+    private Long groupInterval;
+    @UriParam
+    private Boolean groupActiveOnly;
+    @UriParam
+    private Long groupDelay;
 
     public LogEndpoint() {
     }
@@ -69,5 +82,53 @@ public class LogEndpoint extends ProcessorEndpoint {
     @Override
     protected String createEndpointUri() {
         return "log:" + logger.toString();
+    }
+
+    public String getLevel() {
+        return level;
+    }
+
+    public void setLevel(String level) {
+        this.level = level;
+    }
+
+    public String getMarker() {
+        return marker;
+    }
+
+    public void setMarker(String marker) {
+        this.marker = marker;
+    }
+
+    public Integer getGroupSize() {
+        return groupSize;
+    }
+
+    public void setGroupSize(Integer groupSize) {
+        this.groupSize = groupSize;
+    }
+
+    public Long getGroupInterval() {
+        return groupInterval;
+    }
+
+    public void setGroupInterval(Long groupInterval) {
+        this.groupInterval = groupInterval;
+    }
+
+    public Boolean getGroupActiveOnly() {
+        return groupActiveOnly;
+    }
+
+    public void setGroupActiveOnly(Boolean groupActiveOnly) {
+        this.groupActiveOnly = groupActiveOnly;
+    }
+
+    public Long getGroupDelay() {
+        return groupDelay;
+    }
+
+    public void setGroupDelay(Long groupDelay) {
+        this.groupDelay = groupDelay;
     }
 }

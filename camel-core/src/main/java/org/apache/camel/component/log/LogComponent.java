@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.log;
 
+import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
@@ -39,6 +40,8 @@ public class LogComponent extends DefaultComponent {
     private ExchangeFormatter exchangeFormatter;
     
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
+        Map<String, Object> originalParameters = new HashMap<String, Object>(parameters);
+
         LoggingLevel level = getLoggingLevel(parameters);
         String marker = getAndRemoveParameter(parameters, "marker", String.class);
         Integer groupSize = getAndRemoveParameter(parameters, "groupSize", Integer.class);
@@ -69,7 +72,8 @@ public class LogComponent extends DefaultComponent {
         }
 
         LogEndpoint endpoint = new LogEndpoint(uri, this, logger);
-        setProperties(endpoint, parameters);
+        // we want the endpoint to have the all the options configured from the original parameters
+        setProperties(endpoint, originalParameters);
         return endpoint;
     }
 

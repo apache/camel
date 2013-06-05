@@ -58,22 +58,26 @@ import org.slf4j.LoggerFactory;
 public class SedaEndpoint extends DefaultEndpoint implements BrowsableEndpoint, MultipleConsumersSupport {
     private static final transient Logger LOG = LoggerFactory.getLogger(SedaEndpoint.class);
     private volatile BlockingQueue<Exchange> queue;
-    @UriParam
-    private int size = Integer.MAX_VALUE;
-    @UriParam
-    private int concurrentConsumers = 1;
-    private volatile ExecutorService multicastExecutor;
-    @UriParam
-    private boolean multipleConsumers;
-    private WaitForTaskToComplete waitForTaskToComplete = WaitForTaskToComplete.IfReplyExpected;
-    @UriParam
-    private long timeout = 30000;
     private final Set<SedaProducer> producers = new CopyOnWriteArraySet<SedaProducer>();
     private final Set<SedaConsumer> consumers = new CopyOnWriteArraySet<SedaConsumer>();
     private volatile MulticastProcessor consumerMulticastProcessor;
     private volatile boolean multicastStarted;
+    private volatile ExecutorService multicastExecutor;
+    @UriParam
+    private int size = Integer.MAX_VALUE;
+    @UriParam
+    private int concurrentConsumers = 1;
+    @UriParam
+    private boolean multipleConsumers;
+    @UriParam
+    private WaitForTaskToComplete waitForTaskToComplete = WaitForTaskToComplete.IfReplyExpected;
+    @UriParam
+    private long timeout = 30000;
+    @UriParam
     private boolean blockWhenFull;
+    @UriParam
     private int pollTimeout = 1000;
+    @UriParam
     private boolean purgeWhenStopping;
 
     public SedaEndpoint() {
