@@ -37,15 +37,6 @@
     </camel.osgi.export.service>
   </properties>
 
-  <repositories>
-    <!-- ServiceMix repo -->
-    <repository>
-      <id>servicemix</id>
-      <name>Apache ServiceMix Repository</name>
-      <url>http://svn.apache.org/repos/asf/servicemix/m2-repo</url>
-    </repository>
-  </repositories>
-
   <dependencies>
 
     <dependency>
@@ -55,7 +46,7 @@
 
     <dependency>
       <groupId>net.sf.saxon</groupId>
-      <artifactId>saxon9he</artifactId>
+      <artifactId>Saxon-HE</artifactId>
     </dependency>
     
     <!-- test dependencies -->

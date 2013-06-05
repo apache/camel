@@ -26,6 +26,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.Service;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.ThroughputLogger;
+import org.apache.camel.spi.UriParam;
 import org.apache.camel.util.CamelLogger;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -40,12 +41,17 @@ import org.slf4j.LoggerFactory;
  */
 public class DataSetEndpoint extends MockEndpoint implements Service {
     private final transient Logger log;
-    private DataSet dataSet;
-    private AtomicInteger receivedCounter = new AtomicInteger();
+    private volatile DataSet dataSet;
+    private final AtomicInteger receivedCounter = new AtomicInteger();
+    @UriParam
     private int minRate;
+    @UriParam
     private long produceDelay = 3;
+    @UriParam
     private long consumeDelay;
+    @UriParam
     private long preloadSize;
+    @UriParam
     private long initialDelay = 1000;
 
     @Deprecated

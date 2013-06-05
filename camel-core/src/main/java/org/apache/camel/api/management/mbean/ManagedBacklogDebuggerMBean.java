@@ -44,8 +44,11 @@ public interface ManagedBacklogDebuggerMBean {
     @ManagedOperation(description = "Add a conditional breakpoint at the given node id")
     void addConditionalBreakpoint(String nodeId, String language, String predicate);
 
-    @ManagedOperation(description = "Remote the breakpoint from the given node id")
+    @ManagedOperation(description = "Remote the breakpoint from the given node id (will resume suspend breakpoint first)")
     void removeBreakpoint(String nodeId);
+
+    @ManagedOperation(description = "Remote all breakpoints (will resume all suspend breakpoints first and exists single step mode)")
+    void removeAllBreakpoints();
 
     @ManagedOperation(description = "Resume running from the suspended breakpoint at the given node id")
     void resumeBreakpoint(String nodeId);

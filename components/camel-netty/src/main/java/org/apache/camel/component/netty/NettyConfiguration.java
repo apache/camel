@@ -47,6 +47,7 @@ public class NettyConfiguration implements Cloneable {
     private boolean tcpNoDelay = true;
     private boolean broadcast;
     private long connectTimeout = 10000;
+    private long requestTimeout;
     private boolean reuseAddress = true;
     private boolean sync = true;
     private boolean textline;
@@ -74,6 +75,8 @@ public class NettyConfiguration implements Cloneable {
     private boolean transferExchange;
     private boolean disconnectOnNoReply = true;
     private LoggingLevel noReplyLogLevel = LoggingLevel.WARN;
+    private LoggingLevel serverExceptionCaughtLogLevel = LoggingLevel.WARN;
+    private LoggingLevel serverClosedChannelExceptionCaughtLogLevel = LoggingLevel.DEBUG;
     private boolean allowDefaultCodec = true;
     private ClientPipelineFactory clientPipelineFactory;
     private ServerPipelineFactory serverPipelineFactory;
@@ -281,6 +284,14 @@ public class NettyConfiguration implements Cloneable {
 
     public void setConnectTimeout(long connectTimeout) {
         this.connectTimeout = connectTimeout;
+    }
+
+    public long getRequestTimeout() {
+        return requestTimeout;
+    }
+
+    public void setRequestTimeout(long requestTimeout) {
+        this.requestTimeout = requestTimeout;
     }
 
     public boolean isReuseAddress() {
@@ -521,6 +532,22 @@ public class NettyConfiguration implements Cloneable {
 
     public void setNoReplyLogLevel(LoggingLevel noReplyLogLevel) {
         this.noReplyLogLevel = noReplyLogLevel;
+    }
+
+    public LoggingLevel getServerExceptionCaughtLogLevel() {
+        return serverExceptionCaughtLogLevel;
+    }
+
+    public void setServerExceptionCaughtLogLevel(LoggingLevel serverExceptionCaughtLogLevel) {
+        this.serverExceptionCaughtLogLevel = serverExceptionCaughtLogLevel;
+    }
+
+    public LoggingLevel getServerClosedChannelExceptionCaughtLogLevel() {
+        return serverClosedChannelExceptionCaughtLogLevel;
+    }
+
+    public void setServerClosedChannelExceptionCaughtLogLevel(LoggingLevel serverClosedChannelExceptionCaughtLogLevel) {
+        this.serverClosedChannelExceptionCaughtLogLevel = serverClosedChannelExceptionCaughtLogLevel;
     }
 
     public boolean isAllowDefaultCodec() {

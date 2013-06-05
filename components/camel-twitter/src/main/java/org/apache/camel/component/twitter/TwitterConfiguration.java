@@ -20,6 +20,7 @@ import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 
+import org.apache.camel.spi.UriParam;
 import twitter4j.Twitter;
 import twitter4j.TwitterFactory;
 import twitter4j.TwitterStream;
@@ -32,68 +33,89 @@ public class TwitterConfiguration {
     /**
      * OAuth
      */
+    @UriParam
     private String consumerKey;
+    @UriParam
     private String consumerSecret;
+    @UriParam
     private String accessToken;
+    @UriParam
     private String accessTokenSecret;
 
     /**
      * Defines the Twitter API endpoint.
      */
+    @UriParam
     private String type;
 
     /**
      * Polling delay.
      */
+    @UriParam
     private int delay = 60;
 
     /**
      * Username -- used for searching, etc.
      */
+    @UriParam
     private String user;
 
     /**
      * Keywords used for search and filters.
      */
+    @UriParam
     private String keywords;
 
     /**
      * Lon/Lat bounding boxes used for filtering.
      */
+    @UriParam
     private String locations;
 
     /**
      * List of userIds used for searching, etc.
      */
+    @UriParam
     private String userIds;
 
     /**
      * Filter out old tweets that have been previously polled.
      */
+    @UriParam
     private boolean filterOld = true;
 
     /**
      * Used for time-based endpoints (trends, etc.)
      */
+    @UriParam
     private String date;
     
     /**
      * Used to set the sinceId from pulling
      */
+    @UriParam
     private long sinceId  = 1;
 
     /**
      * Used ot set the preferred language on which to search
      */
+    @UriParam
     private String lang;
 
     /**
      * Used to set the maximum tweets per page (max = 100)
      */
+    @UriParam
     private Integer count;
-    
+
+    @UriParam
     private Date parsedDate;
-    private SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+
+    /**
+     * Number of page to iterate before stop (default is 1)
+     */
+    @UriParam
+    private Integer numberOfPages = new Integer(1);
 
     /**
      * Singleton, on demand instances of Twitter4J's Twitter & TwitterStream.
@@ -104,11 +126,6 @@ public class TwitterConfiguration {
      */
     private Twitter twitter;
     private TwitterStream twitterStream;
-
-    /**
-     * Number of page to iterate before stop (default is 1)
-     */
-    private Integer numberOfPages = new Integer(1);
 
     /**
      * Ensures required fields are available.
@@ -252,6 +269,7 @@ public class TwitterConfiguration {
     public void setDate(String date) {
         this.date = date;
         try {
+            SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
             parsedDate = sdf.parse(date);
         } catch (ParseException e) {
             throw new IllegalArgumentException("date must be in yyyy-mm-dd format!");

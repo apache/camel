@@ -17,6 +17,7 @@
 package org.apache.camel.component.netty;
 
 import java.util.List;
+import java.util.concurrent.TimeUnit;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLEngine;
 
@@ -27,6 +28,7 @@ import org.jboss.netty.channel.ChannelHandler;
 import org.jboss.netty.channel.ChannelPipeline;
 import org.jboss.netty.channel.Channels;
 import org.jboss.netty.handler.ssl.SslHandler;
+import org.jboss.netty.handler.timeout.ReadTimeoutHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -73,6 +75,15 @@ public class DefaultClientPipelineFactory extends ClientPipelineFactory  {
                 encoder = ((ChannelHandlerFactory) encoder).newChannelHandler();
             }
             addToPipeline("encoder-" + x, channelPipeline, encoder);
+        }
+
+        // do we use request timeout?
+        if (producer.getConfiguration().getRequestTimeout() > 0) {
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Using request timeout {} millis", producer.getConfiguration().getRequestTimeout());
+            }
+            ChannelHandler timeout = new ReadTimeoutHandler(NettyComponent.getTimer(), producer.getConfiguration().getRequestTimeout(), TimeUnit.MILLISECONDS);
+            addToPipeline("timeout", channelPipeline, timeout);
         }
 
         // our handler must be added last

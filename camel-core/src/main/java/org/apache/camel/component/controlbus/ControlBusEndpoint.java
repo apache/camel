@@ -24,6 +24,7 @@ import org.apache.camel.Producer;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.Language;
+import org.apache.camel.spi.UriParam;
 import org.apache.camel.util.CamelLogger;
 
 /**
@@ -32,9 +33,13 @@ import org.apache.camel.util.CamelLogger;
 public class ControlBusEndpoint extends DefaultEndpoint {
 
     private Language language;
+    @UriParam
     private String routeId;
+    @UriParam
     private String action;
+    @UriParam
     private boolean async;
+    @UriParam
     private LoggingLevel loggingLevel = LoggingLevel.INFO;
 
     public ControlBusEndpoint(String endpointUri, Component component) {

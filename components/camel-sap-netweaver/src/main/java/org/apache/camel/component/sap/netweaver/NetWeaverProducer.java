@@ -23,8 +23,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.util.ExchangeHelper;
-import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
+import org.apache.camel.util.URISupport;
 import org.codehaus.jackson.map.ObjectMapper;
 
 public class NetWeaverProducer extends DefaultProducer {
@@ -75,7 +75,9 @@ public class NetWeaverProducer extends DefaultProducer {
     @Override
     protected void doStart() throws Exception {
         String url = getEndpoint().getUrl() + "?authUsername=" + getEndpoint().getUsername() + "&authPassword=" + getEndpoint().getPassword() + "&authMethod=Basic";
-        log.info("Creating NetWeaverProducer using url: {}", url);
+        if (log.isInfoEnabled()) {
+            log.info("Creating NetWeaverProducer using url: {}", URISupport.sanitizeUri(url));
+        }
 
         http = getEndpoint().getCamelContext().getEndpoint(url).createProducer();
         ServiceHelper.startService(http);

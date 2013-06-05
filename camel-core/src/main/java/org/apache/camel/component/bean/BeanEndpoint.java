@@ -30,6 +30,7 @@ import org.apache.camel.spi.UriParam;
  */
 @UriEndpoint(scheme = "bean")
 public class BeanEndpoint extends ProcessorEndpoint {
+    private BeanHolder beanHolder;
     @UriParam
     private boolean cache;
     @UriParam
@@ -38,7 +39,6 @@ public class BeanEndpoint extends ProcessorEndpoint {
     private String beanName;
     @UriParam
     private String method;
-    private BeanHolder beanHolder;
 
     public BeanEndpoint() {
         init();

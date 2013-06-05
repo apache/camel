@@ -24,6 +24,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.spi.UriParam;
 import org.apache.camel.util.EndpointHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -38,6 +39,7 @@ import org.slf4j.LoggerFactory;
 public class TestEndpoint extends MockEndpoint {
     private static final transient Logger LOG = LoggerFactory.getLogger(TestEndpoint.class);
     private final Endpoint expectedMessageEndpoint;
+    @UriParam
     private long timeout = 2000L;
 
     public TestEndpoint(String endpointUri, Component component, Endpoint expectedMessageEndpoint) {
@@ -67,5 +69,13 @@ public class TestEndpoint extends MockEndpoint {
      */
     protected Object getInBody(Exchange exchange) {
         return exchange.getIn().getBody();
+    }
+
+    public long getTimeout() {
+        return timeout;
+    }
+
+    public void setTimeout(long timeout) {
+        this.timeout = timeout;
     }
 }

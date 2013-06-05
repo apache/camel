@@ -39,6 +39,7 @@ import org.apache.camel.impl.DefaultDebugger;
 import org.apache.camel.management.event.ExchangeCompletedEvent;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.ProcessorDefinitionHelper;
+import org.apache.camel.spi.Breakpoint;
 import org.apache.camel.spi.Condition;
 import org.apache.camel.spi.Debugger;
 import org.apache.camel.spi.InterceptStrategy;
@@ -233,6 +234,15 @@ public class BacklogDebugger extends ServiceSupport implements InterceptStrategy
         }
     }
 
+    public void removeAllBreakpoints() {
+        // stop single stepping
+        singleStepExchangeId = null;
+
+        for (String nodeId : getSuspendedBreakpointNodeIds()) {
+            removeBreakpoint(nodeId);
+        }
+    }
+
     public Set<String> getBreakpoints() {
         return new LinkedHashSet<String>(breakpoints.keySet());
     }
@@ -299,6 +309,12 @@ public class BacklogDebugger extends ServiceSupport implements InterceptStrategy
     }
 
     public void stepBreakpoint(String nodeId) {
+        // if we are already in single step mode, then infer stepping
+        if (isSingleStepMode()) {
+            logger.log("stepBreakpoint " + nodeId + " is already in single step mode, so stepping instead.");
+            step();
+        }
+
         logger.log("Step breakpoint " + nodeId);
         // we want to step current exchange to next
         BacklogTracerEventMessage msg = suspendedBreakpointMessages.get(nodeId);

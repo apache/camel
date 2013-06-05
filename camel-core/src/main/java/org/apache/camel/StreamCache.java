@@ -30,7 +30,7 @@ import java.io.OutputStream;
  */
 public interface StreamCache {
 
-    public static final long DEFAULT_SPOOL_THRESHOLD = 128 * 1024;
+    long DEFAULT_SPOOL_THRESHOLD = 128 * 1024;
 
     /**
      * Resets the StreamCache for a new stream consumption.

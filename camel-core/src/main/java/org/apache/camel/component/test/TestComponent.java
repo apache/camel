@@ -29,8 +29,6 @@ import org.apache.camel.util.UnsafeUriCharactersEncoder;
 /**
  * Test Component.
  *
- * @see org.apache.camel.component.test.TestEndpoint
- *
  * @version 
  */
 public class TestComponent extends DefaultComponent {
@@ -50,7 +48,14 @@ public class TestComponent extends DefaultComponent {
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
+        Long timeout = getAndRemoveParameter(parameters, "timeout", Long.class);
         Endpoint endpoint = CamelContextHelper.getMandatoryEndpoint(getCamelContext(), remaining);
-        return new TestEndpoint(uri, this, endpoint);
+
+        TestEndpoint answer = new TestEndpoint(uri, this, endpoint);
+        if (timeout != null) {
+            answer.setTimeout(timeout);
+        }
+        return answer;
     }
+
 }
