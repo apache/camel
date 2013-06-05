@@ -1,6 +1,0 @@
-target
-*.ipr
-*.iml
-*.iws
-# Salesforce login properties
-*test-login.properties*
