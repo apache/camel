@@ -19,8 +19,10 @@ package org.apache.camel.component.spring.batch;
 import java.util.Date;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.EndpointInject;
 import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.impl.SimpleRegistry;
@@ -32,6 +34,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.runners.MockitoJUnitRunner;
 import org.springframework.batch.core.Job;
+import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.launch.JobLauncher;
 
@@ -54,12 +57,15 @@ public class SpringBatchEndpointTest extends CamelTestSupport {
 
     // Camel fixtures
 
+    @EndpointInject(uri = "mock:test")
+    MockEndpoint mockEndpoint;
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").to("spring-batch:mockJob");
+                from("direct:start").to("spring-batch:mockJob").to("mock:test");
             }
         };
     }
@@ -89,6 +95,19 @@ public class SpringBatchEndpointTest extends CamelTestSupport {
 
         // Then
         verify(jobLauncher).run(eq(job), any(JobParameters.class));
+    }
+
+    @Test
+    public void shouldReturnJobExecution() throws Exception {
+        // Given
+        JobExecution jobExecution = mock(JobExecution.class);
+        when(jobLauncher.run(eq(job), any(JobParameters.class))).thenReturn(jobExecution);
+
+        // When
+        sendBody("direct:start", "Start the job, please.");
+
+        // Then
+        mockEndpoint.expectedBodiesReceived(jobExecution);
     }
 
     @Test(expected = UnsupportedOperationException.class)
