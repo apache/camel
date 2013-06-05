@@ -21,6 +21,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.batch.item.ItemProcessor;
 
+/**
+ * Spring Batch {@link ItemProcessor} sending synchronous request to the given Camel endpoint. The actual processing of
+ * the item is delegated to the Camel routes.
+ */
 public class CamelItemProcessor<I, O> implements ItemProcessor<I, O> {
 
     private static final transient Logger LOG = LoggerFactory.getLogger(CamelItemProcessor.class);
