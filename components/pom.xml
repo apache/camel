@@ -86,6 +86,7 @@
     <module>camel-freemarker</module>
     <module>camel-ftp</module>
     <module>camel-gae</module>
+    <module>camel-geocoder</module>
     <module>camel-gson</module>
     <module>camel-guava-eventbus</module>
     <module>camel-guice</module>
