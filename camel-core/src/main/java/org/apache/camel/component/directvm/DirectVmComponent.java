@@ -38,6 +38,8 @@ public class DirectVmComponent extends DefaultComponent {
     // later in case the DirectVmEndpoint was re-created due the old was evicted from the endpoints LRUCache
     // on DefaultCamelContext
     private static final ConcurrentMap<String, DirectVmConsumer> CONSUMERS = new ConcurrentHashMap<String, DirectVmConsumer>();
+    private boolean block;
+    private long timeout = 30000L;
 
     /**
      * Gets all the consumer endpoints.
@@ -55,6 +57,8 @@ public class DirectVmComponent extends DefaultComponent {
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         DirectVmEndpoint answer = new DirectVmEndpoint(uri, this);
+        answer.setBlock(block);
+        answer.setTimeout(timeout);
         answer.configureProperties(parameters);
         return answer;
     }
@@ -101,4 +105,19 @@ public class DirectVmComponent extends DefaultComponent {
         super.doStop();
     }
 
+    public boolean isBlock() {
+        return block;
+    }
+
+    public void setBlock(boolean block) {
+        this.block = block;
+    }
+
+    public long getTimeout() {
+        return timeout;
+    }
+
+    public void setTimeout(long timeout) {
+        this.timeout = timeout;
+    }
 }

@@ -26,6 +26,9 @@ import org.apache.camel.impl.DefaultEndpoint;
  */
 public class DirectVmEndpoint extends DefaultEndpoint {
 
+    private boolean block;
+    private long timeout = 30000L;
+
     public DirectVmEndpoint(String endpointUri, DirectVmComponent component) {
         super(endpointUri, component);
     }
@@ -37,7 +40,11 @@ public class DirectVmEndpoint extends DefaultEndpoint {
 
     @Override
     public Producer createProducer() throws Exception {
-        return new DirectVmProducer(this);
+        if (block) {
+            return new DirectVmBlockingProducer(this);
+        } else {
+            return new DirectVmProducer(this);
+        }
     }
 
     @Override
@@ -56,4 +63,19 @@ public class DirectVmEndpoint extends DefaultEndpoint {
         return getComponent().getConsumer(this);
     }
 
+    public boolean isBlock() {
+        return block;
+    }
+
+    public void setBlock(boolean block) {
+        this.block = block;
+    }
+
+    public long getTimeout() {
+        return timeout;
+    }
+
+    public void setTimeout(long timeout) {
+        this.timeout = timeout;
+    }
 }

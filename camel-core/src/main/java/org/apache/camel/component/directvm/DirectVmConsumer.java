@@ -17,12 +17,13 @@
 package org.apache.camel.component.directvm;
 
 import org.apache.camel.Processor;
+import org.apache.camel.SuspendableService;
 import org.apache.camel.impl.DefaultConsumer;
 
 /**
  * The direct-vm consumer
  */
-public class DirectVmConsumer extends DefaultConsumer {
+public class DirectVmConsumer extends DefaultConsumer implements SuspendableService {
 
     public DirectVmConsumer(DirectVmEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
@@ -43,6 +44,16 @@ public class DirectVmConsumer extends DefaultConsumer {
     protected void doStop() throws Exception {
         getEndpoint().getComponent().removeConsumer(getEndpoint(), this);
         super.doStop();
+    }
+
+    @Override
+    protected void doSuspend() throws Exception {
+        getEndpoint().getComponent().removeConsumer(getEndpoint(), this);
+    }
+
+    @Override
+    protected void doResume() throws Exception {
+        getEndpoint().getComponent().addConsumer(getEndpoint(), this);
     }
 
 }
