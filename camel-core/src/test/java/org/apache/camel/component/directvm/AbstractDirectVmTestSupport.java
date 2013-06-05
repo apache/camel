@@ -28,7 +28,7 @@ import org.junit.Before;
 /**
  *
  */
-public class AbstractDirectVmTestSupport extends ContextTestSupport {
+public abstract class AbstractDirectVmTestSupport extends ContextTestSupport {
     protected CamelContext context2;
     protected ProducerTemplate template2;
 
