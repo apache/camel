@@ -27,8 +27,6 @@ import org.springframework.ws.soap.client.SoapFaultClientException;
 /**
  * Provides abstract test for fault and output params for spring-ws:to: and
  * spring-ws:action: endpoints
- * 
- * @author a.zachar
  */
 public abstract class AbstractConsumerTests extends AbstractWSATests {
 

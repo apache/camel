@@ -35,8 +35,6 @@ import org.springframework.ws.soap.addressing.core.MessageAddressingProperties;
 /**
  * Provides abstract test for fault and output params for spring-ws:to: and
  * spring-ws:action: endpoints
- * 
- * @author a.zachar
  */
 public class CamelDirectSenderTest extends AbstractWSATests {
 

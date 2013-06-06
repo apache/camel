@@ -30,7 +30,6 @@ import org.apache.camel.guice.support.Closer;
  * To install this closer you need to register the {@link Jsr250Module} in your
  * injector.
  * 
- * @author james.strachan@gmail.com (James Strachan)
  * @version
  */
 public class PreDestroyCloser implements Closer {

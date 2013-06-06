@@ -25,9 +25,7 @@ import org.apache.camel.spi.Registry;
 import org.springframework.ldap.core.LdapTemplate;
 
 /**
- * @author Leonid Kof, Leonid.Kof@tngtech.com
  * Creates endpoints for the Spring LDAP component.
- *
  */
 public class SpringLdapComponent extends DefaultComponent {
 

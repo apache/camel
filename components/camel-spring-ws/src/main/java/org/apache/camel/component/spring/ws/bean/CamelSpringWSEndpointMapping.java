@@ -22,8 +22,6 @@ import org.springframework.ws.server.endpoint.MessageEndpoint;
 
 /**
  * Allows to register different spring-ws endpoints for camel.
- * 
- * @author azachar
  */
 public interface CamelSpringWSEndpointMapping extends EndpointMapping {
 

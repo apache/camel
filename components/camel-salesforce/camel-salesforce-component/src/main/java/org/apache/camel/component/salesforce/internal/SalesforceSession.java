@@ -289,8 +289,6 @@ public class SalesforceSession implements Service {
 
     /**
      * Records status line, and exception from exchange.
-     *
-     * @author dbokde
      */
     private static class StatusExceptionExchange extends ContentExchange {
 

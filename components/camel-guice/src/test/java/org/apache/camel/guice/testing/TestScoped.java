@@ -33,8 +33,6 @@ import com.google.inject.ScopeAnnotation;
  * {@link junit.framework.TestCase#setUp()} and
  * {@link junit.framework.TestCase#tearDown()}).
  * 
- * @author Luiz-Otavio Zorzella
- * @author Danka Karwanska
  * @see org.apache.camel.guice.util.CloseableScope for an implementation of this
  *      scope
  */

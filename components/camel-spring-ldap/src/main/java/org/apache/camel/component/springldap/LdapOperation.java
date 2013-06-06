@@ -17,11 +17,8 @@
 package org.apache.camel.component.springldap;
 
 /**
- *  @author Leonid Kof, Leonid.Kof@tngtech.com
- *  The list of supported LDAP operations.
- *  Currently supported operations are search, bind, and unbind.
- *  Modify is currently not supported.
- *
+ * The list of supported LDAP operations. Currently supported operations are
+ * search, bind, and unbind. Modify is currently not supported.
  */
 
 public enum LdapOperation {

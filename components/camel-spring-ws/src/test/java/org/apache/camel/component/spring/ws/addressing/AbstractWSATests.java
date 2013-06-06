@@ -38,8 +38,6 @@ import org.springframework.ws.soap.addressing.version.Addressing10;
 
 /**
  * Provides abstract test for WS-Addressing
- * 
- * @author a.zachar
  */
 public abstract class AbstractWSATests extends CamelSpringTestSupport {
 
