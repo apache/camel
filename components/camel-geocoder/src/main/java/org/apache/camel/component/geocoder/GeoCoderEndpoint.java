@@ -29,6 +29,7 @@ public class GeoCoderEndpoint extends DefaultEndpoint {
     private String address;
     private String latlng;
     private String language = "en";
+    private boolean headersOnly;
 
     public GeoCoderEndpoint() {
     }
@@ -71,5 +72,13 @@ public class GeoCoderEndpoint extends DefaultEndpoint {
 
     public void setLatlng(String latlng) {
         this.latlng = latlng;
+    }
+
+    public boolean isHeadersOnly() {
+        return headersOnly;
+    }
+
+    public void setHeadersOnly(boolean headersOnly) {
+        this.headersOnly = headersOnly;
     }
 }

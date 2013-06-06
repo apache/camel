@@ -21,15 +21,15 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-public class GeoCoderComponentAddressTest extends CamelTestSupport {
+public class GeoCoderCurrentAddressTest extends CamelTestSupport {
 
     @Test
     public void testGeoCoder() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMessageCount(1);
+        mock.expectedBodiesReceived("Hello");
+        mock.message(0).header(GeoCoderConstants.LATLNG).isNotNull();
 
-        // the address header overrides the endpoint configuration
-        template.sendBodyAndHeader("direct:start", "Hello", GeoCoderConstants.ADDRESS, "Copenhagen, Denmark");
+        template.sendBody("direct:start", "Hello");
         
         assertMockEndpointsSatisfied();
     }
@@ -39,9 +39,9 @@ public class GeoCoderComponentAddressTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                  .to("geocoder:address:Paris, France")
+                  .to("geocoder:address:current?headersOnly=true")
                   .to("log:result")
-                  .log("Location ${header.CamelGeocoderAddress} is at lat/lng: ${header.CamelGeocoderLatlng} in city ${header.CamelGeocoderCity}")
+                  .log("You are at ${header.CamelGeoCoderLatlng} in city ${header.CamelGeoCoderCity} in country ${header.CamelGeoCoderCountryLong}")
                   .to("mock:result");
             }
         };

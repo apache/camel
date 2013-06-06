@@ -28,6 +28,7 @@ public class GeoCoderLatLngComponentTest extends CamelTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
         mock.expectedHeaderReceived(GeoCoderConstants.COUNTRY_SHORT, "US");
+        mock.expectedHeaderReceived(GeoCoderConstants.CITY, "New York");
 
         // the address header overrides the endpoint configuration
         template.sendBody("direct:start", "Hello");
@@ -42,7 +43,8 @@ public class GeoCoderLatLngComponentTest extends CamelTestSupport {
                 from("direct:start")
                   .to("geocoder:latlng:40.714224,-73.961452")
                   .to("log:result")
-                  .log("Location ${header.CamelGeocoderAddress} is at lat/lng: ${header.CamelGeocoderLatlng} and in country ${header.CamelGeoCoderCountryShort}")
+                  .log("Location ${header.CamelGeocoderAddress} is at lat/lng: ${header.CamelGeocoderLatlng}"
+                          + " and in city ${header.CamelGeoCoderCity} in country ${header.CamelGeoCoderCountryLong}")
                   .to("mock:result");
             }
         };

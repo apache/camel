@@ -21,6 +21,9 @@ public final class GeoCoderConstants {
     public static final String ADDRESS = "CamelGeoCoderAddress";
     public static final String LATLNG = "CamelGeoCoderLatlng";
     public static final String STATUS = "CamelGeoCoderStatus";
+    public static final String REGION_CODE = "CamelGeoCoderRegionCode";
+    public static final String REGION_NAME = "CamelGeoCoderRegionName";
+    public static final String CITY = "CamelGeoCoderCity";
     public static final String COUNTRY_LONG = "CamelGeoCoderCountryLong";
     public static final String COUNTRY_SHORT = "CamelGeoCoderCountryShort";
 

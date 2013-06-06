@@ -17,6 +17,7 @@
 package org.apache.camel.component.geocoder;
 
 import java.math.BigDecimal;
+import java.net.URL;
 
 import com.google.code.geocoder.Geocoder;
 import com.google.code.geocoder.model.GeocodeResponse;
@@ -28,8 +29,13 @@ import com.google.code.geocoder.model.LatLng;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.util.ObjectHelper;
+import org.codehaus.jackson.JsonNode;
+import org.codehaus.jackson.map.ObjectMapper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.apache.camel.util.ObjectHelper.isEmpty;
+import static org.apache.camel.util.ObjectHelper.notNull;
 
 /**
  * The GeoCoder producer.
@@ -73,20 +79,76 @@ public class GeoCoderProducer extends DefaultProducer {
                 extractGeoResult(res, exchange);
             }
         } else if (address != null) {
-            GeocoderRequest req = new GeocoderRequest(address, endpoint.getLanguage());
-            LOG.debug("Geocode for address {}", address);
-            GeocodeResponse res = geocoder.geocode(req);
-            LOG.debug("Geocode response {}", res);
 
-            if (res != null) {
-                extractGeoResult(res, exchange);
+            // is it current address
+            if ("current".equals(address)) {
+                processCurrentLocation(exchange);
+            } else {
+                LOG.debug("Geocode for address {}", address);
+                GeocoderRequest req = new GeocoderRequest(address, endpoint.getLanguage());
+                GeocodeResponse res = geocoder.geocode(req);
+                LOG.debug("Geocode response {}", res);
+
+                if (res != null) {
+                    extractGeoResult(res, exchange);
+                }
             }
+        }
+    }
+
+    protected void processCurrentLocation(Exchange exchange) throws Exception {
+        LOG.debug("Geocode for current address");
+        String json = exchange.getContext().getTypeConverter().mandatoryConvertTo(String.class, new URL("http://freegeoip.net/json/"));
+        if (isEmpty(json)) {
+            throw new IllegalStateException("Got the unexpected value '" + json + "' for the geolocation");
+        }
+        LOG.debug("Geocode response {}", json);
+
+        exchange.getIn().setHeader(GeoCoderConstants.STATUS, GeocoderStatus.OK);
+
+        ObjectMapper mapper = new ObjectMapper();
+        JsonNode node = mapper.readValue(json, JsonNode.class);
+
+        JsonNode latitudeNode = notNull(node.get("latitude"), "latitude");
+        JsonNode longitudeNode = notNull(node.get("longitude"), "longitude");
+        String resLatlng = latitudeNode.asText() + "," + longitudeNode.asText();
+        exchange.getIn().setHeader(GeoCoderConstants.LATLNG, resLatlng);
+
+        JsonNode country_code = node.get("country_code");
+        JsonNode country_name = node.get("country_name");
+        if (country_code != null) {
+            exchange.getIn().setHeader(GeoCoderConstants.COUNTRY_SHORT, country_code.asText());
+        }
+        if (country_name != null) {
+            exchange.getIn().setHeader(GeoCoderConstants.COUNTRY_LONG, country_name.asText());
+        }
+
+        JsonNode region_code = node.get("region_code");
+        JsonNode region_name = node.get("region_name");
+        if (region_code != null) {
+            exchange.getIn().setHeader(GeoCoderConstants.REGION_CODE, region_code.asText());
+        }
+        if (region_name != null) {
+            exchange.getIn().setHeader(GeoCoderConstants.REGION_NAME, region_name.asText());
+        }
+
+        JsonNode city = node.get("city");
+        if (city != null) {
+            exchange.getIn().setHeader(GeoCoderConstants.CITY, city.asText());
+        }
+
+        // should we include body
+        if (!endpoint.isHeadersOnly()) {
+            exchange.getIn().setBody(json);
         }
     }
 
     protected void extractGeoResult(GeocodeResponse res, Exchange exchange) {
         exchange.getIn().setHeader(GeoCoderConstants.STATUS, res.getStatus());
-        exchange.getIn().setBody(res);
+        // should we include body
+        if (!endpoint.isHeadersOnly()) {
+            exchange.getIn().setBody(res);
+        }
 
         if (res.getStatus() == GeocoderStatus.OK) {
             exchange.getIn().setHeader(GeoCoderConstants.ADDRESS, res.getResults().get(0).getFormattedAddress());
@@ -101,14 +163,29 @@ public class GeoCoderProducer extends DefaultProducer {
                 exchange.getIn().setHeader(GeoCoderConstants.COUNTRY_SHORT, country.getShortName());
                 exchange.getIn().setHeader(GeoCoderConstants.COUNTRY_LONG, country.getLongName());
             }
+
+            GeocoderAddressComponent city = getCity(res);
+            if (city != null) {
+                exchange.getIn().setHeader(GeoCoderConstants.CITY, city.getLongName());
+            }
         }
     }
 
     private static GeocoderAddressComponent getCountry(GeocodeResponse res) {
         for (GeocoderResult result : res.getResults()) {
-            // look for "country" in types
             for (String type : result.getTypes()) {
                 if ("country".equals(type)) {
+                    return result.getAddressComponents().get(0);
+                }
+            }
+        }
+        return null;
+    }
+
+    private static GeocoderAddressComponent getCity(GeocodeResponse res) {
+        for (GeocoderResult result : res.getResults()) {
+            for (String type : result.getTypes()) {
+                if ("locality".equals(type)) {
                     return result.getAddressComponents().get(0);
                 }
             }
