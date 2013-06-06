@@ -233,7 +233,7 @@ public class RunMojo extends AbstractExecMojo {
      * The configureAdmin persistent file name, it will be used when 
      * loading the camel context from blueprint.
      * 
-     * * @parameter property="camel.configAdminFileName"
+     * @parameter property="camel.configAdminFileName"
      */
     private String configAdminFileName;
 
