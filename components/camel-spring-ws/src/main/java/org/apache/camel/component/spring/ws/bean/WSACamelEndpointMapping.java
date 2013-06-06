@@ -31,9 +31,7 @@ import org.springframework.ws.server.endpoint.MessageEndpoint;
 import org.springframework.ws.soap.addressing.core.MessageAddressingProperties;
 import org.springframework.ws.soap.addressing.messageid.MessageIdStrategy;
 import org.springframework.ws.soap.addressing.server.AbstractAddressingEndpointMapping;
-import org.springframework.ws.soap.addressing.server.AbstractAddressingEndpointMappingHacked;
 import org.springframework.ws.soap.addressing.server.AnnotationActionEndpointMapping;
-import org.springframework.ws.transport.WebServiceConnection;
 import org.springframework.ws.transport.WebServiceMessageSender;
 
 /**
@@ -44,7 +42,7 @@ import org.springframework.ws.transport.WebServiceMessageSender;
  * uses the camel uri to map to a WS-Addressing {@code Action} header.
  * <p/>
  */
-public class WSACamelEndpointMapping extends AbstractAddressingEndpointMappingHacked implements CamelSpringWSEndpointMapping {
+public class WSACamelEndpointMapping extends AbstractAddressingEndpointMapping implements CamelSpringWSEndpointMapping {
 
     private static final Logger LOG = LoggerFactory.getLogger(WSACamelEndpointMapping.class);
 
@@ -175,14 +173,14 @@ public class WSACamelEndpointMapping extends AbstractAddressingEndpointMappingHa
      * priority over this endpoint.
      */
     @Override
-    protected MessageIdStrategy getMessageStrategy(Object endpoint) {
+    protected MessageIdStrategy getMessageIdStrategy(Object endpoint) {
         SpringWebserviceEndpoint camelEndpoint = getSpringWebserviceEndpoint(endpoint);
 
         if (camelEndpoint.getConfiguration().getMessageIdStrategy() != null) {
             return camelEndpoint.getConfiguration().getMessageIdStrategy();
         }
 
-        return super.getMessageStrategy(endpoint);
+        return super.getMessageIdStrategy(endpoint);
     }
 
     /**
@@ -225,37 +223,12 @@ public class WSACamelEndpointMapping extends AbstractAddressingEndpointMappingHa
         }
     }
 
-    /*
-     * (non-Javadoc)
-     * @see
-     * org.apache.camel.component.spring.ws.bean.CamelSpringWSEndpoint#addConsumer
-     * (org.apache.camel.component.spring.ws.type.EndpointMappingKey,
-     * org.springframework.ws.server.endpoint.MessageEndpoint)
-     */
     public void addConsumer(EndpointMappingKey key, MessageEndpoint endpoint) {
         endpoints.put(key, endpoint);
     }
 
-    /*
-     * (non-Javadoc)
-     * @see org.apache.camel.component.spring.ws.bean.CamelSpringWSEndpoint#
-     * removeConsumer(java.lang.Object)
-     */
     public void removeConsumer(Object key) {
         endpoints.remove(key);
-    }
-
-    /**
-     * Sets the single message sender used for sending messages.
-     * <p/>
-     * This message sender will be used to resolve an URI to a
-     * {@link WebServiceConnection}.
-     * 
-     * @see #createConnection(URI)
-     */
-    public void setMessageSender(WebServiceMessageSender messageSender) {
-        Assert.notNull(messageSender, "'messageSender' must not be null");
-        setMessageSenders(new WebServiceMessageSender[] {messageSender});
     }
 
     /**
