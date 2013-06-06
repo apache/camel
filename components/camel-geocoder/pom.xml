@@ -43,7 +43,7 @@
     <dependency>
       <groupId>com.google.code.geocoder-java</groupId>
       <artifactId>geocoder-java</artifactId>
-      <version>0.15</version>
+      <version>${geocoder-java-version}</version>
     </dependency>
 
     <!-- testing -->
