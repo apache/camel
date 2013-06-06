@@ -295,6 +295,14 @@
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.gae/${google-app-engine-bundle-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-gae/${project.version}</bundle>
   </feature>
+  <feature name='camel-geocoder' version='${project.version}' resolver='(obr)' start-level='50'>
+    <feature version='${project.version}'>camel-core</feature>
+    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.commons-httpclient/${commons-httpclient-bundle-version}</bundle>
+    <bundle dependency='true'>mvn:org.codehaus.jackson/jackson-core-asl/${jackson-version}</bundle>
+    <bundle dependency='true'>mvn:org.codehaus.jackson/jackson-mapper-asl/${jackson-version}</bundle>
+    <bundle dependency='true'>wrap:mvn:com.google.code.geocoder-java/geocoder-java/${geocoder-java-version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-geocoder/${project.version}</bundle>
+  </feature>
   <feature name='camel-groovy' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.ant/${ant-bundle-version}</bundle>
@@ -748,7 +756,7 @@
     <bundle dependency='true'>mvn:org.cometd.java/bayeux-api/${cometd-java-client-version}</bundle>
     <bundle dependency='true'>mvn:org.cometd.java/cometd-java-common/${cometd-java-client-version}</bundle>
     <bundle dependency='true'>mvn:org.eclipse.jetty/jetty-util/${jetty-version}</bundle>
-    <bundle dependency='true'>mvn:org.eclipse.jetty/jetty-io/${jetty--version}</bundle>
+    <bundle dependency='true'>mvn:org.eclipse.jetty/jetty-io/${jetty-version}</bundle>
     <bundle dependency='true'>mvn:org.eclipse.jetty/jetty-http/${jetty-version}</bundle>
     <bundle dependency='true'>mvn:org.eclipse.jetty/jetty-client/${jetty-version}</bundle>
     <bundle dependency='true'>mvn:joda-time/joda-time/${jodatime2-bundle-version}</bundle>
