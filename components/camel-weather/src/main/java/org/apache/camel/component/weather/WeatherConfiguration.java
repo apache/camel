@@ -86,14 +86,17 @@ public class WeatherConfiguration {
     }
 
     public String getQuery() throws Exception {
+        return getQuery(getLocation());
+    }
+
+    public String getQuery(String location) throws Exception {
         String answer = "http://api.openweathermap.org/data/2.5/";
 
-        String location;
-        if (isEmpty(getLocation())) {
+        if (isEmpty(location)) {
             location = getGeoLocation();
         } else {
             // assuming the location is a town or country
-            location = "q=" + getLocation();
+            location = "q=" + location;
         }
 
         if (isEmpty(getPeriod())) {

@@ -21,6 +21,7 @@ package org.apache.camel.component.weather;
  */
 public final class WeatherConstants {
 
+    public static final String WEATHER_LOCATION = "CamelWeatherLocation";
     public static final String WEATHER_QUERY = "CamelWeatherQuery";
 
     private WeatherConstants() {

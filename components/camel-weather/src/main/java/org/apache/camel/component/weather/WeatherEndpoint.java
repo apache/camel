@@ -35,16 +35,6 @@ public class WeatherEndpoint extends DefaultPollingEndpoint {
     }
 
     @Override
-    public Producer createProducer() throws Exception {
-        throw new UnsupportedOperationException("Making Weather is not implemented - yet.");
-    }
-
-    @Override
-    public boolean isSingleton() {
-        return true;
-    }
-
-    @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         WeatherConsumer answer = new WeatherConsumer(this, processor, this.configuration.getQuery());
 
@@ -53,5 +43,19 @@ public class WeatherEndpoint extends DefaultPollingEndpoint {
         answer.setDelay(WeatherConsumer.DEFAULT_CONSUMER_DELAY);
         configureConsumer(answer);
         return answer;
+    }
+
+    @Override
+    public Producer createProducer() throws Exception {
+        return new WeatherProducer(this, configuration.getQuery());
+    }
+
+    @Override
+    public boolean isSingleton() {
+        return true;
+    }
+
+    public WeatherConfiguration getConfiguration() {
+        return configuration;
     }
 }
