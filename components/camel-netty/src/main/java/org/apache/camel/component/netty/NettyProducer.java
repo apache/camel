@@ -49,7 +49,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class NettyProducer extends DefaultAsyncProducer {
-    private static final transient Logger LOG = LoggerFactory.getLogger(NettyProducer.class);
+    private static final Logger LOG = LoggerFactory.getLogger(NettyProducer.class);
     private static final ChannelGroup ALL_CHANNELS = new DefaultChannelGroup("NettyProducer");
     private CamelContext context;
     private NettyConfiguration configuration;

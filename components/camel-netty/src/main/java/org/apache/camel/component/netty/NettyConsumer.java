@@ -38,7 +38,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class NettyConsumer extends DefaultConsumer {
-    private static final transient Logger LOG = LoggerFactory.getLogger(NettyConsumer.class);
+    private static final Logger LOG = LoggerFactory.getLogger(NettyConsumer.class);
     private final ChannelGroup allChannels;
     private CamelContext context;
     private NettyConfiguration configuration;

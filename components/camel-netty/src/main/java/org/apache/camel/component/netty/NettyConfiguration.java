@@ -38,7 +38,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class NettyConfiguration implements Cloneable {
-    private static final transient Logger LOG = LoggerFactory.getLogger(NettyConfiguration.class);
+    private static final Logger LOG = LoggerFactory.getLogger(NettyConfiguration.class);
 
     private String protocol;
     private String host;

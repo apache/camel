@@ -33,7 +33,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class DefaultClientPipelineFactory extends ClientPipelineFactory  {
-    private static final transient Logger LOG = LoggerFactory.getLogger(DefaultClientPipelineFactory.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DefaultClientPipelineFactory.class);
 
     private final NettyProducer producer;
     private SSLContext sslContext;

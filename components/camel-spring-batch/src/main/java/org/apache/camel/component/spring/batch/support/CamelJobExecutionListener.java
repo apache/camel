@@ -24,7 +24,7 @@ import org.springframework.batch.core.JobExecutionListener;
 
 public class CamelJobExecutionListener implements JobExecutionListener {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(CamelJobExecutionListener.class);
+    private static final Logger LOG = LoggerFactory.getLogger(CamelJobExecutionListener.class);
 
     private final ProducerTemplate producerTemplate;
 

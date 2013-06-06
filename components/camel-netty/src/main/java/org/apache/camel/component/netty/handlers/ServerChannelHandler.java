@@ -40,7 +40,7 @@ import org.slf4j.LoggerFactory;
  */
 public class ServerChannelHandler extends SimpleChannelUpstreamHandler {
     // use NettyConsumer as logger to make it easier to read the logs as this is part of the consumer
-    private static final transient Logger LOG = LoggerFactory.getLogger(NettyConsumer.class);
+    private static final Logger LOG = LoggerFactory.getLogger(NettyConsumer.class);
     private final NettyConsumer consumer;
     private final CamelLogger noReplyLogger;
 

@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory;
  */
 public final class NettyHelper {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(NettyHelper.class);
+    private static final Logger LOG = LoggerFactory.getLogger(NettyHelper.class);
 
     private NettyHelper() {
         // Utility class

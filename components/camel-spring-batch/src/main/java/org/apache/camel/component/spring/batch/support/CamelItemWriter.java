@@ -25,7 +25,7 @@ import org.springframework.batch.item.ItemWriter;
 
 public class CamelItemWriter<I> implements ItemWriter<I> {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(CamelItemWriter.class);
+    private static final Logger LOG = LoggerFactory.getLogger(CamelItemWriter.class);
 
     private final ProducerTemplate producerTemplate;
 

@@ -27,7 +27,7 @@ import org.springframework.batch.item.ItemProcessor;
  */
 public class CamelItemProcessor<I, O> implements ItemProcessor<I, O> {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(CamelItemProcessor.class);
+    private static final Logger LOG = LoggerFactory.getLogger(CamelItemProcessor.class);
 
     private final ProducerTemplate producerTemplate;
 

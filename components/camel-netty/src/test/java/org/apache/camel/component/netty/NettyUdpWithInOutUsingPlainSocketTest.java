@@ -31,7 +31,7 @@ import org.slf4j.LoggerFactory;
  * @version 
  */
 public class NettyUdpWithInOutUsingPlainSocketTest extends BaseNettyTest {
-    private static final transient Logger LOG = LoggerFactory.getLogger(NettyUdpWithInOutUsingPlainSocketTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(NettyUdpWithInOutUsingPlainSocketTest.class);
 
     @Test
     public void testSendAndReceiveOnce() throws Exception {

@@ -28,7 +28,7 @@ import org.springframework.beans.factory.InitializingBean;
 
 public class CamelItemReader<I> extends ServiceSupport implements ItemReader<I>, InitializingBean {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(CamelItemReader.class);
+    private static final Logger LOG = LoggerFactory.getLogger(CamelItemReader.class);
 
     private final CamelContext camelContext;
     private final ConsumerTemplate consumerTemplate;
