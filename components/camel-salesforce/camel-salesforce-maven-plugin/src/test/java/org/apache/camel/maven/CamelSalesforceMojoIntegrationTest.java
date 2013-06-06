@@ -16,15 +16,12 @@
  */
 package org.apache.camel.maven;
 
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.io.InputStream;
-import java.util.Properties;
-
 import org.apache.maven.plugin.logging.SystemStreamLog;
 import org.junit.Assert;
 import org.junit.Test;
+
+import java.io.*;
+import java.util.Properties;
 
 public class CamelSalesforceMojoIntegrationTest {
 
@@ -66,20 +63,28 @@ public class CamelSalesforceMojoIntegrationTest {
         // TODO check that the generated code compiles
     }
 
-    private void setLoginProperties(CamelSalesforceMojo mojo) throws IllegalAccessException, IOException {
+    private void setLoginProperties(CamelSalesforceMojo mojo) throws IOException {
         // load test-salesforce-login properties
         Properties properties = new Properties();
-        InputStream stream = new FileInputStream(TEST_LOGIN_PROPERTIES);
-        if (null == stream) {
-            throw new IllegalAccessException("Create a properties file named "
-                    + TEST_LOGIN_PROPERTIES + " with clientId, clientSecret, userName, password and a testId"
-                    + " for a Salesforce account with the Merchandise object from Salesforce Guides.");
+        InputStream stream = null;
+        try {
+            stream = new FileInputStream(TEST_LOGIN_PROPERTIES);
+            properties.load(stream);
+            mojo.clientId = properties.getProperty("clientId");
+            mojo.clientSecret = properties.getProperty("clientSecret");
+            mojo.userName = properties.getProperty("userName");
+            mojo.password = properties.getProperty("password");
+        } catch (FileNotFoundException e) {
+            throw new FileNotFoundException("Create a properties file named "
+                    + TEST_LOGIN_PROPERTIES + " with clientId, clientSecret, userName, password"
+                    + " for a Salesforce account with Merchandise and Invoice objects from Salesforce Guides.");
+        } finally {
+            if (stream != null) {
+                try {
+                    stream.close();
+                } catch (IOException ignore) {}
+            }
         }
-        properties.load(stream);
-        mojo.clientId = properties.getProperty("clientId");
-        mojo.clientSecret = properties.getProperty("clientSecret");
-        mojo.userName = properties.getProperty("userName");
-        mojo.password = properties.getProperty("password");
     }
 
 }
