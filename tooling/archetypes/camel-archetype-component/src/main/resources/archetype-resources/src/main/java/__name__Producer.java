@@ -25,7 +25,7 @@ import org.slf4j.LoggerFactory;
  * The ${name} producer.
  */
 public class ${name}Producer extends DefaultProducer {
-    private static final transient Logger LOG = LoggerFactory.getLogger(${name}Producer.class);
+    private static final Logger LOG = LoggerFactory.getLogger(${name}Producer.class);
     private ${name}Endpoint endpoint;
 
     public ${name}Producer(${name}Endpoint endpoint) {

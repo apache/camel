@@ -38,7 +38,7 @@ import org.slf4j.LoggerFactory;
  */
 public class AhcComponent extends HeaderFilterStrategyComponent {
     
-    private static final transient Logger LOG = LoggerFactory.getLogger(AhcComponent.class);
+    private static final Logger LOG = LoggerFactory.getLogger(AhcComponent.class);
     
     private static final String CLIENT_CONFIG_PREFIX = "clientConfig.";
     private static final String CLIENT_REALM_CONFIG_PREFIX = "clientConfig.realm.";
