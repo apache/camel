@@ -42,9 +42,9 @@ import static org.apache.camel.util.ObjectHelper.notNull;
  */
 public class GeoCoderProducer extends DefaultProducer {
     private static final transient Logger LOG = LoggerFactory.getLogger(GeoCoderProducer.class);
-    private GeoCoderEndpoint endpoint;
 
-    private final Geocoder geocoder = new Geocoder();
+    private GeoCoderEndpoint endpoint;
+    private Geocoder geocoder;
 
     public GeoCoderProducer(GeoCoderEndpoint endpoint) {
         super(endpoint);
@@ -191,6 +191,15 @@ public class GeoCoderProducer extends DefaultProducer {
             }
         }
         return null;
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        if (endpoint.getClientId() != null) {
+            geocoder = new Geocoder(endpoint.getClientId(), endpoint.getClientKey());
+        } else {
+            geocoder = new Geocoder();
+        }
     }
 
 }

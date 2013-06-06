@@ -29,6 +29,8 @@ public class GeoCoderEndpoint extends DefaultEndpoint {
     private String address;
     private String latlng;
     private String language = "en";
+    private String clientId;
+    private String clientKey;
     private boolean headersOnly;
 
     public GeoCoderEndpoint() {
@@ -80,5 +82,21 @@ public class GeoCoderEndpoint extends DefaultEndpoint {
 
     public void setHeadersOnly(boolean headersOnly) {
         this.headersOnly = headersOnly;
+    }
+
+    public String getClientId() {
+        return clientId;
+    }
+
+    public void setClientId(String clientId) {
+        this.clientId = clientId;
+    }
+
+    public String getClientKey() {
+        return clientKey;
+    }
+
+    public void setClientKey(String clientKey) {
+        this.clientKey = clientKey;
     }
 }
