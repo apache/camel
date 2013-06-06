@@ -21,6 +21,7 @@ import java.io.IOException;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
+import org.apache.camel.LoggingLevel;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
 
@@ -107,6 +108,11 @@ public class FileConsumerBridgeRouteExceptionHandlerTest extends ContextTestSupp
 
         @Override
         public void setCheckInterval(long checkInterval) {
+            // noop
+        }
+
+        @Override
+        public void setReadLockLoggingLevel(LoggingLevel readLockLoggingLevel) {
             // noop
         }
 

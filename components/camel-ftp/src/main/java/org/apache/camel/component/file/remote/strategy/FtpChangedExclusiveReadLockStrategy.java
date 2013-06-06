@@ -19,10 +19,12 @@ package org.apache.camel.component.file.remote.strategy;
 import java.util.List;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.LoggingLevel;
 import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.file.GenericFileEndpoint;
 import org.apache.camel.component.file.GenericFileExclusiveReadLockStrategy;
 import org.apache.camel.component.file.GenericFileOperations;
+import org.apache.camel.util.CamelLogger;
 import org.apache.camel.util.StopWatch;
 import org.apache.commons.net.ftp.FTPFile;
 import org.slf4j.Logger;
@@ -32,6 +34,7 @@ public class FtpChangedExclusiveReadLockStrategy implements GenericFileExclusive
     private static final transient Logger LOG = LoggerFactory.getLogger(FtpChangedExclusiveReadLockStrategy.class);
     private long timeout;
     private long checkInterval = 5000;
+    private LoggingLevel readLockLoggingLevel = LoggingLevel.WARN;
     private long minLength = 1;
     private boolean fastExistsCheck;
 
@@ -54,7 +57,8 @@ public class FtpChangedExclusiveReadLockStrategy implements GenericFileExclusive
             if (timeout > 0) {
                 long delta = watch.taken();
                 if (delta > timeout) {
-                    LOG.warn("Cannot acquire read lock within " + timeout + " millis. Will skip the file: " + file);
+                    CamelLogger.log(LOG, readLockLoggingLevel,
+                            "Cannot acquire read lock within " + timeout + " millis. Will skip the file: " + file);
                     // we could not get the lock within the timeout period, so return false
                     return false;
                 }
@@ -123,6 +127,7 @@ public class FtpChangedExclusiveReadLockStrategy implements GenericFileExclusive
         return timeout;
     }
 
+    @Override
     public void setTimeout(long timeout) {
         this.timeout = timeout;
     }
@@ -131,8 +136,14 @@ public class FtpChangedExclusiveReadLockStrategy implements GenericFileExclusive
         return checkInterval;
     }
 
+    @Override
     public void setCheckInterval(long checkInterval) {
         this.checkInterval = checkInterval;
+    }
+
+    @Override
+    public void setReadLockLoggingLevel(LoggingLevel readLockLoggingLevel) {
+        this.readLockLoggingLevel = readLockLoggingLevel;
     }
 
     public long getMinLength() {

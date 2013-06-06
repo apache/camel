@@ -17,6 +17,7 @@
 package org.apache.camel.component.file;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.LoggingLevel;
 
 /**
  * Strategy for acquiring exclusive read locks for files to be consumed. After
@@ -88,5 +89,16 @@ public interface GenericFileExclusiveReadLockStrategy<T> {
      * @param checkInterval interval in millis
      */
     void setCheckInterval(long checkInterval);
+
+    /**
+     * Sets logging level used when a read lock could not be acquired.
+     * <p/>
+     * Logging level used when a read lock could not be acquired.
+     * <p/>
+     * The default logging level is WARN
+     * @param readLockLoggingLevel LoggingLevel
+     */
+    void setReadLockLoggingLevel(LoggingLevel readLockLoggingLevel);
+
 
 }

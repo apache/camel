@@ -24,9 +24,11 @@ import java.nio.channels.FileChannel;
 import java.nio.channels.FileLock;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.LoggingLevel;
 import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.file.GenericFileEndpoint;
 import org.apache.camel.component.file.GenericFileOperations;
+import org.apache.camel.util.CamelLogger;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.StopWatch;
 import org.slf4j.Logger;
@@ -43,11 +45,14 @@ public class FileLockExclusiveReadLockStrategy extends MarkerFileExclusiveReadLo
     private long checkInterval = 1000;
     private FileLock lock;
     private String lockFileName;
+    private LoggingLevel readLockLoggingLevel = LoggingLevel.WARN;
 
+    @Override
     public void prepareOnStartup(GenericFileOperations<File> operations, GenericFileEndpoint<File> endpoint) {
         // noop
     }
 
+    @Override
     public boolean acquireExclusiveReadLock(GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange) throws Exception {
         // must call super
         if (!super.acquireExclusiveReadLock(operations, file, exchange)) {
@@ -70,7 +75,8 @@ public class FileLockExclusiveReadLockStrategy extends MarkerFileExclusiveReadLo
                 if (timeout > 0) {
                     long delta = watch.taken();
                     if (delta > timeout) {
-                        LOG.warn("Cannot acquire read lock within " + timeout + " millis. Will skip the file: " + target);
+                        CamelLogger.log(LOG, readLockLoggingLevel,
+                                "Cannot acquire read lock within " + timeout + " millis. Will skip the file: " + target);
                         // we could not get the lock within the timeout period, so return false
                         return false;
                     }
@@ -112,6 +118,7 @@ public class FileLockExclusiveReadLockStrategy extends MarkerFileExclusiveReadLo
         return true;
     }
 
+    @Override
     public void releaseExclusiveReadLock(GenericFileOperations<File> operations,
                                          GenericFile<File> file, Exchange exchange) throws Exception {
 
@@ -144,12 +151,19 @@ public class FileLockExclusiveReadLockStrategy extends MarkerFileExclusiveReadLo
         return timeout;
     }
 
+    @Override
     public void setTimeout(long timeout) {
         this.timeout = timeout;
     }
 
+    @Override
     public void setCheckInterval(long checkInterval) {
         this.checkInterval = checkInterval;
+    }
+
+    @Override
+    public void setReadLockLoggingLevel(LoggingLevel readLockLoggingLevel) {
+        this.readLockLoggingLevel = readLockLoggingLevel;
     }
 
 }
