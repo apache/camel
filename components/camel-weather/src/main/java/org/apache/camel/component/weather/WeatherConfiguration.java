@@ -92,8 +92,8 @@ public class WeatherConfiguration {
     public String getQuery(String location) throws Exception {
         String answer = "http://api.openweathermap.org/data/2.5/";
 
-        if (isEmpty(location)) {
-            location = getGeoLocation();
+        if (isEmpty(location) || "current".equals(location)) {
+            location = getCurrentGeoLocation();
         } else {
             // assuming the location is a town or country
             location = "q=" + location;
@@ -118,7 +118,7 @@ public class WeatherConfiguration {
         return answer;
     }
 
-    private String getGeoLocation() throws Exception {
+    private String getCurrentGeoLocation() throws Exception {
         String geoLocation = component.getCamelContext().getTypeConverter().mandatoryConvertTo(String.class, new URL("http://freegeoip.net/json/"));
         if (isEmpty(geoLocation)) {
             throw new IllegalStateException("Got the unexpected value '" + geoLocation + "' for the geolocation");

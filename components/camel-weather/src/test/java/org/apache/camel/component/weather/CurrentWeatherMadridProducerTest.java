@@ -62,6 +62,25 @@ public class CurrentWeatherMadridProducerTest extends BaseWeatherConsumerTest {
         checkWeatherContent(weather);
     }
 
+    @Test
+    public void testHeaderOverrideCurrent() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        // as the default delay option is one hour long, we expect exactly one message exchange
+        mock.expectedMessageCount(1);
+
+        template.sendBodyAndHeader("direct:start", "Hello World", WeatherConstants.WEATHER_LOCATION, "current");
+
+        mock.assertIsSatisfied();
+
+        Exchange exchange = mock.getExchanges().get(0);
+        assertNotNull(exchange);
+        Message in = exchange.getIn();
+        assertNotNull(in);
+        String weather = assertIsInstanceOf(String.class, in.getBody());
+
+        checkWeatherContent(weather);
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
