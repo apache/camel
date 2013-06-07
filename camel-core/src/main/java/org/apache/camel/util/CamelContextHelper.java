@@ -356,7 +356,7 @@ public final class CamelContextHelper {
     public static SortedMap<String, Properties> findComponents(CamelContext camelContext) throws LoadPropertiesException {
         SortedMap<String, Properties> map = new TreeMap<String, Properties>();
         Enumeration<URL> iter = camelContext.getClassResolver().loadResourcesAsURL(COMPONENT_DESCRIPTOR);
-        while (iter.hasMoreElements()) {
+        while (iter != null && iter.hasMoreElements()) {
             URL url = iter.nextElement();
             try {
                 Properties properties = new Properties();
