@@ -17,10 +17,12 @@
 package org.apache.camel.component.file.strategy;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.LoggingLevel;
 import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.file.GenericFileEndpoint;
 import org.apache.camel.component.file.GenericFileExclusiveReadLockStrategy;
 import org.apache.camel.component.file.GenericFileOperations;
+import org.apache.camel.util.CamelLogger;
 import org.apache.camel.util.StopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,11 +36,14 @@ public class GenericFileRenameExclusiveReadLockStrategy<T> implements GenericFil
     private static final transient Logger LOG = LoggerFactory.getLogger(GenericFileRenameExclusiveReadLockStrategy.class);
     private long timeout;
     private long checkInterval;
+    private LoggingLevel readLockLoggingLevel = LoggingLevel.WARN;
 
+    @Override
     public void prepareOnStartup(GenericFileOperations<T> operations, GenericFileEndpoint<T> endpoint) throws Exception {
         // noop
     }
 
+    @Override
     public boolean acquireExclusiveReadLock(GenericFileOperations<T> operations, GenericFile<T> file,
                                             Exchange exchange) throws Exception {
         LOG.trace("Waiting for exclusive read lock to file: {}", file);
@@ -58,7 +63,8 @@ public class GenericFileRenameExclusiveReadLockStrategy<T> implements GenericFil
             if (timeout > 0) {
                 long delta = watch.taken();
                 if (delta > timeout) {
-                    LOG.warn("Cannot acquire read lock within " + timeout + " millis. Will skip the file: " + file);
+                    CamelLogger.log(LOG, readLockLoggingLevel,
+                            "Cannot acquire read lock within " + timeout + " millis. Will skip the file: " + file);
                     // we could not get the lock within the timeout period, so return false
                     return false;
                 }
@@ -81,6 +87,7 @@ public class GenericFileRenameExclusiveReadLockStrategy<T> implements GenericFil
         return true;
     }
 
+    @Override
     public void releaseExclusiveReadLock(GenericFileOperations<T> operations, GenericFile<T> file,
                                          Exchange exchange) throws Exception {
         // noop
@@ -101,11 +108,18 @@ public class GenericFileRenameExclusiveReadLockStrategy<T> implements GenericFil
         return timeout;
     }
 
+    @Override
     public void setTimeout(long timeout) {
         this.timeout = timeout;
     }
 
+    @Override
     public void setCheckInterval(long checkInterval) {
         this.checkInterval = checkInterval;
+    }
+
+    @Override
+    public void setReadLockLoggingLevel(LoggingLevel readLockLoggingLevel) {
+        this.readLockLoggingLevel = readLockLoggingLevel;
     }
 }

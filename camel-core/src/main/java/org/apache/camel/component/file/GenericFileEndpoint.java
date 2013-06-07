@@ -29,6 +29,7 @@ import org.apache.camel.Component;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.ExpressionIllegalSyntaxException;
+import org.apache.camel.LoggingLevel;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.ScheduledPollEndpoint;
@@ -132,6 +133,8 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
     protected long readLockCheckInterval = 1000;
     @UriParam
     protected long readLockTimeout = 10000;
+    @UriParam
+    protected LoggingLevel readLockLoggingLevel = LoggingLevel.WARN;
     @UriParam
     protected long readLockMinLength = 1;
     @UriParam
@@ -596,6 +599,14 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
         this.readLockTimeout = readLockTimeout;
     }
 
+    public LoggingLevel getReadLockLoggingLevel() {
+        return readLockLoggingLevel;
+    }
+
+    public void setReadLockLoggingLevel(LoggingLevel readLockLoggingLevel) {
+        this.readLockLoggingLevel = readLockLoggingLevel;
+    }
+
     public long getReadLockMinLength() {
         return readLockMinLength;
     }
@@ -820,6 +831,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
             params.put("readLockTimeout", readLockTimeout);
         }
         params.put("readLockMinLength", readLockMinLength);
+        params.put("readLockLoggingLevel", readLockLoggingLevel);
 
         return params;
     }

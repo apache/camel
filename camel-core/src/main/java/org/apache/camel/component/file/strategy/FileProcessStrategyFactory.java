@@ -21,6 +21,7 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
+import org.apache.camel.LoggingLevel;
 import org.apache.camel.component.file.GenericFileExclusiveReadLockStrategy;
 import org.apache.camel.component.file.GenericFileProcessStrategy;
 import org.apache.camel.spi.Language;
@@ -109,48 +110,37 @@ public final class FileProcessStrategyFactory {
         if (ObjectHelper.isNotEmpty(readLock)) {
             if ("none".equals(readLock) || "false".equals(readLock)) {
                 return null;
+            } else if ("markerFile".equals(readLock)) {
+                return new MarkerFileExclusiveReadLockStrategy();
             } else if ("fileLock".equals(readLock)) {
-                GenericFileExclusiveReadLockStrategy<File> readLockStrategy = new FileLockExclusiveReadLockStrategy();
-                Long timeout = (Long) params.get("readLockTimeout");
-                if (timeout != null) {
-                    readLockStrategy.setTimeout(timeout);
-                }
-                Long checkInterval = (Long) params.get("readLockCheckInterval");
-                if (checkInterval != null) {
-                    readLockStrategy.setCheckInterval(checkInterval);
-                }
-                return readLockStrategy;
+                strategy = new FileLockExclusiveReadLockStrategy();
             } else if ("rename".equals(readLock)) {
-                GenericFileExclusiveReadLockStrategy<File> readLockStrategy = new FileRenameExclusiveReadLockStrategy();
-                Long timeout = (Long) params.get("readLockTimeout");
-                if (timeout != null) {
-                    readLockStrategy.setTimeout(timeout);
-                }
-                Long checkInterval = (Long) params.get("readLockCheckInterval");
-                if (checkInterval != null) {
-                    readLockStrategy.setCheckInterval(checkInterval);
-                }
-                return readLockStrategy;
+                strategy = new FileRenameExclusiveReadLockStrategy();
             } else if ("changed".equals(readLock)) {
                 FileChangedExclusiveReadLockStrategy readLockStrategy = new FileChangedExclusiveReadLockStrategy();
-                Long timeout = (Long) params.get("readLockTimeout");
-                if (timeout != null) {
-                    readLockStrategy.setTimeout(timeout);
-                }
-                Long checkInterval = (Long) params.get("readLockCheckInterval");
-                if (checkInterval != null) {
-                    readLockStrategy.setCheckInterval(checkInterval);
-                }
                 Long minLength = (Long) params.get("readLockMinLength");
                 if (minLength != null) {
                     readLockStrategy.setMinLength(minLength);
                 }
-                return readLockStrategy;
-            } else if ("markerFile".equals(readLock)) {
-                return new MarkerFileExclusiveReadLockStrategy();
+                strategy = readLockStrategy;
+            }
+
+            if (strategy != null) {
+                Long timeout = (Long) params.get("readLockTimeout");
+                if (timeout != null) {
+                    strategy.setTimeout(timeout);
+                }
+                Long checkInterval = (Long) params.get("readLockCheckInterval");
+                if (checkInterval != null) {
+                    strategy.setCheckInterval(checkInterval);
+                }
+                LoggingLevel readLockLoggingLevel = (LoggingLevel) params.get("readLockLoggingLevel");
+                if (readLockLoggingLevel != null) {
+                    strategy.setReadLockLoggingLevel(readLockLoggingLevel);
+                }
             }
         }
 
-        return null;
+        return strategy;
     }
 }

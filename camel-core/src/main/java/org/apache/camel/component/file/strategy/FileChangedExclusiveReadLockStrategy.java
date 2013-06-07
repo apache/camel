@@ -19,8 +19,10 @@ package org.apache.camel.component.file.strategy;
 import java.io.File;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.LoggingLevel;
 import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.file.GenericFileOperations;
+import org.apache.camel.util.CamelLogger;
 import org.apache.camel.util.StopWatch;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,7 +36,9 @@ public class FileChangedExclusiveReadLockStrategy extends MarkerFileExclusiveRea
     private long timeout;
     private long checkInterval = 1000;
     private long minLength = 1;
+    private LoggingLevel readLockLoggingLevel = LoggingLevel.WARN;
 
+    @Override
     public boolean acquireExclusiveReadLock(GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange) throws Exception {
         // must call super
         if (!super.acquireExclusiveReadLock(operations, file, exchange)) {
@@ -55,7 +59,8 @@ public class FileChangedExclusiveReadLockStrategy extends MarkerFileExclusiveRea
             if (timeout > 0) {
                 long delta = watch.taken();
                 if (delta > timeout) {
-                    LOG.warn("Cannot acquire read lock within " + timeout + " millis. Will skip the file: " + file);
+                    CamelLogger.log(LOG, readLockLoggingLevel,
+                            "Cannot acquire read lock within " + timeout + " millis. Will skip the file: " + file);
                     // we could not get the lock within the timeout period, so return false
                     return false;
                 }
@@ -101,6 +106,7 @@ public class FileChangedExclusiveReadLockStrategy extends MarkerFileExclusiveRea
         return timeout;
     }
 
+    @Override
     public void setTimeout(long timeout) {
         this.timeout = timeout;
     }
@@ -109,8 +115,14 @@ public class FileChangedExclusiveReadLockStrategy extends MarkerFileExclusiveRea
         return checkInterval;
     }
 
+    @Override
     public void setCheckInterval(long checkInterval) {
         this.checkInterval = checkInterval;
+    }
+
+    @Override
+    public void setReadLockLoggingLevel(LoggingLevel readLockLoggingLevel) {
+        this.readLockLoggingLevel = readLockLoggingLevel;
     }
 
     public long getMinLength() {

@@ -19,6 +19,7 @@ package org.apache.camel.component.file.strategy;
 import java.io.File;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.LoggingLevel;
 import org.apache.camel.component.file.FileComponent;
 import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.component.file.GenericFileEndpoint;
@@ -36,6 +37,7 @@ import org.slf4j.LoggerFactory;
 public class MarkerFileExclusiveReadLockStrategy implements GenericFileExclusiveReadLockStrategy<File> {
     private static final transient Logger LOG = LoggerFactory.getLogger(MarkerFileExclusiveReadLockStrategy.class);
 
+    @Override
     public void prepareOnStartup(GenericFileOperations<File> operations, GenericFileEndpoint<File> endpoint) {
         String dir = endpoint.getConfiguration().getDirectory();
         File file = new File(dir);
@@ -51,6 +53,7 @@ public class MarkerFileExclusiveReadLockStrategy implements GenericFileExclusive
         }
     }
 
+    @Override
     public boolean acquireExclusiveReadLock(GenericFileOperations<File> operations,
                                             GenericFile<File> file, Exchange exchange) throws Exception {
         String lockFileName = getLockFileName(file);
@@ -64,6 +67,7 @@ public class MarkerFileExclusiveReadLockStrategy implements GenericFileExclusive
         return acquired;
     }
 
+    @Override
     public void releaseExclusiveReadLock(GenericFileOperations<File> operations,
                                          GenericFile<File> file, Exchange exchange) throws Exception {
         String lockFileName = exchange.getProperty(Exchange.FILE_LOCK_FILE_NAME, getLockFileName(file), String.class);
@@ -78,11 +82,18 @@ public class MarkerFileExclusiveReadLockStrategy implements GenericFileExclusive
         }
     }
 
+    @Override
     public void setTimeout(long timeout) {
         // noop
     }
 
+    @Override
     public void setCheckInterval(long checkInterval) {
+        // noop
+    }
+
+    @Override
+    public void setReadLockLoggingLevel(LoggingLevel readLockLoggingLevel) {
         // noop
     }
 
