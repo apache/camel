@@ -29,4 +29,8 @@ public class SpringTokenXMLPairNamespaceSplitTest extends TokenXMLPairNamespaceS
         return createSpringCamelContext(this, "org/apache/camel/language/SpringTokenXMLPairNamespaceSplitTest.xml");
     }
 
+    @Override
+    public void testTokenXMLPair2() throws Exception {
+        // noop
+    }
 }
