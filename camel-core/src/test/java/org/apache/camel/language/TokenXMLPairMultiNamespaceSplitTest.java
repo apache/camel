@@ -37,6 +37,11 @@ public class TokenXMLPairMultiNamespaceSplitTest extends TokenXMLPairNamespaceSp
         assertMockEndpointsSatisfied();
     }
 
+    public void testTokenXMLPair2() throws Exception {
+        // noop
+    }
+
+
     @Override
     protected String createBody() {
         // multiple namespaces on parent on the same line
