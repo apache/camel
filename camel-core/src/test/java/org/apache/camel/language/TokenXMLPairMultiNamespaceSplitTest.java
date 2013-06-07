@@ -41,7 +41,6 @@ public class TokenXMLPairMultiNamespaceSplitTest extends TokenXMLPairNamespaceSp
         // noop
     }
 
-
     @Override
     protected String createBody() {
         // multiple namespaces on parent on the same line
