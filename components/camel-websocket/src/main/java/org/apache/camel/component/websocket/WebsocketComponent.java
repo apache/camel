@@ -18,6 +18,7 @@ package org.apache.camel.component.websocket;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.net.URL;
 import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
@@ -349,7 +350,10 @@ public class WebsocketComponent extends DefaultComponent {
             }
 
             if (resources[0].equals("classpath")) {
-                context.setBaseResource(new JettyClassPathResource(getCamelContext().getClassResolver(), resources[1]));
+                // Does not work when deployed as a bundle
+                // context.setBaseResource(new JettyClassPathResource(getCamelContext().getClassResolver(), resources[1]));
+                URL url = this.getCamelContext().getClassResolver().loadResourceAsURL(resources[1]);
+                context.setBaseResource(Resource.newResource(url));
             } else if (resources[0].equals("file")) {
                 context.setBaseResource(Resource.newResource(resources[1]));
             }
