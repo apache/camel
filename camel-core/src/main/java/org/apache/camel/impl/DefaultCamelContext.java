@@ -29,6 +29,7 @@ import java.util.LinkedHashMap;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.Set;
 import java.util.TreeMap;
 import java.util.concurrent.ScheduledExecutorService;
@@ -125,6 +126,7 @@ import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.EndpointHelper;
 import org.apache.camel.util.EventHelper;
 import org.apache.camel.util.IntrospectionSupport;
+import org.apache.camel.util.LoadPropertiesException;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
 import org.apache.camel.util.StopWatch;
@@ -1003,6 +1005,10 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         } else {
             startupListeners.add(listener);
         }
+    }
+
+    public Map<String, Properties> findComponents() throws LoadPropertiesException, IOException {
+        return CamelContextHelper.findComponents(this);
     }
 
     // Helper methods

@@ -342,7 +342,7 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
     }
 
     public Map<String, Properties> findComponents() throws Exception {
-        return CamelContextHelper.findComponents(context);
+        return context.findComponents();
     }
 
     public List<String> findComponentNames() throws Exception {

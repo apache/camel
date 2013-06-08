@@ -354,10 +354,16 @@ public final class CamelContextHelper {
      * Finds all possible Components on the classpath and Registry
      */
     public static SortedMap<String, Properties> findComponents(CamelContext camelContext) throws LoadPropertiesException {
-        SortedMap<String, Properties> map = new TreeMap<String, Properties>();
         Enumeration<URL> iter = camelContext.getClassResolver().loadResourcesAsURL(COMPONENT_DESCRIPTOR);
-        while (iter != null && iter.hasMoreElements()) {
-            URL url = iter.nextElement();
+        return findComponents(camelContext, iter);
+    }
+
+    public static SortedMap<String, Properties> findComponents(CamelContext camelContext,
+                                                               Enumeration<URL> componentDescriptionIter)
+            throws LoadPropertiesException {
+        SortedMap<String, Properties> map = new TreeMap<String, Properties>();
+        while (componentDescriptionIter != null && componentDescriptionIter.hasMoreElements()) {
+            URL url = componentDescriptionIter.nextElement();
             try {
                 Properties properties = new Properties();
                 properties.load(url.openStream());

@@ -16,10 +16,10 @@
  */
 package org.apache.camel;
 
+import java.io.IOException;
 import java.io.InputStream;
-import java.util.Collection;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
+import java.util.Properties;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
@@ -53,6 +53,7 @@ import org.apache.camel.spi.ServicePool;
 import org.apache.camel.spi.ShutdownStrategy;
 import org.apache.camel.spi.TypeConverterRegistry;
 import org.apache.camel.spi.UuidGenerator;
+import org.apache.camel.util.LoadPropertiesException;
 
 /**
  * Interface used to represent the context used to configure routes and the
@@ -1196,4 +1197,12 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      * @param useBreadcrumb <tt>true</tt> to enable breadcrumb, <tt>false</tt> to disable
      */
     void setUseBreadcrumb(Boolean useBreadcrumb);
+
+    /**
+     * Find information about all the Camel components available in the classpath and {@link org.apache.camel.spi.Registry}.
+     *
+     * @return a map with the component name, and value with component details.
+     * @throws Exception is thrown if error occurred
+     */
+    Map<String,Properties> findComponents() throws LoadPropertiesException, IOException;
 }
