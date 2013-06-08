@@ -21,6 +21,8 @@ import java.net.URL;
 import java.util.Enumeration;
 import java.util.Map;
 import java.util.Properties;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
 import org.apache.camel.TypeConverter;
 import org.apache.camel.core.osgi.utils.BundleContextUtils;
@@ -48,9 +50,14 @@ public class OsgiDefaultCamelContext extends DefaultCamelContext {
     }
 
     public Map<String, Properties> findComponents() throws LoadPropertiesException, IOException {
-        Bundle bundle = bundleContext.getBundle();
-        Enumeration<URL> iter = bundle.getResources(CamelContextHelper.COMPONENT_DESCRIPTOR);
-        return CamelContextHelper.findComponents(this, iter);
+        SortedMap<String, Properties> answer = new TreeMap<String, Properties>();
+        Bundle[] bundles = bundleContext.getBundles();
+        for (Bundle bundle : bundles) {
+            Enumeration<URL> iter = bundle.getResources(CamelContextHelper.COMPONENT_DESCRIPTOR);
+            SortedMap<String,Properties> map = CamelContextHelper.findComponents(this, iter);
+            answer.putAll(map);
+        }
+        return answer;
     }
 
     @Override
