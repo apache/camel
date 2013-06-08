@@ -16,10 +16,24 @@
  */
 package org.apache.camel.core.osgi.utils;
 
+import java.io.IOException;
 import java.lang.reflect.Method;
+import java.net.URL;
+import java.util.Arrays;
+import java.util.Enumeration;
+import java.util.Map;
+import java.util.Properties;
+import java.util.SortedMap;
+import java.util.TreeMap;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.spi.ComponentResolver;
+import org.apache.camel.util.CamelContextHelper;
+import org.apache.camel.util.LoadPropertiesException;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.InvalidSyntaxException;
+import org.osgi.framework.ServiceReference;
 
 /**
  * Helper class
@@ -64,4 +78,18 @@ public final class BundleContextUtils {
         return null;
     }
 
+    /**
+     * Finds the components available on the bundle context and camel context
+     */
+    public static Map<String, Properties> findComponents(BundleContext bundleContext, CamelContext camelContext)
+            throws IOException, LoadPropertiesException {
+        SortedMap<String, Properties> answer = new TreeMap<String, Properties>();
+        Bundle[] bundles = bundleContext.getBundles();
+        for (Bundle bundle : bundles) {
+            Enumeration<URL> iter = bundle.getResources(CamelContextHelper.COMPONENT_DESCRIPTOR);
+            SortedMap<String,Properties> map = CamelContextHelper.findComponents(camelContext, iter);
+            answer.putAll(map);
+        }
+        return answer;
+    }
 }

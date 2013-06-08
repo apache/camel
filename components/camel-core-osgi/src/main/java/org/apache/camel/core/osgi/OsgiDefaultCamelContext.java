@@ -17,21 +17,15 @@
 package org.apache.camel.core.osgi;
 
 import java.io.IOException;
-import java.net.URL;
-import java.util.Enumeration;
 import java.util.Map;
 import java.util.Properties;
-import java.util.SortedMap;
-import java.util.TreeMap;
 
 import org.apache.camel.TypeConverter;
 import org.apache.camel.core.osgi.utils.BundleContextUtils;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.Registry;
-import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.LoadPropertiesException;
-import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
 
 public class OsgiDefaultCamelContext extends DefaultCamelContext {
@@ -49,15 +43,9 @@ public class OsgiDefaultCamelContext extends DefaultCamelContext {
         OsgiCamelContextHelper.osgiUpdate(this, bundleContext);
     }
 
+    @Override
     public Map<String, Properties> findComponents() throws LoadPropertiesException, IOException {
-        SortedMap<String, Properties> answer = new TreeMap<String, Properties>();
-        Bundle[] bundles = bundleContext.getBundles();
-        for (Bundle bundle : bundles) {
-            Enumeration<URL> iter = bundle.getResources(CamelContextHelper.COMPONENT_DESCRIPTOR);
-            SortedMap<String,Properties> map = CamelContextHelper.findComponents(this, iter);
-            answer.putAll(map);
-        }
-        return answer;
+        return BundleContextUtils.findComponents(bundleContext, this);
     }
 
     @Override

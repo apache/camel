@@ -16,6 +16,10 @@
  */
 package org.apache.camel.blueprint;
 
+import java.io.IOException;
+import java.util.Map;
+import java.util.Properties;
+
 import org.apache.camel.TypeConverter;
 import org.apache.camel.core.osgi.OsgiCamelContextHelper;
 import org.apache.camel.core.osgi.OsgiFactoryFinderResolver;
@@ -25,6 +29,7 @@ import org.apache.camel.core.osgi.utils.BundleDelegatingClassLoader;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.Registry;
+import org.apache.camel.util.LoadPropertiesException;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceEvent;
 import org.osgi.framework.ServiceListener;
@@ -109,6 +114,10 @@ public class BlueprintCamelContext extends DefaultCamelContext implements Servic
         stop();
     }
 
+    @Override
+    public Map<String, Properties> findComponents() throws LoadPropertiesException, IOException {
+        return BundleContextUtils.findComponents(bundleContext, this);
+    }
 
     @Override
     public void blueprintEvent(BlueprintEvent event) {
