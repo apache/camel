@@ -18,8 +18,10 @@ package org.apache.camel.component.netty;
 
 import java.net.InetSocketAddress;
 import java.util.Map;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.RejectedExecutionException;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
@@ -399,7 +401,22 @@ public class NettyProducer extends DefaultAsyncProducer {
         if (LOG.isTraceEnabled()) {
             LOG.trace("Waiting for operation to complete {} for {} millis", channelFuture, configuration.getConnectTimeout());
         }
-        channelFuture.awaitUninterruptibly(configuration.getConnectTimeout());
+        // here we need to wait it in other thread
+        final CountDownLatch channelLatch = new CountDownLatch(1);
+        channelFuture.addListener(new ChannelFutureListener() {
+            @Override
+            public void operationComplete(ChannelFuture cf) throws Exception {
+                channelLatch.countDown();
+            }
+        });
+         
+        try {
+            channelLatch.await(configuration.getConnectTimeout(), TimeUnit.MILLISECONDS);
+        } catch (InterruptedException ex) {
+            throw new CamelException("Interrupted while waiting for " + "connection to "
+                                     + configuration.getAddress());
+        }
+        
 
         if (!channelFuture.isDone() || !channelFuture.isSuccess()) {
             throw new CamelException("Cannot connect to " + configuration.getAddress(), channelFuture.getCause());
