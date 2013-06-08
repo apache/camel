@@ -16,18 +16,23 @@
  */
 package org.apache.camel.component.salesforce;
 
+import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.component.salesforce.api.dto.bulk.ContentType;
+import org.apache.camel.component.salesforce.internal.PayloadFormat;
+import org.apache.camel.component.salesforce.internal.dto.NotifyForFieldsEnum;
+import org.apache.camel.component.salesforce.internal.dto.NotifyForOperationsEnum;
+import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriParams;
+import org.eclipse.jetty.client.HttpClient;
+
 import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.component.salesforce.api.dto.bulk.ContentType;
-import org.apache.camel.component.salesforce.api.dto.bulk.OperationEnum;
-import org.apache.camel.component.salesforce.internal.PayloadFormat;
-import org.apache.camel.component.salesforce.internal.dto.NotifyForFieldsEnum;
-import org.apache.camel.component.salesforce.internal.dto.NotifyForOperationsEnum;
-import org.eclipse.jetty.client.HttpClient;
-
+/**
+ * Salesforce Endpoint configuration.
+ */
+@UriParams
 public class SalesforceEndpointConfig implements Cloneable {
 
     // default API version
@@ -49,43 +54,57 @@ public class SalesforceEndpointConfig implements Cloneable {
     public static final String SOBJECT_SEARCH = "sObjectSearch";
 
     // parameters for Bulk API
-    public static final String BULK_OPERATION = "bulkOperation";
     public static final String CONTENT_TYPE = "contentType";
     public static final String JOB_ID = "jobId";
     public static final String BATCH_ID = "batchId";
     public static final String RESULT_ID = "resultId";
 
-    // parameters for Streaming API
-    public static final String UPDATE_TOPIC = "updateTopic";
-
     // general properties
+    @UriParam
     private String apiVersion = DEFAULT_VERSION;
 
     // Rest API properties
+    @UriParam
     private PayloadFormat format = PayloadFormat.JSON;
+    @UriParam
     private String sObjectName;
+    @UriParam
     private String sObjectId;
+    @UriParam
     private String sObjectFields;
+    @UriParam
     private String sObjectIdName;
+    @UriParam
     private String sObjectIdValue;
+    @UriParam
     private String sObjectBlobFieldName;
+    @UriParam
     private String sObjectClass;
+    @UriParam
     private String sObjectQuery;
+    @UriParam
     private String sObjectSearch;
 
     // Bulk API properties
-    private OperationEnum bulkOperation;
+    @UriParam
     private ContentType contentType;
+    @UriParam
     private String jobId;
+    @UriParam
     private String batchId;
+    @UriParam
     private String resultId;
 
     // Streaming API properties
+    @UriParam
     private boolean updateTopic;
+    @UriParam
     private NotifyForFieldsEnum notifyForFields;
+    @UriParam
     private NotifyForOperationsEnum notifyForOperations;
 
     // Jetty HttpClient, set using reference
+    @UriParam
     private HttpClient httpClient;
 
     public SalesforceEndpointConfig copy() {
@@ -98,12 +117,12 @@ public class SalesforceEndpointConfig implements Cloneable {
         }
     }
 
-    public PayloadFormat getPayloadFormat() {
+    public PayloadFormat getFormat() {
         return format;
     }
 
-    public void setFormat(String format) {
-        this.format = PayloadFormat.valueOf(format.toUpperCase());
+    public void setFormat(PayloadFormat format) {
+        this.format = format;
     }
 
     public String getApiVersion() {
@@ -184,14 +203,6 @@ public class SalesforceEndpointConfig implements Cloneable {
 
     public void setSObjectSearch(String sObjectSearch) {
         this.sObjectSearch = sObjectSearch;
-    }
-
-    public OperationEnum getBulkOperation() {
-        return bulkOperation;
-    }
-
-    public void setBulkOperation(OperationEnum bulkOperation) {
-        this.bulkOperation = bulkOperation;
     }
 
     public ContentType getContentType() {
@@ -275,17 +286,12 @@ public class SalesforceEndpointConfig implements Cloneable {
         valueMap.put(SOBJECT_SEARCH, sObjectSearch);
 
         // add bulk API properties
-        if (bulkOperation != null) {
-            valueMap.put(BULK_OPERATION, bulkOperation.value());
-        }
         if (contentType != null) {
             valueMap.put(CONTENT_TYPE, contentType.value());
         }
         valueMap.put(JOB_ID, jobId);
         valueMap.put(BATCH_ID, batchId);
         valueMap.put(RESULT_ID, resultId);
-
-        valueMap.put(UPDATE_TOPIC, String.valueOf(updateTopic));
 
         return Collections.unmodifiableMap(valueMap);
     }

@@ -22,17 +22,22 @@ import org.apache.camel.Producer;
 import org.apache.camel.component.salesforce.internal.OperationName;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.impl.SynchronousDelegateProducer;
+import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * Represents a Salesforce endpoint.
  */
+@UriEndpoint(scheme = "salesforce", consumerClass = SalesforceConsumer.class)
 public class SalesforceEndpoint extends DefaultEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(SalesforceEndpoint.class);
 
+    @UriParam
     private final SalesforceEndpointConfig config;
+
     private final OperationName operationName;
     private final String topicName;
 
@@ -66,8 +71,10 @@ public class SalesforceEndpoint extends DefaultEndpoint {
                     operationName.value()));
         }
 
-        return new SalesforceConsumer(this, processor,
-                getComponent().getSubscriptionHelper());
+        final SalesforceConsumer consumer = new SalesforceConsumer(this, processor,
+            getComponent().getSubscriptionHelper());
+        configureConsumer(consumer);
+        return consumer;
     }
 
     @Override

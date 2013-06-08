@@ -39,7 +39,7 @@ public class SalesforceProducer extends DefaultAsyncProducer {
         super(endpoint);
 
         final SalesforceEndpointConfig endpointConfig = endpoint.getConfiguration();
-        final PayloadFormat payloadFormat = endpointConfig.getPayloadFormat();
+        final PayloadFormat payloadFormat = endpointConfig.getFormat();
 
         // check if its a Bulk Operation
         if (isBulkOperation(endpoint.getOperationName())) {

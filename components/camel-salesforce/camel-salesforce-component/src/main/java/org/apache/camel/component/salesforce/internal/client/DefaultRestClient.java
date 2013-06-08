@@ -16,15 +16,10 @@
  */
 package org.apache.camel.component.salesforce.internal.client;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.util.List;
-
 import com.thoughtworks.xstream.XStream;
 import org.apache.camel.component.salesforce.api.SalesforceException;
 import org.apache.camel.component.salesforce.api.dto.RestError;
+import org.apache.camel.component.salesforce.internal.PayloadFormat;
 import org.apache.camel.component.salesforce.internal.SalesforceSession;
 import org.apache.camel.component.salesforce.internal.dto.RestErrors;
 import org.codehaus.jackson.map.ObjectMapper;
@@ -36,6 +31,12 @@ import org.eclipse.jetty.http.HttpHeaders;
 import org.eclipse.jetty.http.HttpMethods;
 import org.eclipse.jetty.util.StringUtil;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.util.List;
+
 public class DefaultRestClient extends AbstractClientBase implements RestClient {
 
     private static final String SERVICES_DATA = "/services/data/";
@@ -44,10 +45,10 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
 
     private ObjectMapper objectMapper;
     private XStream xStream;
-    protected String format;
+    protected PayloadFormat format;
 
     public DefaultRestClient(HttpClient httpClient,
-                             String version, String format, SalesforceSession session) throws SalesforceException {
+                             String version, PayloadFormat format, SalesforceSession session) throws SalesforceException {
         super(version, session, httpClient);
 
         this.format = format;
@@ -61,7 +62,7 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
     @Override
     protected void doHttpRequest(ContentExchange request, ClientResponseCallback callback) {
         // set standard headers for all requests
-        final String contentType = "json".equals(format) ? APPLICATION_JSON_UTF8 : APPLICATION_XML_UTF8;
+        final String contentType = PayloadFormat.JSON.equals(format) ? APPLICATION_JSON_UTF8 : APPLICATION_XML_UTF8;
         request.setRequestHeader(HttpHeaders.ACCEPT, contentType);
         request.setRequestHeader(HttpHeaders.ACCEPT_CHARSET, StringUtil.__UTF8);
         // request content type and charset is set by the request entity
@@ -73,7 +74,7 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
     protected SalesforceException createRestException(ContentExchange httpExchange) {
         // try parsing response according to format
         try {
-            if ("json".equals(format)) {
+            if (PayloadFormat.JSON.equals(format)) {
                 List<RestError> restErrors = objectMapper.readValue(
                         httpExchange.getResponseContent(), new TypeReference<List<RestError>>() {
                 });
@@ -177,7 +178,7 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
 
         // input stream as entity content
         post.setRequestContentSource(sObject);
-        post.setRequestContentType("json".equals(format) ? APPLICATION_JSON_UTF8 : APPLICATION_XML_UTF8);
+        post.setRequestContentType(PayloadFormat.JSON.equals(format) ? APPLICATION_JSON_UTF8 : APPLICATION_XML_UTF8);
 
         doHttpRequest(post, new DelegatingClientCallback(callback));
     }
@@ -191,7 +192,7 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
 
         // input stream as entity content
         patch.setRequestContentSource(sObject);
-        patch.setRequestContentType("json".equals(format) ? APPLICATION_JSON_UTF8 : APPLICATION_XML_UTF8);
+        patch.setRequestContentType(PayloadFormat.JSON.equals(format) ? APPLICATION_JSON_UTF8 : APPLICATION_XML_UTF8);
 
         doHttpRequest(patch, new DelegatingClientCallback(callback));
     }
@@ -231,7 +232,7 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
         // input stream as entity content
         patch.setRequestContentSource(sObject);
         // TODO will the encoding always be UTF-8??
-        patch.setRequestContentType("json".equals(format) ? APPLICATION_JSON_UTF8 : APPLICATION_XML_UTF8);
+        patch.setRequestContentType(PayloadFormat.JSON.equals(format) ? APPLICATION_JSON_UTF8 : APPLICATION_XML_UTF8);
 
         doHttpRequest(patch, new DelegatingClientCallback(callback));
     }

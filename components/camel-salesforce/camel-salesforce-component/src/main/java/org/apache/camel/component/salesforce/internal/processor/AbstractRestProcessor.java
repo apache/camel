@@ -16,11 +16,6 @@
  */
 package org.apache.camel.component.salesforce.internal.processor;
 
-import java.io.InputStream;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.Map;
-
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.salesforce.SalesforceEndpoint;
@@ -31,16 +26,12 @@ import org.apache.camel.component.salesforce.internal.client.DefaultRestClient;
 import org.apache.camel.component.salesforce.internal.client.RestClient;
 import org.apache.camel.util.ServiceHelper;
 
-import static org.apache.camel.component.salesforce.SalesforceEndpointConfig.API_VERSION;
-import static org.apache.camel.component.salesforce.SalesforceEndpointConfig.SOBJECT_BLOB_FIELD_NAME;
-import static org.apache.camel.component.salesforce.SalesforceEndpointConfig.SOBJECT_CLASS;
-import static org.apache.camel.component.salesforce.SalesforceEndpointConfig.SOBJECT_EXT_ID_NAME;
-import static org.apache.camel.component.salesforce.SalesforceEndpointConfig.SOBJECT_EXT_ID_VALUE;
-import static org.apache.camel.component.salesforce.SalesforceEndpointConfig.SOBJECT_FIELDS;
-import static org.apache.camel.component.salesforce.SalesforceEndpointConfig.SOBJECT_ID;
-import static org.apache.camel.component.salesforce.SalesforceEndpointConfig.SOBJECT_NAME;
-import static org.apache.camel.component.salesforce.SalesforceEndpointConfig.SOBJECT_QUERY;
-import static org.apache.camel.component.salesforce.SalesforceEndpointConfig.SOBJECT_SEARCH;
+import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.Map;
+
+import static org.apache.camel.component.salesforce.SalesforceEndpointConfig.*;
 
 public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor {
 
@@ -52,10 +43,10 @@ public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor 
     public AbstractRestProcessor(SalesforceEndpoint endpoint) throws SalesforceException {
         super(endpoint);
 
-        final PayloadFormat payloadFormat = endpoint.getConfiguration().getPayloadFormat();
+        final PayloadFormat payloadFormat = endpoint.getConfiguration().getFormat();
 
         this.restClient = new DefaultRestClient(httpClient, endpointConfigMap.get(API_VERSION),
-                payloadFormat.toString().toLowerCase(), session);
+                payloadFormat, session);
 
         this.classMap = endpoint.getComponent().getClassMap();
     }
