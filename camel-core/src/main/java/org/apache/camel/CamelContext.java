@@ -1205,4 +1205,10 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      * @throws Exception is thrown if error occurred
      */
     Map<String,Properties> findComponents() throws LoadPropertiesException, IOException;
+
+
+    /**
+     * Returns the HTML documentation for the given camel component
+     */
+    String getComponentDocumentation(String componentName) throws IOException;
 }

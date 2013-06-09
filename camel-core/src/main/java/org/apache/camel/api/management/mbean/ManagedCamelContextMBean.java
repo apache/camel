@@ -16,6 +16,7 @@
  */
 package org.apache.camel.api.management.mbean;
 
+import java.io.IOException;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -218,5 +219,13 @@ public interface ManagedCamelContextMBean extends ManagedPerformanceCounterMBean
      */
     @ManagedOperation(description = "Returns the list of available endpoint paths for the given component name, endpoint properties and completion text")
     List<String> completeEndpointPath(String componentName, Map<String, Object> endpointParameters, String completionText) throws Exception;
+
+    /**
+     * Returns the HTML documentation for the given camel component
+     *
+     * @param componentName  the component name
+     */
+    @ManagedOperation(description = "Returns the HTML documentation for the given camel component")
+    String getComponentDocumentation(String componentName) throws IOException;
 
 }

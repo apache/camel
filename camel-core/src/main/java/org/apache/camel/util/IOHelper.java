@@ -24,6 +24,7 @@ import java.io.Closeable;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.Reader;
 import java.io.UnsupportedEncodingException;
@@ -412,5 +413,29 @@ public final class IOHelper {
     
     private static String getDefaultCharsetName() {
         return ObjectHelper.getSystemProperty(Exchange.DEFAULT_CHARSET_PROPERTY, "UTF-8");
+    }
+
+    /**
+     * Loads the entire stream into memory as a String and returns it.
+     *
+     * Warning, don't use for crazy big streams :)
+     */
+    public static String loadText(InputStream in) throws IOException {
+        StringBuilder builder = new StringBuilder();
+        try {
+            BufferedReader reader = buffered(new InputStreamReader(in));
+            while (true) {
+                String line = reader.readLine();
+                if (line != null) {
+                    builder.append(line);
+                    builder.append("\n");
+                } else {
+                    break;
+                }
+            }
+            return builder.toString();
+        } finally {
+            close(in);
+        }
     }
 }

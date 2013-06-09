@@ -18,11 +18,13 @@ package org.apache.camel.impl;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.Collections;
 import java.util.Date;
+import java.util.Enumeration;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
@@ -125,6 +127,7 @@ import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.EndpointHelper;
 import org.apache.camel.util.EventHelper;
+import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.LoadPropertiesException;
 import org.apache.camel.util.ObjectHelper;
@@ -1009,6 +1012,15 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
 
     public Map<String, Properties> findComponents() throws LoadPropertiesException, IOException {
         return CamelContextHelper.findComponents(this);
+    }
+
+    public String getComponentDocumentation(String componentName) throws IOException {
+        String path = CamelContextHelper.COMPONENT_DOCUMENTATION_PREFIX + componentName + ".html";
+        InputStream inputStream = getClassResolver().loadResourceAsStream(path);
+        if (inputStream != null) {
+            return IOHelper.loadText(inputStream);
+        }
+        return null;
     }
 
     // Helper methods

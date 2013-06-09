@@ -120,6 +120,11 @@ public class BlueprintCamelContext extends DefaultCamelContext implements Servic
     }
 
     @Override
+    public String getComponentDocumentation(String componentName) throws IOException {
+        return BundleContextUtils.getComponentDocumentation(bundleContext, this, componentName);
+    }
+
+    @Override
     public void blueprintEvent(BlueprintEvent event) {
         // noop as we just needed to enlist the BlueprintListener to have events triggered to serviceChanged method
     }

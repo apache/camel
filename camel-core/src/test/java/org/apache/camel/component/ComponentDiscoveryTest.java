@@ -56,4 +56,13 @@ public class ComponentDiscoveryTest {
             LOG.info("Found component " + entry.getKey() + " with properties: " + entry.getValue());
         }
     }
+
+    @Test
+    public void testComponentDocumentation() throws Exception {
+        CamelContext context = new DefaultCamelContext();
+        String html = context.getComponentDocumentation("bean");
+        assertNotNull("Should have found some auto-generated HTML if on Java 7", html);
+        LOG.info("HTML: " + html);
+    }
+
 }

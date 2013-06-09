@@ -16,6 +16,7 @@
  */
 package org.apache.camel.management.mbean;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Collection;
@@ -343,6 +344,10 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
 
     public Map<String, Properties> findComponents() throws Exception {
         return context.findComponents();
+    }
+
+    public String getComponentDocumentation(String componentName) throws IOException {
+        return context.getComponentDocumentation(componentName);
     }
 
     public List<String> findComponentNames() throws Exception {
