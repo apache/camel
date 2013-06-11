@@ -490,7 +490,7 @@ public abstract class TestSupport extends TestCase {
      */
     public static boolean isPlatform(String platform) {
         String osName = System.getProperty("os.name").toLowerCase(Locale.US);
-        return osName.indexOf(platform.toLowerCase(Locale.US)) > -1;
+        return osName.contains(platform.toLowerCase(Locale.US));
     }
 
     /**
@@ -503,7 +503,7 @@ public abstract class TestSupport extends TestCase {
      */
     public static boolean isJavaVendor(String vendor) {
         String javaVendor = System.getProperty("java.vendor").toLowerCase(Locale.US);
-        return javaVendor.indexOf(vendor.toLowerCase(Locale.US)) > -1;
+        return javaVendor.contains(vendor.toLowerCase(Locale.US));
     }
 
     /**
@@ -511,11 +511,11 @@ public abstract class TestSupport extends TestCase {
      * <p/>
      * Uses <tt>java.version</tt> from the system properties to determine the version.
      *
-     * @param vendor such as IBM
+     * @param version such as 1.6
      * @return <tt>true</tt> if its that vendor.
      */
     public static boolean isJavaVersion(String version) {
         String javaVersion = System.getProperty("java.version");
-        return javaVersion.indexOf(version.toLowerCase(Locale.US)) > -1;
+        return javaVersion.contains(version.toLowerCase(Locale.US));
     }
 }

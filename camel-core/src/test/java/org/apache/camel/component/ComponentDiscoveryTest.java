@@ -28,6 +28,7 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.camel.TestSupport.isJavaVersion;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 
@@ -59,6 +60,11 @@ public class ComponentDiscoveryTest {
 
     @Test
     public void testComponentDocumentation() throws Exception {
+        // cannot be tested on java 1.6
+        if (isJavaVersion("1.6")) {
+            return;
+        }
+
         CamelContext context = new DefaultCamelContext();
         String html = context.getComponentDocumentation("bean");
         assertNotNull("Should have found some auto-generated HTML if on Java 7", html);
