@@ -56,7 +56,15 @@ public class SedaComponent extends DefaultComponent {
         return defaultConcurrentConsumers;
     }
 
+    /**
+     * @deprecated use {@link #getOrCreateQueue(String, Integer, Boolean)}
+     */
+    @Deprecated
     public synchronized QueueReference getOrCreateQueue(String uri, Integer size) {
+        return getOrCreateQueue(uri, size, null);
+    }
+
+    public synchronized QueueReference getOrCreateQueue(String uri, Integer size, Boolean multipleConsumers) {
         String key = getQueueKey(uri);
 
         QueueReference ref = getQueues().get(key);
@@ -92,7 +100,7 @@ public class SedaComponent extends DefaultComponent {
         log.debug("Created queue {} with size {}", key, size);
 
         // create and add a new reference queue
-        ref = new QueueReference(queue, size);
+        ref = new QueueReference(queue, size, multipleConsumers);
         ref.addReference();
         getQueues().put(key, ref);
 
@@ -101,6 +109,10 @@ public class SedaComponent extends DefaultComponent {
 
     public Map<String, QueueReference> getQueues() {
         return queues;
+    }
+
+    public QueueReference getQueueReference(String key) {
+        return queues.get(key);
     }
 
     @Override
@@ -160,10 +172,12 @@ public class SedaComponent extends DefaultComponent {
         private final BlockingQueue<Exchange> queue;
         private volatile int count;
         private Integer size;
+        private Boolean multipleConsumers;
 
-        private QueueReference(BlockingQueue<Exchange> queue, Integer size) {
+        private QueueReference(BlockingQueue<Exchange> queue, Integer size, Boolean multipleConsumers) {
             this.queue = queue;
             this.size = size;
+            this.multipleConsumers = multipleConsumers;
         }
         
         void addReference() {
@@ -188,6 +202,10 @@ public class SedaComponent extends DefaultComponent {
          */
         public Integer getSize() {
             return size;
+        }
+
+        public Boolean getMultipleConsumers() {
+            return multipleConsumers;
         }
 
         /**
