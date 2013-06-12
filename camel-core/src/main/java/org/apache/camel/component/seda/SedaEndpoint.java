@@ -106,6 +106,17 @@ public class SedaEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
     }
 
     public Consumer createConsumer(Processor processor) throws Exception {
+        if (getComponent() != null) {
+            // all consumers must match having the same multipleConsumers options
+            String key = getComponent().getQueueKey(getEndpointUri());
+            SedaComponent.QueueReference ref = getComponent().getQueueReference(key);
+            if (ref != null && ref.getMultipleConsumers() != isMultipleConsumers()) {
+                // there is already a multiple consumers, so make sure they matches
+                throw new IllegalArgumentException("Cannot use existing queue " + key + " as the existing queue multiple consumers "
+                        + ref.getMultipleConsumers() + " does not match given multiple consumers " + multipleConsumers);
+            }
+        }
+
         Consumer answer = new SedaConsumer(this, processor);
         configureConsumer(answer);
         return answer;
@@ -119,7 +130,7 @@ public class SedaEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
             if (getComponent() != null) {
                 // use null to indicate default size (= use what the existing queue has been configured with)
                 Integer size = getSize() == Integer.MAX_VALUE ? null : getSize();
-                SedaComponent.QueueReference ref = getComponent().getOrCreateQueue(getEndpointUri(), size);
+                SedaComponent.QueueReference ref = getComponent().getOrCreateQueue(getEndpointUri(), size, isMultipleConsumers());
                 queue = ref.getQueue();
                 String key = getComponent().getQueueKey(getEndpointUri());
                 LOG.info("Endpoint {} is using shared queue: {} with size: {}", new Object[]{this, key, ref.getSize() !=  null ? ref.getSize() : Integer.MAX_VALUE});
