@@ -52,7 +52,12 @@ public class WeatherProducer extends DefaultProducer {
             throw new IllegalStateException("Got the unexpected value '" + weather + "' as the result of the query '" + q + "'");
         }
 
-        exchange.getIn().setBody(weather);
+        String header = getEndpoint().getConfiguration().getHeaderName();
+        if (header != null) {
+            exchange.getIn().setHeader(header, weather);
+        } else {
+            exchange.getIn().setBody(weather);
+        }
         exchange.getIn().setHeader(WeatherConstants.WEATHER_QUERY, q);
     }
 }

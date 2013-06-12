@@ -30,15 +30,22 @@ import static org.apache.camel.util.ObjectHelper.notNull;
 
 public class WeatherConfiguration {
 
+    private final WeatherComponent component;
+
     @UriParam
     private String location = "";
+    @UriParam
+    private String lat;
+    @UriParam
+    private String lon;
     @UriParam
     private String period = "";
     @UriParam
     private WeatherMode mode = JSON;
     @UriParam
     private WeatherUnits units = METRIC;
-    private final WeatherComponent component;
+    @UriParam
+    private String headerName;
 
     public WeatherConfiguration(WeatherComponent component) {
         this.component = notNull(component, "component");
@@ -85,6 +92,30 @@ public class WeatherConfiguration {
         this.location = location;
     }
 
+    public String getHeaderName() {
+        return headerName;
+    }
+
+    public void setHeaderName(String headerName) {
+        this.headerName = headerName;
+    }
+
+    public String getLat() {
+        return lat;
+    }
+
+    public void setLat(String lat) {
+        this.lat = lat;
+    }
+
+    public String getLon() {
+        return lon;
+    }
+
+    public void setLon(String lon) {
+        this.lon = lon;
+    }
+
     public String getQuery() throws Exception {
         return getQuery(getLocation());
     }
@@ -92,7 +123,9 @@ public class WeatherConfiguration {
     public String getQuery(String location) throws Exception {
         String answer = "http://api.openweathermap.org/data/2.5/";
 
-        if (isEmpty(location) || "current".equals(location)) {
+        if (lat != null && lon != null) {
+            location = "lat=" + lat + "&lon=" + lon;
+        } else if (isEmpty(location) || "current".equals(location)) {
             location = getCurrentGeoLocation();
         } else {
             // assuming the location is a town or country

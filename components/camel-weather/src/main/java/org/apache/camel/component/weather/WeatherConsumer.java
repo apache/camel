@@ -36,6 +36,11 @@ public class WeatherConsumer extends ScheduledPollConsumer {
     }
 
     @Override
+    public WeatherEndpoint getEndpoint() {
+        return (WeatherEndpoint) super.getEndpoint();
+    }
+
+    @Override
     protected int poll() throws Exception {
         LOG.debug("Going to execute the Weather query {}", query);
         String weather = getEndpoint().getCamelContext().getTypeConverter().mandatoryConvertTo(String.class, new URL(query));
@@ -45,8 +50,14 @@ public class WeatherConsumer extends ScheduledPollConsumer {
         }
 
         Exchange exchange = getEndpoint().createExchange();
-        exchange.getIn().setBody(weather);
+        String header = getEndpoint().getConfiguration().getHeaderName();
+        if (header != null) {
+            exchange.getIn().setHeader(header, weather);
+        } else {
+            exchange.getIn().setBody(weather);
+        }
         exchange.getIn().setHeader(WeatherConstants.WEATHER_QUERY, query);
+
         getProcessor().process(exchange);
 
         return 1;
