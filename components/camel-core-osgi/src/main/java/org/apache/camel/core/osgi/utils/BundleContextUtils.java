@@ -84,12 +84,13 @@ public final class BundleContextUtils {
      * Finds the components available on the bundle context and camel context
      */
     public static Map<String, Properties> findComponents(BundleContext bundleContext, CamelContext camelContext)
-            throws IOException, LoadPropertiesException {
+        throws IOException, LoadPropertiesException {
+
         SortedMap<String, Properties> answer = new TreeMap<String, Properties>();
         Bundle[] bundles = bundleContext.getBundles();
         for (Bundle bundle : bundles) {
             Enumeration<URL> iter = bundle.getResources(CamelContextHelper.COMPONENT_DESCRIPTOR);
-            SortedMap<String,Properties> map = CamelContextHelper.findComponents(camelContext, iter);
+            SortedMap<String, Properties> map = CamelContextHelper.findComponents(camelContext, iter);
             answer.putAll(map);
         }
         return answer;

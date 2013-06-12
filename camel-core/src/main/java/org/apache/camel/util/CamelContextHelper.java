@@ -359,9 +359,9 @@ public final class CamelContextHelper {
         return findComponents(camelContext, iter);
     }
 
-    public static SortedMap<String, Properties> findComponents(CamelContext camelContext,
-                                                               Enumeration<URL> componentDescriptionIter)
-            throws LoadPropertiesException {
+    public static SortedMap<String, Properties> findComponents(CamelContext camelContext, Enumeration<URL> componentDescriptionIter)
+        throws LoadPropertiesException {
+
         SortedMap<String, Properties> map = new TreeMap<String, Properties>();
         while (componentDescriptionIter != null && componentDescriptionIter.hasMoreElements()) {
             URL url = componentDescriptionIter.nextElement();

@@ -1202,9 +1202,10 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      * Find information about all the Camel components available in the classpath and {@link org.apache.camel.spi.Registry}.
      *
      * @return a map with the component name, and value with component details.
-     * @throws Exception is thrown if error occurred
+     * @throws LoadPropertiesException is thrown if error during classpath discovery of the components
+     * @throws IOException is thrown if error during classpath discovery of the components
      */
-    Map<String,Properties> findComponents() throws LoadPropertiesException, IOException;
+    Map<String, Properties> findComponents() throws LoadPropertiesException, IOException;
 
 
     /**
