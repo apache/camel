@@ -155,6 +155,8 @@ public class GeoCoderProducer extends DefaultProducer {
             // just grab the first element and its lat and lon
             BigDecimal resLat = res.getResults().get(0).getGeometry().getLocation().getLat();
             BigDecimal resLon = res.getResults().get(0).getGeometry().getLocation().getLng();
+            exchange.getIn().setHeader(GeoCoderConstants.LAT, resLat.toPlainString());
+            exchange.getIn().setHeader(GeoCoderConstants.LNG, resLon.toPlainString());
             String resLatlng = resLat.toPlainString() + "," + resLon.toPlainString();
             exchange.getIn().setHeader(GeoCoderConstants.LATLNG, resLatlng);
 

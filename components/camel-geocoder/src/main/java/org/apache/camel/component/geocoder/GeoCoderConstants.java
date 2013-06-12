@@ -20,6 +20,8 @@ public final class GeoCoderConstants {
 
     public static final String ADDRESS = "CamelGeoCoderAddress";
     public static final String LATLNG = "CamelGeoCoderLatlng";
+    public static final String LAT = "CamelGeoCoderLat";
+    public static final String LNG = "CamelGeoCoderLng";
     public static final String STATUS = "CamelGeoCoderStatus";
     public static final String REGION_CODE = "CamelGeoCoderRegionCode";
     public static final String REGION_NAME = "CamelGeoCoderRegionName";
