@@ -19,7 +19,12 @@ package org.apache.camel.component.netty.http;
 import java.net.URL;
 import java.util.Properties;
 
+import javax.net.ssl.SSLSession;
+
+import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.netty.NettyConstants;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.After;
 import org.junit.Test;
@@ -81,7 +86,16 @@ public class NettyHttpSSLTest extends BaseNettyTest {
             public void configure() {
                 from("netty-http:https://localhost:{{port}}?ssl=true&passphrase=changeit&keyStoreResource=jsse/localhost.ks&trustStoreResource=jsse/localhost.ks")
                         .to("mock:input")
-                        .transform().constant("Bye World");
+                        .process(new Processor() {
+                        public void process(Exchange exchange) throws Exception {
+                            SSLSession session = exchange.getIn().getHeader(NettyConstants.NETTY_SSL_SESSION, SSLSession.class);
+                            if (session != null) {
+                                exchange.getOut().setBody("Bye World");  
+                            } else {
+                                exchange.getOut().setBody("Cannot start conversion without SSLSession");
+                            }
+                        }
+                    });
             }
         });
         context.start();

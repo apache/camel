@@ -16,8 +16,11 @@
  */
 package org.apache.camel.component.netty;
 
+import javax.net.ssl.SSLSession;
+
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
+import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
@@ -25,6 +28,7 @@ import org.apache.camel.impl.SynchronousDelegateProducer;
 import org.apache.camel.util.ObjectHelper;
 import org.jboss.netty.channel.ChannelHandlerContext;
 import org.jboss.netty.channel.MessageEvent;
+import org.jboss.netty.handler.ssl.SslHandler;
 import org.jboss.netty.util.Timer;
 
 public class NettyEndpoint extends DefaultEndpoint {
@@ -53,10 +57,7 @@ public class NettyEndpoint extends DefaultEndpoint {
 
     public Exchange createExchange(ChannelHandlerContext ctx, MessageEvent messageEvent) throws Exception {
         Exchange exchange = createExchange();
-        exchange.getIn().setHeader(NettyConstants.NETTY_CHANNEL_HANDLER_CONTEXT, ctx);
-        exchange.getIn().setHeader(NettyConstants.NETTY_MESSAGE_EVENT, messageEvent);
-        exchange.getIn().setHeader(NettyConstants.NETTY_REMOTE_ADDRESS, messageEvent.getRemoteAddress());
-        exchange.getIn().setHeader(NettyConstants.NETTY_LOCAL_ADDRESS, messageEvent.getChannel().getLocalAddress());
+        updateMessageHeader(exchange.getIn(), ctx, messageEvent);
         NettyPayloadHelper.setIn(exchange, messageEvent.getMessage());
         return exchange;
     }
@@ -95,6 +96,24 @@ public class NettyEndpoint extends DefaultEndpoint {
     @Override
     protected void doStart() throws Exception {
         ObjectHelper.notNull(timer, "timer");
+    }
+    
+    protected SSLSession getSSLSession(ChannelHandlerContext ctx) {
+        final SslHandler sslHandler = ctx.getPipeline().get(SslHandler.class);
+        SSLSession sslSession = null;
+        if (sslHandler != null) {
+            sslSession = sslHandler.getEngine().getSession();
+        } 
+        return sslSession;
+    }
+    
+    protected void updateMessageHeader(Message in, ChannelHandlerContext ctx, MessageEvent messageEvent) {
+        in.setHeader(NettyConstants.NETTY_CHANNEL_HANDLER_CONTEXT, ctx);
+        in.setHeader(NettyConstants.NETTY_MESSAGE_EVENT, messageEvent);
+        in.setHeader(NettyConstants.NETTY_REMOTE_ADDRESS, messageEvent.getRemoteAddress());
+        in.setHeader(NettyConstants.NETTY_LOCAL_ADDRESS, messageEvent.getChannel().getLocalAddress());
+        // setup the SslSession header
+        in.setHeader(NettyConstants.NETTY_SSL_SESSION, getSSLSession(ctx)); 
     }
 
 }

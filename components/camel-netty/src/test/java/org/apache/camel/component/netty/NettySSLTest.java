@@ -19,6 +19,8 @@ package org.apache.camel.component.netty;
 
 import java.io.File;
 
+import javax.net.ssl.SSLSession;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
@@ -52,7 +54,12 @@ public class NettySSLTest extends BaseNettyTest {
                 from("netty:tcp://localhost:{{port}}?sync=true&ssl=true&passphrase=changeit&keyStoreFile=#ksf&trustStoreFile=#tsf")
                     .process(new Processor() {
                         public void process(Exchange exchange) throws Exception {
-                            exchange.getOut().setBody("When You Go Home, Tell Them Of Us And Say, For Your Tomorrow, We Gave Our Today.");                           
+                            SSLSession session = exchange.getIn().getHeader(NettyConstants.NETTY_SSL_SESSION, SSLSession.class);
+                            if (session != null) {
+                                exchange.getOut().setBody("When You Go Home, Tell Them Of Us And Say, For Your Tomorrow, We Gave Our Today.");  
+                            } else {
+                                exchange.getOut().setBody("Cannot start conversion without SSLSession");
+                            }
                         }
                     });
             }

@@ -78,12 +78,9 @@ public class NettyHttpEndpoint extends NettyEndpoint implements HeaderFilterStra
         HttpRequest request = (HttpRequest) messageEvent.getMessage();
         Message in = getNettyHttpBinding().toCamelMessage(request, exchange, getConfiguration());
         exchange.setIn(in);
-
-        // set additional headers
-        in.setHeader(NettyConstants.NETTY_CHANNEL_HANDLER_CONTEXT, ctx);
-        in.setHeader(NettyConstants.NETTY_MESSAGE_EVENT, messageEvent);
-        in.setHeader(NettyConstants.NETTY_REMOTE_ADDRESS, messageEvent.getRemoteAddress());
-        in.setHeader(NettyConstants.NETTY_LOCAL_ADDRESS, messageEvent.getChannel().getLocalAddress());
+        
+        // setup the common message headers 
+        updateMessageHeader(in, ctx, messageEvent);
 
         // honor the character encoding
         String contentType = in.getHeader(Exchange.CONTENT_TYPE, String.class);
