@@ -25,6 +25,7 @@ import org.apache.camel.LoggingLevel;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.processor.CamelLogProcessor;
+import org.apache.camel.processor.DefaultExchangeFormatter;
 import org.apache.camel.processor.ThroughputLogger;
 import org.apache.camel.spi.ExchangeFormatter;
 import org.apache.camel.util.CamelLogger;
@@ -65,7 +66,7 @@ public class LogComponent extends DefaultComponent {
             }
             // if no formatter is available in the Registry, create a local one of the default type, for a single use
             if (localFormatter == null) {
-                localFormatter = new LogFormatter();
+                localFormatter = new DefaultExchangeFormatter();
                 setProperties(localFormatter, parameters);
             }
             logger = new CamelLogProcessor(camelLogger, localFormatter);
@@ -92,7 +93,7 @@ public class LogComponent extends DefaultComponent {
     /**
      * Sets a custom {@link ExchangeFormatter} to convert the Exchange to a String suitable for logging.
      * <p />
-     * If not specified, we default to {@link LogFormatter}.
+     * If not specified, we default to {@link DefaultExchangeFormatter}.
      * @param exchangeFormatter
      */
     public void setExchangeFormatter(ExchangeFormatter exchangeFormatter) {

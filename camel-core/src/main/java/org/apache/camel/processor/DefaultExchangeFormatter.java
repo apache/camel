@@ -14,10 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.log;
+package org.apache.camel.processor;
 
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.util.Map;
+import java.util.TreeMap;
 import java.util.concurrent.Future;
 
 import org.apache.camel.Exchange;
@@ -27,9 +29,9 @@ import org.apache.camel.util.MessageHelper;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * Logger formatter to format the logging output.
+ * Default {@link ExchangeFormatter} that have fine grained options to configure what to include in the output.
  */
-public class LogFormatter implements ExchangeFormatter {
+public class DefaultExchangeFormatter implements ExchangeFormatter {
 
     protected static final String LS = System.getProperty("line.separator");
 
@@ -71,13 +73,13 @@ public class LogFormatter implements ExchangeFormatter {
             if (multiline) {
                 sb.append(LS);
             }
-            sb.append(", Properties:").append(exchange.getProperties());
+            sb.append(", Properties:").append(sortMap(exchange.getProperties()));
         }
         if (showAll || showHeaders) {
             if (multiline) {
                 sb.append(LS);
             }
-            sb.append(", Headers:").append(in.getHeaders());
+            sb.append(", Headers:").append(sortMap(in.getHeaders()));
         }
         if (showAll || showBodyType) {
             if (multiline) {
@@ -129,7 +131,7 @@ public class LogFormatter implements ExchangeFormatter {
                     if (multiline) {
                         sb.append(LS);
                     }
-                    sb.append(", OutHeaders:").append(out.getHeaders());
+                    sb.append(", OutHeaders:").append(sortMap(out.getHeaders()));
                 }
                 if (showAll || showBodyType) {
                     if (multiline) {
@@ -351,6 +353,13 @@ public class LogFormatter implements ExchangeFormatter {
         if (answer != null && answer.startsWith("java.lang.")) {
             return answer.substring(10);
         }
+        return answer;
+    }
+
+    @SuppressWarnings("unchecked")
+    private static Map sortMap(Map<String, Object> map) {
+        TreeMap answer = new TreeMap(String.CASE_INSENSITIVE_ORDER);
+        answer.putAll(map);
         return answer;
     }
 

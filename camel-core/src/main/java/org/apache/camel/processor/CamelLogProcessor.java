@@ -43,7 +43,7 @@ public class CamelLogProcessor implements AsyncProcessor {
     }
     
     public CamelLogProcessor(CamelLogger log) {
-        this.formatter = new DefaultExchangeFormatter();
+        this.formatter = new ToStringExchangeFormatter();
         this.log = log;
     }
 
@@ -97,7 +97,10 @@ public class CamelLogProcessor implements AsyncProcessor {
         log.setMarker(marker);
     }
 
-    static class DefaultExchangeFormatter implements ExchangeFormatter {
+    /**
+     * {@link ExchangeFormatter} that calls <tt>toString</tt> on the {@link Exchange}.
+     */
+    static class ToStringExchangeFormatter implements ExchangeFormatter {
         public String format(Exchange exchange) {
             return exchange.toString();
         }

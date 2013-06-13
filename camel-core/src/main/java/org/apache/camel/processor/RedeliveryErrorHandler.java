@@ -30,6 +30,7 @@ import org.apache.camel.Message;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.model.OnExceptionDefinition;
+import org.apache.camel.spi.ExchangeFormatter;
 import org.apache.camel.spi.ShutdownPrepared;
 import org.apache.camel.spi.SubUnitOfWorkCallback;
 import org.apache.camel.spi.UnitOfWork;
@@ -67,6 +68,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
     protected final boolean useOriginalMessagePolicy;
     protected boolean redeliveryEnabled;
     protected volatile boolean preparingShutdown;
+    protected final ExchangeFormatter exchangeFormatter;
 
     /**
      * Contains the current redelivery data
@@ -193,6 +195,13 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
         this.useOriginalMessagePolicy = useOriginalMessagePolicy;
         this.retryWhilePolicy = retryWhile;
         this.executorService = executorService;
+
+        // setup exchange formatter to be used for message history dump
+        DefaultExchangeFormatter formatter = new DefaultExchangeFormatter();
+        formatter.setShowExchangeId(true);
+        formatter.setMultiline(true);
+        formatter.setShowHeaders(true);
+        this.exchangeFormatter = formatter;
     }
 
     public boolean supportTransacted() {
@@ -958,7 +967,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
 
             // should we include message history
             if (!shouldRedeliver && data.currentRedeliveryPolicy.isLogExhaustedMessageHistory()) {
-                String routeStackTrace = MessageHelper.dumpMessageHistoryStacktrace(exchange, false);
+                String routeStackTrace = MessageHelper.dumpMessageHistoryStacktrace(exchange, exchangeFormatter, false);
                 if (routeStackTrace != null) {
                     msg = msg + "\n" + routeStackTrace;
                 }
@@ -975,7 +984,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
             String msg = message;
             // should we include message history
             if (!shouldRedeliver && data.currentRedeliveryPolicy.isLogExhaustedMessageHistory()) {
-                String routeStackTrace = MessageHelper.dumpMessageHistoryStacktrace(exchange, e != null && logStackTrace);
+                String routeStackTrace = MessageHelper.dumpMessageHistoryStacktrace(exchange, exchangeFormatter, e != null && logStackTrace);
                 if (routeStackTrace != null) {
                     msg = msg + "\n" + routeStackTrace;
                 }

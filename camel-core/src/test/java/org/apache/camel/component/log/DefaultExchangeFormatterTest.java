@@ -24,11 +24,12 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Producer;
+import org.apache.camel.processor.DefaultExchangeFormatter;
 
 /**
  * Logger formatter test.
  */
-public class LogFormatterTest extends ContextTestSupport {
+public class DefaultExchangeFormatterTest extends ContextTestSupport {
 
     public void testSendMessageToLogDefault() throws Exception {
         template.sendBody("log:org.apache.camel.TEST", "Hello World");
@@ -165,7 +166,7 @@ public class LogFormatterTest extends ContextTestSupport {
     }
 
     public void testConfiguration() {
-        LogFormatter formatter = new LogFormatter();
+        DefaultExchangeFormatter formatter = new DefaultExchangeFormatter();
 
         assertFalse(formatter.isShowExchangeId());
         assertFalse(formatter.isShowProperties());

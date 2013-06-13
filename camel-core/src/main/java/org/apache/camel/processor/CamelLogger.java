@@ -51,7 +51,7 @@ public class CamelLogger extends ServiceSupport implements AsyncProcessor {
     }
 
     public CamelLogger(Logger log, LoggingLevel level) {
-        this.formatter = new CamelLogProcessor.DefaultExchangeFormatter();
+        this.formatter = new CamelLogProcessor.ToStringExchangeFormatter();
         this.log = log;
         this.level = level;
     }

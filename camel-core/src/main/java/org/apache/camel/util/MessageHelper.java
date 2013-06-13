@@ -21,6 +21,7 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Reader;
 import java.io.Writer;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -33,6 +34,7 @@ import org.apache.camel.MessageHistory;
 import org.apache.camel.StreamCache;
 import org.apache.camel.StringSource;
 import org.apache.camel.WrappedFile;
+import org.apache.camel.spi.ExchangeFormatter;
 
 /**
  * Some helper methods when working with {@link org.apache.camel.Message}.
@@ -399,11 +401,13 @@ public final class MessageHelper {
     /**
      * Dumps the {@link MessageHistory} from the {@link Exchange} in a human readable format.
      *
-     * @param exchange       the exchange
-     * @param logStackTrace  whether to include a header for the stacktrace, to be added (not included in this dump).
+     * @param exchange           the exchange
+     * @param exchangeFormatter  if provided then information about the exchange is included in the dump
+     * @param logStackTrace      whether to include a header for the stacktrace, to be added (not included in this dump).
      * @return a human readable message history as a table
      */
-    public static String dumpMessageHistoryStacktrace(Exchange exchange, boolean logStackTrace) {
+    @SuppressWarnings("unchecked")
+    public static String dumpMessageHistoryStacktrace(Exchange exchange, ExchangeFormatter exchangeFormatter, boolean logStackTrace) {
         List<MessageHistory> list = exchange.getProperty(Exchange.MESSAGE_HISTORY, List.class);
         if (list == null || list.isEmpty()) {
             return null;
@@ -416,14 +420,34 @@ public final class MessageHelper {
         sb.append(String.format(MESSAGE_HISTORY_HEADER, "RouteId", "ProcessorId", "Processor", "Elapsed (ms)"));
         sb.append("\n");
 
-        for (MessageHistory history : list) {
+        // add incoming origin of message on the top
+        String routeId = exchange.getFromRouteId();
+        String id = routeId;
+        String label = URISupport.sanitizeUri(exchange.getFromEndpoint().getEndpointUri());
+        long elapsed = 0;
+        Date created = exchange.getProperty(Exchange.CREATED_TIMESTAMP, Date.class);
+        if (created != null) {
+            elapsed = new StopWatch(created).stop();
+        }
 
-            String routeId = history.getRouteId();
-            String id = history.getNode().getId();
-            String label = history.getNode().getLabel();
-            long elapsed = history.getElapsed();
+        sb.append(String.format(MESSAGE_HISTORY_OUTPUT, routeId, id, label, elapsed));
+        sb.append("\n");
+
+        // and then each history
+        for (MessageHistory history : list) {
+            routeId = history.getRouteId();
+            id = history.getNode().getId();
+            label = history.getNode().getLabel();
+            elapsed = history.getElapsed();
 
             sb.append(String.format(MESSAGE_HISTORY_OUTPUT, routeId, id, label, elapsed));
+            sb.append("\n");
+        }
+
+        if (exchangeFormatter != null) {
+            sb.append("\nExchange\n");
+            sb.append("---------------------------------------------------------------------------------------------------------------------------------------\n");
+            sb.append(exchangeFormatter.format(exchange));
             sb.append("\n");
         }
 

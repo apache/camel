@@ -16,6 +16,8 @@
  */
 package org.apache.camel.util;
 
+import java.util.Date;
+
 /**
  * A very simple stop watch.
  * <p/>
@@ -33,6 +35,13 @@ public final class StopWatch {
      */
     public StopWatch() {
         this(true);
+    }
+
+    /**
+     * Starts the stop watch from the given timestamp
+     */
+    public StopWatch(Date startTimestamp) {
+        start = startTimestamp.getTime();
     }
 
     /**
