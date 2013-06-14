@@ -14,11 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.netty;
 
 import java.io.File;
-
+import java.security.Principal;
 import javax.net.ssl.SSLSession;
 
 import org.apache.camel.Exchange;
@@ -51,12 +50,16 @@ public class NettySSLTest extends BaseNettyTest {
 
         context.addRoutes(new RouteBuilder() {
             public void configure() {
-                from("netty:tcp://localhost:{{port}}?sync=true&ssl=true&passphrase=changeit&keyStoreFile=#ksf&trustStoreFile=#tsf")
+                // needClientAuth=true so we can get the client certificate details
+                from("netty:tcp://localhost:{{port}}?sync=true&ssl=true&passphrase=changeit&keyStoreFile=#ksf&trustStoreFile=#tsf&needClientAuth=true")
                     .process(new Processor() {
                         public void process(Exchange exchange) throws Exception {
                             SSLSession session = exchange.getIn().getHeader(NettyConstants.NETTY_SSL_SESSION, SSLSession.class);
                             if (session != null) {
-                                exchange.getOut().setBody("When You Go Home, Tell Them Of Us And Say, For Your Tomorrow, We Gave Our Today.");  
+                                javax.security.cert.X509Certificate cert = session.getPeerCertificateChain()[0];
+                                Principal principal = cert.getSubjectDN();
+                                log.info("Client Cert SubjectDN: {}", principal.getName());
+                                exchange.getOut().setBody("When You Go Home, Tell Them Of Us And Say, For Your Tomorrow, We Gave Our Today.");
                             } else {
                                 exchange.getOut().setBody("Cannot start conversion without SSLSession");
                             }

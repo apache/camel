@@ -112,8 +112,11 @@ public class NettyEndpoint extends DefaultEndpoint {
         in.setHeader(NettyConstants.NETTY_MESSAGE_EVENT, messageEvent);
         in.setHeader(NettyConstants.NETTY_REMOTE_ADDRESS, messageEvent.getRemoteAddress());
         in.setHeader(NettyConstants.NETTY_LOCAL_ADDRESS, messageEvent.getChannel().getLocalAddress());
-        // setup the SslSession header
-        in.setHeader(NettyConstants.NETTY_SSL_SESSION, getSSLSession(ctx)); 
+
+        if (configuration.isSsl()) {
+            // setup the SslSession header
+            in.setHeader(NettyConstants.NETTY_SSL_SESSION, getSSLSession(ctx));
+        }
     }
 
 }
