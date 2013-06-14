@@ -22,7 +22,6 @@ import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.apache.commons.csv.CSVStrategy;
 import org.junit.Test;
 
 /**
@@ -75,13 +74,7 @@ public class CsvUnmarshalPipeDelimiterTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 CsvDataFormat csv = new CsvDataFormat();
-                CSVStrategy strategy = CSVStrategy.DEFAULT_STRATEGY;
-                strategy.setDelimiter('|');
-                csv.setStrategy(strategy);
-                
-                // also possible
-                // CsvDataFormat csv = new CsvDataFormat();
-                // csv.setDelimiter("|");
+                csv.setDelimiter("|");
 
                 from("direct:start").unmarshal(csv)
                     .to("mock:result");
