@@ -76,7 +76,7 @@ public class CsvDataFormat implements DataFormat {
                 doMarshalRecord(exchange, row, out, csv);
             }
         } finally {
-            out.close();
+            IOHelper.close(out);
         }
     }
 
@@ -90,11 +90,13 @@ public class CsvDataFormat implements DataFormat {
     }
 
     public Object unmarshal(Exchange exchange, InputStream inputStream) throws Exception {
-        InputStreamReader in = new InputStreamReader(inputStream, IOHelper.getCharsetName(exchange));
         if (delimiter != null) {
-            strategy.setDelimiter(delimiter.charAt(0));
+            config.setDelimiter(delimiter.charAt(0));
         }
-        
+        strategy.setDelimiter(config.getDelimiter());
+
+        InputStreamReader in = new InputStreamReader(inputStream, IOHelper.getCharsetName(exchange));
+
         try {
             CSVParser parser = new CSVParser(in, strategy);
             List<List<String>> list = new ArrayList<List<String>>();
@@ -116,7 +118,7 @@ public class CsvDataFormat implements DataFormat {
             }
             return list;
         } finally {
-            in.close();
+            IOHelper.close(in);
         }
     }
     
