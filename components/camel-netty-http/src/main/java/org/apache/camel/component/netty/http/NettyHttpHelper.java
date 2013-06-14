@@ -112,9 +112,8 @@ public final class NettyHttpHelper {
         }
     }
 
-    public static Exception populateNettyHttpOperationFailedException(Exchange exchange, HttpResponse response, int responseCode, boolean transferException) {
-        // TODO: we need to have the uri of the http server we called
-        String uri = "TODO";
+    public static Exception populateNettyHttpOperationFailedException(Exchange exchange, String url, HttpResponse response, int responseCode, boolean transferException) {
+        String uri = url;
         String statusText = response.getStatus().getReasonPhrase();
 
         if (responseCode >= 300 && responseCode < 400) {

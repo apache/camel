@@ -35,6 +35,7 @@ public class NettyHttp500ErrorThrowExceptionOnServerTest extends BaseNettyTest {
             String trace = context.getTypeConverter().convertTo(String.class, cause.getResponse().getContent());
             assertNotNull(trace);
             assertTrue(trace.startsWith("java.lang.IllegalArgumentException: Camel cannot do this"));
+            assertEquals("http://localhost:" + getPort() + "/foo", cause.getUri());
         }
 
         assertMockEndpointsSatisfied();

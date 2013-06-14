@@ -18,7 +18,6 @@ package org.apache.camel.component.netty.http;
 
 import java.net.URL;
 import java.util.Properties;
-
 import javax.net.ssl.SSLSession;
 
 import org.apache.camel.Exchange;
@@ -63,7 +62,7 @@ public class NettyHttpSSLTest extends BaseNettyTest {
             if (NULL_VALUE_MARKER.equals(value)) {
                 System.getProperties().remove(key);
             } else {
-                System.setProperty((String)key, (String)value);
+                System.setProperty((String) key, (String) value);
             }
         }
     }
@@ -87,15 +86,15 @@ public class NettyHttpSSLTest extends BaseNettyTest {
                 from("netty-http:https://localhost:{{port}}?ssl=true&passphrase=changeit&keyStoreResource=jsse/localhost.ks&trustStoreResource=jsse/localhost.ks")
                         .to("mock:input")
                         .process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
-                            SSLSession session = exchange.getIn().getHeader(NettyConstants.NETTY_SSL_SESSION, SSLSession.class);
-                            if (session != null) {
-                                exchange.getOut().setBody("Bye World");  
-                            } else {
-                                exchange.getOut().setBody("Cannot start conversion without SSLSession");
+                            public void process(Exchange exchange) throws Exception {
+                                SSLSession session = exchange.getIn().getHeader(NettyConstants.NETTY_SSL_SESSION, SSLSession.class);
+                                if (session != null) {
+                                    exchange.getOut().setBody("Bye World");
+                                } else {
+                                    exchange.getOut().setBody("Cannot start conversion without SSLSession");
+                                }
                             }
-                        }
-                    });
+                        });
             }
         });
         context.start();

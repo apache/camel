@@ -20,6 +20,7 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.netty.NettyConfiguration;
 import org.apache.camel.component.netty.NettyProducer;
+import org.jboss.netty.handler.codec.http.HttpRequest;
 import org.jboss.netty.handler.codec.http.HttpResponse;
 
 /**
@@ -57,11 +58,11 @@ public class NettyHttpProducer extends NettyProducer {
             uri += "?" + uriParameters;
         }
 
-        if (exchange.hasOut()) {
-            return getEndpoint().getNettyHttpBinding().toNettyRequest(exchange.getOut(), uri, getConfiguration());
-        } else {
-            return getEndpoint().getNettyHttpBinding().toNettyRequest(exchange.getIn(), uri, getConfiguration());
-        }
+        HttpRequest request = getEndpoint().getNettyHttpBinding().toNettyRequest(exchange.getIn(), uri, getConfiguration());
+        String actualUri = request.getUri();
+        exchange.getIn().setHeader(Exchange.HTTP_URL, actualUri);
+
+        return request;
     }
 
     /**
@@ -84,13 +85,15 @@ public class NettyHttpProducer extends NettyProducer {
                 if (nettyMessage != null) {
                     HttpResponse response = nettyMessage.getHttpResponse();
                     if (response != null) {
+                        // the actual url is stored on the IN message in the getRequestBody method as its accessed on-demand
+                        String actualUrl = exchange.getIn().getHeader(Exchange.HTTP_URL, String.class);
                         int code = response.getStatus() != null ? response.getStatus().getCode() : -1;
                         log.debug("Http responseCode: {}", code);
 
                         // if there was a http error code (300 or higher) then check if we should throw an exception
                         if (code >= 300 && getConfiguration().isThrowExceptionOnFailure()) {
                             // operation failed so populate exception to throw
-                            Exception cause = NettyHttpHelper.populateNettyHttpOperationFailedException(exchange, response, code, getConfiguration().isTransferException());
+                            Exception cause = NettyHttpHelper.populateNettyHttpOperationFailedException(exchange, actualUrl, response, code, getConfiguration().isTransferException());
                             exchange.setException(cause);
                         }
                     }

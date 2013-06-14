@@ -35,10 +35,10 @@ public class NettyHttpComponent extends NettyComponent implements HeaderFilterSt
     // - bridgeEndpoint
     // - matchOnUriPrefix
     // - urlrewrite
+    // - various CamelHttpUri headers with details about the url in use
 
     // TODO: producer
     // - add support for HTTP_URI / HTTP_QUERY overrides
-    // - add actual url to state so we know exactly which url we called also for done callback
 
     private NettyHttpBinding nettyHttpBinding;
     private HeaderFilterStrategy headerFilterStrategy;
