@@ -97,13 +97,6 @@ public final class CxfConverter {
     }
     
     @Converter
-    public static SOAPMessage StringToSoapMessage(final String string, Exchange exchange) throws SOAPException, IOException {
-        InputStream is = new ByteArrayInputStream(string.getBytes(IOHelper.getCharsetName(exchange)));
-        SOAPMessage message = MessageFactory.newInstance().createMessage(null, is);
-        return message;
-    }
-    
-    @Converter
     public static DataFormat toDataFormat(final String name) {
         return DataFormat.valueOf(name.toUpperCase());
     }
