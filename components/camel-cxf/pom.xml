@@ -236,6 +236,13 @@
       <version>${cxf-version}</version>
       <scope>test</scope>
     </dependency>
+    
+    <dependency>
+      <groupId>org.apache.cxf</groupId>
+      <artifactId>cxf-rt-ws-security</artifactId>
+      <version>${cxf-version}</version>
+      <scope>test</scope>
+    </dependency>
 
     <dependency>
       <groupId>org.springframework</groupId>
@@ -338,6 +345,9 @@
               <wsdlOptions>
                 <wsdlOption>
                   <wsdl>${basedir}/src/test/resources/mtom.wsdl</wsdl>
+                </wsdlOption>
+                <wsdlOption>
+                  <wsdl>${basedir}/src/test/resources/hello_world_wssec.wsdl</wsdl>
                 </wsdlOption>
                 <wsdlOption>
                   <wsdl>${basedir}/src/test/resources/MultiPartTest.wsdl</wsdl>

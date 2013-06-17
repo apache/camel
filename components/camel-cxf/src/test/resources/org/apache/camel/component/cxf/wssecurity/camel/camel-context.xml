@@ -1,0 +1,93 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xmlns:camel="http://camel.apache.org/schema/spring"
+       xmlns:cxf="http://camel.apache.org/schema/cxf"
+       xmlns:cxf-core="http://cxf.apache.org/core"
+       xmlns:wsa="http://cxf.apache.org/ws/addressing"
+       xsi:schemaLocation="
+            http://cxf.apache.org/core http://cxf.apache.org/schemas/core.xsd
+           http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+           http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
+           http://camel.apache.org/schema/cxf http://camel.apache.org/schema/cxf/camel-cxf.xsd">
+
+  <cxf-core:bus>
+        <cxf-core:features>
+            <cxf-core:logging/>
+            <!--  wsa:addressing/-->
+        </cxf-core:features>
+   </cxf-core:bus>
+   
+  <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"/>
+    
+  <import resource="classpath:META-INF/cxf/cxf.xml"/>
+
+
+  <cxf:cxfEndpoint id="route"
+                        address="http://localhost:${CXFTestSupport.port2}/WSSecurityRouteTest/GreeterPort"
+                        serviceClass="org.apache.camel.hello_world_soap_http.Greeter">
+                 <cxf:properties>
+                        <entry key="dataFormat" value="CXF_MESSAGE" />
+                </cxf:properties>
+
+                <cxf:inInterceptors>
+                        <ref bean="wss4jInInterceptor" />
+                </cxf:inInterceptors>
+                
+   </cxf:cxfEndpoint>
+   
+   <cxf:cxfEndpoint id="service"
+                        address="http://localhost:${CXFTestSupport.port1}/WSSecurityRouteTest/GreeterPort"
+                        serviceClass="org.apache.camel.hello_world_soap_http.Greeter">
+                 <cxf:properties>
+                        <entry key="dataFormat" value="CXF_MESSAGE" />
+                </cxf:properties>
+               
+   </cxf:cxfEndpoint>
+
+
+  <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
+   <route errorHandlerRef="noErrorHandler">
+       <from uri="cxf:bean:route" />
+       <process ref="myProcessor" />
+       <to uri="cxf:bean:service"/>
+       <process ref="myProcessor" />
+   </route>
+
+  </camelContext>
+  
+  <bean id="noErrorHandler" class="org.apache.camel.builder.NoErrorHandlerBuilder"/>
+  <bean id="myProcessor" class="org.apache.camel.component.cxf.wssecurity.camel.MyProcessor"/>
+  
+ <bean id="wss4jInInterceptor" class="org.apache.cxf.ws.security.wss4j.WSS4JInInterceptor">
+      <constructor-arg>
+           <map>
+                <entry key="action" value="Signature" />
+                <!--  entry key="passwordCallbackClass" value="org.apache.camel.component.cxf.wssecurity.server.UTPasswordCallback" />
+                <entry key="passwordType" value="PasswordDigest" /-->
+                <!--  entry key="decryptionPropFile" value="wssecurity/etc/Server_Decrypt.properties" />
+                <entry key="encryptionKeyIdentifier" value="IssuerSerial" /-->
+                
+                <entry key="signaturePropFile" value="wssecurity/etc/Server_SignVerf.properties"/>
+                <entry key="signatureKeyIdentifier" value="DirectReference"/>
+           </map>
+        </constructor-arg>
+  </bean>
+
+</beans>
