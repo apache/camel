@@ -19,7 +19,6 @@ package org.apache.camel.component.netty.http;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Ignore;
 import org.junit.Test;
 
 public class NettyHttpEndpointUriEncodingIssueTest extends BaseNettyTest {
@@ -38,15 +37,6 @@ public class NettyHttpEndpointUriEncodingIssueTest extends BaseNettyTest {
         String out = template.requestBody(uri, null, String.class);
 
         assertEquals("We got claus,s\u00F8ren columns", out);
-    }
-
-    @Test
-    @Ignore("Implement the HTTP_URI override")
-    public void testEndpointHeaderUriEncodingIssue() throws Exception {
-        String uri = "netty-http:http://localhost:{{port}}/myapp/mytest?columns=totalsens,upsens&username=apiuser";
-        String out = template.requestBodyAndHeader("netty-http:http://localhost/dummy", null, Exchange.HTTP_URI, uri, String.class);
-
-        assertEquals("We got totalsens,upsens columns", out);
     }
 
     @Override

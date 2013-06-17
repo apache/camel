@@ -19,14 +19,19 @@ package org.apache.camel.component.netty.http;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.ObjectInputStream;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.RuntimeExchangeException;
 import org.apache.camel.converter.IOConverter;
 import org.apache.camel.util.IOHelper;
+import org.apache.camel.util.URISupport;
+import org.apache.camel.util.UnsafeUriCharactersEncoder;
 import org.jboss.netty.handler.codec.http.HttpMethod;
 import org.jboss.netty.handler.codec.http.HttpResponse;
 
@@ -164,6 +169,56 @@ public final class NettyHttpHelper {
         }
 
         return answer;
+    }
+
+    /**
+     * Creates the URL to invoke.
+     *
+     * @param exchange the exchange
+     * @param endpoint the endpoint
+     * @return the URL to invoke
+     */
+    public static String createURL(Exchange exchange, NettyHttpEndpoint endpoint, String uriParameters) throws URISyntaxException {
+        String uri = endpoint.getEndpointUri();
+        if (uriParameters != null) {
+            uri += "?" + uriParameters;
+        }
+
+        // resolve placeholders in uri
+        try {
+            uri = exchange.getContext().resolvePropertyPlaceholders(uri);
+        } catch (Exception e) {
+            throw new RuntimeExchangeException("Cannot resolve property placeholders with uri: " + uri, exchange, e);
+        }
+
+        // ensure uri is encoded to be valid
+        uri = UnsafeUriCharactersEncoder.encode(uri);
+
+        return uri;
+    }
+
+    /**
+     * Creates the URI to invoke.
+     *
+     * @param exchange the exchange
+     * @param url      the url to invoke
+     * @param endpoint the endpoint
+     * @return the URI to invoke
+     */
+    public static URI createURI(Exchange exchange, String url, NettyHttpEndpoint endpoint) throws URISyntaxException {
+        URI uri = new URI(url);
+        // is a query string provided in the endpoint URI or in a header (header overrules endpoint)
+        String queryString = exchange.getIn().getHeader(Exchange.HTTP_QUERY, String.class);
+        if (queryString == null) {
+            // use raw as we encode just below
+            queryString = uri.getRawQuery();
+        }
+        if (queryString != null) {
+            // need to encode query string
+            queryString = UnsafeUriCharactersEncoder.encode(queryString);
+            uri = URISupport.createURIWithQuery(uri, queryString);
+        }
+        return uri;
     }
 
 }

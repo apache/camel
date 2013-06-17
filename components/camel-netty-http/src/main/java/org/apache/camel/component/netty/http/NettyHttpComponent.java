@@ -36,9 +36,6 @@ public class NettyHttpComponent extends NettyComponent implements HeaderFilterSt
     // - matchOnUriPrefix
     // - urlrewrite
 
-    // TODO: producer
-    // - add support for HTTP_URI / HTTP_QUERY overrides
-
     private NettyHttpBinding nettyHttpBinding;
     private HeaderFilterStrategy headerFilterStrategy;
 

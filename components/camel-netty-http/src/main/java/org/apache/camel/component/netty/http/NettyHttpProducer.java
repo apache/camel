@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.netty.http;
 
+import java.net.URI;
+
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.netty.NettyConfiguration;
@@ -52,13 +54,11 @@ public class NettyHttpProducer extends NettyProducer {
 
     @Override
     protected Object getRequestBody(Exchange exchange) throws Exception {
-        String uri = getEndpoint().getEndpointUri();
+        // creating the url to use takes 2-steps
+        String uri = NettyHttpHelper.createURL(exchange, getEndpoint(), uriParameters);
+        URI u = NettyHttpHelper.createURI(exchange, uri, getEndpoint());
 
-        if (uriParameters != null) {
-            uri += "?" + uriParameters;
-        }
-
-        HttpRequest request = getEndpoint().getNettyHttpBinding().toNettyRequest(exchange.getIn(), uri, getConfiguration());
+        HttpRequest request = getEndpoint().getNettyHttpBinding().toNettyRequest(exchange.getIn(), u.toString(), getConfiguration());
         String actualUri = request.getUri();
         exchange.getIn().setHeader(Exchange.HTTP_URL, actualUri);
 
