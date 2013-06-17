@@ -82,7 +82,9 @@ public class GreeterClientTest extends AbstractJUnit4SpringContextTests {
 
     @Test
     public void testServiceWithValidateUser() throws Exception {
+        
         String response = sendMessageWithUsernameToken("jim", "jimspassword", "CXF");
+        
         assertEquals(" Hello CXF", response);
 
         try {

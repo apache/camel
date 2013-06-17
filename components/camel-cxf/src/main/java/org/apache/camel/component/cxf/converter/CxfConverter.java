@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.cxf.converter;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -23,6 +24,7 @@ import java.util.Collection;
 
 import javax.ws.rs.core.Response;
 import javax.xml.namespace.QName;
+import javax.xml.soap.MessageFactory;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPMessage;
 
@@ -92,6 +94,13 @@ public final class CxfConverter {
         soapMessage.writeTo(cos);
         InputStream in = cos.getInputStream();
         return in;
+    }
+    
+    @Converter
+    public static SOAPMessage StringToSoapMessage(final String string, Exchange exchange) throws SOAPException, IOException {
+        InputStream is = new ByteArrayInputStream(string.getBytes(IOHelper.getCharsetName(exchange)));
+        SOAPMessage message = MessageFactory.newInstance().createMessage(null, is);
+        return message;
     }
     
     @Converter
