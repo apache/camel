@@ -30,7 +30,7 @@ import org.jboss.netty.handler.codec.http.HttpResponse;
 public interface NettyHttpBinding {
 
     /**
-     * Binds from Netty {@link HttpRequest} to Camel {@Message}.
+     * Binds from Netty {@link HttpRequest} to Camel {@link Message}.
      * <p/>
      * Will use {@link #populateCamelHeaders(org.jboss.netty.handler.codec.http.HttpRequest, java.util.Map, org.apache.camel.Exchange, NettyHttpConfiguration)}
      * for populating the headers.
@@ -55,7 +55,7 @@ public interface NettyHttpBinding {
     void populateCamelHeaders(HttpRequest request, Map<String, Object> headers, Exchange exchange, NettyHttpConfiguration configuration) throws Exception;
 
     /**
-     * Binds from Netty {@link HttpResponse} to Camel {@Message}.
+     * Binds from Netty {@link HttpResponse} to Camel {@link Message}.
      * <p/>
      * Will use {@link #populateCamelHeaders(org.jboss.netty.handler.codec.http.HttpResponse, java.util.Map, org.apache.camel.Exchange, NettyHttpConfiguration)}
      * for populating the headers.

@@ -34,6 +34,7 @@ public class NettyHttpConfiguration extends NettyConfiguration {
     private boolean compression;
     private boolean throwExceptionOnFailure = true;
     private boolean transferException;
+    private String path;
 
     public NettyHttpConfiguration() {
         // we need sync=true as http is request/reply by nature
@@ -105,5 +106,13 @@ public class NettyHttpConfiguration extends NettyConfiguration {
 
     public void setMapHeaders(boolean mapHeaders) {
         this.mapHeaders = mapHeaders;
+    }
+
+    public String getPath() {
+        return path;
+    }
+
+    public void setPath(String path) {
+        this.path = path;
     }
 }

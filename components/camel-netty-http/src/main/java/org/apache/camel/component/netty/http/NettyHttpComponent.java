@@ -35,7 +35,6 @@ public class NettyHttpComponent extends NettyComponent implements HeaderFilterSt
     // - bridgeEndpoint
     // - matchOnUriPrefix
     // - urlrewrite
-    // - various CamelHttpUri headers with details about the url in use
 
     // TODO: producer
     // - add support for HTTP_URI / HTTP_QUERY overrides
@@ -91,6 +90,11 @@ public class NettyHttpComponent extends NettyComponent implements HeaderFilterSt
         // force using tcp as the underlying transport
         configuration.setProtocol("tcp");
         configuration.setTextline(false);
+
+        if (configuration instanceof NettyHttpConfiguration) {
+            URI uri = new URI(remaining);
+            ((NettyHttpConfiguration) configuration).setPath(uri.getPath());
+        }
 
         return configuration;
     }

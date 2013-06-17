@@ -20,6 +20,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.net.URI;
 import java.net.URLDecoder;
 import java.nio.charset.Charset;
 import java.util.Iterator;
@@ -83,14 +84,31 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding {
     public void populateCamelHeaders(HttpRequest request, Map<String, Object> headers, Exchange exchange, NettyHttpConfiguration configuration) throws Exception {
         LOG.trace("populateCamelHeaders: {}", request);
 
-        String uri = request.getUri();
+        // NOTE: these headers is applied using the same logic as camel-http/camel-jetty to be consistent
 
         headers.put(Exchange.HTTP_METHOD, request.getMethod().getName());
-        headers.put(Exchange.HTTP_URI, uri);
+        // strip query parameters from the uri
+        String s = request.getUri();
+        if (s.contains("?")) {
+            s = ObjectHelper.before(s, "?");
+        }
+        headers.put(Exchange.HTTP_URL, s);
+        // uri is without the host and port
+        URI uri = new URI(request.getUri());
+        // uri is path and query parameters
+        headers.put(Exchange.HTTP_URI, uri.getPath());
+        headers.put(Exchange.HTTP_QUERY, uri.getQuery());
+
+        // strip the starting endpoint path so the path is relative to the endpoint uri
+        String path = uri.getPath();
+        if (configuration.getPath() != null && configuration.getPath().startsWith(path)) {
+            path = path.substring(configuration.getPath().length());
+        }
+        headers.put(Exchange.HTTP_PATH, path);
 
         if (LOG.isTraceEnabled()) {
             LOG.trace("HTTP-Method {}", request.getMethod().getName());
-            LOG.trace("HTTP-Uri {}", uri);
+            LOG.trace("HTTP-Uri {}", request.getUri());
         }
 
         for (String name : request.getHeaderNames()) {
@@ -113,8 +131,8 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding {
         }
 
         // add uri parameters as headers to the Camel message
-        if (uri.contains("?")) {
-            String query = ObjectHelper.after(uri, "?");
+        if (request.getUri().contains("?")) {
+            String query = ObjectHelper.after(request.getUri(), "?");
             Map<String, Object> uriParameters = URISupport.parseQuery(query);
 
             for (Map.Entry<String, Object> entry : uriParameters.entrySet()) {
