@@ -62,10 +62,7 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
         // store request, as this channel handler is created per pipeline
         request = (HttpRequest) messageEvent.getMessage();
 
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Message received: {}", request);
-            LOG.debug("   is keep-alive: {}", isKeepAlive(request));
-        }
+        LOG.debug("Message received: {}", request);
 
         if (is100ContinueExpected(request)) {
             // send back http 100 response to continue

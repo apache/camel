@@ -41,7 +41,7 @@ public class NettyHttpComponent extends NettyComponent implements HeaderFilterSt
     // - urlrewrite
 
     private final Map<Integer, HttpServerMultiplexChannelHandler> multiplexChannelHandlers = new HashMap<Integer, HttpServerMultiplexChannelHandler>();
-    private final Map<String, HttpNettyServerBootstrapFactory> bootstrapFactories = new HashMap<String, HttpNettyServerBootstrapFactory>();
+    private final Map<String, HttpServerBootstrapFactory> bootstrapFactories = new HashMap<String, HttpServerBootstrapFactory>();
     private NettyHttpBinding nettyHttpBinding;
     private HeaderFilterStrategy headerFilterStrategy;
 
@@ -127,11 +127,11 @@ public class NettyHttpComponent extends NettyComponent implements HeaderFilterSt
         return answer;
     }
 
-    protected synchronized HttpNettyServerBootstrapFactory getOrCreateHttpNettyServerBootstrapFactory(NettyHttpConsumer consumer) {
+    protected synchronized HttpServerBootstrapFactory getOrCreateHttpNettyServerBootstrapFactory(NettyHttpConsumer consumer) {
         String key = consumer.getConfiguration().getAddress();
-        HttpNettyServerBootstrapFactory answer = bootstrapFactories.get(key);
+        HttpServerBootstrapFactory answer = bootstrapFactories.get(key);
         if (answer == null) {
-            answer = new HttpNettyServerBootstrapFactory(this);
+            answer = new HttpServerBootstrapFactory(this);
             answer.init(getCamelContext(), consumer.getConfiguration(), new HttpServerPipelineFactory(consumer));
             bootstrapFactories.put(key, answer);
         }

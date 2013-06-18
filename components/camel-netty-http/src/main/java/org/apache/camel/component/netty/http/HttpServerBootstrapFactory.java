@@ -21,13 +21,16 @@ import org.apache.camel.component.netty.NettyConfiguration;
 import org.apache.camel.component.netty.NettyConsumer;
 import org.apache.camel.component.netty.SingleTCPNettyServerBootstrapFactory;
 import org.jboss.netty.channel.ChannelPipelineFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public class HttpNettyServerBootstrapFactory extends SingleTCPNettyServerBootstrapFactory {
+public class HttpServerBootstrapFactory extends SingleTCPNettyServerBootstrapFactory {
 
+    private static final Logger LOG = LoggerFactory.getLogger(HttpServerBootstrapFactory.class);
     private final NettyHttpComponent component;
     private int port;
 
-    public HttpNettyServerBootstrapFactory(NettyHttpComponent component) {
+    public HttpServerBootstrapFactory(NettyHttpComponent component) {
         this.component = component;
     }
 
@@ -35,15 +38,31 @@ public class HttpNettyServerBootstrapFactory extends SingleTCPNettyServerBootstr
     public void init(CamelContext camelContext, NettyConfiguration configuration, ChannelPipelineFactory pipelineFactory) {
         super.init(camelContext, configuration, pipelineFactory);
         this.port = configuration.getPort();
+
+        LOG.info("BootstrapFactory on port {} is using configuration: {}", port, configuration);
     }
 
     public void addConsumer(NettyConsumer consumer) {
+        if (LOG.isDebugEnabled()) {
+            NettyHttpConsumer httpConsumer = (NettyHttpConsumer) consumer;
+            LOG.debug("BootstrapFactory on port {} is adding consumer with context-path {}", port, httpConsumer.getConfiguration().getPath());
+        }
         component.getMultiplexChannelHandler(port).addConsumer((NettyHttpConsumer) consumer);
     }
 
     @Override
     public void removeConsumer(NettyConsumer consumer) {
+        if (LOG.isDebugEnabled()) {
+            NettyHttpConsumer httpConsumer = (NettyHttpConsumer) consumer;
+            LOG.debug("BootstrapFactory on port {} is removing consumer with context-path {}", port, httpConsumer.getConfiguration().getPath());
+        }
         component.getMultiplexChannelHandler(port).removeConsumer((NettyHttpConsumer) consumer);
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        LOG.debug("BootstrapFactory on port {} is starting", port);
+        super.doStart();
     }
 
     @Override
@@ -51,9 +70,11 @@ public class HttpNettyServerBootstrapFactory extends SingleTCPNettyServerBootstr
         // only stop if no more active consumers
         int consumers = component.getMultiplexChannelHandler(port).consumers();
         if (consumers == 0) {
+            LOG.debug("BootstrapFactory on port {} is stopping", port);
             super.stop();
         } else {
-            LOG.info("There are {} active consumers, so cannot stop {} yet.", consumers, HttpNettyServerBootstrapFactory.class.getName());
+            LOG.debug("BootstrapFactory on port {} has {} active consumers, so cannot stop {} yet.",
+                    new Object[]{port, consumers, HttpServerBootstrapFactory.class.getName()});
         }
     }
 

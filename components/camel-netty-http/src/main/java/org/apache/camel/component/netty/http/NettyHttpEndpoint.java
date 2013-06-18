@@ -57,7 +57,7 @@ public class NettyHttpEndpoint extends NettyEndpoint implements HeaderFilterStra
         NettyHttpConsumer answer = new NettyHttpConsumer(this, processor, getConfiguration());
         configureConsumer(answer);
         // reuse pipeline factory for the same address
-        HttpNettyServerBootstrapFactory factory = getComponent().getOrCreateHttpNettyServerBootstrapFactory(answer);
+        HttpServerBootstrapFactory factory = getComponent().getOrCreateHttpNettyServerBootstrapFactory(answer);
         // force using our server bootstrap factory
         answer.setNettyServerBootstrapFactory(factory);
         return answer;

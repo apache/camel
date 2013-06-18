@@ -43,7 +43,7 @@ public class NettyHttpConsumer extends NettyConsumer {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        ObjectHelper.notNull(getNettyServerBootstrapFactory(), "HttpNettyServerBootstrapFactory", this);
+        ObjectHelper.notNull(getNettyServerBootstrapFactory(), "HttpServerBootstrapFactory", this);
         getNettyServerBootstrapFactory().addConsumer(this);
     }
 

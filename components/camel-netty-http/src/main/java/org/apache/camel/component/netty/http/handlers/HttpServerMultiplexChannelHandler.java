@@ -74,10 +74,7 @@ public class HttpServerMultiplexChannelHandler extends SimpleChannelUpstreamHand
         // store request, as this channel handler is created per pipeline
         HttpRequest request = (HttpRequest) messageEvent.getMessage();
 
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Message received: {}", request);
-            LOG.debug("   is keep-alive: {}", isKeepAlive(request));
-        }
+        LOG.debug("Message received: {}", request);
 
         HttpServerChannelHandler handler = getHandler(request);
         if (handler != null) {
