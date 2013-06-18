@@ -22,9 +22,11 @@ import java.util.concurrent.ExecutorService;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.util.ObjectHelper;
 import org.jboss.netty.bootstrap.ServerBootstrap;
 import org.jboss.netty.channel.Channel;
 import org.jboss.netty.channel.ChannelFactory;
+import org.jboss.netty.channel.ChannelPipelineFactory;
 import org.jboss.netty.channel.group.ChannelGroup;
 import org.jboss.netty.channel.group.ChannelGroupFuture;
 import org.jboss.netty.channel.group.DefaultChannelGroup;
@@ -38,21 +40,24 @@ import org.slf4j.LoggerFactory;
 public class SingleTCPNettyServerBootstrapFactory extends ServiceSupport implements NettyServerBootstrapFactory {
 
     protected static final Logger LOG = LoggerFactory.getLogger(SingleTCPNettyServerBootstrapFactory.class);
-    private final CamelContext camelContext;
-    private final NettyConfiguration configuration;
     private final ChannelGroup allChannels;
-    private final ServerPipelineFactory pipelineFactory;
+    private CamelContext camelContext;
+    private NettyConfiguration configuration;
+    private ChannelPipelineFactory pipelineFactory;
     private ChannelFactory channelFactory;
     private ServerBootstrap serverBootstrap;
     private Channel channel;
     private ExecutorService bossExecutor;
     private ExecutorService workerExecutor;
 
-    public SingleTCPNettyServerBootstrapFactory(CamelContext camelContext, NettyConfiguration nettyConfiguration, ServerPipelineFactory pipelineFactory) {
-        this.camelContext = camelContext;
-        this.configuration = nettyConfiguration;
-        this.pipelineFactory = pipelineFactory;
+    public SingleTCPNettyServerBootstrapFactory() {
         this.allChannels = new DefaultChannelGroup(SingleTCPNettyServerBootstrapFactory.class.getName());
+    }
+
+    public void init(CamelContext camelContext, NettyConfiguration configuration, ChannelPipelineFactory pipelineFactory) {
+        this.camelContext = camelContext;
+        this.configuration = configuration;
+        this.pipelineFactory = pipelineFactory;
     }
 
     public void addChannel(Channel channel) {
@@ -73,6 +78,7 @@ public class SingleTCPNettyServerBootstrapFactory extends ServiceSupport impleme
 
     @Override
     protected void doStart() throws Exception {
+        ObjectHelper.notNull(camelContext, "CamelContext");
         startServerBoostrap();
     }
 

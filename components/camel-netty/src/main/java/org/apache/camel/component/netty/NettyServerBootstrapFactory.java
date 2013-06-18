@@ -16,8 +16,10 @@
  */
 package org.apache.camel.component.netty;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Service;
 import org.jboss.netty.channel.Channel;
+import org.jboss.netty.channel.ChannelPipelineFactory;
 
 /**
  * Factory for setting up Netty {@link org.jboss.netty.bootstrap.ServerBootstrap} and all
@@ -27,6 +29,11 @@ import org.jboss.netty.channel.Channel;
  * allows to share the same port for multiple consumers.
  */
 public interface NettyServerBootstrapFactory extends Service {
+
+    /**
+     * Initializes this {@link NettyServerBootstrapFactory}.
+     */
+    void init(CamelContext camelContext, NettyConfiguration configuration, ChannelPipelineFactory pipelineFactory);
 
     /**
      * When a new {@link Channel} is opened.

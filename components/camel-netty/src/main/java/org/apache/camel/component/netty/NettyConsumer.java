@@ -58,10 +58,11 @@ public class NettyConsumer extends DefaultConsumer {
 
         if (nettyServerBootstrapFactory == null) {
             if (isTcp()) {
-                nettyServerBootstrapFactory = new SingleTCPNettyServerBootstrapFactory(context, getConfiguration(), pipelineFactory);
+                nettyServerBootstrapFactory = new SingleTCPNettyServerBootstrapFactory();
             } else {
-                nettyServerBootstrapFactory = new SingleUDPNettyServerBootstrapFactory(context, getConfiguration(), pipelineFactory);
+                nettyServerBootstrapFactory = new SingleUDPNettyServerBootstrapFactory();
             }
+            nettyServerBootstrapFactory.init(context, configuration, pipelineFactory);
         }
 
         ServiceHelper.startServices(nettyServerBootstrapFactory);

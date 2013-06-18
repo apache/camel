@@ -19,19 +19,22 @@ package org.apache.camel.component.netty.http;
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.netty.NettyConfiguration;
 import org.apache.camel.component.netty.NettyConsumer;
-import org.apache.camel.component.netty.ServerPipelineFactory;
 import org.apache.camel.component.netty.SingleTCPNettyServerBootstrapFactory;
+import org.jboss.netty.channel.ChannelPipelineFactory;
 
 public class HttpNettyServerBootstrapFactory extends SingleTCPNettyServerBootstrapFactory {
 
     private final NettyHttpComponent component;
-    private final int port;
+    private int port;
 
-    public HttpNettyServerBootstrapFactory(CamelContext camelContext, NettyConfiguration nettyConfiguration, ServerPipelineFactory pipelineFactory,
-                                           NettyHttpComponent component) {
-        super(camelContext, nettyConfiguration, pipelineFactory);
+    public HttpNettyServerBootstrapFactory(NettyHttpComponent component) {
         this.component = component;
-        this.port = nettyConfiguration.getPort();
+    }
+
+    @Override
+    public void init(CamelContext camelContext, NettyConfiguration configuration, ChannelPipelineFactory pipelineFactory) {
+        super.init(camelContext, configuration, pipelineFactory);
+        this.port = configuration.getPort();
     }
 
     public void addConsumer(NettyConsumer consumer) {
