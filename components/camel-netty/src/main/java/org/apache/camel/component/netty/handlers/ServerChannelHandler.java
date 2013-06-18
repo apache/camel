@@ -95,12 +95,24 @@ public class ServerChannelHandler extends SimpleChannelUpstreamHandler {
             exchange.setProperty(Exchange.CHARSET_NAME, IOHelper.normalizeCharset(consumer.getConfiguration().getCharsetName()));
         }
 
+        beforeProcess(exchange, messageEvent);
+
         // process accordingly to endpoint configuration
         if (consumer.getEndpoint().isSynchronous()) {
             processSynchronously(exchange, messageEvent);
         } else {
             processAsynchronously(exchange, messageEvent);
         }
+    }
+
+    /**
+     * Allows any custom logic before the {@link Exchange} is processed by the routing engine.
+     *
+     * @param exchange       the exchange
+     * @param messageEvent   the Netty message event
+     */
+    protected void beforeProcess(final Exchange exchange, final MessageEvent messageEvent) {
+        // noop
     }
 
     private void processSynchronously(final Exchange exchange, final MessageEvent messageEvent) {

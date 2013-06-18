@@ -35,6 +35,7 @@ public class NettyHttpConfiguration extends NettyConfiguration {
     private boolean throwExceptionOnFailure = true;
     private boolean transferException;
     private boolean matchOnUriPrefix;
+    private boolean bridgeEndpoint;
     private String path;
 
     public NettyHttpConfiguration() {
@@ -115,6 +116,14 @@ public class NettyHttpConfiguration extends NettyConfiguration {
 
     public void setMatchOnUriPrefix(boolean matchOnUriPrefix) {
         this.matchOnUriPrefix = matchOnUriPrefix;
+    }
+
+    public boolean isBridgeEndpoint() {
+        return bridgeEndpoint;
+    }
+
+    public void setBridgeEndpoint(boolean bridgeEndpoint) {
+        this.bridgeEndpoint = bridgeEndpoint;
     }
 
     public String getPath() {

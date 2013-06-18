@@ -20,9 +20,12 @@ import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.component.netty.http.ContextPathMatcher;
 import org.apache.camel.component.netty.http.DefaultContextPathMatcher;
 import org.apache.camel.component.netty.http.NettyHttpConsumer;
+import org.apache.camel.util.UnsafeUriCharactersEncoder;
+import org.jboss.netty.buffer.ChannelBuffers;
 import org.jboss.netty.channel.ChannelHandlerContext;
 import org.jboss.netty.channel.ExceptionEvent;
 import org.jboss.netty.channel.MessageEvent;
@@ -86,8 +89,11 @@ public class HttpServerMultiplexChannelHandler extends SimpleChannelUpstreamHand
             ctx.setAttachment(handler);
             handler.messageReceived(ctx, messageEvent);
         } else {
-            // this service is not available
+            // this service is not available, so send empty response back
             HttpResponse response = new DefaultHttpResponse(HTTP_1_1, SERVICE_UNAVAILABLE);
+            response.setHeader(Exchange.CONTENT_TYPE, "text/plain");
+            response.setHeader(Exchange.CONTENT_LENGTH, 0);
+            response.setContent(ChannelBuffers.copiedBuffer(new byte[]{}));
             messageEvent.getChannel().write(response);
         }
     }
@@ -139,7 +145,8 @@ public class HttpServerMultiplexChannelHandler extends SimpleChannelUpstreamHand
             path = path.substring(0, path.length() - 1);
         }
 
-        return path;
+        String safe = UnsafeUriCharactersEncoder.encode(path);
+        return safe;
     }
 
 }

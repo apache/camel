@@ -28,6 +28,7 @@ import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
 import org.apache.camel.util.ServiceHelper;
 import org.apache.camel.util.URISupport;
+import org.apache.camel.util.UnsafeUriCharactersEncoder;
 
 /**
  * Netty HTTP based component.
@@ -36,7 +37,6 @@ public class NettyHttpComponent extends NettyComponent implements HeaderFilterSt
 
     // TODO: support on consumer
     // - validate routes on same port cannot have different SSL etc
-    // - bridgeEndpoint
     // - urlrewrite
 
     private final Map<Integer, HttpServerMultiplexChannelHandler> multiplexChannelHandlers = new HashMap<Integer, HttpServerMultiplexChannelHandler>();
@@ -87,14 +87,16 @@ public class NettyHttpComponent extends NettyComponent implements HeaderFilterSt
 
     @Override
     protected NettyConfiguration parseConfiguration(NettyConfiguration configuration, String remaining, Map<String, Object> parameters) throws Exception {
-        configuration.parseURI(new URI(remaining), parameters, this, "http", "https");
+        // ensure uri is encoded to be valid
+        String safe = UnsafeUriCharactersEncoder.encode(remaining);
+        URI uri = new URI(safe);
+        configuration.parseURI(uri, parameters, this, "http", "https");
 
         // force using tcp as the underlying transport
         configuration.setProtocol("tcp");
         configuration.setTextline(false);
 
         if (configuration instanceof NettyHttpConfiguration) {
-            URI uri = new URI(remaining);
             ((NettyHttpConfiguration) configuration).setPath(uri.getPath());
         }
 

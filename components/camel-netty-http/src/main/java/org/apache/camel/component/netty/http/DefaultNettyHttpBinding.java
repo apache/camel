@@ -356,15 +356,35 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding {
 
         TypeConverter tc = message.getExchange().getContext().getTypeConverter();
 
+        // if we bridge endpoint then we need to skip matching headers with the HTTP_QUERY to avoid sending
+        // duplicated headers to the receiver, so use this skipRequestHeaders as the list of headers to skip
+        Map<String, Object> skipRequestHeaders = null;
+        if (configuration.isBridgeEndpoint()) {
+            String queryString = message.getHeader(Exchange.HTTP_QUERY, String.class);
+            if (queryString != null) {
+                skipRequestHeaders = URISupport.parseQuery(queryString);
+            }
+            // Need to remove the Host key as it should be not used
+            message.getHeaders().remove("host");
+        }
+
         // append headers
         // must use entrySet to ensure case of keys is preserved
         for (Map.Entry<String, Object> entry : message.getHeaders().entrySet()) {
             String key = entry.getKey();
             Object value = entry.getValue();
+
+            // we should not add headers for the parameters in the uri if we bridge the endpoint
+            // as then we would duplicate headers on both the endpoint uri, and in HTTP headers as well
+            if (skipRequestHeaders != null && skipRequestHeaders.containsKey(key)) {
+                continue;
+            }
+
             // use an iterator as there can be multiple values. (must not use a delimiter)
             final Iterator<?> it = ObjectHelper.createIterator(value, null, true);
             while (it.hasNext()) {
                 String headerValue = tc.convertTo(String.class, it.next());
+
                 if (headerValue != null && headerFilterStrategy != null
                         && !headerFilterStrategy.applyFilterToCamelHeaders(key, headerValue, message.getExchange())) {
                     LOG.trace("HTTP-Header: {}={}", key, headerValue);

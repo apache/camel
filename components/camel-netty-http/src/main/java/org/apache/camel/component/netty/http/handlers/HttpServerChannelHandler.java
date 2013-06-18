@@ -24,6 +24,7 @@ import org.apache.camel.component.netty.NettyConsumer;
 import org.apache.camel.component.netty.NettyHelper;
 import org.apache.camel.component.netty.handlers.ServerChannelHandler;
 import org.apache.camel.component.netty.http.NettyHttpConsumer;
+import org.jboss.netty.buffer.ChannelBuffers;
 import org.jboss.netty.channel.ChannelFutureListener;
 import org.jboss.netty.channel.ChannelHandlerContext;
 import org.jboss.netty.channel.ExceptionEvent;
@@ -75,23 +76,39 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
             // are we suspended?
             LOG.debug("Consumer suspended, cannot service request {}", request);
             HttpResponse response = new DefaultHttpResponse(HTTP_1_1, SERVICE_UNAVAILABLE);
+            response.setHeader(Exchange.CONTENT_TYPE, "text/plain");
+            response.setHeader(Exchange.CONTENT_LENGTH, 0);
+            response.setContent(ChannelBuffers.copiedBuffer(new byte[]{}));
             messageEvent.getChannel().write(response);
             return;
         }
         if (consumer.getEndpoint().getHttpMethodRestrict() != null
                 && !consumer.getEndpoint().getHttpMethodRestrict().contains(request.getMethod().getName())) {
             HttpResponse response = new DefaultHttpResponse(HTTP_1_1, METHOD_NOT_ALLOWED);
+            response.setHeader(Exchange.CONTENT_TYPE, "text/plain");
+            response.setHeader(Exchange.CONTENT_LENGTH, 0);
+            response.setContent(ChannelBuffers.copiedBuffer(new byte[]{}));
             messageEvent.getChannel().write(response);
             return;
         }
         if ("TRACE".equals(request.getMethod().getName()) && !consumer.getEndpoint().isTraceEnabled()) {
             HttpResponse response = new DefaultHttpResponse(HTTP_1_1, METHOD_NOT_ALLOWED);
+            response.setHeader(Exchange.CONTENT_TYPE, "text/plain");
+            response.setHeader(Exchange.CONTENT_LENGTH, 0);
+            response.setContent(ChannelBuffers.copiedBuffer(new byte[]{}));
             messageEvent.getChannel().write(response);
             return;
         }
 
         // let Camel process this message
         super.messageReceived(ctx, messageEvent);
+    }
+
+    @Override
+    protected void beforeProcess(Exchange exchange, MessageEvent messageEvent) {
+        if (consumer.getConfiguration().isBridgeEndpoint()) {
+            exchange.setProperty(Exchange.SKIP_GZIP_ENCODING, Boolean.TRUE);
+        }
     }
 
     @Override
