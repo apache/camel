@@ -37,7 +37,6 @@ public class NettyHttpComponent extends NettyComponent implements HeaderFilterSt
     // TODO: support on consumer
     // - validate routes on same port cannot have different SSL etc
     // - bridgeEndpoint
-    // - matchOnUriPrefix
     // - urlrewrite
 
     private final Map<Integer, HttpServerMultiplexChannelHandler> multiplexChannelHandlers = new HashMap<Integer, HttpServerMultiplexChannelHandler>();

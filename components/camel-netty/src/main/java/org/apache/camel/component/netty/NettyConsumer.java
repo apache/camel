@@ -47,16 +47,16 @@ public class NettyConsumer extends DefaultConsumer {
 
         LOG.debug("Netty consumer binding to: {}", configuration.getAddress());
 
-        // setup pipeline factory
-        ServerPipelineFactory pipelineFactory;
-        ServerPipelineFactory factory = configuration.getServerPipelineFactory();
-        if (factory != null) {
-            pipelineFactory = factory.createPipelineFactory(this);
-        } else {
-            pipelineFactory = new DefaultServerPipelineFactory(this);
-        }
-
         if (nettyServerBootstrapFactory == null) {
+            // setup pipeline factory
+            ServerPipelineFactory pipelineFactory;
+            ServerPipelineFactory factory = configuration.getServerPipelineFactory();
+            if (factory != null) {
+                pipelineFactory = factory.createPipelineFactory(this);
+            } else {
+                pipelineFactory = new DefaultServerPipelineFactory(this);
+            }
+
             if (isTcp()) {
                 nettyServerBootstrapFactory = new SingleTCPNettyServerBootstrapFactory();
             } else {

@@ -34,6 +34,7 @@ public class NettyHttpConfiguration extends NettyConfiguration {
     private boolean compression;
     private boolean throwExceptionOnFailure = true;
     private boolean transferException;
+    private boolean matchOnUriPrefix;
     private String path;
 
     public NettyHttpConfiguration() {
@@ -106,6 +107,14 @@ public class NettyHttpConfiguration extends NettyConfiguration {
 
     public void setMapHeaders(boolean mapHeaders) {
         this.mapHeaders = mapHeaders;
+    }
+
+    public boolean isMatchOnUriPrefix() {
+        return matchOnUriPrefix;
+    }
+
+    public void setMatchOnUriPrefix(boolean matchOnUriPrefix) {
+        this.matchOnUriPrefix = matchOnUriPrefix;
     }
 
     public String getPath() {

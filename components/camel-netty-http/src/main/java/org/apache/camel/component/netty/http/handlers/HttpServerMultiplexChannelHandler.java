@@ -16,9 +16,12 @@
  */
 package org.apache.camel.component.netty.http.handlers;
 
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
+import org.apache.camel.component.netty.http.ContextPathMatcher;
+import org.apache.camel.component.netty.http.DefaultContextPathMatcher;
 import org.apache.camel.component.netty.http.NettyHttpConsumer;
 import org.jboss.netty.channel.ChannelHandlerContext;
 import org.jboss.netty.channel.ExceptionEvent;
@@ -30,7 +33,6 @@ import org.jboss.netty.handler.codec.http.HttpResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.jboss.netty.handler.codec.http.HttpHeaders.isKeepAlive;
 import static org.jboss.netty.handler.codec.http.HttpResponseStatus.SERVICE_UNAVAILABLE;
 import static org.jboss.netty.handler.codec.http.HttpVersion.HTTP_1_1;
 
@@ -43,7 +45,7 @@ public class HttpServerMultiplexChannelHandler extends SimpleChannelUpstreamHand
 
     // use NettyHttpConsumer as logger to make it easier to read the logs as this is part of the consumer
     private static final transient Logger LOG = LoggerFactory.getLogger(NettyHttpConsumer.class);
-    private final ConcurrentMap<String, HttpServerChannelHandler> consumers = new ConcurrentHashMap<String, HttpServerChannelHandler>();
+    private final ConcurrentMap<ContextPathMatcher, HttpServerChannelHandler> consumers = new ConcurrentHashMap<ContextPathMatcher, HttpServerChannelHandler>();
     private final String token;
     private final int len;
 
@@ -54,12 +56,14 @@ public class HttpServerMultiplexChannelHandler extends SimpleChannelUpstreamHand
 
     public void addConsumer(NettyHttpConsumer consumer) {
         String path = pathAsKey(consumer.getConfiguration().getPath());
-        consumers.put(path, new HttpServerChannelHandler(consumer));
+        ContextPathMatcher matcher = new DefaultContextPathMatcher(path, consumer.getConfiguration().isMatchOnUriPrefix());
+        consumers.put(matcher, new HttpServerChannelHandler(consumer));
     }
 
     public void removeConsumer(NettyHttpConsumer consumer) {
         String path = pathAsKey(consumer.getConfiguration().getPath());
-        consumers.remove(path);
+        ContextPathMatcher matcher = new DefaultContextPathMatcher(path, consumer.getConfiguration().isMatchOnUriPrefix());
+        consumers.remove(matcher);
     }
 
     /**
@@ -106,12 +110,16 @@ public class HttpServerMultiplexChannelHandler extends SimpleChannelUpstreamHand
             path = path.substring(idx + len);
         }
 
-        // TODO: support matchOnUriPrefix
-
         // use the path as key to find the consumer handler to use
         path = pathAsKey(path);
 
-        return consumers.get(path);
+        // find the one that matches
+        for (Map.Entry<ContextPathMatcher, HttpServerChannelHandler> entry : consumers.entrySet()) {
+            if (entry.getKey().matches(path)) {
+                return entry.getValue();
+            }
+        }
+        return null;
     }
 
     private static String pathAsKey(String path) {

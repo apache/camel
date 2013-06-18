@@ -73,8 +73,7 @@ public class HttpServerBootstrapFactory extends SingleTCPNettyServerBootstrapFac
             LOG.debug("BootstrapFactory on port {} is stopping", port);
             super.stop();
         } else {
-            LOG.debug("BootstrapFactory on port {} has {} active consumers, so cannot stop {} yet.",
-                    new Object[]{port, consumers, HttpServerBootstrapFactory.class.getName()});
+            LOG.debug("BootstrapFactory on port {} has {} registered consumers, so cannot stop yet.", port, consumers);
         }
     }
 
