@@ -23,7 +23,6 @@ import org.apache.camel.PollingConsumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.netty.NettyConfiguration;
-import org.apache.camel.component.netty.NettyConstants;
 import org.apache.camel.component.netty.NettyEndpoint;
 import org.apache.camel.impl.SynchronousDelegateProducer;
 import org.apache.camel.spi.HeaderFilterStrategy;
@@ -49,9 +48,18 @@ public class NettyHttpEndpoint extends NettyEndpoint implements HeaderFilterStra
     }
 
     @Override
+    public NettyHttpComponent getComponent() {
+        return (NettyHttpComponent) super.getComponent();
+    }
+
+    @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        Consumer answer = new NettyHttpConsumer(this, processor, getConfiguration());
+        NettyHttpConsumer answer = new NettyHttpConsumer(this, processor, getConfiguration());
         configureConsumer(answer);
+        // reuse pipeline factory for the same address
+        HttpNettyServerBootstrapFactory factory = getComponent().getOrCreateHttpNettyServerBootstrapFactory(answer);
+        // force using our server bootstrap factory
+        answer.setNettyServerBootstrapFactory(factory);
         return answer;
     }
 

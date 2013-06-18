@@ -55,7 +55,7 @@ public class ServerChannelHandler extends SimpleChannelUpstreamHandler {
             LOG.trace("Channel open: {}", e.getChannel());
         }
         // to keep track of open sockets
-        consumer.getAllChannels().add(e.getChannel());
+        consumer.getNettyServerBootstrapFactory().addChannel(e.getChannel());
     }
 
     @Override
@@ -64,7 +64,7 @@ public class ServerChannelHandler extends SimpleChannelUpstreamHandler {
             LOG.trace("Channel closed: {}", e.getChannel());
         }
         // to keep track of open sockets
-        consumer.getAllChannels().remove(e.getChannel());
+        consumer.getNettyServerBootstrapFactory().removeChannel(e.getChannel());
     }
 
     @Override

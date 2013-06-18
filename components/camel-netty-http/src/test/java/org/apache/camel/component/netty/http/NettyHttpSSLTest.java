@@ -99,7 +99,7 @@ public class NettyHttpSSLTest extends BaseNettyTest {
         });
         context.start();
 
-        String out = template.requestBody("https://localhost:{{port}}/foo", "Hello World", String.class);
+        String out = template.requestBody("https://localhost:{{port}}", "Hello World", String.class);
         assertEquals("Bye World", out);
 
         assertMockEndpointsSatisfied();

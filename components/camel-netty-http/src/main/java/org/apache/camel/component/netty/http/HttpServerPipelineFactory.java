@@ -21,9 +21,9 @@ import javax.net.ssl.SSLEngine;
 
 import org.apache.camel.component.netty.NettyConsumer;
 import org.apache.camel.component.netty.ServerPipelineFactory;
-import org.apache.camel.component.netty.http.handlers.HttpServerChannelHandler;
 import org.apache.camel.component.netty.ssl.SSLEngineFactory;
 import org.apache.camel.util.ObjectHelper;
+import org.jboss.netty.channel.ChannelHandler;
 import org.jboss.netty.channel.ChannelPipeline;
 import org.jboss.netty.channel.Channels;
 import org.jboss.netty.handler.codec.http.HttpChunkAggregator;
@@ -87,7 +87,9 @@ public class HttpServerPipelineFactory extends ServerPipelineFactory {
         }
 
         // handler to route Camel messages
-        pipeline.addLast("handler", new HttpServerChannelHandler(consumer));
+        int port = consumer.getConfiguration().getPort();
+        ChannelHandler handler = consumer.getEndpoint().getComponent().getMultiplexChannelHandler(port);
+        pipeline.addLast("handler", handler);
 
         return pipeline;
     }

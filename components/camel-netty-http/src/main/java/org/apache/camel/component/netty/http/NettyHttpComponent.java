@@ -17,13 +17,16 @@
 package org.apache.camel.component.netty.http;
 
 import java.net.URI;
+import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.netty.NettyComponent;
 import org.apache.camel.component.netty.NettyConfiguration;
+import org.apache.camel.component.netty.http.handlers.HttpServerMultiplexChannelHandler;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
+import org.apache.camel.util.ServiceHelper;
 import org.apache.camel.util.URISupport;
 
 /**
@@ -32,10 +35,13 @@ import org.apache.camel.util.URISupport;
 public class NettyHttpComponent extends NettyComponent implements HeaderFilterStrategyAware {
 
     // TODO: support on consumer
+    // - validate routes on same port cannot have different SSL etc
     // - bridgeEndpoint
     // - matchOnUriPrefix
     // - urlrewrite
 
+    private final Map<Integer, HttpServerMultiplexChannelHandler> multiplexChannelHandlers = new HashMap<Integer, HttpServerMultiplexChannelHandler>();
+    private final Map<String, HttpNettyServerBootstrapFactory> bootstrapFactories = new HashMap<String, HttpNettyServerBootstrapFactory>();
     private NettyHttpBinding nettyHttpBinding;
     private HeaderFilterStrategy headerFilterStrategy;
 
@@ -110,5 +116,35 @@ public class NettyHttpComponent extends NettyComponent implements HeaderFilterSt
 
     public void setHeaderFilterStrategy(HeaderFilterStrategy headerFilterStrategy) {
         this.headerFilterStrategy = headerFilterStrategy;
+    }
+
+    public synchronized HttpServerMultiplexChannelHandler getMultiplexChannelHandler(int port) {
+        HttpServerMultiplexChannelHandler answer = multiplexChannelHandlers.get(port);
+        if (answer == null) {
+            answer = new HttpServerMultiplexChannelHandler(port);
+            multiplexChannelHandlers.put(port, answer);
+        }
+        return answer;
+    }
+
+    protected synchronized HttpNettyServerBootstrapFactory getOrCreateHttpNettyServerBootstrapFactory(NettyHttpConsumer consumer) {
+        String key = consumer.getConfiguration().getAddress();
+        HttpNettyServerBootstrapFactory answer = bootstrapFactories.get(key);
+        if (answer == null) {
+            answer = new HttpNettyServerBootstrapFactory(getCamelContext(), consumer.getConfiguration(), new HttpServerPipelineFactory(consumer), this);
+            bootstrapFactories.put(key, answer);
+        }
+        return answer;
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        super.doStop();
+
+        ServiceHelper.stopServices(bootstrapFactories.values());
+        bootstrapFactories.clear();
+
+        ServiceHelper.stopService(multiplexChannelHandlers.values());
+        multiplexChannelHandlers.clear();
     }
 }

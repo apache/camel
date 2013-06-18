@@ -19,6 +19,7 @@ package org.apache.camel.component.netty.http;
 import org.apache.camel.Processor;
 import org.apache.camel.component.netty.NettyConfiguration;
 import org.apache.camel.component.netty.NettyConsumer;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * HTTP based {@link NettyConsumer}
@@ -37,5 +38,18 @@ public class NettyHttpConsumer extends NettyConsumer {
     @Override
     public NettyHttpConfiguration getConfiguration() {
         return (NettyHttpConfiguration) super.getConfiguration();
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+        ObjectHelper.notNull(getNettyServerBootstrapFactory(), "HttpNettyServerBootstrapFactory", this);
+        getNettyServerBootstrapFactory().addConsumer(this);
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        getNettyServerBootstrapFactory().removeConsumer(this);
+        super.doStop();
     }
 }
