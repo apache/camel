@@ -125,6 +125,7 @@
     <module>camel-mongodb</module>
     <module>camel-mqtt</module>
     <module>camel-msv</module>
+    <module>camel-mustache</module>
     <module>camel-mvel</module>
     <module>camel-mybatis</module>
     <module>camel-nagios</module>
