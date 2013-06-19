@@ -17,6 +17,7 @@
 package org.apache.camel.component.netty;
 
 import java.net.URI;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ThreadFactory;
 import java.util.concurrent.TimeUnit;
@@ -24,6 +25,7 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.concurrent.CamelThreadFactory;
 import org.jboss.netty.handler.execution.OrderedMemoryAwareThreadPoolExecutor;
 import org.jboss.netty.util.HashedWheelTimer;
@@ -50,8 +52,16 @@ public class NettyComponent extends DefaultComponent {
         } else {
             config = new NettyConfiguration();
         }
-
         config = parseConfiguration(config, remaining, parameters);
+
+        // merge any custom bootstrap configuration on the config
+        NettyServerBootstrapConfiguration bootstrapConfiguration = resolveAndRemoveReferenceParameter(parameters, "bootstrapConfiguration", NettyServerBootstrapConfiguration.class);
+        if (bootstrapConfiguration != null) {
+            Map<String, Object> options = new HashMap<String, Object>();
+            if (IntrospectionSupport.getProperties(bootstrapConfiguration, options, null, false)) {
+                IntrospectionSupport.setProperties(getCamelContext().getTypeConverter(), config, options);
+            }
+        }
 
         // validate config
         config.validateConfiguration();

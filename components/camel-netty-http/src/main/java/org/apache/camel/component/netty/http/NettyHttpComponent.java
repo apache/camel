@@ -23,9 +23,11 @@ import java.util.Map;
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.netty.NettyComponent;
 import org.apache.camel.component.netty.NettyConfiguration;
+import org.apache.camel.component.netty.NettyServerBootstrapConfiguration;
 import org.apache.camel.component.netty.http.handlers.HttpServerMultiplexChannelHandler;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
+import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ServiceHelper;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
@@ -57,6 +59,15 @@ public class NettyHttpComponent extends NettyComponent implements HeaderFilterSt
             config = getConfiguration().copy();
         } else {
             config = new NettyHttpConfiguration();
+        }
+
+        // merge any custom bootstrap configuration on the config
+        NettyServerBootstrapConfiguration bootstrapConfiguration = resolveAndRemoveReferenceParameter(parameters, "bootstrapConfiguration", NettyServerBootstrapConfiguration.class);
+        if (bootstrapConfiguration != null) {
+            Map<String, Object> options = new HashMap<String, Object>();
+            if (IntrospectionSupport.getProperties(bootstrapConfiguration, options, null, false)) {
+                IntrospectionSupport.setProperties(getCamelContext().getTypeConverter(), config, options);
+            }
         }
 
         config = parseConfiguration(config, remaining, parameters);

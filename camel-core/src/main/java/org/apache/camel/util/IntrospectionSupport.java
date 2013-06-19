@@ -199,6 +199,22 @@ public final class IntrospectionSupport {
         return isSetter(method, false);
     }
 
+
+    /**
+     * Will inspect the target for properties.
+     * <p/>
+     * Notice a property must have both a getter/setter method to be included.
+     * Notice all <tt>null</tt> values will be included.
+     *
+     * @param target         the target bean
+     * @param properties     the map to fill in found properties
+     * @param optionPrefix   an optional prefix to append the property key
+     * @return <tt>true</tt> if any properties was found, <tt>false</tt> otherwise.
+     */
+    public static boolean getProperties(Object target, Map<String, Object> properties, String optionPrefix) {
+        return getProperties(target, properties, optionPrefix, true);
+    }
+
     /**
      * Will inspect the target for properties.
      * <p/>
@@ -207,9 +223,10 @@ public final class IntrospectionSupport {
      * @param target         the target bean
      * @param properties     the map to fill in found properties
      * @param optionPrefix   an optional prefix to append the property key
+     * @param includeNull    whether to include <tt>null</tt> values
      * @return <tt>true</tt> if any properties was found, <tt>false</tt> otherwise.
      */
-    public static boolean getProperties(Object target, Map<String, Object> properties, String optionPrefix) {
+    public static boolean getProperties(Object target, Map<String, Object> properties, String optionPrefix, boolean includeNull) {
         ObjectHelper.notNull(target, "target");
         ObjectHelper.notNull(properties, "properties");
         boolean rc = false;
@@ -228,8 +245,10 @@ public final class IntrospectionSupport {
                     // we may want to set options on classes that has package view visibility, so override the accessible
                     method.setAccessible(true);
                     Object value = method.invoke(target);
-                    properties.put(optionPrefix + name, value);
-                    rc = true;
+                    if (value != null || includeNull) {
+                        properties.put(optionPrefix + name, value);
+                        rc = true;
+                    }
                 } catch (Exception e) {
                     if (LOG.isTraceEnabled()) {
                         LOG.trace("Error invoking getter method " + method + ". This exception is ignored.", e);

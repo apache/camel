@@ -194,6 +194,21 @@ public class IntrospectionSupportTest extends ContextTestSupport {
         assertEquals("123", map.get("bean.id"));
     }
 
+    public void testGetPropertiesSkipNull() throws Exception {
+        ExampleBean bean = new ExampleBean();
+        bean.setName("Claus");
+        bean.setPrice(10.0);
+        bean.setId(null);
+
+        Map<String, Object> map = new HashMap<String, Object>();
+        IntrospectionSupport.getProperties(bean, map, null, false);
+        assertEquals(2, map.size());
+
+        assertEquals("Claus", map.get("name"));
+        String price = map.get("price").toString();
+        assertTrue(price.startsWith("10"));
+    }
+
     public void testGetProperty() throws Exception {
         ExampleBean bean = new ExampleBean();
         bean.setId("123");
