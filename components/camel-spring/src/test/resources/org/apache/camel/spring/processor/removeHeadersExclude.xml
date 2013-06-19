@@ -31,7 +31,7 @@
             <removeHeaders pattern="Beer*" excludePattern="Beer(Heineken|Tuborg)"/>
             <!-- remove the header with the name foo -->
             <removeHeaders pattern="foo"/>
-            <to uri="mock:end"/>
+            <to uri="mock:result"/>
         </route>
     </camelContext>
     <!-- END SNIPPET: example -->
