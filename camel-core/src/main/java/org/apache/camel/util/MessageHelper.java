@@ -406,8 +406,17 @@ public final class MessageHelper {
      * @param logStackTrace      whether to include a header for the stacktrace, to be added (not included in this dump).
      * @return a human readable message history as a table
      */
-    @SuppressWarnings("unchecked")
     public static String dumpMessageHistoryStacktrace(Exchange exchange, ExchangeFormatter exchangeFormatter, boolean logStackTrace) {
+        // must not cause new exceptions so run this in a try catch block
+        try {
+            return doDumpMessageHistoryStacktrace(exchange, exchangeFormatter, logStackTrace);
+        } catch (Exception e) {
+            return "";
+        }
+    }
+
+    @SuppressWarnings("unchecked")
+    public static String doDumpMessageHistoryStacktrace(Exchange exchange, ExchangeFormatter exchangeFormatter, boolean logStackTrace) {
         List<MessageHistory> list = exchange.getProperty(Exchange.MESSAGE_HISTORY, List.class);
         if (list == null || list.isEmpty()) {
             return null;
@@ -423,7 +432,10 @@ public final class MessageHelper {
         // add incoming origin of message on the top
         String routeId = exchange.getFromRouteId();
         String id = routeId;
-        String label = URISupport.sanitizeUri(exchange.getFromEndpoint().getEndpointUri());
+        String label = "";
+        if (exchange.getFromEndpoint() != null) {
+            label = URISupport.sanitizeUri(exchange.getFromEndpoint().getEndpointUri());
+        }
         long elapsed = 0;
         Date created = exchange.getProperty(Exchange.CREATED_TIMESTAMP, Date.class);
         if (created != null) {
