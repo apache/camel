@@ -537,11 +537,14 @@ public class MethodInfo {
                             }
                             try {
                                 // its a valid parameter value, so convert it to the expected type of the parameter
-                                answer = exchange.getContext().getTypeConverter().mandatoryConvertTo(parameterType, parameterValue);
+                                answer = exchange.getContext().getTypeConverter().mandatoryConvertTo(parameterType, exchange, parameterValue);
                                 if (LOG.isTraceEnabled()) {
                                     LOG.trace("Parameter #{} evaluated as: {} type: ", new Object[]{index, answer, ObjectHelper.type(answer)});
                                 }
                             } catch (NoTypeConversionAvailableException e) {
+                                if (LOG.isDebugEnabled()) {
+                                    LOG.debug("Cannot convert from type: {} to type: {} for parameter #{}", new Object[]{ObjectHelper.type(parameterValue), parameterType, index});
+                                }
                                 throw ObjectHelper.wrapCamelExecutionException(exchange, e);
                             }
                         }
