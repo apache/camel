@@ -325,8 +325,24 @@ public class NettyServerBootstrapConfiguration implements Cloneable {
         if (nettyServerBootstrapFactory != other.nettyServerBootstrapFactory) {
             return false;
         }
-        // TODO: compare all the options
-
+        // validate all the options is identical
+        if (options == null && other.options != null) {
+            return false;
+        }
+        if (options != null && other.options == null) {
+            return false;
+        }
+        if (options != null && other.options != null) {
+            if (options.size() != other.options.size()) {
+                return false;
+            }
+            if (!options.keySet().containsAll(other.options.keySet())) {
+                return false;
+            }
+            if (!options.values().containsAll(other.options.values())) {
+                return false;
+            }
+        }
         if (ssl != other.ssl) {
             return false;
         }

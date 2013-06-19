@@ -31,12 +31,12 @@ public class NettyHttpTwoRoutesValidateBootstrapConfigurationTest extends BaseNe
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("netty-http:http://0.0.0.0:{{port}}/foo")
+                from("netty-http:http://0.0.0.0:{{port}}/foo?option.child.keepAlive=false")
                         .to("mock:foo")
                         .transform().constant("Bye World");
 
-                // we cannot have a 2nd route on same port with SSL enabled, when the 1st route is NOT
-                from("netty-http:http://0.0.0.0:{{port}}/bar?ssl=true")
+                // we cannot have a 2nd route on same port with different option that the 1st route
+                from("netty-http:http://0.0.0.0:{{port}}/bar?option.child.keepAlive=true")
                         .to("mock:bar")
                         .transform().constant("Bye Camel");
             }
