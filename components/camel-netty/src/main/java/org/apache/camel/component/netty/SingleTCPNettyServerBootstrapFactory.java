@@ -79,15 +79,15 @@ public class SingleTCPNettyServerBootstrapFactory extends ServiceSupport impleme
     @Override
     protected void doStart() throws Exception {
         ObjectHelper.notNull(camelContext, "CamelContext");
-        startServerBoostrap();
+        startServerBootstrap();
     }
 
     @Override
     protected void doStop() throws Exception {
-        stopServerBoostrap();
+        stopServerBootstrap();
     }
 
-    protected void startServerBoostrap() {
+    protected void startServerBootstrap() {
         bossExecutor = camelContext.getExecutorServiceManager().newCachedThreadPool(this, "NettyTCPBoss");
         workerExecutor = camelContext.getExecutorServiceManager().newCachedThreadPool(this, "NettyTCPWorker");
 
@@ -124,7 +124,7 @@ public class SingleTCPNettyServerBootstrapFactory extends ServiceSupport impleme
         allChannels.add(channel);
     }
 
-    protected void stopServerBoostrap() {
+    protected void stopServerBootstrap() {
         // close all channels
         LOG.trace("Closing {} channels", allChannels.size());
         ChannelGroupFuture future = allChannels.close();

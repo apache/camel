@@ -37,39 +37,18 @@ import org.jboss.netty.util.CharsetUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class NettyConfiguration implements Cloneable {
+public class NettyConfiguration extends NettyServerBootstrapConfiguration implements Cloneable {
     private static final Logger LOG = LoggerFactory.getLogger(NettyConfiguration.class);
 
-    private String protocol;
-    private String host;
-    private int port;
-    private boolean keepAlive = true;
-    private boolean tcpNoDelay = true;
-    private boolean broadcast;
-    private long connectTimeout = 10000;
     private long requestTimeout;
-    private boolean reuseAddress = true;
     private boolean sync = true;
     private boolean textline;
     private TextLineDelimiter delimiter = TextLineDelimiter.LINE;
     private boolean autoAppendDelimiter = true;
     private int decoderMaxLineLength = 1024;
     private String encoding;
-    private String passphrase;
-    private File keyStoreFile;
-    private File trustStoreFile;
-    private String keyStoreResource;
-    private String trustStoreResource;
-    private SslHandler sslHandler;
     private List<ChannelHandler> encoders = new ArrayList<ChannelHandler>();
     private List<ChannelHandler> decoders = new ArrayList<ChannelHandler>();
-    private boolean ssl;
-    private long sendBufferSize = 65536;
-    private long receiveBufferSize = 65536;
-    private int receiveBufferSizePredictor;
-    private int workerCount;
-    private String keyStoreFormat;
-    private String securityProvider;
     private boolean disconnect;
     private boolean lazyChannelCreation = true;
     private boolean transferExchange;
@@ -79,9 +58,7 @@ public class NettyConfiguration implements Cloneable {
     private LoggingLevel serverClosedChannelExceptionCaughtLogLevel = LoggingLevel.DEBUG;
     private boolean allowDefaultCodec = true;
     private ClientPipelineFactory clientPipelineFactory;
-    private ServerPipelineFactory serverPipelineFactory;
     private SSLContextParameters sslContextParameters;
-    private boolean needClientAuth;
     private int maximumPoolSize = 16;
     private boolean orderedThreadPoolExecutor = true;
     private int producerPoolMaxActive = -1;
@@ -89,8 +66,6 @@ public class NettyConfiguration implements Cloneable {
     private int producerPoolMaxIdle = 100;
     private long producerPoolMinEvictableIdle = 5 * 60 * 1000L;
     private boolean producerPoolEnabled = true;
-    private int backlog;
-    private Map<String, Object> options;
 
     /**
      * Returns a copy of this configuration
@@ -226,80 +201,12 @@ public class NettyConfiguration implements Cloneable {
         return Charset.forName(encoding).name();
     }
 
-    public boolean isTcp() {
-        return protocol.equalsIgnoreCase("tcp");
-    }
-
-    public String getProtocol() {
-        return protocol;
-    }
-
-    public void setProtocol(String protocol) {
-        this.protocol = protocol;
-    }
-
-    public String getHost() {
-        return host;
-    }
-
-    public void setHost(String host) {
-        this.host = host;
-    }
-
-    public int getPort() {
-        return port;
-    }
-
-    public void setPort(int port) {
-        this.port = port;
-    }
-
-    public boolean isKeepAlive() {
-        return keepAlive;
-    }
-
-    public void setKeepAlive(boolean keepAlive) {
-        this.keepAlive = keepAlive;
-    }
-
-    public boolean isTcpNoDelay() {
-        return tcpNoDelay;
-    }
-
-    public void setTcpNoDelay(boolean tcpNoDelay) {
-        this.tcpNoDelay = tcpNoDelay;
-    }
-
-    public boolean isBroadcast() {
-        return broadcast;
-    }
-
-    public void setBroadcast(boolean broadcast) {
-        this.broadcast = broadcast;
-    }
-
-    public long getConnectTimeout() {
-        return connectTimeout;
-    }
-
-    public void setConnectTimeout(long connectTimeout) {
-        this.connectTimeout = connectTimeout;
-    }
-
     public long getRequestTimeout() {
         return requestTimeout;
     }
 
     public void setRequestTimeout(long requestTimeout) {
         this.requestTimeout = requestTimeout;
-    }
-
-    public boolean isReuseAddress() {
-        return reuseAddress;
-    }
-
-    public void setReuseAddress(boolean reuseAddress) {
-        this.reuseAddress = reuseAddress;
     }
 
     public boolean isSync() {
@@ -350,14 +257,6 @@ public class NettyConfiguration implements Cloneable {
         this.encoding = encoding;
     }
 
-    public SslHandler getSslHandler() {
-        return sslHandler;
-    }
-
-    public void setSslHandler(SslHandler sslHandler) {
-        this.sslHandler = sslHandler;
-    }
-
     public List<ChannelHandler> getDecoders() {
         return decoders;
     }
@@ -392,106 +291,6 @@ public class NettyConfiguration implements Cloneable {
         if (!decoders.contains(decoder)) {
             decoders.add(decoder);
         }
-    }
-
-    public long getSendBufferSize() {
-        return sendBufferSize;
-    }
-
-    public void setSendBufferSize(long sendBufferSize) {
-        this.sendBufferSize = sendBufferSize;
-    }
-
-    public boolean isSsl() {
-        return ssl;
-    }
-
-    public void setSsl(boolean ssl) {
-        this.ssl = ssl;
-    }
-
-    public boolean isNeedClientAuth() {
-        return needClientAuth;
-    }
-
-    public void setNeedClientAuth(boolean needClientAuth) {
-        this.needClientAuth = needClientAuth;
-    }
-
-    public long getReceiveBufferSize() {
-        return receiveBufferSize;
-    }
-
-    public void setReceiveBufferSize(long receiveBufferSize) {
-        this.receiveBufferSize = receiveBufferSize;
-    }
-    
-    public int getReceiveBufferSizePredictor() {
-        return receiveBufferSizePredictor;
-    }
-
-    public void setReceiveBufferSizePredictor(int receiveBufferSizePredictor) {
-        this.receiveBufferSizePredictor = receiveBufferSizePredictor;
-    }
-
-    public String getPassphrase() {
-        return passphrase;
-    }
-
-    public void setPassphrase(String passphrase) {
-        this.passphrase = passphrase;
-    }
-
-    @Deprecated
-    public File getKeyStoreFile() {
-        return keyStoreFile;
-    }
-
-    @Deprecated
-    public void setKeyStoreFile(File keyStoreFile) {
-        this.keyStoreFile = keyStoreFile;
-    }
-
-    @Deprecated
-    public File getTrustStoreFile() {
-        return trustStoreFile;
-    }
-
-    @Deprecated
-    public void setTrustStoreFile(File trustStoreFile) {
-        this.trustStoreFile = trustStoreFile;
-    }
-
-    public String getKeyStoreResource() {
-        return keyStoreResource;
-    }
-
-    public void setKeyStoreResource(String keyStoreResource) {
-        this.keyStoreResource = keyStoreResource;
-    }
-
-    public String getTrustStoreResource() {
-        return trustStoreResource;
-    }
-
-    public void setTrustStoreResource(String trustStoreResource) {
-        this.trustStoreResource = trustStoreResource;
-    }
-
-    public String getKeyStoreFormat() {
-        return keyStoreFormat;
-    }
-
-    public void setKeyStoreFormat(String keyStoreFormat) {
-        this.keyStoreFormat = keyStoreFormat;
-    }
-
-    public String getSecurityProvider() {
-        return securityProvider;
-    }
-
-    public void setSecurityProvider(String securityProvider) {
-        this.securityProvider = securityProvider;
     }
 
     public boolean isDisconnect() {
@@ -558,32 +357,12 @@ public class NettyConfiguration implements Cloneable {
         this.allowDefaultCodec = allowDefaultCodec;
     }
 
-    public String getAddress() {
-        return host + ":" + port;
-    }
-
     public void setClientPipelineFactory(ClientPipelineFactory clientPipelineFactory) {
         this.clientPipelineFactory = clientPipelineFactory;
     }
 
     public ClientPipelineFactory getClientPipelineFactory() {
         return clientPipelineFactory;
-    }
-
-    public void setServerPipelineFactory(ServerPipelineFactory serverPipelineFactory) {
-        this.serverPipelineFactory = serverPipelineFactory;
-    }
-
-    public ServerPipelineFactory getServerPipelineFactory() {
-        return serverPipelineFactory;
-    }
-
-    public int getWorkerCount() {
-        return workerCount;
-    }
-
-    public void setWorkerCount(int workerCount) {
-        this.workerCount = workerCount;
     }
 
     public SSLContextParameters getSslContextParameters() {
@@ -650,29 +429,9 @@ public class NettyConfiguration implements Cloneable {
         this.producerPoolEnabled = producerPoolEnabled;
     }
 
-    public int getBacklog() {
-        return backlog;
-    }
-
-    public void setBacklog(int backlog) {
-        this.backlog = backlog;
-    }
-
-    public Map<String, Object> getOptions() {
-        return options;
-    }
-
-    /**
-     * Additional options to set on Netty.
-     */
-    public void setOptions(Map<String, Object> options) {
-        this.options = options;
-    }
-
     private static <T> void addToHandlersList(List<T> configured, List<T> handlers, Class<T> handlerType) {
         if (handlers != null) {
-            for (int x = 0; x < handlers.size(); x++) {
-                T handler = handlers.get(x);
+            for (T handler : handlers) {
                 if (handlerType.isInstance(handler)) {
                     configured.add(handler);
                 }

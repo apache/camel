@@ -33,6 +33,7 @@ public class NettyConsumer extends DefaultConsumer {
         super(nettyEndpoint, processor);
         this.context = this.getEndpoint().getCamelContext();
         this.configuration = configuration;
+        setNettyServerBootstrapFactory(configuration.getNettyServerBootstrapFactory());
         setExceptionHandler(new NettyConsumerExceptionHandler(this));
     }
 
