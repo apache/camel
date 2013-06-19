@@ -26,7 +26,7 @@ import org.apache.camel.spi.ExceptionHandler;
 
 public class DeadLetterChannelAlwaysHandledTest extends ContextTestSupport {
 
-    private static final AtomicBoolean called = new AtomicBoolean();
+    private static final AtomicBoolean CALLED = new AtomicBoolean();
 
     public void testDeadLetterChannelAlwaysHandled() throws Exception {
         // need to set exception handler manually to work around an issue configuring from uri
@@ -42,7 +42,7 @@ public class DeadLetterChannelAlwaysHandledTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        assertFalse("Should not have called", called.get());
+        assertFalse("Should not have called", CALLED.get());
     }
 
     @Override
@@ -69,17 +69,17 @@ public class DeadLetterChannelAlwaysHandledTest extends ContextTestSupport {
 
         @Override
         public void handleException(Throwable exception) {
-            called.set(true);
+            CALLED.set(true);
         }
 
         @Override
         public void handleException(String message, Throwable exception) {
-            called.set(true);
+            CALLED.set(true);
         }
 
         @Override
         public void handleException(String message, Exchange exchange, Throwable exception) {
-            called.set(true);
+            CALLED.set(true);
         }
     }
 }
