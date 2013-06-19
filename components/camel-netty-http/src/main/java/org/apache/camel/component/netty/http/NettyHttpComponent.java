@@ -36,7 +36,6 @@ import org.apache.camel.util.UnsafeUriCharactersEncoder;
 public class NettyHttpComponent extends NettyComponent implements HeaderFilterStrategyAware {
 
     // TODO: support on consumer
-    // - validate routes on same port cannot have different SSL etc
     // - urlrewrite
 
     private final Map<Integer, HttpServerMultiplexChannelHandler> multiplexChannelHandlers = new HashMap<Integer, HttpServerMultiplexChannelHandler>();

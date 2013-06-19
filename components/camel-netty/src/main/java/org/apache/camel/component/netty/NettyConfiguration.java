@@ -133,6 +133,7 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
         setHost(uri.getHost());
         setPort(uri.getPort());
 
+        ssl = component.getAndRemoveParameter(parameters, "ssl", boolean.class, false);
         sslHandler = component.resolveAndRemoveReferenceParameter(parameters, "sslHandler", SslHandler.class, sslHandler);
         passphrase = component.getAndRemoveParameter(parameters, "passphrase", String.class, passphrase);
         keyStoreFormat = component.getAndRemoveParameter(parameters, "keyStoreFormat", String.class, keyStoreFormat == null ? "JKS" : keyStoreFormat);
