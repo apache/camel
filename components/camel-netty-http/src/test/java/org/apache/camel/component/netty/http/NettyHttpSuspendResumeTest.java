@@ -17,13 +17,11 @@
 package org.apache.camel.component.netty.http;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Ignore;
 import org.junit.Test;
 
-@Ignore
 public class NettyHttpSuspendResumeTest extends BaseNettyTest {
 
-    private String serverUri = "netty-http:http://localhost:" + getPort() + "/cool?chunked=false";
+    private String serverUri = "netty-http:http://localhost:" + getPort() + "/cool";
 
     @Test
     public void testNettySuspendResume() throws Exception {
@@ -33,7 +31,7 @@ public class NettyHttpSuspendResumeTest extends BaseNettyTest {
         assertEquals("Bye World", reply);
 
         // now suspend netty
-        NettyHttpConsumer consumer = (NettyHttpConsumer) context.getRoute("route1").getConsumer();
+        NettyHttpConsumer consumer = (NettyHttpConsumer) context.getRoute("foo").getConsumer();
         assertNotNull(consumer);
 
         // suspend
@@ -62,7 +60,7 @@ public class NettyHttpSuspendResumeTest extends BaseNettyTest {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from(serverUri)
+                from(serverUri).routeId("foo")
                     .transform(body().prepend("Bye "));
             }
         };
