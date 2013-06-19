@@ -16,11 +16,11 @@
  */
 package org.apache.camel.language.groovy;
 
+import groovy.lang.Script;
+
 import org.apache.camel.IsSingleton;
 import org.apache.camel.spi.Language;
 import org.apache.camel.util.LRUSoftCache;
-
-import groovy.lang.Script;
 
 /**
  * @version
