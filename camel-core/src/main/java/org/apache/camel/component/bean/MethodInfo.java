@@ -378,6 +378,10 @@ public class MethodInfo {
         return hasHandlerAnnotation;
     }
 
+    public boolean hasParameters() {
+        return !parameters.isEmpty();
+    }
+
     public boolean isReturnTypeVoid() {
         return method.getReturnType().getName().equals("void");
     }

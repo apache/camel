@@ -35,6 +35,12 @@ public class MethodNotFoundException extends CamelExchangeException {
         this.bean = pojo;
     }
 
+    public MethodNotFoundException(Exchange exchange, Object pojo, String methodName, String postfix) {
+        super("Method with name: " + methodName + " " + postfix + " not found on bean: " + pojo + " of type: " + ObjectHelper.className(pojo), exchange);
+        this.methodName = methodName;
+        this.bean = pojo;
+    }
+
     public MethodNotFoundException(Exchange exchange, Class<?> type, String methodName, boolean isStaticMethod) {
         super((isStaticMethod ? "Static method" : "Method") + " with name: " + methodName + " not found on class: " + ObjectHelper.name(type), exchange);
         this.methodName = methodName;

@@ -206,6 +206,7 @@ public class BeanInfo {
             if (methodName.contains("(")) {
                 name = ObjectHelper.before(methodName, "(");
             }
+            boolean emptyParameters = methodName.endsWith("()");
 
             // special for getClass, as we want the user to be able to invoke this method
             // for example to log the class type or the likes
@@ -221,12 +222,25 @@ public class BeanInfo {
                 if (methods != null && methods.size() == 1) {
                     // only one method then choose it
                     methodInfo = methods.get(0);
+
+                    // validate that if we want an explict no-arg method, then that's what we get
+                    if (emptyParameters && methodInfo.hasParameters()) {
+                        throw new MethodNotFoundException(exchange, pojo, methodName, "(with no parameters)");
+                    }
                 } else if (methods != null) {
                     // there are more methods with that name so we cannot decide which to use
 
                     // but first let's try to choose a method and see if that complies with the name
                     // must use the method name which may have qualifiers
                     methodInfo = chooseMethod(pojo, exchange, methodName);
+
+                    // validate that if we want an explicit no-arg method, then that's what we get
+                    if (emptyParameters) {
+                        if (methodInfo == null || methodInfo.hasParameters()) {
+                            // we could not find a no-arg method with that name
+                            throw new MethodNotFoundException(exchange, pojo, methodName, "(with no parameters)");
+                        }
+                    }
 
                     if (methodInfo == null || !name.equals(methodInfo.getMethod().getName())) {
                         throw new AmbiguousMethodCallException(exchange, methods);
