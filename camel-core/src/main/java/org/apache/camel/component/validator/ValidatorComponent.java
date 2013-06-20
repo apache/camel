@@ -51,7 +51,6 @@ public class ValidatorComponent extends DefaultComponent {
 
         ValidatingProcessor validator = new ValidatingProcessor();
         validator.setSchemaAsByteArray(bytes);
-        //validator.setSchemaSource(source);
         LOG.debug("{} using schema resource: {}", this, resourceUri);
         configureValidator(validator, uri, remaining, parameters);
 
