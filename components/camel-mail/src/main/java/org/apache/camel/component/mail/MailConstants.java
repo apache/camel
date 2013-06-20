@@ -23,7 +23,7 @@ public final class MailConstants {
     public static final String MAIL_DEFAULT_FOLDER = "INBOX";
     public static final String MAIL_DEFAULT_FROM = "camel@localhost";
     public static final String MAIL_MESSAGE_ID = "CamelMailMessageId";
-    public static final long MAIL_DEFAULT_CONNECTION_TIMEOUT = 30000L;
+    public static final int MAIL_DEFAULT_CONNECTION_TIMEOUT = 30000;
 
     private MailConstants() {
         // utility class

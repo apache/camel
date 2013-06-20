@@ -55,7 +55,7 @@ public class MailConfiguration implements Cloneable {
     private String replyTo;
     private int fetchSize = -1;
     private boolean debugMode;
-    private long connectionTimeout = MailConstants.MAIL_DEFAULT_CONNECTION_TIMEOUT;
+    private int connectionTimeout = MailConstants.MAIL_DEFAULT_CONNECTION_TIMEOUT;
     private boolean dummyTrustManager;
     private String contentType = "text/plain";
     private String alternativeBodyHeader = MailConstants.MAIL_ALTERNATIVE_BODY;
@@ -418,7 +418,7 @@ public class MailConfiguration implements Cloneable {
         return connectionTimeout;
     }
 
-    public void setConnectionTimeout(long connectionTimeout) {
+    public void setConnectionTimeout(int connectionTimeout) {
         this.connectionTimeout = connectionTimeout;
     }
 
