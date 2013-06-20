@@ -20,18 +20,22 @@ package org.apache.camel.component.mustache;
  * Mustache component constants
  */
 public final class MustacheConstants {
+
     /**
      * Header containing a Mustache template location
      */
     public static final String MUSTACHE_RESOURCE_URI = "MustacheResourceUri";
+
     /**
      * Header containing the Mustache template code
      */
     public static final String MUSTACHE_TEMPLATE = "MustacheTemplate";
+
     /**
      * Mustache endpoint URI prefix
      */
-    public static final String MUSTACHE_ENDPOINT_URI_PREFIX="mustache:";
+    public static final String MUSTACHE_ENDPOINT_URI_PREFIX = "mustache:";
+
     private MustacheConstants() {
         // Utility class
     }

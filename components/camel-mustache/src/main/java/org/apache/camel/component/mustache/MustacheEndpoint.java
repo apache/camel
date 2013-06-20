@@ -16,53 +16,45 @@
  */
 package org.apache.camel.component.mustache;
 
-import com.github.mustachejava.DefaultMustacheFactory;
-import com.github.mustachejava.Mustache;
-import com.github.mustachejava.MustacheFactory;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.util.Map;
+
+import com.github.mustachejava.DefaultMustacheFactory;
+import com.github.mustachejava.Mustache;
+import com.github.mustachejava.MustacheFactory;
 import org.apache.camel.Component;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Message;
 import org.apache.camel.component.ResourceEndpoint;
 import org.apache.camel.util.ExchangeHelper;
-import static org.apache.camel.component.mustache.MustacheConstants.*;
+
+import static org.apache.camel.component.mustache.MustacheConstants.MUSTACHE_ENDPOINT_URI_PREFIX;
+import static org.apache.camel.component.mustache.MustacheConstants.MUSTACHE_RESOURCE_URI;
+import static org.apache.camel.component.mustache.MustacheConstants.MUSTACHE_TEMPLATE;
+
 /**
  * Represents a Camel Mustache endpoint.
  */
 public class MustacheEndpoint extends ResourceEndpoint {
-    /**
-     * Mustache factory
-     */
+
     private MustacheFactory mustacheFactory;
-    /**
-     * Mustache template
-     */
     private Mustache mustache;
-    /**
-     * Encoding
-     */
     private String encoding;
-    /**
-     * Start delimiter, usually {{
-     */
     private String startDelimiter;
-    /**
-     * End delimiter, usually }}
-     */
     private String endDelimiter;
-    
+
     public MustacheEndpoint() {
     }
 
     public MustacheEndpoint(String endpointUri, Component component, String resourceUri) {
         super(endpointUri, component, resourceUri);
     }
+
     @Override
     public boolean isSingleton() {
         return true;
@@ -91,41 +83,44 @@ public class MustacheEndpoint extends ResourceEndpoint {
             // Get Mustache
             String newTemplate = exchange.getIn().getHeader(MUSTACHE_TEMPLATE, String.class);
             Mustache newMustache;
-            if (newTemplate==null) {
+            if (newTemplate == null) {
                 newMustache = getOrCreateMustache();
             } else {
-                newMustache = createMustache(new StringReader(newTemplate), "mustache:temp#"+newTemplate.hashCode());
+                newMustache = createMustache(new StringReader(newTemplate), "mustache:temp#" + newTemplate.hashCode());
                 exchange.getIn().removeHeader(MUSTACHE_TEMPLATE);
             }
+
             // Execute Mustache
             Map<String, Object> variableMap = ExchangeHelper.createVariableMap(exchange);
             StringWriter writer = new StringWriter();
             newMustache.execute(writer, variableMap);
             writer.flush();
+
             // Fill out message
             Message out = exchange.getOut();
             out.setBody(writer.toString());
             out.setHeaders(exchange.getIn().getHeaders());
-            out.setAttachments(exchange.getIn().getAttachments());            
+            out.setAttachments(exchange.getIn().getAttachments());
         } else {
             exchange.getIn().removeHeader(MustacheConstants.MUSTACHE_RESOURCE_URI);
-            MustacheEndpoint newEndpoint = getCamelContext()
-                    .getEndpoint(MUSTACHE_ENDPOINT_URI_PREFIX+newResourceUri, MustacheEndpoint.class);
+            MustacheEndpoint newEndpoint = getCamelContext().getEndpoint(MUSTACHE_ENDPOINT_URI_PREFIX + newResourceUri, MustacheEndpoint.class);
             newEndpoint.onExchange(exchange);
         }
     }
+
     /**
      * Read and compile a Mustache template
+     *
      * @param resourceReader Reader used to get template
-     * @param resourceUri Template Id
+     * @param resourceUri    Template Id
      * @return Template
      */
     private Mustache createMustache(Reader resourceReader, String resourceUri) throws IOException {
         try {
             Mustache newMustache;
-            if (startDelimiter!=null && endDelimiter!=null && mustacheFactory instanceof DefaultMustacheFactory) {
+            if (startDelimiter != null && endDelimiter != null && mustacheFactory instanceof DefaultMustacheFactory) {
                 DefaultMustacheFactory defaultMustacheFactory = (DefaultMustacheFactory) mustacheFactory;
-                newMustache= defaultMustacheFactory.compile(resourceReader, resourceUri, startDelimiter, endDelimiter);
+                newMustache = defaultMustacheFactory.compile(resourceReader, resourceUri, startDelimiter, endDelimiter);
             } else {
                 newMustache = mustacheFactory.compile(resourceReader, resourceUri);
             }
@@ -134,12 +129,14 @@ public class MustacheEndpoint extends ResourceEndpoint {
             resourceReader.close();
         }
     }
-    private Mustache getOrCreateMustache() throws IOException{
+
+    private Mustache getOrCreateMustache() throws IOException {
         if (mustache == null) {
             mustache = createMustache(getResourceAsReader(), getResourceUri());
         }
         return mustache;
     }
+
     public MustacheFactory getMustacheFactory() {
         return mustacheFactory;
     }
@@ -155,10 +152,11 @@ public class MustacheEndpoint extends ResourceEndpoint {
     public void setEncoding(String encoding) {
         this.encoding = encoding;
     }
+
     private Reader getResourceAsReader() throws IOException {
         return encoding == null
-                    ? new InputStreamReader(getResourceAsInputStream())
-                    : new InputStreamReader(getResourceAsInputStream(), encoding);        
+                ? new InputStreamReader(getResourceAsInputStream())
+                : new InputStreamReader(getResourceAsInputStream(), encoding);
     }
 
     public String getStartDelimiter() {
@@ -176,5 +174,5 @@ public class MustacheEndpoint extends ResourceEndpoint {
     public void setEndDelimiter(String endDelimiter) {
         this.endDelimiter = endDelimiter;
     }
-    
+
 }

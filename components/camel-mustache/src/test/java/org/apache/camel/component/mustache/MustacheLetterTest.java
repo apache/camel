@@ -57,8 +57,8 @@ public class MustacheLetterTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 from("direct:a")
-                    .to("mustache:letter.mustache")
-                    .to("mock:result");
+                        .to("mustache:letter.mustache")
+                        .to("mock:result");
             }
         };
     }

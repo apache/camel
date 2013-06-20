@@ -16,10 +16,10 @@
  */
 package org.apache.camel.component.mustache;
 
-import com.github.mustachejava.DefaultMustacheFactory;
-import com.github.mustachejava.MustacheFactory;
 import java.util.Map;
 
+import com.github.mustachejava.DefaultMustacheFactory;
+import com.github.mustachejava.MustacheFactory;
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.util.ObjectHelper;
@@ -35,10 +35,9 @@ import org.apache.camel.util.ObjectHelper;
  * </li>
  */
 public class MustacheComponent extends DefaultComponent {
-    /**
-     * Mustache factory
-     */
-    private MustacheFactory mustacheFactory = new DefaultMustacheFactory();    
+
+    private MustacheFactory mustacheFactory = new DefaultMustacheFactory();
+
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         MustacheEndpoint endpoint = new MustacheEndpoint(uri, this, remaining);
@@ -66,5 +65,5 @@ public class MustacheComponent extends DefaultComponent {
     public void setMustacheFactory(MustacheFactory mustacheFactory) {
         this.mustacheFactory = mustacheFactory;
     }
-    
+
 }
