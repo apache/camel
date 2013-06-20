@@ -42,7 +42,7 @@ public class MustacheLetterTest extends CamelTestSupport {
     }
 
     @Test
-    public void testFreemarkerLetter() throws Exception {
+    public void testMustacheLetter() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
         mock.expectedBodiesReceived("Dear Ibsen, Claus\n\nThanks for the order of Camel in Action."
