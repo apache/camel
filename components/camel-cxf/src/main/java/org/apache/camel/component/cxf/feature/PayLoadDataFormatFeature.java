@@ -85,6 +85,8 @@ public class PayLoadDataFormatFeature extends AbstractDataFormatFeature {
                           SoapHeaderInterceptor.class);
         client.getEndpoint().getBinding().getInInterceptors().add(new ConfigureDocLitWrapperInterceptor(true));
         resetPartTypes(client.getEndpoint().getBinding());
+
+        LOG.info("Initialized CXF Client: {} in Payload mode with allow streaming: {}", client, allowStreaming);
     }
 
 
@@ -103,6 +105,8 @@ public class PayLoadDataFormatFeature extends AbstractDataFormatFeature {
         removeInterceptor(server.getEndpoint().getBinding().getInInterceptors(), 
                           SoapHeaderInterceptor.class);
         resetPartTypes(server.getEndpoint().getBinding());
+
+        LOG.info("Initialized CXF Server: {} in Payload mode with allow streaming: {}", server, allowStreaming);
     }
 
     @Override

@@ -130,34 +130,9 @@ public class CxfPayload<T> {
         return headers;
     }
     
-    /**
-     * Returns the contents as a String
-     * Important notes:
-     *   1) This requires the message to be fully loaded breaking the streaming
-     *   2) For large messages, the result can be a VERY large String and require
-     *   large amounts of memory.
-     */
     public String toString() {
-        StringBuilder buf = new StringBuilder();
-        buf.append(getClass().getName());
-        buf.append(" headers: " + headers);
-        // go through the list of element and turn it into String
-        if (body == null) {
-            buf.append("body: " + body);
-        } else {
-            buf.append("body: [ ");
-            for (Element src : getBody()) {
-                String elementString;
-                try {
-                    elementString = StaxUtils.toString(src);
-                } catch (XMLStreamException e) {
-                    elementString = src.toString();
-                }
-                buf.append("[" + elementString + "]");
-            }
-            buf.append("]");
-        }
-        return buf.toString();
+        // do not load or print the payload body etc as we do not want to load that into memory etc
+        return super.toString();
     }
 
 }
