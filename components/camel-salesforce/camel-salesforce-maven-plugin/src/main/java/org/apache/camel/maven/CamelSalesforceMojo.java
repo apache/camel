@@ -16,6 +16,7 @@
  */
 package org.apache.camel.maven;
 
+import org.apache.camel.component.salesforce.SalesforceEndpointConfig;
 import org.apache.camel.component.salesforce.SalesforceLoginConfig;
 import org.apache.camel.component.salesforce.api.SalesforceException;
 import org.apache.camel.component.salesforce.api.dto.*;
@@ -27,6 +28,9 @@ import org.apache.camel.component.salesforce.internal.client.SyncResponseCallbac
 import org.apache.log4j.Logger;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
+import org.apache.maven.plugins.annotations.LifecyclePhase;
+import org.apache.maven.plugins.annotations.Mojo;
+import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
@@ -48,10 +52,8 @@ import java.util.regex.Pattern;
 
 /**
  * Goal which generates POJOs for Salesforce SObjects
- *
- * @goal generate
- * @phase generate-sources
  */
+@Mojo(name = "generate", defaultPhase = LifecyclePhase.GENERATE_SOURCES)
 public class CamelSalesforceMojo extends AbstractMojo {
     private static final String JAVA_EXT = ".java";
     private static final String PACKAGE_NAME_PATTERN = "^[a-z]+(\\.[a-z][a-z0-9]*)*$";
@@ -65,84 +67,69 @@ public class CamelSalesforceMojo extends AbstractMojo {
 
     /**
      * Salesforce client id
-     *
-     * @parameter property="${clientId}"
-     * @required
      */
+    @Parameter(property = "camelSalesforce.clientId", required = true)
     protected String clientId;
 
     /**
      * Salesforce client secret
-     *
-     * @parameter property="${clientSecret}"
-     * @required
      */
+    @Parameter(property = "camelSalesforce.clientSecret", required = true)
     protected String clientSecret;
 
     /**
      * Salesforce user name
-     *
-     * @parameter property="${userName}"
-     * @required
      */
+    @Parameter(property = "camelSalesforce.userName", required = true)
     protected String userName;
 
     /**
      * Salesforce password
-     *
-     * @parameter property="${password}"
-     * @required
      */
+    @Parameter(property = "camelSalesforce.password", required = true)
     protected String password;
 
     /**
      * Salesforce version
-     *
-     * @parameter property="${version}" default-value="25.0"
      */
+    @Parameter(property = "camelSalesforce.version", defaultValue = SalesforceEndpointConfig.DEFAULT_VERSION)
     protected String version;
 
     /**
      * Location of the file.
-     *
-     * @parameter property="${outputDirectory}" default-value="${project.build.directory}/generated-sources/camel-salesforce"
-     * @required
      */
+    @Parameter(property = "camelSalesforce.outputDirectory",
+        defaultValue = "${project.build.directory}/generated-sources/camel-salesforce")
     protected File outputDirectory;
 
     /**
      * Names of Salesforce SObject for which POJOs must be generated
-     *
-     * @parameter
      */
+    @Parameter
     protected String[] includes;
 
     /**
      * Do NOT generate POJOs for these Salesforce SObjects
-     *
-     * @parameter
      */
+    @Parameter
     protected String[] excludes;
 
     /**
      * Include Salesforce SObjects that match pattern
-     *
-     * @parameter property="${includePattern}"
      */
+    @Parameter(property = "camelSalesforce.includePattern")
     protected String includePattern;
 
     /**
      * Exclude Salesforce SObjects that match pattern
-     *
-     * @parameter property="${excludePattern}"
      */
+    @Parameter(property = "camelSalesforce.excludePattern")
     protected String excludePattern;
 
     /**
      * Java package name for generated POJOs
-     *
-     * @parameter property="${packageName}" default-value="org.apache.camel.salesforce.dto"
      */
+    @Parameter(property = "camelSalesforce.packageName", defaultValue = "org.apache.camel.salesforce.dto")
     protected String packageName;
 
     private VelocityEngine engine;
@@ -193,7 +180,7 @@ public class CamelSalesforceMojo extends AbstractMojo {
         getLog().info("Salesforce login successful");
 
         // create rest client
-        RestClient restClient = null;
+        RestClient restClient;
         try {
             restClient = new DefaultRestClient(httpClient,
                     version, PayloadFormat.JSON, session);

@@ -56,6 +56,8 @@ public class StreamingApiIntegrationTest extends AbstractSalesforceTestBase {
 
             // validate dynamic message headers
             assertNotNull("Missing header CamelSalesforceClientId", in.getHeader("CamelSalesforceClientId"));
+            assertNotNull("Missing header CamelSalesforceEventType", in.getHeader("CamelSalesforceEventType"));
+            assertNotNull("Missing header CamelSalesforceCreatedDate", in.getHeader("CamelSalesforceCreatedDate"));
 
         } finally {
             // remove the test record
