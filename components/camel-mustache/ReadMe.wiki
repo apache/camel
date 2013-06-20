@@ -1,0 +1,96 @@
+h2. Mustache
+
+The *mustache:* component allows for processing a message using a [Mustache|http://mustache.github.io/] template. This can be ideal when using [Templating] to generate responses for requests.
+
+Maven users will need to add the following dependency to their {{pom.xml}} for this component:
+{code:xml}
+<dependency>
+<groupId>org.apache.camel</groupId>
+<artifactId>camel-mustache</artifactId>
+<version>x.x.x</version> <!-- use the same version as your Camel core version -->
+</dependency>
+{code}
+
+h3. URI format
+
+{code}
+mustache:templateName[?options]
+{code}
+
+Where *templateName* is the classpath-local URI of the template to invoke; or the complete URL of the remote template (eg: file://folder/myfile.mustache).
+
+You can append query options to the URI in the following format, {{?option=value&option=value&...}}
+
+h3. Options
+{div:class=confluenceTableSmall}
+|| Option || Default || Description ||
+| {{encoding}} | {{null}} | Character encoding of the resource content. |
+| {{startDelimiter}} | {{ | Characters used to mark template code beginning. |
+| {{endDelimiter}} | }} | Characters used to mark template code end. |
+{div}
+
+h3. Mustache Context
+Camel will provide exchange information in the Mustache context (just a {{Map}}). The {{Exchange}} is transferred as:
+{div:class=confluenceTableSmall}
+|| key || value ||
+| {{exchange}} | The {{Exchange}} itself. |
+| {{exchange.properties}} | The {{Exchange}} properties. |
+| {{headers}} | The headers of the In message. |
+| {{camelContext}} | The Camel Context. |
+| {{request}} | The In message. |
+| {{body}} | The In message body. |
+| {{response}} | The Out message (only for InOut message exchange pattern). |
+{div}
+
+h3. Dynamic templates
+
+Camel provides two headers by which you can define a different resource location for a template or the template content itself. If any of these headers is set then Camel uses this over the endpoint configured resource. This allows you to provide a dynamic template at runtime.
+{div:class=confluenceTableSmall}
+|| Header || Type || Description || Support Version ||
+| MustacheConstants.MUSTACHE_RESOURCE | org.springframework.core.io.Resource | The template resource | |
+| MustacheConstants.MUSTACHE_RESOURCE_URI | String | A URI for the template resource to use instead of the endpoint configured. | |
+| MustacheConstants.MUSTACHE_TEMPLATE | String | The template to use instead of the endpoint configured. | |
+{div}
+
+h3. Samples
+
+For example you could use something like:
+
+{code}
+from("activemq:My.Queue").
+to("mustache:com/acme/MyResponse.mustache");
+{code}
+
+To use a Mustache template to formulate a response for a message for InOut message exchanges (where there is a {{JMSReplyTo}} header).
+
+If you want to use InOnly and consume the message and send it to another destination you could use:
+
+{code}
+from("activemq:My.Queue").
+to("mustache:com/acme/MyResponse.mustache").
+to("activemq:Another.Queue");
+{code}
+
+It's possible to specify what template the component should use dynamically via a header, so for example:
+{code}
+from("direct:in").
+setHeader(MustacheConstants.MUSTACHE_RESOURCE_URI).constant("path/to/my/template.mustache").
+to("mustache:dummy");
+{code}
+
+h3. The Email Sample
+In this sample we want to use Mustache templating for an order confirmation email. The email template is laid out in Mustache as:
+{code}
+Dear {{headers.lastName}}}, {{headers.firstName}}
+
+Thanks for the order of {{headers.item}}.
+
+Regards Camel Riders Bookstore
+{{body}}
+{code}
+
+And the java code:
+
+{snippet:id=e1|lang=java|url=camel/trunk/components/camel-mustache/src/test/java/org/apache/camel/component/mustache/MustacheLetterTest.java}
+
+{include:Endpoint See Also} 
