@@ -535,17 +535,19 @@ public class MethodInfo {
                             if (parameterValue instanceof String) {
                                 parameterValue = StringHelper.removeLeadingAndEndingQuotes((String) parameterValue);
                             }
-                            try {
-                                // its a valid parameter value, so convert it to the expected type of the parameter
-                                answer = exchange.getContext().getTypeConverter().mandatoryConvertTo(parameterType, exchange, parameterValue);
-                                if (LOG.isTraceEnabled()) {
-                                    LOG.trace("Parameter #{} evaluated as: {} type: ", new Object[]{index, answer, ObjectHelper.type(answer)});
+                            if (parameterValue != null) {
+                                try {
+                                    // its a valid parameter value, so convert it to the expected type of the parameter
+                                    answer = exchange.getContext().getTypeConverter().mandatoryConvertTo(parameterType, exchange, parameterValue);
+                                    if (LOG.isTraceEnabled()) {
+                                        LOG.trace("Parameter #{} evaluated as: {} type: ", new Object[]{index, answer, ObjectHelper.type(answer)});
+                                    }
+                                } catch (Exception e) {
+                                    if (LOG.isDebugEnabled()) {
+                                        LOG.debug("Cannot convert from type: {} to type: {} for parameter #{}", new Object[]{ObjectHelper.type(parameterValue), parameterType, index});
+                                    }
+                                    throw new ParameterBindingException(e, method, index, parameterType, parameterValue);
                                 }
-                            } catch (NoTypeConversionAvailableException e) {
-                                if (LOG.isDebugEnabled()) {
-                                    LOG.debug("Cannot convert from type: {} to type: {} for parameter #{}", new Object[]{ObjectHelper.type(parameterValue), parameterType, index});
-                                }
-                                throw ObjectHelper.wrapCamelExecutionException(exchange, e);
                             }
                         }
                     }
@@ -570,7 +572,10 @@ public class MethodInfo {
                             LOG.trace("Parameter #{} evaluated as: {} type: ", new Object[]{index, answer, ObjectHelper.type(answer)});
                         }
                     } catch (NoTypeConversionAvailableException e) {
-                        throw ObjectHelper.wrapCamelExecutionException(exchange, e);
+                        if (LOG.isDebugEnabled()) {
+                            LOG.debug("Cannot convert from type: {} to type: {} for parameter #{}", new Object[]{ObjectHelper.type(result), parameterType, index});
+                        }
+                        throw new ParameterBindingException(e, method, index, parameterType, result);
                     }
                 } else {
                     LOG.trace("Parameter #{} evaluated as null", index);

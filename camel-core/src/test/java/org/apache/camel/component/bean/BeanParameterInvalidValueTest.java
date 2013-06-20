@@ -37,7 +37,7 @@ public class BeanParameterInvalidValueTest extends ContextTestSupport {
             template.sendBody("direct:a", "World");
             fail("Should have thrown exception");
         } catch (CamelExecutionException e) {
-            TypeConversionException cause = assertIsInstanceOf(TypeConversionException.class, e.getCause());
+            TypeConversionException cause = assertIsInstanceOf(TypeConversionException.class, e.getCause().getCause());
             assertEquals(String.class, cause.getFromType());
             assertEquals(int.class, cause.getToType());
             assertEquals("A", cause.getValue());
@@ -53,7 +53,7 @@ public class BeanParameterInvalidValueTest extends ContextTestSupport {
             template.sendBody("direct:b", "World");
             fail("Should have thrown exception");
         } catch (CamelExecutionException e) {
-            TypeConversionException cause = assertIsInstanceOf(TypeConversionException.class, e.getCause());
+            TypeConversionException cause = assertIsInstanceOf(TypeConversionException.class, e.getCause().getCause());
             assertEquals(String.class, cause.getFromType());
             assertEquals(int.class, cause.getToType());
             assertEquals("true", cause.getValue());

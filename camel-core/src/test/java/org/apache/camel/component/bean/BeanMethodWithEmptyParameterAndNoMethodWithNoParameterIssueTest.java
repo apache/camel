@@ -26,6 +26,8 @@ import org.apache.camel.impl.JndiRegistry;
  */
 public class BeanMethodWithEmptyParameterAndNoMethodWithNoParameterIssueTest extends ContextTestSupport {
 
+    // TODO: CAMEL-6455
+
     @Override
     protected JndiRegistry createRegistry() throws Exception {
         JndiRegistry jndi = super.createRegistry();
@@ -48,7 +50,7 @@ public class BeanMethodWithEmptyParameterAndNoMethodWithNoParameterIssueTest ext
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .to("bean:myBean?method=doSomething()")
+                    .to("bean:myBean?method=doSomething(*)")
                     .to("mock:result");
             }
         };

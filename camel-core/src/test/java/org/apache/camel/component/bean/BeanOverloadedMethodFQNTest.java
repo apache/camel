@@ -66,7 +66,7 @@ public class BeanOverloadedMethodFQNTest extends ContextTestSupport {
             template.sendBody("direct:start", new MyOrder());
             fail("Should have thrown an exception");
         } catch (CamelExecutionException e) {
-            NoTypeConversionAvailableException cause = assertIsInstanceOf(NoTypeConversionAvailableException.class, e.getCause());
+            NoTypeConversionAvailableException cause = assertIsInstanceOf(NoTypeConversionAvailableException.class, e.getCause().getCause());
             assertEquals("Unknown", cause.getValue());
         }
     }
@@ -125,7 +125,7 @@ public class BeanOverloadedMethodFQNTest extends ContextTestSupport {
             template.sendBody("direct:start", new MyOrder());
             fail("Should have thrown an exception");
         } catch (CamelExecutionException e) {
-            NoTypeConversionAvailableException cause = assertIsInstanceOf(NoTypeConversionAvailableException.class, e.getCause());
+            NoTypeConversionAvailableException cause = assertIsInstanceOf(NoTypeConversionAvailableException.class, e.getCause().getCause());
             assertEquals("org.apache.camel.component.bean.BeanOverloadedMethodFQNTest$Unknown", cause.getValue());
         }
     }

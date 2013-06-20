@@ -38,7 +38,12 @@ public class BeanNoTypeConvertionPossibleWhenHeaderTest extends ContextTestSuppo
             template.requestBodyAndHeader("direct:start", "Hello World", "foo", 555);
             fail("Should have thrown an exception");
         } catch (CamelExecutionException e) {
-            NoTypeConversionAvailableException ntae = assertIsInstanceOf(NoTypeConversionAvailableException.class, e.getCause());
+            ParameterBindingException pbe = assertIsInstanceOf(ParameterBindingException.class, e.getCause());
+            assertEquals(1, pbe.getIndex());
+            assertTrue(pbe.getMethod().getName().contains("hello"));
+            assertEquals(555, pbe.getParameterValue());
+
+            NoTypeConversionAvailableException ntae = assertIsInstanceOf(NoTypeConversionAvailableException.class, e.getCause().getCause());
             assertEquals(Integer.class, ntae.getFromType());
             assertEquals(Document.class, ntae.getToType());
             assertEquals(555, ntae.getValue());
