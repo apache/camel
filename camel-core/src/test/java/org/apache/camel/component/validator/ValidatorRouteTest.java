@@ -21,9 +21,6 @@ import org.apache.camel.ValidationException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
-/**
- *
- */
 public class ValidatorRouteTest extends ContextTestSupport {
 
     protected MockEndpoint validEndpoint;
@@ -60,6 +57,14 @@ public class ValidatorRouteTest extends ContextTestSupport {
         MockEndpoint.assertIsSatisfied(validEndpoint, invalidEndpoint, finallyEndpoint);
     }
 
+    public void testUseNotASharedSchema() throws Exception {
+        validEndpoint.expectedMessageCount(1);
+
+        template.sendBody("direct:useNotASharedSchema", "<mail xmlns='http://foo.com/bar'><subject>Hey</subject><body>Hello world!</body></mail>");
+
+        MockEndpoint.assertIsSatisfied(validEndpoint, invalidEndpoint, finallyEndpoint);
+    }
+
     @Override
     protected void setUp() throws Exception {
         super.setUp();
@@ -83,6 +88,10 @@ public class ValidatorRouteTest extends ContextTestSupport {
                     .doFinally()
                         .to("mock:finally")
                     .end();
+                
+                from("direct:useNotASharedSchema")
+                    .to("validator:org/apache/camel/component/validator/schema.xsd?useSharedSchema=false")
+                    .to("mock:valid");
             }
         };
     }

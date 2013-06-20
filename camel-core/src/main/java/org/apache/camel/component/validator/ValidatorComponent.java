@@ -19,11 +19,8 @@ package org.apache.camel.component.validator;
 import java.io.InputStream;
 import java.util.Map;
 
-import javax.xml.transform.stream.StreamSource;
-
-import org.w3c.dom.ls.LSResourceResolver;
-
 import org.apache.camel.Endpoint;
+import org.apache.camel.converter.IOConverter;
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.impl.ProcessorEndpoint;
 import org.apache.camel.processor.validation.ValidatingProcessor;
@@ -31,6 +28,7 @@ import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ResourceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3c.dom.ls.LSResourceResolver;
 
 /**
  * The <a href="http://camel.apache.org/validation.html">Validator Component</a>
@@ -43,18 +41,23 @@ public class ValidatorComponent extends DefaultComponent {
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         final String resourceUri = remaining;
         InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(getCamelContext().getClassResolver(), resourceUri);
-        StreamSource source = new StreamSource(is);
+        byte[] bytes = null;
+        try {
+            bytes = IOConverter.toBytes(is);
+        } finally {
+            // and make sure to close the input stream after the schema has been loaded
+            IOHelper.close(is);
+        }
 
         ValidatingProcessor validator = new ValidatingProcessor();
-        validator.setSchemaSource(source);
+        validator.setSchemaAsByteArray(bytes);
+        //validator.setSchemaSource(source);
         LOG.debug("{} using schema resource: {}", this, resourceUri);
         configureValidator(validator, uri, remaining, parameters);
 
         // force loading of schema at create time otherwise concurrent
         // processing could cause thread safe issues for the javax.xml.validation.SchemaFactory
         validator.loadSchema();
-        // and make sure to close the input stream after the schema has been loaded
-        IOHelper.close(is);
 
         return new ProcessorEndpoint(uri, this, validator);
     }
