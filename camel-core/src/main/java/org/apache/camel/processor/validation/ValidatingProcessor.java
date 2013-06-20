@@ -16,6 +16,7 @@
  */
 package org.apache.camel.processor.validation;
 
+import java.io.ByteArrayInputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -68,6 +69,7 @@ public class ValidatingProcessor implements AsyncProcessor {
     private SchemaFactory schemaFactory;
     private URL schemaUrl;
     private File schemaFile;
+    private byte[] schemaAsByteArray;
     private ValidatorErrorHandler errorHandler = new DefaultValidationErrorHandler();
     private boolean useDom;
     private boolean useSharedSchema = true;
@@ -235,6 +237,14 @@ public class ValidatingProcessor implements AsyncProcessor {
         this.schemaFile = schemaFile;
     }
 
+    public byte[] getSchemaAsByteArray() {
+        return schemaAsByteArray;
+    }
+
+    public void setSchemaAsByteArray(byte[] schemaAsByteArray) {
+        this.schemaAsByteArray = schemaAsByteArray;
+    }
+
     public SchemaFactory getSchemaFactory() {
         if (schemaFactory == null) {
             schemaFactory = createSchemaFactory();
@@ -331,11 +341,19 @@ public class ValidatingProcessor implements AsyncProcessor {
         if (url != null) {
             return factory.newSchema(url);
         }
+
         File file = getSchemaFile();
         if (file != null) {
             return factory.newSchema(file);
         }
-        return factory.newSchema(getSchemaSource());
+
+        byte[] bytes = getSchemaAsByteArray();
+        if (bytes != null) {
+            return factory.newSchema(new StreamSource(new ByteArrayInputStream(schemaAsByteArray)));
+        }
+
+        Source source = getSchemaSource();
+        return factory.newSchema(source);
     }
 
     /**
