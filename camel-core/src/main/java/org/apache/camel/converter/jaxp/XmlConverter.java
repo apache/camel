@@ -79,25 +79,8 @@ public class XmlConverter {
     public static final String OUTPUT_PROPERTIES_PREFIX = "org.apache.camel.xmlconverter.output.";
     public static String defaultCharset = ObjectHelper.getSystemProperty(Exchange.DEFAULT_CHARSET_PROPERTY, "UTF-8");
 
-    /*
-     * When converting a DOM tree to a SAXSource, we try to use Xalan internal DOM parser if
-     * available. Else, transform the DOM tree to a String and build a SAXSource on top of it.
-     */
-    private static final Class<?> DOM_TO_SAX_CLASS;
-
     private DocumentBuilderFactory documentBuilderFactory;
     private TransformerFactory transformerFactory;
-
-    static {
-        Class<?> cl = null;
-        try {
-            // will not warn the user if the class could not be found
-            cl = ObjectHelper.loadClass("org.apache.xalan.xsltc.trax.DOM2SAX", XmlConverter.class.getClassLoader(), false);
-        } catch (Exception e) {
-            // ignore
-        }
-        DOM_TO_SAX_CLASS = cl;
-    }
 
     public XmlConverter() {
     }
@@ -647,19 +630,10 @@ public class XmlConverter {
     
     @Converter
     public SAXSource toSAXSourceFromDOM(DOMSource source, Exchange exchange) throws TransformerException {
-        if (DOM_TO_SAX_CLASS != null) {
-            try {
-                Constructor<?> cns = DOM_TO_SAX_CLASS.getConstructor(Node.class);
-                XMLReader converter = (XMLReader) cns.newInstance(source.getNode());
-                return new SAXSource(converter, new InputSource());
-            } catch (Exception e) {
-                throw new TransformerException(e);
-            }
-        } else {
-            String str = toString(source, exchange);
-            StringReader reader = new StringReader(str);
-            return new SAXSource(new InputSource(reader));
-        }
+        String str = toString(source, exchange);
+        StringReader reader = new StringReader(str);
+        return new SAXSource(new InputSource(reader));
+
     }
 
     @Converter
