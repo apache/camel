@@ -213,6 +213,7 @@
           <configuration>
 	        <localCheckout>true</localCheckout>
             <pushChanges>false</pushChanges>
+            <tagNameFormat>@{project.artifactId}-@{project.version}</tagNameFormat>
             <useReleaseProfile>false</useReleaseProfile>
             <preparationGoals>clean install</preparationGoals>
             <goals>deploy</goals>
