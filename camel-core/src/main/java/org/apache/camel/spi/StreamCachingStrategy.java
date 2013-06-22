@@ -18,7 +18,9 @@ package org.apache.camel.spi;
 
 import java.io.File;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.Service;
+import org.apache.camel.StreamCache;
 
 /**
  * Strategy for using <a href="http://camel.apache.org/stream-caching.html">stream caching</a>.
@@ -82,5 +84,13 @@ public interface StreamCachingStrategy extends Service {
     void setRemoveSpoolDirectoryWhenStopping(boolean remove);
 
     boolean isRemoveSpoolDirectoryWhenStopping();
+
+    /**
+     * Caches the body aas a {@link StreamCache}.
+     *
+     * @param exchange the exchange
+     * @return the body cached as a {@link StreamCache}, or <tt>null</tt> if not possible or no need to cache the body
+     */
+    StreamCache cache(Exchange exchange);
 
 }

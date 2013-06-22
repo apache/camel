@@ -35,6 +35,7 @@ import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RouteDefinitionHelper;
 import org.apache.camel.processor.CamelInternalProcessor;
 import org.apache.camel.processor.InterceptorToAsyncProcessorBridge;
+import org.apache.camel.processor.StreamCachingResetProcessor;
 import org.apache.camel.processor.WrapProcessor;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.LifecycleStrategy;
@@ -191,7 +192,12 @@ public class DefaultChannel extends CamelInternalProcessor implements ModelChann
         // force the creation of an id
         RouteDefinitionHelper.forceAssignIds(routeContext.getCamelContext(), definition);
 
-        // first wrap the output with the managed strategy if any
+        // first wrap with stream caching reset
+        if (routeContext.isStreamCaching()) {
+            target = new StreamCachingResetProcessor(target);
+        }
+
+        // the wrap the output with the managed strategy if any
         InterceptStrategy managed = routeContext.getManagedInterceptStrategy();
         if (managed != null) {
             next = target == nextProcessor ? null : nextProcessor;
@@ -274,23 +280,17 @@ public class DefaultChannel extends CamelInternalProcessor implements ModelChann
             target = wrapped;
         }
 
+        if (routeContext.isStreamCaching()) {
+            addAdvice(new StreamCachingAdvice(camelContext.getStreamCachingStrategy()));
+        }
+
         // sets the delegate to our wrapped output
         output = target;
     }
 
     @Override
     public void postInitChannel(ProcessorDefinition<?> outputDefinition, RouteContext routeContext) throws Exception {
-        for (InterceptStrategy strategy : interceptors) {
-            // apply stream caching at the end as it should be outer most
-            if (strategy instanceof StreamCaching) {
-                if (errorHandler != null) {
-                    errorHandler = strategy.wrapProcessorInInterceptors(routeContext.getCamelContext(), outputDefinition, errorHandler, null);
-                } else {
-                    output = strategy.wrapProcessorInInterceptors(routeContext.getCamelContext(), outputDefinition, output, null);
-                }
-                break;
-            }
-        }
+        // noop
     }
 
     private InterceptStrategy getOrCreateTracer() {

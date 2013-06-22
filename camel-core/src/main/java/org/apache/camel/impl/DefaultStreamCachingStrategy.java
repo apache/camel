@@ -20,6 +20,7 @@ import java.io.File;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
+import org.apache.camel.Exchange;
 import org.apache.camel.StreamCache;
 import org.apache.camel.spi.StreamCachingStrategy;
 import org.apache.camel.util.FileUtil;
@@ -111,6 +112,10 @@ public class DefaultStreamCachingStrategy extends org.apache.camel.support.Servi
 
     public void setRemoveSpoolDirectoryWhenStopping(boolean removeSpoolDirectoryWhenStopping) {
         this.removeSpoolDirectoryWhenStopping = removeSpoolDirectoryWhenStopping;
+    }
+
+    public StreamCache cache(Exchange exchange) {
+        return exchange.getIn().getBody(StreamCache.class);
     }
 
     @Override

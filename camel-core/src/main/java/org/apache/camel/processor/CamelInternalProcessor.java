@@ -29,6 +29,7 @@ import org.apache.camel.MessageHistory;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
 import org.apache.camel.StatefulService;
+import org.apache.camel.StreamCache;
 import org.apache.camel.api.management.PerformanceCounter;
 import org.apache.camel.impl.DefaultMessageHistory;
 import org.apache.camel.impl.DefaultUnitOfWork;
@@ -43,6 +44,7 @@ import org.apache.camel.processor.interceptor.DefaultBacklogTracerEventMessage;
 import org.apache.camel.spi.InflightRepository;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.RoutePolicy;
+import org.apache.camel.spi.StreamCachingStrategy;
 import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.util.MessageHelper;
 import org.apache.camel.util.StopWatch;
@@ -59,6 +61,7 @@ import org.slf4j.LoggerFactory;
  *     <li>Tracing</li>
  *     <li>Debugging</li>
  *     <li>Message History</li>
+ *     <li>Stream Caching</li>
  * </ul>
  * ... and more.
  * <p/>
@@ -716,6 +719,38 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
             if (history != null) {
                 history.nodeProcessingDone();
             }
+        }
+    }
+
+    /**
+     * Advice for {@link org.apache.camel.spi.StreamCachingStrategy}
+     */
+    public static class StreamCachingAdvice implements CamelInternalProcessorAdvice<StreamCache> {
+
+        private final StreamCachingStrategy strategy;
+
+        public StreamCachingAdvice(StreamCachingStrategy strategy) {
+            this.strategy = strategy;
+        }
+
+        @Override
+        public StreamCache before(Exchange exchange) throws Exception {
+            // check if body is already cached
+            Object body = exchange.getIn().getBody();
+            if (body == null || body instanceof StreamCache) {
+                return (StreamCache) body;
+            }
+            // cache the body and if we could do that replace it as the new body
+            StreamCache sc = strategy.cache(exchange);
+            if (sc != null) {
+                exchange.getIn().setBody(sc);
+            }
+            return sc;
+        }
+
+        @Override
+        public void after(Exchange exchange, StreamCache sc) throws Exception {
+            // noop
         }
     }
 

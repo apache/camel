@@ -362,7 +362,6 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
      */
     public RouteDefinition noStreamCaching() {
         setStreamCache("false");
-        StreamCaching.noStreamCaching(getInterceptStrategies());
         return this;
     }
 
@@ -373,12 +372,6 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
      */
     public RouteDefinition streamCaching() {
         setStreamCache("true");
-        StreamCaching cache = StreamCaching.getStreamCaching(getInterceptStrategies());
-        if (cache == null) {
-            cache = new StreamCaching();
-        }
-
-        getInterceptStrategies().add(cache);
         return this;
     }
 
@@ -825,10 +818,6 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
                 routeContext.setStreamCaching(isStreamCache);
                 if (isStreamCache) {
                     log.debug("StreamCaching is enabled on route: {}", getId());
-                    // only add a new stream cache if not already a global configured on camel context
-                    if (StreamCaching.getStreamCaching(camelContext) == null) {
-                        addInterceptStrategy(new StreamCaching());
-                    }
                 }
             }
         }

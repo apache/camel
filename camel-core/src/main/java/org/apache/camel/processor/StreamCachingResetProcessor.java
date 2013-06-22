@@ -14,43 +14,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.processor.interceptor;
+package org.apache.camel.processor;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.StreamCache;
-import org.apache.camel.processor.DelegateAsyncProcessor;
 import org.apache.camel.util.MessageHelper;
 
-/**
- * An interceptor that converts streams messages into a re-readable format
- * by wrapping the stream into a {@link StreamCache}.
- */
-@Deprecated
-public class StreamCachingInterceptor extends DelegateAsyncProcessor {
+public class StreamCachingResetProcessor extends DelegateAsyncProcessor {
 
-    public StreamCachingInterceptor() {
-    }
-
-    public StreamCachingInterceptor(Processor processor) {
+    public StreamCachingResetProcessor(Processor processor) {
         super(processor);
     }
 
     @Override
-    public String toString() {
-        return "StreamCachingInterceptor[" + processor + "]";
-    }
-
-    @Override
     public boolean process(Exchange exchange, AsyncCallback callback) {
-        StreamCache newBody = exchange.getIn().getBody(StreamCache.class);
-        if (newBody != null) {
-            exchange.getIn().setBody(newBody);
-        }
         MessageHelper.resetStreamCache(exchange.getIn());
-
-        return processor.process(exchange, callback);
+        return super.process(exchange, callback);
     }
-
 }

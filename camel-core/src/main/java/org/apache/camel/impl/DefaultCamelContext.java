@@ -1548,11 +1548,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
 
     private void doStartCamel() throws Exception {
         if (isStreamCaching()) {
-            // only add a new stream cache if not already configured
-            if (StreamCaching.getStreamCaching(this) == null) {
-                log.info("StreamCaching is enabled on CamelContext: " + getName());
-                addInterceptStrategy(new StreamCaching());
-            }
+            log.info("StreamCaching is enabled on CamelContext: " + getName());
         }
 
         if (isTracing()) {
@@ -1668,8 +1664,8 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         boolean streamCachingInUse = isStreamCaching();
         if (!streamCachingInUse) {
             for (RouteDefinition route : routeDefinitions) {
-                StreamCaching cache = StreamCaching.getStreamCaching(route.getInterceptStrategies());
-                if (cache != null) {
+                Boolean routeCache = CamelContextHelper.parseBoolean(this, route.getStreamCache());
+                if (routeCache != null && routeCache) {
                     streamCachingInUse = true;
                     break;
                 }
