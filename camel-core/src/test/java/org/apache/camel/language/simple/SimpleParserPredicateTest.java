@@ -16,11 +16,14 @@
  */
 package org.apache.camel.language.simple;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.ExchangeTestSupport;
 import org.apache.camel.Predicate;
+import org.apache.camel.impl.JndiRegistry;
 
 /**
  *
@@ -208,5 +211,36 @@ public class SimpleParserPredicateTest extends ExchangeTestSupport {
         parser = new SimplePredicateParser("${body[foo bar]} == 456", true);
         pre = parser.parsePredicate();
         assertTrue("Should match", pre.matches(exchange));
+    }
+
+    protected JndiRegistry createRegistry() throws Exception {
+        JndiRegistry jndi = super.createRegistry();
+
+        List<String> list = new ArrayList<String>();
+        list.add("foo");
+        list.add("bar");
+
+        jndi.bind("myList", list);
+        return jndi;
+    }
+
+    public void testSimpleIn() throws Exception {
+        Map<String, String> map = new HashMap<String, String>();
+        map.put("key", "foo");
+        map.put("key2", "bar");
+        map.put("key3", "none");
+        exchange.getIn().setBody(map);
+
+        SimplePredicateParser parser = new SimplePredicateParser("${body[key]} in ${ref:myList}", true);
+        Predicate pre = parser.parsePredicate();
+        assertTrue("Should match", pre.matches(exchange));
+
+        parser = new SimplePredicateParser("${body[key2]} in ${ref:myList}", true);
+        pre = parser.parsePredicate();
+        assertTrue("Should match", pre.matches(exchange));
+
+        parser = new SimplePredicateParser("${body[key3]} in ${ref:myList}", true);
+        pre = parser.parsePredicate();
+        assertFalse("Should not match", pre.matches(exchange));
     }
 }
