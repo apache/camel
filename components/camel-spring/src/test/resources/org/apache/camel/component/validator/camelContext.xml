@@ -38,6 +38,12 @@
                 </doFinally>
             </doTry>
         </route>
+
+        <route>
+            <from uri="direct:useNotASharedSchema"/>
+            <to uri="validator:org/apache/camel/component/validator/schema.xsd?useSharedSchema=false"/>
+            <to uri="mock:valid"/>
+        </route>
     </camelContext>
     <!-- END SNIPPET: example -->
 
