@@ -36,7 +36,10 @@ import org.apache.camel.util.ObjectHelper;
  * Can be used to split big XML files.
  * <p/>
  * This implementation supports inheriting namespaces from a parent/root tag.
+ *
+ * @deprecated use {@link TokenXMLExpressionIterator} instead.
  */
+@Deprecated
 public class TokenXMLPairExpressionIterator extends TokenPairExpressionIterator {
 
     private static final Pattern NAMESPACE_PATTERN = Pattern.compile("xmlns(:\\w+|)=\\\"(.*?)\\\"");

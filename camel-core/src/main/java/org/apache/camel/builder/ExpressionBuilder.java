@@ -47,7 +47,7 @@ import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.support.ExpressionAdapter;
 import org.apache.camel.support.TokenPairExpressionIterator;
-import org.apache.camel.support.TokenXMLPairExpressionIterator;
+import org.apache.camel.support.TokenXMLExpressionIterator;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.GroupIterator;
@@ -1155,7 +1155,7 @@ public final class ExpressionBuilder {
     }
 
     /**
-     * Returns an {@link TokenXMLPairExpressionIterator} expression
+     * Returns an {@link TokenXMLExpressionIterator} expression
      */
     public static Expression tokenizeXMLExpression(String tagName, String inheritNamespaceTagName) {
         ObjectHelper.notEmpty(tagName, "tagName");
@@ -1168,8 +1168,6 @@ public final class ExpressionBuilder {
             tagName = tagName + ">";
         }
 
-        String endToken = "</" + tagName.substring(1);
-
         if (inheritNamespaceTagName != null) {
             if (!inheritNamespaceTagName.startsWith("<")) {
                 inheritNamespaceTagName = "<" + inheritNamespaceTagName;
@@ -1179,7 +1177,7 @@ public final class ExpressionBuilder {
             }
         }
 
-        return new TokenXMLPairExpressionIterator(tagName, endToken, inheritNamespaceTagName);
+        return new TokenXMLExpressionIterator(tagName, inheritNamespaceTagName);
     }
 
     /**

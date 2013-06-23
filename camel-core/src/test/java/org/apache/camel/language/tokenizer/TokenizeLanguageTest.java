@@ -45,12 +45,41 @@ public class TokenizeLanguageTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-    public void xxxTestSendSelfClosingTagMessageToTokenize() throws Exception {
-        // TODO: ignored test as it does not work, there is a CAMEL ticket about this
+    public void testSendSelfClosingTagMessageToTokenize() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("<child some_attr='a' anotherAttr='a' />", "<child some_attr='b' anotherAttr='b' />");
 
         template.sendBody("direct:start",
             "<?xml version='1.0' encoding='UTF-8'?><parent><child some_attr='a' anotherAttr='a' /><child some_attr='b' anotherAttr='b' /></parent>");
+
+        assertMockEndpointsSatisfied();
+    }
+
+    public void testSendMixedClosingTagMessageToTokenize() throws Exception {
+        getMockEndpoint("mock:result").expectedBodiesReceived(
+            "<child some_attr='a' anotherAttr='a'>ha</child>", "<child some_attr='b' anotherAttr='b' />", "<child some_attr='c'></child>");
+
+        template.sendBody("direct:start",
+            "<?xml version='1.0' encoding='UTF-8'?><parent><child some_attr='a' anotherAttr='a'>ha</child><child some_attr='b' anotherAttr='b' /><child some_attr='c'></child></parent>");
+
+        assertMockEndpointsSatisfied();
+    }
+
+    public void testSendNamespacedChildMessageToTokenize() throws Exception {
+        getMockEndpoint("mock:result").expectedBodiesReceived(
+            "<c:child xmlns:c='urn:c' some_attr='a' anotherAttr='a'></c:child>", "<c:child xmlns:c='urn:c' some_attr='b' anotherAttr='b' />");
+
+        template.sendBody("direct:start",
+            "<?xml version='1.0' encoding='UTF-8'?><parent><c:child xmlns:c='urn:c' some_attr='a' anotherAttr='a'></c:child><c:child xmlns:c='urn:c' some_attr='b' anotherAttr='b' /></parent>");
+
+        assertMockEndpointsSatisfied();
+    }
+
+    public void testSendNamespacedParentMessageToTokenize() throws Exception {
+        getMockEndpoint("mock:result").expectedBodiesReceived(
+            "<c:child some_attr='a' anotherAttr='a' xmlns:c='urn:c' xmlns:d=\"urn:d\"></c:child>", "<c:child some_attr='b' anotherAttr='b' xmlns:c='urn:c' xmlns:d=\"urn:d\"/>");
+        
+        template.sendBody("direct:start",
+            "<?xml version='1.0' encoding='UTF-8'?><c:parent xmlns:c='urn:c' xmlns:d=\"urn:d\"><c:child some_attr='a' anotherAttr='a'></c:child><c:child some_attr='b' anotherAttr='b'/></c:parent>");
 
         assertMockEndpointsSatisfied();
     }
@@ -60,7 +89,7 @@ public class TokenizeLanguageTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                    .split().tokenizeXML("child")
+                    .split().tokenizeXML("child", "parent")
                         .to("mock:result")
                     .end();
             }
