@@ -47,7 +47,7 @@ public abstract class ExchangeTestSupport extends CamelTestSupport {
     }
 
     @Override
-    @BeforeTest
+    @BeforeTest(alwaysRun = true)
     public void setUp() throws Exception {
         super.setUp();
         exchange = createExchange();

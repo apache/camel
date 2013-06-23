@@ -191,7 +191,7 @@ public abstract class CamelTestSupport extends TestSupport {
         threadService.set(camelContextService);
     }
 
-    @BeforeMethod
+    @BeforeMethod(alwaysRun = true)
     public void setUp() throws Exception {
         log.info("********************************************************************************");
         log.info("Testing: " + getTestMethodName() + "(" + getClass().getName() + ")");
@@ -309,7 +309,7 @@ public abstract class CamelTestSupport extends TestSupport {
         INIT.set(true);
     }
 
-    @AfterMethod
+    @AfterMethod(alwaysRun = true)
     public void tearDown() throws Exception {
         long time = watch.stop();
 
@@ -328,7 +328,7 @@ public abstract class CamelTestSupport extends TestSupport {
         doStopCamelContext(context, camelContextService);
     }
 
-    @AfterClass
+    @AfterClass(alwaysRun = true)
     public static void tearDownAfterClass() throws Exception {
         INIT.remove();
         LOG.debug("tearDownAfterClass test");
