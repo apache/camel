@@ -34,7 +34,7 @@ import org.apache.camel.util.ObjectHelper;
  * The message body must be able to convert to {@link InputStream} type which is used as stream
  * to access the message body.
  * <p/>
- * For splitting XML files use {@link TokenXMLPairExpressionIterator} instead.
+ * For splitting XML files use {@link org.apache.camel.support.TokenXMLExpressionIterator} instead.
  */
 public class TokenPairExpressionIterator extends ExpressionAdapter {
 
