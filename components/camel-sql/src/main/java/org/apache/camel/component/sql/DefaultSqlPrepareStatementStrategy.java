@@ -22,6 +22,7 @@ import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -73,7 +74,7 @@ public class DefaultSqlPrepareStatementStrategy implements SqlPrepareStatementSt
 
                 return new Iterator<Object>() {
                     private NamedQueryParser parser = new NamedQueryParser(query);
-                    private Object next;
+                    private Object nextParam;
                     private boolean done;
 
                     @Override
@@ -81,35 +82,36 @@ public class DefaultSqlPrepareStatementStrategy implements SqlPrepareStatementSt
                         if (done) {
                             return false;
                         }
-                        if (next == null) {
-                            next = next();
+
+                        if (nextParam == null) {
+                            nextParam = parser.next();
+                            if (nextParam == null) {
+                                done = true;
+                            }
                         }
-                        return next != null;
+                        return nextParam != null;
                     }
 
                     @Override
                     public Object next() {
-                        if (next == null) {
-                            String key = parser.next();
-                            if (key == null) {
-                                done = true;
-                                return null;
-                            }
-                            // the key is expected to exist, if not report so end user can see this
-                            boolean contains = bodyMap != null ? bodyMap.containsKey(key) : false;
-                            contains |= headerMap != null ? headerMap.containsKey(key) : false;
-                            if (!contains) {
-                                throw new RuntimeExchangeException("Cannot find key [" + key + "] in message body or headers to use when setting named parameter in query [" + query + "]", exchange);
-                            }
-                            // get from body before header
-                            next = bodyMap != null ? bodyMap.get(key) : null;
-                            if (next == null) {
-                                next = headerMap != null ? headerMap.get(key) : null;
-                            }
+                        if (!hasNext()) {
+                            throw new NoSuchElementException();
                         }
-                        Object answer = next;
-                        next = null;
-                        return answer;
+
+                        boolean contains = bodyMap != null && bodyMap.containsKey(nextParam);
+                        contains |= headerMap != null && headerMap.containsKey(nextParam);
+                        if (!contains) {
+                            throw new RuntimeExchangeException("Cannot find key [" + nextParam + "] in message body or headers to use when setting named parameter in query [" + query + "]", exchange);
+                        }
+
+                        // get from body before header
+                        Object next = bodyMap != null ? bodyMap.get(nextParam) : null;
+                        if (next == null) {
+                            next = headerMap != null ? headerMap.get(nextParam) : null;
+                        }
+
+                        nextParam = null;
+                        return next;
                     }
 
                     @Override
