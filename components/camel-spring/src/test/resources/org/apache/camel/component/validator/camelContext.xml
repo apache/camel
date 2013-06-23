@@ -66,6 +66,12 @@
             <to uri="validator:org/apache/camel/component/validator/schema.xsd?headerName=headerToValidate&amp;failOnNullHeader=false"/>
             <to uri="mock:valid"/>
         </route>
+
+        <route>
+            <from uri="direct:useNotASharedSchema"/>
+            <to uri="validator:org/apache/camel/component/validator/schema.xsd?useSharedSchema=false"/>
+            <to uri="mock:valid"/>
+        </route>
     </camelContext>
 
 </beans>
