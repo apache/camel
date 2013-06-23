@@ -23,10 +23,10 @@ import org.apache.camel.util.ObjectHelper;
 
 public class ParameterBindingException extends RuntimeCamelException {
 
-    private Method method;
-    private int index;
-    private Class<?> parameterType;
-    private Object parameterValue;
+    private final Method method;
+    private final int index;
+    private final Class<?> parameterType;
+    private final Object parameterValue;
 
     public ParameterBindingException(Throwable cause, Method method, int index, Class<?> parameterType, Object parameterValue) {
         super(createMessage(method, index, parameterType, parameterValue), cause);
