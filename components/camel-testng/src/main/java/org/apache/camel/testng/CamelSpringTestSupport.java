@@ -81,7 +81,7 @@ public abstract class CamelSpringTestSupport extends CamelTestSupport {
 
 
     @Override
-    @AfterMethod
+    @AfterMethod(alwaysRun = true)
     public void tearDown() throws Exception {
         super.tearDown();
 
@@ -93,7 +93,7 @@ public abstract class CamelSpringTestSupport extends CamelTestSupport {
         }
     }
 
-    @AfterClass
+    @AfterClass(alwaysRun = true)
     public static void tearSpringDownAfterClass() throws Exception {
         if (threadAppContext.get() != null) {
             threadAppContext.get().destroy();
