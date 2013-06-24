@@ -193,10 +193,14 @@ public final class MessageHelper {
      * @param prepend a message to prepend
      * @param allowStreams whether or not streams is allowed
      * @param allowFiles whether or not files is allowed (currently not in use)
-     * @param maxChars limit to maximum number of chars. Use 0 or negative value to not limit at all.
+     * @param maxChars limit to maximum number of chars. Use 0 for not limit, and -1 for turning logging message body off.
      * @return the logging message
      */
     public static String extractBodyForLogging(Message message, String prepend, boolean allowStreams, boolean allowFiles, int maxChars) {
+        if (maxChars < 0) {
+            return prepend + "[Body is not logged]";
+        }
+
         Object obj = message.getBody();
         if (obj == null) {
             return prepend + "[Body is null]";
@@ -218,6 +222,12 @@ public final class MessageHelper {
             } else if (obj instanceof Writer) {
                 return prepend + "[Body is instance of java.io.Writer]";
             } else if (obj instanceof WrappedFile || obj instanceof File) {
+                return prepend + "[Body is file based: " + obj + "]";
+            }
+        }
+
+        if (!allowFiles) {
+            if (obj instanceof WrappedFile || obj instanceof File) {
                 return prepend + "[Body is file based: " + obj + "]";
             }
         }
@@ -326,9 +336,9 @@ public final class MessageHelper {
                 Object value = entry.getValue();
                 String type = ObjectHelper.classCanonicalName(value);
                 sb.append(prefix);
-                sb.append("    <header key=\"" + entry.getKey() + "\"");
+                sb.append("    <header key=\"").append(entry.getKey()).append("\"");
                 if (type != null) {
-                    sb.append(" type=\"" + type + "\"");
+                    sb.append(" type=\"").append(type).append("\"");
                 }
                 sb.append(">");
 
@@ -358,7 +368,7 @@ public final class MessageHelper {
             sb.append("  <body");
             String type = ObjectHelper.classCanonicalName(message.getBody());
             if (type != null) {
-                sb.append(" type=\"" + type + "\"");
+                sb.append(" type=\"").append(type).append("\"");
             }
             sb.append(">");
 

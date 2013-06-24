@@ -24,12 +24,12 @@ import org.apache.camel.component.mock.MockEndpoint;
 /**
  * @version 
  */
-public class LogDebugBodyMaxCharsTest extends ContextTestSupport {
+public class LogDebugBodyMaxCharsOffTest extends ContextTestSupport {
 
     @Override
     protected void setUp() throws Exception {
         super.setUp();
-        context.getProperties().put(Exchange.LOG_DEBUG_BODY_MAX_CHARS, "20");
+        context.getProperties().put(Exchange.LOG_DEBUG_BODY_MAX_CHARS, "-1");
     }
 
     public void testLogBodyMaxLengthTest() throws Exception {
@@ -48,25 +48,9 @@ public class LogDebugBodyMaxCharsTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        // should be clipped after 20 chars
+        // should be empty body as toString on the message will return an empty body
         String msg = mock.getReceivedExchanges().get(0).getIn().toString();
-        assertEquals("Message: 01234567890123456789... [Body clipped after 20 chars, total length is 1000]", msg);
-
-        // but body and clipped should not be the same
-        assertNotSame("clipped log and real body should not be the same", msg, mock.getReceivedExchanges().get(0).getIn().getBody(String.class));
-    }
-
-    public void testNotClipped() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMessageCount(1);
-
-        template.sendBody("direct:start", "1234567890");
-
-        assertMockEndpointsSatisfied();
-
-        // should not be clipped as the message is < 20 chars
-        String msg = mock.getReceivedExchanges().get(0).getIn().toString();
-        assertEquals("Message: 1234567890", msg);
+        assertEquals("Message: [Body is not logged]", msg);
 
         // but body and clipped should not be the same
         assertNotSame("clipped log and real body should not be the same", msg, mock.getReceivedExchanges().get(0).getIn().getBody(String.class));
