@@ -17,6 +17,7 @@
 package org.apache.camel.component.file.remote.sftp;
 
 import java.security.NoSuchAlgorithmException;
+import java.security.PublicKey;
 import java.util.Arrays;
 
 import org.apache.camel.component.file.remote.BaseServerTestSupport;
@@ -25,7 +26,9 @@ import org.apache.sshd.SshServer;
 import org.apache.sshd.common.NamedFactory;
 import org.apache.sshd.common.keyprovider.FileKeyPairProvider;
 import org.apache.sshd.server.Command;
+import org.apache.sshd.server.PublickeyAuthenticator;
 import org.apache.sshd.server.command.ScpCommandFactory;
+import org.apache.sshd.server.session.ServerSession;
 import org.apache.sshd.server.sftp.SftpSubsystem;
 import org.junit.After;
 import org.junit.Before;
@@ -54,6 +57,14 @@ public class SftpServerTestSupport extends BaseServerTestSupport {
             sshd.setSubsystemFactories(Arrays.<NamedFactory<Command>>asList(new SftpSubsystem.Factory()));
             sshd.setCommandFactory(new ScpCommandFactory());
             sshd.setPasswordAuthenticator(new MyPasswordAuthenticator());
+            PublickeyAuthenticator publickeyAuthenticator = new PublickeyAuthenticator() {
+                // consider all keys as authorized for all users
+                @Override
+                public boolean authenticate(String username, PublicKey key, ServerSession session) {
+                    return true;
+                }
+            };
+            sshd.setPublickeyAuthenticator(publickeyAuthenticator);
             sshd.start();
         } catch (Exception e) {
             // ignore if algorithm is not on the OS
