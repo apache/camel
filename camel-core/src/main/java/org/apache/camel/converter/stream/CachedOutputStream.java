@@ -131,6 +131,10 @@ public class CachedOutputStream extends OutputStream {
         return currentStream.hashCode();
     }
 
+    public OutputStream getCurrentStream() {
+        return currentStream;
+    }
+
     public String toString() {
         return "CachedOutputStream[size: " + totalLength + "]";
     }

@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.http;
 
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
@@ -308,10 +309,11 @@ public class DefaultHttpBinding implements HttpBinding {
         return false;
     }
     
-    protected void copyStream(InputStream is, OutputStream os) throws IOException {
+    protected int copyStream(InputStream is, OutputStream os, int bufferSize) throws IOException {
         try {
-            // copy directly from input stream to output stream
-            IOHelper.copy(is, os);
+            // copy stream, and must flush on each write as etc Jetty has better performance when
+            // flushing after writing to its servlet output stream
+            return IOHelper.copy(is, os, bufferSize, true);
         } finally {
             IOHelper.close(os, is);
         }
@@ -344,31 +346,47 @@ public class DefaultHttpBinding implements HttpBinding {
 
         if (is != null) {
             ServletOutputStream os = response.getOutputStream();
-            LOG.trace("Writing direct response from source input stream to servlet output stream");
             if (!checkChunked(message, exchange)) {
                 CachedOutputStream stream = new CachedOutputStream(exchange);
                 try {
                     // copy directly from input stream to the cached output stream to get the content length
-                    int len = IOHelper.copy(is, stream);
+                    int len = copyStream(is, stream, response.getBufferSize());
                     // we need to setup the length if message is not chucked
                     response.setContentLength(len);
-                    copyStream(stream.getInputStream(), os);
+                    OutputStream current = stream.getCurrentStream();
+                    if (current instanceof ByteArrayOutputStream) {
+                        if (LOG.isDebugEnabled()) {
+                            LOG.debug("Streaming (direct) response in non-chunked mode with content-length {}");
+                        }
+                        ByteArrayOutputStream bos = (ByteArrayOutputStream) current;
+                        bos.writeTo(os);
+                    } else {
+                        if (LOG.isDebugEnabled()) {
+                            LOG.debug("Streaming response in non-chunked mode with content-length {} and buffer size: {}", len, len);
+                        }
+                        copyStream(stream.getInputStream(), os, len);
+                    }
                 } finally {
-                    IOHelper.close(is, stream);
+                    IOHelper.close(is, os);
                 }
             } else {
-                copyStream(is, os);
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Streaming response in chunked mode with buffer size {}", response.getBufferSize());
+                }
+                copyStream(is, os, response.getBufferSize());
             }
         } else {
             // not convertable as a stream so fallback as a String
             String data = message.getBody(String.class);
             if (data != null) {
-                LOG.debug("Cannot write from source input stream, falling back to using String content. For binary content this can be a problem.");
                 // set content length and encoding before we write data
                 String charset = IOHelper.getCharsetName(exchange, true);
                 final int dataByteLength = data.getBytes(charset).length;
                 response.setCharacterEncoding(charset);
                 response.setContentLength(dataByteLength);
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Writing response in non-chunked mode as plain text with content-length {} and buffer size: {}", dataByteLength, response.getBufferSize());
+                }
                 try {
                     response.getWriter().print(data);
                 } finally {
@@ -403,6 +421,9 @@ public class DefaultHttpBinding implements HttpBinding {
         byte[] data = GZIPHelper.compressGZIP(bytes);
         ServletOutputStream os = response.getOutputStream();
         try {
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Streaming response as GZIP in non-chunked mode with content-length {} and buffer size: {}", data.length, response.getBufferSize());
+            }
             response.setContentLength(data.length);
             os.write(data);
             os.flush();

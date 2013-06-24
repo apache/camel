@@ -20,6 +20,8 @@ import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
+import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -34,6 +36,7 @@ import java.nio.charset.Charset;
 import java.nio.charset.UnsupportedCharsetException;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.converter.stream.CachedOutputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -162,14 +165,32 @@ public final class IOHelper {
     public static int copy(InputStream input, OutputStream output) throws IOException {
         return copy(input, output, DEFAULT_BUFFER_SIZE);
     }
-    
+
     public static int copy(final InputStream input, final OutputStream output, int bufferSize) throws IOException {
-        int avail = input.available();
-        if (avail > 262144) {
-            avail = 262144;
+        return copy(input, output, bufferSize, false);
+    }
+
+    public static int copy(final InputStream input, final OutputStream output, int bufferSize, boolean flushOnEachWrite) throws IOException {
+        if (input instanceof ByteArrayInputStream) {
+            // optimized for byte array as we only need the max size it can be
+            input.mark(0);
+            input.reset();
+            bufferSize = input.available();
+        } else {
+            int avail = input.available();
+            if (avail > bufferSize) {
+                bufferSize = avail;
+            }
         }
-        if (avail > bufferSize) {
-            bufferSize = avail;
+
+        if (bufferSize > 262144) {
+            // upper cap to avoid buffers too big
+            bufferSize = 262144;
+        }
+
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Copying InputStream: {} -> OutputStream: {} with buffer: {} and flush on each write {}",
+                    new Object[]{input, output, bufferSize, flushOnEachWrite});
         }
 
         final byte[] buffer = new byte[bufferSize];
@@ -177,10 +198,16 @@ public final class IOHelper {
         int total = 0;
         while (-1 != n) {
             output.write(buffer, 0, n);
+            if (flushOnEachWrite) {
+                output.flush();
+            }
             total += n;
             n = input.read(buffer);
         }
-        output.flush();
+        if (!flushOnEachWrite) {
+            // flush at end, if we didn't do it during the writing
+            output.flush();
+        }
         return total;
     }
     
