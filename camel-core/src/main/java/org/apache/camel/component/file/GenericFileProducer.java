@@ -123,25 +123,32 @@ public class GenericFileProducer<T> extends DefaultProducer {
                 tempTarget = createTempFileName(exchange, target);
 
                 log.trace("Writing using tempNameFile: {}", tempTarget);
+               
+                //if we should eager delete target file before deploying temporary file
+                if (endpoint.getFileExist() != GenericFileExist.TryRename && endpoint.isEagerDeleteTargetFile()) {
+                    
+                    // cater for file exists option on the real target as
+                    // the file operations code will work on the temp file
 
-                // cater for file exists option on the real target as
-                // the file operations code will work on the temp file
-
-                // if an existing file already exists what should we do?
-                targetExists = operations.existsFile(target);
-                if (targetExists) {
-                    if (endpoint.getFileExist() == GenericFileExist.Ignore) {
-                        // ignore but indicate that the file was written
-                        log.trace("An existing file already exists: {}. Ignore and do not override it.", target);
-                        return;
-                    } else if (endpoint.getFileExist() == GenericFileExist.Fail) {
-                        throw new GenericFileOperationFailedException("File already exist: " + target + ". Cannot write new file.");
-                    } else if (endpoint.isEagerDeleteTargetFile() && endpoint.getFileExist() == GenericFileExist.Override) {
-                        // we override the target so we do this by deleting it so the temp file can be renamed later
-                        // with success as the existing target file have been deleted
-                        log.trace("Eagerly deleting existing file: {}", target);
-                        if (!operations.deleteFile(target)) {
-                            throw new GenericFileOperationFailedException("Cannot delete file: " + target);
+                    // if an existing file already exists what should we do?
+                    targetExists = operations.existsFile(target);
+                    if (targetExists) {
+                        
+                        log.trace("EagerDeleteTargetFile, target exists");
+                        
+                        if (endpoint.getFileExist() == GenericFileExist.Ignore) {
+                            // ignore but indicate that the file was written
+                            log.trace("An existing file already exists: {}. Ignore and do not override it.", target);
+                            return;
+                        } else if (endpoint.getFileExist() == GenericFileExist.Fail) {
+                            throw new GenericFileOperationFailedException("File already exist: " + target + ". Cannot write new file.");
+                        } else if (endpoint.isEagerDeleteTargetFile() && endpoint.getFileExist() == GenericFileExist.Override) {
+                            // we override the target so we do this by deleting it so the temp file can be renamed later
+                            // with success as the existing target file have been deleted
+                            log.trace("Eagerly deleting existing file: {}", target);
+                            if (!operations.deleteFile(target)) {
+                                throw new GenericFileOperationFailedException("Cannot delete file: " + target);
+                            }
                         }
                     }
                 }
@@ -161,15 +168,29 @@ public class GenericFileProducer<T> extends DefaultProducer {
             // if we did write to a temporary name then rename it to the real
             // name after we have written the file
             if (tempTarget != null) {
+                // if we did not eager delete the target file
+                if (endpoint.getFileExist() != GenericFileExist.TryRename && !endpoint.isEagerDeleteTargetFile()) {
 
-                // if we should not eager delete the target file then do it now just before renaming
-                if (!endpoint.isEagerDeleteTargetFile() && targetExists
-                        && endpoint.getFileExist() == GenericFileExist.Override) {
-                    // we override the target so we do this by deleting it so the temp file can be renamed later
-                    // with success as the existing target file have been deleted
-                    log.trace("Deleting existing file: {}", target);
-                    if (!operations.deleteFile(target)) {
-                        throw new GenericFileOperationFailedException("Cannot delete file: " + target);
+                    // if an existing file already exists what should we do?
+                    targetExists = operations.existsFile(target);
+                    if (targetExists) {
+
+                        log.trace("Not using EagerDeleteTargetFile, target exists");
+
+                        if (endpoint.getFileExist() == GenericFileExist.Ignore) {
+                            // ignore but indicate that the file was written
+                            log.trace("An existing file already exists: {}. Ignore and do not override it.", target);
+                            return;
+                        } else if (endpoint.getFileExist() == GenericFileExist.Fail) {
+                            throw new GenericFileOperationFailedException("File already exist: " + target + ". Cannot write new file.");
+                        } else if (endpoint.getFileExist() == GenericFileExist.Override) {
+                            // we override the target so we do this by deleting it so the temp file can be renamed later
+                            // with success as the existing target file have been deleted
+                            log.trace("Deleting existing file: {}", target);
+                            if (!operations.deleteFile(target)) {
+                                throw new GenericFileOperationFailedException("Cannot delete file: " + target);
+                            }
+                        }
                     }
                 }
 
