@@ -109,6 +109,12 @@ public class SftpConfiguration extends RemoteFileConfiguration {
         this.privateKeyPassphrase = privateKeyFilePassphrase;
     }
 
+    @Deprecated
+    public String getPrivateKeyFilePassphrase() {
+        return privateKeyPassphrase;
+    }
+
+    @Deprecated
     public void setPrivateKeyFilePassphrase(String privateKeyFilePassphrase) {
         this.privateKeyPassphrase = privateKeyFilePassphrase;
     }
