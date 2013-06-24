@@ -62,6 +62,7 @@ public class HttpEndpoint extends DefaultPollingEndpoint implements HeaderFilter
     private boolean traceEnabled;
     private String httpMethodRestrict;
     private UrlRewrite urlRewrite;
+    private Integer responseBufferSize;
 
     public HttpEndpoint() {
     }
@@ -350,4 +351,11 @@ public class HttpEndpoint extends DefaultPollingEndpoint implements HeaderFilter
         this.urlRewrite = urlRewrite;
     }
 
+    public Integer getResponseBufferSize() {
+        return responseBufferSize;
+    }
+
+    public void setResponseBufferSize(Integer responseBufferSize) {
+        this.responseBufferSize = responseBufferSize;
+    }
 }

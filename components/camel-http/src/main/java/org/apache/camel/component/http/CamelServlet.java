@@ -111,7 +111,9 @@ public class CamelServlet extends HttpServlet {
         }
         
         try {
-            log.trace("Processing request for exchangeId: {}", exchange.getExchangeId());
+            if (log.isTraceEnabled()) {
+                log.trace("Processing request for exchangeId: {}", exchange.getExchangeId());
+            }
             // process the exchange
             consumer.getProcessor().process(exchange);
         } catch (Exception e) {
@@ -119,9 +121,15 @@ public class CamelServlet extends HttpServlet {
         }
 
         try {
-            log.trace("Writing response for exchangeId: {}", exchange.getExchangeId());
-
             // now lets output to the response
+            if (log.isTraceEnabled()) {
+                log.trace("Writing response for exchangeId: {}", exchange.getExchangeId());
+            }
+            Integer bs = consumer.getEndpoint().getResponseBufferSize();
+            if (bs != null) {
+                log.trace("Using response buffer size: {}", bs);
+                response.setBufferSize(bs);
+            }
             consumer.getBinding().writeResponse(exchange, response);
         } catch (IOException e) {
             log.error("Error processing request", e);

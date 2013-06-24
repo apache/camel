@@ -54,7 +54,6 @@ public class JettyHttpEndpoint extends HttpEndpoint {
     private Boolean useContinuation;
     private SSLContextParameters sslContextParameters;
     private Map<String, Object> httpClientParameters;
-    
 
     public JettyHttpEndpoint(JettyHttpComponent component, String uri, URI httpURL) throws URISyntaxException {
         super(uri, component, httpURL);
