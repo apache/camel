@@ -25,8 +25,12 @@ public class SftpConfiguration extends RemoteFileConfiguration {
 
     public static final int DEFAULT_SFTP_PORT = 22;
     private String knownHostsFile;
+    private String knownHostsUri;
+    private byte[] knownHosts;
     private String privateKeyFile;
-    private String privateKeyFilePassphrase;
+    private String privateKeyUri;
+    private byte[] privateKey;
+    private String privateKeyPassphrase;
     private String strictHostKeyChecking = "no";
     private int serverAliveInterval;
     private int serverAliveCountMax = 1;
@@ -57,6 +61,22 @@ public class SftpConfiguration extends RemoteFileConfiguration {
         this.knownHostsFile = knownHostsFile;
     }
 
+    public String getKnownHostsUri() {
+        return knownHostsUri;
+    }
+
+    public void setKnownHostsUri(String knownHostsUri) {
+        this.knownHostsUri = knownHostsUri;
+    }
+
+    public byte[] getKnownHosts() {
+        return knownHosts;
+    }
+
+    public void setKnownHosts(byte[] knownHosts) {
+        this.knownHosts = knownHosts;
+    }
+
     public String getPrivateKeyFile() {
         return privateKeyFile;
     }
@@ -65,12 +85,32 @@ public class SftpConfiguration extends RemoteFileConfiguration {
         this.privateKeyFile = privateKeyFile;
     }
 
-    public String getPrivateKeyFilePassphrase() {
-        return privateKeyFilePassphrase;
+    public String getPrivateKeyUri() {
+        return privateKeyUri;
+    }
+
+    public void setPrivateKeyUri(String privateKeyUri) {
+        this.privateKeyUri = privateKeyUri;
+    }
+
+    public byte[] getPrivateKey() {
+        return privateKey;
+    }
+
+    public void setPrivateKey(byte[] privateKey) {
+        this.privateKey = privateKey;
+    }
+
+    public String getPrivateKeyPassphrase() {
+        return privateKeyPassphrase;
+    }
+
+    public void setPrivateKeyPassphrase(String privateKeyFilePassphrase) {
+        this.privateKeyPassphrase = privateKeyFilePassphrase;
     }
 
     public void setPrivateKeyFilePassphrase(String privateKeyFilePassphrase) {
-        this.privateKeyFilePassphrase = privateKeyFilePassphrase;
+        this.privateKeyPassphrase = privateKeyFilePassphrase;
     }
 
     public String getStrictHostKeyChecking() {

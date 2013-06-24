@@ -23,6 +23,7 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Hashtable;
 import java.util.List;
@@ -36,6 +37,7 @@ import com.jcraft.jsch.Session;
 import com.jcraft.jsch.SftpException;
 import com.jcraft.jsch.UIKeyboardInteractive;
 import com.jcraft.jsch.UserInfo;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.component.file.FileComponent;
@@ -46,6 +48,7 @@ import org.apache.camel.component.file.GenericFileOperationFailedException;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.ResourceHelper;
 
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.TimeUtils;
@@ -157,19 +160,67 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
             ciphers.put("cipher.c2s", sftpConfig.getCiphers());
             JSch.setConfig(ciphers);
         }
-        
+
         if (isNotEmpty(sftpConfig.getPrivateKeyFile())) {
             LOG.debug("Using private keyfile: {}", sftpConfig.getPrivateKeyFile());
-            if (isNotEmpty(sftpConfig.getPrivateKeyFilePassphrase())) {
-                jsch.addIdentity(sftpConfig.getPrivateKeyFile(), sftpConfig.getPrivateKeyFilePassphrase());
+            if (isNotEmpty(sftpConfig.getPrivateKeyPassphrase())) {
+                jsch.addIdentity(sftpConfig.getPrivateKeyFile(), sftpConfig.getPrivateKeyPassphrase());
             } else {
                 jsch.addIdentity(sftpConfig.getPrivateKeyFile());
+            }
+        }
+
+        if (sftpConfig.getPrivateKey() != null) {
+            LOG.debug("Using private key information from byte array");
+            byte[] passphrase = null;
+            if (isNotEmpty(sftpConfig.getPrivateKeyPassphrase())) {
+                try {
+                    passphrase = sftpConfig.getPrivateKeyPassphrase().getBytes("UTF-8");
+                } catch (UnsupportedEncodingException e) {
+                    throw new JSchException("Cannot transform passphrase to byte[]", e);
+                }
+            }
+            jsch.addIdentity("ID", sftpConfig.getPrivateKey(), null, passphrase);
+        }
+
+        if (sftpConfig.getPrivateKeyUri() != null) {
+            LOG.debug("Using private key uri : {}", sftpConfig.getPrivateKeyUri());
+            byte[] passphrase = null;
+            if (isNotEmpty(sftpConfig.getPrivateKeyPassphrase())) {
+                try {
+                    passphrase = sftpConfig.getPrivateKeyPassphrase().getBytes("UTF-8");
+                } catch (UnsupportedEncodingException e) {
+                    throw new JSchException("Cannot transform passphrase to byte[]", e);
+                }
+            }
+            try {
+                InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(endpoint.getCamelContext().getClassResolver(), sftpConfig.getPrivateKeyUri());
+                ByteArrayOutputStream bos = new ByteArrayOutputStream();
+                IOHelper.copyAndCloseInput(is, bos);
+                jsch.addIdentity("ID", bos.toByteArray(), null, passphrase);
+            } catch (IOException e) {
+                throw new JSchException("Cannot read resource: " + sftpConfig.getPrivateKeyUri(), e);
             }
         }
 
         if (isNotEmpty(sftpConfig.getKnownHostsFile())) {
             LOG.debug("Using knownhosts file: {}", sftpConfig.getKnownHostsFile());
             jsch.setKnownHosts(sftpConfig.getKnownHostsFile());
+        }
+
+        if (isNotEmpty(sftpConfig.getKnownHostsUri())) {
+            LOG.debug("Using knownhosts uri: {}", sftpConfig.getKnownHostsUri());
+            try {
+                InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(endpoint.getCamelContext().getClassResolver(), sftpConfig.getKnownHostsUri());
+                jsch.setKnownHosts(is);
+            } catch (IOException e) {
+                throw new JSchException("Cannot read resource: " + sftpConfig.getKnownHostsUri(), e);
+            }
+        }
+
+        if (sftpConfig.getKnownHosts() != null) {
+            LOG.debug("Using knownhosts information from byte array");
+            jsch.setKnownHosts(new ByteArrayInputStream(sftpConfig.getKnownHosts()));
         }
 
         final Session session = jsch.getSession(configuration.getUsername(), configuration.getHost(), configuration.getPort());
