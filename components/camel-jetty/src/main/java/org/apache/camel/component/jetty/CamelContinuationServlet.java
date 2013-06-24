@@ -121,15 +121,19 @@ public class CamelContinuationServlet extends CamelServlet {
                 exchange.getIn().setHeader(Exchange.HTTP_PATH,
                         httpPath.substring(contextPath.length()));
             }
-            
-            log.trace("Suspending continuation of exchangeId: {}", exchange.getExchangeId());
+
+            if (log.isTraceEnabled()) {
+                log.trace("Suspending continuation of exchangeId: {}", exchange.getExchangeId());
+            }
             continuation.setAttribute(EXCHANGE_ATTRIBUTE_ID, exchange.getExchangeId());
             // must suspend before we process the exchange
             continuation.suspend();
 
             ClassLoader oldTccl = overrideTccl(exchange);
-            
-            log.trace("Processing request for exchangeId: {}", exchange.getExchangeId());
+
+            if (log.isTraceEnabled()) {
+                log.trace("Processing request for exchangeId: {}", exchange.getExchangeId());
+            }
             // use the asynchronous API to process the exchange
             
             consumer.getAsyncProcessor().process(exchange, new AsyncCallback() {
@@ -137,7 +141,9 @@ public class CamelContinuationServlet extends CamelServlet {
                     // check if the exchange id is already expired
                     boolean expired = expiredExchanges.remove(exchange.getExchangeId()) != null;
                     if (!expired) {
-                        log.trace("Resuming continuation of exchangeId: {}", exchange.getExchangeId());
+                        if (log.isTraceEnabled()) {
+                            log.trace("Resuming continuation of exchangeId: {}", exchange.getExchangeId());
+                        }
                         // resume processing after both, sync and async callbacks
                         continuation.setAttribute(EXCHANGE_ATTRIBUTE_NAME, exchange);
                         continuation.resume();
@@ -157,8 +163,15 @@ public class CamelContinuationServlet extends CamelServlet {
         }
 
         try {
-            log.trace("Resumed continuation and writing response for exchangeId: {}", result.getExchangeId());
             // now lets output to the response
+            if (log.isTraceEnabled()) {
+                log.trace("Resumed continuation and writing response for exchangeId: {}", result.getExchangeId());
+            }
+            Integer bs = consumer.getEndpoint().getResponseBufferSize();
+            if (bs != null) {
+                log.trace("Using response buffer size: {}", bs);
+                response.setBufferSize(bs);
+            }
             consumer.getBinding().writeResponse(result, response);
         } catch (IOException e) {
             log.error("Error processing request", e);

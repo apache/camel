@@ -100,6 +100,7 @@ public class JettyHttpComponent extends HttpComponent {
     protected Long continuationTimeout;
     protected boolean useContinuation = true;
     protected SSLContextParameters sslContextParameters;
+    protected Integer responseBufferSize;
 
     class ConnectorRef {
         Server server;
@@ -152,6 +153,7 @@ public class JettyHttpComponent extends HttpComponent {
         SSLContextParameters ssl = sslContextParameters != null ? sslContextParameters : this.sslContextParameters;
         String proxyHost = getAndRemoveParameter(parameters, "proxyHost", String.class);
         Integer proxyPort = getAndRemoveParameter(parameters, "proxyPort", Integer.class);
+        Integer responseBufferSize = getAndRemoveParameter(parameters, "responseBufferSize", Integer.class, getResponseBufferSize());
         
         // extract httpClient. parameters
         Map<String, Object> httpClientParameters = IntrospectionSupport.extractProperties(parameters, "httpClient.");
@@ -244,6 +246,9 @@ public class JettyHttpComponent extends HttpComponent {
         }
         if (ssl != null) {
             endpoint.setSslContextParameters(ssl);
+        }
+        if (responseBufferSize != null) {
+            endpoint.setResponseBufferSize(responseBufferSize);
         }
 
         setProperties(endpoint, parameters);
@@ -823,6 +828,14 @@ public class JettyHttpComponent extends HttpComponent {
 
     public void setSslContextParameters(SSLContextParameters sslContextParameters) {
         this.sslContextParameters = sslContextParameters;
+    }
+
+    public Integer getResponseBufferSize() {
+        return responseBufferSize;
+    }
+
+    public void setResponseBufferSize(Integer responseBufferSize) {
+        this.responseBufferSize = responseBufferSize;
     }
 
     // Implementation methods
