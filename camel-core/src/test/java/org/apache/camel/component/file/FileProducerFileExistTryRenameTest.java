@@ -16,34 +16,30 @@
  */
 package org.apache.camel.component.file;
 
-import java.util.Locale;
-
-import junit.framework.TestResult;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
-import org.apache.camel.TestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
 /**
- * @version 
+ * @version
  */
 public class FileProducerFileExistTryRenameTest extends ContextTestSupport {
 
-   @Override
+    @Override
     protected void setUp() throws Exception {
         deleteDirectory("target/file");
         super.setUp();
         template.sendBodyAndHeader("file://target/file", "Hello World", Exchange.FILE_NAME, "hello.txt");
     }
-   
+
 
     public void testIgnore() throws Exception {
-
         // Does not work on Windows
-        if(TestSupport.isPlatform("windows"))
+        if (isPlatform("windows")) {
             return;
-        
+        }
+
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Bye World");
         mock.expectedFileExists("target/file/hello.txt", "Bye World");
