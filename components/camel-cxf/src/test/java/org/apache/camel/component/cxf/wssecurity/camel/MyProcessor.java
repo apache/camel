@@ -8,6 +8,10 @@ import javax.xml.soap.SOAPMessage;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 
+/**
+ * This processor is used to create a new SOAPMessage from the in message stream
+ * which will be used as output message.
+ */
 public class MyProcessor implements Processor {
 
     @Override
