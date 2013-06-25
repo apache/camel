@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.module.jaxb.JaxbAnnotationModule;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.DataFormat;
@@ -41,7 +42,7 @@ public class JacksonDataFormat implements DataFormat {
      * Use the default Jackson {@link ObjectMapper} and {@link Map}
      */
     public JacksonDataFormat() {
-        this(new ObjectMapper(), HashMap.class);
+        this(HashMap.class);
     }
 
     /**
@@ -51,7 +52,7 @@ public class JacksonDataFormat implements DataFormat {
      * @param unmarshalType the custom unmarshal type
      */
     public JacksonDataFormat(Class<?> unmarshalType) {
-        this(new ObjectMapper(), unmarshalType);
+        this(unmarshalType, null);
     }
 
     /**
@@ -63,7 +64,13 @@ public class JacksonDataFormat implements DataFormat {
      *                 See also http://wiki.fasterxml.com/JacksonJsonViews
      */
     public JacksonDataFormat(Class<?> unmarshalType, Class<?> jsonView) {
-        this(new ObjectMapper(), unmarshalType, jsonView);
+        this.objectMapper = new ObjectMapper();
+        this.unmarshalType = unmarshalType;
+        this.jsonView = jsonView;
+
+        // Enables JAXB processing
+        JaxbAnnotationModule module = new JaxbAnnotationModule();
+        this.objectMapper.registerModule(module);
     }
 
     /**
