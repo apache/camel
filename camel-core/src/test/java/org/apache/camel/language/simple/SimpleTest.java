@@ -1234,6 +1234,16 @@ public class SimpleTest extends LanguageTestSupport {
         assertExpression("${type:org.apache.camel.ExchangePattern.UNKNOWN}", null);
     }
 
+    public void testStringArrayLength() throws Exception {
+        exchange.getIn().setBody(new String[]{"foo", "bar"});
+        assertExpression("${body[0]}", "foo");
+        assertExpression("${body[1]}", "bar");
+        assertExpression("${body.length}", 2);
+
+        exchange.getIn().setBody(new String[]{"foo", "bar", "beer"});
+        assertExpression("${body.length}", 3);
+    }
+
     protected String getLanguageName() {
         return "simple";
     }
