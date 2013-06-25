@@ -63,6 +63,8 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
     private LoggingLevel runLoggingLevel = LoggingLevel.TRACE;
     @UriParam
     private boolean sendEmptyMessageWhenIdle;
+    @UriParam
+    private boolean greedy;
     private volatile boolean polling;
 
     public ScheduledPollConsumer(Endpoint endpoint, Processor processor) {
@@ -155,6 +157,12 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
                             }
 
                             pollStrategy.commit(this, getEndpoint(), polledMessages);
+
+                            if (polledMessages > 0 && isGreedy()) {
+                                done = false;
+                                retryCounter = -1;
+                                LOG.trace("Greedy polling after processing {} messages", polledMessages);
+                            }
                         } else {
                             LOG.debug("Cannot begin polling as pollStrategy returned false: {}", pollStrategy);
                         }
@@ -302,6 +310,17 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
     
     public boolean isSendEmptyMessageWhenIdle() {
         return sendEmptyMessageWhenIdle;
+    }
+
+    public boolean isGreedy() {
+        return greedy;
+    }
+
+    /**
+     * If greedy then a poll is executed immediate after a previous poll that polled 1 or more messages.
+     */
+    public void setGreedy(boolean greedy) {
+        this.greedy = greedy;
     }
 
     public ScheduledExecutorService getScheduledExecutorService() {

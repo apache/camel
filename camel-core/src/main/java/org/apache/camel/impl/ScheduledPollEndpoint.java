@@ -62,6 +62,7 @@ public abstract class ScheduledPollEndpoint extends DefaultEndpoint {
         Object pollStrategy = options.remove("pollStrategy");
         Object runLoggingLevel = options.remove("runLoggingLevel");
         Object sendEmptyMessageWhenIdle = options.remove("sendEmptyMessageWhenIdle");
+        Object greedy = options.remove("greedy");
         Object scheduledExecutorService  = options.remove("scheduledExecutorService");
         boolean setConsumerProperties = false;
         
@@ -69,7 +70,7 @@ public abstract class ScheduledPollEndpoint extends DefaultEndpoint {
         if (initialDelay != null || delay != null || timeUnit != null || useFixedDelay != null || pollStrategy != null) {
             setConsumerProperties = true;
         }
-        if (runLoggingLevel != null || startScheduler != null || sendEmptyMessageWhenIdle != null || scheduledExecutorService != null) {
+        if (runLoggingLevel != null || startScheduler != null || sendEmptyMessageWhenIdle != null || greedy != null || scheduledExecutorService != null) {
             setConsumerProperties = true;
         }
         
@@ -101,6 +102,9 @@ public abstract class ScheduledPollEndpoint extends DefaultEndpoint {
             }
             if (sendEmptyMessageWhenIdle != null) {
                 consumerProperties.put("sendEmptyMessageWhenIdle", sendEmptyMessageWhenIdle);
+            }
+            if (greedy != null) {
+                consumerProperties.put("greedy", greedy);
             }
             if (scheduledExecutorService != null) {
                 consumerProperties.put("scheduledExecutorService", scheduledExecutorService);
