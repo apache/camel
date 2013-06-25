@@ -36,7 +36,6 @@ import java.nio.charset.Charset;
 import java.nio.charset.UnsupportedCharsetException;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.converter.stream.CachedOutputStream;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
