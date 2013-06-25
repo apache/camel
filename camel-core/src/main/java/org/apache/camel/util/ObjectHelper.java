@@ -1120,6 +1120,10 @@ public final class ObjectHelper {
         return PRIMITIVE_ARRAY_TYPES.contains(clazz);
     }
 
+    public static int arrayLength(Object[] pojo) {
+        return pojo.length;
+    }
+
     /**
      * Converts primitive types such as int to its wrapper type like
      * {@link Integer}

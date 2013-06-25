@@ -217,6 +217,20 @@ public class BeanInfo {
                 } catch (NoSuchMethodException e) {
                     throw new MethodNotFoundException(exchange, pojo, "getClass");
                 }
+            // special for length on an array type
+            } else if ("length".equals(name) && pojo.getClass().isArray()) {
+                try {
+                    // need to use arrayLength method from ObjectHelper as Camel's bean OGNL support is method invocation based
+                    // and not for accessing fields. And hence we need to create a MethodInfo instance with a method to call
+                    // and therefore use arrayLength from ObjectHelper to return the array length field.
+                    Method method = ObjectHelper.class.getMethod("arrayLength", Object[].class);
+                    ParameterInfo pi = new ParameterInfo(0, Object[].class, null, ExpressionBuilder.mandatoryBodyExpression(Object[].class, true));
+                    List<ParameterInfo> lpi = new ArrayList<ParameterInfo>(1);
+                    lpi.add(pi);
+                    methodInfo = new MethodInfo(exchange.getContext(), pojo.getClass(), method, lpi, lpi, false, false);
+                } catch (NoSuchMethodException e) {
+                    throw new MethodNotFoundException(exchange, pojo, "getClass");
+                }
             } else {
                 List<MethodInfo> methods = getOperations(name);
                 if (methods != null && methods.size() == 1) {
