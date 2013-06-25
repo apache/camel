@@ -32,8 +32,12 @@ public interface NettyServerBootstrapFactory extends Service {
 
     /**
      * Initializes this {@link NettyServerBootstrapFactory}.
+     *
+     * @param camelContext     Use <tt>null</tt> if this factory is to be shared among other Camel applications.
+     * @param configuration    the bootstrap configuration
+     * @param pipelineFactory  the pipeline factory
      */
-    void init(CamelContext camelContext, NettyConfiguration configuration, ChannelPipelineFactory pipelineFactory);
+    void init(CamelContext camelContext, NettyServerBootstrapConfiguration configuration, ChannelPipelineFactory pipelineFactory);
 
     /**
      * When a new {@link Channel} is opened.

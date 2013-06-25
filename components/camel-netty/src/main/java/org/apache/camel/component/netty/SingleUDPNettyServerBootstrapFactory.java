@@ -19,10 +19,10 @@ package org.apache.camel.component.netty;
 import java.net.InetSocketAddress;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.support.ServiceSupport;
-import org.apache.camel.util.ObjectHelper;
 import org.jboss.netty.bootstrap.ConnectionlessBootstrap;
 import org.jboss.netty.channel.Channel;
 import org.jboss.netty.channel.ChannelPipelineFactory;
@@ -43,19 +43,19 @@ public class SingleUDPNettyServerBootstrapFactory extends ServiceSupport impleme
     protected static final Logger LOG = LoggerFactory.getLogger(SingleUDPNettyServerBootstrapFactory.class);
     private final ChannelGroup allChannels;
     private CamelContext camelContext;
-    private NettyConfiguration configuration;
+    private NettyServerBootstrapConfiguration configuration;
     private ChannelPipelineFactory pipelineFactory;
     private DatagramChannelFactory datagramChannelFactory;
     private ConnectionlessBootstrap connectionlessServerBootstrap;
     private Channel channel;
-    private ExecutorService bossExecutor;
     private ExecutorService workerExecutor;
 
     public SingleUDPNettyServerBootstrapFactory() {
         this.allChannels = new DefaultChannelGroup(SingleUDPNettyServerBootstrapFactory.class.getName());
     }
 
-    public void init(CamelContext camelContext, NettyConfiguration configuration, ChannelPipelineFactory pipelineFactory) {
+    public void init(CamelContext camelContext, NettyServerBootstrapConfiguration configuration, ChannelPipelineFactory pipelineFactory) {
+        // notice CamelContext can be optional
         this.camelContext = camelContext;
         this.configuration = configuration;
         this.pipelineFactory = pipelineFactory;
@@ -79,7 +79,6 @@ public class SingleUDPNettyServerBootstrapFactory extends ServiceSupport impleme
 
     @Override
     protected void doStart() throws Exception {
-        ObjectHelper.notNull(camelContext, "CamelContext");
         startServerBootstrap();
     }
 
@@ -89,12 +88,18 @@ public class SingleUDPNettyServerBootstrapFactory extends ServiceSupport impleme
     }
 
     protected void startServerBootstrap() {
-        workerExecutor = camelContext.getExecutorServiceManager().newCachedThreadPool(this, "NettyUDPWorker");
+        if (camelContext != null) {
+            workerExecutor = camelContext.getExecutorServiceManager().newCachedThreadPool(this, "NettyUDPWorker");
+        } else {
+            workerExecutor = Executors.newCachedThreadPool();
+        }
+
         if (configuration.getWorkerCount() <= 0) {
             datagramChannelFactory = new NioDatagramChannelFactory(workerExecutor);
         } else {
             datagramChannelFactory = new NioDatagramChannelFactory(workerExecutor, configuration.getWorkerCount());
         }
+
         connectionlessServerBootstrap = new ConnectionlessBootstrap(datagramChannelFactory);
         connectionlessServerBootstrap.setOption("child.keepAlive", configuration.isKeepAlive());
         connectionlessServerBootstrap.setOption("child.tcpNoDelay", configuration.isTcpNoDelay());
@@ -143,12 +148,12 @@ public class SingleUDPNettyServerBootstrapFactory extends ServiceSupport impleme
         }
 
         // and then shutdown the thread pools
-        if (bossExecutor != null) {
-            camelContext.getExecutorServiceManager().shutdown(bossExecutor);
-            bossExecutor = null;
-        }
         if (workerExecutor != null) {
-            camelContext.getExecutorServiceManager().shutdown(workerExecutor);
+            if (camelContext != null) {
+                camelContext.getExecutorServiceManager().shutdown(workerExecutor);
+            } else {
+                workerExecutor.shutdownNow();
+            }
             workerExecutor = null;
         }
     }

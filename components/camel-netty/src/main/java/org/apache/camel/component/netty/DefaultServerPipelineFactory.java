@@ -34,15 +34,32 @@ import org.slf4j.LoggerFactory;
 public class DefaultServerPipelineFactory extends ServerPipelineFactory {
     private static final Logger LOG = LoggerFactory.getLogger(DefaultServerPipelineFactory.class);
 
-    private final NettyConsumer consumer;
+    private NettyConsumer consumer;
     private SSLContext sslContext;
+
+    public DefaultServerPipelineFactory(NettyServerBootstrapConfiguration configuration) {
+        this.consumer = null;
+        try {
+            this.sslContext = createSSLContext(configuration);
+        } catch (Exception e) {
+            throw ObjectHelper.wrapRuntimeCamelException(e);
+        }
+
+        if (sslContext != null) {
+            LOG.info("Created SslContext {}", sslContext);
+        }
+    }
 
     public DefaultServerPipelineFactory(NettyConsumer consumer) {
         this.consumer = consumer;
         try {
-            this.sslContext = createSSLContext(consumer);
+            this.sslContext = createSSLContext(consumer.getConfiguration());
         } catch (Exception e) {
             throw ObjectHelper.wrapRuntimeCamelException(e);
+        }
+
+        if (sslContext != null) {
+            LOG.info("Created SslContext {}", sslContext);
         }
     }
 
@@ -97,14 +114,14 @@ public class DefaultServerPipelineFactory extends ServerPipelineFactory {
         pipeline.addLast(name, handler);
     }
 
-    private SSLContext createSSLContext(NettyConsumer consumer) throws Exception {
-        if (!consumer.getConfiguration().isSsl()) {
+    private SSLContext createSSLContext(NettyServerBootstrapConfiguration configuration) throws Exception {
+        if (!configuration.isSsl()) {
             return null;
         }
 
         // create ssl context once
-        if (consumer.getConfiguration().getSslContextParameters() != null) {
-            SSLContext context = consumer.getConfiguration().getSslContextParameters().createSSLContext();
+        if (configuration.getSslContextParameters() != null) {
+            SSLContext context = configuration.getSslContextParameters().createSSLContext();
             return context;
         }
 

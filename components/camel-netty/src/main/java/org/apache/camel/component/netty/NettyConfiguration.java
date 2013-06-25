@@ -58,7 +58,6 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
     private LoggingLevel serverClosedChannelExceptionCaughtLogLevel = LoggingLevel.DEBUG;
     private boolean allowDefaultCodec = true;
     private ClientPipelineFactory clientPipelineFactory;
-    private SSLContextParameters sslContextParameters;
     private int maximumPoolSize = 16;
     private boolean orderedThreadPoolExecutor = true;
     private int producerPoolMaxActive = -1;
@@ -364,14 +363,6 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
 
     public ClientPipelineFactory getClientPipelineFactory() {
         return clientPipelineFactory;
-    }
-
-    public SSLContextParameters getSslContextParameters() {
-        return sslContextParameters;
-    }
-
-    public void setSslContextParameters(SSLContextParameters sslContextParameters) {
-        this.sslContextParameters = sslContextParameters;
     }
 
     public int getMaximumPoolSize() {

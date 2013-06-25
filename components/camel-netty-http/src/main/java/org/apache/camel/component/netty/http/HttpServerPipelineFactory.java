@@ -20,6 +20,7 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLEngine;
 
 import org.apache.camel.component.netty.NettyConsumer;
+import org.apache.camel.component.netty.NettyServerBootstrapConfiguration;
 import org.apache.camel.component.netty.ServerPipelineFactory;
 import org.apache.camel.component.netty.ssl.SSLEngineFactory;
 import org.apache.camel.util.ObjectHelper;
@@ -47,10 +48,23 @@ public class HttpServerPipelineFactory extends ServerPipelineFactory {
         // default constructor needed
     }
 
+    public HttpServerPipelineFactory(NettyServerBootstrapConfiguration configuration) {
+        this.consumer = null;
+        try {
+            this.sslContext = createSSLContext(configuration);
+        } catch (Exception e) {
+            throw ObjectHelper.wrapRuntimeCamelException(e);
+        }
+
+        if (sslContext != null) {
+            LOG.info("Created SslContext {}", sslContext);
+        }
+    }
+
     public HttpServerPipelineFactory(NettyHttpConsumer nettyConsumer) {
         this.consumer = nettyConsumer;
         try {
-            this.sslContext = createSSLContext(consumer);
+            this.sslContext = createSSLContext(consumer.getConfiguration());
         } catch (Exception e) {
             throw ObjectHelper.wrapRuntimeCamelException(e);
         }
@@ -70,6 +84,7 @@ public class HttpServerPipelineFactory extends ServerPipelineFactory {
         // Create a default pipeline implementation.
         ChannelPipeline pipeline = Channels.pipeline();
 
+        // TODO: on demand use configuration
         SslHandler sslHandler = configureServerSSLOnDemand();
         if (sslHandler != null) {
             LOG.debug("Server SSL handler configured and added as an interceptor against the ChannelPipeline: {}", sslHandler);
@@ -86,22 +101,28 @@ public class HttpServerPipelineFactory extends ServerPipelineFactory {
             pipeline.addLast("deflater", new HttpContentCompressor());
         }
 
+        // TODO: shared netty http server in ctr
         // handler to route Camel messages
-        int port = consumer.getConfiguration().getPort();
-        ChannelHandler handler = consumer.getEndpoint().getComponent().getMultiplexChannelHandler(port);
+        ChannelHandler handler;
+        if (consumer.getSharedNettyHttpServer() != null) {
+            handler = consumer.getSharedNettyHttpServer().getConsumerChannelFactory().getChannelHandler();
+        } else {
+            int port = consumer.getConfiguration().getPort();
+            handler = consumer.getEndpoint().getComponent().getMultiplexChannelHandler(port).getChannelHandler();
+        }
         pipeline.addLast("handler", handler);
 
         return pipeline;
     }
 
-    private SSLContext createSSLContext(NettyConsumer consumer) throws Exception {
-        if (!consumer.getConfiguration().isSsl()) {
+    private SSLContext createSSLContext(NettyServerBootstrapConfiguration configuration) throws Exception {
+        if (!configuration.isSsl()) {
             return null;
         }
 
         // create ssl context once
-        if (consumer.getConfiguration().getSslContextParameters() != null) {
-            SSLContext context = consumer.getConfiguration().getSslContextParameters().createSSLContext();
+        if (configuration.getSslContextParameters() != null) {
+            SSLContext context = configuration.getSslContextParameters().createSSLContext();
             return context;
         }
 

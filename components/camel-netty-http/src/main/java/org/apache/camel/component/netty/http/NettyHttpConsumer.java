@@ -26,6 +26,8 @@ import org.apache.camel.util.ObjectHelper;
  */
 public class NettyHttpConsumer extends NettyConsumer {
 
+    private SharedNettyHttpServer sharedNettyHttpServer;
+
     public NettyHttpConsumer(NettyHttpEndpoint nettyEndpoint, Processor processor, NettyConfiguration configuration) {
         super(nettyEndpoint, processor, configuration);
     }
@@ -38,6 +40,14 @@ public class NettyHttpConsumer extends NettyConsumer {
     @Override
     public NettyHttpConfiguration getConfiguration() {
         return (NettyHttpConfiguration) super.getConfiguration();
+    }
+
+    public SharedNettyHttpServer getSharedNettyHttpServer() {
+        return sharedNettyHttpServer;
+    }
+
+    public void setSharedNettyHttpServer(SharedNettyHttpServer sharedNettyHttpServer) {
+        this.sharedNettyHttpServer = sharedNettyHttpServer;
     }
 
     @Override

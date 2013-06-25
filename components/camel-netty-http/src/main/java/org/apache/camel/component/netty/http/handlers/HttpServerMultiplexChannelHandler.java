@@ -23,9 +23,11 @@ import java.util.concurrent.ConcurrentMap;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.netty.http.ContextPathMatcher;
 import org.apache.camel.component.netty.http.DefaultContextPathMatcher;
+import org.apache.camel.component.netty.http.HttpServerConsumerChannelFactory;
 import org.apache.camel.component.netty.http.NettyHttpConsumer;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
 import org.jboss.netty.buffer.ChannelBuffers;
+import org.jboss.netty.channel.ChannelHandler;
 import org.jboss.netty.channel.ChannelHandlerContext;
 import org.jboss.netty.channel.ExceptionEvent;
 import org.jboss.netty.channel.MessageEvent;
@@ -44,15 +46,21 @@ import static org.jboss.netty.handler.codec.http.HttpVersion.HTTP_1_1;
  * target handler based on the http context path in the incoming request. This is used to allow to reuse
  * the same Netty consumer, allowing to have multiple routes on the same netty {@link org.jboss.netty.bootstrap.ServerBootstrap}
  */
-public class HttpServerMultiplexChannelHandler extends SimpleChannelUpstreamHandler {
+public class HttpServerMultiplexChannelHandler extends SimpleChannelUpstreamHandler implements HttpServerConsumerChannelFactory {
 
     // use NettyHttpConsumer as logger to make it easier to read the logs as this is part of the consumer
     private static final transient Logger LOG = LoggerFactory.getLogger(NettyHttpConsumer.class);
     private final ConcurrentMap<ContextPathMatcher, HttpServerChannelHandler> consumers = new ConcurrentHashMap<ContextPathMatcher, HttpServerChannelHandler>();
-    private final String token;
-    private final int len;
+    private int port;
+    private String token;
+    private int len;
 
-    public HttpServerMultiplexChannelHandler(int port) {
+    public HttpServerMultiplexChannelHandler() {
+        // must have default no-arg constructor to allow IoC containers to manage it
+    }
+
+    public void init(int port) {
+        this.port = port;
         this.token = ":" + port;
         this.len = token.length();
     }
@@ -69,11 +77,16 @@ public class HttpServerMultiplexChannelHandler extends SimpleChannelUpstreamHand
         consumers.remove(matcher);
     }
 
-    /**
-     * Number of active consumers.
-     */
     public int consumers() {
         return consumers.size();
+    }
+
+    public int getPort() {
+        return port;
+    }
+
+    public ChannelHandler getChannelHandler() {
+        return this;
     }
 
     @Override

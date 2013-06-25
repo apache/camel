@@ -31,17 +31,21 @@ import org.apache.camel.util.ObjectHelper;
 import org.jboss.netty.channel.ChannelHandlerContext;
 import org.jboss.netty.channel.MessageEvent;
 import org.jboss.netty.handler.codec.http.HttpRequest;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * HTTP based {@link NettyEndpoint}
  */
 public class NettyHttpEndpoint extends NettyEndpoint implements HeaderFilterStrategyAware {
 
+    private static final Logger LOG = LoggerFactory.getLogger(NettyHttpEndpoint.class);
     private String uriParameters;
     private NettyHttpBinding nettyHttpBinding;
     private HeaderFilterStrategy headerFilterStrategy;
     private boolean traceEnabled;
     private String httpMethodRestrict;
+    private SharedNettyHttpServer sharedNettyHttpServer;
 
     public NettyHttpEndpoint(String endpointUri, NettyHttpComponent component, NettyConfiguration configuration) {
         super(endpointUri, component, configuration);
@@ -56,10 +60,18 @@ public class NettyHttpEndpoint extends NettyEndpoint implements HeaderFilterStra
     public Consumer createConsumer(Processor processor) throws Exception {
         NettyHttpConsumer answer = new NettyHttpConsumer(this, processor, getConfiguration());
         configureConsumer(answer);
-        // reuse pipeline factory for the same address
-        HttpServerBootstrapFactory factory = getComponent().getOrCreateHttpNettyServerBootstrapFactory(answer);
-        // force using our server bootstrap factory
-        answer.setNettyServerBootstrapFactory(factory);
+
+        if (sharedNettyHttpServer != null) {
+            answer.setSharedNettyHttpServer(sharedNettyHttpServer);
+            answer.setNettyServerBootstrapFactory(sharedNettyHttpServer.getServerBootstrapFactory());
+            LOG.debug("Created NettyHttpConsumer: {} using SharedNettyHttpServer: {}", answer, sharedNettyHttpServer);
+        } else {
+            // reuse pipeline factory for the same address
+            HttpServerBootstrapFactory factory = getComponent().getOrCreateHttpNettyServerBootstrapFactory(answer);
+            // force using our server bootstrap factory
+            answer.setNettyServerBootstrapFactory(factory);
+            LOG.debug("Created NettyHttpConsumer: {} using HttpServerBootstrapFactory: {}", answer, factory);
+        }
         return answer;
     }
 
@@ -146,6 +158,14 @@ public class NettyHttpEndpoint extends NettyEndpoint implements HeaderFilterStra
 
     public void setUriParameters(String uriParameters) {
         this.uriParameters = uriParameters;
+    }
+
+    public SharedNettyHttpServer getSharedNettyHttpServer() {
+        return sharedNettyHttpServer;
+    }
+
+    public void setSharedNettyHttpServer(SharedNettyHttpServer sharedNettyHttpServer) {
+        this.sharedNettyHttpServer = sharedNettyHttpServer;
     }
 
     @Override

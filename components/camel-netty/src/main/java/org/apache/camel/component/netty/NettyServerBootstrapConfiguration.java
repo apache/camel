@@ -19,6 +19,7 @@ package org.apache.camel.component.netty;
 import java.io.File;
 import java.util.Map;
 
+import org.apache.camel.util.jsse.SSLContextParameters;
 import org.jboss.netty.handler.ssl.SslHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,6 +46,7 @@ public class NettyServerBootstrapConfiguration implements Cloneable {
     // SSL options is also part of the server bootstrap as the server listener on port X is either plain or SSL
     protected boolean ssl;
     protected SslHandler sslHandler;
+    protected SSLContextParameters sslContextParameters;
     protected boolean needClientAuth;
     protected File keyStoreFile;
     protected File trustStoreFile;
@@ -180,6 +182,14 @@ public class NettyServerBootstrapConfiguration implements Cloneable {
 
     public void setSslHandler(SslHandler sslHandler) {
         this.sslHandler = sslHandler;
+    }
+
+    public SSLContextParameters getSslContextParameters() {
+        return sslContextParameters;
+    }
+
+    public void setSslContextParameters(SSLContextParameters sslContextParameters) {
+        this.sslContextParameters = sslContextParameters;
     }
 
     public boolean isNeedClientAuth() {
@@ -349,6 +359,9 @@ public class NettyServerBootstrapConfiguration implements Cloneable {
         if (sslHandler != other.sslHandler) {
             return false;
         }
+        if (sslContextParameters != other.sslContextParameters) {
+            return false;
+        }
         if (needClientAuth != other.needClientAuth) {
             return false;
         }
@@ -396,6 +409,7 @@ public class NettyServerBootstrapConfiguration implements Cloneable {
                 ", options=" + options +
                 ", ssl=" + ssl +
                 ", sslHandler=" + sslHandler +
+                ", sslContextParameters='" + sslContextParameters + '\'' +
                 ", needClientAuth=" + needClientAuth +
                 ", keyStoreFile=" + keyStoreFile +
                 ", trustStoreFile=" + trustStoreFile +

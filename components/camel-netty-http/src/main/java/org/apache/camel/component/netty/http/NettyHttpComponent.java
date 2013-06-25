@@ -37,10 +37,8 @@ import org.apache.camel.util.UnsafeUriCharactersEncoder;
  */
 public class NettyHttpComponent extends NettyComponent implements HeaderFilterStrategyAware {
 
-    // TODO: support on consumer
-    // - urlrewrite
-
-    private final Map<Integer, HttpServerMultiplexChannelHandler> multiplexChannelHandlers = new HashMap<Integer, HttpServerMultiplexChannelHandler>();
+    // factories which is created by this component and therefore manage their lifecycles
+    private final Map<Integer, HttpServerConsumerChannelFactory> multiplexChannelHandlers = new HashMap<Integer, HttpServerConsumerChannelFactory>();
     private final Map<String, HttpServerBootstrapFactory> bootstrapFactories = new HashMap<String, HttpServerBootstrapFactory>();
     private NettyHttpBinding nettyHttpBinding;
     private HeaderFilterStrategy headerFilterStrategy;
@@ -129,10 +127,11 @@ public class NettyHttpComponent extends NettyComponent implements HeaderFilterSt
         this.headerFilterStrategy = headerFilterStrategy;
     }
 
-    public synchronized HttpServerMultiplexChannelHandler getMultiplexChannelHandler(int port) {
-        HttpServerMultiplexChannelHandler answer = multiplexChannelHandlers.get(port);
+    public synchronized HttpServerConsumerChannelFactory getMultiplexChannelHandler(int port) {
+        HttpServerConsumerChannelFactory answer = multiplexChannelHandlers.get(port);
         if (answer == null) {
-            answer = new HttpServerMultiplexChannelHandler(port);
+            answer = new HttpServerMultiplexChannelHandler();
+            answer.init(port);
             multiplexChannelHandlers.put(port, answer);
         }
         return answer;
@@ -142,7 +141,8 @@ public class NettyHttpComponent extends NettyComponent implements HeaderFilterSt
         String key = consumer.getConfiguration().getAddress();
         HttpServerBootstrapFactory answer = bootstrapFactories.get(key);
         if (answer == null) {
-            answer = new HttpServerBootstrapFactory(this);
+            HttpServerConsumerChannelFactory channelFactory = getMultiplexChannelHandler(consumer.getConfiguration().getPort());
+            answer = new HttpServerBootstrapFactory(channelFactory);
             answer.init(getCamelContext(), consumer.getConfiguration(), new HttpServerPipelineFactory(consumer));
             bootstrapFactories.put(key, answer);
         }

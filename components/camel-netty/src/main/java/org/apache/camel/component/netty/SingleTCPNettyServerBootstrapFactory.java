@@ -19,10 +19,10 @@ package org.apache.camel.component.netty;
 import java.net.InetSocketAddress;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.support.ServiceSupport;
-import org.apache.camel.util.ObjectHelper;
 import org.jboss.netty.bootstrap.ServerBootstrap;
 import org.jboss.netty.channel.Channel;
 import org.jboss.netty.channel.ChannelFactory;
@@ -42,7 +42,7 @@ public class SingleTCPNettyServerBootstrapFactory extends ServiceSupport impleme
     protected static final Logger LOG = LoggerFactory.getLogger(SingleTCPNettyServerBootstrapFactory.class);
     private final ChannelGroup allChannels;
     private CamelContext camelContext;
-    private NettyConfiguration configuration;
+    private NettyServerBootstrapConfiguration configuration;
     private ChannelPipelineFactory pipelineFactory;
     private ChannelFactory channelFactory;
     private ServerBootstrap serverBootstrap;
@@ -54,7 +54,8 @@ public class SingleTCPNettyServerBootstrapFactory extends ServiceSupport impleme
         this.allChannels = new DefaultChannelGroup(SingleTCPNettyServerBootstrapFactory.class.getName());
     }
 
-    public void init(CamelContext camelContext, NettyConfiguration configuration, ChannelPipelineFactory pipelineFactory) {
+    public void init(CamelContext camelContext, NettyServerBootstrapConfiguration configuration, ChannelPipelineFactory pipelineFactory) {
+        // notice CamelContext can be optional
         this.camelContext = camelContext;
         this.configuration = configuration;
         this.pipelineFactory = pipelineFactory;
@@ -78,7 +79,6 @@ public class SingleTCPNettyServerBootstrapFactory extends ServiceSupport impleme
 
     @Override
     protected void doStart() throws Exception {
-        ObjectHelper.notNull(camelContext, "CamelContext");
         startServerBootstrap();
     }
 
@@ -88,15 +88,25 @@ public class SingleTCPNettyServerBootstrapFactory extends ServiceSupport impleme
     }
 
     protected void startServerBootstrap() {
-        bossExecutor = camelContext.getExecutorServiceManager().newCachedThreadPool(this, "NettyTCPBoss");
-        workerExecutor = camelContext.getExecutorServiceManager().newCachedThreadPool(this, "NettyTCPWorker");
+        if (camelContext != null) {
+            bossExecutor = camelContext.getExecutorServiceManager().newCachedThreadPool(this, "NettyTCPBoss");
+            workerExecutor = camelContext.getExecutorServiceManager().newCachedThreadPool(this, "NettyTCPWorker");
 
-        if (configuration.getWorkerCount() <= 0) {
-            channelFactory = new NioServerSocketChannelFactory(bossExecutor, workerExecutor);
+            if (configuration.getWorkerCount() <= 0) {
+                channelFactory = new NioServerSocketChannelFactory(bossExecutor, workerExecutor);
+            } else {
+                channelFactory = new NioServerSocketChannelFactory(bossExecutor, workerExecutor,
+                        configuration.getWorkerCount());
+            }
         } else {
-            channelFactory = new NioServerSocketChannelFactory(bossExecutor, workerExecutor,
-                    configuration.getWorkerCount());
+            if (configuration.getWorkerCount() <= 0) {
+                channelFactory = new NioServerSocketChannelFactory();
+            } else {
+                channelFactory = new NioServerSocketChannelFactory(Executors.newCachedThreadPool(),
+                        Executors.newCachedThreadPool(), configuration.getWorkerCount());
+            }
         }
+
         serverBootstrap = new ServerBootstrap(channelFactory);
         serverBootstrap.setOption("child.keepAlive", configuration.isKeepAlive());
         serverBootstrap.setOption("child.tcpNoDelay", configuration.isTcpNoDelay());
@@ -138,11 +148,19 @@ public class SingleTCPNettyServerBootstrapFactory extends ServiceSupport impleme
 
         // and then shutdown the thread pools
         if (bossExecutor != null) {
-            camelContext.getExecutorServiceManager().shutdown(bossExecutor);
+            if (camelContext != null) {
+                camelContext.getExecutorServiceManager().shutdown(bossExecutor);
+            } else {
+                bossExecutor.shutdownNow();
+            }
             bossExecutor = null;
         }
         if (workerExecutor != null) {
-            camelContext.getExecutorServiceManager().shutdown(workerExecutor);
+            if (camelContext != null) {
+                camelContext.getExecutorServiceManager().shutdown(workerExecutor);
+            } else {
+                workerExecutor.shutdownNow();
+            }
             workerExecutor = null;
         }
     }
