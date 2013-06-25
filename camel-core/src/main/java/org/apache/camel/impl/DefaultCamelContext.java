@@ -161,7 +161,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     private List<LifecycleStrategy> lifecycleStrategies = new ArrayList<LifecycleStrategy>();
     private ManagementStrategy managementStrategy;
     private ManagementMBeanAssembler managementMBeanAssembler;
-    private AtomicBoolean managementStrategyInitialized = new AtomicBoolean(false);
+    private final AtomicBoolean managementStrategyInitialized = new AtomicBoolean(false);
     private final List<RouteDefinition> routeDefinitions = new ArrayList<RouteDefinition>();
     private List<InterceptStrategy> interceptStrategies = new ArrayList<InterceptStrategy>();
 
@@ -2385,7 +2385,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     public void setManagementStrategy(ManagementStrategy managementStrategy) {
         synchronized (managementStrategyInitialized) {
             if (managementStrategyInitialized.get()) {
-                log.warn("Resetting ManagementStrategy for context " + getName());
+                log.warn("Resetting ManagementStrategy for CamelContext: " + getName());
             }
 
             this.managementStrategy = managementStrategy;
@@ -2589,17 +2589,25 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         this.uuidGenerator = uuidGenerator;
     }
 
+    @Override
+    public String getProperty(String name) {
+        String value = getProperties().get(name);
+        if (ObjectHelper.isNotEmpty(value)) {
+            try {
+                value = resolvePropertyPlaceholders(value);
+            } catch (Exception e) {
+                throw new RuntimeCamelException("Error getting property: " + name, e);
+            }
+        }
+        return value;
+    }
+
     protected Map<String, RouteService> getRouteServices() {
         return routeServices;
     }
 
     protected ManagementStrategy createManagementStrategy() {
         return new ManagementStrategyFactory().create(this, disableJMX || Boolean.getBoolean(JmxSystemPropertyKeys.DISABLED));
-    }
-
-    @Override
-    public String toString() {
-        return "CamelContext(" + getName() + ")";
     }
 
     /**
@@ -2622,16 +2630,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     }
 
     @Override
-    public String getProperty(String name) {
-        String value = getProperties().get(name);
-        if (ObjectHelper.isNotEmpty(value)) {
-            try {
-                value = resolvePropertyPlaceholders(value);
-            } catch (Exception ex) {
-                // throw CamelRutimeException
-                throw new RuntimeCamelException(ex);
-            }
-        }
-        return value;
+    public String toString() {
+        return "CamelContext(" + getName() + ")";
     }
 }
