@@ -45,7 +45,7 @@ public class NettyHttpEndpoint extends NettyEndpoint implements HeaderFilterStra
     private HeaderFilterStrategy headerFilterStrategy;
     private boolean traceEnabled;
     private String httpMethodRestrict;
-    private SharedNettyHttpServer sharedNettyHttpServer;
+    private NettySharedHttpServer nettySharedHttpServer;
 
     public NettyHttpEndpoint(String endpointUri, NettyHttpComponent component, NettyConfiguration configuration) {
         super(endpointUri, component, configuration);
@@ -61,10 +61,9 @@ public class NettyHttpEndpoint extends NettyEndpoint implements HeaderFilterStra
         NettyHttpConsumer answer = new NettyHttpConsumer(this, processor, getConfiguration());
         configureConsumer(answer);
 
-        if (sharedNettyHttpServer != null) {
-            answer.setSharedNettyHttpServer(sharedNettyHttpServer);
-            answer.setNettyServerBootstrapFactory(sharedNettyHttpServer.getServerBootstrapFactory());
-            LOG.debug("Created NettyHttpConsumer: {} using SharedNettyHttpServer: {}", answer, sharedNettyHttpServer);
+        if (nettySharedHttpServer != null) {
+            answer.setNettyServerBootstrapFactory(nettySharedHttpServer.getServerBootstrapFactory());
+            LOG.debug("Created NettyHttpConsumer: {} using NettySharedHttpServer: {}", answer, nettySharedHttpServer);
         } else {
             // reuse pipeline factory for the same address
             HttpServerBootstrapFactory factory = getComponent().getOrCreateHttpNettyServerBootstrapFactory(answer);
@@ -160,12 +159,12 @@ public class NettyHttpEndpoint extends NettyEndpoint implements HeaderFilterStra
         this.uriParameters = uriParameters;
     }
 
-    public SharedNettyHttpServer getSharedNettyHttpServer() {
-        return sharedNettyHttpServer;
+    public NettySharedHttpServer getNettySharedHttpServer() {
+        return nettySharedHttpServer;
     }
 
-    public void setSharedNettyHttpServer(SharedNettyHttpServer sharedNettyHttpServer) {
-        this.sharedNettyHttpServer = sharedNettyHttpServer;
+    public void setNettySharedHttpServer(NettySharedHttpServer nettySharedHttpServer) {
+        this.nettySharedHttpServer = nettySharedHttpServer;
     }
 
     @Override

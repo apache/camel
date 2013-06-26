@@ -19,6 +19,7 @@ package org.apache.camel.component.netty.http;
 import org.apache.camel.Service;
 import org.apache.camel.component.netty.NettyServerBootstrapConfiguration;
 import org.apache.camel.component.netty.NettyServerBootstrapFactory;
+import org.apache.camel.spi.ClassResolver;
 
 /**
  * A single interface to easily configure and setup a shared Netty HTTP server
@@ -28,12 +29,17 @@ import org.apache.camel.component.netty.NettyServerBootstrapFactory;
  * set this using {@link #setNettyServerBootstrapConfiguration(org.apache.camel.component.netty.NettyServerBootstrapConfiguration)}.
  * Then call the {@link #start()} to initialize this shared server.
  */
-public interface SharedNettyHttpServer extends Service {
+public interface NettySharedHttpServer extends Service {
 
     /**
      * Sets the bootstrap configuration to use by this shared Netty HTTP server.
      */
     void setNettyServerBootstrapConfiguration(NettyServerBootstrapConfiguration configuration);
+
+    /**
+     * To use a custom {@link ClassResolver} for loading resource on the classpath.
+     */
+    void setClassResolver(ClassResolver classResolver);
 
     /**
      * Gets the port number this Netty HTTP server uses.

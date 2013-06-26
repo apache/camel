@@ -23,29 +23,29 @@ import org.junit.Test;
 
 public class NettySharedHttpServerTest extends BaseNettyTest {
 
-    private SharedNettyHttpServer sharedNettyHttpServer;
+    private NettySharedHttpServer nettySharedHttpServer;
 
     @Override
     protected JndiRegistry createRegistry() throws Exception {
-        sharedNettyHttpServer = new DefaultSharedNettyHttpServer();
+        nettySharedHttpServer = new DefaultNettySharedHttpServer();
 
         NettyServerBootstrapConfiguration configuration = new NettyServerBootstrapConfiguration();
         configuration.setPort(getPort());
         configuration.setHost("localhost");
         configuration.setBacklog(20);
         configuration.setKeepAlive(true);
-        sharedNettyHttpServer.setNettyServerBootstrapConfiguration(configuration);
+        nettySharedHttpServer.setNettyServerBootstrapConfiguration(configuration);
 
-        sharedNettyHttpServer.start();
+        nettySharedHttpServer.start();
 
         JndiRegistry jndi = super.createRegistry();
-        jndi.bind("myNettyServer", sharedNettyHttpServer);
+        jndi.bind("myNettyServer", nettySharedHttpServer);
         return jndi;
     }
 
     @Override
     public void tearDown() throws Exception {
-        sharedNettyHttpServer.stop();
+        nettySharedHttpServer.stop();
         super.tearDown();
     }
 
@@ -68,11 +68,13 @@ public class NettySharedHttpServerTest extends BaseNettyTest {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("netty-http:http://0.0.0.0:{{port}}/foo?sharedNettyHttpServer=#myNettyServer")
+                // we are using a shared netty http server, so the port number is not needed to be defined in the uri
+                from("netty-http:http://localhost/foo?nettySharedHttpServer=#myNettyServer")
                     .to("mock:foo")
                     .transform().constant("Bye World");
 
-                from("netty-http:http://0.0.0.0:{{port}}/bar?sharedNettyHttpServer=#myNettyServer")
+                // we are using a shared netty http server, so the port number is not needed to be defined in the uri
+                from("netty-http:http://localhost/bar?nettySharedHttpServer=#myNettyServer")
                     .to("mock:bar")
                     .transform().constant("Bye Camel");
             }

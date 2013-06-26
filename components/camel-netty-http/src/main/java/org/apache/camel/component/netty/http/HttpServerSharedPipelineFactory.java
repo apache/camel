@@ -25,7 +25,6 @@ import org.apache.camel.component.netty.ServerPipelineFactory;
 import org.apache.camel.component.netty.ssl.SSLEngineFactory;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.util.ObjectHelper;
-import org.jboss.netty.channel.ChannelHandler;
 import org.jboss.netty.channel.ChannelPipeline;
 import org.jboss.netty.channel.Channels;
 import org.jboss.netty.handler.codec.http.HttpChunkAggregator;
@@ -37,24 +36,25 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * {@link ServerPipelineFactory} for the Netty HTTP server.
+ * A shared {@link org.apache.camel.component.netty.ServerPipelineFactory} for a shared Netty HTTP server.
+ *
+ * @see NettySharedHttpServer
  */
-public class HttpServerPipelineFactory extends ServerPipelineFactory {
+public class HttpServerSharedPipelineFactory extends HttpServerPipelineFactory {
 
-    private static final Logger LOG = LoggerFactory.getLogger(HttpServerPipelineFactory.class);
-    protected NettyHttpConsumer consumer;
-    protected SSLContext sslContext;
-    protected NettyServerBootstrapConfiguration configuration;
+    private static final Logger LOG = LoggerFactory.getLogger(HttpServerSharedPipelineFactory.class);
+    private final NettyServerBootstrapConfiguration configuration;
+    private final HttpServerConsumerChannelFactory channelFactory;
+    private final ClassResolver classResolver;
+    private SSLContext sslContext;
 
-    public HttpServerPipelineFactory() {
-        // default constructor needed
-    }
-
-    public HttpServerPipelineFactory(NettyHttpConsumer nettyConsumer) {
-        this.consumer = nettyConsumer;
-        this.configuration = nettyConsumer.getConfiguration();
+    public HttpServerSharedPipelineFactory(NettyServerBootstrapConfiguration configuration, HttpServerConsumerChannelFactory channelFactory,
+                                           ClassResolver classResolver) {
+        this.configuration = configuration;
+        this.channelFactory = channelFactory;
+        this.classResolver = classResolver;
         try {
-            this.sslContext = createSSLContext(consumer.getConfiguration());
+            this.sslContext = createSSLContext(configuration);
         } catch (Exception e) {
             throw ObjectHelper.wrapRuntimeCamelException(e);
         }
@@ -66,7 +66,7 @@ public class HttpServerPipelineFactory extends ServerPipelineFactory {
 
     @Override
     public ServerPipelineFactory createPipelineFactory(NettyConsumer nettyConsumer) {
-        return new HttpServerPipelineFactory((NettyHttpConsumer) nettyConsumer);
+        throw new UnsupportedOperationException("Should not call this operation");
     }
 
     @Override
@@ -90,9 +90,7 @@ public class HttpServerPipelineFactory extends ServerPipelineFactory {
             pipeline.addLast("deflater", new HttpContentCompressor());
         }
 
-        int port = consumer.getConfiguration().getPort();
-        ChannelHandler handler = consumer.getEndpoint().getComponent().getMultiplexChannelHandler(port).getChannelHandler();
-        pipeline.addLast("handler", handler);
+        pipeline.addLast("handler", channelFactory.getChannelHandler());
 
         return pipeline;
     }
@@ -104,8 +102,7 @@ public class HttpServerPipelineFactory extends ServerPipelineFactory {
 
         // create ssl context once
         if (configuration.getSslContextParameters() != null) {
-            SSLContext context = configuration.getSslContextParameters().createSSLContext();
-            return context;
+            return configuration.getSslContextParameters().createSSLContext();
         }
 
         return null;
@@ -142,8 +139,7 @@ public class HttpServerPipelineFactory extends ServerPipelineFactory {
                         configuration.getTrustStoreFile(),
                         configuration.getPassphrase().toCharArray());
             } else {
-                ClassResolver resolver = consumer != null ? consumer.getContext().getClassResolver() : null;
-                sslEngineFactory = new SSLEngineFactory(resolver,
+                sslEngineFactory = new SSLEngineFactory(classResolver,
                         configuration.getKeyStoreFormat(),
                         configuration.getSecurityProvider(),
                         configuration.getKeyStoreResource(),
@@ -158,11 +154,13 @@ public class HttpServerPipelineFactory extends ServerPipelineFactory {
     }
 
     private boolean supportChunked() {
-        return consumer.getEndpoint().getConfiguration().isChunked();
+        // TODO: options on bootstrap
+        return true;
     }
 
     private boolean supportCompressed() {
-        return consumer.getEndpoint().getConfiguration().isCompression();
+        // TODO: options on bootstrap
+        return false;
     }
 
 }

@@ -16,26 +16,31 @@
  */
 package org.apache.camel.component.netty.http;
 
-import org.apache.camel.component.netty.DefaultServerPipelineFactory;
 import org.apache.camel.component.netty.NettyServerBootstrapConfiguration;
 import org.apache.camel.component.netty.NettyServerBootstrapFactory;
 import org.apache.camel.component.netty.http.handlers.HttpServerMultiplexChannelHandler;
+import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
 import org.jboss.netty.channel.ChannelPipelineFactory;
 
 /**
- * A default {@link SharedNettyHttpServer} to make sharing Netty server in Camel applications easier.
+ * A default {@link NettySharedHttpServer} to make sharing Netty server in Camel applications easier.
  */
-public class DefaultSharedNettyHttpServer extends ServiceSupport implements SharedNettyHttpServer {
+public class DefaultNettySharedHttpServer extends ServiceSupport implements NettySharedHttpServer {
 
     private NettyServerBootstrapConfiguration configuration;
     private HttpServerConsumerChannelFactory channelFactory;
     private HttpServerBootstrapFactory bootstrapFactory;
+    private ClassResolver classResolver;
 
     public void setNettyServerBootstrapConfiguration(NettyServerBootstrapConfiguration configuration) {
         this.configuration = configuration;
+    }
+
+    public void setClassResolver(ClassResolver classResolver) {
+        this.classResolver = classResolver;
     }
 
     public int getPort() {
@@ -60,11 +65,11 @@ public class DefaultSharedNettyHttpServer extends ServiceSupport implements Shar
 
         // force using tcp as the underlying transport
         configuration.setProtocol("tcp");
-        // TODO: ChannelPipelineFactory should be a shared to handle adding consumers
-        ChannelPipelineFactory pipelineFactory = new HttpServerPipelineFactory(configuration);
 
         channelFactory = new HttpServerMultiplexChannelHandler();
         channelFactory.init(configuration.getPort());
+
+        ChannelPipelineFactory pipelineFactory = new HttpServerSharedPipelineFactory(configuration, channelFactory, classResolver);
 
         // create bootstrap factory and disable compatible check as its shared among the consumers
         bootstrapFactory = new HttpServerBootstrapFactory(channelFactory, false);
