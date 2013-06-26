@@ -29,11 +29,12 @@ public class NettySharedHttpServerTest extends BaseNettyTest {
     protected JndiRegistry createRegistry() throws Exception {
         nettySharedHttpServer = new DefaultNettySharedHttpServer();
 
-        NettyServerBootstrapConfiguration configuration = new NettyServerBootstrapConfiguration();
+        NettySharedHttpServerBootstrapConfiguration configuration = new NettySharedHttpServerBootstrapConfiguration();
         configuration.setPort(getPort());
         configuration.setHost("localhost");
         configuration.setBacklog(20);
         configuration.setKeepAlive(true);
+        configuration.setCompression(true);
         nettySharedHttpServer.setNettyServerBootstrapConfiguration(configuration);
 
         nettySharedHttpServer.start();

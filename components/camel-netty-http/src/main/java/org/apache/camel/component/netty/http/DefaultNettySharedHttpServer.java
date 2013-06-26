@@ -34,12 +34,12 @@ public class DefaultNettySharedHttpServer extends ServiceSupport implements Nett
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultNettySharedHttpServer.class);
 
-    private NettyServerBootstrapConfiguration configuration;
+    private NettySharedHttpServerBootstrapConfiguration configuration;
     private HttpServerConsumerChannelFactory channelFactory;
     private HttpServerBootstrapFactory bootstrapFactory;
     private ClassResolver classResolver;
 
-    public void setNettyServerBootstrapConfiguration(NettyServerBootstrapConfiguration configuration) {
+    public void setNettyServerBootstrapConfiguration(NettySharedHttpServerBootstrapConfiguration configuration) {
         this.configuration = configuration;
     }
 
@@ -64,7 +64,7 @@ public class DefaultNettySharedHttpServer extends ServiceSupport implements Nett
 
         // port must be set
         if (configuration.getPort() <= 0) {
-            throw new IllegalArgumentException("Port must be configured on NettyServerBootstrapConfiguration " + configuration);
+            throw new IllegalArgumentException("Port must be configured on NettySharedHttpServerBootstrapConfiguration " + configuration);
         }
 
         LOG.info("Starting NettySharedHttpServer using configuration: {} on port: {}", configuration, configuration.getPort());

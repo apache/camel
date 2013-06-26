@@ -26,7 +26,7 @@ import org.apache.camel.spi.ClassResolver;
  * to be re-used among other Camel applications.
  * <p/>
  * To use this, just define a {@link NettyServerBootstrapConfiguration} configuration, and
- * set this using {@link #setNettyServerBootstrapConfiguration(org.apache.camel.component.netty.NettyServerBootstrapConfiguration)}.
+ * set this using {@link #setNettyServerBootstrapConfiguration(NettySharedHttpServerBootstrapConfiguration)}.
  * Then call the {@link #start()} to initialize this shared server.
  */
 public interface NettySharedHttpServer extends Service {
@@ -34,7 +34,7 @@ public interface NettySharedHttpServer extends Service {
     /**
      * Sets the bootstrap configuration to use by this shared Netty HTTP server.
      */
-    void setNettyServerBootstrapConfiguration(NettyServerBootstrapConfiguration configuration);
+    void setNettyServerBootstrapConfiguration(NettySharedHttpServerBootstrapConfiguration configuration);
 
     /**
      * To use a custom {@link ClassResolver} for loading resource on the classpath.

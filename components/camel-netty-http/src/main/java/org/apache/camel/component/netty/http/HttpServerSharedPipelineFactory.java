@@ -43,12 +43,12 @@ import org.slf4j.LoggerFactory;
 public class HttpServerSharedPipelineFactory extends HttpServerPipelineFactory {
 
     private static final Logger LOG = LoggerFactory.getLogger(HttpServerSharedPipelineFactory.class);
-    private final NettyServerBootstrapConfiguration configuration;
+    private final NettySharedHttpServerBootstrapConfiguration configuration;
     private final HttpServerConsumerChannelFactory channelFactory;
     private final ClassResolver classResolver;
     private SSLContext sslContext;
 
-    public HttpServerSharedPipelineFactory(NettyServerBootstrapConfiguration configuration, HttpServerConsumerChannelFactory channelFactory,
+    public HttpServerSharedPipelineFactory(NettySharedHttpServerBootstrapConfiguration configuration, HttpServerConsumerChannelFactory channelFactory,
                                            ClassResolver classResolver) {
         this.configuration = configuration;
         this.channelFactory = channelFactory;
@@ -82,11 +82,11 @@ public class HttpServerSharedPipelineFactory extends HttpServerPipelineFactory {
 
         pipeline.addLast("decoder", new HttpRequestDecoder());
         // Uncomment the following line if you don't want to handle HttpChunks.
-        if (supportChunked()) {
+        if (configuration.isChunked()) {
             pipeline.addLast("aggregator", new HttpChunkAggregator(1048576));
         }
         pipeline.addLast("encoder", new HttpResponseEncoder());
-        if (supportCompressed()) {
+        if (configuration.isCompression()) {
             pipeline.addLast("deflater", new HttpContentCompressor());
         }
 
@@ -151,16 +151,6 @@ public class HttpServerSharedPipelineFactory extends HttpServerPipelineFactory {
             sslEngine.setNeedClientAuth(configuration.isNeedClientAuth());
             return new SslHandler(sslEngine);
         }
-    }
-
-    private boolean supportChunked() {
-        // TODO: options on bootstrap
-        return true;
-    }
-
-    private boolean supportCompressed() {
-        // TODO: options on bootstrap
-        return false;
     }
 
 }
