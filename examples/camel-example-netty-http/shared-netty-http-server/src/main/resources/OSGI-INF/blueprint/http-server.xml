@@ -27,7 +27,6 @@
     <property name="host" value="0.0.0.0"/>
     <!-- additional options -->
     <property name="backlog" value="50"/>
-    <property name="compression" value="true"/>
   </bean>
 
   <!-- the netty http server -->

@@ -26,7 +26,7 @@
 
     <artifactId>camel-example-netty-http</artifactId>
     <packaging>pom</packaging>
-    <name>Camel :: Example :: Netty Shared HTTP Server</name>
+    <name>Camel :: Example :: Netty HTTP</name>
     <description>An example showing how to use a shared Netty HTTP server with multiple Camel applications in OSGi container</description>
 
     <properties>
