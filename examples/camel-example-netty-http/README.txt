@@ -30,7 +30,7 @@ The port number can be changed by editing the following source file:
 
 In the Apache Karaf / ServiceMix shell type:
 
-  osgi:install -s mvn:mvn:org.apache.camel/camel-example-netty-http-shared/2.12.0
+  osgi:install -s mvn:org.apache.camel/camel-example-netty-http-shared/2.12.0
 
 Then you can install the Camel applications:
 

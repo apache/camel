@@ -16,12 +16,16 @@
  */
 package org.apache.camel.component.netty.http;
 
+import java.util.concurrent.ThreadFactory;
+import java.util.regex.Matcher;
+
 import org.apache.camel.component.netty.NettyServerBootstrapFactory;
 import org.apache.camel.component.netty.http.handlers.HttpServerMultiplexChannelHandler;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
+import org.apache.camel.util.concurrent.CamelThreadFactory;
 import org.jboss.netty.channel.ChannelPipelineFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,8 +36,8 @@ import org.slf4j.LoggerFactory;
 public class DefaultNettySharedHttpServer extends ServiceSupport implements NettySharedHttpServer {
 
     // TODO: option to enlist in JMX
-    // TODO: option to configure thread name pattern for the shared jetty threads
 
+    public static final String DEFAULT_PATTERN = "Camel Thread ##counter# - #name#:#port#";
     private static final Logger LOG = LoggerFactory.getLogger(DefaultNettySharedHttpServer.class);
 
     private NettySharedHttpServerBootstrapConfiguration configuration;
@@ -41,6 +45,7 @@ public class DefaultNettySharedHttpServer extends ServiceSupport implements Nett
     private HttpServerBootstrapFactory bootstrapFactory;
     private ClassResolver classResolver;
     private boolean startServer = true;
+    private String threadPattern = DEFAULT_PATTERN;
 
     public void setNettyServerBootstrapConfiguration(NettySharedHttpServerBootstrapConfiguration configuration) {
         this.configuration = configuration;
@@ -74,6 +79,10 @@ public class DefaultNettySharedHttpServer extends ServiceSupport implements Nett
         this.startServer = startServer;
     }
 
+    public void setThreadNamePattern(String pattern) {
+        this.threadPattern = pattern;
+    }
+
     protected void doStart() throws Exception {
         ObjectHelper.notNull(configuration, "setNettyServerBootstrapConfiguration() must be called with a NettyServerBootstrapConfiguration instance", this);
 
@@ -96,9 +105,15 @@ public class DefaultNettySharedHttpServer extends ServiceSupport implements Nett
 
         ChannelPipelineFactory pipelineFactory = new HttpServerSharedPipelineFactory(configuration, channelFactory, classResolver);
 
+        // thread factory and pattern
+        String port = Matcher.quoteReplacement("" + configuration.getPort());
+        String pattern = threadPattern;
+        pattern = pattern.replaceFirst("#port#", port);
+        ThreadFactory tf = new CamelThreadFactory(pattern, "NettySharedHttpServer", true);
+
         // create bootstrap factory and disable compatible check as its shared among the consumers
         bootstrapFactory = new HttpServerBootstrapFactory(channelFactory, false);
-        bootstrapFactory.init(null, configuration, pipelineFactory);
+        bootstrapFactory.init(tf, configuration, pipelineFactory);
 
         ServiceHelper.startServices(channelFactory);
 

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.netty;
 
+import java.util.concurrent.ThreadFactory;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Service;
 import org.jboss.netty.channel.Channel;
@@ -31,13 +33,22 @@ import org.jboss.netty.channel.ChannelPipelineFactory;
 public interface NettyServerBootstrapFactory extends Service {
 
     /**
-     * Initializes this {@link NettyServerBootstrapFactory}.
+     * Initializes this <b>non-shared</b> {@link NettyServerBootstrapFactory}.
      *
-     * @param camelContext     Use <tt>null</tt> if this factory is to be shared among other Camel applications.
+     * @param camelContext     the {@link CamelContext} for non-shared bootstrap factory
      * @param configuration    the bootstrap configuration
      * @param pipelineFactory  the pipeline factory
      */
     void init(CamelContext camelContext, NettyServerBootstrapConfiguration configuration, ChannelPipelineFactory pipelineFactory);
+
+    /**
+     * Initializes this <b>shared</b> {@link NettyServerBootstrapFactory}.
+     *
+     * @param threadFactory    the thread factory to use for shared bootstrap factory
+     * @param configuration    the bootstrap configuration
+     * @param pipelineFactory  the pipeline factory
+     */
+    void init(ThreadFactory threadFactory, NettyServerBootstrapConfiguration configuration, ChannelPipelineFactory pipelineFactory);
 
     /**
      * When a new {@link Channel} is opened.

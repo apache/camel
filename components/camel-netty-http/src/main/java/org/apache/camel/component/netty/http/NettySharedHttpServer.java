@@ -47,6 +47,11 @@ public interface NettySharedHttpServer extends Service {
     void setStartServer(boolean startServer);
 
     /**
+     * Sets a custom thread name pattern to be used for naming the Netty HTTP server threads.
+     */
+    void setThreadNamePattern(String pattern);
+
+    /**
      * Gets the port number this Netty HTTP server uses.
      */
     int getPort();

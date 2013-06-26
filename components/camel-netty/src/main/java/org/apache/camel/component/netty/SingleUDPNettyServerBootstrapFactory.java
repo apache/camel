@@ -20,6 +20,7 @@ import java.net.InetSocketAddress;
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.support.ServiceSupport;
@@ -43,6 +44,7 @@ public class SingleUDPNettyServerBootstrapFactory extends ServiceSupport impleme
     protected static final Logger LOG = LoggerFactory.getLogger(SingleUDPNettyServerBootstrapFactory.class);
     private final ChannelGroup allChannels;
     private CamelContext camelContext;
+    private ThreadFactory threadFactory;
     private NettyServerBootstrapConfiguration configuration;
     private ChannelPipelineFactory pipelineFactory;
     private DatagramChannelFactory datagramChannelFactory;
@@ -55,8 +57,13 @@ public class SingleUDPNettyServerBootstrapFactory extends ServiceSupport impleme
     }
 
     public void init(CamelContext camelContext, NettyServerBootstrapConfiguration configuration, ChannelPipelineFactory pipelineFactory) {
-        // notice CamelContext can be optional
         this.camelContext = camelContext;
+        this.configuration = configuration;
+        this.pipelineFactory = pipelineFactory;
+    }
+
+    public void init(ThreadFactory threadFactory, NettyServerBootstrapConfiguration configuration, ChannelPipelineFactory pipelineFactory) {
+        this.threadFactory = threadFactory;
         this.configuration = configuration;
         this.pipelineFactory = pipelineFactory;
     }
@@ -79,6 +86,9 @@ public class SingleUDPNettyServerBootstrapFactory extends ServiceSupport impleme
 
     @Override
     protected void doStart() throws Exception {
+        if (camelContext == null && threadFactory == null) {
+            throw new IllegalArgumentException("Either CamelContext or ThreadFactory must be set on " + this);
+        }
         startServerBootstrap();
     }
 
@@ -91,7 +101,7 @@ public class SingleUDPNettyServerBootstrapFactory extends ServiceSupport impleme
         if (camelContext != null) {
             workerExecutor = camelContext.getExecutorServiceManager().newCachedThreadPool(this, "NettyUDPWorker");
         } else {
-            workerExecutor = Executors.newCachedThreadPool();
+            workerExecutor = Executors.newCachedThreadPool(threadFactory);
         }
 
         if (configuration.getWorkerCount() <= 0) {
