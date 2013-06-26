@@ -34,7 +34,7 @@ public interface NettySharedHttpServer extends Service {
     /**
      * Sets the bootstrap configuration to use by this shared Netty HTTP server.
      */
-    void setNettyServerBootstrapConfiguration(NettySharedHttpServerBootstrapConfiguration configuration);
+    void setNettyServerBootstrapConfiguration(NettyServerBootstrapConfiguration configuration);
 
     /**
      * To use a custom {@link ClassResolver} for loading resource on the classpath.

@@ -34,12 +34,12 @@ public class DefaultNettySharedHttpServer extends ServiceSupport implements Nett
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultNettySharedHttpServer.class);
 
-    private NettySharedHttpServerBootstrapConfiguration configuration;
+    private NettyServerBootstrapConfiguration configuration;
     private HttpServerConsumerChannelFactory channelFactory;
     private HttpServerBootstrapFactory bootstrapFactory;
     private ClassResolver classResolver;
 
-    public void setNettyServerBootstrapConfiguration(NettySharedHttpServerBootstrapConfiguration configuration) {
+    public void setNettyServerBootstrapConfiguration(NettyServerBootstrapConfiguration configuration) {
         this.configuration = configuration;
     }
 
