@@ -29,7 +29,7 @@
     <route id="http-route-two">
       <from uri="netty-http:http://localhost/two?matchOnUriPrefix=true&amp;nettySharedHttpServer=#sharedNettyHttpServer"/>
       <transform>
-        <simple>Response from Camel one using thread: ${threadName}</simple>
+        <simple>Response from Camel two on route ${routeId} using thread: ${threadName}</simple>
       </transform>
     </route>
 
