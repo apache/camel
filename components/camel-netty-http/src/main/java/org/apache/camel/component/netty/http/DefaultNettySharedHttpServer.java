@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.netty.http;
 
-import org.apache.camel.component.netty.NettyServerBootstrapConfiguration;
 import org.apache.camel.component.netty.NettyServerBootstrapFactory;
 import org.apache.camel.component.netty.http.handlers.HttpServerMultiplexChannelHandler;
 import org.apache.camel.spi.ClassResolver;
@@ -32,14 +31,18 @@ import org.slf4j.LoggerFactory;
  */
 public class DefaultNettySharedHttpServer extends ServiceSupport implements NettySharedHttpServer {
 
+    // TODO: option to enlist in JMX
+    // TODO: option to configure thread name pattern for the shared jetty threads
+
     private static final Logger LOG = LoggerFactory.getLogger(DefaultNettySharedHttpServer.class);
 
-    private NettyServerBootstrapConfiguration configuration;
+    private NettySharedHttpServerBootstrapConfiguration configuration;
     private HttpServerConsumerChannelFactory channelFactory;
     private HttpServerBootstrapFactory bootstrapFactory;
     private ClassResolver classResolver;
+    private boolean startServer = true;
 
-    public void setNettyServerBootstrapConfiguration(NettyServerBootstrapConfiguration configuration) {
+    public void setNettyServerBootstrapConfiguration(NettySharedHttpServerBootstrapConfiguration configuration) {
         this.configuration = configuration;
     }
 
@@ -59,6 +62,18 @@ public class DefaultNettySharedHttpServer extends ServiceSupport implements Nett
         return bootstrapFactory;
     }
 
+    public int getConsumersSize() {
+        if (channelFactory != null) {
+            return channelFactory.consumers();
+        } else {
+            return -1;
+        }
+    }
+
+    public void setStartServer(boolean startServer) {
+        this.startServer = startServer;
+    }
+
     protected void doStart() throws Exception {
         ObjectHelper.notNull(configuration, "setNettyServerBootstrapConfiguration() must be called with a NettyServerBootstrapConfiguration instance", this);
 
@@ -66,8 +81,12 @@ public class DefaultNettySharedHttpServer extends ServiceSupport implements Nett
         if (configuration.getPort() <= 0) {
             throw new IllegalArgumentException("Port must be configured on NettySharedHttpServerBootstrapConfiguration " + configuration);
         }
+        // hostname must be set
+        if (ObjectHelper.isEmpty(configuration.getHost())) {
+            throw new IllegalArgumentException("Host must be configured on NettySharedHttpServerBootstrapConfiguration " + configuration);
+        }
 
-        LOG.info("Starting NettySharedHttpServer using configuration: {} on port: {}", configuration, configuration.getPort());
+        LOG.debug("NettySharedHttpServer using configuration: {}", configuration);
 
         // force using tcp as the underlying transport
         configuration.setProtocol("tcp");
@@ -80,11 +99,18 @@ public class DefaultNettySharedHttpServer extends ServiceSupport implements Nett
         // create bootstrap factory and disable compatible check as its shared among the consumers
         bootstrapFactory = new HttpServerBootstrapFactory(channelFactory, false);
         bootstrapFactory.init(null, configuration, pipelineFactory);
+
+        ServiceHelper.startServices(channelFactory);
+
+        if (startServer) {
+            LOG.info("Starting NettySharedHttpServer on {}:{}", configuration.getHost(), configuration.getPort());
+            ServiceHelper.startServices(bootstrapFactory);
+        }
     }
 
     @Override
     protected void doStop() throws Exception {
-        LOG.info("Stopping NettySharedHttpServer using configuration: {} on port: {}", configuration, configuration.getPort());
+        LOG.info("Stopping NettySharedHttpServer on {}:{}", configuration.getHost(), configuration.getPort());
         ServiceHelper.stopServices(bootstrapFactory, channelFactory);
     }
 }

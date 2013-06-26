@@ -15,16 +15,41 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
-    <parent>
-        <artifactId>camel-example-netty-http</artifactId>
-        <groupId>org.apache.camel</groupId>
-        <version>2.12-SNAPSHOT</version>
-    </parent>
-    <modelVersion>4.0.0</modelVersion>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+  <parent>
+    <artifactId>camel-example-netty-http</artifactId>
+    <groupId>org.apache.camel</groupId>
+    <version>2.12-SNAPSHOT</version>
+  </parent>
+  <modelVersion>4.0.0</modelVersion>
 
-    <artifactId>camel-example-netty-myapp-one</artifactId>
-    <name>Camel :: Example :: Netty HTTP :: My Application One</name>
-    <packaging>bundle</packaging>
+  <artifactId>camel-example-netty-myapp-one</artifactId>
+  <name>Camel :: Example :: Netty HTTP :: My Application One</name>
+  <packaging>bundle</packaging>
+
+  <build>
+    <plugins>
+
+      <!-- to generate the MANIFEST-FILE of the bundle -->
+      <plugin>
+        <groupId>org.apache.felix</groupId>
+        <artifactId>maven-bundle-plugin</artifactId>
+        <extensions>true</extensions>
+        <configuration>
+          <manifestLocation>target/META-INF</manifestLocation>
+          <instructions>
+            <Bundle-SymbolicName>${project.groupId}.${project.artifactId}</Bundle-SymbolicName>
+            <Import-Package>
+              org.apache.camel.component.netty,
+              org.apache.camel.component.netty.http,
+              org.osgi.service.blueprint
+            </Import-Package>
+          </instructions>
+        </configuration>
+      </plugin>
+
+    </plugins>
+  </build>
 
 </project>

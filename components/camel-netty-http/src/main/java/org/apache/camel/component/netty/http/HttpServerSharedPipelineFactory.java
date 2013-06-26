@@ -43,12 +43,12 @@ import org.slf4j.LoggerFactory;
 public class HttpServerSharedPipelineFactory extends HttpServerPipelineFactory {
 
     private static final Logger LOG = LoggerFactory.getLogger(HttpServerSharedPipelineFactory.class);
-    private final NettyServerBootstrapConfiguration configuration;
+    private final NettySharedHttpServerBootstrapConfiguration configuration;
     private final HttpServerConsumerChannelFactory channelFactory;
     private final ClassResolver classResolver;
     private SSLContext sslContext;
 
-    public HttpServerSharedPipelineFactory(NettyServerBootstrapConfiguration configuration, HttpServerConsumerChannelFactory channelFactory,
+    public HttpServerSharedPipelineFactory(NettySharedHttpServerBootstrapConfiguration configuration, HttpServerConsumerChannelFactory channelFactory,
                                            ClassResolver classResolver) {
         this.configuration = configuration;
         this.channelFactory = channelFactory;
@@ -81,14 +81,13 @@ public class HttpServerSharedPipelineFactory extends HttpServerPipelineFactory {
         }
 
         pipeline.addLast("decoder", new HttpRequestDecoder());
-        // Uncomment the following line if you don't want to handle HttpChunks.
-//        if (configuration.isChunked()) {
+        if (configuration.isChunked()) {
             pipeline.addLast("aggregator", new HttpChunkAggregator(1048576));
-//        }
+        }
         pipeline.addLast("encoder", new HttpResponseEncoder());
-//        if (configuration.isCompression()) {
-//            pipeline.addLast("deflater", new HttpContentCompressor());
-//        }
+        if (configuration.isCompression()) {
+            pipeline.addLast("deflater", new HttpContentCompressor());
+        }
 
         pipeline.addLast("handler", channelFactory.getChannelHandler());
 

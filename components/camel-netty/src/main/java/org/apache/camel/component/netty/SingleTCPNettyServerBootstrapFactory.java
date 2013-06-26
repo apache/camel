@@ -124,11 +124,12 @@ public class SingleTCPNettyServerBootstrapFactory extends ServiceSupport impleme
             }
         }
 
-        LOG.info("Created ServerBootstrap {} with options: {}", serverBootstrap, serverBootstrap.getOptions());
+        LOG.debug("Created ServerBootstrap {} with options: {}", serverBootstrap, serverBootstrap.getOptions());
 
         // set the pipeline factory, which creates the pipeline for each newly created channels
         serverBootstrap.setPipelineFactory(pipelineFactory);
 
+        LOG.info("ServerBootstrap binding to {}:{}", configuration.getHost(), configuration.getPort());
         channel = serverBootstrap.bind(new InetSocketAddress(configuration.getHost(), configuration.getPort()));
         // to keep track of all channels in use
         allChannels.add(channel);
@@ -136,6 +137,8 @@ public class SingleTCPNettyServerBootstrapFactory extends ServiceSupport impleme
 
     protected void stopServerBootstrap() {
         // close all channels
+        LOG.info("ServerBootstrap unbinding from {}:{}", configuration.getHost(), configuration.getPort());
+
         LOG.trace("Closing {} channels", allChannels.size());
         ChannelGroupFuture future = allChannels.close();
         future.awaitUninterruptibly();

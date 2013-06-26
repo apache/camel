@@ -63,7 +63,7 @@ public class NettyHttpEndpoint extends NettyEndpoint implements HeaderFilterStra
 
         if (nettySharedHttpServer != null) {
             answer.setNettyServerBootstrapFactory(nettySharedHttpServer.getServerBootstrapFactory());
-            LOG.debug("Created NettyHttpConsumer: {} using NettySharedHttpServer: {}", answer, nettySharedHttpServer);
+            LOG.info("NettyHttpConsumer: {} is using NettySharedHttpServer on port: {}", answer, nettySharedHttpServer.getPort());
         } else {
             // reuse pipeline factory for the same address
             HttpServerBootstrapFactory factory = getComponent().getOrCreateHttpNettyServerBootstrapFactory(answer);

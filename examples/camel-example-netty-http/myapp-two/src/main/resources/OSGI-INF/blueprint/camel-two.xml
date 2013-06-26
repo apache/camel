@@ -23,12 +23,13 @@
   <!-- reference the shared http server -->
   <reference id="sharedNettyHttpServer" interface="org.apache.camel.component.netty.http.NettySharedHttpServer"/>
 
+  <!-- Camel application which uses the netty-http component and the shared Netty HTTP server -->
   <camelContext xmlns="http://camel.apache.org/schema/blueprint">
 
     <route id="http-route-two">
-      <from uri="netty-http:http://0.0.0.0/two?matchOnUriPrefix=true&amp;nettySharedHttpServer=#sharedNettyHttpServer"/>
+      <from uri="netty-http:http://localhost/two?matchOnUriPrefix=true&amp;nettySharedHttpServer=#sharedNettyHttpServer"/>
       <transform>
-        <simple>Response from camel two: ${body}</simple>
+        <simple>Response from Camel one using thread: ${threadName}</simple>
       </transform>
     </route>
 

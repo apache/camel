@@ -46,7 +46,7 @@ public class SingleUDPNettyServerBootstrapFactory extends ServiceSupport impleme
     private NettyServerBootstrapConfiguration configuration;
     private ChannelPipelineFactory pipelineFactory;
     private DatagramChannelFactory datagramChannelFactory;
-    private ConnectionlessBootstrap connectionlessServerBootstrap;
+    private ConnectionlessBootstrap connectionlessBootstrap;
     private Channel channel;
     private ExecutorService workerExecutor;
 
@@ -100,43 +100,46 @@ public class SingleUDPNettyServerBootstrapFactory extends ServiceSupport impleme
             datagramChannelFactory = new NioDatagramChannelFactory(workerExecutor, configuration.getWorkerCount());
         }
 
-        connectionlessServerBootstrap = new ConnectionlessBootstrap(datagramChannelFactory);
-        connectionlessServerBootstrap.setOption("child.keepAlive", configuration.isKeepAlive());
-        connectionlessServerBootstrap.setOption("child.tcpNoDelay", configuration.isTcpNoDelay());
-        connectionlessServerBootstrap.setOption("reuseAddress", configuration.isReuseAddress());
-        connectionlessServerBootstrap.setOption("child.reuseAddress", configuration.isReuseAddress());
-        connectionlessServerBootstrap.setOption("child.connectTimeoutMillis", configuration.getConnectTimeout());
-        connectionlessServerBootstrap.setOption("child.broadcast", configuration.isBroadcast());
-        connectionlessServerBootstrap.setOption("sendBufferSize", configuration.getSendBufferSize());
-        connectionlessServerBootstrap.setOption("receiveBufferSize", configuration.getReceiveBufferSize());
+        connectionlessBootstrap = new ConnectionlessBootstrap(datagramChannelFactory);
+        connectionlessBootstrap.setOption("child.keepAlive", configuration.isKeepAlive());
+        connectionlessBootstrap.setOption("child.tcpNoDelay", configuration.isTcpNoDelay());
+        connectionlessBootstrap.setOption("reuseAddress", configuration.isReuseAddress());
+        connectionlessBootstrap.setOption("child.reuseAddress", configuration.isReuseAddress());
+        connectionlessBootstrap.setOption("child.connectTimeoutMillis", configuration.getConnectTimeout());
+        connectionlessBootstrap.setOption("child.broadcast", configuration.isBroadcast());
+        connectionlessBootstrap.setOption("sendBufferSize", configuration.getSendBufferSize());
+        connectionlessBootstrap.setOption("receiveBufferSize", configuration.getReceiveBufferSize());
         // only set this if user has specified
         if (configuration.getReceiveBufferSizePredictor() > 0) {
-            connectionlessServerBootstrap.setOption("receiveBufferSizePredictorFactory",
+            connectionlessBootstrap.setOption("receiveBufferSizePredictorFactory",
                     new FixedReceiveBufferSizePredictorFactory(configuration.getReceiveBufferSizePredictor()));
         }
         if (configuration.getBacklog() > 0) {
-            connectionlessServerBootstrap.setOption("backlog", configuration.getBacklog());
+            connectionlessBootstrap.setOption("backlog", configuration.getBacklog());
         }
 
         // set any additional netty options
         if (configuration.getOptions() != null) {
             for (Map.Entry<String, Object> entry : configuration.getOptions().entrySet()) {
-                connectionlessServerBootstrap.setOption(entry.getKey(), entry.getValue());
+                connectionlessBootstrap.setOption(entry.getKey(), entry.getValue());
             }
         }
 
-        LOG.info("Created ConnectionlessBootstrap {} with options: {}", connectionlessServerBootstrap, connectionlessServerBootstrap.getOptions());
+        LOG.debug("Created ConnectionlessBootstrap {} with options: {}", connectionlessBootstrap, connectionlessBootstrap.getOptions());
 
         // set the pipeline factory, which creates the pipeline for each newly created channels
-        connectionlessServerBootstrap.setPipelineFactory(pipelineFactory);
+        connectionlessBootstrap.setPipelineFactory(pipelineFactory);
 
-        channel = connectionlessServerBootstrap.bind(new InetSocketAddress(configuration.getHost(), configuration.getPort()));
+        LOG.info("ConnectionlessBootstrap binding to {}:{}", configuration.getHost(), configuration.getPort());
+        channel = connectionlessBootstrap.bind(new InetSocketAddress(configuration.getHost(), configuration.getPort()));
         // to keep track of all channels in use
         allChannels.add(channel);
     }
 
     protected void stopServerBootstrap() {
         // close all channels
+        LOG.info("ConnectionlessBootstrap unbinding from {}:{}", configuration.getHost(), configuration.getPort());
+
         LOG.trace("Closing {} channels", allChannels.size());
         ChannelGroupFuture future = allChannels.close();
         future.awaitUninterruptibly();

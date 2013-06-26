@@ -34,12 +34,17 @@ public interface NettySharedHttpServer extends Service {
     /**
      * Sets the bootstrap configuration to use by this shared Netty HTTP server.
      */
-    void setNettyServerBootstrapConfiguration(NettyServerBootstrapConfiguration configuration);
+    void setNettyServerBootstrapConfiguration(NettySharedHttpServerBootstrapConfiguration configuration);
 
     /**
      * To use a custom {@link ClassResolver} for loading resource on the classpath.
      */
     void setClassResolver(ClassResolver classResolver);
+
+    /**
+     * Whether to start the Netty HTTP server eager and bind to the port, or wait on first demand
+     */
+    void setStartServer(boolean startServer);
 
     /**
      * Gets the port number this Netty HTTP server uses.
@@ -55,5 +60,10 @@ public interface NettySharedHttpServer extends Service {
      * Gets the {@link NettyServerBootstrapFactory} to use.
      */
     NettyServerBootstrapFactory getServerBootstrapFactory();
+
+    /**
+     * Number of consumers using this shared Netty HTTP server.
+     */
+    int getConsumersSize();
 
 }

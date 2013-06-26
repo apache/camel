@@ -17,7 +17,6 @@
 package org.apache.camel.component.netty.http;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.netty.NettyServerBootstrapConfiguration;
 import org.apache.camel.impl.JndiRegistry;
 import org.junit.Test;
 
@@ -60,6 +59,8 @@ public class NettySharedHttpServerTest extends BaseNettyTest {
 
         out = template.requestBody("netty-http:http://localhost:{{port}}/bar", "Hello Camel", String.class);
         assertEquals("Bye Camel", out);
+
+        assertEquals(2, nettySharedHttpServer.getConsumersSize());
 
         assertMockEndpointsSatisfied();
     }

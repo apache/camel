@@ -21,11 +21,13 @@
            http://www.osgi.org/xmlns/blueprint/v1.0.0 http://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd">
 
   <!-- netty http bootstrap configuration -->
-  <!--<bean id="configuration" class="org.apache.camel.component.netty.http.NettySharedHttpServerBootstrapConfiguration">-->
-  <bean id="configuration" class="org.apache.camel.component.netty.NettyServerBootstrapConfiguration">
-     <!-- the port number is mandatory and must be set -->
+  <bean id="configuration" class="org.apache.camel.component.netty.http.NettySharedHttpServerBootstrapConfiguration">
+     <!-- the port and host is mandatory and must be set -->
     <property name="port" value="8888"/>
-    <property name="backlog" value="20"/>
+    <property name="host" value="0.0.0.0"/>
+    <!-- additional options -->
+    <property name="backlog" value="50"/>
+    <property name="compression" value="true"/>
   </bean>
 
   <!-- the netty http server -->
@@ -34,7 +36,7 @@
     <property name="nettyServerBootstrapConfiguration" ref="configuration"/>
   </bean>
 
-  <!-- and exported in the OSGi server registry so we can use it from the Camel application bundles -->
-  <service id="sharedNettyHttpServer" ref="httpServer" interface="org.apache.camel.component.netty.http.NettySharedHttpServer"/>
+  <!-- export in the OSGi server registry so we can use it from the Camel application bundles -->
+  <service ref="httpServer" interface="org.apache.camel.component.netty.http.NettySharedHttpServer"/>
 
 </blueprint>
