@@ -24,11 +24,15 @@ import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
 import org.jboss.netty.channel.ChannelPipelineFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A default {@link NettySharedHttpServer} to make sharing Netty server in Camel applications easier.
  */
 public class DefaultNettySharedHttpServer extends ServiceSupport implements NettySharedHttpServer {
+
+    private static final Logger LOG = LoggerFactory.getLogger(DefaultNettySharedHttpServer.class);
 
     private NettyServerBootstrapConfiguration configuration;
     private HttpServerConsumerChannelFactory channelFactory;
@@ -63,6 +67,8 @@ public class DefaultNettySharedHttpServer extends ServiceSupport implements Nett
             throw new IllegalArgumentException("Port must be configured on NettyServerBootstrapConfiguration " + configuration);
         }
 
+        LOG.info("Starting NettySharedHttpServer using configuration: {} on port: {}", configuration, configuration.getPort());
+
         // force using tcp as the underlying transport
         configuration.setProtocol("tcp");
 
@@ -78,6 +84,7 @@ public class DefaultNettySharedHttpServer extends ServiceSupport implements Nett
 
     @Override
     protected void doStop() throws Exception {
+        LOG.info("Stopping NettySharedHttpServer using configuration: {} on port: {}", configuration, configuration.getPort());
         ServiceHelper.stopServices(bootstrapFactory, channelFactory);
     }
 }
