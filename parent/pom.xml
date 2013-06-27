@@ -167,7 +167,7 @@
     <hawtbuf-version>1.9</hawtbuf-version>
     <hawtdb-version>1.6</hawtdb-version>
     <hawtdispatch-version>1.17</hawtdispatch-version>
-    <hazelcast-version>2.5</hazelcast-version>
+    <hazelcast-version>2.6</hazelcast-version>
     <hbase-version>0.94.3</hbase-version>
     <hbase-bundle-version>0.94.3_1</hbase-bundle-version>
     <hibernate-validator-version>4.3.1.Final</hibernate-validator-version>
