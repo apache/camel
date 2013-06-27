@@ -86,4 +86,9 @@ public @interface FixedLengthRecord {
      */
     boolean isFooter() default false;
 
+    /**
+     * Indicates whether trailing characters beyond the last mapped field may be ignored
+     */
+    boolean ignoreTrailingChars() default false;
+
 }
