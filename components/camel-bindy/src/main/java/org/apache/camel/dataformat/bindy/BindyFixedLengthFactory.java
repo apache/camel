@@ -48,9 +48,7 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
 
     boolean isOneToMany;
 
-    //private Map<Integer, DataField> dataFields = new LinkedHashMap<Integer, DataField>();
     private Map<Integer, DataField> dataFields = new TreeMap<Integer, DataField>();
-    //private Map<Integer, Field> annotatedFields = new LinkedHashMap<Integer, Field>();
     private Map<Integer, Field> annotatedFields = new TreeMap<Integer, Field>();
    
     private int numberOptionalFields;
@@ -65,6 +63,7 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
     private boolean isFooter;
     private char paddingChar;
     private int recordLength;
+    private boolean ignoreTrailingChars;
 
     public BindyFixedLengthFactory(PackageScanClassResolver resolver, String... packageNames) throws Exception {
         super(resolver, packageNames);
@@ -204,6 +203,12 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
                 throw new IllegalArgumentException("Offset/Position of the field " + dataField.toString()
                                                    + " cannot be negative");
             }
+
+            // skip ahead if the expected position is greater than the offset
+            if (dataField.pos() > offset) {
+                LOG.debug("skipping ahead [" + (dataField.pos() - offset) + "] chars.");
+                offset = dataField.pos();
+            }
             
             if (length > 0) {
                 token = record.substring(offset - 1, offset + length - 1);
@@ -272,7 +277,7 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
         }
         
         // check for unmapped non-whitespace data at the end of the line
-        if (offset <= record.length() && !(record.substring(offset - 1, record.length())).trim().equals("")) {
+        if (offset <= record.length() && !(record.substring(offset - 1, record.length())).trim().equals("") && !isIgnoreTrailingChars()) {
             throw new IllegalArgumentException("Unexpected / unmapped characters found at the end of the fixed-length record at line : " + line);
         }
 
@@ -479,6 +484,7 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
                 
                 // Get skipHeader parameter
                 skipHeader = record.skipHeader();
+                LOG.debug("Skip Header: {}", skipHeader);
 
                 // Get hasFooter parameter
                 hasFooter = record.hasFooter();
@@ -486,12 +492,15 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
                 
                 // Get skipFooter parameter
                 skipFooter = record.skipFooter();
+                LOG.debug("Skip Footer: {}", skipFooter);
                 
                 // Get isHeader parameter
                 isHeader = record.isHeader();
+                LOG.debug("Is Header: {}", isHeader);
                 
                 // Get isFooter parameter
                 isFooter = record.isFooter();
+                LOG.debug("Is Footer: {}", isFooter);
 
                 // Get padding character
                 paddingChar = record.paddingChar();
@@ -501,9 +510,9 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
                 recordLength = record.length();
                 LOG.debug("Length of the record: {}", recordLength);
 
-                // Get length of the record
-                recordLength = record.length();
-                LOG.debug("Length of the record: {}", recordLength);    
+                // Get flag for ignore trailing characters
+                ignoreTrailingChars = record.ignoreTrailingChars();
+                LOG.debug("Ignore trailing chars: {}", ignoreTrailingChars);
             }
         }
         
@@ -576,6 +585,13 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
      */
     public int recordLength() {
         return recordLength;
+    }
+
+    /**
+     * Flag indicating whether trailing characters beyond the last declared field may be ignored
+     */
+    public boolean isIgnoreTrailingChars() {
+        return this.ignoreTrailingChars;
     }
 
 }
