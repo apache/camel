@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.AmazonServiceException;
@@ -43,7 +44,7 @@ public class AmazonSQSClientMock extends AmazonSQSClient {
     
     List<Message> messages = new ArrayList<Message>();
     Map<String, Map<String, String>> queueAttributes = new HashMap<String, Map<String, String>>();
-    List<ChangeMessageVisibilityRequest> changeMessageVisibilityRequests = new ArrayList<ChangeMessageVisibilityRequest>();
+    List<ChangeMessageVisibilityRequest> changeMessageVisibilityRequests = new CopyOnWriteArrayList<ChangeMessageVisibilityRequest>();
     
     public AmazonSQSClientMock() {
         super(new BasicAWSCredentials("myAccessKey", "mySecretKey"));
