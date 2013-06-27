@@ -51,7 +51,10 @@ public final class NettyHttpConverter {
                 msg = exchange.getIn(NettyHttpMessage.class);
             }
             if (msg != null && msg.getBody() == value) {
-                return msg.getHttpRequest();
+                // ensure the http request content is reset so we can read all the content out-of-the-box
+                HttpRequest request = msg.getHttpRequest();
+                request.getContent().resetReaderIndex();
+                return request;
             }
         }
 

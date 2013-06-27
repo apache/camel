@@ -19,18 +19,18 @@ package org.apache.camel.component.netty.http;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
 
-public class NettyHttpXMLXPathTest extends BaseNettyTest {
+public class NettyHttpXMLXPathResponseTest extends BaseNettyTest {
 
     @Test
     public void testHttpXML() throws Exception {
         String out = template.requestBody("netty-http:http://localhost:{{port}}/foo", "<person><name>Claus</name></person>", String.class);
-        assertEquals("<quote>Camel rocks</quote>", out);
+        assertEquals("<name>Claus</name>", out);
 
         out = template.requestBody("netty-http:http://localhost:{{port}}/foo", "<person><name>James</name></person>", String.class);
-        assertEquals("<quote>Camel really rocks</quote>", out);
+        assertEquals("James", out);
 
         out = template.requestBody("netty-http:http://localhost:{{port}}/foo", "<person><name>Jonathan</name></person>", String.class);
-        assertEquals("<quote>Try Camel now</quote>", out);
+        assertEquals("Dont understand <person><name>Jonathan</name></person>", out);
     }
 
     @Override
@@ -41,11 +41,11 @@ public class NettyHttpXMLXPathTest extends BaseNettyTest {
                 from("netty-http:http://0.0.0.0:{{port}}/foo")
                     .choice()
                         .when().xpath("/person/name = 'Claus'")
-                            .transform(constant("<quote>Camel rocks</quote>"))
+                            .transform(xpath("/person/name"))
                         .when().xpath("/person/name = 'James'")
-                            .transform(constant("<quote>Camel really rocks</quote>"))
+                            .transform(xpath("/person/name/text()"))
                         .otherwise()
-                            .transform(constant("<quote>Try Camel now</quote>"));
+                            .transform(simple("Dont understand ${body}"));
             }
         };
     }

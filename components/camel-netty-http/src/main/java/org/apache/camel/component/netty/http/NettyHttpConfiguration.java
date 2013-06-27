@@ -37,6 +37,7 @@ public class NettyHttpConfiguration extends NettyConfiguration {
     private boolean matchOnUriPrefix;
     private boolean bridgeEndpoint;
     private String path;
+    private boolean disableStreamCache;
 
     public NettyHttpConfiguration() {
         // we need sync=true as http is request/reply by nature
@@ -132,5 +133,13 @@ public class NettyHttpConfiguration extends NettyConfiguration {
 
     public void setPath(String path) {
         this.path = path;
+    }
+
+    public boolean isDisableStreamCache() {
+        return disableStreamCache;
+    }
+
+    public void setDisableStreamCache(boolean disableStreamCache) {
+        this.disableStreamCache = disableStreamCache;
     }
 }

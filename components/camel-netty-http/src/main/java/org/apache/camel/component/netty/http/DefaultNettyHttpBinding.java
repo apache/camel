@@ -75,8 +75,14 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding {
             populateCamelHeaders(request, answer.getHeaders(), exchange, configuration);
         }
 
-        // keep the body as is, and use type converters
-        answer.setBody(request.getContent());
+        if (configuration.isDisableStreamCache()) {
+            // keep the body as is, and use type converters
+            answer.setBody(request.getContent());
+        } else {
+            // turn the body into stream cached
+            NettyChannelBufferStreamCache cache = new NettyChannelBufferStreamCache(request.getContent());
+            answer.setBody(cache);
+        }
         return answer;
     }
 
