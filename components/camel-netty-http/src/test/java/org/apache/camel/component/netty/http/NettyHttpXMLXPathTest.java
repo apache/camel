@@ -31,6 +31,12 @@ public class NettyHttpXMLXPathTest extends BaseNettyTest {
     public void testHttpXML() throws Exception {
         String out = template.requestBody("netty-http:http://localhost:{{port}}/foo", "<person><name>Claus</name></person>", String.class);
         assertEquals("<quote>Camel rocks</quote>", out);
+
+        out = template.requestBody("netty-http:http://localhost:{{port}}/foo", "<person><name>James</name></person>", String.class);
+        assertEquals("<quote>Camel really rocks</quote>", out);
+
+        out = template.requestBody("netty-http:http://localhost:{{port}}/foo", "<person><name>Jonathan</name></person>", String.class);
+        assertEquals("<quote>Try Camel now</quote>", out);
     }
 
     @Override
@@ -39,9 +45,13 @@ public class NettyHttpXMLXPathTest extends BaseNettyTest {
             @Override
             public void configure() throws Exception {
                 from("netty-http:http://0.0.0.0:{{port}}/foo")
+                   // need to convert to byte[] to have the CBR with xpath working
+                    .convertBodyTo(byte[].class)
                     .choice()
                         .when().xpath("/person/name = 'Claus'")
                             .transform(constant("<quote>Camel rocks</quote>"))
+                        .when().xpath("/person/name = 'James'")
+                            .transform(constant("<quote>Camel really rocks</quote>"))
                         .otherwise()
                             .transform(constant("<quote>Try Camel now</quote>"));
             }
