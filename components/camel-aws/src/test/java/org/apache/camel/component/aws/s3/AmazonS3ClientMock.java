@@ -22,6 +22,7 @@ import java.net.URL;
 import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
+import java.util.concurrent.CopyOnWriteArrayList;
 
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.AmazonServiceException;
@@ -77,8 +78,8 @@ import org.junit.Assert;
 
 public class AmazonS3ClientMock extends AmazonS3Client {
     
-    List<S3Object> objects = new ArrayList<S3Object>();
-    List<PutObjectRequest> putObjectRequests = new ArrayList<PutObjectRequest>();
+    List<S3Object> objects = new CopyOnWriteArrayList<S3Object>();
+    List<PutObjectRequest> putObjectRequests = new CopyOnWriteArrayList<PutObjectRequest>();
     
     private boolean nonExistingBucketCreated;
     
