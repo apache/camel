@@ -47,7 +47,7 @@
                 </cxf:properties>
 
                 <cxf:inInterceptors>
-                        <ref bean="wss4jInInterceptor" />
+                        <ref bean="wss4jInInterceptor-server" />
                 </cxf:inInterceptors>
                 
    </cxf:cxfEndpoint>
@@ -58,6 +58,9 @@
                  <cxf:properties>
                         <entry key="dataFormat" value="CXF_MESSAGE" />
                 </cxf:properties>
+                 <cxf:inInterceptors>
+                        <ref bean="wss4jInInterceptor-client" />
+                </cxf:inInterceptors>
                
    </cxf:cxfEndpoint>
 
@@ -75,7 +78,7 @@
   <bean id="noErrorHandler" class="org.apache.camel.builder.NoErrorHandlerBuilder"/>
   <bean id="myProcessor" class="org.apache.camel.component.cxf.wssecurity.camel.MyProcessor"/>
   
- <bean id="wss4jInInterceptor" class="org.apache.cxf.ws.security.wss4j.WSS4JInInterceptor">
+ <bean id="wss4jInInterceptor-server" class="org.apache.cxf.ws.security.wss4j.WSS4JInInterceptor">
       <constructor-arg>
            <map>
                 <entry key="action" value="Signature" />
@@ -85,6 +88,21 @@
                 <entry key="encryptionKeyIdentifier" value="IssuerSerial" /-->
                 
                 <entry key="signaturePropFile" value="wssecurity/etc/Server_SignVerf.properties"/>
+                <entry key="signatureKeyIdentifier" value="DirectReference"/>
+           </map>
+        </constructor-arg>
+  </bean>
+  
+  <bean id="wss4jInInterceptor-client" class="org.apache.cxf.ws.security.wss4j.WSS4JInInterceptor">
+      <constructor-arg>
+           <map>
+                <entry key="action" value="Signature" />
+                <!--  entry key="passwordCallbackClass" value="org.apache.camel.component.cxf.wssecurity.server.UTPasswordCallback" />
+                <entry key="passwordType" value="PasswordDigest" /-->
+                <!--  entry key="decryptionPropFile" value="wssecurity/etc/Server_Decrypt.properties" />
+                <entry key="encryptionKeyIdentifier" value="IssuerSerial" /-->
+                
+                <entry key="signaturePropFile" value="wssecurity/etc/Client_Encrypt.properties"/>
                 <entry key="signatureKeyIdentifier" value="DirectReference"/>
            </map>
         </constructor-arg>
