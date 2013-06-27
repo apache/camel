@@ -92,6 +92,19 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding {
         if (s.contains("?")) {
             s = ObjectHelper.before(s, "?");
         }
+
+        // we want the full path for the url, as the client may provide the url in the HTTP headers as absolute or relative, eg
+        //   /foo
+        //   http://servername/foo
+        String http = configuration.isSsl() ? "https://" : "http://";
+        if (!s.startsWith(http)) {
+            if (configuration.getPort() != 80) {
+                s = http + configuration.getHost() + ":" + configuration.getPort() + s;
+            } else {
+                s = http + configuration.getHost() + s;
+            }
+        }
+
         headers.put(Exchange.HTTP_URL, s);
         // uri is without the host and port
         URI uri = new URI(request.getUri());

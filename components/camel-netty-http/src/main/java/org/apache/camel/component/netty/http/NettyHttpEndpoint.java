@@ -24,6 +24,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.netty.NettyConfiguration;
 import org.apache.camel.component.netty.NettyEndpoint;
+import org.apache.camel.converter.IOConverter;
 import org.apache.camel.impl.SynchronousDelegateProducer;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
@@ -103,7 +104,11 @@ public class NettyHttpEndpoint extends NettyEndpoint implements HeaderFilterStra
 
         // honor the character encoding
         String contentType = in.getHeader(Exchange.CONTENT_TYPE, String.class);
-        NettyHttpHelper.setCharsetFromContentType(contentType, exchange);
+        String charset = NettyHttpHelper.getCharsetFromContentType(contentType);
+        if (charset != null) {
+            exchange.setProperty(Exchange.CHARSET_NAME, charset);
+            in.setHeader(Exchange.HTTP_CHARACTER_ENCODING, charset);
+        }
 
         return exchange;
     }
