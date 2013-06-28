@@ -27,46 +27,65 @@
   </parent>
 
   <artifactId>camel-manual</artifactId>
-  <packaging>pom</packaging>
+  <packaging>jar</packaging>
   <name>Camel :: Manual</name>
   <description>The Camel Manual which generates a HTML and PDF representation of the manual.</description>
 
+  <dependencies>
+      <dependency>
+          <groupId>org.ccil.cowan.tagsoup</groupId>
+          <artifactId>tagsoup</artifactId>
+      </dependency>
+  </dependencies>
+
   <build>
     <plugins>
-     <plugin>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>maven-html-to-pdf</artifactId>
-        <version>${project.version}</version>
-        <executions>
-          <execution>
-            <goals>
-              <goal>compile</goal>
-            </goals>
-            <phase>compile</phase>
-          </execution>
-        </executions>    
-        <configuration>
-          <page>http://camel.apache.org/book-in-one-page.html</page>
-          <contentDivClass>wiki-content maincontent</contentDivClass>
-          <head><![CDATA[ 
-              <link href="file:${basedir}/src/styles/print.css" rel="stylesheet" type="text/css" />
-              <style type="text/css">
-                @page :left {
-                  @top-left {
-                    content: "Apache Camel ${project.version} Developer's Manual";
-                  }
-                }
-              </style>
-          ]]></head>
-          <replaceToken><![CDATA[
-              <h3 id="replaceme">.*</h3>
-          ]]></replaceToken>
-          <replaceValue><![CDATA[
-              <h3>Version ${project.version}</h3>
-          ]]></replaceValue>
-          <transformerFactoryClassName>org.apache.xalan.xsltc.trax.TransformerFactoryImpl</transformerFactoryClassName>
-        </configuration>
-      </plugin>
+        <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>exec-maven-plugin</artifactId>
+            <version>1.2.1</version>
+            <executions>
+                <execution>
+                    <id>generate-manual</id>
+                    <phase>process-classes</phase>
+                    <goals>
+                        <goal>java</goal>
+                    </goals>
+                    <configuration>
+                        <mainClass>org.apache.camel.manual.ManualGenerator</mainClass>
+                        <arguments>
+                            <argument>http://camel.apache.org/book-in-one-page.html</argument>
+                            <argument>${project.build.directory}/site/manual/camel-manual-${project.version}.html</argument>
+                            <argument>${project.version}</argument>
+                            <argument><![CDATA[
+                                <link href="http://camel.apache.org/styles/camel-manual.css" rel="stylesheet" type="text/css" />
+                                <style type="text/css">
+                                @page :left {
+                                @top-left {
+                                content: "Apache Camel ${project.version} Developer's Manual";
+                                }
+                                }
+                                </style>
+                                
+                                <link href='http://camel.apache.org/styles/highlighter/styles/shCoreCamel.css' rel='stylesheet' type='text/css' />
+                                <link href='http://camel.apache.org/styles/highlighter/styles/shThemeCamel.css' rel='stylesheet' type='text/css' />
+                                <script src='http://camel.apache.org/styles/highlighter/scripts/shCore.js' type='text/javascript'></script>
+                                <script src='http://camel.apache.org/styles/highlighter/scripts/shBrushSql.js' type='text/javascript'></script>
+                                <script src='http://camel.apache.org/styles/highlighter/scripts/shBrushJava.js' type='text/javascript'></script>
+                                <script src='http://camel.apache.org/styles/highlighter/scripts/shBrushXml.js' type='text/javascript'></script>
+                                <script src='http://camel.apache.org/styles/highlighter/scripts/shBrushPlain.js' type='text/javascript'></script>
+                                
+                                <script type="text/javascript">
+                                SyntaxHighlighter.defaults['toolbar'] = false;
+                                SyntaxHighlighter.all();
+                                </script>
+                            ]]></argument>
+                            <argument>${project.build.directory}</argument>
+                        </arguments>
+                    </configuration>
+                </execution>
+            </executions>
+        </plugin>
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>build-helper-maven-plugin</artifactId>
@@ -79,7 +98,6 @@
             </goals>
             <configuration>
               <artifacts>
-                <!-- Don't need to attach PDF here because the html-to-pdf plugin did that already -->
                 <artifact>
                   <file>${project.build.directory}/site/manual/camel-manual-${project.version}.html</file>
                   <type>html</type>

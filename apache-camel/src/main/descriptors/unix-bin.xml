@@ -60,7 +60,6 @@
       <directory>${basedir}/../tooling/camel-manual/target/site/manual/</directory>
       <outputDirectory>/doc/manual</outputDirectory>
       <includes>
-        <include>*.pdf</include>
         <include>*.html</include>
       </includes>
     </fileSet>
