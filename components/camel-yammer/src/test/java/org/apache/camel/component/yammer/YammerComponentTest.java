@@ -34,6 +34,9 @@ public class YammerComponentTest extends CamelTestSupport {
     public void setUp() throws Exception {
         super.setUp();
 
+        // All this is to mock out the bit that is actually hitting the yammer.com 
+        // rest api. We just return a bit of static json that was retrieved from 
+        // my own account.
         YammerComponent yc = context.getComponent("yammer", YammerComponent.class);
         YammerConfiguration config = yc.getConfig();
         InputStream is = getClass().getResourceAsStream("/messages.json");
@@ -59,6 +62,7 @@ public class YammerComponentTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
+                // using dummy keys here since we are mocking out calls to yammer.com with static json; in a real app, please use your own keys!
                 from("yammer:messages?consumerKey=aConsumerKey&consumerSecret=aConsumerSecretKey&accessToken=aAccessToken").to("mock:result");
             }
         };
