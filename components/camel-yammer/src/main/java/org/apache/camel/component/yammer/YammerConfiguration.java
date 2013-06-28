@@ -36,6 +36,10 @@ public class YammerConfiguration {
     
     @UriParam
     private long delay = 3000 + 2000; // 3 sec per poll is enforced by yammer; add 2 sec for safety 
+    
+    @UriParam
+    private int limit = -1; // default is unlimited
+    
     private ApiRequestor requestor;
     
     public String getConsumerKey() {
@@ -78,19 +82,36 @@ public class YammerConfiguration {
         this.function = function;
     }
 
-    public String getApiUrl() throws Exception {        
+    public String getApiUrl() throws Exception {    
+        StringBuilder sb = new StringBuilder();
+        
         switch (YammerFunctionType.fromUri(function)) {
         case MESSAGES:
-            return String.format("%s%s.json", YammerConstants.YAMMER_BASE_API_URL, function);
+            sb.append(YammerConstants.YAMMER_BASE_API_URL);
+            sb.append(function);
+            sb.append(".json");
+            break;
         case ALGO:
         case FOLLOWING:
         case MY_FEED:
         case PRIVATE:
         case SENT:
-            return String.format("%smessages/%s.json", YammerConstants.YAMMER_BASE_API_URL, function);
+            sb.append(YammerConstants.YAMMER_BASE_API_URL);
+            sb.append("messages/");
+            sb.append(function);
+            sb.append(".json");
+            break;
         default:
             throw new Exception(String.format("%s is not a valid Yammer function type.", function));
-        }
+        }        
+        
+        if (limit > 0) {
+            sb.append("?");
+            sb.append("limit=");
+            sb.append(limit);
+        }        
+        
+        return sb.toString();
     }
 
     public boolean isUseJson() {
@@ -110,6 +131,14 @@ public class YammerConfiguration {
 
     public void setRequestor(ApiRequestor requestor) {
         this.requestor = requestor;
+    }
+
+    public int getLimit() {
+        return limit;
+    }
+
+    public void setLimit(int limit) {
+        this.limit = limit;
     }
 
 }
