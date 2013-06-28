@@ -17,27 +17,25 @@
 package org.apache.camel.component.yammer;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
 
-public class YammerConsumerMessageLimitTest extends YammerComponentTestSupport {
+public class YammerMessagesConsumerOptionTest extends YammerComponentTestSupport {
 
     @Test
-    public void testConsumerMessageLimit() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMinimumMessageCount(1);
-        assertMockEndpointsSatisfied();
-        
-        // now check if limit option got applied
+    public void testOptions() throws Exception {
+        // now check if options got applied
         assertEquals(1, yammerComponent.getConfig().getLimit());
+        assertEquals("true", yammerComponent.getConfig().getThreaded());
+        assertEquals(130, yammerComponent.getConfig().getOlderThan());
+        assertEquals(127, yammerComponent.getConfig().getNewerThan());
+        assertEquals(YammerConstants.YAMMER_BASE_API_URL + "messages.json?limit=1&older_than=130&newer_than=127&threaded=true", yammerComponent.getConfig().getApiUrl());
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                // using dummy keys here since we are mocking out calls to yammer.com with static json; in a real app, please use your own keys!
-                from("yammer:messages?consumerKey=aConsumerKey&consumerSecret=aConsumerSecretKey&accessToken=aAccessToken&limit=1").to("mock:result");
+                from("yammer:messages?consumerKey=aConsumerKey&consumerSecret=aConsumerSecretKey&accessToken=aAccessToken&limit=1&threaded=true&olderThan=130&newerThan=127").to("mock:result");
             }
         };
     }

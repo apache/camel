@@ -18,6 +18,7 @@ package org.apache.camel.component.yammer;
 
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
+import org.apache.camel.util.ObjectHelper;
 
 @UriParams
 public class YammerConfiguration {
@@ -39,6 +40,15 @@ public class YammerConfiguration {
     
     @UriParam
     private int limit = -1; // default is unlimited
+    
+    @UriParam
+    private int olderThan = -1;
+
+    @UriParam
+    private int newerThan = -1;
+
+    @UriParam
+    private String threaded;
     
     private ApiRequestor requestor;
     
@@ -83,35 +93,66 @@ public class YammerConfiguration {
     }
 
     public String getApiUrl() throws Exception {    
-        StringBuilder sb = new StringBuilder();
+        StringBuilder url = new StringBuilder();
         
         switch (YammerFunctionType.fromUri(function)) {
         case MESSAGES:
-            sb.append(YammerConstants.YAMMER_BASE_API_URL);
-            sb.append(function);
-            sb.append(".json");
+            url.append(YammerConstants.YAMMER_BASE_API_URL);
+            url.append(function);
+            url.append(".json");
             break;
         case ALGO:
         case FOLLOWING:
         case MY_FEED:
         case PRIVATE:
         case SENT:
-            sb.append(YammerConstants.YAMMER_BASE_API_URL);
-            sb.append("messages/");
-            sb.append(function);
-            sb.append(".json");
+            url.append(YammerConstants.YAMMER_BASE_API_URL);
+            url.append("messages/");
+            url.append(function);
+            url.append(".json");
             break;
         default:
             throw new Exception(String.format("%s is not a valid Yammer function type.", function));
         }        
         
+        StringBuilder args = new StringBuilder();
+        
         if (limit > 0) {
-            sb.append("?");
-            sb.append("limit=");
-            sb.append(limit);
+            args.append("limit=");
+            args.append(limit);
+        }        
+
+        if (getOlderThan() > 0) {
+            if (args.length() > 0) {
+                args.append("&");
+            }
+            args.append("older_than=");
+            args.append(getOlderThan());
+        }        
+
+        if (getNewerThan() > 0) {
+            if (args.length() > 0) {
+                args.append("&");
+            }            
+            args.append("newer_than=");
+            args.append(getNewerThan());
         }        
         
-        return sb.toString();
+        if (ObjectHelper.isNotEmpty(getThreaded()) 
+                && ("true".equals(getThreaded()) || "extended".equals(getThreaded()))) {
+            if (args.length() > 0) {
+                args.append("&");
+            }            
+            args.append("threaded=");
+            args.append(getThreaded());
+        }        
+        
+        if (args.length() > 0) {
+            url.append("?");
+            url.append(args);
+        }            
+        
+        return url.toString();
     }
 
     public boolean isUseJson() {
@@ -139,6 +180,30 @@ public class YammerConfiguration {
 
     public void setLimit(int limit) {
         this.limit = limit;
+    }
+
+    public int getOlderThan() {
+        return olderThan;
+    }
+
+    public void setOlderThan(int olderThan) {
+        this.olderThan = olderThan;
+    }
+
+    public int getNewerThan() {
+        return newerThan;
+    }
+
+    public void setNewerThan(int newerThan) {
+        this.newerThan = newerThan;
+    }
+
+    public String getThreaded() {
+        return threaded;
+    }
+
+    public void setThreaded(String threaded) {
+        this.threaded = threaded;
     }
 
 }
