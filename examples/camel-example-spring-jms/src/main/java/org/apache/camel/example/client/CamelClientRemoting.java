@@ -45,7 +45,7 @@ public final class CamelClientRemoting {
         System.out.println("... the result is: " + response);
 
         // we're done so let's properly close the application context
-       context.close();
+        context.close();
     }
     // END SNIPPET: e1
 
