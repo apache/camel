@@ -27,6 +27,7 @@ import org.apache.camel.Route;
 import org.apache.camel.StatefulService;
 import org.apache.camel.spi.EventFactory;
 import org.apache.camel.spi.EventNotifier;
+import org.apache.camel.spi.ManagementStrategy;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,7 +44,12 @@ public final class EventHelper {
     }
 
     public static void notifyCamelContextStarting(CamelContext context) {
-        List<EventNotifier> notifiers = context.getManagementStrategy().getEventNotifiers();
+        ManagementStrategy management = context.getManagementStrategy();
+        if (management == null) {
+            return;
+        }
+
+        List<EventNotifier> notifiers = management.getEventNotifiers();
         if (notifiers == null || notifiers.isEmpty()) {
             return;
         }
@@ -53,7 +59,7 @@ public final class EventHelper {
                 continue;
             }
 
-            EventFactory factory = context.getManagementStrategy().getEventFactory();
+            EventFactory factory = management.getEventFactory();
             if (factory == null) {
                 return;
             }
@@ -66,7 +72,12 @@ public final class EventHelper {
     }
 
     public static void notifyCamelContextStarted(CamelContext context) {
-        List<EventNotifier> notifiers = context.getManagementStrategy().getEventNotifiers();
+        ManagementStrategy management = context.getManagementStrategy();
+        if (management == null) {
+            return;
+        }
+
+        List<EventNotifier> notifiers = management.getEventNotifiers();
         if (notifiers == null || notifiers.isEmpty()) {
             return;
         }
@@ -76,7 +87,7 @@ public final class EventHelper {
                 continue;
             }
 
-            EventFactory factory = context.getManagementStrategy().getEventFactory();
+            EventFactory factory = management.getEventFactory();
             if (factory == null) {
                 return;
             }
@@ -89,7 +100,12 @@ public final class EventHelper {
     }
 
     public static void notifyCamelContextStartupFailed(CamelContext context, Throwable cause) {
-        List<EventNotifier> notifiers = context.getManagementStrategy().getEventNotifiers();
+        ManagementStrategy management = context.getManagementStrategy();
+        if (management == null) {
+            return;
+        }
+
+        List<EventNotifier> notifiers = management.getEventNotifiers();
         if (notifiers == null || notifiers.isEmpty()) {
             return;
         }
@@ -99,7 +115,7 @@ public final class EventHelper {
                 continue;
             }
 
-            EventFactory factory = context.getManagementStrategy().getEventFactory();
+            EventFactory factory = management.getEventFactory();
             if (factory == null) {
                 return;
             }
@@ -112,7 +128,12 @@ public final class EventHelper {
     }
 
     public static void notifyCamelContextStopping(CamelContext context) {
-        List<EventNotifier> notifiers = context.getManagementStrategy().getEventNotifiers();
+        ManagementStrategy management = context.getManagementStrategy();
+        if (management == null) {
+            return;
+        }
+
+        List<EventNotifier> notifiers = management.getEventNotifiers();
         if (notifiers == null || notifiers.isEmpty()) {
             return;
         }
@@ -122,7 +143,7 @@ public final class EventHelper {
                 continue;
             }
 
-            EventFactory factory = context.getManagementStrategy().getEventFactory();
+            EventFactory factory = management.getEventFactory();
             if (factory == null) {
                 return;
             }
@@ -135,7 +156,12 @@ public final class EventHelper {
     }
 
     public static void notifyCamelContextStopped(CamelContext context) {
-        List<EventNotifier> notifiers = context.getManagementStrategy().getEventNotifiers();
+        ManagementStrategy management = context.getManagementStrategy();
+        if (management == null) {
+            return;
+        }
+
+        List<EventNotifier> notifiers = management.getEventNotifiers();
         if (notifiers == null || notifiers.isEmpty()) {
             return;
         }
@@ -145,7 +171,7 @@ public final class EventHelper {
                 continue;
             }
 
-            EventFactory factory = context.getManagementStrategy().getEventFactory();
+            EventFactory factory = management.getEventFactory();
             if (factory == null) {
                 return;
             }
@@ -158,7 +184,12 @@ public final class EventHelper {
     }
 
     public static void notifyCamelContextStopFailed(CamelContext context, Throwable cause) {
-        List<EventNotifier> notifiers = context.getManagementStrategy().getEventNotifiers();
+        ManagementStrategy management = context.getManagementStrategy();
+        if (management == null) {
+            return;
+        }
+
+        List<EventNotifier> notifiers = management.getEventNotifiers();
         if (notifiers == null || notifiers.isEmpty()) {
             return;
         }
@@ -168,7 +199,7 @@ public final class EventHelper {
                 continue;
             }
 
-            EventFactory factory = context.getManagementStrategy().getEventFactory();
+            EventFactory factory = management.getEventFactory();
             if (factory == null) {
                 return;
             }
@@ -181,7 +212,12 @@ public final class EventHelper {
     }
 
     public static void notifyServiceStopFailure(CamelContext context, Object service, Throwable cause) {
-        List<EventNotifier> notifiers = context.getManagementStrategy().getEventNotifiers();
+        ManagementStrategy management = context.getManagementStrategy();
+        if (management == null) {
+            return;
+        }
+
+        List<EventNotifier> notifiers = management.getEventNotifiers();
         if (notifiers == null || notifiers.isEmpty()) {
             return;
         }
@@ -191,7 +227,7 @@ public final class EventHelper {
                 continue;
             }
 
-            EventFactory factory = context.getManagementStrategy().getEventFactory();
+            EventFactory factory = management.getEventFactory();
             if (factory == null) {
                 return;
             }
@@ -204,7 +240,12 @@ public final class EventHelper {
     }
 
     public static void notifyServiceStartupFailure(CamelContext context, Object service, Throwable cause) {
-        List<EventNotifier> notifiers = context.getManagementStrategy().getEventNotifiers();
+        ManagementStrategy management = context.getManagementStrategy();
+        if (management == null) {
+            return;
+        }
+
+        List<EventNotifier> notifiers = management.getEventNotifiers();
         if (notifiers == null || notifiers.isEmpty()) {
             return;
         }
@@ -214,7 +255,7 @@ public final class EventHelper {
                 continue;
             }
 
-            EventFactory factory = context.getManagementStrategy().getEventFactory();
+            EventFactory factory = management.getEventFactory();
             if (factory == null) {
                 return;
             }
@@ -227,7 +268,12 @@ public final class EventHelper {
     }
 
     public static void notifyRouteStarted(CamelContext context, Route route) {
-        List<EventNotifier> notifiers = context.getManagementStrategy().getEventNotifiers();
+        ManagementStrategy management = context.getManagementStrategy();
+        if (management == null) {
+            return;
+        }
+
+        List<EventNotifier> notifiers = management.getEventNotifiers();
         if (notifiers == null || notifiers.isEmpty()) {
             return;
         }
@@ -237,7 +283,7 @@ public final class EventHelper {
                 continue;
             }
 
-            EventFactory factory = context.getManagementStrategy().getEventFactory();
+            EventFactory factory = management.getEventFactory();
             if (factory == null) {
                 return;
             }
@@ -250,7 +296,12 @@ public final class EventHelper {
     }
 
     public static void notifyRouteStopped(CamelContext context, Route route) {
-        List<EventNotifier> notifiers = context.getManagementStrategy().getEventNotifiers();
+        ManagementStrategy management = context.getManagementStrategy();
+        if (management == null) {
+            return;
+        }
+
+        List<EventNotifier> notifiers = management.getEventNotifiers();
         if (notifiers == null || notifiers.isEmpty()) {
             return;
         }
@@ -260,7 +311,7 @@ public final class EventHelper {
                 continue;
             }
 
-            EventFactory factory = context.getManagementStrategy().getEventFactory();
+            EventFactory factory = management.getEventFactory();
             if (factory == null) {
                 return;
             }
@@ -278,7 +329,12 @@ public final class EventHelper {
             return;
         }
 
-        List<EventNotifier> notifiers = context.getManagementStrategy().getEventNotifiers();
+        ManagementStrategy management = context.getManagementStrategy();
+        if (management == null) {
+            return;
+        }
+
+        List<EventNotifier> notifiers = management.getEventNotifiers();
         if (notifiers == null || notifiers.isEmpty()) {
             return;
         }
@@ -288,7 +344,7 @@ public final class EventHelper {
                 continue;
             }
 
-            EventFactory factory = context.getManagementStrategy().getEventFactory();
+            EventFactory factory = management.getEventFactory();
             if (factory == null) {
                 return;
             }
@@ -306,7 +362,12 @@ public final class EventHelper {
             return;
         }
 
-        List<EventNotifier> notifiers = context.getManagementStrategy().getEventNotifiers();
+        ManagementStrategy management = context.getManagementStrategy();
+        if (management == null) {
+            return;
+        }
+
+        List<EventNotifier> notifiers = management.getEventNotifiers();
         if (notifiers == null || notifiers.isEmpty()) {
             return;
         }
@@ -316,7 +377,7 @@ public final class EventHelper {
                 continue;
             }
 
-            EventFactory factory = context.getManagementStrategy().getEventFactory();
+            EventFactory factory = management.getEventFactory();
             if (factory == null) {
                 return;
             }
@@ -334,7 +395,12 @@ public final class EventHelper {
             return;
         }
 
-        List<EventNotifier> notifiers = context.getManagementStrategy().getEventNotifiers();
+        ManagementStrategy management = context.getManagementStrategy();
+        if (management == null) {
+            return;
+        }
+
+        List<EventNotifier> notifiers = management.getEventNotifiers();
         if (notifiers == null || notifiers.isEmpty()) {
             return;
         }
@@ -344,7 +410,7 @@ public final class EventHelper {
                 continue;
             }
 
-            EventFactory factory = context.getManagementStrategy().getEventFactory();
+            EventFactory factory = management.getEventFactory();
             if (factory == null) {
                 return;
             }
@@ -363,7 +429,12 @@ public final class EventHelper {
             return;
         }
 
-        List<EventNotifier> notifiers = context.getManagementStrategy().getEventNotifiers();
+        ManagementStrategy management = context.getManagementStrategy();
+        if (management == null) {
+            return;
+        }
+
+        List<EventNotifier> notifiers = management.getEventNotifiers();
         if (notifiers == null || notifiers.isEmpty()) {
             return;
         }
@@ -373,7 +444,7 @@ public final class EventHelper {
                 continue;
             }
 
-            EventFactory factory = context.getManagementStrategy().getEventFactory();
+            EventFactory factory = management.getEventFactory();
             if (factory == null) {
                 return;
             }
@@ -391,7 +462,12 @@ public final class EventHelper {
             return;
         }
 
-        List<EventNotifier> notifiers = context.getManagementStrategy().getEventNotifiers();
+        ManagementStrategy management = context.getManagementStrategy();
+        if (management == null) {
+            return;
+        }
+
+        List<EventNotifier> notifiers = management.getEventNotifiers();
         if (notifiers == null || notifiers.isEmpty()) {
             return;
         }
@@ -401,7 +477,7 @@ public final class EventHelper {
                 continue;
             }
 
-            EventFactory factory = context.getManagementStrategy().getEventFactory();
+            EventFactory factory = management.getEventFactory();
             if (factory == null) {
                 return;
             }
@@ -419,7 +495,12 @@ public final class EventHelper {
             return;
         }
 
-        List<EventNotifier> notifiers = context.getManagementStrategy().getEventNotifiers();
+        ManagementStrategy management = context.getManagementStrategy();
+        if (management == null) {
+            return;
+        }
+
+        List<EventNotifier> notifiers = management.getEventNotifiers();
         if (notifiers == null || notifiers.isEmpty()) {
             return;
         }
@@ -429,7 +510,7 @@ public final class EventHelper {
                 continue;
             }
 
-            EventFactory factory = context.getManagementStrategy().getEventFactory();
+            EventFactory factory = management.getEventFactory();
             if (factory == null) {
                 return;
             }
@@ -447,7 +528,12 @@ public final class EventHelper {
             return;
         }
 
-        List<EventNotifier> notifiers = context.getManagementStrategy().getEventNotifiers();
+        ManagementStrategy management = context.getManagementStrategy();
+        if (management == null) {
+            return;
+        }
+
+        List<EventNotifier> notifiers = management.getEventNotifiers();
         if (notifiers == null || notifiers.isEmpty()) {
             return;
         }
@@ -457,7 +543,7 @@ public final class EventHelper {
                 continue;
             }
 
-            EventFactory factory = context.getManagementStrategy().getEventFactory();
+            EventFactory factory = management.getEventFactory();
             if (factory == null) {
                 return;
             }
@@ -470,7 +556,12 @@ public final class EventHelper {
     }
 
     public static void notifyCamelContextSuspending(CamelContext context) {
-        List<EventNotifier> notifiers = context.getManagementStrategy().getEventNotifiers();
+        ManagementStrategy management = context.getManagementStrategy();
+        if (management == null) {
+            return;
+        }
+
+        List<EventNotifier> notifiers = management.getEventNotifiers();
         if (notifiers == null || notifiers.isEmpty()) {
             return;
         }
@@ -480,7 +571,7 @@ public final class EventHelper {
                 continue;
             }
 
-            EventFactory factory = context.getManagementStrategy().getEventFactory();
+            EventFactory factory = management.getEventFactory();
             if (factory == null) {
                 return;
             }
@@ -493,7 +584,12 @@ public final class EventHelper {
     }
 
     public static void notifyCamelContextSuspended(CamelContext context) {
-        List<EventNotifier> notifiers = context.getManagementStrategy().getEventNotifiers();
+        ManagementStrategy management = context.getManagementStrategy();
+        if (management == null) {
+            return;
+        }
+
+        List<EventNotifier> notifiers = management.getEventNotifiers();
         if (notifiers == null || notifiers.isEmpty()) {
             return;
         }
@@ -503,7 +599,7 @@ public final class EventHelper {
                 continue;
             }
 
-            EventFactory factory = context.getManagementStrategy().getEventFactory();
+            EventFactory factory = management.getEventFactory();
             if (factory == null) {
                 return;
             }
@@ -516,7 +612,12 @@ public final class EventHelper {
     }
 
     public static void notifyCamelContextResuming(CamelContext context) {
-        List<EventNotifier> notifiers = context.getManagementStrategy().getEventNotifiers();
+        ManagementStrategy management = context.getManagementStrategy();
+        if (management == null) {
+            return;
+        }
+
+        List<EventNotifier> notifiers = management.getEventNotifiers();
         if (notifiers == null || notifiers.isEmpty()) {
             return;
         }
@@ -526,7 +627,7 @@ public final class EventHelper {
                 continue;
             }
 
-            EventFactory factory = context.getManagementStrategy().getEventFactory();
+            EventFactory factory = management.getEventFactory();
             if (factory == null) {
                 return;
             }
@@ -539,7 +640,12 @@ public final class EventHelper {
     }
 
     public static void notifyCamelContextResumed(CamelContext context) {
-        List<EventNotifier> notifiers = context.getManagementStrategy().getEventNotifiers();
+        ManagementStrategy management = context.getManagementStrategy();
+        if (management == null) {
+            return;
+        }
+
+        List<EventNotifier> notifiers = management.getEventNotifiers();
         if (notifiers == null || notifiers.isEmpty()) {
             return;
         }
@@ -549,7 +655,7 @@ public final class EventHelper {
                 continue;
             }
 
-            EventFactory factory = context.getManagementStrategy().getEventFactory();
+            EventFactory factory = management.getEventFactory();
             if (factory == null) {
                 return;
             }
@@ -562,7 +668,12 @@ public final class EventHelper {
     }
 
     public static void notifyCamelContextResumeFailed(CamelContext context, Throwable cause) {
-        List<EventNotifier> notifiers = context.getManagementStrategy().getEventNotifiers();
+        ManagementStrategy management = context.getManagementStrategy();
+        if (management == null) {
+            return;
+        }
+
+        List<EventNotifier> notifiers = management.getEventNotifiers();
         if (notifiers == null || notifiers.isEmpty()) {
             return;
         }
@@ -572,7 +683,7 @@ public final class EventHelper {
                 continue;
             }
 
-            EventFactory factory = context.getManagementStrategy().getEventFactory();
+            EventFactory factory = management.getEventFactory();
             if (factory == null) {
                 return;
             }
