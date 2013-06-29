@@ -345,7 +345,7 @@ public class DefaultExchangeFormatter implements ExchangeFormatter {
             }
         }
 
-        return MessageHelper.extractBodyForLogging(message, "", isShowStreams(), isShowFiles(), -1);
+        return MessageHelper.extractBodyForLogging(message, "", isShowStreams(), isShowFiles(), getMaxChars());
     }
 
     protected String getBodyTypeAsString(Message message) {
