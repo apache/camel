@@ -21,11 +21,8 @@ import java.util.Map;
 
 import org.apache.camel.util.jsse.SSLContextParameters;
 import org.jboss.netty.handler.ssl.SslHandler;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class NettyServerBootstrapConfiguration implements Cloneable {
-    private static final Logger LOG = LoggerFactory.getLogger(NettyServerBootstrapConfiguration.class);
 
     protected String protocol;
     protected String host;
@@ -290,134 +287,105 @@ public class NettyServerBootstrapConfiguration implements Cloneable {
      * {@link NettyServerBootstrapConfiguration}, which must be identical.
      */
     public boolean compatible(NettyServerBootstrapConfiguration other) {
+        boolean isCompatible = true;
+
         if (!protocol.equals(other.protocol)) {
+            isCompatible = false;
+        } else if (!host.equals(other.host)) {
+            isCompatible = false;
+        } else if (port != other.port) {
+            isCompatible = false;
+        } else if (broadcast != other.broadcast) {
+            isCompatible = false;
+        } else if (sendBufferSize != other.sendBufferSize) {
             return false;
+        } else if (receiveBufferSize != other.receiveBufferSize) {
+            isCompatible = false;
+        } else if (receiveBufferSizePredictor != other.receiveBufferSizePredictor) {
+            isCompatible = false;
+        } else if (workerCount != other.workerCount) {
+            isCompatible = false;
+        } else if (keepAlive != other.keepAlive) {
+            isCompatible = false;
+        } else if (tcpNoDelay != other.tcpNoDelay) {
+            isCompatible = false;
+        } else if (reuseAddress != other.reuseAddress) {
+            isCompatible = false;
+        } else if (connectTimeout != other.connectTimeout) {
+            isCompatible = false;
+        } else if (backlog != other.backlog) {
+            isCompatible = false;
+        } else if (serverPipelineFactory != other.serverPipelineFactory) {
+            isCompatible = false;
+        } else if (nettyServerBootstrapFactory != other.nettyServerBootstrapFactory) {
+            isCompatible = false;
+        } else if (options == null && other.options != null) {
+            // validate all the options is identical
+            isCompatible = false;
+        } else if (options != null && other.options == null) {
+            isCompatible = false;
+        } else if (options != null && other.options != null && options.size() != other.options.size()) {
+            isCompatible = false;
+        } else if (options != null && other.options != null && !options.keySet().containsAll(other.options.keySet())) {
+            isCompatible = false;
+        } else if (options != null && other.options != null && !options.values().containsAll(other.options.values())) {
+            isCompatible = false;
+        } else if (ssl != other.ssl) {
+            isCompatible = false;
+        } else if (sslHandler != other.sslHandler) {
+            isCompatible = false;
+        } else if (sslContextParameters != other.sslContextParameters) {
+            isCompatible = false;
+        } else if (needClientAuth != other.needClientAuth) {
+            isCompatible = false;
+        } else if (keyStoreFile != other.keyStoreFile) {
+            isCompatible = false;
+        } else if (trustStoreFile != other.trustStoreFile) {
+            isCompatible = false;
+        } else if (keyStoreResource != null && !keyStoreResource.equals(other.keyStoreResource)) {
+            isCompatible = false;
+        } else if (trustStoreResource != null && !trustStoreResource.equals(other.trustStoreResource)) {
+            isCompatible = false;
+        } else if (keyStoreFormat != null && !keyStoreFormat.equals(other.keyStoreFormat)) {
+            isCompatible = false;
+        } else if (securityProvider != null && !securityProvider.equals(other.securityProvider)) {
+            isCompatible = false;
+        } else if (passphrase != null && !passphrase.equals(other.passphrase)) {
+            isCompatible = false;
         }
-        if (!host.equals(other.host)) {
-            return false;
-        }
-        if (port != other.port) {
-            return false;
-        }
-        if (broadcast != other.broadcast) {
-            return false;
-        }
-        if (sendBufferSize != other.sendBufferSize) {
-            return false;
-        }
-        if (receiveBufferSize != other.receiveBufferSize) {
-            return false;
-        }
-        if (receiveBufferSizePredictor != other.receiveBufferSizePredictor) {
-            return false;
-        }
-        if (workerCount != other.workerCount) {
-            return false;
-        }
-        if (keepAlive != other.keepAlive) {
-            return false;
-        }
-        if (tcpNoDelay != other.tcpNoDelay) {
-            return false;
-        }
-        if (reuseAddress != other.reuseAddress) {
-            return false;
-        }
-        if (connectTimeout != other.connectTimeout) {
-            return false;
-        }
-        if (backlog != other.backlog) {
-            return false;
-        }
-        if (serverPipelineFactory != other.serverPipelineFactory) {
-            return false;
-        }
-        if (nettyServerBootstrapFactory != other.nettyServerBootstrapFactory) {
-            return false;
-        }
-        // validate all the options is identical
-        if (options == null && other.options != null) {
-            return false;
-        }
-        if (options != null && other.options == null) {
-            return false;
-        }
-        if (options != null && other.options != null) {
-            if (options.size() != other.options.size()) {
-                return false;
-            }
-            if (!options.keySet().containsAll(other.options.keySet())) {
-                return false;
-            }
-            if (!options.values().containsAll(other.options.values())) {
-                return false;
-            }
-        }
-        if (ssl != other.ssl) {
-            return false;
-        }
-        if (sslHandler != other.sslHandler) {
-            return false;
-        }
-        if (sslContextParameters != other.sslContextParameters) {
-            return false;
-        }
-        if (needClientAuth != other.needClientAuth) {
-            return false;
-        }
-        if (keyStoreFile != other.keyStoreFile) {
-            return false;
-        }
-        if (trustStoreFile != other.trustStoreFile) {
-            return false;
-        }
-        if (keyStoreResource != null && !keyStoreResource.equals(other.keyStoreResource)) {
-            return false;
-        }
-        if (trustStoreResource != null && !trustStoreResource.equals(other.trustStoreResource)) {
-            return false;
-        }
-        if (keyStoreFormat != null && !keyStoreFormat.equals(other.keyStoreFormat)) {
-            return false;
-        }
-        if (securityProvider != null && !securityProvider.equals(other.securityProvider)) {
-            return false;
-        }
-        if (passphrase != null && !passphrase.equals(other.passphrase)) {
-            return false;
-        }
-        return true;
+
+        return isCompatible;
     }
 
     public String toStringBootstrapConfiguration() {
-        return "NettyServerBootstrapConfiguration{" +
-                "protocol='" + protocol + '\'' +
-                ", host='" + host + '\'' +
-                ", port=" + port +
-                ", broadcast=" + broadcast +
-                ", sendBufferSize=" + sendBufferSize +
-                ", receiveBufferSize=" + receiveBufferSize +
-                ", receiveBufferSizePredictor=" + receiveBufferSizePredictor +
-                ", workerCount=" + workerCount +
-                ", keepAlive=" + keepAlive +
-                ", tcpNoDelay=" + tcpNoDelay +
-                ", reuseAddress=" + reuseAddress +
-                ", connectTimeout=" + connectTimeout +
-                ", backlog=" + backlog +
-                ", serverPipelineFactory=" + serverPipelineFactory +
-                ", nettyServerBootstrapFactory=" + nettyServerBootstrapFactory +
-                ", options=" + options +
-                ", ssl=" + ssl +
-                ", sslHandler=" + sslHandler +
-                ", sslContextParameters='" + sslContextParameters + '\'' +
-                ", needClientAuth=" + needClientAuth +
-                ", keyStoreFile=" + keyStoreFile +
-                ", trustStoreFile=" + trustStoreFile +
-                ", keyStoreResource='" + keyStoreResource + '\'' +
-                ", trustStoreResource='" + trustStoreResource + '\'' +
-                ", keyStoreFormat='" + keyStoreFormat + '\'' +
-                ", securityProvider='" + securityProvider + '\'' +
-                ", passphrase='" + passphrase + '\'' +
-                '}';
+        return "NettyServerBootstrapConfiguration{"
+                + "protocol='" + protocol + '\''
+                + ", host='" + host + '\''
+                + ", port=" + port
+                + ", broadcast=" + broadcast
+                + ", sendBufferSize=" + sendBufferSize
+                + ", receiveBufferSize=" + receiveBufferSize
+                + ", receiveBufferSizePredictor=" + receiveBufferSizePredictor
+                + ", workerCount=" + workerCount
+                + ", keepAlive=" + keepAlive
+                + ", tcpNoDelay=" + tcpNoDelay
+                + ", reuseAddress=" + reuseAddress
+                + ", connectTimeout=" + connectTimeout
+                + ", backlog=" + backlog
+                + ", serverPipelineFactory=" + serverPipelineFactory
+                + ", nettyServerBootstrapFactory=" + nettyServerBootstrapFactory
+                + ", options=" + options
+                + ", ssl=" + ssl
+                + ", sslHandler=" + sslHandler
+                + ", sslContextParameters='" + sslContextParameters + '\''
+                + ", needClientAuth=" + needClientAuth
+                + ", keyStoreFile=" + keyStoreFile
+                + ", trustStoreFile=" + trustStoreFile
+                + ", keyStoreResource='" + keyStoreResource + '\''
+                + ", trustStoreResource='" + trustStoreResource + '\''
+                + ", keyStoreFormat='" + keyStoreFormat + '\''
+                + ", securityProvider='" + securityProvider + '\''
+                + ", passphrase='" + passphrase + '\''
+                + '}';
     }
 }
