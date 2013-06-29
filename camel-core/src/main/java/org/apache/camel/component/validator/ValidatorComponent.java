@@ -18,6 +18,7 @@ package org.apache.camel.component.validator;
 
 import java.io.InputStream;
 import java.util.Map;
+import org.w3c.dom.ls.LSResourceResolver;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.converter.IOConverter;
@@ -28,7 +29,6 @@ import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ResourceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.w3c.dom.ls.LSResourceResolver;
 
 /**
  * The <a href="http://camel.apache.org/validation.html">Validator Component</a>
