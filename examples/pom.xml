@@ -74,6 +74,7 @@
     <module>camel-example-sql</module>
     <module>camel-example-tracer</module>
     <module>camel-example-twitter-websocket</module>
+    <module>camel-example-twitter-websocket-blueprint</module>    
   </modules>
  
   <properties>

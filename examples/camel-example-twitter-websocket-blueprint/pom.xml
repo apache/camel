@@ -31,6 +31,9 @@
   <description>An example that pushes new tweets to a web page using web-socket</description>
   <packaging>bundle</packaging>
 
+  <!-- there is no maven dependencies needed as the Camel application has no Java code,
+       and its all defined in the src/main/resources/OSGI-INF/blueprint/camel-twitter.xml file -->
+
   <build>
     <plugins>
 
@@ -43,9 +46,9 @@
           <manifestLocation>target/META-INF</manifestLocation>
           <instructions>
             <Bundle-SymbolicName>${project.groupId}.${project.artifactId}</Bundle-SymbolicName>
+            <Export-Package>org.apache.camel.example.twitter*</Export-Package>
             <Import-Package>
-              org.apache.camel.component.twitter,
-              org.apache.camel.component.websocket
+              *
             </Import-Package>
           </instructions>
         </configuration>

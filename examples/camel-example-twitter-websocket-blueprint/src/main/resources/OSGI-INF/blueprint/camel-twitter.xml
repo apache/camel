@@ -20,15 +20,21 @@
            xsi:schemaLocation="
            http://www.osgi.org/xmlns/blueprint/v1.0.0 http://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd">
 
+  <!-- CamelContext with the twitter websocket example -->
   <camelContext id="twitter-camel" xmlns="http://camel.apache.org/schema/blueprint">
 
     <!-- use properties files for twitter codes -->
     <propertyPlaceholder id="placeholder" location="classpath:twitter.properties"/>
 
     <route id="twitter-route">
-      <from uri="twitter://search?type=polling&amp;delay=5s&amp;keywords=gaga
+      <!-- consume from twitter search to get new tweets about gaga every 5th second -->
+      <from uri="twitter://search?type=polling&amp;delay=5&amp;keywords=gaga
         &amp;accessToken={{access.token}}&amp;accessTokenSecret={{access.token-secret}}&amp;consumerKey={{consumer.key}}&amp;consumerSecret={{consumer.secret}}"/>
+
+      <!-- log tweet to the log -->
       <to uri="log:tweet"/>
+
+      <!-- and send tweet to the websocket component so its viewable in the web page -->
       <to uri="websocket://localhost:9090/camel-tweet?sendToAll=true&amp;staticResources=classpath:webapp"/>
     </route>
 
