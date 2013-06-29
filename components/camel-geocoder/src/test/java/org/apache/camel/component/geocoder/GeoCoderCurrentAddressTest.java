@@ -39,10 +39,10 @@ public class GeoCoderCurrentAddressTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                  .to("geocoder:address:current?headersOnly=true")
-                  .to("log:result")
-                  .log("You are at ${header.CamelGeoCoderLatlng} in city ${header.CamelGeoCoderCity} in country ${header.CamelGeoCoderCountryLong}")
-                  .to("mock:result");
+                    .to("geocoder:address:current?headersOnly=true")
+                    .to("log:result")
+                    .log("You are at ${header.CamelGeoCoderLatlng} in city ${header.CamelGeoCoderCity} in country ${header.CamelGeoCoderCountryLong}")
+                    .to("mock:result");
             }
         };
     }

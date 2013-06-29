@@ -39,10 +39,10 @@ public class GeoCoderComponentAddressTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                  .to("geocoder:address:Paris, France")
-                  .to("log:result")
-                  .log("Location ${header.CamelGeocoderAddress} is at lat/lng: ${header.CamelGeocoderLatlng} in city ${header.CamelGeocoderCity}")
-                  .to("mock:result");
+                    .to("geocoder:address:Paris, France")
+                    .to("log:result")
+                    .log("Location ${header.CamelGeocoderAddress} is at lat/lng: ${header.CamelGeocoderLatlng} in city ${header.CamelGeocoderCity}")
+                    .to("mock:result");
             }
         };
     }

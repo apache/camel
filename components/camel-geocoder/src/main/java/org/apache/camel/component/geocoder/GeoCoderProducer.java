@@ -114,22 +114,22 @@ public class GeoCoderProducer extends DefaultProducer {
         String resLatlng = latitudeNode.asText() + "," + longitudeNode.asText();
         exchange.getIn().setHeader(GeoCoderConstants.LATLNG, resLatlng);
 
-        JsonNode country_code = node.get("country_code");
-        JsonNode country_name = node.get("country_name");
-        if (country_code != null) {
-            exchange.getIn().setHeader(GeoCoderConstants.COUNTRY_SHORT, country_code.asText());
+        JsonNode countryCode = node.get("country_code");
+        JsonNode countryName = node.get("country_name");
+        if (countryCode != null) {
+            exchange.getIn().setHeader(GeoCoderConstants.COUNTRY_SHORT, countryCode.asText());
         }
-        if (country_name != null) {
-            exchange.getIn().setHeader(GeoCoderConstants.COUNTRY_LONG, country_name.asText());
+        if (countryName != null) {
+            exchange.getIn().setHeader(GeoCoderConstants.COUNTRY_LONG, countryName.asText());
         }
 
-        JsonNode region_code = node.get("region_code");
-        JsonNode region_name = node.get("region_name");
-        if (region_code != null) {
-            exchange.getIn().setHeader(GeoCoderConstants.REGION_CODE, region_code.asText());
+        JsonNode regionCode = node.get("region_code");
+        JsonNode regionName = node.get("region_name");
+        if (regionCode != null) {
+            exchange.getIn().setHeader(GeoCoderConstants.REGION_CODE, regionCode.asText());
         }
-        if (region_name != null) {
-            exchange.getIn().setHeader(GeoCoderConstants.REGION_NAME, region_name.asText());
+        if (regionName != null) {
+            exchange.getIn().setHeader(GeoCoderConstants.REGION_NAME, regionName.asText());
         }
 
         JsonNode city = node.get("city");
