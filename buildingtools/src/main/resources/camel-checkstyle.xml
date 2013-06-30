@@ -278,7 +278,9 @@ lengths, if/try depths, etc...
         <!-- We still do enum style interfaces
         <module name="InterfaceIsType"/>
         -->
-        <module name="MutableException"/>
+        <module name="MutableException">
+            <property name="format" value="^.*Exception$"/>
+        </module>
         <module name="ThrowsCount">
             <property name="max" value="5"/>
         </module>
