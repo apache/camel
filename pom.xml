@@ -123,9 +123,9 @@
   </modules>
 
   <scm>
-    <connection>scm:svn:https://svn.apache.org/repos/asf/camel/trunk</connection>
-    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/camel/trunk</developerConnection>
-    <url>http://svn.apache.org/viewvc/camel/trunk/</url>
+    <connection>scm:git:http://git-wip-us.apache.org/repos/asf/camel.git</connection>
+    <developerConnection>scm:git:https://git-wip-us.apache.org/repos/asf/camel.git</developerConnection>
+    <url>https://fisheye6.atlassian.com/browse/~br=master/camel-git</url>
   </scm>
 
   <build>
@@ -198,9 +198,12 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-release-plugin</artifactId>
-          <version>2.4</version>
+          <!-- see http://jira.codehaus.org/browse/MRELEASE-812 -->
+          <version>2.4.1</version>
           <configuration>
-            <tagBase>https://svn.apache.org/repos/asf/camel/tags</tagBase>
+            <localCheckout>true</localCheckout>
+            <pushChanges>false</pushChanges>
+            <tagNameFormat>@{project.artifactId}-@{project.version}</tagNameFormat>
             <useReleaseProfile>false</useReleaseProfile>
             <preparationGoals>clean install</preparationGoals>
             <goals>deploy</goals>
