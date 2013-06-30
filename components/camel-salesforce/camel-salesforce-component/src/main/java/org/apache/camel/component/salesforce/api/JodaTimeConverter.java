@@ -18,20 +18,19 @@ package org.apache.camel.component.salesforce.api;
 
 import java.lang.reflect.Constructor;
 
+import org.joda.time.DateTime;
+import org.joda.time.DateTimeZone;
+import org.joda.time.format.DateTimeFormatter;
+import org.joda.time.format.ISODateTimeFormat;
+
 import com.thoughtworks.xstream.converters.Converter;
 import com.thoughtworks.xstream.converters.MarshallingContext;
 import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
-import org.joda.time.DateTime;
-import org.joda.time.DateTimeZone;
-import org.joda.time.format.DateTimeFormatter;
-import org.joda.time.format.ISODateTimeFormat;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class JodaTimeConverter implements Converter {
-    private static final Logger LOG = LoggerFactory.getLogger(JodaTimeConverter.class);
+
     private final DateTimeFormatter formatter = ISODateTimeFormat.dateTime();
 
     @Override

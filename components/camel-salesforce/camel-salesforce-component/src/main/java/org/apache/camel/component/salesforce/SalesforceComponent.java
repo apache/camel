@@ -16,6 +16,12 @@
  */
 package org.apache.camel.component.salesforce;
 
+import java.lang.reflect.Field;
+import java.lang.reflect.Modifier;
+import java.util.*;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.ComponentConfiguration;
 import org.apache.camel.Endpoint;
@@ -34,12 +40,6 @@ import org.eclipse.jetty.client.HttpClient;
 import org.eclipse.jetty.client.RedirectListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.lang.reflect.Field;
-import java.lang.reflect.Modifier;
-import java.util.*;
-import java.util.regex.Matcher;
-import java.util.regex.Pattern;
 
 /**
  * Represents the component that manages {@link SalesforceEndpoint}.

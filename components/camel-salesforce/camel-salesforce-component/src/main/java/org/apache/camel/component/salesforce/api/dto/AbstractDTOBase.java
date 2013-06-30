@@ -25,13 +25,14 @@ import org.codehaus.jackson.map.annotate.JsonSerialize;
 // disable null values in json output
 @JsonSerialize(include = JsonSerialize.Inclusion.NON_NULL)
 public abstract class AbstractDTOBase {
-    private final static ObjectMapper mapper = new ObjectMapper();
+
+    private static final ObjectMapper MAPPER = new ObjectMapper();
 
     @Override
     public String toString() {
         try {
             StringWriter writer = new StringWriter();
-            mapper.writeValue(writer, this);
+            MAPPER.writeValue(writer, this);
             return writer.toString();
         } catch (IOException e) {
             return "Error in toString " + e.getMessage();

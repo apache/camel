@@ -26,7 +26,7 @@ import org.codehaus.jackson.annotate.JsonProperty;
 public final class SearchResult extends AbstractDTOBase {
 
     private Attributes attributes;
-    private String Id;
+    private String id;
 
     public Attributes getAttributes() {
         return attributes;
@@ -38,12 +38,12 @@ public final class SearchResult extends AbstractDTOBase {
 
     @JsonProperty("Id")
     public String getId() {
-        return Id;
+        return id;
     }
 
     @JsonProperty("Id")
     public void setId(String id) {
-        Id = id;
+        this.id = id;
     }
 
 }

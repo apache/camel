@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.salesforce.dto;
+package org.apache.camel.component.salesforce.dto.generated;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import org.apache.camel.component.salesforce.api.dto.AbstractSObjectBase;

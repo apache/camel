@@ -23,7 +23,6 @@ import com.thoughtworks.xstream.annotations.XStreamImplicit;
 public class SObjectBasicInfo extends AbstractDTOBase {
 
     private SObject objectDescribe;
-
     @XStreamImplicit
     private List<RecentItem> recentItems;
 

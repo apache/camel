@@ -25,6 +25,8 @@ import org.apache.camel.component.salesforce.api.dto.RestError;
 
 public class SalesforceException extends CamelException {
 
+    private static final long serialVersionUID = 1L;
+
     private List<RestError> errors;
     private int statusCode;
 

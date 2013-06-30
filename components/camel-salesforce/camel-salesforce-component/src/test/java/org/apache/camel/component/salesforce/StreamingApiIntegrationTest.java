@@ -20,7 +20,7 @@ import org.apache.camel.Message;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.salesforce.api.dto.CreateSObjectResult;
-import org.apache.camel.component.salesforce.dto.Merchandise__c;
+import org.apache.camel.component.salesforce.dto.generated.Merchandise__c;
 import org.apache.camel.component.salesforce.internal.dto.QueryRecordsPushTopic;
 import org.joda.time.DateTime;
 import org.junit.Test;

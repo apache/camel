@@ -87,7 +87,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
         "totalProcessingTime",
         "apiActiveProcessingTime",
         "apexProcessingTime"
-})
+        })
 public class JobInfo {
 
     protected String id;

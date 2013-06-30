@@ -24,12 +24,9 @@ public class SObjectDescription extends SObject {
 
     @XStreamImplicit
     private List<SObjectField> fields;
-
     private SObjectDescriptionUrls urls;
-
     @XStreamImplicit
     private List<ChildRelationShip> childRelationships;
-
     @XStreamImplicit
     private List<RecordTypeInfo> recordTypeInfos;
 

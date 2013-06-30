@@ -50,6 +50,7 @@ import static org.cometd.bayeux.Message.ERROR_FIELD;
 import static org.cometd.bayeux.Message.SUBSCRIPTION_FIELD;
 
 public class SubscriptionHelper implements Service {
+
     private static final Logger LOG = LoggerFactory.getLogger(SubscriptionHelper.class);
 
     private static final int CONNECT_TIMEOUT = 110;
@@ -134,8 +135,7 @@ public class SubscriptionHelper implements Service {
                                 new HashMap<SalesforceConsumer, ClientSessionChannel.MessageListener>();
                         map.putAll(listenerMap);
                         listenerMap.clear();
-                        for (Map.Entry<SalesforceConsumer, ClientSessionChannel.MessageListener> entry :
-                                map.entrySet()) {
+                        for (Map.Entry<SalesforceConsumer, ClientSessionChannel.MessageListener> entry : map.entrySet()) {
                             final SalesforceConsumer consumer = entry.getKey();
                             final String topicName = consumer.getTopicName();
                             try {

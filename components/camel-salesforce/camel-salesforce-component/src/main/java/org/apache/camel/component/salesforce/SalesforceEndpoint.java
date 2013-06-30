@@ -24,16 +24,12 @@ import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.impl.SynchronousDelegateProducer;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * Represents a Salesforce endpoint.
  */
 @UriEndpoint(scheme = "salesforce", consumerClass = SalesforceConsumer.class)
 public class SalesforceEndpoint extends DefaultEndpoint {
-
-    private static final Logger LOG = LoggerFactory.getLogger(SalesforceEndpoint.class);
 
     @UriParam
     private final SalesforceEndpointConfig config;

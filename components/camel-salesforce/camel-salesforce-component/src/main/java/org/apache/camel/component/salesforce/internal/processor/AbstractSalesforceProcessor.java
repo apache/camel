@@ -35,7 +35,8 @@ public abstract class AbstractSalesforceProcessor implements SalesforceProcessor
     protected static final boolean IS_OPTIONAL = true;
     protected static final boolean USE_BODY = true;
     protected static final boolean IGNORE_BODY = false;
-    protected final Logger LOG = LoggerFactory.getLogger(this.getClass());
+
+    protected final Logger log = LoggerFactory.getLogger(this.getClass());
 
     protected final SalesforceEndpoint endpoint;
     protected final Map<String, String> endpointConfigMap;

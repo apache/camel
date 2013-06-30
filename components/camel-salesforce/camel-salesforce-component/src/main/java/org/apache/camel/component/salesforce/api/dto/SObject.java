@@ -17,6 +17,7 @@
 package org.apache.camel.component.salesforce.api.dto;
 
 public class SObject extends AbstractDTOBase {
+
     private String name;
     private String label;
     private Boolean updateable;

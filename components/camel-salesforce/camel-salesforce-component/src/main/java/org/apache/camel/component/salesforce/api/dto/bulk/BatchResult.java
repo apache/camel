@@ -43,7 +43,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "BatchResult", propOrder = {
         "result"
-})
+        })
 public class BatchResult {
 
     protected List<Result> result;

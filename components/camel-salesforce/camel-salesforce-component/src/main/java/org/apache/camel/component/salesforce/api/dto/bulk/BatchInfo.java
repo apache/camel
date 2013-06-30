@@ -64,7 +64,7 @@ import javax.xml.datatype.XMLGregorianCalendar;
         "totalProcessingTime",
         "apiActiveProcessingTime",
         "apexProcessingTime"
-})
+        })
 public class BatchInfo {
 
     @XmlElement(required = true)

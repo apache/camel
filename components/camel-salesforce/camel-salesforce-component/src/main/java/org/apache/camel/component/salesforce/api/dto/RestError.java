@@ -21,6 +21,7 @@ import java.util.List;
 import com.thoughtworks.xstream.annotations.XStreamImplicit;
 
 public class RestError extends AbstractDTOBase {
+
     private String errorCode;
     private String message;
     @XStreamImplicit

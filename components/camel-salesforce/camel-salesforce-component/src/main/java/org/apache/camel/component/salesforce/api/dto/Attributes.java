@@ -17,6 +17,7 @@
 package org.apache.camel.component.salesforce.api.dto;
 
 public class Attributes extends AbstractDTOBase {
+
     private String type;
     private String url;
 

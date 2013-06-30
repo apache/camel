@@ -16,13 +16,13 @@
  */
 package org.apache.camel.component.salesforce;
 
-import org.junit.Assert;
-
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Properties;
+
+import org.junit.Assert;
 
 public class LoginConfigHelper extends Assert {
 
@@ -61,7 +61,8 @@ public class LoginConfigHelper extends Assert {
             if (stream != null) {
                 try {
                     stream.close();
-                } catch (IOException ignore) {}
+                } catch (IOException ignore) {
+                }
             }
         }
     }

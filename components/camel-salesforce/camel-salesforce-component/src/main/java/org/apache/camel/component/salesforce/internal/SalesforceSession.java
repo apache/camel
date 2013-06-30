@@ -129,64 +129,60 @@ public class SalesforceSession implements Service {
                 final int exchangeState = loginPost.waitForDone();
 
                 switch (exchangeState) {
-                    case HttpExchange.STATUS_COMPLETED:
-                        final byte[] responseContent = loginPost.getResponseContentBytes();
-                        final int responseStatus = loginPost.getResponseStatus();
-                        switch (responseStatus) {
+                case HttpExchange.STATUS_COMPLETED:
+                    final byte[] responseContent = loginPost.getResponseContentBytes();
+                    final int responseStatus = loginPost.getResponseStatus();
 
-                            case HttpStatus.OK_200:
-                                // parse the response to get token
-                                LoginToken token = objectMapper.readValue(responseContent,
-                                        LoginToken.class);
+                    switch (responseStatus) {
+                    case HttpStatus.OK_200:
+                        // parse the response to get token
+                        LoginToken token = objectMapper.readValue(responseContent, LoginToken.class);
 
-                                // don't log token or instance URL for security reasons
-                                LOG.info("Login successful");
-                                accessToken = token.getAccessToken();
-                                instanceUrl = token.getInstanceUrl();
+                        // don't log token or instance URL for security reasons
+                        LOG.info("Login successful");
+                        accessToken = token.getAccessToken();
+                        instanceUrl = token.getInstanceUrl();
 
-                                // notify all listeners
-                                for (SalesforceSessionListener listener : listeners) {
-                                    try {
-                                        listener.onLogin(accessToken, instanceUrl);
-                                    } catch (Throwable t) {
-                                        LOG.warn("Unexpected error from listener {}: {}", listener, t.getMessage());
-                                    }
-                                }
-
-                                break;
-
-                            case HttpStatus.BAD_REQUEST_400:
-                                // parse the response to get error
-                                final LoginError error = objectMapper.readValue(responseContent,
-                                        LoginError.class);
-                                final String msg = String.format("Login error code:[%s] description:[%s]",
-                                        error.getError(), error.getErrorDescription());
-                                final List<RestError> errors = new ArrayList<RestError>();
-                                errors.add(new RestError(msg, error.getErrorDescription()));
-                                throw new SalesforceException(errors, HttpStatus.BAD_REQUEST_400);
-
-                            default:
-                                throw new SalesforceException(
-                                        String.format("Login error status:[%s] reason:[%s]",
-                                                responseStatus, loginPost.getReason()),
-                                        responseStatus);
+                        // notify all listeners
+                        for (SalesforceSessionListener listener : listeners) {
+                            try {
+                                listener.onLogin(accessToken, instanceUrl);
+                            } catch (Throwable t) {
+                                LOG.warn("Unexpected error from listener {}: {}", listener, t.getMessage());
+                            }
                         }
+
                         break;
 
-                    case HttpExchange.STATUS_EXCEPTED:
-                        final Throwable ex = loginPost.getException();
-                        throw new SalesforceException(
-                                String.format("Unexpected login exception: %s", ex.getMessage()),
-                                ex);
+                    case HttpStatus.BAD_REQUEST_400:
+                        // parse the response to get error
+                        final LoginError error = objectMapper.readValue(responseContent, LoginError.class);
+                        final String msg = String.format("Login error code:[%s] description:[%s]",
+                                error.getError(), error.getErrorDescription());
+                        final List<RestError> errors = new ArrayList<RestError>();
+                        errors.add(new RestError(msg, error.getErrorDescription()));
+                        throw new SalesforceException(errors, HttpStatus.BAD_REQUEST_400);
 
-                    case HttpExchange.STATUS_CANCELLED:
-                        throw new SalesforceException("Login request CANCELLED!", null);
+                    default:
+                        throw new SalesforceException(String.format("Login error status:[%s] reason:[%s]",
+                            responseStatus, loginPost.getReason()), responseStatus);
+                    }
+                    break;
 
-                    case HttpExchange.STATUS_EXPIRED:
-                        throw new SalesforceException("Login request TIMEOUT!", null);
+                case HttpExchange.STATUS_EXCEPTED:
+                    final Throwable ex = loginPost.getException();
+                    throw new SalesforceException(
+                            String.format("Unexpected login exception: %s", ex.getMessage()), ex);
 
+                case HttpExchange.STATUS_CANCELLED:
+                    throw new SalesforceException("Login request CANCELLED!", null);
+
+                case HttpExchange.STATUS_EXPIRED:
+                    throw new SalesforceException("Login request TIMEOUT!", null);
+
+                default:
+                    throw new SalesforceException("Unknow status: " + exchangeState, null);
                 }
-
             } catch (IOException e) {
                 String msg = "Login error: unexpected exception " + e.getMessage();
                 throw new SalesforceException(msg, e);
@@ -212,33 +208,33 @@ public class SalesforceSession implements Service {
             httpClient.send(logoutGet);
             final int done = logoutGet.waitForDone();
             switch (done) {
+            case HttpExchange.STATUS_COMPLETED:
+                final int statusCode = logoutGet.getResponseStatus();
+                final String reason = logoutGet.getReason();
 
-                case HttpExchange.STATUS_COMPLETED:
-                    final int statusCode = logoutGet.getResponseStatus();
-                    final String reason = logoutGet.getReason();
+                if (statusCode == HttpStatus.OK_200) {
+                    LOG.info("Logout successful");
+                } else {
+                    throw new SalesforceException(
+                            String.format("Logout error, code: [%s] reason: [%s]",
+                                    statusCode, reason),
+                            statusCode);
+                }
+                break;
 
-                    if (statusCode == HttpStatus.OK_200) {
-                        LOG.info("Logout successful");
-                    } else {
-                        throw new SalesforceException(
-                                String.format("Logout error, code: [%s] reason: [%s]",
-                                        statusCode, reason),
-                                statusCode);
-                    }
-                    break;
+            case HttpExchange.STATUS_EXCEPTED:
+                final Throwable ex = logoutGet.getException();
+                throw new SalesforceException("Unexpected logout exception: " + ex.getMessage(), ex);
 
-                case HttpExchange.STATUS_EXCEPTED:
-                    final Throwable ex = logoutGet.getException();
-                    throw new SalesforceException("Unexpected logout exception: " + ex.getMessage(), ex);
+            case HttpExchange.STATUS_CANCELLED:
+                throw new SalesforceException("Logout request CANCELLED!", null);
 
-                case HttpExchange.STATUS_CANCELLED:
-                    throw new SalesforceException("Logout request CANCELLED!", null);
+            case HttpExchange.STATUS_EXPIRED:
+                throw new SalesforceException("Logout request TIMEOUT!", null);
 
-                case HttpExchange.STATUS_EXPIRED:
-                    throw new SalesforceException("Logout request TIMEOUT!", null);
-
+            default:
+                throw new SalesforceException("Unknow status: " + done, null);
             }
-
         } catch (SalesforceException e) {
             throw e;
         } catch (Exception e) {

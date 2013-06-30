@@ -25,10 +25,8 @@ import com.thoughtworks.xstream.annotations.XStreamImplicit;
 public class CreateSObjectResult extends AbstractDTOBase {
 
     private String id;
-
     @XStreamImplicit
     private List<RestError> errors;
-
     private Boolean success;
 
     public String getId() {

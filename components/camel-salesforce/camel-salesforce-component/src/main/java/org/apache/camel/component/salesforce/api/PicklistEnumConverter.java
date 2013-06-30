@@ -23,14 +23,11 @@ import com.thoughtworks.xstream.converters.MarshallingContext;
 import com.thoughtworks.xstream.converters.UnmarshallingContext;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class PicklistEnumConverter implements Converter {
-    private static final Logger LOG = LoggerFactory.getLogger(PicklistEnumConverter.class);
+
     private static final String FACTORY_METHOD = "fromValue";
 
-    @SuppressWarnings("unchecked")
     @Override
     public void marshal(Object o, HierarchicalStreamWriter writer, MarshallingContext context) {
         Class<?> aClass = o.getClass();

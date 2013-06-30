@@ -35,7 +35,7 @@ import org.slf4j.LoggerFactory;
 
 public class PushTopicHelper {
     private static final Logger LOG = LoggerFactory.getLogger(PushTopicHelper.class);
-    private static final ObjectMapper objectMapper = new ObjectMapper();
+    private static final ObjectMapper OBJECT_MAPPER = new ObjectMapper();
     private static final String PUSH_TOPIC_OBJECT_NAME = "PushTopic";
     private static final long API_TIMEOUT = 60; // Rest API call timeout
     private final SalesforceEndpointConfig config;
@@ -55,9 +55,9 @@ public class PushTopicHelper {
         // lookup Topic first
         try {
             // use SOQL to lookup Topic, since Name is not an external ID!!!
-            restClient.query("SELECT Id, Name, Query, ApiVersion, IsActive, " +
-                    "NotifyForFields, NotifyForOperations, Description " +
-                    "FROM PushTopic WHERE Name = '" + topicName + "'",
+            restClient.query("SELECT Id, Name, Query, ApiVersion, IsActive, "
+                    + "NotifyForFields, NotifyForOperations, Description "
+                    + "FROM PushTopic WHERE Name = '" + topicName + "'",
                     callback);
 
             if (!callback.await(API_TIMEOUT, TimeUnit.SECONDS)) {
@@ -66,7 +66,7 @@ public class PushTopicHelper {
             if (callback.getException() != null) {
                 throw callback.getException();
             }
-            QueryRecordsPushTopic records = objectMapper.readValue(callback.getResponse(),
+            QueryRecordsPushTopic records = OBJECT_MAPPER.readValue(callback.getResponse(),
                     QueryRecordsPushTopic.class);
             if (records.getTotalSize() == 1) {
 
@@ -74,12 +74,12 @@ public class PushTopicHelper {
                 LOG.info("Found existing topic {}: {}", topicName, topic);
 
                 // check if we need to update topic query, notifyForFields or notifyForOperations
-                if (!query.equals(topic.getQuery()) ||
-                        (config.getNotifyForFields() != null &&
-                                !config.getNotifyForFields().equals(topic.getNotifyForFields())) ||
-                        (config.getNotifyForOperations() != null &&
-                                !config.getNotifyForOperations().equals(topic.getNotifyForOperations()))
-                        ) {
+                if (!query.equals(topic.getQuery())
+                        || (config.getNotifyForFields() != null
+                                && !config.getNotifyForFields().equals(topic.getNotifyForFields()))
+                        || (config.getNotifyForOperations() != null
+                                && !config.getNotifyForOperations().equals(topic.getNotifyForOperations()))
+                ) {
 
                     if (!config.isUpdateTopic()) {
                         String msg = "Query doesn't match existing Topic and updateTopic is set to false";
@@ -132,7 +132,7 @@ public class PushTopicHelper {
         final SyncResponseCallback callback = new SyncResponseCallback();
         try {
             restClient.createSObject(PUSH_TOPIC_OBJECT_NAME,
-                    new ByteArrayInputStream(objectMapper.writeValueAsBytes(topic)), callback);
+                    new ByteArrayInputStream(OBJECT_MAPPER.writeValueAsBytes(topic)), callback);
 
             if (!callback.await(API_TIMEOUT, TimeUnit.SECONDS)) {
                 throw new SalesforceException("API call timeout!", null);
@@ -141,7 +141,7 @@ public class PushTopicHelper {
                 throw callback.getException();
             }
 
-            CreateSObjectResult result = objectMapper.readValue(callback.getResponse(), CreateSObjectResult.class);
+            CreateSObjectResult result = OBJECT_MAPPER.readValue(callback.getResponse(), CreateSObjectResult.class);
             if (!result.getSuccess()) {
                 final SalesforceException salesforceException = new SalesforceException(
                         result.getErrors(), HttpStatus.BAD_REQUEST_400);
@@ -185,7 +185,7 @@ public class PushTopicHelper {
             topic.setNotifyForOperations(config.getNotifyForOperations());
 
             restClient.updateSObject("PushTopic", topicId,
-                    new ByteArrayInputStream(objectMapper.writeValueAsBytes(topic)),
+                    new ByteArrayInputStream(OBJECT_MAPPER.writeValueAsBytes(topic)),
                     callback);
 
             if (!callback.await(API_TIMEOUT, TimeUnit.SECONDS)) {

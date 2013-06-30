@@ -17,6 +17,7 @@
 package org.apache.camel.component.salesforce.api.dto;
 
 public class RecordTypeInfo extends AbstractDTOBase {
+
     private String name;
     private Boolean available;
     private String recordTypeId;

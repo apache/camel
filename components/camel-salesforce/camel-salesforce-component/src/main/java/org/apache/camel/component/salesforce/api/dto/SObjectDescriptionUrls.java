@@ -17,6 +17,7 @@
 package org.apache.camel.component.salesforce.api.dto;
 
 public class SObjectDescriptionUrls extends SObjectUrls {
+
     private String uiEditTemplate;
     private String uiDetailTemplate;
     private String uiNewRecord;

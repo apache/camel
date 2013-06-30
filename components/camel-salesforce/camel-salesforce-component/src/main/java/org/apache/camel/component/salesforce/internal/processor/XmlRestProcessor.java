@@ -84,73 +84,69 @@ public class XmlRestProcessor extends AbstractRestProcessor {
     protected void processRequest(Exchange exchange) throws SalesforceException {
 
         switch (operationName) {
-            case GET_VERSIONS:
-                exchange.setProperty(RESPONSE_CLASS, Versions.class);
-                break;
+        case GET_VERSIONS:
+            exchange.setProperty(RESPONSE_CLASS, Versions.class);
+            break;
 
-            case GET_RESOURCES:
-                exchange.setProperty(RESPONSE_CLASS, RestResources.class);
-                break;
+        case GET_RESOURCES:
+            exchange.setProperty(RESPONSE_CLASS, RestResources.class);
+            break;
 
-            case GET_GLOBAL_OBJECTS:
-                // handle in built response types
-                exchange.setProperty(RESPONSE_CLASS, GlobalObjects.class);
-                break;
+        case GET_GLOBAL_OBJECTS:
+            // handle in built response types
+            exchange.setProperty(RESPONSE_CLASS, GlobalObjects.class);
+            break;
 
-            case GET_BASIC_INFO:
-                // handle in built response types
-                exchange.setProperty(RESPONSE_CLASS, SObjectBasicInfo.class);
+        case GET_BASIC_INFO:
+            // handle in built response types
+            exchange.setProperty(RESPONSE_CLASS, SObjectBasicInfo.class);
 
-                // need to add alias for Salesforce XML that uses SObject name as root element
-                exchange.setProperty(RESPONSE_ALIAS,
-                        getParameter(SOBJECT_NAME, exchange, USE_BODY, NOT_OPTIONAL));
-                break;
+            // need to add alias for Salesforce XML that uses SObject name as root element
+            exchange.setProperty(RESPONSE_ALIAS, getParameter(SOBJECT_NAME, exchange, USE_BODY, NOT_OPTIONAL));
+            break;
 
-            case GET_DESCRIPTION:
-                // handle in built response types
-                exchange.setProperty(RESPONSE_CLASS, SObjectDescription.class);
+        case GET_DESCRIPTION:
+            // handle in built response types
+            exchange.setProperty(RESPONSE_CLASS, SObjectDescription.class);
 
-                // need to add alias for Salesforce XML that uses SObject name as root element
-                exchange.setProperty(RESPONSE_ALIAS,
-                        getParameter(SOBJECT_NAME, exchange, USE_BODY, NOT_OPTIONAL));
-                break;
+            // need to add alias for Salesforce XML that uses SObject name as root element
+            exchange.setProperty(RESPONSE_ALIAS, getParameter(SOBJECT_NAME, exchange, USE_BODY, NOT_OPTIONAL));
+            break;
 
-            case GET_SOBJECT:
-                // need to add alias for Salesforce XML that uses SObject name as root element
-                exchange.setProperty(RESPONSE_ALIAS,
-                        getParameter(SOBJECT_NAME, exchange, IGNORE_BODY, NOT_OPTIONAL));
-                break;
+        case GET_SOBJECT:
+            // need to add alias for Salesforce XML that uses SObject name as root element
+            exchange.setProperty(RESPONSE_ALIAS, getParameter(SOBJECT_NAME, exchange, IGNORE_BODY, NOT_OPTIONAL));
+            break;
 
-            case CREATE_SOBJECT:
-                // handle known response type
-                exchange.setProperty(RESPONSE_CLASS, CreateSObjectResult.class);
-                break;
+        case CREATE_SOBJECT:
+            // handle known response type
+            exchange.setProperty(RESPONSE_CLASS, CreateSObjectResult.class);
+            break;
 
-            case GET_SOBJECT_WITH_ID:
-                // need to add alias for Salesforce XML that uses SObject name as root element
-                exchange.setProperty(RESPONSE_ALIAS,
-                        getParameter(SOBJECT_NAME, exchange, IGNORE_BODY, NOT_OPTIONAL));
-                break;
+        case GET_SOBJECT_WITH_ID:
+            // need to add alias for Salesforce XML that uses SObject name as root element
+            exchange.setProperty(RESPONSE_ALIAS, getParameter(SOBJECT_NAME, exchange, IGNORE_BODY, NOT_OPTIONAL));
+            break;
 
-            case UPSERT_SOBJECT:
-                // handle known response type
-                exchange.setProperty(RESPONSE_CLASS, CreateSObjectResult.class);
-                break;
+        case UPSERT_SOBJECT:
+            // handle known response type
+            exchange.setProperty(RESPONSE_CLASS, CreateSObjectResult.class);
+            break;
 
-            case QUERY:
-            case QUERY_MORE:
-                // need to add alias for Salesforce XML that uses SObject name as root element
-                exchange.setProperty(RESPONSE_ALIAS,
-                        "QueryResult");
-                break;
+        case QUERY:
+        case QUERY_MORE:
+            // need to add alias for Salesforce XML that uses SObject name as root element
+            exchange.setProperty(RESPONSE_ALIAS, "QueryResult");
+            break;
 
-            case SEARCH:
-                // handle known response type
-                exchange.setProperty(RESPONSE_CLASS, SearchResults.class);
-                break;
+        case SEARCH:
+            // handle known response type
+            exchange.setProperty(RESPONSE_CLASS, SearchResults.class);
+            break;
 
+        default:
+            throw new SalesforceException("Unknow operation name: " + operationName, null);
         }
-
     }
 
     protected InputStream getRequestStream(Exchange exchange) throws SalesforceException {
@@ -173,8 +169,8 @@ public class XmlRestProcessor extends AbstractRestProcessor {
                     // if all else fails, get body as String
                     final String body = in.getBody(String.class);
                     if (null == body) {
-                        String msg = "Unsupported request message body " +
-                                (in.getBody() == null ? null : in.getBody().getClass());
+                        String msg = "Unsupported request message body "
+                            + (in.getBody() == null ? null : in.getBody().getClass());
                         throw new SalesforceException(msg, null);
                     } else {
                         request = new ByteArrayInputStream(body.getBytes(StringUtil.__UTF8_CHARSET));

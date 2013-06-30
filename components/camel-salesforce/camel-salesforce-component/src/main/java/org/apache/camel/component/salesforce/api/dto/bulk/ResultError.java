@@ -48,7 +48,7 @@ import javax.xml.bind.annotation.XmlType;
         "fields",
         "message",
         "statusCode"
-})
+        })
 public class ResultError {
 
     @XmlElement(nillable = true)

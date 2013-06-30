@@ -24,7 +24,7 @@ import org.apache.camel.component.salesforce.api.dto.bulk.BatchStateEnum;
 import org.apache.camel.component.salesforce.api.dto.bulk.ContentType;
 import org.apache.camel.component.salesforce.api.dto.bulk.JobInfo;
 import org.apache.camel.component.salesforce.api.dto.bulk.OperationEnum;
-import org.apache.camel.component.salesforce.dto.Merchandise__c;
+import org.apache.camel.component.salesforce.dto.generated.Merchandise__c;
 import org.junit.experimental.theories.DataPoints;
 import org.junit.experimental.theories.Theory;
 

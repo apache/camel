@@ -42,9 +42,10 @@ import org.eclipse.jetty.util.StringUtil;
 
 public class JsonRestProcessor extends AbstractRestProcessor {
 
+    private static final String RESPONSE_TYPE = JsonRestProcessor.class.getName() + ".responseType";
+
     // it is ok to use a single thread safe ObjectMapper
     private final ObjectMapper objectMapper;
-    private static final String RESPONSE_TYPE = JsonRestProcessor.class.getName() + ".responseType";
 
     public JsonRestProcessor(SalesforceEndpoint endpoint) throws SalesforceException {
         super(endpoint);
@@ -55,51 +56,53 @@ public class JsonRestProcessor extends AbstractRestProcessor {
     }
 
     @Override
-    protected void processRequest(Exchange exchange) {
+    protected void processRequest(Exchange exchange) throws SalesforceException {
 
         switch (operationName) {
-            case GET_VERSIONS:
-                // handle in built response types
-                exchange.setProperty(RESPONSE_TYPE, new TypeReference<List<Version>>() {
-                });
-                break;
+        case GET_VERSIONS:
+            // handle in built response types
+            exchange.setProperty(RESPONSE_TYPE, new TypeReference<List<Version>>() {
+            });
+            break;
 
-            case GET_RESOURCES:
-                // handle in built response types
-                exchange.setProperty(RESPONSE_CLASS, RestResources.class);
-                break;
+        case GET_RESOURCES:
+            // handle in built response types
+            exchange.setProperty(RESPONSE_CLASS, RestResources.class);
+            break;
 
-            case GET_GLOBAL_OBJECTS:
-                // handle in built response types
-                exchange.setProperty(RESPONSE_CLASS, GlobalObjects.class);
-                break;
+        case GET_GLOBAL_OBJECTS:
+            // handle in built response types
+            exchange.setProperty(RESPONSE_CLASS, GlobalObjects.class);
+            break;
 
-            case GET_BASIC_INFO:
-                // handle in built response types
-                exchange.setProperty(RESPONSE_CLASS, SObjectBasicInfo.class);
-                break;
+        case GET_BASIC_INFO:
+            // handle in built response types
+            exchange.setProperty(RESPONSE_CLASS, SObjectBasicInfo.class);
+            break;
 
-            case GET_DESCRIPTION:
-                // handle in built response types
-                exchange.setProperty(RESPONSE_CLASS, SObjectDescription.class);
-                break;
+        case GET_DESCRIPTION:
+            // handle in built response types
+            exchange.setProperty(RESPONSE_CLASS, SObjectDescription.class);
+            break;
 
-            case CREATE_SOBJECT:
-                // handle known response type
-                exchange.setProperty(RESPONSE_CLASS, CreateSObjectResult.class);
-                break;
+        case CREATE_SOBJECT:
+            // handle known response type
+            exchange.setProperty(RESPONSE_CLASS, CreateSObjectResult.class);
+            break;
 
-            case UPSERT_SOBJECT:
-                // handle known response type
-                exchange.setProperty(RESPONSE_CLASS, CreateSObjectResult.class);
-                break;
+        case UPSERT_SOBJECT:
+            // handle known response type
+            exchange.setProperty(RESPONSE_CLASS, CreateSObjectResult.class);
+            break;
 
-            case SEARCH:
-                // handle known response type
-                exchange.setProperty(RESPONSE_TYPE, new TypeReference<List<SearchResult>>() {
-                });
-                break;
+        case SEARCH:
+            // handle known response type
+            exchange.setProperty(RESPONSE_TYPE, new TypeReference<List<SearchResult>>() {
+            });
+            break;
 
+        default:
+            throw new SalesforceException("Unknow operation name: " + operationName, null);
         }
     }
 
@@ -120,8 +123,8 @@ public class JsonRestProcessor extends AbstractRestProcessor {
                     // if all else fails, get body as String
                     final String body = in.getBody(String.class);
                     if (null == body) {
-                        String msg = "Unsupported request message body " +
-                                (in.getBody() == null ? null : in.getBody().getClass());
+                        String msg = "Unsupported request message body "
+                            + (in.getBody() == null ? null : in.getBody().getClass());
                         throw new SalesforceException(msg, null);
                     } else {
                         request = new ByteArrayInputStream(body.getBytes(StringUtil.__UTF8_CHARSET));

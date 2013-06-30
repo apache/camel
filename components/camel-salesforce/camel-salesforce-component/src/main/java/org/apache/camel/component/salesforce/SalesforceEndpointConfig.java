@@ -16,6 +16,10 @@
  */
 package org.apache.camel.component.salesforce;
 
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.salesforce.api.dto.bulk.ContentType;
 import org.apache.camel.component.salesforce.internal.PayloadFormat;
@@ -24,10 +28,6 @@ import org.apache.camel.component.salesforce.internal.dto.NotifyForOperationsEnu
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.eclipse.jetty.client.HttpClient;
-
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.Map;
 
 /**
  * Salesforce Endpoint configuration.

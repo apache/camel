@@ -44,7 +44,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "QueryResult", propOrder = {
         "records"
-})
+        })
 public class QueryResult {
 
     @XmlElement(nillable = true)

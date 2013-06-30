@@ -16,16 +16,6 @@
  */
 package org.apache.camel.component.salesforce;
 
-import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.salesforce.api.dto.*;
-import org.apache.camel.component.salesforce.dto.Document;
-import org.apache.camel.component.salesforce.dto.Line_Item__c;
-import org.apache.camel.component.salesforce.dto.Merchandise__c;
-import org.apache.camel.component.salesforce.dto.QueryRecordsLine_Item__c;
-import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.FileOutputStream;
 import java.io.InputStream;
 import java.nio.channels.Channels;
@@ -33,6 +23,24 @@ import java.nio.channels.FileChannel;
 import java.nio.channels.ReadableByteChannel;
 import java.util.HashMap;
 import java.util.List;
+
+import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.salesforce.api.dto.CreateSObjectResult;
+import org.apache.camel.component.salesforce.api.dto.GlobalObjects;
+import org.apache.camel.component.salesforce.api.dto.RestResources;
+import org.apache.camel.component.salesforce.api.dto.SObjectBasicInfo;
+import org.apache.camel.component.salesforce.api.dto.SObjectDescription;
+import org.apache.camel.component.salesforce.api.dto.SearchResult;
+import org.apache.camel.component.salesforce.api.dto.SearchResults;
+import org.apache.camel.component.salesforce.api.dto.Version;
+import org.apache.camel.component.salesforce.api.dto.Versions;
+import org.apache.camel.component.salesforce.dto.generated.Document;
+import org.apache.camel.component.salesforce.dto.generated.Line_Item__c;
+import org.apache.camel.component.salesforce.dto.generated.Merchandise__c;
+import org.apache.camel.component.salesforce.dto.generated.QueryRecordsLine_Item__c;
+import org.junit.Test;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class RestApiIntegrationTest extends AbstractSalesforceTestBase {
 

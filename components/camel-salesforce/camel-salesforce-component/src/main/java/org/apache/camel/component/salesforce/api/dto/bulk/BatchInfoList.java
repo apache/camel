@@ -43,7 +43,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "BatchInfoList", propOrder = {
         "batchInfo"
-})
+        })
 public class BatchInfoList {
 
     protected List<BatchInfo> batchInfo;

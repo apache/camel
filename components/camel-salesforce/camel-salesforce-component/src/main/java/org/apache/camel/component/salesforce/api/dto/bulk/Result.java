@@ -49,7 +49,7 @@ import javax.xml.bind.annotation.XmlType;
         "id",
         "success",
         "created"
-})
+        })
 public class Result {
 
     protected List<ResultError> errors;

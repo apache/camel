@@ -21,10 +21,8 @@ import org.codehaus.jackson.annotate.JsonProperty;
 public class RecentItem extends AbstractDTOBase {
 
     private Attributes attributes;
-
-    private String Id;
-
-    private String Name;
+    private String id;
+    private String name;
 
     public Attributes getAttributes() {
         return attributes;
@@ -36,21 +34,21 @@ public class RecentItem extends AbstractDTOBase {
 
     @JsonProperty("Id")
     public String getId() {
-        return Id;
+        return id;
     }
 
     @JsonProperty("Id")
     public void setId(String id) {
-        Id = id;
+        this.id = id;
     }
 
     @JsonProperty("Name")
     public String getName() {
-        return Name;
+        return name;
     }
 
     @JsonProperty("Name")
     public void setName(String name) {
-        Name = name;
+        this.name = name;
     }
 }

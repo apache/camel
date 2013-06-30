@@ -26,7 +26,6 @@ public class GlobalObjects extends AbstractDTOBase {
 
     private String encoding;
     private Integer maxBatchSize;
-
     @XStreamImplicit
     private List<SObject> sobjects;
 

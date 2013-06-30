@@ -49,7 +49,7 @@ import javax.xml.bind.annotation.XmlType;
         "type",
         "id",
         "any"
-})
+        })
 public class SObject {
 
     @XmlElement(required = true)

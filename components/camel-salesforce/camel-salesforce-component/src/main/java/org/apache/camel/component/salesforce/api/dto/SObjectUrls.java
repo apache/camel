@@ -17,6 +17,7 @@
 package org.apache.camel.component.salesforce.api.dto;
 
 public class SObjectUrls extends AbstractDTOBase {
+
     private String sobject;
     private String describe;
     private String rowTemplate;

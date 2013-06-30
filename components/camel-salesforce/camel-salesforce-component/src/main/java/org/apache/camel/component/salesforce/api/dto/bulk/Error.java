@@ -44,7 +44,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlType(name = "Error", propOrder = {
         "exceptionCode",
         "exceptionMessage"
-})
+        })
 public class Error {
 
     @XmlElement(required = true)

@@ -16,14 +16,16 @@
  */
 package org.apache.camel.component.salesforce;
 
+import java.util.*;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.ComponentConfiguration;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.salesforce.dto.Document;
-import org.apache.camel.component.salesforce.dto.Line_Item__c;
-import org.apache.camel.component.salesforce.dto.Merchandise__c;
-import org.apache.camel.component.salesforce.dto.QueryRecordsLine_Item__c;
+import org.apache.camel.component.salesforce.dto.generated.Document;
+import org.apache.camel.component.salesforce.dto.generated.Line_Item__c;
+import org.apache.camel.component.salesforce.dto.generated.Merchandise__c;
+import org.apache.camel.component.salesforce.dto.generated.QueryRecordsLine_Item__c;
 import org.apache.camel.component.salesforce.internal.PayloadFormat;
 import org.apache.camel.impl.ParameterConfiguration;
 import org.apache.camel.test.junit4.CamelTestSupport;
@@ -31,9 +33,6 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.*;
-
 
 /**
  * Lets test the use of the ComponentConfiguration on the Salesforce endpoint

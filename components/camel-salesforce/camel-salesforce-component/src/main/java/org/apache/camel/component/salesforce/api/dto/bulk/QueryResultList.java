@@ -43,7 +43,7 @@ import javax.xml.bind.annotation.XmlType;
 @XmlAccessorType(XmlAccessType.FIELD)
 @XmlType(name = "QueryResultList", propOrder = {
         "result"
-})
+        })
 public class QueryResultList {
 
     protected List<String> result;
