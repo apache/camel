@@ -50,13 +50,13 @@ import org.eclipse.jetty.util.StringUtil;
 public class DefaultBulkApiClient extends AbstractClientBase implements BulkApiClient {
 
     private static final String TOKEN_HEADER = "X-SFDC-Session";
+    private static final ContentType DEFAULT_ACCEPT_TYPE = ContentType.XML;
 
     private JAXBContext context;
-    private static final ContentType DEFAULT_ACCEPT_TYPE = ContentType.XML;
     private ObjectFactory objectFactory;
 
-    public DefaultBulkApiClient(String version,
-                                SalesforceSession session, HttpClient httpClient) throws SalesforceException {
+    public DefaultBulkApiClient(String version, SalesforceSession session, HttpClient httpClient)
+        throws SalesforceException {
         super(version, session, httpClient);
 
         try {
@@ -71,7 +71,6 @@ public class DefaultBulkApiClient extends AbstractClientBase implements BulkApiC
 
     @Override
     public void createJob(JobInfo request, final JobInfoResponseCallback callback) {
-
         // clear system fields if set
         sanitizeJobRequest(request);
 
@@ -124,7 +123,6 @@ public class DefaultBulkApiClient extends AbstractClientBase implements BulkApiC
 
     @Override
     public void getJob(String jobId, final JobInfoResponseCallback callback) {
-
         final ContentExchange get = getContentExchange(HttpMethods.GET, jobUrl(jobId));
 
         // make the call and parse the result
@@ -140,7 +138,6 @@ public class DefaultBulkApiClient extends AbstractClientBase implements BulkApiC
                 callback.onResponse(value, ex);
             }
         });
-
     }
 
     @Override
@@ -169,7 +166,6 @@ public class DefaultBulkApiClient extends AbstractClientBase implements BulkApiC
                 callback.onResponse(value, ex);
             }
         });
-
     }
 
     @Override
@@ -198,13 +194,11 @@ public class DefaultBulkApiClient extends AbstractClientBase implements BulkApiC
                 callback.onResponse(value, ex);
             }
         });
-
     }
 
     @Override
-    public void createBatch(InputStream batchStream, String jobId, ContentType contentTypeEnum,
-                            final BatchInfoResponseCallback callback) {
-
+    public void createBatch(InputStream batchStream, String jobId, ContentType contentTypeEnum, 
+        final BatchInfoResponseCallback callback) {
         final ContentExchange post = getContentExchange(HttpMethods.POST, batchUrl(jobId, null));
         post.setRequestContentSource(batchStream);
         post.setRequestContentType(getContentType(contentTypeEnum) + ";charset=" + StringUtil.__UTF8);
@@ -222,13 +216,10 @@ public class DefaultBulkApiClient extends AbstractClientBase implements BulkApiC
                 callback.onResponse(value, ex);
             }
         });
-
     }
 
     @Override
-    public void getBatch(String jobId, String batchId,
-                         final BatchInfoResponseCallback callback) {
-
+    public void getBatch(String jobId, String batchId, final BatchInfoResponseCallback callback) {
         final ContentExchange get = getContentExchange(HttpMethods.GET, batchUrl(jobId, batchId));
 
         // make the call and parse the result
@@ -244,13 +235,10 @@ public class DefaultBulkApiClient extends AbstractClientBase implements BulkApiC
                 callback.onResponse(value, ex);
             }
         });
-
     }
 
     @Override
-    public void getAllBatches(String jobId,
-                              final BatchInfoListResponseCallback callback) {
-
+    public void getAllBatches(String jobId, final BatchInfoListResponseCallback callback) {
         final ContentExchange get = getContentExchange(HttpMethods.GET, batchUrl(jobId, null));
 
         // make the call and parse the result
@@ -266,13 +254,10 @@ public class DefaultBulkApiClient extends AbstractClientBase implements BulkApiC
                 callback.onResponse(value != null ? value.getBatchInfo() : null, ex);
             }
         });
-
     }
 
     @Override
-    public void getRequest(String jobId, String batchId,
-                           final StreamResponseCallback callback) {
-
+    public void getRequest(String jobId, String batchId, final StreamResponseCallback callback) {
         final ContentExchange get = getContentExchange(HttpMethods.GET, batchUrl(jobId, batchId));
 
         // make the call and parse the result
@@ -282,12 +267,10 @@ public class DefaultBulkApiClient extends AbstractClientBase implements BulkApiC
                 callback.onResponse(response, ex);
             }
         });
-
     }
 
     @Override
-    public void getResults(String jobId, String batchId,
-                           final StreamResponseCallback callback) {
+    public void getResults(String jobId, String batchId, final StreamResponseCallback callback) {
         final ContentExchange get = getContentExchange(HttpMethods.GET, batchResultUrl(jobId, batchId, null));
 
         // make the call and return the result
@@ -301,8 +284,7 @@ public class DefaultBulkApiClient extends AbstractClientBase implements BulkApiC
 
     @Override
     public void createBatchQuery(String jobId, String soqlQuery, ContentType jobContentType,
-                                 final BatchInfoResponseCallback callback) {
-
+        final BatchInfoResponseCallback callback) {
         final ContentExchange post = getContentExchange(HttpMethods.POST, batchUrl(jobId, null));
         byte[] queryBytes = soqlQuery.getBytes(StringUtil.__UTF8_CHARSET);
         post.setRequestContent(new ByteArrayBuffer(queryBytes));
@@ -321,12 +303,10 @@ public class DefaultBulkApiClient extends AbstractClientBase implements BulkApiC
                 callback.onResponse(value, ex);
             }
         });
-
     }
 
     @Override
-    public void getQueryResultIds(String jobId, String batchId,
-                                  final QueryResultIdsCallback callback) {
+    public void getQueryResultIds(String jobId, String batchId, final QueryResultIdsCallback callback) {
         final ContentExchange get = getContentExchange(HttpMethods.GET, batchResultUrl(jobId, batchId, null));
 
         // make the call and parse the result
@@ -339,16 +319,13 @@ public class DefaultBulkApiClient extends AbstractClientBase implements BulkApiC
                 } catch (SalesforceException e) {
                     ex = e;
                 }
-                callback.onResponse(value != null ? Collections.unmodifiableList(value.getResult()) : null,
-                        ex);
+                callback.onResponse(value != null ? Collections.unmodifiableList(value.getResult()) : null, ex);
             }
         });
-
     }
 
     @Override
-    public void getQueryResult(String jobId, String batchId, String resultId,
-                               final StreamResponseCallback callback) {
+    public void getQueryResult(String jobId, String batchId, String resultId, final StreamResponseCallback callback) {
         final ContentExchange get = getContentExchange(HttpMethods.GET, batchResultUrl(jobId, batchId, resultId));
 
         // make the call and parse the result
@@ -358,7 +335,6 @@ public class DefaultBulkApiClient extends AbstractClientBase implements BulkApiC
                 callback.onResponse(response, ex);
             }
         });
-
     }
 
     @Override
@@ -401,6 +377,9 @@ public class DefaultBulkApiClient extends AbstractClientBase implements BulkApiC
         case ZIP_XML:
             result = type.toString().toLowerCase().replace('_', '/');
             break;
+
+        default:
+            break;
         }
 
         return result;
@@ -425,7 +404,7 @@ public class DefaultBulkApiClient extends AbstractClientBase implements BulkApiC
     }
 
     private <T> T unmarshalResponse(InputStream response, ContentExchange request, Class<T> resultClass)
-            throws SalesforceException {
+        throws SalesforceException {
         try {
             Unmarshaller unmarshaller = context.createUnmarshaller();
             JAXBElement<T> result = unmarshaller.unmarshal(new StreamSource(response), resultClass);
@@ -443,8 +422,7 @@ public class DefaultBulkApiClient extends AbstractClientBase implements BulkApiC
         }
     }
 
-    private void marshalRequest(Object input, ContentExchange request, String contentType)
-            throws SalesforceException {
+    private void marshalRequest(Object input, ContentExchange request, String contentType) throws SalesforceException {
         try {
             Marshaller marshaller = context.createMarshaller();
             ByteArrayOutputStream byteStream = new ByteArrayOutputStream();
@@ -487,5 +465,4 @@ public class DefaultBulkApiClient extends AbstractClientBase implements BulkApiC
             return batchUrl(jobId, batchId) + "/result";
         }
     }
-
 }

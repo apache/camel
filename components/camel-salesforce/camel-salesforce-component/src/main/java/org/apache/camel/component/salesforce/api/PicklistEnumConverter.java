@@ -37,8 +37,7 @@ public class PicklistEnumConverter implements Converter {
         } catch (Exception e) {
             throw new IllegalArgumentException(
                     String.format("Exception writing pick list value %s of type %s: %s",
-                            o, o.getClass().getName(), e.getMessage()),
-                    e);
+                            o, o.getClass().getName(), e.getMessage()), e);
         }
     }
 
@@ -53,13 +52,11 @@ public class PicklistEnumConverter implements Converter {
         } catch (SecurityException e) {
             throw new IllegalArgumentException(
                     String.format("Security Exception reading pick list value %s of type %s: %s",
-                            value, context.getRequiredType().getName(), e.getMessage()),
-                    e);
+                            value, context.getRequiredType().getName(), e.getMessage()), e);
         } catch (Exception e) {
             throw new IllegalArgumentException(
                     String.format("Exception reading pick list value %s of type %s: %s",
-                            value, context.getRequiredType().getName(), e.getMessage()),
-                    e);
+                            value, context.getRequiredType().getName(), e.getMessage()), e);
         }
     }
 
@@ -67,8 +64,7 @@ public class PicklistEnumConverter implements Converter {
     @SuppressWarnings("unchecked")
     public boolean canConvert(Class aClass) {
         try {
-            return Enum.class.isAssignableFrom(aClass) &&
-                    aClass.getMethod(FACTORY_METHOD, String.class) != null;
+            return Enum.class.isAssignableFrom(aClass) && aClass.getMethod(FACTORY_METHOD, String.class) != null;
         } catch (NoSuchMethodException e) {
             return false;
         }

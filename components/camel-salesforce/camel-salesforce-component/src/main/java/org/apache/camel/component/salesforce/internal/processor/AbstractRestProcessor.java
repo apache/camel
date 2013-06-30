@@ -16,6 +16,11 @@
  */
 package org.apache.camel.component.salesforce.internal.processor;
 
+import java.io.InputStream;
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.Map;
+
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.salesforce.SalesforceEndpoint;
@@ -25,11 +30,6 @@ import org.apache.camel.component.salesforce.internal.PayloadFormat;
 import org.apache.camel.component.salesforce.internal.client.DefaultRestClient;
 import org.apache.camel.component.salesforce.internal.client.RestClient;
 import org.apache.camel.util.ServiceHelper;
-
-import java.io.InputStream;
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.Map;
 
 import static org.apache.camel.component.salesforce.SalesforceEndpointConfig.*;
 
@@ -63,7 +63,6 @@ public abstract class AbstractRestProcessor extends AbstractSalesforceProcessor 
 
     @Override
     public final boolean process(final Exchange exchange, final AsyncCallback callback) {
-
         // pre-process request message
         try {
             processRequest(exchange);

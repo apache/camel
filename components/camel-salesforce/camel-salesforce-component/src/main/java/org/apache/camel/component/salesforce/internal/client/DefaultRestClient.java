@@ -16,6 +16,12 @@
  */
 package org.apache.camel.component.salesforce.internal.client;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
+import java.net.URLEncoder;
+import java.util.List;
+
 import com.thoughtworks.xstream.XStream;
 import org.apache.camel.component.salesforce.api.SalesforceException;
 import org.apache.camel.component.salesforce.api.dto.RestError;
@@ -31,24 +37,18 @@ import org.eclipse.jetty.http.HttpHeaders;
 import org.eclipse.jetty.http.HttpMethods;
 import org.eclipse.jetty.util.StringUtil;
 
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
-import java.net.URLEncoder;
-import java.util.List;
-
 public class DefaultRestClient extends AbstractClientBase implements RestClient {
 
     private static final String SERVICES_DATA = "/services/data/";
     private static final String TOKEN_HEADER = "Authorization";
     private static final String TOKEN_PREFIX = "Bearer ";
 
+    protected PayloadFormat format;
     private ObjectMapper objectMapper;
     private XStream xStream;
-    protected PayloadFormat format;
 
-    public DefaultRestClient(HttpClient httpClient,
-                             String version, PayloadFormat format, SalesforceSession session) throws SalesforceException {
+    public DefaultRestClient(HttpClient httpClient, String version, PayloadFormat format, SalesforceSession session)
+        throws SalesforceException {
         super(version, session, httpClient);
 
         this.format = format;
@@ -76,8 +76,9 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
         try {
             if (PayloadFormat.JSON.equals(format)) {
                 List<RestError> restErrors = objectMapper.readValue(
-                        httpExchange.getResponseContent(), new TypeReference<List<RestError>>() {
-                });
+                    httpExchange.getResponseContent(), new TypeReference<List<RestError>>() {
+                    }
+                );
                 return new SalesforceException(restErrors, httpExchange.getResponseStatus());
             } else {
                 RestErrors errors = new RestErrors();
@@ -87,11 +88,11 @@ public class DefaultRestClient extends AbstractClientBase implements RestClient 
         } catch (IOException e) {
             // log and ignore
             String msg = "Unexpected Error parsing " + format + " error response: " + e.getMessage();
-            LOG.warn(msg, e);
+            log.warn(msg, e);
         } catch (RuntimeException e) {
             // log and ignore
             String msg = "Unexpected Error parsing " + format + " error response: " + e.getMessage();
-            LOG.warn(msg, e);
+            log.warn(msg, e);
         }
 
         // just report HTTP status info

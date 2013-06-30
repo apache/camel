@@ -28,73 +28,72 @@ import org.codehaus.jackson.annotate.JsonProperty;
 @XStreamAlias("PushTopic")
 public class PushTopic extends AbstractSObjectBase {
 
-    private String Query;
-    private Double ApiVersion;
-    private Boolean IsActive;
+    private String query;
+    private Double apiVersion;
+    private Boolean isActive;
     @XStreamConverter(PicklistEnumConverter.class)
-    private NotifyForFieldsEnum NotifyForFields;
+    private NotifyForFieldsEnum notifyForFields;
     @XStreamConverter(PicklistEnumConverter.class)
-    private NotifyForOperationsEnum NotifyForOperations;
-    private String Description;
+    private NotifyForOperationsEnum notifyForOperations;
+    private String description;
 
     @JsonProperty("Query")
     public String getQuery() {
-        return this.Query;
+        return this.query;
     }
 
     @JsonProperty("Query")
-    public void setQuery(String Query) {
-        this.Query = Query;
+    public void setQuery(String query) {
+        this.query = query;
     }
 
     @JsonProperty("ApiVersion")
     public Double getApiVersion() {
-        return this.ApiVersion;
+        return this.apiVersion;
     }
 
     @JsonProperty("ApiVersion")
-    public void setApiVersion(Double ApiVersion) {
-        this.ApiVersion = ApiVersion;
+    public void setApiVersion(Double apiVersion) {
+        this.apiVersion = apiVersion;
     }
 
     @JsonProperty("IsActive")
     public Boolean getIsActive() {
-        return this.IsActive;
+        return this.isActive;
     }
 
     @JsonProperty("IsActive")
-    public void setIsActive(Boolean IsActive) {
-        this.IsActive = IsActive;
+    public void setIsActive(Boolean isActive) {
+        this.isActive = isActive;
     }
 
     @JsonProperty("NotifyForFields")
     public NotifyForFieldsEnum getNotifyForFields() {
-        return this.NotifyForFields;
+        return this.notifyForFields;
     }
 
     @JsonProperty("NotifyForFields")
-    public void setNotifyForFields(NotifyForFieldsEnum NotifyForFields) {
-        this.NotifyForFields = NotifyForFields;
+    public void setNotifyForFields(NotifyForFieldsEnum notifyForFields) {
+        this.notifyForFields = notifyForFields;
     }
 
     @JsonProperty("NotifyForOperations")
     public NotifyForOperationsEnum getNotifyForOperations() {
-        return this.NotifyForOperations;
+        return this.notifyForOperations;
     }
 
     @JsonProperty("NotifyForOperations")
-    public void setNotifyForOperations(NotifyForOperationsEnum NotifyForOperations) {
-        this.NotifyForOperations = NotifyForOperations;
+    public void setNotifyForOperations(NotifyForOperationsEnum notifyForOperations) {
+        this.notifyForOperations = notifyForOperations;
     }
 
     @JsonProperty("Description")
     public String getDescription() {
-        return this.Description;
+        return this.description;
     }
 
     @JsonProperty("Description")
-    public void setDescription(String Description) {
-        this.Description = Description;
+    public void setDescription(String description) {
+        this.description = description;
     }
-
 }

@@ -54,9 +54,7 @@ public class SalesforceSecurityListener extends HttpEventListenerWrapper {
 
     @Override
     public void onResponseStatus(Buffer version, int status, Buffer reason) throws IOException {
-        if (status == HttpStatus.UNAUTHORIZED_401 &&
-                retries < destination.getHttpClient().maxRetries()) {
-
+        if (status == HttpStatus.UNAUTHORIZED_401 && retries < destination.getHttpClient().maxRetries()) {
             LOG.warn("Retrying on Salesforce authentication error [{}]: [{}]", status, reason);
             setDelegatingRequests(false);
             setDelegatingResponses(false);

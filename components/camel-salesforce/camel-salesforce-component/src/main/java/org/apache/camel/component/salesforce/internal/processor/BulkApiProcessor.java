@@ -56,8 +56,8 @@ public class BulkApiProcessor extends AbstractSalesforceProcessor {
 
     @Override
     public boolean process(final Exchange exchange, final AsyncCallback callback) {
-
         boolean done = false;
+
         try {
             switch (operationName) {
             case CREATE_JOB:
