@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.salesforce.api;
 
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -27,48 +26,49 @@ public class SalesforceException extends CamelException {
 
     private static final long serialVersionUID = 1L;
 
-    private List<RestError> errors;
-    private int statusCode;
+    private final List<RestError> errors;
+    private final int statusCode;
 
-    public SalesforceException(List<RestError> errors, int statusCode) {
-        this(toErrorMessage(errors, statusCode), statusCode);
-
-        this.errors = errors;
-    }
-
-    public SalesforceException(String message, int statusCode) {
-        super(message);
-
-        this.statusCode = statusCode;
+    public SalesforceException(Throwable cause) {
+        this(null, 0, null, cause);
     }
 
     public SalesforceException(String message, Throwable cause) {
-        super(message, cause);
+        this(null, 0, message, cause);
     }
 
-    public SalesforceException(Throwable cause) {
-        super(cause);
+    public SalesforceException(String message, int statusCode) {
+        this(null, statusCode, message, null);
+    }
+
+    public SalesforceException(String message, int statusCode, Throwable cause) {
+        this(null, statusCode, message, cause);
+    }
+
+    public SalesforceException(List<RestError> errors, int statusCode) {
+        this(errors, statusCode, null, null);
+    }
+
+    public SalesforceException(List<RestError> errors, int statusCode, Throwable cause) {
+        this(errors, statusCode, null, cause);
+    }
+
+    public SalesforceException(List<RestError> errors, int statusCode, String message) {
+        this(errors, statusCode, message, null);
+    }
+
+    public SalesforceException(List<RestError> errors, int statusCode, String message, Throwable cause) {
+        super(toErrorMessage(errors, statusCode), cause);
+        this.errors = errors;
+        this.statusCode = statusCode;
     }
 
     public List<RestError> getErrors() {
         return Collections.unmodifiableList(errors);
     }
 
-    public void setErrors(List<RestError> errors) {
-        if (this.errors != null) {
-            this.errors.clear();
-        } else {
-            this.errors = new ArrayList<RestError>();
-        }
-        this.errors.addAll(errors);
-    }
-
     public int getStatusCode() {
         return statusCode;
-    }
-
-    public void setStatusCode(int statusCode) {
-        this.statusCode = statusCode;
     }
 
     @Override
