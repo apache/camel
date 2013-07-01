@@ -179,7 +179,7 @@
     <scala-version>2.9.1</scala-version>
     <scala-plugin-version>2.15.2</scala-plugin-version>
     <scala-maven-plugin-version>3.1.0</scala-maven-plugin-version>
-    <servicemix-specs-version>1.9.0</servicemix-specs-version>
+    <servicemix-specs-version>2.2.0</servicemix-specs-version>
     <shiro-version>1.2.0</shiro-version>
     <slf4j-api-version>1.6.6</slf4j-api-version>
     <slf4j-version>1.6.6</slf4j-version>

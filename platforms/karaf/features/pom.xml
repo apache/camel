@@ -120,9 +120,9 @@
       <tagsoup-bundle-version>1.2_5</tagsoup-bundle-version>
       <twitter4j-bundle-version>2.2.5_2</twitter4j-bundle-version>
       <velocity-bundle-version>1.7_5</velocity-bundle-version>
-      <xalan-bundle-version>2.7.1_5</xalan-bundle-version>
+      <xalan-bundle-version>2.7.1_6</xalan-bundle-version>
       <xerces-bundle-version>2.9.1_5</xerces-bundle-version>
-      <xmlbeans-bundle-version>2.5.0_2</xmlbeans-bundle-version>
+      <xmlbeans-bundle-version>2.6.0_2</xmlbeans-bundle-version>
       <xmlschema-version>2.0</xmlschema-version>
       <xmlresolver-bundle-version>1.2_5</xmlresolver-bundle-version>
       <xpp3-bundle-version>1.1.4c_6</xpp3-bundle-version>
