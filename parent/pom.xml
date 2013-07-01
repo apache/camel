@@ -262,7 +262,7 @@
     <maven-failsafe-plugin-version>2.13</maven-failsafe-plugin-version>
     <maven-install-plugin-version>2.4</maven-install-plugin-version>
     <maven-jar-plugin-version>2.4</maven-jar-plugin-version>
-    <maven-javadoc-plugin-version>2.9</maven-javadoc-plugin-version>
+    <maven-javadoc-plugin-version>2.9.1</maven-javadoc-plugin-version>
     <maven-plugin-plugin-version>3.2</maven-plugin-plugin-version>
     <maven-remote-resources-plugin-version>1.4</maven-remote-resources-plugin-version>
     <maven-resources-plugin-version>2.6</maven-resources-plugin-version>
