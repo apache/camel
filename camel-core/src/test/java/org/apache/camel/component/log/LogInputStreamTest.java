@@ -41,7 +41,7 @@ public class LogInputStreamTest extends ContextTestSupport {
     public void testB() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:b");
         mock.expectedMessageCount(1);
-        mock.message(0).body(String.class).isEqualTo("Hello World");
+        mock.message(0).body(InputStream.class).convertToString().isEqualTo("Hello World");
 
         InputStream is = new ByteArrayInputStream("Hello World".getBytes());
         template.sendBody("direct:b", is);
