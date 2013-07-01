@@ -20,12 +20,14 @@ import javax.persistence.CascadeType;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.NamedQuery;
 import javax.persistence.OneToOne;
 
 /**
  * @version 
  */
 @Entity
+@NamedQuery(name="findAllCustomersWithName", query = "SELECT c FROM Customer c WHERE c.name LIKE :custName ")
 public class Customer {
     
     @Id

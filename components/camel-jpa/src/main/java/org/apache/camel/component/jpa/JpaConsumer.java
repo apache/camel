@@ -19,6 +19,8 @@ package org.apache.camel.component.jpa;
 import java.lang.reflect.Method;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
 import java.util.Queue;
 
 import javax.persistence.Entity;
@@ -49,6 +51,7 @@ public class JpaConsumer extends ScheduledBatchPollingConsumer {
     private String query;
     private String namedQuery;
     private String nativeQuery;
+    private Map<String, Object> parameters;
     private Class<?> resultClass;
     private boolean transacted;
 
@@ -193,6 +196,14 @@ public class JpaConsumer extends ScheduledBatchPollingConsumer {
 
     public void setDeleteHandler(DeleteHandler<Object> deleteHandler) {
         this.deleteHandler = deleteHandler;
+    }
+    
+    public void setParameters(Map<String, Object> params) {
+        this.parameters = params;
+    }
+    
+    public Map<String, Object> getParameters() {
+        return parameters;
     }
 
     public String getNamedQuery() {
@@ -351,6 +362,13 @@ public class JpaConsumer extends ScheduledBatchPollingConsumer {
         if (maxResults > 0) {
             query.setMaxResults(maxResults);
         }
+        // setup the parameter
+        if (parameters != null) {
+            for (Entry<String, Object> entry : parameters.entrySet()) {
+                query.setParameter(entry.getKey(), entry.getValue());
+            }
+        }
+        
     }
 
     protected Exchange createExchange(Object result) {
