@@ -33,9 +33,10 @@
     <xsd:element name="destination">
         <xsd:complexType>
             <xsd:complexContent>
-                <xsd:extension base="beans:Tcomponent"/>
-                <!-- here we need to specify the CamelContext reference --> 
-                <xsd:attribute name="camelContextId" type="xsd:string" />
+                <xsd:extension base="beans:Tcomponent">
+                    <!-- here we need to specify the CamelContext reference --> 
+                    <xsd:attribute name="camelContextId" type="xsd:string" />
+                </xsd:extension>
             </xsd:complexContent>
         </xsd:complexType>
     </xsd:element>
@@ -43,9 +44,10 @@
     <xsd:element name="conduit">
         <xsd:complexType>
             <xsd:complexContent>
-                <xsd:extension base="beans:Tcomponent"/>
-                <!-- here we need to specify the CamelContext reference --> 
-                <xsd:attribute name="camelContextId" type="xsd:string" />    
+                <xsd:extension base="beans:Tcomponent">
+                    <!-- here we need to specify the CamelContext reference --> 
+                    <xsd:attribute name="camelContextId" type="xsd:string" />    
+                </xsd:extension>
             </xsd:complexContent>
         </xsd:complexType>
     </xsd:element>
