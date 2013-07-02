@@ -17,6 +17,7 @@
 package org.apache.camel.component.file.remote;
 
 import java.net.URI;
+import java.security.KeyPair;
 
 /**
  * Secure FTP configuration
@@ -31,6 +32,7 @@ public class SftpConfiguration extends RemoteFileConfiguration {
     private String privateKeyUri;
     private byte[] privateKey;
     private String privateKeyPassphrase;
+    private KeyPair keyPair;
     private String strictHostKeyChecking = "no";
     private int serverAliveInterval;
     private int serverAliveCountMax = 1;
@@ -117,6 +119,14 @@ public class SftpConfiguration extends RemoteFileConfiguration {
     @Deprecated
     public void setPrivateKeyFilePassphrase(String privateKeyFilePassphrase) {
         this.privateKeyPassphrase = privateKeyFilePassphrase;
+    }
+
+    public KeyPair getKeyPair() {
+        return keyPair;
+    }
+
+    public void setKeyPair(KeyPair keyPair) {
+        this.keyPair = keyPair;
     }
 
     public String getStrictHostKeyChecking() {
