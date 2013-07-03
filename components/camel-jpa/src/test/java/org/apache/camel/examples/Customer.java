@@ -27,7 +27,8 @@ import javax.persistence.OneToOne;
  * @version 
  */
 @Entity
-@NamedQuery(name="findAllCustomersWithName", query = "SELECT c FROM Customer c WHERE c.name LIKE :custName ")
+@NamedQuery(name = "findAllCustomersWithName",
+query = "SELECT c FROM Customer c WHERE c.name LIKE :custName ")
 public class Customer {
     
     @Id
