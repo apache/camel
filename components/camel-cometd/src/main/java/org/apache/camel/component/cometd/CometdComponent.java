@@ -64,6 +64,7 @@ public class CometdComponent extends DefaultComponent {
     private String sslKeystore;
     private SecurityPolicy securityPolicy;
     private List<BayeuxServer.Extension> extensions;
+    private List<BayeuxServer.BayeuxServerListener> serverListeners;
     private SSLContextParameters sslContextParameters;
 
     class ConnectorRef {
@@ -140,6 +141,11 @@ public class CometdComponent extends DefaultComponent {
             if (extensions != null) {
                 for (BayeuxServer.Extension extension : extensions) {
                     bayeux.addExtension(extension);
+                }
+            }
+            if (serverListeners != null) {
+                for (BayeuxServer.BayeuxServerListener serverListener : serverListeners) {
+                    bayeux.addListener(serverListener);
                 }
             }
             prodcon.setBayeux(bayeux);
@@ -282,6 +288,13 @@ public class CometdComponent extends DefaultComponent {
             extensions = new ArrayList<BayeuxServer.Extension>();
         }
         extensions.add(extension);
+    }
+    
+    public void addServerListener(BayeuxServer.BayeuxServerListener serverListener) {
+        if (serverListeners == null) {
+            serverListeners = new ArrayList<BayeuxServer.BayeuxServerListener>();
+        }
+        serverListeners.add(serverListener);
     }
     
     public SSLContextParameters getSslContextParameters() {
