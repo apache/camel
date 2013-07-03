@@ -111,7 +111,9 @@ public class Main extends MainSupport {
 
     protected void doStop() throws Exception {
         super.doStop();
-        getCamelContexts().get(0).stop();
+        if (getCamelContexts().size() > 0) {
+            getCamelContexts().get(0).stop();
+        }
     }
 
     protected ProducerTemplate findOrCreateCamelTemplate() {
