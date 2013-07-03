@@ -19,7 +19,9 @@ package org.apache.camel.component.mongodb;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.mongodb.AggregationOutput;
 import com.mongodb.BasicDBObject;
+import com.mongodb.BasicDBList;
 import com.mongodb.CommandResult;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
@@ -113,7 +115,11 @@ public class MongoDbProducer extends DefaultProducer {
         case remove:
             doRemove(exchange);
             break;
-
+        
+        case aggregat:
+        	doAggregat(exchange);
+        	break;
+        	
         case getDbStats:
             doGetStats(exchange, MongoDbOperation.getDbStats);
             break;
@@ -339,6 +345,42 @@ public class MongoDbProducer extends DefaultProducer {
         resultMessage.setBody(answer);
     }
     
+    /**
+    * All headers except collection and database are non available for this
+    * operation.
+    * 
+    * @param exchange
+    * @throws Exception
+    */
+    protected void doAggregat(Exchange exchange) throws Exception {
+    	DBCollection dbCol = calculateCollection(exchange);
+    	DBObject query = exchange.getIn().getMandatoryBody(DBObject.class);
+
+    	// Impossible with java driver to get the batch size and number to skip
+    	Iterable<DBObject> dbIterator = null;
+    	try {
+    		AggregationOutput agregationResult = null;
+    		
+    		//Allow body to be a pipeline
+    		//@see http://docs.mongodb.org/manual/core/aggregation/
+    		if(query instanceof BasicDBList){
+    			BasicDBList queryList = (BasicDBList)query;
+    			agregationResult = dbCol.aggregate((DBObject)queryList.get(0), (BasicDBObject[])queryList.subList(1, queryList.size()).toArray(new BasicDBObject[ queryList.size()-1]));
+    		}else{
+    			agregationResult = dbCol.aggregate(query);
+    		}
+    		
+    		dbIterator = agregationResult.results();
+    		Message resultMessage = prepareResponseMessage(exchange,
+    				MongoDbOperation.aggregat);
+    		resultMessage.setBody(dbIterator);
+    		
+    		//Mongo Driver does not allow to read size and to paginate agregate result
+    	} catch (Exception e) {
+    		// rethrow the exception
+    		throw e;
+    	}
+    }
     // --------- Convenience methods -----------------------
     
     private DBCollection calculateCollection(Exchange exchange) {
