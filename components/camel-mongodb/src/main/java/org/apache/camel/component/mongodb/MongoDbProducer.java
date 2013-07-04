@@ -19,6 +19,8 @@ package org.apache.camel.component.mongodb;
 import java.util.ArrayList;
 import java.util.List;
 
+import com.mongodb.AggregationOutput;
+import com.mongodb.BasicDBList;
 import com.mongodb.BasicDBObject;
 import com.mongodb.CommandResult;
 import com.mongodb.DB;
@@ -113,7 +115,11 @@ public class MongoDbProducer extends DefaultProducer {
         case remove:
             doRemove(exchange);
             break;
-
+        
+        case aggregate:
+            doAggregate(exchange);
+            break;
+        
         case getDbStats:
             doGetStats(exchange, MongoDbOperation.getDbStats);
             break;
@@ -339,6 +345,42 @@ public class MongoDbProducer extends DefaultProducer {
         resultMessage.setBody(answer);
     }
     
+    /**
+    * All headers except collection and database are non available for this
+    * operation.
+    * 
+    * @param exchange
+    * @throws Exception
+    */
+    protected void doAggregate(Exchange exchange) throws Exception {
+        DBCollection dbCol = calculateCollection(exchange);
+        DBObject query = exchange.getIn().getMandatoryBody(DBObject.class);
+
+        // Impossible with java driver to get the batch size and number to skip
+        Iterable<DBObject> dbIterator = null;
+        try {
+            AggregationOutput aggregationResult = null;
+
+            // Allow body to be a pipeline
+            // @see http://docs.mongodb.org/manual/core/aggregation/
+            if (query instanceof BasicDBList) {
+                BasicDBList queryList = (BasicDBList)query;
+                aggregationResult = dbCol.aggregate((DBObject)queryList.get(0), (BasicDBObject[])queryList
+                    .subList(1, queryList.size()).toArray(new BasicDBObject[queryList.size() - 1]));
+            } else {
+                aggregationResult = dbCol.aggregate(query);
+            }
+
+            dbIterator = aggregationResult.results();
+            Message resultMessage = prepareResponseMessage(exchange, MongoDbOperation.aggregate);
+            resultMessage.setBody(dbIterator);
+
+            // Mongo Driver does not allow to read size and to paginate aggregate result
+        } catch (Exception e) {
+            // rethrow the exception
+            throw e;
+        }
+    }
     // --------- Convenience methods -----------------------
     
     private DBCollection calculateCollection(Exchange exchange) {
