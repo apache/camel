@@ -116,7 +116,7 @@ public class MongoDbProducer extends DefaultProducer {
             doRemove(exchange);
             break;
         
-        case aggregat:
+        case aggregate:
         	doAggregat(exchange);
         	break;
         	
@@ -359,23 +359,23 @@ public class MongoDbProducer extends DefaultProducer {
     	// Impossible with java driver to get the batch size and number to skip
     	Iterable<DBObject> dbIterator = null;
     	try {
-    		AggregationOutput agregationResult = null;
+    		AggregationOutput aggregationResult = null;
     		
     		//Allow body to be a pipeline
     		//@see http://docs.mongodb.org/manual/core/aggregation/
     		if(query instanceof BasicDBList){
     			BasicDBList queryList = (BasicDBList)query;
-    			agregationResult = dbCol.aggregate((DBObject)queryList.get(0), (BasicDBObject[])queryList.subList(1, queryList.size()).toArray(new BasicDBObject[ queryList.size()-1]));
+    			aggregationResult = dbCol.aggregate((DBObject)queryList.get(0), (BasicDBObject[])queryList.subList(1, queryList.size()).toArray(new BasicDBObject[ queryList.size()-1]));
     		}else{
-    			agregationResult = dbCol.aggregate(query);
+    			aggregationResult = dbCol.aggregate(query);
     		}
     		
-    		dbIterator = agregationResult.results();
+    		dbIterator = aggregationResult.results();
     		Message resultMessage = prepareResponseMessage(exchange,
-    				MongoDbOperation.aggregat);
+    				MongoDbOperation.aggregate);
     		resultMessage.setBody(dbIterator);
     		
-    		//Mongo Driver does not allow to read size and to paginate agregate result
+    		//Mongo Driver does not allow to read size and to paginate aggregate result
     	} catch (Exception e) {
     		// rethrow the exception
     		throw e;

@@ -34,7 +34,7 @@ public enum MongoDbOperation {
     remove, 
     
     //aggregat
-    aggregat,
+    aggregate,
     
     // others
     getDbStats, 
