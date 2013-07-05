@@ -96,6 +96,13 @@
       <version>${sshd-version}</version>
       <scope>test</scope>
     </dependency>
+    <!-- for testing sftp through http proxy -->
+    <dependency>
+      <groupId>org.littleshoot</groupId>
+      <artifactId>littleproxy</artifactId>
+      <version>0.4</version>
+      <scope>test</scope>
+    </dependency>
     <!-- needed for sftp server -->
     <dependency>
       <groupId>org.bouncycastle</groupId>
