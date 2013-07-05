@@ -17,6 +17,7 @@
 package org.apache.camel.component.file.remote;
 
 import com.jcraft.jsch.ChannelSftp;
+import com.jcraft.jsch.Proxy;
 import org.apache.camel.Processor;
 import org.apache.camel.component.file.GenericFileProducer;
 
@@ -25,6 +26,8 @@ import org.apache.camel.component.file.GenericFileProducer;
  */
 public class SftpEndpoint extends RemoteFileEndpoint<ChannelSftp.LsEntry> {
 
+    Proxy proxy;
+    
     public SftpEndpoint() {
     }
 
@@ -47,7 +50,7 @@ public class SftpEndpoint extends RemoteFileEndpoint<ChannelSftp.LsEntry> {
     }
 
     public RemoteFileOperations<ChannelSftp.LsEntry> createRemoteFileOperations() {
-        SftpOperations operations = new SftpOperations();
+        SftpOperations operations = new SftpOperations(proxy);
         operations.setEndpoint(this);
         return operations;
     }
@@ -55,5 +58,9 @@ public class SftpEndpoint extends RemoteFileEndpoint<ChannelSftp.LsEntry> {
     @Override
     public String getScheme() {
         return "sftp";
+    }
+
+    public void setProxy(Proxy proxy) {
+        this.proxy = proxy;
     }
 }
