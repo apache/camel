@@ -32,6 +32,7 @@ import java.util.regex.Pattern;
 import com.jcraft.jsch.ChannelSftp;
 import com.jcraft.jsch.JSch;
 import com.jcraft.jsch.JSchException;
+import com.jcraft.jsch.Proxy;
 import com.jcraft.jsch.Session;
 import com.jcraft.jsch.SftpException;
 import com.jcraft.jsch.UIKeyboardInteractive;
@@ -58,9 +59,17 @@ import static org.apache.camel.util.ObjectHelper.isNotEmpty;
 public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry> {
     private static final transient Logger LOG = LoggerFactory.getLogger(SftpOperations.class);
     private static final Pattern UP_DIR_PATTERN = Pattern.compile("/[^/]+");
+    private Proxy proxy;
     private SftpEndpoint endpoint;
     private ChannelSftp channel;
     private Session session;
+
+    public SftpOperations() {
+    }
+
+    public SftpOperations(Proxy proxy) {
+        this.proxy = proxy;
+    }
 
     /**
      * Extended user info which supports interactive keyboard mode, by entering the password.
@@ -222,6 +231,12 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
             }
 
         });
+        
+        // set proxy if configured
+        if (proxy != null) {
+            session.setProxy(proxy);
+        }
+        
         return session;
     }
 
