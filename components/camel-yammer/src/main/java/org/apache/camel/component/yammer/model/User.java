@@ -17,9 +17,8 @@
 package org.apache.camel.component.yammer.model;
 
 import java.util.List;
-import org.codehaus.jackson.annotate.JsonProperty;
-
 import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+import org.codehaus.jackson.annotate.JsonProperty;
 
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class User {
