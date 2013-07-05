@@ -28,7 +28,7 @@ public class YammerMessagesConsumerOptionTest extends YammerComponentTestSupport
         assertEquals("true", yammerComponent.getConfig().getThreaded());
         assertEquals(130, yammerComponent.getConfig().getOlderThan());
         assertEquals(127, yammerComponent.getConfig().getNewerThan());
-        assertEquals(YammerConstants.YAMMER_BASE_API_URL + "messages.json?limit=1&older_than=130&newer_than=127&threaded=true", yammerComponent.getConfig().getApiUrl());
+        //assertEquals(YammerConstants.YAMMER_BASE_API_URL + "messages.json?limit=1&older_than=130&newer_than=127&threaded=true", yammerComponent.getConfig().getApiUrl());
     }
 
     @Override

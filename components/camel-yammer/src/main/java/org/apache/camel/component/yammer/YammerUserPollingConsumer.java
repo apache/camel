@@ -16,23 +16,25 @@
  */
 package org.apache.camel.component.yammer;
 
+import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.yammer.model.Messages;
+import org.apache.camel.component.yammer.model.User;
 import org.apache.camel.impl.ScheduledPollConsumer;
 import org.apache.camel.util.ObjectHelper;
 import org.codehaus.jackson.map.ObjectMapper;
 
 /**
- * A Yammer consumer that periodically polls messages from Yammer's message API.
+ * A Yammer consumer that periodically polls messages from Yammer's user API.
  */
-public class YammerMessagePollingConsumer extends ScheduledPollConsumer {
+public class YammerUserPollingConsumer extends ScheduledPollConsumer {
     private final YammerEndpoint endpoint;
     private final String apiUrl;
     
-    public YammerMessagePollingConsumer(YammerEndpoint endpoint, Processor processor) throws Exception {
+    public YammerUserPollingConsumer(YammerEndpoint endpoint, Processor processor) throws Exception {
         super(endpoint, processor);
         this.endpoint = endpoint;
 
@@ -47,65 +49,20 @@ public class YammerMessagePollingConsumer extends ScheduledPollConsumer {
         
         String function = endpoint.getConfig().getFunction();
         switch (YammerFunctionType.fromUri(function)) {
-        case MESSAGES:
+        case USERS:
             url.append(YammerConstants.YAMMER_BASE_API_URL);
             url.append(function);
             url.append(".json");
             break;
-        case ALGO:
-        case FOLLOWING:
-        case MY_FEED:
-        case PRIVATE:
-        case SENT:
+        case CURRENT:
             url.append(YammerConstants.YAMMER_BASE_API_URL);
-            url.append("messages/");
+            url.append("users/");
             url.append(function);
             url.append(".json");
             break;
         default:
-            throw new Exception(String.format("%s is not a valid Yammer message function type.", function));
+            throw new Exception(String.format("%s is not a valid Yammer user function type.", function));
         }        
-        
-        StringBuilder args = new StringBuilder();
-        
-        int limit = endpoint.getConfig().getLimit();
-        if (limit > 0) {
-            args.append("limit=");
-            args.append(limit);
-        }        
-
-        int olderThan = endpoint.getConfig().getOlderThan();
-        if (olderThan > 0) {
-            if (args.length() > 0) {
-                args.append("&");
-            }
-            args.append("older_than=");
-            args.append(olderThan);
-        }        
-
-        int newerThan = endpoint.getConfig().getNewerThan();
-        if (newerThan > 0) {
-            if (args.length() > 0) {
-                args.append("&");
-            }            
-            args.append("newer_than=");
-            args.append(newerThan);
-        }        
-        
-        String threaded = endpoint.getConfig().getThreaded();
-        if (ObjectHelper.isNotEmpty(threaded) 
-                && ("true".equals(threaded) || "extended".equals(threaded))) {
-            if (args.length() > 0) {
-                args.append("&");
-            }            
-            args.append("threaded=");
-            args.append(threaded);
-        }        
-        
-        if (args.length() > 0) {
-            url.append("?");
-            url.append(args);
-        }            
         
         return url.toString();
     }
@@ -116,19 +73,20 @@ public class YammerMessagePollingConsumer extends ScheduledPollConsumer {
         Exchange exchange = endpoint.createExchange();
 
         try {
-            String jsonBody = endpoint.getConfig().getRequestor(apiUrl).send();   
-            
+            String jsonBody = endpoint.getConfig().getRequestor(apiUrl).send();
+
             if (!endpoint.getConfig().isUseJson()) {
                 ObjectMapper jsonMapper = new ObjectMapper();
-                Messages messages = jsonMapper.readValue(jsonBody, Messages.class);
-                exchange.getIn().setBody(messages);
+                List<User> users = jsonMapper.readValue(jsonBody, jsonMapper.getTypeFactory().constructCollectionType(List.class, User.class));
+                
+                exchange.getIn().setBody(users);
             } else {
                 exchange.getIn().setBody(jsonBody);
             }
 
             // send message to next processor in the route
             getProcessor().process(exchange);
-        
+
             return 1; // number of messages polled
         } finally {
             // log exception if an exception occurred and was not handled

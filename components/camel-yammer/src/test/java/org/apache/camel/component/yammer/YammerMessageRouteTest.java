@@ -23,7 +23,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.yammer.model.Messages;
 import org.junit.Test;
 
-public class YammerComponentTest extends YammerComponentTestSupport {
+public class YammerMessageRouteTest extends YammerComponentTestSupport {
 
     @Test
     public void testConsumeAllMessages() throws Exception {

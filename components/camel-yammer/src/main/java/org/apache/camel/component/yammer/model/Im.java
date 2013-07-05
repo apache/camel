@@ -14,18 +14,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.yammer;
+package org.apache.camel.component.yammer.model;
 
-public enum YammerFunctionType {
-    MESSAGES, MY_FEED, ALGO, FOLLOWING, SENT, PRIVATE, 
-    USERS, CURRENT;
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
-    public static YammerFunctionType fromUri(String uri) {
-        for (YammerFunctionType endpointType : YammerFunctionType.values()) {
-            if (endpointType.name().equalsIgnoreCase(uri)) {
-                return endpointType;
-            }
-        }
-        return YammerFunctionType.MESSAGES;
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class Im {
+
+    private String username;
+    private String provider;
+
+    public String getUsername() {
+        return username;
     }
+
+    public void setUsername(String username) {
+        this.username = username;
+    }
+
+    public String getProvider() {
+        return provider;
+    }
+
+    public void setProvider(String provider) {
+        this.provider = provider;
+    }
+
+    @Override
+    public String toString() {
+        return "Im [username=" + username + ", provider=" + provider + "]";
+    }
+
 }

@@ -14,18 +14,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.yammer;
+package org.apache.camel.component.yammer.model;
 
-public enum YammerFunctionType {
-    MESSAGES, MY_FEED, ALGO, FOLLOWING, SENT, PRIVATE, 
-    USERS, CURRENT;
+import org.codehaus.jackson.annotate.JsonProperty;
 
-    public static YammerFunctionType fromUri(String uri) {
-        for (YammerFunctionType endpointType : YammerFunctionType.values()) {
-            if (endpointType.name().equalsIgnoreCase(uri)) {
-                return endpointType;
-            }
-        }
-        return YammerFunctionType.MESSAGES;
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
+
+@JsonIgnoreProperties(ignoreUnknown = true)
+public class Settings {
+
+    @JsonProperty("xdr_proxy")
+    private String xdrProxy;
+
+    public String getXdrProxy() {
+        return xdrProxy;
     }
+
+    public void setXdrProxy(String xdrProxy) {
+        this.xdrProxy = xdrProxy;
+    }
+
+    @Override
+    public String toString() {
+        return "Settings [xdrProxy=" + xdrProxy + "]";
+    }
+
 }
