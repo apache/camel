@@ -17,7 +17,6 @@
 package org.apache.camel.component.seda;
 
 import org.apache.camel.ContextTestSupport;
-import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.builder.RouteBuilder;
 
 /**

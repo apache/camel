@@ -22,6 +22,9 @@ import org.apache.camel.RuntimeCamelException;
  * A runtime exception caused by using the Camel RX layer
  */
 public class RuntimeCamelRxException extends RuntimeCamelException {
+
+    private static final long serialVersionUID = 1L;
+
     public RuntimeCamelRxException() {
     }
 

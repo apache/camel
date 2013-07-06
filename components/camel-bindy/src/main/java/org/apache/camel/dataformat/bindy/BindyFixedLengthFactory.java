@@ -193,7 +193,7 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
                 Field lengthField = annotatedFields.get(dataField.lengthPos());
                 lengthField.setAccessible(true);
                 Object modelObj = model.get(lengthField.getDeclaringClass().getName());
-                Object lengthObj =  (Integer) lengthField.get(modelObj);
+                Object lengthObj =  lengthField.get(modelObj);
                 length = ((Integer)lengthObj).intValue();
             }
             if (length < 1 && delimiter == null && dataField.lengthPos() == 0) {

@@ -29,7 +29,7 @@ public class Smpp8BitSplitterTest {
                 + "123456789012345678901234567890123456789012345678901234567890";
 
         Smpp8BitSplitter splitter = new Smpp8BitSplitter(message.length());
-        Smpp8BitSplitter.resetCurrentReferenceNumber();
+        SmppSplitter.resetCurrentReferenceNumber();
         byte[][] result = splitter.split(message.getBytes());
         
         assertEquals(1, result.length);
@@ -47,7 +47,7 @@ public class Smpp8BitSplitterTest {
                 + "12345678901234567890123456789012345678901234567890123456789012345678901";
 
         Smpp8BitSplitter splitter = new Smpp8BitSplitter(message.length());
-        Smpp8BitSplitter.resetCurrentReferenceNumber();
+        SmppSplitter.resetCurrentReferenceNumber();
         byte[][] result = splitter.split(message.getBytes());
         
         assertEquals(2, result.length);

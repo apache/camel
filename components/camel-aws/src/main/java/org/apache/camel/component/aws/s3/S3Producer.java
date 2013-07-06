@@ -29,7 +29,6 @@ import com.amazonaws.services.s3.model.PutObjectResult;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
-import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.util.FileUtil;

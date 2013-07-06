@@ -282,8 +282,8 @@ public class SedaDisruptorCompareTest extends CamelTestSupport {
         }
         final long start = System.currentTimeMillis();
 
-        for (int i = 0; i < producerThread.length; ++i) {
-            producerThread[i].start();
+        for (ProducerThread element : producerThread) {
+            element.start();
         }
 
         awaitExchangeAwaiters();
@@ -420,17 +420,6 @@ public class SedaDisruptorCompareTest extends CamelTestSupport {
             while (producedMessageCount++ < totalMessageCount) {
                 producerTemplate.sendBody(endpoint, ExchangePattern.InOnly, System.nanoTime());
             }
-        }
-
-        public String getStatus() {
-            final StringBuilder sb = new StringBuilder(100);
-            sb.append("produced ");
-            sb.append(producedMessageCount - 1);
-            sb.append('/');
-            sb.append(totalMessageCount);
-            sb.append(" messages");
-
-            return sb.toString();
         }
     }
 }

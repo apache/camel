@@ -23,6 +23,7 @@ import org.apache.camel.util.ObjectHelper;
 
 public class ParameterBindingException extends RuntimeCamelException {
 
+    private static final long serialVersionUID = 1L;
     private final Method method;
     private final int index;
     private final Class<?> parameterType;

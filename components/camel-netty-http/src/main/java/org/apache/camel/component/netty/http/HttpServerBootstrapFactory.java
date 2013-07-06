@@ -17,7 +17,6 @@
 package org.apache.camel.component.netty.http;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.component.netty.NettyConfiguration;
 import org.apache.camel.component.netty.NettyConsumer;
 import org.apache.camel.component.netty.NettyServerBootstrapConfiguration;
 import org.apache.camel.component.netty.SingleTCPNettyServerBootstrapFactory;

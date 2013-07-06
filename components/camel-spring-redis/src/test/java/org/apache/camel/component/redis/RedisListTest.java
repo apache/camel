@@ -237,7 +237,7 @@ public class RedisListTest extends RedisTestSupport {
 
     @Test
     public void shouldExecuteLSET() throws Exception {
-        Object result = sendHeaders(
+        sendHeaders(
                 RedisConstants.COMMAND, "LSET",
                 RedisConstants.KEY, "key",
                 RedisConstants.VALUE, "value",
@@ -248,7 +248,7 @@ public class RedisListTest extends RedisTestSupport {
 
     @Test
     public void shouldExecuteLTRIM() throws Exception {
-        Object result = sendHeaders(
+        sendHeaders(
                 RedisConstants.COMMAND, "LTRIM",
                 RedisConstants.KEY, "key",
                 RedisConstants.START, "1",

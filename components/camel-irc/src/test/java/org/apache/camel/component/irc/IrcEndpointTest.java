@@ -22,7 +22,7 @@ import java.util.List;
 import org.junit.Before;
 import org.junit.Test;
 import org.schwering.irc.lib.IRCConnection;
-import org.schwering.irc.lib.IRCEventAdapter;
+import org.schwering.irc.lib.IRCConstants;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.never;
@@ -77,7 +77,7 @@ public class IrcEndpointTest {
     @Test
     public void doHandleIrcErrorNickInUse() throws Exception {
         when(connection.getNick()).thenReturn("nick");
-        endpoint.handleIrcError(IRCEventAdapter.ERR_NICKNAMEINUSE, "foo");
+        endpoint.handleIrcError(IRCConstants.ERR_NICKNAMEINUSE, "foo");
 
         verify(connection).doNick("nick-");
         when(connection.getNick()).thenReturn("nick---");

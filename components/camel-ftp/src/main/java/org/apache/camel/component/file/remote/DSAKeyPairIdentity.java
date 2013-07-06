@@ -102,7 +102,7 @@ public class DSAKeyPairIdentity implements Identity {
     @Override
     public byte[] getSignature(byte[] data) {
         try {
-            PrivateKey prvKey = (PrivateKey) keyPair.getPrivate();
+            PrivateKey prvKey = keyPair.getPrivate();
             Signature sig;
             sig = Signature.getInstance("SHA1withDSA");
             sig.initSign(prvKey);

@@ -35,16 +35,11 @@ public class SolrComponent extends DefaultComponent {
     private static final transient Logger LOG = LoggerFactory.getLogger(SolrComponent.class);
     private final Map<SolrEndpoint, SolrServerReference> servers = new HashMap<SolrEndpoint, SolrServerReference>();
 
-    protected  static final class SolrServerReference {
+    protected static final class SolrServerReference {
 
         private final AtomicInteger referenceCounter = new AtomicInteger();
-        private final SolrEndpoint endpoint;
         private HttpSolrServer solrServer;
         private ConcurrentUpdateSolrServer updateSolrServer;
-
-        SolrServerReference(SolrEndpoint endpoint) {
-            this.endpoint = endpoint;
-        }
 
         public HttpSolrServer getSolrServer() {
             return solrServer;

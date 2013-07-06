@@ -19,7 +19,6 @@ package org.apache.camel.language.simple;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -309,7 +308,7 @@ public class SimpleTest extends LanguageTestSupport {
     }
 
     public void testDateExpressions() throws Exception {
-        Calendar cal = GregorianCalendar.getInstance();
+        Calendar cal = Calendar.getInstance();
         cal.set(1974, Calendar.APRIL, 20);
         exchange.getIn().setHeader("birthday", cal.getTime());
 
@@ -324,7 +323,7 @@ public class SimpleTest extends LanguageTestSupport {
     }
 
     public void testDateAndTimeExpressions() throws Exception {
-        Calendar cal = GregorianCalendar.getInstance();
+        Calendar cal = Calendar.getInstance();
         cal.set(1974, Calendar.APRIL, 20, 8, 55, 47);
         cal.set(Calendar.MILLISECOND, 123);
         exchange.getIn().setHeader("birthday", cal.getTime());

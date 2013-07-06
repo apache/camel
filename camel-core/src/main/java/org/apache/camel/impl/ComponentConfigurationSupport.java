@@ -141,7 +141,7 @@ public abstract class ComponentConfigurationSupport implements ComponentConfigur
     public void setUriString(String uri) throws URISyntaxException {
         String path = uri;
         int idx = path.indexOf('?');
-        Map<String, Object> newParameters = Collections.EMPTY_MAP;
+        Map<String, Object> newParameters = Collections.emptyMap();
         if (idx >= 0) {
             path = path.substring(0, idx);
             String query = uri.substring(idx + 1);
@@ -166,19 +166,17 @@ public abstract class ComponentConfigurationSupport implements ComponentConfigur
 
     public String createParameterJsonSchema() {
         SortedMap<String, ParameterConfiguration> map = getParameterConfigurationMap();
-        Set<Map.Entry<String, ParameterConfiguration>> entries = map.entrySet();
         StringBuilder buffer = new StringBuilder("{\n  \"properties\": {");
         boolean first = true;
-        for (Map.Entry<String, ParameterConfiguration> entry : entries) {
-            String key = entry.getKey();
+        for (Map.Entry<String, ParameterConfiguration> entry :  map.entrySet()) {
             if (first) {
                 first = false;
             } else {
                 buffer.append(",");
             }
+            buffer.append(entry.getKey());
             buffer.append("\n    ");
-            ParameterConfiguration value = entry.getValue();
-            buffer.append(value.toJson());
+            buffer.append(entry.getValue().toJson());
         }
         buffer.append("\n  }\n}\n");
         return buffer.toString();

@@ -63,7 +63,9 @@ import org.apache.deltaspike.core.util.metadata.builder.AnnotatedTypeBuilder;
  * Set of camel specific hooks for CDI.
  */
 public class CamelExtension implements Extension {
-    private static class InjectLiteral extends AnnotationLiteral<Inject> implements Inject { }
+    private static class InjectLiteral extends AnnotationLiteral<Inject> implements Inject {
+        private static final long serialVersionUID = 1L;
+    }
 
     CamelContextMap camelContextMap;
 

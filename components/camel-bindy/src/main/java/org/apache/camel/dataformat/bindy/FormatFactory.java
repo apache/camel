@@ -64,7 +64,7 @@ public final class FormatFactory {
      * @return Format the formatter
      * @throws IllegalArgumentException if not suitable formatter is found
      */
-    @SuppressWarnings("unchcecked")
+    @SuppressWarnings("unchecked")
     private static Format<?> doGetFormat(Class<?> clazz, String pattern, String locale, int precision, boolean impliedDecimalSeparator) throws Exception {
         if (clazz == byte.class || clazz == Byte.class) {
             return ObjectHelper.isNotEmpty(pattern)

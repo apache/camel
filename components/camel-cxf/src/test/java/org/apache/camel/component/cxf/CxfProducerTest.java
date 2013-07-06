@@ -34,7 +34,7 @@ import org.apache.camel.component.cxf.converter.CxfPayloadConverter;
 import org.apache.camel.converter.jaxp.XmlConverter;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.AvailablePortFinder;
-import org.apache.cxf.bus.CXFBusFactory;
+import org.apache.cxf.BusFactory;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.frontend.ServerFactoryBean;
@@ -80,7 +80,7 @@ public class CxfProducerTest extends Assert {
         svrBean.setAddress(getSimpleServerAddress());
         svrBean.setServiceClass(HelloService.class);
         svrBean.setServiceBean(new HelloServiceImpl());
-        svrBean.setBus(CXFBusFactory.getDefaultBus());
+        svrBean.setBus(BusFactory.getDefaultBus());
         server = svrBean.create();
         
         GreeterImpl greeterImpl = new GreeterImpl();

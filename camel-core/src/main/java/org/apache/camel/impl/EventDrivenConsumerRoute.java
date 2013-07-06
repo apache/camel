@@ -24,7 +24,6 @@ import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
 import org.apache.camel.Service;
 import org.apache.camel.SuspendableService;
-import org.apache.camel.processor.DelegateAsyncProcessor;
 import org.apache.camel.spi.RouteContext;
 
 /**

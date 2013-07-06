@@ -87,7 +87,7 @@ public final class Rfc3164SyslogConverter {
 
         //SDF isn't going to help much here.
 
-        Calendar cal = GregorianCalendar.getInstance();
+        Calendar cal = Calendar.getInstance();
         cal.setTime(message.getTimestamp());
 
         String firstLetter = MONTHS.values()[cal.get(Calendar.MONTH)].toString().substring(0, 1);  // Get first letter

@@ -20,7 +20,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.lang.reflect.Method;
 import java.net.URL;
-import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.Map;
 import java.util.Properties;
@@ -28,14 +27,11 @@ import java.util.SortedMap;
 import java.util.TreeMap;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.spi.ComponentResolver;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.LoadPropertiesException;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
-import org.osgi.framework.InvalidSyntaxException;
-import org.osgi.framework.ServiceReference;
 
 /**
  * Helper class

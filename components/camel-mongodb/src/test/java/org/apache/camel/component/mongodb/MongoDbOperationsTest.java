@@ -24,7 +24,6 @@ import com.mongodb.DBObject;
 import com.mongodb.WriteResult;
 import com.mongodb.util.JSON;
 
-import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 
 import org.junit.Test;

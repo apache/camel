@@ -246,7 +246,7 @@ public class CxfRsConsumerSimpleBindingTest extends CamelTestSupport {
         HttpResponse response = httpclient.execute(get);
         assertEquals(200, response.getStatusLine().getStatusCode());
         CustomerList cl = (CustomerList) jaxb.createUnmarshaller().unmarshal(new StringReader(EntityUtils.toString(response.getEntity())));
-        List<Customer> vips = (List<Customer>) cl.getCustomers();
+        List<Customer> vips = cl.getCustomers();
         assertEquals(2, vips.size());
         assertEquals(123, vips.get(0).getId());
         assertEquals(456, vips.get(1).getId());

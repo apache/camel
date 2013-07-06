@@ -24,7 +24,6 @@ import java.util.Map;
 import java.util.Timer;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.impl.UriEndpointComponent;
 
 /**

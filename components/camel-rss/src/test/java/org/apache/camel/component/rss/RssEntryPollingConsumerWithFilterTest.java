@@ -18,7 +18,6 @@ package org.apache.camel.component.rss;
 
 import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 import java.util.TimeZone;
 
 import javax.naming.Context;
@@ -49,7 +48,7 @@ public class RssEntryPollingConsumerWithFilterTest extends CamelTestSupport {
         
         // timestamp from the feed to use as base
         // Fri, 31 Oct 2008 12:02:21 -0500
-        Calendar cal = GregorianCalendar.getInstance(TimeZone.getTimeZone("GMT-5:00"));
+        Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT-5:00"));
         cal.set(2008, Calendar.OCTOBER, 31, 12, 02, 21);
         
         answer.bind("myBean", new MyBean(cal.getTime()));

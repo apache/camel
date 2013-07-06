@@ -20,7 +20,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.apache.cxf.bus.CXFBusFactory;
+import org.apache.cxf.BusFactory;
 import org.apache.cxf.frontend.ServerFactoryBean;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -52,7 +52,7 @@ public class CxfProducerSynchronousFalseTest extends CamelTestSupport {
         svrBean.setAddress(SIMPLE_SERVER_ADDRESS);
         svrBean.setServiceClass(HelloService.class);
         svrBean.setServiceBean(new HelloServiceImpl());
-        svrBean.setBus(CXFBusFactory.getDefaultBus());
+        svrBean.setBus(BusFactory.getDefaultBus());
         svrBean.create();
     }
 

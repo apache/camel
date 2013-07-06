@@ -384,7 +384,7 @@ public final class SjmsExchangeMessageHelper {
             } else if (headerName.equalsIgnoreCase("JMSReplyTo") && headerValue != null) {
                 if (headerValue instanceof String) {
                     // if the value is a String we must normalize it first
-                    headerValue = (String)headerValue;
+                    headerValue = headerValue;
                 } else {
                     // TODO write destination converter
                     // Destination replyTo =

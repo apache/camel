@@ -365,7 +365,7 @@ public class MongoDbProducer extends DefaultProducer {
             // @see http://docs.mongodb.org/manual/core/aggregation/
             if (query instanceof BasicDBList) {
                 BasicDBList queryList = (BasicDBList)query;
-                aggregationResult = dbCol.aggregate((DBObject)queryList.get(0), (BasicDBObject[])queryList
+                aggregationResult = dbCol.aggregate((DBObject)queryList.get(0), queryList
                     .subList(1, queryList.size()).toArray(new BasicDBObject[queryList.size() - 1]));
             } else {
                 aggregationResult = dbCol.aggregate(query);

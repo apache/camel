@@ -17,7 +17,6 @@
 package org.apache.camel.component.atom;
 
 import java.util.Calendar;
-import java.util.GregorianCalendar;
 import java.util.List;
 import java.util.TimeZone;
 
@@ -40,7 +39,7 @@ public class UpdatedDateFilterTest extends Assert {
 
         // timestamp from the feed to use as base
         // 2007-11-13T13:35:25.014Z
-        Calendar cal = GregorianCalendar.getInstance(TimeZone.getTimeZone("GMT+1:00"));
+        Calendar cal = Calendar.getInstance(TimeZone.getTimeZone("GMT+1:00"));
         cal.set(2007, Calendar.NOVEMBER, 13, 14, 35, 0);
         EntryFilter filter = new UpdatedDateFilter(cal.getTime());
 

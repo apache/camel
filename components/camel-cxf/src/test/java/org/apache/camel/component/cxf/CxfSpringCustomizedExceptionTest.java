@@ -26,6 +26,7 @@ import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.cxf.binding.soap.SoapFault;
+import org.apache.cxf.interceptor.Fault;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -41,7 +42,7 @@ public class CxfSpringCustomizedExceptionTest extends CamelTestSupport  {
    
     static {
         // START SNIPPET: FaultDefine
-        SOAP_FAULT = new SoapFault(EXCEPTION_MESSAGE, SoapFault.FAULT_CODE_CLIENT);
+        SOAP_FAULT = new SoapFault(EXCEPTION_MESSAGE, Fault.FAULT_CODE_CLIENT);
         Element detail = SOAP_FAULT.getOrCreateDetail();
         Document doc = detail.getOwnerDocument();
         Text tn = doc.createTextNode(DETAIL_TEXT);

@@ -29,7 +29,6 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class ChoiceWithEndTest extends ContextTestSupport {
 
-    @SuppressWarnings("unchecked")
     public void testRouteIsCorrectAtRuntime() throws Exception {
         // use navigate to find that the end works as expected
         Navigate<Processor> nav = getRoute("direct://start").navigate();

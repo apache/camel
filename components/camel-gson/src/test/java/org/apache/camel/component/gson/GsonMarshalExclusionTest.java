@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.gson;
 
+import java.util.Arrays;
+
 import com.google.gson.ExclusionStrategy;
 import com.google.gson.FieldAttributes;
 import org.apache.camel.builder.RouteBuilder;
@@ -106,12 +108,14 @@ public class GsonMarshalExclusionTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
 
-                GsonDataFormat weightExclusionFormat = new GsonDataFormat(TestPojoExclusion.class, new WeightExclusionStrategy());
+                GsonDataFormat weightExclusionFormat = new GsonDataFormat(TestPojoExclusion.class);
+                weightExclusionFormat.setExclusionStrategies(Arrays.<ExclusionStrategy>asList(new WeightExclusionStrategy()));
                 from("direct:inPojoExcludeWeight").marshal(weightExclusionFormat);
                 from("direct:backPojoExcludeWeight").unmarshal(weightExclusionFormat).to("mock:reversePojoExcludeWeight");
 
                 //START SNIPPET: format
-                GsonDataFormat ageExclusionFormat = new GsonDataFormat(TestPojoExclusion.class, new AgeExclusionStrategy());
+                GsonDataFormat ageExclusionFormat = new GsonDataFormat(TestPojoExclusion.class);
+                ageExclusionFormat.setExclusionStrategies(Arrays.<ExclusionStrategy>asList(new AgeExclusionStrategy()));
                 from("direct:inPojoExcludeAge").marshal(ageExclusionFormat);
                 //END SNIPPET: format
                 from("direct:backPojoExcludeAge").unmarshal(ageExclusionFormat).to("mock:reversePojoExcludeAge");

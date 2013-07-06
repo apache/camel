@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.cxf.converter;
 
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -24,7 +23,6 @@ import java.util.Collection;
 
 import javax.ws.rs.core.Response;
 import javax.xml.namespace.QName;
-import javax.xml.soap.MessageFactory;
 import javax.xml.soap.SOAPException;
 import javax.xml.soap.SOAPMessage;
 

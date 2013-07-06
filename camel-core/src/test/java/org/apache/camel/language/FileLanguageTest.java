@@ -20,7 +20,6 @@ import java.io.File;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.ExpressionIllegalSyntaxException;
@@ -177,7 +176,7 @@ public class FileLanguageTest extends LanguageTestSupport {
         Exchange answer = endpoint.createExchange(gf);
         endpoint.configureMessage(gf, answer.getIn());
 
-        Calendar cal = GregorianCalendar.getInstance();
+        Calendar cal = Calendar.getInstance();
         cal.set(1974, Calendar.APRIL, 20);
         answer.getIn().setHeader("birthday", cal.getTime());
 

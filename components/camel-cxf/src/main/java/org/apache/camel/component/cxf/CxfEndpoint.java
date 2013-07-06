@@ -25,6 +25,7 @@ import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.transform.Source;
@@ -965,10 +966,10 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
             }
             if (r != null) {
                 try {
-                    if (r.getEventType() == XMLStreamReader.START_DOCUMENT) {
+                    if (r.getEventType() == XMLStreamConstants.START_DOCUMENT) {
                         r.next();
                     }
-                    if (r.getEventType() != XMLStreamReader.START_ELEMENT) {
+                    if (r.getEventType() != XMLStreamConstants.START_ELEMENT) {
                         r.nextTag();
                     }
                 } catch (XMLStreamException e) {

@@ -86,7 +86,7 @@ public class SolrEndpoint extends DefaultEndpoint {
                 solrServer.setAllowCompression(allowCompression);
             }
 
-            ref = new SolrComponent.SolrServerReference(this);
+            ref = new SolrComponent.SolrServerReference();
             ref.setSolrServer(solrServer);
             ref.setUpdateSolrServer(solrStreamingServer);
 

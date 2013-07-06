@@ -17,6 +17,7 @@
 package org.apache.camel.guice;
 
 import java.util.Hashtable;
+import javax.naming.Context;
 import javax.naming.InitialContext;
 
 import com.google.inject.Injector;
@@ -53,7 +54,7 @@ public class ComponentFoundInRegistryTest extends Assert {
     @Test
     public void testGuice() throws Exception {
         Hashtable<String, Object> env = new Hashtable<String, Object>();
-        env.put(InitialContext.PROVIDER_URL, GuiceInitialContextFactory.class.getName());
+        env.put(Context.PROVIDER_URL, GuiceInitialContextFactory.class.getName());
         env.put(Injectors.MODULE_CLASS_NAMES, MyModule.class.getName());
 
         InitialContext context = new InitialContext(env);

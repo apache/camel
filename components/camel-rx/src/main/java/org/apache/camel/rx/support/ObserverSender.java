@@ -18,7 +18,6 @@ package org.apache.camel.rx.support;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
-import org.apache.camel.Message;
 import org.apache.camel.Producer;
 import org.apache.camel.rx.RuntimeCamelRxException;
 
@@ -28,11 +27,9 @@ import rx.Observer;
  * An {@link Observer} which sends events to a given {@link Endpoint}
  */
 public class ObserverSender implements Observer {
-    private Endpoint endpoint;
     private Producer producer;
 
     public ObserverSender(Endpoint endpoint) throws Exception {
-        this.endpoint = endpoint;
         this.producer = endpoint.createProducer();
         this.producer.start();
     }

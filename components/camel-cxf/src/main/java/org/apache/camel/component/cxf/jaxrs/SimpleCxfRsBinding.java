@@ -121,8 +121,8 @@ public class SimpleCxfRsBinding extends DefaultCxfRsBinding {
                 InputStream.class,
             })));
     
-    private static final Class<?>[] NO_PARAMETER_TYPES = (Class<?>[]) null;
-    private static final Object[] NO_PARAMETERS = (Object[]) null;
+    private static final Class<?>[] NO_PARAMETER_TYPES = null;
+    private static final Object[] NO_PARAMETERS = null;
     
     /** Caches the Method to Parameters associations to avoid reflection with every request */
     private Map<Method, MethodSpec> methodSpecCache = new ConcurrentHashMap<Method, MethodSpec>();

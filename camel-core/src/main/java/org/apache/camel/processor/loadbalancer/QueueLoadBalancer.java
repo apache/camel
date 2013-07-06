@@ -22,7 +22,6 @@ import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.util.AsyncProcessorHelper;
 
 /**
  * A base class for {@link LoadBalancer} implementations which choose a single

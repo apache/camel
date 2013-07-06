@@ -39,7 +39,7 @@ public class XmlRpcWriter extends org.apache.xmlrpc.serializer.XmlRpcWriter {
         handler.startDocument();
         boolean extensions = config.isEnabledForExtensions();
         if (extensions) {
-            handler.startPrefixMapping("ex", XmlRpcWriter.EXTENSIONS_URI);
+            handler.startPrefixMapping("ex", org.apache.xmlrpc.serializer.XmlRpcWriter.EXTENSIONS_URI);
         }
         handler.startElement("", "methodCall", "methodCall", ZERO_ATTRIBUTES);
         handler.startElement("", "methodName", "methodName", ZERO_ATTRIBUTES);

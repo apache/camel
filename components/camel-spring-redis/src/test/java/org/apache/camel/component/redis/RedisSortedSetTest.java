@@ -113,7 +113,7 @@ public class RedisSortedSetTest extends RedisTestSupport {
         Set<String> keys = new HashSet<String>();
         keys.add("key2");
         keys.add("key3");
-        Object result = sendHeaders(
+        sendHeaders(
                 RedisConstants.COMMAND, "ZINTERSTORE",
                 RedisConstants.KEY, "key",
                 RedisConstants.DESTINATION, "destination",
@@ -203,7 +203,7 @@ public class RedisSortedSetTest extends RedisTestSupport {
 
     @Test
     public void shouldExecuteZREMRANGEBYRANK() {
-        Object result = sendHeaders(
+        sendHeaders(
                 RedisConstants.COMMAND, "ZREMRANGEBYRANK",
                 RedisConstants.KEY, "key",
                 RedisConstants.START, 1,
@@ -214,7 +214,7 @@ public class RedisSortedSetTest extends RedisTestSupport {
 
     @Test
     public void shouldExecuteZREMRANGEBYSCORE() {
-        Object result = sendHeaders(
+        sendHeaders(
                 RedisConstants.COMMAND, "ZREMRANGEBYSCORE",
                 RedisConstants.KEY, "key",
                 RedisConstants.START, 1,
@@ -294,7 +294,7 @@ public class RedisSortedSetTest extends RedisTestSupport {
         Set<String> keys = new HashSet<String>();
         keys.add("key2");
         keys.add("key3");
-        Object result = sendHeaders(
+        sendHeaders(
                 RedisConstants.COMMAND, "ZUNIONSTORE",
                 RedisConstants.KEY, "key",
                 RedisConstants.DESTINATION, "destination",

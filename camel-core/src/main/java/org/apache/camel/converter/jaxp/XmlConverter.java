@@ -26,7 +26,6 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
-import java.lang.reflect.Constructor;
 import java.nio.ByteBuffer;
 import java.util.Properties;
 
@@ -56,7 +55,6 @@ import org.w3c.dom.NodeList;
 
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
-import org.xml.sax.XMLReader;
 
 import org.apache.camel.BytesSource;
 import org.apache.camel.Converter;

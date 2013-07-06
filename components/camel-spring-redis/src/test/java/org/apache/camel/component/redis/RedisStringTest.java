@@ -56,7 +56,7 @@ public class RedisStringTest extends RedisTestSupport {
 
     @Test
     public void shouldExecuteSET() throws Exception {
-        Object result = sendHeaders(
+        sendHeaders(
                 RedisConstants.COMMAND, "SET",
                 RedisConstants.KEY, "key",
                 RedisConstants.VALUE, "value");
@@ -66,7 +66,7 @@ public class RedisStringTest extends RedisTestSupport {
 
     @Test
     public void shouldExecuteSETNX() throws Exception {
-        Object result = sendHeaders(
+        sendHeaders(
                 RedisConstants.COMMAND, "SETNX",
                 RedisConstants.KEY, "key",
                 RedisConstants.VALUE, "value");
@@ -77,7 +77,7 @@ public class RedisStringTest extends RedisTestSupport {
 
     @Test
     public void shouldExecuteSETEX() throws Exception {
-        Object result = sendHeaders(
+        sendHeaders(
                 RedisConstants.COMMAND, "SETEX",
                 RedisConstants.KEY, "key",
                 RedisConstants.TIMEOUT, "10",
@@ -89,7 +89,7 @@ public class RedisStringTest extends RedisTestSupport {
 
     @Test
     public void shouldExecuteSETRANGE() throws Exception {
-        Object result = sendHeaders(
+        sendHeaders(
                 RedisConstants.COMMAND, "SETRANGE",
                 RedisConstants.KEY, "key",
                 RedisConstants.OFFSET, "10",
@@ -116,7 +116,7 @@ public class RedisStringTest extends RedisTestSupport {
 
     @Test
     public void shouldExecuteSETBIT() throws Exception {
-        Object result = sendHeaders(
+        sendHeaders(
                 RedisConstants.COMMAND, "SETBIT",
                 RedisConstants.KEY, "key",
                 RedisConstants.OFFSET, "10",
@@ -252,7 +252,7 @@ public class RedisStringTest extends RedisTestSupport {
         HashMap<String, String> values = new HashMap<String, String>();
         values.put("field1", "valu1");
 
-        Object result = sendHeaders(
+        sendHeaders(
                 RedisConstants.COMMAND, "MSET",
                 RedisConstants.VALUES, values);
 
@@ -265,7 +265,7 @@ public class RedisStringTest extends RedisTestSupport {
         HashMap<String, String> values = new HashMap<String, String>();
         values.put("field1", "valu1");
 
-        Object result = sendHeaders(
+        sendHeaders(
                 RedisConstants.COMMAND, "MSETNX",
                 RedisConstants.VALUES, values);
 
@@ -286,34 +286,4 @@ public class RedisStringTest extends RedisTestSupport {
         assertEquals("old value", result);
 
     }
-
-
-//
-//    @Test
-//        public void shouldExecuteMULTI() throws Exception {
-//            //when(valueOperations.multi()).thenReturn(any(Transaction.class));
-//
-//            Object result = sendHeaders(RedisConstants.COMMAND, "MULTI");
-//
-//            verify(jedis).multi();
-//            assertEquals("OK", result);
-//        }
-//
-//        @Test
-//        public void shouldExecuteInTransaction() throws Exception {
-//            Transaction transaction = mock(Transaction.class);
-//            when(jedis.multi()).thenReturn(transaction);
-//
-//            sendHeaders(RedisConstants.COMMAND, "MULTI");
-//
-//
-//            Object result = sendHeaders(
-//                    RedisConstants.KEY, "key",
-//                    RedisConstants.VALUE, "value");
-//
-//            verify(transaction).set("key", "value");
-//            assertEquals("OK", result);
-//
-//
-//        }
 }

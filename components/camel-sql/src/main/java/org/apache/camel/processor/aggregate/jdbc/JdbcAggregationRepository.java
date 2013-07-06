@@ -41,6 +41,7 @@ import org.springframework.jdbc.support.lob.DefaultLobHandler;
 import org.springframework.jdbc.support.lob.LobCreator;
 import org.springframework.jdbc.support.lob.LobHandler;
 import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
@@ -97,10 +98,10 @@ public class JdbcAggregationRepository extends ServiceSupport implements Recover
         this.transactionManager = transactionManager;
 
         transactionTemplate = new TransactionTemplate(transactionManager);
-        transactionTemplate.setPropagationBehavior(TransactionTemplate.PROPAGATION_REQUIRED);
+        transactionTemplate.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
 
         transactionTemplateReadOnly = new TransactionTemplate(transactionManager);
-        transactionTemplateReadOnly.setPropagationBehavior(TransactionTemplate.PROPAGATION_REQUIRED);
+        transactionTemplateReadOnly.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
         transactionTemplateReadOnly.setReadOnly(true);
     }
 

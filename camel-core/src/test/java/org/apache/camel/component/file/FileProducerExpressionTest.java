@@ -19,7 +19,6 @@ package org.apache.camel.component.file;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -87,7 +86,7 @@ public class FileProducerExpressionTest extends ContextTestSupport {
     }
 
     public void testProducerWithDateHeader() throws Exception {
-        Calendar cal = GregorianCalendar.getInstance();
+        Calendar cal = Calendar.getInstance();
         cal.set(1974, Calendar.APRIL, 20);
         Date date = cal.getTime();
 

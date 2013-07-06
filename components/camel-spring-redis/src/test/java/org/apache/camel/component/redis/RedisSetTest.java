@@ -102,7 +102,7 @@ public class RedisSetTest extends RedisTestSupport {
         Set<String> keys = new HashSet<String>();
         keys.add("key2");
         keys.add("key3");
-        Object result = sendHeaders(
+        sendHeaders(
                 RedisConstants.COMMAND, "SDIFFSTORE",
                 RedisConstants.KEY, "key",
                 RedisConstants.KEYS, keys,
@@ -135,7 +135,7 @@ public class RedisSetTest extends RedisTestSupport {
         Set<String> keys = new HashSet<String>();
         keys.add("key2");
         keys.add("key3");
-        Object result = sendHeaders(
+        sendHeaders(
                 RedisConstants.COMMAND, "SINTERSTORE",
                 RedisConstants.KEY, "key",
                 RedisConstants.DESTINATION, "destination",
@@ -175,7 +175,7 @@ public class RedisSetTest extends RedisTestSupport {
 
     @Test
     public void shouldExecuteSMOVE() throws Exception {
-        Object result = sendHeaders(
+        sendHeaders(
                 RedisConstants.COMMAND, "SMOVE",
                 RedisConstants.KEY, "key",
                 RedisConstants.VALUE, "value",
@@ -250,7 +250,7 @@ public class RedisSetTest extends RedisTestSupport {
         keys.add("key2");
         keys.add("key4");
 
-        Object result = sendHeaders(
+        sendHeaders(
                 RedisConstants.COMMAND, "SUNIONSTORE",
                 RedisConstants.KEY, "key",
                 RedisConstants.KEYS, keys,

@@ -19,7 +19,6 @@ package org.apache.camel.component.file.remote;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.Date;
-import java.util.GregorianCalendar;
 
 import org.apache.camel.impl.JndiRegistry;
 import org.junit.Before;
@@ -105,7 +104,7 @@ public class FtpProducerExpressionTest extends FtpServerTestSupport {
 
     @Test
     public void testProducerWithDateHeader() throws Exception {
-        Calendar cal = GregorianCalendar.getInstance();
+        Calendar cal = Calendar.getInstance();
         cal.set(1974, Calendar.APRIL, 20);
         Date date = cal.getTime();
 

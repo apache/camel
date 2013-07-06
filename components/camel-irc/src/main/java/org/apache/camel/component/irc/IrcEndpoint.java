@@ -24,7 +24,7 @@ import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
 import org.schwering.irc.lib.IRCConnection;
-import org.schwering.irc.lib.IRCEventAdapter;
+import org.schwering.irc.lib.IRCConstants;
 import org.schwering.irc.lib.IRCModeParser;
 import org.schwering.irc.lib.IRCUser;
 import org.slf4j.Logger;
@@ -151,7 +151,7 @@ public class IrcEndpoint extends DefaultEndpoint {
 
 
     public void handleIrcError(int num, String msg) {
-        if (IRCEventAdapter.ERR_NICKNAMEINUSE == num) {
+        if (IRCConstants.ERR_NICKNAMEINUSE == num) {
             handleNickInUse();
         }
     }

@@ -33,9 +33,9 @@ import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ResourceHelper;
 import org.apache.velocity.VelocityContext;
-import org.apache.velocity.app.Velocity;
 import org.apache.velocity.app.VelocityEngine;
 import org.apache.velocity.context.Context;
+import org.apache.velocity.runtime.RuntimeConstants;
 import org.apache.velocity.runtime.log.CommonsLogLogChute;
 
 public class VelocityEndpoint extends ResourceEndpoint {
@@ -76,11 +76,11 @@ public class VelocityEndpoint extends ResourceEndpoint {
 
             // set default properties
             Properties properties = new Properties();
-            properties.setProperty(Velocity.FILE_RESOURCE_LOADER_CACHE, isLoaderCache() ? "true" : "false");
-            properties.setProperty(Velocity.RESOURCE_LOADER, "file, class");
+            properties.setProperty(RuntimeConstants.FILE_RESOURCE_LOADER_CACHE, isLoaderCache() ? "true" : "false");
+            properties.setProperty(RuntimeConstants.RESOURCE_LOADER, "file, class");
             properties.setProperty("class.resource.loader.description", "Camel Velocity Classpath Resource Loader");
             properties.setProperty("class.resource.loader.class", CamelVelocityClasspathResourceLoader.class.getName());
-            properties.setProperty(Velocity.RUNTIME_LOG_LOGSYSTEM_CLASS, CommonsLogLogChute.class.getName());
+            properties.setProperty(RuntimeConstants.RUNTIME_LOG_LOGSYSTEM_CLASS, CommonsLogLogChute.class.getName());
             properties.setProperty(CommonsLogLogChute.LOGCHUTE_COMMONS_LOG_NAME, VelocityEndpoint.class.getName());
 
             // load the velocity properties from property file which may overrides the default ones

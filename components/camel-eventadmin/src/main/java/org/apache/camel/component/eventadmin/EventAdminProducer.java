@@ -37,12 +37,12 @@ import org.osgi.util.tracker.ServiceTracker;
 public class EventAdminProducer extends DefaultProducer {
 
     private final EventAdminEndpoint endpoint;
-    private ServiceTracker tracker;
+    private ServiceTracker<Object, Object> tracker;
 
     public EventAdminProducer(EventAdminEndpoint endpoint) {
         super(endpoint);
         this.endpoint = endpoint;
-        this.tracker = new ServiceTracker(endpoint.getComponent().getBundleContext(), EventAdmin.class.getName(), null);
+        this.tracker = new ServiceTracker<Object, Object>(endpoint.getComponent().getBundleContext(), EventAdmin.class.getName(), null);
     }
 
     @Override

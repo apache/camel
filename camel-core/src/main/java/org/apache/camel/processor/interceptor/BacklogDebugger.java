@@ -39,7 +39,6 @@ import org.apache.camel.impl.DefaultDebugger;
 import org.apache.camel.management.event.ExchangeCompletedEvent;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.ProcessorDefinitionHelper;
-import org.apache.camel.spi.Breakpoint;
 import org.apache.camel.spi.Condition;
 import org.apache.camel.spi.Debugger;
 import org.apache.camel.spi.InterceptStrategy;

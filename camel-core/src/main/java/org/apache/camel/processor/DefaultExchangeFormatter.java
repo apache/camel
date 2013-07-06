@@ -356,9 +356,8 @@ public class DefaultExchangeFormatter implements ExchangeFormatter {
         return answer;
     }
 
-    @SuppressWarnings("unchecked")
-    private static Map sortMap(Map<String, Object> map) {
-        TreeMap answer = new TreeMap(String.CASE_INSENSITIVE_ORDER);
+    private static Map<String, Object> sortMap(Map<String, Object> map) {
+        TreeMap<String, Object> answer = new TreeMap<String, Object>(String.CASE_INSENSITIVE_ORDER);
         answer.putAll(map);
         return answer;
     }

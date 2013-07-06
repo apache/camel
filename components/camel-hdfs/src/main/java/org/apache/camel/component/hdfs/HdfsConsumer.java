@@ -119,14 +119,13 @@ public final class HdfsConsumer extends ScheduledPollConsumer {
             fileStatuses = info.getFileSystem().globStatus(pattern, new ExcludePathFilter());
         }
 
-        for (int i = 0; i < fileStatuses.length; ++i) {
-            FileStatus status = fileStatuses[i];
+        for (FileStatus status : fileStatuses) {
             if (normalFileIsDirectoryNoSuccessFile(status, info)) {
                 continue;
             }
             try {
                 this.rwlock.writeLock().lock();
-                this.istream = HdfsInputStream.createInputStream(fileStatuses[i].getPath().toString(), this.config);
+                this.istream = HdfsInputStream.createInputStream(status.getPath().toString(), this.config);
             } finally {
                 this.rwlock.writeLock().unlock();
             }

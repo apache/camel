@@ -20,6 +20,7 @@ import java.util.Iterator;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.disruptor.DisruptorComponent;
 import org.apache.camel.component.disruptor.DisruptorReference;
 
 /**
@@ -30,7 +31,7 @@ public class DisruptorVmComponentReferenceEndpointTest extends ContextTestSuppor
     public void testDisruptorVmComponentReference() throws Exception {
         DisruptorVmComponent vm = context.getComponent("disruptor-vm", DisruptorVmComponent.class);
 
-        String key = DisruptorVmComponent.getDisruptorKey("disruptor-vm://foo");
+        String key = DisruptorComponent.getDisruptorKey("disruptor-vm://foo");
         assertEquals(1, vm.getDisruptors().get(key).getEndpointCount());
         assertEquals(2, numberOfReferences(vm));
 
@@ -61,7 +62,7 @@ public class DisruptorVmComponentReferenceEndpointTest extends ContextTestSuppor
 
         // there should still be a bar
         assertEquals(1, numberOfReferences(vm));
-        key = DisruptorVmComponent.getDisruptorKey("disruptor-vm://bar");
+        key = DisruptorComponent.getDisruptorKey("disruptor-vm://bar");
         assertEquals(1, vm.getDisruptors().get(key).getEndpointCount());
     }
 

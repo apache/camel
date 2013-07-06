@@ -58,7 +58,7 @@ public class RedisHashTest extends RedisTestSupport {
 
     @Test
     public void shouldExecuteHDEL() throws Exception {
-        Object result = sendHeaders(
+        sendHeaders(
                 RedisConstants.COMMAND, "HDEL",
                 RedisConstants.KEY, "key",
                 RedisConstants.FIELD, "field");
@@ -113,7 +113,7 @@ public class RedisHashTest extends RedisTestSupport {
         values.put("field1", "value1");
         values.put("field2", "value");
 
-        Object result = sendHeaders(
+        sendHeaders(
                 RedisConstants.COMMAND, "HMSET",
                 RedisConstants.KEY, "key",
                 RedisConstants.VALUES, values);
@@ -152,7 +152,7 @@ public class RedisHashTest extends RedisTestSupport {
 
     @Test
     public void shouldSetHashValue() throws Exception {
-        Object result = sendHeaders(
+        sendHeaders(
                 RedisConstants.COMMAND, "HSET",
                 RedisConstants.KEY, "key",
                 RedisConstants.FIELD, "field",

@@ -58,7 +58,7 @@ public class NetWeaverProducer extends DefaultProducer {
         if (data != null && getEndpoint().isJsonAsMap()) {
             // map json string to json map
             ObjectMapper mapper = new ObjectMapper();
-            Map map = mapper.readValue(data, Map.class);
+            Map<?, ?> map = mapper.readValue(data, Map.class);
 
             // if we only have one entry in the map, then put that as root (as it tends to return a single instance "d"
             if (map.size() == 1 && getEndpoint().isFlatternMap()) {

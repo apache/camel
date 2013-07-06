@@ -37,7 +37,9 @@ public interface OptimisticLockingAggregationRepository extends AggregationRepos
      * update error has occurred and that the operation should be retried by the caller.
      * <p/>
      */
-    public static class OptimisticLockingException extends RuntimeException { }
+    class OptimisticLockingException extends RuntimeException {
+        private static final long serialVersionUID = 1L;
+    }
 
     /**
      * Add the given {@link org.apache.camel.Exchange} under the correlation key.

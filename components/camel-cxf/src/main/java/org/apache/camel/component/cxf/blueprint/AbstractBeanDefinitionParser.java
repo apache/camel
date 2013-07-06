@@ -19,6 +19,8 @@ package org.apache.camel.component.cxf.blueprint;
 
 import java.util.StringTokenizer;
 
+import org.osgi.service.blueprint.reflect.BeanMetadata;
+
 import org.w3c.dom.Element;
 
 import org.apache.aries.blueprint.ParserContext;
@@ -48,7 +50,7 @@ public class AbstractBeanDefinitionParser extends AbstractBPBeanDefinitionParser
         answer.addProperty("blueprintContainer", createRef(context, "blueprintContainer"));
         answer.addProperty("bundleContext", createRef(context, "blueprintBundleContext"));
         // set the Bean scope to be prototype, so we can get a new instance per looking up
-        answer.setScope(MutableBeanMetadata.SCOPE_PROTOTYPE);
+        answer.setScope(BeanMetadata.SCOPE_PROTOTYPE);
         
         if (!StringUtils.isEmpty(getIdOrName(element))) {
             answer.setId(getIdOrName(element));

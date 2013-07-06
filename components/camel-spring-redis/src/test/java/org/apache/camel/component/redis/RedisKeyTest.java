@@ -59,7 +59,7 @@ public class RedisKeyTest extends RedisTestSupport {
         Collection<String> keys = new HashSet<String>();
         keys.add("key1");
         keys.add("key2");
-        Object result = sendHeaders(
+        sendHeaders(
                 RedisConstants.COMMAND, "DEL",
                 RedisConstants.KEYS, keys);
 
@@ -187,7 +187,7 @@ public class RedisKeyTest extends RedisTestSupport {
 
     @Test
     public void shouldExecuteRENAME() throws Exception {
-        Object result = sendHeaders(
+        sendHeaders(
                 RedisConstants.COMMAND, "RENAME",
                 RedisConstants.KEY, "key",
                 RedisConstants.VALUE, "newkey");

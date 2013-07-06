@@ -19,7 +19,6 @@ package org.apache.camel.management.mbean;
 import java.util.Set;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.api.management.ManagedOperation;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.api.management.mbean.ManagedBacklogDebuggerMBean;
 import org.apache.camel.processor.interceptor.BacklogDebugger;

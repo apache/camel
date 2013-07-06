@@ -285,11 +285,11 @@ public class BacklogTracer extends ServiceSupport implements InterceptStrategy {
         List<BacklogTracerEventMessage> events = dumpTracedMessages(nodeId);
 
         StringBuilder sb = new StringBuilder();
-        sb.append("<").append(DefaultBacklogTracerEventMessage.ROOT_TAG).append("s>");
+        sb.append("<").append(BacklogTracerEventMessage.ROOT_TAG).append("s>");
         for (BacklogTracerEventMessage event : events) {
             sb.append("\n").append(event.toXml(2));
         }
-        sb.append("\n</").append(DefaultBacklogTracerEventMessage.ROOT_TAG).append("s>");
+        sb.append("\n</").append(BacklogTracerEventMessage.ROOT_TAG).append("s>");
         return sb.toString();
     }
 

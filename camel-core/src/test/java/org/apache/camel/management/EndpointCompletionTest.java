@@ -18,6 +18,8 @@ package org.apache.camel.management;
 
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
+
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
@@ -28,7 +30,6 @@ import org.slf4j.LoggerFactory;
 public class EndpointCompletionTest extends ManagementTestSupport {
     private static final transient Logger LOG = LoggerFactory.getLogger(EndpointCompletionTest.class);
 
-    @SuppressWarnings("unchecked")
     public void testEndpointCompletion() throws Exception {
         MBeanServer mbeanServer = getMBeanServer();
         ObjectName on = ObjectName.getInstance(
@@ -37,13 +38,13 @@ public class EndpointCompletionTest extends ManagementTestSupport {
         mbeanServer.isRegistered(on);
 
         String componentName = "file";
-        HashMap<String, Object> properties = new HashMap<String, Object>();
-        List<String> completions = assertCompletion(mbeanServer, on, componentName, properties, "");
-        completions = assertCompletion(mbeanServer, on, componentName, properties, "po");
-        completions = assertCompletion(mbeanServer, on, componentName, properties, "/");
-        completions = assertCompletion(mbeanServer, on, componentName, properties, "/usr/local");
-        completions = assertCompletion(mbeanServer, on, componentName, properties, "/usr/local/");
-        completions = assertCompletion(mbeanServer, on, componentName, properties, "/usr/local/b");
+        Map<String, Object> properties = new HashMap<String, Object>();
+        assertCompletion(mbeanServer, on, componentName, properties, "");
+        assertCompletion(mbeanServer, on, componentName, properties, "po");
+        assertCompletion(mbeanServer, on, componentName, properties, "/");
+        assertCompletion(mbeanServer, on, componentName, properties, "/usr/local");
+        assertCompletion(mbeanServer, on, componentName, properties, "/usr/local/");
+        assertCompletion(mbeanServer, on, componentName, properties, "/usr/local/b");
     }
 
     public void testEndpointConfigurationJson() throws Exception {
@@ -57,16 +58,17 @@ public class EndpointCompletionTest extends ManagementTestSupport {
         assertParameterJsonSchema(mbeanServer, on, "timer");
     }
 
+    @SuppressWarnings("unchecked")
     private List<String> assertCompletion(MBeanServer mbeanServer, ObjectName on, String componentName,
-                                          HashMap<String, Object> properties, String completionText) throws Exception {
+                                          Map<String, Object> properties, String completionText) throws Exception {
         Object[] params = {componentName, properties, completionText};
         String[] signature = {"java.lang.String",  "java.util.Map",  "java.lang.String"};
 
-        List completions = assertIsInstanceOf(List.class,
+        List<?> completions = assertIsInstanceOf(List.class,
                 mbeanServer.invoke(on, "completeEndpointPath", params, signature));
 
         LOG.info("Component " + componentName + " with '" + completionText + "' Returned: " + completions);
-        return completions;
+        return (List<String>) completions;
     }
 
     private String assertParameterJsonSchema(MBeanServer mbeanServer, ObjectName on, String componentName) throws Exception {

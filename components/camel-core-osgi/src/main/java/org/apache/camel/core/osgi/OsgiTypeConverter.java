@@ -58,7 +58,7 @@ public class OsgiTypeConverter extends ServiceSupport implements TypeConverter, 
 
     public Object addingService(ServiceReference<TypeConverterLoader> serviceReference) {
         LOG.trace("AddingService: {}", serviceReference);
-        TypeConverterLoader loader = (TypeConverterLoader) bundleContext.getService(serviceReference);
+        TypeConverterLoader loader = bundleContext.getService(serviceReference);
         if (loader != null) {
             try {
                 loader.load(getDelegate());

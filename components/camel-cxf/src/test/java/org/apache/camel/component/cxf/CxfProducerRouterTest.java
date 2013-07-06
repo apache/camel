@@ -28,7 +28,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.util.URISupport;
-import org.apache.cxf.bus.CXFBusFactory;
+import org.apache.cxf.BusFactory;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.frontend.ServerFactoryBean;
 import org.apache.cxf.helpers.CastUtils;
@@ -63,7 +63,7 @@ public class CxfProducerRouterTest extends CamelTestSupport {
         svrBean.setAddress(SIMPLE_SERVER_ADDRESS);
         svrBean.setServiceClass(HelloService.class);
         svrBean.setServiceBean(new HelloServiceImpl());
-        svrBean.setBus(CXFBusFactory.getDefaultBus());
+        svrBean.setBus(BusFactory.getDefaultBus());
         svrBean.create();
     }
 

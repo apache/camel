@@ -16,11 +16,8 @@
  */
 package org.apache.camel.language.mvel;
 
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.io.Reader;
-import java.io.StringReader;
-import java.io.StringWriter;
 import java.util.Map;
 
 import org.apache.camel.Exchange;

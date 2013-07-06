@@ -19,7 +19,6 @@ package org.apache.camel.component.redis;
 import org.apache.camel.impl.JndiRegistry;
 import org.junit.Before;
 import org.junit.Test;
-import org.mockito.ArgumentCaptor;
 import org.springframework.data.redis.connection.RedisConnection;
 import org.springframework.data.redis.core.RedisCallback;
 import org.springframework.data.redis.core.RedisTemplate;
@@ -46,13 +45,6 @@ public class RedisConnectionTest extends RedisTestSupport {
         redisTemplate = mock(RedisTemplate.class);
         redisConnection = mock(RedisConnection.class);
         super.setUp();
-    }
-
-    private void getMocketConnection() {
-        ArgumentCaptor<RedisCallback> argument = ArgumentCaptor.forClass(RedisCallback.class);
-        verify(redisTemplate).execute(argument.capture());
-        RedisCallback redisCallback = argument.getValue();
-        redisCallback.doInRedis(redisConnection);
     }
 
     @Test
@@ -85,7 +77,7 @@ public class RedisConnectionTest extends RedisTestSupport {
 
     @Test
     public void shouldExecutePUBLISH() throws Exception {
-        Object result = sendHeaders(
+        sendHeaders(
                 RedisConstants.COMMAND, "PUBLISH",
                 RedisConstants.CHANNEL, "channel",
                 RedisConstants.MESSAGE, "a message");

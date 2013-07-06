@@ -23,13 +23,13 @@ import org.osgi.framework.ServiceRegistration;
 /**
  * EventAdmin service factory
  */
-public class EventAdminServiceFactory implements ServiceFactory {
+public class EventAdminServiceFactory implements ServiceFactory<Object> {
 
-    public Object getService(Bundle bundle, ServiceRegistration serviceRegistration) {
+    public Object getService(Bundle bundle, ServiceRegistration<Object> serviceRegistration) {
         return new EventAdminComponentResolver(bundle.getBundleContext());
     }
 
-    public void ungetService(Bundle bundle, ServiceRegistration serviceRegistration, Object o) {
+    public void ungetService(Bundle bundle, ServiceRegistration<Object> serviceRegistration, Object o) {
     }
 
 }

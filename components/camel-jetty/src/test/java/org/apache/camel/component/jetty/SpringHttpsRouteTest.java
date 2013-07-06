@@ -34,6 +34,7 @@ import org.apache.camel.test.junit4.TestSupport;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.junit.After;
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -100,7 +101,7 @@ public class SpringHttpsRouteTest {
         mockEndpoint.assertIsSatisfied();
         List<Exchange> list = mockEndpoint.getReceivedExchanges();
         Exchange exchange = list.get(0);
-        TestSupport.assertNotNull("exchange", exchange);
+        Assert.assertNotNull("exchange", exchange);
 
         Message in = exchange.getIn();
         assertNotNull("in", in);

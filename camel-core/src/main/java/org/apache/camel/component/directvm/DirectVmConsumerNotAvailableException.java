@@ -26,6 +26,8 @@ import org.apache.camel.Exchange;
  */
 public class DirectVmConsumerNotAvailableException extends CamelExchangeException {
 
+    private static final long serialVersionUID = 1L;
+
     public DirectVmConsumerNotAvailableException(String message, Exchange exchange) {
         super(message, exchange);
     }

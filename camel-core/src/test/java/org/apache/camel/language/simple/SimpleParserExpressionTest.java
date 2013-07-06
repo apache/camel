@@ -21,7 +21,6 @@ import java.util.Map;
 
 import org.apache.camel.ExchangeTestSupport;
 import org.apache.camel.Expression;
-import org.apache.camel.Predicate;
 
 /**
  *

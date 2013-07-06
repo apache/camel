@@ -32,7 +32,7 @@ public class SmppUcs2SplitterTest {
         Charset charset = Charset.forName("UTF-16BE");
         
         SmppUcs2Splitter splitter = new SmppUcs2Splitter(message.length());
-        SmppUcs2Splitter.resetCurrentReferenceNumber();
+        SmppSplitter.resetCurrentReferenceNumber();
         byte[][] result = splitter.split(message.getBytes(charset));
         
         assertEquals(1, result.length);
@@ -49,7 +49,7 @@ public class SmppUcs2SplitterTest {
         Charset charset = Charset.forName("UTF-16BE");
         
         SmppUcs2Splitter splitter = new SmppUcs2Splitter(message.length());
-        SmppUcs2Splitter.resetCurrentReferenceNumber();
+        SmppSplitter.resetCurrentReferenceNumber();
         byte[][] result = splitter.split(message.getBytes(charset));
         
         assertEquals(2, result.length);

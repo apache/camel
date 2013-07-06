@@ -35,7 +35,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
-import java.util.Properties;
 import java.util.jar.JarInputStream;
 
 import de.kalpatec.pojosr.framework.PojoServiceRegistryFactoryImpl;
@@ -184,7 +183,7 @@ public final class CamelBlueprintHelper {
                     // must force type cast to have code compile with both java6
                     // and 7 with the
                     // (org.apache.felix.utils.properties.Properties)
-                    String value = (String)cfg.get(key);
+                    String value = cfg.get(key);
                     props.put(key, value);
                 }
 

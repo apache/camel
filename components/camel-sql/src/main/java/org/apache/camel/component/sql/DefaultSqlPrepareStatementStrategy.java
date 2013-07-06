@@ -176,9 +176,5 @@ public class DefaultSqlPrepareStatementStrategy implements SqlPrepareStatementSt
 
             return matcher.group(1);
         }
-
-        public String replaceAll(String replacement) {
-            return matcher.replaceAll(replacement);
-        }
     }
 }

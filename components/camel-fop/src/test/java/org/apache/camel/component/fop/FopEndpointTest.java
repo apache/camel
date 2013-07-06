@@ -24,7 +24,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.apache.fop.apps.MimeConstants;
 import org.apache.pdfbox.cos.COSName;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.junit.Test;
@@ -86,7 +85,7 @@ public class FopEndpointTest extends CamelTestSupport {
         Endpoint endpoint = context().getEndpoint("fop:" + defaultOutputFormat);
         Producer producer = endpoint.createProducer();
         Exchange exchange = new DefaultExchange(context);
-        exchange.getIn().setHeader(FopConstants.CAMEL_FOP_OUTPUT_FORMAT, MimeConstants.MIME_PLAIN_TEXT);
+        exchange.getIn().setHeader(FopConstants.CAMEL_FOP_OUTPUT_FORMAT, org.apache.xmlgraphics.util.MimeConstants.MIME_PLAIN_TEXT);
         exchange.getIn().setBody(FopHelper.decorateTextWithXSLFO("Test Content"));
 
         producer.process(exchange);
