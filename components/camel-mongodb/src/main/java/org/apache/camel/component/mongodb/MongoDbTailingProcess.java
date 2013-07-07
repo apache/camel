@@ -160,6 +160,9 @@ public class MongoDbTailingProcess implements Runnable {
             if (keepRunning) {
                 LOG.debug("Cursor not found exception from MongoDB, will regenerate cursor. This is normal behaviour with tailable cursors.", e);
             }
+        } catch (NullPointerException e) {
+            // The MongoDB Java Driver throws this uncontrolled NPE when the cursor is closed while blocked at DBCursor#hasMore.
+            // See https://jira.mongodb.org/browse/JAVA-605
         }
 
         // the loop finished, persist the lastValue just in case we are shutting down

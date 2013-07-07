@@ -33,7 +33,7 @@ public enum MongoDbOperation {
     // delete operations
     remove, 
     
-    //aggregat
+    // aggregate
     aggregate,
     
     // others

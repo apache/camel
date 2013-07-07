@@ -25,7 +25,8 @@ import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.DBObject;
 import com.mongodb.Mongo;
-import com.mongodb.MongoURI;
+import com.mongodb.MongoClient;
+import com.mongodb.MongoClientURI;
 import com.mongodb.WriteConcern;
 import com.mongodb.util.JSON;
 
@@ -72,7 +73,7 @@ public abstract class AbstractMongoDbTest extends CamelTestSupport {
         properties.load(is);
         // ping Mongo and populate db and collection
         try {
-            mongo = new Mongo(new MongoURI(properties.getProperty("mongodb.connectionURI")));
+            mongo = new MongoClient(new MongoClientURI(properties.getProperty("mongodb.connectionURI")));
             mongo.getDatabaseNames();
             dbName = properties.getProperty("mongodb.testDb");
             db = mongo.getDB(dbName);
