@@ -25,7 +25,8 @@ import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.DBObject;
 import com.mongodb.Mongo;
-import com.mongodb.MongoURI;
+import com.mongodb.MongoClient;
+import com.mongodb.MongoClientURI;
 import com.mongodb.WriteConcern;
 import com.mongodb.util.JSON;
 
@@ -36,12 +37,10 @@ import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
-
 import org.junit.After;
 import org.junit.Assume;
 import org.junit.Before;
 import org.junit.BeforeClass;
-
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -72,7 +71,7 @@ public abstract class AbstractMongoDbTest extends CamelTestSupport {
         properties.load(is);
         // ping Mongo and populate db and collection
         try {
-            mongo = new Mongo(new MongoURI(properties.getProperty("mongodb.connectionURI")));
+            mongo = new MongoClient(new MongoClientURI(properties.getProperty("mongodb.connectionURI")));
             mongo.getDatabaseNames();
             dbName = properties.getProperty("mongodb.testDb");
             db = mongo.getDB(dbName);
