@@ -95,4 +95,5 @@ http\://camel.apache.org/schema/osgi/camel-osgi-2.10.2.xsd=camel-osgi.xsd
 http\://camel.apache.org/schema/osgi/camel-osgi-2.10.3.xsd=camel-osgi.xsd
 http\://camel.apache.org/schema/osgi/camel-osgi-2.10.4.xsd=camel-osgi.xsd
 http\://camel.apache.org/schema/osgi/camel-osgi-2.10.5.xsd=camel-osgi.xsd
+http\://camel.apache.org/schema/osgi/camel-osgi-2.10.6.xsd=camel-osgi.xsd
 http\://camel.apache.org/schema/osgi/camel-osgi-${project.version}.xsd=camel-osgi.xsd
