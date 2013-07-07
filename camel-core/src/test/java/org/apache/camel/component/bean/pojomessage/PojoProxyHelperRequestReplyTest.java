@@ -20,7 +20,6 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Endpoint;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.bean.PojoProxyHelper;
-import org.junit.Assert;
 import org.junit.Test;
 
 public class PojoProxyHelperRequestReplyTest extends ContextTestSupport {
@@ -34,7 +33,7 @@ public class PojoProxyHelperRequestReplyTest extends ContextTestSupport {
         PersonHandler sender = PojoProxyHelper.createProxy(personEndpoint, PersonHandler.class);
         
         Person resultPerson = sender.onPerson(person);
-        Assert.assertEquals(person.getName() + "1", resultPerson.getName());
+        assertEquals(person.getName() + "1", resultPerson.getName());
     }
     
     @Override

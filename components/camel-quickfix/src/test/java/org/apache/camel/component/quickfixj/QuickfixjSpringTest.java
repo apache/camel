@@ -20,7 +20,6 @@ import java.util.Properties;
 
 import org.apache.camel.test.spring.CamelSpringTestSupport;
 import org.hamcrest.CoreMatchers;
-import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -50,13 +49,13 @@ public class QuickfixjSpringTest extends CamelSpringTestSupport {
         SessionSettings springSessionSettings = configuration.createSessionSettings();
         Properties sessionProperties = springSessionSettings.getSessionProperties(sessionID, true);
 
-        Assert.assertThat(sessionProperties.get("ConnectionType").toString(), CoreMatchers.is("initiator"));
-        Assert.assertThat(sessionProperties.get("SocketConnectProtocol").toString(), CoreMatchers.is("VM_PIPE"));
+        assertThat(sessionProperties.get("ConnectionType").toString(), CoreMatchers.is("initiator"));
+        assertThat(sessionProperties.get("SocketConnectProtocol").toString(), CoreMatchers.is("VM_PIPE"));
 
         QuickfixjComponent component = context.getComponent("quickfix", QuickfixjComponent.class);
         QuickfixjEngine engine = component.getEngines().values().iterator().next();
 
-        Assert.assertThat(engine.getMessageFactory(), is(instanceOf(CustomMessageFactory.class)));
+        assertThat(engine.getMessageFactory(), is(instanceOf(CustomMessageFactory.class)));
     }
 
     /**

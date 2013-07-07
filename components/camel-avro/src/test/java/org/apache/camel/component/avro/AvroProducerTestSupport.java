@@ -28,7 +28,6 @@ import org.apache.camel.avro.generated.Value;
 import org.apache.camel.avro.impl.KeyValueProtocolImpl;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.After;
-import org.junit.Assert;
 import org.junit.Test;
 
 public abstract class AvroProducerTestSupport extends AvroTestSupport {
@@ -61,7 +60,7 @@ public abstract class AvroProducerTestSupport extends AvroTestSupport {
         Value value = Value.newBuilder().setValue("test value").build();
         Object[] request = {key, value};
         template.sendBodyAndHeader("direct:in", request, AvroConstants.AVRO_MESSAGE_NAME, "put");
-        Assert.assertEquals(value, keyValue.getStore().get(key));
+        assertEquals(value, keyValue.getStore().get(key));
     }
 
     @Test

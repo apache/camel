@@ -135,7 +135,7 @@ public abstract class CamelBlueprintTestSupport extends CamelTestSupport {
             CamelBlueprintHelper.disposeBundleContext(threadLocalBundleContext.get());
             threadLocalBundleContext.remove();
         }
-        CamelTestSupport.tearDownAfterClass();
+        tearDownAfterClass();
     }
 
     /**

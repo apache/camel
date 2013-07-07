@@ -31,7 +31,6 @@ import org.apache.camel.dataformat.bindy.annotation.FixedLengthRecord;
 import org.apache.camel.model.dataformat.BindyDataFormat;
 import org.apache.camel.model.dataformat.BindyType;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Assert;
 import org.junit.Test;
 
 /**
@@ -69,9 +68,9 @@ public class BindyFixedLengthDelimitedFieldTest extends CamelTestSupport {
         // check the model
         BindyFixedLengthDelimitedFieldTest.Order order = 
             (BindyFixedLengthDelimitedFieldTest.Order) unmarshallResult.getReceivedExchanges().get(0).getIn().getBody();
-        Assert.assertEquals(10, order.getOrderNr());
-        Assert.assertEquals("Pauline", order.getFirstName());
-        Assert.assertEquals("M", order.getLastName());
+        assertEquals(10, order.getOrderNr());
+        assertEquals("Pauline", order.getFirstName());
+        assertEquals("M", order.getLastName());
     }
     
     @Test

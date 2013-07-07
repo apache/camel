@@ -30,7 +30,6 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Assert;
 import org.junit.Test;
 
 /**
@@ -78,8 +77,8 @@ public class BasicDisruptorComponentTest extends CamelTestSupport {
         resultEndpoint.await(20, TimeUnit.SECONDS);
         resultEndpoint.assertIsSatisfied();
 
-        Assert.assertTrue(threadCounter.getThreadIdCount() > 0);
-        Assert.assertFalse(threadCounter.getThreadIds().contains(currentThreadId));
+        assertTrue(threadCounter.getThreadIdCount() > 0);
+        assertFalse(threadCounter.getThreadIds().contains(currentThreadId));
     }
 
     @Test
@@ -101,7 +100,7 @@ public class BasicDisruptorComponentTest extends CamelTestSupport {
 
         resultEndpoint.assertIsSatisfied();
 
-        Assert.assertEquals(4, threadCounter.getThreadIdCount());
+        assertEquals(4, threadCounter.getThreadIdCount());
     }
 
 

@@ -31,7 +31,6 @@ import org.apache.camel.dataformat.bindy.annotation.FixedLengthRecord;
 import org.apache.camel.model.dataformat.BindyDataFormat;
 import org.apache.camel.model.dataformat.BindyType;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Assert;
 import org.junit.Test;
 
 
@@ -70,11 +69,11 @@ public class BindySimpleFixedLengthOrdinalPosTest extends CamelTestSupport {
         // check the model
         BindySimpleFixedLengthOrdinalPosTest.Order order = 
             (BindySimpleFixedLengthOrdinalPosTest.Order) unmarshallResult.getReceivedExchanges().get(0).getIn().getBody();
-        Assert.assertEquals(10, order.getOrderNr());
+        assertEquals(10, order.getOrderNr());
         // the field is not trimmed
-        Assert.assertEquals("  Pauline", order.getFirstName());
-        Assert.assertEquals("M    ", order.getLastName());
-        Assert.assertEquals("Hello     ", order.getComment());
+        assertEquals("  Pauline", order.getFirstName());
+        assertEquals("M    ", order.getLastName());
+        assertEquals("Hello     ", order.getComment());
     }
     
     @Test

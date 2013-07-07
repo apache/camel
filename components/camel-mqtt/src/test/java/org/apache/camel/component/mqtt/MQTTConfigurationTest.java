@@ -18,7 +18,6 @@ package org.apache.camel.component.mqtt;
 
 import org.apache.camel.Endpoint;
 import org.fusesource.mqtt.client.QoS;
-import org.junit.Assert;
 import org.junit.Test;
 
 public class MQTTConfigurationTest extends MQTTBaseTest {
@@ -29,9 +28,9 @@ public class MQTTConfigurationTest extends MQTTBaseTest {
         assertTrue("Endpoint not a MQTTEndpoint: " + endpoint, endpoint instanceof MQTTEndpoint);
         MQTTEndpoint mqttEndpoint = (MQTTEndpoint) endpoint;
 
-        Assert.assertEquals(mqttEndpoint.getConfiguration().getQoS(), QoS.EXACTLY_ONCE);
-        Assert.assertEquals(mqttEndpoint.getConfiguration().getPublishTopicName(), TEST_TOPIC);
-        Assert.assertEquals(mqttEndpoint.getConfiguration().getSubscribeTopicName(), TEST_TOPIC);
-        Assert.assertTrue(mqttEndpoint.getConfiguration().isByDefaultRetain());
+        assertEquals(mqttEndpoint.getConfiguration().getQoS(), QoS.EXACTLY_ONCE);
+        assertEquals(mqttEndpoint.getConfiguration().getPublishTopicName(), TEST_TOPIC);
+        assertEquals(mqttEndpoint.getConfiguration().getSubscribeTopicName(), TEST_TOPIC);
+        assertTrue(mqttEndpoint.getConfiguration().isByDefaultRetain());
     }
 }

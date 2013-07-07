@@ -29,7 +29,6 @@ import org.apache.camel.avro.generated.Value;
 import org.apache.camel.avro.impl.KeyValueProtocolImpl;
 
 import org.junit.After;
-import org.junit.Assert;
 import org.junit.Test;
 
 public abstract class AvroConsumerTestSupport extends AvroTestSupport {
@@ -68,7 +67,7 @@ public abstract class AvroConsumerTestSupport extends AvroTestSupport {
         keyValue.getStore().put(key, value);
         Object[] request = {key};
         Object response = requestor.request("get", request);
-        Assert.assertEquals(value, response);
+        assertEquals(value, response);
     }
 
     @Override

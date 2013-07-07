@@ -18,7 +18,6 @@ package org.apache.camel.test.patterns;
 
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Assert;
 import org.junit.Test;
 
 public class AsyncSendMockTest extends CamelTestSupport {
@@ -40,7 +39,7 @@ public class AsyncSendMockTest extends CamelTestSupport {
             assertMockEndpointsSatisfied();
         } catch (Exception e) {
             e.printStackTrace();
-            Assert.assertTrue("Failed to make async call to api", false);
+            assertTrue("Failed to make async call to api", false);
         }
     }
 }

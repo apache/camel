@@ -31,7 +31,6 @@ import org.apache.camel.dataformat.bindy.annotation.FixedLengthRecord;
 import org.apache.camel.model.dataformat.BindyDataFormat;
 import org.apache.camel.model.dataformat.BindyType;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Assert;
 import org.junit.Test;
 
 
@@ -70,11 +69,11 @@ public class BindyFixedLengthDynamicFieldTest extends CamelTestSupport {
         // check the model
         BindyFixedLengthDynamicFieldTest.Order order = 
             (BindyFixedLengthDynamicFieldTest.Order) unmarshallResult.getReceivedExchanges().get(0).getIn().getBody();
-        Assert.assertEquals(10, order.getOrderNr());
+        assertEquals(10, order.getOrderNr());
         // the field is not trimmed
-        Assert.assertEquals("Pauline", order.getFirstName());
-        Assert.assertEquals("M", order.getLastName());
-        Assert.assertEquals("XD12345678", order.getInstrumentNumber());
+        assertEquals("Pauline", order.getFirstName());
+        assertEquals("M", order.getLastName());
+        assertEquals("XD12345678", order.getInstrumentNumber());
     }
     
     @Test

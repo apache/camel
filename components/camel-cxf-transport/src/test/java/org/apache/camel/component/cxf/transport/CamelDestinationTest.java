@@ -48,7 +48,6 @@ import org.apache.cxf.transport.ConduitInitiator;
 import org.apache.cxf.transport.ConduitInitiatorManager;
 import org.apache.cxf.transport.MessageObserver;
 import org.easymock.EasyMock;
-import org.junit.Assert;
 import org.junit.Test;
 
 public class CamelDestinationTest extends CamelTransportTestSupport {
@@ -265,8 +264,8 @@ public class CamelDestinationTest extends CamelTransportTestSupport {
         DefaultExchange exchange = new DefaultExchange(camelContext);
         consumerProcessor.process(exchange);
         Exception exc = exchange.getException();
-        Assert.assertNotNull(exc);
-        Assert.assertEquals(expectedException, exc);
+        assertNotNull(exc);
+        assertEquals(expectedException, exc);
         EasyMock.verify(dest);
     }
     

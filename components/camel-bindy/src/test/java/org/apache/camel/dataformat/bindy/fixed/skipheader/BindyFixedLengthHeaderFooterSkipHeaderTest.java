@@ -34,7 +34,6 @@ import org.apache.camel.dataformat.bindy.fixed.BindyFixedLengthDataFormat;
 import org.apache.camel.model.dataformat.BindyDataFormat;
 import org.apache.camel.model.dataformat.BindyType;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Assert;
 import org.junit.Test;
 
 /**
@@ -78,10 +77,10 @@ public class BindyFixedLengthHeaderFooterSkipHeaderTest extends CamelTestSupport
         // check the model
         Exchange exchange = unmarshallResult.getReceivedExchanges().get(0);
         Order order = (Order) exchange.getIn().getBody();
-        Assert.assertEquals(10, order.getOrderNr());
+        assertEquals(10, order.getOrderNr());
         // the field is not trimmed
-        Assert.assertEquals("  Pauline", order.getFirstName());
-        Assert.assertEquals("M    ", order.getLastName());
+        assertEquals("  Pauline", order.getFirstName());
+        assertEquals("M    ", order.getLastName());
         
         Map<String, Object> receivedHeaderMap = 
             (Map<String, Object>) exchange.getIn().getHeader(BindyFixedLengthDataFormat.CAMEL_BINDY_FIXED_LENGTH_HEADER);

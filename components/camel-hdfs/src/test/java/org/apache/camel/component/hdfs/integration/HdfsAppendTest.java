@@ -23,7 +23,6 @@ import org.apache.hadoop.fs.FSDataInputStream;
 import org.apache.hadoop.fs.FSDataOutputStream;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
-import org.junit.Assert;
 import org.junit.Ignore;
 import org.junit.Test;
 
@@ -74,7 +73,7 @@ public class HdfsAppendTest extends CamelTestSupport {
             ret = in.read(buffer);
         }
         ret = in.read(buffer);
-        Assert.assertEquals(-1, ret);
+        assertEquals(-1, ret);
         in.close();
     }
 

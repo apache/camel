@@ -80,8 +80,8 @@ public class MulticastDisruptorComponentTest extends CamelTestSupport {
 //        resultEndpoint.await(20, TimeUnit.SECONDS);
 //        resultEndpoint.assertIsSatisfied();
 //
-//        Assert.assertTrue(threadCounter.getThreadIdCount() > 0);
-//        Assert.assertFalse(threadCounter.getThreadIds().contains(currentThreadId));
+//        assertTrue(threadCounter.getThreadIdCount() > 0);
+//        assertFalse(threadCounter.getThreadIds().contains(currentThreadId));
 //    }
 //
 //    @Test
@@ -104,7 +104,7 @@ public class MulticastDisruptorComponentTest extends CamelTestSupport {
 //        System.out.println("count = " + resultEndpoint.getReceivedCounter());
 //        resultEndpoint.assertIsSatisfied();
 //
-//        Assert.assertEquals(4, threadCounter.getThreadIdCount());
+//        assertEquals(4, threadCounter.getThreadIdCount());
 //    }
 //
 

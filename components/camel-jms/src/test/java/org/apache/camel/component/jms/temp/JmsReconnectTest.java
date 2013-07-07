@@ -76,8 +76,7 @@ public class JmsReconnectTest {
          * When using Tibco EMS the problem can be recreated. As the broker is
          * external it has to be stopped and started by hand.
          */
-        // TibjmsConnectionFactory connectionFactory = new
-        // TibjmsConnectionFactory();
+        // TibjmsConnectionFactory connectionFactory = new TibjmsConnectionFactory();
         // connectionFactory.setReconnAttemptCount(1);
 
         jmsComponent.setConnectionFactory(connectionFactory);

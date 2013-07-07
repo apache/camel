@@ -24,7 +24,6 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.bean.PojoProxyHelper;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Assert;
 import org.junit.Test;
 
 public class PojoProxyHelperOneWayTest extends ContextTestSupport {
@@ -42,8 +41,8 @@ public class PojoProxyHelperOneWayTest extends ContextTestSupport {
         sender.onPerson(person);
         
         result.assertIsSatisfied();
-        Assert.assertEquals(1, receiver.receivedPersons.size());
-        Assert.assertEquals(person.getName(), receiver.receivedPersons.get(0).getName());
+        assertEquals(1, receiver.receivedPersons.size());
+        assertEquals(person.getName(), receiver.receivedPersons.get(0).getName());
     }
     
     @Override

@@ -21,7 +21,6 @@ import java.util.Date;
 
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
-import org.apache.camel.TestSupport;
 import org.apache.camel.spring.SpringRunWithTestSupport;
 import org.junit.Before;
 import org.junit.Ignore;
@@ -37,8 +36,8 @@ public class SimpleLanguageWithSprinPropertyPlaceholderRouteTest extends SpringR
 
     @Before
     public void setUp() throws Exception {
-        TestSupport.deleteDirectory("target/outBox");
-        TestSupport.deleteDirectory("target/outBoxSimple");
+        deleteDirectory("target/outBox");
+        deleteDirectory("target/outBoxSimple");
     }
 
     @Test

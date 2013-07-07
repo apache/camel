@@ -20,7 +20,6 @@ import javax.xml.xpath.XPathFactory;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.TestSupport;
 import org.apache.camel.test.spring.CamelSpringTestSupport;
 import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
@@ -37,7 +36,7 @@ public class XPathLanguageTest extends CamelSpringTestSupport {
 
     @Override
     public void setUp() throws Exception {
-        if (!TestSupport.isJavaVendor("ibm")) {
+        if (!isJavaVendor("ibm")) {
             // Force using the JAXP default implementation, because having Saxon in the classpath will automatically make JAXP use it
             // because of Service Provider discovery (this does not happen in OSGi because the META-INF/services package is not exported
             oldPropertyValue = System.setProperty(KEY, "com.sun.org.apache.xpath.internal.jaxp.XPathFactoryImpl");

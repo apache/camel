@@ -33,10 +33,10 @@ public class UriConfigurationTest extends Assert {
         assertTrue("Endpoint not a TwitterEndpoint: " + endpoint, endpoint instanceof TwitterEndpoint);
         TwitterEndpoint twitterEndpoint = (TwitterEndpoint) endpoint;
 
-        Assert.assertTrue(!twitterEndpoint.getProperties().getConsumerKey().isEmpty());
-        Assert.assertTrue(!twitterEndpoint.getProperties().getConsumerSecret().isEmpty());
-        Assert.assertTrue(!twitterEndpoint.getProperties().getAccessToken().isEmpty());
-        Assert.assertTrue(!twitterEndpoint.getProperties().getAccessTokenSecret().isEmpty());
+        assertTrue(!twitterEndpoint.getProperties().getConsumerKey().isEmpty());
+        assertTrue(!twitterEndpoint.getProperties().getConsumerSecret().isEmpty());
+        assertTrue(!twitterEndpoint.getProperties().getAccessToken().isEmpty());
+        assertTrue(!twitterEndpoint.getProperties().getAccessTokenSecret().isEmpty());
     }
     
     @Test
@@ -45,7 +45,7 @@ public class UriConfigurationTest extends Assert {
         assertTrue("Endpoint not a TwitterEndpoint: " + endpoint, endpoint instanceof TwitterEndpoint);
         TwitterEndpoint twitterEndpoint = (TwitterEndpoint) endpoint;
 
-        Assert.assertEquals(new Integer(50), twitterEndpoint.getProperties().getCount());
-        Assert.assertEquals(new Integer(2), twitterEndpoint.getProperties().getNumberOfPages());
+        assertEquals(new Integer(50), twitterEndpoint.getProperties().getCount());
+        assertEquals(new Integer(2), twitterEndpoint.getProperties().getNumberOfPages());
     }
 }

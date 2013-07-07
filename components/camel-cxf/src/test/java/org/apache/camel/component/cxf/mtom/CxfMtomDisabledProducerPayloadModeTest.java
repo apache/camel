@@ -70,7 +70,6 @@ public class CxfMtomDisabledProducerPayloadModeTest extends CxfMtomProducerPaylo
         return new MyHelloImpl();
     }
     
-    @SuppressWarnings("unchecked")
     @Override
     public void testProducer() throws Exception {
         if (MtomTestHelper.isAwtHeadless(logger, null)) {
@@ -98,7 +97,7 @@ public class CxfMtomDisabledProducerPayloadModeTest extends CxfMtomProducerPaylo
         
         // process response - verify response attachments
         
-        CxfPayload<SoapHeader> out = exchange.getOut().getBody(CxfPayload.class);
+        CxfPayload<?> out = exchange.getOut().getBody(CxfPayload.class);
         Assert.assertEquals(1, out.getBody().size());
         
 

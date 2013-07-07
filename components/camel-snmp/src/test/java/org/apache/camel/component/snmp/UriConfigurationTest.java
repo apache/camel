@@ -31,9 +31,9 @@ public class UriConfigurationTest extends Assert {
         assertTrue("Endpoint not an SnmpEndpoint: " + endpoint, endpoint instanceof SnmpEndpoint);
         SnmpEndpoint snmpEndpoint = (SnmpEndpoint) endpoint;
 
-        Assert.assertEquals(SnmpActionType.TRAP, snmpEndpoint.getType());
-        Assert.assertEquals("1.3.6.1.2.1.7.5.1", snmpEndpoint.getOids().get(0).toString());
-        Assert.assertEquals("udp:0.0.0.0/1662", snmpEndpoint.getAddress());
+        assertEquals(SnmpActionType.TRAP, snmpEndpoint.getType());
+        assertEquals("1.3.6.1.2.1.7.5.1", snmpEndpoint.getOids().get(0).toString());
+        assertEquals("udp:0.0.0.0/1662", snmpEndpoint.getAddress());
     }
 
     @Test
@@ -42,9 +42,9 @@ public class UriConfigurationTest extends Assert {
         assertTrue("Endpoint not an SnmpEndpoint: " + endpoint, endpoint instanceof SnmpEndpoint);
         SnmpEndpoint snmpEndpoint = (SnmpEndpoint) endpoint;
 
-        Assert.assertEquals(SnmpActionType.TRAP, snmpEndpoint.getType());
-        Assert.assertEquals("1.3.6.1.2.1.7.5.1", snmpEndpoint.getOids().get(0).toString());
-        Assert.assertEquals("udp:0.0.0.0/162", snmpEndpoint.getAddress());
+        assertEquals(SnmpActionType.TRAP, snmpEndpoint.getType());
+        assertEquals("1.3.6.1.2.1.7.5.1", snmpEndpoint.getOids().get(0).toString());
+        assertEquals("udp:0.0.0.0/162", snmpEndpoint.getAddress());
     }
 
     @Test
@@ -53,8 +53,8 @@ public class UriConfigurationTest extends Assert {
         assertTrue("Endpoint not an SnmpEndpoint: " + endpoint, endpoint instanceof SnmpEndpoint);
         SnmpEndpoint snmpEndpoint = (SnmpEndpoint) endpoint;
 
-        Assert.assertEquals(SnmpActionType.POLL, snmpEndpoint.getType());
-        Assert.assertEquals("1.3.6.1.2.1.7.5.1", snmpEndpoint.getOids().get(0).toString());
-        Assert.assertEquals("udp:127.0.0.1/1662", snmpEndpoint.getAddress());
+        assertEquals(SnmpActionType.POLL, snmpEndpoint.getType());
+        assertEquals("1.3.6.1.2.1.7.5.1", snmpEndpoint.getOids().get(0).toString());
+        assertEquals("udp:127.0.0.1/1662", snmpEndpoint.getAddress());
     }
 }

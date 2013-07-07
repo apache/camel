@@ -89,8 +89,8 @@ public class ServiceInterfaceStrategyTest extends Assert {
         ServiceInterfaceStrategy strategy = new ServiceInterfaceStrategy(
                 com.example.customerservice2.CustomerService.class, true);
         QName elName = strategy.findQNameForSoapActionOrType("", com.example.customerservice2.GetCustomersByName.class);
-        Assert.assertEquals("http://customerservice2.example.com/", elName.getNamespaceURI());
-        Assert.assertEquals("getCustomersByName", elName.getLocalPart());
+        assertEquals("http://customerservice2.example.com/", elName.getNamespaceURI());
+        assertEquals("getCustomersByName", elName.getLocalPart());
 
         try {
             elName = strategy.findQNameForSoapActionOrType("test", Class.class);
