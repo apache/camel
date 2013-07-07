@@ -177,14 +177,8 @@ public final class CamelBlueprintHelper {
                 File load = new File(fileName);
                 LOG.debug("Loading properties from OSGi config admin file: {}", load);
                 org.apache.felix.utils.properties.Properties cfg = new org.apache.felix.utils.properties.Properties(load);
-                Iterator<String> it = cfg.keySet().iterator();
-                while (it.hasNext()) {
-                    String key = it.next();
-                    // must force type cast to have code compile with both java6
-                    // and 7 with the
-                    // (org.apache.felix.utils.properties.Properties)
-                    String value = (String)cfg.get(key);
-                    props.put(key, value);
+                for (Object key : cfg.keySet()) {
+                    props.put(key, cfg.get(key));
                 }
 
                 ConfigurationAdmin configAdmin = CamelBlueprintHelper
