@@ -183,7 +183,7 @@ public final class CamelBlueprintHelper {
                     // must force type cast to have code compile with both java6
                     // and 7 with the
                     // (org.apache.felix.utils.properties.Properties)
-                    String value = cfg.get(key);
+                    String value = (String)cfg.get(key);
                     props.put(key, value);
                 }
 
