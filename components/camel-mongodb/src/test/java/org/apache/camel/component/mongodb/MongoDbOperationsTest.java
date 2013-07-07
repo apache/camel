@@ -26,7 +26,6 @@ import com.mongodb.util.JSON;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-
 import org.junit.Test;
 
 public class MongoDbOperationsTest extends AbstractMongoDbTest {
