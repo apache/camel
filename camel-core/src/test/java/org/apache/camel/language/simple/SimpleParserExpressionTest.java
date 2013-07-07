@@ -22,9 +22,6 @@ import java.util.Map;
 import org.apache.camel.ExchangeTestSupport;
 import org.apache.camel.Expression;
 
-/**
- *
- */
 public class SimpleParserExpressionTest extends ExchangeTestSupport {
 
     public void testSimpleParserEol() throws Exception {
@@ -184,4 +181,14 @@ public class SimpleParserExpressionTest extends ExchangeTestSupport {
         assertEquals("456", exp.evaluate(exchange, Object.class));
     }
 
+    // FIXME: see CAMEL-6414
+    public void _testSimpleParser() throws Exception {
+        exchange.getIn().setHeader("JMSMessageID", "JMSMessageID-123");
+        exchange.getIn().setBody("THE MSG ID ${header.JMSMessageID} isA --");
+
+        SimpleExpressionParser parser = new SimpleExpressionParser("THE MSG ID ${header.JMSMessageID} isA --", true);
+        Expression exp = parser.parseExpression();
+
+        assertEquals("THE MSG ID JMSMessageID-123 isA --", exp.evaluate(exchange, String.class));
+    }
 }
