@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.mina2;
 
+
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.spring.CamelSpringTestSupport;
 import org.junit.Test;
@@ -34,6 +35,9 @@ public class Mina2SpringMinaEndpointTest extends CamelSpringTestSupport {
         template.sendBody("myMinaEndpoint", "Hello World");
 
         assertMockEndpointsSatisfied();
+        // checking the endpoint uri
+        Mina2Endpoint endpoint = applicationContext.getBean("myMinaEndpoint", Mina2Endpoint.class);
+        assertEquals("mina2:tcp:localhost:1234", endpoint.getEndpointUri());
     }
 
     @Override

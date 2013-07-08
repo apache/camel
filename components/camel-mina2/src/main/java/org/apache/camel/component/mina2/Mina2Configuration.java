@@ -263,4 +263,9 @@ public class Mina2Configuration implements Cloneable {
     public void setOrderedThreadPoolExecutor(boolean orderedThreadPoolExecutor) {
         this.orderedThreadPoolExecutor = orderedThreadPoolExecutor;
     }
+    
+    // here we just shows the option setting of host, port, protocol 
+    public String getUriString() {
+        return "mina2:" + getProtocol() + ":" + getHost() + ":" + getPort();
+    }
 }
