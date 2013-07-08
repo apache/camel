@@ -94,7 +94,7 @@ public class MinaComponent extends DefaultComponent {
     }
 
     public Endpoint createEndpoint(MinaConfiguration config) throws Exception {
-        return createEndpoint(null, config);
+        return createEndpoint(config.getUriString(), config);
     }
 
     private Endpoint createEndpoint(String uri, MinaConfiguration config) throws Exception {
