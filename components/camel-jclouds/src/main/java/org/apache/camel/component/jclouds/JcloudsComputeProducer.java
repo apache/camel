@@ -28,7 +28,6 @@ import org.jclouds.compute.domain.ExecResponse;
 import org.jclouds.compute.domain.Hardware;
 import org.jclouds.compute.domain.Image;
 import org.jclouds.compute.domain.NodeMetadata;
-import org.jclouds.compute.domain.NodeState;
 import org.jclouds.compute.domain.TemplateBuilder;
 import org.jclouds.compute.domain.internal.NodeMetadataImpl;
 import org.jclouds.compute.options.RunScriptOptions;
@@ -132,7 +131,7 @@ public class JcloudsComputeProducer extends JcloudsProducer {
         }
 
         exchange.setProperty(JcloudsConstants.RUN_SCRIPT_ERROR, execResponse.getError());
-        exchange.setProperty(JcloudsConstants.RUN_SCRIPT_EXIT_CODE, execResponse.getExitCode());
+        exchange.setProperty(JcloudsConstants.RUN_SCRIPT_EXIT_CODE, execResponse.getExitStatus());
         exchange.getOut().setBody(execResponse.getOutput());
     }
 
@@ -205,7 +204,7 @@ public class JcloudsComputeProducer extends JcloudsProducer {
         final String nodeId = getNodeId(exchange);
         final String imageId = getImageId(exchange);
         final String group = getGroup(exchange);
-        final NodeState queryState = getNodeState(exchange);
+        final NodeMetadata.Status queryState = getNodeState(exchange);
 
         Predicate<NodeMetadata> predicate = new Predicate<NodeMetadata>() {
             public boolean apply(NodeMetadata metadata) {
@@ -215,7 +214,7 @@ public class JcloudsComputeProducer extends JcloudsProducer {
                 if (imageId != null && !imageId.equals(metadata.getImageId())) {
                     return false;
                 }
-                if (queryState != null && !queryState.equals(metadata.getState())) {
+                if (queryState != null && !queryState.equals(metadata.getStatus())) {
                     return false;
                 }
                 if (group != null && !group.equals(metadata.getGroup())) {
@@ -242,21 +241,21 @@ public class JcloudsComputeProducer extends JcloudsProducer {
     /**
      * Retrieves the node state from the URI or from the exchange headers. The header will take precedence over the URI.
      */
-    public NodeState getNodeState(Exchange exchange) {
-        NodeState nodeState = null;
+    public NodeMetadata.Status getNodeState(Exchange exchange) {
+        NodeMetadata.Status nodeState = null;
         String state = getEndpoint().getNodeState();
         if (state != null) {
-            nodeState = NodeState.valueOf(state);
+            nodeState =  NodeMetadata.Status.valueOf(state);
         }
 
         if (exchange.getIn().getHeader(JcloudsConstants.NODE_STATE) != null) {
             Object stateHeader = exchange.getIn().getHeader(JcloudsConstants.NODE_STATE);
             if (stateHeader == null) {
                 nodeState = null;
-            } else if (stateHeader instanceof NodeState) {
-                nodeState = (NodeState) stateHeader;
+            } else if (stateHeader instanceof  NodeMetadata.Status) {
+                nodeState = (NodeMetadata.Status) stateHeader;
             } else {
-                nodeState = NodeState.valueOf(String.valueOf(stateHeader));
+                nodeState =  NodeMetadata.Status.valueOf(String.valueOf(stateHeader));
             }
         }
         return nodeState;

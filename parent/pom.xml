@@ -199,9 +199,9 @@
     <jaxen-version>1.1.4</jaxen-version>
     <jboss-javaee-6-version>1.0.0.Final</jboss-javaee-6-version>
     <jboss-logging-version>3.1.3.GA</jboss-logging-version>
-    <jclouds-version>1.5.7</jclouds-version>
+    <jclouds-version>1.6.1-incubating</jclouds-version>
     <!-- jclouds must use this guava version -->
-    <jclouds-google-guava-version>13.0.1</jclouds-google-guava-version>
+    <jclouds-google-guava-version>14.0.1</jclouds-google-guava-version>
     <jcr-version>2.0</jcr-version>
     <jdom-bundle-version>1.1_4</jdom-bundle-version>
     <jdom-version>1.1.3</jdom-version>
