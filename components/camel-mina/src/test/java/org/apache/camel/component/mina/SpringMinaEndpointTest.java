@@ -34,6 +34,9 @@ public class SpringMinaEndpointTest extends CamelSpringTestSupport {
         template.sendBody("myMinaEndpoint", "Hello World");
 
         assertMockEndpointsSatisfied();
+        
+        MinaEndpoint endpoint = applicationContext.getBean("myMinaEndpoint", MinaEndpoint.class);
+        assertEquals("mina:tcp:localhost:1234", endpoint.getEndpointUri());
     }
 
     @Override

@@ -225,4 +225,9 @@ public class MinaConfiguration implements Cloneable {
     public void setNoReplyLogLevel(LoggingLevel noReplyLogLevel) {
         this.noReplyLogLevel = noReplyLogLevel;
     }
+    
+    // here we just shows the option setting of host, port, protocol 
+    public String getUriString() {
+        return "mina:" + getProtocol() + ":" + getHost() + ":" + getPort();
+    }
 }
