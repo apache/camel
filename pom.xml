@@ -202,7 +202,7 @@
           <version>2.4.1</version>
           <configuration>
             <localCheckout>true</localCheckout>
-            <pushChanges>false</pushChanges>
+            <pushChanges>true</pushChanges>
             <tagNameFormat>@{project.artifactId}-@{project.version}</tagNameFormat>
             <useReleaseProfile>false</useReleaseProfile>
             <preparationGoals>clean install</preparationGoals>
