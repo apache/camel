@@ -115,7 +115,7 @@
     <dozer-version>5.4.0</dozer-version>
     <easymock-version>3.1</easymock-version>
     <eclipse-equinox-common-version>3.3.0-v20070426</eclipse-equinox-common-version>
-    <ehcache-version>2.7.0</ehcache-version>
+    <ehcache-version>2.7.2</ehcache-version>
     <!-- The 0.20 bundle is flawed, see SMX4-1372 -->
     <elasticsearch-bundle-version>0.19.10_1</elasticsearch-bundle-version>
     <elasticsearch-version>0.20.5</elasticsearch-version>
