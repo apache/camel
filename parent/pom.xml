@@ -63,7 +63,7 @@
     <aws-java-sdk-version>1.4.7</aws-java-sdk-version>
     <axiom-version>1.2.14</axiom-version>
     <bcel-bundle-version>5.2_4</bcel-bundle-version>
-    <beanio-version>2.0.5</beanio-version>
+    <beanio-version>2.0.6</beanio-version>
     <bsh-version>2.0b5</bsh-version>
     <bouncycastle-version>1.48</bouncycastle-version>
     <build-helper-maven-plugin-version>1.7</build-helper-maven-plugin-version>
