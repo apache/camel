@@ -181,8 +181,7 @@ public class SimpleParserExpressionTest extends ExchangeTestSupport {
         assertEquals("456", exp.evaluate(exchange, Object.class));
     }
 
-    // FIXME: see CAMEL-6414
-    public void xxxTestSimpleParser() throws Exception {
+    public void testUnaryLenient() throws Exception {
         exchange.getIn().setHeader("JMSMessageID", "JMSMessageID-123");
         exchange.getIn().setBody("THE MSG ID ${header.JMSMessageID} isA --");
 
@@ -190,5 +189,25 @@ public class SimpleParserExpressionTest extends ExchangeTestSupport {
         Expression exp = parser.parseExpression();
 
         assertEquals("THE MSG ID JMSMessageID-123 isA --", exp.evaluate(exchange, String.class));
+    }
+
+    public void testUnaryLenient2() throws Exception {
+        exchange.getIn().setHeader("JMSMessageID", "JMSMessageID-123");
+        exchange.getIn().setBody("------------THE MSG ID ${header.JMSMessageID}------------");
+
+        SimpleExpressionParser parser = new SimpleExpressionParser("------------THE MSG ID ${header.JMSMessageID}------------", true);
+        Expression exp = parser.parseExpression();
+
+        assertEquals("------------THE MSG ID JMSMessageID-123------------", exp.evaluate(exchange, String.class));
+    }
+
+    public void testUnaryLenient3() throws Exception {
+        exchange.getIn().setHeader("JMSMessageID", "JMSMessageID-123");
+        exchange.getIn().setBody("------------ THE MSG ID ${header.JMSMessageID} ------------");
+
+        SimpleExpressionParser parser = new SimpleExpressionParser("------------ THE MSG ID ${header.JMSMessageID} ------------", true);
+        Expression exp = parser.parseExpression();
+
+        assertEquals("------------ THE MSG ID JMSMessageID-123 ------------", exp.evaluate(exchange, String.class));
     }
 }
