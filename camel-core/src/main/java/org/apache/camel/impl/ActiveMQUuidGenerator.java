@@ -16,11 +16,11 @@
  */
 package org.apache.camel.impl;
 
+import java.io.IOException;
 import java.net.ServerSocket;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.camel.spi.UuidGenerator;
-import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.InetAddressUtil;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -78,7 +78,16 @@ public class ActiveMQUuidGenerator implements UuidGenerator {
                     LOG.warn("Cannot generate unique stub by using DNS and binding to local port: " + idGeneratorPort + " due " + ioe.getMessage());
                 }
             } finally {
-                IOHelper.close(ss);
+                try {
+                    // TODO: replace the following line with IOHelper.close(ss) when Java 6 support is dropped
+                    ss.close();
+                } catch (IOException ioe) {
+                    if (LOG.isTraceEnabled()) {
+                        LOG.trace("Closing the server socket failed", ioe);
+                    } else {
+                        LOG.warn("Closing the server socket failed" + " due " + ioe.getMessage());
+                    }
+                }
             }
         }
 
