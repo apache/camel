@@ -104,9 +104,9 @@ public class SingleTCPNettyServerBootstrapFactory extends ServiceSupport impleme
 
         if (bp == null) {
             // create new pool which we should shutdown when stopping as its not shared
-            bossPool = new NettyBossPoolBuilder()
+            bossPool = new NettyServerBossPoolBuilder()
                     .withBossCount(configuration.getBossCount())
-                    .withName("NettyTCPBoss")
+                    .withName("NettyServerTCPBoss")
                     .build();
             bp = bossPool;
         }
@@ -114,7 +114,7 @@ public class SingleTCPNettyServerBootstrapFactory extends ServiceSupport impleme
             // create new pool which we should shutdown when stopping as its not shared
             workerPool = new NettyWorkerPoolBuilder()
                     .withWorkerCount(configuration.getWorkerCount())
-                    .withName("NettyTCPWorker")
+                    .withName("NettyServerTCPWorker")
                     .build();
             wp = workerPool;
         }

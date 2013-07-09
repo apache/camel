@@ -27,7 +27,8 @@ import org.junit.Test;
 public class NettyUseSharedWorkerThreadPoolTest extends BaseNettyTest {
 
     private JndiRegistry jndi;
-    private WorkerPool shared;
+    private WorkerPool sharedServer;
+    private WorkerPool sharedClient;
     private int port;
     private int port2;
     private int port3;
@@ -48,19 +49,20 @@ public class NettyUseSharedWorkerThreadPoolTest extends BaseNettyTest {
         getMockEndpoint("mock:result").expectedMessageCount(30);
 
         for (int i = 0; i < 10; i++) {
-            String reply = template.requestBody("netty:tcp://localhost:" + port + "?textline=true&sync=true", "Hello World", String.class);
+            String reply = template.requestBody("netty:tcp://localhost:" + port + "?textline=true&sync=true&workerPool=#sharedClientPool", "Hello World", String.class);
             assertEquals("Bye World", reply);
 
-            reply = template.requestBody("netty:tcp://localhost:" + port2 + "?textline=true&sync=true", "Hello Camel", String.class);
+            reply = template.requestBody("netty:tcp://localhost:" + port2 + "?textline=true&sync=true&workerPool=#sharedClientPool", "Hello Camel", String.class);
             assertEquals("Hi Camel", reply);
 
-            reply = template.requestBody("netty:tcp://localhost:" + port3 + "?textline=true&sync=true", "Hello Claus", String.class);
+            reply = template.requestBody("netty:tcp://localhost:" + port3 + "?textline=true&sync=true&workerPool=#sharedClientPool", "Hello Claus", String.class);
             assertEquals("Hej Claus", reply);
         }
 
         assertMockEndpointsSatisfied();
 
-        shared.shutdown();
+        sharedServer.shutdown();
+        sharedClient.shutdown();
     }
 
     @Override
@@ -69,26 +71,28 @@ public class NettyUseSharedWorkerThreadPoolTest extends BaseNettyTest {
             @Override
             public void configure() throws Exception {
                 // we have 3 routes, but lets try to have only 2 threads in the pool
-                shared = new NettyWorkerPoolBuilder().withWorkerCount(2).build();
-                jndi.bind("sharedPool", shared);
+                sharedServer = new NettyWorkerPoolBuilder().withWorkerCount(2).withName("NettyServer").build();
+                jndi.bind("sharedServerPool", sharedServer);
+                sharedClient = new NettyWorkerPoolBuilder().withWorkerCount(3).withName("NettyClient").build();
+                jndi.bind("sharedClientPool", sharedClient);
 
                 port = getPort();
                 port2 = getNextPort();
                 port3 = getNextPort();
 
-                from("netty:tcp://localhost:" + port + "?textline=true&sync=true&workerPool=#sharedPool&orderedThreadPoolExecutor=false")
+                from("netty:tcp://localhost:" + port + "?textline=true&sync=true&workerPool=#sharedServerPool&orderedThreadPoolExecutor=false")
                     .validate(body().isInstanceOf(String.class))
                     .to("log:result")
                     .to("mock:result")
                     .transform(body().regexReplaceAll("Hello", "Bye"));
 
-                from("netty:tcp://localhost:" + port2 + "?textline=true&sync=true&workerPool=#sharedPool&orderedThreadPoolExecutor=false")
+                from("netty:tcp://localhost:" + port2 + "?textline=true&sync=true&workerPool=#sharedServerPool&orderedThreadPoolExecutor=false")
                     .validate(body().isInstanceOf(String.class))
                     .to("log:result")
                     .to("mock:result")
                     .transform(body().regexReplaceAll("Hello", "Hi"));
 
-                from("netty:tcp://localhost:" + port3 + "?textline=true&sync=true&workerPool=#sharedPool&orderedThreadPoolExecutor=false")
+                from("netty:tcp://localhost:" + port3 + "?textline=true&sync=true&workerPool=#sharedServerPool&orderedThreadPoolExecutor=false")
                     .validate(body().isInstanceOf(String.class))
                     .to("log:result")
                     .to("mock:result")

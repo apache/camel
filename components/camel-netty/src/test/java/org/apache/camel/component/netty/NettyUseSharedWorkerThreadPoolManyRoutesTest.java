@@ -67,7 +67,7 @@ public class NettyUseSharedWorkerThreadPoolManyRoutesTest extends BaseNettyTest 
             public void configure() throws Exception {
                 sharedWorker = new NettyWorkerPoolBuilder().withWorkerCount(10).build();
                 jndi.bind("sharedWorker", sharedWorker);
-                sharedBoos = new NettyBossPoolBuilder().withBossCount(20).build();
+                sharedBoos = new NettyServerBossPoolBuilder().withBossCount(20).build();
                 jndi.bind("sharedBoss", sharedBoos);
 
                 for (int i = 0; i < 100; i++) {

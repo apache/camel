@@ -19,7 +19,7 @@ package org.apache.camel.component.netty;
 import java.net.InetSocketAddress;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.TimeUnit;
 
@@ -45,8 +45,11 @@ import org.jboss.netty.channel.group.ChannelGroup;
 import org.jboss.netty.channel.group.ChannelGroupFuture;
 import org.jboss.netty.channel.group.DefaultChannelGroup;
 import org.jboss.netty.channel.socket.DatagramChannelFactory;
+import org.jboss.netty.channel.socket.nio.BossPool;
 import org.jboss.netty.channel.socket.nio.NioClientSocketChannelFactory;
 import org.jboss.netty.channel.socket.nio.NioDatagramChannelFactory;
+import org.jboss.netty.channel.socket.nio.NioDatagramWorkerPool;
+import org.jboss.netty.channel.socket.nio.WorkerPool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -59,8 +62,8 @@ public class NettyProducer extends DefaultAsyncProducer {
     private DatagramChannelFactory datagramChannelFactory;
     private ClientPipelineFactory pipelineFactory;
     private CamelLogger noReplyLogger;
-    private ExecutorService bossExecutor;
-    private ExecutorService workerExecutor;
+    private BossPool bossPool;
+    private WorkerPool workerPool;
     private ObjectPool<Channel> pool;
 
     public NettyProducer(NettyEndpoint nettyEndpoint, NettyConfiguration configuration) {
@@ -154,13 +157,13 @@ public class NettyProducer extends DefaultAsyncProducer {
         }
 
         // and then shutdown the thread pools
-        if (bossExecutor != null) {
-            context.getExecutorServiceManager().shutdown(bossExecutor);
-            bossExecutor = null;
+        if (bossPool != null) {
+            bossPool.shutdown();
+            bossPool = null;
         }
-        if (workerExecutor != null) {
-            context.getExecutorServiceManager().shutdown(workerExecutor);
-            workerExecutor = null;
+        if (workerPool != null) {
+            workerPool.shutdown();
+            workerPool = null;
         }
 
         if (pool != null) {
@@ -316,24 +319,35 @@ public class NettyProducer extends DefaultAsyncProducer {
 
     protected void setupTCPCommunication() throws Exception {
         if (channelFactory == null) {
-            bossExecutor = context.getExecutorServiceManager().newCachedThreadPool(this, "NettyTCPBoss");
-            workerExecutor = context.getExecutorServiceManager().newCachedThreadPool(this, "NettyTCPWorker");
-            if (configuration.getWorkerCount() <= 0) {
-                channelFactory = new NioClientSocketChannelFactory(bossExecutor, workerExecutor);
-            } else {
-                channelFactory = new NioClientSocketChannelFactory(bossExecutor, workerExecutor, configuration.getWorkerCount());
+            // prefer using explicit configured thread pools
+            BossPool bp = configuration.getBossPool();
+            WorkerPool wp = configuration.getWorkerPool();
+
+            if (bp == null) {
+                // create new pool which we should shutdown when stopping as its not shared
+                bossPool = new NettyClientBossPoolBuilder()
+                        .withBossCount(configuration.getBossCount())
+                        .withName("NettyClientTCPBoss")
+                        .build();
+                bp = bossPool;
             }
+            if (wp == null) {
+                // create new pool which we should shutdown when stopping as its not shared
+                workerPool = new NettyWorkerPoolBuilder()
+                        .withWorkerCount(configuration.getWorkerCount())
+                        .withName("NettyClientTCPWorker")
+                        .build();
+                wp = workerPool;
+            }
+            channelFactory = new NioClientSocketChannelFactory(bp, wp);
         }
     }
 
     protected void setupUDPCommunication() throws Exception {
         if (datagramChannelFactory == null) {
-            workerExecutor = context.getExecutorServiceManager().newCachedThreadPool(this, "NettyUDPWorker");
-            if (configuration.getWorkerCount() <= 0) {
-                datagramChannelFactory = new NioDatagramChannelFactory(workerExecutor);
-            } else {
-                datagramChannelFactory = new NioDatagramChannelFactory(workerExecutor, configuration.getWorkerCount());
-            }
+            int count = configuration.getWorkerCount() > 0 ? configuration.getWorkerCount() : NettyHelper.DEFAULT_IO_THREADS;
+            workerPool = new NioDatagramWorkerPool(Executors.newCachedThreadPool(), count);
+            datagramChannelFactory = new NioDatagramChannelFactory(workerPool);
         }
     }
 

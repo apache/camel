@@ -43,7 +43,6 @@ import org.slf4j.LoggerFactory;
 public class SingleUDPNettyServerBootstrapFactory extends ServiceSupport implements NettyServerBootstrapFactory {
 
     protected static final Logger LOG = LoggerFactory.getLogger(SingleUDPNettyServerBootstrapFactory.class);
-    private static final int DEFAULT_IO_THREADS = Runtime.getRuntime().availableProcessors() * 2;
     private final ChannelGroup allChannels;
     private CamelContext camelContext;
     private ThreadFactory threadFactory;
@@ -101,7 +100,7 @@ public class SingleUDPNettyServerBootstrapFactory extends ServiceSupport impleme
 
     protected void startServerBootstrap() {
         // create non-shared worker pool
-        int count = configuration.getWorkerCount() > 0 ? configuration.getWorkerCount() : DEFAULT_IO_THREADS;
+        int count = configuration.getWorkerCount() > 0 ? configuration.getWorkerCount() : NettyHelper.DEFAULT_IO_THREADS;
         workerPool = new NioDatagramWorkerPool(Executors.newCachedThreadPool(), count);
 
         datagramChannelFactory = new NioDatagramChannelFactory(workerPool);
