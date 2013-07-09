@@ -20,6 +20,7 @@ import java.net.ServerSocket;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.camel.spi.UuidGenerator;
+import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.InetAddressUtil;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -31,10 +32,15 @@ import org.slf4j.LoggerFactory;
  * <p/>
  * This implementation is not synchronized but it leverages API which may not be accessible
  * in the cloud (such as Google App Engine).
+ * <p/>
+ * The JVM system property {@link #PROPERTY_IDGENERATOR_PORT} can be used to set a specific port
+ * number to be used as part of the initialization process to generate unique UUID.
  */
 public class ActiveMQUuidGenerator implements UuidGenerator {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(ActiveMQUuidGenerator.class); 
+    // use same JVM property name as ActiveMQ
+    public static final String PROPERTY_IDGENERATOR_PORT = "activemq.idgenerator.port";
+    private static final transient Logger LOG = LoggerFactory.getLogger(ActiveMQUuidGenerator.class);
     private static final String UNIQUE_STUB;
     private static int instanceCount;
     private static String hostName;
@@ -55,14 +61,24 @@ public class ActiveMQUuidGenerator implements UuidGenerator {
         }
 
         if (canAccessSystemProps) {
+            int idGeneratorPort = 0;
+            ServerSocket ss = null;
             try {
+                idGeneratorPort = Integer.parseInt(System.getProperty(PROPERTY_IDGENERATOR_PORT, "0"));
+                LOG.trace("Using port {}", idGeneratorPort);
                 hostName = InetAddressUtil.getLocalHostName();
-                ServerSocket ss = new ServerSocket(0);
+                ss = new ServerSocket(idGeneratorPort);
                 stub = "-" + ss.getLocalPort() + "-" + System.currentTimeMillis() + "-";
                 Thread.sleep(100);
                 ss.close();
             } catch (Exception ioe) {
-                LOG.warn("Could not generate unique stub by using DNS and binding to local port, will fallback and use localhost as name", ioe);
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Cannot generate unique stub by using DNS and binding to local port: " + idGeneratorPort, ioe);
+                } else {
+                    LOG.warn("Cannot generate unique stub by using DNS and binding to local port: " + idGeneratorPort + " due " + ioe.getMessage());
+                }
+            } finally {
+                IOHelper.close(ss);
             }
         }
 
