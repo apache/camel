@@ -18,8 +18,11 @@ package org.apache.camel.component.netty;
 
 import java.io.File;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
 
 import org.apache.camel.util.jsse.SSLContextParameters;
+import org.jboss.netty.channel.socket.nio.BossPool;
+import org.jboss.netty.channel.socket.nio.WorkerPool;
 import org.jboss.netty.handler.ssl.SslHandler;
 
 public class NettyServerBootstrapConfiguration implements Cloneable {
@@ -31,6 +34,7 @@ public class NettyServerBootstrapConfiguration implements Cloneable {
     protected long sendBufferSize = 65536;
     protected long receiveBufferSize = 65536;
     protected int receiveBufferSizePredictor;
+    protected int bossCount = 1;
     protected int workerCount;
     protected boolean keepAlive = true;
     protected boolean tcpNoDelay = true;
@@ -52,6 +56,8 @@ public class NettyServerBootstrapConfiguration implements Cloneable {
     protected String keyStoreFormat;
     protected String securityProvider;
     protected String passphrase;
+    protected BossPool bossPool;
+    protected WorkerPool workerPool;
 
     public String getAddress() {
         return host + ":" + port;
@@ -123,6 +129,14 @@ public class NettyServerBootstrapConfiguration implements Cloneable {
 
     public void setWorkerCount(int workerCount) {
         this.workerCount = workerCount;
+    }
+
+    public int getBossCount() {
+        return bossCount;
+    }
+
+    public void setBossCount(int bossCount) {
+        this.bossCount = bossCount;
     }
 
     public boolean isKeepAlive() {
@@ -281,6 +295,22 @@ public class NettyServerBootstrapConfiguration implements Cloneable {
         this.options = options;
     }
 
+    public BossPool getBossPool() {
+        return bossPool;
+    }
+
+    public void setBossPool(BossPool bossPool) {
+        this.bossPool = bossPool;
+    }
+
+    public WorkerPool getWorkerPool() {
+        return workerPool;
+    }
+
+    public void setWorkerPool(WorkerPool workerPool) {
+        this.workerPool = workerPool;
+    }
+
     /**
      * Checks if the other {@link NettyServerBootstrapConfiguration} is compatible
      * with this, as a Netty listener bound on port X shares the same common
@@ -304,6 +334,8 @@ public class NettyServerBootstrapConfiguration implements Cloneable {
         } else if (receiveBufferSizePredictor != other.receiveBufferSizePredictor) {
             isCompatible = false;
         } else if (workerCount != other.workerCount) {
+            isCompatible = false;
+        } else if (bossCount != other.bossCount) {
             isCompatible = false;
         } else if (keepAlive != other.keepAlive) {
             isCompatible = false;
@@ -352,6 +384,10 @@ public class NettyServerBootstrapConfiguration implements Cloneable {
             isCompatible = false;
         } else if (passphrase != null && !passphrase.equals(other.passphrase)) {
             isCompatible = false;
+        } else if (bossPool != other.bossPool) {
+            isCompatible = false;
+        } else if (workerPool != other.workerPool) {
+            isCompatible = false;
         }
 
         return isCompatible;
@@ -367,6 +403,7 @@ public class NettyServerBootstrapConfiguration implements Cloneable {
                 + ", receiveBufferSize=" + receiveBufferSize
                 + ", receiveBufferSizePredictor=" + receiveBufferSizePredictor
                 + ", workerCount=" + workerCount
+                + ", bossCount=" + bossCount
                 + ", keepAlive=" + keepAlive
                 + ", tcpNoDelay=" + tcpNoDelay
                 + ", reuseAddress=" + reuseAddress
@@ -386,6 +423,8 @@ public class NettyServerBootstrapConfiguration implements Cloneable {
                 + ", keyStoreFormat='" + keyStoreFormat + '\''
                 + ", securityProvider='" + securityProvider + '\''
                 + ", passphrase='" + passphrase + '\''
+                + ", bossPool=" + bossPool
+                + ", workerPool=" + workerPool
                 + '}';
     }
 }

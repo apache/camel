@@ -18,7 +18,6 @@ package org.apache.camel.component.netty;
 
 import java.net.InetSocketAddress;
 import java.util.Map;
-import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
 
@@ -33,6 +32,8 @@ import org.jboss.netty.channel.group.ChannelGroupFuture;
 import org.jboss.netty.channel.group.DefaultChannelGroup;
 import org.jboss.netty.channel.socket.DatagramChannelFactory;
 import org.jboss.netty.channel.socket.nio.NioDatagramChannelFactory;
+import org.jboss.netty.channel.socket.nio.NioDatagramWorkerPool;
+import org.jboss.netty.channel.socket.nio.WorkerPool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -42,6 +43,7 @@ import org.slf4j.LoggerFactory;
 public class SingleUDPNettyServerBootstrapFactory extends ServiceSupport implements NettyServerBootstrapFactory {
 
     protected static final Logger LOG = LoggerFactory.getLogger(SingleUDPNettyServerBootstrapFactory.class);
+    private static final int DEFAULT_IO_THREADS = Runtime.getRuntime().availableProcessors() * 2;
     private final ChannelGroup allChannels;
     private CamelContext camelContext;
     private ThreadFactory threadFactory;
@@ -50,7 +52,7 @@ public class SingleUDPNettyServerBootstrapFactory extends ServiceSupport impleme
     private DatagramChannelFactory datagramChannelFactory;
     private ConnectionlessBootstrap connectionlessBootstrap;
     private Channel channel;
-    private ExecutorService workerExecutor;
+    private WorkerPool workerPool;
 
     public SingleUDPNettyServerBootstrapFactory() {
         this.allChannels = new DefaultChannelGroup(SingleUDPNettyServerBootstrapFactory.class.getName());
@@ -98,17 +100,11 @@ public class SingleUDPNettyServerBootstrapFactory extends ServiceSupport impleme
     }
 
     protected void startServerBootstrap() {
-        if (camelContext != null) {
-            workerExecutor = camelContext.getExecutorServiceManager().newCachedThreadPool(this, "NettyUDPWorker");
-        } else {
-            workerExecutor = Executors.newCachedThreadPool(threadFactory);
-        }
+        // create non-shared worker pool
+        int count = configuration.getWorkerCount() > 0 ? configuration.getWorkerCount() : DEFAULT_IO_THREADS;
+        workerPool = new NioDatagramWorkerPool(Executors.newCachedThreadPool(), count);
 
-        if (configuration.getWorkerCount() <= 0) {
-            datagramChannelFactory = new NioDatagramChannelFactory(workerExecutor);
-        } else {
-            datagramChannelFactory = new NioDatagramChannelFactory(workerExecutor, configuration.getWorkerCount());
-        }
+        datagramChannelFactory = new NioDatagramChannelFactory(workerPool);
 
         connectionlessBootstrap = new ConnectionlessBootstrap(datagramChannelFactory);
         connectionlessBootstrap.setOption("child.keepAlive", configuration.isKeepAlive());
@@ -161,13 +157,10 @@ public class SingleUDPNettyServerBootstrapFactory extends ServiceSupport impleme
         }
 
         // and then shutdown the thread pools
-        if (workerExecutor != null) {
-            if (camelContext != null) {
-                camelContext.getExecutorServiceManager().shutdown(workerExecutor);
-            } else {
-                workerExecutor.shutdownNow();
-            }
-            workerExecutor = null;
+        if (workerPool != null) {
+            workerPool.shutdown();
+            workerPool = null;
         }
     }
+
 }

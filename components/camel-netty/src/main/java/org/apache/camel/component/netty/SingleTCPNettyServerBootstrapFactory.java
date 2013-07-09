@@ -18,8 +18,6 @@ package org.apache.camel.component.netty;
 
 import java.net.InetSocketAddress;
 import java.util.Map;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadFactory;
 
 import org.apache.camel.CamelContext;
@@ -31,7 +29,9 @@ import org.jboss.netty.channel.ChannelPipelineFactory;
 import org.jboss.netty.channel.group.ChannelGroup;
 import org.jboss.netty.channel.group.ChannelGroupFuture;
 import org.jboss.netty.channel.group.DefaultChannelGroup;
+import org.jboss.netty.channel.socket.nio.BossPool;
 import org.jboss.netty.channel.socket.nio.NioServerSocketChannelFactory;
+import org.jboss.netty.channel.socket.nio.WorkerPool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,8 +49,8 @@ public class SingleTCPNettyServerBootstrapFactory extends ServiceSupport impleme
     private ChannelFactory channelFactory;
     private ServerBootstrap serverBootstrap;
     private Channel channel;
-    private ExecutorService bossExecutor;
-    private ExecutorService workerExecutor;
+    private BossPool bossPool;
+    private WorkerPool workerPool;
 
     public SingleTCPNettyServerBootstrapFactory() {
         this.allChannels = new DefaultChannelGroup(SingleTCPNettyServerBootstrapFactory.class.getName());
@@ -98,20 +98,28 @@ public class SingleTCPNettyServerBootstrapFactory extends ServiceSupport impleme
     }
 
     protected void startServerBootstrap() {
-        if (camelContext != null) {
-            bossExecutor = camelContext.getExecutorServiceManager().newCachedThreadPool(this, "NettyTCPBoss");
-            workerExecutor = camelContext.getExecutorServiceManager().newCachedThreadPool(this, "NettyTCPWorker");
-        } else {
-            bossExecutor = Executors.newCachedThreadPool(threadFactory);
-            workerExecutor = Executors.newCachedThreadPool(threadFactory);
+        // prefer using explicit configured thread pools
+        BossPool bp = configuration.getBossPool();
+        WorkerPool wp = configuration.getWorkerPool();
+
+        if (bp == null) {
+            // create new pool which we should shutdown when stopping as its not shared
+            bossPool = new NettyBossPoolBuilder()
+                    .withBossCount(configuration.getBossCount())
+                    .withName("NettyTCPBoss")
+                    .build();
+            bp = bossPool;
+        }
+        if (wp == null) {
+            // create new pool which we should shutdown when stopping as its not shared
+            workerPool = new NettyWorkerPoolBuilder()
+                    .withWorkerCount(configuration.getWorkerCount())
+                    .withName("NettyTCPWorker")
+                    .build();
+            wp = workerPool;
         }
 
-        if (configuration.getWorkerCount() <= 0) {
-            channelFactory = new NioServerSocketChannelFactory(bossExecutor, workerExecutor);
-        } else {
-            channelFactory = new NioServerSocketChannelFactory(bossExecutor, workerExecutor,
-                    configuration.getWorkerCount());
-        }
+        channelFactory = new NioServerSocketChannelFactory(bp, wp);
 
         serverBootstrap = new ServerBootstrap(channelFactory);
         serverBootstrap.setOption("child.keepAlive", configuration.isKeepAlive());
@@ -156,21 +164,14 @@ public class SingleTCPNettyServerBootstrapFactory extends ServiceSupport impleme
         }
 
         // and then shutdown the thread pools
-        if (bossExecutor != null) {
-            if (camelContext != null) {
-                camelContext.getExecutorServiceManager().shutdown(bossExecutor);
-            } else {
-                bossExecutor.shutdownNow();
-            }
-            bossExecutor = null;
+        if (bossPool != null) {
+            bossPool.shutdown();
+            bossPool = null;
         }
-        if (workerExecutor != null) {
-            if (camelContext != null) {
-                camelContext.getExecutorServiceManager().shutdown(workerExecutor);
-            } else {
-                workerExecutor.shutdownNow();
-            }
-            workerExecutor = null;
+        if (workerPool != null) {
+            workerPool.shutdown();
+            workerPool = null;
         }
     }
+
 }
