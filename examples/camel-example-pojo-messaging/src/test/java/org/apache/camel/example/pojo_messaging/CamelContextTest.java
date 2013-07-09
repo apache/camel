@@ -35,7 +35,7 @@ public class CamelContextTest extends CamelSpringTestSupport {
     @Test
     public void testCheckFiles() throws Exception {
         // wait a little for the files to be picked up and processed
-        Thread.sleep(3000);
+        Thread.sleep(5000);
 
         File file = new File("target/messages/emea/hr_pickup");
         assertTrue("The pickup folder should exists", file.exists());
@@ -47,7 +47,7 @@ public class CamelContextTest extends CamelSpringTestSupport {
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {        
-        return new ClassPathXmlApplicationContext(new String[] {"/META-INF/spring/camel-context.xml"});
+        return new ClassPathXmlApplicationContext("META-INF/spring/camel-context.xml");
     }
 
 }
