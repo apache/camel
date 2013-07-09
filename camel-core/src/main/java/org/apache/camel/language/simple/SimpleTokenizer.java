@@ -230,20 +230,35 @@ public final class SimpleTokenizer {
 
     private static boolean acceptToken(SimpleTokenType token, String text, String expression, int index) {
         if (token.isUnary() && text.startsWith(token.getValue())) {
-            // special check for unary as the previous must be a function end, and the next a whitespace
-            // to ensure unary operators is only applied on functions as intended
-            int len = token.getValue().length();
-            char previous = ' ';
-            if (index > 0) {
-                previous = expression.charAt(index - 1);
+            SimpleTokenType functionEndToken = getFunctionEndToken();
+            if (functionEndToken != null) {
+                int endLen = functionEndToken.getValue().length();
+
+                // special check for unary as the previous must be a function end, and the next a whitespace
+                // to ensure unary operators is only applied on functions as intended
+                int len = token.getValue().length();
+
+                String previous = "";
+                if (index - endLen >= 0) {
+                    previous = expression.substring(index - endLen, index);
+                }
+                String after = text.substring(len);
+                boolean whiteSpace = ObjectHelper.isEmpty(after) || after.startsWith(" ");
+                boolean functionEnd = previous.equals(functionEndToken.getValue());
+                return functionEnd && whiteSpace;
             }
-            String after = text.substring(len);
-            boolean whiteSpace = ObjectHelper.isEmpty(after) || after.startsWith(" ");
-            boolean functionEnd = previous == '}';
-            return functionEnd && whiteSpace;
         }
 
         return text.startsWith(token.getValue());
+    }
+
+    private static SimpleTokenType getFunctionEndToken() {
+        for (SimpleTokenType token : KNOWN_TOKENS) {
+            if (token.isFunctionEnd()) {
+                return token;
+            }
+        }
+        return null;
     }
 
 }
