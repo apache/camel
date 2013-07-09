@@ -183,7 +183,7 @@ public class SimpleParserExpressionTest extends ExchangeTestSupport {
     }
 
     // FIXME: see CAMEL-6414
-    public void _testSimpleParser() throws Exception {
+    public void xxxTestSimpleParser() throws Exception {
         exchange.getIn().setHeader("JMSMessageID", "JMSMessageID-123");
         exchange.getIn().setBody("THE MSG ID ${header.JMSMessageID} isA --");
 
