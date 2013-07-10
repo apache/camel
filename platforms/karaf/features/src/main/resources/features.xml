@@ -491,6 +491,7 @@
   </feature>
   <feature name='camel-jclouds' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${jclouds-version}'>jclouds</feature>
+    <feature version='${jclouds-version}'>jclouds-blobstore</feature>
     <feature version='${jclouds-version}'>jclouds-compute</feature>
     <feature version='${project.version}'>camel-core</feature>
     <bundle>mvn:org.apache.camel/camel-jclouds/${project.version}</bundle>
