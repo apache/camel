@@ -19,6 +19,7 @@ package org.apache.camel.component.yammer;
 
 public interface ApiRequestor {
 
-    String send() throws Exception;
-
+    String get() throws Exception;
+    String post(String params) throws Exception;
+    
 }

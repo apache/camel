@@ -31,12 +31,8 @@ public class ScribeApiRequestor implements ApiRequestor {
         this.apiAccessToken = apiAccessToken;
     }
     
-    /* (non-Javadoc)
-     * @see org.apache.camel.component.yammer.ApiRequestor#send()
-     */
-    @Override
-    public String send() throws Exception {
-        OAuthRequest request = new OAuthRequest(Verb.GET, apiUrl);
+    private String send(Verb verb, String params) throws Exception {
+        OAuthRequest request = new OAuthRequest(verb, apiUrl + ((params != null) ? params : ""));
         request.addQuerystringParameter(OAuthConstants.ACCESS_TOKEN, apiAccessToken);
         Response response = request.send();
         if (response.isSuccessful()) {                    
@@ -60,5 +56,15 @@ public class ScribeApiRequestor implements ApiRequestor {
 
     public void setApiAccessToken(String apiAccessToken) {
         this.apiAccessToken = apiAccessToken;
+    }
+
+    @Override
+    public String get() throws Exception {
+        return send(Verb.GET, null);
+    }
+
+    @Override
+    public String post(String params) throws Exception {
+        return send(Verb.POST, params);
     }
 }

@@ -116,7 +116,7 @@ public class YammerMessagePollingConsumer extends ScheduledPollConsumer {
         Exchange exchange = endpoint.createExchange();
 
         try {
-            String jsonBody = endpoint.getConfig().getRequestor(apiUrl).send();   
+            String jsonBody = endpoint.getConfig().getRequestor(apiUrl).get();   
             
             if (!endpoint.getConfig().isUseJson()) {
                 ObjectMapper jsonMapper = new ObjectMapper();

@@ -44,7 +44,7 @@ public class YammerEndpoint extends ScheduledPollEndpoint {
     }
 
     public Producer createProducer() throws Exception {
-        throw new UnsupportedOperationException("YammerProducer is not implemented");
+        return new YammerMessageProducer(this);
     }
 
     public Consumer createConsumer(Processor processor) throws Exception {

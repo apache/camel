@@ -25,9 +25,18 @@ public class TestApiRequestor implements ApiRequestor {
         this.body = body;
     }
     
-    @Override
-    public String send() {
+    private String send() {
         return body;
+    }
+
+    @Override
+    public String get() throws Exception {
+        return send();
+    }
+
+    @Override
+    public String post(String params) throws Exception {
+        return send();
     }
 
 }
