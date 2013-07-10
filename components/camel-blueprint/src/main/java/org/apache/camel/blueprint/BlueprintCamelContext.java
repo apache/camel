@@ -18,11 +18,13 @@ package org.apache.camel.blueprint;
 
 import org.apache.camel.TypeConverter;
 import org.apache.camel.core.osgi.OsgiCamelContextHelper;
+import org.apache.camel.core.osgi.OsgiCamelContextPublisher;
 import org.apache.camel.core.osgi.OsgiFactoryFinderResolver;
 import org.apache.camel.core.osgi.OsgiTypeConverter;
 import org.apache.camel.core.osgi.utils.BundleContextUtils;
 import org.apache.camel.core.osgi.utils.BundleDelegatingClassLoader;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.spi.EventNotifier;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.util.ObjectHelper;
@@ -39,6 +41,9 @@ import org.osgi.service.cm.ConfigurationAdmin;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * OSGi Blueprint based {@link CamelContext}.
+ */
 public class BlueprintCamelContext extends DefaultCamelContext implements ServiceListener, BlueprintListener {
 
     private static final transient Logger LOG = LoggerFactory.getLogger(BlueprintCamelContext.class);
@@ -167,8 +172,28 @@ public class BlueprintCamelContext extends DefaultCamelContext implements Servic
 
     private void maybeStart() throws Exception {
         LOG.trace("maybeStart: {}", this);
+
+        // allow to regsiter the BluerintCamelContext eager in the OSGi Service Registry, which ex is needed
+        // for unit testing with camel-test-blueprint
+        boolean eager = "true".equalsIgnoreCase(System.getProperty("registerBlueprintCamelContextEager"));
+        if (eager) {
+            for (EventNotifier notifer : getManagementStrategy().getEventNotifiers()) {
+                if (notifer instanceof OsgiCamelContextPublisher) {
+                    OsgiCamelContextPublisher publisher = (OsgiCamelContextPublisher) notifer;
+                    publisher.registerCamelContext(this);
+                    break;
+                }
+            }
+        }
+
         // for example from unit testing we want to start Camel later and not
         // when blueprint loading the bundle
+        boolean skip = "true".equalsIgnoreCase(System.getProperty("skipStartingCamelContext"));
+        if (skip) {
+            LOG.trace("maybeStart: {} is skipping as System property skipStartingCamelContext is set", this);
+            return;
+        }
+
         if (!isStarted() && !isStarting()) {
             LOG.debug("Starting {}", this);
             start();
@@ -176,8 +201,6 @@ public class BlueprintCamelContext extends DefaultCamelContext implements Servic
             // ignore as Camel is already started
             LOG.trace("Ignoring maybeStart() as {} is already started", this);
         }
-
     }
-    
-    
+
 }
