@@ -348,6 +348,7 @@ public class RoutingSlip extends ServiceSupport implements AsyncProcessor, Trace
                     }
                 });
 
+                callback.done(sync);
                 return sync;
             }
         });
