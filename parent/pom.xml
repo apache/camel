@@ -70,6 +70,7 @@
     <castor-bundle-version>1.3.2_2</castor-bundle-version>
     <cglib-bundle-version>2.1_3_7</cglib-bundle-version>
     <cglib-version>2.2</cglib-version>
+    <classmate-version>0.8.0</classmate-version>
     <cmis-version>0.8.0</cmis-version>
     <cometd-bayeux-version>6.1.11</cometd-bayeux-version>
     <cometd-java-client-version>2.4.3</cometd-java-client-version>
@@ -170,7 +171,7 @@
     <hazelcast-version>2.6</hazelcast-version>
     <hbase-version>0.94.3</hbase-version>
     <hbase-bundle-version>0.94.3_1</hbase-bundle-version>
-    <hibernate-validator-version>4.3.1.Final</hibernate-validator-version>
+    <hibernate-validator-version>5.0.1.Final</hibernate-validator-version>
     <hibernate-version>4.2.2.Final</hibernate-version>
     <httpunit-version>1.7</httpunit-version>
     <httpcore4-version>4.2.4</httpcore4-version>
@@ -193,6 +194,8 @@
     <java-apns-version>0.1.6</java-apns-version>
     <javacrumbs-version>0.22</javacrumbs-version>
     <javassist-bundle-version>3.12.1.GA_3</javassist-bundle-version>
+    <javax.el-api-version>2.2.4</javax.el-api-version>
+    <javax.el-version>2.2.4</javax.el-version>
     <javax-inject-bundle-version>1_2</javax-inject-bundle-version>
     <javax-mail-version>1.4.7</javax-mail-version>
     <jaxb-bundle-version>2.2.1.1_2</jaxb-bundle-version>
@@ -374,6 +377,7 @@
     <twitter4j-version>3.0.3</twitter4j-version>
     <urlrewritefilter-version>4.0.4</urlrewritefilter-version>
     <urlrewritefilter-bundle-version>4.0.4_1</urlrewritefilter-bundle-version>
+    <validation-api-version>1.1.0.Final</validation-api-version>
     <velocity-bundle-version>1.7_6</velocity-bundle-version>
     <velocity-tools-version>2.0</velocity-tools-version>
     <velocity-version>1.7</velocity-version>

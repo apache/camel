@@ -131,8 +131,10 @@
   </feature>
   <feature name='camel-bean-validator' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
-    <bundle dependency='true'>mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.jsr303-api-1.0.0/${servicemix-specs-version}</bundle>
-    <bundle dependency='true'>mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.scripting-api-1.0/${servicemix-specs-version}</bundle>
+    <bundle dependency='true'>mvn:javax.validation/validation-api/${validation-api-version}</bundle>
+    <bundle dependency='true'>mvn:javax.el/javax.el-api/${javax.el-api-version}</bundle>
+    <bundle dependency='true'>mvn:org.glassfish.web/javax.el/${javax.el-version}</bundle>
+    <bundle dependency='true'>mvn:com.fasterxml/classmate/${classmate-version}</bundle>
     <bundle dependency='true'>mvn:org.hibernate/hibernate-validator/${hibernate-validator-version}</bundle>
     <bundle dependency='true'>mvn:org.jboss.logging/jboss-logging/${jboss-logging-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-bean-validator/${project.version}</bundle>

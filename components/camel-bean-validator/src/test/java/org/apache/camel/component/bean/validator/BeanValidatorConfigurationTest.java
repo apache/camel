@@ -29,8 +29,8 @@ import javax.validation.TraversableResolver;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.impl.ProcessorEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.hibernate.validator.internal.engine.ConstraintValidatorFactoryImpl;
 import org.hibernate.validator.internal.engine.ValidatorImpl;
+import org.hibernate.validator.internal.engine.constraintvalidation.ConstraintValidatorFactoryImpl;
 import org.hibernate.validator.internal.engine.resolver.DefaultTraversableResolver;
 import org.hibernate.validator.messageinterpolation.ResourceBundleMessageInterpolator;
 import org.junit.Test;
@@ -117,6 +117,11 @@ public class BeanValidatorConfigurationTest extends CamelTestSupport {
 
         public <T extends ConstraintValidator<?, ?>> T getInstance(Class<T> key) {
             return null;
+        }
+
+        @Override
+        public void releaseInstance(ConstraintValidator<?, ?> arg0) {
+            // noop
         }
     }
 }
