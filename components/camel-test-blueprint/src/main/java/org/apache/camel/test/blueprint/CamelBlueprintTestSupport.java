@@ -80,6 +80,9 @@ public abstract class CamelBlueprintTestSupport extends CamelTestSupport {
     @Before
     @Override
     public void setUp() throws Exception {
+        System.setProperty("skipStartingCamelContext", "true");
+        System.setProperty("registerBlueprintCamelContextEager", "true");
+
         String symbolicName = getClass().getSimpleName();
         if (isCreateCamelContextPerClass()) {
             // test is per class, so only setup once (the first time)
@@ -93,6 +96,11 @@ public abstract class CamelBlueprintTestSupport extends CamelTestSupport {
         }
 
         super.setUp();
+
+        // start context when we are ready
+        log.debug("Staring CamelContext: {}", context.getName());
+        context.start();
+
         // must wait for blueprint container to be published then the namespace parser is complete and we are ready for testing
         log.debug("Waiting for BlueprintContainer to be published with symbolicName: {}", symbolicName);
         getOsgiService(BlueprintContainer.class, "(osgi.blueprint.container.symbolicname=" + symbolicName + ")");
@@ -121,6 +129,8 @@ public abstract class CamelBlueprintTestSupport extends CamelTestSupport {
     @After
     @Override
     public void tearDown() throws Exception {
+        System.clearProperty("skipStartingCamelContext");
+        System.clearProperty("registerBlueprintCamelContextEager");
         super.tearDown();
         if (isCreateCamelContextPerClass()) {
             // we tear down in after class
@@ -181,8 +191,8 @@ public abstract class CamelBlueprintTestSupport extends CamelTestSupport {
 
     /**
      * Gets the bundle directives.
+     * <p/>
      * Modify this method if you wish to add some directives.
-     * @return
      */
     protected String getBundleDirectives() {
         return null;
