@@ -22,12 +22,12 @@ import java.util.List;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.component.yammer.model.Messages;
 import org.apache.camel.component.yammer.model.User;
 import org.junit.Test;
 
 public class YammerUserRouteTest extends YammerComponentTestSupport {
 
+    @SuppressWarnings("unchecked")
     @Test
     public void testConsumeAllUsers() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
