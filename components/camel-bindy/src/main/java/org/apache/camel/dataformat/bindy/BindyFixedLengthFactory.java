@@ -319,7 +319,7 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
         }
 
         // Convert Map<Integer, List> into List<List>
-        TreeMap<Integer, List<String>> sortValues = new TreeMap<Integer, List<String>>(results);
+        Map<Integer, List<String>> sortValues = new TreeMap<Integer, List<String>>(results);
         for (Entry<Integer, List<String>> entry : sortValues.entrySet()) {
 
             // Get list of values

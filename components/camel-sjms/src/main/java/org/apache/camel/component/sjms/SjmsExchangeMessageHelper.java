@@ -93,7 +93,7 @@ public final class SjmsExchangeMessageHelper {
                     bodyMessage.setBody(result);
                     break;
                 case Map:
-                    HashMap<String, Object> body = new HashMap<String, Object>();
+                    Map<String, Object> body = new HashMap<String, Object>();
                     MapMessage mapMessage = (MapMessage)message;
                     Enumeration<String> names = mapMessage.getMapNames();
                     while (names.hasMoreElements()) {
@@ -428,7 +428,7 @@ public final class SjmsExchangeMessageHelper {
 
     @SuppressWarnings("unchecked")
     public static Exchange setJmsMessageHeaders(final Message jmsMessage, final Exchange exchange, boolean out) throws JMSException {
-        HashMap<String, Object> headers = new HashMap<String, Object>();
+        Map<String, Object> headers = new HashMap<String, Object>();
         if (jmsMessage != null) {
             // lets populate the standard JMS message headers
             try {

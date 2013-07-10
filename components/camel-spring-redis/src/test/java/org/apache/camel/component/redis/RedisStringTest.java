@@ -19,6 +19,7 @@ package org.apache.camel.component.redis;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.impl.JndiRegistry;
@@ -249,7 +250,7 @@ public class RedisStringTest extends RedisTestSupport {
 
     @Test
     public void shouldExecuteMSET() throws Exception {
-        HashMap<String, String> values = new HashMap<String, String>();
+        Map<String, String> values = new HashMap<String, String>();
         values.put("field1", "valu1");
 
         sendHeaders(
@@ -262,7 +263,7 @@ public class RedisStringTest extends RedisTestSupport {
 
     @Test
     public void shouldExecuteMSETNX() throws Exception {
-        HashMap<String, String> values = new HashMap<String, String>();
+        Map<String, String> values = new HashMap<String, String>();
         values.put("field1", "valu1");
 
         sendHeaders(

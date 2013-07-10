@@ -398,7 +398,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     }
 
     public Map<String, Endpoint> getEndpointMap() {
-        TreeMap<String, Endpoint> answer = new TreeMap<String, Endpoint>();
+        Map<String, Endpoint> answer = new TreeMap<String, Endpoint>();
         for (Map.Entry<EndpointKey, Endpoint> entry : endpoints.entrySet()) {
             answer.put(entry.getKey().get(), entry.getValue());
         }

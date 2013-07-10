@@ -19,6 +19,7 @@ package org.apache.camel.component.routebox;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
@@ -49,7 +50,7 @@ public class RouteboxDispatchMapTest extends RouteboxDemoTestSupport {
         registry.bind("routes", routes);
         
         // Wire a dispatch map to registry
-        HashMap<String, String> map = new HashMap<String, String>();
+        Map<String, String> map = new HashMap<String, String>();
         map.put("addToCatalog", "seda:addToCatalog");
         map.put("findBook", "seda:findBook");
         registry.bind("map", map);

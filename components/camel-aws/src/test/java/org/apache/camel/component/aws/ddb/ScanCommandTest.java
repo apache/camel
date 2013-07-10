@@ -51,7 +51,7 @@ public class ScanCommandTest {
 
     @Test
     public void execute() {
-        HashMap<String, Condition> scanFilter = new HashMap<String, Condition>();
+        Map<String, Condition> scanFilter = new HashMap<String, Condition>();
         Condition condition = new Condition()
                 .withComparisonOperator(ComparisonOperator.GT.toString())
                 .withAttributeValueList(new AttributeValue().withN("1985"));

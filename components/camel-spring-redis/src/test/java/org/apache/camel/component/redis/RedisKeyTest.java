@@ -20,6 +20,7 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
@@ -210,7 +211,7 @@ public class RedisKeyTest extends RedisTestSupport {
 
     @Test
     public void shouldExecuteSORT() throws Exception {
-        ArrayList<Integer> list = new ArrayList<Integer>();
+        List<Integer> list = new ArrayList<Integer>();
         list.add(5);
         when(redisTemplate.sort(any(SortQuery.class))).thenReturn(list);
 

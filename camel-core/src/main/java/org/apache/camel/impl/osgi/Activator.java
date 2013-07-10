@@ -423,7 +423,7 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer {
         }
 
         protected void doRegister(Class<?> type, String key, Object value) {
-            Hashtable<String, Object> props = new Hashtable<String, Object>();
+            Dictionary<String, Object> props = new Hashtable<String, Object>();
             props.put(key, value);
             doRegister(type, props);
         }

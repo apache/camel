@@ -21,6 +21,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.camel.impl.JndiRegistry;
@@ -109,7 +110,7 @@ public class RedisHashTest extends RedisTestSupport {
 
     @Test
     public void shouldExecuteHMSET() throws Exception {
-        HashMap<String, String> values = new HashMap<String, String>();
+        Map<String, String> values = new HashMap<String, String>();
         values.put("field1", "value1");
         values.put("field2", "value");
 

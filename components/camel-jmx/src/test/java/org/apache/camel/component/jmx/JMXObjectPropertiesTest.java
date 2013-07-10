@@ -17,6 +17,7 @@
 package org.apache.camel.component.jmx;
 
 import java.util.Hashtable;
+import java.util.Map;
 
 import org.apache.camel.component.jmx.beans.ISimpleMXBean;
 import org.junit.Test;
@@ -40,7 +41,7 @@ public class JMXObjectPropertiesTest extends SimpleBeanFixture {
 
     @Override
     protected void initRegistry() {
-        Hashtable<String, String> ht = new Hashtable<String, String>();
+        Map<String, String> ht = new Hashtable<String, String>();
         ht.put("name", "simpleBean");
         getRegistry().put("myTable", ht);
     }

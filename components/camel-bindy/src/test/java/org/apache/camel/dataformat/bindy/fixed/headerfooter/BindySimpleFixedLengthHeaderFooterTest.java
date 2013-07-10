@@ -22,6 +22,7 @@ import java.util.Arrays;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.EndpointInject;
@@ -127,7 +128,7 @@ public class BindySimpleFixedLengthHeaderFooterTest extends CamelTestSupport {
         calendar.set(2009, 7, 1, 0, 0, 0);
         order.setOrderDate(calendar.getTime());
         
-        ArrayList<Map<String, Object>> input = new ArrayList<Map<String, Object>>();
+        List<Map<String, Object>> input = new ArrayList<Map<String, Object>>();
         Map<String, Object> bodyRow = new HashMap<String, Object>();
         bodyRow.put(Order.class.getName(), order);
         input.add(createHeaderRow());
@@ -162,7 +163,7 @@ public class BindySimpleFixedLengthHeaderFooterTest extends CamelTestSupport {
         calendar.set(2009, 7, 1, 0, 0, 0);
         order.setOrderDate(calendar.getTime());
         
-        ArrayList<Map<String, Object>> input = new ArrayList<Map<String, Object>>();
+        List<Map<String, Object>> input = new ArrayList<Map<String, Object>>();
         Map<String, Object> bodyRow = new HashMap<String, Object>();
         bodyRow.put(Order.class.getName(), order);
 

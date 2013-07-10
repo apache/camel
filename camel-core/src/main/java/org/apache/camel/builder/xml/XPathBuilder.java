@@ -827,7 +827,7 @@ public class XPathBuilder extends ServiceSupport implements Expression, Predicat
     }
 
     private void logDiscoveredNamespaces(NodeList namespaces) {
-        HashMap<String, HashSet<String>> map = new LinkedHashMap<String, HashSet<String>>();
+        Map<String, HashSet<String>> map = new LinkedHashMap<String, HashSet<String>>();
         for (int i = 0; i < namespaces.getLength(); i++) {
             Node n = namespaces.item(i);
             if (n.getNodeName().equals("xmlns:xml")) {

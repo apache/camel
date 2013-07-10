@@ -357,7 +357,7 @@ public class DefaultExchangeFormatter implements ExchangeFormatter {
     }
 
     private static Map<String, Object> sortMap(Map<String, Object> map) {
-        TreeMap<String, Object> answer = new TreeMap<String, Object>(String.CASE_INSENSITIVE_ORDER);
+        Map<String, Object> answer = new TreeMap<String, Object>(String.CASE_INSENSITIVE_ORDER);
         answer.putAll(map);
         return answer;
     }
