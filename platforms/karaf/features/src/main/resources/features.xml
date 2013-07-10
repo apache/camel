@@ -1057,6 +1057,13 @@
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.xstream/${xstream-bundle-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-xstream/${project.version}</bundle>
   </feature>
+  <feature name='camel-yammer' version='${project.version}' resolver='(obr)' start-level='50'>
+    <bundle dependency='true'>mvn:org.codehaus.jackson/jackson-core-asl/${jackson-version}</bundle>
+    <bundle dependency='true'>mvn:org.codehaus.jackson/jackson-mapper-asl/${jackson-version}</bundle>
+    <bundle dependency='true'>wrap:mvn:org.scribe/scribe/${scribe-version}</bundle>
+    <feature version='${project.version}'>camel-core</feature>
+    <bundle>mvn:org.apache.camel/camel-yammer/${project.version}</bundle>
+  </feature>
   <feature name='camel-zipfile' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
     <bundle>mvn:org.apache.camel/camel-zipfile/${project.version}</bundle>

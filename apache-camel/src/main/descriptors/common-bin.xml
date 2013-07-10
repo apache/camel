@@ -166,6 +166,7 @@
         <include>org.apache.camel:camel-xmlsecurity</include>
         <include>org.apache.camel:camel-xmpp</include>
         <include>org.apache.camel:camel-xstream</include>
+        <include>org.apache.camel:camel-yammer</include>
         <include>org.apache.camel:camel-zipfile</include>
         <include>org.apache.camel:camel-zookeeper</include>
         <include>org.apache.camel.karaf:camel-karaf-commands</include>
