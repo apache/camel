@@ -22,6 +22,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.yammer.model.Relationships;
 import org.apache.camel.impl.ScheduledPollConsumer;
+import org.apache.camel.util.ObjectHelper;
 import org.codehaus.jackson.map.ObjectMapper;
 
 /**
@@ -53,6 +54,15 @@ public class YammerRelationshipPollingConsumer extends ScheduledPollConsumer {
             break;
         default:
             throw new Exception(String.format("%s is not a valid Yammer relationship function type.", function));
+        }        
+        
+        StringBuilder args = new StringBuilder();
+        
+        String userId = endpoint.getConfig().getUserId();
+        if (ObjectHelper.isNotEmpty(userId)) {
+            args.append("?user_id=");
+            args.append(userId);
+            url.append(args);
         }        
         
         return url.toString();

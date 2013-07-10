@@ -49,6 +49,9 @@ public class YammerConfiguration {
     @UriParam
     private String threaded;
     
+    @UriParam
+    private String userId;
+    
     private ApiRequestor requestor;
     
     public String getConsumerKey() {
@@ -141,6 +144,14 @@ public class YammerConfiguration {
 
     public void setThreaded(String threaded) {
         this.threaded = threaded;
+    }
+
+    public String getUserId() {
+        return userId;
+    }
+
+    public void setUserId(String userId) {
+        this.userId = userId;
     }
 
 }
