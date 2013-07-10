@@ -1,0 +1,28 @@
+{
+	"subordinates":[
+		
+	],
+	"superiors":[
+		{
+			"mugshot_url":"",
+			"stats":{
+				"updates":24,
+				"following":6,
+				"followers":80
+			},
+			"state":"active",
+			"url":"https://www.yammer.com/api/v1/users/123456",
+			"job_title":"",
+			"type":"user",
+			"mugshot_url_template":"",
+			"web_url":"https://www.yammer.com/redhat.com/users/jcamel",
+			"full_name":"Joe Camel",
+			"id":143117,
+			"activated_at":"2010/01/21 16:24:25 +0000",
+			"name":"jcamel"
+		}
+	],
+	"colleagues":[
+		
+	]
+}
