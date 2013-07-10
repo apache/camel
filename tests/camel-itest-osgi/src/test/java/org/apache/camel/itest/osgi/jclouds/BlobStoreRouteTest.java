@@ -24,10 +24,9 @@ import org.apache.camel.component.jclouds.JcloudsConstants;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.itest.osgi.OSGiIntegrationTestSupport;
 import org.apache.camel.spring.SpringCamelContext;
+import org.jclouds.ContextBuilder;
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.BlobStoreContext;
-// import org.jclouds.blobstore.BlobStoreContextFactory;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.Option;
@@ -39,7 +38,6 @@ import org.springframework.osgi.context.support.OsgiBundleXmlApplicationContext;
 import static org.ops4j.pax.exam.OptionUtils.combine;
 
 @RunWith(JUnit4TestRunner.class)
-@Ignore("See CAMEL-6536")
 public class BlobStoreRouteTest extends OSGiIntegrationTestSupport {
 
     private static final String TEST_CONTAINER = "testContainer";
@@ -53,14 +51,10 @@ public class BlobStoreRouteTest extends OSGiIntegrationTestSupport {
      */
     @Override
     protected void doPreSetup() throws Exception {
-/*        BlobStoreContextFactory contextFactory = new BlobStoreContextFactory();
-        BlobStoreContext blobStoreContext = contextFactory.createContext("transient", "identity", "credential");
-        BlobStore blobStore = blobStoreContext.getBlobStore();
+        BlobStore blobStore = ContextBuilder.newBuilder("transient").credentials("identity", "credential").buildView(BlobStoreContext.class).getBlobStore();
         blobStore.createContainerInLocation(null, TEST_CONTAINER);
         blobStore.clearContainer(TEST_CONTAINER);
-*/
     }
-
 
     @Test
     public void testProducerAndConsumer() throws Exception {

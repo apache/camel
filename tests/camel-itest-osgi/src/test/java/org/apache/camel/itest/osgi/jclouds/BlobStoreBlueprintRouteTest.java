@@ -22,16 +22,16 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.jclouds.JcloudsConstants;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.itest.osgi.blueprint.OSGiBlueprintTestSupport;
+import org.jclouds.ContextBuilder;
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.BlobStoreContext;
-// import org.jclouds.blobstore.BlobStoreContextFactory;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.Configuration;
 import org.ops4j.pax.exam.junit.JUnit4TestRunner;
 import org.osgi.framework.Constants;
+
 import static org.ops4j.pax.exam.CoreOptions.felix;
 import static org.ops4j.pax.exam.CoreOptions.provision;
 import static org.ops4j.pax.exam.CoreOptions.workingDirectory;
@@ -39,7 +39,6 @@ import static org.ops4j.pax.exam.OptionUtils.combine;
 import static org.ops4j.pax.swissbox.tinybundles.core.TinyBundles.newBundle;
 
 @RunWith(JUnit4TestRunner.class)
-@Ignore("See CAMEL-6536")
 public class BlobStoreBlueprintRouteTest extends OSGiBlueprintTestSupport {
 
     private static final String TEST_CONTAINER = "testContainer";
@@ -49,12 +48,9 @@ public class BlobStoreBlueprintRouteTest extends OSGiBlueprintTestSupport {
      */
     @Override
     protected void doPreSetup() throws Exception {
-/*        BlobStoreContextFactory contextFactory = new BlobStoreContextFactory();
-        BlobStoreContext blobStoreContext = contextFactory.createContext("transient", "identity", "credential");
-        BlobStore blobStore = blobStoreContext.getBlobStore();
+        BlobStore blobStore = ContextBuilder.newBuilder("transient").credentials("identity", "credential").buildView(BlobStoreContext.class).getBlobStore();
         blobStore.createContainerInLocation(null, TEST_CONTAINER);
         blobStore.clearContainer(TEST_CONTAINER);
-*/
     }
 
     @Test
