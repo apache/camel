@@ -31,9 +31,9 @@ public class Attachment {
     private String largePreviewUrl;
     private String url;
     @JsonProperty("streaming_url")
-    private Object streamingUrl;
+    private String streamingUrl;
     @JsonProperty("group_id")
-    private Object groupId;
+    private String groupId;
     private Long id;
     @JsonProperty("last_uploaded_by_id")
     private Long lastUploadedById;
@@ -49,7 +49,7 @@ public class Attachment {
     private String type;
     private Boolean official;
     private Long height;
-    private Object transcoded;
+    private String transcoded;
     private String path;
     @JsonProperty("preview_url")
     private String previewUrl;
@@ -81,7 +81,7 @@ public class Attachment {
     private Image image;
     @JsonProperty("web_url")
     private String webUrl;
-    private Object uuid;
+    private String uuid;
 
     public String getLastUploadedAt() {
         return lastUploadedAt;
@@ -123,19 +123,19 @@ public class Attachment {
         this.url = url;
     }
 
-    public Object getStreamingUrl() {
+    public String getStreamingUrl() {
         return streamingUrl;
     }
 
-    public void setStreamingUrl(Object streamingUrl) {
+    public void setStreamingUrl(String streamingUrl) {
         this.streamingUrl = streamingUrl;
     }
 
-    public Object getGroupId() {
+    public String getGroupId() {
         return groupId;
     }
 
-    public void setGroupId(Object groupId) {
+    public void setGroupId(String groupId) {
         this.groupId = groupId;
     }
 
@@ -219,11 +219,11 @@ public class Attachment {
         this.height = height;
     }
 
-    public Object getTranscoded() {
+    public String getTranscoded() {
         return transcoded;
     }
 
-    public void setTranscoded(Object transcoded) {
+    public void setTranscoded(String transcoded) {
         this.transcoded = transcoded;
     }
 
@@ -371,11 +371,11 @@ public class Attachment {
         this.webUrl = webUrl;
     }
 
-    public Object getUuid() {
+    public String getUuid() {
         return uuid;
     }
 
-    public void setUuid(Object uuid) {
+    public void setUuid(String uuid) {
         this.uuid = uuid;
     }
 

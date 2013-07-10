@@ -34,7 +34,7 @@ public class Meta {
     private Boolean olderAvailable;
     @JsonProperty("followed_references")
     private List<FollowedReference> followedReferences;
-    private List<Object> ymodules;
+    private List<String> ymodules;
     @JsonProperty("liked_message_ids")
     private List<Long> likedMessageIds;
     @JsonProperty("feed_name")
@@ -83,11 +83,11 @@ public class Meta {
         this.followedReferences = followedReferences;
     }
 
-    public List<Object> getYmodules() {
+    public List<String> getYmodules() {
         return ymodules;
     }
 
-    public void setYmodules(List<Object> ymodules) {
+    public void setYmodules(List<String> ymodules) {
         this.ymodules = ymodules;
     }
 

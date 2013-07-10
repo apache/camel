@@ -25,7 +25,7 @@ import org.codehaus.jackson.annotate.JsonProperty;
 public class Message {
 
     @JsonProperty("replied_to_id")
-    private Object repliedToId;
+    private String repliedToId;
     @JsonProperty("network_id")
     private Long networkId;
     private String url;
@@ -35,7 +35,7 @@ public class Message {
     @JsonProperty("message_type")
     private String messageType;
     @JsonProperty("chat_client_sequence")
-    private Object chatClientSequence;
+    private String chatClientSequence;
     private Body body;
     @JsonProperty("client_url")
     private String clientUrl;
@@ -52,7 +52,7 @@ public class Message {
     private LikedBy likedBy;
     @JsonProperty("sender_id")
     private Long senderId;
-    private Object language;
+    private String language;
     @JsonProperty("system_message")
     private Boolean systemMessage;
     private List<Attachment> attachments;
@@ -61,11 +61,11 @@ public class Message {
     @JsonProperty("web_url")
     private String webUrl;
 
-    public Object getRepliedToId() {
+    public String getRepliedToId() {
         return repliedToId;
     }
 
-    public void setRepliedToId(Object repliedToId) {
+    public void setRepliedToId(String repliedToId) {
         this.repliedToId = repliedToId;
     }
 
@@ -109,11 +109,11 @@ public class Message {
         this.messageType = messageType;
     }
 
-    public Object getChatClientSequence() {
+    public String getChatClientSequence() {
         return chatClientSequence;
     }
 
-    public void setChatClientSequence(Object chatClientSequence) {
+    public void setChatClientSequence(String chatClientSequence) {
         this.chatClientSequence = chatClientSequence;
     }
 
@@ -189,11 +189,11 @@ public class Message {
         this.senderId = senderId;
     }
 
-    public Object getLanguage() {
+    public String getLanguage() {
         return language;
     }
 
-    public void setLanguage(Object language) {
+    public void setLanguage(String language) {
         this.language = language;
     }
 
