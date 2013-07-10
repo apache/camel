@@ -301,7 +301,12 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
 
             public String[] promptKeyboardInteractive(String destination, String name,
                                                       String instruction, String[] prompt, boolean[] echo) {
-                return new String[]{configuration.getPassword()};
+                // must return an empty array if password is null
+                if (configuration.getPassword() == null) {
+                    return new String[0];
+                } else {
+                    return new String[]{configuration.getPassword()};
+                }
             }
 
         });
