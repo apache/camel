@@ -1,0 +1,14 @@
+<?xml version='1.0' encoding='UTF-8' ?>
+<beanio xmlns="http://www.beanio.org/2012/03"
+  xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+  xsi:schemaLocation="http://www.beanio.org/2011/01 http://www.beanio.org/2011/01/mapping.xsd">
+
+  <stream name="stream1" format="csv">
+    <!-- TODO warning - if class is ommitted then this test case just does nothing; no messages consumed and no warnings! :) -->
+    <record name="record1" class="map">
+       <field name="firstName" />
+       <field name="lastName" />
+       <field name="age" type="int"/>
+     </record>
+  </stream>
+</beanio>
