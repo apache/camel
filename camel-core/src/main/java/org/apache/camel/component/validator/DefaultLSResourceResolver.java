@@ -66,13 +66,16 @@ public class DefaultLSResourceResolver implements LSResourceResolver {
         // Build up the relative path for using relatedURI and baseURI
         if (baseURI == null) {
             relatedURI = getUri(systemId);
-            resourceURI = relatedURI.intern();
+            resourceURI = relatedURI;
         } else {
             String relatedPath = relatedURIMap.get(baseURI);
             if (relatedPath == null) {
-                relatedPath = FileUtil.onlyPath(relatedURI).intern();
+                relatedPath = FileUtil.onlyPath(relatedURI);
+                if (relatedPath == null) {
+                    relatedPath = "";
+                }
                 relatedURI = FileUtil.onlyPath(relatedURI) + "/" + systemId;
-                resourceURI = relatedURI.intern();
+                resourceURI = relatedURI;
                 relatedURIMap.put(baseURI, relatedPath);
             } else { 
                 resourceURI = relatedPath + "/" + systemId;
@@ -88,7 +91,6 @@ public class DefaultLSResourceResolver implements LSResourceResolver {
         private final String baseURI;
         private final String relatedURI;
         private final String uri;
-        
 
         private DefaultLSInput(String publicId, String systemId, String basedURI, String relatedURI) {
             this.publicId = publicId;
@@ -97,8 +99,7 @@ public class DefaultLSResourceResolver implements LSResourceResolver {
             this.relatedURI = relatedURI;
             this.uri = getInputUri();
         }
-        
-        
+
         private String getInputUri() {
             // find the xsd with relative path
             if (ObjectHelper.isNotEmpty(relatedURI)) {
@@ -204,7 +205,5 @@ public class DefaultLSResourceResolver implements LSResourceResolver {
             return "DefaultLSInput[" + uri + "]";
         }
     }
-    
-    
-    
+
 }
