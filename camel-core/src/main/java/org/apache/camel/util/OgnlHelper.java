@@ -81,10 +81,10 @@ public final class OgnlHelper {
     }
 
     /**
-     * Tests whether or not the given Camel OGNL expression is using the Elvis operator or not.
+     * Tests whether or not the given Camel OGNL expression is using the null safe operator or not.
      *
      * @param ognlExpression the Camel OGNL expression
-     * @return <tt>true</tt> if the Elvis operator is used, otherwise <tt>false</tt>.
+     * @return <tt>true</tt> if the null safe operator is used, otherwise <tt>false</tt>.
      */
     public static boolean isNullSafeOperator(String ognlExpression) {
         if (ObjectHelper.isEmpty(ognlExpression)) {
