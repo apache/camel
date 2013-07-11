@@ -18,7 +18,6 @@ package org.apache.camel.component.netty;
 
 import java.io.File;
 import java.util.Map;
-import java.util.concurrent.ExecutorService;
 
 import org.apache.camel.util.jsse.SSLContextParameters;
 import org.jboss.netty.channel.socket.nio.BossPool;
@@ -46,6 +45,7 @@ public class NettyServerBootstrapConfiguration implements Cloneable {
     protected Map<String, Object> options;
     // SSL options is also part of the server bootstrap as the server listener on port X is either plain or SSL
     protected boolean ssl;
+    protected boolean sslClientCertHeaders;
     protected SslHandler sslHandler;
     protected SSLContextParameters sslContextParameters;
     protected boolean needClientAuth;
@@ -185,6 +185,14 @@ public class NettyServerBootstrapConfiguration implements Cloneable {
 
     public void setSsl(boolean ssl) {
         this.ssl = ssl;
+    }
+
+    public boolean isSslClientCertHeaders() {
+        return sslClientCertHeaders;
+    }
+
+    public void setSslClientCertHeaders(boolean sslClientCertHeaders) {
+        this.sslClientCertHeaders = sslClientCertHeaders;
     }
 
     public SslHandler getSslHandler() {

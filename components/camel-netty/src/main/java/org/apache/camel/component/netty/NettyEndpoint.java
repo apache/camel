@@ -16,7 +16,11 @@
  */
 package org.apache.camel.component.netty;
 
+import java.math.BigInteger;
+import java.security.Principal;
+import javax.net.ssl.SSLPeerUnverifiedException;
 import javax.net.ssl.SSLSession;
+import javax.security.cert.X509Certificate;
 
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
@@ -106,7 +110,7 @@ public class NettyEndpoint extends DefaultEndpoint {
         } 
         return sslSession;
     }
-    
+
     protected void updateMessageHeader(Message in, ChannelHandlerContext ctx, MessageEvent messageEvent) {
         in.setHeader(NettyConstants.NETTY_CHANNEL_HANDLER_CONTEXT, ctx);
         in.setHeader(NettyConstants.NETTY_MESSAGE_EVENT, messageEvent);
@@ -115,7 +119,47 @@ public class NettyEndpoint extends DefaultEndpoint {
 
         if (configuration.isSsl()) {
             // setup the SslSession header
-            in.setHeader(NettyConstants.NETTY_SSL_SESSION, getSSLSession(ctx));
+            SSLSession sslSession = getSSLSession(ctx);
+            in.setHeader(NettyConstants.NETTY_SSL_SESSION, sslSession);
+
+            // enrich headers with details from the client certificate if option is enabled
+            if (configuration.isSslClientCertHeaders()) {
+                enrichWithClientCertInformation(sslSession, in);
+            }
+        }
+    }
+
+    /**
+     * Enriches the message with client certificate details such as subject name, serial number etc.
+     * <p/>
+     * If the certificate is unverified then the headers is not enriched.
+     *
+     * @param sslSession  the SSL session
+     * @param message     the message to enrich
+     */
+    protected void enrichWithClientCertInformation(SSLSession sslSession, Message message) {
+        try {
+            X509Certificate[] certificates = sslSession.getPeerCertificateChain();
+            if (certificates != null && certificates.length > 0) {
+                X509Certificate cert = certificates[0];
+
+                Principal subject = cert.getSubjectDN();
+                if (subject != null) {
+                    message.setHeader(NettyConstants.NETTY_SSL_CLIENT_CERT_SUBJECT_NAME, subject.getName());
+                }
+                Principal issuer = cert.getIssuerDN();
+                if (issuer != null) {
+                    message.setHeader(NettyConstants.NETTY_SSL_CLIENT_CERT_ISSUER_NAME, issuer.getName());
+                }
+                BigInteger serial = cert.getSerialNumber();
+                if (serial != null) {
+                    message.setHeader(NettyConstants.NETTY_SSL_CLIENT_CERT_SERIAL_NO, serial.toString());
+                }
+                message.setHeader(NettyConstants.NETTY_SSL_CLIENT_CERT_NOT_BEFORE, cert.getNotBefore());
+                message.setHeader(NettyConstants.NETTY_SSL_CLIENT_CERT_NOT_AFTER, cert.getNotAfter());
+            }
+        } catch (SSLPeerUnverifiedException e) {
+            // ignore
         }
     }
 
