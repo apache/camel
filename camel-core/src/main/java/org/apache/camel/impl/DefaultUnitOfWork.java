@@ -86,7 +86,7 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
         if (exchange.getIn().getClass().getSimpleName().equals("JmsMessage")) {
             this.originalInMessage = new DefaultMessage();
             this.originalInMessage.setBody(exchange.getIn().getBody());
-            this.originalInMessage.setHeaders(exchange.getIn().getHeaders());
+            this.originalInMessage.getHeaders().putAll(exchange.getIn().getHeaders());
         } else {
             this.originalInMessage = exchange.getIn().copy();
         }
