@@ -77,7 +77,7 @@
     <cometd-java-server-bundle-version>2.3.1_2</cometd-java-server-bundle-version>
     <cometd-java-server>2.3.1</cometd-java-server>
     <commons-beanutils-bundle-version>1.8.3_1</commons-beanutils-bundle-version>
-    <commons-codec-version>1.6</commons-codec-version>
+    <commons-codec-version>1.8</commons-codec-version>
     <commons-collections-version>3.2.1</commons-collections-version>
     <commons-configuration-version>1.8</commons-configuration-version>
     <commons-configuration-bundle-version>1.9_1</commons-configuration-bundle-version>
