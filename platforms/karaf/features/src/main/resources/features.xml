@@ -660,6 +660,15 @@
     <feature version='${project.version}'>camel-core</feature>
     <bundle>mvn:org.apache.camel/camel-msv/${project.version}</bundle>
   </feature>
+  <!-- TODO: The mustache bundle is flawed and requires ruby and scala and guava 13.0, see SMX4-1477 -->
+  <feature name='camel-mustache' version='${project.version}' resolver='(obr)' start-level='50'>
+    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.mustache-compiler/${mustache-bundle-version}</bundle>
+    <bundle dependency='true'>mvn:com.google.guava/guava/13.0.1</bundle>
+    <feature version='${project.version}'>camel-ruby</feature>
+    <feature version='${project.version}'>camel-scala</feature>
+    <feature version='${project.version}'>camel-core</feature>
+    <bundle>mvn:org.apache.camel/camel-mustache/${project.version}</bundle>
+  </feature>
   <feature name='camel-mvel' version='${project.version}' resolver='(obr)' start-level='50'>
     <bundle dependency='true'>mvn:org.mvel/mvel2/${mvel-version}</bundle>
     <feature version='${project.version}'>camel-core</feature>
