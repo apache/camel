@@ -21,6 +21,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.support.ServiceSupport;
 
 import rx.Observable;
+import rx.subjects.PublishSubject;
 import rx.subjects.Subject;
 import rx.util.functions.Func1;
 
@@ -29,9 +30,10 @@ import rx.util.functions.Func1;
  * so that the messages can be processed using the <a href="https://github.com/Netflix/RxJava/wiki">RX Java API</a>
  */
 public abstract class ObservableProcessor<T> extends ServiceSupport implements Processor {
-    private final Subject<T> observable = Subject.create();
+    private final Subject observable = PublishSubject.create();
     private final ProcessorToObserver processor;
 
+    @SuppressWarnings("unchecked")
     protected ObservableProcessor(Func1<Exchange, T> func) {
         this.processor = new ProcessorToObserver(func, observable);
     }
@@ -44,6 +46,7 @@ public abstract class ObservableProcessor<T> extends ServiceSupport implements P
      * Returns the {@link Observable} for this {@link Processor} so that the messages that are received
      * can be processed using the <a href="https://github.com/Netflix/RxJava/wiki">RX Java API</a>
      */
+    @SuppressWarnings("unchecked")
     public Observable<T> getObservable() {
         return observable;
     }
@@ -51,7 +54,6 @@ public abstract class ObservableProcessor<T> extends ServiceSupport implements P
     /**
      * Provides the configuration hook so that derived classes can process the observable
      * to use whatever RX methods they wish to process the incoming events
-     * @param observable
      */
     protected abstract void configure(Observable<T> observable);
 
@@ -59,8 +61,7 @@ public abstract class ObservableProcessor<T> extends ServiceSupport implements P
         configure(getObservable());
     }
 
-
     protected void doStop() throws Exception {
-        observable.onCompleted();
+        // noop
     }
 }

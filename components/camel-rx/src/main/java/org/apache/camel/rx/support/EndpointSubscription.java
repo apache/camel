@@ -21,6 +21,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 
+import org.apache.camel.util.ServiceHelper;
 import rx.Observer;
 import rx.Subscription;
 import rx.util.functions.Func1;
@@ -42,7 +43,7 @@ public class EndpointSubscription<T> implements Subscription {
         Processor processor = new ProcessorToObserver<T>(func, observer);
         try {
             this.consumer = endpoint.createConsumer(processor);
-            this.consumer.start();
+            ServiceHelper.startService(consumer);
         } catch (Exception e) {
             observer.onError(e);
         }
@@ -57,7 +58,7 @@ public class EndpointSubscription<T> implements Subscription {
     public void unsubscribe() {
         if (consumer != null) {
             try {
-                consumer.stop();
+                ServiceHelper.stopServices(consumer);
 
                 // TODO should this fire the observer.onComplete()?
                 observer.onCompleted();

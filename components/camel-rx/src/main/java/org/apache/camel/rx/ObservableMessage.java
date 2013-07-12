@@ -21,11 +21,12 @@ import org.apache.camel.rx.support.ExchangeToMessageFunc1;
 import org.apache.camel.rx.support.ObservableProcessor;
 
 /**
- * A base class for a {@link Processor} which allows you to process
- * messages using an {@link Observable<Message>} by implementing the
- * abstract {@link org.apache.camel.rx.support.ObservableProcessor#configure(rx.Observable} method.
+ * A base class for a {@link org.apache.camel.Processor} which allows you to process
+ * messages using an {@link rx.Observable <Message>} by implementing the
+ * abstract {@link org.apache.camel.rx.support.ObservableProcessor#configure(rx.Observable)} method.
  */
 public abstract class ObservableMessage extends ObservableProcessor<Message> {
+
     public ObservableMessage() {
         super(ExchangeToMessageFunc1.getInstance());
     }

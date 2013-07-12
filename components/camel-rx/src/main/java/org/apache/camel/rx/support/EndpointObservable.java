@@ -24,7 +24,7 @@ import rx.Subscription;
 import rx.util.functions.Func1;
 
 /**
- * An {@link Observerable} Camel {@link Endpoint}
+ * An {@link Observable} Camel {@link Endpoint}
  */
 public class EndpointObservable<T> extends Observable<T> {
     private final Endpoint endpoint;

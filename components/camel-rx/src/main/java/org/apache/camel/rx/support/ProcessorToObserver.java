@@ -24,7 +24,7 @@ import rx.util.functions.Func1;
 
 /**
  * A {@link Processor} which invokes an underling {@link Observer} as messages
- * arrive using hte given function to convert the {@link Exchange} to the required
+ * arrive using the given function to convert the {@link Exchange} to the required
  * object
  */
 public class ProcessorToObserver<T> implements Processor {

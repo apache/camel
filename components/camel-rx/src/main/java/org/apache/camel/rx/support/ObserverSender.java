@@ -21,6 +21,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Producer;
 import org.apache.camel.rx.RuntimeCamelRxException;
 
+import org.apache.camel.util.ServiceHelper;
 import rx.Observer;
 
 /**
@@ -31,13 +32,13 @@ public class ObserverSender implements Observer {
 
     public ObserverSender(Endpoint endpoint) throws Exception {
         this.producer = endpoint.createProducer();
-        this.producer.start();
+        ServiceHelper.startService(producer);
     }
 
     public void onCompleted() {
         if (producer != null) {
             try {
-                producer.stop();
+                ServiceHelper.stopService(producer);
             } catch (Exception e) {
                 throw new RuntimeCamelRxException(e);
             } finally {

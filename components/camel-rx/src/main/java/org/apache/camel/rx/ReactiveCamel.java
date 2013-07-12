@@ -60,8 +60,6 @@ public class ReactiveCamel {
         return toObservable(endpoint(uri), bodyType);
     }
 
-
-
     /**
      * Returns an {@link rx.Observable < org.apache.camel.Message >} to allow the messages sent on the endpoint
      * to be processed using  <a href="https://rx.codeplex.com/">Reactive Extensions</a>
@@ -88,6 +86,7 @@ public class ReactiveCamel {
     /**
      * Sends events on the given {@link Observable} to the given camel endpoint
      */
+    @SuppressWarnings("unchecked")
     public <T> void sendTo(Observable<T> observable, Endpoint endpoint) {
         try {
             ObserverSender observer = new ObserverSender(endpoint);
@@ -97,7 +96,6 @@ public class ReactiveCamel {
         }
     }
 
-
     public CamelContext getCamelContext() {
         return camelContext;
     }
@@ -106,11 +104,11 @@ public class ReactiveCamel {
         return CamelContextHelper.getMandatoryEndpoint(camelContext, endpointUri);
     }
 
-
     /**
      * Returns a newly created {@link Observable} given a function which converts
      * the {@link Exchange} from the Camel consumer to the required type
      */
+    @SuppressWarnings("unchecked")
     protected <T> Observable<T> createEndpointObservable(final Endpoint endpoint,
                                                          final Func1<Exchange, T> converter) {
         Func1<Observer<Message>, Subscription> func = new Func1<Observer<Message>, Subscription>() {
