@@ -636,7 +636,9 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
         // must use synchronized for concurrency issues and only let it initialize once
         if (!initialized.get()) {
             LOG.debug("Initializing XQueryBuilder {}", this);
-            configuration = new Configuration();
+            if (configuration == null) {
+        	configuration = new Configuration();
+            }
             configuration.setHostLanguage(Configuration.XQUERY);
             configuration.setStripsWhiteSpace(isStripsAllWhiteSpace() ? Whitespace.ALL : Whitespace.IGNORABLE);
 
