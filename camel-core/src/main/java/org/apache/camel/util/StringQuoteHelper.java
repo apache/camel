@@ -123,8 +123,9 @@ public final class StringQuoteHelper {
                     }
                     answer.add(text);
                     sb.setLength(0);
-                    continue;
                 }
+                // we should avoid adding the separator 
+                continue;
             }
 
             sb.append(ch);
