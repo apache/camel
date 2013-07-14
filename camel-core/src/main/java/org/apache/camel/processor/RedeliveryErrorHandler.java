@@ -201,6 +201,7 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
         formatter.setShowExchangeId(true);
         formatter.setMultiline(true);
         formatter.setShowHeaders(true);
+        formatter.setStyle(DefaultExchangeFormatter.OutputStyle.Fixed);
         this.exchangeFormatter = formatter;
     }
 

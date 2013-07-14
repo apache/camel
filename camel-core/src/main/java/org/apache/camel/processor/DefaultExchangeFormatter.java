@@ -35,6 +35,8 @@ public class DefaultExchangeFormatter implements ExchangeFormatter {
 
     protected static final String LS = System.getProperty("line.separator");
 
+    public enum OutputStyle { Default, Tab, Fixed }
+
     private boolean showExchangeId;
     private boolean showExchangePattern = true;
     private boolean showProperties;
@@ -51,6 +53,17 @@ public class DefaultExchangeFormatter implements ExchangeFormatter {
     private boolean showStreams;
     private boolean showFiles;
     private int maxChars = 10000;
+    private OutputStyle style = OutputStyle.Default;
+
+    private String style(String label) {
+        if (style == OutputStyle.Default) {
+            return String.format(", %s: ", label);
+        } if (style == OutputStyle.Tab) {
+            return String.format("\t%s: ", label);
+        } else {
+            return String.format("\t%-20s", label);
+        }
+    }
 
     public String format(Exchange exchange) {
         Message in = exchange.getIn();
@@ -60,38 +73,38 @@ public class DefaultExchangeFormatter implements ExchangeFormatter {
             if (multiline) {
                 sb.append(LS);
             }
-            sb.append(", Id:").append(exchange.getExchangeId());
+            sb.append(style("Id")).append(exchange.getExchangeId());
         }
         if (showAll || showExchangePattern) {
             if (multiline) {
                 sb.append(LS);
             }
-            sb.append(", ExchangePattern:").append(exchange.getPattern());
+            sb.append(style("ExchangePattern")).append(exchange.getPattern());
         }
 
         if (showAll || showProperties) {
             if (multiline) {
                 sb.append(LS);
             }
-            sb.append(", Properties:").append(sortMap(exchange.getProperties()));
+            sb.append(style("Properties")).append(sortMap(exchange.getProperties()));
         }
         if (showAll || showHeaders) {
             if (multiline) {
                 sb.append(LS);
             }
-            sb.append(", Headers:").append(sortMap(in.getHeaders()));
+            sb.append(style("Headers")).append(sortMap(in.getHeaders()));
         }
         if (showAll || showBodyType) {
             if (multiline) {
                 sb.append(LS);
             }
-            sb.append(", BodyType:").append(getBodyTypeAsString(in));
+            sb.append(style("BodyType")).append(getBodyTypeAsString(in));
         }
         if (showAll || showBody) {
             if (multiline) {
                 sb.append(LS);
             }
-            sb.append(", Body:").append(getBodyAsString(in));
+            sb.append(style("Body")).append(getBodyAsString(in));
         }
 
         if (showAll || showException || showCaughtException) {
@@ -110,16 +123,16 @@ public class DefaultExchangeFormatter implements ExchangeFormatter {
                     sb.append(LS);
                 }
                 if (caught) {
-                    sb.append(", CaughtExceptionType:").append(exception.getClass().getCanonicalName());
-                    sb.append(", CaughtExceptionMessage:").append(exception.getMessage());
+                    sb.append(style("CaughtExceptionType")).append(exception.getClass().getCanonicalName());
+                    sb.append(style("CaughtExceptionMessage")).append(exception.getMessage());
                 } else {
-                    sb.append(", ExceptionType:").append(exception.getClass().getCanonicalName());
-                    sb.append(", ExceptionMessage:").append(exception.getMessage());
+                    sb.append(style("ExceptionType")).append(exception.getClass().getCanonicalName());
+                    sb.append(style("ExceptionMessage")).append(exception.getMessage());
                 }
                 if (showAll || showStackTrace) {
                     StringWriter sw = new StringWriter();
                     exception.printStackTrace(new PrintWriter(sw));
-                    sb.append(", StackTrace:").append(sw.toString());
+                    sb.append(style("StackTrace")).append(sw.toString());
                 }
             }
         }
@@ -131,25 +144,25 @@ public class DefaultExchangeFormatter implements ExchangeFormatter {
                     if (multiline) {
                         sb.append(LS);
                     }
-                    sb.append(", OutHeaders:").append(sortMap(out.getHeaders()));
+                    sb.append(style("OutHeaders")).append(sortMap(out.getHeaders()));
                 }
                 if (showAll || showBodyType) {
                     if (multiline) {
                         sb.append(LS);
                     }
-                    sb.append(", OutBodyType:").append(getBodyTypeAsString(out));
+                    sb.append(style("OutBodyType")).append(getBodyTypeAsString(out));
                 }
                 if (showAll || showBody) {
                     if (multiline) {
                         sb.append(LS);
                     }
-                    sb.append(", OutBody:").append(getBodyAsString(out));
+                    sb.append(style("OutBody")).append(getBodyAsString(out));
                 }
             } else {
                 if (multiline) {
                     sb.append(LS);
                 }
-                sb.append(", Out: null");
+                sb.append(style("Out: null"));
             }
         }
 
@@ -333,6 +346,17 @@ public class DefaultExchangeFormatter implements ExchangeFormatter {
      */
     public void setShowFiles(boolean showFiles) {
         this.showFiles = showFiles;
+    }
+
+    public OutputStyle getStyle() {
+        return style;
+    }
+
+    /**
+     * Sets the outputs style to use.
+     */
+    public void setStyle(OutputStyle style) {
+        this.style = style;
     }
 
     // Implementation methods
