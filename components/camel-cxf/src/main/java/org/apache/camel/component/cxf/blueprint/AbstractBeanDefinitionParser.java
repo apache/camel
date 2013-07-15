@@ -18,15 +18,15 @@
 package org.apache.camel.component.cxf.blueprint;
 
 import java.util.StringTokenizer;
-
-import org.osgi.service.blueprint.reflect.BeanMetadata;
-
 import org.w3c.dom.Element;
 
 import org.apache.aries.blueprint.ParserContext;
 import org.apache.aries.blueprint.mutable.MutableBeanMetadata;
 import org.apache.cxf.common.util.StringUtils;
 import org.apache.cxf.configuration.blueprint.AbstractBPBeanDefinitionParser;
+import org.osgi.service.blueprint.reflect.BeanMetadata;
+
+
 
 public class AbstractBeanDefinitionParser extends AbstractBPBeanDefinitionParser {
     public static String getIdOrName(Element elem) {

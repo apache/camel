@@ -20,7 +20,11 @@ import org.apache.camel.Converter;
 import org.apache.camel.test.blueprint.Foo;
 
 @Converter
-public class MyConverter {
+public final class MyConverter {
+    
+    private MyConverter() {
+        //Helper class
+    }
 
     @Converter
     public static Foo convertToFoo(String data) {
