@@ -973,6 +973,8 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
                     }
                 } catch (XMLStreamException e) {
                     //ignore
+                    LOG.warn("Error finding the start element.", e);
+                    return null;
                 }
                 return r.getLocalName();
             }
