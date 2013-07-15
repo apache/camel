@@ -46,6 +46,7 @@ public class NettyHttpEndpoint extends NettyEndpoint implements HeaderFilterStra
     private boolean traceEnabled;
     private String httpMethodRestrict;
     private NettySharedHttpServer nettySharedHttpServer;
+    private NettyHttpSecurityConfiguration nettyHttpSecurityConfiguration;
 
     public NettyHttpEndpoint(String endpointUri, NettyHttpComponent component, NettyConfiguration configuration) {
         super(endpointUri, component, configuration);
@@ -169,6 +170,14 @@ public class NettyHttpEndpoint extends NettyEndpoint implements HeaderFilterStra
 
     public void setNettySharedHttpServer(NettySharedHttpServer nettySharedHttpServer) {
         this.nettySharedHttpServer = nettySharedHttpServer;
+    }
+
+    public NettyHttpSecurityConfiguration getNettyHttpSecurityConfiguration() {
+        return nettyHttpSecurityConfiguration;
+    }
+
+    public void setNettyHttpSecurityConfiguration(NettyHttpSecurityConfiguration nettyHttpSecurityConfiguration) {
+        this.nettyHttpSecurityConfiguration = nettyHttpSecurityConfiguration;
     }
 
     @Override

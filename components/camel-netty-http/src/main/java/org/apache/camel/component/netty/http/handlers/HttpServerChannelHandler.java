@@ -18,17 +18,23 @@ package org.apache.camel.component.netty.http.handlers;
 
 import java.net.SocketAddress;
 import java.nio.channels.ClosedChannelException;
+import java.nio.charset.Charset;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.component.netty.NettyConsumer;
 import org.apache.camel.component.netty.NettyHelper;
 import org.apache.camel.component.netty.handlers.ServerChannelHandler;
+import org.apache.camel.component.netty.http.HttpBasicAuthSubject;
 import org.apache.camel.component.netty.http.NettyHttpConsumer;
+import org.apache.camel.component.netty.http.NettyHttpSecurityConfiguration;
+import org.apache.camel.util.ObjectHelper;
+import org.jboss.netty.buffer.ChannelBuffer;
 import org.jboss.netty.buffer.ChannelBuffers;
 import org.jboss.netty.channel.ChannelFutureListener;
 import org.jboss.netty.channel.ChannelHandlerContext;
 import org.jboss.netty.channel.ExceptionEvent;
 import org.jboss.netty.channel.MessageEvent;
+import org.jboss.netty.handler.codec.base64.Base64;
 import org.jboss.netty.handler.codec.http.DefaultHttpResponse;
 import org.jboss.netty.handler.codec.http.HttpRequest;
 import org.jboss.netty.handler.codec.http.HttpResponse;
@@ -40,6 +46,7 @@ import static org.jboss.netty.handler.codec.http.HttpHeaders.isKeepAlive;
 import static org.jboss.netty.handler.codec.http.HttpResponseStatus.CONTINUE;
 import static org.jboss.netty.handler.codec.http.HttpResponseStatus.METHOD_NOT_ALLOWED;
 import static org.jboss.netty.handler.codec.http.HttpResponseStatus.SERVICE_UNAVAILABLE;
+import static org.jboss.netty.handler.codec.http.HttpResponseStatus.UNAUTHORIZED;
 import static org.jboss.netty.handler.codec.http.HttpVersion.HTTP_1_1;
 
 /**
@@ -100,8 +107,68 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
             return;
         }
 
+        // is basic auth configured
+        NettyHttpSecurityConfiguration security = consumer.getEndpoint().getNettyHttpSecurityConfiguration();
+        if (security != null) {
+            String url = request.getUri();
+
+            // is it a restricted resource?
+            boolean restricted = security.getContextPathMatcher() == null || security.getContextPathMatcher().matches(url);
+            if (restricted) {
+                // basic auth subject
+                HttpBasicAuthSubject subject = extractBasicAuthSubject(request);
+                boolean authenticated = subject != null && authenticate(subject);
+                if (subject == null || !authenticated) {
+                    if (subject == null) {
+                        LOG.debug("Http Basic Auth required for resource: {}", url);
+                    } else {
+                        LOG.debug("Http Basic Auth not authorized for username: {}", subject.getUsername());
+                    }
+                    // restricted resource, so send back 401 to require valid username/password
+                    HttpResponse response = new DefaultHttpResponse(HTTP_1_1, UNAUTHORIZED);
+                    response.setHeader("WWW-Authenticate", "Basic realm=\"" + security.getRealm() + "\"");
+                    response.setHeader(Exchange.CONTENT_TYPE, "text/plain");
+                    response.setHeader(Exchange.CONTENT_LENGTH, 0);
+                    response.setContent(ChannelBuffers.copiedBuffer(new byte[]{}));
+                    messageEvent.getChannel().write(response);
+                    return;
+                } else {
+                    LOG.debug("Http Basic Auth authorized for username: {}", subject.getUsername());
+                }
+            }
+        }
+
         // let Camel process this message
         super.messageReceived(ctx, messageEvent);
+    }
+
+    /**
+     * Authenticates the http basic auth subject.
+     *
+     * @param subject  the subject
+     * @return <tt>true</tt> if username and password is valid, <tt>false</tt> if not
+     */
+    protected boolean authenticate(HttpBasicAuthSubject subject) {
+        // TODO: an api for authentication
+        return subject.getPassword().equals("secret");
+        //return true;
+    }
+
+    protected static HttpBasicAuthSubject extractBasicAuthSubject(HttpRequest request) {
+        String auth = request.getHeader("Authorization");
+        if (auth != null) {
+            String constraint = ObjectHelper.before(auth, " ");
+            String decoded = ObjectHelper.after(auth, " ");
+            // the decoded part is base64 encoded, so we need to decode that
+            ChannelBuffer buf = ChannelBuffers.copiedBuffer(decoded.getBytes());
+            ChannelBuffer out = Base64.decode(buf);
+            String userAndPw = out.toString(Charset.defaultCharset());
+            String username = ObjectHelper.before(userAndPw, ":");
+            String password = ObjectHelper.after(userAndPw, ":");
+            HttpBasicAuthSubject subject = new HttpBasicAuthSubject(username, password);
+            return subject;
+        }
+        return null;
     }
 
     @Override

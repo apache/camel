@@ -46,6 +46,8 @@ public class NettyHttpComponent extends NettyComponent implements HeaderFilterSt
     private final Map<String, HttpServerBootstrapFactory> bootstrapFactories = new HashMap<String, HttpServerBootstrapFactory>();
     private NettyHttpBinding nettyHttpBinding;
     private HeaderFilterStrategy headerFilterStrategy;
+    // TODO: make it easy to configure this
+    private NettyHttpSecurityConfiguration nettyHttpSecurityConfiguration;// = new NettyHttpSecurityConfiguration();
 
     public NettyHttpComponent() {
         // use the http configuration and filter strategy
@@ -102,6 +104,9 @@ public class NettyHttpComponent extends NettyComponent implements HeaderFilterSt
         if (answer.getHeaderFilterStrategy() == null) {
             answer.setHeaderFilterStrategy(getHeaderFilterStrategy());
         }
+        if (answer.getNettyHttpSecurityConfiguration() == null) {
+            answer.setNettyHttpSecurityConfiguration(getNettyHttpSecurityConfiguration());
+        }
 
         answer.setNettySharedHttpServer(shared);
         return answer;
@@ -139,6 +144,14 @@ public class NettyHttpComponent extends NettyComponent implements HeaderFilterSt
 
     public void setHeaderFilterStrategy(HeaderFilterStrategy headerFilterStrategy) {
         this.headerFilterStrategy = headerFilterStrategy;
+    }
+
+    public NettyHttpSecurityConfiguration getNettyHttpSecurityConfiguration() {
+        return nettyHttpSecurityConfiguration;
+    }
+
+    public void setNettyHttpSecurityConfiguration(NettyHttpSecurityConfiguration nettyHttpSecurityConfiguration) {
+        this.nettyHttpSecurityConfiguration = nettyHttpSecurityConfiguration;
     }
 
     public synchronized HttpServerConsumerChannelFactory getMultiplexChannelHandler(int port) {
