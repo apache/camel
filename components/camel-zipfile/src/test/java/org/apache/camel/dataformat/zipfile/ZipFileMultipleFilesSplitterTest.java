@@ -18,9 +18,23 @@ package org.apache.camel.dataformat.zipfile;
 
 import java.util.Iterator;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.processor.aggregate.AggregationStrategy;
+import org.junit.Test;
 
 public class ZipFileMultipleFilesSplitterTest extends ZipSplitterRouteTest {
+    static final String PROCESSED_FILES_HEADER_NAME = "processedFiles";
+    
+    @Test
+    public void testSplitter() throws InterruptedException {
+        MockEndpoint processZipEntry = getMockEndpoint("mock:processZipEntry");
+        MockEndpoint splitResult = getMockEndpoint("mock:splitResult");
+        processZipEntry.expectedBodiesReceivedInAnyOrder("chau", "hi", "hola");
+        splitResult.expectedBodiesReceivedInAnyOrder("chiau.txt", "hi.txt", "hola.txt");
+        assertMockEndpointsSatisfied();
+    }
     
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -34,13 +48,35 @@ public class ZipFileMultipleFilesSplitterTest extends ZipSplitterRouteTest {
                         .unmarshal(zipFile)
                         .split(body(Iterator.class))
                         .streaming()
+                        .aggregationStrategy(updateHeader())
                         .convertBodyTo(String.class)
                         .to("mock:processZipEntry")
                         .end()
-                        .log("Done processing big file: ${header.CamelFileName}");
+                        .log("Done processing big file: ${header.CamelFileName}")
+                        .setBody().header(PROCESSED_FILES_HEADER_NAME)
+                        .split().body()
+                        .to("mock:splitResult");
             }
         };
 
+    }
+    
+    private AggregationStrategy updateHeader() {
+        return new AggregationStrategy() {
+            @Override
+            public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
+                if (oldExchange != null) {
+                    String processedFiles = oldExchange.getIn().getHeader(PROCESSED_FILES_HEADER_NAME, String.class);
+                    if (processedFiles == null) {
+                        processedFiles = oldExchange.getIn().getHeader("zipFileName", String.class);
+                    }
+                    processedFiles = processedFiles + "," + newExchange.getIn().getHeader("zipFileName", String.class);
+                    newExchange.getIn().setHeader(PROCESSED_FILES_HEADER_NAME, processedFiles);
+                }
+                return newExchange;
+            }
+            
+        };
     }
 
 }
