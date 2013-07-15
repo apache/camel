@@ -138,7 +138,14 @@
       <artifactId>easymock</artifactId>
       <scope>test</scope>
     </dependency>
-    
+
+    <!-- for json tests -->
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-databind</artifactId>
+      <version>${jackson2-version}</version>
+    </dependency>
+
     <!-- validator -->
 	<dependency>
 		<groupId>xml-resolver</groupId>
@@ -146,6 +153,7 @@
 		<version>${xml-resolver-version}</version>
 		<scope>test</scope>
 	</dependency>
+
   </dependencies>
 
 

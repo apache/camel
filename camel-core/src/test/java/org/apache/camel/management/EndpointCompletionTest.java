@@ -23,6 +23,8 @@ import java.util.Map;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
+
 import org.apache.camel.builder.RouteBuilder;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -79,6 +81,11 @@ public class EndpointCompletionTest extends ManagementTestSupport {
                 mbeanServer.invoke(on, "componentParameterJsonSchema", params, signature));
 
         LOG.info("Component " + componentName + " returned JSON: " + answer);
+
+        // now lets validate that the generated JSON parses correctly
+        ObjectMapper mapper = new ObjectMapper();
+        HashMap data = mapper.readValue(answer, HashMap.class);
+        LOG.info("Read JSON: " + data);
         return answer;
     }
 

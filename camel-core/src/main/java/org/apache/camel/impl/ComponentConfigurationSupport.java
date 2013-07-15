@@ -174,7 +174,6 @@ public abstract class ComponentConfigurationSupport implements ComponentConfigur
             } else {
                 buffer.append(",");
             }
-            buffer.append(entry.getKey());
             buffer.append("\n    ");
             buffer.append(entry.getValue().toJson());
         }
