@@ -1,30 +1,43 @@
+/**
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
 package org.apache.camel.component.rabbitmq;
+
+import java.io.IOException;
+import java.util.concurrent.ExecutorService;
 
 import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.Envelope;
+
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultConsumer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-import java.util.concurrent.ExecutorService;
 
-/**
- * @author Stephen Samuel
- */
 public class RabbitMQConsumer extends DefaultConsumer {
-
-    private static final Logger logger = LoggerFactory.getLogger(RabbitMQConsumer.class);
-
-    private final RabbitMQEndpoint endpoint;
-
+    
     ExecutorService executor;
     Connection conn;
     Channel channel;
+
+    private final RabbitMQEndpoint endpoint;
 
     public RabbitMQConsumer(RabbitMQEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
@@ -37,13 +50,13 @@ public class RabbitMQConsumer extends DefaultConsumer {
         log.info("Starting RabbitMQ consumer");
 
         executor = endpoint.createExecutor();
-        logger.debug("Using executor {}", executor);
+        log.debug("Using executor {}", executor);
 
         conn = endpoint.connect(executor);
-        logger.debug("Using conn {}", conn);
+        log.debug("Using conn {}", conn);
 
         channel = conn.createChannel();
-        logger.debug("Using channel {}", channel);
+        log.debug("Using channel {}", channel);
 
         channel.exchangeDeclare(endpoint.getExchangeName(), "direct", true);
         channel.queueDeclare(endpoint.getQueue(), true, false, false, null);
@@ -57,10 +70,13 @@ public class RabbitMQConsumer extends DefaultConsumer {
     protected void doStop() throws Exception {
         super.doStop();
         log.info("Stopping RabbitMQ consumer");
-        if (conn != null)
+        if (conn != null) {
             try {
                 conn.close();
-            } catch (Exception ignored) { }
+            } catch (Exception ignored) { 
+                // ignored
+            }
+        }
 
         channel = null;
         conn = null;
@@ -88,17 +104,16 @@ public class RabbitMQConsumer extends DefaultConsumer {
         public void handleDelivery(String consumerTag,
                                    Envelope envelope,
                                    AMQP.BasicProperties properties,
-                                   byte[] body)
-                throws IOException {
+                                   byte[] body) throws IOException {
 
             Exchange exchange = consumer.endpoint.createRabbitExchange(envelope);
-            logger.trace("Created exchange [exchange={}]", new Object[]{exchange});
+            log.trace("Created exchange [exchange={}]", new Object[]{exchange});
 
             try {
                 consumer.getProcessor().process(exchange);
 
                 long deliveryTag = envelope.getDeliveryTag();
-                logger.trace("Acknowleding receipt [delivery_tag={}]", deliveryTag);
+                log.trace("Acknowleding receipt [delivery_tag={}]", deliveryTag);
                 channel.basicAck(deliveryTag, false);
 
             } catch (Exception e) {

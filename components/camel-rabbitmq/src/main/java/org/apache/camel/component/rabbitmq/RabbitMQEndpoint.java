@@ -1,16 +1,21 @@
-package org.apache.camel.component.rabbitmq;
+/**
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
-import com.rabbitmq.client.Connection;
-import com.rabbitmq.client.ConnectionFactory;
-import com.rabbitmq.client.Envelope;
-import org.apache.camel.Consumer;
-import org.apache.camel.Exchange;
-import org.apache.camel.Message;
-import org.apache.camel.Processor;
-import org.apache.camel.Producer;
-import org.apache.camel.impl.DefaultEndpoint;
-import org.apache.camel.impl.DefaultExchange;
-import org.apache.camel.impl.DefaultMessage;
+package org.apache.camel.component.rabbitmq;
 
 import java.io.IOException;
 import java.net.URI;
@@ -20,9 +25,19 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 
-/**
- * @author Stephen Samuel
- */
+import com.rabbitmq.client.Connection;
+import com.rabbitmq.client.ConnectionFactory;
+import com.rabbitmq.client.Envelope;
+
+import org.apache.camel.Consumer;
+import org.apache.camel.Exchange;
+import org.apache.camel.Message;
+import org.apache.camel.Processor;
+import org.apache.camel.Producer;
+import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.impl.DefaultExchange;
+import org.apache.camel.impl.DefaultMessage;
+
 public class RabbitMQEndpoint extends DefaultEndpoint {
 
     private String username;
@@ -35,6 +50,21 @@ public class RabbitMQEndpoint extends DefaultEndpoint {
     private String queue = String.valueOf(UUID.randomUUID().toString().hashCode());
     private String exchangeName;
     private String routingKey;
+    
+    public RabbitMQEndpoint() {
+    }
+
+    public RabbitMQEndpoint(String endpointUri,
+                            String remaining,
+                            RabbitMQComponent component) throws URISyntaxException {
+        super(endpointUri, component);
+
+        URI uri = new URI("http://" + remaining);
+        hostname = uri.getHost();
+        portNumber = uri.getPort();
+        exchangeName = uri.getPath().substring(1);
+    }
+
 
     public String getExchangeName() {
         return exchangeName;
@@ -71,21 +101,7 @@ public class RabbitMQEndpoint extends DefaultEndpoint {
     public void setRoutingKey(String routingKey) {
         this.routingKey = routingKey;
     }
-
-    public RabbitMQEndpoint() {
-    }
-
-    public RabbitMQEndpoint(String endpointUri,
-                            String remaining,
-                            RabbitMQComponent component) throws URISyntaxException {
-        super(endpointUri, component);
-
-        URI uri = new URI("http://" + remaining);
-        hostname = uri.getHost();
-        portNumber = uri.getPort();
-        exchangeName = uri.getPath().substring(1);
-    }
-
+    
     public Exchange createRabbitExchange(Envelope envelope) {
         Exchange exchange = new DefaultExchange(getCamelContext(), getExchangePattern());
 
@@ -110,10 +126,11 @@ public class RabbitMQEndpoint extends DefaultEndpoint {
         ConnectionFactory factory = new ConnectionFactory();
         factory.setUsername(getUsername());
         factory.setPassword(getPassword());
-        if (getVhost() == null)
+        if (getVhost() == null) {
             factory.setVirtualHost("/");
-        else
+        } else {
             factory.setVirtualHost(getVhost());
+        }
         factory.setHost(getHostname());
         factory.setPort(getPortNumber());
         return factory.newConnection(executor);

@@ -1,18 +1,34 @@
-package org.apache.camel.component.rabbitmq;
+/**
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 
-import com.rabbitmq.client.AMQP;
-import com.rabbitmq.client.Channel;
-import com.rabbitmq.client.Connection;
-import org.apache.camel.Exchange;
-import org.apache.camel.impl.DefaultProducer;
+package org.apache.camel.component.rabbitmq;
 
 import java.io.IOException;
 import java.util.Date;
 import java.util.concurrent.Executors;
 
-/**
- * @author Stephen Samuel
- */
+import com.rabbitmq.client.AMQP;
+import com.rabbitmq.client.Channel;
+import com.rabbitmq.client.Connection;
+
+import org.apache.camel.Exchange;
+import org.apache.camel.impl.DefaultProducer;
+
+
 public class RabbitMQProducer extends DefaultProducer {
 
     private final RabbitMQEndpoint endpoint;
@@ -48,56 +64,69 @@ public class RabbitMQProducer extends DefaultProducer {
         AMQP.BasicProperties.Builder properties = new AMQP.BasicProperties.Builder();
 
         final Object contentType = exchange.getIn().getHeader(RabbitMQConstants.CONTENT_TYPE);
-        if (contentType != null)
+        if (contentType != null) {
             properties.contentType(contentType.toString());
-
+        }
+        
         final Object priority = exchange.getIn().getHeader(RabbitMQConstants.PRIORITY);
-        if (priority != null)
+        if (priority != null) {
             properties.priority(Integer.parseInt(priority.toString()));
+        }
 
         final Object messageId = exchange.getIn().getHeader(RabbitMQConstants.MESSAGE_ID);
-        if (messageId != null)
+        if (messageId != null) {
             properties.messageId(messageId.toString());
+        }
 
         final Object clusterId = exchange.getIn().getHeader(RabbitMQConstants.CLUSTERID);
-        if (clusterId != null)
+        if (clusterId != null) {
             properties.clusterId(clusterId.toString());
+        }
 
         final Object replyTo = exchange.getIn().getHeader(RabbitMQConstants.REPLY_TO);
-        if (replyTo != null)
+        if (replyTo != null) {
             properties.replyTo(replyTo.toString());
+        }
 
         final Object correlationId = exchange.getIn().getHeader(RabbitMQConstants.CORRELATIONID);
-        if (correlationId != null)
+        if (correlationId != null) {
             properties.correlationId(correlationId.toString());
+        }
 
         final Object deliveryMode = exchange.getIn().getHeader(RabbitMQConstants.DELIVERY_MODE);
-        if (deliveryMode != null)
+        if (deliveryMode != null) {
             properties.deliveryMode(Integer.parseInt(deliveryMode.toString()));
+        }
 
         final Object userId = exchange.getIn().getHeader(RabbitMQConstants.USERID);
-        if (userId != null)
+        if (userId != null) {
             properties.userId(userId.toString());
+        }
 
         final Object type = exchange.getIn().getHeader(RabbitMQConstants.TYPE);
-        if (type != null)
+        if (type != null) {
             properties.type(type.toString());
+        }
 
         final Object contentEncoding = exchange.getIn().getHeader(RabbitMQConstants.CONTENT_ENCODING);
-        if (contentEncoding != null)
+        if (contentEncoding != null) {
             properties.contentEncoding(contentEncoding.toString());
+        }
 
         final Object expiration = exchange.getIn().getHeader(RabbitMQConstants.EXPIRATION);
-        if (expiration != null)
+        if (expiration != null) {
             properties.expiration(expiration.toString());
+        }
 
         final Object appId = exchange.getIn().getHeader(RabbitMQConstants.APP_ID);
-        if (appId != null)
+        if (appId != null) {
             properties.appId(appId.toString());
+        }
 
         final Object timestamp = exchange.getIn().getHeader(RabbitMQConstants.TIMESTAMP);
-        if (timestamp != null)
+        if (timestamp != null) {
             properties.timestamp(new Date(Long.parseLong(timestamp.toString())));
+        }
 
         return properties;
     }
