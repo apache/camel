@@ -49,7 +49,7 @@ public class JAASSecurityAuthenticator implements SecurityAuthenticator {
     @Override
     public Subject login(HttpPrincipal principal) throws LoginException {
         if (ObjectHelper.isEmpty(getName())) {
-            throw new LoginException("Realm has not been configured on this SecurityAuthenticator: " + this);
+            throw new IllegalArgumentException("Realm has not been configured on this SecurityAuthenticator: " + this);
         }
 
         LOG.debug("Login username: {} using realm: {}", principal.getName(), getName());

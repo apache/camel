@@ -24,6 +24,7 @@ import javax.security.auth.Subject;
 import javax.security.auth.login.LoginException;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.LoggingLevel;
 import org.apache.camel.component.netty.NettyConsumer;
 import org.apache.camel.component.netty.NettyHelper;
 import org.apache.camel.component.netty.handlers.ServerChannelHandler;
@@ -31,6 +32,7 @@ import org.apache.camel.component.netty.http.HttpPrincipal;
 import org.apache.camel.component.netty.http.NettyHttpConsumer;
 import org.apache.camel.component.netty.http.NettyHttpSecurityConfiguration;
 import org.apache.camel.component.netty.http.SecurityAuthenticator;
+import org.apache.camel.util.CamelLogger;
 import org.apache.camel.util.ObjectHelper;
 import org.jboss.netty.buffer.ChannelBuffer;
 import org.jboss.netty.buffer.ChannelBuffers;
@@ -126,11 +128,12 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
             String target = uri.getPath();
 
             // is it a restricted resource?
-            boolean restricted = security.getContextPathMatcher() == null || security.getContextPathMatcher().matches(target);
+            boolean restricted = security.getConstraintMapping() == null || security.getConstraintMapping().matches(target);
             if (restricted) {
                 // basic auth subject
                 HttpPrincipal principal = extractBasicAuthSubject(request);
-                boolean authenticated = principal != null && authenticate(security.getSecurityAuthenticator(), principal) != null;
+                boolean authenticated = principal != null
+                        && authenticate(security.getSecurityAuthenticator(), security.getLoginDeniedLoggingLevel(), principal) != null;
                 if (principal == null || !authenticated) {
                     if (principal == null) {
                         LOG.debug("Http Basic Auth required for resource: {}", url);
@@ -193,8 +196,14 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
      * @param principal          the principal
      * @return <tt>true</tt> if username and password is valid, <tt>false</tt> if not
      */
-    protected Subject authenticate(SecurityAuthenticator authenticator, HttpPrincipal principal) throws LoginException {
-        return authenticator.login(principal);
+    protected Subject authenticate(SecurityAuthenticator authenticator, LoggingLevel deniedLoggingLevel, HttpPrincipal principal) {
+        try {
+            return authenticator.login(principal);
+        } catch (LoginException e) {
+            CamelLogger logger = new CamelLogger(LOG, deniedLoggingLevel);
+            logger.log("Cannot login " + principal.getName() + " due " + e.getMessage(), e);
+        }
+        return null;
     }
 
     @Override

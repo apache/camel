@@ -38,11 +38,10 @@ public interface SecurityAuthenticator {
     /**
      * Attempts to login the {@link java.security.Principal} on this realm.
      * <p/>
-     * The login is a success if no Exception is thrown. The implementation can return
-     * a {@link Subject} instance, but is not required to do so.
+     * The login is a success if no Exception is thrown, and a {@link Subject} is returned.
      *
      * @param principal       the principal
-     * @return optional subject returned for successful login
+     * @return the subject for the logged in principal, must <b>not</b> be <tt>null</tt>
      * @throws LoginException is thrown if error logging in the {@link java.security.Principal}
      */
     Subject login(HttpPrincipal principal) throws LoginException;

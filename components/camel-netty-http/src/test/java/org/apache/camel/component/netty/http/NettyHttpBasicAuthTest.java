@@ -70,6 +70,19 @@ public class NettyHttpBasicAuthTest extends BaseNettyTest {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
+    public void testInvalidCredentials() throws Exception {
+        // username:password is scott:typo
+        try {
+            // password is invalid so we should get a 401
+            String auth = "Basic c2NvdHQ6dHlwbw==";
+            template.requestBodyAndHeader("netty-http:http://localhost:{{port}}/foo", "Hello World", "Authorization", auth, String.class);
+        } catch (CamelExecutionException e) {
+            NettyHttpOperationFailedException cause = assertIsInstanceOf(NettyHttpOperationFailedException.class, e.getCause());
+            assertEquals(401, cause.getStatusCode());
+        }
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {

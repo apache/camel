@@ -16,22 +16,21 @@
  */
 package org.apache.camel.component.netty.http;
 
+import javax.security.auth.Subject;
+import javax.security.auth.login.LoginException;
+
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.impl.JndiRegistry;
 import org.junit.Test;
 
-public class NettyHttpSimpleBasicAuthTest extends BaseNettyTest {
+public class NettyHttpBasicAuthCustomSecurityAuthenticatorTest extends BaseNettyTest {
 
     @Override
-    public void setUp() throws Exception {
-        System.setProperty("java.security.auth.login.config", "src/test/resources/myjaas.config");
-        super.setUp();
-    }
-
-    @Override
-    public void tearDown() throws Exception {
-        System.clearProperty("java.security.auth.login.config");
-        super.tearDown();
+    protected JndiRegistry createRegistry() throws Exception {
+        JndiRegistry jndi = super.createRegistry();
+        jndi.bind("myAuthenticator", new MyAuthenticator());
+        return jndi;
     }
 
     @Test
@@ -59,11 +58,36 @@ public class NettyHttpSimpleBasicAuthTest extends BaseNettyTest {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("netty-http:http://0.0.0.0:{{port}}/foo?securityConfiguration.realm=karaf")
+                from("netty-http:http://0.0.0.0:{{port}}/foo?securityConfiguration.realm=foo&securityConfiguration.securityAuthenticator=#myAuthenticator")
                     .to("mock:input")
                     .transform().constant("Bye World");
             }
         };
+    }
+
+    private final class MyAuthenticator implements SecurityAuthenticator {
+
+        public void setName(String name) {
+            // noop
+        }
+
+        public String getName() {
+            return null;
+        }
+
+        @Override
+        public Subject login(HttpPrincipal principal) throws LoginException {
+            if (!principal.getPassword().equalsIgnoreCase("secret")) {
+                throw new LoginException("Login denied");
+            }
+            // login success so return a subject
+            return new Subject();
+        }
+
+        @Override
+        public void logout(Subject subject) throws LoginException {
+            // noop
+        }
     }
 
 }

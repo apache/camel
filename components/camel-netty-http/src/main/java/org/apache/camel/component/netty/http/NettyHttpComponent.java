@@ -75,14 +75,7 @@ public class NettyHttpComponent extends NettyComponent implements HeaderFilterSt
 
         // any custom security configuration
         NettyHttpSecurityConfiguration securityConfiguration = resolveAndRemoveReferenceParameter(parameters, "securityConfiguration", NettyHttpSecurityConfiguration.class);
-        String realm = getAndRemoveParameter(parameters, "realm", String.class);
-        if (securityConfiguration != null && realm != null) {
-            throw new IllegalArgumentException("Cannot have both realm and securityConfiguration options configured");
-        } else if (realm != null) {
-            // use default security configuration with the given realm, as a very easy way of enabling this
-            securityConfiguration = new NettyHttpSecurityConfiguration();
-            securityConfiguration.setRealm(realm);
-        }
+        Map<String, Object> securityOptions = IntrospectionSupport.extractProperties(parameters, "securityConfiguration.");
 
         config = parseConfiguration(config, remaining, parameters);
 
@@ -119,6 +112,17 @@ public class NettyHttpComponent extends NettyComponent implements HeaderFilterSt
             answer.setSecurityConfiguration(securityConfiguration);
         } else if (answer.getSecurityConfiguration() == null) {
             answer.setSecurityConfiguration(getSecurityConfiguration());
+        }
+
+        // configure any security options
+        if (securityOptions != null && !securityOptions.isEmpty()) {
+            securityConfiguration = answer.getSecurityConfiguration();
+            if (securityConfiguration == null) {
+                securityConfiguration = new NettyHttpSecurityConfiguration();
+                answer.setSecurityConfiguration(securityConfiguration);
+            }
+            setProperties(securityConfiguration, securityOptions);
+            validateParameters(uri, securityOptions, null);
         }
 
         answer.setNettySharedHttpServer(shared);

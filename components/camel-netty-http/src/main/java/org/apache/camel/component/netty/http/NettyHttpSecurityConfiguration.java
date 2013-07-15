@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.netty.http;
 
+import org.apache.camel.LoggingLevel;
+
 /**
  * Security configuration for the {@link NettyHttpConsumer}.
  */
@@ -24,8 +26,9 @@ public class NettyHttpSecurityConfiguration {
     private boolean authenticate = true;
     private String constraint = "Basic";
     private String realm;
-    private ContextPathMatcher contextPathMatcher;
+    private ContextPathMatcher constraintMapping;
     private SecurityAuthenticator securityAuthenticator;
+    private LoggingLevel loginDeniedLoggingLevel = LoggingLevel.DEBUG;
 
     public boolean isAuthenticate() {
         return authenticate;
@@ -64,8 +67,8 @@ public class NettyHttpSecurityConfiguration {
         this.realm = realm;
     }
 
-    public ContextPathMatcher getContextPathMatcher() {
-        return contextPathMatcher;
+    public ContextPathMatcher getConstraintMapping() {
+        return constraintMapping;
     }
 
     /**
@@ -73,8 +76,8 @@ public class NettyHttpSecurityConfiguration {
      * <p/>
      * By default this is <tt>null</tt>, which means all resources is restricted.
      */
-    public void setContextPathMatcher(ContextPathMatcher contextPathMatcher) {
-        this.contextPathMatcher = contextPathMatcher;
+    public void setConstraintMapping(ContextPathMatcher constraintMapping) {
+        this.constraintMapping = constraintMapping;
     }
 
     public SecurityAuthenticator getSecurityAuthenticator() {
@@ -86,5 +89,18 @@ public class NettyHttpSecurityConfiguration {
      */
     public void setSecurityAuthenticator(SecurityAuthenticator securityAuthenticator) {
         this.securityAuthenticator = securityAuthenticator;
+    }
+
+    public LoggingLevel getLoginDeniedLoggingLevel() {
+        return loginDeniedLoggingLevel;
+    }
+
+    /**
+     * Sets a logging level to use for logging denied login attempts (incl stacktraces)
+     * <p/>
+     * This level is by default DEBUG.
+     */
+    public void setLoginDeniedLoggingLevel(LoggingLevel loginDeniedLoggingLevel) {
+        this.loginDeniedLoggingLevel = loginDeniedLoggingLevel;
     }
 }

@@ -18,9 +18,10 @@ package org.apache.camel.component.netty.http;
 
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.impl.JndiRegistry;
 import org.junit.Test;
 
-public class NettyHttpSimpleBasicAuthTest extends BaseNettyTest {
+public class NettyHttpSimpleBasicAuthConstraintMapperTest extends BaseNettyTest {
 
     @Override
     public void setUp() throws Exception {
@@ -34,8 +35,27 @@ public class NettyHttpSimpleBasicAuthTest extends BaseNettyTest {
         super.tearDown();
     }
 
+    @Override
+    protected JndiRegistry createRegistry() throws Exception {
+        JndiRegistry jndi = super.createRegistry();
+
+        ConstraintMappingContextPathMatcher matcher = new ConstraintMappingContextPathMatcher();
+        matcher.addInclusion("/foo/*");
+        matcher.addExclusion("/foo/public/*");
+
+        jndi.bind("myConstraint", matcher);
+
+        return jndi;
+    }
+
     @Test
     public void testBasicAuth() throws Exception {
+        getMockEndpoint("mock:input").expectedBodiesReceived("Hello Public", "Hello World");
+
+        // we dont need auth for the public page
+        String out = template.requestBody("netty-http:http://localhost:{{port}}/foo/public/hello.txt", "Hello Public", String.class);
+        assertEquals("Bye World", out);
+
         try {
             template.requestBody("netty-http:http://localhost:{{port}}/foo", "Hello World", String.class);
             fail("Should send back 401");
@@ -44,11 +64,9 @@ public class NettyHttpSimpleBasicAuthTest extends BaseNettyTest {
             assertEquals(401, cause.getStatusCode());
         }
 
-        getMockEndpoint("mock:input").expectedBodiesReceived("Hello World");
-
         // username:password is scott:secret
         String auth = "Basic c2NvdHQ6c2VjcmV0";
-        String out = template.requestBodyAndHeader("netty-http:http://localhost:{{port}}/foo", "Hello World", "Authorization", auth, String.class);
+        out = template.requestBodyAndHeader("netty-http:http://localhost:{{port}}/foo", "Hello World", "Authorization", auth, String.class);
         assertEquals("Bye World", out);
 
         assertMockEndpointsSatisfied();
@@ -59,7 +77,8 @@ public class NettyHttpSimpleBasicAuthTest extends BaseNettyTest {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("netty-http:http://0.0.0.0:{{port}}/foo?securityConfiguration.realm=karaf")
+                from("netty-http:http://0.0.0.0:{{port}}/foo?matchOnUriPrefix=true"
+                        + "&securityConfiguration.realm=karaf&securityConfiguration.constraintMapping=#myConstraint")
                     .to("mock:input")
                     .transform().constant("Bye World");
             }
