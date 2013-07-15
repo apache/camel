@@ -18,9 +18,10 @@ package org.apache.camel.component.netty.http;
 
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.impl.JndiRegistry;
 import org.junit.Test;
 
-public class NettyHttpSimpleBasicAuthTest extends BaseNettyTest {
+public class NettyHttpBasicAuthTest extends BaseNettyTest {
 
     @Override
     public void setUp() throws Exception {
@@ -32,6 +33,21 @@ public class NettyHttpSimpleBasicAuthTest extends BaseNettyTest {
     public void tearDown() throws Exception {
         System.clearProperty("java.security.auth.login.config");
         super.tearDown();
+    }
+
+    @Override
+    protected JndiRegistry createRegistry() throws Exception {
+        JndiRegistry jndi = super.createRegistry();
+
+        NettyHttpSecurityConfiguration security = new NettyHttpSecurityConfiguration();
+        security.setRealm("karaf");
+        SecurityAuthenticator auth = new JAASSecurityAuthenticator();
+        auth.setName("karaf");
+        security.setSecurityAuthenticator(auth);
+
+        jndi.bind("mySecurityConfig", security);
+
+        return jndi;
     }
 
     @Test
@@ -59,7 +75,7 @@ public class NettyHttpSimpleBasicAuthTest extends BaseNettyTest {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("netty-http:http://0.0.0.0:{{port}}/foo?realm=karaf")
+                from("netty-http:http://0.0.0.0:{{port}}/foo?securityConfiguration=#mySecurityConfig")
                     .to("mock:input")
                     .transform().constant("Bye World");
             }

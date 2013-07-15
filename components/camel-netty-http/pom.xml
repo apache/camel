@@ -25,7 +25,7 @@
 
 	<artifactId>camel-netty-http</artifactId>
 	<packaging>bundle</packaging>
-	<name>Camel :: Netty</name>
+	<name>Camel :: Netty HTTP</name>
 	<description>Camel Netty HTTP support</description>
 
 	<properties>
@@ -44,7 +44,7 @@
 		<!-- testing -->
 		<dependency>
 			<groupId>org.apache.camel</groupId>
-			<artifactId>camel-test-spring</artifactId>
+			<artifactId>camel-test</artifactId>
 			<scope>test</scope>
 		</dependency>
 		<dependency>

@@ -46,7 +46,7 @@ public class NettyHttpEndpoint extends NettyEndpoint implements HeaderFilterStra
     private boolean traceEnabled;
     private String httpMethodRestrict;
     private NettySharedHttpServer nettySharedHttpServer;
-    private NettyHttpSecurityConfiguration nettyHttpSecurityConfiguration;
+    private NettyHttpSecurityConfiguration securityConfiguration;
 
     public NettyHttpEndpoint(String endpointUri, NettyHttpComponent component, NettyConfiguration configuration) {
         super(endpointUri, component, configuration);
@@ -172,12 +172,12 @@ public class NettyHttpEndpoint extends NettyEndpoint implements HeaderFilterStra
         this.nettySharedHttpServer = nettySharedHttpServer;
     }
 
-    public NettyHttpSecurityConfiguration getNettyHttpSecurityConfiguration() {
-        return nettyHttpSecurityConfiguration;
+    public NettyHttpSecurityConfiguration getSecurityConfiguration() {
+        return securityConfiguration;
     }
 
-    public void setNettyHttpSecurityConfiguration(NettyHttpSecurityConfiguration nettyHttpSecurityConfiguration) {
-        this.nettyHttpSecurityConfiguration = nettyHttpSecurityConfiguration;
+    public void setSecurityConfiguration(NettyHttpSecurityConfiguration securityConfiguration) {
+        this.securityConfiguration = securityConfiguration;
     }
 
     @Override
@@ -186,5 +186,18 @@ public class NettyHttpEndpoint extends NettyEndpoint implements HeaderFilterStra
 
         ObjectHelper.notNull(nettyHttpBinding, "nettyHttpBinding", this);
         ObjectHelper.notNull(headerFilterStrategy, "headerFilterStrategy", this);
+
+        if (securityConfiguration != null) {
+            ObjectHelper.notEmpty(securityConfiguration.getRealm(), "realm", securityConfiguration);
+            ObjectHelper.notEmpty(securityConfiguration.getConstraint(), "constraint", securityConfiguration);
+
+            if (securityConfiguration.getSecurityAuthenticator() == null) {
+                // setup default JAAS authenticator if none was configured
+                JAASSecurityAuthenticator jaas = new JAASSecurityAuthenticator();
+                jaas.setName(securityConfiguration.getRealm());
+                LOG.info("No SecurityAuthenticator configured, using JAASSecurityAuthenticator as authenticator: {}", jaas);
+                securityConfiguration.setSecurityAuthenticator(jaas);
+            }
+        }
     }
 }

@@ -22,7 +22,7 @@ package org.apache.camel.component.netty.http;
 public class NettyHttpSecurityConfiguration {
 
     private boolean authenticate = true;
-    private String constraint = "BASIC";
+    private String constraint = "Basic";
     private String realm;
     private ContextPathMatcher contextPathMatcher;
     private SecurityAuthenticator securityAuthenticator;
@@ -31,6 +31,11 @@ public class NettyHttpSecurityConfiguration {
         return authenticate;
     }
 
+    /**
+     * Whether to enable authentication
+     * <p/>
+     * This is by default enabled.
+     */
     public void setAuthenticate(boolean authenticate) {
         this.authenticate = authenticate;
     }
@@ -39,6 +44,11 @@ public class NettyHttpSecurityConfiguration {
         return constraint;
     }
 
+    /**
+     * The supported constraint.
+     * <p/>
+     * Currently only Basic is supported.
+     */
     public void setConstraint(String constraint) {
         this.constraint = constraint;
     }
@@ -47,6 +57,9 @@ public class NettyHttpSecurityConfiguration {
         return realm;
     }
 
+    /**
+     * Sets the name of the realm to use.
+     */
     public void setRealm(String realm) {
         this.realm = realm;
     }
@@ -55,6 +68,11 @@ public class NettyHttpSecurityConfiguration {
         return contextPathMatcher;
     }
 
+    /**
+     * Sets a {@link ContextPathMatcher} to use for matching if a url is restricted or not.
+     * <p/>
+     * By default this is <tt>null</tt>, which means all resources is restricted.
+     */
     public void setContextPathMatcher(ContextPathMatcher contextPathMatcher) {
         this.contextPathMatcher = contextPathMatcher;
     }
@@ -63,6 +81,9 @@ public class NettyHttpSecurityConfiguration {
         return securityAuthenticator;
     }
 
+    /**
+     * Sets the {@link SecurityAuthenticator} to use for authenticating the {@link HttpPrincipal}.
+     */
     public void setSecurityAuthenticator(SecurityAuthenticator securityAuthenticator) {
         this.securityAuthenticator = securityAuthenticator;
     }

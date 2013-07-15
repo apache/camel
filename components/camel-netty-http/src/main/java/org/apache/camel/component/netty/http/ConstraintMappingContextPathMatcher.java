@@ -21,6 +21,22 @@ import java.util.Set;
 
 import org.apache.camel.util.EndpointHelper;
 
+/**
+ * A {@link ContextPathMatcher} which can be used to define a set of mappings to
+ * as constraints.
+ * <p/>
+ * This matcher will match as <tt>true</tt> if no inclusions has been defined.
+ * First all the inclusions is check for matching. If a inclusion matches,
+ * then the exclusion is checked, and if any of them matches, then the exclusion
+ * will override the match and force returning <tt>false</tt>.
+ * <p/>
+ * Wildcards and regular expressions is supported as this implementation uses
+ * {@link EndpointHelper#matchPattern(String, String)} method for matching.
+ * <p/>
+ * This constraint matcher allows you to setup context path rules that will restrict
+ * access to paths, and then override and have exclusions that may allow access to
+ * public paths.
+ */
 public class ConstraintMappingContextPathMatcher implements ContextPathMatcher {
 
     private Set<String> inclusions;
@@ -41,8 +57,8 @@ public class ConstraintMappingContextPathMatcher implements ContextPathMatcher {
             matches = found;
         }
 
-        // any exclusions
-        if (exclusions != null && !exclusions.isEmpty()) {
+        // if matches check for any exclusions
+        if (matches && exclusions != null && !exclusions.isEmpty()) {
             for (String constraint : exclusions) {
                 if (EndpointHelper.matchPattern(target, constraint)) {
                     // force false if this was an exclusion

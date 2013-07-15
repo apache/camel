@@ -46,7 +46,7 @@ public class NettyHttpComponent extends NettyComponent implements HeaderFilterSt
     private final Map<String, HttpServerBootstrapFactory> bootstrapFactories = new HashMap<String, HttpServerBootstrapFactory>();
     private NettyHttpBinding nettyHttpBinding;
     private HeaderFilterStrategy headerFilterStrategy;
-    private NettyHttpSecurityConfiguration nettyHttpSecurityConfiguration;
+    private NettyHttpSecurityConfiguration securityConfiguration;
 
     public NettyHttpComponent() {
         // use the http configuration and filter strategy
@@ -74,7 +74,15 @@ public class NettyHttpComponent extends NettyComponent implements HeaderFilterSt
         }
 
         // any custom security configuration
-        NettyHttpSecurityConfiguration securityConfiguration = resolveAndRemoveReferenceParameter(parameters, "nettyHttpSecurityConfiguration", NettyHttpSecurityConfiguration.class);
+        NettyHttpSecurityConfiguration securityConfiguration = resolveAndRemoveReferenceParameter(parameters, "securityConfiguration", NettyHttpSecurityConfiguration.class);
+        String realm = getAndRemoveParameter(parameters, "realm", String.class);
+        if (securityConfiguration != null && realm != null) {
+            throw new IllegalArgumentException("Cannot have both realm and securityConfiguration options configured");
+        } else if (realm != null) {
+            // use default security configuration with the given realm, as a very easy way of enabling this
+            securityConfiguration = new NettyHttpSecurityConfiguration();
+            securityConfiguration.setRealm(realm);
+        }
 
         config = parseConfiguration(config, remaining, parameters);
 
@@ -108,9 +116,9 @@ public class NettyHttpComponent extends NettyComponent implements HeaderFilterSt
         }
 
         if (securityConfiguration != null) {
-            answer.setNettyHttpSecurityConfiguration(securityConfiguration);
-        } else if (answer.getNettyHttpSecurityConfiguration() == null) {
-            answer.setNettyHttpSecurityConfiguration(getNettyHttpSecurityConfiguration());
+            answer.setSecurityConfiguration(securityConfiguration);
+        } else if (answer.getSecurityConfiguration() == null) {
+            answer.setSecurityConfiguration(getSecurityConfiguration());
         }
 
         answer.setNettySharedHttpServer(shared);
@@ -151,12 +159,12 @@ public class NettyHttpComponent extends NettyComponent implements HeaderFilterSt
         this.headerFilterStrategy = headerFilterStrategy;
     }
 
-    public NettyHttpSecurityConfiguration getNettyHttpSecurityConfiguration() {
-        return nettyHttpSecurityConfiguration;
+    public NettyHttpSecurityConfiguration getSecurityConfiguration() {
+        return securityConfiguration;
     }
 
-    public void setNettyHttpSecurityConfiguration(NettyHttpSecurityConfiguration nettyHttpSecurityConfiguration) {
-        this.nettyHttpSecurityConfiguration = nettyHttpSecurityConfiguration;
+    public void setSecurityConfiguration(NettyHttpSecurityConfiguration securityConfiguration) {
+        this.securityConfiguration = securityConfiguration;
     }
 
     public synchronized HttpServerConsumerChannelFactory getMultiplexChannelHandler(int port) {

@@ -17,6 +17,7 @@
 package org.apache.camel.component.netty.http.handlers;
 
 import java.net.SocketAddress;
+import java.net.URI;
 import java.nio.channels.ClosedChannelException;
 import java.nio.charset.Charset;
 import javax.security.auth.Subject;
@@ -111,12 +112,21 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
         }
 
         // is basic auth configured
-        NettyHttpSecurityConfiguration security = consumer.getEndpoint().getNettyHttpSecurityConfiguration();
-        if (security != null && security.isAuthenticate()) {
+        NettyHttpSecurityConfiguration security = consumer.getEndpoint().getSecurityConfiguration();
+        if (security != null && security.isAuthenticate() && "Basic".equalsIgnoreCase(security.getConstraint())) {
             String url = request.getUri();
 
+            // drop parameters from url
+            if (url.contains("?")) {
+                url = ObjectHelper.before(url, "?");
+            }
+
+            // we need the relative path without the hostname and port
+            URI uri = new URI(request.getUri());
+            String target = uri.getPath();
+
             // is it a restricted resource?
-            boolean restricted = security.getContextPathMatcher() == null || security.getContextPathMatcher().matches(url);
+            boolean restricted = security.getContextPathMatcher() == null || security.getContextPathMatcher().matches(target);
             if (restricted) {
                 // basic auth subject
                 HttpPrincipal principal = extractBasicAuthSubject(request);

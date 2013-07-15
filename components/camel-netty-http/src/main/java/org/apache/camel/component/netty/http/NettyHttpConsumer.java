@@ -45,6 +45,8 @@ public class NettyHttpConsumer extends NettyConsumer {
         super.doStart();
         ObjectHelper.notNull(getNettyServerBootstrapFactory(), "HttpServerBootstrapFactory", this);
         getNettyServerBootstrapFactory().addConsumer(this);
+
+
     }
 
     @Override
