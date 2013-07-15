@@ -46,8 +46,7 @@ public class NettyHttpComponent extends NettyComponent implements HeaderFilterSt
     private final Map<String, HttpServerBootstrapFactory> bootstrapFactories = new HashMap<String, HttpServerBootstrapFactory>();
     private NettyHttpBinding nettyHttpBinding;
     private HeaderFilterStrategy headerFilterStrategy;
-    // TODO: make it easy to configure this
-    private NettyHttpSecurityConfiguration nettyHttpSecurityConfiguration;// = new NettyHttpSecurityConfiguration();
+    private NettyHttpSecurityConfiguration nettyHttpSecurityConfiguration;
 
     public NettyHttpComponent() {
         // use the http configuration and filter strategy
@@ -73,6 +72,9 @@ public class NettyHttpComponent extends NettyComponent implements HeaderFilterSt
                 IntrospectionSupport.setProperties(getCamelContext().getTypeConverter(), config, options);
             }
         }
+
+        // any custom security configuration
+        NettyHttpSecurityConfiguration securityConfiguration = resolveAndRemoveReferenceParameter(parameters, "nettyHttpSecurityConfiguration", NettyHttpSecurityConfiguration.class);
 
         config = parseConfiguration(config, remaining, parameters);
 
@@ -104,7 +106,10 @@ public class NettyHttpComponent extends NettyComponent implements HeaderFilterSt
         if (answer.getHeaderFilterStrategy() == null) {
             answer.setHeaderFilterStrategy(getHeaderFilterStrategy());
         }
-        if (answer.getNettyHttpSecurityConfiguration() == null) {
+
+        if (securityConfiguration != null) {
+            answer.setNettyHttpSecurityConfiguration(securityConfiguration);
+        } else if (answer.getNettyHttpSecurityConfiguration() == null) {
             answer.setNettyHttpSecurityConfiguration(getNettyHttpSecurityConfiguration());
         }
 

@@ -16,22 +16,58 @@
  */
 package org.apache.camel.component.netty.http;
 
+import org.apache.camel.CamelExecutionException;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Ignore;
+import org.apache.camel.impl.JndiRegistry;
 import org.junit.Test;
 
-@Ignore
 public class NettyHttpSimpleBasicAuthTest extends BaseNettyTest {
 
+    @Override
+    public void setUp() throws Exception {
+        System.setProperty("java.security.auth.login.config", "src/test/resources/myjaas.config");
+        super.setUp();
+    }
+
+    @Override
+    public void tearDown() throws Exception {
+        System.clearProperty("java.security.auth.login.config");
+        super.tearDown();
+    }
+
+    @Override
+    protected JndiRegistry createRegistry() throws Exception {
+        JndiRegistry jndi = super.createRegistry();
+
+        NettyHttpSecurityConfiguration security = new NettyHttpSecurityConfiguration();
+        security.setRealm("karaf");
+        SecurityAuthenticator auth = new JAASSecurityAuthenticator();
+        auth.setName("karaf");
+        security.setSecurityAuthenticator(auth);
+
+        jndi.bind("mySecurityConfig", security);
+
+        return jndi;
+    }
+
     @Test
-    public void testHttpSimple() throws Exception {
-//        getMockEndpoint("mock:input").expectedBodiesReceived("Hello World");
-//
-//        String out = template.requestBody("netty-http:http://localhost:{{port}}/foo", "Hello World", String.class);
-//        assertEquals("Bye World", out);
-//
-//        assertMockEndpointsSatisfied();
-//        Thread.sleep(9999999);
+    public void testBasicAuth() throws Exception {
+        try {
+            template.requestBody("netty-http:http://localhost:{{port}}/foo", "Hello World", String.class);
+            fail("Should send back 401");
+        } catch (CamelExecutionException e) {
+            NettyHttpOperationFailedException cause = assertIsInstanceOf(NettyHttpOperationFailedException.class, e.getCause());
+            assertEquals(401, cause.getStatusCode());
+        }
+
+        getMockEndpoint("mock:input").expectedBodiesReceived("Hello World");
+
+        // username:password is scott:secret
+        String auth = "Basic c2NvdHQ6c2VjcmV0";
+        String out = template.requestBodyAndHeader("netty-http:http://localhost:{{port}}/foo", "Hello World", "Authorization", auth, String.class);
+        assertEquals("Bye World", out);
+
+        assertMockEndpointsSatisfied();
     }
 
     @Override
@@ -39,7 +75,7 @@ public class NettyHttpSimpleBasicAuthTest extends BaseNettyTest {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("netty-http:http://0.0.0.0:{{port}}/foo")
+                from("netty-http:http://0.0.0.0:{{port}}/foo?nettyHttpSecurityConfiguration=#mySecurityConfig")
                     .to("mock:input")
                     .transform().constant("Bye World");
             }

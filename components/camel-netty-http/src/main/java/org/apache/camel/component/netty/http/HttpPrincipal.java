@@ -16,17 +16,24 @@
  */
 package org.apache.camel.component.netty.http;
 
-import java.io.Serializable;
+import java.security.Principal;
 
-public final class HttpBasicAuthSubject implements Serializable {
+/**
+ * Http {@link Principal}.
+ */
+public final class HttpPrincipal implements Principal {
 
-    private static final long serialVersionUID = 1L;
     private final String username;
     private final String password;
 
-    public HttpBasicAuthSubject(String username, String password) {
+    public HttpPrincipal(String username, String password) {
         this.username = username;
         this.password = password;
+    }
+
+    @Override
+    public String getName() {
+        return username;
     }
 
     public String getUsername() {
@@ -40,6 +47,6 @@ public final class HttpBasicAuthSubject implements Serializable {
     @Override
     public String toString() {
         // do not display the password
-        return "HttpBasicAuthSubject[" + username + "]";
+        return "HttpPrincipal[" + username + "]";
     }
 }

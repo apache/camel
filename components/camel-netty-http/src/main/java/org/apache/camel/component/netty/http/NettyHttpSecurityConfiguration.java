@@ -16,12 +16,16 @@
  */
 package org.apache.camel.component.netty.http;
 
+/**
+ * Security configuration for the {@link NettyHttpConsumer}.
+ */
 public class NettyHttpSecurityConfiguration {
 
     private boolean authenticate = true;
     private String constraint = "BASIC";
-    private String realm = "Camel";
+    private String realm;
     private ContextPathMatcher contextPathMatcher;
+    private SecurityAuthenticator securityAuthenticator;
 
     public boolean isAuthenticate() {
         return authenticate;
@@ -53,5 +57,13 @@ public class NettyHttpSecurityConfiguration {
 
     public void setContextPathMatcher(ContextPathMatcher contextPathMatcher) {
         this.contextPathMatcher = contextPathMatcher;
+    }
+
+    public SecurityAuthenticator getSecurityAuthenticator() {
+        return securityAuthenticator;
+    }
+
+    public void setSecurityAuthenticator(SecurityAuthenticator securityAuthenticator) {
+        this.securityAuthenticator = securityAuthenticator;
     }
 }
