@@ -1,0 +1,20 @@
+<!DOCTYPE log4j:configuration SYSTEM "log4j.dtd">
+<log4j:configuration threshold="all" debug="true"
+                     xmlns:log4j="http://jakarta.apache.org/log4j/">
+
+    <appender name="console" class="org.apache.log4j.ConsoleAppender">
+        <param name="Target" value="System.out"/>
+        <layout class="org.apache.log4j.PatternLayout">
+            <param name="ConversionPattern" value="[%t] %-5p %c{1}.%M - %m%n"/>
+        </layout>
+    </appender>
+
+    <logger name="org.apache.camel.component.rabbitmq">
+        <level value="debug"/>
+    </logger>
+    <root>
+        <level value="warn"/>
+        <appender-ref ref="console"/>
+    </root>
+
+</log4j:configuration>
