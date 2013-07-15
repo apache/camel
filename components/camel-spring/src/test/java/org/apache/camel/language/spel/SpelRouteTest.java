@@ -29,6 +29,13 @@ public class SpelRouteTest extends ContextTestSupport {
         template.sendBodyAndHeader("direct:test", "World", "dayOrNight", "day");
         resultEndpoint.assertIsSatisfied();
     }
+    
+    public void testSpelWithLoop() throws Exception {
+        MockEndpoint resultEndpoint = getMockEndpoint("mock:loopResult");
+        resultEndpoint.expectedBodiesReceived("A:0", "A:0:1", "A:0:1:2", "A:0:1:2:3");
+        template.sendBody("direct:loop", "A");
+        resultEndpoint.assertIsSatisfied();
+    }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -36,6 +43,7 @@ public class SpelRouteTest extends ContextTestSupport {
             @Override
             public void configure() {
                 from("direct:test").setBody(spel("Hello #{request.body}! What a beautiful #{request.headers['dayOrNight']}")).to("mock:result");
+                from("direct:loop").loop(4).setBody(spel("#{body + ':' + properties['CamelLoopIndex']}")).to("mock:loopResult");
             }
         };
     }
