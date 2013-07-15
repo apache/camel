@@ -318,6 +318,7 @@
     <quartz-bundle-version>1.8.6_1</quartz-bundle-version>
     <quartz-version>1.8.6</quartz-version>
     <quickfix-bundle-version>1.5.3_1</quickfix-bundle-version>
+    <rabbitmq-amqp-client-version>3.1.3</rabbitmq-amqp-client-version>
     <regexp-bundle-version>1.4_1</regexp-bundle-version>
     <restlet-version>2.0.15</restlet-version>
     <rhino-bundle-version>1.7R2_3</rhino-bundle-version>
