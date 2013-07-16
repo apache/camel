@@ -25,6 +25,7 @@ import java.net.URLDecoder;
 import java.nio.charset.Charset;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import org.apache.camel.Exchange;
@@ -120,7 +121,7 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding {
 
         // strip the starting endpoint path so the path is relative to the endpoint uri
         String path = uri.getPath();
-        if (configuration.getPath() != null && configuration.getPath().startsWith(path)) {
+        if (configuration.getPath() != null && path.startsWith(configuration.getPath())) {
             path = path.substring(configuration.getPath().length());
         }
         headers.put(Exchange.HTTP_PATH, path);
@@ -132,9 +133,21 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding {
 
         for (String name : request.getHeaderNames()) {
             // mapping the content-type
-            if (name.toLowerCase().equals("content-type")) {
+            if (name.toLowerCase(Locale.US).equals("content-type")) {
                 name = Exchange.CONTENT_TYPE;
             }
+
+            if (name.toLowerCase(Locale.US).equals("authorization")) {
+                String value = request.getHeader(name);
+                // store a special header that this request was authenticated using HTTP Basic
+                if (value != null && value.trim().startsWith("Basic")) {
+                    if (headerFilterStrategy != null
+                            && !headerFilterStrategy.applyFilterToExternalHeaders(NettyHttpConstants.HTTP_AUTHENTICATION, "Basic", exchange)) {
+                        NettyHttpHelper.appendHeader(headers, NettyHttpConstants.HTTP_AUTHENTICATION, "Basic");
+                    }
+                }
+            }
+
             // add the headers one by one, and use the header filter strategy
             List<String> values = request.getHeaders(name);
             Iterator<?> it = ObjectHelper.createIterator(values);

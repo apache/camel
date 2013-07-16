@@ -61,6 +61,7 @@ public class NettyHttpBasicAuthTest extends BaseNettyTest {
         }
 
         getMockEndpoint("mock:input").expectedBodiesReceived("Hello World");
+        getMockEndpoint("mock:input").expectedHeaderReceived(NettyHttpConstants.HTTP_AUTHENTICATION, "Basic");
 
         // username:password is scott:secret
         String auth = "Basic c2NvdHQ6c2VjcmV0";

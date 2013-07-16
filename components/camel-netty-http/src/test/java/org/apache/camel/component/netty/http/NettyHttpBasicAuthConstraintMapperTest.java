@@ -46,8 +46,8 @@ public class NettyHttpBasicAuthConstraintMapperTest extends BaseNettyTest {
         security.setSecurityAuthenticator(auth);
 
         SecurityConstraintMapping matcher = new SecurityConstraintMapping();
-        matcher.addInclusion("/foo/*");
-        matcher.addExclusion("/foo/public/*");
+        matcher.addInclusion("/*");
+        matcher.addExclusion("/public/*");
         security.setSecurityConstraint(matcher);
 
         jndi.bind("mySecurityConfig", security);

@@ -41,15 +41,15 @@
     <!-- a * should be used for any role accepted (or even no roles) -->
     <property name="inclusions">
       <map>
-        <entry key="/foo/*" value="*"/>
-        <entry key="/foo/admin/*" value="admin"/>
-        <entry key="/foo/guest/*" value="admin,guest"/>
+        <entry key="/*" value="*"/>
+        <entry key="/admin/*" value="admin"/>
+        <entry key="/guest/*" value="admin,guest"/>
       </map>
     </property>
     <!-- exclusions is used to define public urls, which requires no authentication -->
     <property name="exclusions">
       <set>
-        <value>/foo/public/*</value>
+        <value>/public/*</value>
       </set>
     </property>
   </bean>

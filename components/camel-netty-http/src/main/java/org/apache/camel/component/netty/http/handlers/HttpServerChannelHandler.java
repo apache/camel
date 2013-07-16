@@ -128,6 +128,12 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
             URI uri = new URI(request.getUri());
             String target = uri.getPath();
 
+            // strip the starting endpoint path so the target is relative to the endpoint uri
+            String path = consumer.getConfiguration().getPath();
+            if (path != null && target.startsWith(path)) {
+                target = target.substring(path.length());
+            }
+
             // is it a restricted resource?
             String roles;
             if (security.getSecurityConstraint() != null) {
