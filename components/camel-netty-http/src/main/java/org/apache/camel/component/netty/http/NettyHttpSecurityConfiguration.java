@@ -26,9 +26,10 @@ public class NettyHttpSecurityConfiguration {
     private boolean authenticate = true;
     private String constraint = "Basic";
     private String realm;
-    private ContextPathMatcher constraintMapping;
+    private SecurityConstraint securityConstraint;
     private SecurityAuthenticator securityAuthenticator;
     private LoggingLevel loginDeniedLoggingLevel = LoggingLevel.DEBUG;
+    private String roleClassName;
 
     public boolean isAuthenticate() {
         return authenticate;
@@ -48,7 +49,7 @@ public class NettyHttpSecurityConfiguration {
     }
 
     /**
-     * The supported constraint.
+     * The supported restricted.
      * <p/>
      * Currently only Basic is supported.
      */
@@ -67,17 +68,17 @@ public class NettyHttpSecurityConfiguration {
         this.realm = realm;
     }
 
-    public ContextPathMatcher getConstraintMapping() {
-        return constraintMapping;
+    public SecurityConstraint getSecurityConstraint() {
+        return securityConstraint;
     }
 
     /**
-     * Sets a {@link ContextPathMatcher} to use for matching if a url is restricted or not.
+     * Sets a {@link SecurityConstraint} to use for checking if a web resource is restricted or not
      * <p/>
      * By default this is <tt>null</tt>, which means all resources is restricted.
      */
-    public void setConstraintMapping(ContextPathMatcher constraintMapping) {
-        this.constraintMapping = constraintMapping;
+    public void setSecurityConstraint(SecurityConstraint securityConstraint) {
+        this.securityConstraint = securityConstraint;
     }
 
     public SecurityAuthenticator getSecurityAuthenticator() {
@@ -102,5 +103,13 @@ public class NettyHttpSecurityConfiguration {
      */
     public void setLoginDeniedLoggingLevel(LoggingLevel loginDeniedLoggingLevel) {
         this.loginDeniedLoggingLevel = loginDeniedLoggingLevel;
+    }
+
+    public String getRoleClassName() {
+        return roleClassName;
+    }
+
+    public void setRoleClassName(String roleClassName) {
+        this.roleClassName = roleClassName;
     }
 }

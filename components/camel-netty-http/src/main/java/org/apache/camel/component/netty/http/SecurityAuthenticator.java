@@ -35,6 +35,8 @@ public interface SecurityAuthenticator {
      */
     String getName();
 
+    void setRoleClassNames(String names);
+
     /**
      * Attempts to login the {@link java.security.Principal} on this realm.
      * <p/>
@@ -53,5 +55,13 @@ public interface SecurityAuthenticator {
      * @throws LoginException is thrown if error logging out subject
      */
     void logout(Subject subject) throws LoginException;
+
+    /**
+     * Gets the user roles from the given {@link Subject}
+     *
+     * @param subject the subject
+     * @return <tt>null</tt> if no roles, otherwise a String with roles separated by comma.
+     */
+    String getUserRoles(Subject subject);
 
 }

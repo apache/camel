@@ -17,15 +17,16 @@
 package org.apache.camel.component.netty.http;
 
 import java.util.LinkedHashSet;
+import java.util.Map;
 import java.util.Set;
 
 import org.apache.camel.util.EndpointHelper;
 
 /**
- * A {@link ContextPathMatcher} which can be used to define a set of mappings to
+ * A default {@link SecurityConstraint} which can be used to define a set of mappings to
  * as constraints.
  * <p/>
- * This matcher will match as <tt>true</tt> if no inclusions has been defined.
+ * This constraint will match as <tt>true</tt> if no inclusions has been defined.
  * First all the inclusions is check for matching. If a inclusion matches,
  * then the exclusion is checked, and if any of them matches, then the exclusion
  * will override the match and force returning <tt>false</tt>.
@@ -33,49 +34,80 @@ import org.apache.camel.util.EndpointHelper;
  * Wildcards and regular expressions is supported as this implementation uses
  * {@link EndpointHelper#matchPattern(String, String)} method for matching.
  * <p/>
- * This constraint matcher allows you to setup context path rules that will restrict
+ * This restricted constraint allows you to setup context path rules that will restrict
  * access to paths, and then override and have exclusions that may allow access to
  * public paths.
  */
-public class ConstraintMappingContextPathMatcher implements ContextPathMatcher {
+public class DefaultSecurityConstraint implements SecurityConstraint {
 
-    private Set<String> inclusions;
+    // url -> roles
+    private Map<String, String> inclusions;
+    // url
     private Set<String> exclusions;
 
     @Override
-    public boolean matches(String target) {
-        boolean matches = true;
+    public String restricted(String url) {
+        // check excluded first
+        if (excludedUrl(url)) {
+            return null;
+        }
 
+        // is the url restricted?
+        String constraint = includedUrl(url);
+        if (constraint == null) {
+            return null;
+        }
+
+        // is there any roles for the restricted url?
+        String roles = inclusions != null ? inclusions.get(constraint) : null;
+        if (roles == null) {
+            // use wildcard to indicate any role is accepted
+            return "*";
+        } else {
+            return roles;
+        }
+    }
+
+    private String includedUrl(String url) {
         if (inclusions != null && !inclusions.isEmpty()) {
-            boolean found = false;
-            for (String constraint : inclusions) {
-                if (EndpointHelper.matchPattern(target, constraint)) {
-                    found = true;
-                    break;
+            for (String constraint : inclusions.keySet()) {
+                if (EndpointHelper.matchPattern(url, constraint)) {
+                    return constraint;
                 }
             }
-            matches = found;
+            // not in included so return null as its not restricted
+            return null;
         }
 
-        // if matches check for any exclusions
-        if (matches && exclusions != null && !exclusions.isEmpty()) {
+        // by default if no included has been configured then everything is restricted
+        return "*";
+    }
+
+    private boolean excludedUrl(String url) {
+        if (exclusions != null && !exclusions.isEmpty()) {
             for (String constraint : exclusions) {
-                if (EndpointHelper.matchPattern(target, constraint)) {
-                    // force false if this was an exclusion
-                    matches = false;
-                    break;
+                if (EndpointHelper.matchPattern(url, constraint)) {
+                    // force not matches if this was an exclusion
+                    return true;
                 }
             }
         }
 
-        return matches;
+        return false;
     }
 
     public void addInclusion(String constraint) {
         if (inclusions == null) {
-            inclusions = new LinkedHashSet<String>();
+            inclusions = new java.util.LinkedHashMap<String, String>();
         }
-        inclusions.add(constraint);
+        inclusions.put(constraint, null);
+    }
+
+    public void addInclusion(String constraint, String roles) {
+        if (inclusions == null) {
+            inclusions = new java.util.LinkedHashMap<String, String>();
+        }
+        inclusions.put(constraint, roles);
     }
 
     public void addExclusion(String constraint) {
@@ -85,16 +117,8 @@ public class ConstraintMappingContextPathMatcher implements ContextPathMatcher {
         exclusions.add(constraint);
     }
 
-    public Set<String> getInclusions() {
-        return inclusions;
-    }
-
-    public void setInclusions(Set<String> inclusions) {
+    public void setInclusions(Map<String, String> inclusions) {
         this.inclusions = inclusions;
-    }
-
-    public Set<String> getExclusions() {
-        return exclusions;
     }
 
     public void setExclusions(Set<String> exclusions) {

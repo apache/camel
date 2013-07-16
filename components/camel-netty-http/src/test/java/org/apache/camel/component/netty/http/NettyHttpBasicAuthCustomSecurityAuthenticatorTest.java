@@ -76,6 +76,11 @@ public class NettyHttpBasicAuthCustomSecurityAuthenticatorTest extends BaseNetty
         }
 
         @Override
+        public void setRoleClassNames(String names) {
+            // noop
+        }
+
+        @Override
         public Subject login(HttpPrincipal principal) throws LoginException {
             if (!principal.getPassword().equalsIgnoreCase("secret")) {
                 throw new LoginException("Login denied");
@@ -87,6 +92,11 @@ public class NettyHttpBasicAuthCustomSecurityAuthenticatorTest extends BaseNetty
         @Override
         public void logout(Subject subject) throws LoginException {
             // noop
+        }
+
+        @Override
+        public String getUserRoles(Subject subject) {
+            return null;
         }
     }
 

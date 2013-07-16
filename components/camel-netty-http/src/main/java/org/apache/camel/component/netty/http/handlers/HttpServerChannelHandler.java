@@ -20,6 +20,7 @@ import java.net.SocketAddress;
 import java.net.URI;
 import java.nio.channels.ClosedChannelException;
 import java.nio.charset.Charset;
+import java.util.Iterator;
 import javax.security.auth.Subject;
 import javax.security.auth.login.LoginException;
 
@@ -128,17 +129,36 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
             String target = uri.getPath();
 
             // is it a restricted resource?
-            boolean restricted = security.getConstraintMapping() == null || security.getConstraintMapping().matches(target);
-            if (restricted) {
+            String roles;
+            if (security.getSecurityConstraint() != null) {
+                // if restricted returns null, then the resource is not restricted and we should not authenticate the user
+                roles = security.getSecurityConstraint().restricted(target);
+            } else {
+                // assume any roles is valid if no security constraint has been configured
+                roles = "*";
+            }
+            if (roles != null) {
                 // basic auth subject
                 HttpPrincipal principal = extractBasicAuthSubject(request);
-                boolean authenticated = principal != null
-                        && authenticate(security.getSecurityAuthenticator(), security.getLoginDeniedLoggingLevel(), principal) != null;
-                if (principal == null || !authenticated) {
+
+                // authenticate principal and check if the user is in role
+                Subject subject = null;
+                boolean inRole = true;
+                if (principal != null) {
+                    subject = authenticate(security.getSecurityAuthenticator(), security.getLoginDeniedLoggingLevel(), principal);
+                    if (subject != null) {
+                        String userRoles = security.getSecurityAuthenticator().getUserRoles(subject);
+                        inRole = matchesRoles(roles, userRoles);
+                    }
+                }
+
+                if (principal == null || subject == null || !inRole) {
                     if (principal == null) {
                         LOG.debug("Http Basic Auth required for resource: {}", url);
-                    } else {
+                    } else if (subject == null) {
                         LOG.debug("Http Basic Auth not authorized for username: {}", principal.getUsername());
+                    } else {
+                        LOG.debug("Http Basic Auth not in role for username: {}", principal.getUsername());
                     }
                     // restricted resource, so send back 401 to require valid username/password
                     HttpResponse response = new DefaultHttpResponse(HTTP_1_1, UNAUTHORIZED);
@@ -156,6 +176,24 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
 
         // let Camel process this message
         super.messageReceived(ctx, messageEvent);
+    }
+
+    protected boolean matchesRoles(String roles, String userRoles) {
+        // matches if no role restrictions or any role is accepted
+        if (roles.equals("*")) {
+            return true;
+        }
+
+        // see if any of the user roles is contained in the roles list
+        Iterator it = ObjectHelper.createIterator(userRoles);
+        while (it.hasNext()) {
+            String userRole = it.next().toString();
+            if (roles.contains(userRole)) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     /**
