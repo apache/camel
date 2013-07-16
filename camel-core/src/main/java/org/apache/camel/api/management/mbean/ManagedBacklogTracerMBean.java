@@ -21,7 +21,7 @@ import java.util.List;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedOperation;
 
-public interface ManagedTracerBacklogMBean {
+public interface ManagedBacklogTracerMBean {
 
     @ManagedAttribute(description = "Is tracing enabled")
     boolean isEnabled();
