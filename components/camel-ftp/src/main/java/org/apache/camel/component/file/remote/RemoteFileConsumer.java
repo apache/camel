@@ -28,6 +28,7 @@ import org.apache.camel.component.file.GenericFileOperationFailedException;
  */
 public abstract class RemoteFileConsumer<T> extends GenericFileConsumer<T> {
     protected boolean loggedIn;
+    protected boolean loggedInWarning;
 
     public RemoteFileConsumer(RemoteFileEndpoint<T> endpoint, Processor processor, RemoteFileOperations<T> operations) {
         super(endpoint, processor, operations);
@@ -66,10 +67,16 @@ public abstract class RemoteFileConsumer<T> extends GenericFileConsumer<T> {
 
         if (!loggedIn) {
             String message = "Cannot connect/login to: " + remoteServer() + ". Will skip this poll.";
-            log.warn(message);
+            if (!loggedInWarning) {
+                log.warn(message);
+                loggedInWarning = true;
+            } 
             return false;
+        } else {
+            // need to log the failed log again
+            loggedInWarning = false;
         }
-
+       
         return true;
     }
 
