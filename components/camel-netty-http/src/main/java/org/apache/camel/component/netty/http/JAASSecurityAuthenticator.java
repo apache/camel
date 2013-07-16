@@ -16,15 +16,8 @@
  */
 package org.apache.camel.component.netty.http;
 
-import java.io.IOException;
 import java.security.Principal;
-import java.util.Locale;
 import javax.security.auth.Subject;
-import javax.security.auth.callback.Callback;
-import javax.security.auth.callback.CallbackHandler;
-import javax.security.auth.callback.NameCallback;
-import javax.security.auth.callback.PasswordCallback;
-import javax.security.auth.callback.UnsupportedCallbackException;
 import javax.security.auth.login.LoginContext;
 import javax.security.auth.login.LoginException;
 
@@ -35,23 +28,9 @@ import org.slf4j.LoggerFactory;
 /**
  * A JAAS based {@link SecurityAuthenticator} implementation.
  */
-public class JAASSecurityAuthenticator implements SecurityAuthenticator {
+public class JAASSecurityAuthenticator extends SecurityAuthenticatorSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(JAASSecurityAuthenticator.class);
-    private String name;
-    private String roleClassNames;
-
-    public void setName(String name) {
-        this.name = name;
-    }
-
-    public String getName() {
-        return name;
-    }
-
-    public void setRoleClassNames(String roleClassNames) {
-        this.roleClassNames = roleClassNames;
-    }
 
     @Override
     public Subject login(HttpPrincipal principal) throws LoginException {
@@ -88,55 +67,6 @@ public class JAASSecurityAuthenticator implements SecurityAuthenticator {
         LoginContext context = new LoginContext(getName(), subject);
         context.logout();
         LOG.debug("Logout username: {} successful", username);
-    }
-
-    @Override
-    public String getUserRoles(Subject subject) {
-        StringBuilder sb = new StringBuilder();
-        for (Principal p : subject.getPrincipals()) {
-            if (roleClassNames == null) {
-                // by default assume its a role when the classname has role in its name
-                if (p.getName().toLowerCase(Locale.US).contains("role")) {
-                    if (sb.length() > 0) {
-                        sb.append(",");
-                    }
-                    sb.append(p.getName());
-                }
-            }
-        }
-        if (sb.length() > 0) {
-            return sb.toString();
-        } else {
-            return null;
-        }
-    }
-
-    /**
-     * {@link CallbackHandler} that provides the username and password.
-     */
-    private final class HttpPrincipalCallbackHandler implements CallbackHandler {
-
-        private final HttpPrincipal principal;
-
-        private HttpPrincipalCallbackHandler(HttpPrincipal principal) {
-            this.principal = principal;
-        }
-
-        @Override
-        public void handle(Callback[] callbacks) throws IOException, UnsupportedCallbackException {
-            for (Callback callback : callbacks) {
-                LOG.trace("Callback {}", callback);
-                if (callback instanceof PasswordCallback) {
-                    PasswordCallback pc = (PasswordCallback) callback;
-                    LOG.trace("Setting password on callback {}", pc);
-                    pc.setPassword(principal.getPassword().toCharArray());
-                } else if (callback instanceof NameCallback) {
-                    NameCallback nc = (NameCallback) callback;
-                    LOG.trace("Setting username on callback {}", nc);
-                    nc.setName(principal.getName());
-                }
-            }
-        }
     }
 
 }

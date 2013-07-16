@@ -38,7 +38,7 @@ import org.apache.camel.util.EndpointHelper;
  * access to paths, and then override and have exclusions that may allow access to
  * public paths.
  */
-public class DefaultSecurityConstraint implements SecurityConstraint {
+public class SecurityConstraintMapping implements SecurityConstraint {
 
     // url -> roles
     private Map<String, String> inclusions;
@@ -69,14 +69,20 @@ public class DefaultSecurityConstraint implements SecurityConstraint {
     }
 
     private String includedUrl(String url) {
+        String candidate = null;
         if (inclusions != null && !inclusions.isEmpty()) {
             for (String constraint : inclusions.keySet()) {
                 if (EndpointHelper.matchPattern(url, constraint)) {
-                    return constraint;
+                    if (candidate == null) {
+                        candidate = constraint;
+                    } else if (constraint.length() > candidate.length()) {
+                        // we want the constraint that has the longest context-path matching as its
+                        // the most explicit for the target url
+                        candidate = constraint;
+                    }
                 }
             }
-            // not in included so return null as its not restricted
-            return null;
+            return candidate;
         }
 
         // by default if no included has been configured then everything is restricted

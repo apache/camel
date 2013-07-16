@@ -39,7 +39,7 @@ public class NettyHttpSimpleBasicAuthConstraintMapperTest extends BaseNettyTest 
     protected JndiRegistry createRegistry() throws Exception {
         JndiRegistry jndi = super.createRegistry();
 
-        DefaultSecurityConstraint matcher = new DefaultSecurityConstraint();
+        SecurityConstraintMapping matcher = new SecurityConstraintMapping();
         matcher.addInclusion("/foo/*");
         matcher.addExclusion("/foo/public/*");
 

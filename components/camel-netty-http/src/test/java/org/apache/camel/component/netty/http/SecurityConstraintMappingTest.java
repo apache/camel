@@ -18,17 +18,17 @@ package org.apache.camel.component.netty.http;
 
 import junit.framework.TestCase;
 
-public class DefaultSecurityConstraintTest extends TestCase {
+public class SecurityConstraintMappingTest extends TestCase {
 
     public void testDefault() {
-        DefaultSecurityConstraint matcher = new DefaultSecurityConstraint();
+        SecurityConstraintMapping matcher = new SecurityConstraintMapping();
 
         assertNotNull(matcher.restricted("/"));
         assertNotNull(matcher.restricted("/foo"));
     }
 
     public void testFoo() {
-        DefaultSecurityConstraint matcher = new DefaultSecurityConstraint();
+        SecurityConstraintMapping matcher = new SecurityConstraintMapping();
         matcher.addInclusion("/foo");
 
         assertNull(matcher.restricted("/"));
@@ -38,7 +38,7 @@ public class DefaultSecurityConstraintTest extends TestCase {
     }
 
     public void testFooWildcard() {
-        DefaultSecurityConstraint matcher = new DefaultSecurityConstraint();
+        SecurityConstraintMapping matcher = new SecurityConstraintMapping();
         matcher.addInclusion("/foo*");
 
         assertNull(matcher.restricted("/"));
@@ -48,7 +48,7 @@ public class DefaultSecurityConstraintTest extends TestCase {
     }
 
     public void testFooBar() {
-        DefaultSecurityConstraint matcher = new DefaultSecurityConstraint();
+        SecurityConstraintMapping matcher = new SecurityConstraintMapping();
         matcher.addInclusion("/foo");
         matcher.addInclusion("/bar");
 
@@ -63,7 +63,7 @@ public class DefaultSecurityConstraintTest extends TestCase {
     }
 
     public void testFooBarWildcard() {
-        DefaultSecurityConstraint matcher = new DefaultSecurityConstraint();
+        SecurityConstraintMapping matcher = new SecurityConstraintMapping();
         matcher.addInclusion("/foo*");
         matcher.addInclusion("/bar*");
 
@@ -78,7 +78,7 @@ public class DefaultSecurityConstraintTest extends TestCase {
     }
 
     public void testFooExclusion() {
-        DefaultSecurityConstraint matcher = new DefaultSecurityConstraint();
+        SecurityConstraintMapping matcher = new SecurityConstraintMapping();
         matcher.addInclusion("/foo/*");
         matcher.addExclusion("/foo/public/*");
 
@@ -91,7 +91,7 @@ public class DefaultSecurityConstraintTest extends TestCase {
 
     public void testDefaultExclusion() {
         // everything is restricted unless its from the public
-        DefaultSecurityConstraint matcher = new DefaultSecurityConstraint();
+        SecurityConstraintMapping matcher = new SecurityConstraintMapping();
         matcher.addExclusion("/public/*");
         matcher.addExclusion("/index");
         matcher.addExclusion("/index.html");

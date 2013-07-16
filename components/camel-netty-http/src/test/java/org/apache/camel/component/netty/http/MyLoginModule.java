@@ -58,6 +58,15 @@ public class MyLoginModule implements LoginModule {
             if (!"secret".equals(password)) {
                 throw new LoginException("Login denied");
             }
+
+            // add roles
+            if ("scott".equals(username)) {
+                subject.getPrincipals().add(new MyRolePrincipal("admin"));
+                subject.getPrincipals().add(new MyRolePrincipal("guest"));
+            } else if ("guest".equals(username)) {
+                subject.getPrincipals().add(new MyRolePrincipal("guest"));
+            }
+
         } catch (IOException ioe) {
             LoginException le = new LoginException(ioe.toString());
             le.initCause(ioe);
@@ -68,6 +77,7 @@ public class MyLoginModule implements LoginModule {
             le.initCause(uce);
             throw le;
         }
+
 
         return true;
     }
