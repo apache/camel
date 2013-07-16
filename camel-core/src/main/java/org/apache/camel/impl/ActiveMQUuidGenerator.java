@@ -70,7 +70,6 @@ public class ActiveMQUuidGenerator implements UuidGenerator {
                 ss = new ServerSocket(idGeneratorPort);
                 stub = "-" + ss.getLocalPort() + "-" + System.currentTimeMillis() + "-";
                 Thread.sleep(100);
-                ss.close();
             } catch (Exception ioe) {
                 if (LOG.isTraceEnabled()) {
                     LOG.trace("Cannot generate unique stub by using DNS and binding to local port: " + idGeneratorPort, ioe);
