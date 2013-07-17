@@ -752,7 +752,7 @@ public final class ObjectHelper {
      * @return the class or <tt>null</tt> if it could not be loaded
      */
     public static Class<?> loadClass(String name, ClassLoader loader) {
-        return loadClass(name, loader, true);
+        return loadClass(name, loader, false);
     }
 
     /**
@@ -789,6 +789,8 @@ public final class ObjectHelper {
         if (clazz == null) {
             if (needToWarn) {
                 LOG.warn("Cannot find class: " + name);
+            } else {
+                LOG.debug("Cannot find class: " + name);
             }
         }
 
