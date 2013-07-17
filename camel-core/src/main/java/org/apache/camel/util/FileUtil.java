@@ -285,6 +285,24 @@ public final class FileUtil {
             return defaultTempDir;
         }
 
+        defaultTempDir = createNewTempDir();
+
+        // create shutdown hook to remove the temp dir
+        shutdownHook = new Thread() {
+            @Override
+            public void run() {
+                removeDir(defaultTempDir);
+            }
+        };
+        Runtime.getRuntime().addShutdownHook(shutdownHook);
+
+        return defaultTempDir;
+    }
+
+    /**
+     * Creates a new temporary directory in the <tt>java.io.tmpdir</tt> directory.
+     */
+    public static File createNewTempDir() {
         String s = System.getProperty("java.io.tmpdir");
         File checkExists = new File(s);
         if (!checkExists.exists()) {
@@ -304,18 +322,7 @@ public final class FileUtil {
             f = new File(s, "camel-tmp-" + x);
         }
 
-        defaultTempDir = f;
-
-        // create shutdown hook to remove the temp dir
-        shutdownHook = new Thread() {
-            @Override
-            public void run() {
-                removeDir(defaultTempDir);
-            }
-        };
-        Runtime.getRuntime().addShutdownHook(shutdownHook);
-
-        return defaultTempDir;
+        return f;
     }
 
     /**
@@ -332,7 +339,7 @@ public final class FileUtil {
         }
     }
 
-    private static void removeDir(File d) {
+    public static void removeDir(File d) {
         String[] list = d.list();
         if (list == null) {
             list = new String[0];

@@ -119,6 +119,7 @@ import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.RouteStartupOrder;
 import org.apache.camel.spi.ServicePool;
 import org.apache.camel.spi.ShutdownStrategy;
+import org.apache.camel.spi.StreamCachingStrategy;
 import org.apache.camel.spi.TypeConverterRegistry;
 import org.apache.camel.spi.UuidGenerator;
 import org.apache.camel.support.ServiceSupport;
@@ -195,6 +196,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     private FactoryFinderResolver factoryFinderResolver = new DefaultFactoryFinderResolver();
     private FactoryFinder defaultFactoryFinder;
     private PropertiesComponent propertiesComponent;
+    private StreamCachingStrategy streamCachingStrategy = new DefaultStreamCachingStrategy();
     private final Map<String, FactoryFinder> factories = new HashMap<String, FactoryFinder>();
     private final Map<String, RouteService> routeServices = new LinkedHashMap<String, RouteService>();
     private final Map<String, RouteService> suspendedRouteServices = new LinkedHashMap<String, RouteService>();
@@ -1679,6 +1681,9 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                 threshold = StreamCache.DEFAULT_SPOOL_THRESHOLD;
             }
             log.info("Stream caching is enabled, and using {} kb as threshold for overflow and spooling to disk store.", threshold / 1024);
+
+            // stream caching is in use so enable the strategy
+            addService(streamCachingStrategy);
         }
 
         // start routes
@@ -2658,6 +2663,14 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
 
     public void setUuidGenerator(UuidGenerator uuidGenerator) {
         this.uuidGenerator = uuidGenerator;
+    }
+
+    public StreamCachingStrategy getStreamCachingStrategy() {
+        return streamCachingStrategy;
+    }
+
+    public void setStreamCachingStrategy(StreamCachingStrategy streamCachingStrategy) {
+        this.streamCachingStrategy = streamCachingStrategy;
     }
 
     @Override

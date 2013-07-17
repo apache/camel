@@ -55,7 +55,7 @@ public class CachedOutputStream extends OutputStream {
     public static final String TEMP_DIR = "CamelCachedOutputStreamOutputDirectory";
     public static final String CIPHER_TRANSFORMATION = "CamelCachedOutputStreamCipherTransformation";
     private static final transient Logger LOG = LoggerFactory.getLogger(CachedOutputStream.class);
-    
+
     private OutputStream currentStream;
     private boolean inMemory = true;
     private int totalLength;
@@ -68,12 +68,12 @@ public class CachedOutputStream extends OutputStream {
     private String cipherTransformation;
     private CipherPair ciphers;
 
-    
     public CachedOutputStream(Exchange exchange) {
         this(exchange, true);
     }
 
     public CachedOutputStream(Exchange exchange, boolean closedOnCompletion) {
+        // TODO: these options should be on StreamCachingStrategy
         String bufferSize = exchange.getContext().getProperty(BUFFER_SIZE);
         String hold = exchange.getContext().getProperty(THRESHOLD);
         String dir = exchange.getContext().getProperty(TEMP_DIR);
@@ -86,6 +86,8 @@ public class CachedOutputStream extends OutputStream {
         }
         if (dir != null) {
             this.outputDir = exchange.getContext().getTypeConverter().convertTo(File.class, dir);
+        } else {
+            this.outputDir = exchange.getContext().getStreamCachingStrategy().getTemporaryDirectory();
         }
         this.cipherTransformation = exchange.getContext().getProperty(CIPHER_TRANSFORMATION);
        
@@ -222,11 +224,7 @@ public class CachedOutputStream extends OutputStream {
         flush();
 
         ByteArrayOutputStream bout = (ByteArrayOutputStream)currentStream;
-        if (outputDir == null) {
-            tempFile = FileUtil.createTempFile("cos", ".tmp");
-        } else {
-            tempFile = FileUtil.createTempFile("cos", ".tmp", outputDir);
-        }
+        tempFile = FileUtil.createTempFile("cos", ".tmp", outputDir);
 
         LOG.trace("Creating temporary stream cache file: {}", tempFile);
 

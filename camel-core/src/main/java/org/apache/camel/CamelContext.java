@@ -51,6 +51,7 @@ import org.apache.camel.spi.Registry;
 import org.apache.camel.spi.RouteStartupOrder;
 import org.apache.camel.spi.ServicePool;
 import org.apache.camel.spi.ShutdownStrategy;
+import org.apache.camel.spi.StreamCachingStrategy;
 import org.apache.camel.spi.TypeConverterRegistry;
 import org.apache.camel.spi.UuidGenerator;
 import org.apache.camel.util.LoadPropertiesException;
@@ -1207,9 +1208,19 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      */
     Map<String, Properties> findComponents() throws LoadPropertiesException, IOException;
 
-
     /**
      * Returns the HTML documentation for the given camel component
      */
     String getComponentDocumentation(String componentName) throws IOException;
+
+    /**
+     * Gets the {@link StreamCachingStrategy} to use.
+     */
+    StreamCachingStrategy getStreamCachingStrategy();
+
+    /**
+     * Sets a custom {@link StreamCachingStrategy} to use.
+     */
+    void setStreamCachingStrategy(StreamCachingStrategy streamCachingStrategy);
+
 }
