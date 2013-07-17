@@ -204,4 +204,13 @@ public class FileUtilTest extends TestCase {
         assertTrue("A new file should be created " + file, FileUtil.createNewFile(file));
     }
 
+    public void testShutdown() throws Exception {
+        File tmpFile = FileUtil.createTempFile(null, null);
+        File tmpDir = tmpFile.getParentFile();
+        assertTrue(tmpDir.exists());
+
+        FileUtil.shutdown();
+        assertFalse(tmpDir.exists());
+    }
+
 }

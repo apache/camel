@@ -30,7 +30,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * File utilities
+ * File utilities.
  */
 public final class FileUtil {
     
@@ -39,8 +39,10 @@ public final class FileUtil {
     private static final transient Logger LOG = LoggerFactory.getLogger(FileUtil.class);
     private static final int RETRY_SLEEP_MILLIS = 10;
     private static File defaultTempDir;
+    private static Thread shutdownHook;
 
     private FileUtil() {
+        // Utils method
     }
 
     /**
@@ -296,15 +298,29 @@ public final class FileUtil {
         defaultTempDir = f;
 
         // create shutdown hook to remove the temp dir
-        Thread hook = new Thread() {
+        shutdownHook = new Thread() {
             @Override
             public void run() {
                 removeDir(defaultTempDir);
             }
         };
-        Runtime.getRuntime().addShutdownHook(hook);
+        Runtime.getRuntime().addShutdownHook(shutdownHook);
 
         return defaultTempDir;
+    }
+
+    /**
+     * Shutdown and cleanup the temporary directory and removes any shutdown hooks in use.
+     */
+    public static synchronized void shutdown() {
+        if (defaultTempDir != null && defaultTempDir.exists()) {
+            removeDir(defaultTempDir);
+        }
+
+        if (shutdownHook != null) {
+            Runtime.getRuntime().removeShutdownHook(shutdownHook);
+            shutdownHook = null;
+        }
     }
 
     private static void removeDir(File d) {
