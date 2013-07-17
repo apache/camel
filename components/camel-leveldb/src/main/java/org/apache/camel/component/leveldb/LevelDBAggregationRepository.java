@@ -47,6 +47,7 @@ public class LevelDBAggregationRepository extends ServiceSupport implements Reco
     private LevelDBFile levelDBFile;
     private String persistentFileName;
     private String repositoryName;
+    private boolean sync;
     private boolean returnOldExchange;
     private LevelDBCamelCodec codec = new LevelDBCamelCodec();
     private long recoveryInterval = 5000;
@@ -337,6 +338,14 @@ public class LevelDBAggregationRepository extends ServiceSupport implements Reco
         this.repositoryName = repositoryName;
     }
 
+    public boolean isSync() {
+        return sync;
+    }
+
+    public void setSync(boolean sync) {
+        this.sync = sync;
+    }
+
     public boolean isReturnOldExchange() {
         return returnOldExchange;
     }
@@ -395,6 +404,7 @@ public class LevelDBAggregationRepository extends ServiceSupport implements Reco
         // either we have a LevelDB configured or we use a provided fileName
         if (levelDBFile == null && persistentFileName != null) {
             levelDBFile = new LevelDBFile();
+            levelDBFile.setSync(isSync());
             levelDBFile.setFileName(persistentFileName);
         }
 
