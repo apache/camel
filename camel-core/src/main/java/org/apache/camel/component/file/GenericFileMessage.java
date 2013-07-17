@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.file;
 
+import org.apache.camel.Message;
 import org.apache.camel.impl.DefaultMessage;
 
 /**
@@ -47,6 +48,16 @@ public class GenericFileMessage<T> extends DefaultMessage {
     @Override
     public GenericFileMessage<T> newInstance() {
         return new GenericFileMessage<T>();
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    public void copyFrom(Message that) {
+        super.copyFrom(that);
+
+        if (that instanceof GenericFileMessage) {
+            setGenericFile(((GenericFileMessage) that).getGenericFile());
+        }
     }
 
     @Override
