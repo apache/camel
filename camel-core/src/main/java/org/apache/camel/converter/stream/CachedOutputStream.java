@@ -208,7 +208,7 @@ public class CachedOutputStream extends OutputStream {
         flush();
 
         ByteArrayOutputStream bout = (ByteArrayOutputStream)currentStream;
-        tempFile = FileUtil.createTempFile("cos", ".tmp", strategy.getTemporaryDirectory());
+        tempFile = FileUtil.createTempFile("cos", ".tmp", strategy.getSpoolDirectory());
 
         LOG.trace("Creating temporary stream cache file: {}", tempFile);
 

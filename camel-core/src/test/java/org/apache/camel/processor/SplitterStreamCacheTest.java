@@ -23,7 +23,6 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.builder.xml.XPathBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.converter.stream.CachedOutputStream;
 
 /**
  * @version 
@@ -48,7 +47,7 @@ public class SplitterStreamCacheTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 //ensure stream is spooled to disk
-                context.getStreamCachingStrategy().setTemporaryDirectory("target/tmp");
+                context.getStreamCachingStrategy().setSpoolDirectory("target/tmp");
                 context.getStreamCachingStrategy().setSpoolThreshold(-1);
 
                 from("seda:parallel?concurrentConsumers=5").streamCaching()

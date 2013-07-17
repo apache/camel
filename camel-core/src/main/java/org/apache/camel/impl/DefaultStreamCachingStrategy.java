@@ -47,11 +47,11 @@ public class DefaultStreamCachingStrategy extends org.apache.camel.support.Servi
     private static final Logger LOG = LoggerFactory.getLogger(DefaultStreamCachingStrategy.class);
 
     private CamelContext camelContext;
-    private File temporaryDirectory;
+    private File spoolDirectory;
     private long spoolThreshold = StreamCache.DEFAULT_SPOOL_THRESHOLD;
     private String spoolChiper;
     private int bufferSize = IOHelper.DEFAULT_BUFFER_SIZE;
-    private boolean removeTemporaryDirectoryWhenStopping = true;
+    private boolean removeSpoolDirectoryWhenStopping = true;
 
     public CamelContext getCamelContext() {
         return camelContext;
@@ -61,16 +61,16 @@ public class DefaultStreamCachingStrategy extends org.apache.camel.support.Servi
         this.camelContext = camelContext;
     }
 
-    public void setTemporaryDirectory(String path) {
-        this.temporaryDirectory = new File(path);
+    public void setSpoolDirectory(String path) {
+        this.spoolDirectory = new File(path);
     }
 
-    public void setTemporaryDirectory(File path) {
-        this.temporaryDirectory = path;
+    public void setSpoolDirectory(File path) {
+        this.spoolDirectory = path;
     }
 
-    public File getTemporaryDirectory() {
-        return temporaryDirectory;
+    public File getSpoolDirectory() {
+        return spoolDirectory;
     }
 
     public long getSpoolThreshold() {
@@ -97,12 +97,12 @@ public class DefaultStreamCachingStrategy extends org.apache.camel.support.Servi
         this.bufferSize = bufferSize;
     }
 
-    public boolean isRemoveTemporaryDirectoryWhenStopping() {
-        return removeTemporaryDirectoryWhenStopping;
+    public boolean isRemoveSpoolDirectoryWhenStopping() {
+        return removeSpoolDirectoryWhenStopping;
     }
 
-    public void setRemoveTemporaryDirectoryWhenStopping(boolean removeTemporaryDirectoryWhenStopping) {
-        this.removeTemporaryDirectoryWhenStopping = removeTemporaryDirectoryWhenStopping;
+    public void setRemoveSpoolDirectoryWhenStopping(boolean removeSpoolDirectoryWhenStopping) {
+        this.removeSpoolDirectoryWhenStopping = removeSpoolDirectoryWhenStopping;
     }
 
     @Override
@@ -112,32 +112,40 @@ public class DefaultStreamCachingStrategy extends org.apache.camel.support.Servi
         String chiper = camelContext.getProperty(CIPHER_TRANSFORMATION);
         String dir = camelContext.getProperty(TEMP_DIR);
 
+        boolean warn = false;
         if (bufferSize != null) {
+            warn = true;
             this.bufferSize = camelContext.getTypeConverter().convertTo(Integer.class, bufferSize);
         }
         if (hold != null) {
+            warn = true;
             this.spoolThreshold = camelContext.getTypeConverter().convertTo(Long.class, hold);
         }
         if (chiper != null) {
+            warn = true;
             this.spoolChiper = chiper;
         }
         if (dir != null) {
-            this.temporaryDirectory = camelContext.getTypeConverter().convertTo(File.class, dir);
+            warn = true;
+            this.spoolDirectory = camelContext.getTypeConverter().convertTo(File.class, dir);
+        }
+        if (warn) {
+            LOG.warn("Configuring of StreamCaching using CamelContext properties is deprecated - use StreamCachingStrategy instead.");
         }
 
         LOG.info("StreamCaching in use with {}", this.toString());
 
         // create random temporary directory if none has been created
-        if (temporaryDirectory == null) {
-            temporaryDirectory = FileUtil.createNewTempDir();
-            LOG.info("Created temporary directory {}", temporaryDirectory);
+        if (spoolDirectory == null) {
+            spoolDirectory = FileUtil.createNewTempDir();
+            LOG.info("Created temporary spool directory {}", spoolDirectory);
         } else {
-            if (!temporaryDirectory.exists()) {
-                boolean created = temporaryDirectory.mkdirs();
+            if (!spoolDirectory.exists()) {
+                boolean created = spoolDirectory.mkdirs();
                 if (!created) {
-                    LOG.warn("Cannot create temporary directory {}", temporaryDirectory);
+                    LOG.warn("Cannot create spool directory {}", spoolDirectory);
                 } else {
-                    LOG.info("Created temporary directory {}", temporaryDirectory);
+                    LOG.info("Created spool directory {}", spoolDirectory);
                 }
             }
         }
@@ -145,16 +153,16 @@ public class DefaultStreamCachingStrategy extends org.apache.camel.support.Servi
 
     @Override
     protected void doStop() throws Exception {
-        if (temporaryDirectory != null  && isRemoveTemporaryDirectoryWhenStopping()) {
-            LOG.info("Removing temporary directory {}", temporaryDirectory);
-            FileUtil.removeDir(temporaryDirectory);
+        if (spoolDirectory != null  && isRemoveSpoolDirectoryWhenStopping()) {
+            LOG.info("Removing spool directory {}", spoolDirectory);
+            FileUtil.removeDir(spoolDirectory);
         }
     }
 
     @Override
     public String toString() {
         return "DefaultStreamCachingStrategy["
-            + "temporaryDirectory=" + temporaryDirectory
+            + "spoolDirectory=" + spoolDirectory
             + ", spoolThreshold=" + spoolThreshold
             + ", spoolChiper=" + spoolChiper
             + ", bufferSize=" + bufferSize + "]";

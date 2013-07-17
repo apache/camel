@@ -43,7 +43,7 @@ public class CachedOutputStreamTest extends ContextTestSupport {
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
         context.setStreamCaching(true);
-        context.getStreamCachingStrategy().setTemporaryDirectory("target/cachedir");
+        context.getStreamCachingStrategy().setSpoolDirectory("target/cachedir");
         context.getStreamCachingStrategy().setSpoolThreshold(16);
         return context;
     }

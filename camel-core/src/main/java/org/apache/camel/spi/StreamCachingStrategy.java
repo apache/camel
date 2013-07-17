@@ -24,16 +24,16 @@ import java.io.File;
 public interface StreamCachingStrategy {
 
     /**
-     * Sets the temporary directory to use for overflow and spooling to disk.
+     * Sets the spool (temporary) directory to use for overflow and spooling to disk.
      * <p/>
-     * If no temporary directory has been explicit configured, then a directory
+     * If no spool directory has been explicit configured, then a temporary directory
      * is created in the <tt>java.io.tmpdir</tt> directory.
      */
-    void setTemporaryDirectory(File path);
+    void setSpoolDirectory(File path);
 
-    File getTemporaryDirectory();
+    File getSpoolDirectory();
 
-    void setTemporaryDirectory(String path);
+    void setSpoolDirectory(String path);
 
     /**
      * Threshold in bytes when overflow to disk is activated.
@@ -68,8 +68,8 @@ public interface StreamCachingStrategy {
      * <p/>
      * This option is default <tt>true</tt>
      */
-    void setRemoveTemporaryDirectoryWhenStopping(boolean remove);
+    void setRemoveSpoolDirectoryWhenStopping(boolean remove);
 
-    boolean isRemoveTemporaryDirectoryWhenStopping();
+    boolean isRemoveSpoolDirectoryWhenStopping();
 
 }
