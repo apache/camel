@@ -26,6 +26,15 @@ import org.apache.camel.Service;
 public interface StreamCachingStrategy extends Service {
 
     /**
+     * Sets whether the stream caching is enabled.
+     * <p/>
+     * <b>Notice:</b> This cannot be changed at runtime.
+     */
+    void setEnabled(boolean enabled);
+
+    boolean isEnabled();
+
+    /**
      * Sets the spool (temporary) directory to use for overflow and spooling to disk.
      * <p/>
      * If no spool directory has been explicit configured, then a temporary directory

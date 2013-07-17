@@ -45,7 +45,9 @@ public class ManagedStreamCachingStrategyTest extends ManagementTestSupport {
         }
         assertNotNull("Cannot find DefaultStreamCachingStrategy", name);
 
-        // is disabled by default
+        Boolean enabled = (Boolean) mbeanServer.getAttribute(name, "Enabled");
+        assertEquals(Boolean.TRUE, enabled);
+
         String dir = (String) mbeanServer.getAttribute(name, "SpoolDirectory");
         assertEquals("target/cachedir", dir);
 

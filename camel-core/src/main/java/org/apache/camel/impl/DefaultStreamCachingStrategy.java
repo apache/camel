@@ -47,6 +47,7 @@ public class DefaultStreamCachingStrategy extends org.apache.camel.support.Servi
     private static final Logger LOG = LoggerFactory.getLogger(DefaultStreamCachingStrategy.class);
 
     private CamelContext camelContext;
+    private boolean enabled;
     private File spoolDirectory;
     private long spoolThreshold = StreamCache.DEFAULT_SPOOL_THRESHOLD;
     private String spoolChiper;
@@ -59,6 +60,14 @@ public class DefaultStreamCachingStrategy extends org.apache.camel.support.Servi
 
     public void setCamelContext(CamelContext camelContext) {
         this.camelContext = camelContext;
+    }
+
+    public boolean isEnabled() {
+        return enabled;
+    }
+
+    public void setEnabled(boolean enabled) {
+        this.enabled = enabled;
     }
 
     public void setSpoolDirectory(String path) {
@@ -107,6 +116,11 @@ public class DefaultStreamCachingStrategy extends org.apache.camel.support.Servi
 
     @Override
     protected void doStart() throws Exception {
+        if (!enabled) {
+            LOG.info("StreamCaching is not enabled");
+            return;
+        }
+
         String bufferSize = camelContext.getProperty(BUFFER_SIZE);
         String hold = camelContext.getProperty(THRESHOLD);
         String chiper = camelContext.getProperty(CIPHER_TRANSFORMATION);

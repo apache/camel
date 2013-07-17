@@ -196,7 +196,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     private FactoryFinderResolver factoryFinderResolver = new DefaultFactoryFinderResolver();
     private FactoryFinder defaultFactoryFinder;
     private PropertiesComponent propertiesComponent;
-    private StreamCachingStrategy streamCachingStrategy = new DefaultStreamCachingStrategy();
+    private StreamCachingStrategy streamCachingStrategy;
     private final Map<String, FactoryFinder> factories = new HashMap<String, FactoryFinder>();
     private final Map<String, RouteService> routeServices = new LinkedHashMap<String, RouteService>();
     private final Map<String, RouteService> suspendedRouteServices = new LinkedHashMap<String, RouteService>();
@@ -1677,7 +1677,8 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         }
         if (streamCachingInUse) {
             // stream caching is in use so enable the strategy
-            addService(streamCachingStrategy);
+            getStreamCachingStrategy().setEnabled(true);
+            addService(getStreamCachingStrategy());
         }
 
         // start routes
@@ -2179,7 +2180,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                 // but only add if we haven't already registered it before (we dont want to double add when restarting)
                 boolean found = false;
                 for (RouteStartupOrder other : routeStartupOrder) {
-                    if (other.getRoute().getId() == route.getId()) {
+                    if (other.getRoute().getId().equals(route.getId())) {
                         found = true;
                         break;
                     }
@@ -2660,6 +2661,9 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     }
 
     public StreamCachingStrategy getStreamCachingStrategy() {
+        if (streamCachingStrategy == null) {
+            streamCachingStrategy = new DefaultStreamCachingStrategy();
+        }
         return streamCachingStrategy;
     }
 

@@ -20,6 +20,9 @@ import org.apache.camel.api.management.ManagedAttribute;
 
 public interface ManagedStreamCachingStrategyMBean {
 
+    @ManagedAttribute(description = "Whether stream caching is enabled")
+    boolean isEnabled();
+
     @ManagedAttribute(description = "Directory used when overflow and spooling to disk")
     String getSpoolDirectory();
 
