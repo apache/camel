@@ -31,6 +31,7 @@ import javax.crypto.CipherOutputStream;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.StreamCache;
+import org.apache.camel.spi.StreamCachingStrategy;
 import org.apache.camel.support.SynchronizationAdapter;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
@@ -50,22 +51,22 @@ import org.slf4j.LoggerFactory;
  * fileInputStream is closed after the exchange is completed.
  */
 public class CachedOutputStream extends OutputStream {
+    @Deprecated
     public static final String THRESHOLD = "CamelCachedOutputStreamThreshold";
+    @Deprecated
     public static final String BUFFER_SIZE = "CamelCachedOutputStreamBufferSize";
+    @Deprecated
     public static final String TEMP_DIR = "CamelCachedOutputStreamOutputDirectory";
+    @Deprecated
     public static final String CIPHER_TRANSFORMATION = "CamelCachedOutputStreamCipherTransformation";
     private static final transient Logger LOG = LoggerFactory.getLogger(CachedOutputStream.class);
 
+    private final StreamCachingStrategy strategy;
     private OutputStream currentStream;
     private boolean inMemory = true;
     private int totalLength;
     private File tempFile;
     private FileInputStreamCache fileInputStreamCache;
-
-    private long threshold = StreamCache.DEFAULT_SPOOL_THRESHOLD;
-    private int bufferSize = 2 * 1024;
-    private File outputDir;
-    private String cipherTransformation;
     private CipherPair ciphers;
 
     public CachedOutputStream(Exchange exchange) {
@@ -73,25 +74,8 @@ public class CachedOutputStream extends OutputStream {
     }
 
     public CachedOutputStream(Exchange exchange, boolean closedOnCompletion) {
-        // TODO: these options should be on StreamCachingStrategy
-        String bufferSize = exchange.getContext().getProperty(BUFFER_SIZE);
-        String hold = exchange.getContext().getProperty(THRESHOLD);
-        String dir = exchange.getContext().getProperty(TEMP_DIR);
-        
-        if (bufferSize != null) {
-            this.bufferSize = exchange.getContext().getTypeConverter().convertTo(Integer.class, bufferSize);
-        }
-        if (hold != null) {
-            this.threshold = exchange.getContext().getTypeConverter().convertTo(Long.class, hold);
-        }
-        if (dir != null) {
-            this.outputDir = exchange.getContext().getTypeConverter().convertTo(File.class, dir);
-        } else {
-            this.outputDir = exchange.getContext().getStreamCachingStrategy().getTemporaryDirectory();
-        }
-        this.cipherTransformation = exchange.getContext().getProperty(CIPHER_TRANSFORMATION);
-       
-        currentStream = new ByteArrayOutputStream(this.bufferSize);
+        this.strategy = exchange.getContext().getStreamCachingStrategy();
+        currentStream = new ByteArrayOutputStream(strategy.getBufferSize());
         
         if (closedOnCompletion) {
             // add on completion so we can cleanup after the exchange is done such as deleting temporary files
@@ -143,7 +127,7 @@ public class CachedOutputStream extends OutputStream {
 
     public void write(byte[] b, int off, int len) throws IOException {
         this.totalLength += len;
-        if (threshold > 0 && inMemory && totalLength > threshold && currentStream instanceof ByteArrayOutputStream) {
+        if (strategy.getSpoolThreshold() > 0 && inMemory && totalLength > strategy.getSpoolThreshold() && currentStream instanceof ByteArrayOutputStream) {
             pageToFileStream();
         }
         currentStream.write(b, off, len);
@@ -151,7 +135,7 @@ public class CachedOutputStream extends OutputStream {
 
     public void write(byte[] b) throws IOException {
         this.totalLength += b.length;
-        if (threshold > 0 && inMemory && totalLength > threshold && currentStream instanceof ByteArrayOutputStream) {
+        if (strategy.getSpoolThreshold() > 0 && inMemory && totalLength > strategy.getSpoolThreshold() && currentStream instanceof ByteArrayOutputStream) {
             pageToFileStream();
         }
         currentStream.write(b);
@@ -159,7 +143,7 @@ public class CachedOutputStream extends OutputStream {
 
     public void write(int b) throws IOException {
         this.totalLength++;
-        if (threshold > 0 && inMemory && totalLength > threshold && currentStream instanceof ByteArrayOutputStream) {
+        if (strategy.getSpoolThreshold() > 0 && inMemory && totalLength > strategy.getSpoolThreshold() && currentStream instanceof ByteArrayOutputStream) {
             pageToFileStream();
         }
         currentStream.write(b);
@@ -224,7 +208,7 @@ public class CachedOutputStream extends OutputStream {
         flush();
 
         ByteArrayOutputStream bout = (ByteArrayOutputStream)currentStream;
-        tempFile = FileUtil.createTempFile("cos", ".tmp", outputDir);
+        tempFile = FileUtil.createTempFile("cos", ".tmp", strategy.getTemporaryDirectory());
 
         LOG.trace("Creating temporary stream cache file: {}", tempFile);
 
@@ -236,9 +220,10 @@ public class CachedOutputStream extends OutputStream {
             inMemory = false;
         }
     }
-    
+
+    @Deprecated
     public int getBufferSize() {
-        return bufferSize;
+        return strategy.getBufferSize();
     }
 
     // This class will close the CachedOutputStream when it is closed
@@ -275,10 +260,10 @@ public class CachedOutputStream extends OutputStream {
 
     private OutputStream createOutputStream(File file) throws IOException {
         OutputStream out = new BufferedOutputStream(new FileOutputStream(file));
-        if (ObjectHelper.isNotEmpty(cipherTransformation)) {
+        if (ObjectHelper.isNotEmpty(strategy.getSpoolChiper())) {
             try {
                 if (ciphers == null) {
-                    ciphers = new CipherPair(cipherTransformation);
+                    ciphers = new CipherPair(strategy.getSpoolChiper());
                 }
             } catch (GeneralSecurityException e) {
                 throw new IOException(e.getMessage(), e);

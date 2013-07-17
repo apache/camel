@@ -23,7 +23,53 @@ import java.io.File;
  */
 public interface StreamCachingStrategy {
 
+    /**
+     * Sets the temporary directory to use for overflow and spooling to disk.
+     * <p/>
+     * If no temporary directory has been explicit configured, then a directory
+     * is created in the <tt>java.io.tmpdir</tt> directory.
+     */
     void setTemporaryDirectory(File path);
 
     File getTemporaryDirectory();
+
+    void setTemporaryDirectory(String path);
+
+    /**
+     * Threshold in bytes when overflow to disk is activated.
+     * <p/>
+     * The default threshold is {@link org.apache.camel.StreamCache#DEFAULT_SPOOL_THRESHOLD} bytes (eg 128kb).
+     * Use <tt>-1</tt> to disable overflow to disk.
+     */
+    void setSpoolThreshold(long threshold);
+
+    long getSpoolThreshold();
+
+    /**
+     * Sets the buffer size to use when copying between buffers.
+     * <p/>
+     * The default size is {@link org.apache.camel.util.IOHelper#DEFAULT_BUFFER_SIZE}
+     */
+    void setBufferSize(int bufferSize);
+
+    int getBufferSize();
+
+    /**
+     * Sets a chiper name to use when spooling to disk to write with encryption.
+     * <p/>
+     * By default the data is not encrypted.
+     */
+    void setSpoolChiper(String chiper);
+
+    String getSpoolChiper();
+
+    /**
+     * Whether to remove the temporary directory when stopping.
+     * <p/>
+     * This option is default <tt>true</tt>
+     */
+    void setRemoveTemporaryDirectoryWhenStopping(boolean remove);
+
+    boolean isRemoveTemporaryDirectoryWhenStopping();
+
 }

@@ -1676,12 +1676,6 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
             }
         }
         if (streamCachingInUse) {
-            Long threshold = CamelContextHelper.convertTo(this, Long.class, getProperties().get("CamelCachedOutputStreamThreshold"));
-            if (threshold == null) {
-                threshold = StreamCache.DEFAULT_SPOOL_THRESHOLD;
-            }
-            log.info("Stream caching is enabled, and using {} kb as threshold for overflow and spooling to disk store.", threshold / 1024);
-
             // stream caching is in use so enable the strategy
             addService(streamCachingStrategy);
         }

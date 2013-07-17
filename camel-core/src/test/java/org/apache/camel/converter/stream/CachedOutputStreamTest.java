@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.StreamCache;
@@ -38,17 +39,29 @@ public class CachedOutputStreamTest extends ContextTestSupport {
 
     private Exchange exchange;
 
+    @Override
+    protected CamelContext createCamelContext() throws Exception {
+        CamelContext context = super.createCamelContext();
+        context.setStreamCaching(true);
+        context.getStreamCachingStrategy().setTemporaryDirectory("target/cachedir");
+        context.getStreamCachingStrategy().setSpoolThreshold(16);
+        return context;
+    }
+
     protected void setUp() throws Exception {
         super.setUp();
-        
-        context.getProperties().put(CachedOutputStream.TEMP_DIR, "target/cachedir");
-        context.getProperties().put(CachedOutputStream.THRESHOLD, "16");
+
         deleteDirectory("target/cachedir");
         createDirectory("target/cachedir");
 
         exchange = new DefaultExchange(context);
         UnitOfWork uow = new DefaultUnitOfWork(exchange);
         exchange.setUnitOfWork(uow);
+    }
+
+    @Override
+    public boolean isUseRouteBuilder() {
+        return false;
     }
 
     private static String toString(InputStream input) throws IOException {
@@ -63,7 +76,9 @@ public class CachedOutputStreamTest extends ContextTestSupport {
         }
     }
 
-    public void testCacheStreamToFileAndCloseStream() throws IOException {       
+    public void testCacheStreamToFileAndCloseStream() throws Exception {
+        context.start();
+
         CachedOutputStream cos = new CachedOutputStream(exchange);
         cos.write(TEST_STRING.getBytes("UTF-8"));
         
@@ -96,9 +111,12 @@ public class CachedOutputStreamTest extends ContextTestSupport {
         IOHelper.close(cos);
     }
     
-    public void testCacheStreamToFileAndCloseStreamEncrypted() throws IOException {
+    public void testCacheStreamToFileAndCloseStreamEncrypted() throws Exception {
         // set some stream or 8-bit block cipher transformation name
-        exchange.getContext().getProperties().put(CachedOutputStream.CIPHER_TRANSFORMATION, "RC4");
+        context.getStreamCachingStrategy().setSpoolChiper("RC4");
+
+        context.start();
+
         CachedOutputStream cos = new CachedOutputStream(exchange);
         cos.write(TEST_STRING.getBytes("UTF-8"));
         cos.flush();
@@ -137,7 +155,9 @@ public class CachedOutputStreamTest extends ContextTestSupport {
         IOHelper.close(cos);
     }
 
-    public void testCacheStreamToFileCloseStreamBeforeDone() throws IOException {
+    public void testCacheStreamToFileCloseStreamBeforeDone() throws Exception {
+        context.start();
+
         CachedOutputStream cos = new CachedOutputStream(exchange);
         cos.write(TEST_STRING.getBytes("UTF-8"));
 
@@ -163,8 +183,10 @@ public class CachedOutputStreamTest extends ContextTestSupport {
         IOHelper.close(cos);
     }
     
-    public void testCacheStreamToMemory() throws IOException {
-        context.getProperties().put(CachedOutputStream.THRESHOLD, "1024");
+    public void testCacheStreamToMemory() throws Exception {
+        context.getStreamCachingStrategy().setSpoolThreshold(1024);
+
+        context.start();
 
         CachedOutputStream cos = new CachedOutputStream(exchange);
         cos.write(TEST_STRING.getBytes("UTF-8"));
@@ -181,9 +203,11 @@ public class CachedOutputStreamTest extends ContextTestSupport {
         IOHelper.close(cos);
     }
 
-    public void testCacheStreamToMemoryAsDiskIsdisabled() throws IOException {
+    public void testCacheStreamToMemoryAsDiskIsDisabled() throws Exception {
         // -1 disables disk based cache
-        context.getProperties().put(CachedOutputStream.THRESHOLD, "-1");
+        context.getStreamCachingStrategy().setSpoolThreshold(-1);
+
+        context.start();
 
         CachedOutputStream cos = new CachedOutputStream(exchange);
         cos.write(TEST_STRING.getBytes("UTF-8"));
@@ -202,14 +226,16 @@ public class CachedOutputStreamTest extends ContextTestSupport {
         IOHelper.close(cos);
     }
     
-    public void testCachedOutputStreamCustomBufferSize() throws IOException {
+    public void testCachedOutputStreamCustomBufferSize() throws Exception {
         // double the default buffer size
-        context.getProperties().put(CachedOutputStream.BUFFER_SIZE, "4096");
-        
+        context.getStreamCachingStrategy().setBufferSize(8192);
+
+        context.start();
+
         CachedOutputStream cos = new CachedOutputStream(exchange);
         cos.write(TEST_STRING.getBytes("UTF-8"));
 
-        assertEquals("we should have a custom buffer size", cos.getBufferSize(), 4096);
+        assertEquals("we should have a custom buffer size", cos.getBufferSize(), 8192);
         
         // make sure things still work after custom buffer size set
         File file = new File("target/cachedir");

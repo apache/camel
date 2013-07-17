@@ -79,6 +79,7 @@ import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.PackageScanFilter;
 import org.apache.camel.spi.ProcessorFactory;
 import org.apache.camel.spi.ShutdownStrategy;
+import org.apache.camel.spi.StreamCachingStrategy;
 import org.apache.camel.spi.ThreadPoolFactory;
 import org.apache.camel.spi.ThreadPoolProfile;
 import org.apache.camel.spi.UuidGenerator;
@@ -788,6 +789,11 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         if (nodeIdFactory != null) {
             LOG.info("Using custom NodeIdFactory: " + nodeIdFactory);
             getContext().setNodeIdFactory(nodeIdFactory);
+        }
+        StreamCachingStrategy streamCachingStrategy = getBeanForType(StreamCachingStrategy.class);
+        if (streamCachingStrategy != null) {
+            LOG.info("Using custom StreamCachingStrategy: " + streamCachingStrategy);
+            getContext().setStreamCachingStrategy(streamCachingStrategy);
         }
     }
 }

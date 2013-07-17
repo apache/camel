@@ -19,9 +19,6 @@ package org.apache.camel.converter.stream;
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.io.Serializable;
-import java.util.HashMap;
-import java.util.Map;
-
 import javax.xml.transform.Source;
 import javax.xml.transform.sax.SAXSource;
 import javax.xml.transform.stream.StreamSource;
@@ -51,6 +48,8 @@ public class StreamCacheConverterTest extends ContextTestSupport {
     }
     
     public void testConvertToStreamCache() throws Exception {
+        context.start();
+
         ByteArrayInputStream inputStream = new ByteArrayInputStream(MESSAGE.getBytes());
         StreamCache streamCache = StreamCacheConverter.convertToStreamCache(new SAXSource(new InputSource(inputStream)), exchange);
         String message = exchange.getContext().getTypeConverter().convertTo(String.class, streamCache);
@@ -59,6 +58,8 @@ public class StreamCacheConverterTest extends ContextTestSupport {
     }
 
     public void testConvertToStreamCacheStreamSource() throws Exception {
+        context.start();
+
         StreamSource source = new StreamSource(getTestFileStream());
         StreamCache cache = StreamCacheConverter.convertToStreamCache(source, exchange);
         //assert re-readability of the cached StreamSource
@@ -69,6 +70,8 @@ public class StreamCacheConverterTest extends ContextTestSupport {
     }
 
     public void testConvertToStreamCacheInputStream() throws Exception {
+        context.start();
+
         InputStream is = getTestFileStream();
         InputStream cache = (InputStream)StreamCacheConverter.convertToStreamCache(is, exchange);
         //assert re-readability of the cached InputStream
@@ -77,10 +80,10 @@ public class StreamCacheConverterTest extends ContextTestSupport {
     }
     
     public void testConvertToStreamCacheInputStreamWithFileCache() throws Exception {
-        // set up the properties
-        Map<String, String> properties = new HashMap<String, String>();
-        properties.put(CachedOutputStream.THRESHOLD, "1");
-        exchange.getContext().setProperties(properties);
+        exchange.getContext().getStreamCachingStrategy().setSpoolThreshold(1);
+
+        context.start();
+
         InputStream is = getTestFileStream();
         InputStream cache = (InputStream)StreamCacheConverter.convertToStreamCache(is, exchange);
         assertNotNull(IOConverter.toString(cache, null));
@@ -96,6 +99,8 @@ public class StreamCacheConverterTest extends ContextTestSupport {
     }
 
     public void testConvertToSerializable() throws Exception {
+        context.start();
+
         InputStream is = getTestFileStream();
         StreamCache cache = StreamCacheConverter.convertToStreamCache(is, exchange);
         Serializable ser = StreamCacheConverter.convertToSerializable(cache, exchange);
@@ -103,6 +108,8 @@ public class StreamCacheConverterTest extends ContextTestSupport {
     }
 
     public void testConvertToByteArray() throws Exception {
+        context.start();
+
         InputStream is = getTestFileStream();
         StreamCache cache = StreamCacheConverter.convertToStreamCache(is, exchange);
         byte[] bytes = StreamCacheConverter.convertToByteArray(cache, exchange);
@@ -113,5 +120,10 @@ public class StreamCacheConverterTest extends ContextTestSupport {
         InputStream answer = getClass().getClassLoader().getResourceAsStream(TEST_FILE);
         assertNotNull("Should have found the file: " + TEST_FILE + " on the classpath", answer);
         return answer;
+    }
+
+    @Override
+    public boolean isUseRouteBuilder() {
+        return false;
     }
 }
