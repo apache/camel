@@ -18,10 +18,12 @@ package org.apache.camel.spi;
 
 import java.io.File;
 
+import org.apache.camel.Service;
+
 /**
  * Strategy for using <a href="http://camel.apache.org/stream-caching.html">stream caching</a>.
  */
-public interface StreamCachingStrategy {
+public interface StreamCachingStrategy extends Service {
 
     /**
      * Sets the spool (temporary) directory to use for overflow and spooling to disk.
