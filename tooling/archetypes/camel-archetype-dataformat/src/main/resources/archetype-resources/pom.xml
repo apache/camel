@@ -21,7 +21,7 @@
 
   <groupId>${groupId}</groupId>
   <artifactId>${artifactId}</artifactId>
-  <packaging>jar</packaging>
+  <packaging>bundle</packaging>
   <version>${version}</version>
 
   <name>Camel ${name} Data format</name>
@@ -71,6 +71,7 @@
     <defaultGoal>install</defaultGoal>
 
     <plugins>
+
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-compiler-plugin</artifactId>
@@ -80,6 +81,7 @@
           <target>1.6</target>
         </configuration>
       </plugin>
+
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-resources-plugin</artifactId>
@@ -88,6 +90,21 @@
           <encoding>UTF-8</encoding>
         </configuration>
       </plugin>
+
+      <!-- to generate the MANIFEST-FILE of the bundle -->
+      <plugin>
+        <groupId>org.apache.felix</groupId>
+        <artifactId>maven-bundle-plugin</artifactId>
+        <version>${maven-bundle-plugin-version}</version>
+        <extensions>true</extensions>
+        <configuration>
+          <instructions>
+            <Bundle-SymbolicName>${groupId}.${artifactId}</Bundle-SymbolicName>
+            <Export-Service>org.apache.camel.spi.DataFormatResolver;dataformat=${scheme}</Export-Service>
+          </instructions>
+        </configuration>
+      </plugin>
+
     </plugins>
   </build>
 
