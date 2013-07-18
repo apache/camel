@@ -40,6 +40,7 @@ import org.apache.camel.core.xml.AbstractCamelContextFactoryBean;
 import org.apache.camel.core.xml.CamelJMXAgentDefinition;
 import org.apache.camel.core.xml.CamelPropertyPlaceholderDefinition;
 import org.apache.camel.core.xml.CamelServiceExporterDefinition;
+import org.apache.camel.core.xml.CamelStreamCachingStrategyDefinition;
 import org.apache.camel.model.ContextScanDefinition;
 import org.apache.camel.model.InterceptDefinition;
 import org.apache.camel.model.InterceptFromDefinition;
@@ -121,6 +122,8 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Blu
     private ContextScanDefinition contextScan;
     @XmlElement(name = "jmxAgent", type = CamelJMXAgentDefinition.class, required = false)
     private CamelJMXAgentDefinition camelJMXAgent;
+    @XmlElement(name = "streamCaching", type = CamelStreamCachingStrategyDefinition.class, required = false)
+    private CamelStreamCachingStrategyDefinition camelStreamCachingStrategy;
     @XmlElements({
         @XmlElement(name = "template", type = CamelProducerTemplateFactoryBean.class, required = false),
         @XmlElement(name = "consumerTemplate", type = CamelConsumerTemplateFactoryBean.class, required = false),
@@ -505,6 +508,14 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Blu
 
     public void setCamelJMXAgent(CamelJMXAgentDefinition camelJMXAgent) {
         this.camelJMXAgent = camelJMXAgent;
+    }
+
+    public CamelStreamCachingStrategyDefinition getCamelStreamCachingStrategy() {
+        return camelStreamCachingStrategy;
+    }
+
+    public void setCamelStreamCachingStrategy(CamelStreamCachingStrategyDefinition camelStreamCachingStrategy) {
+        this.camelStreamCachingStrategy = camelStreamCachingStrategy;
     }
 
     public List<?> getBeans() {

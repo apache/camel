@@ -18,3 +18,4 @@ CamelJMXAgentDefinition
 CamelPropertyPlaceholderDefinition
 CamelProxyFactoryDefinition
 CamelServiceExporterDefinition
+CamelStreamCachingStrategyDefinition

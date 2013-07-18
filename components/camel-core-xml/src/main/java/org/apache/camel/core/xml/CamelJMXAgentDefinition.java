@@ -36,79 +36,79 @@ public class CamelJMXAgentDefinition extends IdentifiedType {
     /**
      * Disable JMI (default false)
      */
-    @XmlAttribute(required = false)
+    @XmlAttribute
     private String disabled = "false";
 
     /**
      * Only register processor if a custom id was defined for it.
      */
-    @XmlAttribute(required = false)
+    @XmlAttribute
     private String onlyRegisterProcessorWithCustomId = "false";
 
     /**
      * RMI connector registry port (default 1099)
      */
-    @XmlAttribute(required = false)
+    @XmlAttribute
     private String registryPort;
 
     /**
      * RMI connector server port (default -1 not used)
      */
-    @XmlAttribute(required = false)
+    @XmlAttribute
     private String connectorPort;
 
     /**
      * MBean server default domain name (default org.apache.camel)
      */
-    @XmlAttribute(required = false)
+    @XmlAttribute
     private String mbeanServerDefaultDomain;
 
     /**
      * MBean object domain name (default org.apache.camel)
      */
-    @XmlAttribute(required = false)
+    @XmlAttribute
     private String mbeanObjectDomainName;
 
     /**
      * JMX Service URL path (default /jmxrmi)
      */
-    @XmlAttribute(required = false)
+    @XmlAttribute
     private String serviceUrlPath;
 
     /**
      * A flag that indicates whether the agent should be created
      */
-    @XmlAttribute(required = false)
+    @XmlAttribute
     private String createConnector = "true";
 
     /**
      * A flag that indicates whether the platform mbean server should be used
      */
-    @XmlAttribute(required = false)
+    @XmlAttribute
     private String usePlatformMBeanServer = "true";
 
     /**
      * A flag that indicates whether to register mbeans always
      */
-    @XmlAttribute(required = false)
+    @XmlAttribute
     private String registerAlways;
 
     /**
      * A flag that indicates whether to register mbeans when starting new routes
      */
-    @XmlAttribute(required = false)
+    @XmlAttribute
     private String registerNewRoutes = "true";
 
     /**
      * Level of granularity for performance statistics enabled
      */
-    @XmlAttribute(required = false)
+    @XmlAttribute
     private ManagementStatisticsLevel statisticsLevel = ManagementStatisticsLevel.All;
 
     /**
      * A flag that indicates whether Load statistics is enabled
      */
-    @XmlAttribute(required = false)
+    @XmlAttribute
     private String loadStatisticsEnabled;
 
     public String getDisabled() {
