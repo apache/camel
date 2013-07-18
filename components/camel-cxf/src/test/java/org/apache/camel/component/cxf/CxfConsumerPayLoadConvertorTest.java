@@ -16,14 +16,12 @@
  */
 package org.apache.camel.component.cxf;
 
-import java.util.ArrayList;
 import java.util.List;
 
 import javax.xml.transform.Source;
-import javax.xml.transform.dom.DOMSource;
 
-import org.w3c.dom.Document;
 import org.w3c.dom.Element;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
@@ -31,30 +29,9 @@ import org.apache.camel.converter.jaxp.XmlConverter;
 import org.apache.cxf.binding.soap.SoapHeader;
 
 
-public class CxfConsumerPayloadTest extends CxfConsumerMessageTest {
-        
-    protected static final String ECHO_RESPONSE = "<ns1:echoResponse xmlns:ns1=\"http://cxf.component.camel.apache.org/\">"
-            + "<return xmlns=\"http://cxf.component.camel.apache.org/\">echo Hello World!</return>"
-            + "</ns1:echoResponse>";
-    protected static final String ECHO_BOOLEAN_RESPONSE = "<ns1:echoBooleanResponse xmlns:ns1=\"http://cxf.component.camel.apache.org/\">"
-            + "<return xmlns=\"http://cxf.component.camel.apache.org/\">true</return>"
-            + "</ns1:echoBooleanResponse>";
-    protected static final String ECHO_REQUEST = "<ns1:echo xmlns:ns1=\"http://cxf.component.camel.apache.org/\">"
-            + "<arg0 xmlns=\"http://cxf.component.camel.apache.org/\">Hello World!</arg0></ns1:echo>";
-    protected static final String ECHO_BOOLEAN_REQUEST = "<ns1:echoBoolean xmlns:ns1=\"http://cxf.component.camel.apache.org/\">"
-            + "<arg0 xmlns=\"http://cxf.component.camel.apache.org/\">true</arg0></ns1:echoBoolean>";
-    
-    protected static final String ELEMENT_NAMESPACE = "http://cxf.component.camel.apache.org/";
-    
-    protected void checkRequest(String expect, String request) {
-        if (expect.equals("ECHO_REQUEST")) {
-            assertEquals("Get a wrong request", ECHO_REQUEST, request);
-        } else {
-            assertEquals("Get a wrong request", ECHO_BOOLEAN_REQUEST, request);
-        }
-    }
 
-    // START SNIPPET: payload
+public class CxfConsumerPayLoadConvertorTest extends CxfConsumerPayloadTest {
+    
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
@@ -63,10 +40,8 @@ public class CxfConsumerPayloadTest extends CxfConsumerMessageTest {
                     public void process(final Exchange exchange) throws Exception {
                         CxfPayload<SoapHeader> requestPayload = exchange.getIn().getBody(CxfPayload.class);
                         List<Source> inElements = requestPayload.getBodySources();
-                        List<Source> outElements = new ArrayList<Source>();
                         // You can use a customer toStringConverter to turn a CxfPayLoad message into String as you want                        
                         String request = exchange.getIn().getBody(String.class);
-                        XmlConverter converter = new XmlConverter();
                         String documentString = ECHO_RESPONSE;
                         
                         Element in = new XmlConverter().toDOMElement(inElements.get(0));
@@ -81,16 +56,12 @@ public class CxfConsumerPayloadTest extends CxfConsumerMessageTest {
                             documentString = ECHO_RESPONSE;
                             checkRequest("ECHO_REQUEST", request);
                         }
-                        Document outDocument = converter.toDOMDocument(documentString);
-                        outElements.add(new DOMSource(outDocument.getDocumentElement()));
-                        // set the payload header with null
-                        CxfPayload<SoapHeader> responsePayload = new CxfPayload<SoapHeader>(null, outElements, null);
-                        exchange.getOut().setBody(responsePayload); 
+                        // just set the documentString into to the message body
+                        exchange.getOut().setBody(documentString); 
                     }
                 });
             }
         };
     }
-    // END SNIPPET: payload
 
 }
