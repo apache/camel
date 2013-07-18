@@ -32,7 +32,6 @@ import org.slf4j.LoggerFactory;
  */
 public class DefaultStreamCachingStrategy extends org.apache.camel.support.ServiceSupport implements CamelContextAware, StreamCachingStrategy {
 
-    // TODO: Add JMX management
     // TODO: Maybe use #syntax# for default temp dir so ppl can easily configure this
 
     @Deprecated
@@ -117,7 +116,7 @@ public class DefaultStreamCachingStrategy extends org.apache.camel.support.Servi
     @Override
     protected void doStart() throws Exception {
         if (!enabled) {
-            LOG.info("StreamCaching is not enabled");
+            LOG.debug("StreamCaching is not enabled");
             return;
         }
 
@@ -147,28 +146,41 @@ public class DefaultStreamCachingStrategy extends org.apache.camel.support.Servi
             LOG.warn("Configuring of StreamCaching using CamelContext properties is deprecated - use StreamCachingStrategy instead.");
         }
 
-        LOG.info("StreamCaching in use with {}", this.toString());
-
-        // create random temporary directory if none has been created
-        if (spoolDirectory == null) {
-            spoolDirectory = FileUtil.createNewTempDir();
-            LOG.info("Created temporary spool directory {}", spoolDirectory);
-        } else {
-            if (!spoolDirectory.exists()) {
+        // if we can overflow to disk then make sure directory exists / is created
+        if (spoolThreshold > 0) {
+            // create random temporary directory if none has been created
+            if (spoolDirectory == null) {
+                spoolDirectory = FileUtil.createNewTempDir();
+                LOG.debug("Created temporary spool directory: {}", spoolDirectory);
+            } else if (spoolDirectory.exists()) {
+                if (spoolDirectory.isDirectory()) {
+                    LOG.debug("Using spool directory: {}", spoolDirectory);
+                } else {
+                    LOG.warn("Spool directory: {} is not a directory. This may cause problems spooling to disk for the stream caching!", spoolDirectory);
+                }
+            } else {
                 boolean created = spoolDirectory.mkdirs();
                 if (!created) {
-                    LOG.warn("Cannot create spool directory {}", spoolDirectory);
+                    LOG.warn("Cannot create spool directory: {}. This may cause problems spooling to disk for the stream caching!", spoolDirectory);
                 } else {
-                    LOG.info("Created spool directory {}", spoolDirectory);
+                    LOG.debug("Created spool directory: {}", spoolDirectory);
                 }
             }
+        }
+
+        LOG.debug("StreamCaching configuration {}", this.toString());
+
+        if (spoolThreshold > 0) {
+            LOG.info("StreamCaching in use and overflow to disk enabled when > {} bytes to directory: {}", spoolThreshold, spoolDirectory);
+        } else {
+            LOG.info("StreamCaching in use with no overflow to disk (memory only)");
         }
     }
 
     @Override
     protected void doStop() throws Exception {
-        if (spoolDirectory != null  && isRemoveSpoolDirectoryWhenStopping()) {
-            LOG.info("Removing spool directory {}", spoolDirectory);
+        if (spoolThreshold > 0 & spoolDirectory != null  && isRemoveSpoolDirectoryWhenStopping()) {
+            LOG.debug("Removing spool directory: {}", spoolDirectory);
             FileUtil.removeDir(spoolDirectory);
         }
     }
