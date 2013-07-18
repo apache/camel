@@ -53,6 +53,25 @@ public class JdbcRSMetaDataTest extends AbstractJdbcTestSupport {
         assertTrue(columnNames.contains("NAME"));
     }
 
+    @Test
+    public void testJdbcRSMetaDataEmptyResult() {
+        Endpoint directHelloEndpoint = context.getEndpoint("direct:hello");
+        Exchange directHelloExchange = directHelloEndpoint.createExchange();
+
+        directHelloExchange.getIn().setBody("select * from customer where id = 'cust0'");
+
+        Exchange out = template.send(directHelloEndpoint, directHelloExchange);
+        assertNotNull(out);
+        assertNotNull(out.getOut());
+
+        List<Map<String, Object>> returnValues = out.getOut().getBody(List.class);
+        assertNotNull(returnValues);
+        assertEquals(0, returnValues.size());
+
+        Set<String> columnNames = (Set<String>) out.getOut().getHeader(JdbcConstants.JDBC_COLUMN_NAMES);
+        assertNull(columnNames);
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
