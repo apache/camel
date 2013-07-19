@@ -58,10 +58,12 @@ public final class ServiceHelper {
     }
     
     /**
-     * Starts all of the given services
+     * Start the given service
      */
     public static void startService(Service service) throws Exception {
-        service.start();
+        if (service != null) {
+            service.start();
+        }
     }
 
     /**
