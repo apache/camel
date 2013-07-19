@@ -494,8 +494,8 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
             return;
         }
         if (getCurrentDirectory().startsWith(path)) {
-            // use relative path
-            String p = getCurrentDirectory().substring(path.length());
+            // extract the path segment relative to the target path and make sure it keeps the preceding '/' for the regex op
+            String p = getCurrentDirectory().substring(path.length() - (path.endsWith("/") ?  1 : 0));
             if (p.length() == 0) {
                 return;
             }
