@@ -77,4 +77,15 @@ public interface ManagementNameStrategy {
      * @return <tt>true</tt> for fixed names, <tt>false</tt> for names which can re-calculated
      */
     boolean isFixedName();
+
+    /**
+     * Creates a new management name with the given pattern.
+     *
+     * @param pattern the pattern
+     * @param name    the name
+     * @param invalidCheck whether to check for invalid pattern
+     * @return the management name
+     * @throws IllegalArgumentException if the pattern or name is invalid or empty
+     */
+    String resolveManagementName(String pattern, String name, boolean invalidCheck);
 }

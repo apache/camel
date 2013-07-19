@@ -25,6 +25,7 @@ import java.util.regex.Pattern;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.util.FilePathResolver;
 import org.apache.camel.util.LRUSoftCache;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -66,10 +67,6 @@ public class PropertiesComponent extends DefaultComponent {
      * in the OSGi service registry
      */
     public static final String OVERRIDE_PROPERTIES = PropertiesComponent.class.getName() + ".OverrideProperties";
-
-    // must be non greedy patterns
-    private static final Pattern ENV_PATTERN = Pattern.compile("\\$\\{env:(.*?)\\}", Pattern.DOTALL);
-    private static final Pattern SYS_PATTERN = Pattern.compile("\\$\\{(.*?)\\}", Pattern.DOTALL);
 
     private static final transient Logger LOG = LoggerFactory.getLogger(PropertiesComponent.class);
     private final Map<CacheKey, Properties> cacheMap = new LRUSoftCache<CacheKey, Properties>(1000);
@@ -292,33 +289,7 @@ public class PropertiesComponent extends DefaultComponent {
             String location = locations[i];
             LOG.trace("Parsing location: {} ", location);
 
-            Matcher matcher = ENV_PATTERN.matcher(location);
-            while (matcher.find()) {
-                String key = matcher.group(1);
-                String value = System.getenv(key);
-                if (ObjectHelper.isEmpty(value)) {
-                    throw new IllegalArgumentException("Cannot find system environment with key: " + key);
-                }
-                // must quote the replacement to have it work as literal replacement
-                value = Matcher.quoteReplacement(value);
-                location = matcher.replaceFirst(value);
-                // must match again as location is changed
-                matcher = ENV_PATTERN.matcher(location);
-            }
-
-            matcher = SYS_PATTERN.matcher(location);
-            while (matcher.find()) {
-                String key = matcher.group(1);
-                String value = System.getProperty(key);
-                if (ObjectHelper.isEmpty(value)) {
-                    throw new IllegalArgumentException("Cannot find JVM system property with key: " + key);
-                }
-                // must quote the replacement to have it work as literal replacement
-                value = Matcher.quoteReplacement(value);
-                location = matcher.replaceFirst(value);
-                // must match again as location is changed
-                matcher = SYS_PATTERN.matcher(location);
-            }
+            location = FilePathResolver.resolvePath(location);
 
             LOG.debug("Parsed location: {} ", location);
             answer[i] = location;

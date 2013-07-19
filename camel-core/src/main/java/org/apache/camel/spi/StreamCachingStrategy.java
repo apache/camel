@@ -86,6 +86,11 @@ public interface StreamCachingStrategy extends Service {
     boolean isRemoveSpoolDirectoryWhenStopping();
 
     /**
+     * Gets the counter for number of {@link StreamCache} created.
+     */
+    long getCacheCounter();
+
+    /**
      * Caches the body aas a {@link StreamCache}.
      *
      * @param exchange the exchange

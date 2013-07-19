@@ -76,11 +76,13 @@ public final class FileUtil {
         return osName.indexOf("windows") > -1;
     }
 
+    @Deprecated
     public static File createTempFile(String prefix, String suffix) throws IOException {
         return createTempFile(prefix, suffix, null);
     }
 
     public static File createTempFile(String prefix, String suffix, File parentDir) throws IOException {
+        // TODO: parentDir should be mandatory
         File parent = (parentDir == null) ? getDefaultTempDir() : parentDir;
             
         if (suffix == null) {
@@ -280,6 +282,7 @@ public final class FileUtil {
         return sb.toString();
     }
 
+    @Deprecated
     private static synchronized File getDefaultTempDir() {
         if (defaultTempDir != null && defaultTempDir.exists()) {
             return defaultTempDir;
@@ -302,7 +305,8 @@ public final class FileUtil {
     /**
      * Creates a new temporary directory in the <tt>java.io.tmpdir</tt> directory.
      */
-    public static File createNewTempDir() {
+    @Deprecated
+    private static File createNewTempDir() {
         String s = System.getProperty("java.io.tmpdir");
         File checkExists = new File(s);
         if (!checkExists.exists()) {
@@ -328,6 +332,7 @@ public final class FileUtil {
     /**
      * Shutdown and cleanup the temporary directory and removes any shutdown hooks in use.
      */
+    @Deprecated
     public static synchronized void shutdown() {
         if (defaultTempDir != null && defaultTempDir.exists()) {
             removeDir(defaultTempDir);

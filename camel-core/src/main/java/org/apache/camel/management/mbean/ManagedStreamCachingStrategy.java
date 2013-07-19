@@ -81,4 +81,8 @@ public class ManagedStreamCachingStrategy extends ManagedService implements Mana
     public boolean isRemoveSpoolDirectoryWhenStopping() {
         return streamCachingStrategy.isRemoveSpoolDirectoryWhenStopping();
     }
+
+    public long getCacheCounter() {
+        return streamCachingStrategy.getCacheCounter();
+    }
 }

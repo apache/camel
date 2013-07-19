@@ -69,7 +69,7 @@ public class DefaultManagementNameStrategy implements ManagementNameStrategy {
                 // fallback and use the default pattern which is the same name as the CamelContext has been given
                 pattern = defaultPattern;
             }
-            name = resolveManagementName(pattern, camelContext.getName());
+            name = resolveManagementName(pattern, camelContext.getName(), true);
         }
         return name;
     }
@@ -86,7 +86,7 @@ public class DefaultManagementNameStrategy implements ManagementNameStrategy {
                 // use a pattern that has a counter to ensure unique next name
                 pattern = nextPattern;
             }
-            return resolveManagementName(pattern, camelContext.getName());
+            return resolveManagementName(pattern, camelContext.getName(), true);
         }
     }
 
@@ -109,7 +109,7 @@ public class DefaultManagementNameStrategy implements ManagementNameStrategy {
      * @return the management name
      * @throws IllegalArgumentException if the pattern or name is invalid or empty
      */
-    protected String resolveManagementName(String pattern, String name) {
+    public String resolveManagementName(String pattern, String name, boolean invalidCheck) {
         ObjectHelper.notEmpty(pattern, "pattern");
         ObjectHelper.notEmpty(name, "name");
 
@@ -131,7 +131,7 @@ public class DefaultManagementNameStrategy implements ManagementNameStrategy {
         answer = customResolveManagementName(pattern, answer);
 
         // are there any #word# combos left, if so they should be considered invalid tokens
-        if (INVALID_PATTERN.matcher(answer).matches()) {
+        if (invalidCheck && INVALID_PATTERN.matcher(answer).matches()) {
             throw new IllegalArgumentException("Pattern is invalid: " + pattern);
         }
 
