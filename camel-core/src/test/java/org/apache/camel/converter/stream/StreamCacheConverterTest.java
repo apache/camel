@@ -75,8 +75,10 @@ public class StreamCacheConverterTest extends ContextTestSupport {
         InputStream is = getTestFileStream();
         InputStream cache = (InputStream)StreamCacheConverter.convertToStreamCache(is, exchange);
         //assert re-readability of the cached InputStream
-        assertNotNull(IOConverter.toString(cache, null));
-        assertNotNull(IOConverter.toString(cache, null));
+        String data = IOConverter.toString(cache, null);
+        cache.reset();
+        String data2 = IOConverter.toString(cache, null);
+        assertEquals(data, data2);
     }
     
     public void testConvertToStreamCacheInputStreamWithFileCache() throws Exception {

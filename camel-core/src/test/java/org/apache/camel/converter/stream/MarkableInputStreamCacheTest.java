@@ -16,24 +16,26 @@
  */
 package org.apache.camel.converter.stream;
 
-import java.io.ByteArrayInputStream;
-import java.io.IOException;
-import java.io.OutputStream;
+import java.io.ByteArrayOutputStream;
 
-import org.apache.camel.StreamCache;
+import org.apache.camel.ContextTestSupport;
+import org.apache.camel.util.IOHelper;
 
 /**
- * @deprecated  use {@link MarkableInputStreamCache} instead.
+ * @version 
  */
-@Deprecated
-public class InputStreamCache extends ByteArrayInputStream implements StreamCache {
+public class MarkableInputStreamCacheTest extends ContextTestSupport {
 
-    public InputStreamCache(byte[] data) {
-        super(data);
-    }
+    public void testInputStreamCache() throws Exception {
+        MarkableInputStreamCache cache = new MarkableInputStreamCache("<foo>bar</foo>".getBytes());
 
-    public void writeTo(OutputStream os) throws IOException {
-        os.write(buf, pos, count - pos);
+        ByteArrayOutputStream bos = new ByteArrayOutputStream();
+        cache.writeTo(bos);
+
+        String s = context.getTypeConverter().convertTo(String.class, bos);
+        assertEquals("<foo>bar</foo>", s);
+
+        IOHelper.close(cache, bos);
     }
 
 }

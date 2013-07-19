@@ -16,26 +16,40 @@
  */
 package org.apache.camel.converter.stream;
 
-import java.io.ByteArrayOutputStream;
+import java.io.ByteArrayInputStream;
+import java.io.FilterInputStream;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.OutputStream;
 
-import org.apache.camel.ContextTestSupport;
+import org.apache.camel.StreamCache;
 import org.apache.camel.util.IOHelper;
 
 /**
- * @version 
+ * A {@link StreamCache} for {@link InputStream} that supports mark.
  */
-public class InputStreamCacheTest extends ContextTestSupport {
+public final class MarkableInputStreamCache extends FilterInputStream implements StreamCache {
 
-    public void testInputStreamCache() throws Exception {
-        InputStreamCache cache = new InputStreamCache("<foo>bar</foo>".getBytes());
-
-        ByteArrayOutputStream bos = new ByteArrayOutputStream();
-        cache.writeTo(bos);
-
-        String s = context.getTypeConverter().convertTo(String.class, bos);
-        assertEquals("<foo>bar</foo>", s);
-
-        IOHelper.close(cache, bos);
+    public MarkableInputStreamCache(byte[] data) {
+        this(new ByteArrayInputStream(data));
+        mark(data.length);
     }
 
+    public MarkableInputStreamCache(InputStream in) {
+        super(in);
+    }
+
+    @Override
+    public void reset() {
+        try {
+            in.reset();
+        } catch (IOException e) {
+            // ignore
+        }
+    }
+
+    @Override
+    public void writeTo(OutputStream os) throws IOException {
+        IOHelper.copyAndCloseInput(in, os);
+    }
 }

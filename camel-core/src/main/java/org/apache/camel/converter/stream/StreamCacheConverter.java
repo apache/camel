@@ -70,9 +70,13 @@ public final class StreamCacheConverter {
 
     @Converter
     public static StreamCache convertToStreamCache(InputStream stream, Exchange exchange) throws IOException {
-        CachedOutputStream cos = new CachedOutputStream(exchange);
-        IOHelper.copyAndCloseInput(stream, cos);
-        return cos.getStreamCache();
+        if (stream.markSupported()) {
+            return new MarkableInputStreamCache(stream);
+        } else {
+            CachedOutputStream cos = new CachedOutputStream(exchange);
+            IOHelper.copyAndCloseInput(stream, cos);
+            return cos.getStreamCache();
+        }
     }
 
     @Converter
