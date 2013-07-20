@@ -21,15 +21,12 @@ import java.io.OutputStream;
 import java.io.StringReader;
 
 import org.apache.camel.StreamCache;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * A {@link org.apache.camel.StreamCache} for String {@link java.io.Reader}s
  */
 public class ReaderCache extends StringReader implements StreamCache {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(ReaderCache.class);
     private final String data;
 
     public ReaderCache(String data) {
@@ -56,6 +53,10 @@ public class ReaderCache extends StringReader implements StreamCache {
 
     public boolean inMemory() {
         return true;
+    }
+
+    public long length() {
+        return data.length();
     }
 
     String getData() {

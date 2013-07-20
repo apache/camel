@@ -44,4 +44,7 @@ public final class InputStreamCache extends ByteArrayInputStream implements Stre
         return true;
     }
 
+    public long length() {
+        return count;
+    }
 }

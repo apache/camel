@@ -51,4 +51,14 @@ public interface StreamCache {
      */
     boolean inMemory();
 
+    /**
+     * Gets the length of the cached stream.
+     * <p/>
+     * The implementation may return <tt>0</tt> in cases where the length
+     * cannot be computed, or if the implementation does not support this.
+     *
+     * @return number of bytes in the cache.
+     */
+    long length();
+
 }

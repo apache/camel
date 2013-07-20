@@ -37,6 +37,7 @@ public class DefaultStreamCachingStrategy extends org.apache.camel.support.Servi
 
     // TODO: logic for spool to disk in this class so we can control this
     // TODO: add memory based watermarks for spool to disk
+    // TODO: add statistics on|off option and also have avg size stats
 
     @Deprecated
     public static final String THRESHOLD = "CamelCachedOutputStreamThreshold";
@@ -59,6 +60,8 @@ public class DefaultStreamCachingStrategy extends org.apache.camel.support.Servi
     private boolean removeSpoolDirectoryWhenStopping = true;
     private volatile long cacheMemoryCounter;
     private volatile long cacheSpoolCounter;
+    private volatile long cacheMemorySize;
+    private volatile long cacheSpoolSize;
 
     public CamelContext getCamelContext() {
         return camelContext;
@@ -128,14 +131,28 @@ public class DefaultStreamCachingStrategy extends org.apache.camel.support.Servi
         return cacheSpoolCounter;
     }
 
+    public long getCacheMemorySize() {
+        return cacheMemorySize;
+    }
+
+    public long getCacheSpoolSize() {
+        return cacheSpoolSize;
+    }
+
     public StreamCache cache(Exchange exchange) {
         StreamCache cache = exchange.getIn().getBody(StreamCache.class);
-        if (cache != null) {
-            if (cache.inMemory()) {
-                cacheMemoryCounter++;
-            } else {
-                cacheSpoolCounter++;
+        try {
+            if (cache != null) {
+                if (cache.inMemory()) {
+                    cacheMemoryCounter++;
+                    cacheMemorySize += cache.length();
+                } else {
+                    cacheSpoolCounter++;
+                    cacheSpoolSize += cache.length();
+                }
             }
+        } catch (Exception e) {
+            LOG.debug("Error updating cache statistics. This exception is ignored.", e);
         }
         return cache;
     }
@@ -242,6 +259,8 @@ public class DefaultStreamCachingStrategy extends org.apache.camel.support.Servi
 
         cacheMemoryCounter = 0;
         cacheSpoolCounter = 0;
+        cacheMemorySize = 0;
+        cacheSpoolSize = 0;
     }
 
     @Override

@@ -89,4 +89,12 @@ public class ManagedStreamCachingStrategy extends ManagedService implements Mana
     public long getCacheSpoolCounter() {
         return streamCachingStrategy.getCacheSpoolCounter();
     }
+
+    public long getCacheMemorySize() {
+        return streamCachingStrategy.getCacheMemorySize();
+    }
+
+    public long getCacheSpoolSize() {
+        return streamCachingStrategy.getCacheSpoolSize();
+    }
 }

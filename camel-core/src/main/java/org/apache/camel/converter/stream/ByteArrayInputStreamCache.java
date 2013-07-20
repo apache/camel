@@ -29,8 +29,11 @@ import org.apache.camel.util.IOHelper;
  */
 public class ByteArrayInputStreamCache extends FilterInputStream implements StreamCache {
 
+    private final int length;
+
     public ByteArrayInputStreamCache(ByteArrayInputStream in) {
         super(in);
+        this.length = in.available();
     }
 
     public void reset() {
@@ -48,5 +51,10 @@ public class ByteArrayInputStreamCache extends FilterInputStream implements Stre
 
     public boolean inMemory() {
         return true;
+    }
+
+    @Override
+    public long length() {
+        return length;
     }
 }

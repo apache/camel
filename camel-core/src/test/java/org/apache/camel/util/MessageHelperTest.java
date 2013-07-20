@@ -66,6 +66,11 @@ public class MessageHelperTest extends TestCase {
             public boolean inMemory() {
                 return true;
             }
+
+            @Override
+            public long length() {
+                return 0;
+            }
         });
         MessageHelper.resetStreamCache(message);
         assertTrue("Should have reset the stream cache", reset.get());

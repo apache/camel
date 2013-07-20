@@ -96,6 +96,16 @@ public interface StreamCachingStrategy extends Service {
     long getCacheSpoolCounter();
 
     /**
+     * Gets the total accumulated number of bytes which has been stream cached for in-memory stream caches.
+     */
+    long getCacheMemorySize();
+
+    /**
+     * Gets the total accumulated number of bytes which has been stream cached for spooled stream caches.
+     */
+    long getCacheSpoolSize();
+
+    /**
      * Caches the body aas a {@link StreamCache}.
      *
      * @param exchange the exchange

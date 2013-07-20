@@ -153,9 +153,11 @@ public class ContextInfo extends OsgiCommandSupport {
                             camelContext.getStreamCachingStrategy().getBufferSize(),
                             camelContext.getStreamCachingStrategy().isRemoveSpoolDirectoryWhenStopping())));
 
-                    System.out.println(StringEscapeUtils.unescapeJava(String.format("\t                       [cacheMemoryCounter=%s, cacheSpoolCounter=%s]",
+                    System.out.println(StringEscapeUtils.unescapeJava(String.format("\t                       [cacheMemoryCounter=%s, cacheMemorySize=%s, cacheSpoolCounter=%s, cacheSpoolSize=%s]",
                             camelContext.getStreamCachingStrategy().getCacheMemoryCounter(),
-                            camelContext.getStreamCachingStrategy().getCacheSpoolCounter())));
+                            camelContext.getStreamCachingStrategy().getCacheMemorySize(),
+                            camelContext.getStreamCachingStrategy().getCacheSpoolCounter(),
+                            camelContext.getStreamCachingStrategy().getCacheSpoolSize())));
                 }
 
                 long activeRoutes = 0;

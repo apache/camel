@@ -85,4 +85,14 @@ public final class NettyChannelBufferStreamCache extends InputStream implements 
             buffer.readerIndex(idx);
         }
     }
+
+    @Override
+    public boolean inMemory() {
+        return true;
+    }
+
+    @Override
+    public long length() {
+        return buffer.readableBytes();
+    }
 }

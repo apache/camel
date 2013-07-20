@@ -37,8 +37,9 @@ import org.apache.camel.util.IOHelper;
  */
 public final class FileInputStreamCache extends InputStream implements StreamCache {
     private InputStream stream;
-    private File file;
-    private CipherPair ciphers;
+    private final File file;
+    private final CipherPair ciphers;
+    private final long length;
 
     public FileInputStreamCache(File file) throws FileNotFoundException {
         this(file, null);
@@ -48,6 +49,7 @@ public final class FileInputStreamCache extends InputStream implements StreamCac
         this.file = file;
         this.stream = null;
         this.ciphers = ciphers;
+        this.length = file.length();
     }
     
     @Override
@@ -93,6 +95,10 @@ public final class FileInputStreamCache extends InputStream implements StreamCac
 
     public boolean inMemory() {
         return false;
+    }
+
+    public long length() {
+        return length;
     }
 
     @Override

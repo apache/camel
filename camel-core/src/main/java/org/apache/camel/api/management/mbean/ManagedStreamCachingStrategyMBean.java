@@ -53,4 +53,10 @@ public interface ManagedStreamCachingStrategyMBean {
     @ManagedAttribute(description = "Number of spooled (not in-memory) StreamCache created")
     long getCacheSpoolCounter();
 
+    @ManagedAttribute(description = "Total accumulated number of bytes which has been stream cached for in-memory StreamCache")
+    long getCacheMemorySize();
+
+    @ManagedAttribute(description = "Total accumulated number of bytes which has been stream cached for spooled StreamCache")
+    long getCacheSpoolSize();
+
 }

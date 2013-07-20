@@ -93,6 +93,17 @@ public final class StreamSourceCache extends StreamSource implements StreamCache
         }
     }
 
+    public long length() {
+        if (streamCache != null) {
+            return streamCache.length();
+        } else if (readCache != null) {
+            return readCache.length();
+        } else {
+            // should not happen
+            return 0;
+        }
+    }
+
     @Override
     public InputStream getInputStream() {
         return stream;
