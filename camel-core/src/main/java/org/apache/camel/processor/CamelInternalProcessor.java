@@ -737,8 +737,13 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
         public StreamCache before(Exchange exchange) throws Exception {
             // check if body is already cached
             Object body = exchange.getIn().getBody();
-            if (body == null || body instanceof StreamCache) {
-                return (StreamCache) body;
+            if (body == null) {
+                return null;
+            } else if (body instanceof StreamCache) {
+                StreamCache sc = (StreamCache) body;
+                // reset so the cache is ready to be used before processing
+                sc.reset();
+                return sc;
             }
             // cache the body and if we could do that replace it as the new body
             StreamCache sc = strategy.cache(exchange);

@@ -191,12 +191,7 @@ public class DefaultChannel extends CamelInternalProcessor implements ModelChann
         // force the creation of an id
         RouteDefinitionHelper.forceAssignIds(routeContext.getCamelContext(), definition);
 
-        // first wrap with stream caching reset
-        if (routeContext.isStreamCaching()) {
-            target = new StreamCachingResetProcessor(target);
-        }
-
-        // the wrap the output with the managed strategy if any
+        // first wrap the output with the managed strategy if any
         InterceptStrategy managed = routeContext.getManagedInterceptStrategy();
         if (managed != null) {
             next = target == nextProcessor ? null : nextProcessor;

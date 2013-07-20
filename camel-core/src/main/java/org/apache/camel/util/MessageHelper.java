@@ -114,8 +114,9 @@ public final class MessageHelper {
         if (message == null) {
             return;
         }
-        if (message.getBody() instanceof StreamCache) {
-            ((StreamCache)message.getBody()).reset();
+        Object body = message.getBody();
+        if (body != null && body instanceof StreamCache) {
+            ((StreamCache) body).reset();
         }
     }
 
