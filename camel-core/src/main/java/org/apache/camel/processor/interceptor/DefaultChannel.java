@@ -35,7 +35,6 @@ import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RouteDefinitionHelper;
 import org.apache.camel.processor.CamelInternalProcessor;
 import org.apache.camel.processor.InterceptorToAsyncProcessorBridge;
-import org.apache.camel.processor.StreamCachingResetProcessor;
 import org.apache.camel.processor.WrapProcessor;
 import org.apache.camel.spi.InterceptStrategy;
 import org.apache.camel.spi.LifecycleStrategy;

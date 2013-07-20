@@ -19,34 +19,28 @@ package org.apache.camel.converter.stream;
 import java.io.ByteArrayInputStream;
 import java.io.FilterInputStream;
 import java.io.IOException;
-import java.io.InputStream;
 import java.io.OutputStream;
 
 import org.apache.camel.StreamCache;
 import org.apache.camel.util.IOHelper;
 
 /**
- * A {@link StreamCache} for {@link InputStream} that supports mark.
+ * A {@link StreamCache} for {@link java.io.ByteArrayInputStream}
  */
-public final class MarkableInputStreamCache extends FilterInputStream implements StreamCache {
+public class ByteArrayInputStreamCache extends FilterInputStream implements StreamCache {
 
-    public MarkableInputStreamCache(byte[] data) {
-        this(new ByteArrayInputStream(data));
-        mark(data.length);
-    }
-
-    public MarkableInputStreamCache(InputStream in) {
+    public ByteArrayInputStreamCache(ByteArrayInputStream in) {
         super(in);
     }
 
-    @Override
     public void reset() {
         try {
-            in.reset();
+            super.reset();
         } catch (IOException e) {
             // ignore
         }
     }
+
 
     @Override
     public void writeTo(OutputStream os) throws IOException {

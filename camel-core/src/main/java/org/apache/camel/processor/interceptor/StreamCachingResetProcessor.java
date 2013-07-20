@@ -14,13 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.processor;
+package org.apache.camel.processor.interceptor;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.processor.DelegateAsyncProcessor;
 import org.apache.camel.util.MessageHelper;
 
+/**
+ * {@link Processor} to reset {@link org.apache.camel.StreamCache} to ensure the stream
+ * is ready and re-readable for processing.
+ */
 public class StreamCachingResetProcessor extends DelegateAsyncProcessor {
 
     public StreamCachingResetProcessor(Processor processor) {

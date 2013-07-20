@@ -180,7 +180,7 @@ public class CachedOutputStream extends OutputStream {
 
         if (inMemory) {
             if (currentStream instanceof ByteArrayOutputStream) {
-                return new MarkableInputStreamCache(((ByteArrayOutputStream) currentStream).toByteArray());
+                return new InputStreamCache(((ByteArrayOutputStream) currentStream).toByteArray());
             } else {
                 throw new IllegalStateException("CurrentStream should be an instance of ByteArrayOutputStream but is: " + currentStream.getClass().getName());
             }

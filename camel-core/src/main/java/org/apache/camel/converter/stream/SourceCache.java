@@ -26,12 +26,9 @@ import org.apache.camel.util.IOHelper;
 /**
  * {@link org.apache.camel.StreamCache} implementation for {@link org.apache.camel.StringSource}s
  */
-public class SourceCache extends StringSource implements StreamCache {
+public final class SourceCache extends StringSource implements StreamCache {
 
     private static final long serialVersionUID = 1L;
-
-    public SourceCache() {
-    }
 
     public SourceCache(String data) {
         super(data);

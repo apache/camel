@@ -26,14 +26,16 @@ import java.io.OutputStream;
 import java.nio.channels.Channels;
 import java.nio.channels.FileChannel;
 import java.nio.channels.WritableByteChannel;
-
 import javax.crypto.CipherInputStream;
 
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.StreamCache;
 import org.apache.camel.util.IOHelper;
 
-public class FileInputStreamCache extends InputStream implements StreamCache {
+/**
+ * A {@link StreamCache} for {@link File}s
+ */
+public final class FileInputStreamCache extends InputStream implements StreamCache {
     private InputStream stream;
     private File file;
     private CipherPair ciphers;

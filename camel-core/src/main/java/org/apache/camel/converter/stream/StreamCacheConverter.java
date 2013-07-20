@@ -16,6 +16,7 @@
  */
 package org.apache.camel.converter.stream;
 
+import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -69,14 +70,15 @@ public final class StreamCacheConverter {
     }
 
     @Converter
+    public static StreamCache convertToStreamCache(ByteArrayInputStream stream, Exchange exchange) throws IOException {
+        return new ByteArrayInputStreamCache(stream);
+    }
+
+    @Converter
     public static StreamCache convertToStreamCache(InputStream stream, Exchange exchange) throws IOException {
-        if (stream.markSupported()) {
-            return new MarkableInputStreamCache(stream);
-        } else {
-            CachedOutputStream cos = new CachedOutputStream(exchange);
-            IOHelper.copyAndCloseInput(stream, cos);
-            return cos.getStreamCache();
-        }
+        CachedOutputStream cos = new CachedOutputStream(exchange);
+        IOHelper.copyAndCloseInput(stream, cos);
+        return cos.getStreamCache();
     }
 
     @Converter

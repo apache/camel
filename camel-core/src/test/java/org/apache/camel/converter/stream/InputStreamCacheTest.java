@@ -24,10 +24,10 @@ import org.apache.camel.util.IOHelper;
 /**
  * @version 
  */
-public class MarkableInputStreamCacheTest extends ContextTestSupport {
+public class InputStreamCacheTest extends ContextTestSupport {
 
     public void testInputStreamCache() throws Exception {
-        MarkableInputStreamCache cache = new MarkableInputStreamCache("<foo>bar</foo>".getBytes());
+        InputStreamCache cache = new InputStreamCache("<foo>bar</foo>".getBytes());
 
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         cache.writeTo(bos);

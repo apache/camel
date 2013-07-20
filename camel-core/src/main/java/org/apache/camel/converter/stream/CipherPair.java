@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.converter.stream;
 
 import java.security.GeneralSecurityException;
@@ -29,9 +28,9 @@ import javax.crypto.spec.IvParameterSpec;
  * A class to hold a pair of encryption and decryption ciphers.
  */
 public class CipherPair {
-    private String transformation;
-    private Cipher enccipher;
-    private Cipher deccipher;
+    private final String transformation;
+    private final Cipher enccipher;
+    private final Cipher deccipher;
     
     public CipherPair(String transformation) throws GeneralSecurityException {
         this.transformation = transformation;
@@ -43,20 +42,15 @@ public class CipherPair {
         } else {
             a = transformation;
         }
-        try {
-            KeyGenerator keygen = KeyGenerator.getInstance(a);
-            keygen.init(new SecureRandom());
-            Key key = keygen.generateKey();
-            enccipher = Cipher.getInstance(transformation);
-            deccipher = Cipher.getInstance(transformation);
-            enccipher.init(Cipher.ENCRYPT_MODE, key);
-            final byte[] ivp = enccipher.getIV();
-            deccipher.init(Cipher.DECRYPT_MODE, key, ivp == null ? null : new IvParameterSpec(ivp));
-        } catch (GeneralSecurityException e) {
-            enccipher = null;
-            deccipher = null;
-            throw e;
-        }
+
+        KeyGenerator keygen = KeyGenerator.getInstance(a);
+        keygen.init(new SecureRandom());
+        Key key = keygen.generateKey();
+        enccipher = Cipher.getInstance(transformation);
+        deccipher = Cipher.getInstance(transformation);
+        enccipher.init(Cipher.ENCRYPT_MODE, key);
+        final byte[] ivp = enccipher.getIV();
+        deccipher.init(Cipher.DECRYPT_MODE, key, ivp == null ? null : new IvParameterSpec(ivp));
     }
     
     public String getTransformation() {

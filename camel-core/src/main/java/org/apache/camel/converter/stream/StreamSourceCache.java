@@ -28,9 +28,9 @@ import org.apache.camel.StreamCache;
 import org.apache.camel.util.IOHelper;
 
 /**
- * {@link org.apache.camel.StreamCache} implementation for Cache the StreamSource {@link javax.xml.transform.stream.StreamSource}s
+ * A {@link org.apache.camel.StreamCache} for {@link javax.xml.transform.stream.StreamSource}s
  */
-public class StreamSourceCache extends StreamSource implements StreamCache {
+public final class StreamSourceCache extends StreamSource implements StreamCache {
 
     private final InputStream stream;
     private final StreamCache streamCache;

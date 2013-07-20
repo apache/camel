@@ -26,6 +26,8 @@ import org.apache.camel.util.MessageHelper;
 /**
  * An interceptor that converts streams messages into a re-readable format
  * by wrapping the stream into a {@link StreamCache}.
+ *
+ * @deprecated no longer in use, will be removed in next Camel release.
  */
 @Deprecated
 public class StreamCachingInterceptor extends DelegateAsyncProcessor {

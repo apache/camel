@@ -25,6 +25,8 @@ import org.apache.camel.spi.InterceptStrategy;
 
 /**
  * {@link InterceptStrategy} implementation to configure stream caching on a RouteContext
+ *
+ * @deprecated no longer in use, will be removed in next Camel release.
  */
 @Deprecated
 public final class StreamCaching implements InterceptStrategy {

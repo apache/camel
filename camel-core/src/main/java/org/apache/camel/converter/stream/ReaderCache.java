@@ -25,13 +25,12 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * {@link org.apache.camel.StreamCache} implementation for Cache the Reader {@link java.io.Reader}s
+ * A {@link org.apache.camel.StreamCache} for String {@link java.io.Reader}s
  */
 public class ReaderCache extends StringReader implements StreamCache {
 
     private static final transient Logger LOG = LoggerFactory.getLogger(ReaderCache.class);
-
-    private String data;
+    private final String data;
 
     public ReaderCache(String data) {
         super(data);
@@ -47,7 +46,7 @@ public class ReaderCache extends StringReader implements StreamCache {
         try {
             super.reset();
         } catch (IOException e) {
-            LOG.warn("Cannot reset cache", e);
+            // ignore
         }
     }
 

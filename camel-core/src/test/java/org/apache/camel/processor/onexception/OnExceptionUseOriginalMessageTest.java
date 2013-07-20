@@ -21,7 +21,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.converter.stream.MarkableInputStreamCache;
+import org.apache.camel.converter.stream.InputStreamCache;
 
 /**
  * @version 
@@ -50,7 +50,7 @@ public class OnExceptionUseOriginalMessageTest extends ContextTestSupport {
         getMockEndpoint("mock:end").expectedMessageCount(1);
         getMockEndpoint("mock:end").message(0).property(Exchange.EXCEPTION_CAUGHT).isInstanceOf(IllegalArgumentException.class);
     
-        MarkableInputStreamCache cache = new MarkableInputStreamCache(TEST_STRING.getBytes());
+        InputStreamCache cache = new InputStreamCache(TEST_STRING.getBytes());
         
         template.sendBody("direct:a", cache);
 
