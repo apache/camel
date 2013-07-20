@@ -24,8 +24,6 @@ First you need to install the following features in Karaf/ServiceMix with:
 
   features:install camel-mybatis
 
-TODO: Install this example using its own features file
-
 Then you can install the Camel example:
 
   osgi:install -s mvn:org.apache.camel/camel-example-mybatis/2.12.0
