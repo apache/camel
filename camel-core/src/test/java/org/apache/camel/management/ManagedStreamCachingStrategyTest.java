@@ -58,7 +58,10 @@ public class ManagedStreamCachingStrategyTest extends ManagementTestSupport {
         Integer size = (Integer) mbeanServer.getAttribute(name, "BufferSize");
         assertEquals(IOHelper.DEFAULT_BUFFER_SIZE, size.intValue());
 
-        Long counter = (Long) mbeanServer.getAttribute(name, "CacheCounter");
+        Long counter = (Long) mbeanServer.getAttribute(name, "CacheMemoryCounter");
+        assertEquals(0, counter.longValue());
+
+        counter = (Long) mbeanServer.getAttribute(name, "CacheSpoolCounter");
         assertEquals(0, counter.longValue());
 
         String chiper = (String) mbeanServer.getAttribute(name, "SpoolChiper");

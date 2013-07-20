@@ -35,8 +35,6 @@ import org.slf4j.LoggerFactory;
  */
 public class DefaultStreamCachingStrategy extends org.apache.camel.support.ServiceSupport implements CamelContextAware, StreamCachingStrategy {
 
-    // TODO: add JMX counters for in memory vs spooled
-    // TODO: Add support for mark
     // TODO: logic for spool to disk in this class so we can control this
     // TODO: add memory based watermarks for spool to disk
 
@@ -59,7 +57,8 @@ public class DefaultStreamCachingStrategy extends org.apache.camel.support.Servi
     private String spoolChiper;
     private int bufferSize = IOHelper.DEFAULT_BUFFER_SIZE;
     private boolean removeSpoolDirectoryWhenStopping = true;
-    private volatile long cacheCounter;
+    private volatile long cacheMemoryCounter;
+    private volatile long cacheSpoolCounter;
 
     public CamelContext getCamelContext() {
         return camelContext;
@@ -121,14 +120,22 @@ public class DefaultStreamCachingStrategy extends org.apache.camel.support.Servi
         this.removeSpoolDirectoryWhenStopping = removeSpoolDirectoryWhenStopping;
     }
 
-    public long getCacheCounter() {
-        return cacheCounter;
+    public long getCacheMemoryCounter() {
+        return cacheMemoryCounter;
+    }
+
+    public long getCacheSpoolCounter() {
+        return cacheSpoolCounter;
     }
 
     public StreamCache cache(Exchange exchange) {
         StreamCache cache = exchange.getIn().getBody(StreamCache.class);
         if (cache != null) {
-            cacheCounter++;
+            if (cache.inMemory()) {
+                cacheMemoryCounter++;
+            } else {
+                cacheSpoolCounter++;
+            }
         }
         return cache;
     }
@@ -233,7 +240,8 @@ public class DefaultStreamCachingStrategy extends org.apache.camel.support.Servi
             FileUtil.removeDir(spoolDirectory);
         }
 
-        cacheCounter = 0;
+        cacheMemoryCounter = 0;
+        cacheSpoolCounter = 0;
     }
 
     @Override

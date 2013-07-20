@@ -17,7 +17,6 @@
 package org.apache.camel.converter.stream;
 
 import java.io.BufferedOutputStream;
-import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -26,7 +25,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.security.GeneralSecurityException;
-
 import javax.crypto.CipherOutputStream;
 
 import org.apache.camel.Exchange;
@@ -40,7 +38,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * This output stream will store the content into a File if the stream context size is exceed the
- * THRESHOLD which's default value is {@link StreamCache#DEFAULT_SPOOL_THRESHOLD} bytes .
+ * THRESHOLD value. The default THRESHOLD value is {@link StreamCache#DEFAULT_SPOOL_THRESHOLD} bytes .
  * <p/>
  * The temp file will store in the temp directory, you can configure it by setting the TEMP_DIR property.
  * If you don't set the TEMP_DIR property, it will choose the directory which is set by the
@@ -75,7 +73,7 @@ public class CachedOutputStream extends OutputStream {
 
     public CachedOutputStream(Exchange exchange, boolean closedOnCompletion) {
         this.strategy = exchange.getContext().getStreamCachingStrategy();
-        currentStream = new ByteArrayOutputStream(strategy.getBufferSize());
+        currentStream = new CachedByteArrayOutputStream(strategy.getBufferSize());
         
         if (closedOnCompletion) {
             // add on completion so we can cleanup after the exchange is done such as deleting temporary files
@@ -153,10 +151,10 @@ public class CachedOutputStream extends OutputStream {
         flush();
 
         if (inMemory) {
-            if (currentStream instanceof ByteArrayOutputStream) {
-                return new ByteArrayInputStream(((ByteArrayOutputStream) currentStream).toByteArray());
+            if (currentStream instanceof CachedByteArrayOutputStream) {
+                return ((CachedByteArrayOutputStream) currentStream).newInputStreamCache();
             } else {
-                throw new IllegalStateException("CurrentStream should be an instance of ByteArrayOutputStream but is: " + currentStream.getClass().getName());
+                throw new IllegalStateException("CurrentStream should be an instance of CachedByteArrayOutputStream but is: " + currentStream.getClass().getName());
             }
         } else {
             try {
@@ -171,18 +169,29 @@ public class CachedOutputStream extends OutputStream {
     }    
     
     public InputStream getWrappedInputStream() throws IOException {
-        // The WrappedInputStream will close the CachedOuputStream when it is closed
+        // The WrappedInputStream will close the CachedOutputStream when it is closed
         return new WrappedInputStream(this, getInputStream());
     }
 
+    /**
+     * @deprecated  use {@link #newStreamCache()}
+     */
+    @Deprecated
     public StreamCache getStreamCache() throws IOException {
+        return newStreamCache();
+    }
+
+    /**
+     * Creates a new {@link StreamCache} from the data cached in this {@link OutputStream}.
+     */
+    public StreamCache newStreamCache() throws IOException {
         flush();
 
         if (inMemory) {
-            if (currentStream instanceof ByteArrayOutputStream) {
-                return new InputStreamCache(((ByteArrayOutputStream) currentStream).toByteArray());
+            if (currentStream instanceof CachedByteArrayOutputStream) {
+                return ((CachedByteArrayOutputStream) currentStream).newInputStreamCache();
             } else {
-                throw new IllegalStateException("CurrentStream should be an instance of ByteArrayOutputStream but is: " + currentStream.getClass().getName());
+                throw new IllegalStateException("CurrentStream should be an instance of CachedByteArrayOutputStream but is: " + currentStream.getClass().getName());
             }
         } else {
             try {

@@ -16,33 +16,25 @@
  */
 package org.apache.camel.converter.stream;
 
-import java.io.IOException;
-import java.io.OutputStream;
-
-import org.apache.camel.StreamCache;
-import org.apache.camel.StringSource;
-import org.apache.camel.util.IOHelper;
+import java.io.ByteArrayOutputStream;
 
 /**
- * {@link org.apache.camel.StreamCache} implementation for {@link org.apache.camel.StringSource}s
+ * A {@link ByteArrayOutputStream} that is capable of returning a
+ * {@link InputStreamCache} view of the buffer.
+ * <p/>
+ * This implementation avoids any buffer copying when caching in memory {@link java.io.InputStream}
+ * as the buffer can be shared.
  */
-public final class SourceCache extends StringSource implements StreamCache {
+public final class CachedByteArrayOutputStream extends ByteArrayOutputStream {
 
-    private static final long serialVersionUID = 1L;
-
-    public SourceCache(String data) {
-        super(data);
+    public CachedByteArrayOutputStream(int size) {
+        super(size);
     }
 
-    public void reset() {
-        // do nothing here
-    }
-
-    public void writeTo(OutputStream os) throws IOException {
-        IOHelper.copy(getInputStream(), os);
-    }
-
-    public boolean inMemory() {
-        return true;
+    /**
+     * Creates a new {@link InputStreamCache} view of the byte array
+     */
+    public InputStreamCache newInputStreamCache() {
+        return new InputStreamCache(buf, count);
     }
 }

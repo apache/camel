@@ -41,7 +41,7 @@ public final class StreamSourceCache extends StreamSource implements StreamCache
             // set up CachedOutputStream with the properties
             CachedOutputStream cos = new CachedOutputStream(exchange);
             IOHelper.copyAndCloseInput(source.getInputStream(), cos);
-            streamCache = cos.getStreamCache();
+            streamCache = cos.newStreamCache();
             readCache = null;
             setSystemId(source.getSystemId());
             stream = (InputStream) streamCache;
@@ -79,6 +79,17 @@ public final class StreamSourceCache extends StreamSource implements StreamCache
             streamCache.writeTo(os);
         } else if (readCache != null) {
             readCache.writeTo(os);
+        }
+    }
+
+    public boolean inMemory() {
+        if (streamCache != null) {
+            return streamCache.inMemory();
+        } else if (readCache != null) {
+            return readCache.inMemory();
+        } else {
+            // should not happen
+            return true;
         }
     }
 

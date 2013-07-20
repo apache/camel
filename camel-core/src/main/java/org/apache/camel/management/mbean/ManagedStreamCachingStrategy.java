@@ -82,7 +82,11 @@ public class ManagedStreamCachingStrategy extends ManagedService implements Mana
         return streamCachingStrategy.isRemoveSpoolDirectoryWhenStopping();
     }
 
-    public long getCacheCounter() {
-        return streamCachingStrategy.getCacheCounter();
+    public long getCacheMemoryCounter() {
+        return streamCachingStrategy.getCacheMemoryCounter();
+    }
+
+    public long getCacheSpoolCounter() {
+        return streamCachingStrategy.getCacheSpoolCounter();
     }
 }

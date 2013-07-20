@@ -45,4 +45,10 @@ public interface StreamCache {
      */
     void writeTo(OutputStream os) throws IOException;
 
+    /**
+     * Whether this {@link StreamCache} is in memory only or
+     * spooled to persistent storage such as files.
+     */
+    boolean inMemory();
+
 }

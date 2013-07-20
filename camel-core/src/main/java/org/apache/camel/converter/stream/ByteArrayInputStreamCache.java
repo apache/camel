@@ -42,8 +42,11 @@ public class ByteArrayInputStreamCache extends FilterInputStream implements Stre
     }
 
 
-    @Override
     public void writeTo(OutputStream os) throws IOException {
         IOHelper.copyAndCloseInput(in, os);
+    }
+
+    public boolean inMemory() {
+        return true;
     }
 }

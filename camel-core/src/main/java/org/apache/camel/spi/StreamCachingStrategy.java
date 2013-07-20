@@ -59,7 +59,7 @@ public interface StreamCachingStrategy extends Service {
     long getSpoolThreshold();
 
     /**
-     * Sets the buffer size to use when copying between buffers.
+     * Sets the buffer size to use when allocating in-memory buffers used for in-memory stream caches.
      * <p/>
      * The default size is {@link org.apache.camel.util.IOHelper#DEFAULT_BUFFER_SIZE}
      */
@@ -86,9 +86,14 @@ public interface StreamCachingStrategy extends Service {
     boolean isRemoveSpoolDirectoryWhenStopping();
 
     /**
-     * Gets the counter for number of {@link StreamCache} created.
+     * Gets the counter for number of in-memory {@link StreamCache} created.
      */
-    long getCacheCounter();
+    long getCacheMemoryCounter();
+
+    /**
+     * Gets the counter for number of spooled (not in-memory) {@link StreamCache} created.
+     */
+    long getCacheSpoolCounter();
 
     /**
      * Caches the body aas a {@link StreamCache}.

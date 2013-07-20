@@ -91,6 +91,10 @@ public final class FileInputStreamCache extends InputStream implements StreamCac
         }
     }
 
+    public boolean inMemory() {
+        return false;
+    }
+
     @Override
     public int available() throws IOException {
         return getInputStream().available();

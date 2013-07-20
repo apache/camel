@@ -31,8 +31,17 @@ public final class InputStreamCache extends ByteArrayInputStream implements Stre
         super(data);
     }
 
+    public InputStreamCache(byte[] data, int count) {
+        super(data);
+        super.count = count;
+    }
+
     public void writeTo(OutputStream os) throws IOException {
         os.write(buf, pos, count - pos);
+    }
+
+    public boolean inMemory() {
+        return true;
     }
 
 }

@@ -54,6 +54,10 @@ public class ReaderCache extends StringReader implements StreamCache {
         os.write(data.getBytes());
     }
 
+    public boolean inMemory() {
+        return true;
+    }
+
     String getData() {
         return data;
     }
