@@ -83,7 +83,7 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
         // TODO: optimize to only copy original message if enabled to do so in the route
         // special for JmsMessage as it can cause it to loose headers later.
         // This will be resolved when we get the message facade with copy on write implemented
-        if (exchange.getIn().getClass().getSimpleName().equals("JmsMessage")) {
+        if (exchange.getIn().getClass().getName().equals("org.apache.camel.component.jms.JmsMessage")) {
             this.originalInMessage = new DefaultMessage();
             this.originalInMessage.setBody(exchange.getIn().getBody());
             this.originalInMessage.getHeaders().putAll(exchange.getIn().getHeaders());
