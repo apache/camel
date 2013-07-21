@@ -38,19 +38,29 @@ public interface StreamCachingStrategy extends Service {
         long getCacheMemoryCounter();
 
         /**
-         * Gets the counter for number of spooled (not in-memory) {@link StreamCache} created.
-         */
-        long getCacheSpoolCounter();
-
-        /**
          * Gets the total accumulated number of bytes which has been stream cached for in-memory stream caches.
          */
         long getCacheMemorySize();
 
         /**
+         * Gets the average number of bytes per cached stream for in-memory stream caches.
+         */
+        long getCacheMemoryAverageSize();
+
+        /**
+         * Gets the counter for number of spooled (not in-memory) {@link StreamCache} created.
+         */
+        long getCacheSpoolCounter();
+
+        /**
          * Gets the total accumulated number of bytes which has been stream cached for spooled stream caches.
          */
         long getCacheSpoolSize();
+
+        /**
+         * Gets the average number of bytes per cached stream for spooled (not in-memory) stream caches.
+         */
+        long getCacheSpoolAverageSize();
 
         /**
          * Reset the counters

@@ -146,19 +146,22 @@ public class ContextInfo extends OsgiCommandSupport {
 
                 // add stream caching details if enabled
                 if (camelContext.getStreamCachingStrategy().isEnabled()) {
-                    System.out.println(StringEscapeUtils.unescapeJava(String.format("\tStreamCachingStrategy: [spoolDirectory=%s, spoolThreshold=%s, spoolChiper=%s, bufferSize=%s, removeSpoolDirectoryWhenStopping=%s]",
+                    System.out.println(StringEscapeUtils.unescapeJava(String.format("\tStreamCachingStrategy: [spoolDirectory=%s, spoolThreshold=%s, spoolChiper=%s, bufferSize=%s, removeSpoolDirectoryWhenStopping=%s, statisticsEnabled=%s]",
                             camelContext.getStreamCachingStrategy().getSpoolDirectory(),
                             camelContext.getStreamCachingStrategy().getSpoolThreshold(),
                             camelContext.getStreamCachingStrategy().getSpoolChiper(),
                             camelContext.getStreamCachingStrategy().getBufferSize(),
-                            camelContext.getStreamCachingStrategy().isRemoveSpoolDirectoryWhenStopping())));
+                            camelContext.getStreamCachingStrategy().isRemoveSpoolDirectoryWhenStopping(),
+                            camelContext.getStreamCachingStrategy().getStatistics().isStatisticsEnabled())));
 
                     if (camelContext.getStreamCachingStrategy().getStatistics().isStatisticsEnabled()) {
-                        System.out.println(StringEscapeUtils.unescapeJava(String.format("\t                       [cacheMemoryCounter=%s, cacheMemorySize=%s, cacheSpoolCounter=%s, cacheSpoolSize=%s]",
+                        System.out.println(StringEscapeUtils.unescapeJava(String.format("\t                       [cacheMemoryCounter=%s, cacheMemorySize=%s, cacheMemoryAverageSize=%s, cacheSpoolCounter=%s, cacheSpoolSize=%s, cacheSpoolAverageSize=%s]",
                                 camelContext.getStreamCachingStrategy().getStatistics().getCacheMemoryCounter(),
                                 camelContext.getStreamCachingStrategy().getStatistics().getCacheMemorySize(),
+                                camelContext.getStreamCachingStrategy().getStatistics().getCacheMemoryAverageSize(),
                                 camelContext.getStreamCachingStrategy().getStatistics().getCacheSpoolCounter(),
-                                camelContext.getStreamCachingStrategy().getStatistics().getCacheSpoolSize())));
+                                camelContext.getStreamCachingStrategy().getStatistics().getCacheSpoolSize(),
+                                camelContext.getStreamCachingStrategy().getStatistics().getCacheSpoolAverageSize())));
                     }
                 }
 

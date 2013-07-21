@@ -239,6 +239,10 @@ public class DefaultStreamCachingStrategy extends org.apache.camel.support.Servi
             FileUtil.removeDir(spoolDirectory);
         }
 
+        if (LOG.isDebugEnabled() && statistics.isStatisticsEnabled()) {
+            LOG.debug("Stopping StreamCachingStrategy with statistics: {}", statistics.toString());
+        }
+
         statistics.reset();
     }
 
@@ -259,40 +263,54 @@ public class DefaultStreamCachingStrategy extends org.apache.camel.support.Servi
         private boolean statisticsEnabled;
         private volatile long memoryCounter;
         private volatile long memorySize;
+        private volatile long memoryAverageSize;
         private volatile long spoolCounter;
         private volatile long spoolSize;
+        private volatile long spoolAverageSize;
 
         void updateMemory(long size) {
             memoryCounter++;
             memorySize += size;
+            memoryAverageSize = memorySize / memoryCounter;
         }
 
         void updateSpool(long size) {
             spoolCounter++;
             spoolSize += size;
+            spoolAverageSize = spoolSize / spoolCounter;
         }
 
         public long getCacheMemoryCounter() {
             return memoryCounter;
         }
 
-        public long getCacheSpoolCounter() {
-            return spoolCounter;
-        }
-
         public long getCacheMemorySize() {
             return memorySize;
+        }
+
+        public long getCacheMemoryAverageSize() {
+            return memoryAverageSize;
+        }
+
+        public long getCacheSpoolCounter() {
+            return spoolCounter;
         }
 
         public long getCacheSpoolSize() {
             return spoolSize;
         }
 
+        public long getCacheSpoolAverageSize() {
+            return spoolAverageSize;
+        }
+
         public void reset() {
             memoryCounter = 0;
             memorySize = 0;
+            memoryAverageSize = 0;
             spoolCounter = 0;
             spoolSize = 0;
+            spoolAverageSize = 0;
         }
 
         public boolean isStatisticsEnabled() {
@@ -301,6 +319,11 @@ public class DefaultStreamCachingStrategy extends org.apache.camel.support.Servi
 
         public void setStatisticsEnabled(boolean statisticsEnabled) {
             this.statisticsEnabled = statisticsEnabled;
+        }
+
+        public String toString() {
+            return String.format("[memoryCounter=%s, memorySize=%s, memoryAverageSize=%s, spoolCounter=%s, spoolSize=%s, spoolAverageSize=%s]",
+                    memoryCounter, memorySize, memoryAverageSize, spoolCounter, spoolSize, spoolAverageSize);
         }
     }
 
