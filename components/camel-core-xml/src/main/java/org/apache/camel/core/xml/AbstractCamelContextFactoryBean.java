@@ -397,6 +397,10 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         if (remove != null) {
             getContext().getStreamCachingStrategy().setRemoveSpoolDirectoryWhenStopping(remove);
         }
+        Boolean statisticsEnabled = CamelContextHelper.parseBoolean(getContext(), streamCaching.getStatisticsEnabled());
+        if (statisticsEnabled != null) {
+            getContext().getStreamCachingStrategy().getStatistics().setStatisticsEnabled(statisticsEnabled);
+        }
     }
 
     protected void initPropertyPlaceholder() throws Exception {

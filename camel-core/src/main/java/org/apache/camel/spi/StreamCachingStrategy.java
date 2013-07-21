@@ -28,6 +28,49 @@ import org.apache.camel.StreamCache;
 public interface StreamCachingStrategy extends Service {
 
     /**
+     * Utilization statistics of stream caching.
+     */
+    interface Statistics {
+
+        /**
+         * Gets the counter for number of in-memory {@link StreamCache} created.
+         */
+        long getCacheMemoryCounter();
+
+        /**
+         * Gets the counter for number of spooled (not in-memory) {@link StreamCache} created.
+         */
+        long getCacheSpoolCounter();
+
+        /**
+         * Gets the total accumulated number of bytes which has been stream cached for in-memory stream caches.
+         */
+        long getCacheMemorySize();
+
+        /**
+         * Gets the total accumulated number of bytes which has been stream cached for spooled stream caches.
+         */
+        long getCacheSpoolSize();
+
+        /**
+         * Reset the counters
+         */
+        void reset();
+
+        /**
+         * Whether statistics is enabled.
+         */
+        boolean isStatisticsEnabled();
+
+        /**
+         * Sets whether statistics is enabled.
+         *
+         * @param statisticsEnabled <tt>true</tt> to enable
+         */
+        void setStatisticsEnabled(boolean statisticsEnabled);
+    }
+
+    /**
      * Sets whether the stream caching is enabled.
      * <p/>
      * <b>Notice:</b> This cannot be changed at runtime.
@@ -86,24 +129,9 @@ public interface StreamCachingStrategy extends Service {
     boolean isRemoveSpoolDirectoryWhenStopping();
 
     /**
-     * Gets the counter for number of in-memory {@link StreamCache} created.
+     * Gets the utilization statistics.
      */
-    long getCacheMemoryCounter();
-
-    /**
-     * Gets the counter for number of spooled (not in-memory) {@link StreamCache} created.
-     */
-    long getCacheSpoolCounter();
-
-    /**
-     * Gets the total accumulated number of bytes which has been stream cached for in-memory stream caches.
-     */
-    long getCacheMemorySize();
-
-    /**
-     * Gets the total accumulated number of bytes which has been stream cached for spooled stream caches.
-     */
-    long getCacheSpoolSize();
+    Statistics getStatistics();
 
     /**
      * Caches the body aas a {@link StreamCache}.

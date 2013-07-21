@@ -50,6 +50,9 @@ public class CamelStreamCachingStrategyDefinition extends IdentifiedType {
     @XmlAttribute
     private String removeSpoolDirectoryWhenStopping;
 
+    @XmlAttribute
+    private String statisticsEnabled;
+
     public String getEnabled() {
         return enabled;
     }
@@ -98,4 +101,11 @@ public class CamelStreamCachingStrategyDefinition extends IdentifiedType {
         this.removeSpoolDirectoryWhenStopping = removeSpoolDirectoryWhenStopping;
     }
 
+    public String getStatisticsEnabled() {
+        return statisticsEnabled;
+    }
+
+    public void setStatisticsEnabled(String statisticsEnabled) {
+        this.statisticsEnabled = statisticsEnabled;
+    }
 }

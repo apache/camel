@@ -37,7 +37,6 @@ public class DefaultStreamCachingStrategy extends org.apache.camel.support.Servi
 
     // TODO: logic for spool to disk in this class so we can control this
     // TODO: add memory based watermarks for spool to disk
-    // TODO: add statistics on|off option and also have avg size stats
 
     @Deprecated
     public static final String THRESHOLD = "CamelCachedOutputStreamThreshold";
@@ -58,10 +57,7 @@ public class DefaultStreamCachingStrategy extends org.apache.camel.support.Servi
     private String spoolChiper;
     private int bufferSize = IOHelper.DEFAULT_BUFFER_SIZE;
     private boolean removeSpoolDirectoryWhenStopping = true;
-    private volatile long cacheMemoryCounter;
-    private volatile long cacheSpoolCounter;
-    private volatile long cacheMemorySize;
-    private volatile long cacheSpoolSize;
+    private final UtilizationStatistics statistics = new UtilizationStatistics();
 
     public CamelContext getCamelContext() {
         return camelContext;
@@ -123,36 +119,22 @@ public class DefaultStreamCachingStrategy extends org.apache.camel.support.Servi
         this.removeSpoolDirectoryWhenStopping = removeSpoolDirectoryWhenStopping;
     }
 
-    public long getCacheMemoryCounter() {
-        return cacheMemoryCounter;
-    }
-
-    public long getCacheSpoolCounter() {
-        return cacheSpoolCounter;
-    }
-
-    public long getCacheMemorySize() {
-        return cacheMemorySize;
-    }
-
-    public long getCacheSpoolSize() {
-        return cacheSpoolSize;
+    public Statistics getStatistics() {
+        return statistics;
     }
 
     public StreamCache cache(Exchange exchange) {
         StreamCache cache = exchange.getIn().getBody(StreamCache.class);
-        try {
-            if (cache != null) {
+        if (cache != null && statistics.isStatisticsEnabled()) {
+            try {
                 if (cache.inMemory()) {
-                    cacheMemoryCounter++;
-                    cacheMemorySize += cache.length();
+                    statistics.updateMemory(cache.length());
                 } else {
-                    cacheSpoolCounter++;
-                    cacheSpoolSize += cache.length();
+                    statistics.updateSpool(cache.length());
                 }
+            } catch (Exception e) {
+                LOG.debug("Error updating cache statistics. This exception is ignored.", e);
             }
-        } catch (Exception e) {
-            LOG.debug("Error updating cache statistics. This exception is ignored.", e);
         }
         return cache;
     }
@@ -257,10 +239,7 @@ public class DefaultStreamCachingStrategy extends org.apache.camel.support.Servi
             FileUtil.removeDir(spoolDirectory);
         }
 
-        cacheMemoryCounter = 0;
-        cacheSpoolCounter = 0;
-        cacheMemorySize = 0;
-        cacheSpoolSize = 0;
+        statistics.reset();
     }
 
     @Override
@@ -271,4 +250,58 @@ public class DefaultStreamCachingStrategy extends org.apache.camel.support.Servi
             + ", spoolChiper=" + spoolChiper
             + ", bufferSize=" + bufferSize + "]";
     }
+
+    /**
+     * Represents utilization statistics
+     */
+    private final class UtilizationStatistics implements Statistics {
+
+        private boolean statisticsEnabled;
+        private volatile long memoryCounter;
+        private volatile long memorySize;
+        private volatile long spoolCounter;
+        private volatile long spoolSize;
+
+        void updateMemory(long size) {
+            memoryCounter++;
+            memorySize += size;
+        }
+
+        void updateSpool(long size) {
+            spoolCounter++;
+            spoolSize += size;
+        }
+
+        public long getCacheMemoryCounter() {
+            return memoryCounter;
+        }
+
+        public long getCacheSpoolCounter() {
+            return spoolCounter;
+        }
+
+        public long getCacheMemorySize() {
+            return memorySize;
+        }
+
+        public long getCacheSpoolSize() {
+            return spoolSize;
+        }
+
+        public void reset() {
+            memoryCounter = 0;
+            memorySize = 0;
+            spoolCounter = 0;
+            spoolSize = 0;
+        }
+
+        public boolean isStatisticsEnabled() {
+            return statisticsEnabled;
+        }
+
+        public void setStatisticsEnabled(boolean statisticsEnabled) {
+            this.statisticsEnabled = statisticsEnabled;
+        }
+    }
+
 }

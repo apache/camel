@@ -17,6 +17,7 @@
 package org.apache.camel.api.management.mbean;
 
 import org.apache.camel.api.management.ManagedAttribute;
+import org.apache.camel.api.management.ManagedOperation;
 
 public interface ManagedStreamCachingStrategyMBean {
 
@@ -58,5 +59,14 @@ public interface ManagedStreamCachingStrategyMBean {
 
     @ManagedAttribute(description = "Total accumulated number of bytes which has been stream cached for spooled StreamCache")
     long getCacheSpoolSize();
+
+    @ManagedAttribute(description = "Whether utilization statistics is enabled")
+    boolean isStatisticsEnabled();
+
+    @ManagedAttribute(description = "Whether utilization statistics is enabled")
+    void setStatisticsEnabled(boolean enabled);
+
+    @ManagedOperation(description = "Reset the utilization statistics")
+    void resetStatistics();
 
 }

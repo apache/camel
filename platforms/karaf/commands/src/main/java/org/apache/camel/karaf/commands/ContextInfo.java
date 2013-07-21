@@ -153,11 +153,13 @@ public class ContextInfo extends OsgiCommandSupport {
                             camelContext.getStreamCachingStrategy().getBufferSize(),
                             camelContext.getStreamCachingStrategy().isRemoveSpoolDirectoryWhenStopping())));
 
-                    System.out.println(StringEscapeUtils.unescapeJava(String.format("\t                       [cacheMemoryCounter=%s, cacheMemorySize=%s, cacheSpoolCounter=%s, cacheSpoolSize=%s]",
-                            camelContext.getStreamCachingStrategy().getCacheMemoryCounter(),
-                            camelContext.getStreamCachingStrategy().getCacheMemorySize(),
-                            camelContext.getStreamCachingStrategy().getCacheSpoolCounter(),
-                            camelContext.getStreamCachingStrategy().getCacheSpoolSize())));
+                    if (camelContext.getStreamCachingStrategy().getStatistics().isStatisticsEnabled()) {
+                        System.out.println(StringEscapeUtils.unescapeJava(String.format("\t                       [cacheMemoryCounter=%s, cacheMemorySize=%s, cacheSpoolCounter=%s, cacheSpoolSize=%s]",
+                                camelContext.getStreamCachingStrategy().getStatistics().getCacheMemoryCounter(),
+                                camelContext.getStreamCachingStrategy().getStatistics().getCacheMemorySize(),
+                                camelContext.getStreamCachingStrategy().getStatistics().getCacheSpoolCounter(),
+                                camelContext.getStreamCachingStrategy().getStatistics().getCacheSpoolSize())));
+                    }
                 }
 
                 long activeRoutes = 0;
