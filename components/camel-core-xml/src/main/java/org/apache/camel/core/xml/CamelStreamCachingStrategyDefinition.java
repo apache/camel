@@ -39,10 +39,16 @@ public class CamelStreamCachingStrategyDefinition extends IdentifiedType {
     private String spoolDirectory;
 
     @XmlAttribute
+    private String spoolChiper;
+
+    @XmlAttribute
     private String spoolThreshold;
 
     @XmlAttribute
-    private String spoolChiper;
+    private String spoolUsedHeapMemoryThreshold;
+
+    @XmlAttribute
+    private String spoolRules;
 
     @XmlAttribute
     private String bufferSize;
@@ -52,6 +58,9 @@ public class CamelStreamCachingStrategyDefinition extends IdentifiedType {
 
     @XmlAttribute
     private String statisticsEnabled;
+
+    @XmlAttribute
+    private String anySpoolRules;
 
     public String getEnabled() {
         return enabled;
@@ -69,6 +78,14 @@ public class CamelStreamCachingStrategyDefinition extends IdentifiedType {
         this.spoolDirectory = spoolDirectory;
     }
 
+    public String getSpoolChiper() {
+        return spoolChiper;
+    }
+
+    public void setSpoolChiper(String spoolChiper) {
+        this.spoolChiper = spoolChiper;
+    }
+
     public String getSpoolThreshold() {
         return spoolThreshold;
     }
@@ -77,12 +94,20 @@ public class CamelStreamCachingStrategyDefinition extends IdentifiedType {
         this.spoolThreshold = spoolThreshold;
     }
 
-    public String getSpoolChiper() {
-        return spoolChiper;
+    public String getSpoolUsedHeapMemoryThreshold() {
+        return spoolUsedHeapMemoryThreshold;
     }
 
-    public void setSpoolChiper(String spoolChiper) {
-        this.spoolChiper = spoolChiper;
+    public void setSpoolUsedHeapMemoryThreshold(String spoolUsedHeapMemoryThreshold) {
+        this.spoolUsedHeapMemoryThreshold = spoolUsedHeapMemoryThreshold;
+    }
+
+    public String getSpoolRules() {
+        return spoolRules;
+    }
+
+    public void setSpoolRules(String spoolRules) {
+        this.spoolRules = spoolRules;
     }
 
     public String getBufferSize() {
@@ -107,5 +132,13 @@ public class CamelStreamCachingStrategyDefinition extends IdentifiedType {
 
     public void setStatisticsEnabled(String statisticsEnabled) {
         this.statisticsEnabled = statisticsEnabled;
+    }
+
+    public String getAnySpoolRules() {
+        return anySpoolRules;
+    }
+
+    public void setAnySpoolRules(String anySpoolRules) {
+        this.anySpoolRules = anySpoolRules;
     }
 }

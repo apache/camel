@@ -66,6 +66,14 @@ public class ManagedStreamCachingStrategy extends ManagedService implements Mana
         return streamCachingStrategy.getSpoolThreshold();
     }
 
+    public void setSpoolUsedHeapMemoryThreshold(int percentage) {
+        streamCachingStrategy.setSpoolUsedHeapMemoryThreshold(percentage);
+    }
+
+    public long getSpoolUsedHeapMemoryThreshold() {
+        return streamCachingStrategy.getSpoolUsedHeapMemoryThreshold();
+    }
+
     public void setBufferSize(int bufferSize) {
         streamCachingStrategy.setBufferSize(bufferSize);
     }
@@ -82,12 +90,12 @@ public class ManagedStreamCachingStrategy extends ManagedService implements Mana
         return streamCachingStrategy.isRemoveSpoolDirectoryWhenStopping();
     }
 
-    public void setAnySpoolTasks(boolean any) {
-        streamCachingStrategy.setAnySpoolTasks(any);
+    public void setAnySpoolRules(boolean any) {
+        streamCachingStrategy.setAnySpoolRules(any);
     }
 
-    public boolean isAnySpoolTasks() {
-        return streamCachingStrategy.isAnySpoolTasks();
+    public boolean isAnySpoolRules() {
+        return streamCachingStrategy.isAnySpoolRules();
     }
 
     public long getCacheMemoryCounter() {

@@ -18,6 +18,7 @@ package org.apache.camel.core.xml;
 
 import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
@@ -389,6 +390,10 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         if (spoolThreshold != null) {
             getContext().getStreamCachingStrategy().setSpoolThreshold(spoolThreshold);
         }
+        Integer spoolUsedHeap = CamelContextHelper.parseInteger(getContext(), streamCaching.getSpoolUsedHeapMemoryThreshold());
+        if (spoolUsedHeap != null) {
+            getContext().getStreamCachingStrategy().setSpoolUsedHeapMemoryThreshold(spoolUsedHeap);
+        }
         String spoolChiper = CamelContextHelper.parseText(getContext(), streamCaching.getSpoolChiper());
         if (spoolChiper != null) {
             getContext().getStreamCachingStrategy().setSpoolChiper(spoolChiper);
@@ -400,6 +405,21 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         Boolean statisticsEnabled = CamelContextHelper.parseBoolean(getContext(), streamCaching.getStatisticsEnabled());
         if (statisticsEnabled != null) {
             getContext().getStreamCachingStrategy().getStatistics().setStatisticsEnabled(statisticsEnabled);
+        }
+        Boolean anySpoolRules = CamelContextHelper.parseBoolean(getContext(), streamCaching.getAnySpoolRules());
+        if (anySpoolRules != null) {
+            getContext().getStreamCachingStrategy().setAnySpoolRules(anySpoolRules);
+        }
+        String spoolRules = CamelContextHelper.parseText(getContext(), streamCaching.getAnySpoolRules());
+        if (spoolRules != null) {
+            Iterator it = ObjectHelper.createIterator(spoolRules);
+            while (it.hasNext()) {
+                String name = it.next().toString();
+                StreamCachingStrategy.SpoolRule rule = getContext().getRegistry().lookupByNameAndType(name, StreamCachingStrategy.SpoolRule.class);
+                if (rule != null) {
+                    getContext().getStreamCachingStrategy().addSpoolRule(rule);
+                }
+            }
         }
     }
 

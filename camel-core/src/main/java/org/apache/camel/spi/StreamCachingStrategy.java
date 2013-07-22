@@ -81,9 +81,9 @@ public interface StreamCachingStrategy extends Service {
     }
 
     /**
-     * Task for determine if stream caching should be spooled to disk or kept in-memory.
+     * Rule for determine if stream caching should be spooled to disk or kept in-memory.
      */
-    interface ShouldSpoolTask {
+    interface SpoolRule {
 
         /**
          * Determines if the stream should be spooled or not. For example if the stream length is
@@ -130,13 +130,13 @@ public interface StreamCachingStrategy extends Service {
     long getSpoolThreshold();
 
     /**
-     * Sets a percentage (0-100) of used heap memory threshold to activate spooling to disk.
+     * Sets a percentage (1-99) of used heap memory threshold to activate spooling to disk.
      *
      * @param percentage percentage of used heap memory.
      */
-    void setSpoolHeapMemoryWatermarkThreshold(int percentage);
+    void setSpoolUsedHeapMemoryThreshold(int percentage);
 
-    int getSpoolHeapMemoryWatermarkThreshold();
+    int getSpoolUsedHeapMemoryThreshold();
 
     /**
      * Sets the buffer size to use when allocating in-memory buffers used for in-memory stream caches.
@@ -166,16 +166,16 @@ public interface StreamCachingStrategy extends Service {
     boolean isRemoveSpoolDirectoryWhenStopping();
 
     /**
-     * Sets whether if just any of the {@link ShouldSpoolTask}
+     * Sets whether if just any of the {@link org.apache.camel.spi.StreamCachingStrategy.SpoolRule} rules
      * returns <tt>true</tt> then {@link #shouldSpoolCache(long)} returns <tt>true</tt>.
-     * If this option is <tt>false</tt>, then <b>all</b> the {@link ShouldSpoolTask} must
+     * If this option is <tt>false</tt>, then <b>all</b> the {@link org.apache.camel.spi.StreamCachingStrategy.SpoolRule} must
      * return <tt>true</tt>.
      * <p/>
-     * The default value is <tt>false</tt>
+     * The default value is <tt>false</tt> which means that all the rules must return <tt>true</tt>.
      */
-    void setAnySpoolTasks(boolean any);
+    void setAnySpoolRules(boolean any);
 
-    boolean isAnySpoolTasks();
+    boolean isAnySpoolRules();
 
     /**
      * Gets the utilization statistics.
@@ -183,9 +183,9 @@ public interface StreamCachingStrategy extends Service {
     Statistics getStatistics();
 
     /**
-     * Adds the {@link ShouldSpoolTask} to be used.
+     * Adds the {@link org.apache.camel.spi.StreamCachingStrategy.SpoolRule} rule to be used.
      */
-    void addShouldSpoolTask(ShouldSpoolTask task);
+    void addSpoolRule(SpoolRule rule);
 
     /**
      * Determines if the stream should be spooled or not. For example if the stream length is

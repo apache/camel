@@ -36,6 +36,12 @@ public interface ManagedStreamCachingStrategyMBean {
     @ManagedAttribute(description = "Threshold in bytes when overflow and spooling to disk instead of keeping in memory")
     long getSpoolThreshold();
 
+    @ManagedAttribute(description = "Percentage (1-99) of used heap memory threshold to activate spooling to disk")
+    void setSpoolUsedHeapMemoryThreshold(int percentage);
+
+    @ManagedAttribute(description = "Percentage (1-99) of used heap memory threshold to activate spooling to disk")
+    long getSpoolUsedHeapMemoryThreshold();
+
     @ManagedAttribute(description = "Buffer size in bytes to use when coping between buffers")
     void setBufferSize(int bufferSize);
 
@@ -48,11 +54,11 @@ public interface ManagedStreamCachingStrategyMBean {
     @ManagedAttribute(description = "Whether to remove spool directory when stopping")
     boolean isRemoveSpoolDirectoryWhenStopping();
 
-    @ManagedAttribute(description = "Whether any or all should spool tasks determines should spool")
-    void setAnySpoolTasks(boolean any);
+    @ManagedAttribute(description = "Whether any or all spool rules determines whether to spool")
+    void setAnySpoolRules(boolean any);
 
-    @ManagedAttribute(description = "Whether any or all should spool tasks determines should spool")
-    boolean isAnySpoolTasks();
+    @ManagedAttribute(description = "Whether any or all spool rules determines whether to spool")
+    boolean isAnySpoolRules();
 
     @ManagedAttribute(description = "Number of in-memory StreamCache created")
     long getCacheMemoryCounter();

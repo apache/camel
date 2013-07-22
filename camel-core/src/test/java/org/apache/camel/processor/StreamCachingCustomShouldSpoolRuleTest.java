@@ -27,9 +27,9 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.StreamCachingStrategy;
 
-public class StreamCachingCustomShouldSpoolTaskTest extends ContextTestSupport {
+public class StreamCachingCustomShouldSpoolRuleTest extends ContextTestSupport {
 
-    private MyCustomShouldSpoolTask spoolTask = new MyCustomShouldSpoolTask();
+    private MyCustomSpoolRule spoolRule = new MyCustomSpoolRule();
 
     @Override
     protected void setUp() throws Exception {
@@ -47,7 +47,7 @@ public class StreamCachingCustomShouldSpoolTaskTest extends ContextTestSupport {
         // and not needed to spool to disk
         template.sendBody("direct:a", new MyInputStream(new ByteArrayInputStream("<hello/>".getBytes())));
 
-        spoolTask.setSpool(true);
+        spoolRule.setSpool(true);
         template.sendBody("direct:a", new MyInputStream(new ByteArrayInputStream("<hallo/>".getBytes())));
         template.sendBody("direct:a", new MyInputStream(new ByteArrayInputStream("<hellos/>".getBytes())));
 
@@ -67,8 +67,8 @@ public class StreamCachingCustomShouldSpoolTaskTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 context.getStreamCachingStrategy().setSpoolDirectory("target/cachedir");
-                context.getStreamCachingStrategy().addShouldSpoolTask(spoolTask);
-                context.getStreamCachingStrategy().setAnySpoolTasks(true);
+                context.getStreamCachingStrategy().addSpoolRule(spoolRule);
+                context.getStreamCachingStrategy().setAnySpoolRules(true);
                 context.setStreamCaching(true);
 
                 from("direct:a")
@@ -81,7 +81,7 @@ public class StreamCachingCustomShouldSpoolTaskTest extends ContextTestSupport {
                         @Override
                         public void process(Exchange exchange) throws Exception {
                             // check if spool file exists
-                            if (spoolTask.isSpool()) {
+                            if (spoolRule.isSpool()) {
                                 String[] names = new File("target/cachedir").list();
                                 assertEquals("There should be a cached spool file", 1, names.length);
                             }
@@ -92,7 +92,7 @@ public class StreamCachingCustomShouldSpoolTaskTest extends ContextTestSupport {
         };
     }
 
-    private static final class MyCustomShouldSpoolTask implements StreamCachingStrategy.ShouldSpoolTask {
+    private static final class MyCustomSpoolRule implements StreamCachingStrategy.SpoolRule {
 
         private volatile boolean spool;
 
@@ -111,7 +111,7 @@ public class StreamCachingCustomShouldSpoolTaskTest extends ContextTestSupport {
 
         @Override
         public String toString() {
-            return "MyCustomShouldSpoolTask";
+            return "MyCustomSpoolRule";
         }
     }
 }

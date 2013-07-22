@@ -39,8 +39,6 @@ import org.slf4j.LoggerFactory;
  */
 public class DefaultStreamCachingStrategy extends org.apache.camel.support.ServiceSupport implements CamelContextAware, StreamCachingStrategy {
 
-    // TODO: add easy configuration in XML to add custom should spool tasks
-
     @Deprecated
     public static final String THRESHOLD = "CamelCachedOutputStreamThreshold";
     @Deprecated
@@ -57,13 +55,13 @@ public class DefaultStreamCachingStrategy extends org.apache.camel.support.Servi
     private File spoolDirectory;
     private transient String spoolDirectoryName = "${java.io.tmpdir}camel-tmp-#uuid#";
     private long spoolThreshold = StreamCache.DEFAULT_SPOOL_THRESHOLD;
-    private int spoolHeapMemoryWatermarkThreshold;
+    private int spoolUsedHeapMemoryThreshold;
     private String spoolChiper;
     private int bufferSize = IOHelper.DEFAULT_BUFFER_SIZE;
     private boolean removeSpoolDirectoryWhenStopping = true;
     private final UtilizationStatistics statistics = new UtilizationStatistics();
-    private final Set<ShouldSpoolTask> spoolTasks = new LinkedHashSet<ShouldSpoolTask>();
-    private boolean anySpoolTasks;
+    private final Set<SpoolRule> spoolRules = new LinkedHashSet<SpoolRule>();
+    private boolean anySpoolRules;
 
     public CamelContext getCamelContext() {
         return camelContext;
@@ -97,12 +95,12 @@ public class DefaultStreamCachingStrategy extends org.apache.camel.support.Servi
         return spoolThreshold;
     }
 
-    public int getSpoolHeapMemoryWatermarkThreshold() {
-        return spoolHeapMemoryWatermarkThreshold;
+    public int getSpoolUsedHeapMemoryThreshold() {
+        return spoolUsedHeapMemoryThreshold;
     }
 
-    public void setSpoolHeapMemoryWatermarkThreshold(int spoolHeapMemoryWatermarkThreshold) {
-        this.spoolHeapMemoryWatermarkThreshold = spoolHeapMemoryWatermarkThreshold;
+    public void setSpoolUsedHeapMemoryThreshold(int spoolHeapMemoryWatermarkThreshold) {
+        this.spoolUsedHeapMemoryThreshold = spoolHeapMemoryWatermarkThreshold;
     }
 
     public void setSpoolThreshold(long spoolThreshold) {
@@ -133,12 +131,12 @@ public class DefaultStreamCachingStrategy extends org.apache.camel.support.Servi
         this.removeSpoolDirectoryWhenStopping = removeSpoolDirectoryWhenStopping;
     }
 
-    public boolean isAnySpoolTasks() {
-        return anySpoolTasks;
+    public boolean isAnySpoolRules() {
+        return anySpoolRules;
     }
 
-    public void setAnySpoolTasks(boolean anySpoolTasks) {
-        this.anySpoolTasks = anySpoolTasks;
+    public void setAnySpoolRules(boolean anySpoolTasks) {
+        this.anySpoolRules = anySpoolTasks;
     }
 
     public Statistics getStatistics() {
@@ -146,29 +144,29 @@ public class DefaultStreamCachingStrategy extends org.apache.camel.support.Servi
     }
 
     public boolean shouldSpoolCache(long length) {
-        if (spoolTasks.isEmpty()) {
+        if (spoolRules.isEmpty()) {
             return false;
         }
 
         boolean all = true;
         boolean any = false;
-        for (ShouldSpoolTask task : spoolTasks) {
-            boolean result = task.shouldSpoolCache(length);
+        for (SpoolRule rule : spoolRules) {
+            boolean result = rule.shouldSpoolCache(length);
             if (!result) {
                 all = false;
             } else {
                 any = true;
-                if (anySpoolTasks) {
+                if (anySpoolRules) {
                     // no need to check anymore
                     break;
                 }
             }
         }
-        return anySpoolTasks ? any : all;
+        return anySpoolRules ? any : all;
     }
 
-    public void addShouldSpoolTask(ShouldSpoolTask task) {
-        spoolTasks.add(task);
+    public void addSpoolRule(SpoolRule rule) {
+        spoolRules.add(rule);
     }
 
     public StreamCache cache(Exchange exchange) {
@@ -190,6 +188,26 @@ public class DefaultStreamCachingStrategy extends org.apache.camel.support.Servi
             }
         }
         return cache;
+    }
+
+    protected String resolveSpoolDirectory(String path) {
+        String name = camelContext.getManagementNameStrategy().resolveManagementName(path, camelContext.getName(), false);
+        if (name != null) {
+            name = customResolveManagementName(name);
+        }
+        // and then check again with invalid check to ensure all ## is resolved
+        if (name != null) {
+            name = camelContext.getManagementNameStrategy().resolveManagementName(name, camelContext.getName(), true);
+        }
+        return name;
+    }
+
+    protected String customResolveManagementName(String pattern) {
+        if (pattern.contains("#uuid#")) {
+            String uuid = UUID.randomUUID().toString();
+            pattern = pattern.replaceFirst("#uuid#", uuid);
+        }
+        return FilePathResolver.resolvePath(pattern);
     }
 
     @Override
@@ -225,12 +243,12 @@ public class DefaultStreamCachingStrategy extends org.apache.camel.support.Servi
             LOG.warn("Configuring of StreamCaching using CamelContext properties is deprecated - use StreamCachingStrategy instead.");
         }
 
-        if (spoolHeapMemoryWatermarkThreshold < 0 || spoolHeapMemoryWatermarkThreshold > 100) {
-            throw new IllegalArgumentException("SpoolHeapMemoryWatermarkThreshold must be a value between 0 and 100, was: " + spoolHeapMemoryWatermarkThreshold);
+        if (spoolUsedHeapMemoryThreshold > 99) {
+            throw new IllegalArgumentException("SpoolHeapMemoryWatermarkThreshold must not be higher than 99, was: " + spoolUsedHeapMemoryThreshold);
         }
 
         // if we can overflow to disk then make sure directory exists / is created
-        if (spoolThreshold > 0 || spoolHeapMemoryWatermarkThreshold > 0) {
+        if (spoolThreshold > 0 || spoolUsedHeapMemoryThreshold > 0) {
 
             if (spoolDirectory == null && spoolDirectoryName == null) {
                 throw new IllegalArgumentException("SpoolDirectory must be configured when using SpoolThreshold > 0");
@@ -263,40 +281,20 @@ public class DefaultStreamCachingStrategy extends org.apache.camel.support.Servi
             }
 
             if (spoolThreshold > 0) {
-                spoolTasks.add(new FixedThresholdShouldSpoolTask(spoolThreshold));
+                spoolRules.add(new FixedThresholdSpoolRule());
             }
-            if (spoolHeapMemoryWatermarkThreshold > 0) {
-                spoolTasks.add(new UsedHeapMemoryShouldSpoolTask(spoolHeapMemoryWatermarkThreshold));
+            if (spoolUsedHeapMemoryThreshold > 0) {
+                spoolRules.add(new UsedHeapMemorySpoolRule());
             }
         }
 
         LOG.debug("StreamCaching configuration {}", this.toString());
 
         if (spoolDirectory != null) {
-            LOG.info("StreamCaching in use with spool directory: {} and thresholds: {}", spoolDirectory.getPath(), spoolTasks.toString());
+            LOG.info("StreamCaching in use with spool directory: {} and rules: {}", spoolDirectory.getPath(), spoolRules.toString());
         } else {
-            LOG.info("StreamCaching in use with thresholds: {}", spoolTasks.toString());
+            LOG.info("StreamCaching in use with rules: {}", spoolRules.toString());
         }
-    }
-
-    protected String resolveSpoolDirectory(String path) {
-        String name = camelContext.getManagementNameStrategy().resolveManagementName(path, camelContext.getName(), false);
-        if (name != null) {
-            name = customResolveManagementName(name);
-        }
-        // and then check again with invalid check to ensure all ## is resolved
-        if (name != null) {
-            name = camelContext.getManagementNameStrategy().resolveManagementName(name, camelContext.getName(), true);
-        }
-        return name;
-    }
-
-    protected String customResolveManagementName(String pattern) {
-        if (pattern.contains("#uuid#")) {
-            String uuid = UUID.randomUUID().toString();
-            pattern = pattern.replaceFirst("#uuid#", uuid);
-        }
-        return FilePathResolver.resolvePath(pattern);
     }
 
     @Override
@@ -317,55 +315,48 @@ public class DefaultStreamCachingStrategy extends org.apache.camel.support.Servi
     public String toString() {
         return "DefaultStreamCachingStrategy["
             + "spoolDirectory=" + spoolDirectory
-            + ", spoolThreshold=" + spoolThreshold
             + ", spoolChiper=" + spoolChiper
+            + ", spoolThreshold=" + spoolThreshold
+            + ", spoolUsedHeapMemoryThreshold=" + spoolUsedHeapMemoryThreshold
             + ", bufferSize=" + bufferSize
-            + ", anySpoolTasks=" + anySpoolTasks + "]";
+            + ", anySpoolRules=" + anySpoolRules + "]";
     }
 
-    private static final class FixedThresholdShouldSpoolTask implements ShouldSpoolTask {
-
-        private final long threshold;
-
-        private FixedThresholdShouldSpoolTask(long threshold) {
-            this.threshold = threshold;
-        }
+    private final class FixedThresholdSpoolRule implements SpoolRule {
 
         public boolean shouldSpoolCache(long length) {
-            if (threshold > 0 && length > threshold) {
-                LOG.trace("Should spool cache {} > {} -> true", length, threshold);
+            if (spoolThreshold > 0 && length > spoolThreshold) {
+                LOG.trace("Should spool cache {} > {} -> true", length, spoolThreshold);
                 return true;
             }
             return false;
         }
 
         public String toString() {
-            if (threshold < 1024) {
-                return "Spool > " + threshold + " bytes body size";
+            if (spoolThreshold < 1024) {
+                return "Spool > " + spoolThreshold + " bytes body size";
             } else {
-                return "Spool > " + (threshold >> 10) + "K body size";
+                return "Spool > " + (spoolThreshold >> 10) + "K body size";
             }
         }
     }
 
-    private final class UsedHeapMemoryShouldSpoolTask implements ShouldSpoolTask {
+    private final class UsedHeapMemorySpoolRule implements SpoolRule {
 
         private final MemoryMXBean heapUsage;
-        private final int spoolPercentage;
 
-        private UsedHeapMemoryShouldSpoolTask(int spoolPercentage) {
-            this.spoolPercentage = spoolPercentage;
+        private UsedHeapMemorySpoolRule() {
             this.heapUsage = ManagementFactory.getMemoryMXBean();
         }
 
         public boolean shouldSpoolCache(long length) {
-            if (spoolPercentage > 0) {
+            if (spoolUsedHeapMemoryThreshold > 0) {
                 long used = heapUsage.getHeapMemoryUsage().getUsed();
                 long committed = heapUsage.getHeapMemoryUsage().getCommitted();
                 long percentage = committed / used * 100;
                 LOG.trace("Heap memory: [used=%sK (%sK\\%), committed=%sK]", new Object[]{used >> 10, percentage, committed >> 10});
-                if (percentage >= spoolPercentage) {
-                    LOG.trace("Should spool cache {} > {} -> true", percentage, spoolPercentage);
+                if (percentage >= spoolUsedHeapMemoryThreshold) {
+                    LOG.trace("Should spool cache {} > {} -> true", percentage, spoolUsedHeapMemoryThreshold);
                     return true;
                 }
             }
@@ -373,14 +364,14 @@ public class DefaultStreamCachingStrategy extends org.apache.camel.support.Servi
         }
 
         public String toString() {
-            return "Spool > " + spoolPercentage + "% used heap memory";
+            return "Spool > " + spoolUsedHeapMemoryThreshold + "% used heap memory";
         }
     }
 
     /**
      * Represents utilization statistics.
      */
-    private final class UtilizationStatistics implements Statistics {
+    private static final class UtilizationStatistics implements Statistics {
 
         private boolean statisticsEnabled;
         private volatile long memoryCounter;
