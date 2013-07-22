@@ -58,6 +58,7 @@ public class NettyServerBootstrapConfiguration implements Cloneable {
     protected String passphrase;
     protected BossPool bossPool;
     protected WorkerPool workerPool;
+    protected String networkInterface;
 
     public String getAddress() {
         return host + ":" + port;
@@ -319,6 +320,14 @@ public class NettyServerBootstrapConfiguration implements Cloneable {
         this.workerPool = workerPool;
     }
 
+    public String getNetworkInterface() {
+        return networkInterface;
+    }
+
+    public void setNetworkInterface(String networkInterface) {
+        this.networkInterface = networkInterface;
+    }
+
     /**
      * Checks if the other {@link NettyServerBootstrapConfiguration} is compatible
      * with this, as a Netty listener bound on port X shares the same common
@@ -396,6 +405,8 @@ public class NettyServerBootstrapConfiguration implements Cloneable {
             isCompatible = false;
         } else if (workerPool != other.workerPool) {
             isCompatible = false;
+        } else if (networkInterface != null && !networkInterface.equals(other.networkInterface)) {
+            isCompatible = false;
         }
 
         return isCompatible;
@@ -433,6 +444,7 @@ public class NettyServerBootstrapConfiguration implements Cloneable {
                 + ", passphrase='" + passphrase + '\''
                 + ", bossPool=" + bossPool
                 + ", workerPool=" + workerPool
+                + ", networkInterface='" + networkInterface + '\''
                 + '}';
     }
 }
