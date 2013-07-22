@@ -49,7 +49,7 @@ import org.slf4j.LoggerFactory;
  * For a brief tutorial on setting cron expression see
  * <a href="http://www.opensymphony.com/quartz/wikidocs/CronTriggers%20Tutorial.html">Quartz cron tutorial</a>.
  *
- * @version 
+ * @version
  */
 public class QuartzComponent extends DefaultComponent implements StartupListener {
     private static final transient Logger LOG = LoggerFactory.getLogger(QuartzComponent.class);
@@ -234,19 +234,25 @@ public class QuartzComponent extends DefaultComponent implements StartupListener
             LOG.debug("Trigger: {}/{} already exists and will be updated by Quartz.", trigger.getGroup(), trigger.getName());
             // fast forward start time to now, as we do not want any misfire to kick in
             trigger.setStartTime(new Date());
-            // replace job, and relate trigger to previous job name, which is needed to reschedule job
+
+            // To ensure trigger uses the same job (the job name might change!) we will remove old trigger then re-add.
+            scheduler.unscheduleJob(trigger.getName(), trigger.getGroup());
             scheduler.addJob(job, true);
-            trigger.setJobName(existingTrigger.getJobName());
-            scheduler.rescheduleJob(trigger.getName(), trigger.getGroup(), trigger);
+            trigger.setJobName(job.getName());
+            trigger.setJobGroup(job.getGroup());
+            scheduler.scheduleJob(trigger);
         } else {
             if (!isClustered()) {
                 LOG.debug("Trigger: {}/{} already exists and will be resumed by Quartz.", trigger.getGroup(), trigger.getName());
                 // fast forward start time to now, as we do not want any misfire to kick in
                 trigger.setStartTime(new Date());
-                // replace job, and relate trigger to previous job name, which is needed to reschedule job
+
+                // To ensure trigger uses the same job (the job name might change!) we will remove old trigger then re-add.
+                scheduler.unscheduleJob(trigger.getName(), trigger.getGroup());
                 scheduler.addJob(job, true);
-                trigger.setJobName(existingTrigger.getJobName());
-                scheduler.rescheduleJob(trigger.getName(), trigger.getGroup(), trigger);
+                trigger.setJobName(job.getName());
+                trigger.setJobGroup(job.getGroup());
+                scheduler.scheduleJob(trigger);
             } else {
                 LOG.debug("Trigger: {}/{} already exists and is already scheduled by clustered JobStore.", trigger.getGroup(), trigger.getName());
             }
