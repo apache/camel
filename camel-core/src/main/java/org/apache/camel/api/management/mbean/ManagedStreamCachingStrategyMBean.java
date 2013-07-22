@@ -48,6 +48,12 @@ public interface ManagedStreamCachingStrategyMBean {
     @ManagedAttribute(description = "Whether to remove spool directory when stopping")
     boolean isRemoveSpoolDirectoryWhenStopping();
 
+    @ManagedAttribute(description = "Whether any or all should spool tasks determines should spool")
+    void setAnySpoolTasks(boolean any);
+
+    @ManagedAttribute(description = "Whether any or all should spool tasks determines should spool")
+    boolean isAnySpoolTasks();
+
     @ManagedAttribute(description = "Number of in-memory StreamCache created")
     long getCacheMemoryCounter();
 

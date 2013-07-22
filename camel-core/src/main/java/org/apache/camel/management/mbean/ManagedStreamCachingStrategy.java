@@ -82,6 +82,14 @@ public class ManagedStreamCachingStrategy extends ManagedService implements Mana
         return streamCachingStrategy.isRemoveSpoolDirectoryWhenStopping();
     }
 
+    public void setAnySpoolTasks(boolean any) {
+        streamCachingStrategy.setAnySpoolTasks(any);
+    }
+
+    public boolean isAnySpoolTasks() {
+        return streamCachingStrategy.isAnySpoolTasks();
+    }
+
     public long getCacheMemoryCounter() {
         return streamCachingStrategy.getStatistics().getCacheMemoryCounter();
     }

@@ -1675,6 +1675,10 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
             // stream caching is in use so enable the strategy
             getStreamCachingStrategy().setEnabled(true);
             addService(getStreamCachingStrategy());
+        } else {
+            // log if stream caching is not in use as this can help people to enable it if they use streams
+            log.info("StreamCaching is not in use. If using streams then its recommended to enable stream caching."
+                    + " See more details at http://camel.apache.org/stream-caching.html");
         }
 
         // start routes

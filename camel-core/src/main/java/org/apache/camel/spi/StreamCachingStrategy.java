@@ -81,6 +81,24 @@ public interface StreamCachingStrategy extends Service {
     }
 
     /**
+     * Task for determine if stream caching should be spooled to disk or kept in-memory.
+     */
+    interface ShouldSpoolTask {
+
+        /**
+         * Determines if the stream should be spooled or not. For example if the stream length is
+         * over a threshold.
+         * <p/>
+         * This allows implementations to use custom strategies to determine if spooling is needed or not.
+         *
+         * @param length the length of the stream
+         * @return <tt>true</tt> to spool the cache, or <tt>false</tt> to keep the cache in-memory
+         */
+        boolean shouldSpoolCache(long length);
+
+    }
+
+    /**
      * Sets whether the stream caching is enabled.
      * <p/>
      * <b>Notice:</b> This cannot be changed at runtime.
@@ -112,6 +130,15 @@ public interface StreamCachingStrategy extends Service {
     long getSpoolThreshold();
 
     /**
+     * Sets a percentage (0-100) of used heap memory threshold to activate spooling to disk.
+     *
+     * @param percentage percentage of used heap memory.
+     */
+    void setSpoolHeapMemoryWatermarkThreshold(int percentage);
+
+    int getSpoolHeapMemoryWatermarkThreshold();
+
+    /**
      * Sets the buffer size to use when allocating in-memory buffers used for in-memory stream caches.
      * <p/>
      * The default size is {@link org.apache.camel.util.IOHelper#DEFAULT_BUFFER_SIZE}
@@ -139,9 +166,26 @@ public interface StreamCachingStrategy extends Service {
     boolean isRemoveSpoolDirectoryWhenStopping();
 
     /**
+     * Sets whether if just any of the {@link ShouldSpoolTask}
+     * returns <tt>true</tt> then {@link #shouldSpoolCache(long)} returns <tt>true</tt>.
+     * If this option is <tt>false</tt>, then <b>all</b> the {@link ShouldSpoolTask} must
+     * return <tt>true</tt>.
+     * <p/>
+     * The default value is <tt>false</tt>
+     */
+    void setAnySpoolTasks(boolean any);
+
+    boolean isAnySpoolTasks();
+
+    /**
      * Gets the utilization statistics.
      */
     Statistics getStatistics();
+
+    /**
+     * Adds the {@link ShouldSpoolTask} to be used.
+     */
+    void addShouldSpoolTask(ShouldSpoolTask task);
 
     /**
      * Determines if the stream should be spooled or not. For example if the stream length is
