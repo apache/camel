@@ -47,6 +47,8 @@ public class RabbitMQEndpoint extends DefaultEndpoint {
     private int threadPoolSize = 10;
     private int portNumber;
     private boolean autoAck = true;
+    private boolean autoDelete = true;
+    private boolean durable = true;
     private String queue = String.valueOf(UUID.randomUUID().toString().hashCode());
     private String exchangeName;
     private String routingKey;
@@ -92,6 +94,22 @@ public class RabbitMQEndpoint extends DefaultEndpoint {
 
     public String getQueue() {
         return queue;
+    }
+    
+    public boolean isAutoDelete() {
+        return autoDelete;
+    }
+
+    public void setAutoDelete(boolean autoDelete) {
+        this.autoDelete = autoDelete;
+    }
+
+    public boolean isDurable() {
+        return durable;
+    }
+
+    public void setDurable(boolean durable) {
+        this.durable = durable;
     }
 
     public String getRoutingKey() {

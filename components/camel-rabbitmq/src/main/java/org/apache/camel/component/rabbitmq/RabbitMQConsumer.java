@@ -18,6 +18,7 @@
 package org.apache.camel.component.rabbitmq;
 
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.concurrent.ExecutorService;
 
 import com.rabbitmq.client.AMQP;
@@ -58,7 +59,12 @@ public class RabbitMQConsumer extends DefaultConsumer {
         channel = conn.createChannel();
         log.debug("Using channel {}", channel);
 
-        channel.exchangeDeclare(endpoint.getExchangeName(), "direct", true);
+        channel.exchangeDeclare(endpoint.getExchangeName(),
+                "direct",
+                endpoint.isDurable(),
+                endpoint.isAutoDelete(),
+                new HashMap<String, Object>());
+
         channel.queueDeclare(endpoint.getQueue(), true, false, false, null);
         channel.queueBind(endpoint.getQueue(), endpoint.getExchangeName(),
                 endpoint.getRoutingKey() == null ? "" : endpoint.getRoutingKey());
