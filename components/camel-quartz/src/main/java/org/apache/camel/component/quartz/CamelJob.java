@@ -25,10 +25,9 @@ import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.quartz.SchedulerContext;
 import org.quartz.SchedulerException;
+import org.quartz.Trigger;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.apache.camel.util.URISupport.normalizeUri;
 
 /**
  * @version 
@@ -36,7 +35,7 @@ import static org.apache.camel.util.URISupport.normalizeUri;
 public class CamelJob implements Job, Serializable {
 
     private static final transient Logger LOG = LoggerFactory.getLogger(CamelJob.class);
-    private static final long serialVersionUID = 26L;
+    private static final long serialVersionUID = 27L;
 
     public void execute(JobExecutionContext context) throws JobExecutionException {
         String camelContextName = (String) context.getJobDetail().getJobDataMap().get(QuartzConstants.QUARTZ_CAMEL_CONTEXT_NAME);
@@ -54,28 +53,35 @@ public class CamelJob implements Job, Serializable {
             throw new JobExecutionException("No CamelContext could be found with name: " + camelContextName);
         }
 
-        QuartzEndpoint endpoint = lookupQuartzEndpoint(camelContext, endpointUri);
+        Trigger trigger = context.getTrigger();
+        QuartzEndpoint endpoint = lookupQuartzEndpoint(camelContext, endpointUri, trigger);
         if (endpoint == null) {
-            throw new JobExecutionException("No QuartzEndpoint could be found with uri: " + endpointUri);
+            throw new JobExecutionException("No QuartzEndpoint could be found with endpointUri: " + endpointUri);
         }
         endpoint.onJobExecute(context);
     }
 
-    private QuartzEndpoint lookupQuartzEndpoint(CamelContext camelContext, String endpointUri) throws JobExecutionException {
-        try {
-            String targetUri = normalizeUri(endpointUri);
+    private QuartzEndpoint lookupQuartzEndpoint(CamelContext camelContext, String endpointUri, Trigger trigger) throws JobExecutionException {
+        String targetTriggerName = trigger.getName();
+        String targetTriggerGroup = trigger.getGroup();
 
+        LOG.debug("Looking up existing QuartzEndpoint with trigger {}.{}", targetTriggerName, targetTriggerGroup);
+        try {
             // check all active routes for the quartz endpoint this task matches
             // as we prefer to use the existing endpoint from the routes
             for (Route route : camelContext.getRoutes()) {
                 if (route.getEndpoint() instanceof QuartzEndpoint) {
-                    if (normalizeUri(route.getEndpoint().getEndpointUri()).equals(targetUri)) {
+                    QuartzEndpoint quartzEndpoint = (QuartzEndpoint) route.getEndpoint();
+                    String triggerName = quartzEndpoint.getTrigger().getName();
+                    String triggerGroup = quartzEndpoint.getTrigger().getGroup();
+                    LOG.trace("Checking route trigger {}.{}", triggerName, triggerGroup);
+                    if (triggerName.equals(targetTriggerName) && triggerGroup.equals(targetTriggerGroup)) {
                         return (QuartzEndpoint) route.getEndpoint();
                     }
                 }
             }
         } catch (Exception e) {
-            throw new JobExecutionException("Error lookup up existing QuartzEndpoint with uri: " + endpointUri, e);
+            throw new JobExecutionException("Error lookup up existing QuartzEndpoint with trigger: " + trigger, e);
         }
 
         // fallback and lookup existing from registry (eg maybe a @Consume POJO with a quartz endpoint, and thus not from a route)
