@@ -125,7 +125,7 @@ public class CachedOutputStream extends OutputStream {
 
     public void write(byte[] b, int off, int len) throws IOException {
         this.totalLength += len;
-        if (strategy.getSpoolThreshold() > 0 && inMemory && totalLength > strategy.getSpoolThreshold() && currentStream instanceof ByteArrayOutputStream) {
+        if (inMemory && currentStream instanceof ByteArrayOutputStream && strategy.shouldSpoolCache(totalLength)) {
             pageToFileStream();
         }
         currentStream.write(b, off, len);
@@ -133,7 +133,7 @@ public class CachedOutputStream extends OutputStream {
 
     public void write(byte[] b) throws IOException {
         this.totalLength += b.length;
-        if (strategy.getSpoolThreshold() > 0 && inMemory && totalLength > strategy.getSpoolThreshold() && currentStream instanceof ByteArrayOutputStream) {
+        if (inMemory && currentStream instanceof ByteArrayOutputStream && strategy.shouldSpoolCache(totalLength)) {
             pageToFileStream();
         }
         currentStream.write(b);
@@ -141,7 +141,7 @@ public class CachedOutputStream extends OutputStream {
 
     public void write(int b) throws IOException {
         this.totalLength++;
-        if (strategy.getSpoolThreshold() > 0 && inMemory && totalLength > strategy.getSpoolThreshold() && currentStream instanceof ByteArrayOutputStream) {
+        if (inMemory && currentStream instanceof ByteArrayOutputStream && strategy.shouldSpoolCache(totalLength)) {
             pageToFileStream();
         }
         currentStream.write(b);
@@ -167,7 +167,7 @@ public class CachedOutputStream extends OutputStream {
             }
         }
     }    
-    
+
     public InputStream getWrappedInputStream() throws IOException {
         // The WrappedInputStream will close the CachedOutputStream when it is closed
         return new WrappedInputStream(this, getInputStream());

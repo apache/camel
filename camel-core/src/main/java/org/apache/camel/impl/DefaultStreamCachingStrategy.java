@@ -35,7 +35,6 @@ import org.slf4j.LoggerFactory;
  */
 public class DefaultStreamCachingStrategy extends org.apache.camel.support.ServiceSupport implements CamelContextAware, StreamCachingStrategy {
 
-    // TODO: logic for spool to disk in this class so we can control this
     // TODO: add memory based watermarks for spool to disk
 
     @Deprecated
@@ -123,17 +122,29 @@ public class DefaultStreamCachingStrategy extends org.apache.camel.support.Servi
         return statistics;
     }
 
+    public boolean shouldSpoolCache(long length) {
+        if (spoolThreshold > 0 && length >= spoolThreshold) {
+            return true;
+        }
+        return false;
+    }
+
     public StreamCache cache(Exchange exchange) {
         StreamCache cache = exchange.getIn().getBody(StreamCache.class);
-        if (cache != null && statistics.isStatisticsEnabled()) {
-            try {
-                if (cache.inMemory()) {
-                    statistics.updateMemory(cache.length());
-                } else {
-                    statistics.updateSpool(cache.length());
+        if (cache != null) {
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Cached stream to {} -> {}", cache.inMemory() ? "memory" : "spool", cache);
+            }
+            if (statistics.isStatisticsEnabled()) {
+                try {
+                    if (cache.inMemory()) {
+                        statistics.updateMemory(cache.length());
+                    } else {
+                        statistics.updateSpool(cache.length());
+                    }
+                } catch (Exception e) {
+                    LOG.debug("Error updating cache statistics. This exception is ignored.", e);
                 }
-            } catch (Exception e) {
-                LOG.debug("Error updating cache statistics. This exception is ignored.", e);
             }
         }
         return cache;

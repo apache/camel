@@ -144,6 +144,17 @@ public interface StreamCachingStrategy extends Service {
     Statistics getStatistics();
 
     /**
+     * Determines if the stream should be spooled or not. For example if the stream length is
+     * over a threshold.
+     * <p/>
+     * This allows implementations to use custom strategies to determine if spooling is needed or not.
+     *
+     * @param length the length of the stream
+     * @return <tt>true</tt> to spool the cache, or <tt>false</tt> to keep the cache in-memory
+     */
+    boolean shouldSpoolCache(long length);
+
+    /**
      * Caches the body aas a {@link StreamCache}.
      *
      * @param exchange the exchange
