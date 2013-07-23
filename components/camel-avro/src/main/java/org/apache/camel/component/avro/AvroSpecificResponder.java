@@ -16,31 +16,22 @@
  */
 package org.apache.camel.component.avro;
 
-import org.apache.avro.ipc.HttpServer;
+import org.apache.avro.Protocol;
+import org.apache.avro.ipc.specific.SpecificResponder;
+import org.apache.avro.specific.SpecificData;
 
-import org.apache.camel.Endpoint;
-import org.apache.camel.Processor;
+public class AvroSpecificResponder extends SpecificResponder {
+    private AvroListener listener;
 
-public class AvroHttpConsumer extends AvroConsumer {
 
-    HttpServer server;
-
-    public AvroHttpConsumer(Endpoint endpoint, Processor processor) {
-        super(endpoint, processor);
+    public AvroSpecificResponder(Protocol protocol, AvroListener listener)  throws Exception {
+        super(protocol, null);
+        this.listener = listener;
     }
 
     @Override
-    protected void doStart() throws Exception {
-        AvroConfiguration configuration = getEndpoint().getConfiguration();
-        server = new HttpServer(new AvroResponder(this), configuration.getPort());
-        server.start();
+    public Object respond(Protocol.Message message, Object request) throws Exception {
+        return listener.respond(message, request, SpecificData.get());
     }
 
-    @Override
-    protected void doStop() throws Exception {
-        super.doStop();
-        if (server != null) {
-            server.close();
-        }
-    }
 }

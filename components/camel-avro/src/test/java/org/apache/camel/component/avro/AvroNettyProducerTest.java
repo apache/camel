@@ -20,24 +20,13 @@ package org.apache.camel.component.avro;
 import java.net.InetSocketAddress;
 
 import org.apache.avro.ipc.NettyServer;
+import org.apache.avro.ipc.reflect.ReflectResponder;
 import org.apache.avro.ipc.specific.SpecificResponder;
 import org.apache.camel.avro.generated.KeyValueProtocol;
+import org.apache.camel.avro.test.TestReflection;
 import org.apache.camel.builder.RouteBuilder;
 
 public class AvroNettyProducerTest extends AvroProducerTestSupport {
-
-    public RouteBuilder createRouteBuilder() throws Exception {
-        return new RouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-                //In Only
-                from("direct:in").to("avro:netty:localhost:" + avroPort);
-
-                //InOut
-                from("direct:inout").to("avro:netty:localhost:" + avroPort).to("mock:result-inout");
-            }
-        };
-    }
 
     @Override
     protected void initializeServer() {
@@ -45,5 +34,46 @@ public class AvroNettyProducerTest extends AvroProducerTestSupport {
             server = new NettyServer(new SpecificResponder(KeyValueProtocol.PROTOCOL, keyValue), new InetSocketAddress("localhost", avroPort));
             server.start();
         }
+
+        if (serverReflection == null) {
+            serverReflection = new NettyServer(new ReflectResponder(TestReflection.class, testReflection), new InetSocketAddress("localhost", avroPortReflection));
+            serverReflection.start();
+        }
+    }
+
+    public RouteBuilder createRouteBuilder() throws Exception {
+        return new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                //In Only
+                from("direct:in")
+                        .to("avro:netty:localhost:" + avroPort + "?protocolClassName=org.apache.camel.avro.generated.KeyValueProtocol");
+
+                //In Only with message in route
+                from("direct:in-message-name")
+                        .errorHandler(deadLetterChannel("mock:in-message-name-error"))
+                        .to("avro:netty:localhost:" + avroPort + "/put?protocolClassName=org.apache.camel.avro.generated.KeyValueProtocol")
+                        .to("mock:result-in-message-name");
+
+                //In Only with existing interface
+                from("direct:in-reflection")
+                        .to("avro:netty:localhost:" + avroPortReflection + "/setName?protocolClassName=org.apache.camel.avro.test.TestReflection");
+
+                //InOut
+                from("direct:inout")
+                        .to("avro:netty:localhost:" + avroPort + "?protocolClassName=org.apache.camel.avro.generated.KeyValueProtocol")
+                        .to("mock:result-inout");
+
+                //InOut
+                from("direct:inout-message-name")
+                        .to("avro:netty:localhost:" + avroPort + "/get?protocolClassName=org.apache.camel.avro.generated.KeyValueProtocol")
+                        .to("mock:result-inout-message-name");
+
+                //InOut with existing interface
+                from("direct:inout-reflection")
+                        .to("avro:netty:localhost:" + avroPortReflection + "/increaseAge?protocolClassName=org.apache.camel.avro.test.TestReflection")
+                        .to("mock:result-inout-reflection");
+            }
+        };
     }
 }

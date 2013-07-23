@@ -20,8 +20,10 @@ import org.apache.avro.Protocol;
 import org.apache.avro.Schema;
 
 import org.apache.camel.Component;
+import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultEndpoint;
 
 public abstract class AvroEndpoint extends DefaultEndpoint {
@@ -56,12 +58,24 @@ public abstract class AvroEndpoint extends DefaultEndpoint {
     public boolean isSingleton() {
         return true;
     }
+    
+    /**
+     * Creates a new <a
+     * href="http://camel.apache.org/event-driven-consumer.html">Event
+     * Driven Consumer</a> which consumes messages from the endpoint using the
+     * given processor
+     *
+     * @param processor the given processor
+     * @return a newly created consumer
+     * @throws Exception can be thrown
+     */
+    @Override
+    public Consumer createConsumer(Processor processor) throws Exception {
+        return new AvroConsumer(this, processor);
+    }
 
     public AvroConfiguration getConfiguration() {
         return configuration;
     }
 
-    public Protocol getProtocol() {
-        return configuration.getProtocol();
-    }
 }
