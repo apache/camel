@@ -221,15 +221,14 @@
     <bundle>mvn:org.apache.camel/camel-cxf-transport/${project.version}</bundle>
     <bundle>mvn:org.apache.camel/camel-cxf/${project.version}</bundle>
   </feature>
-<!-- TODO: Does not work due: No export found to match sun.misc (imported by mvn:com.lmax/disruptor/3.0.1)  
   <feature name='camel-disruptor' version='${project.version}' resolver='(obr)' start-level='50'>
+    <details>The camel-disruptor feature can only run on a SUN JVM. You need to add the package sun.misc to the java platform packages in the etc/jre.properties file.</details>
     <bundle dependency='true'>mvn:com.lmax/disruptor/${disruptor-version}</bundle>
     <feature version='${project.version}'>camel-core</feature>
     <bundle>mvn:org.apache.camel/camel-disruptor/${project.version}</bundle>
   </feature>
--->
   <feature name='camel-dns' version='${project.version}' resolver='(obr)' start-level='50'>
-    <details>The camel-dns feature can only run on a SUN JVM. You need to ddd the package sun.net.spi.nameservice to the java platform packages in the etc/jre.properties file.</details>
+    <details>The camel-dns feature can only run on a SUN JVM. You need to add the package sun.net.spi.nameservice to the java platform packages in the etc/jre.properties file.</details>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.dnsjava/${dnsjava-bundle-version}</bundle>
     <feature version='${project.version}'>camel-core</feature>
     <bundle>mvn:org.apache.camel/camel-dns/${project.version}</bundle>
