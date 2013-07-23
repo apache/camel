@@ -42,6 +42,7 @@
         !com.googlecode.concurrentlinkedhashmap,
         ${camel.osgi.import.defaults},
         org.apache.xalan.xsltc.trax;resolution:=optional,
+        net.sf.saxon;resolution:=optional,
         javax.activation;resolution:=optional,
         javax.xml.bind;resolution:=optional,
         javax.xml.bind.annotation;resolution:=optional,
