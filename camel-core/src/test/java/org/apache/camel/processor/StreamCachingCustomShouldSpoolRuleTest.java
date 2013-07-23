@@ -54,7 +54,7 @@ public class StreamCachingCustomShouldSpoolRuleTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-    private class MyInputStream extends FilterInputStream {
+    private final class MyInputStream extends FilterInputStream {
 
         private MyInputStream(InputStream in) {
             super(in);
