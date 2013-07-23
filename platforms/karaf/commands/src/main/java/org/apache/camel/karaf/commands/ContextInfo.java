@@ -33,6 +33,8 @@ import org.apache.felix.gogo.commands.Command;
 import org.apache.karaf.shell.console.OsgiCommandSupport;
 import org.apache.karaf.util.StringEscapeUtils;
 
+import static org.apache.camel.util.UnitUtils.printUnitFromBytes;
+
 /**
  * Command to display detailed information about a Camel context.
  */
@@ -160,11 +162,11 @@ public class ContextInfo extends OsgiCommandSupport {
                     if (camelContext.getStreamCachingStrategy().getStatistics().isStatisticsEnabled()) {
                         System.out.println(StringEscapeUtils.unescapeJava(String.format("\t                       [cacheMemoryCounter=%s, cacheMemorySize=%s, cacheMemoryAverageSize=%s, cacheSpoolCounter=%s, cacheSpoolSize=%s, cacheSpoolAverageSize=%s]",
                                 camelContext.getStreamCachingStrategy().getStatistics().getCacheMemoryCounter(),
-                                camelContext.getStreamCachingStrategy().getStatistics().getCacheMemorySize(),
-                                camelContext.getStreamCachingStrategy().getStatistics().getCacheMemoryAverageSize(),
+                                printUnitFromBytes(camelContext.getStreamCachingStrategy().getStatistics().getCacheMemorySize()),
+                                printUnitFromBytes(camelContext.getStreamCachingStrategy().getStatistics().getCacheMemoryAverageSize()),
                                 camelContext.getStreamCachingStrategy().getStatistics().getCacheSpoolCounter(),
-                                camelContext.getStreamCachingStrategy().getStatistics().getCacheSpoolSize(),
-                                camelContext.getStreamCachingStrategy().getStatistics().getCacheSpoolAverageSize())));
+                                printUnitFromBytes(camelContext.getStreamCachingStrategy().getStatistics().getCacheSpoolSize()),
+                                printUnitFromBytes(camelContext.getStreamCachingStrategy().getStatistics().getCacheSpoolAverageSize()))));
                     }
                 }
 
