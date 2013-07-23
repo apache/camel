@@ -322,8 +322,7 @@ public abstract class CamelTestSupport extends TestSupport {
 
     private void replaceFromEndpoints() throws Exception {
         for (final Map.Entry<String, String> entry : fromEndpoints.entrySet()) {
-            context.getRouteDefinition(
-                    entry.getKey()).adviceWith(context, new AdviceWithRouteBuilder() {
+            context.getRouteDefinition(entry.getKey()).adviceWith(context, new AdviceWithRouteBuilder() {
                 @Override
                 public void configure() throws Exception {
                     replaceFromWith(entry.getValue());
