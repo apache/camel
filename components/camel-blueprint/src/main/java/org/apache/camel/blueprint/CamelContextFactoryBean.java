@@ -167,7 +167,6 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Blu
     @XmlTransient
     private boolean implicitId;
 
-
     public Class<BlueprintCamelContext> getObjectType() {
         return BlueprintCamelContext.class;
     }
@@ -297,6 +296,8 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Blu
             // Ignore, if the EventAdmin package is not available, just don't use it
             LOG.debug("EventAdmin package is not available, just don't use it");
         }
+        // ensure routes is setup
+        setupRoutes();
     }
 
     public String getDependsOn() {

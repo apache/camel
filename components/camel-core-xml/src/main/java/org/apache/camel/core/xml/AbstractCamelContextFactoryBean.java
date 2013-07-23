@@ -23,6 +23,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlTransient;
@@ -111,6 +112,8 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
     private List<RoutesBuilder> builders = new ArrayList<RoutesBuilder>();
     @XmlTransient
     private ClassLoader contextClassLoaderOnStart;
+    @XmlTransient
+    private final AtomicBoolean routesSetupDone = new AtomicBoolean();
 
     public AbstractCamelContextFactoryBean() {
         // Keep track of the class loader for when we actually do start things up
@@ -269,22 +272,31 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
 
         // init stream caching strategy
         initStreamCachingStrategy();
+    }
 
-        // must init route refs before we prepare the routes below
-        initRouteRefs();
+    /**
+     * Setup all the routes which must be done prior starting {@link CamelContext}.
+     */
+    protected void setupRoutes() throws Exception {
+        if (routesSetupDone.compareAndSet(false, true)) {
+            LOG.debug("Setting up routes");
 
-        // do special preparation for some concepts such as interceptors and policies
-        // this is needed as JAXB does not build exactly the same model definition as Spring DSL would do
-        // using route builders. So we have here a little custom code to fix the JAXB gaps
-        prepareRoutes();
+            // must init route refs before we prepare the routes below
+            initRouteRefs();
 
-        // and add the routes
-        getContext().addRouteDefinitions(getRoutes());
+            // do special preparation for some concepts such as interceptors and policies
+            // this is needed as JAXB does not build exactly the same model definition as Spring DSL would do
+            // using route builders. So we have here a little custom code to fix the JAXB gaps
+            prepareRoutes();
 
-        LOG.debug("Found JAXB created routes: {}", getRoutes());
-        
-        findRouteBuilders();
-        installRoutes();
+            // and add the routes
+            getContext().addRouteDefinitions(getRoutes());
+
+            LOG.debug("Found JAXB created routes: {}", getRoutes());
+
+            findRouteBuilders();
+            installRoutes();
+        }
     }
 
     /**
@@ -485,6 +497,7 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
     protected abstract <S> S getBeanForType(Class<S> clazz);
 
     public void destroy() throws Exception {
+        routesSetupDone.set(false);
         getContext().stop();
     }
 

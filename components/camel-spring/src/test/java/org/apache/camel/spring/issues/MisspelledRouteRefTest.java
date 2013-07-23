@@ -17,6 +17,7 @@
 package org.apache.camel.spring.issues;
 
 import junit.framework.TestCase;
+import org.apache.camel.CamelException;
 import org.apache.camel.spring.Main;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,8 +38,9 @@ public class MisspelledRouteRefTest extends TestCase {
         } catch (Exception e) {
             //expected but want to see what it looks like...
             LOG.debug("Exception message : " + e.getMessage());
-            assertTrue("Get a wrong exception name", e.getMessage().indexOf("nested exception is org.apache.camel.CamelException: "
-                         + "Cannot find any routes with this RouteBuilder reference: RouteBuilderRef[xxxroute]") > 0);
+
+            CamelException cause = (CamelException) e.getCause();
+            assertEquals("Cannot find any routes with this RouteBuilder reference: RouteBuilderRef[xxxroute]", cause.getMessage());
         }
     }
 }

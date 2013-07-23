@@ -37,11 +37,11 @@ public class SpringCamelContextNoDependsOnTest extends SpringTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        // in this example CamelContext is created first, then route builder, and then the depends on bean is last
+        // in this example the depends on bean is created first, and then the route builder, and CamelContext is started last.
         long time1 = context.getRegistry().lookupByNameAndType("myDependsOnBean", MyDependsOnBean.class).getTime();
         long time2 = context.getRegistry().lookupByNameAndType("myRouteBuilder", MyDependsOnRouteBuilder.class).getTime();
 
-        assertTrue("myDependsOnBean should NOT be created before myRouteBuilder", time1 > time2);
+        assertTrue("myDependsOnBean should be created before myRouteBuilder", time2 > time1);
     }
 
 }

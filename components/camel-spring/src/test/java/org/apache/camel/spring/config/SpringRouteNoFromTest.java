@@ -41,7 +41,7 @@ public class SpringRouteNoFromTest extends SpringTestSupport {
             answer = new ClassPathXmlApplicationContext("org/apache/camel/spring/config/SpringRouteNoFromTest.xml");
             fail("Should have thrown exception");
         } catch (Exception e) {
-            IllegalArgumentException iae = (IllegalArgumentException) e.getCause().getCause();
+            IllegalArgumentException iae = (IllegalArgumentException) e.getCause();
             assertEquals("Route myRoute has no inputs: Route(myRoute)[[] -> [To[mock:result]]]", iae.getMessage());
             return null;
         }

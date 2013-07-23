@@ -288,6 +288,15 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
 
         SpringCamelContext context = getContext(false);
         if (context != null) {
+            // we need to defer setting up routes until Spring has done all its dependency injection
+            // which is only guaranteed to be done when it emits the ContextRefreshedEvent event.
+            if (event instanceof ContextRefreshedEvent) {
+                try {
+                    setupRoutes();
+                } catch (Exception e) {
+                    throw wrapRuntimeCamelException(e);
+                }
+            }
             // let the spring camel context handle the events
             context.onApplicationEvent(event);
         } else {
@@ -297,6 +306,9 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
                 // now lets start the CamelContext so that all its possible
                 // dependencies are initialized
                 try {
+                    // we need to defer setting up routes until Spring has done all its dependency injection
+                    // which is only guaranteed to be done when it emits the ContextRefreshedEvent event.
+                    setupRoutes();
                     LOG.trace("Starting the context now");
                     getContext().start();
                 } catch (Exception e) {
