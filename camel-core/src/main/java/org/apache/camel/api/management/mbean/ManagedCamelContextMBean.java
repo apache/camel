@@ -45,6 +45,15 @@ public interface ManagedCamelContextMBean extends ManagedPerformanceCounterMBean
     @ManagedAttribute(description = "Camel Properties")
     Map<String, String> getProperties();
 
+    @ManagedAttribute(description = "ClassResolver class name")
+    String getClassResolver();
+
+    @ManagedAttribute(description = "PackageScanClassResolver class name")
+    String getPackageScanClassResolver();
+
+    @ManagedAttribute(description = "ApplicationContext class name")
+    String getApplicationContextClassName();
+
     /**
      * Gets the value of a CamelContext property name
      *

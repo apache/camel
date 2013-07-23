@@ -84,6 +84,22 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
         return context.getUptime();
     }
 
+    public String getClassResolver() {
+        return context.getClassResolver().getClass().getName();
+    }
+
+    public String getPackageScanClassResolver() {
+        return context.getPackageScanClassResolver().getClass().getName();
+    }
+
+    public String getApplicationContextClassName() {
+        if (context.getApplicationContextClassLoader() != null) {
+            return context.getApplicationContextClassLoader().toString();
+        } else {
+            return null;
+        }
+    }
+
     public Map<String, String> getProperties() {
         if (context.getProperties().isEmpty()) {
             return null;

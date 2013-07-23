@@ -1547,7 +1547,15 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     }
 
     private void doStartCamel() throws Exception {
-        log.info("Using ClassResolver {}", getClassResolver());
+        if (applicationContextClassLoader == null) {
+            // use the classloader that loaded this class
+            setApplicationContextClassLoader(this.getClass().getClassLoader());
+        }
+
+        if (log.isDebugEnabled()) {
+            log.debug("Using ClassResolver={}, PackageScanClassResolver={}, ApplicationContextClassLoader={}",
+                    new Object[]{getClassResolver(), getPackageScanClassResolver(), getApplicationContextClassLoader()});
+        }
 
         if (isStreamCaching()) {
             log.info("StreamCaching is enabled on CamelContext: {}", getName());
