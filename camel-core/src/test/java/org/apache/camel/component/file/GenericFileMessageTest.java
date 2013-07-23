@@ -19,6 +19,7 @@ package org.apache.camel.component.file;
 import java.io.File;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.util.FileUtil;
 
 public class GenericFileMessageTest extends ContextTestSupport {
 
@@ -30,6 +31,6 @@ public class GenericFileMessageTest extends ContextTestSupport {
         file.setFileName("target/test.txt");
         file.setFile(new File("target/test.txt"));
         message = new GenericFileMessage<File>(file); 
-        assertEquals("target/test.txt", message.toString());
+        assertEquals(FileUtil.isWindows() ? "target\\test.txt" : "target/test.txt", message.toString());
     }
 }
