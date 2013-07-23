@@ -93,6 +93,8 @@ public class ServiceSupportTest extends TestSupport {
 
     public void testExceptionOnStart() throws Exception {
         ServiceSupportTestExOnStart service = new ServiceSupportTestExOnStart();
+        // forced not being stopped at start
+        assertEquals(false, service.isStopped());
         try {
             service.start();
             fail("RuntimeException expected");
@@ -105,6 +107,11 @@ public class ServiceSupportTest extends TestSupport {
     }
 
     public static class ServiceSupportTestExOnStart extends ServiceSupport {
+
+        public ServiceSupportTestExOnStart() {
+            // just for testing force it to not be stopped
+            stopped.set(false);
+        }
 
         @Override
         protected void doStart() throws Exception {
