@@ -23,13 +23,11 @@ import java.util.concurrent.ThreadPoolExecutor;
 import com.rabbitmq.client.Envelope;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.test.junit4.TestSupport;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertTrue;
-
-public class RabbitMQEndpointTest {
+public class RabbitMQEndpointTest extends TestSupport {
 
     private Envelope envelope = Mockito.mock(Envelope.class);
 
@@ -58,8 +56,8 @@ public class RabbitMQEndpointTest {
         RabbitMQEndpoint endpoint =
                 new RabbitMQEndpoint("rabbitmq:localhost/exchange", "localhost/exchange", new RabbitMQComponent());
         endpoint.setThreadPoolSize(400);
-        ThreadPoolExecutor executor = endpoint.createExecutor();
 
+        ThreadPoolExecutor executor = assertIsInstanceOf(ThreadPoolExecutor.class,  endpoint.createExecutor());
         assertEquals(400, executor.getCorePoolSize());
     }
 

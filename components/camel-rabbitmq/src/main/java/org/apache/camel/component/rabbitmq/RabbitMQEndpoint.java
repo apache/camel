@@ -23,7 +23,6 @@ import java.net.URISyntaxException;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadPoolExecutor;
 
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
@@ -196,7 +195,7 @@ public class RabbitMQEndpoint extends DefaultEndpoint {
         this.vhost = vhost;
     }
 
-    public ThreadPoolExecutor createExecutor() {
-        return (ThreadPoolExecutor) Executors.newFixedThreadPool(getThreadPoolSize());
+    public ExecutorService createExecutor() {
+        return Executors.newFixedThreadPool(getThreadPoolSize());
     }
 }

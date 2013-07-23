@@ -58,7 +58,7 @@ public class RabbitMQConsumerTest {
     public void testStoppingConsumerShutsdownConnection() throws Exception {
         RabbitMQConsumer consumer = new RabbitMQConsumer(endpoint, processor);
 
-        Mockito.when(endpoint.createExecutor()).thenReturn((ThreadPoolExecutor) Executors.newFixedThreadPool(3));
+        Mockito.when(endpoint.createExecutor()).thenReturn(Executors.newFixedThreadPool(3));
         Mockito.when(endpoint.connect(Matchers.any(ExecutorService.class))).thenReturn(conn);
         Mockito.when(conn.createChannel()).thenReturn(channel);
 
