@@ -17,11 +17,13 @@
 package org.apache.camel.component.cxf.common.header;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.helpers.CastUtils;
@@ -71,9 +73,14 @@ public final class CxfHeaderHelper {
                             || Message.RESPONSE_CODE.equals(entry.getKey())) {
                     message.put(entry.getKey(), entry.getValue());
                 } else {
-                    List<String> listValue = new ArrayList<String>();
-                    listValue.add(entry.getValue().toString());
-                    cxfHeaders.put(entry.getKey(), listValue);
+                    Object values = entry.getValue();
+                    if (values instanceof List<?>) {
+                        cxfHeaders.put(entry.getKey(), CastUtils.cast((List<?>)values, String.class));
+                    } else {
+                        List<String> listValue = new ArrayList<String>();
+                        listValue.add(entry.getValue().toString());
+                        cxfHeaders.put(entry.getKey(), listValue);
+                    }
                 }
             }
         }
@@ -92,7 +99,26 @@ public final class CxfHeaderHelper {
         if (cxfHeaders != null) {
             for (Map.Entry<String, List<String>> entry : cxfHeaders.entrySet()) {
                 if (!strategy.applyFilterToExternalHeaders(entry.getKey(), entry.getValue(), exchange)) {
-                    headers.put(entry.getKey(), entry.getValue().get(0));
+                    List<String> values = entry.getValue();
+                    //headers.put(entry.getKey(), entry.getValue().get(0));
+                    Object evalue;
+                    if (values.size() > 1) {
+                        if (exchange.getProperty(CxfConstants.CAMEL_CXF_PROTOCOL_HEADERS_MERGED, Boolean.FALSE, Boolean.class)) {
+                            StringBuilder sb = new StringBuilder();
+                            for (Iterator<String> it = values.iterator(); it.hasNext();) {
+                                sb.append(it.next());
+                                if (it.hasNext()) {
+                                    sb.append(',').append(' ');
+                                }
+                            }
+                            evalue = sb.toString();
+                        } else {
+                            evalue = values;
+                        }
+                    } else {
+                        evalue = values.get(0);
+                    }
+                    headers.put(entry.getKey(), evalue);
                 }
             }
         }
