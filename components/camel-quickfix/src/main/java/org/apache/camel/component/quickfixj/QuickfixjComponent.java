@@ -36,6 +36,7 @@ public class QuickfixjComponent extends DefaultComponent implements StartupListe
 
     private final Object engineInstancesLock = new Object();
     private final Map<String, QuickfixjEngine> engines = new HashMap<String, QuickfixjEngine>();
+    private final Map<String, QuickfixjEngine> provisionalEngines = new HashMap<String, QuickfixjEngine>();
     private final Map<String, QuickfixjEndpoint> endpoints = new HashMap<String, QuickfixjEndpoint>();
 
     private MessageStoreFactory messageStoreFactory;
@@ -54,6 +55,9 @@ public class QuickfixjComponent extends DefaultComponent implements StartupListe
             if (endpoint == null) {
                 engine = engines.get(remaining);
                 if (engine == null) {
+                    engine = provisionalEngines.get(remaining);
+                }
+                if (engine == null) {
                     QuickfixjConfiguration configuration = configurations.get(remaining);
                     if (configuration != null) {
                         SessionSettings settings = configuration.createSessionSettings();
@@ -61,12 +65,15 @@ public class QuickfixjComponent extends DefaultComponent implements StartupListe
                     } else {
                         engine = new QuickfixjEngine(uri, remaining, forcedShutdown, messageStoreFactory, logFactory, messageFactory);
                     }
-                    engines.put(remaining, engine);
 
                     // only start engine if CamelContext is already started, otherwise the engines gets started
                     // automatic later when CamelContext has been started using the StartupListener
                     if (getCamelContext().getStatus().isStarted()) {
                         startQuickfixjEngine(engine);
+                        engines.put(remaining, engine);
+                    } else {
+                        // engines to be started later
+                        provisionalEngines.put(remaining, engine);
                     }
                 }
 
@@ -100,6 +107,7 @@ public class QuickfixjComponent extends DefaultComponent implements StartupListe
     protected void doShutdown() throws Exception {
         // cleanup when shutting down
         engines.clear();
+        provisionalEngines.clear();
         endpoints.clear();
         super.doShutdown();
     }
@@ -112,6 +120,11 @@ public class QuickfixjComponent extends DefaultComponent implements StartupListe
     // Test Support
     Map<String, QuickfixjEngine> getEngines() {
         return Collections.unmodifiableMap(engines);
+    }
+
+    // Test Support
+    Map<String, QuickfixjEngine> getProvisionalEngines() {
+        return Collections.unmodifiableMap(provisionalEngines);
     }
 
     public void setMessageFactory(MessageFactory messageFactory) {
@@ -144,6 +157,11 @@ public class QuickfixjComponent extends DefaultComponent implements StartupListe
         synchronized (engineInstancesLock) {
             for (QuickfixjEngine engine : engines.values()) {
                 startQuickfixjEngine(engine);
+            }
+            for (Map.Entry<String, QuickfixjEngine> entry : provisionalEngines.entrySet()) {
+                startQuickfixjEngine(entry.getValue());
+                engines.put(entry.getKey(), entry.getValue());
+                provisionalEngines.remove(entry.getKey());
             }
         }
     }
