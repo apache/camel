@@ -162,21 +162,24 @@ public class QuickfixjComponentTest {
         writeSettings();
 
         Endpoint e1 = component.createEndpoint(getEndpointUri(settingsFile.getName(), null));
-        assertThat(component.getEngines().size(), is(1));
-        assertThat(component.getEngines().get(settingsFile.getName()), is(notNullValue()));
-        assertThat(component.getEngines().get(settingsFile.getName()).isStarted(), is(false));
+        assertThat(component.getProvisionalEngines().size(), is(1));
+        assertThat(component.getProvisionalEngines().get(settingsFile.getName()), is(notNullValue()));
+        assertThat(component.getProvisionalEngines().get(settingsFile.getName()).isStarted(), is(false));
         assertThat(((QuickfixjEndpoint)e1).getSessionID(), is(nullValue()));
         
         // Should used cached QFJ engine
         Endpoint e2 = component.createEndpoint(getEndpointUri(settingsFile.getName(), sessionID));
         
-        assertThat(component.getEngines().size(), is(1));
-        assertThat(component.getEngines().get(settingsFile.getName()), is(notNullValue()));
-        assertThat(component.getEngines().get(settingsFile.getName()).isStarted(), is(false));
+        assertThat(component.getProvisionalEngines().size(), is(1));
+        assertThat(component.getProvisionalEngines().get(settingsFile.getName()), is(notNullValue()));
+        assertThat(component.getProvisionalEngines().get(settingsFile.getName()).isStarted(), is(false));
         assertThat(((QuickfixjEndpoint)e2).getSessionID(), is(sessionID));
 
         // will start the component
         camelContext.start();
+
+        assertThat(component.getProvisionalEngines().size(), is(0));
+        assertThat(component.getEngines().size(), is(1));
         assertThat(component.getEngines().get(settingsFile.getName()).isStarted(), is(true));
         
         // Move these too an endpoint testcase if one exists
@@ -331,7 +334,8 @@ public class QuickfixjComponentTest {
 
         component.createEndpoint(getEndpointUri(settingsFile.getName(), null));
 
-        component.start();
+        // will start the component
+        camelContext.start();
 
         assertThat(component.getEngines().size(), is(1));
         QuickfixjEngine engine = component.getEngines().values().iterator().next();
