@@ -70,7 +70,7 @@ public class ManagedStreamCachingStrategy extends ManagedService implements Mana
         streamCachingStrategy.setSpoolUsedHeapMemoryThreshold(percentage);
     }
 
-    public long getSpoolUsedHeapMemoryThreshold() {
+    public int getSpoolUsedHeapMemoryThreshold() {
         return streamCachingStrategy.getSpoolUsedHeapMemoryThreshold();
     }
 

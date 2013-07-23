@@ -40,7 +40,7 @@ public interface ManagedStreamCachingStrategyMBean {
     void setSpoolUsedHeapMemoryThreshold(int percentage);
 
     @ManagedAttribute(description = "Percentage (1-99) of used heap memory threshold to activate spooling to disk")
-    long getSpoolUsedHeapMemoryThreshold();
+    int getSpoolUsedHeapMemoryThreshold();
 
     @ManagedAttribute(description = "Buffer size in bytes to use when coping between buffers")
     void setBufferSize(int bufferSize);
