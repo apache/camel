@@ -1547,24 +1547,26 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     }
 
     private void doStartCamel() throws Exception {
+        log.info("Using ClassResolver {}", getClassResolver());
+
         if (isStreamCaching()) {
-            log.info("StreamCaching is enabled on CamelContext: " + getName());
+            log.info("StreamCaching is enabled on CamelContext: {}", getName());
         }
 
         if (isTracing()) {
             // tracing is added in the DefaultChannel so we can enable it on the fly
-            log.info("Tracing is enabled on CamelContext: " + getName());
+            log.info("Tracing is enabled on CamelContext: {}", getName());
         }
 
         if (isUseMDCLogging()) {
             // log if MDC has been enabled
-            log.info("MDC logging is enabled on CamelContext: " + getName());
+            log.info("MDC logging is enabled on CamelContext: {}", getName());
         }
 
         if (isHandleFault()) {
             // only add a new handle fault if not already configured
             if (HandleFault.getHandleFault(this) == null) {
-                log.info("HandleFault is enabled on CamelContext: " + getName());
+                log.info("HandleFault is enabled on CamelContext: {}", getName());
                 addInterceptStrategy(new HandleFault());
             }
         }
@@ -1573,14 +1575,14 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
             // only add a new delayer if not already configured
             if (Delayer.getDelayer(this) == null) {
                 long millis = getDelayer();
-                log.info("Delayer is enabled with: " + millis + " ms. on CamelContext: " + getName());
+                log.info("Delayer is enabled with: {} ms. on CamelContext: {}", millis, getName());
                 addInterceptStrategy(new Delayer(millis));
             }
         }
         
         // register debugger
         if (getDebugger() != null) {
-            log.info("Debugger: " + getDebugger() + " is enabled on CamelContext: " + getName());
+            log.info("Debugger: {} is enabled on CamelContext: {}", getDebugger(), getName());
             // register this camel context on the debugger
             getDebugger().setCamelContext(this);
             startService(getDebugger());
