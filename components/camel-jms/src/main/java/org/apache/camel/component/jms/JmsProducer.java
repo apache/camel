@@ -75,7 +75,16 @@ public class JmsProducer extends DefaultAsyncProducer {
                 if (started.get()) {
                     return;
                 }
+
+                // must use the classloader from the application context when creating reply manager,
+                // as it should inherit the classloader from app context and not the current which may be
+                // a different classloader
+                ClassLoader current = Thread.currentThread().getContextClassLoader();
+                ClassLoader ac = endpoint.getCamelContext().getApplicationContextClassLoader();
                 try {
+                    if (ac != null) {
+                        Thread.currentThread().setContextClassLoader(ac);
+                    }
                     // validate that replyToType and replyTo is configured accordingly
                     if (endpoint.getReplyToType() != null) {
                         // setting temporary with a fixed replyTo is not supported
@@ -96,6 +105,10 @@ public class JmsProducer extends DefaultAsyncProducer {
                     }
                 } catch (Exception e) {
                     throw new FailedToCreateProducerException(endpoint, e);
+                } finally {
+                    if (ac != null) {
+                        Thread.currentThread().setContextClassLoader(current);
+                    }
                 }
                 started.set(true);
             }
