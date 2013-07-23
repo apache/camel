@@ -61,6 +61,7 @@ public class ContextInfo extends OsgiCommandSupport {
 
         System.out.println(StringEscapeUtils.unescapeJava("\u001B[1m\u001B[33mCamel Context " + name + "\u001B[0m"));
         System.out.println(StringEscapeUtils.unescapeJava("\tName: " + camelContext.getName()));
+        System.out.println(StringEscapeUtils.unescapeJava("\tManagementName: " + camelContext.getManagementName()));
         System.out.println(StringEscapeUtils.unescapeJava("\tVersion: " + camelContext.getVersion()));
         System.out.println(StringEscapeUtils.unescapeJava("\tStatus: " + camelContext.getStatus()));
         System.out.println(StringEscapeUtils.unescapeJava("\tUptime: " + camelContext.getUptime()));
@@ -189,7 +190,7 @@ public class ContextInfo extends OsgiCommandSupport {
         }
 
         System.out.println("");
-        System.out.println(StringEscapeUtils.unescapeJava("\u001B[1mAdvanced\u001B[0m"));
+        System.out.println(StringEscapeUtils.unescapeJava("\u001B[1mMiscellaneous\u001B[0m"));
         System.out.println(StringEscapeUtils.unescapeJava("\tAuto Startup: " + camelContext.isAutoStartup()));
         System.out.println(StringEscapeUtils.unescapeJava("\tStarting Routes: " + camelContext.isStartingRoutes()));
         System.out.println(StringEscapeUtils.unescapeJava("\tSuspended: " + camelContext.isSuspended()));
@@ -200,10 +201,29 @@ public class ContextInfo extends OsgiCommandSupport {
         for (String property : camelContext.getProperties().keySet()) {
             System.out.println(StringEscapeUtils.unescapeJava("\t" + property + " = " + camelContext.getProperty(property)));
         }
+
+        System.out.println("");
+        System.out.println(StringEscapeUtils.unescapeJava("\u001B[1mAdvanced\u001B[0m"));
+        System.out.println(StringEscapeUtils.unescapeJava("\tClassResolver: " + camelContext.getClassResolver()));
+        System.out.println(StringEscapeUtils.unescapeJava("\tPackageScanClassResolver: " + camelContext.getPackageScanClassResolver()));
+        System.out.println(StringEscapeUtils.unescapeJava("\tApplicationContextClassLoader: " + camelContext.getApplicationContextClassLoader()));
+
         System.out.println("");
         System.out.println(StringEscapeUtils.unescapeJava("\u001B[1mComponents\u001B[0m"));
         for (String component : camelContext.getComponentNames()) {
             System.out.println(StringEscapeUtils.unescapeJava("\t" + component));
+        }
+
+        System.out.println("");
+        System.out.println(StringEscapeUtils.unescapeJava("\u001B[1mDataformats\u001B[0m"));
+        for (String names : camelContext.getDataFormats().keySet()) {
+            System.out.println(StringEscapeUtils.unescapeJava("\t" + names));
+        }
+
+        System.out.println("");
+        System.out.println(StringEscapeUtils.unescapeJava("\u001B[1mLanguages\u001B[0m"));
+        for (String language : camelContext.getLanguageNames()) {
+            System.out.println(StringEscapeUtils.unescapeJava("\t" + language));
         }
 
         if (mode != null && mode.equals("--verbose")) {
@@ -218,12 +238,6 @@ public class ContextInfo extends OsgiCommandSupport {
         System.out.println(StringEscapeUtils.unescapeJava("\u001B[1mRoutes\u001B[0m"));
         for (Route route : camelContext.getRoutes()) {
             System.out.println(StringEscapeUtils.unescapeJava("\t" + route.getId()));
-        }
-
-        System.out.println("");
-        System.out.println(StringEscapeUtils.unescapeJava("\u001B[1mUsed Languages\u001B[0m"));
-        for (String language : camelContext.getLanguageNames()) {
-            System.out.println(StringEscapeUtils.unescapeJava("\t" + language));
         }
 
         return null;
