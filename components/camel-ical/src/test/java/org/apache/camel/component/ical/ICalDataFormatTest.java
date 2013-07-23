@@ -46,12 +46,33 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.IOConverter;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 
 /**
  * Small unit test which verifies ical data format.
  */
 public class ICalDataFormatTest extends CamelTestSupport {
+
+    private java.util.TimeZone defaultTimeZone;
+
+    @Before
+    @Override
+    public void setUp() throws Exception {
+        super.setUp();
+
+        defaultTimeZone = java.util.TimeZone.getDefault();
+        java.util.TimeZone.setDefault(java.util.TimeZone.getTimeZone("America/New_York"));
+    }
+
+    @After
+    @Override
+    public void tearDown() throws Exception {
+        super.tearDown();
+
+        java.util.TimeZone.setDefault(defaultTimeZone);
+    }
 
     @Test
     public void testUnmarshal() throws Exception {
@@ -85,6 +106,7 @@ public class ICalDataFormatTest extends CamelTestSupport {
                 from("direct:unmarshal")
                     .unmarshal("ical")
                     .to("mock:result");
+
                 from("direct:marshal")
                     .marshal("ical")
                     .to("mock:result");
