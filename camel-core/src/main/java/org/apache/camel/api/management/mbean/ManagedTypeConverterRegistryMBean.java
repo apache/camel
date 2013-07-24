@@ -19,9 +19,6 @@ package org.apache.camel.api.management.mbean;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedOperation;
 
-/**
- *
- */
 public interface ManagedTypeConverterRegistryMBean extends ManagedServiceMBean {
 
     @ManagedAttribute(description = "Number of type conversion attempts")
