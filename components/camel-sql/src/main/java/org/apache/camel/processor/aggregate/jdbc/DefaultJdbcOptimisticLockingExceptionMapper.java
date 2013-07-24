@@ -16,17 +16,25 @@
  */
 package org.apache.camel.processor.aggregate.jdbc;
 
+import java.sql.SQLException;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.Set;
 
 import org.apache.camel.util.ObjectHelper;
+import org.springframework.dao.DataIntegrityViolationException;
 
 /**
  * A default {@link JdbcOptimisticLockingExceptionMapper} which checks the caused exception (and its nested)
- * whether any of them has <tt>ConstraintViolation</tt> in the class name. If there is such a class name
- * then {@link #isOptimisticLocking(Exception)} returns <tt>true</tt>.
+ * whether any of them is a constraint violation exception.
  * <p/>
+ * The following check is done:
+ * <ul>
+ *     <li>If the caused exception is an {@link SQLException}</li> then the SQLState is checked if starts with <tt>23</tt>.
+ *     <li>If the caused exception is a {@link DataIntegrityViolationException}</li>
+ *     <li>If the caused exception class name has <tt>ConstraintViolation</tt></li> in its name.
+ *     <li>optional checking for FQN class name matches if any class names has been configured</li>
+ * </ul>
  * In addition you can add FQN classnames using the {@link #addClassName(String)} or {@link #setClassNames(java.util.Set)}
  * methods. These class names is also matched. This allows to add vendor specific exception classes.
  */
@@ -38,6 +46,18 @@ public class DefaultJdbcOptimisticLockingExceptionMapper implements JdbcOptimist
     public boolean isOptimisticLocking(Exception cause) {
         Iterator<Throwable> it = ObjectHelper.createExceptionIterator(cause);
         while (it.hasNext()) {
+            // if its a SQL exception
+            if (it instanceof SQLException) {
+                SQLException se = (SQLException) it;
+                if (isConstraintViolation(se)) {
+                    return true;
+                }
+            }
+            if (it instanceof DataIntegrityViolationException) {
+                return true;
+            }
+
+            // fallback to names
             String name = it.next().getClass().getName();
             if (name.contains("ConstraintViolation") || hasClassName(name)) {
                 return true;
@@ -45,6 +65,10 @@ public class DefaultJdbcOptimisticLockingExceptionMapper implements JdbcOptimist
         }
 
         return false;
+    }
+
+    public static boolean isConstraintViolation(SQLException e) {
+        return e.getSQLState().startsWith("23");
     }
 
     private boolean hasClassName(String name) {
