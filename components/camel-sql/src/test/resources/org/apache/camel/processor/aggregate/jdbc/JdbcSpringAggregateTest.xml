@@ -36,7 +36,7 @@
         <route>
             <from uri="direct:start"/>
             <!-- aggregate using our strategy and jdbc repo, and complete when we have 5 messages aggregated -->
-            <aggregate strategyRef="myAggregatorStrategy" aggregationRepositoryRef="repo1" completionSize="5">
+            <aggregate strategyRef="myAggregatorStrategy" aggregationRepositoryRef="repo1" completionSize="5" optimisticLocking="true">
                 <!-- correlate by header with the key id -->
                 <correlationExpression><header>id</header></correlationExpression>
                 <!-- send aggregated messages to the mock endpoint -->
