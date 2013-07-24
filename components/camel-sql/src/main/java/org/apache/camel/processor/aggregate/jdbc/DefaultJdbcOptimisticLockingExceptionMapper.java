@@ -49,7 +49,7 @@ public class DefaultJdbcOptimisticLockingExceptionMapper implements JdbcOptimist
             Throwable throwable = it.next();
             // if its a SQL exception
             if (throwable instanceof SQLException) {
-                SQLException se = (SQLException) it;
+                SQLException se = (SQLException) throwable;
                 if (isConstraintViolation(se)) {
                     return true;
                 }
