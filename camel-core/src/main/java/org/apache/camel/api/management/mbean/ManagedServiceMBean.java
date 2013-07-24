@@ -42,6 +42,9 @@ public interface ManagedServiceMBean {
     @ManagedAttribute(description = "Whether this service supports suspension")
     boolean isSupportSuspension();
 
+    @ManagedAttribute(description = "Whether this service is static")
+    boolean isStaticService();
+
     @ManagedAttribute(description = "Whether this service is suspended")
     boolean isSuspended();
 

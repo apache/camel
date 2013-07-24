@@ -133,11 +133,7 @@ public class ManagedManagementStrategy extends DefaultManagementStrategy {
             if (ms.getService() instanceof Endpoint) {
                 return null;
             }
-            if (ms.isSingle()) {
-                objectName = getManagementNamingStrategy().getObjectNameForSingleService(ms.getContext(), ms.getService());
-            } else {
-                objectName = getManagementNamingStrategy().getObjectNameForService(ms.getContext(), ms.getService());
-            }
+            objectName = getManagementNamingStrategy().getObjectNameForService(ms.getContext(), ms.getService());
         }
 
         return nameType.cast(objectName);

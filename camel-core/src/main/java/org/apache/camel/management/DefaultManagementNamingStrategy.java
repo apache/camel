@@ -31,6 +31,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.Route;
 import org.apache.camel.Service;
+import org.apache.camel.StaticService;
 import org.apache.camel.builder.ErrorHandlerBuilderRef;
 import org.apache.camel.spi.EventNotifier;
 import org.apache.camel.spi.InterceptStrategy;
@@ -245,19 +246,10 @@ public class DefaultManagementNamingStrategy implements ManagementNamingStrategy
         buffer.append(domainName).append(":");
         buffer.append(KEY_CONTEXT + "=").append(getContextId(context)).append(",");
         buffer.append(KEY_TYPE + "=" + TYPE_SERVICE + ",");
-        buffer.append(KEY_NAME + "=")
-            .append(service.getClass().getSimpleName())
-            .append("(").append(ObjectHelper.getIdentityHashCode(service)).append(")");
-        return createObjectName(buffer);
-    }
-
-    public ObjectName getObjectNameForSingleService(CamelContext context, Service service) throws MalformedObjectNameException {
-        StringBuilder buffer = new StringBuilder();
-        buffer.append(domainName).append(":");
-        buffer.append(KEY_CONTEXT + "=").append(getContextId(context)).append(",");
-        buffer.append(KEY_TYPE + "=" + TYPE_SERVICE + ",");
-        buffer.append(KEY_NAME + "=")
-            .append(service.getClass().getSimpleName());
+        buffer.append(KEY_NAME + "=").append(service.getClass().getSimpleName());
+        if (!(service instanceof StaticService)) {
+            buffer.append("(").append(ObjectHelper.getIdentityHashCode(service)).append(")");
+        }
         return createObjectName(buffer);
     }
 

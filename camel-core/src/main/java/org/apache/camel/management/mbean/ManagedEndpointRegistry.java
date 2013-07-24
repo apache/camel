@@ -31,7 +31,6 @@ public class ManagedEndpointRegistry extends ManagedService implements ManagedEn
     public ManagedEndpointRegistry(CamelContext context, EndpointRegistry endpointRegistry) {
         super(context, endpointRegistry);
         this.endpointRegistry = endpointRegistry;
-        this.single = true;
     }
 
     public EndpointRegistry getEndpointRegistry() {

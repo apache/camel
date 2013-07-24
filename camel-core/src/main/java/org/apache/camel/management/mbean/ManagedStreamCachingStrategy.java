@@ -32,7 +32,6 @@ public class ManagedStreamCachingStrategy extends ManagedService implements Mana
         super(camelContext, streamCachingStrategy);
         this.camelContext = camelContext;
         this.streamCachingStrategy = streamCachingStrategy;
-        this.single = true;
     }
 
     public void init(ManagementStrategy strategy) {
