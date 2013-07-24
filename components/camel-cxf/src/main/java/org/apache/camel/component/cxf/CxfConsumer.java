@@ -172,6 +172,10 @@ public class CxfConsumer extends DefaultConsumer {
                 
                 camelExchange.setProperty(Message.MTOM_ENABLED, String.valueOf(endpoint.isMtomEnabled()));
                 
+                if (endpoint.getMergeProtocolHeaders()) {
+                    camelExchange.setProperty(CxfConstants.CAMEL_CXF_PROTOCOL_HEADERS_MERGED, Boolean.TRUE);
+                }
+
                 // bind the CXF request into a Camel exchange
                 binding.populateExchangeFromCxfRequest(cxfExchange, camelExchange);
                 // extract the javax.xml.ws header

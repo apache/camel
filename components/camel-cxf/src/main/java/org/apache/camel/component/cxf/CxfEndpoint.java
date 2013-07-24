@@ -136,6 +136,7 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     private boolean mtomEnabled;
     private boolean skipPayloadMessagePartCheck;
     private boolean skipFaultLogging;
+    private boolean mergeProtocolHeaders;
     private Map<String, Object> properties;
     private List<Interceptor<? extends Message>> in 
         = new ModCountCopyOnWriteArrayList<Interceptor<? extends Message>>();
@@ -1066,6 +1067,14 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
 
     public void setSkipFaultLogging(boolean skipFaultLogging) {
         this.skipFaultLogging = skipFaultLogging;
+    }
+
+    public Boolean getMergeProtocolHeaders() {
+        return mergeProtocolHeaders;
+    }
+
+    public void setMergeProtocolHeaders(boolean mergeProtocolHeaders) {
+        this.mergeProtocolHeaders = mergeProtocolHeaders;
     }
 
     public void setBindingConfig(BindingConfiguration bindingConfig) {
