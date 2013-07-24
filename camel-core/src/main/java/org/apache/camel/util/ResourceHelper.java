@@ -101,7 +101,8 @@ public final class ResourceHelper {
         }
 
         // load from classpath by default
-        InputStream is = classResolver.loadResourceAsStream(uri);
+        String resolvedName = resolveUriPath(uri);
+        InputStream is = classResolver.loadResourceAsStream(resolvedName);
         if (is == null) {
             throw new FileNotFoundException("Cannot find resource in classpath for URI: " + uri);
         } else {
@@ -175,4 +176,18 @@ public final class ResourceHelper {
             return uri;
         }
     }
+
+    /**
+     * Helper operation used to remove relative path notation from
+     * resources.  Most critical for resources on the Classpath
+     * as resource loaders will not resolve the relative paths correctly.
+     *
+     * @param name the name of the resource to load
+     * @return the modified or unmodified string if there were no changes
+     */
+    private static String resolveUriPath(String name) {
+        // compact the path and use / as separator as that's used for loading resources on the classpath
+        return FileUtil.compactPath(name, '/');
+    }
+
 }
