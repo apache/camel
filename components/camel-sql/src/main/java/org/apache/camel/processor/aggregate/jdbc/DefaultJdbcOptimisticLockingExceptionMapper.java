@@ -46,19 +46,20 @@ public class DefaultJdbcOptimisticLockingExceptionMapper implements JdbcOptimist
     public boolean isOptimisticLocking(Exception cause) {
         Iterator<Throwable> it = ObjectHelper.createExceptionIterator(cause);
         while (it.hasNext()) {
+            Throwable throwable = it.next();
             // if its a SQL exception
-            if (it instanceof SQLException) {
+            if (throwable instanceof SQLException) {
                 SQLException se = (SQLException) it;
                 if (isConstraintViolation(se)) {
                     return true;
                 }
             }
-            if (it instanceof DataIntegrityViolationException) {
+            if (throwable instanceof DataIntegrityViolationException) {
                 return true;
             }
 
             // fallback to names
-            String name = it.next().getClass().getName();
+            String name = throwable.getClass().getName();
             if (name.contains("ConstraintViolation") || hasClassName(name)) {
                 return true;
             }
