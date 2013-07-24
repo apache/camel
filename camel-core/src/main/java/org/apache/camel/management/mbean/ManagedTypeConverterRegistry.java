@@ -32,6 +32,7 @@ public class ManagedTypeConverterRegistry extends ManagedService implements Mana
     public ManagedTypeConverterRegistry(CamelContext context, TypeConverterRegistry registry) {
         super(context, registry);
         this.registry = registry;
+        this.single = true;
     }
 
     public TypeConverterRegistry getRegistry() {

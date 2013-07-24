@@ -32,6 +32,7 @@ public class ManagedService implements ManagedInstance, ManagedServiceMBean {
     private final CamelContext context;
     private final Service service;
     private Route route;
+    protected boolean single;
 
     public ManagedService(CamelContext context, Service service) {
         this.context = context;
@@ -40,6 +41,10 @@ public class ManagedService implements ManagedInstance, ManagedServiceMBean {
 
     public void init(ManagementStrategy strategy) {
         // do nothing
+    }
+
+    public boolean isSingle() {
+        return single;
     }
 
     public Service getService() {

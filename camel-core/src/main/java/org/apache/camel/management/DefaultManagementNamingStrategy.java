@@ -126,8 +126,9 @@ public class DefaultManagementNamingStrategy implements ManagementNamingStrategy
 
     public ObjectName getObjectNameForErrorHandler(RouteContext routeContext, Processor errorHandler, ErrorHandlerFactory builder) throws MalformedObjectNameException {
         StringBuilder buffer = new StringBuilder();
-        buffer.append(domainName + ":" + KEY_CONTEXT + "=" + getContextId(routeContext.getCamelContext()) + ","
-                      + KEY_TYPE + "=" +  TYPE_ERRORHANDLER + ",");
+        buffer.append(domainName).append(":");
+        buffer.append(KEY_CONTEXT + "=").append(getContextId(routeContext.getCamelContext())).append(",");
+        buffer.append(KEY_TYPE + "=").append(TYPE_ERRORHANDLER + ",");
 
         // we want to only register one instance of the various error handler types and thus do some lookup
         // if its a ErrorHandlerBuildRef. We need a bit of work to do that as there are potential indirection.
@@ -247,6 +248,16 @@ public class DefaultManagementNamingStrategy implements ManagementNamingStrategy
         buffer.append(KEY_NAME + "=")
             .append(service.getClass().getSimpleName())
             .append("(").append(ObjectHelper.getIdentityHashCode(service)).append(")");
+        return createObjectName(buffer);
+    }
+
+    public ObjectName getObjectNameForSingleService(CamelContext context, Service service) throws MalformedObjectNameException {
+        StringBuilder buffer = new StringBuilder();
+        buffer.append(domainName).append(":");
+        buffer.append(KEY_CONTEXT + "=").append(getContextId(context)).append(",");
+        buffer.append(KEY_TYPE + "=" + TYPE_SERVICE + ",");
+        buffer.append(KEY_NAME + "=")
+            .append(service.getClass().getSimpleName());
         return createObjectName(buffer);
     }
 
