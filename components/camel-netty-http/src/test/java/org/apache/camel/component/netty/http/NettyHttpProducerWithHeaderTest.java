@@ -23,32 +23,23 @@ import org.junit.Test;
 public class NettyHttpProducerWithHeaderTest extends BaseNettyTest {
 
     @Test
-    public void testHttpSimple() throws Exception {
+    public void testHttpSimpleGet() throws Exception {
         getMockEndpoint("mock:input").expectedHeaderReceived(Exchange.HTTP_METHOD, "GET");
+        getMockEndpoint("mock:input").expectedHeaderReceived("myTraceId", "mockCorrelationID");
 
-        String out = template.requestBody("netty-http:http://localhost:{{port}}/foo", null, String.class);
+        String out = template.requestBodyAndHeader("netty-http:http://localhost:{{port}}/foo", null, "myTraceId", "mockCorrelationID", String.class);
         assertEquals("Bye World", out);
 
         assertMockEndpointsSatisfied();
     }
 
     @Test
-    public void testHttpSimpleHeader() throws Exception {
-        getMockEndpoint("mock:input").expectedHeaderReceived(Exchange.HTTP_METHOD, "GET");
-
-        String out = template.requestBodyAndHeader("netty-http:http://localhost:{{port}}/foo", null, Exchange.HTTP_METHOD, "GET", String.class);
-        assertEquals("Bye World", out);
-
-        assertMockEndpointsSatisfied();
-    }
-
-    @Test
-    public void testHttpSimpleHeaderAndBody() throws Exception {
-        // even if we have a body we force it to be GET
+    public void testHttpSimplePost() throws Exception {
+        getMockEndpoint("mock:input").expectedHeaderReceived(Exchange.HTTP_METHOD, "POST");
+        getMockEndpoint("mock:input").expectedHeaderReceived("myTraceId", "mockCorrelationID");
         getMockEndpoint("mock:input").expectedBodiesReceived("Hello World");
-        getMockEndpoint("mock:input").expectedHeaderReceived(Exchange.HTTP_METHOD, "GET");
 
-        String out = template.requestBodyAndHeader("netty-http:http://localhost:{{port}}/foo", "Hello World", Exchange.HTTP_METHOD, "GET", String.class);
+        String out = template.requestBodyAndHeader("netty-http:http://localhost:{{port}}/foo", "Hello World", "myTraceId", "mockCorrelationID", String.class);
         assertEquals("Bye World", out);
 
         assertMockEndpointsSatisfied();
