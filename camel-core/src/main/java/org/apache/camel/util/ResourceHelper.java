@@ -30,11 +30,15 @@ import java.net.URLConnection;
 import java.util.Map;
 
 import org.apache.camel.spi.ClassResolver;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Helper class for loading resources on the classpath or file system.
  */
 public final class ResourceHelper {
+
+    private static final transient Logger LOG = LoggerFactory.getLogger(ResourceHelper.class);
 
     private ResourceHelper() {
         // utility class
@@ -81,9 +85,11 @@ public final class ResourceHelper {
     public static InputStream resolveMandatoryResourceAsInputStream(ClassResolver classResolver, String uri) throws IOException {
         if (uri.startsWith("file:")) {
             uri = ObjectHelper.after(uri, "file:");
+            LOG.trace("Loading resource: {} from file system", uri);
             return new FileInputStream(uri);
         } else if (uri.startsWith("http:")) {
             URL url = new URL(uri);
+            LOG.trace("Loading resource: {} from HTTP", uri);
             URLConnection con = url.openConnection();
             con.setUseCaches(false);
             try {
@@ -102,9 +108,10 @@ public final class ResourceHelper {
 
         // load from classpath by default
         String resolvedName = resolveUriPath(uri);
+        LOG.trace("Loading resource: {} from classpath", resolvedName);
         InputStream is = classResolver.loadResourceAsStream(resolvedName);
         if (is == null) {
-            throw new FileNotFoundException("Cannot find resource in classpath for URI: " + uri);
+            throw new FileNotFoundException("Cannot find resource: " + resolvedName + " in classpath for URI: " + uri);
         } else {
             return is;
         }
@@ -123,21 +130,25 @@ public final class ResourceHelper {
         if (uri.startsWith("file:")) {
             // check if file exists first
             String name = ObjectHelper.after(uri, "file:");
+            LOG.trace("Loading resource: {} from file system", uri);
             File file = new File(name);
             if (!file.exists()) {
                 throw new FileNotFoundException("File " + file + " not found");
             }
             return new URL(uri);
         } else if (uri.startsWith("http:")) {
+            LOG.trace("Loading resource: {} from HTTP", uri);
             return new URL(uri);
         } else if (uri.startsWith("classpath:")) {
             uri = ObjectHelper.after(uri, "classpath:");
         }
 
         // load from classpath by default
-        URL url = classResolver.loadResourceAsURL(uri);
+        String resolvedName = resolveUriPath(uri);
+        LOG.trace("Loading resource: {} from classpath", resolvedName);
+        URL url = classResolver.loadResourceAsURL(resolvedName);
         if (url == null) {
-            throw new FileNotFoundException("Cannot find resource in classpath for URI: " + uri);
+            throw new FileNotFoundException("Cannot find resource: " + resolvedName + " in classpath for URI: " + uri);
         } else {
             return url;
         }
