@@ -21,6 +21,13 @@
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
 
+	<bean id="inOnlyErrorHandler" class="org.apache.camel.builder.DeadLetterChannelBuilder">
+		<property name="deadLetterUri" value="mock:in-message-name-error"/>
+	</bean>
+	
+	<bean id="inOutErrorHandler" class="org.apache.camel.builder.DeadLetterChannelBuilder">
+		<property name="deadLetterUri" value="mock:inout-message-name-error"/>
+	</bean>
 
     <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
         <propertyPlaceholder id="properties" ignoreMissingLocation="true" location="classpath:custom.properties"/>
@@ -28,11 +35,34 @@
             <from uri="direct:in"/>
             <to uri="avro:netty:localhost:{{avroport}}?protocolClassName=org.apache.camel.avro.generated.KeyValueProtocol"/>
         </route>
+        
+        <route errorHandlerRef="inOnlyErrorHandler">
+            <from uri="direct:in-message-name"/>
+            <to uri="avro:netty:localhost:{{avroport}}/put?protocolClassName=org.apache.camel.avro.generated.KeyValueProtocol"/>
+            <to uri="mock:result-in-message-name"/>
+        </route>
+        
+        <route>
+            <from uri="direct:in-reflection"/>
+            <to uri="avro:netty:localhost:{{avroPortReflection}}/setName?protocolClassName=org.apache.camel.avro.test.TestReflection&amp;singleParameter=true"/>
+        </route>
 
         <route>
             <from uri="direct:inout"/>
             <to uri="avro:netty:localhost:{{avroport}}?protocolClassName=org.apache.camel.avro.generated.KeyValueProtocol"/>
             <to uri="mock:result-inout"/>
+        </route>
+        
+        <route>
+            <from uri="direct:inout-message-name"/>
+            <to uri="avro:netty:localhost:{{avroport}}/get?protocolClassName=org.apache.camel.avro.generated.KeyValueProtocol"/>
+            <to uri="mock:result-inout-message-name"/>
+        </route>
+        
+        <route>
+            <from uri="direct:inout-reflection"/>
+            <to uri="avro:netty:localhost:{{avroPortReflection}}/increaseAge?protocolClassName=org.apache.camel.avro.test.TestReflection&amp;singleParameter=true"/>
+            <to uri="mock:result-inout-reflection"/>
         </route>
 
     </camelContext>

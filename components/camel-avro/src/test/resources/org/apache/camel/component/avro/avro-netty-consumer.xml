@@ -37,10 +37,52 @@
                 </when>
             </choice>
         </route>
+        
+        <route>
+            <from uri="avro:netty:localhost:{{avroPortMessageInRoute}}/put?protocolClassName=org.apache.camel.avro.generated.KeyValueProtocol"/>
+            <process ref="putProcessor"/>
+        </route>
+        
+        <route>
+            <from uri="avro:netty:localhost:{{avroPortMessageInRoute}}/get?protocolClassName=org.apache.camel.avro.generated.KeyValueProtocol"/>
+            <process ref="getProcessor"/>
+        </route>
+        
+        <route>
+            <from uri="avro:netty:localhost:{{avroPortForWrongMessages}}/put?protocolClassName=org.apache.camel.avro.generated.KeyValueProtocol"/>
+            <process ref="putProcessor"/>
+        </route>
+        
+        <route>
+            <from uri="avro:netty:localhost:{{avroPortReflection}}/setName?protocolClassName=org.apache.camel.avro.test.TestReflection&amp;singleParameter=true"/>
+            <process ref="reflectionInOnlyProcessor"/>
+        </route>
+        
+        <route>
+            <from uri="avro:netty:localhost:{{avroPortReflection}}/setAge?protocolClassName=org.apache.camel.avro.test.TestReflection"/>
+            <process ref="reflectionInOnlyProcessor"/>
+        </route>
+        
+        <route>
+            <from uri="avro:netty:localhost:{{avroPortReflection}}/setTestPojo?protocolClassName=org.apache.camel.avro.test.TestReflection&amp;singleParameter=true"/>
+            <process ref="reflectionInOnlyProcessor"/>
+        </route>
+        
+        <route>
+            <from uri="avro:netty:localhost:{{avroPortReflection}}/increaseAge?protocolClassName=org.apache.camel.avro.test.TestReflection&amp;singleParameter=true"/>
+            <process ref="reflectionInOutProcessor"/>
+        </route>
+        
+        <route>
+            <from uri="avro:netty:localhost:{{avroPortReflection}}/getTestPojo?protocolClassName=org.apache.camel.avro.test.TestReflection"/>
+            <process ref="reflectionInOutProcessor"/>
+        </route>
 
     </camelContext>
 
     <bean id="keyValue" class="org.apache.camel.avro.impl.KeyValueProtocolImpl"/>
+    
+    <bean id="testReflection" class="org.apache.camel.avro.test.TestReflectionImpl"/>
 
     <bean id="getProcessor" class="org.apache.camel.component.avro.processors.GetProcessor">
         <constructor-arg ref="keyValue"/>
@@ -48,6 +90,14 @@
 
     <bean id="putProcessor" class="org.apache.camel.component.avro.processors.PutProcessor">
         <constructor-arg ref="keyValue"/>
+    </bean>
+    
+    <bean id="reflectionInOnlyProcessor" class="org.apache.camel.component.avro.processors.ReflectionInOnlyProcessor">
+    	<constructor-arg ref="testReflection"/>
+    </bean>
+    
+    <bean id="reflectionInOutProcessor" class="org.apache.camel.component.avro.processors.ReflectionInOutProcessor">
+    	<constructor-arg ref="testReflection"/>
     </bean>
 
 </beans>
