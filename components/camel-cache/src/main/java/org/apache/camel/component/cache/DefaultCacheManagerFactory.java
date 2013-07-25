@@ -22,7 +22,7 @@ public class DefaultCacheManagerFactory extends CacheManagerFactory {
 
     @Override
     protected CacheManager createCacheManagerInstance() {
-        return CacheManager.create(getClass().getResourceAsStream("/ehcache.xml"));
+        return EHCacheUtil.createCacheManager(getClass().getResourceAsStream("/ehcache.xml"));
     }
 
 }
