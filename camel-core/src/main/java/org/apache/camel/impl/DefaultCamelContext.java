@@ -65,7 +65,6 @@ import org.apache.camel.ShutdownRoute;
 import org.apache.camel.ShutdownRunningTask;
 import org.apache.camel.StartupListener;
 import org.apache.camel.StatefulService;
-import org.apache.camel.StreamCache;
 import org.apache.camel.SuspendableService;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.VetoCamelContextStartException;
@@ -2442,13 +2441,14 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     }
 
     public ManagementStrategy getManagementStrategy() {
-        if (!managementStrategyInitialized.get()) {
-            synchronized (managementStrategyInitialized) {
+        synchronized (managementStrategyInitialized) {
+            if (!managementStrategyInitialized.get()) {
                 if (managementStrategyInitialized.compareAndSet(false, true)) {
                     managementStrategy = createManagementStrategy();
                 }
             }
         }
+
         return managementStrategy;
     }
 
