@@ -91,6 +91,7 @@ import org.apache.cxf.message.MessageContentsList;
 import org.apache.cxf.resource.DefaultResourceManager;
 import org.apache.cxf.resource.ResourceManager;
 import org.apache.cxf.resource.ResourceResolver;
+import org.apache.cxf.service.factory.FactoryBeanListener;
 import org.apache.cxf.service.factory.ReflectionServiceFactoryBean;
 import org.apache.cxf.service.model.BindingOperationInfo;
 import org.apache.cxf.service.model.MessagePartInfo;
@@ -343,14 +344,18 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
             return new JaxWsClientFactoryBean() {
                 @Override
                 protected Client createClient(Endpoint ep) {
-                    return new CamelCxfClientImpl(getBus(), ep);
+                    Client client = new CamelCxfClientImpl(getBus(), ep);
+                    this.getServiceFactory().sendEvent(FactoryBeanListener.Event.CLIENT_CREATED, client, ep);
+                    return client;
                 }
             };
         } else {
             return new ClientFactoryBean() {
                 @Override
                 protected Client createClient(Endpoint ep) {
-                    return new CamelCxfClientImpl(getBus(), ep);
+                    Client client = new CamelCxfClientImpl(getBus(), ep);
+                    this.getServiceFactory().sendEvent(FactoryBeanListener.Event.CLIENT_CREATED, client, ep);
+                    return client;
                 }
             };
         }
@@ -364,7 +369,9 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
 
             @Override
             protected Client createClient(Endpoint ep) {
-                return new CamelCxfClientImpl(getBus(), ep);
+                Client client = new CamelCxfClientImpl(getBus(), ep);
+                this.getServiceFactory().sendEvent(FactoryBeanListener.Event.CLIENT_CREATED, client, ep);
+                return client;
             }
 
             @Override
