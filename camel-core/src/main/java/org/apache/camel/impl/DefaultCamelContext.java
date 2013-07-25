@@ -2334,13 +2334,14 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     }
 
     public ManagementStrategy getManagementStrategy() {
-        if (!managementStrategyInitialized.get()) {
-            synchronized (managementStrategyInitialized) {
+        synchronized (managementStrategyInitialized) {
+            if (!managementStrategyInitialized.get()) {
                 if (managementStrategyInitialized.compareAndSet(false, true)) {
                     managementStrategy = createManagementStrategy();
                 }
             }
         }
+
         return managementStrategy;
     }
 
