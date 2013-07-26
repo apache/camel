@@ -104,9 +104,9 @@
     <commons-vfs2-version>2.0</commons-vfs2-version>
     <concurrentlinkedhashmap.version>1.3.2</concurrentlinkedhashmap.version>
     <cobertura-maven-plugin-version>2.5.2</cobertura-maven-plugin-version>
-    <cxf-version>2.7.5</cxf-version>
+    <cxf-version>2.7.6</cxf-version>
     <cxf-version-range>[2.6,2.9)</cxf-version-range>
-    <cxf-xjc-utils-version>2.6.0</cxf-xjc-utils-version>
+    <cxf-xjc-utils-version>2.6.2</cxf-xjc-utils-version>
     <deltaspike-version>0.3-incubating</deltaspike-version>
     <derby-version>10.10.1.1</derby-version>
     <disruptor-version>3.1.1</disruptor-version>
@@ -212,7 +212,7 @@
     <jetty-version>7.6.9.v20130131</jetty-version>
     <jetty6-bundle-version>6.1.26_4</jetty6-bundle-version>
     <jetty6-version>6.1.26</jetty6-version>
-    <jettison-version>1.3.3</jettison-version>
+    <jettison-version>1.3.4</jettison-version>
     <jexcelapi-bundle-version>2.4.2_4</jexcelapi-bundle-version>
     <jexcelapi-version>2.4.2</jexcelapi-version>
     <jibx-version>1.2.5</jibx-version>
