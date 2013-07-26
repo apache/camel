@@ -77,8 +77,9 @@ public class DefaultLSResourceResolver implements LSResourceResolver {
                 relatedURI = FileUtil.onlyPath(relatedURI) + "/" + systemId;
                 resourceURI = relatedURI;
                 relatedURIMap.put(baseURI, relatedPath);
-            } else { 
+            } else {
                 resourceURI = relatedPath + "/" + systemId;
+                relatedURI = resourceURI;
             }
         }
         return new DefaultLSInput(publicId, systemId, baseURI, resourceURI);
