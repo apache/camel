@@ -18,6 +18,8 @@ package org.apache.camel.builder.script;
 
 import java.util.HashMap;
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 import org.apache.camel.ScriptTestHelper;
 import org.apache.camel.builder.RouteBuilder;
@@ -146,7 +148,38 @@ public class JavaScriptExpressionTest extends CamelTestSupport {
 
         assertMockEndpointsSatisfied();
     }
-
+    
+    @Test
+    public void testSendingRequestInMutipleThreads() throws Exception {
+        if (!ScriptTestHelper.canRunTestOnThisPlatform()) {
+            return;
+        }
+        getMockEndpoint("mock:result").expectedMessageCount(0);
+        getMockEndpoint("mock:unmatched").expectedMessageCount(100);
+        long start = System.currentTimeMillis();
+        ExecutorService executorService = Executors.newFixedThreadPool(100);
+        for (int i = 0; i < 100; i++) {
+            executorService.submit(new Runnable() {
+                @Override
+                public void run() {
+                    Map<String, Object> headers = new HashMap<String, Object>();
+                    String arguments = "foo";
+                    headers.put(ScriptBuilder.ARGUMENTS, arguments);
+    
+                    sendBody("direct:start", "hello", headers);
+                    
+                }
+                
+            });
+        }
+            
+        assertMockEndpointsSatisfied();
+        long delta = System.currentTimeMillis() - start;
+        log.info("Processing the 100 request tooks: " + delta + " ms");
+        executorService.shutdown();
+        
+    }
+    
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {

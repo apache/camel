@@ -22,6 +22,8 @@ import java.io.InputStreamReader;
 import java.io.Reader;
 import java.lang.reflect.Method;
 import java.util.Map;
+import java.util.WeakHashMap;
+
 import javax.script.Compilable;
 import javax.script.CompiledScript;
 import javax.script.ScriptContext;
@@ -35,6 +37,7 @@ import org.apache.camel.Message;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.converter.ObjectConverter;
+import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ResourceHelper;
@@ -47,7 +50,7 @@ import org.slf4j.LoggerFactory;
  *
  * @version 
  */
-public class ScriptBuilder implements Expression, Predicate, Processor {
+public class ScriptBuilder extends ServiceSupport implements Expression, Predicate, Processor {
 
     /**
      * Additional arguments to {@link ScriptEngine} provided as a header on the IN {@link org.apache.camel.Message}
@@ -60,8 +63,9 @@ public class ScriptBuilder implements Expression, Predicate, Processor {
     private String scriptEngineName;
     private String scriptResource;
     private String scriptText;
-    private ScriptEngine engine;
     private CompiledScript compiledScript;
+    private Map<Thread, ScriptEngineHolder> engineHolders = new WeakHashMap<Thread, ScriptEngineHolder>();
+    private ThreadLocal<ScriptEngineHolder> engineHolder = new ThreadLocal<ScriptEngineHolder>();
 
     /**
      * Constructor.
@@ -194,13 +198,22 @@ public class ScriptBuilder implements Expression, Predicate, Processor {
     // -------------------------------------------------------------------------
 
     public ScriptEngine getEngine() {
-        if (engine == null) {
-            engine = createScriptEngine();
+        if (engineHolder.get() == null) {
+            ScriptEngineHolder holder = new ScriptEngineHolder();
+           
+            engineHolder.set(holder);
+            engineHolders.put(Thread.currentThread(), holder);
         }
-        if (engine == null) {
+        if (engineHolder.get()  == null) {
             throw new IllegalArgumentException("No script engine could be created for: " + getScriptEngineName());
         }
-        return engine;
+        ScriptEngineHolder holder  = engineHolder.get();
+        if (holder.engine == null) {
+            holder.engine = createScriptEngine();
+            engineHolders.put(Thread.currentThread(), holder);
+        }
+        
+        return holder.engine;
     }
 
     public CompiledScript getCompiledScript() {
@@ -258,13 +271,20 @@ public class ScriptBuilder implements Expression, Predicate, Processor {
         if (scriptText == null && scriptResource == null) {
             throw new IllegalArgumentException("Neither scriptText or scriptResource are specified");
         }
-        if (engine == null) {
-            engine = createScriptEngine();
+        ScriptEngineHolder holder = engineHolder.get();
+        if (holder  == null) {
+            holder = new ScriptEngineHolder();
+            engineHolder.set(holder);
+        }
+        holder = engineHolder.get();
+        if (holder.engine == null) {
+            holder.engine = createScriptEngine();
+            engineHolders.put(Thread.currentThread(), holder);
         }
         if (compiledScript == null) {
             // BeanShell implements Compilable but throws an exception if you call compile
-            if (engine instanceof Compilable && !isBeanShell()) { 
-                compileScript((Compilable)engine, exchange);
+            if (holder.engine instanceof Compilable && !isBeanShell()) { 
+                compileScript((Compilable)holder.engine, exchange);
             }
         }
     }
@@ -275,6 +295,7 @@ public class ScriptBuilder implements Expression, Predicate, Processor {
 
     protected ScriptEngine createScriptEngine() {
         ScriptEngineManager manager = new ScriptEngineManager();
+        ScriptEngine engine = null;
         try {
             engine = manager.getEngineByName(scriptEngineName);
         } catch (NoClassDefFoundError ex) {
@@ -333,7 +354,7 @@ public class ScriptBuilder implements Expression, Predicate, Processor {
         }
     }
 
-    protected synchronized Object evaluateScript(Exchange exchange) {
+    protected Object evaluateScript(Exchange exchange) {
         try {
             getScriptContext();
             populateBindings(getEngine(), exchange);
@@ -437,5 +458,23 @@ public class ScriptBuilder implements Expression, Predicate, Processor {
 
     protected boolean isBeanShell() {
         return "beanshell".equals(scriptEngineName) || "bsh".equals(scriptEngineName);
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        // do nothing here
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        // we need to clean up the engines map
+        for (ScriptEngineHolder holder : engineHolders.values()) {
+            holder.engine = null;
+        }
+        engineHolders.clear();
+    }
+    
+    static class ScriptEngineHolder {
+        ScriptEngine engine;
     }
 }
