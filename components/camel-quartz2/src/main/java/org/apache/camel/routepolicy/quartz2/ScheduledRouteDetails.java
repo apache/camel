@@ -16,81 +16,80 @@
  */
 package org.apache.camel.routepolicy.quartz2;
 
-import org.quartz.JobDetail;
-import org.quartz.Trigger;
+import org.quartz.JobKey;
+import org.quartz.TriggerKey;
 
 public class ScheduledRouteDetails {
-    private JobDetail startJobDetail;
-    private JobDetail stopJobDetail;
-    private JobDetail suspendJobDetail;
-    private JobDetail resumeJobDetail;
-    private Trigger startTrigger;
-    private Trigger stopTrigger;
-    private Trigger suspendTrigger;
-    private Trigger resumeTrigger;
+    private JobKey startJobKey;
+    private JobKey stopJobKey;
+    private JobKey suspendJobKey;
+    private JobKey resumeJobKey;
+    private TriggerKey startTriggerKey;
+    private TriggerKey stopTriggerKey;
+    private TriggerKey suspendTriggerKey;
+    private TriggerKey resumeTriggerKey;
 
-    public JobDetail getStartJobDetail() {
-        return startJobDetail;
+    public JobKey getStartJobKey() {
+        return startJobKey;
     }
 
-    public void setStartJobDetail(JobDetail startJobDetail) {
-        this.startJobDetail = startJobDetail;
+    public void setStartJobKey(JobKey startJobKey) {
+        this.startJobKey = startJobKey;
     }
 
-    public JobDetail getStopJobDetail() {
-        return stopJobDetail;
+    public JobKey getStopJobKey() {
+        return stopJobKey;
     }
 
-    public void setStopJobDetail(JobDetail stopJobDetail) {
-        this.stopJobDetail = stopJobDetail;
+    public void setStopJobKey(JobKey stopJobKey) {
+        this.stopJobKey = stopJobKey;
     }
 
-    public JobDetail getSuspendJobDetail() {
-        return suspendJobDetail;
+    public JobKey getSuspendJobKey() {
+        return suspendJobKey;
     }
 
-    public void setSuspendJobDetail(JobDetail suspendJobDetail) {
-        this.suspendJobDetail = suspendJobDetail;
+    public void setSuspendJobKey(JobKey suspendJobKey) {
+        this.suspendJobKey = suspendJobKey;
     }
 
-    public Trigger getStartTrigger() {
-        return startTrigger;
+    public JobKey getResumeJobKey() {
+        return resumeJobKey;
     }
 
-    public void setStartTrigger(Trigger startTrigger) {
-        this.startTrigger = startTrigger;
+    public void setResumeJobKey(JobKey resumeJobKey) {
+        this.resumeJobKey = resumeJobKey;
     }
 
-    public Trigger getStopTrigger() {
-        return stopTrigger;
+    public TriggerKey getStartTriggerKey() {
+        return startTriggerKey;
     }
 
-    public void setStopTrigger(Trigger stopTrigger) {
-        this.stopTrigger = stopTrigger;
+    public void setStartTriggerKey(TriggerKey startTriggerKey) {
+        this.startTriggerKey = startTriggerKey;
     }
 
-    public Trigger getSuspendTrigger() {
-        return suspendTrigger;
+    public TriggerKey getStopTriggerKey() {
+        return stopTriggerKey;
     }
 
-    public void setSuspendTrigger(Trigger suspendTrigger) {
-        this.suspendTrigger = suspendTrigger;
+    public void setStopTriggerKey(TriggerKey stopTriggerKey) {
+        this.stopTriggerKey = stopTriggerKey;
     }
 
-    public void setResumeJobDetail(JobDetail resumeJobDetail) {
-        this.resumeJobDetail = resumeJobDetail;
+    public TriggerKey getSuspendTriggerKey() {
+        return suspendTriggerKey;
     }
 
-    public JobDetail getResumeJobDetail() {
-        return resumeJobDetail;
+    public void setSuspendTriggerKey(TriggerKey suspendTriggerKey) {
+        this.suspendTriggerKey = suspendTriggerKey;
     }
 
-    public void setResumeTrigger(Trigger resumeTrigger) {
-        this.resumeTrigger = resumeTrigger;
+    public TriggerKey getResumeTriggerKey() {
+        return resumeTriggerKey;
     }
 
-    public Trigger getResumeTrigger() {
-        return resumeTrigger;
+    public void setResumeTriggerKey(TriggerKey resumeTriggerKey) {
+        this.resumeTriggerKey = resumeTriggerKey;
     }
-    
 }

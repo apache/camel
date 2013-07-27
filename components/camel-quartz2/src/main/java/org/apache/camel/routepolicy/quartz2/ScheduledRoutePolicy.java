@@ -87,50 +87,47 @@ public abstract class ScheduledRoutePolicy extends RoutePolicySupport implements
     }
 
     public void pauseRouteTrigger(Action action, String routeId) throws SchedulerException {
-        String triggerName = retrieveTriggerName(action, routeId);
-        String triggerGroup = retrieveTriggerGroup(action, routeId);
+        TriggerKey triggerKey = retrieveTriggerKey(action, routeId);
         
-        getScheduler().pauseTrigger(TriggerKey.triggerKey(triggerName, triggerGroup));
+        getScheduler().pauseTrigger(triggerKey);
 
-        LOG.debug("Scheduled trigger: {}.{} is paused", triggerGroup, triggerName);
+        LOG.debug("Scheduled trigger: {} is paused", triggerKey);
     }
     
     public void resumeRouteTrigger(Action action, String routeId) throws SchedulerException {
-        String triggerName = retrieveTriggerName(action, routeId);
-        String triggerGroup = retrieveTriggerGroup(action, routeId);
+        TriggerKey triggerKey = retrieveTriggerKey(action, routeId);
         
-        getScheduler().resumeTrigger(TriggerKey.triggerKey(triggerName, triggerGroup));
+        getScheduler().resumeTrigger(triggerKey);
 
-        LOG.debug("Scheduled trigger: {}.{} is resumed", triggerGroup, triggerName);
+        LOG.debug("Scheduled trigger: {} is resumed", triggerKey);
     }
 
     @Override
     protected void doStop() throws Exception {
         for (ScheduledRouteDetails scheduledRouteDetails : scheduledRouteDetailsMap.values()) {
-            if (scheduledRouteDetails.getStartJobDetail() != null) {
+            if (scheduledRouteDetails.getStartJobKey() != null) {
                 deleteRouteJob(Action.START, scheduledRouteDetails);
             }
-            if (scheduledRouteDetails.getStopJobDetail() != null) {
+            if (scheduledRouteDetails.getStopJobKey() != null) {
                 deleteRouteJob(Action.STOP, scheduledRouteDetails);
             }
-            if (scheduledRouteDetails.getSuspendJobDetail() != null) {
+            if (scheduledRouteDetails.getSuspendJobKey() != null) {
                 deleteRouteJob(Action.SUSPEND, scheduledRouteDetails);
             }
-            if (scheduledRouteDetails.getResumeJobDetail() != null) {
+            if (scheduledRouteDetails.getResumeJobKey() != null) {
                 deleteRouteJob(Action.RESUME, scheduledRouteDetails);
             }
         }
     }
 
     public void deleteRouteJob(Action action, ScheduledRouteDetails scheduledRouteDetails) throws SchedulerException {
-        String jobDetailName = retrieveJobDetailName(action, scheduledRouteDetails);
-        String jobDetailGroup = retrieveJobDetailGroup(action, scheduledRouteDetails);
+        JobKey jobKey = retrieveJobKey(action, scheduledRouteDetails);
         
         if (!getScheduler().isShutdown()) {
-            getScheduler().deleteJob(JobKey.jobKey(jobDetailName, jobDetailGroup));
+            getScheduler().deleteJob(jobKey);
         }
 
-        LOG.debug("Scheduled Job: {}.{} is deleted", jobDetailGroup, jobDetailName);
+        LOG.debug("Scheduled Job: {} is deleted", jobKey);
     }
     
     protected JobDetail createJobDetail(Action action, Route route) throws Exception {
@@ -152,17 +149,17 @@ public abstract class ScheduledRoutePolicy extends RoutePolicySupport implements
     protected void updateScheduledRouteDetails(Action action, JobDetail jobDetail, Trigger trigger, Route route) throws Exception {
         ScheduledRouteDetails scheduledRouteDetails = getScheduledRouteDetails(route.getId());
         if (action == Action.START) {
-            scheduledRouteDetails.setStartJobDetail(jobDetail);
-            scheduledRouteDetails.setStartTrigger(trigger);
+            scheduledRouteDetails.setStartJobKey(jobDetail.getKey());
+            scheduledRouteDetails.setStartTriggerKey(trigger.getKey());
         } else if (action == Action.STOP) {
-            scheduledRouteDetails.setStopJobDetail(jobDetail);
-            scheduledRouteDetails.setStopTrigger(trigger);
+            scheduledRouteDetails.setStopJobKey(jobDetail.getKey());
+            scheduledRouteDetails.setStopTriggerKey(trigger.getKey());
         } else if (action == Action.SUSPEND) {
-            scheduledRouteDetails.setSuspendJobDetail(jobDetail);
-            scheduledRouteDetails.setSuspendTrigger(trigger);
+            scheduledRouteDetails.setSuspendJobKey(jobDetail.getKey());
+            scheduledRouteDetails.setSuspendTriggerKey(trigger.getKey());
         } else if (action == Action.RESUME) {
-            scheduledRouteDetails.setResumeJobDetail(jobDetail);
-            scheduledRouteDetails.setResumeTrigger(trigger);
+            scheduledRouteDetails.setResumeJobKey(jobDetail.getKey());
+            scheduledRouteDetails.setResumeTriggerKey(trigger.getKey());
         }
     }
 
@@ -170,71 +167,38 @@ public abstract class ScheduledRoutePolicy extends RoutePolicySupport implements
         getScheduler().getContext().put(jobDetail.getKey().getName(), new ScheduledJobState(action, route));
     }    
         
-    public String retrieveTriggerName(Action action, String routeId) {
+    public TriggerKey retrieveTriggerKey(Action action, String routeId) {
         ScheduledRouteDetails scheduledRouteDetails = getScheduledRouteDetails(routeId);
-        String triggerName = null;
+        TriggerKey result = null;
 
         if (action == Action.START) {
-            triggerName = scheduledRouteDetails.getStartTrigger().getKey().getName();
+            result = scheduledRouteDetails.getStartTriggerKey();
         } else if (action == Action.STOP) {
-            triggerName = scheduledRouteDetails.getStopTrigger().getKey().getName();
+            result = scheduledRouteDetails.getStopTriggerKey();
         } else if (action == Action.SUSPEND) {
-            triggerName = scheduledRouteDetails.getSuspendTrigger().getKey().getName();
+            result = scheduledRouteDetails.getSuspendTriggerKey();
         } else if (action == Action.RESUME) {
-            triggerName = scheduledRouteDetails.getResumeTrigger().getKey().getName();
+            result = scheduledRouteDetails.getResumeTriggerKey();
         }
         
-        return triggerName;
-    }
-
-    public String retrieveTriggerGroup(Action action, String routeId) {
-        ScheduledRouteDetails scheduledRouteDetails = getScheduledRouteDetails(routeId);
-        String triggerGroup = null;
-
-        if (action == Action.START) {
-            triggerGroup = scheduledRouteDetails.getStartTrigger().getKey().getGroup();
-        } else if (action == Action.STOP) {
-            triggerGroup = scheduledRouteDetails.getStopTrigger().getKey().getGroup();
-        } else if (action == Action.SUSPEND) {
-            triggerGroup = scheduledRouteDetails.getSuspendTrigger().getKey().getGroup();
-        } else if (action == Action.RESUME) {
-            triggerGroup = scheduledRouteDetails.getResumeTrigger().getKey().getGroup();
-        }
-        
-        return triggerGroup;
+        return result;
     }
     
-    public String retrieveJobDetailName(Action action, ScheduledRouteDetails scheduledRouteDetails) {
-        String jobDetailName = null;
+    public JobKey retrieveJobKey(Action action, ScheduledRouteDetails scheduledRouteDetails) {
+        JobKey result = null;
 
         if (action == Action.START) {
-            jobDetailName = scheduledRouteDetails.getStartJobDetail().getKey().getName();
+            result = scheduledRouteDetails.getStartJobKey();
         } else if (action == Action.STOP) {
-            jobDetailName = scheduledRouteDetails.getStopJobDetail().getKey().getName();
+            result = scheduledRouteDetails.getStopJobKey();
         } else if (action == Action.SUSPEND) {
-            jobDetailName = scheduledRouteDetails.getSuspendJobDetail().getKey().getName();
+            result = scheduledRouteDetails.getSuspendJobKey();
         } else if (action == Action.RESUME) {
-            jobDetailName = scheduledRouteDetails.getResumeJobDetail().getKey().getName();
+            result = scheduledRouteDetails.getResumeJobKey();
         }
         
-        return jobDetailName;
+        return result;
     }
-
-    public String retrieveJobDetailGroup(Action action, ScheduledRouteDetails scheduledRouteDetails) {
-        String jobDetailGroup = null;
-
-        if (action == Action.START) {
-            jobDetailGroup = scheduledRouteDetails.getStartJobDetail().getKey().getGroup();
-        } else if (action == Action.STOP) {
-            jobDetailGroup = scheduledRouteDetails.getStopJobDetail().getKey().getGroup();
-        } else if (action == Action.SUSPEND) {
-            jobDetailGroup = scheduledRouteDetails.getSuspendJobDetail().getKey().getGroup();
-        } else if (action == Action.RESUME) {
-            jobDetailGroup = scheduledRouteDetails.getResumeJobDetail().getKey().getGroup();
-        }
-        
-        return jobDetailGroup;
-    } 
     
     protected void registerRouteToScheduledRouteDetails(Route route) {
         ScheduledRouteDetails scheduledRouteDetails = new ScheduledRouteDetails();
