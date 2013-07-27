@@ -1,8 +1,6 @@
 package org.apache.camel.component.quartz2;
 
-import org.apache.camel.Consumer;
-import org.apache.camel.Processor;
-import org.apache.camel.Producer;
+import org.apache.camel.*;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.processor.loadbalancer.LoadBalancer;
 import org.apache.camel.processor.loadbalancer.RoundRobinLoadBalancer;
@@ -136,7 +134,10 @@ public class QuartzEndpoint extends DefaultEndpoint {
 
     private void removeJobInScheduler() throws Exception {
         Scheduler scheduler = getComponent().getScheduler();
-        if (deleteJob && scheduler != null) {
+        if (scheduler == null)
+            return;
+
+        if (deleteJob) {
             boolean isClustered = scheduler.getMetaData().isJobStoreClustered();
             if (!scheduler.isShutdown() && !isClustered) {
                 LOG.info("Deleting job {}", triggerKey);
@@ -171,6 +172,8 @@ public class QuartzEndpoint extends DefaultEndpoint {
                             jobDetail.getJobClass().getSimpleName(),
                             nextFireDate});
         } else {
+            ensureNoDupTriggerKey();
+
             // Update existing jobDetails with current endpoint data to jobDataMap.
             jobDetail = scheduler.getJobDetail(trigger.getJobKey());
             updateJobDataMap(jobDetail);
@@ -189,6 +192,18 @@ public class QuartzEndpoint extends DefaultEndpoint {
         number.incrementAndGet();
 
         jobAdded.set(true);
+    }
+
+    private void ensureNoDupTriggerKey() {
+        for (Route route : getCamelContext().getRoutes()) {
+            if (route.getEndpoint() instanceof QuartzEndpoint) {
+                QuartzEndpoint quartzEndpoint = (QuartzEndpoint) route.getEndpoint();
+                TriggerKey checkTriggerKey = quartzEndpoint.getTriggerKey();
+                if (triggerKey.equals(checkTriggerKey)) {
+                    throw new IllegalArgumentException("Trigger key " + triggerKey + " is already in used by " + quartzEndpoint);
+                }
+            }
+        }
     }
 
     private void updateJobDataMap(JobDetail jobDetail) {

@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.quartz2;
 
+import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.After;
@@ -44,11 +45,17 @@ public class QuartzNameCollisionTest {
         });
         camel1.start();
 
-        QuartzComponent component2 = new QuartzComponent(camel1);
         try {
-            component2.createEndpoint("quartz2://myGroup/myTimerName");
-        } catch (IllegalArgumentException e) {
-            Assert.fail("Should not have thrown an exception. Due to new deleteJob option. Exception: " + e.getMessage());
+            camel1.addRoutes(new RouteBuilder() {
+                @Override
+                public void configure() throws Exception {
+                    from("quartz2://myGroup/myTimerName?cron=0/2+*+*+*+*+?").to("log:two", "mock:two");
+                }
+            });
+            Assert.fail("Should have thrown an exception");
+        } catch (FailedToCreateRouteException e) {
+            String reason = e.getMessage();
+            Assert.assertEquals(reason.indexOf("Trigger key myGroup.myTimerName is already in used") >=0, true);
         }
     }
 
@@ -65,8 +72,14 @@ public class QuartzNameCollisionTest {
         camel1.start();
 
         camel2 = new DefaultCamelContext();
-        QuartzComponent component2 = new QuartzComponent(camel2);
-        component2.createEndpoint("quartz2://myGroup/myTimerName");
+        camel2.setName("camel-2");
+        camel2.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("quartz2://myGroup/myTimerName=0/2+*+*+*+*+?").to("log:two", "mock:two");
+            }
+        });
+        camel2.start();
     }
 
     /**
@@ -85,9 +98,14 @@ public class QuartzNameCollisionTest {
         camel1.start();
 
         camel2 = new DefaultCamelContext();
-        QuartzComponent component2 = new QuartzComponent(camel2);
-
-        component2.createEndpoint("quartz2://myGroup/myTimerName?stateful=true");
+        camel2.setName("camel-2");
+        camel2.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("quartz2://myGroup/myTimerName?stateful=true").to("log:two", "mock:two");
+            }
+        });
+        camel2.start();
         // if no exception is thrown then this test passed.
     }
 
@@ -148,7 +166,7 @@ public class QuartzNameCollisionTest {
         TriggerKey triggerKey = TriggerKey.triggerKey("myTimerName", "myGroup");
         Trigger trigger = scheduler.getTrigger(triggerKey);
         Assert.assertNotNull(trigger);
-        
+
         camel1.stopRoute("route-1");
 
         Trigger.TriggerState triggerState = component.getScheduler().getTriggerState(triggerKey);
