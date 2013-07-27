@@ -34,7 +34,7 @@ public class ScheduledJob implements Job, Serializable, ScheduledRoutePolicyCons
         LOG.debug("Running ScheduledJob: jobExecutionContext={}", jobExecutionContext);
 
         SchedulerContext schedulerContext = getSchedulerContext(jobExecutionContext);
-        ScheduledJobState state = (ScheduledJobState) schedulerContext.get(jobExecutionContext.getJobDetail().getKey().getName());
+        ScheduledJobState state = (ScheduledJobState) schedulerContext.get(jobExecutionContext.getJobDetail().getKey().toString());
         Action storedAction = state.getAction(); 
         Route storedRoute = state.getRoute();
         

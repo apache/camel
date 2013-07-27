@@ -34,6 +34,7 @@ import java.util.concurrent.TimeUnit;
  * The following has been updated:
  *  - Changed and used Quartz 2.x API call on all the area affected.
  *  - Stored JobKey and TriggerKey instead of JobDetail and Trigger objects in ScheduledRouteDetails.
+ *  - ScheduledJobState is stored using full JobKey.toString() instead of just jobName.
  *
  * See org.apache.camel.component.quartz2.QuartzComponent
  *
@@ -177,7 +178,7 @@ public abstract class ScheduledRoutePolicy extends RoutePolicySupport implements
     }
 
     protected void loadCallbackDataIntoSchedulerContext(JobDetail jobDetail, Action action, Route route) throws SchedulerException {
-        getScheduler().getContext().put(jobDetail.getKey().getName(), new ScheduledJobState(action, route));
+        getScheduler().getContext().put(jobDetail.getKey().toString(), new ScheduledJobState(action, route));
     }    
         
     public TriggerKey retrieveTriggerKey(Action action, String routeId) {
