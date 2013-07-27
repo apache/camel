@@ -185,6 +185,7 @@ public class SimpleScheduledRoutePolicyTest extends CamelTestSupport {
                 long suspendTime = System.currentTimeMillis() + 1000L;
                 policy.setRouteSuspendDate(new Date(suspendTime));
                 policy.setRouteSuspendRepeatCount(0);
+                policy.setRouteSuspendRepeatInterval(3000);
                 long resumeTime = System.currentTimeMillis() + 4000L;
                 policy.setRouteResumeDate(new Date(resumeTime));
                 policy.setRouteResumeRepeatCount(1);
