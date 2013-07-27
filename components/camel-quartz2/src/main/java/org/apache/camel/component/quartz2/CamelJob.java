@@ -15,7 +15,9 @@ public class CamelJob implements Job {
     public void execute(JobExecutionContext context) throws JobExecutionException {
         Exchange exchange = null;
         try {
-            LOG.debug("Running CamelJob jobExecutionContext={}", context);
+            if (LOG.isDebugEnabled())
+                LOG.debug("Running CamelJob jobExecutionContext={}", context);
+
             CamelContext camelContext = getCamelContext(context);
             QuartzEndpoint endpoint = lookupQuartzEndpoint(camelContext, context);
             exchange = endpoint.createExchange();
@@ -59,7 +61,8 @@ public class CamelJob implements Job {
 
     private QuartzEndpoint lookupQuartzEndpoint(CamelContext camelContext, JobExecutionContext quartzContext) throws JobExecutionException {
         TriggerKey triggerKey = quartzContext.getTrigger().getKey();
-        LOG.debug("Looking up existing QuartzEndpoint with triggerKey={}", triggerKey);
+        if (LOG.isDebugEnabled())
+            LOG.debug("Looking up existing QuartzEndpoint with triggerKey={}", triggerKey);
 
         // check all active routes for the quartz endpoint this task matches
         // as we prefer to use the existing endpoint from the routes
@@ -67,7 +70,8 @@ public class CamelJob implements Job {
             if (route.getEndpoint() instanceof QuartzEndpoint) {
                 QuartzEndpoint quartzEndpoint = (QuartzEndpoint) route.getEndpoint();
                 TriggerKey checkTriggerKey = quartzEndpoint.getTriggerKey();
-                LOG.trace("Checking route endpoint={} with checkTriggerKey={}", quartzEndpoint, checkTriggerKey);
+                if (LOG.isTraceEnabled())
+                    LOG.trace("Checking route endpoint={} with checkTriggerKey={}", quartzEndpoint, checkTriggerKey);
                 if (triggerKey.equals(checkTriggerKey)) {
                     return quartzEndpoint;
                 }
@@ -80,7 +84,8 @@ public class CamelJob implements Job {
 
         // Even though the same camelContext.getEndpoint call, but if/else display different log.
         if (camelContext.hasEndpoint(endpointUri) != null) {
-            LOG.debug("Getting Endpoint from camelContext.");
+            if (LOG.isDebugEnabled())
+                LOG.debug("Getting Endpoint from camelContext.");
             result = camelContext.getEndpoint(endpointUri, QuartzEndpoint.class);
         } else {
             LOG.warn("Cannot find existing QuartzEndpoint with uri: {}. Creating new endpoint instance.", endpointUri);
