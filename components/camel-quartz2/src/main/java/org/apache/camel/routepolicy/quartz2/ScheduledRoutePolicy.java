@@ -28,6 +28,19 @@ import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+/**
+ * This is Quartz2.x based RoutePolicy implementation that re-use almost identical to "camel-quartz" component.
+ *
+ * The following has been updated:
+ *  - Changed and used Quartz 2.x API call on all the area affected.
+ *  - Stored JobKey and TriggerKey instead of JobDetail and Trigger objects in ScheduledRouteDetails.
+ *
+ * See org.apache.camel.component.quartz2.QuartzComponent
+ *
+ * @author All the orignal authors from camel-quartz should get credits as well.
+ * @author Zemian Deng saltnlight5@gmail.com - ported and re-implemented the camel-quartz2 component.
+ * @since Jul-27-2013
+ */
 public abstract class ScheduledRoutePolicy extends RoutePolicySupport implements ScheduledRoutePolicyConstants {
     private static final transient Logger LOG = LoggerFactory.getLogger(ScheduledRoutePolicy.class);
     protected Map<String, ScheduledRouteDetails> scheduledRouteDetailsMap = new LinkedHashMap<String, ScheduledRouteDetails>();

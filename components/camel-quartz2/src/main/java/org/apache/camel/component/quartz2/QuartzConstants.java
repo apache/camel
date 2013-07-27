@@ -17,7 +17,9 @@
 package org.apache.camel.component.quartz2;
 
 /**
- * Quartz constants.
+ * Provide some constants used in this component package.
+ *
+ * @author Zemian Deng saltnlight5@gmail.com
  */
 public final class QuartzConstants {
     public static final String QUARTZ_CAMEL_JOBS_COUNT = "CamelJobsCount";

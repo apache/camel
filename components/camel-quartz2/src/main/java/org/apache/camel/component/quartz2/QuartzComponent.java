@@ -1,3 +1,19 @@
+/**
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.apache.camel.component.quartz2;
 
 import org.apache.camel.CamelContext;
@@ -19,6 +35,18 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.atomic.AtomicInteger;
 
+/**
+ * A factory for QuartzEndpoint. This component will hold a Quartz Scheduler that will provide scheduled timer based
+ * endpoint that generate a QuartzMessage to a route. Currently it support Cron and Simple trigger scheduling type.
+ *
+ * <p>This component uses Quartz 2.x API and provide all the features from "camel-quartz". It has reused some
+ * of the code, but mostly has been re-written in attempt to be more easier to maintain, and use Quartz more
+ * fully.</p>
+ *
+ * @author All the orignal authors from camel-quartz should get credits as well.
+ * @author Zemian Deng saltnlight5@gmail.com - ported and re-implemented the camel-quartz2 component.
+ * @since Jul-27-2013
+ */
 public class QuartzComponent extends DefaultComponent implements StartupListener {
     private static final transient Logger LOG = LoggerFactory.getLogger(QuartzComponent.class);
     private SchedulerFactory schedulerFactory;
