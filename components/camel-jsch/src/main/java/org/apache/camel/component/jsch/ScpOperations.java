@@ -128,7 +128,7 @@ public class ScpOperations implements RemoteFileOperations<ScpFile> {
                 if (is == null) {
                     is = exchange.getIn().getMandatoryBody(InputStream.class);
                 }
-                write(channel, file, exchange.getIn().getMandatoryBody(InputStream.class), cfg);
+                write(channel, file, is, cfg);
             } catch (InvalidPayloadException e) {
                 throw new GenericFileOperationFailedException("Cannot store file: " + name, e);
             } catch (IOException e) {
