@@ -13,6 +13,7 @@ import org.slf4j.LoggerFactory;
 
 import java.util.Date;
 import java.util.Map;
+import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import static org.quartz.CronScheduleBuilder.cronSchedule;
@@ -31,6 +32,10 @@ public class QuartzEndpoint extends DefaultEndpoint {
     /** In case of scheduler has already started, we want the trigger start slightly after current time to
      * ensure endpoint is fully started before the job kicks in. */
     private long triggerStartDelay = 500; // in millis second
+
+    // An internal variables to track whether a job has been in scheduler or not, and has it paused or not.
+    private AtomicBoolean jobAdded = new AtomicBoolean(false);
+    private AtomicBoolean jobPaused = new AtomicBoolean(false);
 
     public String getCron() {
         return cron;
@@ -111,7 +116,6 @@ public class QuartzEndpoint extends DefaultEndpoint {
     public Consumer createConsumer(Processor processor) throws Exception {
         QuartzConsumer result = new QuartzConsumer(this, processor);
         configureConsumer(result);
-        getConsumerLoadBalancer().addProcessor(processor);
         return result;
     }
 
@@ -122,8 +126,32 @@ public class QuartzEndpoint extends DefaultEndpoint {
 
     @Override
     protected void doStart() throws Exception {
-        super.doStart();
+        addJobInScheduler();
+    }
 
+    @Override
+    protected void doStop() throws Exception {
+        removeJobInScheduler();
+    }
+
+    private void removeJobInScheduler() throws Exception {
+        Scheduler scheduler = getComponent().getScheduler();
+        if (deleteJob && scheduler != null) {
+            boolean isClustered = scheduler.getMetaData().isJobStoreClustered();
+            if (!scheduler.isShutdown() && !isClustered) {
+                LOG.info("Deleting job {}", triggerKey);
+                scheduler.unscheduleJob(triggerKey);
+
+                jobAdded.set(false);
+            }
+        }
+
+        // Decrement camel job count for this endpoint
+        AtomicInteger number = (AtomicInteger) scheduler.getContext().get(QuartzConstants.QUARTZ_CAMEL_JOBS_COUNT);
+        number.decrementAndGet();
+    }
+
+    private void addJobInScheduler() throws Exception {
         // Add or use existing trigger to/from scheduler
         Scheduler scheduler = getComponent().getScheduler();
         JobDetail jobDetail = null;
@@ -135,17 +163,32 @@ public class QuartzEndpoint extends DefaultEndpoint {
             updateJobDataMap(jobDetail);
 
             // Schedule it now. Remember that scheduler might not be started it, but we can schedule now.
-            scheduler.scheduleJob(jobDetail, trigger);
+            Date nextFireDate = scheduler.scheduleJob(jobDetail, trigger);
+            LOG.info("Job {} (triggerType={}, jobClass={}) is scheduled. Next fire date is {}",
+                    new Object[]{
+                            trigger.getKey(),
+                            trigger.getClass().getSimpleName(),
+                            jobDetail.getJobClass().getSimpleName(),
+                            nextFireDate});
         } else {
             // Update existing jobDetails with current endpoint data to jobDataMap.
             jobDetail = scheduler.getJobDetail(trigger.getJobKey());
             updateJobDataMap(jobDetail);
             scheduler.addJob(jobDetail, true);
+            Date nextFireDate = trigger.getNextFireTime();
+            LOG.info("Reuse existing Job {} (triggerType={}, jobType={}) is scheduled. Next fire date is {}",
+                    new Object[]{
+                            trigger.getKey(),
+                            trigger.getClass().getSimpleName(),
+                            jobDetail.getJobClass().getSimpleName(),
+                            nextFireDate});
         }
 
         // Increase camel job count for this endpoint
         AtomicInteger number = (AtomicInteger) scheduler.getContext().get(QuartzConstants.QUARTZ_CAMEL_JOBS_COUNT);
         number.incrementAndGet();
+
+        jobAdded.set(true);
     }
 
     private void updateJobDataMap(JobDetail jobDetail) {
@@ -194,7 +237,7 @@ public class QuartzEndpoint extends DefaultEndpoint {
             setProperties(result, triggerParameters);
         }
 
-        LOG.info("Created trigger={}", result);
+        LOG.debug("Created trigger={}", result);
         return result;
     }
 
@@ -220,7 +263,7 @@ public class QuartzEndpoint extends DefaultEndpoint {
             setProperties(result, jobParameters);
         }
 
-        LOG.info("Created jobDetail={}", result);
+        LOG.debug("Created jobDetail={}", result);
         return result;
     }
 
@@ -229,43 +272,43 @@ public class QuartzEndpoint extends DefaultEndpoint {
         return (QuartzComponent)super.getComponent();
     }
 
-    @Override
-    protected void doStop() throws Exception {
-        super.doStop();
-
-        Scheduler scheduler = getComponent().getScheduler();
-        if (deleteJob && scheduler != null) {
-            boolean isClustered = scheduler.getMetaData().isJobStoreClustered();
-            if (!scheduler.isShutdown() && !isClustered) {
-                LOG.info("Deleting job {}", triggerKey);
-                scheduler.unscheduleJob(triggerKey);
-            }
-        }
-
-        // Decrement camel job count for this endpoint
-        AtomicInteger number = (AtomicInteger) scheduler.getContext().get(QuartzConstants.QUARTZ_CAMEL_JOBS_COUNT);
-        number.decrementAndGet();
-    }
-
-    @Override
-    protected void doSuspend() throws Exception {
-        super.doSuspend();
+    public void pauseTrigger() throws Exception {
+        if (jobPaused.get())
+            return;
+        jobPaused.set(true);
 
         Scheduler scheduler = getComponent().getScheduler();
         if (scheduler != null) {
-            LOG.info("Pausing trigger (suspend).");
+            LOG.info("Pausing trigger {}", triggerKey);
             scheduler.pauseTrigger(triggerKey);
         }
     }
 
-    @Override
-    protected void doResume() throws Exception {
-        super.doResume();
+    public void resumeTrigger() throws Exception {
+        if (!jobPaused.get())
+            return;
+        jobPaused.set(false);
 
         Scheduler scheduler = getComponent().getScheduler();
         if (scheduler != null) {
-            LOG.info("Resuming trigger (resume).");
+            LOG.info("Resuming trigger {}", triggerKey);
             scheduler.resumeTrigger(triggerKey);
+        }
+    }
+
+    public void onConsumerStart(QuartzConsumer quartzConsumer) throws Exception {
+        getConsumerLoadBalancer().addProcessor(quartzConsumer.getProcessor());
+        if (!jobAdded.get()) {
+            addJobInScheduler();
+        } else {
+            resumeTrigger();
+        }
+    }
+
+    public void onConsumerStop(QuartzConsumer quartzConsumer) throws Exception {
+        getConsumerLoadBalancer().removeProcessor(quartzConsumer.getProcessor());
+        if (jobAdded.get()) {
+            pauseTrigger();
         }
     }
 }
