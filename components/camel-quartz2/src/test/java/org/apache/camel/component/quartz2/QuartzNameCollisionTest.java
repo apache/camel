@@ -153,7 +153,7 @@ public class QuartzNameCollisionTest {
 
         Trigger.TriggerState triggerState = component.getScheduler().getTriggerState(triggerKey);
         Assert.assertNotNull(trigger);
-        Assert.assertEquals(Trigger.TriggerState.NORMAL, triggerState);
+        Assert.assertEquals(Trigger.TriggerState.PAUSED, triggerState);
     }
 
     @After

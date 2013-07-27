@@ -286,24 +286,4 @@ public class QuartzComponent extends DefaultComponent implements StartupListener
             }
         }
     }
-
-    @Override
-    protected void doSuspend() throws Exception {
-        super.doSuspend();
-
-        if (scheduler != null) {
-            LOG.info("Standby the scheduler (suspend).");
-            scheduler.standby();
-        }
-    }
-
-    @Override
-    protected void doResume() throws Exception {
-        super.doResume();
-
-        if (scheduler != null) {
-            LOG.info("Start the scheduler (resume).");
-            scheduler.start();
-        }
-    }
 }
