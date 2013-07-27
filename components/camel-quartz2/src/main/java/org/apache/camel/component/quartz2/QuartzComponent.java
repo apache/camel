@@ -27,6 +27,7 @@ public class QuartzComponent extends DefaultComponent implements StartupListener
     private String propertiesFile;
     private int startDelayedSeconds;
     private boolean autoStartScheduler = true;
+    private boolean prefixJobNameWithEndpointId = false;
 
     public QuartzComponent() {
     }
@@ -172,13 +173,19 @@ public class QuartzComponent extends DefaultComponent implements StartupListener
         if (autoStartScheduler != null)
             this.autoStartScheduler = autoStartScheduler;
 
+        Boolean prefixJobNameWithEndpointId = getAndRemoveParameter(parameters, "prefixJobNameWithEndpointId", Boolean.class);
+        if (prefixJobNameWithEndpointId != null)
+            this.prefixJobNameWithEndpointId = prefixJobNameWithEndpointId;
+
         // Extract trigger.XXX and job.XXX properties to be set on endpoint below
         Map<String, Object> triggerParameters = IntrospectionSupport.extractProperties(parameters, "trigger.");
         Map<String, Object> jobParameters = IntrospectionSupport.extractProperties(parameters, "job.");
 
         // Create quartz endpoint
-        TriggerKey triggerKey = createTriggerKey(uri, remaining);
         QuartzEndpoint result = new QuartzEndpoint(uri, this);
+        TriggerKey triggerKey = createTriggerKey(uri, remaining);
+        if (this.prefixJobNameWithEndpointId)
+            triggerKey = TriggerKey.triggerKey(result.getId() + "_" + triggerKey.getName(), triggerKey.getGroup());
         result.setTriggerKey(triggerKey);
         result.setTriggerParameters(triggerParameters);
         result.setJobParameters(jobParameters);
@@ -196,13 +203,13 @@ public class QuartzComponent extends DefaultComponent implements StartupListener
             host = ObjectHelper.before(remaining, "/");
         }
 
-        // Trigger group can be optional, if so set it to Camel
+        // Trigger group can be optional, if so set it to this context's unique name
         String name, group;
         if (ObjectHelper.isNotEmpty(path) && ObjectHelper.isNotEmpty(host)) {
             group = host;
             name = path;
         } else {
-            group = "Camel";
+            group = getCamelContext().getManagementName();
             name = host;
         }
 
