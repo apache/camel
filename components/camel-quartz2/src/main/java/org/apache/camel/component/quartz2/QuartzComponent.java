@@ -183,16 +183,14 @@ public class QuartzComponent extends DefaultComponent implements StartupListener
 
         // Create quartz endpoint
         QuartzEndpoint result = new QuartzEndpoint(uri, this);
-        TriggerKey triggerKey = createTriggerKey(uri, remaining);
-        if (this.prefixJobNameWithEndpointId)
-            triggerKey = TriggerKey.triggerKey(result.getId() + "_" + triggerKey.getName(), triggerKey.getGroup());
+        TriggerKey triggerKey = createTriggerKey(uri, remaining, result);
         result.setTriggerKey(triggerKey);
         result.setTriggerParameters(triggerParameters);
         result.setJobParameters(jobParameters);
         return result;
     }
 
-    private TriggerKey createTriggerKey(String uri, String remaining) throws Exception {
+    private TriggerKey createTriggerKey(String uri, String remaining, QuartzEndpoint endpoint) throws Exception {
         // Parse uri for trigger name and group
         URI u = new URI(uri);
         String path = ObjectHelper.after(u.getPath(), "/");
@@ -210,8 +208,17 @@ public class QuartzComponent extends DefaultComponent implements StartupListener
             name = path;
         } else {
             group = getCamelContext().getManagementName();
+
+            // There are cases where above is NULL, then we simply set to a constant value.
+            if (group == null)
+                group = "Camel";
+
             name = host;
         }
+
+
+        if (prefixJobNameWithEndpointId)
+            name = endpoint.getId() + "_" + name;
 
         return new TriggerKey(name, group);
     }
