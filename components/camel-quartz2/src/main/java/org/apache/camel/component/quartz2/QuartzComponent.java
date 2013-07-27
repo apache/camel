@@ -207,12 +207,8 @@ public class QuartzComponent extends DefaultComponent implements StartupListener
             group = host;
             name = path;
         } else {
-            group = "Camel_" + getCamelContext().getManagementName();
-
-            // There are cases where above is NULL, then we simply set to a constant value.
-            if (group == null)
-                group = "Camel";
-
+            String camelContextName = getCamelContext().getManagementName();
+            group = camelContextName == null ? "Camel" : "Camel_" + camelContextName;
             name = host;
         }
 
