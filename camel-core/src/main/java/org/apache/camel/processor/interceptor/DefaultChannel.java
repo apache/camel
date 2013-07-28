@@ -278,6 +278,10 @@ public class DefaultChannel extends CamelInternalProcessor implements ModelChann
             addAdvice(new StreamCachingAdvice(camelContext.getStreamCachingStrategy()));
         }
 
+        if (routeContext.getDelayer() != null && routeContext.getDelayer() > 0) {
+            addAdvice(new DelayerAdvice(routeContext.getDelayer()));
+        }
+
         // sets the delegate to our wrapped output
         output = target;
     }

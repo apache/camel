@@ -1579,12 +1579,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         }
 
         if (getDelayer() != null && getDelayer() > 0) {
-            // only add a new delayer if not already configured
-            if (Delayer.getDelayer(this) == null) {
-                long millis = getDelayer();
-                log.info("Delayer is enabled with: {} ms. on CamelContext: {}", millis, getName());
-                addInterceptStrategy(new Delayer(millis));
-            }
+            log.info("Delayer is enabled with: {} ms. on CamelContext: {}", getDelayer(), getName());
         }
         
         // register debugger

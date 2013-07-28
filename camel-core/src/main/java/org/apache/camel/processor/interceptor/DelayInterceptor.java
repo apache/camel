@@ -24,7 +24,10 @@ import org.apache.camel.processor.DelayProcessorSupport;
 
 /**
  * An interceptor for delaying routes.
+ *
+ * @deprecated no longer in use, will be removed in next Camel release.
  */
+@Deprecated
 public class DelayInterceptor extends DelayProcessorSupport {
 
     private final ProcessorDefinition<?> node;
