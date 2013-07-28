@@ -17,7 +17,6 @@
 package org.apache.camel.management.mbean;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.Endpoint;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.api.management.mbean.ManagedSendProcessorMBean;
 import org.apache.camel.model.ProcessorDefinition;
@@ -44,8 +43,7 @@ public class ManagedSendProcessor extends ManagedProcessor implements ManagedSen
     }
 
     public void setDestination(String uri) {
-        Endpoint endpoint = getContext().getEndpoint(uri);
-        processor.setDestination(endpoint);
+        // noop
     }
 
     public String getMessageExchangePattern() {

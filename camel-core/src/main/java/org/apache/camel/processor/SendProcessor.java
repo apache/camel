@@ -66,12 +66,11 @@ public class SendProcessor extends ServiceSupport implements AsyncProcessor, Tra
         return "sendTo(" + destination + (pattern != null ? " " + pattern : "") + ")";
     }
 
+    /**
+     * @deprecated not longer supported.
+     */
+    @Deprecated
     public void setDestination(Endpoint destination) {
-        this.destination = destination;
-        // destination changed so purge the cache
-        if (producerCache != null) {
-            producerCache.purge();
-        }
     }
 
     public String getTraceLabel() {
