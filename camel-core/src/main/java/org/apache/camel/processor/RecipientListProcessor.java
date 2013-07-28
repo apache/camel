@@ -97,8 +97,9 @@ public class RecipientListProcessor extends MulticastProcessor {
         }
 
         public void begin() {
-            // we have already acquired and prepare the producer so we
+            // we have already acquired and prepare the producer
             LOG.trace("RecipientProcessorExchangePair #{} begin: {}", index, exchange);
+            exchange.setProperty(Exchange.RECIPIENT_LIST_ENDPOINT, endpoint.getEndpointUri());
         }
 
         public void done() {

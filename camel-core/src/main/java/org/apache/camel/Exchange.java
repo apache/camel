@@ -164,6 +164,7 @@ public interface Exchange {
 
     String PARENT_UNIT_OF_WORK = "CamelParentUnitOfWork";
 
+    String RECIPIENT_LIST_ENDPOINT = "CamelRecipientListEndpoint";
     String RECEIVED_TIMESTAMP      = "CamelReceivedTimestamp";
     String REDELIVERED             = "CamelRedelivered";
     String REDELIVERY_COUNTER      = "CamelRedeliveryCounter";
