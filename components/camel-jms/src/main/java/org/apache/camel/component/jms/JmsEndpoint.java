@@ -313,7 +313,7 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
 
     public HeaderFilterStrategy getHeaderFilterStrategy() {
         if (headerFilterStrategy == null) {
-            headerFilterStrategy = new JmsHeaderFilterStrategy();
+            headerFilterStrategy = new JmsHeaderFilterStrategy(isIncludeAllJMSXProperties());
         }
         return headerFilterStrategy;
     }
@@ -1080,6 +1080,16 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     @ManagedAttribute
     public void setIncludeSentJMSMessageID(boolean includeSentJMSMessageID) {
         configuration.setIncludeSentJMSMessageID(includeSentJMSMessageID);
+    }
+
+    @ManagedAttribute
+    public boolean isIncludeAllJMSXProperties() {
+        return configuration.isIncludeAllJMSXProperties();
+    }
+
+    @ManagedAttribute
+    public void setIncludeAllJMSXProperties(boolean includeAllJMSXProperties) {
+        configuration.setIncludeAllJMSXProperties(includeAllJMSXProperties);
     }
 
     @ManagedAttribute
