@@ -41,7 +41,7 @@ public class ManagedProducer extends ManagedService implements ManagedProducerMB
         super.init(strategy);
         boolean sanitize = strategy.getManagementAgent().getSanitize() != null ? strategy.getManagementAgent().getSanitize() : false;
         if (sanitize) {
-            uri = URISupport.sanitizeUri(producer.getEndpoint().getEndpointUri(), "xxxxxx");
+            uri = URISupport.sanitizeUri(producer.getEndpoint().getEndpointUri());
         } else {
             uri = producer.getEndpoint().getEndpointUri();
         }

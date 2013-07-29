@@ -41,7 +41,7 @@ public class ManagedConsumer extends ManagedService implements ManagedConsumerMB
         super.init(strategy);
         boolean sanitize = strategy.getManagementAgent().getSanitize() != null ? strategy.getManagementAgent().getSanitize() : false;
         if (sanitize) {
-            uri = URISupport.sanitizeUri(consumer.getEndpoint().getEndpointUri(), "xxxxxx");
+            uri = URISupport.sanitizeUri(consumer.getEndpoint().getEndpointUri());
         } else {
             uri = consumer.getEndpoint().getEndpointUri();
         }

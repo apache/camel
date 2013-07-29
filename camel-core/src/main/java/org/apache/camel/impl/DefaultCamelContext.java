@@ -1179,9 +1179,6 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     }
 
     public ManagementMBeanAssembler getManagementMBeanAssembler() {
-        if (managementMBeanAssembler == null) {
-            managementMBeanAssembler = createManagementMBeanAssembler();
-        }
         return managementMBeanAssembler;
     }
 
@@ -1550,6 +1547,10 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
             // use the classloader that loaded this class
             setApplicationContextClassLoader(this.getClass().getClassLoader());
         }
+        if (managementMBeanAssembler == null) {
+            managementMBeanAssembler = createManagementMBeanAssembler();
+        }
+        addService(managementMBeanAssembler);
 
         if (log.isDebugEnabled()) {
             log.debug("Using ClassResolver={}, PackageScanClassResolver={}, ApplicationContextClassLoader={}",

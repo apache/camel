@@ -41,7 +41,7 @@ public class ManagedSendProcessor extends ManagedProcessor implements ManagedSen
         super.init(strategy);
         boolean sanitize = strategy.getManagementAgent().getSanitize() != null ? strategy.getManagementAgent().getSanitize() : false;
         if (sanitize) {
-            destination = URISupport.sanitizeUri(processor.getDestination().getEndpointUri(), "xxxxxx");
+            destination = URISupport.sanitizeUri(processor.getDestination().getEndpointUri());
         } else {
             destination = processor.getDestination().getEndpointUri();
         }

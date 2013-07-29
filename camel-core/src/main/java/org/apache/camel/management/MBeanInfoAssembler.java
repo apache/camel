@@ -31,6 +31,7 @@ import javax.management.modelmbean.ModelMBeanInfoSupport;
 import javax.management.modelmbean.ModelMBeanNotificationInfo;
 import javax.management.modelmbean.ModelMBeanOperationInfo;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Service;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedNotification;
@@ -57,6 +58,12 @@ public class MBeanInfoAssembler implements Service {
     // use a weak cache as we dont want the cache to keep around as it reference classes
     // which could prevent classloader to unload classes if being referenced from this cache
     private final LRUCache<Class<?>, MBeanAttributesAndOperations> cache = new LRUWeakCache<Class<?>, MBeanAttributesAndOperations>(1000);
+
+    private final CamelContext camelContext;
+
+    public MBeanInfoAssembler(CamelContext camelContext) {
+        this.camelContext = camelContext;
+    }
 
     @Override
     public void start() throws Exception {

@@ -315,7 +315,7 @@ public class DefaultManagementNamingStrategy implements ManagementNamingStrategy
         Boolean sanitize = camelContext != null && camelContext.getManagementStrategy().getManagementAgent().getSanitize();
         if (sanitize != null && sanitize) {
             // use xxxxxx as replacements as * has to be quoted for MBean names
-            answer = URISupport.sanitizeUri(answer, "xxxxxx");
+            answer = URISupport.sanitizeUri(answer);
         }
         return answer;
     }

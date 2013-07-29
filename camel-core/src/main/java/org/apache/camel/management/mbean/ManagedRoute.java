@@ -75,7 +75,7 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
             String uri = ep.getEndpointUri();
             boolean sanitize = strategy.getManagementAgent().getSanitize() != null ? strategy.getManagementAgent().getSanitize() : false;
             if (sanitize) {
-                endpointUri = URISupport.sanitizeUri(uri, "xxxxxx");
+                endpointUri = URISupport.sanitizeUri(uri);
             } else {
                 endpointUri = uri;
             }

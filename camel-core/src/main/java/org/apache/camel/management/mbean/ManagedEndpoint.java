@@ -37,7 +37,7 @@ public class ManagedEndpoint implements ManagedInstance, ManagedEndpointMBean {
     public void init(ManagementStrategy strategy) {
         boolean sanitize = strategy.getManagementAgent().getSanitize() != null ? strategy.getManagementAgent().getSanitize() : false;
         if (sanitize) {
-            uri = URISupport.sanitizeUri(endpoint.getEndpointUri(), "xxxxxx");
+            uri = URISupport.sanitizeUri(endpoint.getEndpointUri());
         } else {
             uri = endpoint.getEndpointUri();
         }

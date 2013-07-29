@@ -24,11 +24,14 @@ import javax.management.modelmbean.ModelMBean;
 import javax.management.modelmbean.ModelMBeanInfo;
 import javax.management.modelmbean.RequiredModelMBean;
 
-import org.apache.camel.Service;
+import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
+import org.apache.camel.StaticService;
 import org.apache.camel.api.management.ManagedInstance;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.api.management.NotificationSenderAware;
 import org.apache.camel.spi.ManagementMBeanAssembler;
+import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
 import org.slf4j.Logger;
@@ -41,12 +44,20 @@ import org.slf4j.LoggerFactory;
  *
  * @version 
  */
-public class DefaultManagementMBeanAssembler implements ManagementMBeanAssembler, Service {
+public class DefaultManagementMBeanAssembler extends ServiceSupport implements ManagementMBeanAssembler, CamelContextAware, StaticService {
     protected final Logger log = LoggerFactory.getLogger(getClass());
-    private final MBeanInfoAssembler assembler;
+    private MBeanInfoAssembler assembler;
+    private CamelContext camelContext;
 
     public DefaultManagementMBeanAssembler() {
-        this.assembler = new MBeanInfoAssembler();
+    }
+
+    public CamelContext getCamelContext() {
+        return camelContext;
+    }
+
+    public void setCamelContext(CamelContext camelContext) {
+        this.camelContext = camelContext;
     }
 
     public ModelMBean assemble(MBeanServer mBeanServer, Object obj, ObjectName name) throws JMException {
@@ -92,13 +103,14 @@ public class DefaultManagementMBeanAssembler implements ManagementMBeanAssembler
         return mbean;
     }
 
-    @Override
-    public void start() throws Exception {
+    protected void doStart() throws Exception {
+        if (assembler == null) {
+            assembler = new MBeanInfoAssembler(camelContext);
+        }
         ServiceHelper.startService(assembler);
     }
 
-    @Override
-    public void stop() throws Exception {
+    protected void doStop() throws Exception {
         ServiceHelper.stopService(assembler);
     }
 }
