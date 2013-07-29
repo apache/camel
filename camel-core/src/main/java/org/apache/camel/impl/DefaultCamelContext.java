@@ -1550,7 +1550,6 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         if (managementMBeanAssembler == null) {
             managementMBeanAssembler = createManagementMBeanAssembler();
         }
-        addService(managementMBeanAssembler);
 
         if (log.isDebugEnabled()) {
             log.debug("Using ClassResolver={}, PackageScanClassResolver={}, ApplicationContextClassLoader={}",
@@ -2281,7 +2280,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
      * Lazily create a default implementation
      */
     protected ManagementMBeanAssembler createManagementMBeanAssembler() {
-        return new DefaultManagementMBeanAssembler();
+        return new DefaultManagementMBeanAssembler(this);
     }
 
     /**

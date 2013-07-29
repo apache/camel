@@ -25,15 +25,11 @@ import javax.management.modelmbean.ModelMBeanInfo;
 import javax.management.modelmbean.RequiredModelMBean;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.CamelContextAware;
-import org.apache.camel.StaticService;
 import org.apache.camel.api.management.ManagedInstance;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.api.management.NotificationSenderAware;
 import org.apache.camel.spi.ManagementMBeanAssembler;
-import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.ServiceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -44,20 +40,14 @@ import org.slf4j.LoggerFactory;
  *
  * @version 
  */
-public class DefaultManagementMBeanAssembler extends ServiceSupport implements ManagementMBeanAssembler, CamelContextAware, StaticService {
+public class DefaultManagementMBeanAssembler implements ManagementMBeanAssembler {
     protected final Logger log = LoggerFactory.getLogger(getClass());
-    private MBeanInfoAssembler assembler;
-    private CamelContext camelContext;
+    private final MBeanInfoAssembler assembler;
+    private final CamelContext camelContext;
 
-    public DefaultManagementMBeanAssembler() {
-    }
-
-    public CamelContext getCamelContext() {
-        return camelContext;
-    }
-
-    public void setCamelContext(CamelContext camelContext) {
+    public DefaultManagementMBeanAssembler(CamelContext camelContext) {
         this.camelContext = camelContext;
+        this.assembler = new MBeanInfoAssembler(camelContext);
     }
 
     public ModelMBean assemble(MBeanServer mBeanServer, Object obj, ObjectName name) throws JMException {
@@ -103,14 +93,4 @@ public class DefaultManagementMBeanAssembler extends ServiceSupport implements M
         return mbean;
     }
 
-    protected void doStart() throws Exception {
-        if (assembler == null) {
-            assembler = new MBeanInfoAssembler(camelContext);
-        }
-        ServiceHelper.startService(assembler);
-    }
-
-    protected void doStop() throws Exception {
-        ServiceHelper.stopService(assembler);
-    }
 }
