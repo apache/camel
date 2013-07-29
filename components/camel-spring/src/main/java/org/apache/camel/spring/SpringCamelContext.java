@@ -196,7 +196,7 @@ public class SpringCamelContext extends DefaultCamelContext implements Initializ
     @Override
     protected ManagementMBeanAssembler createManagementMBeanAssembler() {
         // use a spring mbean assembler
-        return new SpringManagementMBeanAssembler();
+        return new SpringManagementMBeanAssembler(this);
     }
 
     protected EventEndpoint createEventEndpoint() {

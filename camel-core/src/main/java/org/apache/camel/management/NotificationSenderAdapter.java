@@ -21,7 +21,7 @@ import javax.management.modelmbean.ModelMBeanNotificationBroadcaster;
 
 import org.apache.camel.api.management.NotificationSender;
 
-final class NotificationSenderAdapter implements NotificationSender {
+public final class NotificationSenderAdapter implements NotificationSender {
     ModelMBeanNotificationBroadcaster broadcaster;
 
     public NotificationSenderAdapter(ModelMBeanNotificationBroadcaster broadcaster) {
