@@ -93,7 +93,7 @@ public class DefaultManagementStrategy implements ManagementStrategy, CamelConte
 
     public ManagementNamingStrategy getManagementNamingStrategy() {
         if (managementNamingStrategy == null) {
-            managementNamingStrategy = new DefaultManagementNamingStrategy(getManagementAgent());
+            managementNamingStrategy = new DefaultManagementNamingStrategy();
         }
         return managementNamingStrategy;
     }
@@ -218,8 +218,11 @@ public class DefaultManagementStrategy implements ManagementStrategy, CamelConte
             managementAgent.start();
             // set the naming strategy using the domain name from the agent
             if (managementNamingStrategy == null) {
-                setManagementNamingStrategy(new DefaultManagementNamingStrategy(managementAgent, managementAgent.getMBeanObjectDomainName()));
+                setManagementNamingStrategy(new DefaultManagementNamingStrategy(managementAgent.getMBeanObjectDomainName()));
             }
+        }
+        if (managementNamingStrategy instanceof CamelContextAware) {
+            ((CamelContextAware) managementNamingStrategy).setCamelContext(getCamelContext());
         }
     }
 

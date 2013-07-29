@@ -22,6 +22,7 @@ import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
@@ -45,7 +46,7 @@ import org.apache.camel.util.URISupport;
 /**
  * Naming strategy used when registering MBeans.
  */
-public class DefaultManagementNamingStrategy implements ManagementNamingStrategy {
+public class DefaultManagementNamingStrategy implements ManagementNamingStrategy, CamelContextAware {
     public static final String VALUE_UNKNOWN = "unknown";
     public static final String KEY_NAME = "name";
     public static final String KEY_TYPE = "type";
@@ -65,14 +66,14 @@ public class DefaultManagementNamingStrategy implements ManagementNamingStrategy
 
     protected String domainName;
     protected String hostName = "localhost";
-    protected final ManagementAgent managementAgent;
+    protected CamelContext camelContext;
 
-    public DefaultManagementNamingStrategy(ManagementAgent managementAgent) {
-        this(managementAgent, "org.apache.camel");
+    public DefaultManagementNamingStrategy() {
+        this("org.apache.camel");
+        // default constructor needed for <bean> style configuration
     }
 
-    public DefaultManagementNamingStrategy(ManagementAgent managementAgent, String domainName) {
-        this.managementAgent = managementAgent;
+    public DefaultManagementNamingStrategy(String domainName) {
         if (domainName != null) {
             this.domainName = domainName;
         }
@@ -81,6 +82,14 @@ public class DefaultManagementNamingStrategy implements ManagementNamingStrategy
         } catch (UnknownHostException ex) {
             // ignore, use the default "localhost"
         }
+    }
+
+    public CamelContext getCamelContext() {
+        return camelContext;
+    }
+
+    public void setCamelContext(CamelContext camelContext) {
+        this.camelContext = camelContext;
     }
 
     public ObjectName getObjectNameForCamelContext(String managementName, String name) throws MalformedObjectNameException {
@@ -303,7 +312,8 @@ public class DefaultManagementNamingStrategy implements ManagementNamingStrategy
 
     protected String getEndpointId(Endpoint ep) {
         String answer = doGetEndpointId(ep);
-        if (managementAgent.getSanitize() != null && managementAgent.getSanitize()) {
+        Boolean sanitize = camelContext != null && camelContext.getManagementStrategy().getManagementAgent().getSanitize();
+        if (sanitize != null && sanitize) {
             // use xxxxxx as replacements as * has to be quoted for MBean names
             answer = URISupport.sanitizeUri(answer, "xxxxxx");
         }
