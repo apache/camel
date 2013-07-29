@@ -45,21 +45,4 @@ public class AvroHttpEndpoint extends AvroEndpoint {
     public Producer createProducer() throws Exception {
         return new AvroHttpProducer(this);
     }
-
-    /**
-     * Creates a new <a
-     * href="http://camel.apache.org/event-driven-consumer.html">Event
-     * Driven Consumer</a> which consumes messages from the endpoint using the
-     * given processor
-     *
-     * @param processor the given processor
-     * @return a newly created consumer
-     * @throws Exception can be thrown
-     */
-    @Override
-    public Consumer createConsumer(Processor processor) throws Exception {
-        AvroHttpConsumer answer = new AvroHttpConsumer(this, processor);
-        configureConsumer(answer);
-        return answer;
-    }
 }

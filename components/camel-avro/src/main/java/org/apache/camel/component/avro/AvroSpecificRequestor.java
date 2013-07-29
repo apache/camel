@@ -16,33 +16,15 @@
  */
 package org.apache.camel.component.avro;
 
-import java.net.InetSocketAddress;
+import java.io.IOException;
 
-import org.apache.avro.ipc.NettyServer;
+import org.apache.avro.Protocol;
+import org.apache.avro.ipc.Transceiver;
+import org.apache.avro.ipc.specific.SpecificRequestor;
 
-import org.apache.camel.Endpoint;
-import org.apache.camel.Processor;
+public class AvroSpecificRequestor extends SpecificRequestor {
 
-public class AvroNettyConsumer extends AvroConsumer {
-
-    NettyServer server;
-
-    public AvroNettyConsumer(Endpoint endpoint, Processor processor) {
-        super(endpoint, processor);
-    }
-
-    @Override
-    protected void doStart() throws Exception {
-        AvroConfiguration configuration = getEndpoint().getConfiguration();
-        server = new NettyServer(new AvroResponder(this), new InetSocketAddress(configuration.getHost(), configuration.getPort()));
-        server.start();
-    }
-
-    @Override
-    protected void doStop() throws Exception {
-        super.doStop();
-        if (server != null) {
-            server.close();
-        }
+    public AvroSpecificRequestor(Protocol protocol, Transceiver transceiver) throws IOException {
+        super(protocol, transceiver);
     }
 }

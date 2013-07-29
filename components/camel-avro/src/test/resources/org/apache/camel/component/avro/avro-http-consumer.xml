@@ -37,6 +37,17 @@
                 </when>
             </choice>
         </route>
+        
+        <route>
+            <from uri="avro:http:localhost:{{avroport}}/put?protocolClassName=org.apache.camel.avro.generated.KeyValueProtocol"/>
+            <process ref="putProcessor"/>
+        </route>
+        
+        <route>
+        	<from uri="avro:http:localhost:{{avroport}}/get?protocolClassName=org.apache.camel.avro.generated.KeyValueProtocol"/>
+            <process ref="getProcessor"/>
+        </route>    
+
     </camelContext>
 
     <bean id="keyValue" class="org.apache.camel.avro.impl.KeyValueProtocolImpl"/>

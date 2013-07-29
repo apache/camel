@@ -17,8 +17,6 @@
 package org.apache.camel.component.avro;
 
 import org.apache.camel.Component;
-import org.apache.camel.Consumer;
-import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 
 public class AvroNettyEndpoint extends AvroEndpoint {
@@ -44,22 +42,5 @@ public class AvroNettyEndpoint extends AvroEndpoint {
     @Override
     public Producer createProducer() throws Exception {
         return new AvroNettyProducer(this);
-    }
-
-    /**
-     * Creates a new <a
-     * href="http://camel.apache.org/event-driven-consumer.html">Event
-     * Driven Consumer</a> which consumes messages from the endpoint using the
-     * given processor
-     *
-     * @param processor the given processor
-     * @return a newly created consumer
-     * @throws Exception can be thrown
-     */
-    @Override
-    public Consumer createConsumer(Processor processor) throws Exception {
-        AvroNettyConsumer answer = new AvroNettyConsumer(this, processor);
-        configureConsumer(answer);
-        return answer;
     }
 }

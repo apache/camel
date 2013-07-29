@@ -19,6 +19,7 @@ package org.apache.camel.component.avro;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.avro.impl.KeyValueProtocolImpl;
+import org.apache.camel.avro.test.TestReflectionImpl;
 import org.apache.camel.spring.SpringCamelContext;
 
 import org.junit.After;
@@ -37,6 +38,7 @@ public class AvroNettySpringConsumerTest extends AvroNettyConsumerTest {
         super.setUp();
 
         keyValue = (KeyValueProtocolImpl) applicationContext.getBean("keyValue");
+        testReflection = (TestReflectionImpl) applicationContext.getBean("testReflection");
     }
 
     @Override
