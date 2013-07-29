@@ -28,19 +28,13 @@ import org.apache.camel.util.URISupport;
 @ManagedResource(description = "Managed Endpoint")
 public class ManagedEndpoint implements ManagedInstance, ManagedEndpointMBean {
     private final Endpoint endpoint;
-    private String uri;
 
     public ManagedEndpoint(Endpoint endpoint) {
         this.endpoint = endpoint;
     }
 
     public void init(ManagementStrategy strategy) {
-        boolean sanitize = strategy.getManagementAgent().getSanitize() != null ? strategy.getManagementAgent().getSanitize() : false;
-        if (sanitize) {
-            uri = URISupport.sanitizeUri(endpoint.getEndpointUri());
-        } else {
-            uri = endpoint.getEndpointUri();
-        }
+        // noop
     }
 
     public Endpoint getEndpoint() {
@@ -54,7 +48,7 @@ public class ManagedEndpoint implements ManagedInstance, ManagedEndpointMBean {
 
     @Override
     public String getEndpointUri() {
-        return uri;
+        return endpoint.getEndpointUri();
     }
 
     @Override

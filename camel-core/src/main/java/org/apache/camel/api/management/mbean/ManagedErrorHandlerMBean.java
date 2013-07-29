@@ -35,7 +35,7 @@ public interface ManagedErrorHandlerMBean {
     @ManagedAttribute(description = "Does this error handler support transactions")
     boolean isSupportTransactions();
 
-    @ManagedAttribute(description = "Endpoint Uri for the dead letter channel where dead message is move to")
+    @ManagedAttribute(description = "Endpoint Uri for the dead letter channel where dead message is move to", sanitize = true)
     String getDeadLetterChannelEndpointUri();
 
     @ManagedAttribute(description = "RedeliveryPolicy for maximum redeliveries")

@@ -21,7 +21,6 @@ import org.apache.camel.Consumer;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.api.management.mbean.ManagedConsumerMBean;
 import org.apache.camel.spi.ManagementStrategy;
-import org.apache.camel.util.URISupport;
 
 /**
  * @version 
@@ -29,7 +28,6 @@ import org.apache.camel.util.URISupport;
 @ManagedResource(description = "Managed Consumer")
 public class ManagedConsumer extends ManagedService implements ManagedConsumerMBean {
     private final Consumer consumer;
-    private String uri;
 
     public ManagedConsumer(CamelContext context, Consumer consumer) {
         super(context, consumer);
@@ -38,13 +36,7 @@ public class ManagedConsumer extends ManagedService implements ManagedConsumerMB
 
     @Override
     public void init(ManagementStrategy strategy) {
-        super.init(strategy);
-        boolean sanitize = strategy.getManagementAgent().getSanitize() != null ? strategy.getManagementAgent().getSanitize() : false;
-        if (sanitize) {
-            uri = URISupport.sanitizeUri(consumer.getEndpoint().getEndpointUri());
-        } else {
-            uri = consumer.getEndpoint().getEndpointUri();
-        }
+        // noop
     }
 
     public Consumer getConsumer() {
@@ -52,7 +44,7 @@ public class ManagedConsumer extends ManagedService implements ManagedConsumerMB
     }
 
     public String getEndpointUri() {
-        return uri;
+        return consumer.getEndpoint().getEndpointUri();
     }
 
     public Integer getInflightExchanges() {

@@ -37,6 +37,10 @@
       <to uri="stub:foo?username=foo&amp;password=secret"/>
       <to uri="mock:result"/>
     </route>
+    <route id="stub">
+      <from uri="stub:foo?username=foo&amp;password=secret"/>
+      <to uri="mock:stub"/>
+    </route>
   </camelContext>
   <!-- END SNIPPET: example -->
 

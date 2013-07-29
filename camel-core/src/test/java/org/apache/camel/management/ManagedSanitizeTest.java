@@ -52,6 +52,9 @@ public class ManagedSanitizeTest extends ManagementTestSupport {
                 from("direct:start").routeId("foo")
                     .to("stub:foo?username=foo&password=secret")
                     .to("mock:result");
+
+                from("stub:foo?username=foo&password=secret").routeId("stub")
+                    .to("mock:stub");
             }
         };
     }

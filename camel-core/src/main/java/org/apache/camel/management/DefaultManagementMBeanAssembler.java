@@ -86,8 +86,8 @@ public class DefaultManagementMBeanAssembler extends ServiceSupport implements M
             return null;
         }
 
-        RequiredModelMBean mbean = (RequiredModelMBean) mBeanServer.instantiate(RequiredModelMBean.class.getName());
-        mbean.setModelMBeanInfo(mbi);
+        boolean santizie = camelContext.getManagementStrategy().getManagementAgent().getSanitize() != null && camelContext.getManagementStrategy().getManagementAgent().getSanitize();
+        RequiredModelMBean mbean = new DefaultRequiredModelMBean(mbi, santizie);
 
         try {
             mbean.setManagedResource(obj, "ObjectReference");

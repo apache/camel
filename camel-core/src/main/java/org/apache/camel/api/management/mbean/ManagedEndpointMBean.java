@@ -23,7 +23,7 @@ public interface ManagedEndpointMBean {
     @ManagedAttribute(description = "Camel ID")
     String getCamelId();
 
-    @ManagedAttribute(description = "Endpoint URI")
+    @ManagedAttribute(description = "Endpoint URI", sanitize = true)
     String getEndpointUri();
 
     @ManagedAttribute(description = "Singleton")
