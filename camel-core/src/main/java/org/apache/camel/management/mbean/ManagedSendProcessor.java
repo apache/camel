@@ -21,6 +21,8 @@ import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.api.management.mbean.ManagedSendProcessorMBean;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.processor.SendProcessor;
+import org.apache.camel.spi.ManagementStrategy;
+import org.apache.camel.util.URISupport;
 
 /**
  * @version 
@@ -28,10 +30,21 @@ import org.apache.camel.processor.SendProcessor;
 @ManagedResource(description = "Managed SendProcessor")
 public class ManagedSendProcessor extends ManagedProcessor implements ManagedSendProcessorMBean {
     private final SendProcessor processor;
+    private String destination;
 
     public ManagedSendProcessor(CamelContext context, SendProcessor processor, ProcessorDefinition<?> definition) {
         super(context, processor, definition);
         this.processor = processor;
+    }
+
+    public void init(ManagementStrategy strategy) {
+        super.init(strategy);
+        boolean sanitize = strategy.getManagementAgent().getSanitize() != null ? strategy.getManagementAgent().getSanitize() : false;
+        if (sanitize) {
+            destination = URISupport.sanitizeUri(processor.getDestination().getEndpointUri(), "xxxxxx");
+        } else {
+            destination = processor.getDestination().getEndpointUri();
+        }
     }
 
     public SendProcessor getProcessor() {
@@ -39,7 +52,7 @@ public class ManagedSendProcessor extends ManagedProcessor implements ManagedSen
     }
 
     public String getDestination() {
-        return processor.getDestination().getEndpointUri();
+        return destination;
     }
 
     public void setDestination(String uri) {

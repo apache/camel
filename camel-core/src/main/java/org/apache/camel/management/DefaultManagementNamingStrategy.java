@@ -35,10 +35,12 @@ import org.apache.camel.StaticService;
 import org.apache.camel.builder.ErrorHandlerBuilderRef;
 import org.apache.camel.spi.EventNotifier;
 import org.apache.camel.spi.InterceptStrategy;
+import org.apache.camel.spi.ManagementAgent;
 import org.apache.camel.spi.ManagementNamingStrategy;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.InetAddressUtil;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.URISupport;
 
 /**
  * Naming strategy used when registering MBeans.
@@ -63,12 +65,14 @@ public class DefaultManagementNamingStrategy implements ManagementNamingStrategy
 
     protected String domainName;
     protected String hostName = "localhost";
+    protected final ManagementAgent managementAgent;
 
-    public DefaultManagementNamingStrategy() {
-        this("org.apache.camel");
+    public DefaultManagementNamingStrategy(ManagementAgent managementAgent) {
+        this(managementAgent, "org.apache.camel");
     }
 
-    public DefaultManagementNamingStrategy(String domainName) {
+    public DefaultManagementNamingStrategy(ManagementAgent managementAgent, String domainName) {
+        this.managementAgent = managementAgent;
         if (domainName != null) {
             this.domainName = domainName;
         }
@@ -298,6 +302,15 @@ public class DefaultManagementNamingStrategy implements ManagementNamingStrategy
     }
 
     protected String getEndpointId(Endpoint ep) {
+        String answer = doGetEndpointId(ep);
+        if (managementAgent.getSanitize() != null && managementAgent.getSanitize()) {
+            // use xxxxxx as replacements as * has to be quoted for MBean names
+            answer = URISupport.sanitizeUri(answer, "xxxxxx");
+        }
+        return answer;
+    }
+
+    private String doGetEndpointId(Endpoint ep) {
         if (ep.isSingleton()) {
             return ep.getEndpointKey();
         } else {

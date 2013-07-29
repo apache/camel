@@ -44,8 +44,10 @@ import org.apache.camel.api.management.mbean.ManagedRouteMBean;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.ModelHelper;
 import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.spi.RoutePolicy;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.URISupport;
 
 @ManagedResource(description = "Managed Route")
 public class ManagedRoute extends ManagedPerformanceCounter implements TimerListener, ManagedRouteMBean {
@@ -54,6 +56,7 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
     protected final String description;
     protected final ModelCamelContext context;
     private final LoadTriplet load = new LoadTriplet();
+    private String endpointUri;
 
     public ManagedRoute(ModelCamelContext context, Route route) {
         this.route = route;
@@ -61,6 +64,24 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
         this.description = route.toString();
         boolean enabled = context.getManagementStrategy().getStatisticsLevel() != ManagementStatisticsLevel.Off;
         setStatisticsEnabled(enabled);
+    }
+
+    @Override
+    public void init(ManagementStrategy strategy) {
+        super.init(strategy);
+
+        Endpoint ep = route.getEndpoint();
+        if (ep != null) {
+            String uri = ep.getEndpointUri();
+            boolean sanitize = strategy.getManagementAgent().getSanitize() != null ? strategy.getManagementAgent().getSanitize() : false;
+            if (sanitize) {
+                endpointUri = URISupport.sanitizeUri(uri, "xxxxxx");
+            } else {
+                endpointUri = uri;
+            }
+        } else {
+            endpointUri = VALUE_UNKNOWN;
+        }
     }
 
     public Route getRoute() {
@@ -84,8 +105,7 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
     }
 
     public String getEndpointUri() {
-        Endpoint ep = route.getEndpoint();
-        return ep != null ? ep.getEndpointUri() : VALUE_UNKNOWN;
+        return endpointUri;
     }
 
     public String getState() {

@@ -20,6 +20,8 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Producer;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.api.management.mbean.ManagedProducerMBean;
+import org.apache.camel.spi.ManagementStrategy;
+import org.apache.camel.util.URISupport;
 
 /**
  * @version 
@@ -27,10 +29,22 @@ import org.apache.camel.api.management.mbean.ManagedProducerMBean;
 @ManagedResource(description = "Managed Producer")
 public class ManagedProducer extends ManagedService implements ManagedProducerMBean {
     private final Producer producer;
+    private String uri;
 
     public ManagedProducer(CamelContext context, Producer producer) {
         super(context, producer);
         this.producer = producer;
+    }
+
+    @Override
+    public void init(ManagementStrategy strategy) {
+        super.init(strategy);
+        boolean sanitize = strategy.getManagementAgent().getSanitize() != null ? strategy.getManagementAgent().getSanitize() : false;
+        if (sanitize) {
+            uri = URISupport.sanitizeUri(producer.getEndpoint().getEndpointUri(), "xxxxxx");
+        } else {
+            uri = producer.getEndpoint().getEndpointUri();
+        }
     }
 
     public Producer getProducer() {
@@ -38,7 +52,7 @@ public class ManagedProducer extends ManagedService implements ManagedProducerMB
     }
 
     public String getEndpointUri() {
-        return producer.getEndpoint().getEndpointUri();
+        return uri;
     }
 
     public boolean isSingleton() {

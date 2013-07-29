@@ -61,20 +61,34 @@ public final class URISupport {
 
     /**
      * Removes detected sensitive information (such as passwords) from the URI and returns the result.
+     *
      * @param uri The uri to sanitize.
      * @see #SECRETS for the matched pattern
      *
      * @return Returns null if the uri is null, otherwise the URI with the passphrase, password or secretKey sanitized.
      */
     public static String sanitizeUri(String uri) {
+        return sanitizeUri(uri, "******");
+    }
+    
+    /**
+     * Removes detected sensitive information (such as passwords) from the URI and returns the result.
+     *
+     * @param uri The uri to sanitize.
+     * @param replacement the masked replacement
+     * @see #SECRETS for the matched pattern
+     *
+     * @return Returns null if the uri is null, otherwise the URI with the passphrase, password or secretKey sanitized.
+     */
+    public static String sanitizeUri(String uri, String replacement) {
         String sanitized = uri;
         if (uri != null) {
-            sanitized = SECRETS.matcher(sanitized).replaceAll("$1=******");
-            sanitized = USERINFO_PASSWORD.matcher(sanitized).replaceFirst("$1******$3");
+            sanitized = SECRETS.matcher(sanitized).replaceAll("$1=" + replacement);
+            sanitized = USERINFO_PASSWORD.matcher(sanitized).replaceFirst("$1" + replacement + "$3");
         }
         return sanitized;
     }
-    
+
     /**
      * Removes detected sensitive information (such as passwords) from the
      * <em>path part</em> of an URI (that is, the part without the query

@@ -76,6 +76,7 @@ public class DefaultManagementAgent extends ServiceSupport implements Management
     private Boolean onlyRegisterProcessorWithCustomId;
     private Boolean registerAlways;
     private Boolean registerNewRoutes = true;
+    private Boolean sanitize;
 
     public DefaultManagementAgent() {
     }
@@ -118,6 +119,9 @@ public class DefaultManagementAgent extends ServiceSupport implements Management
         }
         if (System.getProperty(JmxSystemPropertyKeys.REGISTER_NEW_ROUTES) != null) {
             registerNewRoutes = Boolean.getBoolean(JmxSystemPropertyKeys.REGISTER_NEW_ROUTES);
+        }
+        if (System.getProperty(JmxSystemPropertyKeys.SANITIZE) != null) {
+            sanitize = Boolean.getBoolean(JmxSystemPropertyKeys.SANITIZE);
         }
     }
 
@@ -207,6 +211,14 @@ public class DefaultManagementAgent extends ServiceSupport implements Management
 
     public void setRegisterNewRoutes(Boolean registerNewRoutes) {
         this.registerNewRoutes = registerNewRoutes;
+    }
+
+    public Boolean getSanitize() {
+        return sanitize != null && sanitize;
+    }
+
+    public void setSanitize(Boolean sanitize) {
+        this.sanitize = sanitize;
     }
 
     public CamelContext getCamelContext() {
