@@ -45,10 +45,11 @@ public abstract class AvroProducer extends DefaultAsyncProducer implements Servi
         if (transceiver == null) {
             try {
                 transceiver = createTransceiver();
-                if(configuration.isReflectionProtocol())
+                if (configuration.isReflectionProtocol()) {
                     requestor = new AvroReflectRequestor(configuration.getProtocol(), transceiver);
-                else
+                } else {
                     requestor = new AvroSpecificRequestor(configuration.getProtocol(), transceiver);
+                }
             } catch (Exception e) {
                 exchange.setException(e);
                 callback.done(true);
@@ -57,12 +58,13 @@ public abstract class AvroProducer extends DefaultAsyncProducer implements Servi
         }
 
         try {
-        	String messageName;
-        	if(!StringUtils.isEmpty(exchange.getIn().getHeader(AvroConstants.AVRO_MESSAGE_NAME, String.class)))
-        		messageName = exchange.getIn().getHeader(AvroConstants.AVRO_MESSAGE_NAME, String.class);
-        	else
-        		messageName = configuration.getMessageName();
-        	
+            String messageName;
+            if (!StringUtils.isEmpty(exchange.getIn().getHeader(AvroConstants.AVRO_MESSAGE_NAME, String.class))) {
+                messageName = exchange.getIn().getHeader(AvroConstants.AVRO_MESSAGE_NAME, String.class);
+            } else {
+                messageName = configuration.getMessageName();
+            }
+
             requestor.request(messageName, wrapObjectToArray(request), new Callback<Object>() {
                 @Override
                 public void handleResult(Object result) {

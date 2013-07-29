@@ -21,10 +21,10 @@ import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 
 public class AvroTestSupport extends CamelTestSupport {
-
-	private int port = 9100;
+    protected int port = 9100;
     protected int avroPort = setupFreePort("avroport");
     protected int avroPortReflection = setupFreePort("avroPortReflection");
+    
 
     public int setupFreePort(String name) {
         port = AvailablePortFinder.getNextAvailable(++port);

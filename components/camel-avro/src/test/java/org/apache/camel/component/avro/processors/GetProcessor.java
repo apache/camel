@@ -34,7 +34,7 @@ public class GetProcessor implements Processor {
     public void process(Exchange exchange) throws Exception {
         Object body = exchange.getIn().getBody();
         if (body instanceof Key) {
-        	Value v = keyValue.get((Key) body);
+            Value v = keyValue.get((Key) body);
             exchange.getOut().setBody(v);
         }
         if (body instanceof Object[]) {

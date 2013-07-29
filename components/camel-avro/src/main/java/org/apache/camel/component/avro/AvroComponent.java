@@ -86,17 +86,17 @@ public class AvroComponent extends DefaultComponent {
         if (config.getProtocol() == null && config.getProtocolClassName() != null) {
             Class<?> protocolClass = getCamelContext().getClassResolver().resolveClass(config.getProtocolClassName());
             if (protocolClass != null) {
-            	try {
-            		Field f = protocolClass.getField("PROTOCOL");
-            		if (f != null) {
-                        Protocol protocol = (Protocol) f.get(null);
+                try {
+                    Field f = protocolClass.getField("PROTOCOL");
+                    if (f != null) {
+                        Protocol protocol = (Protocol)f.get(null);
                         config.setProtocol(protocol);
                     }
-            	} catch(NoSuchFieldException e) {
-            		ReflectData reflectData = ReflectData.get();
-                	config.setProtocol(reflectData.getProtocol(protocolClass));
-                	config.setReflectionProtocol(true);
-            	}
+                } catch (NoSuchFieldException e) {
+                    ReflectData reflectData = ReflectData.get();
+                    config.setProtocol(reflectData.getProtocol(protocolClass));
+                    config.setReflectionProtocol(true);
+                }
             }
         }
 
@@ -110,14 +110,14 @@ public class AvroComponent extends DefaultComponent {
 
         if (config.isSingleParameter()) {
             Map<String, Protocol.Message> messageMap = config.getProtocol().getMessages();
-            Iterable<Protocol.Message> messagesToCheck =  config.getMessageName() == null ?
-                    messageMap.values() :
-                    Collections.singleton(messageMap.get(config.getMessageName()));
+            Iterable<Protocol.Message> messagesToCheck = config.getMessageName() == null 
+                ? messageMap.values() 
+                : Collections.singleton(messageMap.get(config.getMessageName()));
             for (Protocol.Message message: messagesToCheck) {
                 if (message.getRequest().getFields().size() != 1) {
                     throw new IllegalArgumentException("Single parameter option can't be used with message "
-                            + message.getName() + " because it has " + message.getRequest().getFields().size() +
-                            " parameters defined"
+                            + message.getName() + " because it has " + message.getRequest().getFields().size()
+                            + " parameters defined"
                     );
                 }
             }
@@ -126,31 +126,34 @@ public class AvroComponent extends DefaultComponent {
     
     /**
      * Registers new responder with uri as key. Registers consumer in responder.
-     * In case if responder is already registered by this uri then just registers consumer.
+     * In case if responder is already registered by this uri then just
+     * registers consumer.
      * 
-     * @param uri			URI of the endpoint without message name
-     * @param messageName	message name
-     * @param consumer		consumer that will be registered in providers` registry
+     * @param uri URI of the endpoint without message name
+     * @param messageName message name
+     * @param consumer consumer that will be registered in providers` registry
      * @throws Exception
      */
     public void register(String uri, String messageName, AvroConsumer consumer) throws Exception {
-    	AvroListener listener = listenerRegistry.get(uri);
-    	if(listener == null) {
-    		listener = new AvroListener(consumer.getEndpoint());
-    		listenerRegistry.put(uri, listener);
-    	}
-    	listener.register(messageName, consumer);
+        AvroListener listener = listenerRegistry.get(uri);
+        if (listener == null) {
+            listener = new AvroListener(consumer.getEndpoint());
+            listenerRegistry.put(uri, listener);
+        }
+        listener.register(messageName, consumer);
     }
     
     /**
      * Calls unregister of consumer by appropriate message name.
      * In case if all consumers are unregistered then it removes responder from the registry.
      *
-     * @param uri			URI of the endpoint without message name
-     * @param messageName	message name
+     * @param uri URI of the endpoint without message name
+     * @param messageName message name
      */
     public void unregister(String uri, String messageName) {
-    	if(listenerRegistry.get(uri).unregister(messageName)) listenerRegistry.remove(uri);
+        if (listenerRegistry.get(uri).unregister(messageName)) {
+            listenerRegistry.remove(uri);
+        }
     }
 
     public AvroConfiguration getConfiguration() {

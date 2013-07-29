@@ -23,29 +23,29 @@ import org.apache.camel.avro.test.TestReflection;
 
 public class ReflectionInOnlyProcessor implements Processor {
 
-	private TestReflection testReflection;
+    private TestReflection testReflection;
 
-	public ReflectionInOnlyProcessor(TestReflection testReflection) {
-		this.testReflection = testReflection; 
-	}
-	
-	@Override
-	public void process(Exchange exchange) throws Exception {
+    public ReflectionInOnlyProcessor(TestReflection testReflection) {
+        this.testReflection = testReflection;
+    }
+
+    @Override
+    public void process(Exchange exchange) throws Exception {
         Object body = exchange.getIn().getBody();
-        if(body instanceof String) {
-        	testReflection.setName(String.valueOf(body));
+        if (body instanceof String) {
+            testReflection.setName(String.valueOf(body));
         }
-        if(body instanceof TestPojo) {
-        	testReflection.setTestPojo((TestPojo) body);
+        if (body instanceof TestPojo) {
+            testReflection.setTestPojo((TestPojo)body);
         }
     }
-	
-	public TestReflection getTestReflection() {
-		return testReflection;
-	}
 
-	public void setTestReflection(TestReflection testReflection) {
-		this.testReflection = testReflection;
-	}
+    public TestReflection getTestReflection() {
+        return testReflection;
+    }
+
+    public void setTestReflection(TestReflection testReflection) {
+        this.testReflection = testReflection;
+    }
 
 }

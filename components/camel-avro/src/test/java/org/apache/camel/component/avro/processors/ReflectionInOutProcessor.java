@@ -23,19 +23,19 @@ import org.apache.camel.avro.test.TestReflectionImpl;
 
 public class ReflectionInOutProcessor implements Processor {
 
-	private TestReflection testReflection = new TestReflectionImpl();
-	
-	public ReflectionInOutProcessor(TestReflection testReflection) {
-		this.testReflection = testReflection;  
-	}
-	
-	@Override
-	public void process(Exchange exchange) throws Exception {
+    private TestReflection testReflection = new TestReflectionImpl();
+
+    public ReflectionInOutProcessor(TestReflection testReflection) {
+        this.testReflection = testReflection;
+    }
+
+    @Override
+    public void process(Exchange exchange) throws Exception {
         Object body = exchange.getIn().getBody();
-        if (body instanceof Object[] && ((Object[]) body).length == 0) {
+        if (body instanceof Object[] && ((Object[])body).length == 0) {
             exchange.getOut().setBody(testReflection.getTestPojo());
         } else if (body instanceof Object) {
-            exchange.getOut().setBody(testReflection.increaseAge((Integer) body));
+            exchange.getOut().setBody(testReflection.increaseAge((Integer)body));
         }
     }
 }

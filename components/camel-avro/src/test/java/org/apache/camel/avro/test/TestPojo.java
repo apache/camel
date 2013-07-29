@@ -18,13 +18,13 @@ package org.apache.camel.avro.test;
 
 public class TestPojo {
 
-	private String pojoName;
+    private String pojoName;
 
-	public String getPojoName() {
-		return pojoName;
-	}
+    public String getPojoName() {
+        return pojoName;
+    }
 
-	public void setPojoName(String pojoName) {
-		this.pojoName = pojoName;
-	} 
+    public void setPojoName(String pojoName) {
+        this.pojoName = pojoName;
+    } 
 }

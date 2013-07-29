@@ -18,44 +18,44 @@ package org.apache.camel.avro.test;
 
 public class TestReflectionImpl implements TestReflection {
 
-	String name = "";
-	int age = 0;
-	TestPojo testPojo;
-	
-	@Override
-	public String getName() {
-		return this.name;
-	}
+    String name = "";
+    int age;
+    TestPojo testPojo;
 
-	@Override
-	public void setName(String name) {
-		this.name = name;
-	}
+    @Override
+    public String getName() {
+        return this.name;
+    }
 
-	@Override
-	public int getAge() {
-		return this.age;
-	}
+    @Override
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	@Override
-	public void setAge(int age) {
-		this.age = age;
-	}
-	
-	@Override
-	public int increaseAge(int age) {
-		this.age = ++age;
-		return this.age;
-	}
+    @Override
+    public int getAge() {
+        return this.age;
+    }
 
-	@Override
-	public void setTestPojo(TestPojo testPojo) {
-		this.testPojo = testPojo;
-	}
+    @Override
+    public void setAge(int age) {
+        this.age = age;
+    }
 
-	@Override
-	public TestPojo getTestPojo() {
-		return testPojo;
-	}
+    @Override
+    public int increaseAge(int age) {
+        this.age = ++age;
+        return this.age;
+    }
+
+    @Override
+    public void setTestPojo(TestPojo testPojo) {
+        this.testPojo = testPojo;
+    }
+
+    @Override
+    public TestPojo getTestPojo() {
+        return testPojo;
+    }
 
 }

@@ -38,9 +38,9 @@ public class AvroConfiguration implements Cloneable {
     private boolean reflectionProtocol;
     private boolean singleParameter;
 
-	public AvroConfiguration copy() {
+    public AvroConfiguration copy() {
         try {
-            AvroConfiguration answer = (AvroConfiguration) clone();
+            AvroConfiguration answer = (AvroConfiguration)clone();
             return answer;
         } catch (CloneNotSupportedException e) {
             throw new RuntimeCamelException(e);
@@ -57,10 +57,14 @@ public class AvroConfiguration implements Cloneable {
         setHost(uri.getHost());
         setPort(uri.getPort());
         
-        if((uri.getPath() != null) && (StringUtils.indexOf(uri.getPath(), AVRO_MESSAGE_NAME_SEPARATOR) != -1)) {
-        	String path = StringUtils.substringAfter(uri.getPath(), AVRO_MESSAGE_NAME_SEPARATOR);
-        	if(!path.contains(AVRO_MESSAGE_NAME_SEPARATOR)) setMessageName(path);
-        	else throw new IllegalArgumentException("Unrecognized Avro message name: " + path + " for uri: " + uri);
+        if ((uri.getPath() != null)
+            && (StringUtils.indexOf(uri.getPath(), AVRO_MESSAGE_NAME_SEPARATOR) != -1)) {
+            String path = StringUtils.substringAfter(uri.getPath(), AVRO_MESSAGE_NAME_SEPARATOR);
+            if (!path.contains(AVRO_MESSAGE_NAME_SEPARATOR)) {
+                setMessageName(path);
+            } else {
+                throw new IllegalArgumentException("Unrecognized Avro message name: " + path + " for uri: " + uri);
+            }
         }
         
         setUriAuthority(uri.getAuthority());
@@ -114,35 +118,35 @@ public class AvroConfiguration implements Cloneable {
         this.protocolClassName = protocolClassName;
     }
 
-	public String getMessageName() {
-		return messageName;
-	}
+    public String getMessageName() {
+        return messageName;
+    }
 
-	public void setMessageName(String messageName) {
-		this.messageName = messageName;
-	}
+    public void setMessageName(String messageName) {
+        this.messageName = messageName;
+    }
 
-	public String getUriAuthority() {
-		return uriAuthority;
-	}
+    public String getUriAuthority() {
+        return uriAuthority;
+    }
 
-	public void setUriAuthority(String uriAuthority) {
-		this.uriAuthority = uriAuthority;
-	}
-	
-	public boolean isReflectionProtocol() {
-		return reflectionProtocol;
-	}
+    public void setUriAuthority(String uriAuthority) {
+        this.uriAuthority = uriAuthority;
+    }
 
-	public void setReflectionProtocol(boolean isReflectionProtocol) {
-		this.reflectionProtocol = isReflectionProtocol;
-	}
+    public boolean isReflectionProtocol() {
+        return reflectionProtocol;
+    }
 
-	public boolean isSingleParameter() {
-		return singleParameter;
-	}
+    public void setReflectionProtocol(boolean isReflectionProtocol) {
+        this.reflectionProtocol = isReflectionProtocol;
+    }
 
-	public void setSingleParameter(boolean singleParameter) {
-		this.singleParameter = singleParameter;
-	}
+    public boolean isSingleParameter() {
+        return singleParameter;
+    }
+
+    public void setSingleParameter(boolean singleParameter) {
+        this.singleParameter = singleParameter;
+    }
 }

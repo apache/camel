@@ -24,11 +24,11 @@ import org.apache.avro.ipc.reflect.ReflectRequestor;
 
 public class AvroReflectRequestor extends ReflectRequestor {
 
-	public AvroReflectRequestor(Class<?> iface, Transceiver transceiver) throws IOException {
-		super(iface, transceiver);
-	}
+    public AvroReflectRequestor(Class<?> iface, Transceiver transceiver) throws IOException {
+        super(iface, transceiver);
+    }
 
-	public AvroReflectRequestor(Protocol protocol, Transceiver transceiver) throws IOException {
-		super(protocol, transceiver);
-	}
+    public AvroReflectRequestor(Protocol protocol, Transceiver transceiver) throws IOException {
+        super(protocol, transceiver);
+    }
 }

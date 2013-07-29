@@ -20,7 +20,7 @@ import org.apache.camel.FailedToCreateRouteException;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
 
-public class AvroSettingsTest extends AvroTestSupport{
+public class AvroSettingsTest extends AvroTestSupport {
 
     @Test(expected = FailedToCreateRouteException.class)
     public void testConsumerForUnknownMessage() throws Exception {

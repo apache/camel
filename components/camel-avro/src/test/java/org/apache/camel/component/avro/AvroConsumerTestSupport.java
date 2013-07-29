@@ -23,7 +23,6 @@ import java.io.IOException;
 import org.apache.avro.AvroRuntimeException;
 import org.apache.avro.ipc.Requestor;
 import org.apache.avro.ipc.Transceiver;
-import org.apache.camel.CamelContext;
 import org.apache.camel.avro.generated.Key;
 import org.apache.camel.avro.generated.Value;
 import org.apache.camel.avro.impl.KeyValueProtocolImpl;
@@ -34,6 +33,8 @@ import org.junit.After;
 import org.junit.Test;
 
 public abstract class AvroConsumerTestSupport extends AvroTestSupport {
+    public static final String REFLECTION_TEST_NAME = "Chucky";
+    public static final int REFLECTION_TEST_AGE = 100;
 
     protected int avroPortMessageInRoute = setupFreePort("avroPortMessageInRoute");
     protected int avroPortForWrongMessages = setupFreePort("avroPortForWrongMessages");
@@ -52,9 +53,6 @@ public abstract class AvroConsumerTestSupport extends AvroTestSupport {
 
     KeyValueProtocolImpl keyValue = new KeyValueProtocolImpl();
     TestReflection testReflection = new TestReflectionImpl();
-
-    public static final String REFLECTION_TEST_NAME = "Chucky";
-    public static final int REFLECTION_TEST_AGE = 100;
 
     protected abstract void initializeTranceiver() throws IOException;
 
@@ -106,7 +104,7 @@ public abstract class AvroConsumerTestSupport extends AvroTestSupport {
         assertEquals(REFLECTION_TEST_NAME, testReflection.getName());
     }
 
-    @Test(expected=AvroRuntimeException.class)
+    @Test(expected = AvroRuntimeException.class)
     public void testInOnlyWrongMessageName() throws Exception {
         initializeTranceiver();
         Key key = Key.newBuilder().setKey("1").build();
@@ -115,7 +113,7 @@ public abstract class AvroConsumerTestSupport extends AvroTestSupport {
         requestorMessageInRoute.request("throwException", request);
     }
 
-    @Test(expected=AvroRuntimeException.class)
+    @Test(expected = AvroRuntimeException.class)
     public void testInOnlyToNotExistingRoute() throws Exception {
         initializeTranceiver();
         Key key = Key.newBuilder().setKey("1").build();
