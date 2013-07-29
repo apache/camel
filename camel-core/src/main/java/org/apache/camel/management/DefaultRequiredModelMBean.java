@@ -35,10 +35,17 @@ import org.apache.camel.util.URISupport;
  */
 public class DefaultRequiredModelMBean extends RequiredModelMBean {
 
-    private final boolean sanitize;
+    private boolean sanitize;
 
-    public DefaultRequiredModelMBean(ModelMBeanInfo mbi, boolean sanitize) throws MBeanException, RuntimeOperationsException {
-        super(mbi);
+    public DefaultRequiredModelMBean() throws MBeanException, RuntimeOperationsException {
+        // must have default no-arg constructor
+    }
+
+    public boolean isSanitize() {
+        return sanitize;
+    }
+
+    public void setSanitize(boolean sanitize) {
         this.sanitize = sanitize;
     }
 

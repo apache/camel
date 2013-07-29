@@ -22,7 +22,6 @@ import javax.management.ObjectName;
 import javax.management.modelmbean.InvalidTargetObjectTypeException;
 import javax.management.modelmbean.ModelMBean;
 import javax.management.modelmbean.ModelMBeanInfo;
-import javax.management.modelmbean.RequiredModelMBean;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.api.management.ManagedInstance;
@@ -77,7 +76,9 @@ public class DefaultManagementMBeanAssembler implements ManagementMBeanAssembler
         }
 
         boolean santizie = camelContext.getManagementStrategy().getManagementAgent().getSanitize() != null && camelContext.getManagementStrategy().getManagementAgent().getSanitize();
-        RequiredModelMBean mbean = new DefaultRequiredModelMBean(mbi, santizie);
+        DefaultRequiredModelMBean mbean = (DefaultRequiredModelMBean) mBeanServer.instantiate(DefaultRequiredModelMBean.class.getName());
+        mbean.setSanitize(santizie);
+        mbean.setModelMBeanInfo(mbi);
 
         try {
             mbean.setManagedResource(obj, "ObjectReference");

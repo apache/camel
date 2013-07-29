@@ -28,7 +28,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.api.management.ManagedInstance;
 import org.apache.camel.api.management.NotificationSenderAware;
 import org.apache.camel.management.DefaultManagementMBeanAssembler;
-import org.apache.camel.management.DefaultRequiredModelMBean;
 import org.apache.camel.management.NotificationSenderAdapter;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -81,8 +80,8 @@ public class SpringManagementMBeanAssembler extends DefaultManagementMBeanAssemb
 
         LOG.trace("Assembled MBeanInfo {}", mbi);
 
-        boolean santizie = camelContext.getManagementStrategy().getManagementAgent().getSanitize() != null && camelContext.getManagementStrategy().getManagementAgent().getSanitize();
-        RequiredModelMBean mbean = new DefaultRequiredModelMBean(mbi, santizie);
+        RequiredModelMBean mbean = (RequiredModelMBean) mBeanServer.instantiate(RequiredModelMBean.class.getName());
+        mbean.setModelMBeanInfo(mbi);
 
         try {
             mbean.setManagedResource(obj, "ObjectReference");
