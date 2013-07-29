@@ -110,6 +110,7 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     private static final Logger LOG = LoggerFactory.getLogger(CxfEndpoint.class);
 
     protected Bus bus;
+    private boolean createBus;
 
     private String wsdlURL;
     private Class<?> serviceClass;
@@ -765,11 +766,13 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
 
     public void setBus(Bus bus) {
         this.bus = bus;
+        this.createBus = false;
     }
 
     public Bus getBus() {
         if (bus == null) {
             bus = CxfEndpointUtils.createBus(getCamelContext());
+            this.createBus = true;
             LOG.debug("Using DefaultBus {}", bus);
         }
 
@@ -869,7 +872,13 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
 
     @Override
     protected void doStop() throws Exception {
-        // noop
+        // we should consider to shutdown the bus if the bus is created by cxfEndpoint
+        if (createBus && bus != null) {
+            LOG.info("shutdown the bus ... " + bus);
+            getBus().shutdown(false);
+            // clean up the bus to create a new one if the endpoint is started again
+            bus = null;
+        }
     }
 
     public void setAddress(String address) {
