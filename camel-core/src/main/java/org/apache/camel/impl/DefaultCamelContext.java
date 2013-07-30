@@ -244,6 +244,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         // setup management strategy first since end users may use it to add event notifiers
         // using the management strategy before the CamelContext has been started
         this.managementStrategy = createManagementStrategy();
+        this.managementMBeanAssembler = createManagementMBeanAssembler();
 
         Container.Instance.manage(this);
     }
@@ -1550,9 +1551,6 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
             // use the classloader that loaded this class
             setApplicationContextClassLoader(this.getClass().getClassLoader());
         }
-        if (managementMBeanAssembler == null) {
-            managementMBeanAssembler = createManagementMBeanAssembler();
-        }
 
         if (log.isDebugEnabled()) {
             log.debug("Using ClassResolver={}, PackageScanClassResolver={}, ApplicationContextClassLoader={}",
@@ -2484,6 +2482,8 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
             throw new IllegalStateException("Disabling JMX can only be done when CamelContext has not been started");
         }
         managementStrategy = new DefaultManagementStrategy(this);
+        // must clear lifecycle strategies as we add DefaultManagementLifecycleStrategy by default for JMX support
+        lifecycleStrategies.clear();
     }
 
     public InflightRepository getInflightRepository() {

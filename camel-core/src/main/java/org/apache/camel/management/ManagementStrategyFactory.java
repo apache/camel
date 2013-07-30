@@ -35,6 +35,10 @@ public class ManagementStrategyFactory {
         } else {
             try {
                 answer = new ManagedManagementStrategy(context, new DefaultManagementAgent(context));
+
+                // must add management lifecycle strategy
+                context.getLifecycleStrategies().add(0, new DefaultManagementLifecycleStrategy(context));
+
             } catch (Exception e) {
                 log.warn("Cannot create JMX lifecycle strategy. Will fallback and disable JMX.", e);
                 answer = new DefaultManagementStrategy(context);

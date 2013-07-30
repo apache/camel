@@ -265,9 +265,6 @@ public class DefaultManagementAgent extends ServiceSupport implements Management
     protected void doStart() throws Exception {
         ObjectHelper.notNull(camelContext, "CamelContext");
 
-        // must add management lifecycle strategy
-        camelContext.getLifecycleStrategies().add(0, new DefaultManagementLifecycleStrategy(camelContext));
-
         // create mbean server if is has not be injected.
         if (server == null) {
             finalizeSettings();
