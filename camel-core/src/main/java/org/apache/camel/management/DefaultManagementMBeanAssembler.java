@@ -76,9 +76,8 @@ public class DefaultManagementMBeanAssembler implements ManagementMBeanAssembler
         }
 
         boolean santizie = camelContext.getManagementStrategy().getManagementAgent().getSanitize() != null && camelContext.getManagementStrategy().getManagementAgent().getSanitize();
-        DefaultRequiredModelMBean mbean = (DefaultRequiredModelMBean) mBeanServer.instantiate(DefaultRequiredModelMBean.class.getName());
+        DefaultRequiredModelMBean mbean = new DefaultRequiredModelMBean(mbi);
         mbean.setSanitize(santizie);
-        mbean.setModelMBeanInfo(mbi);
 
         try {
             mbean.setManagedResource(obj, "ObjectReference");

@@ -21,6 +21,7 @@ import javax.management.MBeanException;
 import javax.management.MBeanOperationInfo;
 import javax.management.ReflectionException;
 import javax.management.RuntimeOperationsException;
+import javax.management.modelmbean.ModelMBeanInfo;
 import javax.management.modelmbean.RequiredModelMBean;
 
 import org.apache.camel.util.ObjectHelper;
@@ -41,6 +42,10 @@ public class DefaultRequiredModelMBean extends RequiredModelMBean {
 
     public DefaultRequiredModelMBean() throws MBeanException, RuntimeOperationsException {
         // must have default no-arg constructor
+    }
+
+    public DefaultRequiredModelMBean(ModelMBeanInfo mbi) throws MBeanException, RuntimeOperationsException {
+        super(mbi);
     }
 
     public boolean isSanitize() {
