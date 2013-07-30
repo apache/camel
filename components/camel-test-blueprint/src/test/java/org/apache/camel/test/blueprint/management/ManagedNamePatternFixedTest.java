@@ -25,6 +25,11 @@ import org.junit.Test;
 public class ManagedNamePatternFixedTest extends CamelBlueprintTestSupport {
 
     @Override
+    protected boolean useJmx() {
+        return true;
+    }
+
+    @Override
     protected String getBlueprintDescriptor() {
         return "org/apache/camel/test/blueprint/management/managedNamePatternFixedTest.xml";
     }
