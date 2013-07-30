@@ -370,9 +370,6 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
             ManagementStrategy managementStrategy = new ManagedManagementStrategy(getContext(), agent);
             getContext().setManagementStrategy(managementStrategy);
 
-            // clear the existing lifecycle strategies define by the DefaultCamelContext constructor
-            getContext().getLifecycleStrategies().clear();
-            getContext().addLifecycleStrategy(new DefaultManagementLifecycleStrategy(getContext()));
             // set additional configuration from camelJMXAgent
             boolean onlyId = agent.getOnlyRegisterProcessorWithCustomId() != null && agent.getOnlyRegisterProcessorWithCustomId();
             getContext().getManagementStrategy().onlyManageProcessorWithCustomId(onlyId);

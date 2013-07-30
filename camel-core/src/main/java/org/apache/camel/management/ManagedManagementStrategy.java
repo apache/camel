@@ -182,4 +182,10 @@ public class ManagedManagementStrategy extends DefaultManagementStrategy {
         return objectName;
     }
 
+    @Override
+    protected void doStart() throws Exception {
+        LOG.info("JMX is enabled");
+        doStartManagementStrategy();
+    }
+
 }
