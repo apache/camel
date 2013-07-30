@@ -65,7 +65,7 @@ public class DefaultLSResourceResolver implements LSResourceResolver {
         String resourceURI = null;
         // Build up the relative path for using relatedURI and baseURI
         if (baseURI == null) {
-            relatedURI = getUri(systemId);
+            relatedURI = FileUtil.compactPath(getUri(systemId), '/');
             resourceURI = relatedURI;
         } else {
             String relatedPath = relatedURIMap.get(baseURI);
@@ -74,11 +74,11 @@ public class DefaultLSResourceResolver implements LSResourceResolver {
                 if (relatedPath == null) {
                     relatedPath = "";
                 }
-                relatedURI = FileUtil.onlyPath(relatedURI) + "/" + systemId;
+                relatedURI = FileUtil.compactPath(FileUtil.onlyPath(relatedURI) + "/" + systemId, '/');
                 resourceURI = relatedURI;
                 relatedURIMap.put(baseURI, relatedPath);
             } else {
-                resourceURI = relatedPath + "/" + systemId;
+                resourceURI = FileUtil.compactPath(relatedPath + "/" + systemId, '/');
                 relatedURI = resourceURI;
             }
         }
