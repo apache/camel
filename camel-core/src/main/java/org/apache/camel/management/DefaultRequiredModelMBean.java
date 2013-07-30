@@ -21,20 +21,22 @@ import javax.management.MBeanException;
 import javax.management.MBeanOperationInfo;
 import javax.management.ReflectionException;
 import javax.management.RuntimeOperationsException;
-import javax.management.modelmbean.ModelMBeanInfo;
 import javax.management.modelmbean.RequiredModelMBean;
 
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * A {@link RequiredModelMBean} which allows us to intercept invoking operations.
+ * A {@link RequiredModelMBean} which allows us to intercept invoking operations on the MBean.
  * <p/>
  * For example if sanitize has been enabled on JMX, then we use this implementation
  * to hide sensitive information from the returned JMX attributes / operations.
  */
 public class DefaultRequiredModelMBean extends RequiredModelMBean {
 
+    private static final Logger LOG = LoggerFactory.getLogger(DefaultRequiredModelMBean.class);
     private boolean sanitize;
 
     public DefaultRequiredModelMBean() throws MBeanException, RuntimeOperationsException {
@@ -54,7 +56,7 @@ public class DefaultRequiredModelMBean extends RequiredModelMBean {
         Object answer = super.invoke(opName, opArgs, sig);
         // sanitize the answer if enabled and it was a String type (we cannot sanitize other types)
         if (sanitize && answer instanceof String && ObjectHelper.isNotEmpty(answer) && isSanitizedOperation(opName)) {
-            answer = URISupport.sanitizeUri((String) answer);
+            answer = sanitize(opName, (String) answer);
         }
         return answer;
     }
@@ -70,5 +72,21 @@ public class DefaultRequiredModelMBean extends RequiredModelMBean {
             }
         }
         return false;
+    }
+
+    /**
+     * Sanitizes the returned value from invoking the operation
+     *
+     * @param opName  the operation name invoked
+     * @param value   the current value
+     * @return the sanitized value
+     */
+    protected String sanitize(String opName, String value) {
+        String answer = URISupport.sanitizeUri(value);
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Sanitizing JMX operation: {}.{} value: {} -> {}",
+                    new Object[]{getMBeanInfo().getClassName(), opName, value, answer});
+        }
+        return answer;
     }
 }
