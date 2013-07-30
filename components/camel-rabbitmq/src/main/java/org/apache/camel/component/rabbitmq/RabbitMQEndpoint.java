@@ -14,11 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.rabbitmq;
 
 import java.io.IOException;
-import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
@@ -27,7 +25,6 @@ import java.util.concurrent.Executors;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.Envelope;
-
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -55,70 +52,10 @@ public class RabbitMQEndpoint extends DefaultEndpoint {
     public RabbitMQEndpoint() {
     }
 
-    public RabbitMQEndpoint(String endpointUri,
-                            String remaining,
-                            RabbitMQComponent component) throws URISyntaxException {
+    public RabbitMQEndpoint(String endpointUri, RabbitMQComponent component) throws URISyntaxException {
         super(endpointUri, component);
-
-        URI uri = new URI("http://" + remaining);
-        hostname = uri.getHost();
-        portNumber = uri.getPort();
-        exchangeName = uri.getPath().substring(1);
     }
 
-
-    public String getExchangeName() {
-        return exchangeName;
-    }
-
-    public void setQueue(String queue) {
-        this.queue = queue;
-    }
-
-    public int getThreadPoolSize() {
-        return threadPoolSize;
-    }
-
-    public void setThreadPoolSize(int threadPoolSize) {
-        this.threadPoolSize = threadPoolSize;
-    }
-
-    public boolean isAutoAck() {
-        return autoAck;
-    }
-
-    public void setAutoAck(boolean autoAck) {
-        this.autoAck = autoAck;
-    }
-
-    public String getQueue() {
-        return queue;
-    }
-    
-    public boolean isAutoDelete() {
-        return autoDelete;
-    }
-
-    public void setAutoDelete(boolean autoDelete) {
-        this.autoDelete = autoDelete;
-    }
-
-    public boolean isDurable() {
-        return durable;
-    }
-
-    public void setDurable(boolean durable) {
-        this.durable = durable;
-    }
-
-    public String getRoutingKey() {
-        return routingKey;
-    }
-
-    public void setRoutingKey(String routingKey) {
-        this.routingKey = routingKey;
-    }
-    
     public Exchange createRabbitExchange(Envelope envelope) {
         Exchange exchange = new DefaultExchange(getCamelContext(), getExchangePattern());
 
@@ -163,20 +100,12 @@ public class RabbitMQEndpoint extends DefaultEndpoint {
         return true;
     }
 
-    public int getPortNumber() {
-        return portNumber;
-    }
-
-    public String getHostname() {
-        return hostname;
-    }
-
-    public String getVhost() {
-        return vhost;
-    }
-
-    public String getPassword() {
-        return password;
+    protected ExecutorService createExecutor() {
+        if (getCamelContext() != null) {
+            return getCamelContext().getExecutorServiceManager().newFixedThreadPool(this, "RabbitMQConsumer", getThreadPoolSize());
+        } else {
+            return Executors.newFixedThreadPool(getThreadPoolSize());
+        }
     }
 
     public String getUsername() {
@@ -187,15 +116,91 @@ public class RabbitMQEndpoint extends DefaultEndpoint {
         this.username = username;
     }
 
+    public String getPassword() {
+        return password;
+    }
+
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getVhost() {
+        return vhost;
     }
 
     public void setVhost(String vhost) {
         this.vhost = vhost;
     }
 
-    public ExecutorService createExecutor() {
-        return Executors.newFixedThreadPool(getThreadPoolSize());
+    public String getHostname() {
+        return hostname;
+    }
+
+    public void setHostname(String hostname) {
+        this.hostname = hostname;
+    }
+
+    public int getThreadPoolSize() {
+        return threadPoolSize;
+    }
+
+    public void setThreadPoolSize(int threadPoolSize) {
+        this.threadPoolSize = threadPoolSize;
+    }
+
+    public int getPortNumber() {
+        return portNumber;
+    }
+
+    public void setPortNumber(int portNumber) {
+        this.portNumber = portNumber;
+    }
+
+    public boolean isAutoAck() {
+        return autoAck;
+    }
+
+    public void setAutoAck(boolean autoAck) {
+        this.autoAck = autoAck;
+    }
+
+    public boolean isAutoDelete() {
+        return autoDelete;
+    }
+
+    public void setAutoDelete(boolean autoDelete) {
+        this.autoDelete = autoDelete;
+    }
+
+    public boolean isDurable() {
+        return durable;
+    }
+
+    public void setDurable(boolean durable) {
+        this.durable = durable;
+    }
+
+    public String getQueue() {
+        return queue;
+    }
+
+    public void setQueue(String queue) {
+        this.queue = queue;
+    }
+
+    public String getExchangeName() {
+        return exchangeName;
+    }
+
+    public void setExchangeName(String exchangeName) {
+        this.exchangeName = exchangeName;
+    }
+
+    public String getRoutingKey() {
+        return routingKey;
+    }
+
+    public void setRoutingKey(String routingKey) {
+        this.routingKey = routingKey;
     }
 }

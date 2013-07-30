@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.rabbitmq;
 
 import java.io.IOException;
@@ -24,10 +23,9 @@ import java.util.concurrent.Executors;
 import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultProducer;
-
+import org.apache.camel.util.ObjectHelper;
 
 public class RabbitMQProducer extends DefaultProducer {
 
@@ -40,22 +38,30 @@ public class RabbitMQProducer extends DefaultProducer {
         this.channel = conn.createChannel();
     }
 
+    @Override
+    public RabbitMQEndpoint getEndpoint() {
+        return (RabbitMQEndpoint) super.getEndpoint();
+    }
+
     public void shutdown() throws IOException {
         conn.close();
     }
 
     @Override
     public void process(Exchange exchange) throws Exception {
+        String exchangeName = exchange.getIn().getHeader(RabbitMQConstants.EXCHANGE_NAME, String.class);
+        if (exchangeName == null) {
+            exchangeName = getEndpoint().getExchangeName();
+        }
+        if (ObjectHelper.isEmpty(exchangeName)) {
+            throw new IllegalArgumentException("ExchangeName is not provided in header " + RabbitMQConstants.EXCHANGE_NAME);
+        }
 
-        Object key = exchange.getIn().getHeader(RabbitMQConstants.ROUTING_KEY);
-        String exchangeName = exchange.getIn().getHeader(RabbitMQConstants.EXCHANGE_NAME).toString();
-        byte[] messageBodyBytes = exchange.getIn().getBody(byte[].class);
+        String key = exchange.getIn().getHeader(RabbitMQConstants.ROUTING_KEY, "", String.class);
+        byte[] messageBodyBytes = exchange.getIn().getMandatoryBody(byte[].class);
         AMQP.BasicProperties.Builder properties = buildProperties(exchange);
 
-        channel.basicPublish(exchangeName,
-                key == null ? "" : key.toString(),
-                properties.build(),
-                messageBodyBytes);
+        channel.basicPublish(exchangeName, key, properties.build(), messageBodyBytes);
     }
 
     AMQP.BasicProperties.Builder buildProperties(Exchange exchange) {

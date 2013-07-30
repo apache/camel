@@ -14,15 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.rabbitmq;
 
+import java.net.URI;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultComponent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class RabbitMQComponent extends DefaultComponent {
+
+    private static final transient Logger LOG = LoggerFactory.getLogger(RabbitMQComponent.class);
 
     public RabbitMQComponent() {
     }
@@ -35,8 +39,23 @@ public class RabbitMQComponent extends DefaultComponent {
     protected RabbitMQEndpoint createEndpoint(String uri,
                                               String remaining,
                                               Map<String, Object> params) throws Exception {
-        RabbitMQEndpoint endpoint = new RabbitMQEndpoint(uri, remaining, this);
+        URI host = new URI("http://" + remaining);
+        String hostname = host.getHost();
+        int portNumber = host.getPort();
+        String exchangeName = host.getPath().substring(1);
+
+        RabbitMQEndpoint endpoint = new RabbitMQEndpoint(uri, this);
+        endpoint.setHostname(hostname);
+        endpoint.setPortNumber(portNumber);
+        endpoint.setExchangeName(exchangeName);
+
         setProperties(endpoint, params);
+
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Creating RabbitMQEndpoint with host {}:{} and exchangeName: {}",
+                    endpoint.getHostname(), endpoint.getPortNumber(), endpoint.getExchangeName())
+        }
+
         return endpoint;
     }
 }

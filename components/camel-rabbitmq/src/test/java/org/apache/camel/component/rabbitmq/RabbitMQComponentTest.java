@@ -50,7 +50,7 @@ public class RabbitMQComponentTest {
         assertEquals("queuey", endpoint.getQueue());
         assertEquals("vman", endpoint.getVhost());
         assertEquals("special.host", endpoint.getHostname());
-        assertEquals(14, endpoint.getPortNumber());
+        assertEquals(14123, endpoint.getPortNumber());
         assertEquals(515, endpoint.getThreadPoolSize());
         assertEquals(true, endpoint.isAutoAck());
     }

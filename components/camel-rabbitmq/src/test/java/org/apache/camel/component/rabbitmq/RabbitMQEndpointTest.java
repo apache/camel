@@ -16,25 +16,22 @@
  */
 package org.apache.camel.component.rabbitmq;
 
-import java.net.URISyntaxException;
 import java.util.UUID;
 import java.util.concurrent.ThreadPoolExecutor;
 
 import com.rabbitmq.client.Envelope;
-
 import org.apache.camel.Exchange;
-import org.apache.camel.test.junit4.TestSupport;
+import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 import org.mockito.Mockito;
 
-public class RabbitMQEndpointTest extends TestSupport {
+public class RabbitMQEndpointTest extends CamelTestSupport {
 
     private Envelope envelope = Mockito.mock(Envelope.class);
 
     @Test
-    public void testCreatingRabbitExchangeSetsHeaders() throws URISyntaxException {
-        RabbitMQEndpoint endpoint =
-                new RabbitMQEndpoint("rabbitmq:localhost/exchange", "localhost/exchange", new RabbitMQComponent());
+    public void testCreatingRabbitExchangeSetsHeaders() throws Exception {
+        RabbitMQEndpoint endpoint = context.getEndpoint("rabbitmq:localhost/exchange", RabbitMQEndpoint.class);
 
         String routingKey = UUID.randomUUID().toString();
         String exchangeName = UUID.randomUUID().toString();
@@ -52,19 +49,17 @@ public class RabbitMQEndpointTest extends TestSupport {
 
     @Test
     public void creatingExecutorUsesThreadPoolSettings() throws Exception {
-
-        RabbitMQEndpoint endpoint =
-                new RabbitMQEndpoint("rabbitmq:localhost/exchange", "localhost/exchange", new RabbitMQComponent());
-        endpoint.setThreadPoolSize(400);
+        RabbitMQEndpoint endpoint = context.getEndpoint("rabbitmq:localhost/exchange?threadPoolSize=20", RabbitMQEndpoint.class);
+        assertEquals(20, endpoint.getThreadPoolSize());
 
         ThreadPoolExecutor executor = assertIsInstanceOf(ThreadPoolExecutor.class,  endpoint.createExecutor());
-        assertEquals(400, executor.getCorePoolSize());
+        assertEquals(20, executor.getCorePoolSize());
     }
 
     @Test
-    public void assertSingleton() throws URISyntaxException {
-        RabbitMQEndpoint endpoint =
-                new RabbitMQEndpoint("rabbitmq:localhost/exchange", "localhost/exchange", new RabbitMQComponent());
+    public void assertSingleton() throws Exception {
+        RabbitMQEndpoint endpoint = context.getEndpoint("rabbitmq:localhost/exchange", RabbitMQEndpoint.class);
+
         assertTrue(endpoint.isSingleton());
     }
 }

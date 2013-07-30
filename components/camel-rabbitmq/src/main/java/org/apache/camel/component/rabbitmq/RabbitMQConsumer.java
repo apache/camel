@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.rabbitmq;
 
 import java.io.IOException;
@@ -25,12 +24,9 @@ import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.Envelope;
-
-
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultConsumer;
-
 
 public class RabbitMQConsumer extends DefaultConsumer {
     
@@ -86,7 +82,13 @@ public class RabbitMQConsumer extends DefaultConsumer {
 
         channel = null;
         conn = null;
-        executor.shutdown();
+        if (executor != null) {
+            if (getEndpoint() != null && getEndpoint().getCamelContext() != null) {
+                getEndpoint().getCamelContext().getExecutorServiceManager().shutdownNow(executor);
+            } else {
+                executor.shutdownNow();
+            }
+        }
         executor = null;
     }
 
@@ -123,7 +125,7 @@ public class RabbitMQConsumer extends DefaultConsumer {
                 channel.basicAck(deliveryTag, false);
 
             } catch (Exception e) {
-                e.printStackTrace();
+                getExceptionHandler().handleException("Error processing exchange", exchange, e);
             }
         }
     }
