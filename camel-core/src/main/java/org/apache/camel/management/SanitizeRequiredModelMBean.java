@@ -35,25 +35,22 @@ import org.slf4j.LoggerFactory;
  * For example if sanitize has been enabled on JMX, then we use this implementation
  * to hide sensitive information from the returned JMX attributes / operations.
  */
-public class DefaultRequiredModelMBean extends RequiredModelMBean {
+public class SanitizeRequiredModelMBean extends RequiredModelMBean {
 
-    private static final Logger LOG = LoggerFactory.getLogger(DefaultRequiredModelMBean.class);
+    private static final Logger LOG = LoggerFactory.getLogger(SanitizeRequiredModelMBean.class);
     private boolean sanitize;
 
-    public DefaultRequiredModelMBean() throws MBeanException, RuntimeOperationsException {
+    public SanitizeRequiredModelMBean() throws MBeanException, RuntimeOperationsException {
         // must have default no-arg constructor
     }
 
-    public DefaultRequiredModelMBean(ModelMBeanInfo mbi) throws MBeanException, RuntimeOperationsException {
+    public SanitizeRequiredModelMBean(ModelMBeanInfo mbi, boolean sanitize) throws MBeanException, RuntimeOperationsException {
         super(mbi);
+        this.sanitize = sanitize;
     }
 
     public boolean isSanitize() {
         return sanitize;
-    }
-
-    public void setSanitize(boolean sanitize) {
-        this.sanitize = sanitize;
     }
 
     @Override
