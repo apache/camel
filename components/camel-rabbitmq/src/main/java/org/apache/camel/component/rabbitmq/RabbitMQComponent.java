@@ -53,7 +53,7 @@ public class RabbitMQComponent extends DefaultComponent {
 
         if (LOG.isDebugEnabled()) {
             LOG.debug("Creating RabbitMQEndpoint with host {}:{} and exchangeName: {}",
-                    endpoint.getHostname(), endpoint.getPortNumber(), endpoint.getExchangeName())
+                    new Object[]{endpoint.getHostname(), endpoint.getPortNumber(), endpoint.getExchangeName()});
         }
 
         return endpoint;
