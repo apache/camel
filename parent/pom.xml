@@ -347,7 +347,7 @@
     <snmp4j-version>2.1.0_1</snmp4j-version>
     <solr-bundle-version>3.6.0_1</solr-bundle-version> <!-- FIXME cmueller: not in sync! -->
     <solr-version>3.6.2</solr-version>
-    <spring-batch-version>2.1.9.RELEASE</spring-batch-version>
+    <spring-batch-version>2.2.1.RELEASE</spring-batch-version>
     <spring-castor-bundle-version>1.2.0</spring-castor-bundle-version>
     <spring-data-commons-version>1.5.0.RELEASE</spring-data-commons-version>
     <spring-data-redis-version>1.0.4.RELEASE</spring-data-redis-version>
