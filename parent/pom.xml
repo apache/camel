@@ -2624,6 +2624,7 @@
       </activation>
       <properties>
         <maven.test.skip.exec>true</maven.test.skip.exec>
+        <assembly.skipAssembly>true</assembly.skipAssembly>
         <noassembly>true</noassembly>
       </properties>
     </profile>
