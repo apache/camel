@@ -16,6 +16,7 @@
  */
 package org.apache.camel.converter.dozer;
 
+import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
 import java.util.Collections;
@@ -28,6 +29,7 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.TypeConverterRegistry;
+import org.apache.camel.util.ResourceHelper;
 import org.dozer.DozerBeanMapper;
 import org.dozer.Mapper;
 import org.dozer.classmap.ClassMap;
@@ -105,7 +107,7 @@ public class DozerTypeConverterLoader implements CamelContextAware {
         CamelToDozerClassResolverAdapter adapter = new CamelToDozerClassResolverAdapter(camelContext);
         BeanContainer.getInstance().setClassLoader(adapter);
         
-        Map<String, DozerBeanMapper> mappers = new HashMap<String, DozerBeanMapper>(camelContext.getRegistry().findByTypeWithName(DozerBeanMapper.class));
+        Map<String, DozerBeanMapper> mappers = lookupDozerBeanMappers();
         if (mapper != null) {
             mappers.put("parameter", mapper);
         }
@@ -122,6 +124,13 @@ public class DozerTypeConverterLoader implements CamelContextAware {
             List<ClassMap> all = loadMappings(camelContext, dozer);
             registerClassMaps(registry, dozer, all);
         }
+    }
+
+    /**
+     * Lookup the dozer {@link DozerBeanMapper} to be used.
+     */
+    protected Map<String, DozerBeanMapper> lookupDozerBeanMappers() {
+        return new HashMap<String, DozerBeanMapper>(camelContext.getRegistry().findByTypeWithName(DozerBeanMapper.class));
     }
 
     private void registerClassMaps(TypeConverterRegistry registry, DozerBeanMapper dozer, List<ClassMap> all) {
@@ -197,7 +206,12 @@ public class DozerTypeConverterLoader implements CamelContextAware {
         }
 
         public URL loadResource(String s) {
-            URL url = classResolver.loadResourceAsURL(s);
+            URL url = null;
+            try {
+                url = ResourceHelper.resolveResourceAsUrl(classResolver, s);
+            } catch (MalformedURLException e) {
+                // ignore
+            }
             if (url == null) {
                 // using the classloader of DozerClassLoader as a fallback
                 url = DozerClassLoader.class.getClassLoader().getResource(s);

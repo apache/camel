@@ -83,6 +83,26 @@ public final class ResourceHelper {
      * @throws java.io.IOException is thrown if the resource file could not be found or loaded as {@link InputStream}
      */
     public static InputStream resolveMandatoryResourceAsInputStream(ClassResolver classResolver, String uri) throws IOException {
+        InputStream is = resolveResourceAsInputStream(classResolver, uri);
+        if (is == null) {
+            String resolvedName = resolveUriPath(uri);
+            throw new FileNotFoundException("Cannot find resource: " + resolvedName + " in classpath for URI: " + uri);
+        } else {
+            return is;
+        }
+    }
+
+    /**
+     * Resolves the resource.
+     * <p/>
+     * If possible recommended to use {@link #resolveMandatoryResourceAsUrl(org.apache.camel.spi.ClassResolver, String)}
+     *
+     * @param classResolver the class resolver to load the resource from the classpath
+     * @param uri URI of the resource
+     * @return the resource as an {@link InputStream}. Remember to close this stream after usage. Or <tt>null</tt> if not found.
+     * @throws java.io.IOException is thrown if error loading the resource
+     */
+    public static InputStream resolveResourceAsInputStream(ClassResolver classResolver, String uri) throws IOException {
         if (uri.startsWith("file:")) {
             uri = ObjectHelper.after(uri, "file:");
             LOG.trace("Loading resource: {} from file system", uri);
@@ -109,12 +129,7 @@ public final class ResourceHelper {
         // load from classpath by default
         String resolvedName = resolveUriPath(uri);
         LOG.trace("Loading resource: {} from classpath", resolvedName);
-        InputStream is = classResolver.loadResourceAsStream(resolvedName);
-        if (is == null) {
-            throw new FileNotFoundException("Cannot find resource: " + resolvedName + " in classpath for URI: " + uri);
-        } else {
-            return is;
-        }
+        return classResolver.loadResourceAsStream(resolvedName);
     }
 
     /**
@@ -122,18 +137,36 @@ public final class ResourceHelper {
      *
      * @param classResolver the class resolver to load the resource from the classpath
      * @param uri uri of the resource
-     * @return the resource as an {@link InputStream}.  Remember to close this stream after usage.
+     * @return the resource as an {@link java.net.URL}.
      * @throws java.io.FileNotFoundException is thrown if the resource file could not be found
      * @throws java.net.MalformedURLException if the URI is malformed
      */
     public static URL resolveMandatoryResourceAsUrl(ClassResolver classResolver, String uri) throws FileNotFoundException, MalformedURLException {
+        URL url = resolveResourceAsUrl(classResolver, uri);
+        if (url == null) {
+            String resolvedName = resolveUriPath(uri);
+            throw new FileNotFoundException("Cannot find resource: " + resolvedName + " in classpath for URI: " + uri);
+        } else {
+            return url;
+        }
+    }
+
+    /**
+     * Resolves the resource.
+     *
+     * @param classResolver the class resolver to load the resource from the classpath
+     * @param uri uri of the resource
+     * @return the resource as an {@link java.net.URL}. Or <tt>null</tt> if not found.
+     * @throws java.net.MalformedURLException if the URI is malformed
+     */
+    public static URL resolveResourceAsUrl(ClassResolver classResolver, String uri) throws MalformedURLException {
         if (uri.startsWith("file:")) {
             // check if file exists first
             String name = ObjectHelper.after(uri, "file:");
             LOG.trace("Loading resource: {} from file system", uri);
             File file = new File(name);
             if (!file.exists()) {
-                throw new FileNotFoundException("File " + file + " not found");
+                return null;
             }
             return new URL(uri);
         } else if (uri.startsWith("http:")) {
@@ -146,12 +179,7 @@ public final class ResourceHelper {
         // load from classpath by default
         String resolvedName = resolveUriPath(uri);
         LOG.trace("Loading resource: {} from classpath", resolvedName);
-        URL url = classResolver.loadResourceAsURL(resolvedName);
-        if (url == null) {
-            throw new FileNotFoundException("Cannot find resource: " + resolvedName + " in classpath for URI: " + uri);
-        } else {
-            return url;
-        }
+        return classResolver.loadResourceAsURL(resolvedName);
     }
 
     /**
