@@ -20,7 +20,7 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.Service;
+import org.apache.camel.StaticService;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.LRUSoftCache;
 import org.apache.camel.util.ServiceHelper;
@@ -30,7 +30,7 @@ import org.apache.camel.util.ServiceHelper;
  * <p/>
  * We use a soft reference cache to allow the JVM to re-claim memory if it runs low on memory.
  */
-public class EndpointRegistry extends LRUSoftCache<EndpointKey, Endpoint> implements Service {
+public class EndpointRegistry extends LRUSoftCache<EndpointKey, Endpoint> implements StaticService {
     private static final long serialVersionUID = 1L;
     private final CamelContext context;
 

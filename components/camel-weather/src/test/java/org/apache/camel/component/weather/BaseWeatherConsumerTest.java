@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.weather;
 
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -37,7 +39,9 @@ public abstract class BaseWeatherConsumerTest extends CamelTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         // as the default delay option is one hour long, we expect exactly one message exchange
         mock.expectedMessageCount(1);
-        mock.assertIsSatisfied();
+
+        // give the route a bit time to start and fetch the weather info
+        assertMockEndpointsSatisfied(20, TimeUnit.SECONDS);
 
         Exchange exchange = mock.getExchanges().get(0);
         assertNotNull(exchange);

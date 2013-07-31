@@ -365,13 +365,11 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
             agent.setOnlyRegisterProcessorWithCustomId(CamelContextHelper.parseBoolean(getContext(), camelJMXAgent.getOnlyRegisterProcessorWithCustomId()));
             agent.setRegisterAlways(CamelContextHelper.parseBoolean(getContext(), camelJMXAgent.getRegisterAlways()));
             agent.setRegisterNewRoutes(CamelContextHelper.parseBoolean(getContext(), camelJMXAgent.getRegisterNewRoutes()));
+            agent.setSanitize(CamelContextHelper.parseBoolean(getContext(), camelJMXAgent.getSanitize()));
 
             ManagementStrategy managementStrategy = new ManagedManagementStrategy(getContext(), agent);
             getContext().setManagementStrategy(managementStrategy);
 
-            // clear the existing lifecycle strategies define by the DefaultCamelContext constructor
-            getContext().getLifecycleStrategies().clear();
-            getContext().addLifecycleStrategy(new DefaultManagementLifecycleStrategy(getContext()));
             // set additional configuration from camelJMXAgent
             boolean onlyId = agent.getOnlyRegisterProcessorWithCustomId() != null && agent.getOnlyRegisterProcessorWithCustomId();
             getContext().getManagementStrategy().onlyManageProcessorWithCustomId(onlyId);

@@ -46,6 +46,7 @@ import org.apache.camel.model.ModelHelper;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.spi.RoutePolicy;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.URISupport;
 
 @ManagedResource(description = "Managed Route")
 public class ManagedRoute extends ManagedPerformanceCounter implements TimerListener, ManagedRouteMBean {
@@ -83,9 +84,12 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
         return description;
     }
 
+    @Override
     public String getEndpointUri() {
-        Endpoint ep = route.getEndpoint();
-        return ep != null ? ep.getEndpointUri() : VALUE_UNKNOWN;
+        if (route.getEndpoint() != null) {
+            return route.getEndpoint().getEndpointUri();
+        }
+        return VALUE_UNKNOWN;
     }
 
     public String getState() {

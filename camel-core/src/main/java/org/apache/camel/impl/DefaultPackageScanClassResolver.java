@@ -37,6 +37,7 @@ import java.util.Set;
 import java.util.jar.JarEntry;
 import java.util.jar.JarInputStream;
 
+import org.apache.camel.StaticService;
 import org.apache.camel.impl.scan.AnnotatedWithAnyPackageScanFilter;
 import org.apache.camel.impl.scan.AnnotatedWithPackageScanFilter;
 import org.apache.camel.impl.scan.AssignableToPackageScanFilter;
@@ -54,7 +55,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Default implement of {@link org.apache.camel.spi.PackageScanClassResolver}
  */
-public class DefaultPackageScanClassResolver extends ServiceSupport implements PackageScanClassResolver {
+public class DefaultPackageScanClassResolver extends ServiceSupport implements PackageScanClassResolver, StaticService {
 
     protected final transient Logger log = LoggerFactory.getLogger(getClass());
     private final Set<ClassLoader> classLoaders = new LinkedHashSet<ClassLoader>();

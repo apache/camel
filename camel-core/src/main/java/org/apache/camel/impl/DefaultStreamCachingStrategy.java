@@ -154,6 +154,10 @@ public class DefaultStreamCachingStrategy extends org.apache.camel.support.Servi
             boolean result = rule.shouldSpoolCache(length);
             if (!result) {
                 all = false;
+                if (!anySpoolRules) {
+                    // no need to check anymore
+                    break;
+                }
             } else {
                 any = true;
                 if (anySpoolRules) {
@@ -162,7 +166,10 @@ public class DefaultStreamCachingStrategy extends org.apache.camel.support.Servi
                 }
             }
         }
-        return anySpoolRules ? any : all;
+
+        boolean answer = anySpoolRules ? any : all;
+        LOG.debug("Should spool cache {} -> {}", length, answer);
+        return answer;
     }
 
     public void addSpoolRule(SpoolRule rule) {
@@ -326,7 +333,7 @@ public class DefaultStreamCachingStrategy extends org.apache.camel.support.Servi
 
         public boolean shouldSpoolCache(long length) {
             if (spoolThreshold > 0 && length > spoolThreshold) {
-                LOG.trace("Should spool cache {} > {} -> true", length, spoolThreshold);
+                LOG.trace("Should spool cache fixed threshold {} > {} -> true", length, spoolThreshold);
                 return true;
             }
             return false;
@@ -351,12 +358,20 @@ public class DefaultStreamCachingStrategy extends org.apache.camel.support.Servi
 
         public boolean shouldSpoolCache(long length) {
             if (spoolUsedHeapMemoryThreshold > 0) {
-                long used = heapUsage.getHeapMemoryUsage().getUsed();
-                long committed = heapUsage.getHeapMemoryUsage().getCommitted();
-                long percentage = committed / used * 100;
-                LOG.trace("Heap memory: [used=%sK (%sK\\%), committed=%sK]", new Object[]{used >> 10, percentage, committed >> 10});
-                if (percentage >= spoolUsedHeapMemoryThreshold) {
-                    LOG.trace("Should spool cache {} > {} -> true", percentage, spoolUsedHeapMemoryThreshold);
+                // must use double to calculate with decimals for the percentage
+                double used = heapUsage.getHeapMemoryUsage().getUsed();
+                double committed = heapUsage.getHeapMemoryUsage().getCommitted();
+                double calc = (used / committed) * 100;
+                int percentage = (int) calc;
+
+                if (LOG.isTraceEnabled()) {
+                    long u = heapUsage.getHeapMemoryUsage().getUsed();
+                    long c = heapUsage.getHeapMemoryUsage().getCommitted();
+                    LOG.trace("Heap memory: [used={}M ({}%), committed={}M]", new Object[]{u >> 20, percentage, c >> 20});
+                }
+
+                if (percentage > spoolUsedHeapMemoryThreshold) {
+                    LOG.trace("Should spool cache heap memory threshold {} > {} -> true", percentage, spoolUsedHeapMemoryThreshold);
                     return true;
                 }
             }

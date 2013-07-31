@@ -59,6 +59,7 @@ public class JmsHeaderFilteringTest extends CamelTestSupport {
                 exchange.getIn().setHeader("org.apache.camel.test.jms", 20000);
                 exchange.getIn().setHeader("testheader", 1020);
                 exchange.getIn().setHeader("anotherheader", 1030);
+                exchange.getIn().setHeader("JMSXAppID", "myApp");
             }
 
         });
@@ -75,13 +76,15 @@ public class JmsHeaderFilteringTest extends CamelTestSupport {
         ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
         camelContext.addComponent(componentName, jmsComponentAutoAcknowledge(connectionFactory));
 
-        // add "testheader" to in filter set
         JmsComponent component = camelContext.getComponent(componentName, JmsComponent.class);
-        ((DefaultHeaderFilterStrategy)component.getHeaderFilterStrategy()).getInFilter().add("testheader");
-        // add "anotherheader" to out filter set
-        ((DefaultHeaderFilterStrategy)component.getHeaderFilterStrategy()).getOutFilter().add("anotherheader");
+
+        JmsHeaderFilterStrategy filter = new JmsHeaderFilterStrategy();
+        filter.getInFilter().add("testheader");
+        filter.getOutFilter().add("anotherheader");
         // add a regular expression pattern filter, notice that dots are encoded to '_DOT_' in jms headers
-        ((DefaultHeaderFilterStrategy)component.getHeaderFilterStrategy()).setInFilterPattern(IN_FILTER_PATTERN);
+        filter.setInFilterPattern(IN_FILTER_PATTERN);
+
+        component.setHeaderFilterStrategy(filter);
 
         return camelContext;
     }
@@ -116,6 +119,9 @@ public class JmsHeaderFilteringTest extends CamelTestSupport {
             // like testheader, org.apache.camel.test.jms will be filtered by the "in" filter
             assertEquals(20000, message.getJmsMessage().getObjectProperty("org_DOT_apache_DOT_camel_DOT_test_DOT_jms"));
 
+            // should be filtered by default
+            assertNull(message.getJmsMessage().getStringProperty("JMSXAppID"));
+
             latch.countDown();
         }
 
@@ -136,6 +142,9 @@ public class JmsHeaderFilteringTest extends CamelTestSupport {
 
             // filtered out by "in" filter
             assertNull(exchange.getIn().getHeader("org_DOT_apache_DOT_camel_DOT_test_DOT_jms"));
+
+            // should be filtered by default
+            assertNull(exchange.getIn().getHeader("JMSXAppID"));
 
             latch.countDown();
         }

@@ -246,4 +246,17 @@ public interface ManagementAgent extends Service {
      */
     void setRegisterNewRoutes(Boolean registerNewRoutes);
 
+    /**
+     * Whether to remove detected sensitive information (such as passwords) from MBean names and attributes.
+     * <p/>
+     * This option is default <tt>false</tt>.
+     */
+    Boolean getSanitize();
+
+    /**
+     * Whether to remove detected sensitive information (such as passwords) from MBean names and attributes.
+     * <p/>
+     * This option is default <tt>false</tt>.
+     */
+    void setSanitize(Boolean sanitize);
 }

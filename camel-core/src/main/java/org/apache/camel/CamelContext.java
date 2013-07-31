@@ -18,7 +18,9 @@ package org.apache.camel;
 
 import java.io.IOException;
 import java.io.InputStream;
-import java.util.*;
+import java.util.Collection;
+import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
@@ -1019,8 +1021,12 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
 
     /**
      * Disables using JMX as {@link org.apache.camel.spi.ManagementStrategy}.
+     * <p/>
+     * <b>Important:</b> This method must be called <b>before</b> the {@link CamelContext} is started.
+     *
+     * @throws IllegalStateException is thrown if the {@link CamelContext} is not in stopped state.
      */
-    void disableJMX();
+    void disableJMX() throws IllegalStateException;
 
     /**
      * Gets the inflight repository

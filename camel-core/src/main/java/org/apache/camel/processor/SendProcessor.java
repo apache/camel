@@ -26,13 +26,17 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Producer;
-import org.apache.camel.ProducerCallback;
+import org.apache.camel.ServicePoolAware;
 import org.apache.camel.Traceable;
 import org.apache.camel.impl.InterceptSendToEndpoint;
 import org.apache.camel.impl.ProducerCache;
 import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.util.AsyncProcessorConverterHelper;
+import org.apache.camel.util.AsyncProcessorHelper;
+import org.apache.camel.util.EventHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
+import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,22 +47,23 @@ import org.slf4j.LoggerFactory;
  * @version 
  */
 public class SendProcessor extends ServiceSupport implements AsyncProcessor, Traceable {
-    protected final transient Logger log = LoggerFactory.getLogger(getClass());
+    protected static final Logger LOG = LoggerFactory.getLogger(SendProcessor.class);
     protected final CamelContext camelContext;
+    protected final ExchangePattern pattern;
     protected ProducerCache producerCache;
+    protected AsyncProcessor producer;
     protected Endpoint destination;
-    protected ExchangePattern pattern;
 
     public SendProcessor(Endpoint destination) {
-        ObjectHelper.notNull(destination, "destination");
-        this.destination = destination;
-        this.camelContext = destination.getCamelContext();
-        ObjectHelper.notNull(this.camelContext, "camelContext");
+        this(destination, null);
     }
 
     public SendProcessor(Endpoint destination, ExchangePattern pattern) {
-        this(destination);
+        ObjectHelper.notNull(destination, "destination");
+        this.destination = destination;
+        this.camelContext = destination.getCamelContext();
         this.pattern = pattern;
+        ObjectHelper.notNull(this.camelContext, "camelContext");
     }
 
     @Override
@@ -66,12 +71,11 @@ public class SendProcessor extends ServiceSupport implements AsyncProcessor, Tra
         return "sendTo(" + destination + (pattern != null ? " " + pattern : "") + ")";
     }
 
+    /**
+     * @deprecated not longer supported.
+     */
+    @Deprecated
     public void setDestination(Endpoint destination) {
-        this.destination = destination;
-        // destination changed so purge the cache
-        if (producerCache != null) {
-            producerCache.purge();
-        }
     }
 
     public String getTraceLabel() {
@@ -79,28 +83,7 @@ public class SendProcessor extends ServiceSupport implements AsyncProcessor, Tra
     }
 
     public void process(final Exchange exchange) throws Exception {
-        if (!isStarted()) {
-            throw new IllegalStateException("SendProcessor has not been started: " + this);
-        }
-
-        // we should preserve existing MEP so remember old MEP
-        // if you want to permanently to change the MEP then use .setExchangePattern in the DSL
-        final ExchangePattern existingPattern = exchange.getPattern();
-
-        // send the exchange to the destination using a producer
-        producerCache.doInProducer(destination, exchange, pattern, new ProducerCallback<Exchange>() {
-            public Exchange doInProducer(Producer producer, Exchange exchange, ExchangePattern pattern) throws Exception {
-                exchange = configureExchange(exchange, pattern);
-                log.debug(">>>> {} {}", destination, exchange);
-                try {
-                    producer.process(exchange);
-                } finally {
-                    // restore previous MEP
-                    exchange.setPattern(existingPattern);
-                }
-                return exchange;
-            }
-        });
+        AsyncProcessorHelper.process(this, exchange);
     }
 
     public boolean process(Exchange exchange, final AsyncCallback callback) {
@@ -114,12 +97,38 @@ public class SendProcessor extends ServiceSupport implements AsyncProcessor, Tra
         // if you want to permanently to change the MEP then use .setExchangePattern in the DSL
         final ExchangePattern existingPattern = exchange.getPattern();
 
-        // send the exchange to the destination using a producer
+        // if we have a producer then use that as its optimized
+        if (producer != null) {
+
+            // record timing for sending the exchange using the producer
+            final StopWatch watch = new StopWatch();
+
+            final Exchange target = configureExchange(exchange, pattern);
+
+            EventHelper.notifyExchangeSending(exchange.getContext(), target, destination);
+            LOG.debug(">>>> {} {}", destination, exchange);
+            return producer.process(exchange, new AsyncCallback() {
+                @Override
+                public void done(boolean doneSync) {
+                    try {
+                        // restore previous MEP
+                        target.setPattern(existingPattern);
+                        // emit event that the exchange was sent to the endpoint
+                        long timeTaken = watch.stop();
+                        EventHelper.notifyExchangeSent(target.getContext(), target, destination, timeTaken);
+                    } finally {
+                        callback.done(doneSync);
+                    }
+                }
+            });
+        }
+
+        // send the exchange to the destination using the producer cache for the non optimized producers
         return producerCache.doInAsyncProducer(destination, exchange, pattern, callback, new AsyncProducerCallback() {
             public boolean doInAsyncProducer(Producer producer, AsyncProcessor asyncProducer, final Exchange exchange,
                                              ExchangePattern pattern, final AsyncCallback callback) {
                 final Exchange target = configureExchange(exchange, pattern);
-                log.debug(">>>> {} {}", destination, exchange);
+                LOG.debug(">>>> {} {}", destination, exchange);
                 return asyncProducer.process(target, new AsyncCallback() {
                     public void done(boolean doneSync) {
                         // restore previous MEP
@@ -164,8 +173,8 @@ public class SendProcessor extends ServiceSupport implements AsyncProcessor, Tra
         // lookup this before we can use the destination
         Endpoint lookup = camelContext.hasEndpoint(destination.getEndpointKey());
         if (lookup instanceof InterceptSendToEndpoint) {
-            if (log.isDebugEnabled()) {
-                log.debug("Intercepted sending to {} -> {}",
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Intercepted sending to {} -> {}",
                         URISupport.sanitizeUri(destination.getEndpointUri()), URISupport.sanitizeUri(lookup.getEndpointUri()));
             }
             destination = lookup;
@@ -173,14 +182,28 @@ public class SendProcessor extends ServiceSupport implements AsyncProcessor, Tra
         // warm up the producer by starting it so we can fail fast if there was a problem
         // however must start endpoint first
         ServiceHelper.startService(destination);
-        producerCache.startProducer(destination);
+
+        // this SendProcessor is used a lot in Camel (eg every .to in the route DSL) and therefore we
+        // want to optimize for regular producers, by using the producer directly instead of the ProducerCache
+        // Only for pooled and non singleton producers we have to use the ProducerCache as it supports these
+        // kind of producer better (though these kind of producer should be rare)
+
+        Producer producer = producerCache.acquireProducer(destination);
+        if (producer instanceof ServicePoolAware || !producer.isSingleton()) {
+            // no we cannot optimize it - so release the producer back to the producer cache
+            // and use the producer cache for sending
+            producerCache.releaseProducer(destination, producer);
+        } else {
+            // yes we can optimize and use the producer directly for sending
+            this.producer = AsyncProcessorConverterHelper.convert(producer);
+        }
     }
 
     protected void doStop() throws Exception {
-        ServiceHelper.stopService(producerCache);
+        ServiceHelper.stopServices(producerCache, producer);
     }
 
     protected void doShutdown() throws Exception {
-        ServiceHelper.stopAndShutdownService(producerCache);
+        ServiceHelper.stopAndShutdownServices(producerCache, producer);
     }
 }

@@ -21,6 +21,7 @@ import org.apache.camel.Route;
 import org.apache.camel.Service;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.StatefulService;
+import org.apache.camel.StaticService;
 import org.apache.camel.SuspendableService;
 import org.apache.camel.api.management.ManagedInstance;
 import org.apache.camel.api.management.ManagedResource;
@@ -40,6 +41,10 @@ public class ManagedService implements ManagedInstance, ManagedServiceMBean {
 
     public void init(ManagementStrategy strategy) {
         // do nothing
+    }
+
+    public boolean isStaticService() {
+        return service instanceof StaticService;
     }
 
     public Service getService() {

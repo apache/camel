@@ -22,6 +22,7 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -509,7 +510,25 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
                     } else {
                         LOG.trace("Populate header from CXF header={} value={}",
                                 entry.getKey(), entry.getValue());
-                        camelHeaders.put(entry.getKey(), entry.getValue().get(0));
+                        List<String> values = entry.getValue();
+                        Object evalue;
+                        if (values.size() > 1) {
+                            if (exchange.getProperty(CxfConstants.CAMEL_CXF_PROTOCOL_HEADERS_MERGED, Boolean.FALSE, Boolean.class)) {
+                                StringBuilder sb = new StringBuilder();
+                                for (Iterator<String> it = values.iterator(); it.hasNext();) {
+                                    sb.append(it.next());
+                                    if (it.hasNext()) {
+                                        sb.append(',').append(' ');
+                                    }
+                                }
+                                evalue = sb.toString();
+                            } else {
+                                evalue = values;
+                            }
+                        } else {
+                            evalue = values.get(0);
+                        }
+                        camelHeaders.put(entry.getKey(), evalue);
                     }
                     
                 }

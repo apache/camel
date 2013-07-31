@@ -17,6 +17,7 @@
 package org.apache.camel.test.junit4;
 
 import java.io.InputStream;
+import java.util.HashMap;
 import java.util.Hashtable;
 import java.util.Map;
 import java.util.Properties;
@@ -35,6 +36,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.Service;
 import org.apache.camel.ServiceStatus;
+import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.properties.PropertiesComponent;
@@ -76,6 +78,7 @@ public abstract class CamelTestSupport extends TestSupport {
     private boolean useRouteBuilder = true;
     private final DebugBreakpoint breakpoint = new DebugBreakpoint();
     private final StopWatch watch = new StopWatch();
+    private final Map<String, String> fromEndpoints = new HashMap<String, String>();
 
     /**
      * Use the RouteBuilder or not
@@ -144,6 +147,10 @@ public abstract class CamelTestSupport extends TestSupport {
      */
     public String isMockEndpointsAndSkip() {
         return null;
+    }
+
+    public void replaceRouteFromWith(String routeId, String fromEndpoint) {
+        fromEndpoints.put(routeId, fromEndpoint);
     }
 
     /**
@@ -293,6 +300,7 @@ public abstract class CamelTestSupport extends TestSupport {
                 log.debug("Using created route builder: " + builder);
                 context.addRoutes(builder);
             }
+            replaceFromEndpoints();
             boolean skip = "true".equalsIgnoreCase(System.getProperty("skipStartingCamelContext"));
             if (skip) {
                 log.info("Skipping starting CamelContext as system property skipStartingCamelContext is set to be true.");
@@ -302,6 +310,7 @@ public abstract class CamelTestSupport extends TestSupport {
                 startCamelContext();
             }
         } else {
+            replaceFromEndpoints();
             log.debug("Using route builder from the created context: " + context);
         }
         log.debug("Routing Rules are: " + context.getRoutes());
@@ -309,6 +318,17 @@ public abstract class CamelTestSupport extends TestSupport {
         assertValidContext(context);
 
         INIT.set(true);
+    }
+
+    private void replaceFromEndpoints() throws Exception {
+        for (final Map.Entry<String, String> entry : fromEndpoints.entrySet()) {
+            context.getRouteDefinition(entry.getKey()).adviceWith(context, new AdviceWithRouteBuilder() {
+                @Override
+                public void configure() throws Exception {
+                    replaceFromWith(entry.getValue());
+                }
+            });
+        }
     }
 
     @After

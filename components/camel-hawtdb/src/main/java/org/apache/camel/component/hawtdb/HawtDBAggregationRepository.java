@@ -27,11 +27,13 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.spi.OptimisticLockingAggregationRepository;
 import org.apache.camel.spi.RecoverableAggregationRepository;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
 import org.fusesource.hawtbuf.Buffer;
+import org.fusesource.hawtdb.api.OptimisticUpdateException;
 import org.fusesource.hawtdb.api.SortedIndex;
 import org.fusesource.hawtdb.api.Transaction;
 import org.slf4j.Logger;
@@ -40,7 +42,7 @@ import org.slf4j.LoggerFactory;
 /**
  * An instance of AggregationRepository which is backed by a HawtDB.
  */
-public class HawtDBAggregationRepository extends ServiceSupport implements RecoverableAggregationRepository {
+public class HawtDBAggregationRepository extends ServiceSupport implements RecoverableAggregationRepository, OptimisticLockingAggregationRepository {
 
     private static final transient Logger LOG = LoggerFactory.getLogger(HawtDBAggregationRepository.class);
     private HawtDBFile hawtDBFile;
@@ -100,6 +102,18 @@ public class HawtDBAggregationRepository extends ServiceSupport implements Recov
     }
 
     public Exchange add(final CamelContext camelContext, final String key, final Exchange exchange) {
+        return doAdd(camelContext, key, exchange, true);
+    }
+
+    public Exchange add(CamelContext camelContext, String key, Exchange oldExchange, Exchange newExchange) throws OptimisticLockingException {
+        try {
+            return doAdd(camelContext, key, newExchange, false);
+        } catch (OptimisticUpdateException e) {
+            throw new OptimisticLockingException();
+        }
+    }
+
+    protected Exchange doAdd(final CamelContext camelContext, final String key, final Exchange exchange, final boolean handleOptimisticLockingException) {
         LOG.debug("Adding key [{}] -> {}", key, exchange);
         try {
             // If we could guarantee that the key and exchange are immutable,
@@ -121,7 +135,7 @@ public class HawtDBAggregationRepository extends ServiceSupport implements Recov
                 public String toString() {
                     return "Adding key [" + key + "]";
                 }
-            });
+            }, handleOptimisticLockingException);
             if (rc == null) {
                 return null;
             }
@@ -255,7 +269,6 @@ public class HawtDBAggregationRepository extends ServiceSupport implements Recov
                     }
                 }
                 return null;
-
             }
 
             @Override
@@ -336,6 +349,7 @@ public class HawtDBAggregationRepository extends ServiceSupport implements Recov
                     return "Recovering exchangeId [" + exchangeId + "]";
                 }
             });
+
             if (rc != null) {
                 answer = codec.unmarshallExchange(camelContext, rc);
             }

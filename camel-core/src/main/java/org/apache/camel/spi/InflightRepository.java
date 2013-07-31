@@ -18,14 +18,14 @@ package org.apache.camel.spi;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
-import org.apache.camel.Service;
+import org.apache.camel.StaticService;
 
 /**
  * A repository which tracks in flight {@link Exchange}s.
  *
  * @version 
  */
-public interface InflightRepository extends Service {
+public interface InflightRepository extends StaticService {
 
     /**
      * Adds the exchange to the inflight registry to the total counter

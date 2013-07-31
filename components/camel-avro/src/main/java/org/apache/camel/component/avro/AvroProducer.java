@@ -19,12 +19,12 @@ package org.apache.camel.component.avro;
 import org.apache.avro.ipc.Callback;
 import org.apache.avro.ipc.Requestor;
 import org.apache.avro.ipc.Transceiver;
-
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ServicePoolAware;
 import org.apache.camel.impl.DefaultAsyncProducer;
+import org.apache.commons.lang.StringUtils;
 
 public abstract class AvroProducer extends DefaultAsyncProducer implements ServicePoolAware {
 
@@ -41,8 +41,31 @@ public abstract class AvroProducer extends DefaultAsyncProducer implements Servi
     public boolean process(final Exchange exchange, final AsyncCallback callback) {
         Object request = exchange.getIn().getBody();
 
+        AvroConfiguration configuration = getEndpoint().getConfiguration();
+        if (transceiver == null) {
+            try {
+                transceiver = createTransceiver();
+                if (configuration.isReflectionProtocol()) {
+                    requestor = new AvroReflectRequestor(configuration.getProtocol(), transceiver);
+                } else {
+                    requestor = new AvroSpecificRequestor(configuration.getProtocol(), transceiver);
+                }
+            } catch (Exception e) {
+                exchange.setException(e);
+                callback.done(true);
+                return true;
+            }
+        }
+
         try {
-            requestor.request(exchange.getIn().getHeader(AvroConstants.AVRO_MESSAGE_NAME, String.class), wrapObjectToArray(request), new Callback<Object>() {
+            String messageName;
+            if (!StringUtils.isEmpty(exchange.getIn().getHeader(AvroConstants.AVRO_MESSAGE_NAME, String.class))) {
+                messageName = exchange.getIn().getHeader(AvroConstants.AVRO_MESSAGE_NAME, String.class);
+            } else {
+                messageName = configuration.getMessageName();
+            }
+
+            requestor.request(messageName, wrapObjectToArray(request), new Callback<Object>() {
                 @Override
                 public void handleResult(Object result) {
                     // got result from avro, so set it on the exchange and invoke the callback
@@ -88,8 +111,6 @@ public abstract class AvroProducer extends DefaultAsyncProducer implements Servi
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        transceiver = createTransceiver();
-        requestor = new AvroRequestor(getEndpoint().getProtocol(), transceiver);
     }
 
     @Override
@@ -97,6 +118,7 @@ public abstract class AvroProducer extends DefaultAsyncProducer implements Servi
         super.doStop();
         if (transceiver != null) {
             transceiver.close();
+            transceiver = null;
         }
         requestor = null;
     }

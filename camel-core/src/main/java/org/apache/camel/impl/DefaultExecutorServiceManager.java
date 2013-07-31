@@ -31,6 +31,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.NamedNode;
+import org.apache.camel.StaticService;
 import org.apache.camel.ThreadPoolRejectedPolicy;
 import org.apache.camel.model.OptionalIdentifiedDefinition;
 import org.apache.camel.model.ProcessorDefinition;
@@ -502,8 +503,13 @@ public class DefaultExecutorServiceManager extends ServiceSupport implements Exe
         } else if (source instanceof String) {
             id = (String) source;
         } else if (source != null) {
-            // fallback and use the simple class name with hashcode for the id so its unique for this given source
-            id = source.getClass().getSimpleName() + "(" + ObjectHelper.getIdentityHashCode(source) + ")";
+            if (source instanceof StaticService) {
+                // the source is static service so its name would be unique
+                id = source.getClass().getSimpleName();
+            } else {
+                // fallback and use the simple class name with hashcode for the id so its unique for this given source
+                id = source.getClass().getSimpleName() + "(" + ObjectHelper.getIdentityHashCode(source) + ")";
+            }
         } else {
             // no source, so fallback and use the simple class name from thread pool and its hashcode identity so its unique
             id = executorService.getClass().getSimpleName() + "(" + ObjectHelper.getIdentityHashCode(executorService) + ")";

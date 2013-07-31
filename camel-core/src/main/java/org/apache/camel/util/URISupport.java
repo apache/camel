@@ -61,16 +61,18 @@ public final class URISupport {
 
     /**
      * Removes detected sensitive information (such as passwords) from the URI and returns the result.
+     *
      * @param uri The uri to sanitize.
      * @see #SECRETS for the matched pattern
      *
      * @return Returns null if the uri is null, otherwise the URI with the passphrase, password or secretKey sanitized.
      */
     public static String sanitizeUri(String uri) {
+        // use xxxxx as replacement as that works well with JMX also
         String sanitized = uri;
         if (uri != null) {
-            sanitized = SECRETS.matcher(sanitized).replaceAll("$1=******");
-            sanitized = USERINFO_PASSWORD.matcher(sanitized).replaceFirst("$1******$3");
+            sanitized = SECRETS.matcher(sanitized).replaceAll("$1=xxxxxx");
+            sanitized = USERINFO_PASSWORD.matcher(sanitized).replaceFirst("$1xxxxxx$3");
         }
         return sanitized;
     }
@@ -86,7 +88,7 @@ public final class URISupport {
     public static String sanitizePath(String path) {
         String sanitized = path;
         if (path != null) {
-            sanitized = PATH_USERINFO_PASSWORD.matcher(sanitized).replaceFirst("$1******$3");
+            sanitized = PATH_USERINFO_PASSWORD.matcher(sanitized).replaceFirst("$1xxxxxx$3");
         }
         return sanitized;
     }

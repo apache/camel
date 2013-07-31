@@ -33,6 +33,10 @@ public class GetProcessor implements Processor {
     @Override
     public void process(Exchange exchange) throws Exception {
         Object body = exchange.getIn().getBody();
+        if (body instanceof Key) {
+            Value v = keyValue.get((Key) body);
+            exchange.getOut().setBody(v);
+        }
         if (body instanceof Object[]) {
             Object[] args = (Object[]) body;
             if (args.length == 1 && args[0] instanceof Key) {

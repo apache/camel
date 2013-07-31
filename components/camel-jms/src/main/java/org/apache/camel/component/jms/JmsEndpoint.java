@@ -313,7 +313,7 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
 
     public HeaderFilterStrategy getHeaderFilterStrategy() {
         if (headerFilterStrategy == null) {
-            headerFilterStrategy = new JmsHeaderFilterStrategy();
+            headerFilterStrategy = new JmsHeaderFilterStrategy(isIncludeAllJMSXProperties());
         }
         return headerFilterStrategy;
     }
@@ -1083,6 +1083,16 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     }
 
     @ManagedAttribute
+    public boolean isIncludeAllJMSXProperties() {
+        return configuration.isIncludeAllJMSXProperties();
+    }
+
+    @ManagedAttribute
+    public void setIncludeAllJMSXProperties(boolean includeAllJMSXProperties) {
+        configuration.setIncludeAllJMSXProperties(includeAllJMSXProperties);
+    }
+
+    @ManagedAttribute
     public DefaultTaskExecutorType getDefaultTaskExecutorType() {
         return configuration.getDefaultTaskExecutorType();
     }
@@ -1120,7 +1130,7 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         return getCamelContext().getName();
     }
 
-    @ManagedAttribute(description = "Endpoint Uri")
+    @ManagedAttribute(description = "Endpoint Uri", sanitize = true)
     @Override
     public String getEndpointUri() {
         return super.getEndpointUri();

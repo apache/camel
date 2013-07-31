@@ -34,4 +34,6 @@ public @interface ManagedAttribute {
 
     String description() default "";
 
+    boolean sanitize() default false;
+
 }

@@ -24,13 +24,12 @@ import javax.management.modelmbean.ModelMBean;
 import javax.management.modelmbean.ModelMBeanInfo;
 import javax.management.modelmbean.RequiredModelMBean;
 
-import org.apache.camel.Service;
+import org.apache.camel.CamelContext;
 import org.apache.camel.api.management.ManagedInstance;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.api.management.NotificationSenderAware;
 import org.apache.camel.spi.ManagementMBeanAssembler;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.ServiceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,12 +40,14 @@ import org.slf4j.LoggerFactory;
  *
  * @version 
  */
-public class DefaultManagementMBeanAssembler implements ManagementMBeanAssembler, Service {
-    protected final Logger log = LoggerFactory.getLogger(getClass());
-    private final MBeanInfoAssembler assembler;
+public class DefaultManagementMBeanAssembler implements ManagementMBeanAssembler {
+    private static final Logger LOG = LoggerFactory.getLogger(DefaultManagementMBeanAssembler.class);
+    protected final MBeanInfoAssembler assembler;
+    protected final CamelContext camelContext;
 
-    public DefaultManagementMBeanAssembler() {
-        this.assembler = new MBeanInfoAssembler();
+    public DefaultManagementMBeanAssembler(CamelContext camelContext) {
+        this.camelContext = camelContext;
+        this.assembler = new MBeanInfoAssembler(camelContext);
     }
 
     public ModelMBean assemble(MBeanServer mBeanServer, Object obj, ObjectName name) throws JMException {
@@ -57,7 +58,7 @@ public class DefaultManagementMBeanAssembler implements ManagementMBeanAssembler
             // there may be a custom embedded instance which have additional methods
             Object custom = ((ManagedInstance) obj).getInstance();
             if (custom != null && ObjectHelper.hasAnnotation(custom.getClass().getAnnotations(), ManagedResource.class)) {
-                log.trace("Assembling MBeanInfo for: {} from custom @ManagedResource object: {}", name, custom);
+                LOG.trace("Assembling MBeanInfo for: {} from custom @ManagedResource object: {}", name, custom);
                 // get the mbean info from the custom managed object
                 mbi = assembler.getMBeanInfo(obj, custom, name.toString());
                 // and let the custom object be registered in JMX
@@ -67,7 +68,7 @@ public class DefaultManagementMBeanAssembler implements ManagementMBeanAssembler
 
         if (mbi == null) {
             // use the default provided mbean which has been annotated with JMX annotations
-            log.trace("Assembling MBeanInfo for: {} from @ManagedResource object: {}", name, obj);
+            LOG.trace("Assembling MBeanInfo for: {} from @ManagedResource object: {}", name, obj);
             mbi = assembler.getMBeanInfo(obj, null, name.toString());
         }
 
@@ -75,8 +76,14 @@ public class DefaultManagementMBeanAssembler implements ManagementMBeanAssembler
             return null;
         }
 
-        RequiredModelMBean mbean = (RequiredModelMBean) mBeanServer.instantiate(RequiredModelMBean.class.getName());
-        mbean.setModelMBeanInfo(mbi);
+        RequiredModelMBean mbean;
+        boolean sanitize = camelContext.getManagementStrategy().getManagementAgent().getSanitize() != null && camelContext.getManagementStrategy().getManagementAgent().getSanitize();
+        if (sanitize) {
+            mbean = new SanitizeRequiredModelMBean(mbi, sanitize);
+        } else {
+            mbean = (RequiredModelMBean) mBeanServer.instantiate(RequiredModelMBean.class.getName());
+            mbean.setModelMBeanInfo(mbi);
+        }
 
         try {
             mbean.setManagedResource(obj, "ObjectReference");
@@ -92,13 +99,4 @@ public class DefaultManagementMBeanAssembler implements ManagementMBeanAssembler
         return mbean;
     }
 
-    @Override
-    public void start() throws Exception {
-        ServiceHelper.startService(assembler);
-    }
-
-    @Override
-    public void stop() throws Exception {
-        ServiceHelper.stopService(assembler);
-    }
 }

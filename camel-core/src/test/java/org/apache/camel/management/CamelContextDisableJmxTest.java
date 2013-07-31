@@ -14,33 +14,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.avro;
+package org.apache.camel.management;
 
-import org.apache.avro.ipc.HttpServer;
+import junit.framework.TestCase;
+import org.apache.camel.CamelContext;
+import org.apache.camel.impl.DefaultCamelContext;
 
-import org.apache.camel.Endpoint;
-import org.apache.camel.Processor;
+public class CamelContextDisableJmxTest extends TestCase {
 
-public class AvroHttpConsumer extends AvroConsumer {
+    public void testDisableJmx() throws Exception {
+        CamelContext context = new DefaultCamelContext();
+        context.disableJMX();
+        context.start();
 
-    HttpServer server;
+        // JMX should be disabled and therefore not a ManagedManagementStrategy instance
+        assertFalse(context.getManagementStrategy() instanceof ManagedManagementStrategy);
 
-    public AvroHttpConsumer(Endpoint endpoint, Processor processor) {
-        super(endpoint, processor);
-    }
-
-    @Override
-    protected void doStart() throws Exception {
-        AvroConfiguration configuration = getEndpoint().getConfiguration();
-        server = new HttpServer(new AvroResponder(this), configuration.getPort());
-        server.start();
-    }
-
-    @Override
-    protected void doStop() throws Exception {
-        super.doStop();
-        if (server != null) {
-            server.close();
-        }
+        context.stop();
     }
 }

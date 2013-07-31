@@ -97,7 +97,7 @@ public class HawtDBFile extends TxPageFileFactory implements Service {
             public String toString() {
                 return "Allocation repository file: " + getFile();
             }
-        });
+        }, true);
     }
 
     public void stop() {
@@ -113,10 +113,14 @@ public class HawtDBFile extends TxPageFileFactory implements Service {
     }
 
     public <T> T execute(Work<T> work) {
+        return execute(work, true);
+    }
+
+    public <T> T execute(Work<T> work, boolean rollbackOnOptimisticUpdateException) {
         LOG.trace("Executing work +++ start +++ {}", work);
 
         Transaction tx = pageFile.tx();
-        T answer = doExecute(work, tx, pageFile);
+        T answer = doExecute(work, tx, pageFile, rollbackOnOptimisticUpdateException);
 
         LOG.trace("Executing work +++ done  +++ {}", work);
         return answer;
@@ -148,7 +152,7 @@ public class HawtDBFile extends TxPageFileFactory implements Service {
         return answer;
     }
 
-    private static <T> T doExecute(Work<T> work, Transaction tx, TxPageFile page) {
+    private static <T> T doExecute(Work<T> work, Transaction tx, TxPageFile page, boolean handleOptimisticLockingException) {
         T answer = null;
 
         boolean done = false;
@@ -172,10 +176,16 @@ public class HawtDBFile extends TxPageFileFactory implements Service {
                 // and we are done
                 done = true;
             } catch (OptimisticUpdateException e) {
-                // retry as we hit an optimistic update error
-                LOG.warn("OptimisticUpdateException occurred at attempt " + attempt + " executing work " + work + ". Will do rollback and retry.");
-                // no harm doing rollback before retry and no wait is needed
-                tx.rollback();
+                if (handleOptimisticLockingException) {
+                    // retry as we hit an optimistic update error
+                    LOG.warn("OptimisticUpdateException occurred at attempt " + attempt + " executing work " + work + ". Will do rollback and retry.");
+                    // no harm doing rollback before retry and no wait is needed
+                    tx.rollback();
+                } else {
+                    // we must rollback and rethrow
+                    tx.rollback();
+                    throw e;
+                }
             } catch (RuntimeException e) {
                 LOG.warn("Error executing work " + work + ". Will do rollback.", e);
                 tx.rollback();

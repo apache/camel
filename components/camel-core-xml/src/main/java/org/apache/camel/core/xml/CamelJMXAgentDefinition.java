@@ -111,6 +111,12 @@ public class CamelJMXAgentDefinition extends IdentifiedType {
     @XmlAttribute
     private String loadStatisticsEnabled;
 
+    /**
+     * A flag that indicates whether to remove detected sensitive information (such as passwords) from MBean names and attributes.
+     */
+    @XmlAttribute
+    private String sanitize = "false";
+
     public String getDisabled() {
         return disabled;
     }
@@ -215,6 +221,14 @@ public class CamelJMXAgentDefinition extends IdentifiedType {
         this.loadStatisticsEnabled = loadStatisticsEnabled;
     }
 
+    public String getSanitize() {
+        return sanitize;
+    }
+
+    public void setSanitize(String sanitize) {
+        this.sanitize = sanitize;
+    }
+
     @Override
     public String toString() {
         StringBuilder sb = new StringBuilder();
@@ -244,11 +258,17 @@ public class CamelJMXAgentDefinition extends IdentifiedType {
         if (loadStatisticsEnabled != null) {
             sb.append(", loadStatisticsEnabled=").append(loadStatisticsEnabled);
         }
+        if (onlyRegisterProcessorWithCustomId != null) {
+            sb.append(", onlyRegisterProcessorWithCustomId=").append(onlyRegisterProcessorWithCustomId);
+        }
         if (registerAlways != null) {
             sb.append(", registerAlways=").append(registerAlways);
         }
         if (registerNewRoutes != null) {
             sb.append(", registerNewRoutes=").append(registerNewRoutes);
+        }
+        if (sanitize != null) {
+            sb.append(", sanitize=").append(sanitize);
         }
         sb.append("]");
         return sb.toString();

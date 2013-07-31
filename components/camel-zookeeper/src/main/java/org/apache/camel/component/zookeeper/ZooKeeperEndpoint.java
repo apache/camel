@@ -66,7 +66,7 @@ public class ZooKeeperEndpoint extends DefaultEndpoint {
         return connectionManager;
     }
 
-    @ManagedAttribute(description = "Session Password")
+    @ManagedAttribute(description = "Session Password", sanitize = true)
     public byte[] getSessionPassword() {
         return getConfiguration().getSessionPassword();
     }

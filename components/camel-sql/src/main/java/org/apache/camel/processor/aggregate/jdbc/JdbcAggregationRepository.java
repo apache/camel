@@ -28,6 +28,7 @@ import javax.sql.DataSource;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.spi.OptimisticLockingAggregationRepository;
 import org.apache.camel.spi.RecoverableAggregationRepository;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
@@ -50,12 +51,13 @@ import org.springframework.transaction.support.TransactionTemplate;
 /**
  * JDBC based {@link org.apache.camel.spi.AggregationRepository}
  */
-public class JdbcAggregationRepository extends ServiceSupport implements RecoverableAggregationRepository {
+public class JdbcAggregationRepository extends ServiceSupport implements RecoverableAggregationRepository, OptimisticLockingAggregationRepository {
 
     private static final transient Logger LOG = LoggerFactory.getLogger(JdbcAggregationRepository.class);
     private static final String ID = "id";
     private static final String EXCHANGE = "exchange";
     private static final String BODY = "body";
+    private JdbcOptimisticLockingExceptionMapper jdbcOptimisticLockingExceptionMapper = new DefaultJdbcOptimisticLockingExceptionMapper();
     private PlatformTransactionManager transactionManager;
     private DataSource dataSource;
     private TransactionTemplate transactionTemplate;
@@ -109,6 +111,21 @@ public class JdbcAggregationRepository extends ServiceSupport implements Recover
         this.dataSource = dataSource;
 
         jdbcTemplate = new JdbcTemplate(dataSource);
+    }
+
+    @Override
+    public Exchange add(final CamelContext camelContext, final String correlationId,
+                        final Exchange oldExchange, final Exchange newExchange) throws OptimisticLockingException {
+
+        try {
+            return add(camelContext, correlationId, newExchange);
+        } catch (Exception e) {
+            if (jdbcOptimisticLockingExceptionMapper != null && jdbcOptimisticLockingExceptionMapper.isOptimisticLocking(e)) {
+                throw new OptimisticLockingException();
+            } else {
+                throw ObjectHelper.wrapRuntimeCamelException(e);
+            }
+        }
     }
 
     @Override
@@ -423,6 +440,14 @@ public class JdbcAggregationRepository extends ServiceSupport implements Recover
      */
     public void setLobHandler(LobHandler lobHandler) {
         this.lobHandler = lobHandler;
+    }
+
+    public JdbcOptimisticLockingExceptionMapper getJdbcOptimisticLockingExceptionMapper() {
+        return jdbcOptimisticLockingExceptionMapper;
+    }
+
+    public void setJdbcOptimisticLockingExceptionMapper(JdbcOptimisticLockingExceptionMapper jdbcOptimisticLockingExceptionMapper) {
+        this.jdbcOptimisticLockingExceptionMapper = jdbcOptimisticLockingExceptionMapper;
     }
 
     public String getRepositoryName() {

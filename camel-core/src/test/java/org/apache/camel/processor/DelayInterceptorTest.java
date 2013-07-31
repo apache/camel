@@ -20,7 +20,6 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.processor.interceptor.Delayer;
 
 /**
  * Delay interceptor unit test.
@@ -50,11 +49,10 @@ public class DelayInterceptorTest extends ContextTestSupport {
         return new RouteBuilder() {
             // START SNIPPET: e1
             public void configure() throws Exception {
-                // add the delay interceptor to delay each step 200 millis
-                getContext().addInterceptStrategy(new Delayer(200));
-                
+                // configure delayer for each step 200 millis
+                getContext().setDelayer(200L);
+
                 // regular routes here
-            // END SNIPPET: e1
 
                 from("direct:start").
                         process(new Processor() {

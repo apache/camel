@@ -16,18 +16,29 @@
  */
 package org.apache.camel.component.avro;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 
 public class AvroTestSupport extends CamelTestSupport {
+    protected int port = 9100;
+    protected int avroPort = setupFreePort("avroport");
+    protected int avroPortReflection = setupFreePort("avroPortReflection");
+    
 
-    int avroPort;
+    public int setupFreePort(String name) {
+        port = AvailablePortFinder.getNextAvailable(++port);
+        System.setProperty(name, String.valueOf(port));
+        return port;
+    }
 
     @Override
-    protected void doPreSetup() throws Exception {
-        avroPort = AvailablePortFinder.getNextAvailable(9100);
-        System.setProperty("avroport", String.valueOf(avroPort));
-
-        super.doPreSetup();
+    protected CamelContext createCamelContext() throws Exception {
+        CamelContext context = super.createCamelContext();
+        AvroConfiguration configuration = new AvroConfiguration();
+        AvroComponent component = new AvroComponent(context);
+        component.setConfiguration(configuration);
+        context.addComponent("avro", component);
+        return context;
     }
 }

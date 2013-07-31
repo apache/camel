@@ -25,7 +25,10 @@ import org.apache.camel.spi.InterceptStrategy;
 
 /**
  * An interceptor strategy for delaying routes.
+ *
+ * @deprecated no longer in use, will be removed in next Camel release.
  */
+@Deprecated
 public class Delayer implements InterceptStrategy {
 
     private volatile boolean enabled = true;

@@ -21,6 +21,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Service;
+import org.apache.camel.StaticService;
 
 /**
  * Pluggable shutdown strategy executed during shutdown of routes.
@@ -38,7 +39,7 @@ import org.apache.camel.Service;
  * @version 
  * @see org.apache.camel.spi.ShutdownAware
  */
-public interface ShutdownStrategy extends Service {
+public interface ShutdownStrategy extends StaticService {
 
     /**
      * Shutdown the routes, forcing shutdown being more aggressive, if timeout occurred.
@@ -120,7 +121,7 @@ public interface ShutdownStrategy extends Service {
     /**
      * Gets the timeout.
      * <p/>
-     * Use 0 or a negative value to disable timeout
+     * Use positive value to set the timeout
      * <p/>
      * The default timeout unit is <tt>SECONDS</tt>
      *

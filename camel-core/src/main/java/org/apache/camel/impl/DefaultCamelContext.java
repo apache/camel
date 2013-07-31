@@ -34,7 +34,6 @@ import java.util.Set;
 import java.util.TreeMap;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import javax.naming.Context;
 import javax.xml.bind.JAXBContext;
@@ -65,7 +64,6 @@ import org.apache.camel.ShutdownRoute;
 import org.apache.camel.ShutdownRunningTask;
 import org.apache.camel.StartupListener;
 import org.apache.camel.StatefulService;
-import org.apache.camel.StreamCache;
 import org.apache.camel.SuspendableService;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.VetoCamelContextStartException;
@@ -75,6 +73,7 @@ import org.apache.camel.impl.converter.BaseTypeConverterRegistry;
 import org.apache.camel.impl.converter.DefaultTypeConverter;
 import org.apache.camel.impl.converter.LazyLoadingTypeConverter;
 import org.apache.camel.management.DefaultManagementMBeanAssembler;
+import org.apache.camel.management.DefaultManagementStrategy;
 import org.apache.camel.management.JmxSystemPropertyKeys;
 import org.apache.camel.management.ManagementStrategyFactory;
 import org.apache.camel.model.Constants;
@@ -168,7 +167,6 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     private List<LifecycleStrategy> lifecycleStrategies = new ArrayList<LifecycleStrategy>();
     private ManagementStrategy managementStrategy;
     private ManagementMBeanAssembler managementMBeanAssembler;
-    private final AtomicBoolean managementStrategyInitialized = new AtomicBoolean(false);
     private final List<RouteDefinition> routeDefinitions = new ArrayList<RouteDefinition>();
     private List<InterceptStrategy> interceptStrategies = new ArrayList<InterceptStrategy>();
 
@@ -242,6 +240,11 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         } else {
             packageScanClassResolver = new DefaultPackageScanClassResolver();
         }
+
+        // setup management strategy first since end users may use it to add event notifiers
+        // using the management strategy before the CamelContext has been started
+        this.managementStrategy = createManagementStrategy();
+        this.managementMBeanAssembler = createManagementMBeanAssembler();
 
         Container.Instance.manage(this);
     }
@@ -1180,9 +1183,6 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     }
 
     public ManagementMBeanAssembler getManagementMBeanAssembler() {
-        if (managementMBeanAssembler == null) {
-            managementMBeanAssembler = createManagementMBeanAssembler();
-        }
         return managementMBeanAssembler;
     }
 
@@ -1580,12 +1580,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         }
 
         if (getDelayer() != null && getDelayer() > 0) {
-            // only add a new delayer if not already configured
-            if (Delayer.getDelayer(this) == null) {
-                long millis = getDelayer();
-                log.info("Delayer is enabled with: {} ms. on CamelContext: {}", millis, getName());
-                addInterceptStrategy(new Delayer(millis));
-            }
+            log.info("Delayer is enabled with: {} ms. on CamelContext: {}", getDelayer(), getName());
         }
         
         // register debugger
@@ -2286,7 +2281,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
      * Lazily create a default implementation
      */
     protected ManagementMBeanAssembler createManagementMBeanAssembler() {
-        return new DefaultManagementMBeanAssembler();
+        return new DefaultManagementMBeanAssembler(this);
     }
 
     /**
@@ -2442,25 +2437,11 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     }
 
     public ManagementStrategy getManagementStrategy() {
-        if (!managementStrategyInitialized.get()) {
-            synchronized (managementStrategyInitialized) {
-                if (managementStrategyInitialized.compareAndSet(false, true)) {
-                    managementStrategy = createManagementStrategy();
-                }
-            }
-        }
         return managementStrategy;
     }
 
     public void setManagementStrategy(ManagementStrategy managementStrategy) {
-        synchronized (managementStrategyInitialized) {
-            if (managementStrategyInitialized.get()) {
-                log.warn("Resetting ManagementStrategy for CamelContext: " + getName());
-            }
-
-            this.managementStrategy = managementStrategy;
-            managementStrategyInitialized.set(true);
-        }
+        this.managementStrategy = managementStrategy;
     }
 
     public InterceptStrategy getDefaultTracer() {
@@ -2497,7 +2478,12 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     }
 
     public void disableJMX() {
-        disableJMX = true;
+        if (isStarting() || isStarted()) {
+            throw new IllegalStateException("Disabling JMX can only be done when CamelContext has not been started");
+        }
+        managementStrategy = new DefaultManagementStrategy(this);
+        // must clear lifecycle strategies as we add DefaultManagementLifecycleStrategy by default for JMX support
+        lifecycleStrategies.clear();
     }
 
     public InflightRepository getInflightRepository() {

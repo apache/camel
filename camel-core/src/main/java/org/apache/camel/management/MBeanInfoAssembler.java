@@ -31,6 +31,7 @@ import javax.management.modelmbean.ModelMBeanInfoSupport;
 import javax.management.modelmbean.ModelMBeanNotificationInfo;
 import javax.management.modelmbean.ModelMBeanOperationInfo;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Service;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedNotification;
@@ -57,6 +58,12 @@ public class MBeanInfoAssembler implements Service {
     // use a weak cache as we dont want the cache to keep around as it reference classes
     // which could prevent classloader to unload classes if being referenced from this cache
     private final LRUCache<Class<?>, MBeanAttributesAndOperations> cache = new LRUWeakCache<Class<?>, MBeanAttributesAndOperations>(1000);
+
+    private final CamelContext camelContext;
+
+    public MBeanInfoAssembler(CamelContext camelContext) {
+        this.camelContext = camelContext;
+    }
 
     @Override
     public void start() throws Exception {
@@ -195,6 +202,7 @@ public class MBeanInfoAssembler implements Service {
                 String desc = ma.description();
                 Method getter = null;
                 Method setter = null;
+                boolean sanitize = ma.sanitize();
 
                 if (cacheInfo.isGetter) {
                     key = cacheInfo.getterOrSetterShorthandName;
@@ -220,6 +228,7 @@ public class MBeanInfoAssembler implements Service {
                 if (setter != null) {
                     info.setSetter(setter);
                 }
+                info.setSanitize(sanitize);
 
                 attributes.put(key, info);
             }
@@ -229,7 +238,8 @@ public class MBeanInfoAssembler implements Service {
             if (mo != null) {
                 String desc = mo.description();
                 Method operation = cacheInfo.method;
-                operations.add(new ManagedOperationInfo(desc, operation));
+                boolean sanitize = mo.sanitize();
+                operations.add(new ManagedOperationInfo(desc, operation, sanitize));
             }
         }
     }
@@ -242,10 +252,15 @@ public class MBeanInfoAssembler implements Service {
 
             // add missing attribute descriptors, this is needed to have attributes accessible
             Descriptor desc = mbeanAttribute.getDescriptor();
+
+            desc.setField("sanitize", info.isSanitize() ? "true" : "false");
             if (info.getGetter() != null) {
                 desc.setField("getMethod", info.getGetter().getName());
                 // attribute must also be added as mbean operation
                 ModelMBeanOperationInfo mbeanOperation = new ModelMBeanOperationInfo(info.getKey(), info.getGetter());
+                Descriptor opDesc = mbeanOperation.getDescriptor();
+                opDesc.setField("sanitize", info.isSanitize() ? "true" : "false");
+                mbeanOperation.setDescriptor(opDesc);
                 mBeanOperations.add(mbeanOperation);
             }
             if (info.getSetter() != null) {
@@ -264,6 +279,9 @@ public class MBeanInfoAssembler implements Service {
     private void extractMbeanOperations(Object managedBean, Set<ManagedOperationInfo> operations, Set<ModelMBeanOperationInfo> mBeanOperations) {
         for (ManagedOperationInfo info : operations) {
             ModelMBeanOperationInfo mbean = new ModelMBeanOperationInfo(info.getDescription(), info.getOperation());
+            Descriptor opDesc = mbean.getDescriptor();
+            opDesc.setField("sanitize", info.isSanitize() ? "true" : "false");
+            mbean.setDescriptor(opDesc);
             mBeanOperations.add(mbean);
             LOG.trace("Assembled operation: {}", mbean);
         }
@@ -294,6 +312,7 @@ public class MBeanInfoAssembler implements Service {
         private String description;
         private Method getter;
         private Method setter;
+        private boolean sanitize;
 
         private ManagedAttributeInfo(String key, String description) {
             this.key = key;
@@ -324,6 +343,14 @@ public class MBeanInfoAssembler implements Service {
             this.setter = setter;
         }
 
+        public boolean isSanitize() {
+            return sanitize;
+        }
+
+        public void setSanitize(boolean sanitize) {
+            this.sanitize = sanitize;
+        }
+
         @Override
         public String toString() {
             return "ManagedAttributeInfo: [" + key + " + getter: " + getter + ", setter: " + setter + "]";
@@ -333,10 +360,12 @@ public class MBeanInfoAssembler implements Service {
     private static final class ManagedOperationInfo {
         private final String description;
         private final Method operation;
+        private final boolean sanitize;
 
-        private ManagedOperationInfo(String description, Method operation) {
+        private ManagedOperationInfo(String description, Method operation, boolean sanitize) {
             this.description = description;
             this.operation = operation;
+            this.sanitize = sanitize;
         }
 
         public String getDescription() {
@@ -345,6 +374,10 @@ public class MBeanInfoAssembler implements Service {
 
         public Method getOperation() {
             return operation;
+        }
+
+        public boolean isSanitize() {
+            return sanitize;
         }
 
         @Override

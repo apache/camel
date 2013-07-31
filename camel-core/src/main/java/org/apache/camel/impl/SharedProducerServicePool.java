@@ -17,6 +17,7 @@
 package org.apache.camel.impl;
 
 import org.apache.camel.ShutdownableService;
+import org.apache.camel.StaticService;
 
 /**
  * A shared {@link org.apache.camel.impl.DefaultProducerServicePool} which is used by
@@ -24,7 +25,7 @@ import org.apache.camel.ShutdownableService;
  *
  * @version 
  */
-public class SharedProducerServicePool extends DefaultProducerServicePool implements ShutdownableService {
+public class SharedProducerServicePool extends DefaultProducerServicePool implements ShutdownableService, StaticService {
 
     public SharedProducerServicePool() {
     }

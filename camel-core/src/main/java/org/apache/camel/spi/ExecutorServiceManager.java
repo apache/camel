@@ -21,6 +21,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
 
 import org.apache.camel.ShutdownableService;
+import org.apache.camel.StaticService;
 
 /**
  * Strategy to create thread pools.
@@ -50,7 +51,7 @@ import org.apache.camel.ShutdownableService;
  *
  * @see ThreadPoolFactory
  */
-public interface ExecutorServiceManager extends ShutdownableService {
+public interface ExecutorServiceManager extends ShutdownableService, StaticService {
 
     /**
      * Gets the {@link ThreadPoolFactory} to use for creating the thread pools.

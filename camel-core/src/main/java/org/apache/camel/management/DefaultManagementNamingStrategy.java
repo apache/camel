@@ -22,27 +22,31 @@ import javax.management.MalformedObjectNameException;
 import javax.management.ObjectName;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.ErrorHandlerFactory;
+import org.apache.camel.NamedNode;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.Route;
 import org.apache.camel.Service;
+import org.apache.camel.StaticService;
 import org.apache.camel.builder.ErrorHandlerBuilderRef;
-import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.spi.EventNotifier;
 import org.apache.camel.spi.InterceptStrategy;
+import org.apache.camel.spi.ManagementAgent;
 import org.apache.camel.spi.ManagementNamingStrategy;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.InetAddressUtil;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.URISupport;
 
 /**
  * Naming strategy used when registering MBeans.
  */
-public class DefaultManagementNamingStrategy implements ManagementNamingStrategy {
+public class DefaultManagementNamingStrategy implements ManagementNamingStrategy, CamelContextAware {
     public static final String VALUE_UNKNOWN = "unknown";
     public static final String KEY_NAME = "name";
     public static final String KEY_TYPE = "type";
@@ -62,9 +66,11 @@ public class DefaultManagementNamingStrategy implements ManagementNamingStrategy
 
     protected String domainName;
     protected String hostName = "localhost";
+    protected CamelContext camelContext;
 
     public DefaultManagementNamingStrategy() {
         this("org.apache.camel");
+        // default constructor needed for <bean> style configuration
     }
 
     public DefaultManagementNamingStrategy(String domainName) {
@@ -76,6 +82,14 @@ public class DefaultManagementNamingStrategy implements ManagementNamingStrategy
         } catch (UnknownHostException ex) {
             // ignore, use the default "localhost"
         }
+    }
+
+    public CamelContext getCamelContext() {
+        return camelContext;
+    }
+
+    public void setCamelContext(CamelContext camelContext) {
+        this.camelContext = camelContext;
     }
 
     public ObjectName getObjectNameForCamelContext(String managementName, String name) throws MalformedObjectNameException {
@@ -115,7 +129,7 @@ public class DefaultManagementNamingStrategy implements ManagementNamingStrategy
         return createObjectName(buffer);
     }
 
-    public ObjectName getObjectNameForProcessor(CamelContext context, Processor processor, ProcessorDefinition<?> definition) throws MalformedObjectNameException {
+    public ObjectName getObjectNameForProcessor(CamelContext context, Processor processor, NamedNode definition) throws MalformedObjectNameException {
         StringBuilder buffer = new StringBuilder();
         buffer.append(domainName).append(":");
         buffer.append(KEY_CONTEXT + "=").append(getContextId(context)).append(",");
@@ -126,8 +140,9 @@ public class DefaultManagementNamingStrategy implements ManagementNamingStrategy
 
     public ObjectName getObjectNameForErrorHandler(RouteContext routeContext, Processor errorHandler, ErrorHandlerFactory builder) throws MalformedObjectNameException {
         StringBuilder buffer = new StringBuilder();
-        buffer.append(domainName + ":" + KEY_CONTEXT + "=" + getContextId(routeContext.getCamelContext()) + ","
-                      + KEY_TYPE + "=" +  TYPE_ERRORHANDLER + ",");
+        buffer.append(domainName).append(":");
+        buffer.append(KEY_CONTEXT + "=").append(getContextId(routeContext.getCamelContext())).append(",");
+        buffer.append(KEY_TYPE + "=").append(TYPE_ERRORHANDLER + ",");
 
         // we want to only register one instance of the various error handler types and thus do some lookup
         // if its a ErrorHandlerBuildRef. We need a bit of work to do that as there are potential indirection.
@@ -244,9 +259,10 @@ public class DefaultManagementNamingStrategy implements ManagementNamingStrategy
         buffer.append(domainName).append(":");
         buffer.append(KEY_CONTEXT + "=").append(getContextId(context)).append(",");
         buffer.append(KEY_TYPE + "=" + TYPE_SERVICE + ",");
-        buffer.append(KEY_NAME + "=")
-            .append(service.getClass().getSimpleName())
-            .append("(").append(ObjectHelper.getIdentityHashCode(service)).append(")");
+        buffer.append(KEY_NAME + "=").append(service.getClass().getSimpleName());
+        if (!(service instanceof StaticService)) {
+            buffer.append("(").append(ObjectHelper.getIdentityHashCode(service)).append(")");
+        }
         return createObjectName(buffer);
     }
 
@@ -295,6 +311,16 @@ public class DefaultManagementNamingStrategy implements ManagementNamingStrategy
     }
 
     protected String getEndpointId(Endpoint ep) {
+        String answer = doGetEndpointId(ep);
+        Boolean sanitize = camelContext != null && camelContext.getManagementStrategy().getManagementAgent().getSanitize();
+        if (sanitize != null && sanitize) {
+            // use xxxxxx as replacements as * has to be quoted for MBean names
+            answer = URISupport.sanitizeUri(answer);
+        }
+        return answer;
+    }
+
+    private String doGetEndpointId(Endpoint ep) {
         if (ep.isSingleton()) {
             return ep.getEndpointKey();
         } else {

@@ -16,7 +16,6 @@
  */
 package org.apache.camel.management;
 
-import javax.management.Attribute;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
@@ -60,26 +59,6 @@ public class ManagedSendProcessorTest extends ManagementTestSupport {
 
         String pattern = (String) mbeanServer.getAttribute(on, "MessageExchangePattern");
         assertNull(pattern);
-
-        // we must stop it to change the destination
-        mbeanServer.invoke(on, "stop", null, null);
-
-        // send it somewhere else
-        mbeanServer.setAttribute(on, new Attribute("Destination", "direct:foo"));
-
-        // start it
-        mbeanServer.invoke(on, "start", null, null);
-
-        // prepare mocks
-        result.reset();
-        result.expectedMessageCount(0);
-        foo.reset();
-        foo.expectedMessageCount(1);
-
-        // send in another message that should be sent to mock:foo
-        template.sendBody("direct:start", "Bye World");
-
-        assertMockEndpointsSatisfied();
     }
 
     @Override

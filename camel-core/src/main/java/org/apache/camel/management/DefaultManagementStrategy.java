@@ -32,8 +32,11 @@ import org.apache.camel.spi.ManagementAgent;
 import org.apache.camel.spi.ManagementNamingStrategy;
 import org.apache.camel.spi.ManagementObjectStrategy;
 import org.apache.camel.spi.ManagementStrategy;
+import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A default management strategy that does <b>not</b> manage.
@@ -48,8 +51,9 @@ import org.apache.camel.util.ServiceHelper;
  * @see ManagedManagementStrategy
  * @version 
  */
-public class DefaultManagementStrategy implements ManagementStrategy, CamelContextAware {
+public class DefaultManagementStrategy extends ServiceSupport implements ManagementStrategy, CamelContextAware {
 
+    private static final transient Logger LOG = LoggerFactory.getLogger(DefaultManagementStrategy.class);
     private List<EventNotifier> eventNotifiers = new CopyOnWriteArrayList<EventNotifier>();
     private EventFactory eventFactory = new DefaultEventFactory();
     private ManagementNamingStrategy managementNamingStrategy;
@@ -198,7 +202,12 @@ public class DefaultManagementStrategy implements ManagementStrategy, CamelConte
         this.loadStatisticsEnabled = loadStatisticsEnabled;
     }
 
-    public void start() throws Exception {
+    protected void doStart() throws Exception {
+        LOG.info("JMX is disabled");
+        doStartManagementStrategy();
+    }
+
+    protected void doStartManagementStrategy() throws Exception {
         ObjectHelper.notNull(camelContext, "CamelContext");
 
         if (eventNotifiers != null) {
@@ -215,21 +224,19 @@ public class DefaultManagementStrategy implements ManagementStrategy, CamelConte
         }
 
         if (managementAgent != null) {
-            managementAgent.start();
+            ServiceHelper.startService(managementAgent);
             // set the naming strategy using the domain name from the agent
             if (managementNamingStrategy == null) {
                 setManagementNamingStrategy(new DefaultManagementNamingStrategy(managementAgent.getMBeanObjectDomainName()));
             }
         }
+        if (managementNamingStrategy instanceof CamelContextAware) {
+            ((CamelContextAware) managementNamingStrategy).setCamelContext(getCamelContext());
+        }
     }
 
-    public void stop() throws Exception {
-        if (managementAgent != null) {
-            managementAgent.stop();
-        }
-        if (eventNotifiers != null) {
-            ServiceHelper.stopServices(eventNotifiers);
-        }
+    protected void doStop() throws Exception {
+        ServiceHelper.stopServices(managementAgent, eventNotifiers);
     }
 
 }

@@ -20,10 +20,14 @@ import org.apache.camel.api.management.ManagedAttribute;
 
 public interface ManagedSendProcessorMBean extends ManagedProcessorMBean {
 
-    @ManagedAttribute(description = "Destination as Endpoint URI")
+    @ManagedAttribute(description = "Destination as Endpoint URI", sanitize = true)
     String getDestination();
 
+    /**
+     * @deprecated no longer in use. Will be removed in a future Camel release.
+     */
     @ManagedAttribute(description = "Destination as Endpoint URI")
+    @Deprecated
     void setDestination(String uri);
 
     @ManagedAttribute(description = "Message Exchange Pattern")

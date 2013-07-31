@@ -14,17 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.avro;
+package org.apache.camel;
 
-import java.io.IOException;
-
-import org.apache.avro.Protocol;
-import org.apache.avro.ipc.Transceiver;
-import org.apache.avro.ipc.specific.SpecificRequestor;
-
-public class AvroRequestor extends SpecificRequestor {
-
-    public AvroRequestor(Protocol protocol, Transceiver transceiver) throws IOException {
-        super(protocol, transceiver);
-    }
+/**
+ * Marker for indicating the {@link Service} is a static service (only one instance per {@link CamelContext}).
+ */
+public interface StaticService extends Service {
 }

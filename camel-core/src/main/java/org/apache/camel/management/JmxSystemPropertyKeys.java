@@ -56,6 +56,9 @@ public final class JmxSystemPropertyKeys {
     // whether to register when starting new routes
     public static final String REGISTER_NEW_ROUTES = "org.apache.camel.jmx.registerNewRoutes";
 
+    // Whether to remove detected sensitive information (such as passwords) from MBean names and attributes.
+    public static final String SANITIZE = "org.apache.camel.jmx.sanitize";
+
     private JmxSystemPropertyKeys() {
         // not instantiated
     }

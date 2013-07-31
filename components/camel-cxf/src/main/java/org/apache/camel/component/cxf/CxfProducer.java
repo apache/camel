@@ -175,6 +175,10 @@ public class CxfProducer extends DefaultProducer implements AsyncProcessor {
         camelExchange.setProperty(CxfConstants.DATA_FORMAT_PROPERTY, dataFormat);   
         LOG.trace("Set Camel Exchange property: {}={}", DataFormat.class.getName(), dataFormat);
         
+        if (endpoint.getMergeProtocolHeaders()) {
+            camelExchange.setProperty(CxfConstants.CAMEL_CXF_PROTOCOL_HEADERS_MERGED, Boolean.TRUE);
+        }
+        
         // set data format mode in the request context
         requestContext.put(DataFormat.class.getName(), dataFormat);
 

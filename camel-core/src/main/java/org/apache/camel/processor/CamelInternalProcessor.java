@@ -759,4 +759,34 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
         }
     }
 
+    /**
+     * Advice for delaying
+     */
+    public static class DelayerAdvice implements CamelInternalProcessorAdvice {
+
+        private final long delay;
+
+        public DelayerAdvice(long delay) {
+            this.delay = delay;
+        }
+
+        @Override
+        public Object before(Exchange exchange) throws Exception {
+            try {
+                LOG.trace("Sleeping for: {} millis", delay);
+                Thread.sleep(delay);
+            } catch (InterruptedException e) {
+                LOG.debug("Sleep interrupted");
+                Thread.currentThread().interrupt();
+                throw e;
+            }
+            return null;
+        }
+
+        @Override
+        public void after(Exchange exchange, Object data) throws Exception {
+            // noop
+        }
+    }
+
 }

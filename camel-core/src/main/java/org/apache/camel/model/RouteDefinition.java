@@ -844,7 +844,6 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
                 routeContext.setDelayer(delayer);
                 if (delayer > 0) {
                     log.debug("Delayer is enabled with: {} ms. on route: {}", delayer, getId());
-                    addInterceptStrategy(new Delayer(delayer));
                 } else {
                     log.debug("Delayer is disabled on route: {}", getId());
                 }

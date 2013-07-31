@@ -24,6 +24,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
+import org.apache.camel.StaticService;
 import org.apache.camel.TimerListener;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -38,7 +39,7 @@ import org.slf4j.LoggerFactory;
  *
  * @see TimerListener
  */
-public class TimerListenerManager extends ServiceSupport implements Runnable, CamelContextAware {
+public class TimerListenerManager extends ServiceSupport implements Runnable, CamelContextAware, StaticService {
 
     private static final Logger LOG = LoggerFactory.getLogger(TimerListenerManager.class);
     private final Set<TimerListener> listeners = new LinkedHashSet<TimerListener>();

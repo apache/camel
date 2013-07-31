@@ -36,7 +36,7 @@ public class FileCacheManagerFactory extends CacheManagerFactory {
     @Override
     protected CacheManager createCacheManagerInstance() {
         try {
-            return CacheManager.create(new FileInputStream(fileName));
+            return EHCacheUtil.createCacheManager(new FileInputStream(fileName));
         } catch (Exception exception) {
             throw new RuntimeCamelException("Error creating CacheManager from file: " + fileName, exception);
         }

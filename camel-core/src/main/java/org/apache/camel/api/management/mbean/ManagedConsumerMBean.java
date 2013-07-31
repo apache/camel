@@ -20,7 +20,7 @@ import org.apache.camel.api.management.ManagedAttribute;
 
 public interface ManagedConsumerMBean extends ManagedServiceMBean {
 
-    @ManagedAttribute(description = "Endpoint URI")
+    @ManagedAttribute(description = "Endpoint URI", sanitize = true)
     String getEndpointUri();
 
     @ManagedAttribute(description = "Current number of inflight Exchanges")

@@ -203,13 +203,13 @@ public class URISupportTest extends ContextTestSupport {
 
     public void testSanitizeUriWithUserInfo() {
         String uri = "jt400://GEORGE:HARRISON@LIVERPOOL/QSYS.LIB/BEATLES.LIB/PENNYLANE.DTAQ";
-        String expected = "jt400://GEORGE:******@LIVERPOOL/QSYS.LIB/BEATLES.LIB/PENNYLANE.DTAQ";
+        String expected = "jt400://GEORGE:xxxxxx@LIVERPOOL/QSYS.LIB/BEATLES.LIB/PENNYLANE.DTAQ";
         assertEquals(expected, URISupport.sanitizeUri(uri));
     }
     
     public void testSanitizePathWithUserInfo() {
         String path = "GEORGE:HARRISON@LIVERPOOL/QSYS.LIB/BEATLES.LIB/PENNYLANE.PGM";
-        String expected = "GEORGE:******@LIVERPOOL/QSYS.LIB/BEATLES.LIB/PENNYLANE.PGM";
+        String expected = "GEORGE:xxxxxx@LIVERPOOL/QSYS.LIB/BEATLES.LIB/PENNYLANE.PGM";
         assertEquals(expected, URISupport.sanitizePath(path));
     }
     

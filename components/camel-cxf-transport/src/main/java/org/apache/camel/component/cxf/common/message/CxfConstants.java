@@ -59,6 +59,7 @@ public final class CxfConstants {
 
     public static final String WSA_HEADERS_OUTBOUND = "javax.xml.ws.addressing.context.outbound";
 
+    public static final String CAMEL_CXF_PROTOCOL_HEADERS_MERGED = "CamelCxfProtocolHeadersMerged";
 
     private CxfConstants() {
         // Utility class

@@ -16,7 +16,7 @@
  */
 package org.apache.camel.spi;
 
-import org.apache.camel.Service;
+import org.apache.camel.StaticService;
 import org.apache.camel.TypeConverter;
 
 /**
@@ -27,7 +27,7 @@ import org.apache.camel.TypeConverter;
  *
  * @version 
  */
-public interface TypeConverterRegistry extends Service {
+public interface TypeConverterRegistry extends StaticService {
 
     /**
      * Utilization statistics of the this registry.

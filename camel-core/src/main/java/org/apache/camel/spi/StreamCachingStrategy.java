@@ -19,13 +19,13 @@ package org.apache.camel.spi;
 import java.io.File;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.Service;
+import org.apache.camel.StaticService;
 import org.apache.camel.StreamCache;
 
 /**
  * Strategy for using <a href="http://camel.apache.org/stream-caching.html">stream caching</a>.
  */
-public interface StreamCachingStrategy extends Service {
+public interface StreamCachingStrategy extends StaticService {
 
     /**
      * Utilization statistics of stream caching.

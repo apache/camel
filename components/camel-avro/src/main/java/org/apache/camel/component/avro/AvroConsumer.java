@@ -20,7 +20,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultConsumer;
 
-public abstract class AvroConsumer extends DefaultConsumer {
+public class AvroConsumer extends DefaultConsumer {
 
     public AvroConsumer(Endpoint endpoint, Processor processor) {
         super(endpoint, processor);
@@ -29,5 +29,18 @@ public abstract class AvroConsumer extends DefaultConsumer {
     @Override
     public AvroEndpoint getEndpoint() {
         return (AvroEndpoint) super.getEndpoint();
+    }
+    
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+        ((AvroComponent)getEndpoint().getComponent()).register(getEndpoint().getConfiguration()
+            .getUriAuthority(), getEndpoint().getConfiguration().getMessageName(), this);
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        ((AvroComponent) getEndpoint().getComponent()).unregister(getEndpoint().getConfiguration().getUriAuthority(), getEndpoint().getConfiguration().getMessageName());
+        super.doStop();
     }
 }
