@@ -120,7 +120,7 @@ public interface ShutdownStrategy extends Service {
     /**
      * Gets the timeout.
      * <p/>
-     * Use 0 or a negative value to disable timeout
+     * Use positive value to set the timeout
      * <p/>
      * The default timeout unit is <tt>SECONDS</tt>
      *
