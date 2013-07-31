@@ -167,6 +167,7 @@
     <module>camel-sql</module>
     <module>camel-ssh</module>
     <module>camel-stax</module>
+    <module>camel-stomp</module>
     <module>camel-stream</module>
     <module>camel-stringtemplate</module>
     <module>camel-syslog</module>
