@@ -54,6 +54,24 @@ public class TypeConverterRegistryTest extends TestCase {
         assertEquals(123, order.getId());
     }
 
+    public void testRemoveTypeConverter() {
+        DefaultCamelContext context = new DefaultCamelContext();
+
+        // add our own type converter manually that converts from String -> MyOrder using MyOrderTypeConverter
+        context.getTypeConverterRegistry().addTypeConverter(MyOrder.class, String.class, new MyOrderTypeConverter());
+
+        MyOrder order = context.getTypeConverter().convertTo(MyOrder.class, "123");
+        assertNotNull(order);
+        assertEquals(123, order.getId());
+
+        // now remove it
+        boolean removed = context.getTypeConverterRegistry().removeTypeConverter(MyOrder.class, String.class);
+        assertTrue("Type converter should be removed", removed);
+
+        order = context.getTypeConverter().convertTo(MyOrder.class, "123");
+        assertNull("Type converter should be removed", order);
+    }
+
     private static class MyOrder {
         private int id;
 

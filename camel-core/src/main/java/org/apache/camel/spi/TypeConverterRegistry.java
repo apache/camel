@@ -82,6 +82,15 @@ public interface TypeConverterRegistry extends StaticService {
     void addTypeConverter(Class<?> toType, Class<?> fromType, TypeConverter typeConverter);
 
     /**
+     * Removes the type converter
+     *
+     * @param toType        the type to convert to
+     * @param fromType      the type to convert from
+     * @return <tt>true</tt> if removed, <tt>false</tt> if the type converter didn't exist
+     */
+    boolean removeTypeConverter(Class<?> toType, Class<?> fromType);
+
+    /**
      * Registers a new fallback type converter
      *
      * @param typeConverter the type converter to use

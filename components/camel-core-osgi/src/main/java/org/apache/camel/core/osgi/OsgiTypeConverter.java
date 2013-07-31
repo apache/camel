@@ -123,6 +123,10 @@ public class OsgiTypeConverter extends ServiceSupport implements TypeConverter, 
         getDelegate().addTypeConverter(toType, fromType, typeConverter);
     }
 
+    public boolean removeTypeConverter(Class<?> toType, Class<?> fromType) {
+        return getDelegate().removeTypeConverter(toType, fromType);
+    }
+
     public void addFallbackTypeConverter(TypeConverter typeConverter, boolean canPromote) {
         getDelegate().addFallbackTypeConverter(typeConverter, canPromote);
     }

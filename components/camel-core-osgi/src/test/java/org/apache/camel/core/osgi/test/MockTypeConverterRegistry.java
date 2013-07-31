@@ -39,6 +39,11 @@ public class MockTypeConverterRegistry implements TypeConverterRegistry {
         typeConverters.add(typeConverter);
     }
 
+    public boolean removeTypeConverter(Class<?> toType, Class<?> fromType) {
+        // noop
+        return true;
+    }
+
     public void addFallbackTypeConverter(TypeConverter typeConverter, boolean canPromote) {
         fallbackTypeConverters.add(typeConverter);
     }

@@ -366,6 +366,18 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
     }
 
     @Override
+    public boolean removeTypeConverter(Class<?> toType, Class<?> fromType) {
+        log.trace("Removing type converter from: {} to: {}", fromType, toType);
+        TypeMapping key = new TypeMapping(toType, fromType);
+        TypeConverter converter = typeMappings.remove(key);
+        if (converter != null) {
+            typeMappings.remove(key);
+            misses.remove(key);
+        }
+        return converter != null;
+    }
+
+    @Override
     public void addFallbackTypeConverter(TypeConverter typeConverter, boolean canPromote) {
         log.trace("Adding fallback type converter: {} which can promote: {}", typeConverter, canPromote);
 
