@@ -62,6 +62,11 @@ public class NettyHttpProducer extends NettyProducer {
         String actualUri = request.getUri();
         exchange.getIn().setHeader(Exchange.HTTP_URL, actualUri);
 
+        if (getConfiguration().isBridgeEndpoint()) {
+            // Need to remove the Host key as it should be not used when bridging/proxying
+            exchange.getIn().removeHeader("host");
+        }
+
         return request;
     }
 

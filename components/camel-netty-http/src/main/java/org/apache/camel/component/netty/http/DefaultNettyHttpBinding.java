@@ -21,6 +21,7 @@ import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.net.URI;
+import java.net.URL;
 import java.net.URLDecoder;
 import java.nio.charset.Charset;
 import java.util.Iterator;
@@ -463,6 +464,13 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding {
             request.setHeader(HttpHeaders.Names.CONTENT_TYPE, contentType);
             LOG.trace("Content-Type: {}", contentType);
         }
+
+        // must include HOST header as required by HTTP 1.1
+        // use URI as its faster than URL (no DNS lookup)
+        URI u = new URI(uri);
+        String host = u.getHost();
+        request.setHeader(HttpHeaders.Names.HOST, host);
+        LOG.trace("Host: {}", host);
 
         // configure connection to accordingly to keep alive configuration
         // favor using the header from the message

@@ -43,6 +43,7 @@ import org.jboss.netty.channel.ExceptionEvent;
 import org.jboss.netty.channel.MessageEvent;
 import org.jboss.netty.handler.codec.base64.Base64;
 import org.jboss.netty.handler.codec.http.DefaultHttpResponse;
+import org.jboss.netty.handler.codec.http.HttpHeaders;
 import org.jboss.netty.handler.codec.http.HttpRequest;
 import org.jboss.netty.handler.codec.http.HttpResponse;
 import org.slf4j.Logger;
@@ -50,6 +51,7 @@ import org.slf4j.LoggerFactory;
 
 import static org.jboss.netty.handler.codec.http.HttpHeaders.is100ContinueExpected;
 import static org.jboss.netty.handler.codec.http.HttpHeaders.isKeepAlive;
+import static org.jboss.netty.handler.codec.http.HttpResponseStatus.BAD_REQUEST;
 import static org.jboss.netty.handler.codec.http.HttpResponseStatus.CONTINUE;
 import static org.jboss.netty.handler.codec.http.HttpResponseStatus.METHOD_NOT_ALLOWED;
 import static org.jboss.netty.handler.codec.http.HttpResponseStatus.SERVICE_UNAVAILABLE;
@@ -107,6 +109,15 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
         }
         if ("TRACE".equals(request.getMethod().getName()) && !consumer.getEndpoint().isTraceEnabled()) {
             HttpResponse response = new DefaultHttpResponse(HTTP_1_1, METHOD_NOT_ALLOWED);
+            response.setHeader(Exchange.CONTENT_TYPE, "text/plain");
+            response.setHeader(Exchange.CONTENT_LENGTH, 0);
+            response.setContent(ChannelBuffers.copiedBuffer(new byte[]{}));
+            messageEvent.getChannel().write(response);
+            return;
+        }
+        // must include HOST header as required by HTTP 1.1
+        if (!request.getHeaderNames().contains(HttpHeaders.Names.HOST)) {
+            HttpResponse response = new DefaultHttpResponse(HTTP_1_1, BAD_REQUEST);
             response.setHeader(Exchange.CONTENT_TYPE, "text/plain");
             response.setHeader(Exchange.CONTENT_LENGTH, 0);
             response.setContent(ChannelBuffers.copiedBuffer(new byte[]{}));
