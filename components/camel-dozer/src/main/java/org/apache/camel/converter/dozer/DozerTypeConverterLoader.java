@@ -42,6 +42,8 @@ import org.dozer.util.DozerClassLoader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.dozer.classmap.MappingDirection.ONE_WAY;
+
 /**
  * <code>DozerTypeConverterLoader</code> provides the mechanism for registering
  * a Dozer {@link Mapper} as {@link TypeConverter} for a {@link CamelContext}.
@@ -122,9 +124,11 @@ public class DozerTypeConverterLoader implements CamelContextAware {
         }
 
         TypeConverterRegistry registry = camelContext.getTypeConverterRegistry();
-        for (DozerBeanMapper dozer : mappers.values()) {
-            List<ClassMap> all = loadMappings(camelContext, dozer);
-            registerClassMaps(registry, dozer, all);
+        for (Map.Entry<String, DozerBeanMapper> entry : mappers.entrySet()) {
+            String mapperId = entry.getKey();
+            DozerBeanMapper dozer = entry.getValue();
+            List<ClassMap> all = loadMappings(camelContext, mapperId, dozer);
+            registerClassMaps(registry, mapperId, dozer, all);
         }
     }
 
@@ -135,22 +139,30 @@ public class DozerTypeConverterLoader implements CamelContextAware {
         return new HashMap<String, DozerBeanMapper>(camelContext.getRegistry().findByTypeWithName(DozerBeanMapper.class));
     }
 
-    protected void registerClassMaps(TypeConverterRegistry registry, DozerBeanMapper dozer, List<ClassMap> all) {
+    protected void registerClassMaps(TypeConverterRegistry registry, String dozerId, DozerBeanMapper dozer, List<ClassMap> all) {
         DozerTypeConverter converter = new DozerTypeConverter(dozer);
         for (ClassMap map : all) {
-            addDozerTypeConverter(registry, converter, map.getMapId(), map.getSrcClassToMap(), map.getDestClassToMap());
+            addDozerTypeConverter(registry, converter, dozerId, map.getSrcClassToMap(), map.getDestClassToMap());
+            // if not one way then add the other way around also
+            if (map.getType() != ONE_WAY) {
+                addDozerTypeConverter(registry, converter, dozerId, map.getDestClassToMap(), map.getSrcClassToMap());
+            }
         }
     }
 
-    protected void addDozerTypeConverter(TypeConverterRegistry registry, DozerTypeConverter converter, String mapId, Class<?> to, Class<?> from) {
+    protected void addDozerTypeConverter(TypeConverterRegistry registry, DozerTypeConverter converter,
+                                         String dozerId, Class<?> to, Class<?> from) {
         if (log.isInfoEnabled()) {
-            log.info("Added Dozer map id {} as Camel type converter {} <-> {}", new Object[]{mapId, from, to});
+            if (dozerId != null) {
+                log.info("Added Dozer: {} as Camel type converter: {} -> {}", new Object[]{dozerId, from, to});
+            } else {
+                log.info("Added Dozer as Camel type converter: {} -> {}", new Object[]{from, to});
+            }
         }
         registry.addTypeConverter(from, to, converter);
-        registry.addTypeConverter(to, from, converter);
     }
 
-    private List<ClassMap> loadMappings(CamelContext camelContext, DozerBeanMapper mapper) {
+    private List<ClassMap> loadMappings(CamelContext camelContext, String mapperId, DozerBeanMapper mapper) {
         List<ClassMap> answer = new ArrayList<ClassMap>();
 
         // load the class map using the class resolver so we can load from classpath in OSGi
@@ -190,7 +202,7 @@ public class DozerTypeConverterLoader implements CamelContextAware {
         TypeConverterRegistry registry = camelContext.getTypeConverterRegistry();
         List<ClassMap> classMaps = new ArrayList<ClassMap>();
         classMaps.addAll(mappingFileData.getClassMaps());
-        registerClassMaps(registry, mapper, classMaps);
+        registerClassMaps(registry, null, mapper, classMaps);
     }
 
     public CamelContext getCamelContext() {
