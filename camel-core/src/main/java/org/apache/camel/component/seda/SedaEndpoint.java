@@ -23,7 +23,6 @@ import java.util.Set;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.CopyOnWriteArraySet;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.LinkedBlockingQueue;
 
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
@@ -79,8 +78,10 @@ public class SedaEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
     private int pollTimeout = 1000;
     @UriParam
     private boolean purgeWhenStopping;
+    private BlockingQueueFactory<Exchange> queueFactory;
 
     public SedaEndpoint() {
+		queueFactory = new LinkedBlockingQueueFactory<Exchange>();
     }
 
     public SedaEndpoint(String endpointUri, Component component, BlockingQueue<Exchange> queue) {
@@ -88,11 +89,21 @@ public class SedaEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
     }
 
     public SedaEndpoint(String endpointUri, Component component, BlockingQueue<Exchange> queue, int concurrentConsumers) {
-        super(endpointUri, component);
+		this(endpointUri, component, concurrentConsumers);
         this.queue = queue;
         if (queue != null) {
             this.size = queue.remainingCapacity();
         }
+		queueFactory = new LinkedBlockingQueueFactory<Exchange>();
+	}
+	
+    public SedaEndpoint(String endpointUri, Component component, BlockingQueueFactory<Exchange> queueFactory, int concurrentConsumers) {
+		this(endpointUri, component, concurrentConsumers);
+		this.queueFactory = queueFactory;
+	}
+	
+    private SedaEndpoint(String endpointUri, Component component, int concurrentConsumers) {
+        super(endpointUri, component);
         this.concurrentConsumers = concurrentConsumers;
     }
 
@@ -130,7 +141,7 @@ public class SedaEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
             if (getComponent() != null) {
                 // use null to indicate default size (= use what the existing queue has been configured with)
                 Integer size = getSize() == Integer.MAX_VALUE ? null : getSize();
-                SedaComponent.QueueReference ref = getComponent().getOrCreateQueue(getEndpointUri(), size, isMultipleConsumers());
+                SedaComponent.QueueReference ref = getComponent().getOrCreateQueue(getEndpointUri(), size, isMultipleConsumers(), queueFactory);
                 queue = ref.getQueue();
                 String key = getComponent().getQueueKey(getEndpointUri());
                 LOG.info("Endpoint {} is using shared queue: {} with size: {}", new Object[]{this, key, ref.getSize() !=  null ? ref.getSize() : Integer.MAX_VALUE});
@@ -149,9 +160,9 @@ public class SedaEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
 
     protected BlockingQueue<Exchange> createQueue() {
         if (size > 0) {
-            return new LinkedBlockingQueue<Exchange>(size);
+            return queueFactory.create(size);
         } else {
-            return new LinkedBlockingQueue<Exchange>();
+            return queueFactory.create();
         }
     }
 
