@@ -19,7 +19,6 @@ package org.apache.camel.component.seda;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingQueue;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
@@ -39,7 +38,7 @@ public class SedaComponent extends UriEndpointComponent {
     protected int queueSize;
     protected int defaultConcurrentConsumers = 1;
     private final Map<String, QueueReference> queues = new HashMap<String, QueueReference>();
-
+    private BlockingQueueFactory<Exchange> defaultQueueFactory =new LinkedBlockingQueueFactory<Exchange>();
     public SedaComponent() {
         super(SedaEndpoint.class);
     }
@@ -60,15 +59,30 @@ public class SedaComponent extends UriEndpointComponent {
         return defaultConcurrentConsumers;
     }
 
+	public BlockingQueueFactory<Exchange> getDefaultQueueFactory() {
+		return defaultQueueFactory;
+	}
+
+	public void setDefaultQueueFactory(BlockingQueueFactory<Exchange> defaultQueueFactory) {
+		this.defaultQueueFactory = defaultQueueFactory;
+	}
+
     /**
-     * @deprecated use {@link #getOrCreateQueue(String, Integer, Boolean)}
+     * @deprecated use {@link #getOrCreateQueue(String, Integer, Boolean, BlockingQueueFactory)}
      */
     @Deprecated
     public synchronized QueueReference getOrCreateQueue(String uri, Integer size) {
         return getOrCreateQueue(uri, size, null);
     }
 
+    /**
+     * @deprecated use {@link #getOrCreateQueue(String, Integer, Boolean, BlockingQueueFactory)}
+     */
     public synchronized QueueReference getOrCreateQueue(String uri, Integer size, Boolean multipleConsumers) {
+        return getOrCreateQueue(uri, size, multipleConsumers, null);
+    }
+
+    public synchronized QueueReference getOrCreateQueue(String uri, Integer size, Boolean multipleConsumers, BlockingQueueFactory customQueueFactory) {
         String key = getQueueKey(uri);
 
         QueueReference ref = getQueues().get(key);
@@ -91,14 +105,15 @@ public class SedaComponent extends UriEndpointComponent {
 
         // create queue
         BlockingQueue<Exchange> queue;
+        BlockingQueueFactory<Exchange> queueFactory = customQueueFactory == null ? defaultQueueFactory : customQueueFactory;
         if (size != null && size > 0) {
-            queue = new LinkedBlockingQueue<Exchange>(size);
+            queue = queueFactory.create(size);
         } else {
             if (getQueueSize() > 0) {
                 size = getQueueSize();
-                queue = new LinkedBlockingQueue<Exchange>(getQueueSize());
+                queue = queueFactory.create(getQueueSize());
             } else {
-                queue = new LinkedBlockingQueue<Exchange>();
+                queue = queueFactory.create();
             }
         }
         log.debug("Created queue {} with size {}", key, size);
@@ -127,8 +142,10 @@ public class SedaComponent extends UriEndpointComponent {
             throw new IllegalArgumentException("The limitConcurrentConsumers flag in set to true. ConcurrentConsumers cannot be set at a value greater than "
                     + maxConcurrentConsumers + " was " + consumers);
         }
-        // defer creating queue till endpoint is started, so we pass in null
-        SedaEndpoint answer = new SedaEndpoint(uri, this, null, consumers);
+		// Resolve queue factory when specified
+		BlockingQueueFactory<Exchange> queueFactory=resolveAndRemoveReferenceParameter(parameters, "queueFactory", BlockingQueueFactory.class);
+        // defer creating queue till endpoint is started, so we pass the queue factory
+        SedaEndpoint answer = new SedaEndpoint(uri, this, queueFactory, consumers);
         answer.configureProperties(parameters);
         return answer;
     }
