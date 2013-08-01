@@ -142,10 +142,17 @@ public class SedaComponent extends UriEndpointComponent {
             throw new IllegalArgumentException("The limitConcurrentConsumers flag in set to true. ConcurrentConsumers cannot be set at a value greater than "
                     + maxConcurrentConsumers + " was " + consumers);
         }
-		// Resolve queue factory when specified
-		BlockingQueueFactory<Exchange> queueFactory=resolveAndRemoveReferenceParameter(parameters, "queueFactory", BlockingQueueFactory.class);
-        // defer creating queue till endpoint is started, so we pass the queue factory
-        SedaEndpoint answer = new SedaEndpoint(uri, this, queueFactory, consumers);
+		// Resolve queue reference
+		BlockingQueue<Exchange> queue=resolveAndRemoveReferenceParameter(parameters, "queue", BlockingQueue.class);
+		SedaEndpoint answer;
+		// Resolve queue factory when no queue specified
+		if (queue == null) {
+			BlockingQueueFactory<Exchange> queueFactory=resolveAndRemoveReferenceParameter(parameters, "queueFactory", BlockingQueueFactory.class);
+			// defer creating queue till endpoint is started, so we pass the queue factory
+			answer = new SedaEndpoint(uri, this, queueFactory, consumers);			
+		} else {
+			answer = new SedaEndpoint(uri, this, queue, consumers);
+		}
         answer.configureProperties(parameters);
         return answer;
     }
