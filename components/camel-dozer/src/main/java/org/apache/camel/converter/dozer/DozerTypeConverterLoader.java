@@ -102,7 +102,9 @@ public class DozerTypeConverterLoader implements CamelContextAware {
      */
     public void init(CamelContext camelContext, DozerBeanMapper mapper) {
         this.camelContext = camelContext;
-        this.mapper = mapper;
+        if (mapper != null) {
+            this.mapper = mapper;
+        }
 
         CamelToDozerClassResolverAdapter adapter = new CamelToDozerClassResolverAdapter(camelContext);
         BeanContainer.getInstance().setClassLoader(adapter);
@@ -133,15 +135,19 @@ public class DozerTypeConverterLoader implements CamelContextAware {
         return new HashMap<String, DozerBeanMapper>(camelContext.getRegistry().findByTypeWithName(DozerBeanMapper.class));
     }
 
-    private void registerClassMaps(TypeConverterRegistry registry, DozerBeanMapper dozer, List<ClassMap> all) {
+    protected void registerClassMaps(TypeConverterRegistry registry, DozerBeanMapper dozer, List<ClassMap> all) {
         DozerTypeConverter converter = new DozerTypeConverter(dozer);
         for (ClassMap map : all) {
-            if (log.isInfoEnabled()) {
-                log.info("Added {} -> {} as type converter to: {}", new Object[]{map.getSrcClassName(), map.getDestClassName(), registry});
-            }
-            registry.addTypeConverter(map.getSrcClassToMap(), map.getDestClassToMap(), converter);
-            registry.addTypeConverter(map.getDestClassToMap(), map.getSrcClassToMap(), converter);
+            addDozerTypeConverter(registry, converter, map.getMapId(), map.getSrcClassToMap(), map.getDestClassToMap());
         }
+    }
+
+    protected void addDozerTypeConverter(TypeConverterRegistry registry, DozerTypeConverter converter, String mapId, Class<?> to, Class<?> from) {
+        if (log.isInfoEnabled()) {
+            log.info("Added Dozer map id {} as Camel type converter {} <-> {}", new Object[]{mapId, from, to});
+        }
+        registry.addTypeConverter(from, to, converter);
+        registry.addTypeConverter(to, from, converter);
     }
 
     private List<ClassMap> loadMappings(CamelContext camelContext, DozerBeanMapper mapper) {
@@ -155,9 +161,11 @@ public class DozerTypeConverterLoader implements CamelContextAware {
         }
 
         for (String name : mappingFiles) {
-            URL url = camelContext.getClassResolver().loadResourceAsURL(name);
-            MappingFileData data = reader.read(url);
-            answer.addAll(data.getClassMaps());
+            URL url = loadMappingFile(camelContext.getClassResolver(), name);
+            if (url != null) {
+                MappingFileData data = reader.read(url);
+                answer.addAll(data.getClassMaps());
+            }
         }
 
         return answer;
@@ -189,8 +197,38 @@ public class DozerTypeConverterLoader implements CamelContextAware {
         return camelContext;
     }
 
+    /**
+     * Sets the {@link CamelContext} <b>and also</b> initializes this loader.
+     * <p/>
+     * The reason why {@link #init(org.apache.camel.CamelContext, org.dozer.DozerBeanMapper)} is also called
+     * is because making using Dozer in Spring XML files easier, as no need to use the init-method attribute.
+     *
+     * @param camelContext the CamelContext
+     */
     public void setCamelContext(CamelContext camelContext) {
         init(camelContext, null);
+    }
+
+    public DozerBeanMapper getMapper() {
+        return mapper;
+    }
+
+    public void setMapper(DozerBeanMapper mapper) {
+        this.mapper = mapper;
+    }
+
+    protected static URL loadMappingFile(ClassResolver classResolver, String mappingFile) {
+        URL url = null;
+        try {
+            url = ResourceHelper.resolveResourceAsUrl(classResolver, mappingFile);
+        } catch (MalformedURLException e) {
+            // ignore
+        }
+        if (url == null) {
+            // using the classloader of DozerClassLoader as a fallback
+            url = DozerClassLoader.class.getClassLoader().getResource(mappingFile);
+        }
+        return url;
     }
 
     private static final class CamelToDozerClassResolverAdapter implements DozerClassLoader {
@@ -201,22 +239,12 @@ public class DozerTypeConverterLoader implements CamelContextAware {
             classResolver = camelContext.getClassResolver();
         }
 
-        public Class<?> loadClass(String s) {
-            return classResolver.resolveClass(s);
+        public Class<?> loadClass(String name) {
+            return classResolver.resolveClass(name);
         }
 
-        public URL loadResource(String s) {
-            URL url = null;
-            try {
-                url = ResourceHelper.resolveResourceAsUrl(classResolver, s);
-            } catch (MalformedURLException e) {
-                // ignore
-            }
-            if (url == null) {
-                // using the classloader of DozerClassLoader as a fallback
-                url = DozerClassLoader.class.getClassLoader().getResource(s);
-            } 
-            return url;
+        public URL loadResource(String name) {
+            return loadMappingFile(classResolver, name);
         }
     }
 

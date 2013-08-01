@@ -36,10 +36,14 @@ import org.dozer.Mapper;
  */
 public class DozerTypeConverter implements TypeConverter {
 
-    private DozerBeanMapper mapper;
+    private final DozerBeanMapper mapper;
 
     public DozerTypeConverter(DozerBeanMapper mapper) {
         this.mapper = mapper;
+    }
+
+    public DozerBeanMapper getMapper() {
+        return mapper;
     }
 
     public <T> T convertTo(Class<T> type, Object value) {
