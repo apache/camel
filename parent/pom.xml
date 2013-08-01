@@ -393,7 +393,7 @@
     <wsdl4j-bundle-version>1.6.2_6</wsdl4j-bundle-version>
     <xalan-bundle-version>2.7.1_5</xalan-bundle-version>
     <xalan-version>2.7.1</xalan-version>
-    <xbean-spring-version>3.13</xbean-spring-version>
+    <xbean-spring-version>3.14</xbean-spring-version>
     <xerces-bundle-version>2.11.0_1</xerces-bundle-version>
     <xerces-version>2.11.0</xerces-version>
     <!-- needed to manage the xml-apis version in camel-xmljson -->
