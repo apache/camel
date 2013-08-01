@@ -24,10 +24,12 @@ import org.junit.Test;
 
 public class NettyHttpRedirectNoLocationTest extends BaseNettyTest {
 
+    private int nextPort;
+
     @Test
     public void testHttpRedirectNoLocation() throws Exception {
         try {
-            template.requestBody("netty-http:http://localhost:{{port}}/test", "Hello World", String.class);
+            template.requestBody("netty-http:http://localhost:" + nextPort + "/test", "Hello World", String.class);
             fail("Should have thrown an exception");
         } catch (RuntimeCamelException e) {
             NettyHttpOperationFailedException cause = assertIsInstanceOf(NettyHttpOperationFailedException.class, e.getCause());
@@ -43,7 +45,9 @@ public class NettyHttpRedirectNoLocationTest extends BaseNettyTest {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("netty-http:http://localhost:{{port}}/test")
+                nextPort = getNextPort();
+
+                from("netty-http:http://localhost:" + nextPort + "/test")
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
                                 exchange.getOut().setHeader(Exchange.HTTP_RESPONSE_CODE, 302);

@@ -46,9 +46,17 @@ public class HttpClientChannelHandler extends ClientChannelHandler {
     @Override
     public void messageReceived(ChannelHandlerContext ctx, MessageEvent messageEvent) throws Exception {
         // store response, as this channel handler is created per pipeline
-        response = (HttpResponse) messageEvent.getMessage();
+        Object msg = messageEvent.getMessage();
+        if (msg instanceof HttpResponse) {
+            response = (HttpResponse) msg;
+            super.messageReceived(ctx, messageEvent);
+        } else {
+            // ignore not supported message
+            if (msg != null) {
+                LOG.trace("Ignoring non HttpResponse message of type {} -> {}", msg.getClass(), msg);
+            }
+        }
 
-        super.messageReceived(ctx, messageEvent);
     }
 
     @Override

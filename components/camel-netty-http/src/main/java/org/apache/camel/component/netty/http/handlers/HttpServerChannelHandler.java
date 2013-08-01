@@ -92,6 +92,7 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
             // are we suspended?
             LOG.debug("Consumer suspended, cannot service request {}", request);
             HttpResponse response = new DefaultHttpResponse(HTTP_1_1, SERVICE_UNAVAILABLE);
+            response.setChunked(false);
             response.setHeader(Exchange.CONTENT_TYPE, "text/plain");
             response.setHeader(Exchange.CONTENT_LENGTH, 0);
             response.setContent(ChannelBuffers.copiedBuffer(new byte[]{}));
@@ -101,6 +102,7 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
         if (consumer.getEndpoint().getHttpMethodRestrict() != null
                 && !consumer.getEndpoint().getHttpMethodRestrict().contains(request.getMethod().getName())) {
             HttpResponse response = new DefaultHttpResponse(HTTP_1_1, METHOD_NOT_ALLOWED);
+            response.setChunked(false);
             response.setHeader(Exchange.CONTENT_TYPE, "text/plain");
             response.setHeader(Exchange.CONTENT_LENGTH, 0);
             response.setContent(ChannelBuffers.copiedBuffer(new byte[]{}));
@@ -109,6 +111,7 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
         }
         if ("TRACE".equals(request.getMethod().getName()) && !consumer.getEndpoint().isTraceEnabled()) {
             HttpResponse response = new DefaultHttpResponse(HTTP_1_1, METHOD_NOT_ALLOWED);
+            response.setChunked(false);
             response.setHeader(Exchange.CONTENT_TYPE, "text/plain");
             response.setHeader(Exchange.CONTENT_LENGTH, 0);
             response.setContent(ChannelBuffers.copiedBuffer(new byte[]{}));
@@ -118,6 +121,7 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
         // must include HOST header as required by HTTP 1.1
         if (!request.getHeaderNames().contains(HttpHeaders.Names.HOST)) {
             HttpResponse response = new DefaultHttpResponse(HTTP_1_1, BAD_REQUEST);
+            response.setChunked(false);
             response.setHeader(Exchange.CONTENT_TYPE, "text/plain");
             response.setHeader(Exchange.CONTENT_LENGTH, 0);
             response.setContent(ChannelBuffers.copiedBuffer(new byte[]{}));

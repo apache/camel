@@ -290,64 +290,67 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding {
 
         Object body = message.getBody();
         Exception cause = message.getExchange().getException();
-        if (body != null || cause != null) {
-            // support bodies as native Netty
-            ChannelBuffer buffer;
+        // support bodies as native Netty
+        ChannelBuffer buffer;
 
-            // if there was an exception then use that as body
-            if (cause != null) {
-                if (configuration.isTransferException()) {
-                    // we failed due an exception, and transfer it as java serialized object
-                    ByteArrayOutputStream bos = new ByteArrayOutputStream();
-                    ObjectOutputStream oos = new ObjectOutputStream(bos);
-                    oos.writeObject(cause);
-                    oos.flush();
-                    IOHelper.close(oos, bos);
+        // if there was an exception then use that as body
+        if (cause != null) {
+            if (configuration.isTransferException()) {
+                // we failed due an exception, and transfer it as java serialized object
+                ByteArrayOutputStream bos = new ByteArrayOutputStream();
+                ObjectOutputStream oos = new ObjectOutputStream(bos);
+                oos.writeObject(cause);
+                oos.flush();
+                IOHelper.close(oos, bos);
 
-                    // the body should be the serialized java object of the exception
-                    body = ChannelBuffers.copiedBuffer(bos.toByteArray());
-                    // force content type to be serialized java object
-                    message.setHeader(Exchange.CONTENT_TYPE, NettyHttpConstants.CONTENT_TYPE_JAVA_SERIALIZED_OBJECT);
-                } else {
-                    // we failed due an exception so print it as plain text
-                    StringWriter sw = new StringWriter();
-                    PrintWriter pw = new PrintWriter(sw);
-                    cause.printStackTrace(pw);
-
-                    // the body should then be the stacktrace
-                    body = ChannelBuffers.copiedBuffer(sw.toString().getBytes());
-                    // force content type to be text/plain as that is what the stacktrace is
-                    message.setHeader(Exchange.CONTENT_TYPE, "text/plain");
-                }
-
-                // and mark the exception as failure handled, as we handled it by returning it as the response
-                ExchangeHelper.setFailureHandled(message.getExchange());
-            }
-
-            if (body instanceof ChannelBuffer) {
-                buffer = (ChannelBuffer) body;
+                // the body should be the serialized java object of the exception
+                body = ChannelBuffers.copiedBuffer(bos.toByteArray());
+                // force content type to be serialized java object
+                message.setHeader(Exchange.CONTENT_TYPE, NettyHttpConstants.CONTENT_TYPE_JAVA_SERIALIZED_OBJECT);
             } else {
-                // try to convert to buffer first
-                buffer = message.getBody(ChannelBuffer.class);
-                if (buffer == null) {
-                    // fallback to byte array as last resort
-                    byte[] data = message.getBody(byte[].class);
-                    if (data != null) {
-                        buffer = ChannelBuffers.copiedBuffer(data);
+                // we failed due an exception so print it as plain text
+                StringWriter sw = new StringWriter();
+                PrintWriter pw = new PrintWriter(sw);
+                cause.printStackTrace(pw);
+
+                // the body should then be the stacktrace
+                body = ChannelBuffers.copiedBuffer(sw.toString().getBytes());
+                // force content type to be text/plain as that is what the stacktrace is
+                message.setHeader(Exchange.CONTENT_TYPE, "text/plain");
+            }
+
+            // and mark the exception as failure handled, as we handled it by returning it as the response
+            ExchangeHelper.setFailureHandled(message.getExchange());
+        }
+
+        if (body instanceof ChannelBuffer) {
+            buffer = (ChannelBuffer) body;
+        } else {
+            // try to convert to buffer first
+            buffer = message.getBody(ChannelBuffer.class);
+            if (buffer == null) {
+                // fallback to byte array as last resort
+                byte[] data = message.getBody(byte[].class);
+                if (data != null) {
+                    buffer = ChannelBuffers.copiedBuffer(data);
+                } else {
+                    // and if byte array fails then try String
+                    String str;
+                    if (body != null) {
+                        str = message.getMandatoryBody(String.class);
                     } else {
-                        // and if byte array fails then try String
-                        String str = message.getMandatoryBody(String.class);
-                        buffer = ChannelBuffers.copiedBuffer(str.getBytes());
+                        str = "";
                     }
+                    buffer = ChannelBuffers.copiedBuffer(str.getBytes());
                 }
             }
-            if (buffer != null) {
-                response.setContent(buffer);
-                int len = buffer.readableBytes();
-                // set content-length
-                response.setHeader(HttpHeaders.Names.CONTENT_LENGTH, len);
-                LOG.trace("Content-Length: {}", len);
-            }
+        }
+        if (buffer != null) {
+            response.setContent(buffer);
+            int len = buffer.readableBytes();
+            // set content-length
+            response.setHeader(HttpHeaders.Names.CONTENT_LENGTH, len);
+            LOG.trace("Content-Length: {}", len);
         }
 
         // set the content type in the response.
