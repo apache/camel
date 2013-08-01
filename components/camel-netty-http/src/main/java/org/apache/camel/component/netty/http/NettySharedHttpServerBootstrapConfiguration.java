@@ -20,6 +20,7 @@ import org.apache.camel.component.netty.NettyServerBootstrapConfiguration;
 
 public class NettySharedHttpServerBootstrapConfiguration extends NettyServerBootstrapConfiguration {
 
+    private int chunkedMaxContentLength = 1024 * 1024;
     private boolean chunked = true;
     private boolean compression;
 
@@ -29,6 +30,14 @@ public class NettySharedHttpServerBootstrapConfiguration extends NettyServerBoot
 
     public void setChunked(boolean chunked) {
         this.chunked = chunked;
+    }
+
+    public int getChunkedMaxContentLength() {
+        return chunkedMaxContentLength;
+    }
+
+    public void setChunkedMaxContentLength(int chunkedMaxContentLength) {
+        this.chunkedMaxContentLength = chunkedMaxContentLength;
     }
 
     public boolean isCompression() {

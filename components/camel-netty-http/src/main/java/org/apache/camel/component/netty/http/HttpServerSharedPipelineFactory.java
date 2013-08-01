@@ -82,7 +82,7 @@ public class HttpServerSharedPipelineFactory extends HttpServerPipelineFactory {
 
         pipeline.addLast("decoder", new HttpRequestDecoder());
         if (configuration.isChunked()) {
-            pipeline.addLast("aggregator", new HttpChunkAggregator(1048576));
+            pipeline.addLast("aggregator", new HttpChunkAggregator(configuration.getChunkedMaxContentLength()));
         }
         pipeline.addLast("encoder", new HttpResponseEncoder());
         if (configuration.isCompression()) {
