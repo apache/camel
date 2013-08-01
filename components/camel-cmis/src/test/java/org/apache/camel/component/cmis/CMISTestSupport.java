@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.componenet.cmis;
+package org.apache.camel.component.cmis;
 
 import java.io.BufferedReader;
 import java.io.ByteArrayInputStream;
