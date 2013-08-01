@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.componenet.cmis;
+package org.apache.camel.component.cmis;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
@@ -25,7 +25,6 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.RuntimeExchangeException;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.cmis.CamelCMISConstants;
 import org.apache.chemistry.opencmis.client.api.CmisObject;
 import org.apache.chemistry.opencmis.client.api.Document;
 import org.apache.chemistry.opencmis.client.api.Folder;
