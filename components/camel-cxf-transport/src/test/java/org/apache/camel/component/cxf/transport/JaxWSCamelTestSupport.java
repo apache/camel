@@ -16,16 +16,22 @@
  */
 package org.apache.camel.component.cxf.transport;
 
+import java.util.concurrent.Future;
+
 import javax.jws.WebMethod;
+import javax.jws.WebParam;
 import javax.jws.WebResult;
 import javax.jws.WebService;
 import javax.xml.namespace.QName;
+import javax.xml.ws.AsyncHandler;
 import javax.xml.ws.Endpoint;
+import javax.xml.ws.Response;
 import javax.xml.ws.Service;
 
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.cxf.Bus;
 import org.apache.cxf.BusFactory;
+import org.apache.cxf.feature.Feature;
 import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
 import org.junit.Before;
 
@@ -51,9 +57,24 @@ public class JaxWSCamelTestSupport extends CamelTestSupport {
     @WebService(targetNamespace = "urn:test", serviceName = "testService", portName = "testPort")
     public interface SampleWS {
 
-        @WebMethod
+        @WebMethod(operationName = "getSomething")
         @WebResult(name = "result", targetNamespace = "urn:test")
         String getSomething();
+       
+    }
+    
+    @WebService(targetNamespace = "urn:test", serviceName = "testService", portName = "testPort")
+    public interface SampleWSAsync {
+        @WebMethod(operationName = "getSomething")
+        @WebResult(name = "result", targetNamespace = "urn:test")
+        String getSomething();
+        
+        @WebMethod(operationName = "getSomething")
+        Response<String> getSomethingAsync();
+        
+        @WebMethod(operationName = "getSomething")
+        Future<?> getSomethingAsync(@WebParam(name = "asyncHandler", targetNamespace = "")
+            AsyncHandler<String> asyncHandler);
     }
     
     public static class SampleWSImpl implements SampleWS {
@@ -97,6 +118,14 @@ public class JaxWSCamelTestSupport extends CamelTestSupport {
         factory.setServiceClass(SampleWS.class);
         factory.setBus(bus);
         return factory.create(SampleWS.class);
+    }
+    
+    public SampleWSAsync getSampleWSAsyncWithCXFAPI(String camelEndpoint) {
+        JaxWsProxyFactoryBean factory = new JaxWsProxyFactoryBean();
+        factory.setAddress("camel://" + camelEndpoint);
+        factory.setServiceClass(SampleWSAsync.class);
+        factory.setBus(bus);
+        return factory.create(SampleWSAsync.class);
     }
     
     /**

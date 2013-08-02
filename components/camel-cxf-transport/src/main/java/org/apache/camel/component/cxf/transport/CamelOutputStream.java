@@ -18,16 +18,24 @@ package org.apache.camel.component.cxf.transport;
 
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.concurrent.Executor;
+import java.util.concurrent.RejectedExecutionException;
 
+import org.apache.camel.AsyncCallback;
+import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Producer;
 import org.apache.camel.component.cxf.common.header.CxfHeaderHelper;
 import org.apache.camel.component.cxf.common.message.CxfMessageHelper;
 import org.apache.camel.spi.HeaderFilterStrategy;
+import org.apache.cxf.Bus;
 import org.apache.cxf.io.CachedOutputStream;
 import org.apache.cxf.message.Message;
+import org.apache.cxf.phase.PhaseInterceptorChain;
 import org.apache.cxf.transport.MessageObserver;
+import org.apache.cxf.workqueue.AutomaticWorkQueue;
+import org.apache.cxf.workqueue.WorkQueueManager;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,12 +45,13 @@ class CamelOutputStream extends CachedOutputStream {
     /**
      * 
      */
-    private Message outMessage;
+    private final Message outMessage;
     private boolean isOneWay;
     private String targetCamelEndpointUri;
     private Producer producer;
     private HeaderFilterStrategy headerFilterStrategy;
     private MessageObserver observer;
+    private boolean hasLoggedAsyncWarning;
 
     public CamelOutputStream(String targetCamelEndpointUri, Producer producer, 
                              HeaderFilterStrategy headerFilterStrategy, MessageObserver observer, 
@@ -60,6 +69,7 @@ class CamelOutputStream extends CachedOutputStream {
 
     protected void doClose() throws IOException {
         isOneWay = outMessage.getExchange().isOneWay();
+        
         commitOutputMessage();
     }
 
@@ -76,7 +86,7 @@ class CamelOutputStream extends CachedOutputStream {
             pattern = ExchangePattern.InOut;
         }
         LOG.debug("send the message to endpoint {}", this.targetCamelEndpointUri);
-        org.apache.camel.Exchange exchange = this.producer.createExchange(pattern);
+        final org.apache.camel.Exchange exchange = this.producer.createExchange(pattern);
 
         exchange.setProperty(Exchange.TO_ENDPOINT, this.targetCamelEndpointUri);
         CachedOutputStream outputStream = (CachedOutputStream) outMessage.getContent(OutputStream.class);
@@ -86,31 +96,89 @@ class CamelOutputStream extends CachedOutputStream {
         // TODO support different encoding
         exchange.getIn().setBody(outputStream.getInputStream());
         LOG.debug("template sending request: ", exchange.getIn());
-        Exception exception;
+        
+        if (outMessage.getExchange().isSynchronous()) {
+            syncInvoke(exchange);
+        } else {
+            // submit the request to the work queue
+            asyncInvokeFromWorkQueue(exchange);
+        }
+
+    }
+    
+    protected void syncInvoke(org.apache.camel.Exchange exchange) throws IOException {
         try {
             this.producer.process(exchange);
         } catch (Exception ex) {
-            exception = ex;
+            exchange.setException(ex);
         }
         // Throw the exception that the template get
-        exception = exchange.getException();
+        Exception exception = exchange.getException();
         if (exception != null) {
             throw new IOException("Cannot send the request message.", exchange.getException());
         }
         exchange.setProperty(CamelTransportConstants.CXF_EXCHANGE, outMessage.getExchange());
         if (!isOneWay) {
-            handleResponse(exchange);
+            handleResponseInternal(exchange);
         }
-
+        
+    }
+     
+    protected void asyncInvokeFromWorkQueue(final org.apache.camel.Exchange exchange) throws IOException {
+        Runnable runnable = new Runnable() {
+            public void run() {
+                try {
+                    syncInvoke(exchange);
+                } catch (Throwable e) {
+                    ((PhaseInterceptorChain)outMessage.getInterceptorChain()).abort();
+                    outMessage.setContent(Exception.class, e);
+                    ((PhaseInterceptorChain)outMessage.getInterceptorChain()).unwind(outMessage);
+                    MessageObserver mo = outMessage.getInterceptorChain().getFaultObserver();
+                    if (mo == null) {
+                        mo = outMessage.getExchange().get(MessageObserver.class);
+                    }
+                    mo.onMessage(outMessage);
+                }
+            }
+        };
+        
+        try {
+            Executor ex = outMessage.getExchange().get(Executor.class);
+            if (ex != null) {
+                final Executor ex2 = ex;
+                final Runnable origRunnable = runnable;
+                runnable = new Runnable() {
+                    public void run() {
+                        outMessage.getExchange().put(Executor.class.getName() 
+                                                     + ".USING_SPECIFIED", Boolean.TRUE);
+                        ex2.execute(origRunnable);
+                    }
+                };
+            } else {
+                WorkQueueManager mgr = outMessage.getExchange().get(Bus.class)
+                    .getExtension(WorkQueueManager.class);
+                AutomaticWorkQueue qu = mgr.getNamedWorkQueue("nmr-conduit");
+                if (qu == null) {
+                    qu = mgr.getAutomaticWorkQueue();
+                }
+                // need to set the time out somewhere
+                qu.execute(runnable);
+            } 
+        } catch (RejectedExecutionException rex) {
+            if (!hasLoggedAsyncWarning) {
+                LOG.warn("Executor rejected background task to retrieve the response.  Suggest increasing the workqueue settings.");
+                hasLoggedAsyncWarning = true;
+            }
+            LOG.info("Executor rejected background task to retrieve the response, running on current thread.");
+            syncInvoke(exchange);
+        }
     }
 
-    private void handleResponse(org.apache.camel.Exchange exchange) throws IOException {
+    private void handleResponseInternal(org.apache.camel.Exchange exchange) {
         org.apache.cxf.message.Message inMessage = null;
-        try {
-            inMessage = CxfMessageHelper.getCxfInMessage(this.headerFilterStrategy, exchange, true);
-        } catch (Exception ex) {
-            throw new IOException("Cannot get the response message. ", ex);
-        }
+        inMessage = CxfMessageHelper.getCxfInMessage(this.headerFilterStrategy, exchange, true);
         this.observer.onMessage(inMessage);
     }
+    
+    
 }

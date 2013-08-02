@@ -16,10 +16,14 @@
  */
 package org.apache.camel.component.cxf.transport;
 
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.Future;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
+
 import static org.hamcrest.CoreMatchers.is;
 
 /**
@@ -67,5 +71,15 @@ public class JaxWSCamelConduitTest extends JaxWSCamelTestSupport {
     @Test
     public void testStart3() {
         assertThat(getSampleWS("direct:start3").getSomething(), is("Something"));
+    }
+    
+    @Test
+    public void testAsyncInvocation() throws InterruptedException, ExecutionException {
+        
+        Future<?> result = getSampleWSAsyncWithCXFAPI("direct:start2").getSomethingAsync();
+        // as the CXF will build the getSomethingResponse by using asm, so we cannot get the response directly.
+        assertNotNull(result.get());
+        
+       
     }
 }
