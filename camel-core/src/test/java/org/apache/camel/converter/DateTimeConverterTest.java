@@ -16,6 +16,8 @@
  */
 package org.apache.camel.converter;
 
+
+import java.util.Date;
 import java.util.TimeZone;
 
 import org.apache.camel.ContextTestSupport;
@@ -31,5 +33,18 @@ public class DateTimeConverterTest extends ContextTestSupport {
         TimeZone zone = context.getTypeConverter().convertTo(TimeZone.class, id);
         assertNotNull(zone);
         assertEquals(id, zone.getID());
+    }
+    
+    public void testLongToDate() {
+        long value = 0;
+        Date date = context.getTypeConverter().convertTo(Date.class, value);
+        Date expected = new Date(value);
+        assertEquals(expected, date);
+    }
+    
+    public void testDateToLong() {
+        Date date = new Date(0);
+        long l = context.getTypeConverter().convertTo(Long.class, date);
+        assertEquals(date.getTime(), l);
     }
 }
