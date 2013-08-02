@@ -251,7 +251,8 @@
     <lightcouch-version>0.0.6</lightcouch-version>
     <lightcouch-bundle-version>0.0.5_1</lightcouch-bundle-version>
     <!-- needed from tooling/archetypes -->
-    <maven-antrun-plugin-version>1.7</maven-antrun-plugin-version>
+    <!-- use antrun 1.6 as 1.7 fails with finding tools.jar on java on some platforms -->
+    <maven-antrun-plugin-version>1.6</maven-antrun-plugin-version>
     <maven-archetype-plugin-version>2.0</maven-archetype-plugin-version>
     <maven-archetype-packaging-version>2.0</maven-archetype-packaging-version>
     <maven-assembly-plugin-version>2.4</maven-assembly-plugin-version>
