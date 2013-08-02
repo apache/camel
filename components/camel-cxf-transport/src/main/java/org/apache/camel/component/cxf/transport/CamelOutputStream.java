@@ -145,19 +145,13 @@ class CamelOutputStream extends CachedOutputStream {
         try {
             Executor ex = outMessage.getExchange().get(Executor.class);
             if (ex != null) {
-                final Executor ex2 = ex;
-                final Runnable origRunnable = runnable;
-                runnable = new Runnable() {
-                    public void run() {
-                        outMessage.getExchange().put(Executor.class.getName() 
-                                                     + ".USING_SPECIFIED", Boolean.TRUE);
-                        ex2.execute(origRunnable);
-                    }
-                };
+                outMessage.getExchange().put(Executor.class.getName() 
+                                             + ".USING_SPECIFIED", Boolean.TRUE);
+                ex.execute(runnable);
             } else {
                 WorkQueueManager mgr = outMessage.getExchange().get(Bus.class)
                     .getExtension(WorkQueueManager.class);
-                AutomaticWorkQueue qu = mgr.getNamedWorkQueue("nmr-conduit");
+                AutomaticWorkQueue qu = mgr.getNamedWorkQueue("camel-cxf-conduit");
                 if (qu == null) {
                     qu = mgr.getAutomaticWorkQueue();
                 }
