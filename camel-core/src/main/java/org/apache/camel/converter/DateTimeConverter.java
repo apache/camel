@@ -16,6 +16,7 @@
  */
 package org.apache.camel.converter;
 
+import java.util.Date;
 import java.util.TimeZone;
 
 import org.apache.camel.Converter;
@@ -35,5 +36,15 @@ public final class DateTimeConverter {
     @Converter
     public static TimeZone toTimeZone(String s) {
         return TimeZone.getTimeZone(s);
+    }
+    
+    @Converter
+    public static Date toDate(Long l) {
+        return l != null ? new Date(l) : null;
+    }
+    
+    @Converter
+    public static Long toLong(Date date) {
+        return date != null ? date.getTime() : null;
     }
 }
