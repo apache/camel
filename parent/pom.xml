@@ -251,11 +251,12 @@
     <lightcouch-version>0.0.6</lightcouch-version>
     <lightcouch-bundle-version>0.0.5_1</lightcouch-bundle-version>
     <!-- needed from tooling/archetypes -->
-    <maven-antrun-plugin-version>1.6</maven-antrun-plugin-version>
+    <maven-antrun-plugin-version>1.7</maven-antrun-plugin-version>
     <maven-archetype-plugin-version>2.0</maven-archetype-plugin-version>
     <maven-archetype-packaging-version>2.0</maven-archetype-packaging-version>
     <maven-assembly-plugin-version>2.4</maven-assembly-plugin-version>
     <maven-bundle-version>${maven-bundle-plugin-version}</maven-bundle-version>
+    <!-- problems by upgrading to maven-bundle-plugin 2.4.0 -->
     <maven-bundle-plugin-version>2.3.7</maven-bundle-plugin-version>
     <maven-checkstyle-plugin-version>2.9.1</maven-checkstyle-plugin-version>
     <maven-clean-plugin-version>2.5</maven-clean-plugin-version>
