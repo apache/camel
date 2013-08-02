@@ -81,7 +81,7 @@ public class SedaEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
     private BlockingQueueFactory<Exchange> queueFactory;
 
     public SedaEndpoint() {
-		queueFactory = new LinkedBlockingQueueFactory<Exchange>();
+        queueFactory = new LinkedBlockingQueueFactory<Exchange>();
     }
 
     public SedaEndpoint(String endpointUri, Component component, BlockingQueue<Exchange> queue) {
@@ -89,19 +89,19 @@ public class SedaEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
     }
 
     public SedaEndpoint(String endpointUri, Component component, BlockingQueue<Exchange> queue, int concurrentConsumers) {
-		this(endpointUri, component, concurrentConsumers);
+        this(endpointUri, component, concurrentConsumers);
         this.queue = queue;
         if (queue != null) {
             this.size = queue.remainingCapacity();
         }
-		queueFactory = new LinkedBlockingQueueFactory<Exchange>();
-	}
-	
+        queueFactory = new LinkedBlockingQueueFactory<Exchange>();
+    }
+
     public SedaEndpoint(String endpointUri, Component component, BlockingQueueFactory<Exchange> queueFactory, int concurrentConsumers) {
-		this(endpointUri, component, concurrentConsumers);
-		this.queueFactory = queueFactory;
-	}
-	
+        this(endpointUri, component, concurrentConsumers);
+        this.queueFactory = queueFactory;
+    }
+
     private SedaEndpoint(String endpointUri, Component component, int concurrentConsumers) {
         super(endpointUri, component);
         this.concurrentConsumers = concurrentConsumers;

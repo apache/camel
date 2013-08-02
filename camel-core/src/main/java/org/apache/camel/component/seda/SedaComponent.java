@@ -38,7 +38,7 @@ public class SedaComponent extends UriEndpointComponent {
     protected int queueSize;
     protected int defaultConcurrentConsumers = 1;
     private final Map<String, QueueReference> queues = new HashMap<String, QueueReference>();
-    private BlockingQueueFactory<Exchange> defaultQueueFactory =new LinkedBlockingQueueFactory<Exchange>();
+    private BlockingQueueFactory<Exchange> defaultQueueFactory = new LinkedBlockingQueueFactory<Exchange>();
     public SedaComponent() {
         super(SedaEndpoint.class);
     }
@@ -59,13 +59,13 @@ public class SedaComponent extends UriEndpointComponent {
         return defaultConcurrentConsumers;
     }
 
-	public BlockingQueueFactory<Exchange> getDefaultQueueFactory() {
-		return defaultQueueFactory;
-	}
+    public BlockingQueueFactory<Exchange> getDefaultQueueFactory() {
+        return defaultQueueFactory;
+    }
 
-	public void setDefaultQueueFactory(BlockingQueueFactory<Exchange> defaultQueueFactory) {
-		this.defaultQueueFactory = defaultQueueFactory;
-	}
+    public void setDefaultQueueFactory(BlockingQueueFactory<Exchange> defaultQueueFactory) {
+        this.defaultQueueFactory = defaultQueueFactory;
+    }
 
     /**
      * @deprecated use {@link #getOrCreateQueue(String, Integer, Boolean, BlockingQueueFactory)}
@@ -135,6 +135,7 @@ public class SedaComponent extends UriEndpointComponent {
     }
 
     @Override
+    @SuppressWarnings("unchecked")
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         int consumers = getAndRemoveParameter(parameters, "concurrentConsumers", Integer.class, defaultConcurrentConsumers);
         boolean limitConcurrentConsumers = getAndRemoveParameter(parameters, "limitConcurrentConsumers", Boolean.class, true);
@@ -142,17 +143,21 @@ public class SedaComponent extends UriEndpointComponent {
             throw new IllegalArgumentException("The limitConcurrentConsumers flag in set to true. ConcurrentConsumers cannot be set at a value greater than "
                     + maxConcurrentConsumers + " was " + consumers);
         }
-		// Resolve queue reference
-		BlockingQueue<Exchange> queue=resolveAndRemoveReferenceParameter(parameters, "queue", BlockingQueue.class);
-		SedaEndpoint answer;
-		// Resolve queue factory when no queue specified
-		if (queue == null) {
-			BlockingQueueFactory<Exchange> queueFactory=resolveAndRemoveReferenceParameter(parameters, "queueFactory", BlockingQueueFactory.class);
-			// defer creating queue till endpoint is started, so we pass the queue factory
-			answer = new SedaEndpoint(uri, this, queueFactory, consumers);			
-		} else {
-			answer = new SedaEndpoint(uri, this, queue, consumers);
-		}
+        // Resolve queue reference
+        BlockingQueue<Exchange> queue = resolveAndRemoveReferenceParameter(parameters, "queue",
+                                                                           BlockingQueue.class);
+        SedaEndpoint answer;
+        // Resolve queue factory when no queue specified
+        if (queue == null) {
+            BlockingQueueFactory<Exchange> queueFactory = resolveAndRemoveReferenceParameter(parameters,
+                                                                                             "queueFactory",
+                                                                                             BlockingQueueFactory.class);
+            // defer creating queue till endpoint is started, so we pass the
+            // queue factory
+            answer = new SedaEndpoint(uri, this, queueFactory, consumers);
+        } else {
+            answer = new SedaEndpoint(uri, this, queue, consumers);
+        }
         answer.configureProperties(parameters);
         return answer;
     }

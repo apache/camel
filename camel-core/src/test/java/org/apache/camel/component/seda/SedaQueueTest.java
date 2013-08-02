@@ -17,6 +17,7 @@
 package org.apache.camel.component.seda;
 
 import java.util.concurrent.ArrayBlockingQueue;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -24,8 +25,6 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.SimpleRegistry;
-import org.hamcrest.CoreMatchers;
-import org.junit.matchers.JUnitMatchers;
 
 /**
  * @version 
@@ -46,16 +45,18 @@ public class SedaQueueTest extends ContextTestSupport {
         mock.expectedBodiesReceived("Hello World");
 
         template.sendBody("seda:array?queue=#arrayQueue", "Hello World");
-		
-		SedaEndpoint sedaEndpoint=resolveMandatoryEndpoint("seda:array?queue=#arrayQueue", SedaEndpoint.class);
-		assertTrue(sedaEndpoint.getQueue() instanceof ArrayBlockingQueue);
+
+        SedaEndpoint sedaEndpoint = resolveMandatoryEndpoint("seda:array?queue=#arrayQueue",
+                                                             SedaEndpoint.class);
+        assertTrue(sedaEndpoint.getQueue() instanceof ArrayBlockingQueue);
     }
-	@Override
-	protected CamelContext createCamelContext() throws Exception {
-		SimpleRegistry simpleRegistry=new SimpleRegistry();
-		simpleRegistry.put("arrayQueue", new ArrayBlockingQueue<Exchange>(10));
+
+    @Override
+    protected CamelContext createCamelContext() throws Exception {
+        SimpleRegistry simpleRegistry = new SimpleRegistry();
+        simpleRegistry.put("arrayQueue", new ArrayBlockingQueue<Exchange>(10));
         return new DefaultCamelContext(simpleRegistry);
-	}
+    }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -66,7 +67,7 @@ public class SedaQueueTest extends ContextTestSupport {
 
                 from("seda:bar").to("mock:result");
 
-				from("seda:array?queue=#arrayQueue").to("mock:result");
+                from("seda:array?queue=#arrayQueue").to("mock:result");
             }
         };
     }

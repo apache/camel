@@ -24,31 +24,31 @@ import java.util.concurrent.PriorityBlockingQueue;
  * Implementation of {@link BlockingQueueFactory} producing {@link java.util.concurrent.PriorityBlockingQueue}
  */
 public class PriorityBlockingQueueFactory<E> implements BlockingQueueFactory<E> {
-	/**
-	 * Comparator used to sort exchanges
-	 */
-	private Comparator<E> comparator;
+    /**
+     * Comparator used to sort exchanges
+     */
+    private Comparator<E> comparator;
 
-	public Comparator<E> getComparator() {
-		return comparator;
-	}
+    public Comparator<E> getComparator() {
+        return comparator;
+    }
 
-	public void setComparator(Comparator<E> comparator) {
-		this.comparator = comparator;
-	}
-	
+    public void setComparator(Comparator<E> comparator) {
+        this.comparator = comparator;
+    }
+
     @Override
     public PriorityBlockingQueue<E> create() {
-        return comparator==null ?
-				new PriorityBlockingQueue<E>() :
-				// PriorityQueue as a default capacity of 11
-				new PriorityBlockingQueue<E>(11, comparator);
+        return comparator == null 
+            ? new PriorityBlockingQueue<E>()
+            // PriorityQueue as a default capacity of 11
+            : new PriorityBlockingQueue<E>(11, comparator);
     }
 
     @Override
     public PriorityBlockingQueue<E> create(int capacity) {
-        return comparator==null?
-				new PriorityBlockingQueue<E>(capacity):
-				new PriorityBlockingQueue<E>(capacity, comparator);
+        return comparator == null
+            ? new PriorityBlockingQueue<E>(capacity)
+            : new PriorityBlockingQueue<E>(capacity, comparator);
     }
 }

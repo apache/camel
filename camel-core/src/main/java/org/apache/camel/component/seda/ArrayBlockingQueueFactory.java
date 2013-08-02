@@ -23,42 +23,43 @@ import java.util.concurrent.ArrayBlockingQueue;
  * Implementation of {@link BlockingQueueFactory} producing {@link java.util.concurrent.ArrayBlockingQueue}
  */
 public class ArrayBlockingQueueFactory<E> implements BlockingQueueFactory<E> {
-	/**
-	 * Capacity used when none provided
-	 */
-	private int defaultCapacity=50;
-	/**
-	 * Lock fairness. null means default fairness
-	 */
-	private Boolean fair;
-	/**
-	 * @return Default array capacity
-	 */
-	public int getDefaultCapacity() {
-		return defaultCapacity;
-	}
+    /**
+     * Capacity used when none provided
+     */
+    private int defaultCapacity = 50;
+    /**
+     * Lock fairness. null means default fairness
+     */
+    private Boolean fair;
 
-	/**
-	 * @param defaultCapacity Default array capacity
-	 */
-	public void setDefaultCapacity(int defaultCapacity) {
-		this.defaultCapacity = defaultCapacity;
-	}
+    /**
+     * @return Default array capacity
+     */
+    public int getDefaultCapacity() {
+        return defaultCapacity;
+    }
 
-	/**
-	 * @return Lock fairness
-	 */
-	public boolean isFair() {
-		return fair;
-	}
+    /**
+     * @param defaultCapacity Default array capacity
+     */
+    public void setDefaultCapacity(int defaultCapacity) {
+        this.defaultCapacity = defaultCapacity;
+    }
 
-	/**
-	 * @param fair Lock fairness
-	 */
-	public void setFair(boolean fair) {
-		this.fair = fair;
-	}
-	
+    /**
+     * @return Lock fairness
+     */
+    public boolean isFair() {
+        return fair;
+    }
+
+    /**
+     * @param fair Lock fairness
+     */
+    public void setFair(boolean fair) {
+        this.fair = fair;
+    }
+
     @Override
     public ArrayBlockingQueue<E> create() {
         return create(defaultCapacity);
@@ -66,8 +67,7 @@ public class ArrayBlockingQueueFactory<E> implements BlockingQueueFactory<E> {
 
     @Override
     public ArrayBlockingQueue<E> create(int capacity) {
-        return fair == null ? 
-				new ArrayBlockingQueue<E>(defaultCapacity) :
-				new ArrayBlockingQueue<E>(defaultCapacity, fair) ;
+        return fair == null
+            ? new ArrayBlockingQueue<E>(defaultCapacity) : new ArrayBlockingQueue<E>(defaultCapacity, fair);
     }
 }
