@@ -2451,7 +2451,7 @@
         <plugin>
           <groupId>org.jvnet.jaxb2.maven2</groupId>
           <artifactId>maven-jaxb2-plugin</artifactId>
-          <version>0.8.1</version>
+          <version>0.8.3</version>
           <executions>
             <execution>
               <goals>
