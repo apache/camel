@@ -16,28 +16,39 @@
  */
 package org.apache.camel.component.quartz2;
 
-import org.apache.camel.*;
-import org.apache.camel.impl.DefaultEndpoint;
-import org.apache.camel.processor.loadbalancer.LoadBalancer;
-import org.apache.camel.processor.loadbalancer.RoundRobinLoadBalancer;
-import org.apache.camel.util.EndpointHelper;
-import org.quartz.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.Date;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.apache.camel.Consumer;
+import org.apache.camel.Processor;
+import org.apache.camel.Producer;
+import org.apache.camel.Route;
+import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.processor.loadbalancer.LoadBalancer;
+import org.apache.camel.processor.loadbalancer.RoundRobinLoadBalancer;
+import org.apache.camel.util.EndpointHelper;
+import org.quartz.Job;
+import org.quartz.JobBuilder;
+import org.quartz.JobDataMap;
+import org.quartz.JobDetail;
+import org.quartz.Scheduler;
+import org.quartz.SimpleTrigger;
+import org.quartz.Trigger;
+import org.quartz.TriggerBuilder;
+import org.quartz.TriggerKey;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import static org.quartz.CronScheduleBuilder.cronSchedule;
 import static org.quartz.SimpleScheduleBuilder.simpleSchedule;
+
 
 /**
  * This endpoint represent each job to be created in scheduler. When consumer is started or stopped, it will
  * call back into doConsumerStart()/Stop() to pause/resume the scheduler trigger.
  *
- * @author Zemian Deng saltnlight5@gmail.com
  */
 public class QuartzEndpoint extends DefaultEndpoint {
     private static final transient Logger LOG = LoggerFactory.getLogger(QuartzEndpoint.class);
@@ -56,6 +67,10 @@ public class QuartzEndpoint extends DefaultEndpoint {
     // An internal variables to track whether a job has been in scheduler or not, and has it paused or not.
     private AtomicBoolean jobAdded = new AtomicBoolean(false);
     private AtomicBoolean jobPaused = new AtomicBoolean(false);
+    
+    public QuartzEndpoint(String uri, QuartzComponent quartzComponent) {
+        super(uri, quartzComponent);
+    }
 
     public String getCron() {
         return cron;
@@ -102,8 +117,9 @@ public class QuartzEndpoint extends DefaultEndpoint {
     }
 
     public LoadBalancer getConsumerLoadBalancer() {
-        if (consumerLoadBalancer == null)
+        if (consumerLoadBalancer == null) {
             consumerLoadBalancer = new RoundRobinLoadBalancer();
+        }
         return consumerLoadBalancer;
     }
 
@@ -122,11 +138,7 @@ public class QuartzEndpoint extends DefaultEndpoint {
     public void setTriggerKey(TriggerKey triggerKey) {
         this.triggerKey = triggerKey;
     }
-
-    public QuartzEndpoint(String uri, QuartzComponent quartzComponent) {
-        super(uri, quartzComponent);
-    }
-
+    
     @Override
     public Producer createProducer() throws Exception {
         throw new UnsupportedOperationException("Quartz producer is not supported.");
@@ -156,8 +168,9 @@ public class QuartzEndpoint extends DefaultEndpoint {
 
     private void removeJobInScheduler() throws Exception {
         Scheduler scheduler = getComponent().getScheduler();
-        if (scheduler == null)
+        if (scheduler == null) {
             return;
+        }
 
         if (deleteJob) {
             boolean isClustered = scheduler.getMetaData().isJobStoreClustered();
@@ -188,11 +201,8 @@ public class QuartzEndpoint extends DefaultEndpoint {
             // Schedule it now. Remember that scheduler might not be started it, but we can schedule now.
             Date nextFireDate = scheduler.scheduleJob(jobDetail, trigger);
             LOG.info("Job {} (triggerType={}, jobClass={}) is scheduled. Next fire date is {}",
-                    new Object[]{
-                            trigger.getKey(),
-                            trigger.getClass().getSimpleName(),
-                            jobDetail.getJobClass().getSimpleName(),
-                            nextFireDate});
+                     new Object[] {trigger.getKey(), trigger.getClass().getSimpleName(),
+                          jobDetail.getJobClass().getSimpleName(), nextFireDate});
         } else {
             ensureNoDupTriggerKey();
 
@@ -202,11 +212,8 @@ public class QuartzEndpoint extends DefaultEndpoint {
             scheduler.addJob(jobDetail, true);
             Date nextFireDate = trigger.getNextFireTime();
             LOG.info("Reuse existing Job {} (triggerType={}, jobType={}) is scheduled. Next fire date is {}",
-                    new Object[]{
-                            trigger.getKey(),
-                            trigger.getClass().getSimpleName(),
-                            jobDetail.getJobClass().getSimpleName(),
-                            nextFireDate});
+                     new Object[] {trigger.getKey(), trigger.getClass().getSimpleName(),
+                                   jobDetail.getJobClass().getSimpleName(), nextFireDate});
         }
 
         // Increase camel job count for this endpoint
@@ -241,8 +248,9 @@ public class QuartzEndpoint extends DefaultEndpoint {
     private Trigger createTrigger() throws Exception {
         Trigger result = null;
         Date startTime = new Date();
-        if (getComponent().getScheduler().isStarted())
+        if (getComponent().getScheduler().isStarted()) {
             startTime = new Date(System.currentTimeMillis() + triggerStartDelay);
+        }
         if (cron != null) {
             LOG.debug("Creating CronTrigger: {}", cron);
             result = TriggerBuilder.newTrigger()
@@ -310,8 +318,9 @@ public class QuartzEndpoint extends DefaultEndpoint {
     }
 
     public void pauseTrigger() throws Exception {
-        if (jobPaused.get())
+        if (jobPaused.get()) {
             return;
+        }
         jobPaused.set(true);
 
         Scheduler scheduler = getComponent().getScheduler();
@@ -322,8 +331,9 @@ public class QuartzEndpoint extends DefaultEndpoint {
     }
 
     public void resumeTrigger() throws Exception {
-        if (!jobPaused.get())
+        if (!jobPaused.get()) {
             return;
+        }
         jobPaused.set(false);
 
         Scheduler scheduler = getComponent().getScheduler();

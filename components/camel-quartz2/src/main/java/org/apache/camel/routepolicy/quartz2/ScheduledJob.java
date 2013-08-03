@@ -16,14 +16,18 @@
  */
 package org.apache.camel.routepolicy.quartz2;
 
-import org.apache.camel.Route;
-import org.apache.camel.spi.RoutePolicy;
-import org.quartz.*;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.Serializable;
 import java.util.List;
+
+import org.apache.camel.Route;
+import org.apache.camel.spi.RoutePolicy;
+import org.quartz.Job;
+import org.quartz.JobExecutionContext;
+import org.quartz.JobExecutionException;
+import org.quartz.SchedulerContext;
+import org.quartz.SchedulerException;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ScheduledJob implements Job, Serializable, ScheduledRoutePolicyConstants {
     private static final transient Logger LOG = LoggerFactory.getLogger(ScheduledJob.class);

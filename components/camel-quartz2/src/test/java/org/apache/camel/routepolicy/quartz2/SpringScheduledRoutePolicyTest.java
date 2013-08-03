@@ -16,6 +16,9 @@
  */
 package org.apache.camel.routepolicy.quartz2;
 
+import java.util.List;
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ServiceStatus;
@@ -28,12 +31,7 @@ import org.apache.camel.test.junit4.TestSupport;
 import org.apache.camel.util.ServiceHelper;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-import java.util.List;
-import java.util.concurrent.TimeUnit;
 
-/**
- * @version 
- */
 public abstract class SpringScheduledRoutePolicyTest extends TestSupport {
     protected enum TestType {
         SIMPLE, CRON

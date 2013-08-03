@@ -16,6 +16,8 @@
  */
 package org.apache.camel.routepolicy.quartz2;
 
+import java.util.Date;
+
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -25,8 +27,6 @@ import org.apache.camel.impl.ThrottlingInflightRoutePolicy;
 import org.apache.camel.spi.RoutePolicy;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
-
-import java.util.Date;
 
 /**
  * @version 

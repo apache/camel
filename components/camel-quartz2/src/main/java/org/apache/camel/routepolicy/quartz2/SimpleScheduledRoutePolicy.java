@@ -16,13 +16,16 @@
  */
 package org.apache.camel.routepolicy.quartz2;
 
+import java.util.Date;
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.Route;
 import org.apache.camel.component.quartz2.QuartzComponent;
 import org.apache.camel.util.ObjectHelper;
-import org.quartz.*;
-
-import java.util.Date;
-import java.util.concurrent.TimeUnit;
+import org.quartz.SimpleScheduleBuilder;
+import org.quartz.SimpleTrigger;
+import org.quartz.Trigger;
+import org.quartz.TriggerBuilder;
 
 public class SimpleScheduledRoutePolicy extends ScheduledRoutePolicy {
     private Date routeStartDate;

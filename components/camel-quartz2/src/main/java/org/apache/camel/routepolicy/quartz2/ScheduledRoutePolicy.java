@@ -16,17 +16,23 @@
  */
 package org.apache.camel.routepolicy.quartz2;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.Route;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.impl.RoutePolicySupport;
 import org.apache.camel.util.ServiceHelper;
-import org.quartz.*;
+import org.quartz.JobBuilder;
+import org.quartz.JobDetail;
+import org.quartz.JobKey;
+import org.quartz.Scheduler;
+import org.quartz.SchedulerException;
+import org.quartz.Trigger;
+import org.quartz.TriggerKey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.LinkedHashMap;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
 
 /**
  * This is Quartz2.x based RoutePolicy implementation that re-use almost identical to "camel-quartz" component.
@@ -38,9 +44,6 @@ import java.util.concurrent.TimeUnit;
  *
  * See org.apache.camel.component.quartz2.QuartzComponent
  *
- * @author All the orignal authors from camel-quartz should get credits as well.
- * @author Zemian Deng saltnlight5@gmail.com - ported and re-implemented the camel-quartz2 component.
- * @since Jul-27-2013
  */
 public abstract class ScheduledRoutePolicy extends RoutePolicySupport implements ScheduledRoutePolicyConstants {
     private static final transient Logger LOG = LoggerFactory.getLogger(ScheduledRoutePolicy.class);

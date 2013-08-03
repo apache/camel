@@ -16,24 +16,27 @@
  */
 package org.apache.camel.component.quartz2;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.Endpoint;
-import org.apache.camel.StartupListener;
-import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.DefaultComponent;
-import org.apache.camel.util.IntrospectionSupport;
-import org.apache.camel.util.ObjectHelper;
-import org.quartz.*;
-import org.quartz.impl.StdSchedulerFactory;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.atomic.AtomicInteger;
+
+import org.apache.camel.CamelContext;
+import org.apache.camel.Endpoint;
+import org.apache.camel.StartupListener;
+import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.util.IntrospectionSupport;
+import org.apache.camel.util.ObjectHelper;
+import org.quartz.Scheduler;
+import org.quartz.SchedulerContext;
+import org.quartz.SchedulerException;
+import org.quartz.SchedulerFactory;
+import org.quartz.TriggerKey;
+import org.quartz.impl.StdSchedulerFactory;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A factory for QuartzEndpoint. This component will hold a Quartz Scheduler that will provide scheduled timer based
@@ -43,9 +46,6 @@ import java.util.concurrent.atomic.AtomicInteger;
  * of the code, but mostly has been re-written in attempt to be more easier to maintain, and use Quartz more
  * fully.</p>
  *
- * @author All the orignal authors from camel-quartz should get credits as well.
- * @author Zemian Deng saltnlight5@gmail.com - ported and re-implemented the camel-quartz2 component.
- * @since Jul-27-2013
  */
 public class QuartzComponent extends DefaultComponent implements StartupListener {
     private static final transient Logger LOG = LoggerFactory.getLogger(QuartzComponent.class);
@@ -55,7 +55,7 @@ public class QuartzComponent extends DefaultComponent implements StartupListener
     private String propertiesFile;
     private int startDelayedSeconds;
     private boolean autoStartScheduler = true;
-    private boolean prefixJobNameWithEndpointId = false;
+    private boolean prefixJobNameWithEndpointId;
 
     public QuartzComponent() {
     }
@@ -198,12 +198,14 @@ public class QuartzComponent extends DefaultComponent implements StartupListener
         }
 
         Boolean autoStartScheduler = getAndRemoveParameter(parameters, "autoStartScheduler", Boolean.class);
-        if (autoStartScheduler != null)
+        if (autoStartScheduler != null) {
             this.autoStartScheduler = autoStartScheduler;
+        }
 
         Boolean prefixJobNameWithEndpointId = getAndRemoveParameter(parameters, "prefixJobNameWithEndpointId", Boolean.class);
-        if (prefixJobNameWithEndpointId != null)
+        if (prefixJobNameWithEndpointId != null) {
             this.prefixJobNameWithEndpointId = prefixJobNameWithEndpointId;
+        }
 
         // Extract trigger.XXX and job.XXX properties to be set on endpoint below
         Map<String, Object> triggerParameters = IntrospectionSupport.extractProperties(parameters, "trigger.");
@@ -230,7 +232,8 @@ public class QuartzComponent extends DefaultComponent implements StartupListener
         }
 
         // Trigger group can be optional, if so set it to this context's unique name
-        String name, group;
+        String name;
+        String group;
         if (ObjectHelper.isNotEmpty(path) && ObjectHelper.isNotEmpty(host)) {
             group = host;
             name = path;
@@ -241,8 +244,9 @@ public class QuartzComponent extends DefaultComponent implements StartupListener
         }
 
 
-        if (prefixJobNameWithEndpointId)
+        if (prefixJobNameWithEndpointId) {
             name = endpoint.getId() + "_" + name;
+        }
 
         return new TriggerKey(name, group);
     }

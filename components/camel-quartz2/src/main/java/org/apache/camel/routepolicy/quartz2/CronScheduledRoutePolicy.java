@@ -16,6 +16,8 @@
  */
 package org.apache.camel.routepolicy.quartz2;
 
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.Route;
 import org.apache.camel.component.quartz2.QuartzComponent;
 import org.apache.camel.util.ObjectHelper;
@@ -23,8 +25,6 @@ import org.quartz.CronScheduleBuilder;
 import org.quartz.CronTrigger;
 import org.quartz.Trigger;
 import org.quartz.TriggerBuilder;
-
-import java.util.concurrent.TimeUnit;
 
 public class CronScheduledRoutePolicy extends ScheduledRoutePolicy implements ScheduledRoutePolicyConstants {
     private String routeStartTime;

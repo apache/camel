@@ -16,6 +16,9 @@
  */
 package org.apache.camel.routepolicy.quartz2;
 
+import java.util.Date;
+import java.util.concurrent.TimeUnit;
+
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
@@ -27,12 +30,6 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Date;
-import java.util.concurrent.TimeUnit;
-
-/**
- * @version 
- */
 public class SimpleScheduledRoutePolicyTest extends CamelTestSupport {
     private static final transient Logger LOG = LoggerFactory.getLogger(SimpleScheduledRoutePolicyTest.class);
     

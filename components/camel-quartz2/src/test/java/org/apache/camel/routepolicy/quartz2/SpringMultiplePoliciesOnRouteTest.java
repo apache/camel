@@ -21,9 +21,7 @@ import org.junit.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-/**
- * @version 
- */
+
 public class SpringMultiplePoliciesOnRouteTest extends CamelSpringTestSupport {
     private String url = "seda:foo?concurrentConsumers=20";
     private int size = 100;

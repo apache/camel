@@ -20,7 +20,12 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Route;
-import org.quartz.*;
+import org.quartz.Job;
+import org.quartz.JobExecutionContext;
+import org.quartz.JobExecutionException;
+import org.quartz.SchedulerContext;
+import org.quartz.SchedulerException;
+import org.quartz.TriggerKey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -28,7 +33,6 @@ import org.slf4j.LoggerFactory;
  * This is a Quartz Job that is scheduled by QuartzEndpoint's Consumer and will call it to
  * produce a QuartzMessage sending to a route.
  *
- * @author Zemian Deng saltnlight5@gmail.com
  */
 public class CamelJob implements Job {
     private static final transient Logger LOG = LoggerFactory.getLogger(CamelJob.class);
@@ -37,8 +41,9 @@ public class CamelJob implements Job {
     public void execute(JobExecutionContext context) throws JobExecutionException {
         Exchange exchange = null;
         try {
-            if (LOG.isDebugEnabled())
+            if (LOG.isDebugEnabled()) {
                 LOG.debug("Running CamelJob jobExecutionContext={}", context);
+            }
 
             CamelContext camelContext = getCamelContext(context);
             QuartzEndpoint endpoint = lookupQuartzEndpoint(camelContext, context);
@@ -50,10 +55,11 @@ public class CamelJob implements Job {
                 throw new JobExecutionException(exchange.getException());
             }
         } catch (Exception e) {
-            if (exchange != null)
+            if (exchange != null) {
                 LOG.error(CamelExchangeException.createExceptionMessage("Error processing exchange", exchange, e));
-            else
+            } else {
                 LOG.error("Failed to execute CamelJob.", e);
+            }
 
             // and rethrow to let quartz handle it
             if (e instanceof JobExecutionException) {
@@ -83,8 +89,9 @@ public class CamelJob implements Job {
 
     private QuartzEndpoint lookupQuartzEndpoint(CamelContext camelContext, JobExecutionContext quartzContext) throws JobExecutionException {
         TriggerKey triggerKey = quartzContext.getTrigger().getKey();
-        if (LOG.isDebugEnabled())
+        if (LOG.isDebugEnabled()) {
             LOG.debug("Looking up existing QuartzEndpoint with triggerKey={}", triggerKey);
+        }
 
         // check all active routes for the quartz endpoint this task matches
         // as we prefer to use the existing endpoint from the routes
@@ -92,8 +99,9 @@ public class CamelJob implements Job {
             if (route.getEndpoint() instanceof QuartzEndpoint) {
                 QuartzEndpoint quartzEndpoint = (QuartzEndpoint) route.getEndpoint();
                 TriggerKey checkTriggerKey = quartzEndpoint.getTriggerKey();
-                if (LOG.isTraceEnabled())
+                if (LOG.isTraceEnabled()) {
                     LOG.trace("Checking route endpoint={} with checkTriggerKey={}", quartzEndpoint, checkTriggerKey);
+                }
                 if (triggerKey.equals(checkTriggerKey)) {
                     return quartzEndpoint;
                 }
@@ -106,8 +114,9 @@ public class CamelJob implements Job {
 
         // Even though the same camelContext.getEndpoint call, but if/else display different log.
         if (camelContext.hasEndpoint(endpointUri) != null) {
-            if (LOG.isDebugEnabled())
+            if (LOG.isDebugEnabled()) {
                 LOG.debug("Getting Endpoint from camelContext.");
+            }
             result = camelContext.getEndpoint(endpointUri, QuartzEndpoint.class);
         } else {
             LOG.warn("Cannot find existing QuartzEndpoint with uri: {}. Creating new endpoint instance.", endpointUri);

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.quartz2;
 
+import java.util.List;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.builder.RouteBuilder;
@@ -23,11 +25,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-import java.util.List;
 
-/**
- * @version 
- */
 public class StatefulQuartzRouteTest extends CamelTestSupport {
     protected MockEndpoint resultEndpoint;
 

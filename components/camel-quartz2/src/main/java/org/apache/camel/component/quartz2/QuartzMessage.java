@@ -16,17 +16,16 @@
  */
 package org.apache.camel.component.quartz2;
 
+import java.util.Map;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultMessage;
 import org.quartz.JobExecutionContext;
 import org.quartz.Trigger;
 
-import java.util.Map;
-
 /**
  * A Camel message to be created upon each scheduled job execution.
  *
- * @author Zemian Deng saltnlight5@gmail.com
  */
 public class QuartzMessage extends DefaultMessage {
     private final JobExecutionContext jobExecutionContext;
