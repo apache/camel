@@ -136,6 +136,7 @@
     <module>camel-printer</module>
     <module>camel-protobuf</module>
     <module>camel-quartz</module>
+    <module>camel-quartz2</module>
     <module>camel-quickfix</module>
     <module>camel-rabbitmq</module>
     <module>camel-restlet</module>
