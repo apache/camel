@@ -49,6 +49,8 @@ public class MDCWireTapTest extends ContextTestSupport {
                         public void process(Exchange exchange) throws Exception {
                             assertEquals("route-a", MDC.get("camel.routeId"));
                             assertEquals(exchange.getExchangeId(), MDC.get("camel.exchangeId"));
+
+                            MDC.put("custom.id", "1");
                         }
                     })
                     .to("log:before-wiretap")
@@ -58,6 +60,7 @@ public class MDCWireTapTest extends ContextTestSupport {
                             public void process(Exchange exchange) throws Exception {
                                 assertEquals("route-a", MDC.get("camel.routeId"));
                                 assertEquals(exchange.getExchangeId(), MDC.get("camel.exchangeId"));
+                                assertEquals("1", MDC.get("custom.id"));
                             }
                         })
                     .to("log:a-done")
@@ -68,9 +71,11 @@ public class MDCWireTapTest extends ContextTestSupport {
                             public void process(Exchange exchange) throws Exception {
                                 assertEquals("route-b", MDC.get("camel.routeId"));
                                 assertEquals(exchange.getExchangeId(), MDC.get("camel.exchangeId"));
+                                assertEquals("1", MDC.get("custom.id"));
                             }
                         })
-                    .to("log:b-done").to("mock:b");
+                    .to("log:b-done")
+                    .to("mock:b");
             }
         };
     }

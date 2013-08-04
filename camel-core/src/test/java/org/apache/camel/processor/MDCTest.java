@@ -61,9 +61,12 @@ public class MDCTest extends ContextTestSupport {
                                 assertEquals("route-a", MDC.get("camel.routeId"));
                                 assertEquals(exchange.getExchangeId(), MDC.get("camel.exchangeId"));
                                 assertEquals(exchange.getIn().getMessageId(), MDC.get("camel.messageId"));
+
+                                MDC.put("custom.id", "1");
                             }
                         })
-                        .to("log:foo").to("direct:b");
+                        .to("log:foo")
+                        .to("direct:b");
 
                 from("direct:b").routeId("route-b")
                         .process(new Processor() {
@@ -71,9 +74,11 @@ public class MDCTest extends ContextTestSupport {
                                 assertEquals("route-b", MDC.get("camel.routeId"));
                                 assertEquals(exchange.getExchangeId(), MDC.get("camel.exchangeId"));
                                 assertEquals(exchange.getIn().getMessageId(), MDC.get("camel.messageId"));
+                                assertEquals("1", MDC.get("custom.id"));
                             }
                         })
-                        .to("log:bar").to("mock:result");
+                        .to("log:bar")
+                        .to("mock:result");
             }
         };
     }
