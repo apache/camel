@@ -65,7 +65,7 @@
     <bcel-bundle-version>5.2_4</bcel-bundle-version>
     <beanio-version>2.0.6</beanio-version>
     <bsh-version>2.0b5</bsh-version>
-    <bouncycastle-version>1.48</bouncycastle-version>
+    <bouncycastle-version>1.49</bouncycastle-version>
     <build-helper-maven-plugin-version>1.8</build-helper-maven-plugin-version>
     <castor-bundle-version>1.3.2_2</castor-bundle-version>
     <cglib-bundle-version>2.1_3_7</cglib-bundle-version>
