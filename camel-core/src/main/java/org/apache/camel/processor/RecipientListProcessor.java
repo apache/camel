@@ -30,6 +30,7 @@ import org.apache.camel.impl.ProducerCache;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ExchangeHelper;
+import org.apache.camel.util.MessageHelper;
 import org.apache.camel.util.ServiceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -100,6 +101,8 @@ public class RecipientListProcessor extends MulticastProcessor {
             // we have already acquired and prepare the producer
             LOG.trace("RecipientProcessorExchangePair #{} begin: {}", index, exchange);
             exchange.setProperty(Exchange.RECIPIENT_LIST_ENDPOINT, endpoint.getEndpointUri());
+            // ensure stream caching is reset
+            MessageHelper.resetStreamCache(exchange.getIn());
         }
 
         public void done() {
