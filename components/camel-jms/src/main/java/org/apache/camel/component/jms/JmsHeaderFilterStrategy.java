@@ -24,7 +24,13 @@ import org.apache.camel.impl.DefaultHeaderFilterStrategy;
 public class JmsHeaderFilterStrategy extends DefaultHeaderFilterStrategy {
 
     public JmsHeaderFilterStrategy() {
-        initialize();
+        this(false);
+    }
+
+    public JmsHeaderFilterStrategy(boolean includeAllJMSXProperties) {
+        if (!includeAllJMSXProperties) {
+            initialize();
+        }
     }
 
     protected void initialize() {

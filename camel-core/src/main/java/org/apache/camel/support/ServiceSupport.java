@@ -72,6 +72,16 @@ public abstract class ServiceSupport implements StatefulService {
                     stop();
                 } catch (Exception e2) {
                     // Ignore exceptions as we want to show the original exception
+                } finally {
+                    // ensure flags get reset to stopped as we failed during starting
+                    stopping.set(false);
+                    stopped.set(true);
+                    starting.set(false);
+                    started.set(false);
+                    suspending.set(false);
+                    suspended.set(false);
+                    shutdown.set(false);
+                    shuttingdown.set(false);
                 }
                 throw e;
             } 

@@ -149,6 +149,10 @@ public class FileUtilTest extends TestCase {
             assertEquals("foo\\bar\\baz", FileUtil.compactPath("foo\\bar\\.\\baz"));
             assertEquals("foo\\bar\\baz", FileUtil.compactPath("foo\\bar\\\\baz"));
             assertEquals("\\foo\\bar\\baz", FileUtil.compactPath("\\foo\\bar\\baz"));
+            assertEquals("\\", FileUtil.compactPath("\\"));
+            assertEquals("\\", FileUtil.compactPath("/"));
+            assertEquals("/", FileUtil.compactPath("\\", '/'));
+            assertEquals("/", FileUtil.compactPath("/", '/'));            
         } else {
             assertEquals("../foo", FileUtil.compactPath("../foo"));
             assertEquals("../../foo", FileUtil.compactPath("../../foo"));
@@ -164,6 +168,10 @@ public class FileUtilTest extends TestCase {
             assertEquals("foo/bar/baz", FileUtil.compactPath("foo/bar/./baz"));
             assertEquals("foo/bar/baz", FileUtil.compactPath("foo/bar//baz"));
             assertEquals("/foo/bar/baz", FileUtil.compactPath("/foo/bar/baz"));
+            assertEquals("/", FileUtil.compactPath("/"));
+            assertEquals("/", FileUtil.compactPath("\\"));
+            assertEquals("/", FileUtil.compactPath("/", '/'));
+            assertEquals("/", FileUtil.compactPath("\\", '/'));
         }
     }
 
@@ -202,6 +210,15 @@ public class FileUtilTest extends TestCase {
 
         assertFalse("File should not exist " + file, file.exists());
         assertTrue("A new file should be created " + file, FileUtil.createNewFile(file));
+    }
+
+    public void testShutdown() throws Exception {
+        File tmpFile = FileUtil.createTempFile(null, null);
+        File tmpDir = tmpFile.getParentFile();
+        assertTrue(tmpDir.exists());
+
+        FileUtil.shutdown();
+        assertFalse(tmpDir.exists());
     }
 
 }

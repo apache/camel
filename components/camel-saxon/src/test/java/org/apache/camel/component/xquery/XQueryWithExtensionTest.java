@@ -27,97 +27,92 @@ import net.sf.saxon.trans.XPathException;
 import net.sf.saxon.tree.iter.SingletonIterator;
 import net.sf.saxon.value.SequenceType;
 import net.sf.saxon.value.StringValue;
-
+import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.ProcessorEndpoint;
-import org.apache.camel.test.spring.CamelSpringTestSupport;
+import org.apache.camel.impl.JndiRegistry;
+import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
  * @version
  */
-public class XQueryWithExtensionTest extends CamelSpringTestSupport {
+public class XQueryWithExtensionTest extends CamelTestSupport {
+
+    private Configuration conf;
+
+    @Override
+    protected JndiRegistry createRegistry() throws Exception {
+        JndiRegistry jndi = super.createRegistry();
+
+        conf = new Configuration();
+        conf.registerExtensionFunction(new SimpleExtension());
+
+        jndi.bind("saxonConf", conf);
+        return jndi;
+    }
 
     @Test
     public void testWithExtension() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedBodiesReceived("<transformed extension-function-render=\"arg1[test]\"/>");
 
-	// have to get to the XQueryBuilder somehow to register our custom saxon
-	// extension function
-	ProcessorEndpoint pep = (ProcessorEndpoint) this.context
-		.getEndpoint("xquery://org/apache/camel/component/xquery/transformWithExtension.xquery");
+        template.sendBody("direct:start", "<body>test</body>");
 
-	XQueryBuilder xqb = (XQueryBuilder) pep.getProcessor();
-
-	// add a custom configuration to the XQueryBuilder with an externally
-	// registered xpath extension
-	Configuration conf = new Configuration();
-	conf.registerExtensionFunction(new SimpleExtention());
-	xqb.setConfiguration(conf);
-
-	MockEndpoint mock = getMockEndpoint("mock:result");
-	mock.expectedBodiesReceived("<transformed extension-function-render=\"arg1[test]\"/>");
-
-	template.sendBody("direct:start", "<body>test</body>");
-
-	assertMockEndpointsSatisfied();
+        assertMockEndpointsSatisfied();
     }
 
-    protected ClassPathXmlApplicationContext createApplicationContext() {
-	return new ClassPathXmlApplicationContext(
-		"org/apache/camel/component/xquery/xqueryWithExtensionTest.xml");
+    @Override
+    protected RouteBuilder createRouteBuilder() throws Exception {
+        return new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("direct:start")
+                    .to("xquery:org/apache/camel/component/xquery/transformWithExtension.xquery?configuration=#saxonConf")
+                    .to("mock:result");
+            }
+        };
     }
 
     /**
      * This is a very simple example of a saxon extension function. We will use
      * this for testing purposes.
-     * 
+     * <p/>
      * Example: <code>efx:simple('some text')</code> will be rendered to
      * <code>arg1[some text]</code> and returned in the XQuery response.
-     * 
      */
-    public static class SimpleExtention extends ExtensionFunctionDefinition {
+    public static final class SimpleExtension extends ExtensionFunctionDefinition {
 
-	private static final long serialVersionUID = 1L;
+        private static final long serialVersionUID = 1L;
 
-	@Override
-	public SequenceType[] getArgumentTypes() {
-	    return new SequenceType[] { SequenceType.SINGLE_STRING };
-	}
+        @Override
+        public SequenceType[] getArgumentTypes() {
+            return new SequenceType[]{SequenceType.SINGLE_STRING};
+        }
 
-	@Override
-	public SequenceType getResultType(SequenceType[] suppliedArgumentTypes) {
-	    return SequenceType.SINGLE_STRING;
-	}
+        @Override
+        public SequenceType getResultType(SequenceType[] suppliedArgumentTypes) {
+            return SequenceType.SINGLE_STRING;
+        }
 
-	@Override
-	public StructuredQName getFunctionQName() {
-	    return new StructuredQName("efx", "http://test/saxon/ext", "simple");
-	}
+        @Override
+        public StructuredQName getFunctionQName() {
+            return new StructuredQName("efx", "http://test/saxon/ext", "simple");
+        }
 
-	@Override
-	public ExtensionFunctionCall makeCallExpression() {
-	    return new ExtensionFunctionCall() {
+        @Override
+        public ExtensionFunctionCall makeCallExpression() {
+            return new ExtensionFunctionCall() {
+                @Override
+                public SequenceIterator<? extends Item> call(SequenceIterator<? extends Item>[] sequenceIterators, XPathContext xPathContext) throws XPathException {
+                    Item arg1 = sequenceIterators[0].next();
+                    String arg1Val = arg1.getStringValue();
 
-		private static final long serialVersionUID = 1L;
-
-		@SuppressWarnings("rawtypes")
-		@Override
-		public SequenceIterator<? extends Item> call(
-			SequenceIterator<? extends Item>[] args,
-			XPathContext context) throws XPathException {
-
-		    // get value of first arg passed to the function
-		    Item<?> arg1 = args[0].next();
-		    String arg1Val = arg1.getStringValue();
-
-		    // return a altered version of the first arg
-		    StringValue sv = new StringValue("arg1[" + arg1Val + "]");
-		    return SingletonIterator.makeIterator(sv);
-		}
-
-	    };
-	}
+                    // return a altered version of the first arg
+                    StringValue sv = new StringValue("arg1[" + arg1Val + "]");
+                    return SingletonIterator.makeIterator(sv);
+                }
+            };
+        }
     }
 
 }

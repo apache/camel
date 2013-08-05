@@ -223,7 +223,9 @@ public class JdbcProducer extends DefaultProducer {
         List<Map<String, Object>> data = extractResultSetData(rs);
 
         exchange.getOut().setHeader(JdbcConstants.JDBC_ROW_COUNT, data.size());
-        exchange.getOut().setHeader(JdbcConstants.JDBC_COLUMN_NAMES, data.get(0).keySet());
+        if (!data.isEmpty()) {
+          exchange.getOut().setHeader(JdbcConstants.JDBC_COLUMN_NAMES, data.get(0).keySet());
+        }
         exchange.getOut().setBody(data);
     }
 

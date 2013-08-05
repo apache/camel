@@ -90,6 +90,7 @@ import org.apache.cxf.message.MessageContentsList;
 import org.apache.cxf.resource.DefaultResourceManager;
 import org.apache.cxf.resource.ResourceManager;
 import org.apache.cxf.resource.ResourceResolver;
+import org.apache.cxf.service.factory.FactoryBeanListener;
 import org.apache.cxf.service.factory.ReflectionServiceFactoryBean;
 import org.apache.cxf.service.model.BindingOperationInfo;
 import org.apache.cxf.service.model.MessagePartInfo;
@@ -109,6 +110,7 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     private static final Logger LOG = LoggerFactory.getLogger(CxfEndpoint.class);
 
     protected Bus bus;
+    private boolean createBus;
 
     private String wsdlURL;
     private Class<?> serviceClass;
@@ -136,6 +138,7 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     private boolean mtomEnabled;
     private boolean skipPayloadMessagePartCheck;
     private boolean skipFaultLogging;
+    private boolean mergeProtocolHeaders;
     private Map<String, Object> properties;
     private List<Interceptor<? extends Message>> in 
         = new ModCountCopyOnWriteArrayList<Interceptor<? extends Message>>();
@@ -341,14 +344,18 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
             return new JaxWsClientFactoryBean() {
                 @Override
                 protected Client createClient(Endpoint ep) {
-                    return new CamelCxfClientImpl(getBus(), ep);
+                    Client client = new CamelCxfClientImpl(getBus(), ep);
+                    this.getServiceFactory().sendEvent(FactoryBeanListener.Event.CLIENT_CREATED, client, ep);
+                    return client;
                 }
             };
         } else {
             return new ClientFactoryBean() {
                 @Override
                 protected Client createClient(Endpoint ep) {
-                    return new CamelCxfClientImpl(getBus(), ep);
+                    Client client = new CamelCxfClientImpl(getBus(), ep);
+                    this.getServiceFactory().sendEvent(FactoryBeanListener.Event.CLIENT_CREATED, client, ep);
+                    return client;
                 }
             };
         }
@@ -362,7 +369,9 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
 
             @Override
             protected Client createClient(Endpoint ep) {
-                return new CamelCxfClientImpl(getBus(), ep);
+                Client client = new CamelCxfClientImpl(getBus(), ep);
+                this.getServiceFactory().sendEvent(FactoryBeanListener.Event.CLIENT_CREATED, client, ep);
+                return client;
             }
 
             @Override
@@ -757,11 +766,13 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
 
     public void setBus(Bus bus) {
         this.bus = bus;
+        this.createBus = false;
     }
 
     public Bus getBus() {
         if (bus == null) {
             bus = CxfEndpointUtils.createBus(getCamelContext());
+            this.createBus = true;
             LOG.debug("Using DefaultBus {}", bus);
         }
 
@@ -861,7 +872,13 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
 
     @Override
     protected void doStop() throws Exception {
-        // noop
+        // we should consider to shutdown the bus if the bus is created by cxfEndpoint
+        if (createBus && bus != null) {
+            LOG.info("shutdown the bus ... " + bus);
+            getBus().shutdown(false);
+            // clean up the bus to create a new one if the endpoint is started again
+            bus = null;
+        }
     }
 
     public void setAddress(String address) {
@@ -973,6 +990,8 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
                     }
                 } catch (XMLStreamException e) {
                     //ignore
+                    LOG.warn("Error finding the start element.", e);
+                    return null;
                 }
                 return r.getLocalName();
             }
@@ -1064,6 +1083,14 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
 
     public void setSkipFaultLogging(boolean skipFaultLogging) {
         this.skipFaultLogging = skipFaultLogging;
+    }
+
+    public Boolean getMergeProtocolHeaders() {
+        return mergeProtocolHeaders;
+    }
+
+    public void setMergeProtocolHeaders(boolean mergeProtocolHeaders) {
+        this.mergeProtocolHeaders = mergeProtocolHeaders;
     }
 
     public void setBindingConfig(BindingConfiguration bindingConfig) {

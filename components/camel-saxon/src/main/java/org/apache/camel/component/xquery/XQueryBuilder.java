@@ -637,10 +637,13 @@ public abstract class XQueryBuilder implements Expression, Predicate, NamespaceA
         if (!initialized.get()) {
             LOG.debug("Initializing XQueryBuilder {}", this);
             if (configuration == null) {
-        	configuration = new Configuration();
+                configuration = new Configuration();
+                configuration.setHostLanguage(Configuration.XQUERY);
+                configuration.setStripsWhiteSpace(isStripsAllWhiteSpace() ? Whitespace.ALL : Whitespace.IGNORABLE);
+                LOG.debug("Created new Configuration {}", configuration);
+            } else {
+                LOG.debug("Using existing Configuration {}", configuration);
             }
-            configuration.setHostLanguage(Configuration.XQUERY);
-            configuration.setStripsWhiteSpace(isStripsAllWhiteSpace() ? Whitespace.ALL : Whitespace.IGNORABLE);
 
             staticQueryContext = getConfiguration().newStaticQueryContext();
             if (moduleURIResolver != null) {

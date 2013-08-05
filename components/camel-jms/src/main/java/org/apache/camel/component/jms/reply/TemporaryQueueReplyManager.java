@@ -120,6 +120,9 @@ public class TemporaryQueueReplyManager extends ReplyManagerSupport {
         // we use CACHE_CONSUMER by default to cling to the consumer as long as we can, since we can only consume
         // msgs from the JMS Connection that created the temp destination in the first place
         if (endpoint.getReplyToCacheLevelName() != null) {
+            if ("CACHE_NONE".equals(endpoint.getReplyToCacheLevelName())) {
+                throw new IllegalArgumentException("ReplyToCacheLevelName cannot be CACHE_NONE when using temporary reply queues. The value must be either CACHE_CONSUMER, or CACHE_SESSION");
+            }
             answer.setCacheLevelName(endpoint.getReplyToCacheLevelName());
         } else {
             answer.setCacheLevel(DefaultMessageListenerContainer.CACHE_CONSUMER);

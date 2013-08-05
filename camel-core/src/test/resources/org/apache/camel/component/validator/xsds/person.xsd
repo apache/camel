@@ -22,6 +22,8 @@
            targetNamespace="org.person"
            xmlns:h="org.health.check.person">
     <xs:import schemaLocation="health/health.xsd" namespace="org.health.check.person"/>
+    <xs:import schemaLocation="health/common/common.xsd" namespace="org.health.check.common"/>
+    <xs:import schemaLocation="health/type1.xsd" namespace="org.health.check.type1" />
     <xs:element name="person" type="p:personType">
 </xs:element>
 <xs:complexType name="personType">

@@ -53,7 +53,7 @@ public class JmsComponent extends DefaultComponent implements ApplicationContext
     private JmsConfiguration configuration;
     private ApplicationContext applicationContext;
     private QueueBrowseStrategy queueBrowseStrategy;
-    private HeaderFilterStrategy headerFilterStrategy = new JmsHeaderFilterStrategy();
+    private HeaderFilterStrategy headerFilterStrategy;
     private ExecutorService asyncStartStopExecutorService;
     private MessageListenerContainerFactory messageListenerContainerFactory;
 
@@ -380,7 +380,11 @@ public class JmsComponent extends DefaultComponent implements ApplicationContext
     public void setIncludeSentJMSMessageID(boolean includeSentJMSMessageID) {
         getConfiguration().setIncludeSentJMSMessageID(includeSentJMSMessageID);
     }
-    
+
+    public void setIncludeAllJMSXProperties(boolean includeAllJMSXProperties) {
+        getConfiguration().setIncludeAllJMSXProperties(includeAllJMSXProperties);
+    }
+
     public void setDefaultTaskExecutorType(DefaultTaskExecutorType type) {
         getConfiguration().setDefaultTaskExecutorType(type);
     }
@@ -424,6 +428,14 @@ public class JmsComponent extends DefaultComponent implements ApplicationContext
 
     // Implementation methods
     // -------------------------------------------------------------------------
+
+
+    @Override
+    protected void doStart() throws Exception {
+        if (headerFilterStrategy == null) {
+            headerFilterStrategy = new JmsHeaderFilterStrategy(getConfiguration().isIncludeAllJMSXProperties());
+        }
+    }
 
     @Override
     protected void doShutdown() throws Exception {

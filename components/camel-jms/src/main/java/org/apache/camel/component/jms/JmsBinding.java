@@ -77,7 +77,7 @@ public class JmsBinding {
 
     public JmsBinding() {
         this.endpoint = null;
-        headerFilterStrategy = new JmsHeaderFilterStrategy();
+        headerFilterStrategy = new JmsHeaderFilterStrategy(false);
         jmsKeyFormatStrategy = new DefaultJmsKeyFormatStrategy();
     }
 
@@ -86,7 +86,7 @@ public class JmsBinding {
         if (endpoint.getHeaderFilterStrategy() != null) {
             headerFilterStrategy = endpoint.getHeaderFilterStrategy();
         } else {
-            headerFilterStrategy = new JmsHeaderFilterStrategy();
+            headerFilterStrategy = new JmsHeaderFilterStrategy(endpoint.isIncludeAllJMSXProperties());
         }
         if (endpoint.getJmsKeyFormatStrategy() != null) {
             jmsKeyFormatStrategy = endpoint.getJmsKeyFormatStrategy();

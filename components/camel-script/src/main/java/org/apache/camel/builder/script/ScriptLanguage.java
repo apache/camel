@@ -18,6 +18,7 @@ package org.apache.camel.builder.script;
 
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.support.LanguageSupport;
 
 /**
@@ -32,12 +33,24 @@ public class ScriptLanguage extends LanguageSupport {
 
     public Predicate createPredicate(String expression) {
         expression = loadResource(expression);
-        return new ScriptBuilder(language, expression);
+        ScriptBuilder builder = new ScriptBuilder(language, expression);
+        try {
+            getCamelContext().addService(builder);
+        } catch (Exception ex) {
+            throw new RuntimeCamelException(ex);
+        }
+        return builder;
     }
 
     public Expression createExpression(String expression) {
         expression = loadResource(expression);
-        return new ScriptBuilder(language, expression);
+        ScriptBuilder builder = new ScriptBuilder(language, expression);
+        try {
+            getCamelContext().addService(builder);
+        } catch (Exception ex) {
+            throw new RuntimeCamelException(ex);
+        }
+        return builder;
     }
 
 }

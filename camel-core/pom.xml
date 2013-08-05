@@ -81,7 +81,9 @@
       org.apache.camel.spi.LanguageResolver;language=tokenize
     </camel.osgi.export.service>
     <camel.osgi.dynamic>
-        org.apache.camel.spring.util;${camel.osgi.import.strict.version},org.apache.camel.processor.interceptor.jpa;${camel.osgi.import.strict.version}
+        org.apache.camel.spring.util;${camel.osgi.import.strict.version},
+        org.apache.camel.processor.interceptor.jpa;${camel.osgi.import.strict.version},
+        net.sf.saxon
     </camel.osgi.dynamic>
     <camel.osgi.activator>
         org.apache.camel.impl.osgi.Activator

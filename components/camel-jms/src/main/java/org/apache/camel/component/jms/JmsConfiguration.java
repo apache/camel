@@ -138,6 +138,7 @@ public class JmsConfiguration implements Cloneable {
     private MessageListenerContainerFactory messageListenerContainerFactory;
     private boolean includeSentJMSMessageID;
     private DefaultTaskExecutorType defaultTaskExecutorType;
+    private boolean includeAllJMSXProperties;
 
     public JmsConfiguration() {
     }
@@ -1325,5 +1326,19 @@ public class JmsConfiguration implements Cloneable {
      */
     public void setDefaultTaskExecutorType(DefaultTaskExecutorType defaultTaskExecutorType) {
         this.defaultTaskExecutorType = defaultTaskExecutorType;
+    }
+
+    public boolean isIncludeAllJMSXProperties() {
+        return includeAllJMSXProperties;
+    }
+
+    /**
+     * Whether to include all <tt>JMSX</tt> properties as Camel headers when binding from JMS to Camel Message.
+     * <p/>
+     * By default a number of properties is excluded accordingly to the table of JMS properties in the JMS 1.1 spec,
+     * on page 39.
+     */
+    public void setIncludeAllJMSXProperties(boolean includeAllJMSXProperties) {
+        this.includeAllJMSXProperties = includeAllJMSXProperties;
     }
 }
