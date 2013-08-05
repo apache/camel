@@ -97,7 +97,7 @@ public class SSLContextServerParameters extends BaseSSLContextParameters {
             Configurer<SSLEngine> sslEngineConfigurer = new Configurer<SSLEngine>() {
                 @Override
                 public SSLEngine configure(SSLEngine engine) {
-                    LOG.info("Configuring client-auth on SSLEngine [{}] to [{}].", engine, clientAuthValue);
+                    LOG.trace("Configuring client-auth on SSLEngine [{}] to [{}].", engine, clientAuthValue);
                     switch (clientAuthValue) {
                     case NONE:
                         engine.setWantClientAuth(false);
@@ -136,7 +136,7 @@ public class SSLContextServerParameters extends BaseSSLContextParameters {
             Configurer<SSLServerSocket> sslServerSocketConfigurer = new Configurer<SSLServerSocket>() {
                 @Override
                 public SSLServerSocket configure(SSLServerSocket socket) {
-                    LOG.info("Configuring client-auth on SSLServerSocket [{}] to [{}].", socket, clientAuthValue);
+                    LOG.trace("Configuring client-auth on SSLServerSocket [{}] to [{}].", socket, clientAuthValue);
                     switch (clientAuthValue) {
                     case NONE:
                         socket.setWantClientAuth(false);
