@@ -18,17 +18,14 @@ package org.apache.camel.component.cxf;
 
 import java.util.ArrayList;
 import java.util.List;
-import javax.xml.ws.Endpoint;
+
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.cxf.CxfEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.cxf.clustering.FailoverFeature;
 import org.apache.cxf.clustering.RandomStrategy;
 import org.apache.cxf.frontend.ClientProxyFactoryBean;
 import org.apache.cxf.frontend.ServerFactoryBean;
-import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
-import org.junit.After;
 import org.junit.Assert;
 import org.junit.BeforeClass;
 import org.junit.Test;
