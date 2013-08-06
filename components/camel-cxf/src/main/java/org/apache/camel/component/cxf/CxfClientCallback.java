@@ -20,7 +20,9 @@ import java.util.Map;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
+import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.endpoint.ClientCallback;
+import org.apache.cxf.endpoint.ClientImpl;
 import org.apache.cxf.service.model.BindingOperationInfo;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,8 +35,17 @@ public class CxfClientCallback extends ClientCallback {
     private final org.apache.cxf.message.Exchange cxfExchange;
     private final BindingOperationInfo boi;
     private final CxfBinding binding;
+    private final Client client;
     
     public CxfClientCallback(AsyncCallback callback, 
+                             Exchange camelExchange,
+                             org.apache.cxf.message.Exchange cxfExchange,
+                             BindingOperationInfo boi,
+                             CxfBinding binding) {
+        this(null, callback, camelExchange, cxfExchange, boi, binding);       
+    }
+    
+    public CxfClientCallback(Client client, AsyncCallback callback, 
                              Exchange camelExchange,
                              org.apache.cxf.message.Exchange cxfExchange,
                              BindingOperationInfo boi,
@@ -42,6 +53,7 @@ public class CxfClientCallback extends ClientCallback {
         this.camelAsyncCallback = callback;
         this.camelExchange = camelExchange;
         this.cxfExchange = cxfExchange;
+        this.client = client;
         this.boi = boi;
         this.binding = binding;       
     }
@@ -69,7 +81,19 @@ public class CxfClientCallback extends ClientCallback {
     public void handleException(Map<String, Object> ctx, Throwable ex) {
         try {
             super.handleException(ctx, ex);
-            camelExchange.setException(ex);
+            // need to call the conduitSelector complete method to enable the fail over feature
+            if (client instanceof ClientImpl) {
+                ((ClientImpl)client).getConduitSelector().complete(cxfExchange);
+                ex = cxfExchange.getOutMessage().getContent(Exception.class);
+                if (ex == null && cxfExchange.getInMessage() != null) {
+                    ex = cxfExchange.getInMessage().getContent(Exception.class);
+                }
+                if (ex != null) {
+                    camelExchange.setException(ex);
+                }
+            } else {
+                camelExchange.setException(ex);
+            }
         } finally {
             // copy the context information and 
             // call camel callback
