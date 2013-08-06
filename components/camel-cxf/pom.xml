@@ -171,6 +171,13 @@
        <scope>test</scope>
     </dependency>
     
+    <!-- test for cxf failover feature -->
+	<dependency>
+		<groupId>org.apache.cxf</groupId>
+		<artifactId>cxf-rt-features-clustering</artifactId>
+		<version>${cxf-version}</version>
+	</dependency>
+    
     <dependency>
         <groupId>org.apache.activemq</groupId>
         <artifactId>activemq-kahadb-store</artifactId>
