@@ -47,7 +47,7 @@ import org.apache.camel.util.ObjectHelper;
 public class TokenXMLExpressionIterator extends ExpressionAdapter {
     private static final Pattern NAMESPACE_PATTERN = Pattern.compile("xmlns(:\\w+|)\\s*=\\s*('[^']+'|\"[^\"]+\")");
     private static final String SCAN_TOKEN_NS_PREFIX_REGEX = "([^:<>]{1,15}?:|)";
-    private static final String SCAN_BLOCK_TOKEN_REGEX_TEMPLATE = "<{0}(\\s+[^/]*)?/>|<{0}(\\s+[^>]*)?>(?:(?!</{0}).)*</{0}\\s*>";
+    private static final String SCAN_BLOCK_TOKEN_REGEX_TEMPLATE = "<{0}(\\s+[^/]*)?/>|<{0}(\\s+[^>]*)?>(?:(?!(</{0}\\s*>)).)*</{0}\\s*>";
     private static final String SCAN_PARENT_TOKEN_REGEX_TEMPLATE = "<{0}(\\s+[^>]*\\s*)?>";
     
     protected final String tagToken;
@@ -133,7 +133,7 @@ public class TokenXMLExpressionIterator extends ExpressionAdapter {
             this.tagToken = tagToken;
             this.in = in;
             this.charset = charset;
-
+          
             // remove any beginning < and ending > as we need to support ns prefixes and attributes, so we use a reg exp patterns
             this.tagTokenPattern = 
                 Pattern.compile(MessageFormat.format(SCAN_BLOCK_TOKEN_REGEX_TEMPLATE, 
