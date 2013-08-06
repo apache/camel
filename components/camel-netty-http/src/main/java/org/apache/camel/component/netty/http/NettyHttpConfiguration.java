@@ -28,7 +28,6 @@ import org.jboss.netty.channel.ChannelHandler;
  */
 public class NettyHttpConfiguration extends NettyConfiguration {
 
-    private boolean chunked = true;
     private boolean urlDecodeHeaders = true;
     private boolean mapHeaders = true;
     private boolean compression;
@@ -61,14 +60,6 @@ public class NettyHttpConfiguration extends NettyConfiguration {
         } catch (CloneNotSupportedException e) {
             throw new RuntimeCamelException(e);
         }
-    }
-
-    public boolean isChunked() {
-        return chunked;
-    }
-
-    public void setChunked(boolean chunked) {
-        this.chunked = chunked;
     }
 
     public boolean isCompression() {

@@ -69,6 +69,8 @@ public class DefaultServerPipelineFactory extends ServerPipelineFactory {
 
         SslHandler sslHandler = configureServerSSLOnDemand();
         if (sslHandler != null) {
+            // must close on SSL exception
+            sslHandler.setCloseOnSSLException(true);
             LOG.debug("Server SSL handler configured and added as an interceptor against the ChannelPipeline: {}", sslHandler);
             addToPipeline("ssl", channelPipeline, sslHandler);
         }

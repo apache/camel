@@ -76,15 +76,15 @@ public class HttpServerPipelineFactory extends ServerPipelineFactory {
 
         SslHandler sslHandler = configureServerSSLOnDemand(configuration);
         if (sslHandler != null) {
+            // must close on SSL exception
+            sslHandler.setCloseOnSSLException(true);
             LOG.debug("Server SSL handler configured and added as an interceptor against the ChannelPipeline: {}", sslHandler);
             pipeline.addLast("ssl", sslHandler);
         }
 
         pipeline.addLast("decoder", new HttpRequestDecoder());
-        // Uncomment the following line if you don't want to handle HttpChunks.
-        if (supportChunked()) {
-            pipeline.addLast("aggregator", new HttpChunkAggregator(1048576));
-        }
+        pipeline.addLast("aggregator", new HttpChunkAggregator(1048576));
+
         pipeline.addLast("encoder", new HttpResponseEncoder());
         if (supportCompressed()) {
             pipeline.addLast("deflater", new HttpContentCompressor());
@@ -155,10 +155,6 @@ public class HttpServerPipelineFactory extends ServerPipelineFactory {
             sslEngine.setNeedClientAuth(configuration.isNeedClientAuth());
             return new SslHandler(sslEngine);
         }
-    }
-
-    private boolean supportChunked() {
-        return consumer.getEndpoint().getConfiguration().isChunked();
     }
 
     private boolean supportCompressed() {

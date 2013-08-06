@@ -68,6 +68,8 @@ public class HttpClientPipelineFactory extends ClientPipelineFactory {
 
         SslHandler sslHandler = configureClientSSLOnDemand();
         if (sslHandler != null) {
+            // must close on SSL exception
+            sslHandler.setCloseOnSSLException(true);
             LOG.debug("Client SSL handler configured and added as an interceptor against the ChannelPipeline: {}", sslHandler);
             pipeline.addLast("ssl", sslHandler);
         }
