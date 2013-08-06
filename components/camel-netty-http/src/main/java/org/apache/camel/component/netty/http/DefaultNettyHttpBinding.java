@@ -21,7 +21,6 @@ import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
 import java.net.URI;
-import java.net.URL;
 import java.net.URLDecoder;
 import java.nio.charset.Charset;
 import java.util.Iterator;

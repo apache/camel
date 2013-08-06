@@ -16,12 +16,18 @@
  */
 package org.apache.camel.component.netty.http.handlers;
 
+import java.util.Map;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.component.netty.handlers.ClientChannelHandler;
 import org.apache.camel.component.netty.http.NettyHttpProducer;
+import org.jboss.netty.buffer.ChannelBuffer;
+import org.jboss.netty.buffer.ChannelBuffers;
 import org.jboss.netty.channel.ChannelHandlerContext;
 import org.jboss.netty.channel.MessageEvent;
+import org.jboss.netty.handler.codec.http.HttpChunk;
+import org.jboss.netty.handler.codec.http.HttpChunkTrailer;
 import org.jboss.netty.handler.codec.http.HttpResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -37,6 +43,7 @@ public class HttpClientChannelHandler extends ClientChannelHandler {
     private static final transient Logger LOG = LoggerFactory.getLogger(NettyHttpProducer.class);
     private final NettyHttpProducer producer;
     private HttpResponse response;
+    private ChannelBuffer buffer;
 
     public HttpClientChannelHandler(NettyHttpProducer producer) {
         super(producer);
@@ -47,13 +54,56 @@ public class HttpClientChannelHandler extends ClientChannelHandler {
     public void messageReceived(ChannelHandlerContext ctx, MessageEvent messageEvent) throws Exception {
         // store response, as this channel handler is created per pipeline
         Object msg = messageEvent.getMessage();
-        if (msg instanceof HttpResponse) {
+
+        // it may be a chunked message
+        if (msg instanceof HttpChunk) {
+            HttpChunk chunk = (HttpChunk) msg;
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("HttpChunk received: {} isLast: {}", chunk, chunk.isLast());
+            }
+
+            if (msg instanceof HttpChunkTrailer) {
+                // chunk trailer only has headers
+                HttpChunkTrailer trailer = (HttpChunkTrailer) msg;
+                for (Map.Entry<String, String> entry : trailer.getHeaders()) {
+                    if (LOG.isTraceEnabled()) {
+                        LOG.trace("Adding trailing header {}={}", entry.getKey(), entry.getValue());
+                    }
+                    response.addHeader(entry.getKey(), entry.getValue());
+                }
+            } else {
+                // append chunked content
+                buffer.writeBytes(chunk.getContent());
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("Wrote {} bytes to chunk buffer", buffer.writerIndex());
+                }
+            }
+            if (chunk.isLast()) {
+                // the content is a copy of the buffer with the actual data we wrote to it
+                int end = buffer.writerIndex();
+                ChannelBuffer copy = buffer.copy(0, end);
+                // the copy must not be readable when the content was chunked, so set the index to the end
+                copy.setIndex(end, end);
+                response.setContent(copy);
+                // we the all the content now, so call super to process the received message
+                super.messageReceived(ctx, messageEvent);
+            }
+        } else if (msg instanceof HttpResponse) {
             response = (HttpResponse) msg;
-            super.messageReceived(ctx, messageEvent);
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("HttpResponse received: {} chunked:", response, response.isChunked());
+            }
+            if (!response.isChunked()) {
+                // the response is not chunked so we have all the content
+                super.messageReceived(ctx, messageEvent);
+            } else {
+                // the response is chunkced so use a dynamic buffer to receive the content in chunks
+                buffer = ChannelBuffers.dynamicBuffer();
+            }
         } else {
             // ignore not supported message
-            if (msg != null) {
-                LOG.trace("Ignoring non HttpResponse message of type {} -> {}", msg.getClass(), msg);
+            if (LOG.isTraceEnabled() && msg != null) {
+                LOG.trace("Ignoring non supported response message of type {} -> {}", msg.getClass(), msg);
             }
         }
 
