@@ -204,6 +204,14 @@ public class TokenizerTest extends ExchangeTestSupport {
         List<?> names = exp.evaluate(exchange, List.class);
         assertNull(names);
     }
+    
+    public void testTokenizeXMLPairWithSimilarChildNames() throws Exception {
+        Expression exp = TokenizeLanguage.tokenizeXML("Trip", "Trips");
+        exchange.getIn().setBody("<?xml version='1.0' encoding='UTF-8'?>\n<Trips>\n<Trip>\n<TripType>\n</TripType>\n</Trip>\n</Trips>");
+        List<?> names = exp.evaluate(exchange, List.class);
+        assertEquals(1, names.size());
+    }
+    
 
     public void testTokenizeXMLPairWithDefaultNamespace() throws Exception {
         Expression exp = TokenizeLanguage.tokenizeXML("<person>", "<persons>");
