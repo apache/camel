@@ -55,4 +55,12 @@ public class DefaultMessageHistory implements MessageHistory {
     public void nodeProcessingDone() {
         stopWatch.stop();
     }
+
+    @Override
+    public String toString() {
+        return "DefaultMessageHistory[" +
+                "routeId=" + routeId +
+                ", node=" + node.getId() +
+                ']';
+    }
 }
