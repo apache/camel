@@ -19,6 +19,7 @@ package org.apache.camel.component.sql;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -125,15 +126,20 @@ public class DefaultSqlPrepareStatementStrategy implements SqlPrepareStatementSt
 
 
         } else {
-            // is the body a String
-            if (value instanceof String) {
-                // if the body is a String then honor quotes etc.
-                String[] tokens = StringQuoteHelper.splitSafeQuote((String)value, separator, true);
-                List<String> list = Arrays.asList(tokens);
-                return list.iterator();
+            // if only 1 parameter and the body is a String then use body as is
+            if (expectedParams == 1 && value instanceof String) {
+                return Collections.singletonList(value).iterator();
             } else {
-                // just use a regular iterator
-                return exchange.getContext().getTypeConverter().convertTo(Iterator.class, value);
+                // is the body a String
+                if (value instanceof String) {
+                    // if the body is a String then honor quotes etc.
+                    String[] tokens = StringQuoteHelper.splitSafeQuote((String)value, separator, true);
+                    List<String> list = Arrays.asList(tokens);
+                    return list.iterator();
+                } else {
+                    // just use a regular iterator
+                    return exchange.getContext().getTypeConverter().convertTo(Iterator.class, value);
+                }
             }
         }
     }
