@@ -537,6 +537,7 @@ public class XMLSecurityDataFormat implements DataFormat, CamelContextAware {
     
     private Object decode(Exchange exchange, Document encodedDocument, Key keyEncryptionKey) throws Exception {
         XMLCipher xmlCipher = XMLCipher.getInstance();
+        xmlCipher.setSecureValidation(true);
         xmlCipher.init(XMLCipher.DECRYPT_MODE, null);
         xmlCipher.setKEK(keyEncryptionKey);
 
