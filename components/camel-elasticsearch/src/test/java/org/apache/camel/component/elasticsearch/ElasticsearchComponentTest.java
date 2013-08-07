@@ -18,13 +18,12 @@ package org.apache.camel.component.elasticsearch;
 
 import java.util.HashMap;
 import java.util.Map;
-
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.elasticsearch.action.delete.DeleteResponse;
 import org.elasticsearch.action.get.GetResponse;
-
 import org.junit.Before;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class ElasticsearchComponentTest extends CamelTestSupport {
@@ -104,6 +103,34 @@ public class ElasticsearchComponentTest extends CamelTestSupport {
     }
 
     @Test
+    @Ignore("need to setup the cluster IP for this test")
+    public void indexWithIp()  throws Exception {
+        Map<String, String> map = new HashMap<String, String>();
+        map.put("content", "test");
+        Map<String, Object> headers = new HashMap<String, Object>();
+        headers.put(ElasticsearchConfiguration.PARAM_OPERATION, ElasticsearchConfiguration.OPERATION_INDEX);
+        headers.put(ElasticsearchConfiguration.PARAM_INDEX_NAME, "twitter");
+        headers.put(ElasticsearchConfiguration.PARAM_INDEX_TYPE, "tweet");
+
+        String indexId = template.requestBodyAndHeaders("direct:indexWithIp", map, headers, String.class);
+        assertNotNull("indexId should be set", indexId);
+    }
+
+    @Test
+    @Ignore("need to setup the cluster IP/Port for this test")
+    public void indexWithIpAndPort()  throws Exception {
+        Map<String, String> map = new HashMap<String, String>();
+        map.put("content", "test");
+        Map<String, Object> headers = new HashMap<String, Object>();
+        headers.put(ElasticsearchConfiguration.PARAM_OPERATION, ElasticsearchConfiguration.OPERATION_INDEX);
+        headers.put(ElasticsearchConfiguration.PARAM_INDEX_NAME, "twitter");
+        headers.put(ElasticsearchConfiguration.PARAM_INDEX_TYPE, "tweet");
+
+        String indexId = template.requestBodyAndHeaders("direct:indexWithIpAndPort", map, headers, String.class);
+        assertNotNull("indexId should be set", indexId);
+    }
+
+    @Test
     public void testGetWithHeaders() throws Exception {
         //first, INDEX a value
         Map<String, String> map = new HashMap<String, String>();
@@ -162,6 +189,8 @@ public class ElasticsearchComponentTest extends CamelTestSupport {
                 from("direct:index").to("elasticsearch://local?operation=INDEX&indexName=twitter&indexType=tweet");
                 from("direct:get").to("elasticsearch://local?operation=GET_BY_ID&indexName=twitter&indexType=tweet");
                 from("direct:delete").to("elasticsearch://local?operation=DELETE&indexName=twitter&indexType=tweet");
+                //from("direct:indexWithIp").to("elasticsearch://elasticsearch?operation=INDEX&indexName=twitter&indexType=tweet&ip=localhost");
+                //from("direct:indexWithIpAndPort").to("elasticsearch://elasticsearch?operation=INDEX&indexName=twitter&indexType=tweet&ip=localhost&port=9300");
             }
         };
     }

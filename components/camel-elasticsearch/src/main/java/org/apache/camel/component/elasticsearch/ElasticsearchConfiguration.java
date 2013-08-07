@@ -19,10 +19,8 @@ package org.apache.camel.component.elasticsearch;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.Map;
-
 import org.elasticsearch.node.Node;
 import org.elasticsearch.node.NodeBuilder;
-
 import static org.elasticsearch.node.NodeBuilder.nodeBuilder;
 
 public class ElasticsearchConfiguration {
@@ -37,6 +35,9 @@ public class ElasticsearchConfiguration {
     public static final String PARAM_INDEX_TYPE = "indexType";
     public static final String PROTOCOL = "elasticsearch";
     private static final String LOCAL_NAME = "local";
+    private static final String IP = "ip";
+    private static final String PORT = "port";
+    private static final Integer DEFAULT_PORT = 9300;
 
     private URI uri;
     private String protocolType;
@@ -47,6 +48,8 @@ public class ElasticsearchConfiguration {
     private boolean local;
     private Boolean data;
     private String operation;
+    private String ip;
+    private Integer port;
 
     public ElasticsearchConfiguration(URI uri, Map<String, Object> parameters) throws Exception {
         String protocol = uri.getScheme();
@@ -82,6 +85,9 @@ public class ElasticsearchConfiguration {
         indexName = (String)parameters.remove(PARAM_INDEX_NAME);
         indexType = (String)parameters.remove(PARAM_INDEX_TYPE);
         operation = (String)parameters.remove(PARAM_OPERATION);
+        ip = (String)parameters.remove(IP);
+        String portParam = (String) parameters.remove(PORT);
+        port = portParam == null ? DEFAULT_PORT : Integer.valueOf(portParam);
     }
 
     protected Boolean toBoolean(Object string) {
@@ -181,4 +187,21 @@ public class ElasticsearchConfiguration {
     public String getOperation() {
         return this.operation;
     }
+
+    public String getIp() {
+        return ip;
+    }
+
+    public void setIp(String ip) {
+        this.ip = ip;
+    }
+
+    public Integer getPort() {
+        return port;
+    }
+
+    public void setPort(Integer port) {
+        this.port = port;
+    }
+
 }

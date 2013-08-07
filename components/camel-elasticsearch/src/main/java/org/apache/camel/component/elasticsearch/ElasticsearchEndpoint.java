@@ -18,13 +18,16 @@ package org.apache.camel.component.elasticsearch;
 
 import java.net.URI;
 import java.util.Map;
-
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.elasticsearch.client.Client;
+import org.elasticsearch.client.transport.TransportClient;
+import org.elasticsearch.common.settings.ImmutableSettings;
+import org.elasticsearch.common.settings.Settings;
+import org.elasticsearch.common.transport.InetSocketTransportAddress;
 import org.elasticsearch.node.Node;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -66,7 +69,15 @@ public class ElasticsearchEndpoint extends DefaultEndpoint {
             LOG.info("Joining ElasticSearch cluster " + config.getClusterName());
         }
         node = config.buildNode();
-        client = node.client();
+        if (config.getIp() != null && !config.isLocal()) {
+            Settings settings = ImmutableSettings.settingsBuilder()
+                    .put("cluster.name", config.getClusterName()).put("node.client", true).build();
+            Client client = new TransportClient(settings)
+                    .addTransportAddress(new InetSocketTransportAddress(config.getIp(), config.getPort()));
+            this.client = client;
+        } else {
+            client = node.client();
+        }
     }
 
     @Override
