@@ -1,0 +1,28 @@
+{"web-app": {
+  "servlet": [
+    {
+      "servlet-name": "fooServlet",
+      "servlet-class": "com.foo.FooServlet",
+      "init-param": {
+        "configGlossary:staticPath": "/content/static",
+        "useJSP": false,
+        "cachePackageTagsTrack": 200,
+        "cachePackageTagsStore": 200,
+        "cachePackageTagsRefresh": 60,
+        "cacheTemplatesTrack": 100,
+        "cacheTemplatesStore": 50,
+        "cacheTemplatesRefresh": 15,
+        "cachePagesTrack": 200,
+        "cachePagesStore": 100,
+        "cachePagesRefresh": 10,
+        "cachePagesDirtyRead": 10,
+        "dataStoreLogLevel": "debug",
+        "maxUrlLength": 500
+      }
+    }
+  ],
+  "servlet-mapping": {
+    "fooSerlvet": "/"
+  }
+}
+}
