@@ -38,6 +38,16 @@ public class WireTapTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
     }
+    
+    public void testWireTapId() throws Exception {
+        MockEndpoint a = getMockEndpoint("mock:a");
+        MockEndpoint b = getMockEndpoint("mock:b");
+        a.expectedBodiesReceived("Hello");
+        b.expectedBodiesReceived("Hello");
+        
+        template.sendBody("direct:test", "Hello");
+        assertMockEndpointsSatisfied();
+    }
 
     @Override
     protected void setUp() throws Exception {
@@ -59,6 +69,9 @@ public class WireTapTest extends ContextTestSupport {
                 from("direct:tap")
                     .delay(1000).setBody().constant("Tapped")
                     .to("mock:result", "mock:tap");
+                
+                from("direct:test").wireTap("direct:a").id("wiretap_1").to("mock:a");
+                from("direct:a").to("mock:b");
             }
         };
     }
