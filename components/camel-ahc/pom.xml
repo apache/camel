@@ -54,7 +54,7 @@
     <dependency>
       <groupId>io.netty</groupId>
       <artifactId>netty</artifactId>
-      <version>${netty-version}</version>
+      <version>${netty3-version}</version>
     </dependency>
 
     <!-- testing -->
