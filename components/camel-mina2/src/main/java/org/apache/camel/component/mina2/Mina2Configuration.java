@@ -38,7 +38,7 @@ public class Mina2Configuration implements Cloneable {
     private Mina2TextLineDelimiter textlineDelimiter;
     private ProtocolCodecFactory codec;
     private String encoding;
-    private long timeout = 3000;
+    private long timeout = 30000;
     private boolean lazySessionCreation = true;
     private boolean transferExchange;
     private boolean minaLogger;
