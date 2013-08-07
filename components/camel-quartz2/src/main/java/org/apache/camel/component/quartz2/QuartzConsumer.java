@@ -19,30 +19,43 @@ package org.apache.camel.component.quartz2;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultConsumer;
-import org.quartz.Scheduler;
 
 /**
  * This consumer process QuartzMessage when scheduler job is executed per scheduled time. When the job runs, it will
  * call this consumer's processor to process a new exchange with QuartzMessage.
- *
- * @author Zemian Deng saltnlight5@gmail.com
  */
 public class QuartzConsumer extends DefaultConsumer {
+
     public QuartzConsumer(Endpoint endpoint, Processor processor) {
         super(endpoint, processor);
     }
 
+    @Override
     public QuartzEndpoint getEndpoint() {
-        return (QuartzEndpoint)super.getEndpoint();
+        return (QuartzEndpoint) super.getEndpoint();
     }
 
     @Override
     protected void doStart() throws Exception {
+        super.doStart();
+        getEndpoint().onConsumerStart(this);
+    }
+
+    @Override
+    protected void doResume() throws Exception {
+        super.doResume();
         getEndpoint().onConsumerStart(this);
     }
 
     @Override
     protected void doStop() throws Exception {
         getEndpoint().onConsumerStop(this);
+        super.doStop();
+    }
+
+    @Override
+    protected void doSuspend() throws Exception {
+        getEndpoint().onConsumerStop(this);
+        super.doSuspend();
     }
 }

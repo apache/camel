@@ -44,11 +44,9 @@ import org.slf4j.LoggerFactory;
 import static org.quartz.CronScheduleBuilder.cronSchedule;
 import static org.quartz.SimpleScheduleBuilder.simpleSchedule;
 
-
 /**
  * This endpoint represent each job to be created in scheduler. When consumer is started or stopped, it will
  * call back into doConsumerStart()/Stop() to pause/resume the scheduler trigger.
- *
  */
 public class QuartzEndpoint extends DefaultEndpoint {
     private static final transient Logger LOG = LoggerFactory.getLogger(QuartzEndpoint.class);

@@ -25,7 +25,6 @@ import org.quartz.Trigger;
 
 /**
  * A Camel message to be created upon each scheduled job execution.
- *
  */
 public class QuartzMessage extends DefaultMessage {
     private final JobExecutionContext jobExecutionContext;
