@@ -58,9 +58,9 @@ public class DefaultMessageHistory implements MessageHistory {
 
     @Override
     public String toString() {
-        return "DefaultMessageHistory[" +
-                "routeId=" + routeId +
-                ", node=" + node.getId() +
-                ']';
+        return "DefaultMessageHistory["
+                + "routeId=" + routeId
+                + ", node=" + node.getId()
+                + ']';
     }
 }
