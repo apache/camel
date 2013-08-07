@@ -38,11 +38,9 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.processor.DelegateProcessor;
 import org.apache.camel.util.PredicateAssertHelper;
-
 import org.junit.Assert;
 import org.junit.Rule;
 import org.junit.rules.TestName;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -152,7 +150,7 @@ public abstract class TestSupport extends Assert {
 
     public static void assertEndpointUri(Endpoint endpoint, String uri) {
         assertNotNull("Endpoint is null when expecting endpoint for: " + uri, endpoint);
-        assertEquals("Endoint uri for: " + endpoint, uri, endpoint.getEndpointUri());
+        assertEquals("Endpoint uri for: " + endpoint, uri, endpoint.getEndpointUri());
     }
 
     /**
@@ -368,6 +366,7 @@ public abstract class TestSupport extends Assert {
      * If a processor is wrapped with a bunch of DelegateProcessor or DelegateAsyncProcessor objects
      * this call will drill through them and return the wrapped Processor.
      */
+    @Deprecated
     public static Processor unwrap(Processor processor) {
         while (true) {
             if (processor instanceof DelegateProcessor) {
@@ -384,6 +383,7 @@ public abstract class TestSupport extends Assert {
      * <p/>
      * Returns null if no channel is found.
      */
+    @Deprecated
     public static Channel unwrapChannel(Processor processor) {
         while (true) {
             if (processor instanceof Channel) {
@@ -549,11 +549,21 @@ public abstract class TestSupport extends Assert {
     /**
      * Is this Java 1.7
      *
-     * @return <tt>true</tt> if its Java 1.7, <tt>false</tt> if its not (for example Java 1.8 or better)
+     * @return <tt>true</tt> if its Java 1.7, <tt>false</tt> if its not (for example Java 1.6 or older)
      */
     public static boolean isJava17() {
         String javaVersion = System.getProperty("java.version").toLowerCase(Locale.US);
         return javaVersion.startsWith("1.7");
+    }
+
+    /**
+     * Is this Java 1.8
+     *
+     * @return <tt>true</tt> if its Java 1.8, <tt>false</tt> if its not (for example Java 1.7 or older)
+     */
+    public static boolean isJava18() {
+        String javaVersion = System.getProperty("java.version").toLowerCase(Locale.US);
+        return javaVersion.startsWith("1.8");
     }
 
     /**

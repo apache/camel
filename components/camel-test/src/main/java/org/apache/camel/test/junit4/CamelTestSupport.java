@@ -229,7 +229,7 @@ public abstract class CamelTestSupport extends TestSupport {
     }
 
     /**
-     * Strategy to perform any post setup after {@link CamelContext} is createt.
+     * Strategy to perform any post setup after {@link CamelContext} is created
      */
     protected void doPostSetup() throws Exception {
         // noop
@@ -254,7 +254,7 @@ public abstract class CamelTestSupport extends TestSupport {
         // set debugger if enabled
         if (isUseDebugger()) {
             if (context.getStatus().equals(ServiceStatus.Started)) {
-                log.info("Cannot setting the Debugger to the starting CamelConetxt, stop the CamelContext now.");
+                log.info("Cannot setting the Debugger to the starting CamelContext, stop the CamelContext now.");
                 // we need to stop the context first to setup the debugger
                 context.stop();
             }
