@@ -21,6 +21,7 @@ import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicLong;
 
+import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultConsumer;
@@ -94,6 +95,16 @@ public class TimerConsumer extends DefaultConsumer {
         return endpoint.getCamelContext().getStatus().isStarted() && isRunAllowed() && !isSuspended();
     }
 
+    @Override
+    protected void doSuspend() throws Exception {
+        doStop();
+    }
+
+    @Override
+    protected void doResume() throws Exception {
+        doStart();
+    }
+
     protected void configureTask(TimerTask task, Timer timer) {
         if (endpoint.isFixedRate()) {
             if (endpoint.getTime() != null) {
@@ -119,7 +130,7 @@ public class TimerConsumer extends DefaultConsumer {
     }
 
     protected void sendTimerExchange(long counter) {
-        Exchange exchange = endpoint.createExchange();
+        final Exchange exchange = endpoint.createExchange();
         exchange.setProperty(Exchange.TIMER_COUNTER, counter);
         exchange.setProperty(Exchange.TIMER_NAME, endpoint.getTimerName());
         exchange.setProperty(Exchange.TIMER_TIME, endpoint.getTime());
@@ -130,16 +141,31 @@ public class TimerConsumer extends DefaultConsumer {
         // also set now on in header with same key as quartz to be consistent
         exchange.getIn().setHeader("firedTime", now);
 
-        LOG.trace("Timer {} is firing #{} count", endpoint.getTimerName(), counter);
-        try {
-            getProcessor().process(exchange);
-        } catch (Exception e) {
-            exchange.setException(e);
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Timer {} is firing #{} count", endpoint.getTimerName(), counter);
         }
 
-        // handle any thrown exception
-        if (exchange.getException() != null) {
-            getExceptionHandler().handleException("Error processing exchange", exchange, exchange.getException());
+        if (!endpoint.isSynchronous()) {
+            getAsyncProcessor().process(exchange, new AsyncCallback() {
+                @Override
+                public void done(boolean doneSync) {
+                    // handle any thrown exception
+                    if (exchange.getException() != null) {
+                        getExceptionHandler().handleException("Error processing exchange", exchange, exchange.getException());
+                    }
+                }
+            });
+        } else {
+            try {
+                getProcessor().process(exchange);
+            } catch (Exception e) {
+                exchange.setException(e);
+            }
+
+            // handle any thrown exception
+            if (exchange.getException() != null) {
+                getExceptionHandler().handleException("Error processing exchange", exchange, exchange.getException());
+            }
         }
     }
 }
