@@ -17,8 +17,8 @@
 package org.apache.camel.component.mongodb;
 
 public final class MongoDbConstants {
-    
-    public static final String OPERATION_HEADER = "CamelMongoDbOperation";    
+
+    public static final String OPERATION_HEADER = "CamelMongoDbOperation";
     public static final String RESULT_TOTAL_SIZE = "CamelMongoDbResultTotalSize";
     public static final String RESULT_PAGE_SIZE = "CamelMongoDbResultPageSize";
     public static final String FIELDS_FILTER = "CamelMongoDbFieldsFilter";
@@ -32,11 +32,13 @@ public final class MongoDbConstants {
     public static final String SORT_BY = "CamelMongoDbSortBy";
     public static final String DATABASE = "CamelMongoDbDatabase";
     public static final String COLLECTION = "CamelMongoDbCollection";
+    public static final String COLLECTION_INDEX = "CamelMongoDbCollectionIndex";
     public static final String WRITECONCERN = "CamelMongoDbWriteConcern";
     public static final String LIMIT = "CamelMongoDbLimit";
     public static final String FROM_TAILABLE = "CamelMongoDbTailable";
     public static final String WRITERESULT = "CamelMongoWriteResult";
 
-    private MongoDbConstants() { }
-    
+    private MongoDbConstants() {
+    }
+
 }

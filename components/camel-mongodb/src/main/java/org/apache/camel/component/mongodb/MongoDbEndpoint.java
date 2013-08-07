@@ -16,6 +16,13 @@
  */
 package org.apache.camel.component.mongodb;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.mongodb.BasicDBObject;
 import com.mongodb.DB;
 import com.mongodb.DBCollection;
 import com.mongodb.DBObject;
@@ -23,7 +30,6 @@ import com.mongodb.Mongo;
 import com.mongodb.ReadPreference;
 import com.mongodb.WriteConcern;
 import com.mongodb.WriteResult;
-
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -33,14 +39,14 @@ import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.DefaultMessage;
 import org.apache.camel.util.ObjectHelper;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Represents a MongoDb endpoint. 
- * It is responsible for creating {@link MongoDbProducer} and {@link MongoDbTailableCursorConsumer} instances.
- * It accepts a number of options to customise the behaviour of consumers and producers.
+ * Represents a MongoDb endpoint. It is responsible for creating
+ * {@link MongoDbProducer} and {@link MongoDbTailableCursorConsumer} instances.
+ * It accepts a number of options to customise the behaviour of consumers and
+ * producers.
  */
 public class MongoDbEndpoint extends DefaultEndpoint {
 
@@ -48,6 +54,7 @@ public class MongoDbEndpoint extends DefaultEndpoint {
     private Mongo mongoConnection;
     private String database;
     private String collection;
+    private String collectionIndex;
     private MongoDbOperation operation;
     private boolean createCollection = true;
     private boolean invokeGetLastError; // = false
@@ -60,16 +67,16 @@ public class MongoDbEndpoint extends DefaultEndpoint {
     private MongoDbConsumerType consumerType;
     private long cursorRegenerationDelay = 1000L;
     private String tailTrackIncreasingField;
-    
+
     // persitent tail tracking
     private boolean persistentTailTracking; // = false;
     private String persistentId;
     private String tailTrackDb;
     private String tailTrackCollection;
     private String tailTrackField;
-    
+
     private MongoDbTailTrackingConfig tailTrackingConfig;
-    
+
     private DBCollection dbCollection;
     private DB db;
 
@@ -88,7 +95,7 @@ public class MongoDbEndpoint extends DefaultEndpoint {
     }
 
     // ======= Implementation methods =====================================
-    
+
     public Producer createProducer() throws Exception {
         validateOptions('P');
         initializeConnection();
@@ -100,12 +107,12 @@ public class MongoDbEndpoint extends DefaultEndpoint {
         // we never create the collection
         createCollection = false;
         initializeConnection();
-                
+
         // select right consumer type
         if (consumerType == null) {
             consumerType = MongoDbConsumerType.tailable;
         }
-        
+
         Consumer consumer;
         if (consumerType == MongoDbConsumerType.tailable) {
             consumer = new MongoDbTailableCursorConsumer(this, processor);
@@ -121,17 +128,17 @@ public class MongoDbEndpoint extends DefaultEndpoint {
         // make our best effort to validate, options with defaults are checked against their defaults, which is not always a guarantee that
         // they haven't been explicitly set, but it is enough
         if (role == 'P') {
-            if (!ObjectHelper.isEmpty(consumerType) || persistentTailTracking || !ObjectHelper.isEmpty(tailTrackDb) 
+            if (!ObjectHelper.isEmpty(consumerType) || persistentTailTracking || !ObjectHelper.isEmpty(tailTrackDb)
                     || !ObjectHelper.isEmpty(tailTrackCollection) || !ObjectHelper.isEmpty(tailTrackField) || cursorRegenerationDelay != 1000L) {
                 throw new IllegalArgumentException("consumerType, tailTracking, cursorRegenerationDelay options cannot appear on a producer endpoint");
             }
         } else if (role == 'C') {
-            if (!ObjectHelper.isEmpty(operation) || !ObjectHelper.isEmpty(writeConcern) || writeConcernRef != null 
+            if (!ObjectHelper.isEmpty(operation) || !ObjectHelper.isEmpty(writeConcern) || writeConcernRef != null
                     || readPreference != null || dynamicity || invokeGetLastError) {
-                throw new IllegalArgumentException("operation, writeConcern, writeConcernRef, readPreference, dynamicity, invokeGetLastError " 
+                throw new IllegalArgumentException("operation, writeConcern, writeConcernRef, readPreference, dynamicity, invokeGetLastError "
                         + "options cannot appear on a consumer endpoint");
             }
-            
+
             if (consumerType == MongoDbConsumerType.tailable) {
                 if (tailTrackIncreasingField == null) {
                     throw new IllegalArgumentException("tailTrackIncreasingField option must be set for tailable cursor MongoDB consumer endpoint");
@@ -140,7 +147,7 @@ public class MongoDbEndpoint extends DefaultEndpoint {
                     throw new IllegalArgumentException("persistentId is compulsory for persistent tail tracking");
                 }
             }
-            
+
         } else {
             throw new IllegalArgumentException("Unknown endpoint role");
         }
@@ -149,9 +156,11 @@ public class MongoDbEndpoint extends DefaultEndpoint {
     public boolean isSingleton() {
         return true;
     }
-    
+
     /**
-     * Initialises the MongoDB connection using the Mongo object provided to the endpoint
+     * Initialises the MongoDB connection using the Mongo object provided to the
+     * endpoint
+     *
      * @throws CamelMongoDbException
      */
     public void initializeConnection() throws CamelMongoDbException {
@@ -167,20 +176,66 @@ public class MongoDbEndpoint extends DefaultEndpoint {
             throw new CamelMongoDbException("Could not initialise MongoDbComponent. Collection " + collection + " and createCollection is false.");
         }
         dbCollection = db.getCollection(collection);
-        
-        LOG.info("MongoDb component initialised and endpoint bound to MongoDB collection with the following paramters. Address list: {}, Db: {}, Collection: {}", 
-                new Object[] {mongoConnection.getAllAddress().toString(), db.getName(), dbCollection.getName()});
+
+        LOG.debug("MongoDb component initialised and endpoint bound to MongoDB collection with the following parameters. Address list: {}, Db: {}, Collection: {}",
+                new Object[]{mongoConnection.getAllAddress().toString(), db.getName(), dbCollection.getName()});
+
+        try {
+            if (ObjectHelper.isNotEmpty(collectionIndex)) {
+                ensureIndex(dbCollection, createIndex());
+            }
+        } catch (Exception e) {
+            throw new CamelMongoDbException("Error creating index", e);
+        }
     }
 
     /**
-     * Applies validation logic specific to this endpoint type. If everything succeeds, continues initialization
+     * Add Index
+     *
+     * @param collection
+     */
+    public void ensureIndex(DBCollection collection, List<DBObject> dynamicIndex) {
+        collection.dropIndexes();
+        if (dynamicIndex != null && !dynamicIndex.isEmpty()) {
+            for (DBObject index : dynamicIndex) {
+                LOG.debug("create BDObject Index {}", index);
+                collection.ensureIndex(index);
+            }
+        }
+    }
+
+    /**
+     * Create technical list index
+     *
+     * @return technical list index
+     */
+    @SuppressWarnings("unchecked")
+    public List<DBObject> createIndex() throws Exception {
+        List<DBObject> indexList = new ArrayList<DBObject>();
+
+        if (ObjectHelper.isNotEmpty(collectionIndex)) {
+            HashMap<String, String> indexMap = new ObjectMapper().readValue(collectionIndex, HashMap.class);
+
+            for (Map.Entry<String, String> set : indexMap.entrySet()) {
+                DBObject index = new BasicDBObject();
+                index.put(set.getKey(), set.getValue());
+
+                indexList.add(index);
+            }
+        }
+        return indexList;
+    }
+
+    /**
+     * Applies validation logic specific to this endpoint type. If everything
+     * succeeds, continues initialization
      */
     @Override
     protected void doStart() throws Exception {
         if (writeConcern != null && writeConcernRef != null) {
-            LOG.error("Cannot set both writeConcern and writeConcernRef at the same time. Respective values: {}, {}. "
-                    + "Aborting initialization.", new Object[] {writeConcern, writeConcernRef});
-            throw new IllegalArgumentException("Cannot set both writeConcern and writeConcernRef at the same time on MongoDB endpoint");
+            String msg = "Cannot set both writeConcern and writeConcernRef at the same time. Respective values: " + writeConcern
+                    + ", " + writeConcernRef + ". Aborting initialization.";
+            throw new IllegalArgumentException(msg);
         }
 
         setWriteReadOptionsOnConnection();
@@ -193,12 +248,12 @@ public class MongoDbEndpoint extends DefaultEndpoint {
         message.setHeader(MongoDbConstants.DATABASE, database);
         message.setHeader(MongoDbConstants.COLLECTION, collection);
         message.setHeader(MongoDbConstants.FROM_TAILABLE, true);
-        
+
         message.setBody(dbObj);
         exchange.setIn(message);
         return exchange;
     }
-    
+
     private void setWriteReadOptionsOnConnection() {
         // Set the WriteConcern
         if (writeConcern != null) {
@@ -206,18 +261,19 @@ public class MongoDbEndpoint extends DefaultEndpoint {
         } else if (writeConcernRef != null) {
             mongoConnection.setWriteConcern(writeConcernRef);
         }
-        
+
         // Set the ReadPreference
         if (readPreference != null) {
             mongoConnection.setReadPreference(readPreference);
         }
     }
-    
-    
-    // ======= Getters and setters ===============================================
-    
+
+    // ======= Getters and setters
+    // ===============================================
+
     /**
      * Sets the name of the MongoDB collection to bind to this endpoint
+     *
      * @param collection collection name
      */
     public void setCollection(String collection) {
@@ -229,7 +285,21 @@ public class MongoDbEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * Sets the operation this endpoint will execute against MongoDB. For possible values, see {@link MongoDbOperation}.
+     * Sets the collection index (JSON FORMAT : { "field1" : "order", "field2" :
+     * "order"})
+     */
+    public void setCollectionIndex(String collectionIndex) {
+        this.collectionIndex = collectionIndex;
+    }
+
+    public String getCollectionIndex() {
+        return collectionIndex;
+    }
+
+    /**
+     * Sets the operation this endpoint will execute against MongoDB. For
+     * possible values, see {@link MongoDbOperation}.
+     *
      * @param operation name of the operation as per catalogued values
      * @throws CamelMongoDbException
      */
@@ -247,6 +317,7 @@ public class MongoDbEndpoint extends DefaultEndpoint {
 
     /**
      * Sets the name of the MongoDB database to target
+     *
      * @param database name of the MongoDB database
      */
     public void setDatabase(String database) {
@@ -258,7 +329,9 @@ public class MongoDbEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * Create collection during initialisation if it doesn't exist. Default is true.
+     * Create collection during initialisation if it doesn't exist. Default is
+     * true.
+     *
      * @param createCollection true or false
      */
     public void setCreateCollection(boolean createCollection) {
@@ -276,9 +349,10 @@ public class MongoDbEndpoint extends DefaultEndpoint {
     public DBCollection getDbCollection() {
         return dbCollection;
     }
-    
+
     /**
      * Sets the Mongo instance that represents the backing connection
+     *
      * @param mongoConnection the connection to the database
      */
     public void setMongoConnection(Mongo mongoConnection) {
@@ -290,10 +364,14 @@ public class MongoDbEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * Set the {@link WriteConcern} for write operations on MongoDB using the standard ones.
-     * Resolved from the fields of the WriteConcern class by calling the {@link WriteConcern#valueOf(String)} method.
+     * Set the {@link WriteConcern} for write operations on MongoDB using the
+     * standard ones. Resolved from the fields of the WriteConcern class by
+     * calling the {@link WriteConcern#valueOf(String)} method.
+     *
      * @param writeConcern the standard name of the WriteConcern
-     * @see <a href="http://api.mongodb.org/java/current/com/mongodb/WriteConcern.html#valueOf(java.lang.String)">possible options</a>
+     * @see <a
+     *      href="http://api.mongodb.org/java/current/com/mongodb/WriteConcern.html#valueOf(java.lang.String)">possible
+     *      options</a>
      */
     public void setWriteConcern(String writeConcern) {
         this.writeConcern = WriteConcern.valueOf(writeConcern);
@@ -304,9 +382,11 @@ public class MongoDbEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * Instructs this endpoint to invoke {@link WriteResult#getLastError()} with every operation. By default, MongoDB does not wait
-     * for the write operation to occur before returning. If set to true, each exchange will only return after the write operation 
-     * has actually occurred in MongoDB.
+     * Instructs this endpoint to invoke {@link WriteResult#getLastError()} with
+     * every operation. By default, MongoDB does not wait for the write
+     * operation to occur before returning. If set to true, each exchange will
+     * only return after the write operation has actually occurred in MongoDB.
+     *
      * @param invokeGetLastError true or false
      */
     public void setInvokeGetLastError(boolean invokeGetLastError) {
@@ -320,16 +400,17 @@ public class MongoDbEndpoint extends DefaultEndpoint {
     /**
      * Set the {@link WriteConcern} for write operations on MongoDB, passing in the bean ref to a custom WriteConcern which exists in the Registry.
      * You can also use standard WriteConcerns by passing in their key. See the {@link #setWriteConcern(String) setWriteConcern} method.
+     *
      * @param writeConcernRef the name of the bean in the registry that represents the WriteConcern to use
      */
     public void setWriteConcernRef(String writeConcernRef) {
         WriteConcern wc = this.getCamelContext().getRegistry().lookupByNameAndType(writeConcernRef, WriteConcern.class);
         if (wc == null) {
-            LOG.error("Camel MongoDB component could not find the WriteConcern in the Registry. Verify that the " 
-                    + "provided bean name ({}) is correct. Aborting initialization.", writeConcernRef);
-            throw new IllegalArgumentException("Camel MongoDB component could not find the WriteConcern in the Registry");   
+            String msg = "Camel MongoDB component could not find the WriteConcern in the Registry. Verify that the "
+                    + "provided bean name (" + writeConcernRef + ")  is correct. Aborting initialization.";
+            throw new IllegalArgumentException(msg);
         }
-    
+
         this.writeConcernRef = wc;
     }
 
@@ -337,9 +418,11 @@ public class MongoDbEndpoint extends DefaultEndpoint {
         return writeConcernRef;
     }
 
-    /** 
-     * Sets a MongoDB {@link ReadPreference} on the Mongo connection. Read preferences set directly on the connection will be
-     * overridden by this setting.
+    /**
+     * Sets a MongoDB {@link ReadPreference} on the Mongo connection. Read
+     * preferences set directly on the connection will be overridden by this
+     * setting.
+     *
      * @param readPreference the bean name of the read preference to set
      */
     public void setReadPreference(String readPreference) {
@@ -354,23 +437,28 @@ public class MongoDbEndpoint extends DefaultEndpoint {
                 break;
             }
         }
-        
-        LOG.error("Could not resolve specified ReadPreference of type {}. Read preferences are resolved from inner " 
-                + "classes of com.mongodb.ReadPreference.", readPreference);
-        throw new IllegalArgumentException("MongoDB endpoint could not resolve specified ReadPreference");
+
+        String msg = "Could not resolve specified ReadPreference of type " + readPreference
+                + ". Read preferences are resolved from inner classes of com.mongodb.ReadPreference.";
+        throw new IllegalArgumentException(msg);
     }
-    
+
     public ReadPreference getReadPreference() {
         return readPreference;
     }
 
     /**
-     * Sets whether this endpoint will attempt to dynamically resolve the target database and collection from the incoming Exchange properties.
-     * Can be used to override at runtime the database and collection specified on the otherwise static endpoint URI.
-     * It is disabled by default to boost performance. Enabling it will take a minimal performance hit.
+     * Sets whether this endpoint will attempt to dynamically resolve the target
+     * database and collection from the incoming Exchange properties. Can be
+     * used to override at runtime the database and collection specified on the
+     * otherwise static endpoint URI. It is disabled by default to boost
+     * performance. Enabling it will take a minimal performance hit.
+     *
+     * @param dynamicity true or false indicated whether target database and
+     *                   collection should be calculated dynamically based on Exchange
+     *                   properties.
      * @see MongoDbConstants#DATABASE
      * @see MongoDbConstants#COLLECTION
-     * @param dynamicity true or false indicated whether target database and collection should be calculated dynamically based on Exchange properties.
      */
     public void setDynamicity(boolean dynamicity) {
         this.dynamicity = dynamicity;
@@ -381,7 +469,8 @@ public class MongoDbEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * Reserved for future use, when more consumer types are supported. 
+     * Reserved for future use, when more consumer types are supported.
+     *
      * @param consumerType key of the consumer type
      * @throws CamelMongoDbException
      */
@@ -396,15 +485,17 @@ public class MongoDbEndpoint extends DefaultEndpoint {
     public MongoDbConsumerType getConsumerType() {
         return consumerType;
     }
-    
+
     public String getTailTrackDb() {
         return tailTrackDb;
     }
 
     /**
-     * Indicates what database the tail tracking mechanism will persist to. If not specified, the current database will 
-     * be picked by default. Dynamicity will not be taken into account even if enabled, i.e. the tail tracking database 
-     * will not vary past endpoint initialisation.
+     * Indicates what database the tail tracking mechanism will persist to. If
+     * not specified, the current database will be picked by default. Dynamicity
+     * will not be taken into account even if enabled, i.e. the tail tracking
+     * database will not vary past endpoint initialisation.
+     *
      * @param tailTrackDb database name
      */
     public void setTailTrackDb(String tailTrackDb) {
@@ -416,8 +507,10 @@ public class MongoDbEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * Collection where tail tracking information will be persisted. If not specified, {@link MongoDbTailTrackingConfig#DEFAULT_COLLECTION} 
-     * will be used by default.
+     * Collection where tail tracking information will be persisted. If not
+     * specified, {@link MongoDbTailTrackingConfig#DEFAULT_COLLECTION} will be
+     * used by default.
+     *
      * @param tailTrackCollection collection name
      */
     public void setTailTrackCollection(String tailTrackCollection) {
@@ -429,8 +522,9 @@ public class MongoDbEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * Field where the last tracked value will be placed. If not specified,  {@link MongoDbTailTrackingConfig#DEFAULT_FIELD} 
-     * will be used by default.
+     * Field where the last tracked value will be placed. If not specified,
+     * {@link MongoDbTailTrackingConfig#DEFAULT_FIELD} will be used by default.
+     *
      * @param tailTrackField field name
      */
     public void setTailTrackField(String tailTrackField) {
@@ -438,8 +532,11 @@ public class MongoDbEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * Enable persistent tail tracking, which is a mechanism to keep track of the last consumed message across system restarts.
-     * The next time the system is up, the endpoint will recover the cursor from the point where it last stopped slurping records.
+     * Enable persistent tail tracking, which is a mechanism to keep track of
+     * the last consumed message across system restarts. The next time the
+     * system is up, the endpoint will recover the cursor from the point where
+     * it last stopped slurping records.
+     *
      * @param persistentTailTracking true or false
      */
     public void setPersistentTailTracking(boolean persistentTailTracking) {
@@ -449,14 +546,16 @@ public class MongoDbEndpoint extends DefaultEndpoint {
     public boolean isPersistentTailTracking() {
         return persistentTailTracking;
     }
-    
+
     /**
-     * Correlation field in the incoming record which is of increasing nature and will be used to position the tailing cursor every 
-     * time it is generated.
-     * The cursor will be (re)created with a query of type: tailTrackIncreasingField > lastValue (possibly recovered from persistent
-     * tail tracking).
-     * Can be of type Integer, Date, String, etc.
-     * NOTE: No support for dot notation at the current time, so the field should be at the top level of the document.
+     * Correlation field in the incoming record which is of increasing nature
+     * and will be used to position the tailing cursor every time it is
+     * generated. The cursor will be (re)created with a query of type:
+     * tailTrackIncreasingField > lastValue (possibly recovered from persistent
+     * tail tracking). Can be of type Integer, Date, String, etc. NOTE: No
+     * support for dot notation at the current time, so the field should be at
+     * the top level of the document.
+     *
      * @param tailTrackIncreasingField
      */
     public void setTailTrackIncreasingField(String tailTrackIncreasingField) {
@@ -469,16 +568,20 @@ public class MongoDbEndpoint extends DefaultEndpoint {
 
     public MongoDbTailTrackingConfig getTailTrackingConfig() {
         if (tailTrackingConfig == null) {
-            tailTrackingConfig = new MongoDbTailTrackingConfig(persistentTailTracking, tailTrackIncreasingField, 
-                    tailTrackDb == null ? database : tailTrackDb, tailTrackCollection, tailTrackField, getPersistentId());
+            tailTrackingConfig = new MongoDbTailTrackingConfig(persistentTailTracking, tailTrackIncreasingField, tailTrackDb == null ? database : tailTrackDb, tailTrackCollection,
+                    tailTrackField, getPersistentId());
         }
-        return tailTrackingConfig;       
+        return tailTrackingConfig;
     }
 
     /**
-     * MongoDB tailable cursors will block until new data arrives. If no new data is inserted, after some time the cursor will be automatically
-     * freed and closed by the MongoDB server. The client is expected to regenerate the cursor if needed. This value specifies the time to wait
-     * before attempting to fetch a new cursor, and if the attempt fails, how long before the next attempt is made. Default value is 1000ms.
+     * MongoDB tailable cursors will block until new data arrives. If no new
+     * data is inserted, after some time the cursor will be automatically freed
+     * and closed by the MongoDB server. The client is expected to regenerate
+     * the cursor if needed. This value specifies the time to wait before
+     * attempting to fetch a new cursor, and if the attempt fails, how long
+     * before the next attempt is made. Default value is 1000ms.
+     *
      * @param cursorRegenerationDelay delay specified in milliseconds
      */
     public void setCursorRegenerationDelay(long cursorRegenerationDelay) {
@@ -490,9 +593,12 @@ public class MongoDbEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * One tail tracking collection can host many trackers for several tailable consumers. 
-     * To keep them separate, each tracker should have its own unique persistentId.
-     * @param persistentId the value of the persistent ID to use for this tailable consumer
+     * One tail tracking collection can host many trackers for several tailable
+     * consumers. To keep them separate, each tracker should have its own unique
+     * persistentId.
+     *
+     * @param persistentId the value of the persistent ID to use for this
+     *                     tailable consumer
      */
     public void setPersistentId(String persistentId) {
         this.persistentId = persistentId;
@@ -507,8 +613,10 @@ public class MongoDbEndpoint extends DefaultEndpoint {
     }
 
     /**
-     * In write operations, it determines whether instead of returning {@link WriteResult} as the body of the OUT
-     * message, we transfer the IN message to the OUT and attach the WriteResult as a header.
+     * In write operations, it determines whether instead of returning
+     * {@link WriteResult} as the body of the OUT message, we transfer the IN
+     * message to the OUT and attach the WriteResult as a header.
+     *
      * @param writeResultAsHeader flag to indicate if this option is enabled
      */
     public void setWriteResultAsHeader(boolean writeResultAsHeader) {
