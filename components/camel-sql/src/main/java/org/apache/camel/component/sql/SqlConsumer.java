@@ -33,10 +33,8 @@ import org.apache.camel.spi.UriParam;
 import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.ObjectHelper;
 import org.springframework.dao.DataAccessException;
-import org.springframework.jdbc.core.ColumnMapRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCallback;
-import org.springframework.jdbc.core.RowMapperResultSetExtractor;
 
 /**
  *
@@ -100,29 +98,19 @@ public class SqlConsumer extends ScheduledBatchPollingConsumer {
 
                 log.debug("Executing query: {}", preparedQuery);
                 ResultSet rs = preparedStatement.executeQuery();
+                SqlOutputType outputType = getEndpoint().getOutputType();
                 try {
-                    log.trace("Got result list from query: {}", rs);
-
-                    RowMapperResultSetExtractor<Map<String, Object>> mapper = new RowMapperResultSetExtractor<Map<String, Object>>(new ColumnMapRowMapper());
-                    List<Map<String, Object>> data = mapper.extractData(rs);
-
-                    // create a list of exchange objects with the data
-                    if (useIterator) {
-                        for (Map<String, Object> item : data) {
-                            Exchange exchange = createExchange(item);
-                            DataHolder holder = new DataHolder();
-                            holder.exchange = exchange;
-                            holder.data = item;
-                            answer.add(holder);
+                    log.trace("Got result list from query: {}, outputType={}", rs, outputType);
+                    if (outputType == SqlOutputType.SelectList) {
+                        List<Map<String, Object>> data = getEndpoint().queryForList(rs);
+                        addListToQueue(data, answer);
+                    } else if (outputType == SqlOutputType.SelectOne) {
+                        Object data = getEndpoint().queryForObject(rs);
+                        if (data != null) {
+                            addListToQueue(data, answer);
                         }
                     } else {
-                        if (!data.isEmpty() || routeEmptyResultSet) {
-                            Exchange exchange = createExchange(data);
-                            DataHolder holder = new DataHolder();
-                            holder.exchange = exchange;
-                            holder.data = data;
-                            answer.add(holder);
-                        }
+                        throw new IllegalArgumentException("Invalid outputType=" + outputType);
                     }
                 } finally {
                     rs.close();
@@ -131,7 +119,7 @@ public class SqlConsumer extends ScheduledBatchPollingConsumer {
                 // process all the exchanges in this batch
                 try {
                     int rows = processBatch(CastUtils.cast(answer));
-                    return Integer.valueOf(rows);
+                    return rows;
                 } catch (Exception e) {
                     throw ObjectHelper.wrapRuntimeCamelException(e);
                 }
@@ -139,6 +127,30 @@ public class SqlConsumer extends ScheduledBatchPollingConsumer {
         });
 
         return messagePolled;
+    }
+
+    private void addListToQueue(Object data, Queue<DataHolder> answer) {
+        if (data instanceof List) {
+            // create a list of exchange objects with the data
+            List<?> list = (List)data;
+            if (useIterator) {
+                for (Object item : list) {
+                    addItemToQueue(item, answer);
+                }
+            } else if (!list.isEmpty() || routeEmptyResultSet) {
+                addItemToQueue(list, answer);
+            }
+        } else {
+            // create single object as data
+            addItemToQueue(data, answer);
+        }
+    }
+    private void addItemToQueue(Object item, Queue<DataHolder> answer) {
+        Exchange exchange = createExchange(item);
+        DataHolder holder = new DataHolder();
+        holder.exchange = exchange;
+        holder.data = item;
+        answer.add(holder);
     }
 
     protected Exchange createExchange(Object data) {
@@ -300,4 +312,3 @@ public class SqlConsumer extends ScheduledBatchPollingConsumer {
         this.breakBatchOnConsumeFail = breakBatchOnConsumeFail;
     }
 }
-

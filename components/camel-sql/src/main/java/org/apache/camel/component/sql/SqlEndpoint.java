@@ -16,6 +16,12 @@
  */
 package org.apache.camel.component.sql;
 
+import java.sql.ResultSet;
+import java.sql.SQLDataException;
+import java.sql.SQLException;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
@@ -25,7 +31,11 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriPath;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
+import org.springframework.jdbc.core.BeanPropertyRowMapper;
+import org.springframework.jdbc.core.ColumnMapRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.core.RowMapper;
+import org.springframework.jdbc.core.RowMapperResultSetExtractor;
 
 /**
  * SQL Endpoint. Endpoint URI should contain valid SQL statement, but instead of
@@ -35,6 +45,7 @@ import org.springframework.jdbc.core.JdbcTemplate;
 @UriEndpoint(scheme = "sql", consumerClass = SqlConsumer.class)
 public class SqlEndpoint extends DefaultPollingEndpoint {
     private JdbcTemplate jdbcTemplate;
+
     @UriPath
     private String query;
     @UriParam
@@ -57,6 +68,10 @@ public class SqlEndpoint extends DefaultPollingEndpoint {
     private boolean alwaysPopulateStatement;
     @UriParam
     private char separator = ',';
+    @UriParam
+    private SqlOutputType outputType = SqlOutputType.SelectList;
+    @UriParam
+    private String outputClass;
 
     public SqlEndpoint() {
     }
@@ -193,9 +208,67 @@ public class SqlEndpoint extends DefaultPollingEndpoint {
         this.separator = separator;
     }
 
+    public SqlOutputType getOutputType() {
+        return outputType;
+    }
+
+    public void setOutputType(SqlOutputType outputType) {
+        this.outputType = outputType;
+    }
+
+    public String getOutputClass() {
+        return outputClass;
+    }
+
+    public void setOutputClass(String outputClass) {
+        this.outputClass = outputClass;
+    }
+
     @Override
     protected String createEndpointUri() {
         // Make sure it's properly encoded
         return "sql:" + UnsafeUriCharactersEncoder.encode(query);
     }
+
+    protected List<Map<String, Object>> queryForList(ResultSet rs) throws SQLException {
+        ColumnMapRowMapper rowMapper = new ColumnMapRowMapper();
+        RowMapperResultSetExtractor<Map<String, Object>> mapper = new RowMapperResultSetExtractor<Map<String, Object>>(rowMapper);
+        List<Map<String, Object>> data = mapper.extractData(rs);
+        return data;
+    }
+
+    @SuppressWarnings("unchecked")
+    protected Object queryForObject(ResultSet rs) throws SQLException {
+        Object result = null;
+        if (outputClass == null) {
+            RowMapper rowMapper = new ColumnMapRowMapper();
+            RowMapperResultSetExtractor<Map<String, Object>> mapper = new RowMapperResultSetExtractor<Map<String, Object>>(rowMapper);
+            List<Map<String, Object>> data = mapper.extractData(rs);
+            if (data.size() > 1) {
+                throw new SQLDataException("Query result not unique for outputType=SelectOne. Got " + data.size() +  " count instead.");
+            } else if (data.size() == 1) {
+                // Set content depend on number of column from query result
+                Map<String, Object> row = data.get(0);
+                if (row.size() == 1) {
+                    result = row.values().iterator().next();
+                } else {
+                    result = row;
+                }
+            }
+        } else {
+            Class<?> outputClzz = getCamelContext().getClassResolver().resolveClass(outputClass);
+            RowMapper rowMapper = new BeanPropertyRowMapper(outputClzz);
+            RowMapperResultSetExtractor<?> mapper = new RowMapperResultSetExtractor(rowMapper);
+            List<?> data = mapper.extractData(rs);
+            if (data.size() > 1) {
+                throw new SQLDataException("Query result not unique for outputType=SelectOne. Got " + data.size() +  " count instead.");
+            } else if (data.size() == 1) {
+                result = data.get(0);
+            }
+        }
+
+        // If data.size is zero, let result be null.
+        return result;
+    }
+
 }

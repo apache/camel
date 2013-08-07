@@ -17,6 +17,7 @@
 package org.apache.camel.component.sql;
 
 import java.sql.PreparedStatement;
+import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Iterator;
 import java.util.List;
@@ -24,10 +25,8 @@ import java.util.Map;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultProducer;
-import org.springframework.jdbc.core.ColumnMapRowMapper;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCallback;
-import org.springframework.jdbc.core.RowMapperResultSetExtractor;
 
 public class SqlProducer extends DefaultProducer {
     private String query;
@@ -89,12 +88,25 @@ public class SqlProducer extends DefaultProducer {
                 } else {
                     boolean isResultSet = ps.execute();
                     if (isResultSet) {
-                        RowMapperResultSetExtractor<Map<String, Object>> mapper = new RowMapperResultSetExtractor<Map<String, Object>>(new ColumnMapRowMapper());
-                        List<Map<String, Object>> result = mapper.extractData(ps.getResultSet());
-                        exchange.getOut().setBody(result);
-                        exchange.getIn().setHeader(SqlConstants.SQL_ROW_COUNT, result.size());
+                        ResultSet rs = ps.getResultSet();
+                        SqlOutputType outputType = getEndpoint().getOutputType();
+                        log.trace("Got result list from query: {}, outputType={}", rs, outputType);
+                        if (outputType == SqlOutputType.SelectList) {
+                            List<Map<String, Object>> data = getEndpoint().queryForList(ps.getResultSet());
+                            exchange.getOut().setBody(data);
+                            exchange.getOut().setHeader(SqlConstants.SQL_ROW_COUNT, data.size());
+                        } else if (outputType == SqlOutputType.SelectOne) {
+                            Object data = getEndpoint().queryForObject(ps.getResultSet());
+                            if (data != null) {
+                                exchange.getOut().setBody(data);
+                                exchange.getOut().setHeader(SqlConstants.SQL_ROW_COUNT, 1);
+                            }
+                        } else {
+                            throw new IllegalArgumentException("Invalid outputType=" + outputType);
+                        }
+
                         // preserve headers
-                        exchange.getOut().setHeaders(exchange.getIn().getHeaders());
+                        exchange.getOut().getHeaders().putAll(exchange.getIn().getHeaders());
                     } else {
                         exchange.getIn().setHeader(SqlConstants.SQL_UPDATE_COUNT, ps.getUpdateCount());
                     }
@@ -105,5 +117,4 @@ public class SqlProducer extends DefaultProducer {
             }
         });
     }
-
 }
