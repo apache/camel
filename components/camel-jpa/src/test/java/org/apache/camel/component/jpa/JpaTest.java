@@ -117,7 +117,7 @@ public class JpaTest extends Assert {
         endpoint = (JpaEndpoint) value;
 
         transactionTemplate = endpoint.createTransactionTemplate();
-        entityManager = endpoint.createEntityManager();
+        entityManager = endpoint.getEntityManager();
     }
 
     protected String getEndpointUri() {
@@ -127,6 +127,5 @@ public class JpaTest extends Assert {
     @After
     public void tearDown() throws Exception {
         stopServices(consumer, template, camelContext);
-        entityManager.close();
     }
 }

@@ -28,11 +28,11 @@ import org.apache.camel.processor.interceptor.jpa.JpaTraceEventMessage;
 import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.spring.SpringRouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-import org.springframework.orm.jpa.JpaTransactionManager;
-import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -44,7 +44,23 @@ public class JpaTraceEventMessageTest extends CamelTestSupport {
     protected static final String SELECT_ALL_STRING = "select x from " + JpaTraceEventMessage.class.getName() + " x";
 
     protected ApplicationContext applicationContext;
-    protected EntityManagerFactory entityManagerFactory;
+    protected TransactionTemplate transactionTemplate;
+    protected EntityManager entityManager;
+
+    @Before
+    public void setUp() throws Exception {
+        super.setUp();
+    	EntityManagerFactory entityManagerFactory = applicationContext.getBean("entityManagerFactory", EntityManagerFactory.class);
+    	transactionTemplate = applicationContext.getBean("transactionTemplate", TransactionTemplate.class);
+        entityManager = entityManagerFactory.createEntityManager();
+        cleanupRepository();
+    }
+
+    @After
+    public void tearDown() throws Exception {
+        super.tearDown();
+        entityManager.close();
+    }
 
     @Test
     public void testSendTraceMessage() throws Exception {
@@ -60,7 +76,6 @@ public class JpaTraceEventMessageTest extends CamelTestSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         applicationContext = new ClassPathXmlApplicationContext("org/apache/camel/processor/interceptor/springJpaTraveEvent.xml");
-        cleanupRepository();
         return SpringCamelContext.springCamelContext(applicationContext);
     }
 
@@ -79,10 +94,7 @@ public class JpaTraceEventMessageTest extends CamelTestSupport {
     }
 
     private void assertEntityInDB() throws Exception {
-    	entityManagerFactory = applicationContext.getBean("entityManagerFactory", EntityManagerFactory.class);
-    	EntityManager entityManager = entityManagerFactory.createEntityManager();
-    	
-        List<?> list = entityManager.createQuery(SELECT_ALL_STRING).getResultList();
+    	List<?> list = entityManager.createQuery(SELECT_ALL_STRING).getResultList();
         assertEquals(1, list.size());
         
         JpaTraceEventMessage db = (JpaTraceEventMessage) list.get(0);
@@ -90,19 +102,12 @@ public class JpaTraceEventMessageTest extends CamelTestSupport {
         assertEquals("direct://start", db.getFromEndpointUri());
         assertEquals("mock://result", db.getToNode());
         assertEquals("foo", db.getRouteId());
-        
-        entityManager.close();
     }
 
     protected void cleanupRepository() {
-    	entityManagerFactory = applicationContext.getBean("entityManagerFactory", EntityManagerFactory.class);
-    	final EntityManager entityManager = entityManagerFactory.createEntityManager();
-        TransactionTemplate transactionTemplate = new TransactionTemplate();
-        transactionTemplate.setTransactionManager(new JpaTransactionManager(entityManagerFactory));
-        transactionTemplate.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
-
-        transactionTemplate.execute(new TransactionCallback<Object>() {
+    	transactionTemplate.execute(new TransactionCallback<Object>() {
             public Object doInTransaction(TransactionStatus arg0) {
+            	entityManager.joinTransaction();
                 List<?> list = entityManager.createQuery(SELECT_ALL_STRING).getResultList();
                 for (Object item : list) {
                 	entityManager.remove(item);
@@ -111,7 +116,5 @@ public class JpaTraceEventMessageTest extends CamelTestSupport {
                 return Boolean.TRUE;
             }
         });
-        
-        entityManager.close();
     }
 }

@@ -69,7 +69,7 @@ public class JpaConsumer extends ScheduledBatchPollingConsumer {
     public JpaConsumer(JpaEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
         this.endpoint = endpoint;
-        this.entityManager = endpoint.createEntityManager();
+        this.entityManager = endpoint.getEntityManager();
         this.transactionTemplate = endpoint.createTransactionTemplate();
     }
 
@@ -382,13 +382,5 @@ public class JpaConsumer extends ScheduledBatchPollingConsumer {
         exchange.getIn().setBody(result);
         exchange.getIn().setHeader(JpaConstants.ENTITYMANAGER, entityManager);
         return exchange;
-    }
-
-    @Override
-    protected void doStop() throws Exception {
-        super.doStop();
-        // TODO: This should probably happen, but hitting an open transaction or flush in progress.
-        // Is there a thread holding onto it?
-//        entityManager.close();
     }
 }

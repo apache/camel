@@ -166,7 +166,7 @@ public class JpaWithNamedQueryTest extends Assert {
         endpoint = (JpaEndpoint)value;
 
         transactionTemplate = endpoint.createTransactionTemplate();
-        entityManager = endpoint.createEntityManager();
+        entityManager = endpoint.getEntityManager();
     }
 
     protected String getEndpointUri() {
@@ -176,6 +176,5 @@ public class JpaWithNamedQueryTest extends Assert {
     @After
     public void tearDown() throws Exception {
         ServiceHelper.stopServices(consumer, template, camelContext);
-        entityManager.close();
     }
 }

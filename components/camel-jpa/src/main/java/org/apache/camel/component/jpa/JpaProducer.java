@@ -42,7 +42,7 @@ public class JpaProducer extends DefaultProducer {
         super(endpoint);
         this.endpoint = endpoint;
         this.expression = expression;
-        this.entityManager = endpoint.createEntityManager();
+        this.entityManager = endpoint.getEntityManager();
         this.transactionTemplate = endpoint.createTransactionTemplate();
     }
 
@@ -106,11 +106,5 @@ public class JpaProducer extends DefaultProducer {
             });
         }
         exchange.getIn().removeHeader(JpaConstants.ENTITYMANAGER);
-    }
-
-    @Override
-    protected void doStop() throws Exception {
-        super.doStop();
-        entityManager.close();
     }
 }

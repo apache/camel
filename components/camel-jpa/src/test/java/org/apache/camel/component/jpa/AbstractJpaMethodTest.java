@@ -60,7 +60,6 @@ public abstract class AbstractJpaMethodTest extends Assert {
     @After
     public void tearDown() throws Exception {
         stopServices(consumer, template, camelContext);
-        entityManager.close();
     }
     
     @Test
@@ -165,7 +164,7 @@ public abstract class AbstractJpaMethodTest extends Assert {
         endpoint = camelContext.getEndpoint(endpointUri, JpaEndpoint.class);
 
         transactionTemplate = endpoint.createTransactionTemplate();
-        entityManager = endpoint.createEntityManager();
+        entityManager = endpoint.getEntityManager();
         
         transactionTemplate.execute(new TransactionCallback<Object>() {
             public Object doInTransaction(TransactionStatus status) {
