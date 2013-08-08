@@ -24,8 +24,8 @@
     <!-- START SNIPPET: jpaStore -->
     <!-- we define our jpa based idempotent repository we want to use in the file consumer -->
     <bean id="jpaStore" class="org.apache.camel.processor.idempotent.jpa.JpaMessageIdRepository">
-        <!-- Here we refer to the spring jpaTemplate -->
-        <constructor-arg index="0" ref="jpaTemplate"/>
+        <!-- Here we refer to the entityManagerFactory -->
+        <constructor-arg index="0" ref="entityManagerFactory"/>
         <!-- This 2nd parameter is the name  (= a cateogry name).
              You can have different repositories with different names -->
         <constructor-arg index="1" value="FileConsumer"/>

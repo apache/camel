@@ -18,15 +18,13 @@ package org.apache.camel.component.jpa;
 
 import java.util.List;
 
-import javax.persistence.EntityManager;
-import javax.persistence.PersistenceException;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.examples.Address;
 import org.apache.camel.examples.Customer;
 import org.apache.camel.impl.DefaultExchange;
 import org.junit.Test;
-import org.springframework.orm.jpa.JpaCallback;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallback;
 
 /**
  * @version 
@@ -42,8 +40,9 @@ public class JpaUseMergeTest extends AbstractJpaMethodTest {
         setUp("jpa://" + Customer.class.getName() + "?usePersist=false");
         
         final Customer customer = createDefaultCustomer();
-        transactionStrategy.execute(new JpaCallback<Object>() {
-            public Object doInJpa(EntityManager entityManager) throws PersistenceException {
+        transactionTemplate.execute(new TransactionCallback<Object>() {
+            public Object doInTransaction(TransactionStatus status) {
+            	entityManager.joinTransaction();
                 entityManager.persist(customer);
                 entityManager.flush();
                 return null;
@@ -68,7 +67,7 @@ public class JpaUseMergeTest extends AbstractJpaMethodTest {
         assertEquals(customer.getAddress().getAddressLine2(), receivedCustomer.getAddress().getAddressLine2());
         assertNotNull(receivedCustomer.getAddress().getId());
         
-        List<?> results = jpaTemplate.find("select o from " + Customer.class.getName() + " o");
+        List<?> results = entityManager.createQuery("select o from " + Customer.class.getName() + " o").getResultList();
         assertEquals(1, results.size());
         Customer persistedCustomer = (Customer) results.get(0);
         assertEquals(receivedCustomer.getName(), persistedCustomer.getName());

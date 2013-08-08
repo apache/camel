@@ -27,10 +27,6 @@
         </property>
     </bean>
 
-    <bean id="jpaTemplate" class="org.springframework.orm.jpa.JpaTemplate">
-        <property name="entityManagerFactory" ref="entityManagerFactory"/>
-    </bean>
-
     <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalEntityManagerFactoryBean">
         <property name="persistenceUnitName" value="camel"/>
     </bean>

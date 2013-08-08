@@ -18,6 +18,9 @@ package org.apache.camel.processor.interceptor;
 
 import java.util.List;
 
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -28,7 +31,6 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-import org.springframework.orm.jpa.JpaTemplate;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
@@ -42,7 +44,7 @@ public class JpaTraceEventMessageTest extends CamelTestSupport {
     protected static final String SELECT_ALL_STRING = "select x from " + JpaTraceEventMessage.class.getName() + " x";
 
     protected ApplicationContext applicationContext;
-    protected JpaTemplate jpaTemplate;
+    protected EntityManagerFactory entityManagerFactory;
 
     @Test
     public void testSendTraceMessage() throws Exception {
@@ -77,9 +79,10 @@ public class JpaTraceEventMessageTest extends CamelTestSupport {
     }
 
     private void assertEntityInDB() throws Exception {
-        jpaTemplate = applicationContext.getBean("jpaTemplate", JpaTemplate.class);
-
-        List<?> list = jpaTemplate.find(SELECT_ALL_STRING);
+    	entityManagerFactory = applicationContext.getBean("entityManagerFactory", EntityManagerFactory.class);
+    	EntityManager entityManager = entityManagerFactory.createEntityManager();
+    	
+        List<?> list = entityManager.createQuery(SELECT_ALL_STRING).getResultList();
         assertEquals(1, list.size());
         
         JpaTraceEventMessage db = (JpaTraceEventMessage) list.get(0);
@@ -87,24 +90,28 @@ public class JpaTraceEventMessageTest extends CamelTestSupport {
         assertEquals("direct://start", db.getFromEndpointUri());
         assertEquals("mock://result", db.getToNode());
         assertEquals("foo", db.getRouteId());
+        
+        entityManager.close();
     }
 
     protected void cleanupRepository() {
-        jpaTemplate = applicationContext.getBean("jpaTemplate", JpaTemplate.class);
-
+    	entityManagerFactory = applicationContext.getBean("entityManagerFactory", EntityManagerFactory.class);
+    	final EntityManager entityManager = entityManagerFactory.createEntityManager();
         TransactionTemplate transactionTemplate = new TransactionTemplate();
-        transactionTemplate.setTransactionManager(new JpaTransactionManager(jpaTemplate.getEntityManagerFactory()));
+        transactionTemplate.setTransactionManager(new JpaTransactionManager(entityManagerFactory));
         transactionTemplate.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
 
         transactionTemplate.execute(new TransactionCallback<Object>() {
             public Object doInTransaction(TransactionStatus arg0) {
-                List<?> list = jpaTemplate.find(SELECT_ALL_STRING);
+                List<?> list = entityManager.createQuery(SELECT_ALL_STRING).getResultList();
                 for (Object item : list) {
-                    jpaTemplate.remove(item);
+                	entityManager.remove(item);
                 }
-                jpaTemplate.flush();
+                entityManager.flush();
                 return Boolean.TRUE;
             }
         });
+        
+        entityManager.close();
     }
 }

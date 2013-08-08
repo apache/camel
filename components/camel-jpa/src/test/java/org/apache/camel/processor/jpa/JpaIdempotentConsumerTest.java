@@ -16,71 +16,54 @@
  */
 package org.apache.camel.processor.jpa;
 
+import static org.apache.camel.processor.idempotent.jpa.JpaMessageIdRepository.jpaMessageIdRepository;
+
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
-import org.apache.camel.CamelContext;
+import javax.persistence.EntityManagerFactory;
+import javax.persistence.Query;
+
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.idempotent.jpa.MessageProcessed;
-import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.spring.SpringRouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Before;
 import org.junit.Test;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
-import org.springframework.orm.jpa.JpaTemplate;
-import org.springframework.orm.jpa.JpaTransactionManager;
-import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
-import org.springframework.transaction.support.TransactionTemplate;
-
-import static org.apache.camel.processor.idempotent.jpa.JpaMessageIdRepository.jpaMessageIdRepository;
 
 /**
  * @version 
  */
-public class JpaIdempotentConsumerTest extends CamelTestSupport {
+public class JpaIdempotentConsumerTest extends AbstractJpaTest {
     protected static final String SELECT_ALL_STRING = "select x from " + MessageProcessed.class.getName() + " x where x.processorName = ?1";
     protected static final String PROCESSOR_NAME = "myProcessorName";
 
-    protected ApplicationContext applicationContext;
-    protected JpaTemplate jpaTemplate;
     protected Endpoint startEndpoint;
     protected MockEndpoint resultEndpoint;
-
-    @Override
-    protected CamelContext createCamelContext() throws Exception {
-        applicationContext = new ClassPathXmlApplicationContext("org/apache/camel/processor/jpa/spring.xml");
-        cleanupRepository();
-        return SpringCamelContext.springCamelContext(applicationContext);
-    }
 
     @Override
     public boolean isUseRouteBuilder() {
         return false;
     }
 
+    @Override
     protected void cleanupRepository() {
-        jpaTemplate = applicationContext.getBean("jpaTemplate", JpaTemplate.class);
-
-        TransactionTemplate transactionTemplate = new TransactionTemplate();
-        transactionTemplate.setTransactionManager(new JpaTransactionManager(jpaTemplate.getEntityManagerFactory()));
-        transactionTemplate.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
-
         transactionTemplate.execute(new TransactionCallback<Object>() {
             public Object doInTransaction(TransactionStatus arg0) {
-                List<?> list = jpaTemplate.find(SELECT_ALL_STRING, PROCESSOR_NAME);
+            	entityManager.joinTransaction();
+            	Query query = entityManager.createQuery(SELECT_ALL_STRING);
+            	query.setParameter(1, PROCESSOR_NAME);
+                List<?> list = query.getResultList();
                 for (Object item : list) {
-                    jpaTemplate.remove(item);
+                	entityManager.remove(item);
                 }
-                jpaTemplate.flush();
+                entityManager.flush();
                 return Boolean.TRUE;
             }
         });
@@ -103,7 +86,7 @@ public class JpaIdempotentConsumerTest extends CamelTestSupport {
                 // START SNIPPET: idempotent
                 from("direct:start").idempotentConsumer(
                         header("messageId"),
-                        jpaMessageIdRepository(lookup(JpaTemplate.class), PROCESSOR_NAME)
+                        jpaMessageIdRepository(lookup(EntityManagerFactory.class), PROCESSOR_NAME)
                 ).to("mock:result");
                 // END SNIPPET: idempotent
             }
@@ -123,7 +106,9 @@ public class JpaIdempotentConsumerTest extends CamelTestSupport {
 
         // all 3 messages should be in jpa repo
         Set<String> ids = new HashSet<String>();
-        List<MessageProcessed> list = jpaTemplate.find(SELECT_ALL_STRING, PROCESSOR_NAME);
+        Query query = entityManager.createQuery(SELECT_ALL_STRING);
+    	query.setParameter(1, PROCESSOR_NAME);
+    	List<MessageProcessed> list = query.getResultList();
         for (MessageProcessed item : list) {
             ids.add(item.getMessageId());
         }
@@ -144,7 +129,7 @@ public class JpaIdempotentConsumerTest extends CamelTestSupport {
 
                 from("direct:start").idempotentConsumer(
                         header("messageId"),
-                        jpaMessageIdRepository(lookup(JpaTemplate.class), PROCESSOR_NAME)
+                        jpaMessageIdRepository(lookup(EntityManagerFactory.class), PROCESSOR_NAME)
                 ).process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         String id = exchange.getIn().getHeader("messageId", String.class);
@@ -172,7 +157,9 @@ public class JpaIdempotentConsumerTest extends CamelTestSupport {
 
         // only message 1 and 3 should be in jpa repo
         Set<String> ids = new HashSet<String>();
-        List<MessageProcessed> list = jpaTemplate.find(SELECT_ALL_STRING, PROCESSOR_NAME);
+        Query query = entityManager.createQuery(SELECT_ALL_STRING);
+    	query.setParameter(1, PROCESSOR_NAME);
+    	List<MessageProcessed> list = query.getResultList();
         for (MessageProcessed item : list) {
             ids.add(item.getMessageId());
         }
@@ -192,5 +179,15 @@ public class JpaIdempotentConsumerTest extends CamelTestSupport {
             }
         });
     }
+
+	@Override
+	protected String routeXml() {
+		return "org/apache/camel/processor/jpa/spring.xml";
+	}
+
+	@Override
+	protected String selectAllString() {
+		return SELECT_ALL_STRING;
+	}
 
 }

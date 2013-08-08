@@ -16,33 +16,17 @@
  */
 package org.apache.camel.processor.jpa;
 
-import java.util.List;
-
-import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.examples.SendEmail;
-import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.spring.SpringRouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
-import org.springframework.context.ApplicationContext;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
-import org.springframework.orm.jpa.JpaTemplate;
-import org.springframework.orm.jpa.JpaTransactionManager;
-import org.springframework.transaction.TransactionDefinition;
-import org.springframework.transaction.TransactionStatus;
-import org.springframework.transaction.support.TransactionCallback;
-import org.springframework.transaction.support.TransactionTemplate;
 
 /**
  * @version 
  */
-public class JpaRouteMaximumResultsTest extends CamelTestSupport {
+public class JpaRouteMaximumResultsTest extends AbstractJpaTest {
     protected static final String SELECT_ALL_STRING = "select x from " + SendEmail.class.getName() + " x";
-
-    protected ApplicationContext applicationContext;
-    protected JpaTemplate jpaTemplate;
 
     @Test
     public void testRouteJpa() throws Exception {
@@ -54,17 +38,10 @@ public class JpaRouteMaximumResultsTest extends CamelTestSupport {
         template.sendBody("direct:start", new SendEmail("three@somewhere.org"));
 
         assertMockEndpointsSatisfied();
-        assertEntityInDB();
+        assertEntityInDB(3);
 
         // should not consume 3 at once
         assertTrue("Should not consume all 3 at once", mock.getReceivedCounter() < 3);
-    }
-
-    @Override
-    protected CamelContext createCamelContext() throws Exception {
-        applicationContext = new ClassPathXmlApplicationContext("org/apache/camel/processor/jpa/springJpaRouteTest.xml");
-        cleanupRepository();
-        return SpringCamelContext.springCamelContext(applicationContext);
     }
 
     @Override
@@ -78,31 +55,13 @@ public class JpaRouteMaximumResultsTest extends CamelTestSupport {
         };
     }
 
-    private void assertEntityInDB() throws Exception {
-        jpaTemplate = applicationContext.getBean("jpaTemplate", JpaTemplate.class);
+	@Override
+	protected String routeXml() {
+		return "org/apache/camel/processor/jpa/springJpaRouteTest.xml";
+	}
 
-        List<?> list = jpaTemplate.find(SELECT_ALL_STRING);
-        assertEquals(3, list.size());
-
-        assertIsInstanceOf(SendEmail.class, list.get(0));
-    }
-
-    protected void cleanupRepository() {
-        jpaTemplate = applicationContext.getBean("jpaTemplate", JpaTemplate.class);
-
-        TransactionTemplate transactionTemplate = new TransactionTemplate();
-        transactionTemplate.setTransactionManager(new JpaTransactionManager(jpaTemplate.getEntityManagerFactory()));
-        transactionTemplate.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
-
-        transactionTemplate.execute(new TransactionCallback<Object>() {
-            public Object doInTransaction(TransactionStatus arg0) {
-                List<?> list = jpaTemplate.find(SELECT_ALL_STRING);
-                for (Object item : list) {
-                    jpaTemplate.remove(item);
-                }
-                jpaTemplate.flush();
-                return Boolean.TRUE;
-            }
-        });
-    }
+	@Override
+	protected String selectAllString() {
+		return SELECT_ALL_STRING;
+	}
 }

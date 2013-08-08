@@ -21,7 +21,6 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
 import javax.persistence.EntityManager;
-import javax.persistence.PersistenceException;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Consumer;
@@ -38,8 +37,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.orm.jpa.JpaCallback;
-import org.springframework.orm.jpa.JpaTemplate;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallback;
+import org.springframework.transaction.support.TransactionTemplate;
 
 /**
  * @version 
@@ -51,8 +51,8 @@ public class JpaWithNamedQueryTest extends Assert {
     protected CamelContext camelContext = new DefaultCamelContext();
     protected ProducerTemplate template;
     protected JpaEndpoint endpoint;
-    protected TransactionStrategy transactionStrategy;
-    protected JpaTemplate jpaTemplate;
+    protected EntityManager entityManager;
+    protected TransactionTemplate transactionTemplate;
     protected Consumer consumer;
     protected Exchange receivedExchange;
     protected CountDownLatch latch = new CountDownLatch(1);
@@ -61,8 +61,9 @@ public class JpaWithNamedQueryTest extends Assert {
 
     @Test
     public void testProducerInsertsIntoDatabaseThenConsumerFiresMessageExchange() throws Exception {
-        transactionStrategy.execute(new JpaCallback<Object>() {
-            public Object doInJpa(EntityManager entityManager) throws PersistenceException {
+    	transactionTemplate.execute(new TransactionCallback<Object>() {
+            public Object doInTransaction(TransactionStatus status) {
+            	entityManager.joinTransaction();
                 // lets delete any exiting records before the test
                 entityManager.createQuery("delete from " + entityName).executeUpdate();
 
@@ -74,7 +75,7 @@ public class JpaWithNamedQueryTest extends Assert {
             }
         });
 
-        List<?> results = jpaTemplate.find(queryText);
+        List<?> results = entityManager.createQuery(queryText).getResultList();
         assertEquals("Should have no results: " + results, 0, results.size());
 
         // lets produce some objects
@@ -85,7 +86,7 @@ public class JpaWithNamedQueryTest extends Assert {
         });
 
         // now lets assert that there is a result
-        results = jpaTemplate.find(queryText);
+        results = entityManager.createQuery(queryText).getResultList();
         assertEquals("Should have results: " + results, 1, results.size());
         MultiSteps mail = (MultiSteps)results.get(0);
         assertEquals("address property", "foo@bar.com", mail.getAddress());
@@ -108,8 +109,9 @@ public class JpaWithNamedQueryTest extends Assert {
         // we need to sleep as we will be invoked from inside the transaction!
         Thread.sleep(1000);
 
-        transactionStrategy.execute(new JpaCallback<Object>() {
-            public Object doInJpa(EntityManager entityManager) throws PersistenceException {
+        transactionTemplate.execute(new TransactionCallback<Object>() {
+            public Object doInTransaction(TransactionStatus status) {
+            	entityManager.joinTransaction();
 
                 // now lets assert that there are still 2 entities left
                 List<?> rows = entityManager.createQuery("select x from MultiSteps x").getResultList();
@@ -163,8 +165,8 @@ public class JpaWithNamedQueryTest extends Assert {
         assertTrue("Should be a JPA endpoint but was: " + value, value instanceof JpaEndpoint);
         endpoint = (JpaEndpoint)value;
 
-        transactionStrategy = endpoint.createTransactionStrategy();
-        jpaTemplate = endpoint.getTemplate();
+        transactionTemplate = endpoint.createTransactionTemplate();
+        entityManager = endpoint.createEntityManager();
     }
 
     protected String getEndpointUri() {
@@ -174,5 +176,6 @@ public class JpaWithNamedQueryTest extends Assert {
     @After
     public void tearDown() throws Exception {
         ServiceHelper.stopServices(consumer, template, camelContext);
+        entityManager.close();
     }
 }

@@ -27,16 +27,9 @@
         </property>
     </bean>
 
-    <!-- START SNIPPET: e1 -->
-    <!-- this is standard spring JPA configuration -->
-    <bean id="jpaTemplate" class="org.springframework.orm.jpa.JpaTemplate">
-        <property name="entityManagerFactory" ref="entityManagerFactory"/>
-    </bean>
-
     <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalEntityManagerFactoryBean">
         <!-- we use trace as the persitence unit name defined in the persistence.xml file -->
         <property name="persistenceUnitName" value="trace"/>
     </bean>
-    <!-- END SNIPPET: e1 -->
 
 </beans>
