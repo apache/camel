@@ -40,6 +40,17 @@
             <to uri="mock:result"/>
             <to uri="mock:tap"/>
         </route>
+        
+        <route>
+        	<from uri="direct:test"/>
+        	<wireTap uri="direct:a" id="wiretap_1" />
+        	<to uri="mock:a"/>
+        </route>
+        
+        <route>
+            <from uri="direct:a"/>
+            <to uri="mock:b" />
+        </route>
     </camelContext>
 
 </beans>
