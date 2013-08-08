@@ -114,7 +114,7 @@ public class RabbitMQConsumer extends DefaultConsumer {
                                    AMQP.BasicProperties properties,
                                    byte[] body) throws IOException {
 
-            Exchange exchange = consumer.endpoint.createRabbitExchange(envelope);
+            Exchange exchange = consumer.endpoint.createRabbitExchange(envelope, body);
             log.trace("Created exchange [exchange={}]", new Object[]{exchange});
 
             try {

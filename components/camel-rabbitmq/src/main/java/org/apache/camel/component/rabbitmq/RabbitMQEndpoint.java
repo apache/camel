@@ -56,7 +56,7 @@ public class RabbitMQEndpoint extends DefaultEndpoint {
         super(endpointUri, component);
     }
 
-    public Exchange createRabbitExchange(Envelope envelope) {
+    public Exchange createRabbitExchange(Envelope envelope, byte[] body) {
         Exchange exchange = new DefaultExchange(getCamelContext(), getExchangePattern());
 
         Message message = new DefaultMessage();
@@ -65,6 +65,7 @@ public class RabbitMQEndpoint extends DefaultEndpoint {
         message.setHeader(RabbitMQConstants.ROUTING_KEY, envelope.getRoutingKey());
         message.setHeader(RabbitMQConstants.EXCHANGE_NAME, envelope.getExchange());
         message.setHeader(RabbitMQConstants.DELIVERY_TAG, envelope.getDeliveryTag());
+        message.setBody(body);
 
         return exchange;
     }
