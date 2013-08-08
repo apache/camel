@@ -87,6 +87,9 @@ public class ServerChannelHandler extends SimpleChannelUpstreamHandler {
 
         // create Exchange and let the consumer process it
         final Exchange exchange = consumer.getEndpoint().createExchange(ctx, messageEvent);
+        // we want to handle the UoW
+        consumer.createUoW(exchange);
+
         if (consumer.getConfiguration().isSync()) {
             exchange.setPattern(ExchangePattern.InOut);
         }
@@ -123,6 +126,8 @@ public class ServerChannelHandler extends SimpleChannelUpstreamHandler {
             }
         } catch (Throwable e) {
             consumer.getExceptionHandler().handleException(e);
+        } finally {
+            consumer.doneUoW(exchange);
         }
     }
 
@@ -137,6 +142,8 @@ public class ServerChannelHandler extends SimpleChannelUpstreamHandler {
                     }
                 } catch (Throwable e) {
                     consumer.getExceptionHandler().handleException(e);
+                } finally {
+                    consumer.doneUoW(exchange);
                 }
             }
         });

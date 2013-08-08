@@ -86,6 +86,14 @@ public class CamelServlet extends HttpServlet {
         
         // create exchange and set data on it
         Exchange exchange = new DefaultExchange(consumer.getEndpoint(), ExchangePattern.InOut);
+        // we want to handle the UoW
+        try {
+            consumer.createUoW(exchange);
+        } catch (Exception e) {
+            log.error("Error processing request", e);
+            throw new ServletException(e);
+        }
+
         if (consumer.getEndpoint().isBridgeEndpoint()) {
             exchange.setProperty(Exchange.SKIP_GZIP_ENCODING, Boolean.TRUE);
         }
@@ -138,6 +146,7 @@ public class CamelServlet extends HttpServlet {
             log.error("Error processing request", e);
             throw new ServletException(e);
         } finally {
+            consumer.doneUoW(exchange);
             restoreTccl(exchange, oldTccl);
         }
     }
@@ -202,9 +211,7 @@ public class CamelServlet extends HttpServlet {
     }
 
     /**
-     * Restore the Thread Context ClassLoader if the Old TCCL is not null.
-     * @param exchange
-     * @param oldTccl
+     * Restore the Thread Context ClassLoader if the old TCCL is not null.
      */
     protected void restoreTccl(final Exchange exchange, ClassLoader oldTccl) {
         if (oldTccl == null) {

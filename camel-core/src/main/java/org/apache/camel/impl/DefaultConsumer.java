@@ -19,12 +19,15 @@ package org.apache.camel.impl;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
+import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.spi.ExceptionHandler;
+import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.AsyncProcessorConverterHelper;
 import org.apache.camel.util.ServiceHelper;
 import org.apache.camel.util.URISupport;
+import org.apache.camel.util.UnitOfWorkHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,6 +51,37 @@ public class DefaultConsumer extends ServiceSupport implements Consumer {
     @Override
     public String toString() {
         return "Consumer[" + URISupport.sanitizeUri(endpoint.getEndpointUri()) + "]";
+    }
+
+    /**
+     * If the consumer needs to defer done the {@link org.apache.camel.spi.UnitOfWork} on
+     * the processed {@link Exchange} then this method should be use to create and start
+     * the {@link UnitOfWork} on the exchange.
+     *
+     * @param exchange the exchange
+     * @return the created and started unit of work
+     * @throws Exception is thrown if error starting the unit of work
+     *
+     * @see #doneUoW(org.apache.camel.Exchange)
+     */
+    public UnitOfWork createUoW(Exchange exchange) throws Exception {
+        UnitOfWork uow = UnitOfWorkHelper.createUoW(exchange);
+        exchange.setUnitOfWork(uow);
+        uow.start();
+        return uow;
+    }
+
+    /**
+     * If the consumer needs to defer done the {@link org.apache.camel.spi.UnitOfWork} on
+     * the processed {@link Exchange} then this method should be executed when the consumer
+     * is finished processing the message.
+     *
+     * @param exchange the exchange
+     *
+     * @see #createUoW(org.apache.camel.Exchange)
+     */
+    public void doneUoW(Exchange exchange) {
+        UnitOfWorkHelper.doneUow(exchange.getUnitOfWork(), exchange);
     }
 
     public Endpoint getEndpoint() {

@@ -21,15 +21,66 @@ import java.util.Collections;
 import java.util.List;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.impl.DefaultUnitOfWork;
+import org.apache.camel.impl.MDCUnitOfWork;
 import org.apache.camel.spi.Synchronization;
+import org.apache.camel.spi.UnitOfWork;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @version 
  */
 public final class UnitOfWorkHelper {
 
+    private static final Logger LOG = LoggerFactory.getLogger(UnitOfWorkHelper.class);
+
     private UnitOfWorkHelper() {
+    }
+
+    /**
+     * Creates a new {@link UnitOfWork}.
+     *
+     * @param exchange the exchange
+     * @return the created unit of work (is not started)
+     */
+    public static UnitOfWork createUoW(Exchange exchange) {
+        UnitOfWork answer;
+        if (exchange.getContext().isUseMDCLogging()) {
+            answer = new MDCUnitOfWork(exchange);
+        } else {
+            answer = new DefaultUnitOfWork(exchange);
+        }
+        return answer;
+    }
+
+    /**
+     * Done and stop the {@link UnitOfWork}.
+     *
+     * @param uow the unit of work
+     * @param exchange the exchange (will unset the UoW on the exchange)
+     */
+    public static void doneUow(UnitOfWork uow, Exchange exchange) {
+        // unit of work is done
+        try {
+            if (uow != null) {
+                uow.done(exchange);
+            }
+        } catch (Throwable e) {
+            LOG.warn("Exception occurred during done UnitOfWork for Exchange: " + exchange
+                    + ". This exception will be ignored.", e);
+        }
+        try {
+            if (uow != null) {
+                uow.stop();
+            }
+        } catch (Throwable e) {
+            LOG.warn("Exception occurred during stopping UnitOfWork for Exchange: " + exchange
+                    + ". This exception will be ignored.", e);
+        }
+
+        // remove uow from exchange as its done
+        exchange.setUnitOfWork(null);
     }
 
     public static void doneSynchronizations(Exchange exchange, List<Synchronization> synchronizations, Logger log) {

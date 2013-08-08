@@ -32,8 +32,6 @@ import org.apache.camel.StatefulService;
 import org.apache.camel.StreamCache;
 import org.apache.camel.api.management.PerformanceCounter;
 import org.apache.camel.impl.DefaultMessageHistory;
-import org.apache.camel.impl.DefaultUnitOfWork;
-import org.apache.camel.impl.MDCUnitOfWork;
 import org.apache.camel.management.DelegatePerformanceCounter;
 import org.apache.camel.management.mbean.ManagedPerformanceCounter;
 import org.apache.camel.model.ProcessorDefinition;
@@ -48,6 +46,7 @@ import org.apache.camel.spi.StreamCachingStrategy;
 import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.util.MessageHelper;
 import org.apache.camel.util.StopWatch;
+import org.apache.camel.util.UnitOfWorkHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -598,7 +597,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
             if (exchange.getUnitOfWork() == null) {
                 // If there is no existing UoW, then we should start one and
                 // terminate it once processing is completed for the exchange.
-                final UnitOfWork uow = createUnitOfWork(exchange);
+                UnitOfWork uow = createUnitOfWork(exchange);
                 exchange.setUnitOfWork(uow);
                 uow.start();
                 return uow;
@@ -609,42 +608,14 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
 
         @Override
         public void after(Exchange exchange, UnitOfWork uow) throws Exception {
+            // execute done on uow if we created it, and the consumer is not doing it
             if (uow != null) {
-                doneUow(uow, exchange);
+                UnitOfWorkHelper.doneUow(uow, exchange);
             }
         }
 
         protected UnitOfWork createUnitOfWork(Exchange exchange) {
-            UnitOfWork answer;
-            if (exchange.getContext().isUseMDCLogging()) {
-                answer = new MDCUnitOfWork(exchange);
-            } else {
-                answer = new DefaultUnitOfWork(exchange);
-            }
-            return answer;
-        }
-
-        private void doneUow(UnitOfWork uow, Exchange exchange) {
-            // unit of work is done
-            try {
-                if (uow != null) {
-                    uow.done(exchange);
-                }
-            } catch (Throwable e) {
-                LOG.warn("Exception occurred during done UnitOfWork for Exchange: " + exchange
-                        + ". This exception will be ignored.", e);
-            }
-            try {
-                if (uow != null) {
-                    uow.stop();
-                }
-            } catch (Throwable e) {
-                LOG.warn("Exception occurred during stopping UnitOfWork for Exchange: " + exchange
-                        + ". This exception will be ignored.", e);
-            }
-
-            // remove uow from exchange as its done
-            exchange.setUnitOfWork(null);
+            return UnitOfWorkHelper.createUoW(exchange);
         }
 
     }

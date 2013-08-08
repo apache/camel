@@ -31,6 +31,8 @@ import org.apache.camel.component.http.HttpConsumer;
 import org.apache.camel.component.http.HttpMessage;
 import org.apache.camel.component.http.helper.HttpHelper;
 import org.apache.camel.impl.DefaultExchange;
+import org.apache.camel.spi.UnitOfWork;
+import org.apache.camel.util.UnitOfWorkHelper;
 import org.eclipse.jetty.continuation.Continuation;
 import org.eclipse.jetty.continuation.ContinuationSupport;
 
@@ -100,6 +102,14 @@ public class CamelContinuationServlet extends CamelServlet {
 
             // a new request so create an exchange
             final Exchange exchange = new DefaultExchange(consumer.getEndpoint(), ExchangePattern.InOut);
+            // we want to handle the UoW
+            try {
+                consumer.createUoW(exchange);
+            } catch (Exception e) {
+                log.error("Error processing request", e);
+                throw new ServletException(e);
+            }
+
             if (consumer.getEndpoint().isBridgeEndpoint()) {
                 exchange.setProperty(Exchange.SKIP_GZIP_ENCODING, Boolean.TRUE);
             }
@@ -179,6 +189,8 @@ public class CamelContinuationServlet extends CamelServlet {
         } catch (Exception e) {
             log.error("Error processing request", e);
             throw new ServletException(e);
+        } finally {
+            consumer.doneUoW(result);
         }
     }
 
