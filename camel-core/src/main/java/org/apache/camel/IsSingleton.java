@@ -19,12 +19,14 @@ package org.apache.camel;
 /**
  * Used for defining if a given class is singleton or not.  If the class is a singleton, 
  * then a single instance will be shared (and hence should be treated as immutable and
- * be used in a thread-safe manner.)
- * 
+ * be used in a thread-safe manner).
+ * <p/>
  * This interface is not implemented as a marker interface (i.e., it's necessary to read  
- * isSingleton() instead of instanceof(IsSingleton)).  This allows for subclasses to have 
- * a singleton status different from a parent and for objects to have this value dynamically 
- * changed. 
+ * {@link #isSingleton()} instead of <tt>instanceof(IsSingleton))</tt>.
+ * This allows for subclasses to have a singleton status different from a parent and
+ * for objects to have this value dynamically changed.
+ * <p/>
+ * Camel component is very often singleton based, only a few components is not.
  *
  * @version 
  */
@@ -32,7 +34,7 @@ public interface IsSingleton {
 
     /**
      * Whether this class supports being singleton or not.
-     *  
+     *
      * @return <tt>true</tt> to be a single shared instance, <tt>false</tt> to create new instances.
      */
     boolean isSingleton();

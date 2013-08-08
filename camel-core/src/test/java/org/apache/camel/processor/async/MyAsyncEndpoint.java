@@ -51,7 +51,7 @@ public class MyAsyncEndpoint extends DefaultEndpoint {
     }
 
     public boolean isSingleton() {
-        return false;
+        return true;
     }
 
     public String getReply() {

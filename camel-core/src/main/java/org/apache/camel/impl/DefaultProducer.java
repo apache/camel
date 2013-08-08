@@ -59,8 +59,11 @@ public abstract class DefaultProducer extends ServiceSupport implements Producer
         return endpoint.createExchange(exchange);
     }
 
+    /**
+     * This implementation will delegate to the endpoint {@link org.apache.camel.Endpoint#isSingleton()}
+     */
     public boolean isSingleton() {
-        return true;
+        return endpoint.isSingleton();
     }
 
     protected void doStart() throws Exception {

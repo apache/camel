@@ -80,6 +80,7 @@ public class SmppProducerTest {
                     ""))).andReturn("1");
         expect(endpoint.getConnectionString())
             .andReturn("smpp://smppclient@localhost:2775");
+        expect(endpoint.isSingleton()).andReturn(true);
     }
     
     @Test
@@ -98,7 +99,8 @@ public class SmppProducerTest {
         expect(endpoint.getConnectionString())
             .andReturn("smpp://smppclient@localhost:2775")
             .times(3);
-        
+        expect(endpoint.isSingleton()).andReturn(true);
+
         replay(session, endpoint);
         
         producer.doStop();
@@ -116,7 +118,8 @@ public class SmppProducerTest {
         session.unbindAndClose();
         expect(endpoint.getConnectionString())
             .andReturn("smpp://smppclient@localhost:2775");
-        
+        expect(endpoint.isSingleton()).andReturn(true);
+
         replay(session, endpoint);
         
         producer.doStart();

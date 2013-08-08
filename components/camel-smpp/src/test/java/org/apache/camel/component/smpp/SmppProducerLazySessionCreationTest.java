@@ -62,6 +62,7 @@ public class SmppProducerLazySessionCreationTest {
     @Test
     public void doStartShouldNotCreateTheSmppSession() throws Exception {
         expect(endpoint.getConnectionString()).andReturn("smpp://smppclient@localhost:2775");
+        expect(endpoint.isSingleton()).andReturn(true);
 
         replay(endpoint, session);
 
@@ -90,6 +91,7 @@ public class SmppProducerLazySessionCreationTest {
                     NumberingPlanIndicator.UNKNOWN,
                     ""))).andReturn("1");
         expect(endpoint.getConnectionString()).andReturn("smpp://smppclient@localhost:2775");
+        expect(endpoint.isSingleton()).andReturn(true);
         SmppBinding binding = createMock(SmppBinding.class);
         Exchange exchange = createMock(Exchange.class);
         Message in = createMock(Message.class);
@@ -134,6 +136,7 @@ public class SmppProducerLazySessionCreationTest {
         Message in = createMock(Message.class);
         SmppCommand command = createMock(SmppCommand.class);
         expect(endpoint.getBinding()).andReturn(binding);
+        expect(endpoint.isSingleton()).andReturn(true);
         expect(binding.createSmppCommand(session, exchange)).andReturn(command);
         expect(exchange.getIn()).andReturn(in);
         expect(in.getHeader("CamelSmppSystemId", String.class)).andReturn("smppclient2");
