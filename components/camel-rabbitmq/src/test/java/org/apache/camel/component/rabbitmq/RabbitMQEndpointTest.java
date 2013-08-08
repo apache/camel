@@ -41,10 +41,12 @@ public class RabbitMQEndpointTest extends CamelTestSupport {
         Mockito.when(envelope.getExchange()).thenReturn(exchangeName);
         Mockito.when(envelope.getDeliveryTag()).thenReturn(tag);
 
-        Exchange exchange = endpoint.createRabbitExchange(envelope);
+        byte[] body = new byte[20];
+        Exchange exchange = endpoint.createRabbitExchange(envelope, body);
         assertEquals(exchangeName, exchange.getIn().getHeader(RabbitMQConstants.EXCHANGE_NAME));
         assertEquals(routingKey, exchange.getIn().getHeader(RabbitMQConstants.ROUTING_KEY));
         assertEquals(tag, exchange.getIn().getHeader(RabbitMQConstants.DELIVERY_TAG));
+        assertEquals(body, exchange.getIn().getBody());
     }
 
     @Test
