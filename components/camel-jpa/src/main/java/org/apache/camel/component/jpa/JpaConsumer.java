@@ -36,7 +36,9 @@ import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.orm.jpa.JpaCallback;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallback;
+import org.springframework.transaction.support.TransactionTemplate;
 
 /**
  * @version 
@@ -45,7 +47,8 @@ public class JpaConsumer extends ScheduledBatchPollingConsumer {
 
     private static final Logger LOG = LoggerFactory.getLogger(JpaConsumer.class);
     private final JpaEndpoint endpoint;
-    private final TransactionStrategy template;
+	private final EntityManager entityManager;
+    private final TransactionTemplate transactionTemplate;
     private QueryFactory queryFactory;
     private DeleteHandler<Object> deleteHandler;
     private String query;
@@ -66,7 +69,8 @@ public class JpaConsumer extends ScheduledBatchPollingConsumer {
     public JpaConsumer(JpaEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
         this.endpoint = endpoint;
-        this.template = endpoint.createTransactionStrategy();
+        this.entityManager = endpoint.createEntityManager();
+        this.transactionTemplate = endpoint.createTransactionTemplate();
     }
 
     @Override
@@ -75,9 +79,11 @@ public class JpaConsumer extends ScheduledBatchPollingConsumer {
         shutdownRunningTask = null;
         pendingExchanges = 0;
 
-        Object messagePolled = template.execute(new JpaCallback<Object>() {
-            public Object doInJpa(EntityManager entityManager) throws PersistenceException {
-                Queue<DataHolder> answer = new LinkedList<DataHolder>();
+        Object messagePolled = transactionTemplate.execute(new TransactionCallback<Object>() {
+            public Object doInTransaction(TransactionStatus status) {
+            	entityManager.joinTransaction();
+            	
+            	Queue<DataHolder> answer = new LinkedList<DataHolder>();
 
                 Query query = getQueryFactory().createQuery(entityManager);
                 configureParameters(query);
@@ -374,7 +380,15 @@ public class JpaConsumer extends ScheduledBatchPollingConsumer {
     protected Exchange createExchange(Object result) {
         Exchange exchange = endpoint.createExchange();
         exchange.getIn().setBody(result);
-        exchange.getIn().setHeader(JpaConstants.JPA_TEMPLATE, endpoint.getTemplate());
+        exchange.getIn().setHeader(JpaConstants.ENTITYMANAGER, entityManager);
         return exchange;
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        super.doStop();
+        // TODO: This should probably happen, but hitting an open transaction or flush in progress.
+        // Is there a thread holding onto it?
+//        entityManager.close();
     }
 }

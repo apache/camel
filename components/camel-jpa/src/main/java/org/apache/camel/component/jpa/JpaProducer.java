@@ -21,18 +21,20 @@ import java.util.Collection;
 import java.util.List;
 
 import javax.persistence.EntityManager;
-import javax.persistence.PersistenceException;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.impl.DefaultProducer;
-import org.springframework.orm.jpa.JpaCallback;
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallback;
+import org.springframework.transaction.support.TransactionTemplate;
 
 /**
  * @version 
  */
 public class JpaProducer extends DefaultProducer {
-    private final TransactionStrategy template;
+	private final EntityManager entityManager;
+	private final TransactionTemplate transactionTemplate;
     private final JpaEndpoint endpoint;
     private final Expression expression;
 
@@ -40,17 +42,19 @@ public class JpaProducer extends DefaultProducer {
         super(endpoint);
         this.endpoint = endpoint;
         this.expression = expression;
-        this.template = endpoint.createTransactionStrategy();
+        this.entityManager = endpoint.createEntityManager();
+        this.transactionTemplate = endpoint.createTransactionTemplate();
     }
 
     public void process(final Exchange exchange) {
-        exchange.getIn().setHeader(JpaConstants.JPA_TEMPLATE, endpoint.getTemplate());
+        exchange.getIn().setHeader(JpaConstants.ENTITYMANAGER, entityManager);
         final Object values = expression.evaluate(exchange, Object.class);
         if (values != null) {
-            template.execute(new JpaCallback<Object>() {
-                
-                public Object doInJpa(EntityManager entityManager) throws PersistenceException {
-                    if (values.getClass().isArray()) {
+        	transactionTemplate.execute(new TransactionCallback<Object>() {
+                public Object doInTransaction(TransactionStatus status) {
+                	entityManager.joinTransaction();
+                	
+                	if (values.getClass().isArray()) {
                         Object[] array = (Object[]) values;
                         for (int index = 0; index < array.length; index++) {
                             Object managedEntity = save(array[index], entityManager);
@@ -80,6 +84,7 @@ public class JpaProducer extends DefaultProducer {
                     if (endpoint.isFlushOnSend()) {
                         entityManager.flush();
                     }
+                    
                     return null;
                 }
 
@@ -100,6 +105,12 @@ public class JpaProducer extends DefaultProducer {
                 }
             });
         }
-        exchange.getIn().removeHeader(JpaConstants.JPA_TEMPLATE);
+        exchange.getIn().removeHeader(JpaConstants.ENTITYMANAGER);
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        super.doStop();
+        entityManager.close();
     }
 }

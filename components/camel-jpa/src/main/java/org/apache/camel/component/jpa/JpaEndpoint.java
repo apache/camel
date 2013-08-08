@@ -17,9 +17,9 @@
 package org.apache.camel.component.jpa;
 
 import java.util.Map;
+
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
-import javax.persistence.Persistence;
 
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
@@ -33,20 +33,21 @@ import org.apache.camel.support.ExpressionAdapter;
 import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
-import org.springframework.orm.jpa.JpaTemplate;
 import org.springframework.orm.jpa.JpaTransactionManager;
+import org.springframework.orm.jpa.LocalEntityManagerFactoryBean;
 import org.springframework.transaction.PlatformTransactionManager;
+import org.springframework.transaction.TransactionDefinition;
+import org.springframework.transaction.support.TransactionTemplate;
 
 public class JpaEndpoint extends ScheduledPollEndpoint {
 
     private EntityManagerFactory entityManagerFactory;
     private PlatformTransactionManager transactionManager;
     private String persistenceUnit = "camel";
-    private JpaTemplate template;
     private Expression producerExpression;
     private int maximumResults = -1;
     private Class<?> entityType;
-    private Map<Object, Object> entityManagerProperties;
+    private Map<String, Object> entityManagerProperties;
     private boolean consumeDelete = true;
     private boolean consumeLockEntity = true;
     private boolean flushOnSend = true;
@@ -116,7 +117,7 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
         super.configureProperties(options);
         Map<String, Object> emProperties = IntrospectionSupport.extractProperties(options, "emf.");
         if (emProperties != null) {
-            setEntityManagerProperties(CastUtils.cast(emProperties));
+            setEntityManagerProperties(emProperties);
         }
     }
 
@@ -132,17 +133,6 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
 
     // Properties
     // -------------------------------------------------------------------------
-    public JpaTemplate getTemplate() {
-        if (template == null) {
-            template = createTemplate();
-        }
-        return template;
-    }
-
-    public void setTemplate(JpaTemplate template) {
-        this.template = template;
-    }
-
     public Expression getProducerExpression() {
         if (producerExpression == null) {
             producerExpression = createProducerExpression();
@@ -192,14 +182,14 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
         this.transactionManager = transactionManager;
     }
 
-    public Map<Object, Object> getEntityManagerProperties() {
+    public Map<String, Object> getEntityManagerProperties() {
         if (entityManagerProperties == null) {
-            entityManagerProperties = System.getProperties();
+            entityManagerProperties = CastUtils.cast(System.getProperties());
         }
         return entityManagerProperties;
     }
 
-    public void setEntityManagerProperties(Map<Object, Object> entityManagerProperties) {
+    public void setEntityManagerProperties(Map<String, Object> entityManagerProperties) {
         this.entityManagerProperties = entityManagerProperties;
     }
 
@@ -258,12 +248,12 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
         ObjectHelper.notNull(getEntityManagerFactory(), "entityManagerFactory");
     }
 
-    protected JpaTemplate createTemplate() {
-        return new JpaTemplate(getEntityManagerFactory());
-    }
-
     protected EntityManagerFactory createEntityManagerFactory() {
-        return Persistence.createEntityManagerFactory(persistenceUnit, getEntityManagerProperties());
+    	LocalEntityManagerFactoryBean emfBean = new LocalEntityManagerFactoryBean();
+    	emfBean.setPersistenceUnitName(persistenceUnit);
+    	emfBean.setJpaPropertyMap(getEntityManagerProperties());
+    	emfBean.afterPropertiesSet();
+    	return emfBean.getObject();
     }
 
     protected PlatformTransactionManager createTransactionManager() {
@@ -276,8 +266,11 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
         return getEntityManagerFactory().createEntityManager();
     }
 
-    protected TransactionStrategy createTransactionStrategy() {
-        return JpaTemplateTransactionStrategy.newInstance(getTransactionManager(), getTemplate());
+    protected TransactionTemplate createTransactionTemplate() {
+    	TransactionTemplate transactionTemplate = new TransactionTemplate(getTransactionManager());
+        transactionTemplate.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
+    	transactionTemplate.afterPropertiesSet();
+        return transactionTemplate;
     }
 
     protected Expression createProducerExpression() {

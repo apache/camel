@@ -23,7 +23,7 @@ package org.apache.camel.component.jpa;
  */
 public final class JpaConstants {
 
-    public static final String JPA_TEMPLATE = "CamelJpaTemplate";
+    public static final String ENTITYMANAGER = "CamelEntityManager";
 
     private JpaConstants() {
         // utility class

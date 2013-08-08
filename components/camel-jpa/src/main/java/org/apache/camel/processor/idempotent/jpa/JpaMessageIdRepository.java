@@ -19,15 +19,16 @@ package org.apache.camel.processor.idempotent.jpa;
 import java.util.Date;
 import java.util.List;
 
+import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
 import javax.persistence.Persistence;
+import javax.persistence.Query;
 
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedOperation;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.spi.IdempotentRepository;
 import org.apache.camel.support.ServiceSupport;
-import org.springframework.orm.jpa.JpaTemplate;
 import org.springframework.orm.jpa.JpaTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.TransactionStatus;
@@ -40,32 +41,31 @@ import org.springframework.transaction.support.TransactionTemplate;
 @ManagedResource(description = "JPA based message id repository")
 public class JpaMessageIdRepository extends ServiceSupport implements IdempotentRepository<String> {
     protected static final String QUERY_STRING = "select x from " + MessageProcessed.class.getName() + " x where x.processorName = ?1 and x.messageId = ?2";
-    private final JpaTemplate jpaTemplate;
     private final String processorName;
+    private final EntityManager entityManager;
     private final TransactionTemplate transactionTemplate;
 
-    public JpaMessageIdRepository(JpaTemplate template, String processorName) {
-        this(template, createTransactionTemplate(template), processorName);
+    public JpaMessageIdRepository(EntityManagerFactory entityManagerFactory, String processorName) {
+        this(entityManagerFactory, createTransactionTemplate(entityManagerFactory), processorName);
     }
 
-    public JpaMessageIdRepository(JpaTemplate template, TransactionTemplate transactionTemplate, String processorName) {
-        this.jpaTemplate = template;
+    public JpaMessageIdRepository(EntityManagerFactory entityManagerFactory, TransactionTemplate transactionTemplate, String processorName) {
+        this.entityManager = entityManagerFactory.createEntityManager();
         this.processorName = processorName;
         this.transactionTemplate = transactionTemplate;
     }
 
     public static JpaMessageIdRepository jpaMessageIdRepository(String persistenceUnit, String processorName) {
-        EntityManagerFactory entityManagerFactory = Persistence.createEntityManagerFactory(persistenceUnit);
-        return jpaMessageIdRepository(new JpaTemplate(entityManagerFactory), processorName);
+        return jpaMessageIdRepository(Persistence.createEntityManagerFactory(persistenceUnit), processorName);
     }
 
-    public static JpaMessageIdRepository jpaMessageIdRepository(JpaTemplate jpaTemplate, String processorName) {
-        return new JpaMessageIdRepository(jpaTemplate, processorName);
+    public static JpaMessageIdRepository jpaMessageIdRepository(EntityManagerFactory entityManagerFactory, String processorName) {
+        return new JpaMessageIdRepository(entityManagerFactory, processorName);
     }
 
-    private static TransactionTemplate createTransactionTemplate(JpaTemplate jpaTemplate) {
+    private static TransactionTemplate createTransactionTemplate(EntityManagerFactory entityManagerFactory) {
         TransactionTemplate transactionTemplate = new TransactionTemplate();
-        transactionTemplate.setTransactionManager(new JpaTransactionManager(jpaTemplate.getEntityManagerFactory()));
+        transactionTemplate.setTransactionManager(new JpaTransactionManager(entityManagerFactory));
         transactionTemplate.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
         return transactionTemplate;
     }
@@ -75,14 +75,16 @@ public class JpaMessageIdRepository extends ServiceSupport implements Idempotent
         // Run this in single transaction.
         Boolean rc = transactionTemplate.execute(new TransactionCallback<Boolean>() {
             public Boolean doInTransaction(TransactionStatus arg0) {
-                List<?> list = jpaTemplate.find(QUERY_STRING, processorName, messageId);
+            	entityManager.joinTransaction();
+            	
+            	List<?> list = query(messageId);
                 if (list.isEmpty()) {
                     MessageProcessed processed = new MessageProcessed();
                     processed.setProcessorName(processorName);
                     processed.setMessageId(messageId);
                     processed.setCreatedAt(new Date());
-                    jpaTemplate.persist(processed);
-                    jpaTemplate.flush();
+                    entityManager.persist(processed);
+                    entityManager.flush();
                     return Boolean.TRUE;
                 } else {
                     return Boolean.FALSE;
@@ -97,7 +99,9 @@ public class JpaMessageIdRepository extends ServiceSupport implements Idempotent
         // Run this in single transaction.
         Boolean rc = transactionTemplate.execute(new TransactionCallback<Boolean>() {
             public Boolean doInTransaction(TransactionStatus arg0) {
-                List<?> list = jpaTemplate.find(QUERY_STRING, processorName, messageId);
+            	entityManager.joinTransaction();
+            	
+            	List<?> list = query(messageId);
                 if (list.isEmpty()) {
                     return Boolean.FALSE;
                 } else {
@@ -112,18 +116,27 @@ public class JpaMessageIdRepository extends ServiceSupport implements Idempotent
     public boolean remove(final String messageId) {
         Boolean rc = transactionTemplate.execute(new TransactionCallback<Boolean>() {
             public Boolean doInTransaction(TransactionStatus arg0) {
-                List<?> list = jpaTemplate.find(QUERY_STRING, processorName, messageId);
+            	entityManager.joinTransaction();
+            	
+                List<?> list = query(messageId);
                 if (list.isEmpty()) {
                     return Boolean.FALSE;
                 } else {
-                    MessageProcessed processoed = (MessageProcessed) list.get(0);
-                    jpaTemplate.remove(processoed);
-                    jpaTemplate.flush();
+                    MessageProcessed processed = (MessageProcessed) list.get(0);
+                    entityManager.remove(processed);
+                    entityManager.flush();
                     return Boolean.TRUE;
                 }
             }
         });
         return rc.booleanValue();
+    }
+    
+    private List<?> query(final String messageId) {
+    	Query query = entityManager.createQuery(QUERY_STRING);
+    	query.setParameter(1, processorName);
+    	query.setParameter(2, messageId);
+    	return query.getResultList();
     }
 
     public boolean confirm(String s) {
@@ -142,5 +155,6 @@ public class JpaMessageIdRepository extends ServiceSupport implements Idempotent
 
     @Override
     protected void doStop() throws Exception {
+    	entityManager.close();
     }
 }
