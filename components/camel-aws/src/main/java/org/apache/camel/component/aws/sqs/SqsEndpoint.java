@@ -24,6 +24,8 @@ import com.amazonaws.services.sqs.AmazonSQS;
 import com.amazonaws.services.sqs.AmazonSQSClient;
 import com.amazonaws.services.sqs.model.CreateQueueRequest;
 import com.amazonaws.services.sqs.model.CreateQueueResult;
+import com.amazonaws.services.sqs.model.GetQueueUrlRequest;
+import com.amazonaws.services.sqs.model.GetQueueUrlResult;
 import com.amazonaws.services.sqs.model.ListQueuesResult;
 import com.amazonaws.services.sqs.model.QueueAttributeName;
 import com.amazonaws.services.sqs.model.SetQueueAttributesRequest;
@@ -78,14 +80,22 @@ public class SqsEndpoint extends ScheduledPollEndpoint {
         client = getConfiguration().getAmazonSQSClient() != null
                 ? getConfiguration().getAmazonSQSClient() : getClient();
 
-        // check whether the queue already exists
-        ListQueuesResult listQueuesResult = client.listQueues();
-        for (String url : listQueuesResult.getQueueUrls()) {
-            if (url.endsWith("/" + configuration.getQueueName())) {
-                queueUrl = url;
-                LOG.trace("Queue available at '{}'.", queueUrl);
-                break;
-            }
+        if (configuration.getQueueOwnerAWSAccountId() != null) {
+    		GetQueueUrlRequest getQueueUrlRequest = new GetQueueUrlRequest();
+    		getQueueUrlRequest.setQueueName(configuration.getQueueName());
+    		getQueueUrlRequest.setQueueOwnerAWSAccountId(configuration.getQueueOwnerAWSAccountId());
+    		GetQueueUrlResult getQueueUrlResult = client.getQueueUrl(getQueueUrlRequest );
+    		queueUrl = getQueueUrlResult.getQueueUrl();
+        } else {
+	        // check whether the queue already exists
+	        ListQueuesResult listQueuesResult = client.listQueues();
+	        for (String url : listQueuesResult.getQueueUrls()) {
+	            if (url.endsWith("/" + configuration.getQueueName())) {
+	                queueUrl = url;
+	                LOG.trace("Queue available at '{}'.", queueUrl);
+	                break;
+	            }
+	        }
         }
         
         if (queueUrl == null) {

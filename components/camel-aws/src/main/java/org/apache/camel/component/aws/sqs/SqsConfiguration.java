@@ -32,6 +32,7 @@ public class SqsConfiguration {
     private String accessKey;
     private String secretKey;
     private String amazonSQSEndpoint;
+    private String queueOwnerAWSAccountId;
     
     // consumer properties
     private Boolean deleteAfterRead = Boolean.TRUE;
@@ -177,6 +178,14 @@ public class SqsConfiguration {
     public void setWaitTimeSeconds(Integer waitTimeSeconds) {
         this.waitTimeSeconds = waitTimeSeconds;
     }
+    
+    public String getQueueOwnerAWSAccountId() {
+		return queueOwnerAWSAccountId;
+	}
+    
+    public void setQueueOwnerAWSAccountId(String queueOwnerAWSAccountId) {
+		this.queueOwnerAWSAccountId = queueOwnerAWSAccountId;
+	}
 
     @Override
     public String toString() {
@@ -195,6 +204,7 @@ public class SqsConfiguration {
             + ", delaySeconds=" + delaySeconds
             + ", policy=" + policy
             + ", extendMessageVisibility=" + extendMessageVisibility
+            + ", queueOwnerAWSAccountId=" + queueOwnerAWSAccountId
             + "]";
     }
 }
