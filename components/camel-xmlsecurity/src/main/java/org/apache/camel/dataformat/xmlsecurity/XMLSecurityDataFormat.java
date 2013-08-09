@@ -19,12 +19,16 @@ package org.apache.camel.dataformat.xmlsecurity;
 import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.lang.reflect.Field;
 import java.net.URL;
+import java.security.AccessController;
 import java.security.InvalidKeyException;
 import java.security.Key;
 import java.security.KeyStore;
 import java.security.NoSuchAlgorithmException;
 import java.security.PrivateKey;
+import java.security.PrivilegedAction;
+import java.security.PrivilegedExceptionAction;
 import java.security.PublicKey;
 import java.security.spec.InvalidKeySpecException;
 import java.util.Arrays;
@@ -40,22 +44,20 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
-
 import org.apache.camel.builder.xml.DefaultNamespaceContext;
 import org.apache.camel.builder.xml.XPathBuilder;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.jsse.KeyStoreParameters;
-
 import org.apache.xml.security.encryption.EncryptedData;
 import org.apache.xml.security.encryption.EncryptedKey;
 import org.apache.xml.security.encryption.XMLCipher;
 import org.apache.xml.security.encryption.XMLEncryptionException;
 import org.apache.xml.security.keys.KeyInfo;
+import org.apache.xml.security.utils.XMLUtils;
 
 
 public class XMLSecurityDataFormat implements DataFormat, CamelContextAware {
@@ -125,7 +127,39 @@ public class XMLSecurityDataFormat implements DataFormat, CamelContextAware {
         this.passPhrase = "Just another 24 Byte key".getBytes();
         this.secureTag = "";
         this.secureTagContents = true;
+
+        // Set ignoreLineBreaks to true
+        boolean wasSet = false;
+        try {
+            // Don't override if it was set explicitly
+            wasSet = AccessController.doPrivileged(new PrivilegedAction<Boolean>() {
+                public Boolean run() {
+                    String lineBreakPropName = "org.apache.xml.security.ignoreLineBreaks";
+                    if (System.getProperty(lineBreakPropName) == null) {
+                        System.setProperty(lineBreakPropName, "true");
+                        return false;
+                    }
+                    return true; 
+                }
+            });
+        } catch (Throwable t) { //NOPMD
+            //ignore
+        }
         org.apache.xml.security.Init.init();
+        if (!wasSet) {
+            try {
+                AccessController.doPrivileged(new PrivilegedExceptionAction<Boolean>() {
+                    public Boolean run() throws Exception {
+                        Field f = XMLUtils.class.getDeclaredField("ignoreLineBreaks");
+                        f.setAccessible(true);
+                        f.set(null, Boolean.TRUE);
+                        return false;
+                    }
+                });
+            } catch (Throwable t) { //NOPMD
+                //ignore
+            }
+        }
     }
 
     public XMLSecurityDataFormat(String secureTag, boolean secureTagContents) {
