@@ -95,16 +95,6 @@ public class TimerConsumer extends DefaultConsumer {
         return endpoint.getCamelContext().getStatus().isStarted() && isRunAllowed() && !isSuspended();
     }
 
-    @Override
-    protected void doSuspend() throws Exception {
-        doStop();
-    }
-
-    @Override
-    protected void doResume() throws Exception {
-        doStart();
-    }
-
     protected void configureTask(TimerTask task, Timer timer) {
         if (endpoint.isFixedRate()) {
             if (endpoint.getTime() != null) {
