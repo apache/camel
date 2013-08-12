@@ -727,6 +727,12 @@
     <feature version='${project.version}'>camel-core</feature>
     <bundle>mvn:org.apache.camel/camel-quartz/${project.version}</bundle>
   </feature>
+  <feature name='camel-quartz2' version='${project.version}' resolver='(obr)' start-level='50'>
+    <bundle dependency='true'>wrap:mvn:c3p0/c3p0/${c3p0-version}</bundle>
+    <bundle dependency='true'>mvn:org.quartz-scheduler/quartz/${quartz2-version}</bundle>
+    <feature version='${project.version}'>camel-core</feature>
+    <bundle>mvn:org.apache.camel/camel-quartz2/${project.version}</bundle>
+  </feature>
   <feature name='camel-quickfix' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
     <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.quickfix/${quickfix-bundle-version}</bundle>
