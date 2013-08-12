@@ -152,7 +152,7 @@ public class CxfConsumer extends DefaultConsumer {
 
                 BindingOperationInfo boi = cxfExchange.getBindingOperationInfo();
                 // make sure the "boi" is remained as wrapped in PAYLOAD mode
-                if (dataFormat == DataFormat.PAYLOAD && boi.isUnwrapped()) {
+                if (boi != null && dataFormat == DataFormat.PAYLOAD && boi.isUnwrapped()) {
                     boi = boi.getWrappedOperation();
                     cxfExchange.put(BindingOperationInfo.class, boi);
                 }
