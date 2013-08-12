@@ -16,6 +16,7 @@
  */
 package org.apache.camel.processor;
 
+import java.io.Closeable;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -57,6 +58,7 @@ import org.apache.camel.util.AsyncProcessorHelper;
 import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.EventHelper;
 import org.apache.camel.util.ExchangeHelper;
+import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.KeyValueHolder;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
@@ -198,7 +200,7 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
 
     public boolean process(Exchange exchange, AsyncCallback callback) {
         final AtomicExchange result = new AtomicExchange();
-        final Iterable<ProcessorExchangePair> pairs;
+        Iterable<ProcessorExchangePair> pairs = null;
 
         try {
             boolean sync = true;
@@ -222,14 +224,14 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
             exchange.setException(e);
             // unexpected exception was thrown, maybe from iterator etc. so do not regard as exhausted
             // and do the done work
-            doDone(exchange, null, callback, true, false);
+            doDone(exchange, null, pairs, callback, true, false);
             return true;
         }
 
         // multicasting was processed successfully
         // and do the done work
         Exchange subExchange = result.get() != null ? result.get() : null;
-        doDone(exchange, subExchange, callback, true, true);
+        doDone(exchange, subExchange, pairs, callback, true, true);
         return true;
     }
 
@@ -603,7 +605,7 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
                             result.set(subExchange);
                         }
                         // and do the done work
-                        doDone(original, subExchange, callback, false, true);
+                        doDone(original, subExchange, pairs, callback, false, true);
                         return;
                     }
 
@@ -613,7 +615,7 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
                         // wrap in exception to explain where it failed
                         subExchange.setException(new CamelExchangeException("Sequential processing failed for number " + total, subExchange, e));
                         // and do the done work
-                        doDone(original, subExchange, callback, false, true);
+                        doDone(original, subExchange, pairs, callback, false, true);
                         return;
                     }
 
@@ -647,7 +649,7 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
                                 result.set(subExchange);
                             }
                             // and do the done work
-                            doDone(original, subExchange, callback, false, true);
+                            doDone(original, subExchange, pairs, callback, false, true);
                             return;
                         }
 
@@ -658,7 +660,7 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
                             // wrap in exception to explain where it failed
                             subExchange.setException(new CamelExchangeException("Sequential processing failed for number " + total, subExchange, e));
                             // and do the done work
-                            doDone(original, subExchange, callback, false, true);
+                            doDone(original, subExchange, pairs, callback, false, true);
                             return;
                         }
 
@@ -667,7 +669,7 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
 
                     // do the done work
                     subExchange = result.get() != null ? result.get() : null;
-                    doDone(original, subExchange, callback, false, true);
+                    doDone(original, subExchange, pairs, callback, false, true);
                 }
             });
         } finally {
@@ -733,11 +735,19 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
      *
      * @param original    the original exchange
      * @param subExchange the current sub exchange, can be <tt>null</tt> for the synchronous part
+     * @param pairs       the pairs with the exchanges to process
      * @param callback    the callback
      * @param doneSync    the <tt>doneSync</tt> parameter to call on callback
      * @param exhaust     whether or not error handling is exhausted
      */
-    protected void doDone(Exchange original, Exchange subExchange, AsyncCallback callback, boolean doneSync, boolean exhaust) {
+    protected void doDone(Exchange original, Exchange subExchange, final Iterable<ProcessorExchangePair> pairs,
+                          AsyncCallback callback, boolean doneSync, boolean exhaust) {
+
+        // we are done so close the pairs iterator
+        if (pairs != null && pairs instanceof Closeable) {
+            IOHelper.close((Closeable) pairs, "pairs", LOG);
+        }
+
         // cleanup any per exchange aggregation strategy
         removeAggregationStrategyFromExchange(original);
         if (original.getException() != null || subExchange != null && subExchange.getException() != null) {
