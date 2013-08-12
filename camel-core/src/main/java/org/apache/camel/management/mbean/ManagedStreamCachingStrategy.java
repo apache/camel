@@ -74,6 +74,14 @@ public class ManagedStreamCachingStrategy extends ManagedService implements Mana
         return streamCachingStrategy.getSpoolUsedHeapMemoryThreshold();
     }
 
+    public void setSpoolUsedHeapMemoryLimit(StreamCachingStrategy.SpoolUsedHeapMemoryLimit limit) {
+        streamCachingStrategy.setSpoolUsedHeapMemoryLimit(limit);
+    }
+
+    public StreamCachingStrategy.SpoolUsedHeapMemoryLimit getSpoolUsedHeapMemoryLimit() {
+        return streamCachingStrategy.getSpoolUsedHeapMemoryLimit();
+    }
+
     public void setBufferSize(int bufferSize) {
         streamCachingStrategy.setBufferSize(bufferSize);
     }

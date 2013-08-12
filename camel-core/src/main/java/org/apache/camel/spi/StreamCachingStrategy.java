@@ -81,6 +81,13 @@ public interface StreamCachingStrategy extends StaticService {
     }
 
     /**
+     * Used for selecting if the memory limit is <tt>committed</tt> or <tt>maximum</tt> heap memory setting.
+     */
+    enum SpoolUsedHeapMemoryLimit {
+        Committed, Max
+    }
+
+    /**
      * Rule for determine if stream caching should be spooled to disk or kept in-memory.
      */
     interface SpoolRule {
@@ -137,6 +144,16 @@ public interface StreamCachingStrategy extends StaticService {
     void setSpoolUsedHeapMemoryThreshold(int percentage);
 
     int getSpoolUsedHeapMemoryThreshold();
+
+    /**
+     * Sets what the upper bounds should be when {@link #setSpoolUsedHeapMemoryThreshold(int)}
+     * is in use.
+     *
+     * @param bounds the bounds
+     */
+    void setSpoolUsedHeapMemoryLimit(SpoolUsedHeapMemoryLimit bounds);
+
+    SpoolUsedHeapMemoryLimit getSpoolUsedHeapMemoryLimit();
 
     /**
      * Sets the buffer size to use when allocating in-memory buffers used for in-memory stream caches.

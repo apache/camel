@@ -48,6 +48,9 @@ public class CamelStreamCachingStrategyDefinition extends IdentifiedType {
     private String spoolUsedHeapMemoryThreshold;
 
     @XmlAttribute
+    private String spoolUsedHeapMemoryLimit;
+
+    @XmlAttribute
     private String spoolRules;
 
     @XmlAttribute
@@ -100,6 +103,14 @@ public class CamelStreamCachingStrategyDefinition extends IdentifiedType {
 
     public void setSpoolUsedHeapMemoryThreshold(String spoolUsedHeapMemoryThreshold) {
         this.spoolUsedHeapMemoryThreshold = spoolUsedHeapMemoryThreshold;
+    }
+
+    public String getSpoolUsedHeapMemoryLimit() {
+        return spoolUsedHeapMemoryLimit;
+    }
+
+    public void setSpoolUsedHeapMemoryLimit(String spoolUsedHeapMemoryLimit) {
+        this.spoolUsedHeapMemoryLimit = spoolUsedHeapMemoryLimit;
     }
 
     public String getSpoolRules() {

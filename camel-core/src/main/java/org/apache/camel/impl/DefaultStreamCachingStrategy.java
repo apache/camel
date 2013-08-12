@@ -56,6 +56,7 @@ public class DefaultStreamCachingStrategy extends org.apache.camel.support.Servi
     private transient String spoolDirectoryName = "${java.io.tmpdir}camel-tmp-#uuid#";
     private long spoolThreshold = StreamCache.DEFAULT_SPOOL_THRESHOLD;
     private int spoolUsedHeapMemoryThreshold;
+    private SpoolUsedHeapMemoryLimit spoolUsedHeapMemoryLimit;
     private String spoolChiper;
     private int bufferSize = IOHelper.DEFAULT_BUFFER_SIZE;
     private boolean removeSpoolDirectoryWhenStopping = true;
@@ -101,6 +102,14 @@ public class DefaultStreamCachingStrategy extends org.apache.camel.support.Servi
 
     public void setSpoolUsedHeapMemoryThreshold(int spoolHeapMemoryWatermarkThreshold) {
         this.spoolUsedHeapMemoryThreshold = spoolHeapMemoryWatermarkThreshold;
+    }
+
+    public SpoolUsedHeapMemoryLimit getSpoolUsedHeapMemoryLimit() {
+        return spoolUsedHeapMemoryLimit;
+    }
+
+    public void setSpoolUsedHeapMemoryLimit(SpoolUsedHeapMemoryLimit spoolUsedHeapMemoryLimit) {
+        this.spoolUsedHeapMemoryLimit = spoolUsedHeapMemoryLimit;
     }
 
     public void setSpoolThreshold(long spoolThreshold) {
@@ -291,7 +300,11 @@ public class DefaultStreamCachingStrategy extends org.apache.camel.support.Servi
                 spoolRules.add(new FixedThresholdSpoolRule());
             }
             if (spoolUsedHeapMemoryThreshold > 0) {
-                spoolRules.add(new UsedHeapMemorySpoolRule());
+                if (spoolUsedHeapMemoryLimit == null) {
+                    // use max by default
+                    spoolUsedHeapMemoryLimit = SpoolUsedHeapMemoryLimit.Max;
+                }
+                spoolRules.add(new UsedHeapMemorySpoolRule(spoolUsedHeapMemoryLimit));
             }
         }
 
@@ -351,8 +364,10 @@ public class DefaultStreamCachingStrategy extends org.apache.camel.support.Servi
     private final class UsedHeapMemorySpoolRule implements SpoolRule {
 
         private final MemoryMXBean heapUsage;
+        private final SpoolUsedHeapMemoryLimit limit;
 
-        private UsedHeapMemorySpoolRule() {
+        private UsedHeapMemorySpoolRule(SpoolUsedHeapMemoryLimit limit) {
+            this.limit = limit;
             this.heapUsage = ManagementFactory.getMemoryMXBean();
         }
 
@@ -360,14 +375,16 @@ public class DefaultStreamCachingStrategy extends org.apache.camel.support.Servi
             if (spoolUsedHeapMemoryThreshold > 0) {
                 // must use double to calculate with decimals for the percentage
                 double used = heapUsage.getHeapMemoryUsage().getUsed();
-                double committed = heapUsage.getHeapMemoryUsage().getCommitted();
-                double calc = (used / committed) * 100;
+                double upper = limit == SpoolUsedHeapMemoryLimit.Committed ?
+                    heapUsage.getHeapMemoryUsage().getCommitted() : heapUsage.getHeapMemoryUsage().getMax();
+                double calc = (used / upper) * 100;
                 int percentage = (int) calc;
 
                 if (LOG.isTraceEnabled()) {
                     long u = heapUsage.getHeapMemoryUsage().getUsed();
                     long c = heapUsage.getHeapMemoryUsage().getCommitted();
-                    LOG.trace("Heap memory: [used={}M ({}%), committed={}M]", new Object[]{u >> 20, percentage, c >> 20});
+                    long m = heapUsage.getHeapMemoryUsage().getMax();
+                    LOG.trace("Heap memory: [used={}M ({}%), committed={}M, max={}M]", new Object[]{u >> 20, percentage, c >> 20, m >> 20});
                 }
 
                 if (percentage > spoolUsedHeapMemoryThreshold) {
@@ -379,7 +396,7 @@ public class DefaultStreamCachingStrategy extends org.apache.camel.support.Servi
         }
 
         public String toString() {
-            return "Spool > " + spoolUsedHeapMemoryThreshold + "% used heap memory";
+            return "Spool > " + spoolUsedHeapMemoryThreshold + "% used of " + limit + " heap memory";
         }
     }
 

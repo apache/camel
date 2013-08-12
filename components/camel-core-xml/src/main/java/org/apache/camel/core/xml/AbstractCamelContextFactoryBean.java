@@ -39,7 +39,6 @@ import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.component.properties.PropertiesParser;
 import org.apache.camel.component.properties.PropertiesResolver;
 import org.apache.camel.management.DefaultManagementAgent;
-import org.apache.camel.management.DefaultManagementLifecycleStrategy;
 import org.apache.camel.management.DefaultManagementStrategy;
 import org.apache.camel.management.ManagedManagementStrategy;
 import org.apache.camel.model.ContextScanDefinition;
@@ -403,6 +402,11 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         Integer spoolUsedHeap = CamelContextHelper.parseInteger(getContext(), streamCaching.getSpoolUsedHeapMemoryThreshold());
         if (spoolUsedHeap != null) {
             getContext().getStreamCachingStrategy().setSpoolUsedHeapMemoryThreshold(spoolUsedHeap);
+        }
+        String limit = CamelContextHelper.parseText(getContext(), streamCaching.getSpoolUsedHeapMemoryLimit());
+        if (limit != null) {
+            StreamCachingStrategy.SpoolUsedHeapMemoryLimit ul = CamelContextHelper.mandatoryConvertTo(getContext(), StreamCachingStrategy.SpoolUsedHeapMemoryLimit.class, limit);
+            getContext().getStreamCachingStrategy().setSpoolUsedHeapMemoryLimit(ul);
         }
         String spoolChiper = CamelContextHelper.parseText(getContext(), streamCaching.getSpoolChiper());
         if (spoolChiper != null) {

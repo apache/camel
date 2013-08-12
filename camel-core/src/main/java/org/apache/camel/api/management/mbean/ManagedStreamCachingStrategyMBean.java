@@ -18,6 +18,7 @@ package org.apache.camel.api.management.mbean;
 
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedOperation;
+import org.apache.camel.spi.StreamCachingStrategy;
 
 public interface ManagedStreamCachingStrategyMBean {
 
@@ -41,6 +42,12 @@ public interface ManagedStreamCachingStrategyMBean {
 
     @ManagedAttribute(description = "Percentage (1-99) of used heap memory threshold to activate spooling to disk")
     int getSpoolUsedHeapMemoryThreshold();
+
+    @ManagedAttribute(description = "Whether used heap memory limit is committed or maximum")
+    void setSpoolUsedHeapMemoryLimit(StreamCachingStrategy.SpoolUsedHeapMemoryLimit limit);
+
+    @ManagedAttribute(description = "Whether used heap memory limit is committed or maximum")
+    StreamCachingStrategy.SpoolUsedHeapMemoryLimit getSpoolUsedHeapMemoryLimit();
 
     @ManagedAttribute(description = "Buffer size in bytes to use when coping between buffers")
     void setBufferSize(int bufferSize);
