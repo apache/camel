@@ -122,69 +122,89 @@ public class Splitter extends MulticastProcessor implements AsyncProcessor, Trac
     }
 
     private Iterable<ProcessorExchangePair> createProcessorExchangePairsIterable(final Exchange exchange, final Object value) {
-        final Iterator<?> iterator = ObjectHelper.createIterator(value);
-        return new Iterable<ProcessorExchangePair>() {
-            // create a copy which we use as master to copy during splitting
-            // this avoids any side effect reflected upon the incoming exchange
-            private final Exchange copy = copyExchangeNoAttachments(exchange, true);
-            private final RouteContext routeContext = exchange.getUnitOfWork() != null ? exchange.getUnitOfWork().getRouteContext() : null;
+        return new SplitterIterable(exchange, value);
+    }
 
-            public Iterator<ProcessorExchangePair> iterator() {
-                return new Iterator<ProcessorExchangePair>() {
-                    private int index;
-                    private boolean closed;
+    private final class SplitterIterable implements Iterable<ProcessorExchangePair>, Closeable {
 
-                    public boolean hasNext() {
-                        if (closed) {
-                            return false;
-                        }
+        // create a copy which we use as master to copy during splitting
+        // this avoids any side effect reflected upon the incoming exchange
+        final Object value;
+        final Iterator<?> iterator;
+        private final Exchange copy;
+        private final RouteContext routeContext;
 
-                        boolean answer = iterator.hasNext();
-                        if (!answer) {
-                            // we are now closed
-                            closed = true;
-                            // nothing more so we need to close the expression value in case it needs to be
-                            if (value instanceof Closeable) {
-                                IOHelper.close((Closeable) value, value.getClass().getName(), LOG);
-                            } else if (value instanceof Scanner) {
-                                // special for Scanner as it does not implement Closeable
-                                Scanner scanner = (Scanner) value;
-                                scanner.close();
-                                
-                                IOException ioException = scanner.ioException();
-                                if (ioException != null) {
-                                    throw new RuntimeCamelException("Scanner aborted because of an IOException!", ioException);
-                                }
-                            }
-                        }
-                        return answer;
+        private SplitterIterable(Exchange exchange, Object value) {
+            this.value = value;
+            this.iterator = ObjectHelper.createIterator(value);
+            this.copy = copyExchangeNoAttachments(exchange, true);
+            this.routeContext = exchange.getUnitOfWork() != null ? exchange.getUnitOfWork().getRouteContext() : null;
+        }
+
+        @Override
+        public Iterator<ProcessorExchangePair> iterator() {
+            return new Iterator<ProcessorExchangePair>() {
+                private int index;
+                private boolean closed;
+
+                public boolean hasNext() {
+                    if (closed) {
+                        return false;
                     }
 
-                    public ProcessorExchangePair next() {
-                        Object part = iterator.next();
-                        // create a correlated copy as the new exchange to be routed in the splitter from the copy
-                        // and do not share the unit of work
-                        Exchange newExchange = ExchangeHelper.createCorrelatedCopy(copy, false);
-                        // if we share unit of work, we need to prepare the child exchange
-                        if (isShareUnitOfWork()) {
-                            prepareSharedUnitOfWork(newExchange, copy);
+                    boolean answer = iterator.hasNext();
+                    if (!answer) {
+                        // we are now closed
+                        closed = true;
+                        // nothing more so we need to close the expression value in case it needs to be
+                        try {
+                            close();
+                        } catch (IOException e) {
+                            throw new RuntimeCamelException("Scanner aborted because of an IOException!", e);
                         }
-                        if (part instanceof Message) {
-                            newExchange.setIn((Message) part);
-                        } else {
-                            Message in = newExchange.getIn();
-                            in.setBody(part);
-                        }
-                        return createProcessorExchangePair(index++, getProcessors().iterator().next(), newExchange, routeContext);
                     }
+                    return answer;
+                }
 
-                    public void remove() {
-                        throw new UnsupportedOperationException("Remove is not supported by this iterator");
+                public ProcessorExchangePair next() {
+                    Object part = iterator.next();
+                    // create a correlated copy as the new exchange to be routed in the splitter from the copy
+                    // and do not share the unit of work
+                    Exchange newExchange = ExchangeHelper.createCorrelatedCopy(copy, false);
+                    // if we share unit of work, we need to prepare the child exchange
+                    if (isShareUnitOfWork()) {
+                        prepareSharedUnitOfWork(newExchange, copy);
                     }
-                };
+                    if (part instanceof Message) {
+                        newExchange.setIn((Message) part);
+                    } else {
+                        Message in = newExchange.getIn();
+                        in.setBody(part);
+                    }
+                    return createProcessorExchangePair(index++, getProcessors().iterator().next(), newExchange, routeContext);
+                }
+
+                public void remove() {
+                    throw new UnsupportedOperationException("Remove is not supported by this iterator");
+                }
+            };
+        }
+
+        @Override
+        public void close() throws IOException {
+            if (value instanceof Closeable) {
+                IOHelper.close((Closeable) value, value.getClass().getName(), LOG);
+            } else if (value instanceof Scanner) {
+                // special for Scanner as it does not implement Closeable
+                Scanner scanner = (Scanner) value;
+                scanner.close();
+
+                IOException ioException = scanner.ioException();
+                if (ioException != null) {
+                    throw ioException;
+                }
             }
-
-        };
+        }
     }
 
     private Iterable<ProcessorExchangePair> createProcessorExchangePairsList(Exchange exchange, Object value) {
