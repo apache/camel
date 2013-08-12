@@ -153,7 +153,7 @@ public final class MailConverters {
             }
         }
         if (simple.getFromReceivedDate() != null) {
-            String s = simple.getFromSentDate();
+            String s = simple.getFromReceivedDate();
             if (s.startsWith("now")) {
                 long offset = extractOffset(s, typeConverter);
                 builder = builder.and(new NowSearchTerm(SearchTermBuilder.Comparison.GE.asNum(), false, offset));
