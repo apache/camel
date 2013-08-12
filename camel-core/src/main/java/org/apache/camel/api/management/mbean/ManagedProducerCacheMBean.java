@@ -45,4 +45,7 @@ public interface ManagedProducerCacheMBean extends ManagedServiceMBean {
     @ManagedOperation(description = "Purges the cache")
     void purge();
 
+    @ManagedAttribute(description = "EventNotifier enabled")
+    Boolean isEventNotifierEnabled();
+
 }

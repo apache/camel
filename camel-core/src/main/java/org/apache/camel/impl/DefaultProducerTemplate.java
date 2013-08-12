@@ -52,6 +52,7 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
     private volatile ExecutorService executor;
     private Endpoint defaultEndpoint;
     private int maximumCacheSize;
+    private boolean eventNotifierEnabled = true;
 
     public DefaultProducerTemplate(CamelContext camelContext) {
         this.camelContext = camelContext;
@@ -85,6 +86,18 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
             return 0;
         }
         return producerCache.size();
+    }
+
+    public boolean isEventNotifierEnabled() {
+        return eventNotifierEnabled;
+    }
+
+    public void setEventNotifierEnabled(boolean eventNotifierEnabled) {
+        this.eventNotifierEnabled = eventNotifierEnabled;
+        // if we already created the cache then adjust its setting as well
+        if (producerCache != null) {
+            producerCache.setEventNotifierEnabled(eventNotifierEnabled);
+        }
     }
 
     public Exchange send(String endpointUri, Exchange exchange) {
@@ -717,6 +730,7 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
             } else {
                 producerCache = new ProducerCache(this, camelContext);
             }
+            producerCache.setEventNotifierEnabled(isEventNotifierEnabled());
         }
         ServiceHelper.startService(producerCache);
     }

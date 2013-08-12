@@ -72,4 +72,7 @@ public class ManagedProducerCache extends ManagedService implements ManagedProdu
         producerCache.purge();
     }
 
+    public Boolean isEventNotifierEnabled() {
+        return producerCache.isEventNotifierEnabled();
+    }
 }

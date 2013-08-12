@@ -117,4 +117,12 @@ public abstract class EventNotifierSupport extends ServiceSupport implements Eve
     public void setIgnoreExchangeSendingEvents(boolean ignoreExchangeSendingEvents) {
         this.ignoreExchangeSendingEvents = ignoreExchangeSendingEvents;
     }
+
+    protected void doStart() throws Exception {
+        // noop
+    }
+
+    protected void doStop() throws Exception {
+        // noop
+    }
 }

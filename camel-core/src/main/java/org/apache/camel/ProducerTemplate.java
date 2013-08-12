@@ -112,6 +112,26 @@ public interface ProducerTemplate extends Service {
      */
     void setDefaultEndpointUri(String endpointUri);
 
+    /**
+     * Sets whether the {@link org.apache.camel.spi.EventNotifier} should be
+     * used by this {@link ProducerTemplate} to send events about the {@link Exchange}
+     * being sent.
+     * <p/>
+     * By default this is enabled.
+     *
+     * @param enabled <tt>true</tt> to enable, <tt>false</tt> to disable.
+     */
+    void setEventNotifierEnabled(boolean enabled);
+
+    /**
+     * Whether the {@link org.apache.camel.spi.EventNotifier} should be
+     * used by this {@link ProducerTemplate} to send events about the {@link Exchange}
+     * being sent.
+     *
+     * @return <tt>true</tt> if enabled, <tt>false</tt> otherwise
+     */
+    boolean isEventNotifierEnabled();
+
     // Synchronous methods
     // -----------------------------------------------------------------------
 

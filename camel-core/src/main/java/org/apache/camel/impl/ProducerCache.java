@@ -54,6 +54,7 @@ public class ProducerCache extends ServiceSupport {
     private final ServicePool<Endpoint, Producer> pool;
     private final Map<String, Producer> producers;
     private final Object source;
+    private boolean eventNotifierEnabled = true;
 
     public ProducerCache(Object source, CamelContext camelContext) {
         this(source, camelContext, CamelContextHelper.getMaximumCachePoolSize(camelContext));
@@ -72,6 +73,14 @@ public class ProducerCache extends ServiceSupport {
         this.camelContext = camelContext;
         this.pool = producerServicePool;
         this.producers = cache;
+    }
+
+    public boolean isEventNotifierEnabled() {
+        return eventNotifierEnabled;
+    }
+
+    public void setEventNotifierEnabled(boolean eventNotifierEnabled) {
+        this.eventNotifierEnabled = eventNotifierEnabled;
     }
 
     /**
@@ -220,13 +229,13 @@ public class ProducerCache extends ServiceSupport {
         }
 
         StopWatch watch = null;
-        if (exchange != null) {
+        if (eventNotifierEnabled && exchange != null) {
             // record timing for sending the exchange using the producer
             watch = new StopWatch();
         }
 
         try {
-            if (exchange != null) {
+            if (eventNotifierEnabled && exchange != null) {
                 EventHelper.notifyExchangeSending(exchange.getContext(), exchange, endpoint);
             }
             // invoke the callback
@@ -236,7 +245,7 @@ public class ProducerCache extends ServiceSupport {
                 exchange.setException(e);
             }
         } finally {
-            if (exchange != null) {
+            if (eventNotifierEnabled && exchange != null) {
                 long timeTaken = watch.stop();
                 // emit event that the exchange was sent to the endpoint
                 EventHelper.notifyExchangeSent(exchange.getContext(), exchange, endpoint, timeTaken);
@@ -287,10 +296,10 @@ public class ProducerCache extends ServiceSupport {
         }
 
         // record timing for sending the exchange using the producer
-        final StopWatch watch = exchange != null ? new StopWatch() : null;
+        final StopWatch watch = eventNotifierEnabled && exchange != null ? new StopWatch() : null;
 
         try {
-            if (exchange != null) {
+            if (eventNotifierEnabled && exchange != null) {
                 EventHelper.notifyExchangeSending(exchange.getContext(), exchange, endpoint);
             }
             // invoke the callback
@@ -299,7 +308,7 @@ public class ProducerCache extends ServiceSupport {
                 @Override
                 public void done(boolean doneSync) {
                     try {
-                        if (watch != null) {
+                        if (eventNotifierEnabled && watch != null) {
                             long timeTaken = watch.stop();
                             // emit event that the exchange was sent to the endpoint
                             EventHelper.notifyExchangeSent(exchange.getContext(), exchange, endpoint, timeTaken);
@@ -358,9 +367,12 @@ public class ProducerCache extends ServiceSupport {
                 exchange.setProperty(Exchange.TO_ENDPOINT, endpoint.getEndpointUri());
 
                 // send the exchange using the processor
-                StopWatch watch = new StopWatch();
+                StopWatch watch = null;
                 try {
-                    EventHelper.notifyExchangeSending(exchange.getContext(), exchange, endpoint);
+                    if (eventNotifierEnabled) {
+                        watch = new StopWatch();
+                        EventHelper.notifyExchangeSending(exchange.getContext(), exchange, endpoint);
+                    }
                     // ensure we run in an unit of work
                     Producer target = new UnitOfWorkProducer(producer);
                     target.process(exchange);
@@ -369,8 +381,10 @@ public class ProducerCache extends ServiceSupport {
                     exchange.setException(e);
                 } finally {
                     // emit event that the exchange was sent to the endpoint
-                    long timeTaken = watch.stop();
-                    EventHelper.notifyExchangeSent(exchange.getContext(), exchange, endpoint, timeTaken);
+                    if (eventNotifierEnabled && watch != null) {
+                        long timeTaken = watch.stop();
+                        EventHelper.notifyExchangeSent(exchange.getContext(), exchange, endpoint, timeTaken);
+                    }
                 }
                 return exchange;
             }
