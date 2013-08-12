@@ -82,7 +82,7 @@ public class CxfConsumer extends DefaultConsumer {
             private Object asyncInvoke(Exchange cxfExchange, final Continuation continuation) {
                 synchronized (continuation) {
                     if (continuation.isNew()) {
-                        final org.apache.camel.Exchange camelExchange = perpareCamelExchange(cxfExchange);
+                        final org.apache.camel.Exchange camelExchange = prepareCamelExchange(cxfExchange);
                         
                         // Now we don't set up the timeout value
                         LOG.trace("Suspending continuation of exchangeId: {}", camelExchange.getExchangeId());
@@ -104,9 +104,12 @@ public class CxfConsumer extends DefaultConsumer {
                         });
                         
                     } else if (continuation.isResumed()) {
-                        org.apache.camel.Exchange camelExchange = (org.apache.camel.Exchange)continuation
-                            .getObject();
-                        setResponseBack(cxfExchange, camelExchange);
+                        org.apache.camel.Exchange camelExchange = (org.apache.camel.Exchange)continuation.getObject();
+                        try {
+                            setResponseBack(cxfExchange, camelExchange);
+                        } finally {
+                            CxfConsumer.this.doneUoW(camelExchange);
+                        }
 
                     }
                 }
@@ -127,27 +130,41 @@ public class CxfConsumer extends DefaultConsumer {
             }
             
             private Object syncInvoke(Exchange cxfExchange) {
-                org.apache.camel.Exchange camelExchange = perpareCamelExchange(cxfExchange);               
-                // send Camel exchange to the target processor
-                LOG.trace("Processing +++ START +++");
+                org.apache.camel.Exchange camelExchange = prepareCamelExchange(cxfExchange);
                 try {
-                    getProcessor().process(camelExchange);
-                } catch (Exception e) {
-                    throw new Fault(e);
+                    try {
+                        LOG.trace("Processing +++ START +++");
+                        // send Camel exchange to the target processor
+                        getProcessor().process(camelExchange);
+                    } catch (Exception e) {
+                        throw new Fault(e);
+                    }
+
+                    LOG.trace("Processing +++ END +++");
+                    setResponseBack(cxfExchange, camelExchange);
+                } finally {
+                    doneUoW(camelExchange);
                 }
-                LOG.trace("Processing +++ END +++");
-                setResponseBack(cxfExchange, camelExchange);
+
                 // response should have been set in outMessage's content
                 return null;
             }
             
-            private org.apache.camel.Exchange perpareCamelExchange(Exchange cxfExchange) {
+            private org.apache.camel.Exchange prepareCamelExchange(Exchange cxfExchange) {
                 // get CXF binding
                 CxfEndpoint endpoint = (CxfEndpoint)getEndpoint();
                 CxfBinding binding = endpoint.getCxfBinding();
 
                 // create a Camel exchange, the default MEP is InOut
                 org.apache.camel.Exchange camelExchange = endpoint.createExchange();
+                // we want to handle the UoW
+                try {
+                    CxfConsumer.this.createUoW(camelExchange);
+                } catch (Exception e) {
+                    log.error("Error processing request", e);
+                    throw new Fault(e);
+                }
+
                 DataFormat dataFormat = endpoint.getDataFormat();
 
                 BindingOperationInfo boi = cxfExchange.getBindingOperationInfo();

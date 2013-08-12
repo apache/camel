@@ -18,6 +18,7 @@ package org.apache.camel.component.cxf;
 
 import javax.xml.namespace.QName;
 import javax.xml.ws.Service;
+import javax.xml.ws.soap.SOAPFaultException;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.RuntimeCamelException;

@@ -76,6 +76,9 @@ public class CxfRsInvoker extends JAXRSInvoker {
                     ep = ExchangePattern.InOnly;
                 } 
                 final org.apache.camel.Exchange camelExchange = endpoint.createExchange(ep);
+                // we want to handle the UoW
+                cxfRsConsumer.createUoW(camelExchange);
+
                 CxfRsBinding binding = endpoint.getBinding();
                 binding.populateExchangeFromCxfRsRequest(cxfExchange, camelExchange, method, paramArray);
                 // Now we don't set up the timeout value
@@ -99,9 +102,12 @@ public class CxfRsInvoker extends JAXRSInvoker {
             }
             if (continuation.isResumed()) {
                 cxfExchange.put(SUSPENED, Boolean.FALSE);
-                org.apache.camel.Exchange camelExchange = (org.apache.camel.Exchange)continuation
-                    .getObject();
-                return returnResponse(cxfExchange, camelExchange);
+                org.apache.camel.Exchange camelExchange = (org.apache.camel.Exchange)continuation.getObject();
+                try {
+                    return returnResponse(cxfExchange, camelExchange);
+                } finally {
+                    cxfRsConsumer.doneUoW(camelExchange);
+                }
             }
         }
         return null;
@@ -115,16 +121,22 @@ public class CxfRsInvoker extends JAXRSInvoker {
             ep = ExchangePattern.InOnly;
         } 
         org.apache.camel.Exchange camelExchange = endpoint.createExchange(ep);
+        // we want to handle the UoW
+        cxfRsConsumer.createUoW(camelExchange);
         CxfRsBinding binding = endpoint.getBinding();
         binding.populateExchangeFromCxfRsRequest(cxfExchange, camelExchange, method, paramArray);
-        
+
         try {
             cxfRsConsumer.getProcessor().process(camelExchange);
         } catch (Exception exception) {
             camelExchange.setException(exception);
         }
-        return returnResponse(cxfExchange, camelExchange);
-        
+
+        try {
+            return returnResponse(cxfExchange, camelExchange);
+        } finally {
+            cxfRsConsumer.doneUoW(camelExchange);
+        }
     }
     
     private Object returnResponse(Exchange cxfExchange, org.apache.camel.Exchange camelExchange) throws Exception {
