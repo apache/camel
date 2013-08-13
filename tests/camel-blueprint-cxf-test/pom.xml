@@ -76,6 +76,11 @@
           <groupId>org.apache.aries.quiesce</groupId>
           <artifactId>org.apache.aries.quiesce.api</artifactId>         
         </exclusion>
+        <!--  exclude additional unneeded components -->
+        <exclusion>
+          <groupId>org.apache.camel</groupId>
+          <artifactId>camel-spring</artifactId>         
+        </exclusion>
       </exclusions>
       <scope>test</scope>
     </dependency>
@@ -88,6 +93,12 @@
     </dependency>
     <dependency>
       <groupId>org.apache.cxf</groupId>
+      <artifactId>cxf-rt-bindings-soap</artifactId>
+      <version>${cxf-version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-transports-http-jetty</artifactId>
       <version>${cxf-version}</version>
       <scope>test</scope>
@@ -95,6 +106,25 @@
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-testutils</artifactId>
+      <version>${cxf-version}</version>
+      <scope>test</scope>
+    </dependency>
+    <!-- for ws-* tests -->
+    <dependency>
+      <groupId>org.apache.cxf</groupId>
+      <artifactId>cxf-rt-ws-addr</artifactId>
+      <version>${cxf-version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.cxf</groupId>
+      <artifactId>cxf-rt-ws-policy</artifactId>
+      <version>${cxf-version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.cxf</groupId>
+      <artifactId>cxf-rt-ws-rm</artifactId>
       <version>${cxf-version}</version>
       <scope>test</scope>
     </dependency>
