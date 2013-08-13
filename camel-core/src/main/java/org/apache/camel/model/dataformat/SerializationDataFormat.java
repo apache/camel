@@ -31,11 +31,6 @@ import org.apache.camel.spi.RouteContext;
 public class SerializationDataFormat extends DataFormatDefinition {
 
     @Override
-    public String getDataFormatName() {
-        return "serialization";
-    }
-
-    @Override
     protected DataFormat createDataFormat(RouteContext routeContext) {
         return new org.apache.camel.impl.SerializationDataFormat();
     }
