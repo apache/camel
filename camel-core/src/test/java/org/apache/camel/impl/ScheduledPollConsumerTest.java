@@ -30,7 +30,8 @@ public class ScheduledPollConsumerTest extends ContextTestSupport {
     public void testExceptionOnPollAndCanStartAgain() throws Exception {
 
         final Exception expectedException = new Exception("Hello, I should be thrown on shutdown only!");
-        MockScheduledPollConsumer consumer = new MockScheduledPollConsumer(expectedException);
+        final Endpoint endpoint = getMockEndpoint("mock:foo");
+        MockScheduledPollConsumer consumer = new MockScheduledPollConsumer(endpoint, expectedException);
 
         consumer.setPollStrategy(new PollingConsumerPollStrategy() {
             public boolean begin(Consumer consumer, Endpoint endpoint) {
@@ -72,7 +73,8 @@ public class ScheduledPollConsumerTest extends ContextTestSupport {
         event = "";
 
         final Exception expectedException = new Exception("Hello, I should be thrown on shutdown only!");
-        MockScheduledPollConsumer consumer = new MockScheduledPollConsumer(expectedException);
+        final Endpoint endpoint = getMockEndpoint("mock:foo");
+        MockScheduledPollConsumer consumer = new MockScheduledPollConsumer(endpoint, expectedException);
 
         consumer.setPollStrategy(new PollingConsumerPollStrategy() {
             public boolean begin(Consumer consumer, Endpoint endpoint) {
@@ -106,7 +108,8 @@ public class ScheduledPollConsumerTest extends ContextTestSupport {
     }
 
     public void testNoExceptionOnPoll() throws Exception {
-        MockScheduledPollConsumer consumer = new MockScheduledPollConsumer(null);
+        final Endpoint endpoint = getMockEndpoint("mock:foo");
+        MockScheduledPollConsumer consumer = new MockScheduledPollConsumer(endpoint, null);
         consumer.start();
         consumer.run(); 
         consumer.stop();

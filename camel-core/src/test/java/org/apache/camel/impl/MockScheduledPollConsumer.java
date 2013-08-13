@@ -18,6 +18,7 @@ package org.apache.camel.impl;
 
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 
+import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
 
 public class MockScheduledPollConsumer extends ScheduledPollConsumer {
@@ -29,8 +30,8 @@ public class MockScheduledPollConsumer extends ScheduledPollConsumer {
     }
 
     // dummy constructor here - we just want to test the run() method, which calls poll()   
-    public MockScheduledPollConsumer(Exception exceptionToThrowOnPoll) {
-        super(null, null, new ScheduledThreadPoolExecutor(1));
+    public MockScheduledPollConsumer(Endpoint endpoint, Exception exceptionToThrowOnPoll) {
+        super(endpoint, null, new ScheduledThreadPoolExecutor(1));
         this.exceptionToThrowOnPoll = exceptionToThrowOnPoll;
     }
     

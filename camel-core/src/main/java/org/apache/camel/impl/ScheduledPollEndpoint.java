@@ -64,6 +64,7 @@ public abstract class ScheduledPollEndpoint extends DefaultEndpoint {
         Object sendEmptyMessageWhenIdle = options.remove("sendEmptyMessageWhenIdle");
         Object greedy = options.remove("greedy");
         Object scheduledExecutorService  = options.remove("scheduledExecutorService");
+        Object scheduler  = options.remove("scheduler");
         boolean setConsumerProperties = false;
         
         // the following is split into two if statements to satisfy the checkstyle max complexity constraint
@@ -71,6 +72,9 @@ public abstract class ScheduledPollEndpoint extends DefaultEndpoint {
             setConsumerProperties = true;
         }
         if (runLoggingLevel != null || startScheduler != null || sendEmptyMessageWhenIdle != null || greedy != null || scheduledExecutorService != null) {
+            setConsumerProperties = true;
+        }
+        if (scheduler != null) {
             setConsumerProperties = true;
         }
         
@@ -108,6 +112,9 @@ public abstract class ScheduledPollEndpoint extends DefaultEndpoint {
             }
             if (scheduledExecutorService != null) {
                 consumerProperties.put("scheduledExecutorService", scheduledExecutorService);
+            }
+            if (scheduler != null) {
+                consumerProperties.put("scheduler", scheduler);
             }
         }
     }

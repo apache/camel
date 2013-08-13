@@ -17,6 +17,7 @@
 package org.apache.camel.impl;
 
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.Endpoint;
 import org.apache.camel.util.ServiceHelper;
 
 public class LimitedPollingConsumerPollStrategyTest extends ContextTestSupport {
@@ -29,7 +30,8 @@ public class LimitedPollingConsumerPollStrategyTest extends ContextTestSupport {
         strategy = new LimitedPollingConsumerPollStrategy();
         strategy.setLimit(3);
 
-        MockScheduledPollConsumer consumer = new MockScheduledPollConsumer(expectedException);
+        final Endpoint endpoint = getMockEndpoint("mock:foo");
+        MockScheduledPollConsumer consumer = new MockScheduledPollConsumer(endpoint, expectedException);
         consumer.setPollStrategy(strategy);
 
         consumer.start();
@@ -50,7 +52,8 @@ public class LimitedPollingConsumerPollStrategyTest extends ContextTestSupport {
         strategy = new LimitedPollingConsumerPollStrategy();
         strategy.setLimit(2);
 
-        MockScheduledPollConsumer consumer = new MockScheduledPollConsumer(expectedException);
+        final Endpoint endpoint = getMockEndpoint("mock:foo");
+        MockScheduledPollConsumer consumer = new MockScheduledPollConsumer(endpoint, expectedException);
         consumer.setPollStrategy(strategy);
 
         consumer.start();
@@ -69,7 +72,8 @@ public class LimitedPollingConsumerPollStrategyTest extends ContextTestSupport {
         strategy = new LimitedPollingConsumerPollStrategy();
         strategy.setLimit(3);
 
-        MockScheduledPollConsumer consumer = new MockScheduledPollConsumer(expectedException);
+        final Endpoint endpoint = getMockEndpoint("mock:foo");
+        MockScheduledPollConsumer consumer = new MockScheduledPollConsumer(endpoint, expectedException);
         consumer.setPollStrategy(strategy);
 
         consumer.start();
@@ -95,7 +99,8 @@ public class LimitedPollingConsumerPollStrategyTest extends ContextTestSupport {
         strategy = new LimitedPollingConsumerPollStrategy();
         strategy.setLimit(3);
 
-        MockScheduledPollConsumer consumer = new MockScheduledPollConsumer(expectedException);
+        final Endpoint endpoint = getMockEndpoint("mock:foo");
+        MockScheduledPollConsumer consumer = new MockScheduledPollConsumer(endpoint, expectedException);
         consumer.setPollStrategy(strategy);
 
         consumer.start();
@@ -131,10 +136,11 @@ public class LimitedPollingConsumerPollStrategyTest extends ContextTestSupport {
         strategy = new LimitedPollingConsumerPollStrategy();
         strategy.setLimit(3);
 
-        MockScheduledPollConsumer consumer = new MockScheduledPollConsumer(expectedException);
+        final Endpoint endpoint = getMockEndpoint("mock:foo");
+        MockScheduledPollConsumer consumer = new MockScheduledPollConsumer(endpoint, expectedException);
         consumer.setPollStrategy(strategy);
 
-        MockScheduledPollConsumer consumer2 = new MockScheduledPollConsumer(null);
+        MockScheduledPollConsumer consumer2 = new MockScheduledPollConsumer(endpoint, null);
         consumer2.setPollStrategy(strategy);
 
         consumer.start();
@@ -163,7 +169,8 @@ public class LimitedPollingConsumerPollStrategyTest extends ContextTestSupport {
         strategy = new LimitedPollingConsumerPollStrategy();
         strategy.setLimit(3);
 
-        MockScheduledPollConsumer consumer = new MockScheduledPollConsumer(expectedException);
+        final Endpoint endpoint = getMockEndpoint("mock:foo");
+        MockScheduledPollConsumer consumer = new MockScheduledPollConsumer(endpoint, expectedException);
         consumer.setPollStrategy(strategy);
 
         consumer.start();

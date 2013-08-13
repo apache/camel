@@ -16,9 +16,9 @@
  */
 package org.apache.camel.impl;
 
-import java.util.Locale;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.Endpoint;
@@ -28,7 +28,9 @@ import org.apache.camel.PollingConsumerPollingStrategy;
 import org.apache.camel.Processor;
 import org.apache.camel.SuspendableService;
 import org.apache.camel.spi.PollingConsumerPollStrategy;
+import org.apache.camel.spi.ScheduledPollConsumerScheduler;
 import org.apache.camel.spi.UriParam;
+import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
 import org.slf4j.Logger;
@@ -42,9 +44,8 @@ import org.slf4j.LoggerFactory;
 public abstract class ScheduledPollConsumer extends DefaultConsumer implements Runnable, SuspendableService, PollingConsumerPollingStrategy {
     private static final transient Logger LOG = LoggerFactory.getLogger(ScheduledPollConsumer.class);
 
+    private ScheduledPollConsumerScheduler scheduler;
     private ScheduledExecutorService scheduledExecutorService;
-    private boolean shutdownExecutor;
-    private volatile ScheduledFuture<?> future;
 
     // if adding more options then align with ScheduledPollEndpoint#configureScheduledPollConsumerProperties
     @UriParam
@@ -232,6 +233,18 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
         return polling;
     }
 
+    public ScheduledPollConsumerScheduler getScheduler() {
+        return scheduler;
+    }
+
+    /**
+     * Sets a cutom scheduler to use for scheduling running this task (poll).
+     * @param scheduler
+     */
+    public void setScheduler(ScheduledPollConsumerScheduler scheduler) {
+        this.scheduler = scheduler;
+    }
+
     public long getInitialDelay() {
         return initialDelay;
     }
@@ -335,7 +348,7 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
      * @return <tt>true</tt> if started, <tt>false</tt> if not.
      */
     public boolean isSchedulerStarted() {
-        return future != null;
+        return scheduler.isSchedulerStarted();
     }
 
     /**
@@ -366,17 +379,21 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
     protected void doStart() throws Exception {
         super.doStart();
 
-        // if no existing executor provided, then create a new thread pool ourselves
-        if (scheduledExecutorService == null) {
-            // we only need one thread in the pool to schedule this task
-            this.scheduledExecutorService = getEndpoint().getCamelContext().getExecutorServiceManager()
-                    .newScheduledThreadPool(this, getEndpoint().getEndpointUri(), 1);
-            // and we should shutdown the thread pool when no longer needed
-            this.shutdownExecutor = true;
+        if (scheduler == null) {
+            scheduler = new DefaultScheduledPollConsumerScheduler();
         }
+        scheduler.setCamelContext(getEndpoint().getCamelContext());
+        scheduler.scheduleTask(this, this);
 
-        ObjectHelper.notNull(scheduledExecutorService, "scheduledExecutorService", this);
+        // configure scheduler with options from this consumer
+        Map<String, Object> properties = new HashMap<String, Object>();
+        IntrospectionSupport.getProperties(this, properties, null);
+        IntrospectionSupport.setProperties(getEndpoint().getCamelContext().getTypeConverter(), scheduler, properties);
+
+        ObjectHelper.notNull(scheduler, "scheduler", this);
         ObjectHelper.notNull(pollStrategy, "pollStrategy", this);
+
+        ServiceHelper.startService(scheduler);
 
         if (isStartScheduler()) {
             startScheduler();
@@ -389,41 +406,18 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
      * If the scheduler is already started, then this is a noop method call.
      */
     public void startScheduler() {
-        // only schedule task if we have not already done that
-        if (future == null) {
-            if (isUseFixedDelay()) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Scheduling poll (fixed delay) with initialDelay: {}, delay: {} ({}) for: {}",
-                            new Object[]{getInitialDelay(), getDelay(), getTimeUnit().name().toLowerCase(Locale.ENGLISH), getEndpoint()});
-                }
-                future = scheduledExecutorService.scheduleWithFixedDelay(this, getInitialDelay(), getDelay(), getTimeUnit());
-            } else {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Scheduling poll (fixed rate) with initialDelay: {}, delay: {} ({}) for: {}",
-                            new Object[]{getInitialDelay(), getDelay(), getTimeUnit().name().toLowerCase(Locale.ENGLISH), getEndpoint()});
-                }
-                future = scheduledExecutorService.scheduleAtFixedRate(this, getInitialDelay(), getDelay(), getTimeUnit());
-            }
-        }
+        scheduler.startScheduler();
     }
 
     @Override
     protected void doStop() throws Exception {
-        if (future != null) {
-            LOG.debug("This consumer is stopping, so cancelling scheduled task: " + future);
-            future.cancel(false);
-            future = null;
-        }
+        ServiceHelper.stopService(scheduler);
         super.doStop();
     }
 
     @Override
     protected void doShutdown() throws Exception {
-        if (shutdownExecutor && scheduledExecutorService != null) {
-            getEndpoint().getCamelContext().getExecutorServiceManager().shutdownNow(scheduledExecutorService);
-            scheduledExecutorService = null;
-            future = null;
-        }
+        ServiceHelper.stopAndShutdownServices(scheduler);
         super.doShutdown();
     }
 
