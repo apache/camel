@@ -23,9 +23,11 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
+import org.apache.camel.FailedToCreateConsumerException;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.PollingConsumerPollingStrategy;
 import org.apache.camel.Processor;
+import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.SuspendableService;
 import org.apache.camel.spi.PollingConsumerPollStrategy;
 import org.apache.camel.spi.ScheduledPollConsumerScheduler;
@@ -67,6 +69,7 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
     @UriParam
     private boolean greedy;
     private volatile boolean polling;
+    private Map<String, Object> schedulerProperties;
 
     public ScheduledPollConsumer(Endpoint endpoint, Processor processor) {
         super(endpoint, processor);
@@ -238,11 +241,23 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
     }
 
     /**
-     * Sets a cutom scheduler to use for scheduling running this task (poll).
-     * @param scheduler
+     * Sets a custom scheduler to use for scheduling running this task (poll).
+     *
+     * @param scheduler the custom scheduler
      */
     public void setScheduler(ScheduledPollConsumerScheduler scheduler) {
         this.scheduler = scheduler;
+    }
+
+    public Map<String, Object> getSchedulerProperties() {
+        return schedulerProperties;
+    }
+
+    /**
+     * Additional properties to configure on the custom scheduler.
+     */
+    public void setSchedulerProperties(Map<String, Object> schedulerProperties) {
+        this.schedulerProperties = schedulerProperties;
     }
 
     public long getInitialDelay() {
@@ -389,6 +404,17 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
         Map<String, Object> properties = new HashMap<String, Object>();
         IntrospectionSupport.getProperties(this, properties, null);
         IntrospectionSupport.setProperties(getEndpoint().getCamelContext().getTypeConverter(), scheduler, properties);
+        if (schedulerProperties != null && !schedulerProperties.isEmpty()) {
+            // need to use a copy in case the consumer is restarted so we keep the properties
+            Map<String, Object> copy = new HashMap<String, Object>(schedulerProperties);
+            IntrospectionSupport.setProperties(getEndpoint().getCamelContext().getTypeConverter(), scheduler, copy);
+            if (copy.size() > 0) {
+                throw new FailedToCreateConsumerException(getEndpoint(), "There are " + copy.size()
+                        + " scheduler parameters that couldn't be set on the endpoint."
+                        + " Check the uri if the parameters are spelt correctly and that they are properties of the endpoint."
+                        + " Unknown parameters=[" + copy + "]");
+            }
+        }
 
         ObjectHelper.notNull(scheduler, "scheduler", this);
         ObjectHelper.notNull(pollStrategy, "pollStrategy", this);

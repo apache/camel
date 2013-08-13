@@ -21,6 +21,7 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
+import org.apache.camel.util.IntrospectionSupport;
 
 /**
  * A base class for {@link org.apache.camel.Endpoint} which creates a {@link ScheduledPollConsumer}
@@ -54,6 +55,7 @@ public abstract class ScheduledPollEndpoint extends DefaultEndpoint {
     private void configureScheduledPollConsumerProperties(Map<String, Object> options, Map<String, Object> consumerProperties) {
         // special for scheduled poll consumers as we want to allow end users to configure its options
         // from the URI parameters without the consumer. prefix
+        Map<String, Object> schedulerProperties = IntrospectionSupport.extractProperties(options, "scheduler.");
         Object startScheduler = options.remove("startScheduler");
         Object initialDelay = options.remove("initialDelay");
         Object delay = options.remove("delay");
@@ -74,7 +76,7 @@ public abstract class ScheduledPollEndpoint extends DefaultEndpoint {
         if (runLoggingLevel != null || startScheduler != null || sendEmptyMessageWhenIdle != null || greedy != null || scheduledExecutorService != null) {
             setConsumerProperties = true;
         }
-        if (scheduler != null) {
+        if (scheduler != null || !schedulerProperties.isEmpty()) {
             setConsumerProperties = true;
         }
         
@@ -115,6 +117,9 @@ public abstract class ScheduledPollEndpoint extends DefaultEndpoint {
             }
             if (scheduler != null) {
                 consumerProperties.put("scheduler", scheduler);
+            }
+            if (!schedulerProperties.isEmpty()) {
+                consumerProperties.put("schedulerProperties", schedulerProperties);
             }
         }
     }
