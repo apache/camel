@@ -168,7 +168,7 @@ public class ManagedCamelContextTest extends ManagementTestSupport {
         Map<String, Properties> info = (Map<String, Properties>) mbeanServer.invoke(on, "findComponents", null, null);
         assertNotNull(info);
 
-        assertEquals(21, info.size());
+        assertEquals(22, info.size());
         Properties prop = info.get("seda");
         assertNotNull(prop);
         assertEquals("org.apache.camel", prop.get("groupId"));

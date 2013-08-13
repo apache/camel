@@ -33,13 +33,21 @@ import org.apache.camel.util.IOHelper;
  */
 public class ZipDataFormat implements DataFormat {
 
-    private final int compressionLevel;
+    private int compressionLevel;
 
     public ZipDataFormat() {
         this.compressionLevel = Deflater.BEST_SPEED;
     }
 
     public ZipDataFormat(int compressionLevel) {
+        this.compressionLevel = compressionLevel;
+    }
+
+    public int getCompressionLevel() {
+        return compressionLevel;
+    }
+
+    public void setCompressionLevel(int compressionLevel) {
         this.compressionLevel = compressionLevel;
     }
 
