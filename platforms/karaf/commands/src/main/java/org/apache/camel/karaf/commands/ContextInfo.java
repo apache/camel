@@ -149,11 +149,12 @@ public class ContextInfo extends OsgiCommandSupport {
 
                 // add stream caching details if enabled
                 if (camelContext.getStreamCachingStrategy().isEnabled()) {
-                    System.out.println(StringEscapeUtils.unescapeJava(String.format("\tStreamCachingStrategy: [spoolDirectory=%s, spoolChiper=%s, spoolThreshold=%s, spoolUsedHeapMemoryThreshold=%s, anySpoolRules=%s, bufferSize=%s, removeSpoolDirectoryWhenStopping=%s, statisticsEnabled=%s]",
+                    System.out.println(StringEscapeUtils.unescapeJava(String.format("\tStreamCachingStrategy: [spoolDirectory=%s, spoolChiper=%s, spoolThreshold=%s, spoolUsedHeapMemoryThreshold=%s, spoolUsedHeapMemoryLimit=%s, anySpoolRules=%s, bufferSize=%s, removeSpoolDirectoryWhenStopping=%s, statisticsEnabled=%s]",
                             camelContext.getStreamCachingStrategy().getSpoolDirectory(),
                             camelContext.getStreamCachingStrategy().getSpoolChiper(),
                             camelContext.getStreamCachingStrategy().getSpoolThreshold(),
                             camelContext.getStreamCachingStrategy().getSpoolUsedHeapMemoryThreshold(),
+                            camelContext.getStreamCachingStrategy().getSpoolUsedHeapMemoryLimit(),
                             camelContext.getStreamCachingStrategy().isAnySpoolRules(),
                             camelContext.getStreamCachingStrategy().getBufferSize(),
                             camelContext.getStreamCachingStrategy().isRemoveSpoolDirectoryWhenStopping(),
