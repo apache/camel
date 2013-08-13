@@ -40,7 +40,7 @@ public class FileConsumerCustomSchedulerTest extends ContextTestSupport {
 
     @Override
     protected void setUp() throws Exception {
-        deleteDirectory("target/file/customer");
+        deleteDirectory("target/file/custom");
         super.setUp();
     }
 
@@ -123,7 +123,7 @@ public class FileConsumerCustomSchedulerTest extends ContextTestSupport {
 
         @Override
         public void shutdown() throws Exception {
-             timerTask.cancel();
+            timerTask.cancel();
         }
 
         @Override

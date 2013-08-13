@@ -32,10 +32,12 @@
   <properties>
     <camel.osgi.export.pkg>
       org.apache.camel.component.quartz2.*;${camel.osgi.version},
+      org.apache.camel.pollconsumer.quartz2.*
       org.apache.camel.routepolicy.quartz2.*
     </camel.osgi.export.pkg>
     <camel.osgi.import.pkg>
       !org.apache.camel.component.quartz2.*,
+      !org.apache.camel.pollconsumer.quartz2.*,
       !org.apache.camel.routepolicy.quartz2.*,
       ${camel.osgi.import.defaults},
       *
