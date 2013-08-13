@@ -29,8 +29,8 @@
 
   <!-- START SNIPPET: example -->
   <camelContext xmlns="http://camel.apache.org/schema/spring">
-    <!-- sanitize JMX so sensitive information such as passwords is not shown -->
-    <jmxAgent id="agent" sanitize="true"/>
+    <!-- mask JMX so sensitive information such as passwords is not shown -->
+    <jmxAgent id="agent" mask="true"/>
 
     <route id="foo">
       <from uri="direct:start"/>

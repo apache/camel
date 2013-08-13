@@ -251,12 +251,12 @@ public interface ManagementAgent extends Service {
      * <p/>
      * This option is default <tt>false</tt>.
      */
-    Boolean getSanitize();
+    Boolean getMask();
 
     /**
      * Whether to remove detected sensitive information (such as passwords) from MBean names and attributes.
      * <p/>
      * This option is default <tt>false</tt>.
      */
-    void setSanitize(Boolean sanitize);
+    void setMask(Boolean sanitize);
 }

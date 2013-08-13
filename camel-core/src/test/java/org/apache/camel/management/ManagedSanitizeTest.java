@@ -30,7 +30,7 @@ public class ManagedSanitizeTest extends ManagementTestSupport {
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
-        context.getManagementStrategy().getManagementAgent().setSanitize(true);
+        context.getManagementStrategy().getManagementAgent().setMask(true);
         return context;
     }
 

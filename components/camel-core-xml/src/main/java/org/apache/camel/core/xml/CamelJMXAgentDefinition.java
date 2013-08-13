@@ -115,7 +115,7 @@ public class CamelJMXAgentDefinition extends IdentifiedType {
      * A flag that indicates whether to remove detected sensitive information (such as passwords) from MBean names and attributes.
      */
     @XmlAttribute
-    private String sanitize = "false";
+    private String mask = "false";
 
     public String getDisabled() {
         return disabled;
@@ -221,12 +221,12 @@ public class CamelJMXAgentDefinition extends IdentifiedType {
         this.loadStatisticsEnabled = loadStatisticsEnabled;
     }
 
-    public String getSanitize() {
-        return sanitize;
+    public String getMask() {
+        return mask;
     }
 
-    public void setSanitize(String sanitize) {
-        this.sanitize = sanitize;
+    public void setMask(String mask) {
+        this.mask = mask;
     }
 
     @Override
@@ -267,8 +267,8 @@ public class CamelJMXAgentDefinition extends IdentifiedType {
         if (registerNewRoutes != null) {
             sb.append(", registerNewRoutes=").append(registerNewRoutes);
         }
-        if (sanitize != null) {
-            sb.append(", sanitize=").append(sanitize);
+        if (mask != null) {
+            sb.append(", mask=").append(mask);
         }
         sb.append("]");
         return sb.toString();

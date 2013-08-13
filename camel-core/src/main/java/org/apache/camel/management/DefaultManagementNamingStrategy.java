@@ -36,7 +36,6 @@ import org.apache.camel.StaticService;
 import org.apache.camel.builder.ErrorHandlerBuilderRef;
 import org.apache.camel.spi.EventNotifier;
 import org.apache.camel.spi.InterceptStrategy;
-import org.apache.camel.spi.ManagementAgent;
 import org.apache.camel.spi.ManagementNamingStrategy;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.InetAddressUtil;
@@ -312,7 +311,7 @@ public class DefaultManagementNamingStrategy implements ManagementNamingStrategy
 
     protected String getEndpointId(Endpoint ep) {
         String answer = doGetEndpointId(ep);
-        Boolean sanitize = camelContext != null && camelContext.getManagementStrategy().getManagementAgent().getSanitize();
+        Boolean sanitize = camelContext != null && camelContext.getManagementStrategy().getManagementAgent().getMask();
         if (sanitize != null && sanitize) {
             // use xxxxxx as replacements as * has to be quoted for MBean names
             answer = URISupport.sanitizeUri(answer);

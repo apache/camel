@@ -1130,7 +1130,7 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         return getCamelContext().getName();
     }
 
-    @ManagedAttribute(description = "Endpoint Uri", sanitize = true)
+    @ManagedAttribute(description = "Endpoint Uri", mask = true)
     @Override
     public String getEndpointUri() {
         return super.getEndpointUri();

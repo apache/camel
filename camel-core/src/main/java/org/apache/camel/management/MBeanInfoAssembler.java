@@ -202,7 +202,7 @@ public class MBeanInfoAssembler implements Service {
                 String desc = ma.description();
                 Method getter = null;
                 Method setter = null;
-                boolean sanitize = ma.sanitize();
+                boolean mask = ma.mask();
 
                 if (cacheInfo.isGetter) {
                     key = cacheInfo.getterOrSetterShorthandName;
@@ -228,7 +228,7 @@ public class MBeanInfoAssembler implements Service {
                 if (setter != null) {
                     info.setSetter(setter);
                 }
-                info.setSanitize(sanitize);
+                info.setMask(mask);
 
                 attributes.put(key, info);
             }
@@ -238,8 +238,8 @@ public class MBeanInfoAssembler implements Service {
             if (mo != null) {
                 String desc = mo.description();
                 Method operation = cacheInfo.method;
-                boolean sanitize = mo.sanitize();
-                operations.add(new ManagedOperationInfo(desc, operation, sanitize));
+                boolean mask = mo.mask();
+                operations.add(new ManagedOperationInfo(desc, operation, mask));
             }
         }
     }
@@ -253,13 +253,13 @@ public class MBeanInfoAssembler implements Service {
             // add missing attribute descriptors, this is needed to have attributes accessible
             Descriptor desc = mbeanAttribute.getDescriptor();
 
-            desc.setField("sanitize", info.isSanitize() ? "true" : "false");
+            desc.setField("mask", info.isMask() ? "true" : "false");
             if (info.getGetter() != null) {
                 desc.setField("getMethod", info.getGetter().getName());
                 // attribute must also be added as mbean operation
                 ModelMBeanOperationInfo mbeanOperation = new ModelMBeanOperationInfo(info.getKey(), info.getGetter());
                 Descriptor opDesc = mbeanOperation.getDescriptor();
-                opDesc.setField("sanitize", info.isSanitize() ? "true" : "false");
+                opDesc.setField("mask", info.isMask() ? "true" : "false");
                 mbeanOperation.setDescriptor(opDesc);
                 mBeanOperations.add(mbeanOperation);
             }
@@ -280,7 +280,7 @@ public class MBeanInfoAssembler implements Service {
         for (ManagedOperationInfo info : operations) {
             ModelMBeanOperationInfo mbean = new ModelMBeanOperationInfo(info.getDescription(), info.getOperation());
             Descriptor opDesc = mbean.getDescriptor();
-            opDesc.setField("sanitize", info.isSanitize() ? "true" : "false");
+            opDesc.setField("mask", info.isMask() ? "true" : "false");
             mbean.setDescriptor(opDesc);
             mBeanOperations.add(mbean);
             LOG.trace("Assembled operation: {}", mbean);
@@ -312,7 +312,7 @@ public class MBeanInfoAssembler implements Service {
         private String description;
         private Method getter;
         private Method setter;
-        private boolean sanitize;
+        private boolean mask;
 
         private ManagedAttributeInfo(String key, String description) {
             this.key = key;
@@ -343,12 +343,12 @@ public class MBeanInfoAssembler implements Service {
             this.setter = setter;
         }
 
-        public boolean isSanitize() {
-            return sanitize;
+        public boolean isMask() {
+            return mask;
         }
 
-        public void setSanitize(boolean sanitize) {
-            this.sanitize = sanitize;
+        public void setMask(boolean mask) {
+            this.mask = mask;
         }
 
         @Override
@@ -360,12 +360,12 @@ public class MBeanInfoAssembler implements Service {
     private static final class ManagedOperationInfo {
         private final String description;
         private final Method operation;
-        private final boolean sanitize;
+        private final boolean mask;
 
-        private ManagedOperationInfo(String description, Method operation, boolean sanitize) {
+        private ManagedOperationInfo(String description, Method operation, boolean mask) {
             this.description = description;
             this.operation = operation;
-            this.sanitize = sanitize;
+            this.mask = mask;
         }
 
         public String getDescription() {
@@ -376,8 +376,8 @@ public class MBeanInfoAssembler implements Service {
             return operation;
         }
 
-        public boolean isSanitize() {
-            return sanitize;
+        public boolean isMask() {
+            return mask;
         }
 
         @Override

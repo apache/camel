@@ -20,7 +20,7 @@ import org.apache.camel.api.management.ManagedAttribute;
 
 public interface ManagedSendProcessorMBean extends ManagedProcessorMBean {
 
-    @ManagedAttribute(description = "Destination as Endpoint URI", sanitize = true)
+    @ManagedAttribute(description = "Destination as Endpoint URI", mask = true)
     String getDestination();
 
     /**

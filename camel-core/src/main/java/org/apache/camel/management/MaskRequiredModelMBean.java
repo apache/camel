@@ -32,43 +32,43 @@ import org.slf4j.LoggerFactory;
 /**
  * A {@link RequiredModelMBean} which allows us to intercept invoking operations on the MBean.
  * <p/>
- * For example if sanitize has been enabled on JMX, then we use this implementation
+ * For example if mask has been enabled on JMX, then we use this implementation
  * to hide sensitive information from the returned JMX attributes / operations.
  */
-public class SanitizeRequiredModelMBean extends RequiredModelMBean {
+public class MaskRequiredModelMBean extends RequiredModelMBean {
 
-    private static final Logger LOG = LoggerFactory.getLogger(SanitizeRequiredModelMBean.class);
-    private boolean sanitize;
+    private static final Logger LOG = LoggerFactory.getLogger(MaskRequiredModelMBean.class);
+    private boolean mask;
 
-    public SanitizeRequiredModelMBean() throws MBeanException, RuntimeOperationsException {
+    public MaskRequiredModelMBean() throws MBeanException, RuntimeOperationsException {
         // must have default no-arg constructor
     }
 
-    public SanitizeRequiredModelMBean(ModelMBeanInfo mbi, boolean sanitize) throws MBeanException, RuntimeOperationsException {
+    public MaskRequiredModelMBean(ModelMBeanInfo mbi, boolean mask) throws MBeanException, RuntimeOperationsException {
         super(mbi);
-        this.sanitize = sanitize;
+        this.mask = mask;
     }
 
-    public boolean isSanitize() {
-        return sanitize;
+    public boolean isMask() {
+        return mask;
     }
 
     @Override
     public Object invoke(String opName, Object[] opArgs, String[] sig) throws MBeanException, ReflectionException {
         Object answer = super.invoke(opName, opArgs, sig);
-        // sanitize the answer if enabled and it was a String type (we cannot sanitize other types)
-        if (sanitize && answer instanceof String && ObjectHelper.isNotEmpty(answer) && isSanitizedOperation(opName)) {
-            answer = sanitize(opName, (String) answer);
+        // mask the answer if enabled and it was a String type (we cannot mask other types)
+        if (mask && answer instanceof String && ObjectHelper.isNotEmpty(answer) && isMaskOperation(opName)) {
+            answer = mask(opName, (String) answer);
         }
         return answer;
     }
 
-    protected boolean isSanitizedOperation(String opName) {
+    protected boolean isMaskOperation(String opName) {
         for (MBeanOperationInfo info : getMBeanInfo().getOperations()) {
             if (info.getName().equals(opName)) {
                 Descriptor desc = info.getDescriptor();
                 if (desc != null) {
-                    Object val = desc.getFieldValue("sanitize");
+                    Object val = desc.getFieldValue("mask");
                     return val != null && "true".equals(val);
                 }
             }
@@ -77,16 +77,17 @@ public class SanitizeRequiredModelMBean extends RequiredModelMBean {
     }
 
     /**
-     * Sanitizes the returned value from invoking the operation
+     * Masks the returned value from invoking the operation
      *
      * @param opName  the operation name invoked
      * @param value   the current value
-     * @return the sanitized value
+     * @return the masked value
      */
-    protected String sanitize(String opName, String value) {
+    protected String mask(String opName, String value) {
+        // use sanitize uri which will mask sensitive information
         String answer = URISupport.sanitizeUri(value);
         if (LOG.isTraceEnabled()) {
-            LOG.trace("Sanitizing JMX operation: {}.{} value: {} -> {}",
+            LOG.trace("Masking JMX operation: {}.{} value: {} -> {}",
                     new Object[]{getMBeanInfo().getClassName(), opName, value, answer});
         }
         return answer;

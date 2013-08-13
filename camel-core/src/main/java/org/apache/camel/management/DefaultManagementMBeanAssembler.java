@@ -77,9 +77,9 @@ public class DefaultManagementMBeanAssembler implements ManagementMBeanAssembler
         }
 
         RequiredModelMBean mbean;
-        boolean sanitize = camelContext.getManagementStrategy().getManagementAgent().getSanitize() != null && camelContext.getManagementStrategy().getManagementAgent().getSanitize();
+        boolean sanitize = camelContext.getManagementStrategy().getManagementAgent().getMask() != null && camelContext.getManagementStrategy().getManagementAgent().getMask();
         if (sanitize) {
-            mbean = new SanitizeRequiredModelMBean(mbi, sanitize);
+            mbean = new MaskRequiredModelMBean(mbi, sanitize);
         } else {
             mbean = (RequiredModelMBean) mBeanServer.instantiate(RequiredModelMBean.class.getName());
             mbean.setModelMBeanInfo(mbi);
