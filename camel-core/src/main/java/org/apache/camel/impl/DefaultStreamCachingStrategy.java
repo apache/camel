@@ -375,8 +375,8 @@ public class DefaultStreamCachingStrategy extends org.apache.camel.support.Servi
             if (spoolUsedHeapMemoryThreshold > 0) {
                 // must use double to calculate with decimals for the percentage
                 double used = heapUsage.getHeapMemoryUsage().getUsed();
-                double upper = limit == SpoolUsedHeapMemoryLimit.Committed ?
-                    heapUsage.getHeapMemoryUsage().getCommitted() : heapUsage.getHeapMemoryUsage().getMax();
+                double upper = limit == SpoolUsedHeapMemoryLimit.Committed
+                    ? heapUsage.getHeapMemoryUsage().getCommitted() : heapUsage.getHeapMemoryUsage().getMax();
                 double calc = (used / upper) * 100;
                 int percentage = (int) calc;
 
