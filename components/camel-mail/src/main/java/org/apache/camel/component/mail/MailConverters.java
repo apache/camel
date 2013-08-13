@@ -142,7 +142,7 @@ public final class MailConverters {
             }
         }
         if (simple.getToSentDate() != null) {
-            String s = simple.getFromSentDate();
+            String s = simple.getToSentDate();
             if (s.startsWith("now")) {
                 long offset = extractOffset(s, typeConverter);
                 builder = builder.and(new NowSearchTerm(SearchTermBuilder.Comparison.LE.asNum(), true, offset));
@@ -153,7 +153,7 @@ public final class MailConverters {
             }
         }
         if (simple.getFromReceivedDate() != null) {
-            String s = simple.getFromSentDate();
+            String s = simple.getFromReceivedDate();
             if (s.startsWith("now")) {
                 long offset = extractOffset(s, typeConverter);
                 builder = builder.and(new NowSearchTerm(SearchTermBuilder.Comparison.GE.asNum(), false, offset));
@@ -164,7 +164,7 @@ public final class MailConverters {
             }
         }
         if (simple.getToReceivedDate() != null) {
-            String s = simple.getFromSentDate();
+            String s = simple.getToReceivedDate();
             if (s.startsWith("now")) {
                 long offset = extractOffset(s, typeConverter);
                 builder = builder.and(new NowSearchTerm(SearchTermBuilder.Comparison.LE.asNum(), false, offset));
