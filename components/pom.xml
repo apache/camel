@@ -176,6 +176,7 @@
     <module>camel-twitter</module>
     <module>camel-urlrewrite</module>
     <module>camel-velocity</module>
+    <module>camel-vertx</module>
     <module>camel-weather</module>
     <module>camel-websocket</module>
     <module>camel-xmlbeans</module>
