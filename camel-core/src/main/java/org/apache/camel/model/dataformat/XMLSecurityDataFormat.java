@@ -55,6 +55,8 @@ public class XMLSecurityDataFormat extends DataFormatDefinition implements Names
     private String keyOrTrustStoreParametersId;
     @XmlAttribute
     private String keyPassword;
+    @XmlAttribute
+    private String digestAlgorithm;
     
     @XmlTransient
     private KeyStoreParameters keyOrTrustStoreParameters;
@@ -211,7 +213,19 @@ public class XMLSecurityDataFormat extends DataFormatDefinition implements Names
         this.setKeyOrTrustStoreParameters(keyOrTrustStoreParameters);
         this.setKeyPassword(keyPassword);
     }
-        
+    
+    public XMLSecurityDataFormat(String secureTag, Map<String, String> namespaces, boolean secureTagContents, String recipientKeyAlias,
+             String xmlCipherAlgorithm, String keyCipherAlgorithm, KeyStoreParameters keyOrTrustStoreParameters, String keyPassword,
+             String digestAlgorithm) {
+        this(secureTag, secureTagContents);
+        this.setRecipientKeyAlias(recipientKeyAlias);
+        this.setXmlCipherAlgorithm(xmlCipherAlgorithm);
+        this.setKeyCipherAlgorithm(keyCipherAlgorithm);
+        this.setNamespaces(namespaces);
+        this.setKeyOrTrustStoreParameters(keyOrTrustStoreParameters);
+        this.setKeyPassword(keyPassword);
+        this.setDigestAlgorithm(digestAlgorithm);
+    }
 
     @Override
     protected void configureDataFormat(DataFormat dataFormat) {
@@ -250,6 +264,9 @@ public class XMLSecurityDataFormat extends DataFormatDefinition implements Names
         }
         if (keyPassword != null) {
             setProperty(dataFormat, "keyPassword", this.getKeyPassword());
+        }
+        if (digestAlgorithm != null) {
+            setProperty(dataFormat, "digestAlgorithm", this.getDigestAlgorithm());
         }
     }
 
@@ -321,6 +338,14 @@ public class XMLSecurityDataFormat extends DataFormatDefinition implements Names
         return this.keyPassword;
     }
     
+    public String getDigestAlgorithm() {
+        return digestAlgorithm;
+    }
+
+    public void setDigestAlgorithm(String digestAlgorithm) {
+        this.digestAlgorithm = digestAlgorithm;
+    }
+
     public void setKeyPassword(String keyPassword) {
         this.keyPassword = keyPassword;
     }

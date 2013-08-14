@@ -101,6 +101,19 @@ public class XMLSecurityDataFormat implements DataFormat, CamelContextAware {
 
     private String xmlCipherAlgorithm;
     private String keyCipherAlgorithm;
+    
+    /**
+     * Digest Algorithm to be used with RSA-OAEP. The default is SHA-1 (which is not
+     * written out unless it is explicitly configured).
+     */
+    private String digestAlgorithm;
+    
+    /**
+     * MGF Algorithm to be used with RSA-OAEP. The default is MGF-SHA-1 (which is not
+     * written out unless it is explicitly configured).
+     */
+    private String mgfAlgorithm;
+
     private byte[] passPhrase;
 
     private String secureTag;
@@ -301,8 +314,8 @@ public class XMLSecurityDataFormat implements DataFormat, CamelContextAware {
         this.setKeyCipherAlgorithm(keyCipherAlgorithm);
         this.setKeyOrTrustStoreParameters(keyOrTrustStoreParameters);
         this.setKeyPassword(keyPassword);
-    }    
-
+    }
+    
     public XMLSecurityDataFormat(String secureTag, Map<String, String> namespaces, boolean secureTagContents, String recipientKeyAlias, 
             String xmlCipherAlgorithm, String keyCipherAlgorithm, KeyStoreParameters keyOrTrustStoreParameters) {
         this();
@@ -326,6 +339,21 @@ public class XMLSecurityDataFormat implements DataFormat, CamelContextAware {
         this.setNamespaces(namespaces);
         this.setKeyOrTrustStoreParameters(keyOrTrustStoreParameters);
         this.setKeyPassword(keyPassword);
+    }
+    
+    public XMLSecurityDataFormat(String secureTag, Map<String, String> namespaces, boolean secureTagContents, String recipientKeyAlias, 
+            String xmlCipherAlgorithm, String keyCipherAlgorithm, KeyStoreParameters keyOrTrustStoreParameters, String keyPassword,
+            String digestAlgorithm) {
+        this();
+        this.setSecureTag(secureTag);
+        this.setSecureTagContents(secureTagContents);
+        this.setXmlCipherAlgorithm(xmlCipherAlgorithm);
+        this.setRecipientKeyAlias(recipientKeyAlias);
+        this.setKeyCipherAlgorithm(keyCipherAlgorithm);
+        this.setNamespaces(namespaces);
+        this.setKeyOrTrustStoreParameters(keyOrTrustStoreParameters);
+        this.setKeyPassword(keyPassword);
+        this.setDigestAlgorithm(digestAlgorithm);
     }
     
     @Override
@@ -389,7 +417,8 @@ public class XMLSecurityDataFormat implements DataFormat, CamelContextAware {
         Document document = exchange.getContext().getTypeConverter().convertTo(Document.class, exchange, is);
         
         if (null != keyCipherAlgorithm 
-            && (keyCipherAlgorithm.equals(XMLCipher.RSA_v1dot5) || keyCipherAlgorithm.equals(XMLCipher.RSA_OAEP))) {
+            && (keyCipherAlgorithm.equals(XMLCipher.RSA_v1dot5) || keyCipherAlgorithm.equals(XMLCipher.RSA_OAEP)
+                || keyCipherAlgorithm.equals(XMLCipher.RSA_OAEP_11))) {
             encryptAsymmetric(exchange, document, stream);
         } else if (null != recipientKeyAlias) {
             encryptAsymmetric(exchange, document, stream);
@@ -433,10 +462,10 @@ public class XMLSecurityDataFormat implements DataFormat, CamelContextAware {
         Key dataEncryptionKey = generateDataEncryptionKey();
         
         XMLCipher keyCipher;
-        if (null != this.getKeyCyperAlgorithm()) {
-            keyCipher = XMLCipher.getInstance(this.getKeyCyperAlgorithm());
+        if (null != this.getKeyCipherAlgorithm()) {
+            keyCipher = XMLCipher.getInstance(this.getKeyCipherAlgorithm(), null, digestAlgorithm);
         } else {
-            keyCipher = XMLCipher.getInstance(XMLCipher.RSA_v1dot5);
+            keyCipher = XMLCipher.getInstance(XMLCipher.RSA_v1dot5, null, digestAlgorithm);
         }
         keyCipher.init(XMLCipher.WRAP_MODE, keyEncryptionKey);
         encrypt(exchange, document, stream, dataEncryptionKey, keyCipher);
@@ -535,7 +564,8 @@ public class XMLSecurityDataFormat implements DataFormat, CamelContextAware {
         Document encodedDocument = exchange.getContext().getTypeConverter().convertTo(Document.class, exchange, stream);        
         
         if (null != keyCipherAlgorithm 
-            && (keyCipherAlgorithm.equals(XMLCipher.RSA_v1dot5) || keyCipherAlgorithm.equals(XMLCipher.RSA_OAEP))) {
+            && (keyCipherAlgorithm.equals(XMLCipher.RSA_v1dot5) || keyCipherAlgorithm.equals(XMLCipher.RSA_OAEP)
+                || keyCipherAlgorithm.equals(XMLCipher.RSA_OAEP_11))) {
             return decodeWithAsymmetricKey(exchange, encodedDocument);
         } else {
             return decodeWithSymmetricKey(exchange, encodedDocument);
@@ -647,11 +677,14 @@ public class XMLSecurityDataFormat implements DataFormat, CamelContextAware {
         } else {
             keyGenerator = KeyGenerator.getInstance("AES");
         }
-        if (xmlCipherAlgorithm.equalsIgnoreCase(XMLCipher.AES_128)) {
+        if (xmlCipherAlgorithm.equalsIgnoreCase(XMLCipher.AES_128)
+            || xmlCipherAlgorithm.equalsIgnoreCase(XMLCipher.AES_128_GCM)) {
             keyGenerator.init(128);
-        } else if (xmlCipherAlgorithm.equalsIgnoreCase(XMLCipher.AES_192)) {
+        } else if (xmlCipherAlgorithm.equalsIgnoreCase(XMLCipher.AES_192)
+            || xmlCipherAlgorithm.equalsIgnoreCase(XMLCipher.AES_192_GCM)) {
             keyGenerator.init(192);
-        } else if (xmlCipherAlgorithm.equalsIgnoreCase(XMLCipher.AES_256)) {
+        } else if (xmlCipherAlgorithm.equalsIgnoreCase(XMLCipher.AES_256)
+            || xmlCipherAlgorithm.equalsIgnoreCase(XMLCipher.AES_256_GCM)) {
             keyGenerator.init(256);
         }
         return keyGenerator.generateKey();
@@ -660,7 +693,7 @@ public class XMLSecurityDataFormat implements DataFormat, CamelContextAware {
     private void embedKeyInfoInEncryptedData(Document document, XMLCipher keyCipher, XMLCipher xmlCipher, Key dataEncryptionkey) 
         throws XMLEncryptionException {
 
-        EncryptedKey encryptedKey = keyCipher.encryptKey(document, dataEncryptionkey);
+        EncryptedKey encryptedKey = keyCipher.encryptKey(document, dataEncryptionkey, mgfAlgorithm, null);
         KeyInfo keyInfo = new KeyInfo(document);
         keyInfo.add(encryptedKey);    
         EncryptedData encryptedDataElement = xmlCipher.getEncryptedData();
@@ -671,11 +704,14 @@ public class XMLSecurityDataFormat implements DataFormat, CamelContextAware {
         String algorithmKeyWrap = null;
         if (xmlCipherAlgorithm.equalsIgnoreCase(XMLCipher.TRIPLEDES)) {
             algorithmKeyWrap = XMLCipher.TRIPLEDES_KeyWrap;
-        } else if (xmlCipherAlgorithm.equalsIgnoreCase(XMLCipher.AES_128)) {
+        } else if (xmlCipherAlgorithm.equalsIgnoreCase(XMLCipher.AES_128)
+            || xmlCipherAlgorithm.equalsIgnoreCase(XMLCipher.AES_128_GCM)) {
             algorithmKeyWrap = XMLCipher.AES_128_KeyWrap;
-        } else if (xmlCipherAlgorithm.equalsIgnoreCase(XMLCipher.AES_192)) {
+        } else if (xmlCipherAlgorithm.equalsIgnoreCase(XMLCipher.AES_192)
+            || xmlCipherAlgorithm.equalsIgnoreCase(XMLCipher.AES_192_GCM)) {
             algorithmKeyWrap = XMLCipher.AES_192_KeyWrap;
-        } else if (xmlCipherAlgorithm.equalsIgnoreCase(XMLCipher.AES_256)) {
+        } else if (xmlCipherAlgorithm.equalsIgnoreCase(XMLCipher.AES_256)
+            || xmlCipherAlgorithm.equalsIgnoreCase(XMLCipher.AES_256_GCM)) {
             algorithmKeyWrap = XMLCipher.AES_256_KeyWrap;
         }
 
@@ -704,7 +740,12 @@ public class XMLSecurityDataFormat implements DataFormat, CamelContextAware {
         this.xmlCipherAlgorithm = xmlCipherAlgorithm;
     }
     
+    @Deprecated
     public String getKeyCyperAlgorithm() {
+        return keyCipherAlgorithm;
+    }
+    
+    public String getKeyCipherAlgorithm() {
         return keyCipherAlgorithm;
     }
     
@@ -865,5 +906,21 @@ public class XMLSecurityDataFormat implements DataFormat, CamelContextAware {
     
     public void setKeyPassword(String keyPassword) {
         this.keyPassword = keyPassword;
+    }
+
+    public String getDigestAlgorithm() {
+        return digestAlgorithm;
+    }
+
+    public void setDigestAlgorithm(String digestAlgorithm) {
+        this.digestAlgorithm = digestAlgorithm;
+    }
+
+    public String getMgfAlgorithm() {
+        return mgfAlgorithm;
+    }
+
+    public void setMgfAlgorithm(String mgfAlgorithm) {
+        this.mgfAlgorithm = mgfAlgorithm;
     }
 }
