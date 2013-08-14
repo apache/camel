@@ -469,7 +469,10 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
             LOG.trace("Before poll {}", getEndpoint());
         }
         scheduler.scheduleTask(this);
-        return timeout;
+
+        // ensure at least timeout is as long as one poll delay normally is
+        // to give the poll a chance to run once
+        return Math.max(timeout, getDelay());
     }
 
     @Override

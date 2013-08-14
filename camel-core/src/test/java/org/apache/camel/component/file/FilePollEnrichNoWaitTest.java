@@ -17,11 +17,9 @@
 package org.apache.camel.component.file;
 
 import java.io.File;
-import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
@@ -58,19 +56,14 @@ public class FilePollEnrichNoWaitTest extends ContextTestSupport {
             public void configure() throws Exception {
                 from("timer:foo?period=1000").routeId("foo")
                     .log("Trigger timer foo")
-                    .pollEnrich("file:target/pollenrich?move=done")
+                    // use 0 as timeout for no wait
+                    .pollEnrich("file:target/pollenrich?move=done", 0)
                     .convertBodyTo(String.class)
                     .filter(body().isNull())
                         .stop()
                     .end()
                     .log("Polled filed ${file:name}")
-                    .to("mock:result")
-                    .process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
-                            // force stop route after use to prevent firing timer again
-                            exchange.getContext().stopRoute("foo", 100, TimeUnit.MILLISECONDS);
-                        }
-                    });
+                    .to("mock:result");
             }
         };
     }
