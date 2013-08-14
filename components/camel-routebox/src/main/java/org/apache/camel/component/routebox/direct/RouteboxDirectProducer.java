@@ -30,7 +30,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class RouteboxDirectProducer extends RouteboxServiceSupport implements Producer, AsyncProcessor {
-    private static final transient Logger LOG = LoggerFactory.getLogger(RouteboxDirectProducer.class);
+    private static final Logger LOG = LoggerFactory.getLogger(RouteboxDirectProducer.class);
     protected ProducerTemplate producer;
 
     public RouteboxDirectProducer(RouteboxDirectEndpoint endpoint) {

@@ -32,7 +32,7 @@ import org.slf4j.LoggerFactory;
  */
 public class MinaUdpWithInOutUsingPlainSocketTest extends BaseMinaTest {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(MinaUdpWithInOutUsingPlainSocketTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(MinaUdpWithInOutUsingPlainSocketTest.class);
 
     @Test
     public void testSendAndReceiveOnce() throws Exception {

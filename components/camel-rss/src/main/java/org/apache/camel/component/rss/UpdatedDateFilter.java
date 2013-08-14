@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory;
  */
 public class UpdatedDateFilter implements EntryFilter {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(UpdatedDateFilter.class);
+    private static final Logger LOG = LoggerFactory.getLogger(UpdatedDateFilter.class);
     private Date lastUpdate;
 
     public UpdatedDateFilter(Date lastUpdate) {

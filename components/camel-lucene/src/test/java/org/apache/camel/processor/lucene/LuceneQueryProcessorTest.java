@@ -32,7 +32,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class LuceneQueryProcessorTest extends CamelTestSupport {
-    private static final transient Logger LOG = LoggerFactory.getLogger(LuceneQueryProcessorTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(LuceneQueryProcessorTest.class);
 
     @Override
     public boolean isUseRouteBuilder() {

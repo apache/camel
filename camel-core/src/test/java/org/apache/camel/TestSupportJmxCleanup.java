@@ -26,7 +26,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public final class TestSupportJmxCleanup {
-    private static final transient Logger LOG = LoggerFactory.getLogger(TestSupportJmxCleanup.class);
+    private static final Logger LOG = LoggerFactory.getLogger(TestSupportJmxCleanup.class);
 
     private TestSupportJmxCleanup() {
         // no instances

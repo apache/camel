@@ -40,7 +40,7 @@ import org.slf4j.LoggerFactory;
  * @version 
  */
 public class TryProcessor extends ServiceSupport implements AsyncProcessor, Navigate<Processor>, Traceable {
-    private static final transient Logger LOG = LoggerFactory.getLogger(TryProcessor.class);
+    private static final Logger LOG = LoggerFactory.getLogger(TryProcessor.class);
 
     protected final Processor tryProcessor;
     protected final List<Processor> catchClauses;

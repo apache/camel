@@ -41,7 +41,7 @@ import static org.apache.camel.processor.PipelineHelper.continueProcessing;
  * @version 
  */
 public class Pipeline extends MulticastProcessor implements AsyncProcessor, Traceable {
-    private static final transient Logger LOG = LoggerFactory.getLogger(Pipeline.class);
+    private static final Logger LOG = LoggerFactory.getLogger(Pipeline.class);
 
     public Pipeline(CamelContext camelContext, Collection<Processor> processors) {
         super(camelContext, processors);

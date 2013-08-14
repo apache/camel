@@ -58,7 +58,7 @@ public class TidyMarkupDataFormat implements DataFormat {
     /*
      * Our Logger
      */
-    private static final transient Logger LOG = LoggerFactory.getLogger(TidyMarkupDataFormat.class);
+    private static final Logger LOG = LoggerFactory.getLogger(TidyMarkupDataFormat.class);
 
     private static final String NO = "no";
 

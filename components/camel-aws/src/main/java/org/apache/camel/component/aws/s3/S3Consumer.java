@@ -46,7 +46,7 @@ import org.slf4j.LoggerFactory;
  */
 public class S3Consumer extends ScheduledBatchPollingConsumer {
     
-    private static final transient Logger LOG = LoggerFactory.getLogger(S3Consumer.class);
+    private static final Logger LOG = LoggerFactory.getLogger(S3Consumer.class);
 
     public S3Consumer(S3Endpoint endpoint, Processor processor) throws NoFactoryAvailableException {
         super(endpoint, processor);

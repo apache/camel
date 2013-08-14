@@ -30,7 +30,7 @@ import org.slf4j.LoggerFactory;
  * @version 
  */
 public class BeanMethodWithMultipleParametersTest extends ContextTestSupport {
-    private static final transient Logger LOG = LoggerFactory.getLogger(BeanRouteTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(BeanRouteTest.class);
     protected MyBean myBean = new MyBean();
 
     public void testDummy() throws Exception {

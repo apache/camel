@@ -49,7 +49,7 @@ import org.slf4j.LoggerFactory;
  */
 public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactory {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(BindyCsvFactory.class);
+    private static final Logger LOG = LoggerFactory.getLogger(BindyCsvFactory.class);
 
     boolean isOneToMany;
 

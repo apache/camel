@@ -35,7 +35,7 @@ import twitter4j.TwitterException;
  */
 public class SearchConsumer extends Twitter4JConsumer {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(SearchConsumer.class);
+    private static final Logger LOG = LoggerFactory.getLogger(SearchConsumer.class);
 
     public SearchConsumer(TwitterEndpoint te) {
         super(te);

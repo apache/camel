@@ -50,7 +50,7 @@ import org.slf4j.LoggerFactory;
  */
 public class ScpOperations implements RemoteFileOperations<ScpFile> {
     private static final String DEFAULT_KNOWN_HOSTS = "META-INF/.ssh/known_hosts";
-    private static final transient Logger LOG = LoggerFactory.getLogger(ScpOperations.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ScpOperations.class);
 
     private ScpEndpoint endpoint;
     private Session session;

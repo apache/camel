@@ -43,7 +43,7 @@ import org.slf4j.LoggerFactory;
  * @version 
  */
 public abstract class ScheduledPollConsumer extends DefaultConsumer implements Runnable, SuspendableService, PollingConsumerPollingStrategy {
-    private static final transient Logger LOG = LoggerFactory.getLogger(ScheduledPollConsumer.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ScheduledPollConsumer.class);
 
     private ScheduledPollConsumerScheduler scheduler;
     private ScheduledExecutorService scheduledExecutorService;

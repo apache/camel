@@ -37,7 +37,7 @@ import org.slf4j.LoggerFactory;
 
 public class BindyComplexKeyValuePairStandaloneTest {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(BindyComplexKeyValuePairStandaloneTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(BindyComplexKeyValuePairStandaloneTest.class);
 
     protected Map<String, Object> model = new HashMap<String, Object>();
     protected Set<Class<?>> models = new HashSet<Class<?>>();

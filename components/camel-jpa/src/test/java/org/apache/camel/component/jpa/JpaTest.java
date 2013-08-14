@@ -46,7 +46,7 @@ import static org.apache.camel.util.ServiceHelper.stopServices;
  * @version 
  */
 public class JpaTest extends Assert {
-    private static final transient Logger LOG = LoggerFactory.getLogger(JpaTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(JpaTest.class);
     protected CamelContext camelContext = new DefaultCamelContext();
     protected ProducerTemplate template;
     protected JpaEndpoint endpoint;

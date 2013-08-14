@@ -32,7 +32,7 @@ import org.slf4j.LoggerFactory;
 public final class FtpServerBean {
 
     public static final String FTP_ROOT_DIR = "./res/home/";
-    private static final transient Logger LOG = LoggerFactory.getLogger(FtpServerBean.class);
+    private static final Logger LOG = LoggerFactory.getLogger(FtpServerBean.class);
 
     private static FtpServer ftpServer;
     private static int port;

@@ -38,7 +38,7 @@ import static org.fusesource.leveldbjni.JniDBFactory.factory;
  */
 public class LevelDBFile implements Service {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(LevelDBFile.class);
+    private static final Logger LOG = LoggerFactory.getLogger(LevelDBFile.class);
 
     private DB db;
     private File file;

@@ -81,7 +81,7 @@ import static org.apache.camel.util.ObjectHelper.notNull;
  */
 public class MulticastProcessor extends ServiceSupport implements AsyncProcessor, Navigate<Processor>, Traceable {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(MulticastProcessor.class);
+    private static final Logger LOG = LoggerFactory.getLogger(MulticastProcessor.class);
 
     /**
      * Class that represent each step in the multicast route to do

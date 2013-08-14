@@ -43,7 +43,7 @@ import org.slf4j.LoggerFactory;
     name = "CAMEL_ACTIVITYSTATE"
 )
 public class ActivityState extends TemporalEntity {
-    private static final transient Logger LOG = LoggerFactory.getLogger(ActivityState.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ActivityState.class);
     private ProcessInstance processInstance;
     private Integer receivedMessageCount = 0;
     private ActivityDefinition activityDefinition;

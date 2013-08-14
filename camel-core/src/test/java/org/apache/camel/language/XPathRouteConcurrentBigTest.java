@@ -26,7 +26,7 @@ import org.slf4j.LoggerFactory;
  */
 public class XPathRouteConcurrentBigTest extends ContextTestSupport {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(XPathRouteConcurrentBigTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(XPathRouteConcurrentBigTest.class);
 
     private static final String XMLTEST1 =
             "<message><messageType>AAA</messageType><sender>0123456789101112131415</sender>"

@@ -18,11 +18,11 @@ package org.apache.camel.component.avro;
 
 public final class AvroConstants {
 
-    public static final transient String AVRO_NETTY_TRANSPORT = "netty";
-    public static final transient String AVRO_HTTP_TRANSPORT = "http";
-    public static final transient String AVRO_MESSAGE_NAME_SEPARATOR = "/";
+    public static final String AVRO_NETTY_TRANSPORT = "netty";
+    public static final String AVRO_HTTP_TRANSPORT = "http";
+    public static final String AVRO_MESSAGE_NAME_SEPARATOR = "/";
 
-    public static final transient String AVRO_MESSAGE_NAME = "CamelAvroMessageName";
+    public static final String AVRO_MESSAGE_NAME = "CamelAvroMessageName";
 
     private AvroConstants() {
         // Utility class

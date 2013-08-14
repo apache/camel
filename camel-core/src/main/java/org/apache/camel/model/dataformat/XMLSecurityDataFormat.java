@@ -37,7 +37,7 @@ import org.apache.camel.util.jsse.KeyStoreParameters;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class XMLSecurityDataFormat extends DataFormatDefinition implements NamespaceAware {
 
-    private static final transient String TRIPLEDES = "http://www.w3.org/2001/04/xmlenc#tripledes-cbc";
+    private static final String TRIPLEDES = "http://www.w3.org/2001/04/xmlenc#tripledes-cbc";
 
     @XmlAttribute
     private String xmlCipherAlgorithm;

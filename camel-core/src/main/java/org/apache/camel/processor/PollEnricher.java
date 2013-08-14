@@ -45,7 +45,7 @@ import static org.apache.camel.util.ExchangeHelper.copyResultsPreservePattern;
  */
 public class PollEnricher extends ServiceSupport implements AsyncProcessor {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(PollEnricher.class);
+    private static final Logger LOG = LoggerFactory.getLogger(PollEnricher.class);
     private AggregationStrategy aggregationStrategy;
     private PollingConsumer consumer;
     private long timeout;

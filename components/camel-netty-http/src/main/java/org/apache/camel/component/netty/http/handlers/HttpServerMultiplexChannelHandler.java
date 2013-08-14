@@ -49,7 +49,7 @@ import static org.jboss.netty.handler.codec.http.HttpVersion.HTTP_1_1;
 public class HttpServerMultiplexChannelHandler extends SimpleChannelUpstreamHandler implements HttpServerConsumerChannelFactory {
 
     // use NettyHttpConsumer as logger to make it easier to read the logs as this is part of the consumer
-    private static final transient Logger LOG = LoggerFactory.getLogger(NettyHttpConsumer.class);
+    private static final Logger LOG = LoggerFactory.getLogger(NettyHttpConsumer.class);
     private final ConcurrentMap<ContextPathMatcher, HttpServerChannelHandler> consumers = new ConcurrentHashMap<ContextPathMatcher, HttpServerChannelHandler>();
     private int port;
     private String token;

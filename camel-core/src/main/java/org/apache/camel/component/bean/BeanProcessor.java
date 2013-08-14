@@ -35,7 +35,7 @@ import org.slf4j.LoggerFactory;
  * @version 
  */
 public class BeanProcessor extends ServiceSupport implements AsyncProcessor {
-    private static final transient Logger LOG = LoggerFactory.getLogger(BeanProcessor.class);
+    private static final Logger LOG = LoggerFactory.getLogger(BeanProcessor.class);
 
     private boolean multiParameterArray;
     private String method;

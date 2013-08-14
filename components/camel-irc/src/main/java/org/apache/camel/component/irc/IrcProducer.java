@@ -30,7 +30,7 @@ public class IrcProducer extends DefaultProducer {
     public static final String[] COMMANDS = new String[] {"AWAY", "INVITE", "ISON", "JOIN", "KICK", "LIST", "NAMES",
         "PRIVMSG", "MODE", "NICK", "NOTICE", "PART", "PONG", "QUIT", "TOPIC", "WHO", "WHOIS", "WHOWAS", "USERHOST"};
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(IrcProducer.class);
+    private static final Logger LOG = LoggerFactory.getLogger(IrcProducer.class);
 
     private IRCConnection connection;
     private IrcEndpoint endpoint;

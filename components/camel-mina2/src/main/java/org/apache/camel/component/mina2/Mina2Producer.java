@@ -64,7 +64,7 @@ import org.slf4j.LoggerFactory;
  */
 public class Mina2Producer extends DefaultProducer implements ServicePoolAware {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(Mina2Producer.class);
+    private static final Logger LOG = LoggerFactory.getLogger(Mina2Producer.class);
     private IoSession session;
     private CountDownLatch latch;
     private boolean lazySessionCreation;

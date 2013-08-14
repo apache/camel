@@ -38,7 +38,7 @@ import static org.junit.Assert.assertNotNull;
  */
 @ContextConfiguration
 public class HeaderAndTrailerTest extends AbstractJUnit4SpringContextTests {
-    private static final transient Logger LOG = LoggerFactory.getLogger(HeaderAndTrailerTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(HeaderAndTrailerTest.class);
 
     @EndpointInject(uri = "mock:results")
     protected MockEndpoint results;

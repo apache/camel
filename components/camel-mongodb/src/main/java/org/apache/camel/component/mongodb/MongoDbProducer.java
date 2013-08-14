@@ -43,7 +43,7 @@ import org.slf4j.LoggerFactory;
  * The MongoDb producer.
  */
 public class MongoDbProducer extends DefaultProducer {
-    private static final transient Logger LOG = LoggerFactory.getLogger(MongoDbProducer.class);
+    private static final Logger LOG = LoggerFactory.getLogger(MongoDbProducer.class);
     private MongoDbEndpoint endpoint;
 
     public MongoDbProducer(MongoDbEndpoint endpoint) {

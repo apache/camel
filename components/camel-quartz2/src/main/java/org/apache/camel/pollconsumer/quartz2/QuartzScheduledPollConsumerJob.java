@@ -24,7 +24,7 @@ import org.slf4j.LoggerFactory;
 
 public class QuartzScheduledPollConsumerJob implements Job {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(QuartzScheduledPollConsumerJob.class);
+    private static final Logger LOG = LoggerFactory.getLogger(QuartzScheduledPollConsumerJob.class);
 
     public QuartzScheduledPollConsumerJob() {
     }

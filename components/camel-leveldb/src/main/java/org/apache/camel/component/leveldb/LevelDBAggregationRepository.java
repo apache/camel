@@ -43,7 +43,7 @@ import static org.fusesource.leveldbjni.JniDBFactory.asString;
  */
 public class LevelDBAggregationRepository extends ServiceSupport implements RecoverableAggregationRepository {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(LevelDBAggregationRepository.class);
+    private static final Logger LOG = LoggerFactory.getLogger(LevelDBAggregationRepository.class);
     private LevelDBFile levelDBFile;
     private String persistentFileName;
     private String repositoryName;

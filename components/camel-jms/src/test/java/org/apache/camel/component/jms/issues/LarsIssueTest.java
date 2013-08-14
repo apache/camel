@@ -38,7 +38,7 @@ import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknow
  * @version 
  */
 public class LarsIssueTest  extends CamelTestSupport {
-    private static final transient Logger LOG = LoggerFactory.getLogger(LarsIssueTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(LarsIssueTest.class);
 
     @Test
     public void testSendSomeMessages() throws Exception {

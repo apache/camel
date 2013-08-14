@@ -23,7 +23,7 @@ import org.slf4j.LoggerFactory;
 
 public class KratiDataStoreRegistration {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(KratiDataStoreRegistration.class);
+    private static final Logger LOG = LoggerFactory.getLogger(KratiDataStoreRegistration.class);
 
     private final DataStore<Object, Object> dataStore;
     private int registrationCount;

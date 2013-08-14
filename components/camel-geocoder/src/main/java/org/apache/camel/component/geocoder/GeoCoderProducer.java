@@ -41,7 +41,7 @@ import static org.apache.camel.util.ObjectHelper.notNull;
  * The GeoCoder producer.
  */
 public class GeoCoderProducer extends DefaultProducer {
-    private static final transient Logger LOG = LoggerFactory.getLogger(GeoCoderProducer.class);
+    private static final Logger LOG = LoggerFactory.getLogger(GeoCoderProducer.class);
 
     private GeoCoderEndpoint endpoint;
     private Geocoder geocoder;

@@ -30,7 +30,7 @@ import static org.apache.camel.util.ObjectHelper.getException;
 
 public class BlueprintComponentResolver extends OsgiComponentResolver {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(BlueprintComponentResolver.class);
+    private static final Logger LOG = LoggerFactory.getLogger(BlueprintComponentResolver.class);
 
     public BlueprintComponentResolver(BundleContext bundleContext) {
         super(bundleContext);

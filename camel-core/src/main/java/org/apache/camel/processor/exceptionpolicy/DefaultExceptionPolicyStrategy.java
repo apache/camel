@@ -56,7 +56,7 @@ import org.slf4j.LoggerFactory;
  */
 public class DefaultExceptionPolicyStrategy implements ExceptionPolicyStrategy {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(DefaultExceptionPolicyStrategy.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DefaultExceptionPolicyStrategy.class);
 
     public OnExceptionDefinition getExceptionPolicy(Map<ExceptionPolicyKey, OnExceptionDefinition> exceptionPolicies,
                                                     Exchange exchange, Throwable exception) {

@@ -30,7 +30,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class EndpointCompletionTest extends ManagementTestSupport {
-    private static final transient Logger LOG = LoggerFactory.getLogger(EndpointCompletionTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(EndpointCompletionTest.class);
 
     public void testEndpointCompletion() throws Exception {
         MBeanServer mbeanServer = getMBeanServer();

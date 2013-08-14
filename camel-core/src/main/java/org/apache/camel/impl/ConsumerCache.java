@@ -37,7 +37,7 @@ import org.slf4j.LoggerFactory;
  * @version 
  */
 public class ConsumerCache extends ServiceSupport {
-    private static final transient Logger LOG = LoggerFactory.getLogger(ConsumerCache.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ConsumerCache.class);
     private final CamelContext camelContext;
     private final Map<String, PollingConsumer> consumers;
     private final Object source;

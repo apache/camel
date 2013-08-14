@@ -37,7 +37,7 @@ import org.slf4j.LoggerFactory;
 
 
 public class LuceneIndexAndQueryProducerTest extends CamelTestSupport {
-    private static final transient Logger LOG = LoggerFactory.getLogger(LuceneIndexAndQueryProducerTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(LuceneIndexAndQueryProducerTest.class);
     private String[] humorousQuotes = {
         "I think, therefore I am. I think - George Carlin",
         "I have as much authority as the Pope. I just don't have as many people who believe it. - George Carlin",

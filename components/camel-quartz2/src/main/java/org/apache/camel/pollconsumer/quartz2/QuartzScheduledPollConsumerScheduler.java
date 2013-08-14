@@ -44,7 +44,7 @@ import org.slf4j.LoggerFactory;
  */
 public class QuartzScheduledPollConsumerScheduler extends ServiceSupport implements ScheduledPollConsumerScheduler, Job {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(QuartzScheduledPollConsumerScheduler.class);
+    private static final Logger LOG = LoggerFactory.getLogger(QuartzScheduledPollConsumerScheduler.class);
     private Scheduler quartzScheduler;
     private CamelContext camelContext;
     private Consumer consumer;

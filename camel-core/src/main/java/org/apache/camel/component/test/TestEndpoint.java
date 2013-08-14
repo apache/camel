@@ -37,7 +37,7 @@ import org.slf4j.LoggerFactory;
  * @version 
  */
 public class TestEndpoint extends MockEndpoint {
-    private static final transient Logger LOG = LoggerFactory.getLogger(TestEndpoint.class);
+    private static final Logger LOG = LoggerFactory.getLogger(TestEndpoint.class);
     private final Endpoint expectedMessageEndpoint;
     @UriParam
     private long timeout = 2000L;

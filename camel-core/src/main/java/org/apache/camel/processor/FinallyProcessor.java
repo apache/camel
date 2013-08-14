@@ -31,7 +31,7 @@ import org.slf4j.LoggerFactory;
  */
 public class FinallyProcessor extends DelegateAsyncProcessor implements Traceable {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(FinallyProcessor.class);
+    private static final Logger LOG = LoggerFactory.getLogger(FinallyProcessor.class);
 
     public FinallyProcessor(Processor processor) {
         super(processor);

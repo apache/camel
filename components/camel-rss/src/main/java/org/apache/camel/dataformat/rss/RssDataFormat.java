@@ -39,7 +39,7 @@ import org.slf4j.LoggerFactory;
  * <p/>
  */
 public class RssDataFormat implements DataFormat {
-    protected static final transient Logger LOG = LoggerFactory.getLogger(RssDataFormat.class);
+    protected static final Logger LOG = LoggerFactory.getLogger(RssDataFormat.class);
     
     public void marshal(Exchange exchange, Object body, OutputStream out) throws Exception {
         SyndFeed feed = ExchangeHelper.convertToMandatoryType(exchange, SyndFeed.class, body);        

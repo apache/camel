@@ -35,7 +35,7 @@ import org.slf4j.LoggerFactory;
 @Entity
 @NamedQuery(name = "step1", query = "select x from MultiSteps x where x.step = 1")
 public class MultiSteps {
-    private static final transient Logger LOG = LoggerFactory.getLogger(MultiSteps.class);
+    private static final Logger LOG = LoggerFactory.getLogger(MultiSteps.class);
     private Long id;
     private String address;
     private int step;

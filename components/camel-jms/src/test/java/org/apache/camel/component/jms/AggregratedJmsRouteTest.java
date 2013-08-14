@@ -34,7 +34,7 @@ import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknow
 
 public class AggregratedJmsRouteTest extends CamelTestSupport {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(AggregratedJmsRouteTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(AggregratedJmsRouteTest.class);
     private String timeOutEndpointUri = "jms:queue:test.a";
     private String multicastEndpointUri = "jms:queue:multicast";
 

@@ -54,7 +54,7 @@ public class JavaSpaceConsumer extends DefaultConsumer {
     public static final int TAKE = 0;
     
     @SuppressWarnings("unused")
-    private static final transient Logger LOG = LoggerFactory.getLogger(JavaSpaceConsumer.class);
+    private static final Logger LOG = LoggerFactory.getLogger(JavaSpaceConsumer.class);
     
     private final int concurrentConsumers;
     private final boolean transactional;

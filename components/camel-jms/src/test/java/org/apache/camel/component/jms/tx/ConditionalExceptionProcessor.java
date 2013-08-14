@@ -26,7 +26,7 @@ import org.slf4j.LoggerFactory;
  */
 public class ConditionalExceptionProcessor implements Processor {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(ConditionalExceptionProcessor.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ConditionalExceptionProcessor.class);
     private int count;
     private int maxCalls;
     private String errorMsg;

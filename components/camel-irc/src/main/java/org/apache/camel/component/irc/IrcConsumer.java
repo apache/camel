@@ -27,7 +27,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class IrcConsumer extends DefaultConsumer {
-    private static final transient Logger LOG = LoggerFactory.getLogger(IrcConsumer.class);
+    private static final Logger LOG = LoggerFactory.getLogger(IrcConsumer.class);
 
     private final IrcConfiguration configuration;
     private final IrcEndpoint endpoint;

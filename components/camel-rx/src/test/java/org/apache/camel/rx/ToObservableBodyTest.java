@@ -28,7 +28,7 @@ import rx.util.functions.Func1;
 /**
  */
 public class ToObservableBodyTest extends RxTestSupport {
-    private static final transient Logger LOG = LoggerFactory.getLogger(ToObservableBodyTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ToObservableBodyTest.class);
 
     @Test
     public void testConsume() throws Exception {

@@ -26,7 +26,7 @@ import org.slf4j.LoggerFactory;
 
 public class CacheEventListener implements net.sf.ehcache.event.CacheEventListener {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(CacheEventListener.class);
+    private static final Logger LOG = LoggerFactory.getLogger(CacheEventListener.class);
     CacheConsumer cacheConsumer;
 
     public CacheEventListener() {

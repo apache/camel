@@ -22,7 +22,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class MyProcessor implements Processor {
-    private static final transient Logger LOG = LoggerFactory.getLogger(MyProcessor.class);
+    private static final Logger LOG = LoggerFactory.getLogger(MyProcessor.class);
     
     public void process(Exchange exchange) {
         LOG.debug("Called with exchange: " + exchange);

@@ -48,7 +48,7 @@ import static org.apache.camel.util.ExchangeHelper.copyResultsPreservePattern;
  */
 public class Enricher extends ServiceSupport implements AsyncProcessor {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(Enricher.class);
+    private static final Logger LOG = LoggerFactory.getLogger(Enricher.class);
     private AggregationStrategy aggregationStrategy;
     private Producer producer;
 

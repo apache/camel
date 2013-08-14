@@ -37,7 +37,7 @@ import org.slf4j.LoggerFactory;
  */
 public class ValidatorComponent extends DefaultComponent {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(ValidatorComponent.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ValidatorComponent.class);
 
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         final String resourceUri = remaining;

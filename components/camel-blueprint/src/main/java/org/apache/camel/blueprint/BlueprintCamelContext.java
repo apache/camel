@@ -47,7 +47,7 @@ import org.slf4j.LoggerFactory;
  */
 public class BlueprintCamelContext extends DefaultCamelContext implements ServiceListener, BlueprintListener {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(BlueprintCamelContext.class);
+    private static final Logger LOG = LoggerFactory.getLogger(BlueprintCamelContext.class);
     
     private BundleContext bundleContext;
     private BlueprintContainer blueprintContainer;

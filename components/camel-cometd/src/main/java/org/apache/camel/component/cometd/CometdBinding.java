@@ -43,7 +43,7 @@ public class CometdBinding {
     public static final String COMETD_SESSION_ATTR_HEADER_NAME = "CometdSessionAttr";
     
     private static final String IMPROPER_SESSTION_ATTRIBUTE_TYPE_MESSAGE = "Sesstion attribute %s has a value of %s which cannot be included as at header because it is not an int, string, or long.";
-    private static final transient Logger LOG = LoggerFactory.getLogger(CometdBinding.class);
+    private static final Logger LOG = LoggerFactory.getLogger(CometdBinding.class);
 
     private final BayeuxServerImpl bayeux;
     private boolean enableSessionHeader;

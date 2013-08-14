@@ -55,7 +55,7 @@ public class CxfProducerTest extends Assert {
     protected static final String GREET_ME_OPERATION = "greetMe";
     protected static final String TEST_MESSAGE = "Hello World!";
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(CxfProducerTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(CxfProducerTest.class);
 
     protected CamelContext camelContext;
     protected ProducerTemplate template;

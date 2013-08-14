@@ -65,7 +65,7 @@ import org.slf4j.LoggerFactory;
  */
 public class AnnotationTypeConverterLoader implements TypeConverterLoader {
     public static final String META_INF_SERVICES = "META-INF/services/org/apache/camel/TypeConverter";
-    private static final transient Logger LOG = LoggerFactory.getLogger(AnnotationTypeConverterLoader.class);
+    private static final Logger LOG = LoggerFactory.getLogger(AnnotationTypeConverterLoader.class);
     protected PackageScanClassResolver resolver;
     protected Set<Class<?>> visitedClasses = new HashSet<Class<?>>();
     protected Set<String> visitedURIs = new HashSet<String>();

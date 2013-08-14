@@ -33,7 +33,7 @@ public abstract class CommonBindyTest extends AbstractJUnit4SpringContextTests {
     public static final String URI_FILE_FIX_SIMPLE = "file://src/test/data/fix_simple?noop=true";
     public static final String URI_FILE_FIX_TAB = "file://src/test/data/fix_tab?noop=true";
 
-    protected static final transient Logger LOG = LoggerFactory.getLogger(CommonBindyTest.class);
+    protected static final Logger LOG = LoggerFactory.getLogger(CommonBindyTest.class);
 
     @Produce(uri = URI_DIRECT_START)
     public ProducerTemplate template;

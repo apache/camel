@@ -44,7 +44,7 @@ import org.slf4j.LoggerFactory;
  */
 public class HawtDBAggregationRepository extends ServiceSupport implements RecoverableAggregationRepository, OptimisticLockingAggregationRepository {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(HawtDBAggregationRepository.class);
+    private static final Logger LOG = LoggerFactory.getLogger(HawtDBAggregationRepository.class);
     private HawtDBFile hawtDBFile;
     private String persistentFileName;
     private String repositoryName;

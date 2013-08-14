@@ -57,7 +57,7 @@ import org.slf4j.LoggerFactory;
  * @version 
  */
 public class HttpComponent extends HeaderFilterStrategyComponent {
-    private static final transient Logger LOG = LoggerFactory.getLogger(HttpComponent.class);
+    private static final Logger LOG = LoggerFactory.getLogger(HttpComponent.class);
 
     protected HttpClientConfigurer httpClientConfigurer;
     protected ClientConnectionManager clientConnectionManager;

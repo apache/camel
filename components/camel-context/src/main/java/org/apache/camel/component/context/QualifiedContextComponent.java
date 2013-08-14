@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory;
  * Typically there's no need to use this level of verbosity, you can just use <tt>camelContextId:someEndpoint</tt>
  */
 public class QualifiedContextComponent extends DefaultComponent {
-    private static final transient Logger LOG = LoggerFactory.getLogger(QualifiedContextComponent.class);
+    private static final Logger LOG = LoggerFactory.getLogger(QualifiedContextComponent.class);
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {

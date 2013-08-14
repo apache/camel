@@ -47,7 +47,7 @@ import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
  * @version 
  */
 public class EndpointMessageListener implements MessageListener {
-    private static final transient Logger LOG = LoggerFactory.getLogger(EndpointMessageListener.class);
+    private static final Logger LOG = LoggerFactory.getLogger(EndpointMessageListener.class);
     private final JmsEndpoint endpoint;
     private final AsyncProcessor processor;
     private JmsBinding binding;

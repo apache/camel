@@ -31,7 +31,7 @@ import org.slf4j.LoggerFactory;
  * @version 
  */
 public class PredicateAsBeanTest extends ContextTestSupport {
-    private static final transient Logger LOG = LoggerFactory.getLogger(BeanRouteTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(BeanRouteTest.class);
     protected MyPredicate myPredicate = new MyPredicate();
 
     public void testSendMessage() throws Exception {

@@ -32,7 +32,7 @@ import org.slf4j.LoggerFactory;
  */
 public class DefaultJavaMailSender implements JavaMailSender {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(DefaultJavaMailSender.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DefaultJavaMailSender.class);
 
     private Properties javaMailProperties;
     private String host;

@@ -49,7 +49,7 @@ import static org.quartz.SimpleScheduleBuilder.simpleSchedule;
  * call back into doConsumerStart()/Stop() to pause/resume the scheduler trigger.
  */
 public class QuartzEndpoint extends DefaultEndpoint {
-    private static final transient Logger LOG = LoggerFactory.getLogger(QuartzEndpoint.class);
+    private static final Logger LOG = LoggerFactory.getLogger(QuartzEndpoint.class);
     private TriggerKey triggerKey;
     private String cron;
     private LoadBalancer consumerLoadBalancer;

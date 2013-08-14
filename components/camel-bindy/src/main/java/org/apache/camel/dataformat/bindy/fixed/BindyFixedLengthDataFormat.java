@@ -52,7 +52,7 @@ public class BindyFixedLengthDataFormat extends BindyAbstractDataFormat {
     public static final String CAMEL_BINDY_FIXED_LENGTH_HEADER = "CamelBindyFixedLengthHeader";
     public static final String CAMEL_BINDY_FIXED_LENGTH_FOOTER = "CamelBindyFixedLengthFooter";
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(BindyFixedLengthDataFormat.class);
+    private static final Logger LOG = LoggerFactory.getLogger(BindyFixedLengthDataFormat.class);
     
     private BindyFixedLengthFactory headerFactory;
     private BindyFixedLengthFactory footerFactory;

@@ -53,7 +53,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class SipConfiguration {    
-    private static final transient Logger LOG = LoggerFactory.getLogger(SipConfiguration.class);
+    private static final Logger LOG = LoggerFactory.getLogger(SipConfiguration.class);
     private static final String IMPLEMENTATION = "gov.nist";
     private URI uri;
     private Map<String, Object> parameters;

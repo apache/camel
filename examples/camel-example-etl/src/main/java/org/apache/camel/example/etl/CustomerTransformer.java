@@ -34,7 +34,7 @@ import org.springframework.orm.jpa.JpaTemplate;
 @Converter
 public class CustomerTransformer {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(CustomerTransformer.class);
+    private static final Logger LOG = LoggerFactory.getLogger(CustomerTransformer.class);
 
     /**
      * A transformation method to convert a person document into a customer

@@ -29,7 +29,7 @@ import org.slf4j.LoggerFactory;
 */
 public final class DirectVmProcessor extends DelegateAsyncProcessor {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(DirectVmProcessor.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DirectVmProcessor.class);
     private final DirectVmEndpoint endpoint;
 
     public DirectVmProcessor(Processor processor, DirectVmEndpoint endpoint) {

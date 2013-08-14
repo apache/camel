@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory;
  * @version 
  */
 public class JmxNotificationEventNotifier extends EventNotifierSupport implements JmxNotificationBroadcasterAware {
-    private static final transient Logger LOG = LoggerFactory.getLogger(JmxNotificationEventNotifier.class);
+    private static final Logger LOG = LoggerFactory.getLogger(JmxNotificationEventNotifier.class);
     private final AtomicLong counter = new AtomicLong();
     private NotificationBroadcasterSupport notificationBroadcaster;
     private String source = "Camel";

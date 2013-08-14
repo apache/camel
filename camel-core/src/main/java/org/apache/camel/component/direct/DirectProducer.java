@@ -28,7 +28,7 @@ import org.slf4j.LoggerFactory;
  * @version 
  */
 public class DirectProducer extends DefaultAsyncProducer {
-    private static final transient Logger LOG = LoggerFactory.getLogger(DirectProducer.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DirectProducer.class);
     private final DirectEndpoint endpoint;
 
     public DirectProducer(DirectEndpoint endpoint) {

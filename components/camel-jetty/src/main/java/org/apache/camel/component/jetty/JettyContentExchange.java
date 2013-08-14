@@ -45,7 +45,7 @@ import org.slf4j.LoggerFactory;
  */
 public class JettyContentExchange extends ContentExchange {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(JettyContentExchange.class);
+    private static final Logger LOG = LoggerFactory.getLogger(JettyContentExchange.class);
 
     private final Map<String, String> headers = new LinkedHashMap<String, String>();
     private volatile Exchange exchange;

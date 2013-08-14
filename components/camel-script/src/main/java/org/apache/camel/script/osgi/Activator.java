@@ -47,7 +47,7 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer {
     public static final String META_INF_SERVICES_DIR = "META-INF/services";
     public static final String SCRIPT_ENGINE_SERVICE_FILE = "javax.script.ScriptEngineFactory";
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(Activator.class);
+    private static final Logger LOG = LoggerFactory.getLogger(Activator.class);
     private static BundleContext context;
     private BundleTracker tracker;
     

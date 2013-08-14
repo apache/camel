@@ -31,7 +31,7 @@ import org.slf4j.LoggerFactory;
 
 /* Using the bundle of CamelContext to load the class */
 public class OsgiClassResolver extends DefaultClassResolver {
-    private static final transient Logger LOG = LoggerFactory.getLogger(OsgiClassResolver.class);
+    private static final Logger LOG = LoggerFactory.getLogger(OsgiClassResolver.class);
 
     public BundleContext bundleContext;
     

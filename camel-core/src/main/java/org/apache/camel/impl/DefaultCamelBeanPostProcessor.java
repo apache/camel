@@ -46,7 +46,7 @@ import org.slf4j.LoggerFactory;
  */
 public class DefaultCamelBeanPostProcessor {
 
-    protected static final transient Logger LOG = LoggerFactory.getLogger(DefaultCamelBeanPostProcessor.class);
+    protected static final Logger LOG = LoggerFactory.getLogger(DefaultCamelBeanPostProcessor.class);
     protected CamelPostProcessorHelper camelPostProcessorHelper;
     protected CamelContext camelContext;
 

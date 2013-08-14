@@ -36,7 +36,7 @@ import org.slf4j.LoggerFactory;
  * @version 
  */
 public abstract class ServiceSupport implements StatefulService {
-    private static final transient Logger LOG = LoggerFactory.getLogger(ServiceSupport.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ServiceSupport.class);
 
     protected final AtomicBoolean started = new AtomicBoolean(false);
     protected final AtomicBoolean starting = new AtomicBoolean(false);

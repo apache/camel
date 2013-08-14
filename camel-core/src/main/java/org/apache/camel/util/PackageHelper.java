@@ -25,7 +25,7 @@ import org.slf4j.LoggerFactory;
  * @version 
  */
 public final class PackageHelper {
-    private static final transient Logger LOG = LoggerFactory.getLogger(PackageHelper.class);
+    private static final Logger LOG = LoggerFactory.getLogger(PackageHelper.class);
 
     private PackageHelper() {
         // Utility Class

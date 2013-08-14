@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory;
  */
 public class XQueryComponent extends DefaultComponent {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(XQueryComponent.class);
+    private static final Logger LOG = LoggerFactory.getLogger(XQueryComponent.class);
     private ModuleURIResolver moduleURIResolver = new XQueryModuleURIResolver(this);
 
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {

@@ -23,7 +23,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class BookCatalog {
-    private static final transient Logger LOG = LoggerFactory.getLogger(BookCatalog.class);
+    private static final Logger LOG = LoggerFactory.getLogger(BookCatalog.class);
     private HashMap<String, Book> map;
 
     public BookCatalog() {

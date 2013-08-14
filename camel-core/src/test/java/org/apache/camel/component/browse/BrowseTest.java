@@ -30,7 +30,7 @@ import org.slf4j.LoggerFactory;
  * @version 
  */
 public class BrowseTest extends ContextTestSupport {
-    private static final transient Logger LOG = LoggerFactory.getLogger(BrowseTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(BrowseTest.class);
 
     protected Object body1 = "one";
     protected Object body2 = "two";

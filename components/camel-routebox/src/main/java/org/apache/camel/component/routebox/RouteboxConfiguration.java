@@ -32,7 +32,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class RouteboxConfiguration {
-    private static final transient Logger LOG = LoggerFactory.getLogger(RouteboxConfiguration.class);
+    private static final Logger LOG = LoggerFactory.getLogger(RouteboxConfiguration.class);
     private URI uri;
     private String authority;
     private String endpointName;

@@ -27,7 +27,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class StreamEndpoint extends DefaultEndpoint {
-    private static final transient Logger LOG = LoggerFactory.getLogger(StreamEndpoint.class);
+    private static final Logger LOG = LoggerFactory.getLogger(StreamEndpoint.class);
 
     private String url;
 

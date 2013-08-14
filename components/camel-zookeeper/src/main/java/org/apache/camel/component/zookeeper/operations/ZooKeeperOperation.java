@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class ZooKeeperOperation<ResultType> {
 
-    protected static final transient Logger LOG = LoggerFactory.getLogger(ZooKeeperOperation.class);
+    protected static final Logger LOG = LoggerFactory.getLogger(ZooKeeperOperation.class);
 
     protected static final Class<?>[] CONSTRUCTOR_ARGS = {ZooKeeper.class, String.class};
 

@@ -34,7 +34,7 @@ import org.slf4j.LoggerFactory;
 
 public class MessageReceiverListenerImpl implements MessageReceiverListener {
     
-    private static final transient Logger LOG = LoggerFactory.getLogger(MessageReceiverListenerImpl.class);
+    private static final Logger LOG = LoggerFactory.getLogger(MessageReceiverListenerImpl.class);
 
     private MessageIDGenerator messageIDGenerator = new RandomMessageIDGenerator();
     private SmppEndpoint endpoint;

@@ -28,7 +28,7 @@ import org.slf4j.LoggerFactory;
  */
 public final class MinaHelper {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(MinaHelper.class);
+    private static final Logger LOG = LoggerFactory.getLogger(MinaHelper.class);
 
     private MinaHelper() {
         //Utility Class

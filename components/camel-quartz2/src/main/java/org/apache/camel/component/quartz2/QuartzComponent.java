@@ -48,7 +48,7 @@ import org.slf4j.LoggerFactory;
  *
  */
 public class QuartzComponent extends DefaultComponent implements StartupListener {
-    private static final transient Logger LOG = LoggerFactory.getLogger(QuartzComponent.class);
+    private static final Logger LOG = LoggerFactory.getLogger(QuartzComponent.class);
     private SchedulerFactory schedulerFactory;
     private Scheduler scheduler;
     private Properties properties;

@@ -42,7 +42,7 @@ import org.slf4j.MDC;
  */
 public class PaxLoggingConsumer extends DefaultConsumer implements PaxAppender {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(PaxLoggingConsumer.class);
+    private static final Logger LOG = LoggerFactory.getLogger(PaxLoggingConsumer.class);
     private final PaxLoggingEndpoint endpoint;
     private ExecutorService executor;
     private ServiceRegistration registration;

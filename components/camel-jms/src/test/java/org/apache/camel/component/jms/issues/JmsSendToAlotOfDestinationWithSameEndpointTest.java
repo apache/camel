@@ -30,7 +30,7 @@ import org.springframework.context.support.AbstractXmlApplicationContext;
  */
 public class JmsSendToAlotOfDestinationWithSameEndpointTest extends CamelSpringTestSupport {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(JmsSendToAlotOfDestinationWithSameEndpointTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(JmsSendToAlotOfDestinationWithSameEndpointTest.class);
     private static final String URI = "activemq:queue:foo?autoStartup=false";
 
     @Test

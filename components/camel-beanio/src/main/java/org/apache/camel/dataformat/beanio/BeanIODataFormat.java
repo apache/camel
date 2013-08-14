@@ -52,7 +52,7 @@ import org.slf4j.LoggerFactory;
 public class BeanIODataFormat extends ServiceSupport implements DataFormat, CamelContextAware {
 
     private static final String LOG_PREFIX = "BeanIO: ";
-    private static final transient Logger LOG = LoggerFactory.getLogger(BeanIODataFormat.class);
+    private static final Logger LOG = LoggerFactory.getLogger(BeanIODataFormat.class);
 
     private transient CamelContext camelContext;
     private transient StreamFactory factory;

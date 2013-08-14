@@ -44,7 +44,7 @@ import org.slf4j.LoggerFactory;
  */
 public class StreamProducer extends DefaultProducer {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(StreamProducer.class);
+    private static final Logger LOG = LoggerFactory.getLogger(StreamProducer.class);
     private static final String TYPES = "out,err,file,header,url";
     private static final String INVALID_URI = "Invalid uri, valid form: 'stream:{" + TYPES + "}'";
     private static final List<String> TYPES_LIST = Arrays.asList(TYPES.split(","));

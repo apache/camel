@@ -32,7 +32,7 @@ import org.slf4j.LoggerFactory;
  * @version 
  */
 public class NewInstanceTest extends ContextTestSupport {
-    private static final transient Logger LOG = LoggerFactory.getLogger(BeanRouteTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(BeanRouteTest.class);
     protected JndiContext jndiContext;
 
     public void testSendMessageToDifferentBeans() throws Exception {

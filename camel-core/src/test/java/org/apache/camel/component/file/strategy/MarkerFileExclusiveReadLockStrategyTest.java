@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory;
  */
 public class MarkerFileExclusiveReadLockStrategyTest extends ContextTestSupport {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(MarkerFileExclusiveReadLockStrategyTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(MarkerFileExclusiveReadLockStrategyTest.class);
     private static final int NUMBER_OF_THREADS = 5;
     private AtomicInteger numberOfFilesProcessed = new AtomicInteger(0);
 

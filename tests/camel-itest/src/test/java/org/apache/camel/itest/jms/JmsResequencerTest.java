@@ -39,7 +39,7 @@ import org.slf4j.LoggerFactory;
 
 public class JmsResequencerTest extends CamelTestSupport  {
     
-    private static final transient Logger LOG = LoggerFactory.getLogger(JmsResequencerTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(JmsResequencerTest.class);
     private ReusableBean b1 = new ReusableBean("myBean1");
     private ReusableBean b2 = new ReusableBean("myBean2");
     private ReusableBean b3 = new ReusableBean("myBean3");

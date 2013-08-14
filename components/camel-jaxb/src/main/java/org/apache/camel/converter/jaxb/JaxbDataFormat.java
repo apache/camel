@@ -68,8 +68,8 @@ import org.slf4j.LoggerFactory;
  */
 public class JaxbDataFormat extends ServiceSupport implements DataFormat, CamelContextAware {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(JaxbDataFormat.class);
-    private static final transient SchemaFactory SCHEMA_FACTORY = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+    private static final Logger LOG = LoggerFactory.getLogger(JaxbDataFormat.class);
+    private static final SchemaFactory SCHEMA_FACTORY = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
     private CamelContext camelContext;
     private JAXBContext context;
     private String contextPath;

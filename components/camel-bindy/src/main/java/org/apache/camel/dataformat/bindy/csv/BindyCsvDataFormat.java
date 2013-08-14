@@ -44,7 +44,7 @@ import org.slf4j.LoggerFactory;
  * {@link DataFormat}) using Bindy to marshal to and from CSV files
  */
 public class BindyCsvDataFormat extends BindyAbstractDataFormat {
-    private static final transient Logger LOG = LoggerFactory.getLogger(BindyCsvDataFormat.class);
+    private static final Logger LOG = LoggerFactory.getLogger(BindyCsvDataFormat.class);
 
     public BindyCsvDataFormat() {
     }

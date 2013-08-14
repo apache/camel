@@ -70,7 +70,7 @@ import static org.apache.camel.component.jms.JmsMessageType.Text;
  * @version 
  */
 public class JmsBinding {
-    private static final transient Logger LOG = LoggerFactory.getLogger(JmsBinding.class);
+    private static final Logger LOG = LoggerFactory.getLogger(JmsBinding.class);
     private final JmsEndpoint endpoint;
     private final HeaderFilterStrategy headerFilterStrategy;
     private final JmsKeyFormatStrategy jmsKeyFormatStrategy;

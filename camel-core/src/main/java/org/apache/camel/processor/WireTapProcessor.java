@@ -44,7 +44,7 @@ import org.slf4j.LoggerFactory;
  * @version 
  */
 public class WireTapProcessor extends ServiceSupport implements AsyncProcessor, Traceable {
-    private static final transient Logger LOG = LoggerFactory.getLogger(WireTapProcessor.class);
+    private static final Logger LOG = LoggerFactory.getLogger(WireTapProcessor.class);
     private final Endpoint destination;
     private final Processor processor;
     private final ExchangePattern exchangePattern;

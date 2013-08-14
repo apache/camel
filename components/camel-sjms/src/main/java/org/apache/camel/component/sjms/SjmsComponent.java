@@ -37,7 +37,7 @@ import org.slf4j.LoggerFactory;
  * The <a href="http://camel.apache.org/sjms">Simple JMS</a> component.
  */
 public class SjmsComponent extends UriEndpointComponent implements HeaderFilterStrategyAware {
-    private static final transient Logger LOGGER = LoggerFactory.getLogger(SjmsComponent.class);
+    private static final Logger LOGGER = LoggerFactory.getLogger(SjmsComponent.class);
 
     private ConnectionFactory connectionFactory;
     private ConnectionResource connectionResource;

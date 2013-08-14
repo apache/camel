@@ -35,7 +35,7 @@ import org.slf4j.LoggerFactory;
  */
 public final class UnitOfWorkProducer implements Producer {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(UnitOfWorkProducer.class);
+    private static final Logger LOG = LoggerFactory.getLogger(UnitOfWorkProducer.class);
     private final Producer producer;
     private final AsyncProcessor processor;
 

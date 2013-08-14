@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory;
  * consuming the file its not currently in progress of being written by third party.
  */
 public class GenericFileRenameExclusiveReadLockStrategy<T> implements GenericFileExclusiveReadLockStrategy<T> {
-    private static final transient Logger LOG = LoggerFactory.getLogger(GenericFileRenameExclusiveReadLockStrategy.class);
+    private static final Logger LOG = LoggerFactory.getLogger(GenericFileRenameExclusiveReadLockStrategy.class);
     private long timeout;
     private long checkInterval;
     private LoggingLevel readLockLoggingLevel = LoggingLevel.WARN;

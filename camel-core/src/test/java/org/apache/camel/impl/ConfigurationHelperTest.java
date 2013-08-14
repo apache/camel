@@ -41,7 +41,7 @@ import static org.junit.Assert.assertTrue;
  */
 public class ConfigurationHelperTest {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(ConfigurationHelperTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ConfigurationHelperTest.class);
     private static final String URIDUMP_SCHEME = "uri-dump";
     private static final String DUMMY_SCHEME = "dummy";
     

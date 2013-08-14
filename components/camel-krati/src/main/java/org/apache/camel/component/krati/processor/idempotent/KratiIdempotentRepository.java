@@ -30,7 +30,7 @@ import org.slf4j.LoggerFactory;
 
 public class KratiIdempotentRepository extends ServiceSupport implements IdempotentRepository<String> {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(KratiHelper.class);
+    private static final Logger LOG = LoggerFactory.getLogger(KratiHelper.class);
 
     private String repositoryPath;
 

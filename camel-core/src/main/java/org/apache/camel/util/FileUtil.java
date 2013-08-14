@@ -36,7 +36,7 @@ public final class FileUtil {
     
     public static final int BUFFER_SIZE = 128 * 1024;
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(FileUtil.class);
+    private static final Logger LOG = LoggerFactory.getLogger(FileUtil.class);
     private static final int RETRY_SLEEP_MILLIS = 10;
     /**
      * The System property key for the user directory.

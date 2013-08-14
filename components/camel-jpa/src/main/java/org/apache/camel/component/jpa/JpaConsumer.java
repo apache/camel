@@ -43,7 +43,7 @@ import org.springframework.orm.jpa.JpaCallback;
  */
 public class JpaConsumer extends ScheduledBatchPollingConsumer {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(JpaConsumer.class);
+    private static final Logger LOG = LoggerFactory.getLogger(JpaConsumer.class);
     private final JpaEndpoint endpoint;
     private final TransactionStrategy template;
     private QueryFactory queryFactory;

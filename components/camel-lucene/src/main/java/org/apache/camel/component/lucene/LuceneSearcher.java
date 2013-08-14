@@ -36,7 +36,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class LuceneSearcher {
-    private static final transient Logger LOG = LoggerFactory.getLogger(LuceneSearcher.class);
+    private static final Logger LOG = LoggerFactory.getLogger(LuceneSearcher.class);
     private Analyzer analyzer;
     private IndexSearcher indexSearcher; 
     private ScoreDoc[] hits;

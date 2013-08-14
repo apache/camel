@@ -30,7 +30,7 @@ import org.slf4j.LoggerFactory;
  * @version 
  */
 public class XmlConfigTestSupport extends TestSupport {
-    protected static final transient Logger LOG = LoggerFactory.getLogger(CamelContextFactoryBeanTest.class);
+    protected static final Logger LOG = LoggerFactory.getLogger(CamelContextFactoryBeanTest.class);
 
     protected void assertValidContext(CamelContext context) {
         assertNotNull("No context found!", context);

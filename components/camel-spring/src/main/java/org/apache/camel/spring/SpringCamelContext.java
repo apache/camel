@@ -56,7 +56,7 @@ import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
 public class SpringCamelContext extends DefaultCamelContext implements InitializingBean, DisposableBean,
         ApplicationContextAware {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(SpringCamelContext.class);
+    private static final Logger LOG = LoggerFactory.getLogger(SpringCamelContext.class);
     private static final ThreadLocal<Boolean> NO_START = new ThreadLocal<Boolean>();
     private ApplicationContext applicationContext;
     private EventEndpoint eventEndpoint;

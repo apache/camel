@@ -23,7 +23,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class CacheValidate {
-    private static final transient Logger LOG = LoggerFactory.getLogger(CacheValidate.class);
+    private static final Logger LOG = LoggerFactory.getLogger(CacheValidate.class);
 
     public boolean isValid(CacheManager cacheManager, String cacheName, String key) {
         LOG.trace("Cache Name: {}", cacheName);

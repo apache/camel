@@ -43,7 +43,7 @@ import org.slf4j.LoggerFactory;
  * @version 
  */
 public class QuartzEndpoint extends DefaultEndpoint implements ShutdownableService {
-    private static final transient Logger LOG = LoggerFactory.getLogger(QuartzEndpoint.class);
+    private static final Logger LOG = LoggerFactory.getLogger(QuartzEndpoint.class);
 
     private LoadBalancer loadBalancer;
     private Trigger trigger;
