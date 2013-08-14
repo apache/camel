@@ -398,11 +398,7 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
         }
         scheduler.setCamelContext(getEndpoint().getCamelContext());
         scheduler.onInit(this);
-
-        if (!(scheduler instanceof SingleScheduledPollConsumerScheduler)) {
-            // schedule task if its not the single scheduled
-            scheduler.scheduleTask(this);
-        }
+        scheduler.scheduleTask(this);
 
         // configure scheduler with options from this consumer
         Map<String, Object> properties = new HashMap<String, Object>();
@@ -458,29 +454,29 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
 
     @Override
     public void onInit() throws Exception {
-        // use a single scheduler so we do not have it running it periodically when we use
-        // this consumer as a EventDrivenPollingConsumer
-        scheduler = new SingleScheduledPollConsumerScheduler();
+        // make sure the scheduler is starter
+        startScheduler = true;
     }
 
     @Override
     public long beforePoll(long timeout) throws Exception {
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("Before poll {}", getEndpoint());
+        LOG.trace("Before poll {}", getEndpoint());
+        // resume or start our self
+        if (!ServiceHelper.resumeService(this)) {
+            ServiceHelper.startService(this);
         }
-        scheduler.scheduleTask(this);
 
-        // ensure at least timeout is as long as one poll delay normally is
-        // to give the poll a chance to run once
+        // ensure at least timeout is as long as one poll delay
         return Math.max(timeout, getDelay());
     }
 
     @Override
     public void afterPoll() throws Exception {
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("After poll {}", getEndpoint());
+        LOG.trace("After poll {}", getEndpoint());
+        // suspend or stop our self
+        if (!ServiceHelper.suspendService(this)) {
+            ServiceHelper.stopService(this);
         }
-        scheduler.unscheduleTask();
     }
 
 }

@@ -143,9 +143,9 @@ public class EventDrivenPollingConsumer extends PollingConsumerSupport implement
         if (consumer instanceof PollingConsumerPollingStrategy) {
             PollingConsumerPollingStrategy strategy = (PollingConsumerPollingStrategy) consumer;
             strategy.onInit();
+        } else {
+            ServiceHelper.startService(consumer);
         }
-
-        ServiceHelper.startService(consumer);
     }
 
     protected void doStop() throws Exception {
