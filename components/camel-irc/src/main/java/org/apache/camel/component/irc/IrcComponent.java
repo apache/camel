@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory;
  * @version 
  */
 public class IrcComponent extends DefaultComponent {
-    private static final transient Logger LOG = LoggerFactory.getLogger(IrcComponent.class);
+    private static final Logger LOG = LoggerFactory.getLogger(IrcComponent.class);
     private final Map<String, IRCConnection> connectionCache = new HashMap<String, IRCConnection>();
 
     public IrcEndpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {

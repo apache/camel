@@ -40,7 +40,7 @@ import org.slf4j.LoggerFactory;
 @Converter
 public final class MongoDbBasicConverters {
     
-    private static final transient Logger LOG = LoggerFactory.getLogger(MongoDbBasicConverters.class);
+    private static final Logger LOG = LoggerFactory.getLogger(MongoDbBasicConverters.class);
 
     // Jackson's ObjectMapper is thread-safe, so no need to create a pool nor synchronize access to it
     private static ObjectMapper objectMapper = new ObjectMapper();

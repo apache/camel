@@ -59,7 +59,7 @@ import org.slf4j.LoggerFactory;
  */
 public class MailBinding {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(MailBinding.class);
+    private static final Logger LOG = LoggerFactory.getLogger(MailBinding.class);
     private HeaderFilterStrategy headerFilterStrategy;
     private ContentTypeResolver contentTypeResolver;
 

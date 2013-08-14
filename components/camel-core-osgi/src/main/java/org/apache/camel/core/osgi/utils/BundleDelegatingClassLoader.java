@@ -29,7 +29,7 @@ import org.slf4j.LoggerFactory;
  *
  */
 public class BundleDelegatingClassLoader extends ClassLoader {
-    private static final transient Logger LOG = LoggerFactory.getLogger(BundleDelegatingClassLoader.class);
+    private static final Logger LOG = LoggerFactory.getLogger(BundleDelegatingClassLoader.class);
     private final Bundle bundle;
     private final ClassLoader classLoader;
 

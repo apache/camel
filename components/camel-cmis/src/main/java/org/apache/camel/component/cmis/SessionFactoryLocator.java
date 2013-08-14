@@ -24,7 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public final class SessionFactoryLocator {
-    private static final transient Logger LOG = LoggerFactory.getLogger(SessionFactoryLocator.class);
+    private static final Logger LOG = LoggerFactory.getLogger(SessionFactoryLocator.class);
     private static SessionFactory sessionFactory;
     
     private SessionFactoryLocator() {

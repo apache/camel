@@ -38,7 +38,7 @@ import org.slf4j.LoggerFactory;
  */
 public class DefaultJettyHttpBinding implements JettyHttpBinding {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(DefaultJettyHttpBinding.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DefaultJettyHttpBinding.class);
     private HeaderFilterStrategy headerFilterStrategy = new HttpHeaderFilterStrategy();
     private boolean throwExceptionOnFailure;
     private boolean transferException;

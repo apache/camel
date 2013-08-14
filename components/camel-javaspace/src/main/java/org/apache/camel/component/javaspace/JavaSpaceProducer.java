@@ -42,7 +42,7 @@ import org.slf4j.LoggerFactory;
  * @version 
  */
 public class JavaSpaceProducer extends DefaultProducer {
-    private static final transient Logger LOG = LoggerFactory.getLogger(JavaSpaceProducer.class);
+    private static final Logger LOG = LoggerFactory.getLogger(JavaSpaceProducer.class);
 
     private final boolean transactional;
     private final long transactionTimeout;

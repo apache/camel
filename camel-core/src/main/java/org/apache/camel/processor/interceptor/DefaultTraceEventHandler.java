@@ -34,7 +34,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class DefaultTraceEventHandler implements TraceEventHandler, Service {
-    private static final transient Logger LOG = LoggerFactory.getLogger(DefaultTraceEventHandler.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DefaultTraceEventHandler.class);
     
     private Producer traceEventProducer;
     private Class<?> jpaTraceEventMessageClass;

@@ -26,7 +26,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class PrepareRequest implements Processor {
-    private static final transient Logger LOG = LoggerFactory.getLogger(PrepareRequest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(PrepareRequest.class);
 
     public void process(Exchange exchange) throws Exception {
         List<String> params = new ArrayList<String>();

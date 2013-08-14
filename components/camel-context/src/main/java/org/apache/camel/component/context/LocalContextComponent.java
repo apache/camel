@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory;
  * A Camel Component which exposes a local {@link CamelContext} instance as a black box set of endpoints.
  */
 public class LocalContextComponent extends DefaultComponent {
-    private static final transient Logger LOG = LoggerFactory.getLogger(LocalContextComponent.class);
+    private static final Logger LOG = LoggerFactory.getLogger(LocalContextComponent.class);
 
     private CamelContext localCamelContext;
     private List<String> localProtocolSchemes = new ArrayList<String>(Arrays.asList("direct", "seda", "mock"));

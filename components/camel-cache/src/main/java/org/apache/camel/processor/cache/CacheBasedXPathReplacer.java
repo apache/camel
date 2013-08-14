@@ -41,7 +41,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class CacheBasedXPathReplacer extends CacheValidate implements Processor {
-    private static final transient Logger LOG = LoggerFactory.getLogger(CacheBasedXPathReplacer.class);
+    private static final Logger LOG = LoggerFactory.getLogger(CacheBasedXPathReplacer.class);
     private String cacheName;
     private String key;
     private String xpath;

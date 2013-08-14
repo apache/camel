@@ -44,7 +44,7 @@ import org.slf4j.LoggerFactory;
  */
 public class XsltUriResolver implements URIResolver {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(XsltUriResolver.class); 
+    private static final Logger LOG = LoggerFactory.getLogger(XsltUriResolver.class);
 
     private final ClassResolver resolver;
     private final String location;

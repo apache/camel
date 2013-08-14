@@ -53,7 +53,7 @@ import org.slf4j.LoggerFactory;
  * @version 
  */
 public class CamelPostProcessorHelper implements CamelContextAware {
-    private static final transient Logger LOG = LoggerFactory.getLogger(CamelPostProcessorHelper.class);
+    private static final Logger LOG = LoggerFactory.getLogger(CamelPostProcessorHelper.class);
 
     @XmlTransient
     private CamelContext camelContext;

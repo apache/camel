@@ -48,7 +48,7 @@ import static org.junit.Assert.fail;
  * with {@link org.apache.camel.spi.UriEndpoint}, {@link org.apache.camel.spi.UriParam} and {@link org.apache.camel.spi.UriParams}
  */
 public class ComponentConfigurationTest {
-    private static final transient Logger LOG = LoggerFactory.getLogger(ComponentConfigurationTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ComponentConfigurationTest.class);
 
     private CamelContext context;
 

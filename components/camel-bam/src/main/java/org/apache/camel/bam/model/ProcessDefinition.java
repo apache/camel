@@ -37,7 +37,7 @@ import org.springframework.orm.jpa.JpaTemplate;
 @Table(name = "CAMEL_PROCESSDEFINITION")
 public class ProcessDefinition extends EntitySupport {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(ProcessDefinition.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ProcessDefinition.class);
     private String name;
 
     @Column(unique = true)

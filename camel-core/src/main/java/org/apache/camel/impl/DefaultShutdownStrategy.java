@@ -97,7 +97,7 @@ import org.slf4j.LoggerFactory;
  * @version 
  */
 public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownStrategy, CamelContextAware {
-    private static final transient Logger LOG = LoggerFactory.getLogger(DefaultShutdownStrategy.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DefaultShutdownStrategy.class);
 
     private CamelContext camelContext;
     private ExecutorService executor;

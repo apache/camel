@@ -35,7 +35,7 @@ import org.slf4j.LoggerFactory;
  */
 public class SqsProducer extends DefaultProducer {
     
-    private static final transient Logger LOG = LoggerFactory.getLogger(SqsProducer.class);
+    private static final Logger LOG = LoggerFactory.getLogger(SqsProducer.class);
     
     public SqsProducer(SqsEndpoint endpoint) throws NoFactoryAvailableException {
         super(endpoint);

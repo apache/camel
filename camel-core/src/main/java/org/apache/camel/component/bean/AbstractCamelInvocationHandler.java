@@ -43,7 +43,7 @@ import org.slf4j.LoggerFactory;
 
 public abstract class AbstractCamelInvocationHandler implements InvocationHandler {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(CamelInvocationHandler.class);
+    private static final Logger LOG = LoggerFactory.getLogger(CamelInvocationHandler.class);
     private static final List<Method> EXCLUDED_METHODS = new ArrayList<Method>();
     private static ExecutorService executorService;
     protected final Endpoint endpoint;

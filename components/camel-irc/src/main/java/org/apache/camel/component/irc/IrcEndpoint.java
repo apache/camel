@@ -36,7 +36,7 @@ import org.slf4j.LoggerFactory;
  * @version 
  */
 public class IrcEndpoint extends DefaultEndpoint {
-    private static final transient Logger LOG = LoggerFactory.getLogger(IrcEndpoint.class);
+    private static final Logger LOG = LoggerFactory.getLogger(IrcEndpoint.class);
     
     private IrcBinding binding;
     private IrcConfiguration configuration;

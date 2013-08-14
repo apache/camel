@@ -37,7 +37,7 @@ import org.slf4j.LoggerFactory;
 public class XmppRouteTest extends TestCase {
     protected static boolean enabled;
     protected static String xmppUrl;
-    private static final transient Logger LOG = LoggerFactory.getLogger(XmppRouteTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(XmppRouteTest.class);
     protected Exchange receivedExchange;
     protected CamelContext container = new DefaultCamelContext();
     protected CountDownLatch latch = new CountDownLatch(1);

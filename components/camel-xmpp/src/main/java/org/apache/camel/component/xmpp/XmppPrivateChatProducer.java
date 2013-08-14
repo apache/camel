@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory;
  * @version 
  */
 public class XmppPrivateChatProducer extends DefaultProducer {
-    private static final transient Logger LOG = LoggerFactory.getLogger(XmppPrivateChatProducer.class);
+    private static final Logger LOG = LoggerFactory.getLogger(XmppPrivateChatProducer.class);
     private final XmppEndpoint endpoint;
     private XMPPConnection connection;
     private final String participant;

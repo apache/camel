@@ -36,7 +36,7 @@ import org.slf4j.LoggerFactory;
  */
 public class JcrConsumerTest extends JcrRouteTestSupport {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(JcrConsumerTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(JcrConsumerTest.class);
 
     private String absPath = "/home/test";
     private int eventTypes = Event.NODE_ADDED;

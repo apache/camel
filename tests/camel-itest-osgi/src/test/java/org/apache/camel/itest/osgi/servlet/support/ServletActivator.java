@@ -31,7 +31,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.osgi.context.BundleContextAware;
 
 public final class ServletActivator implements BundleActivator, BundleContextAware {
-    private static final transient Logger LOG = LoggerFactory.getLogger(ServletActivator.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ServletActivator.class);
     private static boolean registerService;
     
     /**

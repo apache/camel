@@ -53,7 +53,7 @@ import org.slf4j.LoggerFactory;
  * @version 
  */
 public class SedaConsumer extends ServiceSupport implements Consumer, Runnable, ShutdownAware, SuspendableService {
-    private static final transient Logger LOG = LoggerFactory.getLogger(SedaConsumer.class);
+    private static final Logger LOG = LoggerFactory.getLogger(SedaConsumer.class);
 
     private final AtomicInteger taskCount = new AtomicInteger();
     private volatile CountDownLatch latch;

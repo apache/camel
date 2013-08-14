@@ -57,7 +57,7 @@ import org.slf4j.LoggerFactory;
  */
 public class RouteResource extends CamelChildResourceSupport {
     public static final String LANGUAGE_XML = "Xml";
-    private static final transient Logger LOG = LoggerFactory.getLogger(RouteResource.class);
+    private static final Logger LOG = LoggerFactory.getLogger(RouteResource.class);
 
     private RouteDefinition route;
     private String error = "";

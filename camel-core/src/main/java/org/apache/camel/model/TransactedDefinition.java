@@ -53,7 +53,7 @@ public class TransactedDefinition extends OutputDefinition<TransactedDefinition>
     @XmlTransient
     public static final String PROPAGATION_REQUIRED = "PROPAGATION_REQUIRED";
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(TransactedDefinition.class);
+    private static final Logger LOG = LoggerFactory.getLogger(TransactedDefinition.class);
 
     @XmlTransient
     protected Class<? extends Policy> type = TransactedPolicy.class;

@@ -64,7 +64,7 @@ import org.slf4j.LoggerFactory;
  * @version 
  */
 public final class ObjectHelper {
-    private static final transient Logger LOG = LoggerFactory.getLogger(ObjectHelper.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ObjectHelper.class);
     private static final String DEFAULT_DELIMITER = ",";
     @SuppressWarnings("unchecked")
     private static final List<?> PRIMITIVE_ARRAY_TYPES = Arrays.asList(byte[].class, short[].class, int[].class, long[].class,

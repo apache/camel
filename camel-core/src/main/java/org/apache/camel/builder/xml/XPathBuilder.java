@@ -86,7 +86,7 @@ import static org.apache.camel.builder.xml.Namespaces.isMatchingNamespaceOrEmpty
  * @see XPathConstants#NODESET
  */
 public class XPathBuilder extends ServiceSupport implements Expression, Predicate, NamespaceAware {
-    private static final transient Logger LOG = LoggerFactory.getLogger(XPathBuilder.class);
+    private static final Logger LOG = LoggerFactory.getLogger(XPathBuilder.class);
     private static final String SAXON_OBJECT_MODEL_URI = "http://saxon.sf.net/jaxp/xpath/om";
     private static final String OBTAIN_ALL_NS_XPATH = "//*/namespace::*";
 

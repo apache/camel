@@ -31,7 +31,7 @@ import org.slf4j.LoggerFactory;
  * @version 
  */
 public class MainTest extends TestCase {
-    private static final transient Logger LOG = LoggerFactory.getLogger(MainTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(MainTest.class);
 
     public void testMain() throws Exception {
         // lets make a simple route

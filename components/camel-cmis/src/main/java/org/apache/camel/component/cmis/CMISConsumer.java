@@ -30,7 +30,7 @@ import org.slf4j.LoggerFactory;
  * The CMIS consumer.
  */
 public class CMISConsumer extends ScheduledPollConsumer {
-    private static final transient Logger LOG = LoggerFactory.getLogger(CMISConsumer.class);
+    private static final Logger LOG = LoggerFactory.getLogger(CMISConsumer.class);
     private CMISSessionFacade sessionFacade;
 
     public CMISConsumer(CMISEndpoint endpoint, Processor processor) {

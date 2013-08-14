@@ -27,7 +27,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class OsgiDataFormatResolver implements DataFormatResolver {
-    private static final transient Logger LOG = LoggerFactory.getLogger(OsgiDataFormatResolver.class);
+    private static final Logger LOG = LoggerFactory.getLogger(OsgiDataFormatResolver.class);
 
     private final BundleContext bundleContext;
 

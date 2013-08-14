@@ -35,7 +35,7 @@ import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
  */
 public class EndpointEventListener implements EventListener {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(EndpointEventListener.class);
+    private static final Logger LOG = LoggerFactory.getLogger(EndpointEventListener.class);
 
     private final JcrEndpoint endpoint;
     private final Processor processor;

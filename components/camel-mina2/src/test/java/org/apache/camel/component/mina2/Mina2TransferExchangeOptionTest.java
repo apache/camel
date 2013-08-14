@@ -36,7 +36,7 @@ import org.slf4j.LoggerFactory;
  */
 public class Mina2TransferExchangeOptionTest extends BaseMina2Test {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(Mina2TransferExchangeOptionTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(Mina2TransferExchangeOptionTest.class);
 
     @Test
     public void testMinaTransferExchangeOptionWithoutException() throws Exception {

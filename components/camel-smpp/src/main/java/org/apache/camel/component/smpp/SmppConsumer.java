@@ -43,7 +43,7 @@ import org.slf4j.LoggerFactory;
  */
 public class SmppConsumer extends DefaultConsumer {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(SmppConsumer.class);
+    private static final Logger LOG = LoggerFactory.getLogger(SmppConsumer.class);
 
     private SmppConfiguration configuration;
     private SMPPSession session;

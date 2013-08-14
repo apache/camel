@@ -38,7 +38,7 @@ import static org.openqa.selenium.lift.Matchers.text;
  * @version 
  */
 public class CreateEndpointTest extends HtmlTestSupport {
-    private static final transient Logger LOG = LoggerFactory.getLogger(CreateEndpointTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(CreateEndpointTest.class);
 
     protected String newEndpointUri = "mock:myNewlyCreatedEndpoint";
     protected String messageBody = "hello world!";

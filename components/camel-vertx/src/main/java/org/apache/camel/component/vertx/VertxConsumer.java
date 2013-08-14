@@ -26,7 +26,7 @@ import org.vertx.java.core.Handler;
 import org.vertx.java.core.eventbus.Message;
 
 public class VertxConsumer extends DefaultConsumer {
-    private static final transient Logger LOG = LoggerFactory.getLogger(VertxConsumer.class);
+    private static final Logger LOG = LoggerFactory.getLogger(VertxConsumer.class);
     private final VertxEndpoint endpoint;
 
     private Handler<? extends Message> handler = new Handler<Message>() {

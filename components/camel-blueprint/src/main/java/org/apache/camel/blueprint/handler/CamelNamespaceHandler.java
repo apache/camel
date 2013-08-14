@@ -104,7 +104,7 @@ public class CamelNamespaceHandler implements NamespaceHandler {
     private static final String BLUEPRINT_NS = "http://camel.apache.org/schema/blueprint";
     private static final String SPRING_NS = "http://camel.apache.org/schema/spring";
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(CamelNamespaceHandler.class);
+    private static final Logger LOG = LoggerFactory.getLogger(CamelNamespaceHandler.class);
 
     private JAXBContext jaxbContext;
 

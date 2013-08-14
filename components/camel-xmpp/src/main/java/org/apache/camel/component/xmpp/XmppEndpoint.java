@@ -47,7 +47,7 @@ import org.slf4j.LoggerFactory;
  * @version 
  */
 public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrategyAware {
-    private static final transient Logger LOG = LoggerFactory.getLogger(XmppEndpoint.class);
+    private static final Logger LOG = LoggerFactory.getLogger(XmppEndpoint.class);
     private HeaderFilterStrategy headerFilterStrategy = new DefaultHeaderFilterStrategy();
     private XmppBinding binding;
     private String host;

@@ -34,7 +34,7 @@ import org.slf4j.LoggerFactory;
  * @version 
  */
 public class SimpleScheduledRoutePolicyTest extends CamelTestSupport {
-    private static final transient Logger LOG = LoggerFactory.getLogger(SimpleScheduledRoutePolicyTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(SimpleScheduledRoutePolicyTest.class);
     
     @Override
     public boolean isUseRouteBuilder() {

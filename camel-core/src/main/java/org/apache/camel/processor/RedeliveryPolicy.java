@@ -75,9 +75,9 @@ import org.slf4j.LoggerFactory;
  * @version 
  */
 public class RedeliveryPolicy implements Cloneable, Serializable {
-    protected static transient Random randomNumberGenerator;
+    protected static Random randomNumberGenerator;
     private static final long serialVersionUID = -338222777701473252L;
-    private static final transient Logger LOG = LoggerFactory.getLogger(RedeliveryPolicy.class);
+    private static final Logger LOG = LoggerFactory.getLogger(RedeliveryPolicy.class);
 
     protected long redeliveryDelay = 1000L;
     protected int maximumRedeliveries;

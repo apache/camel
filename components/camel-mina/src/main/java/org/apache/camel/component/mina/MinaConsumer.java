@@ -38,7 +38,7 @@ import org.slf4j.LoggerFactory;
  * @version 
  */
 public class MinaConsumer extends DefaultConsumer {
-    private static final transient Logger LOG = LoggerFactory.getLogger(MinaConsumer.class);
+    private static final Logger LOG = LoggerFactory.getLogger(MinaConsumer.class);
 
     private final SocketAddress address;
     private final IoAcceptor acceptor;

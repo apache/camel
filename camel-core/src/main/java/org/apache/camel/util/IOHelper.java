@@ -47,7 +47,7 @@ public final class IOHelper {
 
     public static final int DEFAULT_BUFFER_SIZE = 1024 * 4;
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(IOHelper.class);
+    private static final Logger LOG = LoggerFactory.getLogger(IOHelper.class);
     private static final Charset UTF8_CHARSET = Charset.forName("UTF-8");
 
     private IOHelper() {

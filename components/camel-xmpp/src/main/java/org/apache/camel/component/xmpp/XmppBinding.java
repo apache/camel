@@ -36,7 +36,7 @@ import org.slf4j.LoggerFactory;
  */
 public class XmppBinding {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(XmppBinding.class);
+    private static final Logger LOG = LoggerFactory.getLogger(XmppBinding.class);
     private HeaderFilterStrategy headerFilterStrategy;
 
     public XmppBinding() {

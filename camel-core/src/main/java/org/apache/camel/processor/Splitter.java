@@ -55,7 +55,7 @@ import static org.apache.camel.util.ObjectHelper.notNull;
  * @version 
  */
 public class Splitter extends MulticastProcessor implements AsyncProcessor, Traceable {
-    private static final transient Logger LOG = LoggerFactory.getLogger(Splitter.class);
+    private static final Logger LOG = LoggerFactory.getLogger(Splitter.class);
 
     private final Expression expression;
 

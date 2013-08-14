@@ -30,7 +30,7 @@ import org.slf4j.LoggerFactory;
 
 public class EventAdminConsumer extends DefaultConsumer implements EventHandler {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(EventAdminConsumer.class);
+    private static final Logger LOG = LoggerFactory.getLogger(EventAdminConsumer.class);
     private final EventAdminEndpoint endpoint;
     private ServiceRegistration<?> registration;
     

@@ -34,7 +34,7 @@ import org.slf4j.LoggerFactory;
  * @version 
  */
 public class TimerConsumer extends DefaultConsumer {
-    private static final transient Logger LOG = LoggerFactory.getLogger(TimerConsumer.class);
+    private static final Logger LOG = LoggerFactory.getLogger(TimerConsumer.class);
     private final TimerEndpoint endpoint;
     private volatile TimerTask task;
 

@@ -45,7 +45,7 @@ import static org.ops4j.pax.exam.CoreOptions.scanFeatures;
 import static org.ops4j.pax.exam.OptionUtils.combine;
 
 public class OSGiIntegrationTestSupport extends CamelTestSupport {
-    protected static final transient Logger LOG = LoggerFactory.getLogger(OSGiIntegrationTestSupport.class);
+    protected static final Logger LOG = LoggerFactory.getLogger(OSGiIntegrationTestSupport.class);
     protected static final AtomicInteger COUNTER = new AtomicInteger();
     protected static String workDir = "target/paxrunner/";
     @Inject

@@ -28,7 +28,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class OsgiComponentResolver implements ComponentResolver {
-    private static final transient Logger LOG = LoggerFactory.getLogger(OsgiComponentResolver.class);
+    private static final Logger LOG = LoggerFactory.getLogger(OsgiComponentResolver.class);
 
     private final BundleContext bundleContext;
 

@@ -30,7 +30,7 @@ import org.slf4j.LoggerFactory;
 
 public class DefaultScheduledPollConsumerScheduler extends org.apache.camel.support.ServiceSupport implements ScheduledPollConsumerScheduler {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(DefaultScheduledPollConsumerScheduler.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DefaultScheduledPollConsumerScheduler.class);
     private CamelContext camelContext;
     private Consumer consumer;
     private ScheduledExecutorService scheduledExecutorService;

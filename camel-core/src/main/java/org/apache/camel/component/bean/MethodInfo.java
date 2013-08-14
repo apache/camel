@@ -61,7 +61,7 @@ import static org.apache.camel.util.ObjectHelper.asString;
  * @version 
  */
 public class MethodInfo {
-    private static final transient Logger LOG = LoggerFactory.getLogger(MethodInfo.class);
+    private static final Logger LOG = LoggerFactory.getLogger(MethodInfo.class);
 
     private CamelContext camelContext;
     private Class<?> type;

@@ -23,13 +23,13 @@ package org.apache.camel.component.mina2;
  */
 public final class Mina2Constants {
 
-    public static final transient String MINA_CLOSE_SESSION_WHEN_COMPLETE = "CamelMina2CloseSessionWhenComplete";
+    public static final String MINA_CLOSE_SESSION_WHEN_COMPLETE = "CamelMina2CloseSessionWhenComplete";
     /** The key of the IoSession which is stored in the message header*/
-    public static final transient String MINA_IOSESSION = "CamelMina2IoSession";
+    public static final String MINA_IOSESSION = "CamelMina2IoSession";
     /** The socket address of local machine that received the message. */
-    public static final transient String MINA_LOCAL_ADDRESS = "CamelMina2LocalAddress";
+    public static final String MINA_LOCAL_ADDRESS = "CamelMina2LocalAddress";
     /** The socket address of the remote machine that send the message. */
-    public static final transient String MINA_REMOTE_ADDRESS = "CamelMina2RemoteAddress";
+    public static final String MINA_REMOTE_ADDRESS = "CamelMina2RemoteAddress";
 
     private Mina2Constants() {
         // Utility class

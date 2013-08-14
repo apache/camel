@@ -36,7 +36,7 @@ import org.slf4j.LoggerFactory;
  * consumer is available, but actual consumer execution will happen concurrently.
  */
 public class DirectVmBlockingProducer extends DefaultAsyncProducer {
-    private static final transient Logger LOG = LoggerFactory.getLogger(DirectVmBlockingProducer.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DirectVmBlockingProducer.class);
     private final DirectVmEndpoint endpoint;
 
     public DirectVmBlockingProducer(DirectVmEndpoint endpoint) {

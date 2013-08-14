@@ -50,7 +50,7 @@ import org.slf4j.LoggerFactory;
  * @version 
  */
 public class JettyHttpProducer extends DefaultProducer implements AsyncProcessor {
-    private static final transient Logger LOG = LoggerFactory.getLogger(JettyHttpProducer.class);
+    private static final Logger LOG = LoggerFactory.getLogger(JettyHttpProducer.class);
     private HttpClient client;
     private boolean sharedClient;
     private JettyHttpBinding binding;

@@ -46,7 +46,7 @@ import org.slf4j.LoggerFactory;
  *
  */
 public abstract class ScheduledRoutePolicy extends RoutePolicySupport implements ScheduledRoutePolicyConstants {
-    private static final transient Logger LOG = LoggerFactory.getLogger(ScheduledRoutePolicy.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ScheduledRoutePolicy.class);
     protected Map<String, ScheduledRouteDetails> scheduledRouteDetailsMap = new LinkedHashMap<String, ScheduledRouteDetails>();
     private Scheduler scheduler;
     private int routeStopGracePeriod;

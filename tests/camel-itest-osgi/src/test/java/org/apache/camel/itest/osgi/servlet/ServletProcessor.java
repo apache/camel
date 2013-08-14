@@ -22,7 +22,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class ServletProcessor implements Processor {
-    private static final transient Logger LOG = LoggerFactory.getLogger(ServletProcessor.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ServletProcessor.class);
 
     public void process(Exchange exchange) throws Exception {
         String request = exchange.getIn().getBody(String.class);

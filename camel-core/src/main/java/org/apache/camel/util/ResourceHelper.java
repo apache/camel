@@ -38,7 +38,7 @@ import org.slf4j.LoggerFactory;
  */
 public final class ResourceHelper {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(ResourceHelper.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ResourceHelper.class);
 
     private ResourceHelper() {
         // utility class

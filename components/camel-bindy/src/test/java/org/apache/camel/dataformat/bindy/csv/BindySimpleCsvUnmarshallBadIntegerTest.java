@@ -40,7 +40,7 @@ import static org.junit.Assert.assertEquals;
 @ContextConfiguration
 public class BindySimpleCsvUnmarshallBadIntegerTest extends AbstractJUnit4SpringContextTests {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(BindySimpleCsvUnmarshallBadIntegerTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(BindySimpleCsvUnmarshallBadIntegerTest.class);
 
     private static final String URI_MOCK_RESULT = "mock:result";
     private static final String URI_MOCK_ERROR = "mock:error";

@@ -28,7 +28,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class OsgiLanguageResolver implements LanguageResolver {
-    private static final transient Logger LOG = LoggerFactory.getLogger(OsgiLanguageResolver.class);
+    private static final Logger LOG = LoggerFactory.getLogger(OsgiLanguageResolver.class);
 
     private final BundleContext bundleContext;
 

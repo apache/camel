@@ -75,7 +75,7 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer {
     public static final String META_INF_TYPE_CONVERTER = "META-INF/services/org/apache/camel/TypeConverter";
     public static final String META_INF_FALLBACK_TYPE_CONVERTER = "META-INF/services/org/apache/camel/FallbackTypeConverter";
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(Activator.class);
+    private static final Logger LOG = LoggerFactory.getLogger(Activator.class);
 
     private BundleTracker tracker;
     private Map<Long, List<BaseService>> resolvers = new ConcurrentHashMap<Long, List<BaseService>>();

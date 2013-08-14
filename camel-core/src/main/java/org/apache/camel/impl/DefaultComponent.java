@@ -43,7 +43,7 @@ import org.slf4j.LoggerFactory;
  * @version 
  */
 public abstract class DefaultComponent extends ServiceSupport implements Component {
-    private static final transient Logger LOG = LoggerFactory.getLogger(DefaultComponent.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DefaultComponent.class);
 
     private CamelContext camelContext;
 

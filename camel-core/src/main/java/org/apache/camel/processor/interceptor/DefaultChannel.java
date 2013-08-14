@@ -58,7 +58,7 @@ import org.slf4j.LoggerFactory;
  */
 public class DefaultChannel extends CamelInternalProcessor implements ModelChannel {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(DefaultChannel.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DefaultChannel.class);
 
     private final List<InterceptStrategy> interceptors = new ArrayList<InterceptStrategy>();
     private Processor errorHandler;

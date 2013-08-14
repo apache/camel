@@ -41,7 +41,7 @@ import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
  */
 public class DefaultConsumerTemplate extends ServiceSupport implements ConsumerTemplate {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(DefaultConsumerTemplate.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DefaultConsumerTemplate.class);
     private final CamelContext camelContext;
     private ConsumerCache consumerCache;
     private int maximumCacheSize;

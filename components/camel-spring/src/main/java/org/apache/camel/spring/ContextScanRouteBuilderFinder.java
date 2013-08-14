@@ -33,7 +33,7 @@ import org.springframework.context.ApplicationContext;
  * @version 
  */
 public class ContextScanRouteBuilderFinder {
-    private static final transient Logger LOG = LoggerFactory.getLogger(ContextScanRouteBuilderFinder.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ContextScanRouteBuilderFinder.class);
     private final ApplicationContext applicationContext;
     private final PackageScanFilter filter;
 

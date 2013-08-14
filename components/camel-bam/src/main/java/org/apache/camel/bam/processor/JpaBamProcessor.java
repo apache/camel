@@ -35,7 +35,7 @@ import org.springframework.transaction.support.TransactionTemplate;
  * @version 
  */
 public class JpaBamProcessor extends JpaBamProcessorSupport<ProcessInstance> {
-    private static final transient Logger LOG = LoggerFactory.getLogger(JpaBamProcessor.class);
+    private static final Logger LOG = LoggerFactory.getLogger(JpaBamProcessor.class);
 
     public JpaBamProcessor(TransactionTemplate transactionTemplate, JpaTemplate template, Expression correlationKeyExpression, ActivityRules activityRules) {
         super(transactionTemplate, template, correlationKeyExpression, activityRules);

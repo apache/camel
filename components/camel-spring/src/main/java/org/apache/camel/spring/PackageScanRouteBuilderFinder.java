@@ -34,7 +34,7 @@ import org.springframework.context.ApplicationContext;
  * @version 
  */
 public class PackageScanRouteBuilderFinder {
-    private static final transient Logger LOG = LoggerFactory.getLogger(PackageScanRouteBuilderFinder.class);
+    private static final Logger LOG = LoggerFactory.getLogger(PackageScanRouteBuilderFinder.class);
     private final SpringCamelContext camelContext;
     private final String[] packages;
     private final PackageScanClassResolver resolver;

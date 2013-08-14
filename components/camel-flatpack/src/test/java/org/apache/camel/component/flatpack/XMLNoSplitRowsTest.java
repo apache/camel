@@ -40,7 +40,7 @@ import static org.junit.Assert.fail;
 @ContextConfiguration
 public class XMLNoSplitRowsTest extends AbstractJUnit4SpringContextTests {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(XMLNoSplitRowsTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(XMLNoSplitRowsTest.class);
 
     @EndpointInject(uri = "mock:results")
     protected MockEndpoint results;

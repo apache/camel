@@ -39,7 +39,7 @@ import static org.junit.Assert.assertNotNull;
  */
 @ContextConfiguration
 public class DelimitedWithUnmarshalTest extends AbstractJUnit4SpringContextTests {
-    private static final transient Logger LOG = LoggerFactory.getLogger(FixedLengthTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(FixedLengthTest.class);
 
     @EndpointInject(uri = "mock:results")
     protected MockEndpoint results;

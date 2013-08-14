@@ -31,7 +31,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class CacheProducer extends DefaultProducer {
-    private static final transient Logger LOG = LoggerFactory.getLogger(CacheProducer.class);
+    private static final Logger LOG = LoggerFactory.getLogger(CacheProducer.class);
     private CacheConfiguration config;
     private Ehcache cache;
 

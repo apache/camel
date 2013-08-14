@@ -52,7 +52,7 @@ import org.slf4j.LoggerFactory;
  * @version 
  */
 public class TraceInterceptor extends DelegateAsyncProcessor implements ExchangeFormatter {
-    private static final transient Logger LOG = LoggerFactory.getLogger(TraceInterceptor.class);
+    private static final Logger LOG = LoggerFactory.getLogger(TraceInterceptor.class);
 
     private CamelLogProcessor logger;
 

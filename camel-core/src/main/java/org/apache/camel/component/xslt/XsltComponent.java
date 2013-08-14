@@ -38,7 +38,7 @@ import org.slf4j.LoggerFactory;
 public class XsltComponent extends DefaultComponent {
 
     private static final String SAXON_TRANSFORMER_FACTORY_CLASS_NAME = "net.sf.saxon.TransformerFactoryImpl";
-    private static final transient Logger LOG = LoggerFactory.getLogger(XsltComponent.class);
+    private static final Logger LOG = LoggerFactory.getLogger(XsltComponent.class);
     private XmlConverter xmlConverter;
     private URIResolver uriResolver;
     private boolean contentCache = true;

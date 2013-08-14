@@ -37,7 +37,7 @@ import org.slf4j.LoggerFactory;
  */
 @Converter
 public final class NIOConverter {
-    private static final transient Logger LOG = LoggerFactory.getLogger(NIOConverter.class);
+    private static final Logger LOG = LoggerFactory.getLogger(NIOConverter.class);
 
     /**
      * Utility classes should not have a public constructor.

@@ -23,7 +23,7 @@ import org.slf4j.LoggerFactory;
 
 public class XmppLogger implements PacketListener {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(XmppLogger.class);
+    private static final Logger LOG = LoggerFactory.getLogger(XmppLogger.class);
     private String direction;
 
     public XmppLogger(String direction) {

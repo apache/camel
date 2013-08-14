@@ -28,7 +28,7 @@ import org.slf4j.LoggerFactory;
  * @version 
  */
 public class MyRegistry {
-    private static final transient Logger LOG = LoggerFactory.getLogger(MyRegistry.class);
+    private static final Logger LOG = LoggerFactory.getLogger(MyRegistry.class);
 
     private Map<String, Map<String, Object>> services = new HashMap<String, Map<String, Object>>();
 

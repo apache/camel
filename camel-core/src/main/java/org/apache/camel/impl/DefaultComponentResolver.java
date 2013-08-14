@@ -38,7 +38,7 @@ import org.slf4j.LoggerFactory;
 public class DefaultComponentResolver implements ComponentResolver {
 
     public static final String RESOURCE_PATH = "META-INF/services/org/apache/camel/component/";
-    private static final transient Logger LOG = LoggerFactory.getLogger(DefaultComponentResolver.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DefaultComponentResolver.class);
     private FactoryFinder factoryFinder;
 
     public Component resolveComponent(String name, CamelContext context) {

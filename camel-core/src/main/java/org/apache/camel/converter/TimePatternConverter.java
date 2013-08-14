@@ -25,7 +25,7 @@ import org.slf4j.LoggerFactory;
 
 @Converter
 public final class TimePatternConverter {   
-    private static final transient Logger LOG = LoggerFactory.getLogger(TimePatternConverter.class);
+    private static final Logger LOG = LoggerFactory.getLogger(TimePatternConverter.class);
     private static final String NUMBERS_ONLY_STRING_PATTERN = "^[-]?(\\d)+$";
     private static final String REPLACEMENT_PATTERN = "[our|inute|econd](s)?";
     private static final String HOUR_REGEX_PATTERN = "((\\d)*(\\d))[h|H]";

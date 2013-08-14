@@ -34,7 +34,7 @@ import org.springframework.transaction.support.TransactionTemplate;
  * @version 
  */
 public class SpringTransactionPolicy implements TransactedPolicy {
-    private static final transient Logger LOG = LoggerFactory.getLogger(SpringTransactionPolicy.class);
+    private static final Logger LOG = LoggerFactory.getLogger(SpringTransactionPolicy.class);
     private TransactionTemplate template;
     private String propagationBehaviorName;
     private PlatformTransactionManager transactionManager;

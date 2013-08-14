@@ -56,7 +56,7 @@ import org.slf4j.LoggerFactory;
  */
 public class DefaultHttpBinding implements HttpBinding {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(DefaultHttpBinding.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DefaultHttpBinding.class);
     private boolean useReaderForPayload;
     private HeaderFilterStrategy headerFilterStrategy = new HttpHeaderFilterStrategy();
     private HttpEndpoint endpoint;

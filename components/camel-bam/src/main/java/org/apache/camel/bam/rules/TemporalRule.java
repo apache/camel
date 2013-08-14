@@ -44,7 +44,7 @@ import static org.apache.camel.util.ServiceHelper.stopServices;
  * @version 
  */
 public class TemporalRule extends ServiceSupport {
-    private static final transient Logger LOG = LoggerFactory.getLogger(TemporalRule.class);
+    private static final Logger LOG = LoggerFactory.getLogger(TemporalRule.class);
     private TimeExpression first;
     private TimeExpression second;
     private long expectedMillis;

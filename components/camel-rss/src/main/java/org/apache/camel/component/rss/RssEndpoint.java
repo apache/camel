@@ -32,7 +32,7 @@ import org.slf4j.LoggerFactory;
  * An <a href="http://camel.apache.org/rss.html">RSS Endpoint</a>.
  */
 public class RssEndpoint extends FeedEndpoint {
-    protected static final transient Logger LOG = LoggerFactory.getLogger(RssEndpoint.class);
+    protected static final Logger LOG = LoggerFactory.getLogger(RssEndpoint.class);
 
     public RssEndpoint() {
     }

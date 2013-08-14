@@ -43,13 +43,13 @@ public class MinaEndpoint extends DefaultEndpoint implements MultipleConsumersSu
 
     /** The key of the IoSession which is stored in the message header*/
     @Deprecated
-    public static final transient String HEADER_MINA_IOSESSION = "CamelMinaIoSession";
+    public static final String HEADER_MINA_IOSESSION = "CamelMinaIoSession";
     /** The socket address of local machine that received the message. */
     @Deprecated
-    public static final transient String HEADER_LOCAL_ADDRESS = "CamelMinaLocalAddress";
+    public static final String HEADER_LOCAL_ADDRESS = "CamelMinaLocalAddress";
     /** The socket address of the remote machine that send the message. */
     @Deprecated
-    public static final transient String HEADER_REMOTE_ADDRESS = "CamelMinaRemoteAddress";
+    public static final String HEADER_REMOTE_ADDRESS = "CamelMinaRemoteAddress";
 
     private SocketAddress address;
     private IoAcceptor acceptor;

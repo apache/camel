@@ -47,7 +47,7 @@ import org.slf4j.LoggerFactory;
  */
 public class ShiroSecurityProcessor extends DelegateAsyncProcessor {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(ShiroSecurityProcessor.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ShiroSecurityProcessor.class);
     private final ShiroSecurityPolicy policy;
 
     public ShiroSecurityProcessor(Processor processor, ShiroSecurityPolicy policy) {

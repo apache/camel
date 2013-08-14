@@ -37,7 +37,7 @@ import org.slf4j.LoggerFactory;
  * @version 
  */
 public class JmsMessage extends DefaultMessage {
-    private static final transient Logger LOG = LoggerFactory.getLogger(JmsMessage.class);
+    private static final Logger LOG = LoggerFactory.getLogger(JmsMessage.class);
     private Message jmsMessage;
     private JmsBinding binding;
 

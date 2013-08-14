@@ -29,7 +29,7 @@ import org.slf4j.LoggerFactory;
  * A Producer to send messages using JavaMail.
  */
 public class MailProducer extends DefaultProducer {
-    private static final transient Logger LOG = LoggerFactory.getLogger(MailProducer.class);
+    private static final Logger LOG = LoggerFactory.getLogger(MailProducer.class);
     private final JavaMailSender sender;
 
     public MailProducer(MailEndpoint endpoint, JavaMailSender sender) {

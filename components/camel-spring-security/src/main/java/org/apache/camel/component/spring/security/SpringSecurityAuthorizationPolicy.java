@@ -46,7 +46,7 @@ import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.util.Assert;
 
 public class SpringSecurityAuthorizationPolicy extends IdentifiedType implements AuthorizationPolicy, InitializingBean, ApplicationEventPublisherAware {
-    private static final transient Logger LOG = LoggerFactory.getLogger(SpringSecurityAuthorizationPolicy.class);
+    private static final Logger LOG = LoggerFactory.getLogger(SpringSecurityAuthorizationPolicy.class);
     private AccessDecisionManager accessDecisionManager;
     private AuthenticationManager authenticationManager;
     private AuthenticationAdapter authenticationAdapter;

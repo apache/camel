@@ -57,7 +57,7 @@ public class CachedOutputStream extends OutputStream {
     public static final String TEMP_DIR = "CamelCachedOutputStreamOutputDirectory";
     @Deprecated
     public static final String CIPHER_TRANSFORMATION = "CamelCachedOutputStreamCipherTransformation";
-    private static final transient Logger LOG = LoggerFactory.getLogger(CachedOutputStream.class);
+    private static final Logger LOG = LoggerFactory.getLogger(CachedOutputStream.class);
 
     private final StreamCachingStrategy strategy;
     private OutputStream currentStream;

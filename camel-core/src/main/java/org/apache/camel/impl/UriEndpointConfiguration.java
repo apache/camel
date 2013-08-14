@@ -37,7 +37,7 @@ import org.slf4j.LoggerFactory;
  * to denote its parameters which can be specified via URI query parameters.
  */
 public class UriEndpointConfiguration implements EndpointConfiguration {
-    private static final transient Logger LOG = LoggerFactory.getLogger(UriEndpointConfiguration.class);
+    private static final Logger LOG = LoggerFactory.getLogger(UriEndpointConfiguration.class);
 
     private final CamelContext camelContext;
     private final Endpoint endpoint;

@@ -38,7 +38,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  * @version 
  */
 public class JmsPerformanceTest extends CamelTestSupport {
-    private static final transient Logger LOG = LoggerFactory.getLogger(JmsPerformanceTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(JmsPerformanceTest.class);
     protected MyBean myBean = new MyBean();
     protected int messageCount = 1000;
     protected CountDownLatch receivedCountDown = new CountDownLatch(messageCount);

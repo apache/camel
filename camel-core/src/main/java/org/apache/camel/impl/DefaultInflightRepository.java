@@ -34,7 +34,7 @@ import org.slf4j.LoggerFactory;
  */
 public class DefaultInflightRepository extends ServiceSupport implements InflightRepository  {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(DefaultInflightRepository.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DefaultInflightRepository.class);
     private final AtomicInteger totalCount = new AtomicInteger();
     private final ConcurrentMap<String, AtomicInteger> routeCount = new ConcurrentHashMap<String, AtomicInteger>();
 

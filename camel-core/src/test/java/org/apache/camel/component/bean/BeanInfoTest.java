@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory;
  * @version 
  */
 public class BeanInfoTest extends TestCase {
-    private static final transient Logger LOG = LoggerFactory.getLogger(BeanInfoTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(BeanInfoTest.class);
 
     protected CamelContext camelContext = new DefaultCamelContext();
 

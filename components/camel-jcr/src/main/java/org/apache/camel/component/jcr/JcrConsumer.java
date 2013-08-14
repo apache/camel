@@ -37,7 +37,7 @@ import org.slf4j.LoggerFactory;
  */
 public class JcrConsumer extends DefaultConsumer implements SuspendableService {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(JcrConsumer.class);
+    private static final Logger LOG = LoggerFactory.getLogger(JcrConsumer.class);
 
     private Session session;
     private EventListener eventListener;

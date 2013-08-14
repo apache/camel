@@ -27,7 +27,7 @@ import org.slf4j.LoggerFactory;
  */
 public class DirectVmProducer extends DefaultAsyncProducer {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(DirectVmProducer.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DirectVmProducer.class);
     private DirectVmEndpoint endpoint;
 
     public DirectVmProducer(DirectVmEndpoint endpoint) {

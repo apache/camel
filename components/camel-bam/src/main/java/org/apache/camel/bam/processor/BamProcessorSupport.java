@@ -39,7 +39,7 @@ import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
  * @version 
  */
 public abstract class BamProcessorSupport<T> implements Processor {
-    private static final transient Logger LOG = LoggerFactory.getLogger(BamProcessorSupport.class);
+    private static final Logger LOG = LoggerFactory.getLogger(BamProcessorSupport.class);
     private Class<T> entityType;
     private Expression correlationKeyExpression;
     private TransactionTemplate transactionTemplate;

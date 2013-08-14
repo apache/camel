@@ -48,7 +48,7 @@ import org.slf4j.LoggerFactory;
  */
 public class JMXConsumer extends DefaultConsumer implements NotificationListener {
     
-    private static final transient Logger LOG = LoggerFactory.getLogger(JMXConsumer.class);
+    private static final Logger LOG = LoggerFactory.getLogger(JMXConsumer.class);
     
     private JMXEndpoint mJmxEndpoint;
     private JMXConnector mConnector;

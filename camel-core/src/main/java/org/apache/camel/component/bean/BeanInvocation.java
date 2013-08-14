@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory;
  * Invocation of beans that can handle being serialized.
  */
 public class BeanInvocation implements Externalizable {
-    private static final transient Logger LOG = LoggerFactory.getLogger(BeanInvocation.class);
+    private static final Logger LOG = LoggerFactory.getLogger(BeanInvocation.class);
     private Object[] args;
     private MethodBean methodBean;
     private transient Method method;

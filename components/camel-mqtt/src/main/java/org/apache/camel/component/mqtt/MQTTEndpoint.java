@@ -40,7 +40,7 @@ import org.slf4j.LoggerFactory;
  * MQTT endpoint
  */
 public class MQTTEndpoint extends DefaultEndpoint {
-    private static final transient Logger LOG = LoggerFactory.getLogger(MQTTEndpoint.class);
+    private static final Logger LOG = LoggerFactory.getLogger(MQTTEndpoint.class);
 
     private CallbackConnection connection;
     private final MQTTConfiguration configuration;

@@ -42,7 +42,7 @@ import org.slf4j.LoggerFactory;
  * webservice data element
  */
 public class ServiceInterfaceStrategy implements ElementNameStrategy {
-    private static final transient Logger LOG = LoggerFactory.getLogger(ServiceInterfaceStrategy.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ServiceInterfaceStrategy.class);
     private Map<String, MethodInfo> soapActionToMethodInfo = new HashMap<String, MethodInfo>();
     private Map<String, QName> inTypeNameToQName = new HashMap<String, QName>();
     private Map<String, QName> outTypeNameToQName = new HashMap<String, QName>();

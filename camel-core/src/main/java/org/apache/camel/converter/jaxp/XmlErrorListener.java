@@ -24,7 +24,7 @@ import org.slf4j.LoggerFactory;
 
 public class XmlErrorListener implements ErrorListener {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(XmlErrorListener.class);
+    private static final Logger LOG = LoggerFactory.getLogger(XmlErrorListener.class);
     
     @Override
     public void warning(TransformerException e) throws TransformerException {

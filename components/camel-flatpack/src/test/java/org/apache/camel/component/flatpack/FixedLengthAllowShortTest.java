@@ -38,7 +38,7 @@ import static org.junit.Assert.assertNotNull;
  */
 @ContextConfiguration
 public class FixedLengthAllowShortTest extends AbstractJUnit4SpringContextTests {
-    private static final transient Logger LOG = LoggerFactory.getLogger(FixedLengthAllowShortTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(FixedLengthAllowShortTest.class);
 
     @EndpointInject(uri = "mock:results")
     protected MockEndpoint results;

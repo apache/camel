@@ -40,7 +40,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class CMISSessionFacade {
-    private static final transient Logger LOG = LoggerFactory.getLogger(CMISSessionFacade.class);
+    private static final Logger LOG = LoggerFactory.getLogger(CMISSessionFacade.class);
     private final String url;
     private int pageSize = 100;
     private int readCount;

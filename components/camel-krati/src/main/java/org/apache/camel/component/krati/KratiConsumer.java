@@ -35,7 +35,7 @@ import org.slf4j.LoggerFactory;
  */
 public class KratiConsumer extends ScheduledBatchPollingConsumer {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(KratiConsumer.class);
+    private static final Logger LOG = LoggerFactory.getLogger(KratiConsumer.class);
 
     protected final KratiEndpoint endpoint;
     protected DataStore<Object, Object> dataStore;

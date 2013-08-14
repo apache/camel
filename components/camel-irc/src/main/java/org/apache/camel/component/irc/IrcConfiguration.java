@@ -36,7 +36,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class IrcConfiguration implements Cloneable {
-    private static final transient Logger LOG = LoggerFactory.getLogger(IrcConfiguration.class);
+    private static final Logger LOG = LoggerFactory.getLogger(IrcConfiguration.class);
 
     private List<IrcChannel> channels = new ArrayList<IrcChannel>();
     private String hostname;

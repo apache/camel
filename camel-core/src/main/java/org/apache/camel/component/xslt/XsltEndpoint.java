@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory;
 @ManagedResource(description = "Managed XsltEndpoint")
 public class XsltEndpoint extends ProcessorEndpoint {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(XsltEndpoint.class);
+    private static final Logger LOG = LoggerFactory.getLogger(XsltEndpoint.class);
 
     private XsltBuilder xslt;
     private String resourceUri;

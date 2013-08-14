@@ -47,7 +47,7 @@ import org.slf4j.LoggerFactory;
  * @version 
  */
 public class XmppConsumer extends DefaultConsumer implements PacketListener, MessageListener, ChatManagerListener {
-    private static final transient Logger LOG = LoggerFactory.getLogger(XmppConsumer.class);
+    private static final Logger LOG = LoggerFactory.getLogger(XmppConsumer.class);
     private final XmppEndpoint endpoint;
     private MultiUserChat muc;
     private Chat privateChat;

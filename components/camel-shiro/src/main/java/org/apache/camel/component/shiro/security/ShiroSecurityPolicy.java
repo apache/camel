@@ -35,7 +35,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class ShiroSecurityPolicy implements AuthorizationPolicy {
-    private static final transient Logger LOG = LoggerFactory.getLogger(ShiroSecurityPolicy.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ShiroSecurityPolicy.class);
     private final byte[] bits128 = {
         (byte) 0x08, (byte) 0x09, (byte) 0x0A, (byte) 0x0B,
         (byte) 0x0C, (byte) 0x0D, (byte) 0x0E, (byte) 0x0F,

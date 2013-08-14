@@ -28,7 +28,7 @@ import rx.util.functions.Action1;
 /**
  */
 public class ToObservableTest extends RxTestSupport {
-    private static final transient Logger LOG = LoggerFactory.getLogger(ToObservableTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ToObservableTest.class);
 
     @Test
     public void testConsume() throws Exception {

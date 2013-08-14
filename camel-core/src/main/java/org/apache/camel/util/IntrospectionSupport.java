@@ -56,7 +56,7 @@ import org.slf4j.LoggerFactory;
  */
 public final class IntrospectionSupport {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(IntrospectionSupport.class);
+    private static final Logger LOG = LoggerFactory.getLogger(IntrospectionSupport.class);
     private static final Pattern GETTER_PATTERN = Pattern.compile("(get|is)[A-Z].*");
     private static final Pattern SETTER_PATTERN = Pattern.compile("set[A-Z].*");
     private static final List<Method> EXCLUDED_METHODS = new ArrayList<Method>();

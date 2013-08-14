@@ -48,7 +48,7 @@ import org.slf4j.LoggerFactory;
  */
 @Converter
 public class StaxConverter {
-    private static final transient Logger LOG = LoggerFactory.getLogger(XmlErrorListener.class);
+    private static final Logger LOG = LoggerFactory.getLogger(XmlErrorListener.class);
 
     // TODO: do not use a cxf system property
     // TODO: make higher default pool size as 20 is not much in high end systems

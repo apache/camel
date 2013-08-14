@@ -35,7 +35,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class CacheEndpoint extends DefaultEndpoint {
-    private static final transient Logger LOG = LoggerFactory.getLogger(CacheEndpoint.class);
+    private static final Logger LOG = LoggerFactory.getLogger(CacheEndpoint.class);
     private CacheConfiguration config;
     private CacheManagerFactory cacheManagerFactory;
 

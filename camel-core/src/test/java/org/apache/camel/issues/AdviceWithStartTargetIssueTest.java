@@ -66,7 +66,7 @@ public class AdviceWithStartTargetIssueTest extends ContextTestSupport {
 
     static class ContainerWideInterceptor implements InterceptStrategy {
 
-        private static final transient Logger LOG = LoggerFactory.getLogger(ContainerWideInterceptor.class);
+        private static final Logger LOG = LoggerFactory.getLogger(ContainerWideInterceptor.class);
         private static int count;
 
         public Processor wrapProcessorInInterceptors(final CamelContext context, final ProcessorDefinition<?> definition,

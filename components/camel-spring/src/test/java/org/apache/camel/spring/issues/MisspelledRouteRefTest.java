@@ -27,7 +27,7 @@ import org.slf4j.LoggerFactory;
  */
 public class MisspelledRouteRefTest extends TestCase {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(MisspelledRouteRefTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(MisspelledRouteRefTest.class);
 
     public void testApplicationContextFailed() {
         try {

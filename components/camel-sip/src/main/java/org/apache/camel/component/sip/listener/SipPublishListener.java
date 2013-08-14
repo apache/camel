@@ -28,7 +28,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class SipPublishListener implements SipListener {
-    private static final transient Logger LOG = LoggerFactory.getLogger(SipPublishListener.class);
+    private static final Logger LOG = LoggerFactory.getLogger(SipPublishListener.class);
     private SipPublisher sipPublisher;
 
     public SipPublishListener(SipPublisher sipPublisher) {

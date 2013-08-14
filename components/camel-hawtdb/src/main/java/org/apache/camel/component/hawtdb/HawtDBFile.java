@@ -41,7 +41,7 @@ import org.slf4j.LoggerFactory;
  */
 public class HawtDBFile extends TxPageFileFactory implements Service {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(HawtDBFile.class);
+    private static final Logger LOG = LoggerFactory.getLogger(HawtDBFile.class);
 
     // the root which contains an index with name -> page for the real indexes
     private static final BTreeIndexFactory<String, Integer> ROOT_INDEXES_FACTORY = new BTreeIndexFactory<String, Integer>();

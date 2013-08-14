@@ -76,7 +76,7 @@ import org.slf4j.LoggerFactory;
  * @version 
  */
 public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
-    private static final transient Logger LOG = LoggerFactory.getLogger(MockEndpoint.class);
+    private static final Logger LOG = LoggerFactory.getLogger(MockEndpoint.class);
     // must be volatile so changes is visible between the thread which performs the assertions
     // and the threads which process the exchanges when routing messages in Camel
     protected volatile Processor reporter;

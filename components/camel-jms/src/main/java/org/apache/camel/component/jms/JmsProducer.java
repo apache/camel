@@ -50,7 +50,7 @@ import static org.apache.camel.component.jms.JmsMessageHelper.normalizeDestinati
  * @version 
  */
 public class JmsProducer extends DefaultAsyncProducer {
-    private static final transient Logger LOG = LoggerFactory.getLogger(JmsProducer.class);
+    private static final Logger LOG = LoggerFactory.getLogger(JmsProducer.class);
     private static final String GENERATED_CORRELATION_ID_PREFIX = "Camel-";
     private final JmsEndpoint endpoint;
     private final AtomicBoolean started = new AtomicBoolean(false);

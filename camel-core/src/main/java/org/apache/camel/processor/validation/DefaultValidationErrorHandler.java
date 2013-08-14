@@ -35,7 +35,7 @@ import org.slf4j.LoggerFactory;
  * @version 
  */
 public class DefaultValidationErrorHandler implements ValidatorErrorHandler {
-    private static final transient Logger LOG = LoggerFactory.getLogger(DefaultValidationErrorHandler.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DefaultValidationErrorHandler.class);
     private List<SAXParseException> warnings = new ArrayList<SAXParseException>();
     private List<SAXParseException> errors = new ArrayList<SAXParseException>();
     private List<SAXParseException> fatalErrors = new ArrayList<SAXParseException>();

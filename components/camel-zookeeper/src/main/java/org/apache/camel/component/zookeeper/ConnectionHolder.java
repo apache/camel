@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory;
  * established.
  */
 public class ConnectionHolder implements Watcher {
-    private static final transient Logger LOG = LoggerFactory.getLogger(ConnectionHolder.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ConnectionHolder.class);
 
     private CountDownLatch connectionLatch = new CountDownLatch(1);
 

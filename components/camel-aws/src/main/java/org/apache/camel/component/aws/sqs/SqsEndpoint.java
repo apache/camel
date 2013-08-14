@@ -48,7 +48,7 @@ import org.slf4j.LoggerFactory;
  */
 public class SqsEndpoint extends ScheduledPollEndpoint {
     
-    private static final transient Logger LOG = LoggerFactory.getLogger(SqsEndpoint.class);
+    private static final Logger LOG = LoggerFactory.getLogger(SqsEndpoint.class);
     
     private AmazonSQS client;
     private String queueUrl;

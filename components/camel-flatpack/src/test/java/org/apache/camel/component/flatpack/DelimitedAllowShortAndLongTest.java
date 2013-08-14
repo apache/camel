@@ -36,7 +36,7 @@ import static org.junit.Assert.assertNotNull;
 
 @ContextConfiguration
 public class DelimitedAllowShortAndLongTest extends AbstractJUnit4SpringContextTests {
-    private static final transient Logger LOG = LoggerFactory.getLogger(DelimitedAllowShortAndLongTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DelimitedAllowShortAndLongTest.class);
 
     @EndpointInject(uri = "mock:results")
     protected MockEndpoint results;

@@ -32,7 +32,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class RouteboxSedaTest extends RouteboxDemoTestSupport {
-    private static final transient Logger LOG = LoggerFactory.getLogger(RouteboxSedaTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(RouteboxSedaTest.class);
     
     private ProducerTemplate template;
     private String routeboxUri = "routebox:multipleRoutes?innerProtocol=seda&innerContext=#ctx&dispatchStrategy=#strategy"; 
