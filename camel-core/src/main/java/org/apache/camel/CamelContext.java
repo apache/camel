@@ -64,7 +64,8 @@ import org.apache.camel.util.LoadPropertiesException;
  * <p/>
  * The context offers the following methods to control the lifecycle:
  * <ul>
- *   <li>{@link #start()}  - to start</li>
+ *   <li>{@link #start()}  - to start (<b>important:</b> the start method is not blocked, see more details
+ *     <a href="http://camel.apache.org/running-camel-standalone-and-have-it-keep-running.html">here</a>)</li>
  *   <li>{@link #stop()} - to shutdown (will stop all routes/components/endpoints etc and clear internal state/cache)</li>
  *   <li>{@link #suspend()} - to pause routing messages</li>
  *   <li>{@link #resume()} - to resume after a suspend</li>
@@ -83,6 +84,25 @@ import org.apache.camel.util.LoadPropertiesException;
  * @version 
  */
 public interface CamelContext extends SuspendableService, RuntimeConfiguration {
+
+    /**
+     * Starts the {@link CamelContext} (<b>important:</b> the start method is not blocked, see more details
+     *     <a href="http://camel.apache.org/running-camel-standalone-and-have-it-keep-running.html">here</a>)</li>.
+     * <p/>
+     * See more details at the class-level javadoc of this class.
+     *
+     * @throws Exception is thrown if starting failed
+     */
+    void start() throws Exception;
+
+    /**
+     * Stop and shutdown the {@link CamelContext} (will stop all routes/components/endpoints etc and clear internal state/cache).
+     * <p/>
+     * See more details at the class-level javadoc of this class.
+     *
+     * @throws Exception is thrown if stopping failed
+     */
+    void stop() throws Exception;
 
     /**
      * Gets the name (id) of the this context.
