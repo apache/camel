@@ -25,7 +25,7 @@ import org.apache.camel.spi.ScheduledPollConsumerScheduler;
 
 /**
  * A {@link ScheduledPollConsumerScheduler} which is <b>not</b> scheduled but uses a regular single-threaded {@link ExecutorService}
- * to execute the task when {@link #scheduleTask(org.apache.camel.Consumer, Runnable)} is invoked.
+ * to execute the task when {@link #scheduleTask(Runnable)} is invoked.
  * <p/>
  * This is used when the {@link org.apache.camel.PollingConsumer} EIP is implemented using the {@link EventDrivenPollingConsumer}
  * bridging a {@link ScheduledPollConsumer} implementation. In this case we use this single threaded regular thread pool
@@ -34,17 +34,18 @@ import org.apache.camel.spi.ScheduledPollConsumerScheduler;
  */
 public class SingleScheduledPollConsumerScheduler extends org.apache.camel.support.ServiceSupport implements ScheduledPollConsumerScheduler {
 
-    private final Consumer consumer;
+    private Consumer consumer;
     private CamelContext camelContext;
     private ExecutorService executorService;
     private Future future;
 
-    public SingleScheduledPollConsumerScheduler(Consumer consumer) {
+    @Override
+    public void onInit(Consumer consumer) {
         this.consumer = consumer;
     }
 
     @Override
-    public void scheduleTask(Consumer consumer, Runnable task) {
+    public void scheduleTask(Runnable task) {
         if (isSchedulerStarted()) {
             future = executorService.submit(task);
         }

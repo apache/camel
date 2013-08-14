@@ -57,8 +57,12 @@ public class QuartzScheduledPollConsumerScheduler extends ServiceSupport impleme
     private volatile JobDetail job;
 
     @Override
-    public void scheduleTask(Consumer consumer, Runnable runnable) {
+    public void onInit(Consumer consumer) {
         this.consumer = consumer;
+    }
+
+    @Override
+    public void scheduleTask(Runnable runnable) {
         this.runnable = runnable;
     }
 

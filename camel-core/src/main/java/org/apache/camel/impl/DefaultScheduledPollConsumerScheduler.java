@@ -92,8 +92,12 @@ public class DefaultScheduledPollConsumerScheduler extends org.apache.camel.supp
     }
 
     @Override
-    public void scheduleTask(Consumer consumer, Runnable task) {
+    public void onInit(Consumer consumer) {
         this.consumer = consumer;
+    }
+
+    @Override
+    public void scheduleTask(Runnable task) {
         this.task = task;
     }
 

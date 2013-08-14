@@ -397,10 +397,11 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
             scheduler = new DefaultScheduledPollConsumerScheduler();
         }
         scheduler.setCamelContext(getEndpoint().getCamelContext());
+        scheduler.onInit(this);
 
         if (!(scheduler instanceof SingleScheduledPollConsumerScheduler)) {
             // schedule task if its not the single scheduled
-            scheduler.scheduleTask(this, this);
+            scheduler.scheduleTask(this);
         }
 
         // configure scheduler with options from this consumer
@@ -459,7 +460,7 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
     public void onInit() throws Exception {
         // use a single scheduler so we do not have it running it periodically when we use
         // this consumer as a EventDrivenPollingConsumer
-        scheduler = new SingleScheduledPollConsumerScheduler(this);
+        scheduler = new SingleScheduledPollConsumerScheduler();
     }
 
     @Override
@@ -467,7 +468,7 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
         if (LOG.isTraceEnabled()) {
             LOG.trace("Before poll {}", getEndpoint());
         }
-        scheduler.scheduleTask(this, this);
+        scheduler.scheduleTask(this);
         return timeout;
     }
 

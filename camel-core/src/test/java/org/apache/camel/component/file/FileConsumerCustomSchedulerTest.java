@@ -78,7 +78,12 @@ public class FileConsumerCustomSchedulerTest extends ContextTestSupport {
         private String foo;
 
         @Override
-        public void scheduleTask(final Consumer consumer, final Runnable task) {
+        public void onInit(Consumer consumer) {
+            // noop
+        }
+
+        @Override
+        public void scheduleTask(final Runnable task) {
             this.timerTask = new TimerTask() {
                 @Override
                 public void run() {
