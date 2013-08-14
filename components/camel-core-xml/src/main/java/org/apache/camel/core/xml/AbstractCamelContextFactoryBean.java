@@ -30,6 +30,7 @@ import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelException;
+import org.apache.camel.ManagementStatisticsLevel;
 import org.apache.camel.RoutesBuilder;
 import org.apache.camel.ShutdownRoute;
 import org.apache.camel.ShutdownRunningTask;
@@ -372,7 +373,10 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
             // set additional configuration from camelJMXAgent
             boolean onlyId = agent.getOnlyRegisterProcessorWithCustomId() != null && agent.getOnlyRegisterProcessorWithCustomId();
             getContext().getManagementStrategy().onlyManageProcessorWithCustomId(onlyId);
-            getContext().getManagementStrategy().setStatisticsLevel(camelJMXAgent.getStatisticsLevel());
+
+            String level = CamelContextHelper.parseText(getContext(), camelJMXAgent.getStatisticsLevel());
+            ManagementStatisticsLevel msLevel = getContext().getTypeConverter().mandatoryConvertTo(ManagementStatisticsLevel.class, level);
+            getContext().getManagementStrategy().setStatisticsLevel(msLevel);
 
             Boolean loadStatisticsEnabled = CamelContextHelper.parseBoolean(getContext(), camelJMXAgent.getLoadStatisticsEnabled());
             if (loadStatisticsEnabled != null) {

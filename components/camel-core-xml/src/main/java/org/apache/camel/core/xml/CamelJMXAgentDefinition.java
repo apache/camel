@@ -103,7 +103,7 @@ public class CamelJMXAgentDefinition extends IdentifiedType {
      * Level of granularity for performance statistics enabled
      */
     @XmlAttribute
-    private ManagementStatisticsLevel statisticsLevel = ManagementStatisticsLevel.All;
+    private String statisticsLevel = ManagementStatisticsLevel.All.name();
 
     /**
      * A flag that indicates whether Load statistics is enabled
@@ -189,11 +189,11 @@ public class CamelJMXAgentDefinition extends IdentifiedType {
         this.usePlatformMBeanServer = usePlatformMBeanServer;
     }
 
-    public ManagementStatisticsLevel getStatisticsLevel() {
+    public String getStatisticsLevel() {
         return statisticsLevel;
     }
 
-    public void setStatisticsLevel(ManagementStatisticsLevel statisticsLevel) {
+    public void setStatisticsLevel(String statisticsLevel) {
         this.statisticsLevel = statisticsLevel;
     }
 
