@@ -63,6 +63,18 @@ public class QuartzScheduledPollConsumerScheduler extends ServiceSupport impleme
     }
 
     @Override
+    public void unscheduleTask() {
+        if (trigger != null) {
+            LOG.debug("Unscheduling trigger: {}", trigger.getKey());
+            try {
+                quartzScheduler.unscheduleJob(trigger.getKey());
+            } catch (SchedulerException e) {
+                throw ObjectHelper.wrapRuntimeCamelException(e);
+            }
+        }
+    }
+
+    @Override
     public void startScheduler() {
         // the quartz component starts the scheduler
     }

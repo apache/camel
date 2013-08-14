@@ -98,6 +98,13 @@ public class DefaultScheduledPollConsumerScheduler extends org.apache.camel.supp
     }
 
     @Override
+    public void unscheduleTask() {
+        if (future != null) {
+            future.cancel(false);
+        }
+    }
+
+    @Override
     public void startScheduler() {
         // only schedule task if we have not already done that
         if (future == null) {

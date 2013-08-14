@@ -40,6 +40,13 @@ public interface ScheduledPollConsumerScheduler extends ShutdownableService, Cam
     void scheduleTask(Consumer consumer, Runnable task);
 
     /**
+     * Attempts to unschedules the last task which was scheduled.
+     * <p/>
+     * An implementation may not implement this method.
+     */
+    void unscheduleTask();
+
+    /**
      * Starts the scheduler.
      * <p/>
      * If the scheduler is already started, then this is a noop method call.

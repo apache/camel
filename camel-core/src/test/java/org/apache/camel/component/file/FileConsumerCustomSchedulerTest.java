@@ -88,6 +88,11 @@ public class FileConsumerCustomSchedulerTest extends ContextTestSupport {
             };
         }
 
+        @Override
+        public void unscheduleTask() {
+            // noop
+        }
+
         public int getCounter() {
             return counter;
         }

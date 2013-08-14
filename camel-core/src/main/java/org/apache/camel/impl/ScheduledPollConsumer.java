@@ -27,7 +27,6 @@ import org.apache.camel.FailedToCreateConsumerException;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.PollingConsumerPollingStrategy;
 import org.apache.camel.Processor;
-import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.SuspendableService;
 import org.apache.camel.spi.PollingConsumerPollStrategy;
 import org.apache.camel.spi.ScheduledPollConsumerScheduler;
@@ -398,7 +397,11 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
             scheduler = new DefaultScheduledPollConsumerScheduler();
         }
         scheduler.setCamelContext(getEndpoint().getCamelContext());
-        scheduler.scheduleTask(this, this);
+
+        if (!(scheduler instanceof SingleScheduledPollConsumerScheduler)) {
+            // schedule task if its not the single scheduled
+            scheduler.scheduleTask(this, this);
+        }
 
         // configure scheduler with options from this consumer
         Map<String, Object> properties = new HashMap<String, Object>();
@@ -454,28 +457,26 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
 
     @Override
     public void onInit() throws Exception {
-        // noop
+        // use a single scheduler so we do not have it running it periodically when we use
+        // this consumer as a EventDrivenPollingConsumer
+        scheduler = new SingleScheduledPollConsumerScheduler(this);
     }
 
     @Override
     public long beforePoll(long timeout) throws Exception {
-        LOG.trace("Before poll {}", getEndpoint());
-        // resume or start our self
-        if (!ServiceHelper.resumeService(this)) {
-            ServiceHelper.startService(this);
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Before poll {}", getEndpoint());
         }
-
-        // ensure at least timeout is as long as one poll delay
-        return Math.max(timeout, getDelay());
+        scheduler.scheduleTask(this, this);
+        return timeout;
     }
 
     @Override
     public void afterPoll() throws Exception {
-        LOG.trace("After poll {}", getEndpoint());
-        // suspend or stop our self
-        if (!ServiceHelper.suspendService(this)) {
-            ServiceHelper.stopService(this);
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("After poll {}", getEndpoint());
         }
+        scheduler.unscheduleTask();
     }
 
 }
