@@ -350,7 +350,7 @@
     <smack-bundle-version>3.2.1_1</smack-bundle-version>
     <smack-version>3.2.1</smack-version>
     <snappy-bundle-version>1.0.4.1_1</snappy-bundle-version>
-    <snmp4j-version>2.1.0_1</snmp4j-version>
+    <snmp4j-version>2.2.2_1</snmp4j-version>
     <solr-bundle-version>3.6.0_1</solr-bundle-version> <!-- FIXME cmueller: not in sync! -->
     <solr-version>3.6.2</solr-version>
     <spring-batch-version>2.2.1.RELEASE</spring-batch-version>
