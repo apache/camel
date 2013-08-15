@@ -100,7 +100,10 @@ public class JettyHttpComponent extends HttpComponent {
     protected Long continuationTimeout;
     protected boolean useContinuation = true;
     protected SSLContextParameters sslContextParameters;
+    protected Integer requestBufferSize;
+    protected Integer requestHeaderSize;
     protected Integer responseBufferSize;
+    protected Integer responseHeaderSize;
 
     class ConnectorRef {
         Server server;
@@ -542,6 +545,19 @@ public class JettyHttpComponent extends HttpComponent {
                     + " Unknown parameters=[" + properties + "]");
             }
         }
+
+        if (answer != null && requestBufferSize != null) {
+            answer.setRequestBufferSize(requestBufferSize);
+        }
+        if (answer != null && requestHeaderSize != null) {
+            answer.setRequestHeaderSize(requestHeaderSize);
+        }
+        if (answer != null && responseBufferSize != null) {
+            answer.setResponseBufferSize(responseBufferSize);
+        }
+        if (answer != null && responseHeaderSize != null) {
+            answer.setResponseBufferSize(responseHeaderSize);
+        }
         return answer;
     }
     
@@ -618,6 +634,19 @@ public class JettyHttpComponent extends HttpComponent {
                     + " Check the uri if the parameters are spelt correctly and that they are properties of the SelectChannelConnector."
                     + " Unknown parameters=[" + properties + "]");
             }
+        }
+
+        if (requestBufferSize != null) {
+            answer.setRequestBufferSize(requestBufferSize);
+        }
+        if (requestHeaderSize != null) {
+            answer.setRequestHeaderSize(requestHeaderSize);
+        }
+        if (responseBufferSize != null) {
+            answer.setResponseBufferSize(responseBufferSize);
+        }
+        if (responseHeaderSize != null) {
+            answer.setResponseBufferSize(responseHeaderSize);
         }
         return answer;
     }
@@ -836,6 +865,30 @@ public class JettyHttpComponent extends HttpComponent {
 
     public void setResponseBufferSize(Integer responseBufferSize) {
         this.responseBufferSize = responseBufferSize;
+    }
+
+    public Integer getRequestBufferSize() {
+        return requestBufferSize;
+    }
+
+    public void setRequestBufferSize(Integer requestBufferSize) {
+        this.requestBufferSize = requestBufferSize;
+    }
+
+    public Integer getRequestHeaderSize() {
+        return requestHeaderSize;
+    }
+
+    public void setRequestHeaderSize(Integer requestHeaderSize) {
+        this.requestHeaderSize = requestHeaderSize;
+    }
+
+    public Integer getResponseHeaderSize() {
+        return responseHeaderSize;
+    }
+
+    public void setResponseHeaderSize(Integer responseHeaderSize) {
+        this.responseHeaderSize = responseHeaderSize;
     }
 
     // Implementation methods
