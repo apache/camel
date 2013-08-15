@@ -37,7 +37,7 @@ import org.slf4j.LoggerFactory;
  * @version 
  */
 public class DefaultConsumer extends ServiceSupport implements Consumer {
-    protected final transient Logger log = LoggerFactory.getLogger(getClass());
+    protected final Logger log = LoggerFactory.getLogger(getClass());
     private final Endpoint endpoint;
     private final Processor processor;
     private volatile AsyncProcessor asyncProcessor;

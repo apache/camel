@@ -37,7 +37,7 @@ public abstract class RoutePolicySupport extends ServiceSupport implements Route
 
     // TODO: Move to support package
 
-    protected final transient Logger log = LoggerFactory.getLogger(getClass());
+    protected final Logger log = LoggerFactory.getLogger(getClass());
     private ExceptionHandler exceptionHandler;
 
     public void onInit(Route route) {

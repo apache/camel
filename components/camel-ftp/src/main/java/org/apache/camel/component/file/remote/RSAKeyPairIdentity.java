@@ -35,7 +35,7 @@ import org.slf4j.LoggerFactory;
 
 public class RSAKeyPairIdentity implements Identity {
     private static final String ALGORITHM_TYPE = "ssh-rsa";
-    private final transient Logger log = LoggerFactory.getLogger(getClass());
+    private final Logger log = LoggerFactory.getLogger(getClass());
     
     private KeyPair keyPair;
     private String name;

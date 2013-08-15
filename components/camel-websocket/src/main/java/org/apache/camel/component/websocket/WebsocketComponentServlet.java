@@ -28,7 +28,7 @@ import org.slf4j.LoggerFactory;
 
 public class WebsocketComponentServlet extends WebSocketServlet {
     private static final long serialVersionUID = 1L;
-    private final transient Logger log = LoggerFactory.getLogger(getClass());
+    private final Logger log = LoggerFactory.getLogger(getClass());
 
     private final NodeSynchronization sync;
     private WebsocketConsumer consumer;

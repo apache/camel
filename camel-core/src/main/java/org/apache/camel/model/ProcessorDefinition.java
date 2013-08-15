@@ -80,7 +80,7 @@ import org.slf4j.LoggerFactory;
 @XmlAccessorType(XmlAccessType.PROPERTY)
 public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>> extends OptionalIdentifiedDefinition<Type> implements Block {
     private static final AtomicInteger COUNTER = new AtomicInteger();
-    protected final transient Logger log = LoggerFactory.getLogger(getClass());
+    protected final Logger log = LoggerFactory.getLogger(getClass());
 
     protected Boolean inheritErrorHandler;
     private final LinkedList<Block> blocks = new LinkedList<Block>();

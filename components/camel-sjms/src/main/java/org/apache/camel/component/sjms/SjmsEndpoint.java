@@ -40,7 +40,7 @@ import org.slf4j.LoggerFactory;
  */
 @UriEndpoint(scheme = "sjms", consumerClass = SjmsConsumer.class)
 public class SjmsEndpoint extends DefaultEndpoint implements MultipleConsumersSupport {
-    protected final transient Logger logger = LoggerFactory.getLogger(getClass());
+    protected final Logger logger = LoggerFactory.getLogger(getClass());
 
     private SessionPool sessions;
     @UriParam

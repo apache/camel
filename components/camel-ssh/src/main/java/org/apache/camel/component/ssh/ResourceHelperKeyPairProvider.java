@@ -42,7 +42,7 @@ import org.slf4j.LoggerFactory;
  * unless it has been correctly registered as a security provider.
  */
 public class ResourceHelperKeyPairProvider extends AbstractKeyPairProvider {
-    protected final transient Logger log = LoggerFactory.getLogger(getClass());
+    protected final Logger log = LoggerFactory.getLogger(getClass());
 
     private ClassResolver classResolver;
     private String[] resources;

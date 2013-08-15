@@ -53,7 +53,7 @@ import org.slf4j.LoggerFactory;
  */
 public class FtpOperations implements RemoteFileOperations<FTPFile> {
 
-    protected final transient Logger log = LoggerFactory.getLogger(getClass());
+    protected final Logger log = LoggerFactory.getLogger(getClass());
     protected final FTPClient client;
     protected final FTPClientConfig clientConfig;
     protected RemoteFileEndpoint<FTPFile> endpoint;

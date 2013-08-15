@@ -37,7 +37,7 @@ import org.slf4j.LoggerFactory;
  * Generic file producer
  */
 public class GenericFileProducer<T> extends DefaultProducer {
-    protected final transient Logger log = LoggerFactory.getLogger(getClass());
+    protected final Logger log = LoggerFactory.getLogger(getClass());
     protected final GenericFileEndpoint<T> endpoint;
     protected GenericFileOperations<T> operations;
     // assume writing to 100 different files concurrently at most for the same file producer

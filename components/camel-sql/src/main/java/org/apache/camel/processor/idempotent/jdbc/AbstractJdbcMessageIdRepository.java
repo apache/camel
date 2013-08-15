@@ -50,7 +50,7 @@ public abstract class AbstractJdbcMessageIdRepository<T> extends ServiceSupport 
     protected String processorName;
     protected TransactionTemplate transactionTemplate;
     protected DataSource dataSource;
-    protected transient Logger log = LoggerFactory.getLogger(getClass());
+    protected Logger log = LoggerFactory.getLogger(getClass());
 
     public AbstractJdbcMessageIdRepository() {
     }

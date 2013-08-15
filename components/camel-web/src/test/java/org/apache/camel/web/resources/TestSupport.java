@@ -31,7 +31,7 @@ import org.slf4j.LoggerFactory;
  * @version 
  */
 public class TestSupport extends Assert {
-    protected final transient Logger log = LoggerFactory.getLogger(getClass());
+    protected final Logger log = LoggerFactory.getLogger(getClass());
 
     protected ClientConfig clientConfig;
     protected Client client;

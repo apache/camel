@@ -26,7 +26,7 @@ import org.slf4j.LoggerFactory;
 
 public abstract class AbstractSdbCommand {
     
-    protected final transient Logger log = LoggerFactory.getLogger(getClass());
+    protected final Logger log = LoggerFactory.getLogger(getClass());
     
     protected AmazonSimpleDB sdbClient;
     protected SdbConfiguration configuration;

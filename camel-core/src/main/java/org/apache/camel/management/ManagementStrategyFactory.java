@@ -25,7 +25,7 @@ import org.slf4j.LoggerFactory;
  * Factory for creating {@link ManagementStrategy}
  */
 public class ManagementStrategyFactory {
-    private final transient Logger log = LoggerFactory.getLogger(getClass());
+    private final Logger log = LoggerFactory.getLogger(getClass());
 
     public ManagementStrategy create(CamelContext context, boolean disableJMX) {
         ManagementStrategy answer;

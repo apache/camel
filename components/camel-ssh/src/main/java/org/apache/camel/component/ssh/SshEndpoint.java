@@ -42,7 +42,7 @@ import org.slf4j.LoggerFactory;
  */
 @UriEndpoint(scheme = "ssh", consumerClass = SshConsumer.class)
 public class SshEndpoint extends ScheduledPollEndpoint {
-    protected final transient Logger log = LoggerFactory.getLogger(getClass());
+    protected final Logger log = LoggerFactory.getLogger(getClass());
 
     private SshClient client;
     @UriParam

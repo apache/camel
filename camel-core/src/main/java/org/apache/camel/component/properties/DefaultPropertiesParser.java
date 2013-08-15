@@ -31,7 +31,7 @@ import org.slf4j.LoggerFactory;
  * @version 
  */
 public class DefaultPropertiesParser implements AugmentedPropertyNameAwarePropertiesParser {
-    protected final transient Logger log = LoggerFactory.getLogger(getClass());
+    protected final Logger log = LoggerFactory.getLogger(getClass());
     
     @Override
     public String parseUri(String text, Properties properties, String prefixToken, String suffixToken) throws IllegalArgumentException {

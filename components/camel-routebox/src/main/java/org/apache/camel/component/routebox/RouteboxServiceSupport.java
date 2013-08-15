@@ -28,7 +28,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public abstract class RouteboxServiceSupport extends ServiceSupport {
-    private final transient Logger log = LoggerFactory.getLogger(getClass());
+    private final Logger log = LoggerFactory.getLogger(getClass());
     private ExceptionHandler exceptionHandler;
     private RouteboxEndpoint endpoint;
     private ExecutorService executor;

@@ -57,7 +57,7 @@ import org.slf4j.LoggerFactory;
  */
 public class DefaultPackageScanClassResolver extends ServiceSupport implements PackageScanClassResolver, StaticService {
 
-    protected final transient Logger log = LoggerFactory.getLogger(getClass());
+    protected final Logger log = LoggerFactory.getLogger(getClass());
     private final Set<ClassLoader> classLoaders = new LinkedHashSet<ClassLoader>();
     // use a JAR cache to speed up scanning JARs, but let it be soft referenced so it can claim the data when memory is needed
     private final Map<String, List<String>> jarCache = new LRUSoftCache<String, List<String>>(1000);

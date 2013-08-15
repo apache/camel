@@ -38,7 +38,7 @@ import org.slf4j.LoggerFactory;
  */
 public class CamelServlet extends HttpServlet {
     private static final long serialVersionUID = -7061982839117697829L;
-    protected final transient Logger log = LoggerFactory.getLogger(getClass());
+    protected final Logger log = LoggerFactory.getLogger(getClass());
     
     /**
      *  We have to define this explicitly so the name can be set as we can not always be

@@ -39,7 +39,7 @@ import org.slf4j.LoggerFactory;
  * @version 
  */
 public class GraphSupport {
-    protected final transient Logger log = LoggerFactory.getLogger(getClass());
+    protected final Logger log = LoggerFactory.getLogger(getClass());
     protected final Map<Object, NodeData> nodeMap = new HashMap<Object, NodeData>();
     private String imagePrefix = "http://camel.apache.org/images/eip/";
 

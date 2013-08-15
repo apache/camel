@@ -50,7 +50,7 @@ import org.slf4j.LoggerFactory;
 
 public class DefaultAhcBinding implements AhcBinding {
 
-    protected final transient Logger log = LoggerFactory.getLogger(this.getClass());
+    protected final Logger log = LoggerFactory.getLogger(this.getClass());
 
     @Override
     public Request prepareRequest(AhcEndpoint endpoint, Exchange exchange) throws CamelExchangeException {

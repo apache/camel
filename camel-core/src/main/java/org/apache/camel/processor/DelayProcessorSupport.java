@@ -37,7 +37,7 @@ import org.slf4j.LoggerFactory;
  * @version 
  */
 public abstract class DelayProcessorSupport extends DelegateAsyncProcessor {
-    protected final transient Logger log = LoggerFactory.getLogger(getClass());
+    protected final Logger log = LoggerFactory.getLogger(getClass());
     private final CamelContext camelContext;
     private final ScheduledExecutorService executorService;
     private final boolean shutdownExecutorService;

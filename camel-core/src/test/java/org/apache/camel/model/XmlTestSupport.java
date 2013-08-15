@@ -30,7 +30,7 @@ import org.slf4j.LoggerFactory;
  * @version 
  */
 public abstract class XmlTestSupport extends TestSupport {
-    protected final transient Logger log = LoggerFactory.getLogger(getClass());
+    protected final Logger log = LoggerFactory.getLogger(getClass());
     protected JAXBContext jaxbContext;
 
     protected RouteContainer assertParseAsJaxb(String uri) throws JAXBException {

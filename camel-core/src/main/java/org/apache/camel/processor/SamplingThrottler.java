@@ -40,7 +40,7 @@ import org.slf4j.LoggerFactory;
  */
 public class SamplingThrottler extends DelegateAsyncProcessor {
 
-    protected final transient Logger log = LoggerFactory.getLogger(getClass());
+    protected final Logger log = LoggerFactory.getLogger(getClass());
     private long messageFrequency;
     private long currentMessageCount;
     private long samplePeriod;

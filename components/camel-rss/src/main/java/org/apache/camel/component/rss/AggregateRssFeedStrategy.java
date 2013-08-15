@@ -29,7 +29,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class AggregateRssFeedStrategy implements AggregationStrategy {
-    protected final transient Logger log = LoggerFactory.getLogger(AggregateRssFeedStrategy.class);    
+    protected final Logger log = LoggerFactory.getLogger(AggregateRssFeedStrategy.class);    
     
     public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
         if (oldExchange == null) {

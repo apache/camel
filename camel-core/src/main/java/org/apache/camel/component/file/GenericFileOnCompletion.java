@@ -34,7 +34,7 @@ import org.slf4j.LoggerFactory;
  */
 public class GenericFileOnCompletion<T> implements Synchronization {
 
-    private final transient Logger log = LoggerFactory.getLogger(GenericFileOnCompletion.class);
+    private final Logger log = LoggerFactory.getLogger(GenericFileOnCompletion.class);
     private GenericFileEndpoint<T> endpoint;
     private GenericFileOperations<T> operations;
     private ExceptionHandler exceptionHandler;

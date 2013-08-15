@@ -143,7 +143,7 @@ import org.slf4j.LoggerFactory;
  */
 @SuppressWarnings("deprecation")
 public class DefaultCamelContext extends ServiceSupport implements ModelCamelContext, SuspendableService {
-    private final transient Logger log = LoggerFactory.getLogger(getClass());
+    private final Logger log = LoggerFactory.getLogger(getClass());
     private JAXBContext jaxbContext;
     private CamelContextNameStrategy nameStrategy = new DefaultCamelContextNameStrategy();
     private ManagementNameStrategy managementNameStrategy = new DefaultManagementNameStrategy(this);

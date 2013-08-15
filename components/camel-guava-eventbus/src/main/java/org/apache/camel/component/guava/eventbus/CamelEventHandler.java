@@ -30,7 +30,7 @@ import org.slf4j.LoggerFactory;
  */
 public class CamelEventHandler {
 
-    protected final transient Logger log = LoggerFactory.getLogger(CamelEventHandler.class);
+    protected final Logger log = LoggerFactory.getLogger(CamelEventHandler.class);
     protected final GuavaEventBusEndpoint eventBusEndpoint;
     protected final AsyncProcessor processor;
 

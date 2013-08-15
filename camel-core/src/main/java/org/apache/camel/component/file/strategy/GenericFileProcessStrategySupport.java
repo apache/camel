@@ -34,7 +34,7 @@ import org.slf4j.LoggerFactory;
  * Base class for implementations of {@link GenericFileProcessStrategy}.
  */
 public abstract class GenericFileProcessStrategySupport<T> implements GenericFileProcessStrategy<T> {
-    protected final transient Logger log = LoggerFactory.getLogger(getClass());
+    protected final Logger log = LoggerFactory.getLogger(getClass());
     protected GenericFileExclusiveReadLockStrategy<T> exclusiveReadLockStrategy;
 
     public void prepareOnStartup(GenericFileOperations<T> operations, GenericFileEndpoint<T> endpoint) throws Exception {

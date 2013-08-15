@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory;
  * @version 
  */
 public class SedaComponent extends UriEndpointComponent {
-    protected final transient Logger log = LoggerFactory.getLogger(getClass());
+    protected final Logger log = LoggerFactory.getLogger(getClass());
     protected final int maxConcurrentConsumers = 500;
     protected int queueSize;
     protected int defaultConcurrentConsumers = 1;

@@ -55,7 +55,7 @@ public abstract class GenericFileEndpoint<T> extends ScheduledPollEndpoint imple
     protected static final String DEFAULT_STRATEGYFACTORY_CLASS = "org.apache.camel.component.file.strategy.GenericFileProcessStrategyFactory";
     protected static final int DEFAULT_IDEMPOTENT_CACHE_SIZE = 1000;
 
-    protected final transient Logger log = LoggerFactory.getLogger(getClass());
+    protected final Logger log = LoggerFactory.getLogger(getClass());
 
     protected GenericFileConfiguration configuration;
 

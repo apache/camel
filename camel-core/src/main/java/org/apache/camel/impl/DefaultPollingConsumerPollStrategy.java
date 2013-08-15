@@ -29,7 +29,7 @@ import org.slf4j.LoggerFactory;
  */
 public class DefaultPollingConsumerPollStrategy implements PollingConsumerPollStrategy {
 
-    protected final transient Logger log = LoggerFactory.getLogger(getClass());
+    protected final Logger log = LoggerFactory.getLogger(getClass());
 
     public boolean begin(Consumer consumer, Endpoint endpoint) {
         return true;

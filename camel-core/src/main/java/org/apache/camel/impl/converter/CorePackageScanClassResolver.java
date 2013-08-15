@@ -51,7 +51,7 @@ import org.slf4j.LoggerFactory;
  */
 public class CorePackageScanClassResolver implements PackageScanClassResolver {
 
-    protected final transient Logger log = LoggerFactory.getLogger(getClass());
+    protected final Logger log = LoggerFactory.getLogger(getClass());
     private final Set<ClassLoader> classLoaders = new LinkedHashSet<ClassLoader>();
     private final Set<Class<?>> converters = new LinkedHashSet<Class<?>>();
 

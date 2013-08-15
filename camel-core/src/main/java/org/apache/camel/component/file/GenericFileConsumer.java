@@ -40,7 +40,7 @@ import org.slf4j.LoggerFactory;
  * Base class for file consumers.
  */
 public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsumer {
-    protected final transient Logger log = LoggerFactory.getLogger(getClass());
+    protected final Logger log = LoggerFactory.getLogger(getClass());
     protected GenericFileEndpoint<T> endpoint;
     protected GenericFileOperations<T> operations;
     protected volatile boolean loggedIn;
