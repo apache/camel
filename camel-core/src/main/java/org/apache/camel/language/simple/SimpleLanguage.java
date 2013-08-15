@@ -21,6 +21,7 @@ import org.apache.camel.Predicate;
 import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.support.LanguageSupport;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.PredicateToExpressionAdapter;
 
 /**
  * A <a href="http://camel.apache.org/simple.html">simple language</a>
@@ -158,14 +159,47 @@ public class SimpleLanguage extends LanguageSupport {
         return answer;
     }
 
+    /**
+     * Creates a new {@link Expression}.
+     * <p/>
+     * <b>Important:</b> If you need to use a predicate (function to return true|false) then use
+     * {@link #predicate(String)} instead.
+     */
     public static Expression simple(String expression) {
-        return SIMPLE.createExpression(expression);
+        return expression(expression);
     }
 
+    /**
+     * Creates a new {@link Expression} (or {@link Predicate}
+     * if the resultType is a <tt>Boolean</tt>, or <tt>boolean</tt> type).
+     */
     public static Expression simple(String expression, Class<?> resultType) {
         SimpleLanguage answer = new SimpleLanguage();
         answer.setResultType(resultType);
-        return answer.createExpression(expression);
+        if (resultType == Boolean.class || resultType == boolean.class) {
+            // if its a boolean as result then its a predicate
+            Predicate predicate = answer.createPredicate(expression);
+            return PredicateToExpressionAdapter.toExpression(predicate);
+        } else {
+            return answer.createExpression(expression);
+        }
+    }
+
+    /**
+     * Creates a new {@link Expression}.
+     * <p/>
+     * <b>Important:</b> If you need to use a predicate (function to return true|false) then use
+     * {@link #predicate(String)} instead.
+     */
+    public static Expression expression(String expression) {
+        return SIMPLE.createExpression(expression);
+    }
+
+    /**
+     * Creates a new {@link Predicate}.
+     */
+    public static Predicate predicate(String predicate) {
+        return SIMPLE.createPredicate(predicate);
     }
 
     /**

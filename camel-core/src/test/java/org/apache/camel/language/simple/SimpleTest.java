@@ -32,6 +32,7 @@ import org.apache.camel.Expression;
 import org.apache.camel.ExpressionIllegalSyntaxException;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.LanguageTestSupport;
+import org.apache.camel.Predicate;
 import org.apache.camel.component.bean.MethodNotFoundException;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.language.bean.RuntimeBeanExpressionException;
@@ -49,6 +50,31 @@ public class SimpleTest extends LanguageTestSupport {
         JndiRegistry jndi = super.createRegistry();
         jndi.bind("myAnimal", new Animal("Donkey", 17));
         return jndi;
+    }
+
+    public void testSimpleExpressionOrPredicate() throws Exception {
+        Predicate predicate = SimpleLanguage.predicate("${header.bar} == 123");
+        assertTrue(predicate.matches(exchange));
+
+        predicate = SimpleLanguage.predicate("${header.bar} == 124");
+        assertFalse(predicate.matches(exchange));
+
+        Expression expression = SimpleLanguage.expression("${body}");
+        assertEquals("<hello id='m123'>world!</hello>", expression.evaluate(exchange, String.class));
+
+        expression = SimpleLanguage.simple("${body}");
+        assertEquals("<hello id='m123'>world!</hello>", expression.evaluate(exchange, String.class));
+        expression = SimpleLanguage.simple("${body}", String.class);
+        assertEquals("<hello id='m123'>world!</hello>", expression.evaluate(exchange, String.class));
+
+        expression = SimpleLanguage.simple("${header.bar} == 123", boolean.class);
+        assertEquals(Boolean.TRUE, expression.evaluate(exchange, Object.class));
+        expression = SimpleLanguage.simple("${header.bar} == 124", boolean.class);
+        assertEquals(Boolean.FALSE, expression.evaluate(exchange, Object.class));
+        expression = SimpleLanguage.simple("${header.bar} == 123", Boolean.class);
+        assertEquals(Boolean.TRUE, expression.evaluate(exchange, Object.class));
+        expression = SimpleLanguage.simple("${header.bar} == 124", Boolean.class);
+        assertEquals(Boolean.FALSE, expression.evaluate(exchange, Object.class));
     }
 
     public void testResultType() throws Exception {
