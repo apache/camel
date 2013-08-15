@@ -45,12 +45,12 @@ public class NettyMultipleSimultaneousClientsTest extends BaseNettyTest {
             replies[i] = executorService.submit(new Callable<Object>() {
                 @Override
                 public Object call() throws Exception {
-                    // wait until we're permitted to start
+                    // wait until we're allowed to start
                     startLatch.await();
 
                     Object reply = template.requestBody(uri, "World");
 
-                    // signal that we're now done
+                    // signal that we're done now
                     finishLatch.countDown();
 
                     return reply;
@@ -71,7 +71,6 @@ public class NettyMultipleSimultaneousClientsTest extends BaseNettyTest {
         // and wait long enough until they're all done
         assertTrue("Waiting on the latch ended up with a timeout!", finishLatch.await(5, TimeUnit.SECONDS));
 
-        // shutdown the thread pool as the finishLatch above has already guaranteed the completion of all the tasks
         executorService.shutdown();
 
         // assert on what we expect to receive
