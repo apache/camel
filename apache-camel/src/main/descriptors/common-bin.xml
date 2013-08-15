@@ -161,6 +161,7 @@
         <include>org.apache.camel:camel-twitter</include>
         <include>org.apache.camel:camel-urlrewrite</include>
         <include>org.apache.camel:camel-velocity</include>
+        <include>org.apache.camel:camel-vertx</include>
         <include>org.apache.camel:camel-weather</include>
         <include>org.apache.camel:camel-websocket</include>
         <include>org.apache.camel:camel-xmlbeans</include>
