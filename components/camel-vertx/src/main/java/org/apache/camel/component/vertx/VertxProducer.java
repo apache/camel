@@ -47,13 +47,13 @@ public class VertxProducer extends DefaultProducer {
 
         JsonObject jsonObject = in.getBody(JsonObject.class);
         if (jsonObject != null) {
-            LOG.debug("Publishing to: with JsonObject: {}", address, jsonObject);
+            LOG.debug("Publishing to: {} with JsonObject: {}", address, jsonObject);
             eventBus.publish(address, jsonObject);
             return;
         }
         JsonArray jsonArray = in.getBody(JsonArray.class);
         if (jsonArray != null) {
-            LOG.debug("Publishing to: with JsonArray: {}", address, jsonArray);
+            LOG.debug("Publishing to: {} with JsonArray: {}", address, jsonArray);
             eventBus.publish(address, jsonArray);
             return;
         }
@@ -61,7 +61,7 @@ public class VertxProducer extends DefaultProducer {
         // and fallback and use string which almost all can be converted
         String text = in.getBody(String.class);
         if (text != null) {
-            LOG.debug("Publishing to: with String: {}", address, text);
+            LOG.debug("Publishing to: {} with String: {}", address, text);
             eventBus.publish(address, new JsonObject(text));
             return;
         }
