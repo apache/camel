@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.vertx;
 
+import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultConsumer;
@@ -39,25 +40,39 @@ public class VertxConsumer extends DefaultConsumer {
         this.endpoint = endpoint;
     }
 
+    protected void onEventBusEvent(final Message event) {
+        LOG.debug("onEvent {}", event);
+
+        final Exchange exchange = endpoint.createExchange();
+        exchange.getIn().setBody(event.body());
+
+        try {
+            getAsyncProcessor().process(exchange, new AsyncCallback() {
+                @Override
+                public void done(boolean doneSync) {
+                    // noop
+                }
+            });
+        } catch (Exception e) {
+            getExceptionHandler().handleException("Error processing Vertx event: " + event, exchange, e);
+        }
+    }
+
     protected void doStart() throws Exception {
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Registering EventBus handler on address {}", endpoint.getAddress());
+        }
+
         endpoint.getEventBus().registerHandler(endpoint.getAddress(), handler);
         super.doStart();
     }
 
     protected void doStop() throws Exception {
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Unregistering EventBus handler on address {}", endpoint.getAddress());
+        }
+
         endpoint.getEventBus().unregisterHandler(endpoint.getAddress(), handler);
         super.doStop();
-    }
-
-    protected void onEventBusEvent(Message event) {
-        LOG.debug("onEvent {}", event);
-
-        Exchange exchange = endpoint.createExchange();
-        exchange.getIn().setBody(event.body());
-        try {
-            getProcessor().process(exchange);
-        } catch (Exception e) {
-            getExceptionHandler().handleException("Error processing vertx message " + event, exchange, e);
-        }
     }
 }

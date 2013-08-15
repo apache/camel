@@ -24,6 +24,8 @@ import org.apache.camel.ComponentConfiguration;
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.spi.EndpointCompleter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.vertx.java.core.Vertx;
 import org.vertx.java.core.VertxFactory;
 
@@ -31,6 +33,7 @@ import org.vertx.java.core.VertxFactory;
  * A Camel Component for <a href="http://vertx.io/">vert.x</a>
  */
 public class VertxComponent extends UriEndpointComponent implements EndpointCompleter {
+    private static final Logger LOG = LoggerFactory.getLogger(VertxComponent.class);
     private Vertx vertx;
     private String host = "127.0.0.1";
     private int port = 5701;
@@ -85,8 +88,10 @@ public class VertxComponent extends UriEndpointComponent implements EndpointComp
         if (vertx == null) {
             // lets using a host / port if a host name is specified
             if (host != null && host.length() > 0) {
+                LOG.debug("Creating Vertx {}:{}", host, port);
                 vertx = VertxFactory.newVertx(port, host);
             } else {
+                LOG.debug("Creating Vertx");
                 vertx = VertxFactory.newVertx();
             }
         }
@@ -95,5 +100,8 @@ public class VertxComponent extends UriEndpointComponent implements EndpointComp
     @Override
     protected void doStop() throws Exception {
         super.doStop();
+
+        LOG.debug("Stopping Vertx {}", vertx);
+        vertx.stop();
     }
 }

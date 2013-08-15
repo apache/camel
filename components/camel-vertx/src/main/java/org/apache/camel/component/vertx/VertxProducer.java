@@ -20,11 +20,15 @@ import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadRuntimeException;
 import org.apache.camel.Message;
 import org.apache.camel.impl.DefaultProducer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.vertx.java.core.eventbus.EventBus;
 import org.vertx.java.core.json.JsonArray;
 import org.vertx.java.core.json.JsonObject;
 
 public class VertxProducer extends DefaultProducer {
+
+    private static final Logger LOG = LoggerFactory.getLogger(VertxProducer.class);
 
     public VertxProducer(VertxEndpoint endpoint) {
         super(endpoint);
@@ -43,11 +47,13 @@ public class VertxProducer extends DefaultProducer {
 
         JsonObject jsonObject = in.getBody(JsonObject.class);
         if (jsonObject != null) {
+            LOG.debug("Publishing to: with JsonObject: {}", address, jsonObject);
             eventBus.publish(address, jsonObject);
             return;
         }
         JsonArray jsonArray = in.getBody(JsonArray.class);
         if (jsonArray != null) {
+            LOG.debug("Publishing to: with JsonArray: {}", address, jsonArray);
             eventBus.publish(address, jsonArray);
             return;
         }
@@ -55,6 +61,7 @@ public class VertxProducer extends DefaultProducer {
         // and fallback and use string which almost all can be converted
         String text = in.getBody(String.class);
         if (text != null) {
+            LOG.debug("Publishing to: with String: {}", address, text);
             eventBus.publish(address, new JsonObject(text));
             return;
         }
