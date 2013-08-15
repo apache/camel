@@ -31,7 +31,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class FtpChangedExclusiveReadLockStrategy implements GenericFileExclusiveReadLockStrategy<FTPFile> {
-    private static final transient Logger LOG = LoggerFactory.getLogger(FtpChangedExclusiveReadLockStrategy.class);
+    private static final Logger LOG = LoggerFactory.getLogger(FtpChangedExclusiveReadLockStrategy.class);
     private long timeout;
     private long checkInterval = 5000;
     private LoggingLevel readLockLoggingLevel = LoggingLevel.WARN;

@@ -37,7 +37,7 @@ import org.springframework.transaction.support.TransactionTemplate;
  */
 public class TransactionErrorHandlerBuilder extends DefaultErrorHandlerBuilder {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(TransactionErrorHandlerBuilder.class);
+    private static final Logger LOG = LoggerFactory.getLogger(TransactionErrorHandlerBuilder.class);
     private static final String PROPAGATION_REQUIRED = "PROPAGATION_REQUIRED";
     private TransactionTemplate transactionTemplate;
     private LoggingLevel rollbackLoggingLevel = LoggingLevel.WARN;

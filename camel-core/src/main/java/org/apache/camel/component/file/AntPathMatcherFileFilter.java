@@ -29,7 +29,7 @@ import org.slf4j.LoggerFactory;
  * Exclude take precedence over includes. If a file match both exclude and include it will be regarded as excluded.
  */
 public class AntPathMatcherFileFilter implements FileFilter {
-    private static final transient Logger LOG = LoggerFactory.getLogger(AntPathMatcherFileFilter.class);
+    private static final Logger LOG = LoggerFactory.getLogger(AntPathMatcherFileFilter.class);
 
     private AntPathMatcher matcher = new AntPathMatcher();
     private String[] excludes;

@@ -31,7 +31,7 @@ import org.slf4j.LoggerFactory;
  */
 class HL7MLLPEncoder implements ProtocolEncoder {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(HL7MLLPEncoder.class);
+    private static final Logger LOG = LoggerFactory.getLogger(HL7MLLPEncoder.class);
 
     private static final String CHARSET_ENCODER = HL7MLLPCodec.class.getName() + ".charsetencoder";
 

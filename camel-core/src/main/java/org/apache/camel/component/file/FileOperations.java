@@ -44,7 +44,7 @@ import org.slf4j.LoggerFactory;
  * File operations for {@link java.io.File}.
  */
 public class FileOperations implements GenericFileOperations<File> {
-    private static final transient Logger LOG = LoggerFactory.getLogger(FileOperations.class);
+    private static final Logger LOG = LoggerFactory.getLogger(FileOperations.class);
     private FileEndpoint endpoint;
 
     public FileOperations() {

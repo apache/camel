@@ -44,7 +44,7 @@ import static org.apache.camel.util.ObjectHelper.notNull;
  */
 public class OnCompletionProcessor extends ServiceSupport implements AsyncProcessor, Traceable {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(OnCompletionProcessor.class);
+    private static final Logger LOG = LoggerFactory.getLogger(OnCompletionProcessor.class);
     private final CamelContext camelContext;
     private final Processor processor;
     private final ExecutorService executorService;

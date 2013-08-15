@@ -42,7 +42,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class SipPresenceAgentListener implements SipListener, SipMessageCodes {
-    private static final transient Logger LOG = LoggerFactory.getLogger(SipPresenceAgentListener.class);
+    private static final Logger LOG = LoggerFactory.getLogger(SipPresenceAgentListener.class);
     protected Dialog dialog;
     protected int notifyCount;
     private SipPresenceAgent sipPresenceAgent;

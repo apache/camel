@@ -38,7 +38,7 @@ import static org.junit.Assert.assertTrue;
 
 @ContextConfiguration
 public class CamelGreeterFileDomTest extends AbstractJUnit4SpringContextTests {
-    private static final transient Logger LOG = LoggerFactory.getLogger(CamelGreeterFileDomTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(CamelGreeterFileDomTest.class);
     
     private static final String REQUEST = "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\">"
         + "<soap:Body><greetMe xmlns=\"http://apache.org/hello_world_soap_http/types\">"

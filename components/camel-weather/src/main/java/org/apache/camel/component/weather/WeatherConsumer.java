@@ -27,7 +27,7 @@ import org.slf4j.LoggerFactory;
 
 public class WeatherConsumer extends ScheduledPollConsumer {
     public static final long DEFAULT_CONSUMER_DELAY = 60 * 60 * 1000L;
-    private static final transient Logger LOG = LoggerFactory.getLogger(WeatherConsumer.class);
+    private static final Logger LOG = LoggerFactory.getLogger(WeatherConsumer.class);
     private final String query;
 
     public WeatherConsumer(WeatherEndpoint endpoint, Processor processor, String query) {

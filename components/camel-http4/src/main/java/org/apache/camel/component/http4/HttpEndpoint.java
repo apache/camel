@@ -45,7 +45,7 @@ import org.slf4j.LoggerFactory;
  */
 public class HttpEndpoint extends DefaultPollingEndpoint implements HeaderFilterStrategyAware {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(HttpEndpoint.class);
+    private static final Logger LOG = LoggerFactory.getLogger(HttpEndpoint.class);
     private HeaderFilterStrategy headerFilterStrategy = new HttpHeaderFilterStrategy();
     private HttpBinding binding;
     private HttpContext httpContext;

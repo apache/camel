@@ -25,7 +25,7 @@ import org.slf4j.LoggerFactory;
  * test sending recieving from an MQTT broker
  */
 public abstract class MQTTBaseTest extends CamelTestSupport {
-    protected static final transient Logger LOG = LoggerFactory.getLogger(MQTTBaseTest.class);
+    protected static final Logger LOG = LoggerFactory.getLogger(MQTTBaseTest.class);
     protected static final String TEST_TOPIC = "ComponentTestTopic";
     protected BrokerService brokerService;
     protected int numberOfMessages = 100;

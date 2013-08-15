@@ -53,7 +53,7 @@ import org.slf4j.LoggerFactory;
  */
 public class SqsConsumer extends ScheduledBatchPollingConsumer {
     
-    private static final transient Logger LOG = LoggerFactory.getLogger(SqsConsumer.class);
+    private static final Logger LOG = LoggerFactory.getLogger(SqsConsumer.class);
     private ScheduledExecutorService scheduledExecutor;
 
     public SqsConsumer(SqsEndpoint endpoint, Processor processor) throws NoFactoryAvailableException {

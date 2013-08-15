@@ -27,7 +27,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class CacheBasedMessageBodyReplacer extends CacheValidate implements Processor {
-    private static final transient Logger LOG = LoggerFactory.getLogger(CacheBasedMessageBodyReplacer.class);
+    private static final Logger LOG = LoggerFactory.getLogger(CacheBasedMessageBodyReplacer.class);
     CacheManager cacheManager;
     Ehcache cache;
     private String cacheName;

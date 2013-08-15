@@ -30,7 +30,7 @@ import org.slf4j.LoggerFactory;
  * @version 
  */
 public class TimerRouteTest extends ContextTestSupport {
-    private static final transient Logger LOG = LoggerFactory.getLogger(TimerRouteTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(TimerRouteTest.class);
     private MyBean bean = new MyBean();
 
     public void testTimerInvokesBeanMethod() throws Exception {

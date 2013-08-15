@@ -50,7 +50,7 @@ public class SoapJaxbDataFormat extends JaxbDataFormat {
 
     public static final String SOAP_UNMARSHALLED_HEADER_LIST = "org.apache.camel.dataformat.soap.UNMARSHALLED_HEADER_LIST";
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(SoapJaxbDataFormat.class);
+    private static final Logger LOG = LoggerFactory.getLogger(SoapJaxbDataFormat.class);
 
     private SoapDataFormatAdapter adapter;
     private ElementNameStrategy elementNameStrategy;

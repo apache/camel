@@ -31,7 +31,7 @@ import org.slf4j.LoggerFactory;
  * @version 
  */
 public class RomeksExceptionTest extends ContextTestSupport {
-    private static final transient Logger LOG = LoggerFactory.getLogger(RomeksExceptionTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(RomeksExceptionTest.class);
 
     public void testRouteA() throws Exception {
         assertErrorHandlingWorks("a");

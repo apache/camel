@@ -40,7 +40,7 @@ import org.slf4j.LoggerFactory;
 public class HttpClientChannelHandler extends ClientChannelHandler {
 
     // use NettyHttpProducer as logger to make it easier to read the logs as this is part of the producer
-    private static final transient Logger LOG = LoggerFactory.getLogger(NettyHttpProducer.class);
+    private static final Logger LOG = LoggerFactory.getLogger(NettyHttpProducer.class);
     private final NettyHttpProducer producer;
     private HttpResponse response;
     private ChannelBuffer buffer;

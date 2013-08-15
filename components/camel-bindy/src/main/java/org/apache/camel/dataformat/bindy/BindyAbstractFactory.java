@@ -37,7 +37,7 @@ import org.slf4j.LoggerFactory;
  * supported by Camel Bindy
  */
 public abstract class BindyAbstractFactory implements BindyFactory {
-    private static final transient Logger LOG = LoggerFactory.getLogger(BindyAbstractFactory.class);
+    private static final Logger LOG = LoggerFactory.getLogger(BindyAbstractFactory.class);
     protected final Map<String, List<Field>> annotatedLinkFields = new LinkedHashMap<String, List<Field>>();
     protected Set<Class<?>> models;
     protected Set<String> modelClassNames;

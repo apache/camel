@@ -31,7 +31,7 @@ import org.slf4j.LoggerFactory;
  * The xmlrpc producer.
  */
 public class XmlRpcProducer extends DefaultProducer implements AsyncProcessor {
-    private static final transient Logger LOG = LoggerFactory.getLogger(XmlRpcProducer.class);
+    private static final Logger LOG = LoggerFactory.getLogger(XmlRpcProducer.class);
     private XmlRpcEndpoint endpoint;
     private XmlRpcClient client;
 

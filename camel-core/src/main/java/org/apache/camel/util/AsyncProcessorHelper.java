@@ -29,7 +29,7 @@ import org.slf4j.LoggerFactory;
  */
 public final class AsyncProcessorHelper {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(AsyncProcessorHelper.class);
+    private static final Logger LOG = LoggerFactory.getLogger(AsyncProcessorHelper.class);
 
     private AsyncProcessorHelper() {
         // utility class

@@ -47,7 +47,7 @@ import org.springframework.context.ApplicationContextAware;
 @XmlRootElement(name = "beanPostProcessor")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CamelBeanPostProcessor implements BeanPostProcessor, ApplicationContextAware {
-    private static final transient Logger LOG = LoggerFactory.getLogger(CamelBeanPostProcessor.class);
+    private static final Logger LOG = LoggerFactory.getLogger(CamelBeanPostProcessor.class);
     @XmlTransient
     Set<String> prototypeBeans = new LinkedHashSet<String>();
     @XmlTransient

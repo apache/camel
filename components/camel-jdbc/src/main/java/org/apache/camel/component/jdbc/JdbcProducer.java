@@ -40,7 +40,7 @@ import org.slf4j.LoggerFactory;
  * @version
  */
 public class JdbcProducer extends DefaultProducer {
-    private static final transient Logger LOG = LoggerFactory.getLogger(JdbcProducer.class);
+    private static final Logger LOG = LoggerFactory.getLogger(JdbcProducer.class);
     private DataSource dataSource;
     private int readSize;
     private Map<String, Object> parameters;

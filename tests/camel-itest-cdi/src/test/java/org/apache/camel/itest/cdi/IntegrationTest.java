@@ -44,7 +44,7 @@ import static org.junit.Assert.assertTrue;
 
 @RunWith(Arquillian.class)
 public class IntegrationTest {
-    private static final transient Logger LOG = LoggerFactory.getLogger(IntegrationTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(IntegrationTest.class);
 
     @Inject
     CamelContextMap camelContextMap;

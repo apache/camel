@@ -68,7 +68,7 @@ public class PropertiesComponent extends DefaultComponent {
      */
     public static final String OVERRIDE_PROPERTIES = PropertiesComponent.class.getName() + ".OverrideProperties";
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(PropertiesComponent.class);
+    private static final Logger LOG = LoggerFactory.getLogger(PropertiesComponent.class);
     private final Map<CacheKey, Properties> cacheMap = new LRUSoftCache<CacheKey, Properties>(1000);
     private PropertiesResolver propertiesResolver = new DefaultPropertiesResolver();
     private PropertiesParser propertiesParser = new DefaultPropertiesParser();

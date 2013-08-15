@@ -32,7 +32,7 @@ import org.springframework.osgi.context.BundleContextAware;
 @XmlRootElement(name = "camelContext")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CamelContextFactoryBean extends org.apache.camel.spring.CamelContextFactoryBean implements BundleContextAware {
-    private static final transient Logger LOG = LoggerFactory.getLogger(CamelContextFactoryBean.class);
+    private static final Logger LOG = LoggerFactory.getLogger(CamelContextFactoryBean.class);
     
     @XmlTransient
     private BundleContext bundleContext;

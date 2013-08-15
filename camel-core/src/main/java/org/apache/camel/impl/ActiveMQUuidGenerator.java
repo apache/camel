@@ -40,7 +40,7 @@ public class ActiveMQUuidGenerator implements UuidGenerator {
 
     // use same JVM property name as ActiveMQ
     public static final String PROPERTY_IDGENERATOR_PORT = "activemq.idgenerator.port";
-    private static final transient Logger LOG = LoggerFactory.getLogger(ActiveMQUuidGenerator.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ActiveMQUuidGenerator.class);
     private static final String UNIQUE_STUB;
     private static int instanceCount;
     private static String hostName;

@@ -56,7 +56,7 @@ import org.slf4j.LoggerFactory;
 public class DefaultExchangeHolder implements Serializable {
 
     private static final long serialVersionUID = 2L;
-    private static final transient Logger LOG = LoggerFactory.getLogger(DefaultExchangeHolder.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DefaultExchangeHolder.class);
 
     private String exchangeId;
     private Object inBody;

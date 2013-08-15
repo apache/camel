@@ -53,7 +53,7 @@ import org.springframework.transaction.support.TransactionTemplate;
  */
 public class JdbcAggregationRepository extends ServiceSupport implements RecoverableAggregationRepository, OptimisticLockingAggregationRepository {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(JdbcAggregationRepository.class);
+    private static final Logger LOG = LoggerFactory.getLogger(JdbcAggregationRepository.class);
     private static final String ID = "id";
     private static final String EXCHANGE = "exchange";
     private static final String BODY = "body";

@@ -55,7 +55,7 @@ import org.slf4j.LoggerFactory;
  * @version 
  */
 public class FlatpackDataFormat implements DataFormat {
-    private static final transient Logger LOG = LoggerFactory.getLogger(FlatpackDataFormat.class);
+    private static final Logger LOG = LoggerFactory.getLogger(FlatpackDataFormat.class);
     private ParserFactory parserFactory = DefaultParserFactory.getInstance();
     private char delimiter = ',';
     private char textQualifier = '"';

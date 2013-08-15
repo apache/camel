@@ -62,7 +62,7 @@ import org.slf4j.LoggerFactory;
  * @version 
  */
 public class HttpProducer extends DefaultProducer {
-    private static final transient Logger LOG = LoggerFactory.getLogger(HttpProducer.class);
+    private static final Logger LOG = LoggerFactory.getLogger(HttpProducer.class);
     private HttpClient httpClient;
     private boolean throwException;
     private boolean transferException;

@@ -44,7 +44,7 @@ import org.slf4j.LoggerFactory;
  */
 public class BindyKeyValuePairDataFormat extends BindyAbstractDataFormat {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(BindyKeyValuePairDataFormat.class);
+    private static final Logger LOG = LoggerFactory.getLogger(BindyKeyValuePairDataFormat.class);
 
     public BindyKeyValuePairDataFormat() {
     }

@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory;
  * @version 
  */
 public class PackageScanRouteBuilderFinder {
-    private static final transient Logger LOG = LoggerFactory.getLogger(PackageScanRouteBuilderFinder.class);
+    private static final Logger LOG = LoggerFactory.getLogger(PackageScanRouteBuilderFinder.class);
     private final BlueprintCamelContext camelContext;
     private final String[] packages;
     private final PackageScanClassResolver resolver;

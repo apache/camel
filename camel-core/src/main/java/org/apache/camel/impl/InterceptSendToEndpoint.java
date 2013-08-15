@@ -42,7 +42,7 @@ import static org.apache.camel.processor.PipelineHelper.continueProcessing;
  */
 public class InterceptSendToEndpoint implements Endpoint {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(InterceptSendToEndpoint.class);
+    private static final Logger LOG = LoggerFactory.getLogger(InterceptSendToEndpoint.class);
 
     private final Endpoint delegate;
     private Producer producer;

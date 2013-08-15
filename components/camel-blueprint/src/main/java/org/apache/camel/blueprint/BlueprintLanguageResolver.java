@@ -26,7 +26,7 @@ import org.slf4j.LoggerFactory;
 
 public class BlueprintLanguageResolver extends OsgiLanguageResolver {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(BlueprintLanguageResolver.class);
+    private static final Logger LOG = LoggerFactory.getLogger(BlueprintLanguageResolver.class);
 
     public BlueprintLanguageResolver(BundleContext bundleContext) {
         super(bundleContext);

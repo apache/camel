@@ -58,7 +58,7 @@ public class ScriptBuilder extends ServiceSupport implements Expression, Predica
      */
     public static final String ARGUMENTS = "CamelScriptArguments";
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(ScriptBuilder.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ScriptBuilder.class);
 
     private String scriptEngineName;
     private String scriptResource;

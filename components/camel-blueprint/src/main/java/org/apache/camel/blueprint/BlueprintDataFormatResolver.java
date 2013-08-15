@@ -26,7 +26,7 @@ import org.slf4j.LoggerFactory;
 
 public class BlueprintDataFormatResolver extends OsgiDataFormatResolver {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(BlueprintDataFormatResolver.class);
+    private static final Logger LOG = LoggerFactory.getLogger(BlueprintDataFormatResolver.class);
 
     public BlueprintDataFormatResolver(BundleContext bundleContext) {
         super(bundleContext);

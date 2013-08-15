@@ -44,7 +44,7 @@ import org.slf4j.LoggerFactory;
 public class MailConsumer extends ScheduledBatchPollingConsumer {
     public static final String POP3_UID = "CamelPop3Uid";
     public static final long DEFAULT_CONSUMER_DELAY = 60 * 1000L;
-    private static final transient Logger LOG = LoggerFactory.getLogger(MailConsumer.class);
+    private static final Logger LOG = LoggerFactory.getLogger(MailConsumer.class);
 
     private final JavaMailSender sender;
     private Folder folder;

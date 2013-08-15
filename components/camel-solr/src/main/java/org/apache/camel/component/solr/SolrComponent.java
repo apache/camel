@@ -32,7 +32,7 @@ import org.slf4j.LoggerFactory;
  */
 public class SolrComponent extends DefaultComponent {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(SolrComponent.class);
+    private static final Logger LOG = LoggerFactory.getLogger(SolrComponent.class);
     private final Map<SolrEndpoint, SolrServerReference> servers = new HashMap<SolrEndpoint, SolrServerReference>();
 
     protected static final class SolrServerReference {

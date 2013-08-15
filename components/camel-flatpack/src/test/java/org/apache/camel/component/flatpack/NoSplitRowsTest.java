@@ -37,7 +37,7 @@ import static org.junit.Assert.assertEquals;
 @ContextConfiguration
 public class NoSplitRowsTest extends AbstractJUnit4SpringContextTests {
     
-    private static final transient Logger LOG = LoggerFactory.getLogger(NoSplitRowsTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(NoSplitRowsTest.class);
 
     @EndpointInject(uri = "mock:results")
     protected MockEndpoint results;

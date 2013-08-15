@@ -57,7 +57,7 @@ public class DefaultManagementAgent extends ServiceSupport implements Management
     public static final int DEFAULT_REGISTRY_PORT = 1099;
     public static final int DEFAULT_CONNECTION_PORT = -1;
     public static final String DEFAULT_SERVICE_URL_PATH = "/jmxrmi/camel";
-    private static final transient Logger LOG = LoggerFactory.getLogger(DefaultManagementAgent.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DefaultManagementAgent.class);
 
     private CamelContext camelContext;
     private MBeanServer server;

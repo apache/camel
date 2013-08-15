@@ -30,7 +30,7 @@ import org.slf4j.LoggerFactory;
  */
 public class FileChangedReadLockTest extends ContextTestSupport {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(FileChangedReadLockTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(FileChangedReadLockTest.class);
 
     @Override
     protected void setUp() throws Exception {

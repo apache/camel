@@ -31,7 +31,7 @@ import org.slf4j.LoggerFactory;
  * @version 
  */
 public class AtomRouteTest extends CamelTestSupport {
-    private static final transient Logger LOG = LoggerFactory.getLogger(AtomRouteTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(AtomRouteTest.class);
 
     @Test
     public void testFeedGetsUpdatedEvents() throws Exception {

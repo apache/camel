@@ -57,7 +57,7 @@ import org.slf4j.LoggerFactory;
  * >Enterprise Integration Patterns</a>
  */
 public class RoutesResource extends CamelChildResourceSupport {
-    private static final transient Logger LOG = LoggerFactory.getLogger(RoutesResource.class);
+    private static final Logger LOG = LoggerFactory.getLogger(RoutesResource.class);
     private String error = "";
     
     public RoutesResource(CamelContextResource contextResource) {

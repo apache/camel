@@ -22,7 +22,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class MyInterceptorProcessor extends DelegateProcessor {
-    private static final transient Logger LOG = LoggerFactory.getLogger(MyInterceptorProcessor.class);
+    private static final Logger LOG = LoggerFactory.getLogger(MyInterceptorProcessor.class);
 
     public void process(Exchange exchange) throws Exception {
         LOG.debug("START of onExchange: " + exchange);

@@ -29,7 +29,7 @@ import org.slf4j.LoggerFactory;
  */
 @ImplicitProduces(Constants.HTML_MIME_TYPES)
 public class CamelChildResourceSupport {
-    private static final transient Logger LOG = LoggerFactory.getLogger(CamelChildResourceSupport.class);
+    private static final Logger LOG = LoggerFactory.getLogger(CamelChildResourceSupport.class);
 
     private final CamelContext camelContext;
     private final ProducerTemplate template;

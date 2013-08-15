@@ -50,7 +50,7 @@ import org.slf4j.LoggerFactory;
 
 public final class HttpHelper {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(HttpHelper.class);
+    private static final Logger LOG = LoggerFactory.getLogger(HttpHelper.class);
 
     private HttpHelper() {
         // Helper class

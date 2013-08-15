@@ -61,7 +61,7 @@ import org.slf4j.LoggerFactory;
  * @version 
  */
 public class MinaComponent extends DefaultComponent {
-    private static final transient Logger LOG = LoggerFactory.getLogger(MinaComponent.class);
+    private static final Logger LOG = LoggerFactory.getLogger(MinaComponent.class);
     private MinaConfiguration configuration;
 
     public MinaComponent() {

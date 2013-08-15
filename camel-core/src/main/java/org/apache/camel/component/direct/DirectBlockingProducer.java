@@ -36,7 +36,7 @@ import org.slf4j.LoggerFactory;
  * consumer is available, but actual consumer execution will happen concurrently.
  */
 public class DirectBlockingProducer extends DefaultAsyncProducer {
-    private static final transient Logger LOG = LoggerFactory.getLogger(DirectBlockingProducer.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DirectBlockingProducer.class);
     private final DirectEndpoint endpoint;
 
     public DirectBlockingProducer(DirectEndpoint endpoint) {

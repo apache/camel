@@ -34,7 +34,7 @@ import org.slf4j.LoggerFactory;
  */
 @ContextName("contextD")
 public class RoutesContextD extends RouteBuilder {
-    private static final transient Logger LOG = LoggerFactory.getLogger(RoutesContextD.class);
+    private static final Logger LOG = LoggerFactory.getLogger(RoutesContextD.class);
 
     @Inject @Uri("seda:D.a")
     Endpoint a;

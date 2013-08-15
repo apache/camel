@@ -44,7 +44,7 @@ import org.slf4j.LoggerFactory;
  */
 public final class EndpointHelper {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(EndpointHelper.class);
+    private static final Logger LOG = LoggerFactory.getLogger(EndpointHelper.class);
     private static final AtomicLong ENDPOINT_COUNTER = new AtomicLong(0);
 
     private EndpointHelper() {

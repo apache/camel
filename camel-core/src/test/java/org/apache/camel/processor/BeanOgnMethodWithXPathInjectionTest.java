@@ -29,7 +29,7 @@ import org.slf4j.LoggerFactory;
  * @version 
  */
 public class BeanOgnMethodWithXPathInjectionTest extends ContextTestSupport {
-    private static final transient Logger LOG = LoggerFactory.getLogger(BeanRouteTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(BeanRouteTest.class);
     protected MyBean myBean = new MyBean();
     protected MyOtherBean myOtherBean = new MyOtherBean(myBean);
 

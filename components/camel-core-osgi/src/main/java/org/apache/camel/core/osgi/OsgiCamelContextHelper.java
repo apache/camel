@@ -26,7 +26,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public final class OsgiCamelContextHelper {
-    private static final transient Logger LOG = LoggerFactory.getLogger(OsgiCamelContextHelper.class);
+    private static final Logger LOG = LoggerFactory.getLogger(OsgiCamelContextHelper.class);
 
     private OsgiCamelContextHelper() {
         // helper class

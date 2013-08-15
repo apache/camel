@@ -57,7 +57,7 @@ import org.slf4j.LoggerFactory;
  */
 public class FallbackTypeConverter extends ServiceSupport implements TypeConverter, TypeConverterAware {
     public static final String PRETTY_PRINT = "CamelJaxbPrettyPrint"; 
-    private static final transient Logger LOG = LoggerFactory.getLogger(FallbackTypeConverter.class);
+    private static final Logger LOG = LoggerFactory.getLogger(FallbackTypeConverter.class);
     private final Map<Class<?>, JAXBContext> contexts = new HashMap<Class<?>, JAXBContext>();
     private final StaxConverter staxConverter = new StaxConverter();
     private TypeConverter parentTypeConverter;

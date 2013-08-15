@@ -35,7 +35,7 @@ import org.slf4j.LoggerFactory;
  */
 public class DummySSLSocketFactory extends SSLSocketFactory {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(DummySSLSocketFactory.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DummySSLSocketFactory.class);
     private SSLSocketFactory factory;
 
     public DummySSLSocketFactory() {

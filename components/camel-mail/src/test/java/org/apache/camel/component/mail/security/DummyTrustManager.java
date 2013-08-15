@@ -29,7 +29,7 @@ import org.slf4j.LoggerFactory;
  */
 public class DummyTrustManager implements X509TrustManager {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(DummyTrustManager.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DummyTrustManager.class);
 
     public void checkClientTrusted(X509Certificate[] chain, String authType) throws CertificateException {
         // everything is trusted

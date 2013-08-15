@@ -28,7 +28,7 @@ import org.slf4j.LoggerFactory;
  * @version 
  */
 public class MyAggregator implements AggregationStrategy {
-    private static final transient Logger LOG = LoggerFactory.getLogger(MyAggregator.class);
+    private static final Logger LOG = LoggerFactory.getLogger(MyAggregator.class);
 
     public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
         // lets append the old body to the new body

@@ -44,7 +44,7 @@ import org.slf4j.LoggerFactory;
  *
  */
 public class EndpointsResource extends CamelChildResourceSupport {
-    private static final transient Logger LOG = LoggerFactory.getLogger(EndpointsResource.class);
+    private static final Logger LOG = LoggerFactory.getLogger(EndpointsResource.class);
     
     private String error = "";
     private String newUri = "mock:someName";

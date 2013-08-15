@@ -36,7 +36,7 @@ import org.slf4j.LoggerFactory;
  */
 public class AggregatorConcurrencyTest extends ContextTestSupport {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(AggregatorConcurrencyTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(AggregatorConcurrencyTest.class);
 
     private static final AtomicInteger COUNTER = new AtomicInteger(0);
     private static final AtomicInteger SUM = new AtomicInteger(0);

@@ -32,7 +32,7 @@ import org.slf4j.LoggerFactory;
  * @version 
  */
 public class XmppGroupChatProducer extends DefaultProducer {
-    private static final transient Logger LOG = LoggerFactory.getLogger(XmppGroupChatProducer.class);
+    private static final Logger LOG = LoggerFactory.getLogger(XmppGroupChatProducer.class);
     private final XmppEndpoint endpoint;
     private XMPPConnection connection;
     private MultiUserChat chat;

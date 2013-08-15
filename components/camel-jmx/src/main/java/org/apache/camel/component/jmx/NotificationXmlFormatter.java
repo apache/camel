@@ -48,7 +48,7 @@ import org.slf4j.LoggerFactory;
  */
 public class NotificationXmlFormatter extends ServiceSupport {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(NotificationXmlFormatter.class);
+    private static final Logger LOG = LoggerFactory.getLogger(NotificationXmlFormatter.class);
 
     private final ObjectFactory mObjectFactory = new ObjectFactory();
     private JAXBContext jaxbContext;

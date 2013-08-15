@@ -30,7 +30,7 @@ import org.vertx.java.core.json.JsonObject;
 /**
  */
 public class VertxProducer extends DefaultProducer {
-    private static final transient Logger LOG = LoggerFactory.getLogger(VertxProducer.class);
+    private static final Logger LOG = LoggerFactory.getLogger(VertxProducer.class);
     private final VertxEndpoint endpoint;
 
     public VertxProducer(VertxEndpoint endpoint) {

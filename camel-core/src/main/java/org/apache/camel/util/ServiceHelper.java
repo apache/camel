@@ -38,7 +38,7 @@ import org.slf4j.LoggerFactory;
  * @version 
  */
 public final class ServiceHelper {
-    private static final transient Logger LOG = LoggerFactory.getLogger(ServiceHelper.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ServiceHelper.class);
 
     /**
      * Utility classes should not have a public constructor.

@@ -48,7 +48,7 @@ import org.slf4j.LoggerFactory;
  * @version 
  */
 public class ProducerCache extends ServiceSupport {
-    private static final transient Logger LOG = LoggerFactory.getLogger(ProducerCache.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ProducerCache.class);
 
     private final CamelContext camelContext;
     private final ServicePool<Endpoint, Producer> pool;

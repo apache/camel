@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory;
  */
 public class CamelControllerImpl implements CamelController {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(CamelControllerImpl.class);
+    private static final Logger LOG = LoggerFactory.getLogger(CamelControllerImpl.class);
 
     private BundleContext bundleContext;
 

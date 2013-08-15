@@ -32,7 +32,7 @@ import org.slf4j.LoggerFactory;
  * changed by scanning the file at different intervals (to detect changes).
  */
 public class FileChangedExclusiveReadLockStrategy extends MarkerFileExclusiveReadLockStrategy {
-    private static final transient Logger LOG = LoggerFactory.getLogger(FileChangedExclusiveReadLockStrategy.class);
+    private static final Logger LOG = LoggerFactory.getLogger(FileChangedExclusiveReadLockStrategy.class);
     private long timeout;
     private long checkInterval = 1000;
     private long minLength = 1;

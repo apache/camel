@@ -40,7 +40,7 @@ import org.slf4j.LoggerFactory;
  * consuming the file its not currently in progress of being written by third party.
  */
 public class FileLockExclusiveReadLockStrategy extends MarkerFileExclusiveReadLockStrategy {
-    private static final transient Logger LOG = LoggerFactory.getLogger(FileLockExclusiveReadLockStrategy.class);
+    private static final Logger LOG = LoggerFactory.getLogger(FileLockExclusiveReadLockStrategy.class);
     private long timeout;
     private long checkInterval = 1000;
     private FileLock lock;

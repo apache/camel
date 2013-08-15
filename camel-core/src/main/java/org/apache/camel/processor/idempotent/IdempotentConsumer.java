@@ -39,7 +39,7 @@ import org.slf4j.LoggerFactory;
  * href="http://camel.apache.org/idempotent-consumer.html">Idempotent Consumer</a> pattern.
  */
 public class IdempotentConsumer extends ServiceSupport implements AsyncProcessor, Navigate<Processor> {
-    private static final transient Logger LOG = LoggerFactory.getLogger(IdempotentConsumer.class);
+    private static final Logger LOG = LoggerFactory.getLogger(IdempotentConsumer.class);
     private final Expression messageIdExpression;
     private final AsyncProcessor processor;
     private final IdempotentRepository<String> idempotentRepository;

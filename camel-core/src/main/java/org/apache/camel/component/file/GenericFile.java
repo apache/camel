@@ -31,7 +31,7 @@ import org.slf4j.LoggerFactory;
  * provide a File for transfer.
  */
 public class GenericFile<T> implements WrappedFile<T>  {
-    private static final transient Logger LOG = LoggerFactory.getLogger(GenericFile.class);
+    private static final Logger LOG = LoggerFactory.getLogger(GenericFile.class);
 
     private String endpointPath;
     private String fileName;

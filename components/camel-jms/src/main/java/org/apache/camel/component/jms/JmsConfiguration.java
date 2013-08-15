@@ -61,7 +61,7 @@ public class JmsConfiguration implements Cloneable {
     public static final String TEMP_QUEUE_PREFIX = "temp:queue:";
     public static final String TEMP_TOPIC_PREFIX = "temp:topic:";
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(JmsConfiguration.class);
+    private static final Logger LOG = LoggerFactory.getLogger(JmsConfiguration.class);
     private JmsOperations jmsOperations;
     private DestinationResolver destinationResolver;
     private ConnectionFactory connectionFactory;

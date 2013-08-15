@@ -36,7 +36,7 @@ import static org.hamcrest.core.Is.is;
  * Tests posting a twitter update and getting the status update id from the Twitter API response
  */
 public class UserProducerInOutTest extends CamelTwitterTestSupport {
-    private static final transient Logger LOG = LoggerFactory.getLogger(UserProducerInOutTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(UserProducerInOutTest.class);
 
     @EndpointInject(uri = "mock:result")
     protected MockEndpoint resultEndpoint;

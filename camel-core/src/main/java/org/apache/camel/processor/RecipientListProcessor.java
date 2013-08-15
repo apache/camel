@@ -52,7 +52,7 @@ import org.slf4j.LoggerFactory;
  */
 public class RecipientListProcessor extends MulticastProcessor {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(RecipientListProcessor.class);
+    private static final Logger LOG = LoggerFactory.getLogger(RecipientListProcessor.class);
     private final Iterator<Object> iter;
     private boolean ignoreInvalidEndpoints;
     private ProducerCache producerCache;

@@ -35,7 +35,7 @@ public class DefaultLanguageResolver implements LanguageResolver {
     public static final String LANGUAGE_RESOURCE_PATH = "META-INF/services/org/apache/camel/language/";
     public static final String LANGUAGE_RESOLVER_RESOURCE_PATH = LANGUAGE_RESOURCE_PATH + "resolver/";
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(DefaultLanguageResolver.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DefaultLanguageResolver.class);
 
     protected FactoryFinder languageFactory;
     protected FactoryFinder languageResolver;

@@ -35,7 +35,7 @@ import static org.junit.Assert.assertTrue;
 @ApplicationScoped
 @ContextName
 public class TestRouteBuilder extends RouteBuilder {
-    private static final transient Logger LOG = LoggerFactory.getLogger(TestRouteBuilder.class);
+    private static final Logger LOG = LoggerFactory.getLogger(TestRouteBuilder.class);
 
     @Inject
     MyRoutes config;

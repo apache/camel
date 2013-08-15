@@ -49,7 +49,7 @@ import org.slf4j.LoggerFactory;
  * @version 
  */
 public class ConverterTest extends TestCase {
-    private static final transient Logger LOG = LoggerFactory.getLogger(ConverterTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ConverterTest.class);
 
     protected TypeConverter converter = new DefaultTypeConverter(new DefaultPackageScanClassResolver(),
             new ReflectionInjector(), new DefaultFactoryFinderResolver().resolveDefaultFactoryFinder(new DefaultClassResolver()));

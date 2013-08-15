@@ -35,7 +35,7 @@ import org.slf4j.LoggerFactory;
  * as supported by Kestrel.
  */
 public class KestrelComponent extends DefaultComponent {
-    private static final transient Logger LOG = LoggerFactory.getLogger(KestrelComponent.class);
+    private static final Logger LOG = LoggerFactory.getLogger(KestrelComponent.class);
 
     private KestrelConfiguration configuration;
     private ConnectionFactory memcachedConnectionFactory;

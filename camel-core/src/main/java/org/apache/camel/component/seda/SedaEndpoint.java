@@ -55,7 +55,7 @@ import org.slf4j.LoggerFactory;
 @ManagedResource(description = "Managed SedaEndpoint")
 @UriEndpoint(scheme = "seda", consumerClass = SedaConsumer.class)
 public class SedaEndpoint extends DefaultEndpoint implements BrowsableEndpoint, MultipleConsumersSupport {
-    private static final transient Logger LOG = LoggerFactory.getLogger(SedaEndpoint.class);
+    private static final Logger LOG = LoggerFactory.getLogger(SedaEndpoint.class);
     private volatile BlockingQueue<Exchange> queue;
     private final Set<SedaProducer> producers = new CopyOnWriteArraySet<SedaProducer>();
     private final Set<SedaConsumer> consumers = new CopyOnWriteArraySet<SedaConsumer>();

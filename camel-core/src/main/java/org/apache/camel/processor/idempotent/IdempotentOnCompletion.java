@@ -30,7 +30,7 @@ import org.slf4j.LoggerFactory;
  * was processed successfully. In case of failure the message id is <b>not</b> added.
  */
 public class IdempotentOnCompletion implements Synchronization {
-    private static final transient Logger LOG = LoggerFactory.getLogger(IdempotentOnCompletion.class);
+    private static final Logger LOG = LoggerFactory.getLogger(IdempotentOnCompletion.class);
     private final IdempotentRepository<String> idempotentRepository;
     private final String messageId;
     private final boolean eager;

@@ -36,7 +36,7 @@ import static org.junit.Assert.assertTrue;
  * Test we can auto discover components on the classpath
  */
 public class ComponentDiscoveryTest {
-    private static final transient Logger LOG = LoggerFactory.getLogger(ComponentDiscoveryTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ComponentDiscoveryTest.class);
 
     @Test
     public void testComponentDiscovery() throws Exception {

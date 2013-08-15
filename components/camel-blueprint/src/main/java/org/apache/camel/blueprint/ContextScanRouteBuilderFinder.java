@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory;
  * @version 
  */
 public class ContextScanRouteBuilderFinder {
-    private static final transient Logger LOG = LoggerFactory.getLogger(ContextScanRouteBuilderFinder.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ContextScanRouteBuilderFinder.class);
     private final BlueprintContainer blueprintContainer;
     private final PackageScanFilter filter;
 

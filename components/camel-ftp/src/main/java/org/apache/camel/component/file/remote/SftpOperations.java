@@ -67,7 +67,7 @@ import static org.apache.camel.util.ObjectHelper.isNotEmpty;
  * SFTP remote file operations
  */
 public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry> {
-    private static final transient Logger LOG = LoggerFactory.getLogger(SftpOperations.class);
+    private static final Logger LOG = LoggerFactory.getLogger(SftpOperations.class);
     private static final Pattern UP_DIR_PATTERN = Pattern.compile("/[^/]+");
     private Proxy proxy;
     private SftpEndpoint endpoint;

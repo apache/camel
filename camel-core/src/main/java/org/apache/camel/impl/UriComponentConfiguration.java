@@ -35,7 +35,7 @@ import org.slf4j.LoggerFactory;
  * to denote its parameters which can be specified via URI query parameters.
  */
 public class UriComponentConfiguration extends ComponentConfigurationSupport {
-    private static final transient Logger LOG = LoggerFactory.getLogger(UriComponentConfiguration.class);
+    private static final Logger LOG = LoggerFactory.getLogger(UriComponentConfiguration.class);
 
     private final Class<? extends Endpoint> endpointClass;
     private final SortedMap<String, ParameterConfiguration> parameterConfigurationMap;

@@ -26,7 +26,7 @@ import org.slf4j.LoggerFactory;
  * The Krati producer.
  */
 public class KratiProducer extends DefaultProducer {
-    private static final transient Logger LOG = LoggerFactory.getLogger(KratiProducer.class);
+    private static final Logger LOG = LoggerFactory.getLogger(KratiProducer.class);
 
     protected final KratiEndpoint endpoint;
     protected final DataStore<Object, Object> dataStore;

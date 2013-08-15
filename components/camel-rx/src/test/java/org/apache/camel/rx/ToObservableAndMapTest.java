@@ -29,7 +29,7 @@ import rx.util.functions.Func1;
 /**
  */
 public class ToObservableAndMapTest extends RxTestSupport {
-    private static final transient Logger LOG = LoggerFactory.getLogger(ToObservableAndMapTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ToObservableAndMapTest.class);
 
     @Test
     public void testConsume() throws Exception {

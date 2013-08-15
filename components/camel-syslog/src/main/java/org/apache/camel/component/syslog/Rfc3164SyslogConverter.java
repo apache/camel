@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory;
 @Converter
 public final class Rfc3164SyslogConverter {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(Rfc3164SyslogConverter.class);
+    private static final Logger LOG = LoggerFactory.getLogger(Rfc3164SyslogConverter.class);
 
     private static enum MONTHS {
         jan, feb, mar, apr, may, jun, jul, aug, sep, oct, nov, dec

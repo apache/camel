@@ -41,7 +41,7 @@ import org.slf4j.LoggerFactory;
  */
 public class SmppProducer extends DefaultProducer {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(SmppProducer.class);
+    private static final Logger LOG = LoggerFactory.getLogger(SmppProducer.class);
 
     private SmppConfiguration configuration;
     private SMPPSession session;

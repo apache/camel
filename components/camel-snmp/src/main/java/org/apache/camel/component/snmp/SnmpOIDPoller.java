@@ -41,7 +41,7 @@ import org.snmp4j.transport.DefaultUdpTransportMapping;
 
 public class SnmpOIDPoller extends ScheduledPollConsumer implements ResponseListener {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(SnmpOIDPoller.class);
+    private static final Logger LOG = LoggerFactory.getLogger(SnmpOIDPoller.class);
 
     private Address targetAddress;
     private TransportMapping<? extends Address> transport;

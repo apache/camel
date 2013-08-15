@@ -45,7 +45,7 @@ import org.slf4j.LoggerFactory;
  */
 @ManagedResource(description = "File based idempotent repository")
 public class FileIdempotentRepository extends ServiceSupport implements IdempotentRepository<String> {
-    private static final transient Logger LOG = LoggerFactory.getLogger(FileIdempotentRepository.class);
+    private static final Logger LOG = LoggerFactory.getLogger(FileIdempotentRepository.class);
     private static final String STORE_DELIMITER = "\n";
     private Map<String, Object> cache;
     private File fileStore;

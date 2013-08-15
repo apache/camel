@@ -46,7 +46,7 @@ import org.springframework.orm.jpa.JpaTemplate;
  */
 public class JpaWithNamedQueryTest extends Assert {
     
-    protected static final transient Logger LOG = LoggerFactory.getLogger(JpaWithNamedQueryTest.class);
+    protected static final Logger LOG = LoggerFactory.getLogger(JpaWithNamedQueryTest.class);
     
     protected CamelContext camelContext = new DefaultCamelContext();
     protected ProducerTemplate template;

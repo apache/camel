@@ -31,7 +31,7 @@ import org.slf4j.LoggerFactory;
  * @version 
  */
 public abstract class ScriptRouteBuilder extends RouteBuilder {
-    private static final transient Logger LOG = LoggerFactory.getLogger(ScriptRouteBuilder.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ScriptRouteBuilder.class);
     protected ProcessorDefinition<?> node;
 
     public ScriptRouteBuilder() {

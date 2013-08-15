@@ -29,7 +29,7 @@ import org.springframework.osgi.context.BundleContextAware;
  * any spring application context involved.
  */
 public class CamelContextFactory implements BundleContextAware {
-    private static final transient Logger LOG = LoggerFactory.getLogger(CamelContextFactory.class);
+    private static final Logger LOG = LoggerFactory.getLogger(CamelContextFactory.class);
     private BundleContext bundleContext;
     private Registry registry;
 

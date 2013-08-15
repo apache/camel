@@ -55,7 +55,7 @@ import org.slf4j.LoggerFactory;
  */
 @Converter
 public final class IOConverter {
-    private static final transient Logger LOG = LoggerFactory.getLogger(IOConverter.class);
+    private static final Logger LOG = LoggerFactory.getLogger(IOConverter.class);
 
     /**
      * Utility classes should not have a public constructor.

@@ -97,7 +97,7 @@ public class BeanWithExceptionTest extends ContextTestSupport {
     }
 
     public static class ValidationBean {
-        private static final transient Logger LOG = LoggerFactory.getLogger(ValidationBean.class);
+        private static final Logger LOG = LoggerFactory.getLogger(ValidationBean.class);
 
         public void someMethod(String body, @Header("foo")
                                String header, @Property("cheese") String cheese) throws ValidationException {

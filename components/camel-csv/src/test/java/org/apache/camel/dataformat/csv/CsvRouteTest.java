@@ -52,7 +52,7 @@ import org.slf4j.LoggerFactory;
  * @version 
  */
 public class CsvRouteTest extends CamelTestSupport {
-    private static final transient Logger LOG = LoggerFactory.getLogger(CsvRouteTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(CsvRouteTest.class);
 
     @Test
     public void testSendMessage() throws Exception {

@@ -55,7 +55,7 @@ import org.slf4j.LoggerFactory;
  * Component for Jetty Cometd
  */
 public class CometdComponent extends DefaultComponent {
-    private static final transient Logger LOG = LoggerFactory.getLogger(CometdComponent.class);
+    private static final Logger LOG = LoggerFactory.getLogger(CometdComponent.class);
 
     private final Map<String, ConnectorRef> connectors = new LinkedHashMap<String, ConnectorRef>();
    

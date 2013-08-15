@@ -32,7 +32,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class RouteboxDirectTest extends RouteboxDemoTestSupport {
-    private static final transient Logger LOG = LoggerFactory.getLogger(RouteboxDirectTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(RouteboxDirectTest.class);
     
     private ProducerTemplate template;
     private String routeboxUri = "routebox:multipleRoutes?innerContext=#ctx&dispatchStrategy=#strategy"; 

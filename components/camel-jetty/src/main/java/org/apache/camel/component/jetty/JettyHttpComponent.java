@@ -77,7 +77,7 @@ public class JettyHttpComponent extends HttpComponent {
     
     protected static final HashMap<String, ConnectorRef> CONNECTORS = new HashMap<String, ConnectorRef>();
    
-    private static final transient Logger LOG = LoggerFactory.getLogger(JettyHttpComponent.class);
+    private static final Logger LOG = LoggerFactory.getLogger(JettyHttpComponent.class);
     private static final String JETTY_SSL_KEYSTORE = "org.eclipse.jetty.ssl.keystore";
     private static final String JETTY_SSL_KEYPASSWORD = "org.eclipse.jetty.ssl.keypassword";
     private static final String JETTY_SSL_PASSWORD = "org.eclipse.jetty.ssl.password";

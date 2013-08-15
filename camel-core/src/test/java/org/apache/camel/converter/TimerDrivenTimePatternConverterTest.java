@@ -24,7 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class TimerDrivenTimePatternConverterTest extends ContextTestSupport {
-    private static final transient Logger LOG = LoggerFactory.getLogger(TimerDrivenTimePatternConverterTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(TimerDrivenTimePatternConverterTest.class);
     
     public void testTimerInvocation() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result"); 

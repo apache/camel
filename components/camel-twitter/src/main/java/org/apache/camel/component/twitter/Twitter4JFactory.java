@@ -63,7 +63,7 @@ import org.slf4j.LoggerFactory;
  */
 public final class Twitter4JFactory {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(Twitter4JFactory.class);
+    private static final Logger LOG = LoggerFactory.getLogger(Twitter4JFactory.class);
 
     private Twitter4JFactory() {
         // helper class

@@ -26,7 +26,7 @@ import org.slf4j.LoggerFactory;
 
 public class RabbitMQComponent extends DefaultComponent {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(RabbitMQComponent.class);
+    private static final Logger LOG = LoggerFactory.getLogger(RabbitMQComponent.class);
 
     public RabbitMQComponent() {
     }

@@ -31,7 +31,7 @@ import org.slf4j.LoggerFactory;
  * @version 
  */
 public class XmppComponent extends DefaultComponent {
-    private static final transient Logger LOG = LoggerFactory.getLogger(XmppComponent.class);
+    private static final Logger LOG = LoggerFactory.getLogger(XmppComponent.class);
 
     //keep a cache of endpoints so they can be properly cleaned up
     private final Map<String, XmppEndpoint> endpointCache = new HashMap<String, XmppEndpoint>();

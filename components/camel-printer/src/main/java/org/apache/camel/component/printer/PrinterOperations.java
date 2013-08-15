@@ -39,7 +39,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class PrinterOperations implements PrinterOperationsInterface {
-    private static final transient Logger LOG = LoggerFactory.getLogger(PrinterOperations.class);
+    private static final Logger LOG = LoggerFactory.getLogger(PrinterOperations.class);
     private PrintService printService;
     private DocFlavor flavor;
     private PrintRequestAttributeSet printRequestAttributeSet;

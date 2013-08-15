@@ -32,7 +32,7 @@ import org.slf4j.LoggerFactory;
  */
 class HL7MLLPDecoder extends CumulativeProtocolDecoder {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(HL7MLLPDecoder.class);
+    private static final Logger LOG = LoggerFactory.getLogger(HL7MLLPDecoder.class);
 
     private static final String CHARSET_DECODER = HL7MLLPDecoder.class.getName() + ".charsetdecoder";
     private static final String DECODER_STATE = HL7MLLPDecoder.class.getName() + ".STATE";

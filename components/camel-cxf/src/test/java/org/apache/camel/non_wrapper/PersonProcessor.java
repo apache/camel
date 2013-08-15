@@ -27,7 +27,7 @@ import org.slf4j.LoggerFactory;
 // START SNIPPET: personProcessor
 public class PersonProcessor implements Processor {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(PersonProcessor.class);
+    private static final Logger LOG = LoggerFactory.getLogger(PersonProcessor.class);
 
     public void process(Exchange exchange) throws Exception {
         LOG.info("processing exchange in camel");

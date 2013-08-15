@@ -32,7 +32,7 @@ import org.slf4j.LoggerFactory;
  *  Component providing secure messaging using JSch
  */
 public class JschComponent extends RemoteFileComponent<ScpFile> {
-    private static final transient Logger LOG = LoggerFactory.getLogger(JschComponent.class);
+    private static final Logger LOG = LoggerFactory.getLogger(JschComponent.class);
     static {
         JSch.setConfig("StrictHostKeyChecking",  "yes");
         JSch.setLogger(new com.jcraft.jsch.Logger() {

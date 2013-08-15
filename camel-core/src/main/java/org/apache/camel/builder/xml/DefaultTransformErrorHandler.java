@@ -31,7 +31,7 @@ import org.slf4j.LoggerFactory;
  * and throws error and fatal as exception, which ensures those can be caught by Camel and dealt-with.
  */
 public class DefaultTransformErrorHandler implements ErrorHandler, ErrorListener {
-    private static final transient Logger LOG = LoggerFactory.getLogger(DefaultTransformErrorHandler.class);
+    private static final Logger LOG = LoggerFactory.getLogger(DefaultTransformErrorHandler.class);
 
     public void error(SAXParseException exception) throws SAXException {
         throw exception;

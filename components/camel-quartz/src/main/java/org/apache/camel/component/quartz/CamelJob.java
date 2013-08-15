@@ -34,7 +34,7 @@ import org.slf4j.LoggerFactory;
  */
 public class CamelJob implements Job, Serializable {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(CamelJob.class);
+    private static final Logger LOG = LoggerFactory.getLogger(CamelJob.class);
     private static final long serialVersionUID = 27L;
 
     public void execute(JobExecutionContext context) throws JobExecutionException {

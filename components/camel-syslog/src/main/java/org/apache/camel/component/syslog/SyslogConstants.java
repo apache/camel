@@ -22,31 +22,31 @@ public final class SyslogConstants {
     /**
      * The socket address of local machine that received the message.
      */
-    public static final transient String SYSLOG_LOCAL_ADDRESS = "CamelSyslogLocalAddress";
+    public static final String SYSLOG_LOCAL_ADDRESS = "CamelSyslogLocalAddress";
     /**
      * The socket address of the remote machine that send the message.
      */
-    public static final transient String SYSLOG_REMOTE_ADDRESS = "CamelSyslogRemoteAddress";
+    public static final String SYSLOG_REMOTE_ADDRESS = "CamelSyslogRemoteAddress";
 
     /**
      * The Sylog message Facility
      */
-    public static final transient String SYSLOG_FACILITY = "CamelSyslogFacility";
+    public static final String SYSLOG_FACILITY = "CamelSyslogFacility";
 
     /**
      * The Syslog severity
      */
-    public static final transient String SYSLOG_SEVERITY = "CamelSyslogSeverity";
+    public static final String SYSLOG_SEVERITY = "CamelSyslogSeverity";
 
     /**
      * The hostname in the syslog message
      */
-    public static final transient String SYSLOG_HOSTNAME = "CamelSyslogHostname";
+    public static final String SYSLOG_HOSTNAME = "CamelSyslogHostname";
 
     /**
      * The syslog timestamp
      */
-    public static final transient String SYSLOG_TIMESTAMP = "CamelSyslogTimestamp";
+    public static final String SYSLOG_TIMESTAMP = "CamelSyslogTimestamp";
 
     private SyslogConstants() {
         // Utility class

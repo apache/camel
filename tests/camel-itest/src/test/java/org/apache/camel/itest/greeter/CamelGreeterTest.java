@@ -41,7 +41,7 @@ import static org.junit.Assert.assertNotNull;
 
 @ContextConfiguration
 public class CamelGreeterTest extends AbstractJUnit4SpringContextTests {
-    private static final transient Logger LOG = LoggerFactory.getLogger(CamelGreeterTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(CamelGreeterTest.class);
     
     private static Endpoint endpoint;
     

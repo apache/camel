@@ -36,7 +36,7 @@ import org.springframework.test.context.ContextConfiguration;
 @ContextConfiguration
 public class BindySimpleKeyValuePairSortedMarshallTest extends CommonBindyTest {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(BindySimpleKeyValuePairSortedMarshallTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(BindySimpleKeyValuePairSortedMarshallTest.class);
 
     @Test
     @DirtiesContext

@@ -58,7 +58,7 @@ import org.slf4j.LoggerFactory;
  * introspection and annotations together with some useful sensible defaults
  */
 public class BeanInfo {
-    private static final transient Logger LOG = LoggerFactory.getLogger(BeanInfo.class);
+    private static final Logger LOG = LoggerFactory.getLogger(BeanInfo.class);
     private static final String CGLIB_CLASS_SEPARATOR = "$$";
     private static final List<Method> EXCLUDED_METHODS = new ArrayList<Method>();
     private final CamelContext camelContext;

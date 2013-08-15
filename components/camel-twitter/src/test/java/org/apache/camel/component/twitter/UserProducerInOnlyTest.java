@@ -34,7 +34,7 @@ import static org.hamcrest.core.Is.is;
  * Tests posting a twitter update with the default In Message Exchange Pattern
  */
 public class UserProducerInOnlyTest extends CamelTwitterTestSupport {
-    private static final transient Logger LOG = LoggerFactory.getLogger(UserProducerInOnlyTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(UserProducerInOnlyTest.class);
 
     @EndpointInject(uri = "mock:result")
     protected MockEndpoint resultEndpoint;

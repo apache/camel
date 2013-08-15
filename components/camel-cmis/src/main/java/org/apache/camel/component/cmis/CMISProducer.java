@@ -39,7 +39,7 @@ import org.slf4j.LoggerFactory;
  * The CMIS producer.
  */
 public class CMISProducer extends DefaultProducer {
-    private static final transient Logger LOG = LoggerFactory.getLogger(CMISProducer.class);
+    private static final Logger LOG = LoggerFactory.getLogger(CMISProducer.class);
     private final CMISSessionFacade cmisSessionFacade;
 
     public CMISProducer(CMISEndpoint endpoint, CMISSessionFacade cmisSessionFacade) {

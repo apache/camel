@@ -34,7 +34,7 @@ import org.slf4j.LoggerFactory;
  */
 public class BeanComponent extends UriEndpointComponent {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(BeanComponent.class);
+    private static final Logger LOG = LoggerFactory.getLogger(BeanComponent.class);
     // use an internal soft cache for BeanInfo as they are costly to introspect
     // for example the bean language using OGNL expression runs much faster reusing the BeanInfo from this cache
     private final LRUSoftCache<BeanInfoCacheKey, BeanInfo> cache = new LRUSoftCache<BeanInfoCacheKey, BeanInfo>(1000);

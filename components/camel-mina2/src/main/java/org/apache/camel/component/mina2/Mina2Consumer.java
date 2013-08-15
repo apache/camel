@@ -58,7 +58,7 @@ import org.slf4j.LoggerFactory;
  */
 public class Mina2Consumer extends DefaultConsumer {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(Mina2Consumer.class);
+    private static final Logger LOG = LoggerFactory.getLogger(Mina2Consumer.class);
     private SocketAddress address;
     private IoAcceptor acceptor;
     private Mina2Configuration configuration;

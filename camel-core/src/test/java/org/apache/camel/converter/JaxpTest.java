@@ -40,7 +40,7 @@ import org.slf4j.LoggerFactory;
  * @version 
  */
 public class JaxpTest extends TestCase {
-    private static final transient Logger LOG = LoggerFactory.getLogger(JaxpTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(JaxpTest.class);
     protected TypeConverter converter = new DefaultTypeConverter(new DefaultPackageScanClassResolver(),
             new ReflectionInjector(), new DefaultFactoryFinderResolver().resolveDefaultFactoryFinder(new DefaultClassResolver()));
 

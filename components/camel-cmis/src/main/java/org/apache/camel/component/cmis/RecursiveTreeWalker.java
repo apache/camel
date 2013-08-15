@@ -29,7 +29,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class RecursiveTreeWalker {
-    private static final transient Logger LOG = LoggerFactory.getLogger(RecursiveTreeWalker.class);
+    private static final Logger LOG = LoggerFactory.getLogger(RecursiveTreeWalker.class);
 
     private final CMISConsumer cmisConsumer;
     private final boolean readContent;

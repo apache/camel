@@ -43,7 +43,7 @@ import static org.apache.camel.processor.PipelineHelper.continueProcessing;
  * @version 
  */
 public class ChoiceProcessor extends ServiceSupport implements AsyncProcessor, Navigate<Processor>, Traceable {
-    private static final transient Logger LOG = LoggerFactory.getLogger(ChoiceProcessor.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ChoiceProcessor.class);
     private final List<Processor> filters;
     private final Processor otherwise;
 

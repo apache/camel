@@ -35,7 +35,7 @@ import org.slf4j.LoggerFactory;
  *
  */
 public class CamelJob implements Job {
-    private static final transient Logger LOG = LoggerFactory.getLogger(CamelJob.class);
+    private static final Logger LOG = LoggerFactory.getLogger(CamelJob.class);
 
     @Override
     public void execute(JobExecutionContext context) throws JobExecutionException {

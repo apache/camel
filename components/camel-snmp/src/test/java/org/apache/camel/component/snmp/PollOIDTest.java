@@ -28,7 +28,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class PollOIDTest extends CamelTestSupport {
-    private static final transient Logger LOG = LoggerFactory.getLogger(PollOIDTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(PollOIDTest.class);
 
     // a disabled test... before enabling you must fill in a working IP, Port
     // and maybe oids in the route below

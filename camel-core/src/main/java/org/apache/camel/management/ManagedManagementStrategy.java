@@ -51,7 +51,7 @@ import org.slf4j.LoggerFactory;
  */
 public class ManagedManagementStrategy extends DefaultManagementStrategy {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(ManagedManagementStrategy.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ManagedManagementStrategy.class);
 
     public ManagedManagementStrategy() {
     }

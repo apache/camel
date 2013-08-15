@@ -35,7 +35,7 @@ import org.slf4j.LoggerFactory;
  * @version 
  */
 public class CatchProcessor extends DelegateAsyncProcessor implements Traceable {
-    private static final transient Logger LOG = LoggerFactory.getLogger(CatchProcessor.class);
+    private static final Logger LOG = LoggerFactory.getLogger(CatchProcessor.class);
 
     private final List<Class<? extends Throwable>> exceptions;
     private final Predicate onWhen;

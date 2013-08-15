@@ -34,7 +34,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class CamelFileGreeterOneWayTest extends CamelSpringTestSupport {
     
-    private static final transient Logger LOG = LoggerFactory.getLogger(CamelGreeterTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(CamelGreeterTest.class);
     
     private static Endpoint endpoint;
     private static GreeterImpl greeterImpl;

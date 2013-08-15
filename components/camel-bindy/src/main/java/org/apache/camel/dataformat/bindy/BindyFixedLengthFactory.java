@@ -44,7 +44,7 @@ import org.slf4j.LoggerFactory;
  */
 public class BindyFixedLengthFactory extends BindyAbstractFactory implements BindyFactory {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(BindyFixedLengthFactory.class);
+    private static final Logger LOG = LoggerFactory.getLogger(BindyFixedLengthFactory.class);
 
     boolean isOneToMany;
 

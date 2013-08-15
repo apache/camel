@@ -32,7 +32,7 @@ import org.slf4j.LoggerFactory;
  * A useful base class for any consumer which is polling batch based
  */
 public abstract class ScheduledBatchPollingConsumer extends ScheduledPollConsumer implements BatchConsumer, ShutdownAware {
-    private static final transient Logger LOG = LoggerFactory.getLogger(ScheduledBatchPollingConsumer.class);
+    private static final Logger LOG = LoggerFactory.getLogger(ScheduledBatchPollingConsumer.class);
     protected volatile ShutdownRunningTask shutdownRunningTask;
     protected volatile int pendingExchanges;
     @UriParam

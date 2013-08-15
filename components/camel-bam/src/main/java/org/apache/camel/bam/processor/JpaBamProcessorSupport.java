@@ -43,7 +43,7 @@ import org.springframework.transaction.support.TransactionTemplate;
  * @version 
  */
 public class JpaBamProcessorSupport<T> extends BamProcessorSupport<T> {
-    private static final transient Logger LOG = LoggerFactory.getLogger(JpaBamProcessorSupport.class);
+    private static final Logger LOG = LoggerFactory.getLogger(JpaBamProcessorSupport.class);
 
     private static final Lock LOCK = new ReentrantLock(); // lock used for concurrency issues
 

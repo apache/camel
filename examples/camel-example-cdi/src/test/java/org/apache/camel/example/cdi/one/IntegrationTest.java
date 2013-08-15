@@ -43,7 +43,7 @@ import static org.junit.Assert.assertTrue;
 public class IntegrationTest extends DeploymentFactory {
 
     static boolean routeConfigured;
-    private static final transient Logger LOG = LoggerFactory.getLogger(IntegrationTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(IntegrationTest.class);
 
     @Inject
     MyRoutes config;

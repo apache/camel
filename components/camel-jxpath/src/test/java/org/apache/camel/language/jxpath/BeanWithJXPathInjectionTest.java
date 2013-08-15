@@ -29,7 +29,7 @@ import org.slf4j.LoggerFactory;
  * @version 
  */
 public class BeanWithJXPathInjectionTest extends CamelTestSupport {
-    private static final transient Logger LOG = LoggerFactory.getLogger(BeanWithJXPathInjectionTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(BeanWithJXPathInjectionTest.class);
 
     @Test
     public void testSendMessage() throws Exception {

@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory;
  */
 @ContextName("contextA")
 public class RoutesContextA extends RouteBuilder {
-    private static final transient Logger LOG = LoggerFactory.getLogger(RoutesContextA.class);
+    private static final Logger LOG = LoggerFactory.getLogger(RoutesContextA.class);
 
     @EndpointInject(uri = "mock:A.b", context = "contextA")
     public MockEndpoint b;

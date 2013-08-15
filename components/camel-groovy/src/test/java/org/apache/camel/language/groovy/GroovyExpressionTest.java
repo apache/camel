@@ -29,7 +29,7 @@ import org.slf4j.LoggerFactory;
  * @version 
  */
 public class GroovyExpressionTest extends CamelTestSupport {
-    private static final transient Logger LOG = LoggerFactory.getLogger(GroovyTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(GroovyTest.class);
 
     protected Exchange exchange;
 

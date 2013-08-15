@@ -30,7 +30,7 @@ import org.slf4j.LoggerFactory;
  * @version 
  */
 public class BeanWithXQueryInjectionTest extends CamelTestSupport {
-    private static final transient Logger LOG = LoggerFactory.getLogger(BeanWithXQueryInjectionTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(BeanWithXQueryInjectionTest.class);
     protected MyBean myBean = new MyBean();
 
     @Test
