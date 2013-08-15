@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -31,14 +30,18 @@ import org.vertx.java.core.eventbus.EventBus;
  */
 @UriEndpoint(scheme = "vertx", consumerClass = VertxConsumer.class)
 public class VertxEndpoint extends DefaultEndpoint {
-    private final VertxComponent component;
+
     @UriParam
     private String address;
 
     public VertxEndpoint(String uri, VertxComponent component, String address) {
         super(uri, component);
-        this.component = component;
         this.address = address;
+    }
+
+    @Override
+    public VertxComponent getComponent() {
+        return (VertxComponent) super.getComponent();
     }
 
     public Producer createProducer() throws Exception {
@@ -47,6 +50,7 @@ public class VertxEndpoint extends DefaultEndpoint {
 
     public Consumer createConsumer(Processor processor) throws Exception {
         VertxConsumer consumer = new VertxConsumer(this, processor);
+        configureConsumer(consumer);
         return consumer;
     }
 
@@ -59,7 +63,7 @@ public class VertxEndpoint extends DefaultEndpoint {
     }
 
     public Vertx getVertx() {
-        return component.getVertx();
+        return getComponent().getVertx();
     }
 
     public String getAddress() {

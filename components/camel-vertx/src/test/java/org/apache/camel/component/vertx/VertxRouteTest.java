@@ -43,7 +43,7 @@ public class VertxRouteTest extends CamelTestSupport {
     @Test
     public void testVertxMessages() throws Exception {
         resultEndpoint = context.getEndpoint(resultUri, MockEndpoint.class);
-        resultEndpoint.expectedBodiesReceived(body1, body2);
+        resultEndpoint.expectedBodiesReceivedInAnyOrder(body1, body2);
 
         template.sendBody(startUri, body1);
         template.sendBody(startUri, body2);

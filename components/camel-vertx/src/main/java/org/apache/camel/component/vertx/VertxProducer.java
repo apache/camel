@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -21,26 +20,24 @@ import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadRuntimeException;
 import org.apache.camel.Message;
 import org.apache.camel.impl.DefaultProducer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.vertx.java.core.eventbus.EventBus;
 import org.vertx.java.core.json.JsonArray;
 import org.vertx.java.core.json.JsonObject;
 
-/**
- */
 public class VertxProducer extends DefaultProducer {
-    private static final Logger LOG = LoggerFactory.getLogger(VertxProducer.class);
-    private final VertxEndpoint endpoint;
 
     public VertxProducer(VertxEndpoint endpoint) {
         super(endpoint);
-        this.endpoint = endpoint;
+    }
+
+    @Override
+    public VertxEndpoint getEndpoint() {
+        return (VertxEndpoint) super.getEndpoint();
     }
 
     public void process(Exchange exchange) throws Exception {
-        EventBus eventBus = endpoint.getEventBus();
-        String address = endpoint.getAddress();
+        EventBus eventBus = getEndpoint().getEventBus();
+        String address = getEndpoint().getAddress();
 
         Message in = exchange.getIn();
 
@@ -49,15 +46,16 @@ public class VertxProducer extends DefaultProducer {
             eventBus.publish(address, jsonObject);
             return;
         }
-
-        String text = in.getBody(String.class);
-        if (text != null) {
-            eventBus.publish(address, new JsonObject(text));
-            return;
-        }
         JsonArray jsonArray = in.getBody(JsonArray.class);
         if (jsonArray != null) {
             eventBus.publish(address, jsonArray);
+            return;
+        }
+
+        // and fallback and use string which almost all can be converted
+        String text = in.getBody(String.class);
+        if (text != null) {
+            eventBus.publish(address, new JsonObject(text));
             return;
         }
         throw new InvalidPayloadRuntimeException(exchange, String.class);

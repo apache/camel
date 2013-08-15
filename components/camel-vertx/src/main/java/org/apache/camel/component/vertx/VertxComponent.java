@@ -1,5 +1,4 @@
 /**
- *
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -7,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -61,6 +60,28 @@ public class VertxComponent extends UriEndpointComponent implements EndpointComp
     }
 
     public Vertx getVertx() {
+        return vertx;
+    }
+
+    public void setVertx(Vertx vertx) {
+        this.vertx = vertx;
+    }
+
+    protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
+        VertxEndpoint endpoint = new VertxEndpoint(uri, this, remaining);
+        setProperties(endpoint, parameters);
+        return endpoint;
+    }
+
+    public List<String> completeEndpointPath(ComponentConfiguration componentConfiguration, String text) {
+        // TODO is there any way to find out the list of endpoint names in vertx?
+        return null;
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+
         if (vertx == null) {
             // lets using a host / port if a host name is specified
             if (host != null && host.length() > 0) {
@@ -69,22 +90,10 @@ public class VertxComponent extends UriEndpointComponent implements EndpointComp
                 vertx = VertxFactory.newVertx();
             }
         }
-        return vertx;
     }
 
-    public void setVertx(Vertx vertx) {
-        this.vertx = vertx;
-    }
-
-    protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters)
-            throws Exception {
-        // lazily create vertx
-        getVertx();
-        return new VertxEndpoint(uri, this, remaining);
-    }
-
-    public List<String> completeEndpointPath(ComponentConfiguration componentConfiguration, String text) {
-        // TODO is there any way to find out the list of endpoint names in vertx?
-        return null;
+    @Override
+    protected void doStop() throws Exception {
+        super.doStop();
     }
 }

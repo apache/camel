@@ -390,6 +390,7 @@
     <velocity-bundle-version>1.7_6</velocity-bundle-version>
     <velocity-tools-version>2.0</velocity-tools-version>
     <velocity-version>1.7</velocity-version>
+    <vertx-version>2.0.1-final</vertx-version>
     <vysper-version>0.7</vysper-version>
     <!-- should be in-sync with deltaspike -->
     <weld-version>1.1.5.Final</weld-version>
