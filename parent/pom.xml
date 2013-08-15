@@ -170,7 +170,7 @@
     <hawtdb-version>1.6</hawtdb-version>
     <hawtdispatch-version>1.17</hawtdispatch-version>
     <hazelcast-version>2.6</hazelcast-version>
-    <hbase-version>0.94.6</hbase-version>
+    <hbase-version>0.94.10</hbase-version>
     <hbase-bundle-version>0.94.6_1</hbase-bundle-version>
     <hibernate-validator-version>5.0.1.Final</hibernate-validator-version>
     <hibernate-version>4.2.4.Final</hibernate-version>
