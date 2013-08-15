@@ -26,12 +26,9 @@ import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.quartz.CronScheduleBuilder;
 import org.quartz.CronTrigger;
-import org.quartz.Job;
 import org.quartz.JobBuilder;
 import org.quartz.JobDataMap;
 import org.quartz.JobDetail;
-import org.quartz.JobExecutionContext;
-import org.quartz.JobExecutionException;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerException;
 import org.quartz.TriggerBuilder;
@@ -42,7 +39,7 @@ import org.slf4j.LoggerFactory;
  * A quartz based {@link ScheduledPollConsumerScheduler} which uses a {@link CronTrigger} to define when the
  * poll should be triggered.
  */
-public class QuartzScheduledPollConsumerScheduler extends ServiceSupport implements ScheduledPollConsumerScheduler, Job {
+public class QuartzScheduledPollConsumerScheduler extends ServiceSupport implements ScheduledPollConsumerScheduler {
 
     private static final Logger LOG = LoggerFactory.getLogger(QuartzScheduledPollConsumerScheduler.class);
     private Scheduler quartzScheduler;
@@ -140,11 +137,6 @@ public class QuartzScheduledPollConsumerScheduler extends ServiceSupport impleme
 
     public void setTriggerGroup(String triggerGroup) {
         this.triggerGroup = triggerGroup;
-    }
-
-    @Override
-    public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
-        runnable.run();
     }
 
     @Override

@@ -31,6 +31,7 @@ import org.apache.camel.util.IntrospectionSupport;
  */
 public abstract class ScheduledPollEndpoint extends DefaultEndpoint {
 
+    private static final String SPRING_SCHEDULER = "org.apache.camel.spring.pollingconsumer.SpringScheduledPollConsumerScheduler";
     private static final String QUARTZ_2_SCHEDULER = "org.apache.camel.pollconsumer.quartz2.QuartzScheduledPollConsumerScheduler";
 
     protected ScheduledPollEndpoint(String endpointUri, Component component) {
@@ -119,8 +120,15 @@ public abstract class ScheduledPollEndpoint extends DefaultEndpoint {
                 consumerProperties.put("scheduledExecutorService", scheduledExecutorService);
             }
             if (scheduler != null) {
-                // special for scheduler if its "quartz2"
-                if ("quartz2".equals(scheduler)) {
+                // special for scheduler if its "spring"
+                if ("spring".equals(scheduler)) {
+                    try {
+                        Class<?> clazz = getCamelContext().getClassResolver().resolveMandatoryClass(SPRING_SCHEDULER);
+                        scheduler = getCamelContext().getInjector().newInstance(clazz);
+                    } catch (ClassNotFoundException e) {
+                        throw new IllegalArgumentException("Cannot load " + SPRING_SCHEDULER + " from classpath. Make sure camel-spring.jar is on the classpath.", e);
+                    }
+                } else if ("quartz2".equals(scheduler)) {
                     try {
                         Class<?> clazz = getCamelContext().getClassResolver().resolveMandatoryClass(QUARTZ_2_SCHEDULER);
                         scheduler = getCamelContext().getInjector().newInstance(clazz);
