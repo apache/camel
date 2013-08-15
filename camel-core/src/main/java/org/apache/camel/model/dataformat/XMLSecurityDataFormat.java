@@ -57,7 +57,9 @@ public class XMLSecurityDataFormat extends DataFormatDefinition implements Names
     private String keyPassword;
     @XmlAttribute
     private String digestAlgorithm;
-    
+    @XmlAttribute
+    private String mgfAlgorithm;
+
     @XmlTransient
     private KeyStoreParameters keyOrTrustStoreParameters;
     
@@ -268,6 +270,9 @@ public class XMLSecurityDataFormat extends DataFormatDefinition implements Names
         if (digestAlgorithm != null) {
             setProperty(dataFormat, "digestAlgorithm", this.getDigestAlgorithm());
         }
+        if (mgfAlgorithm != null) {
+            setProperty(dataFormat, "mgfAlgorithm", this.getMgfAlgorithm());
+        }
     }
 
     public String getXmlCipherAlgorithm() {
@@ -337,7 +342,11 @@ public class XMLSecurityDataFormat extends DataFormatDefinition implements Names
     public String getKeyPassword() {
         return this.keyPassword;
     }
-    
+
+    public void setKeyPassword(String keyPassword) {
+        this.keyPassword = keyPassword;
+    }
+
     public String getDigestAlgorithm() {
         return digestAlgorithm;
     }
@@ -346,8 +355,12 @@ public class XMLSecurityDataFormat extends DataFormatDefinition implements Names
         this.digestAlgorithm = digestAlgorithm;
     }
 
-    public void setKeyPassword(String keyPassword) {
-        this.keyPassword = keyPassword;
+    public String getMgfAlgorithm() {
+        return mgfAlgorithm;
+    }
+
+    public void setMgfAlgorithm(String mgfAlgorithm) {
+        this.mgfAlgorithm = mgfAlgorithm;
     }
 
     @Override
