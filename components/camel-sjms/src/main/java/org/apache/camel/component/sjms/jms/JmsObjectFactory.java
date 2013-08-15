@@ -22,7 +22,6 @@ import javax.jms.MessageConsumer;
 import javax.jms.MessageProducer;
 import javax.jms.Session;
 import javax.jms.Topic;
-import javax.jms.TopicSession;
 
 import org.apache.camel.util.ObjectHelper;
 
@@ -119,20 +118,18 @@ public final class JmsObjectFactory {
         MessageConsumer messageConsumer = null;
         
         if (topic) {
-            TopicSession ts = (TopicSession)session;
             if (ObjectHelper.isNotEmpty(durableSubscriptionId)) {
                 if (ObjectHelper.isNotEmpty(messageSelector)) {
-                    messageConsumer = ts.createDurableSubscriber((Topic)destination, durableSubscriptionId,
+                    messageConsumer = session.createDurableSubscriber((Topic)destination, durableSubscriptionId,
                                                                  messageSelector, noLocal);
                 } else {
-                    messageConsumer = ts.createDurableSubscriber((Topic)destination, durableSubscriptionId);
+                    messageConsumer = session.createDurableSubscriber((Topic)destination, durableSubscriptionId);
                 }
-
             } else {
                 if (ObjectHelper.isNotEmpty(messageSelector)) {
-                    messageConsumer = ts.createSubscriber((Topic)destination, messageSelector, noLocal);
+                    messageConsumer = session.createConsumer((Topic)destination, messageSelector, noLocal);
                 } else {
-                    messageConsumer = ts.createSubscriber((Topic)destination);
+                    messageConsumer = session.createConsumer((Topic)destination);
                 }
             }
         } else {
