@@ -1019,6 +1019,16 @@
     <feature version='${project.version}'>camel-core</feature>
     <bundle>mvn:org.apache.camel/camel-urlrewrite/${project.version}</bundle>
   </feature>
+  <feature name='camel-vertx' version='${project.version}' resolver='(obr)' start-level='50'>
+    <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-core/${jackson2-version}</bundle>
+    <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-databind/${jackson2-version}</bundle>
+    <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-annotations/${jackson2-version}</bundle>
+    <bundle dependency='true'>mvn:com.hazelcast/hazelcast/${hazelcast-version}</bundle>
+    <!-- TODO: vertx is not OSGi bundle, see https://github.com/eclipse/vert.x/issues/708 -->
+    <bundle dependency='true'>wrap:mvn:io.vertx/vertx-core/${vertx-version}</bundle>
+    <feature version='${project.version}'>camel-core</feature>
+    <bundle>mvn:org.apache.camel/camel-vertx/${project.version}</bundle>
+  </feature>
   <feature name='camel-velocity' version='${project.version}' resolver='(obr)' start-level='50'>
     <bundle dependency='true'>mvn:org.apache.geronimo.specs/geronimo-servlet_2.5_spec/${geronimo-servlet-spec-version}</bundle>
     <bundle dependency='true'>mvn:commons-lang/commons-lang/${commons-lang-version}</bundle>
