@@ -78,26 +78,26 @@ public class SqsEndpoint extends ScheduledPollEndpoint {
     @Override
     protected void doStart() throws Exception {
         client = getConfiguration().getAmazonSQSClient() != null
-                ? getConfiguration().getAmazonSQSClient() : getClient();
+            ? getConfiguration().getAmazonSQSClient() : getClient();
 
         if (configuration.getQueueOwnerAWSAccountId() != null) {
-    		GetQueueUrlRequest getQueueUrlRequest = new GetQueueUrlRequest();
-    		getQueueUrlRequest.setQueueName(configuration.getQueueName());
-    		getQueueUrlRequest.setQueueOwnerAWSAccountId(configuration.getQueueOwnerAWSAccountId());
-    		GetQueueUrlResult getQueueUrlResult = client.getQueueUrl(getQueueUrlRequest );
-    		queueUrl = getQueueUrlResult.getQueueUrl();
+            GetQueueUrlRequest getQueueUrlRequest = new GetQueueUrlRequest();
+            getQueueUrlRequest.setQueueName(configuration.getQueueName());
+            getQueueUrlRequest.setQueueOwnerAWSAccountId(configuration.getQueueOwnerAWSAccountId());
+            GetQueueUrlResult getQueueUrlResult = client.getQueueUrl(getQueueUrlRequest);
+            queueUrl = getQueueUrlResult.getQueueUrl();
         } else {
-	        // check whether the queue already exists
-	        ListQueuesResult listQueuesResult = client.listQueues();
-	        for (String url : listQueuesResult.getQueueUrls()) {
-	            if (url.endsWith("/" + configuration.getQueueName())) {
-	                queueUrl = url;
-	                LOG.trace("Queue available at '{}'.", queueUrl);
-	                break;
-	            }
-	        }
+            // check whether the queue already exists
+            ListQueuesResult listQueuesResult = client.listQueues();
+            for (String url : listQueuesResult.getQueueUrls()) {
+                if (url.endsWith("/" + configuration.getQueueName())) {
+                    queueUrl = url;
+                    LOG.trace("Queue available at '{}'.", queueUrl);
+                    break;
+                }
+            }
         }
-        
+
         if (queueUrl == null) {
             createQueue(client);
         } else {

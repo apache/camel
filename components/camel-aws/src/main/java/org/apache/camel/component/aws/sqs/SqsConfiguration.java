@@ -180,12 +180,12 @@ public class SqsConfiguration {
     }
     
     public String getQueueOwnerAWSAccountId() {
-		return queueOwnerAWSAccountId;
-	}
-    
+        return queueOwnerAWSAccountId;
+    }
+
     public void setQueueOwnerAWSAccountId(String queueOwnerAWSAccountId) {
-		this.queueOwnerAWSAccountId = queueOwnerAWSAccountId;
-	}
+        this.queueOwnerAWSAccountId = queueOwnerAWSAccountId;
+    }
 
     @Override
     public String toString() {

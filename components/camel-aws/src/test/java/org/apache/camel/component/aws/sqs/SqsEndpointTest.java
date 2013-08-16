@@ -58,16 +58,18 @@ public class SqsEndpointTest {
     
     @Test
     public void doStartWithDifferentQueueOwner() throws Exception {
-        
-    	EasyMock.expect(amazonSQSClient.getQueueUrl(new GetQueueUrlRequest("test-queue").withQueueOwnerAWSAccountId("111222333")))
-        	.andReturn(new GetQueueUrlResult().withQueueUrl("https://sqs.us-east-1.amazonaws.com/111222333/test-queue"));
-    
-	    EasyMock.replay(amazonSQSClient);
-	    
-	    endpoint.getConfiguration().setQueueOwnerAWSAccountId("111222333");
-	    endpoint.doStart();
-	    
-	    EasyMock.verify(amazonSQSClient);
-    	
+
+        EasyMock.expect(amazonSQSClient.getQueueUrl(new GetQueueUrlRequest("test-queue")
+                            .withQueueOwnerAWSAccountId("111222333")))
+            .andReturn(new GetQueueUrlResult()
+                           .withQueueUrl("https://sqs.us-east-1.amazonaws.com/111222333/test-queue"));
+
+        EasyMock.replay(amazonSQSClient);
+
+        endpoint.getConfiguration().setQueueOwnerAWSAccountId("111222333");
+        endpoint.doStart();
+
+        EasyMock.verify(amazonSQSClient);
+
     }
 }
