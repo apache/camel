@@ -21,8 +21,6 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
-import org.apache.camel.PollingConsumer;
-import org.apache.camel.spi.UriParam;
 import org.apache.camel.util.IntrospectionSupport;
 
 /**
