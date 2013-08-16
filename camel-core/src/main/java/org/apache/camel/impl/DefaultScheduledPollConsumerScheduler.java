@@ -143,7 +143,7 @@ public class DefaultScheduledPollConsumerScheduler extends org.apache.camel.supp
         if (scheduledExecutorService == null) {
             // we only need one thread in the pool to schedule this task
             this.scheduledExecutorService = getCamelContext().getExecutorServiceManager()
-                    .newScheduledThreadPool(this, consumer.getEndpoint().getEndpointUri(), 1);
+                    .newSingleThreadScheduledExecutor(consumer, consumer.getEndpoint().getEndpointUri());
             // and we should shutdown the thread pool when no longer needed
             this.shutdownExecutor = true;
         }

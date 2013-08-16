@@ -22,9 +22,9 @@ import java.util.concurrent.ScheduledFuture;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Consumer;
 import org.apache.camel.spi.ScheduledPollConsumerScheduler;
+import org.apache.camel.spring.util.CamelThreadPoolTaskScheduler;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.concurrent.CamelThreadFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
@@ -116,9 +116,7 @@ public class SpringScheduledPollConsumerScheduler extends ServiceSupport impleme
         trigger = new CronTrigger(getCron(), getTimeZone());
 
         if (taskScheduler == null) {
-            taskScheduler = new ThreadPoolTaskScheduler();
-            CamelThreadFactory tf = new CamelThreadFactory(getCamelContext().getExecutorServiceManager().getThreadNamePattern(), "SpringScheduledPollConsumerSchedulerTask", true);
-            taskScheduler.setThreadFactory(tf);
+            taskScheduler = new CamelThreadPoolTaskScheduler(getCamelContext(), consumer, consumer.getEndpoint().getEndpointUri());
             taskScheduler.afterPropertiesSet();
             destroyTaskScheduler = true;
         }

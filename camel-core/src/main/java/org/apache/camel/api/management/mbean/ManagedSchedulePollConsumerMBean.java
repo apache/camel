@@ -16,6 +16,8 @@
  */
 package org.apache.camel.api.management.mbean;
 
+import java.util.Map;
+
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedOperation;
 
@@ -50,5 +52,8 @@ public interface ManagedSchedulePollConsumerMBean extends ManagedConsumerMBean {
 
     @ManagedOperation(description = "Starts the scheduler")
     void startScheduler();
+
+    @ManagedAttribute(description = "Scheduler classname")
+    String getSchedulerClassName();
 
 }
