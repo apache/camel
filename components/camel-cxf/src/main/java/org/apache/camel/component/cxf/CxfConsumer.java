@@ -62,7 +62,6 @@ public class CxfConsumer extends DefaultConsumer {
         // create server
         ServerFactoryBean svrBean = endpoint.createServerFactoryBean();
         svrBean.setInvoker(new Invoker() {
-
             // we receive a CXF request when this method is called
             public Object invoke(Exchange cxfExchange, Object o) {
                 LOG.trace("Received CXF Request: {}", cxfExchange);                
@@ -75,8 +74,7 @@ public class CxfConsumer extends DefaultConsumer {
                     LOG.trace("Calling the Camel sync processors.");
                     return syncInvoke(cxfExchange);
                 }
-            }            
-            
+            }
             // NOTE this code cannot work with CXF 2.2.x and JMSContinuation
             // as it doesn't break out the interceptor chain when we call it 
             private Object asyncInvoke(Exchange cxfExchange, final Continuation continuation) {
@@ -115,7 +113,6 @@ public class CxfConsumer extends DefaultConsumer {
                 }
                 return null;
             }
-
             private Continuation getContinuation(Exchange cxfExchange) {
                 ContinuationProvider provider = 
                     (ContinuationProvider)cxfExchange.getInMessage().get(ContinuationProvider.class.getName());
@@ -128,7 +125,6 @@ public class CxfConsumer extends DefaultConsumer {
                     return continuation;
                 }
             }
-            
             private Object syncInvoke(Exchange cxfExchange) {
                 org.apache.camel.Exchange camelExchange = prepareCamelExchange(cxfExchange);
                 try {
@@ -145,7 +141,6 @@ public class CxfConsumer extends DefaultConsumer {
                 } finally {
                     doneUoW(camelExchange);
                 }
-
                 // response should have been set in outMessage's content
                 return null;
             }
@@ -192,7 +187,6 @@ public class CxfConsumer extends DefaultConsumer {
                 if (endpoint.getMergeProtocolHeaders()) {
                     camelExchange.setProperty(CxfConstants.CAMEL_CXF_PROTOCOL_HEADERS_MERGED, Boolean.TRUE);
                 }
-
                 // bind the CXF request into a Camel exchange
                 binding.populateExchangeFromCxfRequest(cxfExchange, camelExchange);
                 // extract the javax.xml.ws header
@@ -201,7 +195,6 @@ public class CxfConsumer extends DefaultConsumer {
                 // put the context into camelExchange
                 camelExchange.setProperty(CxfConstants.JAXWS_CONTEXT, context);
                 return camelExchange;
-                
             }
             
             @SuppressWarnings("unchecked")
@@ -230,12 +223,11 @@ public class CxfConsumer extends DefaultConsumer {
                         cxfExchange.getInMessage().put(FaultMode.class, FaultMode.CHECKED_APPLICATION_FAULT);
                         throw (Fault)t;
                     } else if (t != null) {                        
-                        // This is not a CXF Fault. Build the CXF Fault manuallly.
+                        // This is not a CXF Fault. Build the CXF Fault manually.
                         Fault fault = new Fault(t);
                         if (fault.getMessage() == null) {
-                            // The Fault has no Message. This is the case if t had
-                            // no message, for
-                            // example was a NullPointerException.
+                            // The Fault has no Message. This is the case if it has
+                            // no message, for example was a NullPointerException.
                             fault.setMessage(t.getClass().getSimpleName());
                         }
                         WebFault faultAnnotation = t.getClass().getAnnotation(WebFault.class);
