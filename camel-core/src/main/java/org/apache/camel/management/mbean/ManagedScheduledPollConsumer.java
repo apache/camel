@@ -83,4 +83,19 @@ public class ManagedScheduledPollConsumer extends ManagedConsumer implements Man
         return getConsumer().getScheduler().getClass().getName();
     }
 
+    public int getBackoffMultiplier() {
+        return getConsumer().getBackoffMultiplier();
+    }
+
+    public int getBackoffIdleThreshold() {
+        return getConsumer().getBackoffIdleThreshold();
+    }
+
+    public int getBackoffErrorThreshold() {
+        return getConsumer().getBackoffErrorThreshold();
+    }
+
+    public int getBackoffCounter() {
+        return getConsumer().getBackoffCounter();
+    }
 }

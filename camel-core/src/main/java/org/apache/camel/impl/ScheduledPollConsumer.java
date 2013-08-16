@@ -39,8 +39,6 @@ import org.slf4j.LoggerFactory;
 
 /**
  * A useful base class for any consumer which is polling based
- * 
- * @version 
  */
 public abstract class ScheduledPollConsumer extends DefaultConsumer implements Runnable, SuspendableService, PollingConsumerPollingStrategy {
     private static final Logger LOG = LoggerFactory.getLogger(ScheduledPollConsumer.class);
@@ -67,8 +65,19 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
     private boolean sendEmptyMessageWhenIdle;
     @UriParam
     private boolean greedy;
-    private volatile boolean polling;
+    @UriParam
+    private int backoffMultiplier;
+    @UriParam
+    private int backoffIdleThreshold;
+    @UriParam
+    private int backoffErrorThreshold;
     private Map<String, Object> schedulerProperties;
+
+    // state during running
+    private volatile boolean polling;
+    private volatile int backoffCounter;
+    private volatile long idleCounter;
+    private volatile long errorCounter;
 
     public ScheduledPollConsumer(Endpoint endpoint, Processor processor) {
         super(endpoint, processor);
@@ -129,9 +138,32 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
             return;
         }
 
+        // should we backoff if its enabled, and either the idle or error counter is > the threshold
+        if (backoffMultiplier > 0
+                // either idle or error threshold could be not in use, so check for that and use MAX_VALUE if not in use
+                && (idleCounter >= (backoffIdleThreshold > 0 ? backoffIdleThreshold : Integer.MAX_VALUE))
+                || errorCounter >= (backoffErrorThreshold > 0 ? backoffErrorThreshold : Integer.MAX_VALUE)) {
+            if (backoffCounter++ < backoffMultiplier) {
+                // yes we should backoff
+                if (idleCounter > 0) {
+                    LOG.debug("doRun() backoff due subsequent {} idles (backoff at {}/{})", new Object[]{idleCounter, backoffCounter, backoffMultiplier});
+                } else {
+                    LOG.debug("doRun() backoff due subsequent {} errors (backoff at {}/{})", new Object[]{errorCounter, backoffCounter, backoffMultiplier});
+                }
+                return;
+            } else {
+                // we are finished with backoff so reset counters
+                idleCounter = 0;
+                errorCounter = 0;
+                backoffCounter = 0;
+                LOG.trace("doRun() backoff finished, resetting counters.");
+            }
+        }
+
         int retryCounter = -1;
         boolean done = false;
         Throwable cause = null;
+        int polledMessages = 0;
 
         while (!done) {
             try {
@@ -152,7 +184,7 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
                         boolean begin = pollStrategy.begin(this, getEndpoint());
                         if (begin) {
                             retryCounter++;
-                            int polledMessages = poll();
+                            polledMessages = poll();
 
                             if (polledMessages == 0 && isSendEmptyMessageWhenIdle()) {
                                 // send an "empty" exchange
@@ -198,14 +230,22 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
                 // let exception handler deal with the caused exception
                 // but suppress this during shutdown as the logs may get flooded with exceptions during shutdown/forced shutdown
                 try {
-                    getExceptionHandler().handleException("Consumer " + this +  " failed polling endpoint: " + getEndpoint()
+                    getExceptionHandler().handleException("Consumer " + this + " failed polling endpoint: " + getEndpoint()
                             + ". Will try again at next poll", cause);
                 } catch (Throwable e) {
                     LOG.warn("Error handling exception. This exception will be ignored.", e);
                 }
-                cause = null;
             }
         }
+
+        if (cause != null) {
+            idleCounter = 0;
+            errorCounter++;
+        } else {
+            idleCounter = polledMessages == 0 ? ++idleCounter : 0;
+            errorCounter = 0;
+        }
+        LOG.trace("doRun() done with idleCounter={}, errorCounter={}", idleCounter, errorCounter);
 
         // avoid this thread to throw exceptions because the thread pool wont re-schedule a new thread
     }
@@ -330,11 +370,11 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
     public void setStartScheduler(boolean startScheduler) {
         this.startScheduler = startScheduler;
     }
-    
+
     public void setSendEmptyMessageWhenIdle(boolean sendEmptyMessageWhenIdle) {
         this.sendEmptyMessageWhenIdle = sendEmptyMessageWhenIdle;
     }
-    
+
     public boolean isSendEmptyMessageWhenIdle() {
         return sendEmptyMessageWhenIdle;
     }
@@ -348,6 +388,34 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
      */
     public void setGreedy(boolean greedy) {
         this.greedy = greedy;
+    }
+
+    public int getBackoffCounter() {
+        return backoffCounter;
+    }
+
+    public int getBackoffMultiplier() {
+        return backoffMultiplier;
+    }
+
+    public void setBackoffMultiplier(int backoffMultiplier) {
+        this.backoffMultiplier = backoffMultiplier;
+    }
+
+    public int getBackoffIdleThreshold() {
+        return backoffIdleThreshold;
+    }
+
+    public void setBackoffIdleThreshold(int backoffIdleThreshold) {
+        this.backoffIdleThreshold = backoffIdleThreshold;
+    }
+
+    public int getBackoffErrorThreshold() {
+        return backoffErrorThreshold;
+    }
+
+    public void setBackoffErrorThreshold(int backoffErrorThreshold) {
+        this.backoffErrorThreshold = backoffErrorThreshold;
     }
 
     public ScheduledExecutorService getScheduledExecutorService() {
@@ -392,6 +460,14 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
     @Override
     protected void doStart() throws Exception {
         super.doStart();
+
+        // validate that if backoff multiplier is in use, the threshold values is set correclty
+        if (backoffMultiplier > 0) {
+            if (backoffIdleThreshold <= 0 && backoffErrorThreshold <= 0) {
+                throw new IllegalArgumentException("backoffIdleThreshold and/or backoffErrorThreshold must be configured to a positive value when using backoffMultiplier");
+            }
+            LOG.debug("Using backoff[multiplier={}, idleThreshold={}, errorThreshold={}] on {}", new Object[]{backoffMultiplier, backoffIdleThreshold, backoffErrorThreshold, getEndpoint()});
+        }
 
         if (scheduler == null) {
             scheduler = new DefaultScheduledPollConsumerScheduler();
@@ -438,6 +514,12 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
     @Override
     protected void doStop() throws Exception {
         ServiceHelper.stopService(scheduler);
+
+        // clear counters
+        backoffCounter = 0;
+        idleCounter = 0;
+        errorCounter = 0;
+
         super.doStop();
     }
 

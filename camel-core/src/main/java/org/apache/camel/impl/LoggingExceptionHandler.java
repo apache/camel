@@ -25,7 +25,7 @@ import org.apache.camel.util.CamelLogger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A default implementation of {@link ExceptionHandler} which uses a {@link org.apache.camel.processor.CamelLogger} to
+ * A default implementation of {@link ExceptionHandler} which uses a {@link org.apache.camel.util.CamelLogger} to
  * log the exception.
  * <p/>
  * This implementation will by default log the exception with stack trace at WARN level.

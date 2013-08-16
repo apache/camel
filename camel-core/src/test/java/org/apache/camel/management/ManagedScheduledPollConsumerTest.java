@@ -39,7 +39,7 @@ public class ManagedScheduledPollConsumerTest extends ManagementTestSupport {
 
         assertTrue("Should be registered", mbeanServer.isRegistered(on));
         String uri = (String) mbeanServer.getAttribute(on, "EndpointUri");
-        assertEquals("file://target/foo?delay=4000", uri);
+        assertEquals("file://target/foo?backoffErrorThreshold=3&backoffIdleThreshold=2&backoffMultiplier=4&delay=4000", uri);
 
         Long delay = (Long) mbeanServer.getAttribute(on, "Delay");
         assertEquals(4000, delay.longValue());
@@ -55,6 +55,18 @@ public class ManagedScheduledPollConsumerTest extends ManagementTestSupport {
 
         String timeUnit = (String) mbeanServer.getAttribute(on, "TimeUnit");
         assertEquals(TimeUnit.MILLISECONDS.toString(), timeUnit);
+
+        Integer backoffMultiplier = (Integer) mbeanServer.getAttribute(on, "BackoffMultiplier");
+        assertEquals(4, backoffMultiplier.longValue());
+
+        Integer backoffCounter = (Integer) mbeanServer.getAttribute(on, "BackoffCounter");
+        assertEquals(0, backoffCounter.longValue());
+
+        Integer backoffIdleThreshold = (Integer) mbeanServer.getAttribute(on, "BackoffIdleThreshold");
+        assertEquals(2, backoffIdleThreshold.longValue());
+
+        Integer backoffErrorThreshold = (Integer) mbeanServer.getAttribute(on, "BackoffErrorThreshold");
+        assertEquals(3, backoffErrorThreshold.longValue());
 
         String routeId = (String) mbeanServer.getAttribute(on, "RouteId");
         assertEquals("route1", routeId);
@@ -96,7 +108,7 @@ public class ManagedScheduledPollConsumerTest extends ManagementTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("file://target/foo?delay=4000").to("mock:result");
+                from("file://target/foo?delay=4000&backoffMultiplier=4&backoffIdleThreshold=2&backoffErrorThreshold=3").to("mock:result");
             }
         };
     }

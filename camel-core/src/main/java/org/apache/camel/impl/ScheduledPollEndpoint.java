@@ -22,6 +22,7 @@ import java.util.Map;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.PollingConsumer;
+import org.apache.camel.spi.UriParam;
 import org.apache.camel.util.IntrospectionSupport;
 
 /**
@@ -71,6 +72,9 @@ public abstract class ScheduledPollEndpoint extends DefaultEndpoint {
         Object greedy = options.remove("greedy");
         Object scheduledExecutorService  = options.remove("scheduledExecutorService");
         Object scheduler  = options.remove("scheduler");
+        Object backoffMultiplier  = options.remove("backoffMultiplier");
+        Object backoffIdleThreshold  = options.remove("backoffIdleThreshold");
+        Object backoffErrorThreshold  = options.remove("backoffErrorThreshold");
         boolean setConsumerProperties = false;
         
         // the following is split into two if statements to satisfy the checkstyle max complexity constraint
@@ -80,7 +84,7 @@ public abstract class ScheduledPollEndpoint extends DefaultEndpoint {
         if (runLoggingLevel != null || startScheduler != null || sendEmptyMessageWhenIdle != null || greedy != null || scheduledExecutorService != null) {
             setConsumerProperties = true;
         }
-        if (scheduler != null || !schedulerProperties.isEmpty()) {
+        if (scheduler != null || !schedulerProperties.isEmpty() || backoffMultiplier != null || backoffIdleThreshold != null || backoffErrorThreshold != null) {
             setConsumerProperties = true;
         }
         
@@ -140,6 +144,15 @@ public abstract class ScheduledPollEndpoint extends DefaultEndpoint {
             }
             if (!schedulerProperties.isEmpty()) {
                 consumerProperties.put("schedulerProperties", schedulerProperties);
+            }
+            if (backoffMultiplier != null) {
+                consumerProperties.put("backoffMultiplier", backoffMultiplier);
+            }
+            if (backoffIdleThreshold != null) {
+                consumerProperties.put("backoffIdleThreshold", backoffIdleThreshold);
+            }
+            if (backoffErrorThreshold != null) {
+                consumerProperties.put("backoffErrorThreshold", backoffErrorThreshold);
             }
         }
     }
