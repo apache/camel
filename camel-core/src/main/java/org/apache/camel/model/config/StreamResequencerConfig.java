@@ -42,6 +42,8 @@ public class StreamResequencerConfig extends ResequencerConfig {
     @XmlTransient
     private ExpressionResultComparator comparator;
     @XmlAttribute
+    private String comparatorRef;
+    @XmlAttribute
     private Boolean rejectOld;
 
     /**
@@ -154,6 +156,14 @@ public class StreamResequencerConfig extends ResequencerConfig {
 
     public void setComparator(ExpressionResultComparator comparator) {
         this.comparator = comparator;
+    }
+
+    public String getComparatorRef() {
+        return comparatorRef;
+    }
+
+    public void setComparatorRef(String comparatorRef) {
+        this.comparatorRef = comparatorRef;
     }
 
     public void setRejectOld(boolean value) {

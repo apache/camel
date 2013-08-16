@@ -38,6 +38,7 @@ import org.apache.camel.processor.StreamResequencer;
 import org.apache.camel.processor.resequencer.ExpressionResultComparator;
 import org.apache.camel.spi.Required;
 import org.apache.camel.spi.RouteContext;
+import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -385,7 +386,12 @@ public class ResequenceDefinition extends ProcessorDefinition<ResequenceDefiniti
         ObjectHelper.notNull(config, "config", this);
         ObjectHelper.notNull(expression, "expression", this);
 
-        ExpressionResultComparator comparator = config.getComparator();
+        ExpressionResultComparator comparator;
+        if (config.getComparatorRef() != null) {
+            comparator = CamelContextHelper.mandatoryLookup(routeContext.getCamelContext(), config.getComparatorRef(), ExpressionResultComparator.class);
+        } else {
+            comparator = config.getComparator();
+        }
         comparator.setExpression(expression);
 
         StreamResequencer resequencer = new StreamResequencer(routeContext.getCamelContext(), internal, comparator);
