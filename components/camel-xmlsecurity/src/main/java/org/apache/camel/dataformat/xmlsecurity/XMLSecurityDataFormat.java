@@ -57,6 +57,8 @@ import org.apache.xml.security.encryption.EncryptedKey;
 import org.apache.xml.security.encryption.XMLCipher;
 import org.apache.xml.security.encryption.XMLEncryptionException;
 import org.apache.xml.security.keys.KeyInfo;
+import org.apache.xml.security.utils.Constants;
+import org.apache.xml.security.utils.EncryptionConstants;
 import org.apache.xml.security.utils.XMLUtils;
 
 
@@ -133,7 +135,6 @@ public class XMLSecurityDataFormat implements DataFormat, CamelContextAware {
     private CamelContext camelContext;
     private DefaultNamespaceContext nsContext = new DefaultNamespaceContext();
         
-
     public XMLSecurityDataFormat() {
         this.xmlCipherAlgorithm = XMLCipher.TRIPLEDES;
         // set a default pass phrase as its required
@@ -465,7 +466,7 @@ public class XMLSecurityDataFormat implements DataFormat, CamelContextAware {
         if (null != this.getKeyCipherAlgorithm()) {
             keyCipher = XMLCipher.getInstance(this.getKeyCipherAlgorithm(), null, digestAlgorithm);
         } else {
-            keyCipher = XMLCipher.getInstance(XMLCipher.RSA_v1dot5, null, digestAlgorithm);
+            keyCipher = XMLCipher.getInstance(XMLCipher.RSA_OAEP, null, digestAlgorithm);
         }
         keyCipher.init(XMLCipher.WRAP_MODE, keyEncryptionKey);
         encrypt(exchange, document, stream, dataEncryptionKey, keyCipher);
@@ -606,6 +607,7 @@ public class XMLSecurityDataFormat implements DataFormat, CamelContextAware {
         xmlCipher.setKEK(keyEncryptionKey);
 
         if (secureTag.equalsIgnoreCase("")) {
+            checkEncryptionAlgorithm(keyEncryptionKey, encodedDocument.getDocumentElement());
             encodedDocument = xmlCipher.doFinal(encodedDocument, encodedDocument.getDocumentElement());
         } else {
 
@@ -618,6 +620,7 @@ public class XMLSecurityDataFormat implements DataFormat, CamelContextAware {
                 Node node = nodeList.item(i);
                 encodedDocument = node.getOwnerDocument();
                 if (getSecureTagContents()) {
+                    checkEncryptionAlgorithm(keyEncryptionKey, (Element)node);
                     Document temp = xmlCipher.doFinal(encodedDocument, (Element) node, true);
                     encodedDocument.importNode(temp.getDocumentElement().cloneNode(true), true);
                 } else {
@@ -625,6 +628,7 @@ public class XMLSecurityDataFormat implements DataFormat, CamelContextAware {
                     for (int j = 0; j < childNodes.getLength(); j++) {
                         Node childNode = childNodes.item(j);
                         if (childNode.getLocalName().equals("EncryptedData")) {
+                            checkEncryptionAlgorithm(keyEncryptionKey, (Element) childNode);
                             Document temp = xmlCipher.doFinal(encodedDocument, (Element) childNode, false);
                             encodedDocument.importNode(temp.getDocumentElement().cloneNode(true), true);
                         }    
@@ -676,16 +680,17 @@ public class XMLSecurityDataFormat implements DataFormat, CamelContextAware {
             keyGenerator = KeyGenerator.getInstance("DESede");
         } else {
             keyGenerator = KeyGenerator.getInstance("AES");
-        }
-        if (xmlCipherAlgorithm.equalsIgnoreCase(XMLCipher.AES_128)
-            || xmlCipherAlgorithm.equalsIgnoreCase(XMLCipher.AES_128_GCM)) {
-            keyGenerator.init(128);
-        } else if (xmlCipherAlgorithm.equalsIgnoreCase(XMLCipher.AES_192)
-            || xmlCipherAlgorithm.equalsIgnoreCase(XMLCipher.AES_192_GCM)) {
-            keyGenerator.init(192);
-        } else if (xmlCipherAlgorithm.equalsIgnoreCase(XMLCipher.AES_256)
-            || xmlCipherAlgorithm.equalsIgnoreCase(XMLCipher.AES_256_GCM)) {
-            keyGenerator.init(256);
+        
+            if (xmlCipherAlgorithm.equalsIgnoreCase(XMLCipher.AES_128)
+                || xmlCipherAlgorithm.equalsIgnoreCase(XMLCipher.AES_128_GCM)) {
+                keyGenerator.init(128);
+            } else if (xmlCipherAlgorithm.equalsIgnoreCase(XMLCipher.AES_192)
+                || xmlCipherAlgorithm.equalsIgnoreCase(XMLCipher.AES_192_GCM)) {
+                keyGenerator.init(192);
+            } else if (xmlCipherAlgorithm.equalsIgnoreCase(XMLCipher.AES_256)
+                || xmlCipherAlgorithm.equalsIgnoreCase(XMLCipher.AES_256_GCM)) {
+                keyGenerator.init(256);
+            }
         }
         return keyGenerator.generateKey();
     }
@@ -726,6 +731,92 @@ public class XMLSecurityDataFormat implements DataFormat, CamelContextAware {
             alias = recipientKeyAlias;
         }
         return alias;
+    }
+    
+    // Check to see if the asymmetric key transport algorithm is allowed
+    private void checkEncryptionAlgorithm(Key keyEncryptionKey, Element parentElement) throws Exception {
+        if (XMLCipher.RSA_v1dot5.equals(keyCipherAlgorithm)
+            || keyCipherAlgorithm == null
+            || !(keyEncryptionKey instanceof PrivateKey)) {
+            // This only applies for Asymmetric Encryption
+            return;
+        }
+        Element encryptedElement = findEncryptedDataElement(parentElement);
+        if (encryptedElement == null) {
+            return;
+        }
+        
+        // The EncryptedKey EncryptionMethod algorithm
+        String foundEncryptedKeyMethod = findEncryptedKeyMethod(encryptedElement);
+        if (XMLCipher.RSA_v1dot5.equals(foundEncryptedKeyMethod)) {
+            String errorMessage = "The found key transport encryption method is not allowed"; 
+            throw new XMLEncryptionException(errorMessage);
+        }
+    }
+    
+    private Element findEncryptedDataElement(Element element) {
+        // First check the Element itself
+        if (EncryptionConstants._TAG_ENCRYPTEDDATA.equals(element.getLocalName())
+            && EncryptionConstants.EncryptionSpecNS.equals(element.getNamespaceURI())) {
+            return element;
+        }
+        
+        // Now check the child nodes
+        Node child = element.getFirstChild();
+        while (child != null) {
+            if (child.getNodeType() == Node.ELEMENT_NODE) {
+                Element childElement = (Element)child;
+                if (EncryptionConstants._TAG_ENCRYPTEDDATA.equals(childElement.getLocalName())
+                    && EncryptionConstants.EncryptionSpecNS.equals(childElement.getNamespaceURI())) {
+                    return childElement;
+                }
+            }
+            child = child.getNextSibling();
+        }
+        
+        return null;
+    }
+    
+    private String findEncryptionMethod(Element element) {
+        Node child = element.getFirstChild();
+        while (child != null) {
+            if (child.getNodeType() == Node.ELEMENT_NODE) {
+                Element childElement = (Element)child;
+                if (EncryptionConstants._TAG_ENCRYPTIONMETHOD.equals(childElement.getLocalName())
+                    && EncryptionConstants.EncryptionSpecNS.equals(childElement.getNamespaceURI())) {
+                    return childElement.getAttributeNS(null, EncryptionConstants._ATT_ALGORITHM);
+                }
+            }
+            child = child.getNextSibling();
+        }
+        
+        return null;
+    }
+    
+    private String findEncryptedKeyMethod(Element element) {
+        Node child = element.getFirstChild();
+        while (child != null) {
+            if (child.getNodeType() == Node.ELEMENT_NODE) {
+                Element childElement = (Element)child;
+                if (Constants._TAG_KEYINFO.equals(childElement.getLocalName())
+                    && Constants.SignatureSpecNS.equals(childElement.getNamespaceURI())) {
+                    Node keyInfoChild = child.getFirstChild();
+                    while (keyInfoChild != null) {
+                        if (child.getNodeType() == Node.ELEMENT_NODE) {
+                            childElement = (Element)keyInfoChild;
+                            if (EncryptionConstants._TAG_ENCRYPTEDKEY.equals(childElement.getLocalName())
+                                && EncryptionConstants.EncryptionSpecNS.equals(childElement.getNamespaceURI())) {
+                                return findEncryptionMethod(childElement);
+                            }
+                        }
+                        keyInfoChild = keyInfoChild.getNextSibling();
+                    }
+                }
+            }
+            child = child.getNextSibling();
+        }
+        
+        return null;
     }
      
     private DefaultNamespaceContext getNamespaceContext() {
@@ -923,4 +1014,5 @@ public class XMLSecurityDataFormat implements DataFormat, CamelContextAware {
     public void setMgfAlgorithm(String mgfAlgorithm) {
         this.mgfAlgorithm = mgfAlgorithm;
     }
+
 }
