@@ -57,6 +57,9 @@ public class SingleUDPNettyServerBootstrapFactory extends ServiceSupport impleme
     private ChannelPipelineFactory pipelineFactory;
     private DatagramChannelFactory datagramChannelFactory;
     private ConnectionlessBootstrap connectionlessBootstrap;
+    private NetworkInterface multicastNetworkInterface;
+    private DatagramChannel datagramChannel;
+    private Channel channel;
     private WorkerPool workerPool;
 
     public SingleUDPNettyServerBootstrapFactory() {
@@ -104,6 +107,16 @@ public class SingleUDPNettyServerBootstrapFactory extends ServiceSupport impleme
         stopServerBootstrap();
     }
 
+    @Override
+    protected void doResume() throws Exception {
+        // noop
+    }
+
+    @Override
+    protected void doSuspend() throws Exception {
+        // noop
+    }
+
     protected void startServerBootstrap() throws UnknownHostException, SocketException {
         // create non-shared worker pool
         int count = configuration.getWorkerCount() > 0 ? configuration.getWorkerCount() : NettyHelper.DEFAULT_IO_THREADS;
@@ -145,15 +158,15 @@ public class SingleUDPNettyServerBootstrapFactory extends ServiceSupport impleme
         IpV4Subnet multicastSubnet = new IpV4Subnet(MULTICAST_SUBNET);
 
         if (multicastSubnet.contains(configuration.getHost())) {
-            DatagramChannel channel = (DatagramChannel)connectionlessBootstrap.bind(hostAddress);
+            datagramChannel = (DatagramChannel)connectionlessBootstrap.bind(hostAddress);
             String networkInterface = configuration.getNetworkInterface() == null ? LOOPBACK_INTERFACE : configuration.getNetworkInterface();
-            NetworkInterface multicastNetworkInterface = NetworkInterface.getByName(networkInterface);
+            multicastNetworkInterface = NetworkInterface.getByName(networkInterface);
             LOG.info("ConnectionlessBootstrap joining {}:{} using network interface: {}", new Object[]{configuration.getHost(), configuration.getPort(), multicastNetworkInterface.getName()});
-            channel.joinGroup(hostAddress, multicastNetworkInterface);
-            allChannels.add(channel);
+            datagramChannel.joinGroup(hostAddress, multicastNetworkInterface);
+            allChannels.add(datagramChannel);
         } else {
             LOG.info("ConnectionlessBootstrap binding to {}:{}", configuration.getHost(), configuration.getPort());
-            Channel channel = connectionlessBootstrap.bind(hostAddress);
+            channel = connectionlessBootstrap.bind(hostAddress);
             allChannels.add(channel);
         }
     }

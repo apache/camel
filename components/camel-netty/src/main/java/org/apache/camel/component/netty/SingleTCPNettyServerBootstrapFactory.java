@@ -25,6 +25,7 @@ import org.apache.camel.support.ServiceSupport;
 import org.jboss.netty.bootstrap.ServerBootstrap;
 import org.jboss.netty.channel.Channel;
 import org.jboss.netty.channel.ChannelFactory;
+import org.jboss.netty.channel.ChannelFuture;
 import org.jboss.netty.channel.ChannelPipelineFactory;
 import org.jboss.netty.channel.group.ChannelGroup;
 import org.jboss.netty.channel.group.ChannelGroupFuture;
@@ -95,6 +96,30 @@ public class SingleTCPNettyServerBootstrapFactory extends ServiceSupport impleme
     @Override
     protected void doStop() throws Exception {
         stopServerBootstrap();
+    }
+
+    @Override
+    protected void doResume() throws Exception {
+        if (channel != null) {
+            LOG.debug("ServerBootstrap binding to {}:{}", configuration.getHost(), configuration.getPort());
+            ChannelFuture future = channel.bind(new InetSocketAddress(configuration.getHost(), configuration.getPort()));
+            future.awaitUninterruptibly();
+            if (!future.isSuccess()) {
+                // if we cannot bind, the re-create channel
+                allChannels.remove(channel);
+                channel = serverBootstrap.bind(new InetSocketAddress(configuration.getHost(), configuration.getPort()));
+                allChannels.add(channel);
+            }
+        }
+    }
+
+    @Override
+    protected void doSuspend() throws Exception {
+        if (channel != null) {
+            LOG.debug("ServerBootstrap unbinding from {}:{}", configuration.getHost(), configuration.getPort());
+            ChannelFuture future = channel.unbind();
+            future.awaitUninterruptibly();
+        }
     }
 
     protected void startServerBootstrap() {

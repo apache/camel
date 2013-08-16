@@ -37,6 +37,7 @@ public class NettyHttpConfiguration extends NettyConfiguration {
     private boolean bridgeEndpoint;
     private String path;
     private boolean disableStreamCache;
+    private boolean send503whenSuspended = true;
 
     public NettyHttpConfiguration() {
         // we need sync=true as http is request/reply by nature
@@ -132,5 +133,13 @@ public class NettyHttpConfiguration extends NettyConfiguration {
 
     public void setDisableStreamCache(boolean disableStreamCache) {
         this.disableStreamCache = disableStreamCache;
+    }
+
+    public boolean isSend503whenSuspended() {
+        return send503whenSuspended;
+    }
+
+    public void setSend503whenSuspended(boolean send503whenSuspended) {
+        this.send503whenSuspended = send503whenSuspended;
     }
 }

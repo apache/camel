@@ -14,44 +14,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.netty.http;
+package org.apache.camel.component.netty;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
 
-public class NettyHttpSuspendResumeTest extends BaseNettyTest {
-
-    private String serverUri = "netty-http:http://localhost:" + getPort() + "/cool?disconnect=true&send503whenSuspended=false";
-
+public class NettySuspendResumeTest extends BaseNettyTest {
+    
     @Test
-    public void testNettySuspendResume() throws Exception {
-        context.getShutdownStrategy().setTimeout(50);
+    public void testSuspendResume() throws Exception {
+        getMockEndpoint("mock:result").expectedBodiesReceived("Camel", "Again");
 
-        String reply = template.requestBody(serverUri, "World", String.class);
-        assertEquals("Bye World", reply);
+        String out = template.requestBody("netty:tcp://localhost:{{port}}?sync=true&disconnect=true", "Camel", String.class);
+        assertEquals("Bye Camel", out);
 
-        // now suspend netty
-        NettyHttpConsumer consumer = (NettyHttpConsumer) context.getRoute("foo").getConsumer();
-        assertNotNull(consumer);
-
-        // suspend
-        consumer.suspend();
+        context.suspendRoute("foo");
 
         try {
-            template.requestBody(serverUri, "Moon", String.class);
-            fail("Should throw exception");
+            template.requestBody("netty:tcp://localhost:{{port}}?sync=true&disconnect=true", "World", String.class);
+            fail("Should not allow connecting as its suspended");
         } catch (Exception e) {
-            assertTrue(e.getCause().getMessage().startsWith("Cannot connect to localhost"));
+            // expected
         }
 
-        // resume
-        consumer.resume();
+        context.resumeRoute("foo");
 
-        Thread.sleep(2000);
+        out = template.requestBody("netty:tcp://localhost:{{port}}?sync=true&disconnect=true", "Again", String.class);
+        assertEquals("Bye Again", out);
 
-        // and send request which should be processed
-        reply = template.requestBody(serverUri, "Moon", String.class);
-        assertEquals("Bye Moon", reply);
+        assertMockEndpointsSatisfied();
     }
 
     @Override
@@ -59,7 +50,9 @@ public class NettyHttpSuspendResumeTest extends BaseNettyTest {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from(serverUri).routeId("foo")
+                from("netty:tcp://localhost:{{port}}?sync=true").routeId("foo")
+                    .to("log:result")
+                    .to("mock:result")
                     .transform(body().prepend("Bye "));
             }
         };

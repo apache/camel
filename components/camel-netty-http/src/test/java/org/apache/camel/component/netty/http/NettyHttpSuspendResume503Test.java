@@ -19,9 +19,9 @@ package org.apache.camel.component.netty.http;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
 
-public class NettyHttpSuspendResumeTest extends BaseNettyTest {
+public class NettyHttpSuspendResume503Test extends BaseNettyTest {
 
-    private String serverUri = "netty-http:http://localhost:" + getPort() + "/cool?disconnect=true&send503whenSuspended=false";
+    private String serverUri = "netty-http:http://localhost:" + getPort() + "/cool?disconnect=true";
 
     @Test
     public void testNettySuspendResume() throws Exception {
@@ -41,7 +41,8 @@ public class NettyHttpSuspendResumeTest extends BaseNettyTest {
             template.requestBody(serverUri, "Moon", String.class);
             fail("Should throw exception");
         } catch (Exception e) {
-            assertTrue(e.getCause().getMessage().startsWith("Cannot connect to localhost"));
+            NettyHttpOperationFailedException cause = assertIsInstanceOf(NettyHttpOperationFailedException.class, e.getCause());
+            assertEquals(503, cause.getStatusCode());
         }
 
         // resume

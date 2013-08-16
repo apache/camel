@@ -45,13 +45,31 @@ public class NettyHttpConsumer extends NettyConsumer {
         super.doStart();
         ObjectHelper.notNull(getNettyServerBootstrapFactory(), "HttpServerBootstrapFactory", this);
         getNettyServerBootstrapFactory().addConsumer(this);
-
-
     }
 
     @Override
     protected void doStop() throws Exception {
         getNettyServerBootstrapFactory().removeConsumer(this);
         super.doStop();
+    }
+
+    @Override
+    protected void doSuspend() throws Exception {
+        if (getConfiguration().isSend503whenSuspended()) {
+            // noop as the server handler will send back 503 when suspended
+        } else {
+            // will unbind the acceptor
+            super.doSuspend();
+        }
+    }
+
+    @Override
+    protected void doResume() throws Exception {
+        if (getConfiguration().isSend503whenSuspended()) {
+            // noop
+        } else {
+            // will resume the acceptor
+            super.doResume();
+        }
     }
 }
