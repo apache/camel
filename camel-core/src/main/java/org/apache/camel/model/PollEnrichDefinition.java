@@ -26,6 +26,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
 import org.apache.camel.processor.PollEnricher;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
+import org.apache.camel.processor.aggregate.AggregationStrategyBeanAdapter;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ObjectHelper;
 
@@ -46,6 +47,8 @@ public class PollEnrichDefinition extends NoOutputDefinition<PollEnrichDefinitio
     private Long timeout;
     @XmlAttribute(name = "strategyRef")
     private String aggregationStrategyRef;
+    @XmlAttribute(name = "strategyMethodName")
+    private String aggregationStrategyMethodName;
     @XmlTransient
     private AggregationStrategy aggregationStrategy;
 
@@ -99,16 +102,29 @@ public class PollEnrichDefinition extends NoOutputDefinition<PollEnrichDefinitio
             enricher = new PollEnricher(null, endpoint.createPollingConsumer(), -1);
         }
 
-        if (aggregationStrategyRef != null) {
-            aggregationStrategy = routeContext.mandatoryLookup(aggregationStrategyRef, AggregationStrategy.class);
-        }
-        if (aggregationStrategy == null) {
+        AggregationStrategy strategy = createAggregationStrategy(routeContext);
+        if (strategy == null) {
             enricher.setDefaultAggregationStrategy();
         } else {
-            enricher.setAggregationStrategy(aggregationStrategy);
+            enricher.setAggregationStrategy(strategy);
         }
 
         return enricher;
+    }
+
+    private AggregationStrategy createAggregationStrategy(RouteContext routeContext) {
+        AggregationStrategy strategy = getAggregationStrategy();
+        if (strategy == null && aggregationStrategyRef != null) {
+            Object aggStrategy = routeContext.lookup(aggregationStrategyRef, Object.class);
+            if (aggStrategy instanceof AggregationStrategy) {
+                strategy = (AggregationStrategy) aggStrategy;
+            } else if (aggStrategy != null) {
+                strategy = new AggregationStrategyBeanAdapter(aggStrategy, getAggregationStrategyMethodName());
+            } else {
+                throw new IllegalArgumentException("Cannot find AggregationStrategy in Registry with name: " + aggregationStrategyRef);
+            }
+        }
+        return strategy;
     }
 
     public String getResourceUri() {
@@ -141,6 +157,14 @@ public class PollEnrichDefinition extends NoOutputDefinition<PollEnrichDefinitio
 
     public void setAggregationStrategyRef(String aggregationStrategyRef) {
         this.aggregationStrategyRef = aggregationStrategyRef;
+    }
+
+    public String getAggregationStrategyMethodName() {
+        return aggregationStrategyMethodName;
+    }
+
+    public void setAggregationStrategyMethodName(String aggregationStrategyMethodName) {
+        this.aggregationStrategyMethodName = aggregationStrategyMethodName;
     }
 
     public AggregationStrategy getAggregationStrategy() {

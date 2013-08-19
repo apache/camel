@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -37,6 +36,7 @@ import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.processor.CamelInternalProcessor;
 import org.apache.camel.processor.aggregate.AggregateProcessor;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
+import org.apache.camel.processor.aggregate.AggregationStrategyBeanAdapter;
 import org.apache.camel.processor.aggregate.GroupedExchangeAggregationStrategy;
 import org.apache.camel.processor.aggregate.OptimisticLockRetryPolicy;
 import org.apache.camel.spi.AggregationRepository;
@@ -87,6 +87,8 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
     private String aggregationRepositoryRef;
     @XmlAttribute
     private String strategyRef;
+    @XmlAttribute
+    private String strategyMethodName;
     @XmlAttribute
     private Integer completionSize;
     @XmlAttribute
@@ -277,7 +279,14 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
     private AggregationStrategy createAggregationStrategy(RouteContext routeContext) {
         AggregationStrategy strategy = getAggregationStrategy();
         if (strategy == null && strategyRef != null) {
-            strategy = routeContext.mandatoryLookup(strategyRef, AggregationStrategy.class);
+            Object aggStrategy = routeContext.lookup(strategyRef, Object.class);
+            if (aggStrategy instanceof AggregationStrategy) {
+                strategy = (AggregationStrategy) aggStrategy;
+            } else if (aggStrategy != null) {
+                strategy = new AggregationStrategyBeanAdapter(aggStrategy, getAggregationStrategyMethodName());
+            } else {
+                throw new IllegalArgumentException("Cannot find AggregationStrategy in Registry with name: " + strategyRef);
+            }
         }
 
         if (groupExchanges != null && groupExchanges) {
@@ -321,6 +330,14 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
 
     public void setAggregationStrategyRef(String aggregationStrategyRef) {
         this.strategyRef = aggregationStrategyRef;
+    }
+
+    public String getAggregationStrategyMethodName() {
+        return strategyMethodName;
+    }
+
+    public void setAggregationStrategyMethodName(String strategyMethodName) {
+        this.strategyMethodName = strategyMethodName;
     }
 
     public Integer getCompletionSize() {
@@ -677,6 +694,17 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
      */
     public AggregateDefinition aggregationStrategyRef(String aggregationStrategyRef) {
         setAggregationStrategyRef(aggregationStrategyRef);
+        return this;
+    }
+
+    /**
+     * Sets the method name to use when using a POJO as {@link AggregationStrategy}.
+     *
+     * @param  methodName the method name to call
+     * @return the builder
+     */
+    public AggregateDefinition aggregationStrategyMethodName(String methodName) {
+        setAggregationStrategyMethodName(methodName);
         return this;
     }
 

@@ -30,6 +30,7 @@ import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.processor.CamelInternalProcessor;
 import org.apache.camel.processor.Splitter;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
+import org.apache.camel.processor.aggregate.AggregationStrategyBeanAdapter;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.CamelContextHelper;
 
@@ -49,6 +50,8 @@ public class SplitDefinition extends ExpressionNode implements ExecutorServiceAw
     private Boolean parallelProcessing;
     @XmlAttribute
     private String strategyRef;
+    @XmlAttribute
+    private String strategyMethodName;
     @XmlAttribute
     private String executorServiceRef;
     @XmlAttribute
@@ -123,10 +126,17 @@ public class SplitDefinition extends ExpressionNode implements ExecutorServiceAw
     private AggregationStrategy createAggregationStrategy(RouteContext routeContext) {
         AggregationStrategy strategy = getAggregationStrategy();
         if (strategy == null && strategyRef != null) {
-            strategy = CamelContextHelper.mandatoryLookup(routeContext.getCamelContext(), strategyRef, AggregationStrategy.class);
+            Object aggStrategy = routeContext.lookup(strategyRef, Object.class);
+            if (aggStrategy instanceof AggregationStrategy) {
+                strategy = (AggregationStrategy) aggStrategy;
+            } else if (aggStrategy != null) {
+                strategy = new AggregationStrategyBeanAdapter(aggStrategy, strategyMethodName);
+            } else {
+                throw new IllegalArgumentException("Cannot find AggregationStrategy in Registry with name: " + strategyRef);
+            }
         }
         return strategy;
-    }        
+    }
 
     // Fluent API
     // -------------------------------------------------------------------------
@@ -149,6 +159,17 @@ public class SplitDefinition extends ExpressionNode implements ExecutorServiceAw
      */
     public SplitDefinition aggregationStrategyRef(String aggregationStrategyRef) {
         setStrategyRef(aggregationStrategyRef);
+        return this;
+    }
+
+    /**
+     * Sets the method name to use when using a POJO as {@link AggregationStrategy}.
+     *
+     * @param  methodName the method name to call
+     * @return the builder
+     */
+    public SplitDefinition aggregationStrategyMethodName(String methodName) {
+        setStrategyMethodName(methodName);
         return this;
     }
 
@@ -317,6 +338,14 @@ public class SplitDefinition extends ExpressionNode implements ExecutorServiceAw
 
     public void setStrategyRef(String strategyRef) {
         this.strategyRef = strategyRef;
+    }
+
+    public String getStrategyMethodName() {
+        return strategyMethodName;
+    }
+
+    public void setStrategyMethodName(String strategyMethodName) {
+        this.strategyMethodName = strategyMethodName;
     }
 
     public String getExecutorServiceRef() {

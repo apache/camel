@@ -40,8 +40,6 @@ public final class AggregationStrategyBeanAdapter extends ServiceSupport impleme
     // TODO: Add parameter bindings for:
     // - @Header / @Property / @XPath etc
     // - CamelContext, Registry, etc.
-    // TODO: Add DSL support in Java DSL
-    // TODO: Add DSL support in XML DSL
 
     private static final List<Method> EXCLUDED_METHODS = new ArrayList<Method>();
     private CamelContext camelContext;
