@@ -27,6 +27,7 @@ import java.security.SecureRandom;
 import java.security.Security;
 import java.security.SignatureException;
 import java.util.Date;
+import java.util.Iterator;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.DataFormat;
@@ -245,7 +246,16 @@ public class PGPDataFormat implements DataFormat {
         }
         IOHelper.close(in);
 
-        PGPPublicKeyEncryptedData pbe = (PGPPublicKeyEncryptedData) enc.get(0);
+//        PGPPublicKeyEncryptedData pbe = (PGPPublicKeyEncryptedData) enc.get(0);
+        PGPPublicKeyEncryptedData pbe = null;
+        Iterator encryptedDataObjects = enc.getEncryptedDataObjects();
+        // iterate through the "encryptedDataObjects" until we find the one that matches our "key"
+        while (pbe == null && encryptedDataObjects.hasNext()) {
+        	PGPPublicKeyEncryptedData encryptedData = (PGPPublicKeyEncryptedData) encryptedDataObjects.next();
+        	if (encryptedData.getKeyID() == key.getKeyID()) {
+        		pbe = encryptedData;
+        	}
+        }
         InputStream encData = pbe.getDataStream(key, "BC");
 
         pgpFactory = new PGPObjectFactory(encData);

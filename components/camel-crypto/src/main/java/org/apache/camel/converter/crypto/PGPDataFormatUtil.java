@@ -160,7 +160,12 @@ public final class PGPDataFormatUtil {
         while (privateKey == null && encryptedDataObjects.hasNext()) {
             encryptedData = (PGPPublicKeyEncryptedData) encryptedDataObjects.next();
             PGPSecretKey pgpSecKey = pgpSec.getSecretKey(encryptedData.getKeyID());
-            privateKey = pgpSecKey.extractPrivateKey(passphrase.toCharArray(), "BC");
+//            privateKey = pgpSecKey.extractPrivateKey(passphrase.toCharArray(), "BC");
+            if (pgpSecKey != null) {
+            	privateKey = pgpSecKey.extractPrivateKey(passphrase.toCharArray(), "BC");
+            } else {
+            	// hopefully we'll have the secret key for one of the next encypredDataObjects
+            }
         }
         return privateKey;
     }
