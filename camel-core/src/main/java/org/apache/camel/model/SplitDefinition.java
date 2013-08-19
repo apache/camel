@@ -24,6 +24,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
 import org.apache.camel.model.language.ExpressionDefinition;
@@ -135,6 +136,11 @@ public class SplitDefinition extends ExpressionNode implements ExecutorServiceAw
                 throw new IllegalArgumentException("Cannot find AggregationStrategy in Registry with name: " + strategyRef);
             }
         }
+
+        if (strategy != null && strategy instanceof CamelContextAware) {
+            ((CamelContextAware) strategy).setCamelContext(routeContext.getCamelContext());
+        }
+
         return strategy;
     }
 

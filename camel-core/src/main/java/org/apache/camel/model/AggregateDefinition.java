@@ -28,6 +28,7 @@ import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
@@ -305,6 +306,11 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
         if (strategy == null) {
             throw new IllegalArgumentException("AggregationStrategy or AggregationStrategyRef must be set on " + this);
         }
+
+        if (strategy instanceof CamelContextAware) {
+            ((CamelContextAware) strategy).setCamelContext(routeContext.getCamelContext());
+        }
+
         return strategy;
     }
 
@@ -474,6 +480,14 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
 
     public void setStrategyRef(String strategyRef) {
         this.strategyRef = strategyRef;
+    }
+
+    public String getStrategyMethodName() {
+        return strategyMethodName;
+    }
+
+    public void setStrategyMethodName(String strategyMethodName) {
+        this.strategyMethodName = strategyMethodName;
     }
 
     public Boolean getEagerCheckCompletion() {

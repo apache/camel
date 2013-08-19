@@ -39,7 +39,6 @@ public class AggregationStrategyBeanAdapterPollEnrichAllowNullNewExchangeTest ex
             @Override
             public void configure() throws Exception {
                 myStrategy = new AggregationStrategyBeanAdapter(appender, "append");
-                myStrategy.setCamelContext(getContext());
                 myStrategy.setAllowNullNewExchange(true);
 
                 from("direct:start")

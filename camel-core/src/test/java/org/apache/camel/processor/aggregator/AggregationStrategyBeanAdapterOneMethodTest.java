@@ -19,11 +19,11 @@ package org.apache.camel.processor.aggregator;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.processor.aggregate.AggregationStrategyBeanAdapter;
+import org.apache.camel.util.toolbox.AggregationStrategies;
 
 public class AggregationStrategyBeanAdapterOneMethodTest extends ContextTestSupport {
 
     private MyBodyAppender appender = new MyBodyAppender();
-    private AggregationStrategyBeanAdapter myStrategy;
 
     public void testAggregate() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("ABC");
@@ -40,11 +40,8 @@ public class AggregationStrategyBeanAdapterOneMethodTest extends ContextTestSupp
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                myStrategy = new AggregationStrategyBeanAdapter(appender);
-                myStrategy.setCamelContext(getContext());
-
                 from("direct:start")
-                    .aggregate(constant(true), myStrategy)
+                    .aggregate(constant(true), AggregationStrategies.bean(appender))
                         .completionSize(3)
                         .to("mock:result");
             }

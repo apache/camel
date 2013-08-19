@@ -19,6 +19,7 @@ package org.apache.camel.processor.aggregator;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.processor.aggregate.AggregationStrategyBeanAdapter;
+import org.apache.camel.util.toolbox.AggregationStrategies;
 
 public class AggregationStrategyBeanAdapterTest extends ContextTestSupport {
 
@@ -40,11 +41,8 @@ public class AggregationStrategyBeanAdapterTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                myStrategy = new AggregationStrategyBeanAdapter(appender, "append");
-                myStrategy.setCamelContext(getContext());
-
                 from("direct:start")
-                    .aggregate(constant(true), myStrategy)
+                    .aggregate(constant(true), AggregationStrategies.bean(appender, "append"))
                         .completionSize(3)
                         .to("mock:result");
             }

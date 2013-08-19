@@ -17,6 +17,7 @@
 package org.apache.camel.util.toolbox;
 
 import org.apache.camel.processor.aggregate.AggregationStrategy;
+import org.apache.camel.processor.aggregate.AggregationStrategyBeanAdapter;
 import org.apache.camel.processor.aggregate.GroupedExchangeAggregationStrategy;
 import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
 
@@ -61,6 +62,34 @@ public final class AggregationStrategies {
      */
     public static AggregationStrategy groupedExchange() {
         return new GroupedExchangeAggregationStrategy();
+    }
+
+    /**
+     * Creates a {@link AggregationStrategyBeanAdapter} for using a POJO as the aggregration strategy.
+     */
+    public static AggregationStrategy bean(Object bean) {
+        return new AggregationStrategyBeanAdapter(bean);
+    }
+
+    /**
+     * Creates a {@link AggregationStrategyBeanAdapter} for using a POJO as the aggregration strategy.
+     */
+    public static AggregationStrategy bean(Object bean, String methodName) {
+        return new AggregationStrategyBeanAdapter(bean, methodName);
+    }
+
+    /**
+     * Creates a {@link AggregationStrategyBeanAdapter} for using a POJO as the aggregration strategy.
+     */
+    public static AggregationStrategy bean(Class<?> type) {
+        return new AggregationStrategyBeanAdapter(type);
+    }
+
+    /**
+     * Creates a {@link AggregationStrategyBeanAdapter} for using a POJO as the aggregration strategy.
+     */
+    public static AggregationStrategy bean(Class<?> type, String methodName) {
+        return new AggregationStrategyBeanAdapter(type, methodName);
     }
 
 }

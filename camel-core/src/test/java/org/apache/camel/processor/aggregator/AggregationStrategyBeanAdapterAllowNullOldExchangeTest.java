@@ -41,7 +41,6 @@ public class AggregationStrategyBeanAdapterAllowNullOldExchangeTest extends Cont
             @Override
             public void configure() throws Exception {
                 myStrategy = new AggregationStrategyBeanAdapter(appender, "append");
-                myStrategy.setCamelContext(getContext());
                 myStrategy.setAllowNullOldExchange(true);
 
                 from("direct:start")

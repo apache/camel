@@ -22,6 +22,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
 import org.apache.camel.processor.Enricher;
@@ -118,6 +119,11 @@ public class EnrichDefinition extends NoOutputDefinition<EnrichDefinition> {
                 throw new IllegalArgumentException("Cannot find AggregationStrategy in Registry with name: " + aggregationStrategyRef);
             }
         }
+
+        if (strategy != null && strategy instanceof CamelContextAware) {
+            ((CamelContextAware) strategy).setCamelContext(routeContext.getCamelContext());
+        }
+
         return strategy;
     }
 

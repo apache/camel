@@ -18,12 +18,11 @@ package org.apache.camel.processor.aggregator;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.processor.aggregate.AggregationStrategyBeanAdapter;
+import org.apache.camel.util.toolbox.AggregationStrategies;
 
 public class AggregationStrategyBeanAdapterPollEnrichTest extends ContextTestSupport {
 
     private MyBodyAppender appender = new MyBodyAppender();
-    private AggregationStrategyBeanAdapter myStrategy;
 
     public void testNoData() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("A");
@@ -48,11 +47,8 @@ public class AggregationStrategyBeanAdapterPollEnrichTest extends ContextTestSup
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                myStrategy = new AggregationStrategyBeanAdapter(appender, "append");
-                myStrategy.setCamelContext(getContext());
-
                 from("direct:start")
-                    .pollEnrich("seda:foo", 100, myStrategy)
+                    .pollEnrich("seda:foo", 100, AggregationStrategies.bean(appender))
                         .to("mock:result");
             }
         };
