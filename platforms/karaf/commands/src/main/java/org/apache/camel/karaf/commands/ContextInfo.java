@@ -69,6 +69,64 @@ public class ContextInfo extends OsgiCommandSupport {
         System.out.println(StringEscapeUtils.unescapeJava("\tUptime: " + camelContext.getUptime()));
 
         // the statistics are in the mbeans
+        printCamelManagedBeansStatus(camelContext);
+
+        System.out.println("");
+        System.out.println(StringEscapeUtils.unescapeJava("\u001B[1mMiscellaneous\u001B[0m"));
+        System.out.println(StringEscapeUtils.unescapeJava("\tAuto Startup: " + camelContext.isAutoStartup()));
+        System.out.println(StringEscapeUtils.unescapeJava("\tStarting Routes: " + camelContext.isStartingRoutes()));
+        System.out.println(StringEscapeUtils.unescapeJava("\tSuspended: " + camelContext.isSuspended()));
+        System.out.println(StringEscapeUtils.unescapeJava("\tMessage History: " + camelContext.isMessageHistory()));
+        System.out.println(StringEscapeUtils.unescapeJava("\tTracing: " + camelContext.isTracing()));
+        System.out.println("");
+        System.out.println(StringEscapeUtils.unescapeJava("\u001B[1mProperties\u001B[0m"));
+        for (String property : camelContext.getProperties().keySet()) {
+            System.out.println(StringEscapeUtils.unescapeJava("\t" + property + " = " + camelContext.getProperty(property)));
+        }
+
+        System.out.println("");
+        System.out.println(StringEscapeUtils.unescapeJava("\u001B[1mAdvanced\u001B[0m"));
+        System.out.println(StringEscapeUtils.unescapeJava("\tClassResolver: " + camelContext.getClassResolver()));
+        System.out.println(StringEscapeUtils.unescapeJava("\tPackageScanClassResolver: " + camelContext.getPackageScanClassResolver()));
+        System.out.println(StringEscapeUtils.unescapeJava("\tApplicationContextClassLoader: " + camelContext.getApplicationContextClassLoader()));
+
+        System.out.println("");
+        System.out.println(StringEscapeUtils.unescapeJava("\u001B[1mComponents\u001B[0m"));
+        for (String component : camelContext.getComponentNames()) {
+            System.out.println(StringEscapeUtils.unescapeJava("\t" + component));
+        }
+
+        System.out.println("");
+        System.out.println(StringEscapeUtils.unescapeJava("\u001B[1mDataformats\u001B[0m"));
+        for (String names : camelContext.getDataFormats().keySet()) {
+            System.out.println(StringEscapeUtils.unescapeJava("\t" + names));
+        }
+
+        System.out.println("");
+        System.out.println(StringEscapeUtils.unescapeJava("\u001B[1mLanguages\u001B[0m"));
+        for (String language : camelContext.getLanguageNames()) {
+            System.out.println(StringEscapeUtils.unescapeJava("\t" + language));
+        }
+
+        if (mode != null && mode.equals("--verbose")) {
+            System.out.println("");
+            System.out.println(StringEscapeUtils.unescapeJava("\u001B[1mEndpoints\u001B[0m"));
+            for (Endpoint endpoint : camelContext.getEndpoints()) {
+                System.out.println(StringEscapeUtils.unescapeJava("\t" + endpoint.getEndpointUri()));
+            }
+        }
+
+        System.out.println("");
+        System.out.println(StringEscapeUtils.unescapeJava("\u001B[1mRoutes\u001B[0m"));
+        for (Route route : camelContext.getRoutes()) {
+            System.out.println(StringEscapeUtils.unescapeJava("\t" + route.getId()));
+        }
+
+        return null;
+    }
+
+    protected void printCamelManagedBeansStatus(CamelContext camelContext) throws Exception {
+        // the statistics are in the mbeans
         System.out.println("");
         System.out.println(StringEscapeUtils.unescapeJava("\u001B[1mStatistics\u001B[0m"));
         ObjectName contextMBean = null;
@@ -149,7 +207,9 @@ public class ContextInfo extends OsgiCommandSupport {
 
                 // add stream caching details if enabled
                 if (camelContext.getStreamCachingStrategy().isEnabled()) {
-                    System.out.println(StringEscapeUtils.unescapeJava(String.format("\tStreamCachingStrategy: [spoolDirectory=%s, spoolChiper=%s, spoolThreshold=%s, spoolUsedHeapMemoryThreshold=%s, spoolUsedHeapMemoryLimit=%s, anySpoolRules=%s, bufferSize=%s, removeSpoolDirectoryWhenStopping=%s, statisticsEnabled=%s]",
+                    System.out.println(StringEscapeUtils.unescapeJava(
+                        String.format("\tStreamCachingStrategy: [spoolDirectory=%s, spoolChiper=%s, spoolThreshold=%s, spoolUsedHeapMemoryThreshold=%s, "
+                                + "spoolUsedHeapMemoryLimit=%s, anySpoolRules=%s, bufferSize=%s, removeSpoolDirectoryWhenStopping=%s, statisticsEnabled=%s]",
                             camelContext.getStreamCachingStrategy().getSpoolDirectory(),
                             camelContext.getStreamCachingStrategy().getSpoolChiper(),
                             camelContext.getStreamCachingStrategy().getSpoolThreshold(),
@@ -161,7 +221,9 @@ public class ContextInfo extends OsgiCommandSupport {
                             camelContext.getStreamCachingStrategy().getStatistics().isStatisticsEnabled())));
 
                     if (camelContext.getStreamCachingStrategy().getStatistics().isStatisticsEnabled()) {
-                        System.out.println(StringEscapeUtils.unescapeJava(String.format("\t                       [cacheMemoryCounter=%s, cacheMemorySize=%s, cacheMemoryAverageSize=%s, cacheSpoolCounter=%s, cacheSpoolSize=%s, cacheSpoolAverageSize=%s]",
+                        System.out.println(StringEscapeUtils.unescapeJava(
+                            String.format("\t                       [cacheMemoryCounter=%s, cacheMemorySize=%s, cacheMemoryAverageSize=%s, cacheSpoolCounter=%s, "
+                                    + "cacheSpoolSize=%s, cacheSpoolAverageSize=%s]",
                                 camelContext.getStreamCachingStrategy().getStatistics().getCacheMemoryCounter(),
                                 printUnitFromBytes(camelContext.getStreamCachingStrategy().getStatistics().getCacheMemorySize()),
                                 printUnitFromBytes(camelContext.getStreamCachingStrategy().getStatistics().getCacheMemoryAverageSize()),
@@ -191,59 +253,7 @@ public class ContextInfo extends OsgiCommandSupport {
             System.out.println(StringEscapeUtils.unescapeJava("\u001B[31mJMX Agent of Camel is not reachable. Maybe it has been disabled on the Camel context"));
             System.out.println(StringEscapeUtils.unescapeJava("In consequence, some statistics are not available.\u001B[0m"));
         }
-
-        System.out.println("");
-        System.out.println(StringEscapeUtils.unescapeJava("\u001B[1mMiscellaneous\u001B[0m"));
-        System.out.println(StringEscapeUtils.unescapeJava("\tAuto Startup: " + camelContext.isAutoStartup()));
-        System.out.println(StringEscapeUtils.unescapeJava("\tStarting Routes: " + camelContext.isStartingRoutes()));
-        System.out.println(StringEscapeUtils.unescapeJava("\tSuspended: " + camelContext.isSuspended()));
-        System.out.println(StringEscapeUtils.unescapeJava("\tMessage History: " + camelContext.isMessageHistory()));
-        System.out.println(StringEscapeUtils.unescapeJava("\tTracing: " + camelContext.isTracing()));
-        System.out.println("");
-        System.out.println(StringEscapeUtils.unescapeJava("\u001B[1mProperties\u001B[0m"));
-        for (String property : camelContext.getProperties().keySet()) {
-            System.out.println(StringEscapeUtils.unescapeJava("\t" + property + " = " + camelContext.getProperty(property)));
-        }
-
-        System.out.println("");
-        System.out.println(StringEscapeUtils.unescapeJava("\u001B[1mAdvanced\u001B[0m"));
-        System.out.println(StringEscapeUtils.unescapeJava("\tClassResolver: " + camelContext.getClassResolver()));
-        System.out.println(StringEscapeUtils.unescapeJava("\tPackageScanClassResolver: " + camelContext.getPackageScanClassResolver()));
-        System.out.println(StringEscapeUtils.unescapeJava("\tApplicationContextClassLoader: " + camelContext.getApplicationContextClassLoader()));
-
-        System.out.println("");
-        System.out.println(StringEscapeUtils.unescapeJava("\u001B[1mComponents\u001B[0m"));
-        for (String component : camelContext.getComponentNames()) {
-            System.out.println(StringEscapeUtils.unescapeJava("\t" + component));
-        }
-
-        System.out.println("");
-        System.out.println(StringEscapeUtils.unescapeJava("\u001B[1mDataformats\u001B[0m"));
-        for (String names : camelContext.getDataFormats().keySet()) {
-            System.out.println(StringEscapeUtils.unescapeJava("\t" + names));
-        }
-
-        System.out.println("");
-        System.out.println(StringEscapeUtils.unescapeJava("\u001B[1mLanguages\u001B[0m"));
-        for (String language : camelContext.getLanguageNames()) {
-            System.out.println(StringEscapeUtils.unescapeJava("\t" + language));
-        }
-
-        if (mode != null && mode.equals("--verbose")) {
-            System.out.println("");
-            System.out.println(StringEscapeUtils.unescapeJava("\u001B[1mEndpoints\u001B[0m"));
-            for (Endpoint endpoint : camelContext.getEndpoints()) {
-                System.out.println(StringEscapeUtils.unescapeJava("\t" + endpoint.getEndpointUri()));
-            }
-        }
-
-        System.out.println("");
-        System.out.println(StringEscapeUtils.unescapeJava("\u001B[1mRoutes\u001B[0m"));
-        for (Route route : camelContext.getRoutes()) {
-            System.out.println(StringEscapeUtils.unescapeJava("\t" + route.getId()));
-        }
-
-        return null;
+        
     }
 
 }
