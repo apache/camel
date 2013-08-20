@@ -91,6 +91,8 @@ public abstract class AbstractXStreamWrapper implements DataFormat {
             if (this.aliases != null) {
                 for (Entry<String, String> entry : this.aliases.entrySet()) {
                     xstream.alias(entry.getKey(), resolver.resolveMandatoryClass(entry.getValue()));
+                    // It can turn the auto-detection mode off
+                    xstream.processAnnotations(resolver.resolveMandatoryClass(entry.getValue()));
                 }
             }
 
