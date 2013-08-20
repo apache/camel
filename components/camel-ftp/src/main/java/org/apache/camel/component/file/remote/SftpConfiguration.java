@@ -39,6 +39,7 @@ public class SftpConfiguration extends RemoteFileConfiguration {
     // null means default jsch list will be used
     private String ciphers;
     private int compression;
+    private String preferredAuthentications;
 
     public SftpConfiguration() {
         setProtocol("sftp");
@@ -165,5 +166,13 @@ public class SftpConfiguration extends RemoteFileConfiguration {
 
     public void setCompression(int compression) {
         this.compression = compression;
+    }
+    
+    public void setPreferredAuthentications(String pAuthentications) {
+        this.preferredAuthentications = pAuthentications;
+    }
+    
+    public String getPreferredAuthentications() {
+        return preferredAuthentications;
     }
 }
