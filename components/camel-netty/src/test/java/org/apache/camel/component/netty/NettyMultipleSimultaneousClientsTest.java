@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.netty;
 
+import java.util.Arrays;
 import java.util.concurrent.Callable;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
@@ -59,9 +60,8 @@ public class NettyMultipleSimultaneousClientsTest extends BaseNettyTest {
         }
 
         Object[] expectedReplies = new Object[clientCount];
-        for (int i = 0; i < clientCount; i++) {
-            expectedReplies[i] = "Bye World";
-        }
+        Arrays.fill(expectedReplies, "Bye World");
+
         getMockEndpoint("mock:result").expectedMessageCount(clientCount);
         getMockEndpoint("mock:result").expectedBodiesReceived(expectedReplies);
 
