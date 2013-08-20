@@ -270,6 +270,12 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
             session.setConfig("compression.c2s", "zlib@openssh.com, zlib, none");
             session.setConfig("compression_level", Integer.toString(sftpConfig.getCompression()));
         }
+        
+        // set the PreferredAuthentications 
+        if (sftpConfig.getPreferredAuthentications() != null) {
+            LOG.debug("Using PreferredAuthentications: {}", sftpConfig.getPreferredAuthentications());
+            session.setConfig("PreferredAuthentications", sftpConfig.getPreferredAuthentications());
+        }
 
         // set user information
         session.setUserInfo(new ExtendedUserInfo() {
