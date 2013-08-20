@@ -72,6 +72,8 @@ public class SqlEndpoint extends DefaultPollingEndpoint {
     private SqlOutputType outputType = SqlOutputType.SelectList;
     @UriParam
     private String outputClass;
+    @UriParam
+    private int parametersCount;
 
     public SqlEndpoint() {
     }
@@ -96,7 +98,9 @@ public class SqlEndpoint extends DefaultPollingEndpoint {
 
     public Producer createProducer() throws Exception {
         SqlPrepareStatementStrategy prepareStrategy = prepareStatementStrategy != null ? prepareStatementStrategy : new DefaultSqlPrepareStatementStrategy(separator);
-        return new SqlProducer(this, query, jdbcTemplate, prepareStrategy, batch, alwaysPopulateStatement);
+        SqlProducer result = new SqlProducer(this, query, jdbcTemplate, prepareStrategy, batch, alwaysPopulateStatement);
+        result.setParametersCount(parametersCount);
+        return result;
     }
 
     public boolean isSingleton() {
@@ -222,6 +226,14 @@ public class SqlEndpoint extends DefaultPollingEndpoint {
 
     public void setOutputClass(String outputClass) {
         this.outputClass = outputClass;
+    }
+
+    public int getParametersCount() {
+        return parametersCount;
+    }
+
+    public void setParametersCount(int parametersCount) {
+        this.parametersCount = parametersCount;
     }
 
     @Override
