@@ -65,31 +65,51 @@ public final class AggregationStrategies {
     }
 
     /**
-     * Creates a {@link AggregationStrategyBeanAdapter} for using a POJO as the aggregration strategy.
+     * Creates a {@link AggregationStrategyBeanAdapter} for using a POJO as the aggregation strategy.
      */
     public static AggregationStrategy bean(Object bean) {
         return new AggregationStrategyBeanAdapter(bean);
     }
 
     /**
-     * Creates a {@link AggregationStrategyBeanAdapter} for using a POJO as the aggregration strategy.
+     * Creates a {@link AggregationStrategyBeanAdapter} for using a POJO as the aggregation strategy.
      */
     public static AggregationStrategy bean(Object bean, String methodName) {
         return new AggregationStrategyBeanAdapter(bean, methodName);
     }
 
     /**
-     * Creates a {@link AggregationStrategyBeanAdapter} for using a POJO as the aggregration strategy.
+     * Creates a {@link AggregationStrategyBeanAdapter} for using a POJO as the aggregation strategy.
+     */
+    public static AggregationStrategy beanAllowNull(Object bean, String methodName) {
+        AggregationStrategyBeanAdapter adapter = new AggregationStrategyBeanAdapter(bean, methodName);
+        adapter.setAllowNullOldExchange(true);
+        adapter.setAllowNullNewExchange(true);
+        return adapter;
+    }
+
+    /**
+     * Creates a {@link AggregationStrategyBeanAdapter} for using a POJO as the aggregation strategy.
      */
     public static AggregationStrategy bean(Class<?> type) {
         return new AggregationStrategyBeanAdapter(type);
     }
 
     /**
-     * Creates a {@link AggregationStrategyBeanAdapter} for using a POJO as the aggregration strategy.
+     * Creates a {@link AggregationStrategyBeanAdapter} for using a POJO as the aggregation strategy.
      */
     public static AggregationStrategy bean(Class<?> type, String methodName) {
         return new AggregationStrategyBeanAdapter(type, methodName);
+    }
+
+    /**
+     * Creates a {@link AggregationStrategyBeanAdapter} for using a POJO as the aggregation strategy.
+     */
+    public static AggregationStrategy beanAllowNull(Class<?> type, String methodName) {
+        AggregationStrategyBeanAdapter adapter = new AggregationStrategyBeanAdapter(type, methodName);
+        adapter.setAllowNullOldExchange(true);
+        adapter.setAllowNullNewExchange(true);
+        return adapter;
     }
 
 }

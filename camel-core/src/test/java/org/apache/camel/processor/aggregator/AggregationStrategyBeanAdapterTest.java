@@ -24,7 +24,6 @@ import org.apache.camel.util.toolbox.AggregationStrategies;
 public class AggregationStrategyBeanAdapterTest extends ContextTestSupport {
 
     private MyBodyAppender appender = new MyBodyAppender();
-    private AggregationStrategyBeanAdapter myStrategy;
 
     public void testAggregate() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("ABC");
