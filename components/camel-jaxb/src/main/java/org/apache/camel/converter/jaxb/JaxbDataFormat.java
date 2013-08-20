@@ -25,6 +25,8 @@ import java.io.UnsupportedEncodingException;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.Map;
+import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingQueue;
 
 import javax.xml.XMLConstants;
 import javax.xml.bind.JAXBContext;
@@ -44,8 +46,6 @@ import javax.xml.transform.stream.StreamSource;
 import javax.xml.validation.Schema;
 import javax.xml.validation.SchemaFactory;
 
-import org.xml.sax.SAXException;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
@@ -58,6 +58,7 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ResourceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.xml.sax.SAXException;
 
 
 /**
@@ -69,7 +70,9 @@ import org.slf4j.LoggerFactory;
 public class JaxbDataFormat extends ServiceSupport implements DataFormat, CamelContextAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(JaxbDataFormat.class);
-    private static final SchemaFactory SCHEMA_FACTORY = SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+    private static final BlockingQueue<SchemaFactory> SCHEMA_FACTORY_POOL = new LinkedBlockingQueue<SchemaFactory>();
+
+    private SchemaFactory schemaFactory;
     private CamelContext camelContext;
     private JAXBContext context;
     private String contextPath;
@@ -215,6 +218,17 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, CamelC
         this.contextPath = contextPath;
     }
 
+    public SchemaFactory getSchemaFactory() {
+        if (schemaFactory == null) {
+            return getOrCreateSchemaFactory();
+        }
+        return schemaFactory;
+    }
+
+    public void setSchema(SchemaFactory schemaFactory) {
+        this.schemaFactory = schemaFactory;
+    }
+
     public String getSchema() {
         return schema;
     }
@@ -344,30 +358,42 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, CamelC
     protected Unmarshaller createUnmarshaller() throws JAXBException, SAXException, FileNotFoundException, MalformedURLException {
         Unmarshaller unmarshaller = getContext().createUnmarshaller();
         if (schema != null) {
-            Schema newSchema = SCHEMA_FACTORY.newSchema(getSources());
-            unmarshaller.setSchema(newSchema);
-            unmarshaller.setEventHandler(new ValidationEventHandler() {
-                public boolean handleEvent(ValidationEvent event) {
-                    // stop unmarshalling if the event is an ERROR or FATAL ERROR
-                    return event.getSeverity() == ValidationEvent.WARNING;
-                }
-            });
+            SchemaFactory factory = getOrCreateSchemaFactory();
+            try {
+                Schema newSchema = factory.newSchema(getSources());
+                unmarshaller.setSchema(newSchema);
+                unmarshaller.setEventHandler(new ValidationEventHandler() {
+                    public boolean handleEvent(ValidationEvent event) {
+                        // stop unmarshalling if the event is an ERROR or FATAL ERROR
+                        return event.getSeverity() == ValidationEvent.WARNING;
+                    }
+                });
+            } finally {
+                returnSchemaFactory(factory);
+            }
         }
+
         return unmarshaller;
     }
 
     protected Marshaller createMarshaller() throws JAXBException, SAXException, FileNotFoundException, MalformedURLException {
         Marshaller marshaller = getContext().createMarshaller();
         if (schema != null) {
-            Schema newSchema = SCHEMA_FACTORY.newSchema(getSources());
-            marshaller.setSchema(newSchema);
-            marshaller.setEventHandler(new ValidationEventHandler() {
-                public boolean handleEvent(ValidationEvent event) {
-                    // stop marshalling if the event is an ERROR or FATAL ERROR
-                    return event.getSeverity() == ValidationEvent.WARNING;
-                }
-            });
+            SchemaFactory factory = getOrCreateSchemaFactory();
+            try {
+                Schema newSchema = factory.newSchema(getSources());
+                marshaller.setSchema(newSchema);
+                marshaller.setEventHandler(new ValidationEventHandler() {
+                    public boolean handleEvent(ValidationEvent event) {
+                        // stop marshalling if the event is an ERROR or FATAL ERROR
+                        return event.getSeverity() == ValidationEvent.WARNING;
+                    }
+                });
+            } finally {
+                returnSchemaFactory(factory);
+            }
         }
+
         return marshaller;
     }
 
@@ -380,5 +406,23 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, CamelC
             sources[i] = new StreamSource(schemaUrl.toExternalForm());
         }
         return sources;
+    }
+
+    private SchemaFactory getOrCreateSchemaFactory() {
+        SchemaFactory factory = SCHEMA_FACTORY_POOL.poll();
+        if (factory == null) {
+            factory = createSchemaFactory();
+        }
+        return factory;
+    }
+
+    public static SchemaFactory createSchemaFactory() {
+        return SchemaFactory.newInstance(XMLConstants.W3C_XML_SCHEMA_NS_URI);
+    }
+
+    private void returnSchemaFactory(SchemaFactory factory) {
+        if (factory != schemaFactory) {
+            SCHEMA_FACTORY_POOL.offer(factory);
+        }
     }
 }
