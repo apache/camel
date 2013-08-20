@@ -54,6 +54,8 @@ public class SplitDefinition extends ExpressionNode implements ExecutorServiceAw
     @XmlAttribute
     private String strategyMethodName;
     @XmlAttribute
+    private Boolean strategyMethodAllowNull;
+    @XmlAttribute
     private String executorServiceRef;
     @XmlAttribute
     private Boolean streaming;
@@ -131,7 +133,12 @@ public class SplitDefinition extends ExpressionNode implements ExecutorServiceAw
             if (aggStrategy instanceof AggregationStrategy) {
                 strategy = (AggregationStrategy) aggStrategy;
             } else if (aggStrategy != null) {
-                strategy = new AggregationStrategyBeanAdapter(aggStrategy, strategyMethodName);
+                AggregationStrategyBeanAdapter adapter = new AggregationStrategyBeanAdapter(aggStrategy, getStrategyMethodName());
+                if (getStrategyMethodAllowNull() != null) {
+                    adapter.setAllowNullNewExchange(getStrategyMethodAllowNull());
+                    adapter.setAllowNullOldExchange(getStrategyMethodAllowNull());
+                }
+                strategy = adapter;
             } else {
                 throw new IllegalArgumentException("Cannot find AggregationStrategy in Registry with name: " + strategyRef);
             }
@@ -176,6 +183,16 @@ public class SplitDefinition extends ExpressionNode implements ExecutorServiceAw
      */
     public SplitDefinition aggregationStrategyMethodName(String methodName) {
         setStrategyMethodName(methodName);
+        return this;
+    }
+
+    /**
+     * Sets allowing null when using a POJO as {@link AggregationStrategy}.
+     *
+     * @return the builder
+     */
+    public SplitDefinition aggregationStrategyMethodAllowNull() {
+        setStrategyMethodAllowNull(true);
         return this;
     }
 
@@ -352,6 +369,14 @@ public class SplitDefinition extends ExpressionNode implements ExecutorServiceAw
 
     public void setStrategyMethodName(String strategyMethodName) {
         this.strategyMethodName = strategyMethodName;
+    }
+
+    public Boolean getStrategyMethodAllowNull() {
+        return strategyMethodAllowNull;
+    }
+
+    public void setStrategyMethodAllowNull(Boolean strategyMethodAllowNull) {
+        this.strategyMethodAllowNull = strategyMethodAllowNull;
     }
 
     public String getExecutorServiceRef() {

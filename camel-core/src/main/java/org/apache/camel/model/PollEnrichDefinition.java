@@ -50,6 +50,8 @@ public class PollEnrichDefinition extends NoOutputDefinition<PollEnrichDefinitio
     private String aggregationStrategyRef;
     @XmlAttribute(name = "strategyMethodName")
     private String aggregationStrategyMethodName;
+    @XmlAttribute(name = "strategyMethodAllowNull")
+    private Boolean aggregationStrategyMethodAllowNull;
     @XmlTransient
     private AggregationStrategy aggregationStrategy;
 
@@ -120,7 +122,12 @@ public class PollEnrichDefinition extends NoOutputDefinition<PollEnrichDefinitio
             if (aggStrategy instanceof AggregationStrategy) {
                 strategy = (AggregationStrategy) aggStrategy;
             } else if (aggStrategy != null) {
-                strategy = new AggregationStrategyBeanAdapter(aggStrategy, getAggregationStrategyMethodName());
+                AggregationStrategyBeanAdapter adapter = new AggregationStrategyBeanAdapter(aggStrategy, getAggregationStrategyMethodName());
+                if (getAggregationStrategyMethodAllowNull() != null) {
+                    adapter.setAllowNullNewExchange(getAggregationStrategyMethodAllowNull());
+                    adapter.setAllowNullOldExchange(getAggregationStrategyMethodAllowNull());
+                }
+                strategy = adapter;
             } else {
                 throw new IllegalArgumentException("Cannot find AggregationStrategy in Registry with name: " + aggregationStrategyRef);
             }
@@ -171,6 +178,14 @@ public class PollEnrichDefinition extends NoOutputDefinition<PollEnrichDefinitio
 
     public void setAggregationStrategyMethodName(String aggregationStrategyMethodName) {
         this.aggregationStrategyMethodName = aggregationStrategyMethodName;
+    }
+
+    public Boolean getAggregationStrategyMethodAllowNull() {
+        return aggregationStrategyMethodAllowNull;
+    }
+
+    public void setAggregationStrategyMethodAllowNull(Boolean aggregationStrategyMethodAllowNull) {
+        this.aggregationStrategyMethodAllowNull = aggregationStrategyMethodAllowNull;
     }
 
     public AggregationStrategy getAggregationStrategy() {

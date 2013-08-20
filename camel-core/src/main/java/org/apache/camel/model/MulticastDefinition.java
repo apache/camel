@@ -48,6 +48,8 @@ public class MulticastDefinition extends OutputDefinition<MulticastDefinition> i
     private String strategyRef;
     @XmlAttribute
     private String strategyMethodName;
+    @XmlAttribute
+    private Boolean strategyMethodAllowNull;
     @XmlTransient
     private ExecutorService executorService;
     @XmlAttribute
@@ -122,6 +124,16 @@ public class MulticastDefinition extends OutputDefinition<MulticastDefinition> i
      */
     public MulticastDefinition aggregationStrategyMethodName(String methodName) {
         setStrategyMethodName(methodName);
+        return this;
+    }
+
+    /**
+     * Sets allowing null when using a POJO as {@link AggregationStrategy}.
+     *
+     * @return the builder
+     */
+    public MulticastDefinition aggregationStrategyMethodAllowNull() {
+        setStrategyMethodAllowNull(true);
         return this;
     }
 
@@ -255,7 +267,12 @@ public class MulticastDefinition extends OutputDefinition<MulticastDefinition> i
         if (strategy == null && strategyRef != null) {
             Object aggStrategy = routeContext.lookup(strategyRef, Object.class);
             if (aggStrategy instanceof AggregationStrategy) {
-                strategy = (AggregationStrategy) aggStrategy;
+                AggregationStrategyBeanAdapter adapter = new AggregationStrategyBeanAdapter(aggStrategy, getStrategyMethodName());
+                if (getStrategyMethodAllowNull() != null) {
+                    adapter.setAllowNullNewExchange(getStrategyMethodAllowNull());
+                    adapter.setAllowNullOldExchange(getStrategyMethodAllowNull());
+                }
+                strategy = adapter;
             } else if (aggStrategy != null) {
                 strategy = new AggregationStrategyBeanAdapter(aggStrategy, getStrategyMethodName());
             } else {
@@ -338,6 +355,14 @@ public class MulticastDefinition extends OutputDefinition<MulticastDefinition> i
 
     public void setStrategyMethodName(String strategyMethodName) {
         this.strategyMethodName = strategyMethodName;
+    }
+
+    public Boolean getStrategyMethodAllowNull() {
+        return strategyMethodAllowNull;
+    }
+
+    public void setStrategyMethodAllowNull(Boolean strategyMethodAllowNull) {
+        this.strategyMethodAllowNull = strategyMethodAllowNull;
     }
 
     public String getExecutorServiceRef() {

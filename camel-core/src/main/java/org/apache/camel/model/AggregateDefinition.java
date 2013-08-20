@@ -91,6 +91,8 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
     @XmlAttribute
     private String strategyMethodName;
     @XmlAttribute
+    private Boolean strategyMethodAllowNull;
+    @XmlAttribute
     private Integer completionSize;
     @XmlAttribute
     private Long completionInterval;
@@ -284,7 +286,12 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
             if (aggStrategy instanceof AggregationStrategy) {
                 strategy = (AggregationStrategy) aggStrategy;
             } else if (aggStrategy != null) {
-                strategy = new AggregationStrategyBeanAdapter(aggStrategy, getAggregationStrategyMethodName());
+                AggregationStrategyBeanAdapter adapter = new AggregationStrategyBeanAdapter(aggStrategy, getAggregationStrategyMethodName());
+                if (getStrategyMethodAllowNull() != null) {
+                    adapter.setAllowNullNewExchange(getStrategyMethodAllowNull());
+                    adapter.setAllowNullOldExchange(getStrategyMethodAllowNull());
+                }
+                strategy = adapter;
             } else {
                 throw new IllegalArgumentException("Cannot find AggregationStrategy in Registry with name: " + strategyRef);
             }
@@ -344,6 +351,14 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
 
     public void setAggregationStrategyMethodName(String strategyMethodName) {
         this.strategyMethodName = strategyMethodName;
+    }
+
+    public Boolean getStrategyMethodAllowNull() {
+        return strategyMethodAllowNull;
+    }
+
+    public void setStrategyMethodAllowNull(Boolean strategyMethodAllowNull) {
+        this.strategyMethodAllowNull = strategyMethodAllowNull;
     }
 
     public Integer getCompletionSize() {
@@ -719,6 +734,16 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
      */
     public AggregateDefinition aggregationStrategyMethodName(String methodName) {
         setAggregationStrategyMethodName(methodName);
+        return this;
+    }
+
+    /**
+     * Sets allowing null when using a POJO as {@link AggregationStrategy}.
+     *
+     * @return the builder
+     */
+    public AggregateDefinition aggregationStrategyMethodAllowNull() {
+        setStrategyMethodAllowNull(true);
         return this;
     }
 
