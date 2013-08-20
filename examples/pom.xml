@@ -60,6 +60,7 @@
     <module>camel-example-pojo-messaging</module>
     <module>camel-example-reportincident</module>
     <module>camel-example-reportincident-wssecurity</module>
+    <module>camel-example-restlet-jdbc</module>
     <module>camel-example-route-throttling</module>
     <module>camel-example-servlet-tomcat</module>
     <module>camel-example-servlet-tomcat-no-spring</module>
