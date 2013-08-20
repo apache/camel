@@ -35,6 +35,7 @@ public class SqlProducer extends DefaultProducer {
     private boolean batch;
     private boolean alwaysPopulateStatement;
     private SqlPrepareStatementStrategy sqlPrepareStatementStrategy;
+    private int parametersCount;
 
     public SqlProducer(SqlEndpoint endpoint, String query, JdbcTemplate jdbcTemplate, SqlPrepareStatementStrategy sqlPrepareStatementStrategy,
                        boolean batch, boolean alwaysPopulateStatement) {
@@ -59,7 +60,7 @@ public class SqlProducer extends DefaultProducer {
 
         jdbcTemplate.execute(preparedQuery, new PreparedStatementCallback<Map<?, ?>>() {
             public Map<?, ?> doInPreparedStatement(PreparedStatement ps) throws SQLException {
-                int expected = ps.getParameterMetaData().getParameterCount();
+                int expected = parametersCount > 0 ? parametersCount : ps.getParameterMetaData().getParameterCount();
 
                 // only populate if really needed
                 if (alwaysPopulateStatement || expected > 0) {
@@ -106,4 +107,7 @@ public class SqlProducer extends DefaultProducer {
         });
     }
 
+    public void setParametersCount(int parametersCount) {
+        this.parametersCount = parametersCount;
+    }
 }

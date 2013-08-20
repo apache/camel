@@ -42,6 +42,7 @@ public class SqlEndpoint extends DefaultPollingEndpoint {
     private boolean allowNamedParameters = true;
     private boolean alwaysPopulateStatement;
     private char separator = ',';
+    private int parametersCount;
 
     public SqlEndpoint() {
     }
@@ -66,7 +67,9 @@ public class SqlEndpoint extends DefaultPollingEndpoint {
 
     public Producer createProducer() throws Exception {
         SqlPrepareStatementStrategy prepareStrategy = prepareStatementStrategy != null ? prepareStatementStrategy : new DefaultSqlPrepareStatementStrategy(separator);
-        return new SqlProducer(this, query, jdbcTemplate, prepareStrategy, batch, alwaysPopulateStatement);
+        SqlProducer result = new SqlProducer(this, query, jdbcTemplate, prepareStrategy, batch, alwaysPopulateStatement);
+        result.setParametersCount(parametersCount);
+        return result;
     }
 
     public boolean isSingleton() {
@@ -167,6 +170,14 @@ public class SqlEndpoint extends DefaultPollingEndpoint {
 
     public void setSeparator(char separator) {
         this.separator = separator;
+    }
+
+    public int getParametersCount() {
+        return parametersCount;
+    }
+
+    public void setParametersCount(int parametersCount) {
+        this.parametersCount = parametersCount;
     }
 
     @Override
