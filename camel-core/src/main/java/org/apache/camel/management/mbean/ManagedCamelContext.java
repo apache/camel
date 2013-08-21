@@ -373,10 +373,14 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
         if (completionText == null) {
             completionText = "";
         }
-        Component component = context.getComponent(componentName);
-        ComponentConfiguration configuration = component.createComponentConfiguration();
-        configuration.setParameters(endpointParameters);
-        return configuration.completeEndpointPath(completionText);
+        Component component = context.getComponent(componentName, false);
+        if (component != null) {
+            ComponentConfiguration configuration = component.createComponentConfiguration();
+            configuration.setParameters(endpointParameters);
+            return configuration.completeEndpointPath(completionText);
+        } else {
+            return new ArrayList<String>();
+        }
     }
 
     public String componentParameterJsonSchema(String componentName) throws Exception {

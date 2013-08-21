@@ -331,6 +331,10 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     }
 
     public Component getComponent(String name) {
+        return getComponent(name, autoCreateComponents);
+    }
+
+    public Component getComponent(String name, boolean autoCreateComponents) {
         // synchronize the look up and auto create so that 2 threads can't
         // concurrently auto create the same component.
         synchronized (components) {

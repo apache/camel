@@ -248,6 +248,16 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
     Component getComponent(String componentName);
 
     /**
+     * Gets a component from the context by name.
+     *
+     * @param componentName the name of the component
+     * @param autoCreateComponents whether or not the component should
+     *                             be lazily created if it does not already exist
+     * @return the component
+     */
+    Component getComponent(String name, boolean autoCreateComponents);
+
+    /**
      * Gets a component from the context by name and specifying the expected type of component.
      *
      * @param name          the name to lookup
