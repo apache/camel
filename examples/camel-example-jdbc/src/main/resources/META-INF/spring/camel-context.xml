@@ -1,0 +1,101 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:jdbc="http://www.springframework.org/schema/jdbc"
+       xmlns:camel="http://camel.apache.org/schema/spring"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc.xsd
+		http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
+
+  <!--
+  Embedded in-memeory database setup.
+  -->
+  <jdbc:embedded-database id="dataSource" type="DERBY">
+    <jdbc:script location="classpath:create-derby.sql"/>
+  </jdbc:embedded-database>
+
+  <!--
+  Sample Data and Record Processor beans
+  -->
+  <bean id="sampleGenerator" class="org.apache.camel.component.dataset.SimpleDataSet">
+    <property name="size" value="10"/>
+    <property name="defaultHeaders">
+      <map>
+        <entry key="insertMsg" value="Hello"/>
+      </map>
+    </property>
+  </bean>
+  <bean id="recordProcessor" class="org.apache.camel.example.jdbc.RecordProcessor">
+  </bean>
+
+  <!--
+  Camel route setup
+  -->
+  <camel:camelContext xmlns="http://camel.apache.org/schema/spring">
+    <!-- This route will simply insert sample data and not dependent on other routes. -->
+    <route id="sample-generator-route">
+      <from uri="dataset:sampleGenerator"/>
+      <setBody>
+        <constant>
+          INSERT INTO CAMEL_TEST(MSG, STATUS) VALUES(:?insertMsg, 'NEW')
+        </constant>
+      </setBody>
+      <setHeader headerName="CamelRetrieveGeneratedKeys">
+        <constant>true</constant>
+      </setHeader>
+      <to uri="jdbc:dataSource?useHeadersAsParameters=true"/>
+      <to uri="log:insertLog?showHeaders=true"/>
+    </route>
+
+    <!-- The query-update-route-part1/2 routes are used to query database and process it and then
+    update the STATUS as marker flag so not to re-process again. -->
+    <route id="query-update-route-part1">
+      <from uri="timer://timer1?period=2s"/>
+      <setBody>
+        <constant>
+          SELECT * FROM CAMEL_TEST WHERE STATUS='NEW' ORDER BY CREATE_TS
+        </constant>
+      </setBody>
+      <to uri="jdbc:dataSource"/>
+      <split>
+        <simple>${body}</simple>
+        <to uri="bean:recordProcessor"/>
+        <to uri="direct:updateDone"/>
+      </split>
+    </route>
+    <route id="query-update-route-part2">
+      <from uri="direct:updateDone"/>
+      <setHeader headerName="camelTestId">
+        <simple>${body['ID']}</simple>
+      </setHeader>
+      <setBody>
+        <constant>
+          UPDATE CAMEL_TEST SET STATUS='DONE' WHERE ID=:?camelTestId
+        </constant>
+      </setBody>
+      <to uri="jdbc:dataSource?useHeadersAsParameters=true"/>
+      <setBody>
+        <simple>Record ID=${headers.camelTestId} has been marked as 'DONE'</simple>
+      </setBody>
+      <to uri="log:updateDone"/>
+    </route>
+  </camel:camelContext>
+
+</beans>

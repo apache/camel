@@ -48,6 +48,7 @@
     <module>camel-example-gae</module>
     <module>camel-example-gauth</module>
     <module>camel-example-guice-jms</module>
+    <module>camel-example-jdbc</module>
     <module>camel-example-jmx</module>
     <module>camel-example-jms-file</module>
     <module>camel-example-loadbalancing</module>
