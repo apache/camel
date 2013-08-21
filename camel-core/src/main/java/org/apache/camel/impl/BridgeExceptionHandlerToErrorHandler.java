@@ -30,6 +30,11 @@ import org.apache.camel.spi.ExceptionHandler;
  * to enable this {@link BridgeExceptionHandlerToErrorHandler} on the consumer.
  * The consumer must extend the {@link DefaultConsumer}, to support this, if not an
  * {@link IllegalArgumentException} is thrown upon startup.
+ * <p/>
+ * <b>Notice:</b> When using this bridging error handler, then interceptors, onCompletions
+ * does <b>not</b> apply. The {@link Exchange} is processed directly by the Camel
+ * error handler, and does not allow prior actions such as interceptors, onCompletion
+ * to take action.
  */
 public class BridgeExceptionHandlerToErrorHandler implements ExceptionHandler {
 
