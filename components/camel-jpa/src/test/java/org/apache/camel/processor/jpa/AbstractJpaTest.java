@@ -53,7 +53,9 @@ public abstract class AbstractJpaTest extends CamelTestSupport {
     @After
     public void tearDown() throws Exception {
         super.tearDown();
-        entityManager.close();
+        if (entityManager != null) {
+            entityManager.close();
+        }
     }
 
     @Override

@@ -32,8 +32,8 @@
       <!-- in stream to allow you to enter some text in the console -->
       <from uri="stream:in?initialPromptDelay=4000&amp;promptDelay=2000&amp;promptMessage=Enter some words:"/>
 
-      <!-- split the text using parallel execution -->
-      <split parallelProcessing="true">
+      <!-- split the text -->
+      <split>
         <!-- use methodCall expression to split the words, using a java bean to do it -->
         <method bean="quoteService" method="splitWords"/>
 
@@ -108,11 +108,6 @@
         <property name="entityManagerFactory" ref="entityManagerFactory"/>
       </bean>
     </property>
-  </bean>
-
-  <!-- this is ordinary JPA spring configuration -->
-  <bean id="jpaTemplate" class="org.springframework.orm.jpa.JpaTemplate">
-    <property name="entityManagerFactory" ref="entityManagerFactory"/>
   </bean>
 
   <!-- this is ordinary JPA spring configuration -->

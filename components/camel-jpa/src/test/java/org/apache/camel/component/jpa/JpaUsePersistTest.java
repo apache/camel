@@ -16,10 +16,8 @@
  */
 package org.apache.camel.component.jpa;
 
-import org.apache.camel.Exchange;
 import org.apache.camel.examples.Address;
 import org.apache.camel.examples.Customer;
-import org.apache.camel.impl.DefaultExchange;
 import org.junit.Test;
 
 /**
@@ -32,21 +30,27 @@ public class JpaUsePersistTest extends AbstractJpaMethodTest {
     }
     
     @Test
-    public void produceExistingEntityShouldThowAnException() throws Exception {
+    public void produceExistingEntityShouldThrowAnException() throws Exception {
         setUp("jpa://" + Customer.class.getName() + "?usePersist=true");
         
-        final Customer customer = createDefaultCustomer();
+        Customer customer = createDefaultCustomer();
         save(customer);
-        
+        long id = customer.getId();
+
+        // and adjust some values
+        customer = createDefaultCustomer();
+        customer.setId(id);
         customer.setName("Max Mustermann");
         customer.getAddress().setAddressLine1("Musterstr. 1");
         customer.getAddress().setAddressLine2("11111 Enterhausen");
-        Exchange exchange = new DefaultExchange(camelContext);
-        exchange.getIn().setBody(customer);
-        Exchange returnedExchange = template.send(endpoint, exchange);
-        
-        assertTrue(returnedExchange.isFailed());
-        assertNotNull(returnedExchange.getException());
+
+        try {
+            // we cannot store the 2nd customer as its using the same id as the 1st
+            template.requestBody(endpoint, customer);
+            fail("Should throw exception");
+        } catch (Exception e) {
+            // expected
+        }
         
         assertEntitiesInDatabase(1, Customer.class.getName());
         assertEntitiesInDatabase(1, Address.class.getName());

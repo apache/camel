@@ -22,6 +22,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
+import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.examples.SendEmail;
@@ -61,7 +62,7 @@ public class JpaProducerConcurrentTest extends AbstractJpaTest {
             responses.put(index, out);
         }
 
-        assertMockEndpointsSatisfied();
+        assertMockEndpointsSatisfied(20, TimeUnit.SECONDS);
 
         assertEquals(files, responses.size());
 

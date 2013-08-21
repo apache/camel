@@ -53,7 +53,7 @@ public class JpaProducer extends DefaultProducer {
         	transactionTemplate.execute(new TransactionCallback<Object>() {
                 public Object doInTransaction(TransactionStatus status) {
                 	entityManager.joinTransaction();
-                	
+
                 	if (values.getClass().isArray()) {
                         Object[] array = (Object[]) values;
                         for (int index = 0; index < array.length; index++) {
@@ -82,6 +82,8 @@ public class JpaProducer extends DefaultProducer {
                     }
                     
                     if (endpoint.isFlushOnSend()) {
+                        // there may be concurrency so need to join tx before flush
+                        entityManager.joinTransaction();
                         entityManager.flush();
                     }
                     
@@ -90,16 +92,16 @@ public class JpaProducer extends DefaultProducer {
 
                 /**
                  * save the given entity end return the managed entity
-                 * 
-                 * @param entity
-                 * @param entityManager
                  * @return the managed entity
                  */
                 private Object save(final Object entity, EntityManager entityManager) {
+                    // there may be concurrency so need to join tx before persist/merge
                     if (endpoint.isUsePersist()) {
+                        entityManager.joinTransaction();
                         entityManager.persist(entity);
                         return entity;
                     } else {
+                        entityManager.joinTransaction();
                         return entityManager.merge(entity);
                     }
                 }

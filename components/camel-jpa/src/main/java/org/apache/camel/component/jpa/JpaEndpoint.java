@@ -305,6 +305,6 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
     @Override
     protected void doStop() throws Exception {
         super.doStop();
-        entityManager.close();
+//        entityManager.close();
     }
 }
