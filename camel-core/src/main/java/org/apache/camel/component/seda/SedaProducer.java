@@ -214,7 +214,6 @@ public class SedaProducer extends DefaultAsyncProducer {
         BlockingQueue<Exchange> queue = queueReference.getQueue();
 
         if (endpoint.isFailIfNoConsumers() && !queueReference.hasConsumers()) {
-            LOG.warn("No consumers available on endpoint: " + endpoint + " to process: " + exchange);
             throw new SedaConsumerNotAvailableException("No consumers available on endpoint: " + endpoint, exchange);
         }
         if (blockWhenFull) {
