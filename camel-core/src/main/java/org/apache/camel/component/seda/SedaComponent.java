@@ -82,7 +82,7 @@ public class SedaComponent extends UriEndpointComponent {
         return getOrCreateQueue(endpoint, size, multipleConsumers, null);
     }
 
-    public synchronized QueueReference getOrCreateQueue(SedaEndpoint endpoint, Integer size, Boolean multipleConsumers, BlockingQueueFactory customQueueFactory) {
+    public synchronized QueueReference getOrCreateQueue(SedaEndpoint endpoint, Integer size, Boolean multipleConsumers, BlockingQueueFactory<Exchange> customQueueFactory) {
         String key = getQueueKey(endpoint.getEndpointUri());
 
         QueueReference ref = getQueues().get(key);
@@ -126,7 +126,7 @@ public class SedaComponent extends UriEndpointComponent {
         return ref;
     }
 
-    public synchronized QueueReference registerQueue(SedaEndpoint endpoint, BlockingQueue queue) {
+    public synchronized QueueReference registerQueue(SedaEndpoint endpoint, BlockingQueue<Exchange> queue) {
         String key = getQueueKey(endpoint.getEndpointUri());
 
         QueueReference ref = getQueues().get(key);
@@ -198,12 +198,14 @@ public class SedaComponent extends UriEndpointComponent {
         // we need to remove the endpoint from the reference counter
         String key = getQueueKey(endpoint.getEndpointUri());
         QueueReference ref = getQueues().get(key);
-        if (ref != null) {
+        if (ref != null && endpoint.getConsumers().size() == 0) {
+            // only remove the endpoint when the consumers are removed
             ref.removeReference(endpoint);
             if (ref.getCount() <= 0) {
                 // reference no longer needed so remove from queues
                 getQueues().remove(key);
             }
+
         }
     }
 

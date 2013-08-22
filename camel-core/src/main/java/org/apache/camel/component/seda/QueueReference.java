@@ -45,6 +45,10 @@ public final class QueueReference {
     synchronized void addReference(SedaEndpoint endpoint) {
         if (!endpoints.contains(endpoint)) {
             endpoints.add(endpoint);
+            // update the multipleConsumers setting if need
+            if (endpoint.isMultipleConsumers()) {
+                multipleConsumers = true;
+            }
         }
     }
 

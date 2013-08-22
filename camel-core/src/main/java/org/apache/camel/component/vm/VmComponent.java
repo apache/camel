@@ -40,6 +40,11 @@ public class VmComponent extends SedaComponent {
     public Map<String, QueueReference> getQueues() {
         return QUEUES;
     }
+    
+    @Override
+    public QueueReference getQueueReference(String key) {
+        return QUEUES.get(key);
+    }
 
     @Override
     protected void doStart() throws Exception {
