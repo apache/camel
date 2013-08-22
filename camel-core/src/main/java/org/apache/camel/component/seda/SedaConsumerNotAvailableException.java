@@ -19,9 +19,6 @@ package org.apache.camel.component.seda;
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 
-/**
- * @author <a href="http://www.christianposta.com/blog">Christian Posta</a>
- */
 public class SedaConsumerNotAvailableException extends CamelExchangeException {
     private static final long serialVersionUID = 683242306650809007L;
 
