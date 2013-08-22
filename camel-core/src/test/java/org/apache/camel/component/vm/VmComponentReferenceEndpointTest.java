@@ -20,7 +20,7 @@ import java.util.Iterator;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.seda.SedaComponent;
+import org.apache.camel.component.seda.QueueReference;
 
 /**
  *
@@ -79,7 +79,7 @@ public class VmComponentReferenceEndpointTest extends ContextTestSupport {
     
     private int numberOfReferences(VmComponent vm) {
         int num = 0;
-        Iterator<SedaComponent.QueueReference> it = vm.getQueues().values().iterator();
+        Iterator<QueueReference> it = vm.getQueues().values().iterator();
         while (it.hasNext()) {
             num += it.next().getCount();
         }

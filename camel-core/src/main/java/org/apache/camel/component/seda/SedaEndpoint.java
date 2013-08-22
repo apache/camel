@@ -78,6 +78,10 @@ public class SedaEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
     private int pollTimeout = 1000;
     @UriParam
     private boolean purgeWhenStopping;
+
+    @UriParam
+    private boolean failIfNoConsumers;
+
     private BlockingQueueFactory<Exchange> queueFactory;
 
     public SedaEndpoint() {
@@ -95,6 +99,7 @@ public class SedaEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
             this.size = queue.remainingCapacity();
         }
         queueFactory = new LinkedBlockingQueueFactory<Exchange>();
+        getComponent().registerQueue(this, queue);
     }
 
     public SedaEndpoint(String endpointUri, Component component, BlockingQueueFactory<Exchange> queueFactory, int concurrentConsumers) {
@@ -120,7 +125,7 @@ public class SedaEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
         if (getComponent() != null) {
             // all consumers must match having the same multipleConsumers options
             String key = getComponent().getQueueKey(getEndpointUri());
-            SedaComponent.QueueReference ref = getComponent().getQueueReference(key);
+            QueueReference ref = getComponent().getQueueReference(key);
             if (ref != null && ref.getMultipleConsumers() != isMultipleConsumers()) {
                 // there is already a multiple consumers, so make sure they matches
                 throw new IllegalArgumentException("Cannot use existing queue " + key + " as the existing queue multiple consumers "
@@ -141,7 +146,7 @@ public class SedaEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
             if (getComponent() != null) {
                 // use null to indicate default size (= use what the existing queue has been configured with)
                 Integer size = getSize() == Integer.MAX_VALUE ? null : getSize();
-                SedaComponent.QueueReference ref = getComponent().getOrCreateQueue(getEndpointUri(), size, isMultipleConsumers(), queueFactory);
+                QueueReference ref = getComponent().getOrCreateQueue(this, size, isMultipleConsumers(), queueFactory);
                 queue = ref.getQueue();
                 String key = getComponent().getQueueKey(getEndpointUri());
                 LOG.info("Endpoint {} is using shared queue: {} with size: {}", new Object[]{this, key, ref.getSize() !=  null ? ref.getSize() : Integer.MAX_VALUE});
@@ -164,6 +169,16 @@ public class SedaEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
         } else {
             return queueFactory.create();
         }
+    }
+
+    public synchronized QueueReference getQueueReference() {
+        String key = getComponent().getQueueKey(getEndpointUri());
+        QueueReference ref =  getComponent().getQueueReference(key);
+        if (ref == null) {
+            LOG.warn("There was no queue reference for this queue!");
+        }
+
+        return ref;
     }
 
     protected synchronized MulticastProcessor getConsumerMulticastProcessor() throws Exception {
@@ -256,6 +271,15 @@ public class SedaEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
 
     public void setTimeout(long timeout) {
         this.timeout = timeout;
+    }
+
+    @ManagedAttribute
+    public boolean isFailIfNoConsumers() {
+        return failIfNoConsumers;
+    }
+
+    public void setFailIfNoConsumers(boolean failIfNoConsumers) {
+        this.failIfNoConsumers = failIfNoConsumers;
     }
 
     @ManagedAttribute
@@ -467,5 +491,12 @@ public class SedaEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
 
         // clear queue, as we are shutdown, so if re-created then the queue must be updated
         queue = null;
+    }
+
+    public boolean hasConsumers() {
+        if (this.consumers == null) {
+            return false;
+        }
+        return this.consumers.size() > 0;
     }
 }

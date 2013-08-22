@@ -21,6 +21,7 @@ import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.apache.camel.component.seda.QueueReference;
 import org.apache.camel.component.seda.SedaComponent;
 
 /**

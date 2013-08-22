@@ -78,7 +78,7 @@ public class SedaComponentReferenceEndpointTest extends ContextTestSupport {
     
     private int numberOfReferences(SedaComponent seda) {
         int num = 0;
-        Iterator<SedaComponent.QueueReference> it = seda.getQueues().values().iterator();
+        Iterator<QueueReference> it = seda.getQueues().values().iterator();
         while (it.hasNext()) {
             num += it.next().getCount();
         }

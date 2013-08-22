@@ -68,22 +68,22 @@ public class SedaComponent extends UriEndpointComponent {
     }
 
     /**
-     * @deprecated use {@link #getOrCreateQueue(String, Integer, Boolean, BlockingQueueFactory)}
+     * @deprecated use
      */
     @Deprecated
-    public synchronized QueueReference getOrCreateQueue(String uri, Integer size) {
-        return getOrCreateQueue(uri, size, null);
+    public synchronized QueueReference getOrCreateQueue(SedaEndpoint endpoint, Integer size) {
+        return getOrCreateQueue(endpoint, size, null);
     }
 
     /**
-     * @deprecated use {@link #getOrCreateQueue(String, Integer, Boolean, BlockingQueueFactory)}
+     * @deprecated use {@link #getOrCreateQueue(SedaEndpoint, Integer, Boolean, BlockingQueueFactory)}
      */
-    public synchronized QueueReference getOrCreateQueue(String uri, Integer size, Boolean multipleConsumers) {
-        return getOrCreateQueue(uri, size, multipleConsumers, null);
+    public synchronized QueueReference getOrCreateQueue(SedaEndpoint endpoint, Integer size, Boolean multipleConsumers) {
+        return getOrCreateQueue(endpoint, size, multipleConsumers, null);
     }
 
-    public synchronized QueueReference getOrCreateQueue(String uri, Integer size, Boolean multipleConsumers, BlockingQueueFactory customQueueFactory) {
-        String key = getQueueKey(uri);
+    public synchronized QueueReference getOrCreateQueue(SedaEndpoint endpoint, Integer size, Boolean multipleConsumers, BlockingQueueFactory customQueueFactory) {
+        String key = getQueueKey(endpoint.getEndpointUri());
 
         QueueReference ref = getQueues().get(key);
         if (ref != null) {
@@ -95,7 +95,7 @@ public class SedaComponent extends UriEndpointComponent {
                         + (ref.getSize() != null ? ref.getSize() : Integer.MAX_VALUE) + " does not match given queue size " + size);
             }
             // add the reference before returning queue
-            ref.addReference();
+            ref.addReference(endpoint);
 
             if (log.isDebugEnabled()) {
                 log.debug("Reusing existing queue {} with size {} and reference count {}", new Object[]{key, size, ref.getCount()});
@@ -120,8 +120,21 @@ public class SedaComponent extends UriEndpointComponent {
 
         // create and add a new reference queue
         ref = new QueueReference(queue, size, multipleConsumers);
-        ref.addReference();
+        ref.addReference(endpoint);
         getQueues().put(key, ref);
+
+        return ref;
+    }
+
+    public synchronized QueueReference registerQueue(SedaEndpoint endpoint, BlockingQueue queue) {
+        String key = getQueueKey(endpoint.getEndpointUri());
+
+        QueueReference ref = getQueues().get(key);
+        if (ref == null) {
+            ref = new QueueReference(queue, endpoint.getSize(), endpoint.isMultipleConsumers());
+            ref.addReference(endpoint);
+            getQueues().put(key, ref);
+        }
 
         return ref;
     }
@@ -186,7 +199,7 @@ public class SedaComponent extends UriEndpointComponent {
         String key = getQueueKey(endpoint.getEndpointUri());
         QueueReference ref = getQueues().get(key);
         if (ref != null) {
-            ref.removeReference();
+            ref.removeReference(endpoint);
             if (ref.getCount() <= 0) {
                 // reference no longer needed so remove from queues
                 getQueues().remove(key);
@@ -194,58 +207,4 @@ public class SedaComponent extends UriEndpointComponent {
         }
     }
 
-    /**
-     * Holder for queue references.
-     * <p/>
-     * This is used to keep track of the usages of the queues, so we know when a queue is no longer
-     * in use, and can safely be discarded.
-     */
-    public static final class QueueReference {
-        
-        private final BlockingQueue<Exchange> queue;
-        private volatile int count;
-        private Integer size;
-        private Boolean multipleConsumers;
-
-        private QueueReference(BlockingQueue<Exchange> queue, Integer size, Boolean multipleConsumers) {
-            this.queue = queue;
-            this.size = size;
-            this.multipleConsumers = multipleConsumers;
-        }
-        
-        void addReference() {
-            count++;
-        }
-        
-        void removeReference() {
-            count--;
-        }
-
-        /**
-         * Gets the reference counter
-         */
-        public int getCount() {
-            return count;
-        }
-
-        /**
-         * Gets the queue size
-         *
-         * @return <tt>null</tt> if unbounded
-         */
-        public Integer getSize() {
-            return size;
-        }
-
-        public Boolean getMultipleConsumers() {
-            return multipleConsumers;
-        }
-
-        /**
-         * Gets the queue
-         */
-        public BlockingQueue<Exchange> getQueue() {
-            return queue;
-        }
-    }
 }

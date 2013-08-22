@@ -27,11 +27,15 @@ import org.apache.camel.WaitForTaskToComplete;
 import org.apache.camel.impl.DefaultAsyncProducer;
 import org.apache.camel.support.SynchronizationAdapter;
 import org.apache.camel.util.ExchangeHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * @version 
  */
 public class SedaProducer extends DefaultAsyncProducer {
+    private static final transient Logger LOG = LoggerFactory.getLogger(SedaProducer.class);
+
     /**
      * @deprecated Better make use of the {@link SedaEndpoint#getQueue()} API which delivers the accurate reference to the queue currently being used.
      */
@@ -120,7 +124,13 @@ public class SedaProducer extends DefaultAsyncProducer {
             });
 
             log.trace("Adding Exchange to queue: {}", copy);
-            addToQueue(copy);
+            try {
+                addToQueue(copy);
+            } catch (SedaConsumerNotAvailableException e) {
+                exchange.setException(e);
+                callback.done(true);
+                return true;
+            }
 
             if (timeout > 0) {
                 if (log.isTraceEnabled()) {
@@ -156,7 +166,13 @@ public class SedaProducer extends DefaultAsyncProducer {
             // handover the completion so its the copy which performs that, as we do not wait
             Exchange copy = prepareCopy(exchange, true);
             log.trace("Adding Exchange to queue: {}", copy);
-            addToQueue(copy);
+            try {
+                addToQueue(copy);
+            } catch (SedaConsumerNotAvailableException e) {
+                exchange.setException(e);
+                callback.done(true);
+                return true;
+            }
         }
 
         // we use OnCompletion on the Exchange to callback and wait for the Exchange to be done
@@ -193,8 +209,14 @@ public class SedaProducer extends DefaultAsyncProducer {
      * 
      * @param exchange the exchange to add to the queue
      */
-    protected void addToQueue(Exchange exchange) {
-        BlockingQueue<Exchange> queue = endpoint.getQueue();
+    protected void addToQueue(Exchange exchange) throws SedaConsumerNotAvailableException {
+        QueueReference queueReference = endpoint.getQueueReference();
+        BlockingQueue<Exchange> queue = queueReference.getQueue();
+
+        if (endpoint.isFailIfNoConsumers() && !queueReference.hasConsumers()) {
+            LOG.warn("No consumers available on endpoint: " + endpoint + " to process: " + exchange);
+            throw new SedaConsumerNotAvailableException("No consumers available on endpoint: " + endpoint, exchange);
+        }
         if (blockWhenFull) {
             try {
                 queue.put(exchange);
