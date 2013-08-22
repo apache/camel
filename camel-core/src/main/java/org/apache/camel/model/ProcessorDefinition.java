@@ -2357,10 +2357,17 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @return the exception builder to configure
      */
     public OnExceptionDefinition onException(Class<? extends Throwable> exceptionType) {
-        OnExceptionDefinition answer = new OnExceptionDefinition(exceptionType);
-        answer.setRouteScoped(true);
-        addOutput(answer);
-        return answer;
+        // onException can only be added on the route-level and not nested in splitter/policy etc
+        // Camel 3.0 will fix this where we will have a RouteScopeDefinition where route scoped
+        // configuration must take place, and not from this generic ProcessorDefinition
+        if (this.getClass().isAssignableFrom(RouteDefinition.class)) {
+            OnExceptionDefinition answer = new OnExceptionDefinition(exceptionType);
+            answer.setRouteScoped(true);
+            addOutput(answer);
+            return answer;
+        } else {
+            throw new IllegalArgumentException("onException can only be added directly to the route. Try moving this onException to the top of the route: " + this);
+        }
     }
 
     /**
@@ -2371,10 +2378,17 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @return the exception builder to configure
      */
     public OnExceptionDefinition onException(Class<? extends Throwable>... exceptions) {
-        OnExceptionDefinition answer = new OnExceptionDefinition(Arrays.asList(exceptions));
-        answer.setRouteScoped(true);
-        addOutput(answer);
-        return answer;
+        // onException can only be added on the route-level and not nested in splitter/policy etc
+        // Camel 3.0 will fix this where we will have a RouteScopeDefinition where route scoped
+        // configuration must take place, and not from this generic ProcessorDefinition
+        if (this.getClass().isAssignableFrom(RouteDefinition.class)) {
+            OnExceptionDefinition answer = new OnExceptionDefinition(Arrays.asList(exceptions));
+            answer.setRouteScoped(true);
+            addOutput(answer);
+            return answer;
+        } else {
+            throw new IllegalArgumentException("onException can only be added directly to the route. Try moving this onException to the top of the route: " + this);
+        }
     }
 
     /**
