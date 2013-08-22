@@ -32,16 +32,22 @@ public class YammerComponent extends DefaultComponent {
     private YammerConfiguration config;
     
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
+        // by default use config for each endpoint; use from component level if one has been explicitly set
+        YammerConfiguration endpointConfig = getConfig();
+        if (endpointConfig == null) {
+            endpointConfig = new YammerConfiguration();            
+        }
+        
         // set options from component
-        getConfig().setConsumerKey(consumerKey);
-        getConfig().setConsumerSecret(consumerSecret);
-        getConfig().setAccessToken(accessToken);
-        getConfig().setFunction(remaining);
+        endpointConfig.setConsumerKey(consumerKey);
+        endpointConfig.setConsumerSecret(consumerSecret);
+        endpointConfig.setAccessToken(accessToken);
+        endpointConfig.setFunction(remaining);
         
         // and then override from parameters
-        setProperties(getConfig(), parameters);
+        setProperties(endpointConfig, parameters);
         
-        Endpoint endpoint = new YammerEndpoint(uri, this, getConfig());
+        Endpoint endpoint = new YammerEndpoint(uri, this, endpointConfig);
         setProperties(endpoint, parameters);
         return endpoint;
     }
@@ -71,9 +77,6 @@ public class YammerComponent extends DefaultComponent {
     }
 
     public YammerConfiguration getConfig() {
-        if (config == null) {
-            config = new YammerConfiguration();
-        }
         return config;
     }
 

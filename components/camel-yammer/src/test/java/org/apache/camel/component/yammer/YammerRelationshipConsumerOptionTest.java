@@ -21,17 +21,21 @@ import org.junit.Test;
 
 public class YammerRelationshipConsumerOptionTest extends YammerComponentTestSupport {
 
+    private static final String YAMMER_RELATIONSHIPS_CONSUMER = "yammer:relationships?consumerKey=aConsumerKey&consumerSecret=aConsumerSecretKey&accessToken=aAccessToken&userId=jcamel";
+
     @Test
     public void testOptions() throws Exception {
+        YammerEndpoint endpoint = context.getEndpoint(YAMMER_RELATIONSHIPS_CONSUMER, YammerEndpoint.class);
+        
         // now check if options got applied
-        assertEquals("jcamel", yammerComponent.getConfig().getUserId());
+        assertEquals("jcamel", endpoint.getConfig().getUserId());
     }
     
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                from("yammer:relationships?consumerKey=aConsumerKey&consumerSecret=aConsumerSecretKey&accessToken=aAccessToken&userId=jcamel").to("mock:result");
+                from(YAMMER_RELATIONSHIPS_CONSUMER).to("mock:result");
             }
         };
     }

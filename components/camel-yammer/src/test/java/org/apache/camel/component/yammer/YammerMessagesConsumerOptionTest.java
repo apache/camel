@@ -21,21 +21,24 @@ import org.junit.Test;
 
 public class YammerMessagesConsumerOptionTest extends YammerComponentTestSupport {
 
+    private static final String YAMMER_MESSAGES_CONSUMER = "yammer:messages?consumerKey=aConsumerKey&consumerSecret=aConsumerSecretKey&accessToken=aAccessToken&limit=1&threaded=true&olderThan=130&newerThan=127";
+
     @Test
     public void testOptions() throws Exception {
+        YammerEndpoint endpoint = context.getEndpoint(YAMMER_MESSAGES_CONSUMER, YammerEndpoint.class);
+        
         // now check if options got applied
-        assertEquals(1, yammerComponent.getConfig().getLimit());
-        assertEquals("true", yammerComponent.getConfig().getThreaded());
-        assertEquals(130, yammerComponent.getConfig().getOlderThan());
-        assertEquals(127, yammerComponent.getConfig().getNewerThan());
-        //assertEquals(YammerConstants.YAMMER_BASE_API_URL + "messages.json?limit=1&older_than=130&newer_than=127&threaded=true", yammerComponent.getConfig().getApiUrl());
+        assertEquals(1, endpoint.getConfig().getLimit());
+        assertEquals("true", endpoint.getConfig().getThreaded());
+        assertEquals(130, endpoint.getConfig().getOlderThan());
+        assertEquals(127, endpoint.getConfig().getNewerThan());
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                from("yammer:messages?consumerKey=aConsumerKey&consumerSecret=aConsumerSecretKey&accessToken=aAccessToken&limit=1&threaded=true&olderThan=130&newerThan=127").to("mock:result");
+                from(YAMMER_MESSAGES_CONSUMER).to("mock:result");
             }
         };
     }
