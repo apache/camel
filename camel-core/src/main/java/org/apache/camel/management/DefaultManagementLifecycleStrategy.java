@@ -889,8 +889,9 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
             // we are disabled either if configured explicit, or if level is off
             boolean disabled = !camelContext.getManagementStrategy().isLoadStatisticsEnabled()
                     || camelContext.getManagementStrategy().getStatisticsLevel() == ManagementStatisticsLevel.Off;
+
+            LOG.debug("Load performance statistics {}", disabled ? "disabled" : "enabled");
             if (!disabled) {
-                LOG.info("Load performance statistics enabled.");
                 // must use 1 sec interval as the load statistics is based on 1 sec calculations
                 timerListenerManager.setInterval(1000);
                 // we have to defer enlisting timer lister manager as a service until CamelContext has been started
