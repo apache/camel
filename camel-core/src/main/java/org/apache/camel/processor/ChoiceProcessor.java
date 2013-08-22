@@ -30,10 +30,6 @@ import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.AsyncProcessorConverterHelper;
 import org.apache.camel.util.AsyncProcessorHelper;
 import org.apache.camel.util.ServiceHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
-import static org.apache.camel.processor.PipelineHelper.continueProcessing;
 
 /**
  * Implements a Choice structure where one or more predicates are used which if
@@ -43,7 +39,6 @@ import static org.apache.camel.processor.PipelineHelper.continueProcessing;
  * @version 
  */
 public class ChoiceProcessor extends ServiceSupport implements AsyncProcessor, Navigate<Processor>, Traceable {
-    private static final Logger LOG = LoggerFactory.getLogger(ChoiceProcessor.class);
     private final List<Processor> filters;
     private final Processor otherwise;
 
@@ -56,91 +51,61 @@ public class ChoiceProcessor extends ServiceSupport implements AsyncProcessor, N
         AsyncProcessorHelper.process(this, exchange);
     }
 
-    public boolean process(Exchange exchange, AsyncCallback callback) {
+    public boolean process(final Exchange exchange, final AsyncCallback callback) {
         Iterator<Processor> processors = next().iterator();
 
-        exchange.setProperty(Exchange.FILTER_MATCHED, false);
-        while (continueRouting(processors, exchange)) {
+        // callback to restore existing FILTER_MATCHED property on the Exchange
+        final Object existing = exchange.getProperty(Exchange.FILTER_MATCHED);
+        final AsyncCallback choiceCallback = new AsyncCallback() {
+            @Override
+            public void done(boolean doneSync) {
+                if (existing != null) {
+                    exchange.setProperty(Exchange.FILTER_MATCHED, existing);
+                } else {
+                    exchange.removeProperty(Exchange.FILTER_MATCHED);
+                }
+                callback.done(doneSync);
+            }
+        };
+
+        // as we only pick one processor to process, then no need to have async callback that has a while loop as well
+        // as this should not happen, eg we pick the first filter processor that matches, or the otherwise (if present)
+        // and if not, we just continue without using any processor
+        while (processors.hasNext()) {
             // get the next processor
             Processor processor = processors.next();
 
+            // evaluate the predicate on filter predicate early to be faster
+            // and avoid issues when having nested choices
+            // as we should only pick one processor
+            boolean matches = true;
+            if (processor instanceof FilterProcessor) {
+                FilterProcessor filter = (FilterProcessor) processor;
+                try {
+                    matches = filter.getPredicate().matches(exchange);
+                    exchange.setProperty(Exchange.FILTER_MATCHED, matches);
+                } catch (Throwable e) {
+                    exchange.setException(e);
+                    choiceCallback.done(true);
+                    return true;
+                }
+                // as we have pre evaluated the predicate then use its processor directly when routing
+                processor = filter.getProcessor();
+            }
+
+            // if we did not match then continue to next filter
+            if (!matches) {
+                continue;
+            }
+
+            // okay we found a filter or its the otherwise we are processing
             AsyncProcessor async = AsyncProcessorConverterHelper.convert(processor);
-            boolean sync = process(exchange, callback, processors, async);
-
-            // continue as long its being processed synchronously
-            if (!sync) {
-                LOG.trace("Processing exchangeId: {} is continued being processed asynchronously", exchange.getExchangeId());
-                // the remainder of the CBR will be completed async
-                // so we break out now, then the callback will be invoked which then continue routing from where we left here
-                return false;
-            }
-
-            LOG.trace("Processing exchangeId: {} is continued being processed synchronously", exchange.getExchangeId());
-
-            // check for error if so we should break out
-            if (!continueProcessing(exchange, "so breaking out of content based router", LOG)) {
-                break;
-            }
+            return async.process(exchange, choiceCallback);
         }
 
-        LOG.trace("Processing complete for exchangeId: {} >>> {}", exchange.getExchangeId(), exchange);
-
-        callback.done(true);
+        // when no filter matches and there is no otherwise, then just continue
+        choiceCallback.done(true);
         return true;
-    }
-
-    protected boolean continueRouting(Iterator<Processor> it, Exchange exchange) {
-        boolean answer = it.hasNext();
-        if (answer) {
-            Object matched = exchange.getProperty(Exchange.FILTER_MATCHED);
-            if (matched != null) {
-                boolean hasMatched = exchange.getContext().getTypeConverter().convertTo(Boolean.class, matched);
-                if (hasMatched) {
-                    LOG.debug("ExchangeId: {} has been matched: {}", exchange.getExchangeId(), exchange);
-                    answer = false;
-                }
-            }
-        }
-        LOG.trace("ExchangeId: {} should continue matching: {}", exchange.getExchangeId(), answer);
-        return answer;
-    }
-
-    private boolean process(final Exchange exchange, final AsyncCallback callback,
-                            final Iterator<Processor> processors, final AsyncProcessor asyncProcessor) {
-        // this does the actual processing so log at trace level
-        LOG.trace("Processing exchangeId: {} >>> {}", exchange.getExchangeId(), exchange);
-
-        // implement asynchronous routing logic in callback so we can have the callback being
-        // triggered and then continue routing where we left
-        boolean sync = asyncProcessor.process(exchange, new AsyncCallback() {
-            public void done(boolean doneSync) {
-                // we only have to handle async completion of the pipeline
-                if (doneSync) {
-                    return;
-                }
-
-                // continue processing the pipeline asynchronously
-                while (continueRouting(processors, exchange)) {
-                    AsyncProcessor processor = AsyncProcessorConverterHelper.convert(processors.next());
-
-                    // check for error if so we should break out
-                    if (!continueProcessing(exchange, "so breaking out of pipeline", LOG)) {
-                        break;
-                    }
-
-                    doneSync = process(exchange, callback, processors, processor);
-                    if (!doneSync) {
-                        LOG.trace("Processing exchangeId: {} is continued being processed asynchronously", exchange.getExchangeId());
-                        return;
-                    }
-                }
-
-                LOG.trace("Processing complete for exchangeId: {} >>> {}", exchange.getExchangeId(), exchange);
-                callback.done(false);
-            }
-        });
-
-        return sync;
     }
 
     @Override
