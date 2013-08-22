@@ -332,6 +332,16 @@ public class SedaEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
         return EndpointHelper.browseRangeMessagesAsXml(this, fromIndex, toIndex, includeBody);
     }
 
+    @ManagedAttribute(description = "Camel context name")
+    public String getCamelId() {
+        return getCamelContext().getName();
+    }
+
+    @ManagedAttribute(description = "Endpoint service state")
+    public String getState() {
+        return getStatus().name();
+    }
+
     void onStarted(SedaProducer producer) {
         producers.add(producer);
     }
