@@ -46,6 +46,7 @@ public class SpringBatchProducer extends DefaultProducer {
     public void process(Exchange exchange) throws Exception {
         JobParameters jobParameters = prepareJobParameters(exchange.getIn().getHeaders());
         JobExecution jobExecution = jobLauncher.run(job, jobParameters);
+        exchange.getOut().getHeaders().putAll(exchange.getIn().getHeaders());
         exchange.getOut().setBody(jobExecution);
     }
 

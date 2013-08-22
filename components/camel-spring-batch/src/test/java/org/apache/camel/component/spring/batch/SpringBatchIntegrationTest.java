@@ -25,6 +25,8 @@ import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class SpringBatchIntegrationTest extends CamelSpringTestSupport {
+    @EndpointInject(uri = "mock:header")
+    MockEndpoint headerEndpoint;
 
     @EndpointInject(uri = "mock:output")
     MockEndpoint outputEndpoint;
@@ -59,6 +61,15 @@ public class SpringBatchIntegrationTest extends CamelSpringTestSupport {
         template.sendBody("direct:start", "Start batch!");
 
         jobExecutionEventsQueueEndpoint.assertIsSatisfied();
+    }
+    
+    @Test
+    public void testMessageHeader() throws Exception {
+        headerEndpoint.expectedHeaderReceived("header", 1);
+        
+        template.sendBodyAndHeader(null, "header", "1");
+        
+        headerEndpoint.assertIsSatisfied();
     }
 
     @Override

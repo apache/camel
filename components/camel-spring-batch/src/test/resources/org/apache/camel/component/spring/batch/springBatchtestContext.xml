@@ -50,6 +50,11 @@
                 <camel:simple>Echo ${body}</camel:simple>
             </camel:setBody>
         </camel:route>
+        <camel:route>
+            <camel:from uri="direct:header"/>
+            <camel:to uri="spring-batch:echoJob"/>
+            <camel:to uri="mock:header"/>
+        </camel:route>
     </camel:camelContext>
 
     <camel:consumerTemplate id="consumerTemplate" camelContextId="camel"/>
