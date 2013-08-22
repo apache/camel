@@ -23,8 +23,8 @@ import org.apache.camel.spi.PollingConsumerPollStrategy;
 
 public class ScheduledPollConsumerBackoffTest extends ContextTestSupport {
 
-    private static int commits = 0;
-    private static int errors = 0;
+    private static int commits;
+    private static int errors;
 
     public void testBackoffIdle() throws Exception {
 

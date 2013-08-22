@@ -42,8 +42,8 @@ public final class AggregationStrategyBeanAdapter extends ServiceSupport impleme
     private Object pojo;
     private final Class<?> type;
     private String methodName;
-    private boolean allowNullOldExchange = false;
-    private boolean allowNullNewExchange = false;
+    private boolean allowNullOldExchange;
+    private boolean allowNullNewExchange;
     private volatile AggregationStrategyMethodInfo mi;
 
     static {
