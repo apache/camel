@@ -55,7 +55,7 @@ public class NetWeaverProducer extends DefaultProducer {
 
         String data = httpExchange.getOut().getBody(String.class);
 
-        if (data != null && getEndpoint().isJsonAsMap()) {
+        if (data != null && getEndpoint().isJsonAsMap() && getEndpoint().isJson()) {
             // map json string to json map
             ObjectMapper mapper = new ObjectMapper();
             Map<?, ?> map = mapper.readValue(data, Map.class);
