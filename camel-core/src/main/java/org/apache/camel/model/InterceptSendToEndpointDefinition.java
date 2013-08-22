@@ -80,6 +80,11 @@ public class InterceptSendToEndpointDefinition extends OutputDefinition<Intercep
     }
 
     @Override
+    public boolean isTopLevelOnly() {
+        return true;
+    }
+
+    @Override
     public Processor createProcessor(final RouteContext routeContext) throws Exception {
         // create the detour
         final Processor detour = this.createChildProcessor(routeContext, true);

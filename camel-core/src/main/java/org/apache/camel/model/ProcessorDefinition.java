@@ -113,6 +113,16 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     public abstract boolean isOutputSupported();
 
     /**
+     * Whether this definition can only be added as top-level directly on the route itself (such as onException,onCompletion,intercept, etc.)
+     * <p/>
+     * If trying to add a top-level only definition to a nested output would fail in the {@link #addOutput(ProcessorDefinition)}
+     * method.
+     */
+    public boolean isTopLevelOnly() {
+        return false;
+    }
+
+    /**
      * Whether this model is abstract or not.
      * <p/>
      * An abstract model is something that is used for configuring cross cutting concerns such as
@@ -181,6 +191,12 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
             Block block = blocks.getLast();
             block.addOutput(output);
             return;
+        }
+
+        // validate that top-level is only added on the route (eg top level)
+        boolean parentIsRoute = this.getClass().isAssignableFrom(RouteDefinition.class);
+        if (output.isTopLevelOnly() && !parentIsRoute) {
+            throw new IllegalArgumentException("The output must be added as top-level on the route. Try moving " + output + " to the top of route.");
         }
 
         output.setParent(this);
@@ -2357,17 +2373,10 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @return the exception builder to configure
      */
     public OnExceptionDefinition onException(Class<? extends Throwable> exceptionType) {
-        // onException can only be added on the route-level and not nested in splitter/policy etc
-        // Camel 3.0 will fix this where we will have a RouteScopeDefinition where route scoped
-        // configuration must take place, and not from this generic ProcessorDefinition
-        if (this.getClass().isAssignableFrom(RouteDefinition.class)) {
-            OnExceptionDefinition answer = new OnExceptionDefinition(exceptionType);
-            answer.setRouteScoped(true);
-            addOutput(answer);
-            return answer;
-        } else {
-            throw new IllegalArgumentException("onException can only be added directly to the route. Try moving this onException to the top of the route: " + this);
-        }
+        OnExceptionDefinition answer = new OnExceptionDefinition(exceptionType);
+        answer.setRouteScoped(true);
+        addOutput(answer);
+        return answer;
     }
 
     /**
@@ -2378,17 +2387,10 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @return the exception builder to configure
      */
     public OnExceptionDefinition onException(Class<? extends Throwable>... exceptions) {
-        // onException can only be added on the route-level and not nested in splitter/policy etc
-        // Camel 3.0 will fix this where we will have a RouteScopeDefinition where route scoped
-        // configuration must take place, and not from this generic ProcessorDefinition
-        if (this.getClass().isAssignableFrom(RouteDefinition.class)) {
-            OnExceptionDefinition answer = new OnExceptionDefinition(Arrays.asList(exceptions));
-            answer.setRouteScoped(true);
-            addOutput(answer);
-            return answer;
-        } else {
-            throw new IllegalArgumentException("onException can only be added directly to the route. Try moving this onException to the top of the route: " + this);
-        }
+        OnExceptionDefinition answer = new OnExceptionDefinition(Arrays.asList(exceptions));
+        answer.setRouteScoped(true);
+        addOutput(answer);
+        return answer;
     }
 
     /**
@@ -2425,9 +2427,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      *
      * @return the policy builder to configure
      */
-    public PolicyDefinition transacted() {
-        PolicyDefinition answer = new PolicyDefinition();
-        answer.setType(TransactedPolicy.class);
+    public TransactedDefinition transacted() {
+        TransactedDefinition answer = new TransactedDefinition();
         addOutput(answer);
         return answer;
     }
@@ -2438,9 +2439,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      * @param ref  reference to lookup a transacted policy in the registry
      * @return the policy builder to configure
      */
-    public PolicyDefinition transacted(String ref) {
-        PolicyDefinition answer = new PolicyDefinition();
-        answer.setType(TransactedPolicy.class);
+    public TransactedDefinition transacted(String ref) {
+        TransactedDefinition answer = new TransactedDefinition();
         answer.setRef(ref);
         addOutput(answer);
         return answer;

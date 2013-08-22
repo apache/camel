@@ -99,6 +99,12 @@ public class TransactedDefinition extends OutputDefinition<TransactedDefinition>
         return true;
     }
 
+    @Override
+    public boolean isTopLevelOnly() {
+        // transacted is top level as we only allow have it configured once per route
+        return true;
+    }
+
     public String getRef() {
         return ref;
     }

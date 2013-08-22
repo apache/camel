@@ -94,7 +94,7 @@ public final class RouteDefinitionHelper {
     }
 
     public static void initParent(ProcessorDefinition parent) {
-        List<ProcessorDefinition> children = parent.getOutputs();
+        List<ProcessorDefinition<?>> children = parent.getOutputs();
         for (ProcessorDefinition child : children) {
             child.setParent(parent);
             if (child.getOutputs() != null && !child.getOutputs().isEmpty()) {
@@ -105,7 +105,7 @@ public final class RouteDefinitionHelper {
     }
 
     private static void initParentAndErrorHandlerBuilder(ProcessorDefinition parent) {
-        List<ProcessorDefinition> children = parent.getOutputs();
+        List<ProcessorDefinition<?>> children = parent.getOutputs();
         for (ProcessorDefinition child : children) {
             child.setParent(parent);
             if (child.getOutputs() != null && !child.getOutputs().isEmpty()) {
@@ -172,6 +172,8 @@ public final class RouteDefinitionHelper {
 
         // parent and error handler builder should be initialized first
         initParentAndErrorHandlerBuilder(context, route, abstracts, onExceptions);
+        // validate top-level violations
+        validateTopLevel(route.getOutputs());
         // then interceptors
         initInterceptors(context, route, abstracts, upper, intercepts, interceptFromDefinitions, interceptSendToEndpointDefinitions);
         // then on completion
@@ -213,6 +215,25 @@ public final class RouteDefinitionHelper {
         }
     }
 
+    /**
+     * Validates that top-level only definitions is not added in the wrong places, such as nested
+     * inside a splitter etc.
+     */
+    private static void validateTopLevel(List<ProcessorDefinition<?>> children) {
+        for (ProcessorDefinition child : children) {
+            // validate that top-level is only added on the route (eg top level)
+            RouteDefinition route = ProcessorDefinitionHelper.getRoute(child);
+            boolean parentIsRoute = route != null && child.getParent() == route;
+            if (child.isTopLevelOnly() && !parentIsRoute) {
+                throw new IllegalArgumentException("The output must be added as top-level on the route. Try moving " + child + " to the top of route.");
+            }
+            if (child.getOutputs() != null && !child.getOutputs().isEmpty()) {
+                validateTopLevel(child.getOutputs());
+            }
+        }
+    }
+
+
     private static void initParentAndErrorHandlerBuilder(ModelCamelContext context, RouteDefinition route,
                                                          List<ProcessorDefinition<?>> abstracts, List<OnExceptionDefinition> onExceptions) {
 
@@ -233,11 +254,12 @@ public final class RouteDefinitionHelper {
         // set the parent and error handler builder on the global on exceptions
         if (onExceptions != null) {
             for (OnExceptionDefinition global : onExceptions) {
-                //global.setErrorHandlerBuilder(context.getErrorHandlerBuilder());
                 initParentAndErrorHandlerBuilder(global);
             }
         }
     }
+
+
 
     private static void initOnExceptions(List<ProcessorDefinition<?>> abstracts, List<ProcessorDefinition<?>> upper,
                                          List<OnExceptionDefinition> onExceptions) {
@@ -442,7 +464,7 @@ public final class RouteDefinitionHelper {
             }
         }
 
-        List<ProcessorDefinition> children = processor.getOutputs();
+        List<ProcessorDefinition<?>> children = processor.getOutputs();
         if (children != null && !children.isEmpty()) {
             for (ProcessorDefinition child : children) {
                 forceAssignIds(context, child);

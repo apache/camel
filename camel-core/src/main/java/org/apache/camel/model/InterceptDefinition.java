@@ -67,6 +67,11 @@ public class InterceptDefinition extends OutputDefinition<InterceptDefinition> {
     }
 
     @Override
+    public boolean isTopLevelOnly() {
+        return true;
+    }
+
+    @Override
     public Processor createProcessor(final RouteContext routeContext) throws Exception {
         // create the output processor
         output = this.createChildProcessor(routeContext, true);

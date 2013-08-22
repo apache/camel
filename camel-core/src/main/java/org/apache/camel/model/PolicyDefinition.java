@@ -86,6 +86,12 @@ public class PolicyDefinition extends OutputDefinition<PolicyDefinition> {
         return false;
     }
 
+    @Override
+    public boolean isTopLevelOnly() {
+        // a policy is often top-level but you can have it in lower-levels as well
+        return false;
+    }
+
     public String getRef() {
         return ref;
     }

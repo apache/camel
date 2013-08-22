@@ -65,6 +65,11 @@ public class InterceptFromDefinition extends InterceptDefinition {
     }
 
     @Override
+    public boolean isTopLevelOnly() {
+        return true;
+    }
+
+    @Override
     @SuppressWarnings({"unchecked", "rawtypes"})
     public Processor createProcessor(RouteContext routeContext) throws Exception {
         // insert a set header definition so we can set the intercepted endpoint uri as a header

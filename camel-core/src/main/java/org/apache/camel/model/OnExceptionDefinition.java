@@ -135,6 +135,11 @@ public class OnExceptionDefinition extends ProcessorDefinition<OnExceptionDefini
         return true;
     }
 
+    @Override
+    public boolean isTopLevelOnly() {
+        return true;
+    }
+
     /**
      * Allows an exception handler to create a new redelivery policy for this exception type
      *

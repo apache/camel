@@ -102,6 +102,11 @@ public class OnCompletionDefinition extends ProcessorDefinition<OnCompletionDefi
     }
 
     @Override
+    public boolean isTopLevelOnly() {
+        return true;
+    }
+
+    @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
         // assign whether this was a route scoped onCompletion or not
         // we need to know this later when setting the parent, as only route scoped should have parent
