@@ -972,8 +972,16 @@ public class SftpOperations implements RemoteFileOperations<ChannelSftp.LsEntry>
     }
 
     public boolean sendNoop() throws GenericFileOperationFailedException {
-        // is not implemented
-        return true;
+        if (isConnected()) {
+            try {
+                session.sendIgnore();
+                return true;
+            } catch (Exception e) {
+                LOG.debug("SFTP session was closed. Ignoring this exception.", e);
+                return false;
+            }
+        }
+        return false;
     }
 
     public boolean sendSiteCommand(String command) throws GenericFileOperationFailedException {

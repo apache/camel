@@ -42,13 +42,17 @@ public class SftpServerTestSupport extends BaseServerTestSupport {
     protected SshServer sshd;
     protected boolean canTest;
 
-    @SuppressWarnings("unchecked")
     @Override
     @Before
     public void setUp() throws Exception {
         deleteDirectory(FTP_ROOT_DIR);
         super.setUp();
 
+        setUpServer();
+    }
+
+    @SuppressWarnings("unchecked")
+    protected void setUpServer() throws Exception {
         canTest = true;
         try {
             sshd = SshServer.setUpDefaultServer();
@@ -87,6 +91,10 @@ public class SftpServerTestSupport extends BaseServerTestSupport {
     public void tearDown() throws Exception {
         super.tearDown();
 
+        tearDownServer();
+    }
+
+    protected void tearDownServer() {
         if (sshd != null) {
             try {
                 // stop asap as we may hang forever
