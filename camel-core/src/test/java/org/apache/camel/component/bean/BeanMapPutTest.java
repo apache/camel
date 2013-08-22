@@ -21,7 +21,6 @@ import java.util.Map;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
 
 /**
@@ -29,7 +28,7 @@ import org.apache.camel.impl.JndiRegistry;
  */
 public class BeanMapPutTest extends ContextTestSupport {
 
-    private Map myMap = new HashMap();
+    private Map<String, String> myMap = new HashMap<String, String>();
 
     @Override
     protected JndiRegistry createRegistry() throws Exception {

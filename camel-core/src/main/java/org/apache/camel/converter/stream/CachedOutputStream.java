@@ -230,8 +230,15 @@ public class CachedOutputStream extends OutputStream {
         }
     }
 
+    /**
+     * @deprecated  use {@link #getStrategyBufferSize()}
+     */
     @Deprecated
     public int getBufferSize() {
+        return getStrategyBufferSize();
+    }
+    
+    public int getStrategyBufferSize() {
         return strategy.getBufferSize();
     }
 

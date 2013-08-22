@@ -87,7 +87,7 @@ public class CachedOutputStreamTest extends ContextTestSupport {
         assertEquals("we should have a temp file", files.length, 1);
         assertTrue("The file name should start with cos" , files[0].startsWith("cos"));
 
-        StreamCache cache = cos.getStreamCache();
+        StreamCache cache = cos.newStreamCache();
         assertTrue("Should get the FileInputStreamCache", cache instanceof FileInputStreamCache);
         String temp = toString((InputStream)cache);
 
@@ -131,7 +131,7 @@ public class CachedOutputStreamTest extends ContextTestSupport {
         assertTrue("The content is not encrypted", temp.length() > 0 && temp.indexOf("aaa") < 0);
         tmpin.close();
         
-        StreamCache cache = cos.getStreamCache();
+        StreamCache cache = cos.newStreamCache();
         assertTrue("Should get the FileInputStreamCache", cache instanceof FileInputStreamCache);
         temp = toString((InputStream)cache);
 
@@ -166,7 +166,7 @@ public class CachedOutputStreamTest extends ContextTestSupport {
         assertEquals("we should have a temp file", files.length, 1);
         assertTrue("The file name should start with cos" , files[0].startsWith("cos"));
         
-        StreamCache cache = cos.getStreamCache();
+        StreamCache cache = cos.newStreamCache();
         assertTrue("Should get the FileInputStreamCache", cache instanceof FileInputStreamCache);
         String temp = toString((InputStream)cache);
         assertEquals("Cached a wrong file", temp, TEST_STRING);
@@ -195,7 +195,7 @@ public class CachedOutputStreamTest extends ContextTestSupport {
         String[] files = file.list();
 
         assertEquals("we should have no temp file", files.length, 0);
-        StreamCache cache = cos.getStreamCache();
+        StreamCache cache = cos.newStreamCache();
         assertTrue("Should get the InputStreamCache", cache instanceof InputStreamCache);
         String temp = IOConverter.toString((InputStream)cache, null);
         assertEquals("Cached a wrong file", temp, TEST_STRING);
@@ -216,7 +216,7 @@ public class CachedOutputStreamTest extends ContextTestSupport {
         String[] files = file.list();
 
         assertEquals("we should have no temp file", files.length, 0);
-        StreamCache cache = cos.getStreamCache();
+        StreamCache cache = cos.newStreamCache();
         assertTrue("Should get the InputStreamCache", cache instanceof InputStreamCache);
         String temp = IOConverter.toString((InputStream)cache, null);
         assertEquals("Cached a wrong file", temp, TEST_STRING);
@@ -235,7 +235,7 @@ public class CachedOutputStreamTest extends ContextTestSupport {
         CachedOutputStream cos = new CachedOutputStream(exchange);
         cos.write(TEST_STRING.getBytes("UTF-8"));
 
-        assertEquals("we should have a custom buffer size", cos.getBufferSize(), 8192);
+        assertEquals("we should have a custom buffer size", cos.getStrategyBufferSize(), 8192);
         
         // make sure things still work after custom buffer size set
         File file = new File("target/cachedir");
@@ -243,7 +243,7 @@ public class CachedOutputStreamTest extends ContextTestSupport {
         assertEquals("we should have a temp file", files.length, 1);
         assertTrue("The file name should start with cos" , files[0].startsWith("cos"));              
         
-        StreamCache cache = cos.getStreamCache();
+        StreamCache cache = cos.newStreamCache();
         assertTrue("Should get the FileInputStreamCache", cache instanceof FileInputStreamCache);
         String temp = toString((InputStream)cache);
         assertEquals("Cached a wrong file", temp, TEST_STRING);
