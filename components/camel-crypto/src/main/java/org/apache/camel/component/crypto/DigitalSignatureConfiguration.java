@@ -33,7 +33,7 @@ public class DigitalSignatureConfiguration implements Cloneable, CamelContextAwa
     private PrivateKey privateKey;
     private KeyStore keystore;
     private SecureRandom secureRandom;
-    private String algorithm = "DSA";
+    private String algorithm = "SHA1WithDSA";
     private Integer bufferSize = Integer.valueOf(2048);
     private String provider;
     private String signatureHeaderName;

@@ -72,9 +72,7 @@ public class SignatureTests extends CamelTestSupport {
         }, new RouteBuilder() {
             public void configure() throws Exception {
                 // START SNIPPET: algorithm
-                KeyPairGenerator keyGen = KeyPairGenerator.getInstance("RSA");
-                keyGen.initialize(512, new SecureRandom());
-                keyPair = keyGen.generateKeyPair();
+                keyPair = getKeyPair("RSA");
                 PrivateKey privateKey = keyPair.getPrivate();
                 PublicKey publicKey = keyPair.getPublic();
 
@@ -83,6 +81,32 @@ public class SignatureTests extends CamelTestSupport {
                 context.getEndpoint("crypto:verify://rsa?algorithm=MD5withRSA", DigitalSignatureEndpoint.class).setPublicKey(publicKey);
                 from("direct:algorithm").to("crypto:sign://rsa?algorithm=MD5withRSA", "crypto:verify://rsa?algorithm=MD5withRSA", "mock:result");
                 // END SNIPPET: algorithm
+            }
+        }, new RouteBuilder() {
+            public void configure() throws Exception {
+                // START SNIPPET: rsa-sha1
+                keyPair = getKeyPair("RSA");
+                PrivateKey privateKey = keyPair.getPrivate();
+                PublicKey publicKey = keyPair.getPublic();
+
+                // we can set the keys explicitly on the endpoint instances.
+                context.getEndpoint("crypto:sign://rsa?algorithm=SHA1withRSA", DigitalSignatureEndpoint.class).setPrivateKey(privateKey);
+                context.getEndpoint("crypto:verify://rsa?algorithm=SHA1withRSA", DigitalSignatureEndpoint.class).setPublicKey(publicKey);
+                from("direct:rsa-sha1").to("crypto:sign://rsa?algorithm=SHA1withRSA", "crypto:verify://rsa?algorithm=SHA1withRSA", "mock:result");
+                // END SNIPPET: rsa-sha1
+            }
+        }, new RouteBuilder() {
+            public void configure() throws Exception {
+                // START SNIPPET: rsa-sha256
+                keyPair = getKeyPair("RSA");
+                PrivateKey privateKey = keyPair.getPrivate();
+                PublicKey publicKey = keyPair.getPublic();
+
+                // we can set the keys explicitly on the endpoint instances.
+                context.getEndpoint("crypto:sign://rsa?algorithm=SHA256withRSA", DigitalSignatureEndpoint.class).setPrivateKey(privateKey);
+                context.getEndpoint("crypto:verify://rsa?algorithm=SHA256withRSA", DigitalSignatureEndpoint.class).setPublicKey(publicKey);
+                from("direct:rsa-sha256").to("crypto:sign://rsa?algorithm=SHA256withRSA", "crypto:verify://rsa?algorithm=SHA256withRSA", "mock:result");
+                // END SNIPPET: rsa-sha256
             }
         }, new RouteBuilder() {
             public void configure() throws Exception {
@@ -161,6 +185,20 @@ public class SignatureTests extends CamelTestSupport {
     public void testSetAlgorithmInRouteDefinition() throws Exception {
         setupMock();
         sendBody("direct:algorithm", payload);
+        assertMockEndpointsSatisfied();
+    }
+    
+    @Test
+    public void testRSASHA1() throws Exception {
+        setupMock();
+        sendBody("direct:rsa-sha1", payload);
+        assertMockEndpointsSatisfied();
+    }
+    
+    @Test
+    public void testRSASHA256() throws Exception {
+        setupMock();
+        sendBody("direct:rsa-sha256", payload);
         assertMockEndpointsSatisfied();
     }
 

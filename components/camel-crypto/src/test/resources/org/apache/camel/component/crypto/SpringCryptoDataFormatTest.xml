@@ -44,9 +44,26 @@
       <crypto id="hmac-algorithm" algorithm="DES" keyRef="desKey" macAlgorithm="HmacMD5" shouldAppendHMAC="true" />
       <!-- END SNIPPET: hmac-algorithm -->
       
+      <!-- START SNIPPET: hmac-sha-256-algorithm -->
+      <crypto id="hmac-sha-256-algorithm" algorithm="DES" keyRef="desKey" macAlgorithm="HmacSHA256" shouldAppendHMAC="true" />
+      <!-- END SNIPPET: hmac-sha-256-algorithm -->
+      
       <!-- START SNIPPET: header-key -->
       <crypto id="nokey" algorithm="DES" />
       <!-- END SNIPPET: header-key -->
+      
+      <!-- START SNIPPET: tripledes-ecb-encryption -->
+      <crypto id="tripledes-ecb-encryption" algorithm="DESede/ECB/PKCS5Padding" keyRef="desEdeKey" />
+      <!-- END SNIPPET: tripledes-ecb-encryption -->
+      
+      <!-- START SNIPPET: tripledes-cbc-encryption -->
+      <crypto id="tripledes-cbc-encryption-encrypt" algorithm="DESede/CBC/PKCS5Padding" keyRef="desEdeKey" initVectorRef="initializationVector" inline="true" />
+      <crypto id="tripledes-cbc-encryption-decrypt" algorithm="DESede/CBC/PKCS5Padding" keyRef="desEdeKey" inline="true" />
+      <!-- END SNIPPET: tripledes-cbc-encryption -->
+      
+      <!-- START SNIPPET: aes-128-ecb-encryption -->
+      <crypto id="aes-128-ecb-encryption" algorithm="AES/ECB/PKCS5Padding" keyRef="aesKey" />
+      <!-- END SNIPPET: aes-128-ecb-encryption -->
     </dataFormats>
     
     <route>
@@ -90,6 +107,14 @@
     </route>
     
     <route>
+      <from uri="direct:hmac-sha-256-algorithm" />
+      <marshal ref="hmac-sha-256-algorithm" />
+      <to uri="mock:encrypted" />
+      <unmarshal ref="hmac-sha-256-algorithm" />
+      <to uri="mock:unencrypted" />
+    </route>
+    
+    <route>
       <from uri="direct:key-in-header-encrypt" />
       <marshal ref="nokey" />
       <setHeader headerName="CamelCryptoKey">
@@ -107,9 +132,35 @@
       <to uri="mock:unencrypted" />
     </route>
     
+    <route>
+      <from uri="direct:3des-ecb-encryption" />
+      <marshal ref="tripledes-ecb-encryption" />
+      <to uri="mock:encrypted" />
+      <unmarshal ref="tripledes-ecb-encryption" />
+      <to uri="mock:unencrypted" />
+    </route>
+    
+    <route>
+      <from uri="direct:3des-cbc-encryption" />
+      <marshal ref="tripledes-cbc-encryption-encrypt" />
+      <to uri="mock:encrypted" />
+      <unmarshal ref="tripledes-cbc-encryption-decrypt" />
+      <to uri="mock:unencrypted" />
+    </route>
+    
+    <route>
+      <from uri="direct:aes-128-ecb-encryption" />
+      <marshal ref="aes-128-ecb-encryption" />
+      <to uri="mock:encrypted" />
+      <unmarshal ref="aes-128-ecb-encryption" />
+      <to uri="mock:unencrypted" />
+    </route>
+    
   </camelContext>
   
   <bean id="desKey" class="org.apache.camel.converter.crypto.SpringCryptoDataFormatTest" factory-method="getDesKey" />
+  <bean id="desEdeKey" class="org.apache.camel.converter.crypto.SpringCryptoDataFormatTest" factory-method="getDesEdeKey" />
+  <bean id="aesKey" class="org.apache.camel.converter.crypto.SpringCryptoDataFormatTest" factory-method="getAESKey" />
   <bean id="initializationVector" class="org.apache.camel.converter.crypto.SpringCryptoDataFormatTest" factory-method="getIV" />
   
 </beans>

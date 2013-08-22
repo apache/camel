@@ -41,6 +41,24 @@
         </route>        
         <!-- END SNIPPET: algorithm -->
         
+        <!-- START SNIPPET: rsa-sha1 -->
+        <route>
+            <from uri="direct:rsa-sha1"/>
+            <to uri="crypto:sign://rsa?algorithm=SHA1withRSA&amp;privateKey=#rsaPrivateKey" />
+            <to uri="crypto:verify://rsa?algorithm=SHA1withRSA&amp;publicKey=#rsaPublicKey" />
+            <to uri="mock:result"/>
+        </route>        
+        <!-- END SNIPPET: rsa-sha1 -->
+        
+        <!-- START SNIPPET: rsa-sha256 -->
+        <route>
+            <from uri="direct:rsa-sha256"/>
+            <to uri="crypto:sign://rsa?algorithm=SHA256withRSA&amp;privateKey=#rsaPrivateKey" />
+            <to uri="crypto:verify://rsa?algorithm=SHA256withRSA&amp;publicKey=#rsaPublicKey" />
+            <to uri="mock:result"/>
+        </route>        
+        <!-- END SNIPPET: rsa-sha256 -->
+        
         <!-- START SNIPPET: buffersize -->
         <route>
             <from uri="direct:buffersize" />

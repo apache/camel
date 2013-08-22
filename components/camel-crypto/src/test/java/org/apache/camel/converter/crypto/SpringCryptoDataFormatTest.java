@@ -27,6 +27,8 @@ import org.apache.camel.spring.SpringCamelContext;
 public class SpringCryptoDataFormatTest extends CryptoDataFormatTest {
 
     private static Key deskey;
+    private static Key desEdekey;
+    private static Key aeskey;
 
     @Override
     protected RouteBuilder[] createRouteBuilders() throws Exception {
@@ -36,11 +38,23 @@ public class SpringCryptoDataFormatTest extends CryptoDataFormatTest {
     protected CamelContext createCamelContext() throws Exception {
         KeyGenerator generator = KeyGenerator.getInstance("DES");
         deskey = generator.generateKey();
+        generator = KeyGenerator.getInstance("DESede");
+        desEdekey = generator.generateKey();
+        generator = KeyGenerator.getInstance("AES");
+        aeskey = generator.generateKey();
         return SpringCamelContext.springCamelContext("/org/apache/camel/component/crypto/SpringCryptoDataFormatTest.xml");
     }
 
     public static Key getDesKey() {
         return deskey;
+    }
+    
+    public static Key getDesEdeKey() {
+        return desEdekey;
+    }
+    
+    public static Key getAESKey() {
+        return aeskey;
     }
 
     public static byte[] getIV() {
