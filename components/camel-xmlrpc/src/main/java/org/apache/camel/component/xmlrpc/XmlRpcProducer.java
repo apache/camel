@@ -48,7 +48,7 @@ public class XmlRpcProducer extends DefaultProducer implements AsyncProcessor {
         Object result = client.execute(operationName, in.getBody(List.class));
         //TODO what if the request is one way operation
         // copy the in message header to the out message
-        exchange.getOut().setHeaders(exchange.getIn().getHeaders());
+        exchange.getOut().getHeaders().putAll(exchange.getIn().getHeaders());
         exchange.getOut().setBody(result);
     }
     
