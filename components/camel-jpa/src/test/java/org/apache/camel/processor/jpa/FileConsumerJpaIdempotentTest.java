@@ -58,12 +58,12 @@ public class FileConsumerJpaIdempotentTest extends AbstractJpaTest {
     protected void cleanupRepository() {
         transactionTemplate.execute(new TransactionCallback<Object>() {
             public Object doInTransaction(TransactionStatus arg0) {
-            	entityManager.joinTransaction();
-            	Query query = entityManager.createQuery(SELECT_ALL_STRING);
-            	query.setParameter(1, PROCESSOR_NAME);
+                entityManager.joinTransaction();
+                Query query = entityManager.createQuery(SELECT_ALL_STRING);
+                query.setParameter(1, PROCESSOR_NAME);
                 List<?> list = query.getResultList();
                 for (Object item : list) {
-                	entityManager.remove(item);
+                    entityManager.remove(item);
                 }
                 entityManager.flush();
                 return Boolean.TRUE;
@@ -96,15 +96,14 @@ public class FileConsumerJpaIdempotentTest extends AbstractJpaTest {
         assertMockEndpointsSatisfied();
     }
 
-	@Override
-	protected String routeXml() {
-		return "org/apache/camel/processor/jpa/fileConsumerJpaIdempotentTest-config.xml";
-	}
+    @Override
+    protected String routeXml() {
+        return "org/apache/camel/processor/jpa/fileConsumerJpaIdempotentTest-config.xml";
+    }
 
-	@Override
-	protected String selectAllString() {
-		return SELECT_ALL_STRING;
-	}
-
+    @Override
+    protected String selectAllString() {
+        return SELECT_ALL_STRING;
+    }
 
 }

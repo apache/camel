@@ -61,9 +61,9 @@ public class JpaWithNamedQueryTest extends Assert {
 
     @Test
     public void testProducerInsertsIntoDatabaseThenConsumerFiresMessageExchange() throws Exception {
-    	transactionTemplate.execute(new TransactionCallback<Object>() {
+        transactionTemplate.execute(new TransactionCallback<Object>() {
             public Object doInTransaction(TransactionStatus status) {
-            	entityManager.joinTransaction();
+                entityManager.joinTransaction();
                 // lets delete any exiting records before the test
                 entityManager.createQuery("delete from " + entityName).executeUpdate();
 
@@ -111,7 +111,7 @@ public class JpaWithNamedQueryTest extends Assert {
 
         transactionTemplate.execute(new TransactionCallback<Object>() {
             public Object doInTransaction(TransactionStatus status) {
-            	entityManager.joinTransaction();
+                entityManager.joinTransaction();
 
                 // now lets assert that there are still 2 entities left
                 List<?> rows = entityManager.createQuery("select x from MultiSteps x").getResultList();

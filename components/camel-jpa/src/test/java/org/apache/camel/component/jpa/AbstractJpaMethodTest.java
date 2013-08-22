@@ -152,7 +152,7 @@ public abstract class AbstractJpaMethodTest extends CamelTestSupport {
         
         transactionTemplate.execute(new TransactionCallback<Object>() {
             public Object doInTransaction(TransactionStatus status) {
-            	entityManager.joinTransaction();
+                entityManager.joinTransaction();
                 entityManager.createQuery("delete from " + Customer.class.getName()).executeUpdate();
                 return null;
             }
@@ -163,15 +163,15 @@ public abstract class AbstractJpaMethodTest extends CamelTestSupport {
     }
     
     protected void save(final Customer customer) {
-    	transactionTemplate.execute(new TransactionCallback<Object>() {
+        transactionTemplate.execute(new TransactionCallback<Object>() {
             public Object doInTransaction(TransactionStatus status) {
-            	entityManager.joinTransaction();
+                entityManager.joinTransaction();
                 entityManager.persist(customer);
                 entityManager.flush();
                 return null;
             }
         });
-        
+
         assertEntitiesInDatabase(1, Customer.class.getName());
         assertEntitiesInDatabase(1, Address.class.getName());
     }

@@ -50,8 +50,9 @@ public class JpaTraceEventMessageTest extends CamelTestSupport {
     @Before
     public void setUp() throws Exception {
         super.setUp();
-    	EntityManagerFactory entityManagerFactory = applicationContext.getBean("entityManagerFactory", EntityManagerFactory.class);
-    	transactionTemplate = applicationContext.getBean("transactionTemplate", TransactionTemplate.class);
+        EntityManagerFactory entityManagerFactory = applicationContext.getBean("entityManagerFactory",
+                                                                               EntityManagerFactory.class);
+        transactionTemplate = applicationContext.getBean("transactionTemplate", TransactionTemplate.class);
         entityManager = entityManagerFactory.createEntityManager();
         cleanupRepository();
     }
@@ -94,10 +95,10 @@ public class JpaTraceEventMessageTest extends CamelTestSupport {
     }
 
     private void assertEntityInDB() throws Exception {
-    	List<?> list = entityManager.createQuery(SELECT_ALL_STRING).getResultList();
+        List<?> list = entityManager.createQuery(SELECT_ALL_STRING).getResultList();
         assertEquals(1, list.size());
-        
-        JpaTraceEventMessage db = (JpaTraceEventMessage) list.get(0);
+
+        JpaTraceEventMessage db = (JpaTraceEventMessage)list.get(0);
         assertNotNull(db.getId());
         assertEquals("direct://start", db.getFromEndpointUri());
         assertEquals("mock://result", db.getToNode());
@@ -105,12 +106,12 @@ public class JpaTraceEventMessageTest extends CamelTestSupport {
     }
 
     protected void cleanupRepository() {
-    	transactionTemplate.execute(new TransactionCallback<Object>() {
+        transactionTemplate.execute(new TransactionCallback<Object>() {
             public Object doInTransaction(TransactionStatus arg0) {
-            	entityManager.joinTransaction();
+                entityManager.joinTransaction();
                 List<?> list = entityManager.createQuery(SELECT_ALL_STRING).getResultList();
                 for (Object item : list) {
-                	entityManager.remove(item);
+                    entityManager.remove(item);
                 }
                 entityManager.flush();
                 return Boolean.TRUE;

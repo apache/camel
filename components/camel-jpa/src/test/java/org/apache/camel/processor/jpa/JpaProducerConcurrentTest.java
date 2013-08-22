@@ -85,13 +85,13 @@ public class JpaProducerConcurrentTest extends AbstractJpaTest {
         };
     }
 
-	@Override
-	protected String routeXml() {
-		return "org/apache/camel/processor/jpa/springJpaRouteTest.xml";
-	}
+    @Override
+    protected String routeXml() {
+        return "org/apache/camel/processor/jpa/springJpaRouteTest.xml";
+    }
 
-	@Override
-	protected String selectAllString() {
-		return SELECT_ALL_STRING;
-	}
+    @Override
+    protected String selectAllString() {
+        return SELECT_ALL_STRING;
+    }
 }

@@ -250,11 +250,11 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
     }
 
     protected EntityManagerFactory createEntityManagerFactory() {
-    	LocalEntityManagerFactoryBean emfBean = new LocalEntityManagerFactoryBean();
-    	emfBean.setPersistenceUnitName(persistenceUnit);
-    	emfBean.setJpaPropertyMap(getEntityManagerProperties());
-    	emfBean.afterPropertiesSet();
-    	return emfBean.getObject();
+        LocalEntityManagerFactoryBean emfBean = new LocalEntityManagerFactoryBean();
+        emfBean.setPersistenceUnitName(persistenceUnit);
+        emfBean.setJpaPropertyMap(getEntityManagerProperties());
+        emfBean.afterPropertiesSet();
+        return emfBean.getObject();
     }
 
     protected PlatformTransactionManager createTransactionManager() {
@@ -265,15 +265,15 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
 
     protected EntityManager getEntityManager() {
         if (entityManager == null) {
-        	entityManager = getEntityManagerFactory().createEntityManager();
+            entityManager = getEntityManagerFactory().createEntityManager();
         }
         return entityManager;
     }
 
     protected TransactionTemplate createTransactionTemplate() {
-    	TransactionTemplate transactionTemplate = new TransactionTemplate(getTransactionManager());
+        TransactionTemplate transactionTemplate = new TransactionTemplate(getTransactionManager());
         transactionTemplate.setPropagationBehavior(TransactionDefinition.PROPAGATION_REQUIRED);
-    	transactionTemplate.afterPropertiesSet();
+        transactionTemplate.afterPropertiesSet();
         return transactionTemplate;
     }
 

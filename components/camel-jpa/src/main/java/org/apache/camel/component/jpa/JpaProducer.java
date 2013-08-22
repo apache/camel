@@ -33,8 +33,8 @@ import org.springframework.transaction.support.TransactionTemplate;
  * @version 
  */
 public class JpaProducer extends DefaultProducer {
-	private final EntityManager entityManager;
-	private final TransactionTemplate transactionTemplate;
+    private final EntityManager entityManager;
+    private final TransactionTemplate transactionTemplate;
     private final JpaEndpoint endpoint;
     private final Expression expression;
 
@@ -50,12 +50,12 @@ public class JpaProducer extends DefaultProducer {
         exchange.getIn().setHeader(JpaConstants.ENTITYMANAGER, entityManager);
         final Object values = expression.evaluate(exchange, Object.class);
         if (values != null) {
-        	transactionTemplate.execute(new TransactionCallback<Object>() {
+            transactionTemplate.execute(new TransactionCallback<Object>() {
                 public Object doInTransaction(TransactionStatus status) {
-                	entityManager.joinTransaction();
+                    entityManager.joinTransaction();
 
-                	if (values.getClass().isArray()) {
-                        Object[] array = (Object[]) values;
+                    if (values.getClass().isArray()) {
+                        Object[] array = (Object[])values;
                         for (int index = 0; index < array.length; index++) {
                             Object managedEntity = save(array[index], entityManager);
                             if (!endpoint.isUsePersist()) {
@@ -64,7 +64,7 @@ public class JpaProducer extends DefaultProducer {
                         }
                     } else if (values instanceof Collection) {
                         @SuppressWarnings("unchecked")
-                        Collection<Object> collection = (Collection<Object>) values;
+                        Collection<Object> collection = (Collection<Object>)values;
                         List<Object> managedEntities = new ArrayList<Object>();
                         for (Object entity : collection) {
                             Object managedEntity = save(entity, entityManager);
@@ -77,16 +77,16 @@ public class JpaProducer extends DefaultProducer {
                     } else {
                         Object managedEntity = save(values, entityManager);
                         if (!endpoint.isUsePersist()) {
-                            exchange.getIn().setBody(managedEntity);                            
+                            exchange.getIn().setBody(managedEntity);
                         }
                     }
-                    
+
                     if (endpoint.isFlushOnSend()) {
                         // there may be concurrency so need to join tx before flush
                         entityManager.joinTransaction();
                         entityManager.flush();
                     }
-                    
+
                     return null;
                 }
 

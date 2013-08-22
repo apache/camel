@@ -47,7 +47,7 @@ public class JpaConsumer extends ScheduledBatchPollingConsumer {
 
     private static final Logger LOG = LoggerFactory.getLogger(JpaConsumer.class);
     private final JpaEndpoint endpoint;
-	private final EntityManager entityManager;
+    private final EntityManager entityManager;
     private final TransactionTemplate transactionTemplate;
     private QueryFactory queryFactory;
     private DeleteHandler<Object> deleteHandler;
@@ -81,9 +81,9 @@ public class JpaConsumer extends ScheduledBatchPollingConsumer {
 
         Object messagePolled = transactionTemplate.execute(new TransactionCallback<Object>() {
             public Object doInTransaction(TransactionStatus status) {
-            	entityManager.joinTransaction();
-            	
-            	Queue<DataHolder> answer = new LinkedList<DataHolder>();
+                entityManager.joinTransaction();
+
+                Queue<DataHolder> answer = new LinkedList<DataHolder>();
 
                 Query query = getQueryFactory().createQuery(entityManager);
                 configureParameters(query);

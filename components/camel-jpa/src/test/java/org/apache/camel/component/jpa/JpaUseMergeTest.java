@@ -40,7 +40,7 @@ public class JpaUseMergeTest extends AbstractJpaMethodTest {
         final Customer customer = createDefaultCustomer();
         transactionTemplate.execute(new TransactionCallback<Object>() {
             public Object doInTransaction(TransactionStatus status) {
-            	entityManager.joinTransaction();
+                entityManager.joinTransaction();
                 entityManager.persist(customer);
                 entityManager.flush();
                 return null;

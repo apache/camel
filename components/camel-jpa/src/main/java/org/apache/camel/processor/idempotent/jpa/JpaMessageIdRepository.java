@@ -75,9 +75,9 @@ public class JpaMessageIdRepository extends ServiceSupport implements Idempotent
         // Run this in single transaction.
         Boolean rc = transactionTemplate.execute(new TransactionCallback<Boolean>() {
             public Boolean doInTransaction(TransactionStatus arg0) {
-            	entityManager.joinTransaction();
-            	
-            	List<?> list = query(messageId);
+                entityManager.joinTransaction();
+
+                List<?> list = query(messageId);
                 if (list.isEmpty()) {
                     MessageProcessed processed = new MessageProcessed();
                     processed.setProcessorName(processorName);
@@ -99,9 +99,9 @@ public class JpaMessageIdRepository extends ServiceSupport implements Idempotent
         // Run this in single transaction.
         Boolean rc = transactionTemplate.execute(new TransactionCallback<Boolean>() {
             public Boolean doInTransaction(TransactionStatus arg0) {
-            	entityManager.joinTransaction();
-            	
-            	List<?> list = query(messageId);
+                entityManager.joinTransaction();
+
+                List<?> list = query(messageId);
                 if (list.isEmpty()) {
                     return Boolean.FALSE;
                 } else {
@@ -116,13 +116,13 @@ public class JpaMessageIdRepository extends ServiceSupport implements Idempotent
     public boolean remove(final String messageId) {
         Boolean rc = transactionTemplate.execute(new TransactionCallback<Boolean>() {
             public Boolean doInTransaction(TransactionStatus arg0) {
-            	entityManager.joinTransaction();
-            	
+                entityManager.joinTransaction();
+
                 List<?> list = query(messageId);
                 if (list.isEmpty()) {
                     return Boolean.FALSE;
                 } else {
-                    MessageProcessed processed = (MessageProcessed) list.get(0);
+                    MessageProcessed processed = (MessageProcessed)list.get(0);
                     entityManager.remove(processed);
                     entityManager.flush();
                     return Boolean.TRUE;
@@ -133,10 +133,10 @@ public class JpaMessageIdRepository extends ServiceSupport implements Idempotent
     }
     
     private List<?> query(final String messageId) {
-    	Query query = entityManager.createQuery(QUERY_STRING);
-    	query.setParameter(1, processorName);
-    	query.setParameter(2, messageId);
-    	return query.getResultList();
+        Query query = entityManager.createQuery(QUERY_STRING);
+        query.setParameter(1, processorName);
+        query.setParameter(2, messageId);
+        return query.getResultList();
     }
 
     public boolean confirm(String s) {
@@ -155,6 +155,6 @@ public class JpaMessageIdRepository extends ServiceSupport implements Idempotent
 
     @Override
     protected void doStop() throws Exception {
-    	entityManager.close();
+        entityManager.close();
     }
 }

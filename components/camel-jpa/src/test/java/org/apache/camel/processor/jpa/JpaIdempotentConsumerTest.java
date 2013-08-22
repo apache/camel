@@ -16,8 +16,6 @@
  */
 package org.apache.camel.processor.jpa;
 
-import static org.apache.camel.processor.idempotent.jpa.JpaMessageIdRepository.jpaMessageIdRepository;
-
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
@@ -36,6 +34,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
+
+import static org.apache.camel.processor.idempotent.jpa.JpaMessageIdRepository.jpaMessageIdRepository;
 
 /**
  * @version 
@@ -56,12 +56,12 @@ public class JpaIdempotentConsumerTest extends AbstractJpaTest {
     protected void cleanupRepository() {
         transactionTemplate.execute(new TransactionCallback<Object>() {
             public Object doInTransaction(TransactionStatus arg0) {
-            	entityManager.joinTransaction();
-            	Query query = entityManager.createQuery(SELECT_ALL_STRING);
-            	query.setParameter(1, PROCESSOR_NAME);
+                entityManager.joinTransaction();
+                Query query = entityManager.createQuery(SELECT_ALL_STRING);
+                query.setParameter(1, PROCESSOR_NAME);
                 List<?> list = query.getResultList();
                 for (Object item : list) {
-                	entityManager.remove(item);
+                    entityManager.remove(item);
                 }
                 entityManager.flush();
                 return Boolean.TRUE;
@@ -107,8 +107,8 @@ public class JpaIdempotentConsumerTest extends AbstractJpaTest {
         // all 3 messages should be in jpa repo
         Set<String> ids = new HashSet<String>();
         Query query = entityManager.createQuery(SELECT_ALL_STRING);
-    	query.setParameter(1, PROCESSOR_NAME);
-    	List<MessageProcessed> list = query.getResultList();
+        query.setParameter(1, PROCESSOR_NAME);
+        List<MessageProcessed> list = query.getResultList();
         for (MessageProcessed item : list) {
             ids.add(item.getMessageId());
         }
@@ -158,8 +158,8 @@ public class JpaIdempotentConsumerTest extends AbstractJpaTest {
         // only message 1 and 3 should be in jpa repo
         Set<String> ids = new HashSet<String>();
         Query query = entityManager.createQuery(SELECT_ALL_STRING);
-    	query.setParameter(1, PROCESSOR_NAME);
-    	List<MessageProcessed> list = query.getResultList();
+        query.setParameter(1, PROCESSOR_NAME);
+        List<MessageProcessed> list = query.getResultList();
         for (MessageProcessed item : list) {
             ids.add(item.getMessageId());
         }
@@ -180,14 +180,14 @@ public class JpaIdempotentConsumerTest extends AbstractJpaTest {
         });
     }
 
-	@Override
-	protected String routeXml() {
-		return "org/apache/camel/processor/jpa/spring.xml";
-	}
+    @Override
+    protected String routeXml() {
+        return "org/apache/camel/processor/jpa/spring.xml";
+    }
 
-	@Override
-	protected String selectAllString() {
-		return SELECT_ALL_STRING;
-	}
+    @Override
+    protected String selectAllString() {
+        return SELECT_ALL_STRING;
+    }
 
 }

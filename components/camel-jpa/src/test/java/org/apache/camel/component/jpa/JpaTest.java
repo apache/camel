@@ -16,9 +16,6 @@
  */
 package org.apache.camel.component.jpa;
 
-import static org.apache.camel.util.ServiceHelper.startServices;
-import static org.apache.camel.util.ServiceHelper.stopServices;
-
 import java.util.List;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
@@ -42,6 +39,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
+
+import static org.apache.camel.util.ServiceHelper.startServices;
+import static org.apache.camel.util.ServiceHelper.stopServices;
+
 /**
  * @version 
  */
@@ -60,9 +61,9 @@ public class JpaTest extends Assert {
 
     @Test
     public void testProducerInsertsIntoDatabaseThenConsumerFiresMessageExchange() throws Exception {
-    	transactionTemplate.execute(new TransactionCallback<Object>() {
+        transactionTemplate.execute(new TransactionCallback<Object>() {
             public Object doInTransaction(TransactionStatus status) {
-            	entityManager.joinTransaction();
+                entityManager.joinTransaction();
                 // lets delete any exiting records before the test
                 entityManager.createQuery("delete from " + entityName).executeUpdate();
                 return null;
