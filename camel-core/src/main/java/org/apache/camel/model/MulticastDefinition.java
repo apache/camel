@@ -267,14 +267,14 @@ public class MulticastDefinition extends OutputDefinition<MulticastDefinition> i
         if (strategy == null && strategyRef != null) {
             Object aggStrategy = routeContext.lookup(strategyRef, Object.class);
             if (aggStrategy instanceof AggregationStrategy) {
+                strategy = (AggregationStrategy) aggStrategy;
+            } else if (aggStrategy != null) {
                 AggregationStrategyBeanAdapter adapter = new AggregationStrategyBeanAdapter(aggStrategy, getStrategyMethodName());
                 if (getStrategyMethodAllowNull() != null) {
                     adapter.setAllowNullNewExchange(getStrategyMethodAllowNull());
                     adapter.setAllowNullOldExchange(getStrategyMethodAllowNull());
                 }
                 strategy = adapter;
-            } else if (aggStrategy != null) {
-                strategy = new AggregationStrategyBeanAdapter(aggStrategy, getStrategyMethodName());
             } else {
                 throw new IllegalArgumentException("Cannot find AggregationStrategy in Registry with name: " + strategyRef);
             }
