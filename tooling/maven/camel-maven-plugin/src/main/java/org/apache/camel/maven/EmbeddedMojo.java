@@ -36,7 +36,7 @@ import org.codehaus.mojo.exec.AbstractExecMojo;
  * the DOT file before closing the context down.
  *
  * @goal embedded
- * @requiresDependencyResolution runtime
+ * @requiresDependencyResolution compile+runtime
  * @execute phase="test-compile"
  */
 public class EmbeddedMojo extends AbstractExecMojo {
