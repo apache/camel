@@ -35,6 +35,15 @@ public class DumpModelAsXmlChoiceFilterRouteTest extends ContextTestSupport {
         assertTrue(xml.contains("<simple>${body} contains Camel</simple>"));
     }
 
+    public void testDumpModelAsXmAl() throws Exception {
+        String xml = ModelHelper.dumpModelAsXml(context.getRouteDefinition("a"));
+        assertNotNull(xml);
+        log.info(xml);
+
+        assertTrue(xml.contains("<constant>bar</constant>"));
+        assertTrue(xml.contains("<expressionDefinition>header{test} is not null</expressionDefinition>"));
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
@@ -54,6 +63,14 @@ public class DumpModelAsXmlChoiceFilterRouteTest extends ContextTestSupport {
                             .to("mock:other")
                     .end()
                     .to("mock:result");
+
+                from("seda:a").routeId("a")
+                    .setProperty("foo").constant("bar")
+                    .choice()
+                        .when(header("test").isNotNull()).log("not null")
+                        .when(xpath("/foo/bar")).log("xpath")
+                    .end()
+                    .to("mock:a");
             }
         };
     }

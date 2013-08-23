@@ -143,5 +143,14 @@ public class ExpressionNode extends ProcessorDefinition<ExpressionNode> {
                 expression = clause.getExpressionType();
             }
         }
+
+        if (expression != null && expression.getExpression() == null) {
+            // use toString from predicate or expression so we have some information to show in the route model
+            if (expression.getPredicate() != null) {
+                expression.setExpression(expression.getPredicate().toString());
+            } else if (expression.getExpressionValue() != null) {
+                expression.setExpression(expression.getExpressionValue().toString());
+            }
+        }
     }
 }
