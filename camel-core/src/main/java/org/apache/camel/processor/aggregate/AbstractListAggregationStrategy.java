@@ -80,11 +80,9 @@ public abstract class AbstractListAggregationStrategy<V> implements CompletionAw
      */
     public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
         List<V> list;
-        Exchange answer = oldExchange;
 
         if (oldExchange == null) {
-            answer = new DefaultExchange(newExchange);
-            list = getList(answer);
+            list = getList(newExchange);
         } else {
             list = getList(oldExchange);
         }
@@ -96,7 +94,7 @@ public abstract class AbstractListAggregationStrategy<V> implements CompletionAw
             }
         }
 
-        return answer;
+        return oldExchange != null ? oldExchange : newExchange;
     }
 
     @SuppressWarnings("unchecked")
