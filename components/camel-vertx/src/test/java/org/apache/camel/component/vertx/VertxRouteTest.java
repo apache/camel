@@ -41,10 +41,7 @@ public class VertxRouteTest extends CamelTestSupport {
 
     @Test
     public void testVertxMessages() throws Exception {
-        // Vertx doesn't support JDK 1.6
-        if (isJava16()) {
-            return;
-        }
+        
         resultEndpoint = context.getEndpoint(resultUri, MockEndpoint.class);
         resultEndpoint.expectedBodiesReceivedInAnyOrder(body1, body2);
 
@@ -62,10 +59,8 @@ public class VertxRouteTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                // Vertx doesn't support JDK 1.6
-                if (isJava16()) {
-                    return;
-                }
+                // camel-vertx cannot be ran with JDK 1.6
+                org.junit.Assume.assumeTrue(!isJava16());
                 from(startUri).to(middleUri);
                 from(middleUri).to(resultUri);
             }
