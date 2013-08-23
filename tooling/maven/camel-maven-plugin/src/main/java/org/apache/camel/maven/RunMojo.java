@@ -60,7 +60,7 @@ import org.codehaus.mojo.exec.Property;
  * and <code>camel-*.xml</code> and starting up the context.
  *
  * @goal run
- * @requiresDependencyResolution runtime
+ * @requiresDependencyResolution compile+runtime
  * @execute phase="test-compile"
  */
 public class RunMojo extends AbstractExecMojo {
