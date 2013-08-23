@@ -16,28 +16,17 @@
  */
 package org.apache.camel.loanbroker.webservice.version;
 
-import org.apache.camel.Exchange;
 import org.apache.camel.loanbroker.webservice.version.bank.BankQuote;
-import org.apache.camel.processor.aggregate.AggregationStrategy;
 
 //START SNIPPET: aggregating
-public class BankResponseAggregationStrategy implements AggregationStrategy {
-
-    @Override
-    public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
-        // the first time we only have the new exchange
-        if (oldExchange == null) {
-            return newExchange;
-        }
-        
-        BankQuote oldQuote = oldExchange.getIn().getBody(BankQuote.class);
-        BankQuote newQuote = newExchange.getIn().getBody(BankQuote.class);
-        
-        // return the winner with the lowest rate
-        if (oldQuote.getRate() <= newQuote.getRate()) {
-            return oldExchange;
+// This POJO aggregator is supported since Camel 2.12
+public class BankResponseAggregationStrategy {
+    
+    public BankQuote aggregate(BankQuote oldQuote, BankQuote newQuote) {
+        if (oldQuote != null && oldQuote.getRate() <= newQuote.getRate()) {
+            return oldQuote;
         } else {
-            return newExchange;
+            return newQuote;
         }
     }
 
