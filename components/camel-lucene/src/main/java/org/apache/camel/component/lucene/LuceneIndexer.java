@@ -41,8 +41,7 @@ public class LuceneIndexer {
     private NIOFSDirectory niofsDirectory;
     private IndexWriter indexWriter;
     private boolean sourceDirectoryIndexed;
-    private boolean indexCreated;
-    
+
     public LuceneIndexer(File sourceDirectory, File indexDirectory, Analyzer analyzer)  throws Exception {
         if (indexDirectory != null) {
             if (!indexDirectory.exists()) {
@@ -144,13 +143,8 @@ public class LuceneIndexer {
 
     private void openIndexWriter() throws IOException {
         IndexWriterConfig indexWriterConfig;
-        if (!indexCreated) {
-            indexWriterConfig = new IndexWriterConfig(Version.LUCENE_36, getAnalyzer()).setOpenMode(OpenMode.CREATE);            
-            indexWriter = new IndexWriter(niofsDirectory, indexWriterConfig);
-            indexCreated = true;
-            return;
-        }
-        indexWriterConfig = new IndexWriterConfig(Version.LUCENE_36, getAnalyzer()).setOpenMode(OpenMode.APPEND);            
+        // use create or append so we can reuse existing index if already exists
+        indexWriterConfig = new IndexWriterConfig(Version.LUCENE_36, getAnalyzer()).setOpenMode(OpenMode.CREATE_OR_APPEND);
         indexWriter = new IndexWriter(niofsDirectory, indexWriterConfig);
     }
 
