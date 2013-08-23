@@ -37,11 +37,14 @@ public class VertxRouteTest extends CamelTestSupport {
     protected MockEndpoint resultEndpoint;
     protected String body1 = "{\"id\":1,\"description\":\"Message One\"}";
     protected String body2 = "{\"id\":2,\"description\":\"Message Two\"}";
-    private boolean sentMessages;
-
+    
 
     @Test
     public void testVertxMessages() throws Exception {
+        // Vertx doesn't support JDK 1.6
+        if (isJava16()) {
+            return;
+        }
         resultEndpoint = context.getEndpoint(resultUri, MockEndpoint.class);
         resultEndpoint.expectedBodiesReceivedInAnyOrder(body1, body2);
 
@@ -59,6 +62,10 @@ public class VertxRouteTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
+                // Vertx doesn't support JDK 1.6
+                if (isJava16()) {
+                    return;
+                }
                 from(startUri).to(middleUri);
                 from(middleUri).to(resultUri);
             }
