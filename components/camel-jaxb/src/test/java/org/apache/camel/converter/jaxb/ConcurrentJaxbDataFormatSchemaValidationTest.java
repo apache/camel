@@ -55,7 +55,7 @@ public class ConcurrentJaxbDataFormatSchemaValidationTest extends CamelTestSuppo
         }
 
         assertMockEndpointsSatisfied();
-        log.info("Validation of {} messages took {} ms",testCount, (System.currentTimeMillis() - start));
+        log.info("Validation of {} messages took {} ms", testCount, System.currentTimeMillis() - start);
 
         String payload = mockMarshall.getExchanges().get(0).getIn().getBody(String.class);
         log.info(payload);
@@ -92,7 +92,7 @@ public class ConcurrentJaxbDataFormatSchemaValidationTest extends CamelTestSuppo
         }
 
         assertMockEndpointsSatisfied(20, TimeUnit.SECONDS);
-        log.info("Validation of {} messages took {} ms",testCount, (System.currentTimeMillis() - start));
+        log.info("Validation of {} messages took {} ms", testCount, System.currentTimeMillis() - start);
 
         Person person = mockUnmarshall.getExchanges().get(0).getIn().getBody(Person.class);
 

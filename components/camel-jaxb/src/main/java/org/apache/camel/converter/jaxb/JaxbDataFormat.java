@@ -226,7 +226,7 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, CamelC
         return schemaFactory;
     }
 
-    public void setSchema(SchemaFactory schemaFactory) {
+    public void setSchemaFactory(SchemaFactory schemaFactory) {
         this.schemaFactory = schemaFactory;
     }
 
