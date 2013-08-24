@@ -55,8 +55,58 @@ public abstract class AbstractSmppCommand implements SmppCommand {
         return message;
     }
 
+    @SuppressWarnings({ "unchecked", "rawtypes" })
+    protected List<OptionalParameter> createOptionalParameters(Map optinalParamaters) {
+        if (optinalParamaters == null || optinalParamaters.isEmpty()) {
+            return new ArrayList<OptionalParameter>();
+        }
+
+        Object firstKey = optinalParamaters.keySet().iterator().next();
+        if (firstKey instanceof String) {
+            return createOptionalParametersByName(optinalParamaters);
+        } else {
+            return createOptionalParametersByCode(optinalParamaters);
+        }
+    }
+
+    protected List<OptionalParameter> createOptionalParametersByCode(Map<Short, Object> optinalParamaters) {
+        List<OptionalParameter> optParams = new ArrayList<OptionalParameter>();
+
+        for (Entry<Short, Object> entry : optinalParamaters.entrySet()) {
+            OptionalParameter optParam = null;
+            Short key = entry.getKey();
+            Object value = entry.getValue();
+
+            try {
+                if (value == null) {
+                    optParam = new OptionalParameter.Null(key);
+                } else if (value instanceof byte[]) {
+                    optParam = new OptionalParameter.OctetString(key, (byte[]) value);
+                } else if (value instanceof String) {
+                    optParam = new OptionalParameter.COctetString(key, (String) value);
+                } else if (value instanceof Byte) {
+                    optParam = new OptionalParameter.Byte(key, (Byte) value);
+                } else if (value instanceof Integer) {
+                    optParam = new OptionalParameter.Int(key, (Integer) value);
+                } else if (value instanceof Short) {
+                    optParam = new OptionalParameter.Short(key, (Short) value);
+                } else {
+                    log.info("Couldn't determine optional parameter for value {} (type: {}). Skip this one.", value, value.getClass());
+                    continue;
+                }
+
+                optParams.add(optParam);
+            } catch (Exception e) {
+                log.info("Couldn't determine optional parameter for key {} and value {}. Skip this one.", key, value);
+            }
+        }
+
+        return optParams;
+    }
+
     @SuppressWarnings("rawtypes")
-    protected List<OptionalParameter> createOptionalParameters(Map<String, String> optinalParamaters) {
+    @Deprecated
+    protected List<OptionalParameter> createOptionalParametersByName(Map<String, String> optinalParamaters) {
         List<OptionalParameter> optParams = new ArrayList<OptionalParameter>();
 
         for (Entry<String, String> entry : optinalParamaters.entrySet()) {
