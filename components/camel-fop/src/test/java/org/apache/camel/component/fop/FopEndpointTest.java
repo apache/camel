@@ -46,7 +46,16 @@ public class FopEndpointTest extends CamelTestSupport {
     @Test
     public void specifyCustomUserConfigurationFile() throws Exception {
         FopEndpoint customConfiguredEndpoint = context()
-                .getEndpoint("fop:application/pdf?userConfigURL=src/test/data/conf/testcfg.xml",
+                .getEndpoint("fop:application/pdf?userConfigURL=file:src/test/data/conf/testcfg.xml",
+                        FopEndpoint.class);
+        float customSourceResolution = customConfiguredEndpoint.getFopFactory().getSourceResolution();
+        assertEquals(96.0, customSourceResolution, 0.1);
+    }
+
+    @Test
+    public void specifyCustomUserConfigurationFileClasspath() throws Exception {
+        FopEndpoint customConfiguredEndpoint = context()
+                .getEndpoint("fop:application/pdf?userConfigURL=myconf/testcfg.xml",
                         FopEndpoint.class);
         float customSourceResolution = customConfiguredEndpoint.getFopFactory().getSourceResolution();
         assertEquals(96.0, customSourceResolution, 0.1);
