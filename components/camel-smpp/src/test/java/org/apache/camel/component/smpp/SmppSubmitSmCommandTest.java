@@ -221,6 +221,69 @@ public class SmppSubmitSmCommandTest {
     }
 
     @Test
+    public void executeWithOptionalParameterNewStyle() throws Exception {
+        Exchange exchange = new DefaultExchange(new DefaultCamelContext(), ExchangePattern.InOut);
+        exchange.getIn().setHeader(SmppConstants.COMMAND, "SubmitSm");
+        exchange.getIn().setHeader(SmppConstants.ID, "1");
+        exchange.getIn().setHeader(SmppConstants.SOURCE_ADDR_TON, TypeOfNumber.NATIONAL.value());
+        exchange.getIn().setHeader(SmppConstants.SOURCE_ADDR_NPI, NumberingPlanIndicator.NATIONAL.value());
+        exchange.getIn().setHeader(SmppConstants.SOURCE_ADDR, "1818");
+        exchange.getIn().setHeader(SmppConstants.DEST_ADDR_TON, TypeOfNumber.INTERNATIONAL.value());
+        exchange.getIn().setHeader(SmppConstants.DEST_ADDR_NPI, NumberingPlanIndicator.INTERNET.value());
+        exchange.getIn().setHeader(SmppConstants.DEST_ADDR, "1919");
+        exchange.getIn().setHeader(SmppConstants.SCHEDULE_DELIVERY_TIME, new Date(1111111));
+        exchange.getIn().setHeader(SmppConstants.VALIDITY_PERIOD, new Date(2222222));
+        exchange.getIn().setHeader(SmppConstants.PROTOCOL_ID, (byte) 1);
+        exchange.getIn().setHeader(SmppConstants.PRIORITY_FLAG, (byte) 2);
+        exchange.getIn().setHeader(SmppConstants.REGISTERED_DELIVERY, new RegisteredDelivery(SMSCDeliveryReceipt.SUCCESS).value());
+        exchange.getIn().setHeader(SmppConstants.REPLACE_IF_PRESENT_FLAG, ReplaceIfPresentFlag.REPLACE.value());
+        exchange.getIn().setBody("short message body");
+        Map<Short, Object> optionalParameters = new LinkedHashMap<Short, Object>();
+        // standard optional parameter
+        optionalParameters.put(Short.valueOf((short) 0x0202), "1292".getBytes("UTF-8"));
+        optionalParameters.put(Short.valueOf((short) 0x001D), "urgent");
+        optionalParameters.put(Short.valueOf((short) 0x0005), Byte.valueOf("4"));
+        optionalParameters.put(Short.valueOf((short) 0x0008), Short.valueOf((short) 2));
+        optionalParameters.put(Short.valueOf((short) 0x0017), Integer.valueOf(3600000));
+        optionalParameters.put(Short.valueOf((short) 0x130C), null);
+        // vendor specific optional parameter
+        optionalParameters.put(Short.valueOf((short) 0x2150), "0815".getBytes("UTF-8"));
+        optionalParameters.put(Short.valueOf((short) 0x2151), "0816");
+        optionalParameters.put(Short.valueOf((short) 0x2152), Byte.valueOf("6"));
+        optionalParameters.put(Short.valueOf((short) 0x2153), Short.valueOf((short) 9));
+        optionalParameters.put(Short.valueOf((short) 0x2154), Integer.valueOf(7400000));
+        optionalParameters.put(Short.valueOf((short) 0x2155), null);
+        exchange.getIn().setHeader(SmppConstants.OPTIONAL_PARAMETERS, optionalParameters);
+        expect(session.submitShortMessage(eq("CMT"), eq(TypeOfNumber.NATIONAL), eq(NumberingPlanIndicator.NATIONAL), eq("1818"),
+                eq(TypeOfNumber.INTERNATIONAL), eq(NumberingPlanIndicator.INTERNET), eq("1919"),
+                eq(new ESMClass()), eq((byte) 1), eq((byte) 2), eq("-300101001831100-"), eq("-300101003702200-"), eq(new RegisteredDelivery(SMSCDeliveryReceipt.SUCCESS)),
+                eq(ReplaceIfPresentFlag.REPLACE.value()), eq(DataCoding.newInstance((byte) 0)), eq((byte) 0),
+                aryEq("short message body".getBytes()),
+                eq(new OptionalParameter.OctetString(Tag.SOURCE_SUBADDRESS, "1292")),
+                eq(new OptionalParameter.COctetString(Tag.ADDITIONAL_STATUS_INFO_TEXT.code(), "urgent")),
+                eq(new OptionalParameter.Byte(Tag.DEST_ADDR_SUBUNIT, (byte) 4)),
+                eq(new OptionalParameter.Short(Tag.DEST_TELEMATICS_ID.code(), (short) 2)),
+                eq(new OptionalParameter.Int(Tag.QOS_TIME_TO_LIVE, 3600000)),
+                eq(new OptionalParameter.Null(Tag.ALERT_ON_MESSAGE_DELIVERY)),
+                eq(new OptionalParameter.OctetString((short) 0x2150, "1292", "UTF-8")),
+                eq(new OptionalParameter.COctetString((short) 0x2151, "0816")),
+                eq(new OptionalParameter.Byte((short) 0x2152, (byte) 6)),
+                eq(new OptionalParameter.Short((short) 0x2153, (short) 9)),
+                eq(new OptionalParameter.Int((short) 0x2154, 7400000)),
+                eq(new OptionalParameter.Null((short) 0x2155))))
+                .andReturn("1");
+
+        replay(session);
+
+        command.execute(exchange);
+
+        verify(session);
+
+        assertEquals(Arrays.asList("1"), exchange.getOut().getHeader(SmppConstants.ID));
+        assertEquals(1, exchange.getOut().getHeader(SmppConstants.SENT_MESSAGE_COUNT));
+    }
+
+    @Test
     public void executeWithValidityPeriodAsString() throws Exception {
         Exchange exchange = new DefaultExchange(new DefaultCamelContext(), ExchangePattern.InOut);
         exchange.getIn().setHeader(SmppConstants.COMMAND, "SubmitSm");
