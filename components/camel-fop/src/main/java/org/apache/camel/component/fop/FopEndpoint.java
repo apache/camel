@@ -19,6 +19,8 @@ package org.apache.camel.component.fop;
 import java.io.IOException;
 import java.io.InputStream;
 
+import org.xml.sax.SAXException;
+
 import org.apache.avalon.framework.configuration.Configuration;
 import org.apache.avalon.framework.configuration.ConfigurationException;
 import org.apache.avalon.framework.configuration.DefaultConfigurationBuilder;
@@ -28,7 +30,6 @@ import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.util.ResourceHelper;
 import org.apache.fop.apps.FopFactory;
-import org.xml.sax.SAXException;
 
 /**
  * Represents a Fop endpoint.
