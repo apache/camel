@@ -224,7 +224,7 @@ public class JdbcProducer extends DefaultProducer {
 
         exchange.getOut().setHeader(JdbcConstants.JDBC_ROW_COUNT, data.size());
         if (!data.isEmpty()) {
-          exchange.getOut().setHeader(JdbcConstants.JDBC_COLUMN_NAMES, data.get(0).keySet());
+            exchange.getOut().setHeader(JdbcConstants.JDBC_COLUMN_NAMES, data.get(0).keySet());
         }
         exchange.getOut().setBody(data);
     }
