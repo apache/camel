@@ -196,7 +196,7 @@ public class SmppDataSmCommandTest {
         optionalParameters.put(Short.valueOf((short) 0x2153), Short.valueOf((short) 9));
         optionalParameters.put(Short.valueOf((short) 0x2154), Integer.valueOf(7400000));
         optionalParameters.put(Short.valueOf((short) 0x2155), null);
-        exchange.getIn().setHeader(SmppConstants.OPTIONAL_PARAMETERS, optionalParameters);
+        exchange.getIn().setHeader(SmppConstants.OPTIONAL_PARAMETER, optionalParameters);
         expect(session.dataShortMessage(eq("CMT"), eq(TypeOfNumber.UNKNOWN), eq(NumberingPlanIndicator.UNKNOWN), eq("1616"),
                 eq(TypeOfNumber.UNKNOWN), eq(NumberingPlanIndicator.UNKNOWN), eq("1717"), eq(new ESMClass()),
                 eq(new RegisteredDelivery((byte) 1)), eq(DataCoding.newInstance((byte) 0)),

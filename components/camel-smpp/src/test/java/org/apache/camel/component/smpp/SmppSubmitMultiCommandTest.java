@@ -506,7 +506,7 @@ public class SmppSubmitMultiCommandTest {
         optionalParameters.put(Short.valueOf((short) 0x2153), Short.valueOf((short) 9));
         optionalParameters.put(Short.valueOf((short) 0x2154), Integer.valueOf(7400000));
         optionalParameters.put(Short.valueOf((short) 0x2155), null);
-        exchange.getIn().setHeader(SmppConstants.OPTIONAL_PARAMETERS, optionalParameters);
+        exchange.getIn().setHeader(SmppConstants.OPTIONAL_PARAMETER, optionalParameters);
         exchange.getIn().setBody("short message body");
         expect(session.submitMultiple(eq("CMT"), eq(TypeOfNumber.NATIONAL), eq(NumberingPlanIndicator.NATIONAL), eq("1818"),
                 aryEq(new Address[]{new Address(TypeOfNumber.INTERNATIONAL, NumberingPlanIndicator.INTERNET, "1919")}),

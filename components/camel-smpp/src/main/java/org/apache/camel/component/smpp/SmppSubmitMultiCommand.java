@@ -246,12 +246,18 @@ public class SmppSubmitMultiCommand extends SmppSmCommand {
             submitMulti.setReplaceIfPresentFlag(config.getReplaceIfPresentFlag());
         }
 
-        Map<String, String> optinalParamaters = in.getHeader(SmppConstants.OPTIONAL_PARAMETERS, Map.class);
-        if (optinalParamaters != null) {
-            List<OptionalParameter> optParams = createOptionalParameters(optinalParamaters);
+        Map<java.lang.Short, Object> optinalParamater = in.getHeader(SmppConstants.OPTIONAL_PARAMETER, Map.class);
+        if (optinalParamater != null) {
+            List<OptionalParameter> optParams = createOptionalParametersByCode(optinalParamater);
             submitMulti.setOptionalParameters(optParams.toArray(new OptionalParameter[optParams.size()]));
         } else {
-            submitMulti.setOptionalParameters(new OptionalParameter[]{});
+            Map<String, String> optinalParamaters = in.getHeader(SmppConstants.OPTIONAL_PARAMETERS, Map.class);
+            if (optinalParamaters != null) {
+                List<OptionalParameter> optParams = createOptionalParametersByName(optinalParamaters);
+                submitMulti.setOptionalParameters(optParams.toArray(new OptionalParameter[optParams.size()]));
+            } else {
+                submitMulti.setOptionalParameters(new OptionalParameter[]{});
+            }
         }
 
         return submitMulti;
