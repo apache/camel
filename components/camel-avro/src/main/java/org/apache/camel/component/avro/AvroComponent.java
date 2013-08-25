@@ -113,7 +113,7 @@ public class AvroComponent extends DefaultComponent {
             Iterable<Protocol.Message> messagesToCheck = config.getMessageName() == null 
                 ? messageMap.values() 
                 : Collections.singleton(messageMap.get(config.getMessageName()));
-            for (Protocol.Message message: messagesToCheck) {
+            for (Protocol.Message message : messagesToCheck) {
                 if (message.getRequest().getFields().size() != 1) {
                     throw new IllegalArgumentException("Single parameter option can't be used with message "
                             + message.getName() + " because it has " + message.getRequest().getFields().size()
