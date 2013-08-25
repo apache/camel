@@ -50,6 +50,8 @@ public class QuartzEndpoint extends DefaultEndpoint implements ShutdownableServi
     private JobDetail jobDetail = new JobDetail();
     private volatile boolean started;
     private volatile boolean stateful;
+    private boolean deleteJob = true;
+    private boolean pauseJob;
 
     public QuartzEndpoint(final String endpointUri, final QuartzComponent component) {
         super(endpointUri, component);
@@ -200,6 +202,22 @@ public class QuartzEndpoint extends DefaultEndpoint implements ShutdownableServi
         this.stateful = stateful;
     }
 
+    public boolean isDeleteJob() {
+        return deleteJob;
+    }
+
+    public void setDeleteJob(boolean deleteJob) {
+        this.deleteJob = deleteJob;
+    }
+
+    public boolean isPauseJob() {
+        return pauseJob;
+    }
+
+    public void setPauseJob(boolean pauseJob) {
+        this.pauseJob = pauseJob;
+    }
+
     // Implementation methods
     // -------------------------------------------------------------------------
 
@@ -234,6 +252,10 @@ public class QuartzEndpoint extends DefaultEndpoint implements ShutdownableServi
     protected void doStart() throws Exception {
         ObjectHelper.notNull(getComponent(), "QuartzComponent", this);
         ServiceHelper.startService(loadBalancer);
+
+        if (isDeleteJob() && isPauseJob()) {
+            throw new IllegalArgumentException("Cannot have both options deleteJob and pauseJob enabled");
+        }
     }
 
     @Override
@@ -244,6 +266,10 @@ public class QuartzEndpoint extends DefaultEndpoint implements ShutdownableServi
     @Override
     protected void doShutdown() throws Exception {
         ObjectHelper.notNull(trigger, "trigger");
-        deleteTrigger(getTrigger());
+        if (isDeleteJob()) {
+            deleteTrigger(getTrigger());
+        } else if (isPauseJob()) {
+            pauseTrigger(getTrigger());
+        }
     }
 }

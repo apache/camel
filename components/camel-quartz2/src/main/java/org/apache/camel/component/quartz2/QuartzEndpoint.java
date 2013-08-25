@@ -58,6 +58,7 @@ public class QuartzEndpoint extends DefaultEndpoint {
     private boolean stateful;
     private boolean fireNow;
     private boolean deleteJob = true;
+    private boolean pauseJob;
     /** In case of scheduler has already started, we want the trigger start slightly after current time to
      * ensure endpoint is fully started before the job kicks in. */
     private long triggerStartDelay = 500; // in millis second
@@ -88,6 +89,14 @@ public class QuartzEndpoint extends DefaultEndpoint {
 
     public boolean isDeleteJob() {
         return deleteJob;
+    }
+
+    public boolean isPauseJob() {
+        return pauseJob;
+    }
+
+    public void setPauseJob(boolean pauseJob) {
+        this.pauseJob = pauseJob;
     }
 
     public void setTriggerStartDelay(long triggerStartDelay) {
@@ -156,6 +165,10 @@ public class QuartzEndpoint extends DefaultEndpoint {
 
     @Override
     protected void doStart() throws Exception {
+        if (isDeleteJob() && isPauseJob()) {
+            throw new IllegalArgumentException("Cannot have both options deleteJob and pauseJob enabled");
+        }
+
         addJobInScheduler();
     }
 
@@ -178,6 +191,14 @@ public class QuartzEndpoint extends DefaultEndpoint {
 
                 jobAdded.set(false);
             }
+        } else if (pauseJob) {
+            boolean isClustered = scheduler.getMetaData().isJobStoreClustered();
+            if (!scheduler.isShutdown() && !isClustered) {
+                LOG.info("Pausing job {}", triggerKey);
+                scheduler.pauseTrigger(triggerKey);
+
+                jobAdded.set(false);
+            }
         }
 
         // Decrement camel job count for this endpoint
@@ -188,7 +209,7 @@ public class QuartzEndpoint extends DefaultEndpoint {
     private void addJobInScheduler() throws Exception {
         // Add or use existing trigger to/from scheduler
         Scheduler scheduler = getComponent().getScheduler();
-        JobDetail jobDetail = null;
+        JobDetail jobDetail;
         Trigger trigger = scheduler.getTrigger(triggerKey);
         if (trigger == null) {
             jobDetail = createJobDetail();
@@ -244,7 +265,7 @@ public class QuartzEndpoint extends DefaultEndpoint {
     }
 
     private Trigger createTrigger() throws Exception {
-        Trigger result = null;
+        Trigger result;
         Date startTime = new Date();
         if (getComponent().getScheduler().isStarted()) {
             startTime = new Date(System.currentTimeMillis() + triggerStartDelay);

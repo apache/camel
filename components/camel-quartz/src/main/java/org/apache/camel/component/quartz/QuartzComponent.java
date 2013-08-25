@@ -287,7 +287,7 @@ public class QuartzComponent extends DefaultComponent implements StartupListener
             // do not pause jobs which are clustered, as we want the jobs to continue running on the other nodes
             LOG.debug("Cannot delete job using trigger: {}/{} as the JobStore is clustered.", group, name);
         } else {
-            Trigger trigger  = getScheduler().getTrigger(name, group);
+            Trigger trigger = getScheduler().getTrigger(name, group);
             if (trigger != null) {
                 LOG.debug("Deleting job using trigger: {}/{}", group, name);
                 getScheduler().unscheduleJob(name, group);
