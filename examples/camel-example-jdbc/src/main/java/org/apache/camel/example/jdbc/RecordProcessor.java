@@ -29,12 +29,12 @@ import org.slf4j.LoggerFactory;
  */
 public class RecordProcessor implements Processor {
 
-    static Logger LOG = LoggerFactory.getLogger(RecordProcessor.class);
+    static Logger log = LoggerFactory.getLogger(RecordProcessor.class);
 
     public void process(Exchange msg) {
-        LOG.trace("Processing msg {}", msg);
+        log.trace("Processing msg {}", msg);
         Map<String, Object> record = msg.getIn().getBody(Map.class);
-        LOG.info("Processing record {}", record);
+        log.info("Processing record {}", record);
         // Do something useful with this record.
     }
 }
