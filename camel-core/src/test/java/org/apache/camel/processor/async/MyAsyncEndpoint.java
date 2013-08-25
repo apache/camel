@@ -28,6 +28,7 @@ import org.apache.camel.impl.SynchronousDelegateProducer;
  */
 public class MyAsyncEndpoint extends DefaultEndpoint {
 
+    private boolean append;
     private String reply;
     private long delay = 25;
     private int failFirstAttempts;
@@ -76,5 +77,13 @@ public class MyAsyncEndpoint extends DefaultEndpoint {
 
     public void setFailFirstAttempts(int failFirstAttempts) {
         this.failFirstAttempts = failFirstAttempts;
+    }
+
+    public boolean isAppend() {
+        return append;
+    }
+
+    public void setAppend(boolean append) {
+        this.append = append;
     }
 }
