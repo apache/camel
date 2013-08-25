@@ -24,16 +24,17 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Just a demo bean to show we are ready to process each record polled from
- * the database.
+ * Just a demo bean to show we are ready to process each record polled from the
+ * database.
  */
 public class RecordProcessor implements Processor {
-	static Logger LOG = LoggerFactory.getLogger(RecordProcessor.class);
-	
-	public void process(Exchange msg) {
-		LOG.trace("Processing msg {}", msg);
-		Map<String, Object> record = msg.getIn().getBody(Map.class);
-		LOG.info("Processing record {}", record);
-		// Do something useful with this record.
-	}
+
+    static Logger LOG = LoggerFactory.getLogger(RecordProcessor.class);
+
+    public void process(Exchange msg) {
+        LOG.trace("Processing msg {}", msg);
+        Map<String, Object> record = msg.getIn().getBody(Map.class);
+        LOG.info("Processing record {}", record);
+        // Do something useful with this record.
+    }
 }
