@@ -16,12 +16,12 @@
  */
 package org.apache.camel.maven;
 
+import java.io.*;
+import java.util.Properties;
+
 import org.apache.maven.plugin.logging.SystemStreamLog;
 import org.junit.Assert;
 import org.junit.Test;
-
-import java.io.*;
-import java.util.Properties;
 
 public class CamelSalesforceMojoIntegrationTest {
 
@@ -82,7 +82,9 @@ public class CamelSalesforceMojoIntegrationTest {
             if (stream != null) {
                 try {
                     stream.close();
-                } catch (IOException ignore) {}
+                } catch (IOException ignore) {
+                    // noop
+                }
             }
         }
     }
