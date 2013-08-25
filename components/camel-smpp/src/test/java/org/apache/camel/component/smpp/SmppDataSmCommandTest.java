@@ -45,6 +45,7 @@ import static org.easymock.EasyMock.eq;
 import static org.easymock.EasyMock.expect;
 import static org.easymock.EasyMock.replay;
 import static org.easymock.EasyMock.verify;
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNull;
 
@@ -164,7 +165,9 @@ public class SmppDataSmCommandTest {
 
         verify(session);
 
+        assertEquals(3, exchange.getOut().getHeaders().size());
         assertEquals("1", exchange.getOut().getHeader(SmppConstants.ID));
+
         Map<String, String> optParamMap = exchange.getOut().getHeader(SmppConstants.OPTIONAL_PARAMETERS, Map.class);
         assertEquals(6, optParamMap.size());
         assertEquals("1292", optParamMap.get("SOURCE_SUBADDRESS"));
@@ -174,8 +177,18 @@ public class SmppDataSmCommandTest {
         assertEquals("2", optParamMap.get("DEST_TELEMATICS_ID"));
         assertEquals("3600000", optParamMap.get("QOS_TIME_TO_LIVE"));
         assertNull(optParamMap.get("ALERT_ON_MESSAGE_DELIVERY"));
+
+        Map<Short, Object> optionalResultParameter = exchange.getOut().getHeader(SmppConstants.OPTIONAL_PARAMETER, Map.class);
+        assertEquals(6, optionalResultParameter.size());
+        assertArrayEquals("1292".getBytes("UTF-8"), (byte[]) optionalResultParameter.get(Short.valueOf((short) 0x0202)));
+        // FIXME: fix required in JSMPP. See http://code.google.com/p/jsmpp/issues/detail?id=140
+        //assertEquals("urgent", optionalResultParameter.get(Short.valueOf((short) 0x001D)));
+        assertEquals(Byte.valueOf((byte) 4), optionalResultParameter.get(Short.valueOf((short) 0x0005)));
+        assertEquals(Short.valueOf((short) 2), optionalResultParameter.get(Short.valueOf((short) 0x0008)));
+        assertEquals(Integer.valueOf(3600000), optionalResultParameter.get(Short.valueOf((short) 0x0017)));
+        assertNull(optionalResultParameter.get(Short.valueOf((short) 0x130C)));
     }
-    
+
     @SuppressWarnings("unchecked")
     @Test
     public void executeWithOptionalParameterNewStyle() throws Exception {
@@ -223,7 +236,9 @@ public class SmppDataSmCommandTest {
 
         verify(session);
 
+        assertEquals(3, exchange.getOut().getHeaders().size());
         assertEquals("1", exchange.getOut().getHeader(SmppConstants.ID));
+
         Map<String, String> optParamMap = exchange.getOut().getHeader(SmppConstants.OPTIONAL_PARAMETERS, Map.class);
         assertEquals(6, optParamMap.size());
         assertEquals("1292", optParamMap.get("SOURCE_SUBADDRESS"));
@@ -233,5 +248,15 @@ public class SmppDataSmCommandTest {
         assertEquals("2", optParamMap.get("DEST_TELEMATICS_ID"));
         assertEquals("3600000", optParamMap.get("QOS_TIME_TO_LIVE"));
         assertNull(optParamMap.get("ALERT_ON_MESSAGE_DELIVERY"));
+
+        Map<Short, Object> optionalResultParameter = exchange.getOut().getHeader(SmppConstants.OPTIONAL_PARAMETER, Map.class);
+        assertEquals(6, optionalResultParameter.size());
+        assertArrayEquals("1292".getBytes("UTF-8"), (byte[]) optionalResultParameter.get(Short.valueOf((short) 0x0202)));
+        // FIXME: fix required in JSMPP. See http://code.google.com/p/jsmpp/issues/detail?id=140
+        //assertEquals("urgent", optionalResultParameter.get(Short.valueOf((short) 0x001D)));
+        assertEquals(Byte.valueOf((byte) 4), optionalResultParameter.get(Short.valueOf((short) 0x0005)));
+        assertEquals(Short.valueOf((short) 2), optionalResultParameter.get(Short.valueOf((short) 0x0008)));
+        assertEquals(Integer.valueOf(3600000), optionalResultParameter.get(Short.valueOf((short) 0x0017)));
+        assertNull(optionalResultParameter.get(Short.valueOf((short) 0x130C)));
     }
 }
