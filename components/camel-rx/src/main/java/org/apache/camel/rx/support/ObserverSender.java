@@ -47,7 +47,7 @@ public class ObserverSender implements Observer {
         }
     }
 
-    public void onError(Exception e) {
+    public void onError(Throwable e) {
         Exchange exchange = producer.createExchange();
         exchange.setException(e);
         send(exchange);
