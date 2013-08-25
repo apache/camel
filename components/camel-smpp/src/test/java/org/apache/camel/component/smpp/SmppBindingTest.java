@@ -139,7 +139,7 @@ public class SmppBindingTest {
         SmppMessage smppMessage = binding.createSmppMessage(deliverSm);
 
         assertEquals("Hello SMPP world!", smppMessage.getBody());
-        assertEquals(9, smppMessage.getHeaders().size());
+        assertEquals(10, smppMessage.getHeaders().size());
         assertEquals("2", smppMessage.getHeader(SmppConstants.ID));
         assertEquals(1, smppMessage.getHeader(SmppConstants.DELIVERED));
         // To avoid the test failure when running in different TimeZone
@@ -149,8 +149,8 @@ public class SmppBindingTest {
         assertEquals(1, smppMessage.getHeader(SmppConstants.SUBMITTED));
         assertEquals(DeliveryReceiptState.DELIVRD, smppMessage.getHeader(SmppConstants.FINAL_STATUS));
         assertEquals(SmppMessageType.DeliveryReceipt.toString(), smppMessage.getHeader(SmppConstants.MESSAGE_TYPE));
-        
-        Map<String, String> optionalParameters = smppMessage.getHeader(SmppConstants.OPTIONAL_PARAMETERS, Map.class);
+
+        Map<String, Object> optionalParameters = smppMessage.getHeader(SmppConstants.OPTIONAL_PARAMETERS, Map.class);
         assertEquals(6, optionalParameters.size());
         assertEquals("OctetString", optionalParameters.get("SOURCE_SUBADDRESS"));
         assertEquals("COctetStrin", optionalParameters.get("ADDITIONAL_STATUS_INFO_TEXT"));
@@ -158,6 +158,15 @@ public class SmppBindingTest {
         assertEquals(Short.valueOf((short) 1), optionalParameters.get("DEST_TELEMATICS_ID"));
         assertEquals(Integer.valueOf(1), optionalParameters.get("QOS_TIME_TO_LIVE"));
         assertNull("0x00", optionalParameters.get("ALERT_ON_MESSAGE_DELIVERY"));
+
+        Map<Short, Object> optionalParameter = smppMessage.getHeader(SmppConstants.OPTIONAL_PARAMETER, Map.class);
+        assertEquals(6, optionalParameter.size());
+        assertArrayEquals("OctetString".getBytes("UTF-8"), (byte[]) optionalParameter.get(Short.valueOf((short) 0x0202)));
+        assertEquals("COctetStrin", optionalParameter.get(Short.valueOf((short) 0x001D)));
+        assertEquals(Byte.valueOf((byte) 0x01), optionalParameter.get(Short.valueOf((short) 0x0005)));
+        assertEquals(Short.valueOf((short) 1), optionalParameter.get(Short.valueOf((short) 0x0008)));
+        assertEquals(Integer.valueOf(1), optionalParameter.get(Short.valueOf((short) 0x0017)));
+        assertNull("0x00", optionalParameter.get(Short.valueOf((short) 0x130C)));
     }
 
     @Test

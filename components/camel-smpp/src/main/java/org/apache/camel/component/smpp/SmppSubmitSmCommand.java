@@ -206,12 +206,18 @@ public class SmppSubmitSmCommand extends SmppSmCommand {
 
         submitSm.setEsmClass(new ESMClass().value());
 
-        Map<String, String> optinalParamaters = in.getHeader(SmppConstants.OPTIONAL_PARAMETERS, Map.class);
-        if (optinalParamaters != null) {
-            List<OptionalParameter> optParams = createOptionalParameters(optinalParamaters);
+        Map<java.lang.Short, Object> optinalParamater = in.getHeader(SmppConstants.OPTIONAL_PARAMETER, Map.class);
+        if (optinalParamater != null) {
+            List<OptionalParameter> optParams = createOptionalParametersByCode(optinalParamater);
             submitSm.setOptionalParametes(optParams.toArray(new OptionalParameter[optParams.size()]));
         } else {
-            submitSm.setOptionalParametes();
+            Map<String, String> optinalParamaters = in.getHeader(SmppConstants.OPTIONAL_PARAMETERS, Map.class);
+            if (optinalParamaters != null) {
+                List<OptionalParameter> optParams = createOptionalParametersByName(optinalParamaters);
+                submitSm.setOptionalParametes(optParams.toArray(new OptionalParameter[optParams.size()]));
+            } else {
+                submitSm.setOptionalParametes();
+            }
         }
 
         return submitSm;

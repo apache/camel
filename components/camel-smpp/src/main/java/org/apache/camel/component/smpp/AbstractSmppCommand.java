@@ -55,20 +55,6 @@ public abstract class AbstractSmppCommand implements SmppCommand {
         return message;
     }
 
-    @SuppressWarnings({ "unchecked", "rawtypes" })
-    protected List<OptionalParameter> createOptionalParameters(Map optinalParamaters) {
-        if (optinalParamaters == null || optinalParamaters.isEmpty()) {
-            return new ArrayList<OptionalParameter>();
-        }
-
-        Object firstKey = optinalParamaters.keySet().iterator().next();
-        if (firstKey instanceof String) {
-            return createOptionalParametersByName(optinalParamaters);
-        } else {
-            return createOptionalParametersByCode(optinalParamaters);
-        }
-    }
-
     protected List<OptionalParameter> createOptionalParametersByCode(Map<Short, Object> optinalParamaters) {
         List<OptionalParameter> optParams = new ArrayList<OptionalParameter>();
 
@@ -104,8 +90,12 @@ public abstract class AbstractSmppCommand implements SmppCommand {
         return optParams;
     }
 
+    /**
+     * @deprecated will be removed in Camel 2.13.0/3.0.0 - use createOptionalParametersByCode instead
+     * @param optinalParamaters
+     * @return
+     */
     @SuppressWarnings("rawtypes")
-    @Deprecated
     protected List<OptionalParameter> createOptionalParametersByName(Map<String, String> optinalParamaters) {
         List<OptionalParameter> optParams = new ArrayList<OptionalParameter>();
 

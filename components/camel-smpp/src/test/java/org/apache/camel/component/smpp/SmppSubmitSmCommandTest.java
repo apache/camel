@@ -253,7 +253,7 @@ public class SmppSubmitSmCommandTest {
         optionalParameters.put(Short.valueOf((short) 0x2153), Short.valueOf((short) 9));
         optionalParameters.put(Short.valueOf((short) 0x2154), Integer.valueOf(7400000));
         optionalParameters.put(Short.valueOf((short) 0x2155), null);
-        exchange.getIn().setHeader(SmppConstants.OPTIONAL_PARAMETERS, optionalParameters);
+        exchange.getIn().setHeader(SmppConstants.OPTIONAL_PARAMETER, optionalParameters);
         expect(session.submitShortMessage(eq("CMT"), eq(TypeOfNumber.NATIONAL), eq(NumberingPlanIndicator.NATIONAL), eq("1818"),
                 eq(TypeOfNumber.INTERNATIONAL), eq(NumberingPlanIndicator.INTERNET), eq("1919"),
                 eq(new ESMClass()), eq((byte) 1), eq((byte) 2), eq("-300101001831100-"), eq("-300101003702200-"), eq(new RegisteredDelivery(SMSCDeliveryReceipt.SUCCESS)),
