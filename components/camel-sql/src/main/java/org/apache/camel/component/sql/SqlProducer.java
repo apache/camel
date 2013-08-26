@@ -94,12 +94,22 @@ public class SqlProducer extends DefaultProducer {
                         log.trace("Got result list from query: {}, outputType={}", rs, outputType);
                         if (outputType == SqlOutputType.SelectList) {
                             List<Map<String, Object>> data = getEndpoint().queryForList(ps.getResultSet());
-                            exchange.getOut().setBody(data);
+                            // for noop=true we still want to enrich with the row count header
+                            if (getEndpoint().isNoop()) {
+                                exchange.getOut().setBody(exchange.getIn().getBody());
+                            } else {
+                                exchange.getOut().setBody(data);
+                            }
                             exchange.getOut().setHeader(SqlConstants.SQL_ROW_COUNT, data.size());
                         } else if (outputType == SqlOutputType.SelectOne) {
                             Object data = getEndpoint().queryForObject(ps.getResultSet());
                             if (data != null) {
-                                exchange.getOut().setBody(data);
+                                // for noop=true we still want to enrich with the row count header
+                                if (getEndpoint().isNoop()) {
+                                    exchange.getOut().setBody(exchange.getIn().getBody());
+                                } else {
+                                    exchange.getOut().setBody(data);
+                                }
                                 exchange.getOut().setHeader(SqlConstants.SQL_ROW_COUNT, 1);
                             }
                         } else {

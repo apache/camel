@@ -74,6 +74,8 @@ public class SqlEndpoint extends DefaultPollingEndpoint {
     private String outputClass;
     @UriParam
     private int parametersCount;
+    @UriParam
+    private boolean noop;
 
     public SqlEndpoint() {
     }
@@ -234,6 +236,14 @@ public class SqlEndpoint extends DefaultPollingEndpoint {
 
     public void setParametersCount(int parametersCount) {
         this.parametersCount = parametersCount;
+    }
+
+    public boolean isNoop() {
+        return noop;
+    }
+
+    public void setNoop(boolean noop) {
+        this.noop = noop;
     }
 
     @Override
