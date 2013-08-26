@@ -23,8 +23,6 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.util.CamelContextHelper;
-import org.apache.camel.util.ObjectHelper;
 
 /**
  * Represents an XML &lt;routeContextRef/&gt; element
@@ -55,14 +53,7 @@ public class RouteContextRefDefinition {
 
     @SuppressWarnings({"unchecked", "rawtypes"})
     public List<RouteDefinition> lookupRoutes(CamelContext camelContext) {
-        ObjectHelper.notNull(camelContext, "camelContext", this);
-        ObjectHelper.notNull(ref, "ref", this);
-
-        List answer = CamelContextHelper.lookup(camelContext, ref, List.class);
-        if (answer == null) {
-            throw new IllegalArgumentException("Cannot find RouteContext with id " + ref);
-        }
-        return answer;
+        return RouteContextRefDefinitionHelper.lookupRoutes(camelContext, ref);
     }
 
 }
