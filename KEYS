@@ -727,14 +727,18 @@ aXBFB9GtEAATQf2vS/UJw/PtInCQlF3Or3MmBPYR0qZVLHIxBjZRheRFSWffpThw
 =aGvL
 -----END PGP PUBLIC KEY BLOCK-----
 pub   1024D/AE8DE9E4 2008-02-26
-      Key fingerprint = 2D6C 3C63 1196 B77D 12D8  C92F 2350 9298 AE8D E9E4
 uid                  Willem Jiang <ningjiang@apache.org>
+sig 3        AE8DE9E4 2011-01-07  Willem Jiang <ningjiang@apache.org>
+sig 2        7FBBDC54 2008-02-29  Freeman Fang <freeman.fang@gmail.com>
 sub   2048g/7103E49E 2008-02-26
+sig          AE8DE9E4 2008-02-26  Willem Jiang <ningjiang@apache.org>
 
 pub   4096R/14D0DEE9 2011-01-07
-      Key fingerprint = 5000 847E C0EE 4523 38CE  B801 F058 8A55 14D0 DEE9
 uid                  Willem Jiang (CODE SIGNING KEY) <ningjiang@apache.org>
+sig 3        14D0DEE9 2011-01-07  Willem Jiang (CODE SIGNING KEY) <ningjiang@apache.org>
+sig          AE8DE9E4 2011-01-07  Willem Jiang <ningjiang@apache.org>
 sub   4096R/FE639F22 2011-01-07
+sig          14D0DEE9 2011-01-07  Willem Jiang (CODE SIGNING KEY) <ningjiang@apache.org>
 -----BEGIN PGP PUBLIC KEY BLOCK-----
 Version: GnuPG/MacGPG2 v2.0.16 (Darwin)
 
