@@ -24,6 +24,7 @@ import java.io.Serializable;
 import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
+import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -422,6 +423,13 @@ public class HttpProducer extends DefaultProducer {
                         // do not fallback to use the default charset as it can influence the request
                         // (for example application/x-www-form-urlencoded forms being sent)
                         String charset = IOHelper.getCharsetName(exchange, false);
+                        if (charset == null && contentType != null) {
+                            // okay try to get the charset from the content-type
+                            Charset cs = contentType.getCharset();
+                            if (cs != null) {
+                                charset = cs.name();
+                            }
+                        }
                         StringEntity entity = new StringEntity((String) data, charset);
                         if (contentType != null) {
                             entity.setContentType(contentType.toString());
