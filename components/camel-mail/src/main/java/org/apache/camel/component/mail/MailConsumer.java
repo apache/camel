@@ -32,6 +32,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.ScheduledBatchPollingConsumer;
 import org.apache.camel.spi.Synchronization;
+import org.apache.camel.support.SynchronizationAdapter;
 import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -180,13 +181,20 @@ public class MailConsumer extends ScheduledBatchPollingConsumer {
             final Message mail = exchange.getIn(MailMessage.class).getOriginalMessage();
 
             // add on completion to handle after work when the exchange is done
-            exchange.addOnCompletion(new Synchronization() {
+            exchange.addOnCompletion(new SynchronizationAdapter() {
                 public void onComplete(Exchange exchange) {
                     processCommit(mail, exchange);
                 }
 
                 public void onFailure(Exchange exchange) {
                     processRollback(mail, exchange);
+                }
+
+                @Override
+                public boolean allowHandover() {
+                    // do not allow handover as the commit/rollback logic needs to be executed
+                    // on the same session that polled the messages
+                    return false;
                 }
 
                 @Override
