@@ -665,7 +665,7 @@ public class CamelNamespaceHandler implements NamespaceHandler {
                 for (Field field : fields) {
                     PropertyInject propertyInject = field.getAnnotation(PropertyInject.class);
                     if (propertyInject != null && matchContext(propertyInject.context())) {
-                        injectFieldProperty(field, propertyInject.value(), bean, beanName);
+                        injectFieldProperty(field, propertyInject.value(), propertyInject.defaultValue(), bean, beanName);
                     }
 
                     EndpointInject endpointInject = field.getAnnotation(EndpointInject.class);
@@ -686,8 +686,8 @@ public class CamelNamespaceHandler implements NamespaceHandler {
             setField(field, bean, getInjectionValue(field.getType(), endpointUri, endpointRef, endpointProperty, field.getName(), bean, beanName));
         }
 
-        protected void injectFieldProperty(Field field, String propertyName, Object bean, String beanName) {
-            setField(field, bean, getInjectionPropertyValue(field.getType(), propertyName, field.getName(), bean, beanName));
+        protected void injectFieldProperty(Field field, String propertyName, String propertyDefaultValue, Object bean, String beanName) {
+            setField(field, bean, getInjectionPropertyValue(field.getType(), propertyName, propertyDefaultValue, field.getName(), bean, beanName));
         }
 
         protected static void setField(Field field, Object instance, Object value) {
@@ -723,7 +723,7 @@ public class CamelNamespaceHandler implements NamespaceHandler {
         protected void setterInjection(Method method, Object bean, String beanName) {
             PropertyInject propertyInject = method.getAnnotation(PropertyInject.class);
             if (propertyInject != null && matchContext(propertyInject.context())) {
-                setterPropertyInjection(method, propertyInject.value(), bean, beanName);
+                setterPropertyInjection(method, propertyInject.value(), propertyInject.defaultValue(), bean, beanName);
             }
 
             EndpointInject endpointInject = method.getAnnotation(EndpointInject.class);
@@ -737,14 +737,14 @@ public class CamelNamespaceHandler implements NamespaceHandler {
             }
         }
 
-        protected void setterPropertyInjection(Method method, String name, Object bean, String beanName) {
+        protected void setterPropertyInjection(Method method, String propertyValue, String propertyDefaultValue, Object bean, String beanName) {
             Class<?>[] parameterTypes = method.getParameterTypes();
             if (parameterTypes != null) {
                 if (parameterTypes.length != 1) {
                     LOG.warn("Ignoring badly annotated method for injection due to incorrect number of parameters: " + method);
                 } else {
                     String propertyName = ObjectHelper.getPropertyName(method);
-                    Object value = getInjectionPropertyValue(parameterTypes[0], name, propertyName, bean, beanName);
+                    Object value = getInjectionPropertyValue(parameterTypes[0], propertyValue, propertyDefaultValue, propertyName, bean, beanName);
                     ObjectHelper.invokeMethod(method, bean, value);
                 }
             }

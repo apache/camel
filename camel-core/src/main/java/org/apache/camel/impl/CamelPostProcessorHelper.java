@@ -221,7 +221,7 @@ public class CamelPostProcessorHelper implements CamelContextAware {
         }
     }
 
-    public Object getInjectionPropertyValue(Class<?> type, String propertyName, String injectionPointName, Object bean, String beanName) {
+    public Object getInjectionPropertyValue(Class<?> type, String propertyName, String propertyDefaultValue, String injectionPointName, Object bean, String beanName) {
         try {
             String key;
             String prefix = getCamelContext().getPropertyPrefixToken();
@@ -240,6 +240,13 @@ public class CamelPostProcessorHelper implements CamelContextAware {
                 return null;
             }
         } catch (Exception e) {
+            if (ObjectHelper.isNotEmpty(propertyDefaultValue)) {
+                try {
+                    return getCamelContext().getTypeConverter().mandatoryConvertTo(type, propertyDefaultValue);
+                } catch (Exception e2) {
+                    throw ObjectHelper.wrapRuntimeCamelException(e2);
+                }
+            }
             throw ObjectHelper.wrapRuntimeCamelException(e);
         }
     }

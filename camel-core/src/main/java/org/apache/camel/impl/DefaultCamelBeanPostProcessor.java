@@ -168,7 +168,7 @@ public class DefaultCamelBeanPostProcessor {
             public void doWith(Field field) throws IllegalArgumentException, IllegalAccessException {
                 PropertyInject propertyInject = field.getAnnotation(PropertyInject.class);
                 if (propertyInject != null && getPostProcessorHelper().matchContext(propertyInject.context())) {
-                    injectFieldProperty(field, propertyInject.value(), bean, beanName);
+                    injectFieldProperty(field, propertyInject.value(), propertyInject.defaultValue(), bean, beanName);
                 }
 
                 EndpointInject endpointInject = field.getAnnotation(EndpointInject.class);
@@ -191,9 +191,9 @@ public class DefaultCamelBeanPostProcessor {
                         field.getName(), bean, beanName));
     }
 
-    public void injectFieldProperty(Field field, String propertyName, Object bean, String beanName) {
+    public void injectFieldProperty(Field field, String propertyName, String propertyDefaultValue, Object bean, String beanName) {
         ReflectionHelper.setField(field, bean,
-                getPostProcessorHelper().getInjectionPropertyValue(field.getType(), propertyName,
+                getPostProcessorHelper().getInjectionPropertyValue(field.getType(), propertyName, propertyDefaultValue,
                         field.getName(), bean, beanName));
     }
 
@@ -209,7 +209,7 @@ public class DefaultCamelBeanPostProcessor {
     protected void setterInjection(Method method, Object bean, String beanName) {
         PropertyInject propertyInject = method.getAnnotation(PropertyInject.class);
         if (propertyInject != null && getPostProcessorHelper().matchContext(propertyInject.context())) {
-            setterPropertyInjection(method, propertyInject.value(), bean, beanName);
+            setterPropertyInjection(method, propertyInject.value(), propertyInject.defaultValue(), bean, beanName);
         }
 
         EndpointInject endpointInject = method.getAnnotation(EndpointInject.class);
@@ -237,14 +237,15 @@ public class DefaultCamelBeanPostProcessor {
         }
     }
 
-    public void setterPropertyInjection(Method method, String name, Object bean, String beanName) {
+    public void setterPropertyInjection(Method method, String propertyValue, String propertyDefaultValue,
+                                        Object bean, String beanName) {
         Class<?>[] parameterTypes = method.getParameterTypes();
         if (parameterTypes != null) {
             if (parameterTypes.length != 1) {
                 LOG.warn("Ignoring badly annotated method for injection due to incorrect number of parameters: " + method);
             } else {
                 String propertyName = ObjectHelper.getPropertyName(method);
-                Object value = getPostProcessorHelper().getInjectionPropertyValue(parameterTypes[0], name, propertyName, bean, beanName);
+                Object value = getPostProcessorHelper().getInjectionPropertyValue(parameterTypes[0], propertyValue, propertyDefaultValue, propertyName, bean, beanName);
                 ObjectHelper.invokeMethod(method, bean, value);
             }
         }
