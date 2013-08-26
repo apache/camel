@@ -40,6 +40,8 @@ public final class RouteContextRefDefinitionHelper {
 
     private static JAXBContext jaxbContext;
 
+    private RouteContextRefDefinitionHelper() {
+    }
 
     /**
      * Lookup the routes from the {@link RouteContextRefDefinition}.
@@ -54,6 +56,7 @@ public final class RouteContextRefDefinitionHelper {
      * @param ref          the id of the {@link RouteContextRefDefinition} to lookup and get the rotues.
      * @return the routes.
      */
+    @SuppressWarnings("unchecked")
     public static synchronized List<RouteDefinition> lookupRoutes(CamelContext camelContext, String ref) {
         ObjectHelper.notNull(camelContext, "camelContext");
         ObjectHelper.notNull(ref, "ref");
@@ -130,6 +133,5 @@ public final class RouteContextRefDefinitionHelper {
 
         return null;
     }
-
 
 }
