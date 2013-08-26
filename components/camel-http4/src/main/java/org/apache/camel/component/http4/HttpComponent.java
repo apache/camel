@@ -182,12 +182,6 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
             httpBinding = resolveAndRemoveReferenceParameter(parameters, "httpBinding", HttpBinding.class);
         }
 
-        // TODO cmueller: remove the "httpClientConfigurerRef" look up in Camel 3.0
-        HttpClientConfigurer httpClientConfigurer = resolveAndRemoveReferenceParameter(parameters, "httpClientConfigurerRef", HttpClientConfigurer.class);
-        if (httpClientConfigurer == null) {
-            httpClientConfigurer = resolveAndRemoveReferenceParameter(parameters, "httpClientConfigurer", HttpClientConfigurer.class);
-        }
-
         // TODO cmueller: remove the "httpContextRef" look up in Camel 3.0
         HttpContext httpContext = resolveAndRemoveReferenceParameter(parameters, "httpContextRef", HttpContext.class);
         if (httpContext == null) {
@@ -272,9 +266,6 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
         endpoint.setBinding(getHttpBinding());
         if (httpBinding != null) {
             endpoint.setHttpBinding(httpBinding);
-        }
-        if (httpClientConfigurer != null) {
-            endpoint.setHttpClientConfigurer(httpClientConfigurer);
         }
         if (httpMethodRestrict != null) {
             endpoint.setHttpMethodRestrict(httpMethodRestrict);
