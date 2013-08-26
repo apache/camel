@@ -16,16 +16,23 @@
  */
 package org.apache.camel.test.blueprint;
 
-import java.util.Properties;
+import org.junit.Test;
 
-public class MyProperties extends Properties {
-    
-    private static final long serialVersionUID = -2082205766653164835L;
+public class PropertyInjectTest extends CamelBlueprintTestSupport {
 
-    public MyProperties() {
-        setProperty("greeting", "Hello");
-        setProperty("hello", "Hello Camel");
-        setProperty("destination", "mock:result");
+    @Override
+    protected String getBlueprintDescriptor() {
+        return "org/apache/camel/test/blueprint/propertyInjectTest.xml";
     }
+
+    @Test
+    public void testPropertyInject() throws Exception {
+        getMockEndpoint("mock:result").expectedBodiesReceived("Hello");
+
+        template.sendBody("direct:start", "Camel");
+
+        assertMockEndpointsSatisfied();
+    }
+
 
 }

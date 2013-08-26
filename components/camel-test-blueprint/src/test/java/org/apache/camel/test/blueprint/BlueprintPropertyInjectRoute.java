@@ -16,16 +16,19 @@
  */
 package org.apache.camel.test.blueprint;
 
-import java.util.Properties;
+import org.apache.camel.PropertyInject;
+import org.apache.camel.builder.RouteBuilder;
 
-public class MyProperties extends Properties {
-    
-    private static final long serialVersionUID = -2082205766653164835L;
+public class BlueprintPropertyInjectRoute extends RouteBuilder {
 
-    public MyProperties() {
-        setProperty("greeting", "Hello");
-        setProperty("hello", "Hello Camel");
-        setProperty("destination", "mock:result");
+    @PropertyInject("greeting")
+    private String greeting;
+
+    @Override
+    public void configure() throws Exception {
+        from("direct:start")
+                .transform().constant(greeting)
+                .to("{{destination}}");
     }
 
 }

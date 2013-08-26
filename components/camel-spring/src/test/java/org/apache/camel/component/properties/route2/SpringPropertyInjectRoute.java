@@ -14,18 +14,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.test.blueprint;
+package org.apache.camel.component.properties.route2;
 
-import java.util.Properties;
+import org.apache.camel.PropertyInject;
+import org.apache.camel.spring.SpringRouteBuilder;
 
-public class MyProperties extends Properties {
-    
-    private static final long serialVersionUID = -2082205766653164835L;
+/**
+ * @version 
+ */
+public class SpringPropertyInjectRoute extends SpringRouteBuilder {
 
-    public MyProperties() {
-        setProperty("greeting", "Hello");
-        setProperty("hello", "Hello Camel");
-        setProperty("destination", "mock:result");
+    @PropertyInject("hello")
+    private String greeting;
+
+    @Override
+    public void configure() throws Exception {
+        from("direct:start")
+            .transform().constant(greeting)
+            .to("{{result}}");
     }
 
 }

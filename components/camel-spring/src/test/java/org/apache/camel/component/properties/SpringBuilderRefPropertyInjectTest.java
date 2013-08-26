@@ -14,18 +14,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.test.blueprint;
+package org.apache.camel.component.properties;
 
-import java.util.Properties;
+import org.apache.camel.spring.SpringTestSupport;
+import org.springframework.context.support.AbstractXmlApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-public class MyProperties extends Properties {
-    
-    private static final long serialVersionUID = -2082205766653164835L;
+/**
+ * @version 
+ */
+public class SpringBuilderRefPropertyInjectTest extends SpringTestSupport {
 
-    public MyProperties() {
-        setProperty("greeting", "Hello");
-        setProperty("hello", "Hello Camel");
-        setProperty("destination", "mock:result");
+    @Override
+    protected AbstractXmlApplicationContext createApplicationContext() {
+        return new ClassPathXmlApplicationContext("org/apache/camel/component/properties/SpringBuilderRefPropertyInjectTest.xml");
+    }
+
+    public void testPropertyInject() throws Exception {
+        getMockEndpoint("{{result}}").expectedBodiesReceived("Hello Camel");
+
+        template.sendBody("direct:start", "Hello World");
+
+        assertMockEndpointsSatisfied();
     }
 
 }

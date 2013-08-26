@@ -14,18 +14,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.test.blueprint;
+package org.apache.camel;
 
-import java.util.Properties;
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-public class MyProperties extends Properties {
-    
-    private static final long serialVersionUID = -2082205766653164835L;
-
-    public MyProperties() {
-        setProperty("greeting", "Hello");
-        setProperty("hello", "Hello Camel");
-        setProperty("destination", "mock:result");
-    }
-
+/**
+ * Used to indicate an injection point of a
+ * <a href="http://camel.apache.org/using-propertyplaceholder.html">property placeholder</a> into a POJO.
+ */
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
+@Target({ElementType.FIELD, ElementType.METHOD, ElementType.CONSTRUCTOR })
+public @interface PropertyInject {
+    String value();
+    String context() default "";
 }

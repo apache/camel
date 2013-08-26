@@ -135,7 +135,7 @@ public class CamelPostProcessorHelper implements CamelContextAware {
     }
 
     public Endpoint getEndpointInjection(Object bean, String uri, String name, String propertyName,
-                                            String injectionPointName, boolean mandatory) {
+                                         String injectionPointName, boolean mandatory) {
         if (ObjectHelper.isEmpty(uri) && ObjectHelper.isEmpty(name)) {
             // if no uri or ref, then fallback and try the endpoint property
             return doGetEndpointInjection(bean, propertyName, injectionPointName);
@@ -218,6 +218,29 @@ public class CamelPostProcessorHelper implements CamelContextAware {
                 }
             }
             return null;
+        }
+    }
+
+    public Object getInjectionPropertyValue(Class<?> type, String propertyName, String injectionPointName, Object bean, String beanName) {
+        try {
+            String key;
+            String prefix = getCamelContext().getPropertyPrefixToken();
+            String suffix = getCamelContext().getPropertySuffixToken();
+            if (!propertyName.contains(prefix)) {
+                // must enclose the property name with prefix/suffix to have it resolved
+                key = prefix + propertyName + suffix;
+            } else {
+                // key has already prefix/suffix so use it as-is as it may be a compound key
+                key = propertyName;
+            }
+            String value = getCamelContext().resolvePropertyPlaceholders(key);
+            if (value != null) {
+                return getCamelContext().getTypeConverter().mandatoryConvertTo(type, value);
+            } else {
+                return null;
+            }
+        } catch (Exception e) {
+            throw ObjectHelper.wrapRuntimeCamelException(e);
         }
     }
 

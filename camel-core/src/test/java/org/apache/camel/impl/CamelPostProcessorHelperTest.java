@@ -18,7 +18,9 @@ package org.apache.camel.impl;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
+import java.util.Properties;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Consume;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.EndpointInject;
@@ -28,9 +30,11 @@ import org.apache.camel.PollingConsumer;
 import org.apache.camel.Produce;
 import org.apache.camel.Producer;
 import org.apache.camel.ProducerTemplate;
+import org.apache.camel.PropertyInject;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.support.SynchronizationAdapter;
 import org.apache.camel.util.ObjectHelper;
 
@@ -40,6 +44,24 @@ import org.apache.camel.util.ObjectHelper;
 public class CamelPostProcessorHelperTest extends ContextTestSupport {
 
     private MySynchronization mySynchronization = new MySynchronization();
+    private Properties myProp = new Properties();
+
+    @Override
+    protected JndiRegistry createRegistry() throws Exception {
+        JndiRegistry jndi = super.createRegistry();
+        jndi.bind("myProp", myProp);
+        return jndi;
+    }
+
+    @Override
+    protected CamelContext createCamelContext() throws Exception {
+        CamelContext context = super.createCamelContext();
+
+        PropertiesComponent pc = context.getComponent("properties", PropertiesComponent.class);
+        pc.setLocation("ref:myProp");
+
+        return context;
+    }
 
     public void testConstructor() {
         CamelPostProcessorHelper helper = new CamelPostProcessorHelper();
@@ -309,6 +331,48 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
         }
     }
 
+    public void testPropertyFieldInject() throws Exception {
+        myProp.put("myTimeout", "2000");
+        myProp.put("myApp", "Camel");
+
+        CamelPostProcessorHelper helper = new CamelPostProcessorHelper(context);
+
+        MyPropertyFieldBean bean = new MyPropertyFieldBean();
+
+        Field field = bean.getClass().getField("timeout");
+        PropertyInject propertyInject = field.getAnnotation(PropertyInject.class);
+        Class<?> type = field.getType();
+        Object value = helper.getInjectionPropertyValue(type, propertyInject.value(), "timeout",  bean, "foo");
+        assertEquals(Integer.valueOf("2000"), Integer.valueOf("" + value));
+
+        field = bean.getClass().getField("greeting");
+        propertyInject = field.getAnnotation(PropertyInject.class);
+        type = field.getType();
+        value = helper.getInjectionPropertyValue(type, propertyInject.value(), "greeting",  bean, "foo");
+        assertEquals("Hello Camel", value);
+    }
+
+    public void testPropertyMethodInject() throws Exception {
+        myProp.put("myTimeout", "2000");
+        myProp.put("myApp", "Camel");
+
+        CamelPostProcessorHelper helper = new CamelPostProcessorHelper(context);
+
+        MyPropertyMethodBean bean = new MyPropertyMethodBean();
+
+        Method method = bean.getClass().getMethod("setTimeout", int.class);
+        PropertyInject propertyInject = method.getAnnotation(PropertyInject.class);
+        Class<?> type = method.getParameterTypes()[0];
+        Object value = helper.getInjectionPropertyValue(type, propertyInject.value(), "timeout",  bean, "foo");
+        assertEquals(Integer.valueOf("2000"), Integer.valueOf("" + value));
+
+        method = bean.getClass().getMethod("setGreeting", String.class);
+        propertyInject = method.getAnnotation(PropertyInject.class);
+        type = method.getParameterTypes()[0];
+        value = helper.getInjectionPropertyValue(type, propertyInject.value(), "greeting",  bean, "foo");
+        assertEquals("Hello Camel", value);
+    }
+
     public class MyConsumeBean {
 
         @Consume(uri = "seda:foo")
@@ -478,6 +542,47 @@ public class CamelPostProcessorHelperTest extends ContextTestSupport {
         private void consumeSomethingPrivate(String body) {
             assertEquals("Hello World", body);
             template.sendBody("mock:result", body);
+        }
+    }
+
+    public class MyPropertyFieldBean {
+
+        @PropertyInject("myTimeout")
+        public int timeout;
+
+        @PropertyInject("Hello {{myApp}}")
+        public String greeting;
+
+        public String doSomething(String body) {
+            return greeting + " " + body + " with timeout=" + timeout;
+        }
+    }
+
+    public class MyPropertyMethodBean {
+
+        private int timeout;
+        private String greeting;
+
+        public String doSomething(String body) {
+            return greeting + " " + body + " with timeout=" + timeout;
+        }
+
+        public int getTimeout() {
+            return timeout;
+        }
+
+        @PropertyInject("myTimeout")
+        public void setTimeout(int timeout) {
+            this.timeout = timeout;
+        }
+
+        public String getGreeting() {
+            return greeting;
+        }
+
+        @PropertyInject("Hello {{myApp}}")
+        public void setGreeting(String greeting) {
+            this.greeting = greeting;
         }
     }
 
