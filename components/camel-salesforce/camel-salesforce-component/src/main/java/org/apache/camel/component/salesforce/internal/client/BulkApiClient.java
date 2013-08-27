@@ -29,23 +29,23 @@ import org.apache.camel.component.salesforce.api.dto.bulk.JobInfo;
  */
 public interface BulkApiClient {
 
-    public static interface JobInfoResponseCallback {
+    public interface JobInfoResponseCallback {
         void onResponse(JobInfo jobInfo, SalesforceException ex);
     }
 
-    public static interface BatchInfoResponseCallback {
+    public interface BatchInfoResponseCallback {
         void onResponse(BatchInfo batchInfo, SalesforceException ex);
     }
 
-    public static interface BatchInfoListResponseCallback {
+    public interface BatchInfoListResponseCallback {
         void onResponse(List<BatchInfo> batchInfoList, SalesforceException ex);
     }
 
-    public static interface StreamResponseCallback {
+    public interface StreamResponseCallback {
         void onResponse(InputStream inputStream, SalesforceException ex);
     }
 
-    public static interface QueryResultIdsCallback {
+    public interface QueryResultIdsCallback {
         void onResponse(List<String> ids, SalesforceException ex);
     }
 

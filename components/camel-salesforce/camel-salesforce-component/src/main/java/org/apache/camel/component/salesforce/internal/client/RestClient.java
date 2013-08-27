@@ -22,7 +22,7 @@ import org.apache.camel.component.salesforce.api.SalesforceException;
 
 public interface RestClient {
 
-    public static interface ResponseCallback {
+    public interface ResponseCallback {
         void onResponse(InputStream response, SalesforceException exception);
     }
 
