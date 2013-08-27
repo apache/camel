@@ -101,18 +101,24 @@
   <dependencies>
 
     <!-- required dependencies by camel-core -->
+    <!-- which we shade into camel-core so its available for everybody out of the box -->
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>spi-annotations</artifactId>
       <version>${project.version}</version>
       <optional>true</optional>
+      <scope>provided</scope>
     </dependency>
 
+    <!-- required dependencies by camel-core -->
+    <!-- which we shade into camel-core so its available for everybody out of the box -->
     <dependency>
       <groupId>com.googlecode.concurrentlinkedhashmap</groupId>
       <artifactId>concurrentlinkedhashmap-lru</artifactId>
+      <scope>provided</scope>
     </dependency>
 
+    <!-- required dependencies by camel-core -->
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
@@ -120,10 +126,10 @@
 
     <!-- osgi support -->
     <dependency>
-        <groupId>org.osgi</groupId>
-        <artifactId>org.osgi.core</artifactId>
-        <scope>provided</scope>
-        <optional>true</optional>
+      <groupId>org.osgi</groupId>
+      <artifactId>org.osgi.core</artifactId>
+      <scope>provided</scope>
+      <optional>true</optional>
     </dependency>
 
     <!-- testing -->
@@ -156,12 +162,12 @@
     </dependency>
 
     <!-- validator -->
-	<dependency>
-		<groupId>xml-resolver</groupId>
-		<artifactId>xml-resolver</artifactId>
-		<version>${xml-resolver-version}</version>
-		<scope>test</scope>
-	</dependency>
+	  <dependency>
+		  <groupId>xml-resolver</groupId>
+		  <artifactId>xml-resolver</artifactId>
+		  <version>${xml-resolver-version}</version>
+		  <scope>test</scope>
+	  </dependency>
 
   </dependencies>
 
@@ -169,7 +175,7 @@
   <build>
     <plugins>
 
-    <!-- Shade the googlecode stuff for OSGi -->
+      <!-- shade concurrent hashmap for faster Camel and spi-annotations as needed by everybody -->
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-shade-plugin</artifactId>
@@ -182,6 +188,7 @@
             <configuration>
               <artifactSet>
                 <includes>
+                  <include>org.apache.camel:spi-annotations</include>
                   <include>com.googlecode.concurrentlinkedhashmap:concurrentlinkedhashmap-lru</include>
                 </includes>
                 <excludes>
