@@ -36,6 +36,11 @@ import javax.xml.crypto.dsig.dom.DOMValidateContext;
 import javax.xml.crypto.dsig.keyinfo.KeyInfo;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.w3c.dom.Document;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.component.xmlsecurity.api.ValidationFailedHandler;
@@ -47,10 +52,7 @@ import org.apache.camel.component.xmlsecurity.api.XmlSignatureInvalidException;
 import org.apache.camel.util.IOHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.w3c.dom.Document;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
+
 
 /**
  * XML signature verifier. Assumes that the input XML contains exactly one
@@ -139,7 +141,7 @@ public class XmlVerifierProcessor extends XmlSignatureProcessor {
         }
         // Check core validation status
         boolean goon = coreValidity;
-        if (coreValidity == false) {
+        if (!coreValidity) {
             goon = handleSignatureValidationFailed(valContext, signature);
         }
         if (goon) {

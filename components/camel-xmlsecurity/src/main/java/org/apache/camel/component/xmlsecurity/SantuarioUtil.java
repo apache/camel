@@ -28,6 +28,9 @@ import org.apache.xml.security.utils.XMLUtils;
 
 
 public final class SantuarioUtil {
+    private SantuarioUtil() {
+        //Helper class
+    }
 
     public static void initializeSantuario() {
         // Set ignoreLineBreaks to true

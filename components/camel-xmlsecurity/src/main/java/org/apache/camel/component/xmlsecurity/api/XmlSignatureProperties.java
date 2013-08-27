@@ -23,8 +23,10 @@ import javax.xml.crypto.dsig.XMLObject;
 import javax.xml.crypto.dsig.XMLSignatureFactory;
 import javax.xml.crypto.dsig.keyinfo.KeyInfo;
 
-import org.apache.camel.Message;
 import org.w3c.dom.Node;
+
+import org.apache.camel.Message;
+
 
 /**
  * You can provide further XML objects and references which will be added by the
@@ -43,7 +45,7 @@ public interface XmlSignatureProperties {
      */
     Output get(Input input) throws Exception;
 
-    public static interface Input {
+    public interface Input {
 
         /** Input message for reading header data */
         Message getMessage();

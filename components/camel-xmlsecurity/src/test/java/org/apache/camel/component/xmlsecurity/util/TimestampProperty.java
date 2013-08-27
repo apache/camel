@@ -29,9 +29,11 @@ import javax.xml.crypto.dsig.Transform;
 import javax.xml.crypto.dsig.XMLObject;
 import javax.xml.crypto.dsig.spec.TransformParameterSpec;
 
+import org.w3c.dom.Document;
+
 import org.apache.camel.component.xmlsecurity.api.XmlSignatureHelper;
 import org.apache.camel.component.xmlsecurity.api.XmlSignatureProperties;
-import org.w3c.dom.Document;
+
 
 /**
  * Example for a XmlSignatureProperties implementation which adds a timestamp

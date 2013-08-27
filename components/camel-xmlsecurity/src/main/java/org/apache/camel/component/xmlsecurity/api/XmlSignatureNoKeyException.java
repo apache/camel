@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.xmlsecurity.api;
 
-import org.apache.camel.component.xmlsecurity.api.XmlSignatureException;
 
 /**
  * Exception thrown when no key for signing is found.

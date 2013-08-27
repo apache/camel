@@ -61,7 +61,10 @@ import org.xml.sax.SAXException;
  * Helps to construct the transformations and the canonicalization methods for
  * the XML Signature generator.
  */
-public class XmlSignatureHelper {
+public final class XmlSignatureHelper {
+    private XmlSignatureHelper() {
+        //Helper class
+    }
 
     /**
      * Returns a configuration for a canonicalization algorithm.
@@ -400,7 +403,8 @@ public class XmlSignatureHelper {
     }
 
     public static void transformToOutputStream(Node node, OutputStream os, boolean omitXmlDeclaration)
-            throws TransformerFactoryConfigurationError, TransformerConfigurationException, TransformerException, IOException {
+        throws TransformerFactoryConfigurationError, TransformerConfigurationException, TransformerException, IOException {
+        
         if (node.getNodeType() == Node.TEXT_NODE) {
             byte[] bytes = tranformTextNodeToByteArray(node);
             os.write(bytes);
@@ -410,7 +414,8 @@ public class XmlSignatureHelper {
     }
 
     public static void transformNonTextNodeToOutputStream(Node node, OutputStream os, boolean omitXmlDeclaration)
-            throws TransformerFactoryConfigurationError, TransformerConfigurationException, TransformerException {
+        throws TransformerFactoryConfigurationError, TransformerConfigurationException, TransformerException {
+        
         TransformerFactory tf = TransformerFactory.newInstance();
         Transformer trans = tf.newTransformer();
         if (omitXmlDeclaration) {

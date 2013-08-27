@@ -62,7 +62,8 @@ public class DefaultKeySelector extends KeySelector {
     }
 
     public KeySelectorResult select(KeyInfo keyInfo, KeySelector.Purpose purpose, AlgorithmMethod method, XMLCryptoContext context)
-            throws KeySelectorException {
+        throws KeySelectorException {
+        
         if (keyStoreAndAlias.getKeyStore() == null) {
             return getNullKeyResult();
         }

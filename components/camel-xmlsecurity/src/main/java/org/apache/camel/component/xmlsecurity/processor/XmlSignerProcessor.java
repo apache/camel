@@ -49,6 +49,12 @@ import javax.xml.crypto.dsig.spec.C14NMethodParameterSpec;
 import javax.xml.crypto.dsig.spec.TransformParameterSpec;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.component.xmlsecurity.api.KeyAccessor;
@@ -62,11 +68,7 @@ import org.apache.camel.component.xmlsecurity.api.XmlSignatureProperties;
 import org.apache.camel.util.IOHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
-import org.xml.sax.SAXException;
+
 
 /**
  * Creates from the message body a XML signature element which is returned in
@@ -388,7 +390,8 @@ public class XmlSignerProcessor extends XmlSignatureProcessor {
     }
 
     protected List<? extends XMLObject> getObjects(XmlSignatureProperties.Input input, XmlSignatureProperties.Output properties)
-            throws Exception { //NOPMD
+        throws Exception { //NOPMD
+        
         if (isEnveloped()) {
             if (properties == null || properties.getObjects() == null) {
                 return Collections.emptyList();

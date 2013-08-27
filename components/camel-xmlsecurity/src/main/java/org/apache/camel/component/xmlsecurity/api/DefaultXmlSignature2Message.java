@@ -35,12 +35,14 @@ import javax.xml.transform.TransformerFactoryConfigurationError;
 import javax.xml.xpath.XPathConstants;
 import javax.xml.xpath.XPathExpression;
 
-import org.apache.camel.Message;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+
+import org.apache.camel.Message;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 /**
  * Maps the XML signature to a camel message. A output node is determined from
@@ -191,7 +193,8 @@ public class DefaultXmlSignature2Message implements XmlSignature2Message {
     }
 
     protected void transformNodeToByteArrayAndSetToOutputMessage(Input input, Message output, Node node)
-            throws TransformerFactoryConfigurationError, TransformerConfigurationException, TransformerException, IOException {
+        throws TransformerFactoryConfigurationError, TransformerConfigurationException, TransformerException, IOException {
+        
         ByteArrayOutputStream os = new ByteArrayOutputStream();
         XmlSignatureHelper.transformToOutputStream(node, os, omitXmlDeclaration(output, input));
         output.setBody(os.toByteArray());
@@ -223,7 +226,8 @@ public class DefaultXmlSignature2Message implements XmlSignature2Message {
         }
         throw new XmlSignatureException(
                 String.format(
-                        "Cannot extract root node for the output document from the XML signature document. XPATH %s as specified in the output node search results into a node which has the wrong type.",
+                        "Cannot extract root node for the output document from the XML signature document. "
+                        + "XPATH %s as specified in the output node search results into a node which has the wrong type.",
                         xpathFilter.getXPath()));
     }
 
@@ -237,14 +241,16 @@ public class DefaultXmlSignature2Message implements XmlSignature2Message {
             if (index < 1) {
                 throw new XmlSignatureException(
                         String.format(
-                                "Wrong configuration: Value %s for the output node search %s has wrong format. Value must have the form '{<namespace>}<element local name>' or '<element local name>' if no the element has no namespace.",
+                                "Wrong configuration: Value %s for the output node search %s has wrong format. "
+                                + "Value must have the form '{<namespace>}<element local name>' or '<element local name>' if no the element has no namespace.",
                                 search, input.getOutputNodeSearchType()));
             }
             namespace = search.substring(1, index);
             if (search.length() < index + 1) {
                 throw new XmlSignatureException(
                         String.format(
-                                "Wrong configuration: Value %s for the output node search %s has wrong format. Value must have the form '{<namespace>}<element local name>' or '<element local name>' if no the element has no namespace.",
+                                "Wrong configuration: Value %s for the output node search %s has wrong format. "
+                                + "Value must have the form '{<namespace>}<element local name>' or '<element local name>' if no the element has no namespace.",
                                 search, input.getOutputNodeSearchType()));
             }
             localName = search.substring(index + 1);
@@ -344,7 +350,7 @@ public class DefaultXmlSignature2Message implements XmlSignature2Message {
     protected boolean isEnveloped(Input input) throws Exception { //NOPMD
         for (Reference ref : input.getReferences()) {
             if ("".equals(ref.getURI())) {
-                for (Transform t : ((List<Transform>) ref.getTransforms())) {
+                for (Transform t : (List<Transform>)ref.getTransforms()) {
                     if (Transform.ENVELOPED.equals(t.getAlgorithm())) {
                         return true;
                     }
@@ -410,7 +416,8 @@ public class DefaultXmlSignature2Message implements XmlSignature2Message {
      *             if an error occurs
      */
     protected DOMStructure getDomStructureForMessageBody(List<Reference> relevantReferences, List<XMLObject> relevantObjects)
-            throws Exception { //NOPMD
+        throws Exception { //NOPMD
+        
         List<XMLObject> referencedObjects = getReferencedSameDocumentObjects(relevantReferences, relevantObjects);
 
         if (referencedObjects.isEmpty()) {

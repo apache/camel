@@ -21,8 +21,10 @@ import java.util.List;
 import javax.xml.crypto.dsig.Reference;
 import javax.xml.crypto.dsig.XMLObject;
 
-import org.apache.camel.Message;
 import org.w3c.dom.Document;
+
+import org.apache.camel.Message;
+
 
 /**
  * Used in the signature verifier to map the references and objects of the XML
@@ -41,7 +43,7 @@ public interface XmlSignature2Message {
      */
     void mapToMessage(Input input, Message output) throws Exception;
 
-    public static interface Input {
+    public interface Input {
 
         /**
          * Returns the references.

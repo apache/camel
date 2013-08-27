@@ -20,8 +20,10 @@ import javax.xml.crypto.KeySelector;
 import javax.xml.crypto.dsig.keyinfo.KeyInfo;
 import javax.xml.crypto.dsig.keyinfo.KeyInfoFactory;
 
-import org.apache.camel.Message;
 import org.w3c.dom.Node;
+
+import org.apache.camel.Message;
+
 
 /**
  * Returns the key selector and the optional KeyInfo instance for signing an XML

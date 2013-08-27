@@ -19,8 +19,8 @@ package org.apache.camel.component.xmlsecurity.api;
 import java.security.InvalidKeyException;
 
 import javax.xml.crypto.dsig.Reference;
-import javax.xml.crypto.dsig.XMLSignatureException;
 import javax.xml.crypto.dsig.XMLSignature.SignatureValue;
+import javax.xml.crypto.dsig.XMLSignatureException;
 
 /**
  * Interrupts the validation by throwing an exception as soon as a validation

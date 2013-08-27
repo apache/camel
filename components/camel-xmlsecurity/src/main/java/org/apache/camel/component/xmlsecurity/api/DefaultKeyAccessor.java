@@ -29,8 +29,10 @@ import javax.xml.crypto.dsig.keyinfo.KeyInfo;
 import javax.xml.crypto.dsig.keyinfo.KeyInfoFactory;
 import javax.xml.crypto.dsig.keyinfo.X509Data;
 
-import org.apache.camel.Message;
 import org.w3c.dom.Node;
+
+import org.apache.camel.Message;
+
 
 /**
  * Accesses the private key from a key-store and returns a KeyInfo which

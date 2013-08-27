@@ -19,8 +19,8 @@ package org.apache.camel.component.xmlsecurity;
 import javax.xml.crypto.KeySelector;
 
 import org.apache.camel.Processor;
-import org.apache.camel.component.xmlsecurity.api.XmlSignature2Message;
 import org.apache.camel.component.xmlsecurity.api.ValidationFailedHandler;
+import org.apache.camel.component.xmlsecurity.api.XmlSignature2Message;
 import org.apache.camel.component.xmlsecurity.api.XmlSignatureChecker;
 import org.apache.camel.component.xmlsecurity.processor.XmlVerifierConfiguration;
 import org.apache.camel.component.xmlsecurity.processor.XmlVerifierProcessor;

@@ -23,8 +23,10 @@ import javax.xml.crypto.dsig.XMLObject;
 import javax.xml.crypto.dsig.XMLSignature.SignatureValue;
 import javax.xml.crypto.dsig.keyinfo.KeyInfo;
 
-import org.apache.camel.Message;
 import org.w3c.dom.Document;
+
+import org.apache.camel.Message;
+
 
 /**
  * This interface gives the application the possibility to check whether the
@@ -48,7 +50,7 @@ public interface XmlSignatureChecker {
      */
     void checkBeforeCoreValidation(Input input) throws Exception;
 
-    public static interface Input {
+    public interface Input {
 
         /** Signed info instance. */
         SignedInfo getSignedInfo();

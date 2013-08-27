@@ -20,10 +20,10 @@ import javax.xml.crypto.KeySelector;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.component.xmlsecurity.api.DefaultXmlSignature2Message;
 import org.apache.camel.component.xmlsecurity.api.DefaultValidationFailedHandler;
-import org.apache.camel.component.xmlsecurity.api.XmlSignature2Message;
+import org.apache.camel.component.xmlsecurity.api.DefaultXmlSignature2Message;
 import org.apache.camel.component.xmlsecurity.api.ValidationFailedHandler;
+import org.apache.camel.component.xmlsecurity.api.XmlSignature2Message;
 import org.apache.camel.component.xmlsecurity.api.XmlSignatureChecker;
 
 public class XmlVerifierConfiguration extends XmlSignatureConfiguration {

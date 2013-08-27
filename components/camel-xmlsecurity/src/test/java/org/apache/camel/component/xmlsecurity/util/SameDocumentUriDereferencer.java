@@ -28,17 +28,19 @@ import javax.xml.crypto.dsig.XMLSignatureFactory;
 /**
  * URI Dereferencer which allows only same document URI references via ids.
  */
-public class SameDocumentUriDereferencer implements URIDereferencer {
+public final class SameDocumentUriDereferencer implements URIDereferencer {
 
     private static final URIDereferencer INSTANCE = new SameDocumentUriDereferencer();
+    
+    private SameDocumentUriDereferencer() {
+        // singelton
+    }
 
     public static URIDereferencer getInstance() {
         return INSTANCE;
     }
 
-    private SameDocumentUriDereferencer() {
-        // singelton
-    }
+    
 
     public Data dereference(URIReference uriReference, XMLCryptoContext context) throws URIReferenceException {
 

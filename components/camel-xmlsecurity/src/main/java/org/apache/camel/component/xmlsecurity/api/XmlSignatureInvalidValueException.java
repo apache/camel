@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.xmlsecurity.api;
 
-import org.apache.camel.component.xmlsecurity.api.XmlSignatureInvalidException;
 
 /**
  * This exception is thrown if the verification of an XML signature fails

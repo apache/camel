@@ -18,10 +18,6 @@ package org.apache.camel.component.xmlsecurity.api;
 
 public final class XmlSignatureConstants {
 
-    private XmlSignatureConstants() {
-        // no instance
-    }
-
     /**
      * Header for indicating that the message body contains non-xml plain text.
      * This header is used in the XML signature generator. If the value is set
@@ -61,5 +57,9 @@ public final class XmlSignatureConstants {
     public static final String HEADER_CONTENT_REFERENCE_URI = "CamelXmlSignatureContentReferenceUri";
 
     public static final String HEADER_CONTENT_REFERENCE_TYPE = "CamelXmlSignatureContentReferenceType";
+
+    private XmlSignatureConstants() {
+        // no instance
+    }
 
 }

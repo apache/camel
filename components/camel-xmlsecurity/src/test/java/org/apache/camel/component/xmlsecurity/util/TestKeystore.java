@@ -23,14 +23,14 @@ import java.security.KeyStore;
 
 import javax.xml.crypto.KeySelector;
 
-import org.apache.camel.component.xmlsecurity.api.KeyAccessor;
 import org.apache.camel.component.xmlsecurity.api.DefaultKeyAccessor;
 import org.apache.camel.component.xmlsecurity.api.DefaultKeySelector;
+import org.apache.camel.component.xmlsecurity.api.KeyAccessor;
 
-public class TestKeystore {
+public final class TestKeystore {
 
-    public TestKeystore() {
-
+    private TestKeystore() {
+        // helper class
     }
 
  
