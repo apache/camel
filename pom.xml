@@ -169,6 +169,7 @@
               <excludes>
                 <exclude>**/README</exclude>
                 <exclude>**/README.txt</exclude>
+                <exclude>**/README.md</exclude>
                 <exclude>**/resources/**/*.xsd</exclude>
                 <exclude>**/webapp/js/**/*</exclude>
                 <exclude>**/test/resources/**/*</exclude>
