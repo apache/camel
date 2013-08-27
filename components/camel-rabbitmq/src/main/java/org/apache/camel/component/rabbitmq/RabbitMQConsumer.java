@@ -60,8 +60,9 @@ public class RabbitMQConsumer extends DefaultConsumer {
                 endpoint.isDurable(),
                 endpoint.isAutoDelete(),
                 new HashMap<String, Object>());
-
-        channel.queueDeclare(endpoint.getQueue(), true, false, false, null);
+        
+        // need to make sure the queueDeclare is same with the exchange declare
+        channel.queueDeclare(endpoint.getQueue(), endpoint.isDurable(), false, endpoint.isAutoDelete(), null);
         channel.queueBind(endpoint.getQueue(), endpoint.getExchangeName(),
                 endpoint.getRoutingKey() == null ? "" : endpoint.getRoutingKey());
 
