@@ -1,4 +1,21 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?><Signature xmlns="http://www.w3.org/2000/09/xmldsig#"><SignedInfo><CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"/><SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#dsa-sha1"/><Reference URI="#myManifest"><DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/><DigestValue>Dn1qUwuTxEEY+mvIETwPpCzTSao=</DigestValue></Reference></SignedInfo><SignatureValue>Z8BjjJ1lVpd58a2pNafQVIVTIP4blaSdbqDnClB/TK8QMj93XY+ZdQ==</SignatureValue><KeyInfo><KeyValue><DSAKeyValue><P>/KaCzo4Syrom78z3EQ5SbbB4sF7ey80etKII864WF64B81uRpH5t9jQTxeEu0ImbzRMqzVDZkVG9
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!--
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+<Signature xmlns="http://www.w3.org/2000/09/xmldsig#"><SignedInfo><CanonicalizationMethod Algorithm="http://www.w3.org/TR/2001/REC-xml-c14n-20010315"/><SignatureMethod Algorithm="http://www.w3.org/2000/09/xmldsig#dsa-sha1"/><Reference URI="#myManifest"><DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/><DigestValue>Dn1qUwuTxEEY+mvIETwPpCzTSao=</DigestValue></Reference></SignedInfo><SignatureValue>Z8BjjJ1lVpd58a2pNafQVIVTIP4blaSdbqDnClB/TK8QMj93XY+ZdQ==</SignatureValue><KeyInfo><KeyValue><DSAKeyValue><P>/KaCzo4Syrom78z3EQ5SbbB4sF7ey80etKII864WF64B81uRpH5t9jQTxeEu0ImbzRMqzVDZkVG9
 xD7nN1kuFw==</P><Q>li7dzDacuo67Jg7mtqEm2TRuOMU=</Q><G>Z4Rxsnqc9E7pGknFFH2xqaryRPBaQ01khpMdLRQnG541Awtx/XPaF5Bpsy4pNWMOHCBiNU0Nogps
 QW5QvnlMpA==</G><Y>BtnkfZ+4ME+oz7cJTKHpwJErRQ7NkAJO0K4fO+sCzr/KO2TKbG1Jg69aZuuEnxtPIEV0HkDJkKu4
 N7vcAKk0yw==</Y></DSAKeyValue></KeyValue></KeyInfo><Object><Manifest Id="myManifest"><Reference URI="#content"><DigestMethod Algorithm="http://www.w3.org/2000/09/xmldsig#sha1"/><DigestValue>ABSEE2Q8T96qN9OIEvPyNaLx6kk=</DigestValue></Reference></Manifest></Object><Object Id="content">some text tampered</Object></Signature>
