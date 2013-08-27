@@ -1,0 +1,389 @@
+﻿<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="
+       http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+       http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
+    ">
+
+	<camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
+		<onException>
+			<exception>org.apache.camel.component.xmlsecurity.api.XmlSignatureException
+			</exception>
+			<handled>
+				<constant>false</constant>
+			</handled>
+			<to uri="mock:exception" />
+		</onException>
+
+		<!-- START SNIPPET: enveloping XML signature -->
+		<route>
+			<from uri="direct:enveloping" />
+			<to uri="xmlsecurity:sign://enveloping?keyAccessor=#accessorRsa" />
+			<to uri="xmlsecurity:verify://enveloping?keySelector=#selectorRsa" />
+			<to uri="mock:result" />
+		</route>
+		<!-- END SNIPPET: enveloping XML signature -->
+
+		<!-- START SNIPPET: enveloping XML signature with plain text -->
+		<route>
+			<from uri="direct:plaintext" />
+			<to
+				uri="xmlsecurity:sign://plaintext?keyAccessor=#accessorRsa&amp;plainText=true&amp;plainTextEncoding=UTF-8" />
+			<to uri="xmlsecurity:verify://plaintext?keySelector=#selectorRsa" />
+			<to uri="mock:result" />
+		</route>
+		<!-- END SNIPPET: enveloping XML signature with plain text -->
+
+		<!-- START SNIPPET: enveloped XML signature -->
+		<route>
+			<from uri="direct:enveloped" />
+			<to
+				uri="xmlsecurity:sign://enveloped?keyAccessor=#accessorRsa&amp;parentLocalName=root&amp;parentNamespace=http://test/test" />
+			<to uri="xmlsecurity:verify://enveloped?keySelector=#selectorRsa" />
+			<to uri="mock:result" />
+		</route>
+		<!-- END SNIPPET: enveloped XML signature -->
+
+		<!-- START SNIPPET: canonicalization -->
+		<route>
+			<from uri="direct:canonicalization" />
+			<to
+				uri="xmlsecurity:sign://canonicalization?keyAccessor=#accessorRsa&amp;canonicalizationMethod=#canonicalizationMethod1" />
+			<to uri="xmlsecurity:verify://canonicalization?keySelector=#selectorRsa" />
+			<to uri="mock:result" />
+		</route>
+		<!-- END SNIPPET: canonicalization -->
+
+		<!-- START SNIPPET: digest and signature algorithm -->
+		<route>
+			<from uri="direct:signaturedigestalgorithm" />
+			<to
+				uri="xmlsecurity:sign://signaturedigestalgorithm?keyAccessor=#accessorRsa&amp;signatureAlgorithm=http://www.w3.org/2001/04/xmldsig-more#rsa-sha384&amp;digestAlgorithm=http://www.w3.org/2001/04/xmlenc#sha256" />
+			<to
+				uri="xmlsecurity:verify://signaturedigestalgorithm?keySelector=#selectorRsa" />
+			<to uri="mock:result" />
+		</route>
+		<!-- END SNIPPET: digest and signature algorithm -->
+
+		<!-- START SNIPPET: transforms XPath2 -->
+		<route>
+			<from uri="direct:transformsXPath2" />
+			<to
+				uri="xmlsecurity:sign://transformsXPath2?keyAccessor=#accessorRsa&amp;transformMethods=#transformsXPath2" />
+			<to uri="xmlsecurity:verify://transformsXPath2?keySelector=#selectorRsa" />
+			<to uri="mock:result" />
+		</route>
+		<!-- END SNIPPET: transforms XPath2 -->
+
+		<!-- START SNIPPET: transforms XSLT, XPath -->
+		<route>
+			<from uri="direct:transformsXsltXPath" />
+			<to
+				uri="xmlsecurity:sign://transformsXsltXPath?keyAccessor=#accessorRsa&amp;transformMethods=#transformsXsltXPath" />
+			<to
+				uri="xmlsecurity:verify://transformsXsltXPath?keySelector=#selectorRsa" />
+			<to uri="mock:result" />
+		</route>
+		<!-- END SNIPPET: transforms XSLT, XPath -->
+		
+		<!-- START SNIPPET: transforms XSLT, XPath - secure Validation disabled -->
+		<route>
+			<from uri="direct:transformsXsltXPathSecureValDisabled" />
+			<to
+				uri="xmlsecurity:sign://transformsXsltXPathSecureValDisabled?keyAccessor=#accessorRsa&amp;transformMethods=#transformsXsltXPath" />
+			<to
+				uri="xmlsecurity:verify://transformsXsltXPathSecureValDisabled?keySelector=#selectorRsa&amp;secureValidation=false" />
+			<to uri="mock:result" />
+		</route>
+		<!-- END SNIPPET: transforms XSLT, XPath - secure Validation disabled -->
+
+
+		<!-- START SNIPPET: invalid key exception -->
+		<route>
+			<from uri="direct:signexceptioninvalidkey" />
+			<to
+				uri="xmlsecurity:sign://signexceptioninvalidkey?keyAccessor=#accessorDsa" />
+			<to uri="mock:result" />
+		</route>
+		<!-- END SNIPPET: invalid key exception -->
+
+		<!-- START SNIPPET: sign exceptions -->
+		<route>
+			<from uri="direct:signexceptions" />
+			<to
+				uri="xmlsecurity:sign://signexceptioninvalidkey?keyAccessor=#accessorRsa" />
+			<to uri="mock:result" />
+		</route>
+		<!-- END SNIPPET: sign exceptions -->
+
+		<!-- START SNIPPET: noSuchAlgorithmException -->
+		<route>
+			<from uri="direct:noSuchAlgorithmException" />
+			<to
+				uri="xmlsecurity:sign://noSuchAlgorithmException?keyAccessor=#accessorRsa&amp;signatureAlgorithm=wrongalgorithm&amp;digestAlgorithm=http://www.w3.org/2001/04/xmlenc#sha512" />
+			<to uri="mock:result" />
+		</route>
+		<!-- END SNIPPET: noSuchAlgorithmException -->
+
+		<!-- START SNIPPET: verify exceptions -->
+		<route>
+			<from uri="direct:verifyexceptions" />
+			<to uri="xmlsecurity:verify://verifyexceptions?keySelector=#selectorDsa" />
+			<to uri="mock:result" />
+		</route>
+		<!-- END SNIPPET: verify exceptions -->
+
+		<!-- START SNIPPET: verifier InvalidHashException -->
+		<route>
+			<from uri="direct:invalidhash" />
+			<to
+				uri="xmlsecurity:verify://invalidhash?keySelector=#selectorKeyValue&amp;baseUri=#baseUri&amp;secureValidation=false" />
+			<to uri="mock:result" />
+		</route>
+		<!-- END SNIPPET: verifier InvalidHashException -->
+
+		<!-- START SNIPPET: cryptoContextProperties -->
+		<route>
+			<from uri="direct:cryptocontextprops" />
+			<to
+				uri="xmlsecurity:verify://cryptocontextprops?keySelector=#selectorKeyValue&amp;cryptoContextProperties=#cryptoContextProperties" />
+			<to uri="mock:result" />
+		</route>
+		<!-- END SNIPPET: cryptoContextProperties -->
+
+		<!-- START SNIPPET: verify InvalidKeyException -->
+		<route>
+			<from uri="direct:verifyInvalidKeyException" />
+			<to
+				uri="xmlsecurity:verify://verifyInvalidKeyException?keySelector=#selectorRsa" />
+			<to uri="mock:result" />
+		</route>
+		<!-- END SNIPPET: verify InvalidKeyException -->
+
+
+		<!-- START SNIPPET: uridereferencer -->
+		<route>
+			<from uri="direct:uridereferencer" />
+			<to
+				uri="xmlsecurity:sign://uridereferencer?keyAccessor=#accessorRsa&amp;uriDereferencer=#uriDereferencer" />
+			<to
+				uri="xmlsecurity:verify://uridereferencer?keySelector=#selectorRsa&amp;uriDereferencer=#uriDereferencer" />
+			<to uri="mock:result" />
+		</route>
+		<!-- END SNIPPET: uridereferencer -->
+
+		<!-- START SNIPPET: keyAccessorKeySelectorDefault -->
+		<route>
+			<from uri="direct:keyAccessorKeySelectorDefault" />
+			<to
+				uri="xmlsecurity:sign://keyAccessorKeySelectorDefault?keyAccessor=#keyAccessorDefault" />
+			<to
+				uri="xmlsecurity:verify://keyAccessorKeySelectorDefault?keySelector=#keySelectorDefault" />
+			<to uri="mock:result" />
+		</route>
+		<!-- END SNIPPET: keyAccessorKeySelectorDefault -->
+
+		<!-- START SNIPPET: xmlSignatureChecker -->
+		<route>
+			<from uri="direct:xmlSignatureChecker" />
+			<to
+				uri="xmlsecurity:verify://keyAccessorKeySelectorDefault?keySelector=#selectorKeyValue&amp;xmlSignatureChecker=#envelopingSignatureChecker" />
+			<to uri="mock:result" />
+		</route>
+		<!-- END SNIPPET: xmlSignatureChecker -->
+
+		<!-- START SNIPPET: properties -->
+		<route>
+			<from uri="direct:props" />
+			<to
+				uri="xmlsecurity:sign://properties?keyAccessor=#accessorRsa&amp;properties=#signatureProperties" />
+			<to
+				uri="xmlsecurity:verify://properties?keySelector=#selectorRsa&amp;xmlSignature2Message=#xmlSignature2MessageWithTimestampPropertyy" />
+			<to uri="mock:result" />
+		</route>
+		<!-- END SNIPPET: properties -->
+
+		<!-- START SNIPPET: verify output node search element name -->
+		<route>
+			<from uri="direct:outputnodesearchelementname" />
+			<to
+				uri="xmlsecurity:verify://outputnodesearchelementname?keySelector=#selectorKeyValue&amp;outputNodeSearchType=ElementName&amp;outputNodeSearch={http://test/test}root&amp;removeSignatureElements=true" />
+			<to uri="mock:result" />
+		</route>
+		<!-- END SNIPPET: verify output node search element name -->
+
+		<!-- START SNIPPET: verify output node search xpath -->
+		<route>
+			<from uri="direct:outputnodesearchxpath" />
+			<to
+				uri="xmlsecurity:verify://outputnodesearchxpath?keySelector=#selectorKeyValue&amp;outputNodeSearchType=XPath&amp;outputNodeSearch=#nodesearchxpath&amp;removeSignatureElements=true" />
+			<to uri="mock:result" />
+		</route>
+		<!-- END SNIPPET: verify output node search xpath -->
+
+		<!-- START SNIPPET: validationFailedHandler -->
+		<route>
+			<from uri="direct:validationFailedHandler" />
+			<to
+				uri="xmlsecurity:verify://validationFailedHandler?keySelector=#selectorKeyValue&amp;validationFailedHandler=validationFailedHandlerIgnoreManifestFailures" />
+			<to uri="mock:result" />
+		</route>
+		<!-- END SNIPPET: validationFailedHandler -->
+
+		<!-- START SNIPPET: further parameters -->
+		<route>
+			<from uri="direct:furtherparams" />
+			<to
+				uri="xmlsecurity:sign://furtherparams?keyAccessor=#accessorRsa&amp;prefixForXmlSignatureNamespace=digsig&amp;disallowDoctypeDecl=false" />
+			<to
+				uri="xmlsecurity:verify://furtherparams?keySelector=#selectorRsa&amp;disallowDoctypeDecl=false" />
+			<to uri="mock:result" />
+		</route>
+		<!-- END SNIPPET: further parameters -->
+
+
+	</camelContext>
+
+	<bean id="accessorDsa"
+		class="org.apache.camel.component.xmlsecurity.SpringXmlSignatureTest"
+		factory-method="getDsaKeyAccessor" />
+	<bean id="accessorRsa"
+		class="org.apache.camel.component.xmlsecurity.SpringXmlSignatureTest"
+		factory-method="getRsaKeyAccessor" />
+	<bean id="selectorDsa"
+		class="org.apache.camel.component.xmlsecurity.SpringXmlSignatureTest"
+		factory-method="getDsaKeySelector" />
+	<bean id="selectorRsa"
+		class="org.apache.camel.component.xmlsecurity.SpringXmlSignatureTest"
+		factory-method="getRsaKeySelector" />
+
+	<bean id="keyAccessorDefault"
+		class="org.apache.camel.component.xmlsecurity.SpringXmlSignatureTest"
+		factory-method="getDefaultKeyAccessor" />
+	<bean id="keySelectorDefault"
+		class="org.apache.camel.component.xmlsecurity.SpringXmlSignatureTest"
+		factory-method="getDefaultKeySelector" />
+
+	<bean id="baseUri"
+		class="org.apache.camel.component.xmlsecurity.SpringXmlSignatureTest"
+		factory-method="getBaseUri" />
+
+	<bean id="selectorKeyValue"
+		class="org.apache.camel.component.xmlsecurity.SpringXmlSignatureTest"
+		factory-method="getKeyValueKeySelector" />
+
+	<bean id="cryptoContextProperties"
+		class="org.apache.camel.component.xmlsecurity.SpringXmlSignatureTest"
+		factory-method="getCrytoContextProperties" />
+
+	<bean id="canonicalizationMethod1"
+		class="org.apache.camel.component.xmlsecurity.api.XmlSignatureHelper"
+		factory-method="getCanonicalizationMethod">
+		<constructor-arg type="java.lang.String"
+			value="http://www.w3.org/2001/10/xml-exc-c14n#" />
+	</bean>
+
+	<bean id="transformsXsltXPath"
+		class="org.apache.camel.component.xmlsecurity.api.XmlSignatureHelper"
+		factory-method="getTransforms">
+		<constructor-arg type="java.util.List">
+			<list>
+				<bean
+					class="org.apache.camel.component.xmlsecurity.api.XmlSignatureHelper"
+					factory-method="getCanonicalizationMethod">
+					<constructor-arg type="java.lang.String"
+						value="http://www.w3.org/TR/2001/REC-xml-c14n-20010315" />
+				</bean>
+				<bean
+					class="org.apache.camel.component.xmlsecurity.api.XmlSignatureHelper"
+					factory-method="getXslTransform">
+					<constructor-arg type="java.lang.String"
+						value="/org/apache/camel/component/xmlsecurity/xslt_test.xsl" />
+				</bean>
+				<bean
+					class="org.apache.camel.component.xmlsecurity.api.XmlSignatureHelper"
+					factory-method="getXPathTransform">
+					<constructor-arg type="java.lang.String" value="//n0:XMLSecurity/n0:Content" />
+					<constructor-arg type="java.util.Map">
+						<map>
+							<entry key="n0" value="https://org.apache/camel/xmlsecurity/test" />
+						</map>
+					</constructor-arg>
+				</bean>
+				<!-- I removed base 64 transform because the JDK provider does not support 
+					correctly this transform <bean class="org.apache.camel.component.xmlsecurity.api.XmlSignatureHelper" 
+					factory-method="getBase64Transform" /> -->
+			</list>
+		</constructor-arg>
+	</bean>
+
+
+	<bean  id="transformsXPath2"
+		class="org.apache.camel.component.xmlsecurity.api.XmlSignatureHelper"
+		factory-method="getTransforms">
+		<constructor-arg type="java.util.List">
+			<list>
+			  	<bean
+					class="org.apache.camel.component.xmlsecurity.api.XmlSignatureHelper"
+					factory-method="getCanonicalizationMethod">
+					<constructor-arg type="java.lang.String"
+						value="http://www.w3.org/TR/2001/REC-xml-c14n-20010315" />
+				</bean>
+				<bean
+					class="org.apache.camel.component.xmlsecurity.api.XmlSignatureHelper"
+					factory-method="getXPath2Transform">
+					<constructor-arg type="java.util.List">
+						<list>
+							<bean
+								class="org.apache.camel.component.xmlsecurity.api.XmlSignatureHelper.XPathAndFilter">
+								<property name="xpath" value="//n0:ToBeSigned" />
+								<property name="filter" value="intersect" />
+							</bean>
+							<bean
+								class="org.apache.camel.component.xmlsecurity.api.XmlSignatureHelper.XPathAndFilter">
+								<property name="xpath" value="//n0:NotToBeSigned" />
+								<property name="filter" value="subtract" />
+							</bean>
+							<bean
+								class="org.apache.camel.component.xmlsecurity.api.XmlSignatureHelper.XPathAndFilter">
+								<property name="xpath" value="//n0:ReallyToBeSigned" />
+								<property name="filter" value="union" />
+							</bean>
+						</list>
+					</constructor-arg>
+					<constructor-arg type="java.util.Map">
+						<map>
+							<entry key="n0" value="http://test/test" />
+						</map>
+					</constructor-arg>
+				</bean>
+			</list>
+		</constructor-arg>
+	</bean>
+
+	<bean id="uriDereferencer"
+		class="org.apache.camel.component.xmlsecurity.SpringXmlSignatureTest"
+		factory-method="getSameDocumentUriDereferencer" />
+
+	<bean id="envelopingSignatureChecker"
+		class="org.apache.camel.component.xmlsecurity.SpringXmlSignatureTest"
+		factory-method="getEnvelopingXmlSignatureChecker" />
+
+	<bean id="xmlSignature2MessageWithTimestampPropertyy"
+		class="org.apache.camel.component.xmlsecurity.SpringXmlSignatureTest"
+		factory-method="getXmlSignature2MessageWithTimestampdProperty" />
+
+	<bean id="signatureProperties"
+		class="org.apache.camel.component.xmlsecurity.SpringXmlSignatureTest"
+		factory-method="getSignatureProperties" />
+
+	<bean id="validationFailedHandlerIgnoreManifestFailures"
+		class="org.apache.camel.component.xmlsecurity.SpringXmlSignatureTest"
+		factory-method="getValidationFailedHandlerIgnoreManifestFailures" />
+
+	<bean id="nodesearchxpath"
+		class="org.apache.camel.component.xmlsecurity.SpringXmlSignatureTest"
+		factory-method="getNodeSerachXPath" />
+
+</beans>

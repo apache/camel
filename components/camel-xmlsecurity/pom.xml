@@ -28,11 +28,17 @@
     <artifactId>camel-xmlsecurity</artifactId>
     <packaging>bundle</packaging>
     <name>Camel :: XML Security</name>
-    <description>Camel Partial XML Encryption/Decryption support</description>
+    <description>Camel Partial XML Encryption/Decryption and XML Signature support</description>
 
     <properties>
-        <camel.osgi.export.pkg>org.apache.camel.dataformat.xmlsecurity.*</camel.osgi.export.pkg>
-        <camel.osgi.export.service>org.apache.camel.spi.DataFormatResolver;dataformat=secureXML</camel.osgi.export.service>
+        <camel.osgi.export.pkg>
+             org.apache.camel.component.xmlsecurity.*;${camel.osgi.version},
+             org.apache.camel.dataformat.xmlsecurity.*
+        </camel.osgi.export.pkg>
+        <camel.osgi.export.service>
+            org.apache.camel.spi.ComponentResolver;component=xmlsecurity,
+            org.apache.camel.spi.DataFormatResolver;dataformat=secureXML
+        </camel.osgi.export.service>
     </properties>
 
     <dependencies>
