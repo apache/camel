@@ -23,11 +23,11 @@ import org.junit.Test;
 
 public class NettyCustomCodecTest extends BaseNettyTest {
 
-    private String uri = "netty:tcp://localhost:{{port}}?disconnect=true&sync=false" +
-            "&allowDefaultCodec=false&decoders=#myCustomDecoder,#myCustomDecoder2&encoder=#myCustomEncoder";
+    private String uri = "netty:tcp://localhost:{{port}}?disconnect=true&sync=false"
+        + "&allowDefaultCodec=false&decoders=#myCustomDecoder,#myCustomDecoder2&encoder=#myCustomEncoder";
 
     // use reaadble bytes
-    private byte[] data = new byte[]{65,66,67,68,69,70,71,72,73,0,0};
+    private byte[] data = new byte[]{65, 66, 67, 68, 69, 70, 71, 72, 73, 0, 0};
 
     @Override
     protected JndiRegistry createRegistry() throws Exception {

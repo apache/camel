@@ -26,9 +26,13 @@ import org.jboss.netty.handler.codec.oneone.OneToOneEncoder;
 
 import static org.jboss.netty.buffer.ChannelBuffers.copiedBuffer;
 
-public class MyCustomCodec {
-
+public final class MyCustomCodec {
+    
     private static ChannelBuffer nullDelimiter = ChannelBuffers.wrappedBuffer(new byte[]{0});
+    
+    private MyCustomCodec() {
+        // Helper class
+    }
 
     public static ChannelHandlerFactory createMyCustomDecoder() {
         ChannelBuffer[] delimiters = new ChannelBuffer[]{nullDelimiter, nullDelimiter};
