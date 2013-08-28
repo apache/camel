@@ -35,6 +35,11 @@ public class DefaultTypeConverter extends BaseTypeConverterRegistry {
     }
 
     @Override
+    public boolean allowNull() {
+        return false;
+    }
+
+    @Override
     protected void doStart() throws Exception {
         super.doStart();
         // load type converters up front

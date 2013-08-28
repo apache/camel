@@ -20,7 +20,7 @@ import java.io.File;
 import java.io.InputStream;
 import java.io.Reader;
 import java.nio.ByteBuffer;
-
+import java.util.List;
 import javax.xml.transform.OutputKeys;
 import javax.xml.transform.Source;
 import javax.xml.transform.TransformerException;
@@ -29,17 +29,17 @@ import javax.xml.transform.sax.SAXSource;
 import javax.xml.transform.stax.StAXSource;
 import javax.xml.transform.stream.StreamSource;
 
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.xml.sax.InputSource;
-
 import org.apache.camel.BytesSource;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultExchange;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.InputSource;
 
 /**
  * @version 
@@ -347,30 +347,6 @@ public class XmlConverterTest extends ContextTestSupport {
         assertEquals("<foo>bar</foo>", conv.toString(out, null));
     }
 
-    public void testToVariousUsingNull() throws Exception {
-        XmlConverter conv = new XmlConverter();
-
-        InputStream is = null;
-        assertNull(conv.toStreamSource(is));
-
-        Reader reader = null;
-        assertNull(conv.toStreamSource(reader));
-
-        File file = null;
-        assertNull(conv.toStreamSource(file));
-
-        byte[] bytes = null;
-        assertNull(conv.toStreamSource(bytes, null));
-
-        try {
-            Node node = null;
-            conv.toDOMElement(node);
-            fail("Should have thrown exception");
-        } catch (TransformerException e) {
-            // expected
-        }
-    }
-
     public void testToReaderFromSource() throws Exception {
         XmlConverter conv = new XmlConverter();
         SAXSource source = conv.toSAXSource("<foo>bar</foo>", null);
@@ -506,6 +482,37 @@ public class XmlConverterTest extends ContextTestSupport {
         assertNotSame(source, out);
 
         assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"no\"?><foo>bar</foo>", conv.toString(out, exchange));
+    }
+
+    public void testNodeListToNode() throws Exception {
+        Document document = context.getTypeConverter().convertTo(Document.class, "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+                + "<foo><hello>Hello World</hello></foo>");
+
+        NodeList nl = document.getElementsByTagName("hello");
+        assertEquals(1, nl.getLength());
+
+        Node node = context.getTypeConverter().convertTo(Node.class, nl);
+        assertNotNull(node);
+
+        document = context.getTypeConverter().convertTo(Document.class, "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+                + "<foo><hello>Hello World</hello><hello>Hello Camel</hello></foo>");
+
+        nl = document.getElementsByTagName("hello");
+        assertEquals(2, nl.getLength());
+
+        // not possible as we have 2 elements in the node list
+        node = context.getTypeConverter().convertTo(Node.class, nl);
+        assertNull(node);
+
+        // and we can convert with 1 again
+        document = context.getTypeConverter().convertTo(Document.class, "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+                + "<foo><hello>Hello World</hello></foo>");
+
+        nl = document.getElementsByTagName("hello");
+        assertEquals(1, nl.getLength());
+
+        node = context.getTypeConverter().convertTo(Node.class, nl);
+        assertNotNull(node);
     }
 
 }

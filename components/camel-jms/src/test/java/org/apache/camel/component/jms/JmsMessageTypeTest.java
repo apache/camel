@@ -23,11 +23,13 @@ import javax.jms.ConnectionFactory;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
-import org.apache.camel.TypeConverter;
+import org.apache.camel.TypeConversionException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.support.TypeConverterSupport;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
+
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 import static org.apache.camel.component.jms.JmsConstants.JMS_MESSAGE_TYPE;
 
@@ -211,7 +213,7 @@ public class JmsMessageTypeTest extends CamelTestSupport {
         };
     }
 
-    public static final class MyFooBean implements TypeConverter, Serializable {
+    public static final class MyFooBean extends TypeConverterSupport implements Serializable {
 
         private static final long serialVersionUID = 1L;
         private String name;
@@ -227,8 +229,9 @@ public class JmsMessageTypeTest extends CamelTestSupport {
             return name;
         }
 
+        @Override
         @SuppressWarnings("unchecked")
-        public <T> T convertTo(Class<T> type, Object value) {
+        public <T> T convertTo(Class<T> type, Exchange exchange, Object value) throws TypeConversionException {
             if (type.isAssignableFrom(String.class)) {
                 return (T) ("Hello " + ((MyFooBean)value).getName());
             }
@@ -241,26 +244,6 @@ public class JmsMessageTypeTest extends CamelTestSupport {
                 return (T) map;
             }
             return null;
-        }
-
-        public <T> T convertTo(Class<T> type, Exchange exchange, Object value) {
-            return convertTo(type, value);
-        }
-
-        public <T> T mandatoryConvertTo(Class<T> type, Object value) {
-            return convertTo(type, value);
-        }
-
-        public <T> T mandatoryConvertTo(Class<T> type, Exchange exchange, Object value) {
-            return convertTo(type, value);
-        }
-
-        public <T> T tryConvertTo(Class<T> type, Object value) {
-            return convertTo(type, value);
-        }
-
-        public <T> T tryConvertTo(Class<T> type, Exchange exchange, Object value) {
-            return convertTo(type, value);
         }
     }
 }

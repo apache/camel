@@ -71,6 +71,10 @@ public class FallbackTypeConverter extends ServiceSupport implements TypeConvert
         this.prettyPrint = prettyPrint;
     }
 
+    public boolean allowNull() {
+        return false;
+    }
+
     public void setTypeConverter(TypeConverter parentTypeConverter) {
         this.parentTypeConverter = parentTypeConverter;
     }

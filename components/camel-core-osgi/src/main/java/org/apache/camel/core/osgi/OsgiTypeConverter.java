@@ -95,6 +95,10 @@ public class OsgiTypeConverter extends ServiceSupport implements TypeConverter, 
         this.delegate = null;
     }
 
+    public boolean allowNull() {
+        return getDelegate().allowNull();
+    }
+
     public <T> T convertTo(Class<T> type, Object value) {
         return getDelegate().convertTo(type, value);
     }

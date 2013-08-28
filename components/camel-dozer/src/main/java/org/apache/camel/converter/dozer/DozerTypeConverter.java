@@ -18,8 +18,9 @@ package org.apache.camel.converter.dozer;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
-import org.apache.camel.NoTypeConversionAvailableException;
+import org.apache.camel.TypeConversionException;
 import org.apache.camel.TypeConverter;
+import org.apache.camel.support.TypeConverterSupport;
 import org.dozer.DozerBeanMapper;
 import org.dozer.Mapper;
 
@@ -29,12 +30,11 @@ import org.dozer.Mapper;
  * types. <code>DozerTypeConverter</code>s are created and installed into a
  * {@link CamelContext} by an instance of {@link DozerTypeConverterLoader}.
  * <p>
- * See http://dozer.sourceforge.net} or more information on
- * configuring Dozer
+ * See <a href="http://dozer.sourceforge.net">dozer project page</a> or more information on configuring Dozer
  *
  * @see DozerTypeConverterLoader
  */
-public class DozerTypeConverter implements TypeConverter {
+public class DozerTypeConverter extends TypeConverterSupport {
 
     private final DozerBeanMapper mapper;
 
@@ -46,36 +46,8 @@ public class DozerTypeConverter implements TypeConverter {
         return mapper;
     }
 
-    public <T> T convertTo(Class<T> type, Object value) {
+    @Override
+    public <T> T convertTo(Class<T> type, Exchange exchange, Object value) throws TypeConversionException {
         return mapper.map(value, type);
     }
-
-    public <T> T convertTo(Class<T> type, Exchange exchange, Object value) {
-        return convertTo(type, value);
-    }
-
-    public <T> T mandatoryConvertTo(Class<T> type, Object value) throws NoTypeConversionAvailableException {
-        return convertTo(type, value);
-    }
-
-    public <T> T mandatoryConvertTo(Class<T> type, Exchange exchange, Object value) throws NoTypeConversionAvailableException {
-        return convertTo(type, value);
-    }
-
-    public <T> T tryConvertTo(Class<T> type, Object value) {
-        try {
-            return convertTo(type, value);
-        } catch (Exception e) {
-            return null;
-        }
-    }
-
-    public <T> T tryConvertTo(Class<T> type, Exchange exchange, Object value) {
-        try {
-            return convertTo(type, value);
-        } catch (Exception e) {
-            return null;
-        }
-    }
-
 }
