@@ -35,17 +35,29 @@ public class InstanceMethodFallbackTypeConverter extends TypeConverterSupport {
     private final Method method;
     private final boolean useExchange;
     private final TypeConverterRegistry registry;
+    private final boolean allowNull;
 
+    @Deprecated
     public InstanceMethodFallbackTypeConverter(CachingInjector<?> injector, Method method, TypeConverterRegistry registry) {
+        this(injector, method, registry, false);
+    }
+
+    public InstanceMethodFallbackTypeConverter(CachingInjector<?> injector, Method method, TypeConverterRegistry registry, boolean allowNull) {
         this.injector = injector;
         this.method = method;
         this.useExchange = method.getParameterTypes().length == 4;
         this.registry = registry;
+        this.allowNull = allowNull;
     }
 
     @Override
     public String toString() {
         return "InstanceMethodFallbackTypeConverter: " + method;
+    }
+
+    @Override
+    public boolean allowNull() {
+        return allowNull;
     }
 
     @SuppressWarnings("unchecked")

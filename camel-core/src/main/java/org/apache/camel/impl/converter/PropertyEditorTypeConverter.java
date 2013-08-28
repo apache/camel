@@ -52,6 +52,11 @@ public class PropertyEditorTypeConverter implements TypeConverter {
     }
 
     @Override
+    public boolean allowNull() {
+        return false;
+    }
+
+    @Override
     public <T> T convertTo(Class<T> type, Object value) {
         // We can't convert null values since we can't figure out a property
         // editor for it.

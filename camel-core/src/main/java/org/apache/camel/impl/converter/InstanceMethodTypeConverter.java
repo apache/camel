@@ -37,17 +37,29 @@ public class InstanceMethodTypeConverter extends TypeConverterSupport {
     private final Method method;
     private final boolean useExchange;
     private final TypeConverterRegistry registry;
+    private final boolean allowNull;
 
+    @Deprecated
     public InstanceMethodTypeConverter(CachingInjector<?> injector, Method method, TypeConverterRegistry registry) {
+        this(injector, method, registry, false);
+    }
+
+    public InstanceMethodTypeConverter(CachingInjector<?> injector, Method method, TypeConverterRegistry registry, boolean allowNull) {
         this.injector = injector;
         this.method = method;
         this.useExchange = method.getParameterTypes().length == 2;
         this.registry = registry;
+        this.allowNull = allowNull;
     }
 
     @Override
     public String toString() {
         return "InstanceMethodTypeConverter: " + method;
+    }
+
+    @Override
+    public boolean allowNull() {
+        return allowNull;
     }
 
     @SuppressWarnings("unchecked")

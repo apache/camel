@@ -30,6 +30,11 @@ import org.apache.camel.TypeConverter;
 public abstract class TypeConverterSupport implements TypeConverter {
 
     @Override
+    public boolean allowNull() {
+        return false;
+    }
+
+    @Override
     public <T> T convertTo(Class<T> type, Object value) throws TypeConversionException {
         return convertTo(type, null, value);
     }

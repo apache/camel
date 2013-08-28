@@ -31,15 +31,27 @@ import org.apache.camel.util.ObjectHelper;
 public class StaticMethodTypeConverter extends TypeConverterSupport {
     private final Method method;
     private final boolean useExchange;
+    private final boolean allowNull;
 
+    @Deprecated
     public StaticMethodTypeConverter(Method method) {
+        this(method,  false);
+    }
+
+    public StaticMethodTypeConverter(Method method, boolean allowNull) {
         this.method = method;
         this.useExchange = method.getParameterTypes().length == 2;
+        this.allowNull = allowNull;
     }
 
     @Override
     public String toString() {
         return "StaticMethodTypeConverter: " + method;
+    }
+
+    @Override
+    public boolean allowNull() {
+        return allowNull;
     }
 
     @SuppressWarnings("unchecked")

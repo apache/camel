@@ -44,7 +44,13 @@ import java.lang.annotation.Target;
 public @interface FallbackConverter {
 
     /**
+     * Whether or not returning <tt>null</tt> is a valid response.
+     */
+    boolean allowNull() default false;
+
+    /**
      * Whether or not this fallback converter can be promoted to a first class type converter.
      */
     boolean canPromote() default false;
+
 }

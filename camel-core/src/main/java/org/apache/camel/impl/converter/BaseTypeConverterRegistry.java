@@ -274,7 +274,9 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
             } else {
                 rc = converter.convertTo(type, exchange, value);
             }
-            if (rc != null) {
+            if (rc == null && converter.allowNull()) {
+                return null;
+            } else if (rc != null) {
                 return rc;
             }
         }
@@ -294,7 +296,9 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
                     } else {
                         rc = tc.convertTo(primitiveType, exchange, value);
                     }
-                    if (rc != null) {
+                    if (rc == null && tc.allowNull()) {
+                        return null;
+                    } else if (rc != null) {
                         return rc;
                     }
                 }
@@ -309,6 +313,9 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
                 rc = tc.tryConvertTo(type, exchange, value);
             } else {
                 rc = tc.convertTo(type, exchange, value);
+            }
+            if (rc == null && tc.allowNull()) {
+                return null;
             }
 
             if (Void.TYPE.equals(rc)) {
