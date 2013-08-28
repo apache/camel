@@ -22,7 +22,7 @@
   <parent>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-salesforce-parent</artifactId>
-    <version>2.12-SNAPSHOT</version>
+    <version>2.12.0</version>
   </parent>
 
   <artifactId>camel-salesforce</artifactId>
@@ -31,7 +31,7 @@
   <description>Camel Salesforce support</description>
 
   <properties>
-    <camel.osgi.export.pkg/>
+    <camel.osgi.export.pkg />
     <camel.osgi.export>
       org.apache.camel.component.salesforce;version=${project.version},
       org.apache.camel.component.salesforce.api.*;version=${project.version}
