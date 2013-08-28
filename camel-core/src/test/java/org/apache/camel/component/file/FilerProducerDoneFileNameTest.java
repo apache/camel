@@ -17,21 +17,44 @@
 package org.apache.camel.component.file;
 
 import java.io.File;
+import java.util.Properties;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExpressionIllegalSyntaxException;
+import org.apache.camel.component.properties.PropertiesComponent;
+import org.apache.camel.impl.JndiRegistry;
 
 /**
  * Unit test for writing done files
  */
 public class FilerProducerDoneFileNameTest extends ContextTestSupport {
 
+    private Properties myProp = new Properties();
+
     @Override
     protected void setUp() throws Exception {
         deleteDirectory("target/done");
         super.setUp();
+    }
+
+    @Override
+    protected JndiRegistry createRegistry() throws Exception {
+        JndiRegistry jndi = super.createRegistry();
+        jndi.bind("myProp", myProp);
+        return jndi;
+    }
+
+    @Override
+    protected CamelContext createCamelContext() throws Exception {
+        CamelContext context = super.createCamelContext();
+
+        PropertiesComponent pc = context.getComponent("properties", PropertiesComponent.class);
+        pc.setLocation("ref:myProp");
+
+        return context;
     }
 
     public void testProducerConstantDoneFileName() throws Exception {
@@ -92,6 +115,18 @@ public class FilerProducerDoneFileNameTest extends ContextTestSupport {
             IllegalArgumentException cause = assertIsInstanceOf(IllegalArgumentException.class, e.getCause());
             assertTrue(cause.getMessage(), cause.getMessage().startsWith("doneFileName must be specified and not empty"));
         }
+    }
+
+    public void testProducerPlaceholderPrefixDoneFileName() throws Exception {
+        myProp.put("myDir", "target/done");
+
+        template.sendBodyAndHeader("file:{{myDir}}?doneFileName=done-${file:name}", "Hello World", Exchange.FILE_NAME, "hello.txt");
+
+        File file = new File("target/done/hello.txt");
+        assertEquals("File should exists", true, file.exists());
+
+        File done = new File("target/done/done-hello.txt");
+        assertEquals("Done file should exists", true, done.exists());
     }
 
     @Override
