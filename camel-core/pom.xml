@@ -101,13 +101,12 @@
   <dependencies>
 
     <!-- required dependencies by camel-core -->
-    <!-- which we shade into camel-core so its available for everybody out of the box -->
+    <!-- it will be shade into camel-core by bnd plugin -->
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>spi-annotations</artifactId>
       <version>${project.version}</version>
       <optional>true</optional>
-      <scope>provided</scope>
     </dependency>
 
     <!-- required dependencies by camel-core -->
@@ -115,7 +114,6 @@
     <dependency>
       <groupId>com.googlecode.concurrentlinkedhashmap</groupId>
       <artifactId>concurrentlinkedhashmap-lru</artifactId>
-      <scope>provided</scope>
     </dependency>
 
     <!-- required dependencies by camel-core -->
@@ -188,7 +186,6 @@
             <configuration>
               <artifactSet>
                 <includes>
-                  <include>org.apache.camel:spi-annotations</include>
                   <include>com.googlecode.concurrentlinkedhashmap:concurrentlinkedhashmap-lru</include>
                 </includes>
                 <excludes>
