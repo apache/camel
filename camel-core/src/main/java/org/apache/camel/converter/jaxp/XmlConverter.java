@@ -136,7 +136,6 @@ public class XmlConverter {
         return new BytesSource(data);
     }
 
-
     /**
      * Converts the given String to a Source
      */
@@ -468,44 +467,29 @@ public class XmlConverter {
 
     @Converter
     public StreamSource toStreamSource(InputStream in) throws TransformerException {
-        if (in != null) {
-            return new StreamSource(in);
-        }
-        return null;
+        return new StreamSource(in);
     }
 
     @Converter
     public StreamSource toStreamSource(Reader in) throws TransformerException {
-        if (in != null) {
-            return new StreamSource(in);
-        }
-        return null;
+        return new StreamSource(in);
     }
 
     @Converter
     public StreamSource toStreamSource(File in) throws TransformerException {
-        if (in != null) {
-            return new StreamSource(in);
-        }
-        return null;
+        return new StreamSource(in);
     }
 
     @Converter
     public StreamSource toStreamSource(byte[] in, Exchange exchange) throws TransformerException {
-        if (in != null) {
-            InputStream is = exchange.getContext().getTypeConverter().convertTo(InputStream.class, exchange, in);
-            return new StreamSource(is);
-        }
-        return null;
+        InputStream is = exchange.getContext().getTypeConverter().convertTo(InputStream.class, exchange, in);
+        return new StreamSource(is);
     }
 
     @Converter
     public StreamSource toStreamSource(ByteBuffer in, Exchange exchange) throws TransformerException {
-        if (in != null) {
-            InputStream is = exchange.getContext().getTypeConverter().convertTo(InputStream.class, exchange, in);
-            return new StreamSource(is);
-        }
-        return null;
+        InputStream is = exchange.getContext().getTypeConverter().convertTo(InputStream.class, exchange, in);
+        return new StreamSource(is);
     }
 
     /**
@@ -631,7 +615,6 @@ public class XmlConverter {
         String str = toString(source, exchange);
         StringReader reader = new StringReader(str);
         return new SAXSource(new InputSource(reader));
-
     }
 
     @Converter
@@ -670,7 +653,7 @@ public class XmlConverter {
      * @param nl the NodeList
      * @return the DOM Node
      */
-    @Converter
+    @Converter(allowNull = true)
     public Node toDOMNodeFromSingleNodeList(NodeList nl) {
         return nl.getLength() == 1 ? nl.item(0) : null;
     }
@@ -681,7 +664,7 @@ public class XmlConverter {
      * @param nl the NodeList
      * @return the DOM Document
      */
-    @Converter
+    @Converter(allowNull = true)
     public Document toDOMDocumentFromSingleNodeList(NodeList nl) throws ParserConfigurationException, TransformerException {
         return nl.getLength() == 1 ? toDOMDocument(nl.item(0)) : null;
     }
@@ -689,7 +672,7 @@ public class XmlConverter {
     /**
      * Converts the given TRaX Source into a W3C DOM node
      */
-    @Converter
+    @Converter(allowNull = true)
     public Node toDOMNode(Source source) throws TransformerException, ParserConfigurationException, IOException, SAXException {
         DOMSource domSrc = toDOMSource(source);
         return domSrc != null ? domSrc.getNode() : null;

@@ -34,4 +34,9 @@ import java.lang.annotation.Target;
 @Documented
 @Target({ElementType.TYPE, ElementType.METHOD })
 public @interface Converter {
+
+    /**
+     * Whether or not returning <tt>null</tt> is a valid response.
+     */
+    boolean allowNull() default false;
 }

@@ -264,9 +264,17 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
                 // this may be prone to ClassLoader or packaging problems when the same class is defined
                 // in two different jars (as is the case sometimes with specs).
                 if (ObjectHelper.hasAnnotation(method, Converter.class, true)) {
-                    injector = handleHasConverterAnnotation(registry, type, injector, method);
+                    boolean allowNull = false;
+                    if (method.getAnnotation(Converter.class) != null) {
+                        allowNull = method.getAnnotation(Converter.class).allowNull();
+                    }
+                    injector = handleHasConverterAnnotation(registry, type, injector, method, allowNull);
                 } else if (ObjectHelper.hasAnnotation(method, FallbackConverter.class, true)) {
-                    injector = handleHasFallbackConverterAnnotation(registry, type, injector, method);
+                    boolean allowNull = false;
+                    if (method.getAnnotation(FallbackConverter.class) != null) {
+                        allowNull = method.getAnnotation(FallbackConverter.class).allowNull();
+                    }
+                    injector = handleHasFallbackConverterAnnotation(registry, type, injector, method, allowNull);
                 }
             }
 
@@ -279,7 +287,8 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
         }
     }
 
-    private CachingInjector<?> handleHasConverterAnnotation(TypeConverterRegistry registry, Class<?> type, CachingInjector<?> injector, Method method) {
+    private CachingInjector<?> handleHasConverterAnnotation(TypeConverterRegistry registry, Class<?> type,
+                                                            CachingInjector<?> injector, Method method, boolean allowNull) {
         if (isValidConverterMethod(method)) {
             int modifiers = method.getModifiers();
             if (isAbstract(modifiers) || !isPublic(modifiers)) {
@@ -294,13 +303,13 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
                     Class<?> fromType = method.getParameterTypes()[0];
                     if (isStatic(modifiers)) {
                         registerTypeConverter(registry, method, toType, fromType,
-                                new StaticMethodTypeConverter(method));
+                                new StaticMethodTypeConverter(method, allowNull));
                     } else {
                         if (injector == null) {
                             injector = new CachingInjector<Object>(registry, CastUtils.cast(type, Object.class));
                         }
                         registerTypeConverter(registry, method, toType, fromType,
-                                new InstanceMethodTypeConverter(injector, method, registry));
+                                new InstanceMethodTypeConverter(injector, method, registry, allowNull));
                     }
                 }
             }
@@ -311,7 +320,8 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
         return injector;
     }
 
-    private CachingInjector<?> handleHasFallbackConverterAnnotation(TypeConverterRegistry registry, Class<?> type, CachingInjector<?> injector, Method method) {
+    private CachingInjector<?> handleHasFallbackConverterAnnotation(TypeConverterRegistry registry, Class<?> type,
+                                                                    CachingInjector<?> injector, Method method, boolean allowNull) {
         if (isValidFallbackConverterMethod(method)) {
             int modifiers = method.getModifiers();
             if (isAbstract(modifiers) || !isPublic(modifiers)) {
@@ -324,12 +334,12 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
                             + method + " as a fallback converter method returns a void method");
                 } else {
                     if (isStatic(modifiers)) {
-                        registerFallbackTypeConverter(registry, new StaticMethodFallbackTypeConverter(method, registry), method);
+                        registerFallbackTypeConverter(registry, new StaticMethodFallbackTypeConverter(method, registry, allowNull), method);
                     } else {
                         if (injector == null) {
                             injector = new CachingInjector<Object>(registry, CastUtils.cast(type, Object.class));
                         }
-                        registerFallbackTypeConverter(registry, new InstanceMethodFallbackTypeConverter(injector, method, registry), method);
+                        registerFallbackTypeConverter(registry, new InstanceMethodFallbackTypeConverter(injector, method, registry, allowNull), method);
                     }
                 }
             }

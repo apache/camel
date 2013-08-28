@@ -28,6 +28,13 @@ package org.apache.camel;
 public interface TypeConverter {
 
     /**
+     * Whether the type converter allows returning null as a valid response.
+     * <p/>
+     * By default <tt>null</tt> is not a valid response, returning <tt>false</tt> from this method.
+     */
+    boolean allowNull();
+
+    /**
      * Converts the value to the specified type
      *
      * @param type the requested type
