@@ -85,9 +85,6 @@ public class SimpleBuilder implements Predicate, Expression {
 
     private Predicate createPredicate(Exchange exchange) {
         SimpleLanguage simple = (SimpleLanguage) exchange.getContext().resolveLanguage("simple");
-        if (resultType != null) {
-            simple.setResultType(resultType);
-        }
         // resolve property placeholders
         try {
             String resolve = exchange.getContext().resolvePropertyPlaceholders(text);
@@ -99,13 +96,14 @@ public class SimpleBuilder implements Predicate, Expression {
 
     private Expression createExpression(Exchange exchange) {
         SimpleLanguage simple = (SimpleLanguage) exchange.getContext().resolveLanguage("simple");
-        if (resultType != null) {
-            simple.setResultType(resultType);
-        }
         // resolve property placeholders
         try {
             String resolve = exchange.getContext().resolvePropertyPlaceholders(text);
-            return simple.createExpression(resolve);
+            Expression exp = simple.createExpression(resolve);
+            if (resultType != null) {
+                exp = ExpressionBuilder.convertToExpression(exp, resultType);
+            }
+            return exp;
         } catch (Exception e) {
             throw ObjectHelper.wrapCamelExecutionException(exchange, e);
         }
