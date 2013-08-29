@@ -1,0 +1,200 @@
+package org.apache.camel.facebook;
+
+import java.lang.reflect.Array;
+import java.text.SimpleDateFormat;
+import java.util.*;
+import java.util.concurrent.TimeUnit;
+import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
+import org.apache.camel.facebook.data.FacebookMethodsType;
+import org.apache.camel.facebook.data.FacebookPropertiesHelper;
+import org.apache.camel.facebook.data.ReadingBuilder;
+import org.apache.camel.impl.ScheduledPollConsumer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import facebook4j.Reading;
+
+import static org.apache.camel.facebook.FacebookConstants.FACEBOOK_DATE_FORMAT;
+import static org.apache.camel.facebook.FacebookConstants.READING_PPROPERTY;
+import static org.apache.camel.facebook.FacebookConstants.READING_PREFIX;
+import static org.apache.camel.facebook.data.FacebookMethodsTypeHelper.MatchType;
+import static org.apache.camel.facebook.data.FacebookMethodsTypeHelper.filterMethods;
+import static org.apache.camel.facebook.data.FacebookMethodsTypeHelper.getHighestPriorityMethod;
+import static org.apache.camel.facebook.data.FacebookMethodsTypeHelper.getMissingProperties;
+import static org.apache.camel.facebook.data.FacebookMethodsTypeHelper.invokeMethod;
+
+/**
+ * The Facebook consumer.
+ */
+public class FacebookConsumer extends ScheduledPollConsumer {
+
+    private static final Logger LOG = LoggerFactory.getLogger(FacebookConsumer.class);
+    private static final String SINCE_PREFIX = "since=";
+
+    private final FacebookEndpoint endpoint;
+    private final FacebookMethodsType method;
+    private final Map<String, Object> endpointProperties;
+
+    private String sinceTime;
+    private String untilTime;
+
+    public FacebookConsumer(FacebookEndpoint endpoint, Processor processor) {
+        super(endpoint, processor);
+        this.endpoint = endpoint;
+
+        // determine the consumer method to invoke
+        this.method = findMethod(endpoint.getCandidates());
+
+        // get endpoint properties in a map
+        final HashMap<String, Object> properties = new HashMap<String, Object>();
+        FacebookPropertiesHelper.getEndpointProperties(endpoint.getConfiguration(), properties);
+
+        // skip since and until fields?
+        final Reading reading = (Reading) properties.get(READING_PPROPERTY);
+        if (reading != null) {
+            final String queryString = reading.toString();
+            if (queryString.contains("since=")) {
+                // use the user supplied value to start with
+                final int startIndex = queryString.indexOf(SINCE_PREFIX) + SINCE_PREFIX.length();
+                int endIndex = queryString.indexOf('&', startIndex);
+                if (endIndex == -1) {
+                    endIndex = queryString.length();
+                }
+                this.sinceTime = queryString.substring(startIndex, endIndex).replaceAll("%3(a|A)", ":");
+                LOG.debug("Using supplied property {}since value {}", READING_PREFIX, this.sinceTime);
+            }
+            if (queryString.contains("until=")) {
+                LOG.debug("Overriding configured property {}until", READING_PREFIX);
+            }
+        }
+        this.endpointProperties = Collections.unmodifiableMap(properties);
+    }
+
+    private FacebookMethodsType findMethod(List<FacebookMethodsType> candidates) {
+        // did we get lucky to have a single candidate?
+        FacebookMethodsType result;
+        if (candidates.size() == 1) {
+            // jackpot
+            result = candidates.get(0);
+        } else {
+            // find one that takes the largest subset of endpoint parameters
+            final Set<String> argNames = new HashSet<String>();
+            argNames.addAll(FacebookPropertiesHelper.getEndpointPropertyNames(endpoint.getConfiguration()));
+
+            // add reading property for polling, if it doesn't already exist!
+            argNames.add(READING_PPROPERTY);
+
+            final String[] argNamesArray = argNames.toArray(new String[argNames.size()]);
+            List<FacebookMethodsType> filteredMethods = filterMethods(
+                endpoint.getCandidates(), MatchType.SUPER_SET, argNamesArray);
+
+            if (filteredMethods.isEmpty()) {
+                throw new IllegalArgumentException(
+                    String.format("Missing properties for %s, need one or more from %s",
+                        endpoint.getMethodName(),
+                        getMissingProperties(endpoint.getMethodName(), endpoint.getNameStyle(), argNames)));
+            } else if (filteredMethods.size() == 1) {
+                // single match
+                result = filteredMethods.get(0);
+            } else {
+                result = getHighestPriorityMethod(filteredMethods);
+                LOG.warn("Using highest priority method {} from methods {}", method, filteredMethods);
+            }
+        }
+        return result;
+    }
+
+    @Override
+    protected int poll() throws Exception {
+        // Note mark this consumer as not greedy to avoid making too many Facebook calls
+        setGreedy(false);
+
+        // invoke the consumer method
+        Object result = invokeMethod(endpoint.getConfiguration().getFacebook(),
+            method, getMethodArguments());
+
+        // process result according to type
+        if (result != null && (result instanceof Collection || result.getClass().isArray())) {
+            // create an exchange for every element
+            final Object array = getResultAsArray(result);
+            final int length = Array.getLength(array);
+            for (int i = 0; i < length; i++) {
+                processResult(Array.get(array, i));
+            }
+            return length;
+        } else {
+            processResult(result);
+            return 1; // number of messages polled
+        }
+    }
+
+    private void processResult(Object result) throws Exception {
+        Exchange exchange = endpoint.createExchange();
+        exchange.getIn().setBody(result);
+        try {
+            // send message to next processor in the route
+            getProcessor().process(exchange);
+        } finally {
+            // log exception if an exception occurred and was not handled
+            if (exchange.getException() != null) {
+                getExceptionHandler().handleException("Error processing exchange", exchange, exchange.getException());
+            }
+        }
+    }
+
+    private Object getResultAsArray(Object result) {
+        if (result.getClass().isArray()) {
+            // no conversion needed
+            return result;
+        }
+        // must be a Collection
+        // TODO add support for Paging using ResponseList
+        Collection collection = (Collection) result;
+        return collection.toArray(new Object[collection.size()]);
+    }
+
+    private Map<String, Object> getMethodArguments() {
+        // start by setting the Reading since and until fields,
+        // these are used to avoid reading duplicate results across polls
+        Map<String, Object> arguments = new HashMap<String, Object>();
+        arguments.putAll(endpointProperties);
+
+        Reading reading = (Reading) arguments.remove(READING_PPROPERTY);
+        if (reading == null) {
+            reading = new Reading();
+        } else {
+            try {
+                reading = ReadingBuilder.copy(reading, true);
+            } catch (NoSuchFieldException e) {
+                throw new IllegalArgumentException(String.format("Error creating property [%s]: %s",
+                    READING_PPROPERTY, e.getMessage()), e);
+            } catch (IllegalAccessException e) {
+                throw new IllegalArgumentException(String.format("Error creating property [%s]: %s",
+                    READING_PPROPERTY, e.getMessage()), e);
+            }
+        }
+
+        // now set since and until for this poll
+        final SimpleDateFormat dateFormat = new SimpleDateFormat(FACEBOOK_DATE_FORMAT);
+        final long currentMillis = System.currentTimeMillis();
+        if (this.sinceTime == null) {
+            // first poll, set this to (current time - initial poll delay)
+            final Date startTime = new Date(currentMillis
+                - TimeUnit.MILLISECONDS.convert(getInitialDelay(), getTimeUnit()));
+            this.sinceTime = dateFormat.format(startTime);
+        } else if (this.untilTime != null) {
+            // use the last 'until' time
+            this.sinceTime = this.untilTime;
+        }
+        this.untilTime = dateFormat.format(new Date(currentMillis));
+
+        reading.since(this.sinceTime);
+        reading.until(this.untilTime);
+
+        arguments.put(READING_PPROPERTY, reading);
+
+        return arguments;
+    }
+
+}
