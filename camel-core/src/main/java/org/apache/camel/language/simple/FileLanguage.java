@@ -23,14 +23,7 @@ public class FileLanguage extends SimpleLanguage {
 
     public FileLanguage() {
         // do not allow escaping, as Windows uses \ as path separator
-        setAllowEscape(false);
+        allowEscape = false;
     }
 
-    @Override
-    public void setAllowEscape(boolean allowEscape) {
-        if (allowEscape) {
-            throw new IllegalArgumentException("File language does not allow escape");
-        }
-        this.allowEscape = allowEscape;
-    }
 }
