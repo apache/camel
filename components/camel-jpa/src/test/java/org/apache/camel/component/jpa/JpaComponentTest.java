@@ -17,6 +17,7 @@
 package org.apache.camel.component.jpa;
 
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.LockModeType;
 import javax.persistence.Persistence;
 
 import org.apache.camel.examples.SendEmail;
@@ -25,9 +26,22 @@ import org.junit.Test;
 import org.springframework.orm.jpa.JpaTransactionManager;
 
 /**
- * @version 
+ * @version
  */
 public class JpaComponentTest extends CamelTestSupport {
+
+    @Test
+    public void testJpaComponentConsumerHasLockModeType() throws Exception {
+        JpaComponent comp = new JpaComponent();
+        comp.setCamelContext(context);
+        assertNull(comp.getEntityManagerFactory());
+        assertNull(comp.getTransactionManager());
+
+        JpaEndpoint jpa = (JpaEndpoint) comp.createEndpoint("jpa://" + SendEmail.class.getName() + "?consumer.lockModeType=PESSIMISTIC_WRITE");
+        JpaConsumer consumer = (JpaConsumer) jpa.createConsumer(null);
+
+        assertEquals(consumer.getLockModeType(), LockModeType.PESSIMISTIC_WRITE);
+    }
 
     @Test
     public void testJpaComponentCtr() throws Exception {
@@ -62,7 +76,7 @@ public class JpaComponentTest extends CamelTestSupport {
         assertNotNull(jpa);
         assertNotNull(jpa.getEntityType());
     }
-    
+
     @Test
     public void testJpaComponentWithPath() throws Exception {
         JpaComponent comp = new JpaComponent();
