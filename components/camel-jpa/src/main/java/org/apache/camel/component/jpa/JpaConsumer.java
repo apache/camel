@@ -49,6 +49,7 @@ public class JpaConsumer extends ScheduledBatchPollingConsumer {
     private String query;
     private String namedQuery;
     private String nativeQuery;
+    private LockModeType lockModeType = LockModeType.WRITE;
     private Class<?> resultClass;
     private boolean transacted;
 
@@ -203,6 +204,14 @@ public class JpaConsumer extends ScheduledBatchPollingConsumer {
         this.namedQuery = namedQuery;
     }
 
+    public LockModeType getLockModeType() {
+        return lockModeType;
+    }
+
+    public void setLockModeType(LockModeType lockModeType) {
+        this.lockModeType = lockModeType;
+    }
+
     public String getNativeQuery() {
         return nativeQuery;
     }
@@ -259,7 +268,7 @@ public class JpaConsumer extends ScheduledBatchPollingConsumer {
         }
         try {
             LOG.debug("Acquiring exclusive lock on entity: {}", entity);
-            entityManager.lock(entity, LockModeType.WRITE);
+            entityManager.lock(entity, lockModeType);
             return true;
         } catch (Exception e) {
             if (LOG.isDebugEnabled()) {
