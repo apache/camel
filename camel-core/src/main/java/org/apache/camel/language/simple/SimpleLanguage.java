@@ -93,35 +93,12 @@ public class SimpleLanguage extends LanguageSupport {
     // singleton for expressions without a result type
     private static final SimpleLanguage SIMPLE = new SimpleLanguage();
 
-    protected Class<?> resultType;
     protected boolean allowEscape = true;
 
     /**
      * Default constructor.
      */
     public SimpleLanguage() {
-    }
-
-    public Class<?> getResultType() {
-        return resultType;
-    }
-
-    public void setResultType(Class<?> resultType) {
-        this.resultType = resultType;
-    }
-
-    public boolean isAllowEscape() {
-        return allowEscape;
-    }
-
-    public void setAllowEscape(boolean allowEscape) {
-        this.allowEscape = allowEscape;
-    }
-
-    @Override
-    public boolean isSingleton() {
-        // we cannot be singleton as we have state
-        return false;
     }
 
     public Predicate createPredicate(String expression) {
@@ -153,9 +130,6 @@ public class SimpleLanguage extends LanguageSupport {
             SimpleExpressionParser parser = new SimpleExpressionParser(expression, allowEscape);
             answer = parser.parseExpression();
         }
-        if (resultType != null) {
-            answer = ExpressionBuilder.convertToExpression(answer, resultType);
-        }
         return answer;
     }
 
@@ -175,13 +149,16 @@ public class SimpleLanguage extends LanguageSupport {
      */
     public static Expression simple(String expression, Class<?> resultType) {
         SimpleLanguage answer = new SimpleLanguage();
-        answer.setResultType(resultType);
         if (resultType == Boolean.class || resultType == boolean.class) {
             // if its a boolean as result then its a predicate
             Predicate predicate = answer.createPredicate(expression);
             return PredicateToExpressionAdapter.toExpression(predicate);
         } else {
-            return answer.createExpression(expression);
+            Expression exp = answer.createExpression(expression);
+            if (resultType != null) {
+                exp = ExpressionBuilder.convertToExpression(exp, resultType);
+            }
+            return exp;
         }
     }
 
