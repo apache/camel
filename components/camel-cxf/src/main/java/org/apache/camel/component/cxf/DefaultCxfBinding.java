@@ -493,7 +493,7 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
         Map<String, List<String>> cxfHeaders = CastUtils.cast((Map<?, ?>)cxfMessage.get(Message.PROTOCOL_HEADERS));
         Map<String, Object> camelHeaders = camelMessage.getHeaders();
         camelHeaders.put(CxfConstants.CAMEL_CXF_MESSAGE, cxfMessage);
-
+        
         if (cxfHeaders != null) {
             for (Map.Entry<String, List<String>> entry : cxfHeaders.entrySet()) {
                 if (!headerFilterStrategy.applyFilterToExternalHeaders(entry.getKey(), 
@@ -501,12 +501,19 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
                     // We need to filter the content type with multi-part, 
                     // as the multi-part stream is already consumed by AttachmentInInterceptor,
                     // it will cause some trouble when route this message to another CXF endpoint.
+                    
                     if ("Content-Type".compareToIgnoreCase(entry.getKey()) == 0
                         && entry.getValue().get(0) != null
                         && entry.getValue().get(0).startsWith("multipart/related")) {
-                        String contentType = replaceMultiPartContentType(entry.getValue().get(0));
-                        LOG.trace("Find the multi-part Conent-Type, and replace it with {}", contentType);
-                        camelHeaders.put(entry.getKey(), contentType);
+                        // We need to keep the Content-Type if the data format is RAW message
+                        DataFormat dataFormat = exchange.getProperty(CxfConstants.DATA_FORMAT_PROPERTY, DataFormat.class);
+                        if (dataFormat.equals(DataFormat.RAW)) {
+                            camelHeaders.put(entry.getKey(), getContentTypeString(entry.getValue()));
+                        } else {
+                            String contentType = replaceMultiPartContentType(entry.getValue().get(0));
+                            LOG.trace("Find the multi-part Conent-Type, and replace it with {}", contentType);
+                            camelHeaders.put(entry.getKey(), contentType);
+                        }
                     } else {
                         LOG.trace("Populate header from CXF header={} value={}",
                                 entry.getKey(), entry.getValue());
@@ -581,6 +588,18 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
         }
         return result;
     }
+    
+    protected String getContentTypeString(List<String> values) {
+        String result = "";
+        for (String value : values) {
+            if (result.length() == 0) {
+                result = value;
+            } else {
+                result = result + "; " + value;
+            }
+        }
+        return result;
+    }
 
     @SuppressWarnings("unchecked")
     protected void propagateHeadersFromCamelToCxf(Exchange camelExchange, 
@@ -601,12 +620,21 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
         if (headers != null) {
             transportHeaders.putAll(headers);
         }
+        
+        DataFormat dataFormat = camelExchange.getProperty(CxfConstants.DATA_FORMAT_PROPERTY, DataFormat.class);
             
         for (Map.Entry<String, Object> entry : camelHeaders.entrySet()) {
             // put response code in request context so it will be copied to CXF message's property
             if (Message.RESPONSE_CODE.equals(entry.getKey()) || Exchange.HTTP_RESPONSE_CODE.equals(entry.getKey())) {
                 LOG.debug("Propagate to CXF header: {} value: {}", Message.RESPONSE_CODE, entry.getValue());
                 cxfContext.put(Message.RESPONSE_CODE, entry.getValue());
+                continue;
+            }
+            
+            // We need to copy the content-type if the dataformat is RAW
+            if (Message.CONTENT_TYPE.equalsIgnoreCase(entry.getKey()) && dataFormat.equals(DataFormat.RAW)) {
+                LOG.debug("Propagate to CXF header: {} value: {}", Message.CONTENT_TYPE, entry.getValue());
+                cxfContext.put(Message.CONTENT_TYPE, entry.getValue().toString());
                 continue;
             }
             
