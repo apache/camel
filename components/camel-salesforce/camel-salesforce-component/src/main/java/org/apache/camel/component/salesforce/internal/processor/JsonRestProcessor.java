@@ -102,7 +102,7 @@ public class JsonRestProcessor extends AbstractRestProcessor {
             break;
 
         default:
-            throw new SalesforceException("Unknow operation name: " + operationName, null);
+            // ignore, some operations do not require response class or type
         }
     }
 

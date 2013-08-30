@@ -93,7 +93,7 @@ public class StreamingApiIntegrationTest extends AbstractSalesforceTestBase {
                 // route for finding test topic
                 from("direct:query").
                     to("salesforce:query?sObjectQuery=SELECT Id FROM PushTopic WHERE Name = 'CamelTestTopic'&"
-                        + "sObjectClass=org.apache.camel.component.salesforce.internal.dto.QueryRecordsPushTopic");
+                        + "sObjectClass=" + QueryRecordsPushTopic.class.getName());
 
                 // route for removing test record
                 from("direct:deleteSObjectWithId").
