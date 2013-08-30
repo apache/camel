@@ -145,7 +145,7 @@ public class XmlRestProcessor extends AbstractRestProcessor {
             break;
 
         default:
-            throw new SalesforceException("Unknow operation name: " + operationName, null);
+            // ignore, some operations do not require alias or class exchange properties
         }
     }
 
