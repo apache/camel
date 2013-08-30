@@ -16,6 +16,7 @@
  */
 package org.apache.camel.converter.dozer;
 
+import java.lang.reflect.Field;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.util.ArrayList;
@@ -29,12 +30,14 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.TypeConverterRegistry;
+import org.apache.camel.util.ReflectionHelper;
 import org.apache.camel.util.ResourceHelper;
 import org.dozer.DozerBeanMapper;
 import org.dozer.Mapper;
 import org.dozer.classmap.ClassMap;
 import org.dozer.classmap.MappingFileData;
 import org.dozer.config.BeanContainer;
+import org.dozer.config.GlobalSettings;
 import org.dozer.loader.api.BeanMappingBuilder;
 import org.dozer.loader.xml.MappingFileReader;
 import org.dozer.loader.xml.XMLParserFactory;
@@ -59,7 +62,8 @@ public class DozerTypeConverterLoader implements CamelContextAware {
 
     private final Logger log = LoggerFactory.getLogger(getClass());
     private CamelContext camelContext;
-    private DozerBeanMapper mapper;
+    private DozerBeanMapperConfiguration configuration;
+    private transient DozerBeanMapper mapper;
 
     /**
      * Creates a <code>DozerTypeConverter</code> performing no
@@ -82,6 +86,35 @@ public class DozerTypeConverterLoader implements CamelContextAware {
     }
 
     /**
+     * Creates a <code>DozerTypeConverter</code> using the given
+     * {@link DozerBeanMapperConfiguration} configuration.
+     *
+     * @param camelContext the context to register the
+     *                     {@link DozerTypeConverter} in
+     *
+     * @param configuration dozer mapping bean configuration.
+     */
+    public DozerTypeConverterLoader(CamelContext camelContext, DozerBeanMapperConfiguration configuration) {
+        GlobalSettings settings = GlobalSettings.getInstance();
+        try {
+            log.info("Configuring GlobalSettings to use Camel classloader: {}", CamelToDozerClassResolverAdapter.class.getName());
+            Field field = settings.getClass().getDeclaredField("classLoaderBeanName");
+            ReflectionHelper.setField(field, settings, CamelToDozerClassResolverAdapter.class.getName());
+        } catch (Exception e) {
+            throw new IllegalStateException("Cannot configure Dozer GlobalSettings to use CamelToDozerClassResolverAdapter as classloader due " + e.getMessage(), e);
+        }
+
+        // must set class loader before we create bean mapper
+        CamelToDozerClassResolverAdapter adapter = new CamelToDozerClassResolverAdapter(camelContext);
+        BeanContainer.getInstance().setClassLoader(adapter);
+
+        log.info("Using DozerBeanMapperConfiguration: {}", configuration);
+        DozerBeanMapper mapper = createDozerBeanMapper(configuration);
+
+        init(camelContext, mapper);
+    }
+
+    /**
      * Creates a <code>DozerTypeConverter</code> that will wrap the the given
      * {@link DozerBeanMapper} as a {@link DozerTypeConverter} and register it
      * with the given context. It will also search the context for
@@ -90,6 +123,7 @@ public class DozerTypeConverterLoader implements CamelContextAware {
      *                     {@link DozerTypeConverter} in
      * @param mapper       the DozerMapperBean to be wrapped as a type converter.
      */
+    @Deprecated
     public DozerTypeConverterLoader(CamelContext camelContext, DozerBeanMapper mapper) {
         init(camelContext, mapper);
     }
@@ -110,12 +144,30 @@ public class DozerTypeConverterLoader implements CamelContextAware {
 
         CamelToDozerClassResolverAdapter adapter = new CamelToDozerClassResolverAdapter(camelContext);
         BeanContainer.getInstance().setClassLoader(adapter);
-        
+
         Map<String, DozerBeanMapper> mappers = lookupDozerBeanMappers();
         // only add if we do not already have it
         if (mapper != null && !mappers.containsValue(mapper)) {
             mappers.put("parameter", mapper);
         }
+
+        // add any dozer bean mapper configurations
+        Map<String, DozerBeanMapperConfiguration> configurations = lookupDozerBeanMapperConfigurations();
+        if (configurations != null) {
+            if (configurations.size() > 1) {
+                log.warn("Loaded " + configurations.size() + " Dozer configurations from Camel registry."
+                        + " Dozer is most efficient when there is a single mapper instance. Consider amalgamating instances.");
+            }
+            for (Map.Entry<String, DozerBeanMapperConfiguration> entry : configurations.entrySet()) {
+                String id = entry.getKey();
+                DozerBeanMapper beanMapper = createDozerBeanMapper(entry.getValue());
+                // only add if we do not already have it
+                if (!mappers.containsValue(beanMapper)) {
+                    mappers.put(id, beanMapper);
+                }
+            }
+        }
+
         if (mappers.size() > 1) {
             log.warn("Loaded " + mappers.size() + " Dozer mappers from Camel registry."
                     + " Dozer is most efficient when there is a single mapper instance. Consider amalgamating instances.");
@@ -123,6 +175,7 @@ public class DozerTypeConverterLoader implements CamelContextAware {
             log.warn("No Dozer mappers found in Camel registry. You should add Dozer mappers as beans to the registry of the type: "
                     + DozerBeanMapper.class.getName());
         }
+
 
         TypeConverterRegistry registry = camelContext.getTypeConverterRegistry();
         for (Map.Entry<String, DozerBeanMapper> entry : mappers.entrySet()) {
@@ -134,10 +187,45 @@ public class DozerTypeConverterLoader implements CamelContextAware {
     }
 
     /**
+     * Creates a {@link DozerBeanMapper} from the given configuration.
+     *
+     * @param configuration  the dozer bean mapper configuration.
+     * @return the created mapper
+     */
+    protected DozerBeanMapper createDozerBeanMapper(DozerBeanMapperConfiguration configuration) {
+        DozerBeanMapper mapper;
+        if (configuration.getMappingFiles() != null) {
+            mapper = new DozerBeanMapper(configuration.getMappingFiles());
+        } else {
+            mapper = new DozerBeanMapper();
+        }
+        if (configuration.getCustomConverters() != null) {
+            mapper.setCustomConverters(configuration.getCustomConverters());
+        }
+        if (configuration.getEventListeners() != null) {
+            mapper.setEventListeners(configuration.getEventListeners());
+        }
+        if (configuration.getCustomConvertersWithId() != null) {
+            mapper.setCustomConvertersWithId(configuration.getCustomConvertersWithId());
+        }
+        if (configuration.getCustomFieldMapper() != null) {
+            mapper.setCustomFieldMapper(configuration.getCustomFieldMapper());
+        }
+        return mapper;
+    }
+
+    /**
      * Lookup the dozer {@link DozerBeanMapper} to be used.
      */
     protected Map<String, DozerBeanMapper> lookupDozerBeanMappers() {
         return new HashMap<String, DozerBeanMapper>(camelContext.getRegistry().findByTypeWithName(DozerBeanMapper.class));
+    }
+
+    /**
+     * Lookup the dozer {@link DozerBeanMapperConfiguration} to be used.
+     */
+    protected Map<String, DozerBeanMapperConfiguration> lookupDozerBeanMapperConfigurations() {
+        return new HashMap<String, DozerBeanMapperConfiguration>(camelContext.getRegistry().findByTypeWithName(DozerBeanMapperConfiguration.class));
     }
 
     protected void registerClassMaps(TypeConverterRegistry registry, String dozerId, DozerBeanMapper dozer, List<ClassMap> all) {
@@ -242,23 +330,6 @@ public class DozerTypeConverterLoader implements CamelContextAware {
             url = DozerClassLoader.class.getClassLoader().getResource(mappingFile);
         }
         return url;
-    }
-
-    private static final class CamelToDozerClassResolverAdapter implements DozerClassLoader {
-
-        private final ClassResolver classResolver;
-
-        private CamelToDozerClassResolverAdapter(CamelContext camelContext) {
-            classResolver = camelContext.getClassResolver();
-        }
-
-        public Class<?> loadClass(String name) {
-            return classResolver.resolveClass(name);
-        }
-
-        public URL loadResource(String name) {
-            return loadMappingFile(classResolver, name);
-        }
     }
 
 }
