@@ -19,9 +19,14 @@ package org.apache.camel;
 /**
  * Runtime version of the {@link InvalidPayloadException}.
  *
- * @version 
+ * @deprecated will be removed in Camel 3.0, use org.apache.camel.util.ObjectHelper#wrapRuntimeCamelException
+ * @version
  */
+@Deprecated
 public class InvalidPayloadRuntimeException extends RuntimeExchangeException {
+
+    // TODO: Use org.apache.camel.util.ObjectHelper#wrapRuntimeCamelException to wrap as runtime
+
     private static final long serialVersionUID = -155083097523464793L;
     private final transient Class<?> type;
 

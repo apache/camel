@@ -25,6 +25,7 @@ package org.apache.camel;
 @Deprecated
 public class InvalidPayloadException extends CamelExchangeException {
 
+    // TODO: We should have NoSuchBodyException to be consistent with NoSuchHeaderException
     // TODO: We should remove this class in Camel 3.0, and just rely on the other exceptions for type conversion issues
 
     private static final long serialVersionUID = -1689157578733908632L;
