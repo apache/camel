@@ -32,7 +32,7 @@ import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknow
 /**
  *
  */
-public class ManagedJmsEndpointTest extends CamelTestSupport {
+public class ManagedJmsEndpointTopicTest extends CamelTestSupport {
 
     @Override
     protected boolean useJmx() {
@@ -59,34 +59,21 @@ public class ManagedJmsEndpointTest extends CamelTestSupport {
     public void testJmsEndpoint() throws Exception {
         MBeanServer mbeanServer = getMBeanServer();
 
-        ObjectName name = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=endpoints,name=\"activemq://queue:start\"");
+        ObjectName name = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=endpoints,name=\"activemq://topic:start\"");
         String uri = (String) mbeanServer.getAttribute(name, "EndpointUri");
-        assertEquals("activemq://queue:start", uri);
+        assertEquals("activemq://topic:start", uri);
 
         Boolean singleton = (Boolean) mbeanServer.getAttribute(name, "Singleton");
         assertTrue(singleton.booleanValue());
 
         Integer running = (Integer) mbeanServer.getAttribute(name, "RunningMessageListeners");
-        assertEquals(1, running.intValue());
-
-        Long size = (Long) mbeanServer.invoke(name, "queueSize", null, null);
-        assertEquals(0, size.intValue());
+        assertEquals(2, running.intValue());
 
         getMockEndpoint("mock:result").expectedMessageCount(2);
 
-        template.sendBody("activemq:queue:start", "Hello World");
-        template.sendBody("activemq:queue:start", "Bye World");
+        template.sendBody("activemq:topic:start", "Hello World");
 
         assertMockEndpointsSatisfied();
-
-        // stop route
-        context.stopRoute("foo");
-
-        // send a message to queue
-        template.sendBody("activemq:queue:start", "Hi World");
-
-        size = (Long) mbeanServer.invoke(name, "queueSize", null, null);
-        assertEquals(1, size.intValue());
     }
 
     @Override
@@ -94,7 +81,9 @@ public class ManagedJmsEndpointTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("activemq:queue:start").routeId("foo").to("log:foo").to("mock:result");
+                from("activemq:topic:start").routeId("foo").to("log:foo").to("mock:result");
+
+                from("activemq:topic:start").routeId("bar").to("log:bar").to("mock:result");
             }
         };
     }
