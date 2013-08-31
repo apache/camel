@@ -133,7 +133,8 @@ public class JmsConsumer extends DefaultConsumer implements SuspendableService {
         if (listenerContainer == null) {
             createMessageListenerContainer();
         }
-        
+        getEndpoint().onListenerContainerStarting(listenerContainer);
+
         if (getEndpoint().getConfiguration().isAsyncStartListener()) {
             getEndpoint().getAsyncStartStopExecutorService().submit(new Runnable() {
                 @Override
@@ -173,8 +174,12 @@ public class JmsConsumer extends DefaultConsumer implements SuspendableService {
 
     protected void stopAndDestroyListenerContainer() {
         if (listenerContainer != null) {
-            listenerContainer.stop();
-            listenerContainer.destroy();
+            try {
+                listenerContainer.stop();
+                listenerContainer.destroy();
+            } finally {
+                getEndpoint().onListenerConstainerStopped(listenerContainer);
+            }
         }
         // null container and listener so they are fully re created if this consumer is restarted
         // then we will use updated configuration from jms endpoint that may have been managed using JMX
