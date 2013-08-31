@@ -18,6 +18,7 @@ package org.apache.camel.component.salesforce.internal.dto;
 
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import com.thoughtworks.xstream.annotations.XStreamConverter;
+
 import org.apache.camel.component.salesforce.api.PicklistEnumConverter;
 import org.apache.camel.component.salesforce.api.dto.AbstractSObjectBase;
 import org.codehaus.jackson.annotate.JsonProperty;
@@ -26,74 +27,84 @@ import org.codehaus.jackson.annotate.JsonProperty;
  * Salesforce DTO for SObject PushTopic
  */
 @XStreamAlias("PushTopic")
+//CHECKSTYLE:OFF
 public class PushTopic extends AbstractSObjectBase {
 
-    private String query;
-    private Double apiVersion;
-    private Boolean isActive;
+    // WARNING: these fields have case sensitive names,
+    // the field name MUST match the field name used by Salesforce
+    // DO NOT change these field names to camel case!!!
+    private String Query;
+
+    private Double ApiVersion;
+
+    private Boolean IsActive;
+
     @XStreamConverter(PicklistEnumConverter.class)
-    private NotifyForFieldsEnum notifyForFields;
+    private NotifyForFieldsEnum NotifyForFields;
+
     @XStreamConverter(PicklistEnumConverter.class)
-    private NotifyForOperationsEnum notifyForOperations;
-    private String description;
+    private NotifyForOperationsEnum NotifyForOperations;
+
+    private String Description;
 
     @JsonProperty("Query")
     public String getQuery() {
-        return this.query;
+        return this.Query;
     }
 
     @JsonProperty("Query")
     public void setQuery(String query) {
-        this.query = query;
+        this.Query = query;
     }
 
     @JsonProperty("ApiVersion")
     public Double getApiVersion() {
-        return this.apiVersion;
+        return this.ApiVersion;
     }
 
     @JsonProperty("ApiVersion")
     public void setApiVersion(Double apiVersion) {
-        this.apiVersion = apiVersion;
+        this.ApiVersion = apiVersion;
     }
 
     @JsonProperty("IsActive")
     public Boolean getIsActive() {
-        return this.isActive;
+        return this.IsActive;
     }
 
     @JsonProperty("IsActive")
     public void setIsActive(Boolean isActive) {
-        this.isActive = isActive;
+        this.IsActive = isActive;
     }
 
     @JsonProperty("NotifyForFields")
     public NotifyForFieldsEnum getNotifyForFields() {
-        return this.notifyForFields;
+        return this.NotifyForFields;
     }
 
     @JsonProperty("NotifyForFields")
     public void setNotifyForFields(NotifyForFieldsEnum notifyForFields) {
-        this.notifyForFields = notifyForFields;
+        this.NotifyForFields = notifyForFields;
     }
 
     @JsonProperty("NotifyForOperations")
     public NotifyForOperationsEnum getNotifyForOperations() {
-        return this.notifyForOperations;
+        return this.NotifyForOperations;
     }
 
     @JsonProperty("NotifyForOperations")
     public void setNotifyForOperations(NotifyForOperationsEnum notifyForOperations) {
-        this.notifyForOperations = notifyForOperations;
+        this.NotifyForOperations = notifyForOperations;
     }
 
     @JsonProperty("Description")
     public String getDescription() {
-        return this.description;
+        return this.Description;
     }
 
     @JsonProperty("Description")
     public void setDescription(String description) {
-        this.description = description;
+        this.Description = description;
     }
 }
+//CHECKSTYLE:ON

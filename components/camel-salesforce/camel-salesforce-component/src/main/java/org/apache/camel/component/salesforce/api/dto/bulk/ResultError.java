@@ -23,7 +23,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
-
+//CHECKSTYLE:OFF
 /**
  * <p>Java class for ResultError complex type.
  * <p/>
@@ -126,3 +126,4 @@ public class ResultError {
     }
 
 }
+//CHECKSTYLE:ON

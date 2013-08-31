@@ -19,7 +19,7 @@ package org.apache.camel.component.salesforce.dto.generated;
 import com.thoughtworks.xstream.annotations.XStreamAlias;
 import org.apache.camel.component.salesforce.api.dto.AbstractSObjectBase;
 import org.codehaus.jackson.annotate.JsonProperty;
-
+//CHECKSTYLE:OFF
 @XStreamAlias("Line_Item__c")
 public class Line_Item__c extends AbstractSObjectBase {
 
@@ -72,3 +72,4 @@ public class Line_Item__c extends AbstractSObjectBase {
     }
 
 }
+//CHECKSTYLE:ON

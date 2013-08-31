@@ -17,12 +17,15 @@
 package org.apache.camel.component.salesforce.api.dto;
 
 import org.codehaus.jackson.annotate.JsonProperty;
-
+//CHECKSTYLE:OFF
 public class RecentItem extends AbstractDTOBase {
 
+    // WARNING: these fields have case sensitive names,
+    // the field name MUST match the field name used by Salesforce
+    // DO NOT change these field names to camel case!!!
     private Attributes attributes;
-    private String id;
-    private String name;
+    private String Id;
+    private String Name;
 
     public Attributes getAttributes() {
         return attributes;
@@ -34,21 +37,22 @@ public class RecentItem extends AbstractDTOBase {
 
     @JsonProperty("Id")
     public String getId() {
-        return id;
+        return Id;
     }
 
     @JsonProperty("Id")
     public void setId(String id) {
-        this.id = id;
+        this.Id = id;
     }
 
     @JsonProperty("Name")
     public String getName() {
-        return name;
+        return Name;
     }
 
     @JsonProperty("Name")
     public void setName(String name) {
-        this.name = name;
+        this.Name = name;
     }
 }
+//CHECKSTYLE:ON

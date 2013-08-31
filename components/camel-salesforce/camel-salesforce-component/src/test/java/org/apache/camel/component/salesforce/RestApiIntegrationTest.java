@@ -398,10 +398,10 @@ public class RestApiIntegrationTest extends AbstractSalesforceTestBase {
 
                 // testQuery
                 from("direct:query")
-                    .to("salesforce:query?sObjectQuery=SELECT name from Line_Item__c&sObjectClass=org.apache.camel.component.salesforce.dto.QueryRecordsLine_Item__c");
+                    .to("salesforce:query?sObjectQuery=SELECT name from Line_Item__c&sObjectClass=" + QueryRecordsLine_Item__c.class.getName());
 
                 from("direct:queryXml")
-                    .to("salesforce:query?format=XML&sObjectQuery=SELECT name from Line_Item__c&sObjectClass=org.apache.camel.component.salesforce.dto.QueryRecordsLine_Item__c");
+                    .to("salesforce:query?format=XML&sObjectQuery=SELECT name from Line_Item__c&sObjectClass=" + QueryRecordsLine_Item__c.class.getName());
 
                 // testSearch
                 from("direct:search")

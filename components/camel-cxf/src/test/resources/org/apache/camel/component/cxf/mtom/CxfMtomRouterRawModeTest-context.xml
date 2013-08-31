@@ -39,7 +39,7 @@
             <entry key="mtom-enabled" value="true"/>
             
             <!--  set the camel-cxf endpoint data fromat to RAW mode -->
-            <entry key="dataFormat" value="RAW"/>
+            <entry key="dataFormat" value="CXF_MESSAGE"/>
         </cxf:properties>      
         
   <!-- END SNIPPET: enableMtom -->
@@ -62,17 +62,17 @@
             
         <cxf:properties>
             <entry key="mtom-enabled" value="true"/>
-            <entry key="dataFormat" value="RAW"/>            
+            <entry key="dataFormat" value="CXF_MESSAGE"/>            
         </cxf:properties>  
 
-<!--                          
+                          
         <cxf:inInterceptors>
 		    <ref bean="logInbound"/>
 		</cxf:inInterceptors>	
 		<cxf:outInterceptors>
 		    <ref bean="logOutbound"/>
 		</cxf:outInterceptors>
--->
+
    </cxf:cxfEndpoint>                        
 
    <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">

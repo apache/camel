@@ -20,7 +20,7 @@ import java.util.List;
 
 import com.thoughtworks.xstream.annotations.XStreamImplicit;
 import org.apache.camel.component.salesforce.api.dto.AbstractQueryRecordsBase;
-
+//CHECKSTYLE:OFF
 public class QueryRecordsLine_Item__c extends AbstractQueryRecordsBase {
     @XStreamImplicit
     private List<Line_Item__c> records;
@@ -33,3 +33,4 @@ public class QueryRecordsLine_Item__c extends AbstractQueryRecordsBase {
         this.records = records;
     }
 }
+//CHECKSTYLE:ON

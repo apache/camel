@@ -19,7 +19,7 @@ package org.apache.camel.component.salesforce.api.dto;
 import java.util.List;
 
 import com.thoughtworks.xstream.annotations.XStreamImplicit;
-
+//CHECKSTYLE:OFF
 public class RestError extends AbstractDTOBase {
 
     private String errorCode;
@@ -67,3 +67,4 @@ public class RestError extends AbstractDTOBase {
     }
 
 }
+//CHECKSTYLE:ON
