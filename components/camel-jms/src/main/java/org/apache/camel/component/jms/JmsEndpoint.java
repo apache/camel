@@ -382,6 +382,7 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         return true;
     }
 
+    @ManagedAttribute
     public boolean isPubSubDomain() {
         return pubSubDomain;
     }
