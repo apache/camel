@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.log;
 
-import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
@@ -41,28 +40,30 @@ public class LogComponent extends DefaultComponent {
     private ExchangeFormatter exchangeFormatter;
     
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        Map<String, Object> originalParameters = new HashMap<String, Object>(parameters);
-
         LoggingLevel level = getLoggingLevel(parameters);
-        String marker = getAndRemoveParameter(parameters, "marker", String.class);
-        Integer groupSize = getAndRemoveParameter(parameters, "groupSize", Integer.class);
-        Long groupInterval = getAndRemoveParameter(parameters, "groupInterval", Long.class);
 
-        CamelLogger camelLogger = new CamelLogger(remaining, level, marker);
+        LogEndpoint endpoint = new LogEndpoint(uri, this);
+        endpoint.setLevel(level.name());
+        setProperties(endpoint, parameters);
+
+        CamelLogger camelLogger = new CamelLogger(remaining, level, endpoint.getMarker());
         Processor logger;
-        if (groupSize != null) {
-            logger = new ThroughputLogger(camelLogger, groupSize);
-        } else if (groupInterval != null) {
-            Boolean groupActiveOnly = getAndRemoveParameter(parameters, "groupActiveOnly", Boolean.class, Boolean.TRUE);
-            Long groupDelay = getAndRemoveParameter(parameters, "groupDelay", Long.class);
-            logger = new ThroughputLogger(camelLogger, this.getCamelContext(), groupInterval, groupDelay, groupActiveOnly);
+        if (endpoint.getGroupSize() != null) {
+            logger = new ThroughputLogger(camelLogger, endpoint.getGroupSize());
+        } else if (endpoint.getGroupInterval() != null) {
+            Boolean groupActiveOnly = endpoint.getGroupActiveOnly() != null ? endpoint.getGroupActiveOnly() : Boolean.TRUE;
+            Long groupDelay = endpoint.getGroupDelay();
+            logger = new ThroughputLogger(camelLogger, this.getCamelContext(), endpoint.getGroupInterval(), groupDelay, groupActiveOnly);
         } else {
             // first, try to use the user-specified formatter (or the one picked up from the Registry and transferred to 
             // the property by a previous endpoint initialisation); if null, try to pick it up from the Registry now
             ExchangeFormatter localFormatter = exchangeFormatter;
             if (localFormatter == null) {
                 localFormatter = getCamelContext().getRegistry().lookupByNameAndType("logFormatter", ExchangeFormatter.class);
-                exchangeFormatter = localFormatter;
+                if (localFormatter != null) {
+                    exchangeFormatter = localFormatter;
+                    setProperties(exchangeFormatter, parameters);
+                }
             }
             // if no formatter is available in the Registry, create a local one of the default type, for a single use
             if (localFormatter == null) {
@@ -72,9 +73,7 @@ public class LogComponent extends DefaultComponent {
             logger = new CamelLogProcessor(camelLogger, localFormatter);
         }
 
-        LogEndpoint endpoint = new LogEndpoint(uri, this, logger);
-        // we want the endpoint to have the all the options configured from the original parameters
-        setProperties(endpoint, originalParameters);
+        endpoint.setLogger(logger);
         return endpoint;
     }
 
@@ -94,7 +93,6 @@ public class LogComponent extends DefaultComponent {
      * Sets a custom {@link ExchangeFormatter} to convert the Exchange to a String suitable for logging.
      * <p />
      * If not specified, we default to {@link DefaultExchangeFormatter}.
-     * @param exchangeFormatter
      */
     public void setExchangeFormatter(ExchangeFormatter exchangeFormatter) {
         this.exchangeFormatter = exchangeFormatter;
