@@ -18,7 +18,7 @@ package org.apache.camel.component.jms;
 
 import java.util.concurrent.Executor;
 import java.util.concurrent.ExecutorService;
-import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
 import javax.jms.ConnectionFactory;
 import javax.jms.Destination;
 import javax.jms.ExceptionListener;
@@ -71,6 +71,7 @@ import org.springframework.util.ErrorHandler;
 @UriEndpoint(scheme = "jms", consumerClass = JmsConsumer.class)
 public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategyAware, MultipleConsumersSupport, Service {
     protected final Logger log = LoggerFactory.getLogger(getClass());
+    private final AtomicInteger runningMessageListeners = new AtomicInteger();
     @UriParam
     private HeaderFilterStrategy headerFilterStrategy;
     private boolean pubSubDomain;
@@ -82,7 +83,6 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     private String selector;
     @UriParam
     private JmsConfiguration configuration;
-    private final AtomicBoolean running = new AtomicBoolean();
 
     public JmsEndpoint() {
         this(null, null);
@@ -442,21 +442,39 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         return getComponent().getAsyncStartStopExecutorService();
     }
 
+    public void onListenerContainerStarting(AbstractMessageListenerContainer container) {
+        runningMessageListeners.incrementAndGet();
+    }
+
+    public void onListenerConstainerStopped(AbstractMessageListenerContainer container) {
+        runningMessageListeners.decrementAndGet();
+    }
+
     /**
      * State whether this endpoint is running (eg started)
      */
     protected boolean isRunning() {
-        return running.get();
+        return isStarted();
     }
 
     @Override
-    protected void doStart() throws Exception {
-        running.set(true);
+    public void stop() throws Exception {
+        int running = runningMessageListeners.get();
+        if (running <= 0) {
+            super.stop();
+        } else {
+            log.trace("There are still {} running message listeners. Cannot stop endpoint {}", running, this);
+        }
     }
 
     @Override
-    protected void doStop() throws Exception {
-        running.set(false);
+    public void shutdown() throws Exception {
+        int running = runningMessageListeners.get();
+        if (running <= 0) {
+            super.shutdown();
+        } else {
+            log.trace("There are still {} running message listeners. Cannot shutdown endpoint {}", running, this);
+        }
     }
 
     // Delegated properties from the configuration
@@ -1144,6 +1162,11 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
             status = ServiceStatus.Stopped;
         }
         return status.name();
+    }
+
+    @ManagedAttribute(description = "Number of running message listeners")
+    public int getRunningMessageListeners() {
+        return runningMessageListeners.get();
     }
 
     // Implementation methods
