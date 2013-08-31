@@ -89,7 +89,7 @@ public class SedaComponent extends UriEndpointComponent {
         if (ref != null) {
 
             // if the given size is not provided, we just use the existing queue as is
-            if (size != null && ref.getSize() != size) {
+            if (size != null && !size.equals(ref.getSize())) {
                 // there is already a queue, so make sure the size matches
                 throw new IllegalArgumentException("Cannot use existing queue " + key + " as the existing queue size "
                         + (ref.getSize() != null ? ref.getSize() : Integer.MAX_VALUE) + " does not match given queue size " + size);
