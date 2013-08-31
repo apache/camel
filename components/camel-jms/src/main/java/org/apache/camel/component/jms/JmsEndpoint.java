@@ -379,12 +379,6 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
 
     @ManagedAttribute
     public boolean isSingleton() {
-        if (isPubSubDomain()) {
-            // topic cannot be singleton, as there may be multiple consumers
-            // on the same topic
-            return false;
-        }
-        // but queues can be singleton
         return true;
     }
 
