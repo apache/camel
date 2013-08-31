@@ -16,8 +16,10 @@
  */
 package org.apache.camel.component.log;
 
+import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
+import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.impl.PropertyPlaceholderDelegateRegistry;
 import org.apache.camel.spi.ExchangeFormatter;
@@ -85,6 +87,47 @@ public class LogCustomFormatterTest extends ContextTestSupport {
     }
 
     @Test
+    public void testCustomFormatterInRegistryOptions() throws Exception {
+        context.stop();
+
+        exchangeFormatter = new TestExchangeFormatter();
+        JndiRegistry registry = getRegistryAsJndi();
+        registry.bind("logFormatter", exchangeFormatter);
+        assertEquals("", exchangeFormatter.getPrefix());
+
+        context.start();
+
+        String endpointUri = "log:" + LogCustomFormatterTest.class.getCanonicalName() + "?prefix=foo";
+        template.requestBody(endpointUri, "Hello World");
+        template.requestBody(endpointUri, "Hello World");
+
+        assertEquals(2, exchangeFormatter.getCounter());
+        assertEquals("foo", exchangeFormatter.getPrefix());
+    }
+
+    @Test
+    public void testCustomFormatterInRegistryUnknownOption() throws Exception {
+        context.stop();
+
+        exchangeFormatter = new TestExchangeFormatter();
+        JndiRegistry registry = getRegistryAsJndi();
+        registry.bind("logFormatter", exchangeFormatter);
+        assertEquals("", exchangeFormatter.getPrefix());
+
+        context.start();
+
+        // unknown parameter
+        try {
+            String endpointUri2 = "log:" + LogCustomFormatterTest.class.getCanonicalName() + "?prefix=foo&bar=no";
+            template.requestBody(endpointUri2, "Hello World");
+            fail("Should have thrown exception");
+        } catch (Exception e) {
+            ResolveEndpointFailedException cause = assertIsInstanceOf(ResolveEndpointFailedException.class, e.getCause());
+            assertTrue(cause.getMessage().endsWith("Unknown parameters=[{bar=no}]"));
+        }
+    }
+
+    @Test
     public void testFormatterNotPickedUpWithDifferentKey() throws Exception {
         context.stop();
         
@@ -118,11 +161,12 @@ public class LogCustomFormatterTest extends ContextTestSupport {
     public static class TestExchangeFormatter implements ExchangeFormatter {
         private int counter;
         private boolean addTen;
+        private String prefix = "";
         
         @Override
         public String format(Exchange exchange) {
             counter += addTen ? 10 : 1;
-            return exchange.toString();
+            return prefix + exchange.toString();
         }
         
         public int getCounter() {
@@ -136,7 +180,14 @@ public class LogCustomFormatterTest extends ContextTestSupport {
         public void setAddTen(boolean addTen) {
             this.addTen = addTen;
         }
-        
+
+        public String getPrefix() {
+            return prefix;
+        }
+
+        public void setPrefix(String prefix) {
+            this.prefix = prefix;
+        }
     }
     
 }

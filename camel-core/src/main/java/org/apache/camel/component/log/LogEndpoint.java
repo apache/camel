@@ -27,7 +27,14 @@ import org.apache.camel.util.ServiceHelper;
  */
 public class LogEndpoint extends ProcessorEndpoint {
 
-    private Processor logger;
+    private volatile Processor logger;
+
+    private String level;
+    private String marker;
+    private Integer groupSize;
+    private Long groupInterval;
+    private Boolean groupActiveOnly;
+    private Long groupDelay;
 
     public LogEndpoint() {
     }
@@ -69,5 +76,53 @@ public class LogEndpoint extends ProcessorEndpoint {
     @Override
     protected String createEndpointUri() {
         return "log:" + logger.toString();
+    }
+
+    public String getLevel() {
+        return level;
+    }
+
+    public void setLevel(String level) {
+        this.level = level;
+    }
+
+    public String getMarker() {
+        return marker;
+    }
+
+    public void setMarker(String marker) {
+        this.marker = marker;
+    }
+
+    public Integer getGroupSize() {
+        return groupSize;
+    }
+
+    public void setGroupSize(Integer groupSize) {
+        this.groupSize = groupSize;
+    }
+
+    public Long getGroupInterval() {
+        return groupInterval;
+    }
+
+    public void setGroupInterval(Long groupInterval) {
+        this.groupInterval = groupInterval;
+    }
+
+    public Boolean getGroupActiveOnly() {
+        return groupActiveOnly;
+    }
+
+    public void setGroupActiveOnly(Boolean groupActiveOnly) {
+        this.groupActiveOnly = groupActiveOnly;
+    }
+
+    public Long getGroupDelay() {
+        return groupDelay;
+    }
+
+    public void setGroupDelay(Long groupDelay) {
+        this.groupDelay = groupDelay;
     }
 }
