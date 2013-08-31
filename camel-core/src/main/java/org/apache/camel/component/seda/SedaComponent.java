@@ -39,6 +39,7 @@ public class SedaComponent extends UriEndpointComponent {
     protected int defaultConcurrentConsumers = 1;
     private final Map<String, QueueReference> queues = new HashMap<String, QueueReference>();
     private BlockingQueueFactory<Exchange> defaultQueueFactory = new LinkedBlockingQueueFactory<Exchange>();
+
     public SedaComponent() {
         super(SedaEndpoint.class);
     }
@@ -157,16 +158,12 @@ public class SedaComponent extends UriEndpointComponent {
                     + maxConcurrentConsumers + " was " + consumers);
         }
         // Resolve queue reference
-        BlockingQueue<Exchange> queue = resolveAndRemoveReferenceParameter(parameters, "queue",
-                                                                           BlockingQueue.class);
+        BlockingQueue<Exchange> queue = resolveAndRemoveReferenceParameter(parameters, "queue", BlockingQueue.class);
         SedaEndpoint answer;
         // Resolve queue factory when no queue specified
         if (queue == null) {
-            BlockingQueueFactory<Exchange> queueFactory = resolveAndRemoveReferenceParameter(parameters,
-                                                                                             "queueFactory",
-                                                                                             BlockingQueueFactory.class);
-            // defer creating queue till endpoint is started, so we pass the
-            // queue factory
+            BlockingQueueFactory<Exchange> queueFactory = resolveAndRemoveReferenceParameter(parameters, "queueFactory", BlockingQueueFactory.class);
+            // defer creating queue till endpoint is started, so we pass the queue factory
             answer = new SedaEndpoint(uri, this, queueFactory, consumers);
         } else {
             answer = new SedaEndpoint(uri, this, queue, consumers);
@@ -205,7 +202,6 @@ public class SedaComponent extends UriEndpointComponent {
                 // reference no longer needed so remove from queues
                 getQueues().remove(key);
             }
-
         }
     }
 
