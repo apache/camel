@@ -224,6 +224,8 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
         listenerContainer = createListenerContainer();
         listenerContainer.afterPropertiesSet();
         log.debug("Starting reply listener container on endpoint: {}", endpoint);
+
+        endpoint.onListenerContainerStarting(listenerContainer);
         listenerContainer.start();
     }
 
@@ -233,9 +235,13 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
 
         if (listenerContainer != null) {
             log.debug("Stopping reply listener container on endpoint: {}", endpoint);
-            listenerContainer.stop();
-            listenerContainer.destroy();
-            listenerContainer = null;
+            try {
+                listenerContainer.stop();
+                listenerContainer.destroy();
+            } finally {
+                endpoint.onListenerConstainerStopped(listenerContainer);
+                listenerContainer = null;
+            }
         }
 
         // must also stop executor service
