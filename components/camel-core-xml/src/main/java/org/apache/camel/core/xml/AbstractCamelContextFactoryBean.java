@@ -40,6 +40,7 @@ import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.component.properties.PropertiesParser;
 import org.apache.camel.component.properties.PropertiesResolver;
 import org.apache.camel.management.DefaultManagementAgent;
+import org.apache.camel.management.DefaultManagementLifecycleStrategy;
 import org.apache.camel.management.DefaultManagementStrategy;
 import org.apache.camel.management.ManagedManagementStrategy;
 import org.apache.camel.model.ContextScanDefinition;
@@ -369,6 +370,10 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
 
             ManagementStrategy managementStrategy = new ManagedManagementStrategy(getContext(), agent);
             getContext().setManagementStrategy(managementStrategy);
+
+            // clear the existing lifecycle strategies define by the DefaultCamelContext constructor
+            getContext().getLifecycleStrategies().clear();
+            getContext().addLifecycleStrategy(new DefaultManagementLifecycleStrategy(getContext()));
 
             // set additional configuration from camelJMXAgent
             boolean onlyId = agent.getOnlyRegisterProcessorWithCustomId() != null && agent.getOnlyRegisterProcessorWithCustomId();
