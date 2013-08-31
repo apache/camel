@@ -18,20 +18,23 @@ package org.apache.camel.component.salesforce.api.dto;
 
 import org.codehaus.jackson.annotate.JsonProperty;
 import org.joda.time.DateTime;
-
+//CHECKSTYLE:OFF
 public class AbstractSObjectBase extends AbstractDTOBase {
 
+    // WARNING: these fields have case sensitive names,
+    // the field name MUST match the field name used by Salesforce
+    // DO NOT change these field names to camel case!!!
     private Attributes attributes;
-    private String id;
-    private String ownerId;
-    private Boolean isDeleted;
-    private String name;
-    private DateTime createdDate;
-    private String createdById;
-    private DateTime lastModifiedDate;
-    private String lastModifiedById;
-    private DateTime systemModstamp;
-    private String lastActivityDate;
+    private String Id;
+    private String OwnerId;
+    private Boolean IsDeleted;
+    private String Name;
+    private DateTime CreatedDate;
+    private String CreatedById;
+    private DateTime LastModifiedDate;
+    private String LastModifiedById;
+    private DateTime SystemModstamp;
+    private String LastActivityDate;
 
     /**
      * Utility method to clear all {@link AbstractSObjectBase} fields.
@@ -39,16 +42,16 @@ public class AbstractSObjectBase extends AbstractDTOBase {
      */
     public final void clearBaseFields() {
         attributes = null;
-        id = null;
-        ownerId = null;
-        isDeleted = null;
-        name = null;
-        createdDate = null;
-        createdById = null;
-        lastModifiedDate = null;
-        lastModifiedById = null;
-        systemModstamp = null;
-        lastActivityDate = null;
+        Id = null;
+        OwnerId = null;
+        IsDeleted = null;
+        Name = null;
+        CreatedDate = null;
+        CreatedById = null;
+        LastModifiedDate = null;
+        LastModifiedById = null;
+        SystemModstamp = null;
+        LastActivityDate = null;
     }
 
     public Attributes getAttributes() {
@@ -61,101 +64,102 @@ public class AbstractSObjectBase extends AbstractDTOBase {
 
     @JsonProperty("Id")
     public String getId() {
-        return id;
+        return Id;
     }
 
     @JsonProperty("Id")
     public void setId(String id) {
-        this.id = id;
+        this.Id = id;
     }
 
     @JsonProperty("OwnerId")
     public String getOwnerId() {
-        return ownerId;
+        return OwnerId;
     }
 
     @JsonProperty("OwnerId")
     public void setOwnerId(String ownerId) {
-        this.ownerId = ownerId;
+        this.OwnerId = ownerId;
     }
 
     @JsonProperty("IsDeleted")
     public Boolean isIsDeleted() {
-        return isDeleted;
+        return IsDeleted;
     }
 
     @JsonProperty("IsDeleted")
     public void setIsDeleted(Boolean isDeleted) {
-        this.isDeleted = isDeleted;
+        this.IsDeleted = isDeleted;
     }
 
     @JsonProperty("Name")
     public String getName() {
-        return name;
+        return Name;
     }
 
     @JsonProperty("Name")
     public void setName(String name) {
-        this.name = name;
+        this.Name = name;
     }
 
     @JsonProperty("CreatedDate")
     public DateTime getCreatedDate() {
-        return createdDate;
+        return CreatedDate;
     }
 
     @JsonProperty("CreatedDate")
     public void setCreatedDate(DateTime createdDate) {
-        this.createdDate = createdDate;
+        this.CreatedDate = createdDate;
     }
 
     @JsonProperty("CreatedById")
     public String getCreatedById() {
-        return createdById;
+        return CreatedById;
     }
 
     @JsonProperty("CreatedById")
     public void setCreatedById(String createdById) {
-        this.createdById = createdById;
+        this.CreatedById = createdById;
     }
 
     @JsonProperty("LastModifiedDate")
     public DateTime getLastModifiedDate() {
-        return lastModifiedDate;
+        return LastModifiedDate;
     }
 
     @JsonProperty("LastModifiedDate")
     public void setLastModifiedDate(DateTime lastModifiedDate) {
-        this.lastModifiedDate = lastModifiedDate;
+        this.LastModifiedDate = lastModifiedDate;
     }
 
     @JsonProperty("LastModifiedById")
     public String getLastModifiedById() {
-        return lastModifiedById;
+        return LastModifiedById;
     }
 
     @JsonProperty("LastModifiedById")
     public void setLastModifiedById(String lastModifiedById) {
-        this.lastModifiedById = lastModifiedById;
+        this.LastModifiedById = lastModifiedById;
     }
 
     @JsonProperty("SystemModstamp")
     public DateTime getSystemModstamp() {
-        return systemModstamp;
+        return SystemModstamp;
     }
 
     @JsonProperty("SystemModstamp")
     public void setSystemModstamp(DateTime systemModstamp) {
-        this.systemModstamp = systemModstamp;
+        this.SystemModstamp = systemModstamp;
     }
 
     @JsonProperty("LastActivityDate")
     public String getLastActivityDate() {
-        return lastActivityDate;
+        return LastActivityDate;
     }
 
     @JsonProperty("LastActivityDate")
     public void setLastActivityDate(String lastActivityDate) {
-        this.lastActivityDate = lastActivityDate;
+        this.LastActivityDate = lastActivityDate;
     }
 }
+//CHECKSTYLE:ON

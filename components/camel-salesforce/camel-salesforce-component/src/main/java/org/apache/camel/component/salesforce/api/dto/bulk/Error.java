@@ -21,7 +21,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlType;
 
-
+//CHECKSTYLE:OFF
 /**
  * <p>Java class for Error complex type.
  * <p/>
@@ -93,3 +93,4 @@ public class Error {
     }
 
 }
+//CHECKSTYLE:ON

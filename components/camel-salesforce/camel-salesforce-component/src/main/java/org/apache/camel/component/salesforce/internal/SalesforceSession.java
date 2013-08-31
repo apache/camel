@@ -324,7 +324,7 @@ public class SalesforceSession implements Service {
 
     }
 
-    public static interface SalesforceSessionListener {
+    public interface SalesforceSessionListener {
         void onLogin(String accessToken, String instanceUrl);
 
         void onLogout();
