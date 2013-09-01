@@ -269,6 +269,11 @@
     <bundle dependency='true'>mvn:commons-io/commons-io/${commons-io-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-exec/${project.version}</bundle>
   </feature>
+  <feature name='camel-facebook' version='${project.version}' resolver='(obr)' start-level='50'>
+    <feature version='${project.version}'>camel-core</feature>
+    <bundle dependency='true'>wrap:mvn:org.facebook4j/facebook4j-core/${facebook4j-core-version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-facebook/${project.version}</bundle>
+  </feature>
   <feature name='camel-flatpack' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.jdom/${jdom-bundle-version}</bundle>
