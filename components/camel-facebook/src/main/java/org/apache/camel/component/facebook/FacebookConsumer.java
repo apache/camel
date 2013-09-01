@@ -18,11 +18,22 @@ package org.apache.camel.component.facebook;
 
 import java.lang.reflect.Array;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
+
+import facebook4j.Reading;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.facebook.data.FacebookMethodsType;
+import org.apache.camel.component.facebook.data.FacebookMethodsTypeHelper.MatchType;
 import org.apache.camel.component.facebook.data.FacebookPropertiesHelper;
 import org.apache.camel.component.facebook.data.ReadingBuilder;
 import org.apache.camel.impl.ScheduledPollConsumer;
@@ -30,12 +41,9 @@ import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import facebook4j.Reading;
-
 import static org.apache.camel.component.facebook.FacebookConstants.FACEBOOK_DATE_FORMAT;
 import static org.apache.camel.component.facebook.FacebookConstants.READING_PPROPERTY;
 import static org.apache.camel.component.facebook.FacebookConstants.READING_PREFIX;
-import static org.apache.camel.component.facebook.data.FacebookMethodsTypeHelper.MatchType;
 import static org.apache.camel.component.facebook.data.FacebookMethodsTypeHelper.filterMethods;
 import static org.apache.camel.component.facebook.data.FacebookMethodsTypeHelper.getHighestPriorityMethod;
 import static org.apache.camel.component.facebook.data.FacebookMethodsTypeHelper.getMissingProperties;

@@ -1,16 +1,38 @@
+/**
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.apache.camel.component.facebook.data;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
-import java.util.*;
-import org.apache.camel.component.facebook.config.FacebookEndpointConfiguration;
-import org.junit.Test;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Set;
 
 import facebook4j.Facebook;
+
+import org.apache.camel.component.facebook.config.FacebookEndpointConfiguration;
+import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
+
 
 /**
  * Test {@link FacebookMethodsTypeHelper}.
@@ -78,16 +100,16 @@ public class FacebookMethodsTypeHelperTest {
     @Test
     public void testGetArguments() throws Exception {
         final Class<?>[] interfaces = Facebook.class.getInterfaces();
-        for (Class clazz : interfaces) {
+        for (Class<?> clazz : interfaces) {
             if (clazz.getName().endsWith("Methods")) {
                 // check all methods of this *Methods interface
                 for (Method method : clazz.getDeclaredMethods()) {
                     // will throw an exception if can't be found
                     final List<Object> arguments = FacebookMethodsTypeHelper.getArguments(method.getName());
                     final int nArgs = arguments.size() / 2;
-                    List<Class> types = new ArrayList<Class>(nArgs);
+                    List<Class<?>> types = new ArrayList<Class<?>>(nArgs);
                     for (int i = 0; i < nArgs; i++) {
-                        types.add((Class) arguments.get(2 * i));
+                        types.add((Class<?>) arguments.get(2 * i));
                     }
                     assertTrue("Missing parameters for " + method,
                         types.containsAll(Arrays.asList(method.getParameterTypes())));
@@ -104,11 +126,11 @@ public class FacebookMethodsTypeHelperTest {
     @Test
     public void testGetType() throws Exception {
         for (Field field : FacebookEndpointConfiguration.class.getDeclaredFields()) {
-            Class expectedType = field.getType();
-            final Class actualType = FacebookMethodsTypeHelper.getType(field.getName());
+            Class<?> expectedType = field.getType();
+            final Class<?> actualType = FacebookMethodsTypeHelper.getType(field.getName());
             // test for auto boxing, un-boxing
             if (actualType.isPrimitive()) {
-                expectedType = (Class) expectedType.getField("TYPE").get(null);
+                expectedType = (Class<?>) expectedType.getField("TYPE").get(null);
             } else if (List.class.isAssignableFrom(expectedType) && actualType.isArray()) {
                 // skip lists, since they will be converted in invokeMethod()
                 expectedType = actualType;

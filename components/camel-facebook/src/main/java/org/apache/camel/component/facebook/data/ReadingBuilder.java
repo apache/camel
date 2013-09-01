@@ -22,14 +22,19 @@ import java.text.SimpleDateFormat;
 import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
-import org.apache.camel.component.facebook.FacebookConstants;
 
 import facebook4j.Reading;
+
+import org.apache.camel.component.facebook.FacebookConstants;
 
 /**
  * Builds {@link facebook4j.Reading} instances.
  */
-public class ReadingBuilder {
+public final class ReadingBuilder {
+    
+    private ReadingBuilder() {
+        // Helper class
+    }
 
 
     public static Reading copy(Reading reading, boolean skipSinceUtil) throws NoSuchFieldException, IllegalAccessException {
@@ -39,7 +44,7 @@ public class ReadingBuilder {
         final LinkedHashMap<String, String> source = (LinkedHashMap<String, String>) field.get(reading);
         // create another reading, and add all fields from source
         Reading copy = new Reading();
-        final LinkedHashMap copyMap = new LinkedHashMap();
+        final LinkedHashMap<String, String> copyMap = new LinkedHashMap<String, String>();
         copyMap.putAll(source);
         if (skipSinceUtil) {
             copyMap.remove("since");

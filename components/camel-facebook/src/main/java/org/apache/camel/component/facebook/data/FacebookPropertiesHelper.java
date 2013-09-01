@@ -17,7 +17,14 @@
 package org.apache.camel.component.facebook.data;
 
 import java.lang.reflect.Field;
-import java.util.*;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.Map;
+import java.util.Set;
+
+import facebook4j.Reading;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.component.facebook.FacebookConstants;
 import org.apache.camel.component.facebook.config.FacebookConfiguration;
@@ -25,8 +32,6 @@ import org.apache.camel.component.facebook.config.FacebookEndpointConfiguration;
 import org.apache.camel.util.IntrospectionSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import facebook4j.Reading;
 
 /**
  * Helper class to work with Facebook component properties.

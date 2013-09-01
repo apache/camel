@@ -21,11 +21,12 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import facebook4j.Facebook;
+
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
-
-import facebook4j.Facebook;
 
 public class FacebookComponentProducerTest extends CamelFacebookTestSupport {
 
@@ -35,7 +36,7 @@ public class FacebookComponentProducerTest extends CamelFacebookTestSupport {
     private final List<String> readingExcludes;
 
     public FacebookComponentProducerTest() throws Exception {
-        for (Class clazz : Facebook.class.getInterfaces()) {
+        for (Class<?> clazz : Facebook.class.getInterfaces()) {
             final String clazzName = clazz.getSimpleName();
             if (clazzName.endsWith("Methods") && !clazzName.equals("GameMethods")) {
                 for (Method method : clazz.getDeclaredMethods()) {
@@ -94,28 +95,28 @@ public class FacebookComponentProducerTest extends CamelFacebookTestSupport {
                 // generate test routes for all methods with no args
                 for (String name : noArgNames) {
                     from("direct://test" + name)
-                      .to("facebook://" + name + "?" + getOauthParams())
-                      .to("mock:result" + name);
+                        .to("facebook://" + name + "?" + getOauthParams())
+                        .to("mock:result" + name);
 
                     // with user id
                     if (!idExcludes.contains(name)) {
                         from("direct://testId" + name)
-                          .to("facebook://" + name + "?userId=me&" + getOauthParams())
-                          .to("mock:resultId" + name);
+                            .to("facebook://" + name + "?userId=me&" + getOauthParams())
+                            .to("mock:resultId" + name);
                     }
 
                     // reading options
                     if (!readingExcludes.contains(name)) {
                         from("direct://testReading" + name)
-                          .to("facebook://" + name + "?reading.limit=10&reading.locale=en,US&" + getOauthParams())
-                          .to("mock:resultReading" + name);
+                            .to("facebook://" + name + "?reading.limit=10&reading.locale=en,US&" + getOauthParams())
+                            .to("mock:resultReading" + name);
                     }
 
                     // with id and reading options
                     if (!(idExcludes.contains(name) || readingExcludes.contains(name))) {
                         from("direct://testIdReading" + name)
-                          .to("facebook://" + name + "?userId=me&reading.limit=10&reading.locale=en,US&" + getOauthParams())
-                          .to("mock:resultIdReading" + name);
+                            .to("facebook://" + name + "?userId=me&reading.limit=10&reading.locale=en,US&" + getOauthParams())
+                            .to("mock:resultIdReading" + name);
                     }
                 }
 
