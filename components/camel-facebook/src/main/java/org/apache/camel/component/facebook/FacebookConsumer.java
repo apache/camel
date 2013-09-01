@@ -175,7 +175,7 @@ public class FacebookConsumer extends ScheduledPollConsumer {
         }
         // must be a Collection
         // TODO add support for Paging using ResponseList
-        Collection collection = (Collection) result;
+        Collection<?> collection = (Collection<?>) result;
         return collection.toArray(new Object[collection.size()]);
     }
 

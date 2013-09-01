@@ -53,8 +53,8 @@ public final class FacebookMethodsTypeHelper {
         new HashMap<String, List<Object>>();
 
     // maps argument name to argument type
-    private static final Map<String, Class> VALID_ARGUMENTS =
-        new HashMap<String, Class>();
+    private static final Map<String, Class<?>> VALID_ARGUMENTS =
+        new HashMap<String, Class<?>>();
 
     static {
         final FacebookMethodsType[] methods = FacebookMethodsType.values();
@@ -80,17 +80,17 @@ public final class FacebookMethodsTypeHelper {
             // process all arguments for this method
             final int nArgs = method.getArgNames().size();
             final String[] argNames = method.getArgNames().toArray(new String[nArgs]);
-            final Class[] argTypes = method.getArgTypes().toArray(new Class[nArgs]);
+            final Class<?>[] argTypes = method.getArgTypes().toArray(new Class[nArgs]);
             for (int i = 0; i < nArgs; i++) {
                 final String argName = argNames[i];
-                final Class argType = argTypes[i];
+                final Class<?> argType = argTypes[i];
                 if (!arguments.contains(argName)) {
                     arguments.add(argType);
                     arguments.add(argName);
                 }
 
                 // also collect argument names for all methods, also detect clashes here
-                final Class previousType = VALID_ARGUMENTS.get(argName);
+                final Class<?> previousType = VALID_ARGUMENTS.get(argName);
                 if (previousType != null && previousType != argType) {
                     throw new ExceptionInInitializerError(String.format(
                         "Argument %s has ambiguous types (%s, %s) across methods!",
@@ -253,7 +253,7 @@ public final class FacebookMethodsTypeHelper {
      * Get argument types and names used by all methods.
      * @return map with argument names as keys, and types as values
      */
-    public static Map<String, Class> allArguments() {
+    public static Map<String, Class<?>> allArguments() {
         return Collections.unmodifiableMap(VALID_ARGUMENTS);
     }
 
@@ -262,8 +262,8 @@ public final class FacebookMethodsTypeHelper {
      * @param argName argument name
      * @return argument type
      */
-    public static Class getType(String argName) throws IllegalArgumentException {
-        final Class type = VALID_ARGUMENTS.get(argName);
+    public static Class<?> getType(String argName) throws IllegalArgumentException {
+        final Class<?> type = VALID_ARGUMENTS.get(argName);
         if (type == null) {
             throw new IllegalArgumentException(argName);
         }
@@ -303,7 +303,6 @@ public final class FacebookMethodsTypeHelper {
      * @return result of method invocation
      * @throws RuntimeCamelException on errors
      */
-    @SuppressWarnings("unchecked")
     public static Object invokeMethod(Facebook facebook, FacebookMethodsType method, Map<String, Object> properties)
         throws RuntimeCamelException {
 
@@ -311,19 +310,19 @@ public final class FacebookMethodsTypeHelper {
 
         final List<String> argNames = method.getArgNames();
         final Object[] values = new Object[argNames.size()];
-        final List<Class> argTypes = method.getArgTypes();
-        final Class[] types = argTypes.toArray(new Class[argTypes.size()]);
+        final List<Class<?>> argTypes = method.getArgTypes();
+        final Class<?>[] types = argTypes.toArray(new Class[argTypes.size()]);
         int index = 0;
         for (String name : argNames) {
             Object value = properties.get(name);
 
             // is the parameter an array type?
             if (value != null && types[index].isArray()) {
-                Class type = types[index];
+                Class<?> type = types[index];
 
                 if (value instanceof Collection) {
                     // convert collection to array
-                    Collection collection = (Collection) value;
+                    Collection<?> collection = (Collection<?>) value;
                     Object array = Array.newInstance(type.getComponentType(), collection.size());
                     if (array instanceof Object[]) {
                         collection.toArray((Object[]) array);
