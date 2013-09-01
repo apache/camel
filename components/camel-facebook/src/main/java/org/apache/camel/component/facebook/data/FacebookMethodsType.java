@@ -520,12 +520,12 @@ public enum FacebookMethodsType {
 
     // name, result class, ordered argument names and classes, and Method to invoke
     private final String name;
-    private final Class resultType;
+    private final Class<?> resultType;
     private final List<String> argNames;
-    private final List<Class> argTypes;
+    private final List<Class<?>> argTypes;
     private final Method method;
 
-    private FacebookMethodsType(Class resultType, String name, Object... args) throws IllegalArgumentException {
+    private FacebookMethodsType(Class<?> resultType, String name, Object... args) throws IllegalArgumentException {
         this.name = name;
         this.resultType = resultType;
 
@@ -535,9 +535,9 @@ public enum FacebookMethodsType {
         }
         int nArgs = args.length / 2;
         this.argNames = new ArrayList<String>(nArgs);
-        this.argTypes = new ArrayList<Class>(nArgs);
+        this.argTypes = new ArrayList<Class<?>>(nArgs);
         for (int i = 0; i < nArgs; i++) {
-            this.argTypes.add((Class) args[i * 2]);
+            this.argTypes.add((Class<?>) args[i * 2]);
             this.argNames.add((String) args[i * 2 + 1]);
         }
 
@@ -557,7 +557,7 @@ public enum FacebookMethodsType {
      * @param args ordered argument types
      * @return matching method, null if not found
      */
-    public static FacebookMethodsType findMethod(String name, Class... args) {
+    public static FacebookMethodsType findMethod(String name, Class<?>... args) {
         for (FacebookMethodsType method : values()) {
             if (method.name.equals(name)) {
                 if ((method.argTypes.isEmpty() && (args == null || args.length == 0))
@@ -574,7 +574,7 @@ public enum FacebookMethodsType {
         return name;
     }
 
-    public Class getResultType() {
+    public Class<?> getResultType() {
         return resultType;
     }
 
@@ -582,7 +582,7 @@ public enum FacebookMethodsType {
         return Collections.unmodifiableList(argNames);
     }
 
-    public List<Class> getArgTypes() {
+    public List<Class<?>> getArgTypes() {
         return Collections.unmodifiableList(argTypes);
     }
 

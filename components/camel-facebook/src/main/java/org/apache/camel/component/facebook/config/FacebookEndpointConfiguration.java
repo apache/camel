@@ -133,7 +133,7 @@ public class FacebookEndpointConfiguration extends FacebookConfiguration {
     @UriParam
     private PostUpdate postUpdate;
     @UriParam
-    private Map queries;
+    private Map<String, String> queries;
     @UriParam
     private String query;
     @UriParam
@@ -537,11 +537,11 @@ public class FacebookEndpointConfiguration extends FacebookConfiguration {
         this.postUpdate = postUpdate;
     }
 
-    public Map getQueries() {
+    public Map<String, String> getQueries() {
         return queries;
     }
 
-    public void setQueries(Map queries) {
+    public void setQueries(Map<String, String> queries) {
         this.queries = queries;
     }
 
