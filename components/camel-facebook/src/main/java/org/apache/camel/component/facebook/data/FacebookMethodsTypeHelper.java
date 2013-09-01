@@ -17,15 +17,24 @@
 package org.apache.camel.component.facebook.data;
 
 import java.lang.reflect.Array;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
+
+import facebook4j.Facebook;
+import facebook4j.FacebookException;
+
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.facebook.FacebookConstants;
 import org.apache.camel.component.facebook.config.FacebookNameStyle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import facebook4j.Facebook;
-import facebook4j.FacebookException;
 
 
 /**

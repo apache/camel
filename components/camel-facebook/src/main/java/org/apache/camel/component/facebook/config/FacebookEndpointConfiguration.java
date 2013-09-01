@@ -22,12 +22,22 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+
+import facebook4j.AlbumCreate;
+import facebook4j.CheckinCreate;
+import facebook4j.EventUpdate;
+import facebook4j.GeoLocation;
+import facebook4j.Media;
+import facebook4j.PictureSize;
+import facebook4j.PostUpdate;
+import facebook4j.Reading;
+import facebook4j.TagUpdate;
+import facebook4j.TestUser;
+
 import org.apache.camel.component.facebook.FacebookConstants;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.apache.camel.util.ObjectHelper;
-
-import facebook4j.*;
 
 @UriParams
 public class FacebookEndpointConfiguration extends FacebookConfiguration {

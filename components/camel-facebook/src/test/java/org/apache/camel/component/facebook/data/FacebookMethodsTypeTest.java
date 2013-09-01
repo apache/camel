@@ -18,11 +18,13 @@ package org.apache.camel.component.facebook.data;
 
 import java.lang.reflect.Method;
 
+import facebook4j.Facebook;
+
+import org.junit.Test;
+
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
-import facebook4j.Facebook;
-import org.junit.Test;
 
 /**
  * Test that all *Methods methods are mapped in {@link FacebookMethodsType}.
@@ -32,7 +34,7 @@ public class FacebookMethodsTypeTest {
     @Test
     public void areAllMethodsMapped() throws Exception {
         final Class<?>[] interfaces = Facebook.class.getInterfaces();
-        for (Class clazz : interfaces) {
+        for (Class<?> clazz : interfaces) {
             if (clazz.getName().endsWith("Methods")) {
                 // check all methods of this *Methods interface
                 for (Method method : clazz.getDeclaredMethods()) {

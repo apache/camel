@@ -18,11 +18,44 @@ package org.apache.camel.component.facebook.data;
 
 import java.lang.reflect.Method;
 import java.net.URL;
-import java.util.*;
-import org.apache.camel.component.facebook.FacebookConstants;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
 
-import facebook4j.*;
+import facebook4j.Album;
+import facebook4j.AlbumCreate;
+import facebook4j.Checkin;
+import facebook4j.CheckinCreate;
+import facebook4j.Comment;
+import facebook4j.Domain;
+import facebook4j.Event;
+import facebook4j.EventUpdate;
+import facebook4j.Facebook;
+import facebook4j.Friendlist;
+import facebook4j.GeoLocation;
+import facebook4j.Group;
+import facebook4j.InboxResponseList;
+import facebook4j.Link;
+import facebook4j.Media;
+import facebook4j.Message;
+import facebook4j.Note;
+import facebook4j.Photo;
+import facebook4j.PictureSize;
+import facebook4j.Post;
+import facebook4j.PostUpdate;
+import facebook4j.Question;
+import facebook4j.Reading;
+import facebook4j.ResponseList;
+import facebook4j.TagUpdate;
+import facebook4j.TestUser;
+import facebook4j.User;
+import facebook4j.Video;
 import facebook4j.internal.org.json.JSONArray;
+
+import org.apache.camel.component.facebook.FacebookConstants;
 
 /**
  * Enum for Facebook4J *Method interfaces.

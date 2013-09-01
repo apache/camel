@@ -16,17 +16,16 @@
  */
 package org.apache.camel.component.facebook.config;
 
-import org.apache.camel.spi.UriParam;
-import org.apache.camel.spi.UriParams;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import facebook4j.Facebook;
 import facebook4j.FacebookException;
 import facebook4j.FacebookFactory;
 import facebook4j.auth.OAuthAuthorization;
 import facebook4j.conf.Configuration;
 import facebook4j.conf.ConfigurationBuilder;
+import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriParams;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * Facebook component configuration.
