@@ -508,42 +508,43 @@ public class MethodInfo {
                     try {
                         expression = exchange.getContext().resolveLanguage("simple").createExpression(exp);
                         parameterValue = expression.evaluate(exchange, Object.class);
+                        // use "null" to indicate the expression returned a null value which is a valid response we need to honor
+                        if (parameterValue == null) {
+                            parameterValue = "null";
+                        }
                     } catch (Exception e) {
                         throw new ExpressionEvaluationException(expression, "Cannot create/evaluate simple expression: " + exp
                                 + " to be bound to parameter at index: " + index + " on method: " + getMethod(), exchange, e);
                     }
 
-                    if (parameterValue != null) {
+                    // special for explicit null parameter values (as end users can explicit indicate they want null as parameter)
+                    // see method javadoc for details
+                    if ("null".equals(parameterValue)) {
+                        return Void.TYPE;
+                    }
 
-                        // special for explicit null parameter values (as end users can explicit indicate they want null as parameter)
-                        // see method javadoc for details
-                        if ("null".equals(parameterValue)) {
-                            return Void.TYPE;
+                    // the parameter value was not already valid, but since the simple language have evaluated the expression
+                    // which may change the parameterValue, so we have to check it again to see if its now valid
+                    exp = exchange.getContext().getTypeConverter().convertTo(String.class, parameterValue);
+                    // String values from the simple language is always valid
+                    if (!valid) {
+                        // re validate if the parameter was not valid the first time (String values should be accepted)
+                        valid = parameterValue instanceof String || BeanHelper.isValidParameterValue(exp);
+                    }
+
+                    if (valid) {
+                        // we need to unquote String parameters, as the enclosing quotes is there to denote a parameter value
+                        if (parameterValue instanceof String) {
+                            parameterValue = StringHelper.removeLeadingAndEndingQuotes((String) parameterValue);
                         }
-
-                        // the parameter value was not already valid, but since the simple language have evaluated the expression
-                        // which may change the parameterValue, so we have to check it again to see if its now valid
-                        exp = exchange.getContext().getTypeConverter().convertTo(String.class, parameterValue);
-                        // String values from the simple language is always valid
-                        if (!valid) {
-                            // re validate if the parameter was not valid the first time (String values should be accepted)
-                            valid = parameterValue instanceof String || BeanHelper.isValidParameterValue(exp);
-                        }
-
-                        if (valid) {
-                            // we need to unquote String parameters, as the enclosing quotes is there to denote a parameter value
-                            if (parameterValue instanceof String) {
-                                parameterValue = StringHelper.removeLeadingAndEndingQuotes((String) parameterValue);
+                        try {
+                            // its a valid parameter value, so convert it to the expected type of the parameter
+                            answer = exchange.getContext().getTypeConverter().mandatoryConvertTo(parameterType, parameterValue);
+                            if (LOG.isTraceEnabled()) {
+                                LOG.trace("Parameter #{} evaluated as: {} type: ", new Object[]{index, answer, ObjectHelper.type(answer)});
                             }
-                            try {
-                                // its a valid parameter value, so convert it to the expected type of the parameter
-                                answer = exchange.getContext().getTypeConverter().mandatoryConvertTo(parameterType, parameterValue);
-                                if (LOG.isTraceEnabled()) {
-                                    LOG.trace("Parameter #{} evaluated as: {} type: ", new Object[]{index, answer, ObjectHelper.type(answer)});
-                                }
-                            } catch (NoTypeConversionAvailableException e) {
-                                throw ObjectHelper.wrapCamelExecutionException(exchange, e);
-                            }
+                        } catch (NoTypeConversionAvailableException e) {
+                            throw ObjectHelper.wrapCamelExecutionException(exchange, e);
                         }
                     }
                 }
