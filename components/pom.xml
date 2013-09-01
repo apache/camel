@@ -81,6 +81,7 @@
     <module>camel-elasticsearch</module>
     <module>camel-eventadmin</module>
     <module>camel-exec</module>
+    <module>camel-facebook</module>
     <module>camel-flatpack</module>
     <module>camel-fop</module>
     <module>camel-freemarker</module>

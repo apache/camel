@@ -124,6 +124,7 @@
     <el-api-1.0-version>1.0.1</el-api-1.0-version>
     <exec-maven-plugin-version>1.2.1</exec-maven-plugin-version>
     <ezmorph-bundle-version>1.0.6_1</ezmorph-bundle-version>
+    <facebook4j-core-version>1.1.12</facebook4j-core-version>
     <fastinfoset-version>1.2.13_1</fastinfoset-version>
     <felix-configadmin-version>1.4.0</felix-configadmin-version>
     <felix-fileinstall-version>3.2.6</felix-fileinstall-version>
