@@ -57,6 +57,7 @@
         <include>org.apache.camel:camel-elasticsearch</include>
         <include>org.apache.camel:camel-eventadmin</include>
         <include>org.apache.camel:camel-exec</include>
+        <include>org.apache.camel:camel-facebook</include>
         <include>org.apache.camel:camel-flatpack</include>
         <include>org.apache.camel:camel-fop</include>
         <include>org.apache.camel:camel-freemarker</include>
