@@ -23,7 +23,7 @@ import org.apache.camel.example.cafe.OrderItem;
 
 public class Barista {
 
-    private long hotDrinkDelay = 500;
+    private long hotDrinkDelay = 300;
 
     private long coldDrinkDelay = 100;
 
