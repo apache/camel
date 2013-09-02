@@ -120,11 +120,17 @@ public class ZipFileDataFormatTest extends CamelTestSupport {
 
     @Test
     public void testZipToFileWithFileName() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:zipToFile");
+        mock.expectedMessageCount(1);
+        
         File file = new File(TEST_DIR, "poem.txt.zip");
         assertFalse(file.exists());
 
         template.sendBodyAndHeader("direct:zipToFile", TEXT, FILE_NAME, "poem.txt");
 
+        // just make sure the file is created
+        mock.assertIsSatisfied();
+        
         assertTrue(file.exists());
         assertTrue(ObjectHelper.equalByteArray(getZippedText("poem.txt"), getBytes(file)));
     }
@@ -167,7 +173,7 @@ public class ZipFileDataFormatTest extends CamelTestSupport {
                 from("direct:zip").marshal(zip).to("mock:zip");
                 from("direct:unzip").unmarshal(zip).to("mock:unzip");
                 from("direct:zipAndUnzip").marshal(zip).unmarshal(zip).to("mock:zipAndUnzip");
-                from("direct:zipToFile").marshal(zip).to("file:" + TEST_DIR.getPath());
+                from("direct:zipToFile").marshal(zip).to("file:" + TEST_DIR.getPath()).to("mock:zipToFile");
                 from("direct:dslZip").marshal().zipFile().to("mock:dslZip");
                 from("direct:dslUnzip").unmarshal().zipFile().to("mock:dslUnzip");
             }
