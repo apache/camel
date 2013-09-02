@@ -62,7 +62,7 @@ public class JpaProducerConcurrentTest extends AbstractJpaTest {
             responses.put(index, out);
         }
 
-        assertMockEndpointsSatisfied(20, TimeUnit.SECONDS);
+        assertMockEndpointsSatisfied(30, TimeUnit.SECONDS);
 
         assertEquals(files, responses.size());
 
