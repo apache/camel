@@ -48,12 +48,12 @@ public final class RouteContextRefDefinitionHelper {
      * <p/>
      * This implmementation must be used to lookup the routes as it performs a deep clone of the routes
      * as a {@link RouteContextRefDefinition} can be re-used with multiple {@link CamelContext} and each
-     * context should have their own instances of the routes. This is to ensure no side-effefts and sharing
+     * context should have their own instances of the routes. This is to ensure no side-effects and sharing
      * of instances between the contexts. For example such as property placeholders may be context specific
      * so the routes should not use placeholders from another {@link CamelContext}.
      *
      * @param camelContext the CamelContext
-     * @param ref          the id of the {@link RouteContextRefDefinition} to lookup and get the rotues.
+     * @param ref          the id of the {@link RouteContextRefDefinition} to lookup and get the routes.
      * @return the routes.
      */
     @SuppressWarnings("unchecked")
