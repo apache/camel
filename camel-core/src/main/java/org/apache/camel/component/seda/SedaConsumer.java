@@ -69,6 +69,7 @@ public class SedaConsumer extends ServiceSupport implements Consumer, Runnable, 
         this.endpoint = endpoint;
         this.processor = AsyncProcessorConverterHelper.convert(processor);
         this.pollTimeout = endpoint.getPollTimeout();
+        this.exceptionHandler = new LoggingExceptionHandler(endpoint.getCamelContext(), getClass());
     }
 
     @Override
@@ -81,9 +82,6 @@ public class SedaConsumer extends ServiceSupport implements Consumer, Runnable, 
     }
 
     public ExceptionHandler getExceptionHandler() {
-        if (exceptionHandler == null) {
-            exceptionHandler = new LoggingExceptionHandler(getClass());
-        }
         return exceptionHandler;
     }
 

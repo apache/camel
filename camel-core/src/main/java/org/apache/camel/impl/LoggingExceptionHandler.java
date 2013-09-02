@@ -16,6 +16,7 @@
  */
 package org.apache.camel.impl;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.LoggingLevel;
@@ -29,21 +30,41 @@ import org.slf4j.LoggerFactory;
  * log the exception.
  * <p/>
  * This implementation will by default log the exception with stack trace at WARN level.
+ * <p/>
+ * This implementation honors the {@link org.apache.camel.impl.DefaultShutdownStrategy#isSuppressLoggingOnTimeout()}
+ * option to avoid logging if the logging should be suppressed.
  *
  * @version 
  */
 public class LoggingExceptionHandler implements ExceptionHandler {
     private final CamelLogger logger;
+    private final CamelContext camelContext;
 
+    @Deprecated
     public LoggingExceptionHandler(Class<?> ownerType) {
-        this(new CamelLogger(LoggerFactory.getLogger(ownerType), LoggingLevel.WARN));
+        this(null, new CamelLogger(LoggerFactory.getLogger(ownerType), LoggingLevel.WARN));
     }
 
+    public LoggingExceptionHandler(CamelContext camelContext, Class<?> ownerType) {
+        this(camelContext, new CamelLogger(LoggerFactory.getLogger(ownerType), LoggingLevel.WARN));
+    }
+
+    @Deprecated
     public LoggingExceptionHandler(Class<?> ownerType, LoggingLevel level) {
-        this(new CamelLogger(LoggerFactory.getLogger(ownerType), level));
+        this(null, new CamelLogger(LoggerFactory.getLogger(ownerType), level));
     }
 
+    public LoggingExceptionHandler(CamelContext camelContext, Class<?> ownerType, LoggingLevel level) {
+        this(camelContext, new CamelLogger(LoggerFactory.getLogger(ownerType), level));
+    }
+
+    @Deprecated
     public LoggingExceptionHandler(CamelLogger logger) {
+        this(null, logger);
+    }
+
+    public LoggingExceptionHandler(CamelContext camelContext, CamelLogger logger) {
+        this.camelContext = camelContext;
         this.logger = logger;
     }
 
@@ -57,15 +78,17 @@ public class LoggingExceptionHandler implements ExceptionHandler {
 
     public void handleException(String message, Exchange exchange, Throwable exception) {
         try {
-            String msg = CamelExchangeException.createExceptionMessage(message, exchange, exception);
-            if (isCausedByRollbackExchangeException(exception)) {
-                // do not log stack trace for intended rollbacks
-                logger.log(msg);
-            } else {
-                if (exception != null) {
-                    logger.log(msg, exception);
-                } else {
+            if (!isSuppressLogging()) {
+                String msg = CamelExchangeException.createExceptionMessage(message, exchange, exception);
+                if (isCausedByRollbackExchangeException(exception)) {
+                    // do not log stack trace for intended rollbacks
                     logger.log(msg);
+                } else {
+                    if (exception != null) {
+                        logger.log(msg, exception);
+                    } else {
+                        logger.log(msg);
+                    }
                 }
             }
         } catch (Throwable e) {
@@ -85,5 +108,14 @@ public class LoggingExceptionHandler implements ExceptionHandler {
         }
 
         return false;
+    }
+
+    protected boolean isSuppressLogging() {
+        if (camelContext != null) {
+            return (camelContext.getStatus().isStopping() || camelContext.getStatus().isStopped())
+                    && camelContext.getShutdownStrategy().hasTimeoutOccurred() && camelContext.getShutdownStrategy().isSuppressLoggingOnTimeout();
+        } else {
+            return false;
+        }
     }
 }

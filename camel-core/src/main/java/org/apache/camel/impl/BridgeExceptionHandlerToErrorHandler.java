@@ -44,7 +44,7 @@ public class BridgeExceptionHandlerToErrorHandler implements ExceptionHandler {
 
     public BridgeExceptionHandlerToErrorHandler(DefaultConsumer consumer) {
         this.consumer = consumer;
-        this.fallback = new LoggingExceptionHandler(consumer.getClass());
+        this.fallback = new LoggingExceptionHandler(consumer.getEndpoint().getCamelContext(), consumer.getClass());
         this.bridge = consumer.getProcessor();
     }
 

@@ -98,7 +98,7 @@ public class AggregateProcessor extends ServiceSupport implements AsyncProcessor
     private ScheduledExecutorService recoverService;
     // store correlation key -> exchange id in timeout map
     private TimeoutMap<String, String> timeoutMap;
-    private ExceptionHandler exceptionHandler = new LoggingExceptionHandler(getClass());
+    private ExceptionHandler exceptionHandler;
     private AggregationRepository aggregationRepository;
     private Map<String, String> closedCorrelationKeys;
     private final Set<String> batchConsumerCorrelationKeys = new ConcurrentSkipListSet<String>();
@@ -145,6 +145,7 @@ public class AggregateProcessor extends ServiceSupport implements AsyncProcessor
         this.aggregationStrategy = aggregationStrategy;
         this.executorService = executorService;
         this.shutdownExecutorService = shutdownExecutorService;
+        this.exceptionHandler = new LoggingExceptionHandler(camelContext, getClass());
     }
 
     @Override

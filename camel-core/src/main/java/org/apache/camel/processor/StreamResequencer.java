@@ -87,10 +87,10 @@ public class StreamResequencer extends ServiceSupport implements SequenceSender<
     public StreamResequencer(CamelContext camelContext, Processor processor, SequenceElementComparator<Exchange> comparator) {
         ObjectHelper.notNull(camelContext, "CamelContext");
         this.camelContext = camelContext;
-        this.exceptionHandler = new LoggingExceptionHandler(getClass());
         this.engine = new ResequencerEngine<Exchange>(comparator);
         this.engine.setSequenceSender(this);
         this.processor = processor;
+        this.exceptionHandler = new LoggingExceptionHandler(camelContext, getClass());
     }
 
     /**

@@ -47,6 +47,7 @@ public class GenericFileOnCompletion<T> implements Synchronization {
         this.operations = operations;
         this.file = file;
         this.absoluteFileName = absoluteFileName;
+        this.exceptionHandler = new LoggingExceptionHandler(endpoint.getCamelContext(), getClass());
     }
 
     public void onComplete(Exchange exchange) {
@@ -58,9 +59,6 @@ public class GenericFileOnCompletion<T> implements Synchronization {
     }
 
     public ExceptionHandler getExceptionHandler() {
-        if (exceptionHandler == null) {
-            exceptionHandler = new LoggingExceptionHandler(getClass());
-        }
         return exceptionHandler;
     }
 
@@ -136,7 +134,7 @@ public class GenericFileOnCompletion<T> implements Synchronization {
                         log.warn("Done file: " + doneFileName + " could not be deleted");
                     }
                 } catch (Exception e) {
-                    handleException(e);
+                    handleException("Error deleting done file: " + doneFileName, exchange, e);
                 }
             }
         }
@@ -145,7 +143,7 @@ public class GenericFileOnCompletion<T> implements Synchronization {
             log.trace("Commit file strategy: {} for file: {}", processStrategy, file);
             processStrategy.commit(operations, endpoint, exchange, file);
         } catch (Exception e) {
-            handleException(e);
+            handleException("Error during commit", exchange, e);
         }
     }
 
@@ -165,13 +163,13 @@ public class GenericFileOnCompletion<T> implements Synchronization {
         try {
             processStrategy.rollback(operations, endpoint, exchange, file);
         } catch (Exception e) {
-            handleException(e);
+            handleException("Error during rollback", exchange, e);
         }
     }
 
-    protected void handleException(Throwable t) {
+    protected void handleException(String message, Exchange exchange, Throwable t) {
         Throwable newt = (t == null) ? new IllegalArgumentException("Handling [null] exception") : t;
-        getExceptionHandler().handleException(newt);
+        getExceptionHandler().handleException(message, exchange, newt);
     }
 
     @Override
