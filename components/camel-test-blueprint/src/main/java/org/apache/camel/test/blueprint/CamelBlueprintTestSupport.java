@@ -17,16 +17,22 @@
 package org.apache.camel.test.blueprint;
 
 import java.util.Dictionary;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
+import java.util.Map;
 import java.util.Properties;
+import java.util.Set;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.util.KeyValueHolder;
 import org.junit.After;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.osgi.framework.BundleContext;
+import org.osgi.framework.ServiceRegistration;
 import org.osgi.service.blueprint.container.BlueprintContainer;
 import org.osgi.service.cm.Configuration;
 import org.osgi.service.cm.ConfigurationAdmin;
@@ -37,6 +43,7 @@ import org.osgi.service.cm.ConfigurationAdmin;
 public abstract class CamelBlueprintTestSupport extends CamelTestSupport {
     private static ThreadLocal<BundleContext> threadLocalBundleContext = new ThreadLocal<BundleContext>();
     private volatile BundleContext bundleContext;
+    private final Set<ServiceRegistration<?>> services = new LinkedHashSet<ServiceRegistration<?>>();
     
     @SuppressWarnings({"rawtypes", "unchecked"})
     protected BundleContext createBundleContext() throws Exception {
@@ -48,6 +55,19 @@ public abstract class CamelBlueprintTestSupport extends CamelTestSupport {
         Properties extra = useOverridePropertiesWithPropertiesComponent();
         if (extra != null) {
             answer.registerService(PropertiesComponent.OVERRIDE_PROPERTIES, extra, null);
+        }
+
+        Map<String, KeyValueHolder<Object, Dictionary>> map = new LinkedHashMap<String, KeyValueHolder<Object, Dictionary>>();
+        addServicesOnStartup(map);
+        for (Map.Entry<String, KeyValueHolder<Object, Dictionary>> entry : map.entrySet()) {
+            String clazz = entry.getKey();
+            Object service = entry.getValue().getKey();
+            Dictionary dict = entry.getValue().getValue();
+            log.debug("Registering service {} -> {}", clazz, service);
+            ServiceRegistration<?> reg = answer.registerService(clazz, service, dict);
+            if (reg != null) {
+                services.add(reg);
+            }
         }
 
         // must reuse props as we can do both load from .cfg file and override afterwards
@@ -107,6 +127,34 @@ public abstract class CamelBlueprintTestSupport extends CamelTestSupport {
     }
 
     /**
+     * Override this method to add services to be registered on startup.
+     * <p/>
+     * You can use the builder methods {@link #asService(Object, java.util.Dictionary)}, {@link #asService(Object, String, String)}
+     * to make it easy to add the services to the map.
+     */
+    protected void addServicesOnStartup(Map<String, KeyValueHolder<Object, Dictionary>> services) {
+        // noop
+    }
+
+    /**
+     * Creates a holder for the given service, which make it easier to use {@link #addServicesOnStartup(java.util.Map)}
+     */
+    KeyValueHolder<Object, Dictionary> asService(Object service, Dictionary dict) {
+        return new KeyValueHolder<Object, Dictionary>(service, dict);
+    }
+
+    /**
+     * Creates a holder for the given service, which make it easier to use {@link #addServicesOnStartup(java.util.Map)}
+     */
+    KeyValueHolder<Object, Dictionary> asService(Object service, String key, String value) {
+        Properties prop = new Properties();
+        if (key != null && value != null) {
+            prop.put(key, value);
+        }
+        return new KeyValueHolder<Object, Dictionary>(service, prop);
+    }
+
+    /**
      * Override this method to override config admin properties.
      *
      * @param props properties where you add the properties to override
@@ -135,6 +183,13 @@ public abstract class CamelBlueprintTestSupport extends CamelTestSupport {
         if (isCreateCamelContextPerClass()) {
             // we tear down in after class
             return;
+        }
+
+        // unregister services
+        if (bundleContext != null) {
+            for (ServiceRegistration<?> reg : services) {
+                bundleContext.ungetService(reg.getReference());
+            }
         }
         CamelBlueprintHelper.disposeBundleContext(bundleContext);
     }
