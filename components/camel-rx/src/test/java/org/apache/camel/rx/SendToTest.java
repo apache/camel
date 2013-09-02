@@ -27,7 +27,7 @@ public class SendToTest extends RxTestSupport {
     @Test
     public void testSendObservableToEndpoint() throws Exception {
         Order[] expectedBodies = {new Order("o1", 1.10), new Order("o2", 2.20), new Order("o3", 3.30)};
-        Observable<Order> someObservable = Observable.toObservable(expectedBodies);
+        Observable<Order> someObservable = Observable.from(expectedBodies);
 
         final MockEndpoint mockEndpoint = camelContext.getEndpoint("mock:results", MockEndpoint.class);
         mockEndpoint.expectedBodiesReceived(expectedBodies);
