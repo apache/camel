@@ -69,7 +69,7 @@ public class FacebookConsumer extends ScheduledPollConsumer {
         this.endpoint = endpoint;
 
         // determine the consumer method to invoke
-        this.method = findMethod(endpoint.getCandidates());
+        this.method = findMethod();
 
         // get endpoint properties in a map
         final HashMap<String, Object> properties = new HashMap<String, Object>();
@@ -96,7 +96,7 @@ public class FacebookConsumer extends ScheduledPollConsumer {
         this.endpointProperties = Collections.unmodifiableMap(properties);
     }
 
-    private FacebookMethodsType findMethod(List<FacebookMethodsType> candidates) {
+    private FacebookMethodsType findMethod() {
 
         FacebookMethodsType result;
         // find one that takes the largest subset of endpoint parameters

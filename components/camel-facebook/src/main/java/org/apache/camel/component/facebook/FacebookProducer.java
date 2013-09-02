@@ -137,13 +137,13 @@ public class FacebookProducer extends DefaultAsyncProducer {
 
     // returns false on exception, which is set in exchange
     private boolean processInBody(Exchange exchange, Map<String, Object> properties) {
-        final String inBodyProperty = (String) properties.remove(FacebookConstants.IN_BODY_PROPERTY);
+        final String inBodyProperty = endpoint.getInBody();
         if (inBodyProperty != null) {
 
             Object value = exchange.getIn().getBody();
             try {
                 value = getEndpoint().getCamelContext().getTypeConverter().mandatoryConvertTo(
-                    FacebookEndpointConfiguration.class.getDeclaredField(inBodyProperty).getClass(),
+                    FacebookEndpointConfiguration.class.getDeclaredField(inBodyProperty).getType(),
                     exchange, value);
             } catch (Exception e) {
                 exchange.setException(new RuntimeCamelException(String.format(
@@ -152,6 +152,7 @@ public class FacebookProducer extends DefaultAsyncProducer {
                 return false;
             }
 
+            LOG.debug("Property [{}] has message body value {}", inBodyProperty, value);
             properties.put(inBodyProperty, value);
         }
 

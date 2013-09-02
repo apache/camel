@@ -134,4 +134,8 @@ public final class FacebookPropertiesHelper {
         return Collections.unmodifiableSet(properties.keySet());
     }
 
+    public static Set<String> getValidEndpointProperties() {
+        return Collections.unmodifiableSet(ENDPOINT_CONFIG_FIELDS);
+    }
+
 }

@@ -28,9 +28,6 @@ public interface FacebookConstants {
     // property name prefix for exchange 'in' headers
     String FACEBOOK_PROPERTY_PREFIX = "CamelFacebook.";
 
-    // property name for exchange 'in' body
-    String IN_BODY_PROPERTY = "inBody";
-
     String FACEBOOK_THREAD_PROFILE_NAME = "CamelFacebook";
 
     // date format used by Facebook Reading since and until fields
