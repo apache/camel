@@ -721,21 +721,14 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
     protected void installRoutes() throws Exception {
         List<RouteBuilder> builders = new ArrayList<RouteBuilder>();
 
-        // lets add route builders added from references
+        // lets add RoutesBuilder's added from references
         if (getBuilderRefs() != null) {
             for (RouteBuilderDefinition builderRef : getBuilderRefs()) {
-                RouteBuilder builder = builderRef.createRouteBuilder(getContext());
-                if (builder != null) {
-                    builders.add(builder);
+                RoutesBuilder routes = builderRef.createRoutes(getContext());
+                if (routes != null) {
+                    this.builders.add(routes);
                 } else {
-                    // support to get the route here
-                    RoutesBuilder routes = builderRef.createRoutes(getContext());
-                    if (routes != null) {
-                        this.builders.add(routes);
-                    } else {
-                        // Throw the exception that we can't find any build here
-                        throw new CamelException("Cannot find any routes with this RouteBuilder reference: " + builderRef);
-                    }
+                    throw new CamelException("Cannot find any routes with this RouteBuilder reference: " + builderRef);
                 }
             }
         }
