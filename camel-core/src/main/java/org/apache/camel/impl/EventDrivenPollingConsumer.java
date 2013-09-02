@@ -41,7 +41,7 @@ import org.slf4j.LoggerFactory;
 public class EventDrivenPollingConsumer extends PollingConsumerSupport implements Processor {
     private static final Logger LOG = LoggerFactory.getLogger(EventDrivenPollingConsumer.class);
     private final BlockingQueue<Exchange> queue;
-    private ExceptionHandler interruptedExceptionHandler = new LoggingExceptionHandler(EventDrivenPollingConsumer.class);
+    private ExceptionHandler interruptedExceptionHandler;
     private Consumer consumer;
 
     public EventDrivenPollingConsumer(Endpoint endpoint) {
@@ -51,6 +51,7 @@ public class EventDrivenPollingConsumer extends PollingConsumerSupport implement
     public EventDrivenPollingConsumer(Endpoint endpoint, BlockingQueue<Exchange> queue) {
         super(endpoint);
         this.queue = queue;
+        this.interruptedExceptionHandler = new LoggingExceptionHandler(endpoint.getCamelContext(), EventDrivenPollingConsumer.class);
     }
 
     public Exchange receiveNoWait() {

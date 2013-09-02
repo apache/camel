@@ -41,7 +41,9 @@ public abstract class RoutePolicySupport extends ServiceSupport implements Route
     private ExceptionHandler exceptionHandler;
 
     public void onInit(Route route) {
-        // noop
+        if (exceptionHandler == null) {
+            exceptionHandler = new LoggingExceptionHandler(route.getRouteContext().getCamelContext(), getClass());
+        }
     }
 
     public void onRemove(Route route) {
@@ -122,7 +124,9 @@ public abstract class RoutePolicySupport extends ServiceSupport implements Route
      * @param t the exception to handle
      */
     protected void handleException(Throwable t) {
-        getExceptionHandler().handleException(t);
+        if (exceptionHandler != null) {
+            exceptionHandler.handleException(t);
+        }
     }
 
     @Override
@@ -136,9 +140,6 @@ public abstract class RoutePolicySupport extends ServiceSupport implements Route
     }
 
     public ExceptionHandler getExceptionHandler() {
-        if (exceptionHandler == null) {
-            exceptionHandler = new LoggingExceptionHandler(getClass());
-        }
         return exceptionHandler;
     }
 

@@ -144,6 +144,32 @@ public interface ShutdownStrategy extends StaticService {
     TimeUnit getTimeUnit();
 
     /**
+     * Whether Camel should try to suppress logging during shutdown and timeout was triggered,
+     * meaning forced shutdown is happening. And during forced shutdown we want to avoid logging
+     * errors/warnings et all in the logs as a side-effect of the forced timeout.
+     * <p/>
+     * By default this is <tt>false</tt>
+     * <p/>
+     * Notice the suppress is a <i>best effort</i> as there may still be some logs coming
+     * from 3rd party libraries and whatnot, which Camel cannot control.
+     *
+     * @param suppressLoggingOnTimeout <tt>true</tt> to suppress logging, false to log as usual.
+     */
+    void setSuppressLoggingOnTimeout(boolean suppressLoggingOnTimeout);
+
+    /**
+     * Whether Camel should try to suppress logging during shutdown and timeout was triggered,
+     * meaning forced shutdown is happening. And during forced shutdown we want to avoid logging
+     * errors/warnings et all in the logs as a side-effect of the forced timeout.
+     * <p/>
+     * By default this is <tt>false</tt>
+     * <p/>
+     * Notice the suppress is a <i>best effort</i> as there may still be some logs coming
+     * from 3rd party libraries and whatnot, which Camel cannot control.
+     */
+    boolean isSuppressLoggingOnTimeout();
+
+    /**
      * Sets whether to force shutdown of all consumers when a timeout occurred and thus
      * not all consumers was shutdown within that period.
      * <p/>
@@ -190,5 +216,10 @@ public interface ShutdownStrategy extends StaticService {
      * @return <tt>true</tt> indicates the service is to be forced to shutdown, <tt>false</tt> the service can keep running.
      */
     boolean forceShutdown(Service service);
+
+    /**
+     * Whether a timeout has occurred during a shutdown.
+     */
+    boolean hasTimeoutOccurred();
 
 }

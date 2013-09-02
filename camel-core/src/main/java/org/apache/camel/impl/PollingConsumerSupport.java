@@ -35,6 +35,7 @@ public abstract class PollingConsumerSupport extends ServiceSupport implements P
 
     public PollingConsumerSupport(Endpoint endpoint) {
         this.endpoint = endpoint;
+        this.exceptionHandler = new LoggingExceptionHandler(endpoint.getCamelContext(), getClass());
     }
 
     @Override
@@ -47,9 +48,6 @@ public abstract class PollingConsumerSupport extends ServiceSupport implements P
     }
 
     public ExceptionHandler getExceptionHandler() {
-        if (exceptionHandler == null) {
-            exceptionHandler = new LoggingExceptionHandler(getClass());
-        }
         return exceptionHandler;
     }
 

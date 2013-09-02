@@ -88,6 +88,7 @@ public class BatchProcessor extends ServiceSupport implements AsyncProcessor, Na
         this.collection = collection;
         this.expression = expression;
         this.sender = new BatchSender();
+        this.exceptionHandler = new LoggingExceptionHandler(camelContext, getClass());
     }
 
     @Override
@@ -98,9 +99,6 @@ public class BatchProcessor extends ServiceSupport implements AsyncProcessor, Na
     // Properties
     // -------------------------------------------------------------------------
     public ExceptionHandler getExceptionHandler() {
-        if (exceptionHandler == null) {
-            exceptionHandler = new LoggingExceptionHandler(getClass());
-        }
         return exceptionHandler;
     }
 
