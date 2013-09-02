@@ -26,12 +26,12 @@ import org.apache.camel.component.facebook.config.FacebookConfiguration;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.util.IntrospectionSupport;
 
-public class CamelFacebookTestSupport extends CamelTestSupport {
+public abstract class CamelFacebookTestSupport extends CamelTestSupport {
 
-    private final Properties properties;
-    private FacebookConfiguration configuration;
+    protected final Properties properties;
+    protected final FacebookConfiguration configuration;
 
-    public CamelFacebookTestSupport() throws Exception {
+    protected CamelFacebookTestSupport() throws Exception {
         URL url = getClass().getResource("/test-options.properties");
 
         InputStream inStream;
@@ -59,14 +59,18 @@ public class CamelFacebookTestSupport extends CamelTestSupport {
         IntrospectionSupport.setProperties(configuration, options);
     }
 
-    public FacebookConfiguration getConfiguration() {
+    protected FacebookConfiguration getConfiguration() {
         return configuration;
     }
 
-    public String getOauthParams() {
+    protected String getOauthParams() {
         return "oAuthAppId=" + properties.get("oAuthAppId") + "&oAuthAppSecret=" + properties.get("oAuthAppSecret")
             + (properties.get("oAuthAccessToken") != null
             ? ("&oAuthAccessToken=" + properties.get("oAuthAccessToken")) : "");
+    }
+    
+    protected String getAppOauthParams() {
+         return "oAuthAppId=" + properties.get("oAuthAppId") + "&oAuthAppSecret=" + properties.get("oAuthAppSecret");
     }
 
     protected String getShortName(String name) {

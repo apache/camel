@@ -28,6 +28,7 @@ import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.util.EndpointHelper;
+import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -47,6 +48,10 @@ public class FacebookEndpoint extends DefaultEndpoint implements FacebookConstan
 
     @UriParam
     private FacebookEndpointConfiguration configuration;
+
+    // property name for Exchange 'In' message body
+    @UriParam
+    private String inBody;
 
     // Facebook4J method name
     private final String methodName;
@@ -160,6 +165,19 @@ public class FacebookEndpoint extends DefaultEndpoint implements FacebookConstan
 
     public List<FacebookMethodsType> getCandidates() {
         return Collections.unmodifiableList(candidates);
+    }
+
+    public String getInBody() {
+        return inBody;
+    }
+
+    public void setInBody(String inBody) {
+        // validate property name
+        ObjectHelper.notNull(inBody, "inBody");
+        if (!FacebookPropertiesHelper.getValidEndpointProperties().contains(inBody)) {
+            throw new IllegalArgumentException("Unknown property " + inBody);
+        }
+        this.inBody = inBody;
     }
 
 }

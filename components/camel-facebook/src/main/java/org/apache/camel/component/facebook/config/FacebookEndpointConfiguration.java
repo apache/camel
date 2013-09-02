@@ -16,9 +16,7 @@
  */
 package org.apache.camel.component.facebook.config;
 
-import java.lang.reflect.Field;
 import java.net.URL;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -34,17 +32,11 @@ import facebook4j.Reading;
 import facebook4j.TagUpdate;
 import facebook4j.TestUser;
 
-import org.apache.camel.component.facebook.FacebookConstants;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
-import org.apache.camel.util.ObjectHelper;
 
 @UriParams
 public class FacebookEndpointConfiguration extends FacebookConfiguration {
-
-    // property name for Exchange 'In' message body
-    @UriParam
-    private String inBody;
 
     @UriParam
     private URL achievementURL;
@@ -177,22 +169,6 @@ public class FacebookEndpointConfiguration extends FacebookConfiguration {
     @UriParam
     private String videoId;
 
-    public String getInBody() {
-        return inBody;
-    }
-
-    public void setInBody(String inBody) {
-        ObjectHelper.notNull(inBody, "inBody");
-        this.inBody = inBody;
-
-        // validate name
-        final List<Field> fields = Arrays.asList(getClass().getDeclaredFields());
-        fields.remove(FacebookConstants.IN_BODY_PROPERTY);
-        if (!fields.contains(inBody)) {
-            throw new IllegalArgumentException("Unknown property " + inBody);
-        }
-    }
-
     public URL getAchievementURL() {
         return achievementURL;
     }
@@ -225,11 +201,11 @@ public class FacebookEndpointConfiguration extends FacebookConfiguration {
         this.allowNewOptions = allowNewOptions;
     }
 
-    public String getoAuthAppId() {
+    public String getAppId() {
         return appId;
     }
 
-    public void setoAuthAppId(String appId) {
+    public void setAppId(String appId) {
         this.appId = appId;
     }
 
@@ -489,11 +465,11 @@ public class FacebookEndpointConfiguration extends FacebookConfiguration {
         this.permissionName = permissionName;
     }
 
-    public String getoAuthPermissions() {
+    public String getPermissions() {
         return permissions;
     }
 
-    public void setoAuthPermissions(String permissions) {
+    public void setPermissions(String permissions) {
         this.permissions = permissions;
     }
 

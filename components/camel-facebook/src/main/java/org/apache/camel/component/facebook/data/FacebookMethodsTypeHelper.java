@@ -31,7 +31,6 @@ import facebook4j.Facebook;
 import facebook4j.FacebookException;
 
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.component.facebook.FacebookConstants;
 import org.apache.camel.component.facebook.config.FacebookNameStyle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -101,9 +100,6 @@ public final class FacebookMethodsTypeHelper {
             }
 
         }
-
-        // add endpoint parameter inBody for producers
-        VALID_ARGUMENTS.put(FacebookConstants.IN_BODY_PROPERTY, String.class);
 
         LOG.debug("Found {} unique method names in {} methods", METHOD_MAP.size(), methods.length);
 
