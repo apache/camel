@@ -82,6 +82,10 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.blueprint.KeyStoreParametersFactoryBean;
 import org.apache.camel.util.blueprint.SSLContextParametersFactoryBean;
 import org.apache.camel.util.blueprint.SecureRandomParametersFactoryBean;
+import org.apache.camel.util.jsse.KeyStoreParameters;
+import org.apache.camel.util.jsse.SSLContextParameters;
+import org.apache.camel.util.jsse.SecureRandomParameters;
+
 import org.osgi.framework.Bundle;
 import org.osgi.service.blueprint.container.BlueprintContainer;
 import org.osgi.service.blueprint.container.ComponentDefinitionException;
@@ -92,10 +96,13 @@ import org.osgi.service.blueprint.reflect.RefMetadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.osgi.service.blueprint.reflect.ComponentMetadata.ACTIVATION_LAZY;
 import static org.osgi.service.blueprint.reflect.ServiceReferenceMetadata.AVAILABILITY_MANDATORY;
 import static org.osgi.service.blueprint.reflect.ServiceReferenceMetadata.AVAILABILITY_OPTIONAL;
 
-
+/**
+ * Camel {@link NamespaceHandler} to parse the Camel related namespaces.
+ */
 public class CamelNamespaceHandler implements NamespaceHandler {
 
     private static final String CAMEL_CONTEXT = "camelContext";
@@ -135,7 +142,10 @@ public class CamelNamespaceHandler implements NamespaceHandler {
 
     public Metadata parse(Element element, ParserContext context) {
         LOG.trace("Parsing element {}", element);
+
+        // make sure namespace is blueprint
         renameNamespaceRecursive(element);
+
         if (element.getLocalName().equals(CAMEL_CONTEXT)) {
             return parseCamelContextNode(element, context);
         }
@@ -305,6 +315,8 @@ public class CamelNamespaceHandler implements NamespaceHandler {
         ctx.setRuntimeClass(List.class);
         ctx.setFactoryComponent(factory2);
         ctx.setFactoryMethod("getRoutes");
+        // must be lazy as we want CamelContext to be activated first
+        ctx.setActivation(ACTIVATION_LAZY);
 
         // lets inject the namespaces into any namespace aware POJOs
         injectNamespaces(element, binder);
@@ -344,9 +356,11 @@ public class CamelNamespaceHandler implements NamespaceHandler {
 
         MutableBeanMetadata ctx = context.createMetadata(MutableBeanMetadata.class);
         ctx.setId(id);
-        ctx.setRuntimeClass(List.class);
+        ctx.setRuntimeClass(KeyStoreParameters.class);
         ctx.setFactoryComponent(factory2);
         ctx.setFactoryMethod("getObject");
+        // must be lazy as we want CamelContext to be activated first
+        ctx.setActivation(ACTIVATION_LAZY);
 
         LOG.trace("Parsing KeyStoreParameters done, returning {}", ctx);
         return ctx;
@@ -383,9 +397,11 @@ public class CamelNamespaceHandler implements NamespaceHandler {
 
         MutableBeanMetadata ctx = context.createMetadata(MutableBeanMetadata.class);
         ctx.setId(id);
-        ctx.setRuntimeClass(List.class);
+        ctx.setRuntimeClass(SecureRandomParameters.class);
         ctx.setFactoryComponent(factory2);
         ctx.setFactoryMethod("getObject");
+        // must be lazy as we want CamelContext to be activated first
+        ctx.setActivation(ACTIVATION_LAZY);
 
         LOG.trace("Parsing SecureRandomParameters done, returning {}", ctx);
         return ctx;
@@ -422,9 +438,11 @@ public class CamelNamespaceHandler implements NamespaceHandler {
 
         MutableBeanMetadata ctx = context.createMetadata(MutableBeanMetadata.class);
         ctx.setId(id);
-        ctx.setRuntimeClass(List.class);
+        ctx.setRuntimeClass(SSLContextParameters.class);
         ctx.setFactoryComponent(factory2);
         ctx.setFactoryMethod("getObject");
+        // must be lazy as we want CamelContext to be activated first
+        ctx.setActivation(ACTIVATION_LAZY);
 
         LOG.trace("Parsing SSLContextParameters done, returning {}", ctx);
         return ctx;
@@ -833,8 +851,8 @@ public class CamelNamespaceHandler implements NamespaceHandler {
                     getDataformatResolverReference(context, dataformat);
                 }
             } catch (UnsupportedOperationException e) {
-                LOG.warn("Unable to add dependencies on to camel components OSGi services.  "
-                    + "The Apache Aries blueprint implementation used it too old and the blueprint bundle can not see the org.apache.camel.spi package.");
+                LOG.warn("Unable to add dependencies to Camel components OSGi services. "
+                    + "The Apache Aries blueprint implementation used is too old and the blueprint bundle can not see the org.apache.camel.spi package.");
                 components.clear();
                 languages.clear();
                 dataformats.clear();
