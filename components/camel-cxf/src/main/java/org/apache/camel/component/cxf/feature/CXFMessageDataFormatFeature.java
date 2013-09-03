@@ -17,6 +17,9 @@
 
 package org.apache.camel.component.cxf.feature;
 
+import java.util.ArrayList;
+import java.util.Collection;
+
 import javax.xml.soap.SOAPMessage;
 import javax.xml.transform.Source;
 
@@ -29,8 +32,13 @@ import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.endpoint.Endpoint;
 import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.interceptor.AbstractInDatabindingInterceptor;
+import org.apache.cxf.interceptor.ClientFaultConverter;
+import org.apache.cxf.jaxws.interceptors.HolderInInterceptor;
+import org.apache.cxf.jaxws.interceptors.HolderOutInterceptor;
 import org.apache.cxf.jaxws.interceptors.MessageModeInInterceptor;
 import org.apache.cxf.jaxws.interceptors.MessageModeOutInterceptor;
+import org.apache.cxf.jaxws.interceptors.WrapperClassInInterceptor;
+import org.apache.cxf.jaxws.interceptors.WrapperClassOutInterceptor;
 import org.apache.cxf.service.model.BindingMessageInfo;
 import org.apache.cxf.service.model.BindingOperationInfo;
 import org.apache.cxf.service.model.MessageInfo;
@@ -46,6 +54,18 @@ import org.slf4j.LoggerFactory;
 public class CXFMessageDataFormatFeature extends AbstractDataFormatFeature {
     private static final Logger LOG = LoggerFactory.getLogger(CXFMessageDataFormatFeature.class);
 
+    private static final Collection<Class<?>> REMOVING_IN_INTERCEPTORS;
+    private static final Collection<Class<?>> REMOVING_OUT_INTERCEPTORS;
+   
+    static {
+        REMOVING_IN_INTERCEPTORS = new ArrayList<Class<?>>();
+        REMOVING_IN_INTERCEPTORS.add(HolderInInterceptor.class);
+        REMOVING_IN_INTERCEPTORS.add(WrapperClassInInterceptor.class);
+        
+        REMOVING_OUT_INTERCEPTORS = new ArrayList<Class<?>>();
+        REMOVING_OUT_INTERCEPTORS.add(HolderOutInterceptor.class);
+        REMOVING_OUT_INTERCEPTORS.add(WrapperClassOutInterceptor.class);
+    }
 
     @Override
     public void initialize(Client client, Bus bus) {
@@ -72,6 +92,9 @@ public class CXFMessageDataFormatFeature extends AbstractDataFormatFeature {
         }
         ep.getInInterceptors().add(new MessageModeInInterceptor(fmt, ep.getBinding().getBindingInfo().getName()));            
         ep.put(AbstractInDatabindingInterceptor.NO_VALIDATE_PARTS, Boolean.TRUE);
+        // need to remove the wrapper class and holder interceptor
+        removeInterceptors(ep.getInInterceptors(), REMOVING_IN_INTERCEPTORS);
+        removeInterceptors(ep.getOutInterceptors(), REMOVING_OUT_INTERCEPTORS);
     }
 
     @Override
