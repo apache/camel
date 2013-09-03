@@ -66,7 +66,6 @@ import org.springframework.beans.factory.support.BeanDefinitionBuilder;
 import org.springframework.beans.factory.xml.NamespaceHandlerSupport;
 import org.springframework.beans.factory.xml.ParserContext;
 
-
 /**
  * Camel namespace for the spring XML configuration file.
  */
@@ -128,7 +127,7 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
         boolean osgi = false;
         Class<?> cl = CamelContextFactoryBean.class;
         // These code will try to detected if we are in the OSGi environment.
-        // If so, camel will use the OSGi version of CamelContenxtFactoryBean to create the camel context.
+        // If so, camel will use the OSGi version of CamelContextFactoryBean to create the CamelContext.
         try {
             // Try to load the BundleActivator first
             Class.forName("org.osgi.framework.BundleActivator");
@@ -140,7 +139,7 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
                 osgi = true;
             }
         } catch (Throwable t) {
-            // not running with camel-osgi so we fallback to the regular factory bean
+            // not running with camel-core-osgi so we fallback to the regular factory bean
             LOG.trace("Cannot find class so assuming not running in OSGi container: " + t.getMessage());
         }
         if (osgi) {
