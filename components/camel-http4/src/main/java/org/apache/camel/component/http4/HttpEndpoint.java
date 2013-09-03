@@ -28,12 +28,16 @@ import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.http.HttpHost;
+import org.apache.http.client.CookieStore;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.protocol.ClientContext;
 import org.apache.http.conn.ClientConnectionManager;
 import org.apache.http.conn.params.ConnRoutePNames;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpParams;
+import org.apache.http.protocol.BasicHttpContext;
+import org.apache.http.protocol.DefaultedHttpContext;
 import org.apache.http.protocol.HttpContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -64,6 +68,8 @@ public class HttpEndpoint extends DefaultPollingEndpoint implements HeaderFilter
     private boolean traceEnabled;
     private String httpMethodRestrict;
     private UrlRewrite urlRewrite;
+    private boolean clearExpiredCookies = true;
+    private CookieStore cookieStore;
 
     public HttpEndpoint() {
     }
@@ -124,7 +130,10 @@ public class HttpEndpoint extends DefaultPollingEndpoint implements HeaderFilter
         ObjectHelper.notNull(clientParams, "clientParams");
         ObjectHelper.notNull(clientConnectionManager, "httpConnectionManager");
 
-        HttpClient answer = new DefaultHttpClient(clientConnectionManager, getClientParams());
+        DefaultHttpClient answer = new DefaultHttpClient(clientConnectionManager, getClientParams());
+        if (cookieStore != null) {
+            answer.setCookieStore(cookieStore);
+        }
 
         // configure http proxy from camelContext
         if (ObjectHelper.isNotEmpty(getCamelContext().getProperty("http.proxyHost")) && ObjectHelper.isNotEmpty(getCamelContext().getProperty("http.proxyPort"))) {
@@ -148,6 +157,11 @@ public class HttpEndpoint extends DefaultPollingEndpoint implements HeaderFilter
         HttpClientConfigurer configurer = getHttpClientConfigurer();
         if (configurer != null) {
             configurer.configureHttpClient(answer);
+        }
+
+        if (isBridgeEndpoint()) {
+            // need to use noop cookiestore as we do not want to keep cookies in memory
+            answer.setCookieStore(new NoopCookieStore());
         }
 
         LOG.debug("Created HttpClient {}", answer);
@@ -346,5 +360,21 @@ public class HttpEndpoint extends DefaultPollingEndpoint implements HeaderFilter
 
     public void setUrlRewrite(UrlRewrite urlRewrite) {
         this.urlRewrite = urlRewrite;
+    }
+
+    public boolean isClearExpiredCookies() {
+        return clearExpiredCookies;
+    }
+
+    public void setClearExpiredCookies(boolean clearExpiredCookies) {
+        this.clearExpiredCookies = clearExpiredCookies;
+    }
+
+    public CookieStore getCookieStore() {
+        return cookieStore;
+    }
+
+    public void setCookieStore(CookieStore cookieStore) {
+        this.cookieStore = cookieStore;
     }
 }
