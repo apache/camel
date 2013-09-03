@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.smpp;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Processor;
 import org.jsmpp.bean.BindType;
 import org.jsmpp.bean.NumberingPlanIndicator;
@@ -42,6 +43,7 @@ public class SmppConsumerTest {
     private SmppConfiguration configuration;
     private Processor processor;
     private SMPPSession session;
+    private CamelContext camelContext;
 
     @Before
     public void setUp() {
@@ -50,6 +52,7 @@ public class SmppConsumerTest {
         processor = createMock(Processor.class);
         session = createMock(SMPPSession.class);
         
+        // the construction of SmppConsumer will trigger the getCamelContext call
         consumer = new SmppConsumer(
                 endpoint, 
                 configuration,
@@ -63,6 +66,7 @@ public class SmppConsumerTest {
 
     @Test
     public void doStartShouldStartANewSmppSession() throws Exception {
+        resetToNice(endpoint, session);
         expect(endpoint.getConnectionString())
             .andReturn("smpp://smppclient@localhost:2775")
             .times(2);
@@ -82,8 +86,10 @@ public class SmppConsumerTest {
                         NumberingPlanIndicator.UNKNOWN,
                         ""))).andReturn("1");
         expect(endpoint.getConnectionString()).andReturn("smpp://smppclient@localhost:2775");
+     
         
         replay(endpoint, processor, session);
+        
         
         consumer.doStart();
         
@@ -92,6 +98,7 @@ public class SmppConsumerTest {
 
     @Test
     public void doStopShouldNotCloseTheSMPPSessionIfItIsNull() throws Exception {
+        resetToNice(endpoint, session);
         expect(endpoint.getConnectionString())
             .andReturn("smpp://smppclient@localhost:2775")
             .times(3);
