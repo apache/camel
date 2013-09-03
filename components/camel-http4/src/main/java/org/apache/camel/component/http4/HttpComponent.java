@@ -31,6 +31,7 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.jsse.SSLContextParameters;
 import org.apache.http.auth.params.AuthParamBean;
+import org.apache.http.client.CookieStore;
 import org.apache.http.client.params.ClientParamBean;
 import org.apache.http.conn.ClientConnectionManager;
 import org.apache.http.conn.params.ConnRouteParamBean;
@@ -65,6 +66,7 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
     protected HttpContext httpContext;
     protected SSLContextParameters sslContextParameters;
     protected X509HostnameVerifier x509HostnameVerifier = new BrowserCompatHostnameVerifier();
+    protected CookieStore cookieStore;
 
     // options to the default created http connection manager
     protected int maxTotalConnections = 200;
@@ -274,6 +276,9 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
         if (httpContext != null) {
             endpoint.setHttpContext(httpContext);
         }
+        if (endpoint.getCookieStore() == null) {
+            endpoint.setCookieStore(getCookieStore());
+        }
         // register port on schema registry
         registerPort(secure, x509HostnameVerifier, port, sslContextParameters);
 
@@ -450,7 +455,15 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
     public void setConnectionTimeToLive(long connectionTimeToLive) {
         this.connectionTimeToLive = connectionTimeToLive;
     }
- 
+
+    public CookieStore getCookieStore() {
+        return cookieStore;
+    }
+
+    public void setCookieStore(CookieStore cookieStore) {
+        this.cookieStore = cookieStore;
+    }
+
     @Override
     public void doStart() throws Exception {
         super.doStart();

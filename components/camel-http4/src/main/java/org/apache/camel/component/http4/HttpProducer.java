@@ -26,6 +26,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
@@ -57,6 +58,7 @@ import org.apache.http.entity.ContentType;
 import org.apache.http.entity.FileEntity;
 import org.apache.http.entity.InputStreamEntity;
 import org.apache.http.entity.StringEntity;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.CoreProtocolPNames;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EntityUtils;
@@ -82,6 +84,14 @@ public class HttpProducer extends DefaultProducer {
     }
 
     public void process(Exchange exchange) throws Exception {
+
+        if (getEndpoint().isClearExpiredCookies()) {
+            if (httpClient instanceof DefaultHttpClient) {
+                boolean cleared = ((DefaultHttpClient) httpClient).getCookieStore().clearExpired(new Date());
+                log.debug("Any expired cookies cleared: {}", cleared);
+            }
+        }
+
         // if we bridge endpoint then we need to skip matching headers with the HTTP_QUERY to avoid sending
         // duplicated headers to the receiver, so use this skipRequestHeaders as the list of headers to skip
         Map<String, Object> skipRequestHeaders = null;
