@@ -76,7 +76,7 @@ public class JpaProducerConcurrentTest extends CamelTestSupport {
             responses.put(index, out);
         }
 
-        assertMockEndpointsSatisfied();
+        assertMockEndpointsSatisfied(30, TimeUnit.SECONDS);
 
         assertEquals(files, responses.size());
 
