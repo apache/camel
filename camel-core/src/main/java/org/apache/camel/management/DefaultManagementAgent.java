@@ -25,9 +25,9 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ConcurrentMap;
 import javax.management.JMException;
 import javax.management.MBeanServer;
 import javax.management.MBeanServerFactory;
@@ -62,7 +62,7 @@ public class DefaultManagementAgent extends ServiceSupport implements Management
     private CamelContext camelContext;
     private MBeanServer server;
     // need a name -> actual name mapping as some servers changes the names (such as WebSphere)
-    private final Map<ObjectName, ObjectName> mbeansRegistered = new HashMap<ObjectName, ObjectName>();
+    private final ConcurrentMap<ObjectName, ObjectName> mbeansRegistered = new ConcurrentHashMap<ObjectName, ObjectName>();
     private JMXConnectorServer cs;
     private Registry registry;
 
@@ -250,15 +250,17 @@ public class DefaultManagementAgent extends ServiceSupport implements Management
 
     public void unregister(ObjectName name) throws JMException {
         if (isRegistered(name)) {
-            server.unregisterMBean(mbeansRegistered.get(name));
+            ObjectName on = mbeansRegistered.remove(name);
+            server.unregisterMBean(on);
             LOG.debug("Unregistered MBean with ObjectName: {}", name);
+        } else {
+            mbeansRegistered.remove(name);
         }
-        mbeansRegistered.remove(name);
     }
 
     public boolean isRegistered(ObjectName name) {
-        return (mbeansRegistered.containsKey(name) 
-                && server.isRegistered(mbeansRegistered.get(name))) 
+        ObjectName on = mbeansRegistered.get(name);
+        return (on != null && server.isRegistered(on))
                 || server.isRegistered(name);
     }
 
