@@ -68,9 +68,9 @@
   <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
    <route errorHandlerRef="noErrorHandler">
        <from uri="cxf:bean:route" />
-       <process ref="myProcessor" />
+       <!-- process ref="myProcessor" /-->
        <to uri="cxf:bean:service"/>
-       <process ref="myProcessor" />
+       <!-- process ref="myProcessor" /-->
    </route>
 
   </camelContext>
