@@ -153,7 +153,7 @@ public class DefaultStreamCachingStrategy extends org.apache.camel.support.Servi
     }
 
     public boolean shouldSpoolCache(long length) {
-        if (spoolRules.isEmpty()) {
+        if (!enabled || spoolRules.isEmpty()) {
             return false;
         }
 
