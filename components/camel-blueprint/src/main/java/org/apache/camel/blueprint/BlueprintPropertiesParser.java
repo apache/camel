@@ -20,6 +20,7 @@ import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 
@@ -127,7 +128,8 @@ public class BlueprintPropertiesParser extends DefaultPropertiesParser {
                     // okay we have multiple placeholders and we want to return the answer that
                     // is not the default placeholder if there is multiple keys
                     if (placeholder instanceof PropertyPlaceholder) {
-                        isDefault = ((PropertyPlaceholder) placeholder).getDefaultProperties().containsKey(key);
+                        Map map = ((PropertyPlaceholder) placeholder).getDefaultProperties();
+                        isDefault = map != null && map.containsKey(key);
                     }
                     log.trace("Blueprint property key: {} is part of default properties: {}", key, isDefault);
                 }
