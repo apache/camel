@@ -25,6 +25,7 @@ import java.util.Set;
 
 import org.apache.aries.blueprint.ExtendedBeanMetadata;
 import org.apache.aries.blueprint.ext.AbstractPropertyPlaceholder;
+import org.apache.aries.blueprint.ext.PropertyPlaceholder;
 import org.apache.camel.component.properties.DefaultPropertiesParser;
 import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.component.properties.PropertiesParser;
@@ -120,12 +121,28 @@ public class BlueprintPropertiesParser extends DefaultPropertiesParser {
         // lookup key in blueprint and return its value
         if (answer == null && key != null) {
             for (AbstractPropertyPlaceholder placeholder : placeholders) {
-                answer = (String) ObjectHelper.invokeMethod(method, placeholder, key);
-                if (answer != null) {
-                    log.debug("Blueprint parsed property key: {} as value: {}", key, answer);
-                    break;
+
+                boolean isDefault = false;
+                if (placeholders.size() > 1) {
+                    // okay we have multiple placeholders and we want to return the answer that
+                    // is not the default placeholder if there is multiple keys
+                    if (placeholder instanceof PropertyPlaceholder) {
+                        isDefault = ((PropertyPlaceholder) placeholder).getDefaultProperties().containsKey(key);
+                    }
+                    log.trace("Blueprint property key: {} is part of default properties: {}", key, isDefault);
+                }
+
+                String candidate = (String) ObjectHelper.invokeMethod(method, placeholder, key);
+
+                if (candidate != null) {
+                    if (answer == null || !isDefault) {
+                        log.trace("Blueprint parsed candidate property key: {} as value: {}", key, answer);
+                        answer = candidate;
+                    }
                 }
             }
+
+            log.debug("Blueprint parsed property key: {} as value: {}", key, answer);
         }
 
         // if there is a delegate then let it parse the current answer as it may be jasypt which
