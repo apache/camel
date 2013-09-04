@@ -443,13 +443,17 @@ public final class IOHelper {
 
     /**
      * Loads the entire stream into memory as a String and returns it.
-     *
+     * <p/>
+     * <b>Notice:</b> This implementation appends a <tt>\n</tt> as line
+     * terminator at the of the text.
+     * <p/>
      * Warning, don't use for crazy big streams :)
      */
     public static String loadText(InputStream in) throws IOException {
         StringBuilder builder = new StringBuilder();
+        InputStreamReader isr = new InputStreamReader(in);
         try {
-            BufferedReader reader = buffered(new InputStreamReader(in));
+            BufferedReader reader = buffered(isr);
             while (true) {
                 String line = reader.readLine();
                 if (line != null) {
@@ -461,7 +465,7 @@ public final class IOHelper {
             }
             return builder.toString();
         } finally {
-            close(in);
+            close(isr, in);
         }
     }
 }

@@ -18,9 +18,12 @@ package org.apache.camel.util;
 
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.io.PrintWriter;
 
 import junit.framework.TestCase;
 
@@ -62,5 +65,38 @@ public class IOHelperTest extends TestCase {
         assertEquals("UTF-8", IOHelper.normalizeCharset("\"UTF-8\""));
         assertEquals("UTF-8", IOHelper.normalizeCharset("\"UTF-8 \""));
         assertEquals("UTF-8", IOHelper.normalizeCharset("\' UTF-8\'"));
+    }
+
+    public void testLine1() throws Exception {
+        assertReadAsWritten("line1",   "line1", "line1\n");
+    }
+
+    public void testLine1LF() throws Exception {
+        assertReadAsWritten("line1LF", "line1\n", "line1\n");
+    }
+
+    public void testLine2() throws Exception {
+        assertReadAsWritten("line2",   "line1\nline2", "line1\nline2\n");
+    }
+
+    public void testLine2LF() throws Exception {
+        assertReadAsWritten("line2LF", "line1\nline2\n", "line1\nline2\n");
+    }
+
+    private void assertReadAsWritten(String testname, String text, String compareText) throws Exception {
+        File file = tempFile(testname);
+        write(file, text);
+        String loadText = IOHelper.loadText(new FileInputStream(file));
+        assertEquals(compareText, loadText);
+    }
+
+    private File tempFile(String testname) throws Exception {
+        return File.createTempFile(testname, "");
+    }
+
+    private void write(File file, String text) throws Exception {
+        PrintWriter out = new PrintWriter(file);
+        out.print(text);
+        out.close();
     }
 }
