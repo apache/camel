@@ -70,7 +70,8 @@ public abstract class CamelFacebookTestSupport extends CamelTestSupport {
     }
     
     protected String getAppOauthParams() {
-         return "oAuthAppId=" + properties.get("oAuthAppId") + "&oAuthAppSecret=" + properties.get("oAuthAppSecret");
+        return "oAuthAppId=" + properties.get("oAuthAppId")
+             + "&oAuthAppSecret=" + properties.get("oAuthAppSecret");
     }
 
     protected String getShortName(String name) {
