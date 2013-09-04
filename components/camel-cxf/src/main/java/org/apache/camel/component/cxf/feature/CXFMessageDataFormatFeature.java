@@ -23,7 +23,6 @@ import java.util.Collection;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.transform.Source;
 
-import org.apache.camel.component.cxf.interceptors.SoapMessageRedirectInterceptor;
 import org.apache.cxf.Bus;
 import org.apache.cxf.binding.Binding;
 import org.apache.cxf.binding.soap.SoapBinding;
@@ -86,7 +85,6 @@ public class CXFMessageDataFormatFeature extends AbstractDataFormatFeature {
             ep.getInInterceptors().add(new SAAJInInterceptor());          
             SAAJOutInterceptor out = new SAAJOutInterceptor();
             ep.getOutInterceptors().add(out);
-            ep.getOutInterceptors().add(new SoapMessageRedirectInterceptor());
             ep.getOutInterceptors().add(new MessageModeOutInterceptor(out, ep.getBinding().getBindingInfo().getName()));
             fmt = SOAPMessage.class;
         } else {
