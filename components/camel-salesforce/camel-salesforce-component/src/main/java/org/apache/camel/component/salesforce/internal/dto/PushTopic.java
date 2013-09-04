@@ -23,11 +23,11 @@ import org.apache.camel.component.salesforce.api.PicklistEnumConverter;
 import org.apache.camel.component.salesforce.api.dto.AbstractSObjectBase;
 import org.codehaus.jackson.annotate.JsonProperty;
 
+//CHECKSTYLE:OFF
 /**
  * Salesforce DTO for SObject PushTopic
  */
 @XStreamAlias("PushTopic")
-//CHECKSTYLE:OFF
 public class PushTopic extends AbstractSObjectBase {
 
     // WARNING: these fields have case sensitive names,
@@ -108,3 +108,4 @@ public class PushTopic extends AbstractSObjectBase {
     }
 }
 //CHECKSTYLE:ON
+
