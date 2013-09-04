@@ -20,10 +20,13 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+
+import facebook4j.TestUser;
+
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
 
-import facebook4j.TestUser;
+
 
 /**
  * Test methods in {@link facebook4j.api.TestUserMethods}
