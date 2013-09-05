@@ -92,11 +92,11 @@ public abstract class RemoteFileConsumer<T> extends GenericFileConsumer<T> {
     }
 
     @Override
-    protected void processExchange(Exchange exchange) {
+    protected boolean processExchange(Exchange exchange) {
         // mark the exchange to be processed synchronously as the ftp client is not thread safe
         // and we must execute the callbacks in the same thread as this consumer
         exchange.setProperty(Exchange.UNIT_OF_WORK_PROCESS_SYNC, Boolean.TRUE);
-        super.processExchange(exchange);
+        return super.processExchange(exchange);
     }
     
     @Override

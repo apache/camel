@@ -16,8 +16,10 @@
  */
 package org.apache.camel.component.file.remote;
 
+import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.util.FileUtil;
@@ -83,11 +85,24 @@ public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
         }
 
         log.trace("Polling directory: {}", dir);
-        List<FTPFile> files;
-        if (isStepwise()) {
-            files = operations.listFiles();
+        List<FTPFile> files = null;
+        if (isUseList()) {
+            if (isStepwise()) {
+                files = operations.listFiles();
+            } else {
+                files = operations.listFiles(dir);
+            }
         } else {
-            files = operations.listFiles(dir);
+            // we cannot use the LIST command(s) so we can only poll a named file
+            // so created a pseudo file with that name
+            FTPFile file = new FTPFile();
+            file.setType(FTPFile.FILE_TYPE);
+            fileExpressionResult = evaluateFileExpression();
+            if (fileExpressionResult != null) {
+                file.setName(fileExpressionResult);
+                files = new ArrayList<FTPFile>(1);
+                files.add(file);
+            }
         }
 
         if (files == null || files.isEmpty()) {
@@ -149,6 +164,18 @@ public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
         return false;
     }
 
+    @Override
+    protected boolean ignoreCannotRetrieveFile(String name, Exchange exchange) {
+        if (getEndpoint().getConfiguration().isIgnoreFileNotFound()) {
+            // error code 550 is file not found
+            int code = exchange.getIn().getHeader(FtpConstants.FTP_REPLY_CODE, 0, int.class);
+            if (code == 550) {
+                return true;
+            }
+        }
+        return super.ignoreCannotRetrieveFile(name, exchange);
+    }
+
     private RemoteFile<FTPFile> asRemoteFile(String absolutePath, FTPFile file) {
         RemoteFile<FTPFile> answer = new RemoteFile<FTPFile>();
 
@@ -191,6 +218,11 @@ public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
     private boolean isStepwise() {
         RemoteFileConfiguration config = (RemoteFileConfiguration) endpoint.getConfiguration();
         return config.isStepwise();
+    }
+
+    private boolean isUseList() {
+        RemoteFileConfiguration config = (RemoteFileConfiguration) endpoint.getConfiguration();
+        return config.isUseList();
     }
 
     @Override

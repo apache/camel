@@ -185,6 +185,7 @@ public abstract class ScheduledPollConsumer extends DefaultConsumer implements R
                         if (begin) {
                             retryCounter++;
                             polledMessages = poll();
+                            LOG.trace("Polled {} messages", polledMessages);
 
                             if (polledMessages == 0 && isSendEmptyMessageWhenIdle()) {
                                 // send an "empty" exchange
