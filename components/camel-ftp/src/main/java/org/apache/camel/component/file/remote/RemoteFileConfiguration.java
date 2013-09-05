@@ -33,7 +33,7 @@ public abstract class RemoteFileConfiguration extends GenericFileConfiguration {
      * Windows = Path separator \ is used
      * Auto = Use existing path separator in file name
      */
-    public enum PathSeparator { UNIX, Windows, Auto };
+    public enum PathSeparator { UNIX, Windows, Auto }
 
     private String protocol;
     private String username;
@@ -50,6 +50,8 @@ public abstract class RemoteFileConfiguration extends GenericFileConfiguration {
     private boolean stepwise = true;
     private PathSeparator separator = PathSeparator.Auto;
     private boolean streamDownload;
+    private boolean useList = true;
+    private boolean ignoreFileNotFound;
 
     public RemoteFileConfiguration() {
     }
@@ -270,11 +272,38 @@ public abstract class RemoteFileConfiguration extends GenericFileConfiguration {
      * Sets the download method to use when not using a local working directory.  If set to true,
      * the remote files are streamed to the route as they are read.  When set to false, the remote files
      * are loaded into memory before being sent into the route.
-     *
-     * @param streamDownload 
      */
     public void setStreamDownload(boolean streamDownload) {
         this.streamDownload = streamDownload;
+    }
+
+    public boolean isUseList() {
+        return useList;
+    }
+
+    /**
+     * Whether to allow using LIST command when downloading a file.
+     * <p/>
+     * Default is <tt>true</tt>. In some use cases you may want to download
+     * a specific file and are not allowed to use the LIST command, and therefore
+     * you can set this option to <tt>false</tt>.
+     */
+    public void setUseList(boolean useList) {
+        this.useList = useList;
+    }
+
+    public boolean isIgnoreFileNotFound() {
+        return ignoreFileNotFound;
+    }
+
+    /**
+     * Whether to ignore when trying to download a file which does not exist.
+     * <p/>
+     * By default when a file does not exists, then an exception is thrown.
+     * Setting this option to <tt>true</tt> allows to ignore that instead.
+     */
+    public void setIgnoreFileNotFound(boolean ignoreFileNotFound) {
+        this.ignoreFileNotFound = ignoreFileNotFound;
     }
 
     /**

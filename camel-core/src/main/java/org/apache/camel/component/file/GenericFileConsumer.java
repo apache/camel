@@ -171,6 +171,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
 
     public int processBatch(Queue<Object> exchanges) {
         int total = exchanges.size();
+        int answer = total;
 
         // limit if needed
         if (maxMessagesPerPoll > 0 && total > maxMessagesPerPoll) {
@@ -191,19 +192,25 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
             pendingExchanges = total - index - 1;
 
             // process the current exchange
+            boolean started;
             if (customProcessor != null) {
                 // use a custom processor
-                customProcessExchange(exchange, customProcessor);
+                started = customProcessExchange(exchange, customProcessor);
             } else {
                 // process the exchange regular
-                processExchange(exchange);
+                started = processExchange(exchange);
+            }
+
+            // if we did not start process the file then decremember the counter
+            if (!started) {
+                answer--;
             }
         }
 
         // drain any in progress files as we are done with this batch
         removeExcessiveInProgressFiles(CastUtils.cast((Deque<?>) exchanges, Exchange.class), 0);
 
-        return total;
+        return answer;
     }
 
     protected void removeExcessiveInProgressFiles(Deque<Exchange> exchanges, int limit) {
@@ -277,11 +284,28 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
     }
 
     /**
+     * Whether to ignore if the file cannot be retrieved.
+     * <p/>
+     * By default an {@link GenericFileOperationFailedException} is thrown if the file cannot be retrieved.
+     * <p/>
+     * This method allows to suppress this and just ignore that.
+     *
+     * @param name        the file name
+     * @param exchange    the exchange
+     * @return <tt>true</tt> to ignore, <tt>false</tt> is the default.
+     */
+    protected boolean ignoreCannotRetrieveFile(String name, Exchange exchange) {
+        return false;
+    }
+
+    /**
      * Processes the exchange
      *
      * @param exchange the exchange
+     * @return <tt>true</tt> if the file was started to be processed, <tt>false</tt> if the file was not started
+     * to be processed, for some reason (not found, or aborted etc)
      */
-    protected void processExchange(final Exchange exchange) {
+    protected boolean processExchange(final Exchange exchange) {
         GenericFile<T> file = getExchangeFileProperty(exchange);
         log.trace("Processing file: {}", file);
 
@@ -303,7 +327,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
                     // begin returned false, so remove file from the in progress list as its no longer in progress
                     endpoint.getInProgressRepository().remove(absoluteFileName);
                 }
-                return;
+                return false;
             }
         } catch (Exception e) {
             // remove file from the in progress list due to failure
@@ -311,7 +335,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
 
             String msg = endpoint + " cannot begin processing file: " + file + " due to: " + e.getMessage();
             handleException(msg, e);
-            return;
+            return false;
         }
 
         // must use file from exchange as it can be updated due the
@@ -328,10 +352,17 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
                 // retrieve the file and check it was a success
                 boolean retrieved = operations.retrieveFile(name, exchange);
                 if (!retrieved) {
-                    // throw exception to handle the problem with retrieving the file
-                    // then if the method return false or throws an exception is handled the same in here
-                    // as in both cases an exception is being thrown
-                    throw new GenericFileOperationFailedException("Cannot retrieve file: " + file + " from: " + endpoint);
+                    if (ignoreCannotRetrieveFile(name, exchange)) {
+                        log.trace("Cannot retrieve file {} maybe it does not exists. Ignorning.", name);
+                        // remove file from the in progress list as we could not retrieve it, but should ignore
+                        endpoint.getInProgressRepository().remove(absoluteFileName);
+                        return false;
+                    } else {
+                        // throw exception to handle the problem with retrieving the file
+                        // then if the method return false or throws an exception is handled the same in here
+                        // as in both cases an exception is being thrown
+                        throw new GenericFileOperationFailedException("Cannot retrieve file: " + file + " from: " + endpoint);
+                    }
                 }
     
                 log.trace("Retrieved file: {} from: {}", name, endpoint);                
@@ -368,6 +399,8 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
             String msg = "Error processing file " + file + " due to " + e.getMessage();
             handleException(msg, e);
         }
+
+        return true;
     }
 
     /**
@@ -385,7 +418,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
      * @param exchange the exchange
      * @param processor the custom processor
      */
-    protected void customProcessExchange(final Exchange exchange, final Processor processor) {
+    protected boolean customProcessExchange(final Exchange exchange, final Processor processor) {
         GenericFile<T> file = getExchangeFileProperty(exchange);
         log.trace("Custom processing file: {}", file);
 
@@ -407,6 +440,8 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
             // as the name can be different when using preMove option
             endpoint.getInProgressRepository().remove(absoluteFileName);
         }
+
+        return true;
     }
 
     /**
@@ -508,7 +543,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
 
         // use file expression for a simple dynamic file filter
         if (endpoint.getFileName() != null) {
-            evaluateFileExpression();
+            fileExpressionResult = evaluateFileExpression();
             if (fileExpressionResult != null) {
                 if (!name.equals(fileExpressionResult)) {
                     return false;
@@ -557,12 +592,13 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
         return !endpoint.getInProgressRepository().add(key);
     }
 
-    private void evaluateFileExpression() {
-        if (fileExpressionResult == null) {
+    protected String evaluateFileExpression() {
+        if (fileExpressionResult == null && endpoint.getFileName() != null) {
             // create a dummy exchange as Exchange is needed for expression evaluation
             Exchange dummy = endpoint.createExchange();
             fileExpressionResult = endpoint.getFileName().evaluate(dummy, String.class);
         }
+        return fileExpressionResult;
     }
 
     @SuppressWarnings("unchecked")

@@ -19,6 +19,7 @@ package org.apache.camel.component.file.remote;
 import java.util.List;
 
 import com.jcraft.jsch.ChannelSftp;
+import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.util.FileUtil;
