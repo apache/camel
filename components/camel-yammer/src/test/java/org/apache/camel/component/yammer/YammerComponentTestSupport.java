@@ -27,7 +27,8 @@ import org.junit.Before;
 public abstract class YammerComponentTestSupport extends CamelTestSupport {
 
     protected YammerComponent yammerComponent;
-
+    private String messages;
+    
     public YammerComponentTestSupport() {
         super();
     }
@@ -38,20 +39,28 @@ public abstract class YammerComponentTestSupport extends CamelTestSupport {
         super.setUp();
         
         InputStream is = getClass().getResourceAsStream(jsonFile());        
-        String messages = context.getTypeConverter().convertTo(String.class, is);    
+        setMessages(context.getTypeConverter().convertTo(String.class, is));    
         
         yammerComponent = context.getComponent("yammer", YammerComponent.class);
         
         Collection<Endpoint> endpoints = context.getEndpoints();
         for (Endpoint endpoint : endpoints) {
             if (endpoint instanceof YammerEndpoint) {
-                ((YammerEndpoint)endpoint).getConfig().setRequestor(new TestApiRequestor(messages));
+                ((YammerEndpoint)endpoint).getConfig().setRequestor(new TestApiRequestor(getMessages()));
             }
         }
     }
 
     protected String jsonFile() {
         return "/messages.json";
+    }
+
+    protected String getMessages() {
+        return messages;
+    }
+
+    protected void setMessages(String messages) {
+        this.messages = messages;
     }
 
 }
