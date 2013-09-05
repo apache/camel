@@ -201,7 +201,7 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
                 started = processExchange(exchange);
             }
 
-            // if we did not start process the file then decremember the counter
+            // if we did not start process the file then decrement the counter
             if (!started) {
                 answer--;
             }
@@ -213,6 +213,12 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
         return answer;
     }
 
+    /**
+     * Drain any in progress files as we are done with this batch
+     *
+     * @param exchanges  the exchanges
+     * @param limit      the limit
+     */
     protected void removeExcessiveInProgressFiles(Deque<Exchange> exchanges, int limit) {
         // remove the file from the in progress list in case the batch was limited by max messages per poll
         while (exchanges.size() > limit) {
@@ -223,7 +229,6 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
             endpoint.getInProgressRepository().remove(key);
         }
     }
-
 
     /**
      * Whether or not we can continue polling for more files
