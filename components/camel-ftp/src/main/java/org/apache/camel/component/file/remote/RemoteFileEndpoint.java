@@ -103,6 +103,10 @@ public abstract class RemoteFileEndpoint<T> extends GenericFileEndpoint<T> {
             idempotentRepository = MemoryIdempotentRepository.memoryIdempotentRepository(DEFAULT_IDEMPOTENT_CACHE_SIZE);
         }
 
+        if (!getConfiguration().isUseList() && getFileName() == null) {
+            throw new IllegalArgumentException("Endpoint is configured with useList=false, then fileName must be configured also");
+        }
+
         // set max messages per poll
         consumer.setMaxMessagesPerPoll(getMaxMessagesPerPoll());
         consumer.setEagerLimitMaxMessagesPerPoll(isEagerMaxMessagesPerPoll());
