@@ -17,7 +17,7 @@
 package org.apache.camel.component.yammer;
 
 public enum YammerFunctionType {
-    MESSAGES, MY_FEED, ALGO, FOLLOWING, SENT, PRIVATE, 
+    MESSAGES, MY_FEED, ALGO, FOLLOWING, SENT, PRIVATE, RECEIVED, 
     USERS, CURRENT,
     RELATIONSHIPS;
 

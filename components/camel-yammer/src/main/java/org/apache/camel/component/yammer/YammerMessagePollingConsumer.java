@@ -57,6 +57,7 @@ public class YammerMessagePollingConsumer extends ScheduledPollConsumer {
         case MY_FEED:
         case PRIVATE:
         case SENT:
+        case RECEIVED:
             url.append(YammerConstants.YAMMER_BASE_API_URL);
             url.append("messages/");
             url.append(function);
