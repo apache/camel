@@ -23,6 +23,7 @@ import java.util.Collection;
 import javax.xml.soap.SOAPMessage;
 import javax.xml.transform.Source;
 
+import org.apache.camel.component.cxf.interceptors.CxfMessageSoapHeaderOutInterceptor;
 import org.apache.cxf.Bus;
 import org.apache.cxf.binding.Binding;
 import org.apache.cxf.binding.soap.SoapBinding;
@@ -32,7 +33,6 @@ import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.endpoint.Endpoint;
 import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.interceptor.AbstractInDatabindingInterceptor;
-import org.apache.cxf.interceptor.ClientFaultConverter;
 import org.apache.cxf.jaxws.interceptors.HolderInInterceptor;
 import org.apache.cxf.jaxws.interceptors.HolderOutInterceptor;
 import org.apache.cxf.jaxws.interceptors.MessageModeInInterceptor;
@@ -85,6 +85,7 @@ public class CXFMessageDataFormatFeature extends AbstractDataFormatFeature {
             ep.getInInterceptors().add(new SAAJInInterceptor());          
             SAAJOutInterceptor out = new SAAJOutInterceptor();
             ep.getOutInterceptors().add(out);
+            ep.getOutInterceptors().add(new CxfMessageSoapHeaderOutInterceptor());
             ep.getOutInterceptors().add(new MessageModeOutInterceptor(out, ep.getBinding().getBindingInfo().getName()));
             fmt = SOAPMessage.class;
         } else {
