@@ -43,7 +43,7 @@ public class YammerMessageAndUserRouteTest extends CamelTestSupport {
         String messages = context.getTypeConverter().convertTo(String.class, getClass().getResourceAsStream("/messages.json"));
         messagesEndpoint.getConfig().setRequestor(new TestApiRequestor(messages));
         
-        String users = context.getTypeConverter().convertTo(String.class, getClass().getResourceAsStream("/users.json"));
+        String users = context.getTypeConverter().convertTo(String.class, getClass().getResourceAsStream("/user.json"));
         usersEndpoint.getConfig().setRequestor(new TestApiRequestor(users));
     }
     
@@ -68,11 +68,10 @@ public class YammerMessageAndUserRouteTest extends CamelTestSupport {
         userMock.assertIsSatisfied();
         
         exchange = userMock.getExchanges().get(0);
-        List<User> users = exchange.getIn().getBody(List.class);
+        User user = exchange.getIn().getBody(User.class);
 
-        assertEquals(1, users.size());
-        assertEquals("Joe Camel", users.get(0).getFullName());        
-        assertEquals("jcamel@redhat.com", users.get(0).getContact().getEmailAddresses().get(0).getAddress());        
+        assertEquals("Joe Camel", user.getFullName());        
+        assertEquals("jcamel@redhat.com", user.getContact().getEmailAddresses().get(0).getAddress());        
     }
 
     @Override
