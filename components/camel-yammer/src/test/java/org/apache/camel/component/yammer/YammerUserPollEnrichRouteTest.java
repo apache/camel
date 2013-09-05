@@ -47,7 +47,7 @@ public class YammerUserPollEnrichRouteTest extends YammerComponentTestSupport {
 
     @Override
     protected String jsonFile() {
-        return "/users.json";
+        return "/user.json";
     }
 
     @Override

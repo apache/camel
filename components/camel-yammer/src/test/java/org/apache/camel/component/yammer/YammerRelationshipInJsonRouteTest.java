@@ -50,7 +50,7 @@ public class YammerRelationshipInJsonRouteTest extends YammerComponentTestSuppor
         return new RouteBuilder() {
             public void configure() {
                 // using dummy keys here since we are mocking out calls to yammer.com with static json; in a real app, please use your own keys!
-                from("yammer:relationships?consumerKey=aConsumerKey&consumerSecret=aConsumerSecretKey&accessToken=aAccessToken&useJson=true").to("log:foo").to("mock:result");
+                from("yammer:relationships?consumerKey=aConsumerKey&consumerSecret=aConsumerSecretKey&accessToken=aAccessToken&useJson=true").to("mock:result");
             }
         };
     }

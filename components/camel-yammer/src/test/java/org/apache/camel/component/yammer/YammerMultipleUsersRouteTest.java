@@ -25,34 +25,38 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.yammer.model.User;
 import org.junit.Test;
 
-public class YammerUserRouteTest extends YammerComponentTestSupport {
+public class YammerMultipleUsersRouteTest extends YammerComponentTestSupport {
 
     @SuppressWarnings("unchecked")
     @Test
     public void testConsumeAllUsers() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(1);
+        
+        template.sendBody("direct:start", "overwrite me");        
+        
         assertMockEndpointsSatisfied();
         
         Exchange exchange = mock.getExchanges().get(0);
         List<User> users = exchange.getIn().getBody(List.class);
 
-        assertEquals(1, users.size());
+        assertEquals(2, users.size());
         assertEquals("Joe Camel", users.get(0).getFullName());        
         assertEquals("jcamel@redhat.com", users.get(0).getContact().getEmailAddresses().get(0).getAddress());
+        assertEquals("Joe Camel Jr", users.get(1).getFullName());        
+        assertEquals("jcameljr@redhat.com", users.get(1).getContact().getEmailAddresses().get(0).getAddress());
     }
 
     @Override
     protected String jsonFile() {
-        return "/user.json";
+        return "/users.json";
     }
-       
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                // using dummy keys here since we are mocking out calls to yammer.com with static json; in a real app, please use your own keys!
-                from("yammer:users?consumerKey=aConsumerKey&consumerSecret=aConsumerSecretKey&accessToken=aAccessToken").to("mock:result");
+                from("direct:start").pollEnrich("yammer:users?consumerKey=aConsumerKey&consumerSecret=aConsumerSecretKey&accessToken=aAccessToken").to("mock:result");
             }
         };
     }
