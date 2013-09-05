@@ -75,9 +75,20 @@ public class YammerUserPollingConsumer extends ScheduledPollConsumer {
 
             if (!endpoint.getConfig().isUseJson()) {
                 ObjectMapper jsonMapper = new ObjectMapper();
-                List<User> users = jsonMapper.readValue(jsonBody, jsonMapper.getTypeFactory().constructCollectionType(List.class, User.class));
+                String function = endpoint.getConfig().getFunction();
+                switch (YammerFunctionType.fromUri(function)) {
+                case USERS:
+                    List<User> users = jsonMapper.readValue(jsonBody, jsonMapper.getTypeFactory().constructCollectionType(List.class, User.class));
+                    exchange.getIn().setBody(users);                   
+                    break;
+                case CURRENT:
+                    User user = jsonMapper.readValue(jsonBody, jsonMapper.getTypeFactory().constructType(User.class));
+                    exchange.getIn().setBody(user);                                       
+                    break;
+                default:
+                    throw new Exception(String.format("%s is not a valid Yammer user function type.", function));
+                }    
                 
-                exchange.getIn().setBody(users);
             } else {
                 exchange.getIn().setBody(jsonBody);
             }

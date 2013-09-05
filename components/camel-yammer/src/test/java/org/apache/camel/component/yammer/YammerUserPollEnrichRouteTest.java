@@ -17,8 +17,6 @@
 package org.apache.camel.component.yammer;
 
 
-import java.util.List;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -38,11 +36,10 @@ public class YammerUserPollEnrichRouteTest extends YammerComponentTestSupport {
         assertMockEndpointsSatisfied();
         
         Exchange exchange = mock.getExchanges().get(0);
-        List<User> users = exchange.getIn().getBody(List.class);
+        User user = exchange.getIn().getBody(User.class);
 
-        assertEquals(1, users.size());
-        assertEquals("Joe Camel", users.get(0).getFullName());        
-        assertEquals("jcamel@redhat.com", users.get(0).getContact().getEmailAddresses().get(0).getAddress());
+        assertEquals("Joe Camel", user.getFullName());        
+        assertEquals("jcamel@redhat.com", user.getContact().getEmailAddresses().get(0).getAddress());
     }
 
     @Override
