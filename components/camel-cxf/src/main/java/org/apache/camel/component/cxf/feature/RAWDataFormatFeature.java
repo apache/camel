@@ -18,10 +18,10 @@
 package org.apache.camel.component.cxf.feature;
 
 import org.apache.camel.component.cxf.interceptors.RawMessageContentRedirectInterceptor;
+import org.apache.camel.component.cxf.interceptors.RawMessageWSDLGetInterceptor;
 import org.apache.cxf.Bus;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.endpoint.Server;
-import org.apache.cxf.frontend.WSDLGetInterceptor;
 import org.apache.cxf.interceptor.LoggingOutInterceptor;
 import org.apache.cxf.phase.Phase;
 import org.slf4j.Logger;
@@ -69,10 +69,7 @@ public class RAWDataFormatFeature extends AbstractDataFormatFeature {
     public void initialize(Server server, Bus bus) {
         // currently we do not filter the bus
         // remove the interceptors
-        
-        // keep the WSDLGetInterceptor
-        getInInterceptorNames().add(WSDLGetInterceptor.class.getName());
-        
+
         removeInterceptorWhichIsOutThePhases(server.getEndpoint().getService().getInInterceptors(), REMAINING_IN_PHASES, getInInterceptorNames());
         removeInterceptorWhichIsOutThePhases(server.getEndpoint().getInInterceptors(), REMAINING_IN_PHASES, getInInterceptorNames());
 
@@ -89,7 +86,9 @@ public class RAWDataFormatFeature extends AbstractDataFormatFeature {
         // Do not use the binding interceptor any more
         server.getEndpoint().getBinding().getOutInterceptors().clear();
         server.getEndpoint().getOutInterceptors().add(new RawMessageContentRedirectInterceptor());
-        
+
+        // setup the RawMessageWSDLGetInterceptor
+        server.getEndpoint().getInInterceptors().add(RawMessageWSDLGetInterceptor.INSTANCE);
     }
 
     @Override
