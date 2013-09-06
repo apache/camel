@@ -17,6 +17,8 @@
 package org.apache.camel.component.cxf;
 
 import javax.xml.ws.Endpoint;
+
+import org.apache.camel.wsdl_first.JaxwsTestHandler;
 import org.apache.camel.wsdl_first.PersonImpl;
 import org.junit.BeforeClass;
 import org.junit.Test;
@@ -46,6 +48,16 @@ public class CxfWsdlFirstPayloadModeTest extends AbstractCxfWsdlFirstTest {
     @Test
     public void testInvokingServiceWithCamelProducer() throws Exception {
         // this test does not apply to PAYLOAD mode
+    }
+
+    protected void verifyJaxwsHandlers(JaxwsTestHandler fromHandler, JaxwsTestHandler toHandler) {
+        assertEquals(2, fromHandler.getFaultCount());
+        assertEquals(4, fromHandler.getMessageCount());
+        // Since CXF 2.2.7 there are some performance improvement to use the stax as much as possible
+        // which causes the XML validate doesn't work on the from endpoint
+        // So we skip the toHandler messageCount here
+        //assertEquals(3, toHandler.getMessageCount());
+        assertEquals(1, toHandler.getFaultCount());
     }
     
 
