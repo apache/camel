@@ -21,14 +21,12 @@ import java.util.List;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 /**
  * @version
  */
-public class VertxRouteTest extends CamelTestSupport {
-    private static final String HEADER_NAME = "TODO";
+public class VertxRouteTest extends VertxBaseTestSupport {
 
     protected String startUri = "vertx:foo.start";
     protected String middleUri = "vertx:foo.middle";
@@ -37,11 +35,9 @@ public class VertxRouteTest extends CamelTestSupport {
     protected MockEndpoint resultEndpoint;
     protected String body1 = "{\"id\":1,\"description\":\"Message One\"}";
     protected String body2 = "{\"id\":2,\"description\":\"Message Two\"}";
-    
 
     @Test
     public void testVertxMessages() throws Exception {
-        
         resultEndpoint = context.getEndpoint(resultUri, MockEndpoint.class);
         resultEndpoint.expectedBodiesReceivedInAnyOrder(body1, body2);
 
@@ -61,6 +57,10 @@ public class VertxRouteTest extends CamelTestSupport {
             public void configure() throws Exception {
                 // camel-vertx cannot be ran with JDK 1.6
                 org.junit.Assume.assumeTrue(!isJava16());
+
+                VertxComponent vertx = getContext().getComponent("vertx", VertxComponent.class);
+                vertx.setPort(getPort());
+
                 from(startUri).to(middleUri);
                 from(middleUri).to(resultUri);
             }
