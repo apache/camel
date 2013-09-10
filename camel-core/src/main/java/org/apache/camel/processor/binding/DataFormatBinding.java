@@ -21,13 +21,14 @@ import org.apache.camel.processor.MarshalProcessor;
 import org.apache.camel.processor.UnmarshalProcessor;
 import org.apache.camel.spi.Binding;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
 
 /**
  * Represents a {@link org.apache.camel.spi.Binding} which Marshals the message in the ProduceProcessor and
  * Unmarshals the message in the ConsumeProcessor
  */
-public class DataFormatBinding implements Binding {
+public class DataFormatBinding extends ServiceSupport implements Binding {
     private DataFormat producerDataFormat;
     private DataFormat consumerDataFormat;
 
@@ -63,7 +64,6 @@ public class DataFormatBinding implements Binding {
         setProducerDataFormat(dataFormat);
     }
 
-
     public DataFormat getConsumerDataFormat() {
         return consumerDataFormat;
     }
@@ -78,5 +78,15 @@ public class DataFormatBinding implements Binding {
 
     public void setProducerDataFormat(DataFormat producerDataFormat) {
         this.producerDataFormat = producerDataFormat;
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        // noop
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        // noop
     }
 }

@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.binding;
 
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -34,8 +35,8 @@ public class BindingProducer extends DefaultProducer {
     public BindingProducer(BindingEndpoint endpoint) throws Exception {
         super(endpoint);
         this.endpoint = endpoint;
-        bindingProcessor = endpoint.getBinding().createProduceProcessor();
-        delegateProducer = endpoint.getDelegate().createProducer();
+        this.bindingProcessor = endpoint.getBinding().createProduceProcessor();
+        this.delegateProducer = endpoint.getDelegate().createProducer();
     }
 
     @Override
@@ -45,6 +46,13 @@ public class BindingProducer extends DefaultProducer {
 
     @Override
     protected void doStart() throws Exception {
+        // inject CamelContext
+        if (bindingProcessor instanceof CamelContextAware) {
+            ((CamelContextAware) bindingProcessor).setCamelContext(getEndpoint().getCamelContext());
+        }
+        if (delegateProducer instanceof CamelContextAware) {
+            ((CamelContextAware) delegateProducer).setCamelContext(getEndpoint().getCamelContext());
+        }
         ServiceHelper.startServices(bindingProcessor, delegateProducer);
         super.doStart();
     }

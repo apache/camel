@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.binding;
 
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
@@ -26,6 +27,7 @@ import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.Binding;
 import org.apache.camel.spi.HasBinding;
 import org.apache.camel.util.ExchangeHelper;
+import org.apache.camel.util.ServiceHelper;
 
 /**
  * Applies a {@link org.apache.camel.spi.Binding} to an underlying {@link Endpoint} so that the binding processes messages
@@ -67,7 +69,6 @@ public class BindingEndpoint extends DefaultEndpoint implements HasBinding {
         return delegate;
     }
 
-
     /**
      * Applies the {@link Binding} processor to the given exchange before passing it on to the delegateProcessor (either a producer or consumer)
      */
@@ -93,4 +94,19 @@ public class BindingEndpoint extends DefaultEndpoint implements HasBinding {
         return answer;
     }
 
+    @Override
+    protected void doStart() throws Exception {
+        // inject CamelContext
+        if (binding instanceof CamelContextAware) {
+            ((CamelContextAware) binding).setCamelContext(getCamelContext());
+        }
+        ServiceHelper.startServices(delegate, binding);
+        super.doStart();
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        ServiceHelper.stopServices(delegate, binding);
+        super.doStop();
+    }
 }

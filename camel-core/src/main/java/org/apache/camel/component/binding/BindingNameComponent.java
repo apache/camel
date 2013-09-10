@@ -36,7 +36,6 @@ public class BindingNameComponent extends DefaultComponent {
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-
         CamelContext camelContext = getCamelContext();
         int idx = remaining.indexOf(":");
         if (idx <= 0) {
