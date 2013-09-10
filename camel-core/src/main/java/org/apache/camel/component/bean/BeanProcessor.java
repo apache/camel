@@ -75,7 +75,12 @@ public class BeanProcessor extends ServiceSupport implements AsyncProcessor {
         BeanInfo beanInfo;
         try {
             bean = beanHolder.getBean();
-            beanInfo = beanHolder.getBeanInfo();
+            // get bean info for this bean instance (to avoid thread issue)
+            beanInfo = beanHolder.getBeanInfo(bean);
+            if (beanInfo == null) {
+                // fallback and use old way
+                beanInfo = beanHolder.getBeanInfo();
+            }
         } catch (Throwable e) {
             exchange.setException(e);
             callback.done(true);

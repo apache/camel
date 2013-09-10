@@ -62,6 +62,10 @@ public class ConstantTypeBeanHolder implements BeanTypeHolder {
         return beanInfo;
     }
 
+    public BeanInfo getBeanInfo(Object bean) {
+        return null;
+    }
+
     public Class<?> getType() {
         return type;
     }
