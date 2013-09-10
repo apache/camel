@@ -21,7 +21,6 @@ import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.Processor;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.util.CamelContextHelper;
-import org.apache.camel.util.ObjectHelper;
 
 /**
  * An implementation of a {@link BeanHolder} which will look up a bean from the registry and act as a cache of its metadata
@@ -29,12 +28,13 @@ import org.apache.camel.util.ObjectHelper;
  * @version 
  */
 public class RegistryBean implements BeanHolder {
+    private final Object lock = new Object();
     private final CamelContext context;
     private final String name;
     private final Registry registry;
-    private Processor processor;
-    private BeanInfo beanInfo;
-    private Object bean;
+    private volatile Processor processor;
+    private volatile BeanInfo beanInfo;
+    private volatile Object bean;
     private ParameterMappingStrategy parameterMappingStrategy;
 
     public RegistryBean(CamelContext context, String name) {
@@ -55,34 +55,45 @@ public class RegistryBean implements BeanHolder {
     }
 
     public ConstantBeanHolder createCacheHolder() throws Exception {
-        return new ConstantBeanHolder(getBean(), getBeanInfo());
+        Object bean = getBean();
+        BeanInfo info = createBeanInfo(bean);
+        return new ConstantBeanHolder(bean, info);
     }
 
-    public synchronized Object getBean() throws NoSuchBeanException {
+    public Object getBean() throws NoSuchBeanException {
+        // must always lookup bean first
         Object value = lookupBean();
-        if (value == null) {
+
+        if (value != null) {
+            // could be a class then create an instance of it
+            if (value instanceof Class) {
+                // bean is a class so create an instance of it
+                value = context.getInjector().newInstance((Class<?>)value);
+            }
+            bean = value;
+            return value;
+        }
+
+        // okay bean is not in registry, so try to resolve if its a class name and create a shared instance
+        synchronized (lock) {
+            if (bean != null) {
+                return bean;
+            }
+
             // maybe its a class
-            value = context.getClassResolver().resolveClass(name);
-            if (value == null) {
+            bean = context.getClassResolver().resolveClass(name);
+            if (bean == null) {
                 // no its not a class then we cannot find the bean
                 throw new NoSuchBeanException(name);
             }
-        }
-        if (value != bean) {
-            if (!ObjectHelper.equal(ObjectHelper.type(bean), ObjectHelper.type(value))) {
-                beanInfo = null;
-            }
-            bean = value;
-            processor = null;
-
             // could be a class then create an instance of it
             if (bean instanceof Class) {
                 // bean is a class so create an instance of it
                 bean = context.getInjector().newInstance((Class<?>)bean);
-                value = bean;
             }
         }
-        return value;
+
+        return bean;
     }
 
     public Processor getProcessor() {
@@ -94,9 +105,17 @@ public class RegistryBean implements BeanHolder {
 
     public BeanInfo getBeanInfo() {
         if (beanInfo == null && bean != null) {
-            this.beanInfo = createBeanInfo();
+            this.beanInfo = createBeanInfo(bean);
         }
         return beanInfo;
+    }
+
+    public BeanInfo getBeanInfo(Object bean) {
+        if (this.bean == bean) {
+            return getBeanInfo();
+        } else {
+            return createBeanInfo(bean);
+        }
     }
 
     public String getName() {
@@ -124,7 +143,7 @@ public class RegistryBean implements BeanHolder {
 
     // Implementation methods
     //-------------------------------------------------------------------------
-    protected BeanInfo createBeanInfo() {
+    protected BeanInfo createBeanInfo(Object bean) {
         return new BeanInfo(context, bean.getClass(), getParameterMappingStrategy());
     }
 
