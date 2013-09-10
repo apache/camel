@@ -16,7 +16,9 @@
  */
 package org.apache.camel.util;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutionException;
@@ -32,6 +34,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
+import org.apache.camel.MessageHistory;
 import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.NoSuchHeaderException;
@@ -813,10 +816,18 @@ public final class ExchangeHelper {
         return answer;
     }
 
+    @SuppressWarnings("unchecked")
     private static Map<String, Object> safeCopy(Map<String, Object> properties) {
         if (properties == null) {
             return null;
         }
+
+        // safe copy message history using a defensive copy
+        List<MessageHistory> history = (List<MessageHistory>) properties.remove(Exchange.MESSAGE_HISTORY);
+        if (history != null) {
+            properties.put(Exchange.MESSAGE_HISTORY, new ArrayList<MessageHistory>(history));
+        }
+
         return new ConcurrentHashMap<String, Object>(properties);
     }
 }
