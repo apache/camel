@@ -74,11 +74,11 @@ public class MarshalProcessor extends ServiceSupport implements AsyncProcessor, 
         out.copyFrom(in);
 
         try {
-            dataFormat.marshal(exchange, body, os);
-
             if (cos != null) {
+                dataFormat.marshal(exchange, body, cos);
                 out.setBody(cos.newStreamCache());
             } else {
+                dataFormat.marshal(exchange, body, os);
                 byte[] data = os.toByteArray();
                 out.setBody(data);
             }
