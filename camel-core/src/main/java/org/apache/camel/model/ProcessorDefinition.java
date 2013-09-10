@@ -2580,6 +2580,41 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
 
     /**
      * <a href="http://camel.apache.org/message-translator.html">Message Translator EIP:</a>
+     * Adds a bean which is invoked which could be a final destination, or could be a transformation in a pipeline
+     *
+     * @param ref  reference to a bean to lookup in the registry
+     * @param cache  if enabled, Camel will cache the result of the first Registry look-up.
+     *               Cache can be enabled if the bean in the Registry is defined as a singleton scope.
+     * @return the builder
+     */
+    @SuppressWarnings("unchecked")
+    public Type beanRef(String ref, boolean cache) {
+        BeanDefinition answer = new BeanDefinition(ref);
+        answer.setCache(cache);
+        addOutput(answer);
+        return (Type) this;
+    }
+
+    /**
+     * <a href="http://camel.apache.org/message-translator.html">Message Translator EIP:</a>
+     * Adds a bean which is invoked which could be a final destination, or could be a transformation in a pipeline
+     *
+     * @param ref  reference to a bean to lookup in the registry
+     * @param method  the method name to invoke on the bean (can be used to avoid ambiguity)
+     * @param cache  if enabled, Camel will cache the result of the first Registry look-up.
+     *               Cache can be enabled if the bean in the Registry is defined as a singleton scope.
+     * @return the builder
+     */
+    @SuppressWarnings("unchecked")
+    public Type beanRef(String ref, String method, boolean cache) {
+        BeanDefinition answer = new BeanDefinition(ref, method);
+        answer.setCache(cache);
+        addOutput(answer);
+        return (Type) this;
+    }
+
+    /**
+     * <a href="http://camel.apache.org/message-translator.html">Message Translator EIP:</a>
      * Adds a processor which sets the body on the IN message
      *
      * @return a expression builder clause to set the body
