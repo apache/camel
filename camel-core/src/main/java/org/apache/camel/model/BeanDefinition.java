@@ -48,6 +48,8 @@ public class BeanDefinition extends NoOutputDefinition<BeanDefinition> {
     private String method;
     @XmlAttribute
     private String beanType;
+    @XmlAttribute
+    private Boolean cache;
     @XmlTransient
     private Class<?> beanClass;
     @XmlTransient
@@ -130,6 +132,14 @@ public class BeanDefinition extends NoOutputDefinition<BeanDefinition> {
         this.beanClass = beanType;
     }
 
+    public Boolean getCache() {
+        return cache;
+    }
+
+    public void setCache(Boolean cache) {
+        this.cache = cache;
+    }
+
     // Fluent API
     //-------------------------------------------------------------------------
     /**
@@ -184,14 +194,30 @@ public class BeanDefinition extends NoOutputDefinition<BeanDefinition> {
         return this;
     }
 
+    /**
+     * Caches the bean lookup, to avoid lookup up bean on every usage.
+     *
+     * @return the builder
+     */
+    @Deprecated
+    public BeanDefinition cache() {
+        setCache(true);
+        return this;
+    }
+
     @Override
-    public Processor createProcessor(RouteContext routeContext) {
+    public Processor createProcessor(RouteContext routeContext) throws Exception {
         BeanProcessor answer;
         Class<?> clazz = bean != null ? bean.getClass() : null;
         BeanHolder beanHolder;
 
         if (ObjectHelper.isNotEmpty(ref)) {
-            beanHolder = new RegistryBean(routeContext.getCamelContext(), ref);
+            if (cache != null && cache) {
+                // cache the registry lookup which avoids repeat lookup in the registry
+                beanHolder = new RegistryBean(routeContext.getCamelContext(), ref).createCacheHolder();
+            } else {
+                beanHolder = new RegistryBean(routeContext.getCamelContext(), ref);
+            }
             // bean holder will check if the bean exists
             bean = beanHolder.getBean();
             answer = new BeanProcessor(beanHolder);
