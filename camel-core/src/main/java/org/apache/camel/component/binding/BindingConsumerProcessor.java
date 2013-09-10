@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.binding;
 
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.support.ServiceSupport;
@@ -42,11 +43,18 @@ public class BindingConsumerProcessor extends ServiceSupport implements Processo
 
     @Override
     protected void doStart() throws Exception {
-        ServiceHelper.startService(bindingProcessor);
+        // inject CamelContext
+        if (bindingProcessor instanceof CamelContextAware) {
+            ((CamelContextAware) bindingProcessor).setCamelContext(endpoint.getCamelContext());
+        }
+        if (delegateProcessor instanceof CamelContextAware) {
+            ((CamelContextAware) delegateProcessor).setCamelContext(endpoint.getCamelContext());
+        }
+        ServiceHelper.startServices(bindingProcessor, delegateProcessor);
     }
 
     @Override
     protected void doStop() throws Exception {
-        ServiceHelper.stopService(bindingProcessor);
+        ServiceHelper.stopServices(delegateProcessor, bindingProcessor);
     }
 }

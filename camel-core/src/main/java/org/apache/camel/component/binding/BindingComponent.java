@@ -81,10 +81,11 @@ public class BindingComponent extends DefaultComponent {
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         Binding bindingValue = getBinding();
         ObjectHelper.notNull(bindingValue, "binding");
+
         CamelContext camelContext = getCamelContext();
         String delegateURI = createDelegateURI(remaining, parameters);
         Endpoint delegate = getMandatoryEndpoint(camelContext, delegateURI);
-        return new BindingEndpoint(uri, this, bindingValue,  delegate);
+        return new BindingEndpoint(uri, this, bindingValue, delegate);
     }
 
     protected String createDelegateURI(String remaining, Map<String, Object> parameters) {
