@@ -26,9 +26,33 @@ import org.apache.camel.Processor;
  */
 public interface BeanHolder {
 
+    /**
+     * Gets the bean.
+     *
+     * @throws NoSuchBeanException is thrown if the bean cannot be found.
+     */
     Object getBean() throws NoSuchBeanException;
 
+    /**
+     * Gets a {@link Processor} for this bean, if supported.
+     *
+     * @return the {@link Processor}, or <tt>null</tt> if not supported.
+     */
     Processor getProcessor();
 
+    /**
+     * Gets bean info for the bean.
+     */
     BeanInfo getBeanInfo();
+
+    /**
+     * Gets bean info for the given bean.
+     * <p/>
+     * This implementation allows a thread safe usage for {@link BeanHolder} implementations
+     * such as the {@link RegistryBean}.
+     *
+     * @param bean the bean
+     * @return <tt>null</tt> if not supported, then use {@link #getBeanInfo()} instead.
+     */
+    BeanInfo getBeanInfo(Object bean);
 }
