@@ -21,10 +21,12 @@ import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
+import java.util.concurrent.TimeUnit;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
@@ -102,6 +104,8 @@ public class ZipFileDataFormatTest extends CamelTestSupport {
 
     @Test
     public void testZipToFileWithoutFileName() throws Exception {
+        NotifyBuilder notify = new NotifyBuilder(context).whenDone(1).create();
+
         String[] files = TEST_DIR.list();
         assertTrue(files == null || files.length == 0);
 
@@ -112,6 +116,9 @@ public class ZipFileDataFormatTest extends CamelTestSupport {
 
         assertMockEndpointsSatisfied();
 
+        // use builder to ensure the exchange is fully done before we check for file exists
+        assertTrue(notify.matches(5, TimeUnit.SECONDS));
+
         Exchange exchange = mock.getReceivedExchanges().get(0);
         File file = new File(TEST_DIR, exchange.getIn().getMessageId() + ".zip");
         assertTrue(file.exists());
@@ -120,6 +127,8 @@ public class ZipFileDataFormatTest extends CamelTestSupport {
 
     @Test
     public void testZipToFileWithFileName() throws Exception {
+        NotifyBuilder notify = new NotifyBuilder(context).whenDone(1).create();
+
         MockEndpoint mock = getMockEndpoint("mock:zipToFile");
         mock.expectedMessageCount(1);
         
@@ -130,7 +139,10 @@ public class ZipFileDataFormatTest extends CamelTestSupport {
 
         // just make sure the file is created
         mock.assertIsSatisfied();
-        
+
+        // use builder to ensure the exchange is fully done before we check for file exists
+        assertTrue(notify.matches(5, TimeUnit.SECONDS));
+
         assertTrue(file.exists());
         assertTrue(ObjectHelper.equalByteArray(getZippedText("poem.txt"), getBytes(file)));
     }
