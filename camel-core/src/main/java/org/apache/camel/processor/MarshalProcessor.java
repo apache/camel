@@ -25,6 +25,7 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Traceable;
+import org.apache.camel.converter.stream.CachedOutputStream;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.AsyncProcessorHelper;
@@ -35,7 +36,7 @@ import org.apache.camel.util.ServiceHelper;
  * Marshals the body of the incoming message using the given
  * <a href="http://camel.apache.org/data-format.html">data format</a>
  *
- * @version 
+ * @version
  */
 public class MarshalProcessor extends ServiceSupport implements AsyncProcessor, Traceable, CamelContextAware {
     private CamelContext camelContext;
@@ -52,7 +53,18 @@ public class MarshalProcessor extends ServiceSupport implements AsyncProcessor, 
     public boolean process(Exchange exchange, AsyncCallback callback) {
         ObjectHelper.notNull(dataFormat, "dataFormat");
 
-        ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+        // if stream caching is enabled then use that so we can stream accordingly
+        // for example to overflow to disk for big streams
+        CachedOutputStream cos;
+        ByteArrayOutputStream os;
+        if (exchange.getContext().getStreamCachingStrategy().isEnabled()) {
+            cos = new CachedOutputStream(exchange);
+            os = null;
+        } else {
+            cos = null;
+            os = new ByteArrayOutputStream();
+        }
+
         Message in = exchange.getIn();
         Object body = in.getBody();
 
@@ -62,9 +74,14 @@ public class MarshalProcessor extends ServiceSupport implements AsyncProcessor, 
         out.copyFrom(in);
 
         try {
-            dataFormat.marshal(exchange, body, buffer);
-            byte[] data = buffer.toByteArray();
-            out.setBody(data);
+            dataFormat.marshal(exchange, body, os);
+
+            if (cos != null) {
+                out.setBody(cos.newStreamCache());
+            } else {
+                byte[] data = os.toByteArray();
+                out.setBody(data);
+            }
         } catch (Exception e) {
             // remove OUT message, as an exception occurred
             exchange.setOut(null);
