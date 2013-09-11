@@ -21,6 +21,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.DataFormat;
 
@@ -38,9 +39,9 @@ public class ZipFileDataFormat extends DataFormatDefinition {
     }
     
     @Override
-    protected void configureDataFormat(DataFormat dataFormat) {
+    protected void configureDataFormat(DataFormat dataFormat, CamelContext camelContext) {
         if (usingIterator != null) {
-            setProperty(dataFormat, "usingIterator", usingIterator);
+            setProperty(camelContext, dataFormat, "usingIterator", usingIterator);
         }
     }
 

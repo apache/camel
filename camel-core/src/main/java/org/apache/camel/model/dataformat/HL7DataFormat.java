@@ -22,6 +22,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.DataFormat;
 
@@ -64,11 +65,11 @@ public class HL7DataFormat extends DataFormatDefinition {
     }
 
     @Override
-    protected void configureDataFormat(DataFormat dataFormat) {
+    protected void configureDataFormat(DataFormat dataFormat, CamelContext camelContext) {
         if (getParser() != null) {
-            setProperty(dataFormat, "parser", getParser());
+            setProperty(camelContext, dataFormat, "parser", getParser());
         }
-        setProperty(dataFormat, "validate", isValidate());
+        setProperty(camelContext, dataFormat, "validate", isValidate());
     }
 
 }

@@ -25,6 +25,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.NamespaceAware;
@@ -230,48 +231,48 @@ public class XMLSecurityDataFormat extends DataFormatDefinition implements Names
     }
 
     @Override
-    protected void configureDataFormat(DataFormat dataFormat) {
+    protected void configureDataFormat(DataFormat dataFormat, CamelContext camelContext) {
         if (getSecureTag() != null) {
-            setProperty(dataFormat, "secureTag", getSecureTag());
+            setProperty(camelContext, dataFormat, "secureTag", getSecureTag());
         } else {
-            setProperty(dataFormat, "secureTag", "");
+            setProperty(camelContext, dataFormat, "secureTag", "");
         }
 
-        setProperty(dataFormat, "secureTagContents", isSecureTagContents());
+        setProperty(camelContext, dataFormat, "secureTagContents", isSecureTagContents());
 
         if (passPhrase != null) {
-            setProperty(dataFormat, "passPhrase", getPassPhrase().getBytes());
+            setProperty(camelContext, dataFormat, "passPhrase", getPassPhrase().getBytes());
         } else {
-            setProperty(dataFormat, "passPhrase", "Just another 24 Byte key".getBytes());
+            setProperty(camelContext, dataFormat, "passPhrase", "Just another 24 Byte key".getBytes());
         }
         if (getXmlCipherAlgorithm() != null) {
-            setProperty(dataFormat, "xmlCipherAlgorithm", getXmlCipherAlgorithm());
+            setProperty(camelContext, dataFormat, "xmlCipherAlgorithm", getXmlCipherAlgorithm());
         } else {
-            setProperty(dataFormat, "xmlCipherAlgorithm", TRIPLEDES);
+            setProperty(camelContext, dataFormat, "xmlCipherAlgorithm", TRIPLEDES);
         }
         if (getKeyCipherAlgorithm() != null) {
-            setProperty(dataFormat, "keyCipherAlgorithm", getKeyCipherAlgorithm());
+            setProperty(camelContext, dataFormat, "keyCipherAlgorithm", getKeyCipherAlgorithm());
         }
         if (getRecipientKeyAlias() != null) {
-            setProperty(dataFormat, "recipientKeyAlias", getRecipientKeyAlias());
+            setProperty(camelContext, dataFormat, "recipientKeyAlias", getRecipientKeyAlias());
         }
         if (getKeyOrTrustStoreParametersId() != null) {
-            setProperty(dataFormat, "keyOrTrustStoreParametersId", getKeyOrTrustStoreParametersId());
+            setProperty(camelContext, dataFormat, "keyOrTrustStoreParametersId", getKeyOrTrustStoreParametersId());
         }
         if (keyOrTrustStoreParameters != null) {
-            setProperty(dataFormat, "keyOrTrustStoreParameters", this.keyOrTrustStoreParameters);
+            setProperty(camelContext, dataFormat, "keyOrTrustStoreParameters", this.keyOrTrustStoreParameters);
         }
         if (namespaces != null) {
-            setProperty(dataFormat, "namespaces", this.namespaces);
+            setProperty(camelContext, dataFormat, "namespaces", this.namespaces);
         }
         if (keyPassword != null) {
-            setProperty(dataFormat, "keyPassword", this.getKeyPassword());
+            setProperty(camelContext, dataFormat, "keyPassword", this.getKeyPassword());
         }
         if (digestAlgorithm != null) {
-            setProperty(dataFormat, "digestAlgorithm", this.getDigestAlgorithm());
+            setProperty(camelContext, dataFormat, "digestAlgorithm", this.getDigestAlgorithm());
         }
         if (mgfAlgorithm != null) {
-            setProperty(dataFormat, "mgfAlgorithm", this.getMgfAlgorithm());
+            setProperty(camelContext, dataFormat, "mgfAlgorithm", this.getMgfAlgorithm());
         }
     }
 

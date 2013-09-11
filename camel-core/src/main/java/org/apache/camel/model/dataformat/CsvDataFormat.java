@@ -21,6 +21,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.RouteContext;
@@ -101,34 +102,34 @@ public class CsvDataFormat extends DataFormatDefinition {
 
         if (ObjectHelper.isNotEmpty(configRef)) {
             Object config = CamelContextHelper.mandatoryLookup(routeContext.getCamelContext(), configRef);
-            setProperty(csvFormat, "config", config);
+            setProperty(routeContext.getCamelContext(), csvFormat, "config", config);
         }
         if (ObjectHelper.isNotEmpty(strategyRef)) {
             Object strategy = CamelContextHelper.mandatoryLookup(routeContext.getCamelContext(), strategyRef);
-            setProperty(csvFormat, "strategy", strategy);
+            setProperty(routeContext.getCamelContext(), csvFormat, "strategy", strategy);
         }
 
         return csvFormat;
     }
 
     @Override
-    protected void configureDataFormat(DataFormat dataFormat) {
+    protected void configureDataFormat(DataFormat dataFormat, CamelContext camelContext) {
         if (autogenColumns != null) {
-            setProperty(dataFormat, "autogenColumns", autogenColumns);
+            setProperty(camelContext, dataFormat, "autogenColumns", autogenColumns);
         }
 
         if (delimiter != null) {
             if (delimiter.length() > 1) {
                 throw new IllegalArgumentException("Delimiter must have a length of one!");
             }
-            setProperty(dataFormat, "delimiter", delimiter);
+            setProperty(camelContext, dataFormat, "delimiter", delimiter);
         } else {
             // the default delimiter is ','
-            setProperty(dataFormat, "delimiter", ",");
+            setProperty(camelContext, dataFormat, "delimiter", ",");
         }
 
         if (skipFirstLine != null) {
-            setProperty(dataFormat, "skipFirstLine", skipFirstLine);
+            setProperty(camelContext, dataFormat, "skipFirstLine", skipFirstLine);
         }
     }
 }

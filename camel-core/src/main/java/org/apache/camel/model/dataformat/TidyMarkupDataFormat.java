@@ -22,6 +22,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
+import org.apache.camel.CamelContext;
 import org.w3c.dom.Node;
 
 import org.apache.camel.model.DataFormatDefinition;
@@ -83,9 +84,9 @@ public class TidyMarkupDataFormat extends DataFormatDefinition {
     }
 
     @Override
-    protected void configureDataFormat(DataFormat dataFormat) {
+    protected void configureDataFormat(DataFormat dataFormat, CamelContext camelContext) {
         if (dataObjectType != null) {
-            setProperty(dataFormat, "dataObjectType", dataObjectType);
+            setProperty(camelContext, dataFormat, "dataObjectType", dataObjectType);
         }
     }
 

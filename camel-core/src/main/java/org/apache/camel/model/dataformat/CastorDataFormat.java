@@ -21,6 +21,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.DataFormat;
 
@@ -93,20 +94,20 @@ public class CastorDataFormat extends DataFormatDefinition {
     }
 
     @Override
-    protected void configureDataFormat(DataFormat dataFormat) {
+    protected void configureDataFormat(DataFormat dataFormat, CamelContext camelContext) {
         if (mappingFile != null) {
-            setProperty(dataFormat, "mappingFile", mappingFile);
+            setProperty(camelContext, dataFormat, "mappingFile", mappingFile);
         }
-        setProperty(dataFormat, "validation", isValidation());
+        setProperty(camelContext, dataFormat, "validation", isValidation());
 
         if (encoding != null) {
-            setProperty(dataFormat, "encoding", encoding);
+            setProperty(camelContext, dataFormat, "encoding", encoding);
         }
         if (packages != null) {
-            setProperty(dataFormat, "packages", packages);
+            setProperty(camelContext, dataFormat, "packages", packages);
         }
         if (classes != null) {
-            setProperty(dataFormat, "classes", classes);
+            setProperty(camelContext, dataFormat, "classes", classes);
         }
     }
 

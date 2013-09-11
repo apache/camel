@@ -22,6 +22,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.DataFormat;
 
@@ -64,12 +65,12 @@ public class ProtobufDataFormat extends DataFormatDefinition {
     }
 
     @Override
-    protected void configureDataFormat(DataFormat dataFormat) {
+    protected void configureDataFormat(DataFormat dataFormat, CamelContext camelContext) {
         if (this.instanceClass != null) {
-            setProperty(dataFormat, "instanceClass", instanceClass);
+            setProperty(camelContext, dataFormat, "instanceClass", instanceClass);
         }
         if (this.defaultInstance != null) {
-            setProperty(dataFormat, "defaultInstance", defaultInstance);
+            setProperty(camelContext, dataFormat, "defaultInstance", defaultInstance);
         }
     }
 

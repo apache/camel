@@ -22,6 +22,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.RouteContext;
@@ -112,10 +113,10 @@ public class BindyDataFormat extends DataFormatDefinition {
     }
 
     @Override
-    protected void configureDataFormat(DataFormat dataFormat) {
-        setProperty(dataFormat, "packages", packages);
-        setProperty(dataFormat, "locale", locale);
-        setProperty(dataFormat, "classType", clazz);
+    protected void configureDataFormat(DataFormat dataFormat, CamelContext camelContext) {
+        setProperty(camelContext, dataFormat, "packages", packages);
+        setProperty(camelContext, dataFormat, "locale", locale);
+        setProperty(camelContext, dataFormat, "classType", clazz);
     }
 
 }

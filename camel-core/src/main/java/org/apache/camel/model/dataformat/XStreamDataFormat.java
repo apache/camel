@@ -33,6 +33,7 @@ import javax.xml.bind.annotation.XmlType;
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 import javax.xml.bind.annotation.adapters.XmlJavaTypeAdapter;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.RouteContext;
@@ -134,32 +135,32 @@ public class XStreamDataFormat extends DataFormatDefinition {
     @Override
     protected DataFormat createDataFormat(RouteContext routeContext) {
         if ("json".equals(this.driver)) {
-            setProperty(this, "dataFormatName", "json-xstream");
+            setProperty(routeContext.getCamelContext(), this, "dataFormatName", "json-xstream");
         }
         DataFormat answer = super.createDataFormat(routeContext);
         // need to lookup the reference for the xstreamDriver
         if (ObjectHelper.isNotEmpty(driverRef)) {
-            setProperty(answer, "xstreamDriver", CamelContextHelper.mandatoryLookup(routeContext.getCamelContext(), driverRef));
+            setProperty(routeContext.getCamelContext(), answer, "xstreamDriver", CamelContextHelper.mandatoryLookup(routeContext.getCamelContext(), driverRef));
         }
         return answer;
     }
 
     @Override
-    protected void configureDataFormat(DataFormat dataFormat) {
+    protected void configureDataFormat(DataFormat dataFormat, CamelContext camelContext) {
         if (encoding != null) {
-            setProperty(dataFormat, "encoding", encoding);
+            setProperty(camelContext, dataFormat, "encoding", encoding);
         }
         if (this.converters != null) {
-            setProperty(dataFormat, "converters", this.converters);
+            setProperty(camelContext, dataFormat, "converters", this.converters);
         }
         if (this.aliases != null) {
-            setProperty(dataFormat, "aliases", this.aliases);
+            setProperty(camelContext, dataFormat, "aliases", this.aliases);
         }
         if (this.omitFields != null) {
-            setProperty(dataFormat, "omitFields", this.omitFields);
+            setProperty(camelContext, dataFormat, "omitFields", this.omitFields);
         }
         if (this.implicitCollections != null) {
-            setProperty(dataFormat, "implicitCollections", this.implicitCollections);
+            setProperty(camelContext, dataFormat, "implicitCollections", this.implicitCollections);
         }
     }
 
