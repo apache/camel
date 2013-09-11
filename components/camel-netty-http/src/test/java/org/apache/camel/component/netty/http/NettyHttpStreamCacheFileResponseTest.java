@@ -19,7 +19,9 @@ package org.apache.camel.component.netty.http;
 import java.io.BufferedInputStream;
 import java.io.ByteArrayInputStream;
 import java.io.File;
+import java.util.concurrent.TimeUnit;
 
+import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Before;
 import org.junit.Test;
@@ -39,8 +41,12 @@ public class NettyHttpStreamCacheFileResponseTest extends BaseNettyTest {
 
     @Test
     public void testStreamCacheToFileShouldBeDeletedInCaseOfResponse() throws Exception {
+        NotifyBuilder builder = new NotifyBuilder(context).whenDone(1).create();
+
         String out = template.requestBody("http://localhost:{{port}}/myserver", body, String.class);
         assertEquals(body2, out);
+
+        assertTrue(builder.matches(5, TimeUnit.SECONDS));
 
         // the temporary files should have been deleted
         File file = new File("target/cachedir");
