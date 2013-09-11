@@ -16,16 +16,19 @@
  */
 package org.apache.camel.component.cxf.interceptors;
 
+import java.io.OutputStream;
+
+import javax.xml.stream.XMLStreamException;
+import javax.xml.stream.XMLStreamWriter;
+
+import org.w3c.dom.Document;
+
 import org.apache.cxf.interceptor.Fault;
 import org.apache.cxf.message.Message;
 import org.apache.cxf.phase.AbstractPhaseInterceptor;
 import org.apache.cxf.phase.Phase;
 import org.apache.cxf.staxutils.StaxUtils;
-import org.w3c.dom.Document;
 
-import javax.xml.stream.XMLStreamException;
-import javax.xml.stream.XMLStreamWriter;
-import java.io.OutputStream;
 
 public class RawMessageWSDLGetOutInterceptor extends AbstractPhaseInterceptor<Message> {
     public static final RawMessageWSDLGetOutInterceptor INSTANCE = new RawMessageWSDLGetOutInterceptor();
