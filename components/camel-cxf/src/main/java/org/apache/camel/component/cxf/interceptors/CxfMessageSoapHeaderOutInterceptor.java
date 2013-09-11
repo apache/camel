@@ -17,13 +17,12 @@
 package org.apache.camel.component.cxf.interceptors;
 
 
+import javax.xml.soap.SOAPMessage;
+
 import org.apache.cxf.binding.soap.SoapMessage;
 import org.apache.cxf.binding.soap.saaj.SAAJOutInterceptor;
 import org.apache.cxf.phase.AbstractPhaseInterceptor;
 import org.apache.cxf.phase.Phase;
-
-
-import javax.xml.soap.SOAPMessage;
 
 public class CxfMessageSoapHeaderOutInterceptor extends AbstractPhaseInterceptor<SoapMessage> {
 
