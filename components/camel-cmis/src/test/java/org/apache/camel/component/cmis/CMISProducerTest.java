@@ -126,7 +126,7 @@ public class CMISProducerTest extends CMISTestSupport {
 
     @Test(expected = ResolveEndpointFailedException.class)
     public void failConnectingToNonExistingRepository() throws Exception {
-        Endpoint endpoint = context.getEndpoint("cmis://" + CMIS_ENDPOINT_TEST_SERVER
+        Endpoint endpoint = context.getEndpoint("cmis://" + getUrl()
                 + "?username=admin&password=admin&repositoryId=NON_EXISTING_ID");
         Producer producer = endpoint.createProducer();
 
@@ -172,7 +172,7 @@ public class CMISProducerTest extends CMISTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                        .to("cmis://" + CMIS_ENDPOINT_TEST_SERVER);
+                        .to("cmis://" + getUrl());
             }
         };
     }

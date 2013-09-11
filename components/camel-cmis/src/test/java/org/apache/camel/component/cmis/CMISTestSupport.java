@@ -27,6 +27,7 @@ import java.util.Map;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultExchange;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.chemistry.opencmis.client.api.CmisObject;
 import org.apache.chemistry.opencmis.client.api.Document;
@@ -50,11 +51,16 @@ import org.junit.BeforeClass;
 
 public class CMISTestSupport extends CamelTestSupport {
     protected static final String CMIS_ENDPOINT_TEST_SERVER
-        = "http://localhost:9090/chemistry-opencmis-server-inmemory/atom";
+        = "http://localhost:%s/chemistry-opencmis-server-inmemory/atom";
     protected static final String OPEN_CMIS_SERVER_WAR_PATH
         = "target/dependency/chemistry-opencmis-server-inmemory-0.8.0.war";
 
     protected static Server cmisServer;
+    protected static int port;
+
+    protected String getUrl() {
+        return String.format(CMIS_ENDPOINT_TEST_SERVER, port);
+    }
 
     protected Exchange createExchangeWithInBody(String body) {
         DefaultExchange exchange = new DefaultExchange(context);
@@ -90,7 +96,7 @@ public class CMISTestSupport extends CamelTestSupport {
     protected Session createSession() {
         SessionFactory sessionFactory = SessionFactoryImpl.newInstance();
         Map<String, String> parameter = new HashMap<String, String>();
-        parameter.put(SessionParameter.ATOMPUB_URL, CMIS_ENDPOINT_TEST_SERVER);
+        parameter.put(SessionParameter.ATOMPUB_URL, getUrl());
         parameter.put(SessionParameter.BINDING_TYPE, BindingType.ATOMPUB.value());
 
         Repository repository = sessionFactory.getRepositories(parameter).get(0);
@@ -143,7 +149,8 @@ public class CMISTestSupport extends CamelTestSupport {
 
     @BeforeClass
     public static void startServer() throws Exception {
-        cmisServer = new Server(9090);
+        port = AvailablePortFinder.getNextAvailable(26500);
+        cmisServer = new Server(port);
         cmisServer.setHandler(new WebAppContext(OPEN_CMIS_SERVER_WAR_PATH, "/chemistry-opencmis-server-inmemory"));
         cmisServer.start();
     }
