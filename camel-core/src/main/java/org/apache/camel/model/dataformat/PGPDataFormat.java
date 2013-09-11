@@ -21,6 +21,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.DataFormat;
 
@@ -47,21 +48,21 @@ public class PGPDataFormat extends DataFormatDefinition {
     }
 
     @Override
-    protected void configureDataFormat(DataFormat dataFormat) {
+    protected void configureDataFormat(DataFormat dataFormat, CamelContext camelContext) {
         if (keyUserid != null) {
-            setProperty(dataFormat, "keyUserid", keyUserid);
+            setProperty(camelContext, dataFormat, "keyUserid", keyUserid);
         }
         if (password != null) {
-            setProperty(dataFormat, "password", password);
+            setProperty(camelContext, dataFormat, "password", password);
         }
         if (keyFileName != null) {
-            setProperty(dataFormat, "keyFileName", keyFileName);
+            setProperty(camelContext, dataFormat, "keyFileName", keyFileName);
         }
         if (armored != null) {
-            setProperty(dataFormat, "armored", armored);
+            setProperty(camelContext, dataFormat, "armored", armored);
         }
         if (integrity != null) {
-            setProperty(dataFormat, "integrity", integrity);
+            setProperty(camelContext, dataFormat, "integrity", integrity);
         }
     }
 

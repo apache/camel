@@ -21,6 +21,8 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
+
+import org.apache.camel.CamelContext;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.DataFormat;
 
@@ -63,12 +65,12 @@ public class AvroDataFormat extends DataFormatDefinition {
     }
 
     @Override
-    protected void configureDataFormat(DataFormat dataFormat) {
+    protected void configureDataFormat(DataFormat dataFormat, CamelContext camelContext) {
         if (this.instanceClassName != null) {
-            setProperty(dataFormat, "instanceClass", instanceClassName);
+            setProperty(camelContext, dataFormat, "instanceClass", instanceClassName);
         }
         if (this.schema != null) {
-            setProperty(dataFormat, "schema", schema);
+            setProperty(camelContext, dataFormat, "schema", schema);
         }
     }
 }

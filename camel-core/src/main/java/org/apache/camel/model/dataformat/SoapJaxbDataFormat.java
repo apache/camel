@@ -22,6 +22,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.DataFormat;
 
@@ -111,23 +112,23 @@ public class SoapJaxbDataFormat extends DataFormatDefinition {
     }
 
     @Override
-    protected void configureDataFormat(DataFormat dataFormat) {
+    protected void configureDataFormat(DataFormat dataFormat, CamelContext camelContext) {
         if (elementNameStrategy != null) {
-            setProperty(dataFormat, "elementNameStrategy", elementNameStrategy);
+            setProperty(camelContext, dataFormat, "elementNameStrategy", elementNameStrategy);
         }
         if (elementNameStrategyRef != null) {
-            setProperty(dataFormat, "elementNameStrategyRef", elementNameStrategyRef);
+            setProperty(camelContext, dataFormat, "elementNameStrategyRef", elementNameStrategyRef);
         }
         if (encoding != null) {
-            setProperty(dataFormat, "encoding", encoding);
+            setProperty(camelContext, dataFormat, "encoding", encoding);
         }
         if (version != null) {
-            setProperty(dataFormat, "version", version);
+            setProperty(camelContext, dataFormat, "version", version);
         }
         if (namespacePrefixRef != null) {
-            setProperty(dataFormat, "namespacePrefixRef", namespacePrefixRef);
+            setProperty(camelContext, dataFormat, "namespacePrefixRef", namespacePrefixRef);
         }
-        setProperty(dataFormat, "contextPath", contextPath);
+        setProperty(camelContext, dataFormat, "contextPath", contextPath);
     }
 
 }

@@ -21,8 +21,9 @@
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
-    
-  
+
+    <bean id="testXmlStreamWriterWrapper" class="org.apache.camel.jaxb.TestXmlStreamWriter"/>
+
   <!-- START SNIPPET: example -->
   <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
     <route>
@@ -60,6 +61,21 @@
       </marshal>          
       <to uri="mock:result"/>
     </route>
+
+      <route>
+          <from uri="direct:marshalCustomWriter"/>
+          <marshal>
+              <jaxb filterNonXmlChars="false"  contextPath="org.apache.camel.foo.bar" xmlStreamWriterWrapper="#testXmlStreamWriterWrapper"/>
+          </marshal>
+          <to uri="mock:result"/>
+      </route>
+      <route>
+          <from uri="direct:marshalCustomWriterAndFiltering"/>
+          <marshal>
+              <jaxb filterNonXmlChars="true"  contextPath="org.apache.camel.foo.bar" xmlStreamWriterWrapper="#testXmlStreamWriterWrapper" />
+          </marshal>
+          <to uri="mock:result"/>
+      </route>
   </camelContext>
   <!-- END SNIPPET: example -->
 

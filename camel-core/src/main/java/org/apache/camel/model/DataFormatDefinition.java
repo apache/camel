@@ -21,15 +21,16 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
 
+import static org.apache.camel.util.EndpointHelper.isReferenceParameter;
+
 /**
  * Represents the base XML type for DataFormat.
- *
- * @version 
  */
 @XmlType(name = "dataFormat")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -63,7 +64,7 @@ public class DataFormatDefinition extends IdentifiedType {
             ObjectHelper.notNull(ref, "ref or type");
 
             // try to let resolver see if it can resolve it, its not always possible
-            type = ((ModelCamelContext)routeContext.getCamelContext()).resolveDataFormatDefinition(ref);
+            type = ((ModelCamelContext) routeContext.getCamelContext()).resolveDataFormatDefinition(ref);
 
             if (type != null) {
                 return type.getDataFormat(routeContext);
@@ -84,11 +85,11 @@ public class DataFormatDefinition extends IdentifiedType {
         if (dataFormat == null) {
             dataFormat = createDataFormat(routeContext);
             if (dataFormat != null) {
-                configureDataFormat(dataFormat);
+                configureDataFormat(dataFormat, routeContext.getCamelContext());
             } else {
                 throw new IllegalArgumentException(
-                    "Data format '" + (dataFormatName != null ? dataFormatName : "<null>") + "' could not be created. "
-                    + "Ensure that the data format is valid and the associated Camel component is present on the classpath");
+                        "Data format '" + (dataFormatName != null ? dataFormatName : "<null>") + "' could not be created. "
+                                + "Ensure that the data format is valid and the associated Camel component is present on the classpath");
             }
         }
         return dataFormat;
@@ -106,16 +107,40 @@ public class DataFormatDefinition extends IdentifiedType {
 
     /**
      * Allows derived classes to customize the data format
+     *
+     * @deprecated use {@link #configureDataFormat(org.apache.camel.spi.DataFormat, org.apache.camel.CamelContext)}
      */
+    @Deprecated
     protected void configureDataFormat(DataFormat dataFormat) {
+    }
+
+    /**
+     * Allows derived classes to customize the data format
+     */
+    protected void configureDataFormat(DataFormat dataFormat, CamelContext camelContext) {
+    }
+
+    /**
+     * Sets a named property on the data format instance using introspection
+     *
+     * @deprecated use {@link #setProperty(org.apache.camel.CamelContext, Object, String, Object)}
+     */
+    @Deprecated
+    protected void setProperty(Object bean, String name, Object value) {
+        setProperty(null, bean, name, value);
     }
 
     /**
      * Sets a named property on the data format instance using introspection
      */
-    protected void setProperty(Object bean, String name, Object value) {
+    protected void setProperty(CamelContext camelContext, Object bean, String name, Object value) {
         try {
-            IntrospectionSupport.setProperty(bean, name, value);
+            String ref = value instanceof String ? value.toString() : null;
+            if (isReferenceParameter(ref) && camelContext != null) {
+                IntrospectionSupport.setProperty(camelContext, camelContext.getTypeConverter(), bean, name, null, ref, true);
+            } else {
+                IntrospectionSupport.setProperty(bean, name, value);
+            }
         } catch (Exception e) {
             throw new IllegalArgumentException("Failed to set property: " + name + " on: " + bean + ". Reason: " + e, e);
         }

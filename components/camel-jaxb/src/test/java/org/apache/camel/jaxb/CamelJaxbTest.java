@@ -81,6 +81,38 @@ public class CamelJaxbTest extends CamelTestSupport {
     }
 
     @Test
+    public void testCustomXmlStreamWriter() throws InterruptedException {
+        PersonType person = new PersonType();
+        person.setFirstName("foo");
+        person.setLastName("bar");
+
+        MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
+        resultEndpoint.expectedMessageCount(1);
+        template.sendBody("direct:marshalCustomWriter", person);
+        resultEndpoint.assertIsSatisfied();
+
+        String body = resultEndpoint.getReceivedExchanges().get(0).getIn().getBody(String.class);
+        assertTrue("Body did not get processed correctly by custom filter", body.contains("-Foo"));
+    }
+
+    @Test
+    public void testCustomXmlStreamWriterAndFiltering() throws InterruptedException {
+        PersonType person = new PersonType();
+        person.setFirstName("foo\u0004");
+        person.setLastName("bar");
+
+        MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
+        resultEndpoint.expectedMessageCount(1);
+        template.sendBody("direct:marshalCustomWriterAndFiltering", person);
+        resultEndpoint.assertIsSatisfied();
+
+        String body = resultEndpoint.getReceivedExchanges().get(0).getIn().getBody(String.class);
+        assertFalse("Non-xml character unexpectedly did not get into marshalled contents", body
+                .contains("\u0004"));
+        assertTrue("Body did not get processed correctly by custom filter", body.contains("-Foo"));
+    }
+
+    @Test
     public void testUnmarshal() throws Exception {
         final String xml = "<Person><firstName>FOO</firstName><lastName>BAR</lastName></Person>";
         PersonType expected = new PersonType();
@@ -110,6 +142,13 @@ public class CamelJaxbTest extends CamelTestSupport {
                 JaxbDataFormat filterEnabledFormat = new JaxbDataFormat("org.apache.camel.foo.bar");
                 filterEnabledFormat.setFilterNonXmlChars(true);
 
+                JaxbDataFormat customWriterFormat = new JaxbDataFormat("org.apache.camel.foo.bar");
+                customWriterFormat.setXmlStreamWriterWrapper(new TestXmlStreamWriter());
+
+                JaxbDataFormat customWriterAndFilterFormat = new JaxbDataFormat("org.apache.camel.foo.bar");
+                customWriterAndFilterFormat.setFilterNonXmlChars(true);
+                customWriterAndFilterFormat.setXmlStreamWriterWrapper(new TestXmlStreamWriter());
+
                 from("direct:getJAXBElementValue")
                     .unmarshal(new JaxbDataFormat("org.apache.camel.foo.bar"))                        
                         .to("mock:result");
@@ -129,6 +168,13 @@ public class CamelJaxbTest extends CamelTestSupport {
                 from("direct:marshalFilteringEnabled")
                     .marshal(filterEnabledFormat)
                     .to("mock:result");
+
+                from("direct:marshalCustomWriter")
+                        .marshal(customWriterFormat)
+                        .to("mock:result");
+                from("direct:marshalCustomWriterAndFiltering")
+                        .marshal(customWriterAndFilterFormat)
+                        .to("mock:result");
 
             }
         };

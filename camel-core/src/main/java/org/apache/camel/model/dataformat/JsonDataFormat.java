@@ -22,6 +22,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.RouteContext;
@@ -96,11 +97,11 @@ public class JsonDataFormat extends DataFormatDefinition {
     @Override
     protected DataFormat createDataFormat(RouteContext routeContext) {
         if (library == JsonLibrary.XStream) {
-            setProperty(this, "dataFormatName", "json-xstream");
+            setProperty(routeContext.getCamelContext(), this, "dataFormatName", "json-xstream");
         } else if (library == JsonLibrary.Jackson) {
-            setProperty(this, "dataFormatName", "json-jackson");
+            setProperty(routeContext.getCamelContext(), this, "dataFormatName", "json-jackson");
         } else {
-            setProperty(this, "dataFormatName", "json-gson");
+            setProperty(routeContext.getCamelContext(), this, "dataFormatName", "json-gson");
         }
 
         if (unmarshalType == null && unmarshalTypeName != null) {
@@ -115,16 +116,16 @@ public class JsonDataFormat extends DataFormatDefinition {
     }
 
     @Override
-    protected void configureDataFormat(DataFormat dataFormat) {
+    protected void configureDataFormat(DataFormat dataFormat, CamelContext camelContext) {
         if (unmarshalType != null) {
-            setProperty(dataFormat, "unmarshalType", unmarshalType);
+            setProperty(camelContext, dataFormat, "unmarshalType", unmarshalType);
         }
         if (prettyPrint != null) {
-            setProperty(dataFormat, "prettyPrint", unmarshalType);
+            setProperty(camelContext, dataFormat, "prettyPrint", unmarshalType);
         }
 
         if (jsonView != null) {
-            setProperty(dataFormat, "jsonView", jsonView);
+            setProperty(camelContext, dataFormat, "jsonView", jsonView);
         }
     }
 

@@ -90,7 +90,7 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, CamelC
     private String namespacePrefixRef;
     private Map<String, String> namespacePrefix;
     private JaxbNamespacePrefixMapper namespacePrefixMapper;
-
+    private JaxbXmlStreamWriterWrapper xmlStreamWriterWrapper;
     private TypeConverter typeConverter;
 
     public JaxbDataFormat() {
@@ -144,18 +144,22 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, CamelC
             e = new JAXBElement<Object>(getPartNamespace(), partialClass, graph);
         }
 
-        if (needFiltering(exchange)) {
-            marshaller.marshal(e, createFilteringWriter(stream));
+        if (asXmlStreamWriter(exchange)) {
+            XMLStreamWriter writer = typeConverter.convertTo(XMLStreamWriter.class, stream);
+            if (needFiltering(exchange)) {
+                writer = new FilteringXmlStreamWriter(writer);
+            }
+            if (xmlStreamWriterWrapper != null) {
+                writer = xmlStreamWriterWrapper.wrapWriter(writer);
+            }
+            marshaller.marshal(e, writer);
         } else {
             marshaller.marshal(e, stream);
         }
     }
 
-    private FilteringXmlStreamWriter createFilteringWriter(OutputStream stream)
-        throws XMLStreamException, FactoryConfigurationError {
-        XMLStreamWriter writer = typeConverter.convertTo(XMLStreamWriter.class, stream);
-        FilteringXmlStreamWriter filteringWriter = new FilteringXmlStreamWriter(writer);
-        return filteringWriter;
+    private boolean asXmlStreamWriter(Exchange exchange) {
+        return needFiltering(exchange) || (xmlStreamWriterWrapper != null);
     }
 
     public Object unmarshal(Exchange exchange, InputStream stream) throws IOException, SAXException {
@@ -308,6 +312,14 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, CamelC
 
     public void setCamelContext(CamelContext camelContext) {
         this.camelContext = camelContext;
+    }
+
+    public JaxbXmlStreamWriterWrapper getXmlStreamWriterWrapper() {
+        return xmlStreamWriterWrapper;
+    }
+
+    public void setXmlStreamWriterWrapper(JaxbXmlStreamWriterWrapper xmlStreamWriterWrapper) {
+        this.xmlStreamWriterWrapper = xmlStreamWriterWrapper;
     }
 
     @Override

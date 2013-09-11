@@ -22,8 +22,10 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.namespace.QName;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -55,6 +57,8 @@ public class JaxbDataFormat extends DataFormatDefinition {
     private String partNamespace;
     @XmlAttribute
     private String namespacePrefixRef;
+    @XmlAttribute
+    private String xmlStreamWriterWrapper;
 
     public JaxbDataFormat() {
         super("jaxb");
@@ -145,47 +149,58 @@ public class JaxbDataFormat extends DataFormatDefinition {
         this.namespacePrefixRef = namespacePrefixRef;
     }
 
+    public String getXmlStreamWriterWrapper() {
+        return xmlStreamWriterWrapper;
+    }
+
+    public void setXmlStreamWriterWrapper(String xmlStreamWriterWrapperRef) {
+        this.xmlStreamWriterWrapper = xmlStreamWriterWrapperRef;
+    }
+
     @Override
-    protected void configureDataFormat(DataFormat dataFormat) {
+    protected void configureDataFormat(DataFormat dataFormat, CamelContext camelContext) {
         Boolean answer = ObjectHelper.toBoolean(getPrettyPrint());
         if (answer != null && !answer) {
-            setProperty(dataFormat, "prettyPrint", Boolean.FALSE);
+            setProperty(camelContext, dataFormat, "prettyPrint", Boolean.FALSE);
         } else { // the default value is true
-            setProperty(dataFormat, "prettyPrint", Boolean.TRUE);
+            setProperty(camelContext, dataFormat, "prettyPrint", Boolean.TRUE);
         }
         answer = ObjectHelper.toBoolean(getIgnoreJAXBElement());
         if (answer != null && !answer) {
-            setProperty(dataFormat, "ignoreJAXBElement", Boolean.FALSE);
+            setProperty(camelContext, dataFormat, "ignoreJAXBElement", Boolean.FALSE);
         } else { // the default value is true
-            setProperty(dataFormat, "ignoreJAXBElement", Boolean.TRUE);
+            setProperty(camelContext, dataFormat, "ignoreJAXBElement", Boolean.TRUE);
         }
         answer = ObjectHelper.toBoolean(getFilterNonXmlChars());
         if (answer != null && answer) {
-            setProperty(dataFormat, "filterNonXmlChars", Boolean.TRUE);
+            setProperty(camelContext, dataFormat, "filterNonXmlChars", Boolean.TRUE);
         } else { // the default value is false
-            setProperty(dataFormat, "filterNonXmlChars", Boolean.FALSE);
+            setProperty(camelContext, dataFormat, "filterNonXmlChars", Boolean.FALSE);
         }
         answer = ObjectHelper.toBoolean(getFragment());
         if (answer != null && answer) {
-            setProperty(dataFormat, "fragment", Boolean.TRUE);
+            setProperty(camelContext, dataFormat, "fragment", Boolean.TRUE);
         } else { // the default value is false
-            setProperty(dataFormat, "fragment", Boolean.FALSE);
+            setProperty(camelContext, dataFormat, "fragment", Boolean.FALSE);
         }
         if (partClass != null) {
-            setProperty(dataFormat, "partClass", partClass);
+            setProperty(camelContext, dataFormat, "partClass", partClass);
         }
         if (partNamespace != null) {
-            setProperty(dataFormat, "partNamespace", QName.valueOf(partNamespace));
+            setProperty(camelContext, dataFormat, "partNamespace", QName.valueOf(partNamespace));
         }
         if (encoding != null) {
-            setProperty(dataFormat, "encoding", encoding);
+            setProperty(camelContext, dataFormat, "encoding", encoding);
         }
         if (namespacePrefixRef != null) {
-            setProperty(dataFormat, "namespacePrefixRef", namespacePrefixRef);
+            setProperty(camelContext, dataFormat, "namespacePrefixRef", namespacePrefixRef);
         }
-        setProperty(dataFormat, "contextPath", contextPath);
+        setProperty(camelContext, dataFormat, "contextPath", contextPath);
         if (schema != null) {
-            setProperty(dataFormat, "schema", schema);
+            setProperty(camelContext, dataFormat, "schema", schema);
+        }
+        if (xmlStreamWriterWrapper != null) {
+            setProperty(camelContext, dataFormat, "xmlStreamWriterWrapper", xmlStreamWriterWrapper);
         }
     }
 }

@@ -26,6 +26,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlList;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.spi.DataFormat;
 
@@ -121,54 +122,54 @@ public class XmlJsonDataFormat extends DataFormatDefinition {
     }
 
     @Override
-    protected void configureDataFormat(DataFormat dataFormat) {
+    protected void configureDataFormat(DataFormat dataFormat, CamelContext camelContext) {
         if (encoding != null) {
-            setProperty(dataFormat, ENCODING, encoding);
+            setProperty(camelContext, dataFormat, ENCODING, encoding);
         }
 
         if (forceTopLevelObject != null) {
-            setProperty(dataFormat, FORCE_TOP_LEVEL_OBJECT, forceTopLevelObject);
+            setProperty(camelContext, dataFormat, FORCE_TOP_LEVEL_OBJECT, forceTopLevelObject);
         }
 
         if (namespaceLenient != null) {
-            setProperty(dataFormat, NAMESPACE_LENIENT, namespaceLenient);
+            setProperty(camelContext, dataFormat, NAMESPACE_LENIENT, namespaceLenient);
         }
 
         if (rootName != null) {
-            setProperty(dataFormat, ROOT_NAME, rootName);
+            setProperty(camelContext, dataFormat, ROOT_NAME, rootName);
         }
         
         if (elementName != null) {
-            setProperty(dataFormat, ELEMENT_NAME, elementName);
+            setProperty(camelContext, dataFormat, ELEMENT_NAME, elementName);
         }
 
         if (arrayName != null) {
-            setProperty(dataFormat, ARRAY_NAME, arrayName);
+            setProperty(camelContext, dataFormat, ARRAY_NAME, arrayName);
         }
 
         if (expandableProperties != null && expandableProperties.size() != 0) {
-            setProperty(dataFormat, EXPANDABLE_PROPERTIES, expandableProperties);
+            setProperty(camelContext, dataFormat, EXPANDABLE_PROPERTIES, expandableProperties);
         }
 
         if (skipWhitespace != null) {
-            setProperty(dataFormat, SKIP_WHITESPACE, skipWhitespace);
+            setProperty(camelContext, dataFormat, SKIP_WHITESPACE, skipWhitespace);
         }
 
         if (trimSpaces != null) {
-            setProperty(dataFormat, TRIM_SPACES, trimSpaces);
+            setProperty(camelContext, dataFormat, TRIM_SPACES, trimSpaces);
         }
 
         if (skipNamespaces != null) {
-            setProperty(dataFormat, SKIP_NAMESPACES, skipNamespaces);
+            setProperty(camelContext, dataFormat, SKIP_NAMESPACES, skipNamespaces);
         }
 
         if (removeNamespacePrefixes != null) {
-            setProperty(dataFormat, REMOVE_NAMESPACE_PREFIXES, removeNamespacePrefixes);
+            setProperty(camelContext, dataFormat, REMOVE_NAMESPACE_PREFIXES, removeNamespacePrefixes);
         }
 
         // will end up calling the setTypeHints(String s) which does the parsing from the Enum String key to the Enum value
         if (typeHints != null) {
-            setProperty(typeHints, TYPE_HINTS, typeHints);
+            setProperty(camelContext, typeHints, TYPE_HINTS, typeHints);
         }
 
         //TODO: xmljson: element-namespace mapping is not implemented in the XML DSL
