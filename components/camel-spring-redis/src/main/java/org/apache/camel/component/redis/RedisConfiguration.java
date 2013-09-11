@@ -116,6 +116,7 @@ public class RedisConfiguration {
 
     private RedisTemplate createDefaultTemplate() {
         redisTemplate = new RedisTemplate();
+        redisTemplate.setDefaultSerializer(getSerializer());
         redisTemplate.setConnectionFactory(getConnectionFactory());
         redisTemplate.afterPropertiesSet();
         return redisTemplate;
