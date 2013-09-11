@@ -48,6 +48,11 @@ public class BeanValidatorRouteTest extends CamelTestSupport {
 
     @Test
     public void validateShouldSuccessWithImpliciteDefaultGroup() throws Exception {
+        if (isPlatform("aix")) {
+            // cannot run on aix
+            return;
+        }
+
         Exchange exchange = template.request("bean-validator://x", new Processor() {
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setBody(createCar("BMW", "DD-AB-123"));
@@ -59,6 +64,11 @@ public class BeanValidatorRouteTest extends CamelTestSupport {
     
     @Test
     public void validateShouldSuccessWithExpliciteDefaultGroup() throws Exception {
+        if (isPlatform("aix")) {
+            // cannot run on aix
+            return;
+        }
+
         Exchange exchange = template.request("bean-validator://x?group=javax.validation.groups.Default", new Processor() {
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setBody(createCar("BMW", "DD-AB-123"));
@@ -70,6 +80,11 @@ public class BeanValidatorRouteTest extends CamelTestSupport {
     
     @Test
     public void validateShouldFailWithImpliciteDefaultGroup() throws Exception {
+        if (isPlatform("aix")) {
+            // cannot run on aix
+            return;
+        }
+
         final String url = "bean-validator://x";
         final Car car = createCar("BMW", null);
         
@@ -102,6 +117,11 @@ public class BeanValidatorRouteTest extends CamelTestSupport {
     
     @Test
     public void validateShouldFailWithExpliciteDefaultGroup() throws Exception {
+        if (isPlatform("aix")) {
+            // cannot run on aix
+            return;
+        }
+
         final String url = "bean-validator://x?group=javax.validation.groups.Default";
         final Car car = createCar("BMW", null);
         
@@ -134,6 +154,11 @@ public class BeanValidatorRouteTest extends CamelTestSupport {
     
     @Test
     public void validateShouldFailWithOptionalChecksGroup() throws Exception {
+        if (isPlatform("aix")) {
+            // cannot run on aix
+            return;
+        }
+
         final String url = "bean-validator://x?group=org.apache.camel.component.bean.validator.OptionalChecks";
         final Car car = createCar("BMW", "D-A");
         
@@ -166,6 +191,11 @@ public class BeanValidatorRouteTest extends CamelTestSupport {
     
     @Test
     public void validateShouldFailWithOrderedChecksGroup() throws Exception {
+        if (isPlatform("aix")) {
+            // cannot run on aix
+            return;
+        }
+
         final String url = "bean-validator://x?group=org.apache.camel.component.bean.validator.OrderedChecks";
         final Car car = createCar(null, "D-A");
         
@@ -216,6 +246,11 @@ public class BeanValidatorRouteTest extends CamelTestSupport {
     
     @Test
     public void validateShouldSuccessWithRedefinedDefaultGroup() throws Exception {
+        if (isPlatform("aix")) {
+            // cannot run on aix
+            return;
+        }
+
         final String url = "bean-validator://x";
         final Car car = new CarWithRedefinedDefaultGroup(null, "DD-AB-123");
         
@@ -230,6 +265,11 @@ public class BeanValidatorRouteTest extends CamelTestSupport {
     
     @Test
     public void validateShouldFailWithRedefinedDefaultGroup() throws Exception {
+        if (isPlatform("aix")) {
+            // cannot run on aix
+            return;
+        }
+
         final String url = "bean-validator://x";
         final Car car = new CarWithRedefinedDefaultGroup(null, "D-A");
         
