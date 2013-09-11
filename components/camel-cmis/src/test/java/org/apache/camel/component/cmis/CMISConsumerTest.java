@@ -38,7 +38,7 @@ public class CMISConsumerTest extends CMISTestSupport {
     public void getAllContentFromServerOrderedFromRootToLeaves() throws Exception {
         resultEndpoint.expectedMessageCount(5);
 
-        Consumer treeBasedConsumer = createConsumerFor(CMIS_ENDPOINT_TEST_SERVER);
+        Consumer treeBasedConsumer = createConsumerFor(getUrl());
         treeBasedConsumer.start();
 
         resultEndpoint.assertIsSatisfied();
@@ -57,7 +57,7 @@ public class CMISConsumerTest extends CMISTestSupport {
         resultEndpoint.expectedMessageCount(2);
 
         Consumer queryBasedConsumer = createConsumerFor(
-                CMIS_ENDPOINT_TEST_SERVER + "?query=SELECT * FROM cmis:document");
+                getUrl() + "?query=SELECT * FROM cmis:document");
         queryBasedConsumer.start();
         resultEndpoint.assertIsSatisfied();
         queryBasedConsumer.stop();

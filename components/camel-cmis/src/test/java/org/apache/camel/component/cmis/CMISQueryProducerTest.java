@@ -39,7 +39,7 @@ public class CMISQueryProducerTest extends CMISTestSupport {
 
     @Test
     public void queryServerForDocumentWithSpecificName() throws Exception {
-        Endpoint endpoint = context.getEndpoint("cmis://" + CMIS_ENDPOINT_TEST_SERVER + "?queryMode=true");
+        Endpoint endpoint = context.getEndpoint("cmis://" + getUrl() + "?queryMode=true");
         Producer producer = endpoint.createProducer();
 
         Exchange exchange = createExchangeWithInBody(
@@ -54,7 +54,7 @@ public class CMISQueryProducerTest extends CMISTestSupport {
 
     @Test
     public void getResultCountFromHeader() throws Exception {
-        Endpoint endpoint = context.getEndpoint("cmis://" + CMIS_ENDPOINT_TEST_SERVER + "?queryMode=true");
+        Endpoint endpoint = context.getEndpoint("cmis://" + getUrl() + "?queryMode=true");
         Producer producer = endpoint.createProducer();
 
         Exchange exchange = createExchangeWithInBody(
@@ -69,7 +69,7 @@ public class CMISQueryProducerTest extends CMISTestSupport {
 
     @Test
     public void limitNumberOfResultsWithReadSizeHeader() throws Exception {
-        Endpoint endpoint = context.getEndpoint("cmis://" + CMIS_ENDPOINT_TEST_SERVER + "?queryMode=true");
+        Endpoint endpoint = context.getEndpoint("cmis://" + getUrl() + "?queryMode=true");
         Producer producer = endpoint.createProducer();
 
         Exchange exchange = createExchangeWithInBody(
@@ -85,7 +85,7 @@ public class CMISQueryProducerTest extends CMISTestSupport {
 
     @Test
     public void retrieveAlsoDocumentContent() throws Exception {
-        Endpoint endpoint = context.getEndpoint("cmis://" + CMIS_ENDPOINT_TEST_SERVER + "?queryMode=true");
+        Endpoint endpoint = context.getEndpoint("cmis://" + getUrl() + "?queryMode=true");
         Producer producer = endpoint.createProducer();
 
         Exchange exchange = createExchangeWithInBody(
