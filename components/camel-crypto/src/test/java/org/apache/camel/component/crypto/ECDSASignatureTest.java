@@ -42,10 +42,8 @@ public class ECDSASignatureTest extends CamelTestSupport {
     private boolean ibmJDK;
 
     public ECDSASignatureTest() throws Exception {
-        //
         // BouncyCastle is required for ECDSA support for JDK 1.6
-        //
-        if (System.getProperty("java.version").startsWith("1.6")
+        if (isJava16()
             && Security.getProvider("BC") == null) {
             Constructor<?> cons = null;
             Class<?> c = Class.forName("org.bouncycastle.jce.provider.BouncyCastleProvider");
@@ -55,10 +53,8 @@ public class ECDSASignatureTest extends CamelTestSupport {
             Security.insertProviderAt(provider, 2);
         }
         
-        //
         // This test fails with the IBM JDK
-        //
-        if ("IBM Corporation".equals(System.getProperty("java.vendor"))) {
+        if (isJavaVendor("IBM")) {
             ibmJDK = true;
         }
     }
