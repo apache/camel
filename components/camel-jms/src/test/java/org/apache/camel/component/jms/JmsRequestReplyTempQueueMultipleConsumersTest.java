@@ -21,6 +21,7 @@ import java.util.concurrent.Callable;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.activemq.pool.PooledConnectionFactory;
@@ -40,7 +41,7 @@ import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknow
  */
 public class JmsRequestReplyTempQueueMultipleConsumersTest extends CamelTestSupport {
 
-    private Map<String, AtomicInteger> msgsPerThread = new ConcurrentHashMap<String, AtomicInteger>();
+    private final Map<String, AtomicInteger> msgsPerThread = new ConcurrentHashMap<String, AtomicInteger>();
     private PooledConnectionFactory connectionFactory;
     
     @Test
@@ -53,10 +54,6 @@ public class JmsRequestReplyTempQueueMultipleConsumersTest extends CamelTestSupp
     @Test
     public void testTempQueueRefreshed() throws Exception {
         doSendMessages(500, 5);
-        connectionFactory.clear();
-        doSendMessages(100, 5);
-        connectionFactory.clear();
-        doSendMessages(100, 5);
         connectionFactory.clear();
         doSendMessages(100, 5);
         connectionFactory.clear();
@@ -82,7 +79,7 @@ public class JmsRequestReplyTempQueueMultipleConsumersTest extends CamelTestSupp
             });
         }
 
-        assertMockEndpointsSatisfied();
+        assertMockEndpointsSatisfied(20, TimeUnit.SECONDS);
         executor.shutdownNow();
     }
     
