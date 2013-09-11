@@ -15,7 +15,8 @@
     See the License for the specific language governing permissions and
     limitations under the License.
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
   <modelVersion>4.0.0</modelVersion>
 
   <parent>
@@ -29,12 +30,12 @@
   <packaging>bundle</packaging>
   <name>Camel :: Weather</name>
   <description>Camel Weather support</description>
-  
+
   <properties>
     <camel.osgi.export.pkg>org.apache.camel.component.weather.*</camel.osgi.export.pkg>
     <camel.osgi.export.service>org.apache.camel.spi.ComponentResolver;component=weather</camel.osgi.export.service>
   </properties>
- 
+
   <dependencies>
     <dependency>
       <groupId>org.apache.camel</groupId>
@@ -45,11 +46,11 @@
       <artifactId>jackson-mapper-asl</artifactId>
       <version>${jackson-version}</version>
     </dependency>
-    
+
     <!-- test dependencies -->
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-test</artifactId>      
+      <artifactId>camel-test</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -58,5 +59,34 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
+
+  <profiles>
+    <profile>
+      <id>weather-test</id>
+      <build>
+        <plugins>
+          <plugin>
+            <artifactId>maven-surefire-plugin</artifactId>
+            <configuration>
+              <skipTests>false</skipTests>
+              <forkedProcessTimeoutInSeconds>300</forkedProcessTimeoutInSeconds>
+            </configuration>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+  </profiles>
+
+  <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <skipTests>true</skipTests>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
+
 
 </project>
