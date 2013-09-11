@@ -23,7 +23,10 @@ import javax.management.ObjectName;
 import org.apache.camel.StreamCache;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
+
+import static org.apache.camel.util.FileUtil.normalizePath;
 
 /**
  * @version 
@@ -50,7 +53,7 @@ public class ManagedStreamCachingStrategyTest extends ManagementTestSupport {
         assertEquals(Boolean.TRUE, enabled);
 
         String dir = (String) mbeanServer.getAttribute(name, "SpoolDirectory");
-        assertEquals("target/cachedir/myCamel", dir);
+        assertEquals(normalizePath("target/cachedir/myCamel"), normalizePath(dir));
 
         Long threshold = (Long) mbeanServer.getAttribute(name, "SpoolThreshold");
         assertEquals(StreamCache.DEFAULT_SPOOL_THRESHOLD, threshold.longValue());
