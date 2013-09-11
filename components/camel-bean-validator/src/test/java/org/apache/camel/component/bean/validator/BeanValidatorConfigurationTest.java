@@ -65,6 +65,11 @@ public class BeanValidatorConfigurationTest extends CamelTestSupport {
     
     @Test
     public void configureWithDefaults() throws Exception {
+        if (isPlatform("aix")) {
+            // cannot run on aix
+            return;
+        }
+
         ProcessorEndpoint endpoint = context.getEndpoint("bean-validator://x", ProcessorEndpoint.class);
         BeanValidator processor = (BeanValidator) endpoint.getProcessor();
 
@@ -77,6 +82,11 @@ public class BeanValidatorConfigurationTest extends CamelTestSupport {
     
     @Test
     public void configureBeanValidator() throws Exception {
+        if (isPlatform("aix")) {
+            // cannot run on aix
+            return;
+        }
+
         ProcessorEndpoint endpoint = context.getEndpoint("bean-validator://x"
                 + "?group=org.apache.camel.component.bean.validator.OptionalChecks"
                 + "&messageInterpolator=#myMessageInterpolator"
