@@ -120,6 +120,15 @@ public class ClientChannelHandler extends SimpleChannelUpstreamHandler {
 
     @Override
     public void messageReceived(ChannelHandlerContext ctx, MessageEvent messageEvent) throws Exception {
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("Message received: {}", messageEvent);
+        }
+
+        if (producer.getConfiguration().getRequestTimeout() > 0) {
+            LOG.trace("Removing timeout channel as we received message");
+            ctx.getPipeline().remove("timeout");
+        }
+
         messageReceived = true;
 
         Exchange exchange = getExchange(ctx);
