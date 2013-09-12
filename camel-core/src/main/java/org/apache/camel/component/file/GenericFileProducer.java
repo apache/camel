@@ -258,10 +258,11 @@ public class GenericFileProducer<T> extends DefaultProducer {
         String answer;
 
         String name = exchange.getIn().getHeader(Exchange.FILE_NAME, String.class);
+        String consumed = exchange.getIn().getHeader(Exchange.FILE_NAME_CONSUMED, String.class);
 
         // expression support
         Expression expression = endpoint.getFileName();
-        if (name != null) {
+        if (name != null && !name.equals(consumed)) {
             // the header name can be an expression too, that should override
             // whatever configured on the endpoint
             if (StringHelper.hasStartToken(name, "simple")) {

@@ -127,6 +127,7 @@ public class GenericFile<T> implements WrappedFile<T>  {
         if (message != null) {
             message.setHeader(Exchange.FILE_NAME_ONLY, getFileNameOnly());
             message.setHeader(Exchange.FILE_NAME, getFileName());
+            message.setHeader(Exchange.FILE_NAME_CONSUMED, getFileName());
             message.setHeader("CamelFileAbsolute", isAbsolute());
             message.setHeader("CamelFileAbsolutePath", getAbsoluteFilePath());
     
