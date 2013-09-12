@@ -128,6 +128,13 @@
         </configuration>
       </plugin>
 
+      <!-- plugin to deploy to JBoss AS with: mvn jboss-as:deploy (you can also do redeploy/undeploy) -->
+      <plugin>
+        <groupId>org.jboss.as.plugins</groupId>
+        <artifactId>jboss-as-maven-plugin</artifactId>
+        <version>${maven-jboss-as-maven-plugin-version}</version>
+      </plugin>
+
     </plugins>
   </build>
 

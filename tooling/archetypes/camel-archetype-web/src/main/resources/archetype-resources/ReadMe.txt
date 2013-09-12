@@ -13,6 +13,14 @@ favorite web container or just run
 
 to start up and deploy to Jetty.
 
+If you have JBoss AS running you can deploy using
+
+   mvn jboss-as:deploy
+
+Or to redeploy
+
+    mvn jboss-as:redeploy
+
 For more help see the Apache Camel documentation
 
     http://camel.apache.org/
