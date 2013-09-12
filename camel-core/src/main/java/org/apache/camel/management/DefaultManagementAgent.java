@@ -72,7 +72,7 @@ public class DefaultManagementAgent extends ServiceSupport implements Management
     private String mBeanObjectDomainName;
     private String serviceUrlPath;
     private Boolean usePlatformMBeanServer = true;
-    private Boolean createConnector;
+    private Boolean createConnector = true;
     private Boolean onlyRegisterProcessorWithCustomId;
     private Boolean registerAlways;
     private Boolean registerNewRoutes = true;
@@ -103,9 +103,6 @@ public class DefaultManagementAgent extends ServiceSupport implements Management
         if (serviceUrlPath == null) {
             serviceUrlPath = System.getProperty(JmxSystemPropertyKeys.SERVICE_URL_PATH, DEFAULT_SERVICE_URL_PATH);
         }
-        if (createConnector == null) {
-            createConnector = Boolean.getBoolean(JmxSystemPropertyKeys.CREATE_CONNECTOR);
-        }
         if (onlyRegisterProcessorWithCustomId == null) {
             onlyRegisterProcessorWithCustomId = Boolean.getBoolean(JmxSystemPropertyKeys.ONLY_REGISTER_PROCESSOR_WITH_CUSTOM_ID);
         }
@@ -122,6 +119,9 @@ public class DefaultManagementAgent extends ServiceSupport implements Management
         }
         if (System.getProperty(JmxSystemPropertyKeys.MASK) != null) {
             mask = Boolean.getBoolean(JmxSystemPropertyKeys.MASK);
+        }
+        if (System.getProperty(JmxSystemPropertyKeys.CREATE_CONNECTOR) != null) {
+            createConnector = Boolean.getBoolean(JmxSystemPropertyKeys.CREATE_CONNECTOR);
         }
     }
 
