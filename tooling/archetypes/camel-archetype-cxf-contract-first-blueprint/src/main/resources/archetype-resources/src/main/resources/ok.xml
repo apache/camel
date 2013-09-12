@@ -1,0 +1,3 @@
+<ns2:outputReportIncident xmlns:ns2="http://reportincident.example.camel.apache.org">
+  <code>Accepted</code>
+</ns2:outputReportIncident>
