@@ -287,6 +287,7 @@ public class GenericFileProducer<T> extends DefaultProducer {
 
         // overrule takes precedence
         String overrule = exchange.getIn().getHeader(Exchange.OVERRULE_FILE_NAME, String.class);
+        String consumed = exchange.getIn().getHeader(Exchange.FILE_NAME_CONSUMED, String.class);
         String name = overrule == null ? exchange.getIn().getHeader(Exchange.FILE_NAME, String.class) : overrule;
 
         // if we have an overrule then override the existing header to use the overrule computed name from this point forward
@@ -296,7 +297,8 @@ public class GenericFileProducer<T> extends DefaultProducer {
 
         // expression support
         Expression expression = endpoint.getFileName();
-        if (name != null) {
+
+        if (name != null && !name.equals(consumed)) {
             // the header name can be an expression too, that should override
             // whatever configured on the endpoint
             if (StringHelper.hasStartToken(name, "simple")) {
