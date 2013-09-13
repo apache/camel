@@ -30,5 +30,10 @@ public class SpringPGPDataFormatTest extends AbstractPGPDataFormatTest {
     public void testEncryption() throws Exception {
         doRoundTripEncryptionTests("direct:inline");
     }
+    
+    @Test
+    public void testEncryptionWithKeyRingByteArray() throws Exception {
+        doRoundTripEncryptionTests("direct:pgp-key-ring-byte-array");
+    }
 
 }
