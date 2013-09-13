@@ -165,15 +165,15 @@ public class FtpConsumer extends RemoteFileConsumer<FTPFile> {
     }
 
     @Override
-    protected boolean ignoreCannotRetrieveFile(String name, Exchange exchange) {
-        if (getEndpoint().getConfiguration().isIgnoreFileNotFound()) {
+    protected boolean ignoreCannotRetrieveFile(String name, Exchange exchange, Exception cause) {
+        if (getEndpoint().getConfiguration().isIgnoreFileNotFoundOrPermissionError()) {
             // error code 550 is file not found
             int code = exchange.getIn().getHeader(FtpConstants.FTP_REPLY_CODE, 0, int.class);
             if (code == 550) {
                 return true;
             }
         }
-        return super.ignoreCannotRetrieveFile(name, exchange);
+        return super.ignoreCannotRetrieveFile(name, exchange, cause);
     }
 
     private RemoteFile<FTPFile> asRemoteFile(String absolutePath, FTPFile file) {

@@ -29,7 +29,7 @@ public class FtpConsumerTemplateUseListFalseTest extends FtpServerTestSupport {
 
     private String getFtpUrl() {
         return "ftp://admin@localhost:" + getPort() + "/nolist/?password=admin"
-                + "&stepwise=false&useList=false&ignoreFileNotFound=true&delete=true";
+                + "&stepwise=false&useList=false&ignoreFileNotFoundOrPermissionError=true&delete=true";
     }
 
     @Override
