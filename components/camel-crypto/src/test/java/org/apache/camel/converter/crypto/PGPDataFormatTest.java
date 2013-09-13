@@ -16,17 +16,26 @@
  */
 package org.apache.camel.converter.crypto;
 
+import java.io.ByteArrayOutputStream;
+import java.io.IOException;
+import java.io.InputStream;
+
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.util.IOHelper;
 import org.junit.Test;
 
 public class PGPDataFormatTest extends AbstractPGPDataFormatTest {
     
+    private static final String SEC_KEY_RING_FILE_NAME = "org/apache/camel/component/crypto/secring.gpg";
+    private static final String PUB_KEY_RING_FILE_NAME = "org/apache/camel/component/crypto/pubring.gpg";
+
+    
     protected String getKeyFileName() {
-        return "org/apache/camel/component/crypto/pubring.gpg";
+        return PUB_KEY_RING_FILE_NAME;
     }
     
     protected String getKeyFileNameSec() {
-        return "org/apache/camel/component/crypto/secring.gpg";
+        return SEC_KEY_RING_FILE_NAME;
     }
     
     protected String getKeyUserId() {
@@ -55,6 +64,16 @@ public class PGPDataFormatTest extends AbstractPGPDataFormatTest {
     @Test
     public void testEncryptionSigned() throws Exception {
         doRoundTripEncryptionTests("direct:inline-sign");
+    }
+    
+    @Test
+    public void testEncryptionKeyRingByteArray() throws Exception {
+        doRoundTripEncryptionTests("direct:key-ring-byte-array");
+    }
+
+    @Test
+    public void testEncryptionSignedKeyRingByteArray() throws Exception {
+        doRoundTripEncryptionTests("direct:sign-key-ring-byte-array");
     }
 
     protected RouteBuilder createRouteBuilder() {
@@ -121,8 +140,62 @@ public class PGPDataFormatTest extends AbstractPGPDataFormatTest {
                         .unmarshal(pgpVerifyAndDecrypt)
                         .to("mock:unencrypted");
                 // END SNIPPET: pgp-format-signature
+                /* ---- key ring as byte array -- */
+                // START SNIPPET: pgp-format-key-ring-byte-array
+                PGPDataFormat pgpEncryptByteArray = new PGPDataFormat();
+                pgpEncryptByteArray.setEncryptionKeyRing(getPublicKeyRing());
+                pgpEncryptByteArray.setKeyUserid(keyUserid);
+
+                PGPDataFormat pgpDecryptByteArray = new PGPDataFormat();
+                pgpDecryptByteArray.setEncryptionKeyRing(getSecKeyRing());
+                pgpDecryptByteArray.setKeyUserid(keyUserid);
+                pgpDecryptByteArray.setPassword(keyPassword);
+
+                from("direct:key-ring-byte-array").marshal(pgpEncryptByteArray).to("mock:encrypted").unmarshal(pgpDecryptByteArray)
+                        .to("mock:unencrypted");
+                // END SNIPPET: pgp-format-key-ring-byte-array
+
+                // START SNIPPET: pgp-format-signature-key-ring-byte-array
+                PGPDataFormat pgpSignAndEncryptByteArray = new PGPDataFormat();
+                pgpSignAndEncryptByteArray.setKeyUserid(keyUserid);
+                pgpSignAndEncryptByteArray.setSignatureKeyRing(getSecKeyRing());
+                pgpSignAndEncryptByteArray.setSignatureKeyUserid(keyUserid);
+                pgpSignAndEncryptByteArray.setSignaturePassword(keyPassword);
+
+                PGPDataFormat pgpVerifyAndDecryptByteArray = new PGPDataFormat();
+                pgpVerifyAndDecryptByteArray.setKeyUserid(keyUserid);
+                pgpVerifyAndDecryptByteArray.setPassword(keyPassword);
+                pgpVerifyAndDecryptByteArray.setEncryptionKeyRing(getSecKeyRing());
+                pgpVerifyAndDecryptByteArray.setSignatureKeyUserid(keyUserid);
+
+                from("direct:sign-key-ring-byte-array")
+                // encryption key ring can also be set as header
+                        .setHeader(PGPDataFormat.ENCRYPTION_KEY_RING).constant(getPublicKeyRing()).marshal(pgpSignAndEncryptByteArray)
+                        // it is recommended to remove the header immediately when it is no longer needed
+                        .removeHeader(PGPDataFormat.ENCRYPTION_KEY_RING).to("mock:encrypted")
+                        // signature key ring can also be set as header
+                        .setHeader(PGPDataFormat.SIGNATURE_KEY_RING).constant(getPublicKeyRing()).unmarshal(pgpVerifyAndDecryptByteArray)
+                        // it is recommended to remove the header immediately when it is no longer needed
+                        .removeHeader(PGPDataFormat.SIGNATURE_KEY_RING).to("mock:unencrypted");
+                // END SNIPPET: pgp-format-signature-key-ring-byte-array
             }
         };
+    }
+
+    public static byte[] getPublicKeyRing() throws Exception {
+        return getKeyRing(PUB_KEY_RING_FILE_NAME);
+    }
+
+    public static byte[] getSecKeyRing() throws Exception {
+        return getKeyRing(SEC_KEY_RING_FILE_NAME);
+    }
+
+    private static byte[] getKeyRing(String fileName) throws IOException {
+        InputStream is = PGPDataFormatTest.class.getClassLoader().getResourceAsStream(fileName);
+        ByteArrayOutputStream output = new ByteArrayOutputStream();
+        IOHelper.copyAndCloseInput(is, output);
+        output.close();
+        return output.toByteArray();
     }
 
 }

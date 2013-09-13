@@ -16,6 +16,9 @@
  */
 package org.apache.camel.converter.crypto;
 
+
+
+import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.security.NoSuchProviderException;
@@ -51,8 +54,13 @@ public final class PGPDataFormatUtil {
 
     public static PGPPublicKey findPublicKey(CamelContext context, String filename, String userid, boolean forEncryption) throws IOException, PGPException,
             NoSuchProviderException {
+        return findPublicKey(context, filename, null, userid, forEncryption);
+    }
 
-        InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(context.getClassResolver(), filename);
+    public static PGPPublicKey findPublicKey(CamelContext context, String filename, byte[] keyRing, String userid, boolean forEncryption)
+        throws IOException, PGPException, NoSuchProviderException {
+
+        InputStream is = determineKeyRingInputStream(context, filename, keyRing, forEncryption);
         PGPPublicKey pubKey;
         try {
             pubKey = findPublicKey(is, userid, forEncryption);
@@ -60,6 +68,27 @@ public final class PGPDataFormatUtil {
             IOHelper.close(is);
         }
         return pubKey;
+    }
+
+    private static InputStream determineKeyRingInputStream(CamelContext context, String filename, byte[] keyRing, boolean forEncryption)
+        throws IOException {
+        if (filename != null && keyRing != null) {
+            String encryptionOrSignature;
+            if (forEncryption) {
+                encryptionOrSignature = "encryption";
+            } else {
+                encryptionOrSignature = "signature";
+            }
+            throw new IllegalStateException(String.format("Either specify %s file name or key ring byte array. You can not specify both.",
+                    encryptionOrSignature));
+        }
+        InputStream is;
+        if (keyRing != null) {
+            is = new ByteArrayInputStream(keyRing);
+        } else {
+            is = ResourceHelper.resolveMandatoryResourceAsInputStream(context.getClassResolver(), filename);
+        }
+        return is;
     }
 
     @SuppressWarnings("unchecked")
@@ -98,9 +127,13 @@ public final class PGPDataFormatUtil {
 
     public static PGPPrivateKey findPrivateKey(CamelContext context, String keychainFilename, InputStream encryptedInput, String passphrase)
         throws IOException, PGPException, NoSuchProviderException {
+        return findPrivateKey(context, keychainFilename, null, encryptedInput, passphrase);
+    }
 
-        InputStream keyChainInputStream = ResourceHelper.resolveMandatoryResourceAsInputStream(context.getClassResolver(), keychainFilename);
+    public static PGPPrivateKey findPrivateKey(CamelContext context, String keychainFilename, byte[] secKeyRing,
+        InputStream encryptedInput, String passphrase) throws IOException, PGPException, NoSuchProviderException {
 
+        InputStream keyChainInputStream = determineKeyRingInputStream(context, keychainFilename, secKeyRing, true);
         PGPPrivateKey privKey = null;
         try {
             privKey = findPrivateKey(keyChainInputStream, encryptedInput, passphrase);
@@ -135,9 +168,13 @@ public final class PGPDataFormatUtil {
 
     public static PGPSecretKey findSecretKey(CamelContext context, String keychainFilename, String passphrase)
         throws IOException, PGPException, NoSuchProviderException {
+        return findSecretKey(context, keychainFilename, null, passphrase);
+    }
 
-        InputStream keyChainInputStream = ResourceHelper.resolveMandatoryResourceAsInputStream(context.getClassResolver(), keychainFilename);
+    public static PGPSecretKey findSecretKey(CamelContext context, String keychainFilename, byte[] secKeyRing, String passphrase)
+        throws IOException, PGPException, NoSuchProviderException {
 
+        InputStream keyChainInputStream = determineKeyRingInputStream(context, keychainFilename, secKeyRing, false);
         PGPSecretKey secKey = null;
         try {
             secKey = findSecretKey(keyChainInputStream, passphrase);

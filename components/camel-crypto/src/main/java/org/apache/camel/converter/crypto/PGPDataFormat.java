@@ -73,9 +73,11 @@ import org.bouncycastle.util.io.Streams;
 public class PGPDataFormat implements DataFormat {
 
     public static final String KEY_FILE_NAME = "CamelPGPDataFormatKeyFileName";
+    public static final String ENCRYPTION_KEY_RING = "CamelPGPDataFormatEncryptionKeyRing";
     public static final String KEY_USERID = "CamelPGPDataFormatKeyUserid";
     public static final String KEY_PASSWORD = "CamelPGPDataFormatKeyPassword";
     public static final String SIGNATURE_KEY_FILE_NAME = "CamelPGPDataFormatSignatureKeyFileName";
+    public static final String SIGNATURE_KEY_RING = "CamelPGPDataFormatSignatureKeyRing";
     public static final String SIGNATURE_KEY_USERID = "CamelPGPDataFormatSignatureKeyUserid";
     public static final String SIGNATURE_KEY_PASSWORD = "CamelPGPDataFormatSignatureKeyPassword";
 
@@ -85,11 +87,15 @@ public class PGPDataFormat implements DataFormat {
     private String keyUserid;
     private String password;
     private String keyFileName;
+    // alternatively to the file name you can specify the key ring as byte array
+    private byte[] encryptionKeyRing;
 
     // signature / verification key info (optional)
     private String signatureKeyUserid;
     private String signaturePassword;
     private String signatureKeyFileName;
+    // alternatively to the sigknature key file name you can specify the signature key ring as byte array
+    private byte[] signatureKeyRing;
 
     private boolean armored;
     private boolean integrity = true;
@@ -101,31 +107,39 @@ public class PGPDataFormat implements DataFormat {
     }
     
     protected String findKeyFileName(Exchange exchange) {
-        return exchange.getIn().getHeader(KEY_FILE_NAME, keyFileName, String.class);
+        return exchange.getIn().getHeader(KEY_FILE_NAME, getKeyFileName(), String.class);
+    }
+    
+    protected byte[] findEncryptionKeyRing(Exchange exchange) {
+        return exchange.getIn().getHeader(ENCRYPTION_KEY_RING, getEncryptionKeyRing(), byte[].class);
     }
     
     protected String findKeyUserid(Exchange exchange) {
-        return exchange.getIn().getHeader(KEY_USERID, keyUserid, String.class);
+        return exchange.getIn().getHeader(KEY_USERID, getKeyUserid(), String.class);
     }
     
     protected String findKeyPassword(Exchange exchange) {
-        return exchange.getIn().getHeader(KEY_PASSWORD, password, String.class);
+        return exchange.getIn().getHeader(KEY_PASSWORD, getPassword(), String.class);
     }
 
     protected String findSignatureKeyFileName(Exchange exchange) {
-        return exchange.getIn().getHeader(SIGNATURE_KEY_FILE_NAME, signatureKeyFileName, String.class);
+        return exchange.getIn().getHeader(SIGNATURE_KEY_FILE_NAME, getSignatureKeyFileName(), String.class);
+    }
+    
+    protected byte[] findSignatureKeyRing(Exchange exchange) {
+        return exchange.getIn().getHeader(SIGNATURE_KEY_RING, getSignatureKeyRing(), byte[].class);
     }
 
     protected String findSignatureKeyUserid(Exchange exchange) {
-        return exchange.getIn().getHeader(SIGNATURE_KEY_USERID, signatureKeyUserid, String.class);
+        return exchange.getIn().getHeader(SIGNATURE_KEY_USERID, getSignatureKeyUserid(), String.class);
     }
 
     protected String findSignatureKeyPassword(Exchange exchange) {
-        return exchange.getIn().getHeader(SIGNATURE_KEY_PASSWORD, signaturePassword, String.class);
+        return exchange.getIn().getHeader(SIGNATURE_KEY_PASSWORD, getSignaturePassword(), String.class);
     }
 
     public void marshal(Exchange exchange, Object graph, OutputStream outputStream) throws Exception {
-        PGPPublicKey key = PGPDataFormatUtil.findPublicKey(exchange.getContext(), findKeyFileName(exchange), findKeyUserid(exchange), true);
+        PGPPublicKey key = PGPDataFormatUtil.findPublicKey(exchange.getContext(), findKeyFileName(exchange), findEncryptionKeyRing(exchange), findKeyUserid(exchange), true);
         if (key == null) {
             throw new IllegalArgumentException("Public key is null, cannot proceed");
         }
@@ -182,12 +196,13 @@ public class PGPDataFormat implements DataFormat {
         String sigKeyFileName = findSignatureKeyFileName(exchange);
         String sigKeyUserid = findSignatureKeyUserid(exchange);
         String sigKeyPassword = findSignatureKeyPassword(exchange);
+        byte[] sigKeyRing = findSignatureKeyRing(exchange);
 
-        if (sigKeyFileName == null || sigKeyUserid == null || sigKeyPassword == null) {
+        if ((sigKeyFileName == null && sigKeyRing == null) || sigKeyUserid == null || sigKeyPassword == null) {
             return null;
         }
 
-        PGPSecretKey sigSecretKey = PGPDataFormatUtil.findSecretKey(exchange.getContext(), sigKeyFileName, sigKeyPassword);
+        PGPSecretKey sigSecretKey = PGPDataFormatUtil.findSecretKey(exchange.getContext(), sigKeyFileName, sigKeyRing, sigKeyPassword);
         if (sigSecretKey == null) {
             throw new IllegalArgumentException("Signature secret key is null, cannot proceed");
         }
@@ -213,7 +228,7 @@ public class PGPDataFormat implements DataFormat {
             return null;
         }
 
-        PGPPrivateKey key = PGPDataFormatUtil.findPrivateKey(exchange.getContext(), findKeyFileName(exchange), encryptedStream, findKeyPassword(exchange));
+        PGPPrivateKey key = PGPDataFormatUtil.findPrivateKey(exchange.getContext(), findKeyFileName(exchange), findEncryptionKeyRing(exchange), encryptedStream, findKeyPassword(exchange));
         if (key == null) {
             throw new IllegalArgumentException("Private key is null, cannot proceed");
         }
@@ -279,7 +294,7 @@ public class PGPDataFormat implements DataFormat {
     protected PGPOnePassSignature getSignature(Exchange exchange, PGPOnePassSignatureList signatureList)
         throws IOException, PGPException, NoSuchProviderException {
 
-        PGPPublicKey sigPublicKey = PGPDataFormatUtil.findPublicKey(exchange.getContext(), findSignatureKeyFileName(exchange), findSignatureKeyUserid(exchange), false);
+        PGPPublicKey sigPublicKey = PGPDataFormatUtil.findPublicKey(exchange.getContext(), findSignatureKeyFileName(exchange), findSignatureKeyRing(exchange), findSignatureKeyUserid(exchange), false);
         if (sigPublicKey == null) {
             throw new IllegalArgumentException("Signature public key is null, cannot proceed");
         }
@@ -376,4 +391,21 @@ public class PGPDataFormat implements DataFormat {
     public String getSignaturePassword() {
         return signaturePassword;
     }
+
+    public byte[] getEncryptionKeyRing() {
+        return encryptionKeyRing;
+    }
+
+    public void setEncryptionKeyRing(byte[] encryptionKeyRing) {
+        this.encryptionKeyRing = encryptionKeyRing;
+    }
+
+    public byte[] getSignatureKeyRing() {
+        return signatureKeyRing;
+    }
+
+    public void setSignatureKeyRing(byte[] signatureKeyRing) {
+        this.signatureKeyRing = signatureKeyRing;
+    }
+
 }
