@@ -19,6 +19,7 @@ package org.apache.camel.component.file.remote;
 import java.util.List;
 
 import com.jcraft.jsch.ChannelSftp;
+import com.jcraft.jsch.SftpException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.file.GenericFile;
@@ -145,6 +146,17 @@ public class SftpConsumer extends RemoteFileConsumer<ChannelSftp.LsEntry> {
 
         log.trace("Done file: {} does not exist", doneFileName);
         return false;
+    }
+
+    @Override
+    protected boolean ignoreCannotRetrieveFile(String name, Exchange exchange, Exception cause) {
+        if (getEndpoint().getConfiguration().isIgnoreFileNotFoundOrPermissionError()) {
+            SftpException sftp = ObjectHelper.getException(SftpException.class, cause);
+            if (sftp != null) {
+                return sftp.id == ChannelSftp.SSH_FX_NO_SUCH_FILE || sftp.id == ChannelSftp.SSH_FX_PERMISSION_DENIED;
+            }
+        }
+        return super.ignoreCannotRetrieveFile(name, exchange, cause);
     }
 
     private RemoteFile<ChannelSftp.LsEntry> asRemoteFile(String absolutePath, ChannelSftp.LsEntry file) {

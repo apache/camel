@@ -297,9 +297,10 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
      *
      * @param name        the file name
      * @param exchange    the exchange
+     * @param cause       optional exception occurred during retrieving file
      * @return <tt>true</tt> to ignore, <tt>false</tt> is the default.
      */
-    protected boolean ignoreCannotRetrieveFile(String name, Exchange exchange) {
+    protected boolean ignoreCannotRetrieveFile(String name, Exchange exchange, Exception cause) {
         return false;
     }
 
@@ -355,10 +356,18 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
                 log.trace("Retrieving file: {} from: {}", name, endpoint);
     
                 // retrieve the file and check it was a success
-                boolean retrieved = operations.retrieveFile(name, exchange);
+                boolean retrieved;
+                Exception cause = null;
+                try {
+                    retrieved = operations.retrieveFile(name, exchange);
+                } catch (Exception e) {
+                    retrieved = false;
+                    cause = e;
+                }
+
                 if (!retrieved) {
-                    if (ignoreCannotRetrieveFile(name, exchange)) {
-                        log.trace("Cannot retrieve file {} maybe it does not exists. Ignorning.", name);
+                    if (ignoreCannotRetrieveFile(name, exchange, cause)) {
+                        log.trace("Cannot retrieve file {} maybe it does not exists. Ignoring.", name);
                         // remove file from the in progress list as we could not retrieve it, but should ignore
                         endpoint.getInProgressRepository().remove(absoluteFileName);
                         return false;
@@ -366,7 +375,11 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
                         // throw exception to handle the problem with retrieving the file
                         // then if the method return false or throws an exception is handled the same in here
                         // as in both cases an exception is being thrown
-                        throw new GenericFileOperationFailedException("Cannot retrieve file: " + file + " from: " + endpoint);
+                        if (cause != null && cause instanceof GenericFileOperationFailedException) {
+                            throw cause;
+                        } else {
+                            throw new GenericFileOperationFailedException("Cannot retrieve file: " + file + " from: " + endpoint, cause);
+                        }
                     }
                 }
     

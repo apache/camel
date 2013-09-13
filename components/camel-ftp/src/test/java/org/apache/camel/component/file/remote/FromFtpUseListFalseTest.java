@@ -31,7 +31,7 @@ public class FromFtpUseListFalseTest extends FtpServerTestSupport {
 
     private String getFtpUrl() {
         return "ftp://admin@localhost:" + getPort() + "/nolist/?password=admin"
-                + "&stepwise=false&useList=false&ignoreFileNotFound=true&fileName=report.txt&delete=true";
+                + "&stepwise=false&useList=false&ignoreFileNotFoundOrPermissionError=true&fileName=report.txt&delete=true";
     }
 
     @Override

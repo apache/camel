@@ -51,7 +51,7 @@ public abstract class RemoteFileConfiguration extends GenericFileConfiguration {
     private PathSeparator separator = PathSeparator.Auto;
     private boolean streamDownload;
     private boolean useList = true;
-    private boolean ignoreFileNotFound;
+    private boolean ignoreFileNotFoundOrPermissionError;
 
     public RemoteFileConfiguration() {
     }
@@ -292,18 +292,18 @@ public abstract class RemoteFileConfiguration extends GenericFileConfiguration {
         this.useList = useList;
     }
 
-    public boolean isIgnoreFileNotFound() {
-        return ignoreFileNotFound;
+    public boolean isIgnoreFileNotFoundOrPermissionError() {
+        return ignoreFileNotFoundOrPermissionError;
     }
 
     /**
-     * Whether to ignore when trying to download a file which does not exist.
+     * Whether to ignore when trying to download a file which does not exist or due to permission error.
      * <p/>
-     * By default when a file does not exists, then an exception is thrown.
+     * By default when a file does not exists or insufficient permission, then an exception is thrown.
      * Setting this option to <tt>true</tt> allows to ignore that instead.
      */
-    public void setIgnoreFileNotFound(boolean ignoreFileNotFound) {
-        this.ignoreFileNotFound = ignoreFileNotFound;
+    public void setIgnoreFileNotFoundOrPermissionError(boolean ignoreFileNotFoundOrPermissionError) {
+        this.ignoreFileNotFoundOrPermissionError = ignoreFileNotFoundOrPermissionError;
     }
 
     /**
