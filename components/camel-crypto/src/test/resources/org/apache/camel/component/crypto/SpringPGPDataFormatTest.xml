@@ -39,7 +39,36 @@
       <to uri="mock:unencrypted"/>
     </route>
     <!-- END SNIPPET: pgp-xml-basic -->
+    
+    <!-- START SNIPPET: pgp-xml-data-format-bean-with-keyring-bytearray -->
+    <route>
+      <from uri="direct:pgp-key-ring-byte-array"/>
+      <marshal ref="encryptBean"/>
+      <to uri="mock:encrypted"/>
+      <unmarshal ref="decryptBean"/>
+      <to uri="mock:unencrypted"/>
+    </route>
   </camelContext>
 
-
+   <bean id="encryptBean" class="org.apache.camel.converter.crypto.PGPDataFormat">
+      <property name="keyUserid" value="sdude@nowhere.net"/>  
+      <property name="encryptionKeyRing" ref="pubKeyRing"/>
+   </bean>
+   
+   <bean id="decryptBean" class="org.apache.camel.converter.crypto.PGPDataFormat">
+      <property name="keyUserid" value="sdude@nowhere.net"/>  
+      <property name="encryptionKeyRing" ref="secKeyRing"/>
+      <property name="password" value="sdude"/>
+   </bean>
+   
+   <!-- bean represents the publik key ring as byte array -->
+   <bean id="pubKeyRing"
+		class="org.apache.camel.converter.crypto.PGPDataFormatTest"
+		factory-method="getPublicKeyRing" />
+		
+	<!-- bean represents the secure key ring as byte array -->	
+   <bean id="secKeyRing"
+		class="org.apache.camel.converter.crypto.PGPDataFormatTest"
+		factory-method="getSecKeyRing" />
+    <!-- END SNIPPET:  pgp-xml-data-format-bean-with-keyring-bytearray -->
 </beans>
