@@ -44,14 +44,14 @@ public class AggregateGroupedExchangeSizePredicateTest extends ContextTestSuppor
         assertMockEndpointsSatisfied();
 
         Exchange out = result.getExchanges().get(0);
-        List<Exchange> grouped = out.getProperty(Exchange.GROUPED_EXCHANGE, List.class);
+        List<Exchange> grouped = out.getIn().getBody(List.class);
         assertEquals(3, grouped.size());
         assertEquals("100", grouped.get(0).getIn().getBody(String.class));
         assertEquals("150", grouped.get(1).getIn().getBody(String.class));
         assertEquals("130", grouped.get(2).getIn().getBody(String.class));
 
         out = result.getExchanges().get(1);
-        grouped = out.getProperty(Exchange.GROUPED_EXCHANGE, List.class);
+        grouped = out.getIn().getBody(List.class);
         assertEquals(2, grouped.size());
 
         assertEquals("200", grouped.get(0).getIn().getBody(String.class));

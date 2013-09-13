@@ -775,8 +775,7 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
 
     /**
      * Enables grouped exchanges, so the aggregator will group all aggregated exchanges into a single
-     * combined Exchange holding all the aggregated exchanges in a {@link java.util.List} as a exchange
-     * property with the key {@link org.apache.camel.Exchange#GROUPED_EXCHANGE}.
+     * combined Exchange holding all the aggregated exchanges in a {@link java.util.List}.
      *
      * @return the builder
      */

@@ -20,7 +20,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.impl.DefaultExchange;
 
 /**
  * Aggregate all exchanges into a {@link List} of values defined by the {@link #getValue(Exchange)} call.
@@ -101,10 +100,22 @@ public abstract class AbstractListAggregationStrategy<V> implements CompletionAw
     private List<V> getList(Exchange exchange) {
         List<V> list = exchange.getProperty(Exchange.GROUPED_EXCHANGE, List.class);
         if (list == null) {
-            list = new ArrayList<V>();
+            list = new GroupedExchangeList();
             exchange.setProperty(Exchange.GROUPED_EXCHANGE, list);
         }
         return list;
+    }
+
+    /**
+     * A list to contains grouped {@link Exchange}s.
+     */
+    private static final class GroupedExchangeList extends ArrayList {
+
+        @Override
+        public String toString() {
+            // lets override toString so we don't write data for all the Exchanges by default
+            return "List<Exchange>(" + size() + " elements)";
+        }
     }
 
 }

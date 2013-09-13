@@ -16,21 +16,40 @@
  */
 package org.apache.camel.processor.aggregate;
 
+import java.util.List;
+
 import org.apache.camel.Exchange;
 
 /**
  * Aggregate all exchanges into a single combined Exchange holding all the aggregated exchanges
- * in a {@link java.util.List} as a exchange property with the key
- * {@link org.apache.camel.Exchange#GROUPED_EXCHANGE}.
+ * in a {@link java.util.List<Exchange>} as the message body.
  *
  * @version 
  */
 public class GroupedExchangeAggregationStrategy extends AbstractListAggregationStrategy<Exchange> {
 
     @Override
-    public boolean isStoreAsBodyOnCompletion() {
-        // keep the list as a property to be compatible with old behavior
-        return false;
+    @SuppressWarnings("unchecked")
+    public void onCompletion(Exchange exchange) {
+        if (isStoreAsBodyOnCompletion()) {
+            // lets be backwards compatible
+            // TODO: Remove this method in Camel 3.0
+            List list = (List) exchange.getProperty(Exchange.GROUPED_EXCHANGE);
+            if (list != null) {
+                exchange.getIn().setBody(list);
+            }
+        }
+    }
+
+    @Override
+    public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
+        Exchange answer = super.aggregate(oldExchange, newExchange);
+        if (oldExchange == null) {
+            // for the first time we must do a copy as the answer, so the outgoing
+            // exchange is not one of the grouped exchanges, as that causes a endless circular reference
+            answer = answer.copy();
+        }
+        return answer;
     }
 
     @Override

@@ -26,7 +26,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 /**
  * Unit test for aggregate grouped exchanges.
  */
-public class AggregateGroupedExchangeTest extends ContextTestSupport {
+public class AggregateGroupedExchangeBackwardsCompTest extends ContextTestSupport {
 
     @SuppressWarnings("unchecked")
     public void testGrouped() throws Exception {
@@ -46,7 +46,7 @@ public class AggregateGroupedExchangeTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
 
         Exchange out = result.getExchanges().get(0);
-        List<Exchange> grouped = out.getIn().getBody(List.class);
+        List<Exchange> grouped = out.getProperty(Exchange.GROUPED_EXCHANGE, List.class);
 
         assertEquals(5, grouped.size());
 

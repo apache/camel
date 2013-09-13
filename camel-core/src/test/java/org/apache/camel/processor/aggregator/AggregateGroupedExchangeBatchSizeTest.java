@@ -44,7 +44,7 @@ public class AggregateGroupedExchangeBatchSizeTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
 
         Exchange out = result.getExchanges().get(0);
-        List<Exchange> grouped = out.getProperty(Exchange.GROUPED_EXCHANGE, List.class);
+        List<Exchange> grouped = out.getIn().getBody(List.class);
 
         assertTrue("Should be either 2 or 4, was " + grouped.size(), grouped.size() == 2 || grouped.size() == 4);
 
@@ -57,7 +57,7 @@ public class AggregateGroupedExchangeBatchSizeTest extends ContextTestSupport {
         if (result.getReceivedCounter() == 2) {
 
             out = result.getExchanges().get(1);
-            grouped = out.getProperty(Exchange.GROUPED_EXCHANGE, List.class);
+            grouped = out.getIn().getBody(List.class);
 
             assertEquals(2, grouped.size());
 
