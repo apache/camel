@@ -31,27 +31,11 @@ public class CamelItemListener extends CamelListener implements ItemListener<Obj
         super(consumer, cacheName);
     }
 
-    /**
-     * @deprecated is using the Hazelcast 1.x API
-     */
-    @Deprecated
-    public void itemAdded(Object item) {
-        this.sendExchange(HazelcastConstants.ADDED, null, item);
-    }
-
-    /**
-     * @deprecated is using the Hazelcast 1.x API
-     */
-    @Deprecated
-    public void itemRemoved(Object item) {
-        this.sendExchange(HazelcastConstants.REMOVED, null, item);
-    }
-
     public void itemAdded(ItemEvent<Object> itemEvent) {
-        itemAdded(itemEvent.getItem());
+        this.sendExchange(HazelcastConstants.ADDED, null, itemEvent);
     }
 
     public void itemRemoved(ItemEvent<Object> itemEvent) {
-        itemRemoved(itemEvent.getItem());
+        this.sendExchange(HazelcastConstants.REMOVED, null, itemEvent);
     }
 }
