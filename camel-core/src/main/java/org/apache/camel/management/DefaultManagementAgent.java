@@ -86,8 +86,6 @@ public class DefaultManagementAgent extends ServiceSupport implements Management
     }
 
     protected void finalizeSettings() {
-        // TODO: System properties ought to take precedence, over configured options
-
         if (registryPort == null) {
             registryPort = Integer.getInteger(JmxSystemPropertyKeys.REGISTRY_PORT, DEFAULT_REGISTRY_PORT);
         }
@@ -113,7 +111,6 @@ public class DefaultManagementAgent extends ServiceSupport implements Management
         if (System.getProperty(JmxSystemPropertyKeys.USE_PLATFORM_MBS) != null) {
             usePlatformMBeanServer = Boolean.getBoolean(JmxSystemPropertyKeys.USE_PLATFORM_MBS);
         }
-
         if (System.getProperty(JmxSystemPropertyKeys.REGISTER_ALWAYS) != null) {
             registerAlways = Boolean.getBoolean(JmxSystemPropertyKeys.REGISTER_ALWAYS);
         }
@@ -122,6 +119,9 @@ public class DefaultManagementAgent extends ServiceSupport implements Management
         }
         if (System.getProperty(JmxSystemPropertyKeys.MASK) != null) {
             mask = Boolean.getBoolean(JmxSystemPropertyKeys.MASK);
+        }
+        if (System.getProperty(JmxSystemPropertyKeys.CREATE_CONNECTOR) != null) {
+            createConnector = Boolean.getBoolean(JmxSystemPropertyKeys.CREATE_CONNECTOR);
         }
     }
 
