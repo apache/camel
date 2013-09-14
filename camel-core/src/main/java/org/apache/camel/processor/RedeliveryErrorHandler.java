@@ -910,8 +910,9 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
             // and put failure endpoint back as well
             exchange.setProperty(Exchange.FAILURE_ENDPOINT, exchange.getProperty(Exchange.TO_ENDPOINT));
             // and store the route id so we know in which route we failed
-            if (exchange.getUnitOfWork().getRouteContext() != null) {
-                exchange.setProperty(Exchange.FAILURE_ROUTE_ID, exchange.getUnitOfWork().getRouteContext().getRoute().getId());
+            UnitOfWork uow = exchange.getUnitOfWork();
+            if (uow != null && uow.getRouteContext() != null) {
+                exchange.setProperty(Exchange.FAILURE_ROUTE_ID, uow.getRouteContext().getRoute().getId());
             }
         }
     }
