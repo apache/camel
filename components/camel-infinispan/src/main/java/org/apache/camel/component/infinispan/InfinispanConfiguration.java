@@ -8,7 +8,7 @@ import org.infinispan.commons.api.BasicCacheContainer;
 
 public class InfinispanConfiguration {
     private BasicCacheContainer cacheContainer;
-    private String caseName;
+    private String cacheName;
     private String host;
     private String command;
     private boolean sync = true;
@@ -38,12 +38,12 @@ public class InfinispanConfiguration {
         this.cacheContainer = cacheContainer;
     }
 
-    public String getCasheName() {
-        return caseName;
+    public String getCacheName() {
+        return cacheName;
     }
 
-    public void setCaseName(String caseName) {
-        this.caseName = caseName;
+    public void setCacheName(String cacheName) {
+        this.cacheName = cacheName;
     }
 
     public boolean isSync() {

@@ -45,7 +45,7 @@ public class InfinispanProducer extends DefaultProducer {
     private BasicCache getCache(Exchange exchange) {
         String cacheName = exchange.getIn().getHeader(InfinispanConstants.CACHE_NAME, String.class);
         if (cacheName == null) {
-            cacheName = configuration.getCasheName();
+            cacheName = configuration.getCacheName();
         }
         LOGGER.trace("Cache[{}]", cacheName);
         return cacheName != null ? cacheContainer.getCache(cacheName) : cacheContainer.getCache();

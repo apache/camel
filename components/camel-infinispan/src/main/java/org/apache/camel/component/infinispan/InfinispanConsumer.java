@@ -43,8 +43,8 @@ public class InfinispanConsumer extends DefaultConsumer {
         if (configuration.getCacheContainer() instanceof DefaultCacheManager) {
             defaultCacheManager = (DefaultCacheManager) configuration.getCacheContainer();
             Cache<Object, Object> cache;
-            if (configuration.getCasheName() != null) {
-                cache = defaultCacheManager.getCache(configuration.getCasheName());
+            if (configuration.getCacheName() != null) {
+                cache = defaultCacheManager.getCache(configuration.getCacheName());
             } else {
                 cache = defaultCacheManager.getCache();
             }
