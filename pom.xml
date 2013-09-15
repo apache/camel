@@ -535,6 +535,7 @@
             <exclude>**/.settings/**/*</exclude>
             <exclude>**/*.iml</exclude>
             <exclude>.idea/**/*</exclude>
+            <exclude>**/examples/*/src/**/data/**/*.xml</exclude>
           </excludes>
         </configuration>
       </plugin>
