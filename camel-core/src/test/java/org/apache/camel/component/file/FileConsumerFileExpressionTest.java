@@ -22,6 +22,8 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
 
+import static org.apache.camel.language.simple.SimpleLanguage.simple;
+
 /**
  * Unit test for expression option for file consumer.
  */
@@ -70,7 +72,7 @@ public class FileConsumerFileExpressionTest extends ContextTestSupport {
     public void testConsumeFileBasedOnDatePattern() throws Exception {
         template.sendBodyAndHeader("file://target/filelanguage/date", "Bye World", Exchange.FILE_NAME, "myfile-20081128.txt");
         template.sendBodyAndHeader("file://target/filelanguage/date", "Hello World", Exchange.FILE_NAME, "myfile-20081129.txt");
-        template.sendBodyAndHeader("file://target/filelanguage/date", "Goodday World", Exchange.FILE_NAME, "myfile-${date:now:yyyyMMdd}.txt");
+        template.sendBodyAndHeader("file://target/filelanguage/date", "Goodday World", Exchange.FILE_NAME, simple("myfile-${date:now:yyyyMMdd}.txt"));
 
         context.addRoutes(new RouteBuilder() {
             @Override

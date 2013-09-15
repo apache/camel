@@ -256,23 +256,25 @@ public class GenericFileProducer<T> extends DefaultProducer {
     public String createFileName(Exchange exchange) {
         String answer;
 
-        String name = exchange.getIn().getHeader(Exchange.FILE_NAME, String.class);
-        String consumed = exchange.getIn().getHeader(Exchange.FILE_NAME_CONSUMED, String.class);
+        Object value = exchange.getIn().getHeader(Exchange.FILE_NAME);
+
+        if (value != null && value instanceof String && StringHelper.hasStartToken((String) value, "simple")) {
+            log.warn("Simple expression: {} detected in header: {} of type String. This feature has been removed (see CAMEL-6748).", value, Exchange.FILE_NAME);
+        }
 
         // expression support
         Expression expression = endpoint.getFileName();
-        if (name != null && !name.equals(consumed)) {
-            // the header name can be an expression too, that should override
-            // whatever configured on the endpoint
-            if (StringHelper.hasStartToken(name, "simple")) {
-                log.trace("{} contains a Simple expression: {}", Exchange.FILE_NAME, name);
-                Language language = getEndpoint().getCamelContext().resolveLanguage("file");
-                expression = language.createExpression(name);
-            }
+        if (value != null && value instanceof Expression) {
+            expression = (Expression) value;
         }
+
+        // evaluate the name as a String from the value
+        String name;
         if (expression != null) {
             log.trace("Filename evaluated as expression: {}", expression);
             name = expression.evaluate(exchange, String.class);
+        } else {
+            name = exchange.getContext().getTypeConverter().convertTo(String.class, exchange, value);
         }
 
         // flatten name

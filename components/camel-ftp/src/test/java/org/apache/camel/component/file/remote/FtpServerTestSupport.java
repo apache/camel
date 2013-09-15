@@ -32,6 +32,8 @@ import org.apache.ftpserver.usermanager.PropertiesUserManagerFactory;
 import org.junit.After;
 import org.junit.Before;
 
+import static org.apache.camel.language.simple.SimpleLanguage.simple;
+
 /**
  * Base class for unit testing using a FTPServer
  */
@@ -127,7 +129,7 @@ public abstract class FtpServerTestSupport extends BaseServerTestSupport {
     }
     
     public void sendFile(String url, Object body, String fileName) {
-        template.sendBodyAndHeader(url, body, Exchange.FILE_NAME, fileName);
+        template.sendBodyAndHeader(url, body, Exchange.FILE_NAME, simple(fileName));
     }
     
 }

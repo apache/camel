@@ -25,6 +25,8 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.JndiRegistry;
 
+import static org.apache.camel.language.simple.SimpleLanguage.simple;
+
 /**
  * Unit test for expression option for file producer.
  */
@@ -43,11 +45,9 @@ public class FileProducerExpressionTest extends ContextTestSupport {
         return jndi;
     }
 
-    public void testProduceBeanByHeader() throws Exception {
-        template.sendBodyAndHeader("file://target/filelanguage", "Hello World",
-            Exchange.FILE_NAME, "${bean:myguidgenerator}.bak");
-
-        assertFileExists("target/filelanguage/123.bak");
+    public void testProducerFileNameHeaderNotEvaluated() {
+        template.sendBodyAndHeader("file://target/filelanguage", "Hello World", Exchange.FILE_NAME, "$simple{myfile-${date:now:yyyyMMdd}}.txt");
+        assertFileExists("target/filelanguage/$simple{myfile-${date:now:yyyyMMdd}}.txt");
     }
 
     public void testProduceBeanByExpression() throws Exception {
@@ -58,7 +58,7 @@ public class FileProducerExpressionTest extends ContextTestSupport {
 
     public void testProducerDateByHeader() throws Exception {
         template.sendBodyAndHeader("file://target/filelanguage", "Hello World",
-            Exchange.FILE_NAME, "myfile-${date:now:yyyyMMdd}.txt");
+            Exchange.FILE_NAME, simple("myfile-${date:now:yyyyMMdd}.txt"));
 
         String date = new SimpleDateFormat("yyyyMMdd").format(new Date());
         assertFileExists("target/filelanguage/myfile-" + date + ".txt");
