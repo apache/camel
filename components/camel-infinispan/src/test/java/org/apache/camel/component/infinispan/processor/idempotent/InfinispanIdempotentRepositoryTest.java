@@ -29,10 +29,12 @@ import static org.jgroups.util.Util.assertFalse;
 import static org.jgroups.util.Util.assertTrue;
 
 public class InfinispanIdempotentRepositoryTest {
+
+    public static final GlobalConfiguration GLOBAL_CONFIGURATION = new GlobalConfigurationBuilder().globalJmxStatistics().allowDuplicateDomains(true).build();
+
     protected BasicCacheContainer basicCacheContainer;
     protected InfinispanIdempotentRepository idempotentRepository;
     protected String cacheName = "test";
-    public static final GlobalConfiguration GLOBAL_CONFIGURATION = new GlobalConfigurationBuilder().globalJmxStatistics().allowDuplicateDomains(true).build();
 
     @Before
     public void setUp() throws Exception {

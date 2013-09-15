@@ -33,7 +33,7 @@ import org.slf4j.LoggerFactory;
 
 @Listener(sync = true)
 public class InfinispanSyncEventListener {
-    private final transient Logger LOGGER = LoggerFactory.getLogger(this.getClass());
+    private final transient Logger logger = LoggerFactory.getLogger(this.getClass());
     private final InfinispanConsumer infinispanConsumer;
     private final Set<String> eventTypes;
 
@@ -51,7 +51,7 @@ public class InfinispanSyncEventListener {
     @CacheEntryRemoved
     @CacheEntryVisited
     public void processEvent(CacheEntryEvent event) {
-        LOGGER.trace("Received CacheEntryEvent [{}]", event);
+        logger.trace("Received CacheEntryEvent [{}]", event);
 
         if (eventTypes == null || eventTypes.isEmpty() || eventTypes.contains(event.getType().toString())) {
             infinispanConsumer.processEvent(event.getType().toString(), event.isPre(), event.getCache().getName(), event.getKey());
