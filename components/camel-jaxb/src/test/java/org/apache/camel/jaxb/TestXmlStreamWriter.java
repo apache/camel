@@ -16,11 +16,11 @@
  */
 package org.apache.camel.jaxb;
 
-import org.apache.camel.converter.jaxb.JaxbXmlStreamWriterWrapper;
-
 import javax.xml.namespace.NamespaceContext;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamWriter;
+
+import org.apache.camel.converter.jaxb.JaxbXmlStreamWriterWrapper;
 
 /**
  * @author <a href="http://christianposta.com/blog">Christian Posta</a>
@@ -31,17 +31,17 @@ public class TestXmlStreamWriter implements JaxbXmlStreamWriterWrapper {
         return new XMLStreamWriter() {
             @Override
             public void writeStartElement(String s) throws XMLStreamException {
-                writer.writeStartElement(s+"-Foo");
+                writer.writeStartElement(s + "-Foo");
             }
 
             @Override
             public void writeStartElement(String s, String s2) throws XMLStreamException {
-                writer.writeStartElement(s, s2+"-Foo");
+                writer.writeStartElement(s, s2 + "-Foo");
             }
 
             @Override
             public void writeStartElement(String s, String s2, String s3) throws XMLStreamException {
-                writer.writeStartElement(s, s2+"-Foo", s3);
+                writer.writeStartElement(s, s2 + "-Foo", s3);
             }
 
             @Override
@@ -161,7 +161,7 @@ public class TestXmlStreamWriter implements JaxbXmlStreamWriterWrapper {
 
             @Override
             public String getPrefix(String s) throws XMLStreamException {
-               return writer.getPrefix(s);
+                return writer.getPrefix(s);
             }
 
             @Override
