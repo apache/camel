@@ -193,6 +193,7 @@
                 <exclude>**/avro/**/*.avpr</exclude>
                 <exclude>**/OSGI-INF/bundle.info</exclude>
                 <exclude>**/test_rsa*</exclude>
+                <exclude>**/examples/*/src/**/data/**/*.xml</exclude>
               </excludes>
             </configuration>
           </plugin>
