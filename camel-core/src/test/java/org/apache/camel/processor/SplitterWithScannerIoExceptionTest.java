@@ -22,6 +22,10 @@ import org.apache.camel.builder.RouteBuilder;
 public class SplitterWithScannerIoExceptionTest extends ContextTestSupport {
 
     public void testSplitterStreamingWithError() throws Exception {
+        if (isJavaVersion("1.7")) {
+            return;
+        }
+
         getMockEndpoint("mock:a").expectedMessageCount(252);
         getMockEndpoint("mock:b").expectedMessageCount(0);
         getMockEndpoint("mock:b").setSleepForEmptyTest(3000);
