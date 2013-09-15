@@ -23,8 +23,15 @@
       %5p %c{1} - %m%n"/>
     </layout>
   </appender>
+  <appender name="file" class="org.apache.log4j.FileAppender">
+    <param name="file" value="target/camel-amqp-test.log"/>
+    <layout class="org.apache.log4j.PatternLayout">
+      <param name="ConversionPattern" value="%d{ABSOLUTE}
+      %5p %c{1} - %m%n"/>
+    </layout>
+  </appender>
   <root>
     <priority value="info"></priority>
-    <appender-ref ref="stdout"/>
+    <appender-ref ref="file"/>
   </root>
 </log4j:configuration>

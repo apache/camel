@@ -1,0 +1,27 @@
+{
+  "name": "Broker",
+  "defaultVirtualHost": "default",
+  "modelVersion": "1.0",
+  "storeVersion": 1,
+  "authenticationproviders": [
+    {
+      "name": "passwordFile",
+      "path": "src/test/resources/passwd",
+      "type": "PlainPasswordFile"
+    }
+  ],
+  "ports": [
+    {
+      "authenticationProvider": "passwordFile",
+      "name": "AMQP",
+      "port": "5672"
+    }
+  ],
+  "virtualhosts": [
+    {
+      "name": "test",
+      "type" : "VirtualHost",
+      "configPath": "src/test/resources/virtualhosts.xml"
+    }
+  ]
+}

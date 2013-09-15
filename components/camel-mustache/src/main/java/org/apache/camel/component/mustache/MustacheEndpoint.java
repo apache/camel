@@ -116,7 +116,12 @@ public class MustacheEndpoint extends ResourceEndpoint {
      * @return Template
      */
     private Mustache createMustache(Reader resourceReader, String resourceUri) throws IOException {
+        ClassLoader oldcl = Thread.currentThread().getContextClassLoader();
         try {
+            ClassLoader apcl = getCamelContext().getApplicationContextClassLoader();
+            if (apcl != null) {
+                Thread.currentThread().setContextClassLoader(apcl);
+            }
             Mustache newMustache;
             if (startDelimiter != null && endDelimiter != null && mustacheFactory instanceof DefaultMustacheFactory) {
                 DefaultMustacheFactory defaultMustacheFactory = (DefaultMustacheFactory) mustacheFactory;
@@ -127,6 +132,9 @@ public class MustacheEndpoint extends ResourceEndpoint {
             return newMustache;
         } finally {
             resourceReader.close();
+            if (oldcl != null) {
+                Thread.currentThread().setContextClassLoader(oldcl);
+            }
         }
     }
 
@@ -135,6 +143,17 @@ public class MustacheEndpoint extends ResourceEndpoint {
             mustache = createMustache(getResourceAsReader(), getResourceUri());
         }
         return mustache;
+    }
+
+    @Override
+    public String getResourceUri() {
+        // do not have leading slash as mustache cannot find the resource, as that entails classpath root
+        String uri = super.getResourceUri();
+        if (uri != null && (uri.startsWith("/") || uri.startsWith("\\"))) {
+            return uri.substring(1);
+        } else {
+            return uri;
+        }
     }
 
     public MustacheFactory getMustacheFactory() {
