@@ -111,9 +111,9 @@ public class ReactiveCamel {
     @SuppressWarnings("unchecked")
     protected <T> Observable<T> createEndpointObservable(final Endpoint endpoint,
                                                          final Func1<Exchange, T> converter) {
-        Func1<Observer<Message>, Subscription> func = new Func1<Observer<Message>, Subscription>() {
+        Observable.OnSubscribeFunc<Message> func = new Observable.OnSubscribeFunc<Message>() {
             @Override
-            public Subscription call(Observer<Message> observer) {
+            public Subscription onSubscribe(Observer<? super Message> observer) {
                 return new EndpointSubscription(endpoint, observer, converter);
             }
         };

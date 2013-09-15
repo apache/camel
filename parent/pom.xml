@@ -334,7 +334,7 @@
     <rhino-version>1.7R2</rhino-version>
     <rome-bundle-version>1.0_3</rome-bundle-version>
     <rome-version>1.0</rome-version>
-    <rxjava-version>0.11.3</rxjava-version>
+    <rxjava-version>0.13.1</rxjava-version>
     <saaj-impl-version>1.3.2_2</saaj-impl-version>
     <saxon-bundle-version>9.5.0.2_1</saxon-bundle-version>
     <saxon-version>9.5.0.2</saxon-version>
@@ -360,7 +360,7 @@
     <spring-castor-bundle-version>1.2.0</spring-castor-bundle-version>
     <spring-data-commons-version>1.5.0.RELEASE</spring-data-commons-version>
     <spring-data-redis-version>1.0.4.RELEASE</spring-data-redis-version>
-    <spring-integration-version>2.2.4.RELEASE</spring-integration-version>
+    <spring-integration-version>2.2.5.RELEASE</spring-integration-version>
     <spring-javaconfig-version>1.0.0-20090215</spring-javaconfig-version>
     <spring-ldap-version>1.3.1.RELEASE</spring-ldap-version>
     <spring-ldap-bundle-version>1.3.1.RELEASE_2</spring-ldap-bundle-version>
