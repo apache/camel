@@ -19,9 +19,6 @@ package org.apache.camel.rx.support;
 import org.apache.camel.Endpoint;
 
 import rx.Observable;
-import rx.Observer;
-import rx.Subscription;
-import rx.util.functions.Func1;
 
 /**
  * An {@link Observable} Camel {@link Endpoint}
@@ -29,7 +26,7 @@ import rx.util.functions.Func1;
 public class EndpointObservable<T> extends Observable<T> {
     private final Endpoint endpoint;
 
-    public EndpointObservable(Endpoint endpoint, Func1<Observer<T>, Subscription> func) {
+    public EndpointObservable(Endpoint endpoint, OnSubscribeFunc<T> func) {
         super(func);
         this.endpoint = endpoint;
     }
