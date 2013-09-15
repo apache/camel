@@ -286,30 +286,41 @@ public class GenericFileProducer<T> extends DefaultProducer {
         String answer;
 
         // overrule takes precedence
-        String overrule = exchange.getIn().getHeader(Exchange.OVERRULE_FILE_NAME, String.class);
-        String consumed = exchange.getIn().getHeader(Exchange.FILE_NAME_CONSUMED, String.class);
-        String name = overrule == null ? exchange.getIn().getHeader(Exchange.FILE_NAME, String.class) : overrule;
+        Object value;
+
+        Object overrule = exchange.getIn().getHeader(Exchange.OVERRULE_FILE_NAME);
+        if (overrule != null) {
+            if (overrule instanceof Expression) {
+                value = overrule;
+            } else {
+                value = exchange.getContext().getTypeConverter().convertTo(String.class, exchange, overrule);
+            }
+        } else {
+            value = exchange.getIn().getHeader(Exchange.FILE_NAME);
+        }
 
         // if we have an overrule then override the existing header to use the overrule computed name from this point forward
         if (overrule != null) {
-            exchange.getIn().setHeader(Exchange.FILE_NAME, name);
+            exchange.getIn().setHeader(Exchange.FILE_NAME, value);
+        }
+
+        if (value != null && value instanceof String && StringHelper.hasStartToken((String) value, "simple")) {
+            log.warn("Simple expression: {} detected in header: {} of type String. This feature has been removed (see CAMEL-6748).", value, Exchange.FILE_NAME);
         }
 
         // expression support
         Expression expression = endpoint.getFileName();
-
-        if (name != null && !name.equals(consumed)) {
-            // the header name can be an expression too, that should override
-            // whatever configured on the endpoint
-            if (StringHelper.hasStartToken(name, "simple")) {
-                log.trace("{} contains a Simple expression: {}", Exchange.FILE_NAME, name);
-                Language language = getEndpoint().getCamelContext().resolveLanguage("file");
-                expression = language.createExpression(name);
-            }
+        if (value != null && value instanceof Expression) {
+            expression = (Expression) value;
         }
+
+        // evaluate the name as a String from the value
+        String name;
         if (expression != null) {
             log.trace("Filename evaluated as expression: {}", expression);
             name = expression.evaluate(exchange, String.class);
+        } else {
+            name = exchange.getContext().getTypeConverter().convertTo(String.class, exchange, value);
         }
 
         // flatten name
