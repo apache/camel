@@ -52,11 +52,12 @@ import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
 import javax.xml.xpath.XPathFactory;
 
-import org.apache.camel.util.IOHelper;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
+
+import org.apache.camel.util.IOHelper;
 
 /**
  * Helps to construct the transformations and the canonicalization methods for
@@ -331,10 +332,10 @@ public final class XmlSignatureHelper {
         if (is == null) {
             throw new IllegalStateException(String.format("XSL file %s not found", path));
         }
-        try{
-        	return getXslTranform(is);
-        }finally{
-        	IOHelper.close(is);
+        try {
+            return getXslTranform(is);
+        } finally {
+            IOHelper.close(is);
         }
     }
 
