@@ -53,8 +53,9 @@ public class AMQPRouteTest extends CamelTestSupport {
     @Before
     public void setUp() throws Exception {
         BrokerOptions options = new BrokerOptions();
-        options.setConfigFile("src/test/resources/config.xml");
-        options.setLogConfigFile("src/test/resources/log4j.xml");
+        options.setConfigurationStoreType("memory");
+        options.setInitialConfigurationLocation("src/test/resources/config.json");
+        options.setLogConfigFileLocation("src/test/resources/log4j.xml");
 
         broker = new Broker();
         broker.startup(options);
@@ -65,8 +66,8 @@ public class AMQPRouteTest extends CamelTestSupport {
 
     @Override
     public void tearDown() throws Exception {
-        broker.shutdown();
         super.tearDown();
+        broker.shutdown();
     }
 
     protected CamelContext createCamelContext() throws Exception {
@@ -78,7 +79,9 @@ public class AMQPRouteTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("amqp:queue:ping").to("mock:result");
+                from("amqp:queue:ping")
+                    .to("log:routing")
+                    .to("mock:result");
             }
         };
     }
