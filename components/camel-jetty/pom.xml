@@ -46,25 +46,30 @@
         </dependency>
         <dependency>
             <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>geronimo-servlet_2.5_spec</artifactId>
+            <artifactId>geronimo-servlet_3.0_spec</artifactId>
         </dependency>
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-server</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.eclipse.jetty</groupId>
-            <artifactId>jetty-security</artifactId>
+            <exclusions>
+               <exclusion>
+                   <groupId>javax.servlet</groupId>
+                   <artifactId>servlet-api</artifactId>
+               </exclusion>
+               <exclusion>
+                   <groupId>org.eclipse.jetty.orbit</groupId>
+                   <artifactId>javax.servlet</artifactId>
+               </exclusion>
+            </exclusions>
         </dependency>
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-servlet</artifactId>
-            <exclusions>
-               <exclusion>
-      	           <groupId>javax.servlet</groupId>
-                    <artifactId>servlet-api</artifactId>
-               </exclusion>
-            </exclusions>
+            <version>${jetty-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>org.eclipse.jetty</groupId>
+            <artifactId>jetty-security</artifactId>
         </dependency>
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
