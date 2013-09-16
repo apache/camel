@@ -27,6 +27,11 @@ import org.apache.camel.builder.RouteBuilder;
 public class ManagedInterceptTest extends ManagementTestSupport {
 
     public void testIntercept() throws Exception {
+        // JMX tests dont work well on AIX CI servers (hangs them)
+        if (isPlatform("aix")) {
+            return;
+        }
+
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
         getMockEndpoint("mock:intercept").expectedBodiesReceived("Hello World", "Hello World");
 

@@ -41,6 +41,11 @@ public class ManagedFileIdempotentConsumerTest extends ManagementTestSupport {
     private IdempotentRepository<String> repo;
 
     public void testDuplicateMessagesAreFilteredOut() throws Exception {
+        // JMX tests dont work well on AIX CI servers (hangs them)
+        if (isPlatform("aix")) {
+            return;
+        }
+
         MBeanServer mbeanServer = getMBeanServer();
 
         // services

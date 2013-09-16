@@ -27,6 +27,11 @@ import org.apache.camel.builder.RouteBuilder;
 public class ManagedSedaEndpointTest extends ManagementTestSupport {
 
     public void testSedaEndpoint() throws Exception {
+        // JMX tests dont work well on AIX CI servers (hangs them)
+        if (isPlatform("aix")) {
+            return;
+        }
+
         getMockEndpoint("mock:result").expectedMessageCount(2);
 
         template.sendBody("seda:start", "Hello World");

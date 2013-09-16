@@ -44,6 +44,11 @@ public class ManagedResourceTest extends ManagementTestSupport {
 
     @Test
     public void testManagedResource() throws Exception {
+        // JMX tests dont work well on AIX CI servers (hangs them)
+        if (isPlatform("aix")) {
+            return;
+        }
+
         final ManagementAgent managementAgent = context.getManagementStrategy().getManagementAgent();
         TestCase.assertNotNull(managementAgent);
 

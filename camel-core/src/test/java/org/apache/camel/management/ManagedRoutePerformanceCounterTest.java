@@ -28,6 +28,11 @@ import org.apache.camel.builder.RouteBuilder;
 public class ManagedRoutePerformanceCounterTest extends ManagementTestSupport {
 
     public void testPerformanceCounterStats() throws Exception {
+        // JMX tests dont work well on AIX CI servers (hangs them)
+        if (isPlatform("aix")) {
+            return;
+        }
+
         // get the stats for the route
         MBeanServer mbeanServer = getMBeanServer();
         ObjectName on = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=routes,name=\"route1\"");

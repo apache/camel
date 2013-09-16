@@ -27,6 +27,11 @@ import org.apache.camel.builder.RouteBuilder;
 public class ManagedUnregisterRouteTest extends ManagementTestSupport {
 
     public void testUnregisterRoute() throws Exception {
+        // JMX tests dont work well on AIX CI servers (hangs them)
+        if (isPlatform("aix")) {
+            return;
+        }
+
         MBeanServer mbeanServer = getMBeanServer();
 
         ObjectName on = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=routes,name=\"route1\"");

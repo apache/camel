@@ -29,6 +29,11 @@ import org.apache.camel.builder.RouteBuilder;
 public class ManagedErrorHandlerTest extends ManagementTestSupport {
 
     public void testManagedErrorHandler() throws Exception {
+        // JMX tests dont work well on AIX CI servers (hangs them)
+        if (isPlatform("aix")) {
+            return;
+        }
+
         MBeanServer mbeanServer = getMBeanServer();
 
         Set<ObjectName> set = mbeanServer.queryNames(new ObjectName("*:type=errorhandlers,*"), null);

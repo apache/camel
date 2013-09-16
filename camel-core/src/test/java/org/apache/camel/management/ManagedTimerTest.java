@@ -30,6 +30,11 @@ import org.apache.camel.component.mock.MockEndpoint;
 public class ManagedTimerTest extends ManagementTestSupport {
 
     public void testTimer() throws Exception {
+        // JMX tests dont work well on AIX CI servers (hangs them)
+        if (isPlatform("aix")) {
+            return;
+        }
+
         MBeanServer mbeanServer = getMBeanServer();
 
         ObjectName name = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=endpoints,name=\"timer://foo\\?delay=5000&period=8000\"");

@@ -27,6 +27,11 @@ import org.apache.camel.builder.RouteBuilder;
 public class ManagedBrowsableEndpointEmptyTest extends ManagementTestSupport {
 
     public void testBrowseableEndpointEmpty() throws Exception {
+        // JMX tests dont work well on AIX CI servers (hangs them)
+        if (isPlatform("aix")) {
+            return;
+        }
+
         MBeanServer mbeanServer = getMBeanServer();
         ObjectName name = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=endpoints,name=\"mock://result\"");
 

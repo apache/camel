@@ -36,6 +36,11 @@ public class ManagedCustomPolicyTest extends ManagementTestSupport {
     private final AtomicInteger counter = new AtomicInteger();
 
     public void testPolicy() throws Exception {
+        // JMX tests dont work well on AIX CI servers (hangs them)
+        if (isPlatform("aix")) {
+            return;
+        }
+
         getMockEndpoint("mock:result").expectedMessageCount(1);
         template.sendBody("direct:start", "Hello World");
         assertMockEndpointsSatisfied();

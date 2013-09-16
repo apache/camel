@@ -65,6 +65,11 @@ public class ManagedServiceUrlPathTest extends ManagementTestSupport {
     }
 
     public void testConnectToJmx() throws Exception {
+        // JMX tests dont work well on AIX CI servers (hangs them)
+        if (isPlatform("aix")) {
+            return;
+        }
+
         clientConnector = JMXConnectorFactory.connect(new JMXServiceURL(JMXSERVICEURL), null);
         MBeanServerConnection mbeanServer = clientConnector.getMBeanServerConnection();
 

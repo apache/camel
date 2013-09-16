@@ -41,6 +41,11 @@ public class ManagedDualCamelContextTest extends TestSupport {
     }
     
     public void testDualCamelContext() throws Exception {
+        // JMX tests dont work well on AIX CI servers (hangs them)
+        if (isPlatform("aix")) {
+            return;
+        }
+
         CamelContext camel1 = createCamelContext();
         camel1.start();
 

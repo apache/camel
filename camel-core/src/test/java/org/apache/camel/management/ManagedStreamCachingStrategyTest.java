@@ -34,6 +34,11 @@ import static org.apache.camel.util.FileUtil.normalizePath;
 public class ManagedStreamCachingStrategyTest extends ManagementTestSupport {
 
     public void testStreamCachingStrategy() throws Exception {
+        // JMX tests dont work well on AIX CI servers (hangs them)
+        if (isPlatform("aix")) {
+            return;
+        }
+
         MBeanServer mbeanServer = getMBeanServer();
 
         ObjectName on = ObjectName.getInstance("org.apache.camel:context=localhost/myCamel,type=services,*");

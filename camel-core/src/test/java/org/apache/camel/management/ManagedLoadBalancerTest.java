@@ -27,6 +27,11 @@ import org.apache.camel.builder.RouteBuilder;
 public class ManagedLoadBalancerTest extends ManagementTestSupport {
 
     public void testLoadBalancer() throws Exception {
+        // JMX tests dont work well on AIX CI servers (hangs them)
+        if (isPlatform("aix")) {
+            return;
+        }
+
         getMockEndpoint("mock:a").expectedBodiesReceived("Hello World", "Hi World");
         getMockEndpoint("mock:b").expectedBodiesReceived("Bye World");
 

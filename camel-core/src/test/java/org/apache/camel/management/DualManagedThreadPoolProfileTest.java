@@ -29,6 +29,11 @@ import org.apache.camel.spi.ThreadPoolProfile;
 public class DualManagedThreadPoolProfileTest extends ManagementTestSupport {
 
     public void testManagedThreadPool() throws Exception {
+        // JMX tests dont work well on AIX CI servers (hangs them)
+        if (isPlatform("aix")) {
+            return;
+        }
+
         MBeanServer mbeanServer = getMBeanServer();
 
         ObjectName on = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=threadpools,name=\"threads1(threads)\"");

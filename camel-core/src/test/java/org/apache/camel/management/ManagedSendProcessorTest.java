@@ -29,6 +29,11 @@ import org.apache.camel.component.mock.MockEndpoint;
 public class ManagedSendProcessorTest extends ManagementTestSupport {
 
     public void testManageSendProcessor() throws Exception {
+        // JMX tests dont work well on AIX CI servers (hangs them)
+        if (isPlatform("aix")) {
+            return;
+        }
+
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedMessageCount(1);
         MockEndpoint foo = getMockEndpoint("mock:foo");

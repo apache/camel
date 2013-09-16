@@ -29,6 +29,11 @@ import org.apache.camel.component.mock.MockEndpoint;
 public class ManagedCamelContextUpdateRoutesFromXmlTest extends ManagementTestSupport {
 
     public void testDumpAsXml() throws Exception {
+        // JMX tests dont work well on AIX CI servers (hangs them)
+        if (isPlatform("aix")) {
+            return;
+        }
+
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");
         template.sendBody("direct:start", "Hello World");

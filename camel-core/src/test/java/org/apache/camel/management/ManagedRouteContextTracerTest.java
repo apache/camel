@@ -31,6 +31,11 @@ import org.apache.camel.processor.interceptor.Tracer;
 public class ManagedRouteContextTracerTest extends ManagementTestSupport {
 
     public void testRouteTracing() throws Exception {
+        // JMX tests dont work well on AIX CI servers (hangs them)
+        if (isPlatform("aix")) {
+            return;
+        }
+
         MBeanServer mbeanServer = getMBeanServer();
 
         ObjectName on1 = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=routes,name=\"route1\"");

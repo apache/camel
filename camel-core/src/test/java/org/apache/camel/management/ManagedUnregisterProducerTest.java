@@ -27,6 +27,11 @@ import org.apache.camel.builder.RouteBuilder;
 public class ManagedUnregisterProducerTest extends ManagementTestSupport {
 
     public void testUnregisterProducer() throws Exception {
+        // JMX tests dont work well on AIX CI servers (hangs them)
+        if (isPlatform("aix")) {
+            return;
+        }
+
         // send a message so the managed producer is started
         // do this "manually" to avoid camel managing the direct:start producer as well
         // this makes the unit test easier as we only have 1 managed producer = mock:result

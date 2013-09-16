@@ -29,6 +29,11 @@ public class BacklogTracerPatternTest extends ManagementTestSupport {
 
     @SuppressWarnings("unchecked")
     public void testBacklogTracerPattern() throws Exception {
+        // JMX tests dont work well on AIX CI servers (hangs them)
+        if (isPlatform("aix")) {
+            return;
+        }
+
         MBeanServer mbeanServer = getMBeanServer();
         ObjectName on = new ObjectName("org.apache.camel:context=localhost/camel-1,type=tracer,name=BacklogTracer");
         assertNotNull(on);

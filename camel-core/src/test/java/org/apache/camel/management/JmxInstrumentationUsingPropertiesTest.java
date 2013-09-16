@@ -40,6 +40,11 @@ public class JmxInstrumentationUsingPropertiesTest extends JmxInstrumentationUsi
     }
 
     public void testMBeanServerType() throws Exception {
+        // JMX tests dont work well on AIX CI servers (hangs them)
+        if (isPlatform("aix")) {
+            return;
+        }
+
         // default is platform mbs
         assertNotNull(mbsc.getMBeanInfo(new ObjectName("java.lang:type=OperatingSystem")));        
     }

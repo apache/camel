@@ -38,6 +38,11 @@ public class ManagedMemoryIdempotentConsumerTest extends ManagementTestSupport {
     private IdempotentRepository<String> repo;
 
     public void testDuplicateMessagesAreFilteredOut() throws Exception {
+        // JMX tests dont work well on AIX CI servers (hangs them)
+        if (isPlatform("aix")) {
+            return;
+        }
+
         MBeanServer mbeanServer = getMBeanServer();
 
         // services
@@ -93,6 +98,11 @@ public class ManagedMemoryIdempotentConsumerTest extends ManagementTestSupport {
     }
 
     public void testDuplicateMessagesCountAreCorrectlyCounted() throws Exception {
+        // JMX tests dont work well on AIX CI servers (hangs them)
+        if (isPlatform("aix")) {
+            return;
+        }
+
         MBeanServer mbeanServer = getMBeanServer();
 
         // processors

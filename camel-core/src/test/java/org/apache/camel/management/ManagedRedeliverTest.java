@@ -30,6 +30,11 @@ import org.apache.camel.component.mock.MockEndpoint;
 public class ManagedRedeliverTest extends ManagementTestSupport {
 
     public void testRedeliver() throws Exception {
+        // JMX tests dont work well on AIX CI servers (hangs them)
+        if (isPlatform("aix")) {
+            return;
+        }
+
         MBeanServer mbeanServer = getMBeanServer();
 
         MockEndpoint mock = getMockEndpoint("mock:foo");

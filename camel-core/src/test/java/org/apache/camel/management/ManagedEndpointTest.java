@@ -28,6 +28,11 @@ import org.apache.camel.builder.RouteBuilder;
 public class ManagedEndpointTest extends ManagementTestSupport {
 
     public void testManageEndpoint() throws Exception {
+        // JMX tests dont work well on AIX CI servers (hangs them)
+        if (isPlatform("aix")) {
+            return;
+        }
+
         MBeanServer mbeanServer = getMBeanServer();
 
         ObjectName on = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=endpoints,name=\"seda://test\"");
