@@ -29,6 +29,11 @@ public class XmppRobustConnectionTest extends CamelTestSupport {
 
     @Test
     public void testXmppChatWithRobustConnection() throws Exception {
+        // does not work well on aix or solaris
+        if (isPlatform("aix") || isPlatform("sunos")) {
+            return;
+        }
+
         MockEndpoint consumerEndpoint = context.getEndpoint("mock:out", MockEndpoint.class);
         MockEndpoint errorEndpoint = context.getEndpoint("mock:error", MockEndpoint.class);
         
