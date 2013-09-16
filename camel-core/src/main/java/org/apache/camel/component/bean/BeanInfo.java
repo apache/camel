@@ -549,7 +549,11 @@ public class BeanInfo {
                     answer = chooseMethodWithMatchingParameters(exchange, parameters, possibleOperations);
                 }
             }
-
+            
+            if (answer == null && possibleOperations.size() > 1) {
+                answer = getSingleCovariantMethod(possibleOperations);
+            }
+            
             if (answer == null) {
                 throw new AmbiguousMethodCallException(exchange, possibleOperations);
             } else {
@@ -611,9 +615,24 @@ public class BeanInfo {
         }
 
         if (candidates.size() > 1) {
-            throw new AmbiguousMethodCallException(exchange, candidates);
+            MethodInfo answer = getSingleCovariantMethod(candidates);
+            if (answer == null) {
+                throw new AmbiguousMethodCallException(exchange, candidates);
+            }
+            return answer;
         }
         return candidates.size() == 1 ? candidates.get(0) : null;
+    }
+
+    private MethodInfo getSingleCovariantMethod(Collection<MethodInfo> candidates) {
+        // if all the candidates are actually covariant, it doesn't matter which one we call
+        MethodInfo firstCandidate = candidates.iterator().next();
+        for (MethodInfo candidate: candidates) {
+            if (!firstCandidate.isCovariantWith(candidate)) {
+                return null;
+            }
+        }
+        return firstCandidate;
     }
 
     private MethodInfo chooseMethodWithMatchingBody(Exchange exchange, Collection<MethodInfo> operationList,
@@ -711,8 +730,17 @@ public class BeanInfo {
                 LOG.trace("There are only one method with annotations so we choose it: {}", answer);
                 return answer;
             }
-            // phew try to choose among multiple methods with annotations
-            return chooseMethodWithCustomAnnotations(exchange, possibles);
+            // try to choose among multiple methods with annotations
+            MethodInfo chosen = chooseMethodWithCustomAnnotations(exchange, possibles);
+            if (chosen != null) {
+                return chosen;
+            }
+            // just make sure the methods aren't all actually the same
+            chosen = getSingleCovariantMethod(possibles);
+            if (chosen != null) {
+                return chosen;
+            }
+            throw new AmbiguousMethodCallException(exchange, possibles);
         }
 
         // cannot find a good method to use
@@ -783,10 +811,7 @@ public class BeanInfo {
                 }
             }
         }
-        if (chosen != null) {
-            return chosen;
-        }
-        throw new AmbiguousMethodCallException(exchange, possibles);
+        return chosen;
     }
 
     /**

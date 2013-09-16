@@ -389,6 +389,20 @@ public class MethodInfo {
     public boolean isStaticMethod() {
         return Modifier.isStatic(method.getModifiers());
     }
+    
+    /**
+     * Returns true if this method is covariant with the specified method
+     * (this method may above or below the specified method in the class hierarchy)
+     * @param method
+     * @return
+     */
+    public boolean isCovariantWith(MethodInfo method) {
+        return 
+            method.getMethod().getName().equals(this.getMethod().getName())
+            && (method.getMethod().getReturnType().isAssignableFrom(this.getMethod().getReturnType())
+            || this.getMethod().getReturnType().isAssignableFrom(method.getMethod().getReturnType())) 
+            && Arrays.deepEquals(method.getMethod().getParameterTypes(), this.getMethod().getParameterTypes());
+    }
 
     protected Object invoke(Method mth, Object pojo, Object[] arguments, Exchange exchange) throws InvocationTargetException {
         try {
