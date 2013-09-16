@@ -17,6 +17,7 @@
 package org.apache.camel.component.netty.http;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Ignore;
 import org.junit.Test;
 
 public class NettyHttpProducerKeepAliveTest extends BaseNettyTest {
@@ -35,6 +36,7 @@ public class NettyHttpProducerKeepAliveTest extends BaseNettyTest {
     }
 
     @Test
+    @Ignore("Can fail on some CI servers")
     public void testHttpKeepAliveFalse() throws Exception {
         getMockEndpoint("mock:input").expectedBodiesReceived("Hello World", "Hello Again");
 
