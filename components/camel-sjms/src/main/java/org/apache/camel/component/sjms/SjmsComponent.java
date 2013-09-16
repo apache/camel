@@ -136,7 +136,9 @@ public class SjmsComponent extends DefaultComponent implements HeaderFilterStrat
 
     @Override
     protected void doStop() throws Exception {
-        timedTaskManager.cancelTasks();
+        if (timedTaskManager != null) {
+            timedTaskManager.cancelTasks();
+        }
 
         if (getConnectionResource() != null) {
             if (getConnectionResource() instanceof ConnectionFactoryResource) {
