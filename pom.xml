@@ -120,11 +120,11 @@
   </modules>
 
   <scm>
-    <connection>scm:svn:https://svn.apache.org/repos/asf/camel/branches/camel-2.9.x</connection>
-    <developerConnection>scm:svn:https://svn.apache.org/repos/asf/camel/branches/camel-2.9.x</developerConnection>
-    <url>http://svn.apache.org/viewvc/camel/branches/camel-2.9.x/</url>
+    <connection>scm:git:http://git-wip-us.apache.org/repos/asf/camel.git</connection>
+    <developerConnection>scm:git:https://git-wip-us.apache.org/repos/asf/camel.git</developerConnection>
+    <url>https://fisheye6.atlassian.com/browse/~br=camel-2.9.x/camel-git</url>
   </scm>
-
+  
   <build>
     <defaultGoal>install</defaultGoal>
 
@@ -204,9 +204,12 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-release-plugin</artifactId>
-          <version>2.2.1</version>
+          <!-- see http://jira.codehaus.org/browse/MRELEASE-812 -->
+          <version>2.4.1</version>
           <configuration>
-            <tagBase>https://svn.apache.org/repos/asf/camel/tags</tagBase>
+            <localCheckout>true</localCheckout>
+            <pushChanges>true</pushChanges>
+            <tagNameFormat>@{project.artifactId}-@{project.version}</tagNameFormat>
             <useReleaseProfile>false</useReleaseProfile>
             <preparationGoals>clean install</preparationGoals>
             <goals>deploy</goals>
@@ -214,7 +217,7 @@
             <autoVersionSubmodules>true</autoVersionSubmodules>
           </configuration>
         </plugin>
-  
+
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-shade-plugin</artifactId>
