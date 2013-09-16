@@ -25,6 +25,10 @@ import org.apache.camel.component.mock.MockEndpoint;
 public class StopRouteAbortAfterTimeoutTest extends ContextTestSupport {
 
     public void testStopRouteWithAbortAfterTimeoutTrue() throws Exception {
+        // doesnt test to well on all Windows
+        if (isPlatform("windows")) {
+            return;
+        }
 
         MockEndpoint mockEP = getMockEndpoint("mock:result");
         mockEP.setExpectedMessageCount(10);
@@ -50,6 +54,10 @@ public class StopRouteAbortAfterTimeoutTest extends ContextTestSupport {
     }
     
     public void testStopRouteWithAbortAfterTimeoutFalse() throws Exception {
+        // doesnt test to well on all Windows
+        if (isPlatform("windows")) {
+            return;
+        }
 
         MockEndpoint mockEP = getMockEndpoint("mock:result");
 
