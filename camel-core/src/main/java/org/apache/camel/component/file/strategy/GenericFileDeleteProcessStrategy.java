@@ -50,6 +50,14 @@ public class GenericFileDeleteProcessStrategy<T> extends GenericFileProcessStrat
 
     @Override
     public void commit(GenericFileOperations<T> operations, GenericFileEndpoint<T> endpoint, Exchange exchange, GenericFile<T> file) throws Exception {
+
+        // special for file lock strategy as we must release that lock first before we can delete the file
+        boolean releaseEager = exclusiveReadLockStrategy instanceof FileLockExclusiveReadLockStrategy;
+
+        if (releaseEager) {
+            exclusiveReadLockStrategy.releaseExclusiveReadLock(operations, file, exchange);
+        }
+
         try {
             deleteLocalWorkFile(exchange);
             operations.releaseRetreivedFileResources(exchange);
@@ -82,7 +90,7 @@ public class GenericFileDeleteProcessStrategy<T> extends GenericFileProcessStrat
             }
         } finally {
             // must release lock last
-            if (exclusiveReadLockStrategy != null) {
+            if (!releaseEager && exclusiveReadLockStrategy != null) {
                 exclusiveReadLockStrategy.releaseExclusiveReadLock(operations, file, exchange);
             }
         }
