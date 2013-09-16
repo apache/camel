@@ -115,7 +115,7 @@ public class CamelContextBean implements Bean<CdiCamelContext> {
 
     @Override
     public Set<Class<? extends Annotation>> getStereotypes() {
-        return null;
+        return new HashSet<Class<? extends Annotation>>();
     }
 
     @Override
