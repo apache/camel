@@ -627,7 +627,7 @@ public class BeanInfo {
     private MethodInfo getSingleCovariantMethod(Collection<MethodInfo> candidates) {
         // if all the candidates are actually covariant, it doesn't matter which one we call
         MethodInfo firstCandidate = candidates.iterator().next();
-        for (MethodInfo candidate: candidates) {
+        for (MethodInfo candidate : candidates) {
             if (!firstCandidate.isCovariantWith(candidate)) {
                 return null;
             }
