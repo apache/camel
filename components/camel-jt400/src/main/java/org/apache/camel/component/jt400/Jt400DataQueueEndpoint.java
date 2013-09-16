@@ -18,6 +18,8 @@ package org.apache.camel.component.jt400;
 
 import java.beans.PropertyVetoException;
 import java.net.URISyntaxException;
+import java.util.HashMap;
+import java.util.Map;
 
 import com.ibm.as400.access.AS400;
 import com.ibm.as400.access.AS400ConnectionPool;
@@ -27,7 +29,9 @@ import com.ibm.as400.access.KeyedDataQueue;
 import org.apache.camel.CamelException;
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.Producer;
+import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.impl.DefaultPollingEndpoint;
+import org.apache.camel.util.EndpointHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 
@@ -143,7 +147,25 @@ public class Jt400DataQueueEndpoint extends DefaultPollingEndpoint {
     @Override
     public PollingConsumer createPollingConsumer() throws Exception {
         Jt400DataQueueConsumer answer = new Jt400DataQueueConsumer(this);
-        configureConsumer(answer);
+
+        Map<String, Object> copy = new HashMap<String, Object>(getConsumerProperties());
+        Map<String, Object> throwaway = new HashMap<String, Object>();
+
+        // filter out unwanted options which is intended for the scheduled poll consumer
+        // as these options are not supported on Jt400DataQueueConsumer
+        configureScheduledPollConsumerProperties(copy, throwaway);
+
+        // set reference properties first as they use # syntax that fools the regular properties setter
+        EndpointHelper.setReferenceProperties(getCamelContext(), this, copy);
+        EndpointHelper.setProperties(getCamelContext(), this, copy);
+
+        if (!isLenientProperties() && copy.size() > 0) {
+            throw new ResolveEndpointFailedException(this.getEndpointUri(), "There are " + copy.size()
+                    + " parameters that couldn't be set on the endpoint consumer."
+                    + " Check the uri if the parameters are spelt correctly and that they are properties of the endpoint."
+                    + " Unknown consumer parameters=[" + copy + "]");
+        }
+
         return answer;
     }
 
