@@ -16,6 +16,8 @@
  */
 package org.apache.camel.util;
 
+import java.text.DecimalFormatSymbols;
+
 import junit.framework.TestCase;
 
 import static org.apache.camel.util.UnitUtils.printUnitFromBytes;
@@ -23,14 +25,18 @@ import static org.apache.camel.util.UnitUtils.printUnitFromBytes;
 public class UnitUtilsTest extends TestCase {
 
     public void testPrintUnitFromBytes() throws Exception {
+
+        // needed for the locales that have a decimal separator other than comma
+        char decimalSeparator = DecimalFormatSymbols.getInstance().getDecimalSeparator();
+
         assertEquals("999 B", printUnitFromBytes(999));
-        assertEquals("1.0 kB", printUnitFromBytes(1000));
-        assertEquals("1.0 kB", printUnitFromBytes(1001));
+        assertEquals("1" + decimalSeparator + "0 kB", printUnitFromBytes(1000));
+        assertEquals("1" + decimalSeparator + "0 kB", printUnitFromBytes(1001));
 
-        assertEquals("1000.0 kB", printUnitFromBytes(999999));
-        assertEquals("1.0 MB", printUnitFromBytes(1000000));
-        assertEquals("1.0 MB", printUnitFromBytes(1000001));
+        assertEquals("1000" + decimalSeparator + "0 kB", printUnitFromBytes(999999));
+        assertEquals("1" + decimalSeparator + "0 MB", printUnitFromBytes(1000000));
+        assertEquals("1" + decimalSeparator + "0 MB", printUnitFromBytes(1000001));
 
-        assertEquals("1.5 MB", printUnitFromBytes(1500001));
+        assertEquals("1" + decimalSeparator + "5 MB", printUnitFromBytes(1500001));
     }
 }
