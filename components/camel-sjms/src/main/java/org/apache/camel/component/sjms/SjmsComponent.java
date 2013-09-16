@@ -140,7 +140,9 @@ public class SjmsComponent extends UriEndpointComponent implements HeaderFilterS
 
     @Override
     protected void doStop() throws Exception {
-        timedTaskManager.cancelTasks();
+        if (timedTaskManager != null) {
+            timedTaskManager.cancelTasks();
+        }
 
         if (getConnectionResource() != null) {
             if (getConnectionResource() instanceof ConnectionFactoryResource) {
