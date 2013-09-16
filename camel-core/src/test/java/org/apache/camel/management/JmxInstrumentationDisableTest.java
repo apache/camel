@@ -37,6 +37,11 @@ public class JmxInstrumentationDisableTest extends JmxInstrumentationUsingProper
 
     @Override
     public void testMBeansRegistered() throws Exception {
+        // JMX tests dont work well on AIX CI servers (hangs them)
+        if (isPlatform("aix")) {
+            return;
+        }
+
         assertDefaultDomain();
 
         resolveMandatoryEndpoint("mock:end", MockEndpoint.class);

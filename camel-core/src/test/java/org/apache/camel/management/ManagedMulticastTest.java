@@ -27,6 +27,11 @@ import org.apache.camel.builder.RouteBuilder;
 public class ManagedMulticastTest extends ManagementTestSupport {
 
     public void testMulticast() throws Exception {
+        // JMX tests dont work well on AIX CI servers (hangs them)
+        if (isPlatform("aix")) {
+            return;
+        }
+
         getMockEndpoint("mock:a").expectedMessageCount(3);
         getMockEndpoint("mock:b").expectedMessageCount(3);
 

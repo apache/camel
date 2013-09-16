@@ -42,6 +42,11 @@ public class TwoManagedNamePatternTest extends TestSupport {
     }
 
     public void testManagedNamePattern() throws Exception {
+        // JMX tests dont work well on AIX CI servers (hangs them)
+        if (isPlatform("aix")) {
+            return;
+        }
+
         camel1 = createCamelContext("foo", "aaa-#name#");
         camel2 = createCamelContext("bar", "bbb-#name#");
 
@@ -65,8 +70,12 @@ public class TwoManagedNamePatternTest extends TestSupport {
 
     @Override
     protected void tearDown() throws Exception {
-        camel1.stop();
-        camel2.stop();
+        if (camel1 != null) {
+            camel1.stop();
+        }
+        if (camel2 != null) {
+            camel2.stop();
+        }
         super.tearDown();
     }
 

@@ -32,6 +32,11 @@ import org.apache.camel.builder.RouteBuilder;
 public class ManagedCustomBeanTest extends ManagementTestSupport {
 
     public void testManageCustomBean() throws Exception {
+        // JMX tests dont work well on AIX CI servers (hangs them)
+        if (isPlatform("aix")) {
+            return;
+        }
+
         MBeanServer mbeanServer = getMBeanServer();
         ObjectName on = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=processors,name=\"custom\"");
 

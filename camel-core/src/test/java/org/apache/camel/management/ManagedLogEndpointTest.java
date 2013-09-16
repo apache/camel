@@ -27,6 +27,11 @@ import org.apache.camel.builder.RouteBuilder;
 public class ManagedLogEndpointTest extends ManagementTestSupport {
 
     public void testLogEndpoint() throws Exception {
+        // JMX tests dont work well on AIX CI servers (hangs them)
+        if (isPlatform("aix")) {
+            return;
+        }
+
         getMockEndpoint("mock:a").expectedMessageCount(10);
 
         for (int i = 0; i < 10; i++) {

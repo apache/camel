@@ -33,6 +33,11 @@ public class EndpointCompletionTest extends ManagementTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(EndpointCompletionTest.class);
 
     public void testEndpointCompletion() throws Exception {
+        // JMX tests dont work well on AIX CI servers (hangs them)
+        if (isPlatform("aix")) {
+            return;
+        }
+
         MBeanServer mbeanServer = getMBeanServer();
         ObjectName on = ObjectName.getInstance(
                 "org.apache.camel:context=localhost/camel-1,type=context,name=\"camel-1\"");
@@ -50,6 +55,11 @@ public class EndpointCompletionTest extends ManagementTestSupport {
     }
 
     public void testEndpointConfigurationJson() throws Exception {
+        // JMX tests dont work well on AIX CI servers (hangs them)
+        if (isPlatform("aix")) {
+            return;
+        }
+
         MBeanServer mbeanServer = getMBeanServer();
         ObjectName on = ObjectName.getInstance(
                 "org.apache.camel:context=localhost/camel-1,type=context,name=\"camel-1\"");

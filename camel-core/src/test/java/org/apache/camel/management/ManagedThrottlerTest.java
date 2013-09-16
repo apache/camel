@@ -28,6 +28,11 @@ import org.apache.camel.builder.RouteBuilder;
 public class ManagedThrottlerTest extends ManagementTestSupport {
 
     public void testManageThrottler() throws Exception {
+        // JMX tests dont work well on AIX CI servers (hangs them)
+        if (isPlatform("aix")) {
+            return;
+        }
+
         getMockEndpoint("mock:result").expectedMessageCount(10);
 
         // Send in a first batch of 10 messages and check that the endpoint

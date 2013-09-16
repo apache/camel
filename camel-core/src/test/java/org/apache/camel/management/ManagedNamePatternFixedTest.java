@@ -35,6 +35,11 @@ public class ManagedNamePatternFixedTest extends ManagementTestSupport {
     }
 
     public void testManagedNamePattern() throws Exception {
+        // JMX tests dont work well on AIX CI servers (hangs them)
+        if (isPlatform("aix")) {
+            return;
+        }
+
         MBeanServer mbeanServer = getMBeanServer();
 
         assertEquals("cool", context.getManagementName());

@@ -37,6 +37,11 @@ public class ManagedRouteSuspendAndResumeTest extends ManagementTestSupport {
     }
 
     public void testSuspendAndResume() throws Exception {
+        // JMX tests dont work well on AIX CI servers (hangs them)
+        if (isPlatform("aix")) {
+            return;
+        }
+
         MBeanServer mbeanServer = getMBeanServer();
         ObjectName on = getRouteObjectName(mbeanServer);
 

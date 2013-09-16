@@ -40,6 +40,11 @@ public class JmxInstrumentationOnlyRegisterProcessorWithCustomIdTest extends Con
     }
 
     public void testCustomId() throws Exception {
+        // JMX tests dont work well on AIX CI servers (hangs them)
+        if (isPlatform("aix")) {
+            return;
+        }
+
         Set<ObjectName> s = server.queryNames(new ObjectName(domainName + ":type=endpoints,*"), null);
         assertEquals("Could not find 2 endpoints: " + s, 6, s.size());
 

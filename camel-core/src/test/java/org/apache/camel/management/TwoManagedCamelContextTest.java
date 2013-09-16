@@ -41,6 +41,11 @@ public class TwoManagedCamelContextTest extends TestSupport {
     }
 
     public void testTwoManagedCamelContext() throws Exception {
+        // JMX tests dont work well on AIX CI servers (hangs them)
+        if (isPlatform("aix")) {
+            return;
+        }
+
         camel1 = createCamelContext("foo");
         camel2 = createCamelContext("bar");
 
@@ -64,8 +69,12 @@ public class TwoManagedCamelContextTest extends TestSupport {
 
     @Override
     protected void tearDown() throws Exception {
-        camel1.stop();
-        camel2.stop();
+        if (camel1 != null) {
+            camel1.stop();
+        }
+        if (camel2 != null) {
+            camel2.stop();
+        }
         super.tearDown();
     }
 

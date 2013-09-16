@@ -31,7 +31,11 @@ import org.apache.camel.component.mock.MockEndpoint;
 public class ManagedRouteStopWithAbortAfterTimeoutTest extends ManagementTestSupport {
 
     public void testStopRouteWithAbortAfterTimeoutTrue() throws Exception {
-        
+        // JMX tests dont work well on AIX CI servers (hangs them)
+        if (isPlatform("aix")) {
+            return;
+        }
+
         MockEndpoint mockEP = getMockEndpoint("mock:result");
         mockEP.setExpectedMessageCount(10);
         
@@ -68,7 +72,11 @@ public class ManagedRouteStopWithAbortAfterTimeoutTest extends ManagementTestSup
     }
 
     public void testStopRouteWithAbortAfterTimeoutFalse() throws Exception {
-        
+        // JMX tests dont work well on AIX CI servers (hangs them)
+        if (isPlatform("aix")) {
+            return;
+        }
+
         MockEndpoint mockEP = getMockEndpoint("mock:result");
         
         MBeanServer mbeanServer = getMBeanServer();

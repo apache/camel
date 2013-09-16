@@ -28,6 +28,11 @@ public class ManagedCBRTest extends ManagementTestSupport {
 
     // CAMEL-4044: mbeans not registered for children of choice
     public void testManagedCBR() throws Exception {
+        // JMX tests dont work well on AIX CI servers (hangs them)
+        if (isPlatform("aix")) {
+            return;
+        }
+
         MBeanServer mbeanServer = getMBeanServer();
 
         ObjectName on = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=routes,name=\"route\"");

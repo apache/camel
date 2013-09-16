@@ -32,6 +32,11 @@ import org.apache.camel.builder.RouteBuilder;
 public class ManagedResetIncludeProcessorsTest extends ManagementTestSupport {
 
     public void testReset() throws Exception {
+        // JMX tests dont work well on AIX CI servers (hangs them)
+        if (isPlatform("aix")) {
+            return;
+        }
+
         // get the stats for the route
         MBeanServer mbeanServer = getMBeanServer();
 

@@ -29,6 +29,11 @@ import org.apache.camel.builder.RouteBuilder;
 public class ManagedUnregisterComponentTest extends ManagementTestSupport {
 
     public void testUnregisterComponent() throws Exception {
+        // JMX tests dont work well on AIX CI servers (hangs them)
+        if (isPlatform("aix")) {
+            return;
+        }
+
         MBeanServer mbeanServer = getMBeanServer();
 
         Set<ObjectName> set = mbeanServer.queryNames(new ObjectName("*:type=components,*"), null);

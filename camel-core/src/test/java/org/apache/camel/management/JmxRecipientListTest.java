@@ -28,6 +28,11 @@ import org.apache.camel.component.mock.MockEndpoint;
 public class JmxRecipientListTest extends ManagementTestSupport {
 
     public void testJmxEndpointsAddedDynamicallyDefaultRegister() throws Exception {
+        // JMX tests dont work well on AIX CI servers (hangs them)
+        if (isPlatform("aix")) {
+            return;
+        }
+
         MockEndpoint x = getMockEndpoint("mock:x");
         MockEndpoint y = getMockEndpoint("mock:y");
         MockEndpoint z = getMockEndpoint("mock:z");
@@ -62,6 +67,11 @@ public class JmxRecipientListTest extends ManagementTestSupport {
     }
 
     public void testJmxEndpointsAddedDynamicallyAlwaysRegister() throws Exception {
+        // JMX tests dont work well on AIX CI servers (hangs them)
+        if (isPlatform("aix")) {
+            return;
+        }
+
         // enable always register
         context.getManagementStrategy().getManagementAgent().setRegisterAlways(true);
 

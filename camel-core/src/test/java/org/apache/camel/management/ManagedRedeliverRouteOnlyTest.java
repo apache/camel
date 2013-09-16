@@ -30,6 +30,11 @@ import org.apache.camel.builder.RouteBuilder;
 public class ManagedRedeliverRouteOnlyTest extends ManagementTestSupport {
 
     public void testRedeliver() throws Exception {
+        // JMX tests dont work well on AIX CI servers (hangs them)
+        if (isPlatform("aix")) {
+            return;
+        }
+
         MBeanServer mbeanServer = getMBeanServer();
 
         getMockEndpoint("mock:foo").expectedMessageCount(1);

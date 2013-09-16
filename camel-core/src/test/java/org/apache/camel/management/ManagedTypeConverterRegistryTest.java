@@ -29,6 +29,11 @@ import org.apache.camel.builder.RouteBuilder;
 public class ManagedTypeConverterRegistryTest extends ManagementTestSupport {
 
     public void testTypeConverterRegistry() throws Exception {
+        // JMX tests dont work well on AIX CI servers (hangs them)
+        if (isPlatform("aix")) {
+            return;
+        }
+
         getMockEndpoint("mock:a").expectedMessageCount(2);
 
         template.sendBody("direct:start", "3");

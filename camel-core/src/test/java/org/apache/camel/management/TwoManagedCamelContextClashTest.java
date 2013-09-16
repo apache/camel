@@ -45,6 +45,11 @@ public class TwoManagedCamelContextClashTest extends TestSupport {
     }
 
     public void testTwoManagedCamelContextNoClashDefault() throws Exception {
+        // JMX tests dont work well on AIX CI servers (hangs them)
+        if (isPlatform("aix")) {
+            return;
+        }
+
         camel1 = createCamelContext("foo", null);
         camel2 = createCamelContext("foo", null);
 
@@ -85,6 +90,11 @@ public class TwoManagedCamelContextClashTest extends TestSupport {
     }
 
     public void testTwoManagedCamelContextClash() throws Exception {
+        // JMX tests dont work well on AIX CI servers (hangs them)
+        if (isPlatform("aix")) {
+            return;
+        }
+
         camel1 = createCamelContext("foo", "myFoo");
         camel2 = createCamelContext("foo", "myFoo");
 
@@ -106,8 +116,12 @@ public class TwoManagedCamelContextClashTest extends TestSupport {
 
     @Override
     protected void tearDown() throws Exception {
-        camel1.stop();
-        camel2.stop();
+        if (camel1 != null) {
+            camel1.stop();
+        }
+        if (camel2 != null) {
+            camel2.stop();
+        }
         super.tearDown();
     }
 

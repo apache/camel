@@ -55,6 +55,11 @@ public class JmxInstrumentationUsingDefaultsTest extends ContextTestSupport {
     }
 
     public void testMBeansRegistered() throws Exception {
+        // JMX tests dont work well on AIX CI servers (hangs them)
+        if (isPlatform("aix")) {
+            return;
+        }
+
         assertDefaultDomain();
 
         template.sendBody("direct:start", "Hello World");
@@ -81,6 +86,11 @@ public class JmxInstrumentationUsingDefaultsTest extends ContextTestSupport {
     }
 
     public void testCounters() throws Exception {
+        // JMX tests dont work well on AIX CI servers (hangs them)
+        if (isPlatform("aix")) {
+            return;
+        }
+
         MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:end", MockEndpoint.class);
         resultEndpoint.expectedBodiesReceived("<hello>world!</hello>");
         sendBody("direct:start", "<hello>world!</hello>");

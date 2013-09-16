@@ -65,6 +65,11 @@ public class ManagedRouteAddFromRouteTest extends ManagementTestSupport {
     }
 
     public void testAddRouteFromRoute() throws Exception {
+        // JMX tests dont work well on AIX CI servers (hangs them)
+        if (isPlatform("aix")) {
+            return;
+        }
+
         MBeanServer mbeanServer = getMBeanServer();
         ObjectName route1 = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=routes,name=\"foo\"");
 

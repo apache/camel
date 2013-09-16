@@ -32,6 +32,11 @@ import org.apache.camel.impl.ConsumerCache;
 public class ManagedConsumerCacheHitsTest extends ManagementTestSupport {
 
     public void testManageConsumerCache() throws Exception {
+        // JMX tests dont work well on AIX CI servers (hangs them)
+        if (isPlatform("aix")) {
+            return;
+        }
+
         // always register services in JMX so we can enlist our consumer template/cache
         context.getManagementStrategy().getManagementAgent().setRegisterAlways(true);
 

@@ -38,6 +38,11 @@ public class ManagedCamelContextPropertiesTest extends ManagementTestSupport {
     }
 
     public void testGetSetProperties() throws Exception {
+        // JMX tests dont work well on AIX CI servers (hangs them)
+        if (isPlatform("aix")) {
+            return;
+        }
+
         MBeanServer mbeanServer = getMBeanServer();
 
         ObjectName on = ObjectName.getInstance("org.apache.camel:context=localhost/19-camel-1,type=context,name=\"camel-1\"");
@@ -62,7 +67,6 @@ public class ManagedCamelContextPropertiesTest extends ManagementTestSupport {
 
         invoke = mbeanServer.invoke(on, "getProperty", new String[]{Exchange.LOG_DEBUG_BODY_STREAMS}, new String[]{"java.lang.String"});
         assertEquals("true", invoke);
-
     }
 
     @Override

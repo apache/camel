@@ -29,6 +29,11 @@ import org.apache.camel.builder.RouteBuilder;
 public class ManagedTracerOptionsTest extends ManagementTestSupport {
 
     public void testManagedTracerOptions() throws Exception {
+        // JMX tests dont work well on AIX CI servers (hangs them)
+        if (isPlatform("aix")) {
+            return;
+        }
+
         MBeanServer mbeanServer = getMBeanServer();
 
         ObjectName on = new ObjectName("org.apache.camel:context=localhost/camel-1,type=tracer,name=Tracer");
@@ -81,6 +86,11 @@ public class ManagedTracerOptionsTest extends ManagementTestSupport {
     }
 
     private void doAssertFormatter(MBeanServer mbeanServer, ObjectName on) throws Exception {
+        // JMX tests dont work well on AIX CI servers (hangs them)
+        if (isPlatform("aix")) {
+            return;
+        }
+
         mbeanServer.setAttribute(on, new Attribute("FormatterShowBody", Boolean.TRUE));
         Boolean fsb = (Boolean) mbeanServer.getAttribute(on, "FormatterShowBody");
         assertEquals(true, fsb.booleanValue());

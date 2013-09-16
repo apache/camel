@@ -44,6 +44,11 @@ public class JmxInstrumentationUsingPlatformMBSTest extends JmxInstrumentationUs
 
     @Override
     public void testMBeanServerType() throws Exception {
+        // JMX tests dont work well on AIX CI servers (hangs them)
+        if (isPlatform("aix")) {
+            return;
+        }
+
         try {
             mbsc.getMBeanInfo(new ObjectName("java.lang:type=OperatingSystem"));
             assertFalse(true); // should not get here

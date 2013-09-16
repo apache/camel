@@ -29,7 +29,12 @@ import org.apache.camel.builder.RouteBuilder;
 public class ManagedShutdownStrategyTest extends ManagementTestSupport {
 
     public void testManagedShutdownStrategy() throws Exception {
-        // set timeout to 300 
+        // JMX tests dont work well on AIX CI servers (hangs them)
+        if (isPlatform("aix")) {
+            return;
+        }
+
+        // set timeout to 300
         context.getShutdownStrategy().setTimeout(300);
 
         MBeanServer mbeanServer = getMBeanServer();

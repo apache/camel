@@ -30,6 +30,11 @@ import org.apache.camel.builder.RouteBuilder;
 public class ManagedEndpointRegistryTest extends ManagementTestSupport {
 
     public void testManageEndpointRegistry() throws Exception {
+        // JMX tests dont work well on AIX CI servers (hangs them)
+        if (isPlatform("aix")) {
+            return;
+        }
+
         getMockEndpoint("mock:result").expectedMessageCount(1);
 
         template.sendBody("direct:start", "Hello World");

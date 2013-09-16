@@ -27,6 +27,11 @@ import org.apache.camel.builder.RouteBuilder;
 public class ManagedBrowsableEndpointTest extends ManagementTestSupport {
 
     public void testBrowseableEndpoint() throws Exception {
+        // JMX tests dont work well on AIX CI servers (hangs them)
+        if (isPlatform("aix")) {
+            return;
+        }
+
         getMockEndpoint("mock:result").expectedMessageCount(2);
 
         template.sendBody("direct:start", "Hello World");

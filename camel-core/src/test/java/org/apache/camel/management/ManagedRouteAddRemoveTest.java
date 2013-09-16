@@ -43,6 +43,11 @@ public class ManagedRouteAddRemoveTest extends ManagementTestSupport {
     }
 
     public void testRouteAddRemoteRouteWithTo() throws Exception {
+        // JMX tests dont work well on AIX CI servers (hangs them)
+        if (isPlatform("aix")) {
+            return;
+        }
+
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedMessageCount(1);
         template.sendBody("direct:start", "Hello World");

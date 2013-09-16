@@ -44,6 +44,11 @@ public class JmxInstrumentationDisableOnCamelContextTest extends JmxInstrumentat
 
     @Override
     public void testMBeansRegistered() throws Exception {
+        // JMX tests dont work well on AIX CI servers (hangs them)
+        if (isPlatform("aix")) {
+            return;
+        }
+
         resolveMandatoryEndpoint("mock:end", MockEndpoint.class);
 
         Set<ObjectName> s = mbsc.queryNames(new ObjectName(domainName + ":type=endpoints,*"), null);

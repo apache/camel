@@ -28,6 +28,11 @@ import org.apache.camel.ServiceStatus;
 public class ManagedUnregisterCamelContextTest extends ManagementTestSupport {
 
     public void testUnregisterCamelContext() throws Exception {
+        // JMX tests dont work well on AIX CI servers (hangs them)
+        if (isPlatform("aix")) {
+            return;
+        }
+
         // The camel context already started by ContextTestSupport in the startup method
         
         MBeanServer mbeanServer = getMBeanServer();

@@ -36,6 +36,11 @@ public class ManagedErrorHandlerOptionsTest extends ManagementTestSupport {
     private static int counter;
 
     public void testManagedErrorHandlerOptions() throws Exception {
+        // JMX tests dont work well on AIX CI servers (hangs them)
+        if (isPlatform("aix")) {
+            return;
+        }
+
         counter = 0;
 
         MBeanServer mbeanServer = getMBeanServer();

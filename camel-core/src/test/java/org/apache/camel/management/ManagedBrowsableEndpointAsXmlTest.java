@@ -31,6 +31,11 @@ import org.apache.camel.builder.RouteBuilder;
 public class ManagedBrowsableEndpointAsXmlTest extends ManagementTestSupport {
 
     public void testBrowseableEndpointAsXmlIncludeBody() throws Exception {
+        // JMX tests dont work well on AIX CI servers (hangs them)
+        if (isPlatform("aix")) {
+            return;
+        }
+
         getMockEndpoint("mock:result").expectedMessageCount(7);
 
         template.sendBody("direct:start", "<foo>Camel &gt; Donkey</foo>");
@@ -99,6 +104,11 @@ public class ManagedBrowsableEndpointAsXmlTest extends ManagementTestSupport {
     }
 
     public void testBrowseableEndpointAsXml() throws Exception {
+        // JMX tests dont work well on AIX CI servers (hangs them)
+        if (isPlatform("aix")) {
+            return;
+        }
+
         getMockEndpoint("mock:result").expectedMessageCount(2);
 
         template.sendBodyAndHeader("direct:start", "Hello World", "foo", 123);
@@ -125,6 +135,11 @@ public class ManagedBrowsableEndpointAsXmlTest extends ManagementTestSupport {
     }
 
     public void testBrowseableEndpointAsXmlAllIncludeBody() throws Exception {
+        // JMX tests dont work well on AIX CI servers (hangs them)
+        if (isPlatform("aix")) {
+            return;
+        }
+
         getMockEndpoint("mock:result").expectedMessageCount(2);
 
         template.sendBody("direct:start", "Hello World");
@@ -148,6 +163,11 @@ public class ManagedBrowsableEndpointAsXmlTest extends ManagementTestSupport {
     }
 
     public void testBrowseableEndpointAsXmlAll() throws Exception {
+        // JMX tests dont work well on AIX CI servers (hangs them)
+        if (isPlatform("aix")) {
+            return;
+        }
+
         getMockEndpoint("mock:result").expectedMessageCount(2);
 
         template.sendBodyAndHeader("direct:start", "Hello World", "foo", 123);
@@ -172,6 +192,11 @@ public class ManagedBrowsableEndpointAsXmlTest extends ManagementTestSupport {
     }
 
     public void testBrowseableEndpointAsXmlRangeIncludeBody() throws Exception {
+        // JMX tests dont work well on AIX CI servers (hangs them)
+        if (isPlatform("aix")) {
+            return;
+        }
+
         getMockEndpoint("mock:result").expectedMessageCount(3);
 
         template.sendBody("direct:start", "Hello World");
@@ -196,6 +221,11 @@ public class ManagedBrowsableEndpointAsXmlTest extends ManagementTestSupport {
     }
 
     public void testBrowseableEndpointAsXmlRange() throws Exception {
+        // JMX tests dont work well on AIX CI servers (hangs them)
+        if (isPlatform("aix")) {
+            return;
+        }
+
         getMockEndpoint("mock:result").expectedMessageCount(3);
 
         template.sendBodyAndHeader("direct:start", "Hello World", "foo", 123);
@@ -221,6 +251,11 @@ public class ManagedBrowsableEndpointAsXmlTest extends ManagementTestSupport {
     }
 
     public void testBrowseableEndpointAsXmlRangeInvalidIndex() throws Exception {
+        // JMX tests dont work well on AIX CI servers (hangs them)
+        if (isPlatform("aix")) {
+            return;
+        }
+
         MBeanServer mbeanServer = getMBeanServer();
 
         ObjectName name = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=endpoints,name=\"mock://result\"");

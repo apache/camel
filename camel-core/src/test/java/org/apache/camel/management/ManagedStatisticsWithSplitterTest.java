@@ -27,6 +27,11 @@ import org.apache.camel.builder.RouteBuilder;
 public class ManagedStatisticsWithSplitterTest extends ManagementTestSupport {
 
     public void testManageStatistics() throws Exception {
+        // JMX tests dont work well on AIX CI servers (hangs them)
+        if (isPlatform("aix")) {
+            return;
+        }
+
         // get the status for the route
         MBeanServer mbeanServer = getMBeanServer();
 

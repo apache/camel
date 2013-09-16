@@ -31,6 +31,11 @@ import org.apache.camel.processor.interceptor.Tracer;
 public class ManagedCamelContextTracerTest extends ManagementTestSupport {
 
     public void testCamelContextTracing() throws Exception {
+        // JMX tests dont work well on AIX CI servers (hangs them)
+        if (isPlatform("aix")) {
+            return;
+        }
+
         MBeanServer mbeanServer = getMBeanServer();
 
         ObjectName camel = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=context,name=\"camel-1\"");
