@@ -55,7 +55,7 @@ public abstract class ScheduledPollEndpoint extends DefaultEndpoint {
         configureScheduledPollConsumerProperties(options, getConsumerProperties());
     }
 
-    private void configureScheduledPollConsumerProperties(Map<String, Object> options, Map<String, Object> consumerProperties) {
+    protected void configureScheduledPollConsumerProperties(Map<String, Object> options, Map<String, Object> consumerProperties) {
         // special for scheduled poll consumers as we want to allow end users to configure its options
         // from the URI parameters without the consumer. prefix
         Map<String, Object> schedulerProperties = IntrospectionSupport.extractProperties(options, "scheduler.");
