@@ -29,7 +29,7 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpPost;
 import org.junit.Test;
 import org.restlet.data.CacheDirective;
-import org.restlet.engine.http.header.HeaderConstants;
+import org.restlet.engine.header.HeaderConstants;
 
 /**
  *
