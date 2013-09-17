@@ -41,10 +41,14 @@ import org.osgi.service.cm.ConfigurationAdmin;
  * Base class for OSGi Blueprint unit tests with Camel.
  */
 public abstract class CamelBlueprintTestSupport extends CamelTestSupport {
+    /** Name of a system property that sets camel context creation timeout. */
+    public static final String SPROP_CAMEL_CONTEXT_CREATION_TIMEOUT = "org.apache.camel.test.blueprint.camelContextCreationTimeout";
+
     private static ThreadLocal<BundleContext> threadLocalBundleContext = new ThreadLocal<BundleContext>();
     private volatile BundleContext bundleContext;
     private final Set<ServiceRegistration<?>> services = new LinkedHashSet<ServiceRegistration<?>>();
-    
+
+   
     @SuppressWarnings({"rawtypes", "unchecked"})
     protected BundleContext createBundleContext() throws Exception {
         String symbolicName = getClass().getSimpleName();
@@ -253,9 +257,43 @@ public abstract class CamelBlueprintTestSupport extends CamelTestSupport {
         return null;
     }
     
+    /**
+     * Returns how long to wait for Camel Context
+     * to be created.
+     * 
+     * @return timeout in milliseconds.
+     */
+    protected Long getCamelContextCreationTimeout() {
+        String tm = System.getProperty(SPROP_CAMEL_CONTEXT_CREATION_TIMEOUT);
+        if (tm == null) {
+            return null;
+        }
+        try {
+            Long val = Long.valueOf(tm);
+            if (val < 0) {
+                throw new IllegalArgumentException("Value of " 
+                        + SPROP_CAMEL_CONTEXT_CREATION_TIMEOUT
+                        + " cannot be negative.");
+            }
+            return val;
+        } catch (NumberFormatException e) {
+            throw new IllegalArgumentException("Value of " 
+                    + SPROP_CAMEL_CONTEXT_CREATION_TIMEOUT
+                    + " has wrong format.", e);
+        }
+    }
+    
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        CamelContext answer = CamelBlueprintHelper.getOsgiService(bundleContext, CamelContext.class);
+        CamelContext answer = null;
+        Long timeout = getCamelContextCreationTimeout();
+        if (timeout == null) {
+            answer = CamelBlueprintHelper.getOsgiService(bundleContext, CamelContext.class);
+        } else if (timeout >= 0) {
+            answer = CamelBlueprintHelper.getOsgiService(bundleContext, CamelContext.class, timeout);
+        } else {
+            throw new IllegalArgumentException("getCamelContextCreationTimeout cannot return a negative value.");
+        }
         // must override context so we use the correct one in testing
         context = (ModelCamelContext) answer;
         return answer;
