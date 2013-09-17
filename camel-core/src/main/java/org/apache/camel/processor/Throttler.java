@@ -138,7 +138,7 @@ public class Throttler extends DelayProcessorSupport implements Traceable {
         if (slot == null) {
             slot = new TimeSlot();
         }
-        if (slot.isFull()) {
+        if (slot.isFull() || !slot.isActive()) {
             slot = slot.next();
         }
         slot.assign();
@@ -175,11 +175,16 @@ public class Throttler extends DelayProcessorSupport implements Traceable {
         }
         
         protected boolean isActive() {
-            return startTime <= System.currentTimeMillis();
+            long current = System.currentTimeMillis();
+            return startTime <= current && current < (startTime + duration);
         }
         
         protected boolean isFull() {
             return capacity <= 0;
         }        
+    }
+
+    TimeSlot getSlot() {
+        return this.slot;
     }
 }
