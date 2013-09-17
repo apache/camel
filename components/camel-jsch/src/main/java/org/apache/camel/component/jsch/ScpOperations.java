@@ -236,6 +236,11 @@ public class ScpOperations implements RemoteFileOperations<ScpFile> {
             session = jsch.getSession(config.getUsername(), config.getHost(), config.getPort());
             session.setTimeout(config.getTimeout());
             session.setUserInfo(new SessionUserInfo(config));
+            
+            if (ObjectHelper.isNotEmpty(config.getStrictHostKeyChecking())) {
+                LOG.debug("Using StrickHostKeyChecking: {}", config.getStrictHostKeyChecking());
+                session.setConfig("StrictHostKeyChecking", config.getStrictHostKeyChecking());
+            }
 
             int timeout = config.getConnectTimeout();
             LOG.debug("Connecting to {} with {} timeout...", config.remoteServerInformation(),

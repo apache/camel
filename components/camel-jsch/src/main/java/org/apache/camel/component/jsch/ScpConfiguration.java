@@ -30,7 +30,7 @@ public class ScpConfiguration extends RemoteFileConfiguration {
     private String knownHostsFile;
     private String privateKeyFile;
     private String privateKeyFilePassphrase;
-    private String strictHostKeyChecking = "no";
+    private String strictHostKeyChecking;
     private int serverAliveInterval;
     private int serverAliveCountMax = 1;
     private String chmod = DEFAULT_MOD;
