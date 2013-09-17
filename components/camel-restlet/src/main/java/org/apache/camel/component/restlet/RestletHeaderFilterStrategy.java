@@ -18,7 +18,7 @@ package org.apache.camel.component.restlet;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultHeaderFilterStrategy;
-import org.restlet.engine.http.header.HeaderConstants;
+import org.restlet.engine.header.HeaderConstants;
 
 /**
  * Default header filtering strategy for Restlet
