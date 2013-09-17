@@ -161,6 +161,7 @@
     <module>camel-sjms</module>
     <module>camel-soap</module>
     <module>camel-solr</module>
+    <module>camel-splunk</module>
     <module>camel-spring-batch</module>
     <module>camel-spring-javaconfig</module>
     <module>camel-spring-integration</module>

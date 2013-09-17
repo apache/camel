@@ -1,0 +1,106 @@
+/**
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+package org.apache.camel.component.splunk;
+
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Queue;
+
+import org.apache.camel.Exchange;
+import org.apache.camel.Message;
+import org.apache.camel.Processor;
+import org.apache.camel.component.splunk.event.SplunkEvent;
+import org.apache.camel.component.splunk.support.SplunkDataReader;
+import org.apache.camel.impl.ScheduledBatchPollingConsumer;
+import org.apache.camel.util.CastUtils;
+import org.apache.camel.util.ObjectHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+/**
+ * The Splunk consumer.
+ */
+public class SplunkConsumer extends ScheduledBatchPollingConsumer {
+    private static final Logger LOG = LoggerFactory.getLogger(SplunkConsumer.class);
+    private SplunkDataReader dataReader;
+    private SplunkEndpoint endpoint;
+
+    public SplunkConsumer(SplunkEndpoint endpoint, Processor processor, ConsumerType consumerType) {
+        super(endpoint, processor);
+        this.endpoint = endpoint;
+        if (consumerType.equals(ConsumerType.NORMAL) || consumerType.equals(ConsumerType.REALTIME)) {
+            if (ObjectHelper.isEmpty(endpoint.getConfiguration().getSearch())) {
+                throw new RuntimeException("Missing option 'search' with normal or realtime search");
+            }
+        }
+        if (consumerType.equals(ConsumerType.SAVEDSEARCH) && ObjectHelper.isEmpty(endpoint.getConfiguration().getSavedSearch())) {
+            throw new RuntimeException("Missing option 'savedSearch' with saved search");
+        }
+        dataReader = new SplunkDataReader(endpoint, consumerType);
+    }
+
+    @Override
+    protected int poll() throws Exception {
+        try {
+            List<SplunkEvent> events = dataReader.read();
+            Queue<Exchange> exchanges = createExchanges(events);
+            return processBatch(CastUtils.cast(exchanges));
+        } catch (Exception e) {
+            if (endpoint.reconnectIfPossible(e)) {
+                return 0;
+            } else {
+                getExceptionHandler().handleException(e);
+                return 0;
+            }
+        }
+    }
+
+    protected Queue<Exchange> createExchanges(List<SplunkEvent> splunkEvents) {
+        LOG.trace("Received {} messages in this poll", splunkEvents.size());
+        Queue<Exchange> answer = new LinkedList<Exchange>();
+        for (SplunkEvent splunkEvent : splunkEvents) {
+            Exchange exchange = getEndpoint().createExchange();
+            Message message = exchange.getIn();
+            message.setBody(splunkEvent);
+            answer.add(exchange);
+        }
+        return answer;
+    }
+
+    @Override
+    public int processBatch(Queue<Object> exchanges) throws Exception {
+        int total = exchanges.size();
+
+        for (int index = 0; index < total && isBatchAllowed(); index++) {
+            Exchange exchange = ObjectHelper.cast(Exchange.class, exchanges.poll());
+            exchange.setProperty(Exchange.BATCH_INDEX, index);
+            exchange.setProperty(Exchange.BATCH_SIZE, total);
+            exchange.setProperty(Exchange.BATCH_COMPLETE, index == total - 1);
+            try {
+                LOG.trace("Processing exchange [{}]...", exchange);
+                getProcessor().process(exchange);
+            } catch (Exception e) {
+                exchange.setException(e);
+            }
+            if (exchange.getException() != null) {
+                getExceptionHandler().handleException("Error processing exchange", exchange, exchange.getException());
+            }
+        }
+        return total;
+    }
+
+}

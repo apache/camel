@@ -1,0 +1,40 @@
+{ "init_offset": 0,
+  "messages": [
+    {
+      "text": "base lispy: [ AND index::_internal source::*metrics.log ]",
+      "type": "DEBUG"
+    },
+    {
+      "text": "search context: user=\"admin\", app=\"search\", bs-pathname=\"/Applications/splunk-ace/etc\"",
+      "type": "DEBUG"
+    },
+    {
+      "text": "Your timerange was substituted based on your search string",
+      "type": "INFO"
+    }
+  ],
+  "preview": false,
+  "results": [
+    {
+      "group": "tpool",
+      "host": "splunks-ombra.sv.splunk.com",
+      "name": "indexertpool",
+      "source": "/Applications/splunk-ace/var/log/splunk/metrics.log",
+      "sourcetype": "splunkd"
+    },
+    {
+      "group": "tpool",
+      "host": "splunks-ombra.sv.splunk.com",
+      "name": "bundlereplthreadpool",
+      "source": "/Applications/splunk-ace/var/log/splunk/metrics.log",
+      "sourcetype": "splunkd"
+    },
+    {
+      "group": "tpool",
+      "host": "splunks-ombra.sv.splunk.com",
+      "name": "batchreadertpool",
+      "source": "/Applications/splunk-ace/var/log/splunk/metrics.log",
+      "sourcetype": "splunkd"
+    }
+  ]
+}
