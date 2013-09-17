@@ -29,7 +29,7 @@ import org.junit.Test;
 
 public class HazelcastMapConsumerTest extends CamelTestSupport {
 
-    private IMap<String, Object> map;
+    private IMap<Object, Object> map;
 
     @Override
     protected void doPostSetup() throws Exception {
@@ -56,12 +56,12 @@ public class HazelcastMapConsumerTest extends CamelTestSupport {
         MockEndpoint out = super.getMockEndpoint("mock:envicted");
         out.expectedMessageCount(5);
 
-        map.put("1", "my-foo-1");
-        map.put("2", "my-foo-2");
-        map.put("3", "my-foo-3");
-        map.put("4", "my-foo-4");
-        map.put("5", "my-foo-5");
-        map.put("6", "my-foo-6");
+        map.put(1, "my-foo-1");
+        map.put(2, "my-foo-2");
+        map.put(3, "my-foo-3");
+        map.put(4, "my-foo-4");
+        map.put(5, "my-foo-5");
+        map.put(6, "my-foo-6");
 
         assertMockEndpointsSatisfied(30000, TimeUnit.MILLISECONDS);
     }

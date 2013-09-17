@@ -42,11 +42,11 @@ public class HazelcastMultimapProducer extends DefaultProducer {
         Map<String, Object> headers = exchange.getIn().getHeaders();
 
         // get header parameters
-        String oid = null;
+        Object oid = null;
         int operation = -1;
 
         if (headers.containsKey(HazelcastConstants.OBJECT_ID)) {
-            oid = (String) headers.get(HazelcastConstants.OBJECT_ID);
+            oid = headers.get(HazelcastConstants.OBJECT_ID);
         }
 
         if (headers.containsKey(HazelcastConstants.OPERATION)) {
@@ -82,20 +82,20 @@ public class HazelcastMultimapProducer extends DefaultProducer {
         HazelcastComponentHelper.copyHeaders(exchange);
     }
 
-    private void put(String oid, Exchange exchange) {
+    private void put(Object oid, Exchange exchange) {
         Object body = exchange.getIn().getBody();
         this.cache.put(oid, body);
     }
 
-    private void get(String oid, Exchange exchange) {
+    private void get(Object oid, Exchange exchange) {
         exchange.getOut().setBody(this.cache.get(oid));
     }
 
-    private void delete(String oid) {
+    private void delete(Object oid) {
         this.cache.remove(oid);
     }
 
-    private void removevalue(String oid, Exchange exchange) {
+    private void removevalue(Object oid, Exchange exchange) {
         this.cache.remove(oid, exchange.getIn().getBody());
     }
 

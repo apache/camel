@@ -29,7 +29,7 @@ public class HazelcastMultimapConsumer extends HazelcastDefaultConsumer {
     public HazelcastMultimapConsumer(HazelcastInstance hazelcastInstance, Endpoint endpoint, Processor processor, String cacheName) {
         super(hazelcastInstance, endpoint, processor, cacheName);
 
-        MultiMap<String, Object> cache = hazelcastInstance.getMultiMap(cacheName);
+        MultiMap<Object, Object> cache = hazelcastInstance.getMultiMap(cacheName);
         cache.addEntryListener(new CamelEntryListener(this, cacheName), true);
     }
 

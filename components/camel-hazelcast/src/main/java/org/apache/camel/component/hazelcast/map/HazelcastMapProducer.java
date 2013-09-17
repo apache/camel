@@ -30,7 +30,7 @@ import org.apache.camel.impl.DefaultProducer;
 
 public class HazelcastMapProducer extends DefaultProducer {
 
-    private final IMap<String, Object> cache;
+    private final IMap<Object, Object> cache;
     private final HazelcastComponentHelper helper = new HazelcastComponentHelper();
 
     public HazelcastMapProducer(HazelcastInstance hazelcastInstance, HazelcastMapEndpoint endpoint, String cacheName) {
@@ -43,12 +43,12 @@ public class HazelcastMapProducer extends DefaultProducer {
         Map<String, Object> headers = exchange.getIn().getHeaders();
 
         // get header parameters
-        String oid = null;
+        Object oid = null;
         int operation = -1;
         String query = null;
 
         if (headers.containsKey(HazelcastConstants.OBJECT_ID)) {
-            oid = (String) headers.get(HazelcastConstants.OBJECT_ID);
+            oid = headers.get(HazelcastConstants.OBJECT_ID);
         }
 
         if (headers.containsKey(HazelcastConstants.OPERATION)) {
@@ -107,7 +107,7 @@ public class HazelcastMapProducer extends DefaultProducer {
     /**
      * update an object in your cache (the whole object will be replaced)
      */
-    private void update(String oid, Exchange exchange) {
+    private void update(Object oid, Exchange exchange) {
         Object body = exchange.getIn().getBody();
         this.cache.lock(oid);
         this.cache.replace(oid, body);
@@ -117,21 +117,21 @@ public class HazelcastMapProducer extends DefaultProducer {
     /**
      * remove an object from the cache
      */
-    private void delete(String oid) {
+    private void delete(Object oid) {
         this.cache.remove(oid);
     }
 
     /**
      * find an object by the given id and give it back
      */
-    private void get(String oid, Exchange exchange) {
+    private void get(Object oid, Exchange exchange) {
         exchange.getOut().setBody(this.cache.get(oid));
     }
 
     /**
      * put a new object into the cache
      */
-    private void put(String oid, Exchange exchange) {
+    private void put(Object oid, Exchange exchange) {
         Object body = exchange.getIn().getBody();
         this.cache.put(oid, body);
     }

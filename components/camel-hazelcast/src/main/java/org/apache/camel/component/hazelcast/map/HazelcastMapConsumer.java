@@ -29,7 +29,7 @@ public class HazelcastMapConsumer extends HazelcastDefaultConsumer {
     public HazelcastMapConsumer(HazelcastInstance hazelcastInstance, Endpoint endpoint, Processor processor, String cacheName) {
         super(hazelcastInstance, endpoint, processor, cacheName);
 
-        IMap<String, Object> cache = hazelcastInstance.getMap(cacheName);
+        IMap<Object, Object> cache = hazelcastInstance.getMap(cacheName);
         cache.addEntryListener(new CamelEntryListener(this, cacheName), true);
     }
 

@@ -31,7 +31,7 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 public class HazelcastMapProducerForSpringTest extends CamelSpringTestSupport implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    private IMap<String, Object> map;
+    private IMap<Long, Object> map;
 
     @Override
     protected void doPostSetup() throws Exception {
@@ -49,28 +49,28 @@ public class HazelcastMapProducerForSpringTest extends CamelSpringTestSupport im
 
     @Test
     public void testPut() throws InterruptedException {
-        template.sendBodyAndHeader("direct:put", "my-foo", HazelcastConstants.OBJECT_ID, "4711");
+        template.sendBodyAndHeader("direct:put", "my-foo", HazelcastConstants.OBJECT_ID, 4711L);
 
-        assertTrue(map.containsKey("4711"));
-        assertEquals("my-foo", map.get("4711"));
+        assertTrue(map.containsKey(4711L));
+        assertEquals("my-foo", map.get(4711L));
     }
 
     @Test
     public void testUpdate() {
-        template.sendBodyAndHeader("direct:put", "my-foo", HazelcastConstants.OBJECT_ID, "4711");
+        template.sendBodyAndHeader("direct:put", "my-foo", HazelcastConstants.OBJECT_ID, 4711L);
 
-        assertTrue(map.containsKey("4711"));
-        assertEquals("my-foo", map.get("4711"));
+        assertTrue(map.containsKey(4711L));
+        assertEquals("my-foo", map.get(4711L));
 
-        template.sendBodyAndHeader("direct:update", "my-fooo", HazelcastConstants.OBJECT_ID, "4711");
-        assertEquals("my-fooo", map.get("4711"));
+        template.sendBodyAndHeader("direct:update", "my-fooo", HazelcastConstants.OBJECT_ID, 4711L);
+        assertEquals("my-fooo", map.get(4711L));
     }
 
     @Test
     public void testGet() {
-        map.put("4711", "my-foo");
+        map.put(4711L, "my-foo");
 
-        template.sendBodyAndHeader("direct:get", null, HazelcastConstants.OBJECT_ID, "4711");
+        template.sendBodyAndHeader("direct:get", null, HazelcastConstants.OBJECT_ID, 4711L);
         String body = consumer.receiveBody("seda:out", 5000, String.class);
 
         assertEquals("my-foo", body);
@@ -78,18 +78,18 @@ public class HazelcastMapProducerForSpringTest extends CamelSpringTestSupport im
 
     @Test
     public void testDelete() {
-        map.put("4711", "my-foo");
+        map.put(4711L, "my-foo");
         assertEquals(1, map.size());
 
-        template.sendBodyAndHeader("direct:delete", null, HazelcastConstants.OBJECT_ID, "4711");
+        template.sendBodyAndHeader("direct:delete", null, HazelcastConstants.OBJECT_ID, 4711L);
         assertEquals(0, map.size());
     }
 
     @Test
     public void testQuery() {
-        map.put("1", new Dummy("alpha", 1000));
-        map.put("2", new Dummy("beta", 2000));
-        map.put("3", new Dummy("gamma", 3000));
+        map.put(1L, new Dummy("alpha", 1000));
+        map.put(2L, new Dummy("beta", 2000));
+        map.put(3L, new Dummy("gamma", 3000));
 
         String q1 = "bar > 1000";
         String q2 = "foo LIKE alp%";

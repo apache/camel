@@ -29,7 +29,7 @@ import org.junit.Test;
 
 public class HazelcastMultimapProducerTest extends CamelTestSupport {
 
-    private MultiMap<String, Object> map;
+    private MultiMap<Object, Object> map;
 
     @Override
     protected void doPostSetup() throws Exception {
@@ -81,10 +81,10 @@ public class HazelcastMultimapProducerTest extends CamelTestSupport {
 
     @Test
     public void testDelete() {
-        map.put("4711", "my-foo");
+        map.put(4711, "my-foo");
         assertEquals(1, map.size());
 
-        template.sendBodyAndHeader("direct:delete", null, HazelcastConstants.OBJECT_ID, "4711");
+        template.sendBodyAndHeader("direct:delete", null, HazelcastConstants.OBJECT_ID, 4711);
         assertEquals(0, map.size());
     }
 

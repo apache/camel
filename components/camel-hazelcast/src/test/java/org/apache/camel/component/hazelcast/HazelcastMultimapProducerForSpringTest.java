@@ -29,7 +29,7 @@ import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 public class HazelcastMultimapProducerForSpringTest extends CamelSpringTestSupport {
-    private MultiMap<String, Object> map;
+    private MultiMap<Long, Object> map;
     
     @Override
     protected void doPostSetup() throws Exception {
@@ -51,11 +51,11 @@ public class HazelcastMultimapProducerForSpringTest extends CamelSpringTestSuppo
 
     @Test
     public void testPut() throws InterruptedException {
-        template.sendBodyAndHeader("direct:put", "my-foo", HazelcastConstants.OBJECT_ID, "4711");
-        template.sendBodyAndHeader("direct:put", "my-bar", HazelcastConstants.OBJECT_ID, "4711");
+        template.sendBodyAndHeader("direct:put", "my-foo", HazelcastConstants.OBJECT_ID, 4711L);
+        template.sendBodyAndHeader("direct:put", "my-bar", HazelcastConstants.OBJECT_ID, 4711L);
 
-        assertTrue(map.containsKey("4711"));
-        Collection<Object> values = map.get("4711");
+        assertTrue(map.containsKey(4711L));
+        Collection<Object> values = map.get(4711L);
 
         assertTrue(values.contains("my-foo"));
         assertTrue(values.contains("my-bar"));
@@ -63,22 +63,22 @@ public class HazelcastMultimapProducerForSpringTest extends CamelSpringTestSuppo
 
     @Test
     public void testRemoveValue() {
-        map.put("4711", "my-foo");
-        map.put("4711", "my-bar");
+        map.put(4711L, "my-foo");
+        map.put(4711L, "my-bar");
 
-        assertEquals(2, map.get("4711").size());
+        assertEquals(2, map.get(4711L).size());
 
-        template.sendBodyAndHeader("direct:removevalue", "my-foo", HazelcastConstants.OBJECT_ID, "4711");
+        template.sendBodyAndHeader("direct:removevalue", "my-foo", HazelcastConstants.OBJECT_ID, 4711L);
 
-        assertEquals(1, map.get("4711").size());
-        assertTrue(map.get("4711").contains("my-bar"));
+        assertEquals(1, map.get(4711L).size());
+        assertTrue(map.get(4711L).contains("my-bar"));
     }
 
     @Test
     public void testGet() {
-        map.put("4711", "my-foo");
+        map.put(4711L, "my-foo");
 
-        template.sendBodyAndHeader("direct:get", null, HazelcastConstants.OBJECT_ID, "4711");
+        template.sendBodyAndHeader("direct:get", null, HazelcastConstants.OBJECT_ID, 4711L);
         Collection<?> body = consumer.receiveBody("seda:out", 5000, Collection.class);
 
         assertTrue(body.contains("my-foo"));
@@ -86,10 +86,10 @@ public class HazelcastMultimapProducerForSpringTest extends CamelSpringTestSuppo
 
     @Test
     public void testDelete() {
-        map.put("4711", "my-foo");
+        map.put(4711L, "my-foo");
         assertEquals(1, map.size());
 
-        template.sendBodyAndHeader("direct:delete", null, HazelcastConstants.OBJECT_ID, "4711");
+        template.sendBodyAndHeader("direct:delete", null, HazelcastConstants.OBJECT_ID, 4711L);
         assertEquals(0, map.size());
     }
 

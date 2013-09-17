@@ -30,7 +30,7 @@ import org.junit.Test;
 public class HazelcastMapProducerTest extends CamelTestSupport implements Serializable {
 
     private static final long serialVersionUID = 1L;
-    private IMap<String, Object> map;
+    private IMap<Object, Object> map;
 
     @Override
     protected void doPostSetup() throws Exception {
@@ -71,10 +71,10 @@ public class HazelcastMapProducerTest extends CamelTestSupport implements Serial
 
     @Test
     public void testDelete() {
-        map.put("4711", "my-foo");
+        map.put(4711, "my-foo");
         assertEquals(1, map.size());
 
-        template.sendBodyAndHeader("direct:delete", null, HazelcastConstants.OBJECT_ID, "4711");
+        template.sendBodyAndHeader("direct:delete", null, HazelcastConstants.OBJECT_ID, 4711);
         assertEquals(0, map.size());
     }
 

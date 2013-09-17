@@ -25,25 +25,25 @@ import org.apache.camel.component.hazelcast.HazelcastDefaultConsumer;
 /**
  *
  */
-public class CamelEntryListener extends CamelListener implements EntryListener<String, Object> {
+public class CamelEntryListener extends CamelListener implements EntryListener<Object, Object> {
 
     public CamelEntryListener(HazelcastDefaultConsumer consumer, String cacheName) {
         super(consumer, cacheName);
     }
 
-    public void entryAdded(EntryEvent<String, Object> event) {
+    public void entryAdded(EntryEvent<Object, Object> event) {
         this.sendExchange(HazelcastConstants.ADDED, event.getKey(), event.getValue());
     }
 
-    public void entryEvicted(EntryEvent<String, Object> event) {
+    public void entryEvicted(EntryEvent<Object, Object> event) {
         this.sendExchange(HazelcastConstants.ENVICTED, event.getKey(), event.getValue());
     }
 
-    public void entryRemoved(EntryEvent<String, Object> event) {
+    public void entryRemoved(EntryEvent<Object, Object> event) {
         this.sendExchange(HazelcastConstants.REMOVED, event.getKey(), event.getValue());
     }
 
-    public void entryUpdated(EntryEvent<String, Object> event) {
+    public void entryUpdated(EntryEvent<Object, Object> event) {
         this.sendExchange(HazelcastConstants.UPDATED, event.getKey(), event.getValue());
     }
 }

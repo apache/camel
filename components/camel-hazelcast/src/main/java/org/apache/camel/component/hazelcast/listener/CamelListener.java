@@ -31,7 +31,7 @@ public class CamelListener {
         this.consumer = consumer;
     }
 
-    protected void sendExchange(String operation, String key, Object value) {
+    protected void sendExchange(String operation, Object key, Object value) {
         Exchange exchange = consumer.getEndpoint().createExchange();
 
         // set object to body
