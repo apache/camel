@@ -37,12 +37,26 @@ import static org.hamcrest.CoreMatchers.is;
 public class QuickfixjSpringTest extends CamelSpringTestSupport {
 
     @Override
+    public void setUp() throws Exception {
+        if (isJava16()) {
+            // cannot test on java 1.6
+            return;
+        }
+        super.setUp();
+    }
+
+    @Override
     protected AbstractApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/component/quickfixj/QuickfixjSpringTest-context.xml");
     }
 
     @Test
     public void configureInSpring() throws Exception {
+        if (isJava16()) {
+            // cannot test on java 1.6
+            return;
+        }
+
         SessionID sessionID = new SessionID("FIX.4.2:INITIATOR->ACCEPTOR");
         QuickfixjConfiguration configuration = context.getRegistry().lookupByNameAndType("quickfixjConfiguration", QuickfixjConfiguration.class);
 
