@@ -86,13 +86,6 @@ public class CamelServlet extends HttpServlet {
         
         // create exchange and set data on it
         Exchange exchange = new DefaultExchange(consumer.getEndpoint(), ExchangePattern.InOut);
-        // we want to handle the UoW
-        try {
-            consumer.createUoW(exchange);
-        } catch (Exception e) {
-            log.error("Error processing request", e);
-            throw new ServletException(e);
-        }
 
         if (consumer.getEndpoint().isBridgeEndpoint()) {
             exchange.setProperty(Exchange.SKIP_GZIP_ENCODING, Boolean.TRUE);
@@ -117,7 +110,15 @@ public class CamelServlet extends HttpServlet {
             exchange.getIn().setHeader(Exchange.HTTP_PATH,
                     httpPath.substring(contextPath.length()));
         }
-        
+
+        // we want to handle the UoW
+        try {
+            consumer.createUoW(exchange);
+        } catch (Exception e) {
+            log.error("Error processing request", e);
+            throw new ServletException(e);
+        }
+
         try {
             if (log.isTraceEnabled()) {
                 log.trace("Processing request for exchangeId: {}", exchange.getExchangeId());

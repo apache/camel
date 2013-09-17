@@ -76,11 +76,11 @@ public class CxfRsInvoker extends JAXRSInvoker {
                     ep = ExchangePattern.InOnly;
                 } 
                 final org.apache.camel.Exchange camelExchange = endpoint.createExchange(ep);
-                // we want to handle the UoW
-                cxfRsConsumer.createUoW(camelExchange);
 
                 CxfRsBinding binding = endpoint.getBinding();
                 binding.populateExchangeFromCxfRsRequest(cxfExchange, camelExchange, method, paramArray);
+                // we want to handle the UoW
+                cxfRsConsumer.createUoW(camelExchange);
                 // Now we don't set up the timeout value
                 LOG.trace("Suspending continuation of exchangeId: {}", camelExchange.getExchangeId());
                 // TODO Support to set the timeout in case the Camel can't send the response back on time.
@@ -121,10 +121,10 @@ public class CxfRsInvoker extends JAXRSInvoker {
             ep = ExchangePattern.InOnly;
         } 
         org.apache.camel.Exchange camelExchange = endpoint.createExchange(ep);
-        // we want to handle the UoW
-        cxfRsConsumer.createUoW(camelExchange);
         CxfRsBinding binding = endpoint.getBinding();
         binding.populateExchangeFromCxfRsRequest(cxfExchange, camelExchange, method, paramArray);
+        // we want to handle the UoW
+        cxfRsConsumer.createUoW(camelExchange);
 
         try {
             cxfRsConsumer.getProcessor().process(camelExchange);

@@ -102,13 +102,6 @@ public class CamelContinuationServlet extends CamelServlet {
 
             // a new request so create an exchange
             final Exchange exchange = new DefaultExchange(consumer.getEndpoint(), ExchangePattern.InOut);
-            // we want to handle the UoW
-            try {
-                consumer.createUoW(exchange);
-            } catch (Exception e) {
-                log.error("Error processing request", e);
-                throw new ServletException(e);
-            }
 
             if (consumer.getEndpoint().isBridgeEndpoint()) {
                 exchange.setProperty(Exchange.SKIP_GZIP_ENCODING, Boolean.TRUE);
@@ -136,6 +129,15 @@ public class CamelContinuationServlet extends CamelServlet {
                 log.trace("Suspending continuation of exchangeId: {}", exchange.getExchangeId());
             }
             continuation.setAttribute(EXCHANGE_ATTRIBUTE_ID, exchange.getExchangeId());
+
+            // we want to handle the UoW
+            try {
+                consumer.createUoW(exchange);
+            } catch (Exception e) {
+                log.error("Error processing request", e);
+                throw new ServletException(e);
+            }
+
             // must suspend before we process the exchange
             continuation.suspend();
 
