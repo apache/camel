@@ -24,6 +24,7 @@ import java.util.List;
 import java.util.Map;
 
 import javax.net.ssl.SSLContext;
+import javax.servlet.DispatcherType;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.RuntimeCamelException;
@@ -34,7 +35,6 @@ import org.cometd.bayeux.server.SecurityPolicy;
 import org.cometd.server.BayeuxServerImpl;
 import org.cometd.server.CometdServlet;
 import org.eclipse.jetty.server.Connector;
-import org.eclipse.jetty.server.DispatcherType;
 import org.eclipse.jetty.server.Server;
 import org.eclipse.jetty.server.handler.ContextHandlerCollection;
 import org.eclipse.jetty.server.nio.SelectChannelConnector;
