@@ -84,11 +84,27 @@ public class ThrottlerTest extends ContextTestSupport {
         // make sure the same slot is used (3 exchanges per slot)
         assertSame(slot, throttler.nextSlot());
         assertTrue(slot.isFull());
+        assertTrue(slot.isActive());
         
         TimeSlot next = throttler.nextSlot();
         // now we should have a new slot that starts somewhere in the future
         assertNotSame(slot, next);
         assertFalse(next.isActive());
+    }
+
+    public void testTimeSlotCalculusForPeriod() throws InterruptedException {
+        Throttler throttler = new Throttler(context, null, constant(3), 1000, null, false);
+        throttler.calculateDelay(new DefaultExchange(context));
+
+        TimeSlot slot = throttler.getSlot();
+        assertNotNull(slot);
+        assertSame(slot, throttler.nextSlot());
+
+        // we've only used up two of three slots, but now we introduce a time delay
+        // so to make the slot not valid anymore
+        Thread.sleep((long) (1.5 * 1000));
+        assertFalse(slot.isActive());
+        assertNotSame(slot, throttler.nextSlot());
     }
 
     public void testConfigurationWithConstantExpression() throws Exception {
@@ -142,18 +158,18 @@ public class ThrottlerTest extends ContextTestSupport {
         assertTrue("Should take at least " + minimumTime + "ms, was: " + delta, delta >= minimumTime);
         executor.shutdownNow();
     }
-    
+
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 // START SNIPPET: ex
                 from("seda:a").throttle(3).timePeriodMillis(10000).to("log:result", "mock:result");
                 // END SNIPPET: ex
-                
+
                 from("direct:a").throttle(1).timePeriodMillis(INTERVAL).to("log:result", "mock:result");
-                
+
                 from("direct:expressionConstant").throttle(constant(1)).timePeriodMillis(INTERVAL).to("log:result", "mock:result");
-                
+
                 from("direct:expressionHeader").throttle(header("throttleValue")).timePeriodMillis(INTERVAL).to("log:result", "mock:result");
             }
         };
