@@ -237,10 +237,8 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
         HttpClientConfigurer configurer = createHttpClientConfigurer(parameters, authMethods);
         URI endpointUri = URISupport.createRemainingURI(new URI(addressUri), httpClientParameters);
        
-        // create the endpoint
+        // create the endpoint and connectionManagerParams already be set
         HttpEndpoint endpoint = new HttpEndpoint(endpointUri.toString(), this, clientParams, thisHttpConnectionManager, configurer);
-        
-        endpoint.getHttpConnectionManager().setParams(connectionManagerParams);
         
         if (headerFilterStrategy != null) {
             endpoint.setHeaderFilterStrategy(headerFilterStrategy);
