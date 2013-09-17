@@ -152,13 +152,6 @@ public class CxfConsumer extends DefaultConsumer {
 
                 // create a Camel exchange, the default MEP is InOut
                 org.apache.camel.Exchange camelExchange = endpoint.createExchange();
-                // we want to handle the UoW
-                try {
-                    CxfConsumer.this.createUoW(camelExchange);
-                } catch (Exception e) {
-                    log.error("Error processing request", e);
-                    throw new Fault(e);
-                }
 
                 DataFormat dataFormat = endpoint.getDataFormat();
 
@@ -194,6 +187,14 @@ public class CxfConsumer extends DefaultConsumer {
                 binding.extractJaxWsContext(cxfExchange, context);
                 // put the context into camelExchange
                 camelExchange.setProperty(CxfConstants.JAXWS_CONTEXT, context);
+
+                // we want to handle the UoW
+                try {
+                    CxfConsumer.this.createUoW(camelExchange);
+                } catch (Exception e) {
+                    log.error("Error processing request", e);
+                    throw new Fault(e);
+                }
                 return camelExchange;
             }
             
