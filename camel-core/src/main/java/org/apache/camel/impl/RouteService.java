@@ -30,6 +30,7 @@ import org.apache.camel.Channel;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Route;
+import org.apache.camel.RouteAware;
 import org.apache.camel.Service;
 import org.apache.camel.model.OnCompletionDefinition;
 import org.apache.camel.model.OnExceptionDefinition;
@@ -142,6 +143,12 @@ public class RouteService extends ChildServiceSupport {
                 // afterwards to avoid them being active while the others start
                 List<Service> childServices = new ArrayList<Service>();
                 for (Service service : list) {
+
+                    // inject the route
+                    if (service instanceof RouteAware) {
+                        ((RouteAware) service).setRoute(route);
+                    }
+
                     if (service instanceof Consumer) {
                         inputs.put(route, (Consumer) service);
                     } else {
