@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.netty.handlers;
 
+import java.util.List;
+
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
@@ -26,11 +28,13 @@ import org.apache.camel.component.netty.NettyHelper;
 import org.apache.camel.component.netty.NettyPayloadHelper;
 import org.apache.camel.component.netty.NettyProducer;
 import org.apache.camel.util.ExchangeHelper;
+import org.jboss.netty.channel.ChannelHandler;
 import org.jboss.netty.channel.ChannelHandlerContext;
 import org.jboss.netty.channel.ChannelStateEvent;
 import org.jboss.netty.channel.ExceptionEvent;
 import org.jboss.netty.channel.MessageEvent;
 import org.jboss.netty.channel.SimpleChannelUpstreamHandler;
+import org.jboss.netty.handler.timeout.ReadTimeoutHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -120,16 +124,19 @@ public class ClientChannelHandler extends SimpleChannelUpstreamHandler {
 
     @Override
     public void messageReceived(ChannelHandlerContext ctx, MessageEvent messageEvent) throws Exception {
+        messageReceived = true;
+
         if (LOG.isTraceEnabled()) {
             LOG.trace("Message received: {}", messageEvent);
         }
 
         if (producer.getConfiguration().getRequestTimeout() > 0) {
-            LOG.trace("Removing timeout channel as we received message");
-            ctx.getPipeline().remove("timeout");
+            ChannelHandler handler = ctx.getPipeline().get("timeout");
+            if (handler != null) {
+                LOG.trace("Removing timeout channel as we received message");
+                ctx.getPipeline().remove(handler);
+            }
         }
-
-        messageReceived = true;
 
         Exchange exchange = getExchange(ctx);
         AsyncCallback callback = getAsyncCallback(ctx);
