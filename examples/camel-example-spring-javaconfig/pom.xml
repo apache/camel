@@ -25,20 +25,11 @@
   </parent>
 
   <artifactId>camel-example-spring-javaconfig</artifactId>
-  <packaging>bundle</packaging>
+  <packaging>jar</packaging>
   <name>Camel :: Example :: Spring :: JavaConfig</name>
   <description>An example showing how to work with Camel and Spring Java Config</description>
 
-  <properties>
-    <camel.osgi.export>org.apache.camel.example.spring.*</camel.osgi.export>
-    <camel.osgi.import>
-      !org.apache.camel.example.spring.*,
-      org.springframework.osgi.*;version="[1.2,2)",
-      org.springframework.*;version="[3,4)",
-      org.apache.activemq.xbean,org.apache.activemq.broker,org.apache.activemq.pool
-    </camel.osgi.import>
-    <!-- avoid to import the bunch of spring related package -->
-    <camel.osgi.dynamic>*</camel.osgi.dynamic>
+  <properties>    
     <junit-version>4.8.1</junit-version>
   </properties>
 
@@ -70,35 +61,6 @@
       <artifactId>activemq-client</artifactId>
     </dependency>
 
-    <!-- osgi -->
-    <!-- to run from command line using mvn camel:run -->
-    <dependency>
-      <groupId>org.osgi</groupId>
-      <artifactId>org.osgi.core</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework.osgi</groupId>
-      <artifactId>spring-osgi-core</artifactId>
-      <exclusions>
-          <exclusion>
-              <groupId>org.springframework</groupId>
-              <artifactId>org.springframework.aop</artifactId>
-          </exclusion>
-          <exclusion>
-              <groupId>org.springframework</groupId>
-              <artifactId>org.springframework.beans</artifactId>
-          </exclusion>
-          <exclusion>
-              <groupId>org.springframework</groupId>
-              <artifactId>org.springframework.context</artifactId>
-          </exclusion>
-          <exclusion>
-              <groupId>org.springframework</groupId>
-              <artifactId>org.springframework.core</artifactId>
-          </exclusion>
-      </exclusions>
-    </dependency>
-
     <!-- logging -->
     <dependency>
       <groupId>org.slf4j</groupId>
@@ -119,29 +81,7 @@
   </dependencies>
 
   <build>
-    <plugins>
-      <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>build-helper-maven-plugin</artifactId>
-        <executions>
-          <execution>
-            <id>attach-artifacts</id>
-            <phase>package</phase>
-            <goals>
-              <goal>attach-artifact</goal>
-            </goals>
-            <configuration>
-              <artifacts>
-                <artifact>
-                  <file>target/classes/features.xml</file>
-                  <type>xml</type>
-                  <classifier>features</classifier>
-                </artifact>
-              </artifacts>
-            </configuration>
-          </execution>
-        </executions>
-      </plugin>
+    <plugins>    
 
       <!-- START SNIPPET: example -->
 

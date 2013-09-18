@@ -20,14 +20,12 @@ import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.JmsComponent;
-import org.apache.camel.osgi.SpringCamelContextFactory;
+import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.spring.javaconfig.Main;
 import org.apache.camel.spring.javaconfig.SingleRouteCamelConfiguration;
-import org.osgi.framework.BundleContext;
 import org.springframework.beans.factory.InitializingBean;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.osgi.context.BundleContextAware;
 
 //START SNIPPET: RouteConfig
 /**
@@ -36,9 +34,7 @@ import org.springframework.osgi.context.BundleContextAware;
  * @version 
  */
 @Configuration
-public class MyRouteConfig extends SingleRouteCamelConfiguration implements InitializingBean, BundleContextAware {
-    
-    private BundleContext bundleContext;
+public class MyRouteConfig extends SingleRouteCamelConfiguration implements InitializingBean {
     
     /**
      * Allow this route to be run as an application
@@ -47,23 +43,12 @@ public class MyRouteConfig extends SingleRouteCamelConfiguration implements Init
         new Main().run(args);
     }
     
-    public BundleContext getBundleContext() {
-        return bundleContext;
-    }
-
-    public void setBundleContext(BundleContext bundleContext) { 
-        this.bundleContext = bundleContext;
-    }
-
     /**
-     * Returns the CamelContext which support OSGi
+     * Returns the CamelContext which support Spring
      */
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        SpringCamelContextFactory factory = new SpringCamelContextFactory();
-        factory.setApplicationContext(getApplicationContext());
-        factory.setBundleContext(getBundleContext());
-        return factory.createContext();
+        return new SpringCamelContext(getApplicationContext());
     }
     
     @Override
