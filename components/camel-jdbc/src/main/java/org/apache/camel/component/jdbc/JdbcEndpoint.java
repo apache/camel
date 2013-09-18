@@ -40,6 +40,8 @@ public class JdbcEndpoint extends DefaultEndpoint {
     private boolean allowNamedParameters = true;
     private boolean useHeadersAsParameters;
     private JdbcOutputType outputType = JdbcOutputType.SelectList;
+    private String outputClass;
+    private BeanRowMapper beanRowMapper = new DefaultBeanRowMapper();
 
     public JdbcEndpoint() {
     }
@@ -158,6 +160,22 @@ public class JdbcEndpoint extends DefaultEndpoint {
 
     public void setOutputType(JdbcOutputType outputType) {
         this.outputType = outputType;
+    }
+
+    public String getOutputClass() {
+        return outputClass;
+    }
+
+    public void setOutputClass(String outputClass) {
+        this.outputClass = outputClass;
+    }
+
+    public BeanRowMapper getBeanRowMapper() {
+        return beanRowMapper;
+    }
+
+    public void setBeanRowMapper(BeanRowMapper beanRowMapper) {
+        this.beanRowMapper = beanRowMapper;
     }
 
     @Override
