@@ -59,7 +59,7 @@ public final class DomConverter {
         boolean found = false;
         if (nodeList instanceof Node) {
             Node node = (Node) nodeList;
-            String s = xml.toString(node, exchange);
+            String s = toString(node, exchange);
             if (ObjectHelper.isNotEmpty(s)) {
                 found = true;
                 buffer.append(s);
@@ -69,7 +69,7 @@ public final class DomConverter {
             int size = nodeList.getLength();
             for (int i = 0; i < size; i++) {
                 Node node = nodeList.item(i);
-                String s = xml.toString(node, exchange);
+                String s = toString(node, exchange);
                 if (ObjectHelper.isNotEmpty(s)) {
                     found = true;
                     buffer.append(s);
@@ -84,6 +84,26 @@ public final class DomConverter {
         }
 
         return buffer.toString();
+    }
+    
+    private String toString(Node node, Exchange exchange) throws TransformerException {
+        String s;
+        if (node instanceof Text) {
+            Text textnode = (Text) node;
+            
+            StringBuilder b = new StringBuilder();
+            b.append(textnode.getNodeValue());
+            textnode = (Text) textnode.getNextSibling();
+            while (textnode != null) {
+                b.append(textnode.getNodeValue());
+                textnode = (Text) textnode.getNextSibling();
+            }
+            s = b.toString();
+        } else {
+            s = xml.toString(node, exchange);
+            
+        }
+        return s;
     }
 
     @Converter
