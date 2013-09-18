@@ -21,6 +21,9 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
+import org.apache.camel.PollingConsumer;
+import org.apache.camel.ResolveEndpointFailedException;
+import org.apache.camel.util.EndpointHelper;
 import org.apache.camel.util.IntrospectionSupport;
 
 /**
@@ -74,7 +77,7 @@ public abstract class ScheduledPollEndpoint extends DefaultEndpoint {
         Object backoffIdleThreshold  = options.remove("backoffIdleThreshold");
         Object backoffErrorThreshold  = options.remove("backoffErrorThreshold");
         boolean setConsumerProperties = false;
-        
+
         // the following is split into two if statements to satisfy the checkstyle max complexity constraint
         if (initialDelay != null || delay != null || timeUnit != null || useFixedDelay != null || pollStrategy != null) {
             setConsumerProperties = true;
@@ -85,9 +88,9 @@ public abstract class ScheduledPollEndpoint extends DefaultEndpoint {
         if (scheduler != null || !schedulerProperties.isEmpty() || backoffMultiplier != null || backoffIdleThreshold != null || backoffErrorThreshold != null) {
             setConsumerProperties = true;
         }
-        
+
         if (setConsumerProperties) {
-        
+
             if (consumerProperties == null) {
                 consumerProperties = new HashMap<String, Object>();
             }
@@ -154,5 +157,26 @@ public abstract class ScheduledPollEndpoint extends DefaultEndpoint {
             }
         }
     }
-    
+
+    @Override
+    protected void configurePollingConsumer(PollingConsumer consumer) throws Exception {
+        Map<String, Object> copy = new HashMap<String, Object>(getConsumerProperties());
+        Map<String, Object> throwaway = new HashMap<String, Object>();
+
+        // filter out unwanted options which is intended for the scheduled poll consumer
+        // as these options are not supported on the polling consumer
+        configureScheduledPollConsumerProperties(copy, throwaway);
+
+        // set reference properties first as they use # syntax that fools the regular properties setter
+        EndpointHelper.setReferenceProperties(getCamelContext(), consumer, copy);
+        EndpointHelper.setProperties(getCamelContext(), consumer, copy);
+
+        if (!isLenientProperties() && copy.size() > 0) {
+            throw new ResolveEndpointFailedException(this.getEndpointUri(), "There are " + copy.size()
+                    + " parameters that couldn't be set on the endpoint polling consumer."
+                    + " Check the uri if the parameters are spelt correctly and that they are properties of the endpoint."
+                    + " Unknown consumer parameters=[" + copy + "]");
+        }
+    }
+
 }

@@ -370,6 +370,10 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
         }
     }
 
+    protected void configurePollingConsumer(PollingConsumer consumer) throws Exception {
+        configureConsumer(consumer);
+    }
+
     @Override
     protected void doStart() throws Exception {
         // noop
