@@ -36,9 +36,7 @@ public class AtomPollingConsumer extends FeedPollingConsumer {
 
     @Override
     protected Object createFeed() throws IOException {
-
         Document<Feed> document = AtomUtils.parseDocument(endpoint.getFeedUri());
         return document.getRoot();
-
     }
 }
