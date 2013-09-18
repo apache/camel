@@ -22,6 +22,7 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Navigate;
 import org.apache.camel.Processor;
+import org.apache.camel.RouteAware;
 import org.apache.camel.Service;
 import org.apache.camel.SuspendableService;
 import org.apache.camel.spi.RouteContext;
@@ -64,6 +65,9 @@ public class EventDrivenConsumerRoute extends DefaultRoute {
         consumer = endpoint.createConsumer(processor);
         if (consumer != null) {
             services.add(consumer);
+            if (consumer instanceof RouteAware) {
+                ((RouteAware) consumer).setRoute(this);
+            }
         }
         Processor processor = getProcessor();
         if (processor instanceof Service) {

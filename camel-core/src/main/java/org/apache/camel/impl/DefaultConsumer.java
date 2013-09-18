@@ -21,6 +21,8 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.Route;
+import org.apache.camel.RouteAware;
 import org.apache.camel.spi.ExceptionHandler;
 import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.support.ServiceSupport;
@@ -36,12 +38,13 @@ import org.slf4j.LoggerFactory;
  *
  * @version 
  */
-public class DefaultConsumer extends ServiceSupport implements Consumer {
+public class DefaultConsumer extends ServiceSupport implements Consumer, RouteAware {
     protected final Logger log = LoggerFactory.getLogger(getClass());
     private final Endpoint endpoint;
     private final Processor processor;
     private volatile AsyncProcessor asyncProcessor;
     private ExceptionHandler exceptionHandler;
+    private Route route;
 
     public DefaultConsumer(Endpoint endpoint, Processor processor) {
         this.endpoint = endpoint;
@@ -52,6 +55,14 @@ public class DefaultConsumer extends ServiceSupport implements Consumer {
     @Override
     public String toString() {
         return "Consumer[" + URISupport.sanitizeUri(endpoint.getEndpointUri()) + "]";
+    }
+
+    public Route getRoute() {
+        return route;
+    }
+
+    public void setRoute(Route route) {
+        this.route = route;
     }
 
     /**
@@ -66,6 +77,12 @@ public class DefaultConsumer extends ServiceSupport implements Consumer {
      * @see #doneUoW(org.apache.camel.Exchange)
      */
     public UnitOfWork createUoW(Exchange exchange) throws Exception {
+        // if the exchange doesn't have from route id set, then set it if it originated
+        // from this unit of work
+        if (route != null && exchange.getFromRouteId() == null) {
+            exchange.setFromRouteId(route.getId());
+        }
+
         UnitOfWork uow = UnitOfWorkHelper.createUoW(exchange);
         exchange.setUnitOfWork(uow);
         uow.start();
