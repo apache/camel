@@ -331,12 +331,38 @@ public class JdbcProducer extends DefaultProducer {
         if (data.size() > 1) {
             throw new SQLDataException("Query result not unique for outputType=SelectOne. Got " + data.size() + " count instead.");
         } else if (data.size() == 1) {
-            // Set content depend on number of column from query result
-            Map<String, Object> row = data.get(0);
-            if (row.size() == 1) {
-                result = row.values().iterator().next();
+            if (getEndpoint().getOutputClass() == null) {
+                // Set content depend on number of column from query result
+                Map<String, Object> row = data.get(0);
+                if (row.size() == 1) {
+                    result = row.values().iterator().next();
+                } else {
+                    result = row;
+                }
             } else {
-                result = row;
+                Class<?> outputClzz = getEndpoint().getCamelContext().getClassResolver().resolveClass(getEndpoint().getOutputClass());
+                Object answer = getEndpoint().getCamelContext().getInjector().newInstance(outputClzz);
+
+                Map<String, Object> row = data.get(0);
+                Map<String, Object> properties = new LinkedHashMap<String, Object>(data.size());
+
+                // map row names using the bean row mapper
+                for (Map.Entry<String, Object> entry : row.entrySet()) {
+                    Object value = entry.getValue();
+                    String name = getEndpoint().getBeanRowMapper().map(entry.getKey(), value);
+                    properties.put(name, value);
+                }
+                try {
+                    IntrospectionSupport.setProperties(answer, properties);
+                } catch (Exception e) {
+                    throw new SQLException("Error setting properties on output class " + outputClzz, e);
+                }
+
+                // check we could map all properties to the bean
+                if (!properties.isEmpty()) {
+                    throw new IllegalArgumentException("Cannot map all properties to bean of type " + outputClzz + ". There are " + properties.size() + " unmapped properties. " + properties);
+                }
+                return answer;
             }
         }
 
