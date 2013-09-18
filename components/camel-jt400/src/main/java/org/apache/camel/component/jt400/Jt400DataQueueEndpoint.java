@@ -147,25 +147,7 @@ public class Jt400DataQueueEndpoint extends DefaultPollingEndpoint {
     @Override
     public PollingConsumer createPollingConsumer() throws Exception {
         Jt400DataQueueConsumer answer = new Jt400DataQueueConsumer(this);
-
-        Map<String, Object> copy = new HashMap<String, Object>(getConsumerProperties());
-        Map<String, Object> throwaway = new HashMap<String, Object>();
-
-        // filter out unwanted options which is intended for the scheduled poll consumer
-        // as these options are not supported on Jt400DataQueueConsumer
-        configureScheduledPollConsumerProperties(copy, throwaway);
-
-        // set reference properties first as they use # syntax that fools the regular properties setter
-        EndpointHelper.setReferenceProperties(getCamelContext(), this, copy);
-        EndpointHelper.setProperties(getCamelContext(), this, copy);
-
-        if (!isLenientProperties() && copy.size() > 0) {
-            throw new ResolveEndpointFailedException(this.getEndpointUri(), "There are " + copy.size()
-                    + " parameters that couldn't be set on the endpoint consumer."
-                    + " Check the uri if the parameters are spelt correctly and that they are properties of the endpoint."
-                    + " Unknown consumer parameters=[" + copy + "]");
-        }
-
+        configurePollingConsumer(answer);
         return answer;
     }
 
