@@ -102,13 +102,15 @@ public final class DefaultExchange implements Exchange {
             return null;
         }
 
+        Map<String, Object> answer = new ConcurrentHashMap<String, Object>(properties);
+
         // safe copy message history using a defensive copy
-        List<MessageHistory> history = (List<MessageHistory>) properties.remove(Exchange.MESSAGE_HISTORY);
+        List<MessageHistory> history = (List<MessageHistory>) answer.remove(Exchange.MESSAGE_HISTORY);
         if (history != null) {
-            properties.put(Exchange.MESSAGE_HISTORY, new ArrayList<MessageHistory>(history));
+            answer.put(Exchange.MESSAGE_HISTORY, new ArrayList<MessageHistory>(history));
         }
 
-        return new ConcurrentHashMap<String, Object>(properties);
+        return answer;
     }
 
     public CamelContext getContext() {
