@@ -20,6 +20,7 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
+import java.sql.SQLDataException;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Types;
@@ -261,13 +262,19 @@ public class JdbcProducer extends DefaultProducer {
      * Sets the result from the ResultSet to the Exchange as its OUT body.
      */
     protected void setResultSet(Exchange exchange, ResultSet rs) throws SQLException {
-        List<Map<String, Object>> data = extractResultSetData(rs);
+        JdbcOutputType outputType = getEndpoint().getOutputType();
 
-        exchange.getOut().setHeader(JdbcConstants.JDBC_ROW_COUNT, data.size());
-        if (!data.isEmpty()) {
-            exchange.getOut().setHeader(JdbcConstants.JDBC_COLUMN_NAMES, data.get(0).keySet());
+        if (outputType == JdbcOutputType.SelectList) {
+            List<Map<String, Object>> data = extractResultSetData(rs);
+            exchange.getOut().setHeader(JdbcConstants.JDBC_ROW_COUNT, data.size());
+            if (!data.isEmpty()) {
+                exchange.getOut().setHeader(JdbcConstants.JDBC_COLUMN_NAMES, data.get(0).keySet());
+            }
+            exchange.getOut().setBody(data);
+        } else if (outputType == JdbcOutputType.SelectOne) {
+            Object obj = queryForObject(rs);
+            exchange.getOut().setBody(obj);
         }
-        exchange.getOut().setBody(data);
     }
 
     /**
@@ -314,6 +321,27 @@ public class JdbcProducer extends DefaultProducer {
             rowNumber++;
         }
         return data;
+    }
+
+
+    @SuppressWarnings("unchecked")
+    protected Object queryForObject(ResultSet rs) throws SQLException {
+        Object result = null;
+        List<Map<String, Object>> data = extractResultSetData(rs);
+        if (data.size() > 1) {
+            throw new SQLDataException("Query result not unique for outputType=SelectOne. Got " + data.size() + " count instead.");
+        } else if (data.size() == 1) {
+            // Set content depend on number of column from query result
+            Map<String, Object> row = data.get(0);
+            if (row.size() == 1) {
+                result = row.values().iterator().next();
+            } else {
+                result = row;
+            }
+        }
+
+        // If data.size is zero, let result be null.
+        return result;
     }
 
 }
