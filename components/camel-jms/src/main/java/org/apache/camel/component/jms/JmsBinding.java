@@ -170,6 +170,7 @@ public class JmsBinding {
 
                 // this works around a bug in the ActiveMQ property handling
                 map.put("JMSXGroupID", jmsMessage.getStringProperty("JMSXGroupID"));
+                map.put("JMSXUserID", jmsMessage.getStringProperty("JMSXUserID"));
             } catch (JMSException e) {
                 throw new RuntimeCamelException(e);
             }
@@ -183,7 +184,7 @@ public class JmsBinding {
             while (names.hasMoreElements()) {
                 String name = names.nextElement().toString();
                 try {
-                    Object value = jmsMessage.getObjectProperty(name);
+                    Object value = JmsMessageHelper.getProperty(jmsMessage, name);
                     if (headerFilterStrategy != null
                         && headerFilterStrategy.applyFilterToExternalHeaders(name, value, exchange)) {
                         continue;
