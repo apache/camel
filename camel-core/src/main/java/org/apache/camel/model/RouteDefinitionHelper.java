@@ -348,6 +348,15 @@ public final class RouteDefinitionHelper {
                 // should we only apply interceptor for a given endpoint uri
                 boolean match = true;
                 if (intercept.getUri() != null) {
+
+                    // the uri can have property placeholders so resolve them first
+                    String pattern;
+                    try {
+                        pattern = context.resolvePropertyPlaceholders(intercept.getUri());
+                    } catch (Exception e) {
+                        throw ObjectHelper.wrapRuntimeCamelException(e);
+                    }
+
                     match = false;
                     for (FromDefinition input : route.getInputs()) {
                         // a bit more logic to lookup the endpoint as it can be uri/ref based
@@ -359,7 +368,7 @@ public final class RouteDefinitionHelper {
                             // lookup the endpoint to get its url
                             uri = CamelContextHelper.getMandatoryEndpoint(context, "ref:" + input.getRef()).getEndpointUri();
                         }
-                        if (EndpointHelper.matchEndpoint(context, uri, intercept.getUri())) {
+                        if (EndpointHelper.matchEndpoint(context, uri, pattern)) {
                             match = true;
                             break;
                         }
