@@ -70,7 +70,7 @@ public final class JmsMessageHelper {
             if (name.equals(key)) {
                 answer = key;
             } else {
-                map.put(key, jmsMessage.getObjectProperty(key));
+                map.put(key, getProperty(jmsMessage, key));
             }
         }
 
@@ -100,6 +100,22 @@ public final class JmsMessageHelper {
             }
         }
         return false;
+    }
+
+    /**
+     * Gets a JMS property
+     *
+     * @param jmsMessage the JMS message
+     * @param name       name of the property to get
+     * @return the property value, or <tt>null</tt> if does not exists
+     * @throws JMSException can be thrown
+     */
+    public static Object getProperty(Message jmsMessage, String name) throws JMSException {
+        Object value = jmsMessage.getObjectProperty(name);
+        if (value == null) {
+            value = jmsMessage.getStringProperty(name);
+        }
+        return value;
     }
 
     /**
