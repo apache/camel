@@ -123,7 +123,7 @@ public final class EndpointHelper {
         }
 
         // we need to test with and without scheme separators (//)
-        if (uri.indexOf("://") != -1) {
+        if (uri.contains("://")) {
             // try without :// also
             String scheme = ObjectHelper.before(uri, "://");
             String path = ObjectHelper.after(uri, "://");
