@@ -154,6 +154,13 @@ public class QuartzComponent extends DefaultComponent implements StartupListener
         return answer;
     }
 
+    /**
+     * Is the quartz scheduler clustered?
+     */
+    public boolean isClustered() throws SchedulerException {
+        return getScheduler().getMetaData().isJobStoreClustered();
+    }
+
     private Properties loadProperties() throws SchedulerException {
         Properties answer = getProperties();
         if (answer == null && getPropertiesFile() != null) {
