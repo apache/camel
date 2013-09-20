@@ -14,62 +14,66 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.quartz;
+package org.apache.camel.routepolicy.quartz;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.CamelExecutionException;
+import org.apache.camel.ProducerTemplate;
+import org.apache.camel.component.direct.DirectConsumerNotAvailableException;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.TestSupport;
+
 import org.junit.Test;
+
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
  * @version 
  */
-public class SpringQuartzPersistentStoreRestartAppTest extends TestSupport {
+public class SpringQuartzPersistentStoreClusteredAppTest extends TestSupport {
 
     @Test
-    public void testQuartzPersistentStoreRestart() throws Exception {
-        // load spring app
-        AbstractXmlApplicationContext app = new ClassPathXmlApplicationContext("org/apache/camel/component/quartz/SpringQuartzPersistentStoreTest.xml");
-
+    public void testQuartzPersistentStoreClusteredApp() throws Exception {
+        // boot up the first clustered app which also launches an embedded database
+        AbstractXmlApplicationContext app = new ClassPathXmlApplicationContext("org/apache/camel/routepolicy/quartz/SpringQuartzClusteredAppOneTest.xml");
         app.start();
+
+        // and now the second one
+        AbstractXmlApplicationContext app2 = new ClassPathXmlApplicationContext("org/apache/camel/routepolicy/quartz/SpringQuartzClusteredAppTwoTest.xml");
+        app2.start();
 
         CamelContext camel = app.getBean("camelContext", CamelContext.class);
         assertNotNull(camel);
 
         MockEndpoint mock = camel.getEndpoint("mock:result", MockEndpoint.class);
-        mock.expectedMinimumMessageCount(2);
+        mock.expectedMessageCount(1);
+        mock.expectedBodiesReceived("clustering pings!");
+
+        // wait a bit to make sure the route has been properly started through
+        // the given route policy
+        Thread.sleep(5000);
+
+        app.getBean("template", ProducerTemplate.class).sendBody("direct:start", "clustering");
 
         mock.assertIsSatisfied();
-
-        app.stop();
-        
-        log.info("Restarting ...");
-        log.info("Restarting ...");
-        log.info("Restarting ...");
-
-        // NOTE:
-        // To test a restart where the app has crashed, then you can in QuartzEndpoint
-        // in the doShutdown method, then remove the following code line
-        //  deleteTrigger(getTrigger());
-        // then when we restart then there is old stale data which QuartzComponent
-        // is supposed to handle and start again
-
-        // load spring app
-        AbstractXmlApplicationContext app2 = new ClassPathXmlApplicationContext("org/apache/camel/component/quartz/SpringQuartzPersistentStoreRestartTest.xml");
-
-        app2.start();
 
         CamelContext camel2 = app2.getBean("camelContext", CamelContext.class);
         assertNotNull(camel2);
 
         MockEndpoint mock2 = camel2.getEndpoint("mock:result", MockEndpoint.class);
-        mock2.expectedMinimumMessageCount(2);
+        mock.expectedMessageCount(0);
+
+        // expect no consumer being started as the seconds app is expected to
+        // run in standby modus
+        try {
+            app2.getBean("template", ProducerTemplate.class).sendBody("direct:start", "clustering");
+            fail("Should have thrown exception");
+        } catch (CamelExecutionException cee) {
+            assertIsInstanceOf(DirectConsumerNotAvailableException.class, cee.getCause());
+        }
 
         mock2.assertIsSatisfied();
-
-        app2.stop();
 
         // we're done so let's properly close the application contexts, but stop
         // the second app before the first one so that the quartz scheduler running

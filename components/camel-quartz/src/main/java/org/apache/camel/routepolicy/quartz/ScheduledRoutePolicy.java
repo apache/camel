@@ -22,6 +22,7 @@ import java.util.concurrent.TimeUnit;
 
 import org.apache.camel.Route;
 import org.apache.camel.ServiceStatus;
+import org.apache.camel.component.quartz.QuartzComponent;
 import org.apache.camel.impl.RoutePolicySupport;
 import org.apache.camel.util.ServiceHelper;
 import org.quartz.JobDetail;
@@ -82,6 +83,22 @@ public abstract class ScheduledRoutePolicy extends RoutePolicySupport implements
         updateScheduledRouteDetails(action, jobDetail, trigger, route);
         
         loadCallbackDataIntoSchedulerContext(jobDetail, action, route);
+
+        boolean isClustered = route.getRouteContext().getCamelContext().getComponent("quartz", QuartzComponent.class).isClustered();
+        if (isClustered) {
+            // check to see if the same job has already been setup through another node of the cluster
+            JobDetail existingJobDetail = getScheduler().getJobDetail(jobDetail.getName(), jobDetail.getGroup());
+            if (jobDetail.equals(existingJobDetail)) {
+                if (LOG.isInfoEnabled()) {
+                    LOG.info("Skipping to schedule the job: {} for action: {} on route {} as the job: {} already existing!",
+                             new Object[] {jobDetail.getFullName(), action, route.getId(), existingJobDetail.getFullName()});
+                }
+
+                // skip scheduling the same job as one is already available for the same route and action
+                return;
+            }
+        }
+
         getScheduler().scheduleJob(jobDetail, trigger);
 
         if (LOG.isInfoEnabled()) {
