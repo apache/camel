@@ -302,6 +302,10 @@ public abstract class CamelServletContextListener<R extends Registry> implements
      * Initializes the {@link ServletCamelContext} by setting the supported init parameters.
      */
     private void initCamelContext(ServletCamelContext camelContext, Map<String, Object> parameters) throws Exception {
+        String messageHistory = (String) parameters.remove("messageHistory");
+        if (messageHistory != null) {
+            camelContext.setMessageHistory(CamelContextHelper.parseBoolean(camelContext, messageHistory));
+        }
         String streamCache = (String) parameters.remove("streamCache");
         if (streamCache != null) {
             camelContext.setStreamCaching(CamelContextHelper.parseBoolean(camelContext, streamCache));
