@@ -19,6 +19,7 @@ package org.apache.camel.itest.restlet.example;
 import org.apache.camel.Exchange;
 import org.apache.camel.ProducerTemplate;
 import org.junit.Assert;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
@@ -28,6 +29,7 @@ import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
  * @version 
  */
 @ContextConfiguration
+@Ignore("CAMEL-6770")
 public class RestletDomainServiceTest extends AbstractJUnit4SpringContextTests {
 
     @Autowired
