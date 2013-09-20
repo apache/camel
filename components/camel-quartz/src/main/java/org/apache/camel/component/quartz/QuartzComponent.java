@@ -47,7 +47,7 @@ import org.slf4j.LoggerFactory;
  * A <a href="http://camel.apache.org/quartz.html">Quartz Component</a>
  * <p/>
  * For a brief tutorial on setting cron expression see
- * <a href="http://www.opensymphony.com/quartz/wikidocs/CronTriggers%20Tutorial.html">Quartz cron tutorial</a>.
+ * <a href="http://quartz-scheduler.org/documentation/quartz-1.x/tutorials/crontrigger">Quartz cron tutorial</a>.
  *
  * @version
  */
@@ -184,7 +184,7 @@ public class QuartzComponent extends DefaultComponent implements StartupListener
             return;
         }
 
-        // only start scheduler when CamelContext have finished starting
+        // only start scheduler when CamelContext has finished starting
         startScheduler();
     }
 

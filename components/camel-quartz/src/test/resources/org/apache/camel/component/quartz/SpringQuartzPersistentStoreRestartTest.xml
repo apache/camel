@@ -31,10 +31,9 @@
 
   <bean id="quartz" class="org.apache.camel.component.quartz.QuartzComponent">
     <property name="scheduler" ref="scheduler"/>
-    <property name="autoStartScheduler" value="true"/>
   </bean>
 
-  <!-- jdbc:initialize-database must come before this so the job store exists -->
+  <!-- jdbc:embedded-database must come before this so the job store exists -->
   <bean id="scheduler" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
     <property name="dataSource" ref="camel_quartz"/>
     <property name="autoStartup" value="false"/>
