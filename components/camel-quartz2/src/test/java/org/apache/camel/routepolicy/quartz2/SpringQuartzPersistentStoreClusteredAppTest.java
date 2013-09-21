@@ -62,7 +62,7 @@ public class SpringQuartzPersistentStoreClusteredAppTest extends TestSupport {
         assertNotNull(camel2);
 
         MockEndpoint mock2 = camel2.getEndpoint("mock:result", MockEndpoint.class);
-        mock.expectedMessageCount(0);
+        mock2.expectedMessageCount(0);
 
         // expect no consumer being started as the seconds app is expected to
         // run in standby modus
