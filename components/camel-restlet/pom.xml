@@ -52,13 +52,13 @@
     </dependency>
 
     <dependency>
-      <groupId>org.restlet.jse</groupId>
+      <groupId>org.restlet.osgi</groupId>
       <artifactId>org.restlet</artifactId>
       <version>${restlet-version}</version>
     </dependency>
 
     <dependency>
-     <groupId>org.restlet.jse</groupId>
+     <groupId>org.restlet.osgi</groupId>
      <artifactId>org.restlet.ext.httpclient</artifactId>
      <version>${restlet-version}</version>
      <scope>test</scope>

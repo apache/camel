@@ -141,7 +141,7 @@
     </dependency>
     <!-- restlet JAXB binding -->
     <dependency>
-      <groupId>org.restlet.jse</groupId>
+      <groupId>org.restlet.osgi</groupId>
       <artifactId>org.restlet.ext.jaxb</artifactId>
       <version>${restlet-version}</version>
       <scope>test</scope>
