@@ -382,7 +382,7 @@ public class SignatureTests extends CamelTestSupport {
 
     public static KeyStore loadKeystore() throws Exception {
         KeyStore keystore = KeyStore.getInstance(KeyStore.getDefaultType());
-        InputStream in = SignatureTests.class.getResourceAsStream("/.keystore");
+        InputStream in = SignatureTests.class.getResourceAsStream("/ks.keystore");
         keystore.load(in, "letmein".toCharArray());
         return keystore;
     }
