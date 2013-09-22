@@ -84,6 +84,7 @@ trait DSL {
   def setBody(expression: Exchange => Any) : DSL
   def setFaultBody(expression: Exchange => Any) : DSL
   def setHeader(header: String, expression: Exchange => Any) : DSL
+  def setProperty(header: String, expression: Exchange => Any) : DSL
   def sort[T](expression: Exchange => Any, comparator: Comparator[T] = null) : DSL
   def split(expression: Exchange => Any) : SSplitDefinition
   def stop : DSL

@@ -129,6 +129,7 @@ abstract class SAbstractDefinition[P <: ProcessorDefinition[_]] extends DSL with
   def setFaultBody(expression: Exchange => Any) = wrap(target.setFaultBody(expression))
   def setHeader(name: String, expression: Exchange => Any) = wrap(target.setHeader(name, expression))
   def setExchangePattern(mep: ExchangePattern) = wrap(target.setExchangePattern(mep))
+  def setProperty(name: String, expression: Exchange => Any) = wrap(target.setProperty(name, expression))
   def sort[T](expression: (Exchange) => Any, comparator: Comparator[T] = null) = wrap(target.sort(expression, comparator))
   def split(expression: Exchange => Any) = SSplitDefinition(target.split(expression))
   def stop = wrap(target.stop)
