@@ -30,6 +30,10 @@ class RichMockEndpoint(val endpoint: MockEndpoint) {
     endpoint.expectedHeaderReceived(name, value)
   }
 
+  def propertyReceived(name: String, value : String) {
+    endpoint.expectedPropertyReceived(name, value)
+  }
+
   def count : Int = endpoint.getExpectedCount
   
   def count_=(count: Int) {
