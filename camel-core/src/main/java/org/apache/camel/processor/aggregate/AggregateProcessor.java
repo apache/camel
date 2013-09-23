@@ -212,7 +212,7 @@ public class AggregateProcessor extends ServiceSupport implements AsyncProcessor
 
         // when optimist locking is enabled we keep trying until we succeed
         if (optimisticLocking) {
-            Exchange aggregated = null;
+            List<Exchange> aggregated = null;
             boolean exhaustedRetries = true;
             int attempt = 0;
             do {
@@ -236,7 +236,9 @@ public class AggregateProcessor extends ServiceSupport implements AsyncProcessor
                         new OptimisticLockingAggregationRepository.OptimisticLockingException());
             } else if (aggregated != null) {
                 // we are completed so submit to completion
-                onSubmitCompletion(key, aggregated);
+                for (Exchange agg : aggregated) {
+                    onSubmitCompletion(key, agg);
+                }
             }
         } else {
             // copy exchange, and do not share the unit of work
@@ -246,7 +248,7 @@ public class AggregateProcessor extends ServiceSupport implements AsyncProcessor
             // when memory based then its fast using synchronized, but if the aggregation repository is IO
             // bound such as JPA etc then concurrent aggregation per correlation key could
             // improve performance as we can run aggregation repository get/add in parallel
-            Exchange aggregated = null;
+            List<Exchange> aggregated = null;
             lock.lock();
             try {
                 aggregated = doAggregation(key, copy);
@@ -256,7 +258,9 @@ public class AggregateProcessor extends ServiceSupport implements AsyncProcessor
 
             // we are completed so do that work outside the lock
             if (aggregated != null) {
-                onSubmitCompletion(key, aggregated);
+                for (Exchange agg : aggregated) {
+                    onSubmitCompletion(key, agg);
+                }
             }
         }
 
@@ -278,10 +282,10 @@ public class AggregateProcessor extends ServiceSupport implements AsyncProcessor
      *
      * @param key      the correlation key
      * @param newExchange the exchange
-     * @return the aggregated exchange which is complete, or <tt>null</tt> if not yet complete
+     * @return the aggregated exchange(s) which is complete, or <tt>null</tt> if not yet complete
      * @throws org.apache.camel.CamelExchangeException is thrown if error aggregating
      */
-    private Exchange doAggregation(String key, Exchange newExchange) throws CamelExchangeException {
+    private List<Exchange> doAggregation(String key, Exchange newExchange) throws CamelExchangeException {
         LOG.trace("onAggregation +++ start +++ with correlation key: {}", key);
 
         Exchange answer;
@@ -329,6 +333,8 @@ public class AggregateProcessor extends ServiceSupport implements AsyncProcessor
             complete = isCompleted(key, answer);
         }
 
+        List<Exchange> list = new ArrayList<Exchange>();
+
         // only need to update aggregation repository if we are not complete
         if (complete == null) {
             doAggregationRepositoryAdd(newExchange.getContext(), key, originalExchange, answer);
@@ -349,7 +355,7 @@ public class AggregateProcessor extends ServiceSupport implements AsyncProcessor
                     if (batchAnswer != null) {
                         batchAnswer.setProperty(Exchange.AGGREGATED_COMPLETED_BY, complete);
                         onCompletion(batchKey, originalExchange, batchAnswer, false);
-                        onSubmitCompletion(key, batchAnswer);
+                        list.add(batchAnswer);
                     }
                 }
                 batchConsumerCorrelationKeys.clear();
@@ -363,8 +369,10 @@ public class AggregateProcessor extends ServiceSupport implements AsyncProcessor
         }
 
         LOG.trace("onAggregation +++  end  +++ with correlation key: {}", key);
-
-        return answer;
+        if (answer != null) {
+            list.add(answer);
+        }
+        return list;
     }
 
     protected void doAggregationRepositoryAdd(CamelContext camelContext, String key, Exchange oldExchange, Exchange newExchange) {
