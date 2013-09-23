@@ -26,7 +26,9 @@ import com.ning.http.client.websocket.WebSocket;
 import com.ning.http.client.websocket.WebSocketTextListener;
 import com.ning.http.client.websocket.WebSocketUpgradeHandler;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Before;
 import org.junit.Test;
 
 public class WebsocketComponentRouteExampleTest extends CamelTestSupport {
@@ -34,11 +36,20 @@ public class WebsocketComponentRouteExampleTest extends CamelTestSupport {
     private static List<String> received = new ArrayList<String>();
     private static CountDownLatch latch = new CountDownLatch(1);
 
+    protected int port;
+
+    @Override
+    @Before
+    public void setUp() throws Exception {
+        port = AvailablePortFinder.getNextAvailable(16200);
+        super.setUp();
+    }
+
     @Test
     public void testWSHttpCall() throws Exception {
         AsyncHttpClient c = new AsyncHttpClient();
 
-        WebSocket websocket = c.prepareGet("ws://localhost:9494/echo").execute(
+        WebSocket websocket = c.prepareGet("ws://localhost:" +port + "/echo").execute(
             new WebSocketUpgradeHandler.Builder()
                 .addWebSocketListener(new WebSocketTextListener() {
                     @Override
@@ -83,7 +94,7 @@ public class WebsocketComponentRouteExampleTest extends CamelTestSupport {
 
                 WebsocketComponent websocketComponent = getContext().getComponent("websocket", WebsocketComponent.class);
                 websocketComponent.setHost("localhost");
-                websocketComponent.setPort(9494);
+                websocketComponent.setPort(port);
 
                 from("websocket://echo")
                     .log(">>> Message received from WebSocket Client : ${body}")

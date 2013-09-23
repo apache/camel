@@ -33,6 +33,7 @@ import com.ning.http.client.websocket.WebSocketUpgradeHandler;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.util.jsse.ClientAuthentication;
 import org.apache.camel.util.jsse.KeyManagersParameters;
@@ -52,11 +53,12 @@ public class WebsocketSSLContextInUriRouteExampleTest extends CamelTestSupport {
     private String pwd = "changeit";
     private String uri;
     private String server = "127.0.0.1";
-    private int port = 8443;
+    private int port;
 
     @Override
     @Before
     public void setUp() throws Exception {
+        port = AvailablePortFinder.getNextAvailable(16300);
 
         URL trustStoreUrl = this.getClass().getClassLoader().getResource("jsse/localhost.ks");
         setSystemProp("javax.net.ssl.trustStore", trustStoreUrl.toURI().getPath());
@@ -138,7 +140,7 @@ public class WebsocketSSLContextInUriRouteExampleTest extends CamelTestSupport {
     public void testWSHttpCall() throws Exception {
 
         AsyncHttpClient c = createAsyncHttpSSLClient();
-        WebSocket websocket = c.prepareGet("wss://127.0.0.1:8443/test").execute(
+        WebSocket websocket = c.prepareGet("wss://127.0.0.1:" + port + "/test").execute(
                 new WebSocketUpgradeHandler.Builder()
                         .addWebSocketListener(new WebSocketTextListener() {
                             @Override

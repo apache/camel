@@ -26,6 +26,7 @@ import com.ning.http.client.websocket.WebSocket;
 import com.ning.http.client.websocket.WebSocketTextListener;
 import com.ning.http.client.websocket.WebSocketUpgradeHandler;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
@@ -33,6 +34,13 @@ public class WebsocketTwoRoutesExampleTest extends CamelTestSupport {
 
     private static List<String> received = new ArrayList<String>();
     private static CountDownLatch latch;
+    private int port;
+
+    @Override
+    public void setUp() throws Exception {
+        port = AvailablePortFinder.getNextAvailable(16310);
+        super.setUp();
+    }
 
     @Test
     public void testWSHttpCallEcho() throws Exception {
@@ -43,7 +51,7 @@ public class WebsocketTwoRoutesExampleTest extends CamelTestSupport {
 
         AsyncHttpClient c = new AsyncHttpClient();
 
-        WebSocket websocket = c.prepareGet("ws://127.0.0.1:9292/bar").execute(
+        WebSocket websocket = c.prepareGet("ws://127.0.0.1:" + port + "/bar").execute(
             new WebSocketUpgradeHandler.Builder()
                 .addWebSocketListener(new WebSocketTextListener() {
                     @Override
@@ -86,7 +94,7 @@ public class WebsocketTwoRoutesExampleTest extends CamelTestSupport {
 
         c = new AsyncHttpClient();
 
-        websocket = c.prepareGet("ws://127.0.0.1:9292/pub").execute(
+        websocket = c.prepareGet("ws://127.0.0.1:" + port + "/pub").execute(
                 new WebSocketUpgradeHandler.Builder()
                         .addWebSocketListener(new WebSocketTextListener() {
                             @Override
@@ -129,15 +137,15 @@ public class WebsocketTwoRoutesExampleTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
 
-                from("websocket://localhost:9292/bar")
+                from("websocket://localhost:" + port + "/bar")
                     .log(">>> Message received from BAR WebSocket Client : ${body}")
                     .transform().simple("The bar has ${body}")
-                    .to("websocket://localhost:9292/bar");
+                    .to("websocket://localhost:" + port + "/bar");
 
-                from("websocket://localhost:9292/pub")
+                from("websocket://localhost:" + port + "/pub")
                         .log(">>> Message received from PUB WebSocket Client : ${body}")
                         .transform().simple("The pub has ${body}")
-                        .to("websocket://localhost:9292/pub");
+                        .to("websocket://localhost:" + port + "/pub");
             }
         };
     }
