@@ -31,6 +31,7 @@ import com.ning.http.client.websocket.WebSocket;
 import com.ning.http.client.websocket.WebSocketTextListener;
 import com.ning.http.client.websocket.WebSocketUpgradeHandler;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.util.jsse.ClientAuthentication;
 import org.apache.camel.util.jsse.KeyManagersParameters;
@@ -48,10 +49,13 @@ public class WebsocketSSLRouteExampleTest extends CamelTestSupport {
     private static CountDownLatch latch = new CountDownLatch(10);
     protected Properties originalValues = new Properties();
     protected String pwd = "changeit";
+    protected int port;
 
     @Override
     @Before
     public void setUp() throws Exception {
+        port = AvailablePortFinder.getNextAvailable(16200);
+
         super.setUp();
 
         URL trustStoreUrl = this.getClass().getClassLoader().getResource("jsse/localhost.ks");
@@ -109,7 +113,7 @@ public class WebsocketSSLRouteExampleTest extends CamelTestSupport {
     public void testWSHttpCall() throws Exception {
 
         AsyncHttpClient c = createAsyncHttpSSLClient();
-        WebSocket websocket = c.prepareGet("wss://127.0.0.1:8443/test").execute(
+        WebSocket websocket = c.prepareGet("wss://127.0.0.1:" + port + "/test").execute(
                 new WebSocketUpgradeHandler.Builder()
                         .addWebSocketListener(new WebSocketTextListener() {
                             @Override
@@ -160,7 +164,7 @@ public class WebsocketSSLRouteExampleTest extends CamelTestSupport {
 
                 WebsocketComponent websocketComponent = (WebsocketComponent) context.getComponent("websocket");
                 websocketComponent.setSslContextParameters(defineSSLContextParameters());
-                websocketComponent.setPort(8443);
+                websocketComponent.setPort(port);
 
                 from("websocket://test")
                         .log(">>> Message received from WebSocket Client : ${body}")

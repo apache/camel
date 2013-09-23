@@ -26,19 +26,29 @@ import com.ning.http.client.websocket.WebSocket;
 import com.ning.http.client.websocket.WebSocketTextListener;
 import com.ning.http.client.websocket.WebSocketUpgradeHandler;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Before;
 import org.junit.Test;
 
 public class WebsocketRouteExampleTest extends CamelTestSupport {
 
     private static List<String> received = new ArrayList<String>();
     private static CountDownLatch latch = new CountDownLatch(1);
+    protected int port;
+
+    @Override
+    @Before
+    public void setUp() throws Exception {
+        port = AvailablePortFinder.getNextAvailable(16200);
+        super.setUp();
+    }
 
     @Test
     public void testWSHttpCall() throws Exception {
         AsyncHttpClient c = new AsyncHttpClient();
 
-        WebSocket websocket = c.prepareGet("ws://127.0.0.1:9292/echo").execute(
+        WebSocket websocket = c.prepareGet("ws://127.0.0.1:" + port + "/echo").execute(
             new WebSocketUpgradeHandler.Builder()
                 .addWebSocketListener(new WebSocketTextListener() {
                     @Override
@@ -80,6 +90,9 @@ public class WebsocketRouteExampleTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
+                WebsocketComponent websocketComponent = (WebsocketComponent) context.getComponent("websocket");
+                websocketComponent.setPort(port);
+
                 // START SNIPPET: e1
                 // expose a echo websocket client, that sends back an echo
                 from("websocket://echo")

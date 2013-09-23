@@ -28,22 +28,32 @@ import com.ning.http.client.websocket.WebSocketUpgradeHandler;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Before;
 import org.junit.Test;
 
 public class WebsocketProducerRouteExampleTest extends CamelTestSupport {
 
     private static List<String> received = new ArrayList<String>();
     private static CountDownLatch latch = new CountDownLatch(1);
+    protected int port;
 
     @Produce(uri = "direct:shop")
     private ProducerTemplate producer;
+
+    @Override
+    @Before
+    public void setUp() throws Exception {
+        port = AvailablePortFinder.getNextAvailable(16200);
+        super.setUp();
+    }
 
     @Test
     public void testWSHttpCall() throws Exception {
         AsyncHttpClient c = new AsyncHttpClient();
 
-        WebSocket websocket = c.prepareGet("ws://127.0.0.1:9292/shop").execute(
+        WebSocket websocket = c.prepareGet("ws://127.0.0.1:" + port +"/shop").execute(
             new WebSocketUpgradeHandler.Builder()
                 .addWebSocketListener(new WebSocketTextListener() {
                     @Override
@@ -89,7 +99,7 @@ public class WebsocketProducerRouteExampleTest extends CamelTestSupport {
             public void configure() {
                 from("direct:shop")
                     .log(">>> Message received from Shopping center : ${body}")
-                    .to("websocket://localhost:9292/shop");
+                    .to("websocket://localhost:" + port + "/shop");
             }
         };
     }
