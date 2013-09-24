@@ -206,6 +206,10 @@ public class JmsComponent extends UriEndpointComponent implements ApplicationCon
         getConfiguration().setDeliveryPersistent(deliveryPersistent);
     }
 
+    public void setDeliveryMode(Integer deliveryMode) {
+        getConfiguration().setDeliveryMode(deliveryMode);
+    }
+
     public void setDurableSubscriptionName(String durableSubscriptionName) {
         getConfiguration().setDurableSubscriptionName(durableSubscriptionName);
     }
