@@ -60,7 +60,7 @@
     <property name="routeStartTime" value="0/3 * * * * ?" />
   </bean>
 
-  <camelContext id="camelContext" managementNamePattern="#name#" xmlns="http://camel.apache.org/schema/spring">
+  <camelContext id="camelContext" xmlns="http://camel.apache.org/schema/spring">
     <template id="template" />
     <route id="myRoute" routePolicyRef="startPolicy" autoStartup="false">
       <from uri="direct:start" />
