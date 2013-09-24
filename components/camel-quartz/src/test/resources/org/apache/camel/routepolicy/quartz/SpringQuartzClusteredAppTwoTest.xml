@@ -21,37 +21,37 @@
        xsi:schemaLocation="
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
        http://www.springframework.org/schema/jdbc http://www.springframework.org/schema/jdbc/spring-jdbc.xsd
-       http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
-    ">
+       http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
 
-  <!-- the persistent store for quartz -->
-  <jdbc:embedded-database id="camel_quartz" type="DERBY">
-    <!-- do not load script as database alreaady exists -->
-  </jdbc:embedded-database>
+  <bean id="quartzDataSource" class="org.apache.commons.dbcp.BasicDataSource">
+    <property name="driverClassName" value="org.apache.derby.jdbc.EmbeddedDriver" />
+    <!-- refer the embedded database we setup inside SpringQuartzEmbeddedDatabase.xml -->
+    <property name="url" value="jdbc:derby:memory:quartz-db" />
+    <property name="username" value="sa" />
+    <property name="password" value="" />
+  </bean>
 
   <bean id="quartz" class="org.apache.camel.component.quartz.QuartzComponent">
     <property name="scheduler" ref="scheduler"/>
   </bean>
 
-  <!-- jdbc:embedded-database must come before this so the job store exists -->
   <bean id="scheduler" class="org.springframework.scheduling.quartz.SchedulerFactoryBean">
-    <property name="dataSource" ref="camel_quartz"/>
+    <property name="dataSource" ref="quartzDataSource"/>
     <property name="autoStartup" value="false"/>
-    <!-- let Camel start -->
     <property name="schedulerContextAsMap">
       <!-- hook Camel into Quartz -->
       <map>
-        <entry key="CamelQuartzCamelContext" value-ref="camelContext"/>
+        <entry key="CamelQuartzCamelContext" value-ref="camelContext2"/>
       </map>
     </property>
     <property name="quartzProperties">
       <props>
         <prop key="org.quartz.scheduler.instanceName">myscheduler</prop>
-        <prop key="org.quartz.scheduler.instanceId">AUTO</prop>
+        <prop key="org.quartz.scheduler.instanceId">app-two</prop>
         <prop key="org.quartz.scheduler.skipUpdateCheck">true</prop>
         <prop key="org.quartz.jobStore.driverDelegateClass">org.quartz.impl.jdbcjobstore.StdJDBCDelegate</prop>
         <prop key="org.quartz.jobStore.isClustered">true</prop>
-        <prop key="org.quartz.jobStore.clusterCheckinInterval">1000</prop>
+        <prop key="org.quartz.jobStore.clusterCheckinInterval">5000</prop>
       </props>
     </property>
   </bean>
@@ -60,13 +60,13 @@
     <property name="routeStartTime" value="0/3 * * * * ?" />
   </bean>
 
-  <camelContext id="camelContext" managementNamePattern="#name#-#counter#" xmlns="http://camel.apache.org/schema/spring">
+  <camelContext id="camelContext2" managementNamePattern="#name#" xmlns="http://camel.apache.org/schema/spring">
     <template id="template" />
     <route id="myRoute" routePolicyRef="startPolicy" autoStartup="false">
       <from uri="direct:start" />
       <to uri="log:triggered" />
       <transform>
-        <simple>${in.body} pongs!</simple>
+        <simple>${body} PONGS!</simple>
       </transform>
       <to uri="mock:result" />
     </route>
