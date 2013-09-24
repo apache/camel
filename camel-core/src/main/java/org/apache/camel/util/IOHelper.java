@@ -417,7 +417,8 @@ public final class IOHelper {
     }
 
     /**
-     * Gets the charset name if set as property {@link Exchange#CHARSET_NAME}.
+     * Gets the charset name if set as property or header {@link Exchange#CHARSET_NAME}.
+     * Notice: The lookup from the property has priority over the header
      *
      * @param exchange  the exchange
      * @param useDefault should we fallback and use JVM default charset if no property existed?
@@ -426,6 +427,9 @@ public final class IOHelper {
     public static String getCharsetName(Exchange exchange, boolean useDefault) {
         if (exchange != null) {
             String charsetName = exchange.getProperty(Exchange.CHARSET_NAME, String.class);
+            if (charsetName == null) {
+                charsetName = exchange.getIn().getHeader(Exchange.CHARSET_NAME, String.class);
+            }
             if (charsetName != null) {
                 return IOHelper.normalizeCharset(charsetName);
             }
