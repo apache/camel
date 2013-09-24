@@ -23,10 +23,15 @@ import com.splunk.Args;
 import com.splunk.Index;
 import com.splunk.Receiver;
 import com.splunk.Service;
+
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.splunk.SplunkEndpoint;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class StreamDataWriter extends SplunkDataWriter {
+    private static final Logger LOG = LoggerFactory.getLogger(StreamDataWriter.class);
+
     private String index;
 
     public StreamDataWriter(SplunkEndpoint endpoint, Args args) {
@@ -54,7 +59,7 @@ public class StreamDataWriter extends SplunkDataWriter {
             socket = receiver.attach(args);
         }
         socket.setTcpNoDelay(true);
-        logger.trace(String.format("created a socket on %s", socket.getRemoteSocketAddress()));
+        LOG.trace(String.format("created a socket on %s", socket.getRemoteSocketAddress()));
         return socket;
     }
 

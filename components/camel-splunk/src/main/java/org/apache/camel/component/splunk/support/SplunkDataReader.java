@@ -23,15 +23,21 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
-import com.splunk.Args;
 import com.splunk.Job;
+import com.splunk.JobArgs;
+import com.splunk.JobArgs.ExecutionMode;
+import com.splunk.JobArgs.SearchMode;
+import com.splunk.JobResultsArgs;
+import com.splunk.JobResultsArgs.OutputMode;
 import com.splunk.ResultsReader;
 import com.splunk.ResultsReaderJson;
 import com.splunk.SavedSearch;
 import com.splunk.SavedSearchCollection;
+import com.splunk.SavedSearchDispatchArgs;
 import com.splunk.Service;
+import com.splunk.ServiceArgs;
+
 import org.apache.camel.component.splunk.ConsumerType;
 import org.apache.camel.component.splunk.SplunkEndpoint;
 import org.apache.camel.component.splunk.event.SplunkEvent;
@@ -56,10 +62,6 @@ public class SplunkDataReader {
 
     public int getCount() {
         return endpoint.getConfiguration().getCount();
-    }
-
-    public String getFieldList() {
-        return endpoint.getConfiguration().getFieldList();
     }
 
     public String getSearch() {
@@ -101,9 +103,9 @@ public class SplunkDataReader {
 
     /**
      * Get the earliestTime of range search.
-     *
+     * 
      * @param startTime the time where search start
-     * @param realtime  if this is realtime search
+     * @param realtime if this is realtime search
      * @return The time of last successful read if not realtime; Time difference
      *         between last successful read and start time;
      */
@@ -128,22 +130,19 @@ public class SplunkDataReader {
         return result;
     }
 
-    private void populateArgs(Args queryArgs, Calendar startTime, boolean realtime) {
+    private void populateArgs(JobArgs queryArgs, Calendar startTime, boolean realtime) {
         String earliestTime = getEarliestTime(startTime, realtime);
         if (ObjectHelper.isNotEmpty(earliestTime)) {
-            queryArgs.put("earliest_time", earliestTime);
+            queryArgs.setEarliestTime(earliestTime);
         }
 
         String latestTime = getLatestTime(startTime, realtime);
         if (ObjectHelper.isNotEmpty(latestTime)) {
-            queryArgs.put("latest_time", latestTime);
+            queryArgs.setLatestTime(latestTime);
         }
 
-        queryArgs.put("time_format", SPLUNK_TIME_FORMAT);
+        queryArgs.setTimeFormat(SPLUNK_TIME_FORMAT);
 
-        if (ObjectHelper.isNotEmpty(getFieldList())) {
-            queryArgs.put("field_list", getFieldList());
-        }
     }
 
     private String getLatestTime(Calendar startTime, boolean realtime) {
@@ -186,13 +185,13 @@ public class SplunkDataReader {
     private List<SplunkEvent> savedSearch() throws Exception {
         LOG.trace("saved search start");
 
-        Args queryArgs = new Args();
-        queryArgs.put("app", "search");
+        ServiceArgs queryArgs = new ServiceArgs();
+        queryArgs.setApp("search");
         if (ObjectHelper.isNotEmpty(endpoint.getConfiguration().getOwner())) {
-            queryArgs.put("owner", endpoint.getConfiguration().getOwner());
+            queryArgs.setOwner(endpoint.getConfiguration().getOwner());
         }
         if (ObjectHelper.isNotEmpty(endpoint.getConfiguration().getApp())) {
-            queryArgs.put("app", endpoint.getConfiguration().getApp());
+            queryArgs.setApp(endpoint.getConfiguration().getApp());
         }
 
         Calendar startTime = Calendar.getInstance();
@@ -211,10 +210,10 @@ public class SplunkDataReader {
             }
         }
         if (search != null) {
-            Map<String, String> args = new HashMap<String, String>();
-            args.put("force_dispatch", "true");
-            args.put("dispatch.earliest_time", earliestTime);
-            args.put("dispatch.latest_time", latestTime);
+            SavedSearchDispatchArgs args = new SavedSearchDispatchArgs();
+            args.setForceDispatch(true);
+            args.setDispatchEarliestTime(earliestTime);
+            args.setDispatchLatestTime(latestTime);
             job = search.dispatch(args);
         }
         while (!job.isDone()) {
@@ -229,8 +228,8 @@ public class SplunkDataReader {
     private List<SplunkEvent> nonBlockingSearch() throws Exception {
         LOG.debug("non block search start");
 
-        Args queryArgs = new Args();
-        queryArgs.put("exec_mode", "normal");
+        JobArgs queryArgs = new JobArgs();
+        queryArgs.setExecutionMode(ExecutionMode.NORMAL);
         Calendar startTime = Calendar.getInstance();
         populateArgs(queryArgs, startTime, false);
 
@@ -240,11 +239,11 @@ public class SplunkDataReader {
     }
 
     private List<SplunkEvent> realtimeSearch() throws Exception {
-        LOG.trace("realtime search start");
+        LOG.debug("realtime search start");
 
-        Args queryArgs = new Args();
-        // queryArgs.put("exec_mode", "normal");
-        queryArgs.put("search_mode", "realtime");
+        JobArgs queryArgs = new JobArgs();
+        queryArgs.setExecutionMode(ExecutionMode.NORMAL);
+        queryArgs.setSearchMode(SearchMode.REALTIME);
         Calendar startTime = Calendar.getInstance();
         populateArgs(queryArgs, startTime, true);
 
@@ -253,16 +252,19 @@ public class SplunkDataReader {
         return data;
     }
 
-    private List<SplunkEvent> runQuery(Args queryArgs, boolean realtime) throws Exception {
+    private List<SplunkEvent> runQuery(JobArgs queryArgs, boolean realtime) throws Exception {
         Service service = endpoint.getService();
         Job job = service.getJobs().create(getSearch(), queryArgs);
         if (realtime) {
             while (!job.isReady()) {
-                Thread.sleep(2000);
+                Thread.sleep(500);
             }
+            // Besides job.isReady there must be some delay before real time job
+            // is ready
+            Thread.sleep(1000);
         } else {
             while (!job.isDone()) {
-                Thread.sleep(2000);
+                Thread.sleep(500);
             }
         }
         return extractData(job, realtime);
@@ -281,9 +283,12 @@ public class SplunkDataReader {
         }
         if (getCount() == 0 || total < getCount()) {
             InputStream stream = null;
-            Args outputArgs = new Args();
-            outputArgs.put("output_mode", "json");
+            JobResultsArgs outputArgs = new JobResultsArgs();
+            outputArgs.setOutputMode(OutputMode.JSON);
             if (realtime) {
+                if (getCount() > 0) {
+                    outputArgs.setCount(getCount());
+                }
                 stream = job.getResultsPreview(outputArgs);
             } else {
                 stream = job.getResults(outputArgs);
@@ -299,10 +304,10 @@ public class SplunkDataReader {
             int offset = 0;
             while (offset < total) {
                 InputStream stream;
-                Args outputArgs = new Args();
-                outputArgs.put("output_mode", "json");
-                outputArgs.put("count", getCount());
-                outputArgs.put("offset", offset);
+                JobResultsArgs outputArgs = new JobResultsArgs();
+                outputArgs.setOutputMode(OutputMode.JSON);
+                outputArgs.setCount(getCount());
+                outputArgs.setOffset(offset);
                 if (realtime) {
                     stream = job.getResultsPreview(outputArgs);
                 } else {
@@ -320,6 +325,7 @@ public class SplunkDataReader {
         if (resultsReader != null) {
             resultsReader.close();
         }
+        job.cancel();
         return result;
     }
 

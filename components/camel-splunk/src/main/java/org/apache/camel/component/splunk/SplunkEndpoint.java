@@ -81,7 +81,7 @@ public class SplunkEndpoint extends ScheduledPollEndpoint {
 
     public Service getService() {
         if (service == null) {
-            this.service = configuration.createService();
+            this.service = configuration.getConnectionFactory().createService(getCamelContext());
         }
         return service;
     }
@@ -102,7 +102,7 @@ public class SplunkEndpoint extends ScheduledPollEndpoint {
 
     public synchronized boolean reconnectIfPossible(Exception e) {
         boolean answer = false;
-        if (e instanceof HttpException && ((HttpException) e).getStatus() == 401 || ((e instanceof SocketException) || (e instanceof SSLException))) {
+        if (e instanceof HttpException && ((HttpException)e).getStatus() == 401 || ((e instanceof SocketException) || (e instanceof SSLException))) {
             // try and reconnect
             LOG.warn("Got exception from Splunk. Will try to reconnect");
             this.service = null;

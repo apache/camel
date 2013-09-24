@@ -27,6 +27,8 @@ import com.splunk.Input;
 import com.splunk.InputCollection;
 import com.splunk.Service;
 
+import org.apache.camel.CamelContext;
+
 import static org.mockito.Matchers.anyInt;
 import static org.mockito.Matchers.anyString;
 import static org.mockito.Matchers.isA;
@@ -54,10 +56,10 @@ final class MockConnectionSettings extends SplunkConfiguration {
     private Socket socket;
 
     public MockConnectionSettings(Service service, Socket socket) {
-        super("foo", "bar");
         this.service = service;
         this.socket = socket;
         mockSplunkWriterApi();
+        setConnectionFactory(new MockConnectionFactory(service));
     }
 
     private void mockSplunkWriterApi() {
@@ -78,9 +80,17 @@ final class MockConnectionSettings extends SplunkConfiguration {
         }
     }
 
-    @Override
-    public Service createService() {
-        return service;
-    }
+    class MockConnectionFactory extends SplunkConnectionFactory {
+        private Service service;
 
+        public MockConnectionFactory(Service service) {
+            super("foo", "bar");
+            this.service = service;
+        }
+
+        @Override
+        public Service createService(CamelContext camelContext) {
+            return service;
+        }
+    }
 }

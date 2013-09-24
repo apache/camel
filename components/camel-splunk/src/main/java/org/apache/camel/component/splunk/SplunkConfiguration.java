@@ -16,54 +16,56 @@
  */
 package org.apache.camel.component.splunk;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.Callable;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.TimeUnit;
-
 import com.splunk.Service;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
+import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriParams;
+import org.apache.camel.util.ObjectHelper;
+
+@UriParams
 public class SplunkConfiguration {
 
-    private static final Logger LOG = LoggerFactory.getLogger(SplunkConfiguration.class);
-
+    @UriParam
     private String host = Service.DEFAULT_HOST;
+    @UriParam
     private int port = Service.DEFAULT_PORT;
+    @UriParam
     private String scheme = Service.DEFAULT_SCHEME;
+    @UriParam
     private String app;
+    @UriParam
     private String owner;
+    @UriParam
     private String username;
+    @UriParam
     private String password;
+    @UriParam
     private int connectionTimeout = 5000;
+    @UriParam
+    private boolean useSunHttpsHandler;
+    @UriParam
     private String index;
+    @UriParam
     private String sourceType;
+    @UriParam
     private String source;
+    @UriParam
     private int tcpReceiverPort;
 
     // consumer properties
+    @UriParam
     private int count;
-    private String fieldList;
+    @UriParam
     private String search;
+    @UriParam
     private String savedSearch;
+    @UriParam
     private String earliestTime;
+    @UriParam
     private String latestTime;
+    @UriParam
     private String initEarliestTime;
-
-    public SplunkConfiguration(final String host, final int port, final String username, final String password) {
-        this.host = host;
-        this.port = port;
-        this.username = username;
-        this.password = password;
-    }
-
-    public SplunkConfiguration(final String username, final String password) {
-        this(Service.DEFAULT_HOST, Service.DEFAULT_PORT, username, password);
-    }
+    private SplunkConnectionFactory connectionFactory;
 
     public String getInitEarliestTime() {
         return initEarliestTime;
@@ -79,14 +81,6 @@ public class SplunkConfiguration {
 
     public void setCount(int count) {
         this.count = count;
-    }
-
-    public String getFieldList() {
-        return fieldList;
-    }
-
-    public void setFieldList(String fieldList) {
-        this.fieldList = fieldList;
     }
 
     public String getSearch() {
@@ -209,6 +203,14 @@ public class SplunkConfiguration {
         this.connectionTimeout = timeout;
     }
 
+    public boolean isUseSunHttpsHandler() {
+        return useSunHttpsHandler;
+    }
+
+    public void setUseSunHttpsHandler(boolean useSunHttpsHandler) {
+        this.useSunHttpsHandler = useSunHttpsHandler;
+    }
+
     public String getSavedSearch() {
         return this.savedSearch;
     }
@@ -217,44 +219,25 @@ public class SplunkConfiguration {
         this.savedSearch = savedSearch;
     }
 
-    public Service createService() {
-        final Map<String, Object> args = new HashMap<String, Object>();
-        if (host != null) {
-            args.put("host", host);
-        }
-        if (port > 0) {
-            args.put("port", port);
-        }
-        if (scheme != null) {
-            args.put("scheme", scheme);
-        }
-        if (app != null) {
-            args.put("app", app);
-        }
-        if (owner != null) {
-            args.put("owner", owner);
-        }
+    public SplunkConnectionFactory getConnectionFactory() {
+        return connectionFactory != null ? connectionFactory : createDefaultConnectionFactory();
+    }
 
-        args.put("username", username);
-        args.put("password", password);
-        ExecutorService executor = Executors.newSingleThreadExecutor();
+    public void setConnectionFactory(SplunkConnectionFactory connectionFactory) {
+        this.connectionFactory = connectionFactory;
+    }
 
-        Future<Service> future = executor.submit(new Callable<Service>() {
-            public Service call() throws Exception {
-                return Service.connect(args);
-            }
-        });
-        try {
-            Service service;
-            if (connectionTimeout > 0) {
-                service = future.get(connectionTimeout, TimeUnit.MILLISECONDS);
-            } else {
-                service = future.get();
-            }
-            LOG.info("Successfully connected to Splunk");
-            return service;
-        } catch (Exception e) {
-            throw new RuntimeException(String.format("could not connect to Splunk Server @ %s:%d - %s", host, port, e.getMessage()));
+    private SplunkConnectionFactory createDefaultConnectionFactory() {
+        SplunkConnectionFactory splunkConnectionFactory;
+        if (ObjectHelper.isNotEmpty(getHost()) && getPort() > 0) {
+            splunkConnectionFactory = new SplunkConnectionFactory(getHost(), getPort(), getUsername(), getPassword());
+        } else {
+            splunkConnectionFactory = new SplunkConnectionFactory(getUsername(), getPassword());
         }
+        splunkConnectionFactory.setApp(getApp());
+        splunkConnectionFactory.setConnectionTimeout(getConnectionTimeout());
+        splunkConnectionFactory.setScheme(getScheme());
+        splunkConnectionFactory.setUseSunHttpsHandler(isUseSunHttpsHandler());
+        return splunkConnectionFactory;
     }
 }

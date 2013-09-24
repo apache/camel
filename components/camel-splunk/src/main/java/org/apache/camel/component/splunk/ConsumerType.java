@@ -17,7 +17,7 @@
 package org.apache.camel.component.splunk;
 
 public enum ConsumerType {
-    NORMAL, REALTIME, SAVEDSEARCH, UNKNOWN;
+    NORMAL, REALTIME, SAVEDSEARCH;
 
     public static ConsumerType fromUri(String uri) {
         for (ConsumerType consumerType : ConsumerType.values()) {
@@ -25,7 +25,7 @@ public enum ConsumerType {
                 return consumerType;
             }
         }
-        return ConsumerType.UNKNOWN;
+        throw new RuntimeException("Unable to construct consumerType from uri : " + uri);
     }
 
 }

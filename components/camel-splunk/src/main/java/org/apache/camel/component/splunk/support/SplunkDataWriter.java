@@ -24,13 +24,14 @@ import java.net.Socket;
 
 import com.splunk.Args;
 import com.splunk.Service;
+
 import org.apache.camel.component.splunk.SplunkEndpoint;
 import org.apache.camel.component.splunk.event.SplunkEvent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public abstract class SplunkDataWriter implements DataWriter {
-    protected final Logger logger = LoggerFactory.getLogger(getClass());
+    private static final Logger LOG = LoggerFactory.getLogger(SplunkDataWriter.class);
 
     protected Socket socket;
     protected SplunkEndpoint endpoint;
@@ -44,7 +45,7 @@ public abstract class SplunkDataWriter implements DataWriter {
     protected abstract Socket createSocket(Service service) throws IOException;
 
     public void write(SplunkEvent event) throws Exception {
-        logger.debug("writing event to splunk:" + event);
+        LOG.debug("writing event to splunk:" + event);
         doWrite(event, socket);
     }
 

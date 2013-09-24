@@ -17,7 +17,7 @@
 package org.apache.camel.component.splunk;
 
 public enum ProducerType {
-    TCP, SUBMIT, STREAM, UNKNOWN;
+    TCP, SUBMIT, STREAM;
 
     public static ProducerType fromUri(String uri) {
         for (ProducerType producerType : ProducerType.values()) {
@@ -25,6 +25,6 @@ public enum ProducerType {
                 return producerType;
             }
         }
-        return ProducerType.UNKNOWN;
+        throw new RuntimeException("Unable to construct prodcucerType from uri : " + uri);
     }
 }

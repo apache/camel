@@ -172,48 +172,48 @@ public class SplunkEvent implements Serializable {
     /**
      * default key value delimiter
      */
-    protected static final String KVDELIM = "=";
+    private static final String KVDELIM = "=";
     /**
      * default pair delimiter
      */
-    protected static final String PAIRDELIM = " ";
+    private static final String PAIRDELIM = " ";
     /**
      * default quote char
      */
-    protected static final char QUOTE = '"';
+    private static final char QUOTE = '"';
     /**
      * default date format is using internal generated date
      */
-    protected static final String DATEFORMATPATTERN = "yyyy-MM-dd\tHH:mm:ss:SSSZ";
+    private static final String DATEFORMATPATTERN = "yyyy-MM-dd\tHH:mm:ss:SSSZ";
     /**
      * Date Formatter
      */
-    protected static final DateTimeFormatter DATE_FORMATTER = DateTimeFormat.forPattern(DATEFORMATPATTERN);
+    private static final DateTimeFormatter DATE_FORMATTER = DateTimeFormat.forPattern(DATEFORMATPATTERN);
 
     /**
      * Event prefix fields
      */
-    protected static final String PREFIX_NAME = "name";
-    protected static final String PREFIX_EVENT_ID = "event_id";
+    private static final String PREFIX_NAME = "name";
+    private static final String PREFIX_EVENT_ID = "event_id";
 
     /**
      * Java Throwable type fields
      */
-    protected static final String THROWABLE_CLASS = "throwable_class";
-    protected static final String THROWABLE_MESSAGE = "throwable_message";
-    protected static final String THROWABLE_STACKTRACE_ELEMENTS = "stacktrace_elements";
+    private static final String THROWABLE_CLASS = "throwable_class";
+    private static final String THROWABLE_MESSAGE = "throwable_message";
+    private static final String THROWABLE_STACKTRACE_ELEMENTS = "stacktrace_elements";
 
-    protected static final String LINEBREAK = "\n";
+    private static final String LINEBREAK = "\n";
 
     /**
      * Whether or not to put quotes around values
      */
-    protected boolean quoteValues = true;
+    private boolean quoteValues = true;
 
     /**
      * Whether or not to add a date to the event string
      */
-    protected boolean useInternalDate = true;
+    private boolean useInternalDate = true;
 
     /**
      * Contents of the event message
@@ -222,7 +222,7 @@ public class SplunkEvent implements Serializable {
 
     /**
      * A Constructor to load data from a Map
-     *
+     * 
      * @param data the map
      */
     public SplunkEvent(Map<String, String> data) {
@@ -243,11 +243,11 @@ public class SplunkEvent implements Serializable {
 
     /**
      * Constructor to create a generic event
-     *
-     * @param eventName       the event name
-     * @param eventID         the event id
+     * 
+     * @param eventName the event name
+     * @param eventID the event id
      * @param useInternalDate whether or not to add a date to the event string
-     * @param quoteValues     whether or not to put quotes around values
+     * @param quoteValues whether or not to put quotes around values
      */
     public SplunkEvent(String eventName, String eventID, boolean useInternalDate, boolean quoteValues) {
 
@@ -256,14 +256,17 @@ public class SplunkEvent implements Serializable {
         this.useInternalDate = useInternalDate;
 
         addPair(PREFIX_NAME, eventName);
-        addPair(PREFIX_EVENT_ID, eventID);
+        if (eventID != null) {
+            addPair(PREFIX_EVENT_ID, eventID);
+        }
+
     }
 
     /**
      * Constructor to create a generic event with the default format
-     *
+     * 
      * @param eventName the event name
-     * @param eventID   the event ID
+     * @param eventID the event ID
      */
     public SplunkEvent(String eventName, String eventID) {
         this(eventName, eventID, true, true);
@@ -282,7 +285,7 @@ public class SplunkEvent implements Serializable {
 
         String[] entries = eventEntries.split(PAIRDELIM);
 
-        String quote = new String(new char[]{QUOTE});
+        String quote = new String(new char[] {QUOTE});
 
         for (String entry : entries) {
             String[] pair = entry.split(KVDELIM);
@@ -347,7 +350,7 @@ public class SplunkEvent implements Serializable {
     /**
      * Utility method for formatting Throwable,Error,Exception objects in a more
      * linear and Splunk friendly manner than printStackTrace
-     *
+     * 
      * @param throwable the Throwable object to add to the event
      */
     public void addThrowable(Throwable throwable) {
@@ -357,8 +360,8 @@ public class SplunkEvent implements Serializable {
     /**
      * Utility method for formatting Throwable,Error,Exception objects in a more
      * linear and Splunk friendly manner than printStackTrace
-     *
-     * @param throwable       the Throwable object to add to the event
+     * 
+     * @param throwable the Throwable object to add to the event
      * @param stackTraceDepth maximum number of stacktrace elements to log
      */
     public void addThrowable(Throwable throwable, int stackTraceDepth) {
@@ -368,10 +371,10 @@ public class SplunkEvent implements Serializable {
     /**
      * Internal private method for formatting Throwable,Error,Exception objects
      * in a more linear and Splunk friendly manner than printStackTrace
-     *
-     * @param throwable       the Throwable object to add to the event
+     * 
+     * @param throwable the Throwable object to add to the event
      * @param stackTraceDepth maximum number of stacktrace elements to log, -1
-     *                        for all
+     *            for all
      */
 
     private void addThrowableObject(Throwable throwable, int stackTraceDepth) {
