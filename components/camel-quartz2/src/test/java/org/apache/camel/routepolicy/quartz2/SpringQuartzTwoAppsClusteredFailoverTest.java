@@ -87,7 +87,7 @@ public class SpringQuartzTwoAppsClusteredFailoverTest extends TestSupport {
         // stop the second app as we're already done
         app2.close();
 
-        // and as the last step stop the database itself...
+        // and as the last step shutdown the database...
         db.close();
     }
 
