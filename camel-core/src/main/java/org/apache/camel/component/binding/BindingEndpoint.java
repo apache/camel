@@ -24,9 +24,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.processor.PipelineHelper;
 import org.apache.camel.spi.Binding;
 import org.apache.camel.spi.HasBinding;
-import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ServiceHelper;
 
 /**
@@ -73,25 +73,10 @@ public class BindingEndpoint extends DefaultEndpoint implements HasBinding {
      * Applies the {@link Binding} processor to the given exchange before passing it on to the delegateProcessor (either a producer or consumer)
      */
     public void pipelineBindingProcessor(Processor bindingProcessor, Exchange exchange, Processor delegateProcessor) throws Exception {
-        // use same exchange - seems Pipeline does these days
-        Exchange bindingExchange = exchange;
-        bindingProcessor.process(bindingExchange);
-        Exchange delegateExchange = createNextExchange(bindingExchange);
-        ExchangeHelper.copyResults(bindingExchange, delegateExchange);
+        bindingProcessor.process(exchange);
+
+        Exchange delegateExchange = PipelineHelper.createNextExchange(exchange);
         delegateProcessor.process(delegateExchange);
-    }
-
-    // TODO this code was copied from Pipeline - should make it static and reuse the code?
-    protected Exchange createNextExchange(Exchange previousExchange) {
-        Exchange answer = previousExchange;
-
-        // now lets set the input of the next exchange to the output of the
-        // previous message if it is not null
-        if (answer.hasOut()) {
-            answer.setIn(answer.getOut());
-            answer.setOut(null);
-        }
-        return answer;
     }
 
     @Override
