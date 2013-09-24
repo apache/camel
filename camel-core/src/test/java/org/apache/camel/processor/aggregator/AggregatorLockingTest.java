@@ -32,7 +32,7 @@ public class AggregatorLockingTest extends ContextTestSupport {
 
     public void testAggregationWithoutParallelNorOptimisticShouldNotLockDownstreamProcessors() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedBodiesReceivedInAnyOrder("a","b");
+        mock.expectedBodiesReceivedInAnyOrder("a", "b");
 
         template.sendBodyAndHeader("seda:a", "a", "myId", 1);
         template.sendBodyAndHeader("seda:a", "b", "myId", 2);
@@ -60,7 +60,7 @@ public class AggregatorLockingTest extends ContextTestSupport {
                         public void process(Exchange exchange) throws Exception {
                             latch.countDown();
                             // block until the other thread counts down as well
-                            if(!latch.await(5, TimeUnit.SECONDS)) {
+                            if (!latch.await(5, TimeUnit.SECONDS)) {
                                 throw new RuntimeException("Took too long; assume threads are blocked and fail test");
                             }
                         }
