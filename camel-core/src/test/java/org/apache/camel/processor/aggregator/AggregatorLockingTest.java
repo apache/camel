@@ -60,7 +60,9 @@ public class AggregatorLockingTest extends ContextTestSupport {
                         public void process(Exchange exchange) throws Exception {
                             latch.countDown();
                             // block until the other thread counts down as well
-                            latch.await(5, TimeUnit.SECONDS);
+                            if(!latch.await(5, TimeUnit.SECONDS)) {
+                                throw new RuntimeException("Took too long; assume threads are blocked and fail test");
+                            }
                         }
                     })
                     .log("After await with thread: ${threadName} and body: ${body}")
