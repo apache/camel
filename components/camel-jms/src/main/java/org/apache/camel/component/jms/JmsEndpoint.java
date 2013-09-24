@@ -663,6 +663,11 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     }
 
     @ManagedAttribute
+    public Integer getDeliveryMode() {
+        return getConfiguration().getDeliveryMode();
+    }
+
+    @ManagedAttribute
     public boolean isDisableReplyTo() {
         return getConfiguration().isDisableReplyTo();
     }
@@ -791,6 +796,11 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     @ManagedAttribute
     public void setDeliveryPersistent(boolean deliveryPersistent) {
         getConfiguration().setDeliveryPersistent(deliveryPersistent);
+    }
+
+    @ManagedAttribute
+    public void setDeliveryMode(Integer deliveryMode) {
+        getConfiguration().setDeliveryMode(deliveryMode);
     }
 
     public void setDestinationResolver(DestinationResolver destinationResolver) {

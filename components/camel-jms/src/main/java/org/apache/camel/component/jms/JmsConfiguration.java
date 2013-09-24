@@ -119,6 +119,8 @@ public class JmsConfiguration implements Cloneable {
     @UriParam
     private boolean deliveryPersistent = true;
     @UriParam
+    private Integer deliveryMode;
+    @UriParam
     private boolean replyToDeliveryPersistent = true;
     @UriParam
     private long timeToLive = -1;
@@ -396,7 +398,14 @@ public class JmsConfiguration implements Cloneable {
         template.setDefaultDestinationName(destination);
 
         template.setExplicitQosEnabled(isExplicitQosEnabled());
-        template.setDeliveryPersistent(deliveryPersistent);
+
+        // have to use one or the other.. doesn't make sense to use both
+        if (deliveryMode != null) {
+            template.setDeliveryMode(deliveryMode);
+        } else {
+            template.setDeliveryPersistent(deliveryPersistent);
+        }
+
         if (messageConverter != null) {
             template.setMessageConverter(messageConverter);
         }
@@ -739,6 +748,15 @@ public class JmsConfiguration implements Cloneable {
 
     public void setDeliveryPersistent(boolean deliveryPersistent) {
         this.deliveryPersistent = deliveryPersistent;
+        configuredQoS();
+    }
+
+    public Integer getDeliveryMode() {
+        return deliveryMode;
+    }
+
+    public void setDeliveryMode(Integer deliveryMode) {
+        this.deliveryMode = deliveryMode;
         configuredQoS();
     }
 
