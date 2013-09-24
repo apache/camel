@@ -158,15 +158,7 @@ public class Pipeline extends MulticastProcessor implements AsyncProcessor, Trac
      * @return a new exchange
      */
     protected Exchange createNextExchange(Exchange previousExchange) {
-        Exchange answer = previousExchange;
-
-        // now lets set the input of the next exchange to the output of the
-        // previous message if it is not null
-        if (answer.hasOut()) {
-            answer.setIn(answer.getOut());
-            answer.setOut(null);
-        }
-        return answer;
+        return PipelineHelper.createNextExchange(previousExchange);
     }
 
     protected boolean continueRouting(Iterator<Processor> it, Exchange exchange) {
