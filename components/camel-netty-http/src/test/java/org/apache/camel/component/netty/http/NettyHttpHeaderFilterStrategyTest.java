@@ -14,26 +14,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.http4;
+package org.apache.camel.component.netty.http;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultExchange;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Before;
 import org.junit.Test;
 
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertTrue;
+
 /**
- * @version 
+ * @author <a href="http://www.christianposta.com/blog">Christian Posta</a>
  */
-public class HttpHeaderFilterStrategyTest extends CamelTestSupport {
-
-    private HttpHeaderFilterStrategy filter;
+public class NettyHttpHeaderFilterStrategyTest {
+    
+    private NettyHttpHeaderFilterStrategy filter;
     private Exchange exchange;
-
+    
     @Before
     public void setUp() {
-        filter = new HttpHeaderFilterStrategy();
+        filter = new NettyHttpHeaderFilterStrategy();
         exchange = new DefaultExchange(new DefaultCamelContext());
     }
 
@@ -104,5 +106,4 @@ public class HttpHeaderFilterStrategyTest extends CamelTestSupport {
         assertTrue(filter.applyFilterToCamelHeaders("host", "dummy.host.com", exchange));
         assertTrue(filter.applyFilterToCamelHeaders("Host", "dummy.host.com", exchange));
     }
-
 }
