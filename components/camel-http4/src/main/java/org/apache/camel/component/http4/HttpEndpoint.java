@@ -16,9 +16,6 @@
  */
 package org.apache.camel.component.http4;
 
-import java.net.URI;
-import java.net.URISyntaxException;
-
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.Producer;
 import org.apache.camel.RuntimeCamelException;
@@ -30,17 +27,17 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.http.HttpHost;
 import org.apache.http.client.CookieStore;
 import org.apache.http.client.HttpClient;
-import org.apache.http.client.protocol.ClientContext;
 import org.apache.http.conn.ClientConnectionManager;
 import org.apache.http.conn.params.ConnRoutePNames;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.BasicHttpParams;
 import org.apache.http.params.HttpParams;
-import org.apache.http.protocol.BasicHttpContext;
-import org.apache.http.protocol.DefaultedHttpContext;
 import org.apache.http.protocol.HttpContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.net.URI;
+import java.net.URISyntaxException;
 
 /**
  * Represents a <a href="http://camel.apache.org/http.html">HTTP endpoint</a>
@@ -66,6 +63,7 @@ public class HttpEndpoint extends DefaultPollingEndpoint implements HeaderFilter
     private boolean disableStreamCache;
     private boolean transferException;
     private boolean traceEnabled;
+    private boolean preemptiveAuth;
     private String httpMethodRestrict;
     private UrlRewrite urlRewrite;
     private boolean clearExpiredCookies = true;
@@ -376,5 +374,13 @@ public class HttpEndpoint extends DefaultPollingEndpoint implements HeaderFilter
 
     public void setCookieStore(CookieStore cookieStore) {
         this.cookieStore = cookieStore;
+    }
+
+    public boolean isPreemptiveAuth() {
+        return preemptiveAuth;
+    }
+
+    public void setPreemptiveAuth(boolean preemptiveAuth) {
+        this.preemptiveAuth = preemptiveAuth;
     }
 }

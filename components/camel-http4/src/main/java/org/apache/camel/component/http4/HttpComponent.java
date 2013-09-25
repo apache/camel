@@ -16,11 +16,6 @@
  */
 package org.apache.camel.component.http4;
 
-import java.net.URI;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.TimeUnit;
-
 import org.apache.camel.Endpoint;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.component.http4.helper.HttpHelper;
@@ -50,6 +45,11 @@ import org.apache.http.params.HttpProtocolParamBean;
 import org.apache.http.protocol.HttpContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.net.URI;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.concurrent.TimeUnit;
 
 /**
  * Defines the <a href="http://camel.apache.org/http4.html">HTTP4
