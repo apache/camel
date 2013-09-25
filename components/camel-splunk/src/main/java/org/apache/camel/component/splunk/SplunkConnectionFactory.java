@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.splunk;
 
+import java.net.URLStreamHandler;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
@@ -25,6 +26,7 @@ import com.splunk.Service;
 import com.splunk.ServiceArgs;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -84,7 +86,6 @@ public class SplunkConnectionFactory {
         this.useSunHttpsHandler = useSunHttpsHandler;
     }
 
-    @SuppressWarnings("restriction")
     public Service createService(CamelContext camelContext) {
         final ServiceArgs args = new ServiceArgs();
         if (host != null) {
@@ -108,8 +109,17 @@ public class SplunkConnectionFactory {
         // useful in cases where you want to bypass app. servers https handling
         // (wls i'm looking at you)
         if (isUseSunHttpsHandler()) {
-            args.setHTTPSHandler(new sun.net.www.protocol.https.Handler());
+            String sunHandlerClassName = "sun.net.www.protocol.https.Handler";
+            Class<URLStreamHandler> clazz = camelContext.getClassResolver().resolveClass(sunHandlerClassName, URLStreamHandler.class);
+            if (clazz != null) {
+                URLStreamHandler handler = ObjectHelper.newInstance(clazz);
+                args.setHTTPSHandler(handler);
+                LOG.debug("using the URLStreamHandler {} for {}", handler, args);
+            } else {
+                LOG.warn("could not resolve and use the URLStreamHandler class '{}'", sunHandlerClassName);
+            }
         }
+
         ExecutorService executor = camelContext.getExecutorServiceManager().newSingleThreadExecutor(this, "DefaultSplunkConnectionFactory");
 
         Future<Service> future = executor.submit(new Callable<Service>() {
