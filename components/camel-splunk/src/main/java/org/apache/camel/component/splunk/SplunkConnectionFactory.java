@@ -26,7 +26,6 @@ import com.splunk.Service;
 import com.splunk.ServiceArgs;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -112,7 +111,7 @@ public class SplunkConnectionFactory {
             String sunHandlerClassName = "sun.net.www.protocol.https.Handler";
             Class<URLStreamHandler> clazz = camelContext.getClassResolver().resolveClass(sunHandlerClassName, URLStreamHandler.class);
             if (clazz != null) {
-                URLStreamHandler handler = ObjectHelper.newInstance(clazz);
+                URLStreamHandler handler = camelContext.getInjector().newInstance(clazz);
                 args.setHTTPSHandler(handler);
                 LOG.debug("using the URLStreamHandler {} for {}", handler, args);
             } else {
