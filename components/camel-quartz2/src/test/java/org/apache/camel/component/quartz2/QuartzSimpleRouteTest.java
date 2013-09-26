@@ -22,7 +22,6 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.hamcrest.CoreMatchers;
 import org.junit.Assert;
 import org.junit.Test;
-import org.quartz.CronTrigger;
 import org.quartz.JobDetail;
 import org.quartz.SimpleTrigger;
 import org.quartz.Trigger;
