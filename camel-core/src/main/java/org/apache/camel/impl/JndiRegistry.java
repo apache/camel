@@ -16,13 +16,16 @@
  */
 package org.apache.camel.impl;
 
-import java.util.Collections;
 import java.util.Hashtable;
+import java.util.LinkedHashMap;
+import java.util.LinkedHashSet;
 import java.util.Map;
 import java.util.Set;
 import javax.naming.Context;
 import javax.naming.InitialContext;
+import javax.naming.NameClassPair;
 import javax.naming.NameNotFoundException;
+import javax.naming.NamingEnumeration;
 import javax.naming.NamingException;
 
 import org.apache.camel.NoSuchBeanException;
@@ -31,8 +34,6 @@ import org.apache.camel.spi.Registry;
 
 /**
  * A {@link Registry} implementation which looks up the objects in JNDI
- * 
- * @version 
  */
 public class JndiRegistry implements Registry {
     private Context context;
@@ -72,13 +73,36 @@ public class JndiRegistry implements Registry {
     }
 
     public <T> Map<String, T> findByTypeWithName(Class<T> type) {
-        // not implemented so we return an empty map
-        return Collections.emptyMap();
+        Map<String, T> answer = new LinkedHashMap<String, T>();
+        try {
+            NamingEnumeration<NameClassPair> list = getContext().list("");
+            while (list.hasMore()) {
+                NameClassPair pair = list.next();
+                if (type.isInstance(pair.getClass())) {
+                    answer.put(pair.getName(), type.cast(pair.getClass()));
+                }
+            }
+        } catch (NamingException e) {
+            // ignore
+        }
+
+        return answer;
     }
 
     public <T> Set<T> findByType(Class<T> type) {
-        // not implemented so we return an empty set
-        return Collections.emptySet();
+        Set<T> answer = new LinkedHashSet<T>();
+        try {
+            NamingEnumeration<NameClassPair> list = getContext().list("");
+            while (list.hasMore()) {
+                NameClassPair pair = list.next();
+                if (type.isInstance(pair.getClass())) {
+                    answer.add(type.cast(pair.getClass()));
+                }
+            }
+        } catch (NamingException e) {
+            // ignore
+        }
+        return answer;
     }
 
     public Object lookup(String name) {
