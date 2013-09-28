@@ -53,7 +53,7 @@ public class DefaultStreamCachingStrategy extends org.apache.camel.support.Servi
     private CamelContext camelContext;
     private boolean enabled;
     private File spoolDirectory;
-    private transient String spoolDirectoryName = "${java.io.tmpdir}camel-tmp-#uuid#";
+    private transient String spoolDirectoryName = "${java.io.tmpdir}/camel/camel-tmp-#uuid#";
     private long spoolThreshold = StreamCache.DEFAULT_SPOOL_THRESHOLD;
     private int spoolUsedHeapMemoryThreshold;
     private SpoolUsedHeapMemoryLimit spoolUsedHeapMemoryLimit;
