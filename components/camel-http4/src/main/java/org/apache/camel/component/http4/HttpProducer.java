@@ -16,22 +16,6 @@
  */
 package org.apache.camel.component.http4;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
-import java.io.Serializable;
-import java.io.UnsupportedEncodingException;
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.nio.charset.Charset;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Iterator;
-import java.util.List;
-import java.util.Map;
-
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -40,30 +24,30 @@ import org.apache.camel.component.http4.helper.HttpHelper;
 import org.apache.camel.converter.stream.CachedOutputStream;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.spi.HeaderFilterStrategy;
-import org.apache.camel.util.ExchangeHelper;
-import org.apache.camel.util.GZIPHelper;
-import org.apache.camel.util.IOHelper;
-import org.apache.camel.util.MessageHelper;
-import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.URISupport;
+import org.apache.camel.util.*;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
+import org.apache.http.auth.AuthScope;
+import org.apache.http.auth.Credentials;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
 import org.apache.http.client.methods.HttpRequestBase;
 import org.apache.http.client.methods.HttpUriRequest;
-import org.apache.http.entity.ByteArrayEntity;
-import org.apache.http.entity.ContentType;
-import org.apache.http.entity.FileEntity;
-import org.apache.http.entity.InputStreamEntity;
-import org.apache.http.entity.StringEntity;
+import org.apache.http.entity.*;
+import org.apache.http.impl.auth.BasicScheme;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.params.CoreProtocolPNames;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.io.*;
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.nio.charset.Charset;
+import java.util.*;
 
 /**
  * @version 
@@ -81,6 +65,11 @@ public class HttpProducer extends DefaultProducer {
         this.httpContext = endpoint.getHttpContext();
         this.throwException = endpoint.isThrowExceptionOnFailure();
         this.transferException = endpoint.isTransferException();
+    }
+
+    @Override
+    public HttpEndpoint getEndpoint() {
+        return (HttpEndpoint) super.getEndpoint();
     }
 
     public void process(Exchange exchange) throws Exception {
@@ -102,10 +91,17 @@ public class HttpProducer extends DefaultProducer {
             if (queryString != null) {
                 skipRequestHeaders = URISupport.parseQuery(queryString);
             }
-            // Need to remove the Host key as it should be not used 
+            // Need to remove the Host key as it should be not used
             exchange.getIn().getHeaders().remove("host");
         }
+
         HttpRequestBase httpRequest = createMethod(exchange);
+
+        if (getEndpoint().isPreemptiveAuth()) {
+            Credentials creds = ((DefaultHttpClient) httpClient).getCredentialsProvider().getCredentials(AuthScope.ANY);
+            httpRequest.addHeader(BasicScheme.authenticate(creds, Charset.defaultCharset().displayName(), false));
+        }
+
         Message in = exchange.getIn();
         String httpProtocolVersion = in.getHeader(Exchange.HTTP_PROTOCOL_VERSION, String.class);
         if (httpProtocolVersion != null) {
@@ -175,11 +171,6 @@ public class HttpProducer extends DefaultProducer {
                 }
             }
         }
-    }
-
-    @Override
-    public HttpEndpoint getEndpoint() {
-        return (HttpEndpoint) super.getEndpoint();
     }
 
     protected void populateResponse(Exchange exchange, HttpRequestBase httpRequest, HttpResponse httpResponse,
