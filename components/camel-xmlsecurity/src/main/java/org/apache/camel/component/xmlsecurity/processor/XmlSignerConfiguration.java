@@ -211,8 +211,7 @@ public class XmlSignerConfiguration extends XmlSignatureConfiguration {
      * Signature algorithm. Default value is
      * "http://www.w3.org/2000/09/xmldsig#rsa-sha1".
      * 
-     * @param signatureAlgorithm
-     *            signature algorithm
+     * @param signatureAlgorithm signature algorithm
      */
     public void setSignatureAlgorithm(String signatureAlgorithm) {
         this.signatureAlgorithm = signatureAlgorithm;
@@ -238,8 +237,7 @@ public class XmlSignerConfiguration extends XmlSignatureConfiguration {
      * Only relevant when a KeyInfo is returned by {@link KeyAccessor}. and
      * {@link KeyInfo#getId()} is not <code>null</code>.
      * 
-     * @param addKeyInfoReference
-     *            boolean value
+     * @param addKeyInfoReference boolean value
      */
     public void setAddKeyInfoReference(Boolean addKeyInfoReference) {
         this.addKeyInfoReference = addKeyInfoReference;
@@ -260,8 +258,7 @@ public class XmlSignerConfiguration extends XmlSignatureConfiguration {
      * http://www.w3.org/TR/xmldsig-bestpractices/#signing-xml-
      * without-namespaces
      * 
-     * @param prefixForXmlSignatureNamespace
-     *            prefix
+     * @param prefixForXmlSignatureNamespace prefix
      */
     public void setPrefixForXmlSignatureNamespace(String prefixForXmlSignatureNamespace) {
         this.prefixForXmlSignatureNamespace = prefixForXmlSignatureNamespace;
@@ -270,13 +267,6 @@ public class XmlSignerConfiguration extends XmlSignatureConfiguration {
     public String getParentLocalName() {
         return parentLocalName;
     }
-    
-    public String getContentObjectId() {
-        if (contentObjectId == null) {
-            contentObjectId = "_" + UUID.randomUUID().toString();
-        }
-        return contentObjectId;
-    }
 
     /**
      * Local name of the parent element to which the XML signature element will
@@ -284,8 +274,7 @@ public class XmlSignerConfiguration extends XmlSignatureConfiguration {
      * <code>null</code>. The value must be <code>null</code> for enveloping XML
      * signature.
      * 
-     * @param parentLocalName
-     *            local name
+     * @param parentLocalName local name
      */
     public void setParentLocalName(String parentLocalName) {
         this.parentLocalName = parentLocalName;
@@ -297,12 +286,21 @@ public class XmlSignerConfiguration extends XmlSignatureConfiguration {
 
     /**
      * Namespace of the parent element to which the XML signature element will
-     * be added. See {@link #setEnvelopedParentLocalName(String)}.
-     * 
-     * @param parentNamespace
+     * be added.
      */
     public void setParentNamespace(String parentNamespace) {
         this.parentNamespace = parentNamespace;
+    }
+
+    public String getContentObjectId() {
+        if (contentObjectId == null) {
+            contentObjectId = "_" + UUID.randomUUID().toString();
+        }
+        return contentObjectId;
+    }
+
+    public void setContentObjectId(String contentObjectId) {
+        this.contentObjectId = contentObjectId;
     }
 
     public String getContentReferenceUri() {
@@ -361,4 +359,35 @@ public class XmlSignerConfiguration extends XmlSignatureConfiguration {
         }
     }
 
+    public String getKeyAccessorName() {
+        return keyAccessorName;
+    }
+
+    public void setKeyAccessorName(String keyAccessorName) {
+        this.keyAccessorName = keyAccessorName;
+    }
+
+    public String getCanonicalizationMethodName() {
+        return canonicalizationMethodName;
+    }
+
+    public void setCanonicalizationMethodName(String canonicalizationMethodName) {
+        this.canonicalizationMethodName = canonicalizationMethodName;
+    }
+
+    public String getTransformMethodsName() {
+        return transformMethodsName;
+    }
+
+    public void setTransformMethodsName(String transformMethodsName) {
+        this.transformMethodsName = transformMethodsName;
+    }
+
+    public String getPropertiesName() {
+        return propertiesName;
+    }
+
+    public void setPropertiesName(String propertiesName) {
+        this.propertiesName = propertiesName;
+    }
 }
