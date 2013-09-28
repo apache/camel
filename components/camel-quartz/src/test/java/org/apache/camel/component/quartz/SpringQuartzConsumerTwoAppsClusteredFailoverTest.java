@@ -75,7 +75,7 @@ public class SpringQuartzConsumerTwoAppsClusteredFailoverTest extends TestSuppor
         // 2013-09-28 19:50:58,892 [_ClusterManager] INFO  LocalDataSourceJobStore        - ClusterManager: Scanning for instance "app-one"'s failed in-progress jobs.
         // 2013-09-28 19:50:58,913 [eduler_Worker-1] INFO  triggered                      - Exchange[ExchangePattern: InOnly, BodyType: String, Body: clustering PONGS!]
 
-        CamelContext camel2 = app2.getBean("camelContext", CamelContext.class);
+        CamelContext camel2 = app2.getBean("camelContext2", CamelContext.class);
 
         MockEndpoint mock2 = camel2.getEndpoint("mock:result", MockEndpoint.class);
         mock2.expectedMinimumMessageCount(3);
