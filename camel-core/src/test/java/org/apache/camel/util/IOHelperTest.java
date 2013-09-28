@@ -23,6 +23,9 @@ import java.io.InputStream;
 import java.io.OutputStream;
 
 import junit.framework.TestCase;
+import org.apache.camel.CamelContext;
+import org.apache.camel.Exchange;
+import org.apache.camel.impl.DefaultExchange;
 
 /**
  * @version 
@@ -63,4 +66,18 @@ public class IOHelperTest extends TestCase {
         assertEquals("UTF-8", IOHelper.normalizeCharset("\"UTF-8 \""));
         assertEquals("UTF-8", IOHelper.normalizeCharset("\' UTF-8\'"));
     }
+
+    public void testCharsetName() throws Exception {
+        Exchange exchange = new DefaultExchange((CamelContext) null);
+
+        assertNull(IOHelper.getCharsetName(exchange, false));
+
+        exchange.getIn().setHeader(Exchange.CHARSET_NAME, "iso-8859-1");
+        assertEquals("iso-8859-1", IOHelper.getCharsetName(exchange, false));
+
+        exchange.getIn().removeHeader(Exchange.CHARSET_NAME);
+        exchange.setProperty(Exchange.CHARSET_NAME, "iso-8859-1");
+        assertEquals("iso-8859-1", IOHelper.getCharsetName(exchange, false));
+    }
+
 }
