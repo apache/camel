@@ -14,10 +14,11 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.routepolicy.quartz;
+package org.apache.camel.component.quartz;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.ProducerTemplate;
+import org.apache.camel.Exchange;
+import org.apache.camel.Predicate;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.TestSupport;
 import org.junit.Test;
@@ -25,36 +26,34 @@ import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
- * Tests a Quartz based cluster setup of two Camel Apps being triggered through {@link CronScheduledRoutePolicy}.
+ * Tests a Quartz based cluster setup of two Camel Apps being triggered through {@link QuartzConsumer}.
  * 
  * @version
  */
-public class SpringQuartzTwoAppsClusteredFailoverTest extends TestSupport {
+public class SpringQuartzConsumerTwoAppsClusteredFailoverTest extends TestSupport {
 
     @Test
     public void testQuartzPersistentStoreClusteredApp() throws Exception {
         // boot up the database the two apps are going to share inside a clustered quartz setup
-        AbstractXmlApplicationContext db = new ClassPathXmlApplicationContext("org/apache/camel/routepolicy/quartz/SpringQuartzClusteredAppDatabase.xml");
+        AbstractXmlApplicationContext db = new ClassPathXmlApplicationContext("org/apache/camel/component/quartz/SpringQuartzConsumerClusteredAppDatabase.xml");
         db.start();
 
         // now launch the first clustered app
-        AbstractXmlApplicationContext app = new ClassPathXmlApplicationContext("org/apache/camel/routepolicy/quartz/SpringQuartzClusteredAppOne.xml");
+        AbstractXmlApplicationContext app = new ClassPathXmlApplicationContext("org/apache/camel/component/quartz/SpringQuartzConsumerClusteredAppOne.xml");
         app.start();
 
         // as well as the second one
-        AbstractXmlApplicationContext app2 = new ClassPathXmlApplicationContext("org/apache/camel/routepolicy/quartz/SpringQuartzClusteredAppTwo.xml");
+        AbstractXmlApplicationContext app2 = new ClassPathXmlApplicationContext("org/apache/camel/component/quartz/SpringQuartzConsumerClusteredAppTwo.xml");
         app2.start();
 
         CamelContext camel = app.getBean("camelContext", CamelContext.class);
 
         MockEndpoint mock = camel.getEndpoint("mock:result", MockEndpoint.class);
-        mock.expectedMessageCount(1);
-        mock.expectedBodiesReceived("clustering PINGS!");
+        mock.expectedMinimumMessageCount(3);
+        mock.expectedMessagesMatches(new ClusteringPredicate(true));
 
-        // wait a bit to make sure the route has already been properly started through the given route policy
+        // let the route run a bit...
         Thread.sleep(5000);
-
-        app.getBean("template", ProducerTemplate.class).sendBody("direct:start", "clustering");
 
         mock.assertIsSatisfied();
 
@@ -69,20 +68,18 @@ public class SpringQuartzTwoAppsClusteredFailoverTest extends TestSupport {
         // wait long enough until the second app takes it over...
         Thread.sleep(20000);
         // inside the logs one can then clearly see how the route of the second CamelContext gets started:
-        // 2013-09-24 22:51:34,215 [main           ] WARN  ersistentStoreClusteredAppTest - Crashed...
-        // 2013-09-24 22:51:34,215 [main           ] WARN  ersistentStoreClusteredAppTest - Crashed...
-        // 2013-09-24 22:51:34,215 [main           ] WARN  ersistentStoreClusteredAppTest - Crashed...
-        // 2013-09-24 22:51:49,188 [_ClusterManager] INFO  LocalDataSourceJobStore        - ClusterManager: detected 1 failed or restarted instances.
-        // 2013-09-24 22:51:49,188 [_ClusterManager] INFO  LocalDataSourceJobStore        - ClusterManager: Scanning for instance "app-one"'s failed in-progress jobs.
-        // 2013-09-24 22:51:49,211 [eduler_Worker-1] INFO  SpringCamelContext             - Route: myRoute started and consuming from: Endpoint[direct://start]
+        // 2013-09-28 19:50:43,900 [main           ] WARN  ntTwoAppsClusteredFailoverTest - Crashed...
+        // 2013-09-28 19:50:43,900 [main           ] WARN  ntTwoAppsClusteredFailoverTest - Crashed...
+        // 2013-09-28 19:50:43,900 [main           ] WARN  ntTwoAppsClusteredFailoverTest - Crashed...
+        // 2013-09-28 19:50:58,892 [_ClusterManager] INFO  LocalDataSourceJobStore        - ClusterManager: detected 1 failed or restarted instances.
+        // 2013-09-28 19:50:58,892 [_ClusterManager] INFO  LocalDataSourceJobStore        - ClusterManager: Scanning for instance "app-one"'s failed in-progress jobs.
+        // 2013-09-28 19:50:58,913 [eduler_Worker-1] INFO  triggered                      - Exchange[ExchangePattern: InOnly, BodyType: String, Body: clustering PONGS!]
 
-        CamelContext camel2 = app2.getBean("camelContext2", CamelContext.class);
+        CamelContext camel2 = app2.getBean("camelContext", CamelContext.class);
 
         MockEndpoint mock2 = camel2.getEndpoint("mock:result", MockEndpoint.class);
-        mock2.expectedMessageCount(1);
-        mock2.expectedBodiesReceived("clustering PONGS!");
-
-        app2.getBean("template", ProducerTemplate.class).sendBody("direct:start", "clustering");
+        mock2.expectedMinimumMessageCount(3);
+        mock2.expectedMessagesMatches(new ClusteringPredicate(false));
 
         mock2.assertIsSatisfied();
 
@@ -91,6 +88,21 @@ public class SpringQuartzTwoAppsClusteredFailoverTest extends TestSupport {
 
         // and as the last step shutdown the database...
         db.close();
+    }
+    
+    private static class ClusteringPredicate implements Predicate {
+
+        private final String expectedPayload;
+        
+        ClusteringPredicate(boolean pings) {
+            expectedPayload = pings ? "clustering PINGS!" : "clustering PONGS!";
+        }
+        
+        @Override
+        public boolean matches(Exchange exchange) {
+            return exchange.getIn().getBody().equals(expectedPayload);
+        }
+
     }
 
 }
