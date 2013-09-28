@@ -428,7 +428,7 @@ public final class IOConverter {
     }
 
     /**
-     * Gets the charset name if set as property {@link Exchange#CHARSET_NAME}.
+     * Gets the charset name if set as header or property {@link Exchange#CHARSET_NAME}.
      *
      * @param exchange  the exchange
      * @param useDefault should we fallback and use JVM default charset if no property existed?
