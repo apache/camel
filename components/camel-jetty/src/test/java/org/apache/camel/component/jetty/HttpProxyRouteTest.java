@@ -24,7 +24,7 @@ import org.junit.Test;
 
 public class HttpProxyRouteTest extends BaseJettyTest {
 
-    private int size = 500;
+    private int size = 10;
 
     @Test
     public void testHttpProxy() throws Exception {
