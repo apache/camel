@@ -105,29 +105,29 @@ import static org.osgi.service.blueprint.reflect.ServiceReferenceMetadata.AVAILA
  */
 public class CamelNamespaceHandler implements NamespaceHandler {
 
+    public static final String BLUEPRINT_NS = "http://camel.apache.org/schema/blueprint";
+    public static final String SPRING_NS = "http://camel.apache.org/schema/spring";
+
     private static final String CAMEL_CONTEXT = "camelContext";
     private static final String ROUTE_CONTEXT = "routeContext";
     private static final String KEY_STORE_PARAMETERS = "keyStoreParameters";
     private static final String SECURE_RANDOM_PARAMETERS = "secureRandomParameters";
     private static final String SSL_CONTEXT_PARAMETERS = "sslContextParameters";
 
-    private static final String BLUEPRINT_NS = "http://camel.apache.org/schema/blueprint";
-    private static final String SPRING_NS = "http://camel.apache.org/schema/spring";
-
     private static final Logger LOG = LoggerFactory.getLogger(CamelNamespaceHandler.class);
 
     private JAXBContext jaxbContext;
 
-    public static void renameNamespaceRecursive(Node node) {
+    public static void renameNamespaceRecursive(Node node, String fromNamespace, String toNamespace) {
         if (node.getNodeType() == Node.ELEMENT_NODE) {
             Document doc = node.getOwnerDocument();
-            if (node.getNamespaceURI().equals(BLUEPRINT_NS)) {
-                doc.renameNode(node, SPRING_NS, node.getLocalName());
+            if (node.getNamespaceURI().equals(fromNamespace)) {
+                doc.renameNode(node, toNamespace, node.getLocalName());
             }
         }
         NodeList list = node.getChildNodes();
         for (int i = 0; i < list.getLength(); ++i) {
-            renameNamespaceRecursive(list.item(i));
+            renameNamespaceRecursive(list.item(i), fromNamespace, toNamespace);
         }
     }
 
@@ -143,23 +143,28 @@ public class CamelNamespaceHandler implements NamespaceHandler {
     public Metadata parse(Element element, ParserContext context) {
         LOG.trace("Parsing element {}", element);
 
-        // make sure namespace is blueprint
-        renameNamespaceRecursive(element);
+        try {
+            // as the camel-core model namespace is Spring we need to rename from blueprint to spring
+            renameNamespaceRecursive(element, BLUEPRINT_NS, SPRING_NS);
 
-        if (element.getLocalName().equals(CAMEL_CONTEXT)) {
-            return parseCamelContextNode(element, context);
-        }
-        if (element.getLocalName().equals(ROUTE_CONTEXT)) {
-            return parseRouteContextNode(element, context);
-        }
-        if (element.getLocalName().equals(KEY_STORE_PARAMETERS)) {
-            return parseKeyStoreParametersNode(element, context);
-        }
-        if (element.getLocalName().equals(SECURE_RANDOM_PARAMETERS)) {
-            return parseSecureRandomParametersNode(element, context);
-        }
-        if (element.getLocalName().equals(SSL_CONTEXT_PARAMETERS)) {
-            return parseSSLContextParametersNode(element, context);
+            if (element.getLocalName().equals(CAMEL_CONTEXT)) {
+                return parseCamelContextNode(element, context);
+            }
+            if (element.getLocalName().equals(ROUTE_CONTEXT)) {
+                return parseRouteContextNode(element, context);
+            }
+            if (element.getLocalName().equals(KEY_STORE_PARAMETERS)) {
+                return parseKeyStoreParametersNode(element, context);
+            }
+            if (element.getLocalName().equals(SECURE_RANDOM_PARAMETERS)) {
+                return parseSecureRandomParametersNode(element, context);
+            }
+            if (element.getLocalName().equals(SSL_CONTEXT_PARAMETERS)) {
+                return parseSSLContextParametersNode(element, context);
+            }
+        } finally {
+            // make sure to rename back so we leave the DOM as-is
+            renameNamespaceRecursive(element, SPRING_NS, BLUEPRINT_NS);
         }
 
         return null;
