@@ -25,7 +25,7 @@
 
   <bean id="quartzDataSource" class="org.apache.commons.dbcp.BasicDataSource">
     <property name="driverClassName" value="org.apache.derby.jdbc.EmbeddedDriver" />
-    <!-- refer the embedded database we setup inside SpringQuartzEmbeddedDatabase.xml -->
+    <!-- refer the embedded database we setup inside SpringQuartzClusteredAppDatabase.xml -->
     <property name="url" value="jdbc:derby:memory:quartz-db" />
     <property name="username" value="sa" />
     <property name="password" value="" />
