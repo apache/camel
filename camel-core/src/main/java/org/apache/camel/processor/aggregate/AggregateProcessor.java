@@ -532,7 +532,7 @@ public class AggregateProcessor extends ServiceSupport implements AsyncProcessor
             ((CompletionAwareAggregationStrategy) aggregationStrategy).onCompletion(exchange);
         }
 
-            // send this exchange
+        // send this exchange
         executorService.submit(new Runnable() {
             public void run() {
                 LOG.debug("Processing aggregated exchange: {}", exchange);
