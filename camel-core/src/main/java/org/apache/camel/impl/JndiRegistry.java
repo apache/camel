@@ -117,16 +117,18 @@ public class JndiRegistry implements Registry {
         return findByTypeWithName(type);
     }
 
-    public void bind(String s, Object o) {
+    public void bind(String name, Object object) {
         try {
-            getContext().bind(s, o);
+            getContext().bind(name, object);
         } catch (NamingException e) {
             throw new RuntimeCamelException(e);
         }
     }
 
     public void close() throws NamingException {
-        getContext().close();
+        if (context != null) {
+            context.close();
+        }
     }
 
     public Context getContext() throws NamingException {
