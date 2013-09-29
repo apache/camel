@@ -17,7 +17,9 @@
 
 package org.apache.camel.test;
 
+import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Before;
 import org.junit.Test;
@@ -38,6 +40,22 @@ public class CamelTestSupportTest extends CamelTestSupport {
         template.sendBody("direct:start", "Hello World");
 
         assertMockEndpointsSatisfied();
+    }
+
+    @Test(expected = NoSuchEndpointException.class)
+    public void exceptionThrownWhenEndpointNotFoundAndNoCreate() {
+        getMockEndpoint("mock:bogus", false);
+    }
+
+    @Test(expected = NoSuchEndpointException.class)
+    public void exceptionThrownWhenEndpointNotAMockEndpoint() {
+        getMockEndpoint("direct:something", false);
+    }
+
+    @Test
+    public void autoCreateNoneExisting() {
+        MockEndpoint mock = getMockEndpoint("mock:bogus2", true);
+        assertNotNull(mock);
     }
 
     @Override

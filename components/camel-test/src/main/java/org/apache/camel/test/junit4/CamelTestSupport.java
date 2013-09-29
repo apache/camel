@@ -31,6 +31,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Message;
+import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
@@ -555,7 +556,28 @@ public abstract class CamelTestSupport extends TestSupport {
      * @return the mandatory mock endpoint or an exception is thrown if it could not be resolved
      */
     protected MockEndpoint getMockEndpoint(String uri) {
-        return resolveMandatoryEndpoint(uri, MockEndpoint.class);
+        return getMockEndpoint(uri, true);
+    }
+
+    /**
+     * Resolves the {@link MockEndpoint} using a URI of the form <code>mock:someName</code>, optionally
+     * creating it if it does not exist.
+     *
+     * @param uri      the URI which typically starts with "mock:" and has some name
+     * @param create   whether or not to allow the endpoint to be created if it doesn't exist
+     * @return the mock endpoint or an {@link NoSuchEndpointException} is thrown if it could not be resolved
+     * @throws NoSuchEndpointException is the mock endpoint does not exists
+     */
+    protected MockEndpoint getMockEndpoint(String uri, boolean create) throws NoSuchEndpointException {
+        if (create) {
+            return resolveMandatoryEndpoint(uri, MockEndpoint.class);
+        } else {
+            Endpoint endpoint = context.hasEndpoint(uri);
+            if (endpoint instanceof MockEndpoint) {
+                return (MockEndpoint) endpoint;
+            }
+            throw new NoSuchEndpointException(String.format("MockEndpoint %s does not exist.", uri));
+        }
     }
 
     /**
