@@ -25,22 +25,24 @@ import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
- * @version 
+ * Tests a Quartz based cluster setup of two Camel Apps being triggered through {@link CronScheduledRoutePolicy}.
+ * 
+ * @version
  */
 public class SpringQuartzTwoAppsClusteredFailoverTest extends TestSupport {
 
     @Test
     public void testQuartzPersistentStoreClusteredApp() throws Exception {
         // boot up the database the two apps are going to share inside a clustered quartz setup
-        AbstractXmlApplicationContext db = new ClassPathXmlApplicationContext("org/apache/camel/routepolicy/quartz2/SpringQuartzEmbeddedDatabase.xml");
+        AbstractXmlApplicationContext db = new ClassPathXmlApplicationContext("org/apache/camel/routepolicy/quartz2/SpringQuartzClusteredAppDatabase.xml");
         db.start();
 
         // now launch the first clustered app
-        AbstractXmlApplicationContext app = new ClassPathXmlApplicationContext("org/apache/camel/routepolicy/quartz2/SpringQuartzClusteredAppOneTest.xml");
+        AbstractXmlApplicationContext app = new ClassPathXmlApplicationContext("org/apache/camel/routepolicy/quartz2/SpringQuartzClusteredAppOne.xml");
         app.start();
 
         // as well as the second one
-        AbstractXmlApplicationContext app2 = new ClassPathXmlApplicationContext("org/apache/camel/routepolicy/quartz2/SpringQuartzClusteredAppTwoTest.xml");
+        AbstractXmlApplicationContext app2 = new ClassPathXmlApplicationContext("org/apache/camel/routepolicy/quartz2/SpringQuartzClusteredAppTwo.xml");
         app2.start();
 
         CamelContext camel = app.getBean("camelContext", CamelContext.class);
@@ -67,12 +69,12 @@ public class SpringQuartzTwoAppsClusteredFailoverTest extends TestSupport {
         // wait long enough until the second app takes it over...
         Thread.sleep(20000);
         // inside the logs one can then clearly see how the route of the second CamelContext gets started:
-        // 2013-09-24 22:51:34,215 [main           ] WARN  ersistentStoreClusteredAppTest - Crashed...
-        // 2013-09-24 22:51:34,215 [main           ] WARN  ersistentStoreClusteredAppTest - Crashed...
-        // 2013-09-24 22:51:34,215 [main           ] WARN  ersistentStoreClusteredAppTest - Crashed...
-        // 2013-09-24 22:51:49,188 [_ClusterManager] INFO  LocalDataSourceJobStore        - ClusterManager: detected 1 failed or restarted instances.
-        // 2013-09-24 22:51:49,188 [_ClusterManager] INFO  LocalDataSourceJobStore        - ClusterManager: Scanning for instance "app-one"'s failed in-progress jobs.
-        // 2013-09-24 22:51:49,211 [eduler_Worker-1] INFO  SpringCamelContext             - Route: myRoute started and consuming from: Endpoint[direct://start]
+        // 2013-09-29 08:15:17,038 [main           ] WARN  tzTwoAppsClusteredFailoverTest:65   - Crashed...
+        // 2013-09-29 08:15:17,038 [main           ] WARN  tzTwoAppsClusteredFailoverTest:66   - Crashed...
+        // 2013-09-29 08:15:17,038 [main           ] WARN  tzTwoAppsClusteredFailoverTest:67   - Crashed...
+        // 2013-09-29 08:15:32,001 [_ClusterManager] INFO  LocalDataSourceJobStore       :3567 - ClusterManager: detected 1 failed or restarted instances.
+        // 2013-09-29 08:15:32,001 [_ClusterManager] INFO  LocalDataSourceJobStore       :3426 - ClusterManager: Scanning for instance "app-one"'s failed in-progress jobs.
+        // 2013-09-29 08:15:32,024 [eduler_Worker-1] INFO  SpringCamelContext            :2183 - Route: myRoute started and consuming from: Endpoint[direct://start]
 
         CamelContext camel2 = app2.getBean("camelContext2", CamelContext.class);
 
