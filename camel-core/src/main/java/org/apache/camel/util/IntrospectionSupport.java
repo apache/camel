@@ -496,9 +496,13 @@ public final class IntrospectionSupport {
             Object ref = value;
             // try and lookup the reference based on the method
             if (context != null && refName != null && ref == null) {
-                ref = CamelContextHelper.lookup(context, refName.replaceAll("#", ""), parameterType);
+                ref = CamelContextHelper.lookup(context, refName.replaceAll("#", ""));
                 if (ref == null) {
-                    continue; // try the next method if nothing was found
+                    // try the next method if nothing was found
+                    continue;
+                } else if (!parameterType.isAssignableFrom(ref.getClass())) {
+                    // setter method has not the correct type
+                    continue;
                 }
             }
 

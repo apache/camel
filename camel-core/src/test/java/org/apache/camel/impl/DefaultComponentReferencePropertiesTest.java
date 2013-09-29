@@ -16,6 +16,7 @@
  */
 package org.apache.camel.impl;
 
+import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
@@ -56,6 +57,10 @@ public class DefaultComponentReferencePropertiesTest extends ContextTestSupport 
 
         public Consumer createConsumer(Processor processor) throws Exception {
             return null;
+        }
+
+        public void setExpression(List<?> expressions) {
+            // do nothing
         }
 
         public void setExpression(Expression expression) {
@@ -104,14 +109,14 @@ public class DefaultComponentReferencePropertiesTest extends ContextTestSupport 
                 assertEquals("", remaining);
                 assertEquals(1, parameters.size());
                 assertEquals("Christian", parameters.get("name"));
-                
+
                 return null;
             }
-            
+
         };
         component.createEndpoint("foo://?name=Christian");
     }
-    
+
     public void testOnlyStringSetter() throws Exception {
         MyComponent component = new MyComponent(context);
         MyEndpoint endpoint = (MyEndpoint) component.createEndpoint("foo://?name=Claus");
