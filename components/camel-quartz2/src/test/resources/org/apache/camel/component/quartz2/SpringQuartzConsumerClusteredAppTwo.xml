@@ -41,7 +41,7 @@
     <property name="schedulerContextAsMap">
       <!-- hook Camel into Quartz -->
       <map>
-        <entry key="CamelQuartzCamelContext-camelContext2" value-ref="camelContext2"/>
+        <entry key="CamelQuartzCamelContext-camelContext" value-ref="camelContext2"/>
       </map>
     </property>
     <property name="quartzProperties">
