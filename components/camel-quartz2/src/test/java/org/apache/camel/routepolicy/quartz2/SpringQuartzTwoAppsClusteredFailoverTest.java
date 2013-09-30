@@ -37,11 +37,13 @@ public class SpringQuartzTwoAppsClusteredFailoverTest extends TestSupport {
         AbstractXmlApplicationContext db = new ClassPathXmlApplicationContext("org/apache/camel/routepolicy/quartz2/SpringQuartzClusteredAppDatabase.xml");
         db.start();
 
-        // now launch the first clustered app
+        // now launch the first clustered app which will acquire the quartz
+        // database lock and become the master
         AbstractXmlApplicationContext app = new ClassPathXmlApplicationContext("org/apache/camel/routepolicy/quartz2/SpringQuartzClusteredAppOne.xml");
         app.start();
 
-        // as well as the second one
+        // as well as the second one which will run in slave modus as it will
+        // not be able to acquire the same lock
         AbstractXmlApplicationContext app2 = new ClassPathXmlApplicationContext("org/apache/camel/routepolicy/quartz2/SpringQuartzClusteredAppTwo.xml");
         app2.start();
 
@@ -58,7 +60,7 @@ public class SpringQuartzTwoAppsClusteredFailoverTest extends TestSupport {
 
         mock.assertIsSatisfied();
 
-        // now let's simulate a crash of the first app
+        // now let's simulate a crash of the first app (the quartz instance 'app-one')
         log.warn("The first app is going to crash NOW!");
         app.close();
 
@@ -68,7 +70,7 @@ public class SpringQuartzTwoAppsClusteredFailoverTest extends TestSupport {
 
         // wait long enough until the second app takes it over...
         Thread.sleep(20000);
-        // inside the logs one can then clearly see how the route of the second CamelContext gets started:
+        // inside the logs one can then clearly see how the route of the second app ('app-two') gets started:
         // 2013-09-29 08:15:17,038 [main           ] WARN  tzTwoAppsClusteredFailoverTest:65   - Crashed...
         // 2013-09-29 08:15:17,038 [main           ] WARN  tzTwoAppsClusteredFailoverTest:66   - Crashed...
         // 2013-09-29 08:15:17,038 [main           ] WARN  tzTwoAppsClusteredFailoverTest:67   - Crashed...
@@ -86,7 +88,7 @@ public class SpringQuartzTwoAppsClusteredFailoverTest extends TestSupport {
 
         mock2.assertIsSatisfied();
 
-        // stop the second app as we're already done
+        // close the second app as we're done now
         app2.close();
 
         // and as the last step shutdown the database...
