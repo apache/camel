@@ -23,6 +23,7 @@ import org.apache.camel.processor.lucene.support.Hit;
 import org.apache.camel.processor.lucene.support.Hits;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.document.Document;
+import org.apache.lucene.index.DirectoryReader;
 import org.apache.lucene.index.IndexReader;
 import org.apache.lucene.queryparser.classic.ParseException;
 import org.apache.lucene.queryparser.classic.QueryParser;
@@ -44,9 +45,9 @@ public class LuceneSearcher {
 
     public void open(File indexDirectory, Analyzer analyzer) throws IOException {
         if (indexDirectory != null) {
-            indexReader = IndexReader.open(new NIOFSDirectory(indexDirectory));
+            indexReader = DirectoryReader.open(new NIOFSDirectory(indexDirectory));
         } else {
-            indexReader = IndexReader.open(new NIOFSDirectory(new File("./indexDirectory")));
+            indexReader = DirectoryReader.open(new NIOFSDirectory(new File("./indexDirectory")));
         }
         indexSearcher = new IndexSearcher(indexReader);
         this.analyzer = analyzer;
@@ -54,10 +55,11 @@ public class LuceneSearcher {
 
     public void close() throws IOException {
         indexReader.close();        
+        analyzer.close();
     }
     
     public Hits search(String searchPhrase, int maxNumberOfHits) throws Exception {
-        return search(searchPhrase, maxNumberOfHits, Version.LUCENE_36);
+        return search(searchPhrase, maxNumberOfHits, Version.LUCENE_44);
     }
 
     public Hits search(String searchPhrase, int maxNumberOfHits, Version luenceVersion) throws Exception {

@@ -53,11 +53,11 @@ public class LuceneIndexAndQueryProducerTest extends CamelTestSupport {
         JndiRegistry registry = new JndiRegistry(createJndiContext());
         registry.bind("std", new File("target/stdindexDir"));
         registry.bind("load_dir", new File("src/test/resources/sources"));
-        registry.bind("stdAnalyzer", new StandardAnalyzer(Version.LUCENE_36));
+        registry.bind("stdAnalyzer", new StandardAnalyzer(Version.LUCENE_44));
         registry.bind("simple", new File("target/simpleindexDir"));
-        registry.bind("simpleAnalyzer", new SimpleAnalyzer(Version.LUCENE_36));
+        registry.bind("simpleAnalyzer", new SimpleAnalyzer(Version.LUCENE_44));
         registry.bind("whitespace", new File("target/whitespaceindexDir"));
-        registry.bind("whitespaceAnalyzer", new WhitespaceAnalyzer(Version.LUCENE_36));
+        registry.bind("whitespaceAnalyzer", new WhitespaceAnalyzer(Version.LUCENE_44));
         return registry;
     }
     

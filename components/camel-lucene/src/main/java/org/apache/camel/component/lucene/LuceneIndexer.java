@@ -26,6 +26,7 @@ import org.apache.camel.converter.IOConverter;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.document.Field;
+import org.apache.lucene.document.FieldType;
 import org.apache.lucene.index.IndexWriter;
 import org.apache.lucene.index.IndexWriterConfig;
 import org.apache.lucene.index.IndexWriterConfig.OpenMode;
@@ -37,6 +38,8 @@ import org.slf4j.LoggerFactory;
 public class LuceneIndexer {
     private static final Logger LOG = LoggerFactory.getLogger(LuceneIndexer.class);
     private File sourceDirectory;
+    private FieldType fieldTypeAnalyzed;
+    private FieldType fieldTypeUnanalyzed;
     private Analyzer analyzer;
     private NIOFSDirectory niofsDirectory;
     private IndexWriter indexWriter;
@@ -52,6 +55,18 @@ public class LuceneIndexer {
             this.setNiofsDirectory(new NIOFSDirectory(new File("./indexDirectory")));
         }
         
+        fieldTypeAnalyzed = new FieldType();
+        fieldTypeAnalyzed.setIndexed(true);
+        fieldTypeAnalyzed.setStored(true);
+        fieldTypeAnalyzed.setTokenized(true);
+        fieldTypeAnalyzed.freeze();
+
+        fieldTypeUnanalyzed = new FieldType();
+        fieldTypeUnanalyzed.setIndexed(true);
+        fieldTypeUnanalyzed.setStored(true);
+        fieldTypeUnanalyzed.setTokenized(false);
+        fieldTypeUnanalyzed.freeze();
+
         this.setAnalyzer(analyzer);
         
         if ((sourceDirectory != null) && (!sourceDirectoryIndexed)) {
@@ -68,7 +83,7 @@ public class LuceneIndexer {
         add("exchangeId", exchange.getExchangeId(), true);
         for (Entry<String, Object> entry : headers.entrySet()) {
             String field = entry.getKey();
-            String value = exchange.getContext().getTypeConverter().convertTo(String.class, entry.getValue());
+            String value = exchange.getContext().getTypeConverter().mandatoryConvertTo(String.class, entry.getValue());
             add(field, value, true);
         }
 
@@ -107,11 +122,7 @@ public class LuceneIndexer {
         }
 
         Document doc = new Document();
-        if (!analyzed) {
-            doc.add(new Field(field, value, Field.Store.YES, Field.Index.NOT_ANALYZED));
-        } else {
-            doc.add(new Field(field, value, Field.Store.YES, Field.Index.ANALYZED));
-        }
+        doc.add(new Field(field, value, analyzed ? fieldTypeAnalyzed : fieldTypeUnanalyzed));
         indexWriter.addDocument(doc);
     }
 
@@ -144,7 +155,7 @@ public class LuceneIndexer {
     private void openIndexWriter() throws IOException {
         IndexWriterConfig indexWriterConfig;
         // use create or append so we can reuse existing index if already exists
-        indexWriterConfig = new IndexWriterConfig(Version.LUCENE_36, getAnalyzer()).setOpenMode(OpenMode.CREATE_OR_APPEND);
+        indexWriterConfig = new IndexWriterConfig(Version.LUCENE_44, getAnalyzer()).setOpenMode(OpenMode.CREATE_OR_APPEND);
         indexWriter = new IndexWriter(niofsDirectory, indexWriterConfig);
     }
 
