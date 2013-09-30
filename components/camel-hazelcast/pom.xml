@@ -31,7 +31,7 @@
 
     <properties>
       <camel.osgi.import.before.defaults>
-             com.hazelcast.*;version="[1.9,3)"
+             com.hazelcast.*;version="[3.0,4)"
       </camel.osgi.import.before.defaults>
       <camel.osgi.export.pkg>
             org.apache.camel.component.hazelcast.*;${camel.osgi.version},

@@ -22,6 +22,7 @@ import java.util.Collection;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
 
+import org.apache.camel.component.hazelcast.testutil.Dummy;
 import org.apache.camel.test.spring.CamelSpringTestSupport;
 
 import org.junit.Test;
@@ -105,36 +106,6 @@ public class HazelcastMapProducerForSpringTest extends CamelSpringTestSupport im
 
         assertNotNull(b2);
         assertEquals(1, b2.size());
-    }
-
-    public class Dummy implements Serializable {
-
-        private static final long serialVersionUID = 1L;
-
-        private String foo;
-        private int bar;
-        
-        public Dummy(String foo, int bar) {
-            this.foo = foo;
-            this.bar = bar;
-        }
-
-        public String getFoo() {
-            return foo;
-        }
-
-        public void setFoo(String foo) {
-            this.foo = foo;
-        }
-
-        public int getBar() {
-            return bar;
-        }
-
-        public void setBar(int bar) {
-            this.bar = bar;
-        }
-
     }
 
 }

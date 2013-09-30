@@ -20,7 +20,8 @@ import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.TimeUnit;
 
-import com.hazelcast.core.Transaction;
+import com.hazelcast.transaction.TransactionContext;
+
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Consumer;
@@ -75,14 +76,14 @@ public class HazelcastSedaConsumer extends DefaultConsumer implements Runnable {
         while (queue != null && isRunAllowed()) {
             final Exchange exchange = this.getEndpoint().createExchange();
 
-            Transaction transaction = null;
+            TransactionContext transactionCtx = null;
             if (endpoint.getConfiguration().isTransacted()) {
                 // Get and begin transaction if exist
-                transaction = endpoint.getHazelcastInstance().getTransaction();
+                transactionCtx = endpoint.getHazelcastInstance().newTransactionContext();
 
-                if (transaction != null && transaction.getStatus() == Transaction.TXN_STATUS_NO_TXN) {
-                    log.trace("Begin transaction: {}", transaction);
-                    transaction.begin();
+                if (transactionCtx != null) {
+                    log.trace("Begin transaction: {}", transactionCtx.getTxnId());
+                    transactionCtx.beginTransaction();
                 }
             }
             try {
@@ -104,8 +105,8 @@ public class HazelcastSedaConsumer extends DefaultConsumer implements Runnable {
 
                         if (exchange.getException() != null) {
                             // Rollback
-                            if (transaction != null) {
-                                transaction.rollback();
+                            if (transactionCtx != null) {
+                                transactionCtx.rollbackTransaction();
                             }
                             getExceptionHandler().handleException("Error processing exchange", exchange, exchange.getException());
                         }
@@ -113,16 +114,16 @@ public class HazelcastSedaConsumer extends DefaultConsumer implements Runnable {
                     } catch (Exception e) {
                         LOG.error("Hzlq Exception caught: " + e, e);
                         // Rollback
-                        if (transaction != null) {
-                            log.trace("Rollback transaction: {}", transaction);
-                            transaction.rollback();
+                        if (transactionCtx != null) {
+                            log.trace("Rollback transaction: {}", transactionCtx.getTxnId());
+                            transactionCtx.rollbackTransaction();
                         }
                     }
                 }
                 // It's OK, I commit
-                if (exchange.getException() == null && transaction != null && transaction.getStatus() == Transaction.TXN_STATUS_ACTIVE) {
-                    log.trace("Commit transaction: {}", transaction);
-                    transaction.commit();
+                if (exchange.getException() == null && transactionCtx != null) {
+                    log.trace("Commit transaction: {}", transactionCtx.getTxnId());
+                    transactionCtx.commitTransaction();
                 }
             } catch (InterruptedException e) {
                 if (LOG.isDebugEnabled()) {
@@ -131,9 +132,9 @@ public class HazelcastSedaConsumer extends DefaultConsumer implements Runnable {
                 continue;
             } catch (Throwable e) {
                 // Rollback
-                if (transaction != null) {
-                    log.trace("Rollback transaction: {}", transaction);
-                    transaction.rollback();
+                if (transactionCtx != null) {
+                    log.trace("Rollback transaction: {}", transactionCtx.getTxnId());
+                    transactionCtx.rollbackTransaction();
                 }
                 getExceptionHandler().handleException("Error processing exchange", exchange, e);
             }
