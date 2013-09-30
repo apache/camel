@@ -91,7 +91,7 @@ public class BeanLanguage implements Language, IsSingleton {
             beanName = ObjectHelper.before(expression, "?");
             method = ObjectHelper.after(expression, "?method=");
         } else {
-            int idx = expression.lastIndexOf('.');
+            int idx = expression.indexOf('.');
             if (idx > 0) {
                 beanName = expression.substring(0, idx);
                 method = expression.substring(idx + 1);
