@@ -49,7 +49,7 @@ public class WebsocketComponentRouteExampleTest extends CamelTestSupport {
     public void testWSHttpCall() throws Exception {
         AsyncHttpClient c = new AsyncHttpClient();
 
-        WebSocket websocket = c.prepareGet("ws://localhost:" +port + "/echo").execute(
+        WebSocket websocket = c.prepareGet("ws://localhost:" + port + "/echo").execute(
             new WebSocketUpgradeHandler.Builder()
                 .addWebSocketListener(new WebSocketTextListener() {
                     @Override
