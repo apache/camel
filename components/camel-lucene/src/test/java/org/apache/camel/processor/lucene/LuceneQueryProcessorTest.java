@@ -24,7 +24,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.lucene.support.Hits;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.apache.lucene.analysis.SimpleAnalyzer;
+import org.apache.lucene.analysis.core.WhitespaceAnalyzer;
 import org.apache.lucene.analysis.standard.StandardAnalyzer;
 import org.apache.lucene.util.Version;
 import org.junit.Test;
@@ -97,7 +97,7 @@ public class LuceneQueryProcessorTest extends CamelTestSupport {
     
     @Test
     public void testWildcardSearcher() throws Exception {
-        final SimpleAnalyzer analyzer = new SimpleAnalyzer(Version.LUCENE_36);
+        final WhitespaceAnalyzer analyzer = new WhitespaceAnalyzer(Version.LUCENE_36);
         MockEndpoint mockSearchEndpoint = getMockEndpoint("mock:searchResult");
         
         context.stop();

@@ -119,8 +119,8 @@
     <eclipse-equinox-common-version>3.3.0-v20070426</eclipse-equinox-common-version>
     <ehcache-version>2.7.2</ehcache-version>
     <!-- The 0.20 bundle is flawed, see SMX4-1372 -->
-    <elasticsearch-bundle-version>0.19.10_1</elasticsearch-bundle-version>
-    <elasticsearch-version>0.20.6</elasticsearch-version>
+    <elasticsearch-bundle-version>0.90.3_1</elasticsearch-bundle-version>
+    <elasticsearch-version>0.90.3</elasticsearch-version>
     <el-api-1.0-version>1.0.1</el-api-1.0-version>
     <exec-maven-plugin-version>1.2.1</exec-maven-plugin-version>
     <ezmorph-bundle-version>1.0.6_1</ezmorph-bundle-version>
@@ -250,8 +250,8 @@
     <leveldbjni-version>1.7</leveldbjni-version>
     <log4j-version>1.2.17</log4j-version>
     <!-- we await upgrade for lucene 4.x to sync -->
-    <lucene-bundle-version>3.6.0_1</lucene-bundle-version>
-    <lucene-version>3.6.1</lucene-version>
+    <lucene-bundle-version>4.4.0_1</lucene-bundle-version>
+    <lucene-version>4.4.0</lucene-version>
     <lightcouch-version>0.0.6</lightcouch-version>
     <lightcouch-bundle-version>0.0.5_1</lightcouch-bundle-version>
     <!-- needed from tooling/archetypes -->

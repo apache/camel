@@ -24,8 +24,8 @@ import org.apache.camel.processor.lucene.support.Hits;
 import org.apache.lucene.analysis.Analyzer;
 import org.apache.lucene.document.Document;
 import org.apache.lucene.index.IndexReader;
-import org.apache.lucene.queryParser.ParseException;
-import org.apache.lucene.queryParser.QueryParser;
+import org.apache.lucene.queryparser.classic.ParseException;
+import org.apache.lucene.queryparser.classic.QueryParser;
 import org.apache.lucene.search.IndexSearcher;
 import org.apache.lucene.search.Query;
 import org.apache.lucene.search.ScoreDoc;
@@ -39,19 +39,21 @@ public class LuceneSearcher {
     private static final Logger LOG = LoggerFactory.getLogger(LuceneSearcher.class);
     private Analyzer analyzer;
     private IndexSearcher indexSearcher; 
+    private IndexReader indexReader;
     private ScoreDoc[] hits;
 
     public void open(File indexDirectory, Analyzer analyzer) throws IOException {
         if (indexDirectory != null) {
-            indexSearcher = new IndexSearcher(IndexReader.open(new NIOFSDirectory(indexDirectory)));
+            indexReader = IndexReader.open(new NIOFSDirectory(indexDirectory));
         } else {
-            indexSearcher = new IndexSearcher(IndexReader.open(new NIOFSDirectory(new File("./indexDirectory"))));
+            indexReader = IndexReader.open(new NIOFSDirectory(new File("./indexDirectory")));
         }
+        indexSearcher = new IndexSearcher(indexReader);
         this.analyzer = analyzer;
     }
 
     public void close() throws IOException {
-        indexSearcher.close();        
+        indexReader.close();        
     }
     
     public Hits search(String searchPhrase, int maxNumberOfHits) throws Exception {
