@@ -21,7 +21,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Predicate;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.TestSupport;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -31,7 +30,6 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
  * 
  * @version
  */
-@Ignore("CAMEL-6797")
 public class SpringQuartzConsumerTwoAppsClusteredFailoverTest extends TestSupport {
 
     @Test
@@ -70,12 +68,12 @@ public class SpringQuartzConsumerTwoAppsClusteredFailoverTest extends TestSuppor
         // wait long enough until the second app takes it over...
         Thread.sleep(20000);
         // inside the logs one can then clearly see how the route of the second CamelContext gets started:
-        // 2013-09-28 19:50:43,900 [main           ] WARN  ntTwoAppsClusteredFailoverTest - Crashed...
-        // 2013-09-28 19:50:43,900 [main           ] WARN  ntTwoAppsClusteredFailoverTest - Crashed...
-        // 2013-09-28 19:50:43,900 [main           ] WARN  ntTwoAppsClusteredFailoverTest - Crashed...
-        // 2013-09-28 19:50:58,892 [_ClusterManager] INFO  LocalDataSourceJobStore        - ClusterManager: detected 1 failed or restarted instances.
-        // 2013-09-28 19:50:58,892 [_ClusterManager] INFO  LocalDataSourceJobStore        - ClusterManager: Scanning for instance "app-one"'s failed in-progress jobs.
-        // 2013-09-28 19:50:58,913 [eduler_Worker-1] INFO  triggered                      - Exchange[ExchangePattern: InOnly, BodyType: String, Body: clustering PONGS!]
+        // 2013-09-30 11:22:20,349 [main           ] WARN  erTwoAppsClusteredFailoverTest - Crashed...
+        // 2013-09-30 11:22:20,349 [main           ] WARN  erTwoAppsClusteredFailoverTest - Crashed...
+        // 2013-09-30 11:22:20,349 [main           ] WARN  erTwoAppsClusteredFailoverTest - Crashed...
+        // 2013-09-30 11:22:35,340 [_ClusterManager] INFO  LocalDataSourceJobStore        - ClusterManager: detected 1 failed or restarted instances.
+        // 2013-09-30 11:22:35,340 [_ClusterManager] INFO  LocalDataSourceJobStore        - ClusterManager: Scanning for instance "app-one"'s failed in-progress jobs.
+        // 2013-09-30 11:22:35,369 [eduler_Worker-1] INFO  triggered                      - Exchange[ExchangePattern: InOnly, BodyType: String, Body: clustering PONGS!]
 
         CamelContext camel2 = app2.getBean("camelContext2", CamelContext.class);
 

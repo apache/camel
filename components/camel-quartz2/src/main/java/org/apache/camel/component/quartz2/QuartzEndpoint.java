@@ -46,7 +46,8 @@ import static org.quartz.SimpleScheduleBuilder.simpleSchedule;
 
 /**
  * This endpoint represent each job to be created in scheduler. When consumer is started or stopped, it will
- * call back into doConsumerStart()/Stop() to pause/resume the scheduler trigger.
+ * call back into {@link #onConsumerStart(QuartzConsumer)} to add/resume or {@link #onConsumerStop(QuartzConsumer)}
+ * to pause the scheduler trigger.
  */
 public class QuartzEndpoint extends DefaultEndpoint {
     private static final Logger LOG = LoggerFactory.getLogger(QuartzEndpoint.class);
@@ -203,7 +204,9 @@ public class QuartzEndpoint extends DefaultEndpoint {
 
         // Decrement camel job count for this endpoint
         AtomicInteger number = (AtomicInteger) scheduler.getContext().get(QuartzConstants.QUARTZ_CAMEL_JOBS_COUNT);
-        number.decrementAndGet();
+        if (number != null) {
+            number.decrementAndGet();
+        }
     }
 
     private void addJobInScheduler() throws Exception {
@@ -219,25 +222,20 @@ public class QuartzEndpoint extends DefaultEndpoint {
 
             // Schedule it now. Remember that scheduler might not be started it, but we can schedule now.
             Date nextFireDate = scheduler.scheduleJob(jobDetail, trigger);
-            LOG.info("Job {} (triggerType={}, jobClass={}) is scheduled. Next fire date is {}",
-                     new Object[] {trigger.getKey(), trigger.getClass().getSimpleName(),
-                          jobDetail.getJobClass().getSimpleName(), nextFireDate});
+            if (LOG.isInfoEnabled()) {
+                LOG.info("Job {} (triggerType={}, jobClass={}) is scheduled. Next fire date is {}",
+                         new Object[] {trigger.getKey(), trigger.getClass().getSimpleName(),
+                                       jobDetail.getJobClass().getSimpleName(), nextFireDate});
+            }
         } else {
             ensureNoDupTriggerKey();
-
-            // Update existing jobDetails with current endpoint data to jobDataMap.
-            jobDetail = scheduler.getJobDetail(trigger.getJobKey());
-            updateJobDataMap(jobDetail);
-            scheduler.addJob(jobDetail, true);
-            Date nextFireDate = trigger.getNextFireTime();
-            LOG.info("Reuse existing Job {} (triggerType={}, jobType={}) is scheduled. Next fire date is {}",
-                     new Object[] {trigger.getKey(), trigger.getClass().getSimpleName(),
-                                   jobDetail.getJobClass().getSimpleName(), nextFireDate});
         }
 
         // Increase camel job count for this endpoint
         AtomicInteger number = (AtomicInteger) scheduler.getContext().get(QuartzConstants.QUARTZ_CAMEL_JOBS_COUNT);
-        number.incrementAndGet();
+        if (number != null) {
+            number.incrementAndGet();
+        }
 
         jobAdded.set(true);
     }
@@ -343,7 +341,7 @@ public class QuartzEndpoint extends DefaultEndpoint {
         jobPaused.set(true);
 
         Scheduler scheduler = getComponent().getScheduler();
-        if (scheduler != null) {
+        if (scheduler != null && !scheduler.isShutdown()) {
             LOG.info("Pausing trigger {}", triggerKey);
             scheduler.pauseTrigger(triggerKey);
         }
