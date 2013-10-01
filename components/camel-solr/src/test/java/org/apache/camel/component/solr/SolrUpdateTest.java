@@ -21,6 +21,7 @@ import java.util.Arrays;
 import java.util.List;
 import org.apache.camel.Exchange;
 import org.apache.solr.client.solrj.SolrServerException;
+import org.apache.solr.client.solrj.impl.HttpSolrServer;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.client.solrj.util.ClientUtils;
 import org.apache.solr.common.SolrDocument;
@@ -123,7 +124,7 @@ public class SolrUpdateTest extends SolrComponentTestSupport {
 
         template.send("direct:start", exchange);
 
-        assertEquals(SolrServerException.class, exchange.getException().getClass());
+        assertEquals(HttpSolrServer.RemoteSolrException.class, exchange.getException().getClass());
     }
 
     @Test

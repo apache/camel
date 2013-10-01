@@ -898,6 +898,7 @@
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.solr-solrj/${solr-bundle-version}</bundle>
     <bundle dependency='true'>mvn:commons-codec/commons-codec/${commons-codec-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.commons-httpclient/${commons-httpclient-bundle-version}</bundle>
+    <bundle dependency='true'>mvn:commons-io/commons-io/1.4</bundle>
     <bundle>mvn:org.apache.camel/camel-solr/${project.version}</bundle>
   </feature>
   <feature name='camel-spring-batch' version='${project.version}' resolver='(obr)' start-level='50'>

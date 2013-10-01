@@ -76,7 +76,7 @@ public class SolrSpringTest extends AbstractJUnit4SpringContextTests {
         assertEquals(0, response.getStatus());
         assertEquals(1, response.getResults().getNumFound());
     }
-    
+
     @DirtiesContext
     @Test
     public void endToEndIndexXMLDocuments() throws Exception {
@@ -158,7 +158,7 @@ public class SolrSpringTest extends AbstractJUnit4SpringContextTests {
         System.setProperty("solr.directoryFactory", "solr.RAMDirectoryFactory");
 
         // Start a Solr instance.
-        solrRunner = new JettySolrRunner("/solr", SolrComponentTestSupport.PORT);
+        solrRunner = new JettySolrRunner("src/test/resources/solr", "/solr", SolrComponentTestSupport.PORT);
         solrRunner.start();
 
         solrServer = new HttpSolrServer("http://localhost:" + SolrComponentTestSupport.PORT + "/solr");

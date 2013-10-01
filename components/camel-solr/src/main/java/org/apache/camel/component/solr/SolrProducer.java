@@ -19,6 +19,8 @@ package org.apache.camel.component.solr;
 import java.io.File;
 import java.util.Map;
 
+import javax.activation.MimetypesFileTypeMap;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.WrappedFile;
 import org.apache.camel.impl.DefaultProducer;
@@ -45,7 +47,7 @@ public class SolrProducer extends DefaultProducer {
 
     @Override
     public void process(Exchange exchange) throws Exception {
-        
+
         String operation = (String) exchange.getIn().getHeader(SolrConstants.OPERATION);
 
         if (operation == null) {
@@ -74,16 +76,16 @@ public class SolrProducer extends DefaultProducer {
     }
 
     private void insert(Exchange exchange, boolean isStreaming) throws Exception {
-
         Object body = exchange.getIn().getBody();
         if (body instanceof WrappedFile) {
             body = ((WrappedFile<?>)body).getFile();
         }
 
         if (body instanceof File) {
-
+            MimetypesFileTypeMap mimeTypesMap = new MimetypesFileTypeMap();
+            String mimeType = mimeTypesMap.getContentType((File)body);
             ContentStreamUpdateRequest updateRequest = new ContentStreamUpdateRequest(getRequestHandler());
-            updateRequest.addFile((File) body);
+            updateRequest.addFile((File) body, null);
 
             for (Map.Entry<String, Object> entry : exchange.getIn().getHeaders().entrySet()) {
                 if (entry.getKey().startsWith(SolrConstants.PARAM)) {

@@ -355,8 +355,8 @@
     <smack-version>3.2.1</smack-version>
     <snappy-bundle-version>1.0.4.1_1</snappy-bundle-version>
     <snmp4j-version>2.2.2_1</snmp4j-version>
-    <solr-bundle-version>3.6.0_1</solr-bundle-version> <!-- FIXME cmueller: not in sync! -->
-    <solr-version>3.6.2</solr-version>
+    <solr-bundle-version>4.4.0_1</solr-bundle-version>
+    <solr-version>4.4.0</solr-version>
     <spring-batch-version>2.2.1.RELEASE</spring-batch-version>
     <spring-castor-bundle-version>1.2.0</spring-castor-bundle-version>
     <spring-data-commons-version>1.5.0.RELEASE</spring-data-commons-version>

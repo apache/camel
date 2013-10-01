@@ -71,7 +71,7 @@ public class SolrComponentTestSupport extends CamelTestSupport {
         System.setProperty("solr.directoryFactory", "solr.RAMDirectoryFactory");
 
         // Start a Solr instance.
-        solrRunner = new JettySolrRunner("/solr", PORT);
+        solrRunner = new JettySolrRunner("src/test/resources/solr", "/solr", PORT);
         solrRunner.start();
 
         solrServer = new HttpSolrServer("http://localhost:" + PORT + "/solr");
