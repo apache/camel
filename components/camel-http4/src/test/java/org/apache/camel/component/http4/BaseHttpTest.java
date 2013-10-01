@@ -31,8 +31,8 @@ public abstract class BaseHttpTest extends HttpServerTestSupport {
     protected void assertExchange(Exchange exchange) {
         assertNotNull(exchange);
 
+        assertTrue(exchange.hasOut());
         Message out = exchange.getOut();
-        assertNotNull(out);
         assertHeaders(out.getHeaders());
         assertBody(out.getBody(String.class));
     }
