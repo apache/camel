@@ -218,7 +218,10 @@ public class MongoDbEndpoint extends DefaultEndpoint {
 
             for (Map.Entry<String, String> set : indexMap.entrySet()) {
                 DBObject index = new BasicDBObject();
-                index.put(set.getKey(), set.getValue());
+                // MongoDB 2.4 upwards is restrictive about the type of the 'single field index' being in use so that
+                // we should convert the index value to an Integer, see also:
+                // http://docs.mongodb.org/manual/release-notes/2.4/#improved-validation-of-index-types
+                index.put(set.getKey(), Integer.valueOf(set.getValue()));
 
                 indexList.add(index);
             }

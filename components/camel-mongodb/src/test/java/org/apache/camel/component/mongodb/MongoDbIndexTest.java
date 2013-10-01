@@ -59,11 +59,9 @@ public class MongoDbIndexTest extends AbstractMongoDbTest {
 
         List<DBObject> indexInfos = dynamicCollection.getIndexInfo();
 
-        BasicDBObject key1 = (BasicDBObject) indexInfos.get(1).get("key");
-        BasicDBObject key2 = (BasicDBObject) indexInfos.get(2).get("key");
+        BasicDBObject key = (BasicDBObject) indexInfos.get(0).get("key");
 
-        assertTrue("No index on the field a", key1.containsField("a") && "1".equals(key1.getString("a")));
-        assertTrue("No index on the field b", key2.containsField("b") && "-1".equals(key2.getString("b")));
+        assertTrue("The field _id with the expected value not found", key.containsField("_id") && "1".equals(key.getString("_id")));
 
         DBObject b = dynamicCollection.findOne("testInsertDynamicityEnabledDBAndCollection");
         assertNotNull("No record with 'testInsertDynamicityEnabledDBAndCollection' _id", b);
@@ -102,11 +100,9 @@ public class MongoDbIndexTest extends AbstractMongoDbTest {
 
         List<DBObject> indexInfos = dynamicCollection.getIndexInfo();
 
-        BasicDBObject key1 = (BasicDBObject) indexInfos.get(1).get("key");
-        BasicDBObject key2 = (BasicDBObject) indexInfos.get(2).get("key");
+        BasicDBObject key = (BasicDBObject) indexInfos.get(0).get("key");
 
-        assertTrue("No index on the field a", key1.containsField("a") && "1".equals(key1.getString("a")));
-        assertTrue("No index on the field b", key2.containsField("b") && "-1".equals(key2.getString("b")));
+        assertTrue("The field _id with the expected value not found", key.containsField("_id") && "1".equals(key.getString("_id")));
 
         DBObject b = dynamicCollection.findOne("testInsertDynamicityEnabledCollectionAndIndex");
         assertNotNull("No record with 'testInsertDynamicityEnabledCollectionAndIndex' _id", b);
@@ -133,11 +129,12 @@ public class MongoDbIndexTest extends AbstractMongoDbTest {
         assertEquals("Response isn't of type WriteResult", WriteResult.class, result.getClass());
 
         DBCollection dynamicCollection = db.getCollection("otherCollection");
+
         List<DBObject> indexInfos = dynamicCollection.getIndexInfo();
 
-        BasicDBObject key1 = (BasicDBObject) indexInfos.get(1).get("key");
+        BasicDBObject key = (BasicDBObject)indexInfos.get(0).get("key");
 
-        assertFalse("No index on the field a", key1.containsField("a") && "-1".equals(key1.getString("a")));
+        assertTrue("The field _id with the expected value not found", key.containsField("_id") && "1".equals(key.getString("_id")));
 
         DBObject b = dynamicCollection.findOne("testInsertDynamicityEnabledCollectionOnlyAndURIIndex");
         assertNotNull("No record with 'testInsertDynamicityEnabledCollectionOnlyAndURIIndex' _id", b);
