@@ -21,6 +21,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.ExecutorService;
+
+import facebook4j.Facebook;
+import facebook4j.json.DataObjectFactory;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
@@ -34,9 +37,6 @@ import org.apache.camel.spi.ThreadPoolProfile;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import facebook4j.Facebook;
-import facebook4j.json.DataObjectFactory;
 
 import static org.apache.camel.component.facebook.data.FacebookMethodsTypeHelper.MatchType;
 import static org.apache.camel.component.facebook.data.FacebookMethodsTypeHelper.filterMethods;

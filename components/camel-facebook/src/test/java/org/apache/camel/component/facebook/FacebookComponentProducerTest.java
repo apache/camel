@@ -21,11 +21,11 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
+
+import facebook4j.Facebook;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
-
-import facebook4j.Facebook;
 
 public class FacebookComponentProducerTest extends CamelFacebookTestSupport {
 
@@ -85,7 +85,7 @@ public class FacebookComponentProducerTest extends CamelFacebookTestSupport {
 
     @Test
     public void testJsonStoreEnabled() throws Exception {
-        final String rawJSON = template().requestBody("direct://testJsonStoreEnabled", new String[] { "me" }, String.class);
+        final String rawJSON = template().requestBody("direct://testJsonStoreEnabled", new String[]{"me"}, String.class);
         assertNotNull("NULL rawJSON", rawJSON);
         assertFalse("Empty rawJSON", rawJSON.isEmpty());
     }
