@@ -37,9 +37,10 @@ import org.slf4j.LoggerFactory;
 
 public class LuceneIndexer {
     private static final Logger LOG = LoggerFactory.getLogger(LuceneIndexer.class);
+    private static final FieldType TOKENIZED_FIELD_TYPE = createFieldType(true);
+    private static final FieldType NON_TOKENIZED_FIELD_TYPE = createFieldType(false);
+
     private File sourceDirectory;
-    private FieldType fieldTypeAnalyzed;
-    private FieldType fieldTypeUnanalyzed;
     private Analyzer analyzer;
     private NIOFSDirectory niofsDirectory;
     private IndexWriter indexWriter;
@@ -54,18 +55,6 @@ public class LuceneIndexer {
         } else {
             this.setNiofsDirectory(new NIOFSDirectory(new File("./indexDirectory")));
         }
-        
-        fieldTypeAnalyzed = new FieldType();
-        fieldTypeAnalyzed.setIndexed(true);
-        fieldTypeAnalyzed.setStored(true);
-        fieldTypeAnalyzed.setTokenized(true);
-        fieldTypeAnalyzed.freeze();
-
-        fieldTypeUnanalyzed = new FieldType();
-        fieldTypeUnanalyzed.setIndexed(true);
-        fieldTypeUnanalyzed.setStored(true);
-        fieldTypeUnanalyzed.setTokenized(false);
-        fieldTypeUnanalyzed.freeze();
 
         this.setAnalyzer(analyzer);
         
@@ -122,7 +111,7 @@ public class LuceneIndexer {
         }
 
         Document doc = new Document();
-        doc.add(new Field(field, value, analyzed ? fieldTypeAnalyzed : fieldTypeUnanalyzed));
+        doc.add(new Field(field, value, analyzed ? TOKENIZED_FIELD_TYPE : NON_TOKENIZED_FIELD_TYPE));
         indexWriter.addDocument(doc);
     }
 
@@ -162,6 +151,18 @@ public class LuceneIndexer {
     private void closeIndexWriter() throws IOException {
         indexWriter.commit();
         indexWriter.close();
+    }
+
+    private static FieldType createFieldType(boolean tokenized) {
+        FieldType answer = new FieldType();
+        answer.setIndexed(true);
+        answer.setStored(true);
+        answer.setTokenized(tokenized);
+
+        // freeze the answer so that it becomes immutable
+        answer.freeze();
+
+        return answer;
     }
 
 }
