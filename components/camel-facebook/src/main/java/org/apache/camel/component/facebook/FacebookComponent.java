@@ -54,7 +54,10 @@ public class FacebookComponent extends UriEndpointComponent {
 
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         FacebookEndpointConfiguration config = copyComponentProperties();
-        return new FacebookEndpoint(uri, this, remaining, config);
+        final FacebookEndpoint endpoint = new FacebookEndpoint(uri, this, remaining, config);
+        // set endpoint property inBody so that it's available in initState()
+        setProperties(endpoint, parameters);
+        return endpoint;
     }
 
     private FacebookEndpointConfiguration copyComponentProperties() throws Exception {

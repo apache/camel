@@ -26,7 +26,6 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 
 import facebook4j.api.SearchMethods;
-
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
@@ -64,14 +63,25 @@ public class FacebookComponentConsumerTest extends CamelFacebookTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
+    public void testJsonStoreEnabled() throws Exception {
+        final MockEndpoint mock = getMockEndpoint("mock:testJsonStoreEnabled");
+        mock.expectedMinimumMessageCount(1);
+        mock.assertIsSatisfied();
+
+        final String rawJSON = mock.getExchanges().get(0).getIn().getHeader(FacebookConstants.RAW_JSON_HEADER, String.class);
+        assertNotNull("Null rawJSON", rawJSON);
+        assertFalse("Empty rawJSON", rawJSON.isEmpty());
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
-            public void configure() {
+            public void configure() throws Exception {
 
-                // start with a 7 day window for the first delayed poll
-                String since = new SimpleDateFormat(FacebookConstants.FACEBOOK_DATE_FORMAT).format(
-                    new Date(System.currentTimeMillis() - TimeUnit.MILLISECONDS.convert(7, TimeUnit.DAYS)));
+                // start with a 30 day window for the first delayed poll
+                String since = "RAW(" + new SimpleDateFormat(FacebookConstants.FACEBOOK_DATE_FORMAT).format(
+                    new Date(System.currentTimeMillis() - TimeUnit.MILLISECONDS.convert(30, TimeUnit.DAYS))) + ")";
 
                 for (String name : searchNames) {
                     if (!excludedNames.contains(name)) {
@@ -86,6 +96,9 @@ public class FacebookComponentConsumerTest extends CamelFacebookTestSupport {
                         + since + "&consumer.initialDelay=1000&" + getOauthParams())
                         .to("mock:consumeQueryResult" + name);
                 }
+
+                from("facebook://me?jsonStoreEnabled=true&" + getOauthParams())
+                    .to("mock:testJsonStoreEnabled");
 
                 // TODO add tests for the rest of the supported methods
             }
