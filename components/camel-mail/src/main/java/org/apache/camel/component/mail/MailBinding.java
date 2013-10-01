@@ -321,7 +321,7 @@ public class MailBinding {
                     LOG.trace("Part #{}: LineCount: {}", i, part.getLineCount());
                 }
 
-                if ((disposition != null && (disposition.equalsIgnoreCase(Part.ATTACHMENT) || disposition.equalsIgnoreCase(Part.INLINE)))
+                if (validDisposition(disposition, fileName)
                         || fileName != null) {
                     LOG.debug("Mail contains file attachment: {}", fileName);
                     if (!map.containsKey(fileName)) {
@@ -333,6 +333,12 @@ public class MailBinding {
                 }
             }
         }
+    }
+
+    private boolean validDisposition(String disposition, String fileName) {
+        return disposition != null
+                && fileName != null
+                && (disposition.equalsIgnoreCase(Part.ATTACHMENT) || disposition.equalsIgnoreCase(Part.INLINE));
     }
 
     /**
