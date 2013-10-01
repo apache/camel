@@ -122,8 +122,10 @@ public class RabbitMQConsumer extends DefaultConsumer {
                 consumer.getProcessor().process(exchange);
 
                 long deliveryTag = envelope.getDeliveryTag();
-                log.trace("Acknowleding receipt [delivery_tag={}]", deliveryTag);
-                channel.basicAck(deliveryTag, false);
+                if (consumer.endpoint.isAutoAck()) {
+                    log.trace("Acknowledging receipt [delivery_tag={}]", deliveryTag);
+                    channel.basicAck(deliveryTag, false);
+                }
 
             } catch (Exception e) {
                 getExceptionHandler().handleException("Error processing exchange", exchange, e);
