@@ -16,10 +16,13 @@
  */
 package org.apache.camel.component.http4;
 
+import java.util.Map;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.component.http4.handler.BasicValidationHandler;
+import org.apache.http.HttpStatus;
 import org.junit.Test;
 
 /**
@@ -38,6 +41,47 @@ public class HttpMethodsTest extends BaseHttpTest {
         });
 
         assertExchange(exchange);
+    }
+
+    @Test
+    public void httpPatch() throws Exception {
+        localServer.register("/", new BasicValidationHandler("PATCH", null, null, getExpectedContent()));
+
+        Exchange exchange = template.request("http4://" + getHostName() + ":" + getPort() + "/?throwExceptionOnFailure=false", new Processor() {
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader(Exchange.HTTP_METHOD, "PATCH");
+            }
+        });
+
+        assertNotNull(exchange);
+        assertTrue(exchange.hasOut());
+
+        Message out = exchange.getOut();
+        Map<String, Object> headers = out.getHeaders();
+        assertEquals(HttpStatus.SC_NOT_IMPLEMENTED, headers.get(Exchange.HTTP_RESPONSE_CODE));
+        assertEquals("26", headers.get("Content-Length"));
+        assertNotNull("Should have Content-Type header", headers.get("Content-Type"));
+        assertEquals("PATCH method not supported", out.getBody(String.class));
+    }
+
+    @Test
+    public void httpPatchWithBody() throws Exception {
+        localServer.register("/", new BasicValidationHandler("PATCH", null, "rocks camel?", getExpectedContent()));
+
+        Exchange exchange = template.request("http4://" + getHostName() + ":" + getPort() + "/?throwExceptionOnFailure=false", new Processor() {
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setBody("rocks camel?");
+            }
+        });
+
+        assertNotNull(exchange);
+        assertTrue(exchange.hasOut());
+
+        Message out = exchange.getOut();
+        Map<String, Object> headers = out.getHeaders();
+        assertEquals(HttpStatus.SC_METHOD_FAILURE, headers.get(Exchange.HTTP_RESPONSE_CODE));
+        assertEquals("0", headers.get("Content-Length"));
+        assertEquals("", out.getBody(String.class));
     }
 
     @Test
