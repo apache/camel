@@ -167,7 +167,7 @@ public class StaxConverter {
     public XMLStreamReader createXMLStreamReader(InputStream in, Exchange exchange) throws XMLStreamException {
         XMLInputFactory factory = getInputFactory();
         try {
-            return factory.createXMLStreamReader(IOHelper.buffered(in), IOHelper.getCharsetName(exchange));
+            return factory.createXMLStreamReader(IOHelper.buffered(in), IOHelper.getCharsetName(exchange, false));
         } finally {
             returnXMLInputFactory(factory);
         }
@@ -236,7 +236,7 @@ public class StaxConverter {
     public XMLEventReader createXMLEventReader(InputStream in, Exchange exchange) throws XMLStreamException {
         XMLInputFactory factory = getInputFactory();
         try {
-            return factory.createXMLEventReader(IOHelper.buffered(in), IOHelper.getCharsetName(exchange));
+            return factory.createXMLEventReader(IOHelper.buffered(in), IOHelper.getCharsetName(exchange, false));
         } finally {
             returnXMLInputFactory(factory);
         }
