@@ -18,18 +18,8 @@ package org.apache.camel.component.facebook;
 
 import java.lang.reflect.Array;
 import java.text.SimpleDateFormat;
-import java.util.Collection;
-import java.util.Collections;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.util.*;
 import java.util.concurrent.TimeUnit;
-
-import facebook4j.Reading;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.facebook.data.FacebookMethodsType;
@@ -40,6 +30,10 @@ import org.apache.camel.impl.ScheduledPollConsumer;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import facebook4j.Facebook;
+import facebook4j.Reading;
+import facebook4j.json.DataObjectFactory;
 
 import static org.apache.camel.component.facebook.FacebookConstants.FACEBOOK_DATE_FORMAT;
 import static org.apache.camel.component.facebook.FacebookConstants.READING_PPROPERTY;
@@ -133,8 +127,20 @@ public class FacebookConsumer extends ScheduledPollConsumer {
         // invoke the consumer method
         final Map<String, Object> args = getMethodArguments();
         try {
-            Object result = invokeMethod(endpoint.getConfiguration().getFacebook(),
-                method, args);
+            // also check whether we need to get raw JSON
+            String rawJSON = null;
+            Object result;
+            if (endpoint.getConfiguration().getJsonStoreEnabled() == null
+                || !endpoint.getConfiguration().getJsonStoreEnabled()) {
+                result = invokeMethod(endpoint.getConfiguration().getFacebook(),
+                    method, args);
+            } else {
+                final Facebook facebook = endpoint.getConfiguration().getFacebook();
+                synchronized (facebook) {
+                    result = invokeMethod(facebook, method, args);
+                    rawJSON = DataObjectFactory.getRawJSON(result);
+                }
+            }
 
             // process result according to type
             if (result != null && (result instanceof Collection || result.getClass().isArray())) {
@@ -142,11 +148,11 @@ public class FacebookConsumer extends ScheduledPollConsumer {
                 final Object array = getResultAsArray(result);
                 final int length = Array.getLength(array);
                 for (int i = 0; i < length; i++) {
-                    processResult(Array.get(array, i));
+                    processResult(Array.get(array, i), rawJSON);
                 }
                 return length;
             } else {
-                processResult(result);
+                processResult(result, rawJSON);
                 return 1; // number of messages polled
             }
         } catch (Throwable t) {
@@ -154,9 +160,12 @@ public class FacebookConsumer extends ScheduledPollConsumer {
         }
     }
 
-    private void processResult(Object result) throws Exception {
+    private void processResult(Object result, String rawJSON) throws Exception {
         Exchange exchange = endpoint.createExchange();
         exchange.getIn().setBody(result);
+        if (rawJSON != null) {
+            exchange.getIn().setHeader(FacebookConstants.RAW_JSON_HEADER, rawJSON);
+        }
         try {
             // send message to next processor in the route
             getProcessor().process(exchange);

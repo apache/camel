@@ -33,4 +33,5 @@ public interface FacebookConstants {
     // date format used by Facebook Reading since and until fields
     String FACEBOOK_DATE_FORMAT = "yyyy-MM-dd'T'HH:mm:ssZ";
 
+    String RAW_JSON_HEADER = FACEBOOK_PROPERTY_PREFIX + "rawJSON";
 }

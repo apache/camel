@@ -21,12 +21,11 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
-
-import facebook4j.Facebook;
-
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
+
+import facebook4j.Facebook;
 
 public class FacebookComponentProducerTest extends CamelFacebookTestSupport {
 
@@ -84,6 +83,13 @@ public class FacebookComponentProducerTest extends CamelFacebookTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
+    public void testJsonStoreEnabled() throws Exception {
+        final String rawJSON = template().requestBody("direct://testJsonStoreEnabled", new String[] { "me" }, String.class);
+        assertNotNull("NULL rawJSON", rawJSON);
+        assertFalse("Empty rawJSON", rawJSON.isEmpty());
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
@@ -119,6 +125,10 @@ public class FacebookComponentProducerTest extends CamelFacebookTestSupport {
                             .to("mock:resultIdReading" + name);
                     }
                 }
+
+                from("direct://testJsonStoreEnabled")
+                    .to("facebook://users?inBody=ids&jsonStoreEnabled=true&" + getOauthParams())
+                    .setBody(simple("header." + FacebookConstants.RAW_JSON_HEADER));
 
                 // TODO add tests for the rest of the supported methods
             }

@@ -35,9 +35,11 @@ import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import facebook4j.Facebook;
+import facebook4j.json.DataObjectFactory;
+
 import static org.apache.camel.component.facebook.data.FacebookMethodsTypeHelper.MatchType;
 import static org.apache.camel.component.facebook.data.FacebookMethodsTypeHelper.filterMethods;
-import static org.apache.camel.component.facebook.data.FacebookMethodsTypeHelper.getCandidateMethods;
 import static org.apache.camel.component.facebook.data.FacebookMethodsTypeHelper.getMissingProperties;
 import static org.apache.camel.component.facebook.data.FacebookPropertiesHelper.getEndpointProperties;
 import static org.apache.camel.component.facebook.data.FacebookPropertiesHelper.getExchangeProperties;
@@ -56,9 +58,6 @@ public class FacebookProducer extends DefaultAsyncProducer {
     public FacebookProducer(FacebookEndpoint endpoint) {
         super(endpoint);
         this.endpoint = endpoint;
-
-        // get candidate methods using endpoint configuration
-        getCandidateMethods(endpoint.getEndpointUri());
     }
 
     @Override
@@ -86,13 +85,31 @@ public class FacebookProducer extends DefaultAsyncProducer {
                         LOG.debug("Invoking method {} with {}", method.getName(), properties.keySet());
                     }
 
-                    Object result = FacebookMethodsTypeHelper.invokeMethod(
-                        endpoint.getConfiguration().getFacebook(), method, properties);
+                    // also check whether we need to get Raw JSON
+                    Object result;
+                    String rawJSON = null;
+                    if (endpoint.getConfiguration().getJsonStoreEnabled() == null
+                        || !endpoint.getConfiguration().getJsonStoreEnabled()) {
+                        result = FacebookMethodsTypeHelper.invokeMethod(
+                            endpoint.getConfiguration().getFacebook(), method, properties);
+                    } else {
+                        final Facebook facebook = endpoint.getConfiguration().getFacebook();
+                        // lock out the underlying Facebook object from other threads
+                        synchronized (facebook) {
+                            result = FacebookMethodsTypeHelper.invokeMethod(
+                                facebook, method, properties);
+                            rawJSON = DataObjectFactory.getRawJSON(result);
+                        }
+                    }
 
                     // producer returns a single response, even for methods with List return types
                     exchange.getOut().setBody(result);
                     // copy headers
                     exchange.getOut().setHeaders(exchange.getIn().getHeaders());
+                    if (rawJSON != null) {
+                        exchange.getOut().setHeader(FacebookConstants.FACEBOOK_PROPERTY_PREFIX + "rawJSON",
+                            rawJSON);
+                    }
 
                 } catch (Throwable t) {
                     exchange.setException(ObjectHelper.wrapRuntimeCamelException(t));

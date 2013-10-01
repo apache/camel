@@ -72,6 +72,10 @@ public class FacebookEndpoint extends DefaultEndpoint implements FacebookConstan
     }
 
     public Consumer createConsumer(Processor processor) throws Exception {
+        // make sure inBody is not set for consumers
+        if (inBody != null) {
+            throw new IllegalArgumentException("Option inBody is not supported for consumer endpoint");
+        }
         final FacebookConsumer consumer = new FacebookConsumer(this, processor);
         // also set consumer.* properties
         configureConsumer(consumer);
@@ -108,7 +112,12 @@ public class FacebookEndpoint extends DefaultEndpoint implements FacebookConstan
 
     private void initState() {
         // get endpoint property names
-        final Set<String> arguments = getEndpointPropertyNames(configuration);
+        final Set<String> arguments = new HashSet<String>();
+        arguments.addAll(getEndpointPropertyNames(configuration));
+        // add inBody argument for producers
+        if (inBody != null) {
+            arguments.add(inBody);
+        }
         final String[] argNames = arguments.toArray(new String[arguments.size()]);
 
         candidates = new ArrayList<FacebookMethodsType>();
