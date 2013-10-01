@@ -37,7 +37,6 @@ public abstract class AbstractVmTestSupport extends ContextTestSupport {
     @Before
     protected void setUp() throws Exception {
         super.setUp();
-        
         context2 = new DefaultCamelContext();
         template2 = context2.createProducerTemplate();
         
@@ -54,7 +53,8 @@ public abstract class AbstractVmTestSupport extends ContextTestSupport {
     @After
     protected void tearDown() throws Exception {
         ServiceHelper.stopServices(context2, template2);
-        
+        VmComponent.ENDPOINTS.clear();
+        VmComponent.QUEUES.clear();
         super.tearDown();
     }
     

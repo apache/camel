@@ -21,8 +21,10 @@ import java.util.Map;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.atomic.AtomicInteger;
 
+import org.apache.camel.Endpoint;
 import org.apache.camel.component.seda.QueueReference;
 import org.apache.camel.component.seda.SedaComponent;
+import org.apache.camel.component.seda.SedaEndpoint;
 
 /**
  * An implementation of the <a href="http://camel.apache.org/vm.html">VM components</a>
@@ -34,6 +36,7 @@ import org.apache.camel.component.seda.SedaComponent;
  */
 public class VmComponent extends SedaComponent {
     protected static final Map<String, QueueReference> QUEUES = new HashMap<String, QueueReference>();
+    protected static final Map<String, SedaEndpoint> ENDPOINTS = new HashMap<String, SedaEndpoint>();
     private static final AtomicInteger START_COUNTER = new AtomicInteger();
 
     @Override
@@ -57,6 +60,21 @@ public class VmComponent extends SedaComponent {
         if (START_COUNTER.decrementAndGet() <= 0) {
             // clear queues when no more vm components in use
             getQueues().clear();
+            // also clear endpoints
+            ENDPOINTS.clear();
         }
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
+        if (ENDPOINTS.containsKey(uri)) {
+            return ENDPOINTS.get(uri);
+        }
+
+        SedaEndpoint answer = (SedaEndpoint) super.createEndpoint(uri, remaining, parameters);
+
+        ENDPOINTS.put(uri, answer);
+        return answer;
     }
 }
