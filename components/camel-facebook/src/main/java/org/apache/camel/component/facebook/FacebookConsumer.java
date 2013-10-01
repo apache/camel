@@ -18,8 +18,19 @@ package org.apache.camel.component.facebook;
 
 import java.lang.reflect.Array;
 import java.text.SimpleDateFormat;
-import java.util.*;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.concurrent.TimeUnit;
+
+import facebook4j.Facebook;
+import facebook4j.Reading;
+import facebook4j.json.DataObjectFactory;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.facebook.data.FacebookMethodsType;
@@ -30,10 +41,6 @@ import org.apache.camel.impl.ScheduledPollConsumer;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import facebook4j.Facebook;
-import facebook4j.Reading;
-import facebook4j.json.DataObjectFactory;
 
 import static org.apache.camel.component.facebook.FacebookConstants.FACEBOOK_DATE_FORMAT;
 import static org.apache.camel.component.facebook.FacebookConstants.READING_PPROPERTY;
