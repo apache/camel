@@ -85,7 +85,7 @@ public class SolrProducer extends DefaultProducer {
             MimetypesFileTypeMap mimeTypesMap = new MimetypesFileTypeMap();
             String mimeType = mimeTypesMap.getContentType((File)body);
             ContentStreamUpdateRequest updateRequest = new ContentStreamUpdateRequest(getRequestHandler());
-            updateRequest.addFile((File) body, null);
+            updateRequest.addFile((File) body, mimeType);
 
             for (Map.Entry<String, Object> entry : exchange.getIn().getHeaders().entrySet()) {
                 if (entry.getKey().startsWith(SolrConstants.PARAM)) {
