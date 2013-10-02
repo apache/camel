@@ -20,9 +20,9 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLEngine;
 
 import org.apache.camel.component.netty.NettyConsumer;
-import org.apache.camel.component.netty.NettyServerBootstrapConfiguration;
 import org.apache.camel.component.netty.ServerPipelineFactory;
 import org.apache.camel.component.netty.ssl.SSLEngineFactory;
+import org.apache.camel.impl.DefaultClassResolver;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.util.ObjectHelper;
 import org.jboss.netty.channel.ChannelPipeline;
@@ -52,9 +52,11 @@ public class HttpServerSharedPipelineFactory extends HttpServerPipelineFactory {
                                            ClassResolver classResolver) {
         this.configuration = configuration;
         this.channelFactory = channelFactory;
-        this.classResolver = classResolver;
+        // fallback and use default resolver
+        this.classResolver = classResolver != null ? classResolver : new DefaultClassResolver();
+
         try {
-            this.sslContext = createSSLContext(configuration);
+            this.sslContext = createSSLContext();
         } catch (Exception e) {
             throw ObjectHelper.wrapRuntimeCamelException(e);
         }
@@ -74,7 +76,7 @@ public class HttpServerSharedPipelineFactory extends HttpServerPipelineFactory {
         // Create a default pipeline implementation.
         ChannelPipeline pipeline = Channels.pipeline();
 
-        SslHandler sslHandler = configureServerSSLOnDemand(configuration);
+        SslHandler sslHandler = configureServerSSLOnDemand();
         if (sslHandler != null) {
             LOG.debug("Server SSL handler configured and added as an interceptor against the ChannelPipeline: {}", sslHandler);
             pipeline.addLast("ssl", sslHandler);
@@ -94,20 +96,51 @@ public class HttpServerSharedPipelineFactory extends HttpServerPipelineFactory {
         return pipeline;
     }
 
-    private SSLContext createSSLContext(NettyServerBootstrapConfiguration configuration) throws Exception {
+    private SSLContext createSSLContext() throws Exception {
         if (!configuration.isSsl()) {
             return null;
         }
 
+        SSLContext answer;
+
         // create ssl context once
         if (configuration.getSslContextParameters() != null) {
-            return configuration.getSslContextParameters().createSSLContext();
+            answer = configuration.getSslContextParameters().createSSLContext();
+        } else {
+            if (configuration.getKeyStoreFile() == null && configuration.getKeyStoreResource() == null) {
+                LOG.debug("keystorefile is null");
+            }
+            if (configuration.getTrustStoreFile() == null && configuration.getTrustStoreResource() == null) {
+                LOG.debug("truststorefile is null");
+            }
+            if (configuration.getPassphrase().toCharArray() == null) {
+                LOG.debug("passphrase is null");
+            }
+
+            SSLEngineFactory sslEngineFactory;
+            if (configuration.getKeyStoreFile() != null || configuration.getTrustStoreFile() != null) {
+                sslEngineFactory = new SSLEngineFactory();
+                answer = sslEngineFactory.createSSLContext(classResolver,
+                        configuration.getKeyStoreFormat(),
+                        configuration.getSecurityProvider(),
+                        "file:" + configuration.getKeyStoreFile().getPath(),
+                        "file:" + configuration.getTrustStoreFile().getPath(),
+                        configuration.getPassphrase().toCharArray());
+            } else {
+                sslEngineFactory = new SSLEngineFactory();
+                answer = sslEngineFactory.createSSLContext(classResolver,
+                        configuration.getKeyStoreFormat(),
+                        configuration.getSecurityProvider(),
+                        configuration.getKeyStoreResource(),
+                        configuration.getTrustStoreResource(),
+                        configuration.getPassphrase().toCharArray());
+            }
         }
 
-        return null;
+        return answer;
     }
 
-    private SslHandler configureServerSSLOnDemand(NettyServerBootstrapConfiguration configuration) throws Exception {
+    private SslHandler configureServerSSLOnDemand() throws Exception {
         if (!configuration.isSsl()) {
             return null;
         }
@@ -119,37 +152,9 @@ public class HttpServerSharedPipelineFactory extends HttpServerPipelineFactory {
             engine.setUseClientMode(false);
             engine.setNeedClientAuth(configuration.isNeedClientAuth());
             return new SslHandler(engine);
-        } else {
-            if (configuration.getKeyStoreFile() == null && configuration.getKeyStoreResource() == null) {
-                LOG.debug("keystorefile is null");
-            }
-            if (configuration.getTrustStoreFile() == null && configuration.getTrustStoreResource() == null) {
-                LOG.debug("truststorefile is null");
-            }
-            if (configuration.getPassphrase().toCharArray() == null) {
-                LOG.debug("passphrase is null");
-            }
-            SSLEngineFactory sslEngineFactory;
-            if (configuration.getKeyStoreFile() != null || configuration.getTrustStoreFile() != null) {
-                sslEngineFactory = new SSLEngineFactory(
-                        configuration.getKeyStoreFormat(),
-                        configuration.getSecurityProvider(),
-                        configuration.getKeyStoreFile(),
-                        configuration.getTrustStoreFile(),
-                        configuration.getPassphrase().toCharArray());
-            } else {
-                sslEngineFactory = new SSLEngineFactory(classResolver,
-                        configuration.getKeyStoreFormat(),
-                        configuration.getSecurityProvider(),
-                        configuration.getKeyStoreResource(),
-                        configuration.getTrustStoreResource(),
-                        configuration.getPassphrase().toCharArray());
-            }
-            SSLEngine sslEngine = sslEngineFactory.createServerSSLEngine();
-            sslEngine.setUseClientMode(false);
-            sslEngine.setNeedClientAuth(configuration.isNeedClientAuth());
-            return new SslHandler(sslEngine);
         }
+
+        return null;
     }
 
 }

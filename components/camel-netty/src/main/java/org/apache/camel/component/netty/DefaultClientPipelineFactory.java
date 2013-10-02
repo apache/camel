@@ -100,17 +100,49 @@ public class DefaultClientPipelineFactory extends ClientPipelineFactory  {
     }
 
     private SSLContext createSSLContext(NettyProducer producer) throws Exception {
-        if (!producer.getConfiguration().isSsl()) {
+        NettyConfiguration configuration = producer.getConfiguration();
+
+        if (!configuration.isSsl()) {
             return null;
         }
 
+        SSLContext answer;
+
         // create ssl context once
-        if (producer.getConfiguration().getSslContextParameters() != null) {
-            SSLContext context = producer.getConfiguration().getSslContextParameters().createSSLContext();
-            return context;
+        if (configuration.getSslContextParameters() != null) {
+            answer = configuration.getSslContextParameters().createSSLContext();
+        } else {
+            if (configuration.getKeyStoreFile() == null && configuration.getKeyStoreResource() == null) {
+                LOG.debug("keystorefile is null");
+            }
+            if (configuration.getTrustStoreFile() == null && configuration.getTrustStoreResource() == null) {
+                LOG.debug("truststorefile is null");
+            }
+            if (configuration.getPassphrase().toCharArray() == null) {
+                LOG.debug("passphrase is null");
+            }
+
+            SSLEngineFactory sslEngineFactory;
+            if (configuration.getKeyStoreFile() != null || configuration.getTrustStoreFile() != null) {
+                sslEngineFactory = new SSLEngineFactory();
+                answer = sslEngineFactory.createSSLContext(producer.getContext().getClassResolver(),
+                        configuration.getKeyStoreFormat(),
+                        configuration.getSecurityProvider(),
+                        "file:" + configuration.getKeyStoreFile().getPath(),
+                        "file:" + configuration.getTrustStoreFile().getPath(),
+                        configuration.getPassphrase().toCharArray());
+            } else {
+                sslEngineFactory = new SSLEngineFactory();
+                answer = sslEngineFactory.createSSLContext(producer.getContext().getClassResolver(),
+                        configuration.getKeyStoreFormat(),
+                        configuration.getSecurityProvider(),
+                        configuration.getKeyStoreResource(),
+                        configuration.getTrustStoreResource(),
+                        configuration.getPassphrase().toCharArray());
+            }
         }
 
-        return null;
+        return answer;
     }
 
     private SslHandler configureClientSSLOnDemand() throws Exception {
@@ -124,35 +156,9 @@ public class DefaultClientPipelineFactory extends ClientPipelineFactory  {
             SSLEngine engine = sslContext.createSSLEngine();
             engine.setUseClientMode(true);
             return new SslHandler(engine);
-        } else {
-            if (producer.getConfiguration().getKeyStoreFile() == null && producer.getConfiguration().getKeyStoreResource() == null) {
-                LOG.debug("keystorefile is null");
-            }
-            if (producer.getConfiguration().getTrustStoreFile() == null && producer.getConfiguration().getTrustStoreResource() == null) {
-                LOG.debug("truststorefile is null");
-            }
-            if (producer.getConfiguration().getPassphrase().toCharArray() == null) {
-                LOG.debug("passphrase is null");
-            }
-            SSLEngineFactory sslEngineFactory;
-            if (producer.getConfiguration().getKeyStoreFile() != null || producer.getConfiguration().getTrustStoreFile() != null) {
-                sslEngineFactory = new SSLEngineFactory(
-                    producer.getConfiguration().getKeyStoreFormat(),
-                    producer.getConfiguration().getSecurityProvider(),
-                    producer.getConfiguration().getKeyStoreFile(),
-                    producer.getConfiguration().getTrustStoreFile(),
-                    producer.getConfiguration().getPassphrase().toCharArray());
-            } else {
-                sslEngineFactory = new SSLEngineFactory(producer.getContext().getClassResolver(),
-                        producer.getConfiguration().getKeyStoreFormat(),
-                        producer.getConfiguration().getSecurityProvider(),
-                        producer.getConfiguration().getKeyStoreResource(),
-                        producer.getConfiguration().getTrustStoreResource(),
-                        producer.getConfiguration().getPassphrase().toCharArray());
-            }
-            SSLEngine sslEngine = sslEngineFactory.createClientSSLEngine();
-            return new SslHandler(sslEngine);
         }
+
+        return null;
     }
 
     @Override
