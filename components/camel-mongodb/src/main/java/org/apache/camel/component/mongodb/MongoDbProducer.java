@@ -77,8 +77,7 @@ public class MongoDbProducer extends DefaultProducer {
     }
 
     /**
-     * Entry method that selects the appropriate MongoDB operation and executes
-     * it
+     * Entry method that selects the appropriate MongoDB operation and executes it
      * 
      * @param operation
      * @param exchange
@@ -143,8 +142,7 @@ public class MongoDbProducer extends DefaultProducer {
         if (operation == MongoDbOperation.getColStats) {
             result = calculateCollection(exchange).getStats();
         } else if (operation == MongoDbOperation.getDbStats) {
-            // if it's a DB, also take into account the dynamicity option and
-            // the DB that is used
+            // if it's a DB, also take into account the dynamicity option and the DB that is used
             result = calculateCollection(exchange).getDB().getStats();
         } else {
             throw new CamelMongoDbException("Internal error: wrong operation for getStats variant" + operation);
@@ -162,10 +160,8 @@ public class MongoDbProducer extends DefaultProducer {
         WriteResult result = wc == null ? dbCol.remove(removeObj) : dbCol.remove(removeObj, wc);
 
         Message resultMessage = prepareResponseMessage(exchange, MongoDbOperation.remove);
-        // we always return the WriteResult, because whether the getLastError
-        // was called or not,
-        // the user will have the means to call it or obtain the cached
-        // CommandResult
+        // we always return the WriteResult, because whether the getLastError was called or not,
+        // the user will have the means to call it or obtain the cached CommandResult
         processAndTransferWriteResult(result, exchange);
         resultMessage.setHeader(MongoDbConstants.RECORDS_AFFECTED, result.getN());
     }
@@ -186,15 +182,11 @@ public class MongoDbProducer extends DefaultProducer {
 
         WriteResult result;
         WriteConcern wc = extractWriteConcern(exchange);
-        // In API 2.7, the default upsert and multi values of update(DBObject,
-        // DBObject) are false, false, so we unconditionally invoke the
-        // full-signature method update(DBObject, DBObject, boolean, boolean).
-        // However, the default behaviour may change in the future,
+        // In API 2.7, the default upsert and multi values of update(DBObject, DBObject) are false, false, so we unconditionally invoke the
+        // full-signature method update(DBObject, DBObject, boolean, boolean). However, the default behaviour may change in the future, 
         // so it's safer to be explicit at this level for full determinism
         if (multi == null && upsert == null) {
-            // for update with no multi nor upsert but with specific
-            // WriteConcern there is no update signature without multi and
-            // upsert args,
+            // for update with no multi nor upsert but with specific WriteConcern there is no update signature without multi and upsert args,
             // so assume defaults
             result = wc == null ? dbCol.update(updateCriteria, objNew) : dbCol.update(updateCriteria, objNew, false, false, wc);
         } else {
@@ -205,8 +197,7 @@ public class MongoDbProducer extends DefaultProducer {
         }
 
         Message resultMessage = prepareResponseMessage(exchange, MongoDbOperation.update);
-        // we always return the WriteResult, because whether the getLastError
-        // was called or not, the user will have the means to call it or
+        // we always return the WriteResult, because whether the getLastError was called or not, the user will have the means to call it or 
         // obtain the cached CommandResult
         processAndTransferWriteResult(result, exchange);
         resultMessage.setHeader(MongoDbConstants.RECORDS_AFFECTED, result.getN());
@@ -220,8 +211,7 @@ public class MongoDbProducer extends DefaultProducer {
         WriteResult result = wc == null ? dbCol.save(saveObj) : dbCol.save(saveObj, wc);
 
         prepareResponseMessage(exchange, MongoDbOperation.save);
-        // we always return the WriteResult, because whether the getLastError
-        // was called or not, the user will have the means to call it or
+        // we always return the WriteResult, because whether the getLastError was called or not, the user will have the means to call it or 
         // obtain the cached CommandResult
         processAndTransferWriteResult(result, exchange);
     }
@@ -248,12 +238,10 @@ public class MongoDbProducer extends DefaultProducer {
         DBCollection dbCol = calculateCollection(exchange);
         boolean singleInsert = true;
         Object insert = exchange.getIn().getBody(DBObject.class);
-        // body could not be converted to DBObject, check to see if it's of type
-        // List<DBObject>
+        // body could not be converted to DBObject, check to see if it's of type List<DBObject>
         if (insert == null) {
             insert = exchange.getIn().getBody(List.class);
-            // if the body of type List was obtained, ensure that all items are
-            // of type DBObject and cast the List to List<DBObject>
+            // if the body of type List was obtained, ensure that all items are of type DBObject and cast the List to List<DBObject>
             if (insert != null) {
                 singleInsert = false;
                 insert = attemptConvertToList((List)insert, exchange);
@@ -271,8 +259,7 @@ public class MongoDbProducer extends DefaultProducer {
         }
 
         Message resultMessage = prepareResponseMessage(exchange, MongoDbOperation.insert);
-        // we always return the WriteResult, because whether the getLastError
-        // was called or not, the user will have the means to call it or
+        // we always return the WriteResult, because whether the getLastError was called or not, the user will have the means to call it or 
         // obtain the cached CommandResult
         processAndTransferWriteResult(result, exchange);
         resultMessage.setBody(result);
@@ -280,11 +267,9 @@ public class MongoDbProducer extends DefaultProducer {
 
     protected void doFindAll(Exchange exchange) throws Exception {
         DBCollection dbCol = calculateCollection(exchange);
-        // do not use getMandatoryBody, because if the body is empty we want to
-        // retrieve all objects in the collection
+        // do not use getMandatoryBody, because if the body is empty we want to retrieve all objects in the collection
         DBObject query = null;
-        // do not run around looking for a type converter unless there is a need
-        // for it
+        // do not run around looking for a type converter unless there is a need for it
         if (exchange.getIn().getBody() != null) {
             query = exchange.getIn().getBody(DBObject.class);
         }
@@ -400,7 +385,7 @@ public class MongoDbProducer extends DefaultProducer {
     }
     // --------- Convenience methods -----------------------
     
-    private DBCollection calculateCollection(Exchange exchange) {
+    private DBCollection calculateCollection(Exchange exchange) throws Exception {
         // dynamic calculation is an option. In most cases it won't be used and we should not penalise all users with running this
         // resolution logic on every Exchange if they won't be using this functionality at all
         if (!endpoint.isDynamicity()) {
@@ -409,19 +394,37 @@ public class MongoDbProducer extends DefaultProducer {
         
         String dynamicDB = exchange.getIn().getHeader(MongoDbConstants.DATABASE, String.class);
         String dynamicCollection = exchange.getIn().getHeader(MongoDbConstants.COLLECTION, String.class);
-        
-        if (dynamicDB == null && dynamicCollection == null) {
-            return endpoint.getDbCollection();
-        }
-        
-        DB db = endpoint.getDb();
+                
+        @SuppressWarnings("unchecked")
+        List<DBObject> dynamicIndex = exchange.getIn().getHeader(MongoDbConstants.COLLECTION_INDEX, List.class);
+
         DBCollection dbCol = null;
         
-        if (dynamicDB != null) {
-            db = endpoint.getMongoConnection().getDB(dynamicDB);
+        if (dynamicDB == null && dynamicCollection == null) {
+            dbCol = endpoint.getDbCollection();
+        } else {
+            DB db = null;
+
+            if (dynamicDB == null) {
+                db = endpoint.getDb();
+            } else {
+                db = endpoint.getMongoConnection().getDB(dynamicDB);
+            }
+
+            if (dynamicCollection == null) {
+                dbCol = db.getCollection(endpoint.getCollection());
+            } else {
+                dbCol = db.getCollection(dynamicCollection);
+
+                // on the fly add index
+                if (dynamicIndex == null) {
+                    endpoint.ensureIndex(dbCol, endpoint.createIndex());
+                } else {
+                    endpoint.ensureIndex(dbCol, dynamicIndex);
+                }
+            }
         }
-        
-        dbCol = dynamicCollection == null ? db.getCollection(endpoint.getCollection()) : db.getCollection(dynamicCollection);
+
         if (LOG.isDebugEnabled()) {
             LOG.debug("Dynamic database and/or collection selected: {}->{}", dbCol.getDB().getName(), dbCol.getName());
         }
@@ -442,9 +445,8 @@ public class MongoDbProducer extends DefaultProducer {
                 exchange.setException(MongoDbComponent.wrapInCamelMongoDbException(cr.getException()));
             }
         }
-
-        // determine where to set the WriteResult: as the OUT body or as an IN
-        // message header
+        
+        // determine where to set the WriteResult: as the OUT body or as an IN message header
         if (endpoint.isWriteResultAsHeader()) {
             exchange.getOut().setHeader(MongoDbConstants.WRITERESULT, result);
         } else {

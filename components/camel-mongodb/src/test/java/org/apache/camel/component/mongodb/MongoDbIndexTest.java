@@ -37,7 +37,7 @@ public class MongoDbIndexTest extends AbstractMongoDbTest {
         db.getCollection("otherCollection").drop();
         assertFalse("The otherDB database should not exist", mongo.getDatabaseNames().contains("otherDB"));
 
-        String body = "{\"_id\": \"testInsertDynamicityEnabledDBAndCollection\", \"a\" : \"1\", \"b\" : \"2\"}";
+        String body = "{\"_id\": \"testInsertDynamicityEnabledDBAndCollection\", \"a\" : 1, \"b\" : 2}";
         Map<String, Object> headers = new HashMap<String, Object>();
         headers.put(MongoDbConstants.DATABASE, "otherDB");
         headers.put(MongoDbConstants.COLLECTION, "otherCollection");
@@ -59,9 +59,11 @@ public class MongoDbIndexTest extends AbstractMongoDbTest {
 
         List<DBObject> indexInfos = dynamicCollection.getIndexInfo();
 
-        BasicDBObject key = (BasicDBObject) indexInfos.get(0).get("key");
+        BasicDBObject key1 = (BasicDBObject) indexInfos.get(1).get("key");
+        BasicDBObject key2 = (BasicDBObject) indexInfos.get(2).get("key");
 
-        assertTrue("The field _id with the expected value not found", key.containsField("_id") && "1".equals(key.getString("_id")));
+        assertTrue("No index on the field a", key1.containsField("a") && "1".equals(key1.getString("a")));
+        assertTrue("No index on the field b", key2.containsField("b") && "-1".equals(key2.getString("b")));
 
         DBObject b = dynamicCollection.findOne("testInsertDynamicityEnabledDBAndCollection");
         assertNotNull("No record with 'testInsertDynamicityEnabledDBAndCollection' _id", b);
@@ -79,7 +81,7 @@ public class MongoDbIndexTest extends AbstractMongoDbTest {
         db.getCollection("otherCollection").drop();
         assertFalse("The otherDB database should not exist", mongo.getDatabaseNames().contains("otherDB"));
 
-        String body = "{\"_id\": \"testInsertDynamicityEnabledCollectionAndIndex\", \"a\" : \"1\", \"b\" : \"2\"}";
+        String body = "{\"_id\": \"testInsertDynamicityEnabledCollectionAndIndex\", \"a\" : 1, \"b\" : 2}";
         Map<String, Object> headers = new HashMap<String, Object>();
         headers.put(MongoDbConstants.COLLECTION, "otherCollection");
 
@@ -100,9 +102,11 @@ public class MongoDbIndexTest extends AbstractMongoDbTest {
 
         List<DBObject> indexInfos = dynamicCollection.getIndexInfo();
 
-        BasicDBObject key = (BasicDBObject) indexInfos.get(0).get("key");
+        BasicDBObject key1 = (BasicDBObject) indexInfos.get(1).get("key");
+        BasicDBObject key2 = (BasicDBObject) indexInfos.get(2).get("key");
 
-        assertTrue("The field _id with the expected value not found", key.containsField("_id") && "1".equals(key.getString("_id")));
+        assertTrue("No index on the field a", key1.containsField("a") && "1".equals(key1.getString("a")));
+        assertTrue("No index on the field b", key2.containsField("b") && "-1".equals(key2.getString("b")));
 
         DBObject b = dynamicCollection.findOne("testInsertDynamicityEnabledCollectionAndIndex");
         assertNotNull("No record with 'testInsertDynamicityEnabledCollectionAndIndex' _id", b);
@@ -120,7 +124,7 @@ public class MongoDbIndexTest extends AbstractMongoDbTest {
         db.getCollection("otherCollection").drop();
         assertFalse("The otherDB database should not exist", mongo.getDatabaseNames().contains("otherDB"));
 
-        String body = "{\"_id\": \"testInsertDynamicityEnabledCollectionOnlyAndURIIndex\", \"a\" : \"1\", \"b\" : \"2\"}";
+        String body = "{\"_id\": \"testInsertDynamicityEnabledCollectionOnlyAndURIIndex\", \"a\" : 1, \"b\" : 2}";
         Map<String, Object> headers = new HashMap<String, Object>();
         headers.put(MongoDbConstants.COLLECTION, "otherCollection");
 
@@ -132,9 +136,9 @@ public class MongoDbIndexTest extends AbstractMongoDbTest {
 
         List<DBObject> indexInfos = dynamicCollection.getIndexInfo();
 
-        BasicDBObject key = (BasicDBObject)indexInfos.get(0).get("key");
+        BasicDBObject key1 = (BasicDBObject) indexInfos.get(1).get("key");
 
-        assertTrue("The field _id with the expected value not found", key.containsField("_id") && "1".equals(key.getString("_id")));
+        assertFalse("No index on the field a", key1.containsField("a") && "-1".equals(key1.getString("a")));
 
         DBObject b = dynamicCollection.findOne("testInsertDynamicityEnabledCollectionOnlyAndURIIndex");
         assertNotNull("No record with 'testInsertDynamicityEnabledCollectionOnlyAndURIIndex' _id", b);
@@ -150,7 +154,7 @@ public class MongoDbIndexTest extends AbstractMongoDbTest {
         assertEquals(0, testCollection.count());
         db.getCollection("otherCollection").remove(new BasicDBObject());
 
-        String body = "{\"_id\": \"testInsertAutoCreateCollectionAndURIIndex\", \"a\" : \"1\", \"b\" : \"2\"}";
+        String body = "{\"_id\": \"testInsertAutoCreateCollectionAndURIIndex\", \"a\" : 1, \"b\" : 2}";
         Map<String, Object> headers = new HashMap<String, Object>();
 
         Object result = template.requestBodyAndHeaders("direct:dynamicityDisabled", body, headers);
@@ -181,9 +185,9 @@ public class MongoDbIndexTest extends AbstractMongoDbTest {
                 from("direct:dynamicityEnabled")
                         .to("mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&operation=insert&dynamicity=true&writeConcern=SAFE");
                 from("direct:dynamicityEnabledWithIndexUri")
-                        .to("mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&collectionIndex={\"a\":\"1\"}&operation=insert&dynamicity=true&writeConcern=SAFE");
+                        .to("mongodb:myDb?database={{mongodb.testDb}}&collection={{mongodb.testCollection}}&collectionIndex={\"a\":1}&operation=insert&dynamicity=true&writeConcern=SAFE");
                 from("direct:dynamicityDisabled")
-                        .to("mongodb:myDb?database={{mongodb.testDb}}&collection=otherCollection&collectionIndex={\"a\":\"1\",\"b\":\"-1\"}&operation=insert&dynamicity=false&writeConcern=SAFE");
+                        .to("mongodb:myDb?database={{mongodb.testDb}}&collection=otherCollection&collectionIndex={\"a\":1,\"b\":-1}&operation=insert&dynamicity=false&writeConcern=SAFE");
             }
         };
     }
