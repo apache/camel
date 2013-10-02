@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.netty.ssl;
 
-import java.io.File;
 import java.io.InputStream;
 import java.security.KeyStore;
 import javax.net.ssl.KeyManagerFactory;
@@ -24,17 +23,20 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLEngine;
 import javax.net.ssl.TrustManagerFactory;
 
-import org.apache.camel.converter.IOConverter;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ResourceHelper;
 
-public class SSLEngineFactory {
+public final class SSLEngineFactory {
 
     private static final String SSL_PROTOCOL = "TLS";
-    private static SSLContext sslContext;
 
-    public SSLEngineFactory(ClassResolver classResolver, String keyStoreFormat, String securityProvider, String keyStoreResource, String trustStoreResource, char[] passphrase) throws Exception {
+    public SSLEngineFactory() {
+    }
+
+    public SSLContext createSSLContext(ClassResolver classResolver, String keyStoreFormat, String securityProvider,
+                                       String keyStoreResource, String trustStoreResource, char[] passphrase) throws Exception {
+        SSLContext answer;
         KeyStore ks = KeyStore.getInstance(keyStoreFormat);
 
         InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(classResolver, keyStoreResource);
@@ -47,7 +49,7 @@ public class SSLEngineFactory {
         KeyManagerFactory kmf = KeyManagerFactory.getInstance(securityProvider);
         kmf.init(ks, passphrase);
 
-        sslContext = SSLContext.getInstance(SSL_PROTOCOL);
+        answer = SSLContext.getInstance(SSL_PROTOCOL);
 
         if (trustStoreResource != null) {
             KeyStore ts = KeyStore.getInstance(keyStoreFormat);
@@ -59,55 +61,22 @@ public class SSLEngineFactory {
             }
             TrustManagerFactory tmf = TrustManagerFactory.getInstance(securityProvider);
             tmf.init(ts);
-            sslContext.init(kmf.getKeyManagers(), tmf.getTrustManagers(), null);
+            answer.init(kmf.getKeyManagers(), tmf.getTrustManagers(), null);
         } else {
-            sslContext.init(kmf.getKeyManagers(), null, null);
+            answer.init(kmf.getKeyManagers(), null, null);
         }
+
+        return answer;
     }
 
-    /**
-     * Use {@link #SSLEngineFactory(org.apache.camel.spi.ClassResolver, String, String, String, String, char[])}
-     */
-    @Deprecated
-    public SSLEngineFactory(String keyStoreFormat, String securityProvider, File keyStoreFile, File trustStoreFile, char[] passphrase) throws Exception {
-        KeyStore ks = KeyStore.getInstance(keyStoreFormat);
-
-        InputStream is = IOConverter.toInputStream(keyStoreFile);
-        try {
-            ks.load(is, passphrase);
-        } finally {
-            IOHelper.close(is);
-        }
-
-        KeyManagerFactory kmf = KeyManagerFactory.getInstance(securityProvider);
-        kmf.init(ks, passphrase);
-
-        sslContext = SSLContext.getInstance(SSL_PROTOCOL);
-        
-        if (trustStoreFile != null) { 
-            KeyStore ts = KeyStore.getInstance(keyStoreFormat);
-            is = IOConverter.toInputStream(trustStoreFile);
-            try {
-                ts.load(is, passphrase);
-            } finally {
-                IOHelper.close(is);
-            }
-            TrustManagerFactory tmf = TrustManagerFactory.getInstance(securityProvider);
-            tmf.init(ts); 
-            sslContext.init(kmf.getKeyManagers(), tmf.getTrustManagers(), null); 
-        } else { 
-            sslContext.init(kmf.getKeyManagers(), null, null); 
-        }
-    }
-
-    public SSLEngine createServerSSLEngine() {
+    public SSLEngine createServerSSLEngine(SSLContext sslContext) {
         SSLEngine serverEngine = sslContext.createSSLEngine();
         serverEngine.setUseClientMode(false);
         serverEngine.setNeedClientAuth(true);
         return serverEngine;
     }
 
-    public SSLEngine createClientSSLEngine() {
+    public SSLEngine createClientSSLEngine(SSLContext sslContext) {
         SSLEngine clientEngine = sslContext.createSSLEngine();
         clientEngine.setUseClientMode(true);
         return clientEngine;

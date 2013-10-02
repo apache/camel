@@ -17,6 +17,7 @@
 package org.apache.camel.component.netty.http;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.impl.DefaultClassResolver;
 import org.apache.camel.impl.JndiRegistry;
 import org.junit.Test;
 
@@ -27,6 +28,7 @@ public class NettySharedHttpServerTest extends BaseNettyTest {
     @Override
     protected JndiRegistry createRegistry() throws Exception {
         nettySharedHttpServer = new DefaultNettySharedHttpServer();
+        nettySharedHttpServer.setClassResolver(new DefaultClassResolver());
 
         NettySharedHttpServerBootstrapConfiguration configuration = new NettySharedHttpServerBootstrapConfiguration();
         configuration.setPort(getPort());

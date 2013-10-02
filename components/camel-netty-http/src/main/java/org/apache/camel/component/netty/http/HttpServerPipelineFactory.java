@@ -19,11 +19,11 @@ package org.apache.camel.component.netty.http;
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLEngine;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.component.netty.NettyConsumer;
 import org.apache.camel.component.netty.NettyServerBootstrapConfiguration;
 import org.apache.camel.component.netty.ServerPipelineFactory;
 import org.apache.camel.component.netty.ssl.SSLEngineFactory;
-import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.util.ObjectHelper;
 import org.jboss.netty.channel.ChannelHandler;
 import org.jboss.netty.channel.ChannelPipeline;
@@ -54,7 +54,7 @@ public class HttpServerPipelineFactory extends ServerPipelineFactory {
         this.consumer = nettyConsumer;
         this.configuration = nettyConsumer.getConfiguration();
         try {
-            this.sslContext = createSSLContext(consumer.getConfiguration());
+            this.sslContext = createSSLContext(consumer.getContext(), consumer.getConfiguration());
         } catch (Exception e) {
             throw ObjectHelper.wrapRuntimeCamelException(e);
         }
@@ -74,7 +74,7 @@ public class HttpServerPipelineFactory extends ServerPipelineFactory {
         // Create a default pipeline implementation.
         ChannelPipeline pipeline = Channels.pipeline();
 
-        SslHandler sslHandler = configureServerSSLOnDemand(configuration);
+        SslHandler sslHandler = configureServerSSLOnDemand();
         if (sslHandler != null) {
             // must close on SSL exception
             sslHandler.setCloseOnSSLException(true);
@@ -97,32 +97,16 @@ public class HttpServerPipelineFactory extends ServerPipelineFactory {
         return pipeline;
     }
 
-    private SSLContext createSSLContext(NettyServerBootstrapConfiguration configuration) throws Exception {
+    private SSLContext createSSLContext(CamelContext camelContext, NettyServerBootstrapConfiguration configuration) throws Exception {
         if (!configuration.isSsl()) {
             return null;
         }
+
+        SSLContext answer;
 
         // create ssl context once
         if (configuration.getSslContextParameters() != null) {
-            SSLContext context = configuration.getSslContextParameters().createSSLContext();
-            return context;
-        }
-
-        return null;
-    }
-
-    private SslHandler configureServerSSLOnDemand(NettyServerBootstrapConfiguration configuration) throws Exception {
-        if (!configuration.isSsl()) {
-            return null;
-        }
-
-        if (configuration.getSslHandler() != null) {
-            return configuration.getSslHandler();
-        } else if (sslContext != null) {
-            SSLEngine engine = sslContext.createSSLEngine();
-            engine.setUseClientMode(false);
-            engine.setNeedClientAuth(configuration.isNeedClientAuth());
-            return new SslHandler(engine);
+            answer = configuration.getSslContextParameters().createSSLContext();
         } else {
             if (configuration.getKeyStoreFile() == null && configuration.getKeyStoreResource() == null) {
                 LOG.debug("keystorefile is null");
@@ -133,28 +117,45 @@ public class HttpServerPipelineFactory extends ServerPipelineFactory {
             if (configuration.getPassphrase().toCharArray() == null) {
                 LOG.debug("passphrase is null");
             }
+
             SSLEngineFactory sslEngineFactory;
             if (configuration.getKeyStoreFile() != null || configuration.getTrustStoreFile() != null) {
-                sslEngineFactory = new SSLEngineFactory(
+                sslEngineFactory = new SSLEngineFactory();
+                answer = sslEngineFactory.createSSLContext(camelContext.getClassResolver(),
                         configuration.getKeyStoreFormat(),
                         configuration.getSecurityProvider(),
-                        configuration.getKeyStoreFile(),
-                        configuration.getTrustStoreFile(),
+                        "file:" + configuration.getKeyStoreFile().getPath(),
+                        "file:" + configuration.getTrustStoreFile().getPath(),
                         configuration.getPassphrase().toCharArray());
             } else {
-                ClassResolver resolver = consumer != null ? consumer.getContext().getClassResolver() : null;
-                sslEngineFactory = new SSLEngineFactory(resolver,
+                sslEngineFactory = new SSLEngineFactory();
+                answer = sslEngineFactory.createSSLContext(camelContext.getClassResolver(),
                         configuration.getKeyStoreFormat(),
                         configuration.getSecurityProvider(),
                         configuration.getKeyStoreResource(),
                         configuration.getTrustStoreResource(),
                         configuration.getPassphrase().toCharArray());
             }
-            SSLEngine sslEngine = sslEngineFactory.createServerSSLEngine();
-            sslEngine.setUseClientMode(false);
-            sslEngine.setNeedClientAuth(configuration.isNeedClientAuth());
-            return new SslHandler(sslEngine);
         }
+
+        return answer;
+    }
+
+    private SslHandler configureServerSSLOnDemand() throws Exception {
+        if (!consumer.getConfiguration().isSsl()) {
+            return null;
+        }
+
+        if (consumer.getConfiguration().getSslHandler() != null) {
+            return consumer.getConfiguration().getSslHandler();
+        } else if (sslContext != null) {
+            SSLEngine engine = sslContext.createSSLEngine();
+            engine.setUseClientMode(false);
+            engine.setNeedClientAuth(consumer.getConfiguration().isNeedClientAuth());
+            return new SslHandler(engine);
+        }
+
+        return null;
     }
 
     private boolean supportCompressed() {
