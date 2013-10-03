@@ -37,9 +37,9 @@
   <camelContext xmlns="http://camel.apache.org/schema/spring">
     <!-- in this route we use Camels property placeholder {{ }} style -->
     <route>
-      <from uri="direct:{{cool.bar}}"/>
+      <from uri="direct:{{foo}}"/>
       <bean ref="hello"/>
-      <to uri="{{scheme}}{{separator}}{{authority}}"/>
+      <to uri="{{scheme}}{{separator}}{{context-path}}"/>
     </route>
   </camelContext>
 

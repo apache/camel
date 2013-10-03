@@ -50,13 +50,15 @@ public class CamelSpringPropertyPlaceholderConfigurer3Test extends SpringTestSup
         public Properties resolveProperties(CamelContext context, boolean ignoreMissingLocation, String... uri) throws Exception {
             Properties answer = super.resolveProperties(context, ignoreMissingLocation, uri);
 
-            // add the additional properties we need to provide so that the uri ""{{scheme}}{{separator}}{{authority}}""
-            // inside the route can be resolved. please note that in this simple test we just add these properties
-            // hard-coded below but of course the mechanism to retrieve these extra properties can be anything else,
-            // e.g. through the entries inside a database table etc.
+            // define the additional properties we need to provide so that the uri "direct:{{foo}}" by the "from" clause
+            // as well as "{{scheme}}{{separator}}{{context-path}}" by the "to" clause can be properly resolved. please
+            // note that in this simple test we just add these properties hard-coded below but of course the mechanism to
+            // retrieve these extra properties can be anything else, e.g. through the entries inside a database table etc.
+            answer.put("foo", "bar");
+
             answer.put("scheme", "mock");
             answer.put("separator", ":");
-            answer.put("authority", "result");
+            answer.put("context-path", "result");
                 
             return answer;
         }
