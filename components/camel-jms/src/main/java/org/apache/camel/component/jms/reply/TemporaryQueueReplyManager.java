@@ -196,7 +196,7 @@ public class TemporaryQueueReplyManager extends ReplyManagerSupport {
 
     private final class TemporaryReplyQueueDestinationResolver implements DestinationResolver {
         private TemporaryQueue queue;
-        private AtomicBoolean refreshWanted = new AtomicBoolean(false);
+        private final AtomicBoolean refreshWanted = new AtomicBoolean(false);
 
         public Destination resolveDestinationName(Session session, String destinationName, boolean pubSubDomain) throws JMSException {
             // use a temporary queue to gather the reply message
@@ -204,7 +204,9 @@ public class TemporaryQueueReplyManager extends ReplyManagerSupport {
                 if (queue == null || refreshWanted.compareAndSet(true, false)) {
                     queue = session.createTemporaryQueue();
                     setReplyTo(queue);
-                    log.debug("Refreshed Temporary ReplyTo Queue. New queue: " + queue.getQueueName());
+                    if (log.isDebugEnabled()) {
+                        log.debug("Refreshed Temporary ReplyTo Queue. New queue: {}", queue.getQueueName());
+                    }
                     refreshWanted.notifyAll();
                 }
             }
@@ -218,7 +220,7 @@ public class TemporaryQueueReplyManager extends ReplyManagerSupport {
         public void destinationReady() throws InterruptedException {
             if (refreshWanted.get()) {
                 synchronized (refreshWanted) {
-                    log.debug("Waiting for new Temp ReplyTo destination to be assigned to continue");
+                    log.debug("Waiting for new Temporary ReplyTo queue to be assigned before we can continue");
                     refreshWanted.wait();
                 }
             }
