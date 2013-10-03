@@ -15,7 +15,8 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
 
   <modelVersion>4.0.0</modelVersion>
 
@@ -33,22 +34,22 @@
 
   <properties>
     <camel.osgi.export.pkg>
-        !org.apache.camel.tools.*,
-        org.apache.camel.*;-noimport:=true
+      !org.apache.camel.tools.*,
+      org.apache.camel.*;-noimport:=true
     </camel.osgi.export.pkg>
     <camel.osgi.import>
-        org.apache.camel.tools.*;resolution:=optional,
-        !org.apache.camel.*,
-        !com.googlecode.concurrentlinkedhashmap,
-        ${camel.osgi.import.defaults},
-        org.apache.xalan.xsltc.trax;resolution:=optional,
-        javax.activation;resolution:=optional,
-        javax.xml.bind;resolution:=optional,
-        javax.xml.bind.annotation;resolution:=optional,
-        javax.xml.bind.annotation.adapters;resolution:=optional,
-        javax.xml.stream;resolution:=optional,
-        javax.xml.transform.stax;resolution:=optional,
-        *
+      org.apache.camel.tools.*;resolution:=optional,
+      !org.apache.camel.*,
+      !com.googlecode.concurrentlinkedhashmap,
+      ${camel.osgi.import.defaults},
+      org.apache.xalan.xsltc.trax;resolution:=optional,
+      javax.activation;resolution:=optional,
+      javax.xml.bind;resolution:=optional,
+      javax.xml.bind.annotation;resolution:=optional,
+      javax.xml.bind.annotation.adapters;resolution:=optional,
+      javax.xml.stream;resolution:=optional,
+      javax.xml.transform.stax;resolution:=optional,
+      *
     </camel.osgi.import>
     <camel.osgi.export.service>
       org.apache.camel.spi.ComponentResolver;component=direct,
@@ -87,15 +88,17 @@
       org.apache.camel.spi.LanguageResolver;language=tokenize
     </camel.osgi.export.service>
     <camel.osgi.dynamic>
-        org.apache.camel.spring.util;${camel.osgi.import.strict.version},
-        org.apache.camel.spring.pollingconsumer;${camel.osgi.import.strict.version},
-        org.apache.camel.processor.interceptor.jpa;${camel.osgi.import.strict.version},
-        org.apache.camel.pollconsumer.quartz2;${camel.osgi.import.strict.version},
-        net.sf.saxon
+      org.apache.camel.spring.util;${camel.osgi.import.strict.version},
+      org.apache.camel.spring.pollingconsumer;${camel.osgi.import.strict.version},
+      org.apache.camel.processor.interceptor.jpa;${camel.osgi.import.strict.version},
+      org.apache.camel.pollconsumer.quartz2;${camel.osgi.import.strict.version},
+      net.sf.saxon
     </camel.osgi.dynamic>
     <camel.osgi.activator>
-        org.apache.camel.impl.osgi.Activator
+      org.apache.camel.impl.osgi.Activator
     </camel.osgi.activator>
+    <!-- do not skip any tests by default -->
+    <platform.skip.tests></platform.skip.tests>
   </properties>
 
   <dependencies>
@@ -160,12 +163,12 @@
     </dependency>
 
     <!-- validator -->
-	  <dependency>
-		  <groupId>xml-resolver</groupId>
-		  <artifactId>xml-resolver</artifactId>
-		  <version>${xml-resolver-version}</version>
-		  <scope>test</scope>
-	  </dependency>
+    <dependency>
+      <groupId>xml-resolver</groupId>
+      <artifactId>xml-resolver</artifactId>
+      <version>${xml-resolver-version}</version>
+      <scope>test</scope>
+    </dependency>
 
   </dependencies>
 
@@ -193,10 +196,10 @@
                 </excludes>
               </artifactSet>
               <relocations>
-                 <relocation>
-                   <pattern>com.googlecode.concurrentlinkedhashmap</pattern>
-                   <shadedPattern>org.apache.camel.com.googlecode.concurrentlinkedhashmap</shadedPattern>
-                 </relocation>
+                <relocation>
+                  <pattern>com.googlecode.concurrentlinkedhashmap</pattern>
+                  <shadedPattern>org.apache.camel.com.googlecode.concurrentlinkedhashmap</shadedPattern>
+                </relocation>
               </relocations>
             </configuration>
           </execution>
@@ -227,6 +230,7 @@
             <exclude>org/apache/camel/component/file/stress/**.java</exclude>
             <exclude>**/DistributedCompletionIntervalTest.java</exclude>
             <exclude>**/DistributedConcurrentPerCorrelationKeyTest.java</exclude>
+            <exclude>${platform.skip.tests}</exclude>
           </excludes>
           <forkedProcessTimeoutInSeconds>3000</forkedProcessTimeoutInSeconds>
         </configuration>
@@ -428,6 +432,20 @@
         </dependency>
       </dependencies>
     </profile>
+
+    <!-- skip management tests on AIX as it hangs CI servers -->
+    <profile>
+      <id>aix</id>
+      <activation>
+        <os>
+          <name>aix</name>
+        </os>
+      </activation>
+      <properties>
+        <platform.skip.tests>org/apache/camel/management/**/*.java</platform.skip.tests>
+      </properties>
+    </profile>
+
   </profiles>
 
 </project>
