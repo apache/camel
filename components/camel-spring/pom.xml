@@ -61,6 +61,8 @@
       <camel.osgi.activator>
         org.apache.camel.osgi.Activator
       </camel.osgi.activator>
+      <!-- do not skip any tests by default -->
+      <platform.skip.tests></platform.skip.tests>
   </properties>
 
   <dependencies>
@@ -222,6 +224,10 @@
       <plugin>
         <artifactId>maven-surefire-plugin</artifactId>
         <configuration>
+          <!-- skip file stress tests as they are intended to run manually -->
+          <excludes>
+            <exclude>${platform.skip.tests}</exclude>
+          </excludes>
           <forkedProcessTimeoutInSeconds>1800</forkedProcessTimeoutInSeconds>
         </configuration>
       </plugin>
@@ -405,6 +411,19 @@
           </plugin>
         </plugins>
       </build>
+    </profile>
+
+    <!-- skip management tests on AIX as it hangs CI servers -->
+    <profile>
+      <id>aix</id>
+      <activation>
+        <os>
+          <name>aix</name>
+        </os>
+      </activation>
+      <properties>
+        <platform.skip.tests>org/apache/camel/spring/management/**/*.java</platform.skip.tests>
+      </properties>
     </profile>
   </profiles>
     
