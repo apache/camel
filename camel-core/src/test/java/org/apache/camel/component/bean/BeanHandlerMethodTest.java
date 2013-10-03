@@ -20,6 +20,7 @@ import org.apache.camel.Body;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.Handler;
+import org.apache.camel.Header;
 import org.apache.camel.impl.DefaultExchange;
 
 /**
@@ -83,6 +84,19 @@ public class BeanHandlerMethodTest extends ContextTestSupport {
         }
     }
 
+    public void testNoHandlerAmbigious() throws Exception {
+        BeanInfo info = new BeanInfo(context, MyNoHandlerBean.class);
+
+        Exchange exchange = new DefaultExchange(context);
+        MyNoHandlerBean pojo = new MyNoHandlerBean();
+        try {
+            info.createInvocation(pojo, exchange);
+            fail("Should throw exception");
+        } catch (AmbiguousMethodCallException e) {
+            assertEquals(3, e.getMethods().size());
+        }
+    }
+
     public static class MyNoDummyBean {
 
         public String hello(@Body String hi) {
@@ -132,6 +146,25 @@ public class BeanHandlerMethodTest extends ContextTestSupport {
         }
 
         public String bye(@Body String input) {
+            fail("Should not invoke me");
+            return null;
+        }
+
+    }
+
+    public static class MyNoHandlerBean {
+
+        public String hello(@Body String input, @Header("name") String name, @Header("age") int age) {
+            fail("Should not invoke me");
+            return null;
+        }
+
+        public String greeting(@Body String input, @Header("name") String name) {
+            fail("Should not invoke me");
+            return null;
+        }
+
+        public String bye(String input) {
             fail("Should not invoke me");
             return null;
         }
