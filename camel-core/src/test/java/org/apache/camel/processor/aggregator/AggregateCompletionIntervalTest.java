@@ -37,7 +37,7 @@ public class AggregateCompletionIntervalTest extends ContextTestSupport {
         Thread.sleep(2000);
         
         for (int i = 0; i < 10; i++) {
-            template.sendBodyAndHeader("direct:start", "Message " + i, "id", "1");
+            template.sendBodyAndHeader("seda:start", "Message " + i, "id", "1");
         }
 
         assertMockEndpointsSatisfied();
@@ -49,7 +49,7 @@ public class AggregateCompletionIntervalTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 // START SNIPPET: e1
-                from("direct:start")
+                from("seda:start")
                     .aggregate(header("id"), new UseLatestAggregationStrategy())
                         // trigger completion every 5th second
                         .completionInterval(5000)
