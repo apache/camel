@@ -16,8 +16,6 @@
  */
 package org.apache.camel.converter.crypto;
 
-
-
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.io.InputStream;
@@ -149,6 +147,9 @@ public final class PGPDataFormatUtil {
         PGPObjectFactory factory = new PGPObjectFactory(PGPUtil.getDecoderStream(encryptedInput));
         PGPEncryptedDataList enc;
         Object o = factory.nextObject();
+        if (o == null) {
+            throw new PGPException("Provided input is not encrypted.");
+        }
         if (o instanceof PGPEncryptedDataList) {
             enc = (PGPEncryptedDataList) o;
         } else {
@@ -157,11 +158,16 @@ public final class PGPDataFormatUtil {
         encryptedInput.reset(); // nextObject() method reads from the InputStream, so rewind it!
         Iterator<?> encryptedDataObjects = enc.getEncryptedDataObjects();
         PGPPrivateKey privateKey = null;
-        PGPPublicKeyEncryptedData encryptedData;
+        PGPPublicKeyEncryptedData encryptedData = null;
         while (privateKey == null && encryptedDataObjects.hasNext()) {
             encryptedData = (PGPPublicKeyEncryptedData) encryptedDataObjects.next();
             PGPSecretKey pgpSecKey = pgpSec.getSecretKey(encryptedData.getKeyID());
-            privateKey = pgpSecKey.extractPrivateKey(new JcePBESecretKeyDecryptorBuilder().setProvider("BC").build(passphrase.toCharArray()));
+            if (pgpSecKey != null) {
+                privateKey = pgpSecKey.extractPrivateKey(new JcePBESecretKeyDecryptorBuilder().setProvider("BC").build(passphrase.toCharArray()));
+            }
+        }
+        if (privateKey == null && pgpSec.size() > 0 && encryptedData != null) {
+            throw new PGPException("Provided input is encrypted with unknown pair of keys.");
         }
         return privateKey;
     }
