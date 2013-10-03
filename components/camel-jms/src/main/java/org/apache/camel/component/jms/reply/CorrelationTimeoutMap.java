@@ -57,6 +57,13 @@ public class CorrelationTimeoutMap extends DefaultTimeoutMap<String, ReplyHandle
     }
 
     @Override
+    public ReplyHandler get(String key) {
+        ReplyHandler answer = super.get(key);
+        log.trace("Get correlationID: {} -> {}", key, answer != null);
+        return answer;
+    }
+
+    @Override
     public void put(String key, ReplyHandler value, long timeoutMillis) {
         try {
             if (listener != null) {
