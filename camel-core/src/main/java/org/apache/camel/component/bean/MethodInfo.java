@@ -393,8 +393,6 @@ public class MethodInfo {
     /**
      * Returns true if this method is covariant with the specified method
      * (this method may above or below the specified method in the class hierarchy)
-     * @param method
-     * @return
      */
     public boolean isCovariantWith(MethodInfo method) {
         return 
@@ -541,13 +539,18 @@ public class MethodInfo {
                         return Void.TYPE;
                     }
 
-                    // the parameter value was not already valid, but since the simple language have evaluated the expression
-                    // which may change the parameterValue, so we have to check it again to see if its now valid
-                    exp = exchange.getContext().getTypeConverter().convertTo(String.class, parameterValue);
-                    // String values from the simple language is always valid
-                    if (!valid) {
-                        // re validate if the parameter was not valid the first time (String values should be accepted)
-                        valid = parameterValue instanceof String || BeanHelper.isValidParameterValue(exp);
+                    // the parameter value may match the expected type, then we use it as-is
+                    if (parameterType.isAssignableFrom(parameterValue.getClass())) {
+                        valid = true;
+                    } else {
+                        // the parameter value was not already valid, but since the simple language have evaluated the expression
+                        // which may change the parameterValue, so we have to check it again to see if its now valid
+                        exp = exchange.getContext().getTypeConverter().tryConvertTo(String.class, parameterValue);
+                        // String values from the simple language is always valid
+                        if (!valid) {
+                            // re validate if the parameter was not valid the first time (String values should be accepted)
+                            valid = parameterValue instanceof String || BeanHelper.isValidParameterValue(exp);
+                        }
                     }
 
                     if (valid) {
