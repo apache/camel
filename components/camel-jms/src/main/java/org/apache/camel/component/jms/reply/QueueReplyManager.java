@@ -80,7 +80,8 @@ public class QueueReplyManager extends ReplyManagerSupport {
             // we could not correlate the received reply message to a matching request and therefore
             // we cannot continue routing the unknown message
             // log a warn and then ignore the message
-            log.warn("Reply received for unknown correlationID [{}]. The message will be ignored: {}", correlationID, message);
+            log.warn("Reply received for unknown correlationID [{}] on reply destination [{}]. Current correlation map size: {}. The message will be ignored: {}",
+                    new Object[]{correlationID, replyTo, correlation.size(), message});
         }
     }
 
