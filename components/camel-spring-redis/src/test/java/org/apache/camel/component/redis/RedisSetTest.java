@@ -54,7 +54,7 @@ public class RedisSetTest extends RedisTestSupport {
 
     @Test
     public void shouldExecuteSADD() throws Exception {
-        when(setOperations.add(anyString(), anyObject())).thenReturn(false);
+        when(setOperations.add(anyString(), anyObject())).thenReturn(null);
 
         Object result = sendHeaders(
                 RedisConstants.COMMAND, "SADD",
@@ -62,7 +62,7 @@ public class RedisSetTest extends RedisTestSupport {
                 RedisConstants.VALUE, "value");
 
         verify(setOperations).add("key", "value");
-        assertEquals(false, result);
+        assertEquals(null, result);
 
     }
 
@@ -212,7 +212,7 @@ public class RedisSetTest extends RedisTestSupport {
 
     @Test
     public void shouldExecuteSREM() throws Exception {
-        when(setOperations.remove(anyString(), anyObject())).thenReturn(true);
+        when(setOperations.remove(anyString(), anyObject())).thenReturn(Long.valueOf(1));
 
         Object result = sendHeaders(
                 RedisConstants.COMMAND, "SREM",
@@ -220,7 +220,7 @@ public class RedisSetTest extends RedisTestSupport {
                 RedisConstants.VALUE, "value");
 
         verify(setOperations).remove("key", "value");
-        assertEquals(true, result);
+        assertEquals(Long.valueOf(1), result);
     }
 
     @Test

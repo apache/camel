@@ -198,7 +198,7 @@ public class RedisClient {
         redisTemplate.watch(keys);
     }
 
-    public Boolean sadd(String key, Object value) {
+    public Long sadd(String key, Object value) {
         return redisTemplate.opsForSet().add(key, value);
     }
 
@@ -242,7 +242,7 @@ public class RedisClient {
         return redisTemplate.opsForSet().randomMember(key);
     }
 
-    public Boolean srem(String key, Object value) {
+    public Long srem(String key, Object value) {
         return redisTemplate.opsForSet().remove(key, value);
     }
 
@@ -442,7 +442,7 @@ public class RedisClient {
         return redisTemplate.opsForZSet().rank(key, value);
     }
 
-    public Boolean zrem(String key, Object value) {
+    public Long zrem(String key, Object value) {
         return redisTemplate.opsForZSet().remove(key, value);
     }
 

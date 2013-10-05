@@ -189,7 +189,7 @@ public class RedisSortedSetTest extends RedisTestSupport {
 
     @Test
     public void shouldExecuteZREM() {
-        when(zSetOperations.remove(anyString(), anyString())).thenReturn(true);
+        when(zSetOperations.remove(anyString(), anyString())).thenReturn(Long.valueOf(1));
 
         Object result = sendHeaders(
                 RedisConstants.COMMAND, "ZREM",
@@ -197,7 +197,7 @@ public class RedisSortedSetTest extends RedisTestSupport {
                 RedisConstants.VALUE, "value");
 
         verify(zSetOperations).remove("key", "value");
-        assertEquals(true, result);
+        assertEquals(Long.valueOf(1), result);
     }
 
 

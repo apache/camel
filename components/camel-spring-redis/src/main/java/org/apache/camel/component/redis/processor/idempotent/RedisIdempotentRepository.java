@@ -54,7 +54,7 @@ public class RedisIdempotentRepository extends ServiceSupport implements Idempot
 
     @ManagedOperation(description = "Adds the key to the store")
     public boolean add(String key) {
-        return setOperations.add(processorName, key);
+        return setOperations.add(processorName, key) != null;
     }
 
     @ManagedOperation(description = "Does the store contain the given key")
@@ -64,7 +64,7 @@ public class RedisIdempotentRepository extends ServiceSupport implements Idempot
 
     @ManagedOperation(description = "Remove the key from the store")
     public boolean remove(String key) {
-        return setOperations.remove(processorName, key);
+        return setOperations.remove(processorName, key) != null;
     }
 
     @ManagedAttribute(description = "The processor name")
