@@ -224,7 +224,7 @@
     <jing-version>20030619</jing-version>
     <jline-version>0.9.94</jline-version>
     <jodatime-bundle-version>1.6.2</jodatime-bundle-version>
-    <jodatime2-bundle-version>2.1</jodatime2-bundle-version>
+    <jodatime2-bundle-version>2.3</jodatime2-bundle-version>
     <josql-bundle-version>1.5_5</josql-bundle-version>
     <josql-version>1.5</josql-version>
     <jruby-version>1.7.4</jruby-version>
