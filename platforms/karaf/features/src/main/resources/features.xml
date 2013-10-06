@@ -616,6 +616,7 @@
     <bundle>mvn:org.apache.camel/camel-jsch/${project.version}</bundle>
   </feature>
   <feature name='camel-jsonpath' version='${project.version}' resolver='(obr)' start-level='50'>
+    <feature version='${project.version}'>camel-core</feature>
     <bundle>mvn:com.jayway.jsonpath/json-path/${json-path-version}</bundle>
     <bundle>mvn:net.minidev/json-smart/${json-smart-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-jsonpath/${project.version}</bundle>
