@@ -1,0 +1,16 @@
+{ "store": {
+  "book": [
+    {
+      "category": "fiction",
+      "author": "Evelyn Waugh",
+      "title": "Sword of Honour",
+      "price": 12.99,
+      "isbn": "0-553-21311-3"
+    }
+  ],
+  "bicycle": {
+    "color": "red",
+    "price": 19.95
+  }
+}
+}
