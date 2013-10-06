@@ -297,7 +297,7 @@
     <msv-version>20050913</msv-version>
     <mustache-java-version>0.8.13</mustache-java-version>
     <mustache-bundle-version>0.8.13_1/</mustache-bundle-version>
-    <mvel-version>2.1.6.Final</mvel-version>
+    <mvel-version>2.1.7.Final</mvel-version>
     <mybatis-version>3.2.3</mybatis-version>
     <neethi-bundle-version>3.0.1</neethi-bundle-version>
     <netty3-version>3.7.0.Final</netty3-version>
