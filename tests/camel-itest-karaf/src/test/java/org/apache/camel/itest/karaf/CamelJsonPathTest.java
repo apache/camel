@@ -14,27 +14,27 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.jsonpath;
+package org.apache.camel.itest.karaf;
 
-import java.lang.annotation.Documented;
-import java.lang.annotation.ElementType;
-import java.lang.annotation.Retention;
-import java.lang.annotation.RetentionPolicy;
-import java.lang.annotation.Target;
+import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.ops4j.pax.exam.Option;
+import org.ops4j.pax.exam.junit.Configuration;
+import org.ops4j.pax.exam.junit.JUnit4TestRunner;
 
-import org.apache.camel.language.LanguageAnnotation;
+@RunWith(JUnit4TestRunner.class)
+public class CamelJsonpathTest extends AbstractFeatureTest {
 
-/**
- * An annotation used to inject a <a href="http://commons.apache.org/jsonpath/">JSon Path</a>
- * expression into a method parameter when using
- * <a href="http://camel.apache.org/bean-integration.html">Bean Integration</a>
- *
- * @version
- */
-@Retention(RetentionPolicy.RUNTIME)
-@Documented
-@Target({ElementType.FIELD, ElementType.METHOD, ElementType.PARAMETER })
-@LanguageAnnotation(language = "jsonpath")
-public @interface JsonPath {
-    String value();
+    public static final String COMPONENT = extractName(CamelJsonpathTest.class);
+
+    @Test
+    public void test() throws Exception {
+        testLanguage(COMPONENT);
+    }
+
+    @Configuration
+    public static Option[] configure() {
+        return configure(COMPONENT);
+    }
+
 }

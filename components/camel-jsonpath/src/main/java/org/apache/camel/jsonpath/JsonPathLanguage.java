@@ -28,9 +28,9 @@ public class JsonPathLanguage extends LanguageSupport {
 
     @Override
     public Predicate createPredicate(final String predicate) {
-        final JSonPathEngine engine;
+        final JsonPathEngine engine;
         try {
-            engine = new JSonPathEngine(predicate);
+            engine = new JsonPathEngine(predicate);
         } catch (Exception e) {
             throw new ExpressionIllegalSyntaxException(predicate, e);
         }
@@ -54,9 +54,9 @@ public class JsonPathLanguage extends LanguageSupport {
 
     @Override
     public Expression createExpression(final String expression) {
-        final JSonPathEngine engine;
+        final JsonPathEngine engine;
         try {
-            engine = new JSonPathEngine(expression);
+            engine = new JsonPathEngine(expression);
         } catch (Exception e) {
             throw new ExpressionIllegalSyntaxException(expression, e);
         }
@@ -78,7 +78,7 @@ public class JsonPathLanguage extends LanguageSupport {
         };
     }
 
-    private Object evaluateJsonPath(Exchange exchange, JSonPathEngine engine) throws Exception {
+    private Object evaluateJsonPath(Exchange exchange, JsonPathEngine engine) throws Exception {
         return engine.read(exchange);
     }
 

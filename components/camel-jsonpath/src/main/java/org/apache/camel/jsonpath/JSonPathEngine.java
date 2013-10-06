@@ -27,13 +27,13 @@ import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.WrappedFile;
 
-public class JSonPathEngine {
+public class JsonPathEngine {
 
     private final String expression;
     private final JsonPath path;
     private final Configuration configuration;
 
-    public JSonPathEngine(String expression) {
+    public JsonPathEngine(String expression) {
         this.expression = expression;
         this.configuration = Configuration.defaultConfiguration();
         this.path = JsonPath.compile(expression);
