@@ -62,6 +62,7 @@
     <aws-java-sdk-bundle-version>1.3.27_1</aws-java-sdk-bundle-version>
     <aws-java-sdk-version>1.3.27</aws-java-sdk-version>
     <axiom-version>1.2.14</axiom-version>
+    <backport-util-concurrent-version>3.1</backport-util-concurrent-version>
     <bcel-bundle-version>5.2_4</bcel-bundle-version>
     <bcpg-jdk15on-bundle-version>1.47_1</bcpg-jdk15on-bundle-version>
     <beanio-version>2.0.6</beanio-version>
@@ -177,6 +178,7 @@
     <httpclient-version>3.1</httpclient-version> 
     <ibatis-bundle-version>2.3.4.726_4</ibatis-bundle-version>
     <ibatis-version>2.3.4.726</ibatis-version>
+    <ical4j-version>1.0.5.2</ical4j-version>
     <irclib-bundle-version>1.10_5</irclib-bundle-version>
     <irclib-version>1.10</irclib-version>
     <isorelax-bundle-version>20050913_4</isorelax-bundle-version>

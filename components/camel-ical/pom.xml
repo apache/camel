@@ -51,7 +51,7 @@
     <dependency>
       <groupId>org.mnode.ical4j</groupId>
       <artifactId>ical4j</artifactId>
-      <version>1.0.4</version>
+      <version>${ical4j-version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
