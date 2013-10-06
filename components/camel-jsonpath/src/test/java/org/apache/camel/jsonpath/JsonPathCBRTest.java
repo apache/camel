@@ -31,9 +31,9 @@ public class JsonPathCBRTest extends CamelTestSupport {
             public void configure() throws Exception {
                 from("direct:start")
                     .choice()
-                        .when().jsonPath("$.store.book[?(@.price < 10)]")
+                        .when().jsonpath("$.store.book[?(@.price < 10)]")
                             .to("mock:cheap")
-                        .when().jsonPath("$.store.book[?(@.price < 30)]")
+                        .when().jsonpath("$.store.book[?(@.price < 30)]")
                             .to("mock:average")
                         .otherwise()
                             .to("mock:expensive");

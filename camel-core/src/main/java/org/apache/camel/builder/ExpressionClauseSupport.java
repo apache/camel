@@ -313,13 +313,13 @@ public class ExpressionClauseSupport<T> {
     }
 
     /**
-     * Evaluates a <a href="http://camel.apache.org/jsonpath.html">JSon Path
+     * Evaluates a <a href="http://camel.apache.org/jsonpath.html">Json Path
      * expression</a>
      *
      * @param text the expression to be evaluated
      * @return the builder to continue processing the DSL
      */
-    public T jsonPath(String text) {
+    public T jsonpath(String text) {
         return expression(new JsonPathExpression(text));
     }
 

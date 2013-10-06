@@ -31,7 +31,7 @@ public class JsonPathTransformTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .transform().jsonPath("$.store.book[*].author")
+                    .transform().jsonpath("$.store.book[*].author")
                     .to("mock:authors");
             }
         };
