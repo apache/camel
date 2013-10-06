@@ -236,6 +236,7 @@
     <jsonlib-bundle-version>2.4_1</jsonlib-bundle-version>
     <jsonlib-version>2.4</jsonlib-version>
     <json-path-version>0.9.0</json-path-version>
+    <json-smart-version>1.2</json-smart-version>
     <jsp-api-2.1-version>1.0.1</jsp-api-2.1-version>
     <jsmpp-bundle-version>2.1.0_4</jsmpp-bundle-version>
     <jt400-version>6.7</jt400-version>
@@ -836,6 +837,11 @@
         <artifactId>camel-jsch</artifactId>
         <version>${project.version}</version>
       </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-jsonpath</artifactId>
+        <version>${project.version}</version>
+      </dependency>      
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-jt400</artifactId>
