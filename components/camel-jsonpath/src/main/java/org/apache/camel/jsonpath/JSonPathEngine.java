@@ -16,22 +16,55 @@
  */
 package org.apache.camel.jsonpath;
 
+import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URL;
 
+import com.jayway.jsonpath.Configuration;
 import com.jayway.jsonpath.JsonPath;
+import org.apache.camel.Exchange;
+import org.apache.camel.InvalidPayloadException;
+import org.apache.camel.WrappedFile;
 
 public class JSonPathEngine {
 
     private final String expression;
     private final JsonPath path;
+    private final Configuration configuration;
 
     public JSonPathEngine(String expression) {
         this.expression = expression;
+        this.configuration = Configuration.defaultConfiguration();
         this.path = JsonPath.compile(expression);
     }
 
-    public Object read(InputStream json) throws IOException {
-        return path.read(json);
+    public Object read(Exchange exchange) throws IOException, InvalidPayloadException {
+        Object json = exchange.getIn().getBody();
+
+        if (json instanceof WrappedFile) {
+            json = ((WrappedFile) json).getFile();
+        }
+
+        // the message body type should use the suitable read method
+        if (configuration.getProvider().isContainer(json)) {
+            return path.read(json);
+        } else if (json instanceof String) {
+            String str = (String) json;
+            return path.read(str);
+        } else if (json instanceof InputStream) {
+            InputStream is = (InputStream) json;
+            return path.read(is);
+        } else if (json instanceof File) {
+            File file = (File) json;
+            return path.read(file);
+        } else if (json instanceof URL) {
+            URL url = (URL) json;
+            return path.read(url);
+        }
+
+        // fallback as input stream
+        InputStream is = exchange.getIn().getMandatoryBody(InputStream.class);
+        return path.read(is);
     }
 }

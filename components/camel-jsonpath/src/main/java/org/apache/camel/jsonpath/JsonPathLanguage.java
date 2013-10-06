@@ -16,8 +16,6 @@
  */
 package org.apache.camel.jsonpath;
 
-import java.io.InputStream;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.ExpressionEvaluationException;
@@ -25,7 +23,6 @@ import org.apache.camel.ExpressionIllegalSyntaxException;
 import org.apache.camel.Predicate;
 import org.apache.camel.support.ExpressionAdapter;
 import org.apache.camel.support.LanguageSupport;
-import org.apache.camel.util.IOHelper;
 
 public class JsonPathLanguage extends LanguageSupport {
 
@@ -46,6 +43,11 @@ public class JsonPathLanguage extends LanguageSupport {
                 } catch (Exception e) {
                     throw new ExpressionEvaluationException(this, exchange, e);
                 }
+            }
+
+            @Override
+            public String toString() {
+                return "jsonpath[" + predicate + "]";
             }
         };
     }
@@ -68,16 +70,16 @@ public class JsonPathLanguage extends LanguageSupport {
                     throw new ExpressionEvaluationException(this, exchange, e);
                 }
             }
+
+            @Override
+            public String toString() {
+                return "jsonpath[" + expression + "]";
+            }
         };
     }
 
     private Object evaluateJsonPath(Exchange exchange, JSonPathEngine engine) throws Exception {
-        InputStream is = exchange.getIn().getMandatoryBody(InputStream.class);
-        try {
-            return engine.read(is);
-        } finally {
-            IOHelper.close(is);
-        }
+        return engine.read(exchange);
     }
 
 }
