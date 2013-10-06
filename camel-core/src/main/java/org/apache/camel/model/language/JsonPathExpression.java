@@ -14,25 +14,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.jsonpath;
+package org.apache.camel.model.language;
 
-import java.io.IOException;
-import java.io.InputStream;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlRootElement;
 
-import com.jayway.jsonpath.JsonPath;
+/**
+ * For JSonPath expressions and predicates
+ *
+ * @version 
+ */
+@XmlRootElement(name = "jsonpath")
+@XmlAccessorType(XmlAccessType.FIELD)
+public class JsonPathExpression extends ExpressionDefinition {
 
-public class JsonPathExpression {
-
-    private final String expression;
-    private final JsonPath path;
-
-    public JsonPathExpression(String expression) {
-        this.expression = expression;
-        this.path = JsonPath.compile(expression);
+    public JsonPathExpression() {
     }
 
-    public Object evaluate(InputStream json) throws IOException {
-        Object result = path.read(json);
-        return result;
+    public JsonPathExpression(String expression) {
+        super(expression);
+    }
+
+    public String getLanguage() {
+        return "jsonpath";
     }
 }

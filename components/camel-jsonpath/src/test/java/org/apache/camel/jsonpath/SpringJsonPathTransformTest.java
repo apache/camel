@@ -19,22 +19,16 @@ package org.apache.camel.jsonpath;
 import java.io.File;
 import java.util.List;
 
-import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.test.spring.CamelSpringTestSupport;
 import org.junit.Test;
+import org.springframework.context.support.AbstractApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-public class JsonPathTransformTest extends CamelTestSupport {
+public class SpringJsonPathTransformTest extends CamelSpringTestSupport {
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
-        return new RouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-                from("direct:start")
-                    .transform().jsonPath("$.store.book[*].author")
-                    .to("mock:authors");
-            }
-        };
+    protected AbstractApplicationContext createApplicationContext() {
+        return new ClassPathXmlApplicationContext("org/apache/camel/jsonpath/SpringJsonPathTransformTest.xml");
     }
 
     @Test
@@ -49,5 +43,4 @@ public class JsonPathTransformTest extends CamelTestSupport {
         assertEquals("Nigel Rees", authors.get(0));
         assertEquals("Evelyn Waugh", authors.get(1));
     }
-
 }

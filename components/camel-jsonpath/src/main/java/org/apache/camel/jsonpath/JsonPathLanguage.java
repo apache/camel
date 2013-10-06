@@ -20,21 +20,31 @@ import java.io.InputStream;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
+import org.apache.camel.ExpressionEvaluationException;
+import org.apache.camel.ExpressionIllegalSyntaxException;
 import org.apache.camel.Predicate;
 import org.apache.camel.support.ExpressionAdapter;
 import org.apache.camel.support.LanguageSupport;
+import org.apache.camel.util.IOHelper;
 
 public class JsonPathLanguage extends LanguageSupport {
 
     @Override
     public Predicate createPredicate(final String predicate) {
+        final JSonPathEngine engine;
+        try {
+            engine = new JSonPathEngine(predicate);
+        } catch (Exception e) {
+            throw new ExpressionIllegalSyntaxException(predicate, e);
+        }
+
         return new ExpressionAdapter() {
             @Override
             public Object evaluate(Exchange exchange) {
                 try {
-                    return evaluateJsonPath(exchange, predicate);
+                    return evaluateJsonPath(exchange, engine);
                 } catch (Exception e) {
-                    throw new RuntimeException("TODO", e);
+                    throw new ExpressionEvaluationException(this, exchange, e);
                 }
             }
         };
@@ -42,23 +52,32 @@ public class JsonPathLanguage extends LanguageSupport {
 
     @Override
     public Expression createExpression(final String expression) {
+        final JSonPathEngine engine;
+        try {
+            engine = new JSonPathEngine(expression);
+        } catch (Exception e) {
+            throw new ExpressionIllegalSyntaxException(expression, e);
+        }
+
         return new ExpressionAdapter() {
             @Override
             public Object evaluate(Exchange exchange) {
                 try {
-                    return evaluateJsonPath(exchange, expression);
+                    return evaluateJsonPath(exchange, engine);
                 } catch (Exception e) {
-                    throw new RuntimeException("TODO", e);
+                    throw new ExpressionEvaluationException(this, exchange, e);
                 }
             }
         };
     }
 
-    private Object evaluateJsonPath(Exchange exchange, String expression) throws Exception {
+    private Object evaluateJsonPath(Exchange exchange, JSonPathEngine engine) throws Exception {
         InputStream is = exchange.getIn().getMandatoryBody(InputStream.class);
-        JsonPathExpression exp = new JsonPathExpression(expression);
-        Object result = exp.evaluate(is);
-        return result;
+        try {
+            return engine.read(is);
+        } finally {
+            IOHelper.close(is);
+        }
     }
 
 }

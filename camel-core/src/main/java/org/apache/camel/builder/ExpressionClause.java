@@ -277,6 +277,18 @@ public class ExpressionClause<T> extends ExpressionDefinition {
     }
 
     /**
+     * Evaluates a <a
+     * href="http://camel.apache.org/jsonpath.html">JSon Path
+     * expression</a>
+     *
+     * @param text the expression to be evaluated
+     * @return the builder to continue processing the DSL
+     */
+    public T jsonPath(String text) {
+        return delegate.jsonPath(text);
+    }
+
+    /**
      * Evaluates a <a href="http://commons.apache.org/jxpath/">JXPath expression</a>
      * 
      * @param text the expression to be evaluated

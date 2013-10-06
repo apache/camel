@@ -20,6 +20,7 @@ ExpressionDefinition
 GroovyExpression
 HeaderExpression
 JavaScriptExpression
+JsonPathExpression
 JXPathExpression
 LanguageExpression
 MethodCallExpression

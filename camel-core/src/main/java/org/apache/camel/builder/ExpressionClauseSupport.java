@@ -28,6 +28,7 @@ import org.apache.camel.model.language.GroovyExpression;
 import org.apache.camel.model.language.HeaderExpression;
 import org.apache.camel.model.language.JXPathExpression;
 import org.apache.camel.model.language.JavaScriptExpression;
+import org.apache.camel.model.language.JsonPathExpression;
 import org.apache.camel.model.language.LanguageExpression;
 import org.apache.camel.model.language.MethodCallExpression;
 import org.apache.camel.model.language.MvelExpression;
@@ -309,6 +310,17 @@ public class ExpressionClauseSupport<T> {
      */
     public T javaScript(String text) {
         return expression(new JavaScriptExpression(text));
+    }
+
+    /**
+     * Evaluates a <a href="http://camel.apache.org/jsonpath.html">JSon Path
+     * expression</a>
+     *
+     * @param text the expression to be evaluated
+     * @return the builder to continue processing the DSL
+     */
+    public T jsonPath(String text) {
+        return expression(new JsonPathExpression(text));
     }
 
     /**
