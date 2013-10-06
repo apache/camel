@@ -21,12 +21,11 @@ import java.net.ConnectException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.http4.handler.BasicValidationHandler;
-import org.apache.http.conn.HttpHostConnectException;
 import org.apache.http.localserver.LocalTestServer;
 import org.junit.Test;
 
 /**
- * @version 
+ * @version
  */
 public class HttpNoConnectionTest extends BaseHttpTest {
 
@@ -50,8 +49,8 @@ public class HttpNoConnectionTest extends BaseHttpTest {
         Exchange reply = template.request(url, null);
         Exception e = reply.getException();
         assertNotNull("Should have thrown an exception", e);
-        HttpHostConnectException cause = assertIsInstanceOf(HttpHostConnectException.class, e);
-        assertIsInstanceOf(ConnectException.class, cause.getCause());
+        ConnectException cause = assertIsInstanceOf(ConnectException.class, e);
+        assertTrue(cause.getMessage().contains("refused"));
     }
 
     @Override

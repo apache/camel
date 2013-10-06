@@ -21,12 +21,11 @@ import java.net.ConnectException;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.http4.handler.BasicValidationHandler;
-import org.apache.http.conn.HttpHostConnectException;
 import org.apache.http.localserver.LocalTestServer;
 import org.junit.Test;
 
 /**
- * @version 
+ * @version
  */
 public class HttpNoConnectionRedeliveryTest extends BaseHttpTest {
 
@@ -47,8 +46,8 @@ public class HttpNoConnectionRedeliveryTest extends BaseHttpTest {
         Exchange exchange = template.request("direct:start", null);
         assertTrue(exchange.isFailed());
 
-        HttpHostConnectException cause = assertIsInstanceOf(HttpHostConnectException.class, exchange.getException());
-        assertIsInstanceOf(ConnectException.class, cause.getCause());
+        ConnectException cause = assertIsInstanceOf(ConnectException.class, exchange.getException());
+        assertTrue(cause.getMessage().contains("refused"));
 
         assertEquals(true, exchange.getIn().getHeader(Exchange.REDELIVERED));
         assertEquals(4, exchange.getIn().getHeader(Exchange.REDELIVERY_COUNTER));

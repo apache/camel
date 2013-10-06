@@ -22,7 +22,6 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.http.ConnectionReuseStrategy;
 import org.apache.http.HttpResponseFactory;
 import org.apache.http.localserver.LocalTestServer;
-import org.apache.http.params.HttpParams;
 import org.apache.http.protocol.BasicHttpProcessor;
 import org.apache.http.protocol.HttpExpectationVerifier;
 import org.junit.After;
@@ -33,7 +32,7 @@ import org.junit.Before;
  * The setUp method starts the server before the camel context is started and
  * the tearDown method stops the server after the camel context is stopped.
  *
- * @version 
+ * @version
  */
 public abstract class HttpServerTestSupport extends CamelTestSupport {
 
@@ -47,8 +46,8 @@ public abstract class HttpServerTestSupport extends CamelTestSupport {
                 getConnectionReuseStrategy(),
                 getHttpResponseFactory(),
                 getHttpExpectationVerifier(),
-                getHttpParams(),
-                getSSLContext());
+                getSSLContext(),
+                false);
         registerHandler(localServer);
         localServer.start();
 
@@ -84,7 +83,7 @@ public abstract class HttpServerTestSupport extends CamelTestSupport {
     protected ConnectionReuseStrategy getConnectionReuseStrategy() {
         return null;
     }
-    
+
     /**
      * Returns the org.apache.http.HttpResponseFactory which should be used
      * by the server.
@@ -94,7 +93,7 @@ public abstract class HttpServerTestSupport extends CamelTestSupport {
     protected HttpResponseFactory getHttpResponseFactory() {
         return null;
     }
-    
+
     /**
      * Returns the org.apache.http.protocol.HttpExpectationVerifier which should be used
      * by the server.
@@ -102,16 +101,6 @@ public abstract class HttpServerTestSupport extends CamelTestSupport {
      * @return httpExpectationVerifier
      */
     protected HttpExpectationVerifier getHttpExpectationVerifier() {
-        return null;
-    }
-
-    /**
-     * Returns the org.apache.http.params.HttpParams which should be used by
-     * the server.
-     *
-     * @return httpParams
-     */
-    protected HttpParams getHttpParams() {
         return null;
     }
 
