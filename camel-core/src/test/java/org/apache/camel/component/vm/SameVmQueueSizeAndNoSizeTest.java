@@ -36,7 +36,9 @@ public class SameVmQueueSizeAndNoSizeTest extends ContextTestSupport {
             fail("Should fail");
         } catch (CamelExecutionException e) {
             IllegalStateException ise = assertIsInstanceOf(IllegalStateException.class, e.getCause());
-            assertEquals("Queue full", ise.getMessage());
+            if (!isJavaVendor("ibm")) {
+                assertEquals("Queue full", ise.getMessage());
+            }
         }
     }
 
