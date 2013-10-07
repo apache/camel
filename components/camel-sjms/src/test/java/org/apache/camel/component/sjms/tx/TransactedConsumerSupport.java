@@ -59,10 +59,9 @@ public abstract class TransactedConsumerSupport extends CamelTestSupport {
             log.trace("Sending message: {}", message);
         }
 
-        // Await on our countdown for 10 seconds at most
-        // then move on
-        latch.await(10, TimeUnit.SECONDS);
-        assertMockEndpointsSatisfied(10, TimeUnit.SECONDS);
+        // Await on our countdown for 30 seconds at most then move on
+        latch.await(30, TimeUnit.SECONDS);
+        assertMockEndpointsSatisfied(30, TimeUnit.SECONDS);
     }
 
     @Override
