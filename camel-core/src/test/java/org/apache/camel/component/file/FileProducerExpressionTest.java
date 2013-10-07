@@ -45,8 +45,10 @@ public class FileProducerExpressionTest extends ContextTestSupport {
     }
 
     public void testProducerFileNameHeaderNotEvaluated() {
-        template.sendBodyAndHeader("file://target/filelanguage", "Hello World", Exchange.FILE_NAME, "$simple{myfile-${date:now:yyyyMMdd}}.txt");
-        assertFileExists("target/filelanguage/$simple{myfile-${date:now:yyyyMMdd}}.txt");
+        if (!isPlatform("windows")) {
+            template.sendBodyAndHeader("file://target/filelanguage", "Hello World", Exchange.FILE_NAME, "$simple{myfile-${date:now:yyyyMMdd}}.txt");
+            assertFileExists("target/filelanguage/$simple{myfile-${date:now:yyyyMMdd}}.txt");
+        }
     }
 
     public void testProduceBeanByExpression() throws Exception {

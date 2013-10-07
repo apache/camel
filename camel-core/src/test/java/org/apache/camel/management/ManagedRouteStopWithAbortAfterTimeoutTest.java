@@ -31,8 +31,8 @@ import org.apache.camel.component.mock.MockEndpoint;
 public class ManagedRouteStopWithAbortAfterTimeoutTest extends ManagementTestSupport {
 
     public void testStopRouteWithAbortAfterTimeoutTrue() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
+        // JMX tests dont work well on AIX or windows CI servers (hangs them)
+        if (isPlatform("aix") || isPlatform("windows")) {
             return;
         }
 
@@ -72,8 +72,8 @@ public class ManagedRouteStopWithAbortAfterTimeoutTest extends ManagementTestSup
     }
 
     public void testStopRouteWithAbortAfterTimeoutFalse() throws Exception {
-        // JMX tests dont work well on AIX CI servers (hangs them)
-        if (isPlatform("aix")) {
+        // JMX tests dont work well on AIX or windows CI servers (hangs them)
+        if (isPlatform("aix") || isPlatform("windows")) {
             return;
         }
 
