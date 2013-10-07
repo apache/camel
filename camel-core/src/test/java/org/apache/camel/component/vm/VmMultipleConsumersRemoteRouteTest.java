@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.vm;
 
+import java.util.concurrent.TimeUnit;
+
 import junit.framework.TestCase;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
@@ -61,7 +63,7 @@ public class VmMultipleConsumersRemoteRouteTest extends TestCase {
             producerTemplate.sendBody("vm:producer?multipleConsumers=true", i);
         }
 
-        MockEndpoint.assertIsSatisfied(mock1, mock2);
+        MockEndpoint.assertIsSatisfied(20, TimeUnit.SECONDS, mock1, mock2);
 
         camelContext.stop();
     }
