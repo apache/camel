@@ -75,8 +75,8 @@ public class StaxConverterTest extends ContextTestSupport {
 
         String result = new String(output.toByteArray(), UTF_8.name());
 
-        assertEquals(TEST_XML_WITH_XML_HEADER, result);
-
+        boolean equals = TEST_XML_WITH_XML_HEADER.equals(result) || TEST_XML_WITH_XML_HEADER_ISO_8859_1.equals(result);
+        assertTrue("Should match header", equals);
     }
 
     public void testEncodingXmlStreamReader() throws Exception {
