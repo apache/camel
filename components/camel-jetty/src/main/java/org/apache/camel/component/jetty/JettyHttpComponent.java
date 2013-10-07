@@ -104,6 +104,8 @@ public class JettyHttpComponent extends HttpComponent {
     protected Integer requestHeaderSize;
     protected Integer responseBufferSize;
     protected Integer responseHeaderSize;
+    protected String proxyHost;
+    private Integer proxyPort;
 
     class ConnectorRef {
         Server server;
@@ -154,8 +156,8 @@ public class JettyHttpComponent extends HttpComponent {
         UrlRewrite urlRewrite = resolveAndRemoveReferenceParameter(parameters, "urlRewrite", UrlRewrite.class);
         SSLContextParameters sslContextParameters = resolveAndRemoveReferenceParameter(parameters, "sslContextParametersRef", SSLContextParameters.class);
         SSLContextParameters ssl = sslContextParameters != null ? sslContextParameters : this.sslContextParameters;
-        String proxyHost = getAndRemoveParameter(parameters, "proxyHost", String.class);
-        Integer proxyPort = getAndRemoveParameter(parameters, "proxyPort", Integer.class);
+        String proxyHost = getAndRemoveParameter(parameters, "proxyHost", String.class, getProxyHost());
+        Integer proxyPort = getAndRemoveParameter(parameters, "proxyPort", Integer.class, getProxyPort());
         Integer responseBufferSize = getAndRemoveParameter(parameters, "responseBufferSize", Integer.class, getResponseBufferSize());
         
         // extract httpClient. parameters
@@ -889,6 +891,22 @@ public class JettyHttpComponent extends HttpComponent {
 
     public void setResponseHeaderSize(Integer responseHeaderSize) {
         this.responseHeaderSize = responseHeaderSize;
+    }
+
+    public String getProxyHost() {
+        return proxyHost;
+    }
+
+    public void setProxyHost(String proxyHost) {
+        this.proxyHost = proxyHost;
+    }
+
+    public Integer getProxyPort() {
+        return proxyPort;
+    }
+
+    public void setProxyPort(Integer proxyPort) {
+        this.proxyPort = proxyPort;
     }
 
     // Implementation methods
