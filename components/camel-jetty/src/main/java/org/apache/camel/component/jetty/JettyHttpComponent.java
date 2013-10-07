@@ -159,7 +159,9 @@ public class JettyHttpComponent extends HttpComponent {
         String proxyHost = getAndRemoveParameter(parameters, "proxyHost", String.class, getProxyHost());
         Integer proxyPort = getAndRemoveParameter(parameters, "proxyPort", Integer.class, getProxyPort());
         Integer responseBufferSize = getAndRemoveParameter(parameters, "responseBufferSize", Integer.class, getResponseBufferSize());
-        
+        Integer httpClientMinThreads = getAndRemoveParameter(parameters, "httpClientMinThreads", Integer.class, this.httpClientMinThreads);
+        Integer httpClientMaxThreads = getAndRemoveParameter(parameters, "httpClientMaxThreads", Integer.class, this.httpClientMaxThreads);
+
         // extract httpClient. parameters
         Map<String, Object> httpClientParameters = IntrospectionSupport.extractProperties(parameters, "httpClient.");
 
@@ -254,6 +256,12 @@ public class JettyHttpComponent extends HttpComponent {
         }
         if (responseBufferSize != null) {
             endpoint.setResponseBufferSize(responseBufferSize);
+        }
+        if (httpClientMinThreads != null) {
+            endpoint.setHttpClientMinThreads(httpClientMinThreads);
+        }
+        if (httpClientMaxThreads != null) {
+            endpoint.setHttpClientMaxThreads(httpClientMaxThreads);
         }
 
         setProperties(endpoint, parameters);
