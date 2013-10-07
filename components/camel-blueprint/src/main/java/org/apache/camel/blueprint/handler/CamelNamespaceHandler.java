@@ -181,7 +181,7 @@ public class CamelNamespaceHandler implements NamespaceHandler {
             // if no explicit id was set then use a default auto generated name
             CamelContextNameStrategy strategy = new DefaultCamelContextNameStrategy();
             contextId = strategy.getName();
-            element.setAttribute("id", contextId);
+            element.setAttributeNS(null, "id", contextId);
             implicitId = true;
         }
 
