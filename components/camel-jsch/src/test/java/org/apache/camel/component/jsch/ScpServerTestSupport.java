@@ -86,8 +86,8 @@ public abstract class ScpServerTestSupport extends CamelTestSupport {
     @Override
     @Before
     public void setUp() throws Exception {
-        File root = new File(getScpPath());
-        root.mkdirs(); // implicitly create sshd home dir
+        deleteDirectory(getScpPath());
+        createDirectory(getScpPath());
 
         setupComplete = startSshd();
         setupKnownHosts();
@@ -109,6 +109,7 @@ public abstract class ScpServerTestSupport extends CamelTestSupport {
             }
         }
         FileUtil.deleteFile(new File(knownHostsFile));
+        deleteDirectory(getScpPath());
     }
 
     protected final String getScpPath() {
@@ -120,7 +121,6 @@ public abstract class ScpServerTestSupport extends CamelTestSupport {
     protected String getScpUri() {
         return "scp://localhost:" + getPort() + "/" + getScpPath();
     }
-
 
     @SuppressWarnings("unchecked")
     protected boolean startSshd() {
