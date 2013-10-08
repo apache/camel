@@ -21,6 +21,7 @@ import java.util.Properties;
 import org.apache.camel.CamelContext;
 import org.apache.camel.spring.SpringTestSupport;
 import org.apache.camel.spring.spi.BridgePropertyPlaceholderConfigurer;
+
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
