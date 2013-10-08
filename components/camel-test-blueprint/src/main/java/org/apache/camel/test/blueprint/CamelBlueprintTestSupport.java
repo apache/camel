@@ -48,8 +48,13 @@ public abstract class CamelBlueprintTestSupport extends CamelTestSupport {
     private volatile BundleContext bundleContext;
     private final Set<ServiceRegistration<?>> services = new LinkedHashSet<ServiceRegistration<?>>();
     
-    // CamelBlueprintTestSupport creates the test bundle which includes blueprint configuration files if the value is true
-    // You can override the return value to false if you already has the test bundle in your class path
+    /**
+     * Override this method if you don't want CamelBlueprintTestSupport create the test bundle
+     * @return includeTestBundle
+     * If the return value is true CamelBlueprintTestSupport creates the test bundle which includes blueprint configuration files
+     * If the return value is false CamelBlueprintTestSupport won't create the test bundle
+     * 
+     */
     protected boolean includeTestBundle() {
         return true;
     }
