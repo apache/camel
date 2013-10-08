@@ -17,21 +17,23 @@
 
 package org.apache.camel.component.rabbitmq;
 
+import static org.junit.Assert.assertEquals;
+
 import java.io.IOException;
 import java.util.concurrent.ExecutorService;
-
-import com.rabbitmq.client.AMQP;
-import com.rabbitmq.client.Connection;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.impl.DefaultMessage;
 import org.junit.Before;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Matchers;
 import org.mockito.Mockito;
 
-import static org.junit.Assert.assertEquals;
+import com.rabbitmq.client.AMQP;
+import com.rabbitmq.client.Channel;
+import com.rabbitmq.client.Connection;
 
 public class RabbitMQProducerTest {
 
@@ -39,12 +41,12 @@ public class RabbitMQProducerTest {
     private Exchange exchange = Mockito.mock(Exchange.class);
     private Message message = new DefaultMessage();
     private Connection conn = Mockito.mock(Connection.class);
-
+    private Channel channel = Mockito.mock(Channel.class);
     @Before
     public void before() throws IOException {
         Mockito.when(exchange.getIn()).thenReturn(message);
         Mockito.when(endpoint.connect(Matchers.any(ExecutorService.class))).thenReturn(conn);
-        Mockito.when(conn.createChannel()).thenReturn(null);
+        Mockito.when(conn.createChannel()).thenReturn(channel);
     }
 
     @Test
@@ -149,5 +151,18 @@ public class RabbitMQProducerTest {
         message.setHeader(RabbitMQConstants.TIMESTAMP, "12345123");
         AMQP.BasicProperties props = producer.buildProperties(exchange).build();
         assertEquals(12345123, props.getTimestamp().getTime());
+    }
+    
+    @Test
+    public void testOriginalMessageExchangeNameHeaderIsIgnored() throws Exception {
+        RabbitMQProducer producer = new RabbitMQProducer(endpoint);
+        message.setHeader(RabbitMQConstants.EXCHANGE_NAME, "fooExcchange");
+        message.setBody("Hello".getBytes());
+        Mockito.when(endpoint.getExchangeName()).thenReturn("barExchange");
+        ArgumentCaptor<String> exchangeNameCapture = ArgumentCaptor.forClass(String.class);
+        producer.process(exchange);
+        Mockito.verify(channel).basicPublish(exchangeNameCapture.capture(), Mockito.eq(""), Mockito.any(AMQP.BasicProperties.class), 
+            Mockito.any(byte[].class));
+        assertEquals("barExchange", exchangeNameCapture.getValue());
     }
 }
