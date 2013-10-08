@@ -37,13 +37,11 @@ public class SpringQuartzTwoAppsClusteredFailoverTest extends TestSupport {
         AbstractXmlApplicationContext db = new ClassPathXmlApplicationContext("org/apache/camel/routepolicy/quartz/SpringQuartzClusteredAppDatabase.xml");
         db.start();
 
-        // now launch the first clustered app which will acquire the quartz
-        // database lock and become the master
+        // now launch the first clustered app which will acquire the quartz database lock and become the master
         AbstractXmlApplicationContext app = new ClassPathXmlApplicationContext("org/apache/camel/routepolicy/quartz/SpringQuartzClusteredAppOne.xml");
         app.start();
 
-        // as well as the second one which will run in slave modus as it will
-        // not be able to acquire the same lock
+        // as well as the second one which will run in slave mode as it will not be able to acquire the same lock
         AbstractXmlApplicationContext app2 = new ClassPathXmlApplicationContext("org/apache/camel/routepolicy/quartz/SpringQuartzClusteredAppTwo.xml");
         app2.start();
 
