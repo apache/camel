@@ -68,7 +68,7 @@ public class HazelcastComponent extends DefaultComponent {
 
         if (remaining.startsWith(HazelcastConstants.ATOMICNUMBER_PREFIX)) {
             // remaining is the name of the atomic value
-            remaining = removeStartingCharacters(remaining.substring(HazelcastConstants.INSTANCE_PREFIX.length()), '/');
+            remaining = removeStartingCharacters(remaining.substring(HazelcastConstants.ATOMICNUMBER_PREFIX.length()), '/');
             endpoint = new HazelcastAtomicnumberEndpoint(hazelcastInstance, uri, this, remaining);
         }
 
