@@ -45,7 +45,7 @@ public class CamelSpringPropertyPlaceholderConfigurer3Test extends SpringTestSup
 
     @Override
     protected void tearDown() throws Exception {
-        // clear the property properly to avoid any side effect by the other tests
+        // clear the property to avoid any side effect by the other tests
         System.clearProperty("hi2");
 
         super.tearDown();
