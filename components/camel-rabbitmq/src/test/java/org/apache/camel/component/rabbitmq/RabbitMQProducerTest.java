@@ -17,10 +17,13 @@
 
 package org.apache.camel.component.rabbitmq;
 
-import static org.junit.Assert.assertEquals;
 
 import java.io.IOException;
 import java.util.concurrent.ExecutorService;
+
+import com.rabbitmq.client.AMQP;
+import com.rabbitmq.client.Channel;
+import com.rabbitmq.client.Connection;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -31,9 +34,7 @@ import org.mockito.ArgumentCaptor;
 import org.mockito.Matchers;
 import org.mockito.Mockito;
 
-import com.rabbitmq.client.AMQP;
-import com.rabbitmq.client.Channel;
-import com.rabbitmq.client.Connection;
+import static org.junit.Assert.assertEquals;
 
 public class RabbitMQProducerTest {
 
@@ -42,6 +43,7 @@ public class RabbitMQProducerTest {
     private Message message = new DefaultMessage();
     private Connection conn = Mockito.mock(Connection.class);
     private Channel channel = Mockito.mock(Channel.class);
+    
     @Before
     public void before() throws IOException {
         Mockito.when(exchange.getIn()).thenReturn(message);

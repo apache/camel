@@ -20,20 +20,19 @@ import java.io.IOException;
 import java.util.Date;
 import java.util.concurrent.Executors;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.impl.DefaultProducer;
-import org.apache.camel.util.ObjectHelper;
-
 import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
+import org.apache.camel.Exchange;
+import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.util.ObjectHelper;
 
 public class RabbitMQProducer extends DefaultProducer {
 
     private final Connection conn;
     private final Channel channel;
 
-    public RabbitMQProducer(final RabbitMQEndpoint endpoint) throws IOException {
+    public RabbitMQProducer(RabbitMQEndpoint endpoint) throws IOException {
         super(endpoint);
         this.conn = endpoint.connect(Executors.newSingleThreadExecutor());
         this.channel = conn.createChannel();
@@ -50,7 +49,7 @@ public class RabbitMQProducer extends DefaultProducer {
     }
 
     @Override
-    public void process(final Exchange exchange) throws Exception {
+    public void process(Exchange exchange) throws Exception {
         String exchangeName = getEndpoint().getExchangeName();
         if (ObjectHelper.isEmpty(exchangeName)) {
             throw new IllegalArgumentException("ExchangeName is not provided in the endpoint: " + getEndpoint());
@@ -63,7 +62,7 @@ public class RabbitMQProducer extends DefaultProducer {
         channel.basicPublish(exchangeName, key, properties.build(), messageBodyBytes);
     }
 
-    AMQP.BasicProperties.Builder buildProperties(final Exchange exchange) {
+    AMQP.BasicProperties.Builder buildProperties(Exchange exchange) {
         AMQP.BasicProperties.Builder properties = new AMQP.BasicProperties.Builder();
 
         final Object contentType = exchange.getIn().getHeader(RabbitMQConstants.CONTENT_TYPE);
