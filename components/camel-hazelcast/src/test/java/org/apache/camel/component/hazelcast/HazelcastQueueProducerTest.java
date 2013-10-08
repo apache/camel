@@ -16,114 +16,85 @@
  */
 package org.apache.camel.component.hazelcast;
 
-import java.util.concurrent.BlockingQueue;
-
-import com.hazelcast.core.Hazelcast;
-
 import com.hazelcast.core.HazelcastInstance;
+import com.hazelcast.core.IQueue;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.AfterClass;
+import org.junit.After;
 import org.junit.Test;
+import org.mockito.Mock;
 
-public class HazelcastQueueProducerTest extends CamelTestSupport {
+import static org.mockito.Mockito.*;
 
-    private BlockingQueue<String> queue;
+public class HazelcastQueueProducerTest extends HazelcastCamelTestSupport {
+
+    @Mock
+    private IQueue<String> queue;
 
     @Override
-    protected void doPostSetup() throws Exception {
-        HazelcastComponent component = context().getComponent("hazelcast", HazelcastComponent.class);
-        HazelcastInstance hazelcastInstance = component.getHazelcastInstance();
-        queue = hazelcastInstance.getQueue("bar");
-        queue.clear();
+    protected void trainHazelcastInstance(HazelcastInstance hazelcastInstance) {
+        when(hazelcastInstance.<String>getQueue("bar")).thenReturn(queue);
     }
 
-    @AfterClass
-    public static void tearDownClass() {
-        Hazelcast.shutdownAll();
+    @Override
+    protected void verifyHazelcastInstance(HazelcastInstance hazelcastInstance) {
+        verify(hazelcastInstance, atLeastOnce()).getQueue("bar");
+    }
+
+    @After
+    public void verifyQueueMock() {
+        verifyNoMoreInteractions(queue);
     }
 
     @Test
     public void put() throws InterruptedException {
         template.sendBody("direct:put", "foo");
-
-        assertTrue(queue.contains("foo"));
-
-        queue.clear();
+        verify(queue).put("foo");
     }
 
     @Test
-    public void noOperation() throws InterruptedException {
+    public void noOperation() {
         template.sendBody("direct:no-operation", "bar");
-
-        assertTrue(queue.contains("bar"));
-
-        queue.clear();
+        verify(queue).add("bar");
     }
 
     @Test
-    public void add() throws InterruptedException {
+    public void add() {
         template.sendBody("direct:add", "bar");
-
-        assertTrue(queue.contains("bar"));
-
-        queue.clear();
+        verify(queue).add("bar");
     }
 
     @Test
-    public void offer() throws InterruptedException {
+    public void offer() {
         template.sendBody("direct:offer", "foobar");
-        assertTrue(queue.contains("foobar"));
-
-        queue.clear();
+        verify(queue).offer("foobar");
     }
 
     @Test
-    public void removeValue() throws InterruptedException {
-        queue.put("foo1");
-        queue.put("foo2");
-        queue.put("foo3");
-
-        assertEquals(3, queue.size());
-
-        // specify the value to remove
+    public void removeSpecifiedValue() throws InterruptedException {
         template.sendBody("direct:removevalue", "foo2");
-        assertEquals(2, queue.size());
-        assertTrue(queue.contains("foo1") && queue.contains("foo3"));
+        verify(queue).remove("foo2");
+    }
 
-        // do not specify the value to delete (null)
+    @Test
+    public void removeValue() {
         template.sendBody("direct:removevalue", null);
-        assertEquals(1, queue.size());
-
-        assertTrue(queue.contains("foo3"));
-
-        queue.clear();
+        verify(queue).remove();
     }
 
     @Test
     public void poll() throws InterruptedException {
-        queue.put("foo");
-        assertEquals(1, queue.size());
-
-        template.sendBody("direct:poll", null);
-
-        assertFalse(queue.contains("foo"));
-        assertEquals(0, queue.size());
-
-        queue.clear();
+        when(queue.poll()).thenReturn("foo");
+        String answer = template.requestBody("direct:poll", null, String.class);
+        verify(queue).poll();
+        assertEquals("foo", answer);
     }
 
     @Test
     public void peek() throws InterruptedException {
-        queue.put("foo");
-        assertEquals(1, queue.size());
-
-        template.sendBody("direct:peek", null);
-
-        assertEquals(1, queue.size());
-        assertTrue(queue.contains("foo"));
-
-        queue.clear();
+        when(queue.peek()).thenReturn("foo");
+        String answer = template.requestBody("direct:peek", null, String.class);
+        verify(queue).peek();
+        assertEquals("foo", answer);
     }
 
     @Override

@@ -16,101 +16,77 @@
  */
 package org.apache.camel.component.hazelcast;
 
+import java.util.ArrayList;
 import java.util.List;
 
 import com.hazelcast.core.HazelcastInstance;
 
+import com.hazelcast.core.IList;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
 
+import org.junit.After;
+import org.junit.Before;
 import org.junit.Test;
+import org.mockito.Mock;
 
-public class HazelcastListProducerTest extends CamelTestSupport {
+import static org.mockito.Mockito.*;
 
-    private List<String> list;
+public class HazelcastListProducerTest extends HazelcastCamelTestSupport {
+
+    @Mock
+    private IList<String> list;
 
     @Override
-    protected void doPostSetup() throws Exception {
-        HazelcastComponent component = context().getComponent("hazelcast", HazelcastComponent.class);
-        HazelcastInstance hazelcastInstance = component.getHazelcastInstance();
-        list = hazelcastInstance.getList("bar");
-        list.clear();
+    protected void trainHazelcastInstance(HazelcastInstance hazelcastInstance) {
+        when(hazelcastInstance.<String>getList("bar")).thenReturn(list);
+    }
+
+    @Override
+    protected void verifyHazelcastInstance(HazelcastInstance hazelcastInstance) {
+        verify(hazelcastInstance, atLeastOnce()).getList("bar");
+    }
+
+    @After
+    public final void verifyListMock() {
+        verifyNoMoreInteractions(list);
     }
 
     @Test
     public void addValue() throws InterruptedException {
         template.sendBody("direct:add", "bar");
-        assertTrue(list.contains("bar"));
+        verify(list).add("bar");
     }
 
     @Test
     public void removeValue() throws InterruptedException {
-        list.add("foo1");
-        list.add("foo2");
-        list.add("foo3");
-
-        assertEquals(3, list.size());
-
-        // specify the value to remove
         template.sendBody("direct:removevalue", "foo2");
-
-        assertEquals(2, list.size());
-        assertTrue(list.contains("foo1") && list.contains("foo3"));
+        verify(list).remove("foo2");
     }
 
     @Test
     public void getValueWithIdx() {
-        list.add("foo1");
-        list.add("foo2");
-
-        assertEquals(2, list.size());
-
+        when(list.get(1)).thenReturn("foo2");
         template.sendBodyAndHeader("direct:get", "test", HazelcastConstants.OBJECT_POS, 1);
-
+        verify(list).get(1);
         assertEquals("foo2", consumer.receiveBody("seda:out", 5000, String.class));
-
     }
 
     @Test
     public void setValueWithIdx() {
-        list.add("foo1");
-        list.add("foo2");
-
-        assertEquals(2, list.size());
-
         template.sendBodyAndHeader("direct:set", "test", HazelcastConstants.OBJECT_POS, 1);
-
-        assertEquals(2, list.size());
-        assertEquals("test", list.get(1));
-
+        verify(list).set(1, "test");
     }
 
     @Test
     public void removeValueWithIdx() {
-        list.add("foo1");
-        list.add("foo2");
-
-        assertEquals(2, list.size());
-
-        // do not specify the value to delete, but the index
         template.sendBodyAndHeader("direct:removevalue", null, HazelcastConstants.OBJECT_POS, 1);
-
-        assertEquals(1, list.size());
-        assertEquals("foo1", list.get(0));
+        verify(list).remove(1);
     }
 
     @Test
     public void removeValueWithoutIdx() {
-        list.add("foo1");
-        list.add("foo2");
-
-        assertEquals(2, list.size());
-
-        // do not specify the index to delete, but the value
         template.sendBody("direct:removevalue", "foo1");
-
-        assertEquals(1, list.size());
-        assertEquals("foo2", list.get(0));
+        verify(list).remove("foo1");
     }
 
     @Override

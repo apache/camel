@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.hazelcast;
 
+import java.util.Arrays;
 import java.util.Collection;
 
 import com.hazelcast.core.Hazelcast;
@@ -23,69 +24,56 @@ import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.MultiMap;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.AfterClass;
+import org.junit.After;
 import org.junit.Test;
+import org.mockito.Mock;
+import static org.mockito.Mockito.*;
 
-public class HazelcastMultimapProducerTest extends CamelTestSupport {
+public class HazelcastMultimapProducerTest extends HazelcastCamelTestSupport {
 
+    @Mock
     private MultiMap<Object, Object> map;
 
     @Override
-    protected void doPostSetup() throws Exception {
-        HazelcastComponent component = context().getComponent("hazelcast", HazelcastComponent.class);
-        HazelcastInstance hazelcastInstance = component.getHazelcastInstance();
-        this.map = hazelcastInstance.getMultiMap("bar");
-        this.map.clear();
+    protected void trainHazelcastInstance(HazelcastInstance hazelcastInstance) {
+        when(hazelcastInstance.getMultiMap("bar")).thenReturn(map);
     }
 
-    @AfterClass
-    public static void tearDownClass() {
-        Hazelcast.shutdownAll();
+    @Override
+    protected void verifyHazelcastInstance(HazelcastInstance hazelcastInstance) {
+        verify(hazelcastInstance, atLeastOnce()).getMultiMap("bar");
+    }
+
+    @After
+    public void verifyMapMock() {
+        verifyNoMoreInteractions(map);
     }
 
     @Test
     public void testPut() throws InterruptedException {
         template.sendBodyAndHeader("direct:put", "my-foo", HazelcastConstants.OBJECT_ID, "4711");
-        template.sendBodyAndHeader("direct:put", "my-bar", HazelcastConstants.OBJECT_ID, "4711");
-
-        assertTrue(map.containsKey("4711"));
-        Collection<Object> values = map.get("4711");
-
-        assertTrue(values.contains("my-foo"));
-        assertTrue(values.contains("my-bar"));
+        verify(map).put("4711", "my-foo");
     }
 
     @Test
     public void testRemoveValue() {
-        map.put("4711", "my-foo");
-        map.put("4711", "my-bar");
-
-        assertEquals(2, map.get("4711").size());
-
         template.sendBodyAndHeader("direct:removevalue", "my-foo", HazelcastConstants.OBJECT_ID, "4711");
-
-        assertEquals(1, map.get("4711").size());
-        assertTrue(map.get("4711").contains("my-bar"));
+        verify(map).remove("4711", "my-foo");
     }
 
     @Test
     public void testGet() {
-        map.put("4711", "my-foo");
-
+        when(map.get("4711")).thenReturn(Arrays.<Object>asList("my-foo"));
         template.sendBodyAndHeader("direct:get", null, HazelcastConstants.OBJECT_ID, "4711");
+        verify(map).get("4711");
         Collection<?> body = consumer.receiveBody("seda:out", 5000, Collection.class);
-
         assertTrue(body.contains("my-foo"));
     }
 
     @Test
     public void testDelete() {
-        map.put(4711, "my-foo");
-        assertEquals(1, map.size());
-
         template.sendBodyAndHeader("direct:delete", null, HazelcastConstants.OBJECT_ID, 4711);
-        assertEquals(0, map.size());
+        verify(map).remove(4711);
     }
 
     @Override

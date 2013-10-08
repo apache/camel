@@ -16,51 +16,68 @@
  */
 package org.apache.camel.component.hazelcast;
 
+import com.hazelcast.core.HazelcastInstance;
+import com.hazelcast.core.IAtomicLong;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.After;
 import org.junit.Test;
+import org.mockito.Mock;
+import static org.mockito.Mockito.*;
 
-public class HazelcastAtomicnumberProducerTest extends CamelTestSupport {
+public class HazelcastAtomicnumberProducerTest extends HazelcastCamelTestSupport {
+
+    @Mock
+    private IAtomicLong atomicNumber;
+
+    @Override
+    protected void trainHazelcastInstance(HazelcastInstance hazelcastInstance) {
+        when(hazelcastInstance.getAtomicLong("foo")).thenReturn(atomicNumber);
+    }
+
+    @Override
+    protected void verifyHazelcastInstance(HazelcastInstance hazelcastInstance) {
+        verify(hazelcastInstance, atLeastOnce()).getAtomicLong("foo");
+    }
+
+    @After
+    public void verifyAtomicNumberMock() {
+        verifyNoMoreInteractions(atomicNumber);
+    }
 
     @Test
     public void testSet() {
         template.sendBody("direct:set", 4711);
-
-        long body = template.requestBody("direct:get", null, Long.class);
-        assertEquals(4711, body);
+        verify(atomicNumber).set(4711);
     }
 
     @Test
     public void testGet() {
-        template.sendBody("direct:set", 1234);
-
+        when(atomicNumber.get()).thenReturn(1234L);
         long body = template.requestBody("direct:get", null, Long.class);
+        verify(atomicNumber).get();
         assertEquals(1234, body);
     }
 
     @Test
     public void testIncrement() {
-        template.sendBody("direct:set", 10);
-
+        when(atomicNumber.incrementAndGet()).thenReturn(11L);
         long body = template.requestBody("direct:increment", null, Long.class);
+        verify(atomicNumber).incrementAndGet();
         assertEquals(11, body);
     }
 
     @Test
     public void testDecrement() {
-        template.sendBody("direct:set", 10);
-
+        when(atomicNumber.decrementAndGet()).thenReturn(9L);
         long body = template.requestBody("direct:decrement", null, Long.class);
+        verify(atomicNumber).decrementAndGet();
         assertEquals(9, body);
     }
 
     @Test
     public void testDestroy() throws InterruptedException {
-        template.sendBody("direct:set", 10);
         template.sendBody("direct:destroy", null);
-        long body = template.requestBody("direct:get", null, Long.class);
-        // the body is destory
-        assertEquals(0, body);
+        verify(atomicNumber).destroy();
     }
 
     @Override
