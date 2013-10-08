@@ -52,6 +52,7 @@ import org.restlet.data.Status;
 import org.restlet.engine.header.HeaderConstants;
 import org.restlet.representation.FileRepresentation;
 import org.restlet.representation.InputRepresentation;
+import org.restlet.representation.Representation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -230,6 +231,8 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
         } else if (body instanceof Response) {
             // its already a restlet response, so dont do anything
             LOG.debug("Using existing Restlet Response from exchange body: {}", body);
+        } else if (body instanceof Representation) {
+            response.setEntity(out.getBody(Representation.class));
         } else if (body instanceof InputStream) {
             response.setEntity(new InputRepresentation(out.getBody(InputStream.class), mediaType));
         } else if (body instanceof File) {
