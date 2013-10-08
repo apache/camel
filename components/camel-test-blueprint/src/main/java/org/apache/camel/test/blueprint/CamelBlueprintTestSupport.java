@@ -47,13 +47,19 @@ public abstract class CamelBlueprintTestSupport extends CamelTestSupport {
     private static ThreadLocal<BundleContext> threadLocalBundleContext = new ThreadLocal<BundleContext>();
     private volatile BundleContext bundleContext;
     private final Set<ServiceRegistration<?>> services = new LinkedHashSet<ServiceRegistration<?>>();
+    
+    // CamelBlueprintTestSupport creates the test bundle which includes blueprint configuration files if the value is true
+    // You can override the return value to false if you already has the test bundle in your class path
+    protected boolean includeTestBundle() {
+        return true;
+    }
 
    
     @SuppressWarnings({"rawtypes", "unchecked"})
     protected BundleContext createBundleContext() throws Exception {
         String symbolicName = getClass().getSimpleName();
         BundleContext answer = CamelBlueprintHelper.createBundleContext(symbolicName, getBlueprintDescriptor(),
-                true, getBundleFilter(), getBundleVersion(), getBundleDirectives());
+            includeTestBundle(), getBundleFilter(), getBundleVersion(), getBundleDirectives());
 
         // must register override properties early in OSGi containers
         Properties extra = useOverridePropertiesWithPropertiesComponent();
