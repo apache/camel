@@ -43,18 +43,16 @@ public class RabbitMQProducer extends DefaultProducer {
         return (RabbitMQEndpoint) super.getEndpoint();
     }
 
+    @Override
     public void shutdown() throws IOException {
         conn.close();
     }
 
     @Override
     public void process(Exchange exchange) throws Exception {
-        String exchangeName = exchange.getIn().getHeader(RabbitMQConstants.EXCHANGE_NAME, String.class);
-        if (exchangeName == null) {
-            exchangeName = getEndpoint().getExchangeName();
-        }
+        String exchangeName = getEndpoint().getExchangeName();
         if (ObjectHelper.isEmpty(exchangeName)) {
-            throw new IllegalArgumentException("ExchangeName is not provided in header " + RabbitMQConstants.EXCHANGE_NAME);
+            throw new IllegalArgumentException("ExchangeName is not provided in the endpoint: " + getEndpoint());
         }
 
         String key = exchange.getIn().getHeader(RabbitMQConstants.ROUTING_KEY, "", String.class);
