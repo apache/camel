@@ -16,8 +16,16 @@
  */
 package org.apache.camel.processor;
 
+import java.io.File;
+import java.util.concurrent.atomic.AtomicBoolean;
+
+import org.apache.camel.Component;
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.file.FileConsumer;
+import org.apache.camel.component.file.FileEndpoint;
+import org.apache.camel.component.file.GenericFileOperations;
 import org.apache.camel.component.mock.MockEndpoint;
 
 import static org.apache.camel.ShutdownRoute.Defer;
@@ -27,6 +35,8 @@ import static org.apache.camel.ShutdownRoute.Defer;
  */
 public class ShutdownDeferTest extends ContextTestSupport {
 
+    private static final AtomicBoolean consumerSuspended = new AtomicBoolean();
+
     @Override
     protected void setUp() throws Exception {
         deleteDirectory("target/deferred");
@@ -34,9 +44,6 @@ public class ShutdownDeferTest extends ContextTestSupport {
     }
 
     public void testShutdownDeferred() throws Exception {
-        // give it 20 seconds to shutdown
-        context.getShutdownStrategy().setTimeout(20);
-        
         MockEndpoint bar = getMockEndpoint("mock:bar");
         bar.expectedMinimumMessageCount(1);
 
@@ -52,8 +59,7 @@ public class ShutdownDeferTest extends ContextTestSupport {
 
         context.stop();
 
-        // should route all 5
-        assertEquals(5, bar.getReceivedCounter());
+        assertFalse("Should not have been suspended", consumerSuspended.get());
     }
 
     @Override
@@ -69,12 +75,33 @@ public class ShutdownDeferTest extends ContextTestSupport {
                 // use file component to transfer files from route 1 -> route 2 as it
                 // will normally suspend, but by deferring this we can let route 1
                 // complete while shutting down
-                from("file://target/deferred")
+                MyDeferFileEndpoint defer = new MyDeferFileEndpoint("file://target/deferred", getContext().getComponent("file"));
+                defer.setFile(new File("target/deferred"));
+
+                from(defer)
                     // defer shutting down this route as the 1st route depends upon it
                     .startupOrder(2).shutdownRoute(Defer)
                     .to("mock:bar");
             }
             // END SNIPPET: e1
         };
+    }
+
+    private static final class MyDeferFileEndpoint extends FileEndpoint {
+
+        private MyDeferFileEndpoint(String endpointUri, Component component) {
+            super(endpointUri, component);
+        }
+
+        @Override
+        protected FileConsumer newFileConsumer(Processor processor, GenericFileOperations<File> operations) {
+            return new FileConsumer(this, processor, operations) {
+                @Override
+                protected void doSuspend() throws Exception {
+                    consumerSuspended.set(true);
+                    super.doSuspend();
+                }
+            };
+        }
     }
 }

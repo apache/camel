@@ -14,19 +14,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.spring.processor;
-
-import org.apache.camel.CamelContext;
-import org.apache.camel.processor.ShutdownNotDeferTest;
-
-import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
+package ${package}.incident;
 
 /**
- * @version 
+ * Interface with the services we want to expose as web services using code first.
+ * <p/>
+ * This is a basic example, you can use the JAX-WS annotations to control the contract.
  */
-public class SpringShutdownNotDeferTest extends ShutdownNotDeferTest {
+public interface IncidentService {
 
-    protected CamelContext createCamelContext() throws Exception {
-        return createSpringCamelContext(this, "org/apache/camel/spring/processor/ShutdownNotDeferTest.xml");
-    }
+    /**
+     * Operation to report an incident
+     */
+    OutputReportIncident reportIncident(InputReportIncident input);
+
+    /**
+     * Operation to get the status of an incident
+     */
+    OutputStatusIncident statusIncident(InputStatusIncident input);
 }

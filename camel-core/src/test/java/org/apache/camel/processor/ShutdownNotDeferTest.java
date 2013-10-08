@@ -16,8 +16,16 @@
  */
 package org.apache.camel.processor;
 
+import java.io.File;
+import java.util.concurrent.atomic.AtomicBoolean;
+
+import org.apache.camel.Component;
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.file.FileConsumer;
+import org.apache.camel.component.file.FileEndpoint;
+import org.apache.camel.component.file.GenericFileOperations;
 import org.apache.camel.component.mock.MockEndpoint;
 
 import static org.apache.camel.ShutdownRoute.Default;
@@ -27,6 +35,8 @@ import static org.apache.camel.ShutdownRoute.Default;
  */
 public class ShutdownNotDeferTest extends ContextTestSupport {
 
+    private static final AtomicBoolean consumerSuspended = new AtomicBoolean();
+
     @Override
     protected void setUp() throws Exception {
         deleteDirectory("target/deferred");
@@ -34,9 +44,6 @@ public class ShutdownNotDeferTest extends ContextTestSupport {
     }
 
     public void testShutdownNotDeferred() throws Exception {
-        // give it 20 seconds to shutdown
-        context.getShutdownStrategy().setTimeout(20);
-
         MockEndpoint bar = getMockEndpoint("mock:bar");
         bar.expectedMinimumMessageCount(1);
 
@@ -50,8 +57,7 @@ public class ShutdownNotDeferTest extends ContextTestSupport {
 
         context.stop();
 
-        // should not route all 5
-        assertTrue("Should NOT complete all messages, was " + bar.getReceivedCounter(), bar.getReceivedCounter() < 5);
+        assertTrue("Should have been suspended", consumerSuspended.get());
     }
 
     @Override
@@ -61,14 +67,35 @@ public class ShutdownNotDeferTest extends ContextTestSupport {
             public void configure() throws Exception {
                 from("seda:foo")
                     .startupOrder(1)
-                    .delay(1000).to("file://target/deferred");
+                    .to("file://target/deferred");
 
                 // use file component to transfer files from route 1 -> route 2
-                from("file://target/deferred")
+                MyDeferFileEndpoint defer = new MyDeferFileEndpoint("file://target/deferred", getContext().getComponent("file"));
+                defer.setFile(new File("target/deferred"));
+
+                from(defer)
                     // do NOT defer it but use default for testing this
                     .startupOrder(2).shutdownRoute(Default)
                     .to("mock:bar");
             }
         };
+    }
+
+    private static final class MyDeferFileEndpoint extends FileEndpoint {
+
+        private MyDeferFileEndpoint(String endpointUri, Component component) {
+            super(endpointUri, component);
+        }
+
+        @Override
+        protected FileConsumer newFileConsumer(Processor processor, GenericFileOperations<File> operations) {
+            return new FileConsumer(this, processor, operations) {
+                @Override
+                protected void doSuspend() throws Exception {
+                    consumerSuspended.set(true);
+                    super.doSuspend();
+                }
+            };
+        }
     }
 }

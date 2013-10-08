@@ -14,19 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.spring.processor;
-
-import org.apache.camel.CamelContext;
-import org.apache.camel.processor.ShutdownDeferTest;
-
-import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
+package ${package}.incident;
 
 /**
- * @version 
+ * Input status message
  */
-public class SpringShutdownDeferTest extends ShutdownDeferTest {
+public class InputStatusIncident {
 
-    protected CamelContext createCamelContext() throws Exception {
-        return createSpringCamelContext(this, "org/apache/camel/spring/processor/ShutdownDeferTest.xml");
+    private String incidentId;
+
+    public String getIncidentId() {
+        return incidentId;
+    }
+
+    public void setIncidentId(String incidentId) {
+        this.incidentId = incidentId;
     }
 }
