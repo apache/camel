@@ -46,11 +46,10 @@ import org.apache.xmlrpc.parser.XmlRpcResponseParser;
 import org.apache.xmlrpc.util.SAXParsers;
 
 public class XmlRpcDataFormat implements DataFormat {
-    private XmlRpcStreamRequestConfig config = new XmlRpcHttpRequestConfigImpl();
+    private XmlRpcStreamRequestConfig xmlRpcStreamRequestConfig = new XmlRpcHttpRequestConfigImpl();
     private TypeFactory typeFactory = new TypeFactoryImpl(null);
     private boolean isRequest;
     
-
     protected XMLWriter getXMLWriter(Exchange exchange, OutputStream outputStream) throws XmlRpcException {
         XMLWriter writer = new CharSetXMLWriter();
         String encoding = IOHelper.getCharsetName(exchange);
@@ -69,13 +68,13 @@ public class XmlRpcDataFormat implements DataFormat {
     public void marshal(Exchange exchange, Object graph, OutputStream stream) throws Exception {
         // need to check the object type
         XMLWriter control = getXMLWriter(exchange, stream);
-        XmlRpcWriter writer = new XmlRpcWriter(config, control, typeFactory);
+        XmlRpcWriter writer = new XmlRpcWriter(xmlRpcStreamRequestConfig, control, typeFactory);
         if (graph instanceof XmlRpcRequest) {
-            writer.writeRequest(config, (XmlRpcRequest)graph);
+            writer.writeRequest(xmlRpcStreamRequestConfig, (XmlRpcRequest)graph);
         } else {
             // write the result here directly
             // TODO write the fault message here
-            writer.write(config, graph);
+            writer.write(xmlRpcStreamRequestConfig, graph);
         }
         
     }
@@ -98,7 +97,7 @@ public class XmlRpcDataFormat implements DataFormat {
         XMLReader xr = newXMLReader();
         XmlRpcResponseParser xp;
         try {
-            xp = new XmlRpcResponseParser(config, typeFactory);
+            xp = new XmlRpcResponseParser(xmlRpcStreamRequestConfig, typeFactory);
             xr.setContentHandler(xp);
             xr.parse(isource);
         } catch (SAXException e) {
@@ -128,7 +127,7 @@ public class XmlRpcDataFormat implements DataFormat {
         XMLReader xr = newXMLReader();
         XmlRpcRequestParser xp;
         try {
-            xp = new XmlRpcRequestParser(config, typeFactory);
+            xp = new XmlRpcRequestParser(xmlRpcStreamRequestConfig, typeFactory);
             xr.setContentHandler(xp);
             xr.parse(isource);
         } catch (SAXException e) {
@@ -150,6 +149,22 @@ public class XmlRpcDataFormat implements DataFormat {
 
     public void setRequest(boolean isRequest) {
         this.isRequest = isRequest;
+    }
+    
+    public void setXmlRpcStreamRequestConfig(XmlRpcStreamRequestConfig config) {
+        this.xmlRpcStreamRequestConfig = config;
+    }
+    
+    public XmlRpcStreamRequestConfig getXmlRpcStreamRequestConfig() {
+        return xmlRpcStreamRequestConfig;
+    }
+    
+    public void setTypeFactory(TypeFactory typeFactory) {
+        this.typeFactory = typeFactory;
+    }
+    
+    public TypeFactory getTypeFactory() {
+        return typeFactory;
     }
 
 }
