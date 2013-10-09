@@ -154,9 +154,21 @@ public abstract class BuilderSupport {
 
     /**
      * Returns a xpath expression value builder
+     * @param value The XPath expression
+     * @return A new XPathBuilder object
      */
     public XPathBuilder xpath(String value) {
         return XPathBuilder.xpath(value);
+    }
+    
+    /**
+     * Returns a xpath expression value builder
+     * @param value The XPath expression
+     * @param resultType The result type that the XPath expression will return.
+     * @return A new XPathBuilder object
+     */
+    public static XPathBuilder xpath(String value, Class<?> resultType) {
+        return XPathBuilder.xpath(value, resultType);
     }
 
     /**
