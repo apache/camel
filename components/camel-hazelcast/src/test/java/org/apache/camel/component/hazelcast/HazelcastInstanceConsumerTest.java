@@ -16,12 +16,19 @@
  */
 package org.apache.camel.component.hazelcast;
 
+import java.net.InetSocketAddress;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import com.hazelcast.core.Cluster;
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
 
+import com.hazelcast.core.IList;
+import com.hazelcast.core.ItemListener;
+import com.hazelcast.core.Member;
+import com.hazelcast.core.MembershipEvent;
+import com.hazelcast.core.MembershipListener;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -29,19 +36,51 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 
 import org.junit.Ignore;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Mock;
 
-public class HazelcastInstanceConsumerTest extends CamelTestSupport {
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
+
+public class HazelcastInstanceConsumerTest extends HazelcastCamelTestSupport {
+
+    @Mock
+    private IList<String> list;
+
+    @Mock
+    private Cluster cluster;
+
+    @Mock
+    private Member member;
+
+    private ArgumentCaptor<MembershipListener> argument;
+
+    @Override
+    @SuppressWarnings("unchecked")
+    protected void trainHazelcastInstance(HazelcastInstance hazelcastInstance) {
+        when(hazelcastInstance.getCluster()).thenReturn(cluster);
+        argument = ArgumentCaptor.forClass(MembershipListener.class);
+        when(cluster.addMembershipListener(argument.capture())).thenReturn("foo");
+    }
+
+    @Override
+    @SuppressWarnings("unchecked")
+    protected void verifyHazelcastInstance(HazelcastInstance hazelcastInstance) {
+        verify(hazelcastInstance).getCluster();
+        verify(cluster).addMembershipListener(any(MembershipListener.class));
+    }
 
     @Test
-    @Ignore("Causes further hazelast tests to fail")
     public void testAddInstance() throws InterruptedException {
 
         MockEndpoint added = getMockEndpoint("mock:added");
-        added.setExpectedMessageCount(2);
+        added.setExpectedMessageCount(1);
+        when(member.getInetSocketAddress()).thenReturn(new InetSocketAddress("foo.bar", 12345));
 
-        Hazelcast.newHazelcastInstance(null);
-        Hazelcast.newHazelcastInstance(null);
-
+        MembershipEvent event = new MembershipEvent(cluster, member, MembershipEvent.MEMBER_ADDED, null);
+        argument.getValue().memberAdded(event);
         assertMockEndpointsSatisfied(5000, TimeUnit.MILLISECONDS);
 
         // check headers
@@ -49,20 +88,18 @@ public class HazelcastInstanceConsumerTest extends CamelTestSupport {
         Map<String, Object> headers = ex.getIn().getHeaders();
 
         this.checkHeaders(headers, HazelcastConstants.ADDED);
-
-        Hazelcast.shutdownAll();
     }
 
     @Test
-    @Ignore("Shutdown causes further hazelast tests to fail")
     public void testRemoveInstance() throws InterruptedException {
 
         MockEndpoint removed = getMockEndpoint("mock:removed");
         removed.setExpectedMessageCount(1);
 
-        HazelcastInstance h1 = Hazelcast.newHazelcastInstance(null);
+        when(member.getInetSocketAddress()).thenReturn(new InetSocketAddress("foo.bar", 12345));
 
-        h1.getLifecycleService().shutdown();
+        MembershipEvent event = new MembershipEvent(cluster, member, MembershipEvent.MEMBER_REMOVED, null);
+        argument.getValue().memberRemoved(event);
 
         assertMockEndpointsSatisfied(5000, TimeUnit.MILLISECONDS);
 
@@ -71,8 +108,6 @@ public class HazelcastInstanceConsumerTest extends CamelTestSupport {
         Map<String, Object> headers = ex.getIn().getHeaders();
 
         this.checkHeaders(headers, HazelcastConstants.REMOVED);
-
-        Hazelcast.shutdownAll();
     }
 
     @Override

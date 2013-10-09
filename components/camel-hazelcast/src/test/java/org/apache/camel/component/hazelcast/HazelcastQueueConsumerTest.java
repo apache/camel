@@ -22,35 +22,54 @@ import java.util.concurrent.TimeUnit;
 
 import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
+import com.hazelcast.core.IQueue;
+import com.hazelcast.core.ItemEvent;
+import com.hazelcast.core.ItemEventType;
+import com.hazelcast.core.ItemListener;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.AfterClass;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Mock;
 
-public class HazelcastQueueConsumerTest extends CamelTestSupport {
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
-    private BlockingQueue<String> map;
+public class HazelcastQueueConsumerTest extends HazelcastCamelTestSupport {
+
+    @Mock
+    private IQueue<String> queue;
+
+    private ArgumentCaptor<ItemListener> argument;
 
     @Override
-    protected void doPostSetup() throws Exception {
-        HazelcastComponent component = context().getComponent("hazelcast", HazelcastComponent.class);
-        HazelcastInstance hazelcastInstance = component.getHazelcastInstance();
-        this.map = hazelcastInstance.getQueue("mm");
-        this.map.clear();
+    @SuppressWarnings("unchecked")
+    protected void trainHazelcastInstance(HazelcastInstance hazelcastInstance) {
+        when(hazelcastInstance.<String>getQueue("foo")).thenReturn(queue);
+        argument = ArgumentCaptor.forClass(ItemListener.class);
+        when(queue.addItemListener(argument.capture(), eq(true))).thenReturn("foo");
     }
 
-    @AfterClass
-    public static void tearDownClass() {
-        Hazelcast.shutdownAll();
+    @Override
+    @SuppressWarnings("unchecked")
+    protected void verifyHazelcastInstance(HazelcastInstance hazelcastInstance) {
+        verify(hazelcastInstance).getQueue("foo");
+        verify(queue).addItemListener(any(ItemListener.class), eq(true));
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void add() throws InterruptedException {
         MockEndpoint out = getMockEndpoint("mock:added");
         out.expectedMessageCount(1);
 
-        map.put("foo");
+        final ItemEvent<String> event = new ItemEvent<String>("foo", ItemEventType.ADDED, "foo", null);
+        argument.getValue().itemAdded(event);
+
 
         assertMockEndpointsSatisfied(2000, TimeUnit.MILLISECONDS);
 
@@ -58,12 +77,13 @@ public class HazelcastQueueConsumerTest extends CamelTestSupport {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void remove() throws InterruptedException {
         MockEndpoint out = getMockEndpoint("mock:removed");
         out.expectedMessageCount(1);
 
-        map.put("foo");
-        map.remove();
+        final ItemEvent<String> event = new ItemEvent<String>("foo", ItemEventType.REMOVED, "foo", null);
+        argument.getValue().itemRemoved(event);
 
         assertMockEndpointsSatisfied(2000, TimeUnit.MILLISECONDS);
         this.checkHeaders(out.getExchanges().get(0).getIn().getHeaders(), HazelcastConstants.REMOVED);
@@ -74,7 +94,7 @@ public class HazelcastQueueConsumerTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from(String.format("hazelcast:%smm", HazelcastConstants.QUEUE_PREFIX)).log("object...").choice().when(header(HazelcastConstants.LISTENER_ACTION).isEqualTo(HazelcastConstants.ADDED))
+                from(String.format("hazelcast:%sfoo", HazelcastConstants.QUEUE_PREFIX)).log("object...").choice().when(header(HazelcastConstants.LISTENER_ACTION).isEqualTo(HazelcastConstants.ADDED))
                         .log("...added").to("mock:added").when(header(HazelcastConstants.LISTENER_ACTION).isEqualTo(HazelcastConstants.REMOVED)).log("...removed").to("mock:removed").otherwise()
                         .log("fail!");
             }

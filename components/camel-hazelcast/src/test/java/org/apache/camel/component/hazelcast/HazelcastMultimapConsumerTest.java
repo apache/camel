@@ -19,7 +19,11 @@ package org.apache.camel.component.hazelcast;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
+import com.hazelcast.core.EntryEvent;
+import com.hazelcast.core.EntryEventType;
+import com.hazelcast.core.EntryListener;
 import com.hazelcast.core.HazelcastInstance;
+import com.hazelcast.core.IMap;
 import com.hazelcast.core.MultiMap;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -28,27 +32,44 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 
 import org.junit.Ignore;
 import org.junit.Test;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Mock;
 
-public class HazelcastMultimapConsumerTest extends CamelTestSupport {
+import static org.mockito.Matchers.any;
+import static org.mockito.Matchers.eq;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
-    private MultiMap<String, Object> map;
+public class HazelcastMultimapConsumerTest extends HazelcastCamelTestSupport {
 
+    @Mock
+    private MultiMap<Object,Object> map;
+
+    private ArgumentCaptor<EntryListener> argument;
 
     @Override
-    protected void doPostSetup() throws Exception {
-        HazelcastComponent component = context().getComponent("hazelcast", HazelcastComponent.class);
-        HazelcastInstance hazelcastInstance = component.getHazelcastInstance();
-        this.map = hazelcastInstance.getMultiMap("mm");
-        this.map.clear();
+    @SuppressWarnings("unchecked")
+    protected void trainHazelcastInstance(HazelcastInstance hazelcastInstance) {
+        when(hazelcastInstance.getMultiMap("mm")).thenReturn(map);
+        argument = ArgumentCaptor.forClass(EntryListener.class);
+        when(map.addEntryListener(argument.capture(), eq(true))).thenReturn("foo");
     }
 
+    @Override
+    @SuppressWarnings("unchecked")
+    protected void verifyHazelcastInstance(HazelcastInstance hazelcastInstance) {
+        verify(hazelcastInstance).getMultiMap("mm");
+        verify(map).addEntryListener(any(EntryListener.class), eq(true));
+    }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void testAdd() throws InterruptedException {
         MockEndpoint out = getMockEndpoint("mock:added");
         out.expectedMessageCount(1);
 
-        map.put("4711", "my-foo");
+        EntryEvent<Object,Object> event = new EntryEvent<Object,Object>("foo", null, EntryEventType.ADDED.getType(), "4711", "my-foo");
+        argument.getValue().entryAdded(event);
 
         assertMockEndpointsSatisfied(5000, TimeUnit.MILLISECONDS);
 
@@ -58,18 +79,14 @@ public class HazelcastMultimapConsumerTest extends CamelTestSupport {
     /*
      * mail from talip (hazelcast) on 21.02.2011: MultiMap doesn't support eviction yet. We can and should add this feature.
      */
-    @Ignore("See also http://code.google.com/p/hazelcast/issues/detail?id=577&q=eviction")
     @Test
+    @SuppressWarnings("unchecked")
     public void testEnvict() throws InterruptedException {
         MockEndpoint out = getMockEndpoint("mock:envicted");
         out.expectedMessageCount(1);
 
-        map.put("1", "my-foo-1");
-        map.put("2", "my-foo-2");
-        map.put("3", "my-foo-3");
-        map.put("4", "my-foo-4");
-        map.put("5", "my-foo-5");
-        map.put("6", "my-foo-6");
+        EntryEvent<Object,Object> event = new EntryEvent<Object,Object>("foo", null, EntryEventType.EVICTED.getType(), "4711", "my-foo");
+        argument.getValue().entryEvicted(event);
 
         assertMockEndpointsSatisfied(30000, TimeUnit.MILLISECONDS);
     }
@@ -79,8 +96,8 @@ public class HazelcastMultimapConsumerTest extends CamelTestSupport {
         MockEndpoint out = getMockEndpoint("mock:removed");
         out.expectedMessageCount(1);
 
-        map.put("4711", "foo");
-        map.remove("4711");
+        EntryEvent<Object,Object> event = new EntryEvent<Object,Object>("foo", null, EntryEventType.REMOVED.getType(), "4711", "my-foo");
+        argument.getValue().entryRemoved(event);
 
         assertMockEndpointsSatisfied(5000, TimeUnit.MILLISECONDS);
         this.checkHeaders(out.getExchanges().get(0).getIn().getHeaders(), HazelcastConstants.REMOVED);

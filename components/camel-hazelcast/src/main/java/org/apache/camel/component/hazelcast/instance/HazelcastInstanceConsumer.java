@@ -51,8 +51,8 @@ public class HazelcastInstanceConsumer extends DefaultConsumer {
             HazelcastComponentHelper.setListenerHeaders(exchange, HazelcastConstants.INSTANCE_LISTENER, action);
 
             // instance listener header values
-            exchange.getOut().setHeader(HazelcastConstants.INSTANCE_HOST, event.getMember().getInetSocketAddress().getHostName());
-            exchange.getOut().setHeader(HazelcastConstants.INSTANCE_PORT, event.getMember().getInetSocketAddress().getPort());
+            exchange.getIn().setHeader(HazelcastConstants.INSTANCE_HOST, event.getMember().getInetSocketAddress().getHostName());
+            exchange.getIn().setHeader(HazelcastConstants.INSTANCE_PORT, event.getMember().getInetSocketAddress().getPort());
 
             try {
                 getProcessor().process(exchange);
