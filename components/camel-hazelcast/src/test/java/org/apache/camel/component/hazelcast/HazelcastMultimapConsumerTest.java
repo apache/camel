@@ -23,14 +23,10 @@ import com.hazelcast.core.EntryEvent;
 import com.hazelcast.core.EntryEventType;
 import com.hazelcast.core.EntryListener;
 import com.hazelcast.core.HazelcastInstance;
-import com.hazelcast.core.IMap;
 import com.hazelcast.core.MultiMap;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-
-import org.junit.Ignore;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
@@ -43,7 +39,7 @@ import static org.mockito.Mockito.when;
 public class HazelcastMultimapConsumerTest extends HazelcastCamelTestSupport {
 
     @Mock
-    private MultiMap<Object,Object> map;
+    private MultiMap<Object, Object> map;
 
     private ArgumentCaptor<EntryListener> argument;
 
@@ -68,7 +64,7 @@ public class HazelcastMultimapConsumerTest extends HazelcastCamelTestSupport {
         MockEndpoint out = getMockEndpoint("mock:added");
         out.expectedMessageCount(1);
 
-        EntryEvent<Object,Object> event = new EntryEvent<Object,Object>("foo", null, EntryEventType.ADDED.getType(), "4711", "my-foo");
+        EntryEvent<Object, Object> event = new EntryEvent<Object, Object>("foo", null, EntryEventType.ADDED.getType(), "4711", "my-foo");
         argument.getValue().entryAdded(event);
 
         assertMockEndpointsSatisfied(5000, TimeUnit.MILLISECONDS);
@@ -85,18 +81,19 @@ public class HazelcastMultimapConsumerTest extends HazelcastCamelTestSupport {
         MockEndpoint out = getMockEndpoint("mock:envicted");
         out.expectedMessageCount(1);
 
-        EntryEvent<Object,Object> event = new EntryEvent<Object,Object>("foo", null, EntryEventType.EVICTED.getType(), "4711", "my-foo");
+        EntryEvent<Object, Object> event = new EntryEvent<Object, Object>("foo", null, EntryEventType.EVICTED.getType(), "4711", "my-foo");
         argument.getValue().entryEvicted(event);
 
         assertMockEndpointsSatisfied(30000, TimeUnit.MILLISECONDS);
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void testRemove() throws InterruptedException {
         MockEndpoint out = getMockEndpoint("mock:removed");
         out.expectedMessageCount(1);
 
-        EntryEvent<Object,Object> event = new EntryEvent<Object,Object>("foo", null, EntryEventType.REMOVED.getType(), "4711", "my-foo");
+        EntryEvent<Object, Object> event = new EntryEvent<Object, Object>("foo", null, EntryEventType.REMOVED.getType(), "4711", "my-foo");
         argument.getValue().entryRemoved(event);
 
         assertMockEndpointsSatisfied(5000, TimeUnit.MILLISECONDS);
@@ -112,7 +109,7 @@ public class HazelcastMultimapConsumerTest extends HazelcastCamelTestSupport {
                         .when(header(HazelcastConstants.LISTENER_ACTION).isEqualTo(HazelcastConstants.ADDED)).log("...added").to("mock:added")
                         .when(header(HazelcastConstants.LISTENER_ACTION).isEqualTo(HazelcastConstants.ENVICTED)).log("...envicted").to("mock:envicted")
                         .when(header(HazelcastConstants.LISTENER_ACTION).isEqualTo(HazelcastConstants.REMOVED)).log("...removed").to("mock:removed").otherwise().log("fail!");
-            };
+            }
         };
     }
 

@@ -39,7 +39,7 @@ import static org.mockito.Mockito.when;
 public class HazelcastMapConsumerTest extends HazelcastCamelTestSupport {
 
     @Mock
-    private IMap<Object,Object> map;
+    private IMap<Object, Object> map;
 
     private ArgumentCaptor<EntryListener> argument;
 
@@ -64,7 +64,7 @@ public class HazelcastMapConsumerTest extends HazelcastCamelTestSupport {
         MockEndpoint out = getMockEndpoint("mock:added");
         out.expectedMessageCount(1);
 
-        EntryEvent<Object,Object> event = new EntryEvent<Object,Object>("foo", null, EntryEventType.ADDED.getType(), "4711", "my-foo");
+        EntryEvent<Object, Object> event = new EntryEvent<Object, Object>("foo", null, EntryEventType.ADDED.getType(), "4711", "my-foo");
         argument.getValue().entryAdded(event);
         assertMockEndpointsSatisfied(5000, TimeUnit.MILLISECONDS);
 
@@ -77,7 +77,7 @@ public class HazelcastMapConsumerTest extends HazelcastCamelTestSupport {
         MockEndpoint out = super.getMockEndpoint("mock:envicted");
         out.expectedMessageCount(1);
 
-        EntryEvent<Object,Object> event = new EntryEvent<Object,Object>("foo", null, EntryEventType.EVICTED.getType(), "4711", "my-foo");
+        EntryEvent<Object, Object> event = new EntryEvent<Object, Object>("foo", null, EntryEventType.EVICTED.getType(), "4711", "my-foo");
         argument.getValue().entryEvicted(event);
 
         assertMockEndpointsSatisfied(30000, TimeUnit.MILLISECONDS);
@@ -89,7 +89,7 @@ public class HazelcastMapConsumerTest extends HazelcastCamelTestSupport {
         MockEndpoint out = getMockEndpoint("mock:updated");
         out.expectedMessageCount(1);
 
-        EntryEvent<Object,Object> event = new EntryEvent<Object,Object>("foo", null, EntryEventType.UPDATED.getType(), "4711", "my-foo");
+        EntryEvent<Object, Object> event = new EntryEvent<Object, Object>("foo", null, EntryEventType.UPDATED.getType(), "4711", "my-foo");
         argument.getValue().entryUpdated(event);
 
         assertMockEndpointsSatisfied(5000, TimeUnit.MILLISECONDS);
@@ -103,7 +103,7 @@ public class HazelcastMapConsumerTest extends HazelcastCamelTestSupport {
         MockEndpoint out = getMockEndpoint("mock:removed");
         out.expectedMessageCount(1);
 
-        EntryEvent<Object,Object> event = new EntryEvent<Object,Object>("foo", null, EntryEventType.REMOVED.getType(), "4711", "my-foo");
+        EntryEvent<Object, Object> event = new EntryEvent<Object, Object>("foo", null, EntryEventType.REMOVED.getType(), "4711", "my-foo");
         argument.getValue().entryRemoved(event);
 
         assertMockEndpointsSatisfied(5000, TimeUnit.MILLISECONDS);
