@@ -23,6 +23,7 @@ import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.MultiMap;
 
+import org.apache.camel.CamelExecutionException;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.After;
 import org.junit.Test;
@@ -49,9 +50,26 @@ public class HazelcastMultimapProducerTest extends HazelcastCamelTestSupport {
         verifyNoMoreInteractions(map);
     }
 
+    @Test(expected = CamelExecutionException.class)
+    public void testWithInvalidOperation() {
+        template.sendBodyAndHeader("direct:putInvalid", "my-foo", HazelcastConstants.OBJECT_ID, "4711");
+    }
+
     @Test
     public void testPut() throws InterruptedException {
         template.sendBodyAndHeader("direct:put", "my-foo", HazelcastConstants.OBJECT_ID, "4711");
+        verify(map).put("4711", "my-foo");
+    }
+
+    @Test
+    public void testPutWithOperationName() throws InterruptedException {
+        template.sendBodyAndHeader("direct:putWithOperationName", "my-foo", HazelcastConstants.OBJECT_ID, "4711");
+        verify(map).put("4711", "my-foo");
+    }
+
+    @Test
+    public void testPutWithOperationNumber() throws InterruptedException {
+        template.sendBodyAndHeader("direct:putWithOperationNumber", "my-foo", HazelcastConstants.OBJECT_ID, "4711");
         verify(map).put("4711", "my-foo");
     }
 
@@ -82,6 +100,8 @@ public class HazelcastMultimapProducerTest extends HazelcastCamelTestSupport {
             @Override
             public void configure() throws Exception {
 
+                from("direct:putInvalid").setHeader(HazelcastConstants.OPERATION, constant("bogus")).to(String.format("hazelcast:%sbar", HazelcastConstants.MULTIMAP_PREFIX));
+
                 from("direct:put").setHeader(HazelcastConstants.OPERATION, constant(HazelcastConstants.PUT_OPERATION)).to(String.format("hazelcast:%sbar", HazelcastConstants.MULTIMAP_PREFIX));
 
                 from("direct:removevalue").setHeader(HazelcastConstants.OPERATION, constant(HazelcastConstants.REMOVEVALUE_OPERATION)).to(
@@ -92,6 +112,8 @@ public class HazelcastMultimapProducerTest extends HazelcastCamelTestSupport {
 
                 from("direct:delete").setHeader(HazelcastConstants.OPERATION, constant(HazelcastConstants.DELETE_OPERATION)).to(String.format("hazelcast:%sbar", HazelcastConstants.MULTIMAP_PREFIX));
 
+                from("direct:putWithOperationNumber").toF("hazelcast:%sbar?operation=%s", HazelcastConstants.MULTIMAP_PREFIX, HazelcastConstants.PUT_OPERATION);
+                from("direct:putWithOperationName").toF("hazelcast:%sbar?operation=put", HazelcastConstants.MULTIMAP_PREFIX);
             }
         };
     }

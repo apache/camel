@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.hazelcast;
 
+import java.util.Map;
+
 import com.hazelcast.core.HazelcastInstance;
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
@@ -27,6 +29,8 @@ public abstract class HazelcastDefaultEndpoint extends DefaultEndpoint {
 
     protected final String cacheName;
     protected HazelcastInstance hazelcastInstance;
+    private int defaultOperation = -1;
+    private final HazelcastComponentHelper helper = new HazelcastComponentHelper();
 
     public HazelcastDefaultEndpoint(HazelcastInstance hazelcastInstance, String endpointUri, Component component) {
         this(hazelcastInstance, endpointUri, component, null);
@@ -48,5 +52,15 @@ public abstract class HazelcastDefaultEndpoint extends DefaultEndpoint {
 
     public HazelcastInstance getHazelcastInstance() {
         return hazelcastInstance;
+    }
+
+    @Override
+    public void configureProperties(Map<String, Object> options) {
+        super.configureProperties(options);
+        defaultOperation = helper.extractOperationNumber(options.remove(HazelcastConstants.OPERATION_PARAM), -1);
+    }
+
+    public int getDefaultOperation() {
+        return defaultOperation;
     }
 }

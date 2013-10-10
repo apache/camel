@@ -16,40 +16,26 @@
  */
 package org.apache.camel.component.hazelcast.atomicnumber;
 
-import java.util.Map;
-
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IAtomicLong;
-import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.hazelcast.HazelcastComponentHelper;
 import org.apache.camel.component.hazelcast.HazelcastConstants;
-import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.component.hazelcast.HazelcastDefaultEndpoint;
+import org.apache.camel.component.hazelcast.HazelcastDefaultProducer;
 
-public class HazelcastAtomicnumberProducer extends DefaultProducer {
+public class HazelcastAtomicnumberProducer extends HazelcastDefaultProducer {
 
     private final IAtomicLong atomicnumber;
-    private final HazelcastComponentHelper helper = new HazelcastComponentHelper();
 
-    public HazelcastAtomicnumberProducer(HazelcastInstance hazelcastInstance, Endpoint endpoint, String cacheName) {
+    public HazelcastAtomicnumberProducer(HazelcastInstance hazelcastInstance, HazelcastDefaultEndpoint endpoint, String cacheName) {
         super(endpoint);
         this.atomicnumber = hazelcastInstance.getAtomicLong(cacheName);
     }
 
     public void process(Exchange exchange) throws Exception {
 
-        Map<String, Object> headers = exchange.getIn().getHeaders();
-
-        // get header parameters
-        int operation = -1;
-
-        if (headers.containsKey(HazelcastConstants.OPERATION)) {
-            if (headers.get(HazelcastConstants.OPERATION) instanceof String) {
-                operation = this.helper.lookupOperationNumber((String) headers.get(HazelcastConstants.OPERATION));
-            } else {
-                operation = (Integer) headers.get(HazelcastConstants.OPERATION);
-            }
-        }
+        int operation = lookupOperationNumber(exchange);
 
         switch (operation) {
 

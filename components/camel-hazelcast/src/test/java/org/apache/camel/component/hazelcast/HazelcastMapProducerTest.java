@@ -24,6 +24,7 @@ import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
 
 import com.hazelcast.query.SqlPredicate;
+import org.apache.camel.CamelExecutionException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.hazelcast.testutil.Dummy;
 import org.junit.After;
@@ -52,9 +53,26 @@ public class HazelcastMapProducerTest extends HazelcastCamelTestSupport implemen
         verifyNoMoreInteractions(map);
     }
 
+    @Test(expected = CamelExecutionException.class)
+    public void testWithInvalidOperation() {
+        template.sendBody("direct:putInvalid", "my-foo");
+    }
+
     @Test
     public void testPut() throws InterruptedException {
         template.sendBodyAndHeader("direct:put", "my-foo", HazelcastConstants.OBJECT_ID, "4711");
+        verify(map).put("4711", "my-foo");
+    }
+
+    @Test
+    public void testPutWithOperationNumber() throws InterruptedException {
+        template.sendBodyAndHeader("direct:putWithOperationNumber", "my-foo", HazelcastConstants.OBJECT_ID, "4711");
+        verify(map).put("4711", "my-foo");
+    }
+
+    @Test
+    public void testPutWithOperationName() throws InterruptedException {
+        template.sendBodyAndHeader("direct:putWithOperationName", "my-foo", HazelcastConstants.OBJECT_ID, "4711");
         verify(map).put("4711", "my-foo");
     }
 
@@ -101,6 +119,8 @@ public class HazelcastMapProducerTest extends HazelcastCamelTestSupport implemen
             @Override
             public void configure() throws Exception {
 
+                from("direct:putInvalid").setHeader(HazelcastConstants.OPERATION, constant("bogus")).to(String.format("hazelcast:%sfoo", HazelcastConstants.MAP_PREFIX));
+
                 from("direct:put").setHeader(HazelcastConstants.OPERATION, constant(HazelcastConstants.PUT_OPERATION)).to(String.format("hazelcast:%sfoo", HazelcastConstants.MAP_PREFIX));
 
                 from("direct:update").setHeader(HazelcastConstants.OPERATION, constant(HazelcastConstants.UPDATE_OPERATION)).to(String.format("hazelcast:%sfoo", HazelcastConstants.MAP_PREFIX));
@@ -112,6 +132,10 @@ public class HazelcastMapProducerTest extends HazelcastCamelTestSupport implemen
 
                 from("direct:query").setHeader(HazelcastConstants.OPERATION, constant(HazelcastConstants.QUERY_OPERATION)).to(String.format("hazelcast:%sfoo", HazelcastConstants.MAP_PREFIX))
                         .to("seda:out");
+
+                from("direct:putWithOperationNumber").toF("hazelcast:%sfoo?operation=%s", HazelcastConstants.MAP_PREFIX, HazelcastConstants.PUT_OPERATION);
+                from("direct:putWithOperationName").toF("hazelcast:%sfoo?operation=put", HazelcastConstants.MAP_PREFIX);
+
 
             }
         };

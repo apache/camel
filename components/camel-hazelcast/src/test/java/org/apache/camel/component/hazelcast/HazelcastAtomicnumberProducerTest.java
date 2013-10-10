@@ -18,6 +18,7 @@ package org.apache.camel.component.hazelcast;
 
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IAtomicLong;
+import org.apache.camel.CamelExecutionException;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.After;
 import org.junit.Test;
@@ -42,6 +43,11 @@ public class HazelcastAtomicnumberProducerTest extends HazelcastCamelTestSupport
     @After
     public void verifyAtomicNumberMock() {
         verifyNoMoreInteractions(atomicNumber);
+    }
+
+    @Test(expected = CamelExecutionException.class)
+    public void testWithInvalidOperationName() {
+        template.sendBody("direct:setInvalid", 4711);
     }
 
     @Test
@@ -80,11 +86,26 @@ public class HazelcastAtomicnumberProducerTest extends HazelcastCamelTestSupport
         verify(atomicNumber).destroy();
     }
 
+    @Test
+    public void testSetWithOperationNumber() {
+        template.sendBody("direct:setWithOperationNumber", 5711);
+        verify(atomicNumber).set(5711);
+    }
+
+    @Test
+    public void testSetWithOperationName() {
+        template.sendBody("direct:setWithOperationName", 5711);
+        verify(atomicNumber).set(5711);
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
+
+                from("direct:setInvalid").setHeader(HazelcastConstants.OPERATION, constant("invalid"))
+                        .to(String.format("hazelcast:%sfoo", HazelcastConstants.ATOMICNUMBER_PREFIX));
 
                 from("direct:set").setHeader(HazelcastConstants.OPERATION, constant(HazelcastConstants.SETVALUE_OPERATION))
                         .to(String.format("hazelcast:%sfoo", HazelcastConstants.ATOMICNUMBER_PREFIX));
@@ -99,6 +120,9 @@ public class HazelcastAtomicnumberProducerTest extends HazelcastCamelTestSupport
 
                 from("direct:destroy").setHeader(HazelcastConstants.OPERATION, constant(HazelcastConstants.DESTROY_OPERATION)).to(
                         String.format("hazelcast:%sfoo", HazelcastConstants.ATOMICNUMBER_PREFIX));
+
+                from("direct:setWithOperationNumber").toF("hazelcast:%sfoo?operation=%s", HazelcastConstants.ATOMICNUMBER_PREFIX, HazelcastConstants.SETVALUE_OPERATION);
+                from("direct:setWithOperationName").toF("hazelcast:%sfoo?operation=setvalue", HazelcastConstants.ATOMICNUMBER_PREFIX);
 
             }
         };

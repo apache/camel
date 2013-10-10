@@ -91,6 +91,9 @@ public final class HazelcastConstants {
     public static final String INSTANCE_LISTENER = "instancelistener";
     public static final String ITEM_LISTENER = "itemlistener";
 
+    // parameter names
+    public static final String OPERATION_PARAM = "operation";
+
     private HazelcastConstants() {
     }
 

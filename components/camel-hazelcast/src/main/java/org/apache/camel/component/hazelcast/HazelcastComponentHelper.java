@@ -22,7 +22,7 @@ import java.util.Map;
 
 import org.apache.camel.Exchange;
 
-public class HazelcastComponentHelper {
+public final class HazelcastComponentHelper {
 
     private final HashMap<String, Integer> mapping = new HashMap<String, Integer>();
 
@@ -60,39 +60,58 @@ public class HazelcastComponentHelper {
         ex.getIn().setHeader(HazelcastConstants.LISTENER_TIME, new Date().getTime());
     }
 
+    public int lookupOperationNumber(Exchange exchange, int defaultOperation) {
+        return extractOperationNumber(exchange.getIn().getHeader(HazelcastConstants.OPERATION), defaultOperation);
+    }
+
+    public int extractOperationNumber(Object value, int defaultOperation) {
+        int operation = defaultOperation;
+        if (value instanceof String) {
+            operation = mapToOperationNumber((String) value);
+        } else if (value instanceof Integer) {
+            operation = (Integer)value;
+        }
+        return operation;
+    }
+
     /**
      * Allows the use of speaking operation names (e.g. for usage in Spring DSL)
      */
-    public int lookupOperationNumber(String operation) {
-        if (this.mapping.containsKey(operation)) {
-            return this.mapping.get(operation);
+    private int mapToOperationNumber(String operationName) {
+        if (this.mapping.containsKey(operationName)) {
+            return this.mapping.get(operationName);
         } else {
-            throw new IllegalArgumentException(String.format("Operation '%s' is not supported by this component.", operation));
+            throw new IllegalArgumentException(String.format("Operation '%s' is not supported by this component.", operationName));
         }
     }
 
     private void init() {
         // fill map with values
-        this.mapping.put("put", HazelcastConstants.PUT_OPERATION);
-        this.mapping.put("delete", HazelcastConstants.DELETE_OPERATION);
-        this.mapping.put("get", HazelcastConstants.GET_OPERATION);
-        this.mapping.put("update", HazelcastConstants.UPDATE_OPERATION);
-        this.mapping.put("query", HazelcastConstants.QUERY_OPERATION);
+        addMapping("put", HazelcastConstants.PUT_OPERATION);
+        addMapping("delete", HazelcastConstants.DELETE_OPERATION);
+        addMapping("get", HazelcastConstants.GET_OPERATION);
+        addMapping("update", HazelcastConstants.UPDATE_OPERATION);
+        addMapping("query", HazelcastConstants.QUERY_OPERATION);
 
         // multimap
-        this.mapping.put("removevalue", HazelcastConstants.REMOVEVALUE_OPERATION);
+        addMapping("removevalue", HazelcastConstants.REMOVEVALUE_OPERATION);
 
         // atomic numbers
-        this.mapping.put("increment", HazelcastConstants.INCREMENT_OPERATION);
-        this.mapping.put("decrement", HazelcastConstants.DECREMENT_OPERATION);
-        this.mapping.put("setvalue", HazelcastConstants.SETVALUE_OPERATION);
-        this.mapping.put("destroy", HazelcastConstants.DESTROY_OPERATION);
+        addMapping("increment", HazelcastConstants.INCREMENT_OPERATION);
+        addMapping("decrement", HazelcastConstants.DECREMENT_OPERATION);
+        addMapping("setvalue", HazelcastConstants.SETVALUE_OPERATION);
+        addMapping("destroy", HazelcastConstants.DESTROY_OPERATION);
 
         // queue
-        this.mapping.put("add", HazelcastConstants.ADD_OPERATION);
-        this.mapping.put("offer", HazelcastConstants.OFFER_OPERATION);
-        this.mapping.put("peek", HazelcastConstants.PEEK_OPERATION);
-        this.mapping.put("poll", HazelcastConstants.POLL_OPERATION);
+        addMapping("add", HazelcastConstants.ADD_OPERATION);
+        addMapping("offer", HazelcastConstants.OFFER_OPERATION);
+        addMapping("peek", HazelcastConstants.PEEK_OPERATION);
+        addMapping("poll", HazelcastConstants.POLL_OPERATION);
+    }
+
+    private void addMapping(String operationName, int operationNumber) {
+        this.mapping.put(operationName, operationNumber);
+        this.mapping.put(String.valueOf(operationNumber), operationNumber);
     }
 
 }

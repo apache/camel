@@ -16,49 +16,35 @@
  */
 package org.apache.camel.component.hazelcast.queue;
 
-import java.util.Map;
-
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IQueue;
 
-import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.hazelcast.HazelcastComponentHelper;
 import org.apache.camel.component.hazelcast.HazelcastConstants;
-import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.component.hazelcast.HazelcastDefaultEndpoint;
+import org.apache.camel.component.hazelcast.HazelcastDefaultProducer;
 
 /**
  *
  */
-public class HazelcastQueueProducer extends DefaultProducer {
+public class HazelcastQueueProducer extends HazelcastDefaultProducer {
 
     private IQueue<Object> queue;
-    private HazelcastComponentHelper helper = new HazelcastComponentHelper();
 
-    public HazelcastQueueProducer(HazelcastInstance hazelcastInstance, Endpoint endpoint, String queueName) {
+    public HazelcastQueueProducer(HazelcastInstance hazelcastInstance, HazelcastDefaultEndpoint endpoint, String queueName) {
         super(endpoint);
         this.queue = hazelcastInstance.getQueue(queueName);
     }
 
     public void process(Exchange exchange) throws Exception {
 
-        Map<String, Object> headers = exchange.getIn().getHeaders();
-
-        // get header parameters
-        int operation = -1;
-
-        if (headers.containsKey(HazelcastConstants.OPERATION)) {
-            if (headers.get(HazelcastConstants.OPERATION) instanceof String) {
-                operation = helper.lookupOperationNumber((String) headers.get(HazelcastConstants.OPERATION));
-            } else {
-                operation = (Integer) headers.get(HazelcastConstants.OPERATION);
-            }
-        }
+        final int operation = lookupOperationNumber(exchange);
 
         switch (operation) {
 
         case -1:
-        //If no operation is specified use ADD.
+            //If no operation is specified use ADD.
         case HazelcastConstants.ADD_OPERATION:
             this.add(exchange);
             break;

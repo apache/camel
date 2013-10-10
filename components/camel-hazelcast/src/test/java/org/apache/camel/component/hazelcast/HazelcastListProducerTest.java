@@ -22,6 +22,7 @@ import java.util.List;
 import com.hazelcast.core.HazelcastInstance;
 
 import com.hazelcast.core.IList;
+import org.apache.camel.CamelExecutionException;
 import org.apache.camel.builder.RouteBuilder;
 
 import org.junit.After;
@@ -51,9 +52,26 @@ public class HazelcastListProducerTest extends HazelcastCamelTestSupport {
         verifyNoMoreInteractions(list);
     }
 
+    @Test(expected = CamelExecutionException.class)
+    public void testWithInvalidOperation() {
+        template.sendBody("direct:addInvalid", "bar");
+    }
+
     @Test
     public void addValue() throws InterruptedException {
         template.sendBody("direct:add", "bar");
+        verify(list).add("bar");
+    }
+
+    @Test
+    public void addValueWithOperationNumber() throws InterruptedException {
+        template.sendBody("direct:addWithOperationNumber", "bar");
+        verify(list).add("bar");
+    }
+
+    @Test
+    public void addValueWithOperationName() throws InterruptedException {
+        template.sendBody("direct:addWithOperationName", "bar");
         verify(list).add("bar");
     }
 
@@ -94,6 +112,9 @@ public class HazelcastListProducerTest extends HazelcastCamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
+
+                from("direct:addInvalid").setHeader(HazelcastConstants.OPERATION, constant("bogus")).to(String.format("hazelcast:%sbar", HazelcastConstants.LIST_PREFIX));
+
                 from("direct:add").setHeader(HazelcastConstants.OPERATION, constant(HazelcastConstants.ADD_OPERATION)).to(String.format("hazelcast:%sbar", HazelcastConstants.LIST_PREFIX));
 
                 from("direct:set").setHeader(HazelcastConstants.OPERATION, constant(HazelcastConstants.SETVALUE_OPERATION)).to(String.format("hazelcast:%sbar", HazelcastConstants.LIST_PREFIX));
@@ -103,6 +124,9 @@ public class HazelcastListProducerTest extends HazelcastCamelTestSupport {
 
                 from("direct:removevalue").setHeader(HazelcastConstants.OPERATION, constant(HazelcastConstants.REMOVEVALUE_OPERATION)).to(
                         String.format("hazelcast:%sbar", HazelcastConstants.LIST_PREFIX));
+
+                from("direct:addWithOperationNumber").toF("hazelcast:%sbar?operation=%s", HazelcastConstants.LIST_PREFIX, HazelcastConstants.ADD_OPERATION);
+                from("direct:addWithOperationName").toF("hazelcast:%sbar?operation=add", HazelcastConstants.LIST_PREFIX);
             }
         };
     }

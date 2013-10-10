@@ -26,17 +26,18 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Producer;
 import org.apache.camel.component.hazelcast.HazelcastComponentHelper;
 import org.apache.camel.component.hazelcast.HazelcastConstants;
+import org.apache.camel.component.hazelcast.HazelcastDefaultEndpoint;
+import org.apache.camel.component.hazelcast.HazelcastDefaultProducer;
 import org.apache.camel.impl.DefaultProducer;
 
 /**
  * Implementation of Hazelcast List {@link Producer}.
  */
-public class HazelcastListProducer extends DefaultProducer {
+public class HazelcastListProducer extends HazelcastDefaultProducer {
 
     private final IList<Object> list;
-    private final HazelcastComponentHelper helper = new HazelcastComponentHelper();
 
-    public HazelcastListProducer(HazelcastInstance hazelcastInstance, Endpoint endpoint, String listName) {
+    public HazelcastListProducer(HazelcastInstance hazelcastInstance, HazelcastDefaultEndpoint endpoint, String listName) {
         super(endpoint);
         this.list = hazelcastInstance.getList(listName);
     }
@@ -46,7 +47,6 @@ public class HazelcastListProducer extends DefaultProducer {
         Map<String, Object> headers = exchange.getIn().getHeaders();
 
         // get header parameters
-        int operation = -1;
         Integer pos = null;
 
         if (headers.containsKey(HazelcastConstants.OBJECT_POS)) {
@@ -56,13 +56,7 @@ public class HazelcastListProducer extends DefaultProducer {
             pos = (Integer) headers.get(HazelcastConstants.OBJECT_POS);
         }
 
-        if (headers.containsKey(HazelcastConstants.OPERATION)) {
-            if (headers.get(HazelcastConstants.OPERATION) instanceof String) {
-                operation = helper.lookupOperationNumber((String) headers.get(HazelcastConstants.OPERATION));
-            } else {
-                operation = (Integer) headers.get(HazelcastConstants.OPERATION);
-            }
-        }
+        final int operation = lookupOperationNumber(exchange);
 
         switch (operation) {
 

@@ -21,18 +21,17 @@ import java.util.Map;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.MultiMap;
 
-import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.hazelcast.HazelcastComponentHelper;
 import org.apache.camel.component.hazelcast.HazelcastConstants;
-import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.component.hazelcast.HazelcastDefaultEndpoint;
+import org.apache.camel.component.hazelcast.HazelcastDefaultProducer;
 
-public class HazelcastMultimapProducer extends DefaultProducer {
+public class HazelcastMultimapProducer extends HazelcastDefaultProducer {
 
     private final MultiMap<Object, Object> cache;
-    private final HazelcastComponentHelper helper = new HazelcastComponentHelper();
 
-    public HazelcastMultimapProducer(HazelcastInstance hazelcastInstance, Endpoint endpoint, String cacheName) {
+    public HazelcastMultimapProducer(HazelcastInstance hazelcastInstance, HazelcastDefaultEndpoint endpoint, String cacheName) {
         super(endpoint);
         this.cache = hazelcastInstance.getMultiMap(cacheName);
     }
@@ -43,19 +42,12 @@ public class HazelcastMultimapProducer extends DefaultProducer {
 
         // get header parameters
         Object oid = null;
-        int operation = -1;
 
         if (headers.containsKey(HazelcastConstants.OBJECT_ID)) {
             oid = headers.get(HazelcastConstants.OBJECT_ID);
         }
 
-        if (headers.containsKey(HazelcastConstants.OPERATION)) {
-            if (headers.get(HazelcastConstants.OPERATION) instanceof String) {
-                operation = helper.lookupOperationNumber((String) headers.get(HazelcastConstants.OPERATION));
-            } else {
-                operation = (Integer) headers.get(HazelcastConstants.OPERATION);
-            }
-        }
+        final int operation = lookupOperationNumber(exchange);
 
         switch (operation) {
         case HazelcastConstants.PUT_OPERATION:

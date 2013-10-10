@@ -18,6 +18,7 @@ package org.apache.camel.component.hazelcast;
 
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IQueue;
+import org.apache.camel.CamelExecutionException;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.After;
 import org.junit.Test;
@@ -45,9 +46,26 @@ public class HazelcastQueueProducerTest extends HazelcastCamelTestSupport {
         verifyNoMoreInteractions(queue);
     }
 
+    @Test(expected = CamelExecutionException.class)
+    public void testWithInvalidOperation() {
+        template.sendBody("direct:putInvalid", "foo");
+    }
+
     @Test
     public void put() throws InterruptedException {
         template.sendBody("direct:put", "foo");
+        verify(queue).put("foo");
+    }
+
+    @Test
+    public void putWithOperationNumber() throws InterruptedException {
+        template.sendBody("direct:putWithOperationNumber", "foo");
+        verify(queue).put("foo");
+    }
+
+    @Test
+    public void putWithOperationName() throws InterruptedException {
+        template.sendBody("direct:putWithOperationName", "foo");
         verify(queue).put("foo");
     }
 
@@ -104,6 +122,8 @@ public class HazelcastQueueProducerTest extends HazelcastCamelTestSupport {
             public void configure() throws Exception {
                 from("direct:no-operation").to(String.format("hazelcast:%sbar", HazelcastConstants.QUEUE_PREFIX));
 
+                from("direct:putInvalid").setHeader(HazelcastConstants.OPERATION, constant("bogus")).to(String.format("hazelcast:%sbar", HazelcastConstants.QUEUE_PREFIX));
+
                 from("direct:put").setHeader(HazelcastConstants.OPERATION, constant(HazelcastConstants.PUT_OPERATION)).to(String.format("hazelcast:%sbar", HazelcastConstants.QUEUE_PREFIX));
 
                 from("direct:add").setHeader(HazelcastConstants.OPERATION, constant(HazelcastConstants.ADD_OPERATION)).to(String.format("hazelcast:%sbar", HazelcastConstants.QUEUE_PREFIX));
@@ -116,6 +136,10 @@ public class HazelcastQueueProducerTest extends HazelcastCamelTestSupport {
 
                 from("direct:removevalue").setHeader(HazelcastConstants.OPERATION, constant(HazelcastConstants.REMOVEVALUE_OPERATION)).to(
                         String.format("hazelcast:%sbar", HazelcastConstants.QUEUE_PREFIX));
+
+                from("direct:putWithOperationNumber").toF(String.format("hazelcast:%sbar?operation=%s", HazelcastConstants.QUEUE_PREFIX, HazelcastConstants.PUT_OPERATION));
+
+                from("direct:putWithOperationName").toF(String.format("hazelcast:%sbar?operation=put", HazelcastConstants.QUEUE_PREFIX));
             }
         };
     }

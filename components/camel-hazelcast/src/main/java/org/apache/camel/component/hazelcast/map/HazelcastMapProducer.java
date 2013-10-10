@@ -26,12 +26,11 @@ import com.hazelcast.query.SqlPredicate;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.hazelcast.HazelcastComponentHelper;
 import org.apache.camel.component.hazelcast.HazelcastConstants;
-import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.component.hazelcast.HazelcastDefaultProducer;
 
-public class HazelcastMapProducer extends DefaultProducer {
+public class HazelcastMapProducer extends HazelcastDefaultProducer {
 
     private final IMap<Object, Object> cache;
-    private final HazelcastComponentHelper helper = new HazelcastComponentHelper();
 
     public HazelcastMapProducer(HazelcastInstance hazelcastInstance, HazelcastMapEndpoint endpoint, String cacheName) {
         super(endpoint);
@@ -44,27 +43,17 @@ public class HazelcastMapProducer extends DefaultProducer {
 
         // get header parameters
         Object oid = null;
-        int operation = -1;
         String query = null;
 
         if (headers.containsKey(HazelcastConstants.OBJECT_ID)) {
             oid = headers.get(HazelcastConstants.OBJECT_ID);
         }
 
-        if (headers.containsKey(HazelcastConstants.OPERATION)) {
-
-            // producer allows int (HazelcastConstants) and string values
-            if (headers.get(HazelcastConstants.OPERATION) instanceof String) {
-                operation = helper.lookupOperationNumber((String) headers.get(HazelcastConstants.OPERATION));
-            } else {
-                operation = (Integer) headers.get(HazelcastConstants.OPERATION);
-            }
-        }
-
         if (headers.containsKey(HazelcastConstants.QUERY)) {
             query = (String) headers.get(HazelcastConstants.QUERY);
         }
 
+        final int operation = lookupOperationNumber(exchange);
         switch (operation) {
 
         case HazelcastConstants.PUT_OPERATION:
