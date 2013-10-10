@@ -226,9 +226,6 @@ public class ApnsServiceFactory implements CamelContextAware {
         }
 
         switch (getConnectionStrategy()) {
-        case NON_BLOCKING:
-            builder.asNonBlocking();
-            break;
         case QUEUE:
             builder.asQueued();
             break;

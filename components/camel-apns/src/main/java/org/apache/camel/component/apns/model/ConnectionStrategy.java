@@ -18,6 +18,6 @@ package org.apache.camel.component.apns.model;
 
 public enum ConnectionStrategy {
 
-    SIMPLE, QUEUE, POOL, NON_BLOCKING;
+    SIMPLE, QUEUE, POOL
 
 }
