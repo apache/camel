@@ -1269,6 +1269,26 @@ public class SimpleTest extends LanguageTestSupport {
         assertExpression("${body.length}", 3);
     }
 
+    public void testSimpleMapBoolean() throws Exception {
+        Map map = new HashMap();
+        exchange.getIn().setBody(map);
+
+        map.put("isCredit", true);
+        assertPredicate("${body[isCredit]} == true", true);
+        assertPredicate("${body[isCredit]} == false", false);
+        assertPredicate("${body['isCredit']} == true", true);
+        assertPredicate("${body['isCredit']} == false", false);
+
+        // wrong case
+        assertPredicate("${body['IsCredit']} == true", false);
+
+        map.put("isCredit", false);
+        assertPredicate("${body[isCredit]} == true", false);
+        assertPredicate("${body[isCredit]} == false", true);
+        assertPredicate("${body['isCredit']} == true", false);
+        assertPredicate("${body['isCredit']} == false", true);
+    }
+
     protected String getLanguageName() {
         return "simple";
     }
