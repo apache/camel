@@ -16,31 +16,45 @@
  */
 package org.apache.camel.component.hazelcast;
 
-import java.io.Serializable;
+import java.util.Arrays;
 import java.util.Collection;
 
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IMap;
 
+import com.hazelcast.query.SqlPredicate;
 import org.apache.camel.component.hazelcast.testutil.Dummy;
-import org.apache.camel.test.spring.CamelSpringTestSupport;
 
+import org.junit.After;
 import org.junit.Test;
+import org.mockito.Mock;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-public class HazelcastMapProducerForSpringTest extends CamelSpringTestSupport implements Serializable {
+import static org.mockito.Matchers.any;
+import static org.mockito.Mockito.atLeastOnce;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.verifyNoMoreInteractions;
+import static org.mockito.Mockito.when;
 
-    private static final long serialVersionUID = 1L;
-    private IMap<Long, Object> map;
+public class HazelcastMapProducerForSpringTest extends HazelcastCamelSpringTestSupport {
+
+    @Mock
+    private IMap<Object, Object> map;
 
     @Override
-    protected void doPostSetup() throws Exception {
-        super.doPostSetup();
-        HazelcastComponent component = context().getComponent("hazelcast", HazelcastComponent.class);
-        HazelcastInstance hazelcastInstance = component.getHazelcastInstance();
-        this.map = hazelcastInstance.getMap("foo");
-        this.map.clear();
+    protected void trainHazelcastInstance(HazelcastInstance hazelcastInstance) {
+        when(hazelcastInstance.getMap("foo")).thenReturn(map);
+    }
+
+    @Override
+    protected void verifyHazelcastInstance(HazelcastInstance hazelcastInstance) {
+        verify(hazelcastInstance, atLeastOnce()).getMap("foo");
+    }
+
+    @After
+    public void verifyMapMock() {
+        verifyNoMoreInteractions(map);
     }
 
     @Override
@@ -51,27 +65,22 @@ public class HazelcastMapProducerForSpringTest extends CamelSpringTestSupport im
     @Test
     public void testPut() throws InterruptedException {
         template.sendBodyAndHeader("direct:put", "my-foo", HazelcastConstants.OBJECT_ID, 4711L);
-
-        assertTrue(map.containsKey(4711L));
-        assertEquals("my-foo", map.get(4711L));
+        verify(map).put(4711L, "my-foo");
     }
 
     @Test
     public void testUpdate() {
-        template.sendBodyAndHeader("direct:put", "my-foo", HazelcastConstants.OBJECT_ID, 4711L);
-
-        assertTrue(map.containsKey(4711L));
-        assertEquals("my-foo", map.get(4711L));
-
         template.sendBodyAndHeader("direct:update", "my-fooo", HazelcastConstants.OBJECT_ID, 4711L);
-        assertEquals("my-fooo", map.get(4711L));
+        verify(map).lock(4711L);
+        verify(map).replace(4711L, "my-fooo");
+        verify(map).unlock(4711L);
     }
 
     @Test
     public void testGet() {
-        map.put(4711L, "my-foo");
-
+        when(map.get(4711L)).thenReturn("my-foo");
         template.sendBodyAndHeader("direct:get", null, HazelcastConstants.OBJECT_ID, 4711L);
+        verify(map).get(4711L);
         String body = consumer.receiveBody("seda:out", 5000, String.class);
 
         assertEquals("my-foo", body);
@@ -79,33 +88,22 @@ public class HazelcastMapProducerForSpringTest extends CamelSpringTestSupport im
 
     @Test
     public void testDelete() {
-        map.put(4711L, "my-foo");
-        assertEquals(1, map.size());
-
         template.sendBodyAndHeader("direct:delete", null, HazelcastConstants.OBJECT_ID, 4711L);
-        assertEquals(0, map.size());
+        verify(map).remove(4711L);
     }
 
     @Test
     public void testQuery() {
-        map.put(1L, new Dummy("alpha", 1000));
-        map.put(2L, new Dummy("beta", 2000));
-        map.put(3L, new Dummy("gamma", 3000));
+        String sql = "bar > 1000";
 
-        String q1 = "bar > 1000";
-        String q2 = "foo LIKE alp%";
+        when(map.values(any(SqlPredicate.class))).thenReturn(Arrays.<Object>asList(new Dummy("beta", 2000), new Dummy("gamma", 3000)));
+        template.sendBodyAndHeader("direct:query", null, HazelcastConstants.QUERY, sql);
+        verify(map).values(any(SqlPredicate.class));
 
-        template.sendBodyAndHeader("direct:query", null, HazelcastConstants.QUERY, q1);
         Collection<?> b1 = consumer.receiveBody("seda:out", 5000, Collection.class);
 
         assertNotNull(b1);
         assertEquals(2, b1.size());
-
-        template.sendBodyAndHeader("direct:query", null, HazelcastConstants.QUERY, q2);
-        Collection<?> b2 = consumer.receiveBody("seda:out", 5000, Collection.class);
-
-        assertNotNull(b2);
-        assertEquals(1, b2.size());
     }
 
 }
