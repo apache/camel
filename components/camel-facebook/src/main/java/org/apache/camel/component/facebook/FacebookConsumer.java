@@ -16,7 +16,9 @@
  */
 package org.apache.camel.component.facebook;
 
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Array;
+import java.net.URLDecoder;
 import java.text.SimpleDateFormat;
 import java.util.Collection;
 import java.util.Collections;
@@ -33,6 +35,7 @@ import facebook4j.Reading;
 import facebook4j.json.DataObjectFactory;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.facebook.data.FacebookMethodsType;
 import org.apache.camel.component.facebook.data.FacebookMethodsTypeHelper.MatchType;
 import org.apache.camel.component.facebook.data.FacebookPropertiesHelper;
@@ -41,7 +44,6 @@ import org.apache.camel.impl.ScheduledPollConsumer;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import static org.apache.camel.component.facebook.FacebookConstants.FACEBOOK_DATE_FORMAT;
 import static org.apache.camel.component.facebook.FacebookConstants.READING_PPROPERTY;
 import static org.apache.camel.component.facebook.FacebookConstants.READING_PREFIX;
@@ -87,7 +89,13 @@ public class FacebookConsumer extends ScheduledPollConsumer {
                 if (endIndex == -1) {
                     endIndex = queryString.length();
                 }
-                this.sinceTime = queryString.substring(startIndex, endIndex).replaceAll("%3(a|A)", ":");
+                final String strSince = queryString.substring(startIndex, endIndex);
+                try {
+                    this.sinceTime = URLDecoder.decode(strSince, "UTF-8");
+                } catch (UnsupportedEncodingException e) {
+                    throw new RuntimeCamelException(String.format("Error decoding %s.since with value %s due to: %s"
+                            , READING_PREFIX, strSince, e.getMessage()), e);
+                }
                 LOG.debug("Using supplied property {}since value {}", READING_PREFIX, this.sinceTime);
             }
             if (queryString.contains("until=")) {
