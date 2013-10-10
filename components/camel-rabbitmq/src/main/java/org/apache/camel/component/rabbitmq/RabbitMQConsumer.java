@@ -122,7 +122,7 @@ public class RabbitMQConsumer extends DefaultConsumer {
                 consumer.getProcessor().process(exchange);
 
                 long deliveryTag = envelope.getDeliveryTag();
-                if (consumer.endpoint.isAutoAck()) {
+                if (!consumer.endpoint.isAutoAck()) {
                     log.trace("Acknowledging receipt [delivery_tag={}]", deliveryTag);
                     channel.basicAck(deliveryTag, false);
                 }
