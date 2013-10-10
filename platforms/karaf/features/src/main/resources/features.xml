@@ -936,6 +936,12 @@
     <bundle dependency='true'>mvn:commons-io/commons-io/${commons-io-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-solr/${project.version}</bundle>
   </feature>
+  <feature name='camel-splunk' version='${project.version}' resolver='(obr)' start-level='50'>
+    <feature version='${project.version}'>camel-core</feature>
+    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.splunk/${splunk-version}</bundle>
+    <bundle dependency='true'>mvn:joda-time/joda-time/${jodatime2-bundle-version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-splunk/${project.version}</bundle>
+  </feature>
   <feature name='camel-spring-batch' version='${project.version}' resolver='(obr)' start-level='50'>
     <bundle dependency='true'>mvn:org.springframework.batch/spring-batch-core/${spring-batch-version}</bundle>
     <bundle dependency='true'>mvn:org.springframework.batch/spring-batch-infrastructure/${spring-batch-version}</bundle>

@@ -41,11 +41,16 @@
       <artifactId>camel-core</artifactId>
     </dependency>
 
-    <!-- TODO: use SMX bundle version when its released -->
     <dependency>
-      <groupId>com.splunk</groupId>
-      <artifactId>splunk</artifactId>
-      <version>1.2.0</version>
+      <groupId>org.apache.servicemix.bundles</groupId>
+      <artifactId>org.apache.servicemix.bundles.splunk</artifactId>
+      <version>${splunk-version}</version>
+      <exclusions>
+        <exclusion>
+          <artifactId>splunk</artifactId>
+          <groupId>com.splunk</groupId>
+        </exclusion>
+      </exclusions>
     </dependency>
 
     <dependency>
