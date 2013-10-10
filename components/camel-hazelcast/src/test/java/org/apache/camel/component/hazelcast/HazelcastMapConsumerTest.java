@@ -73,8 +73,8 @@ public class HazelcastMapConsumerTest extends HazelcastCamelTestSupport {
 
     @Test
     @SuppressWarnings("unchecked")
-    public void testEnvict() throws InterruptedException {
-        MockEndpoint out = super.getMockEndpoint("mock:envicted");
+    public void testEnict() throws InterruptedException {
+        MockEndpoint out = super.getMockEndpoint("mock:evicted");
         out.expectedMessageCount(1);
 
         EntryEvent<Object, Object> event = new EntryEvent<Object, Object>("foo", null, EntryEventType.EVICTED.getType(), "4711", "my-foo");
@@ -116,7 +116,7 @@ public class HazelcastMapConsumerTest extends HazelcastCamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from(String.format("hazelcast:%sfoo", HazelcastConstants.MAP_PREFIX)).log("object...").choice().when(header(HazelcastConstants.LISTENER_ACTION).isEqualTo(HazelcastConstants.ADDED))
-                        .log("...added").to("mock:added").when(header(HazelcastConstants.LISTENER_ACTION).isEqualTo(HazelcastConstants.ENVICTED)).log("...envicted").to("mock:envicted")
+                        .log("...added").to("mock:added").when(header(HazelcastConstants.LISTENER_ACTION).isEqualTo(HazelcastConstants.EVICTED)).log("...evicted").to("mock:evicted")
                         .when(header(HazelcastConstants.LISTENER_ACTION).isEqualTo(HazelcastConstants.UPDATED)).log("...updated").to("mock:updated")
                         .when(header(HazelcastConstants.LISTENER_ACTION).isEqualTo(HazelcastConstants.REMOVED)).log("...removed").to("mock:removed").otherwise().log("fail!");
             }

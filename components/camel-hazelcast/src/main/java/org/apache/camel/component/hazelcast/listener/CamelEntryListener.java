@@ -36,7 +36,7 @@ public class CamelEntryListener extends CamelListener implements EntryListener<O
     }
 
     public void entryEvicted(EntryEvent<Object, Object> event) {
-        this.sendExchange(HazelcastConstants.ENVICTED, event.getKey(), event.getValue());
+        this.sendExchange(HazelcastConstants.EVICTED, event.getKey(), event.getValue());
     }
 
     public void entryRemoved(EntryEvent<Object, Object> event) {

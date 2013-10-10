@@ -76,7 +76,15 @@ public final class HazelcastConstants {
 
     // listener actions
     public static final String REMOVED = "removed";
+
+    @Deprecated
+    /**
+     * @deprecated should have been 'evicted' not 'envicted'.  Please use new {@link #EVICTED} constant.
+     */
     public static final String ENVICTED = "envicted";
+
+    public static final String EVICTED = "evicted";
+
     public static final String UPDATED = "updated";
     public static final String ADDED = "added";
 
