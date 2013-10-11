@@ -36,6 +36,7 @@ public class SqsConfiguration {
     
     // consumer properties
     private Boolean deleteAfterRead = Boolean.TRUE;
+    private Boolean deleteIfFiltered = Boolean.TRUE;
     private Integer visibilityTimeout;
     private Collection<String> attributeNames;
     private Integer waitTimeSeconds;
@@ -187,6 +188,14 @@ public class SqsConfiguration {
         this.queueOwnerAWSAccountId = queueOwnerAWSAccountId;
     }
 
+    public Boolean isDeleteIfFiltered() {
+        return deleteIfFiltered;
+    }
+
+    public void setDeleteIfFiltered(Boolean deleteIfFiltered) {
+        this.deleteIfFiltered = deleteIfFiltered;
+    }
+
     @Override
     public String toString() {
         return "SqsConfiguration[queueName=" + queueName
@@ -194,6 +203,7 @@ public class SqsConfiguration {
             + ", accessKey=" + accessKey
             + ", secretKey=xxxxxxxxxxxxxxx" 
             + ", deleteAfterRead=" + deleteAfterRead
+            + ", deleteIfFiltered=" + deleteIfFiltered
             + ", visibilityTimeout=" + visibilityTimeout
             + ", attributeNames=" + attributeNames
             + ", waitTimeSeconds=" + waitTimeSeconds
