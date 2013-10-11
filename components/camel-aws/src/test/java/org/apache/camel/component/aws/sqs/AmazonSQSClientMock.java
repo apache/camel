@@ -20,9 +20,14 @@ import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.AmazonServiceException;
@@ -41,11 +46,14 @@ import com.amazonaws.services.sqs.model.SendMessageResult;
 import com.amazonaws.services.sqs.model.SetQueueAttributesRequest;
 
 public class AmazonSQSClientMock extends AmazonSQSClient {
-    
+
     List<Message> messages = new ArrayList<Message>();
     Map<String, Map<String, String>> queueAttributes = new HashMap<String, Map<String, String>>();
     List<ChangeMessageVisibilityRequest> changeMessageVisibilityRequests = new CopyOnWriteArrayList<ChangeMessageVisibilityRequest>();
-    
+    private Map<String, CreateQueueRequest> queues = new LinkedHashMap<String, CreateQueueRequest>();
+    private Map<String, ScheduledFuture> inFlight = new LinkedHashMap<String, ScheduledFuture>();
+    private ScheduledExecutorService scheduler;
+
     public AmazonSQSClientMock() {
         super(new BasicAWSCredentials("myAccessKey", "mySecretKey"));
     }
@@ -58,8 +66,10 @@ public class AmazonSQSClientMock extends AmazonSQSClient {
 
     @Override
     public CreateQueueResult createQueue(CreateQueueRequest createQueueRequest) throws AmazonServiceException, AmazonClientException {
+        String queueName = "https://queue.amazonaws.com/541925086079/" + createQueueRequest.getQueueName();
+        queues.put(queueName, createQueueRequest);
         CreateQueueResult result = new CreateQueueResult();
-        result.setQueueUrl("https://queue.amazonaws.com/541925086079/MyQueue");
+        result.setQueueUrl(queueName);
         return result;
     }
 
@@ -91,8 +101,10 @@ public class AmazonSQSClientMock extends AmazonSQSClient {
         synchronized (messages) {
             int fetchSize = 0;
             for (Iterator<Message> iterator = messages.iterator(); iterator.hasNext() && fetchSize < maxNumberOfMessages; fetchSize++) {
-                resultMessages.add(iterator.next());
+                Message rc = iterator.next();
+                resultMessages.add(rc);
                 iterator.remove();
+                scheduleCancelInflight(receiveMessageRequest.getQueueUrl(), rc);
             }
         }
         
@@ -100,9 +112,52 @@ public class AmazonSQSClientMock extends AmazonSQSClient {
         return result;
     }
 
+    /*
+     * Cancel (put back onto queue) in flight messages if the visibility time has expired
+     * and has not been manually deleted (ack'd)
+     */
+    private void scheduleCancelInflight(final String queueUrl, final Message message) {
+        if (scheduler != null) {
+            int visibility = getVisibilityForQueue(queueUrl);
+            if (visibility > 0) {
+                ScheduledFuture task = scheduler.schedule(new Runnable() {
+                    @Override
+                    public void run() {
+                        synchronized (messages) {
+                            // put it back!
+                            messages.add(message);
+                        }
+                    }
+                }, visibility, TimeUnit.SECONDS);
+
+                inFlight.put(message.getReceiptHandle(), task);
+            }
+        }
+    }
+
+    private int getVisibilityForQueue(String queueUrl) {
+        Map<String, String> queueAttr = queues.get(queueUrl).getAttributes();
+        if (queueAttr.containsKey("VisibilityTimeout")) {
+            return Integer.parseInt(queueAttr.get("VisibilityTimeout"));
+        }
+        return 0;
+    }
+
+    public ScheduledExecutorService getScheduler() {
+        return scheduler;
+    }
+
+    public void setScheduler(ScheduledExecutorService scheduler) {
+        this.scheduler = scheduler;
+    }
+
     @Override
-    public void deleteMessage(DeleteMessageRequest deleteMessageRequest) throws AmazonServiceException, AmazonClientException {
-        // noop
+    public void deleteMessage(DeleteMessageRequest deleteMessageRequest) throws AmazonClientException {
+        String receiptHandle = deleteMessageRequest.getReceiptHandle();
+        if (inFlight.containsKey(receiptHandle)) {
+            ScheduledFuture inFlightTask = inFlight.get(receiptHandle);
+            inFlightTask.cancel(true);
+        }
     }
 
     @Override

@@ -180,12 +180,13 @@ public class SqsConsumer extends ScheduledBatchPollingConsumer {
      */
     protected void processCommit(Exchange exchange) {
         try {
-            if (getConfiguration().isDeleteAfterRead()) {
+
+            if (shouldDelete(exchange)) {
                 String receiptHandle = exchange.getIn().getHeader(SqsConstants.RECEIPT_HANDLE, String.class);
                 DeleteMessageRequest deleteRequest = new DeleteMessageRequest(getQueueUrl(), receiptHandle);
-                
+
                 LOG.trace("Deleting message with receipt handle {}...", receiptHandle);
-                
+
                 getClient().deleteMessage(deleteRequest);
 
                 LOG.trace("Deleted message with receipt handle {}...", receiptHandle);
@@ -193,6 +194,18 @@ public class SqsConsumer extends ScheduledBatchPollingConsumer {
         } catch (AmazonClientException e) {
             getExceptionHandler().handleException("Error occurred during deleting message. This exception is ignored.", exchange, e);
         }
+    }
+
+    private boolean shouldDelete(Exchange exchange) {
+        return getConfiguration().isDeleteAfterRead()
+                && (getConfiguration().isDeleteIfFiltered()
+                    || (!getConfiguration().isDeleteIfFiltered()
+                        && passedThroughFilter(exchange)));
+    }
+
+    private boolean passedThroughFilter(Exchange exchange) {
+        return exchange.getProperties().containsKey(Exchange.FILTER_MATCHED)
+                && ((Boolean) exchange.getProperties().get(Exchange.FILTER_MATCHED));
     }
 
     /**
