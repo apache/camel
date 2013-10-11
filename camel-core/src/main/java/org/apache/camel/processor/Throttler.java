@@ -17,6 +17,7 @@
 package org.apache.camel.processor;
 
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
@@ -40,7 +41,7 @@ import org.apache.camel.util.ObjectHelper;
 public class Throttler extends DelayProcessorSupport implements Traceable {
     private volatile long maximumRequestsPerPeriod;
     private Expression maxRequestsPerPeriodExpression;
-    private long timePeriodMillis = 1000;
+    private AtomicLong timePeriodMillis = new AtomicLong(1000);
     private volatile TimeSlot slot;
 
     public Throttler(CamelContext camelContext, Processor processor, Expression maxRequestsPerPeriodExpression, long timePeriodMillis,
@@ -53,7 +54,7 @@ public class Throttler extends DelayProcessorSupport implements Traceable {
         if (timePeriodMillis <= 0) {
             throw new IllegalArgumentException("TimePeriodMillis should be a positive number, was: " + timePeriodMillis);
         }
-        this.timePeriodMillis = timePeriodMillis;
+        this.timePeriodMillis.set(timePeriodMillis);
     }
 
     @Override
@@ -81,7 +82,7 @@ public class Throttler extends DelayProcessorSupport implements Traceable {
     }
     
     public long getTimePeriodMillis() {
-        return timePeriodMillis;
+        return timePeriodMillis.get();
     }
 
     /**
@@ -95,7 +96,7 @@ public class Throttler extends DelayProcessorSupport implements Traceable {
      * Sets the time period during which the maximum number of requests apply
      */
     public void setTimePeriodMillis(long timePeriodMillis) {
-        this.timePeriodMillis = timePeriodMillis;
+        this.timePeriodMillis.set(timePeriodMillis);
     }
 
     // Implementation methods
@@ -151,7 +152,7 @@ public class Throttler extends DelayProcessorSupport implements Traceable {
     protected class TimeSlot {
         
         private volatile long capacity = Throttler.this.maximumRequestsPerPeriod;
-        private final long duration = Throttler.this.timePeriodMillis;
+        private final long duration = Throttler.this.timePeriodMillis.get();
         private final long startTime;
 
         protected TimeSlot() {

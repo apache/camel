@@ -19,6 +19,7 @@ package org.apache.camel.processor;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
@@ -43,6 +44,7 @@ public abstract class DelayProcessorSupport extends DelegateAsyncProcessor {
     private final boolean shutdownExecutorService;
     private boolean asyncDelayed;
     private boolean callerRunsWhenRejected = true;
+    private final AtomicInteger delayedCount = new AtomicInteger(0);
 
     // TODO: Add option to cancel tasks on shutdown so we can stop fast
 
@@ -56,6 +58,9 @@ public abstract class DelayProcessorSupport extends DelegateAsyncProcessor {
         }
 
         public void run() {
+            // we are running now so decrement the counter
+            delayedCount.decrementAndGet();
+
             log.trace("Delayed task woke up and continues routing for exchangeId: {}", exchange.getExchangeId());
             if (!isRunAllowed()) {
                 exchange.setException(new RejectedExecutionException("Run is not allowed"));
@@ -123,6 +128,8 @@ public abstract class DelayProcessorSupport extends DelegateAsyncProcessor {
             }
         } else {
             // asynchronous delay so schedule a process call task
+            // and increment the counter (we decrement the counter when we run the ProcessCall)
+            delayedCount.incrementAndGet();
             ProcessCall call = new ProcessCall(exchange, callback);
             try {
                 log.trace("Scheduling delayed task to run in {} millis for exchangeId: {}",
@@ -131,6 +138,8 @@ public abstract class DelayProcessorSupport extends DelegateAsyncProcessor {
                 // tell Camel routing engine we continue routing asynchronous
                 return false;
             } catch (RejectedExecutionException e) {
+                // we were not allowed to run the ProcessCall, so need to decrement the counter here
+                delayedCount.decrementAndGet();
                 if (isCallerRunsWhenRejected()) {
                     if (!isRunAllowed()) {
                         exchange.setException(new RejectedExecutionException());
@@ -174,6 +183,13 @@ public abstract class DelayProcessorSupport extends DelegateAsyncProcessor {
     protected abstract long calculateDelay(Exchange exchange);
 
     /**
+     * Gets the current number of {@link Exchange}s being delayed (hold back due throttle limit hit)
+     */
+    public int getDelayedCount() {
+        return delayedCount.get();
+    }
+
+    /**
      * Delays the given time before continuing.
      * <p/>
      * This implementation will block while waiting
@@ -191,9 +207,13 @@ public abstract class DelayProcessorSupport extends DelegateAsyncProcessor {
             return;
         } else {
             try {
+                // keep track on delayer counter while we sleep
+                delayedCount.incrementAndGet();
                 sleep(delay);
             } catch (InterruptedException e) {
                 handleSleepInterruptedException(e, exchange);
+            } finally {
+                delayedCount.decrementAndGet();
             }
         }
     }

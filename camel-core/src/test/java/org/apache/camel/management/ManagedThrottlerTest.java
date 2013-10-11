@@ -16,14 +16,23 @@
  */
 package org.apache.camel.management;
 
+import java.util.concurrent.RejectedExecutionException;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.ScheduledThreadPoolExecutor;
+import java.util.concurrent.TimeUnit;
 import javax.management.Attribute;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
+import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
+import org.apache.camel.builder.NotifyBuilder;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 
 /**
- * @version 
+ * @version
  */
 public class ManagedThrottlerTest extends ManagementTestSupport {
 
@@ -95,15 +104,273 @@ public class ManagedThrottlerTest extends ManagementTestSupport {
         assertTrue("Should be around 5 sec now: was " + total, total > 3500);
     }
 
+    public void testThrottleVisableViaJmx() throws Exception {
+        // JMX tests dont work well on AIX CI servers (hangs them)
+        if (isPlatform("aix")) {
+            return;
+        }
+
+        // get the stats for the route
+        MBeanServer mbeanServer = getMBeanServer();
+        // get the object name for the delayer
+        ObjectName throttlerName = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=processors,name=\"mythrottler2\"");
+
+        // use route to get the total time
+        ObjectName routeName = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=routes,name=\"route2\"");
+
+        // reset the counters
+        mbeanServer.invoke(routeName, "reset", null, null);
+
+        getMockEndpoint("mock:end").expectedMessageCount(10);
+
+        NotifyBuilder notifier = new NotifyBuilder(context).
+                from("seda:throttleCount").whenReceived(5).create();
+
+        for (int i = 0; i < 10; i++) {
+            template.sendBody("seda:throttleCount", "Message " + i);
+        }
+
+        assertTrue(notifier.matches(2, TimeUnit.SECONDS));
+        Integer throttledMessages = (Integer) mbeanServer.getAttribute(throttlerName, "ThrottledCount");
+
+        // we are expecting this to be > 0
+        assertTrue(throttledMessages.intValue() > 0);
+
+        assertMockEndpointsSatisfied();
+
+        throttledMessages = (Integer) mbeanServer.getAttribute(throttlerName, "ThrottledCount");
+        assertEquals("Should not be any throttled messages left, found: " + throttledMessages, (Integer) 0, throttledMessages);
+
+        Long completed = (Long) mbeanServer.getAttribute(routeName, "ExchangesCompleted");
+        assertEquals(10, completed.longValue());
+
+    }
+
+    public void testThrottleAsyncVisableViaJmx() throws Exception {
+        // JMX tests dont work well on AIX CI servers (hangs them)
+        if (isPlatform("aix")) {
+            return;
+        }
+
+        // get the stats for the route
+        MBeanServer mbeanServer = getMBeanServer();
+        // get the object name for the delayer
+        ObjectName throttlerName = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=processors,name=\"mythrottler3\"");
+
+        // use route to get the total time
+        ObjectName routeName = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=routes,name=\"route3\"");
+
+        // reset the counters
+        mbeanServer.invoke(routeName, "reset", null, null);
+
+        getMockEndpoint("mock:endAsync").expectedMessageCount(10);
+
+        // we pick '5' because we are right in the middle of the number of messages
+        // that have been and reduces any race conditions to minimal...
+        NotifyBuilder notifier = new NotifyBuilder(context).
+                from("seda:throttleCountAsync").whenReceived(5).create();
+
+        for (int i = 0; i < 10; i++) {
+            template.sendBody("seda:throttleCountAsync", "Message " + i);
+        }
+
+        assertTrue(notifier.matches(2, TimeUnit.SECONDS));
+        Integer throttledMessages = (Integer) mbeanServer.getAttribute(throttlerName, "ThrottledCount");
+
+        // we are expecting this to be > 0
+        assertTrue(throttledMessages.intValue() > 0);
+
+        assertMockEndpointsSatisfied();
+
+        throttledMessages = (Integer) mbeanServer.getAttribute(throttlerName, "ThrottledCount");
+        assertEquals("Should not be any throttled messages left, found: " + throttledMessages, (Integer)0, throttledMessages);
+
+        Long completed = (Long) mbeanServer.getAttribute(routeName, "ExchangesCompleted");
+        assertEquals(10, completed.longValue());
+
+    }
+
+    public void testThrottleAsyncExceptionVisableViaJmx() throws Exception {
+        // JMX tests dont work well on AIX CI servers (hangs them)
+        if (isPlatform("aix")) {
+            return;
+        }
+
+        // get the stats for the route
+        MBeanServer mbeanServer = getMBeanServer();
+        // get the object name for the delayer
+        ObjectName throttlerName = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=processors,name=\"mythrottler4\"");
+
+        // use route to get the total time
+        ObjectName routeName = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=routes,name=\"route4\"");
+
+        // reset the counters
+        mbeanServer.invoke(routeName, "reset", null, null);
+
+        getMockEndpoint("mock:endAsyncException").expectedMessageCount(10);
+
+        NotifyBuilder notifier = new NotifyBuilder(context).
+                from("seda:throttleCountAsyncException").whenReceived(5).create();
+
+        for (int i = 0; i < 10; i++) {
+            template.sendBody("seda:throttleCountAsyncException", "Message " + i);
+        }
+
+        assertTrue(notifier.matches(2, TimeUnit.SECONDS));
+        Integer throttledMessages = (Integer) mbeanServer.getAttribute(throttlerName, "ThrottledCount");
+
+        // we are expecting this to be > 0
+        assertTrue(throttledMessages.intValue() > 0);
+
+        assertMockEndpointsSatisfied();
+
+        // give a sec for exception handling to finish..
+        Thread.sleep(500);
+
+        throttledMessages = (Integer) mbeanServer.getAttribute(throttlerName, "ThrottledCount");
+        assertEquals("Should not be any throttled messages left, found: " + throttledMessages, (Integer)0, throttledMessages);
+
+        // since all exchanges ended w/ exception, they are not completed
+        Long completed = (Long) mbeanServer.getAttribute(routeName, "ExchangesCompleted");
+        assertEquals(0, completed.longValue());
+
+    }
+
+    public void testRejectedExecution() throws Exception {
+        // when delaying async, we can possibly fill up the execution queue
+        //. which would through a RejectedExecutionException.. we need to make
+        // sure that the delayedCount/throttledCount doesn't leak
+
+        // JMX tests dont work well on AIX CI servers (hangs them)
+        if (isPlatform("aix")) {
+            return;
+        }
+
+        // get the stats for the route
+        MBeanServer mbeanServer = getMBeanServer();
+        // get the object name for the delayer
+        ObjectName throttlerName = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=processors,name=\"mythrottler2\"");
+
+        // use route to get the total time
+        ObjectName routeName = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=routes,name=\"route2\"");
+
+        // reset the counters
+        mbeanServer.invoke(routeName, "reset", null, null);
+
+        MockEndpoint mock = getMockEndpoint("mock:endAsyncReject");
+        // only one message (the first one) should get through because the rest should get delayed
+        mock.expectedMessageCount(1);
+
+        MockEndpoint exceptionMock = getMockEndpoint("mock:rejectedExceptionEndpoint1");
+        exceptionMock.expectedMessageCount(9);
+
+
+        for (int i = 0; i < 10; i++) {
+            template.sendBody("seda:throttleCountRejectExecution", "Message " + i);
+        }
+
+        assertMockEndpointsSatisfied();
+
+        // we shouldn't have ane leaked throttler counts
+        Integer throttledMessages = (Integer) mbeanServer.getAttribute(throttlerName, "ThrottledCount");
+        assertEquals("Should not be any throttled messages left, found: " + throttledMessages, (Integer) 0, throttledMessages);
+
+    }
+
+    public void testRejectedExecutionCallerRuns() throws Exception {
+        // when delaying async, we can possibly fill up the execution queue
+        //. which would through a RejectedExecutionException.. we need to make
+        // sure that the delayedCount/throttledCount doesn't leak
+
+        // JMX tests dont work well on AIX CI servers (hangs them)
+        if (isPlatform("aix")) {
+            return;
+        }
+
+        // get the stats for the route
+        MBeanServer mbeanServer = getMBeanServer();
+        // get the object name for the delayer
+        ObjectName throttlerName = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=processors,name=\"mythrottler2\"");
+
+        // use route to get the total time
+        ObjectName routeName = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=routes,name=\"route2\"");
+
+        // reset the counters
+        mbeanServer.invoke(routeName, "reset", null, null);
+
+        MockEndpoint mock = getMockEndpoint("mock:endAsyncRejectCallerRuns");
+        // only one message (the first one) should get through because the rest should get delayed
+        mock.expectedMessageCount(10);
+
+        MockEndpoint exceptionMock = getMockEndpoint("mock:rejectedExceptionEndpoint");
+        exceptionMock.expectedMessageCount(0);
+
+
+        for (int i = 0; i < 10; i++) {
+            template.sendBody("seda:throttleCountRejectExecutionCallerRuns", "Message " + i);
+        }
+
+        assertMockEndpointsSatisfied();
+
+        // we shouldn't have ane leaked throttler counts
+        Integer throttledMessages = (Integer) mbeanServer.getAttribute(throttlerName, "ThrottledCount");
+        assertEquals("Should not be any throttled messages left, found: " + throttledMessages, (Integer) 0, throttledMessages);
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
+        final ScheduledExecutorService badService = new ScheduledThreadPoolExecutor(1) {
+            @Override
+            public ScheduledFuture<?> schedule(Runnable command, long delay, TimeUnit unit) {
+                throw new RejectedExecutionException();
+            }
+        };
+
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .to("log:foo")
-                    .throttle(10).id("mythrottler")
-                    .to("mock:result");
+                        .to("log:foo")
+                        .throttle(10).id("mythrottler")
+                        .to("mock:result");
+
+                from("seda:throttleCount")
+                        .throttle(1).timePeriodMillis(250).id("mythrottler2")
+                        .to("mock:end");
+
+                from("seda:throttleCountAsync")
+                        .throttle(1).asyncDelayed().timePeriodMillis(250).id("mythrottler3")
+                        .to("mock:endAsync");
+
+                from("seda:throttleCountAsyncException")
+                        .throttle(1).asyncDelayed().timePeriodMillis(250).id("mythrottler4")
+                        .to("mock:endAsyncException")
+                        .process(new Processor() {
+
+                            @Override
+                            public void process(Exchange exchange) throws Exception {
+                                throw new RuntimeException("Fail me");
+                            }
+                        });
+                from("seda:throttleCountRejectExecutionCallerRuns")
+                        .onException(RejectedExecutionException.class).to("mock:rejectedExceptionEndpoint1").end()
+                        .throttle(1)
+                            .timePeriodMillis(250)
+                            .asyncDelayed()
+                            .executorService(badService)
+                            .callerRunsWhenRejected(true)
+                            .id("mythrottler5")
+                        .to("mock:endAsyncRejectCallerRuns");
+
+                from("seda:throttleCountRejectExecution")
+                        .onException(RejectedExecutionException.class).to("mock:rejectedExceptionEndpoint1").end()
+                        .throttle(1)
+                            .timePeriodMillis(250)
+                            .asyncDelayed()
+                            .executorService(badService)
+                            .callerRunsWhenRejected(false)
+                            .id("mythrottler6")
+                        .to("mock:endAsyncReject");
             }
         };
     }
