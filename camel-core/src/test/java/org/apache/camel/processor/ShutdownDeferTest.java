@@ -35,7 +35,7 @@ import static org.apache.camel.ShutdownRoute.Defer;
  */
 public class ShutdownDeferTest extends ContextTestSupport {
 
-    private static final AtomicBoolean consumerSuspended = new AtomicBoolean();
+    private static final AtomicBoolean CONSUMER_SUSPENDED = new AtomicBoolean();
 
     @Override
     protected void setUp() throws Exception {
@@ -59,7 +59,7 @@ public class ShutdownDeferTest extends ContextTestSupport {
 
         context.stop();
 
-        assertFalse("Should not have been suspended", consumerSuspended.get());
+        assertFalse("Should not have been suspended", CONSUMER_SUSPENDED.get());
     }
 
     @Override
@@ -98,7 +98,7 @@ public class ShutdownDeferTest extends ContextTestSupport {
             return new FileConsumer(this, processor, operations) {
                 @Override
                 protected void doSuspend() throws Exception {
-                    consumerSuspended.set(true);
+                    CONSUMER_SUSPENDED.set(true);
                     super.doSuspend();
                 }
             };
