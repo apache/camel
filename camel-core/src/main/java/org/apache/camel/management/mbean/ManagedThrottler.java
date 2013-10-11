@@ -55,4 +55,8 @@ public class ManagedThrottler extends ManagedProcessor implements ManagedThrottl
     public void setTimePeriodMillis(long timePeriodMillis) {
         getThrottler().setTimePeriodMillis(timePeriodMillis);
     }
+
+    public int getThrottledCount() {
+        return getThrottler().getDelayedCount();
+    }
 }

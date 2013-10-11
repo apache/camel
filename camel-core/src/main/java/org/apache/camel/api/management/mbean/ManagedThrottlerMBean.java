@@ -32,4 +32,7 @@ public interface ManagedThrottlerMBean extends ManagedProcessorMBean {
     @ManagedAttribute(description = "Time period in millis")
     void setTimePeriodMillis(long timePeriodMillis);
 
+    @ManagedAttribute(description = "Number of exchanges currently throttled")
+    int getThrottledCount();
+
 }
