@@ -30,6 +30,7 @@ import java.util.Date;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -65,12 +66,15 @@ import org.bouncycastle.openpgp.operator.jcajce.JcePGPDataEncryptorBuilder;
 import org.bouncycastle.openpgp.operator.jcajce.JcePublicKeyDataDecryptorFactoryBuilder;
 import org.bouncycastle.openpgp.operator.jcajce.JcePublicKeyKeyEncryptionMethodGenerator;
 import org.bouncycastle.util.io.Streams;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * <code>PGPDataFormat</code> uses the <a href="http://www.bouncycastle.org/java.htm">bouncy castle</a>
- * libraries to enable encryption and decryption in the PGP format.
+ * <code>PGPDataFormat</code> uses the <a
+ * href="http://www.bouncycastle.org/java.htm">bouncy castle</a> libraries to
+ * enable encryption and decryption in the PGP format.
  */
-public class PGPDataFormat implements DataFormat {
+public class PGPDataFormat extends ServiceSupport implements DataFormat {
 
     public static final String KEY_FILE_NAME = "CamelPGPDataFormatKeyFileName";
     public static final String ENCRYPTION_KEY_RING = "CamelPGPDataFormatEncryptionKeyRing";
@@ -81,7 +85,13 @@ public class PGPDataFormat implements DataFormat {
     public static final String SIGNATURE_KEY_USERID = "CamelPGPDataFormatSignatureKeyUserid";
     public static final String SIGNATURE_KEY_PASSWORD = "CamelPGPDataFormatSignatureKeyPassword";
 
+    private static final Logger LOG = LoggerFactory.getLogger(PGPDataFormat.class);
+
+    private static final String BC = "BC";
     private static final int BUFFER_SIZE = 16 * 1024;
+
+    // Java Cryptography Extension provider, default is Bouncy Castle
+    private String provider = BC;
 
     // encryption / decryption key info (required)
     private String keyUserid;
@@ -94,30 +104,27 @@ public class PGPDataFormat implements DataFormat {
     private String signatureKeyUserid;
     private String signaturePassword;
     private String signatureKeyFileName;
-    // alternatively to the sigknature key file name you can specify the signature key ring as byte array
+    // alternatively to the signature key file name you can specify the signature key ring as byte array
     private byte[] signatureKeyRing;
 
     private boolean armored;
     private boolean integrity = true;
 
     public PGPDataFormat() {
-        if (Security.getProvider("BC") == null) {
-            Security.addProvider(new BouncyCastleProvider());
-        }
     }
-    
+
     protected String findKeyFileName(Exchange exchange) {
         return exchange.getIn().getHeader(KEY_FILE_NAME, getKeyFileName(), String.class);
     }
-    
+
     protected byte[] findEncryptionKeyRing(Exchange exchange) {
         return exchange.getIn().getHeader(ENCRYPTION_KEY_RING, getEncryptionKeyRing(), byte[].class);
     }
-    
+
     protected String findKeyUserid(Exchange exchange) {
         return exchange.getIn().getHeader(KEY_USERID, getKeyUserid(), String.class);
     }
-    
+
     protected String findKeyPassword(Exchange exchange) {
         return exchange.getIn().getHeader(KEY_PASSWORD, getPassword(), String.class);
     }
@@ -125,7 +132,7 @@ public class PGPDataFormat implements DataFormat {
     protected String findSignatureKeyFileName(Exchange exchange) {
         return exchange.getIn().getHeader(SIGNATURE_KEY_FILE_NAME, getSignatureKeyFileName(), String.class);
     }
-    
+
     protected byte[] findSignatureKeyRing(Exchange exchange) {
         return exchange.getIn().getHeader(SIGNATURE_KEY_RING, getSignatureKeyRing(), byte[].class);
     }
@@ -139,7 +146,8 @@ public class PGPDataFormat implements DataFormat {
     }
 
     public void marshal(Exchange exchange, Object graph, OutputStream outputStream) throws Exception {
-        PGPPublicKey key = PGPDataFormatUtil.findPublicKey(exchange.getContext(), findKeyFileName(exchange), findEncryptionKeyRing(exchange), findKeyUserid(exchange), true);
+        PGPPublicKey key = PGPDataFormatUtil.findPublicKey(exchange.getContext(), findKeyFileName(exchange),
+                findEncryptionKeyRing(exchange), findKeyUserid(exchange), true);
         if (key == null) {
             throw new IllegalArgumentException("Public key is null, cannot proceed");
         }
@@ -150,10 +158,8 @@ public class PGPDataFormat implements DataFormat {
             outputStream = new ArmoredOutputStream(outputStream);
         }
 
-        PGPEncryptedDataGenerator encGen = new PGPEncryptedDataGenerator(new JcePGPDataEncryptorBuilder(SymmetricKeyAlgorithmTags.CAST5).
-                                                                             setWithIntegrityPacket(integrity).
-                                                                             setSecureRandom(new SecureRandom()).
-                                                                             setProvider("BC"));
+        PGPEncryptedDataGenerator encGen = new PGPEncryptedDataGenerator(new JcePGPDataEncryptorBuilder(SymmetricKeyAlgorithmTags.CAST5)
+                .setWithIntegrityPacket(integrity).setSecureRandom(new SecureRandom()).setProvider(getProvider()));
         encGen.addMethod(new JcePublicKeyKeyEncryptionMethodGenerator(key));
         OutputStream encOut = encGen.open(outputStream, new byte[BUFFER_SIZE]);
 
@@ -190,8 +196,8 @@ public class PGPDataFormat implements DataFormat {
         }
     }
 
-    protected PGPSignatureGenerator createSignatureGenerator(Exchange exchange, OutputStream out)
-        throws IOException, PGPException, NoSuchProviderException, NoSuchAlgorithmException {
+    protected PGPSignatureGenerator createSignatureGenerator(Exchange exchange, OutputStream out) throws IOException, PGPException,
+            NoSuchProviderException, NoSuchAlgorithmException {
 
         String sigKeyFileName = findSignatureKeyFileName(exchange);
         String sigKeyUserid = findSignatureKeyUserid(exchange);
@@ -202,12 +208,13 @@ public class PGPDataFormat implements DataFormat {
             return null;
         }
 
-        PGPSecretKey sigSecretKey = PGPDataFormatUtil.findSecretKey(exchange.getContext(), sigKeyFileName, sigKeyRing, sigKeyPassword);
+        PGPSecretKey sigSecretKey = PGPDataFormatUtil.findSecretKey(exchange.getContext(), sigKeyFileName, sigKeyRing, sigKeyPassword, getProvider());
         if (sigSecretKey == null) {
             throw new IllegalArgumentException("Signature secret key is null, cannot proceed");
         }
 
-        PGPPrivateKey sigPrivateKey = sigSecretKey.extractPrivateKey(new JcePBESecretKeyDecryptorBuilder().setProvider("BC").build(sigKeyPassword.toCharArray()));
+        PGPPrivateKey sigPrivateKey = sigSecretKey.extractPrivateKey(new JcePBESecretKeyDecryptorBuilder().setProvider(getProvider()).build(
+                sigKeyPassword.toCharArray()));
         if (sigPrivateKey == null) {
             throw new IllegalArgumentException("Signature private key is null, cannot proceed");
         }
@@ -216,7 +223,8 @@ public class PGPDataFormat implements DataFormat {
         spGen.setSignerUserID(false, sigKeyUserid);
 
         int algorithm = sigSecretKey.getPublicKey().getAlgorithm();
-        PGPSignatureGenerator sigGen = new PGPSignatureGenerator(new JcaPGPContentSignerBuilder(algorithm, HashAlgorithmTags.SHA1).setProvider("BC"));
+        PGPSignatureGenerator sigGen = new PGPSignatureGenerator(
+                new JcaPGPContentSignerBuilder(algorithm, HashAlgorithmTags.SHA1).setProvider(getProvider()));
         sigGen.init(PGPSignature.BINARY_DOCUMENT, sigPrivateKey);
         sigGen.setHashedSubpackets(spGen.generate());
         sigGen.generateOnePassVersion(false).encode(out);
@@ -228,7 +236,8 @@ public class PGPDataFormat implements DataFormat {
             return null;
         }
 
-        PGPPrivateKey key = PGPDataFormatUtil.findPrivateKey(exchange.getContext(), findKeyFileName(exchange), findEncryptionKeyRing(exchange), encryptedStream, findKeyPassword(exchange));
+        PGPPrivateKey key = PGPDataFormatUtil.findPrivateKey(exchange.getContext(), findKeyFileName(exchange),
+                findEncryptionKeyRing(exchange), encryptedStream, findKeyPassword(exchange), getProvider());
         if (key == null) {
             throw new IllegalArgumentException("Private key is null, cannot proceed");
         }
@@ -255,7 +264,7 @@ public class PGPDataFormat implements DataFormat {
         IOHelper.close(in);
 
         PGPPublicKeyEncryptedData pbe = (PGPPublicKeyEncryptedData) enc.get(0);
-        InputStream encData = pbe.getDataStream(new JcePublicKeyDataDecryptorFactoryBuilder().setProvider("BC").build(key));
+        InputStream encData = pbe.getDataStream(new JcePublicKeyDataDecryptorFactoryBuilder().setProvider(getProvider()).build(key));
         pgpFactory = new PGPObjectFactory(encData);
         PGPCompressedData comData = (PGPCompressedData) pgpFactory.nextObject();
 
@@ -291,16 +300,17 @@ public class PGPDataFormat implements DataFormat {
         return answer;
     }
 
-    protected PGPOnePassSignature getSignature(Exchange exchange, PGPOnePassSignatureList signatureList)
-        throws IOException, PGPException, NoSuchProviderException {
+    protected PGPOnePassSignature getSignature(Exchange exchange, PGPOnePassSignatureList signatureList) throws IOException, PGPException,
+            NoSuchProviderException {
 
-        PGPPublicKey sigPublicKey = PGPDataFormatUtil.findPublicKey(exchange.getContext(), findSignatureKeyFileName(exchange), findSignatureKeyRing(exchange), findSignatureKeyUserid(exchange), false);
+        PGPPublicKey sigPublicKey = PGPDataFormatUtil.findPublicKey(exchange.getContext(), findSignatureKeyFileName(exchange),
+                findSignatureKeyRing(exchange), findSignatureKeyUserid(exchange), false);
         if (sigPublicKey == null) {
             throw new IllegalArgumentException("Signature public key is null, cannot proceed");
         }
 
         PGPOnePassSignature signature = signatureList.get(0);
-        signature.init(new JcaPGPContentVerifierBuilderProvider().setProvider("BC"), sigPublicKey);
+        signature.init(new JcaPGPContentVerifierBuilderProvider().setProvider(getProvider()), sigPublicKey);
         return signature;
     }
 
@@ -408,4 +418,26 @@ public class PGPDataFormat implements DataFormat {
         this.signatureKeyRing = signatureKeyRing;
     }
 
+    public String getProvider() {
+        return provider;
+    }
+
+    public void setProvider(String provider) {
+        this.provider = provider;
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        if (Security.getProvider(BC) == null && BC.equals(getProvider())) {
+            LOG.debug("Adding BouncyCastleProvider as security provider");
+            Security.addProvider(new BouncyCastleProvider());
+        } else {
+            LOG.debug("Using custom provider {} which is expected to be enlisted manually.", getProvider());
+        }
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        // noop
+    }
 }

@@ -42,6 +42,8 @@ public class PGPDataFormat extends DataFormatDefinition {
     private Boolean armored;
     @XmlAttribute
     private Boolean integrity;
+    @XmlAttribute
+    private String provider;
 
     public PGPDataFormat() {
         super("pgp");
@@ -63,6 +65,9 @@ public class PGPDataFormat extends DataFormatDefinition {
         }
         if (integrity != null) {
             setProperty(camelContext, dataFormat, "integrity", integrity);
+        }
+        if (provider != null) {
+            setProperty(camelContext, dataFormat, "provider", provider);
         }
     }
 
@@ -104,5 +109,13 @@ public class PGPDataFormat extends DataFormatDefinition {
 
     public void setPassword(String password) {
         this.password = password;
+    }
+
+    public String getProvider() {
+        return provider;
+    }
+
+    public void setProvider(String provider) {
+        this.provider = provider;
     }
 }
