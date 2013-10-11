@@ -16,9 +16,9 @@
  */
 package org.apache.camel.processor.jpa;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Callable;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -50,13 +50,14 @@ public class JpaProducerConcurrentTest extends AbstractJpaTest {
         getMockEndpoint("mock:result").assertNoDuplicates(body());
 
         ExecutorService executor = Executors.newFixedThreadPool(poolSize);
-        Map<Integer, Future<Object>> responses = new ConcurrentHashMap<Integer, Future<Object>>();
+        // we access the responses Map below only inside the main thread,
+        // so no need for a thread-safe Map implementation
+        Map<Integer, Future<SendEmail>> responses = new HashMap<Integer, Future<SendEmail>>();
         for (int i = 0; i < files; i++) {
             final int index = i;
-            Future<Object> out = executor.submit(new Callable<Object>() {
-                public Object call() throws Exception {
-                    template.sendBody("direct:start", new SendEmail("user" + index + "@somewhere.org"));
-                    return null;
+            Future<SendEmail> out = executor.submit(new Callable<SendEmail>() {
+                public SendEmail call() throws Exception {
+                    return template.requestBody("direct:start", new SendEmail("user" + index + "@somewhere.org"), SendEmail.class);
                 }
             });
             responses.put(index, out);
@@ -67,8 +68,10 @@ public class JpaProducerConcurrentTest extends AbstractJpaTest {
         assertEquals(files, responses.size());
 
         // get them so they are complete
-        for (Future<Object> future : responses.values()) {
-            future.get();
+        for (Future<SendEmail> future : responses.values()) {
+        	SendEmail sendMail = future.get();
+        	assertNotNull(sendMail);
+        	log.info("Got the managed entity {}", sendMail);
         }
 
         // assert in the database
@@ -80,7 +83,7 @@ public class JpaProducerConcurrentTest extends AbstractJpaTest {
     protected RouteBuilder createRouteBuilder() {
         return new SpringRouteBuilder() {
             public void configure() {
-                from("direct:start").to("jpa://" + SendEmail.class.getName()).to("mock:result");
+                from("direct:start").to("jpa://" + SendEmail.class.getName() + "?usePersist=true").to("mock:result");
             }
         };
     }
