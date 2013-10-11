@@ -45,6 +45,10 @@ public class PGPDataFormatTest extends AbstractPGPDataFormatTest {
     protected String getKeyPassword() {
         return "sdude";
     }
+    
+    protected String getProvider() {
+        return "BC";
+    }
 
     @Test
     public void testEncryption() throws Exception {
@@ -100,11 +104,13 @@ public class PGPDataFormatTest extends AbstractPGPDataFormatTest {
                 PGPDataFormat pgpEncrypt = new PGPDataFormat();
                 pgpEncrypt.setKeyFileName(keyFileName);
                 pgpEncrypt.setKeyUserid(keyUserid);
+                pgpEncrypt.setProvider(getProvider());
 
                 PGPDataFormat pgpDecrypt = new PGPDataFormat();
                 pgpDecrypt.setKeyFileName(keyFileNameSec);
                 pgpDecrypt.setKeyUserid(keyUserid);
                 pgpDecrypt.setPassword(keyPassword);
+                pgpDecrypt.setProvider(getProvider());
 
                 from("direct:inline2")
                         .marshal(pgpEncrypt)
@@ -126,6 +132,7 @@ public class PGPDataFormatTest extends AbstractPGPDataFormatTest {
                 pgpSignAndEncrypt.setSignatureKeyFileName(keyFileNameSec);
                 pgpSignAndEncrypt.setSignatureKeyUserid(keyUserid);
                 pgpSignAndEncrypt.setSignaturePassword(keyPassword);
+                pgpSignAndEncrypt.setProvider(getProvider());
 
                 PGPDataFormat pgpVerifyAndDecrypt = new PGPDataFormat();
                 pgpVerifyAndDecrypt.setKeyFileName(keyFileNameSec);
@@ -133,6 +140,7 @@ public class PGPDataFormatTest extends AbstractPGPDataFormatTest {
                 pgpVerifyAndDecrypt.setPassword(keyPassword);
                 pgpVerifyAndDecrypt.setSignatureKeyFileName(keyFileName);
                 pgpVerifyAndDecrypt.setSignatureKeyUserid(keyUserid);
+                pgpVerifyAndDecrypt.setProvider(getProvider());
 
                 from("direct:inline-sign")
                         .marshal(pgpSignAndEncrypt)
@@ -145,11 +153,13 @@ public class PGPDataFormatTest extends AbstractPGPDataFormatTest {
                 PGPDataFormat pgpEncryptByteArray = new PGPDataFormat();
                 pgpEncryptByteArray.setEncryptionKeyRing(getPublicKeyRing());
                 pgpEncryptByteArray.setKeyUserid(keyUserid);
+                pgpEncryptByteArray.setProvider(getProvider());
 
                 PGPDataFormat pgpDecryptByteArray = new PGPDataFormat();
                 pgpDecryptByteArray.setEncryptionKeyRing(getSecKeyRing());
                 pgpDecryptByteArray.setKeyUserid(keyUserid);
                 pgpDecryptByteArray.setPassword(keyPassword);
+                pgpDecryptByteArray.setProvider(getProvider());
 
                 from("direct:key-ring-byte-array").marshal(pgpEncryptByteArray).to("mock:encrypted").unmarshal(pgpDecryptByteArray)
                         .to("mock:unencrypted");
@@ -161,12 +171,14 @@ public class PGPDataFormatTest extends AbstractPGPDataFormatTest {
                 pgpSignAndEncryptByteArray.setSignatureKeyRing(getSecKeyRing());
                 pgpSignAndEncryptByteArray.setSignatureKeyUserid(keyUserid);
                 pgpSignAndEncryptByteArray.setSignaturePassword(keyPassword);
+                pgpSignAndEncryptByteArray.setProvider(getProvider());
 
                 PGPDataFormat pgpVerifyAndDecryptByteArray = new PGPDataFormat();
                 pgpVerifyAndDecryptByteArray.setKeyUserid(keyUserid);
                 pgpVerifyAndDecryptByteArray.setPassword(keyPassword);
                 pgpVerifyAndDecryptByteArray.setEncryptionKeyRing(getSecKeyRing());
                 pgpVerifyAndDecryptByteArray.setSignatureKeyUserid(keyUserid);
+                pgpVerifyAndDecryptByteArray.setProvider(getProvider());
 
                 from("direct:sign-key-ring-byte-array")
                 // encryption key ring can also be set as header
