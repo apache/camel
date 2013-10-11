@@ -101,6 +101,9 @@ public class NettyConsumer extends DefaultConsumer {
         if (channelFactory != null) {
             channelFactory.releaseExternalResources();
         }
+        if (datagramChannelFactory != null) {
+            datagramChannelFactory.releaseExternalResources();
+        }
 
         // and then shutdown the thread pools
         if (bossExecutor != null) {
