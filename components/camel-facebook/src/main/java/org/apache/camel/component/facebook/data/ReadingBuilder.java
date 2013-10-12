@@ -17,15 +17,11 @@
 package org.apache.camel.component.facebook.data;
 
 import java.lang.reflect.Field;
-import java.text.ParseException;
-import java.text.SimpleDateFormat;
 import java.util.LinkedHashMap;
 import java.util.Locale;
 import java.util.Map;
 
 import facebook4j.Reading;
-
-import org.apache.camel.component.facebook.FacebookConstants;
 
 /**
  * Builds {@link facebook4j.Reading} instances.
@@ -74,22 +70,15 @@ public final class ReadingBuilder {
         if (offset != null) {
             reading.offset(Integer.parseInt(offset.toString()));
         }
-        final SimpleDateFormat dateFormat = new SimpleDateFormat(FacebookConstants.FACEBOOK_DATE_FORMAT);
         final Object until = readingProperties.remove("until");
         if (until != null) {
-            try {
-                reading.until(dateFormat.parse(until.toString()));
-            } catch (ParseException e) {
-                throw new RuntimeException("Error parsing property 'until' :" + e.getMessage(), e);
-            }
+            // take the string form as is to support PHP strtotime, no validation until API call!
+            reading.until(until.toString());
         }
         final Object since = readingProperties.remove("since");
         if (since != null) {
-            try {
-                reading.since(dateFormat.parse(since.toString()));
-            } catch (ParseException e) {
-                throw new RuntimeException("Error parsing property 'since' :" + e.getMessage(), e);
-            }
+            // take the string form as is to support PHP strtotime, no validation until API call!
+            reading.since(since.toString());
         }
         final Object metadata = readingProperties.remove("metadata");
         if (metadata != null && Boolean.parseBoolean(metadata.toString())) {

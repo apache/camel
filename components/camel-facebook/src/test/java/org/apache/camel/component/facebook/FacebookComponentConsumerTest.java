@@ -74,6 +74,13 @@ public class FacebookComponentConsumerTest extends CamelFacebookTestSupport {
         assertFalse("Empty rawJSON", rawJSON.isEmpty());
     }
 
+    @Test
+    public void testGetPosts() throws Exception {
+        final MockEndpoint mock = getMockEndpoint("mock:testGetPosts");
+        mock.expectedMinimumMessageCount(1);
+        mock.assertIsSatisfied();
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
@@ -99,6 +106,12 @@ public class FacebookComponentConsumerTest extends CamelFacebookTestSupport {
 
                 from("facebook://me?jsonStoreEnabled=true&" + getOauthParams())
                     .to("mock:testJsonStoreEnabled");
+
+                // test unix timestamp support
+                long unixSince =  TimeUnit.SECONDS.convert(System.currentTimeMillis(), TimeUnit.MILLISECONDS)
+                    - TimeUnit.SECONDS.convert(30, TimeUnit.DAYS);
+                from("facebook://posts?reading.limit=10&reading.since=" + unixSince + "&" + getOauthParams())
+                        .to("mock:testGetPosts");
 
                 // TODO add tests for the rest of the supported methods
             }
