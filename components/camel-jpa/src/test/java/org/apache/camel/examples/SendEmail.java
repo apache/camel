@@ -44,7 +44,9 @@ public class SendEmail {
 
     @Override
     public String toString() {
-        return "SendEmail[id: " + getId() + " address: " + getAddress() + "]";
+        // TODO: don't make use of the id property here as it could potentially end up
+        // with a deadlock through the openjpa generated proxy object of this entity 
+        return "SendEmail[address: " + getAddress() + "]";
     }
 
     @Id

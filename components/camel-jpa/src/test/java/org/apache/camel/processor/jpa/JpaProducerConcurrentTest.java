@@ -71,7 +71,7 @@ public class JpaProducerConcurrentTest extends AbstractJpaTest {
         for (Future<SendEmail> future : responses.values()) {
             SendEmail sendMail = future.get();
             assertNotNull(sendMail);
-            log.info("Got the managed entity {}", sendMail);
+            log.info("Got the managed entity {} with the id {}", sendMail, sendMail.getId());
         }
 
         // assert in the database
