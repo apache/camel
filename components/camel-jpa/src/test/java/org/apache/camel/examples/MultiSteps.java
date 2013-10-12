@@ -50,7 +50,9 @@ public class MultiSteps {
 
     @Override
     public String toString() {
-        return "MultiSteps[id: " + getId() + " step: " + getStep() + " address: " + getAddress() + "]";
+        // TODO: don't make use of the id property here as it could potentially end up
+        // with a deadlock through the openjpa generated proxy object of this entity 
+        return "MultiSteps[step: " + getStep() + " address: " + getAddress() + "]";
     }
 
     @Id
