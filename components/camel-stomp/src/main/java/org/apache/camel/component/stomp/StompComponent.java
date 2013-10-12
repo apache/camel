@@ -23,13 +23,18 @@ import org.apache.camel.impl.DefaultComponent;
 
 public class StompComponent extends DefaultComponent {
 
-    StompConfiguration configuration = new StompConfiguration();
+    private StompConfiguration configuration = new StompConfiguration();
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         String destination = "/" + remaining.replaceAll(":", "/");
 
-        StompEndpoint endpoint = new StompEndpoint(uri, this, getConfiguration(), destination);
+        // must copy config so we do not have side effects
+        StompConfiguration config = getConfiguration().copy();
+        // allow to configure configuration from uri parameters
+        setProperties(config, parameters);
+
+        StompEndpoint endpoint = new StompEndpoint(uri, this, config, destination);
         setProperties(endpoint, parameters);
         return endpoint;
     }

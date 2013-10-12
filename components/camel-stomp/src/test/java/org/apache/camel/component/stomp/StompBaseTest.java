@@ -24,12 +24,16 @@ public abstract class StompBaseTest extends CamelTestSupport {
     protected BrokerService brokerService;
     protected int numberOfMessages = 100;
 
+    protected int getPort() {
+        return 61613;
+    }
+
     @Override
     public void setUp() throws Exception {
         brokerService = new BrokerService();
         brokerService.setPersistent(false);
         brokerService.setAdvisorySupport(false);
-        brokerService.addConnector("stomp://localhost:61613?trace=true");
+        brokerService.addConnector("stomp://localhost:" + getPort() + "?trace=true");
         brokerService.start();
         brokerService.waitUntilStarted();
         super.setUp();

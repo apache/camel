@@ -16,15 +16,25 @@
  */
 package org.apache.camel.component.stomp;
 
-import org.fusesource.stomp.client.Stomp;
+import org.apache.camel.RuntimeCamelException;
 
-public class StompConfiguration {
+public class StompConfiguration implements Cloneable {
 
     private String brokerURL = "tcp://localhost:61613";
     private String login;
     private String passcode;
 
-    private Stomp stomp;
+    /**
+     * Returns a copy of this configuration
+     */
+    public StompConfiguration copy() {
+        try {
+            StompConfiguration copy = (StompConfiguration) clone();
+            return copy;
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeCamelException(e);
+        }
+    }
 
     public String getBrokerURL() {
         return brokerURL;
@@ -50,12 +60,4 @@ public class StompConfiguration {
         this.passcode = passcode;
     }
 
-    public Stomp getStomp() throws Exception {
-        if (stomp == null) {
-            stomp = new Stomp(brokerURL);
-            stomp.setLogin(login);
-            stomp.setPasscode(passcode);
-        }
-        return stomp;
-    }
 }
