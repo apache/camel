@@ -51,6 +51,7 @@ public class JpaConsumer extends ScheduledBatchPollingConsumer {
     private final TransactionTemplate transactionTemplate;
     private QueryFactory queryFactory;
     private DeleteHandler<Object> deleteHandler;
+    private DeleteHandler<Object> preDeleteHandler;
     private String query;
     private String namedQuery;
     private String nativeQuery;
@@ -158,6 +159,9 @@ public class JpaConsumer extends ScheduledBatchPollingConsumer {
             pendingExchanges = total - index - 1;
 
             if (lockEntity(result, entityManager)) {
+                // Run the @PreConsumed callback
+                createPreDeleteHandler().deleteObject(entityManager, result);
+
                 // process the current exchange
                 LOG.debug("Processing exchange: {}", exchange);
                 getProcessor().process(exchange);
@@ -166,6 +170,7 @@ public class JpaConsumer extends ScheduledBatchPollingConsumer {
                     throw exchange.getException();
                 }
 
+                // Run the @Consumed callback
                 getDeleteHandler().deleteObject(entityManager, result);
             }
         }
@@ -204,7 +209,18 @@ public class JpaConsumer extends ScheduledBatchPollingConsumer {
     public void setDeleteHandler(DeleteHandler<Object> deleteHandler) {
         this.deleteHandler = deleteHandler;
     }
-    
+
+    public DeleteHandler<Object> getPreDeleteHandler() {
+        if (preDeleteHandler == null) {
+            preDeleteHandler = createPreDeleteHandler();
+        }
+        return preDeleteHandler;
+    }
+
+    public void setPreDeleteHandler(DeleteHandler<Object> preDeleteHandler) {
+        this.preDeleteHandler = preDeleteHandler;
+    }
+
     public void setParameters(Map<String, Object> params) {
         this.parameters = params;
     }
@@ -340,6 +356,40 @@ public class JpaConsumer extends ScheduledBatchPollingConsumer {
         }
     }
 
+    protected DeleteHandler<Object> createPreDeleteHandler() {
+        // Look for @PreConsumed to allow custom callback before the Entity has been consumed
+        Class<?> entityType = getEndpoint().getEntityType();
+        if (entityType != null) {
+            // Inspect the method(s) annotated with @PreConsumed
+            List<Method> methods = ObjectHelper.findMethodsWithAnnotation(entityType, PreConsumed.class);
+            if (methods.size() > 1) {
+                throw new IllegalStateException("Only one method can be annotated with the @PreConsumed annotation but found: " + methods);
+            } else if (methods.size() == 1) {
+                // Inspect the parameters of the @PreConsumed method
+                Class<?>[] parameters = methods.get(0).getParameterTypes();
+                if (parameters.length != 0) {
+                    throw new IllegalStateException("@PreConsumed annotated method cannot have parameters!");
+                }
+
+                final Method method = methods.get(0);
+                return new DeleteHandler<Object>() {
+                    @Override
+                    public void deleteObject(EntityManager entityManager, Object entityBean) {
+                        ObjectHelper.invokeMethod(method, entityBean);
+                    }
+                };
+            }
+        }
+
+        // else do nothing
+        return new DeleteHandler<Object>() {
+            @Override
+            public void deleteObject(EntityManager entityManager, Object entityBean) {
+                // Do nothing
+            }
+        };
+    }
+
     protected DeleteHandler<Object> createDeleteHandler() {
         // look for @Consumed to allow custom callback when the Entity has been consumed
         Class<?> entityType = getEndpoint().getEntityType();
@@ -383,7 +433,6 @@ public class JpaConsumer extends ScheduledBatchPollingConsumer {
                 query.setParameter(entry.getKey(), entry.getValue());
             }
         }
-        
     }
 
     protected Exchange createExchange(Object result) {

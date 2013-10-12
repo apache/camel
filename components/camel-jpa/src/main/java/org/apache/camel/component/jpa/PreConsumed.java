@@ -23,15 +23,11 @@ import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
 /**
- * An annotation to mark a method to be invoked when an entity bean has been successfully processed
- * by a Camel consumer and when the routing is done; so that it can be updated in some way to remove it from the query set.
- * <p/>
- * For example a method may be marked to set an active flag to false or to update some status value to the next step in a workflow
- *
- * @version 
+ * An annotation to mark a method to be invoked <b>before</b> an entity bean is processed and routed; so
+ * that it can be updated in such a way that the results are available to later nodes in the route.
  */
 @Retention(RetentionPolicy.RUNTIME)
 @Documented
-@Target({ElementType.METHOD })
-public @interface Consumed {
+@Target({ ElementType.METHOD })
+public @interface PreConsumed {
 }

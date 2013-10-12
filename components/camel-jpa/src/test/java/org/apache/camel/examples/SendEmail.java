@@ -20,6 +20,10 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 
+import org.apache.camel.component.jpa.PreConsumed;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 /**
  * Represents a task which is added to the database, then removed from the database when it is consumed
  *
@@ -27,6 +31,7 @@ import javax.persistence.Id;
  */
 @Entity
 public class SendEmail {
+    private static final Logger LOG = LoggerFactory.getLogger(SendEmail.class);
     private Long id;
     private String address;
 
@@ -58,5 +63,13 @@ public class SendEmail {
 
     public void setAddress(String address) {
         this.address = address;
+    }
+
+    @PreConsumed
+    public void doBefore() {
+        LOG.info("Invoked the pre consumed method with address {}", address);
+        if ("dummy".equals(address)) {
+            address = "dummy@somewhere.org";
+        }
     }
 }
