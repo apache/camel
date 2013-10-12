@@ -109,6 +109,9 @@ public class QuartzComponent extends DefaultComponent implements StartupListener
         // host can be null if the uri did contain invalid host characters such as an underscore
         if (host == null) {
             host = ObjectHelper.before(remaining, "/");
+            if (host == null) {
+                host = remaining;
+            }
         }
 
         // group can be optional, if so set it to Camel
