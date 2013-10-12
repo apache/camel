@@ -224,8 +224,6 @@ public class QuartzComponent extends DefaultComponent implements StartupListener
     }
 
     private void doAddJob(JobDetail job, Trigger trigger) throws SchedulerException {
-        incrementJobCounter(getScheduler());
-
         Trigger existingTrigger = getScheduler().getTrigger(trigger.getName(), trigger.getGroup());
         if (existingTrigger == null) {
             LOG.debug("Adding job using trigger: {}/{}", trigger.getGroup(), trigger.getName());
@@ -257,6 +255,9 @@ public class QuartzComponent extends DefaultComponent implements StartupListener
                 LOG.debug("Trigger: {}/{} already exists and is already scheduled by clustered JobStore.", trigger.getGroup(), trigger.getName());
             }
         }
+
+        // only increment job counter if we are successful
+        incrementJobCounter(getScheduler());
     }
 
     private boolean hasTriggerChanged(Trigger oldTrigger, Trigger newTrigger) {
@@ -270,8 +271,6 @@ public class QuartzComponent extends DefaultComponent implements StartupListener
     }
 
     public void pauseJob(Trigger trigger) throws SchedulerException {
-        decrementJobCounter(getScheduler());
-
         if (isClustered()) {
             // do not pause jobs which are clustered, as we want the jobs to continue running on the other nodes
             LOG.debug("Cannot pause job using trigger: {}/{} as the JobStore is clustered.", trigger.getGroup(), trigger.getName());
@@ -280,6 +279,9 @@ public class QuartzComponent extends DefaultComponent implements StartupListener
             getScheduler().pauseTrigger(trigger.getName(), trigger.getGroup());
             getScheduler().pauseJob(trigger.getName(), trigger.getGroup());
         }
+
+        // only decrement job counter if we are successful
+        decrementJobCounter(getScheduler());
     }
 
     public void deleteJob(String name, String group) throws SchedulerException {
