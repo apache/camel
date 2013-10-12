@@ -434,8 +434,12 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
      * Specifies the expected number of message exchanges that should be
      * received by this endpoint
      *
+     * If you want to assert that <b>exactly</b> n messages arrives to this mock
+     * endpoint, then see also the {@link #setAssertPeriod(long)} method for further details.
+     *
      * @param expectedCount the number of message exchanges that should be
      *                expected by this endpoint
+     * @see #setAssertPeriod(long)
      */
     public void expectedMessageCount(int expectedCount) {
         setExpectedMessageCount(expectedCount);
