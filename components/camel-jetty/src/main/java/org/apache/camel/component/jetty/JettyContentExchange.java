@@ -199,7 +199,7 @@ public class JettyContentExchange extends ContentExchange {
             } else {
                 // some kind of other error
                 if (exchange.getException() != null) {
-                    exchange.setException(new CamelExchangeException("JettyClient failed with state " + exchangeState, exchange));
+                    exchange.setException(new CamelExchangeException("JettyClient failed with state " + exchangeState, exchange, exchange.getException()));
                 }
             }
         } finally {
