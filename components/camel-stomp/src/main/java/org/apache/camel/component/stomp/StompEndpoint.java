@@ -30,6 +30,7 @@ import org.fusesource.hawtdispatch.Task;
 import org.fusesource.stomp.client.Callback;
 import org.fusesource.stomp.client.CallbackConnection;
 import org.fusesource.stomp.client.Promise;
+import org.fusesource.stomp.client.Stomp;
 import org.fusesource.stomp.codec.StompFrame;
 
 import static org.fusesource.hawtbuf.UTF8Buffer.utf8;
@@ -45,6 +46,7 @@ public class StompEndpoint extends DefaultEndpoint {
     private CallbackConnection connection;
     private StompConfiguration configuration;
     private String destination;
+    private Stomp stomp;
 
     private final List<StompConsumer> consumers = new CopyOnWriteArrayList<StompConsumer>();
 
@@ -70,7 +72,10 @@ public class StompEndpoint extends DefaultEndpoint {
     protected void doStart() throws Exception {
         final Promise<CallbackConnection> promise = new Promise<CallbackConnection>();
 
-        configuration.getStomp().connectCallback(promise);
+        stomp = new Stomp(configuration.getBrokerURL());
+        stomp.setLogin(configuration.getLogin());
+        stomp.setPasscode(configuration.getPasscode());
+        stomp.connectCallback(promise);
 
         connection = promise.await();
 
@@ -123,11 +128,6 @@ public class StompEndpoint extends DefaultEndpoint {
                 connection.send(frame, null);
             }
         });
-    }
-
-    @Override
-    protected String createEndpointUri() {
-        return super.createEndpointUri();
     }
 
     void addConsumer(final StompConsumer consumer) {
