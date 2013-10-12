@@ -23,7 +23,6 @@ import java.util.Locale;
 import java.util.Map;
 
 import facebook4j.Reading;
-
 import org.apache.camel.component.facebook.FacebookConstants;
 import org.junit.Test;
 
@@ -73,7 +72,7 @@ public class ReadingBuilderTest {
         properties.put("offset", "1000");
         final String facebookDate = new SimpleDateFormat(FacebookConstants.FACEBOOK_DATE_FORMAT).format(new Date());
         properties.put("since", facebookDate);
-        properties.put("until", facebookDate);
+        properties.put("until", "arbitrary date, to be validated by Facebook call");
         properties.put("withLocation", "");
 
         // set properties on Reading

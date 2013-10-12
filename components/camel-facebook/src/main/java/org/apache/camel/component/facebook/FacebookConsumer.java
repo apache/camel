@@ -82,12 +82,13 @@ public class FacebookConsumer extends ScheduledPollConsumer {
         final Reading reading = (Reading) properties.get(READING_PPROPERTY);
         if (reading != null) {
             final String queryString = reading.toString();
-            if (queryString.contains("since=")) {
+            if (queryString.contains(SINCE_PREFIX)) {
                 // use the user supplied value to start with
                 final int startIndex = queryString.indexOf(SINCE_PREFIX) + SINCE_PREFIX.length();
                 int endIndex = queryString.indexOf('&', startIndex);
                 if (endIndex == -1) {
-                    endIndex = queryString.length();
+                    // ignore the closing square bracket
+                    endIndex = queryString.length() - 1;
                 }
                 final String strSince = queryString.substring(startIndex, endIndex);
                 try {
@@ -103,6 +104,12 @@ public class FacebookConsumer extends ScheduledPollConsumer {
             }
         }
         this.endpointProperties = Collections.unmodifiableMap(properties);
+    }
+
+    @Override
+    public boolean isGreedy() {
+        // make this consumer not greedy to avoid making too many Facebook calls
+        return false;
     }
 
     private FacebookMethodsType findMethod() {
@@ -136,9 +143,6 @@ public class FacebookConsumer extends ScheduledPollConsumer {
 
     @Override
     protected int poll() throws Exception {
-        // Note mark this consumer as not greedy to avoid making too many Facebook calls
-        setGreedy(false);
-
         // invoke the consumer method
         final Map<String, Object> args = getMethodArguments();
         try {
