@@ -37,13 +37,6 @@ public class SendEmail {
         setAddress(address);
     }
 
-    @Override
-    public String toString() {
-        // TODO: don't make use of the id property here as it could potentially end up
-        // with a deadlock through the openjpa generated proxy object of this entity 
-        return "SendEmail[address: " + getAddress() + "]";
-    }
-
     @Id
     @GeneratedValue
     public Long getId() {
@@ -60,5 +53,13 @@ public class SendEmail {
 
     public void setAddress(String address) {
         this.address = address;
+    }
+
+    @PreConsumed
+    public void doBefore() {
+        LOG.info("Invoked the pre consumed method with address {}", getAddress());
+        if ("dummy".equals(getAddress())) {
+            setAddress("dummy@somewhere.org");
+        }
     }
 }
