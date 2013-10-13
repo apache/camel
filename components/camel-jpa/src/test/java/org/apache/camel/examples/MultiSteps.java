@@ -48,13 +48,6 @@ public class MultiSteps {
         setStep(1);
     }
 
-    @Override
-    public String toString() {
-        // TODO: don't make use of the id property here as it could potentially end up
-        // with a deadlock through the openjpa generated proxy object of this entity 
-        return "MultiSteps[step: " + getStep() + " address: " + getAddress() + "]";
-    }
-
     @Id
     @GeneratedValue
     public Long getId() {
@@ -88,6 +81,6 @@ public class MultiSteps {
     public void goToNextStep() {
         setStep(getStep() + 1);
 
-        LOG.info("Invoked the completion complete method. Now updated the step to: " + getStep());
+        LOG.info("Invoked the completion complete method. Now updated the step to: {}", getStep());
     }
 }
