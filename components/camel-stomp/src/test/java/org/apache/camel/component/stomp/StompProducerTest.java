@@ -35,7 +35,7 @@ public class StompProducerTest extends StompBaseTest {
 
     @Test
     public void testProduce() throws Exception {
-        Stomp stomp = new Stomp("tcp://localhost:61613");
+        Stomp stomp = new Stomp("tcp://localhost:" + getPort());
         final BlockingConnection subscribeConnection = stomp.connectBlocking();
 
         StompFrame frame = new StompFrame(SUBSCRIBE);

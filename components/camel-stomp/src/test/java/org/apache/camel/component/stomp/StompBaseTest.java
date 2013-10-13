@@ -17,19 +17,23 @@
 package org.apache.camel.component.stomp;
 
 import org.apache.activemq.broker.BrokerService;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 
 public abstract class StompBaseTest extends CamelTestSupport {
 
     protected BrokerService brokerService;
     protected int numberOfMessages = 100;
+    protected int port;
 
     protected int getPort() {
-        return 61613;
+        return port;
     }
 
     @Override
     public void setUp() throws Exception {
+        port = AvailablePortFinder.getNextAvailable(61613);
+
         brokerService = new BrokerService();
         brokerService.setPersistent(false);
         brokerService.setAdvisorySupport(false);
