@@ -32,11 +32,6 @@ import static org.fusesource.stomp.client.Constants.SEND;
 
 public class StompConsumerUriTest extends StompBaseTest {
 
-    @Override
-    protected int getPort() {
-        return 61614;
-    }
-
     @Test
     public void testConsume() throws Exception {
         Stomp stomp = new Stomp("tcp://localhost:" + getPort());
@@ -60,7 +55,7 @@ public class StompConsumerUriTest extends StompBaseTest {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("stomp:queue:test?brokerURL=tcp://localhost:61614")
+                from("stomp:queue:test?brokerURL=tcp://localhost:" + getPort())
                         .transform(body().convertToString())
                         .to("mock:result");
             }
