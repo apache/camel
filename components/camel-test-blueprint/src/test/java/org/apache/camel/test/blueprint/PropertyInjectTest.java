@@ -29,7 +29,7 @@ public class PropertyInjectTest extends CamelBlueprintTestSupport {
     public void testPropertyInject() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello");
 
-        template.sendBody("direct:start", "Camel");
+        template.sendBody("seda:start", "Camel");
 
         assertMockEndpointsSatisfied();
     }
