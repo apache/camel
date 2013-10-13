@@ -18,6 +18,8 @@ package org.apache.camel.test.blueprint;
 
 import org.junit.Test;
 
+import static org.apache.camel.util.FileUtil.normalizePath;
+
 /**
  *
  */
@@ -31,7 +33,7 @@ public class BlueprintStreamCachingStrategyTest extends CamelBlueprintTestSuppor
     @Test
     public void testStreamCaching() {
         assertTrue(context.getStreamCachingStrategy().isEnabled());
-        assertEquals("target/cachedir", context.getStreamCachingStrategy().getSpoolDirectory().toString());
+        assertEquals(normalizePath("target/cachedir"), normalizePath(context.getStreamCachingStrategy().getSpoolDirectory().toString()));
         assertEquals(Integer.valueOf(4096).intValue(), context.getStreamCachingStrategy().getBufferSize());
         assertEquals(Long.valueOf(8192).longValue(), context.getStreamCachingStrategy().getSpoolThreshold());
     }
