@@ -23,20 +23,19 @@ import java.util.NoSuchElementException;
 
 /**
  * Finds currently available server ports.
- *
- * @see <a href="http://www.iana.org/assignments/port-numbers">IANA.org</a>
  */
 public final class AvailablePortFinder {
-    /**
-     * The minimum server port number. Set at 1024 to avoid returning privileged
-     * port numbers.
-     */
-    public static final int MIN_PORT_NUMBER = 1024;
 
     /**
-     * The maximum server port number.
+     * The minimum server currentMinPort number for IPv4.
+     * Set at 1100 to avoid returning privileged currentMinPort numbers.
      */
-    public static final int MAX_PORT_NUMBER = 49151;
+    public static final int MIN_PORT_NUMBER = 1100;
+
+    /**
+     * The maximum server currentMinPort number for IPv4.
+     */
+    public static final int MAX_PORT_NUMBER = 65535;
 
     /**
      * Creates a new instance.
