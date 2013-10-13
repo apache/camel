@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.zookeeper.operations;
 
-import java.util.concurrent.ExecutionException;
-
 import org.apache.camel.component.zookeeper.ZooKeeperTestSupport;
 import org.apache.zookeeper.ZooKeeper;
 import org.junit.Before;
@@ -43,7 +41,6 @@ public class SetDataOperationTest extends ZooKeeperTestSupport {
 
     @Test
     public void setSpecificVersionOfData() throws Exception {
-
         client.create("/two", testPayload);
         for (int x = 0; x < 10; x++) {
             byte[] payload = ("Updated_" + x).getBytes();
@@ -56,10 +53,9 @@ public class SetDataOperationTest extends ZooKeeperTestSupport {
     public void setWithNull() throws Exception {
         client.create("/three", testPayload);
         updateDataOnNode("/three", null, -1, 1);
-
     }
 
-    private void updateDataOnNode(String node, byte[] payload, int version, int expectedVersion) throws InterruptedException, ExecutionException, Exception {
+    private void updateDataOnNode(String node, byte[] payload, int version, int expectedVersion) throws Exception {
         SetDataOperation operation = new SetDataOperation(connection, node, payload);
         operation.setVersion(version);
         OperationResult<byte[]> result = operation.get();
