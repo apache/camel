@@ -27,21 +27,19 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Finds currently available server ports.
- *
- * @see <a href="http://www.iana.org/assignments/currentMinPort-numbers">IANA.org</a>
  */
 public final class AvailablePortFinder {
 
     /**
-     * The minimum server currentMinPort number. Set at 1100 to avoid returning privileged
-     * currentMinPort numbers.
+     * The minimum server currentMinPort number for IPv4.
+     * Set at 1100 to avoid returning privileged currentMinPort numbers.
      */
     public static final int MIN_PORT_NUMBER = 1100;
 
     /**
-     * The maximum server currentMinPort number.
+     * The maximum server currentMinPort number for IPv4.
      */
-    public static final int MAX_PORT_NUMBER = 49151;
+    public static final int MAX_PORT_NUMBER = 65535;
 
     private static final Logger LOG = LoggerFactory.getLogger(AvailablePortFinder.class);
 
