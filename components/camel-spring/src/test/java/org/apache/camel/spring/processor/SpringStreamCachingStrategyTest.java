@@ -21,6 +21,8 @@ import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
+import static org.apache.camel.util.FileUtil.normalizePath;
+
 /**
  * @version 
  */
@@ -34,7 +36,7 @@ public class SpringStreamCachingStrategyTest extends SpringTestSupport {
     @Test
     public void testStreamCaching() {
         assertTrue(context.getStreamCachingStrategy().isEnabled());
-        assertEquals("target/cachedir", context.getStreamCachingStrategy().getSpoolDirectory().toString());
+        assertEquals(normalizePath("target/cachedir"), normalizePath(context.getStreamCachingStrategy().getSpoolDirectory().toString()));
         assertEquals(Integer.valueOf(4096).intValue(), context.getStreamCachingStrategy().getBufferSize());
         assertEquals(Long.valueOf(8192).longValue(), context.getStreamCachingStrategy().getSpoolThreshold());
     }
