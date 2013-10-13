@@ -26,7 +26,7 @@ public class BlueprintPropertyInjectRoute extends RouteBuilder {
 
     @Override
     public void configure() throws Exception {
-        from("direct:start")
+        from("seda:start")
                 .transform().constant(greeting)
                 .to("{{destination}}");
     }
