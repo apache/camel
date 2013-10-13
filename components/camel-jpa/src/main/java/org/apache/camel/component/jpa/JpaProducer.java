@@ -96,12 +96,11 @@ public class JpaProducer extends DefaultProducer {
                  */
                 private Object save(final Object entity, EntityManager entityManager) {
                     // there may be concurrency so need to join tx before persist/merge
+                    entityManager.joinTransaction();
                     if (endpoint.isUsePersist()) {
-                        entityManager.joinTransaction();
                         entityManager.persist(entity);
                         return entity;
                     } else {
-                        entityManager.joinTransaction();
                         return entityManager.merge(entity);
                     }
                 }
