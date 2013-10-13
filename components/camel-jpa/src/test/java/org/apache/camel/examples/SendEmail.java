@@ -54,12 +54,4 @@ public class SendEmail {
     public void setAddress(String address) {
         this.address = address;
     }
-
-    @PreConsumed
-    public void doBefore() {
-        LOG.info("Invoked the pre consumed method with address {}", getAddress());
-        if ("dummy".equals(getAddress())) {
-            setAddress("dummy@somewhere.org");
-        }
-    }
 }
