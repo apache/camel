@@ -17,6 +17,8 @@
 package org.apache.camel.component.zookeeper.policy;
 
 import java.util.concurrent.atomic.AtomicBoolean;
+
+import org.apache.camel.CamelContext;
 import org.apache.camel.component.zookeeper.ZooKeeperTestSupport;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.After;
@@ -30,7 +32,9 @@ public class ZookeeperElectionTest extends ZooKeeperTestSupport {
 
     private static final String NODE_BASE_KEY = "/someapp";
     private static final String NODE_PARTICULAR_KEY = "/someapp/somepolicy";
-    private static final String ELECTION_URI = "zookeeper:localhost:39913/someapp/somepolicy";
+
+    private CamelContext candidateOneContext;
+    private CamelContext candidateTwoContext;
 
     @Before
     public void before() throws Exception {
@@ -43,18 +47,29 @@ public class ZookeeperElectionTest extends ZooKeeperTestSupport {
     public void after() throws Exception {
         client.deleteAll(NODE_PARTICULAR_KEY);
         client.delete(NODE_BASE_KEY);
+
+        if (candidateOneContext != null) {
+            candidateOneContext.stop();
+        }
+        if (candidateTwoContext != null) {
+            candidateTwoContext.stop();
+        }
+    }
+
+    private String getElectionUri() {
+        return "zookeeper:localhost:" + getServerPort() + "/someapp/somepolicy";
     }
 
     @Test
     public void masterCanBeElected() throws Exception {
-        ZooKeeperElection candidate = new ZooKeeperElection(template, context, ELECTION_URI, 1);
+        ZooKeeperElection candidate = new ZooKeeperElection(template, context, getElectionUri(), 1);
         assertTrue("The only election candidate was not elected as master.", candidate.isMaster());
     }
 
     @Test
     public void masterAndSlave() throws Exception {
-        final DefaultCamelContext candidateOneContext = createNewContext();
-        final DefaultCamelContext candidateTwoContext = createNewContext();
+        candidateOneContext = createNewContext();
+        candidateTwoContext = createNewContext();
 
         ZooKeeperElection electionCandidate1 = createElectionCandidate(candidateOneContext, 1);
         assertTrue("The first candidate was not elected.", electionCandidate1.isMaster());
@@ -64,8 +79,8 @@ public class ZookeeperElectionTest extends ZooKeeperTestSupport {
 
     @Test
     public void testMasterGoesAway() throws Exception {
-        final DefaultCamelContext candidateOneContext = createNewContext();
-        final DefaultCamelContext candidateTwoContext = createNewContext();
+        candidateOneContext = createNewContext();
+        candidateTwoContext = createNewContext();
 
         ZooKeeperElection electionCandidate1 = createElectionCandidate(candidateOneContext, 1);
         assertTrue("The first candidate was not elected.", electionCandidate1.isMaster());
@@ -80,8 +95,8 @@ public class ZookeeperElectionTest extends ZooKeeperTestSupport {
 
     @Test
     public void testDualMaster() throws Exception {
-        final DefaultCamelContext candidateOneContext = createNewContext();
-        final DefaultCamelContext candidateTwoContext = createNewContext();
+        candidateOneContext = createNewContext();
+        candidateTwoContext = createNewContext();
 
         ZooKeeperElection electionCandidate1 = createElectionCandidate(candidateOneContext, 2);
         assertTrue("The first candidate was not elected.", electionCandidate1.isMaster());
@@ -92,8 +107,8 @@ public class ZookeeperElectionTest extends ZooKeeperTestSupport {
 
     @Test
     public void testWatchersAreNotified() throws Exception {
-        final DefaultCamelContext candidateOneContext = createNewContext();
-        final DefaultCamelContext candidateTwoContext = createNewContext();
+        candidateOneContext = createNewContext();
+        candidateTwoContext = createNewContext();
 
         final AtomicBoolean notified = new AtomicBoolean(false);
         ElectionWatcher watcher = new ElectionWatcher() {
@@ -114,13 +129,13 @@ public class ZookeeperElectionTest extends ZooKeeperTestSupport {
         return controlledContext;
     }
 
-    private ZooKeeperElection createElectionCandidate(final DefaultCamelContext context, int masterCount) {
-        return new ZooKeeperElection(context.createProducerTemplate(), context, ELECTION_URI, masterCount);
+    private ZooKeeperElection createElectionCandidate(final CamelContext context, int masterCount) {
+        return new ZooKeeperElection(context.createProducerTemplate(), context, getElectionUri(), masterCount);
     }
 
     private void assertIsMaster(ZooKeeperElection electionCandidate) throws InterruptedException {
         // Need to wait for a while to be elected.
-        long timeout = System.currentTimeMillis() + 10000;
+        long timeout = System.currentTimeMillis() + 20000;
         
         while (!electionCandidate.isMaster() && timeout > System.currentTimeMillis()) {
             Thread.sleep(200);
