@@ -53,6 +53,7 @@
    <bean id="encryptBean" class="org.apache.camel.converter.crypto.PGPDataFormat">
       <property name="keyUserid" value="sdude@nowhere.net"/>  
       <property name="encryptionKeyRing" ref="pubKeyRing"/>
+      <property name="algorithm" value="7"/> <!-- AES128  algorithm -->
    </bean>
    
    <bean id="decryptBean" class="org.apache.camel.converter.crypto.PGPDataFormat">

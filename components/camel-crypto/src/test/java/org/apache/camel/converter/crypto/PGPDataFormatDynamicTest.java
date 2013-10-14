@@ -19,16 +19,34 @@ package org.apache.camel.converter.crypto;
 import java.util.HashMap;
 import java.util.Map;
 
+import org.bouncycastle.bcpg.HashAlgorithmTags;
+import org.bouncycastle.bcpg.SymmetricKeyAlgorithmTags;
+
 public class PGPDataFormatDynamicTest extends PGPDataFormatTest {
     // setup a wrong userid
+    @Override
     protected String getKeyUserId() {
         return "wrong";
     }
 
     // setup a wrong password
+    @Override
     protected String getKeyPassword() {
         return "wrong";
     }
+    
+    
+    //setup wrong algorithm
+    @Override
+    protected int getAlgorithm() {
+        return -5;
+    }
+    
+    //setup wrong hash algorithm
+    protected int getHashAlgorithm() {
+        return -5;
+    }
+
 
     // override wrong userid and password with correct userid and password in the headers
     protected Map<String, Object> getHeaders() {
@@ -37,6 +55,8 @@ public class PGPDataFormatDynamicTest extends PGPDataFormatTest {
         headers.put(PGPDataFormat.SIGNATURE_KEY_USERID, "sdude@nowhere.net");
         headers.put(PGPDataFormat.KEY_PASSWORD, "sdude");
         headers.put(PGPDataFormat.SIGNATURE_KEY_PASSWORD, "sdude");
+        headers.put(PGPDataFormat.ENCRYPTION_ALGORITHM, SymmetricKeyAlgorithmTags.AES_128);
+        headers.put(PGPDataFormat.SIGNATURE_HASH_ALGORITHM, HashAlgorithmTags.SHA512);
         return headers;
     }
 }
