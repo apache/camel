@@ -31,15 +31,19 @@ public class DefaultTimeoutMapTest extends TestCase {
 
     private ScheduledExecutorService executor = new ScheduledThreadPoolExecutor(1);
 
-    public void testDefaultTimeoutMap() {
+    public void testDefaultTimeoutMap() throws Exception {
         DefaultTimeoutMap<?, ?> map = new DefaultTimeoutMap<Object, Object>(executor);
+        map.start();
         assertTrue(map.currentTime() > 0);
 
         assertEquals(0, map.size());
+
+        map.stop();
     }
 
     public void testDefaultTimeoutMapPurge() throws Exception {
         DefaultTimeoutMap<String, Integer> map = new DefaultTimeoutMap<String, Integer>(executor, 100);
+        map.start();
         assertTrue(map.currentTime() > 0);
 
         assertEquals(0, map.size());
@@ -50,10 +54,13 @@ public class DefaultTimeoutMapTest extends TestCase {
         Thread.sleep(250);
 
         assertEquals(0, map.size());
+
+        map.stop();
     }
 
     public void testDefaultTimeoutMapForcePurge() throws Exception {
         DefaultTimeoutMap<String, Integer> map = new DefaultTimeoutMap<String, Integer>(executor, 100);
+        map.start();
         assertTrue(map.currentTime() > 0);
 
         assertEquals(0, map.size());
@@ -71,6 +78,7 @@ public class DefaultTimeoutMapTest extends TestCase {
 
     public void testDefaultTimeoutMapGetRemove() throws Exception {
         DefaultTimeoutMap<String, Integer> map = new DefaultTimeoutMap<String, Integer>(executor, 100);
+        map.start();
         assertTrue(map.currentTime() > 0);
 
         assertEquals(0, map.size());
@@ -84,10 +92,13 @@ public class DefaultTimeoutMapTest extends TestCase {
         assertEquals(123, old);
         assertEquals(null, map.get("A"));
         assertEquals(0, map.size());
+
+        map.stop();
     }
 
     public void testDefaultTimeoutMapGetKeys() throws Exception {
         DefaultTimeoutMap<String, Integer> map = new DefaultTimeoutMap<String, Integer>(executor, 100);
+        map.start();
         assertTrue(map.currentTime() > 0);
 
         assertEquals(0, map.size());
@@ -105,6 +116,7 @@ public class DefaultTimeoutMapTest extends TestCase {
         ScheduledExecutorService e = Executors.newScheduledThreadPool(2);
 
         DefaultTimeoutMap<String, Integer> map = new DefaultTimeoutMap<String, Integer>(e, 50);
+        map.start();
         assertEquals(50, map.getPurgePollTime());
 
         map.put("A", 123, 100);
@@ -116,6 +128,8 @@ public class DefaultTimeoutMapTest extends TestCase {
         assertEquals(0, map.size());
 
         assertSame(e, map.getExecutor());
+
+        map.stop();
     }
 
     public void testExpiredInCorrectOrder() throws Exception {
@@ -130,6 +144,7 @@ public class DefaultTimeoutMapTest extends TestCase {
                 return true;
             }
         };
+        map.start();
         assertEquals(0, map.size());
 
         map.put("A", 1, 50);
@@ -157,6 +172,8 @@ public class DefaultTimeoutMapTest extends TestCase {
         assertEquals(1, values.get(4).intValue());
 
         assertEquals(1, map.size());
+
+        map.stop();
     }
 
     public void testExpiredNotEvicted() throws Exception {
@@ -175,6 +192,7 @@ public class DefaultTimeoutMapTest extends TestCase {
                 return true;
             }
         };
+        map.start();
         assertEquals(0, map.size());
 
         map.put("A", 1, 90);
@@ -197,10 +215,13 @@ public class DefaultTimeoutMapTest extends TestCase {
         // and keep the gold in the map
         assertEquals(1, map.size());
         assertEquals(Integer.valueOf(9), map.get("gold"));
+
+        map.stop();
     }
 
     public void testDefaultTimeoutMapStopStart() throws Exception {
         DefaultTimeoutMap<String, Integer> map = new DefaultTimeoutMap<String, Integer>(executor, 100);
+        map.start();
         map.put("A", 1, 500);
 
         assertEquals(1, map.size());
@@ -220,6 +241,8 @@ public class DefaultTimeoutMapTest extends TestCase {
         Thread.sleep(250);
         // now it should be gone
         assertEquals(0, map.size());
+
+        map.stop();
     }
 
 }
