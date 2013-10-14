@@ -25,12 +25,22 @@ import org.junit.Test;
 
 public class NettyHttpClientChunkedResponseTest extends CamelTestSupport {
 
-    private int port;
+    private int port1;
+    private int port2;
 
     @Test
     public void testNettyHttpClientChunked() throws Exception {
+        invokeService(port1, true);
+    }
+    
+    @Test
+    public void testNettyHttpRouteClientChunked() throws Exception {
+        invokeService(port2, false);
+    }
+    
+    private void invokeService(int port, boolean checkChunkedHeader) {
         Exchange out = template.request("netty-http:http://localhost:" + port + "/test", new Processor() {
-//        Exchange out = template.request("jetty:http://localhost:" + port + "/test", new Processor() {
+
             @Override
             public void process(Exchange exchange) throws Exception {
                 exchange.getIn().setBody("Camel in chunks.");
@@ -38,22 +48,30 @@ public class NettyHttpClientChunkedResponseTest extends CamelTestSupport {
         });
 
         assertNotNull(out);
-
         assertEquals("Bye Camel in chunks.", out.getOut().getBody(String.class));
-        assertEquals("chunked", out.getOut().getHeader("Transfer-Encoding"));
+        if (checkChunkedHeader) {
+            assertEquals("chunked", out.getOut().getHeader("Transfer-Encoding"));
+        }
     }
+    
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                port = AvailablePortFinder.getNextAvailable(8000);
+                port1 = AvailablePortFinder.getNextAvailable(8000);
+                port2 = AvailablePortFinder.getNextAvailable(9000);
 
                 // use jetty as server as it supports sending response as chunked encoding
-                from("jetty:http://localhost:" + port + "/test")
+                from("jetty:http://localhost:" + port1 + "/test")
                     .setHeader("Transfer-Encoding", constant("chunked"))
                     .transform().simple("Bye ${body}");
+                
+                // set up a netty http proxy
+                from("netty-http:http://localhost:" + port2 + "/test")
+                    .to("netty-http:http://localhost:" + port1 + "/test?bridgeEndpoint=true&throwExceptionOnFailure=false");
+          
             }
         };
     }
