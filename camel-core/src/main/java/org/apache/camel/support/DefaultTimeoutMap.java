@@ -25,6 +25,7 @@ import java.util.Set;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
@@ -43,6 +44,8 @@ import org.slf4j.LoggerFactory;
  * You must provide a {@link java.util.concurrent.ScheduledExecutorService} in the constructor which is used
  * to schedule a background task which check for old entries to purge. This implementation will shutdown the scheduler
  * if its being stopped.
+ * You must also invoke {@link #start()} to startup the timeout map, before its ready to be used.
+ * And you must invoke {@link #stop()} to stop the map when no longer in use.
  *
  * @version 
  */
@@ -52,6 +55,7 @@ public class DefaultTimeoutMap<K, V> extends ServiceSupport implements TimeoutMa
 
     private final ConcurrentMap<K, TimeoutMapEntry<K, V>> map = new ConcurrentHashMap<K, TimeoutMapEntry<K, V>>();
     private final ScheduledExecutorService executor;
+    private volatile ScheduledFuture future;
     private final long purgePollTime;
     private final Lock lock = new ReentrantLock();
     private boolean useLock = true;
@@ -69,7 +73,6 @@ public class DefaultTimeoutMap<K, V> extends ServiceSupport implements TimeoutMa
         this.executor = executor;
         this.purgePollTime = requestMapPollTimeMillis;
         this.useLock = useLock;
-        schedulePoll();
     }
 
     public V get(K key) {
@@ -248,7 +251,7 @@ public class DefaultTimeoutMap<K, V> extends ServiceSupport implements TimeoutMa
      * lets schedule each time to allow folks to change the time at runtime
      */
     protected void schedulePoll() {
-        executor.scheduleWithFixedDelay(this, 0, purgePollTime, TimeUnit.MILLISECONDS);
+        future = executor.scheduleWithFixedDelay(this, 0, purgePollTime, TimeUnit.MILLISECONDS);
     }
 
     /**
@@ -276,10 +279,15 @@ public class DefaultTimeoutMap<K, V> extends ServiceSupport implements TimeoutMa
         if (executor.isShutdown()) {
             throw new IllegalStateException("The ScheduledExecutorService is shutdown");
         }
+        schedulePoll();
     }
 
     @Override
     protected void doStop() throws Exception {
+        if (future != null) {
+            future.cancel(false);
+            future = null;
+        }
         // clear map if we stop
         map.clear();
     }
