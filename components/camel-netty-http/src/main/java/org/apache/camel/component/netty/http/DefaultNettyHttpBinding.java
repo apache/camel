@@ -346,6 +346,11 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding {
         }
         if (buffer != null) {
             response.setContent(buffer);
+            // We just need to reset the readerIndex this time
+            if (buffer.readerIndex() == buffer.writerIndex()) {
+                buffer.setIndex(0, buffer.writerIndex());
+            }
+            // TODO How to enable the chunk transport 
             int len = buffer.readableBytes();
             // set content-length
             response.setHeader(HttpHeaders.Names.CONTENT_LENGTH, len);

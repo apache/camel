@@ -85,7 +85,7 @@ public class HttpClientChannelHandler extends ClientChannelHandler {
                 // the copy must not be readable when the content was chunked, so set the index to the end
                 copy.setIndex(end, end);
                 response.setContent(copy);
-                // we the all the content now, so call super to process the received message
+                // we get the all the content now, so call super to process the received message
                 super.messageReceived(ctx, messageEvent);
             }
         } else if (msg instanceof HttpResponse) {
