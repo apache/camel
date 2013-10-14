@@ -84,6 +84,8 @@ public class PGPDataFormat extends ServiceSupport implements DataFormat {
     public static final String SIGNATURE_KEY_RING = "CamelPGPDataFormatSignatureKeyRing";
     public static final String SIGNATURE_KEY_USERID = "CamelPGPDataFormatSignatureKeyUserid";
     public static final String SIGNATURE_KEY_PASSWORD = "CamelPGPDataFormatSignatureKeyPassword";
+    public static final String ENCRYPTION_ALGORITHM = "CamelPGPDataFormatEncryptionAlgorithm";
+    public static final String SIGNATURE_HASH_ALGORITHM = "CamelPGPDataFormatSignatureHashAlgorithm";
 
     private static final Logger LOG = LoggerFactory.getLogger(PGPDataFormat.class);
 
@@ -109,6 +111,19 @@ public class PGPDataFormat extends ServiceSupport implements DataFormat {
 
     private boolean armored;
     private boolean integrity = true;
+    
+    /** Digest algorithm for signing (marshal).
+     * Possible values are defined in {@link HashAlgorithmTags}.
+     * Default value is SHA1.
+     */
+    private int hashAlgorithm = HashAlgorithmTags.SHA1;
+    
+    /**
+     * Symmetric key algorithm for encryption (marschal).
+     * Possible values are defined in {@link SymmetricKeyAlgorithmTags}.
+     * Default value is CAST5.
+     */
+    private int algorithm = SymmetricKeyAlgorithmTags.CAST5;
 
     public PGPDataFormat() {
     }
@@ -144,6 +159,14 @@ public class PGPDataFormat extends ServiceSupport implements DataFormat {
     protected String findSignatureKeyPassword(Exchange exchange) {
         return exchange.getIn().getHeader(SIGNATURE_KEY_PASSWORD, getSignaturePassword(), String.class);
     }
+    
+    protected int findAlgorithm(Exchange exchange) {
+        return exchange.getIn().getHeader(ENCRYPTION_ALGORITHM, getAlgorithm(), Integer.class);
+    }
+
+    protected int findHashAlgorithm(Exchange exchange) {
+        return exchange.getIn().getHeader(SIGNATURE_HASH_ALGORITHM, getHashAlgorithm(), Integer.class);
+    }
 
     public void marshal(Exchange exchange, Object graph, OutputStream outputStream) throws Exception {
         PGPPublicKey key = PGPDataFormatUtil.findPublicKey(exchange.getContext(), findKeyFileName(exchange),
@@ -158,7 +181,7 @@ public class PGPDataFormat extends ServiceSupport implements DataFormat {
             outputStream = new ArmoredOutputStream(outputStream);
         }
 
-        PGPEncryptedDataGenerator encGen = new PGPEncryptedDataGenerator(new JcePGPDataEncryptorBuilder(SymmetricKeyAlgorithmTags.CAST5)
+        PGPEncryptedDataGenerator encGen = new PGPEncryptedDataGenerator(new JcePGPDataEncryptorBuilder(findAlgorithm(exchange))
                 .setWithIntegrityPacket(integrity).setSecureRandom(new SecureRandom()).setProvider(getProvider()));
         encGen.addMethod(new JcePublicKeyKeyEncryptionMethodGenerator(key));
         OutputStream encOut = encGen.open(outputStream, new byte[BUFFER_SIZE]);
@@ -224,7 +247,7 @@ public class PGPDataFormat extends ServiceSupport implements DataFormat {
 
         int algorithm = sigSecretKey.getPublicKey().getAlgorithm();
         PGPSignatureGenerator sigGen = new PGPSignatureGenerator(
-                new JcaPGPContentSignerBuilder(algorithm, HashAlgorithmTags.SHA1).setProvider(getProvider()));
+                new JcaPGPContentSignerBuilder(algorithm, findHashAlgorithm(exchange)).setProvider(getProvider()));
         sigGen.init(PGPSignature.BINARY_DOCUMENT, sigPrivateKey);
         sigGen.setHashedSubpackets(spGen.generate());
         sigGen.generateOnePassVersion(false).encode(out);
@@ -424,6 +447,24 @@ public class PGPDataFormat extends ServiceSupport implements DataFormat {
 
     public void setProvider(String provider) {
         this.provider = provider;
+    }
+    
+    
+
+    public int getHashAlgorithm() {
+        return hashAlgorithm;
+    }
+
+    public void setHashAlgorithm(int hashAlgorithm) {
+        this.hashAlgorithm = hashAlgorithm;
+    }
+
+    public int getAlgorithm() {
+        return algorithm;
+    }
+
+    public void setAlgorithm(int algorithm) {
+        this.algorithm = algorithm;
     }
 
     @Override

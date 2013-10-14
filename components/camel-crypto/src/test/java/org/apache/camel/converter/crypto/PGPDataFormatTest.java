@@ -22,6 +22,8 @@ import java.io.InputStream;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.util.IOHelper;
+import org.bouncycastle.bcpg.HashAlgorithmTags;
+import org.bouncycastle.bcpg.SymmetricKeyAlgorithmTags;
 import org.junit.Test;
 
 public class PGPDataFormatTest extends AbstractPGPDataFormatTest {
@@ -48,6 +50,14 @@ public class PGPDataFormatTest extends AbstractPGPDataFormatTest {
     
     protected String getProvider() {
         return "BC";
+    }
+    
+    protected int getAlgorithm() {
+        return SymmetricKeyAlgorithmTags.TRIPLE_DES;
+    }
+    
+    protected int getHashAlgorithm() {
+        return HashAlgorithmTags.SHA256;
     }
 
     @Test
@@ -105,6 +115,7 @@ public class PGPDataFormatTest extends AbstractPGPDataFormatTest {
                 pgpEncrypt.setKeyFileName(keyFileName);
                 pgpEncrypt.setKeyUserid(keyUserid);
                 pgpEncrypt.setProvider(getProvider());
+                pgpEncrypt.setAlgorithm(getAlgorithm());
 
                 PGPDataFormat pgpDecrypt = new PGPDataFormat();
                 pgpDecrypt.setKeyFileName(keyFileNameSec);
@@ -133,6 +144,9 @@ public class PGPDataFormatTest extends AbstractPGPDataFormatTest {
                 pgpSignAndEncrypt.setSignatureKeyUserid(keyUserid);
                 pgpSignAndEncrypt.setSignaturePassword(keyPassword);
                 pgpSignAndEncrypt.setProvider(getProvider());
+                pgpSignAndEncrypt.setAlgorithm(getAlgorithm());
+                pgpSignAndEncrypt.setHashAlgorithm(getHashAlgorithm());
+                
 
                 PGPDataFormat pgpVerifyAndDecrypt = new PGPDataFormat();
                 pgpVerifyAndDecrypt.setKeyFileName(keyFileNameSec);
@@ -154,6 +168,7 @@ public class PGPDataFormatTest extends AbstractPGPDataFormatTest {
                 pgpEncryptByteArray.setEncryptionKeyRing(getPublicKeyRing());
                 pgpEncryptByteArray.setKeyUserid(keyUserid);
                 pgpEncryptByteArray.setProvider(getProvider());
+                pgpEncryptByteArray.setAlgorithm(SymmetricKeyAlgorithmTags.DES);
 
                 PGPDataFormat pgpDecryptByteArray = new PGPDataFormat();
                 pgpDecryptByteArray.setEncryptionKeyRing(getSecKeyRing());
@@ -172,6 +187,8 @@ public class PGPDataFormatTest extends AbstractPGPDataFormatTest {
                 pgpSignAndEncryptByteArray.setSignatureKeyUserid(keyUserid);
                 pgpSignAndEncryptByteArray.setSignaturePassword(keyPassword);
                 pgpSignAndEncryptByteArray.setProvider(getProvider());
+                pgpSignAndEncryptByteArray.setAlgorithm(SymmetricKeyAlgorithmTags.BLOWFISH);
+                pgpSignAndEncryptByteArray.setHashAlgorithm(HashAlgorithmTags.RIPEMD160);
 
                 PGPDataFormat pgpVerifyAndDecryptByteArray = new PGPDataFormat();
                 pgpVerifyAndDecryptByteArray.setKeyUserid(keyUserid);
