@@ -80,4 +80,9 @@ public @interface CsvRecord {
      */
     boolean quoting() default false;
 
+    /**
+     * Last record spans rest of line (optional)
+     */
+    boolean autospanLine() default false;
+
 }

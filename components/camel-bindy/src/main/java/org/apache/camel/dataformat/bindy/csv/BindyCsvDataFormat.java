@@ -49,54 +49,55 @@ public class BindyCsvDataFormat extends BindyAbstractDataFormat {
     public BindyCsvDataFormat() {
     }
 
-    public BindyCsvDataFormat(String... packages) {
+    public BindyCsvDataFormat(final String... packages) {
         super(packages);
     }
 
-    public BindyCsvDataFormat(Class<?> type) {
+    public BindyCsvDataFormat(final Class<?> type) {
         super(type);
     }
 
-    @SuppressWarnings("unchecked")
-    public void marshal(Exchange exchange, Object body, OutputStream outputStream) throws Exception {
+    @Override
+	@SuppressWarnings("unchecked")
+    public void marshal(final Exchange exchange, final Object body, final OutputStream outputStream) throws Exception {
 
-        BindyCsvFactory factory = (BindyCsvFactory)getFactory(exchange.getContext().getPackageScanClassResolver());
+        final BindyCsvFactory factory = (BindyCsvFactory)getFactory(exchange.getContext().getPackageScanClassResolver());
         ObjectHelper.notNull(factory, "not instantiated");
 
         // Get CRLF
-        byte[] bytesCRLF = ConverterUtils.getByteReturn(factory.getCarriageReturn());
+        final byte[] bytesCRLF = ConverterUtils.getByteReturn(factory.getCarriageReturn());
 
         if (factory.getGenerateHeaderColumnNames()) {
 
-            String result = factory.generateHeader();
-            byte[] bytes = exchange.getContext().getTypeConverter().convertTo(byte[].class, exchange, result);
+            final String result = factory.generateHeader();
+            final byte[] bytes = exchange.getContext().getTypeConverter().convertTo(byte[].class, exchange, result);
             outputStream.write(bytes);
 
             // Add a carriage return
             outputStream.write(bytesCRLF);
         }
 
-        List<Map<String, Object>> models = new ArrayList<Map<String, Object>>();
+        final List<Map<String, Object>> models = new ArrayList<Map<String, Object>>();
 
         // the body is not a prepared list of map that bindy expects so help a bit here and create one for us
-        Iterator<Object> it = ObjectHelper.createIterator(body);
+        final Iterator<Object> it = ObjectHelper.createIterator(body);
         while (it.hasNext()) {
-            Object model = it.next();
+            final Object model = it.next();
             if (model instanceof Map) {
                 models.add((Map<String, Object>) model);
             } else {
-                String name = model.getClass().getName();
-                Map<String, Object> row = new HashMap<String, Object>(1);
+                final String name = model.getClass().getName();
+                final Map<String, Object> row = new HashMap<String, Object>(1);
                 row.put(name, model);
                 models.add(row);
             }
         }
 
-        for (Map<String, Object> model : models) {
+        for (final Map<String, Object> model : models) {
 
-            String result = factory.unbind(model);
+            final String result = factory.unbind(model);
 
-            byte[] bytes = exchange.getContext().getTypeConverter().convertTo(byte[].class, exchange, result);
+            final byte[] bytes = exchange.getContext().getTypeConverter().convertTo(byte[].class, exchange, result);
             outputStream.write(bytes);
 
             // Add a carriage return
@@ -104,24 +105,25 @@ public class BindyCsvDataFormat extends BindyAbstractDataFormat {
         }
     }
 
-    public Object unmarshal(Exchange exchange, InputStream inputStream) throws Exception {
-        BindyCsvFactory factory = (BindyCsvFactory)getFactory(exchange.getContext().getPackageScanClassResolver());
+    @Override
+	public Object unmarshal(final Exchange exchange, final InputStream inputStream) throws Exception {
+        final BindyCsvFactory factory = (BindyCsvFactory)getFactory(exchange.getContext().getPackageScanClassResolver());
         ObjectHelper.notNull(factory, "not instantiated");
 
         // List of Pojos
-        List<Map<String, Object>> models = new ArrayList<Map<String, Object>>();
+        final List<Map<String, Object>> models = new ArrayList<Map<String, Object>>();
 
         // Pojos of the model
         Map<String, Object> model;
 
-        InputStreamReader in = new InputStreamReader(inputStream, IOHelper.getCharsetName(exchange));
+        final InputStreamReader in = new InputStreamReader(inputStream, IOHelper.getCharsetName(exchange));
 
         // Scanner is used to read big file
-        Scanner scanner = new Scanner(in);
+        final Scanner scanner = new Scanner(in);
 
         // Retrieve the separator defined to split the record
-        String separator = factory.getSeparator();
-        String quote = factory .getQuote();
+        final String separator = factory.getSeparator();
+        final String quote = factory .getQuote();
         ObjectHelper.notNull(separator, "The separator has not been defined in the annotation @CsvRecord or not instantiated during initModel.");
 
         int count = 0;
@@ -138,7 +140,7 @@ public class BindyCsvDataFormat extends BindyAbstractDataFormat {
             while (scanner.hasNextLine()) {
 
                 // Read the line
-                String line = scanner.nextLine().trim();
+                final String line = scanner.nextLine().trim();
 
                 if (ObjectHelper.isEmpty(line)) {
                     // skip if line is empty
@@ -150,22 +152,24 @@ public class BindyCsvDataFormat extends BindyAbstractDataFormat {
 
                 // Create POJO where CSV data will be stored
                 model = factory.factory();
-                
+
                 // Split the CSV record according to the separator defined in
                 // annotated class @CSVRecord
-                String[] tokens = line.split(separator, -1);
+                final String[] tokens = line.split(separator, -1);
                 List<String> result = Arrays.asList(tokens);
                 // must unquote tokens before use
                 result = unquoteTokens(result, separator, quote);
 
                 if (result.size() == 0 || result.isEmpty()) {
                     throw new java.lang.IllegalArgumentException("No records have been defined in the CSV");
-                }
-
-                if (result.size() > 0) {
-                    if (LOG.isDebugEnabled()) {
+                } else {
+                	if (LOG.isDebugEnabled()) {
                         LOG.debug("Size of the record splitted : {}", result.size());
                     }
+
+					if (factory.getAutospanLine()) {
+						result = autospanLine(result, factory.getMaxpos(), separator);
+					}
 
                     // Bind data from CSV record with model classes
                     factory.bind(result, model, count);
@@ -195,20 +199,56 @@ public class BindyCsvDataFormat extends BindyAbstractDataFormat {
 
     }
 
-    /**
+	/**
+	 * Concatenate "the rest of the line" as the last record. Works similar as
+	 * if quoted
+	 *
+	 * @param result
+	 *            input result set
+	 * @param maxpos
+	 *            position of maximum record
+	 * @param separator
+	 * 			  csv separator char
+	 * @return List<String> with concatenated last record
+	 */
+	private List<String> autospanLine(final List<String> result, final int maxpos, final String separator) {
+		if (result.size() <= maxpos) {
+			return result;
+		}
+
+		final List<String> answer = new ArrayList<String>();
+		final StringBuilder lastRecord = new StringBuilder();
+
+		final Iterator<String> it = result.iterator();
+		for (int counter = 0; counter < maxpos - 1; counter++) {
+			answer.add(it.next());
+		}
+
+		while (it.hasNext()) {
+			lastRecord.append(it.next());
+			if (it.hasNext()) {
+				lastRecord.append(separator);
+			}
+		}
+		answer.add(lastRecord.toString());
+
+		return answer;
+	}
+
+	/**
      * Unquote the tokens, by removing leading and trailing quote chars,
      * as will handling fixing broken tokens which may have been split
      * by a separator inside a quote.
      */
-    private List<String> unquoteTokens(List<String> result, String separator, String quote) {
+    private List<String> unquoteTokens(final List<String> result, final String separator, final String quote) {
         // a current quoted token which we assemble from the broken pieces
         // we need to do this as we use the split method on the String class
         // to split the line using regular expression, and it does not handle
         // if the separator char is also inside a quoted token, therefore we need
         // to fix this afterwards
-        StringBuilder current = new StringBuilder();
+        final StringBuilder current = new StringBuilder();
 
-        List<String> answer = new ArrayList<String>();
+        final List<String> answer = new ArrayList<String>();
         for (String s : result) {
             boolean startQuote = false;
             boolean endQuote = false;
@@ -224,7 +264,7 @@ public class BindyCsvDataFormat extends BindyAbstractDataFormat {
             // are we in progress of rebuilding a broken token
             boolean currentInProgress = current.length() > 0;
 
-            // situation when field ending with a separator symbol. 
+            // situation when field ending with a separator symbol.
             if (currentInProgress && startQuote && s.isEmpty()) {
                 // Add separator, append current and reset it
                 current.append(separator);
@@ -232,7 +272,7 @@ public class BindyCsvDataFormat extends BindyAbstractDataFormat {
                 current.setLength(0);
                 continue;
             }
-            
+
             // if we hit a start token then rebuild a broken token
             if (currentInProgress || startQuote) {
                 // append to current if we are in the middle of a start quote
@@ -266,7 +306,8 @@ public class BindyCsvDataFormat extends BindyAbstractDataFormat {
         return answer;
     }
 
-    protected BindyAbstractFactory createModelFactory(PackageScanClassResolver resolver) throws Exception {
+    @Override
+	protected BindyAbstractFactory createModelFactory(final PackageScanClassResolver resolver) throws Exception {
         if (getClassType() != null) {
             return new BindyCsvFactory(resolver, getClassType());
         } else {
