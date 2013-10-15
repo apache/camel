@@ -27,7 +27,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.util.IOHelper;
 
 import org.junit.Test;
@@ -36,7 +35,7 @@ import org.junit.Test;
 /**
  * Unit test for the HL7MLLP Codec.
  */
-public class HL7MLLPCodecLongTest extends CamelTestSupport {
+public class HL7MLLPCodecLongTest extends HL7TestSupport {
 
     protected JndiRegistry createRegistry() throws Exception {
         JndiRegistry jndi = super.createRegistry();
@@ -54,7 +53,7 @@ public class HL7MLLPCodecLongTest extends CamelTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("mina2:tcp://127.0.0.1:8888?sync=true&codec=#hl7codec").process(new Processor() {
+                from("mina2:tcp://127.0.0.1:" + getPort() + "?sync=true&codec=#hl7codec").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         assertEquals(70010, exchange.getIn().getBody().toString().length());
                         MDM_T02 input = (MDM_T02)exchange.getIn().getBody(Message.class);
@@ -81,7 +80,7 @@ public class HL7MLLPCodecLongTest extends CamelTestSupport {
         }
         message = message.substring(0, message.length() - 1);
         assertEquals(70010, message.length());
-        String out = (String)template.requestBody("mina2:tcp://127.0.0.1:8888?sync=true&codec=#hl7codec", message);
+        String out = (String)template.requestBody("mina2:tcp://127.0.0.1:" + getPort() + "?sync=true&codec=#hl7codec", message);
         assertEquals("some response", out);
         // END SNIPPET: e2
     }
