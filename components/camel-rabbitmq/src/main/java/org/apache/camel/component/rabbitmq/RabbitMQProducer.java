@@ -17,7 +17,10 @@
 package org.apache.camel.component.rabbitmq;
 
 import java.io.IOException;
+import java.math.BigDecimal;
 import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.Executors;
 
 import com.rabbitmq.client.AMQP;
@@ -132,6 +135,48 @@ public class RabbitMQProducer extends DefaultProducer {
             properties.timestamp(new Date(Long.parseLong(timestamp.toString())));
         }
 
+        final Map<String, Object> headers = exchange.getIn().getHeaders();
+        Map<String, Object> filteredHeaders = new HashMap<String, Object>();
+
+        // TODO: Add support for a HeaderFilterStrategy. See: org.apache.camel.component.jms.JmsBinding#shouldOutputHeader
+        for (Map.Entry<String, Object> header : headers.entrySet()) {
+
+            // filter header values.
+            Object value = getValidRabbitMQHeaderValue(header.getValue());
+            if (value != null) {
+                filteredHeaders.put(header.getKey(), header.getValue());
+            } else if (log.isDebugEnabled()) {
+                log.debug("Ignoring header: {} of class: {} with value: {}",
+                    new Object[]{header.getKey(), header.getValue().getClass().getName(), header.getValue()});
+            }
+        }
+
+        properties.headers(filteredHeaders);
+
         return properties;
+    }
+
+    /**
+     * Strategy to test if the given header is valid
+     *
+     * @param headerValue  the header value
+     * @return  the value to use, <tt>null</tt> to ignore this header
+     * @see com.rabbitmq.client.impl.Frame#fieldValueSize
+     */
+    private Object getValidRabbitMQHeaderValue(Object headerValue) {
+        if (headerValue instanceof String) {
+            return headerValue;
+        } else if (headerValue instanceof BigDecimal) {
+            return headerValue;
+        } else if (headerValue instanceof Number) {
+            return headerValue;
+        } else if (headerValue instanceof Boolean) {
+            return headerValue;
+        } else if (headerValue instanceof Date) {
+            return headerValue;
+        } else if (headerValue instanceof byte[]) {
+            return headerValue;
+        }
+        return null;
     }
 }
