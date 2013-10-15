@@ -66,13 +66,15 @@ public class RabbitMQEndpoint extends DefaultEndpoint {
         message.setHeader(RabbitMQConstants.DELIVERY_TAG, envelope.getDeliveryTag());
 
         Map<String, Object> headers = properties.getHeaders();
-        for (Map.Entry<String, Object> entry : headers.entrySet()) {
+        if (headers != null) {
+            for (Map.Entry<String, Object> entry : headers.entrySet()) {
 
-            // Convert LongStrings to String.
-            if (entry.getValue() instanceof LongString) {
-                message.setHeader(entry.getKey(), entry.getValue().toString());
-            } else {
-                message.setHeader(entry.getKey(), entry.getValue());
+                // Convert LongStrings to String.
+                if (entry.getValue() instanceof LongString) {
+                    message.setHeader(entry.getKey(), entry.getValue().toString());
+                } else {
+                    message.setHeader(entry.getKey(), entry.getValue());
+                }
             }
         }
 

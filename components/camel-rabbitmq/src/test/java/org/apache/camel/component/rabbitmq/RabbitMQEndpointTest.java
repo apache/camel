@@ -37,7 +37,28 @@ public class RabbitMQEndpointTest extends CamelTestSupport {
     private AMQP.BasicProperties properties = Mockito.mock(AMQP.BasicProperties.class);
 
     @Test
-    public void testCreatingRabbitExchangeSetsHeaders() throws Exception {
+    public void testCreatingRabbitExchangeSetsStandardHeaders() throws Exception {
+        RabbitMQEndpoint endpoint = context.getEndpoint("rabbitmq:localhost/exchange", RabbitMQEndpoint.class);
+
+        String routingKey = UUID.randomUUID().toString();
+        String exchangeName = UUID.randomUUID().toString();
+        long tag = UUID.randomUUID().toString().hashCode();
+
+        Mockito.when(envelope.getRoutingKey()).thenReturn(routingKey);
+        Mockito.when(envelope.getExchange()).thenReturn(exchangeName);
+        Mockito.when(envelope.getDeliveryTag()).thenReturn(tag);
+        Mockito.when(properties.getHeaders()).thenReturn(null);
+
+        byte[] body = new byte[20];
+        Exchange exchange = endpoint.createRabbitExchange(envelope, properties, body);
+        assertEquals(exchangeName, exchange.getIn().getHeader(RabbitMQConstants.EXCHANGE_NAME));
+        assertEquals(routingKey, exchange.getIn().getHeader(RabbitMQConstants.ROUTING_KEY));
+        assertEquals(tag, exchange.getIn().getHeader(RabbitMQConstants.DELIVERY_TAG));
+        assertEquals(body, exchange.getIn().getBody());
+    }
+
+    @Test
+    public void testCreatingRabbitExchangeSetsCustomHeaders() throws Exception {
         RabbitMQEndpoint endpoint = context.getEndpoint("rabbitmq:localhost/exchange", RabbitMQEndpoint.class);
 
         String routingKey = UUID.randomUUID().toString();
