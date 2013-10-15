@@ -21,14 +21,13 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.JndiRegistry;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 /**
  * Unit test to demonstrate the HL7MLLPCodec is message format agnostic (don't require the HAPI library).
  * The message format can be java.lang.String.
  */
-public class HL7MLLPCodecPlainStringTest extends CamelTestSupport {
+public class HL7MLLPCodecPlainStringTest extends HL7TestSupport {
 
     protected JndiRegistry createRegistry() throws Exception {
         JndiRegistry jndi = super.createRegistry();
@@ -48,7 +47,7 @@ public class HL7MLLPCodecPlainStringTest extends CamelTestSupport {
         mock.expectedBodiesReceived("Bye World");
 
         // send plain hello world as String
-        Object out = template.requestBody("mina2:tcp://127.0.0.1:8888?sync=true&codec=#hl7codec", "Hello World");
+        Object out = template.requestBody("mina2:tcp://127.0.0.1:" + getPort() + "?sync=true&codec=#hl7codec", "Hello World");
 
         assertMockEndpointsSatisfied();
 
@@ -61,7 +60,7 @@ public class HL7MLLPCodecPlainStringTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 // START SNIPPET: e2
-                from("mina2:tcp://127.0.0.1:8888?sync=true&codec=#hl7codec")
+                from("mina2:tcp://127.0.0.1:" + getPort() + "?sync=true&codec=#hl7codec")
                     .process(new Processor() {
                         public void process(Exchange exchange) throws Exception {
                             // use plain String as message format
