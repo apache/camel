@@ -16,9 +16,9 @@
  */
 package org.apache.camel.component.mina;
 
+import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.Callable;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -53,7 +53,9 @@ public class MinaProducerAnotherConcurrentTest extends BaseMinaTest {
         getMockEndpoint("mock:result").expectedMessageCount(files);
 
         ExecutorService executor = Executors.newFixedThreadPool(poolSize);
-        Map<Integer, Future<String>> responses = new ConcurrentHashMap<Integer, Future<String>>();
+        // we access the responses Map below only inside the main thread,
+        // so no need for a thread-safe Map implementation
+        Map<Integer, Future<String>> responses = new HashMap<Integer, Future<String>>();
         for (int i = 0; i < files; i++) {
             final int index = i;
             Future<String> out = executor.submit(new Callable<String>() {
@@ -68,7 +70,7 @@ public class MinaProducerAnotherConcurrentTest extends BaseMinaTest {
         assertEquals(files, responses.size());
 
         for (int i = 0; i < files; i++) {
-            Object out = responses.get(i).get();
+            String out = responses.get(i).get();
             assertEquals("Bye " + i, out);
         }
         executor.shutdownNow();

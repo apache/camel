@@ -16,10 +16,10 @@
  */
 package org.apache.camel.component.jdbc;
 
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.Callable;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -49,13 +49,15 @@ public class JdbcProducerConcurrenctTest extends AbstractJdbcTestSupport {
         mock.expectedMessageCount(files);
 
         ExecutorService executor = Executors.newFixedThreadPool(poolSize);
-        Map<Integer, Future<Object>> responses = new ConcurrentHashMap<Integer, Future<Object>>();
+        // we access the responses Map below only inside the main thread,
+        // so no need for a thread-safe Map implementation
+        Map<Integer, Future<List<?>>> responses = new HashMap<Integer, Future<List<?>>>();
         for (int i = 0; i < files; i++) {
             final int index = i;
-            Future<Object> out = executor.submit(new Callable<Object>() {
-                public Object call() throws Exception {
+            Future<List<?>> out = executor.submit(new Callable<List<?>>() {
+                public List<?> call() throws Exception {
                     int id = (index % 2) + 1;
-                    return template.requestBody("direct:start", "select * from customer where id = 'cust" + id + "'");
+                    return template.requestBody("direct:start", "select * from customer where id = 'cust" + id + "'", List.class);
                 }
             });
             responses.put(index, out);
@@ -65,7 +67,7 @@ public class JdbcProducerConcurrenctTest extends AbstractJdbcTestSupport {
         assertEquals(files, responses.size());
 
         for (int i = 0; i < files; i++) {
-            List rows = (List) responses.get(i).get();
+            List<?> rows = responses.get(i).get();
             Map columns = (Map) rows.get(0);
             if (i % 2 == 0) {
                 assertEquals("jstrachan", columns.get("NAME"));

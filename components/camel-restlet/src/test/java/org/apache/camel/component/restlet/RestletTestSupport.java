@@ -34,7 +34,7 @@ import org.junit.BeforeClass;
  * @version 
  */
 public abstract class RestletTestSupport extends CamelTestSupport {
-    public static int portNum;
+    protected static int portNum;
     
     @BeforeClass
     public static void initializePortNum() {

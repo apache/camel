@@ -16,11 +16,11 @@
  */
 package org.apache.camel.component.jetty;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -50,7 +50,9 @@ public class HttpProducerConcurrentTest extends BaseJettyTest {
         getMockEndpoint("mock:result").assertNoDuplicates(body());
 
         ExecutorService executor = Executors.newFixedThreadPool(poolSize);
-        Map<Integer, Future<String>> responses = new ConcurrentHashMap<Integer, Future<String>>();
+        // we access the responses Map below only inside the main thread,
+        // so no need for a thread-safe Map implementation
+        Map<Integer, Future<String>> responses = new HashMap<Integer, Future<String>>();
         for (int i = 0; i < files; i++) {
             final int index = i;
             Future<String> out = executor.submit(new Callable<String>() {
@@ -66,7 +68,7 @@ public class HttpProducerConcurrentTest extends BaseJettyTest {
         assertEquals(files, responses.size());
 
         // get all responses
-        Set<Object> unique = new HashSet<Object>();
+        Set<String> unique = new HashSet<String>();
         for (Future<String> future : responses.values()) {
             unique.add(future.get());
         }

@@ -84,7 +84,7 @@ public abstract class AbstractJpaMethodTest extends CamelTestSupport {
         List<Customer> customers = new ArrayList<Customer>();
         customers.add(createDefaultCustomer());
         customers.add(createDefaultCustomer());
-        List returnedCustomers = template.requestBody(endpoint, customers, List.class);
+        List<?> returnedCustomers = template.requestBody(endpoint, customers, List.class);
         
         assertEquals(2, returnedCustomers.size());
         

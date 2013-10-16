@@ -22,7 +22,6 @@ import java.util.Map;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import javax.persistence.EntityManager;
-import javax.persistence.PersistenceException;
 
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
@@ -39,12 +38,9 @@ import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.orm.jpa.JpaCallback;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
-
-import static org.apache.camel.util.ServiceHelper.startServices;
 
 public class JpaWithNamedQueryAndParametersTest extends Assert {
     

@@ -16,11 +16,11 @@
  */
 package org.apache.camel.component.mina2;
 
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
-import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
@@ -49,12 +49,13 @@ public class Mina2ProducerConcurrentTest extends BaseMina2Test {
         getMockEndpoint("mock:result").expectedMessageCount(files);
 
         ExecutorService executor = Executors.newFixedThreadPool(poolSize);
-        Map<Integer, Future<Object>> responses = new ConcurrentHashMap<Integer, Future<Object>>();
+        // we access the responses Map below only inside the main thread,
+        // so no need for a thread-safe Map implementation
+        Map<Integer, Future<String>> responses = new HashMap<Integer, Future<String>>();
         for (int i = 0; i < files; i++) {
             final int index = i;
-            Future<Object> out = executor.submit(new Callable<Object>() {
-
-                public Object call() throws Exception {
+            Future<String> out = executor.submit(new Callable<String>() {
+                public String call() throws Exception {
                     return template.requestBody(String.format("mina2:tcp://localhost:%1$s?sync=true", getPort()), index, String.class);
                 }
             });
@@ -65,8 +66,8 @@ public class Mina2ProducerConcurrentTest extends BaseMina2Test {
         assertEquals(files, responses.size());
 
         // get all responses
-        Set<Object> unique = new HashSet<Object>();
-        for (Future<Object> future : responses.values()) {
+        Set<String> unique = new HashSet<String>();
+        for (Future<String> future : responses.values()) {
             unique.add(future.get());
         }
 
