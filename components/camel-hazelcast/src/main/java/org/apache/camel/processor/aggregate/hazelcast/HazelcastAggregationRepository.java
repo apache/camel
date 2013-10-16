@@ -20,6 +20,7 @@ import java.util.Set;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.locks.Lock;
 
+import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -27,38 +28,64 @@ public final class HazelcastAggregationRepository extends ServiceSupport
                                                   implements RecoverableAggregationRepository,
                                                              OptimisticLockingAggregationRepository {
     private boolean optimistic;
-    private boolean localHzInstance;
+    private boolean useLocalHzInstance;
     private boolean useRecovery;
     private IMap<String, Exchange> cache;
     private IMap<String, Exchange> persistedCache;
     private static final Logger LOG = LoggerFactory.getLogger(HazelcastAggregationRepository.class.getName()) ;
     private HazelcastInstance hzInstance;
     private String mapName;
-    private String completedSuffix = "-completed";
+    private String persistenceMapName;
+    private static final String COMPLETED_SUFFIX = "-completed";
     private String deadLetterChannel;
     private long recoveryInterval;
     private int maximumRedeliveries;
 
     public HazelcastAggregationRepository(final String repositoryName) {
         mapName = repositoryName;
+        persistenceMapName = String.format("%s%s", mapName, COMPLETED_SUFFIX);
         optimistic = false;
-        localHzInstance = true;
+        useLocalHzInstance = true;
+    }
+
+    public HazelcastAggregationRepository(final String repositoryName, final String persistentRepositoryName) {
+        mapName = repositoryName;
+        persistenceMapName = persistentRepositoryName;
+        optimistic = false;
+        useLocalHzInstance = true;
     }
 
     public HazelcastAggregationRepository(final String repositoryName, boolean optimistic) {
         this(repositoryName);
         this.optimistic = optimistic;
-        localHzInstance = true;
+        useLocalHzInstance = true;
+    }
+
+    public HazelcastAggregationRepository(final String repositoryName, final String persistenRepositoryName, boolean optimistic) {
+        this(repositoryName, persistenRepositoryName);
+        this.optimistic = optimistic;
+        useLocalHzInstance = true;
     }
 
     public HazelcastAggregationRepository(final String repositoryName, HazelcastInstance hzInstanse) {
         this (repositoryName, false);
         this.hzInstance = hzInstanse;
-        localHzInstance = false;
+        useLocalHzInstance = false;
+    }
+
+    public HazelcastAggregationRepository(final String repositoryName, final String persistenRepositoryName, HazelcastInstance hzInstanse) {
+        this (repositoryName, persistenRepositoryName, false);
+        this.hzInstance = hzInstanse;
+        useLocalHzInstance = false;
     }
 
     public HazelcastAggregationRepository(final String repositoryName, boolean optimistic, HazelcastInstance hzInstance) {
         this(repositoryName, optimistic);
+        this.hzInstance = hzInstance;
+    }
+
+    public HazelcastAggregationRepository(final String repositoryName, final String persistenRepositoryName, boolean optimistic, HazelcastInstance hzInstance) {
+        this(repositoryName, persistenRepositoryName, optimistic);
         this.hzInstance = hzInstance;
     }
 
@@ -171,7 +198,6 @@ public final class HazelcastAggregationRepository extends ServiceSupport
                 // The only considerable case for transaction usage is fault tolerance:
                 // the transaction will be rolled back automatically (default timeout is 2 minutes)
                 // if no commit occurs during the timeout. So we are still consistent whether local node crashes.
-
                 TransactionOptions tOpts = new TransactionOptions();
 
                 tOpts.setTransactionType(TransactionOptions.TransactionType.LOCAL);
@@ -201,25 +227,28 @@ public final class HazelcastAggregationRepository extends ServiceSupport
         return Collections.unmodifiableSet(cache.keySet());
     }
 
-    public void setCompletedSuffix(final String completedSuffix) {
-        this.completedSuffix = completedSuffix;
-    }
-
-    public String getCompletedSuffix() {
-        return completedSuffix;
+    public String getPersistentRepositoryName() {
+        return getPersistentMapName();
     }
 
     @Override
     protected void doStart() throws Exception {
-        if (localHzInstance)  {
+        ObjectHelper.notEmpty(mapName, "repositoryName");
+        if (useLocalHzInstance)  {
             Config cfg = new XmlConfigBuilder().build();
             cfg.setProperty("hazelcast.version.check.enabled", "false");
             hzInstance = Hazelcast.newHazelcastInstance(cfg);
+        } else {
+            ObjectHelper.notNull(hzInstance, "hzInstanse");
         }
         cache = hzInstance.getMap(mapName);
         if (useRecovery) {
-            persistedCache = hzInstance.getMap(String.format("%s%s", mapName, completedSuffix));
+            persistedCache = hzInstance.getMap(persistenceMapName);
         }
+    }
+
+    private String getPersistentMapName() {
+        return persistenceMapName;
     }
 
     @Override
@@ -230,7 +259,7 @@ public final class HazelcastAggregationRepository extends ServiceSupport
 
         cache.clear();
 
-        if (localHzInstance) {
+        if (useLocalHzInstance) {
             hzInstance.getLifecycleService().shutdown();
         }
     }
