@@ -180,8 +180,16 @@ public class HdfsProducer extends DefaultProducer {
         Object body = exchange.getIn().getBody();
         Object key = exchange.getIn().getHeader(HdfsHeader.KEY.name());
 
-        // must have ostream
-        if (ostream == null) {
+        // if an explicit filename is specified, close any existing stream and append the filename to the hdfsPath
+        if (exchange.getIn().getHeader(Exchange.FILE_NAME) != null) {
+            if (ostream != null) {
+                IOHelper.close(ostream, "output stream", log);
+            }
+            StringBuilder actualPath = new StringBuilder(hdfsPath);
+            actualPath.append(exchange.getIn().getHeader(Exchange.FILE_NAME, String.class));
+            ostream = HdfsOutputStream.createOutputStream(actualPath.toString(), config);
+        } else if (ostream == null) {
+            // must have ostream
             ostream = setupHdfs(false);
         }
 
