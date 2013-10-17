@@ -75,12 +75,21 @@ public class JettyContentExchange extends ContentExchange {
         if (Exchange.CONTENT_TYPE.equalsIgnoreCase(k)) {
             String charset = ObjectHelper.after(v, "charset=");
             if (charset != null) {
+                // there may be another parameter as well, we only want the charset parameter
+                String extra = "";
+                if (charset.contains(";")) {
+                    extra = ObjectHelper.after(charset, ";");
+                    charset = ObjectHelper.before(charset, ";");
+                }
                 charset = charset.trim();
                 String s = StringHelper.removeLeadingAndEndingQuotes(charset);
                 if (!charset.equals(s)) {
                     v = ObjectHelper.before(v, "charset=") + "charset=" + s;
                     LOG.debug("Removed quotes from charset in " + Exchange.CONTENT_TYPE + " from {} to {}", charset, s);
-
+                    // add extra parameters
+                    if (extra != null) {
+                        v = v + ";" + extra;
+                    }
                     // use a new buffer to adjust the value
                     value = new ByteArrayBuffer.CaseInsensitive(v);
                 }
