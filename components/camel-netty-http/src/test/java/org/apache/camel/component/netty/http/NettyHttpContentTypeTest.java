@@ -40,6 +40,22 @@ public class NettyHttpContentTypeTest extends BaseNettyTest {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
+    public void testContentTypeWithAction() throws Exception {
+        getMockEndpoint("mock:input").expectedBodiesReceived("Hello World");
+        getMockEndpoint("mock:input").expectedHeaderReceived(Exchange.CONTENT_TYPE, "text/plain;charset=\"iso-8859-1\";action=\"http://somewhere.com/foo");
+        getMockEndpoint("mock:input").expectedHeaderReceived(Exchange.HTTP_CHARACTER_ENCODING, "iso-8859-1");
+        getMockEndpoint("mock:input").expectedHeaderReceived(Exchange.HTTP_URL, "http://0.0.0.0:" + getPort() + "/foo");
+        getMockEndpoint("mock:input").expectedPropertyReceived(Exchange.CHARSET_NAME, "iso-8859-1");
+
+        byte[] data = "Hello World".getBytes(Charset.forName("iso-8859-1"));
+        String out = template.requestBodyAndHeader("netty-http:http://0.0.0.0:{{port}}/foo", data,
+                "content-type", "text/plain;charset=\"iso-8859-1\";action=\"http://somewhere.com/foo", String.class);
+        assertEquals("Bye World", out);
+
+        assertMockEndpointsSatisfied();
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
