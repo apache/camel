@@ -16,11 +16,11 @@
  */
 package org.apache.camel.component.splunk;
 
+import java.net.ConnectException;
 import java.net.SocketException;
 import java.util.regex.Pattern;
 import javax.net.ssl.SSLException;
 
-import com.splunk.HttpException;
 import com.splunk.Service;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
@@ -100,13 +100,11 @@ public class SplunkEndpoint extends ScheduledPollEndpoint {
         return configuration;
     }
 
-    public synchronized boolean reconnectIfPossible(Exception e) {
+    public synchronized boolean reset(Exception e) {
         boolean answer = false;
-        if (e instanceof HttpException && ((HttpException)e).getStatus() == 401 || ((e instanceof SocketException) || (e instanceof SSLException))) {
-            // try and reconnect
-            LOG.warn("Got exception from Splunk. Will try to reconnect");
+        if ((e instanceof RuntimeException && ((RuntimeException)e).getCause() instanceof ConnectException) || ((e instanceof SocketException) || (e instanceof SSLException))) {
+            LOG.warn("Got exception from Splunk. Service will be reset.");
             this.service = null;
-            getService();
             answer = true;
         }
         return answer;

@@ -60,12 +60,9 @@ public class SplunkConsumer extends ScheduledBatchPollingConsumer {
             Queue<Exchange> exchanges = createExchanges(events);
             return processBatch(CastUtils.cast(exchanges));
         } catch (Exception e) {
-            if (endpoint.reconnectIfPossible(e)) {
-                return 0;
-            } else {
-                getExceptionHandler().handleException(e);
-                return 0;
-            }
+            endpoint.reset(e);
+            getExceptionHandler().handleException(e);
+            return 0;
         }
     }
 

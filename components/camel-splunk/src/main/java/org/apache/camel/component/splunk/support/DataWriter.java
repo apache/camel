@@ -24,4 +24,6 @@ public interface DataWriter {
     void stop();
 
     void start();
+
+    boolean isConnected();
 }

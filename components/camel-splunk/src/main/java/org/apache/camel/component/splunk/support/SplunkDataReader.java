@@ -255,13 +255,16 @@ public class SplunkDataReader {
     private List<SplunkEvent> runQuery(JobArgs queryArgs, boolean realtime) throws Exception {
         Service service = endpoint.getService();
         Job job = service.getJobs().create(getSearch(), queryArgs);
+        LOG.debug("Running search : {} with queryArgs : {}", getSearch(), queryArgs);
         if (realtime) {
             while (!job.isReady()) {
                 Thread.sleep(500);
             }
             // Besides job.isReady there must be some delay before real time job
             // is ready
-            Thread.sleep(1000);
+            // TODO seems that the realtime stream is not quite isReady to be
+            // read
+            Thread.sleep(4000);
         } else {
             while (!job.isDone()) {
                 Thread.sleep(500);
@@ -277,7 +280,7 @@ public class SplunkDataReader {
         ResultsReader resultsReader = null;
         int total = 0;
         if (realtime) {
-            // total = job.getResultPreviewCount();
+            total = job.getResultPreviewCount();
         } else {
             total = job.getResultCount();
         }

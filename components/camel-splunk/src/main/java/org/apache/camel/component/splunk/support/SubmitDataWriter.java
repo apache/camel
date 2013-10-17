@@ -33,7 +33,8 @@ public class SubmitDataWriter extends SplunkDataWriter {
         super(endpoint, args);
     }
 
-    protected void doWrite(SplunkEvent event, Socket socket) throws IOException {
+    @Override
+    protected void doWrite(SplunkEvent event) throws IOException {
         Index index = getIndex();
         if (index != null) {
             index.submit(args, event.toString());

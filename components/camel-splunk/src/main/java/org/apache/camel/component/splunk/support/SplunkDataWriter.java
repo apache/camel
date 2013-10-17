@@ -33,9 +33,10 @@ import org.slf4j.LoggerFactory;
 public abstract class SplunkDataWriter implements DataWriter {
     private static final Logger LOG = LoggerFactory.getLogger(SplunkDataWriter.class);
 
-    protected Socket socket;
     protected SplunkEndpoint endpoint;
     protected Args args;
+    private boolean connected;
+    private Socket socket;
 
     public SplunkDataWriter(SplunkEndpoint endpoint, Args args) {
         this.endpoint = endpoint;
@@ -46,25 +47,23 @@ public abstract class SplunkDataWriter implements DataWriter {
 
     public void write(SplunkEvent event) throws Exception {
         LOG.debug("writing event to splunk:" + event);
-        doWrite(event, socket);
+        doWrite(event);
     }
 
-    protected void doWrite(SplunkEvent event, Socket socket) throws IOException {
+    protected void doWrite(SplunkEvent event) throws IOException {
         OutputStream ostream = socket.getOutputStream();
         Writer writer = new OutputStreamWriter(ostream, "UTF8");
         writer.write(event.toString());
         writer.flush();
     }
 
-    public Args getArgs() {
-        return args;
-    }
-
     @Override
     public synchronized void start() {
         try {
             socket = createSocket(endpoint.getService());
+            connected = true;
         } catch (Exception e) {
+            connected = false;
             throw new RuntimeException(e);
         }
     }
@@ -74,9 +73,14 @@ public abstract class SplunkDataWriter implements DataWriter {
         try {
             if (socket != null) {
                 socket.close();
+                connected = false;
             }
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
+    }
+
+    public boolean isConnected() {
+        return connected;
     }
 }

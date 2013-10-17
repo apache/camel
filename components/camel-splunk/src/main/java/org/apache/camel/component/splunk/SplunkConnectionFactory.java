@@ -85,7 +85,7 @@ public class SplunkConnectionFactory {
         this.useSunHttpsHandler = useSunHttpsHandler;
     }
 
-    public Service createService(CamelContext camelContext) {
+    public synchronized Service createService(CamelContext camelContext) {
         final ServiceArgs args = new ServiceArgs();
         if (host != null) {
             args.setHost(host);

@@ -43,19 +43,16 @@ public class SplunkProducer extends DefaultProducer {
 
     public void process(Exchange exchange) throws Exception {
         try {
+            if (!dataWriter.isConnected()) {
+                dataWriter.start();
+            }
             dataWriter.write(exchange.getIn().getMandatoryBody(SplunkEvent.class));
         } catch (Exception e) {
-            if (endpoint.reconnectIfPossible(e)) {
-                dataWriter.start();
+            if (endpoint.reset(e)) {
+                dataWriter.stop();
             }
             throw e;
         }
-    }
-
-    @Override
-    protected void doStart() throws Exception {
-        super.doStart();
-        dataWriter.start();
     }
 
     @Override
