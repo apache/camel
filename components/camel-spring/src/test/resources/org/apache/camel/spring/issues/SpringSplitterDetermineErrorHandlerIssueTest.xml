@@ -1,0 +1,95 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+<beans xmlns="http://www.springframework.org/schema/beans"
+       xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+       xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+	       http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
+
+  <!-- custom exceptions -->
+  <bean id="demoIllegalStateException" class="java.lang.IllegalStateException">
+    <constructor-arg index="0" value="Forced Exception" type="java.lang.String"/>
+  </bean>
+
+  <!-- this is the camel route which proxy the web service and forward it to the real web service -->
+  <camelContext id="camelCtx" xmlns="http://camel.apache.org/schema/spring" errorHandlerRef="defaultErrorHandler"
+                trace="false"
+                messageHistory="true">
+
+    <errorHandler id="defaultErrorHandler" type="DefaultErrorHandler">
+      <redeliveryPolicy logExhausted="true"/>
+    </errorHandler>
+
+    <errorHandler id="noErrorHandler" type="NoErrorHandler"/>
+
+    <route id="Start" autoStartup="true" trace="false" errorHandlerRef="defaultErrorHandler"
+           startupOrder="900">
+      <from uri="direct:start"/>
+      <setBody>
+        <simple>Some Test Message</simple>
+      </setBody>
+      <to uri="direct:Process"/>
+    </route>
+
+    <route id="Process" autoStartup="true" trace="false" errorHandlerRef="defaultErrorHandler"
+           startupOrder="800">
+      <from uri="direct:Process"/>
+
+      <onException>
+        <exception>java.lang.ArithmeticException</exception>
+        <handled>
+          <constant>true</constant>
+        </handled>
+        <to uri="direct:HandleException"/>
+      </onException>
+
+      <!-- now delegate the processing of the body with all the selected transfers -->
+      <to uri="direct:Process2"/>
+    </route>
+
+
+    <route id="Process2" autoStartup="true" trace="false" errorHandlerRef="defaultErrorHandler"
+           startupOrder="30">
+      <from uri="direct:Process2"/>
+
+      <onException>
+        <exception>java.lang.IllegalStateException</exception>
+        <handled>
+          <constant>true</constant>
+        </handled>
+        <to uri="direct:HandleException"/>
+      </onException>
+
+      <split stopOnException="true" streaming="false" parallelProcessing="false">
+        <simple>${body}</simple>
+
+        <throwException ref="demoIllegalStateException"/>
+      </split>
+    </route>
+
+    <route id="HandleException" autoStartup="true" trace="false"
+           errorHandlerRef="noErrorHandler"
+           startupOrder="13">
+      <from uri="direct:HandleException"/>
+
+      <log loggingLevel="INFO" message="[${property.LogPrefix}] EXCEPTION message: ${exception}"/>
+      <log loggingLevel="DEBUG" message="[${property.LogPrefix}] EXCEPTION stacktrace: ${exception.stacktrace}"/>
+      <to uri="mock:handled"/>
+      <stop/>
+    </route>
+  </camelContext>
+</beans>
