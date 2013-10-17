@@ -24,6 +24,7 @@ import org.apache.camel.Expression;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.ServiceHelper;
 
 /**
  * Language producer.
@@ -79,8 +80,17 @@ public class LanguageProducer extends DefaultProducer {
 
         ObjectHelper.notNull(exp, "expression");
 
-        Object result = exp.evaluate(exchange, Object.class);
-        log.debug("Evaluated expression as: {} with: {}", result, exchange);
+        Object result;
+        try {
+            result = exp.evaluate(exchange, Object.class);
+            log.debug("Evaluated expression as: {} with: {}", result, exchange);
+        } finally {
+            if (!getEndpoint().isContentCache()) {
+                // some languages add themselves as a service which we then need to remove if we are not cached
+                ServiceHelper.stopService(exp);
+                getEndpoint().getCamelContext().removeService(exp);
+            }
+        }
 
         // set message body if transform is enabled
         if (getEndpoint().isTransform()) {
