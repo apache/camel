@@ -66,7 +66,23 @@ public final class HttpHelper {
             }
         }
     }
-    
+
+    public static String getCharsetFromContentType(String contentType) {
+        if (contentType != null) {
+            // find the charset and set it to the Exchange
+            int index = contentType.indexOf("charset=");
+            if (index > 0) {
+                String charset = contentType.substring(index + 8);
+                // there may be another parameter after a semi colon, so skip that
+                if (charset.contains(";")) {
+                    charset = ObjectHelper.before(charset, ";");
+                }
+                return IOHelper.normalizeCharset(charset);
+            }
+        }
+        return null;
+    }
+
     /**
      * Writes the given object as response body to the servlet response
      * <p/>

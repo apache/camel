@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.netty.http;
+package org.apache.camel.component.jetty;
 
 import java.nio.charset.Charset;
 
@@ -22,7 +22,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
 
-public class NettyHttpContentTypeTest extends BaseNettyTest {
+public class JettyHttpContentTypeTest extends BaseJettyTest {
 
     @Test
     public void testContentType() throws Exception {
@@ -33,7 +33,7 @@ public class NettyHttpContentTypeTest extends BaseNettyTest {
         getMockEndpoint("mock:input").expectedPropertyReceived(Exchange.CHARSET_NAME, "iso-8859-1");
 
         byte[] data = "Hello World".getBytes(Charset.forName("iso-8859-1"));
-        String out = template.requestBodyAndHeader("netty-http:http://0.0.0.0:{{port}}/foo", data,
+        String out = template.requestBodyAndHeader("jetty:http://0.0.0.0:{{port}}/foo", data,
                 "content-type", "text/plain; charset=\"iso-8859-1\"", String.class);
         assertEquals("Bye World", out);
 
@@ -49,7 +49,7 @@ public class NettyHttpContentTypeTest extends BaseNettyTest {
         getMockEndpoint("mock:input").expectedPropertyReceived(Exchange.CHARSET_NAME, "iso-8859-1");
 
         byte[] data = "Hello World".getBytes(Charset.forName("iso-8859-1"));
-        String out = template.requestBodyAndHeader("netty-http:http://0.0.0.0:{{port}}/foo", data,
+        String out = template.requestBodyAndHeader("jetty:http://0.0.0.0:{{port}}/foo", data,
                 "content-type", "text/plain;charset=\"iso-8859-1\";action=\"http://somewhere.com/foo\"", String.class);
         assertEquals("Bye World", out);
 
@@ -61,9 +61,9 @@ public class NettyHttpContentTypeTest extends BaseNettyTest {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("netty-http:http://0.0.0.0:{{port}}/foo")
-                    .to("mock:input")
-                    .transform().constant("Bye World");
+                from("jetty:http://0.0.0.0:{{port}}/foo")
+                        .to("mock:input")
+                        .transform().constant("Bye World");
             }
         };
     }

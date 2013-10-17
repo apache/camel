@@ -52,7 +52,34 @@ public class JettyHttpProducerContentTypeEncodingInQuoteTest extends BaseJettyTe
 
         assertEquals("OK", out.getOut().getBody(String.class));
         // camel-jetty will remove quotes from charset
-        assertEquals("text/foo; charset=utf-8", out.getOut().getHeader("Content-Type"));
+        assertEquals("text/plain;charset=UTF-8", out.getOut().getHeader("Content-Type"));
+    }
+
+    @Test
+    public void testHttpProducerEncodingInQuoteAndActionParameterTest() throws Exception {
+        // these tests do not run well on Windows
+        if (isPlatform("windows")) {
+            return;
+        }
+
+        // give Jetty time to startup properly
+        Thread.sleep(1000);
+
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedMinimumMessageCount(1);
+
+        Exchange out = template.send("jetty:http://localhost:{{port}}/myapp/myservice", new Processor() {
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setBody("Hello World");
+                exchange.getIn().setHeader("Content-Type", "text/plain;charset=\"utf-8\";action=\"http://somewhere.com/foo\"");
+            }
+        });
+
+        assertMockEndpointsSatisfied();
+
+        assertEquals("OK", out.getOut().getBody(String.class));
+        // camel-jetty will remove quotes from charset
+        assertEquals("text/plain;charset=utf-8;action=\"http://somewhere.com/foo\"", out.getOut().getHeader("Content-Type"));
     }
 
     @Override
@@ -61,14 +88,7 @@ public class JettyHttpProducerContentTypeEncodingInQuoteTest extends BaseJettyTe
             public void configure() throws Exception {
                 from("jetty:http://localhost:{{port}}/myapp/myservice")
                     .to("mock:result")
-                    .process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
-                            String body = exchange.getIn().getBody(String.class);
-                            assertEquals("Hello World", body);
-                            assertTrue("Content-Type is not text/plain; charset=\"utf-8\"", exchange.getIn().getHeader("Content-Type").equals("text/plain; charset=\"utf-8\""));
-                        }
-                    })
-                    .transform(constant("OK")).setHeader("Content-Type", constant("text/foo; charset=\"utf-8\""));
+                    .transform(constant("OK"));
             }
         };
     }
