@@ -16,7 +16,10 @@
  */
 package org.apache.camel.spring.javaconfig;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import static java.util.Collections.emptyList;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.RoutesBuilder;
@@ -154,8 +157,21 @@ public abstract class CamelConfiguration implements BeanFactoryAware, Applicatio
     }
 
     /**
-     * Returns the list of routes to use in this configuration
+     * Returns the list of routes to use in this configuration. By default autowires all
+     * {@link org.apache.camel.builder.RouteBuilder} instances available in the
+     * {@link org.springframework.context.ApplicationContext}.
      */
-    public abstract List<RouteBuilder> routes();
+    public List<RouteBuilder> routes() {
+        if (this.applicationContext != null) {
+            Map<String, RouteBuilder> routeBuildersMap = applicationContext.getBeansOfType(RouteBuilder.class);
+            List<RouteBuilder> routeBuilders = new ArrayList<RouteBuilder>(routeBuildersMap.size());
+            for (RouteBuilder routeBuilder : routeBuildersMap.values()) {
+                routeBuilders.add(routeBuilder);
+            }
+            return routeBuilders;
+        } else {
+            return emptyList();
+        }
+    }
 
 }
