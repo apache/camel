@@ -150,7 +150,7 @@ public class BindyCsvDataFormat extends BindyAbstractDataFormat {
 
                 // Create POJO where CSV data will be stored
                 model = factory.factory();
-                
+
                 // Split the CSV record according to the separator defined in
                 // annotated class @CSVRecord
                 String[] tokens = line.split(separator, -1);
@@ -160,11 +160,13 @@ public class BindyCsvDataFormat extends BindyAbstractDataFormat {
 
                 if (result.size() == 0 || result.isEmpty()) {
                     throw new java.lang.IllegalArgumentException("No records have been defined in the CSV");
-                }
-
-                if (result.size() > 0) {
+                } else {
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("Size of the record splitted : {}", result.size());
+                    }
+
+                    if (factory.getAutospanLine()) {
+                        result = autospanLine(result, factory.getMaxpos(), separator);
                     }
 
                     // Bind data from CSV record with model classes
@@ -196,6 +198,38 @@ public class BindyCsvDataFormat extends BindyAbstractDataFormat {
     }
 
     /**
+     * Concatenate "the rest of the line" as the last record. Works similar as if quoted
+     *
+     * @param result    input result set
+     * @param maxpos    position of maximum record
+     * @param separator csv separator char
+     * @return List<String> with concatenated last record
+     */
+    private static List<String> autospanLine(final List<String> result, final int maxpos, final String separator) {
+        if (result.size() <= maxpos) {
+            return result;
+        }
+
+        final List<String> answer = new ArrayList<String>();
+        final StringBuilder lastRecord = new StringBuilder();
+
+        final Iterator<String> it = result.iterator();
+        for (int counter = 0; counter < maxpos - 1; counter++) {
+            answer.add(it.next());
+        }
+
+        while (it.hasNext()) {
+            lastRecord.append(it.next());
+            if (it.hasNext()) {
+                lastRecord.append(separator);
+            }
+        }
+        answer.add(lastRecord.toString());
+
+        return answer;
+    }
+
+    /**
      * Unquote the tokens, by removing leading and trailing quote chars,
      * as will handling fixing broken tokens which may have been split
      * by a separator inside a quote.
@@ -224,7 +258,7 @@ public class BindyCsvDataFormat extends BindyAbstractDataFormat {
             // are we in progress of rebuilding a broken token
             boolean currentInProgress = current.length() > 0;
 
-            // situation when field ending with a separator symbol. 
+            // situation when field ending with a separator symbol.
             if (currentInProgress && startQuote && s.isEmpty()) {
                 // Add separator, append current and reset it
                 current.append(separator);
@@ -232,7 +266,7 @@ public class BindyCsvDataFormat extends BindyAbstractDataFormat {
                 current.setLength(0);
                 continue;
             }
-            
+
             // if we hit a start token then rebuild a broken token
             if (currentInProgress || startQuote) {
                 // append to current if we are in the middle of a start quote
@@ -266,6 +300,7 @@ public class BindyCsvDataFormat extends BindyAbstractDataFormat {
         return answer;
     }
 
+    @Override
     protected BindyAbstractFactory createModelFactory(PackageScanClassResolver resolver) throws Exception {
         if (getClassType() != null) {
             return new BindyCsvFactory(resolver, getClassType());
