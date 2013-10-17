@@ -16,7 +16,6 @@
  */
 package org.apache.camel.dataformat.bindy;
 
-
 import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -40,7 +39,6 @@ import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 /**
  * The BindyCsvFactory is the class who allows to : Generate a model associated
  * to a CSV record, bind data from a record to the POJOs, export data of POJOs
@@ -60,6 +58,7 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
     private int numberOptionalFields;
     private int numberMandatoryFields;
     private int totalFields;
+    private int maxpos;
 
     private String separator;
     private boolean skipFirstLine;
@@ -67,6 +66,7 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
     private boolean messageOrdered;
     private String quote;
     private boolean quoting;
+    private boolean autospanLine;
 
     public BindyCsvFactory(PackageScanClassResolver resolver, String... packageNames) throws Exception {
         super(resolver, packageNames);
@@ -87,7 +87,7 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
      * bind the data. This process will scan for classes according to the
      * package name provided, check the annotated classes and fields and
      * retrieve the separator of the CSV record
-     * 
+     *
      * @throws Exception
      */
     public void initCsvModel() throws Exception {
@@ -100,9 +100,10 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
         initCsvRecordParameters();
     }
 
+    @Override
     public void initAnnotatedFields() {
 
-        int maxpos = 0;
+        maxpos = 0;
         for (Class<?> cl : models) {
             List<Field> linkFields = new ArrayList<Field>();
 
@@ -176,7 +177,7 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
             if (dataField.trim()) {
                 data = data.trim();
             }
-            
+
             if (dataField.required()) {
                 // Increment counter of mandatory fields
                 ++counterMandatoryFields;
@@ -377,7 +378,6 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
     }
 
     /**
-     * 
      * Generate a table containing the data formatted and sorted with their position/offset
      * If the model is Ordered than a key is created combining the annotation @Section and Position of the field
      * If a relation @OneToMany is defined, than we iterate recursively through this function
@@ -482,10 +482,10 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
         }
 
     }
-    
+
     /**
      * Generate for the first line the headers of the columns
-     * 
+     *
      * @return the headers columns
      */
     public String generateHeader() {
@@ -564,6 +564,9 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
 
                     quoting = record.quoting();
                     LOG.debug("CSV will be quoted: {}", messageOrdered);
+
+                    autospanLine = record.autospanLine();
+                    LOG.debug("Autospan line in last record: {}", autospanLine);
                 }
 
                 if (section != null) {
@@ -620,8 +623,15 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
     }
 
     /**
+     * If last record is to span the rest of the line
+     */
+    public boolean getAutospanLine() {
+        return autospanLine;
+    }
+
+    /**
      * Flag indicating if the message must be ordered
-     * 
+     *
      * @return boolean
      */
     public boolean isMessageOrdered() {
@@ -630,5 +640,9 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
 
     public String getQuote() {
         return quote;
+    }
+
+    public int getMaxpos() {
+        return maxpos;
     }
 }
