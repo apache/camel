@@ -39,10 +39,9 @@ import org.springframework.context.annotation.Configuration;
 
 /**
  * A useful base class for writing
- * <a href="http://www.springsource.org/javaconfig">Spring JavaConfig</a>
- * configurations for working with Camel
- *
- * @version 
+ * <a
+ * href="http://docs.spring.io/spring/docs/current/spring-framework-reference/html/beans.html#beans-annotation-config">
+ * Spring annotation-based</a> configurations for working with Camel.
  */
 @Configuration
 public abstract class CamelConfiguration implements BeanFactoryAware, ApplicationContextAware {
