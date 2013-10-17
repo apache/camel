@@ -25,6 +25,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import javax.security.auth.login.Configuration;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.Expression;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.util.IOHelper;
 
@@ -185,8 +186,7 @@ public class HdfsProducer extends DefaultProducer {
             if (ostream != null) {
                 IOHelper.close(ostream, "output stream", log);
             }
-            StringBuilder actualPath = new StringBuilder(hdfsPath);
-            actualPath.append(exchange.getIn().getHeader(Exchange.FILE_NAME, String.class));
+            StringBuilder actualPath = getHdfsPathUsingFileNameHeader(exchange);
             ostream = HdfsOutputStream.createOutputStream(actualPath.toString(), config);
         } else if (ostream == null) {
             // must have ostream
@@ -233,6 +233,23 @@ public class HdfsProducer extends DefaultProducer {
         }
 
         log.debug("Wrote body to hdfs-file {}", path);
+    }
+
+    /**
+     * helper method to construct the hdfsPath from the CamelFileName String or Expression
+     * @param exchange
+     * @return
+     */
+    private StringBuilder getHdfsPathUsingFileNameHeader(Exchange exchange) {
+        StringBuilder actualPath = new StringBuilder(hdfsPath);
+        String fileName = "";
+        Object value = exchange.getIn().getHeader(Exchange.FILE_NAME);
+        if (value instanceof String) {
+            fileName = exchange.getContext().getTypeConverter().convertTo(String.class, exchange, value);
+        } else if (value instanceof Expression) {
+            fileName =  ((Expression) value).evaluate(exchange, String.class);
+        }
+        return actualPath.append(fileName);
     }
 
     private StringBuilder newFileName() {

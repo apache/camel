@@ -44,6 +44,8 @@ import org.apache.hadoop.util.ReflectionUtils;
 import org.junit.Before;
 import org.junit.Test;
 
+import static org.apache.camel.language.simple.SimpleLanguage.simple;
+
 public class HdfsProducerTest extends HdfsTestSupport {
 
     private static final Path TEMP_DIR = new Path(new File("target/test/").getAbsolutePath());
@@ -348,6 +350,29 @@ public class HdfsProducerTest extends HdfsTestSupport {
             InputStream in = null;
             try {
                 in = new URL("file:///" + TEMP_DIR.toUri() + "/test-camel-dynamic/file" + i).openStream();
+                ByteArrayOutputStream bos = new ByteArrayOutputStream();
+                IOUtils.copyBytes(in, bos, 4096, false);
+                assertEquals("CIAO" + i, new String(bos.toByteArray()));
+            } finally {
+                IOHelper.close(in);
+            }
+        }
+    }
+
+    @Test
+    public void testWriteTextWithDynamicFilenameExpression() throws Exception {
+        if (!canTest()) {
+            return;
+        }
+
+        for (int i = 0; i < 5; i++) {
+            template.sendBodyAndHeader("direct:write_dynamic_filename", "CIAO" + i, Exchange.FILE_NAME, simple("file-${body}"));
+        }
+
+        for (int i = 0; i < 5; i++) {
+            InputStream in = null;
+            try {
+                in = new URL("file:///" + TEMP_DIR.toUri() + "/test-camel-dynamic/file-CIAO" + i).openStream();
                 ByteArrayOutputStream bos = new ByteArrayOutputStream();
                 IOUtils.copyBytes(in, bos, 4096, false);
                 assertEquals("CIAO" + i, new String(bos.toByteArray()));
