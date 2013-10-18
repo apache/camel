@@ -26,7 +26,6 @@ public enum HdfsFileSystemType {
             hpath.append(config.getPath());
             if (config.getSplitStrategies().size() > 0) {
                 hpath.append('/');
-                hpath.append(HdfsConstants.DEFAULT_SEGMENT_PREFIX);
             }
             return hpath;
         }
@@ -43,7 +42,6 @@ public enum HdfsFileSystemType {
             hpath.append(config.getPath());
             if (config.getSplitStrategies().size() > 0) {
                 hpath.append('/');
-                hpath.append(HdfsConstants.DEFAULT_SEGMENT_PREFIX);
             }
             return hpath;
         }

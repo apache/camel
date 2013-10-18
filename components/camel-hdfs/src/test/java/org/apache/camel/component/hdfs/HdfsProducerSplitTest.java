@@ -16,16 +16,15 @@
  */
 package org.apache.camel.component.hdfs;
 
-import java.io.ByteArrayOutputStream;
+import java.io.BufferedReader;
 import java.io.File;
-import java.io.InputStream;
-import java.net.URL;
+import java.io.InputStreamReader;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.hadoop.conf.Configuration;
+import org.apache.hadoop.fs.FileStatus;
 import org.apache.hadoop.fs.FileSystem;
 import org.apache.hadoop.fs.Path;
-import org.apache.hadoop.io.IOUtils;
 import org.junit.Before;
 import org.junit.Test;
 
@@ -65,16 +64,13 @@ public class HdfsProducerSplitTest extends HdfsTestSupport {
         // stop Camel to flush and close file stream
         stopCamelContext();
 
-        for (int i = 0; i < 3; ++i) {
-            InputStream in = null;
-            try {
-                in = new URL("file:///" + BASE_FILE.toUri() + "3/" + HdfsConstants.DEFAULT_SEGMENT_PREFIX + i).openStream();
-                ByteArrayOutputStream bos = new ByteArrayOutputStream();
-                IOUtils.copyBytes(in, bos, 4096, false);
-                assertEquals("CIAO" + i, new String(bos.toByteArray()));
-            } finally {
-                IOUtils.closeStream(in);
-            }
+        FileSystem fs = FileSystem.get(new Configuration());
+        FileStatus[] status = fs.listStatus(new Path("file:///" + BASE_FILE.toUri() + "3"));
+        assertEquals(3, status.length);
+        for (int i = 0; i < 3; i++) {
+            BufferedReader br = new BufferedReader(new InputStreamReader(fs.open(status[i].getPath())));
+            assertTrue(br.readLine().startsWith("CIAO"));
+            assertNull(br.readLine());
         }
     }
 
@@ -98,16 +94,13 @@ public class HdfsProducerSplitTest extends HdfsTestSupport {
         }
         stopCamelContext();
 
-        for (int i = 0; i < 10; ++i) {
-            InputStream in = null;
-            try {
-                in = new URL("file:///" + BASE_FILE.toUri() + routeNr + '/' + HdfsConstants.DEFAULT_SEGMENT_PREFIX + i).openStream();
-                ByteArrayOutputStream bos = new ByteArrayOutputStream();
-                IOUtils.copyBytes(in, bos, 4096, false);
-                assertEquals("CIAO" + i, new String(bos.toByteArray()));
-            } finally {
-                IOUtils.closeStream(in);
-            }
+        FileSystem fs = FileSystem.get(new Configuration());
+        FileStatus[] status = fs.listStatus(new Path("file:///" + BASE_FILE.toUri() + routeNr));
+        assertEquals(10, status.length);
+        for (int i = 0; i < status.length; i++) {
+            BufferedReader br = new BufferedReader(new InputStreamReader(fs.open(status[i].getPath())));
+            assertTrue(br.readLine().startsWith("CIAO"));
+            assertNull(br.readLine());
         }
     }
 
