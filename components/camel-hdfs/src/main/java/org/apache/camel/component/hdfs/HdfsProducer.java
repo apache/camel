@@ -28,6 +28,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.util.IOHelper;
+import org.apache.camel.util.StringHelper;
 
 public class HdfsProducer extends DefaultProducer {
 
@@ -36,7 +37,6 @@ public class HdfsProducer extends DefaultProducer {
     private final AtomicBoolean idle = new AtomicBoolean(false);
     private volatile ScheduledExecutorService scheduler;
     private volatile HdfsOutputStream ostream;
-    private long splitNum;
 
     public static final class SplitStrategy {
         private SplitStrategyType type;
@@ -254,8 +254,7 @@ public class HdfsProducer extends DefaultProducer {
 
     private StringBuilder newFileName() {
         StringBuilder actualPath = new StringBuilder(hdfsPath);
-        actualPath.append(splitNum);
-        splitNum++;
+        actualPath.append(StringHelper.sanitize(getEndpoint().getCamelContext().getUuidGenerator().generateUuid()));
         return actualPath;
     }
 
