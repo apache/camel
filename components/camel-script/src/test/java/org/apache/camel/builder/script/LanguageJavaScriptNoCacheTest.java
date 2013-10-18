@@ -16,7 +16,6 @@
  */
 package org.apache.camel.builder.script;
 
-import org.apache.camel.ScriptTestHelper;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
@@ -29,10 +28,6 @@ public class LanguageJavaScriptNoCacheTest extends CamelTestSupport {
 
     @Test
     public void testSendMatchingMessage() throws Exception {
-        if (!ScriptTestHelper.canRunTestOnThisPlatform()) {
-            return;
-        }
-
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived(7, 9);
 

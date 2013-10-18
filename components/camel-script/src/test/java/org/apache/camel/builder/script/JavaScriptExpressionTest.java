@@ -21,7 +21,6 @@ import java.util.Map;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
-import org.apache.camel.ScriptTestHelper;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
@@ -34,10 +33,6 @@ public class JavaScriptExpressionTest extends CamelTestSupport {
 
     @Test
     public void testSendMatchingMessage() throws Exception {
-        if (!ScriptTestHelper.canRunTestOnThisPlatform()) {
-            return;
-        }
-
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
 
@@ -53,10 +48,6 @@ public class JavaScriptExpressionTest extends CamelTestSupport {
 
     @Test
     public void testSendNonMatchingMessage() throws Exception {
-        if (!ScriptTestHelper.canRunTestOnThisPlatform()) {
-            return;
-        }
-
         getMockEndpoint("mock:result").expectedMessageCount(0);
         getMockEndpoint("mock:unmatched").expectedMessageCount(1);
 
@@ -70,10 +61,6 @@ public class JavaScriptExpressionTest extends CamelTestSupport {
     @Test
     // START SNIPPET: e1
     public void testArgumentsExample() throws Exception {
-        if (!ScriptTestHelper.canRunTestOnThisPlatform()) {
-            return;
-        }
-
         getMockEndpoint("mock:result").expectedMessageCount(0);
         getMockEndpoint("mock:unmatched").expectedMessageCount(1);
 
@@ -91,10 +78,6 @@ public class JavaScriptExpressionTest extends CamelTestSupport {
 
     @Test
     public void testArgumentsWithStringMap() throws Exception {
-        if (!ScriptTestHelper.canRunTestOnThisPlatform()) {
-            return;
-        }
-
         getMockEndpoint("mock:result").expectedMessageCount(0);
         getMockEndpoint("mock:unmatched").expectedMessageCount(1);
 
@@ -113,10 +96,6 @@ public class JavaScriptExpressionTest extends CamelTestSupport {
 
     @Test
     public void testArgumentsWithIntegerMap() throws Exception {
-        if (!ScriptTestHelper.canRunTestOnThisPlatform()) {
-            return;
-        }
-
         getMockEndpoint("mock:result").expectedMessageCount(0);
         getMockEndpoint("mock:unmatched").expectedMessageCount(1);
 
@@ -133,10 +112,6 @@ public class JavaScriptExpressionTest extends CamelTestSupport {
 
     @Test
     public void testArgumentsWithNonMap() throws Exception {
-        if (!ScriptTestHelper.canRunTestOnThisPlatform()) {
-            return;
-        }
-
         getMockEndpoint("mock:result").expectedMessageCount(0);
         getMockEndpoint("mock:unmatched").expectedMessageCount(1);
 
@@ -151,11 +126,9 @@ public class JavaScriptExpressionTest extends CamelTestSupport {
     
     @Test
     public void testSendingRequestInMutipleThreads() throws Exception {
-        if (!ScriptTestHelper.canRunTestOnThisPlatform()) {
-            return;
-        }
         getMockEndpoint("mock:result").expectedMessageCount(0);
         getMockEndpoint("mock:unmatched").expectedMessageCount(100);
+
         long start = System.currentTimeMillis();
         ExecutorService executorService = Executors.newFixedThreadPool(100);
         for (int i = 0; i < 100; i++) {
@@ -176,8 +149,8 @@ public class JavaScriptExpressionTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
         long delta = System.currentTimeMillis() - start;
         log.info("Processing the 100 request tooks: " + delta + " ms");
+
         executorService.shutdown();
-        
     }
     
     protected RouteBuilder createRouteBuilder() throws Exception {

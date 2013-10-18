@@ -20,7 +20,6 @@ import javax.script.ScriptEngine;
 import javax.script.ScriptEngineManager;
 
 import junit.framework.TestCase;
-import org.apache.camel.ScriptTestHelper;
 import org.junit.Test;
 
 /**
@@ -31,10 +30,6 @@ public class Jsr223Test extends TestCase {
 
     @Test
     public void testLanguageNames() throws Exception {
-        if (!ScriptTestHelper.canRunTestOnThisPlatform()) {
-            return;
-        }
-
         ScriptEngineManager manager = new ScriptEngineManager();
         for (String scriptName : scriptNames) {
             ScriptEngine engine = manager.getEngineByName(scriptName);

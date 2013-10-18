@@ -17,7 +17,6 @@
 package org.apache.camel.builder.script.example;
 
 import org.apache.camel.CamelContext;
-import org.apache.camel.ScriptTestHelper;
 import org.apache.camel.spring.SpringCamelContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -28,19 +27,11 @@ public class GroovyFilterTest extends XPathFilterTest {
 
     @Override
     public void testSendMatchingMessage() throws Exception {
-        if (!ScriptTestHelper.canRunTestOnThisPlatform()) {
-            return;
-        }
-
         super.testSendMatchingMessage();
     }
 
     @Override
     public void testSendNotMatchingMessage() throws Exception {
-        if (!ScriptTestHelper.canRunTestOnThisPlatform()) {
-            return;
-        }
-
         super.testSendNotMatchingMessage();
     }
 

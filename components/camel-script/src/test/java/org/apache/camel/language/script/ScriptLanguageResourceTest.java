@@ -16,7 +16,6 @@
  */
 package org.apache.camel.language.script;
 
-import org.apache.camel.ScriptTestHelper;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
@@ -28,10 +27,6 @@ public class ScriptLanguageResourceTest extends CamelTestSupport {
 
     @Test
     public void testScriptResource() throws Exception {
-        if (!ScriptTestHelper.canRunTestOnThisPlatform()) {
-            return;
-        }
-
         getMockEndpoint("mock:result").expectedBodiesReceived(7);
 
         template.sendBody("direct:start", 3);
