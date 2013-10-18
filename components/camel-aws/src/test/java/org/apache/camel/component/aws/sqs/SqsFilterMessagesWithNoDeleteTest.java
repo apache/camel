@@ -22,13 +22,13 @@ import com.amazonaws.services.sqs.model.Message;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.JndiRegistry;
-import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.impl.SimpleRegistry;
+import org.apache.camel.test.junit4.TestSupport;
 import org.junit.Test;
 
+import static org.apache.camel.component.mock.MockEndpoint.assertIsSatisfied;
 
-public class SqsFilterMessagesWithNoDeleteTest extends CamelTestSupport {
-
+public class SqsFilterMessagesWithNoDeleteTest extends TestSupport {
 
     // put some test messages onto the 'queue'
     private void populateMessages(AmazonSQSClientMock clientMock) {
@@ -43,7 +43,6 @@ public class SqsFilterMessagesWithNoDeleteTest extends CamelTestSupport {
 
     @Test
     public void testDoesNotGetThroughFilter() throws Exception {
-
         final String sqsURI = String.format("aws-sqs://MyQueue?amazonSQSClient=#amazonSQSClient"
                 // note we will NOT delete if this message gets filtered out
                 + "&deleteIfFiltered=false"
@@ -51,7 +50,7 @@ public class SqsFilterMessagesWithNoDeleteTest extends CamelTestSupport {
 
         AmazonSQSClientMock clientMock = new AmazonSQSClientMock();
         populateMessages(clientMock);
-        JndiRegistry registry = new JndiRegistry(createJndiContext());
+        SimpleRegistry registry = new SimpleRegistry();
 
         DefaultCamelContext ctx = new DefaultCamelContext(registry);
         ctx.addRoutes(new RouteBuilder() {
@@ -66,21 +65,22 @@ public class SqsFilterMessagesWithNoDeleteTest extends CamelTestSupport {
         });
         MockEndpoint result = MockEndpoint.resolve(ctx, "mock:result");
         clientMock.setScheduler(ctx.getExecutorServiceManager().newScheduledThreadPool(clientMock, "ClientMock Scheduler", 1));
-        registry.bind("amazonSQSClient", clientMock);
+        registry.put("amazonSQSClient", clientMock);
 
         result.expectedMessageCount(0);
 
         ctx.start();
 
         // we shouldn't get
-        result.assertIsSatisfied(1000, TimeUnit.MILLISECONDS);
-
+        assertIsSatisfied(1000, TimeUnit.MILLISECONDS);
 
         // however, the message should not be deleted, that is, it should be left on the queue
         String response = ctx.createConsumerTemplate().receiveBody(sqsURI, 5000, String.class);
 
         assertEquals(response, "Message: hello, world!");
 
+        ctx.stop();
+        clientMock.shutdown();
     }
 
     @Test
@@ -93,7 +93,7 @@ public class SqsFilterMessagesWithNoDeleteTest extends CamelTestSupport {
 
         AmazonSQSClientMock clientMock = new AmazonSQSClientMock();
         populateMessages(clientMock);
-        JndiRegistry registry = new JndiRegistry(createJndiContext());
+        SimpleRegistry registry = new SimpleRegistry();
 
         DefaultCamelContext ctx = new DefaultCamelContext(registry);
         ctx.addRoutes(new RouteBuilder() {
@@ -109,19 +109,22 @@ public class SqsFilterMessagesWithNoDeleteTest extends CamelTestSupport {
             }
         });
         MockEndpoint result = MockEndpoint.resolve(ctx, "mock:result");
-        registry.bind("amazonSQSClient", clientMock);
+        registry.put("amazonSQSClient", clientMock);
         clientMock.setScheduler(ctx.getExecutorServiceManager().newScheduledThreadPool(clientMock, "ClientMock Scheduler", 1));
 
         result.expectedMessageCount(1);
         ctx.start();
 
         // the message should get through filter and mock should assert this
-        result.assertIsSatisfied(1000, TimeUnit.MILLISECONDS);
+        assertIsSatisfied(1000, TimeUnit.MILLISECONDS);
 
         // however, the message should not be deleted, that is, it should be left on the queue
         String response = ctx.createConsumerTemplate().receiveBody(sqsURI, 5000, String.class);
 
         assertNull(response);
+
+        ctx.stop();
+        clientMock.shutdown();
     }
 
 }
