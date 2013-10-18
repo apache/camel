@@ -17,6 +17,7 @@
 package org.apache.camel.component.hdfs;
 
 import java.io.File;
+import java.util.ArrayList;
 import java.util.List;
 
 import org.apache.camel.Exchange;
@@ -55,13 +56,15 @@ public class HdfsProducerConsumerTest extends HdfsTestSupport {
             @Override
             public void configure() {
                 from("direct:start").to("hdfs:///" + file.toUri() + "?fileSystemType=LOCAL&splitStrategy=BYTES:5,IDLE:1000");
-                from("hdfs:///" + file.toUri() + "?pattern=seg*&initialDelay=2000&fileSystemType=LOCAL&chunkSize=5").to("mock:result");
+                from("hdfs:///" + file.toUri() + "?initialDelay=2000&fileSystemType=LOCAL&chunkSize=5").to("mock:result");
             }
         });
         context.start();
 
+        List<String> expectedResults = new ArrayList<String>();
         for (int i = 0; i < 10; ++i) {
             template.sendBody("direct:start", "CIAO" + i);
+            expectedResults.add("CIAO" + i);
         }
 
         MockEndpoint resultEndpoint = context.getEndpoint("mock:result", MockEndpoint.class);
@@ -69,11 +72,9 @@ public class HdfsProducerConsumerTest extends HdfsTestSupport {
         resultEndpoint.expectedMessageCount(10);
         resultEndpoint.assertIsSatisfied();
 
-        int i = 0;
         List<Exchange> exchanges = resultEndpoint.getExchanges();
-        for (Exchange exchange : exchanges) {
-            assertEquals("CIAO" + i++, exchange.getIn().getBody(String.class));
-        }
+        assertEquals(10, exchanges.size());
+        resultEndpoint.expectedBodiesReceivedInAnyOrder(expectedResults);
     }
 
     @Override
