@@ -18,15 +18,14 @@ package org.apache.camel.component.infinispan;
 
 import org.apache.camel.Exchange;
 import org.infinispan.commons.api.BasicCache;
-import org.infinispan.commons.api.BasicCacheContainer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class InfinispanOperation {
     private static final transient Logger LOGGER = LoggerFactory.getLogger(InfinispanOperation.class);
-    private BasicCache cache;
+    private final BasicCache<Object, Object> cache;
 
-    public InfinispanOperation(BasicCache cache) {
+    public InfinispanOperation(BasicCache<Object, Object> cache) {
         this.cache = cache;
     }
 
@@ -47,19 +46,19 @@ public class InfinispanOperation {
     enum Operation {
         PUT {
             @Override
-            void execute(BasicCache cache, Exchange exchange) {
+            void execute(BasicCache<Object, Object> cache, Exchange exchange) {
                 Object result = cache.put(getKey(exchange), getValue(exchange));
                 setResult(result, exchange);
             }
         }, GET {
             @Override
-            void execute(BasicCache cache, Exchange exchange) {
+            void execute(BasicCache<Object, Object> cache, Exchange exchange) {
                 Object result = cache.get(getKey(exchange));
                 setResult(result, exchange);
             }
         }, REMOVE {
             @Override
-            void execute(BasicCache cache, Exchange exchange) {
+            void execute(BasicCache<Object, Object> cache, Exchange exchange) {
                 Object result = cache.remove(getKey(exchange));
                 setResult(result, exchange);
             }
@@ -67,7 +66,7 @@ public class InfinispanOperation {
 
         }, CLEAR {
             @Override
-            void execute(BasicCache cache, Exchange exchange) {
+            void execute(BasicCache<Object, Object> cache, Exchange exchange) {
                 cache.clear();
             }
         };
@@ -84,7 +83,7 @@ public class InfinispanOperation {
             return exchange.getIn().getHeader(InfinispanConstants.VALUE);
         }
 
-        abstract void execute(BasicCache cache, Exchange exchange);
+        abstract void execute(BasicCache<Object, Object> cache, Exchange exchange);
     }
 
 }

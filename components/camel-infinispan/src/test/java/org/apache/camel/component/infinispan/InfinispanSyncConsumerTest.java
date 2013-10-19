@@ -17,12 +17,8 @@
 package org.apache.camel.component.infinispan;
 
 import org.apache.camel.EndpointInject;
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.impl.converter.AsyncProcessorTypeConverter;
-import org.apache.camel.util.AsyncProcessorConverterHelper;
 import org.junit.Test;
 
 public class InfinispanSyncConsumerTest extends InfinispanTestSupport {
@@ -42,9 +38,9 @@ public class InfinispanSyncConsumerTest extends InfinispanTestSupport {
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
+            @Override
             public void configure() {
                 from("infinispan://localhost?cacheContainer=#cacheContainer&sync=false&eventTypes=CACHE_ENTRY_CREATED")
-
                         .delayer(500)
                         .to("mock:result");
             }

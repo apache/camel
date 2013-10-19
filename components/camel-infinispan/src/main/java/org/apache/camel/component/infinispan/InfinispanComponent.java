@@ -23,6 +23,7 @@ import org.apache.camel.impl.DefaultComponent;
 
 public class InfinispanComponent extends DefaultComponent {
 
+    @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         InfinispanConfiguration configuration = new InfinispanConfiguration();
         configuration.setHost(remaining);

@@ -23,7 +23,7 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Ignore;
 import org.junit.Test;
 
-@Ignore //start local server with: ./bin/startServer.sh -r hotrod
+@Ignore("start a local server with: ./bin/standalone.sh")
 public class InfinispanRemoteProducerTest extends CamelTestSupport {
 
     @Test
@@ -42,6 +42,7 @@ public class InfinispanRemoteProducerTest extends CamelTestSupport {
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
+            @Override
             public void configure() {
                 from("direct:start")
                         .to("infinispan://localhost");

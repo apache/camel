@@ -19,6 +19,8 @@ package org.apache.camel.component.infinispan;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultProducer;
 import org.infinispan.client.hotrod.RemoteCacheManager;
+import org.infinispan.client.hotrod.configuration.Configuration;
+import org.infinispan.client.hotrod.configuration.ConfigurationBuilder;
 import org.infinispan.commons.api.BasicCache;
 import org.infinispan.commons.api.BasicCacheContainer;
 import org.slf4j.Logger;
@@ -26,7 +28,7 @@ import org.slf4j.LoggerFactory;
 
 public class InfinispanProducer extends DefaultProducer {
     private static final transient Logger LOGGER = LoggerFactory.getLogger(InfinispanProducer.class);
-    private InfinispanConfiguration configuration;
+    private final InfinispanConfiguration configuration;
     private BasicCacheContainer cacheContainer;
     private boolean isManagedCacheContainer;
 
@@ -35,6 +37,7 @@ public class InfinispanProducer extends DefaultProducer {
         this.configuration = configuration;
     }
 
+    @Override
     public void process(Exchange exchange) throws Exception {
         new InfinispanOperation(getCache(exchange)).process(exchange);
     }
@@ -43,8 +46,8 @@ public class InfinispanProducer extends DefaultProducer {
     protected void doStart() throws Exception {
         cacheContainer = configuration.getCacheContainer();
         if (cacheContainer == null) {
-            cacheContainer = new RemoteCacheManager(configuration.getHost());
-            cacheContainer.start();
+            Configuration config = new ConfigurationBuilder().classLoader(Thread.currentThread().getContextClassLoader()).addServers(configuration.getHost()).build();
+            cacheContainer = new RemoteCacheManager(config, true);
             isManagedCacheContainer = true;
         }
         super.doStart();
@@ -58,7 +61,7 @@ public class InfinispanProducer extends DefaultProducer {
         super.doStop();
     }
 
-    private BasicCache getCache(Exchange exchange) {
+    private BasicCache<Object, Object> getCache(Exchange exchange) {
         String cacheName = exchange.getIn().getHeader(InfinispanConstants.CACHE_NAME, String.class);
         if (cacheName == null) {
             cacheName = configuration.getCacheName();

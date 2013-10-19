@@ -47,6 +47,7 @@ public class InfinispanConsumerTest extends InfinispanTestSupport {
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
+            @Override
             public void configure() {
                 from("infinispan://localhost?cacheContainer=#cacheContainer&sync=false&eventTypes=CACHE_ENTRY_CREATED")
                         .to("mock:result");

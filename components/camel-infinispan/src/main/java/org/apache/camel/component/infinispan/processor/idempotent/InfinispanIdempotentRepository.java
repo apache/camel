@@ -59,17 +59,20 @@ public class InfinispanIdempotentRepository extends ServiceSupport implements Id
         return new InfinispanIdempotentRepository();
     }
 
+    @Override
     @ManagedOperation(description = "Adds the key to the store")
     public boolean add(Object key) {
         Boolean put = getCache().put(key, true);
         return put == null;
     }
 
+    @Override
     @ManagedOperation(description = "Does the store contain the given key")
     public boolean contains(Object key) {
         return getCache().containsKey(key);
     }
 
+    @Override
     @ManagedOperation(description = "Remove the key from the store")
     public boolean remove(Object key) {
         return getCache().remove(key) != null;
@@ -80,18 +83,22 @@ public class InfinispanIdempotentRepository extends ServiceSupport implements Id
         return cacheName;
     }
 
+    @Override
     public boolean confirm(Object key) {
         return true;
     }
 
+    @Override
     protected void doStart() throws Exception {
         // noop
     }
 
+    @Override
     protected void doStop() throws Exception {
         // noop
     }
 
+    @Override
     protected void doShutdown() throws Exception {
         super.doShutdown();
         if (isManagedCacheContainer) {

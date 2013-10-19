@@ -122,6 +122,7 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
+            @Override
             public void configure() {
                 from("direct:start")
                         .to("infinispan://localhost?cacheContainer=#cacheContainer");

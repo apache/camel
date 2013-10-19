@@ -27,23 +27,22 @@ public class InfinispanEndpoint extends DefaultEndpoint {
     public InfinispanEndpoint() {
     }
 
-    public InfinispanEndpoint(String endpointUri) {
-        super(endpointUri);
-    }
-
     public InfinispanEndpoint(String uri, InfinispanComponent component, InfinispanConfiguration configuration) {
         super(uri, component);
         this.configuration = configuration;
     }
 
+    @Override
     public Producer createProducer() throws Exception {
         return new InfinispanProducer(this, configuration);
     }
 
+    @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         return new InfinispanConsumer(this, processor, configuration);
     }
 
+    @Override
     public boolean isSingleton() {
         return true;
     }

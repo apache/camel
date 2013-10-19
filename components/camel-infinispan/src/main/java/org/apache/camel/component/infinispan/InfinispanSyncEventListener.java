@@ -50,7 +50,7 @@ public class InfinispanSyncEventListener {
     @CacheEntryPassivated
     @CacheEntryRemoved
     @CacheEntryVisited
-    public void processEvent(CacheEntryEvent event) {
+    public void processEvent(CacheEntryEvent<Object, Object> event) {
         logger.trace("Received CacheEntryEvent [{}]", event);
 
         if (eventTypes == null || eventTypes.isEmpty() || eventTypes.contains(event.getType().toString())) {
