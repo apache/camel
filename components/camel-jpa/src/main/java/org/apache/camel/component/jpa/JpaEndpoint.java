@@ -43,7 +43,6 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
 
     private EntityManagerFactory entityManagerFactory;
     private PlatformTransactionManager transactionManager;
-    private EntityManager entityManager;
     private String persistenceUnit = "camel";
     private Expression producerExpression;
     private int maximumResults = -1;
@@ -263,11 +262,8 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
         return tm;
     }
 
-    protected EntityManager getEntityManager() {
-        if (entityManager == null) {
-            entityManager = getEntityManagerFactory().createEntityManager();
-        }
-        return entityManager;
+    protected EntityManager createEntityManager() {
+        return getEntityManagerFactory().createEntityManager();
     }
 
     protected TransactionTemplate createTransactionTemplate() {
@@ -302,9 +298,4 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
         };
     }
 
-    @Override
-    protected void doStop() throws Exception {
-        super.doStop();
-//        entityManager.close();
-    }
 }

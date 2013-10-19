@@ -44,7 +44,6 @@ import org.springframework.transaction.support.TransactionTemplate;
  * @version 
  */
 public class JpaConsumer extends ScheduledBatchPollingConsumer {
-
     private static final Logger LOG = LoggerFactory.getLogger(JpaConsumer.class);
     private final JpaEndpoint endpoint;
     private final EntityManager entityManager;
@@ -70,7 +69,7 @@ public class JpaConsumer extends ScheduledBatchPollingConsumer {
     public JpaConsumer(JpaEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
         this.endpoint = endpoint;
-        this.entityManager = endpoint.getEntityManager();
+        this.entityManager = endpoint.createEntityManager();
         this.transactionTemplate = endpoint.createTransactionTemplate();
     }
 
@@ -392,4 +391,12 @@ public class JpaConsumer extends ScheduledBatchPollingConsumer {
         exchange.getIn().setHeader(JpaConstants.ENTITYMANAGER, entityManager);
         return exchange;
     }
+
+    @Override
+    protected void doShutdown() throws Exception {
+        super.doShutdown();
+        entityManager.close();
+        LOG.trace("closed the EntityManager {} on {}", entityManager, this);
+    }
+
 }

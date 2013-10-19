@@ -142,7 +142,7 @@ public class JpaWithNamedQueryAndParametersTest extends Assert {
         endpoint = (JpaEndpoint)value;
 
         transactionTemplate = endpoint.createTransactionTemplate();
-        entityManager = endpoint.getEntityManager();
+        entityManager = endpoint.createEntityManager();
     }
 
     protected String getEndpointUri() {

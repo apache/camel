@@ -16,15 +16,15 @@
  */
 package org.apache.camel.component.jpa;
 
-import java.util.ArrayList;
 import java.util.Collection;
-import java.util.List;
 
 import javax.persistence.EntityManager;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.impl.DefaultProducer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
@@ -33,17 +33,21 @@ import org.springframework.transaction.support.TransactionTemplate;
  * @version 
  */
 public class JpaProducer extends DefaultProducer {
+    private static final Logger LOG = LoggerFactory.getLogger(JpaProducer.class);
     private final EntityManager entityManager;
     private final TransactionTemplate transactionTemplate;
-    private final JpaEndpoint endpoint;
     private final Expression expression;
 
     public JpaProducer(JpaEndpoint endpoint, Expression expression) {
         super(endpoint);
-        this.endpoint = endpoint;
         this.expression = expression;
-        this.entityManager = endpoint.getEntityManager();
+        this.entityManager = endpoint.createEntityManager();
         this.transactionTemplate = endpoint.createTransactionTemplate();
+    }
+
+    @Override
+    public JpaEndpoint getEndpoint() {
+        return (JpaEndpoint) super.getEndpoint();
     }
 
     public void process(final Exchange exchange) {
@@ -53,35 +57,24 @@ public class JpaProducer extends DefaultProducer {
             transactionTemplate.execute(new TransactionCallback<Object>() {
                 public Object doInTransaction(TransactionStatus status) {
                     entityManager.joinTransaction();
-
                     if (values.getClass().isArray()) {
                         Object[] array = (Object[])values;
                         for (int index = 0; index < array.length; index++) {
-                            Object managedEntity = save(array[index], entityManager);
-                            if (!endpoint.isUsePersist()) {
-                                array[index] = managedEntity;
-                            }
+                            save(array[index], entityManager);
                         }
                     } else if (values instanceof Collection) {
-                        @SuppressWarnings("unchecked")
-                        Collection<Object> collection = (Collection<Object>)values;
-                        List<Object> managedEntities = new ArrayList<Object>();
+                        Collection<?> collection = (Collection<?>)values;
                         for (Object entity : collection) {
-                            Object managedEntity = save(entity, entityManager);
-                            managedEntities.add(managedEntity);
-                        }
-                        if (!endpoint.isUsePersist()) {
-                            collection.clear();
-                            collection.addAll(managedEntities);
+                            save(entity, entityManager);
                         }
                     } else {
                         Object managedEntity = save(values, entityManager);
-                        if (!endpoint.isUsePersist()) {
+                        if (!getEndpoint().isUsePersist()) {
                             exchange.getIn().setBody(managedEntity);
                         }
                     }
 
-                    if (endpoint.isFlushOnSend()) {
+                    if (getEndpoint().isFlushOnSend()) {
                         // there may be concurrency so need to join tx before flush
                         entityManager.joinTransaction();
                         entityManager.flush();
@@ -97,7 +90,7 @@ public class JpaProducer extends DefaultProducer {
                 private Object save(final Object entity, EntityManager entityManager) {
                     // there may be concurrency so need to join tx before persist/merge
                     entityManager.joinTransaction();
-                    if (endpoint.isUsePersist()) {
+                    if (getEndpoint().isUsePersist()) {
                         entityManager.persist(entity);
                         return entity;
                     } else {
@@ -108,4 +101,12 @@ public class JpaProducer extends DefaultProducer {
         }
         exchange.getIn().removeHeader(JpaConstants.ENTITYMANAGER);
     }
+
+    @Override
+    protected void doShutdown() throws Exception {
+        super.doShutdown();
+        entityManager.close();
+        LOG.trace("closed the EntityManager {} on {}", entityManager, this);
+    }
+
 }

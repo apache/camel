@@ -111,10 +111,12 @@ public class JpaWithNamedQueryTest extends Assert {
 
         transactionTemplate.execute(new TransactionCallback<Object>() {
             public Object doInTransaction(TransactionStatus status) {
-                entityManager.joinTransaction();
+                // make use of the EntityManager having the relevant persistence-context
+                EntityManager entityManager2 = receivedExchange.getIn().getHeader(JpaConstants.ENTITYMANAGER, EntityManager.class);
+                entityManager2.joinTransaction();
 
                 // now lets assert that there are still 2 entities left
-                List<?> rows = entityManager.createQuery("select x from MultiSteps x").getResultList();
+                List<?> rows = entityManager2.createQuery("select x from MultiSteps x").getResultList();
                 assertEquals("Number of entities: " + rows, 2, rows.size());
 
                 int counter = 1;
@@ -125,7 +127,6 @@ public class JpaWithNamedQueryTest extends Assert {
 
                     if (row.getAddress().equals("foo@bar.com")) {
                         LOG.info("Found updated row: " + row);
-
                         assertEquals("Updated row step for: " + row, getUpdatedStepValue(), row.getStep());
                     } else {
                         // dummy row
@@ -166,7 +167,7 @@ public class JpaWithNamedQueryTest extends Assert {
         endpoint = (JpaEndpoint)value;
 
         transactionTemplate = endpoint.createTransactionTemplate();
-        entityManager = endpoint.getEntityManager();
+        entityManager = endpoint.createEntityManager();
     }
 
     protected String getEndpointUri() {
