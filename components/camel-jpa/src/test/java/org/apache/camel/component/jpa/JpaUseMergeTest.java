@@ -50,7 +50,7 @@ public class JpaUseMergeTest extends AbstractJpaMethodTest {
         assertEntitiesInDatabase(1, Customer.class.getName());
         assertEntitiesInDatabase(1, Address.class.getName());
 
-        // do detach the persisted entity first before modifying it
+        // do detach the persisted entity first before modifying it, as we intend to merge it later on below
         entityManager.detach(customer);
         customer.setName("Max Mustermann");
         customer.getAddress().setAddressLine1("Musterstr. 1");
