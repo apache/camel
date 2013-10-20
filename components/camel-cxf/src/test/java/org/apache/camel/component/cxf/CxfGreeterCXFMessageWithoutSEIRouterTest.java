@@ -18,14 +18,13 @@ package org.apache.camel.component.cxf;
 
 import javax.xml.ws.Endpoint;
 
-import org.apache.camel.builder.NoErrorHandlerBuilder;
-import org.apache.camel.builder.RouteBuilder;
 import org.apache.hello_world_soap_http.GreeterImpl;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
-public class CxfGreeterCXFMessageRouterTest extends AbstractCXFGreeterRouterTest {
+public class CxfGreeterCXFMessageWithoutSEIRouterTest extends CxfGreeterCXFMessageRouterTest {
+    
     protected static Endpoint endpoint;
     @AfterClass
     public static void stopService() {
@@ -39,24 +38,13 @@ public class CxfGreeterCXFMessageRouterTest extends AbstractCXFGreeterRouterTest
     public static void startService() {
         Object implementor = new GreeterImpl();
         String address = "http://localhost:" + getPort1() 
-            + "/CxfGreeterCXFMessageRouterTest/SoapContext/SoapPort";
+            + "/CxfGreeterCXFMessageWithoutSEIRouterTest/SoapContext/SoapPort";
         endpoint = Endpoint.publish(address, implementor); 
-    }
-    
-    
-    @Override
-    protected RouteBuilder createRouteBuilder() {
-        return new RouteBuilder() {
-            public void configure() {
-                context.setErrorHandlerBuilder(new NoErrorHandlerBuilder());
-                from("cxf:bean:routerEndpoint?dataFormat=CXF_MESSAGE&publishedEndpointUrl=http://www.simple.com/services/test")
-                    .to("cxf:bean:serviceEndpoint?dataFormat=CXF_MESSAGE");
-            }
-        };
     }
     
     @Override
     protected ClassPathXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/GreeterEndpointCxfMessageBeans.xml");
+        return new ClassPathXmlApplicationContext("org/apache/camel/component/cxf/GreeterEndpointCxfMessageWithoutSEIBeans.xml");
     }
+
 }

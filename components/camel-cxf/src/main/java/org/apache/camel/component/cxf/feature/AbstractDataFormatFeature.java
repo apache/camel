@@ -17,12 +17,15 @@
 
 package org.apache.camel.component.cxf.feature;
 
+import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 
+import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.feature.AbstractFeature;
+import org.apache.cxf.interceptor.ClientFaultConverter;
 import org.apache.cxf.interceptor.Interceptor;
 import org.apache.cxf.message.Message;
 import org.apache.cxf.phase.PhaseInterceptor;
@@ -32,11 +35,18 @@ import org.slf4j.Logger;
  * The abstract class for the data format feature
  */
 public abstract class AbstractDataFormatFeature extends AbstractFeature {
+    protected static final Collection<Class<?>> REMOVING_FAULT_IN_INTERCEPTORS;
+    
+    static {
+        REMOVING_FAULT_IN_INTERCEPTORS = new ArrayList<Class<?>>();
+        REMOVING_FAULT_IN_INTERCEPTORS.add(ClientFaultConverter.class);
+    }
 
     // The interceptors which need to be keeped
     protected Set<String> inInterceptorNames = new HashSet<String>();
     protected Set<String> outInterceptorNames = new HashSet<String>();
     protected abstract Logger getLogger();
+    
 
     @Deprecated
     // It will be removed in Camel 3.0
@@ -114,6 +124,13 @@ public abstract class AbstractDataFormatFeature extends AbstractFeature {
                 interceptors.remove(interceptor);
             }
         }        
+    }
+    
+    protected void removeFaultInInterceptorFromClient(Client client) {
+        removeInterceptors(client.getInFaultInterceptors(), REMOVING_FAULT_IN_INTERCEPTORS);
+        removeInterceptors(client.getEndpoint().getService().getInFaultInterceptors(), REMOVING_FAULT_IN_INTERCEPTORS);
+        removeInterceptors(client.getEndpoint().getInFaultInterceptors(), REMOVING_FAULT_IN_INTERCEPTORS);
+        removeInterceptors(client.getEndpoint().getBinding().getInFaultInterceptors(), REMOVING_FAULT_IN_INTERCEPTORS);
     }
     
     public void addInIntercepters(List<Interceptor<? extends Message>> interceptors) {
