@@ -38,7 +38,7 @@ public final class HazelcastAggregationRepository extends ServiceSupport
     private String persistenceMapName;
     private static final String COMPLETED_SUFFIX = "-completed";
     private String deadLetterChannel;
-    private long recoveryInterval;
+    private long recoveryInterval = 5000;
     private int maximumRedeliveries;
 
     public HazelcastAggregationRepository(final String repositoryName) {
@@ -94,15 +94,22 @@ public final class HazelcastAggregationRepository extends ServiceSupport
         if (!optimistic) {
             throw new UnsupportedOperationException();
         }
+        LOG.trace("Adding an Exchange with ID {} for key {} in an optimistic manner.", newExchange.getExchangeId(), key);
         if (oldExchange == null) {
-            if (cache.putIfAbsent(key, newExchange) != null) {
+            final Exchange misbehaviorEx = cache.putIfAbsent(key, newExchange);
+            if (misbehaviorEx != null) {
+                LOG.error("Optimistic locking failed for exchange with key {}: IMap#putIfAbsend returned Exchange with ID {}, while it's expected no exchanges to be returned",
+                        key, misbehaviorEx.getExchangeId());
                 throw  new OptimisticLockingException();
             }
         } else {
             if (!cache.replace(key, oldExchange, newExchange)) {
+                LOG.error("Optimistic locking failed for exchange with key {}: IMap#replace returned no Exchanges, while it's expected to replace one",
+                        key);
                 throw new OptimisticLockingException();
             }
         }
+        LOG.trace("Added an Exchange with ID {} for key {} in optimistic manner.", newExchange.getExchangeId(), key);
         return oldExchange;
     }
 
@@ -111,25 +118,35 @@ public final class HazelcastAggregationRepository extends ServiceSupport
         if (optimistic){
             throw new UnsupportedOperationException();
         }
+        LOG.trace("Adding an Exchange with ID {} for key {} in a thread-safe manner.", exchange.getExchangeId(), key);
         Lock l = hzInstance.getLock(mapName);
         try {
             l.lock();
             return cache.put(key, exchange);
         } finally {
+            LOG.trace("Adding an Exchange with ID {} for key {} in a thread-safe manner.", exchange.getExchangeId(), key);
             l.unlock();
         }
     }
 
     @Override
     public Set<String> scan(CamelContext camelContext) {
-        if (useRecovery)
-            return Collections.unmodifiableSet(persistedCache.keySet());
-        else
+        if (useRecovery) {
+            LOG.trace("Scanning for exchanges to recover in {} context", camelContext.getName());
+            Set<String> scanned = Collections.unmodifiableSet(persistedCache.keySet());
+            LOG.trace("Found {} keys for exchanges to recover in {} context", scanned.size(),camelContext.getName());
+            return scanned;
+        }
+        else {
+            LOG.warn("What for to run recovery scans in {} context while repository {} is running in non-recoverable aggregation repository mode?!",
+                    camelContext.getName(), mapName);
             return Collections.emptySet();
+        }
     }
 
     @Override
     public Exchange recover(CamelContext camelContext, String exchangeId) {
+        LOG.trace("Recovering an Exchange with ID {}.", exchangeId);
         return useRecovery ? persistedCache.get(exchangeId) : null;
 
     }
@@ -187,14 +204,23 @@ public final class HazelcastAggregationRepository extends ServiceSupport
     @Override
     public void remove(CamelContext camelContext, String key, Exchange exchange) {
         if (optimistic) {
+            LOG.trace("Removing an exchange with ID {} for key {} in an optimistic manner.", exchange.getExchangeId(), key);
             if (!cache.remove(key, exchange)) {
+                LOG.error("Optimistic locking failed for exchange with key {}: IMap#remove removed no Exchanges, while it's expected to remove one.",
+                        key);
                 throw new OptimisticLockingException();
             }
+            LOG.trace("Removed an exchange with ID {} for key {} in an optimistic manner.", exchange.getExchangeId(), key);
             if (useRecovery) {
+                LOG.trace("Putting an exchange with ID {} for key {} into a recoverable storage in an optimistic manner.",
+                        exchange.getExchangeId(), key);
                 persistedCache.put(key, exchange);
+                LOG.trace("Put an exchange with ID {} for key {} into a recoverable storage in an optimistic manner.",
+                        exchange.getExchangeId(), key);
             }
         } else {
             if (useRecovery) {
+                LOG.trace("Removing an exchange with ID {} for key {} in a thread-safe manner.", exchange.getExchangeId(), key);
                 // The only considerable case for transaction usage is fault tolerance:
                 // the transaction will be rolled back automatically (default timeout is 2 minutes)
                 // if no commit occurs during the timeout. So we are still consistent whether local node crashes.
@@ -202,15 +228,31 @@ public final class HazelcastAggregationRepository extends ServiceSupport
 
                 tOpts.setTransactionType(TransactionOptions.TransactionType.LOCAL);
                 TransactionContext tCtx = hzInstance.newTransactionContext(tOpts);
-                tCtx.beginTransaction();
 
-                TransactionalMap<String, Exchange> tCache = tCtx.getMap(cache.getName());
-                TransactionalMap<String, Exchange> tPersistentCache = tCtx.getMap(persistedCache.getName());
+                try {
 
-                tCache.remove(key);
-                tPersistentCache.put(key, exchange);
+                    tCtx.beginTransaction();
 
-                tCtx.commitTransaction();
+                    TransactionalMap<String, Exchange> tCache = tCtx.getMap(cache.getName());
+                    TransactionalMap<String, Exchange> tPersistentCache = tCtx.getMap(persistedCache.getName());
+
+                    tCache.remove(key);
+                    LOG.trace("Putting an exchange with ID {} for key {} into a recoverable storage in a thread-safe manner.",
+                            exchange.getExchangeId(), key);
+                    tPersistentCache.put(key, exchange);
+
+                    tCtx.commitTransaction();
+                    LOG.trace("Removed an exchange with ID {} for key {} in a thread-safe manner.", exchange.getExchangeId(), key);
+                    LOG.trace("Put an exchange with ID {} for key {} into a recoverable storage in a thread-safe manner.",
+                            exchange.getExchangeId(), key);
+                } catch (Throwable throwable) {
+                    tCtx.rollbackTransaction();
+
+                    final String msg = String.format("Transaction with ID %s was rolled back for remove operation with a key %s and an Exchange ID %s.",
+                            tCtx.getTxnId(), key, exchange.getExchangeId());
+                    LOG.warn(msg, throwable);
+                    throw new RuntimeException(msg, throwable);
+                }
             } else {
                 cache.remove(key);
             }
@@ -219,6 +261,7 @@ public final class HazelcastAggregationRepository extends ServiceSupport
 
     @Override
     public void confirm(CamelContext camelContext, String exchangeId) {
+        LOG.trace("Confirming an exchange with ID {}.", exchangeId);
         persistedCache.remove(exchangeId);
     }
 
@@ -228,7 +271,7 @@ public final class HazelcastAggregationRepository extends ServiceSupport
     }
 
     public String getPersistentRepositoryName() {
-        return getPersistentMapName();
+        return persistenceMapName;
     }
 
     @Override
@@ -245,10 +288,6 @@ public final class HazelcastAggregationRepository extends ServiceSupport
         if (useRecovery) {
             persistedCache = hzInstance.getMap(persistenceMapName);
         }
-    }
-
-    private String getPersistentMapName() {
-        return persistenceMapName;
     }
 
     @Override
