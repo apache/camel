@@ -44,11 +44,8 @@ import org.slf4j.LoggerFactory;
  */
 public class PayLoadDataFormatFeature extends AbstractDataFormatFeature {
     private static final Logger LOG = LoggerFactory.getLogger(PayLoadDataFormatFeature.class);
-    private static final Collection<Class<?>> REMOVING_FAULT_IN_INTERCEPTORS;
     private static final boolean DEFAULT_ALLOW_STREAMING;
     static {
-        REMOVING_FAULT_IN_INTERCEPTORS = new ArrayList<Class<?>>();
-        REMOVING_FAULT_IN_INTERCEPTORS.add(ClientFaultConverter.class);
         
         String s = System.getProperty("org.apache.camel.component.cxf.streaming");
         DEFAULT_ALLOW_STREAMING = s == null || Boolean.parseBoolean(s);
@@ -163,11 +160,5 @@ public class PayLoadDataFormatFeature extends AbstractDataFormatFeature {
             }
         }
     }
-    private void removeFaultInInterceptorFromClient(Client client) {
-        removeInterceptors(client.getInFaultInterceptors(), REMOVING_FAULT_IN_INTERCEPTORS);
-        removeInterceptors(client.getEndpoint().getService().getInFaultInterceptors(), REMOVING_FAULT_IN_INTERCEPTORS);
-        removeInterceptors(client.getEndpoint().getInFaultInterceptors(), REMOVING_FAULT_IN_INTERCEPTORS);
-        removeInterceptors(client.getEndpoint().getBinding().getInFaultInterceptors(), REMOVING_FAULT_IN_INTERCEPTORS);
-    }
-
+    
 }
