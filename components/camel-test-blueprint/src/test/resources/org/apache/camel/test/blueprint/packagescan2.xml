@@ -22,7 +22,7 @@
 
   <camelContext xmlns="http://camel.apache.org/schema/blueprint">
 	  <packageScan>
-		  <package>org.apache.camel.test.blueprint.scan</package>
+		  <package>org.apache.camel.test.blueprint.scan2</package>
 	  </packageScan>
 
     <endpoint id="foo" uri="direct:start"/>
