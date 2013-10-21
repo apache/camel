@@ -111,19 +111,29 @@ public class PGPDataFormat extends ServiceSupport implements DataFormat {
 
     private boolean armored;
     private boolean integrity = true;
-    
-    /** Digest algorithm for signing (marshal).
-     * Possible values are defined in {@link HashAlgorithmTags}.
-     * Default value is SHA1.
+
+    /**
+     * Digest algorithm for signing (marshal). Possible values are defined in
+     * {@link HashAlgorithmTags}. Default value is SHA1.
      */
     private int hashAlgorithm = HashAlgorithmTags.SHA1;
-    
+
     /**
-     * Symmetric key algorithm for encryption (marschal).
-     * Possible values are defined in {@link SymmetricKeyAlgorithmTags}.
-     * Default value is CAST5.
+     * Symmetric key algorithm for encryption (marschal). Possible values are
+     * defined in {@link SymmetricKeyAlgorithmTags}. Default value is CAST5.
      */
     private int algorithm = SymmetricKeyAlgorithmTags.CAST5;
+
+    /**
+     * If no passpharase can be found from the parameter <tt>password</tt> or
+     * <tt>signaturePassword</tt> or from the header
+     * {@link #SIGNATURE_KEY_PASSWORD} or {@link #KEY_PASSWORD} then we try to
+     * get the password from the passphrase accessor. This is especially useful
+     * in the decrypt case, where we chose the private key according to the key
+     * Id stored in the encrypted data. So in this case we do not know the user
+     * Id in advance.
+     */
+    private PGPPassphraseAccessor passphraseAccessor;
 
     public PGPDataFormat() {
     }
@@ -141,7 +151,15 @@ public class PGPDataFormat extends ServiceSupport implements DataFormat {
     }
 
     protected String findKeyPassword(Exchange exchange) {
-        return exchange.getIn().getHeader(KEY_PASSWORD, getPassword(), String.class);
+        String keyPassword = exchange.getIn().getHeader(KEY_PASSWORD, getPassword(), String.class);
+        if (keyPassword != null) {
+            return keyPassword;
+        }
+        if (passphraseAccessor != null) {
+            return passphraseAccessor.getPassphrase(findKeyUserid(exchange));
+        } else {
+            return null;
+        }
     }
 
     protected String findSignatureKeyFileName(Exchange exchange) {
@@ -157,9 +175,17 @@ public class PGPDataFormat extends ServiceSupport implements DataFormat {
     }
 
     protected String findSignatureKeyPassword(Exchange exchange) {
-        return exchange.getIn().getHeader(SIGNATURE_KEY_PASSWORD, getSignaturePassword(), String.class);
+        String sigPassword = exchange.getIn().getHeader(SIGNATURE_KEY_PASSWORD, getSignaturePassword(), String.class);
+        if (sigPassword != null) {
+            return sigPassword;
+        }
+        if (passphraseAccessor != null) {
+            return passphraseAccessor.getPassphrase(findSignatureKeyUserid(exchange));
+        } else {
+            return null;
+        }
     }
-    
+
     protected int findAlgorithm(Exchange exchange) {
         return exchange.getIn().getHeader(ENCRYPTION_ALGORITHM, getAlgorithm(), Integer.class);
     }
@@ -231,13 +257,14 @@ public class PGPDataFormat extends ServiceSupport implements DataFormat {
             return null;
         }
 
-        PGPSecretKey sigSecretKey = PGPDataFormatUtil.findSecretKey(exchange.getContext(), sigKeyFileName, sigKeyRing, sigKeyPassword, getProvider());
+        PGPSecretKey sigSecretKey = PGPDataFormatUtil.findSecretKey(exchange.getContext(), sigKeyFileName, sigKeyRing, sigKeyPassword,
+                sigKeyUserid, getProvider());
         if (sigSecretKey == null) {
             throw new IllegalArgumentException("Signature secret key is null, cannot proceed");
         }
 
-        PGPPrivateKey sigPrivateKey = sigSecretKey.extractPrivateKey(new JcePBESecretKeyDecryptorBuilder().setProvider(getProvider()).build(
-                sigKeyPassword.toCharArray()));
+        PGPPrivateKey sigPrivateKey = sigSecretKey.extractPrivateKey(new JcePBESecretKeyDecryptorBuilder().setProvider(getProvider())
+                .build(sigKeyPassword.toCharArray()));
         if (sigPrivateKey == null) {
             throw new IllegalArgumentException("Signature private key is null, cannot proceed");
         }
@@ -259,15 +286,10 @@ public class PGPDataFormat extends ServiceSupport implements DataFormat {
             return null;
         }
 
-        PGPPrivateKey key = PGPDataFormatUtil.findPrivateKey(exchange.getContext(), findKeyFileName(exchange),
-                findEncryptionKeyRing(exchange), encryptedStream, findKeyPassword(exchange), getProvider());
-        if (key == null) {
-            throw new IllegalArgumentException("Private key is null, cannot proceed");
-        }
-
         InputStream in;
         try {
             byte[] encryptedData = IOUtils.toByteArray(encryptedStream);
+            //TODO why do we need a byte array input stream? --> streaming not possible?
             InputStream byteStream = new ByteArrayInputStream(encryptedData);
             in = PGPUtil.getDecoderStream(byteStream);
         } finally {
@@ -286,11 +308,21 @@ public class PGPDataFormat extends ServiceSupport implements DataFormat {
         }
         IOHelper.close(in);
 
-        PGPPublicKeyEncryptedData pbe = (PGPPublicKeyEncryptedData) enc.get(0);
+        PGPPublicKeyEncryptedData pbe = null;
+        PGPPrivateKey key = null;
+        // find encrypted data for which a private key exists in the secret key ring
+        for (int i = 0; i < enc.size() && key == null; i++) {
+            pbe = (PGPPublicKeyEncryptedData) enc.get(i);
+            key = PGPDataFormatUtil.findPrivateKeyWithKeyId(exchange.getContext(), findKeyFileName(exchange),
+                    findEncryptionKeyRing(exchange), pbe.getKeyID(), findKeyPassword(exchange), getPassphraseAccessor(), getProvider());
+        }
+        if (key == null) {
+            throw new PGPException("Provided input is encrypted with unknown pair of keys.");
+        }
+
         InputStream encData = pbe.getDataStream(new JcePublicKeyDataDecryptorFactoryBuilder().setProvider(getProvider()).build(key));
         pgpFactory = new PGPObjectFactory(encData);
         PGPCompressedData comData = (PGPCompressedData) pgpFactory.nextObject();
-
         pgpFactory = new PGPObjectFactory(comData.getDataStream());
         Object object = pgpFactory.nextObject();
 
@@ -305,6 +337,7 @@ public class PGPDataFormat extends ServiceSupport implements DataFormat {
         PGPLiteralData ld = (PGPLiteralData) object;
         InputStream litData = ld.getInputStream();
 
+        //TODO we should enable streaming here with CashedOutputStream!!
         byte[] answer;
         try {
             answer = Streams.readAll(litData);
@@ -315,7 +348,7 @@ public class PGPDataFormat extends ServiceSupport implements DataFormat {
         if (signature != null) {
             signature.update(answer);
             PGPSignatureList sigList = (PGPSignatureList) pgpFactory.nextObject();
-            if (!signature.verify(sigList.get(0))) {
+            if (!signature.verify(getSignatureWithKeyId(signature.getKeyID(), sigList))) {
                 throw new SignatureException("Cannot verify PGP signature");
             }
         }
@@ -323,18 +356,37 @@ public class PGPDataFormat extends ServiceSupport implements DataFormat {
         return answer;
     }
 
+    protected PGPSignature getSignatureWithKeyId(long keyID, PGPSignatureList sigList) {
+        for (int i = 0; i < sigList.size(); i++) {
+            PGPSignature signature = sigList.get(i);
+            if (keyID == signature.getKeyID()) {
+                return signature;
+            }
+        }
+        throw new IllegalStateException("PGP signature is inconsistent");
+    }
+
     protected PGPOnePassSignature getSignature(Exchange exchange, PGPOnePassSignatureList signatureList) throws IOException, PGPException,
             NoSuchProviderException {
 
-        PGPPublicKey sigPublicKey = PGPDataFormatUtil.findPublicKey(exchange.getContext(), findSignatureKeyFileName(exchange),
-                findSignatureKeyRing(exchange), findSignatureKeyUserid(exchange), false);
-        if (sigPublicKey == null) {
-            throw new IllegalArgumentException("Signature public key is null, cannot proceed");
+        for (int i = 0; i < signatureList.size(); i++) {
+            PGPOnePassSignature signature = signatureList.get(i);
+            // Determine public key from signature keyId
+            PGPPublicKey sigPublicKey = PGPDataFormatUtil.findPublicKeyWithKeyId(exchange.getContext(), findSignatureKeyFileName(exchange),
+                    findSignatureKeyRing(exchange), signature.getKeyID(), false);
+            if (sigPublicKey == null) {
+                continue;
+            }
+            // choose that signature for which a public key exists!
+            signature.init(new JcaPGPContentVerifierBuilderProvider().setProvider(getProvider()), sigPublicKey);
+            return signature;
+        }
+        if (signatureList.isEmpty()) {
+            return null;
+        } else {
+            throw new IllegalArgumentException("No public key found fitting to the signature key Id; cannot verify the signature");
         }
 
-        PGPOnePassSignature signature = signatureList.get(0);
-        signature.init(new JcaPGPContentVerifierBuilderProvider().setProvider(getProvider()), sigPublicKey);
-        return signature;
     }
 
     /**
@@ -448,8 +500,6 @@ public class PGPDataFormat extends ServiceSupport implements DataFormat {
     public void setProvider(String provider) {
         this.provider = provider;
     }
-    
-    
 
     public int getHashAlgorithm() {
         return hashAlgorithm;
@@ -465,6 +515,14 @@ public class PGPDataFormat extends ServiceSupport implements DataFormat {
 
     public void setAlgorithm(int algorithm) {
         this.algorithm = algorithm;
+    }
+
+    public PGPPassphraseAccessor getPassphraseAccessor() {
+        return passphraseAccessor;
+    }
+
+    public void setPassphraseAccessor(PGPPassphraseAccessor passphraseAccessor) {
+        this.passphraseAccessor = passphraseAccessor;
     }
 
     @Override

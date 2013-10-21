@@ -50,8 +50,9 @@ public final class PGPDataFormatUtil {
     private PGPDataFormatUtil() {
     }
 
-    public static PGPPublicKey findPublicKey(CamelContext context, String filename, String userid, boolean forEncryption) throws IOException, PGPException,
-            NoSuchProviderException {
+    @Deprecated
+    public static PGPPublicKey findPublicKey(CamelContext context, String filename, String userid, boolean forEncryption)
+        throws IOException, PGPException, NoSuchProviderException {
         return findPublicKey(context, filename, null, userid, forEncryption);
     }
 
@@ -66,6 +67,57 @@ public final class PGPDataFormatUtil {
             IOHelper.close(is);
         }
         return pubKey;
+    }
+
+    public static PGPPublicKey findPublicKeyWithKeyId(CamelContext context, String filename, byte[] keyRing, long keyid,
+            boolean forEncryption) throws IOException, PGPException, NoSuchProviderException {
+        InputStream is = determineKeyRingInputStream(context, filename, keyRing, forEncryption);
+        PGPPublicKey pubKey;
+        try {
+            pubKey = findPublicKeyWithKeyId(is, keyid);
+        } finally {
+            IOHelper.close(is);
+        }
+        return pubKey;
+    }
+
+    public static PGPPrivateKey findPrivateKeyWithKeyId(CamelContext context, String filename, byte[] secreteKeyRing, long keyid,
+            String passphrase, PGPPassphraseAccessor passpraseAccessor, String provider) throws IOException, PGPException,
+            NoSuchProviderException {
+        InputStream is = determineKeyRingInputStream(context, filename, secreteKeyRing, true);
+        try {
+            return findPrivateKeyWithKeyId(is, keyid, passphrase, passpraseAccessor, provider);
+        } finally {
+            IOHelper.close(is);
+        }
+    }
+
+    private static PGPPrivateKey findPrivateKeyWithKeyId(InputStream keyringInput, long keyid, String passphrase,
+            PGPPassphraseAccessor passphraseAccessor, String provider) throws IOException, PGPException {
+        PGPSecretKeyRingCollection pgpSec = new PGPSecretKeyRingCollection(PGPUtil.getDecoderStream(keyringInput));
+        for (Iterator<?> i = pgpSec.getKeyRings(); i.hasNext();) {
+            Object data = i.next();
+            if (data instanceof PGPSecretKeyRing) {
+                PGPSecretKeyRing keyring = (PGPSecretKeyRing) data;
+                PGPSecretKey secKey = keyring.getSecretKey();
+                if (secKey != null && keyid == secKey.getKeyID()) {
+                    if (passphrase == null && passphraseAccessor != null) {
+                        // get passphrase from accessor
+                        @SuppressWarnings("unchecked")
+                        Iterator<String> userIDs = secKey.getUserIDs();
+                        while (passphrase == null && userIDs.hasNext()) {
+                            passphrase = passphraseAccessor.getPassphrase(userIDs.next());
+                        }
+                    }
+                    PGPPrivateKey privateKey = secKey.extractPrivateKey(new JcePBESecretKeyDecryptorBuilder().setProvider(provider).build(
+                            passphrase.toCharArray()));
+                    if (privateKey != null) {
+                        return privateKey;
+                    }
+                }
+            }
+        }
+        return null;
     }
 
     private static InputStream determineKeyRingInputStream(CamelContext context, String filename, byte[] keyRing, boolean forEncryption)
@@ -90,6 +142,24 @@ public final class PGPDataFormatUtil {
     }
 
     @SuppressWarnings("unchecked")
+    private static PGPPublicKey findPublicKeyWithKeyId(InputStream input, long keyid) throws IOException, PGPException,
+            NoSuchProviderException {
+        PGPPublicKeyRingCollection pgpSec = new PGPPublicKeyRingCollection(PGPUtil.getDecoderStream(input));
+
+        for (Iterator<PGPPublicKeyRing> keyRingIter = pgpSec.getKeyRings(); keyRingIter.hasNext();) {
+            PGPPublicKeyRing keyRing = keyRingIter.next();
+            for (Iterator<PGPPublicKey> keyIter = keyRing.getPublicKeys(); keyIter.hasNext();) {
+                PGPPublicKey key = keyIter.next();
+                if (keyid == key.getKeyID()) {
+                    return key;
+                }
+            }
+        }
+
+        return null;
+    }
+
+    @SuppressWarnings("unchecked")
     private static PGPPublicKey findPublicKey(InputStream input, String userid, boolean forEncryption) throws IOException, PGPException,
             NoSuchProviderException {
         PGPPublicKeyRingCollection pgpSec = new PGPPublicKeyRingCollection(PGPUtil.getDecoderStream(input));
@@ -99,17 +169,17 @@ public final class PGPDataFormatUtil {
             PGPPublicKeyRing keyRing = keyRingIter.next();
 
             Iterator<PGPPublicKey> keyIter = keyRing.getPublicKeys();
-            String keyUserId = null;
             while (keyIter.hasNext()) {
                 PGPPublicKey key = keyIter.next();
                 for (Iterator<String> iterator = key.getUserIDs(); iterator.hasNext();) {
-                    keyUserId = iterator.next();
-                }
-                if (keyUserId != null && keyUserId.contains(userid)) {
-                    if (forEncryption && key.isEncryptionKey()) {
-                        return key;
-                    } else if (!forEncryption && isSignatureKey(key)) {
-                        return key;
+                    String keyUserId = iterator.next();
+                    // there can be serveral user IDs!
+                    if (keyUserId != null && keyUserId.contains(userid)) {
+                        if (forEncryption && key.isEncryptionKey()) {
+                            return key;
+                        } else if (!forEncryption && isSignatureKey(key)) {
+                            return key;
+                        }
                     }
                 }
             }
@@ -123,26 +193,36 @@ public final class PGPDataFormatUtil {
         return algorithm == RSA_GENERAL || algorithm == RSA_SIGN || algorithm == DSA || algorithm == ECDSA || algorithm == ELGAMAL_GENERAL;
     }
 
+    @Deprecated
     public static PGPPrivateKey findPrivateKey(CamelContext context, String keychainFilename, InputStream encryptedInput, String passphrase)
         throws IOException, PGPException, NoSuchProviderException {
         return findPrivateKey(context, keychainFilename, null, encryptedInput, passphrase, "BC");
     }
 
+    @Deprecated
     public static PGPPrivateKey findPrivateKey(CamelContext context, String keychainFilename, byte[] secKeyRing,
-        InputStream encryptedInput, String passphrase, String provider) throws IOException, PGPException, NoSuchProviderException {
+            InputStream encryptedInput, String passphrase, String provider) throws IOException, PGPException, NoSuchProviderException {
+        return findPrivateKey(context, keychainFilename, secKeyRing, encryptedInput, passphrase, null, provider);
+    }
+
+    @Deprecated
+    public static PGPPrivateKey findPrivateKey(CamelContext context, String keychainFilename, byte[] secKeyRing,
+            InputStream encryptedInput, String passphrase, PGPPassphraseAccessor passphraseAccessor, String provider) throws IOException,
+            PGPException, NoSuchProviderException {
 
         InputStream keyChainInputStream = determineKeyRingInputStream(context, keychainFilename, secKeyRing, true);
         PGPPrivateKey privKey = null;
         try {
-            privKey = findPrivateKey(keyChainInputStream, encryptedInput, passphrase, provider);
+            privKey = findPrivateKey(keyChainInputStream, encryptedInput, passphrase, passphraseAccessor, provider);
         } finally {
             IOHelper.close(keyChainInputStream);
         }
         return privKey;
     }
 
-    private static PGPPrivateKey findPrivateKey(InputStream keyringInput, InputStream encryptedInput, String passphrase, String provider) throws IOException,
-            PGPException, NoSuchProviderException {
+    @Deprecated
+    private static PGPPrivateKey findPrivateKey(InputStream keyringInput, InputStream encryptedInput, String passphrase,
+            PGPPassphraseAccessor passphraseAccessor, String provider) throws IOException, PGPException, NoSuchProviderException {
         PGPSecretKeyRingCollection pgpSec = new PGPSecretKeyRingCollection(PGPUtil.getDecoderStream(keyringInput));
         PGPObjectFactory factory = new PGPObjectFactory(PGPUtil.getDecoderStream(encryptedInput));
         PGPEncryptedDataList enc;
@@ -163,7 +243,16 @@ public final class PGPDataFormatUtil {
             encryptedData = (PGPPublicKeyEncryptedData) encryptedDataObjects.next();
             PGPSecretKey pgpSecKey = pgpSec.getSecretKey(encryptedData.getKeyID());
             if (pgpSecKey != null) {
-                privateKey = pgpSecKey.extractPrivateKey(new JcePBESecretKeyDecryptorBuilder().setProvider(provider).build(passphrase.toCharArray()));
+                if (passphrase == null && passphraseAccessor != null) {
+                    // get passphrase from accessor
+                    @SuppressWarnings("unchecked")
+                    Iterator<String> userIDs = pgpSecKey.getUserIDs();
+                    while (passphrase == null && userIDs.hasNext()) {
+                        passphrase = passphraseAccessor.getPassphrase(userIDs.next());
+                    }
+                }
+                privateKey = pgpSecKey.extractPrivateKey(new JcePBESecretKeyDecryptorBuilder().setProvider(provider).build(
+                        passphrase.toCharArray()));
             }
         }
         if (privateKey == null && pgpSec.size() > 0 && encryptedData != null) {
@@ -172,25 +261,34 @@ public final class PGPDataFormatUtil {
         return privateKey;
     }
 
-    public static PGPSecretKey findSecretKey(CamelContext context, String keychainFilename, String passphrase)
-        throws IOException, PGPException, NoSuchProviderException {
+    @Deprecated
+    public static PGPSecretKey findSecretKey(CamelContext context, String keychainFilename, String passphrase) throws IOException,
+            PGPException, NoSuchProviderException {
         return findSecretKey(context, keychainFilename, null, passphrase, "BC");
     }
 
-    public static PGPSecretKey findSecretKey(CamelContext context, String keychainFilename, byte[] secKeyRing, String passphrase, String provider)
-        throws IOException, PGPException, NoSuchProviderException {
-
+    public static PGPSecretKey findSecretKey(CamelContext context, String keychainFilename, byte[] secKeyRing, String passphrase,
+            String userId, String provider) throws IOException, PGPException, NoSuchProviderException {
         InputStream keyChainInputStream = determineKeyRingInputStream(context, keychainFilename, secKeyRing, false);
         PGPSecretKey secKey = null;
         try {
-            secKey = findSecretKey(keyChainInputStream, passphrase, provider);
+            secKey = findSecretKey(keyChainInputStream, passphrase, userId, provider);
         } finally {
             IOHelper.close(keyChainInputStream);
         }
         return secKey;
     }
 
-    private static PGPSecretKey findSecretKey(InputStream keyringInput, String passphrase, String provider) throws IOException, PGPException, NoSuchProviderException {
+    @Deprecated
+    public static PGPSecretKey findSecretKey(CamelContext context, String keychainFilename, byte[] secKeyRing, String passphrase,
+            String provider) throws IOException, PGPException, NoSuchProviderException {
+
+        return findSecretKey(context, keychainFilename, secKeyRing, passphrase, null, provider);
+    }
+
+    @SuppressWarnings("unchecked")
+    private static PGPSecretKey findSecretKey(InputStream keyringInput, String passphrase, String userId, String provider)
+        throws IOException, PGPException, NoSuchProviderException {
         PGPSecretKey pgpSecKey = null;
         PGPSecretKeyRingCollection pgpSec = new PGPSecretKeyRingCollection(PGPUtil.getDecoderStream(keyringInput));
         for (Iterator<?> i = pgpSec.getKeyRings(); i.hasNext() && pgpSecKey == null;) {
@@ -198,9 +296,24 @@ public final class PGPDataFormatUtil {
             if (data instanceof PGPSecretKeyRing) {
                 PGPSecretKeyRing keyring = (PGPSecretKeyRing) data;
                 PGPSecretKey secKey = keyring.getSecretKey();
-                PGPPrivateKey privateKey = secKey.extractPrivateKey(new JcePBESecretKeyDecryptorBuilder().setProvider(provider).build(passphrase.toCharArray()));
-                if (privateKey != null) {
-                    pgpSecKey = secKey;
+                if (userId != null) {
+                    for (Iterator<String> iterator = secKey.getUserIDs(); iterator.hasNext();) {
+                        String keyUserId = iterator.next();
+                        // there can be serveral user IDs!
+                        if (keyUserId != null && keyUserId.contains(userId)) {
+                            PGPPrivateKey privateKey = secKey.extractPrivateKey(new JcePBESecretKeyDecryptorBuilder().setProvider(provider)
+                                    .build(passphrase.toCharArray()));
+                            if (privateKey != null) {
+                                return secKey;
+                            }
+                        }
+                    }
+                } else {
+                    PGPPrivateKey privateKey = secKey.extractPrivateKey(new JcePBESecretKeyDecryptorBuilder().setProvider(provider).build(
+                            passphrase.toCharArray()));
+                    if (privateKey != null) {
+                        pgpSecKey = secKey;
+                    }
                 }
             }
         }
