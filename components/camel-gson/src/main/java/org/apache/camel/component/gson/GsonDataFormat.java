@@ -94,14 +94,14 @@ public class GsonDataFormat extends ServiceSupport implements DataFormat {
 
     @Override
     public void marshal(Exchange exchange, Object graph, OutputStream stream) throws Exception {
-        BufferedWriter writer = IOHelper.buffered(new OutputStreamWriter(stream));
+        BufferedWriter writer = IOHelper.buffered(new OutputStreamWriter(stream, IOHelper.getCharsetName(exchange)));
         gson.toJson(graph, writer);
         writer.close();
     }
 
     @Override
     public Object unmarshal(Exchange exchange, InputStream stream) throws Exception {
-        BufferedReader reader = IOHelper.buffered(new InputStreamReader(stream));
+        BufferedReader reader = IOHelper.buffered(new InputStreamReader(stream, IOHelper.getCharsetName(exchange)));
         Object result = gson.fromJson(reader, this.unmarshalType);
         reader.close();
         return result;
