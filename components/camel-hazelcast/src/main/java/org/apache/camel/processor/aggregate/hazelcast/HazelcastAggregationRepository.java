@@ -24,6 +24,18 @@ import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+/**
+ * A Hazelcast-based AggregationRepository implementing
+ * {@link RecoverableAggregationRepository} and {@link OptimisticLockingAggregationRepository}.
+ * Defaults to thread-safe (non-optimistic) locking and recoverable strategy.
+ * Hazelcast settings are given to an end-user and can be controlled with repositoryName and persistentRespositoryName,
+ * both are {@link com.hazelcast.core.IMap} &lt;String, Exchange&gt;. However HazelcastAggregationRepository
+ * can run it's own Hazelcast instance, but obviously no benefits of Hazelcast clustering are gained this way.
+ * If the {@link HazelcastAggregationRepository} uses it's own local {@link HazelcastInstance} it will destroy this
+ * instance on {@link #doStop()}. You should control {@link HazelcastInstance} lifecycle yourself whenever you instantiate
+ * {@link HazelcastAggregationRepository} passing a reference to the instance.
+ *
+ */
 public final class HazelcastAggregationRepository extends ServiceSupport
                                                   implements RecoverableAggregationRepository,
                                                              OptimisticLockingAggregationRepository {
@@ -39,15 +51,28 @@ public final class HazelcastAggregationRepository extends ServiceSupport
     private static final String COMPLETED_SUFFIX = "-completed";
     private String deadLetterChannel;
     private long recoveryInterval = 5000;
-    private int maximumRedeliveries;
+    private int maximumRedeliveries = 3;
 
+    /**
+     * Creates new {@link HazelcastAggregationRepository} that defaults to non-optimistic locking
+     * with recoverable behavior and a local Hazelcast instance. Recoverable repository name defaults to
+     * {@code repositoryName} + "-compeleted".
+     * @param repositoryName {@link IMap} repository name;
+     */
     public HazelcastAggregationRepository(final String repositoryName) {
         mapName = repositoryName;
         persistenceMapName = String.format("%s%s", mapName, COMPLETED_SUFFIX);
         optimistic = false;
         useLocalHzInstance = true;
+        useRecovery = true;
     }
 
+    /**
+    * Creates new {@link HazelcastAggregationRepository} that defaults to non-optimistic locking
+    * with recoverable behavior and a local Hazelcast instance.
+    * @param repositoryName {@link IMap} repository name;
+    * @param  persistentRepositoryName {@link IMap} recoverable repository name;
+    */
     public HazelcastAggregationRepository(final String repositoryName, final String persistentRepositoryName) {
         mapName = repositoryName;
         persistenceMapName = persistentRepositoryName;
@@ -55,38 +80,80 @@ public final class HazelcastAggregationRepository extends ServiceSupport
         useLocalHzInstance = true;
     }
 
+    /**
+     * Creates new {@link HazelcastAggregationRepository} with recoverable behavior and a local Hazelcast instance.
+     * Recoverable repository name defaults to {@code repositoryName} + "-compeleted".
+     * @param repositoryName {@link IMap} repository name;
+     * @param  optimistic whether to use optimistic locking manner.
+     */
     public HazelcastAggregationRepository(final String repositoryName, boolean optimistic) {
         this(repositoryName);
         this.optimistic = optimistic;
         useLocalHzInstance = true;
     }
 
-    public HazelcastAggregationRepository(final String repositoryName, final String persistenRepositoryName, boolean optimistic) {
-        this(repositoryName, persistenRepositoryName);
+    /**
+     * Creates new {@link HazelcastAggregationRepository} with recoverable behavior and a local Hazelcast instance.
+     * @param repositoryName {@link IMap} repository name;
+     * @param  persistentRepositoryName {@link IMap} recoverable repository name;
+     * @param optimistic whether to use optimistic locking manner.
+     */
+    public HazelcastAggregationRepository(final String repositoryName, final String persistentRepositoryName, boolean optimistic) {
+        this(repositoryName, persistentRepositoryName);
         this.optimistic = optimistic;
         useLocalHzInstance = true;
     }
 
+    /**
+     * Creates new {@link HazelcastAggregationRepository} that defaults to non-optimistic locking
+     * with recoverable behavior. Recoverable repository name defaults to
+     * {@code repositoryName} + "-compeleted".
+     * @param repositoryName {@link IMap} repository name;
+     * @param hzInstanse externally configured {@link HazelcastInstance}.
+     */
     public HazelcastAggregationRepository(final String repositoryName, HazelcastInstance hzInstanse) {
         this (repositoryName, false);
         this.hzInstance = hzInstanse;
         useLocalHzInstance = false;
     }
 
-    public HazelcastAggregationRepository(final String repositoryName, final String persistenRepositoryName, HazelcastInstance hzInstanse) {
-        this (repositoryName, persistenRepositoryName, false);
+    /**
+     * Creates new {@link HazelcastAggregationRepository} that defaults to non-optimistic locking
+     * with recoverable behavior.
+     * @param repositoryName {@link IMap} repository name;
+     * @param  persistentRepositoryName {@link IMap} recoverable repository name;
+     * @param hzInstanse externally configured {@link HazelcastInstance}.
+     */
+    public HazelcastAggregationRepository(final String repositoryName, final String persistentRepositoryName, HazelcastInstance hzInstanse) {
+        this (repositoryName, persistentRepositoryName, false);
         this.hzInstance = hzInstanse;
         useLocalHzInstance = false;
     }
 
+    /**
+     * Creates new {@link HazelcastAggregationRepository} with recoverable behavior.
+     * Recoverable repository name defaults to {@code repositoryName} + "-compeleted".
+     * @param repositoryName {@link IMap} repository name;
+     * @param  optimistic whether to use optimistic locking manner;
+     * @param hzInstance  externally configured {@link HazelcastInstance}.
+     */
     public HazelcastAggregationRepository(final String repositoryName, boolean optimistic, HazelcastInstance hzInstance) {
         this(repositoryName, optimistic);
         this.hzInstance = hzInstance;
+        useLocalHzInstance = false;
     }
 
-    public HazelcastAggregationRepository(final String repositoryName, final String persistenRepositoryName, boolean optimistic, HazelcastInstance hzInstance) {
-        this(repositoryName, persistenRepositoryName, optimistic);
+    /**
+     * Creates new {@link HazelcastAggregationRepository} with recoverable behavior.
+     * @param repositoryName {@link IMap} repository name;
+     * @param optimistic whether to use optimistic locking manner;
+     * @param persistentRepositoryName {@link IMap} recoverable repository name;
+     * @param hzInstance  externally configured {@link HazelcastInstance}.
+     */
+    public HazelcastAggregationRepository(final String repositoryName, final String persistentRepositoryName, boolean optimistic, HazelcastInstance hzInstance) {
+        this(repositoryName, persistentRepositoryName, optimistic);
         this.hzInstance = hzInstance;
+        useLocalHzInstance = false;
     }
 
     @Override
@@ -201,6 +268,14 @@ public final class HazelcastAggregationRepository extends ServiceSupport
         return cache.get(key);
     }
 
+    /**
+     * This method performs transactional operation on removing the {@code exchange}
+     * from the operational storage and moving it into the persistent one if the {@link HazelcastAggregationRepository}
+     * runs in recoverable mode and {@code optimistic} is false. It will act at <u>your own</u> risk otherwise.
+     * @param camelContext   the current CamelContext
+     * @param key            the correlation key
+     * @param exchange       the exchange to remove
+     */
     @Override
     public void remove(CamelContext camelContext, String key, Exchange exchange) {
         if (optimistic) {
@@ -270,12 +345,21 @@ public final class HazelcastAggregationRepository extends ServiceSupport
         return Collections.unmodifiableSet(cache.keySet());
     }
 
+    /**
+     * @return Persistent repository {@link IMap} name;
+     */
     public String getPersistentRepositoryName() {
         return persistenceMapName;
     }
 
     @Override
     protected void doStart() throws Exception {
+        if (maximumRedeliveries < 0) {
+            throw new IllegalArgumentException("Maximum redelivery retries must be zero or a positive integer.");
+        }
+        if (recoveryInterval < 0) {
+            throw new IllegalArgumentException("Recovery interval must be zero or a positive integer.");
+        }
         ObjectHelper.notEmpty(mapName, "repositoryName");
         if (useLocalHzInstance)  {
             Config cfg = new XmlConfigBuilder().build();
