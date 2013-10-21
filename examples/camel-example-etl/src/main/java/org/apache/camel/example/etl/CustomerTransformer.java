@@ -18,12 +18,18 @@ package org.apache.camel.example.etl;
 
 import java.util.List;
 
+import javax.persistence.EntityManager;
+
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
-import org.apache.camel.util.CastUtils;
+import org.apache.camel.component.jpa.JpaConstants;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.orm.jpa.JpaTemplate;
+
+import org.springframework.transaction.TransactionStatus;
+import org.springframework.transaction.support.TransactionCallback;
+import org.springframework.transaction.support.TransactionTemplate;
 
 /**
  * A Message Transformer of an XML document to a Customer entity bean
@@ -39,15 +45,14 @@ public class CustomerTransformer {
     /**
      * A transformation method to convert a person document into a customer
      * entity
-     * @throws Exception 
      */
     @Converter
     public CustomerEntity toCustomer(PersonDocument doc, Exchange exchange) throws Exception {
-        JpaTemplate template = exchange.getIn().getHeader("CamelJpaTemplate", JpaTemplate.class);
+        EntityManager entityManager = exchange.getIn().getHeader(JpaConstants.ENTITYMANAGER, EntityManager.class);
+        TransactionTemplate transactionTemplate = exchange.getContext().getRegistry().lookupByNameAndType("transactionTemplate", TransactionTemplate.class);
 
-        
         String user = doc.getUser();
-        CustomerEntity customer = findCustomerByName(template, user);
+        CustomerEntity customer = findCustomerByName(transactionTemplate, entityManager, user);
 
         // let's convert information from the document into the entity bean
         customer.setUserName(user);
@@ -55,23 +60,31 @@ public class CustomerTransformer {
         customer.setSurname(doc.getLastName());
         customer.setCity(doc.getCity());
 
-        LOG.debug("Created object customer: " + customer);
+        LOG.info("Created object customer: {}", customer);
         return customer;
     }
 
     /**
      * Finds a customer for the given username
      */
-    protected CustomerEntity findCustomerByName(JpaTemplate template, String user) throws Exception {
-        List<CustomerEntity> list = CastUtils.cast(template.find("select x from customer"
-                                                                 + " x where x.userName = ?1", user));
-        if (list.isEmpty()) {
-            CustomerEntity answer = new CustomerEntity();
-            answer.setUserName(user);
-            return answer;
-        } else {
-            return list.get(0);
-        }
+    protected CustomerEntity findCustomerByName(TransactionTemplate transactionTemplate, final EntityManager entityManager, final String userName) throws Exception {
+        return transactionTemplate.execute(new TransactionCallback<CustomerEntity>() {
+            public CustomerEntity doInTransaction(TransactionStatus status) {
+                entityManager.joinTransaction();
+                List<CustomerEntity> list = entityManager.createNamedQuery("findCustomerByUsername", CustomerEntity.class).setParameter("userName", userName).getResultList();
+                CustomerEntity answer;
+                if (list.isEmpty()) {
+                    answer = new CustomerEntity();
+                    answer.setUserName(userName);
+                    LOG.info("Created a new CustomerEntity {} as no matching persisted entity found.", answer);
+                } else {
+                    answer = list.get(0);
+                    LOG.info("Found a matching CustomerEntity {} having the userName {}.", answer, userName);
+                }
+
+                return answer;
+            }
+        });
     }
 
 }
