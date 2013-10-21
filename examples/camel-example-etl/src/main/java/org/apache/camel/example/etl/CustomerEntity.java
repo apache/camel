@@ -30,10 +30,10 @@ import javax.xml.bind.annotation.XmlRootElement;
  * 
  * @version 
  */
-@Entity
+@Entity(name = "customer")
 @XmlRootElement(name = "customer")
 @XmlAccessorType(XmlAccessType.FIELD)
-@NamedQuery(name = "findCustomerByUsername", query = "SELECT c FROM CustomerEntity c WHERE c.userName = :userName")
+@NamedQuery(name = "findCustomerByUsername", query = "SELECT c FROM customer c WHERE c.userName = :userName")
 public class CustomerEntity {
     @XmlAttribute
     private Long id;
