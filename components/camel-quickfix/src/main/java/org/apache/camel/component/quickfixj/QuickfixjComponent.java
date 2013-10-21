@@ -163,8 +163,8 @@ public class QuickfixjComponent extends DefaultComponent implements StartupListe
             for (Map.Entry<String, QuickfixjEngine> entry : provisionalEngines.entrySet()) {
                 startQuickfixjEngine(entry.getValue());
                 engines.put(entry.getKey(), entry.getValue());
-                provisionalEngines.remove(entry.getKey());
             }
+            provisionalEngines.clear();
         }
     }
 }

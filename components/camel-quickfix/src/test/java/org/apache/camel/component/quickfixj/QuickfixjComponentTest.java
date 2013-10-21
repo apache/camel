@@ -38,12 +38,12 @@ import org.apache.camel.StatefulService;
 import org.apache.camel.component.quickfixj.converter.QuickfixjConverters;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.converter.StaticMethodTypeConverter;
+import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ServiceHelper;
 import org.apache.mina.common.TransportType;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
-
 import quickfix.Acceptor;
 import quickfix.DefaultMessageFactory;
 import quickfix.FixVersions;
@@ -63,7 +63,6 @@ import quickfix.field.SenderCompID;
 import quickfix.field.Subject;
 import quickfix.field.TargetCompID;
 import quickfix.fix44.Email;
-
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.CoreMatchers.notNullValue;
 import static org.hamcrest.CoreMatchers.nullValue;
@@ -72,7 +71,9 @@ import static org.junit.Assert.assertTrue;
 
 public class QuickfixjComponentTest {
     private File settingsFile;
+    private File settingsFile2;
     private File tempdir;
+    private File tempdir2;
     private ClassLoader contextClassLoader;
     private SessionID sessionID;
     private SessionSettings settings;
@@ -99,8 +100,10 @@ public class QuickfixjComponentTest {
     @Before
     public void setUp() throws Exception {
         settingsFile = File.createTempFile("quickfixj_test_", ".cfg");
+        settingsFile2 = File.createTempFile("quickfixj_test2_", ".cfg");
         tempdir = settingsFile.getParentFile();
-        URL[] urls = new URL[] {tempdir.toURI().toURL()};
+        tempdir2 = settingsFile.getParentFile();
+        URL[] urls = new URL[] {tempdir.toURI().toURL(), tempdir2.toURI().toURL()};
         
         sessionID = new SessionID(FixVersions.BEGINSTRING_FIX44, "FOO", "BAR");
 
@@ -138,7 +141,7 @@ public class QuickfixjComponentTest {
         assertThat(component.getEngines().size(), is(0));
 
         Method converterMethod = QuickfixjConverters.class.getMethod("toSessionID", new Class<?>[] {String.class});
-        camelContext.getTypeConverterRegistry().addTypeConverter(SessionID.class, String.class,  new StaticMethodTypeConverter(converterMethod));
+        camelContext.getTypeConverterRegistry().addTypeConverter(SessionID.class, String.class,  new StaticMethodTypeConverter(converterMethod, false));
     }
 
     @After
@@ -159,30 +162,36 @@ public class QuickfixjComponentTest {
         settings.setString(sessionID, SessionFactory.SETTING_CONNECTION_TYPE, SessionFactory.INITIATOR_CONNECTION_TYPE);
         settings.setLong(sessionID, Initiator.SETTING_SOCKET_CONNECT_PORT, 1234);
 
-        writeSettings();
+        writeSettings(settings, true);
 
+        // Should use cached QFJ engine
         Endpoint e1 = component.createEndpoint(getEndpointUri(settingsFile.getName(), null));
         assertThat(component.getProvisionalEngines().size(), is(1));
         assertThat(component.getProvisionalEngines().get(settingsFile.getName()), is(notNullValue()));
         assertThat(component.getProvisionalEngines().get(settingsFile.getName()).isStarted(), is(false));
+        assertThat(component.getEngines().size(), is(0));
         assertThat(((QuickfixjEndpoint)e1).getSessionID(), is(nullValue()));
-        
-        // Should used cached QFJ engine
-        Endpoint e2 = component.createEndpoint(getEndpointUri(settingsFile.getName(), sessionID));
-        
-        assertThat(component.getProvisionalEngines().size(), is(1));
+
+        writeSettings(settings, false);
+
+        // Should use cached QFJ engine
+        Endpoint e2 = component.createEndpoint(getEndpointUri(settingsFile2.getName(), null));
+        assertThat(component.getProvisionalEngines().size(), is(2));
         assertThat(component.getProvisionalEngines().get(settingsFile.getName()), is(notNullValue()));
         assertThat(component.getProvisionalEngines().get(settingsFile.getName()).isStarted(), is(false));
-        assertThat(((QuickfixjEndpoint)e2).getSessionID(), is(sessionID));
+        assertThat(component.getEngines().size(), is(0));
+        assertThat(((QuickfixjEndpoint)e2).getSessionID(), is(nullValue()));
 
         // will start the component
         camelContext.start();
 
         assertThat(component.getProvisionalEngines().size(), is(0));
-        assertThat(component.getEngines().size(), is(1));
+        assertThat(component.getEngines().size(), is(2));
         assertThat(component.getEngines().get(settingsFile.getName()).isStarted(), is(true));
         
         // Move these too an endpoint testcase if one exists
+        assertThat(e1.isSingleton(), is(true));
+        assertThat(((MultipleConsumersSupport)e1).isMultipleConsumersSupported(), is(true));
         assertThat(e2.isSingleton(), is(true));
         assertThat(((MultipleConsumersSupport)e2).isMultipleConsumersSupported(), is(true));
     }
@@ -203,14 +212,14 @@ public class QuickfixjComponentTest {
         assertThat(component.getEngines().size(), is(1));
         assertThat(component.getEngines().get(settingsFile.getName()), is(notNullValue()));
         assertThat(component.getEngines().get(settingsFile.getName()).isStarted(), is(true));
+        assertThat(component.getProvisionalEngines().size(), is(0));
         assertThat(((QuickfixjEndpoint)e1).getSessionID(), is(nullValue()));
         
-        // Should used cached QFJ engine
         Endpoint e2 = component.createEndpoint(getEndpointUri(settingsFile.getName(), sessionID));
-        
         assertThat(component.getEngines().size(), is(1));
         assertThat(component.getEngines().get(settingsFile.getName()), is(notNullValue()));
         assertThat(component.getEngines().get(settingsFile.getName()).isStarted(), is(true));
+        assertThat(component.getProvisionalEngines().size(), is(0));
         assertThat(((QuickfixjEndpoint)e2).getSessionID(), is(sessionID));
     }
 
@@ -273,7 +282,7 @@ public class QuickfixjComponentTest {
         settings.setLong(initiatorSessionID, Initiator.SETTING_RECONNECT_INTERVAL, 1);
         setSessionID(settings, initiatorSessionID);
 
-        writeSettings(settings);
+        writeSettings(settings, true);
         
         Endpoint endpoint = component.createEndpoint(getEndpointUri(settingsFile.getName(), null));
         
@@ -344,15 +353,15 @@ public class QuickfixjComponentTest {
     }
 
     private void writeSettings() throws IOException {
-        writeSettings(settings);
+        writeSettings(settings, true);
     }
 
-    private void writeSettings(SessionSettings settings) throws IOException {
-        FileOutputStream settingsOut = new FileOutputStream(settingsFile);
+    private void writeSettings(SessionSettings settings, boolean firstSettingsFile) throws IOException {
+        FileOutputStream settingsOut = new FileOutputStream(firstSettingsFile ? settingsFile : settingsFile2);
         try {
             settings.toStream(settingsOut);
         } finally {
-            settingsOut.close();
+            IOHelper.close(settingsOut);
         }
     }
 }
