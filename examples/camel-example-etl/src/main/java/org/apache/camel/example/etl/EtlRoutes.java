@@ -36,7 +36,6 @@ public class EtlRoutes extends SpringRouteBuilder {
         from("jpa:org.apache.camel.example.etl.CustomerEntity?consumeDelete=false&delay=3000&consumeLockEntity=false")
             .setHeader(Exchange.FILE_NAME, el("${in.body.userName}.xml"))
             .to("file:target/customers");
-           
     }
 }
 // END SNIPPET: example

@@ -25,7 +25,7 @@ import org.apache.camel.spring.Main;
 public class IntegrationTest extends TestCase {
 
     public void testEtlRoutes() throws Exception {
-        // let's boot up the Spring application context for 2 seconds to check that it works OK
-        Main.main("-duration", "2s", "-o", "target/site/cameldoc");
+        // let's boot up the Spring application context for 5 seconds to check that it works OK
+        Main.main("-duration", "5s", "-o", "target/site/cameldoc");
     }
 }

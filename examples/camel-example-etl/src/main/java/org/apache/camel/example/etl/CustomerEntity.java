@@ -19,6 +19,7 @@ package org.apache.camel.example.etl;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
+import javax.persistence.NamedQuery;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -29,9 +30,10 @@ import javax.xml.bind.annotation.XmlRootElement;
  * 
  * @version 
  */
-@Entity(name = "customer")
+@Entity
 @XmlRootElement(name = "customer")
 @XmlAccessorType(XmlAccessType.FIELD)
+@NamedQuery(name = "findCustomerByUsername", query = "SELECT c FROM CustomerEntity c WHERE c.userName = :userName")
 public class CustomerEntity {
     @XmlAttribute
     private Long id;
@@ -42,10 +44,6 @@ public class CustomerEntity {
     private String city;
     private String zip;
     private String phone;
-
-    public String toString() {
-        return "Customer[userName: " + getUserName() + " firstName: " + getFirstName() + " surname: " + getSurname() + "]";
-    }
 
     @Id
     @GeneratedValue
@@ -112,4 +110,9 @@ public class CustomerEntity {
     public void setZip(String zip) {
         this.zip = zip;
     }
+
+    public String toString() {
+        return "Customer[userName: " + getUserName() + " firstName: " + getFirstName() + " surname: " + getSurname() + "]";
+    }
+
 }

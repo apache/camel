@@ -51,6 +51,8 @@ public class JpaProducer extends DefaultProducer {
     }
 
     public void process(final Exchange exchange) {
+        exchange.getIn().setHeader(JpaConstants.ENTITYMANAGER, entityManager);
+
         final Object values = expression.evaluate(exchange, Object.class);
         if (values != null) {
             transactionTemplate.execute(new TransactionCallback<Object>() {
@@ -98,8 +100,6 @@ public class JpaProducer extends DefaultProducer {
                 }
             });
         }
-
-        exchange.getIn().setHeader(JpaConstants.ENTITYMANAGER, entityManager);
     }
 
     @Override
