@@ -47,7 +47,7 @@ public class CustomerTransformer {
      * entity
      */
     @Converter
-    public CustomerEntity toCustomer(PersonDocument doc, Exchange exchange) throws Exception {
+    public static CustomerEntity toCustomer(PersonDocument doc, Exchange exchange) throws Exception {
         EntityManager entityManager = exchange.getIn().getHeader(JpaConstants.ENTITYMANAGER, EntityManager.class);
         TransactionTemplate transactionTemplate = exchange.getContext().getRegistry().lookupByNameAndType("transactionTemplate", TransactionTemplate.class);
 
@@ -67,7 +67,7 @@ public class CustomerTransformer {
     /**
      * Finds a customer for the given username
      */
-    protected CustomerEntity findCustomerByName(TransactionTemplate transactionTemplate, final EntityManager entityManager, final String userName) throws Exception {
+    private static CustomerEntity findCustomerByName(TransactionTemplate transactionTemplate, final EntityManager entityManager, final String userName) throws Exception {
         return transactionTemplate.execute(new TransactionCallback<CustomerEntity>() {
             public CustomerEntity doInTransaction(TransactionStatus status) {
                 entityManager.joinTransaction();
