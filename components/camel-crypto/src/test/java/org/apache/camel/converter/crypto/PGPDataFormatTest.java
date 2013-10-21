@@ -19,6 +19,8 @@ package org.apache.camel.converter.crypto;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Collections;
+import java.util.Map;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.util.IOHelper;
@@ -106,7 +108,7 @@ public class PGPDataFormatTest extends AbstractPGPDataFormatTest {
                 from("direct:inline")
                         .marshal().pgp(keyFileName, keyUserid)
                         .to("mock:encrypted")
-                        .unmarshal().pgp(keyFileNameSec, keyUserid, keyPassword)
+                        .unmarshal().pgp(keyFileNameSec, null, keyPassword)
                         .to("mock:unencrypted");
                 // END SNIPPET: pgp-format
 
@@ -119,7 +121,7 @@ public class PGPDataFormatTest extends AbstractPGPDataFormatTest {
 
                 PGPDataFormat pgpDecrypt = new PGPDataFormat();
                 pgpDecrypt.setKeyFileName(keyFileNameSec);
-                pgpDecrypt.setKeyUserid(keyUserid);
+               // pgpDecrypt.setKeyUserid(keyUserid);
                 pgpDecrypt.setPassword(keyPassword);
                 pgpDecrypt.setProvider(getProvider());
 
@@ -132,7 +134,7 @@ public class PGPDataFormatTest extends AbstractPGPDataFormatTest {
                 from("direct:inline-armor")
                         .marshal().pgp(keyFileName, keyUserid, null, true, true)
                         .to("mock:encrypted")
-                        .unmarshal().pgp(keyFileNameSec, keyUserid, keyPassword, true, true)
+                        .unmarshal().pgp(keyFileNameSec, null, keyPassword, true, true)
                         .to("mock:unencrypted");
                 // END SNIPPET: pgp-format-header
 
@@ -141,8 +143,9 @@ public class PGPDataFormatTest extends AbstractPGPDataFormatTest {
                 pgpSignAndEncrypt.setKeyFileName(keyFileName);
                 pgpSignAndEncrypt.setKeyUserid(keyUserid);
                 pgpSignAndEncrypt.setSignatureKeyFileName(keyFileNameSec);
+                PGPPassphraseAccessor passphraseAccessor = getPassphraseAccessor();
                 pgpSignAndEncrypt.setSignatureKeyUserid(keyUserid);
-                pgpSignAndEncrypt.setSignaturePassword(keyPassword);
+                pgpSignAndEncrypt.setPassphraseAccessor(passphraseAccessor);
                 pgpSignAndEncrypt.setProvider(getProvider());
                 pgpSignAndEncrypt.setAlgorithm(getAlgorithm());
                 pgpSignAndEncrypt.setHashAlgorithm(getHashAlgorithm());
@@ -150,10 +153,8 @@ public class PGPDataFormatTest extends AbstractPGPDataFormatTest {
 
                 PGPDataFormat pgpVerifyAndDecrypt = new PGPDataFormat();
                 pgpVerifyAndDecrypt.setKeyFileName(keyFileNameSec);
-                pgpVerifyAndDecrypt.setKeyUserid(keyUserid);
                 pgpVerifyAndDecrypt.setPassword(keyPassword);
                 pgpVerifyAndDecrypt.setSignatureKeyFileName(keyFileName);
-                pgpVerifyAndDecrypt.setSignatureKeyUserid(keyUserid);
                 pgpVerifyAndDecrypt.setProvider(getProvider());
 
                 from("direct:inline-sign")
@@ -172,8 +173,7 @@ public class PGPDataFormatTest extends AbstractPGPDataFormatTest {
 
                 PGPDataFormat pgpDecryptByteArray = new PGPDataFormat();
                 pgpDecryptByteArray.setEncryptionKeyRing(getSecKeyRing());
-                pgpDecryptByteArray.setKeyUserid(keyUserid);
-                pgpDecryptByteArray.setPassword(keyPassword);
+                pgpDecryptByteArray.setPassphraseAccessor(passphraseAccessor);
                 pgpDecryptByteArray.setProvider(getProvider());
 
                 from("direct:key-ring-byte-array").marshal(pgpEncryptByteArray).to("mock:encrypted").unmarshal(pgpDecryptByteArray)
@@ -191,10 +191,8 @@ public class PGPDataFormatTest extends AbstractPGPDataFormatTest {
                 pgpSignAndEncryptByteArray.setHashAlgorithm(HashAlgorithmTags.RIPEMD160);
 
                 PGPDataFormat pgpVerifyAndDecryptByteArray = new PGPDataFormat();
-                pgpVerifyAndDecryptByteArray.setKeyUserid(keyUserid);
-                pgpVerifyAndDecryptByteArray.setPassword(keyPassword);
+                pgpVerifyAndDecryptByteArray.setPassphraseAccessor(passphraseAccessor);
                 pgpVerifyAndDecryptByteArray.setEncryptionKeyRing(getSecKeyRing());
-                pgpVerifyAndDecryptByteArray.setSignatureKeyUserid(keyUserid);
                 pgpVerifyAndDecryptByteArray.setProvider(getProvider());
 
                 from("direct:sign-key-ring-byte-array")
@@ -208,6 +206,8 @@ public class PGPDataFormatTest extends AbstractPGPDataFormatTest {
                         .removeHeader(PGPDataFormat.SIGNATURE_KEY_RING).to("mock:unencrypted");
                 // END SNIPPET: pgp-format-signature-key-ring-byte-array
             }
+
+           
         };
     }
 
@@ -225,6 +225,12 @@ public class PGPDataFormatTest extends AbstractPGPDataFormatTest {
         IOHelper.copyAndCloseInput(is, output);
         output.close();
         return output.toByteArray();
+    }
+    
+    public static PGPPassphraseAccessor getPassphraseAccessor() {
+        Map<String, String> userId2Passphrase = Collections.singletonMap("Super <sdude@nowhere.net>", "sdude");
+        PGPPassphraseAccessor passphraseAccessor = new PGPPassphraseAccessorDefault(userId2Passphrase);
+        return passphraseAccessor;
     }
 
 }

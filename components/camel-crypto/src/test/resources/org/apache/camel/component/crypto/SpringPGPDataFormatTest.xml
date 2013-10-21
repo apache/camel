@@ -28,7 +28,7 @@
       <pgp id="encrypt" keyFileName="org/apache/camel/component/crypto/pubring.gpg"
            keyUserid="sdude@nowhere.net"/>
       <pgp id="decrypt" keyFileName="org/apache/camel/component/crypto/secring.gpg"
-           keyUserid="sdude@nowhere.net" password="sdude"/>
+           password="sdude"/>
     </dataFormats>
 
     <route>
@@ -56,20 +56,24 @@
       <property name="algorithm" value="7"/> <!-- AES128  algorithm -->
    </bean>
    
-   <bean id="decryptBean" class="org.apache.camel.converter.crypto.PGPDataFormat">
-      <property name="keyUserid" value="sdude@nowhere.net"/>  
+   <bean id="decryptBean" class="org.apache.camel.converter.crypto.PGPDataFormat"> 
       <property name="encryptionKeyRing" ref="secKeyRing"/>
-      <property name="password" value="sdude"/>
+      <property name="passphraseAccessor" ref="passphraseAccessorBean"/>
    </bean>
    
-   <!-- bean represents the publik key ring as byte array -->
+   <!-- bean represents the public key ring as byte array -->
    <bean id="pubKeyRing"
 		class="org.apache.camel.converter.crypto.PGPDataFormatTest"
 		factory-method="getPublicKeyRing" />
 		
-	<!-- bean represents the secure key ring as byte array -->	
+	<!-- bean represents the secret key ring as byte array -->	
    <bean id="secKeyRing"
 		class="org.apache.camel.converter.crypto.PGPDataFormatTest"
 		factory-method="getSecKeyRing" />
+        
+    <!-- bean passphrase accessor  -->
+     <bean id="passphraseAccessorBean"
+        class="org.apache.camel.converter.crypto.PGPDataFormatTest"
+        factory-method="getPassphraseAccessor" />
     <!-- END SNIPPET:  pgp-xml-data-format-bean-with-keyring-bytearray -->
 </beans>
