@@ -25,7 +25,7 @@ public class HttpBodyWithOtherProtocalNameTest extends HttpBodyTest {
     @Override
     public void setUp() throws Exception {
         super.setUp();
-        setProtocolString("newHttp://http://");
+        setProtocolString("newHttp://");
     }
     
     public CamelContext createCamelContext() throws Exception {
