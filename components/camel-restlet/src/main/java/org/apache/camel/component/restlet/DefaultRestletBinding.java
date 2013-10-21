@@ -49,10 +49,14 @@ import org.restlet.data.MediaType;
 import org.restlet.data.Method;
 import org.restlet.data.Preference;
 import org.restlet.data.Status;
+import org.restlet.engine.adapter.HttpResponse;
+import org.restlet.engine.header.Header;
 import org.restlet.engine.header.HeaderConstants;
+import org.restlet.engine.header.HeaderUtils;
 import org.restlet.representation.FileRepresentation;
 import org.restlet.representation.InputRepresentation;
 import org.restlet.representation.Representation;
+import org.restlet.util.Series;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -250,13 +254,30 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
         }
 
         // set headers at the end, as the entity must be set first
+        // NOTE: setting HTTP headers on restlet is cumbersome and its API is "weird" and has some flaws
+        // so we need to headers two times, and the 2nd time we add the non-internal headers once more
+        Series<Header> series = new Series<Header>(Header.class);
         for (Map.Entry<String, Object> entry : out.getHeaders().entrySet()) {
             String key = entry.getKey();
             Object value = entry.getValue();
             if (!headerFilterStrategy.applyFilterToCamelHeaders(key, value, exchange)) {
-                setResponseHeader(exchange, response, key, value);
-                LOG.debug("Populate Restlet HTTP header in response from exchange header: {} value: {}", key, value);
+                boolean added = setResponseHeader(exchange, response, key, value);
+                if (!added) {
+                    // we only want non internal headers
+                    if (!key.startsWith("Camel") && !key.startsWith("org.restlet")) {
+                        String text = exchange.getContext().getTypeConverter().tryConvertTo(String.class, exchange, value);
+                        if (text != null) {
+                            series.add(key, text);
+                        }
+                    }
+                }
             }
+        }
+
+        // set HTTP headers so we return these in the response
+        if (!series.isEmpty()) {
+            Series<Header> httpHeaders = (Series<Header>) response.getAttributes().get(HeaderConstants.ATTRIBUTE_HEADERS);
+            httpHeaders.addAll(series);
         }
     }
 
@@ -295,17 +316,16 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
         MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), false);
     }
 
-    
     @SuppressWarnings("unchecked")
-    protected void setResponseHeader(Exchange exchange, org.restlet.Message message, String header, Object value) {
-        // put the header first
-        message.getAttributes().put(header, value);
-
+    protected boolean setResponseHeader(Exchange exchange, org.restlet.Message message, String header, Object value) {
         // there must be a value going forward
         if (value == null) {
-            return;
+            return true;
         }
-        
+
+        // must put to attributes
+        message.getAttributes().put(header, value);
+
         // special for certain headers
         if (message.getEntity() != null) {
             if (header.equalsIgnoreCase(HeaderConstants.HEADER_CACHE_CONTROL)) {
@@ -318,6 +338,7 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
                     list.add(new CacheDirective((String) value));
                     message.setCacheDirectives(list);
                 }
+                return true;
             }
             if (header.equalsIgnoreCase(HeaderConstants.HEADER_EXPIRES)) {
                 if (value instanceof Calendar) {
@@ -333,6 +354,7 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
                         LOG.debug("Header {} with value {} cannot be converted as a Date. The value will be ignored.", HeaderConstants.HEADER_EXPIRES, value);
                     }
                 }
+                return true;
             }
 
             if (header.equalsIgnoreCase(HeaderConstants.HEADER_LAST_MODIFIED)) {
@@ -349,6 +371,7 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
                         LOG.debug("Header {} with value {} cannot be converted as a Date. The value will be ignored.", HeaderConstants.HEADER_LAST_MODIFIED, value);
                     }
                 }
+                return true;
             }
 
             if (header.equalsIgnoreCase(HeaderConstants.HEADER_CONTENT_LENGTH)) {
@@ -364,6 +387,7 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
                         LOG.debug("Header {} with value {} cannot be converted as a Long. The value will be ignored.", HeaderConstants.HEADER_CONTENT_LENGTH, value);
                     }
                 }
+                return true;
             }
 
             if (header.equalsIgnoreCase(HeaderConstants.HEADER_CONTENT_TYPE)) {
@@ -378,8 +402,11 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
                         LOG.debug("Header {} with value {} cannot be converted as a MediaType. The value will be ignored.", HeaderConstants.HEADER_CONTENT_TYPE, value);
                     }
                 }
+                return true;
             }
         }
+
+        return false;
     }
 
     public HeaderFilterStrategy getHeaderFilterStrategy() {
