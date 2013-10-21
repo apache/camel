@@ -19,35 +19,13 @@
 
     <repository>mvn:org.apache.camel.karaf/apache-camel/${project.version}/xml/features</repository>
 
-    <feature name='openjpa-feature' version='${project.version}'>
-       <bundle>mvn:org.eclipse.persistence/javax.persistence/1.2.0</bundle>
-       <bundle>mvn:org.eclipse.persistence/org.eclipse.persistence.antlr/1.2.0</bundle>
-       <bundle>mvn:org.eclipse.persistence/org.eclipse.persistence.asm/1.2.0</bundle>
-       <bundle>mvn:org.eclipse.persistence/org.eclipse.persistence.core/1.2.0</bundle>
-       <bundle>mvn:org.eclipse.persistence/org.eclipse.persistence.jpa/1.2.0</bundle>
-    </feature>
-    
-    <feature name='hibernate-feauture' version='${project.version}'>
-       <bundle>mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.java-persistence-api-1.1.1/1.4.0</bundle>
-       <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.commons-dbcp/1.2.2_5</bundle>
-       <bundle>mvn:org.springframework/spring-jdbc/${spring-version}</bundle>
-       <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.dom4j/1.6.1_2</bundle>
-       <bundle>mvn:org.antlr/com.springsource.antlr/2.7.7</bundle>
-       <bundle>mvn:org.objectweb.asm/com.springsource.org.objectweb.asm/1.5.3</bundle>
-       <bundle>mvn:net.sourceforge.cglib/com.springsource.net.sf.cglib/2.2.0</bundle>
-       <bundle>mvn:org.jboss.javassist/com.springsource.javassist/3.9.0.GA</bundle>
-       <bundle>mvn:org.hibernate/com.springsource.org.hibernate.annotations.common/3.3.0.ga</bundle>
-       <bundle>mvn:org.hibernate/com.springsource.org.hibernate.annotations/3.4.0.GA</bundle>
-       <bundle>mvn:org.hibernate/com.springsource.org.hibernate.ejb/3.4.0.GA</bundle>
-       <bundle>mvn:org.hibernate/com.springsource.org.hibernate/3.3.2.GA</bundle>
-       <bundle>mvn:org.springframework/spring-orm/${spring-version}</bundle>
-    </feature>
-    
     <feature name='camel-example-etl' version='${project.version}'>
-        <feature version="${project.version}">camel</feature>
         <feature version="${project.version}">camel-jaxb</feature>
         <feature version="${project.version}">camel-jpa</feature>
         <feature version="${project.version}">camel-juel</feature>
+        <feature version="${project.version}">camel-spring</feature>
+        <bundle>mvn:org.apache.derby/derby/${derby-version}</bundle>
+        <bundle>mvn:org.apache.openjpa/openjpa/${openjpa-version}</bundle>
         <bundle>mvn:org.apache.camel/camel-example-etl/${project.version}</bundle>
     </feature>
 
