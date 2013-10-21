@@ -29,6 +29,7 @@ import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
+import org.apache.camel.util.UnsafeUriCharactersEncoder;
 import org.apache.camel.util.jsse.SSLContextParameters;
 import org.apache.http.auth.params.AuthParamBean;
 import org.apache.http.client.CookieStore;
@@ -168,10 +169,6 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        String addressUri = uri;
-        if (!uri.startsWith("http4:") && !uri.startsWith("https4:")) {
-            addressUri = remaining;
-        }
         Map<String, Object> httpClientParameters = new HashMap<String, Object>(parameters);
         // http client can be configured from URI options
         HttpParams clientParams = configureHttpParams(parameters);
@@ -208,13 +205,52 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
         HeaderFilterStrategy headerFilterStrategy = resolveAndRemoveReferenceParameter(parameters, "headerFilterStrategy", HeaderFilterStrategy.class);
         UrlRewrite urlRewrite = resolveAndRemoveReferenceParameter(parameters, "urlRewrite", UrlRewrite.class);
 
-        boolean secure = HttpHelper.isSecureConnection(uri);
+        boolean secure = HttpHelper.isSecureConnection(uri) || sslContextParameters != null;
+
+        // need to set scheme on address uri depending on if its secure or not
+        String addressUri = remaining.startsWith("http") ? remaining : null;
+        if (addressUri == null) {
+            if (secure) {
+                addressUri = "https://" + remaining;
+            } else {
+                addressUri = "http://" + remaining;
+            }
+        }
+        addressUri = UnsafeUriCharactersEncoder.encode(addressUri);
+        URI uriHttpUriAddress = new URI(addressUri);
+
+        // validate http uri that end-user did not duplicate the http part that can be a common error
+        int pos = uri.indexOf("//");
+        if (pos != -1) {
+            String part = uri.substring(pos + 2);
+            if (part.startsWith("http:") || part.startsWith("https:")) {
+                throw new ResolveEndpointFailedException(uri,
+                        "The uri part is not configured correctly. You have duplicated the http(s) protocol.");
+            }
+        }
 
         // create the configurer to use for this endpoint
         HttpClientConfigurer configurer = createHttpClientConfigurer(parameters, secure);
-        URI endpointUri = URISupport.createRemainingURI(new URI(addressUri), httpClientParameters);
+        URI endpointUri = URISupport.createRemainingURI(uriHttpUriAddress, httpClientParameters);
+
+
+        // the endpoint uri should use the component name as scheme, so we need to re-create it once more
+        String scheme = ObjectHelper.before(uri, "://");
+        endpointUri = URISupport.createRemainingURI(
+                new URI(scheme,
+                        endpointUri.getUserInfo(),
+                        endpointUri.getHost(),
+                        endpointUri.getPort(),
+                        endpointUri.getPath(),
+                        endpointUri.getQuery(),
+                        endpointUri.getFragment()),
+                httpClientParameters);
+
         // create the endpoint and set the http uri to be null
-        HttpEndpoint endpoint = new HttpEndpoint(endpointUri.toString(), this, clientParams, clientConnectionManager, configurer);
+        String endpointUriString = endpointUri.toString();
+
+        LOG.debug("Creating endpoint uri {}", endpointUriString);
+        HttpEndpoint endpoint = new HttpEndpoint(endpointUriString, this, clientParams, clientConnectionManager, configurer);
         if (urlRewrite != null) {
             // let CamelContext deal with the lifecycle of the url rewrite
             // this ensures its being shutdown when Camel shutdown etc.
@@ -223,27 +259,6 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
         }
         // configure the endpoint
         setProperties(endpoint, parameters);
-        // The httpUri should be start with http or https
-        String httpUriAddress = addressUri;
-        if (addressUri.startsWith("http4")) {
-            httpUriAddress = "http" + addressUri.substring(5);
-        }
-        if (addressUri.startsWith("https4")) {
-            httpUriAddress = "https" + addressUri.substring(6);
-        }
-        // restructure uri to be based on the parameters left as we dont want to include the Camel internal options
-        // build up the http uri
-        URI uriHttpUriAddress = new URI(httpUriAddress);
-
-        // validate http uri that end-user did not duplicate the http part that can be a common error
-        String part = uriHttpUriAddress.getSchemeSpecificPart();
-        if (part != null) {
-            part = part.toLowerCase();
-            if (part.startsWith("//http//") || part.startsWith("//https//") || part.startsWith("//http://") || part.startsWith("//https://")) {
-                throw new ResolveEndpointFailedException(uri,
-                        "The uri part is not configured correctly. You have duplicated the http(s) protocol.");
-            }
-        }
 
         // determine the portnumber (special case: default portnumber)
         int port = getPort(uriHttpUriAddress);

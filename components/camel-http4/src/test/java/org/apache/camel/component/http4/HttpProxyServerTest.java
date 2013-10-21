@@ -87,7 +87,6 @@ public class HttpProxyServerTest extends BaseHttpTest {
         HttpEndpoint http1 = context.getEndpoint("http4://www.google.com?proxyAuthHost=myproxy&proxyAuthPort=1234", HttpEndpoint.class);
         HttpEndpoint http2 = context.getEndpoint("http4://www.google.com?test=parameter&proxyAuthHost=myotherproxy&proxyAuthPort=2345", HttpEndpoint.class);
 
-        
         HttpClient client1 = http1.createHttpClient();
         HttpHost proxy1 = (HttpHost)client1.getParams().getParameter(ConnRoutePNames.DEFAULT_PROXY);
         assertEquals("myproxy", proxy1.getHostName());
@@ -98,7 +97,7 @@ public class HttpProxyServerTest extends BaseHttpTest {
         assertEquals("myotherproxy", proxy2.getHostName());
         assertEquals(2345, proxy2.getPort());
         
-      //As the endpointUri is recreated, so the parameter could be in different place, so we use the URISupport.normalizeUri
+        //As the endpointUri is recreated, so the parameter could be in different place, so we use the URISupport.normalizeUri
         assertEquals("Get a wrong endpoint uri of http1", "http4://www.google.com?proxyAuthHost=myproxy&proxyAuthPort=1234", URISupport.normalizeUri(http1.getEndpointUri()));
         assertEquals("Get a wrong endpoint uri of http2", "http4://www.google.com?proxyAuthHost=myotherproxy&proxyAuthPort=2345&test=parameter", URISupport.normalizeUri(http2.getEndpointUri()));
 
