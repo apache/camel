@@ -41,6 +41,7 @@
             *
         </camel.osgi.import.pkg>
         <camel.osgi.activator>org.apache.camel.script.osgi.Activator</camel.osgi.activator>
+        <java.awt.headless>true</java.awt.headless>
     </properties>
 
     <repositories>
