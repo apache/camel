@@ -34,8 +34,13 @@ public abstract class XmlSignatureProcessor implements Processor {
     private static final Logger LOG = LoggerFactory.getLogger(XmlSignatureProcessor.class);
 
     static {
-        SantuarioUtil.initializeSantuario();
-        SantuarioUtil.addSantuarioJSR105Provider();
+        try {
+            SantuarioUtil.initializeSantuario();
+            SantuarioUtil.addSantuarioJSR105Provider();
+        } catch (Throwable t) {
+            // provider not in classpath, ignore and fall back to jre default
+            LOG.info("Cannot add the SantuarioJSR105Provider due to {0}, fall back to JRE default.", t);
+        }
     }
     
     public abstract XmlSignatureConfiguration getConfiguration();
