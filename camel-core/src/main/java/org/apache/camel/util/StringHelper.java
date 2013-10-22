@@ -180,8 +180,8 @@ public final class StringHelper {
         if (ObjectHelper.isEmpty(input)) {
             return input;
         }
-        if (ObjectHelper.isEmpty(from)) {
-            throw new IllegalArgumentException("From cannot be empty");
+        if (from == null) {
+            throw new IllegalArgumentException("from cannot be null");
         }
         if (to == null) {
             // to can be empty, so only check for null

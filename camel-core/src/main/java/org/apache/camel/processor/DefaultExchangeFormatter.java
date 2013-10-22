@@ -27,6 +27,7 @@ import org.apache.camel.Message;
 import org.apache.camel.spi.ExchangeFormatter;
 import org.apache.camel.util.MessageHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.StringHelper;
 
 /**
  * Default {@link ExchangeFormatter} that have fine grained options to configure what to include in the output.
@@ -109,7 +110,7 @@ public class DefaultExchangeFormatter implements ExchangeFormatter {
             }
             String body = getBodyAsString(in);
             if (skipBodyLineSeparator) {
-                body = body.replaceAll(LS, "");
+                body = StringHelper.replaceAll(body, LS, "");
             }
             sb.append(style("Body")).append(body);
         }
@@ -165,7 +166,7 @@ public class DefaultExchangeFormatter implements ExchangeFormatter {
                     }
                     String body = getBodyAsString(out);
                     if (skipBodyLineSeparator) {
-                        body = body.replaceAll(LS, "");
+                        body = StringHelper.replaceAll(body, LS, "");
                     }
                     sb.append(style("OutBody")).append(body);
                 }
