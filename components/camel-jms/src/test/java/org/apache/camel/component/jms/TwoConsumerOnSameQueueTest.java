@@ -92,7 +92,7 @@ public class TwoConsumerOnSameQueueTest extends CamelTestSupport {
     protected CamelContext createCamelContext() throws Exception {
         CamelContext camelContext = super.createCamelContext();
 
-        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
+        ConnectionFactory connectionFactory = CamelJmsTestHelper.createPersistentConnectionFactory();
         camelContext.addComponent("activemq", jmsComponentAutoAcknowledge(connectionFactory));
 
         return camelContext;
@@ -104,10 +104,10 @@ public class TwoConsumerOnSameQueueTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("activemq:queue:foo").routeId("a")
-                     .to("mock:a");
+                     .to("log:a", "mock:a");
   
                 from("activemq:queue:foo").routeId("b")
-                     .to("mock:b");
+                     .to("log:b", "mock:b");
             }
         };
     }
