@@ -16,11 +16,13 @@
  */
 package org.apache.camel.component.jms;
 
+import java.io.File;
 import java.util.concurrent.atomic.AtomicInteger;
 import javax.jms.ConnectionFactory;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.activemq.pool.PooledConnectionFactory;
+import org.apache.camel.util.FileUtil;
 
 /**
  * A helper for unit testing with Apache ActiveMQ as embedded JMS broker.
@@ -73,6 +75,9 @@ public final class CamelJmsTestHelper {
 
         // use an unique data directory in target
         String dir = "target/activemq-data-" + id;
+
+        // remove dir so its empty on startup
+        FileUtil.removeDir(new File(dir));
 
         String url = "vm://test-broker-" + id + "?broker.persistent=true&broker.useJmx=false&broker.dataDirectory=" + dir;
         if (options != null) {
