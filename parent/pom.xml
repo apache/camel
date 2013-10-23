@@ -1590,18 +1590,8 @@
       </dependency>
       <dependency>
         <groupId>org.apache.geronimo.specs</groupId>
-        <artifactId>geronimo-jpa_3.0_spec</artifactId>
-        <version>${geronimo-jpa-spec-version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.geronimo.specs</groupId>
         <artifactId>geronimo-jpa_2.0_spec</artifactId>
         <version>${geronimo-jpa2-spec-version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.servicemix.specs</groupId>
-        <artifactId>org.apache.servicemix.specs.java-persistence-api-1.1.1</artifactId>
-        <version>${servicemix-specs-version}</version>
       </dependency>
       <dependency>
         <groupId>org.apache.geronimo.specs</groupId>

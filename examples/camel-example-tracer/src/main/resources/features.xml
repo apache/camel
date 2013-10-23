@@ -19,7 +19,7 @@
     <repository>mvn:org.apache.camel.karaf/apache-camel/${project.version}/xml/features</repository>
     
     <feature name="jpa-hibernate" version="${project.version}">
-        <bundle>mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.java-persistence-api-1.1.1/1.4.0</bundle>
+        <bundle>mvn:org.apache.geronimo.specs/geronimo-jpa_2.0_spec/${geronimo-jpa2-spec-version}</bundle>
         <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.commons-dbcp/1.2.2_5</bundle>
         <bundle>mvn:org.springframework/spring-jdbc/${spring-version}</bundle>
         <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.dom4j/1.6.1_2</bundle>
