@@ -33,6 +33,8 @@ import org.apache.camel.util.ServiceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.camel.processor.PipelineHelper.continueProcessing;
+
 /**
  * Implements a Choice structure where one or more predicates are used which if
  * they are true their processors are used, with a default otherwise clause used
@@ -67,6 +69,11 @@ public class ChoiceProcessor extends ServiceSupport implements AsyncProcessor, N
                 }
             } catch (Throwable e) {
                 exchange.setException(e);
+                callback.done(true);
+                return true;
+            }
+
+            if (!continueProcessing(exchange, "so breaking out of choice", LOG)) {
                 callback.done(true);
                 return true;
             }
