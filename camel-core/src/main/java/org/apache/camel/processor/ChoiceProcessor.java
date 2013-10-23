@@ -30,6 +30,10 @@ import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.AsyncProcessorConverterHelper;
 import org.apache.camel.util.AsyncProcessorHelper;
 import org.apache.camel.util.ServiceHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import static org.apache.camel.processor.PipelineHelper.continueProcessing;
 
 /**
  * Implements a Choice structure where one or more predicates are used which if
@@ -39,6 +43,7 @@ import org.apache.camel.util.ServiceHelper;
  * @version 
  */
 public class ChoiceProcessor extends ServiceSupport implements AsyncProcessor, Navigate<Processor>, Traceable {
+    private static final Logger LOG = LoggerFactory.getLogger(ChoiceProcessor.class);
     private final List<Processor> filters;
     private final Processor otherwise;
 
@@ -84,13 +89,16 @@ public class ChoiceProcessor extends ServiceSupport implements AsyncProcessor, N
                 try {
                     matches = filter.getPredicate().matches(exchange);
                     exchange.setProperty(Exchange.FILTER_MATCHED, matches);
+                    // as we have pre evaluated the predicate then use its processor directly when routing
+                    processor = filter.getProcessor();
                 } catch (Throwable e) {
                     exchange.setException(e);
-                    choiceCallback.done(true);
-                    return true;
                 }
-                // as we have pre evaluated the predicate then use its processor directly when routing
-                processor = filter.getProcessor();
+            }
+
+            // check for error if so we should break out
+            if (!continueProcessing(exchange, "so breaking out of choice", LOG)) {
+                break;
             }
 
             // if we did not match then continue to next filter
