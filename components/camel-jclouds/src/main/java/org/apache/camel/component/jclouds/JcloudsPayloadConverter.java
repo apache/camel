@@ -19,6 +19,8 @@ package org.apache.camel.component.jclouds;
 import java.io.File;
 import java.io.IOException;
 import java.io.InputStream;
+import java.util.Date;
+
 import javax.xml.transform.stream.StreamSource;
 import com.google.common.io.ByteStreams;
 import com.google.common.io.InputSupplier;
@@ -31,6 +33,7 @@ import org.apache.camel.converter.stream.CachedOutputStream;
 import org.apache.camel.converter.stream.StreamSourceCache;
 import org.apache.camel.spi.TypeConverterRegistry;
 import org.apache.camel.util.IOHelper;
+import org.apache.camel.util.ObjectHelper;
 import org.jclouds.io.Payload;
 import org.jclouds.io.payloads.ByteArrayPayload;
 import org.jclouds.io.payloads.FilePayload;
@@ -58,6 +61,40 @@ public final class JcloudsPayloadConverter {
     public static Payload toPayload(File file) {
         return new FilePayload(file);
     }
+    
+    protected static Payload setContentMetadata(Payload payload, Exchange exchange) {
+        // Just add an NPE check on the payload
+        if (exchange == null) {
+            return payload;
+        }
+        
+        String contentType = exchange.getIn().getHeader(Exchange.CONTENT_TYPE, String.class);
+        String contentEncoding = exchange.getIn().getHeader(Exchange.CONTENT_ENCODING, String.class);
+        String contentDisposition = exchange.getIn().getHeader(JcloudsConstants.CONTENT_DISPOSITION, String.class);
+        String contentLanguage = exchange.getIn().getHeader(JcloudsConstants.CONTENT_LANGUAGE, String.class);
+        Date payloadExpires = exchange.getIn().getHeader(JcloudsConstants.PAYLOAD_EXPIRES, Date.class);
+        
+        if (ObjectHelper.isNotEmpty(contentType)) {
+            payload.getContentMetadata().setContentType(contentType);
+        }
+        
+        if (ObjectHelper.isNotEmpty(contentEncoding)) {
+            payload.getContentMetadata().setContentEncoding(contentEncoding);
+        }
+        
+        if (ObjectHelper.isNotEmpty(contentDisposition)) {
+            payload.getContentMetadata().setContentDisposition(contentDisposition);
+        }
+        
+        if (ObjectHelper.isNotEmpty(contentLanguage)) {
+            payload.getContentMetadata().setContentLanguage(contentLanguage);
+        }
+        
+        if (ObjectHelper.isNotEmpty(payloadExpires)) {
+            payload.getContentMetadata().setExpires(payloadExpires);
+        }
+        return payload;
+    }
 
     @Converter
     public static Payload toPayload(InputStream is, Exchange exchange) throws IOException {
@@ -76,11 +113,11 @@ public final class JcloudsPayloadConverter {
 
     @Converter
     public static Payload toPayload(StreamSource source, Exchange exchange) throws IOException {
-        return toPayload(new StreamSourceCache(source, exchange));
+        return toPayload(new StreamSourceCache(source, exchange), exchange);
     }
 
     @Converter
-    public static Payload toPayload(final StreamSourceCache cache) throws IOException {
+    public static Payload toPayload(final StreamSourceCache cache, Exchange exchange) throws IOException {
         long contentLength = ByteStreams.length(new InputSupplier<InputStream>() {
             @Override
             public InputStream getInput() throws IOException {
@@ -90,6 +127,7 @@ public final class JcloudsPayloadConverter {
         cache.reset();
         InputStreamPayload payload = new InputStreamPayload(cache.getInputStream());
         payload.getContentMetadata().setContentLength(contentLength);
+        setContentMetadata(payload, exchange);
         return payload;
     }
 

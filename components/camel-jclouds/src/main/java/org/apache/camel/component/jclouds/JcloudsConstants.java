@@ -34,6 +34,11 @@ public final class JcloudsConstants {
     public static final String CREATE_NODE = "CamelJcloudsCreateNode";
     public static final String DESTROY_NODE = "CamelJcloudsDestroyNode";
     public static final String RUN_SCRIPT = "CamelJcloudsRunScript";
+    
+    public static final String CONTENT_LANGUAGE = "CamelJcloudsContentLanguage";
+    public static final String CONTENT_ENCODING = "CamelJcloudsContentEncoding";
+    public static final String CONTENT_DISPOSITION = "CamelJcloudsContentDisposition";
+    public static final String PAYLOAD_EXPIRES = "CamelJcloudsPayloadExpires";
 
     public static final String IMAGE_ID = "CamelJcloudsImageId";
     public static final String LOCATION_ID = "CamelJcloudsLocationId";
