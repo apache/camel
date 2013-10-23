@@ -47,8 +47,8 @@
             <scope>test</scope>
         </dependency>
         <dependency>
-            <groupId>org.openengsb.labs.paxexam.karaf</groupId>
-            <artifactId>paxexam-karaf-container</artifactId>
+            <groupId>org.apache.karaf.tooling.exam</groupId>
+            <artifactId>org.apache.karaf.tooling.exam.container</artifactId>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -137,10 +137,6 @@
                     <forkMode>pertest</forkMode>
                     <redirectTestOutputToFile>true</redirectTestOutputToFile>
                     <argLine>-Xmx256m</argLine>
-                    <excludes>
-                        <!-- CXF test will hang with the Spring3, need to check Cxf feature with karaf later -->
-                        <exclude>**/*Cxf*.*</exclude>
-                    </excludes>
                     <systemPropertyVariables>
                         <karafVersion>${karaf-version}</karafVersion>
                     </systemPropertyVariables>

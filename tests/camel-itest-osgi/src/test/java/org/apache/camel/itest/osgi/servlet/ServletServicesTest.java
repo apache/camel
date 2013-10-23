@@ -17,9 +17,9 @@
 package org.apache.camel.itest.osgi.servlet;
 
 import org.apache.camel.itest.osgi.OSGiIntegrationSpringTestSupport;
+import org.apache.karaf.tooling.exam.options.KarafDistributionOption;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.openengsb.labs.paxexam.karaf.options.KarafDistributionOption;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.Configuration;
 import org.ops4j.pax.exam.junit.JUnit4TestRunner;

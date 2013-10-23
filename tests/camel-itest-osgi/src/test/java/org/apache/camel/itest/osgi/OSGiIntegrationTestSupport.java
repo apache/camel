@@ -25,8 +25,8 @@ import javax.inject.Inject;
 import org.apache.camel.CamelContext;
 import org.apache.camel.osgi.CamelContextFactory;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.openengsb.labs.paxexam.karaf.options.KarafDistributionOption;
-import org.openengsb.labs.paxexam.karaf.options.LogLevelOption;
+import org.apache.karaf.tooling.exam.options.KarafDistributionOption;
+import org.apache.karaf.tooling.exam.options.LogLevelOption;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.Configuration;
 import org.ops4j.pax.exam.options.MavenArtifactProvisionOption;
@@ -36,9 +36,9 @@ import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.openengsb.labs.paxexam.karaf.options.KarafDistributionOption.karafDistributionConfiguration;
-import static org.openengsb.labs.paxexam.karaf.options.KarafDistributionOption.logLevel;
-import static org.openengsb.labs.paxexam.karaf.options.KarafDistributionOption.replaceConfigurationFile;
+import static org.apache.karaf.tooling.exam.options.KarafDistributionOption.karafDistributionConfiguration;
+import static org.apache.karaf.tooling.exam.options.KarafDistributionOption.logLevel;
+import static org.apache.karaf.tooling.exam.options.KarafDistributionOption.replaceConfigurationFile;
 import static org.ops4j.pax.exam.CoreOptions.maven;
 import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
 import static org.ops4j.pax.exam.CoreOptions.scanFeatures;
@@ -132,7 +132,6 @@ public class OSGiIntegrationTestSupport extends CamelTestSupport {
             new Option[] {
                       karafDistributionConfiguration()
                           .frameworkUrl(maven().groupId("org.apache.karaf").artifactId("apache-karaf").type("tar.gz").versionAsInProject())
-                          // This version is not actual karaf version that we use.
                           .karafVersion("2.3.3")
                           .name("Apache Karaf")
                           .useDeployFolder(false).unpackDirectory(new File("target/paxexam/unpack/")),
