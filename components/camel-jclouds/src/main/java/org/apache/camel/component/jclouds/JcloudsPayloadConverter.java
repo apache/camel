@@ -30,6 +30,7 @@ import org.apache.camel.component.file.GenericFile;
 import org.apache.camel.converter.stream.CachedOutputStream;
 import org.apache.camel.converter.stream.StreamSourceCache;
 import org.apache.camel.spi.TypeConverterRegistry;
+import org.apache.camel.util.IOHelper;
 import org.jclouds.io.Payload;
 import org.jclouds.io.payloads.ByteArrayPayload;
 import org.jclouds.io.payloads.FilePayload;
@@ -68,6 +69,7 @@ public final class JcloudsPayloadConverter {
             return payload;
         } else {
             CachedOutputStream cos = new CachedOutputStream(exchange);
+            IOHelper.copy(is, cos);
             return toPayload(cos.getWrappedInputStream(), exchange);
         }
     }
