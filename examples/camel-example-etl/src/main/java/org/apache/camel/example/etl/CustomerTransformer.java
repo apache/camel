@@ -38,9 +38,12 @@ import org.springframework.transaction.support.TransactionTemplate;
  */
 // START SNIPPET: example
 @Converter
-public class CustomerTransformer {
+public final class CustomerTransformer {
 
     private static final Logger LOG = LoggerFactory.getLogger(CustomerTransformer.class);
+
+    private CustomerTransformer() {
+    }
 
     /**
      * A transformation method to convert a person document into a customer
