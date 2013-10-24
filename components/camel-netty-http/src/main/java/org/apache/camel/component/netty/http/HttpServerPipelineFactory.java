@@ -32,6 +32,7 @@ import org.jboss.netty.handler.codec.http.HttpChunkAggregator;
 import org.jboss.netty.handler.codec.http.HttpContentCompressor;
 import org.jboss.netty.handler.codec.http.HttpRequestDecoder;
 import org.jboss.netty.handler.codec.http.HttpResponseEncoder;
+import org.jboss.netty.handler.execution.ExecutionHandler;
 import org.jboss.netty.handler.ssl.SslHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -88,6 +89,16 @@ public class HttpServerPipelineFactory extends ServerPipelineFactory {
         pipeline.addLast("encoder", new HttpResponseEncoder());
         if (supportCompressed()) {
             pipeline.addLast("deflater", new HttpContentCompressor());
+        }
+
+        if (consumer.getConfiguration().isOrderedThreadPoolExecutor()) {
+            // this must be added just before the HttpServerMultiplexChannelHandler
+            // use ordered thread pool, to ensure we process the events in order, and can send back
+            // replies in the expected order. eg this is required by TCP.
+            // and use a Camel thread factory so we have consistent thread namings
+            ExecutionHandler executionHandler = new ExecutionHandler(consumer.getEndpoint().getComponent().getExecutorService());
+            pipeline.addLast("executionHandler", executionHandler);
+            LOG.debug("Using OrderedMemoryAwareThreadPoolExecutor with core pool size: {}", consumer.getConfiguration().getMaximumPoolSize());
         }
 
         int port = consumer.getConfiguration().getPort();
