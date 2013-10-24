@@ -29,6 +29,17 @@ class RichExchange(val exchange : Exchange) extends Exchange {
 
   def in_=(message: Any) { exchange.getIn.setBody(message) }
 
+  /**
+   * Retrieves given header from the input message. Primarily intended to be used together with the named parameter
+   * header, for example:
+   *
+   * {{{
+   * val header = exchange.in(header = "headerKey")
+   * }}}
+   *
+   * @param header name of the header to retrieve
+   * @return header value
+   */
   def in(header:String) : Any = exchange.getIn.getHeader(header)
 
   def in = exchange.getIn.getBody
