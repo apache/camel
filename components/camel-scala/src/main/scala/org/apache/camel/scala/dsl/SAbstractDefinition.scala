@@ -24,7 +24,7 @@ import org.apache.camel.processor.aggregate.AggregationStrategy
 import org.apache.camel.scala.dsl.builder.RouteBuilder
 import spi.Policy
 
-import reflect.Manifest
+import reflect.{ClassTag, classTag}
 import java.lang.String
 import java.util.Comparator
 
@@ -74,7 +74,7 @@ abstract class SAbstractDefinition[P <: ProcessorDefinition[_]] extends DSL with
 
   def filter(predicate: Exchange => Any) = SFilterDefinition(target.filter(predicateBuilder(predicate)))
 
-  def handle[E <: Throwable](block: => Unit)(implicit manifest: Manifest[E]) = SOnExceptionDefinition[E](target.onException(manifest.runtimeClass.asInstanceOf[Class[Throwable]])).apply(block)
+  def handle[E <: Throwable : ClassTag](block: => Unit) = SOnExceptionDefinition[E](target.onException(classTag[E].runtimeClass.asInstanceOf[Class[E]])).apply(block)
 
   def id(id : String) = wrap(target.id(id))
   def idempotentConsumer(expression: Exchange => Any) = SIdempotentConsumerDefinition(target.idempotentConsumer(expression, null))

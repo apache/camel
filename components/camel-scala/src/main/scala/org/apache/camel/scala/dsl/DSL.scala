@@ -19,7 +19,7 @@ package scala
 package dsl 
 
 import org.apache.camel.model.DataFormatDefinition
-import reflect.Manifest
+import reflect.ClassTag
 import java.util.Comparator
 import org.apache.camel.processor.aggregate.AggregationStrategy
 
@@ -46,7 +46,7 @@ trait DSL {
 
   def filter(predicate: Exchange => Any) : SFilterDefinition
 
-  def handle[E <: Throwable](block: => Unit)(implicit manifest: Manifest[E]) : SOnExceptionDefinition[E]
+  def handle[E <: Throwable : ClassTag](block: => Unit) : SOnExceptionDefinition[E]
 
   def id(id : String): DSL
   def idempotentConsumer(expression: Exchange => Any): SIdempotentConsumerDefinition

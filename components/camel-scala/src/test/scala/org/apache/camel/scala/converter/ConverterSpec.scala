@@ -22,7 +22,7 @@ import org.scalatest.matchers.MustMatchers
 import org.scalatest.junit.JUnitRunner
 import org.junit.runner.RunWith
 
-import reflect.Manifest
+import reflect.{ClassTag, classTag}
 import org.w3c.dom.Document
 import xml.Elem
 import scala.Some
@@ -200,5 +200,5 @@ class ConverterSpec extends FunSpec with CamelSpec with MustMatchers {
 
   }
 
-  private def to[T](x: AnyRef)(implicit m: Manifest[T]): Option[T] = Option( context.getTypeConverter.mandatoryConvertTo(m.runtimeClass, createExchange, x).asInstanceOf[T] )
+  private def to[T : ClassTag](x: AnyRef): Option[T] = Option( context.getTypeConverter.mandatoryConvertTo(classTag[T].runtimeClass.asInstanceOf[Class[T]], createExchange, x) )
 }

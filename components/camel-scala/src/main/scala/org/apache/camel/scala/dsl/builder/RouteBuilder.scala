@@ -25,7 +25,7 @@ import org.apache.camel.builder.{LoggingErrorHandlerBuilder, DeadLetterChannelBu
 import org.apache.camel.spi.Policy
 import org.apache.camel.processor.aggregate.AggregationStrategy
 import collection.mutable.Stack
-import _root_.scala.reflect.Manifest
+import reflect.{ClassTag, classTag}
 
 import org.apache.camel.scala.dsl._
 
@@ -80,12 +80,12 @@ class RouteBuilder extends Preamble with DSL with RoutesBuilder with Languages w
   def from(uri: String) = new SRouteDefinition(builder.from(uri), this)
 
   /*
-   * This is done a bit differently - the implicit manifest parameter forces us to define the block in the same
-   * method definition
+   * This is done a bit differently - the implicit manifest parameter forced us to define the block in the same
+   * method definition.
    */
-  def handle[E <: Throwable](block: => Unit)(implicit manifest: Manifest[E]) = {
+  def handle[E <: Throwable : ClassTag](block: => Unit) = {
     stack.size match {
-      case 0 => SOnExceptionDefinition[E](builder.onException(manifest.runtimeClass.asInstanceOf[Class[Throwable]]))(this).apply(block)
+      case 0 => SOnExceptionDefinition[E](builder.onException(classTag[E].runtimeClass.asInstanceOf[Class[Throwable]]))(this).apply(block)
       case _ => stack.top.handle[E](block)
     }
   }
