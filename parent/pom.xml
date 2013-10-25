@@ -36,7 +36,7 @@
     <!-- dependency versions -->
     <abdera-version>1.1.3</abdera-version>
     <!-- Note that activemq dependency is only used for testing! -->
-    <activemq-version>5.8.0</activemq-version>
+    <activemq-version>5.9.0</activemq-version>
     <ahc-version>1.7.20</ahc-version>
     <ant-bundle-version>1.7.0_6</ant-bundle-version>
     <antlr-bundle-version>3.4_1</antlr-bundle-version>
@@ -176,7 +176,7 @@
     <hbase-version>0.94.10</hbase-version>
     <hbase-bundle-version>0.94.6_1</hbase-bundle-version>
     <hibernate-validator-version>5.0.1.Final</hibernate-validator-version>
-    <hibernate-version>4.2.6.Final</hibernate-version>
+    <hibernate-version>4.2.7.Final</hibernate-version>
     <httpunit-version>1.7</httpunit-version>
     <httpcore4-version>4.2.4</httpcore4-version>
     <httpclient4-version>4.2.5</httpclient4-version>
@@ -336,7 +336,7 @@
     <rhino-version>1.7R2</rhino-version>
     <rome-bundle-version>1.0_3</rome-bundle-version>
     <rome-version>1.0</rome-version>
-    <rxjava-version>0.14.5</rxjava-version>
+    <rxjava-version>0.14.6</rxjava-version>
     <saaj-impl-version>1.3.2_2</saaj-impl-version>
     <saxon-bundle-version>9.5.1-1_1</saxon-bundle-version>
     <saxon-version>9.5.1-2</saxon-version>
