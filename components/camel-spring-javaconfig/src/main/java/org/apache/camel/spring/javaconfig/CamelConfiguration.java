@@ -41,7 +41,8 @@ import org.springframework.context.annotation.Configuration;
  * A useful base class for writing
  * <a
  * href="http://docs.spring.io/spring/docs/current/spring-framework-reference/html/beans.html#beans-annotation-config">
- * Spring annotation-based</a> configurations for working with Camel.
+ * Spring annotation-based</a> configurations for working with Camel. Unless {@link #routes()} method is overridden, this configuration
+ * automagically load all the {@link org.apache.camel.builder.RouteBuilder} instances available in the Spring context.
  */
 @Configuration
 public abstract class CamelConfiguration implements BeanFactoryAware, ApplicationContextAware {
