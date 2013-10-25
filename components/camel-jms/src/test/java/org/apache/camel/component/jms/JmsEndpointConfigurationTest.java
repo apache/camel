@@ -25,9 +25,11 @@ import org.apache.activemq.ActiveMQConnectionFactory;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.LoggingLevel;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.ResolveEndpointFailedException;
+import org.apache.camel.ServiceStatus;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
 
@@ -238,21 +240,21 @@ public class JmsEndpointConfigurationTest extends CamelTestSupport {
     public void testIdleTaskExecutionLimit() throws Exception {
         JmsEndpoint endpoint = resolveMandatoryEndpoint("jms:queue:Foo?idleTaskExecutionLimit=50", JmsEndpoint.class);
         assertEquals(50, endpoint.getIdleTaskExecutionLimit());
-        assertEquals(true, endpoint.isAutoStartup());
+        assertTrue(endpoint.isAutoStartup());
     }
 
     @Test
     public void testIdleConsumerLimit() throws Exception {
         JmsEndpoint endpoint = resolveMandatoryEndpoint("jms:queue:Foo?idleConsumerLimit=51", JmsEndpoint.class);
         assertEquals(51, endpoint.getIdleConsumerLimit());
-        assertEquals(true, endpoint.isAutoStartup());
+        assertTrue(endpoint.isAutoStartup());
         assertEquals("Foo", endpoint.getEndpointConfiguredDestinationName());
     }
 
     @Test
     public void testLazyCreateTransactionManager() throws Exception {
         JmsEndpoint endpoint = resolveMandatoryEndpoint("jms:queue:Foo?lazyCreateTransactionManager=true", JmsEndpoint.class);
-        assertEquals(true, endpoint.getConfiguration().isLazyCreateTransactionManager());
+        assertTrue(endpoint.getConfiguration().isLazyCreateTransactionManager());
     }
 
     @SuppressWarnings("deprecation")
@@ -262,42 +264,52 @@ public class JmsEndpointConfigurationTest extends CamelTestSupport {
 
         assertNotNull(endpoint.getBinding());
         assertNotNull(endpoint.getCamelContext());
+        assertNull(endpoint.getDefaultTaskExecutorType());
+        assertNull(endpoint.getMessageListenerContainerFactory());
         assertEquals(-1, endpoint.getRecoveryInterval());
+        assertEquals("JmsConsumer[Foo]", endpoint.getThreadName());
         assertEquals(-1, endpoint.getTimeToLive());
         assertEquals(-1, endpoint.getTransactionTimeout());
-        assertEquals(null, endpoint.getAcknowledgementModeName());
         assertEquals(1, endpoint.getAcknowledgementMode());
+        assertNull(endpoint.getAcknowledgementModeName());
         assertEquals(-1, endpoint.getCacheLevel());
-        assertEquals(null, endpoint.getCacheLevelName());
+        assertNull(endpoint.getCacheLevelName());
         assertNotNull(endpoint.getCamelId());
-        assertEquals(null, endpoint.getClientId());
+        assertNull(endpoint.getClientId());
         assertNotNull(endpoint.getConnectionFactory());
         assertEquals(1, endpoint.getConcurrentConsumers());
+        assertNull(endpoint.getDeliveryMode());
         assertNull(endpoint.getDestination());
         assertEquals("Foo", endpoint.getDestinationName());
         assertNull(endpoint.getDestinationResolver());
-        assertEquals(null, endpoint.getDurableSubscriptionName());
+        assertNull(endpoint.getDurableSubscriptionName());
         assertEquals("jms://queue:Foo", endpoint.getEndpointKey());
         assertEquals("jms://queue:Foo", endpoint.getEndpointUri());
         assertNull(endpoint.getExceptionListener());
         assertNull(endpoint.getErrorHandler());
+        assertEquals(LoggingLevel.WARN, endpoint.getErrorHandlerLoggingLevel());
         assertEquals(1, endpoint.getIdleTaskExecutionLimit());
         assertEquals(1, endpoint.getIdleConsumerLimit());
-        assertEquals(null, endpoint.getJmsMessageType());
+        assertNull(endpoint.getJmsMessageType());
         assertNull(endpoint.getJmsOperations());
         assertNotNull(endpoint.getListenerConnectionFactory());
         assertEquals(0, endpoint.getMaxConcurrentConsumers());
         assertEquals(-1, endpoint.getMaxMessagesPerTask());
-        assertEquals(null, endpoint.getMessageConverter());
+        assertNull(endpoint.getMessageConverter());
         assertNotNull(endpoint.getMetadataJmsOperations());
         assertNotNull(endpoint.getPriority());
         assertNotNull(endpoint.getProviderMetadata());
         assertNotNull(endpoint.getReceiveTimeout());
         assertNotNull(endpoint.getRecoveryInterval());
         assertNull(endpoint.getReplyTo());
+        assertNull(endpoint.getReplyToType());
+        assertNull(endpoint.getReplyToCacheLevelName());
         assertNull(endpoint.getReplyToDestinationSelectorName());
-        assertEquals(20000, endpoint.getRequestTimeout());
+        assertEquals(20000L, endpoint.getRequestTimeout());
+        assertEquals(1000L, endpoint.getRequestTimeoutCheckerInterval());
+        assertEquals(0, endpoint.getRunningMessageListeners());
         assertNull(endpoint.getSelector());
+        assertEquals(ServiceStatus.Started.toString(), endpoint.getState());
         assertEquals(-1, endpoint.getTimeToLive());
         assertNull(endpoint.getTransactionName());
         assertEquals(-1, endpoint.getTransactionTimeout());
@@ -306,27 +318,40 @@ public class JmsEndpointConfigurationTest extends CamelTestSupport {
         assertNull(endpoint.getTransactionManager());
         assertEquals("Foo", endpoint.getEndpointConfiguredDestinationName());
 
-        assertEquals(false, endpoint.isAcceptMessagesWhileStopping());
-        assertEquals(false, endpoint.isAlwaysCopyMessage());
-        assertEquals(true, endpoint.isAutoStartup());
-        assertEquals(true, endpoint.isDeliveryPersistent());
-        assertEquals(false, endpoint.isDisableReplyTo());
-        assertEquals(false, endpoint.isEagerLoadingOfProperties());
-        assertEquals(false, endpoint.isExplicitQosEnabled());
-        assertEquals(true, endpoint.isExposeListenerSession());
-        assertEquals(false, endpoint.isLenientProperties());
-        assertEquals(true, endpoint.isMessageIdEnabled());
-        assertEquals(true, endpoint.isMessageTimestampEnabled());
-        assertEquals(false, endpoint.isPreserveMessageQos());
-        assertEquals(false, endpoint.isPubSubDomain());
-        assertEquals(false, endpoint.isPubSubNoLocal());
-        assertEquals(true, endpoint.isReplyToDeliveryPersistent());
-        assertEquals(false, endpoint.isUseMessageIDAsCorrelationID());
-        assertEquals(true, endpoint.isSingleton());
-        assertEquals(false, endpoint.isSubscriptionDurable());
-        assertEquals(false, endpoint.isTransacted());
-        assertEquals(false, endpoint.isTransactedInOut());
-        assertEquals(false, endpoint.isTransferException());
+        assertFalse(endpoint.isAcceptMessagesWhileStopping());
+        assertFalse(endpoint.isAlwaysCopyMessage());
+        assertTrue(endpoint.isAllowNullBody());
+        assertFalse(endpoint.isAsyncConsumer());
+        assertTrue(endpoint.isAutoStartup());
+        assertFalse(endpoint.isAsyncStartListener());
+        assertFalse(endpoint.isAsyncStopListener());
+        assertTrue(endpoint.isDeliveryPersistent());
+        assertFalse(endpoint.isDisableReplyTo());
+        assertFalse(endpoint.isDisableTimeToLive());
+        assertFalse(endpoint.isEagerLoadingOfProperties());
+        assertTrue(endpoint.isErrorHandlerLogStackTrace());
+        assertFalse(endpoint.isExplicitQosEnabled());
+        assertTrue(endpoint.isExposeListenerSession());
+        assertFalse(endpoint.isForceSendOriginalMessage());
+        assertFalse(endpoint.isIncludeAllJMSXProperties());
+        assertFalse(endpoint.isIncludeSentJMSMessageID());
+        assertTrue(endpoint.isLazyCreateTransactionManager());
+        assertFalse(endpoint.isLenientProperties());
+        assertTrue(endpoint.isMessageIdEnabled());
+        assertTrue(endpoint.isMessageTimestampEnabled());
+        assertFalse(endpoint.isPreserveMessageQos());
+        assertFalse(endpoint.isPubSubDomain());
+        assertFalse(endpoint.isPubSubNoLocal());
+        assertTrue(endpoint.isReplyToDeliveryPersistent());
+        assertFalse(endpoint.isUseMessageIDAsCorrelationID());
+        assertTrue(endpoint.isSingleton());
+        assertFalse(endpoint.isSubscriptionDurable());
+        assertFalse(endpoint.isTestConnectionOnStartup());
+        assertFalse(endpoint.isTransacted());
+        assertFalse(endpoint.isTransferExchange());
+        assertFalse(endpoint.isTransferException());
+        assertFalse(endpoint.isTransactedInOut());
+        assertFalse(endpoint.isTransferException());
     }
 
     @SuppressWarnings("deprecation")
@@ -335,7 +360,7 @@ public class JmsEndpointConfigurationTest extends CamelTestSupport {
         JmsEndpoint endpoint = resolveMandatoryEndpoint("jms:queue:Foo", JmsEndpoint.class);
 
         endpoint.setAcceptMessagesWhileStopping(true);
-        assertEquals(true, endpoint.isAcceptMessagesWhileStopping());
+        assertTrue(endpoint.isAcceptMessagesWhileStopping());
 
         endpoint.setAcknowledgementMode(2);
         assertEquals(2, endpoint.getAcknowledgementMode());
@@ -344,7 +369,7 @@ public class JmsEndpointConfigurationTest extends CamelTestSupport {
         assertEquals("CLIENT_ACKNOWLEDGE", endpoint.getAcknowledgementModeName());
 
         endpoint.setAlwaysCopyMessage(true);
-        assertEquals(true, endpoint.isAlwaysCopyMessage());
+        assertTrue(endpoint.isAlwaysCopyMessage());
 
         endpoint.setCacheLevel(2);
         assertEquals(2, endpoint.getCacheLevel());
@@ -359,16 +384,16 @@ public class JmsEndpointConfigurationTest extends CamelTestSupport {
         assertEquals(5, endpoint.getConcurrentConsumers());
 
         endpoint.setDeliveryPersistent(true);
-        assertEquals(true, endpoint.isDeliveryPersistent());
+        assertTrue(endpoint.isDeliveryPersistent());
 
         endpoint.setDestinationName("cool");
         assertEquals("cool", endpoint.getDestinationName());
 
         endpoint.setDisableReplyTo(true);
-        assertEquals(true, endpoint.isDisableReplyTo());
+        assertTrue(endpoint.isDisableReplyTo());
 
         endpoint.setEagerLoadingOfProperties(true);
-        assertEquals(true, endpoint.isEagerLoadingOfProperties());
+        assertTrue(endpoint.isEagerLoadingOfProperties());
 
         endpoint.setExceptionListener(new ExceptionListener() {
             public void onException(JMSException exception) {
@@ -383,10 +408,10 @@ public class JmsEndpointConfigurationTest extends CamelTestSupport {
         assertNotNull(endpoint.getErrorHandler());
 
         endpoint.setExplicitQosEnabled(true);
-        assertEquals(true, endpoint.isExplicitQosEnabled());
+        assertTrue(endpoint.isExplicitQosEnabled());
 
         endpoint.setExposeListenerSession(true);
-        assertEquals(true, endpoint.isExposeListenerSession());
+        assertTrue(endpoint.isExposeListenerSession());
 
         endpoint.setIdleTaskExecutionLimit(5);
         assertEquals(5, endpoint.getIdleTaskExecutionLimit());
@@ -404,24 +429,24 @@ public class JmsEndpointConfigurationTest extends CamelTestSupport {
         assertNotNull(endpoint.getMessageConverter());
 
         endpoint.setMessageIdEnabled(true);
-        assertEquals(true, endpoint.isMessageIdEnabled());
+        assertTrue(endpoint.isMessageIdEnabled());
 
         endpoint.setMessageTimestampEnabled(true);
-        assertEquals(true, endpoint.isMessageTimestampEnabled());
+        assertTrue(endpoint.isMessageTimestampEnabled());
 
         endpoint.setPreserveMessageQos(true);
-        assertEquals(true, endpoint.isPreserveMessageQos());
+        assertTrue(endpoint.isPreserveMessageQos());
 
         endpoint.setPriority(6);
         assertEquals(6, endpoint.getPriority());
 
         endpoint.setPubSubNoLocal(true);
-        assertEquals(true, endpoint.isPubSubNoLocal());
+        assertTrue(endpoint.isPubSubNoLocal());
 
         endpoint.setPubSubNoLocal(true);
-        assertEquals(true, endpoint.isPubSubNoLocal());
+        assertTrue(endpoint.isPubSubNoLocal());
 
-        assertEquals(false, endpoint.isPubSubDomain());
+        assertFalse(endpoint.isPubSubDomain());
 
         endpoint.setReceiveTimeout(5000);
         assertEquals(5000, endpoint.getReceiveTimeout());
@@ -433,7 +458,7 @@ public class JmsEndpointConfigurationTest extends CamelTestSupport {
         assertEquals("bar", endpoint.getReplyTo());
 
         endpoint.setReplyToDeliveryPersistent(true);
-        assertEquals(true, endpoint.isReplyToDeliveryPersistent());
+        assertTrue(endpoint.isReplyToDeliveryPersistent());
 
         endpoint.setReplyToDestinationSelectorName("me");
         assertEquals("me", endpoint.getReplyToDestinationSelectorName());
@@ -448,16 +473,16 @@ public class JmsEndpointConfigurationTest extends CamelTestSupport {
         assertEquals(4000, endpoint.getTimeToLive());
 
         endpoint.setTransacted(true);
-        assertEquals(true, endpoint.isTransacted());
+        assertTrue(endpoint.isTransacted());
 
         endpoint.setTransactedInOut(true);
-        assertEquals(true, endpoint.isTransactedInOut());
+        assertTrue(endpoint.isTransactedInOut());
 
         endpoint.setTransferExchange(true);
-        assertEquals(true, endpoint.isTransferExchange());
+        assertTrue(endpoint.isTransferExchange());
 
         endpoint.setTransferException(true);
-        assertEquals(true, endpoint.isTransferException());
+        assertTrue(endpoint.isTransferException());
 
         endpoint.setJmsMessageType(JmsMessageType.Text);
         assertEquals(JmsMessageType.Text, endpoint.getJmsMessageType());
