@@ -40,7 +40,6 @@ import org.slf4j.LoggerFactory;
 public class NettyHttpEndpoint extends NettyEndpoint implements HeaderFilterStrategyAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(NettyHttpEndpoint.class);
-    private String uriParameters;
     private NettyHttpBinding nettyHttpBinding;
     private HeaderFilterStrategy headerFilterStrategy;
     private boolean traceEnabled;
@@ -77,7 +76,7 @@ public class NettyHttpEndpoint extends NettyEndpoint implements HeaderFilterStra
 
     @Override
     public Producer createProducer() throws Exception {
-        Producer answer = new NettyHttpProducer(this, getConfiguration(), getUriParameters());
+        Producer answer = new NettyHttpProducer(this, getConfiguration());
         if (isSynchronous()) {
             return new SynchronousDelegateProducer(answer);
         } else {
@@ -154,14 +153,6 @@ public class NettyHttpEndpoint extends NettyEndpoint implements HeaderFilterStra
 
     public void setHttpMethodRestrict(String httpMethodRestrict) {
         this.httpMethodRestrict = httpMethodRestrict;
-    }
-
-    public String getUriParameters() {
-        return uriParameters;
-    }
-
-    public void setUriParameters(String uriParameters) {
-        this.uriParameters = uriParameters;
     }
 
     public NettySharedHttpServer getNettySharedHttpServer() {
