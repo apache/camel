@@ -349,7 +349,7 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer {
                 }
 
                 // load the classes into type converter registry
-                LOG.info("Found {} @Converter classes to load", classes.size());
+                LOG.debug("Found {} @Converter classes to load", classes.size());
                 for (Class<?> type : classes) {
                     if (LOG.isTraceEnabled()) {
                         LOG.trace("Loading converter class: {}", ObjectHelper.name(type));
@@ -386,7 +386,7 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer {
                 return null;
             }
             URL url = bundle.getEntry(path);
-            LOG.debug("The entry {}'s url is {}", name, url);
+            LOG.trace("The entry {}'s url is {}", name, url);
             return createInstance(name, url, context.getInjector());
         }
 
