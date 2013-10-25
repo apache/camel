@@ -28,7 +28,7 @@ class CamelCBRTest extends CamelTestSupport with RouteBuilderSupport {
   def testFoo() {
     getMockEndpoint("mock:foo").expectedMessageCount(1)
     getMockEndpoint("mock:other").expectedMessageCount(0)
-
+    getMockEndpoint("mock:end").expectedMessageCount(1)
     template.sendBody("direct:start", "foo")
 
     assertMockEndpointsSatisfied()
@@ -38,6 +38,7 @@ class CamelCBRTest extends CamelTestSupport with RouteBuilderSupport {
   def testOther() {
     getMockEndpoint("mock:foo").expectedMessageCount(0)
     getMockEndpoint("mock:other").expectedMessageCount(1)
+    getMockEndpoint("mock:end").expectedMessageCount(1)
 
     template.sendBody("direct:start", "bar")
 
@@ -50,7 +51,9 @@ class CamelCBRTest extends CamelTestSupport with RouteBuilderSupport {
         when(simple("${body} == 'foo'")) to "mock:foo"
         otherwise to "mock:other"
       }
+      to("mock:end")
     }
+
   }
 
 }
