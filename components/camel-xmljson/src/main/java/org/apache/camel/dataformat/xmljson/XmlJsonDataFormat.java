@@ -31,6 +31,7 @@ import net.sf.json.xml.XMLSerializer;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.util.IOHelper;
 
 /**
  * A <a href="http://camel.apache.org/data-format.html">data format</a> ({@link DataFormat}) using 
@@ -136,10 +137,10 @@ public class XmlJsonDataFormat extends ServiceSupport implements DataFormat {
     public void marshal(Exchange exchange, Object graph, OutputStream stream) throws Exception {
         boolean streamTreatment = true;
         // try to process as an InputStream if it's not a String
-        Object xml = graph instanceof String ? null : exchange.getContext().getTypeConverter().convertTo(InputStream.class, graph);
+        Object xml = graph instanceof String ? null : exchange.getContext().getTypeConverter().convertTo(InputStream.class, exchange, graph);
         // if conversion to InputStream was unfeasible, fall back to String
         if (xml == null) {
-            xml = exchange.getContext().getTypeConverter().mandatoryConvertTo(String.class, graph);
+            xml = exchange.getContext().getTypeConverter().mandatoryConvertTo(String.class, exchange, graph);
             streamTreatment = false;
         }
 
@@ -151,7 +152,7 @@ public class XmlJsonDataFormat extends ServiceSupport implements DataFormat {
             json = serializer.read((String) xml);
         }
 
-        OutputStreamWriter osw = new OutputStreamWriter(stream);
+        OutputStreamWriter osw = new OutputStreamWriter(stream, IOHelper.getCharsetName(exchange));
         json.write(osw);
         osw.flush();
 
@@ -169,7 +170,7 @@ public class XmlJsonDataFormat extends ServiceSupport implements DataFormat {
         if (inBody instanceof JSON) {
             toConvert = (JSON) inBody;
         } else {
-            String jsonString = exchange.getContext().getTypeConverter().convertTo(String.class, inBody);
+            String jsonString = exchange.getContext().getTypeConverter().convertTo(String.class, exchange, inBody);
             toConvert = JSONSerializer.toJSON(jsonString);
         }
 
