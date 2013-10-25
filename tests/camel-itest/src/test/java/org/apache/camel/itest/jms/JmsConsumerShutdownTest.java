@@ -43,12 +43,9 @@ public class JmsConsumerShutdownTest extends AbstractJUnit4SpringContextTests {
     @EndpointInject(uri = "mock:exception")
     protected MockEndpoint exception;
 
-    // Camel context will never shut down. Regardless of the settings in DefaultShutdownStrategy
-    // JmsConsumer does not correctly shut down direct subroutes
-    @Test(timeout = 20000)
+    @Test
     @DirtiesContext
     public void testJmsConsumerShutdownWithMessageInFlight() throws InterruptedException {
-
         end.expectedMessageCount(0);
         end.setResultWaitTime(2000);
 
@@ -65,11 +62,10 @@ public class JmsConsumerShutdownTest extends AbstractJUnit4SpringContextTests {
         end.assertIsSatisfied();
     }
 
-    // For comparison, SedaConsumer will correctly shut down direct subroutes
-    @Test(timeout = 20000)
+    // Just for the sake of comparison test the SedaConsumer as well
+    @Test
     @DirtiesContext
     public void testSedaConsumerShutdownWithMessageInFlight() throws InterruptedException {
-
         end.expectedMessageCount(0);
         end.setResultWaitTime(2000);
 
@@ -81,7 +77,7 @@ public class JmsConsumerShutdownTest extends AbstractJUnit4SpringContextTests {
             }
         });
 
-        seda.sendBody("activemq:start", "Hello");
+        seda.sendBody("seda:start", "Hello");
 
         end.assertIsSatisfied();
     }
