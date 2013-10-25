@@ -36,7 +36,6 @@ public final class JcloudsConstants {
     public static final String RUN_SCRIPT = "CamelJcloudsRunScript";
     
     public static final String CONTENT_LANGUAGE = "CamelJcloudsContentLanguage";
-    public static final String CONTENT_ENCODING = "CamelJcloudsContentEncoding";
     public static final String CONTENT_DISPOSITION = "CamelJcloudsContentDisposition";
     public static final String PAYLOAD_EXPIRES = "CamelJcloudsPayloadExpires";
 
