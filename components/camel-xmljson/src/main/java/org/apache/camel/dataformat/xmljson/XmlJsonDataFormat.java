@@ -151,8 +151,17 @@ public class XmlJsonDataFormat extends ServiceSupport implements DataFormat {
         } else {
             json = serializer.read((String) xml);
         }
-
-        OutputStreamWriter osw = new OutputStreamWriter(stream, IOHelper.getCharsetName(exchange));
+        // don't return the default setting here
+        String encoding = IOHelper.getCharsetName(exchange, false);
+        if (encoding == null) {
+            encoding = getEncoding();
+        }
+        OutputStreamWriter osw = null;
+        if (encoding != null) {
+            osw = new OutputStreamWriter(stream, encoding);
+        } else {
+            osw = new OutputStreamWriter(stream);
+        }
         json.write(osw);
         osw.flush();
 
