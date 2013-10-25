@@ -78,6 +78,7 @@ public class NettyHttpComponent extends NettyComponent implements HeaderFilterSt
         Map<String, Object> securityOptions = IntrospectionSupport.extractProperties(parameters, "securityConfiguration.");
 
         config = parseConfiguration(config, remaining, parameters);
+        setProperties(config, parameters);
 
         // validate config
         config.validateConfiguration();
@@ -90,15 +91,12 @@ public class NettyHttpComponent extends NettyComponent implements HeaderFilterSt
             config.setPort(shared.getPort());
         }
 
-        NettyHttpEndpoint answer = new NettyHttpEndpoint(remaining, this, config);
-        answer.setTimer(getTimer());
-        setProperties(answer.getConfiguration(), parameters);
+        // create the address uri which includes the remainder parameters (which is not configuration parameters for this component)
+        URI u = new URI(UnsafeUriCharactersEncoder.encode(remaining));
+        String addressUri = URISupport.createRemainingURI(u, parameters).toString();
 
-        // any leftover parameters is uri parameters
-        if (!parameters.isEmpty()) {
-            String query = URISupport.createQueryString(parameters);
-            answer.setUriParameters(query);
-        }
+        NettyHttpEndpoint answer = new NettyHttpEndpoint(addressUri, this, config);
+        answer.setTimer(getTimer());
 
         // set component options on endpoint as defaults
         if (answer.getNettyHttpBinding() == null) {

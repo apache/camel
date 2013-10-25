@@ -30,11 +30,8 @@ import org.jboss.netty.handler.codec.http.HttpResponse;
  */
 public class NettyHttpProducer extends NettyProducer {
 
-    private final String uriParameters;
-
-    public NettyHttpProducer(NettyHttpEndpoint nettyEndpoint, NettyConfiguration configuration, String uriParameters) {
+    public NettyHttpProducer(NettyHttpEndpoint nettyEndpoint, NettyConfiguration configuration) {
         super(nettyEndpoint, configuration);
-        this.uriParameters = uriParameters;
     }
 
     @Override
@@ -55,7 +52,7 @@ public class NettyHttpProducer extends NettyProducer {
     @Override
     protected Object getRequestBody(Exchange exchange) throws Exception {
         // creating the url to use takes 2-steps
-        String uri = NettyHttpHelper.createURL(exchange, getEndpoint(), uriParameters);
+        String uri = NettyHttpHelper.createURL(exchange, getEndpoint());
         URI u = NettyHttpHelper.createURI(exchange, uri, getEndpoint());
 
         HttpRequest request = getEndpoint().getNettyHttpBinding().toNettyRequest(exchange.getIn(), u.toString(), getConfiguration());

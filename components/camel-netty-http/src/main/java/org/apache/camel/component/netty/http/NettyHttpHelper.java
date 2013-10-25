@@ -183,11 +183,8 @@ public final class NettyHttpHelper {
      * @param endpoint the endpoint
      * @return the URL to invoke
      */
-    public static String createURL(Exchange exchange, NettyHttpEndpoint endpoint, String uriParameters) throws URISyntaxException {
+    public static String createURL(Exchange exchange, NettyHttpEndpoint endpoint) throws URISyntaxException {
         String uri = endpoint.getEndpointUri();
-        if (uriParameters != null) {
-            uri += "?" + uriParameters;
-        }
 
         // resolve placeholders in uri
         try {
