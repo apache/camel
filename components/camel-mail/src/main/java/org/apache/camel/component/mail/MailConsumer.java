@@ -31,9 +31,9 @@ import javax.mail.Store;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.ScheduledBatchPollingConsumer;
-import org.apache.camel.spi.Synchronization;
 import org.apache.camel.support.SynchronizationAdapter;
 import org.apache.camel.util.CastUtils;
+import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -180,6 +180,12 @@ public class MailConsumer extends ScheduledBatchPollingConsumer {
             // must use the original message in case we need to workaround a charset issue when extracting mail content
             final Message mail = exchange.getIn(MailMessage.class).getOriginalMessage();
 
+            // need to call setPeek on java-mail to avoid the message being flagged eagerly as SEEN on the server in case
+            // we process the message and rollback due an exception
+            if (getEndpoint().getConfiguration().isPeek()) {
+                peekMessage(mail);
+            }
+
             // add on completion to handle after work when the exchange is done
             exchange.addOnCompletion(new SynchronizationAdapter() {
                 public void onComplete(Exchange exchange) {
@@ -210,6 +216,19 @@ public class MailConsumer extends ScheduledBatchPollingConsumer {
         return total;
     }
 
+    private void peekMessage(Message mail) {
+        // this only applies to IMAP messages which has a setPeek method
+        if (mail.getClass().getName().startsWith("IMAP")) {
+            try {
+                LOG.trace("Calling setPeek(true) on mail message {}", mail);
+                IntrospectionSupport.setProperty(mail, "peek", true);
+            } catch (Throwable e) {
+                // ignore
+                LOG.trace("Error setting peak property to true on: " + mail + ". This exception is ignored.", e);
+            }
+        }
+    }
+
     protected Queue<Exchange> createExchanges(Message[] messages) throws MessagingException {
         Queue<Exchange> answer = new LinkedList<Exchange>();
 
@@ -222,6 +241,11 @@ public class MailConsumer extends ScheduledBatchPollingConsumer {
 
         for (int i = 0; i < count; i++) {
             Message message = messages[i];
+
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Mail #{} is of type: {} - {}", new Object[]{i, ObjectHelper.classCanonicalName(message), message});
+            }
+
             if (!message.getFlags().contains(Flags.Flag.DELETED)) {
                 Exchange exchange = getEndpoint().createExchange(message);
                 if (getEndpoint().getConfiguration().isMapMailMessage()) {
