@@ -63,6 +63,7 @@ public class MailConfiguration implements Cloneable {
     private boolean ignoreUnsupportedCharset;
     private boolean disconnect;
     private boolean closeFolder = true;
+    private boolean peek = true;
     private SSLContextParameters sslContextParameters;
 
     public MailConfiguration() {
@@ -492,5 +493,13 @@ public class MailConfiguration implements Cloneable {
 
     public void setCopyTo(String copyTo) {
         this.copyTo = copyTo;
+    }
+
+    public boolean isPeek() {
+        return peek;
+    }
+
+    public void setPeek(boolean peek) {
+        this.peek = peek;
     }
 }
