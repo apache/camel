@@ -60,10 +60,6 @@ public class BindyFixedLengthDataFormat extends BindyAbstractDataFormat {
     public BindyFixedLengthDataFormat() {
     }
 
-    public BindyFixedLengthDataFormat(String... packages) {
-        super(packages);
-    }
-
     public BindyFixedLengthDataFormat(Class<?> type) {
         super(type);
     }
@@ -71,7 +67,7 @@ public class BindyFixedLengthDataFormat extends BindyAbstractDataFormat {
     @SuppressWarnings("unchecked")
     public void marshal(Exchange exchange, Object body, OutputStream outputStream) throws Exception {
         PackageScanClassResolver resolver = exchange.getContext().getPackageScanClassResolver();
-        BindyFixedLengthFactory factory = (BindyFixedLengthFactory) getFactory(resolver);
+        BindyFixedLengthFactory factory = (BindyFixedLengthFactory) getFactory();
         ObjectHelper.notNull(factory, "not instantiated");
 
         // Get CRLF
@@ -153,7 +149,7 @@ public class BindyFixedLengthDataFormat extends BindyAbstractDataFormat {
 
     public Object unmarshal(Exchange exchange, InputStream inputStream) throws Exception {
         PackageScanClassResolver resolver = exchange.getContext().getPackageScanClassResolver();
-        BindyFixedLengthFactory factory = (BindyFixedLengthFactory) getFactory(resolver);
+        BindyFixedLengthFactory factory = (BindyFixedLengthFactory) getFactory();
         ObjectHelper.notNull(factory, "not instantiated");
         
         // List of Pojos
@@ -269,7 +265,7 @@ public class BindyFixedLengthDataFormat extends BindyAbstractDataFormat {
     }
 
     @Override
-    protected BindyAbstractFactory createModelFactory(PackageScanClassResolver resolver) throws Exception {
+    protected BindyAbstractFactory createModelFactory() throws Exception {
         
         // Initialize the primary (body) model factory ignoring header and footer model classes
         PackageScanFilter defaultRecordScanFilter = new PackageScanFilter() {
@@ -280,12 +276,7 @@ public class BindyFixedLengthDataFormat extends BindyAbstractDataFormat {
             }
         };
 
-        BindyFixedLengthFactory factory;
-        if (getClassType() != null) {
-            factory = new BindyFixedLengthFactory(resolver, defaultRecordScanFilter, getClassType());
-        } else {
-            factory = new BindyFixedLengthFactory(resolver, defaultRecordScanFilter, getPackages());
-        }
+        BindyFixedLengthFactory factory = new BindyFixedLengthFactory(getClassType());
         
         // Optionally initialize the header factory... using header model classes
         if (factory.hasHeader()) {
@@ -296,12 +287,9 @@ public class BindyFixedLengthDataFormat extends BindyAbstractDataFormat {
                     return record != null && record.isHeader();
                 }
             };
-            
-            if (getClassType() != null) {
-                this.headerFactory = new BindyFixedLengthFactory(resolver, headerScanFilter, getClassType());
-            } else {
-                this.headerFactory = new BindyFixedLengthFactory(resolver, headerScanFilter, getPackages());
-            }
+
+            this.headerFactory = new BindyFixedLengthFactory(getClassType());
+
         }
         
         // Optionally initialize the footer factory... using footer model classes
@@ -315,11 +303,8 @@ public class BindyFixedLengthDataFormat extends BindyAbstractDataFormat {
                 }
             };
             
-            if (getClassType() != null) {
-                this.footerFactory = new BindyFixedLengthFactory(resolver, footerScanFilter, getClassType());
-            } else {
-                this.footerFactory = new BindyFixedLengthFactory(resolver, footerScanFilter, getPackages());
-            }
+            this.footerFactory = new BindyFixedLengthFactory(getClassType());
+
         }
         
         return factory;

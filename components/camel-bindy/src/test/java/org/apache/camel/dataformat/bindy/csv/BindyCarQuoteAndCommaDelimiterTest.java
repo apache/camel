@@ -87,17 +87,16 @@ public class BindyCarQuoteAndCommaDelimiterTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
 
-                BindyCsvDataFormat camelDataFormat =
-                        new BindyCsvDataFormat("org.apache.camel.dataformat.bindy.model.car");
-                camelDataFormat.setLocale("en");
+                BindyCsvDataFormat dataFormat = new BindyCsvDataFormat();
+                dataFormat.setClassType(org.apache.camel.dataformat.bindy.model.car.Car.class);
+                dataFormat.setLocale("en");
 
                 from("direct:out")
-                        .unmarshal().bindy(BindyType.Csv, "org.apache.camel.dataformat.bindy.model.car")
-                        .to("mock:out");
-
+                    .unmarshal().bindy(BindyType.Csv,org.apache.camel.dataformat.bindy.model.car.Car.class)
+                    .to("mock:out");
                 from("direct:in")
-                        .marshal(camelDataFormat)
-                        .to("mock:in");
+                    .marshal(dataFormat)
+                    .to("mock:in");
             }
         };
     }

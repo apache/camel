@@ -76,11 +76,11 @@ public class BindyPipeDelimiterTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:unmarshal")
-                    .unmarshal().bindy(BindyType.Csv, "org.apache.camel.dataformat.bindy.model.simple.pipeline")
+                    .unmarshal().bindy(BindyType.Csv, org.apache.camel.dataformat.bindy.model.simple.pipeline.MyData.class)
                     .to("mock:result");
 
                 from("direct:marshal")
-                    .marshal().bindy(BindyType.Csv, "org.apache.camel.dataformat.bindy.model.simple.pipeline")
+                    .marshal().bindy(BindyType.Csv, org.apache.camel.dataformat.bindy.model.simple.pipeline.MyData.class)
                     .to("mock:result");
             }
         };

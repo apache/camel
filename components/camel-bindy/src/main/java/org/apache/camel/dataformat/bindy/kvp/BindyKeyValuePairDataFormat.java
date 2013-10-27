@@ -16,6 +16,17 @@
  */
 package org.apache.camel.dataformat.bindy.kvp;
 
+import org.apache.camel.Exchange;
+import org.apache.camel.dataformat.bindy.BindyAbstractDataFormat;
+import org.apache.camel.dataformat.bindy.BindyAbstractFactory;
+import org.apache.camel.dataformat.bindy.BindyKeyValuePairFactory;
+import org.apache.camel.dataformat.bindy.util.ConverterUtils;
+import org.apache.camel.spi.DataFormat;
+import org.apache.camel.util.IOHelper;
+import org.apache.camel.util.ObjectHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
@@ -25,18 +36,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
-
-import org.apache.camel.Exchange;
-import org.apache.camel.dataformat.bindy.BindyAbstractDataFormat;
-import org.apache.camel.dataformat.bindy.BindyAbstractFactory;
-import org.apache.camel.dataformat.bindy.BindyKeyValuePairFactory;
-import org.apache.camel.dataformat.bindy.util.ConverterUtils;
-import org.apache.camel.spi.DataFormat;
-import org.apache.camel.spi.PackageScanClassResolver;
-import org.apache.camel.util.IOHelper;
-import org.apache.camel.util.ObjectHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * A <a href="http://camel.apache.org/data-format.html">data format</a> (
@@ -49,17 +48,13 @@ public class BindyKeyValuePairDataFormat extends BindyAbstractDataFormat {
     public BindyKeyValuePairDataFormat() {
     }
 
-    public BindyKeyValuePairDataFormat(String... packages) {
-        super(packages);
-    }
-
     public BindyKeyValuePairDataFormat(Class<?> type) {
         super(type);
     }
 
     @SuppressWarnings("unchecked")
     public void marshal(Exchange exchange, Object body, OutputStream outputStream) throws Exception {
-        BindyAbstractFactory factory = getFactory(exchange.getContext().getPackageScanClassResolver());
+        BindyAbstractFactory factory = getFactory();
         List<Map<String, Object>> models = (ArrayList<Map<String, Object>>)body;
         byte[] crlf;
 
@@ -77,7 +72,7 @@ public class BindyKeyValuePairDataFormat extends BindyAbstractDataFormat {
     }
 
     public Object unmarshal(Exchange exchange, InputStream inputStream) throws Exception {
-        BindyKeyValuePairFactory factory = (BindyKeyValuePairFactory)getFactory(exchange.getContext().getPackageScanClassResolver());
+        BindyKeyValuePairFactory factory = (BindyKeyValuePairFactory)getFactory();
 
         // List of Pojos
         List<Map<String, Object>> models = new ArrayList<Map<String, Object>>();
@@ -151,11 +146,7 @@ public class BindyKeyValuePairDataFormat extends BindyAbstractDataFormat {
         }
     }
 
-    protected BindyAbstractFactory createModelFactory(PackageScanClassResolver resolver) throws Exception {
-        if (getClassType() != null) {
-            return new BindyKeyValuePairFactory(resolver, getClassType());
-        } else {
-            return new BindyKeyValuePairFactory(resolver, getPackages());
-        }
+    protected BindyAbstractFactory createModelFactory() throws Exception {
+        return new BindyKeyValuePairFactory(getClassType());
     }
 }

@@ -156,12 +156,14 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
      * @param type     the type of bindy data format to use
      * @param packages packages to scan for Bindy annotated POJO classes
      */
+    /*
     public T bindy(BindyType type, String... packages) {
         BindyDataFormat bindy = new BindyDataFormat();
         bindy.setType(type);
         bindy.setPackages(packages);
         return dataFormat(bindy);
     }
+    */
 
     /**
      * Uses the Bindy data format

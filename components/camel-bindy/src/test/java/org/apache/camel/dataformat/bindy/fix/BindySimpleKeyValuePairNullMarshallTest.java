@@ -91,7 +91,7 @@ public class BindySimpleKeyValuePairNullMarshallTest extends AbstractJUnit4Sprin
     }
 
     public static class ContextConfig extends RouteBuilder {
-        BindyKeyValuePairDataFormat kvpBindyDataFormat = new BindyKeyValuePairDataFormat("org.apache.camel.dataformat.bindy.model.fix.simple");
+        BindyKeyValuePairDataFormat kvpBindyDataFormat = new BindyKeyValuePairDataFormat(org.apache.camel.dataformat.bindy.model.fix.simple.Order.class);
 
         public void configure() {
             from("direct:start").marshal(kvpBindyDataFormat).to("mock:result");

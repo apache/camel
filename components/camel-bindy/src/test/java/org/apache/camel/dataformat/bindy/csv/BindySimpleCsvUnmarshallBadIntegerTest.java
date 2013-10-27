@@ -101,7 +101,7 @@ public class BindySimpleCsvUnmarshallBadIntegerTest extends AbstractJUnit4Spring
 
     public static class ContextConfig extends RouteBuilder {
 
-        BindyCsvDataFormat orderBindyDataFormat = new BindyCsvDataFormat("org.apache.camel.dataformat.bindy.model.simple.oneclassmath");
+        BindyCsvDataFormat orderBindyDataFormat = new BindyCsvDataFormat(org.apache.camel.dataformat.bindy.model.simple.oneclassmath.Math.class);
 
         public void configure() {
 

@@ -55,15 +55,9 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
     private String pairSeparator;
     private boolean messageOrdered;
 
-    public BindyKeyValuePairFactory(PackageScanClassResolver resolver, String... packageNames) throws Exception {
-        super(resolver, packageNames);
 
-        // Initialize what is specific to Key Value Pair model
-        initKeyValuePairModel();
-    }
-
-    public BindyKeyValuePairFactory(PackageScanClassResolver resolver, Class<?> type) throws Exception {
-        super(resolver, type);
+    public BindyKeyValuePairFactory(Class<?> type) throws Exception {
+        super(type);
 
         // Initialize what is specific to Key Value Pair model
         initKeyValuePairModel();
@@ -89,34 +83,31 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
 
     public void initAnnotatedFields() {
 
-        for (Class<?> cl : models) {
+        Class<?> cl = type();
+        List<Field> linkFields = new ArrayList<Field>();
 
-            List<Field> linkFields = new ArrayList<Field>();
-
-            for (Field field : cl.getDeclaredFields()) {
-                KeyValuePairField keyValuePairField = field.getAnnotation(KeyValuePairField.class);
-                if (keyValuePairField != null) {
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("Key declared in the class : {}, key : {}, Field : {}", new Object[]{cl.getName(), keyValuePairField.tag(), keyValuePairField});
-                    }
-                    keyValuePairFields.put(keyValuePairField.tag(), keyValuePairField);
-                    annotatedFields.put(keyValuePairField.tag(), field);
+        for (Field field : cl.getDeclaredFields()) {
+            KeyValuePairField keyValuePairField = field.getAnnotation(KeyValuePairField.class);
+            if (keyValuePairField != null) {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Key declared in the class : {}, key : {}, Field : {}", new Object[]{cl.getName(), keyValuePairField.tag(), keyValuePairField});
                 }
-
-                Link linkField = field.getAnnotation(Link.class);
-
-                if (linkField != null) {
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("Class linked  : {}, Field {}", cl.getName(), field);
-                    }
-                    linkFields.add(field);
-                }
+                keyValuePairFields.put(keyValuePairField.tag(), keyValuePairField);
+                annotatedFields.put(keyValuePairField.tag(), field);
             }
 
-            if (!linkFields.isEmpty()) {
-                annotatedLinkFields.put(cl.getName(), linkFields);
-            }
+            Link linkField = field.getAnnotation(Link.class);
 
+            if (linkField != null) {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Class linked  : {}, Field {}", cl.getName(), field);
+                }
+                linkFields.add(field);
+            }
+        }
+
+        if (!linkFields.isEmpty()) {
+            annotatedLinkFields.put(cl.getName(), linkFields);
         }
     }
 
@@ -170,19 +161,15 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
 
         }
 
-        // Iterate over the model
-        for (Class<?> clazz : models) {
+        Class<?> clazz = type();
+        Object obj = model.get(clazz.getName());
 
-            Object obj = model.get(clazz.getName());
+        if (obj != null) {
 
-            if (obj != null) {
+            // Generate model from key value map
+            generateModelFromKeyValueMap(clazz, obj, results, line, lists);
 
-                // Generate model from key value map
-                generateModelFromKeyValueMap(clazz, obj, results, line, lists);
-
-            }
         }
-
     }
 
     private void generateModelFromKeyValueMap(Class<?> clazz, Object obj, Map<Integer, List<String>> results, int line, Map<String, List<Object>> lists) throws Exception {
@@ -594,43 +581,40 @@ public class BindyKeyValuePairFactory extends BindyAbstractFactory implements Bi
      */
     private void initMessageParameters() {
         if ((pairSeparator == null) || (keyValuePairSeparator == null)) {
-            for (Class<?> cl : models) {
-                // Get annotation @Message from the class
-                Message message = cl.getAnnotation(Message.class);
+            Class<?> cl = type();
+            // Get annotation @Message from the class
+            Message message = cl.getAnnotation(Message.class);
 
-                // Get annotation @Section from the class
-                Section section = cl.getAnnotation(Section.class);
+            // Get annotation @Section from the class
+            Section section = cl.getAnnotation(Section.class);
 
-                if (message != null) {
-                    // Get Pair Separator parameter
-                    ObjectHelper.notNull(message.pairSeparator(), "No Pair Separator has been defined in the @Message annotation");
-                    pairSeparator = message.pairSeparator();
-                    LOG.debug("Pair Separator defined for the message: {}", pairSeparator);
+            if (message != null) {
+                // Get Pair Separator parameter
+                ObjectHelper.notNull(message.pairSeparator(), "No Pair Separator has been defined in the @Message annotation");
+                pairSeparator = message.pairSeparator();
+                LOG.debug("Pair Separator defined for the message: {}", pairSeparator);
 
-                    // Get KeyValuePair Separator parameter
-                    ObjectHelper.notNull(message.keyValuePairSeparator(), "No Key Value Pair Separator has been defined in the @Message annotation");
-                    keyValuePairSeparator = message.keyValuePairSeparator();
-                    LOG.debug("Key Value Pair Separator defined for the message: {}", keyValuePairSeparator);
+                // Get KeyValuePair Separator parameter
+                ObjectHelper.notNull(message.keyValuePairSeparator(), "No Key Value Pair Separator has been defined in the @Message annotation");
+                keyValuePairSeparator = message.keyValuePairSeparator();
+                LOG.debug("Key Value Pair Separator defined for the message: {}", keyValuePairSeparator);
 
-                    // Get carriage return parameter
-                    crlf = message.crlf();
-                    LOG.debug("Carriage return defined for the message: {}", crlf);
+                // Get carriage return parameter
+                crlf = message.crlf();
+                LOG.debug("Carriage return defined for the message: {}", crlf);
 
-                    // Get isOrdered parameter
-                    messageOrdered = message.isOrdered();
-                    LOG.debug("Is the message ordered in output: {}", messageOrdered);
-                }
+                // Get isOrdered parameter
+                messageOrdered = message.isOrdered();
+                LOG.debug("Is the message ordered in output: {}", messageOrdered);
+            }
 
-                if (section != null) {
-                    // Test if section number is not null
-                    ObjectHelper.notNull(section.number(), "No number has been defined for the section");
+            if (section != null) {
+                // Test if section number is not null
+                ObjectHelper.notNull(section.number(), "No number has been defined for the section");
 
-                    // Get section number and add it to the sections
-                    sections.put(cl.getName(), section.number());
-                }
+                // Get section number and add it to the sections
+                sections.put(cl.getName(), section.number());
             }
         }
     }
-
-
 }

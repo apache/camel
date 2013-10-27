@@ -35,7 +35,7 @@ import org.apache.camel.spi.PackageScanFilter;
 public class AnnotationModelLoader {
 
     private PackageScanClassResolver resolver;
-    private PackageScanFilter filter;
+    //private PackageScanFilter filter;
     private Set<Class<? extends Annotation>> annotations;
 
     public AnnotationModelLoader(PackageScanClassResolver resolver) {
@@ -48,26 +48,18 @@ public class AnnotationModelLoader {
         annotations.add(Section.class);
         annotations.add(FixedLengthRecord.class);
     }
-    
+
+    /*
     public AnnotationModelLoader(PackageScanClassResolver resolver, PackageScanFilter filter) {
         this(resolver);
         this.filter = filter;
     }
+    */
 
     public Set<Class<?>> loadModels(String... packageNames) throws Exception {
         Set<Class<?>> results = resolver.findAnnotated(annotations, packageNames);
         
-        //TODO;  this logic could be moved into the PackageScanClassResolver by creating:
-        //          findAnnotated(annotations, packageNames, filter) 
-        Set<Class<?>> resultsToRemove = new HashSet<Class<?>>();
-        if (filter != null) {
-            for (Class<?> clazz : results) {
-                if (!filter.matches(clazz)) {
-                    resultsToRemove.add(clazz);
-                }
-            }
-        }
-        results.removeAll(resultsToRemove);
+
         return results;
     }
     

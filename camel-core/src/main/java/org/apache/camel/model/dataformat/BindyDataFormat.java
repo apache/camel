@@ -40,8 +40,8 @@ import org.apache.camel.util.ObjectHelper;
 public class BindyDataFormat extends DataFormatDefinition {
     @XmlAttribute(required = true)
     private BindyType type;
-    @XmlAttribute
-    private String[] packages;
+    //@XmlAttribute
+    //private String[] packages;
     @XmlAttribute
     private String classType;
     @XmlAttribute
@@ -64,6 +64,7 @@ public class BindyDataFormat extends DataFormatDefinition {
         this.type = type;
     }
 
+    /*
     public String[] getPackages() {
         return packages;
     }
@@ -74,6 +75,7 @@ public class BindyDataFormat extends DataFormatDefinition {
     public void setPackages(String[] packages) {
         this.packages = packages;
     }
+    */
 
     public String getClassType() {
         return classType;
@@ -104,11 +106,8 @@ public class BindyDataFormat extends DataFormatDefinition {
     }
 
     protected DataFormat createDataFormat(RouteContext routeContext) {
-        if (packages == null && (classType == null && clazz == null)) {
+        if (classType == null && clazz == null) {
             throw new IllegalArgumentException("Either packages or classType must be specified");
-        }
-        if (packages != null && (classType != null || clazz != null)) {
-            throw new IllegalArgumentException("Only one of packages and classType must be specified");
         }
 
         if (type == BindyType.Csv) {
@@ -131,7 +130,6 @@ public class BindyDataFormat extends DataFormatDefinition {
 
     @Override
     protected void configureDataFormat(DataFormat dataFormat, CamelContext camelContext) {
-        setProperty(camelContext, dataFormat, "packages", packages);
         setProperty(camelContext, dataFormat, "locale", locale);
         setProperty(camelContext, dataFormat, "classType", clazz);
     }

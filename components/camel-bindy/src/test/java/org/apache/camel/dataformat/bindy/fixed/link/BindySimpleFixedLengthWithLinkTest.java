@@ -92,7 +92,7 @@ public class BindySimpleFixedLengthWithLinkTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 BindyDataFormat bindy = new BindyDataFormat();
-                bindy.setPackages(new String[]{"org.apache.camel.dataformat.bindy.fixed.link"});
+                bindy.setClassType(Order.class);
                 bindy.setLocale("en");
                 bindy.setType(BindyType.Fixed);
 

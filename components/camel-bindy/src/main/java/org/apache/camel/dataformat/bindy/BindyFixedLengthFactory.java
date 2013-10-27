@@ -65,27 +65,10 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
     private int recordLength;
     private boolean ignoreTrailingChars;
 
-    public BindyFixedLengthFactory(PackageScanClassResolver resolver, String... packageNames) throws Exception {
-        super(resolver, packageNames);
-
-        // initialize specific parameters of the fixed length model
-        initFixedLengthModel();
-    }
-    
-    public BindyFixedLengthFactory(PackageScanClassResolver resolver, PackageScanFilter scanFilter, String... packageNames) throws Exception {
-        super(resolver, packageNames, scanFilter);
-        initFixedLengthModel();
-    }
-
-    public BindyFixedLengthFactory(PackageScanClassResolver resolver, Class<?> type) throws Exception {
-        super(resolver, type);
+    public BindyFixedLengthFactory(Class<?> type) throws Exception {
+        super(type);
         
         // initialize specific parameters of the fixed length model
-        initFixedLengthModel();
-    }
-
-    public BindyFixedLengthFactory(PackageScanClassResolver resolver, PackageScanFilter scanFilter, Class<?> type) throws Exception  {
-        super(resolver, type, scanFilter);
         initFixedLengthModel();
     }
 
@@ -105,56 +88,52 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
     }
 
     public void initAnnotatedFields() {
+        Class<?> cl = type();
+        List<Field> linkFields = new ArrayList<Field>();
 
-        for (Class<?> cl : models) {
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Class retrieved: {}", cl.getName());
+        }
 
-            List<Field> linkFields = new ArrayList<Field>();
+        for (Field field : cl.getDeclaredFields()) {
+            DataField dataField = field.getAnnotation(DataField.class);
+            if (dataField != null) {
 
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Class retrieved: {}", cl.getName());
-            }
-
-            for (Field field : cl.getDeclaredFields()) {
-                DataField dataField = field.getAnnotation(DataField.class);
-                if (dataField != null) {
-                    
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("Position defined in the class: {}, position: {}, Field: {}", new Object[]{cl.getName(), dataField.pos(), dataField});
-                    }
-
-                    if (dataField.required()) {
-                        ++numberMandatoryFields;
-                    } else {
-                        ++numberOptionalFields;
-                    }
-
-                    dataFields.put(dataField.pos(), dataField);
-                    annotatedFields.put(dataField.pos(), field);
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Position defined in the class: {}, position: {}, Field: {}", new Object[]{cl.getName(), dataField.pos(), dataField});
                 }
 
-                Link linkField = field.getAnnotation(Link.class);
-
-                if (linkField != null) {
-                    if (LOG.isDebugEnabled()) {
-                        LOG.debug("Class linked: {}, Field: {}", cl.getName(), field);
-                    }
-                    linkFields.add(field);
+                if (dataField.required()) {
+                    ++numberMandatoryFields;
+                } else {
+                    ++numberOptionalFields;
                 }
 
+                dataFields.put(dataField.pos(), dataField);
+                annotatedFields.put(dataField.pos(), field);
             }
 
-            if (!linkFields.isEmpty()) {
-                annotatedLinkFields.put(cl.getName(), linkFields);
+            Link linkField = field.getAnnotation(Link.class);
+
+            if (linkField != null) {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Class linked: {}, Field: {}", cl.getName(), field);
+                }
+                linkFields.add(field);
             }
 
-            totalFields = numberMandatoryFields + numberOptionalFields;
+        }
 
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Number of optional fields: {}", numberOptionalFields);
-                LOG.debug("Number of mandatory fields: {}", numberMandatoryFields);
-                LOG.debug("Total: {}", totalFields);
-            }
+        if (!linkFields.isEmpty()) {
+            annotatedLinkFields.put(cl.getName(), linkFields);
+        }
 
+        totalFields = numberMandatoryFields + numberOptionalFields;
+
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Number of optional fields: {}", numberOptionalFields);
+            LOG.debug("Number of mandatory fields: {}", numberMandatoryFields);
+            LOG.debug("Total: {}", totalFields);
         }
     }
     
@@ -298,23 +277,21 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
         StringBuilder buffer = new StringBuilder();
         Map<Integer, List<String>> results = new HashMap<Integer, List<String>>();
 
-        for (Class<?> clazz : models) {
+        Class<?> clazz = type();
+        if (model.containsKey(clazz.getName())) {
 
-            if (model.containsKey(clazz.getName())) {
+            Object obj = model.get(clazz.getName());
 
-                Object obj = model.get(clazz.getName());
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Model object: {}, class: {}", obj, obj.getClass().getName());
+            }
 
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Model object: {}, class: {}", obj, obj.getClass().getName());
-                }
+            if (obj != null) {
 
-                if (obj != null) {
+                // Generate Fixed Length table
+                // containing the positions of the fields
+                generateFixedLengthPositionMap(clazz, obj, results);
 
-                    // Generate Fixed Length table
-                    // containing the positions of the fields
-                    generateFixedLengthPositionMap(clazz, obj, results);
-
-                }
             }
         }
 
@@ -466,54 +443,53 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
      */
     private void initFixedLengthRecordParameters() {
 
-        for (Class<?> cl : models) {
+        Class<?> cl = type();
 
-            // Get annotation @FixedLengthRecord from the class
-            FixedLengthRecord record = cl.getAnnotation(FixedLengthRecord.class);
+        // Get annotation @FixedLengthRecord from the class
+        FixedLengthRecord record = cl.getAnnotation(FixedLengthRecord.class);
 
-            if (record != null) {
-                LOG.debug("Fixed length record: {}", record);
+        if (record != null) {
+            LOG.debug("Fixed length record: {}", record);
 
-                // Get carriage return parameter
-                crlf = record.crlf();
-                LOG.debug("Carriage return defined for the CSV: {}", crlf);
+            // Get carriage return parameter
+            crlf = record.crlf();
+            LOG.debug("Carriage return defined for the CSV: {}", crlf);
 
-                // Get hasHeader parameter
-                hasHeader = record.hasHeader();
-                LOG.debug("Has Header: {}", hasHeader);
-                
-                // Get skipHeader parameter
-                skipHeader = record.skipHeader();
-                LOG.debug("Skip Header: {}", skipHeader);
+            // Get hasHeader parameter
+            hasHeader = record.hasHeader();
+            LOG.debug("Has Header: {}", hasHeader);
 
-                // Get hasFooter parameter
-                hasFooter = record.hasFooter();
-                LOG.debug("Has Footer: {}", hasFooter);
-                
-                // Get skipFooter parameter
-                skipFooter = record.skipFooter();
-                LOG.debug("Skip Footer: {}", skipFooter);
-                
-                // Get isHeader parameter
-                isHeader = record.isHeader();
-                LOG.debug("Is Header: {}", isHeader);
-                
-                // Get isFooter parameter
-                isFooter = record.isFooter();
-                LOG.debug("Is Footer: {}", isFooter);
+            // Get skipHeader parameter
+            skipHeader = record.skipHeader();
+            LOG.debug("Skip Header: {}", skipHeader);
 
-                // Get padding character
-                paddingChar = record.paddingChar();
-                LOG.debug("Padding char: {}", paddingChar);
+            // Get hasFooter parameter
+            hasFooter = record.hasFooter();
+            LOG.debug("Has Footer: {}", hasFooter);
 
-                // Get length of the record
-                recordLength = record.length();
-                LOG.debug("Length of the record: {}", recordLength);
+            // Get skipFooter parameter
+            skipFooter = record.skipFooter();
+            LOG.debug("Skip Footer: {}", skipFooter);
 
-                // Get flag for ignore trailing characters
-                ignoreTrailingChars = record.ignoreTrailingChars();
-                LOG.debug("Ignore trailing chars: {}", ignoreTrailingChars);
-            }
+            // Get isHeader parameter
+            isHeader = record.isHeader();
+            LOG.debug("Is Header: {}", isHeader);
+
+            // Get isFooter parameter
+            isFooter = record.isFooter();
+            LOG.debug("Is Footer: {}", isFooter);
+
+            // Get padding character
+            paddingChar = record.paddingChar();
+            LOG.debug("Padding char: {}", paddingChar);
+
+            // Get length of the record
+            recordLength = record.length();
+            LOG.debug("Length of the record: {}", recordLength);
+
+            // Get flag for ignore trailing characters
+            ignoreTrailingChars = record.ignoreTrailingChars();
+            LOG.debug("Ignore trailing chars: {}", ignoreTrailingChars);
         }
         
         if (hasHeader && isHeader) {
