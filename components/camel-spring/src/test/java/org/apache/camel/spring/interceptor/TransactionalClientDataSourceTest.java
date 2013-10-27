@@ -30,7 +30,7 @@ public class TransactionalClientDataSourceTest extends TransactionClientDataSour
     public void testTransactionSuccess() throws Exception {
         template.sendBody("direct:okay", "Hello World");
 
-        int count = jdbc.queryForInt("select count(*) from books");
+        int count = jdbc.queryForObject("select count(*) from books", Integer.class);
         assertEquals("Number of books", 3, count);
     }
     // END SNIPPET: e3
@@ -47,7 +47,7 @@ public class TransactionalClientDataSourceTest extends TransactionClientDataSour
             assertEquals("We don't have Donkeys, only Camels", e.getCause().getCause().getMessage());
         }
 
-        int count = jdbc.queryForInt("select count(*) from books");
+        int count = jdbc.queryForObject("select count(*) from books", Integer.class);
         assertEquals("Number of books", 1, count);
     }
     // END SNIPPET: e4

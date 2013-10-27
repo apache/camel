@@ -233,8 +233,8 @@ public class SqlRouteTest extends CamelTestSupport {
         } catch (RuntimeCamelException e) {
             assertTrue(e.getCause() instanceof UncategorizedSQLException);
         }
-        assertEquals(0, jdbcTemplate.queryForInt("select count(*) from projects where id = 9"));
-        assertEquals(0, jdbcTemplate.queryForInt("select count(*) from projects where id = 10"));
+        assertEquals(new Integer(0), jdbcTemplate.queryForObject("select count(*) from projects where id = 9", Integer.class));
+        assertEquals(new Integer(0), jdbcTemplate.queryForObject("select count(*) from projects where id = 10", Integer.class));
     }
     
     @Test
@@ -247,8 +247,8 @@ public class SqlRouteTest extends CamelTestSupport {
         } catch (RuntimeCamelException e) {
             assertTrue(e.getCause() instanceof UncategorizedSQLException);
         }
-        assertEquals(0, jdbcTemplate.queryForInt("select count(*) from projects where id = 9"));
-        assertEquals(0, jdbcTemplate.queryForInt("select count(*) from projects where id = 10"));
+        assertEquals(new Integer(0), jdbcTemplate.queryForObject("select count(*) from projects where id = 9", Integer.class));
+        assertEquals(new Integer(0), jdbcTemplate.queryForObject("select count(*) from projects where id = 10", Integer.class));
     }
     
     @Before

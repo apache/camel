@@ -32,7 +32,7 @@ public class TransactionalClientDataSourceTransactedWithFileOnExceptionTest exte
         // wait for route to complete
         Thread.sleep(3000);
 
-        int count = jdbc.queryForInt("select count(*) from books");
+        int count = jdbc.queryForObject("select count(*) from books", Integer.class);
         assertEquals("Number of books", 3, count);
     }
 
@@ -49,7 +49,7 @@ public class TransactionalClientDataSourceTransactedWithFileOnExceptionTest exte
         Thread.sleep(3000);
 
         // should not be able to process the file so we still got 1 book as we did from the start
-        int count = jdbc.queryForInt("select count(*) from books");
+        int count = jdbc.queryForObject("select count(*) from books", Integer.class);
         assertEquals("Number of books", 1, count);
 
         assertMockEndpointsSatisfied();

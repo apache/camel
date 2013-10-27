@@ -45,7 +45,7 @@ public class SpringTransactionErrorHandlerAndContextScopedOnExceptionIssueTest e
     }
 
     public void testSpringTXOnExceptionIssueCommit() throws Exception {
-        int count = jdbc.queryForInt("select count(*) from books");
+        int count = jdbc.queryForObject("select count(*) from books", Integer.class);
         assertEquals("Number of books", 1, count);
 
         // we succeeded so no message to on exception
@@ -57,12 +57,12 @@ public class SpringTransactionErrorHandlerAndContextScopedOnExceptionIssueTest e
         assertMockEndpointsSatisfied();
 
         // we did commit so there should be 2 books
-        count = jdbc.queryForInt("select count(*) from books");
+        count = jdbc.queryForObject("select count(*) from books", Integer.class);
         assertEquals("Number of books", 2, count);
     }
 
     public void testSpringTXOnExceptionIssueRollback() throws Exception {
-        int count = jdbc.queryForInt("select count(*) from books");
+        int count = jdbc.queryForObject("select count(*) from books", Integer.class);
         assertEquals("Number of books", 1, count);
 
         getMockEndpoint("mock:onException").expectedMessageCount(1);
@@ -81,7 +81,7 @@ public class SpringTransactionErrorHandlerAndContextScopedOnExceptionIssueTest e
         assertMockEndpointsSatisfied();
 
         // we did rollback so there should be 1 books
-        count = jdbc.queryForInt("select count(*) from books");
+        count = jdbc.queryForObject("select count(*) from books", Integer.class);
         assertEquals("Number of books", 1, count);
     }
 

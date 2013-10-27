@@ -37,19 +37,18 @@ public class TransactionalClientDataSourceTransactedWithFileTest extends Transac
         // wait for route to complete
         Thread.sleep(3000);
 
-        int count = jdbc.queryForInt("select count(*) from books");
+        int count = jdbc.queryForObject("select count(*) from books", Integer.class);
         assertEquals("Number of books", 3, count);
     }
 
-    // TODO: disabled as it can fail for no apparent reason on another box
-    public void xxxtestTransactionRollback() throws Exception {
+    public void testTransactionRollback() throws Exception {
         template.sendBodyAndHeader("file://target/transacted/fail", "Hello World", Exchange.FILE_NAME, "fail.txt");
 
         // wait for route to complete
         Thread.sleep(3000);
 
         // should not be able to process the file so we still got 1 book as we did from the start
-        int count = jdbc.queryForInt("select count(*) from books");
+        int count = jdbc.queryForObject("select count(*) from books", Integer.class);
         assertEquals("Number of books", 1, count);
     }
 

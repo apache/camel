@@ -50,7 +50,7 @@ public class MixedTransactionPropagationTest extends SpringTestSupport {
     public void testOkay() throws Exception {
         template.sendBody("direct:okay", "Hello World");
 
-        int count = jdbc.queryForInt("select count(*) from books");
+        int count = jdbc.queryForObject("select count(*) from books", Integer.class);
         assertEquals("Number of books", 3, count);
     }
 
@@ -65,36 +65,36 @@ public class MixedTransactionPropagationTest extends SpringTestSupport {
             assertEquals("We don't have Donkeys, only Camels", e.getCause().getCause().getMessage());
         }
 
-        int count = jdbc.queryForInt("select count(*) from books");
+        int count = jdbc.queryForObject("select count(*) from books", Integer.class);
         assertEquals("Number of books", 1, count);
     }
 
     public void testMixedRollbackOnlyLast() throws Exception {
         template.sendBody("direct:mixed", "Hello World");
 
-        int count = jdbc.queryForInt("select count(*) from books");
+        int count = jdbc.queryForObject("select count(*) from books", Integer.class);
         assertEquals("Number of books", 3, count);
 
         // assert correct books in database
-        assertEquals(1, jdbc.queryForInt("select count(*) from books where title = 'Camel in Action'"));
-        assertEquals(1, jdbc.queryForInt("select count(*) from books where title = 'Tiger in Action'"));
-        assertEquals(1, jdbc.queryForInt("select count(*) from books where title = 'Elephant in Action'"));
-        assertEquals(0, jdbc.queryForInt("select count(*) from books where title = 'Lion in Action'"));
-        assertEquals(0, jdbc.queryForInt("select count(*) from books where title = 'Donkey in Action'"));
+        assertEquals(new Integer(1), jdbc.queryForObject("select count(*) from books where title = 'Camel in Action'", Integer.class));
+        assertEquals(new Integer(1), jdbc.queryForObject("select count(*) from books where title = 'Tiger in Action'", Integer.class));
+        assertEquals(new Integer(1), jdbc.queryForObject("select count(*) from books where title = 'Elephant in Action'", Integer.class));
+        assertEquals(new Integer(0), jdbc.queryForObject("select count(*) from books where title = 'Lion in Action'", Integer.class));
+        assertEquals(new Integer(0), jdbc.queryForObject("select count(*) from books where title = 'Donkey in Action'", Integer.class));
     }
 
     public void testMixedCommit() throws Exception {
         template.sendBody("direct:mixed3", "Hello World");
 
-        int count = jdbc.queryForInt("select count(*) from books");
+        int count = jdbc.queryForObject("select count(*) from books", Integer.class);
         assertEquals("Number of books", 5, count);
 
         // assert correct books in database
-        assertEquals(1, jdbc.queryForInt("select count(*) from books where title = 'Camel in Action'"));
-        assertEquals(1, jdbc.queryForInt("select count(*) from books where title = 'Tiger in Action'"));
-        assertEquals(1, jdbc.queryForInt("select count(*) from books where title = 'Elephant in Action'"));
-        assertEquals(1, jdbc.queryForInt("select count(*) from books where title = 'Lion in Action'"));
-        assertEquals(1, jdbc.queryForInt("select count(*) from books where title = 'Crocodile in Action'"));
+        assertEquals(new Integer(1), jdbc.queryForObject("select count(*) from books where title = 'Camel in Action'", Integer.class));
+        assertEquals(new Integer(1), jdbc.queryForObject("select count(*) from books where title = 'Tiger in Action'", Integer.class));
+        assertEquals(new Integer(1), jdbc.queryForObject("select count(*) from books where title = 'Elephant in Action'", Integer.class));
+        assertEquals(new Integer(1), jdbc.queryForObject("select count(*) from books where title = 'Lion in Action'", Integer.class));
+        assertEquals(new Integer(1), jdbc.queryForObject("select count(*) from books where title = 'Crocodile in Action'", Integer.class));
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {

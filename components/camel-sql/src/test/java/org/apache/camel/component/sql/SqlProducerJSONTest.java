@@ -65,7 +65,7 @@ public class SqlProducerJSONTest extends CamelTestSupport {
 
         mock.assertIsSatisfied();
 
-        assertEquals(4, jdbcTemplate.queryForInt("select count(*) from projects"));
+        assertEquals(new Integer(4), jdbcTemplate.queryForObject("select count(*) from projects", Integer.class));
     }
 
     @Override

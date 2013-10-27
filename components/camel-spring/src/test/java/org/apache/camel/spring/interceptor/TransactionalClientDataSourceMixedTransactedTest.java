@@ -29,7 +29,7 @@ public class TransactionalClientDataSourceMixedTransactedTest extends Transactio
         // "Donkey" as being handled so that we don't count with any exception on the client side.
         template.sendBody("direct:fail", "Hello World");
 
-        int count = jdbc.queryForInt("select count(*) from books");
+        int count = jdbc.queryForObject("select count(*) from books", Integer.class);
         // should get 2 books as the first operation will succeed and we are not transacted
         assertEquals("Number of books", 2, count);
     }

@@ -104,7 +104,7 @@ public class SqlTransactedRouteTest extends CamelTestSupport {
         
         assertFalse(exchange.isFailed());
         
-        long count = jdbc.queryForLong("select count(*) from customer");
+        long count = jdbc.queryForObject("select count(*) from customer", Long.class);
         assertEquals(2, count);
 
         Map<String, Object> map = jdbc.queryForMap("select * from customer where id = 'cust1'");
@@ -144,7 +144,7 @@ public class SqlTransactedRouteTest extends CamelTestSupport {
         
         assertTrue(exchange.isFailed());
         
-        long count = jdbc.queryForLong("select count(*) from customer");
+        long count = jdbc.queryForObject("select count(*) from customer", Long.class);
         assertEquals(0, count);
     }
 
@@ -173,7 +173,7 @@ public class SqlTransactedRouteTest extends CamelTestSupport {
         
         assertTrue(exchange.isFailed());
 
-        long count = jdbc.queryForLong("select count(*) from customer");
+        long count = jdbc.queryForObject("select count(*) from customer", Long.class);
         assertEquals(0, count);
     }
 }

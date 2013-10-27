@@ -63,12 +63,12 @@ public class SqlConsumerDeleteBatchCompleteTest extends CamelTestSupport {
         for (int i = 0; i < 5; i++) {
             // give it a little tine to delete
             Thread.sleep(1000);
-            int rows = jdbcTemplate.queryForInt("select count(*) from projects");
+            int rows = jdbcTemplate.queryForObject("select count(*) from projects", Integer.class);
             if (rows == 0) {
                 break;
             }
         }
-        assertEquals("Should have deleted all 3 rows", 0, jdbcTemplate.queryForInt("select count(*) from projects"));
+        assertEquals("Should have deleted all 3 rows", new Integer(0), jdbcTemplate.queryForObject("select count(*) from projects", Integer.class));
     }
 
     @Override

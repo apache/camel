@@ -86,7 +86,7 @@ public class JdbcMessageIdRepository extends AbstractJdbcMessageIdRepository<Str
 
     @Override
     protected int queryForInt(String key) {
-        return jdbcTemplate.queryForInt(queryString, processorName, key);
+        return jdbcTemplate.queryForObject(queryString, Integer.class, processorName, key);
     }
 
     @Override

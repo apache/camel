@@ -48,7 +48,7 @@ public class SpringTransactionalClientDataSourceTransactedTest extends SpringTes
     public void testTransactionSuccess() throws Exception {
         template.sendBody("direct:okay", "Hello World");
 
-        int count = jdbc.queryForInt("select count(*) from books");
+        int count = jdbc.queryForObject("select count(*) from books", Integer.class);
         assertEquals("Number of books", 3, count);
     }
 
@@ -63,7 +63,7 @@ public class SpringTransactionalClientDataSourceTransactedTest extends SpringTes
             assertEquals("We don't have Donkeys, only Camels", e.getCause().getCause().getMessage());
         }
 
-        int count = jdbc.queryForInt("select count(*) from books");
+        int count = jdbc.queryForObject("select count(*) from books", Integer.class);
         assertEquals("Number of books", 1, count);
     }
 

@@ -75,7 +75,7 @@ public class SqlConsumerDeleteFailedTest extends CamelTestSupport {
         // give it a little tine to delete
         Thread.sleep(2000);
 
-        assertEquals("Should have deleted 2 rows", 1, jdbcTemplate.queryForInt("select count(*) from projects"));
+        assertEquals("Should have deleted 2 rows", new Integer(1), jdbcTemplate.queryForObject("select count(*) from projects", Integer.class));
         assertEquals("Should be AMQ project that is BAD", "AMQ", jdbcTemplate.queryForObject("select PROJECT from projects where license = 'BAD'", String.class));
     }
 

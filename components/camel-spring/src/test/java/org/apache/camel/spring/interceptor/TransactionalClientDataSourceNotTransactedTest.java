@@ -35,7 +35,7 @@ public class TransactionalClientDataSourceNotTransactedTest extends Transactiona
             assertEquals("We don't have Donkeys, only Camels", e.getCause().getMessage());
         }
 
-        int count = jdbc.queryForInt("select count(*) from books");
+        int count = jdbc.queryForObject("select count(*) from books", Integer.class);
         // should get 2 books as the first operation will succeed and we are not transacted
         assertEquals("Number of books", 2, count);
     }

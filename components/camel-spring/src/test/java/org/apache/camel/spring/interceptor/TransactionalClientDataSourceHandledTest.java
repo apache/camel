@@ -33,7 +33,7 @@ public class TransactionalClientDataSourceHandledTest extends TransactionalClien
 
         assertMockEndpointsSatisfied();
 
-        int count = jdbc.queryForInt("select count(*) from books");
+        int count = jdbc.queryForObject("select count(*) from books", Integer.class);
         // there should be 2 books as the first insert operation succeeded
         assertEquals("Number of books", 2, count);
     }

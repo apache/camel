@@ -139,8 +139,8 @@ public class JdbcAggregationRepository extends ServiceSupport implements Recover
                 try {
                     LOG.debug("Adding exchange with key: [{}]", key);
 
-                    boolean present = jdbcTemplate.queryForInt(
-                            "SELECT COUNT(*) FROM " + getRepositoryName() + " WHERE " + ID + " = ?", key) != 0;
+                    boolean present = jdbcTemplate.queryForObject(
+                            "SELECT COUNT(*) FROM " + getRepositoryName() + " WHERE " + ID + " = ?", Integer.class, key) != 0;
 
                     // Recover existing exchange with that ID
                     if (isReturnOldExchange() && present) {

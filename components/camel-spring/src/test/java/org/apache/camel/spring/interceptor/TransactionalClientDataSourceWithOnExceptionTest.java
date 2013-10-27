@@ -43,7 +43,7 @@ public class TransactionalClientDataSourceWithOnExceptionTest extends Transactio
 
         assertMockEndpointsSatisfied();
 
-        int count = jdbc.queryForInt("select count(*) from books");
+        int count = jdbc.queryForObject("select count(*) from books", Integer.class);
         assertEquals("Number of books", 1, count);
     }
 
