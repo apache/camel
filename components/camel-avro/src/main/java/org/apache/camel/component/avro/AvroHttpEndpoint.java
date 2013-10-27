@@ -17,8 +17,6 @@
 package org.apache.camel.component.avro;
 
 import org.apache.camel.Component;
-import org.apache.camel.Consumer;
-import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 
 public class AvroHttpEndpoint extends AvroEndpoint {

@@ -19,13 +19,10 @@ package org.apache.camel.component.hazelcast;
 import java.util.Arrays;
 import java.util.Collection;
 
-import com.hazelcast.core.Hazelcast;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.MultiMap;
 
-import org.apache.camel.test.spring.CamelSpringTestSupport;
 import org.junit.After;
-import org.junit.AfterClass;
 import org.junit.Test;
 import org.mockito.Mock;
 import org.springframework.context.support.AbstractApplicationContext;

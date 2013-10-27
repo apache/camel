@@ -18,8 +18,6 @@ package org.apache.camel.component.jt400;
 
 import java.beans.PropertyVetoException;
 import java.net.URISyntaxException;
-import java.util.HashMap;
-import java.util.Map;
 
 import com.ibm.as400.access.AS400;
 import com.ibm.as400.access.AS400ConnectionPool;
@@ -29,9 +27,7 @@ import com.ibm.as400.access.KeyedDataQueue;
 import org.apache.camel.CamelException;
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.Producer;
-import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.impl.DefaultPollingEndpoint;
-import org.apache.camel.util.EndpointHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 

@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.cxf.feature;
 
-import java.util.ArrayList;
-import java.util.Collection;
 import javax.xml.transform.Source;
 import javax.xml.transform.dom.DOMSource;
 
@@ -29,7 +27,6 @@ import org.apache.cxf.binding.soap.SoapBinding;
 import org.apache.cxf.binding.soap.interceptor.SoapHeaderInterceptor;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.endpoint.Server;
-import org.apache.cxf.interceptor.ClientFaultConverter;
 import org.apache.cxf.jaxws.interceptors.HolderInInterceptor;
 import org.apache.cxf.jaxws.interceptors.HolderOutInterceptor;
 import org.apache.cxf.service.model.BindingMessageInfo;

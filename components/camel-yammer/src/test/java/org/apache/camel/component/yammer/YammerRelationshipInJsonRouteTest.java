@@ -17,12 +17,9 @@
 package org.apache.camel.component.yammer;
 
 
-import java.util.List;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.component.yammer.model.Relationships;
 import org.junit.Test;
 
 public class YammerRelationshipInJsonRouteTest extends YammerComponentTestSupport {

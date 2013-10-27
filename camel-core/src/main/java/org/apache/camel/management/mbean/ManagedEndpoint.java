@@ -23,7 +23,6 @@ import org.apache.camel.api.management.ManagedInstance;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.api.management.mbean.ManagedEndpointMBean;
 import org.apache.camel.spi.ManagementStrategy;
-import org.apache.camel.util.URISupport;
 
 @ManagedResource(description = "Managed Endpoint")
 public class ManagedEndpoint implements ManagedInstance, ManagedEndpointMBean {

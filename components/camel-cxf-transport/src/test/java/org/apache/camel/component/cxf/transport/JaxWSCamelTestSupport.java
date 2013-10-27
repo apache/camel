@@ -31,7 +31,6 @@ import javax.xml.ws.Service;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.cxf.Bus;
 import org.apache.cxf.BusFactory;
-import org.apache.cxf.feature.Feature;
 import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
 import org.junit.Before;
 

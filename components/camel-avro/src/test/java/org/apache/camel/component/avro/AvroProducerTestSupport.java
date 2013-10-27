@@ -20,7 +20,6 @@ package org.apache.camel.component.avro;
 import java.io.IOException;
 
 import org.apache.avro.ipc.Server;
-import org.apache.camel.CamelContext;
 import org.apache.camel.avro.generated.Key;
 import org.apache.camel.avro.generated.Value;
 import org.apache.camel.avro.impl.KeyValueProtocolImpl;

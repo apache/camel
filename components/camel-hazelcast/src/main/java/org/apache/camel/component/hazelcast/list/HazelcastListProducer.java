@@ -21,14 +21,12 @@ import java.util.Map;
 import com.hazelcast.core.HazelcastInstance;
 import com.hazelcast.core.IList;
 
-import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Producer;
 import org.apache.camel.component.hazelcast.HazelcastComponentHelper;
 import org.apache.camel.component.hazelcast.HazelcastConstants;
 import org.apache.camel.component.hazelcast.HazelcastDefaultEndpoint;
 import org.apache.camel.component.hazelcast.HazelcastDefaultProducer;
-import org.apache.camel.impl.DefaultProducer;
 
 /**
  * Implementation of Hazelcast List {@link Producer}.

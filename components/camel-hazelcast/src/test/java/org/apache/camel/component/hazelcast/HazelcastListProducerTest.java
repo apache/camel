@@ -16,9 +16,6 @@
  */
 package org.apache.camel.component.hazelcast;
 
-import java.util.ArrayList;
-import java.util.List;
-
 import com.hazelcast.core.HazelcastInstance;
 
 import com.hazelcast.core.IList;
@@ -26,7 +23,6 @@ import org.apache.camel.CamelExecutionException;
 import org.apache.camel.builder.RouteBuilder;
 
 import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 import org.mockito.Mock;
 

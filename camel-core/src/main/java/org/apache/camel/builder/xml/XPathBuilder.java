@@ -19,7 +19,6 @@ package org.apache.camel.builder.xml;
 import java.io.File;
 import java.io.InputStream;
 import java.io.StringReader;
-import java.util.HashMap;
 import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;

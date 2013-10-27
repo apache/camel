@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.hazelcast;
 
-import java.util.List;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
@@ -27,7 +26,6 @@ import com.hazelcast.core.ItemEventType;
 import com.hazelcast.core.ItemListener;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;

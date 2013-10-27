@@ -16,11 +16,8 @@
  */
 package org.apache.camel.api.management.mbean;
 
-import java.util.Map;
-
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedOperation;
-import org.apache.camel.spi.UriParam;
 
 public interface ManagedSchedulePollConsumerMBean extends ManagedConsumerMBean {
 

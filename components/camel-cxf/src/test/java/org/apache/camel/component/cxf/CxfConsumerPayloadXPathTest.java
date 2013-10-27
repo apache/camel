@@ -29,7 +29,6 @@ import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.commons.lang.StringUtils;
 import org.apache.cxf.binding.soap.SoapHeader;
-import org.junit.ComparisonFailure;
 import org.junit.Test;
 
 public class CxfConsumerPayloadXPathTest extends CamelTestSupport {

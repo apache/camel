@@ -31,8 +31,6 @@ import org.apache.camel.component.http.HttpConsumer;
 import org.apache.camel.component.http.HttpMessage;
 import org.apache.camel.component.http.helper.HttpHelper;
 import org.apache.camel.impl.DefaultExchange;
-import org.apache.camel.spi.UnitOfWork;
-import org.apache.camel.util.UnitOfWorkHelper;
 import org.eclipse.jetty.continuation.Continuation;
 import org.eclipse.jetty.continuation.ContinuationSupport;
 

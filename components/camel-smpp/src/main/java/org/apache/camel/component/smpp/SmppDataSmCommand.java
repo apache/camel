@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.smpp;
 
-import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -25,7 +24,6 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.jsmpp.bean.DataCoding;
 import org.jsmpp.bean.DataSm;
-import org.jsmpp.bean.DeliverSm;
 import org.jsmpp.bean.ESMClass;
 import org.jsmpp.bean.NumberingPlanIndicator;
 import org.jsmpp.bean.OptionalParameter;
