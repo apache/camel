@@ -16,6 +16,17 @@
  */
 package org.apache.camel.dataformat.bindy.csv;
 
+import org.apache.camel.Exchange;
+import org.apache.camel.dataformat.bindy.BindyAbstractDataFormat;
+import org.apache.camel.dataformat.bindy.BindyAbstractFactory;
+import org.apache.camel.dataformat.bindy.BindyCsvFactory;
+import org.apache.camel.dataformat.bindy.util.ConverterUtils;
+import org.apache.camel.spi.DataFormat;
+import org.apache.camel.util.IOHelper;
+import org.apache.camel.util.ObjectHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
@@ -27,18 +38,6 @@ import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.dataformat.bindy.BindyAbstractDataFormat;
-import org.apache.camel.dataformat.bindy.BindyAbstractFactory;
-import org.apache.camel.dataformat.bindy.BindyCsvFactory;
-import org.apache.camel.dataformat.bindy.util.ConverterUtils;
-import org.apache.camel.spi.DataFormat;
-import org.apache.camel.spi.PackageScanClassResolver;
-import org.apache.camel.util.IOHelper;
-import org.apache.camel.util.ObjectHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 /**
  * A <a href="http://camel.apache.org/data-format.html">data format</a> (
  * {@link DataFormat}) using Bindy to marshal to and from CSV files
@@ -49,10 +48,6 @@ public class BindyCsvDataFormat extends BindyAbstractDataFormat {
     public BindyCsvDataFormat() {
     }
 
-    public BindyCsvDataFormat(String... packages) {
-        super(packages);
-    }
-
     public BindyCsvDataFormat(Class<?> type) {
         super(type);
     }
@@ -60,7 +55,7 @@ public class BindyCsvDataFormat extends BindyAbstractDataFormat {
     @SuppressWarnings("unchecked")
     public void marshal(Exchange exchange, Object body, OutputStream outputStream) throws Exception {
 
-        BindyCsvFactory factory = (BindyCsvFactory)getFactory(exchange.getContext().getPackageScanClassResolver());
+        BindyCsvFactory factory = (BindyCsvFactory)getFactory();
         ObjectHelper.notNull(factory, "not instantiated");
 
         // Get CRLF
@@ -105,7 +100,7 @@ public class BindyCsvDataFormat extends BindyAbstractDataFormat {
     }
 
     public Object unmarshal(Exchange exchange, InputStream inputStream) throws Exception {
-        BindyCsvFactory factory = (BindyCsvFactory)getFactory(exchange.getContext().getPackageScanClassResolver());
+        BindyCsvFactory factory = (BindyCsvFactory)getFactory();
         ObjectHelper.notNull(factory, "not instantiated");
 
         // List of Pojos
@@ -301,11 +296,7 @@ public class BindyCsvDataFormat extends BindyAbstractDataFormat {
     }
 
     @Override
-    protected BindyAbstractFactory createModelFactory(PackageScanClassResolver resolver) throws Exception {
-        if (getClassType() != null) {
-            return new BindyCsvFactory(resolver, getClassType());
-        } else {
-            return new BindyCsvFactory(resolver, getPackages());
-        }
+    protected BindyAbstractFactory createModelFactory() throws Exception {
+        return new BindyCsvFactory(getClassType());
     }
 }

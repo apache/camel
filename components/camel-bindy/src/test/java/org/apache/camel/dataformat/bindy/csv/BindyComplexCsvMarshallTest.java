@@ -99,7 +99,7 @@ public class BindyComplexCsvMarshallTest extends AbstractJUnit4SpringContextTest
         @Override
         public void configure() {
             BindyCsvDataFormat camelDataFormat = 
-                new BindyCsvDataFormat("org.apache.camel.dataformat.bindy.model.complex.twoclassesandonelink");
+                new BindyCsvDataFormat(org.apache.camel.dataformat.bindy.model.complex.twoclassesandonelink.Order.class);
             camelDataFormat.setLocale("en");
 
             from("direct:start").marshal(camelDataFormat).to("mock:result");

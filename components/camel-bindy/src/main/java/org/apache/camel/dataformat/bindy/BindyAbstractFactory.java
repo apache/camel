@@ -16,21 +16,22 @@
  */
 package org.apache.camel.dataformat.bindy;
 
+import org.apache.camel.dataformat.bindy.annotation.CsvRecord;
+import org.apache.camel.dataformat.bindy.annotation.FixedLengthRecord;
+import org.apache.camel.dataformat.bindy.annotation.Link;
+import org.apache.camel.dataformat.bindy.annotation.Message;
+import org.apache.camel.dataformat.bindy.annotation.Section;
+import org.apache.camel.util.ObjectHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 import java.lang.reflect.Field;
 import java.text.NumberFormat;
 import java.util.HashMap;
-import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
-import org.apache.camel.dataformat.bindy.util.AnnotationModelLoader;
-import org.apache.camel.spi.PackageScanClassResolver;
-import org.apache.camel.spi.PackageScanFilter;
-import org.apache.camel.util.ObjectHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * The {@link BindyAbstractFactory} implements what its common to all the formats
@@ -39,61 +40,29 @@ import org.slf4j.LoggerFactory;
 public abstract class BindyAbstractFactory implements BindyFactory {
     private static final Logger LOG = LoggerFactory.getLogger(BindyAbstractFactory.class);
     protected final Map<String, List<Field>> annotatedLinkFields = new LinkedHashMap<String, List<Field>>();
-    protected Set<Class<?>> models;
-    protected Set<String> modelClassNames;
     protected String crlf;
-    private AnnotationModelLoader modelsLoader;
-    
-    private String[] packageNames;
     private String locale;
     private Class<?> type;
-
-    public BindyAbstractFactory(PackageScanClassResolver resolver, String... packageNames) throws Exception {
-        this.modelsLoader = new AnnotationModelLoader(resolver);
-        this.packageNames = packageNames;
-
-        if (LOG.isDebugEnabled()) {
-            for (String str : this.packageNames) {
-                LOG.debug("Package name: {}", str);
-            }
-        }
-
-        initModel();
-    }
     
-    public BindyAbstractFactory(PackageScanClassResolver resolver, Class<?> type) throws Exception {
-        this.modelsLoader = new AnnotationModelLoader(resolver);
+    public BindyAbstractFactory(Class<?> type) throws Exception {
         this.type = type;
         
         if (LOG.isDebugEnabled()) {
             LOG.debug("Class name: {}", type.getName());
         }
-        
-        initModel();
-    }
 
-    public BindyAbstractFactory(PackageScanClassResolver resolver, Class<?> type, PackageScanFilter scanFilter) throws Exception {
-        this.modelsLoader = new AnnotationModelLoader(resolver, scanFilter);
-        this.type = type;
-        
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Class name: {}", type.getName());
-        }
-        
-        initModel();
-    }
-
-    public BindyAbstractFactory(PackageScanClassResolver resolver, String[] packageNames, PackageScanFilter scanFilter) throws Exception {
-        this.modelsLoader = new AnnotationModelLoader(resolver, scanFilter);
-        this.packageNames = packageNames;
-        
-        if (LOG.isDebugEnabled()) {
-            for (String str : this.packageNames) {
-                LOG.debug("Package name: {}", str);
-            }
+        if(!validateType(type)) {
+            throw new IllegalArgumentException("...");
         }
 
         initModel();
+    }
+
+    protected boolean validateType(Class<?> type) {
+        return type.getAnnotation(CsvRecord.class) != null
+            || type.getAnnotation(Message.class) != null
+            || type.getAnnotation(Section.class) != null
+            || type.getAnnotation(FixedLengthRecord.class) != null;
     }
 
     /**
@@ -104,29 +73,6 @@ public abstract class BindyAbstractFactory implements BindyFactory {
      * @throws Exception
      */
     public void initModel() throws Exception {
-        // Find classes defined as Model
-        if (packageNames != null)  {
-            initModelClasses(this.packageNames);
-        } else if (type != null) {
-            // use the package name from the type as it may refer to types in the same package
-            String pckName = type.getPackage().getName();
-            initModelClasses(pckName);
-
-        } else {
-            throw new IllegalArgumentException("Either packagenames or type should be configured");
-        }
-        
-        modelClassNames = new HashSet<String>();
-        for (Class<?> clazz : models) {
-            modelClassNames.add(clazz.getName());
-        }
-    }
-
-    /**
-     * Find all the classes defined as model
-     */
-    private void initModelClasses(String... packageNames) throws Exception {
-        models = modelsLoader.loadModels(packageNames);
     }
 
     /**
@@ -164,6 +110,14 @@ public abstract class BindyAbstractFactory implements BindyFactory {
     }
 
     /**
+     *
+     * @return
+     */
+    protected Class<?> type() {
+        return type;
+    }
+
+    /**
      * Factory method generating new instances of the model and adding them to a
      * HashMap
      *
@@ -174,12 +128,8 @@ public abstract class BindyAbstractFactory implements BindyFactory {
     public Map<String, Object> factory() throws Exception {
         Map<String, Object> mapModel = new HashMap<String, Object>();
 
-        for (Class<?> cl : models) {
-            Object obj = ObjectHelper.newInstance(cl);
-
-            // Add instance of the class to the Map Model
-            mapModel.put(obj.getClass().getName(), obj);
-        }
+        Object obj = ObjectHelper.newInstance(type);
+        mapModel.put(obj.getClass().getName(), obj);
 
         return mapModel;
     }
@@ -190,7 +140,7 @@ public abstract class BindyAbstractFactory implements BindyFactory {
      * @return true if the model supports the identified classes
      */
     public boolean supportsModel(Set<String> classes) {
-        return modelClassNames.containsAll(classes);
+        return classes.contains(type);
     }
 
     /**

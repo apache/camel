@@ -64,7 +64,7 @@ public class BindySingleQuoteStartWordCsvUnmarshallTest extends AbstractJUnit4Sp
     }
 
     public static class ContextConfig extends RouteBuilder {
-        BindyCsvDataFormat camelDataFormat = new BindyCsvDataFormat("org.apache.camel.dataformat.bindy.model.simple.oneclass");
+        BindyCsvDataFormat camelDataFormat = new BindyCsvDataFormat(org.apache.camel.dataformat.bindy.model.simple.oneclass.Order.class);
 
         public void configure() {
             from(URI_DIRECT_START).unmarshal(camelDataFormat).to(URI_MOCK_RESULT);

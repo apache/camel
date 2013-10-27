@@ -43,7 +43,7 @@ public class BindySimpleKeyValuePairUnmarshallDslTest extends CommonBindyTest {
 
         public void configure() {
             from(URI_FILE_FIX).unmarshal()
-                .bindy(BindyType.KeyValue, "org.apache.camel.dataformat.bindy.model.fix.simple")
+                .bindy(BindyType.KeyValue, org.apache.camel.dataformat.bindy.model.fix.simple.Order.class)
                 .to(URI_MOCK_RESULT);
         }
 

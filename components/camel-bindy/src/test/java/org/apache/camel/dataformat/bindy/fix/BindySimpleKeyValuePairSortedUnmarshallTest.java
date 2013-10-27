@@ -41,7 +41,7 @@ public class BindySimpleKeyValuePairSortedUnmarshallTest extends CommonBindyTest
     }
 
     public static class ContextConfig extends RouteBuilder {
-        BindyKeyValuePairDataFormat kvpBindyDataFormat = new BindyKeyValuePairDataFormat("org.apache.camel.dataformat.bindy.model.fix.sorted");
+        BindyKeyValuePairDataFormat kvpBindyDataFormat = new BindyKeyValuePairDataFormat(org.apache.camel.dataformat.bindy.model.fix.sorted.body.Order.class);
 
         public void configure() {
             from(URI_FILE_FIX).unmarshal(kvpBindyDataFormat).to(URI_MOCK_RESULT);

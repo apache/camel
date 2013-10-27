@@ -71,7 +71,7 @@ public class BindySimpleFixedLengthUnmarshallTest extends AbstractJUnit4SpringCo
     }
 
     public static class ContextConfig extends RouteBuilder {
-        BindyFixedLengthDataFormat camelDataFormat = new BindyFixedLengthDataFormat("org.apache.camel.dataformat.bindy.fixed.unmarshall.simple.trim");
+        BindyFixedLengthDataFormat camelDataFormat = new BindyFixedLengthDataFormat(Order.class);
 
         public void configure() {
             from(URI_DIRECT_START).unmarshal(camelDataFormat).to(URI_MOCK_RESULT);

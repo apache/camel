@@ -16,15 +16,13 @@
  */
 package org.apache.camel.dataformat.bindy;
 
+import org.apache.camel.spi.DataFormat;
+
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
-import org.apache.camel.spi.DataFormat;
-import org.apache.camel.spi.PackageScanClassResolver;
-
 public abstract class BindyAbstractDataFormat implements DataFormat {
-    private String[] packages;
     private String locale;
     private BindyAbstractFactory modelFactory;
     private Class<?> classType;
@@ -32,20 +30,8 @@ public abstract class BindyAbstractDataFormat implements DataFormat {
     public BindyAbstractDataFormat() {
     }
 
-    public BindyAbstractDataFormat(String... packages) {
-        this.packages = packages;
-    }
-
     protected BindyAbstractDataFormat(Class<?> classType) {
         this.classType = classType;
-    }
-
-    public String[] getPackages() {
-        return packages;
-    }
-
-    public void setPackages(String... packages) {
-        this.packages = packages;
     }
 
     public Class<?> getClassType() {
@@ -64,9 +50,9 @@ public abstract class BindyAbstractDataFormat implements DataFormat {
         this.locale = locale;
     }
     
-    public BindyAbstractFactory getFactory(PackageScanClassResolver resolver) throws Exception {
+    public BindyAbstractFactory getFactory() throws Exception {
         if (modelFactory == null) {
-            modelFactory = createModelFactory(resolver);
+            modelFactory = createModelFactory();
             modelFactory.setLocale(locale);
         }
         return modelFactory;
@@ -76,7 +62,6 @@ public abstract class BindyAbstractDataFormat implements DataFormat {
         this.modelFactory = modelFactory;
     }
     
-    protected abstract BindyAbstractFactory createModelFactory(PackageScanClassResolver resolver) throws Exception;
 
     protected Object extractUnmarshalResult(List<Map<String, Object>> models) {
         if (getClassType() != null) {
@@ -98,4 +83,6 @@ public abstract class BindyAbstractDataFormat implements DataFormat {
             return models;
         }
     }
+
+    protected abstract BindyAbstractFactory createModelFactory() throws Exception;
 }
