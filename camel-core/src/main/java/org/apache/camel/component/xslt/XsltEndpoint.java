@@ -58,6 +58,16 @@ public class XsltEndpoint extends ProcessorEndpoint {
         return cacheStylesheet;
     }
 
+    @ManagedAttribute(description = "Endpoint State")
+    public String getState() {
+        return getStatus().name();
+    }
+
+    @ManagedAttribute(description = "Camel ID")
+    public String getCamelId() {
+        return getCamelContext().getName();
+    }
+
     public XsltEndpoint findOrCreateEndpoint(String uri, String newResourceUri) {
         String newUri = uri.replace(resourceUri, newResourceUri);
         LOG.trace("Getting endpoint with URI: {}", newUri);
@@ -73,7 +83,6 @@ public class XsltEndpoint extends ProcessorEndpoint {
             LOG.trace("{} set to {} creating new endpoint to handle exchange", XsltConstants.XSLT_RESOURCE_URI, newResourceUri);
             XsltEndpoint newEndpoint = findOrCreateEndpoint(getEndpointUri(), newResourceUri);
             newEndpoint.onExchange(exchange);
-            return;
         } else {
             if (!cacheStylesheet || cacheCleared) {
                 loadResource(resourceUri);
