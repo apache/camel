@@ -44,7 +44,7 @@ public final class HazelcastAggregationRepository extends ServiceSupport
                                                              OptimisticLockingAggregationRepository {
     private boolean optimistic;
     private boolean useLocalHzInstance;
-    private boolean useRecovery;
+    private boolean useRecovery = true;
     private IMap<String, DefaultExchangeHolder> cache;
     private IMap<String, DefaultExchangeHolder> persistedCache;
     private static final Logger LOG = LoggerFactory.getLogger(HazelcastAggregationRepository.class.getName()) ;
@@ -67,7 +67,6 @@ public final class HazelcastAggregationRepository extends ServiceSupport
         persistenceMapName = String.format("%s%s", mapName, COMPLETED_SUFFIX);
         optimistic = false;
         useLocalHzInstance = true;
-        useRecovery = true;
     }
 
     /**
@@ -298,7 +297,7 @@ public final class HazelcastAggregationRepository extends ServiceSupport
             if (useRecovery) {
                 LOG.trace("Putting an exchange with ID {} for key {} into a recoverable storage in an optimistic manner.",
                         exchange.getExchangeId(), key);
-                persistedCache.put(key, holder);
+                persistedCache.put(exchange.getExchangeId(), holder);
                 LOG.trace("Put an exchange with ID {} for key {} into a recoverable storage in an optimistic manner.",
                         exchange.getExchangeId(), key);
             }
@@ -323,7 +322,7 @@ public final class HazelcastAggregationRepository extends ServiceSupport
                     DefaultExchangeHolder removedHolder = tCache.remove(key);
                     LOG.trace("Putting an exchange with ID {} for key {} into a recoverable storage in a thread-safe manner.",
                             exchange.getExchangeId(), key);
-                    tPersistentCache.put(key, removedHolder);
+                    tPersistentCache.put(exchange.getExchangeId(), removedHolder);
 
                     tCtx.commitTransaction();
                     LOG.trace("Removed an exchange with ID {} for key {} in a thread-safe manner.", exchange.getExchangeId(), key);
