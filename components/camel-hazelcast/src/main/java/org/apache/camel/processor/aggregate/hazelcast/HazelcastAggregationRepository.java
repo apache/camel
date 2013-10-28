@@ -11,6 +11,9 @@ import com.hazelcast.transaction.TransactionContext;
 import com.hazelcast.transaction.TransactionOptions;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.builder.xml.DomResultHandlerFactory;
+import org.apache.camel.impl.DefaultExchange;
+import org.apache.camel.impl.DefaultExchangeHolder;
 import org.apache.camel.spi.OptimisticLockingAggregationRepository;
 import org.apache.camel.spi.RecoverableAggregationRepository;
 import org.apache.camel.support.ServiceSupport;
@@ -42,8 +45,8 @@ public final class HazelcastAggregationRepository extends ServiceSupport
     private boolean optimistic;
     private boolean useLocalHzInstance;
     private boolean useRecovery;
-    private IMap<String, Exchange> cache;
-    private IMap<String, Exchange> persistedCache;
+    private IMap<String, DefaultExchangeHolder> cache;
+    private IMap<String, DefaultExchangeHolder> persistedCache;
     private static final Logger LOG = LoggerFactory.getLogger(HazelcastAggregationRepository.class.getName()) ;
     private HazelcastInstance hzInstance;
     private String mapName;
@@ -163,14 +166,18 @@ public final class HazelcastAggregationRepository extends ServiceSupport
         }
         LOG.trace("Adding an Exchange with ID {} for key {} in an optimistic manner.", newExchange.getExchangeId(), key);
         if (oldExchange == null) {
-            final Exchange misbehaviorEx = cache.putIfAbsent(key, newExchange);
-            if (misbehaviorEx != null) {
+            DefaultExchangeHolder holder = DefaultExchangeHolder.marshal(newExchange);
+            final DefaultExchangeHolder misbehaviorHolder = cache.putIfAbsent(key, holder);
+            if (misbehaviorHolder != null) {
+                Exchange misbehaviorEx = unmarshallExchange(camelContext, misbehaviorHolder);
                 LOG.error("Optimistic locking failed for exchange with key {}: IMap#putIfAbsend returned Exchange with ID {}, while it's expected no exchanges to be returned",
-                        key, misbehaviorEx.getExchangeId());
+                        key, misbehaviorEx != null ? misbehaviorEx.getExchangeId() : "<null>");
                 throw  new OptimisticLockingException();
             }
         } else {
-            if (!cache.replace(key, oldExchange, newExchange)) {
+            DefaultExchangeHolder oldHolder = DefaultExchangeHolder.marshal(oldExchange);
+            DefaultExchangeHolder newHolder = DefaultExchangeHolder.marshal(newExchange);
+            if (!cache.replace(key, oldHolder, newHolder)) {
                 LOG.error("Optimistic locking failed for exchange with key {}: IMap#replace returned no Exchanges, while it's expected to replace one",
                         key);
                 throw new OptimisticLockingException();
@@ -189,9 +196,11 @@ public final class HazelcastAggregationRepository extends ServiceSupport
         Lock l = hzInstance.getLock(mapName);
         try {
             l.lock();
-            return cache.put(key, exchange);
+            DefaultExchangeHolder newHolder = DefaultExchangeHolder.marshal(exchange);
+            DefaultExchangeHolder oldHolder = cache.put(key, newHolder);
+            return unmarshallExchange(camelContext, oldHolder);
         } finally {
-            LOG.trace("Adding an Exchange with ID {} for key {} in a thread-safe manner.", exchange.getExchangeId(), key);
+            LOG.trace("Added an Exchange with ID {} for key {} in a thread-safe manner.", exchange.getExchangeId(), key);
             l.unlock();
         }
     }
@@ -214,8 +223,7 @@ public final class HazelcastAggregationRepository extends ServiceSupport
     @Override
     public Exchange recover(CamelContext camelContext, String exchangeId) {
         LOG.trace("Recovering an Exchange with ID {}.", exchangeId);
-        return useRecovery ? persistedCache.get(exchangeId) : null;
-
+        return useRecovery ? unmarshallExchange(camelContext, persistedCache.get(exchangeId)) : null;
     }
 
     @Override
@@ -265,7 +273,7 @@ public final class HazelcastAggregationRepository extends ServiceSupport
 
     @Override
     public Exchange get(CamelContext camelContext, String key) {
-        return cache.get(key);
+        return unmarshallExchange(camelContext, cache.get(key));
     }
 
     /**
@@ -278,9 +286,10 @@ public final class HazelcastAggregationRepository extends ServiceSupport
      */
     @Override
     public void remove(CamelContext camelContext, String key, Exchange exchange) {
+        DefaultExchangeHolder holder = DefaultExchangeHolder.marshal(exchange);
         if (optimistic) {
             LOG.trace("Removing an exchange with ID {} for key {} in an optimistic manner.", exchange.getExchangeId(), key);
-            if (!cache.remove(key, exchange)) {
+            if (!cache.remove(key, holder)) {
                 LOG.error("Optimistic locking failed for exchange with key {}: IMap#remove removed no Exchanges, while it's expected to remove one.",
                         key);
                 throw new OptimisticLockingException();
@@ -289,7 +298,7 @@ public final class HazelcastAggregationRepository extends ServiceSupport
             if (useRecovery) {
                 LOG.trace("Putting an exchange with ID {} for key {} into a recoverable storage in an optimistic manner.",
                         exchange.getExchangeId(), key);
-                persistedCache.put(key, exchange);
+                persistedCache.put(key, holder);
                 LOG.trace("Put an exchange with ID {} for key {} into a recoverable storage in an optimistic manner.",
                         exchange.getExchangeId(), key);
             }
@@ -308,13 +317,13 @@ public final class HazelcastAggregationRepository extends ServiceSupport
 
                     tCtx.beginTransaction();
 
-                    TransactionalMap<String, Exchange> tCache = tCtx.getMap(cache.getName());
-                    TransactionalMap<String, Exchange> tPersistentCache = tCtx.getMap(persistedCache.getName());
+                    TransactionalMap<String, DefaultExchangeHolder> tCache = tCtx.getMap(cache.getName());
+                    TransactionalMap<String, DefaultExchangeHolder> tPersistentCache = tCtx.getMap(persistedCache.getName());
 
-                    tCache.remove(key);
+                    DefaultExchangeHolder removedHolder = tCache.remove(key);
                     LOG.trace("Putting an exchange with ID {} for key {} into a recoverable storage in a thread-safe manner.",
                             exchange.getExchangeId(), key);
-                    tPersistentCache.put(key, exchange);
+                    tPersistentCache.put(key, removedHolder);
 
                     tCtx.commitTransaction();
                     LOG.trace("Removed an exchange with ID {} for key {} in a thread-safe manner.", exchange.getExchangeId(), key);
@@ -379,11 +388,18 @@ public final class HazelcastAggregationRepository extends ServiceSupport
         if (useRecovery) {
             persistedCache.clear();
         }
-
         cache.clear();
-
         if (useLocalHzInstance) {
             hzInstance.getLifecycleService().shutdown();
         }
+    }
+
+    private Exchange unmarshallExchange(CamelContext camelContext, DefaultExchangeHolder holder) {
+        Exchange exchange = null;
+        if (holder != null) {
+            exchange = new DefaultExchange(camelContext);
+            DefaultExchangeHolder.unmarshal(exchange, holder);
+        }
+        return exchange;
     }
 }
