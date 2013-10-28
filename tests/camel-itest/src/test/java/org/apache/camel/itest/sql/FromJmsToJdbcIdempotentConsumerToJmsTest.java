@@ -54,6 +54,10 @@ public class FromJmsToJdbcIdempotentConsumerToJmsTest extends CamelSpringTestSup
         dataSource = context.getRegistry().lookupByNameAndType(getDatasourceName(), DataSource.class);
         jdbcTemplate = new JdbcTemplate(dataSource);
         jdbcTemplate.afterPropertiesSet();
+
+        // cater for slow servers
+        getMockEndpoint("mock:a").setResultWaitTime(30000);
+        getMockEndpoint("mock:b").setResultWaitTime(30000);
     }
 
     protected String getDatasourceName() {
@@ -133,10 +137,6 @@ public class FromJmsToJdbcIdempotentConsumerToJmsTest extends CamelSpringTestSup
 
         template.sendBodyAndHeader("activemq:queue:inbox", "B", "uid", 456);
 
-        // cater for slow servers
-        getMockEndpoint("mock:a").setResultWaitTime(30000);
-        getMockEndpoint("mock:b").setResultWaitTime(30000);
-
         // assert mock and wait for the message to be done
         assertMockEndpointsSatisfied();
         assertTrue("Should complete 7 messages", notify.matchesMockWaitTime());
@@ -164,10 +164,6 @@ public class FromJmsToJdbcIdempotentConsumerToJmsTest extends CamelSpringTestSup
         template.sendBodyAndHeader("activemq:queue:inbox", "D", "uid", 111);
         template.sendBodyAndHeader("activemq:queue:inbox", "E", "uid", 222);
         template.sendBodyAndHeader("activemq:queue:inbox", "D", "uid", 111);
-
-        // cater for slow servers
-        getMockEndpoint("mock:a").setResultWaitTime(30000);
-        getMockEndpoint("mock:b").setResultWaitTime(30000);
 
         // assert mock and wait for the message to be done
         assertMockEndpointsSatisfied();
