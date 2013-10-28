@@ -204,8 +204,7 @@ public class SqsConsumer extends ScheduledBatchPollingConsumer {
     }
 
     private boolean passedThroughFilter(Exchange exchange) {
-        return exchange.getProperties().containsKey(Exchange.FILTER_MATCHED)
-                && ((Boolean) exchange.getProperties().get(Exchange.FILTER_MATCHED));
+        return exchange.getProperty(Exchange.FILTER_MATCHED, false, Boolean.class);
     }
 
     /**
