@@ -269,6 +269,20 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
     }
 
     /**
+     * Sets the bean properties on the given bean.
+     * <p/>
+     * This is the same logical implementation as {@link DefaultComponent#setProperties(Object, java.util.Map)}
+     *
+     * @param bean  the bean
+     * @param parameters  properties to set
+     */
+    protected void setProperties(Object bean, Map<String, Object> parameters) throws Exception {
+        // set reference properties first as they use # syntax that fools the regular properties setter
+        EndpointHelper.setReferenceProperties(getCamelContext(), bean, parameters);
+        EndpointHelper.setProperties(getCamelContext(), bean, parameters);
+    }
+
+    /**
      * A factory method to lazily create the endpointUri if none is specified
      */
     protected String createEndpointUri() {
