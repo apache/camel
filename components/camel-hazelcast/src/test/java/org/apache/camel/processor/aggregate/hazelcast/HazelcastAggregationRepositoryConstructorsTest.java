@@ -4,20 +4,10 @@ import com.hazelcast.core.HazelcastInstance;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Before;
 import org.junit.Test;
 
 
 public class HazelcastAggregationRepositoryConstructorsTest extends CamelTestSupport {
-    private static final String HAZELCAST_INSTANCE_NAME = "HazelcastAggregationRepositoryTestInstance";
-    private HazelcastInstance hzInstance;
-
-    @Before
-    public void start() {
-        /*Config cfg = new XmlConfigBuilder().build();
-        cfg.setProperty("hazelcast.version.check.enabled", "false");
-        hzInstance = Hazelcast.newHazelcastInstance(cfg);*/
-    }
 
     @Test(expected = UnsupportedOperationException.class)
     public void nonOptimisticRepoFailsOnOptimisticAdd() throws Exception {
