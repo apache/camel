@@ -27,7 +27,6 @@ import javax.net.ssl.SSLSocket;
 import javax.net.ssl.TrustManagerFactory;
 
 import org.apache.camel.util.IOHelper;
-import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.jsse.SSLContextParameters;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPClientConfig;
@@ -165,7 +164,7 @@ public class FtpsEndpoint extends FtpEndpoint<FTPFile> {
             if (timeout != null) {
                 dataTimeout = getCamelContext().getTypeConverter().convertTo(int.class, dataTimeout);
             }
-            IntrospectionSupport.setProperties(client, ftpClientParameters);
+            setProperties(client, ftpClientParameters);
         }
 
         if (ftpClientConfigParameters != null) {
@@ -173,7 +172,7 @@ public class FtpsEndpoint extends FtpEndpoint<FTPFile> {
             if (ftpClientConfig == null) {
                 ftpClientConfig = new FTPClientConfig();
             }
-            IntrospectionSupport.setProperties(ftpClientConfig, ftpClientConfigParameters);
+            setProperties(ftpClientConfig, ftpClientConfigParameters);
         }
 
         if (dataTimeout > 0) {
