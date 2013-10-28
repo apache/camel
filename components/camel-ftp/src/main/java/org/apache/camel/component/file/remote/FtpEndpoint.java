@@ -24,7 +24,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.component.file.GenericFileConfiguration;
 import org.apache.camel.component.file.GenericFileProducer;
 import org.apache.camel.component.file.remote.RemoteFileConfiguration.PathSeparator;
-import org.apache.camel.util.IntrospectionSupport;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPClientConfig;
 import org.apache.commons.net.ftp.FTPFile;
@@ -100,7 +99,7 @@ public class FtpEndpoint<T extends FTPFile> extends RemoteFileEndpoint<FTPFile> 
             if (timeout != null) {
                 dataTimeout = getCamelContext().getTypeConverter().convertTo(int.class, dataTimeout);
             }
-            IntrospectionSupport.setProperties(client, ftpClientParameters);
+            setProperties(client, ftpClientParameters);
         }
         
         if (ftpClientConfigParameters != null) {
@@ -108,7 +107,7 @@ public class FtpEndpoint<T extends FTPFile> extends RemoteFileEndpoint<FTPFile> 
             if (ftpClientConfig == null) {
                 ftpClientConfig = new FTPClientConfig();
             }
-            IntrospectionSupport.setProperties(ftpClientConfig, ftpClientConfigParameters);
+            setProperties(ftpClientConfig, ftpClientConfigParameters);
         }
 
         if (dataTimeout > 0) {
