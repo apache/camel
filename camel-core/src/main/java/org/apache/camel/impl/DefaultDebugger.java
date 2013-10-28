@@ -122,7 +122,7 @@ public class DefaultDebugger implements Debugger, CamelContextAware {
     }
 
     public void addSingleStepBreakpoint(final Breakpoint breakpoint) {
-        addSingleStepBreakpoint(breakpoint, null);
+        addSingleStepBreakpoint(breakpoint);
     }
 
     public void addSingleStepBreakpoint(final Breakpoint breakpoint, Condition... conditions) {

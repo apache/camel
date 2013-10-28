@@ -49,13 +49,16 @@ public class ObservableMessageTest extends CamelTestSupport {
     }
 
     public class MyObservableMessage extends ObservableMessage {
+        @Override
         protected void configure(Observable<Message> observable) {
             // lets process the messages using the RX API
             observable.map(new Func1<Message, String>() {
+                @Override
                 public String call(Message message) {
                     return "Hello " + message.getBody(String.class);
                 }
             }).subscribe(new Action1<String>() {
+                @Override
                 public void call(String body) {
                     template.sendBody(resultEndpoint, body);
                 }
@@ -66,6 +69,7 @@ public class ObservableMessageTest extends CamelTestSupport {
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
+            @Override
             public void configure() {
                 from("direct:start").process(observableMessage);
             }

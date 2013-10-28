@@ -31,10 +31,10 @@ import rx.util.functions.Func1;
  */
 public class EndpointSubscription<T> implements Subscription {
     private final Endpoint endpoint;
-    private final Observer<T> observer;
+    private final Observer<? super T> observer;
     private Consumer consumer;
 
-    public EndpointSubscription(Endpoint endpoint, final Observer<T> observer,
+    public EndpointSubscription(Endpoint endpoint, final Observer<? super T> observer,
                                 final Func1<Exchange, T> func) {
         this.endpoint = endpoint;
         this.observer = observer;
@@ -72,7 +72,7 @@ public class EndpointSubscription<T> implements Subscription {
         return endpoint;
     }
 
-    public Observer<T> getObserver() {
+    public Observer<? super T> getObserver() {
         return observer;
     }
 

@@ -30,7 +30,7 @@ public class SendToTest extends RxTestSupport {
         Observable<Order> someObservable = Observable.from(expectedBodies);
 
         final MockEndpoint mockEndpoint = camelContext.getEndpoint("mock:results", MockEndpoint.class);
-        mockEndpoint.expectedBodiesReceived(expectedBodies);
+        mockEndpoint.expectedBodiesReceived((Object[]) expectedBodies);
 
         // lets send events on the observable to the camel endpoint
         reactiveCamel.sendTo(someObservable, "mock:results");

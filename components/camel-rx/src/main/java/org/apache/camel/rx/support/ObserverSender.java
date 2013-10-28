@@ -27,7 +27,7 @@ import rx.Observer;
 /**
  * An {@link Observer} which sends events to a given {@link Endpoint}
  */
-public class ObserverSender implements Observer {
+public class ObserverSender<T> implements Observer<T> {
     private Producer producer;
 
     public ObserverSender(Endpoint endpoint) throws Exception {
@@ -35,6 +35,7 @@ public class ObserverSender implements Observer {
         ServiceHelper.startService(producer);
     }
 
+    @Override
     public void onCompleted() {
         if (producer != null) {
             try {
@@ -47,13 +48,15 @@ public class ObserverSender implements Observer {
         }
     }
 
+    @Override
     public void onError(Throwable e) {
         Exchange exchange = producer.createExchange();
         exchange.setException(e);
         send(exchange);
     }
 
-    public void onNext(Object o) {
+    @Override
+    public void onNext(T o) {
         Exchange exchange = producer.createExchange();
         exchange.getIn().setBody(o);
         send(exchange);

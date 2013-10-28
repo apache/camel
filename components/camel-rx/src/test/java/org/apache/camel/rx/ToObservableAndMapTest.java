@@ -41,6 +41,7 @@ public class ToObservableAndMapTest extends RxTestSupport {
 
         // transform the stream
         Observable<String> observable = observableMessage.map(new Func1<Message, String>() {
+            @Override
             public String call(Message message) {
                 return "Transformed value: headers " + message.getHeaders();
             }
