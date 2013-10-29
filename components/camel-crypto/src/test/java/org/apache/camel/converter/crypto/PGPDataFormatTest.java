@@ -121,7 +121,6 @@ public class PGPDataFormatTest extends AbstractPGPDataFormatTest {
 
                 PGPDataFormat pgpDecrypt = new PGPDataFormat();
                 pgpDecrypt.setKeyFileName(keyFileNameSec);
-               // pgpDecrypt.setKeyUserid(keyUserid);
                 pgpDecrypt.setPassword(keyPassword);
                 pgpDecrypt.setProvider(getProvider());
 
@@ -176,7 +175,7 @@ public class PGPDataFormatTest extends AbstractPGPDataFormatTest {
                 pgpDecryptByteArray.setPassphraseAccessor(passphraseAccessor);
                 pgpDecryptByteArray.setProvider(getProvider());
 
-                from("direct:key-ring-byte-array").marshal(pgpEncryptByteArray).to("mock:encrypted").unmarshal(pgpDecryptByteArray)
+                from("direct:key-ring-byte-array").streamCaching().marshal(pgpEncryptByteArray).to("mock:encrypted").unmarshal(pgpDecryptByteArray)
                         .to("mock:unencrypted");
                 // END SNIPPET: pgp-format-key-ring-byte-array
 
@@ -195,7 +194,7 @@ public class PGPDataFormatTest extends AbstractPGPDataFormatTest {
                 pgpVerifyAndDecryptByteArray.setEncryptionKeyRing(getSecKeyRing());
                 pgpVerifyAndDecryptByteArray.setProvider(getProvider());
 
-                from("direct:sign-key-ring-byte-array")
+                from("direct:sign-key-ring-byte-array").streamCaching()
                 // encryption key ring can also be set as header
                         .setHeader(PGPDataFormat.ENCRYPTION_KEY_RING).constant(getPublicKeyRing()).marshal(pgpSignAndEncryptByteArray)
                         // it is recommended to remove the header immediately when it is no longer needed
@@ -207,7 +206,7 @@ public class PGPDataFormatTest extends AbstractPGPDataFormatTest {
                 // END SNIPPET: pgp-format-signature-key-ring-byte-array
             }
 
-           
+         
         };
     }
 
