@@ -25,7 +25,6 @@ import org.apache.camel.Producer;
 import org.apache.camel.component.sjms.jms.ConnectionResource;
 import org.apache.camel.component.sjms.jms.KeyFormatStrategy;
 import org.apache.camel.component.sjms.jms.SessionAcknowledgementType;
-import org.apache.camel.component.sjms.jms.SessionPool;
 import org.apache.camel.component.sjms.producer.InOnlyProducer;
 import org.apache.camel.component.sjms.producer.InOutProducer;
 import org.apache.camel.impl.DefaultEndpoint;
@@ -42,7 +41,7 @@ import org.slf4j.LoggerFactory;
 public class SjmsEndpoint extends DefaultEndpoint implements MultipleConsumersSupport {
     protected final Logger logger = LoggerFactory.getLogger(getClass());
 
-    private SessionPool sessions;
+    
     @UriParam
     private boolean synchronous = true;
     @UriParam
@@ -95,28 +94,10 @@ public class SjmsEndpoint extends DefaultEndpoint implements MultipleConsumersSu
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-
-        //
-        // TODO since we only need a session pool for one use case, find a
-        // better way
-        //
-        // We only create a session pool when we are not transacted.
-        // Transacted listeners or producers need to be paired with the
-        // Session that created them.
-        if (!isTransacted() && getExchangePattern().equals(ExchangePattern.InOnly)) {
-            sessions = new SessionPool(getSessionCount(), getConnectionResource());
-
-            // TODO fix the string hack
-            sessions.setAcknowledgeMode(SessionAcknowledgementType.valueOf(getAcknowledgementMode() + ""));
-            getSessions().fillPool();
-        }
     }
 
     @Override
     protected void doStop() throws Exception {
-        if (getSessions() != null) {
-            getSessions().drainPool();
-        }
         super.doStop();
     }
 
@@ -166,25 +147,6 @@ public class SjmsEndpoint extends DefaultEndpoint implements MultipleConsumersSu
 
     public KeyFormatStrategy getJmsKeyFormatStrategy() {
         return getComponent().getKeyFormatStrategy();
-    }
-
-    /**
-     * Returns a SessionPool if available.
-     * 
-     * @return the sessions
-     */
-    public SessionPool getSessions() {
-        return sessions;
-    }
-
-    /**
-     * SessionPool used by endpoints that do not require a dedicated session per
-     * consumer or producer.
-     * 
-     * @param sessions default null
-     */
-    public void setSessions(SessionPool sessions) {
-        this.sessions = sessions;
     }
 
     /**
@@ -239,6 +201,7 @@ public class SjmsEndpoint extends DefaultEndpoint implements MultipleConsumersSu
      * 
      * @return the sessionCount
      */
+    @Deprecated
     public int getSessionCount() {
         return sessionCount;
     }
@@ -250,6 +213,7 @@ public class SjmsEndpoint extends DefaultEndpoint implements MultipleConsumersSu
      * 
      * @param sessionCount the number of Session instances, default is 1
      */
+    @Deprecated
     public void setSessionCount(int sessionCount) {
         this.sessionCount = sessionCount;
     }

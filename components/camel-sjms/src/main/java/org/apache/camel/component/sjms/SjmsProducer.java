@@ -157,7 +157,7 @@ public abstract class SjmsProducer extends DefaultAsyncProducer {
         if (log.isDebugEnabled()) {
             log.debug("Processing Exchange.id:{}", exchange.getExchangeId());
         }
-        
+
         try {
             if (!isSynchronous()) {
                 if (log.isDebugEnabled()) {
@@ -189,10 +189,9 @@ public abstract class SjmsProducer extends DefaultAsyncProducer {
             exchange.setException(e);
         }
         log.debug("Processing Exchange.id:{}", exchange.getExchangeId() + " - SUCCESS");
-        
+
         return isSynchronous();
     }
-    
 
     protected SjmsEndpoint getSjmsEndpoint() {
         return (SjmsEndpoint)this.getEndpoint();
