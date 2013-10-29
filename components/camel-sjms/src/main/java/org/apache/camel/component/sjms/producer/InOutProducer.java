@@ -79,40 +79,49 @@ public class InOutProducer extends SjmsProducer {
 
         @Override
         protected MessageConsumerResource createObject() throws Exception {
-            Connection conn = getConnectionResource().borrowConnection();
+            MessageConsumerResource answer = null;
+            Connection conn = null;
             Session session = null;
-            if (isEndpointTransacted()) {
-                session = conn.createSession(true, Session.SESSION_TRANSACTED);
-            } else {
-                session = conn.createSession(false, Session.AUTO_ACKNOWLEDGE);
-            }
-            getConnectionResource().returnConnection(conn);
-            Destination replyToDestination = null;
-            if (ObjectHelper.isEmpty(getNamedReplyTo())) {
-                replyToDestination = JmsObjectFactory.createTemporaryDestination(session, isTopic());
-            } else {
-                replyToDestination = JmsObjectFactory.createDestination(session, getNamedReplyTo(), isTopic());
-            }
-            MessageConsumer messageConsumer = JmsObjectFactory.createMessageConsumer(session, replyToDestination, null, isTopic(), null, true);
-            messageConsumer.setMessageListener(new MessageListener() {
-
-                @Override
-                public void onMessage(Message message) {
-                    if (logger.isDebugEnabled()) {
-                        logger.debug("Message Received in the Consumer Pool");
-                        logger.debug("  Message : {}", message);
-                    }
-                    try {
-                        Exchanger<Object> exchanger = exchangerMap.get(message.getJMSCorrelationID());
-                        exchanger.exchange(message, getResponseTimeOut(), TimeUnit.MILLISECONDS);
-                    } catch (Exception e) {
-                        ObjectHelper.wrapRuntimeCamelException(e);
-                    }
-
+            try {
+                conn = getConnectionResource().borrowConnection();
+                if (isEndpointTransacted()) {
+                    session = conn.createSession(true, Session.SESSION_TRANSACTED);
+                } else {
+                    session = conn.createSession(false, Session.AUTO_ACKNOWLEDGE);
                 }
-            });
-            MessageConsumerResource mcm = new MessageConsumerResource(session, messageConsumer, replyToDestination);
-            return mcm;
+
+                Destination replyToDestination = null;
+                if (ObjectHelper.isEmpty(getNamedReplyTo())) {
+                    replyToDestination = JmsObjectFactory.createTemporaryDestination(session, isTopic());
+                } else {
+                    replyToDestination = JmsObjectFactory.createDestination(session, getNamedReplyTo(), isTopic());
+                }
+                MessageConsumer messageConsumer = JmsObjectFactory.createMessageConsumer(session, replyToDestination, null, isTopic(), null, true);
+                messageConsumer.setMessageListener(new MessageListener() {
+
+                    @Override
+                    public void onMessage(Message message) {
+                        if (logger.isDebugEnabled()) {
+                            logger.debug("Message Received in the Consumer Pool");
+                            logger.debug("  Message : {}", message);
+                        }
+                        try {
+                            Exchanger<Object> exchanger = exchangerMap.get(message.getJMSCorrelationID());
+                            exchanger.exchange(message, getResponseTimeOut(), TimeUnit.MILLISECONDS);
+                        } catch (Exception e) {
+                            ObjectHelper.wrapRuntimeCamelException(e);
+                        }
+
+                    }
+                });
+                answer = new MessageConsumerResource(session, messageConsumer, replyToDestination);
+            } catch (Exception e) {
+                log.error("Unable to create the MessageConsumerResource: " + e.getLocalizedMessage());
+                throw new CamelException(e);
+            } finally {
+                getConnectionResource().returnConnection(conn);
+            }
+            return answer;
         }
 
         @Override
@@ -227,21 +236,42 @@ public class InOutProducer extends SjmsProducer {
 
     @Override
     public MessageProducerResources doCreateProducerModel() throws Exception {
-        Connection conn = getConnectionResource().borrowConnection();
-        Session session = null;
-        if (isEndpointTransacted()) {
-            session = conn.createSession(true, getAcknowledgeMode());
-        } else {
-            session = conn.createSession(false, getAcknowledgeMode());
+        MessageProducerResources answer = null;
+        Connection conn = null;
+        try {
+            MessageProducer messageProducer = null;
+            Session session = null;
+            
+            conn = getConnectionResource().borrowConnection();
+            if (isEndpointTransacted()) {
+                session = conn.createSession(true, getAcknowledgeMode());
+            } else {
+                session = conn.createSession(false, getAcknowledgeMode());
+            }
+            if (isTopic()) {
+                messageProducer = JmsObjectFactory.createMessageProducer(session, getDestinationName(), isTopic(), isPersistent(), getTtl());
+            } else {
+                messageProducer = JmsObjectFactory.createQueueProducer(session, getDestinationName());
+            }
+
+            if (session == null) {
+                throw new CamelException("Message Consumer Creation Exception: Session is NULL");
+            }
+            if (messageProducer == null) {
+                throw new CamelException("Message Consumer Creation Exception: MessageProducer is NULL");
+            }
+            
+            answer = new MessageProducerResources(session, messageProducer);
+
+        } catch (Exception e) {
+            log.error("Unable to create the MessageProducer: " + e.getLocalizedMessage());
+        } finally {
+            if (conn != null) {
+                getConnectionResource().returnConnection(conn);
+            }
         }
-        MessageProducer messageProducer = null;
-        if (isTopic()) {
-            messageProducer = JmsObjectFactory.createMessageProducer(session, getDestinationName(), isTopic(), isPersistent(), getTtl());
-        } else {
-            messageProducer = JmsObjectFactory.createQueueProducer(session, getDestinationName());
-        }
-        getConnectionResource().returnConnection(conn);
-        return new MessageProducerResources(session, messageProducer);
+        
+        return answer;
     }
 
     /**
@@ -269,9 +299,9 @@ public class InOutProducer extends SjmsProducer {
                 if (isEndpointTransacted()) {
                     exchange.getUnitOfWork().addSynchronization(new SessionTransactionSynchronization(producer.getSession(), getCommitStrategy()));
                 }
-                
+
                 Message request = SjmsExchangeMessageHelper.createMessage(exchange, producer.getSession(), getSjmsEndpoint().getJmsKeyFormatStrategy());
-                
+
                 // TODO just set the correlation id don't get it from the
                 // message
                 String correlationId = null;
@@ -295,7 +325,8 @@ public class InOutProducer extends SjmsProducer {
                 consumers.returnObject(consumer);
                 producer.getMessageProducer().send(request);
 
-                // Return the producer to the pool so another waiting producer can move forward
+                // Return the producer to the pool so another waiting producer
+                // can move forward
                 // without waiting on us to complete the exchange
                 try {
                     getProducers().returnObject(producer);

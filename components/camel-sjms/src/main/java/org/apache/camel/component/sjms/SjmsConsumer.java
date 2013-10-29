@@ -23,6 +23,7 @@ import javax.jms.MessageConsumer;
 import javax.jms.MessageListener;
 import javax.jms.Session;
 
+import org.apache.camel.CamelException;
 import org.apache.camel.Endpoint;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
@@ -32,7 +33,6 @@ import org.apache.camel.component.sjms.consumer.InOutMessageHandler;
 import org.apache.camel.component.sjms.jms.ConnectionResource;
 import org.apache.camel.component.sjms.jms.JmsObjectFactory;
 import org.apache.camel.component.sjms.jms.ObjectPool;
-import org.apache.camel.component.sjms.jms.SessionPool;
 import org.apache.camel.component.sjms.taskmanager.TimedTaskManager;
 import org.apache.camel.component.sjms.tx.BatchTransactionCommitStrategy;
 import org.apache.camel.component.sjms.tx.DefaultTransactionCommitStrategy;
@@ -66,12 +66,7 @@ public class SjmsConsumer extends DefaultConsumer {
          */
         @Override
         protected MessageConsumerResources createObject() throws Exception {
-            MessageConsumerResources model = null;
-            if (isTransacted() || getEndpoint().getExchangePattern().equals(ExchangePattern.InOut)) {
-                model = createConsumerWithDedicatedSession();
-            } else {
-                model = createConsumerListener();
-            }
+            MessageConsumerResources model = createConsumer();
             return model;
         }
 
@@ -168,39 +163,41 @@ public class SjmsConsumer extends DefaultConsumer {
      * Creates a {@link MessageConsumerResources} with a dedicated
      * {@link Session} required for transacted and InOut consumers.
      */
-    private MessageConsumerResources createConsumerWithDedicatedSession() throws Exception {
-        Connection conn = getConnectionResource().borrowConnection();
-        Session session = null;
-        if (isTransacted()) {
-            session = conn.createSession(true, Session.SESSION_TRANSACTED);
-        } else {
-            session = conn.createSession(false, Session.AUTO_ACKNOWLEDGE);
+    @SuppressWarnings("unused")
+    private MessageConsumerResources createConsumer() throws Exception {
+        MessageConsumerResources answer = null;
+        Connection conn = null;
+        try {
+            conn = getConnectionResource().borrowConnection();
+            
+            Session session = null;
+            MessageConsumer messageConsumer = null;
+            if (isTransacted()) {
+                session = conn.createSession(true, Session.SESSION_TRANSACTED);
+            } else {
+                session = conn.createSession(false, Session.AUTO_ACKNOWLEDGE);
+            }
+            messageConsumer = JmsObjectFactory.createMessageConsumer(session, getDestinationName(), getMessageSelector(), isTopic(), getDurableSubscriptionId());
+            MessageListener handler = createMessageHandler(session);
+            messageConsumer.setMessageListener(handler);
+            
+            if (session == null) {
+                throw new CamelException("Message Consumer Creation Exception: Session is NULL");
+            }
+            if (messageConsumer == null) {
+                throw new CamelException("Message Consumer Creation Exception: MessageConsumer is NULL");
+            }
+            answer = new MessageConsumerResources(session, messageConsumer);
+        } catch (Exception e) {
+            log.error("Unable to create the MessageConsumer: " + e.getLocalizedMessage());
+        } finally {
+            if (conn != null) {
+                getConnectionResource().returnConnection(conn);
+            }
         }
-        MessageConsumer messageConsumer = JmsObjectFactory.createMessageConsumer(session, getDestinationName(), getMessageSelector(), isTopic(), getDurableSubscriptionId());
-        MessageListener handler = createMessageHandler(session);
-        messageConsumer.setMessageListener(handler);
-        getConnectionResource().returnConnection(conn);
-        return new MessageConsumerResources(session, messageConsumer);
+        return answer;
     }
 
-    /**
-     * Creates a {@link MessageConsumerResources} with a shared {@link Session}
-     * for non-transacted InOnly consumers.
-     */
-    private MessageConsumerResources createConsumerListener() throws Exception {
-        Session queueSession = getSessionPool().borrowObject();
-        MessageConsumer messageConsumer = null;
-        if (isTopic()) {
-            messageConsumer = JmsObjectFactory.createTopicConsumer(queueSession, getDestinationName(), getMessageSelector());
-        } else {
-            messageConsumer = JmsObjectFactory.createQueueConsumer(queueSession, getDestinationName(), getMessageSelector());
-        }
-        getSessionPool().returnObject(queueSession);
-        // Don't pass in the session. Only needed if we are transacted
-        MessageListener handler = createMessageHandler(null);
-        messageConsumer.setMessageListener(handler);
-        return new MessageConsumerResources(messageConsumer);
-    }
 
     /**
      * Helper factory method used to create a MessageListener based on the MEP
@@ -251,10 +248,6 @@ public class SjmsConsumer extends DefaultConsumer {
 
     protected ConnectionResource getConnectionResource() {
         return getEndpoint().getConnectionResource();
-    }
-
-    protected SessionPool getSessionPool() {
-        return getEndpoint().getSessions();
     }
 
     public int getAcknowledgementMode() {

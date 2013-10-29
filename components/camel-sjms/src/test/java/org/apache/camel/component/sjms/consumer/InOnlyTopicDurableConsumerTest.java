@@ -78,10 +78,10 @@ public class InOnlyTopicDurableConsumerTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("sjms:topic:foo?durableSubscriptionId=bar")
+                from("sjms:topic:foo?durableSubscriptionId=bar1")
                     .to("mock:result");
 
-                from("sjms:topic:foo?durableSubscriptionId=bar")
+                from("sjms:topic:foo?durableSubscriptionId=bar2")
                     .to("mock:result2");
             }
         };
