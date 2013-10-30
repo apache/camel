@@ -247,7 +247,8 @@ public class AmazonS3ClientMock extends AmazonS3Client {
     public ObjectMetadata getObjectMetadata(GetObjectMetadataRequest getObjectMetadataRequest) throws AmazonClientException, AmazonServiceException {
         throw new UnsupportedOperationException();
     }
-
+    
+    
     @Override
     public S3Object getObject(String bucketName, String key) throws AmazonClientException, AmazonServiceException {
         for (S3Object s3Object : objects) {
@@ -271,7 +272,7 @@ public class AmazonS3ClientMock extends AmazonS3Client {
 
     @Override
     public S3Object getObject(GetObjectRequest getObjectRequest) throws AmazonClientException, AmazonServiceException {
-        throw new UnsupportedOperationException();
+        return getObject(getObjectRequest.getBucketName(), getObjectRequest.getKey());
     }
 
     @Override

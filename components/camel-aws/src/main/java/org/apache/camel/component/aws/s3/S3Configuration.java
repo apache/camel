@@ -29,6 +29,7 @@ public class S3Configuration implements Cloneable {
     private AmazonS3 amazonS3Client;
     
     private String bucketName;
+    private String fileName;
     private String prefix;
     private String region;
     private boolean deleteAfterRead = true;
@@ -83,6 +84,15 @@ public class S3Configuration implements Cloneable {
 
     public void setBucketName(String bucketName) {
         this.bucketName = bucketName;
+    }
+
+
+    public String getFileName() {
+        return fileName;
+    }
+
+    public void setFileName(String fileName) {
+        this.fileName = fileName;
     }
 
     public String getRegion() {

@@ -79,7 +79,14 @@ public class S3Endpoint extends ScheduledPollEndpoint {
     @Override
     public void doStart() throws Exception {
         super.doStart();
-        
+
+        String fileName = getConfiguration().getFileName();
+
+        if (fileName != null) {
+            LOG.trace("File name [{}] requested, so skipping bucket check...", fileName);
+            return;
+        }
+
         String bucketName = getConfiguration().getBucketName();
         LOG.trace("Quering whether bucket [{}] already exists...", bucketName);
         
