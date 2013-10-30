@@ -64,12 +64,12 @@ public class DefaultDebugger implements Debugger, CamelContextAware {
     /**
      * Holder class for breakpoint and the associated conditions
      */
-    private final class BreakpointConditions {
-        private Breakpoint breakpoint;
-        private List<Condition> conditions;
+    private static final class BreakpointConditions {
+        private final Breakpoint breakpoint;
+        private final List<Condition> conditions;
 
         private BreakpointConditions(Breakpoint breakpoint) {
-            this(breakpoint, null);
+            this(breakpoint, new ArrayList<Condition>());
         }
 
         private BreakpointConditions(Breakpoint breakpoint, List<Condition> conditions) {
@@ -93,10 +93,12 @@ public class DefaultDebugger implements Debugger, CamelContextAware {
         this.camelContext = camelContext;
     }
 
+    @Override
     public CamelContext getCamelContext() {
         return camelContext;
     }
 
+    @Override
     public void setCamelContext(CamelContext camelContext) {
         this.camelContext = camelContext;
     }
@@ -109,45 +111,51 @@ public class DefaultDebugger implements Debugger, CamelContextAware {
         this.useTracer = useTracer;
     }
 
+    @Override
     public void addBreakpoint(Breakpoint breakpoint) {
         breakpoints.add(new BreakpointConditions(breakpoint));
     }
 
+    @Override
     public void addBreakpoint(Breakpoint breakpoint, Condition... conditions) {
-        if (conditions != null && conditions.length > 0) {
-            breakpoints.add(new BreakpointConditions(breakpoint, Arrays.asList(conditions)));
-        } else {
-            breakpoints.add(new BreakpointConditions(breakpoint));
-        }
+        breakpoints.add(new BreakpointConditions(breakpoint, Arrays.asList(conditions)));
     }
 
+    @Override
     public void addSingleStepBreakpoint(final Breakpoint breakpoint) {
         addSingleStepBreakpoint(breakpoint, new Condition[]{});
     }
 
+    @Override
     public void addSingleStepBreakpoint(final Breakpoint breakpoint, Condition... conditions) {
         // wrap the breakpoint into single step breakpoint so we can automatic enable/disable the single step mode
         Breakpoint singlestep = new Breakpoint() {
+            @Override
             public State getState() {
                 return breakpoint.getState();
             }
 
+            @Override
             public void suspend() {
                 breakpoint.suspend();
             }
 
+            @Override
             public void activate() {
                 breakpoint.activate();
             }
 
+            @Override
             public void beforeProcess(Exchange exchange, Processor processor, ProcessorDefinition<?> definition) {
                 breakpoint.beforeProcess(exchange, processor, definition);
             }
 
+            @Override
             public void afterProcess(Exchange exchange, Processor processor, ProcessorDefinition<?> definition, long timeTaken) {
                 breakpoint.afterProcess(exchange, processor, definition, timeTaken);
             }
 
+            @Override
             public void onEvent(Exchange exchange, EventObject event, ProcessorDefinition<?> definition) {
                 if (event instanceof ExchangeCreatedEvent) {
                     exchange.getContext().getDebugger().startSingleStepExchange(exchange.getExchangeId(), this);
@@ -166,6 +174,7 @@ public class DefaultDebugger implements Debugger, CamelContextAware {
         addBreakpoint(singlestep, conditions);
     }
 
+    @Override
     public void removeBreakpoint(Breakpoint breakpoint) {
         for (BreakpointConditions condition : breakpoints) {
             if (condition.getBreakpoint().equals(breakpoint)) {
@@ -174,18 +183,21 @@ public class DefaultDebugger implements Debugger, CamelContextAware {
         }
     }
 
+    @Override
     public void suspendAllBreakpoints() {
         for (BreakpointConditions breakpoint : breakpoints) {
             breakpoint.getBreakpoint().suspend();
         }
     }
 
+    @Override
     public void activateAllBreakpoints() {
         for (BreakpointConditions breakpoint : breakpoints) {
             breakpoint.getBreakpoint().activate();
         }
     }
 
+    @Override
     public List<Breakpoint> getBreakpoints() {
         List<Breakpoint> answer = new ArrayList<Breakpoint>(breakpoints.size());
         for (BreakpointConditions e : breakpoints) {
@@ -194,6 +206,7 @@ public class DefaultDebugger implements Debugger, CamelContextAware {
         return Collections.unmodifiableList(answer);
     }
 
+    @Override
     public boolean startSingleStepExchange(String exchangeId, Breakpoint breakpoint) {
         // can we accept single stepping the given exchange?
         if (singleSteps.size() >= maxConcurrentSingleSteps) {
@@ -204,10 +217,12 @@ public class DefaultDebugger implements Debugger, CamelContextAware {
         return true;
     }
 
+    @Override
     public void stopSingleStepExchange(String exchangeId) {
         singleSteps.remove(exchangeId);
     }
 
+    @Override
     public boolean beforeProcess(Exchange exchange, Processor processor, ProcessorDefinition<?> definition) {
         // is the exchange in single step mode?
         Breakpoint singleStep = singleSteps.get(exchange.getExchangeId());
@@ -231,6 +246,7 @@ public class DefaultDebugger implements Debugger, CamelContextAware {
         return match;
     }
 
+    @Override
     public boolean afterProcess(Exchange exchange, Processor processor, ProcessorDefinition<?> definition, long timeTaken) {
         // is the exchange in single step mode?
         Breakpoint singleStep = singleSteps.get(exchange.getExchangeId());
@@ -254,6 +270,7 @@ public class DefaultDebugger implements Debugger, CamelContextAware {
         return match;
     }
 
+    @Override
     public boolean onEvent(Exchange exchange, EventObject event) {
         // is the exchange in single step mode?
         Breakpoint singleStep = singleSteps.get(exchange.getExchangeId());
@@ -312,11 +329,9 @@ public class DefaultDebugger implements Debugger, CamelContextAware {
     }
 
     private boolean matchConditions(Exchange exchange, Processor processor, ProcessorDefinition<?> definition, BreakpointConditions breakpoint) {
-        if (breakpoint.getConditions() != null && !breakpoint.getConditions().isEmpty()) {
-            for (Condition condition : breakpoint.getConditions()) {
-                if (!condition.matchProcess(exchange, processor, definition)) {
-                    return false;
-                }
+        for (Condition condition : breakpoint.getConditions()) {
+            if (!condition.matchProcess(exchange, processor, definition)) {
+                return false;
             }
         }
 
@@ -324,17 +339,16 @@ public class DefaultDebugger implements Debugger, CamelContextAware {
     }
 
     private boolean matchConditions(Exchange exchange, EventObject event, BreakpointConditions breakpoint) {
-        if (breakpoint.getConditions() != null && !breakpoint.getConditions().isEmpty()) {
-            for (Condition condition : breakpoint.getConditions()) {
-                if (!condition.matchEvent(exchange, event)) {
-                    return false;
-                }
+        for (Condition condition : breakpoint.getConditions()) {
+            if (!condition.matchEvent(exchange, event)) {
+                return false;
             }
         }
 
         return true;
     }
 
+    @Override
     public void start() throws Exception {
         ObjectHelper.notNull(camelContext, "CamelContext", this);
 
@@ -356,6 +370,7 @@ public class DefaultDebugger implements Debugger, CamelContextAware {
         }
     }
 
+    @Override
     public void stop() throws Exception {
         breakpoints.clear();
         singleSteps.clear();
@@ -374,6 +389,7 @@ public class DefaultDebugger implements Debugger, CamelContextAware {
             setIgnoreServiceEvents(true);
         }
 
+        @Override
         public void notify(EventObject event) throws Exception {
             AbstractExchangeEvent aee = (AbstractExchangeEvent) event;
             Exchange exchange = aee.getExchange();
@@ -385,14 +401,17 @@ public class DefaultDebugger implements Debugger, CamelContextAware {
             }
         }
 
+        @Override
         public boolean isEnabled(EventObject event) {
             return event instanceof AbstractExchangeEvent;
         }
 
+        @Override
         protected void doStart() throws Exception {
             // noop
         }
 
+        @Override
         protected void doStop() throws Exception {
             // noop
         }
