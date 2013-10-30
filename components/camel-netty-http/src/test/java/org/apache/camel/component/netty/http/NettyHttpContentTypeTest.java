@@ -56,6 +56,22 @@ public class NettyHttpContentTypeTest extends BaseNettyTest {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
+    public void testContentTypeWithActionAndPlus() throws Exception {
+        getMockEndpoint("mock:input").expectedBodiesReceived("Hello World");
+        getMockEndpoint("mock:input").expectedHeaderReceived(Exchange.CONTENT_TYPE, "application/soap+xml;charset=\"utf-8\";action=\"http://somewhere.com/foo\"");
+        getMockEndpoint("mock:input").expectedHeaderReceived(Exchange.HTTP_CHARACTER_ENCODING, "utf-8");
+        getMockEndpoint("mock:input").expectedHeaderReceived(Exchange.HTTP_URL, "http://0.0.0.0:" + getPort() + "/foo");
+        getMockEndpoint("mock:input").expectedPropertyReceived(Exchange.CHARSET_NAME, "utf-8");
+
+        byte[] data = "Hello World".getBytes(Charset.forName("utf-8"));
+        String out = template.requestBodyAndHeader("netty-http:http://0.0.0.0:{{port}}/foo", data,
+                "content-type", "application/soap+xml;charset=\"utf-8\";action=\"http://somewhere.com/foo\"", String.class);
+        assertEquals("Bye World", out);
+
+        assertMockEndpointsSatisfied();
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
