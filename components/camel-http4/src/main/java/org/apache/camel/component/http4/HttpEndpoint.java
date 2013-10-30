@@ -63,6 +63,7 @@ public class HttpEndpoint extends DefaultPollingEndpoint implements HeaderFilter
     private boolean disableStreamCache;
     private boolean transferException;
     private boolean traceEnabled;
+    private boolean authenticationPreemptive;
     private String httpMethodRestrict;
     private UrlRewrite urlRewrite;
     private boolean clearExpiredCookies = true;
@@ -373,5 +374,13 @@ public class HttpEndpoint extends DefaultPollingEndpoint implements HeaderFilter
 
     public void setCookieStore(CookieStore cookieStore) {
         this.cookieStore = cookieStore;
+    }
+
+    public boolean isAuthenticationPreemptive() {
+        return authenticationPreemptive;
+    }
+
+    public void setAuthenticationPreemptive(boolean authenticationPreemptive) {
+        this.authenticationPreemptive = authenticationPreemptive;
     }
 }

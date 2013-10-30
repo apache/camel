@@ -48,6 +48,18 @@ public class HttpAuthenticationTest extends BaseHttpTest {
 
         assertExchange(exchange);
     }
+    
+    
+    @Test
+    public void basicAuthenticationPreemptiveShouldSuccess() throws Exception {
+        Exchange exchange = template.request("http4://" + getHostName() + ":" + getPort() + "/search?authUsername=" + user + "&authPassword=" 
+            + password + "&authenticationPreemptive=true", new Processor() {
+                public void process(Exchange exchange) throws Exception {
+                }
+            });
+
+        assertExchange(exchange);
+    }
 
     @Test
     public void basicAuthenticationShouldFailWithoutCreds() throws Exception {
