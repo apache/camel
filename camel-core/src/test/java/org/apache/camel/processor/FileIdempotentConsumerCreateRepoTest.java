@@ -19,6 +19,8 @@ package org.apache.camel.processor;
 import java.io.File;
 import java.io.IOException;
 
+import static java.util.UUID.randomUUID;
+
 import org.apache.camel.spi.IdempotentRepository;
 import org.junit.Assert;
 import org.junit.Test;
@@ -30,9 +32,8 @@ public class FileIdempotentConsumerCreateRepoTest extends Assert {
     @Test
     public void shouldCreateParentOfRepositoryFileStore() throws IOException {
         // Given
-        File tmpDir = new File(System.getProperty("java.io.tmpdir"));
-        File storeParent = new File(tmpDir, "repositoryParent");
-        File store = new File(storeParent, "repository");
+        File parentDirectory = new File("target/repositoryParent_" + randomUUID());
+        File store = new File(parentDirectory, "store");
         IdempotentRepository<String> repo = fileIdempotentRepository(store);
 
         // When
