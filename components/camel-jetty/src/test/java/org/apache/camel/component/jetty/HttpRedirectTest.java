@@ -38,6 +38,7 @@ public class HttpRedirectTest extends BaseJettyTest {
             assertEquals(301, cause.getStatusCode());
             assertEquals(true, cause.isRedirectError());
             assertEquals(true, cause.hasRedirectLocation());
+            assertEquals("http://localhost:" + getPort() + "/test", cause.getUri());
             assertEquals("http://localhost:" + getPort() + "/newtest", cause.getRedirectLocation());
         }
     }
