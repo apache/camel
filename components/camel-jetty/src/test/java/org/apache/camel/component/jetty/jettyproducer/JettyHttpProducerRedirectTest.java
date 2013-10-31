@@ -18,6 +18,7 @@ package org.apache.camel.component.jetty.jettyproducer;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.http.HttpOperationFailedException;
 import org.apache.camel.component.jetty.BaseJettyTest;
@@ -26,29 +27,20 @@ import org.junit.Test;
 /**
  * @version 
  */
-public class JettyHttpProducerSimulate404ErrorTest extends BaseJettyTest {
-
-    private String url = "jetty://http://0.0.0.0:" + getPort() + "/bar";
+public class JettyHttpProducerRedirectTest extends BaseJettyTest {
 
     @Test
-    public void test404() throws Exception {
-        // these tests does not run well on Windows
-        if (isPlatform("windows")) {
-            return;
-        }
-
-        // give Jetty time to startup properly
-        Thread.sleep(1000);
-
+    public void testHttpRedirect() throws Exception {
         try {
-            template.sendBody(url, null);
-            fail("Should have thrown exception");
-        } catch (Exception e) {
+            template.requestBody("jetty:http://localhost:{{port}}/test", "Hello World", String.class);
+            fail("Should have thrown an exception");
+        } catch (RuntimeCamelException e) {
             HttpOperationFailedException cause = assertIsInstanceOf(HttpOperationFailedException.class, e.getCause());
-            assertEquals(404, cause.getStatusCode());
-            assertEquals("http://0.0.0.0:" + getPort() + "/bar", cause.getUri());
-            assertEquals("Page not found", cause.getResponseBody());
-            assertNotNull(cause.getResponseHeaders());
+            assertEquals(301, cause.getStatusCode());
+            assertEquals(true, cause.isRedirectError());
+            assertEquals(true, cause.hasRedirectLocation());
+            assertEquals("http://localhost:" + getPort() + "/test", cause.getUri());
+            assertEquals("http://localhost:" + getPort() + "/newtest", cause.getRedirectLocation());
         }
     }
 
@@ -57,14 +49,13 @@ public class JettyHttpProducerSimulate404ErrorTest extends BaseJettyTest {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from(url).process(new Processor() {
-                    public void process(Exchange exchange) throws Exception {
-                        Thread.sleep(1000);
-
-                        exchange.getOut().setBody("Page not found");
-                        exchange.getOut().setHeader(Exchange.HTTP_RESPONSE_CODE, 404);
-                    }
-                });
+                from("jetty://http://localhost:{{port}}/test")
+                    .process(new Processor() {
+                        public void process(Exchange exchange) throws Exception {
+                            exchange.getOut().setHeader(Exchange.HTTP_RESPONSE_CODE, 301);
+                            exchange.getOut().setHeader("location", "http://localhost:" + getPort() + "/newtest");
+                        }
+                    });
             }
         };
     }
