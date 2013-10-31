@@ -53,7 +53,10 @@ import org.springframework.test.context.ContextLoader;
  * that accepts an array of class literals to load.
  *
  * @see org.springframework.test.context.ContextConfiguration
+ * @deprecated Use org.apache.camel.test.spring.CamelSpringDelegatingTestContextLoader from
+ * camel-test-spring jar instead.
  */
+@Deprecated
 public class JavaConfigContextLoader implements ContextLoader {
 
     protected final Logger logger = LoggerFactory.getLogger(getClass());
