@@ -32,7 +32,7 @@ import org.springframework.test.context.ContextLoader;
 
 /**
  * Implementation of the {@link ContextLoader} strategy for creating a
- * {@link JavaConfigApplicationContext} for a test's
+ * {@link org.springframework.context.annotation.AnnotationConfigApplicationContext} for a test's
  * {@link org.springframework.test.context.ContextConfiguration &#064;ContextConfiguration}
  * <p/>
  *
@@ -82,9 +82,9 @@ public class JavaConfigContextLoader implements ContextLoader {
      * <p/>
      *
      * Configuration locations are either fully-qualified class names or base package names. These
-     * locations will be given to a {@link JavaConfigApplicationContext} for configuration via the
-     * {@link JavaConfigApplicationContext#addConfigClass(Class)} and
-     * {@link JavaConfigApplicationContext#addBasePackage(String)} methods.
+     * locations will be given to a {@link AnnotationConfigApplicationContext} for configuration via the
+     * {@link AnnotationConfigApplicationContext#register(Class[])} and
+     * {@link AnnotationConfigApplicationContext#scan(String...)} methods.
      *
      * @param locations the locations to use to load the application context
      * @return a new application context
