@@ -66,16 +66,6 @@ public class ZooKeeperEndpoint extends DefaultEndpoint {
         return connectionManager;
     }
 
-    @ManagedAttribute(description = "Session Password", mask = true)
-    public byte[] getSessionPassword() {
-        return getConfiguration().getSessionPassword();
-    }
-
-    @ManagedAttribute
-    public int getSessionId() {
-        return getConfiguration().getSessionId();
-    }
-
     @ManagedAttribute
     public void setPath(String path) {
         getConfiguration().setPath(path);
@@ -117,8 +107,8 @@ public class ZooKeeperEndpoint extends DefaultEndpoint {
     }
 
     @ManagedAttribute
-    public boolean getListChildren() {
-        return getConfiguration().listChildren();
+    public boolean isListChildren() {
+        return getConfiguration().isListChildren();
     }
 
     @ManagedAttribute
