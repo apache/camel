@@ -53,13 +53,9 @@ public class ConnectionHolder implements Watcher {
             throw new RuntimeCamelException("Cannot create ZooKeeper connection as connection string is null. Have servers been configured?");
         }
         try {
-            if (configuration.getSessionId() > 0 && configuration.getSessionPassword() != null) {
-                zookeeper = new ZooKeeper(configuration.getConnectString(), configuration.getTimeout(), this, configuration.getSessionId(), configuration.getSessionPassword());
-            } else {
-                zookeeper = new ZooKeeper(configuration.getConnectString(), configuration.getTimeout(), this);
-            }
+            zookeeper = new ZooKeeper(configuration.getConnectString(), configuration.getTimeout(), this);
         } catch (Exception e) {
-            ObjectHelper.wrapRuntimeCamelException(e);
+            throw ObjectHelper.wrapRuntimeCamelException(e);
         }
         awaitConnection();
         return zookeeper;
@@ -76,7 +72,7 @@ public class ConnectionHolder implements Watcher {
         try {
             connectionLatch.await();
         } catch (InterruptedException e) {
-            ObjectHelper.wrapRuntimeCamelException(e);
+            throw ObjectHelper.wrapRuntimeCamelException(e);
         }
     }
 

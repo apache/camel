@@ -88,7 +88,7 @@ public class ZooKeeperConsumer extends DefaultConsumer {
 
     private void initializeConsumer() {
         String node = configuration.getPath();
-        if (configuration.listChildren()) {
+        if (configuration.isListChildren()) {
             initializeChildListingConsumer(node);
         } else {
             initializeDataConsumer(node);
@@ -98,7 +98,7 @@ public class ZooKeeperConsumer extends DefaultConsumer {
     private void initializeDataConsumer(String node) {
         if (!shuttingDown) {
             if (log.isDebugEnabled()) {
-                log.debug(String.format("Initailizing consumption of data on node '%s'", node));
+                log.debug(String.format("Initializing consumption of data on node '%s'", node));
             }
             addBasicDataConsumeSequence(node);
         }
@@ -107,7 +107,7 @@ public class ZooKeeperConsumer extends DefaultConsumer {
     private void initializeChildListingConsumer(String node) {
         if (!shuttingDown) {
             if (log.isDebugEnabled()) {
-                log.debug(String.format("Initailizing child listing of node '%s'", node));
+                log.debug(String.format("Initializing child listing of node '%s'", node));
             }
             addBasicChildListingSequence(node);
         }
@@ -160,7 +160,6 @@ public class ZooKeeperConsumer extends DefaultConsumer {
                         try {
                             operations.offer(current.createCopy());
                         } catch (Exception e) {
-                            e.printStackTrace();
                             backoffAndThenRestart();
                         }
                     }

@@ -30,12 +30,11 @@ import org.apache.camel.RuntimeCamelException;
  */
 public class ZooKeeperConfiguration implements Cloneable {
 
+    private transient boolean changed;
+
     private int timeout = 5000;
     private long backoff = 5000;
     private List<String> servers;
-    private boolean changed;
-    private int sessionId;
-    private byte[] password;
     private String path;
     private boolean awaitExistence = true;
     private boolean repeat;
@@ -69,7 +68,7 @@ public class ZooKeeperConfiguration implements Cloneable {
         changed = true;
     }
 
-    public boolean listChildren() {
+    public boolean isListChildren() {
         return listChildren;
     }
 
@@ -93,14 +92,6 @@ public class ZooKeeperConfiguration implements Cloneable {
         b.setLength(b.length() - 1);
         return b.toString();
 
-    }
-
-    public byte[] getSessionPassword() {
-        return password;
-    }
-
-    public int getSessionId() {
-        return sessionId;
     }
 
     public void setPath(String path) {
