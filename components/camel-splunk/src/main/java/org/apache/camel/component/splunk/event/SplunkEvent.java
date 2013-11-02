@@ -18,7 +18,7 @@ package org.apache.camel.component.splunk.event;
 
 import java.io.Serializable;
 import java.util.Date;
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 
 import org.joda.time.format.DateTimeFormat;
@@ -218,7 +218,7 @@ public class SplunkEvent implements Serializable {
     /**
      * Contents of the event message
      */
-    private StringBuffer eventMessage;
+    private Map<String, String> event;
 
     /**
      * A Constructor to load data from a Map
@@ -226,17 +226,14 @@ public class SplunkEvent implements Serializable {
      * @param data the map
      */
     public SplunkEvent(Map<String, String> data) {
-        this.eventMessage = new StringBuffer();
-        for (String key : data.keySet()) {
-            this.addPair(key, data.get(key));
-        }
+        this.event = data;
     }
 
     /**
      * A Copy constructor
      */
     public SplunkEvent(SplunkEvent splunkEvent) {
-        this.eventMessage = splunkEvent.eventMessage;
+        this.event = splunkEvent.getEventData();
         this.quoteValues = splunkEvent.quoteValues;
         this.useInternalDate = splunkEvent.useInternalDate;
     }
@@ -250,8 +247,7 @@ public class SplunkEvent implements Serializable {
      * @param quoteValues whether or not to put quotes around values
      */
     public SplunkEvent(String eventName, String eventID, boolean useInternalDate, boolean quoteValues) {
-
-        this.eventMessage = new StringBuffer();
+        this.event = new LinkedHashMap<String, String>();
         this.quoteValues = quoteValues;
         this.useInternalDate = useInternalDate;
 
@@ -276,33 +272,11 @@ public class SplunkEvent implements Serializable {
      * Default constructor
      */
     public SplunkEvent() {
-        this.eventMessage = new StringBuffer();
+        this.event = new LinkedHashMap<String, String>();
     }
 
     public Map<String, String> getEventData() {
-        Map<String, String> eventData = new HashMap<String, String>();
-        String eventEntries = eventMessage.toString();
-
-        String[] entries = eventEntries.split(PAIRDELIM);
-
-        String quote = new String(new char[] {QUOTE});
-
-        for (String entry : entries) {
-            String[] pair = entry.split(KVDELIM);
-
-            if (pair.length != 2) {
-                throw new UnsupportedOperationException(String.format("invalid event data [%s]", entry));
-            }
-
-            String key = pair[0].replaceAll(quote, "");
-            String value = pair[1].replaceAll(quote, "");
-            if ("null".equals(value)) {
-                value = null;
-            }
-
-            eventData.put(key, value);
-        }
-        return eventData;
+        return event;
     }
 
     /**
@@ -398,11 +372,7 @@ public class SplunkEvent implements Serializable {
      * Add a key value pair
      */
     public void addPair(String key, String value) {
-        if (quoteValues) {
-            this.eventMessage.append(key).append(KVDELIM).append(QUOTE).append(value).append(QUOTE).append(PAIRDELIM);
-        } else {
-            this.eventMessage.append(key).append(KVDELIM).append(value).append(PAIRDELIM);
-        }
+        this.event.put(key, value);
     }
 
     /**
@@ -410,16 +380,19 @@ public class SplunkEvent implements Serializable {
      */
     @Override
     public String toString() {
-        String event = "";
-
+        StringBuilder event = new StringBuilder();
         if (useInternalDate) {
-            StringBuilder clonedMessage = new StringBuilder();
-            clonedMessage.append(DATE_FORMATTER.print(new Date().getTime())).append(PAIRDELIM).append(this.eventMessage);
-            event = clonedMessage.toString();
-        } else {
-            event = eventMessage.toString();
+            event.append(DATE_FORMATTER.print(new Date().getTime())).append(PAIRDELIM);
         }
-
+        for (String key : this.event.keySet()) {
+            event.append(key);
+            event.append(KVDELIM);
+            if (quoteValues) {
+                event.append(QUOTE).append(this.event.get(key)).append(QUOTE).append(PAIRDELIM);
+            } else {
+                event.append(this.event.get(key)).append(PAIRDELIM);
+            }
+        }
         // trim off trailing pair delim char(s)
         String result = event.substring(0, event.length() - PAIRDELIM.length()) + LINEBREAK;
         return result;
