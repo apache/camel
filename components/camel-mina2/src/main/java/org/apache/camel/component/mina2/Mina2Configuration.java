@@ -16,14 +16,14 @@
  */
 package org.apache.camel.component.mina2;
 
-import java.nio.charset.Charset;
-import java.util.List;
-
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.util.jsse.SSLContextParameters;
 import org.apache.mina.core.filterchain.IoFilter;
 import org.apache.mina.filter.codec.ProtocolCodecFactory;
+
+import java.nio.charset.Charset;
+import java.util.List;
 
 /**
  * Mina2 configuration
@@ -53,6 +53,7 @@ public class Mina2Configuration implements Cloneable {
     private boolean autoStartTls = true;
     private int maximumPoolSize = 16; // 16 is the default mina setting
     private boolean orderedThreadPoolExecutor = true;
+    private boolean cachedAddress = true;
 
     /**
      * Returns a copy of this configuration
@@ -263,7 +264,15 @@ public class Mina2Configuration implements Cloneable {
     public void setOrderedThreadPoolExecutor(boolean orderedThreadPoolExecutor) {
         this.orderedThreadPoolExecutor = orderedThreadPoolExecutor;
     }
-    
+
+    public boolean isCachedAddress() {
+        return cachedAddress;
+    }
+
+    public void setCachedAddress(final boolean cachedAddress) {
+        this.cachedAddress = cachedAddress;
+    }
+
     // here we just shows the option setting of host, port, protocol 
     public String getUriString() {
         return "mina2:" + getProtocol() + ":" + getHost() + ":" + getPort();
