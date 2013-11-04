@@ -107,20 +107,31 @@ public class SendProcessor extends ServiceSupport implements AsyncProcessor, Tra
 
             EventHelper.notifyExchangeSending(exchange.getContext(), target, destination);
             LOG.debug(">>>> {} {}", destination, exchange);
-            return producer.process(exchange, new AsyncCallback() {
-                @Override
-                public void done(boolean doneSync) {
-                    try {
-                        // restore previous MEP
-                        target.setPattern(existingPattern);
-                        // emit event that the exchange was sent to the endpoint
-                        long timeTaken = watch.stop();
-                        EventHelper.notifyExchangeSent(target.getContext(), target, destination, timeTaken);
-                    } finally {
-                        callback.done(doneSync);
+
+            boolean sync = true;
+            try {
+                sync = producer.process(exchange, new AsyncCallback() {
+                    @Override
+                    public void done(boolean doneSync) {
+                        try {
+                            // restore previous MEP
+                            target.setPattern(existingPattern);
+                            // emit event that the exchange was sent to the endpoint
+                            long timeTaken = watch.stop();
+                            EventHelper.notifyExchangeSent(target.getContext(), target, destination, timeTaken);
+                        } finally {
+                            callback.done(doneSync);
+                        }
                     }
+                });
+            } catch (Throwable throwable) {
+                if (exchange != null) {
+                    exchange.setException(throwable);
                 }
-            });
+
+            }
+
+            return sync;
         }
 
         // send the exchange to the destination using the producer cache for the non optimized producers
