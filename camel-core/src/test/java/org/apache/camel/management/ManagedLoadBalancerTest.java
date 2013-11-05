@@ -43,15 +43,15 @@ public class ManagedLoadBalancerTest extends ManagementTestSupport {
 
         MBeanServer mbeanServer = getMBeanServer();
 
-        ObjectName name = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=endpoints,name=\"mock://a\"");
+        ObjectName name = ObjectName.getInstance("org.apache.camel:context=camel-1,type=endpoints,name=\"mock://a\"");
         Long queueSize = (Long) mbeanServer.invoke(name, "queueSize", null, null);
         assertEquals(2, queueSize.intValue());
 
-        name = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=endpoints,name=\"mock://b\"");
+        name = ObjectName.getInstance("org.apache.camel:context=camel-1,type=endpoints,name=\"mock://b\"");
         queueSize = (Long) mbeanServer.invoke(name, "queueSize", null, null);
         assertEquals(1, queueSize.intValue());
 
-        name = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=processors,name=\"myBalancer\"");
+        name = ObjectName.getInstance("org.apache.camel:context=camel-1,type=processors,name=\"myBalancer\"");
         mbeanServer.isRegistered(name);
         
         Long total = (Long) mbeanServer.getAttribute(name, "ExchangesTotal");

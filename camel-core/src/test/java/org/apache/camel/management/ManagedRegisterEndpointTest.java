@@ -34,15 +34,15 @@ public class ManagedRegisterEndpointTest extends ManagementTestSupport {
 
         MBeanServer mbeanServer = getMBeanServer();
 
-        ObjectName name = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=endpoints,name=\"direct://start\"");
+        ObjectName name = ObjectName.getInstance("org.apache.camel:context=camel-1,type=endpoints,name=\"direct://start\"");
         String uri = (String) mbeanServer.getAttribute(name, "EndpointUri");
         assertEquals("direct://start", uri);
 
-        name = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=endpoints,name=\"log://foo\"");
+        name = ObjectName.getInstance("org.apache.camel:context=camel-1,type=endpoints,name=\"log://foo\"");
         uri = (String) mbeanServer.getAttribute(name, "EndpointUri");
         assertEquals("log://foo", uri);
 
-        name = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=endpoints,name=\"mock://result\"");
+        name = ObjectName.getInstance("org.apache.camel:context=camel-1,type=endpoints,name=\"mock://result\"");
         uri = (String) mbeanServer.getAttribute(name, "EndpointUri");
         assertEquals("mock://result", uri);
 

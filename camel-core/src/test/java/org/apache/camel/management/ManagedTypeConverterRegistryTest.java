@@ -43,7 +43,7 @@ public class ManagedTypeConverterRegistryTest extends ManagementTestSupport {
 
         MBeanServer mbeanServer = getMBeanServer();
 
-        ObjectName on = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=services,*");
+        ObjectName on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=services,*");
 
         // number of services
         Set<ObjectName> names = mbeanServer.queryNames(on, null);

@@ -62,11 +62,11 @@ public class ManagedNettyEndpointTest extends BaseNettyTest {
 
         MBeanServer mbeanServer = getMBeanServer();
 
-        ObjectName on = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=endpoints,name=\"http://0.0.0.0:" + getPort() + "/foo\"");
+        ObjectName on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=endpoints,name=\"http://0.0.0.0:" + getPort() + "/foo\"");
         mbeanServer.isRegistered(on);
 
         // should only be 2 endpoints in JMX
-        Set<ObjectName> set = getMBeanServer().queryNames(new ObjectName("*:context=localhost/camel-1,type=endpoints,*"), null);
+        Set<ObjectName> set = getMBeanServer().queryNames(new ObjectName("*:context=camel-1,type=endpoints,*"), null);
         assertEquals(2, set.size());
     }
 

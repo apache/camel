@@ -34,7 +34,7 @@ public class ManagedUnregisterRouteTest extends ManagementTestSupport {
 
         MBeanServer mbeanServer = getMBeanServer();
 
-        ObjectName on = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=routes,name=\"route1\"");
+        ObjectName on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=routes,name=\"route1\"");
 
         assertTrue("Should be registered", mbeanServer.isRegistered(on));
         String id = (String) mbeanServer.getAttribute(on, "RouteId");

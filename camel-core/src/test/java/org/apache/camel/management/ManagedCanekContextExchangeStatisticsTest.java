@@ -34,15 +34,15 @@ public class ManagedCanekContextExchangeStatisticsTest extends ManagementTestSup
 
         MBeanServer mbeanServer = getMBeanServer();
 
-        ObjectName on = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=context,name=\"camel-1\"");
+        ObjectName on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=context,name=\"camel-1\"");
         Long completed = (Long) mbeanServer.getAttribute(on, "ExchangesCompleted");
         assertEquals(0, completed.longValue());
 
-        ObjectName route1 = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=routes,name=\"route1\"");
+        ObjectName route1 = ObjectName.getInstance("org.apache.camel:context=camel-1,type=routes,name=\"route1\"");
         Long completed1 = (Long) mbeanServer.getAttribute(route1, "ExchangesCompleted");
         assertEquals(0, completed1.longValue());
 
-        ObjectName route2 = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=routes,name=\"route2\"");
+        ObjectName route2 = ObjectName.getInstance("org.apache.camel:context=camel-1,type=routes,name=\"route2\"");
         Long completed2 = (Long) mbeanServer.getAttribute(route1, "ExchangesCompleted");
         assertEquals(0, completed2.longValue());
 

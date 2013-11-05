@@ -26,31 +26,32 @@ import org.springframework.context.support.ClassPathXmlApplicationContext;
 /**
  * @version 
  */
-public class SpringJmxEndpointInjectBeanRefTwoTest extends SpringTestSupport {
+public class SpringJmxDumpRoutesAsXmlIncludeHostNameTest extends SpringTestSupport {
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/spring/management/SpringJmxEndpointInjectBeanRefTwoTest.xml");
+        return new ClassPathXmlApplicationContext("org/apache/camel/spring/management/SpringJmxDumpRouteAsXmlIncludeHostNameTest.xml");
     }
 
     protected MBeanServer getMBeanServer() {
         return context.getManagementStrategy().getManagementAgent().getMBeanServer();
     }
 
-    public void testJmxEndpointInjectBean() throws Exception {
+    public void testJmxDumpRoutesAsXml() throws Exception {
         MBeanServer mbeanServer = getMBeanServer();
 
-        ObjectName on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=components,name=\"seda\"");
-        assertTrue(mbeanServer.isRegistered(on));
+        ObjectName on = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=context,name=\"camel-1\"");
+        String xml = (String) mbeanServer.invoke(on, "dumpRoutesAsXml", null, null);
+        assertNotNull(xml);
+        log.info(xml);
 
-        on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=endpoints,name=\"seda://foo\"");
-        assertTrue(mbeanServer.isRegistered(on));
-        String uri = (String) mbeanServer.getAttribute(on, "EndpointUri");
-        assertEquals("seda://foo", uri);
-
-        getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
-        template.sendBody("direct:start", "Hello World");
-        assertMockEndpointsSatisfied();
+        assertTrue(xml.contains("route"));
+        assertTrue(xml.contains("myRoute"));
+        assertTrue(xml.contains("myOtherRoute"));
+        assertTrue(xml.contains("direct:start"));
+        assertTrue(xml.contains("mock:result"));
+        assertTrue(xml.contains("seda:bar"));
+        assertTrue(xml.contains("mock:bar"));
     }
 
 }

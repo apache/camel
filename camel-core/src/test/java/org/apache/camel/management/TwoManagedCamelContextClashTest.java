@@ -57,12 +57,12 @@ public class TwoManagedCamelContextClashTest extends TestSupport {
         assertTrue("Should be started", camel1.getStatus().isStarted());
 
         MBeanServer mbeanServer = camel1.getManagementStrategy().getManagementAgent().getMBeanServer();
-        ObjectName on = ObjectName.getInstance("org.apache.camel:context=localhost/" + camel1.getManagementName() + ",type=context,name=\"foo\"");
+        ObjectName on = ObjectName.getInstance("org.apache.camel:context=" + camel1.getManagementName() + ",type=context,name=\"foo\"");
         assertTrue("Should be registered", mbeanServer.isRegistered(on));
 
         // the default name pattern will ensure the JMX names is unique
         camel2.start();
-        ObjectName on2 = ObjectName.getInstance("org.apache.camel:context=localhost/" + camel2.getManagementName() + ",type=context,name=\"foo\"");
+        ObjectName on2 = ObjectName.getInstance("org.apache.camel:context=" + camel2.getManagementName() + ",type=context,name=\"foo\"");
         assertTrue("Should be registered", mbeanServer.isRegistered(on2));
 
         assertTrue("Should still be registered after name clash", mbeanServer.isRegistered(on));
@@ -77,12 +77,12 @@ public class TwoManagedCamelContextClashTest extends TestSupport {
         assertTrue("Should be started", camel1.getStatus().isStarted());
 
         MBeanServer mbeanServer = camel1.getManagementStrategy().getManagementAgent().getMBeanServer();
-        ObjectName on = ObjectName.getInstance("org.apache.camel:context=localhost/" + camel1.getManagementName() + ",type=context,name=\"foo\"");
+        ObjectName on = ObjectName.getInstance("org.apache.camel:context=" + camel1.getManagementName() + ",type=context,name=\"foo\"");
         assertTrue("Should be registered", mbeanServer.isRegistered(on));
 
         // the pattern has a counter so no clash
         camel2.start();
-        ObjectName on2 = ObjectName.getInstance("org.apache.camel:context=localhost/" + camel2.getManagementName() + ",type=context,name=\"foo\"");
+        ObjectName on2 = ObjectName.getInstance("org.apache.camel:context=" + camel2.getManagementName() + ",type=context,name=\"foo\"");
         assertTrue("Should be registered", mbeanServer.isRegistered(on2));
 
         assertTrue("Should still be registered after name clash", mbeanServer.isRegistered(on));
@@ -102,7 +102,7 @@ public class TwoManagedCamelContextClashTest extends TestSupport {
         assertTrue("Should be started", camel1.getStatus().isStarted());
 
         MBeanServer mbeanServer = camel1.getManagementStrategy().getManagementAgent().getMBeanServer();
-        ObjectName on = ObjectName.getInstance("org.apache.camel:context=localhost/" + camel1.getManagementName() + ",type=context,name=\"foo\"");
+        ObjectName on = ObjectName.getInstance("org.apache.camel:context=" + camel1.getManagementName() + ",type=context,name=\"foo\"");
         assertTrue("Should be registered", mbeanServer.isRegistered(on));
 
         // we use fixed names, so we will get a clash

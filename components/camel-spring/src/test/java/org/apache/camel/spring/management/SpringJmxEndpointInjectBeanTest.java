@@ -40,10 +40,10 @@ public class SpringJmxEndpointInjectBeanTest extends SpringTestSupport {
     public void testJmxEndpointInjectBean() throws Exception {
         MBeanServer mbeanServer = getMBeanServer();
 
-        ObjectName on = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=components,name=\"seda\"");
+        ObjectName on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=components,name=\"seda\"");
         assertTrue(mbeanServer.isRegistered(on));
 
-        on = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=endpoints,name=\"seda://foo\"");
+        on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=endpoints,name=\"seda://foo\"");
         assertTrue(mbeanServer.isRegistered(on));
         String uri = (String) mbeanServer.getAttribute(on, "EndpointUri");
         assertEquals("seda://foo", uri);

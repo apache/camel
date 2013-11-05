@@ -70,7 +70,7 @@ public class ManagedResetIncludeRoutesTest extends ManagementTestSupport {
         }
 
         // reset which should reset all routes also
-        ObjectName ctx = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=context,name=\"camel-1\"");
+        ObjectName ctx = ObjectName.getInstance("org.apache.camel:context=camel-1,type=context,name=\"camel-1\"");
         mbeanServer.invoke(ctx, "reset", new Object[]{true}, new String[]{"boolean"});
 
         // should be 0 on the route

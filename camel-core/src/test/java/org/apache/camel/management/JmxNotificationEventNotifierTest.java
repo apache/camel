@@ -62,7 +62,7 @@ public class JmxNotificationEventNotifierTest extends ContextTestSupport {
     public void testExchangeDone() throws Exception {
         // START SNIPPET: e2
         // register the NotificationListener
-        ObjectName on = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=eventnotifiers,name=JmxEventNotifier");
+        ObjectName on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=eventnotifiers,name=JmxEventNotifier");
         MyNotificationListener listener = new MyNotificationListener();   
         context.getManagementStrategy().getManagementAgent().getMBeanServer().addNotificationListener(on,
             listener,                                                                                         
@@ -87,7 +87,7 @@ public class JmxNotificationEventNotifierTest extends ContextTestSupport {
     }
 
     public void testExchangeFailed() throws Exception {
-        ObjectName on = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=eventnotifiers,name=JmxEventNotifier");
+        ObjectName on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=eventnotifiers,name=JmxEventNotifier");
         
         MyNotificationListener listener = new MyNotificationListener();   
         context.getManagementStrategy().getManagementAgent().getMBeanServer().addNotificationListener(on,

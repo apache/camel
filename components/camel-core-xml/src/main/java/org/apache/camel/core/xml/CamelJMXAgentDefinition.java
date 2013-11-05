@@ -112,6 +112,12 @@ public class CamelJMXAgentDefinition extends IdentifiedType {
     private String loadStatisticsEnabled;
 
     /**
+     * A flag that indicates whether to include hostname in JMX MBean names.
+     */
+    @XmlAttribute
+    private String includeHostName = "false";
+
+    /**
      * A flag that indicates whether to remove detected sensitive information (such as passwords) from MBean names and attributes.
      */
     @XmlAttribute
@@ -221,6 +227,14 @@ public class CamelJMXAgentDefinition extends IdentifiedType {
         this.loadStatisticsEnabled = loadStatisticsEnabled;
     }
 
+    public String getIncludeHostName() {
+        return includeHostName;
+    }
+
+    public void setIncludeHostName(String includeHostName) {
+        this.includeHostName = includeHostName;
+    }
+
     public String getMask() {
         return mask;
     }
@@ -266,6 +280,9 @@ public class CamelJMXAgentDefinition extends IdentifiedType {
         }
         if (registerNewRoutes != null) {
             sb.append(", registerNewRoutes=").append(registerNewRoutes);
+        }
+        if (includeHostName != null) {
+            sb.append(", includeHostName=").append(includeHostName);
         }
         if (mask != null) {
             sb.append(", mask=").append(mask);

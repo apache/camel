@@ -58,7 +58,7 @@ public class ManagedDualCamelContextTest extends TestSupport {
         assertIsInstanceOf(ManagedManagementStrategy.class, camel2.getManagementStrategy());
 
         MBeanServer mbeanServer1 = camel1.getManagementStrategy().getManagementAgent().getMBeanServer();
-        Set<ObjectName> set = mbeanServer1.queryNames(new ObjectName("*:context=localhost/camel-1,type=components,*"), null);
+        Set<ObjectName> set = mbeanServer1.queryNames(new ObjectName("*:context=camel-1,type=components,*"), null);
         assertEquals(2, set.size());
         ObjectName on = set.iterator().next();
         assertTrue("Should be registered", mbeanServer1.isRegistered(on));
@@ -68,7 +68,7 @@ public class ManagedDualCamelContextTest extends TestSupport {
         assertEquals("camel-1", id);
 
         MBeanServer mbeanServer2 = camel2.getManagementStrategy().getManagementAgent().getMBeanServer();
-        set = mbeanServer1.queryNames(new ObjectName("*:context=localhost/camel-2,type=components,*"), null);
+        set = mbeanServer1.queryNames(new ObjectName("*:context=camel-2,type=components,*"), null);
         assertEquals(2, set.size());
         on = set.iterator().next();
         assertTrue("Should be registered", mbeanServer2.isRegistered(on));

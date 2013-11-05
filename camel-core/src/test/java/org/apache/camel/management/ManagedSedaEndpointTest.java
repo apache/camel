@@ -41,7 +41,7 @@ public class ManagedSedaEndpointTest extends ManagementTestSupport {
 
         MBeanServer mbeanServer = getMBeanServer();
 
-        ObjectName name = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=endpoints,name=\"seda://start\"");
+        ObjectName name = ObjectName.getInstance("org.apache.camel:context=camel-1,type=endpoints,name=\"seda://start\"");
         String uri = (String) mbeanServer.getAttribute(name, "EndpointUri");
         assertEquals("seda://start", uri);
 

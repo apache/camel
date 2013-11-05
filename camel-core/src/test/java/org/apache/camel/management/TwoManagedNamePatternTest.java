@@ -55,10 +55,10 @@ public class TwoManagedNamePatternTest extends TestSupport {
 
         MBeanServer mbeanServer = camel1.getManagementStrategy().getManagementAgent().getMBeanServer();
 
-        ObjectName on = ObjectName.getInstance("org.apache.camel:context=localhost/aaa-foo,type=context,name=\"foo\"");
+        ObjectName on = ObjectName.getInstance("org.apache.camel:context=aaa-foo,type=context,name=\"foo\"");
         assertTrue("Should be registered", mbeanServer.isRegistered(on));
 
-        ObjectName on2 = ObjectName.getInstance("org.apache.camel:context=localhost/bbb-bar,type=context,name=\"bar\"");
+        ObjectName on2 = ObjectName.getInstance("org.apache.camel:context=bbb-bar,type=context,name=\"bar\"");
         assertTrue("Should be registered", mbeanServer.isRegistered(on2));
 
         camel1.stop();

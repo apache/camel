@@ -77,6 +77,7 @@ public class DefaultManagementAgent extends ServiceSupport implements Management
     private Boolean registerAlways;
     private Boolean registerNewRoutes = true;
     private Boolean mask;
+    private Boolean includeHostName;
 
     public DefaultManagementAgent() {
     }
@@ -119,6 +120,9 @@ public class DefaultManagementAgent extends ServiceSupport implements Management
         }
         if (System.getProperty(JmxSystemPropertyKeys.MASK) != null) {
             mask = Boolean.getBoolean(JmxSystemPropertyKeys.MASK);
+        }
+        if (System.getProperty(JmxSystemPropertyKeys.INCLUDE_HOST_NAME) != null) {
+            includeHostName = Boolean.getBoolean(JmxSystemPropertyKeys.INCLUDE_HOST_NAME);
         }
         if (System.getProperty(JmxSystemPropertyKeys.CREATE_CONNECTOR) != null) {
             createConnector = Boolean.getBoolean(JmxSystemPropertyKeys.CREATE_CONNECTOR);
@@ -219,6 +223,14 @@ public class DefaultManagementAgent extends ServiceSupport implements Management
 
     public void setMask(Boolean mask) {
         this.mask = mask;
+    }
+
+    public Boolean getIncludeHostName() {
+        return includeHostName != null && includeHostName;
+    }
+
+    public void setIncludeHostName(Boolean includeHostName) {
+        this.includeHostName = includeHostName;
     }
 
     public CamelContext getCamelContext() {

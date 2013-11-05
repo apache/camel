@@ -41,7 +41,7 @@ public class ManagedBrowsableEndpointTest extends ManagementTestSupport {
 
         MBeanServer mbeanServer = getMBeanServer();
 
-        ObjectName name = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=endpoints,name=\"mock://result\"");
+        ObjectName name = ObjectName.getInstance("org.apache.camel:context=camel-1,type=endpoints,name=\"mock://result\"");
         String uri = (String) mbeanServer.getAttribute(name, "EndpointUri");
         assertEquals("mock://result", uri);
 

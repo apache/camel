@@ -25,23 +25,28 @@ import org.apache.camel.builder.RouteBuilder;
 /**
  * @version 
  */
-public class ManagedSanitizeTest extends ManagementTestSupport {
+public class ManagedNamePatternIncludeHostNameTest extends ManagementTestSupport {
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
-        context.getManagementStrategy().getManagementAgent().setMask(true);
+        context.getManagementStrategy().getManagementAgent().setIncludeHostName(true);
+        context.getManagementNameStrategy().setNamePattern("cool-#name#");
         return context;
     }
 
-    public void testSanitize() throws Exception {
+    public void testManagedNamePattern() throws Exception {
+        // JMX tests dont work well on AIX CI servers (hangs them)
+        if (isPlatform("aix")) {
+            return;
+        }
+
         MBeanServer mbeanServer = getMBeanServer();
 
-        ObjectName name = ObjectName.getInstance("org.apache.camel:context=camel-1,type=endpoints,name=\"stub://foo\\?password=xxxxxx&username=foo\"");
-        assertTrue("Should be registered", mbeanServer.isRegistered(name));
-        // TODO: fix browsable endpoint mbean
-        // String uri = (String) mbeanServer.getAttribute(name, "EndpointUri");
-        // assertEquals("stub://foo?password=xxxxxx&username=foo", uri);
+        assertTrue(context.getManagementName().startsWith("cool"));
+
+        ObjectName on = ObjectName.getInstance("org.apache.camel:context=localhost/" + context.getManagementName() + ",type=context,name=\"camel-1\"");
+        assertTrue("Should be registered", mbeanServer.isRegistered(on));
     }
 
     @Override
@@ -49,14 +54,8 @@ public class ManagedSanitizeTest extends ManagementTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").routeId("foo")
-                    .to("stub:foo?username=foo&password=secret")
-                    .to("mock:result");
-
-                from("stub:foo?username=foo&password=secret").routeId("stub")
-                    .to("mock:stub");
+                from("direct:start").to("mock:result");
             }
         };
     }
-
 }

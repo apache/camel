@@ -35,7 +35,7 @@ public class ManagedRoutePerformanceCounterTest extends ManagementTestSupport {
 
         // get the stats for the route
         MBeanServer mbeanServer = getMBeanServer();
-        ObjectName on = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=routes,name=\"route1\"");
+        ObjectName on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=routes,name=\"route1\"");
 
         Long delta = (Long) mbeanServer.getAttribute(on, "DeltaProcessingTime");
         assertEquals(0, delta.intValue());

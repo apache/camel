@@ -60,7 +60,7 @@ public class OSGiIntegrationManagedCamelContextTest extends OSGiIntegrationTestS
         assertEquals("There should have 2 camelcontext registed", 2, set.size());
         
         String camelContextName = context.getName();
-        ObjectName on = ObjectName.getInstance("org.apache.camel:context=localhost/" + camelContextName + ",type=context,name=\"" + camelContextName + "\"");
+        ObjectName on = ObjectName.getInstance("org.apache.camel:context=" + camelContextName + ",type=context,name=\"" + camelContextName + "\"");
 
         assertTrue("Should be registered", mbeanServer.isRegistered(on));
         String name = (String) mbeanServer.getAttribute(on, "CamelId");

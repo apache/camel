@@ -54,10 +54,10 @@ public class TwoManagedCamelContextTest extends TestSupport {
 
         MBeanServer mbeanServer = camel1.getManagementStrategy().getManagementAgent().getMBeanServer();
 
-        ObjectName on = ObjectName.getInstance("org.apache.camel:context=localhost/foo,type=context,name=\"foo\"");
+        ObjectName on = ObjectName.getInstance("org.apache.camel:context=foo,type=context,name=\"foo\"");
         assertTrue("Should be registered", mbeanServer.isRegistered(on));
 
-        ObjectName on2 = ObjectName.getInstance("org.apache.camel:context=localhost/bar,type=context,name=\"bar\"");
+        ObjectName on2 = ObjectName.getInstance("org.apache.camel:context=bar,type=context,name=\"bar\"");
         assertTrue("Should be registered", mbeanServer.isRegistered(on2));
 
         camel1.stop();

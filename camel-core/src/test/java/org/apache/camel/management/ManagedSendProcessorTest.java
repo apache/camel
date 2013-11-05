@@ -47,7 +47,7 @@ public class ManagedSendProcessorTest extends ManagementTestSupport {
         MBeanServer mbeanServer = getMBeanServer();
 
         // get the object name for the delayer
-        ObjectName on = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=processors,name=\"mysend\"");
+        ObjectName on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=processors,name=\"mysend\"");
 
         // should be on route1
         String routeId = (String) mbeanServer.getAttribute(on, "RouteId");

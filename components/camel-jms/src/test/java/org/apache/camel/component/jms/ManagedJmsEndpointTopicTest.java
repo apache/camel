@@ -59,7 +59,7 @@ public class ManagedJmsEndpointTopicTest extends CamelTestSupport {
     public void testJmsEndpoint() throws Exception {
         MBeanServer mbeanServer = getMBeanServer();
 
-        ObjectName name = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=endpoints,name=\"activemq://topic:start\"");
+        ObjectName name = ObjectName.getInstance("org.apache.camel:context=camel-1,type=endpoints,name=\"activemq://topic:start\"");
         String uri = (String) mbeanServer.getAttribute(name, "EndpointUri");
         assertEquals("activemq://topic:start", uri);
 
