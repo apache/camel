@@ -42,6 +42,9 @@
             org.apache.camel.cdi.internal;${camel.osgi.version},
             org.apache.camel.cdi.component.*;${camel.osgi.version}
         </camel.osgi.export.pkg>
+        <camel.osgi.provide.capability>
+          org.ops4j.pax.cdi.extension; extension=camel-cdi-extension
+        </camel.osgi.provide.capability>
     </properties>
 
     <dependencies>

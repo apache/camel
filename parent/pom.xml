@@ -482,6 +482,8 @@
     <camel.osgi.dynamic />
     <camel.osgi.symbolic.name>${project.groupId}.${project.artifactId}</camel.osgi.symbolic.name>
     <camel.osgi.exclude.dependencies>false</camel.osgi.exclude.dependencies>
+    <camel.osgi.require.capability/>
+    <camel.osgi.provide.capability/>
   </properties>
 
   <dependencyManagement>
@@ -2525,6 +2527,8 @@
             <Private-Package>${camel.osgi.private.pkg}</Private-Package>
             <Import-Service>${camel.osgi.import.service}</Import-Service>
             <Export-Service>${camel.osgi.export.service}</Export-Service>
+            <Require-Capability>${camel.osgi.require.capability}</Require-Capability>
+            <Provide-Capability>${camel.osgi.provide.capability}</Provide-Capability>
             <Implementation-Title>Apache Camel</Implementation-Title>
             <Implementation-Version>${project.version}</Implementation-Version>
             <Karaf-Info>Camel;${project.artifactId}=${project.version}</Karaf-Info>
