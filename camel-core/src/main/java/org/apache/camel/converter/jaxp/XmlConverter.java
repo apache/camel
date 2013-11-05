@@ -27,6 +27,7 @@ import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
 import java.nio.ByteBuffer;
+import java.util.Map;
 import java.util.Properties;
 
 import javax.xml.parsers.DocumentBuilder;
@@ -60,8 +61,12 @@ import org.apache.camel.BytesSource;
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
 import org.apache.camel.StringSource;
+import org.apache.camel.builder.xml.XPathBuilder;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
+
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A helper class to transform to and from various JAXB types such as {@link Source} and {@link Document}
@@ -75,8 +80,11 @@ public class XmlConverter {
     public static final String DEFAULT_CHARSET_PROPERTY = "org.apache.camel.default.charset";
     
     public static final String OUTPUT_PROPERTIES_PREFIX = "org.apache.camel.xmlconverter.output.";
+    public static final String DOCUMENT_BUILDER_FACTORY_FEATURE = "org.apache.camel.xmlconverter.documentBuilderFactory.feature";
     public static String defaultCharset = ObjectHelper.getSystemProperty(Exchange.DEFAULT_CHARSET_PROPERTY, "UTF-8");
 
+    private static final Logger LOG = LoggerFactory.getLogger(XPathBuilder.class);
+    
     private DocumentBuilderFactory documentBuilderFactory;
     private TransformerFactory transformerFactory;
 
@@ -886,12 +894,30 @@ public class XmlConverter {
 
     // Helper methods
     //-------------------------------------------------------------------------
+    
+    protected void setupFeatures(DocumentBuilderFactory factory) {
+        Properties properties = System.getProperties();
+        for (Map.Entry<Object, Object> prop : properties.entrySet()) {
+            String key = (String) prop.getKey();
+            if (key.startsWith(XmlConverter.DOCUMENT_BUILDER_FACTORY_FEATURE)) {
+                String uri = ObjectHelper.after(key, ":");
+                Boolean value = Boolean.valueOf((String)prop.getValue());
+                try {
+                    factory.setFeature(uri, value);
+                } catch (ParserConfigurationException e) {
+                    LOG.warn("DocumentBuilderFactory doesn't support the feature {0} with value {1}, due to {2}.", new Object[]{uri, value, e});
+                }
+            }
+        }
+    }
 
     public DocumentBuilderFactory createDocumentBuilderFactory() {
         DocumentBuilderFactory factory = DocumentBuilderFactory.newInstance();
         factory.setNamespaceAware(true);
         factory.setIgnoringElementContentWhitespace(true);
         factory.setIgnoringComments(true);
+        // setup the feature from the system property
+        setupFeatures(factory);
         return factory;
     }
 
