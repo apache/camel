@@ -30,12 +30,8 @@ public class SedaErrorTest extends ContextTestSupport {
         MockEndpoint mockDLC = getMockEndpoint("mock:dlc");
         mockDLC.expectedMessageCount(1);
 
-        try {
-            for (int i = 0; i < 3; i++) {
-                template.send("direct:start", ExchangeBuilder.anExchange(context).withBody("msg" + i).build());
-            }
-        } catch (Exception ex) {
-            // noop
+        for (int i = 0; i < 3; i++) {
+            template.send("direct:start", ExchangeBuilder.anExchange(context).withBody("msg" + i).build());
         }
 
         assertMockEndpointsSatisfied();
