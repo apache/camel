@@ -198,7 +198,15 @@ public class Mina2Configuration implements Cloneable {
     }
 
     public boolean isDatagramProtocol() {
-        return protocol.equals("udp");
+        return protocol.equalsIgnoreCase("udp");
+    }
+
+    public boolean isTcpProtocol(){
+        return protocol.equalsIgnoreCase("tcp");
+    }
+
+    public boolean isVMProtocol(){
+        return protocol.equalsIgnoreCase("vm");
     }
 
     public void setAllowDefaultCodec(boolean allowDefaultCodec) {

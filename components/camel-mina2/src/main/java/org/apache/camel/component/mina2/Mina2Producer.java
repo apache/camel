@@ -85,13 +85,12 @@ public class Mina2Producer extends DefaultProducer implements ServicePoolAware {
         this.sync = configuration.isSync();
         this.noReplyLogger = new CamelLogger(LOG, configuration.getNoReplyLogLevel());
 
-        String protocol = configuration.getProtocol();
-        if (protocol.equals("tcp")) {
-            setupSocketProtocol(protocol);
+        if (configuration.isTcpProtocol()) {
+            setupSocketProtocol();
         } else if (configuration.isDatagramProtocol()) {
-            setupDatagramProtocol(protocol);
-        } else if (protocol.equals("vm")) {
-            setupVmProtocol(protocol);
+            setupDatagramProtocol();
+        } else if (configuration.isVMProtocol()) {
+            setupVmProtocol();
         }
     }
 
@@ -272,7 +271,7 @@ public class Mina2Producer extends DefaultProducer implements ServicePoolAware {
 
     // Implementation methods
     //-------------------------------------------------------------------------
-    protected void setupVmProtocol(String uri) {
+    protected void setupVmProtocol() {
         boolean minaLogger = configuration.isMinaLogger();
         List<IoFilter> filters = configuration.getFilters();
 
@@ -291,7 +290,7 @@ public class Mina2Producer extends DefaultProducer implements ServicePoolAware {
         configureCodecFactory("Mina2Producer", connector);
     }
 
-    protected void setupSocketProtocol(String uri) throws Exception {
+    protected void setupSocketProtocol() throws Exception {
         boolean minaLogger = configuration.isMinaLogger();
         long timeout = configuration.getTimeout();
         List<IoFilter> filters = configuration.getFilters();
@@ -352,7 +351,7 @@ public class Mina2Producer extends DefaultProducer implements ServicePoolAware {
         }
     }
 
-    protected void setupDatagramProtocol(String uri) {
+    protected void setupDatagramProtocol() {
         boolean minaLogger = configuration.isMinaLogger();
         boolean transferExchange = configuration.isTransferExchange();
         List<IoFilter> filters = configuration.getFilters();
@@ -520,13 +519,15 @@ public class Mina2Producer extends DefaultProducer implements ServicePoolAware {
     }
 
     private void setSocketAddress() {
-        String protocol = configuration.getProtocol();
-        if (protocol.equals("tcp")) {
+        if (configuration.isTcpProtocol()) {
             address = new InetSocketAddress(configuration.getHost(), configuration.getPort());
+
         } else if (configuration.isDatagramProtocol()) {
             address = new InetSocketAddress(configuration.getHost(), configuration.getPort());
-        } else if (protocol.equals("vm")) {
-            address = new VmPipeAddress(configuration.getPort());
+        } else if (configuration.isVMProtocol()) {
+            if(address == null){
+                address = new VmPipeAddress(configuration.getPort());
+            }
         }
     }
 }
