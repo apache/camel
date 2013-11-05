@@ -39,7 +39,7 @@ public class TimerWithTimeOptionTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                Date future = new Date(new Date().getTime() + 2000);
+                Date future = new Date(new Date().getTime() + 1000);
 
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
                 String time = sdf.format(future);
@@ -60,7 +60,7 @@ public class TimerWithTimeOptionTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                Date future = new Date(new Date().getTime() + 2000);
+                Date future = new Date(new Date().getTime() + 1000);
 
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
                 String time = sdf.format(future);
@@ -80,7 +80,7 @@ public class TimerWithTimeOptionTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                Date future = new Date(new Date().getTime() + 2000);
+                Date future = new Date(new Date().getTime() + 1000);
 
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd'T'HH:mm:ss");
                 String time = sdf.format(future);
@@ -101,7 +101,7 @@ public class TimerWithTimeOptionTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                Date future = new Date(new Date().getTime() + 2000);
+                Date future = new Date(new Date().getTime() + 1000);
 
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                 String time = sdf.format(future);
@@ -122,7 +122,7 @@ public class TimerWithTimeOptionTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                Date future = new Date(new Date().getTime() + 2000);
+                Date future = new Date(new Date().getTime() + 1000);
 
                 SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd HH:mm:ss");
                 String time = sdf.format(future);
@@ -142,7 +142,7 @@ public class TimerWithTimeOptionTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                Date future = new Date(new Date().getTime() + 2000);
+                Date future = new Date(new Date().getTime() + 1000);
 
                 SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
                 String time = sdf.format(future);
@@ -163,7 +163,7 @@ public class TimerWithTimeOptionTest extends ContextTestSupport {
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                Date future = new Date(new Date().getTime() + 2000);
+                Date future = new Date(new Date().getTime() + 1000);
 
                 SimpleDateFormat sdf = new SimpleDateFormat("dd-MM-yyyy HH:mm:ss");
                 String time = sdf.format(future);
