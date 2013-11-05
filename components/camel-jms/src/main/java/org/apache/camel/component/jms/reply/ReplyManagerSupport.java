@@ -239,7 +239,7 @@ public abstract class ReplyManagerSupport extends ServiceSupport implements Repl
                 listenerContainer.stop();
                 listenerContainer.destroy();
             } finally {
-                endpoint.onListenerConstainerStopped(listenerContainer);
+                endpoint.onListenerContainerStopped(listenerContainer);
                 listenerContainer = null;
             }
         }
