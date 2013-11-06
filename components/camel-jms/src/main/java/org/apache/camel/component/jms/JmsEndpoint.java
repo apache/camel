@@ -441,7 +441,7 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         runningMessageListeners.incrementAndGet();
     }
 
-    public void onListenerConstainerStopped(AbstractMessageListenerContainer container) {
+    public void onListenerContainerStopped(AbstractMessageListenerContainer container) {
         runningMessageListeners.decrementAndGet();
     }
 

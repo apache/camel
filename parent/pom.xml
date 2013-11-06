@@ -148,7 +148,6 @@
     <geronimo-j2ee-management-spec-version>1.1</geronimo-j2ee-management-spec-version>
     <geronimo-jcdi-1.0-spec-version>1.0</geronimo-jcdi-1.0-spec-version>
     <geronimo-jms-spec-version>1.1.1</geronimo-jms-spec-version>
-    <geronimo-jpa-spec-version>1.1.1</geronimo-jpa-spec-version>
     <geronimo-jpa2-spec-version>1.1</geronimo-jpa2-spec-version>
     <geronimo-jsp-spec-version>1.1</geronimo-jsp-spec-version>
     <geronimo-jta-spec-version>1.1.1</geronimo-jta-spec-version>
@@ -237,7 +236,7 @@
     <jsendnsca-bundle-version>1.3.1_3</jsendnsca-bundle-version>
     <jsonlib-bundle-version>2.4_1</jsonlib-bundle-version>
     <jsonlib-version>2.4</jsonlib-version>
-    <json-path-version>0.9.0</json-path-version>
+    <json-path-version>0.9.1</json-path-version>
     <json-smart-version>1.2</json-smart-version>
     <jsp-api-2.1-version>1.0.1</jsp-api-2.1-version>
     <jsmpp-bundle-version>2.1.0_4</jsmpp-bundle-version>
@@ -339,7 +338,7 @@
     <rhino-version>1.7R2</rhino-version>
     <rome-bundle-version>1.0_3</rome-bundle-version>
     <rome-version>1.0</rome-version>
-    <rxjava-version>0.14.6</rxjava-version>
+    <rxjava-version>0.14.7</rxjava-version>
     <saaj-impl-version>1.3.2_2</saaj-impl-version>
     <saxon-bundle-version>9.5.1-1_1</saxon-bundle-version>
     <saxon-version>9.5.1-2</saxon-version>
@@ -483,6 +482,8 @@
     <camel.osgi.dynamic />
     <camel.osgi.symbolic.name>${project.groupId}.${project.artifactId}</camel.osgi.symbolic.name>
     <camel.osgi.exclude.dependencies>false</camel.osgi.exclude.dependencies>
+    <camel.osgi.require.capability/>
+    <camel.osgi.provide.capability/>
   </properties>
 
   <dependencyManagement>
@@ -2526,6 +2527,8 @@
             <Private-Package>${camel.osgi.private.pkg}</Private-Package>
             <Import-Service>${camel.osgi.import.service}</Import-Service>
             <Export-Service>${camel.osgi.export.service}</Export-Service>
+            <Require-Capability>${camel.osgi.require.capability}</Require-Capability>
+            <Provide-Capability>${camel.osgi.provide.capability}</Provide-Capability>
             <Implementation-Title>Apache Camel</Implementation-Title>
             <Implementation-Version>${project.version}</Implementation-Version>
             <Karaf-Info>Camel;${project.artifactId}=${project.version}</Karaf-Info>

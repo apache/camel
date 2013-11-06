@@ -59,10 +59,10 @@ public class ManagedThrottlerTest extends ManagementTestSupport {
         MBeanServer mbeanServer = getMBeanServer();
 
         // get the object name for the delayer
-        ObjectName throttlerName = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=processors,name=\"mythrottler\"");
+        ObjectName throttlerName = ObjectName.getInstance("org.apache.camel:context=camel-1,type=processors,name=\"mythrottler\"");
 
         // use route to get the total time
-        ObjectName routeName = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=routes,name=\"route1\"");
+        ObjectName routeName = ObjectName.getInstance("org.apache.camel:context=camel-1,type=routes,name=\"route1\"");
         
         // reset the counters
         mbeanServer.invoke(routeName, "reset", null, null);
@@ -113,10 +113,10 @@ public class ManagedThrottlerTest extends ManagementTestSupport {
         // get the stats for the route
         MBeanServer mbeanServer = getMBeanServer();
         // get the object name for the delayer
-        ObjectName throttlerName = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=processors,name=\"mythrottler2\"");
+        ObjectName throttlerName = ObjectName.getInstance("org.apache.camel:context=camel-1,type=processors,name=\"mythrottler2\"");
 
         // use route to get the total time
-        ObjectName routeName = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=routes,name=\"route2\"");
+        ObjectName routeName = ObjectName.getInstance("org.apache.camel:context=camel-1,type=routes,name=\"route2\"");
 
         // reset the counters
         mbeanServer.invoke(routeName, "reset", null, null);
@@ -155,10 +155,10 @@ public class ManagedThrottlerTest extends ManagementTestSupport {
         // get the stats for the route
         MBeanServer mbeanServer = getMBeanServer();
         // get the object name for the delayer
-        ObjectName throttlerName = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=processors,name=\"mythrottler3\"");
+        ObjectName throttlerName = ObjectName.getInstance("org.apache.camel:context=camel-1,type=processors,name=\"mythrottler3\"");
 
         // use route to get the total time
-        ObjectName routeName = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=routes,name=\"route3\"");
+        ObjectName routeName = ObjectName.getInstance("org.apache.camel:context=camel-1,type=routes,name=\"route3\"");
 
         // reset the counters
         mbeanServer.invoke(routeName, "reset", null, null);
@@ -199,10 +199,10 @@ public class ManagedThrottlerTest extends ManagementTestSupport {
         // get the stats for the route
         MBeanServer mbeanServer = getMBeanServer();
         // get the object name for the delayer
-        ObjectName throttlerName = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=processors,name=\"mythrottler4\"");
+        ObjectName throttlerName = ObjectName.getInstance("org.apache.camel:context=camel-1,type=processors,name=\"mythrottler4\"");
 
         // use route to get the total time
-        ObjectName routeName = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=routes,name=\"route4\"");
+        ObjectName routeName = ObjectName.getInstance("org.apache.camel:context=camel-1,type=routes,name=\"route4\"");
 
         // reset the counters
         mbeanServer.invoke(routeName, "reset", null, null);
@@ -249,10 +249,10 @@ public class ManagedThrottlerTest extends ManagementTestSupport {
         // get the stats for the route
         MBeanServer mbeanServer = getMBeanServer();
         // get the object name for the delayer
-        ObjectName throttlerName = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=processors,name=\"mythrottler2\"");
+        ObjectName throttlerName = ObjectName.getInstance("org.apache.camel:context=camel-1,type=processors,name=\"mythrottler2\"");
 
         // use route to get the total time
-        ObjectName routeName = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=routes,name=\"route2\"");
+        ObjectName routeName = ObjectName.getInstance("org.apache.camel:context=camel-1,type=routes,name=\"route2\"");
 
         // reset the counters
         mbeanServer.invoke(routeName, "reset", null, null);
@@ -290,10 +290,10 @@ public class ManagedThrottlerTest extends ManagementTestSupport {
         // get the stats for the route
         MBeanServer mbeanServer = getMBeanServer();
         // get the object name for the delayer
-        ObjectName throttlerName = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=processors,name=\"mythrottler2\"");
+        ObjectName throttlerName = ObjectName.getInstance("org.apache.camel:context=camel-1,type=processors,name=\"mythrottler2\"");
 
         // use route to get the total time
-        ObjectName routeName = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=routes,name=\"route2\"");
+        ObjectName routeName = ObjectName.getInstance("org.apache.camel:context=camel-1,type=routes,name=\"route2\"");
 
         // reset the counters
         mbeanServer.invoke(routeName, "reset", null, null);

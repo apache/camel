@@ -29,12 +29,10 @@ import org.apache.camel.WrappedFile;
 
 public class JsonPathEngine {
 
-    private final String expression;
     private final JsonPath path;
     private final Configuration configuration;
 
     public JsonPathEngine(String expression) {
-        this.expression = expression;
         this.configuration = Configuration.defaultConfiguration();
         this.path = JsonPath.compile(expression);
     }
@@ -43,7 +41,7 @@ public class JsonPathEngine {
         Object json = exchange.getIn().getBody();
 
         if (json instanceof WrappedFile) {
-            json = ((WrappedFile) json).getFile();
+            json = ((WrappedFile<?>) json).getFile();
         }
 
         // the message body type should use the suitable read method

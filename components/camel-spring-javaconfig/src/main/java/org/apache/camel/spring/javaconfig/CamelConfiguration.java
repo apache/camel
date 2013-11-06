@@ -151,7 +151,13 @@ public abstract class CamelConfiguration implements BeanFactoryAware, Applicatio
     protected void setupCamelContext(CamelContext camelContext) throws Exception {
         
     }
-    
+
+    /**
+     * Factory method returning {@link CamelContext} used by this configuration.
+     *
+     * @return {@link CamelContext} used by this configuration. By default {@link SpringCamelContext} instance is
+     * created, to fully integrate Spring application context and Camel registry.
+     */
     protected CamelContext createCamelContext() throws Exception {
         return new SpringCamelContext(getApplicationContext());
     }

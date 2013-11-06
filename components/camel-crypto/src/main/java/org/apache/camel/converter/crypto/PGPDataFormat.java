@@ -17,7 +17,7 @@
 package org.apache.camel.converter.crypto;
 
 import java.io.BufferedOutputStream;
-import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
@@ -29,12 +29,12 @@ import java.security.SignatureException;
 import java.util.Date;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.converter.stream.CachedOutputStream;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.commons.io.IOUtils;
 import org.bouncycastle.bcpg.ArmoredOutputStream;
 import org.bouncycastle.bcpg.CompressionAlgorithmTags;
 import org.bouncycastle.bcpg.HashAlgorithmTags;
@@ -65,7 +65,6 @@ import org.bouncycastle.openpgp.operator.jcajce.JcePBESecretKeyDecryptorBuilder;
 import org.bouncycastle.openpgp.operator.jcajce.JcePGPDataEncryptorBuilder;
 import org.bouncycastle.openpgp.operator.jcajce.JcePublicKeyDataDecryptorFactoryBuilder;
 import org.bouncycastle.openpgp.operator.jcajce.JcePublicKeyKeyEncryptionMethodGenerator;
-import org.bouncycastle.util.io.Streams;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -125,7 +124,7 @@ public class PGPDataFormat extends ServiceSupport implements DataFormat {
     private int algorithm = SymmetricKeyAlgorithmTags.CAST5;
 
     /**
-     * If no passpharase can be found from the parameter <tt>password</tt> or
+     * If no passphrase can be found from the parameter <tt>password</tt> or
      * <tt>signaturePassword</tt> or from the header
      * {@link #SIGNATURE_KEY_PASSWORD} or {@link #KEY_PASSWORD} then we try to
      * get the password from the passphrase accessor. This is especially useful
@@ -281,32 +280,21 @@ public class PGPDataFormat extends ServiceSupport implements DataFormat {
         return sigGen;
     }
 
+    @SuppressWarnings("resource")
     public Object unmarshal(Exchange exchange, InputStream encryptedStream) throws Exception {
         if (encryptedStream == null) {
             return null;
         }
-
-        InputStream in;
-        try {
-            byte[] encryptedData = IOUtils.toByteArray(encryptedStream);
-            //TODO why do we need a byte array input stream? --> streaming not possible?
-            InputStream byteStream = new ByteArrayInputStream(encryptedData);
-            in = PGPUtil.getDecoderStream(byteStream);
-        } finally {
-            IOUtils.closeQuietly(encryptedStream);
-        }
-
+        InputStream in = PGPUtil.getDecoderStream(encryptedStream);
         PGPObjectFactory pgpFactory = new PGPObjectFactory(in);
         Object o = pgpFactory.nextObject();
-
-        // the first object might be a PGP marker packet
+        // the first object might be a PGP marker packet 
         PGPEncryptedDataList enc;
         if (o instanceof PGPEncryptedDataList) {
             enc = (PGPEncryptedDataList) o;
         } else {
             enc = (PGPEncryptedDataList) pgpFactory.nextObject();
         }
-        IOHelper.close(in);
 
         PGPPublicKeyEncryptedData pbe = null;
         PGPPrivateKey key = null;
@@ -337,23 +325,46 @@ public class PGPDataFormat extends ServiceSupport implements DataFormat {
         PGPLiteralData ld = (PGPLiteralData) object;
         InputStream litData = ld.getInputStream();
 
-        //TODO we should enable streaming here with CashedOutputStream!!
-        byte[] answer;
+        // enable streaming via OutputStreamCache
+        CachedOutputStream cos;
+        ByteArrayOutputStream bos;
+        OutputStream os;
+        if (exchange.getContext().getStreamCachingStrategy().isEnabled()) {
+            cos = new CachedOutputStream(exchange);
+            bos = null;
+            os = cos;
+        } else {
+            cos = null;
+            bos = new ByteArrayOutputStream();
+            os = bos;
+        }
+         
         try {
-            answer = Streams.readAll(litData);
+            byte[] buffer = new byte[BUFFER_SIZE];
+            int bytesRead;
+            while ((bytesRead = litData.read(buffer)) != -1) {
+                os.write(buffer, 0, bytesRead);
+                if (signature != null) {
+                    signature.update(buffer, 0, bytesRead);
+                }
+                os.flush();
+            }
         } finally {
-            IOHelper.close(litData, encData, in);
+            IOHelper.close(os, litData, encData, in);
         }
 
         if (signature != null) {
-            signature.update(answer);
             PGPSignatureList sigList = (PGPSignatureList) pgpFactory.nextObject();
             if (!signature.verify(getSignatureWithKeyId(signature.getKeyID(), sigList))) {
                 throw new SignatureException("Cannot verify PGP signature");
             }
         }
-
-        return answer;
+        
+        if (cos != null) {
+            return cos.newStreamCache();
+        } else {
+            return bos.toByteArray();
+        }
     }
 
     protected PGPSignature getSignatureWithKeyId(long keyID, PGPSignatureList sigList) {

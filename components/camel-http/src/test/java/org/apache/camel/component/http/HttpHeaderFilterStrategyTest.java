@@ -66,6 +66,9 @@ public class HttpHeaderFilterStrategyTest extends CamelTestSupport {
         assertFalse(filter.applyFilterToExternalHeaders("org.apache.camel.header", "test", exchange));
 
         assertFalse(filter.applyFilterToExternalHeaders("notFilteredHeader", "test", exchange));
+
+        assertFalse(filter.applyFilterToExternalHeaders("host", "dummy.host.com", exchange));
+        assertFalse(filter.applyFilterToExternalHeaders("Host", "dummy.host.com", exchange));
     }
 
     @Test
@@ -97,6 +100,9 @@ public class HttpHeaderFilterStrategyTest extends CamelTestSupport {
         assertTrue(filter.applyFilterToCamelHeaders("org.apache.camel.header", "test", exchange));
 
         assertFalse(filter.applyFilterToCamelHeaders("notFilteredHeader", "test", exchange));
+
+        assertTrue(filter.applyFilterToCamelHeaders("host", "dummy.host.com", exchange));
+        assertTrue(filter.applyFilterToCamelHeaders("Host", "dummy.host.com", exchange));
     }
 
 }

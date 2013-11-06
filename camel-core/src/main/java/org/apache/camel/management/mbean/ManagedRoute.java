@@ -245,7 +245,8 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
             MBeanServer server = getContext().getManagementStrategy().getManagementAgent().getMBeanServer();
             if (server != null) {
                 // get all the processor mbeans and sort them accordingly to their index
-                ObjectName query = ObjectName.getInstance("org.apache.camel:context=*/" + getContext().getManagementName() + ",type=processors,*");
+                String prefix = getContext().getManagementStrategy().getManagementAgent().getIncludeHostName() ? "*/" : "";
+                ObjectName query = ObjectName.getInstance("org.apache.camel:context=" + prefix + getContext().getManagementName() + ",type=processors,*");
                 Set<ObjectName> names = server.queryNames(query, null);
                 List<ManagedProcessorMBean> mps = new ArrayList<ManagedProcessorMBean>();
                 for (ObjectName on : names) {
@@ -313,7 +314,8 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
             MBeanServer server = getContext().getManagementStrategy().getManagementAgent().getMBeanServer();
             if (server != null) {
                 // get all the processor mbeans and sort them accordingly to their index
-                ObjectName query = ObjectName.getInstance("org.apache.camel:context=*/" + getContext().getManagementName() + ",type=processors,*");
+                String prefix = getContext().getManagementStrategy().getManagementAgent().getIncludeHostName() ? "*/" : "";
+                ObjectName query = ObjectName.getInstance("org.apache.camel:context=" + prefix + getContext().getManagementName() + ",type=processors,*");
                 QueryExp queryExp = Query.match(new AttributeValueExp("RouteId"), new StringValueExp(getRouteId()));
                 Set<ObjectName> names = server.queryNames(query, queryExp);
                 for (ObjectName name : names) {

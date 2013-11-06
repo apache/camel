@@ -49,7 +49,7 @@ public class ManagedNamePatternFixedTest extends CamelBlueprintTestSupport {
 
         assertEquals("cool-1.2.3", context.getManagementName());
 
-        ObjectName on = ObjectName.getInstance("org.apache.camel:context=localhost/" + context.getManagementName()
+        ObjectName on = ObjectName.getInstance("org.apache.camel:context=" + context.getManagementName()
                 + ",type=context,name=\"" + context.getName() + "\"");
         assertTrue("Should be registered", mbeanServer.isRegistered(on));
     }

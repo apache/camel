@@ -19,14 +19,15 @@ package org.apache.camel.rx;
 /**
  */
 public class Order {
-    private String id;
-    private double amount;
+    private final String id;
+    private final double amount;
 
     public Order(String id, double amount) {
         this.amount = amount;
         this.id = id;
     }
 
+    @Override
     public String toString() {
         return "Order[id " + id + ", amount " + amount + "]";
     }

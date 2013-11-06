@@ -35,7 +35,7 @@ public class ManagedRemoveRouteAggregateThreadPoolTest extends ManagementTestSup
         }
 
         MBeanServer mbeanServer = getMBeanServer();
-        ObjectName on = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=routes,name=\"foo\"");
+        ObjectName on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=routes,name=\"foo\"");
 
         getMockEndpoint("mock:result").expectedMessageCount(1);
         template.sendBody("direct:foo", "Hello World");

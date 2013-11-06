@@ -34,7 +34,7 @@ public class ManagedUnregisterEndpointTest extends ManagementTestSupport {
 
         MBeanServer mbeanServer = getMBeanServer();
 
-        ObjectName on = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=endpoints,name=\"mock://result\"");
+        ObjectName on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=endpoints,name=\"mock://result\"");
 
         assertTrue("Should be registered", mbeanServer.isRegistered(on));
         String uri = (String) mbeanServer.getAttribute(on, "EndpointUri");

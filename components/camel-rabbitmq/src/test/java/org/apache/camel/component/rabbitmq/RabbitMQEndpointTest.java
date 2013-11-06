@@ -16,10 +16,16 @@
  */
 package org.apache.camel.component.rabbitmq;
 
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ThreadPoolExecutor;
 
+import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Envelope;
+import com.rabbitmq.client.impl.LongStringHelper;
 import org.apache.camel.Exchange;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
@@ -28,9 +34,31 @@ import org.mockito.Mockito;
 public class RabbitMQEndpointTest extends CamelTestSupport {
 
     private Envelope envelope = Mockito.mock(Envelope.class);
+    private AMQP.BasicProperties properties = Mockito.mock(AMQP.BasicProperties.class);
 
     @Test
-    public void testCreatingRabbitExchangeSetsHeaders() throws Exception {
+    public void testCreatingRabbitExchangeSetsStandardHeaders() throws Exception {
+        RabbitMQEndpoint endpoint = context.getEndpoint("rabbitmq:localhost/exchange", RabbitMQEndpoint.class);
+
+        String routingKey = UUID.randomUUID().toString();
+        String exchangeName = UUID.randomUUID().toString();
+        long tag = UUID.randomUUID().toString().hashCode();
+
+        Mockito.when(envelope.getRoutingKey()).thenReturn(routingKey);
+        Mockito.when(envelope.getExchange()).thenReturn(exchangeName);
+        Mockito.when(envelope.getDeliveryTag()).thenReturn(tag);
+        Mockito.when(properties.getHeaders()).thenReturn(null);
+
+        byte[] body = new byte[20];
+        Exchange exchange = endpoint.createRabbitExchange(envelope, properties, body);
+        assertEquals(exchangeName, exchange.getIn().getHeader(RabbitMQConstants.EXCHANGE_NAME));
+        assertEquals(routingKey, exchange.getIn().getHeader(RabbitMQConstants.ROUTING_KEY));
+        assertEquals(tag, exchange.getIn().getHeader(RabbitMQConstants.DELIVERY_TAG));
+        assertEquals(body, exchange.getIn().getBody());
+    }
+
+    @Test
+    public void testCreatingRabbitExchangeSetsCustomHeaders() throws Exception {
         RabbitMQEndpoint endpoint = context.getEndpoint("rabbitmq:localhost/exchange", RabbitMQEndpoint.class);
 
         String routingKey = UUID.randomUUID().toString();
@@ -41,11 +69,30 @@ public class RabbitMQEndpointTest extends CamelTestSupport {
         Mockito.when(envelope.getExchange()).thenReturn(exchangeName);
         Mockito.when(envelope.getDeliveryTag()).thenReturn(tag);
 
+        Map<String, Object> customHeaders = new HashMap<String, Object>();
+        customHeaders.put("stringHeader", "A string");
+        customHeaders.put("bigDecimalHeader", new BigDecimal("12.34"));
+        customHeaders.put("integerHeader", 42);
+        customHeaders.put("doubleHeader", 42.24);
+        customHeaders.put("booleanHeader", true);
+        customHeaders.put("dateHeader", new Date(0));
+        customHeaders.put("byteArrayHeader", "foo".getBytes());
+        customHeaders.put("longStringHeader", LongStringHelper.asLongString("Some really long string"));
+        Mockito.when(properties.getHeaders()).thenReturn(customHeaders);
+
         byte[] body = new byte[20];
-        Exchange exchange = endpoint.createRabbitExchange(envelope, body);
+        Exchange exchange = endpoint.createRabbitExchange(envelope, properties, body);
         assertEquals(exchangeName, exchange.getIn().getHeader(RabbitMQConstants.EXCHANGE_NAME));
         assertEquals(routingKey, exchange.getIn().getHeader(RabbitMQConstants.ROUTING_KEY));
         assertEquals(tag, exchange.getIn().getHeader(RabbitMQConstants.DELIVERY_TAG));
+        assertEquals("A string", exchange.getIn().getHeader("stringHeader"));
+        assertEquals(new BigDecimal("12.34"), exchange.getIn().getHeader("bigDecimalHeader"));
+        assertEquals(42, exchange.getIn().getHeader("integerHeader"));
+        assertEquals(42.24, exchange.getIn().getHeader("doubleHeader"));
+        assertEquals(true, exchange.getIn().getHeader("booleanHeader"));
+        assertEquals(new Date(0), exchange.getIn().getHeader("dateHeader"));
+        assertArrayEquals("foo".getBytes(), (byte[]) exchange.getIn().getHeader("byteArrayHeader"));
+        assertEquals("Some really long string", exchange.getIn().getHeader("longStringHeader"));
         assertEquals(body, exchange.getIn().getBody());
     }
 

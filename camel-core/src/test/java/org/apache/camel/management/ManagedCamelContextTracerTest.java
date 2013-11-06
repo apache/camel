@@ -38,8 +38,8 @@ public class ManagedCamelContextTracerTest extends ManagementTestSupport {
 
         MBeanServer mbeanServer = getMBeanServer();
 
-        ObjectName camel = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=context,name=\"camel-1\"");
-        ObjectName on = new ObjectName("org.apache.camel:context=localhost/camel-1,type=tracer,name=Tracer");
+        ObjectName camel = ObjectName.getInstance("org.apache.camel:context=camel-1,type=context,name=\"camel-1\"");
+        ObjectName on = new ObjectName("org.apache.camel:context=camel-1,type=tracer,name=Tracer");
         mbeanServer.isRegistered(camel);
         mbeanServer.isRegistered(on);
 

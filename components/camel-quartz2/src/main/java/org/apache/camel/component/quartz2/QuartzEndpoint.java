@@ -28,7 +28,6 @@ import org.apache.camel.Route;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.processor.loadbalancer.LoadBalancer;
 import org.apache.camel.processor.loadbalancer.RoundRobinLoadBalancer;
-import org.apache.camel.util.EndpointHelper;
 import org.quartz.Job;
 import org.quartz.JobBuilder;
 import org.quartz.JobDataMap;
@@ -301,11 +300,6 @@ public class QuartzEndpoint extends DefaultEndpoint {
 
         LOG.debug("Created trigger={}", result);
         return result;
-    }
-
-    private void setProperties(Object bean, Map<String, Object> parameters) throws Exception {
-        EndpointHelper.setReferenceProperties(getCamelContext(), bean, parameters);
-        EndpointHelper.setProperties(getCamelContext(), bean, parameters);
     }
 
     private JobDetail createJobDetail() throws Exception {

@@ -22,6 +22,7 @@ import java.util.Queue;
 
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.services.s3.AmazonS3;
+import com.amazonaws.services.s3.model.GetObjectRequest;
 import com.amazonaws.services.s3.model.ListObjectsRequest;
 import com.amazonaws.services.s3.model.ObjectListing;
 import com.amazonaws.services.s3.model.S3Object;
@@ -58,22 +59,39 @@ public class S3Consumer extends ScheduledBatchPollingConsumer {
         shutdownRunningTask = null;
         pendingExchanges = 0;
         
+        String fileName = getConfiguration().getFileName();
         String bucketName = getConfiguration().getBucketName();
-        LOG.trace("Queueing objects in bucket [{}]...", bucketName);
-        
-        ListObjectsRequest listObjectsRequest = new ListObjectsRequest();
-        listObjectsRequest.setBucketName(bucketName);
-        listObjectsRequest.setPrefix(getConfiguration().getPrefix());
-        listObjectsRequest.setMaxKeys(maxMessagesPerPoll);
-        
-        ObjectListing listObjects = getAmazonS3Client().listObjects(listObjectsRequest);
+        Queue<Exchange> exchanges = null;
 
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("Found {} objects in bucket [{}]...", listObjects.getObjectSummaries().size(), bucketName);
-        }
+        if (fileName != null) {
+            LOG.trace("Getting object in bucket [{}] with file name [{}]...", bucketName, fileName);
+
+            S3Object s3Object = getAmazonS3Client().getObject(new GetObjectRequest(bucketName, fileName));
+            exchanges = createExchanges(s3Object);
+        } else {
+            LOG.trace("Queueing objects in bucket [{}]...", bucketName);
         
-        Queue<Exchange> exchanges = createExchanges(listObjects.getObjectSummaries());
+            ListObjectsRequest listObjectsRequest = new ListObjectsRequest();
+            listObjectsRequest.setBucketName(bucketName);
+            listObjectsRequest.setPrefix(getConfiguration().getPrefix());
+            listObjectsRequest.setMaxKeys(maxMessagesPerPoll);
+        
+            ObjectListing listObjects = getAmazonS3Client().listObjects(listObjectsRequest);
+
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Found {} objects in bucket [{}]...", listObjects.getObjectSummaries().size(), bucketName);
+            }
+        
+            exchanges = createExchanges(listObjects.getObjectSummaries());
+        }
         return processBatch(CastUtils.cast(exchanges));
+    }
+    
+    protected Queue<Exchange> createExchanges(S3Object s3Object) {
+        Queue<Exchange> answer = new LinkedList<Exchange>();
+        Exchange exchange = getEndpoint().createExchange(s3Object);
+        answer.add(exchange);
+        return answer;
     }
     
     protected Queue<Exchange> createExchanges(List<S3ObjectSummary> s3ObjectSummaries) {

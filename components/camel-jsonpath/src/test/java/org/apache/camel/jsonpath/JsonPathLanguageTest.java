@@ -41,7 +41,7 @@ public class JsonPathLanguageTest extends CamelTestSupport {
 
         Language lan = context.resolveLanguage("jsonpath");
         Expression exp = lan.createExpression("$.store.book[*].author");
-        List authors = exp.evaluate(exchange, List.class);
+        List<?> authors = exp.evaluate(exchange, List.class);
         log.info("Authors {}", authors);
 
         assertNotNull(authors);

@@ -77,7 +77,7 @@ public class ZookeeperProducer extends DefaultProducer {
                 }
 
                 OperationResult result = synchronouslyDelete(context);
-                if (configuration.listChildren()) {
+                if (configuration.isListChildren()) {
                     result = listChildren(context);
                 }
                 updateExchangeWithResult(context, result);
@@ -87,7 +87,7 @@ public class ZookeeperProducer extends DefaultProducer {
                 }
 
                 OperationResult result = synchronouslySetData(context);
-                if (configuration.listChildren()) {
+                if (configuration.isListChildren()) {
                     result = listChildren(context);
                 }
                 updateExchangeWithResult(context, result);

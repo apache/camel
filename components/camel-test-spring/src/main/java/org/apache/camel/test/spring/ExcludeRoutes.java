@@ -23,6 +23,8 @@ import java.lang.annotation.Retention;
 import java.lang.annotation.RetentionPolicy;
 import java.lang.annotation.Target;
 
+import org.apache.camel.RoutesBuilder;
+
 /**
  * Indicates if certain route builder classes should be excluded from discovery.  
  * Initializes a {@link org.apache.camel.spi.PackageScanClassResolver} to exclude a set of given
@@ -38,5 +40,5 @@ public @interface ExcludeRoutes {
     /**
      * The classes to exclude from resolution when using package scanning.
      */
-    Class<?>[] value() default {};
+    Class<? extends RoutesBuilder>[] value() default {};
 }

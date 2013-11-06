@@ -74,10 +74,12 @@ public class ECDSASignatureTest extends CamelTestSupport {
     protected JndiRegistry createRegistry() throws Exception {
         JndiRegistry registry = super.createRegistry();
 
-        registry.bind("accessor", getKeyAccessor());
-        registry.bind("selector", 
-                      KeySelector.singletonKeySelector(getCertificateFromKeyStore().getPublicKey()));
-        registry.bind("uriDereferencer", getSameDocumentUriDereferencer());
+        // This test fails with the IBM JDK
+        if (!ibmJDK) {
+            registry.bind("accessor", getKeyAccessor());
+            registry.bind("selector", KeySelector.singletonKeySelector(getCertificateFromKeyStore().getPublicKey()));
+            registry.bind("uriDereferencer", getSameDocumentUriDereferencer());
+        }
 
         return registry;
     }

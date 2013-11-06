@@ -38,7 +38,7 @@ public class BacklogTracerTest extends ManagementTestSupport {
         }
 
         MBeanServer mbeanServer = getMBeanServer();
-        ObjectName on = new ObjectName("org.apache.camel:context=localhost/camel-1,type=tracer,name=BacklogTracer");
+        ObjectName on = new ObjectName("org.apache.camel:context=camel-1,type=tracer,name=BacklogTracer");
         assertNotNull(on);
         mbeanServer.isRegistered(on);
 
@@ -85,7 +85,7 @@ public class BacklogTracerTest extends ManagementTestSupport {
 
     public void testBacklogTracerEventMessageAsXml() throws Exception {
         MBeanServer mbeanServer = getMBeanServer();
-        ObjectName on = new ObjectName("org.apache.camel:context=localhost/camel-1,type=tracer,name=BacklogTracer");
+        ObjectName on = new ObjectName("org.apache.camel:context=camel-1,type=tracer,name=BacklogTracer");
         assertNotNull(on);
         mbeanServer.isRegistered(on);
 
@@ -123,7 +123,7 @@ public class BacklogTracerTest extends ManagementTestSupport {
     @SuppressWarnings("unchecked")
     public void testBacklogTracerEventMessageDumpAll() throws Exception {
         MBeanServer mbeanServer = getMBeanServer();
-        ObjectName on = new ObjectName("org.apache.camel:context=localhost/camel-1,type=tracer,name=BacklogTracer");
+        ObjectName on = new ObjectName("org.apache.camel:context=camel-1,type=tracer,name=BacklogTracer");
         assertNotNull(on);
         mbeanServer.isRegistered(on);
 
@@ -194,7 +194,7 @@ public class BacklogTracerTest extends ManagementTestSupport {
 
     public void testBacklogTracerEventMessageDumpAllAsXml() throws Exception {
         MBeanServer mbeanServer = getMBeanServer();
-        ObjectName on = new ObjectName("org.apache.camel:context=localhost/camel-1,type=tracer,name=BacklogTracer");
+        ObjectName on = new ObjectName("org.apache.camel:context=camel-1,type=tracer,name=BacklogTracer");
         assertNotNull(on);
         mbeanServer.isRegistered(on);
 
@@ -228,7 +228,7 @@ public class BacklogTracerTest extends ManagementTestSupport {
     @SuppressWarnings("unchecked")
     public void testBacklogTracerNotRemoveOnDump() throws Exception {
         MBeanServer mbeanServer = getMBeanServer();
-        ObjectName on = new ObjectName("org.apache.camel:context=localhost/camel-1,type=tracer,name=BacklogTracer");
+        ObjectName on = new ObjectName("org.apache.camel:context=camel-1,type=tracer,name=BacklogTracer");
         assertNotNull(on);
         mbeanServer.isRegistered(on);
 
@@ -280,7 +280,7 @@ public class BacklogTracerTest extends ManagementTestSupport {
     @SuppressWarnings("unchecked")
     public void testBacklogTracerNotRemoveOnDumpPattern() throws Exception {
         MBeanServer mbeanServer = getMBeanServer();
-        ObjectName on = new ObjectName("org.apache.camel:context=localhost/camel-1,type=tracer,name=BacklogTracer");
+        ObjectName on = new ObjectName("org.apache.camel:context=camel-1,type=tracer,name=BacklogTracer");
         assertNotNull(on);
         mbeanServer.isRegistered(on);
 
@@ -340,7 +340,7 @@ public class BacklogTracerTest extends ManagementTestSupport {
     @SuppressWarnings("unchecked")
     public void testBacklogTracerNotRemoveOverflow() throws Exception {
         MBeanServer mbeanServer = getMBeanServer();
-        ObjectName on = new ObjectName("org.apache.camel:context=localhost/camel-1,type=tracer,name=BacklogTracer");
+        ObjectName on = new ObjectName("org.apache.camel:context=camel-1,type=tracer,name=BacklogTracer");
         assertNotNull(on);
         mbeanServer.isRegistered(on);
 

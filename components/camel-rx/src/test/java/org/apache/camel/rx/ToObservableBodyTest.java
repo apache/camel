@@ -38,10 +38,12 @@ public class ToObservableBodyTest extends RxTestSupport {
         // lets consume, filter and map events
         Observable<Order> observable = reactiveCamel.toObservable("seda:orders", Order.class);
         Observable<String> largeOrderIds = observable.filter(new Func1<Order, Boolean>() {
+            @Override
             public Boolean call(Order order) {
                 return order.getAmount() > 100.0;
             }
         }).map(new Func1<Order, String>() {
+            @Override
             public String call(Order order) {
                 return order.getId();
             }

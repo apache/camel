@@ -31,7 +31,7 @@ import org.junit.Test;
 
 import static org.apache.camel.component.zookeeper.ZooKeeperMessage.ZOOKEEPER_CREATE_MODE;
 import static org.apache.camel.component.zookeeper.ZooKeeperMessage.ZOOKEEPER_NODE;
-import static org.apache.camel.component.zookeeper.ZooKeeperMessage.ZOOKEEPER_OPERATION;;
+import static org.apache.camel.component.zookeeper.ZooKeeperMessage.ZOOKEEPER_OPERATION;
 
 public class ZookeeperProducerTest extends ZooKeeperTestSupport {
 

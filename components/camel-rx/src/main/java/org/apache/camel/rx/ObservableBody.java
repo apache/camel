@@ -28,10 +28,11 @@ public abstract class ObservableBody<T> extends ObservableProcessor<T> {
     private final Class<T> bodyType;
 
     public ObservableBody(Class<T> bodyType) {
-        super(new ExchangeToBodyFunc1(bodyType));
+        super(new ExchangeToBodyFunc1<T>(bodyType));
         this.bodyType = bodyType;
     }
 
+    @Override
     public String toString() {
         return "ObservableBody[" + bodyType.getName() + "]";
     }

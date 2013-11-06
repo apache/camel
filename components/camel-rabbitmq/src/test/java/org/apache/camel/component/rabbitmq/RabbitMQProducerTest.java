@@ -18,6 +18,10 @@
 package org.apache.camel.component.rabbitmq;
 
 import java.io.IOException;
+import java.math.BigDecimal;
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
 import java.util.concurrent.ExecutorService;
 
 import com.rabbitmq.client.AMQP;
@@ -31,7 +35,9 @@ import org.junit.Test;
 import org.mockito.Matchers;
 import org.mockito.Mockito;
 
+import static org.junit.Assert.assertArrayEquals;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
 
 public class RabbitMQProducerTest {
 
@@ -149,5 +155,32 @@ public class RabbitMQProducerTest {
         message.setHeader(RabbitMQConstants.TIMESTAMP, "12345123");
         AMQP.BasicProperties props = producer.buildProperties(exchange).build();
         assertEquals(12345123, props.getTimestamp().getTime());
+    }
+
+    @Test
+    public void testPropertiesUsesCustomHeaders() throws IOException {
+        RabbitMQProducer producer = new RabbitMQProducer(endpoint);
+        Map<String, Object> customHeaders = new HashMap<String, Object>();
+        customHeaders.put("stringHeader", "A string");
+        customHeaders.put("bigDecimalHeader", new BigDecimal("12.34"));
+        customHeaders.put("integerHeader", 42);
+        customHeaders.put("doubleHeader", 42.24);
+        customHeaders.put("booleanHeader", true);
+        customHeaders.put("dateHeader", new Date(0));
+        customHeaders.put("byteArrayHeader", "foo".getBytes());
+        customHeaders.put("invalidHeader", new Something());
+        message.setHeaders(customHeaders);
+        AMQP.BasicProperties props = producer.buildProperties(exchange).build();
+        assertEquals("A string", props.getHeaders().get("stringHeader"));
+        assertEquals(new BigDecimal("12.34"), props.getHeaders().get("bigDecimalHeader"));
+        assertEquals(42, props.getHeaders().get("integerHeader"));
+        assertEquals(42.24, props.getHeaders().get("doubleHeader"));
+        assertEquals(true, props.getHeaders().get("booleanHeader"));
+        assertEquals(new Date(0), props.getHeaders().get("dateHeader"));
+        assertArrayEquals("foo".getBytes(), (byte[]) props.getHeaders().get("byteArrayHeader"));
+        assertNull(props.getHeaders().get("invalidHeader"));
+    }
+
+    private static class Something {
     }
 }

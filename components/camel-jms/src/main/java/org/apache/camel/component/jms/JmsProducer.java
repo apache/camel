@@ -117,7 +117,13 @@ public class JmsProducer extends DefaultAsyncProducer {
 
     protected void unInitReplyManager() {
         try {
-            ServiceHelper.stopService(replyManager);
+            if (replyManager != null) {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Stopping JmsReplyManager: {} from processing replies from: {}", replyManager,
+                            endpoint.getReplyTo() != null ? endpoint.getReplyTo() : "temporary queue");
+                }
+                ServiceHelper.stopService(replyManager);
+            }
         } catch (Exception e) {
             throw ObjectHelper.wrapRuntimeCamelException(e);
         } finally {

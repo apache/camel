@@ -18,13 +18,17 @@ package org.apache.camel.component.rabbitmq;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.Envelope;
+import com.rabbitmq.client.LongString;
+
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -56,7 +60,7 @@ public class RabbitMQEndpoint extends DefaultEndpoint {
         super(endpointUri, component);
     }
 
-    public Exchange createRabbitExchange(Envelope envelope, byte[] body) {
+    public Exchange createRabbitExchange(Envelope envelope, AMQP.BasicProperties properties, byte[] body) {
         Exchange exchange = new DefaultExchange(getCamelContext(), getExchangePattern());
 
         Message message = new DefaultMessage();
@@ -65,6 +69,19 @@ public class RabbitMQEndpoint extends DefaultEndpoint {
         message.setHeader(RabbitMQConstants.ROUTING_KEY, envelope.getRoutingKey());
         message.setHeader(RabbitMQConstants.EXCHANGE_NAME, envelope.getExchange());
         message.setHeader(RabbitMQConstants.DELIVERY_TAG, envelope.getDeliveryTag());
+
+        Map<String, Object> headers = properties.getHeaders();
+        if (headers != null) {
+            for (Map.Entry<String, Object> entry : headers.entrySet()) {
+                // Convert LongStrings to String.
+                if (entry.getValue() instanceof LongString) {
+                    message.setHeader(entry.getKey(), entry.getValue().toString());
+                } else {
+                    message.setHeader(entry.getKey(), entry.getValue());
+                }
+            }
+        }
+
         message.setBody(body);
 
         return exchange;

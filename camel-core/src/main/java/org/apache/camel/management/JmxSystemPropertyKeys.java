@@ -59,6 +59,9 @@ public final class JmxSystemPropertyKeys {
     // Whether to remove detected sensitive information (such as passwords) from MBean names and attributes.
     public static final String MASK = "org.apache.camel.jmx.mask";
 
+    // Whether to include host name in MBean naes
+    public static final String INCLUDE_HOST_NAME = "org.apache.camel.jmx.includeHostName";
+
     private JmxSystemPropertyKeys() {
         // not instantiated
     }

@@ -20,6 +20,7 @@ import java.io.ByteArrayOutputStream;
 import java.io.ObjectOutputStream;
 import java.io.PrintWriter;
 import java.io.StringWriter;
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URLDecoder;
 import java.nio.charset.Charset;
@@ -153,7 +154,7 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding {
             Iterator<?> it = ObjectHelper.createIterator(values);
             while (it.hasNext()) {
                 Object extracted = it.next();
-                Object decoded = configuration.isUrlDecodeHeaders() ? URLDecoder.decode(extracted.toString(), "UTF-8") : extracted.toString();
+                Object decoded = shouldUrlDecodeHeader(configuration, name, extracted, "UTF-8");
                 LOG.trace("HTTP-header: {}", extracted);
                 if (headerFilterStrategy != null
                         && !headerFilterStrategy.applyFilterToExternalHeaders(name, decoded, exchange)) {
@@ -173,7 +174,7 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding {
                 Iterator<?> it = ObjectHelper.createIterator(values);
                 while (it.hasNext()) {
                     Object extracted = it.next();
-                    Object decoded = configuration.isUrlDecodeHeaders() ? URLDecoder.decode(extracted.toString(), "UTF-8") : extracted.toString();
+                    Object decoded = shouldUrlDecodeHeader(configuration, name, extracted, "UTF-8");
                     LOG.trace("URI-Parameter: {}", extracted);
                     if (headerFilterStrategy != null
                             && !headerFilterStrategy.applyFilterToExternalHeaders(name, decoded, exchange)) {
@@ -195,8 +196,8 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding {
                 for (String param : body.split("&")) {
                     String[] pair = param.split("=", 2);
                     if (pair.length == 2) {
-                        String name = configuration.isUrlDecodeHeaders() ? URLDecoder.decode(pair[0], charset) : pair[0];
-                        String value = configuration.isUrlDecodeHeaders() ? URLDecoder.decode(pair[1], charset) : pair[1];
+                        String name = shouldUrlDecodeHeader(configuration, "", pair[0], charset);
+                        String value = shouldUrlDecodeHeader(configuration, name, pair[1], charset);
                         if (headerFilterStrategy != null
                                 && !headerFilterStrategy.applyFilterToExternalHeaders(name, value, exchange)) {
                             NettyHttpHelper.appendHeader(headers, name, value);
@@ -208,6 +209,27 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding {
             }
         }
 
+    }
+
+    /**
+     * Decodes the header if needed to, or returns the header value as is.
+     *
+     * @param configuration  the configuration
+     * @param headerName     the header name
+     * @param value          the current header value
+     * @param charset        the charset to use for decoding
+     * @return  the decoded value (if decoded was needed) or a <tt>toString</tt> representation of the value.
+     * @throws UnsupportedEncodingException is thrown if error decoding.
+     */
+    protected String shouldUrlDecodeHeader(NettyHttpConfiguration configuration, String headerName, Object value, String charset) throws UnsupportedEncodingException {
+        // do not decode Content-Type
+        if (Exchange.CONTENT_TYPE.equals(headerName)) {
+            return value.toString();
+        } else if (configuration.isUrlDecodeHeaders()) {
+            return URLDecoder.decode(value.toString(), charset);
+        } else {
+            return value.toString();
+        }
     }
 
     @Override

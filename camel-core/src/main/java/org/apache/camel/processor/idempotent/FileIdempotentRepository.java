@@ -230,6 +230,16 @@ public class FileIdempotentRepository extends ServiceSupport implements Idempote
         LOG.debug("Appending {} to idempotent filestore: {}", messageId, fileStore);
         FileOutputStream fos = null;
         try {
+            // create store parent directory if missing
+            File storeParentDirectory = fileStore.getParentFile();
+            if (storeParentDirectory != null && !storeParentDirectory.exists()) {
+                LOG.info("Parent directory of file store {} doesn't exist. Creating.", fileStore);
+                if (fileStore.getParentFile().mkdirs()) {
+                    LOG.info("Parent directory of file store {} successfully created.", fileStore);
+                } else {
+                    LOG.warn("Parent directory of file store {} cannot be created.", fileStore);
+                }
+            }
             // create store if missing
             if (!fileStore.exists()) {
                 FileUtil.createNewFile(fileStore);

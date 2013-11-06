@@ -75,11 +75,11 @@ public class ManagedStatisticsTest extends ManagementTestSupport {
         assertNull(lastFail);
 
         // should be 5 on the processors
-        ObjectName foo = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=processors,name=\"foo\"");
+        ObjectName foo = ObjectName.getInstance("org.apache.camel:context=camel-1,type=processors,name=\"foo\"");
         completed = (Long) mbeanServer.getAttribute(foo, "ExchangesCompleted");
         assertEquals(5, completed.longValue());
 
-        ObjectName mock = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=processors,name=\"mock\"");
+        ObjectName mock = ObjectName.getInstance("org.apache.camel:context=camel-1,type=processors,name=\"mock\"");
         completed = (Long) mbeanServer.getAttribute(mock, "ExchangesCompleted");
         assertEquals(5, completed.longValue());
     }

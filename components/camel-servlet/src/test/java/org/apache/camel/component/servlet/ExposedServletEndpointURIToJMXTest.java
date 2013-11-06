@@ -41,7 +41,7 @@ public class ExposedServletEndpointURIToJMXTest extends CamelTestSupport {
 
     private void checkServletEndpointURI(String servletEndpointURI) throws Exception {
         MBeanServer mbeanServer = context.getManagementStrategy().getManagementAgent().getMBeanServer();
-        ObjectName name = new ObjectName("org.apache.camel:context=*/camel-1,type=endpoints,name=" + servletEndpointURI);
+        ObjectName name = new ObjectName("org.apache.camel:context=camel-1,type=endpoints,name=" + servletEndpointURI);
         Set<ObjectName> objectNamesSet = mbeanServer.queryNames(name, null);
         assertEquals("Expect one MBean for the servlet endpoint", 1, objectNamesSet.size());
 

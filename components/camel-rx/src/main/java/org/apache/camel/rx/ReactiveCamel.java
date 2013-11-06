@@ -86,10 +86,9 @@ public class ReactiveCamel {
     /**
      * Sends events on the given {@link Observable} to the given camel endpoint
      */
-    @SuppressWarnings("unchecked")
     public <T> void sendTo(Observable<T> observable, Endpoint endpoint) {
         try {
-            ObserverSender observer = new ObserverSender(endpoint);
+            ObserverSender<T> observer = new ObserverSender<T>(endpoint);
             observable.subscribe(observer);
         } catch (Exception e) {
             throw new RuntimeCamelRxException(e);
@@ -108,16 +107,15 @@ public class ReactiveCamel {
      * Returns a newly created {@link Observable} given a function which converts
      * the {@link Exchange} from the Camel consumer to the required type
      */
-    @SuppressWarnings("unchecked")
     protected <T> Observable<T> createEndpointObservable(final Endpoint endpoint,
                                                          final Func1<Exchange, T> converter) {
-        Observable.OnSubscribeFunc<Message> func = new Observable.OnSubscribeFunc<Message>() {
+        Observable.OnSubscribeFunc<T> func = new Observable.OnSubscribeFunc<T>() {
             @Override
-            public Subscription onSubscribe(Observer<? super Message> observer) {
-                return new EndpointSubscription(endpoint, observer, converter);
+            public Subscription onSubscribe(Observer<? super T> observer) {
+                return new EndpointSubscription<T>(endpoint, observer, converter);
             }
         };
-        return new EndpointObservable(endpoint, func);
+        return new EndpointObservable<T>(endpoint, func);
     }
 
 }

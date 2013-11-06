@@ -26,10 +26,12 @@ import org.springframework.context.annotation.Bean;
  * A useful base class for writing
  * <a
  * href="http://docs.spring.io/spring/docs/current/spring-framework-reference/html/beans.html#beans-annotation-config">
- * Spring annotation-based</a> configurations to configure a CamelContext with a single {@link RouteBuilder} instance.
+ * Spring annotation-based</a> configurations to configure a {@link org.apache.camel.CamelContext} with a single
+ * {@link RouteBuilder} instance.
  */
 public abstract class SingleRouteCamelConfiguration extends CamelConfiguration {
 
+    @Override
     @Bean
     public List<RouteBuilder> routes() {
         return Collections.singletonList(route());
@@ -39,4 +41,5 @@ public abstract class SingleRouteCamelConfiguration extends CamelConfiguration {
      * Creates the single {@link RouteBuilder} to use in this configuration
      */
     public abstract RouteBuilder route();
+
 }

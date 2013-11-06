@@ -25,7 +25,6 @@ import javax.management.ObjectName;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.management.DefaultManagementNamingStrategy;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 import org.springframework.jmx.support.JmxUtils;
@@ -52,9 +51,6 @@ public class ZooKeeperManagedEndpointTest extends CamelTestSupport {
 
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = new DefaultCamelContext();
-        DefaultManagementNamingStrategy naming = (DefaultManagementNamingStrategy) context.getManagementStrategy().getManagementNamingStrategy();
-        naming.setHostName("localhost");
-        naming.setDomainName("org.apache.camel");
         return context;
     }
 
