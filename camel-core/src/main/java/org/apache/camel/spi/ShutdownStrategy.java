@@ -109,19 +109,18 @@ public interface ShutdownStrategy extends StaticService {
     /**
      * Set an timeout to wait for the shutdown to complete.
      * <p/>
-     * Setting a value of 0 or negative will disable timeout and wait until complete
-     * (potential blocking forever)
+     * You must set a positive value. If you want to wait (forever) then use
+     * a very high value such as {@link Long#MAX_VALUE}
      * <p/>
      * The default timeout unit is <tt>SECONDS</tt>
      *
+     * @throws IllegalArgumentException if the timeout value is 0 or negative
      * @param timeout timeout
      */
     void setTimeout(long timeout);
 
     /**
      * Gets the timeout.
-     * <p/>
-     * Use positive value to set the timeout
      * <p/>
      * The default timeout unit is <tt>SECONDS</tt>
      *
