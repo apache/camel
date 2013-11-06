@@ -411,9 +411,14 @@ public class HttpProducer extends DefaultProducer {
                 if (data != null) {
                     String contentTypeString = ExchangeHelper.getContentType(exchange);
                     ContentType contentType = null;
+                    
+                    //Check the contentType is valid or not, If not it throws an exception.
+                    //When ContentType.parse parse method parse "multipart/form-data;boundary=---------------------------j2radvtrk",
+                    //it removes "boundary" from Content-Type; I have to use contentType.create method.
                     if (contentTypeString != null) {
-                        contentType = ContentType.parse(contentTypeString);
+                        contentType = ContentType.create(contentTypeString);
                     }
+                                        
                     if (contentTypeString != null && HttpConstants.CONTENT_TYPE_JAVA_SERIALIZED_OBJECT.equals(contentTypeString)) {
                         // serialized java object
                         Serializable obj = in.getMandatoryBody(Serializable.class);
