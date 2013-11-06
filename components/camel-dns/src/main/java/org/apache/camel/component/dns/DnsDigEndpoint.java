@@ -22,7 +22,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.impl.DefaultProducer;
-import org.apache.camel.util.ObjectHelper;
 import org.xbill.DNS.DClass;
 import org.xbill.DNS.Message;
 import org.xbill.DNS.Name;
@@ -50,7 +49,6 @@ public class DnsDigEndpoint extends DefaultEndpoint {
         return new DefaultProducer(this) {
             public void process(Exchange exchange) throws Exception {
                 String server = exchange.getIn().getHeader(DnsConstants.DNS_SERVER, String.class);
-                ObjectHelper.notEmpty(server, "Header " + DnsConstants.DNS_SERVER);
 
                 SimpleResolver resolver = new SimpleResolver(server);
                 int type = Type.value(exchange.getIn().getHeader(DnsConstants.DNS_TYPE, String.class));
@@ -58,7 +56,13 @@ public class DnsDigEndpoint extends DefaultEndpoint {
                     // default: if unparsable value given, use A.
                     type = Type.A;
                 }
-                int dclass = DClass.value(exchange.getIn().getHeader(DnsConstants.DNS_CLASS, String.class));
+                
+                String dclassValue = exchange.getIn().getHeader(DnsConstants.DNS_CLASS, String.class);
+                if (dclassValue == null) {
+                	dclassValue = "";
+                }
+                	
+                int dclass = DClass.value(dclassValue);
                 if (dclass == -1) {
                     // by default, value is IN.
                     dclass = DClass.IN;
