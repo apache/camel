@@ -22,7 +22,7 @@ import javax.management.ObjectName;
 import org.apache.camel.test.blueprint.CamelBlueprintTestSupport;
 import org.junit.Test;
 
-public class ManagedNamePatternFixedTest extends CamelBlueprintTestSupport {
+public class ManagedNamePatternFixedIncludeHostNameTest extends CamelBlueprintTestSupport {
 
     @Override
     protected boolean useJmx() {
@@ -31,7 +31,7 @@ public class ManagedNamePatternFixedTest extends CamelBlueprintTestSupport {
 
     @Override
     protected String getBlueprintDescriptor() {
-        return "org/apache/camel/test/blueprint/management/managedNamePatternFixedTest.xml";
+        return "org/apache/camel/test/blueprint/management/managedNamePatternFixedIncludeHostNameTest.xml";
     }
 
     @Override
@@ -49,7 +49,7 @@ public class ManagedNamePatternFixedTest extends CamelBlueprintTestSupport {
 
         assertEquals("cool-1.2.3", context.getManagementName());
 
-        ObjectName on = ObjectName.getInstance("org.apache.camel:context=" + context.getManagementName()
+        ObjectName on = ObjectName.getInstance("org.apache.camel:context=localhost/" + context.getManagementName()
                 + ",type=context,name=\"" + context.getName() + "\"");
         assertTrue("Should be registered", mbeanServer.isRegistered(on));
     }

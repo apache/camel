@@ -33,7 +33,7 @@ public class ManagedBrowsableEndpointEmptyTest extends ManagementTestSupport {
         }
 
         MBeanServer mbeanServer = getMBeanServer();
-        ObjectName name = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=endpoints,name=\"mock://result\"");
+        ObjectName name = ObjectName.getInstance("org.apache.camel:context=camel-1,type=endpoints,name=\"mock://result\"");
 
         String out = (String) mbeanServer.invoke(name, "browseExchange", new Object[]{0}, new String[]{"java.lang.Integer"});
         assertNull(out);

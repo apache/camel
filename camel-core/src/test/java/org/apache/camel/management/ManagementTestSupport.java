@@ -36,9 +36,6 @@ public abstract class ManagementTestSupport extends ContextTestSupport {
 
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = new DefaultCamelContext();
-        DefaultManagementNamingStrategy naming = (DefaultManagementNamingStrategy) context.getManagementStrategy().getManagementNamingStrategy();
-        naming.setHostName("localhost");
-        naming.setDomainName("org.apache.camel");
         return context;
     }
 

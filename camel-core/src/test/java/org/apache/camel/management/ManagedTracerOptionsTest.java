@@ -36,7 +36,7 @@ public class ManagedTracerOptionsTest extends ManagementTestSupport {
 
         MBeanServer mbeanServer = getMBeanServer();
 
-        ObjectName on = new ObjectName("org.apache.camel:context=localhost/camel-1,type=tracer,name=Tracer");
+        ObjectName on = new ObjectName("org.apache.camel:context=camel-1,type=tracer,name=Tracer");
         mbeanServer.isRegistered(on);
 
         mbeanServer.setAttribute(on, new Attribute("Enabled", Boolean.TRUE));

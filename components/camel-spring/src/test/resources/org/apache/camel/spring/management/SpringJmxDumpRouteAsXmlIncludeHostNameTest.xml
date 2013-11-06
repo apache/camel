@@ -22,19 +22,29 @@
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
 
-    <!-- START SNIPPET: example -->
+    <bean id="naming" class="org.apache.camel.management.DefaultManagementNamingStrategy">
+        <property name="hostName" value="localhost"/>
+        <property name="domainName" value="org.apache.camel"/>
+    </bean>
+
     <camelContext xmlns="http://camel.apache.org/schema/spring">
         <!-- enable JMX -->
-        <jmxAgent id="agent" registryPort="20008"
-                  usePlatformMBeanServer="true"
-                  createConnector="true"/>
+        <jmxAgent id="agent" disabled="false" includeHostName="true"/>
 
-        <route id="foo" autoStartup="false">
-            <from uri="seda:start"/>
+        <route id="myRoute">
+            <from uri="direct:start"/>
+            <log message="Got ${body}"/>
             <to uri="mock:result"/>
         </route>
 
+        <route id="myOtherRoute">
+            <from uri="seda:bar"/>
+            <filter>
+                <header>bar</header>
+                <to uri="mock:bar"/>
+            </filter>
+        </route>
+
     </camelContext>
-    <!-- END SNIPPET: example -->
 
 </beans>

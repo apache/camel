@@ -43,15 +43,15 @@ public class ManagedMulticastTest extends ManagementTestSupport {
 
         MBeanServer mbeanServer = getMBeanServer();
 
-        ObjectName name = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=endpoints,name=\"mock://a\"");
+        ObjectName name = ObjectName.getInstance("org.apache.camel:context=camel-1,type=endpoints,name=\"mock://a\"");
         Long queueSize = (Long) mbeanServer.invoke(name, "queueSize", null, null);
         assertEquals(3, queueSize.intValue());
 
-        name = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=endpoints,name=\"mock://b\"");
+        name = ObjectName.getInstance("org.apache.camel:context=camel-1,type=endpoints,name=\"mock://b\"");
         queueSize = (Long) mbeanServer.invoke(name, "queueSize", null, null);
         assertEquals(3, queueSize.intValue());
 
-        name = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=processors,name=\"myMulticast\"");
+        name = ObjectName.getInstance("org.apache.camel:context=camel-1,type=processors,name=\"myMulticast\"");
         mbeanServer.isRegistered(name);
         
         Long total = (Long) mbeanServer.getAttribute(name, "ExchangesTotal");

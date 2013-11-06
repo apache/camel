@@ -19,6 +19,7 @@ package org.apache.camel.component.jms;
 import org.apache.camel.util.concurrent.CamelThreadFactory;
 import org.springframework.core.task.SimpleAsyncTaskExecutor;
 import org.springframework.core.task.TaskExecutor;
+import org.springframework.jms.JmsException;
 import org.springframework.jms.listener.DefaultMessageListenerContainer;
 import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 
@@ -80,5 +81,32 @@ public class DefaultJmsMessageListenerContainer extends DefaultMessageListenerCo
             return answer;
         }
     }
-    
+
+    @Override
+    public void stop() throws JmsException {
+        if (logger.isDebugEnabled()) {
+            logger.debug("Stopping listenerContainer: " + this + " with cacheLevel: " + getCacheLevel()
+                    + " and sharedConnectionEnabled: " + sharedConnectionEnabled());
+        }
+        super.stop();
+    }
+
+    @Override
+    public void destroy() {
+        if (logger.isDebugEnabled()) {
+            logger.debug("Destroying listenerContainer: " + this + " with cacheLevel: " + getCacheLevel()
+                    + " and sharedConnectionEnabled: " + sharedConnectionEnabled());
+        }
+        super.destroy();
+    }
+
+    @Override
+    protected void stopSharedConnection() {
+        if (logger.isDebugEnabled()) {
+            if (sharedConnectionEnabled()) {
+                logger.debug("Stopping shared connection on listenerContainer: " + this);
+            }
+        }
+        super.stopSharedConnection();
+    }
 }

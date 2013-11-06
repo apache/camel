@@ -306,7 +306,12 @@ public class DefaultManagementNamingStrategy implements ManagementNamingStrategy
     }
 
     protected String getContextId(String name) {
-        return hostName + "/" + (name != null ? name : VALUE_UNKNOWN);
+        Boolean includeHostName = camelContext != null && camelContext.getManagementStrategy().getManagementAgent().getIncludeHostName();
+        if (includeHostName != null && includeHostName) {
+            return hostName + "/" + (name != null ? name : VALUE_UNKNOWN);
+        } else {
+            return name != null ? name : VALUE_UNKNOWN;
+        }
     }
 
     protected String getEndpointId(Endpoint ep) {

@@ -41,7 +41,7 @@ public class BacklogTracerIdOnAllNodesTest extends ManagementTestSupport {
         }
 
         MBeanServer mbeanServer = getMBeanServer();
-        ObjectName on = new ObjectName("org.apache.camel:context=localhost/camel-1,type=tracer,name=BacklogTracer");
+        ObjectName on = new ObjectName("org.apache.camel:context=camel-1,type=tracer,name=BacklogTracer");
         assertNotNull(on);
         mbeanServer.isRegistered(on);
 

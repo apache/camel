@@ -47,7 +47,7 @@ public class ManagedCamelContextTest extends ManagementTestSupport {
 
         MBeanServer mbeanServer = getMBeanServer();
 
-        ObjectName on = ObjectName.getInstance("org.apache.camel:context=localhost/19-camel-1,type=context,name=\"camel-1\"");
+        ObjectName on = ObjectName.getInstance("org.apache.camel:context=19-camel-1,type=context,name=\"camel-1\"");
 
         assertTrue("Should be registered", mbeanServer.isRegistered(on));
         String name = (String) mbeanServer.getAttribute(on, "CamelId");
@@ -111,7 +111,7 @@ public class ManagedCamelContextTest extends ManagementTestSupport {
 
         MBeanServer mbeanServer = getMBeanServer();
 
-        ObjectName on = ObjectName.getInstance("org.apache.camel:context=localhost/19-camel-1,type=context,name=\"camel-1\"");
+        ObjectName on = ObjectName.getInstance("org.apache.camel:context=19-camel-1,type=context,name=\"camel-1\"");
 
         assertNull(context.hasEndpoint("seda:bar"));
 
@@ -121,7 +121,7 @@ public class ManagedCamelContextTest extends ManagementTestSupport {
 
         assertNotNull(context.hasEndpoint("seda:bar"));
 
-        ObjectName seda = ObjectName.getInstance("org.apache.camel:context=localhost/19-camel-1,type=endpoints,name=\"seda://bar\"");
+        ObjectName seda = ObjectName.getInstance("org.apache.camel:context=19-camel-1,type=endpoints,name=\"seda://bar\"");
         boolean registered = mbeanServer.isRegistered(seda);
         assertTrue("Should be registered " + seda, registered);
 
@@ -141,7 +141,7 @@ public class ManagedCamelContextTest extends ManagementTestSupport {
 
         MBeanServer mbeanServer = getMBeanServer();
 
-        ObjectName on = ObjectName.getInstance("org.apache.camel:context=localhost/19-camel-1,type=context,name=\"camel-1\"");
+        ObjectName on = ObjectName.getInstance("org.apache.camel:context=19-camel-1,type=context,name=\"camel-1\"");
 
         assertNull(context.hasEndpoint("seda:bar"));
 
@@ -151,7 +151,7 @@ public class ManagedCamelContextTest extends ManagementTestSupport {
 
         assertNotNull(context.hasEndpoint("seda:bar"));
 
-        ObjectName seda = ObjectName.getInstance("org.apache.camel:context=localhost/19-camel-1,type=endpoints,name=\"seda://bar\"");
+        ObjectName seda = ObjectName.getInstance("org.apache.camel:context=19-camel-1,type=endpoints,name=\"seda://bar\"");
         boolean registered = mbeanServer.isRegistered(seda);
         assertTrue("Should be registered " + seda, registered);
 
@@ -180,7 +180,7 @@ public class ManagedCamelContextTest extends ManagementTestSupport {
 
         MBeanServer mbeanServer = getMBeanServer();
 
-        ObjectName on = ObjectName.getInstance("org.apache.camel:context=localhost/19-camel-1,type=context,name=\"camel-1\"");
+        ObjectName on = ObjectName.getInstance("org.apache.camel:context=19-camel-1,type=context,name=\"camel-1\"");
 
         assertTrue("Should be registered", mbeanServer.isRegistered(on));
 

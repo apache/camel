@@ -366,6 +366,7 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
             agent.setOnlyRegisterProcessorWithCustomId(CamelContextHelper.parseBoolean(getContext(), camelJMXAgent.getOnlyRegisterProcessorWithCustomId()));
             agent.setRegisterAlways(CamelContextHelper.parseBoolean(getContext(), camelJMXAgent.getRegisterAlways()));
             agent.setRegisterNewRoutes(CamelContextHelper.parseBoolean(getContext(), camelJMXAgent.getRegisterNewRoutes()));
+            agent.setIncludeHostName(CamelContextHelper.parseBoolean(getContext(), camelJMXAgent.getIncludeHostName()));
             agent.setMask(CamelContextHelper.parseBoolean(getContext(), camelJMXAgent.getMask()));
 
             ManagementStrategy managementStrategy = new ManagedManagementStrategy(getContext(), agent);

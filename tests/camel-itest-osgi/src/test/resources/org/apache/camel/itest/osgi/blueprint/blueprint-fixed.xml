@@ -17,11 +17,6 @@
 -->
 <blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0">
 
-  <bean id="naming" class="org.apache.camel.management.DefaultManagementNamingStrategy">
-    <property name="hostName" value="localhost"/>
-    <property name="domainName" value="org.apache.camel"/>
-  </bean>
-
   <!-- START SNIPPET: example -->
   <camelContext managementNamePattern="cool" xmlns="http://camel.apache.org/schema/blueprint">
     <jmxAgent id="agent"/>

@@ -282,13 +282,14 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
         MBeanServer server = getContext().getManagementStrategy().getManagementAgent().getMBeanServer();
         if (server != null) {
             // gather all the routes for this CamelContext, which requires JMX
-            ObjectName query = ObjectName.getInstance("org.apache.camel:context=*/" + getContext().getManagementName() + ",type=routes,*");
+            String prefix = getContext().getManagementStrategy().getManagementAgent().getIncludeHostName() ? "*/" : "";
+            ObjectName query = ObjectName.getInstance("org.apache.camel:context=" + prefix + getContext().getManagementName() + ",type=routes,*");
             Set<ObjectName> routes = server.queryNames(query, null);
 
             Set<ManagedProcessorMBean> processors = new LinkedHashSet<ManagedProcessorMBean>();
             if (includeProcessors) {
                 // gather all the processors for this CamelContext, which requires JMX
-                query = ObjectName.getInstance("org.apache.camel:context=*/" + getContext().getManagementName() + ",type=processors,*");
+                query = ObjectName.getInstance("org.apache.camel:context=" + prefix + getContext().getManagementName() + ",type=processors,*");
                 Set<ObjectName> names = server.queryNames(query, null);
                 for (ObjectName on : names) {
                     ManagedProcessorMBean processor = MBeanServerInvocationHandler.newProxyInstance(server, on, ManagedProcessorMBean.class, true);
@@ -397,7 +398,8 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
             MBeanServer server = getContext().getManagementStrategy().getManagementAgent().getMBeanServer();
             if (server != null) {
                 // get all the routes mbeans and sort them accordingly to their index
-                ObjectName query = ObjectName.getInstance("org.apache.camel:context=*/" + getContext().getManagementName() + ",type=routes,*");
+                String prefix = getContext().getManagementStrategy().getManagementAgent().getIncludeHostName() ? "*/" : "";
+                ObjectName query = ObjectName.getInstance("org.apache.camel:context=" + prefix + getContext().getManagementName() + ",type=routes,*");
                 Set<ObjectName> names = server.queryNames(query, null);
                 for (ObjectName name : names) {
                     server.invoke(name, "reset", new Object[]{true}, new String[]{"boolean"});

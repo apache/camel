@@ -259,4 +259,23 @@ public interface ManagementAgent extends Service {
      * This option is default <tt>false</tt>.
      */
     void setMask(Boolean sanitize);
+
+    /**
+     * Gets whether host name is included in MBean names.
+     *
+     * @return <tt>true</tt> if included
+     */
+    Boolean getIncludeHostName();
+
+    /**
+     * Sets whether to include host name in the {@link ManagementNamingStrategy}.
+     * <p/>
+     * By default this is turned off from Camel 2.13 onwards, but this option
+     * can be set to <tt>true</tt> to include the hostname as Camel 2.12 or
+     * older releases does.
+     *
+     * @param includeHostName <tt>true</tt> to include host name in the MBean names.
+     */
+    void setIncludeHostName(Boolean includeHostName);
+
 }
