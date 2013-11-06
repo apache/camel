@@ -63,6 +63,7 @@ import org.apache.deltaspike.core.util.metadata.builder.AnnotatedTypeBuilder;
  * Set of camel specific hooks for CDI.
  */
 public class CamelExtension implements Extension {
+
     private static class InjectLiteral extends AnnotationLiteral<Inject> implements Inject {
         private static final long serialVersionUID = 1L;
     }
@@ -223,7 +224,7 @@ public class CamelExtension implements Extension {
         throws Exception {
         for (CamelContextBean bean : camelContextBeans) {
             String name = bean.getCamelContextName();
-            CamelContext context = getCamelContext(name);
+            CamelContext context = getCamelContext(name, beanManager);
             if (context == null) {
                 throw new IllegalStateException(
                         "CamelContext '" + name + "' has not been injected into the CamelContextMap");
@@ -317,8 +318,8 @@ public class CamelExtension implements Extension {
         return adapter;
     }
 
-    protected DefaultCamelBeanPostProcessor getPostProcessor(String context) {
-        CamelContext camelContext = getCamelContext(context);
+    protected DefaultCamelBeanPostProcessor getPostProcessor(String context, BeanManager beanManager) {
+        CamelContext camelContext = getCamelContext(context, beanManager);
         if (camelContext != null) {
             return new DefaultCamelBeanPostProcessor(camelContext);
         } else {
@@ -326,9 +327,13 @@ public class CamelExtension implements Extension {
         }
     }
 
-    protected CamelContext getCamelContext(String context) {
+    protected CamelContext getCamelContext(String context, BeanManager beanManager) {
         if (camelContextMap == null) {
-            camelContextMap = BeanProvider.getContextualReference(CamelContextMap.class);
+            //camelContextMap = BeanProvider.getContextualReference(CamelContextMap.class);
+            Set<Bean<?>> beans = beanManager.getBeans(CamelContextMap.class);
+            Bean<?> bean = beanManager.resolve(beans);
+            CreationalContext<?> creationalContext = beanManager.createCreationalContext(bean);
+            camelContextMap = (CamelContextMap) beanManager.getReference(bean, bean.getBeanClass(), creationalContext);
             ObjectHelper.notNull(camelContextMap, "Could not resolve CamelContextMap");
         }
         return camelContextMap.getCamelContext(context);
