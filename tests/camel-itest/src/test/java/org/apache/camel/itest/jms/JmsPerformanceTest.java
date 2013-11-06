@@ -16,65 +16,49 @@
  */
 package org.apache.camel.itest.jms;
 
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.TimeUnit;
+import java.util.ArrayList;
+import java.util.List;
 
-import javax.jms.ConnectionFactory;
 import javax.naming.Context;
 
 import org.apache.activemq.ActiveMQConnectionFactory;
+import org.apache.activemq.pool.PooledConnectionFactory;
+import org.apache.camel.Header;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.JmsComponent;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.util.jndi.JndiContext;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
- * @version 
+ * @version
  */
 public class JmsPerformanceTest extends CamelTestSupport {
-    private static final Logger LOG = LoggerFactory.getLogger(JmsPerformanceTest.class);
-    protected MyBean myBean = new MyBean();
-    protected int messageCount = 1000;
-    protected CountDownLatch receivedCountDown = new CountDownLatch(messageCount);
-    protected long consumerSleep;
-    protected int expectedMessageCount;
-    protected ClassPathXmlApplicationContext applicationContext;
-    protected boolean useLocalBroker = true;
-    private int consumedMessageCount;
-
-    protected String getActiveMQFileName() {
-        // using different port number to avoid clash
-        return "activemq7.xml";
-    }
+    private List<Integer> receivedHeaders = new ArrayList<Integer>(getMessageCount());
+    private List<Object> receivedMessages = new ArrayList<Object>(getMessageCount());
 
     @Test
     public void testSendingAndReceivingMessages() throws Exception {
-        setExpectedMessageCount(messageCount);
+        log.info("Sending {} messages", getMessageCount());
 
-        timedSendLoop(0, messageCount);
+        sendLoop(getMessageCount());
+
+        log.info("Sending {} messages completed, now will assert on their content as well as the order of their receipt", getMessageCount());
+
+        // should wait a bit to make sure all messages have been received by the MyBean#onMessage() method
+        // as this happens asynchronously, that's not inside the 'main' thread
+        Thread.sleep(3000);
 
         assertExpectedMessagesReceived();
     }
 
-
-    protected void sendLoop(int startIndex, int endIndex) {
-        for (int i = startIndex; i < endIndex; i++) {
-            sendMessage(i);
-        }
+    protected int getMessageCount() {
+        return 100;
     }
 
-    protected void timedSendLoop(int startIndex, int endIndex) {
-        StopWatch watch = new StopWatch("Sending");
-        for (int i = startIndex; i < endIndex; i++) {
-            watch.start();
+    protected void sendLoop(int messageCount) {
+        for (int i = 1; i <= messageCount; i++) {
             sendMessage(i);
-            watch.stop();
         }
     }
 
@@ -82,36 +66,42 @@ public class JmsPerformanceTest extends CamelTestSupport {
         template.sendBodyAndHeader("activemq:" + getQueueName(), "Hello:" + messageCount, "counter", messageCount);
     }
 
-    public String getQueueName() {
+    protected String getQueueName() {
         return "testSendingAndReceivingMessages";
     }
 
     protected void assertExpectedMessagesReceived() throws InterruptedException {
-        assertTrue(receivedCountDown.await(50, TimeUnit.SECONDS));
+        // assert on the expected message count
+        assertEquals("The expected message count does not match!", getMessageCount(), receivedMessages.size());
 
-        assertEquals("Received message count", expectedMessageCount, consumedMessageCount);
+        // assert on the expected message order
+        List<Integer> expectedHeaders = new ArrayList<Integer>(getMessageCount());
+        for (int i = 1; i <= getMessageCount(); i++) {
+            expectedHeaders.add(i);
+        }
 
-        // TODO assert that messages are received in order
+        List<Object> expectedMessages = new ArrayList<Object>(getMessageCount());
+        for (int i = 1; i <= getMessageCount(); i++) {
+            expectedMessages.add("Hello:" + i);
+        }
+
+        assertEquals("The expected header order does not match!", expectedHeaders, receivedHeaders);
+        assertEquals("The expected message order does not match!", expectedMessages, receivedMessages);
     }
 
     @Override
-    @Before
-    public void setUp() throws Exception {
-        if (useLocalBroker) {
-            applicationContext = new ClassPathXmlApplicationContext(getActiveMQFileName());
-            applicationContext.start();
-        }
+    protected Context createJndiContext() throws Exception {
+        JndiContext answer = new JndiContext();
+        answer.bind("myBean", new MyBean());
 
-        super.setUp();
-    }
+        // add AMQ client and make use of connection pooling we depend on because of the (large) number
+        // of the JMS messages we do produce
+        ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory("vm://broker");
+        PooledConnectionFactory pooledConnectionFactory = new PooledConnectionFactory(connectionFactory);
+        pooledConnectionFactory.setMaxConnections(10);
+        answer.bind("activemq", JmsComponent.jmsComponentAutoAcknowledge(pooledConnectionFactory));
 
-    @Override
-    @After
-    public void tearDown() throws Exception {
-        super.tearDown();
-        if (applicationContext != null) {
-            applicationContext.stop();
-        }
+        return answer;
     }
 
     @Override
@@ -123,38 +113,11 @@ public class JmsPerformanceTest extends CamelTestSupport {
         };
     }
 
-    @Override
-    protected Context createJndiContext() throws Exception {
-        JndiContext answer = new JndiContext();
-        answer.bind("myBean", myBean);
-
-        // add ActiveMQ client
-        ConnectionFactory connectionFactory = new ActiveMQConnectionFactory("vm://broker7");
-        answer.bind("activemq", JmsComponent.jmsComponentAutoAcknowledge(connectionFactory));
-
-        return answer;
-    }
-
-    public int getExpectedMessageCount() {
-        return expectedMessageCount;
-    }
-
-    public void setExpectedMessageCount(int expectedMessageCount) {
-        this.expectedMessageCount = expectedMessageCount;
-        receivedCountDown = new CountDownLatch(expectedMessageCount);
-    }
-
     protected class MyBean {
-        public void onMessage(String body) {
-            if (consumerSleep > 0) {
-                try {
-                    Thread.sleep(consumerSleep);
-                } catch (InterruptedException e) {
-                    LOG.warn("Caught: " + e, e);
-                }
-            }
-            consumedMessageCount++;
-            receivedCountDown.countDown();            
+        public void onMessage(@Header("counter") int counter, Object body) {
+            // the invocation of this method happens inside the same thread so no need for a thread-safe list here
+            receivedHeaders.add(counter);
+            receivedMessages.add(body);
         }
     }
 }
