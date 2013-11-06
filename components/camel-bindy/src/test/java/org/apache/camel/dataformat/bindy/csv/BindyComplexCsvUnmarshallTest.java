@@ -49,9 +49,12 @@ public class BindyComplexCsvUnmarshallTest extends AbstractJUnit4SpringContextTe
 
     public static class ContextConfig extends RouteBuilder {
         public void configure() {
-            BindyCsvDataFormat camelDataFormat = 
-                new BindyCsvDataFormat(org.apache.camel.dataformat.bindy.model.complex.twoclassesandonelink.Order.class);
-            from("direct:start").unmarshal(camelDataFormat).to("mock:result");
+            Class<?> type =
+                org.apache.camel.dataformat.bindy.model.complex.twoclassesandonelink.Order.class;
+
+            from("direct:start")
+                .unmarshal(new BindyCsvDataFormat(type))
+                .to("mock:result");
         }
     }
 }
