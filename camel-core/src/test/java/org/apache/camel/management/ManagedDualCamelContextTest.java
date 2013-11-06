@@ -33,9 +33,6 @@ public class ManagedDualCamelContextTest extends TestSupport {
 
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = new DefaultCamelContext();
-        DefaultManagementNamingStrategy naming = (DefaultManagementNamingStrategy) context.getManagementStrategy().getManagementNamingStrategy();
-        naming.setHostName("localhost");
-        naming.setDomainName("org.apache.camel");
         context.addRoutes(createRouteBuilder());
         return context;
     }

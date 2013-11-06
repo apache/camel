@@ -51,10 +51,6 @@ public class JmxNotificationEventNotifierTest extends ContextTestSupport {
         CamelContext context = new DefaultCamelContext(createRegistry());
         context.getManagementStrategy().addEventNotifier(notifier);
 
-        // Set up the ManagementNamingStrategy
-        DefaultManagementNamingStrategy naming = (DefaultManagementNamingStrategy) context.getManagementStrategy().getManagementNamingStrategy();
-        naming.setHostName("localhost");
-        naming.setDomainName("org.apache.camel");
         // END SNIPPET: e1
         return context;
     }

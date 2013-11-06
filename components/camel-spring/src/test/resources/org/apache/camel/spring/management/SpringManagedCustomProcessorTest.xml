@@ -24,11 +24,6 @@
 
   <bean id="myProcessor" class="org.apache.camel.spring.management.SpringManagedCustomProcessorTest$MyCustomProcessor"/>
 
-  <bean id="naming" class="org.apache.camel.management.DefaultManagementNamingStrategy">
-    <property name="hostName" value="localhost"/>
-    <property name="domainName" value="org.apache.camel"/>
-  </bean>
-
   <camelContext xmlns="http://camel.apache.org/schema/spring">
     <!-- enable JMX -->
     <jmxAgent id="agent" disabled="false"/>

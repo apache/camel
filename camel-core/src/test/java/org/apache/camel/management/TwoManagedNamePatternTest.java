@@ -35,9 +35,6 @@ public class TwoManagedNamePatternTest extends TestSupport {
         DefaultCamelContext context = new DefaultCamelContext();
         context.setName(name);
         context.getManagementNameStrategy().setNamePattern(pattern);
-        DefaultManagementNamingStrategy naming = (DefaultManagementNamingStrategy) context.getManagementStrategy().getManagementNamingStrategy();
-        naming.setHostName("localhost");
-        naming.setDomainName("org.apache.camel");
         return context;
     }
 

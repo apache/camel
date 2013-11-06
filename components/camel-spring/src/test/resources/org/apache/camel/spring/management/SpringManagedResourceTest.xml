@@ -23,11 +23,6 @@
          http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
        ">
 
-  <bean id="naming" class="org.apache.camel.management.DefaultManagementNamingStrategy">
-    <property name="hostName" value="localhost"/>
-    <property name="domainName" value="org.apache.camel"/>
-  </bean>
-
   <bean id="myBean" class="org.apache.camel.management.MyManagedBean"/>
 
   <camelContext xmlns="http://camel.apache.org/schema/spring">

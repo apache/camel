@@ -34,9 +34,6 @@ public class TwoManagedCamelContextAutoAssignedNameClashTest extends TestSupport
 
     protected CamelContext createCamelContext() throws Exception {
         DefaultCamelContext context = new DefaultCamelContext();
-        DefaultManagementNamingStrategy naming = (DefaultManagementNamingStrategy) context.getManagementStrategy().getManagementNamingStrategy();
-        naming.setHostName("localhost");
-        naming.setDomainName("org.apache.camel");
         return context;
     }
 

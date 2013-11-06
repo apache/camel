@@ -38,9 +38,6 @@ public class TwoManagedCamelContextClashTest extends TestSupport {
         if (managementPattern != null) {
             context.getManagementNameStrategy().setNamePattern(managementPattern);
         }
-        DefaultManagementNamingStrategy naming = (DefaultManagementNamingStrategy) context.getManagementStrategy().getManagementNamingStrategy();
-        naming.setHostName("localhost");
-        naming.setDomainName("org.apache.camel");
         return context;
     }
 
