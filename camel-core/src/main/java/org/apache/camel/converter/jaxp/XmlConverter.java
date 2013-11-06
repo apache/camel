@@ -28,6 +28,8 @@ import java.io.StringReader;
 import java.io.StringWriter;
 import java.lang.reflect.Constructor;
 import java.nio.ByteBuffer;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
@@ -916,6 +918,7 @@ public class XmlConverter {
     
     protected void setupFeatures(DocumentBuilderFactory factory) {
         Properties properties = System.getProperties();
+        List<String> features = new ArrayList<String>();
         for (Map.Entry<Object, Object> prop : properties.entrySet()) {
             String key = (String) prop.getKey();
             if (key.startsWith(XmlConverter.DOCUMENT_BUILDER_FACTORY_FEATURE)) {
@@ -923,11 +926,25 @@ public class XmlConverter {
                 Boolean value = Boolean.valueOf((String)prop.getValue());
                 try {
                     factory.setFeature(uri, value);
+                    features.add("feature " + uri + " value " + value);
                 } catch (ParserConfigurationException e) {
-                    LOG.warn("DocumentBuilderFactory doesn't support the feature {0} with value {1}, due to {2}.", new Object[]{uri, value, e});
+                    LOG.warn("DocumentBuilderFactory doesn't support the feature {} with value {}, due to {}.", new Object[]{uri, value, e});
                 }
             }
         }
+        if (features.size() > 0) {
+            StringBuffer featureString = new StringBuffer();
+            // just log the configured feature
+            for (String feature: features) {
+                if (featureString.length() != 0) {
+                    featureString.append(", ");
+                }
+                featureString.append(feature);
+            }
+            System.out.println(featureString);
+            LOG.info("DocumenterBuilderFactory has been set with features {{}}.", featureString.toString());
+        }
+        
     }
 
     public DocumentBuilderFactory createDocumentBuilderFactory() {
