@@ -15,7 +15,8 @@
   See the License for the specific language governing permissions and
   limitations under the License.
 -->
-<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+         xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
     <modelVersion>4.0.0</modelVersion>
 
     <parent>
@@ -43,11 +44,21 @@
             org.apache.camel.cdi.component.*;${camel.osgi.version}
         </camel.osgi.export.pkg>
         <camel.osgi.provide.capability>
-          org.ops4j.pax.cdi.extension; extension=camel-cdi-extension
+            org.ops4j.pax.cdi.extension; extension=camel-cdi-extension
         </camel.osgi.provide.capability>
+        <openwebbeans-version>1.1.7</openwebbeans-version>
+        <deltaspike-version>0.5</deltaspike-version>
+        <cdi-api.version>1.0-SP4</cdi-api.version>
     </properties>
 
     <dependencies>
+
+        <dependency>
+            <groupId>javax.enterprise</groupId>
+            <artifactId>cdi-api</artifactId>
+            <version>${cdi-api.version}</version>
+            <scope>provided</scope>
+        </dependency>
 
         <!-- Camel -->
        <dependency>
@@ -65,6 +76,7 @@
             <groupId>org.apache.deltaspike.core</groupId>
             <artifactId>deltaspike-core-impl</artifactId>
             <version>${deltaspike-version}</version>
+            <scope>runtime</scope>
         </dependency>
 
         <!-- only required for the Main -->
@@ -74,21 +86,6 @@
             <version>${deltaspike-version}</version>
         </dependency>
 
-        <dependency>
-            <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>geronimo-atinject_1.0_spec</artifactId>
-            <version>${geronimo-atinject-1.0-spec-version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>geronimo-jcdi_1.0_spec</artifactId>
-            <version>${geronimo-jcdi-1.0-spec-version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.geronimo.specs</groupId>
-            <artifactId>geronimo-interceptor_1.1_spec</artifactId>
-            <version>${geronimo-interceptor-1.1-spec-version}</version>
-        </dependency>
 
         <!-- logging -->
         <dependency>
@@ -137,11 +134,29 @@
                     <version>${openwebbeans-version}</version>
                     <scope>test</scope>
                 </dependency>
+                <dependency>
+                    <groupId>org.apache.geronimo.specs</groupId>
+                    <artifactId>geronimo-atinject_1.0_spec</artifactId>
+                    <version>${geronimo-atinject-1.0-spec-version}</version>
+                    <scope>test</scope>
+                </dependency>
+                <dependency>
+                    <groupId>org.apache.geronimo.specs</groupId>
+                    <artifactId>geronimo-jcdi_1.0_spec</artifactId>
+                    <version>${geronimo-jcdi-1.0-spec-version}</version>
+                    <scope>test</scope>
+                </dependency>
+                <dependency>
+                    <groupId>org.apache.geronimo.specs</groupId>
+                    <artifactId>geronimo-interceptor_1.1_spec</artifactId>
+                    <version>${geronimo-interceptor-1.1-spec-version}</version>
+                    <scope>test</scope>
+                </dependency>
             </dependencies>
         </profile>
 
         <profile>
-            <id>weld</id>
+            <id>weld-1</id>
             <!-- active by default as the overriding of InvocationTarget is currently broken in owb which breaks ProduceInjectTest -->
             <activation>
                 <activeByDefault>true</activeByDefault>
@@ -157,8 +172,31 @@
                     <groupId>org.jboss.weld.se</groupId>
                     <artifactId>weld-se-core</artifactId>
                     <version>${weld-version}</version>
+                    <scope>test</scope>
+                </dependency>
+
+            </dependencies>
+        </profile>
+        <profile>
+            <id>weld-2</id>
+            <properties>
+                <weld-version>2.1.0.Final</weld-version>
+                <cdi-api.version>1.1</cdi-api.version>
+            </properties>
+            <dependencies>
+                <dependency>
+                    <groupId>org.apache.deltaspike.cdictrl</groupId>
+                    <artifactId>deltaspike-cdictrl-weld</artifactId>
+                    <version>${deltaspike-version}</version>
+                    <scope>test</scope>
+                </dependency>
+                <dependency>
+                    <groupId>org.jboss.weld.se</groupId>
+                    <artifactId>weld-se-core</artifactId>
+                    <version>${weld-version}</version>
                     <scope>provided</scope>
                 </dependency>
+
             </dependencies>
         </profile>
     </profiles>
