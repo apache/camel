@@ -403,6 +403,7 @@
     <vysper-version>0.7</vysper-version>
     <!-- should be in-sync with deltaspike -->
     <weld-version>1.1.5.Final</weld-version>
+    <weld2-version>2.1.0.Final</weld2-version>
     <werken-xpath-bundle-version>0.9.4_5</werken-xpath-bundle-version>
     <woodstox-version>4.2.0</woodstox-version>
     <ws-commons-util-bundle-version>1.0.2_2</ws-commons-util-bundle-version>
