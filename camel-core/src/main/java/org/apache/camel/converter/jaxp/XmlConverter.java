@@ -922,7 +922,6 @@ public class XmlConverter {
                 }
                 featureString.append(feature);
             }
-            System.out.println(featureString);
             LOG.info("DocumenterBuilderFactory has been set with features {{}}.", featureString.toString());
         }
         
