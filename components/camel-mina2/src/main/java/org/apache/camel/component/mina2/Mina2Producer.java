@@ -16,14 +16,6 @@
  */
 package org.apache.camel.component.mina2;
 
-import java.net.InetSocketAddress;
-import java.net.SocketAddress;
-import java.nio.charset.Charset;
-import java.util.List;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.TimeUnit;
-
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangeTimedOutException;
@@ -57,6 +49,14 @@ import org.apache.mina.transport.vmpipe.VmPipeConnector;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import java.net.InetSocketAddress;
+import java.net.SocketAddress;
+import java.nio.charset.Charset;
+import java.util.List;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.TimeUnit;
+
 /**
  * A {@link org.apache.camel.Producer} implementation for MINA
  *
@@ -85,15 +85,16 @@ public class Mina2Producer extends DefaultProducer implements ServicePoolAware {
         this.sync = configuration.isSync();
         this.noReplyLogger = new CamelLogger(LOG, configuration.getNoReplyLogLevel());
 
-        String protocol = configuration.getProtocol();
-        if (protocol.equals("tcp")) {
-            setupSocketProtocol(protocol);
+        if (configuration.isTcpProtocol()) {
+            setupSocketProtocol();
         } else if (configuration.isDatagramProtocol()) {
-            setupDatagramProtocol(protocol);
-        } else if (protocol.equals("vm")) {
-            setupVmProtocol(protocol);
+            setupDatagramProtocol();
+        } else if (configuration.isVMProtocol()) {
+            setupVmProtocol();
         }
     }
+
+
 
     @Override
     public Mina2Endpoint getEndpoint() {
@@ -251,6 +252,9 @@ public class Mina2Producer extends DefaultProducer implements ServicePoolAware {
     }
 
     private void openConnection() {
+        if(this.address == null || !this.configuration.isCachedAddress()){
+            setSocketAddress();
+        }
         if (LOG.isDebugEnabled()) {
             LOG.debug("Creating connector to address: {} using connector: {} timeout: {} millis.", new Object[]{address, connector, timeout});
         }
@@ -267,7 +271,7 @@ public class Mina2Producer extends DefaultProducer implements ServicePoolAware {
 
     // Implementation methods
     //-------------------------------------------------------------------------
-    protected void setupVmProtocol(String uri) {
+    protected void setupVmProtocol() {
         boolean minaLogger = configuration.isMinaLogger();
         List<IoFilter> filters = configuration.getFilters();
 
@@ -281,12 +285,12 @@ public class Mina2Producer extends DefaultProducer implements ServicePoolAware {
         appendIoFiltersToChain(filters, connector.getFilterChain());
         if (configuration.getSslContextParameters() != null) {
             LOG.warn("Using vm protocol"
-                     + ", but an SSLContextParameters instance was provided.  SSLContextParameters is only supported on the TCP protocol.");
+                    + ", but an SSLContextParameters instance was provided.  SSLContextParameters is only supported on the TCP protocol.");
         }
         configureCodecFactory("Mina2Producer", connector);
     }
 
-    protected void setupSocketProtocol(String uri) throws Exception {
+    protected void setupSocketProtocol() throws Exception {
         boolean minaLogger = configuration.isMinaLogger();
         long timeout = configuration.getTimeout();
         List<IoFilter> filters = configuration.getFilters();
@@ -337,7 +341,7 @@ public class Mina2Producer extends DefaultProducer implements ServicePoolAware {
             }
             addCodecFactory(service, codecFactory);
             LOG.debug("{}: Using TextLineCodecFactory: {} using encoding: {} line delimiter: {}({})",
-                      new Object[]{type, codecFactory, charset, configuration.getTextlineDelimiter(), delimiter});
+                    new Object[]{type, codecFactory, charset, configuration.getTextlineDelimiter(), delimiter});
             LOG.debug("Encoder maximum line length: {}. Decoder maximum line length: {}",
                     codecFactory.getEncoderMaxLineLength(), codecFactory.getDecoderMaxLineLength());
         } else {
@@ -347,7 +351,7 @@ public class Mina2Producer extends DefaultProducer implements ServicePoolAware {
         }
     }
 
-    protected void setupDatagramProtocol(String uri) {
+    protected void setupDatagramProtocol() {
         boolean minaLogger = configuration.isMinaLogger();
         boolean transferExchange = configuration.isTransferExchange();
         List<IoFilter> filters = configuration.getFilters();
@@ -373,7 +377,7 @@ public class Mina2Producer extends DefaultProducer implements ServicePoolAware {
         appendIoFiltersToChain(filters, connector.getFilterChain());
         if (configuration.getSslContextParameters() != null) {
             LOG.warn("Using datagram protocol, " + configuration.getProtocol()
-                     + ", but an SSLContextParameters instance was provided.  SSLContextParameters is only supported on the TCP protocol.");
+                    + ", but an SSLContextParameters instance was provided.  SSLContextParameters is only supported on the TCP protocol.");
         }
         configureDataGramCodecFactory("Mina2Producer", connector, configuration);
         // set connect timeout to mina in seconds
@@ -409,18 +413,18 @@ public class Mina2Producer extends DefaultProducer implements ServicePoolAware {
         }
 
         switch (delimiter) {
-        case DEFAULT:
-            return LineDelimiter.DEFAULT;
-        case AUTO:
-            return LineDelimiter.AUTO;
-        case UNIX:
-            return LineDelimiter.UNIX;
-        case WINDOWS:
-            return LineDelimiter.WINDOWS;
-        case MAC:
-            return LineDelimiter.MAC;
-        default:
-            throw new IllegalArgumentException("Unknown textline delimiter: " + delimiter);
+            case DEFAULT:
+                return LineDelimiter.DEFAULT;
+            case AUTO:
+                return LineDelimiter.AUTO;
+            case UNIX:
+                return LineDelimiter.UNIX;
+            case WINDOWS:
+                return LineDelimiter.WINDOWS;
+            case MAC:
+                return LineDelimiter.MAC;
+            default:
+                throw new IllegalArgumentException("Unknown textline delimiter: " + delimiter);
         }
     }
 
@@ -492,7 +496,7 @@ public class Mina2Producer extends DefaultProducer implements ServicePoolAware {
         @Override
         public void exceptionCaught(IoSession ioSession, Throwable cause) {
             LOG.error("Exception on receiving message from address: " + address
-                      + " using connector: " + connector, cause);
+                    + " using connector: " + connector, cause);
             this.message = null;
             this.messageReceived = false;
             this.cause = cause;
@@ -511,6 +515,19 @@ public class Mina2Producer extends DefaultProducer implements ServicePoolAware {
 
         public boolean isMessageReceived() {
             return messageReceived;
+        }
+    }
+
+    private void setSocketAddress() {
+        if (configuration.isTcpProtocol()) {
+            address = new InetSocketAddress(configuration.getHost(), configuration.getPort());
+
+        } else if (configuration.isDatagramProtocol()) {
+            address = new InetSocketAddress(configuration.getHost(), configuration.getPort());
+        } else if (configuration.isVMProtocol()) {
+            if(address == null){
+                address = new VmPipeAddress(configuration.getPort());
+            }
         }
     }
 }
