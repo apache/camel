@@ -149,6 +149,7 @@ public abstract class MainSupport extends ServiceSupport {
             try {
                 afterStart();
                 waitUntilCompleted();
+                internalBeforeStop();
                 beforeStop();
                 stop();
             } catch (Exception e) {
@@ -178,9 +179,17 @@ public abstract class MainSupport extends ServiceSupport {
      * Callback to run custom logic before CamelContext is being stopped.
      */
     protected void beforeStop() throws Exception {
-        if (camelTemplate != null) {
-            ServiceHelper.stopService(camelTemplate);
-            camelTemplate = null;
+        // noop
+    }
+
+    private void internalBeforeStop() {
+        try {
+            if (camelTemplate != null) {
+                ServiceHelper.stopService(camelTemplate);
+                camelTemplate = null;
+            }
+        } catch (Exception e) {
+            LOG.debug("Error stopping camelTemplate due " + e.getMessage() + ". This exception is ignored.", e);
         }
     }
 
