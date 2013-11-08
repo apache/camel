@@ -16,16 +16,16 @@
  */
 package org.apache.camel.cdi.internal;
 
-import java.util.Set;
 import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.inject.spi.InjectionPoint;
 import javax.enterprise.inject.spi.InjectionTarget;
+import java.util.Set;
 
 /**
  * A helper class for creating delegate implementations of {@link InjectionTarget}
  */
-public abstract class DelegateInjectionTarget implements InjectionTarget<Object> {
-    private final InjectionTarget<Object> delegate;
+public abstract class DelegateInjectionTarget implements InjectionTarget {
+    private final InjectionTarget delegate;
 
     public DelegateInjectionTarget(InjectionTarget<Object> delegate) {
         this.delegate = delegate;
@@ -42,7 +42,7 @@ public abstract class DelegateInjectionTarget implements InjectionTarget<Object>
     }
 
     @Override
-    public void inject(Object instance, CreationalContext<Object> ctx) {
+    public void inject(Object instance, CreationalContext ctx) {
         delegate.inject(instance, ctx);
     }
 
@@ -57,7 +57,7 @@ public abstract class DelegateInjectionTarget implements InjectionTarget<Object>
     }
 
     @Override
-    public Object produce(CreationalContext<Object> creationalContext) {
+    public Object produce(CreationalContext creationalContext) {
         return delegate.produce(creationalContext);
     }
 }

@@ -69,7 +69,9 @@ public class CamelExtension implements Extension {
     CamelContextMap camelContextMap;
 
     private final Set<Bean<?>> eagerBeans = new HashSet<Bean<?>>();
+
     private final Map<String, CamelContextConfig> camelContextConfigMap = new HashMap<String, CamelContextConfig>();
+
     private final List<CamelContextBean> camelContextBeans = new ArrayList<CamelContextBean>();
 
     public CamelExtension() {
@@ -92,24 +94,23 @@ public class CamelExtension implements Extension {
      * @param process Annotated type.
      * @throws Exception In case of exceptions.
      */
-    protected void contextAwareness(@Observes ProcessAnnotatedType<CamelContextAware> process)
-        throws Exception {
-        AnnotatedType<CamelContextAware> annotatedType = process.getAnnotatedType();
-        Class<CamelContextAware> javaClass = annotatedType.getJavaClass();
-        if (CamelContextAware.class.isAssignableFrom(javaClass)) {
-            Method method = javaClass.getMethod("setCamelContext", CamelContext.class);
-            AnnotatedTypeBuilder<CamelContextAware> builder = new AnnotatedTypeBuilder<CamelContextAware>()
-                    .readFromType(javaClass)
-                    .addToMethod(method, new InjectLiteral());
-            process.setAnnotatedType(builder.create());
-        }
+    protected void contextAwareness(@Observes ProcessAnnotatedType<? extends CamelContextAware> process)
+            throws Exception {
+        AnnotatedType at = process.getAnnotatedType();
+
+        Method method = at.getJavaClass().getMethod("setCamelContext", CamelContext.class);
+        AnnotatedTypeBuilder builder = new AnnotatedTypeBuilder<CamelContextAware>()
+                .readFromType(at)
+                .addToMethod(method, new InjectLiteral());
+        process.setAnnotatedType(builder.create());
+
     }
 
-    protected <T> void detectRouteBuilders(@Observes ProcessAnnotatedType<T> process)
-        throws Exception {
-        AnnotatedType<T> annotatedType = process.getAnnotatedType();
+    protected  void detectRouteBuilders(@Observes ProcessAnnotatedType<?> process)
+            throws Exception {
+        AnnotatedType annotatedType = process.getAnnotatedType();
         ContextName annotation = annotatedType.getAnnotation(ContextName.class);
-        Class<T> javaClass = annotatedType.getJavaClass();
+        Class javaClass = annotatedType.getJavaClass();
         if (annotation != null && isRoutesBean(javaClass)) {
             addRouteBuilderBean(process, annotation);
         }
@@ -203,7 +204,8 @@ public class CamelExtension implements Extension {
     }
 
     /**
-     * Lets detect all producer methods createing instances of {@link RouteBuilder} which are annotated with {@link org.apache.camel.cdi.ContextName}
+     * Lets detect all producer methods createing instances of {@link RouteBuilder} which are annotated with {@link org
+     * .apache.camel.cdi.ContextName}
      * so they can be auto-registered
      */
     public void detectProducerRoutes(@Observes ProcessProducerMethod<?, ?> event) {
@@ -219,7 +221,7 @@ public class CamelExtension implements Extension {
      * Lets force the CDI container to create all beans annotated with @Consume so that the consumer becomes active
      */
     public void startConsumeBeans(@Observes AfterDeploymentValidation event, BeanManager beanManager)
-        throws Exception {
+            throws Exception {
         for (CamelContextBean bean : camelContextBeans) {
             String name = bean.getCamelContextName();
             CamelContext context = getCamelContext(name, beanManager);
@@ -227,7 +229,7 @@ public class CamelExtension implements Extension {
                 throw new IllegalStateException(
                         "CamelContext '" + name + "' has not been injected into the CamelContextMap");
             }
-            bean.configureCamelContext((CdiCamelContext)context);
+            bean.configureCamelContext((CdiCamelContext) context);
         }
 
         for (Bean<?> bean : eagerBeans) {
@@ -241,9 +243,9 @@ public class CamelExtension implements Extension {
     /**
      * Lets perform injection of all beans which use Camel annotations
      */
-    public void onInjectionTarget(@Observes ProcessInjectionTarget<Object> event) {
-        final InjectionTarget<Object> injectionTarget = event.getInjectionTarget();
-        AnnotatedType<Object> annotatedType = event.getAnnotatedType();
+    public void onInjectionTarget(@Observes ProcessInjectionTarget<?> event) {
+        final InjectionTarget injectionTarget = event.getInjectionTarget();
+        AnnotatedType annotatedType = event.getAnnotatedType();
         final Class<Object> beanClass = annotatedType.getJavaClass();
         // TODO this is a bit of a hack - what should the bean name be?
         final String beanName = injectionTarget.toString();
@@ -345,6 +347,7 @@ public class CamelExtension implements Extension {
     }
 
     protected boolean isRoutesBean(Class<?> returnType) {
-        return (RoutesBuilder.class.isAssignableFrom(returnType) || RouteContainer.class.isAssignableFrom(returnType)) && !Modifier.isAbstract(returnType.getModifiers());
+        return (RoutesBuilder.class.isAssignableFrom(returnType) || RouteContainer.class.isAssignableFrom(returnType)) &&
+                !Modifier.isAbstract(returnType.getModifiers());
     }
 }
