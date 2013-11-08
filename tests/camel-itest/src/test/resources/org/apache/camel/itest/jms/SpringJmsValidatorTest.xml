@@ -42,6 +42,19 @@
                 </doFinally>
             </doTry>
         </route>
+
+      <route>
+        <from uri="jms:queue:valid"/>
+        <to uri="mock:valid"/>
+      </route>
+      <route>
+        <from uri="jms:queue:invalid"/>
+        <to uri="mock:invalid"/>
+      </route>
+      <route>
+        <from uri="jms:queue:finally"/>
+        <to uri="mock:finally"/>
+      </route>
     </camelContext>
 
 </beans>
