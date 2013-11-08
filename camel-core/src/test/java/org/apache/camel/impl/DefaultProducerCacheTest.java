@@ -73,7 +73,7 @@ public class DefaultProducerCacheTest extends ContextTestSupport {
         assertEquals(8, stopCounter.get());
     }
 
-    public void testReleaseProducerInvokesStopAndShutdownByNonSingeltonProducers() throws Exception {
+    public void testReleaseProducerInvokesStopAndShutdownByNonSingletonProducers() throws Exception {
         ProducerCache cache = new ProducerCache(this, context, 1);
         cache.start();
 
