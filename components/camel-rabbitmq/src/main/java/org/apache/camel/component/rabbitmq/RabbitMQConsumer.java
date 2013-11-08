@@ -55,8 +55,10 @@ public class RabbitMQConsumer extends DefaultConsumer {
         channel = conn.createChannel();
         log.debug("Using channel {}", channel);
 
-        channel.exchangeDeclare(endpoint.getExchangeName(), "direct",
-                endpoint.isDurable(), endpoint.isAutoDelete(),
+        channel.exchangeDeclare(endpoint.getExchangeName(),
+                endpoint.getExchangeType(),
+                endpoint.isDurable(),
+                endpoint.isAutoDelete(),
                 new HashMap<String, Object>());
 
         // need to make sure the queueDeclare is same with the exchange declare
