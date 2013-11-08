@@ -21,7 +21,9 @@ import java.net.URI;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.netty.NettyConfiguration;
+import org.apache.camel.component.netty.NettyConstants;
 import org.apache.camel.component.netty.NettyProducer;
+import org.jboss.netty.handler.codec.http.HttpHeaders;
 import org.jboss.netty.handler.codec.http.HttpRequest;
 import org.jboss.netty.handler.codec.http.HttpResponse;
 
@@ -58,7 +60,11 @@ public class NettyHttpProducer extends NettyProducer {
         HttpRequest request = getEndpoint().getNettyHttpBinding().toNettyRequest(exchange.getIn(), u.toString(), getConfiguration());
         String actualUri = request.getUri();
         exchange.getIn().setHeader(Exchange.HTTP_URL, actualUri);
-
+        // Need to check if we need to close the connection or not
+        if (!HttpHeaders.isKeepAlive(request)) {
+            // just want to make sure we close the channel if the keepAlive is not true
+            exchange.setProperty(NettyConstants.NETTY_CLOSE_CHANNEL_WHEN_COMPLETE, true);
+        }
         if (getConfiguration().isBridgeEndpoint()) {
             // Need to remove the Host key as it should be not used when bridging/proxying
             exchange.getIn().removeHeader("host");
