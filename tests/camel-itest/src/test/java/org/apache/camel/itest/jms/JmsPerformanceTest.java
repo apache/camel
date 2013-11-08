@@ -18,17 +18,18 @@ package org.apache.camel.itest.jms;
 
 import java.util.ArrayList;
 import java.util.List;
-
+import javax.jms.ConnectionFactory;
 import javax.naming.Context;
 
-import org.apache.activemq.ActiveMQConnectionFactory;
-import org.apache.activemq.pool.PooledConnectionFactory;
 import org.apache.camel.Header;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.JmsComponent;
+import org.apache.camel.itest.CamelJmsTestHelper;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.util.jndi.JndiContext;
 import org.junit.Test;
+
+import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 
 /**
  * @version
@@ -96,11 +97,12 @@ public class JmsPerformanceTest extends CamelTestSupport {
 
         // add AMQ client and make use of connection pooling we depend on because of the (large) number
         // of the JMS messages we do produce
-        ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory("vm://broker");
-        PooledConnectionFactory pooledConnectionFactory = new PooledConnectionFactory(connectionFactory);
-        pooledConnectionFactory.setMaxConnections(10);
-        answer.bind("activemq", JmsComponent.jmsComponentAutoAcknowledge(pooledConnectionFactory));
+        // add ActiveMQ with embedded broker
+        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
+        JmsComponent amq = jmsComponentAutoAcknowledge(connectionFactory);
+        amq.setCamelContext(context);
 
+        answer.bind("activemq", amq);
         return answer;
     }
 

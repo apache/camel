@@ -25,14 +25,18 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
+import javax.jms.ConnectionFactory;
 import javax.naming.Context;
 
-import org.apache.activemq.camel.component.ActiveMQComponent;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.jms.JmsComponent;
+import org.apache.camel.itest.CamelJmsTestHelper;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.util.jndi.JndiContext;
 import org.junit.Test;
+
+import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 
 /**
  * Doing request/reply over Netty with async processing.
@@ -104,8 +108,10 @@ public class NettyAsyncRequestReplyTest extends CamelTestSupport {
         JndiContext answer = new JndiContext();
 
         // add ActiveMQ with embedded broker
-        ActiveMQComponent amq = ActiveMQComponent.activeMQComponent("vm://localhost?broker.persistent=false");
+        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
+        JmsComponent amq = jmsComponentAutoAcknowledge(connectionFactory);
         amq.setCamelContext(context);
+
         answer.bind("activemq", amq);
         return answer;
     }
