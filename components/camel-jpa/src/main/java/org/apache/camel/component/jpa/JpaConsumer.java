@@ -45,7 +45,6 @@ import org.springframework.transaction.support.TransactionTemplate;
  */
 public class JpaConsumer extends ScheduledBatchPollingConsumer {
     private static final Logger LOG = LoggerFactory.getLogger(JpaConsumer.class);
-    private final JpaEndpoint endpoint;
     private final EntityManager entityManager;
     private final TransactionTemplate transactionTemplate;
     private QueryFactory queryFactory;
@@ -69,7 +68,6 @@ public class JpaConsumer extends ScheduledBatchPollingConsumer {
 
     public JpaConsumer(JpaEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
-        this.endpoint = endpoint;
         this.entityManager = endpoint.createEntityManager();
         this.transactionTemplate = endpoint.createTransactionTemplate();
     }
@@ -129,7 +127,7 @@ public class JpaConsumer extends ScheduledBatchPollingConsumer {
             }
         });
 
-        return endpoint.getCamelContext().getTypeConverter().convertTo(int.class, messagePolled);
+        return getEndpoint().getCamelContext().getTypeConverter().convertTo(int.class, messagePolled);
     }
 
 
@@ -181,7 +179,7 @@ public class JpaConsumer extends ScheduledBatchPollingConsumer {
     // -------------------------------------------------------------------------
     @Override
     public JpaEndpoint getEndpoint() {
-        return endpoint;
+        return (JpaEndpoint) super.getEndpoint();
     }
 
     public QueryFactory getQueryFactory() {
@@ -327,7 +325,7 @@ public class JpaConsumer extends ScheduledBatchPollingConsumer {
                 return QueryBuilder.nativeQuery(nativeQuery);                
             }
         } else {
-            Class<?> entityType = endpoint.getEntityType();
+            Class<?> entityType = getEndpoint().getEntityType();
             
             if (entityType == null) {
                 return null;
@@ -422,7 +420,7 @@ public class JpaConsumer extends ScheduledBatchPollingConsumer {
     }
 
     protected void configureParameters(Query query) {
-        int maxResults = endpoint.getMaximumResults();
+        int maxResults = getEndpoint().getMaximumResults();
         if (maxResults > 0) {
             query.setMaxResults(maxResults);
         }
@@ -435,7 +433,7 @@ public class JpaConsumer extends ScheduledBatchPollingConsumer {
     }
 
     protected Exchange createExchange(Object result) {
-        Exchange exchange = endpoint.createExchange();
+        Exchange exchange = getEndpoint().createExchange();
         exchange.getIn().setBody(result);
         exchange.getIn().setHeader(JpaConstants.ENTITYMANAGER, entityManager);
         return exchange;

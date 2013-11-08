@@ -102,7 +102,7 @@ public final class ServiceHelper {
     }
 
     /**
-     * Stops all of the given services, throwing the first exception caught
+     * Stops the given service, throwing the first exception caught
      */
     public static void stopService(Object value) throws Exception {
         if (isStopped(value)) {
@@ -156,7 +156,7 @@ public final class ServiceHelper {
     }
 
     /**
-     * Stops and shutdowns all of the given services, throwing the first exception caught
+     * Stops and shutdowns the given service, throwing the first exception caught
      */
     public static void stopAndShutdownService(Object value) throws Exception {
         stopService(value);
