@@ -162,7 +162,12 @@ public class ClientChannelHandler extends SimpleChannelUpstreamHandler {
             } else {
                 close = exchange.getIn().getHeader(NettyConstants.NETTY_CLOSE_CHANNEL_WHEN_COMPLETE, Boolean.class);
             }
-
+            
+            // check the setting on the exchange property
+            if (close == null) {
+                close = exchange.getProperty(NettyConstants.NETTY_CLOSE_CHANNEL_WHEN_COMPLETE, Boolean.class);
+            }
+            
             // should we disconnect, the header can override the configuration
             boolean disconnect = producer.getConfiguration().isDisconnect();
             if (close != null) {
