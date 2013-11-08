@@ -21,7 +21,7 @@ import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.concurrent.Executors;
+import java.util.concurrent.ExecutorService;
 
 import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Channel;
@@ -32,13 +32,13 @@ import org.apache.camel.util.ObjectHelper;
 
 public class RabbitMQProducer extends DefaultProducer {
 
-    private final Connection conn;
-    private final Channel channel;
+    private int closeTimeout = 30 * 1000;
+    private Connection conn;
+    private Channel channel;
+    private ExecutorService executorService;
 
     public RabbitMQProducer(RabbitMQEndpoint endpoint) throws IOException {
         super(endpoint);
-        this.conn = endpoint.connect(Executors.newSingleThreadExecutor());
-        this.channel = conn.createChannel();
     }
 
     @Override
@@ -46,8 +46,35 @@ public class RabbitMQProducer extends DefaultProducer {
         return (RabbitMQEndpoint) super.getEndpoint();
     }
 
-    public void shutdown() throws IOException {
-        conn.close();
+    @Override
+    protected void doStart() throws Exception {
+        this.executorService = getEndpoint().getCamelContext().getExecutorServiceManager().newSingleThreadExecutor(this, "CamelRabbitMQProducer[" + getEndpoint().getQueue() + "]");
+
+        log.trace("Creating connection...");
+        this.conn = getEndpoint().connect(executorService);
+        log.debug("Created connection: {}", conn);
+
+        log.trace("Creating channel...");
+        this.channel = conn.createChannel();
+        log.debug("Created channel: {}", channel);
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        if (channel != null) {
+            log.debug("Closing channel: {}", channel);
+            channel.close();
+            channel = null;
+        }
+        if (conn != null) {
+            log.debug("Closing connection: {} with timeout: {} ms.", conn, closeTimeout);
+            conn.close(closeTimeout);
+            conn = null;
+        }
+        if (executorService != null) {
+            getEndpoint().getCamelContext().getExecutorServiceManager().shutdownNow(executorService);
+            executorService = null;
+        }
     }
 
     @Override
@@ -178,5 +205,13 @@ public class RabbitMQProducer extends DefaultProducer {
             return headerValue;
         }
         return null;
+    }
+
+    public int getCloseTimeout() {
+        return closeTimeout;
+    }
+
+    public void setCloseTimeout(int closeTimeout) {
+        this.closeTimeout = closeTimeout;
     }
 }
