@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.netty;
 
+import java.net.ConnectException;
 import java.net.InetSocketAddress;
 import java.util.Map;
 import java.util.concurrent.CountDownLatch;
@@ -433,7 +434,11 @@ public class NettyProducer extends DefaultAsyncProducer {
         
 
         if (!channelFuture.isDone() || !channelFuture.isSuccess()) {
-            throw new CamelException("Cannot connect to " + configuration.getAddress(), channelFuture.getCause());
+            ConnectException cause = new ConnectException("Cannot connect to " + configuration.getAddress());
+            if (channelFuture.getCause() != null) {
+                cause.initCause(channelFuture.getCause());
+            }
+            throw cause;
         }
         Channel answer = channelFuture.getChannel();
         // to keep track of all channels in use
