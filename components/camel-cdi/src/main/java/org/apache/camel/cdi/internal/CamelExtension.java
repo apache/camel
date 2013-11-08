@@ -16,15 +16,20 @@
  */
 package org.apache.camel.cdi.internal;
 
-import java.lang.reflect.Field;
-import java.lang.reflect.Method;
-import java.lang.reflect.Modifier;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
+import org.apache.camel.Consume;
+import org.apache.camel.EndpointInject;
+import org.apache.camel.Produce;
+import org.apache.camel.RoutesBuilder;
+import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.cdi.CdiCamelContext;
+import org.apache.camel.cdi.ContextName;
+import org.apache.camel.impl.DefaultCamelBeanPostProcessor;
+import org.apache.camel.model.RouteContainer;
+import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.ReflectionHelper;
+import org.apache.deltaspike.core.util.metadata.builder.AnnotatedTypeBuilder;
 
 import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.event.Observes;
@@ -42,22 +47,15 @@ import javax.enterprise.inject.spi.ProcessInjectionTarget;
 import javax.enterprise.inject.spi.ProcessProducerMethod;
 import javax.enterprise.util.AnnotationLiteral;
 import javax.inject.Inject;
-
-import org.apache.camel.CamelContext;
-import org.apache.camel.CamelContextAware;
-import org.apache.camel.Consume;
-import org.apache.camel.EndpointInject;
-import org.apache.camel.Produce;
-import org.apache.camel.RoutesBuilder;
-import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.cdi.CdiCamelContext;
-import org.apache.camel.cdi.ContextName;
-import org.apache.camel.impl.DefaultCamelBeanPostProcessor;
-import org.apache.camel.model.RouteContainer;
-import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.ReflectionHelper;
-import org.apache.deltaspike.core.api.provider.BeanProvider;
-import org.apache.deltaspike.core.util.metadata.builder.AnnotatedTypeBuilder;
+import java.lang.reflect.Field;
+import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.HashSet;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 
 /**
  * Set of camel specific hooks for CDI.
@@ -128,7 +126,7 @@ public class CamelExtension implements Extension {
      *
      * @param process Annotated type.
      */
-    protected void disableDefaultContext(@Observes ProcessAnnotatedType<CamelContext> process) {
+    protected void disableDefaultContext(@Observes ProcessAnnotatedType<? extends CamelContext> process) {
         process.veto();
     }
 
