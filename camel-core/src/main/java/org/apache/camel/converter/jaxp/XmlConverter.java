@@ -916,7 +916,7 @@ public class XmlConverter {
         if (features.size() > 0) {
             StringBuffer featureString = new StringBuffer();
             // just log the configured feature
-            for (String feature: features) {
+            for (String feature : features) {
                 if (featureString.length() != 0) {
                     featureString.append(", ");
                 }
