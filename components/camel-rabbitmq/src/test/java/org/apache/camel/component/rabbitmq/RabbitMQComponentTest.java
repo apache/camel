@@ -30,6 +30,18 @@ public class RabbitMQComponentTest {
     private CamelContext context = Mockito.mock(CamelContext.class);
 
     @Test
+    public void testDefaultProperties() throws Exception {
+        RabbitMQEndpoint endpoint = createEndpoint(new HashMap<String, Object>());
+
+        assertEquals(14, endpoint.getPortNumber());
+        assertEquals(10, endpoint.getThreadPoolSize());
+        assertEquals(true, endpoint.isAutoAck());
+        assertEquals(true, endpoint.isAutoDelete());
+        assertEquals(true, endpoint.isDurable());
+        assertEquals("direct", endpoint.getExchangeType());
+    }
+
+    @Test
     public void testPropertiesSet() throws Exception {
         Map<String, Object> params = new HashMap<String, Object>();
         params.put("username", "coldplay");
@@ -40,11 +52,10 @@ public class RabbitMQComponentTest {
         params.put("portNumber", 14123);
         params.put("hostname", "special.host");
         params.put("queue", "queuey");
+        params.put("exchangeType", "topic");
 
-        String uri = "rabbitmq:special.host:14/queuey";
-        String remaining = "special.host:14/queuey";
+        RabbitMQEndpoint endpoint = createEndpoint(params);
 
-        RabbitMQEndpoint endpoint = new RabbitMQComponent(context).createEndpoint(uri, remaining, params);
         assertEquals("chrism", endpoint.getPassword());
         assertEquals("coldplay", endpoint.getUsername());
         assertEquals("queuey", endpoint.getQueue());
@@ -53,5 +64,15 @@ public class RabbitMQComponentTest {
         assertEquals(14123, endpoint.getPortNumber());
         assertEquals(515, endpoint.getThreadPoolSize());
         assertEquals(true, endpoint.isAutoAck());
+        assertEquals(true, endpoint.isAutoDelete());
+        assertEquals(true, endpoint.isDurable());
+        assertEquals("topic", endpoint.getExchangeType());
+    }
+
+    private RabbitMQEndpoint createEndpoint(Map<String, Object> params) throws Exception {
+        String uri = "rabbitmq:special.host:14/queuey";
+        String remaining = "special.host:14/queuey";
+
+        return new RabbitMQComponent(context).createEndpoint(uri, remaining, params);
     }
 }

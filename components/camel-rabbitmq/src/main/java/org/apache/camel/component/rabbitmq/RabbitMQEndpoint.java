@@ -51,6 +51,7 @@ public class RabbitMQEndpoint extends DefaultEndpoint {
     private boolean durable = true;
     private String queue = String.valueOf(UUID.randomUUID().toString().hashCode());
     private String exchangeName;
+    private String exchangeType = "direct";
     private String routingKey;
     
     public RabbitMQEndpoint() {
@@ -212,6 +213,14 @@ public class RabbitMQEndpoint extends DefaultEndpoint {
 
     public void setExchangeName(String exchangeName) {
         this.exchangeName = exchangeName;
+    }
+
+    public String getExchangeType() {
+        return exchangeType;
+    }
+
+    public void setExchangeType(String exchangeType) {
+        this.exchangeType = exchangeType;
     }
 
     public String getRoutingKey() {
