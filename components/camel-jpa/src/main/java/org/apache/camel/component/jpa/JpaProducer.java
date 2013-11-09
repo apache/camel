@@ -61,15 +61,15 @@ public class JpaProducer extends DefaultProducer {
                     if (values.getClass().isArray()) {
                         Object[] array = (Object[])values;
                         for (int index = 0; index < array.length; index++) {
-                            save(array[index], entityManager);
+                            save(array[index]);
                         }
                     } else if (values instanceof Collection) {
                         Collection<?> collection = (Collection<?>)values;
                         for (Object entity : collection) {
-                            save(entity, entityManager);
+                            save(entity);
                         }
                     } else {
-                        Object managedEntity = save(values, entityManager);
+                        Object managedEntity = save(values);
                         if (!getEndpoint().isUsePersist()) {
                             exchange.getIn().setBody(managedEntity);
                         }
@@ -88,7 +88,7 @@ public class JpaProducer extends DefaultProducer {
                  * save the given entity end return the managed entity
                  * @return the managed entity
                  */
-                private Object save(final Object entity, EntityManager entityManager) {
+                private Object save(final Object entity) {
                     // there may be concurrency so need to join tx before persist/merge
                     entityManager.joinTransaction();
                     if (getEndpoint().isUsePersist()) {
