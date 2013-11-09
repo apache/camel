@@ -30,7 +30,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.ProducerCallback;
 import org.apache.camel.ServicePoolAware;
-import org.apache.camel.ShutdownableService;
 import org.apache.camel.processor.UnitOfWorkProducer;
 import org.apache.camel.spi.ServicePool;
 import org.apache.camel.support.ServiceSupport;
@@ -127,13 +126,8 @@ public class ProducerCache extends ServiceSupport {
             // release back to the pool
             pool.release(endpoint, producer);
         } else if (!producer.isSingleton()) {
-            // stop non singleton producers as we should not leak resources
-            producer.stop();
-
-            // shutdown as well in case the producer is shutdownable
-            if (producer instanceof ShutdownableService) {
-                ShutdownableService.class.cast(producer).shutdown();
-            }
+            // stop and shutdown non-singleton producers as we should not leak resources
+            ServiceHelper.stopAndShutdownService(producer);
         }
     }
 
@@ -251,12 +245,12 @@ public class ProducerCache extends ServiceSupport {
                 // release back to the pool
                 pool.release(endpoint, producer);
             } else if (!producer.isSingleton()) {
-                // stop non singleton producers as we should not leak resources
+                // stop and shutdown non-singleton producers as we should not leak resources
                 try {
-                    ServiceHelper.stopService(producer);
+                    ServiceHelper.stopAndShutdownService(producer);
                 } catch (Exception e) {
                     // ignore and continue
-                    LOG.warn("Error stopping producer: " + producer, e);
+                    LOG.warn("Error stopping/shutdown producer: " + producer, e);
                 }
             }
         }
@@ -315,12 +309,12 @@ public class ProducerCache extends ServiceSupport {
                             // release back to the pool
                             pool.release(endpoint, producer);
                         } else if (!producer.isSingleton()) {
-                            // stop non singleton producers as we should not leak resources
+                            // stop and shutdown non-singleton producers as we should not leak resources
                             try {
-                                ServiceHelper.stopService(producer);
+                                ServiceHelper.stopAndShutdownService(producer);
                             } catch (Exception e) {
                                 // ignore and continue
-                                LOG.warn("Error stopping producer: " + producer, e);
+                                LOG.warn("Error stopping/shutdown producer: " + producer, e);
                             }
                         }
                     } finally {
