@@ -135,8 +135,8 @@ public class ProducerCache extends ServiceSupport {
             // release back to the pool
             pool.release(endpoint, producer);
         } else if (!producer.isSingleton()) {
-            // stop non singleton producers as we should not leak resources
-            producer.stop();
+            // stop and shutdown non-singleton producers as we should not leak resources
+            ServiceHelper.stopAndShutdownService(producer);
         }
     }
 
@@ -254,12 +254,12 @@ public class ProducerCache extends ServiceSupport {
                 // release back to the pool
                 pool.release(endpoint, producer);
             } else if (!producer.isSingleton()) {
-                // stop non singleton producers as we should not leak resources
+                // stop and shutdown non-singleton producers as we should not leak resources
                 try {
-                    ServiceHelper.stopService(producer);
+                    ServiceHelper.stopAndShutdownService(producer);
                 } catch (Exception e) {
                     // ignore and continue
-                    LOG.warn("Error stopping producer: " + producer, e);
+                    LOG.warn("Error stopping/shutting down producer: " + producer, e);
                 }
             }
         }
@@ -318,12 +318,12 @@ public class ProducerCache extends ServiceSupport {
                             // release back to the pool
                             pool.release(endpoint, producer);
                         } else if (!producer.isSingleton()) {
-                            // stop non singleton producers as we should not leak resources
+                            // stop and shutdown non-singleton producers as we should not leak resources
                             try {
-                                ServiceHelper.stopService(producer);
+                                ServiceHelper.stopAndShutdownService(producer);
                             } catch (Exception e) {
                                 // ignore and continue
-                                LOG.warn("Error stopping producer: " + producer, e);
+                                LOG.warn("Error stopping/shutting down producer: " + producer, e);
                             }
                         }
                     } finally {

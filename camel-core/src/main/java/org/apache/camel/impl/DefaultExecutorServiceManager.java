@@ -16,13 +16,13 @@
  */
 package org.apache.camel.impl;
 
-import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ThreadFactory;
@@ -60,11 +60,11 @@ public class DefaultExecutorServiceManager extends ServiceSupport implements Exe
 
     private final CamelContext camelContext;
     private ThreadPoolFactory threadPoolFactory = new DefaultThreadPoolFactory();
-    private final List<ExecutorService> executorServices = new ArrayList<ExecutorService>();
+    private final List<ExecutorService> executorServices = new CopyOnWriteArrayList<ExecutorService>();
     private String threadNamePattern;
     private long shutdownAwaitTermination = 10000;
     private String defaultThreadPoolProfileId = "defaultThreadPoolProfile";
-    private final Map<String, ThreadPoolProfile> threadPoolProfiles = new HashMap<String, ThreadPoolProfile>();
+    private final Map<String, ThreadPoolProfile> threadPoolProfiles = new ConcurrentHashMap<String, ThreadPoolProfile>();
     private ThreadPoolProfile defaultProfile;
 
     public DefaultExecutorServiceManager(CamelContext camelContext) {

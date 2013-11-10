@@ -16,7 +16,6 @@
  */
 package org.apache.camel.itest.jms;
 
-import org.apache.camel.spi.BrowsableEndpoint;
 import org.apache.camel.test.spring.CamelSpringTestSupport;
 import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
@@ -34,42 +33,26 @@ public class SpringJmsValidatorTest extends CamelSpringTestSupport {
 
     @Test
     public void testJmsValidator() throws Exception {
-        String body = "<?xml version=\"1.0\"?>\n<p>Hello world!</p>";
+        getMockEndpoint("mock:valid").expectedMessageCount(1);
+        getMockEndpoint("mock:invalid").expectedMessageCount(0);
+        getMockEndpoint("mock:finally").expectedMessageCount(1);
 
+        String body = "<?xml version=\"1.0\"?>\n<p>Hello world!</p>";
         template.sendBody("jms:queue:inbox", body);
 
-        // wait a sec
-        Thread.sleep(1000);
-
-        // it should end up in the valid and finally queue
-        BrowsableEndpoint bev = context.getEndpoint("jms:queue:valid", BrowsableEndpoint.class);
-        assertEquals(1, bev.getExchanges().size());
-
-        BrowsableEndpoint beiv = context.getEndpoint("jms:queue:invalid", BrowsableEndpoint.class);
-        assertEquals(0, beiv.getExchanges().size());
-
-        BrowsableEndpoint bef = context.getEndpoint("jms:queue:finally", BrowsableEndpoint.class);
-        assertEquals(1, bef.getExchanges().size());
+        assertMockEndpointsSatisfied();
     }
 
     @Test
     public void testJmsValidatorInvalid() throws Exception {
-        String body = "<?xml version=\"1.0\"?>\n<foo>Kaboom</foo>";
+        getMockEndpoint("mock:valid").expectedMessageCount(0);
+        getMockEndpoint("mock:invalid").expectedMessageCount(1);
+        getMockEndpoint("mock:finally").expectedMessageCount(1);
 
+        String body = "<?xml version=\"1.0\"?>\n<foo>Kaboom</foo>";
         template.sendBody("jms:queue:inbox", body);
 
-        // wait a sec
-        Thread.sleep(1000);
-
-        // it should end up in the invalid and finally queue
-        BrowsableEndpoint bev = context.getEndpoint("jms:queue:valid", BrowsableEndpoint.class);
-        assertEquals(0, bev.getExchanges().size());
-
-        BrowsableEndpoint beiv = context.getEndpoint("jms:queue:invalid", BrowsableEndpoint.class);
-        assertEquals(1, beiv.getExchanges().size());
-
-        BrowsableEndpoint bef = context.getEndpoint("jms:queue:finally", BrowsableEndpoint.class);
-        assertEquals(1, bef.getExchanges().size());
+        assertMockEndpointsSatisfied();
     }
 
 }

@@ -34,6 +34,7 @@
       org.apache.camel.component.solr.*;${camel.osgi.version}
     </camel.osgi.export.pkg>
     <camel.osgi.export.service>org.apache.camel.spi.ComponentResolver;component=solr</camel.osgi.export.service>
+    <java.awt.headless>true</java.awt.headless>
   </properties>
 
   <dependencies>
@@ -50,18 +51,25 @@
       <groupId>org.apache.solr</groupId>
       <artifactId>solr-solrj</artifactId>
       <version>${solr-version}</version>
+      <exclusions>
+        <!-- exclude rome 0.9 which is not a valid Maven artifact -->
+        <exclusion>
+          <groupId>rome</groupId>
+          <artifactId>rome</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <!-- use rome 1.0 which is a valid Maven artifact -->
+    <dependency>
+      <groupId>rome</groupId>
+      <artifactId>rome</artifactId>
+      <version>${rome-version}</version>
     </dependency>
 
     <!-- test dependencies -->
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-core-xml</artifactId>
-      <scope>test</scope>
-    </dependency>
-
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-test-spring</artifactId>
+      <artifactId>camel-test</artifactId>
       <scope>test</scope>
     </dependency>
 
@@ -123,31 +131,6 @@
       <groupId>xml-apis</groupId>
       <artifactId>xml-apis</artifactId>
       <version>${xml-apis-version}</version>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-context</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.springframework</groupId>
-      <artifactId>spring-test</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-script</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.codehaus.groovy</groupId>
-      <artifactId>groovy-all</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.codehaus.groovy</groupId>
-      <artifactId>groovy-jsr223</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>

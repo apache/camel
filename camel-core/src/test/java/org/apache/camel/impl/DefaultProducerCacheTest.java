@@ -30,7 +30,8 @@ import org.apache.camel.Producer;
  */
 public class DefaultProducerCacheTest extends ContextTestSupport {
 
-    private static final AtomicInteger COUNTER = new AtomicInteger();
+    private final AtomicInteger stopCounter = new AtomicInteger();
+    private final AtomicInteger shutdownCounter = new AtomicInteger();
 
     public void testCacheProducerAcquireAndRelease() throws Exception {
         ProducerCache cache = new ProducerCache(this, context);
@@ -56,7 +57,7 @@ public class DefaultProducerCacheTest extends ContextTestSupport {
         assertEquals("Size should be 0", 0, cache.size());
 
         for (int i = 0; i < 8; i++) {
-            Endpoint e = new MyEndpoint(i);
+            Endpoint e = new MyEndpoint(true, i);
             Producer p = cache.acquireProducer(e);
             cache.releaseProducer(e, p);
         }
@@ -64,19 +65,50 @@ public class DefaultProducerCacheTest extends ContextTestSupport {
         assertEquals("Size should be 5", 5, cache.size());
 
         // should have stopped the 3 evicted
-        assertEquals(3, COUNTER.get());
+        assertEquals(3, stopCounter.get());
 
         cache.stop();
 
         // should have stopped all 8
-        assertEquals(8, COUNTER.get());
+        assertEquals(8, stopCounter.get());
+    }
+
+    public void testReleaseProducerInvokesStopAndShutdownByNonSingletonProducers() throws Exception {
+        ProducerCache cache = new ProducerCache(this, context, 1);
+        cache.start();
+
+        assertEquals("Size should be 0", 0, cache.size());
+
+        for (int i = 0; i < 3; i++) {
+            Endpoint e = new MyEndpoint(false, i);
+            Producer p = cache.acquireProducer(e);
+            cache.releaseProducer(e, p);
+        }
+
+        assertEquals("Size should be 0", 0, cache.size());
+
+        // should have stopped all 3
+        assertEquals(3, stopCounter.get());
+
+        // should have shutdown all 3
+        assertEquals(3, shutdownCounter.get());
+
+        cache.stop();
+
+        // no more stop after stopping the cache
+        assertEquals(3, stopCounter.get());
+
+        // no more shutdown after stopping the cache
+        assertEquals(3, shutdownCounter.get());
     }
 
     private final class MyEndpoint extends DefaultEndpoint {
 
-        private int number;
+        private final boolean isSingleton;
+        private final int number;
 
-        private MyEndpoint(int number) {
+        private MyEndpoint(boolean isSingleton, int number) {
+            this.isSingleton = isSingleton;
             this.number = number;
         }
 
@@ -92,7 +124,7 @@ public class DefaultProducerCacheTest extends ContextTestSupport {
 
         @Override
         public boolean isSingleton() {
-            return true;
+            return isSingleton;
         }
 
         @Override
@@ -114,7 +146,12 @@ public class DefaultProducerCacheTest extends ContextTestSupport {
 
         @Override
         protected void doStop() throws Exception {
-            COUNTER.incrementAndGet();
+            stopCounter.incrementAndGet();
+        }
+
+        @Override
+        protected void doShutdown() throws Exception {
+            shutdownCounter.incrementAndGet();
         }
     }
 

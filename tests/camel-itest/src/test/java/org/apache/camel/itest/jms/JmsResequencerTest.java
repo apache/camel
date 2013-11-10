@@ -17,11 +17,9 @@
 package org.apache.camel.itest.jms;
 
 import java.util.List;
-
 import javax.jms.ConnectionFactory;
 import javax.naming.Context;
 
-import org.apache.activemq.ActiveMQConnectionFactory;
 import org.apache.camel.Body;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -29,6 +27,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jms.JmsComponent;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.itest.CamelJmsTestHelper;
 import org.apache.camel.model.config.BatchResequencerConfig;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.util.jndi.JndiContext;
@@ -36,6 +35,8 @@ import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
 
 public class JmsResequencerTest extends CamelTestSupport  {
     
@@ -158,19 +159,21 @@ public class JmsResequencerTest extends CamelTestSupport  {
             LOG.info(name + " finished");
         }
     }
-    
+
     @Override
     protected Context createJndiContext() throws Exception {
         JndiContext answer = new JndiContext();
-        ConnectionFactory connectionFactory = new ActiveMQConnectionFactory("vm://localhost?broker.persistent=true");
-        JmsComponent component = JmsComponent.jmsComponent(connectionFactory);
-        component.setConcurrentConsumers(4);
-        answer.bind("activemq", JmsComponent.jmsComponentAutoAcknowledge(connectionFactory));
+
+        // add ActiveMQ with embedded broker
+        ConnectionFactory connectionFactory = CamelJmsTestHelper.createConnectionFactory();
+        JmsComponent amq = jmsComponentAutoAcknowledge(connectionFactory);
+        amq.setCamelContext(context);
+        answer.bind("activemq", amq);
+
         answer.bind("myBean1", b1);
         answer.bind("myBean2", b2);
         answer.bind("myBean3", b3);
         return answer;
     }
-
 
 }

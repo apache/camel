@@ -268,12 +268,14 @@ public abstract class ServiceSupport implements StatefulService {
      * Implementations override this method to support customized suspend/resume.
      */
     protected void doSuspend() throws Exception {
+        // noop
     }
 
     /**
      * Implementations override this method to support customized suspend/resume.
      */
     protected void doResume() throws Exception {
+        // noop
     }
 
     /**
