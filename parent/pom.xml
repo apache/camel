@@ -252,7 +252,6 @@
     <kxml2-bundle-version>2.3.0_2</kxml2-bundle-version>
     <leveldbjni-version>1.8</leveldbjni-version>
     <log4j-version>1.2.17</log4j-version>
-    <!-- we await upgrade for lucene 4.x to sync -->
     <lucene-bundle-version>4.5.1_1</lucene-bundle-version>
     <lucene-version>4.5.1</lucene-version>
     <lightcouch-version>0.0.6</lightcouch-version>
