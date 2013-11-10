@@ -17,7 +17,9 @@
 package org.apache.camel.component.properties;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.regex.Matcher;
@@ -123,7 +125,7 @@ public class PropertiesComponent extends DefaultComponent {
             // location may contain JVM system property or OS environment variables
             // so we need to parse those
             String[] locations = parseLocations(paths);
-    
+
             // check cache first
             CacheKey key = new CacheKey(locations);
             prop = cache ? cacheMap.get(key) : null;
@@ -283,19 +285,28 @@ public class PropertiesComponent extends DefaultComponent {
     }
 
     private String[] parseLocations(String[] locations) {
-        String[] answer = new String[locations.length];
+        List<String> answer = new ArrayList<String>();
 
-        for (int i = 0; i < locations.length; i++) {
-            String location = locations[i];
+        for (String location : locations) {
             LOG.trace("Parsing location: {} ", location);
 
-            location = FilePathResolver.resolvePath(location);
-
-            LOG.debug("Parsed location: {} ", location);
-            answer[i] = location;
+            try {
+                location = FilePathResolver.resolvePath(location);
+                LOG.debug("Parsed location: {} ", location);
+                if (ObjectHelper.isNotEmpty(location)) {
+                    answer.add(location);
+                }
+            } catch (IllegalArgumentException e) {
+                if (!ignoreMissingLocation) {
+                    throw e;
+                } else {
+                    LOG.debug("Ignored missing location: {}", location);
+                }
+            }
         }
 
-        return answer;
+        // must return a not-null answer
+        return answer.toArray(new String[answer.size()]);
     }
 
     /**
