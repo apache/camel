@@ -253,8 +253,8 @@
     <leveldbjni-version>1.8</leveldbjni-version>
     <log4j-version>1.2.17</log4j-version>
     <!-- we await upgrade for lucene 4.x to sync -->
-    <lucene-bundle-version>4.4.0_1</lucene-bundle-version>
-    <lucene-version>4.4.0</lucene-version>
+    <lucene-bundle-version>4.5.1_1</lucene-bundle-version>
+    <lucene-version>4.5.1</lucene-version>
     <lightcouch-version>0.0.6</lightcouch-version>
     <lightcouch-bundle-version>0.0.5_1</lightcouch-bundle-version>
     <!-- needed from tooling/archetypes -->
@@ -359,8 +359,8 @@
     <smack-version>3.2.1</smack-version>
     <snappy-bundle-version>1.0.4.1_1</snappy-bundle-version>
     <snmp4j-version>2.2.2_1</snmp4j-version>
-    <solr-bundle-version>4.4.0_1</solr-bundle-version>
-    <solr-version>4.4.0</solr-version>
+    <solr-bundle-version>4.5.1_1</solr-bundle-version>
+    <solr-version>4.5.1</solr-version>
     <splunk-version>1.2.0_1</splunk-version>
     <spring-batch-version>2.2.2.RELEASE</spring-batch-version>
     <spring-castor-bundle-version>1.2.0</spring-castor-bundle-version>
