@@ -50,6 +50,19 @@
       <groupId>org.apache.solr</groupId>
       <artifactId>solr-solrj</artifactId>
       <version>${solr-version}</version>
+      <exclusions>
+        <!-- exclude rome 0.9 which is not a valid Maven artifact -->
+        <exclusion>
+          <groupId>rome</groupId>
+          <artifactId>rome</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>
+    <!-- use rome 1.0 which is a valid Maven artifact -->
+    <dependency>
+      <groupId>rome</groupId>
+      <artifactId>rome</artifactId>
+      <version>${rome-version}</version>
     </dependency>
 
     <!-- test dependencies -->
