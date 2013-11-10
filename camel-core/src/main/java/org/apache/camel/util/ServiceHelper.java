@@ -396,9 +396,11 @@ public final class ServiceHelper {
     }
 
     /**
-     * Is the given service stopping or stopped?
+     * Is the given service stopping or already stopped?
      *
-     * @return <tt>true</tt> if already stopped, <tt>false</tt> otherwise
+     * @return <tt>true</tt> if stopping or already stopped, <tt>false</tt> otherwise
+     * @see StatefulService#isStopping()
+     * @see StatefulService#isStopped()
      */
     public static boolean isStopped(Object value) {
         if (value instanceof StatefulService) {
@@ -411,9 +413,11 @@ public final class ServiceHelper {
     }
 
     /**
-     * Is the given service starting or started?
+     * Is the given service starting or already started?
      *
-     * @return <tt>true</tt> if already started, <tt>false</tt> otherwise
+     * @return <tt>true</tt> if starting or already started, <tt>false</tt> otherwise
+     * @see StatefulService#isStarting()
+     * @see StatefulService#isStarted()
      */
     public static boolean isStarted(Object value) {
         if (value instanceof StatefulService) {
@@ -426,14 +430,16 @@ public final class ServiceHelper {
     }
     
     /**
-     * Is the given service suspended?
+     * Is the given service suspending or already suspended?
      *
-     * @return <tt>true</tt> if already suspended, <tt>false</tt> otherwise
+     * @return <tt>true</tt> if suspending or already suspended, <tt>false</tt> otherwise
+     * @see StatefulService#isSuspending()
+     * @see StatefulService#isSuspended()
      */
     public static boolean isSuspended(Object value) {
         if (value instanceof StatefulService) {
             StatefulService service = (StatefulService) value;
-            if (service.isSuspended() || service.isSuspending()) {
+            if (service.isSuspending() || service.isSuspended()) {
                 return true;
             }
         }
