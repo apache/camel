@@ -250,7 +250,7 @@ public class ProducerCache extends ServiceSupport {
                     ServiceHelper.stopAndShutdownService(producer);
                 } catch (Exception e) {
                     // ignore and continue
-                    LOG.warn("Error stopping/shutdown producer: " + producer, e);
+                    LOG.warn("Error stopping/shutting down producer: " + producer, e);
                 }
             }
         }
@@ -314,7 +314,7 @@ public class ProducerCache extends ServiceSupport {
                                 ServiceHelper.stopAndShutdownService(producer);
                             } catch (Exception e) {
                                 // ignore and continue
-                                LOG.warn("Error stopping/shutdown producer: " + producer, e);
+                                LOG.warn("Error stopping/shutting down producer: " + producer, e);
                             }
                         }
                     } finally {
