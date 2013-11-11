@@ -455,6 +455,14 @@ public final class ObjectHelper {
      * Returns true if the collection contains the specified value
      */
     public static boolean contains(Object collectionOrArray, Object value) {
+        // favor String types
+        if (collectionOrArray != null && (collectionOrArray instanceof StringBuffer || collectionOrArray instanceof StringBuilder)) {
+            collectionOrArray = collectionOrArray.toString();
+        }
+        if (value != null && (value instanceof StringBuffer || value instanceof StringBuilder)) {
+            value = value.toString();
+        }
+
         if (collectionOrArray instanceof Collection) {
             Collection<?> collection = (Collection<?>)collectionOrArray;
             return collection.contains(value);

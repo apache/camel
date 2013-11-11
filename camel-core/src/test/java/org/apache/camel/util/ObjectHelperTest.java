@@ -93,6 +93,32 @@ public class ObjectHelperTest extends TestCase {
         assertFalse(ObjectHelper.contains("foo", "xyz"));
     }
 
+    public void testContainsStringBuilder() throws Exception {
+        StringBuilder sb = new StringBuilder();
+        sb.append("Hello World");
+
+        assertTrue(ObjectHelper.contains(sb, "World"));
+        assertTrue(ObjectHelper.contains(sb, new StringBuffer("World")));
+        assertTrue(ObjectHelper.contains(sb, new StringBuilder("World")));
+
+        assertFalse(ObjectHelper.contains(sb, "Camel"));
+        assertFalse(ObjectHelper.contains(sb, new StringBuffer("Camel")));
+        assertFalse(ObjectHelper.contains(sb, new StringBuilder("Camel")));
+    }
+
+    public void testContainsStringBuffer() throws Exception {
+        StringBuffer sb = new StringBuffer();
+        sb.append("Hello World");
+
+        assertTrue(ObjectHelper.contains(sb, "World"));
+        assertTrue(ObjectHelper.contains(sb, new StringBuffer("World")));
+        assertTrue(ObjectHelper.contains(sb, new StringBuilder("World")));
+
+        assertFalse(ObjectHelper.contains(sb, "Camel"));
+        assertFalse(ObjectHelper.contains(sb, new StringBuffer("Camel")));
+        assertFalse(ObjectHelper.contains(sb, new StringBuilder("Camel")));
+    }
+
     public void testEqual() {
         assertTrue(ObjectHelper.equal(null, null));
         assertTrue(ObjectHelper.equal("", ""));
