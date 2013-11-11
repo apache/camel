@@ -94,6 +94,11 @@
           <groupId>asm</groupId>
             <artifactId>asm</artifactId>
         </exclusion>
+        <!-- rome is not a needed dependency -->
+        <exclusion>
+          <groupId>rome</groupId>
+          <artifactId>rome</artifactId>
+        </exclusion>        
       </exclusions>
     </dependency>
     <dependency>
