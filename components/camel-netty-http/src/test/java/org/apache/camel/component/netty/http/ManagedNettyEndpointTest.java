@@ -52,9 +52,9 @@ public class ManagedNettyEndpointTest extends BaseNettyTest {
             return;
         }
 
-        // should not add 100 endpoints
-        getMockEndpoint("mock:foo").expectedMessageCount(100);
-        for (int i = 0; i < 100; i++) {
+        // should not add 10 endpoints
+        getMockEndpoint("mock:foo").expectedMessageCount(10);
+        for (int i = 0; i < 10; i++) {
             String out = template.requestBody("netty-http:http://localhost:{{port}}/foo?param" + i + "=value" + i, "Hello World", String.class);
             assertEquals("param" + i + "=value" + i, out);
         }

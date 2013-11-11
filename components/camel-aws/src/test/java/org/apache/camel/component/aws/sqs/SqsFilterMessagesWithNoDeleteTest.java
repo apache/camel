@@ -72,7 +72,7 @@ public class SqsFilterMessagesWithNoDeleteTest extends TestSupport {
         ctx.start();
 
         // we shouldn't get
-        assertIsSatisfied(1000, TimeUnit.MILLISECONDS);
+        assertIsSatisfied(2000, TimeUnit.MILLISECONDS);
 
         // however, the message should not be deleted, that is, it should be left on the queue
         String response = ctx.createConsumerTemplate().receiveBody(sqsURI, 5000, String.class);
@@ -116,7 +116,7 @@ public class SqsFilterMessagesWithNoDeleteTest extends TestSupport {
         ctx.start();
 
         // the message should get through filter and mock should assert this
-        assertIsSatisfied(1000, TimeUnit.MILLISECONDS);
+        assertIsSatisfied(2000, TimeUnit.MILLISECONDS);
 
         // however, the message should not be deleted, that is, it should be left on the queue
         String response = ctx.createConsumerTemplate().receiveBody(sqsURI, 5000, String.class);
