@@ -22,11 +22,14 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.processor.idempotent.MemoryIdempotentRepository;
 
 /**
  * Unit test for the idempotent=true option.
  */
 public class FileConsumerIdempotentTest extends ContextTestSupport {
+
+    private String uri = "file://target/idempotent/?idempotent=true&move=done/${file:name}&delay=10";
 
     @Override
     protected void setUp() throws Exception {
@@ -39,8 +42,8 @@ public class FileConsumerIdempotentTest extends ContextTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("file://target/idempotent/?idempotent=true&move=done/${file:name}&delay=10")
-                        .convertBodyTo(String.class).to("mock:result");
+                from(uri)
+                    .convertBodyTo(String.class).to("mock:result");
             }
         };
     }
@@ -66,6 +69,12 @@ public class FileConsumerIdempotentTest extends ContextTestSupport {
         // should NOT consume the file again, let a bit time pass to let the consumer try to consume it but it should not
         Thread.sleep(100);
         assertMockEndpointsSatisfied();
+
+        FileEndpoint fe = context.getEndpoint(uri, FileEndpoint.class);
+        assertNotNull(fe);
+
+        MemoryIdempotentRepository repo = (MemoryIdempotentRepository) fe.getInProgressRepository();
+        assertEquals("Should be no in-progress files", 0, repo.getCacheSize());
     }
 
 }
