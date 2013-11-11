@@ -16,7 +16,6 @@
  */
 package org.apache.camel.test.blueprint;
 
-//import org.junit.Ignore;
 import org.junit.Test;
 
 /**
@@ -30,7 +29,6 @@ public class BlueprintProduceConsumeImplicitPropertyTest extends CamelBlueprintT
     }
 
     @Test
-    //@Ignore("Test fails. Fix Me!")
     public void testImplicit() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
 
