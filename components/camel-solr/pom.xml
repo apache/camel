@@ -53,20 +53,13 @@
       <version>${solr-version}</version>
       <exclusions>
         <!-- exclude rome 0.9 which is not a valid Maven artifact -->
+        <!-- rome is not a needed dependency -->
         <exclusion>
           <groupId>rome</groupId>
           <artifactId>rome</artifactId>
         </exclusion>
       </exclusions>
     </dependency>
-    <!-- use rome 1.0 which is a valid Maven artifact -->
-    <dependency>
-      <groupId>rome</groupId>
-      <artifactId>rome</artifactId>
-      <version>${rome-version}</version>
-    </dependency>
-
-    <!-- test dependencies -->
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-test</artifactId>
