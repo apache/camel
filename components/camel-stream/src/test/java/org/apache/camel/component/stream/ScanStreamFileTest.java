@@ -48,6 +48,11 @@ public class ScanStreamFileTest extends CamelTestSupport {
     public void testScanFile() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(2);
+        mock.message(0).header(StreamConstants.STREAM_INDEX).isEqualTo(0);
+        mock.message(0).header(StreamConstants.STREAM_COMPLETE).isEqualTo(false);
+        mock.message(1).header(StreamConstants.STREAM_INDEX).isEqualTo(1);
+        // a scanStream=true is never finished
+        mock.message(1).header(StreamConstants.STREAM_COMPLETE).isEqualTo(false);
 
         FileOutputStream fos = new FileOutputStream(file);
         try {

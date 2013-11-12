@@ -49,6 +49,10 @@ public class StreamGroupLinesStrategyTest extends StreamGroupLinesTest {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(2);
         mock.setAssertPeriod(1000);
+        mock.message(0).header(StreamConstants.STREAM_INDEX).isEqualTo(0);
+        mock.message(0).header(StreamConstants.STREAM_COMPLETE).isEqualTo(false);
+        mock.message(1).header(StreamConstants.STREAM_INDEX).isEqualTo(1);
+        mock.message(1).header(StreamConstants.STREAM_COMPLETE).isEqualTo(true);
 
         assertMockEndpointsSatisfied();
 
