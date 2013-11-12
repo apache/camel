@@ -64,6 +64,16 @@ public class TokenizeLanguageTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    public void testSendMixedClosingTagInsideMessageToTokenize() throws Exception {
+        getMockEndpoint("mock:result").expectedBodiesReceived(
+            "<child name='child1'><grandchild name='grandchild1'/> <grandchild name='grandchild2'/></child>", "<child name='child2'><grandchild name='grandchild1'></grandchild><grandchild name='grandchild2'></grandchild></child>");
+
+        template.sendBody("direct:start",
+            "<parent><child name='child1'><grandchild name='grandchild1'/> <grandchild name='grandchild2'/></child><child name='child2'><grandchild name='grandchild1'></grandchild><grandchild name='grandchild2'></grandchild></child></parent>");
+
+        assertMockEndpointsSatisfied();
+    }
+
     public void testSendNamespacedChildMessageToTokenize() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived(
             "<c:child xmlns:c='urn:c' some_attr='a' anotherAttr='a'></c:child>", "<c:child xmlns:c='urn:c' some_attr='b' anotherAttr='b' />");
