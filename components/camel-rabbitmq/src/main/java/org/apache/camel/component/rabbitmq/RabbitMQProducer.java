@@ -36,7 +36,7 @@ public class RabbitMQProducer extends DefaultProducer {
     private Connection conn;
     private Channel channel;
     private ExecutorService executorService;
-
+   
     public RabbitMQProducer(RabbitMQEndpoint endpoint) throws IOException {
         super(endpoint);
     }
@@ -88,6 +88,10 @@ public class RabbitMQProducer extends DefaultProducer {
         }
 
         String key = exchange.getIn().getHeader(RabbitMQConstants.ROUTING_KEY, "", String.class);
+        // we just need to make sure RoutingKey option take effect
+        if (key.trim().length() == 0) {
+            key = getEndpoint().getRoutingKey() == null ? "" : getEndpoint().getRoutingKey();
+        }
         byte[] messageBodyBytes = exchange.getIn().getMandatoryBody(byte[].class);
         AMQP.BasicProperties.Builder properties = buildProperties(exchange);
 
