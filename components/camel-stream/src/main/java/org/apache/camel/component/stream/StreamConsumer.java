@@ -159,6 +159,8 @@ public class StreamConsumer extends DefaultConsumer implements Runnable {
                     processLine(line);
                 }
             }
+            // EOL so trigger any
+            processLine(null);
         }
         // important: do not close the reader as it will close the standard system.in etc.
     }
@@ -167,13 +169,17 @@ public class StreamConsumer extends DefaultConsumer implements Runnable {
      * Strategy method for processing the line
      */
     protected synchronized void processLine(String line) throws Exception {
+        boolean last = line == null;
+
         if (endpoint.getGroupLines() > 0) {
             // remember line
-            lines.add(line);
+            if (line != null) {
+                lines.add(line);
+            }
 
             // should we flush lines?
-            if (lines.size() >= endpoint.getGroupLines()) {
-                // spit out lines
+            if (!lines.isEmpty() && (lines.size() >= endpoint.getGroupLines() || last)) {
+                // spit out lines as we hit the size, or it was the last
                 Exchange exchange = endpoint.createExchange();
 
                 // create message with the lines
@@ -187,7 +193,7 @@ public class StreamConsumer extends DefaultConsumer implements Runnable {
 
                 getProcessor().process(exchange);
             }
-        } else {
+        } else if (!last) {
             // single line
             Exchange exchange = endpoint.createExchange();
 
