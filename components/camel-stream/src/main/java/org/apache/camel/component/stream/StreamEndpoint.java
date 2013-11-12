@@ -20,6 +20,7 @@ import java.nio.charset.Charset;
 
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
+import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
@@ -68,6 +69,14 @@ public class StreamEndpoint extends DefaultEndpoint {
 
     public boolean isSingleton() {
         return true;
+    }
+
+    protected Exchange createExchange(Object body, long index, boolean last) {
+        Exchange exchange = createExchange();
+        exchange.getIn().setBody(body);
+        exchange.getIn().setHeader(StreamConstants.STREAM_INDEX, index);
+        exchange.getIn().setHeader(StreamConstants.STREAM_COMPLETE, last);
+        return exchange;
     }
 
     // Properties
