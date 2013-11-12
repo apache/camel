@@ -193,7 +193,6 @@ public class Mina2Consumer extends DefaultConsumer {
             addCodecFactory(service, codecFactory);
             LOG.debug("{}: Using ObjectSerializationCodecFactory: {}", type, codecFactory);
         }
-
     }
 
     protected void setupDatagramProtocol(String uri, Mina2Configuration configuration) {
@@ -207,6 +206,12 @@ public class Mina2Consumer extends DefaultConsumer {
         configureDataGramCodecFactory("MinaConsumer", acceptor, configuration);
         acceptor.setCloseOnDeactivation(true);
         // reuse address is default true for datagram
+        if (configuration.isOrderedThreadPoolExecutor()) {
+            workerPool = new OrderedThreadPoolExecutor(configuration.getMaximumPoolSize());
+        } else {
+            workerPool = new UnorderedThreadPoolExecutor(configuration.getMaximumPoolSize());
+        }
+        acceptor.getFilterChain().addLast("threadPool", new ExecutorFilter(workerPool));
         if (minaLogger) {
             acceptor.getFilterChain().addLast("logger", new LoggingFilter());
         }
