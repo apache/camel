@@ -27,17 +27,17 @@ import org.junit.Test;
 /**
  * @version 
  */
-public class Mina2UdpTest extends BaseMina2Test {
+public class Mina2UdpConcurrentTest extends BaseMina2Test {
 
     protected int messageCount = 3;
 
-    public Mina2UdpTest() {
+    public Mina2UdpConcurrentTest() {
     }
 
     @Test
     public void testMinaRoute() throws Exception {
         MockEndpoint endpoint = getMockEndpoint("mock:result");
-        endpoint.expectedBodiesReceived("Hello Message: 0", "Hello Message: 1", "Hello Message: 2");
+        endpoint.expectedBodiesReceivedInAnyOrder("Hello Message: 0", "Hello Message: 1", "Hello Message: 2");
 
         sendUdpMessages();
 
@@ -65,7 +65,10 @@ public class Mina2UdpTest extends BaseMina2Test {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("mina2:udp://127.0.0.1:10111?sync=false&minaLogger=true").to("mock:result");
+                // we use un-ordered to allow processing the UDP messages in any order from same client
+                from("mina2:udp://127.0.0.1:10111?sync=false&minaLogger=true&orderedThreadPoolExecutor=false")
+                        .delay(1000)
+                        .to("mock:result");
             }
         };
     }
