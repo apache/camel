@@ -44,7 +44,7 @@ public class RabbitMQProducerIntTest extends CamelTestSupport {
     protected ProducerTemplate template;
 
     
-    @EndpointInject(uri = "rabbitmq:localhost:5672/" + EXCHANGE + "?username=cameltest&password=cameltest")
+    @EndpointInject(uri = "rabbitmq:localhost:5672/" + EXCHANGE + "?routingKey=route1&username=cameltest&password=cameltest")
     private Endpoint to;
 
     
@@ -74,7 +74,7 @@ public class RabbitMQProducerIntTest extends CamelTestSupport {
 
         Channel channel = conn.createChannel();
         channel.queueDeclare("sammyq", false, false, true, null);
-        channel.queueBind("sammyq", EXCHANGE, "");
+        channel.queueBind("sammyq", EXCHANGE, "route1");
         channel.basicConsume("sammyq", true, new DefaultConsumer(channel) {
             @Override
             public void handleDelivery(String consumerTag,
