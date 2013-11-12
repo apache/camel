@@ -59,6 +59,7 @@ public class StreamGroupLinesTest extends CamelTestSupport {
     public void testGroupLines() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(2);
+        mock.setAssertPeriod(1000);
 
         assertMockEndpointsSatisfied();
 
