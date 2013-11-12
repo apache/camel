@@ -387,8 +387,8 @@
     <tagsoup-bundle-version>1.2_5</tagsoup-bundle-version>
     <tagsoup-version>1.2.1</tagsoup-version>
     <testng-version>6.8.7</testng-version>
-    <twitter4j-bundle-version>3.0.3_1</twitter4j-bundle-version>
-    <twitter4j-version>3.0.3</twitter4j-version>
+    <twitter4j-bundle-version>3.0.5_1</twitter4j-bundle-version>
+    <twitter4j-version>3.0.5</twitter4j-version>
     <urlrewritefilter-version>4.0.4</urlrewritefilter-version>
     <urlrewritefilter-bundle-version>4.0.4_1</urlrewritefilter-bundle-version>
     <validation-api-version>1.1.0.Final</validation-api-version>
