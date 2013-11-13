@@ -76,6 +76,8 @@ public class ContextInfo extends OsgiCommandSupport {
         System.out.println(StringEscapeUtils.unescapeJava("\tAuto Startup: " + camelContext.isAutoStartup()));
         System.out.println(StringEscapeUtils.unescapeJava("\tStarting Routes: " + camelContext.isStartingRoutes()));
         System.out.println(StringEscapeUtils.unescapeJava("\tSuspended: " + camelContext.isSuspended()));
+        System.out.println(StringEscapeUtils.unescapeJava("\tShutdown timeout: "
+                + camelContext.getShutdownStrategy().getTimeUnit().toSeconds(camelContext.getShutdownStrategy().getTimeout()) + " sec."));
         System.out.println(StringEscapeUtils.unescapeJava("\tMessage History: " + camelContext.isMessageHistory()));
         System.out.println(StringEscapeUtils.unescapeJava("\tTracing: " + camelContext.isTracing()));
         System.out.println("");
