@@ -129,6 +129,12 @@ public class CamelJaxbTest extends CamelTestSupport {
         template.sendBody("direct:getJAXBElement", xml);        
         resultEndpoint.assertIsSatisfied();
         assertTrue("We should get the JAXBElement here", resultEndpoint.getExchanges().get(0).getIn().getBody() instanceof JAXBElement);
+        
+        resultEndpoint.reset();
+        resultEndpoint.expectedMessageCount(1);
+        resultEndpoint.expectedBodiesReceived(expected);
+        template.sendBody("direct:unmarshall", xml);        
+        resultEndpoint.assertIsSatisfied();
     }
 
     @Override
@@ -175,6 +181,11 @@ public class CamelJaxbTest extends CamelTestSupport {
                 from("direct:marshalCustomWriterAndFiltering")
                         .marshal(customWriterAndFilterFormat)
                         .to("mock:result");
+                
+                from("direct:unmarshall")
+                    .unmarshal()
+                    .jaxb(PersonType.class.getPackage().getName())
+                    .to("mock:result");
 
             }
         };
