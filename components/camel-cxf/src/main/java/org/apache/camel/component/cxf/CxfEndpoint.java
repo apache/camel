@@ -662,6 +662,9 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     }
     
     public void setServiceClass(String type) throws ClassNotFoundException {
+        if (ObjectHelper.isEmpty(type)) {
+            throw new IllegalArgumentException("The serviceClass option should not be set with Emptye String.");
+        }
         serviceClass = ClassLoaderUtils.loadClass(resolvePropertyPlaceholders(type), getClass());
     }
 
