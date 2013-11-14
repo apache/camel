@@ -254,6 +254,7 @@
     <log4j-version>1.2.17</log4j-version>
     <lucene-bundle-version>4.5.1_1</lucene-bundle-version>
     <lucene-version>4.5.1</lucene-version>
+    <lucene-version-range>[4.5,5)</lucene-version-range>
     <lightcouch-version>0.0.6</lightcouch-version>
     <lightcouch-bundle-version>0.0.5_1</lightcouch-bundle-version>
     <!-- needed from tooling/archetypes -->
@@ -461,6 +462,7 @@
       net.sf.saxon.*;version="[9.3.0,9.6)",
       freemarker.*;version="[2.3.15,3)",
       javax.persistence.*;version="[1.1,3)",
+      org.apache.lucene.*;version="${lucene-version-range}",
     </camel.osgi.import.defaults>
     <camel.osgi.import.before.defaults />
     <camel.osgi.import.additional />
