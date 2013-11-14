@@ -44,7 +44,7 @@ public final class Mina2Helper {
      * @throws CamelExchangeException is thrown if the body could not be written for some reasons
      *                                (eg remote connection is closed etc.)
      */
-    public static void writeBody(IoSession session, Object body, Exchange exchange) throws CamelExchangeException, InterruptedException {
+    public static void writeBody(IoSession session, Object body, Exchange exchange) throws CamelExchangeException {
         // the write operation is asynchronous. Use WriteFuture to wait until the session has been written
         WriteFuture future = session.write(body);
         // must use a timeout (we use 10s) as in some very high performance scenarios a write can cause 
