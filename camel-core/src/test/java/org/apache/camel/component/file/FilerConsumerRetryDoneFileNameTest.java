@@ -60,7 +60,7 @@ public class FilerConsumerRetryDoneFileNameTest extends ContextTestSupport {
                 from("file:target/done?doneFileName=done&initialDelay=0&delay=10")
                         .to("mock:input")
                         .process(new Processor() {
-                            int index = 0;
+                            int index;
                             @Override
                             public void process(Exchange exchange) throws Exception {
                                 if (index++ == 0) {
