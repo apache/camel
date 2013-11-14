@@ -35,6 +35,8 @@ import org.apache.camel.util.ObjectHelper;
 public class JibxDataFormat extends DataFormatDefinition {
     @XmlAttribute(name = "unmarshallClass")
     private String unmarshallTypeName;
+    @XmlAttribute
+    private String bindingName;
     @XmlTransient
     private Class<?> unmarshallClass;
 
@@ -63,6 +65,14 @@ public class JibxDataFormat extends DataFormatDefinition {
         this.unmarshallTypeName = unmarshallTypeName;
     }
 
+    public String getBindingName() {
+        return bindingName;
+    }
+
+    public void setBindingName(String bindingName) {
+        this.bindingName = bindingName;
+    }
+
     @Override
     protected DataFormat createDataFormat(RouteContext routeContext) {
         if (unmarshallClass == null && unmarshallTypeName != null) {
@@ -80,6 +90,9 @@ public class JibxDataFormat extends DataFormatDefinition {
     protected void configureDataFormat(DataFormat dataFormat) {
         if (unmarshallClass != null) {
             setProperty(dataFormat, "unmarshallClass", unmarshallClass);
+        }
+        if (bindingName != null) {
+            setProperty(camelContext, dataFormat, "bindingName", bindingName);
         }
     }
 
