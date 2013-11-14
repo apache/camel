@@ -33,14 +33,15 @@ import org.apache.camel.impl.DefaultCamelBeanPostProcessor;
  * Contains the bean and the consume methods
  */
 public class BeanAdapter {
+    @Inject 
+    BeanManager beanManager;
+    
     private final List<Method> consumeMethods = new ArrayList<Method>();
     private final List<Method> produceMethods = new ArrayList<Method>();
     private final List<Method> endpointMethods = new ArrayList<Method>();
     private final List<Field> produceFields = new ArrayList<Field>();
     private final List<Field> endpointFields = new ArrayList<Field>();
     private final ContextName startup;
-
-    @Inject BeanManager beanManager;
 
     public BeanAdapter(ContextName startup) {
         this.startup = startup;

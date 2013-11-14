@@ -42,7 +42,7 @@ import org.apache.deltaspike.core.api.literal.DefaultLiteral;
 @SuppressWarnings("unchecked")
 public class CamelContextBean implements Bean<CdiCamelContext>, PassivationCapable {
 
-    private static final UUID uniqueId = UUID.randomUUID();
+    private static final UUID UNIQUE_ID = UUID.randomUUID();
 
     private final BeanManager beanManager;
     private final String name;
@@ -134,7 +134,8 @@ public class CamelContextBean implements Bean<CdiCamelContext>, PassivationCapab
         config.configure(camelContext, beanManager);
     }
 
-    @Override public String getId() {
-        return uniqueId.toString();
+    @Override 
+    public String getId() {
+        return UNIQUE_ID.toString();
     }
 }
