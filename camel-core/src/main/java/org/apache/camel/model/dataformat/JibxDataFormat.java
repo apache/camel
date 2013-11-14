@@ -92,7 +92,7 @@ public class JibxDataFormat extends DataFormatDefinition {
             setProperty(dataFormat, "unmarshallClass", unmarshallClass);
         }
         if (bindingName != null) {
-            setProperty(camelContext, dataFormat, "bindingName", bindingName);
+            setProperty(dataFormat, "bindingName", bindingName);
         }
     }
 
