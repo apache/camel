@@ -59,9 +59,9 @@ public class DnsDigEndpoint extends DefaultEndpoint {
                 
                 String dclassValue = exchange.getIn().getHeader(DnsConstants.DNS_CLASS, String.class);
                 if (dclassValue == null) {
-                	dclassValue = "";
+                    dclassValue = "";
                 }
-                	
+                
                 int dclass = DClass.value(dclassValue);
                 if (dclass == -1) {
                     // by default, value is IN.
