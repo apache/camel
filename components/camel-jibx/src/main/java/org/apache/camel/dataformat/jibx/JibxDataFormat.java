@@ -26,9 +26,11 @@ import org.jibx.runtime.BindingDirectory;
 import org.jibx.runtime.IBindingFactory;
 import org.jibx.runtime.IMarshallingContext;
 import org.jibx.runtime.IUnmarshallingContext;
+import org.jibx.runtime.JiBXException;
 
 public class JibxDataFormat implements DataFormat {
     private Class<?> unmarshallClass;
+    private String bindingName;
 
     public JibxDataFormat() {
     }
@@ -37,15 +39,20 @@ public class JibxDataFormat implements DataFormat {
         this.setUnmarshallClass(unmarshallClass);
     }
 
+    public JibxDataFormat(Class<?> unmarshallClass, String bindingName) {
+        this.setUnmarshallClass(unmarshallClass);
+        this.setBindingName(bindingName);
+    }
+
     public void marshal(Exchange exchange, Object body, OutputStream stream) throws Exception {
-        IBindingFactory bindingFactory = BindingDirectory.getFactory(body.getClass());
+        IBindingFactory bindingFactory = createBindingFactory(body.getClass(), bindingName);
         IMarshallingContext marshallingContext = bindingFactory.createMarshallingContext();
         marshallingContext.marshalDocument(body, null, null, stream);
     }
 
     public Object unmarshal(Exchange exchange, InputStream stream) throws Exception {
         ObjectHelper.notNull(getUnmarshallClass(), "unmarshallClass");
-        IBindingFactory bindingFactory = BindingDirectory.getFactory(getUnmarshallClass());
+        IBindingFactory bindingFactory = createBindingFactory(getUnmarshallClass(), bindingName);
         IUnmarshallingContext unmarshallingContext = bindingFactory.createUnmarshallingContext();
         return unmarshallingContext.unmarshalDocument(stream, null);
     }
@@ -58,4 +65,19 @@ public class JibxDataFormat implements DataFormat {
         this.unmarshallClass = unmarshallClass;
     }
 
+    public String getBindingName() {
+        return bindingName;
+    }
+
+    public void setBindingName(String bindingName) {
+        this.bindingName = bindingName;
+    }
+
+    private IBindingFactory createBindingFactory(Class<?> clazz, String bindingName) throws JiBXException {
+        if (bindingName == null) {
+            return BindingDirectory.getFactory(clazz);
+        } else {
+            return BindingDirectory.getFactory(bindingName, clazz);
+        }
+    }
 }
