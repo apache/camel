@@ -18,6 +18,7 @@ package org.apache.camel.component.mina2;
 
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
+import org.apache.mina.core.future.WriteFuture;
 import org.apache.mina.core.session.IoSession;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -34,7 +35,8 @@ public final class Mina2Helper {
     }
 
     /**
-     * Writes the given body to MINA session. Will wait until the body has been written.
+     * Asynchronous writes the given body to MINA session. Will wait at most for
+     * 10 seconds until the body has been written.
      *
      * @param session  the MINA session
      * @param body     the body to write (send)
@@ -42,9 +44,14 @@ public final class Mina2Helper {
      * @throws CamelExchangeException is thrown if the body could not be written for some reasons
      *                                (eg remote connection is closed etc.)
      */
-    public static void writeBody(IoSession session, Object body, Exchange exchange) throws CamelExchangeException {
-        LOG.trace("write exchange [{}] with body [{}]", exchange, body);
-        // the write operation is asynchronous
-        session.write(body);
+    public static void writeBody(IoSession session, Object body, Exchange exchange) throws CamelExchangeException, InterruptedException {
+        // the write operation is asynchronous. Use WriteFuture to wait until the session has been written
+        WriteFuture future = session.write(body);
+        // must use a timeout (we use 10s) as in some very high performance scenarios a write can cause 
+        // thread hanging forever
+        LOG.trace("Waiting for write to complete for body: {} using session: {}", body, session);
+        if (!future.awaitUninterruptibly(10000L)) {
+            throw new CamelExchangeException("Cannot write body: " + body + " using session: " + session, exchange);
+        }
     }
 }
