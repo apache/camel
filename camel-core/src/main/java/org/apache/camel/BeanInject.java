@@ -14,24 +14,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.test.blueprint;
+package org.apache.camel;
 
-import org.junit.Test;
+import java.lang.annotation.Documented;
+import java.lang.annotation.ElementType;
+import java.lang.annotation.Retention;
+import java.lang.annotation.RetentionPolicy;
+import java.lang.annotation.Target;
 
-public class PropertyInjectTest extends CamelBlueprintTestSupport {
-
-    @Override
-    protected String getBlueprintDescriptor() {
-        return "org/apache/camel/test/blueprint/propertyInjectTest.xml";
-    }
-
-    @Test
-    public void testPropertyInject() throws Exception {
-        getMockEndpoint("mock:result").expectedBodiesReceived("Hello");
-
-        template.sendBody("seda:start", "Camel");
-
-        assertMockEndpointsSatisfied();
-    }
-
+/**
+ * Used to indicate an injection point of a bean obtained from the {@link org.apache.camel.spi.Registry}, into a POJO.
+ *
+ * If no name is specified then the lookup is anonymous and based on lookup up by the type.
+ *
+ * @version
+ */
+@Retention(RetentionPolicy.RUNTIME)
+@Documented
+@Target({ElementType.FIELD, ElementType.METHOD, ElementType.CONSTRUCTOR})
+public @interface BeanInject {
+    String value() default "";
+    String context() default "";
 }

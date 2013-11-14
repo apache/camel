@@ -18,18 +18,18 @@ package org.apache.camel.test.blueprint;
 
 import org.junit.Test;
 
-public class PropertyInjectTest extends CamelBlueprintTestSupport {
+public class BeanInjectTest extends CamelBlueprintTestSupport {
 
     @Override
     protected String getBlueprintDescriptor() {
-        return "org/apache/camel/test/blueprint/propertyInjectTest.xml";
+        return "org/apache/camel/test/blueprint/beanInjectTest.xml";
     }
 
     @Test
-    public void testPropertyInject() throws Exception {
-        getMockEndpoint("mock:result").expectedBodiesReceived("Hello");
+    public void testBeanInject() throws Exception {
+        getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
 
-        template.sendBody("seda:start", "Camel");
+        template.sendBody("direct:start", "World");
 
         assertMockEndpointsSatisfied();
     }

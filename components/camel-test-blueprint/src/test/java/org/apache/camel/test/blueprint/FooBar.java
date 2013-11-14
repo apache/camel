@@ -16,22 +16,12 @@
  */
 package org.apache.camel.test.blueprint;
 
-import org.junit.Test;
+public class FooBar {
 
-public class PropertyInjectTest extends CamelBlueprintTestSupport {
+    private String greeting = "Hello";
 
-    @Override
-    protected String getBlueprintDescriptor() {
-        return "org/apache/camel/test/blueprint/propertyInjectTest.xml";
-    }
-
-    @Test
-    public void testPropertyInject() throws Exception {
-        getMockEndpoint("mock:result").expectedBodiesReceived("Hello");
-
-        template.sendBody("seda:start", "Camel");
-
-        assertMockEndpointsSatisfied();
+    public String hello(String name) {
+        return greeting + " " + name;
     }
 
 }

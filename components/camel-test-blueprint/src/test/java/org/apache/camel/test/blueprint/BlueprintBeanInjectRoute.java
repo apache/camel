@@ -16,22 +16,28 @@
  */
 package org.apache.camel.test.blueprint;
 
-import org.junit.Test;
+import org.apache.camel.BeanInject;
+import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
+import org.apache.camel.PropertyInject;
+import org.apache.camel.builder.RouteBuilder;
 
-public class PropertyInjectTest extends CamelBlueprintTestSupport {
+public class BlueprintBeanInjectRoute extends RouteBuilder {
+
+    @BeanInject("foo")
+    private FooBar greeting;
 
     @Override
-    protected String getBlueprintDescriptor() {
-        return "org/apache/camel/test/blueprint/propertyInjectTest.xml";
-    }
-
-    @Test
-    public void testPropertyInject() throws Exception {
-        getMockEndpoint("mock:result").expectedBodiesReceived("Hello");
-
-        template.sendBody("seda:start", "Camel");
-
-        assertMockEndpointsSatisfied();
+    public void configure() throws Exception {
+        from("direct:start")
+                .process(new Processor() {
+                    @Override
+                    public void process(Exchange exchange) throws Exception {
+                        String out = greeting.hello(exchange.getIn().getBody(String.class));
+                        exchange.getIn().setBody(out);
+                    }
+                })
+                .to("mock:result");
     }
 
 }

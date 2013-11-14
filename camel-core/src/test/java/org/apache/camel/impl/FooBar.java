@@ -14,24 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.test.blueprint;
+package org.apache.camel.impl;
 
-import org.junit.Test;
+public class FooBar {
 
-public class PropertyInjectTest extends CamelBlueprintTestSupport {
+    private String greeting = "Hello";
 
-    @Override
-    protected String getBlueprintDescriptor() {
-        return "org/apache/camel/test/blueprint/propertyInjectTest.xml";
+    public String hello(String name) {
+        return greeting + " " + name;
     }
-
-    @Test
-    public void testPropertyInject() throws Exception {
-        getMockEndpoint("mock:result").expectedBodiesReceived("Hello");
-
-        template.sendBody("seda:start", "Camel");
-
-        assertMockEndpointsSatisfied();
-    }
-
 }
