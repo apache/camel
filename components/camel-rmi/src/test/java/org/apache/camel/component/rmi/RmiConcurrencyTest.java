@@ -43,7 +43,6 @@ public class RmiConcurrencyTest extends CamelTestSupport {
         return port;
     }
 
-
     @Override
     protected JndiRegistry createRegistry() throws Exception {
         if (classPathHasSpaces()) {

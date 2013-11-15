@@ -24,6 +24,7 @@ import java.rmi.registry.LocateRegistry;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
@@ -34,8 +35,13 @@ public class RmiIllegalArgumentExceptionTest extends CamelTestSupport {
 
     private static boolean created;
 
+    private int port;
+
     protected int getPort() {
-        return 37545;
+        if (port == 0) {
+            port = AvailablePortFinder.getNextAvailable(37502);
+        }
+        return port;
     }
 
     @Override
@@ -81,12 +87,12 @@ public class RmiIllegalArgumentExceptionTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 // setup the jmi server endpoint
-                RmiEndpoint echo = (RmiEndpoint)endpoint("rmi://localhost:37545/echo");
+                RmiEndpoint echo = (RmiEndpoint)endpoint("rmi://localhost:" + getPort() + "/echo");
                 echo.setRemoteInterfaces(IEcho.class);
                 from(echo).to("bean:echo");
 
                 // and our route where we call the server
-                from("direct:echo").to("rmi://localhost:37545/echo?method=foo").to("mock:result");
+                from("direct:echo").to("rmi://localhost:" + getPort() + "/echo?method=foo").to("mock:result");
             }
         };
     }
