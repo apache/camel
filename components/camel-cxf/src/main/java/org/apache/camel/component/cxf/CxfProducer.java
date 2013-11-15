@@ -273,7 +273,6 @@ public class CxfProducer extends DefaultProducer implements AsyncProcessor {
     /**
      * Get the parameters for the web service operation
      */
-    @SuppressWarnings("deprecation")
     private Object[] getParams(CxfEndpoint endpoint, Exchange exchange) 
         throws org.apache.camel.InvalidPayloadException {
       
