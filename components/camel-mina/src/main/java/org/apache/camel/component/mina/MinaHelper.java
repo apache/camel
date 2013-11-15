@@ -35,7 +35,7 @@ public final class MinaHelper {
     }
 
     /**
-     * Asynchronous writes the given body to MINA session. Will wait at most for
+     * Asynchronously writes the given body to MINA session. Will wait at most for
      * 10 seconds until the body has been written.
      *
      * @param session  the MINA session

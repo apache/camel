@@ -141,16 +141,11 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     private boolean skipFaultLogging;
     private boolean mergeProtocolHeaders;
     private Map<String, Object> properties;
-    private List<Interceptor<? extends Message>> in 
-        = new ModCountCopyOnWriteArrayList<Interceptor<? extends Message>>();
-    private List<Interceptor<? extends Message>> out 
-        = new ModCountCopyOnWriteArrayList<Interceptor<? extends Message>>();
-    private List<Interceptor<? extends Message>> outFault  
-        = new ModCountCopyOnWriteArrayList<Interceptor<? extends Message>>();
-    private List<Interceptor<? extends Message>> inFault 
-        = new ModCountCopyOnWriteArrayList<Interceptor<? extends Message>>();
-    private List<AbstractFeature> features 
-        = new ModCountCopyOnWriteArrayList<AbstractFeature>();
+    private List<Interceptor<? extends Message>> in = new ModCountCopyOnWriteArrayList<Interceptor<? extends Message>>();
+    private List<Interceptor<? extends Message>> out = new ModCountCopyOnWriteArrayList<Interceptor<? extends Message>>();
+    private List<Interceptor<? extends Message>> outFault = new ModCountCopyOnWriteArrayList<Interceptor<? extends Message>>();
+    private List<Interceptor<? extends Message>> inFault = new ModCountCopyOnWriteArrayList<Interceptor<? extends Message>>();
+    private List<AbstractFeature> features = new ModCountCopyOnWriteArrayList<AbstractFeature>();
 
     @SuppressWarnings("rawtypes")
     private List<Handler> handlers;
@@ -163,6 +158,9 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     private ReflectionServiceFactoryBean serviceFactoryBean;
     private CxfEndpointConfigurer configurer;
     
+
+    public CxfEndpoint() {
+    }
 
     public CxfEndpoint(String remaining, CxfComponent cxfComponent) {
         super(remaining, cxfComponent);
@@ -181,9 +179,6 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         setAddress(remaining);
     }
 
-    public CxfEndpoint() {
-    }
-    
     public CxfEndpoint copy() {
         try {
             return (CxfEndpoint)this.clone();
@@ -663,7 +658,7 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     
     public void setServiceClass(String type) throws ClassNotFoundException {
         if (ObjectHelper.isEmpty(type)) {
-            throw new IllegalArgumentException("The serviceClass option should not be set with Emptye String.");
+            throw new IllegalArgumentException("The serviceClass option can neither be null nor an empty String.");
         }
         serviceClass = ClassLoaderUtils.loadClass(resolvePropertyPlaceholders(type), getClass());
     }
@@ -1044,7 +1039,8 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         return features;
     }
     
-    public void setHandlers(@SuppressWarnings("rawtypes") List<Handler> h) {
+    @SuppressWarnings("rawtypes")
+    public void setHandlers(List<Handler> h) {
         handlers = h;
     }
 
