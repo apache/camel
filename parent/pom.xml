@@ -138,6 +138,7 @@
     <ftpserver-version>1.0.6</ftpserver-version>
     <freemarker-bundle-version>2.3.20_1</freemarker-bundle-version>
     <freemarker-version>2.3.20</freemarker-version>
+    <gentlyweb-bundle-version>1.5_1</gentlyweb-bundle-version>
     <geocoder-java-version>0.15</geocoder-java-version>
     <geronimo-annotation-spec-version>1.1.1</geronimo-annotation-spec-version>
     <geronimo-atinject-1.0-spec-version>1.0</geronimo-atinject-1.0-spec-version>
