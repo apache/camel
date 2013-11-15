@@ -39,7 +39,7 @@ public class RmiRouteTest extends TestSupport {
 
     protected int getPort() {
         if (port == 0) {
-            port = AvailablePortFinder.getNextAvailable(37502);
+            port = AvailablePortFinder.getNextAvailable(37503);
         }
         return port;
     }
