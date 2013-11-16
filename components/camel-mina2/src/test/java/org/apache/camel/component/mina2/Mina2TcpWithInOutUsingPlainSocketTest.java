@@ -97,7 +97,8 @@ public class Mina2TcpWithInOutUsingPlainSocketTest extends BaseMina2Test {
                 return null;
             }
         } finally {
-            IOHelper.close(is, os, soc);
+            IOHelper.close(is, os);
+            soc.close();
         }
 
         // convert the buffer to chars

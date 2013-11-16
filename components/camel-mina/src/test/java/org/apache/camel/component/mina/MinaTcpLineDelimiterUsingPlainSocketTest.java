@@ -97,7 +97,8 @@ public class MinaTcpLineDelimiterUsingPlainSocketTest extends BaseMinaTest {
                 return null;
             }
         } finally {
-            IOHelper.close(is, os, soc);
+            IOHelper.close(is, os);
+            soc.close();
         }
 
         // convert the buffer to chars
