@@ -59,7 +59,7 @@ public class Mina2UdpWithInOutUsingPlainSocketTest extends BaseMina2Test {
         LOG.debug("+++ Receiveing data +++");
         socket.receive(receive);
 
-        IOHelper.close(socket);
+        socket.close();
 
         return new String(receive.getData(), 0, receive.getLength());
     }

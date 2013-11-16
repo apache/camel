@@ -58,7 +58,7 @@ public class Mina2SslContextParametersUdpTest extends BaseMina2Test {
             }
             Thread.sleep(2000);
         } finally {
-            IOHelper.close(socket);
+            socket.close();
         }
     }
     

@@ -59,7 +59,7 @@ public class Mina2UdpTest extends BaseMina2Test {
             }
             Thread.sleep(2000);
         } finally {
-            IOHelper.close(socket);
+            socket.close();
         }
     }
 
