@@ -20,7 +20,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultExchangeHolder;
 
 /**
- * Helper to get and set the correct payload when transferring data using camel-mina.
+ * Helper to get and set the correct payload when transferring data using camel-mina2.
  * Always use this helper instead of direct access on the exchange object.
  * <p/>
  * This helper ensures that we can also transfer exchange objects over the wire using the
