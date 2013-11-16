@@ -24,7 +24,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Helper class used internally by camel-mina using Apache MINA.
+ * Helper class used internally by camel-mina2 using Apache MINA.
  */
 public final class Mina2Helper {
 

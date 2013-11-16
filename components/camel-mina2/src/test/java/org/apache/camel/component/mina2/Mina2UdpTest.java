@@ -22,6 +22,7 @@ import java.net.InetAddress;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.util.IOHelper;
 import org.junit.Test;
 
 /**
@@ -58,7 +59,7 @@ public class Mina2UdpTest extends BaseMina2Test {
             }
             Thread.sleep(2000);
         } finally {
-            socket.close();
+            IOHelper.close(socket);
         }
     }
 
