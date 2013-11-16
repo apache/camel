@@ -23,6 +23,7 @@ import java.net.InetAddress;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.util.IOHelper;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -58,7 +59,7 @@ public class Mina2UdpWithInOutUsingPlainSocketTest extends BaseMina2Test {
         LOG.debug("+++ Receiveing data +++");
         socket.receive(receive);
 
-        socket.close();
+        IOHelper.close(socket);
 
         return new String(receive.getData(), 0, receive.getLength());
     }

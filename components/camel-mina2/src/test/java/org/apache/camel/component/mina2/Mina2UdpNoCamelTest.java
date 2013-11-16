@@ -25,6 +25,7 @@ import java.net.SocketException;
 import java.net.UnknownHostException;
 import java.nio.charset.Charset;
 
+import org.apache.camel.test.AvailablePortFinder;
 import org.apache.mina.core.service.IoHandlerAdapter;
 import org.apache.mina.core.session.IoSession;
 import org.apache.mina.filter.codec.ProtocolCodecFilter;
@@ -49,11 +50,12 @@ public class Mina2UdpNoCamelTest {
     LineDelimiter delimiter = LineDelimiter.DEFAULT;
     Mina2TextLineCodecFactory codecFactory = new Mina2TextLineCodecFactory(charset, delimiter);
     UDPServer server;
+    private int port = AvailablePortFinder.getNextAvailable();
 
     // Create the UDPServer before the test is run
     @Before
     public void setupUDPAcceptor() throws IOException {
-        server = new UDPServer("127.0.0.1", 1234);
+        server = new UDPServer("127.0.0.1", port);
         server.listen();
     }
 
@@ -65,7 +67,7 @@ public class Mina2UdpNoCamelTest {
     @Test
     public void testMinaUDPWithNoCamel() throws InterruptedException {
         UDPClient client = new UDPClient();
-        client.connect("127.0.0.1", 1234);
+        client.connect("127.0.0.1", port);
         for (int i = 0; i < 222; i++) {
             client.sendNoMina("Hello Mina " + i + System.getProperty("line.separator"));
         }
@@ -120,14 +122,14 @@ public class Mina2UdpNoCamelTest {
 
         /**
          * Three optional arguments can be provided (defaults in brackets):
-         * path, host (localhost) and port (1234).
+         * path, host (localhost) and port.
          *
          * @param args The command line args.
          */
         private final NioDatagramConnector connector;
         private DatagramSocket socket;
         private InetAddress address;
-        private int localPort = 1234;
+        private int localPort;
         private String localHost = "127.0.0.1";
 
         private UDPClient() {

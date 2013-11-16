@@ -25,6 +25,7 @@ import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.util.IOHelper;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 
@@ -49,7 +50,7 @@ public class BaseMinaTest extends CamelTestSupport {
         try {
             fos.write(String.valueOf(port).getBytes());
         } finally {
-            fos.close();
+            IOHelper.close(fos);
         }
     }
 

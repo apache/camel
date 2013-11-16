@@ -21,6 +21,8 @@
        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
 
+    <bean id="port" class="org.apache.camel.test.AvailablePortFinder" factory-method="getNextAvailable" />
+
     <!-- START SNIPPET: e1 -->
     <!-- Creating mina endpoints is a bit complex so we reuse MinaComponnet
          as a factory bean to create our endpoint, this is the easiest to do -->
@@ -43,7 +45,7 @@
     <bean id="myMinaConfig" class="org.apache.camel.component.mina2.Mina2Configuration">
         <property name="protocol" value="tcp"/>
         <property name="host" value="localhost"/>
-        <property name="port" value="1234"/>
+        <property name="port" ref="port"/>
         <property name="sync" value="false"/>
     </bean>
     <!-- END SNIPPET: e1 -->
