@@ -22,7 +22,6 @@ import java.net.InetAddress;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.util.IOHelper;
 import org.junit.Test;
 
 /**
