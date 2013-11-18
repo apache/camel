@@ -753,12 +753,18 @@ public class SSLContextParametersTest extends AbstractJsseParametersTest {
     }
     
     protected void assertStartsWith(String[] values, String prefix) {
+        if (values == null || values.length == 0) {
+            return;
+        }
         for (String value : values) {
             assertTrue(value.startsWith(prefix));
         }
     }
     
     protected void assertStartsWith(Collection<String> values, String prefix) {
+        if (values == null || values.size() == 0) {
+            return;
+        }
         for (String value : values) {
             assertTrue(value.startsWith(prefix));
         }
