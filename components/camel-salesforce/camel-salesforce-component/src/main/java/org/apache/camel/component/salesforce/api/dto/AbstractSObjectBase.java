@@ -45,7 +45,6 @@ public class AbstractSObjectBase extends AbstractDTOBase {
         Id = null;
         OwnerId = null;
         IsDeleted = null;
-        Name = null;
         CreatedDate = null;
         CreatedById = null;
         LastModifiedDate = null;
