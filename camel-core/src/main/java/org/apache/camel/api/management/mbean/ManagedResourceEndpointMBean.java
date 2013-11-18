@@ -21,6 +21,15 @@ import org.apache.camel.api.management.ManagedOperation;
 
 public interface ManagedResourceEndpointMBean {
 
+    @ManagedAttribute(description = "Camel context ID")
+    String getCamelId();
+
+    @ManagedAttribute(description = "Camel ManagementName")
+    String getCamelManagementName();
+
+    @ManagedAttribute(description = "Endpoint service state")
+    String getState();
+
     @ManagedAttribute(description = "Whether the content is cached")
     boolean isContentCache();
 

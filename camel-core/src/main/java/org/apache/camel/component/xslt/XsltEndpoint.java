@@ -68,6 +68,11 @@ public class XsltEndpoint extends ProcessorEndpoint {
         return getCamelContext().getName();
     }
 
+    @ManagedAttribute(description = "Camel ManagementName")
+    public String getCamelManagementName() {
+        return getCamelContext().getManagementName();
+    }
+
     public XsltEndpoint findOrCreateEndpoint(String uri, String newResourceUri) {
         String newUri = uri.replace(resourceUri, newResourceUri);
         LOG.trace("Getting endpoint with URI: {}", newUri);
