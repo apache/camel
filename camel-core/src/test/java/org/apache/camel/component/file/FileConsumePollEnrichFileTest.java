@@ -35,20 +35,17 @@ public class FileConsumePollEnrichFileTest extends ContextTestSupport {
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Big file");
+        mock.expectedFileExists("target/enrich/.done/AAA.fin");
+        mock.expectedFileExists("target/enrichdata/.done/AAA.dat");
 
         template.sendBodyAndHeader("file://target/enrich", "Start", Exchange.FILE_NAME, "AAA.fin");
 
-        log.info("Sleeping for 2 sec before writing enrichdata file");
-        Thread.sleep(2000);
+        log.info("Sleeping for 1 sec before writing enrichdata file");
+        Thread.sleep(1000);
         template.sendBodyAndHeader("file://target/enrichdata", "Big file", Exchange.FILE_NAME, "AAA.dat");
         log.info("... write done");
 
-        mock.assertIsSatisfied();
-
-        // because the on completion is executed async, we should wait a bit to not fail on slow CI servers
-        Thread.sleep(200);
-        assertFileExists("target/enrich/.done/AAA.fin");
-        assertFileExists("target/enrichdata/.done/AAA.dat");
+        assertMockEndpointsSatisfied();
     }
 
     @Override
@@ -58,7 +55,7 @@ public class FileConsumePollEnrichFileTest extends ContextTestSupport {
             public void configure() throws Exception {
                 from("file://target/enrich?move=.done")
                     .to("mock:start")
-                    .pollEnrich("file://target/enrichdata?move=.done", 20000)
+                    .pollEnrich("file://target/enrichdata?move=.done", 10000)
                     .to("mock:result");
             }
         };
