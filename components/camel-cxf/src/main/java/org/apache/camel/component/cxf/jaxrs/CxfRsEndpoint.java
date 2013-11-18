@@ -18,7 +18,9 @@ package org.apache.camel.component.cxf.jaxrs;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -65,6 +67,10 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
     private static final Logger LOG = LoggerFactory.getLogger(CxfRsEndpoint.class);
 
     protected Bus bus;
+    
+    protected List<Object> entityProviders = new LinkedList<Object>();
+    
+    protected List<String> schemaLocations;
 
     private Map<String, String> parameters;
     private List<Class<?>> resourceClasses;
@@ -82,6 +88,8 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
     private AtomicBoolean getBusHasBeenCalled = new AtomicBoolean(false);
 
     private boolean isSetDefaultBus;
+    
+   
 
     @Deprecated
     public CxfRsEndpoint(String endpointUri, CamelContext camelContext) {
@@ -230,8 +238,16 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
 
 
     public JAXRSServerFactoryBean createJAXRSServerFactoryBean() {
+        
         JAXRSServerFactoryBean answer = newJAXRSServerFactoryBean();
         setupJAXRSServerFactoryBean(answer);
+        // let customer to override the default setting of provider
+        if (!getProviders().isEmpty()) {
+            answer.setProviders(getProviders());
+        }
+        if (schemaLocations != null) {
+            answer.setSchemaLocations(schemaLocations);
+        }
         if (isLoggingFeatureEnabled()) {
             if (getLoggingSizeLimit() > 0) {
                 answer.getFeatures().add(new LoggingFeature(getLoggingSizeLimit()));
@@ -254,8 +270,16 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
     }
     
     public JAXRSClientFactoryBean createJAXRSClientFactoryBean(String address) {
+        
         JAXRSClientFactoryBean answer = newJAXRSClientFactoryBean();
         setupJAXRSClientFactoryBean(answer, address);
+        // let customer to override the default setting of provider
+        if (!getProviders().isEmpty()) {
+            answer.setProviders(getProviders());
+        }
+        if (schemaLocations != null) {
+            answer.setSchemaLocations(schemaLocations);
+        }
         if (isLoggingFeatureEnabled()) {
             if (getLoggingSizeLimit() > 0) {
                 answer.getFeatures().add(new LoggingFeature(getLoggingSizeLimit()));
@@ -363,6 +387,26 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
     
     public BindingStyle getBindingStyle() {
         return bindingStyle;
+    }
+    
+    public List<?> getProviders() {
+        return entityProviders;
+    }
+    
+    public void setProviders(List<? extends Object> providers) {
+        this.entityProviders.addAll(providers);
+    }
+    
+    public void setProvider(Object provider) {
+        entityProviders.add(provider);
+    }
+    
+    public void setSchemaLocation(String schema) {
+        setSchemaLocations(Collections.singletonList(schema));    
+    }
+    
+    public void setSchemaLocations(List<String> schemas) {
+        this.schemaLocations = schemas;    
     }
 
     /**
