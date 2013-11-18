@@ -61,6 +61,10 @@ public class ManagedErrorHandler implements ManagedErrorHandlerMBean {
         return routeContext.getCamelContext().getName();
     }
 
+    public String getCamelManagementName() {
+        return routeContext.getCamelContext().getManagementName();
+    }
+
     public boolean isSupportRedelivery() {
         return errorHandler instanceof RedeliveryErrorHandler;
     }

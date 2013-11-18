@@ -111,6 +111,21 @@ public abstract class ResourceEndpoint extends ProcessorEndpoint implements Mana
         return buffer == null;
     }
 
+    @ManagedAttribute(description = "Camel context ID")
+    public String getCamelId() {
+        return getCamelContext().getName();
+    }
+
+    @ManagedAttribute(description = "Camel ManagementName")
+    public String getCamelManagementName() {
+        return getCamelContext().getManagementName();
+    }
+
+    @ManagedAttribute(description = "Endpoint service state")
+    public String getState() {
+        return getStatus().name();
+    }
+
     /**
      * Sets whether to use resource content cache or not - default is <tt>false</tt>.
      *

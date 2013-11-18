@@ -78,6 +78,10 @@ public class ManagedService implements ManagedInstance, ManagedServiceMBean {
         return context.getName();
     }
 
+    public String getCamelManagementName() {
+        return context.getManagementName();
+    }
+
     public String getRouteId() {
         if (route != null) {
             return route.getId();

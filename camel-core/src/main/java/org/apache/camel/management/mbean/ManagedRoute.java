@@ -108,6 +108,10 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
         return context.getName();
     }
 
+    public String getCamelManagementName() {
+        return context.getManagementName();
+    }
+
     public Boolean getTracing() {
         return route.getRouteContext().isTracing();
     }
