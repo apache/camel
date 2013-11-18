@@ -66,7 +66,6 @@ public class VmComponent extends SedaComponent {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         if (ENDPOINTS.containsKey(uri)) {
             return ENDPOINTS.get(uri);
