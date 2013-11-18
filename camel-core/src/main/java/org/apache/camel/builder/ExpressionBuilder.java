@@ -935,6 +935,22 @@ public final class ExpressionBuilder {
     }
 
     /**
+     * Returns the expression for the current thread name
+     */
+    public static Expression nullExpression() {
+        return new ExpressionAdapter() {
+            public Object evaluate(Exchange exchange) {
+                return null;
+            }
+
+            @Override
+            public String toString() {
+                return "null";
+            }
+        };
+    }
+
+    /**
      * Returns the expression for the exchanges inbound message body converted
      * to the given type.
      * <p/>
