@@ -250,6 +250,10 @@ public class FileIdempotentRepository extends ServiceSupport implements Idempote
      * to the file store.
      */
     protected void trunkStore() {
+        if (fileStore == null || !fileStore.exists()) {
+            return;
+        }
+
         LOG.info("Trunking idempotent filestore: {}", fileStore);
         FileOutputStream fos = null;
         try {
@@ -269,11 +273,11 @@ public class FileIdempotentRepository extends ServiceSupport implements Idempote
      * Loads the given file store into the 1st level cache
      */
     protected void loadStore() {
-        LOG.trace("Loading to 1st level cache from idempotent filestore: {}", fileStore);
-
-        if (!fileStore.exists()) {
+        if (fileStore == null || !fileStore.exists()) {
             return;
         }
+
+        LOG.trace("Loading to 1st level cache from idempotent filestore: {}", fileStore);
 
         cache.clear();
         Scanner scanner = null;
