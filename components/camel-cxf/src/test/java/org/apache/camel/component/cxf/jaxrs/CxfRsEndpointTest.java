@@ -80,8 +80,7 @@ public class CxfRsEndpointTest extends CamelTestSupport {
 
         CxfRsComponent component = new CxfRsComponent(context);
         CxfRsEndpoint endpoint = (CxfRsEndpoint)component.createEndpoint(endpointUri);
-        @SuppressWarnings("rawtypes")
-        JSONProvider jsonProvider = new JSONProvider();
+        JSONProvider<?> jsonProvider = new JSONProvider<Object>();
         jsonProvider.setDropRootElement(true);
         jsonProvider.setSupportUnwrapped(true);
         endpoint.setProvider(jsonProvider);
