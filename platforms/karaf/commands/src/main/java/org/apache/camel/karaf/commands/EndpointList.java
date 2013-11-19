@@ -42,13 +42,14 @@ public class EndpointList extends OsgiCommandSupport {
     private static final String STATUS_COLUMN_LABEL = "Status";
 
     private static final int DEFAULT_COLUMN_WIDTH_INCREMENT = 0;
-    private static final String DEFAULT_FIELD_PREAMBLE = "[ ";
-    private static final String DEFAULT_FIELD_POSTAMBLE = " ]";
-    private static final String DEFAULT_HEADER_PREAMBLE = "  ";
-    private static final String DEFAULT_HEADER_POSTAMBLE = "  ";
+    private static final String DEFAULT_FIELD_PREAMBLE = " ";
+    private static final String DEFAULT_FIELD_POSTAMBLE = " ";
+    private static final String DEFAULT_HEADER_PREAMBLE = " ";
+    private static final String DEFAULT_HEADER_POSTAMBLE = " ";
     private static final int DEFAULT_FORMAT_BUFFER_LENGTH = 24;
     // endpoint uris can be very long so clip by default after 120 chars
     private static final int MAX_COLUMN_WIDTH = 120;
+    private static final int MIN_COLUMN_WIDTH = 12;
 
     @Argument(index = 0, name = "name", description = "The Camel context name where to look for the endpoints", required = false, multiValued = false)
     String name;
@@ -77,6 +78,7 @@ public class EndpointList extends OsgiCommandSupport {
 
         if (endpoints.size() > 0) {
             out.println(String.format(headerFormat, CONTEXT_COLUMN_LABEL, URI_COLUMN_LABEL, STATUS_COLUMN_LABEL));
+            out.println(String.format(headerFormat, "-------", "---", "------"));
             for (final Endpoint endpoint : endpoints) {
                 String contextId = endpoint.getCamelContext().getName();
                 String uri = endpoint.getEndpointUri();
@@ -143,9 +145,12 @@ public class EndpointList extends OsgiCommandSupport {
         }
         columnWidthIncrement = DEFAULT_COLUMN_WIDTH_INCREMENT;
 
-        final int contextLen = java.lang.Math.min(columnWidths.get(CONTEXT_COLUMN_LABEL) + columnWidthIncrement, getMaxColumnWidth());
-        final int uriLen = java.lang.Math.min(columnWidths.get(URI_COLUMN_LABEL) + columnWidthIncrement, getMaxColumnWidth());
-        final int statusLen = java.lang.Math.min(columnWidths.get(STATUS_COLUMN_LABEL) + columnWidthIncrement, getMaxColumnWidth());
+        int contextLen = java.lang.Math.min(columnWidths.get(CONTEXT_COLUMN_LABEL) + columnWidthIncrement, getMaxColumnWidth());
+        int uriLen = java.lang.Math.min(columnWidths.get(URI_COLUMN_LABEL) + columnWidthIncrement, getMaxColumnWidth());
+        int statusLen = java.lang.Math.min(columnWidths.get(STATUS_COLUMN_LABEL) + columnWidthIncrement, getMaxColumnWidth());
+        contextLen = Math.max(MIN_COLUMN_WIDTH, contextLen);
+        uriLen = Math.max(MIN_COLUMN_WIDTH, uriLen);
+        // last row does not have min width
 
         final StringBuilder retval = new StringBuilder(DEFAULT_FORMAT_BUFFER_LENGTH);
         retval.append(fieldPreamble).append("%-").append(contextLen).append('.').append(contextLen).append('s').append(fieldPostamble).append(' ');
