@@ -16,7 +16,6 @@
  */
 package org.apache.camel.util.jsse;
 
-import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
 import java.util.LinkedList;
@@ -540,7 +539,7 @@ public class SSLContextParametersTest extends AbstractJsseParametersTest {
         
         filter.getInclude().clear();
         filter.getExclude().clear();
-        csp.getCipherSuite().add("TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256");
+        csp.getCipherSuite().add("TLS_RSA_WITH_AES_128_CBC_SHA");
         filter.getInclude().add("TLS.*");
         context = scp.createSSLContext();
         engine = context.createSSLEngine();
