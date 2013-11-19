@@ -63,16 +63,17 @@ public class OsgiCamelContextNameStrategy implements CamelContextNameStrategy {
         boolean clash = false;
         do {
             try {
+                clash = false;
                 LOG.trace("Checking OSGi Service Registry for existence of existing CamelContext with name: {}", candidate);
+
                 ServiceReference[] refs = context.getServiceReferences(CamelContext.class.getName(), "(" + CONTEXT_NAME_PROPERTY + "=" + candidate + ")");
                 if (refs != null && refs.length > 0) {
-                    Object id = refs[0].getProperty(CONTEXT_NAME_PROPERTY);
-                    if (id != null && candidate.equals(id)) {
-                        clash = true;
-                        // generate new candidate
-                        candidate = prefix + "-" + getNextCounter();
-                    } else {
-                        clash = false;
+                    for (ServiceReference ref : refs) {
+                        Object id = ref.getProperty(CONTEXT_NAME_PROPERTY);
+                        if (id != null && candidate.equals(id)) {
+                            clash = true;
+                            break;
+                        }
                     }
                 }
             } catch (InvalidSyntaxException e) {
