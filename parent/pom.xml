@@ -42,6 +42,7 @@
     <antlr-runtime-bundle-version>3.4_2</antlr-runtime-bundle-version>
     <aopalliance-bundle-version>1.0_6</aopalliance-bundle-version>
     <apacheds-version>1.5.7</apacheds-version>
+    <apache-gora-version>0.4</apache-gora-version>
     <apache-mime4j-version>0.7.2</apache-mime4j-version>
     <aries-blueprint-api-version>1.0.0</aries-blueprint-api-version>
     <aries-blueprint-core-version>1.1.0</aries-blueprint-core-version>
@@ -330,6 +331,7 @@
     <plexus-container-default-version>1.0-alpha-48</plexus-container-default-version>
     <plexus-utils-version>1.5.6</plexus-utils-version>
     <pojosr-version>0.2.1</pojosr-version>  
+    <powermock-version>1.5.1</powermock-version>
     <protobuf-version>2.5.0</protobuf-version>
     <qpid-bundle-version>0.26_1</qpid-bundle-version>
     <qpid-version>0.26</qpid-version>
