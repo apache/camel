@@ -17,27 +17,25 @@
 
 package org.apache.camel.component.gora;
 
+import java.lang.reflect.InvocationTargetException;
+import java.util.concurrent.ExecutorService;
+
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.gora.utils.GoraUtils;
 import org.apache.camel.impl.ScheduledPollConsumer;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.gora.persistency.Persistent;
 import org.apache.gora.query.Query;
 import org.apache.gora.query.Result;
 import org.apache.gora.store.DataStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.lang.reflect.InvocationTargetException;
-import java.util.Date;
-import java.util.concurrent.ExecutorService;
-
 /**
  * Implementation of Camel-Gora {@link Consumer}.
  *
- * @author ipolyzos
  */
 public class GoraConsumer extends ScheduledPollConsumer {
 
@@ -49,7 +47,7 @@ public class GoraConsumer extends ScheduledPollConsumer {
     /**
      * GORA datastore
      */
-    private final DataStore dataStore;
+    private final DataStore<Object, Persistent> dataStore;
 
     /**
      * Camel-Gora endpoint configuration
@@ -83,7 +81,7 @@ public class GoraConsumer extends ScheduledPollConsumer {
     public GoraConsumer(final Endpoint endpoint,
                         final Processor processor,
                         final GoraConfiguration configuration,
-                        final DataStore dataStore) throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
+                        final DataStore<Object, Persistent> dataStore) throws ClassNotFoundException, NoSuchMethodException, InvocationTargetException, IllegalAccessException {
 
         super(endpoint, processor);
 
@@ -102,11 +100,9 @@ public class GoraConsumer extends ScheduledPollConsumer {
         final Exchange exchange = this.getEndpoint().createExchange();
 
         // compute time (aprox) since last update
-        if(firstRun){
-
+        if (firstRun) {
             this.query.setStartTime(System.currentTimeMillis());
-        }else{
-
+        } else {
             this.query.setStartTime(System.currentTimeMillis() - getDelay());
         }
 

@@ -21,6 +21,7 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.gora.persistency.Persistent;
 import org.apache.gora.store.DataStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -40,7 +41,7 @@ public class GoraEndpoint extends DefaultEndpoint {
     /**
      * Gora DataStore
      */
-    private final DataStore dataStore;
+    private final DataStore<Object, Persistent> dataStore;
 
     /**
      * Camel-Gora Endpoint Configuratopn
@@ -58,7 +59,7 @@ public class GoraEndpoint extends DefaultEndpoint {
     public GoraEndpoint(final String uri,
                         final GoraComponent goraComponent,
                         final GoraConfiguration config,
-                        final DataStore dataStore) {
+                        final DataStore<Object, Persistent> dataStore) {
 
         super(uri, goraComponent);
         this.configuration = config;
@@ -79,9 +80,8 @@ public class GoraEndpoint extends DefaultEndpoint {
      */
     @Override
     public Consumer createConsumer(final Processor processor) throws Exception {
-
-        //throw new UnsupportedOperationException("Not supported");
-        return new GoraConsumer(this,processor ,this.configuration, this.dataStore);
+        
+        return new GoraConsumer(this, processor, this.configuration, this.dataStore);
     }
 
     /**

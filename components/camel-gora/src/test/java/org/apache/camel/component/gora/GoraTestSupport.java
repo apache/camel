@@ -22,7 +22,6 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 /**
  * GORA Test Support
  *
- * @author ipolyzos
  */
 public class GoraTestSupport extends CamelTestSupport {
     //TODO

@@ -27,7 +27,6 @@ import static com.google.common.base.Strings.isNullOrEmpty;
 /**
  * Gora Configuration.
  *
- * @author ipolyzos
  */
 public class GoraConfiguration {
 
@@ -148,8 +147,7 @@ public class GoraConfiguration {
      */
     public void setKeyClass(final String keyClass) {
 
-        if (isNullOrEmpty(keyClass)){
-
+        if (isNullOrEmpty(keyClass)) {
             throw new IllegalArgumentException("Key class could not be null or empty!");
         }
 
@@ -173,8 +171,7 @@ public class GoraConfiguration {
      */
     public void setValueClass(final String valueClass) {
 
-        if (isNullOrEmpty(valueClass)){
-
+        if (isNullOrEmpty(valueClass)) {
             throw new IllegalArgumentException("Value class  could not be null or empty!");
         }
 
@@ -199,8 +196,7 @@ public class GoraConfiguration {
     public void setDataStoreClass(String dataStoreClass) {
 
 
-        if (isNullOrEmpty(dataStoreClass)){
-
+        if (isNullOrEmpty(dataStoreClass)) {
             throw new IllegalArgumentException("DataStore class could not be null or empty!");
         }
 
@@ -470,7 +466,7 @@ public class GoraConfiguration {
      */
     public void setHadoopConfiguration(Configuration hadoopConfiguration) {
 
-        checkNotNull(hadoopConfiguration,"Hadoop Configuration could not be null!");
+        checkNotNull(hadoopConfiguration, "Hadoop Configuration could not be null!");
         this.hadoopConfiguration = hadoopConfiguration;
     }
 }

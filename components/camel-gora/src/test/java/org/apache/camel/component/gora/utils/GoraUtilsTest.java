@@ -22,28 +22,26 @@ import org.apache.camel.component.gora.GoraConfiguration;
 import org.junit.Test;
 
 import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
 /**
  * GORA Utils Tests
  *
- * @author ipolyzos
  */
 public class GoraUtilsTest {
 
     @Test
     public void configurationExistShouldSucceedtIfMethodExist() throws Exception {
 
-       final GoraConfiguration conf = new GoraConfiguration();
-       assertTrue(GoraUtils.configurationExist(GoraAttribute.GORA_QUERY_LIMIT,conf));
+        final GoraConfiguration conf = new GoraConfiguration();
+        assertTrue(GoraUtils.configurationExist(GoraAttribute.GORA_QUERY_LIMIT, conf));
     }
 
     @Test(expected = NoSuchMethodException.class)
     public void configurationExistShouldThrowExceptionIfMethodDoesNotExist() throws Exception {
 
         final GoraConfiguration conf = new GoraConfiguration();
-        GoraUtils.configurationExist(GoraAttribute.GORA_KEY,conf);
+        GoraUtils.configurationExist(GoraAttribute.GORA_KEY, conf);
     }
 
     @Test

@@ -17,33 +17,29 @@
 
 package org.apache.camel.component.gora;
 
-import org.apache.camel.CamelContext;
+import java.io.IOException;
+import java.util.Map;
+import java.util.Properties;
+
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
-
 import org.apache.gora.persistency.Persistent;
 import org.apache.gora.store.DataStore;
 import org.apache.gora.store.DataStoreFactory;
 import org.apache.hadoop.conf.Configuration;
 
-import java.io.IOException;
-import java.util.Map;
-import java.util.Properties;
-
 import static org.apache.camel.component.gora.GoraConstants.GORA_DEFAULT_DATASTORE_KEY;
-
 
 /**
  * Camel-Gora {@link Endpoint}.
  *
- * @author ipolyzos
  */
 public class GoraComponent extends DefaultComponent {
 
     /**
      * GORA datastore
      */
-    private DataStore<Object,? extends Persistent> dataStore;
+    private DataStore<Object, Persistent> dataStore;
 
     /**
      * GORA properties
@@ -87,10 +83,10 @@ public class GoraComponent extends DefaultComponent {
 
         try {
 
-           init(config);
+            init(config);
         } catch (IOException ex) {
 
-           throw new RuntimeException(ex);
+            throw new RuntimeException(ex);
         }
 
         return new GoraEndpoint(uri, this, config, dataStore);
@@ -101,7 +97,7 @@ public class GoraComponent extends DefaultComponent {
      *
      * @return DataStore
      */
-    public DataStore getDataStore() {
+    public DataStore<Object, Persistent> getDataStore() {
 
         return dataStore;
     }
