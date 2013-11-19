@@ -102,7 +102,7 @@ public class SimpleTest extends LanguageTestSupport {
     }
 
     public void testNull() throws Exception {
-        assertEquals(null, SimpleLanguage.simple("${null}").evaluate(exchange, Object.class));
+        assertNull(SimpleLanguage.simple("${null}").evaluate(exchange, Object.class));
     }
 
     public void testEmptyExpression() throws Exception {
