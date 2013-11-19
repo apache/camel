@@ -38,12 +38,13 @@ public class RouteList extends OsgiCommandSupport {
     private static final String STATUS_COLUMN_LABEL = "Status";
 
     private static final int DEFAULT_COLUMN_WIDTH_INCREMENT = 0;
-    private static final String DEFAULT_FIELD_PREAMBLE = "[ ";
-    private static final String DEFAULT_FIELD_POSTAMBLE = " ]";
-    private static final String DEFAULT_HEADER_PREAMBLE = "  ";
-    private static final String DEFAULT_HEADER_POSTAMBLE = "  ";
+    private static final String DEFAULT_FIELD_PREAMBLE = " ";
+    private static final String DEFAULT_FIELD_POSTAMBLE = " ";
+    private static final String DEFAULT_HEADER_PREAMBLE = " ";
+    private static final String DEFAULT_HEADER_POSTAMBLE = " ";
     private static final int DEFAULT_FORMAT_BUFFER_LENGTH = 24;
     private static final int MAX_COLUMN_WIDTH = Integer.MAX_VALUE;
+    private static final int MIN_COLUMN_WIDTH = 12;
 
     @Argument(index = 0, name = "name", description = "The Camel context name where to look for the route", required = false, multiValued = false)
     String name;
@@ -64,6 +65,7 @@ public class RouteList extends OsgiCommandSupport {
 
         if (routes.size() > 0) {
             out.println(String.format(headerFormat, CONTEXT_COLUMN_LABEL, ROUTE_COLUMN_LABEL, STATUS_COLUMN_LABEL));
+            out.println(String.format(headerFormat, "-------", "-----", "------"));
             for (Route route : routes) {
                 String contextId = route.getRouteContext().getCamelContext().getName();
                 String routeId = route.getId();
@@ -117,9 +119,12 @@ public class RouteList extends OsgiCommandSupport {
         }
         columnWidthIncrement = DEFAULT_COLUMN_WIDTH_INCREMENT;
 
-        final int contextLen = java.lang.Math.min(columnWidths.get(CONTEXT_COLUMN_LABEL) + columnWidthIncrement, MAX_COLUMN_WIDTH);
-        final int routeLen = java.lang.Math.min(columnWidths.get(ROUTE_COLUMN_LABEL) + columnWidthIncrement, MAX_COLUMN_WIDTH);
-        final int statusLen = java.lang.Math.min(columnWidths.get(STATUS_COLUMN_LABEL) + columnWidthIncrement, MAX_COLUMN_WIDTH);
+        int contextLen = Math.min(columnWidths.get(CONTEXT_COLUMN_LABEL) + columnWidthIncrement, MAX_COLUMN_WIDTH);
+        int routeLen = Math.min(columnWidths.get(ROUTE_COLUMN_LABEL) + columnWidthIncrement, MAX_COLUMN_WIDTH);
+        int statusLen = Math.min(columnWidths.get(STATUS_COLUMN_LABEL) + columnWidthIncrement, MAX_COLUMN_WIDTH);
+        contextLen = Math.max(MIN_COLUMN_WIDTH, contextLen);
+        routeLen = Math.max(MIN_COLUMN_WIDTH, routeLen);
+        // last row does not have min width
 
         final StringBuilder retval = new StringBuilder(DEFAULT_FORMAT_BUFFER_LENGTH);
         retval.append(fieldPreamble).append("%-").append(contextLen).append('.').append(contextLen).append('s').append(fieldPostamble).append(' ');
