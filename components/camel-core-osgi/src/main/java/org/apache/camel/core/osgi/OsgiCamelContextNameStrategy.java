@@ -65,10 +65,15 @@ public class OsgiCamelContextNameStrategy implements CamelContextNameStrategy {
             try {
                 LOG.trace("Checking OSGi Service Registry for existence of existing CamelContext with name: {}", candidate);
                 ServiceReference[] refs = context.getServiceReferences(CamelContext.class.getName(), "(" + CONTEXT_NAME_PROPERTY + "=" + candidate + ")");
-                clash = refs != null && refs.length > 0;
-                if (clash) {
-                    // generate new candidate
-                    candidate = prefix + "-" + getNextCounter();
+                if (refs != null && refs.length > 0) {
+                    Object id = refs[0].getProperty(CONTEXT_NAME_PROPERTY);
+                    if (id != null && candidate.equals(id)) {
+                        clash = true;
+                        // generate new candidate
+                        candidate = prefix + "-" + getNextCounter();
+                    } else {
+                        clash = false;
+                    }
                 }
             } catch (InvalidSyntaxException e) {
                 LOG.debug("Error finding free Camel name in OSGi Service Registry due " + e.getMessage() + ". This exception is ignored.", e);
