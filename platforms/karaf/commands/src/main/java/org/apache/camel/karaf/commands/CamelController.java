@@ -19,6 +19,7 @@ package org.apache.camel.karaf.commands;
 import java.util.List;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Endpoint;
 import org.apache.camel.Route;
 import org.apache.camel.model.RouteDefinition;
 
@@ -84,5 +85,13 @@ public interface CamelController {
      * @return the <code>RouteDefinition</code>.
      */
     RouteDefinition getRouteDefinition(String routeId, String camelContextName);
+
+    /**
+     * Return the endpoints
+     *
+     * @param camelContextName the Camel context.
+     * @return the endpoints
+     */
+    List<Endpoint> getEndpoints(String camelContextName);
 
 }

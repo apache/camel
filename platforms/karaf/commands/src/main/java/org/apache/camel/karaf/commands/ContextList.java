@@ -31,7 +31,7 @@ import org.apache.karaf.shell.console.OsgiCommandSupport;
 @Command(scope = "camel", name = "context-list", description = "Lists all Camel contexts.")
 public class ContextList extends OsgiCommandSupport {
 
-    private static final String NAME_COLUMN_LABEL = "Name";
+    private static final String CONTEXT_COLUMN_LABEL = "Context";
     private static final String STATUS_COLUMN_LABEL = "Status";
     private static final String UPTIME_COLUMN_LABEL = "Uptime";
     private static final int DEFAULT_FORMAT_BUFFER_LENGTH = 24;
@@ -57,7 +57,7 @@ public class ContextList extends OsgiCommandSupport {
         final PrintStream out = System.out;
 
         if (camelContexts.size() > 0) {
-            out.println(String.format(headerFormat, NAME_COLUMN_LABEL, STATUS_COLUMN_LABEL, UPTIME_COLUMN_LABEL));
+            out.println(String.format(headerFormat, CONTEXT_COLUMN_LABEL, STATUS_COLUMN_LABEL, UPTIME_COLUMN_LABEL));
             for (final CamelContext camelContext : camelContexts) {
                 out.println(String.format(rowFormat, camelContext.getName(), camelContext.getStatus(), camelContext.getUptime()));
             }
@@ -86,7 +86,7 @@ public class ContextList extends OsgiCommandSupport {
             }
 
             final Map<String, Integer> retval = new Hashtable<String, Integer>(3);
-            retval.put(NAME_COLUMN_LABEL, maxNameLen);
+            retval.put(CONTEXT_COLUMN_LABEL, maxNameLen);
             retval.put(STATUS_COLUMN_LABEL, maxStatusLen);
             retval.put(UPTIME_COLUMN_LABEL, maxUptimeLen);
 
@@ -108,7 +108,7 @@ public class ContextList extends OsgiCommandSupport {
         }
         columnWidthIncrement = DEFAULT_COLUMN_WIDTH_INCREMENT;
 
-        final int nameLen = java.lang.Math.min(columnWidths.get(NAME_COLUMN_LABEL) + columnWidthIncrement, MAX_COLUMN_WIDTH);
+        final int nameLen = java.lang.Math.min(columnWidths.get(CONTEXT_COLUMN_LABEL) + columnWidthIncrement, MAX_COLUMN_WIDTH);
         final int statusLen = java.lang.Math.min(columnWidths.get(STATUS_COLUMN_LABEL) + columnWidthIncrement, MAX_COLUMN_WIDTH);
         final int uptimeLen = java.lang.Math.min(columnWidths.get(UPTIME_COLUMN_LABEL) + columnWidthIncrement, MAX_COLUMN_WIDTH);
 
