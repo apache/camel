@@ -393,7 +393,7 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
         return entityProviders;
     }
     
-    public void setProviders(List<? extends Object> providers) {
+    public void setProviders(List<?> providers) {
         this.entityProviders.addAll(providers);
     }
     
