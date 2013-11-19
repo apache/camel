@@ -46,24 +46,6 @@
         <camel.osgi.export.pkg>org.apache.camel.component.gora.*</camel.osgi.export.pkg>
         <camel.osgi.export.service>org.apache.camel.spi.ComponentResolver;component=gora</camel.osgi.export.service>
 
-        <!--
-            Libraries versions
-        -->
-
-        <!-- apache gora -->
-        <apache-gora.version>0.4-SNAPSHOT</apache-gora.version>
-
-        <mockito.version>1.9.0</mockito.version>
-        <powermock.version>1.4.11</powermock.version>
-
-        <hadoop.version>1.1.1_1</hadoop.version>
-        <avro.version>1.6.1_1</avro.version>
-        <jackson.version>1.6.9</jackson.version>
-
-        <jdom.version>1.1.2_1</jdom.version>
-        <guava.version>11.0.2_2</guava.version>
-        <commons-beanutils.version>1.8.3</commons-beanutils.version>
-
     </properties>
     
     <build>
@@ -99,25 +81,25 @@
         <dependency>
             <groupId>org.mockito</groupId>
             <artifactId>mockito-all</artifactId>
-            <version>${mockito.version}</version>
+            <version>${mockito-version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.powermock</groupId>
             <artifactId>powermock-core</artifactId>
-            <version>${powermock.version}</version>
+            <version>${powermock-version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.powermock</groupId>
             <artifactId>powermock-module-junit4</artifactId>
-            <version>${powermock.version}</version>
+            <version>${powermock-version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.powermock</groupId>
             <artifactId>powermock-api-mockito</artifactId>
-            <version>${powermock.version}</version>
+            <version>${powermock-version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -141,21 +123,27 @@
         <dependency>
             <groupId>org.apache.gora</groupId>
             <artifactId>gora-core</artifactId>
-            <version>${apache-gora.version}</version>
+            <version>${apache-gora-version}</version>
         </dependency>
 
         <!-- hadoop -->
         <dependency>
             <groupId>org.apache.servicemix.bundles</groupId>
             <artifactId>org.apache.servicemix.bundles.hadoop-core</artifactId>
-            <version>${hadoop.version}</version>
+            <version>${hadoop-bundle-version}</version>
+            <exclusions>
+               <exclusion>
+                  <groupId>commons-beanutils</groupId>
+                  <artifactId>commons-beanutils-core</artifactId>
+               </exclusion>
+            </exclusions>
         </dependency>
 
         <!-- Avro  -->
         <dependency>
             <groupId>org.apache.servicemix.bundles</groupId>
             <artifactId>org.apache.servicemix.bundles.avro</artifactId>
-            <version>${avro.version}</version>
+            <version>${avro-bundle-version}</version>
         </dependency>
 
         <!-- other -->
@@ -163,27 +151,27 @@
         <dependency>
             <groupId>org.codehaus.jackson</groupId>
             <artifactId>jackson-core-asl</artifactId>
-            <version>${jackson.version}</version>
+            <version>${jackson-version}</version>
         </dependency>
         <dependency>
             <groupId>org.codehaus.jackson</groupId>
             <artifactId>jackson-mapper-asl</artifactId>
-            <version>${jackson.version}</version>
+            <version>${jackson-version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.servicemix.bundles</groupId>
             <artifactId>org.apache.servicemix.bundles.jdom</artifactId>
-            <version>${jdom.version}</version>
+            <version>${jdom-bundle-version}</version>
+        </dependency>
+        <dependency>
+            <groupId>com.google.guava</groupId>
+            <artifactId>guava</artifactId>
+            <version>${google-guava-version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.servicemix.bundles</groupId>
-            <artifactId>org.apache.servicemix.bundles.guava</artifactId>
-            <version>${guava.version}</version>
-        </dependency>
-        <dependency>
-            <groupId>commons-beanutils</groupId>
-            <artifactId>commons-beanutils</artifactId>
-            <version>${commons-beanutils.version}</version>
+            <artifactId>org.apache.servicemix.bundles.commons-beanutils</artifactId>
+            <version>${commons-beanutils-bundle-version}</version>
         </dependency>
     </dependencies>
 
