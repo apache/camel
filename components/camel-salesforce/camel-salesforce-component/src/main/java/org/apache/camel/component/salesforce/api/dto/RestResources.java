@@ -32,6 +32,8 @@ public class RestResources extends AbstractDTOBase {
     private String chatter;
     private String recent;
     private String tooling;
+    private String licensing;
+    private String analytics;
 
     public String getSobjects() {
         return sobjects;
@@ -97,4 +99,19 @@ public class RestResources extends AbstractDTOBase {
         this.tooling = tooling;
     }
 
+    public String getLicensing() {
+        return licensing;
+    }
+
+    public void setLicensing(String licensing) {
+        this.licensing = licensing;
+    }
+
+    public String getAnalytics() {
+        return analytics;
+    }
+
+    public void setAnalytics(String analytics) {
+        this.analytics = analytics;
+    }
 }
