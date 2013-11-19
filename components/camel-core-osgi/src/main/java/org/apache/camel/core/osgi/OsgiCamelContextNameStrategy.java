@@ -57,13 +57,15 @@ public class OsgiCamelContextNameStrategy implements CamelContextNameStrategy {
 
     @Override
     public synchronized String getNextName() {
-        // generate new candidate
-        String candidate = prefix + "-" + getNextCounter();
-
+        String candidate = null;
         boolean clash = false;
+
         do {
             try {
                 clash = false;
+
+                // generate new candidate
+                candidate = prefix + "-" + getNextCounter();
                 LOG.trace("Checking OSGi Service Registry for existence of existing CamelContext with name: {}", candidate);
 
                 ServiceReference[] refs = context.getServiceReferences(CamelContext.class.getName(), "(" + CONTEXT_NAME_PROPERTY + "=" + candidate + ")");
@@ -82,7 +84,7 @@ public class OsgiCamelContextNameStrategy implements CamelContextNameStrategy {
             }
         } while (clash);
 
-        LOG.debug("Generated CamelContext name for bundle id: {}, clash: {} -> {}", new Object[]{context.getBundle().getBundleId(), clash, name});
+        LOG.debug("Generated CamelContext name for bundle id: {}, clash: {} -> {}", new Object[]{context.getBundle().getBundleId(), clash, candidate});
         return candidate;
     }
 
