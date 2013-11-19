@@ -35,14 +35,6 @@
     </description>
 
     <properties>
-        <!--
-          General
-        -->
-        <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-
-        <!--
-            OSGi
-        -->
         <camel.osgi.export.pkg>
             org.apache.camel.component.gora.*
         </camel.osgi.export.pkg>
@@ -73,32 +65,29 @@
         <commons-beanutils.version>1.8.3</commons-beanutils.version>
 
     </properties>
-
+    
     <build>
-        <defaultGoal>install</defaultGoal>
-        <resources>
-            <resource>
-                <directory>src/main/resources</directory>
-                <filtering>true</filtering>
-            </resource>
-        </resources>
-        <testResources>
-            <testResource>
-                <directory>src/test/resources</directory>
-                <filtering>true</filtering>
-            </testResource>
-        </testResources>
+        <plugins>
+            <plugin>
+                <artifactId>maven-surefire-plugin</artifactId>
+                <configuration>
+                    <systemPropertyVariables>
+                       <org.slf4j.simpleLogger.defaultLogLevel>
+                         warn
+                       </org.slf4j.simpleLogger.defaultLogLevel>
+                    </systemPropertyVariables>
+                </configuration>
+            </plugin>
+        </plugins>
     </build>
-
+    
     <dependencies>
         <!-- logging  -->
         <dependency>
-            <groupId>log4j</groupId>
-            <artifactId>log4j</artifactId>
-        </dependency>
-        <dependency>
+            <!-- Using slf4j-log4j-12 will get some warning -->
             <groupId>org.slf4j</groupId>
             <artifactId>slf4j-simple</artifactId>
+            <scope>test</scope>
         </dependency>
 
         <!-- testing -->
@@ -197,12 +186,5 @@
             <version>${commons-beanutils.version}</version>
         </dependency>
     </dependencies>
-
-    <licenses>
-        <license>
-            <name>Apache 2.0 License</name>
-            <url>http://www.apache.org/licenses/LICENSE-2.0</url>
-        </license>
-    </licenses>
 
 </project>
