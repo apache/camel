@@ -27,6 +27,8 @@ import javax.net.ssl.SSLEngine;
 import javax.net.ssl.SSLServerSocket;
 import javax.net.ssl.SSLSocket;
 
+import junit.framework.AssertionFailedError;
+
 import org.apache.camel.CamelContext;
 
 public class SSLContextParametersTest extends AbstractJsseParametersTest {
@@ -40,6 +42,12 @@ public class SSLContextParametersTest extends AbstractJsseParametersTest {
                           Arrays.asList(new Pattern[0]));
         assertEquals(2, result.size());
         assertStartsWith(result, "TLS");
+        try {
+            assertStartsWith((String[]) null, "TLS");
+            fail("We chould got an exception here!");
+        } catch (AssertionFailedError ex) {
+            assertEquals("Get a wrong message", "The values should not be null", ex.getMessage());
+        }
     }
     
     public void testPropertyPlaceholders() throws Exception {
@@ -752,14 +760,16 @@ public class SSLContextParametersTest extends AbstractJsseParametersTest {
     }
     
     protected void assertStartsWith(String[] values, String prefix) {
+        assertNotNull("The values should not be null", values);
         for (String value : values) {
-            assertTrue(value.startsWith(prefix));
+            assertTrue(value + " does not start with the prefix " + prefix, value.startsWith(prefix));
         }
     }
     
     protected void assertStartsWith(Collection<String> values, String prefix) {
+        assertNotNull("The values should not be null", values);
         for (String value : values) {
-            assertTrue(value.startsWith(prefix));
+            assertTrue(value + " does not start with the prefix " + prefix, value.startsWith(prefix));
         }
     }
 }
