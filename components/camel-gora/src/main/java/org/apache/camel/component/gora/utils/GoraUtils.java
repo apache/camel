@@ -17,7 +17,9 @@
 
 package org.apache.camel.component.gora.utils;
 
-import com.google.common.base.Objects;
+import java.lang.reflect.InvocationTargetException;
+import java.util.Map;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.component.gora.GoraAttribute;
 import org.apache.camel.component.gora.GoraConfiguration;
@@ -25,25 +27,16 @@ import org.apache.commons.beanutils.PropertyUtils;
 import org.apache.gora.persistency.Persistent;
 import org.apache.gora.query.Query;
 import org.apache.gora.store.DataStore;
-import org.apache.gora.store.DataStoreFactory;
-import org.apache.gora.util.GoraException;
-import org.apache.gora.util.IOUtils;
 
-import java.lang.reflect.InvocationTargetException;
-import java.util.Map;
-
-import static com.google.common.base.Preconditions.*;
+import static com.google.common.base.Preconditions.checkNotNull;
 
 /**
  * GoraUtil class contain utility methods for the
  * camel component.
  *
- * @author ipolyzos
  */
-public class GoraUtils {
-
-
-
+public final class GoraUtils {
+    
     /**
      * Private Constructor to prevent
      * instantiation of the class.
@@ -67,11 +60,10 @@ public class GoraUtils {
      * @throws NoSuchMethodException
      * @throws InvocationTargetException
      */
-    public static Query<?, ? extends Persistent> constractQueryFromConfiguration(final DataStore dataStore,
-                                                                                 final GoraConfiguration conf) throws ClassNotFoundException, IllegalAccessException, NoSuchMethodException, InvocationTargetException {
+    public static Query<Object, Persistent> constractQueryFromConfiguration(final DataStore<Object, Persistent> dataStore, final GoraConfiguration conf)
+        throws ClassNotFoundException, IllegalAccessException, NoSuchMethodException, InvocationTargetException {
 
-
-        final Query query = dataStore.newQuery();
+        final Query<Object , Persistent> query = dataStore.newQuery();
 
         if (configurationExist(GoraAttribute.GORA_QUERY_START_TIME, conf)) {
             query.setStartTime(getAttributeAsLong(GoraAttribute.GORA_QUERY_START_TIME, conf));
@@ -124,12 +116,12 @@ public class GoraUtils {
      * @return
      * @throws ClassNotFoundException
      */
-    public static Query<?, ? extends Persistent> constractQueryFromPropertiesMap(final Map<String, ?> propertiesMap,
-                                                                                 final DataStore dataStore,
+    public static Query<Object, Persistent> constractQueryFromPropertiesMap(final Map<String, ?> propertiesMap,
+                                                                                 final DataStore<Object, Persistent> dataStore,
                                                                                  final GoraConfiguration conf) throws ClassNotFoundException {
 
 
-        final Query query = dataStore.newQuery();
+        final Query<Object, Persistent> query = dataStore.newQuery();
 
         if (propertyExist(GoraAttribute.GORA_QUERY_START_TIME, propertiesMap)) {
             query.setStartTime(getPropertyAsLong(GoraAttribute.GORA_QUERY_START_TIME, propertiesMap));
@@ -145,8 +137,8 @@ public class GoraUtils {
 
         if (propertyExist(GoraAttribute.GORA_QUERY_TIME_RANGE_FROM, propertiesMap)
                 && propertyExist(GoraAttribute.GORA_QUERY_TIME_RANGE_TO, propertiesMap)) {
-                    query.setTimeRange(getPropertyAsLong(GoraAttribute.GORA_QUERY_TIME_RANGE_FROM, propertiesMap),
-                    getPropertyAsLong(GoraAttribute.GORA_QUERY_TIME_RANGE_TO, propertiesMap));
+            query.setTimeRange(getPropertyAsLong(GoraAttribute.GORA_QUERY_TIME_RANGE_FROM, propertiesMap),
+                               getPropertyAsLong(GoraAttribute.GORA_QUERY_TIME_RANGE_TO, propertiesMap));
         }
 
         if (propertyExist(GoraAttribute.GORA_QUERY_TIMESTAMP, propertiesMap)) {
@@ -186,7 +178,7 @@ public class GoraUtils {
     protected static boolean configurationExist(final GoraAttribute attr,
                                                 final GoraConfiguration conf) throws IllegalAccessException, NoSuchMethodException, InvocationTargetException {
 
-        return (PropertyUtils.getSimpleProperty(conf, attr.value) != null);
+        return PropertyUtils.getSimpleProperty(conf, attr.value) != null;
     }
 
     /**
@@ -249,7 +241,7 @@ public class GoraUtils {
     protected static Long getAttributeAsLong(final GoraAttribute attr,
                                            final GoraConfiguration conf) throws IllegalAccessException, NoSuchMethodException, InvocationTargetException {
 
-        return Long.parseLong(getAttributeAsString(attr,conf));
+        return Long.parseLong(getAttributeAsString(attr, conf));
     }
 
     /**

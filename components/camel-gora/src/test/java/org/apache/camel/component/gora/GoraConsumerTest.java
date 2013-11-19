@@ -17,17 +17,16 @@
 
 package org.apache.camel.component.gora;
 
+import java.lang.reflect.InvocationTargetException;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
-import org.apache.camel.component.gora.utils.GoraUtils;
 import org.apache.gora.query.Query;
 import org.apache.gora.store.DataStore;
 import org.junit.Before;
 import org.junit.Test;
-
-import java.lang.reflect.InvocationTargetException;
 
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
@@ -35,7 +34,6 @@ import static org.mockito.Mockito.when;
 /**
  * GORA Consumer Tests
  *
- * @author ipolyzos
  */
 public class GoraConsumerTest extends GoraTestSupport {
 
@@ -68,11 +66,7 @@ public class GoraConsumerTest extends GoraTestSupport {
      * Mock Processor
      */
     private Processor mockGoraProcessor;
-
-    /**
-     * Mock GoraUtils
-     */
-    private GoraUtils mockGoraUtils;
+    
 
     @Before
     public void setUp()  {
@@ -83,7 +77,7 @@ public class GoraConsumerTest extends GoraTestSupport {
         mockGoraConfiguration = mock(GoraConfiguration.class);
         mockCamelMessage = mock(Message.class);
         mockDatastore = mock(DataStore.class);
-        mockGoraUtils = mock(GoraUtils.class);
+        
 
         //setup default conditions
         when(mockCamelExchange.getIn()).thenReturn(mockCamelMessage);

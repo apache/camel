@@ -17,22 +17,25 @@
 
 package org.apache.camel.component.gora;
 
+import java.util.Map;
+
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ServicePoolAware;
 import org.apache.camel.impl.DefaultProducer;
+import org.apache.gora.persistency.Persistent;
 import org.apache.gora.store.DataStore;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Map;
+import static org.apache.camel.component.gora.utils.GoraUtils.constractQueryFromPropertiesMap;
+import static org.apache.camel.component.gora.utils.GoraUtils.getKeyFromExchange;
+import static org.apache.camel.component.gora.utils.GoraUtils.getValueFromExchange;
 
-import static org.apache.camel.component.gora.utils.GoraUtils.*;
 
 /**
  * Camel-Gora {@link DefaultProducer}.
  *
- * @author ipolyzos
  */
 public class GoraProducer extends DefaultProducer implements ServicePoolAware {
 
@@ -49,7 +52,7 @@ public class GoraProducer extends DefaultProducer implements ServicePoolAware {
     /**
      * GORA datastore
      */
-    private final DataStore dataStore;
+    private final DataStore<Object, Persistent> dataStore;
 
     /**
      * Constructor
@@ -60,7 +63,7 @@ public class GoraProducer extends DefaultProducer implements ServicePoolAware {
      */
     public GoraProducer(final Endpoint endpoint,
                         final GoraConfiguration configuration,
-                        final DataStore dataStore) {
+                        final DataStore<Object, Persistent> dataStore) {
 
         super(endpoint);
         this.dataStore = dataStore;
@@ -93,12 +96,12 @@ public class GoraProducer extends DefaultProducer implements ServicePoolAware {
             result = dataStore.delete(getKeyFromExchange(exchange));
         } else if (GoraOperation.QUERY.value.equalsIgnoreCase(operation)) {
 
-            final Map<String,Object> props = exchange.getIn().getHeaders();
-            result = constractQueryFromPropertiesMap(props,dataStore,this.configuration).execute();
+            final Map<String, Object> props = exchange.getIn().getHeaders();
+            result = constractQueryFromPropertiesMap(props, dataStore, this.configuration).execute();
         } else if (GoraOperation.DELETE_BY_QUERY.value.equalsIgnoreCase(operation)) {
 
-            final Map<String,Object> props = exchange.getIn().getHeaders();
-            result = dataStore.deleteByQuery(constractQueryFromPropertiesMap(props,dataStore,this.configuration));
+            final Map<String, Object> props = exchange.getIn().getHeaders();
+            result = dataStore.deleteByQuery(constractQueryFromPropertiesMap(props, dataStore, this.configuration));
         } else if (GoraOperation.GET_SCHEMA_NAME.value.equalsIgnoreCase(operation)) {
 
             result = dataStore.getSchemaName();
@@ -111,7 +114,7 @@ public class GoraProducer extends DefaultProducer implements ServicePoolAware {
         } else if (GoraOperation.SCHEMA_EXIST.value.equalsIgnoreCase(operation)) {
 
             result = dataStore.schemaExists();
-        }else {
+        } else {
 
             throw new RuntimeException("Unknown operation!");
         }
@@ -121,7 +124,7 @@ public class GoraProducer extends DefaultProducer implements ServicePoolAware {
            therefore a temporary solution is calling flush
            on every action
         */
-        if (configuration.isFlushOnEveryOperation()){
+        if (configuration.isFlushOnEveryOperation()) {
             dataStore.flush();
         }
 

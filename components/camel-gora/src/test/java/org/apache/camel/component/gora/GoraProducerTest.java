@@ -17,45 +17,36 @@
 
 package org.apache.camel.component.gora;
 
+import java.util.Map;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Message;
 import org.apache.camel.component.gora.utils.GoraUtils;
 import org.apache.gora.persistency.Persistent;
-import org.apache.gora.persistency.StateManager;
 import org.apache.gora.query.Query;
 import org.apache.gora.query.impl.QueryBase;
 import org.apache.gora.store.DataStore;
 import org.junit.Before;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
-import org.mockito.internal.verification.VerificationModeFactory;
-import org.mockito.stubbing.OngoingStubbing;
-import org.mockito.verification.VerificationMode;
-import org.powermock.api.mockito.PowerMockito;
 import org.powermock.core.classloader.annotations.PrepareForTest;
 import org.powermock.modules.junit4.PowerMockRunner;
-
-import java.util.*;
-
 
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.atMost;
 import static org.mockito.Mockito.verify;
 import static org.mockito.internal.verification.VerificationModeFactory.times;
-import static org.powermock.api.mockito.PowerMockito.mockStatic;
 import static org.powermock.api.mockito.PowerMockito.mock;
-import static org.powermock.api.mockito.PowerMockito.when;
+import static org.powermock.api.mockito.PowerMockito.mockStatic;
 import static org.powermock.api.mockito.PowerMockito.verifyStatic;
+import static org.powermock.api.mockito.PowerMockito.when;
 
 /**
  * GORA Producer Tests
  *
  * TODO: <b>NOTE:</b> Query methods does not yet has tests
  *
- * @author ipolyzos
  */
 @RunWith(PowerMockRunner.class)
 @PrepareForTest(GoraUtils.class)
@@ -104,7 +95,7 @@ public class GoraProducerTest extends GoraTestSupport {
     @Test(expected = RuntimeException.class)
     public void processShouldThrowExceptionIfOperationIsNull() throws Exception {
 
-        final GoraProducer producer = new GoraProducer(mockGoraEndpoint,mockGoraConfiguration,mockDatastore);
+        final GoraProducer producer = new GoraProducer(mockGoraEndpoint, mockGoraConfiguration, mockDatastore);
         producer.process(mockCamelExchange);
     }
 
@@ -115,7 +106,7 @@ public class GoraProducerTest extends GoraTestSupport {
         when(mockCamelExchange.getIn()).thenReturn(mockCamelMessage);
         when(mockCamelMessage.getHeader(GoraAttribute.GORA_OPERATION.value)).thenReturn("dah");
 
-        final GoraProducer producer = new GoraProducer(mockGoraEndpoint,mockGoraConfiguration,mockDatastore);
+        final GoraProducer producer = new GoraProducer(mockGoraEndpoint, mockGoraConfiguration, mockDatastore);
         producer.process(mockCamelExchange);
 
         verify(mockCamelExchange, atMost(1)).getIn();
@@ -137,14 +128,14 @@ public class GoraProducerTest extends GoraTestSupport {
         final Message outMessage = mock(Message.class);
         when(mockCamelExchange.getOut()).thenReturn(outMessage);
 
-        final GoraProducer producer = new GoraProducer(mockGoraEndpoint,mockGoraConfiguration,mockDatastore);
+        final GoraProducer producer = new GoraProducer(mockGoraEndpoint, mockGoraConfiguration, mockDatastore);
         producer.process(mockCamelExchange);
 
         verify(mockCamelExchange, atLeastOnce()).getIn();
         verify(mockCamelMessage, atLeastOnce()).getHeader(GoraAttribute.GORA_OPERATION.value);
         verify(mockCamelMessage, atLeastOnce()).getHeader(GoraAttribute.GORA_KEY.value);
         verify(mockCamelMessage, atLeastOnce()).getBody(Persistent.class);
-        verify(mockDatastore, atMost(1)).put(sampleKey,sampleValue);
+        verify(mockDatastore, atMost(1)).put(sampleKey, sampleValue);
     }
 
     @Test
@@ -159,7 +150,7 @@ public class GoraProducerTest extends GoraTestSupport {
         final Message outMessage = mock(Message.class);
         when(mockCamelExchange.getOut()).thenReturn(outMessage);
 
-        final GoraProducer producer = new GoraProducer(mockGoraEndpoint,mockGoraConfiguration,mockDatastore);
+        final GoraProducer producer = new GoraProducer(mockGoraEndpoint, mockGoraConfiguration, mockDatastore);
         producer.process(mockCamelExchange);
 
         verify(mockCamelExchange, atLeastOnce()).getIn();
@@ -180,7 +171,7 @@ public class GoraProducerTest extends GoraTestSupport {
         final Message outMessage = mock(Message.class);
         when(mockCamelExchange.getOut()).thenReturn(outMessage);
 
-        final GoraProducer producer = new GoraProducer(mockGoraEndpoint,mockGoraConfiguration,mockDatastore);
+        final GoraProducer producer = new GoraProducer(mockGoraEndpoint, mockGoraConfiguration, mockDatastore);
         producer.process(mockCamelExchange);
 
         verify(mockCamelExchange, atLeastOnce()).getIn();
@@ -198,7 +189,7 @@ public class GoraProducerTest extends GoraTestSupport {
         final Message outMessage = mock(Message.class);
         when(mockCamelExchange.getOut()).thenReturn(outMessage);
 
-        final GoraProducer producer = new GoraProducer(mockGoraEndpoint,mockGoraConfiguration,mockDatastore);
+        final GoraProducer producer = new GoraProducer(mockGoraEndpoint, mockGoraConfiguration, mockDatastore);
         producer.process(mockCamelExchange);
 
         verify(mockCamelExchange, atLeastOnce()).getIn();
@@ -215,7 +206,7 @@ public class GoraProducerTest extends GoraTestSupport {
         final Message outMessage = mock(Message.class);
         when(mockCamelExchange.getOut()).thenReturn(outMessage);
 
-        final GoraProducer producer = new GoraProducer(mockGoraEndpoint,mockGoraConfiguration,mockDatastore);
+        final GoraProducer producer = new GoraProducer(mockGoraEndpoint, mockGoraConfiguration, mockDatastore);
         producer.process(mockCamelExchange);
 
         verify(mockCamelExchange, atLeastOnce()).getIn();
@@ -233,7 +224,7 @@ public class GoraProducerTest extends GoraTestSupport {
         final Message outMessage = mock(Message.class);
         when(mockCamelExchange.getOut()).thenReturn(outMessage);
 
-        final GoraProducer producer = new GoraProducer(mockGoraEndpoint,mockGoraConfiguration,mockDatastore);
+        final GoraProducer producer = new GoraProducer(mockGoraEndpoint, mockGoraConfiguration, mockDatastore);
         producer.process(mockCamelExchange);
 
         verify(mockCamelExchange, atLeastOnce()).getIn();
@@ -251,7 +242,7 @@ public class GoraProducerTest extends GoraTestSupport {
         final Message outMessage = mock(Message.class);
         when(mockCamelExchange.getOut()).thenReturn(outMessage);
 
-        final GoraProducer producer = new GoraProducer(mockGoraEndpoint,mockGoraConfiguration,mockDatastore);
+        final GoraProducer producer = new GoraProducer(mockGoraEndpoint, mockGoraConfiguration, mockDatastore);
         producer.process(mockCamelExchange);
 
         verify(mockCamelExchange, atLeastOnce()).getIn();
@@ -276,7 +267,7 @@ public class GoraProducerTest extends GoraTestSupport {
         final Query mockQuery = mock(QueryBase.class);
         when(GoraUtils.constractQueryFromPropertiesMap(mockProperties, mockDatastore, mockGoraConfiguration)).thenReturn(mockQuery);
 
-        final GoraProducer producer = new GoraProducer(mockGoraEndpoint,mockGoraConfiguration,mockDatastore);
+        final GoraProducer producer = new GoraProducer(mockGoraEndpoint, mockGoraConfiguration, mockDatastore);
         producer.process(mockCamelExchange);
 
         verify(mockCamelExchange, atLeastOnce()).getIn();
@@ -302,7 +293,7 @@ public class GoraProducerTest extends GoraTestSupport {
         final Query mockQuery = mock(QueryBase.class);
         when(GoraUtils.constractQueryFromPropertiesMap(mockProperties, mockDatastore, mockGoraConfiguration)).thenReturn(mockQuery);
 
-        final GoraProducer producer = new GoraProducer(mockGoraEndpoint,mockGoraConfiguration,mockDatastore);
+        final GoraProducer producer = new GoraProducer(mockGoraEndpoint, mockGoraConfiguration, mockDatastore);
         producer.process(mockCamelExchange);
 
         verify(mockCamelExchange, atLeastOnce()).getIn();

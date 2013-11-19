@@ -22,55 +22,54 @@ import org.junit.Test;
 /**
  * GORA Configuration Tests
  *
- * @author ipolyzos
  */
 public class GoraConfigurationTest {
 
 
     @Test(expected = IllegalArgumentException.class)
-    public void setKeyClassClassShouldThrowExceptionIfNull(){
+    public void setKeyClassClassShouldThrowExceptionIfNull() {
 
         final GoraConfiguration conf = new GoraConfiguration();
         conf.setValueClass(null);
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void setKeyClassShouldThrowExceptionIfEmpty(){
+    public void setKeyClassShouldThrowExceptionIfEmpty() {
 
         final GoraConfiguration conf = new GoraConfiguration();
         conf.setValueClass("");
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void setValueClassClassShouldThrowExceptionIfNull(){
+    public void setValueClassClassShouldThrowExceptionIfNull() {
 
         final GoraConfiguration conf = new GoraConfiguration();
         conf.setValueClass(null);
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void setValueClassClassShouldThrowExceptionIfEmpty(){
+    public void setValueClassClassShouldThrowExceptionIfEmpty() {
 
         final GoraConfiguration conf = new GoraConfiguration();
         conf.setValueClass("");
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void setDataStoreClassShouldThrowExceptionIfNull(){
+    public void setDataStoreClassShouldThrowExceptionIfNull() {
 
         final GoraConfiguration conf = new GoraConfiguration();
         conf.setDataStoreClass(null);
     }
 
     @Test(expected = IllegalArgumentException.class)
-    public void setDataStoreClassShouldThrowExceptionIfEmpty(){
+    public void setDataStoreClassShouldThrowExceptionIfEmpty() {
 
         final GoraConfiguration conf = new GoraConfiguration();
         conf.setDataStoreClass("");
     }
 
     @Test(expected = NullPointerException.class)
-    public void setHadoopConfigurationShouldThrowExceptionIfNull(){
+    public void setHadoopConfigurationShouldThrowExceptionIfNull() {
 
         final GoraConfiguration conf = new GoraConfiguration();
         conf.setHadoopConfiguration(null);
