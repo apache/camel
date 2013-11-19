@@ -27,9 +27,9 @@ import org.apache.camel.builder.RouteBuilder;
 /**
  * @version 
  */
-public class GenerateXmFromCamelContextlTest extends ContextTestSupport {
+public class GenerateXmFromCamelContextTest extends ContextTestSupport {
 
-    public void testCreateRouteFromCamelCOntext() throws Exception {
+    public void testCreateRouteFromCamelContext() throws Exception {
         List<RouteDefinition> list = context.getRouteDefinitions();
         assertEquals("Size of list " + list, 1, list.size());
         RouteDefinition routeType = list.get(0);
