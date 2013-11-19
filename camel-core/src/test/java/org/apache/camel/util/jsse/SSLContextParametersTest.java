@@ -540,7 +540,7 @@ public class SSLContextParametersTest extends AbstractJsseParametersTest {
         
         filter.getInclude().clear();
         filter.getExclude().clear();
-        csp.getCipherSuite().add(controlEngine.getEnabledCipherSuites()[0]);
+        csp.getCipherSuite().add("TLS_ECDHE_ECDSA_WITH_AES_128_CBC_SHA256");
         filter.getInclude().add("TLS.*");
         context = scp.createSSLContext();
         engine = context.createSSLEngine();
@@ -753,18 +753,12 @@ public class SSLContextParametersTest extends AbstractJsseParametersTest {
     }
     
     protected void assertStartsWith(String[] values, String prefix) {
-        if (values == null || values.length == 0) {
-            return;
-        }
         for (String value : values) {
             assertTrue(value.startsWith(prefix));
         }
     }
     
     protected void assertStartsWith(Collection<String> values, String prefix) {
-        if (values == null || values.size() == 0) {
-            return;
-        }
         for (String value : values) {
             assertTrue(value.startsWith(prefix));
         }
