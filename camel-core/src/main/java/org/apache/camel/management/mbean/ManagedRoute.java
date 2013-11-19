@@ -236,7 +236,7 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
 
     public String dumpRouteStatsAsXml(boolean fullStats, boolean includeProcessors) throws Exception {
         // in this logic we need to calculate the accumulated processing time for the processor in the route
-        // and hence why the logic is a bit more complicated to do this, as we need to caculate that from
+        // and hence why the logic is a bit more complicated to do this, as we need to calculate that from
         // the bottom -> top of the route but this information is valuable for profiling routes
         StringBuilder sb = new StringBuilder();
 
