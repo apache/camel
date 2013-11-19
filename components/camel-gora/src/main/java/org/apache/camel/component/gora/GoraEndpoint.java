@@ -1,0 +1,105 @@
+/**
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
+
+package org.apache.camel.component.gora;
+
+import org.apache.camel.Consumer;
+import org.apache.camel.Processor;
+import org.apache.camel.Producer;
+import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.gora.store.DataStore;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+/**
+ * Gora endpoint
+ *
+ * @author ipolyzos
+ */
+public class GoraEndpoint extends DefaultEndpoint {
+
+    /**
+     * logger
+     */
+    private static final Logger LOG = LoggerFactory.getLogger(GoraEndpoint.class);
+
+    /**
+     * Gora DataStore
+     */
+    private final DataStore dataStore;
+
+    /**
+     * Camel-Gora Endpoint Configuratopn
+     */
+    private GoraConfiguration configuration;
+
+    /**
+     * GORA endpoint default constructor
+     *
+     * @param uri           Endpoint URI
+     * @param goraComponent Reference to the Camel-Gora component
+     * @param config        Reference to Camel-Gora endpoint configuration
+     * @param dataStore     Reference to Gora DataStore
+     */
+    public GoraEndpoint(final String uri,
+                        final GoraComponent goraComponent,
+                        final GoraConfiguration config,
+                        final DataStore dataStore) {
+
+        super(uri, goraComponent);
+        this.configuration = config;
+        this.dataStore = dataStore;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Producer createProducer() throws Exception {
+
+        return new GoraProducer(this, this.configuration, this.dataStore);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public Consumer createConsumer(final Processor processor) throws Exception {
+
+        //throw new UnsupportedOperationException("Not supported");
+        return new GoraConsumer(this,processor ,this.configuration, this.dataStore);
+    }
+
+    /**
+     * Get Configutation
+     *
+     * @return
+     */
+    public GoraConfiguration getConfiguration() {
+        return configuration;
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    public boolean isSingleton() {
+
+        return true;
+    }
+
+}
