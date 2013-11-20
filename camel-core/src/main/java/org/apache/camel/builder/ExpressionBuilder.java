@@ -900,7 +900,7 @@ public final class ExpressionBuilder {
     }
 
     /**
-     * Returns the expression for the current thread name
+     * Returns the expression for the {@code null} value
      */
     public static Expression nullExpression() {
         return new ExpressionAdapter() {
