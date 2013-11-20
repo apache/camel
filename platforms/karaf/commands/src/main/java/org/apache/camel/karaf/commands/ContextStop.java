@@ -19,22 +19,15 @@ package org.apache.camel.karaf.commands;
 import org.apache.camel.CamelContext;
 import org.apache.felix.gogo.commands.Argument;
 import org.apache.felix.gogo.commands.Command;
-import org.apache.karaf.shell.console.OsgiCommandSupport;
 
 /**
  * Command to stop a Camel context.
  */
 @Command(scope = "camel", name = "context-stop", description = "Stop a Camel context.")
-public class ContextStop extends OsgiCommandSupport {
+public class ContextStop extends CamelCommandSupport {
 
     @Argument(index = 0, name = "context", description = "The name of the Camel context.", required = true, multiValued = false)
     String context;
-
-    private CamelController camelController;
-
-    public void setCamelController(CamelController camelController) {
-        this.camelController = camelController;
-    }
 
     public Object doExecute() throws Exception {
         CamelContext camelContext = camelController.getCamelContext(context);

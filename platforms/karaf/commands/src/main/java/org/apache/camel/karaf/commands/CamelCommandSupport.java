@@ -16,27 +16,17 @@
  */
 package org.apache.camel.karaf.commands;
 
-import org.apache.camel.CamelContext;
-import org.apache.felix.gogo.commands.Argument;
-import org.apache.felix.gogo.commands.Command;
+import org.apache.karaf.shell.console.OsgiCommandSupport;
 
 /**
- * Command to start a Camel context.
+ * The abstract base class for karaf commands.
  */
-@Command(scope = "camel", name = "context-start", description = "Start a Camel context.")
-public class ContextStart extends CamelCommandSupport {
+public abstract class CamelCommandSupport extends OsgiCommandSupport {
 
-    @Argument(index = 0, name = "context", description = "The name of the Camel context.", required = true, multiValued = false)
-    String context;
+    protected CamelController camelController;
 
-    public Object doExecute() throws Exception {
-        CamelContext camelContext = camelController.getCamelContext(context);
-        if (camelContext == null) {
-            System.err.println("Camel context " + context + " not found.");
-            return null;
-        }
-        camelContext.start();
-        return null;
+    public void setCamelController(CamelController camelController) {
+        this.camelController = camelController;
     }
 
 }

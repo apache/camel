@@ -19,6 +19,7 @@ package org.apache.camel.karaf.commands;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Iterator;
+import java.util.Map;
 import java.util.Set;
 
 import javax.management.MBeanServer;
@@ -31,26 +32,19 @@ import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.spi.ManagementAgent;
 import org.apache.felix.gogo.commands.Argument;
 import org.apache.felix.gogo.commands.Command;
-import org.apache.karaf.shell.console.OsgiCommandSupport;
 import org.apache.karaf.util.StringEscapeUtils;
 
 /**
  * Command to display detailed information about a Camel route.
  */
 @Command(scope = "camel", name = "route-info", description = "Display information about a Camel route.")
-public class RouteInfo extends OsgiCommandSupport {
+public class RouteInfo extends CamelCommandSupport {
 
     @Argument(index = 0, name = "route", description = "The Camel route ID.", required = true, multiValued = false)
     String route;
 
     @Argument(index = 1, name = "context", description = "The Camel context name.", required = false, multiValued = false)
     String context;
-
-    private CamelController camelController;
-
-    public void setCamelController(CamelController camelController) {
-        this.camelController = camelController;
-    }
 
     public Object doExecute() throws Exception {
         Route camelRoute = camelController.getRoute(route, context);
@@ -64,8 +58,8 @@ public class RouteInfo extends OsgiCommandSupport {
         System.out.println(StringEscapeUtils.unescapeJava("\tCamel Context: " + camelRoute.getRouteContext().getCamelContext().getName()));
         System.out.println("");
         System.out.println(StringEscapeUtils.unescapeJava("\u001B[1mProperties\u001B[0m"));
-        for (String property : camelRoute.getProperties().keySet()) {
-            System.out.println(StringEscapeUtils.unescapeJava("\t\t" + property + " = " + camelRoute.getProperties().get(property)));
+        for (Map.Entry<String, Object> entry : camelRoute.getProperties().entrySet()) {
+            System.out.println(StringEscapeUtils.unescapeJava("\t" + entry.getKey() + " = " + entry.getValue()));
         }
         System.out.println("");
         System.out.println(StringEscapeUtils.unescapeJava("\u001B[1mStatistics\u001B[0m"));

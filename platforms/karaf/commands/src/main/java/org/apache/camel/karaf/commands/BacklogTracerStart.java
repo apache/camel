@@ -21,13 +21,12 @@ import org.apache.camel.processor.interceptor.BacklogTracer;
 import org.apache.felix.gogo.commands.Argument;
 import org.apache.felix.gogo.commands.Command;
 import org.apache.felix.gogo.commands.Option;
-import org.apache.karaf.shell.console.OsgiCommandSupport;
 
 /**
  * Command to use the <a href="camel.apache.org/backlogtracer">Backlog Tracer</a>.
  */
 @Command(scope = "camel", name = "backlog-tracer-start", description = "Starts the Backlog tracer")
-public class BacklogTracerStart extends OsgiCommandSupport {
+public class BacklogTracerStart extends CamelCommandSupport {
 
     @Argument(index = 0, name = "context", description = "The name of the Camel context.",
             required = true, multiValued = false)
@@ -48,12 +47,6 @@ public class BacklogTracerStart extends OsgiCommandSupport {
     @Option(name = "--removeOnDump", aliases = "-r", description = "Whether to remove traced messages when dumping the messages",
             required = false, multiValued = false)
     Boolean removeOnDump;
-
-    private CamelController camelController;
-
-    public void setCamelController(CamelController camelController) {
-        this.camelController = camelController;
-    }
 
     @Override
     protected Object doExecute() throws Exception {
