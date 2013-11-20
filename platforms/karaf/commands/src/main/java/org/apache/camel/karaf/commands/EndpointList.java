@@ -29,13 +29,12 @@ import org.apache.camel.util.URISupport;
 import org.apache.felix.gogo.commands.Argument;
 import org.apache.felix.gogo.commands.Command;
 import org.apache.felix.gogo.commands.Option;
-import org.apache.karaf.shell.console.OsgiCommandSupport;
 
 /**
  * List the Camel endpoints available in the Karaf instance.
  */
 @Command(scope = "camel", name = "endpoint-list", description = "Lists all Camel endpoints available in CamelContexts.")
-public class EndpointList extends OsgiCommandSupport {
+public class EndpointList extends CamelCommandSupport {
 
     private static final String CONTEXT_COLUMN_LABEL = "Context";
     private static final String URI_COLUMN_LABEL = "Uri";
@@ -61,12 +60,6 @@ public class EndpointList extends OsgiCommandSupport {
     @Option(name = "--verbose", aliases = "-v", description = "Verbose output which does not limit the length of the uri shown",
             required = false, multiValued = false, valueToShowInHelp = "false")
     Boolean verbose;
-
-    private CamelController camelController;
-
-    public void setCamelController(CamelController camelController) {
-        this.camelController = camelController;
-    }
 
     protected Object doExecute() throws Exception {
         List<Endpoint> endpoints = camelController.getEndpoints(name);

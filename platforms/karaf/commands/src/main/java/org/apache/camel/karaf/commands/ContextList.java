@@ -23,13 +23,12 @@ import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.felix.gogo.commands.Command;
-import org.apache.karaf.shell.console.OsgiCommandSupport;
 
 /**
  * List the Camel contexts available in the Karaf instance.
  */
 @Command(scope = "camel", name = "context-list", description = "Lists all Camel contexts.")
-public class ContextList extends OsgiCommandSupport {
+public class ContextList extends CamelCommandSupport {
 
     private static final String CONTEXT_COLUMN_LABEL = "Context";
     private static final String STATUS_COLUMN_LABEL = "Status";
@@ -42,12 +41,6 @@ public class ContextList extends OsgiCommandSupport {
     private static final int DEFAULT_COLUMN_WIDTH_INCREMENT = 0;
     private static final int MAX_COLUMN_WIDTH = Integer.MAX_VALUE;
     private static final int MIN_COLUMN_WIDTH = 12;
-
-    private CamelController camelController;
-
-    public void setCamelController(CamelController camelController) {
-        this.camelController = camelController;
-    }
 
     protected Object doExecute() throws Exception {
         final List<CamelContext> camelContexts = camelController.getCamelContexts();

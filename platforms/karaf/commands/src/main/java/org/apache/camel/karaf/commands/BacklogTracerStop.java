@@ -20,22 +20,15 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.processor.interceptor.BacklogTracer;
 import org.apache.felix.gogo.commands.Argument;
 import org.apache.felix.gogo.commands.Command;
-import org.apache.karaf.shell.console.OsgiCommandSupport;
 
 /**
  * Command to use the <a href="camel.apache.org/backlogtracer">Backlog Tracer</a>.
  */
 @Command(scope = "camel", name = "backlog-tracer-stop", description = "Stops the Backlog tracer")
-public class BacklogTracerStop extends OsgiCommandSupport {
+public class BacklogTracerStop extends CamelCommandSupport {
 
     @Argument(index = 0, name = "context", description = "The name of the Camel context.", required = true, multiValued = false)
     String context;
-
-    private CamelController camelController;
-
-    public void setCamelController(CamelController camelController) {
-        this.camelController = camelController;
-    }
 
     @Override
     protected Object doExecute() throws Exception {

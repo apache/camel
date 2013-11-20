@@ -25,13 +25,12 @@ import org.apache.camel.Route;
 import org.apache.camel.ServiceStatus;
 import org.apache.felix.gogo.commands.Argument;
 import org.apache.felix.gogo.commands.Command;
-import org.apache.karaf.shell.console.OsgiCommandSupport;
 
 /**
  * Command to list all Camel routes.
  */
 @Command(scope = "camel", name = "route-list", description = "List Camel routes.")
-public class RouteList extends OsgiCommandSupport {
+public class RouteList extends CamelCommandSupport {
 
     private static final String CONTEXT_COLUMN_LABEL = "Context";
     private static final String ROUTE_COLUMN_LABEL = "Route";
@@ -48,12 +47,6 @@ public class RouteList extends OsgiCommandSupport {
 
     @Argument(index = 0, name = "name", description = "The Camel context name where to look for the route", required = false, multiValued = false)
     String name;
-
-    private CamelController camelController;
-
-    public void setCamelController(CamelController camelController) {
-        this.camelController = camelController;
-    }
 
     protected Object doExecute() throws Exception {
         List<Route> routes = camelController.getRoutes(name);

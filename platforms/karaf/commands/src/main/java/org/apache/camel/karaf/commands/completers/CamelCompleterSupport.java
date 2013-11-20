@@ -16,29 +16,19 @@
  */
 package org.apache.camel.karaf.commands.completers;
 
-import java.util.List;
+import org.apache.camel.karaf.commands.CamelController;
 
-import jline.console.completer.StringsCompleter;
-import org.apache.camel.Route;
+import org.apache.karaf.shell.console.Completer;
 
 /**
- * A Jline completer for the Camel routes.
+ * The abstract base class for completers.
  */
-public class RouteCompleter extends CamelCompleterSupport {
+public abstract class CamelCompleterSupport implements Completer {
 
-    @SuppressWarnings({"unchecked", "rawtypes"})
-    public int complete(String buffer, int cursor, List candidates) {
-        try {
-            StringsCompleter delegate = new StringsCompleter();
-            List<Route> routes = camelController.getRoutes(null);
-            for (Route route : routes) {
-                delegate.getStrings().add(route.getId());
-            }
-            return delegate.complete(buffer, cursor, candidates);
-        } catch (Exception e) {
-            // nothing to do, no completion
-        }
-        return 0;
+    protected CamelController camelController;
+
+    public void setCamelController(CamelController camelController) {
+        this.camelController = camelController;
     }
 
 }

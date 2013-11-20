@@ -128,46 +128,6 @@ public class CamelControllerImpl implements CamelController {
         return routes;
     }
 
-    @SuppressWarnings("deprecation")
-    public List<RouteDefinition> getRouteDefinitions(String camelContextName) {
-        List<RouteDefinition> answer = new ArrayList<RouteDefinition>();
-
-        if (camelContextName != null) {
-            CamelContext context = this.getCamelContext(camelContextName);
-            if (context != null) {
-                List<RouteDefinition> routes = context.getRouteDefinitions();
-                // sort routes
-                Collections.sort(routes, new Comparator<RouteDefinition>() {
-                    @Override
-                    public int compare(RouteDefinition o1, RouteDefinition o2) {
-                        // already sorted by camel context first, so just sort the ids
-                        return o1.getId().compareTo(o2.getId());
-                    }
-                });
-                answer.addAll(routes);
-            }
-        } else {
-            // already sorted by camel context
-            List<CamelContext> camelContexts = this.getCamelContexts();
-            for (CamelContext camelContext : camelContexts) {
-                for (RouteDefinition routeDefinition : camelContext.getRouteDefinitions()) {
-                    List<RouteDefinition> routes = new ArrayList<RouteDefinition>();
-                    // sort routes
-                    Collections.sort(routes, new Comparator<RouteDefinition>() {
-                        @Override
-                        public int compare(RouteDefinition o1, RouteDefinition o2) {
-                            // already sorted by camel context first, so just sort the ids
-                            return o1.getId().compareTo(o2.getId());
-                        }
-                    });
-                    answer.addAll(routes);
-                }
-            }
-        }
-        // already sorted
-        return answer;
-    }
-
     public Route getRoute(String routeId, String camelContextName) {
         List<Route> routes = this.getRoutes(camelContextName);
         for (Route route : routes) {
