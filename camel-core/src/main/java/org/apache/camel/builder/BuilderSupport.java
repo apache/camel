@@ -137,7 +137,14 @@ public abstract class BuilderSupport {
     public ValueBuilder constant(Object value) {
         return Builder.constant(value);
     }
-    
+
+    /**
+     * Returns a language expression value builder
+     */
+    public ValueBuilder language(String language, String expression) {
+        return Builder.language(language, expression);
+    }
+
     /**
      * Returns a simple expression value builder
      */
