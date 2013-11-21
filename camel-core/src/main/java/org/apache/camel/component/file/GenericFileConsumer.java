@@ -471,45 +471,43 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
      * @return <tt>true</tt> to include the file, <tt>false</tt> to skip it
      */
     protected boolean isValidFile(GenericFile<T> file, boolean isDirectory, List<T> files) {
+        String absoluteFilePath = file.getAbsoluteFilePath();
+
         if (!isMatched(file, isDirectory, files)) {
             log.trace("File did not match. Will skip this file: {}", file);
             return false;
         }
 
-        // if its a file then check if its already in progress
-        if (!isDirectory && isInProgress(file)) {
+        // directory is always valid
+        if (isDirectory) {
+            return true;
+        }
+
+        // check if file is already in progress
+        if (endpoint.getInProgressRepository().contains(absoluteFilePath)) {
             if (log.isTraceEnabled()) {
                 log.trace("Skipping as file is already in progress: {}", file.getFileName());
             }
             return false;
         }
 
-        boolean answer = true;
-        String key = null;
-        try {
-            // if its a file then check we have the file in the idempotent registry already
-            if (!isDirectory && endpoint.isIdempotent()) {
-                // use absolute file path as default key, but evaluate if an expression key was configured
-                key = file.getAbsoluteFilePath();
-                if (endpoint.getIdempotentKey() != null) {
-                    Exchange dummy = endpoint.createExchange(file);
-                    key = endpoint.getIdempotentKey().evaluate(dummy, String.class);
-                }
-                if (key != null && endpoint.getIdempotentRepository().contains(key)) {
-                    log.trace("This consumer is idempotent and the file has been consumed before. Will skip this file: {}", file);
-                    answer = false;
-                }
+        // if its a file then check we have the file in the idempotent registry already
+        if (endpoint.isIdempotent()) {
+            // use absolute file path as default key, but evaluate if an expression key was configured
+            String key = file.getAbsoluteFilePath();
+            if (endpoint.getIdempotentKey() != null) {
+                Exchange dummy = endpoint.createExchange(file);
+                key = endpoint.getIdempotentKey().evaluate(dummy, String.class);
             }
-        } finally {
-            // ensure to run this in finally block in case of runtime exceptions being thrown
-            if (!answer) {
-                // remove file from the in progress list as its no longer in progress
-                endpoint.getInProgressRepository().remove(key);
+            if (key != null && endpoint.getIdempotentRepository().contains(key)) {
+                log.trace("This consumer is idempotent and the file has been consumed before matching idempotentKey: {}. Will skip this file: {}", key, file);
+                return false;
             }
         }
 
-        // file matched
-        return answer;
+        // okay so final step is to be able to add atomic as in-progress, so we are the
+        // only thread processing this file
+        return endpoint.getInProgressRepository().add(absoluteFilePath);
     }
 
     /**
@@ -614,7 +612,9 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
      *
      * @param file the file
      * @return <tt>true</tt> if the file is already in progress
+     * @deprecated no longer in use, use {@link org.apache.camel.component.file.GenericFileEndpoint#getInProgressRepository()} instead.
      */
+    @Deprecated
     protected boolean isInProgress(GenericFile<T> file) {
         String key = file.getAbsoluteFilePath();
         // must use add, to have operation as atomic
