@@ -27,7 +27,6 @@ import org.apache.camel.Expression;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.api.management.ManagedOperation;
 import org.apache.camel.component.ResourceEndpoint;
 import org.apache.camel.spi.Language;
 import org.apache.camel.util.IOHelper;
@@ -46,7 +45,6 @@ public class LanguageEndpoint extends ResourceEndpoint {
     private String script;
     private boolean transform = true;
     private boolean contentResolvedFromResource;
-    @UriParam
     private boolean cacheScript;
 
     public LanguageEndpoint() {
