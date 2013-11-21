@@ -27,6 +27,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.net.URLDecoder;
 import java.util.Map;
 
 import org.apache.camel.spi.ClassResolver;
@@ -105,6 +106,12 @@ public final class ResourceHelper {
     public static InputStream resolveResourceAsInputStream(ClassResolver classResolver, String uri) throws IOException {
         if (uri.startsWith("file:")) {
             uri = ObjectHelper.after(uri, "file:");
+            try {
+                // try to decode as the uri may contain %20 for spaces etc
+                uri = URLDecoder.decode(uri, "UTF-8");
+            } catch (Exception e) {
+                // ignore
+            }
             LOG.trace("Loading resource: {} from file system", uri);
             return new FileInputStream(uri);
         } else if (uri.startsWith("http:")) {
@@ -123,6 +130,12 @@ public final class ResourceHelper {
                 throw e;
             }
         } else if (uri.startsWith("classpath:")) {
+            try {
+                // try to decode as the uri may contain %20 for spaces etc
+                uri = URLDecoder.decode(uri, "UTF-8");
+            } catch (Exception e) {
+                // ignore
+            }
             uri = ObjectHelper.after(uri, "classpath:");
         }
 
@@ -163,6 +176,12 @@ public final class ResourceHelper {
         if (uri.startsWith("file:")) {
             // check if file exists first
             String name = ObjectHelper.after(uri, "file:");
+            try {
+                // try to decode as the uri may contain %20 for spaces etc
+                uri = URLDecoder.decode(uri, "UTF-8");
+            } catch (Exception e) {
+                // ignore
+            }
             LOG.trace("Loading resource: {} from file system", uri);
             File file = new File(name);
             if (!file.exists()) {
@@ -174,6 +193,12 @@ public final class ResourceHelper {
             return new URL(uri);
         } else if (uri.startsWith("classpath:")) {
             uri = ObjectHelper.after(uri, "classpath:");
+            try {
+                // try to decode as the uri may contain %20 for spaces etc
+                uri = URLDecoder.decode(uri, "UTF-8");
+            } catch (Exception e) {
+                // ignore
+            }
         }
 
         // load from classpath by default
