@@ -27,6 +27,7 @@ import org.apache.camel.Expression;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.api.management.ManagedOperation;
 import org.apache.camel.component.ResourceEndpoint;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.UriParam;
@@ -50,6 +51,8 @@ public class LanguageEndpoint extends ResourceEndpoint {
     private boolean transform = true;
     @UriParam
     private boolean contentResolvedFromResource;
+    @UriParam
+    private boolean cacheScript;
 
     public LanguageEndpoint() {
         // enable cache by default
@@ -72,7 +75,7 @@ public class LanguageEndpoint extends ResourceEndpoint {
         }
 
         ObjectHelper.notNull(language, "language", this);
-        if (expression == null && script != null) {
+        if (cacheScript && expression == null && script != null) {
             script = resolveScript(script);
             expression = language.createExpression(script);
         }
@@ -167,6 +170,10 @@ public class LanguageEndpoint extends ResourceEndpoint {
         this.script = script;
     }
 
+    public String getScript() {
+        return script;
+    }
+
     public boolean isContentResolvedFromResource() {
         return contentResolvedFromResource;
     }
@@ -174,4 +181,26 @@ public class LanguageEndpoint extends ResourceEndpoint {
     public void setContentResolvedFromResource(boolean contentResolvedFromResource) {
         this.contentResolvedFromResource = contentResolvedFromResource;
     }
+
+    public boolean isCacheScript() {
+        return cacheScript;
+    }
+
+    /**
+     * Whether to cache the compiled script and reuse
+     * <p/>
+     * Notice reusing the script can cause side effects from processing one Camel
+     * {@link org.apache.camel.Exchange} to the next {@link org.apache.camel.Exchange}.
+     */
+    public void setCacheScript(boolean cacheScript) {
+        this.cacheScript = cacheScript;
+    }
+
+    public void clearContentCache() {
+        super.clearContentCache();
+        // must also clear expression and script
+        expression = null;
+        script = null;
+    }
+
 }
