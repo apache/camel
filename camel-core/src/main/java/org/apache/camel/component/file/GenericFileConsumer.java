@@ -447,7 +447,13 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
 
         // okay so final step is to be able to add atomic as in-progress, so we are the
         // only thread processing this file
-        return endpoint.getInProgressRepository().add(absoluteFilePath);
+        if (!isDirectory) {
+            // do not add directories as in-progress
+            return endpoint.getInProgressRepository().add(absoluteFilePath);
+        } else {
+            // .. a directory is always valid at this step
+            return true;
+        }
     }
 
     /**
