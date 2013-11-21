@@ -153,6 +153,12 @@ public class DefaultProducerCacheTest extends ContextTestSupport {
         protected void doShutdown() throws Exception {
             shutdownCounter.incrementAndGet();
         }
+
+        @Override
+        public boolean isSingleton() {
+            // endpoint decides if we are singleton
+            return getEndpoint().isSingleton();
+        }
     }
 
 }
