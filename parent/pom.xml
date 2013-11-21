@@ -184,7 +184,7 @@
     <ibatis-bundle-version>2.3.4.726_4</ibatis-bundle-version>
     <ibatis-version>2.3.4.726</ibatis-version>
     <ical4j-version>1.0.5.2</ical4j-version>
-    <infinispan-version>6.0.0.CR1</infinispan-version>
+    <infinispan-version>6.0.0.Final</infinispan-version>
     <irclib-bundle-version>1.10_5</irclib-bundle-version>
     <irclib-version>1.10</irclib-version>
     <isorelax-bundle-version>20050913_4</isorelax-bundle-version>
@@ -208,6 +208,7 @@
     <jaxen-version>1.1.4</jaxen-version>
     <jboss-javaee-6-version>1.0.0.Final</jboss-javaee-6-version>
     <jboss-logging-version>3.1.3.GA</jboss-logging-version>
+    <jboss-marshalling-version>1.3.18.GA</jboss-marshalling-version>
     <jclouds-version>1.6.2-incubating</jclouds-version>
     <!-- jclouds must use this guava version -->
     <jclouds-google-guava-version>14.0.1</jclouds-google-guava-version>
@@ -221,6 +222,7 @@
     <jettison-version>1.3.4</jettison-version>
     <jexcelapi-bundle-version>2.4.2_4</jexcelapi-bundle-version>
     <jexcelapi-version>2.4.2</jexcelapi-version>
+    <jgroups-version>3.4.1.Final</jgroups-version>
     <jibx-version>1.2.5</jibx-version>
     <jing-bundle-version>20030619_5</jing-bundle-version>
     <jing-version>20030619</jing-version>
