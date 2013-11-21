@@ -20,7 +20,6 @@ import java.net.URLDecoder;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.Expression;
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.spi.Language;
 import org.apache.camel.util.ObjectHelper;
@@ -49,7 +48,6 @@ public class LanguageComponent extends DefaultComponent {
         }
         Language language = getCamelContext().resolveLanguage(name);
 
-        Expression expression = null;
         String resourceUri = null;
         String resource = script;
         if (resource != null) {
@@ -61,10 +59,14 @@ public class LanguageComponent extends DefaultComponent {
                 resourceUri = resource;
             } else {
                 // the script is provided as text in the uri, so decode to utf-8
-                expression = language.createExpression(URLDecoder.decode(script, "UTF-8"));
+                script = URLDecoder.decode(script, "UTF-8");
             }
         }
 
-        return new LanguageEndpoint(uri, this, language, expression, resourceUri);
+        LanguageEndpoint endpoint = new LanguageEndpoint(uri, this, language, null, resourceUri);
+        endpoint.setScript(script);
+        setProperties(endpoint, parameters);
+        return endpoint;
     }
+
 }
