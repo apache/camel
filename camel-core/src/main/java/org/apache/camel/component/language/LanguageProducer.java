@@ -24,6 +24,7 @@ import org.apache.camel.Expression;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.ResourceHelper;
 import org.apache.camel.util.ServiceHelper;
 
 /**
@@ -49,27 +50,43 @@ public class LanguageProducer extends DefaultProducer {
             }
         }
         // if not fallback to use expression from endpoint
-        if (exp == null) {
+        if (exp == null && getEndpoint().isCacheScript()) {
             exp = getEndpoint().getExpression();
         }
 
         // fallback and use resource uri from endpoint
         if (exp == null) {
-            if (getEndpoint().getResourceUri() != null) {
-                // load the resource
-                String script;
-                InputStream is = getEndpoint().getResourceAsInputStream();
+            String script = getEndpoint().getScript();
+
+            if (script == null && getEndpoint().getResourceUri() == null) {
+                // no script to execute
+                throw new CamelExchangeException("No script to evaluate", exchange);
+            }
+
+            // the script can be a resource from the endpoint,
+            // or refer to a resource itself
+            // or just be a plain string
+            InputStream is = null;
+            if (script == null) {
+                is = getEndpoint().getResourceAsInputStream();
+            } else if (ResourceHelper.hasScheme(script)) {
+                is = ResourceHelper.resolveMandatoryResourceAsInputStream(getEndpoint().getCamelContext().getClassResolver(), script);
+            }
+            if (is != null) {
                 try {
                     script = getEndpoint().getCamelContext().getTypeConverter().convertTo(String.class, exchange, is);
                 } finally {
                     IOHelper.close(is);
                 }
+            }
+
+            if (script != null) {
                 // create the expression from the script
                 exp = getEndpoint().getLanguage().createExpression(script);
                 // expression was resolved from resource
                 getEndpoint().setContentResolvedFromResource(true);
                 // if we cache then set this as expression on endpoint so we don't re-create it again
-                if (getEndpoint().isContentCache()) {
+                if (getEndpoint().isCacheScript()) {
                     getEndpoint().setExpression(exp);
                 }
             } else {
@@ -85,7 +102,7 @@ public class LanguageProducer extends DefaultProducer {
             result = exp.evaluate(exchange, Object.class);
             log.debug("Evaluated expression as: {} with: {}", result, exchange);
         } finally {
-            if (!getEndpoint().isContentCache()) {
+            if (!getEndpoint().isCacheScript()) {
                 // some languages add themselves as a service which we then need to remove if we are not cached
                 ServiceHelper.stopService(exp);
                 getEndpoint().getCamelContext().removeService(exp);
