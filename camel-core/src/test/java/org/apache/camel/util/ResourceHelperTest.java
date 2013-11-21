@@ -16,6 +16,7 @@
  */
 package org.apache.camel.util;
 
+import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.InputStream;
 import java.net.URL;
@@ -36,6 +37,24 @@ public class ResourceHelperTest extends TestSupport {
         context.start();
 
         InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(context.getClassResolver(), "file:src/test/resources/log4j.properties");
+        assertNotNull(is);
+
+        String text = context.getTypeConverter().convertTo(String.class, is);
+        assertNotNull(text);
+        assertTrue(text.contains("log4j"));
+        is.close();
+
+        context.stop();
+    }
+
+    public void testLoadFileWithSpace() throws Exception {
+        CamelContext context = new DefaultCamelContext();
+        context.start();
+
+        createDirectory("target/my space");
+        FileUtil.copyFile(new File("src/test/resources/log4j.properties"), new File("target/my space/log4j.properties"));
+
+        InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(context.getClassResolver(), "file:target/my%20space/log4j.properties");
         assertNotNull(is);
 
         String text = context.getTypeConverter().convertTo(String.class, is);
