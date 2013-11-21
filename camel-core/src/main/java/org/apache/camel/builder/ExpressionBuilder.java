@@ -37,6 +37,7 @@ import org.apache.camel.Expression;
 import org.apache.camel.InvalidPayloadException;
 import org.apache.camel.Message;
 import org.apache.camel.NoSuchEndpointException;
+import org.apache.camel.NoSuchLanguageException;
 import org.apache.camel.Producer;
 import org.apache.camel.component.bean.BeanInvocation;
 import org.apache.camel.component.properties.PropertiesComponent;
@@ -688,6 +689,40 @@ public final class ExpressionBuilder {
             @Override
             public String toString() {
                 return "" + value;
+            }
+        };
+    }
+
+    /**
+     * Returns an expression for evaluating the expression/predicate using the given language
+     *
+     * @param expression  the expression or predicate
+     * @return an expression object which will evaluate the expression/predicate using the given language
+     */
+    public static Expression languageExpression(final String language, final String expression) {
+        return new ExpressionAdapter() {
+            public Object evaluate(Exchange exchange) {
+                Language lan = exchange.getContext().resolveLanguage(language);
+                if (lan != null) {
+                    return lan.createExpression(expression).evaluate(exchange, Object.class);
+                } else {
+                    throw new NoSuchLanguageException(language);
+                }
+            }
+
+            @Override
+            public boolean matches(Exchange exchange) {
+                Language lan = exchange.getContext().resolveLanguage(language);
+                if (lan != null) {
+                    return lan.createPredicate(expression).matches(exchange);
+                } else {
+                    throw new NoSuchLanguageException(language);
+                }
+            }
+
+            @Override
+            public String toString() {
+                return "language[" + language + ":" + expression + "]";
             }
         };
     }
