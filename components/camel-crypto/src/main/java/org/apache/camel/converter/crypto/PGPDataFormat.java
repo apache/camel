@@ -26,7 +26,10 @@ import java.security.NoSuchProviderException;
 import java.security.SecureRandom;
 import java.security.Security;
 import java.security.SignatureException;
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.converter.stream.CachedOutputStream;
@@ -78,6 +81,7 @@ public class PGPDataFormat extends ServiceSupport implements DataFormat {
     public static final String KEY_FILE_NAME = "CamelPGPDataFormatKeyFileName";
     public static final String ENCRYPTION_KEY_RING = "CamelPGPDataFormatEncryptionKeyRing";
     public static final String KEY_USERID = "CamelPGPDataFormatKeyUserid";
+    public static final String KEY_USERIDS = "CamelPGPDataFormatKeyUserids";
     public static final String KEY_PASSWORD = "CamelPGPDataFormatKeyPassword";
     public static final String SIGNATURE_KEY_FILE_NAME = "CamelPGPDataFormatSignatureKeyFileName";
     public static final String SIGNATURE_KEY_RING = "CamelPGPDataFormatSignatureKeyRing";
@@ -85,6 +89,7 @@ public class PGPDataFormat extends ServiceSupport implements DataFormat {
     public static final String SIGNATURE_KEY_PASSWORD = "CamelPGPDataFormatSignatureKeyPassword";
     public static final String ENCRYPTION_ALGORITHM = "CamelPGPDataFormatEncryptionAlgorithm";
     public static final String SIGNATURE_HASH_ALGORITHM = "CamelPGPDataFormatSignatureHashAlgorithm";
+    public static final String COMPRESSION_ALGORITHM = "CamelPGPDataFormatCompressionAlgorithm";
 
     private static final Logger LOG = LoggerFactory.getLogger(PGPDataFormat.class);
 
@@ -95,43 +100,30 @@ public class PGPDataFormat extends ServiceSupport implements DataFormat {
     private String provider = BC;
 
     // encryption / decryption key info (required)
-    private String keyUserid;
-    private String password;
+    private String keyUserid; // only for encryption
+    //in addition you can specify further User IDs, in this case the symmetric key is encrypted by several public keys corresponding to the User Ids
+    private List<String> keyUserids; //only for encryption;
+    private String password; // only for decryption
     private String keyFileName;
     // alternatively to the file name you can specify the key ring as byte array
     private byte[] encryptionKeyRing;
 
     // signature / verification key info (optional)
-    private String signatureKeyUserid;
-    private String signaturePassword;
+    private String signatureKeyUserid; // for encryption
+    private String signaturePassword; // for encryption
     private String signatureKeyFileName;
     // alternatively to the signature key file name you can specify the signature key ring as byte array
     private byte[] signatureKeyRing;
 
-    private boolean armored;
-    private boolean integrity = true;
+    private boolean armored; // for encryption
+    private boolean integrity = true; // for encryption
 
-    /**
-     * Digest algorithm for signing (marshal). Possible values are defined in
-     * {@link HashAlgorithmTags}. Default value is SHA1.
-     */
-    private int hashAlgorithm = HashAlgorithmTags.SHA1;
+    private int hashAlgorithm = HashAlgorithmTags.SHA1; // for encryption
 
-    /**
-     * Symmetric key algorithm for encryption (marschal). Possible values are
-     * defined in {@link SymmetricKeyAlgorithmTags}. Default value is CAST5.
-     */
-    private int algorithm = SymmetricKeyAlgorithmTags.CAST5;
+    private int algorithm = SymmetricKeyAlgorithmTags.CAST5; // for encryption
 
-    /**
-     * If no passphrase can be found from the parameter <tt>password</tt> or
-     * <tt>signaturePassword</tt> or from the header
-     * {@link #SIGNATURE_KEY_PASSWORD} or {@link #KEY_PASSWORD} then we try to
-     * get the password from the passphrase accessor. This is especially useful
-     * in the decrypt case, where we chose the private key according to the key
-     * Id stored in the encrypted data. So in this case we do not know the user
-     * Id in advance.
-     */
+    private int compressionAlgorithm = CompressionAlgorithmTags.ZIP; // for encryption
+
     private PGPPassphraseAccessor passphraseAccessor;
 
     public PGPDataFormat() {
@@ -149,16 +141,19 @@ public class PGPDataFormat extends ServiceSupport implements DataFormat {
         return exchange.getIn().getHeader(KEY_USERID, getKeyUserid(), String.class);
     }
 
+    @SuppressWarnings("unchecked")
+    protected List<String> findKeyUserids(Exchange exchange) {
+        return exchange.getIn().getHeader(KEY_USERIDS, getKeyUserids(), List.class);
+    }
+
     protected String findKeyPassword(Exchange exchange) {
-        String keyPassword = exchange.getIn().getHeader(KEY_PASSWORD, getPassword(), String.class);
-        if (keyPassword != null) {
-            return keyPassword;
-        }
-        if (passphraseAccessor != null) {
-            return passphraseAccessor.getPassphrase(findKeyUserid(exchange));
-        } else {
-            return null;
-        }
+        return exchange.getIn().getHeader(KEY_PASSWORD, getPassword(), String.class);
+        // the following lines are not needed because the passphrase accessor is taken into account later in the decryption case
+        //        if (passphraseAccessor != null) {
+        //            return passphraseAccessor.getPassphrase(findKeyUserid(exchange));
+        //        } else {
+        //            return null;
+        //        }
     }
 
     protected String findSignatureKeyFileName(Exchange exchange) {
@@ -185,6 +180,10 @@ public class PGPDataFormat extends ServiceSupport implements DataFormat {
         }
     }
 
+    protected int findCompressionAlgorithm(Exchange exchange) {
+        return exchange.getIn().getHeader(COMPRESSION_ALGORITHM, getCompressionAlgorithm(), Integer.class);
+    }
+
     protected int findAlgorithm(Exchange exchange) {
         return exchange.getIn().getHeader(ENCRYPTION_ALGORITHM, getAlgorithm(), Integer.class);
     }
@@ -194,10 +193,12 @@ public class PGPDataFormat extends ServiceSupport implements DataFormat {
     }
 
     public void marshal(Exchange exchange, Object graph, OutputStream outputStream) throws Exception {
-        PGPPublicKey key = PGPDataFormatUtil.findPublicKey(exchange.getContext(), findKeyFileName(exchange),
-                findEncryptionKeyRing(exchange), findKeyUserid(exchange), true);
-        if (key == null) {
-            throw new IllegalArgumentException("Public key is null, cannot proceed");
+        List<String> userids = determineEncryptionUserIds(exchange);
+        List<PGPPublicKey> keys = PGPDataFormatUtil.findPublicKeys(exchange.getContext(), findKeyFileName(exchange),
+                findEncryptionKeyRing(exchange), userids, true);
+        if (keys.isEmpty()) {
+            throw new IllegalArgumentException("Cannot PGP encrypt message. No public encryption key found for the User Ids " + userids
+                    + " in the public keyring. Either specify other User IDs or add correct public keys to the keyring.");
         }
 
         InputStream input = ExchangeHelper.convertToMandatoryType(exchange, InputStream.class, graph);
@@ -208,10 +209,13 @@ public class PGPDataFormat extends ServiceSupport implements DataFormat {
 
         PGPEncryptedDataGenerator encGen = new PGPEncryptedDataGenerator(new JcePGPDataEncryptorBuilder(findAlgorithm(exchange))
                 .setWithIntegrityPacket(integrity).setSecureRandom(new SecureRandom()).setProvider(getProvider()));
-        encGen.addMethod(new JcePublicKeyKeyEncryptionMethodGenerator(key));
+        // several keys can be added
+        for (PGPPublicKey key : keys) {
+            encGen.addMethod(new JcePublicKeyKeyEncryptionMethodGenerator(key));
+        }
         OutputStream encOut = encGen.open(outputStream, new byte[BUFFER_SIZE]);
 
-        PGPCompressedDataGenerator comData = new PGPCompressedDataGenerator(CompressionAlgorithmTags.ZIP);
+        PGPCompressedDataGenerator comData = new PGPCompressedDataGenerator(findCompressionAlgorithm(exchange));
         OutputStream comOut = new BufferedOutputStream(comData.open(encOut));
 
         PGPSignatureGenerator sigGen = createSignatureGenerator(exchange, comOut);
@@ -244,6 +248,28 @@ public class PGPDataFormat extends ServiceSupport implements DataFormat {
         }
     }
 
+    public List<String> determineEncryptionUserIds(Exchange exchange) {
+        String userid = findKeyUserid(exchange);
+        List<String> userids = findKeyUserids(exchange);
+        // merge them together
+        List<String> result;
+        if (userid != null) {
+            if (userids == null || userids.isEmpty()) {
+                result = Collections.singletonList(userid);
+            } else {
+                result = new ArrayList<String>(userids.size() + 1);
+                result.add(userid);
+                result.addAll(userids);
+            }
+        } else {
+            if (userids == null || userids.isEmpty()) {
+                throw new IllegalStateException("Cannot PGP encrypt message. No User ID of the public key specified.");
+            }
+            result = userids;
+        }
+        return result;
+    }
+
     protected PGPSignatureGenerator createSignatureGenerator(Exchange exchange, OutputStream out) throws IOException, PGPException,
             NoSuchProviderException, NoSuchAlgorithmException {
 
@@ -259,12 +285,16 @@ public class PGPDataFormat extends ServiceSupport implements DataFormat {
         PGPSecretKey sigSecretKey = PGPDataFormatUtil.findSecretKey(exchange.getContext(), sigKeyFileName, sigKeyRing, sigKeyPassword,
                 sigKeyUserid, getProvider());
         if (sigSecretKey == null) {
-            throw new IllegalArgumentException("Signature secret key is null, cannot proceed");
+            throw new IllegalArgumentException(
+                    String.format(
+                            "Cannot PGP encrypt message. No secret key found for User ID %s. Either add a key with this User ID to the secret keyring or change the configured User ID.",
+                            sigKeyUserid));
         }
 
         PGPPrivateKey sigPrivateKey = sigSecretKey.extractPrivateKey(new JcePBESecretKeyDecryptorBuilder().setProvider(getProvider())
                 .build(sigKeyPassword.toCharArray()));
         if (sigPrivateKey == null) {
+            // this exception will never happen
             throw new IllegalArgumentException("Signature private key is null, cannot proceed");
         }
 
@@ -401,7 +431,8 @@ public class PGPDataFormat extends ServiceSupport implements DataFormat {
     }
 
     /**
-     * Sets if the encrypted file should be written in ascii visible text
+     * Sets if the encrypted file should be written in ascii visible text (for
+     * marshaling).
      */
     public void setArmored(boolean armored) {
         this.armored = armored;
@@ -412,7 +443,8 @@ public class PGPDataFormat extends ServiceSupport implements DataFormat {
     }
 
     /**
-     * Whether or not to add a integrity check/sign to the encrypted file
+     * Whether or not to add an integrity check/sign to the encrypted file for
+     * marshaling.
      */
     public void setIntegrity(boolean integrity) {
         this.integrity = integrity;
@@ -423,7 +455,11 @@ public class PGPDataFormat extends ServiceSupport implements DataFormat {
     }
 
     /**
-     * Userid of the key used to encrypt/decrypt
+     * Userid of the key used to encrypt. If you want to encrypt with several
+     * keys then use the method {@link #setKeyUserids(List<String>)}. The User
+     * ID of this method and the User IDs of the method {@link
+     * #setKeyUserids(List<String>)} will be merged together and the
+     * corresponding public keys will be used for the encryption.
      */
     public void setKeyUserid(String keyUserid) {
         this.keyUserid = keyUserid;
@@ -433,8 +469,25 @@ public class PGPDataFormat extends ServiceSupport implements DataFormat {
         return keyUserid;
     }
 
+    public List<String> getKeyUserids() {
+        return keyUserids;
+    }
+
     /**
-     * filename of the keyring that will be used, classpathResource
+     * KeyUserIds used to determine the public keys for encryption. If you just
+     * have one User ID, then you can also use the method
+     * {@link #setKeyUserid(String)} or this method. The User ID specified in
+     * {@link #setKeyUserid(String)} and in this method will be merged together
+     * and the corresponding public keys will be used for the encryption.
+     */
+    public void setKeyUserids(List<String> keyUserids) {
+        this.keyUserids = keyUserids;
+    }
+
+    /**
+     * Filename of the keyring that will be used for the encryption/decryption,
+     * classpathResource. Alternatively you can provide the keyring also as byte
+     * array; see method {@link #setEncryptionKeyRing(byte[])}.
      */
     public void setKeyFileName(String keyFileName) {
         this.keyFileName = keyFileName;
@@ -445,7 +498,9 @@ public class PGPDataFormat extends ServiceSupport implements DataFormat {
     }
 
     /**
-     * Password used to open the private keyring
+     * Password used to open the private key in secret keyring for decryption
+     * (unmarshaling). See also
+     * {@link #setPassphraseAccessor(PGPPassphraseAccessor)}.
      */
     public void setPassword(String password) {
         this.password = password;
@@ -456,7 +511,7 @@ public class PGPDataFormat extends ServiceSupport implements DataFormat {
     }
 
     /**
-     * Userid of the signature key used to sign/verify
+     * Userid of the signature key used to sign (marshal).
      */
     public void setSignatureKeyUserid(String signatureKeyUserid) {
         this.signatureKeyUserid = signatureKeyUserid;
@@ -467,7 +522,7 @@ public class PGPDataFormat extends ServiceSupport implements DataFormat {
     }
 
     /**
-     * filename of the signature keyring that will be used, classpathResource
+     * Filename of the signature keyring that will be used, classpathResource.
      */
     public void setSignatureKeyFileName(String signatureKeyFileName) {
         this.signatureKeyFileName = signatureKeyFileName;
@@ -478,7 +533,7 @@ public class PGPDataFormat extends ServiceSupport implements DataFormat {
     }
 
     /**
-     * Password used to open the signature private keyring
+     * Password used to open the signature private key during marshaling.
      */
     public void setSignaturePassword(String signaturePassword) {
         this.signaturePassword = signaturePassword;
@@ -492,6 +547,11 @@ public class PGPDataFormat extends ServiceSupport implements DataFormat {
         return encryptionKeyRing;
     }
 
+    /**
+     * Keyring used for encryption/decryption as byte array. Alternatively you
+     * can also provide the keyring as a file; see method
+     * {@link #setKeyFileName(String)}.
+     */
     public void setEncryptionKeyRing(byte[] encryptionKeyRing) {
         this.encryptionKeyRing = encryptionKeyRing;
     }
@@ -500,6 +560,11 @@ public class PGPDataFormat extends ServiceSupport implements DataFormat {
         return signatureKeyRing;
     }
 
+    /**
+     * Keyring used for signing/verifying as byte array. Alternatively you can
+     * also provide the keyring as a file; see method
+     * {@link #setSignatureKeyFileName(String)}.
+     */
     public void setSignatureKeyRing(byte[] signatureKeyRing) {
         this.signatureKeyRing = signatureKeyRing;
     }
@@ -508,14 +573,37 @@ public class PGPDataFormat extends ServiceSupport implements DataFormat {
         return provider;
     }
 
+    /**
+     * Java Cryptography Extension (JCE) provider, default is Bouncy Castle
+     * ("BC"). Alternatively you can use, for example, the IAIK JCE provider; in
+     * this case the provider must be registered beforehand and the Bouncy
+     * Castle provider must not be registered beforehand. The Sun JCE provider
+     * does not work.
+     */
     public void setProvider(String provider) {
         this.provider = provider;
+    }
+
+    public int getCompressionAlgorithm() {
+        return compressionAlgorithm;
+    }
+
+    /**
+     * Compression algorithm used during marshaling. Possible values are defined
+     * in {@link CompressionAlgorithmTags}. Default value is ZIP.
+     */
+    public void setCompressionAlgorithm(int compressionAlgorithm) {
+        this.compressionAlgorithm = compressionAlgorithm;
     }
 
     public int getHashAlgorithm() {
         return hashAlgorithm;
     }
 
+    /**
+     * Digest algorithm for signing (marshaling). Possible values are defined in
+     * {@link HashAlgorithmTags}. Default value is SHA1.
+     */
     public void setHashAlgorithm(int hashAlgorithm) {
         this.hashAlgorithm = hashAlgorithm;
     }
@@ -524,6 +612,10 @@ public class PGPDataFormat extends ServiceSupport implements DataFormat {
         return algorithm;
     }
 
+    /**
+     * Symmetric key algorithm for encryption (marshaling). Possible values are
+     * defined in {@link SymmetricKeyAlgorithmTags}. Default value is CAST5.
+     */
     public void setAlgorithm(int algorithm) {
         this.algorithm = algorithm;
     }
@@ -532,6 +624,15 @@ public class PGPDataFormat extends ServiceSupport implements DataFormat {
         return passphraseAccessor;
     }
 
+    /**
+     * Alternative way to provide the passphrases. Especially useful for the
+     * unmarshal (decryption) case . If no passphrase can be found from the
+     * parameter <tt>password</tt> or <tt>signaturePassword</tt> or from the
+     * header {@link #SIGNATURE_KEY_PASSWORD} or {@link #KEY_PASSWORD} then we
+     * try to get the password from the passphrase accessor. This is especially
+     * useful in the decrypt case, where we chose the private key according to
+     * the key Id stored in the encrypted data.
+     */
     public void setPassphraseAccessor(PGPPassphraseAccessor passphraseAccessor) {
         this.passphraseAccessor = passphraseAccessor;
     }
