@@ -39,14 +39,7 @@ public class DropboxConfiguration {
     }
 
     public void createClient() {
-        /*TODO clientIdentifier
-        according to the dropbox API doc:
-        If you're the author a higher-level library on top of the basic SDK,
-        and the "Photo Edit" Android app is using your library to access Dropbox,
-        you should append your library's name and version to form the full identifier.
-        For example, if your library is called "File Picker",
-        you might set this field to: "PhotoEditAndroid/2.4 FilePicker/0.1-beta"
-         */
+        /*TODO clientIdentifier*/
         String clientIdentifier = "camel-dropbox/1.0";
 
         DbxAppInfo appInfo = new DbxAppInfo(appKey, appSecret);
@@ -55,7 +48,7 @@ public class DropboxConfiguration {
         DbxClient client = new DbxClient(config, accessToken);
         //TODO define custom exception
         if(client == null) {
-            throw new IllegalStateException("cant establish Dropbox conenction!");
+            throw new IllegalStateException("can't establish a Dropbox conenction!");
         }
         this.client = client;
 
