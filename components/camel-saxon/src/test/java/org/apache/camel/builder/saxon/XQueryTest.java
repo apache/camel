@@ -42,5 +42,8 @@ public class XQueryTest extends Assert {
 
         Document doc = (Document) result;
         assertEquals("Root document element name", "stella", doc.getDocumentElement().getLocalName());
+        
+        result = xquery(".//product[@type = 'beer']/*").evaluate(exchange, String.class);
+        assertEquals("Get a wrong result", "<stella/>", result);
     }
 }

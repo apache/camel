@@ -27,6 +27,9 @@ public interface ManagedProcessorMBean extends ManagedPerformanceCounterMBean {
     @ManagedAttribute(description = "Camel ID")
     String getCamelId();
 
+    @ManagedAttribute(description = "Camel ManagementName")
+    String getCamelManagementName();
+
     @ManagedAttribute(description = "Route ID")
     String getRouteId();
 

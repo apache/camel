@@ -45,20 +45,6 @@
     <camel.osgi.export.service>org.apache.camel.spi.LanguageResolver;language=sql</camel.osgi.export.service>
   </properties>
 
-  <repositories>
-    <repository>
-      <id>fusesource.m2</id>
-      <name>Fusesource Release Repository</name>
-      <url>http://repo.fusesource.com/maven2</url>
-      <snapshots>
-        <enabled>false</enabled>
-      </snapshots>
-      <releases>
-        <enabled>true</enabled>
-      </releases>
-    </repository>
-  </repositories>
-
   <dependencies>
 
     <dependency>
@@ -67,14 +53,14 @@
     </dependency>
 
     <dependency>
-      <groupId>net.sf.josql</groupId>
-      <artifactId>josql</artifactId>
-      <version>${josql-version}</version>
+      <groupId>org.apache.servicemix.bundles</groupId>
+      <artifactId>org.apache.servicemix.bundles.josql</artifactId>
+      <version>${josql-bundle-version}</version>
     </dependency>
     <dependency>
-      <groupId>net.sf.josql</groupId>
-      <artifactId>gentlyweb-utils</artifactId>
-      <version>${josql-version}</version>
+      <groupId>org.apache.servicemix.bundles</groupId>
+      <artifactId>org.apache.servicemix.bundles.gentlyweb-utils</artifactId>
+      <version>${gentlyweb-bundle-version}</version>
     </dependency>
 
     <!-- test dependencies -->

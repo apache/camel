@@ -47,9 +47,6 @@ public interface Registry {
 
     /**
      * Finds services in the registry by their type.
-     * <p/>
-     * <b>Note:</b> Not all registry implementations support this feature,
-     * such as the {@link org.apache.camel.impl.JndiRegistry}.
      *
      * @param type  the type of the registered services
      * @return the types found, with their ids as the key. Returns an empty Map if none found.
@@ -58,9 +55,6 @@ public interface Registry {
 
     /**
      * Finds services in the registry by their type.
-     * <p/>
-     * <b>Note:</b> Not all registry implementations support this feature,
-     * such as the {@link org.apache.camel.impl.JndiRegistry}.
      *
      * @param type  the type of the registered services
      * @return the types found. Returns an empty Set if none found.

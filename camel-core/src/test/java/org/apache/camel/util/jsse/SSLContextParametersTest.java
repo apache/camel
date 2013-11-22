@@ -17,17 +17,38 @@
 package org.apache.camel.util.jsse;
 
 import java.util.Arrays;
+import java.util.Collection;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.regex.Pattern;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLEngine;
 import javax.net.ssl.SSLServerSocket;
 import javax.net.ssl.SSLSocket;
 
+import junit.framework.AssertionFailedError;
+
 import org.apache.camel.CamelContext;
 
 public class SSLContextParametersTest extends AbstractJsseParametersTest {
+    
+    public void testFilter() {
+        SSLContextParameters parameters = new SSLContextParameters();
+        
+        Collection<String> result = parameters.filter(null, 
+                          Arrays.asList(new String[]{"SSLv3", "TLSv1", "TLSv1.1"}),
+                          Arrays.asList(new Pattern[]{Pattern.compile("TLS.*")}),
+                          Arrays.asList(new Pattern[0]));
+        assertEquals(2, result.size());
+        assertStartsWith(result, "TLS");
+        try {
+            assertStartsWith((String[]) null, "TLS");
+            fail("We chould got an exception here!");
+        } catch (AssertionFailedError ex) {
+            assertEquals("Get a wrong message", "The values should not be null", ex.getMessage());
+        }
+    }
     
     public void testPropertyPlaceholders() throws Exception {
         
@@ -173,6 +194,8 @@ public class SSLContextParametersTest extends AbstractJsseParametersTest {
         socket = (SSLSocket) context.getSocketFactory().createSocket();
         serverSocket = (SSLServerSocket) context.getServerSocketFactory().createServerSocket();
         
+        assertEquals(0, engine.getEnabledCipherSuites().length);
+        assertEquals(0, socket.getEnabledCipherSuites().length);
         assertEquals(0, serverSocket.getEnabledCipherSuites().length);
         
         // Csp on server params
@@ -474,39 +497,41 @@ public class SSLContextParametersTest extends AbstractJsseParametersTest {
         
         SSLContext context = scp.createSSLContext();
         
+        CipherSuitesParameters csp = new CipherSuitesParameters();
+        scp.setCipherSuites(csp);
+        
         SSLEngine engine = context.createSSLEngine();
         SSLSocket socket = (SSLSocket) context.getSocketFactory().createSocket();
         SSLServerSocket serverSocket = (SSLServerSocket) context.getServerSocketFactory().createServerSocket();
         
-        assertTrue(Arrays.equals(controlEngine.getEnabledProtocols(), engine.getEnabledProtocols()));
-        assertTrue(Arrays.equals(controlSocket.getEnabledProtocols(), socket.getEnabledProtocols()));
-        checkProtocols(controlServerSocket.getEnabledProtocols(), serverSocket.getEnabledProtocols());
+        assertTrue(Arrays.equals(controlEngine.getEnabledCipherSuites(), engine.getEnabledCipherSuites()));
+        assertTrue(Arrays.equals(controlSocket.getEnabledCipherSuites(), socket.getEnabledCipherSuites()));
+        assertTrue(Arrays.equals(this.getDefaultCipherSuiteIncludes(controlServerSocket.getSupportedCipherSuites()), serverSocket.getEnabledCipherSuites()));
         
-        // empty filter
         
+        // empty filter 
         FilterParameters filter = new FilterParameters();
-        scp.setSecureSocketProtocolsFilter(filter);
+        scp.setCipherSuitesFilter(filter);
         context = scp.createSSLContext();
         engine = context.createSSLEngine();
         socket = (SSLSocket) context.getSocketFactory().createSocket();
         serverSocket = (SSLServerSocket) context.getServerSocketFactory().createServerSocket();
         
-        assertEquals(0, engine.getEnabledProtocols().length);
-        assertEquals(0, socket.getEnabledProtocols().length);
-        assertEquals(0, serverSocket.getEnabledProtocols().length);
+        assertEquals(0, engine.getEnabledCipherSuites().length);
+        assertEquals(0, socket.getEnabledCipherSuites().length);
+        assertEquals(0, serverSocket.getEnabledCipherSuites().length);
         
         // explicit filter
-        
         filter.getInclude().add(".*");
         context = scp.createSSLContext();
         engine = context.createSSLEngine();
         socket = (SSLSocket) context.getSocketFactory().createSocket();
         serverSocket = (SSLServerSocket) context.getServerSocketFactory().createServerSocket();
         
-        assertTrue(Arrays.equals(controlEngine.getEnabledProtocols(), engine.getEnabledProtocols()));
-        assertTrue(Arrays.equals(controlSocket.getEnabledProtocols(), socket.getEnabledProtocols()));
-        checkProtocols(controlServerSocket.getEnabledProtocols(), serverSocket.getEnabledProtocols());
-
+        assertEquals(0, engine.getEnabledCipherSuites().length);
+        assertEquals(0, socket.getEnabledCipherSuites().length);
+        assertEquals(0, serverSocket.getEnabledCipherSuites().length);
+        
         // explicit filter with excludes (excludes overrides)
         filter.getExclude().add(".*");
         context = scp.createSSLContext();
@@ -514,26 +539,27 @@ public class SSLContextParametersTest extends AbstractJsseParametersTest {
         socket = (SSLSocket) context.getSocketFactory().createSocket();
         serverSocket = (SSLServerSocket) context.getServerSocketFactory().createServerSocket();
         
-        assertEquals(0, engine.getEnabledProtocols().length);
-        assertEquals(0, socket.getEnabledProtocols().length);
-        assertEquals(0, serverSocket.getEnabledProtocols().length);
+        assertEquals(0, engine.getEnabledCipherSuites().length);
+        assertEquals(0, socket.getEnabledCipherSuites().length);
+        assertEquals(0, serverSocket.getEnabledCipherSuites().length);
         
         // explicit filter single include
         
         filter.getInclude().clear();
         filter.getExclude().clear();
+        csp.getCipherSuite().add("TLS_RSA_WITH_AES_128_CBC_SHA");
         filter.getInclude().add("TLS.*");
         context = scp.createSSLContext();
         engine = context.createSSLEngine();
         socket = (SSLSocket) context.getSocketFactory().createSocket();
         serverSocket = (SSLServerSocket) context.getServerSocketFactory().createServerSocket();
         
-        assertTrue(engine.getEnabledProtocols().length >= 1);
-        assertStartsWith(engine.getEnabledProtocols(), "TLS");
-        assertTrue(socket.getEnabledProtocols().length >= 1);
-        assertStartsWith(socket.getEnabledProtocols(), "TLS");
-        assertTrue(socket.getEnabledProtocols().length >= 1);
-        assertStartsWith(serverSocket.getEnabledProtocols(), "TLS");        
+        assertTrue(engine.getEnabledCipherSuites().length >= 1);
+        assertStartsWith(engine.getEnabledCipherSuites(), "TLS");
+        assertTrue(socket.getEnabledCipherSuites().length >= 1);
+        assertStartsWith(socket.getEnabledCipherSuites(), "TLS");
+        assertTrue(serverSocket.getEnabledCipherSuites().length >= 1);
+        assertStartsWith(serverSocket.getEnabledCipherSuites(), "TLS");
     }
 
     public void testSecureSocketProtocols() throws Exception {
@@ -659,7 +685,6 @@ public class SSLContextParametersTest extends AbstractJsseParametersTest {
         assertEquals(0, serverSocket.getEnabledProtocols().length);
         
         // explicit filter single include
-        
         filter.getInclude().clear();
         filter.getExclude().clear();
         filter.getInclude().add("TLS.*");
@@ -735,8 +760,16 @@ public class SSLContextParametersTest extends AbstractJsseParametersTest {
     }
     
     protected void assertStartsWith(String[] values, String prefix) {
+        assertNotNull("The values should not be null", values);
         for (String value : values) {
-            assertTrue(value.startsWith(prefix));
+            assertTrue(value + " does not start with the prefix " + prefix, value.startsWith(prefix));
+        }
+    }
+    
+    protected void assertStartsWith(Collection<String> values, String prefix) {
+        assertNotNull("The values should not be null", values);
+        for (String value : values) {
+            assertTrue(value + " does not start with the prefix " + prefix, value.startsWith(prefix));
         }
     }
 }

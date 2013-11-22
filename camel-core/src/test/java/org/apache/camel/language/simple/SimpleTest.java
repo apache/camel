@@ -101,6 +101,10 @@ public class SimpleTest extends LanguageTestSupport {
         assertExpression("Hello World", "Hello World");
     }
 
+    public void testNull() throws Exception {
+        assertNull(SimpleLanguage.simple("${null}").evaluate(exchange, Object.class));
+    }
+
     public void testEmptyExpression() throws Exception {
         assertExpression("", "");
         assertExpression(" ", " ");

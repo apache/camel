@@ -18,13 +18,14 @@ You will need to install this example first to your local maven repository with:
 
 This example requires running in Apache Karaf / ServiceMix
 
-To install Apache Camel in Karaf you type in the shell (we use version 2.12.0):
+To install Apache Camel in Karaf you type in the shell (as an example here we make use of
+Camel version 2.12.0):
 
   features:chooseurl camel 2.12.0
-  features:install camel
 
 First you need to install the following features in Karaf/ServiceMix with:
 
+  features:install camel-blueprint
   features:install camel-twitter
   features:install camel-websocket
 

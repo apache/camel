@@ -32,10 +32,8 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ExecutorService;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultConsumer;
-import org.apache.camel.impl.DefaultMessage;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 
@@ -122,6 +120,7 @@ public class StreamConsumer extends DefaultConsumer implements Runnable {
     }
 
     private void readFromStream() throws Exception {
+        long index = 0;
         String line;
         BufferedReader br = initializeStream();
 
@@ -132,7 +131,7 @@ public class StreamConsumer extends DefaultConsumer implements Runnable {
                 LOG.trace("Read line: {}", line);
                 boolean eos = line == null;
                 if (!eos && isRunAllowed()) {
-                    processLine(line);
+                    index = processLine(line, false, index);
                 } else if (eos && isRunAllowed() && endpoint.isRetry()) {
                     //try and re-open stream
                     br = initializeStream();
@@ -147,18 +146,29 @@ public class StreamConsumer extends DefaultConsumer implements Runnable {
         } else {
             // regular read stream once until end of stream
             boolean eos = false;
+            String line2 = null;
             while (!eos && isRunAllowed()) {
                 if (endpoint.getPromptMessage() != null) {
                     doPromptMessage();
                 }
 
-                line = br.readLine();
+                if (line2 == null) {
+                    line = br.readLine();
+                } else {
+                    line = line2;
+                }
                 LOG.trace("Read line: {}", line);
+
                 eos = line == null;
                 if (!eos && isRunAllowed()) {
-                    processLine(line);
+                    // read ahead if there is more data
+                    line2 = br.readLine();
+                    boolean last = line2 == null;
+                    index = processLine(line, last, index);
                 }
             }
+            // EOL so trigger any
+            processLine(null, true, index);
         }
         // important: do not close the reader as it will close the standard system.in etc.
     }
@@ -166,37 +176,34 @@ public class StreamConsumer extends DefaultConsumer implements Runnable {
     /**
      * Strategy method for processing the line
      */
-    protected synchronized void processLine(String line) throws Exception {
+    protected synchronized long processLine(String line, boolean last, long index) throws Exception {
         if (endpoint.getGroupLines() > 0) {
             // remember line
-            lines.add(line);
+            if (line != null) {
+                lines.add(line);
+            }
 
             // should we flush lines?
-            if (lines.size() >= endpoint.getGroupLines()) {
-                // spit out lines
-                Exchange exchange = endpoint.createExchange();
-
-                // create message with the lines
-                Message msg = new DefaultMessage();
+            if (!lines.isEmpty() && (lines.size() >= endpoint.getGroupLines() || last)) {
+                // spit out lines as we hit the size, or it was the last
                 List<String> copy = new ArrayList<String>(lines);
-                msg.setBody(endpoint.getGroupStrategy().groupLines(copy));
-                exchange.setIn(msg);
+                Object body = endpoint.getGroupStrategy().groupLines(copy);
+                // remember to inc index when we create an exchange
+                Exchange exchange = endpoint.createExchange(body, index++, last);
 
                 // clear lines
                 lines.clear();
 
                 getProcessor().process(exchange);
             }
-        } else {
+        } else if (line != null) {
             // single line
-            Exchange exchange = endpoint.createExchange();
-
-            Message msg = new DefaultMessage();
-            msg.setBody(line);
-            exchange.setIn(msg);
-
+            // remember to inc index when we create an exchange
+            Exchange exchange = endpoint.createExchange(line, index++, last);
             getProcessor().process(exchange);
         }
+
+        return index;
     }
 
     /**

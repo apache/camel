@@ -21,6 +21,7 @@ import java.util.List;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.ServiceStatus;
 import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedOperation;
 import org.apache.camel.api.management.ManagedResource;
@@ -64,6 +65,32 @@ public class ZooKeeperEndpoint extends DefaultEndpoint {
 
     ZooKeeperConnectionManager getConnectionManager() {
         return connectionManager;
+    }
+
+    @ManagedAttribute(description = "Camel ID")
+    public String getCamelId() {
+        return getCamelContext().getName();
+    }
+
+    @ManagedAttribute(description = "Camel ManagementName")
+    public String getCamelManagementName() {
+        return getCamelContext().getManagementName();
+    }
+
+    @ManagedAttribute(description = "Endpoint Uri", mask = true)
+    @Override
+    public String getEndpointUri() {
+        return super.getEndpointUri();
+    }
+
+    @ManagedAttribute(description = "Service State")
+    public String getState() {
+        ServiceStatus status = this.getStatus();
+        // if no status exists then its stopped
+        if (status == null) {
+            status = ServiceStatus.Stopped;
+        }
+        return status.name();
     }
 
     @ManagedAttribute

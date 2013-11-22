@@ -20,6 +20,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
@@ -30,7 +31,6 @@ import org.apache.camel.Route;
 import org.apache.camel.spi.ManagementAgent;
 import org.apache.felix.gogo.commands.Argument;
 import org.apache.felix.gogo.commands.Command;
-import org.apache.karaf.shell.console.OsgiCommandSupport;
 import org.apache.karaf.util.StringEscapeUtils;
 
 import static org.apache.camel.util.UnitUtils.printUnitFromBytes;
@@ -39,19 +39,13 @@ import static org.apache.camel.util.UnitUtils.printUnitFromBytes;
  * Command to display detailed information about a Camel context.
  */
 @Command(scope = "camel", name = "context-info", description = "Display detailed information about a Camel context.")
-public class ContextInfo extends OsgiCommandSupport {
+public class ContextInfo extends CamelCommandSupport {
 
     @Argument(index = 0, name = "name", description = "The name of the Camel context", required = true, multiValued = false)
     String name;
 
     @Argument(index = 1, name = "mode", description = "Allows for different display modes (--verbose, etc)", required = false, multiValued = false)
     String mode;
-
-    private CamelController camelController;
-
-    public void setCamelController(CamelController camelController) {
-        this.camelController = camelController;
-    }
 
     public Object doExecute() throws Exception {
         CamelContext camelContext = camelController.getCamelContext(name);
@@ -76,12 +70,14 @@ public class ContextInfo extends OsgiCommandSupport {
         System.out.println(StringEscapeUtils.unescapeJava("\tAuto Startup: " + camelContext.isAutoStartup()));
         System.out.println(StringEscapeUtils.unescapeJava("\tStarting Routes: " + camelContext.isStartingRoutes()));
         System.out.println(StringEscapeUtils.unescapeJava("\tSuspended: " + camelContext.isSuspended()));
+        System.out.println(StringEscapeUtils.unescapeJava("\tShutdown timeout: "
+                + camelContext.getShutdownStrategy().getTimeUnit().toSeconds(camelContext.getShutdownStrategy().getTimeout()) + " sec."));
         System.out.println(StringEscapeUtils.unescapeJava("\tMessage History: " + camelContext.isMessageHistory()));
         System.out.println(StringEscapeUtils.unescapeJava("\tTracing: " + camelContext.isTracing()));
         System.out.println("");
         System.out.println(StringEscapeUtils.unescapeJava("\u001B[1mProperties\u001B[0m"));
-        for (String property : camelContext.getProperties().keySet()) {
-            System.out.println(StringEscapeUtils.unescapeJava("\t" + property + " = " + camelContext.getProperty(property)));
+        for (Map.Entry<String, String> entry : camelContext.getProperties().entrySet()) {
+            System.out.println(StringEscapeUtils.unescapeJava("\t" + entry.getKey() + " = " + entry.getValue()));
         }
 
         System.out.println("");
@@ -98,8 +94,8 @@ public class ContextInfo extends OsgiCommandSupport {
 
         System.out.println("");
         System.out.println(StringEscapeUtils.unescapeJava("\u001B[1mDataformats\u001B[0m"));
-        for (String names : camelContext.getDataFormats().keySet()) {
-            System.out.println(StringEscapeUtils.unescapeJava("\t" + names));
+        for (String name : camelContext.getDataFormats().keySet()) {
+            System.out.println(StringEscapeUtils.unescapeJava("\t" + name));
         }
 
         System.out.println("");

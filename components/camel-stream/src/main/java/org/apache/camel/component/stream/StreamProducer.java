@@ -99,6 +99,7 @@ public class StreamProducer extends DefaultProducer {
         LOG.debug("About to write to file: {}", fileName);
         File f = new File(fileName);
         // will create a new file if missing or append to existing
+        f.getParentFile().mkdirs();
         f.createNewFile();
         return new FileOutputStream(f, true);
     }

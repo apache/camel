@@ -86,7 +86,7 @@ public class ActiveMQUuidGenerator implements UuidGenerator {
                         if (LOG.isTraceEnabled()) {
                             LOG.trace("Closing the server socket failed", ioe);
                         } else {
-                            LOG.warn("Closing the server socket failed" + " due " + ioe.getMessage());
+                            LOG.warn("Closing the server socket failed due " + ioe.getMessage() + ". This exception is ignored.");
                         }
                     }
                 }
@@ -97,6 +97,7 @@ public class ActiveMQUuidGenerator implements UuidGenerator {
         if (hostName == null) {
             hostName = "localhost";
         }
+        hostName = sanitizeHostName(hostName);
 
         if (ObjectHelper.isEmpty(stub)) {
             stub = "-1-" + System.currentTimeMillis() + "-";
@@ -125,6 +126,28 @@ public class ActiveMQUuidGenerator implements UuidGenerator {
      */
     public static String getHostName() {
         return hostName;
+    }
+
+    public static String sanitizeHostName(String hostName) {
+        boolean changed = false;
+
+        StringBuilder sb = new StringBuilder();
+        for (char ch : hostName.toCharArray()) {
+            // only include ASCII chars
+            if (ch < 127) {
+                sb.append(ch);
+            } else {
+                changed = true;
+            }
+        }
+
+        if (changed) {
+            String newHost = sb.toString();
+            LOG.info("Sanitized hostname from: {} to: {}", hostName, newHost);
+            return newHost;
+        } else {
+            return hostName;
+        }
     }
 
     public String generateUuid() {

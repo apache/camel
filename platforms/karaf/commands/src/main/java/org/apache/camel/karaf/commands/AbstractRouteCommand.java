@@ -24,22 +24,15 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Route;
 import org.apache.camel.karaf.commands.internal.RegexUtil;
 import org.apache.felix.gogo.commands.Argument;
-import org.apache.karaf.shell.console.OsgiCommandSupport;
 
 import static org.apache.camel.util.CamelContextHelper.getRouteStartupOrder;
 
-public abstract class AbstractRouteCommand extends OsgiCommandSupport {
+public abstract class AbstractRouteCommand extends CamelCommandSupport {
     @Argument(index = 0, name = "route", description = "The Camel route ID or a wildcard expression", required = true, multiValued = false)
     String route;
 
     @Argument(index = 1, name = "context", description = "The Camel context name.", required = false, multiValued = false)
     String context;
-
-    private CamelController camelController;
-
-    public void setCamelController(CamelController camelController) {
-        this.camelController = camelController;
-    }
 
     public abstract void executeOnRoute(CamelContext camelContext, Route camelRoute) throws Exception;
 

@@ -23,6 +23,9 @@ public interface ManagedErrorHandlerMBean {
     @ManagedAttribute(description = "Camel ID")
     String getCamelId();
 
+    @ManagedAttribute(description = "Camel ManagementName")
+    String getCamelManagementName();
+
     @ManagedAttribute(description = "Does the error handler support redelivery")
     boolean isSupportRedelivery();
 

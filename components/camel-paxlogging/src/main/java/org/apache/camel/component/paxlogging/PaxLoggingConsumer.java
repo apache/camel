@@ -53,6 +53,8 @@ public class PaxLoggingConsumer extends DefaultConsumer implements PaxAppender {
     }
 
     public void doAppend(final PaxLoggingEvent paxLoggingEvent) {
+        // in order to "force" the copy of properties (especially the MDC ones) in the local thread
+        paxLoggingEvent.getProperties();
         executor.execute(new Runnable() {
             public void run() {
                 sendExchange(paxLoggingEvent);

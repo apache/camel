@@ -89,6 +89,14 @@ public final class Builder {
     }
     
     /**
+     * Returns a constant expression
+     */
+    public static ValueBuilder language(String language, String expression) {
+        Expression exp = ExpressionBuilder.languageExpression(language, expression);
+        return new ValueBuilder(exp);
+    }
+
+    /**
      * Returns a simple expression  
      */
     public static ValueBuilder simple(String value) {

@@ -25,6 +25,7 @@ import java.net.Socket;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.util.IOHelper;
 import org.junit.Test;
 
 /**
@@ -96,12 +97,7 @@ public class MinaTcpLineDelimiterUsingPlainSocketTest extends BaseMinaTest {
                 return null;
             }
         } finally {
-            if (is != null) {
-                is.close();
-            }
-            if (os != null) {
-                os.close();
-            }
+            IOHelper.close(is, os);
             soc.close();
         }
 

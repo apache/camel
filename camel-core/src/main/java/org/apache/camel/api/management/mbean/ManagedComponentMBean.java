@@ -29,4 +29,7 @@ public interface ManagedComponentMBean {
     @ManagedAttribute(description = "Camel ID")
     String getCamelId();
 
+    @ManagedAttribute(description = "Camel ManagementName")
+    String getCamelManagementName();
+
 }

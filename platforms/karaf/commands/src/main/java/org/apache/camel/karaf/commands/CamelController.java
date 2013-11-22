@@ -19,6 +19,7 @@ package org.apache.camel.karaf.commands;
 import java.util.List;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Endpoint;
 import org.apache.camel.Route;
 import org.apache.camel.model.RouteDefinition;
 
@@ -60,14 +61,6 @@ public interface CamelController {
     List<Route> getRoutes(String camelContextName, String filter);
 
     /**
-     * Get all route definitions. If Camel context name is null, all route definitions from all contexts are listed.
-     *
-     * @param camelContextName the Camel context name. If null, all contexts are considered.
-     * @return the list of the Camel route definitions.
-     */
-    List<RouteDefinition> getRouteDefinitions(String camelContextName);
-
-    /**
      * Return the route with the given route ID.
      *
      * @param routeId the route ID.
@@ -84,5 +77,13 @@ public interface CamelController {
      * @return the <code>RouteDefinition</code>.
      */
     RouteDefinition getRouteDefinition(String routeId, String camelContextName);
+
+    /**
+     * Return the endpoints
+     *
+     * @param camelContextName the Camel context.
+     * @return the endpoints
+     */
+    List<Endpoint> getEndpoints(String camelContextName);
 
 }

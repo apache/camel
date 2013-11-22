@@ -104,6 +104,30 @@ public abstract class CamelServletContextListener<R extends Registry> implements
             throw new RuntimeException("Error setting init parameters on CamelContext.", e);
         }
 
+        // any custom CamelContextLifecycle
+        String lifecycle = (String) map.remove("CamelContextLifecycle");
+        if (lifecycle != null) {
+            try {
+                Class<CamelContextLifecycle<R>> clazz = CastUtils.cast(camelContext.getClassResolver().resolveMandatoryClass(lifecycle, CamelContextLifecycle.class));
+                camelContextLifecycle = camelContext.getInjector().newInstance(clazz);
+            } catch (ClassNotFoundException e) {
+                throw new RuntimeException("Error creating CamelContextLifecycle class with name " + lifecycle, e);
+            }
+        }
+        // just log if we could not use all the parameters, as they may be used by others
+        if (!map.isEmpty()) {
+            LOG.info("There are {} ServletContext init parameters, unknown to Camel. Maybe they are used by other frameworks? [{}]", map.size(), map);
+        }
+
+        try {
+            if (camelContextLifecycle != null) {
+                camelContextLifecycle.beforeAddRoutes(camelContext, registry);
+            }
+        } catch (Exception e) {
+            LOG.error("Error before adding routes to CamelContext.", e);
+            throw new RuntimeException("Error before adding routes to CamelContext.", e);
+        }
+
         // get the routes and add to the CamelContext
         List<Object> routes = extractRoutes(map);
         for (Object route : routes) {
@@ -139,20 +163,13 @@ public abstract class CamelServletContextListener<R extends Registry> implements
             }
         }
 
-        // any custom CamelContextLifecycle
-        String lifecycle = (String) map.remove("CamelContextLifecycle");
-        if (lifecycle != null) {
-            try {
-                Class<CamelContextLifecycle<R>> clazz = CastUtils.cast(camelContext.getClassResolver().resolveMandatoryClass(lifecycle, CamelContextLifecycle.class));
-                camelContextLifecycle = camelContext.getInjector().newInstance(clazz);
-            } catch (ClassNotFoundException e) {
-                throw new RuntimeException("Error creating CamelContextLifecycle class with name " + lifecycle, e);
+        try {
+            if (camelContextLifecycle != null) {
+                camelContextLifecycle.afterAddRoutes(camelContext, registry);
             }
-        }
-
-        // just log if we could not use all the parameters, as they may be used by others
-        if (!map.isEmpty()) {
-            LOG.info("There are {} ServletContext init parameters, unknown to Camel. Maybe they are used by other frameworks? [{}]", map.size(), map);
+        } catch (Exception e) {
+            LOG.error("Error after adding routes to CamelContext.", e);
+            throw new RuntimeException("Error after adding routes to CamelContext.", e);
         }
 
         try {

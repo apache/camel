@@ -19,15 +19,12 @@ package org.apache.camel.component.directvm;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultAsyncProducer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * The direct-vm producer
  */
 public class DirectVmProducer extends DefaultAsyncProducer {
 
-    private static final Logger LOG = LoggerFactory.getLogger(DirectVmProducer.class);
     private DirectVmEndpoint endpoint;
 
     public DirectVmProducer(DirectVmEndpoint endpoint) {
@@ -40,7 +37,6 @@ public class DirectVmProducer extends DefaultAsyncProducer {
         // send to consumer
         DirectVmConsumer consumer = endpoint.getComponent().getConsumer(endpoint);
         if (consumer == null) {
-            LOG.warn("No consumers available on endpoint: " + endpoint + " to process: " + exchange);
             throw new DirectVmConsumerNotAvailableException("No consumers available on endpoint: " + endpoint, exchange);
         } else {
             consumer.getProcessor().process(exchange);
@@ -52,7 +48,6 @@ public class DirectVmProducer extends DefaultAsyncProducer {
         // send to consumer
         DirectVmConsumer consumer = endpoint.getComponent().getConsumer(endpoint);
         if (consumer == null) {
-            LOG.warn("No consumers available on endpoint: " + endpoint + " to process: " + exchange);
             exchange.setException(new DirectVmConsumerNotAvailableException("No consumers available on endpoint: " + endpoint, exchange));
             callback.done(true);
             return true;

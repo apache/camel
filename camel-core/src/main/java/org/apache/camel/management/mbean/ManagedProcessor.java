@@ -93,6 +93,10 @@ public class ManagedProcessor extends ManagedPerformanceCounter implements Manag
         return context.getName();
     }
 
+    public String getCamelManagementName() {
+        return context.getManagementName();
+    }
+
     public String getRouteId() {
         if (route != null) {
             return route.getId();

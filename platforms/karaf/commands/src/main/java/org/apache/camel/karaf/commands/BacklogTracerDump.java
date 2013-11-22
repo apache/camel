@@ -30,13 +30,12 @@ import org.apache.camel.util.MessageDump;
 import org.apache.felix.gogo.commands.Argument;
 import org.apache.felix.gogo.commands.Command;
 import org.apache.felix.gogo.commands.Option;
-import org.apache.karaf.shell.console.OsgiCommandSupport;
 
 /**
  * Command to use the <a href="camel.apache.org/backlogtracer">Backlog Tracer</a>.
  */
 @Command(scope = "camel", name = "backlog-tracer-dump", description = "Dumps traced messages from the Backlog tracer")
-public class BacklogTracerDump extends OsgiCommandSupport {
+public class BacklogTracerDump extends CamelCommandSupport {
 
     @Argument(index = 0, name = "context", description = "The name of the Camel context.", required = true, multiValued = false)
     String context;
@@ -49,12 +48,6 @@ public class BacklogTracerDump extends OsgiCommandSupport {
 
     @Option(name = "--bodySize", aliases = "-bs", description = "To limit the body size when using text format", required = false, multiValued = false)
     Integer bodySize;
-
-    private CamelController camelController;
-
-    public void setCamelController(CamelController camelController) {
-        this.camelController = camelController;
-    }
 
     @Override
     protected Object doExecute() throws Exception {

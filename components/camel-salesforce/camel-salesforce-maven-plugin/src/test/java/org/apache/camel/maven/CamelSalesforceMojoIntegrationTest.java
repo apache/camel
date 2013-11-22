@@ -19,6 +19,7 @@ package org.apache.camel.maven;
 import java.io.*;
 import java.util.Properties;
 
+import org.apache.camel.component.salesforce.SalesforceEndpointConfig;
 import org.apache.maven.plugin.logging.SystemStreamLog;
 import org.junit.Assert;
 import org.junit.Test;
@@ -37,12 +38,12 @@ public class CamelSalesforceMojoIntegrationTest {
         setLoginProperties(mojo);
 
         // set defaults
-        mojo.version = "27.0";
+        mojo.version = System.getProperty("apiVersion", SalesforceEndpointConfig.DEFAULT_VERSION);
         mojo.outputDirectory = new File("target/generated-sources/camel-salesforce");
         mojo.packageName = "org.apache.camel.salesforce.dto";
 
         // set code generation properties
-        mojo.includePattern = "(.*__c)|(PushTopic)";
+        mojo.includePattern = "(.*__c)|(PushTopic)|(Document)";
 
         // remove generated code directory
         if (mojo.outputDirectory.exists()) {

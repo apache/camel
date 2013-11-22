@@ -60,7 +60,7 @@ public class CdiCamelContext extends DefaultCamelContext {
         try {
             super.start();
         } catch (Exception e) {
-            ObjectHelper.wrapRuntimeCamelException(e);
+            throw ObjectHelper.wrapRuntimeCamelException(e);
         }
     }
 
@@ -70,7 +70,7 @@ public class CdiCamelContext extends DefaultCamelContext {
         try {
             super.stop();
         } catch (Exception e) {
-            ObjectHelper.wrapRuntimeCamelException(e);
+            throw ObjectHelper.wrapRuntimeCamelException(e);
         }
     }
 

@@ -511,6 +511,20 @@
     <feature version='${project.version}'>camel-core</feature>
     <bundle>mvn:org.apache.camel/camel-ical/${project.version}</bundle>
   </feature>
+  <!-- TODO: infinispan-client-hotrod has flawed MANIFEST.MF
+  <feature name='camel-infinispan' version='${project.version}' resolver='(obr)' start-level='50'>
+    <bundle dependency='true'>mvn:org.infinispan/infinispan-core/${infinispan-version}</bundle>
+    <bundle dependency='true'>mvn:org.infinispan/infinispan-commons/${infinispan-version}</bundle>
+    <bundle dependency='true'>mvn:org.infinispan/infinispan-client-hotrod/${infinispan-version}</bundle>
+    <bundle dependency='true'>mvn:org.jgroups/jgroups/${jgroups-version}</bundle>
+    <bundle dependency='true'>mvn:org.jboss.logging/jboss-logging/${jboss-logging-version}</bundle>
+    <bundle dependency='true'>wrap:mvn:org.jboss.marshalling/jboss-marshalling/${jboss-marshalling-version}</bundle>
+    <bundle dependency='true'>wrap:mvn:org.jboss.marshalling/jboss-marshalling-river/${jboss-marshalling-version}</bundle>
+    <bundle dependency='true'>mvn:commons-pool/commons-pool/${commons-pool-version}</bundle>
+    <feature version='${project.version}'>camel-core</feature>
+    <bundle>mvn:org.apache.camel/camel-infinispan/${project.version}</bundle>
+  </feature>  
+-->
   <feature name='camel-irc' version='${project.version}' resolver='(obr)' start-level='50'>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.irclib/${irclib-bundle-version}</bundle>
     <feature version='${project.version}'>camel-core</feature>

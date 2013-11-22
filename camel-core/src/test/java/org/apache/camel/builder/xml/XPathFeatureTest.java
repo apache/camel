@@ -17,8 +17,6 @@
 package org.apache.camel.builder.xml;
 
 
-import javax.xml.parsers.SAXParserFactory;
-
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.converter.jaxp.XmlConverter;

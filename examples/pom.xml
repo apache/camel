@@ -82,6 +82,9 @@
   </modules>
  
   <properties>
+    <!-- for symbolicName in OSGi examples we only want the artifactId, eg camel-example-sql -->
+    <!-- as having org.apache.camel as prefix is not needed and makes the name very long -->
+    <camel.osgi.symbolic.name>${project.artifactId}</camel.osgi.symbolic.name>
     <skip.starting.camel.context>false</skip.starting.camel.context>
   </properties>
 

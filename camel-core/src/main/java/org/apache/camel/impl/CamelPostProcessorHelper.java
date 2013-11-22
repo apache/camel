@@ -17,6 +17,7 @@
 package org.apache.camel.impl;
 
 import java.lang.reflect.Method;
+import java.util.Set;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.CamelContext;
@@ -26,6 +27,7 @@ import org.apache.camel.Consumer;
 import org.apache.camel.ConsumerTemplate;
 import org.apache.camel.Endpoint;
 import org.apache.camel.IsSingleton;
+import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
@@ -221,7 +223,8 @@ public class CamelPostProcessorHelper implements CamelContextAware {
         }
     }
 
-    public Object getInjectionPropertyValue(Class<?> type, String propertyName, String propertyDefaultValue, String injectionPointName, Object bean, String beanName) {
+    public Object getInjectionPropertyValue(Class<?> type, String propertyName, String propertyDefaultValue,
+                                            String injectionPointName, Object bean, String beanName) {
         try {
             String key;
             String prefix = getCamelContext().getPropertyPrefixToken();
@@ -248,6 +251,22 @@ public class CamelPostProcessorHelper implements CamelContextAware {
                 }
             }
             throw ObjectHelper.wrapRuntimeCamelException(e);
+        }
+    }
+
+    public Object getInjectionBeanValue(Class<?> type, String name) {
+        if (ObjectHelper.isEmpty(name)) {
+            Set<?> found = getCamelContext().getRegistry().findByType(type);
+            if (found == null || found.isEmpty()) {
+                throw new NoSuchBeanException(name, type.getName());
+            } else if (found.size() > 1) {
+                throw new NoSuchBeanException("Found " + found.size() + " beans of type: " + type + ". Only one bean expected.");
+            } else {
+                // we found only one
+                return found.iterator().next();
+            }
+        } else {
+            return CamelContextHelper.mandatoryLookup(getCamelContext(), name, type);
         }
     }
 

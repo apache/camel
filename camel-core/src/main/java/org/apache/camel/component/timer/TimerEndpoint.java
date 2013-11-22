@@ -184,6 +184,11 @@ public class TimerEndpoint extends DefaultEndpoint implements MultipleConsumersS
         return this.getCamelContext().getName();
     }
 
+    @ManagedAttribute(description = "Camel ManagementName")
+    public String getCamelManagementName() {
+        return this.getCamelContext().getManagementName();
+    }
+
     @ManagedAttribute(description = "Endpoint Uri")
     public String getEndpointUri() {
         return super.getEndpointUri();

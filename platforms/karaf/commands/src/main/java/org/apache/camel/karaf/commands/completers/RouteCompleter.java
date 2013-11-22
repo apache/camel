@@ -20,19 +20,11 @@ import java.util.List;
 
 import jline.console.completer.StringsCompleter;
 import org.apache.camel.Route;
-import org.apache.camel.karaf.commands.CamelController;
-import org.apache.karaf.shell.console.Completer;
 
 /**
  * A Jline completer for the Camel routes.
  */
-public class RouteCompleter implements Completer {
-
-    private CamelController camelController;
-
-    public void setCamelController(CamelController camelController) {
-        this.camelController = camelController;
-    }
+public class RouteCompleter extends CamelCompleterSupport {
 
     @SuppressWarnings({"unchecked", "rawtypes"})
     public int complete(String buffer, int cursor, List candidates) {

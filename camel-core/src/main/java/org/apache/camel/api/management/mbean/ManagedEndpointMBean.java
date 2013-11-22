@@ -23,6 +23,9 @@ public interface ManagedEndpointMBean {
     @ManagedAttribute(description = "Camel ID")
     String getCamelId();
 
+    @ManagedAttribute(description = "Camel ManagementName")
+    String getCamelManagementName();
+
     @ManagedAttribute(description = "Endpoint URI", mask = true)
     String getEndpointUri();
 

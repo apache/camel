@@ -34,5 +34,4 @@ public class PropertyInjectTest extends CamelBlueprintTestSupport {
         assertMockEndpointsSatisfied();
     }
 
-
 }

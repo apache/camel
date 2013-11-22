@@ -49,5 +49,15 @@ public class MyLifecycle implements CamelContextLifecycle<SimpleRegistry> {
         // unbind our bean when Camel has been stopped
         registry.remove("myBean");
     }
+
+    @Override
+    public void beforeAddRoutes(ServletCamelContext camelContext, SimpleRegistry registry) throws Exception {
+        // noop
+    }
+
+    @Override
+    public void afterAddRoutes(ServletCamelContext camelContext, SimpleRegistry registry) throws Exception {
+        // noop
+    }
 }
 // END SNIPPET: e1

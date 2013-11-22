@@ -31,6 +31,7 @@ public class DumpModelAsXmlTransformRouteTest extends ContextTestSupport {
         log.info(xml);
 
         assertTrue(xml.contains("<simple>Hello ${body}</simple>"));
+        assertTrue(xml.contains("<to uri=\"mock:result\" customId=\"true\" id=\"myMock\"/>"));
     }
 
     @Override
@@ -40,7 +41,7 @@ public class DumpModelAsXmlTransformRouteTest extends ContextTestSupport {
             public void configure() throws Exception {
                 from("direct:start").routeId("myRoute")
                    .transform().simple("Hello ${body}")
-                   .to("mock:result");
+                   .to("mock:result").id("myMock");
             }
         };
     }

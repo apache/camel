@@ -117,10 +117,10 @@ public class DefaultHttpBinding implements HttpBinding {
             ((StreamCache)body).reset();
         }
 
-        // store the method and query and other info in headers
+        // store the method and query and other info in headers as String types
         headers.put(Exchange.HTTP_METHOD, request.getMethod());
         headers.put(Exchange.HTTP_QUERY, request.getQueryString());
-        headers.put(Exchange.HTTP_URL, request.getRequestURL());
+        headers.put(Exchange.HTTP_URL, request.getRequestURL().toString());
         headers.put(Exchange.HTTP_URI, request.getRequestURI());
         headers.put(Exchange.HTTP_PATH, request.getPathInfo());
         headers.put(Exchange.CONTENT_TYPE, request.getContentType());
@@ -129,7 +129,7 @@ public class DefaultHttpBinding implements HttpBinding {
             LOG.trace("HTTP method {}", request.getMethod());
             LOG.trace("HTTP query {}", request.getQueryString());
             LOG.trace("HTTP url {}", request.getRequestURL());
-            LOG.trace("HTTP uri {}", request.getRequestURI());
+            LOG.trace("HTTP uri {}", request.getRequestURI().toString());
             LOG.trace("HTTP path {}", request.getPathInfo());
             LOG.trace("HTTP content-type {}", request.getContentType());
         }
