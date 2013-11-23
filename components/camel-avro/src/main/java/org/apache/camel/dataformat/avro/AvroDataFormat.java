@@ -37,11 +37,14 @@ import org.apache.camel.CamelException;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.util.ObjectHelper;
 
 public class AvroDataFormat extends ServiceSupport implements DataFormat, CamelContextAware {
 
+    private static final String GENERIC_CONTAINER_CLASSNAME = GenericContainer.class.getName();
     private CamelContext camelContext;
-    private Schema schema;
+    private Object schema;
+    private transient Schema actualSchema;
     private String instanceClassName;
 
     public AvroDataFormat() {
@@ -61,8 +64,14 @@ public class AvroDataFormat extends ServiceSupport implements DataFormat, CamelC
 
     @Override
     protected void doStart() throws Exception {
-        if (instanceClassName != null) {
-            schema = loadDefaultSchema(instanceClassName, camelContext);
+        if (schema != null) {
+            if (schema instanceof Schema) {
+                actualSchema = (Schema) schema;
+            } else {
+                actualSchema = loadSchema(schema.getClass().getName());
+            }
+        } else if (instanceClassName != null) {
+            actualSchema = loadSchema(instanceClassName);
         }
     }
 
@@ -71,56 +80,55 @@ public class AvroDataFormat extends ServiceSupport implements DataFormat, CamelC
         // noop
     }
 
-    public Schema getSchema(Exchange exchange, Object graph) throws Exception {
-        if (schema == null) {
-            if (graph != null && graph instanceof GenericContainer) {
-                return loadDefaultSchema(graph.getClass().getName(), exchange.getContext());
-            } else {
-                throw new CamelException("There is not schema for avro marshaling / unmarshaling");
-            }
-        }
-        return schema;
+    // the getter/setter for Schema is Object type in the API
+
+    public Object getSchema() {
+        return actualSchema != null ? actualSchema : schema;
     }
 
     public void setSchema(Object schema) {
-        if (schema instanceof Schema) {
-            this.schema = (Schema) schema;
-        } else {
-            throw new IllegalArgumentException("The argument for setDefaultInstance should be subClass of " + Schema.class.getName());
-        }
-    }
-
-    public void setInstanceClass(String className) throws Exception {
-        instanceClassName = className;
+        this.schema = schema;
     }
 
     public String getInstanceClassName() {
         return instanceClassName;
     }
 
-    protected Schema loadDefaultSchema(String className, CamelContext context) throws CamelException, ClassNotFoundException {
-        Class<?> instanceClass = context.getClassResolver().resolveMandatoryClass(className);
-        if (GenericContainer.class.isAssignableFrom(instanceClass)) {
+    public void setInstanceClass(String className) throws Exception {
+        instanceClassName = className;
+    }
+
+    protected Schema loadSchema(String className) throws CamelException, ClassNotFoundException {
+        // must use same class loading procedure to ensure working in OSGi
+        Class<?> instanceClass = camelContext.getClassResolver().resolveMandatoryClass(className);
+        Class<?> genericContainer = camelContext.getClassResolver().resolveMandatoryClass(GENERIC_CONTAINER_CLASSNAME);
+
+        if (genericContainer.isAssignableFrom(instanceClass)) {
             try {
                 Method method = instanceClass.getMethod("getSchema", new Class[0]);
-                return (Schema) method.invoke(instanceClass.newInstance(), new Object[0]);
+                return (Schema) method.invoke(camelContext.getInjector().newInstance(instanceClass));
             } catch (Exception ex) {
                 throw new CamelException("Error calling getSchema on " + instanceClass, ex);
             }
         } else {
-            throw new CamelException("Class " + instanceClass + " must be instanceof org.apache.avro.generic.GenericContainer");
+            throw new CamelException("Class " + instanceClass + " must be instanceof " + GENERIC_CONTAINER_CLASSNAME);
         }
     }
 
     public void marshal(Exchange exchange, Object graph, OutputStream outputStream) throws Exception {
-        DatumWriter<Object> datum = new SpecificDatumWriter<Object>(getSchema(exchange, graph));
+        // the schema should be from the graph class name
+        Schema useSchema = actualSchema != null ? actualSchema : loadSchema(graph.getClass().getName());
+
+        DatumWriter<Object> datum = new SpecificDatumWriter<Object>(useSchema);
         Encoder encoder = EncoderFactory.get().binaryEncoder(outputStream, null);
         datum.write(graph, encoder);
         encoder.flush();
     }
 
     public Object unmarshal(Exchange exchange, InputStream inputStream) throws Exception {
-        DatumReader<GenericRecord> reader = new SpecificDatumReader<GenericRecord>(getSchema(exchange, null));
+        ObjectHelper.notNull(actualSchema, "schema", this);
+
+        DatumReader<GenericRecord> reader = new SpecificDatumReader<GenericRecord>(actualSchema);
         Decoder decoder = DecoderFactory.get().binaryDecoder(inputStream, null);
         Object result = reader.read(null, decoder);
         return result;

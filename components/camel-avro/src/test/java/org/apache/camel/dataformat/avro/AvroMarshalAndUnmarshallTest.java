@@ -54,8 +54,7 @@ public class AvroMarshalAndUnmarshallTest extends CamelTestSupport {
             });
             fail("Expect the exception here");
         } catch (Exception ex) {
-            assertTrue("Expect FailedToCreateRouteException", ex instanceof FailedToCreateRouteException);
-            assertTrue("Get a wrong reason", ex.getCause() instanceof IllegalArgumentException);
+            // expected
         }
     }
 
