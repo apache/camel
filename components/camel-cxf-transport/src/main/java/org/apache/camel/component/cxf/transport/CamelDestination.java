@@ -27,7 +27,7 @@ import org.apache.camel.FailedToCreateConsumerException;
 import org.apache.camel.NoSuchEndpointException;
 import org.apache.camel.Processor;
 import org.apache.camel.component.cxf.common.header.CxfHeaderHelper;
-import org.apache.camel.component.cxf.common.message.DefaultCxfMesssageMapper;
+import org.apache.camel.component.cxf.common.message.DefaultCxfMessageMapper;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
@@ -151,7 +151,7 @@ public class CamelDestination extends AbstractDestination implements Configurabl
 
     protected void incoming(org.apache.camel.Exchange camelExchange) {
         LOG.debug("server received request: ", camelExchange);
-        DefaultCxfMesssageMapper beanBinding = new DefaultCxfMesssageMapper();
+        DefaultCxfMessageMapper beanBinding = new DefaultCxfMessageMapper();
         org.apache.cxf.message.Message inMessage =
             beanBinding.createCxfMessageFromCamelExchange(camelExchange, headerFilterStrategy);
 
