@@ -31,15 +31,16 @@ import org.apache.avro.io.Encoder;
 import org.apache.avro.io.EncoderFactory;
 import org.apache.avro.specific.SpecificDatumReader;
 import org.apache.avro.specific.SpecificDatumWriter;
-
 import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.CamelException;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.DataFormat;
-import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.support.ServiceSupport;
 
-public class AvroDataFormat implements DataFormat {
+public class AvroDataFormat extends ServiceSupport implements DataFormat, CamelContextAware {
 
+    private CamelContext camelContext;
     private Schema schema;
     private String instanceClassName;
 
@@ -50,11 +51,28 @@ public class AvroDataFormat implements DataFormat {
         this.schema = schema;
     }
 
-    public synchronized Schema getSchema(Exchange exchange, Object graph) throws Exception {
+    public CamelContext getCamelContext() {
+        return camelContext;
+    }
+
+    public void setCamelContext(CamelContext camelContext) {
+        this.camelContext = camelContext;
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        if (instanceClassName != null) {
+            schema = loadDefaultSchema(instanceClassName, camelContext);
+        }
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        // noop
+    }
+
+    public Schema getSchema(Exchange exchange, Object graph) throws Exception {
         if (schema == null) {
-            if (instanceClassName != null) {
-                return loadDefaultSchema(instanceClassName, exchange.getContext());
-            }
             if (graph != null && graph instanceof GenericContainer) {
                 return loadDefaultSchema(graph.getClass().getName(), exchange.getContext());
             } else {
@@ -73,8 +91,11 @@ public class AvroDataFormat implements DataFormat {
     }
 
     public void setInstanceClass(String className) throws Exception {
-        ObjectHelper.notNull(className, "AvroDataFormat messageClass");
         instanceClassName = className;
+    }
+
+    public String getInstanceClassName() {
+        return instanceClassName;
     }
 
     protected Schema loadDefaultSchema(String className, CamelContext context) throws CamelException, ClassNotFoundException {
@@ -84,12 +105,10 @@ public class AvroDataFormat implements DataFormat {
                 Method method = instanceClass.getMethod("getSchema", new Class[0]);
                 return (Schema) method.invoke(instanceClass.newInstance(), new Object[0]);
             } catch (Exception ex) {
-                throw new CamelException("Can't set the defaultInstance of AvroDataFormat with "
-                        + className + ", caused by " + ex);
+                throw new CamelException("Error calling getSchema on " + instanceClass, ex);
             }
         } else {
-            throw new CamelException("Can't set the shcema of AvroDataFormat with "
-                    + className + ", as the class is not a subClass of SpecificData");
+            throw new CamelException("Class " + instanceClass + " must be instanceof org.apache.avro.generic.GenericContainer");
         }
     }
 
