@@ -441,6 +441,17 @@ public final class PredicateBuilder {
         }
         return answer;
     }
+    
+    /**
+     * Concat the given predicates into a single predicate, which
+     * only matches if all the predicates matches.
+     *
+     * @param predicates predicates
+     * @return a single predicate containing all the predicates
+     */
+    public static Predicate and(Predicate... predicates) {
+    	return and(Arrays.asList(predicates));
+    }
 
     /**
      * A constant predicate.
