@@ -16,30 +16,19 @@
  */
 package org.apache.camel.component.aws.sqs;
 
-import java.util.HashMap;
-
 import com.amazonaws.auth.AWSCredentials;
 import com.amazonaws.auth.BasicAWSCredentials;
 import com.amazonaws.services.sqs.AmazonSQS;
 import com.amazonaws.services.sqs.AmazonSQSClient;
-import com.amazonaws.services.sqs.model.CreateQueueRequest;
-import com.amazonaws.services.sqs.model.CreateQueueResult;
-import com.amazonaws.services.sqs.model.GetQueueUrlRequest;
-import com.amazonaws.services.sqs.model.GetQueueUrlResult;
-import com.amazonaws.services.sqs.model.ListQueuesResult;
-import com.amazonaws.services.sqs.model.QueueAttributeName;
-import com.amazonaws.services.sqs.model.SetQueueAttributesRequest;
-
-import org.apache.camel.Consumer;
-import org.apache.camel.Exchange;
-import org.apache.camel.ExchangePattern;
+import com.amazonaws.services.sqs.model.*;
+import org.apache.camel.*;
 import org.apache.camel.Message;
-import org.apache.camel.Processor;
-import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.ScheduledPollEndpoint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.HashMap;
 
 
 /**
@@ -105,7 +94,7 @@ public class SqsEndpoint extends ScheduledPollEndpoint {
         }
     }
 
-    private void createQueue(AmazonSQS client) {
+    protected void createQueue(AmazonSQS client) {
         LOG.trace("Queue '{}' doesn't exist. Will create it...", configuration.getQueueName());
 
         // creates a new queue, or returns the URL of an existing one
@@ -215,7 +204,7 @@ public class SqsEndpoint extends ScheduledPollEndpoint {
     protected String getQueueUrl() {
         return queueUrl;
     }
-    
+
     public int getMaxMessagesPerPoll() {
         return maxMessagesPerPoll;
     }
