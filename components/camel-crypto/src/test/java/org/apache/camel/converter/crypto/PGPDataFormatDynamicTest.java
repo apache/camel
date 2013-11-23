@@ -16,9 +16,13 @@
  */
 package org.apache.camel.converter.crypto;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
+import org.bouncycastle.bcpg.CompressionAlgorithmTags;
 import org.bouncycastle.bcpg.HashAlgorithmTags;
 import org.bouncycastle.bcpg.SymmetricKeyAlgorithmTags;
 
@@ -29,34 +33,50 @@ public class PGPDataFormatDynamicTest extends PGPDataFormatTest {
         return "wrong";
     }
 
+    // setup a wrong userids
+    @Override
+    protected List<String> getKeyUserIds() {
+        List<String> userids = new ArrayList<String>(2);
+        userids.add("wrong1");
+        userids.add(getKeyUserId());
+        return userids;
+    }
+
     // setup a wrong password
     @Override
     protected String getKeyPassword() {
         return "wrong";
     }
-    
-    
+
     //setup wrong algorithm
     @Override
     protected int getAlgorithm() {
         return -5;
     }
-    
+
     //setup wrong hash algorithm
+    @Override
     protected int getHashAlgorithm() {
         return -5;
     }
 
+    //setup wrong compression algorithm
+    @Override
+    protected int getCompressionAlgorithm() {
+        return -5;
+    }
 
     // override wrong userid and password with correct userid and password in the headers
     protected Map<String, Object> getHeaders() {
         Map<String, Object> headers = new HashMap<String, Object>();
         headers.put(PGPDataFormat.KEY_USERID, "sdude@nowhere.net");
+        headers.put(PGPDataFormat.KEY_USERIDS, Collections.singletonList("second"));
         headers.put(PGPDataFormat.SIGNATURE_KEY_USERID, "sdude@nowhere.net");
         headers.put(PGPDataFormat.KEY_PASSWORD, "sdude");
         headers.put(PGPDataFormat.SIGNATURE_KEY_PASSWORD, "sdude");
         headers.put(PGPDataFormat.ENCRYPTION_ALGORITHM, SymmetricKeyAlgorithmTags.AES_128);
         headers.put(PGPDataFormat.SIGNATURE_HASH_ALGORITHM, HashAlgorithmTags.SHA512);
+        headers.put(PGPDataFormat.COMPRESSION_ALGORITHM, CompressionAlgorithmTags.ZLIB);
         return headers;
     }
 }
