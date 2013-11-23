@@ -46,11 +46,6 @@ public class DropboxConfigurationValidator {
         if(configuration.getAppSecret()==null || configuration.getAppSecret().equals("")) {
             throw new DropboxException("option <app secret> is not present or not valid!");
         }
-        DropboxOperation op = configuration.getOperation();
-        if(op != DropboxOperation.put || op != DropboxOperation.search || op != DropboxOperation.del
-                || op != DropboxOperation.get || op != DropboxOperation.move) {
-            throw new DropboxException("operation specified is not valid!");
-        }
     }
 
     private static void validateGetOp(DropboxConfiguration configuration) throws DropboxException {

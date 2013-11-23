@@ -19,6 +19,7 @@ package org.apache.camel.component.dropbox.producer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.dropbox.DropboxTestSupport;
 import org.apache.camel.component.dropbox.util.DropboxConstants;
 import org.apache.camel.component.dropbox.util.DropboxResultOpCode;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -27,7 +28,9 @@ import org.junit.Test;
 
 import java.util.List;
 
-public class DropboxProducerSearchTest extends CamelTestSupport {
+public class DropboxProducerSearchTest extends DropboxTestSupport {
+
+    public DropboxProducerSearchTest() throws Exception {}
 
     @Test
     public void testCamelDropbox() throws Exception {
@@ -60,7 +63,7 @@ public class DropboxProducerSearchTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                        .to("dropbox://search?appKey=XXX&appSecret=XXX&accessToken=XXX&remotePath=/XXX")
+                        .to("dropbox://search?"+getAuthParams()+"&remotePath=/XXX")
                         .to("mock:result");
             }
         };
