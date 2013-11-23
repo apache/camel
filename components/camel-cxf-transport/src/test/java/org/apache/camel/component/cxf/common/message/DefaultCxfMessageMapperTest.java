@@ -36,7 +36,7 @@ public class DefaultCxfMessageMapperTest extends Assert {
         final String requestURI = "/path;a=b";
         final String requestPath = "/path";
 
-        DefaultCxfMesssageMapper mapper = new DefaultCxfMesssageMapper();
+        DefaultCxfMessageMapper mapper = new DefaultCxfMessageMapper();
 
         Exchange camelExchange = setupCamelExchange(requestURI, requestPath);
         Message cxfMessage = mapper.createCxfMessageFromCamelExchange(
