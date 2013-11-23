@@ -19,16 +19,13 @@ package org.apache.camel.component.dropbox.producer;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.dropbox.DropboxConfiguration;
 import org.apache.camel.component.dropbox.DropboxEndpoint;
-import org.apache.camel.component.dropbox.api.DropboxAPIFacade;
+import org.apache.camel.component.dropbox.core.DropboxAPIFacade;
 import org.apache.camel.component.dropbox.dto.DropboxCamelResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.component.dropbox.util.DropboxResultOpCode.OK;
 
-/**
- * The CamelDropbox producer.
- */
 public class DropboxMoveProducer extends DropboxProducer {
     private static final transient Logger LOG = LoggerFactory.getLogger(DropboxMoveProducer.class);
 

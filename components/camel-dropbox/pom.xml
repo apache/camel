@@ -42,7 +42,7 @@
             <artifactId>camel-core</artifactId>
         </dependency>
 
-        <!-- dropbox-->
+        <!-- dropbox -->
         <dependency>
             <groupId>com.dropbox.core</groupId>
             <artifactId>dropbox-core-sdk</artifactId>
