@@ -60,7 +60,7 @@ public class DropboxProducerGetTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                        .to("dropbox://get?appKey=XXX&appSecret=XXX&accessToken=XXX&remotePath=/test.pdf")
+                        .to("dropbox://get?appKey=XXX&appSecret=XXX&accessToken=XXX&remotePath=/XXX")
                         .to("file:///XXX?fileName=XXX")
                         .to("mock:result");
             }

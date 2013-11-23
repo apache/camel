@@ -23,6 +23,7 @@ import org.apache.camel.component.dropbox.producer.*;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.component.dropbox.util.DropboxException;
 import org.apache.camel.component.dropbox.util.DropboxOperation;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.slf4j.Logger;
@@ -70,7 +71,7 @@ public class DropboxEndpoint extends DefaultEndpoint {
             return new DropboxMoveProducer(this,this.configuration);
         }
         else {
-            throw new IllegalArgumentException("operation specified is not supported by this component!");
+            throw new DropboxException("operation specified is not valid for producer!");
         }
     }
 
@@ -89,7 +90,7 @@ public class DropboxEndpoint extends DefaultEndpoint {
             return consumer;
         }
         else {
-            throw new IllegalArgumentException("operation specified is not supported by this component!");
+            throw new DropboxException("operation specified is not valid for consumer!");
         }
     }
 
