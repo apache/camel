@@ -27,4 +27,5 @@ public interface SesConstants {
     String RETURN_PATH = "CamelAwsSesReturnPath";
     String SUBJECT = "CamelAwsSesSubject";
     String TO = "CamelAwsSesTo";
+    String HTML_EMAIL = "CamelAwsSesHtmlEmail";
 }
