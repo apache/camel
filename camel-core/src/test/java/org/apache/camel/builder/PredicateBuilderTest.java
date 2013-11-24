@@ -16,12 +16,16 @@
  */
 package org.apache.camel.builder;
 
+
+import java.util.Arrays;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Predicate;
 import org.apache.camel.TestSupport;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultExchange;
+
 import static org.apache.camel.builder.Builder.constant;
 import static org.apache.camel.builder.PredicateBuilder.in;
 import static org.apache.camel.builder.PredicateBuilder.not;
@@ -65,6 +69,31 @@ public class PredicateBuilderTest extends TestSupport {
         Predicate and = PredicateBuilder.and(p1, p2);
 
         assertMatches(and);
+    }
+
+    public void testCompoundAndPredicatesVarargs() throws Exception {
+        Predicate p1 = header("name").isEqualTo(constant("James"));
+        Predicate p2 = header("size").isGreaterThanOrEqualTo(constant(10));
+        Predicate p3 = header("location").contains(constant("London"));
+        Predicate and = PredicateBuilder.and(p1, p2, p3);
+
+        assertMatches(and);
+    }
+
+    public void testOrSignatures() throws Exception {
+        Predicate p1 = header("name").isEqualTo(constant("does-not-apply"));
+        Predicate p2 = header("size").isGreaterThanOrEqualTo(constant(10));
+        Predicate p3 = header("location").contains(constant("does-not-apply"));
+
+        // check method signature with two parameters
+        assertMatches(PredicateBuilder.or(p1, p2));
+        assertMatches(PredicateBuilder.or(p2, p3));
+
+        // check method signature with varargs
+        assertMatches(PredicateBuilder.in(p1, p2, p3));
+
+        // maybe a list of predicates?
+        assertMatches(PredicateBuilder.in(Arrays.asList(p1, p2, p3)));
     }
 
     public void testCompoundAndOrPredicates() throws Exception {
