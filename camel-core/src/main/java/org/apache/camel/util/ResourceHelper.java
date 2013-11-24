@@ -82,12 +82,7 @@ public final class ResourceHelper {
     public static InputStream resolveMandatoryResourceAsInputStream(ClassResolver classResolver, String uri) throws IOException {
         if (uri.startsWith("file:")) {
             uri = ObjectHelper.after(uri, "file:");
-            try {
-                // try to decode as the uri may contain %20 for spaces etc
-                uri = URLDecoder.decode(uri, "UTF-8");
-            } catch (Exception e) {
-                // ignore
-            }
+            uri = tryDecodeUri(uri);
             return new FileInputStream(uri);
         } else if (uri.startsWith("http:")) {
             URL url = new URL(uri);
@@ -104,13 +99,8 @@ public final class ResourceHelper {
                 throw e;
             }
         } else if (uri.startsWith("classpath:")) {
-            try {
-                // try to decode as the uri may contain %20 for spaces etc
-                uri = URLDecoder.decode(uri, "UTF-8");
-            } catch (Exception e) {
-                // ignore
-            }
             uri = ObjectHelper.after(uri, "classpath:");
+            uri = tryDecodeUri(uri);
         }
 
         // load from classpath by default
@@ -136,12 +126,7 @@ public final class ResourceHelper {
         if (uri.startsWith("file:")) {
             // check if file exists first
             String name = ObjectHelper.after(uri, "file:");
-            try {
-                // try to decode as the uri may contain %20 for spaces etc
-                uri = URLDecoder.decode(uri, "UTF-8");
-            } catch (Exception e) {
-                // ignore
-            }
+            uri = tryDecodeUri(uri);
             File file = new File(name);
             if (!file.exists()) {
                 throw new FileNotFoundException("File " + file + " not found");
@@ -151,12 +136,7 @@ public final class ResourceHelper {
             return new URL(uri);
         } else if (uri.startsWith("classpath:")) {
             uri = ObjectHelper.after(uri, "classpath:");
-            try {
-                // try to decode as the uri may contain %20 for spaces etc
-                uri = URLDecoder.decode(uri, "UTF-8");
-            } catch (Exception e) {
-                // ignore
-            }
+            uri = tryDecodeUri(uri);
         }
 
         // load from classpath by default
@@ -213,6 +193,22 @@ public final class ResourceHelper {
     private static String resolveUriPath(String name) {
         // compact the path and use / as separator as that's used for loading resources on the classpath
         return FileUtil.compactPath(name, '/');
+    }
+
+    /**
+     * Tries decoding the uri.
+     *
+     * @param uri the uri
+     * @return the decoded uri, or the original uri
+     */
+    private static String tryDecodeUri(String uri) {
+        try {
+            // try to decode as the uri may contain %20 for spaces etc
+            uri = URLDecoder.decode(uri, "UTF-8");
+        } catch (Exception e) {
+            // ignore
+        }
+        return uri;
     }
 
 }
