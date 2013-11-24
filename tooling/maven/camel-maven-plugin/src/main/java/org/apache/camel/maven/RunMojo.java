@@ -971,11 +971,11 @@ public class RunMojo extends AbstractExecMojo {
             // list of assemblies
             ArtifactResolutionResult result = artifactResolver.resolveTransitively(dependencyArtifacts,
                                                                                    executablePomArtifact,
-                                                                                   Collections.EMPTY_MAP,
+                                                                                   Collections.emptyMap(),
                                                                                    this.localRepository,
                                                                                    this.remoteRepositories,
                                                                                    metadataSource, null,
-                                                                                   Collections.EMPTY_LIST);
+                                                                                   Collections.emptyList());
             executableDependencies = CastUtils.cast(result.getArtifacts());
 
         } catch (Exception ex) {

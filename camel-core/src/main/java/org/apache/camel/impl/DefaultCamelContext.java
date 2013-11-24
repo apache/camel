@@ -636,11 +636,10 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         return routeStartupOrder;
     }
 
-    @SuppressWarnings("unchecked")
     public List<Route> getRoutes() {
         // lets return a copy of the collection as objects are removed later when services are stopped
         if (routes.isEmpty()) {
-            return Collections.EMPTY_LIST;
+            return Collections.emptyList();
         } else {
             return new ArrayList<Route>(routes);
         }
