@@ -57,6 +57,12 @@ public class ManagedCamelContextTest extends ManagementTestSupport {
         String status = (String) mbeanServer.getAttribute(on, "State");
         assertEquals("Started", status);
 
+        Integer total = (Integer) mbeanServer.getAttribute(on, "TotalRoutes");
+        assertEquals(2, total.intValue());
+
+        Integer started = (Integer) mbeanServer.getAttribute(on, "StartedRoutes");
+        assertEquals(2, started.intValue());
+
         // invoke operations
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedBodiesReceived("Hello World");
