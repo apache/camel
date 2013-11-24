@@ -30,8 +30,8 @@ import org.slf4j.LoggerFactory;
  *
  * @version 
  */
-public class DefaultCxfMesssageMapper implements CxfMessageMapper {
-    private static final Logger LOG = LoggerFactory.getLogger(DefaultCxfMesssageMapper.class);
+public class DefaultCxfMessageMapper implements CxfMessageMapper {
+    private static final Logger LOG = LoggerFactory.getLogger(DefaultCxfMessageMapper.class);
     private static final String CXF_HTTP_REQUEST = "HTTP.REQUEST";
     private static final String CXF_HTTP_RESPONSE = "HTTP.RESPONSE";
     
