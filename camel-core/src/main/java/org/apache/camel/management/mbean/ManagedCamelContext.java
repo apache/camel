@@ -36,6 +36,7 @@ import org.apache.camel.ComponentConfiguration;
 import org.apache.camel.Endpoint;
 import org.apache.camel.ManagementStatisticsLevel;
 import org.apache.camel.ProducerTemplate;
+import org.apache.camel.Route;
 import org.apache.camel.TimerListener;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.api.management.mbean.ManagedCamelContextMBean;
@@ -129,6 +130,20 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
 
     public Integer getInflightExchanges() {
         return context.getInflightRepository().size();
+    }
+
+    public Integer getTotalRoutes() {
+        return context.getRoutes().size();
+    }
+
+    public Integer getStartedRoutes() {
+        int started = 0;
+        for (Route route : context.getRoutes()) {
+            if (context.getRouteStatus(route.getId()).isStarted()) {
+                started++;
+            }
+        }
+        return started;
     }
 
     public void setTimeout(long timeout) {

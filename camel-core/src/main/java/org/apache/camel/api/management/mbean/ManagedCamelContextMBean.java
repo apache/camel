@@ -86,6 +86,12 @@ public interface ManagedCamelContextMBean extends ManagedPerformanceCounterMBean
     @ManagedAttribute(description = "Current number of inflight Exchanges")
     Integer getInflightExchanges();
 
+    @ManagedAttribute(description = "Total number of routes")
+    Integer getTotalRoutes();
+
+    @ManagedAttribute(description = "Current number of started routes")
+    Integer getStartedRoutes();
+
     @ManagedAttribute(description = "Shutdown timeout")
     void setTimeout(long timeout);
 
