@@ -16,9 +16,6 @@
  */
 package org.apache.camel.builder;
 
-import static org.apache.camel.builder.Builder.constant;
-import static org.apache.camel.builder.PredicateBuilder.in;
-import static org.apache.camel.builder.PredicateBuilder.not;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -26,6 +23,10 @@ import org.apache.camel.Predicate;
 import org.apache.camel.TestSupport;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultExchange;
+
+import static org.apache.camel.builder.Builder.constant;
+import static org.apache.camel.builder.PredicateBuilder.in;
+import static org.apache.camel.builder.PredicateBuilder.not;
 
 /**
  * @version 
@@ -67,13 +68,13 @@ public class PredicateBuilderTest extends TestSupport {
 
         assertMatches(and);
     }
-    
+
     public void testCompoundAndPredicatesVarargs() throws Exception {
         Predicate p1 = header("name").isEqualTo(constant("James"));
         Predicate p2 = header("size").isGreaterThanOrEqualTo(constant(10));
         Predicate p3 = header("location").contains(constant("London"));
-        Predicate and = PredicateBuilder.and(p1, p2, p3); 
-        
+        Predicate and = PredicateBuilder.and(p1, p2, p3);
+
         assertMatches(and);
     }
 
