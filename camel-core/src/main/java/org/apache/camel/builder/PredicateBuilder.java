@@ -127,6 +127,13 @@ public final class PredicateBuilder {
         };
     }
     
+    /**
+     * A helper method to return true if any of the predicates matches.
+     */
+    public static Predicate in(List<Predicate> predicates) {
+        return in(predicates.toArray(new Predicate[0]));
+    }
+
     public static Predicate isEqualTo(final Expression left, final Expression right) {
         return new BinaryPredicateSupport(left, right) {
 
