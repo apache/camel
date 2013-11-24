@@ -86,7 +86,8 @@ public final class PredicateBuilder {
     }
 
     /**
-     * A helper method to combine multiple predicates by a logical OR
+     * A helper method to combine two predicates by a logical OR.
+     * If you want to combine multiple predicates see {@link #in(Predicate...)}
      */
     public static Predicate or(final Predicate left, final Predicate right) {
         notNull(left, "left");
