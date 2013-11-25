@@ -129,7 +129,7 @@ public class InOnlyProducer extends SjmsProducer {
                 }
             }
         } catch (Exception e) {
-            exchange.setException(new Exception("Unable to complet sending the message: " + e.getLocalizedMessage()));
+            exchange.setException(new Exception("Unable to complete sending the message: " + e.getLocalizedMessage()));
         } finally {
             getProducers().returnObject(producer);
             callback.done(isSynchronous());
