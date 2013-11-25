@@ -26,7 +26,7 @@
 
   <camelContext xmlns="http://camel.apache.org/schema/spring">
 
-    <route>
+    <route id="helloRoute">
       <!-- incoming requests from the servlet is routed -->
       <from uri="servlet:///hello"/>
       <choice>
