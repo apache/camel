@@ -16,70 +16,20 @@
  */
 package org.apache.camel.jsonpath;
 
-import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
-import org.apache.camel.ExpressionEvaluationException;
-import org.apache.camel.ExpressionIllegalSyntaxException;
 import org.apache.camel.Predicate;
-import org.apache.camel.support.ExpressionAdapter;
 import org.apache.camel.support.LanguageSupport;
 
 public class JsonPathLanguage extends LanguageSupport {
 
     @Override
     public Predicate createPredicate(final String predicate) {
-        final JsonPathEngine engine;
-        try {
-            engine = new JsonPathEngine(predicate);
-        } catch (Exception e) {
-            throw new ExpressionIllegalSyntaxException(predicate, e);
-        }
-
-        return new ExpressionAdapter() {
-            @Override
-            public Object evaluate(Exchange exchange) {
-                try {
-                    return evaluateJsonPath(exchange, engine);
-                } catch (Exception e) {
-                    throw new ExpressionEvaluationException(this, exchange, e);
-                }
-            }
-
-            @Override
-            public String toString() {
-                return "jsonpath[" + predicate + "]";
-            }
-        };
+        return new JsonPathExpression(predicate);
     }
 
     @Override
     public Expression createExpression(final String expression) {
-        final JsonPathEngine engine;
-        try {
-            engine = new JsonPathEngine(expression);
-        } catch (Exception e) {
-            throw new ExpressionIllegalSyntaxException(expression, e);
-        }
-
-        return new ExpressionAdapter() {
-            @Override
-            public Object evaluate(Exchange exchange) {
-                try {
-                    return evaluateJsonPath(exchange, engine);
-                } catch (Exception e) {
-                    throw new ExpressionEvaluationException(this, exchange, e);
-                }
-            }
-
-            @Override
-            public String toString() {
-                return "jsonpath[" + expression + "]";
-            }
-        };
-    }
-
-    private Object evaluateJsonPath(Exchange exchange, JsonPathEngine engine) throws Exception {
-        return engine.read(exchange);
+        return new JsonPathExpression(expression);
     }
 
 }
