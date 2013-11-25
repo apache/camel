@@ -154,14 +154,14 @@ public abstract class CamelBlueprintTestSupport extends CamelTestSupport {
     /**
      * Creates a holder for the given service, which make it easier to use {@link #addServicesOnStartup(java.util.Map)}
      */
-    KeyValueHolder<Object, Dictionary> asService(Object service, Dictionary dict) {
+    protected KeyValueHolder<Object, Dictionary> asService(Object service, Dictionary dict) {
         return new KeyValueHolder<Object, Dictionary>(service, dict);
     }
 
     /**
      * Creates a holder for the given service, which make it easier to use {@link #addServicesOnStartup(java.util.Map)}
      */
-    KeyValueHolder<Object, Dictionary> asService(Object service, String key, String value) {
+    protected KeyValueHolder<Object, Dictionary> asService(Object service, String key, String value) {
         Properties prop = new Properties();
         if (key != null && value != null) {
             prop.put(key, value);
