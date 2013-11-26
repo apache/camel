@@ -20,6 +20,7 @@ import java.util.Map;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.dropbox.util.DropboxOperation;
+import org.apache.camel.component.dropbox.util.DropboxPropertyManager;
 import org.apache.camel.component.dropbox.validator.DropboxConfigurationValidator;
 import org.apache.camel.impl.DefaultComponent;
 import org.slf4j.Logger;
@@ -41,6 +42,10 @@ public class DropboxComponent extends DefaultComponent {
         configuration.setNewRemotePath((String)parameters.get("newRemotePath"));
         configuration.setQuery((String)parameters.get("query"));
         configuration.setOperation(DropboxOperation.valueOf(remaining));
+        configuration.setClientIdentifier(
+                parameters.get("clientIdentifier")==null?
+                        DropboxPropertyManager.getInstance().getProperty("clientIdentifier")
+                        :(String) parameters.get("clientIdentifier"));
 
         //pass validation test
         DropboxConfigurationValidator.validate(configuration);

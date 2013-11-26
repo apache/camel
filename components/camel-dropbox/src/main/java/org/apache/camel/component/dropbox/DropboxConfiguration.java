@@ -17,6 +17,7 @@
 package org.apache.camel.component.dropbox;
 
 import com.dropbox.core.*;
+import org.apache.camel.component.dropbox.util.DropboxException;
 import org.apache.camel.component.dropbox.util.DropboxOperation;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -27,18 +28,21 @@ public class DropboxConfiguration {
 
     private static final transient Logger LOG = LoggerFactory.getLogger(DropboxConfiguration.class);
 
-
-    /*
-     Dropbox auth
-     */
+    //dropbox auth options
     private String appKey;
     private String appSecret;
     private String accessToken;
+    //local path to put files
     private String localPath;
+    //where to put files on dropbox
     private String remotePath;
+    //new path on dropbox when moving files
     private String newRemotePath;
+    //search query on dropbox
     private String query;
-    //operation supported
+    //id of the app
+    private String clientIdentifier;
+    //specific dropbox operation for the component
     private DropboxOperation operation;
     //reference to dropboxclient
     private DbxClient client;
@@ -47,17 +51,13 @@ public class DropboxConfiguration {
         return client;
     }
 
-    public void createClient() {
-        /*TODO clientIdentifier*/
-        String clientIdentifier = "camel-dropbox/1.0";
-
+    public void createClient() throws DropboxException {
         DbxAppInfo appInfo = new DbxAppInfo(appKey, appSecret);
         DbxRequestConfig config =
                 new DbxRequestConfig(clientIdentifier, Locale.getDefault().toString());
         DbxClient client = new DbxClient(config, accessToken);
-        //TODO define custom exception
         if(client == null) {
-            throw new IllegalStateException("can't establish a Dropbox conenction!");
+            throw new DropboxException("can't establish a Dropbox conenction!");
         }
         this.client = client;
 
@@ -119,6 +119,13 @@ public class DropboxConfiguration {
         this.query = query;
     }
 
+    public String getClientIdentifier() {
+        return clientIdentifier;
+    }
+
+    public void setClientIdentifier(String clientIdentifier) {
+        this.clientIdentifier = clientIdentifier;
+    }
 
     public DropboxOperation getOperation() {
         return operation;

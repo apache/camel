@@ -14,53 +14,51 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.dropbox;
-
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.apache.camel.util.IntrospectionSupport;
+package org.apache.camel.component.dropbox.util;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Properties;
 
-public class DropboxTestSupport extends CamelTestSupport {
+public class DropboxPropertyManager {
 
-    protected final Properties properties;
+    private static Properties properties;
+    private static DropboxPropertyManager instance;
 
-    protected DropboxTestSupport() throws Exception {
-        URL url = getClass().getResource("/test-options.properties");
+    private DropboxPropertyManager(){}
 
+    public static synchronized DropboxPropertyManager getInstance() throws Exception {
+        if(instance==null) {
+            instance = new DropboxPropertyManager();
+            properties = loadProperties();
+        }
+        return instance;
+    }
+
+    public String getProperty(String key) {
+        return (String)properties.getProperty(key);
+    }
+
+
+    private static Properties loadProperties() throws Exception {
+        URL url = DropboxPropertyManager.class.getResource("/dropbox.properties");
         InputStream inStream;
         try {
             inStream = url.openStream();
         }
         catch (IOException e) {
             e.printStackTrace();
-            throw new IllegalAccessError("test-options.properties could not be found");
+            throw new DropboxException("dropbox.properties could not be found");
         }
-
         properties = new Properties();
         try {
             properties.load(inStream);
         }
         catch (IOException e) {
             e.printStackTrace();
-            throw new IllegalAccessError("test-options.properties could not be found");
+            throw new DropboxException("dropbox.properties can't be read");
         }
-
-        Map<String, Object> options = new HashMap<String, Object>();
-        for (Map.Entry<Object, Object> entry : properties.entrySet()) {
-            options.put(entry.getKey().toString(), entry.getValue());
-        }
-    }
-
-    protected String getAuthParams() {
-        return "appKey=" + properties.get("appKey")
-                + "&appSecret=" + properties.get("appSecret")
-                + "&accessToken=" + properties.get("accessToken")
-                + "&clientIdentifier="+properties.get("clientIdentifier");
+        return properties;
     }
 }

@@ -47,46 +47,49 @@ public class DropboxConfigurationValidator {
 
     private static void validateCommonProperties(DropboxConfiguration configuration) throws DropboxException {
         if(configuration.getAccessToken()==null || configuration.getAccessToken().equals("")) {
-            throw new DropboxException("option <access token> is not present or not valid!");
+            throw new DropboxException("option <accessToken> is not present or not valid!");
         }
         if(configuration.getAppKey()==null || configuration.getAppKey().equals("")) {
-            throw new DropboxException("option <app token> is not present or not valid!");
+            throw new DropboxException("option <appToken> is not present or not valid!");
         }
         if(configuration.getAppSecret()==null || configuration.getAppSecret().equals("")) {
-            throw new DropboxException("option <app secret> is not present or not valid!");
+            throw new DropboxException("option <appSecret> is not present or not valid!");
+        }
+        if(configuration.getClientIdentifier()==null || configuration.getClientIdentifier().equals("")) {
+            throw new DropboxException("option <clientIdentifier> is not present or not valid!");
         }
     }
 
     private static void validateGetOp(DropboxConfiguration configuration) throws DropboxException {
         if(configuration.getRemotePath()==null || configuration.getRemotePath().equals("")) {
-            throw new DropboxException("option <remote path> is not present or not valid!");
+            throw new DropboxException("option <remotePath> is not present or not valid!");
         }
     }
 
     private static void validatePutOp(DropboxConfiguration configuration) throws DropboxException {
         if(configuration.getLocalPath()==null || configuration.getLocalPath().equals("")) {
-            throw new DropboxException("option <local path> is not present or not valid!");
+            throw new DropboxException("option <localPath> is not present or not valid!");
         }
     }
 
     private static void validateSearchOp(DropboxConfiguration configuration) throws DropboxException {
         if(configuration.getRemotePath()==null || configuration.getRemotePath().equals("")) {
-            throw new DropboxException("option <remote path> is not present or not valid!");
+            throw new DropboxException("option <remotePath> is not present or not valid!");
         }
     }
 
     private static void validateDelOp(DropboxConfiguration configuration) throws DropboxException {
         if(configuration.getRemotePath()==null || configuration.getRemotePath().equals("")) {
-            throw new DropboxException("option <remote path> is not present or not valid!");
+            throw new DropboxException("option <remotePath> is not present or not valid!");
         }
     }
 
     private static void validateMoveOp(DropboxConfiguration configuration) throws DropboxException {
         if(configuration.getRemotePath()==null || configuration.getRemotePath().equals("")) {
-            throw new DropboxException("option <remote path> is not present or not valid!");
+            throw new DropboxException("option <remotePath> is not present or not valid!");
         }
         if(configuration.getNewRemotePath()==null || configuration.getNewRemotePath().equals("")) {
-            throw new DropboxException("option <new remote path> is not present or not valid!");
+            throw new DropboxException("option <newRemotePath> is not present or not valid!");
         }
     }
 }
