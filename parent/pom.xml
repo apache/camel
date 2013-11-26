@@ -313,6 +313,7 @@
     <openejb-version>4.5.2</openejb-version>
     <openjpa-version>2.2.2</openjpa-version>
     <opensaml-version>2.5.1_2</opensaml-version>
+    <optaplanner-version>6.0.0.Final</optaplanner-version>
     <oro-bundle-version>2.0.8_6</oro-bundle-version>
     <oscache-bundle-version>2.4_5</oscache-bundle-version>
     <osgi-version>4.3.1</osgi-version>
@@ -2084,6 +2085,15 @@
         <groupId>com.sna-projects.krati</groupId>
         <artifactId>krati</artifactId>
         <version>${krati-version}</version>
+      </dependency>
+
+      <!-- optional OptaPlanner dependencies -->
+      <dependency>
+        <groupId>org.optaplanner</groupId>
+        <artifactId>optaplanner-bom</artifactId>
+        <type>pom</type>
+        <version>${optaplanner-version}</version>
+        <scope>import</scope>
       </dependency>
 
       <!-- blueprint -->
