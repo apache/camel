@@ -80,11 +80,12 @@ public class RabbitMQProducer extends DefaultProducer {
     @Override
     public void process(Exchange exchange) throws Exception {
         String exchangeName = exchange.getIn().getHeader(RabbitMQConstants.EXCHANGE_NAME, String.class);
-        if (exchangeName == null) {
+        // If it is BridgeEndpoint we should ignore the message header of EXCHANGE_NAME
+        if (exchangeName == null || getEndpoint().isBridgeEndpoint()) {
             exchangeName = getEndpoint().getExchangeName();
         }
         if (ObjectHelper.isEmpty(exchangeName)) {
-            throw new IllegalArgumentException("ExchangeName is not provided in header " + RabbitMQConstants.EXCHANGE_NAME);
+            throw new IllegalArgumentException("ExchangeName is not provided in the endpoint: " + getEndpoint());
         }
 
         String key = exchange.getIn().getHeader(RabbitMQConstants.ROUTING_KEY, "", String.class);

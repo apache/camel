@@ -55,6 +55,7 @@ public class RabbitMQConsumerIntTest extends CamelTestSupport {
     public void sentMessageIsReceived() throws InterruptedException, IOException {
 
         to.expectedMessageCount(1);
+        to.expectedHeaderReceived(RabbitMQConstants.REPLY_TO, "myReply");
 
         ConnectionFactory factory = new ConnectionFactory();
         factory.setHost("localhost");
@@ -65,6 +66,7 @@ public class RabbitMQConsumerIntTest extends CamelTestSupport {
         Connection conn = factory.newConnection();
 
         AMQP.BasicProperties.Builder properties = new AMQP.BasicProperties.Builder();
+        properties.replyTo("myReply");
 
         Channel channel = conn.createChannel();
         channel.basicPublish(EXCHANGE, "", properties.build(), "hello world".getBytes());
