@@ -16,11 +16,11 @@
  */
 package org.apache.camel.dataformat.bindy;
 
-import org.apache.camel.spi.DataFormat;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+
+import org.apache.camel.spi.DataFormat;
 
 public abstract class BindyAbstractDataFormat implements DataFormat {
     private String locale;
@@ -29,7 +29,6 @@ public abstract class BindyAbstractDataFormat implements DataFormat {
 
     public BindyAbstractDataFormat() {
     }
-
     protected BindyAbstractDataFormat(Class<?> classType) {
         this.classType = classType;
     }
@@ -62,6 +61,7 @@ public abstract class BindyAbstractDataFormat implements DataFormat {
         this.modelFactory = modelFactory;
     }
     
+    protected abstract BindyAbstractFactory createModelFactory() throws Exception;
 
     protected Object extractUnmarshalResult(List<Map<String, Object>> models) {
         if (getClassType() != null) {
@@ -83,6 +83,4 @@ public abstract class BindyAbstractDataFormat implements DataFormat {
             return models;
         }
     }
-
-    protected abstract BindyAbstractFactory createModelFactory() throws Exception;
 }

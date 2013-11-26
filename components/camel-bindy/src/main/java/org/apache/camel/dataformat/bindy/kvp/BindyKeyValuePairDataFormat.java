@@ -16,17 +16,6 @@
  */
 package org.apache.camel.dataformat.bindy.kvp;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.dataformat.bindy.BindyAbstractDataFormat;
-import org.apache.camel.dataformat.bindy.BindyAbstractFactory;
-import org.apache.camel.dataformat.bindy.BindyKeyValuePairFactory;
-import org.apache.camel.dataformat.bindy.util.ConverterUtils;
-import org.apache.camel.spi.DataFormat;
-import org.apache.camel.util.IOHelper;
-import org.apache.camel.util.ObjectHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
@@ -36,6 +25,18 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
+
+import org.apache.camel.Exchange;
+import org.apache.camel.dataformat.bindy.BindyAbstractDataFormat;
+import org.apache.camel.dataformat.bindy.BindyAbstractFactory;
+import org.apache.camel.dataformat.bindy.BindyKeyValuePairFactory;
+import org.apache.camel.dataformat.bindy.util.ConverterUtils;
+import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.PackageScanClassResolver;
+import org.apache.camel.util.IOHelper;
+import org.apache.camel.util.ObjectHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * A <a href="http://camel.apache.org/data-format.html">data format</a> (

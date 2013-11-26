@@ -16,22 +16,19 @@
  */
 package org.apache.camel.dataformat.bindy;
 
-import org.apache.camel.dataformat.bindy.annotation.CsvRecord;
-import org.apache.camel.dataformat.bindy.annotation.FixedLengthRecord;
-import org.apache.camel.dataformat.bindy.annotation.Link;
-import org.apache.camel.dataformat.bindy.annotation.Message;
-import org.apache.camel.dataformat.bindy.annotation.Section;
-import org.apache.camel.util.ObjectHelper;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.lang.reflect.Field;
 import java.text.NumberFormat;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
+import org.apache.camel.dataformat.bindy.annotation.Link;
+import org.apache.camel.util.ObjectHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The {@link BindyAbstractFactory} implements what its common to all the formats
@@ -40,7 +37,11 @@ import java.util.Set;
 public abstract class BindyAbstractFactory implements BindyFactory {
     private static final Logger LOG = LoggerFactory.getLogger(BindyAbstractFactory.class);
     protected final Map<String, List<Field>> annotatedLinkFields = new LinkedHashMap<String, List<Field>>();
+    protected Set<Class<?>> models;
+    protected Set<String> modelClassNames;
     protected String crlf;
+    
+    private String[] packageNames;
     private String locale;
     private Class<?> type;
     
@@ -50,21 +51,10 @@ public abstract class BindyAbstractFactory implements BindyFactory {
         if (LOG.isDebugEnabled()) {
             LOG.debug("Class name: {}", type.getName());
         }
-
-        if(!validateType(type)) {
-            throw new IllegalArgumentException("...");
-        }
-
+        
         initModel();
     }
-
-    protected boolean validateType(Class<?> type) {
-        return type.getAnnotation(CsvRecord.class) != null
-            || type.getAnnotation(Message.class) != null
-            || type.getAnnotation(Section.class) != null
-            || type.getAnnotation(FixedLengthRecord.class) != null;
-    }
-
+    
     /**
      * method uses to initialize the model representing the classes who will
      * bind the data. This process will scan for classes according to the
@@ -73,6 +63,24 @@ public abstract class BindyAbstractFactory implements BindyFactory {
      * @throws Exception
      */
     public void initModel() throws Exception {
+        models = new HashSet<Class<?>>();
+        models.add(type);
+        
+        for (Field field : type.getDeclaredFields()) {
+            Link linkField = field.getAnnotation(Link.class);
+
+            if (linkField != null) {
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Class linked: {}, Field: {}", field.getType(), field);
+                }
+                models.add(field.getType());
+            }
+        }
+        
+        modelClassNames = new HashSet<String>();
+        for (Class<?> clazz : models) {
+            modelClassNames.add(clazz.getName());
+        }
     }
 
     /**
@@ -110,14 +118,6 @@ public abstract class BindyAbstractFactory implements BindyFactory {
     }
 
     /**
-     *
-     * @return
-     */
-    protected Class<?> type() {
-        return type;
-    }
-
-    /**
      * Factory method generating new instances of the model and adding them to a
      * HashMap
      *
@@ -128,8 +128,12 @@ public abstract class BindyAbstractFactory implements BindyFactory {
     public Map<String, Object> factory() throws Exception {
         Map<String, Object> mapModel = new HashMap<String, Object>();
 
-        Object obj = ObjectHelper.newInstance(type);
-        mapModel.put(obj.getClass().getName(), obj);
+        for (Class<?> cl : models) {
+            Object obj = ObjectHelper.newInstance(cl);
+
+            // Add instance of the class to the Map Model
+            mapModel.put(obj.getClass().getName(), obj);
+        }
 
         return mapModel;
     }
@@ -140,7 +144,7 @@ public abstract class BindyAbstractFactory implements BindyFactory {
      * @return true if the model supports the identified classes
      */
     public boolean supportsModel(Set<String> classes) {
-        return classes.contains(type);
+        return modelClassNames.containsAll(classes);
     }
 
     /**

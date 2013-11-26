@@ -96,57 +96,58 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
     public void initAnnotatedFields() {
 
         maxpos = 0;
-        Class<?> cl = type();
-        List<Field> linkFields = new ArrayList<Field>();
+        for (Class<?> cl : models) {
+            List<Field> linkFields = new ArrayList<Field>();
 
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Class retrieved: {}", cl.getName());
-        }
-
-        for (Field field : cl.getDeclaredFields()) {
-            DataField dataField = field.getAnnotation(DataField.class);
-            if (dataField != null) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Position defined in the class: {}, position: {}, Field: {}",
-                            new Object[]{cl.getName(), dataField.pos(), dataField});
-                }
-
-                if (dataField.required()) {
-                    ++numberMandatoryFields;
-                } else {
-                    ++numberOptionalFields;
-                }
-
-                int pos = dataField.pos();
-                if (annotatedFields.containsKey(pos)) {
-                    Field f = annotatedFields.get(pos);
-                    LOG.warn("Potentially invalid model: existing @DataField '{}' replaced by '{}'", f.getName(), field.getName());
-                }
-                dataFields.put(pos, dataField);
-                annotatedFields.put(pos, field);
-                maxpos = Math.max(maxpos, pos);
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Class retrieved: {}", cl.getName());
             }
 
-            Link linkField = field.getAnnotation(Link.class);
+            for (Field field : cl.getDeclaredFields()) {
+                DataField dataField = field.getAnnotation(DataField.class);
+                if (dataField != null) {
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Position defined in the class: {}, position: {}, Field: {}",
+                                new Object[]{cl.getName(), dataField.pos(), dataField});
+                    }
 
-            if (linkField != null) {
-                if (LOG.isDebugEnabled()) {
-                    LOG.debug("Class linked: {}, Field: {}", cl.getName(), field);
+                    if (dataField.required()) {
+                        ++numberMandatoryFields;
+                    } else {
+                        ++numberOptionalFields;
+                    }
+
+                    int pos = dataField.pos();
+                    if (annotatedFields.containsKey(pos)) {
+                        Field f = annotatedFields.get(pos);
+                        LOG.warn("Potentially invalid model: existing @DataField '{}' replaced by '{}'", f.getName(), field.getName());
+                    }
+                    dataFields.put(pos, dataField);
+                    annotatedFields.put(pos, field);
+                    maxpos = Math.max(maxpos, pos);
                 }
-                linkFields.add(field);
+
+                Link linkField = field.getAnnotation(Link.class);
+
+                if (linkField != null) {
+                    if (LOG.isDebugEnabled()) {
+                        LOG.debug("Class linked: {}, Field: {}", cl.getName(), field);
+                    }
+                    linkFields.add(field);
+                }
             }
-        }
 
-        if (!linkFields.isEmpty()) {
-            annotatedLinkFields.put(cl.getName(), linkFields);
-        }
+            if (!linkFields.isEmpty()) {
+                annotatedLinkFields.put(cl.getName(), linkFields);
+            }
 
-        totalFields = numberMandatoryFields + numberOptionalFields;
+            totalFields = numberMandatoryFields + numberOptionalFields;
 
-        if (LOG.isDebugEnabled()) {
-            LOG.debug("Number of optional fields: {}", numberOptionalFields);
-            LOG.debug("Number of mandatory fields: {}", numberMandatoryFields);
-            LOG.debug("Total: {}", totalFields);
+            if (LOG.isDebugEnabled()) {
+                LOG.debug("Number of optional fields: {}", numberOptionalFields);
+                LOG.debug("Number of mandatory fields: {}", numberMandatoryFields);
+                LOG.debug("Total: {}", totalFields);
+            }
         }
 
         if (annotatedFields.size() < maxpos) {
@@ -245,18 +246,19 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
             LOG.debug("Separator converted: '0x{}', from: {}", Integer.toHexString(separator), this.getSeparator());
         }
 
-        Class<?> clazz = type();
-        if (model.containsKey(clazz.getName())) {
+        for (Class<?> clazz : models) {
+            if (model.containsKey(clazz.getName())) {
 
-            Object obj = model.get(clazz.getName());
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Model object: {}, class: {}", obj, obj.getClass().getName());
-            }
-            if (obj != null) {
+                Object obj = model.get(clazz.getName());
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Model object: {}, class: {}", obj, obj.getClass().getName());
+                }
+                if (obj != null) {
 
-                // Generate Csv table
-                generateCsvPositionMap(clazz, obj, results);
+                    // Generate Csv table
+                    generateCsvPositionMap(clazz, obj, results);
 
+                }
             }
         }
 
@@ -515,60 +517,60 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
      */
     private void initCsvRecordParameters() {
         if (separator == null) {
-            Class<?> cl = type();
+            for (Class<?> cl : models) {
 
-            // Get annotation @CsvRecord from the class
-            CsvRecord record = cl.getAnnotation(CsvRecord.class);
+                // Get annotation @CsvRecord from the class
+                CsvRecord record = cl.getAnnotation(CsvRecord.class);
 
-            // Get annotation @Section from the class
-            Section section = cl.getAnnotation(Section.class);
+                // Get annotation @Section from the class
+                Section section = cl.getAnnotation(Section.class);
 
-            if (record != null) {
-                LOG.debug("Csv record: {}", record);
+                if (record != null) {
+                    LOG.debug("Csv record: {}", record);
 
-                // Get skipFirstLine parameter
-                skipFirstLine = record.skipFirstLine();
-                LOG.debug("Skip First Line parameter of the CSV: {}" + skipFirstLine);
+                    // Get skipFirstLine parameter
+                    skipFirstLine = record.skipFirstLine();
+                    LOG.debug("Skip First Line parameter of the CSV: {}" + skipFirstLine);
 
-                // Get generateHeaderColumnNames parameter
-                generateHeaderColumnNames = record.generateHeaderColumns();
-                LOG.debug("Generate header column names parameter of the CSV: {}", generateHeaderColumnNames);
+                    // Get generateHeaderColumnNames parameter
+                    generateHeaderColumnNames = record.generateHeaderColumns();
+                    LOG.debug("Generate header column names parameter of the CSV: {}", generateHeaderColumnNames);
 
-                // Get Separator parameter
-                ObjectHelper.notNull(record.separator(), "No separator has been defined in the @Record annotation");
-                separator = record.separator();
-                LOG.debug("Separator defined for the CSV: {}", separator);
+                    // Get Separator parameter
+                    ObjectHelper.notNull(record.separator(), "No separator has been defined in the @Record annotation");
+                    separator = record.separator();
+                    LOG.debug("Separator defined for the CSV: {}", separator);
 
-                // Get carriage return parameter
-                crlf = record.crlf();
-                LOG.debug("Carriage return defined for the CSV: {}", crlf);
+                    // Get carriage return parameter
+                    crlf = record.crlf();
+                    LOG.debug("Carriage return defined for the CSV: {}", crlf);
 
-                // Get isOrdered parameter
-                messageOrdered = record.isOrdered();
-                LOG.debug("Must CSV record be ordered: {}", messageOrdered);
+                    // Get isOrdered parameter
+                    messageOrdered = record.isOrdered();
+                    LOG.debug("Must CSV record be ordered: {}", messageOrdered);
 
-                if (ObjectHelper.isNotEmpty(record.quote())) {
-                    quote = record.quote();
-                    LOG.debug("Quoting columns with: {}", quote);
+                    if (ObjectHelper.isNotEmpty(record.quote())) {
+                        quote = record.quote();
+                        LOG.debug("Quoting columns with: {}", quote);
+                    }
+
+                    quoting = record.quoting();
+                    LOG.debug("CSV will be quoted: {}", quoting);
+
+                    autospanLine = record.autospanLine();
+                    LOG.debug("Autospan line in last record: {}", autospanLine);
                 }
 
-                quoting = record.quoting();
-                LOG.debug("CSV will be quoted: {}", quoting);
+                if (section != null) {
+                    // Test if section number is not null
+                    ObjectHelper.notNull(section.number(), "No number has been defined for the section");
 
-                autospanLine = record.autospanLine();
-                LOG.debug("Autospan line in last record: {}", autospanLine);
-            }
-
-            if (section != null) {
-                // Test if section number is not null
-                ObjectHelper.notNull(section.number(), "No number has been defined for the section");
-
-                // Get section number and add it to the sections
-                sections.put(cl.getName(), section.number());
+                    // Get section number and add it to the sections
+                    sections.put(cl.getName(), section.number());
+                }
             }
         }
     }
-
     /**
      * Set the default values for the non defined fields.
      * @param model the model which has its default fields set.

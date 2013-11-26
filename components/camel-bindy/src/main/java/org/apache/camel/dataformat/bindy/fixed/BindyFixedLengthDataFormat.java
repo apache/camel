@@ -32,14 +32,10 @@ import org.apache.camel.Exchange;
 import org.apache.camel.dataformat.bindy.BindyAbstractDataFormat;
 import org.apache.camel.dataformat.bindy.BindyAbstractFactory;
 import org.apache.camel.dataformat.bindy.BindyFixedLengthFactory;
-import org.apache.camel.dataformat.bindy.annotation.FixedLengthRecord;
 import org.apache.camel.dataformat.bindy.util.ConverterUtils;
 import org.apache.camel.spi.DataFormat;
-import org.apache.camel.spi.PackageScanClassResolver;
-import org.apache.camel.spi.PackageScanFilter;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -66,7 +62,6 @@ public class BindyFixedLengthDataFormat extends BindyAbstractDataFormat {
 
     @SuppressWarnings("unchecked")
     public void marshal(Exchange exchange, Object body, OutputStream outputStream) throws Exception {
-        PackageScanClassResolver resolver = exchange.getContext().getPackageScanClassResolver();
         BindyFixedLengthFactory factory = (BindyFixedLengthFactory) getFactory();
         ObjectHelper.notNull(factory, "not instantiated");
 
@@ -148,7 +143,6 @@ public class BindyFixedLengthDataFormat extends BindyAbstractDataFormat {
     }
 
     public Object unmarshal(Exchange exchange, InputStream inputStream) throws Exception {
-        PackageScanClassResolver resolver = exchange.getContext().getPackageScanClassResolver();
         BindyFixedLengthFactory factory = (BindyFixedLengthFactory) getFactory();
         ObjectHelper.notNull(factory, "not instantiated");
         
@@ -266,45 +260,17 @@ public class BindyFixedLengthDataFormat extends BindyAbstractDataFormat {
 
     @Override
     protected BindyAbstractFactory createModelFactory() throws Exception {
-        
-        // Initialize the primary (body) model factory ignoring header and footer model classes
-        PackageScanFilter defaultRecordScanFilter = new PackageScanFilter() {
-            @Override
-            public boolean matches(Class<?> type) {
-                FixedLengthRecord record = type.getAnnotation(FixedLengthRecord.class);
-                return record != null && !record.isFooter() && !record.isHeader();
-            }
-        };
 
         BindyFixedLengthFactory factory = new BindyFixedLengthFactory(getClassType());
         
         // Optionally initialize the header factory... using header model classes
         if (factory.hasHeader()) {
-            PackageScanFilter headerScanFilter = new PackageScanFilter() {
-                @Override
-                public boolean matches(Class<?> type) {
-                    FixedLengthRecord record = type.getAnnotation(FixedLengthRecord.class);
-                    return record != null && record.isHeader();
-                }
-            };
-
             this.headerFactory = new BindyFixedLengthFactory(getClassType());
-
         }
         
         // Optionally initialize the footer factory... using footer model classes
         if (factory.hasFooter()) {
-            
-            PackageScanFilter footerScanFilter = new PackageScanFilter() {
-                @Override
-                public boolean matches(Class<?> type) {
-                    FixedLengthRecord record = type.getAnnotation(FixedLengthRecord.class);
-                    return record != null && record.isFooter();
-                }
-            };
-            
             this.footerFactory = new BindyFixedLengthFactory(getClassType());
-
         }
         
         return factory;
