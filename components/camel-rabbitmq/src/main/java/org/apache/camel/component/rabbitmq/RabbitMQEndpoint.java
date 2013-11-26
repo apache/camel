@@ -49,6 +49,7 @@ public class RabbitMQEndpoint extends DefaultEndpoint {
     private boolean autoAck = true;
     private boolean autoDelete = true;
     private boolean durable = true;
+    private boolean bridgeEndpoint;
     private String queue = String.valueOf(UUID.randomUUID().toString().hashCode());
     private String exchangeName;
     private String exchangeType = "direct";
@@ -229,5 +230,13 @@ public class RabbitMQEndpoint extends DefaultEndpoint {
 
     public void setRoutingKey(String routingKey) {
         this.routingKey = routingKey;
+    }
+    
+    public void setBridgeEndpoint(boolean bridgeEndpoint) {
+        this.bridgeEndpoint = bridgeEndpoint;
+    }
+    
+    public boolean isBridgeEndpoint() {
+        return bridgeEndpoint;
     }
 }
