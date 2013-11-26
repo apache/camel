@@ -60,8 +60,8 @@
     <avalon-version>4.3.1</avalon-version>
     <avro-version>1.7.3</avro-version>
     <avro-bundle-version>1.7.3_1</avro-bundle-version>
-    <aws-java-sdk-bundle-version>1.5.1_1</aws-java-sdk-bundle-version>
-    <aws-java-sdk-version>1.5.1</aws-java-sdk-version>
+    <aws-java-sdk-bundle-version>1.6.3_1</aws-java-sdk-bundle-version>
+    <aws-java-sdk-version>1.6.3</aws-java-sdk-version>
     <axiom-version>1.2.14</axiom-version>
     <backport-util-concurrent-version>3.1</backport-util-concurrent-version>
     <bcel-bundle-version>5.2_4</bcel-bundle-version>
@@ -107,7 +107,7 @@
     <commons-vfs2-version>2.0</commons-vfs2-version>
     <concurrentlinkedhashmap.version>1.4</concurrentlinkedhashmap.version>
     <cobertura-maven-plugin-version>2.5.2</cobertura-maven-plugin-version>
-    <cxf-version>2.7.7</cxf-version>
+    <cxf-version>2.7.8</cxf-version>
     <cxf-version-range>[2.6,2.9)</cxf-version-range>
     <cxf-xjc-utils-version>2.6.2</cxf-xjc-utils-version>
     <deltaspike-version>0.3-incubating</deltaspike-version>
