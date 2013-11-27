@@ -16,17 +16,10 @@
  */
 package org.apache.camel.component.optaplanner;
 
-import java.io.Reader;
-import java.io.StringReader;
-import java.io.StringWriter;
-import java.util.Map;
-
 import org.apache.camel.Component;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
-import org.apache.camel.Message;
 import org.apache.camel.component.ResourceEndpoint;
-import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.optaplanner.core.api.solver.Solver;
 import org.optaplanner.core.api.solver.SolverFactory;
@@ -55,11 +48,6 @@ public class OptaPlannerEndpoint extends ResourceEndpoint {
     }
 
     @Override
-    public boolean isSingleton() {
-        return true;
-    }
-
-    @Override
     public ExchangePattern getExchangePattern() {
         return ExchangePattern.InOut;
     }
@@ -74,14 +62,16 @@ public class OptaPlannerEndpoint extends ResourceEndpoint {
         ObjectHelper.notNull(solverFactory, "solverFactory");
         Solver solver = solverFactory.buildSolver();
 
-        Object bodyObject = exchange.getIn().getBody();
-        Solution planningProblem = ObjectHelper.cast(Solution.class, bodyObject);
+        Solution planningProblem = exchange.getIn().getMandatoryBody(Solution.class);
 
         solver.setPlanningProblem(planningProblem);
         solver.solve();
         Solution bestSolution = solver.getBestSolution();
 
         exchange.getOut().setBody(bestSolution);
+        // propagate headers and attachments
+        exchange.getOut().setHeaders(exchange.getIn().getHeaders());
+        exchange.getOut().setAttachments(exchange.getIn().getAttachments());
     }
 
 }

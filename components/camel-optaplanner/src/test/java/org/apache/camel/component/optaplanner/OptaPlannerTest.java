@@ -16,10 +16,6 @@
  */
 package org.apache.camel.component.optaplanner;
 
-import javax.activation.DataHandler;
-
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
@@ -32,7 +28,7 @@ import org.optaplanner.examples.cloudbalancing.persistence.CloudBalancingGenerat
 public class OptaPlannerTest extends CamelTestSupport {
 
     @Test
-    public void testCloudBalance_4computers_12processes() throws Exception {
+    public void testCloudBalance4computers12processes() throws Exception {
         CloudBalancingGenerator generator = new CloudBalancingGenerator(true);
         final CloudBalance planningProblem = generator.createCloudBalance(4, 12);
         assertNull(planningProblem.getScore());

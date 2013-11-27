@@ -16,13 +16,10 @@
  */
 package org.apache.camel.component.optaplanner;
 
-import java.net.URL;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
-import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.ResourceHelper;
 import org.optaplanner.core.api.solver.SolverFactory;
 import org.optaplanner.core.config.solver.XmlSolverFactory;
 
@@ -33,8 +30,11 @@ public class OptaPlannerComponent extends DefaultComponent {
 
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         SolverFactory solverFactory = new XmlSolverFactory(remaining);
+
         OptaPlannerEndpoint endpoint = new OptaPlannerEndpoint(uri, this, remaining);
         endpoint.setSolverFactory(solverFactory);
+        setProperties(endpoint, parameters);
+
         return endpoint;
     }
 
