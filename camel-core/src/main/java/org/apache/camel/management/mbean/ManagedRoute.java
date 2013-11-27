@@ -220,6 +220,16 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
             return;
         }
 
+        // if the xml does not contain the route-id then we fix this by adding the actual route id
+        // this may be needed if the route-id was auto-generated, as the intend is to update this route
+        // and not add a new route, adding a new route, use the MBean operation on ManagedCamelContext instead.
+        if (ObjectHelper.isEmpty(def.getId())) {
+            def.setId(getRouteId());
+        } else if (!def.getId().equals(getRouteId())) {
+            throw new IllegalArgumentException("Cannot update route from XML as routeIds does not match. routeId: "
+                    + getRouteId() + ", routeId from XML: " + def.getId());
+        }
+
         // add will remove existing route first
         context.addRouteDefinition(def);
     }
