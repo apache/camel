@@ -114,6 +114,7 @@
         <include>org.apache.camel:camel-netty4</include>
         <include>org.apache.camel:camel-netty-http</include>
         <include>org.apache.camel:camel-ognl</include>
+        <include>org.apache.camel:camel-optaplanner</include>
         <include>org.apache.camel:camel-paxlogging</include>
         <include>org.apache.camel:camel-printer</include>
         <include>org.apache.camel:camel-protobuf</include>
