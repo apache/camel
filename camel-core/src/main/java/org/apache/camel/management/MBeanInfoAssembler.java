@@ -97,7 +97,7 @@ public class MBeanInfoAssembler implements Service {
      */
     public ModelMBeanInfo getMBeanInfo(Object defaultManagedBean, Object customManagedBean, String objectName) throws JMException {
         // skip proxy classes
-        if (Proxy.isProxyClass(defaultManagedBean.getClass())) {
+        if (defaultManagedBean != null && Proxy.isProxyClass(defaultManagedBean.getClass())) {
             LOG.trace("Skip creating ModelMBeanInfo due proxy class {}", defaultManagedBean.getClass());
             return null;
         }
@@ -110,10 +110,12 @@ public class MBeanInfoAssembler implements Service {
         Set<ModelMBeanNotificationInfo> mBeanNotifications = new LinkedHashSet<ModelMBeanNotificationInfo>();
 
         // extract details from default managed bean
-        extractAttributesAndOperations(defaultManagedBean.getClass(), attributes, operations);
-        extractMbeanAttributes(defaultManagedBean, attributes, mBeanAttributes, mBeanOperations);
-        extractMbeanOperations(defaultManagedBean, operations, mBeanOperations);
-        extractMbeanNotifications(defaultManagedBean, mBeanNotifications);
+        if (defaultManagedBean != null) {
+            extractAttributesAndOperations(defaultManagedBean.getClass(), attributes, operations);
+            extractMbeanAttributes(defaultManagedBean, attributes, mBeanAttributes, mBeanOperations);
+            extractMbeanOperations(defaultManagedBean, operations, mBeanOperations);
+            extractMbeanNotifications(defaultManagedBean, mBeanNotifications);
+        }
 
         // extract details from custom managed bean
         if (customManagedBean != null) {

@@ -308,6 +308,7 @@ public class SedaEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
         this.purgeWhenStopping = purgeWhenStopping;
     }
 
+    @ManagedAttribute(description = "Singleton")
     public boolean isSingleton() {
         return true;
     }
@@ -423,6 +424,11 @@ public class SedaEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
     @ManagedAttribute(description = "Camel ManagementName")
     public String getCamelManagementName() {
         return getCamelContext().getManagementName();
+    }
+
+    @ManagedAttribute(description = "Endpoint URI", mask = true)
+    public String getEndpointUri() {
+        return super.getEndpointUri();
     }
 
     @ManagedAttribute(description = "Endpoint service state")
