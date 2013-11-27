@@ -31,6 +31,9 @@
   <description>Camel servlet listener for bootstrapping Camel in Web Applications</description>
   
   <properties>
+      <camel.osgi.import.before.defaults>
+          javax.servlet.*;version="${servlet-version-range}"
+      </camel.osgi.import.before.defaults>
       <camel.osgi.export.pkg>org.apache.camel.component.servletlistener.*</camel.osgi.export.pkg>
   </properties>
 

@@ -31,8 +31,11 @@
   <description>Camel servlet transport support</description>
   
   <properties>
-      <camel.osgi.export.pkg>org.apache.camel.component.servlet.*</camel.osgi.export.pkg>
-      <camel.osgi.export.service>org.apache.camel.spi.ComponentResolver;component=servlet</camel.osgi.export.service>
+    <camel.osgi.import.before.defaults>
+      javax.servlet.*;version="${servlet-version-range}"
+    </camel.osgi.import.before.defaults>
+    <camel.osgi.export.pkg>org.apache.camel.component.servlet.*</camel.osgi.export.pkg>
+    <camel.osgi.export.service>org.apache.camel.spi.ComponentResolver;component=servlet</camel.osgi.export.service>
   </properties>
 
   <dependencies>
