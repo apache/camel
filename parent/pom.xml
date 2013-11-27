@@ -117,7 +117,9 @@
     <dnsjava-bundle-version>2.1.1_1</dnsjava-bundle-version>
     <dom4j-bundle-version>1.6.1_5</dom4j-bundle-version>
     <dozer-version>5.4.0</dozer-version>
+    <drools-version>6.0.0.Final</drools-version>
     <easymock-version>3.2</easymock-version>
+    <eclipse-compiler-version>4.2.2</eclipse-compiler-version>
     <eclipse-equinox-common-version>3.3.0-v20070426</eclipse-equinox-common-version>
     <ehcache-version>2.7.4</ehcache-version>
     <elasticsearch-bundle-version>0.90.5_1</elasticsearch-bundle-version>
@@ -251,6 +253,7 @@
     <junit-version>4.11</junit-version>
     <jython-version>2.5.3</jython-version>
     <karaf-version>2.3.3</karaf-version>
+    <kie-version>6.0.0.Final</kie-version>
     <krati-version>0.4.9</krati-version>
     <kxml2-bundle-version>2.3.0_2</kxml2-bundle-version>
     <leveldbjni-version>1.8</leveldbjni-version>

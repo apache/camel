@@ -770,6 +770,26 @@
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.javassist/${javassist-bundle-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-ognl/${project.version}</bundle>
   </feature>
+<!-- yet another OSGi import|export package hell
+     [WARNING] No export found to match com.sun.tools.xjc (imported by mvn:org.drools/drools-core/6.0.0.Final)
+  <feature name='camel-optaplanner' version='${project.version}' resolver='(obr)' start-level='50'>
+    <feature version='${project.version}'>camel-core</feature>
+    <bundle dependency='true'>mvn:commons-lang/commons-lang/${commons-lang-version}</bundle>
+    <bundle dependency='true'>mvn:commons-io/commons-io/${commons-io-version}</bundle>
+    <bundle dependency='true'>mvn:commons-collections/commons-collections/${commons-collections-version}</bundle>
+    <bundle dependency='true'>mvn:org.optaplanner/optaplanner-core/${optaplanner-version}</bundle>
+    <bundle dependency='true'>mvn:org.kie/kie-api/${kie-version}</bundle>
+    <bundle dependency='true'>mvn:org.kie/kie-internal/${kie-version}</bundle>
+    <bundle dependency='true'>mvn:org.drools/drools-core/${drools-version}</bundle>
+    <bundle dependency='true'>mvn:org.drools/drools-compiler/${drools-version}</bundle>
+    <bundle dependency='true'>mvn:org.eclipse.jdt.core.compiler/ecj/${eclipse-compiler-version}</bundle>
+    <bundle dependency='true'>mvn:org.mvel/mvel2/${mvel-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.xstream/${xstream-bundle-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.protobuf-java/${protobuf-java-bundle-version}</bundle>
+    <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.javax-inject/${javax-inject-bundle-version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-optaplanner/${project.version}</bundle>
+  </feature>
+-->
   <feature name='camel-paxlogging' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
     <bundle>mvn:org.apache.camel/camel-paxlogging/${project.version}</bundle>
