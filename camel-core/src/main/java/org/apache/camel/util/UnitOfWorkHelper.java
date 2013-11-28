@@ -21,8 +21,6 @@ import java.util.Collections;
 import java.util.List;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.impl.DefaultUnitOfWork;
-import org.apache.camel.impl.MDCUnitOfWork;
 import org.apache.camel.spi.Synchronization;
 import org.apache.camel.spi.UnitOfWork;
 import org.slf4j.Logger;
@@ -43,15 +41,11 @@ public final class UnitOfWorkHelper {
      *
      * @param exchange the exchange
      * @return the created unit of work (is not started)
+     * @deprecated use {@link org.apache.camel.CamelContext#getUnitOfWorkFactory()} instead.
      */
+    @Deprecated
     public static UnitOfWork createUoW(Exchange exchange) {
-        UnitOfWork answer;
-        if (exchange.getContext().isUseMDCLogging()) {
-            answer = new MDCUnitOfWork(exchange);
-        } else {
-            answer = new DefaultUnitOfWork(exchange);
-        }
-        return answer;
+        return exchange.getContext().getUnitOfWorkFactory().createUnitOfWork(exchange);
     }
 
     /**
