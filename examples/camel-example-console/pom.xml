@@ -59,15 +59,14 @@
 
   <build>
     <plugins>
-      <!-- Allows the example to be run via 'mvn compile exec:java' -->
+
+      <!-- Allows the routes to be run via 'mvn camel:run' -->
       <plugin>
-        <groupId>org.codehaus.mojo</groupId>
-        <artifactId>exec-maven-plugin</artifactId>
-        <configuration>
-          <mainClass>org.apache.camel.example.console.CamelConsoleMain</mainClass>
-          <includePluginDependencies>false</includePluginDependencies>
-        </configuration>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-maven-plugin</artifactId>
+        <version>${project.version}</version>
       </plugin>
+
     </plugins>
 
   </build>
