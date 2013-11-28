@@ -19,6 +19,7 @@ package org.apache.camel.component.dropbox;
 import com.dropbox.core.*;
 import org.apache.camel.component.dropbox.util.DropboxException;
 import org.apache.camel.component.dropbox.util.DropboxOperation;
+import org.apache.camel.component.dropbox.util.DropboxUploadMode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -29,8 +30,6 @@ public class DropboxConfiguration {
     private static final transient Logger LOG = LoggerFactory.getLogger(DropboxConfiguration.class);
 
     //dropbox auth options
-    private String appKey;
-    private String appSecret;
     private String accessToken;
     //local path to put files
     private String localPath;
@@ -40,6 +39,8 @@ public class DropboxConfiguration {
     private String newRemotePath;
     //search query on dropbox
     private String query;
+    //in case of uploading if force or add existing file
+    private DropboxUploadMode uploadMode;
     //id of the app
     private String clientIdentifier;
     //specific dropbox operation for the component
@@ -52,7 +53,6 @@ public class DropboxConfiguration {
     }
 
     public void createClient() throws DropboxException {
-        DbxAppInfo appInfo = new DbxAppInfo(appKey, appSecret);
         DbxRequestConfig config =
                 new DbxRequestConfig(clientIdentifier, Locale.getDefault().toString());
         DbxClient client = new DbxClient(config, accessToken);
@@ -61,22 +61,6 @@ public class DropboxConfiguration {
         }
         this.client = client;
 
-    }
-
-    public String getAppSecret() {
-        return appSecret;
-    }
-
-    public void setAppSecret(String appSecret) {
-        this.appSecret = appSecret;
-    }
-
-    public String getAppKey() {
-        return appKey;
-    }
-
-    public void setAppKey(String appKey) {
-        this.appKey = appKey;
     }
 
     public String getAccessToken() {
@@ -133,6 +117,14 @@ public class DropboxConfiguration {
 
     public void setOperation(DropboxOperation operation) {
         this.operation = operation;
+    }
+
+    public DropboxUploadMode getUploadMode() {
+        return uploadMode;
+    }
+
+    public void setUploadMode(DropboxUploadMode uploadMode) {
+        this.uploadMode = uploadMode;
     }
 
 }

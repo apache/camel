@@ -16,20 +16,30 @@
  */
 package org.apache.camel.component.dropbox.dto;
 
+import com.dropbox.core.DbxEntry;
 import org.apache.camel.Exchange;
+import org.apache.camel.component.dropbox.util.DropboxResultHeader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.component.dropbox.util.DropboxConstants.DOWNLOADED_FILE;
+import java.util.List;
 
-public class DropboxFileDownloadCamelResult extends DropboxCamelResult {
+
+public class DropboxSearchResult extends DropboxResult {
+
+    private static final transient Logger LOG = LoggerFactory.getLogger(DropboxSearchResult.class);
+
     @Override
     public void populateExchange(Exchange exchange) {
-        //set info in exchange
-        exchange.getIn().setHeader(DOWNLOADED_FILE, this.dropboxObjs[0].toString());
-        exchange.getIn().setBody(this.dropboxObjs[1]);
-    }
-
-    @Override
-    public String toString() {
-        return this.dropboxObjs[0].toString();
+        StringBuffer fileExtracted = new StringBuffer();
+        List<DbxEntry> entries = null;
+        if (resultEntries != null) {
+            entries = (List<DbxEntry>) resultEntries;
+            for (DbxEntry entry : entries) {
+                fileExtracted.append(entry.name + "-" + entry.path + "\n");
+            }
+        }
+        exchange.getIn().setHeader(DropboxResultHeader.FOUNDED_FILES.name(), fileExtracted.toString());
+        exchange.getIn().setBody(entries);
     }
 }

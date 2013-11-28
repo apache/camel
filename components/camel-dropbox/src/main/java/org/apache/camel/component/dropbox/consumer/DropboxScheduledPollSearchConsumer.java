@@ -21,9 +21,8 @@ import org.apache.camel.Processor;
 import org.apache.camel.component.dropbox.DropboxConfiguration;
 import org.apache.camel.component.dropbox.DropboxEndpoint;
 import org.apache.camel.component.dropbox.core.DropboxAPIFacade;
-import org.apache.camel.component.dropbox.dto.DropboxCamelResult;
-
-import static org.apache.camel.component.dropbox.util.DropboxResultOpCode.OK;
+import org.apache.camel.component.dropbox.dto.DropboxResult;
+import org.apache.camel.component.dropbox.util.DropboxResultCode;
 
 public class DropboxScheduledPollSearchConsumer extends DropboxScheduledPollConsumer {
 
@@ -34,9 +33,8 @@ public class DropboxScheduledPollSearchConsumer extends DropboxScheduledPollCons
     @Override
     protected int poll() throws Exception {
         Exchange exchange = endpoint.createExchange();
-        DropboxCamelResult result = DropboxAPIFacade.getInstance(this.configuration.getClient())
-                .search(this.configuration.getRemotePath(),this.configuration.getQuery());
-        result.createResultOpCode(exchange,OK);
+        DropboxResult result = DropboxAPIFacade.getInstance(configuration.getClient())
+                .search(configuration.getRemotePath(), configuration.getQuery());
         result.populateExchange(exchange);
         LOG.info("consumer --> downloaded: " + result.toString());
 

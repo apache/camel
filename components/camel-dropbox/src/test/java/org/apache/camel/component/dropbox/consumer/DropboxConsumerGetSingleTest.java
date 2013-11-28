@@ -17,20 +17,18 @@
 package org.apache.camel.component.dropbox.consumer;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.dropbox.DropboxTestSupport;
 import org.apache.camel.component.dropbox.util.DropboxConstants;
-import org.apache.camel.component.dropbox.util.DropboxResultOpCode;
+import org.apache.camel.component.dropbox.util.DropboxResultHeader;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 import java.util.List;
 
-public class DropboxConsumerGetTest extends DropboxTestSupport {
+public class DropboxConsumerGetSingleTest extends DropboxTestSupport {
 
-    public DropboxConsumerGetTest() throws Exception {}
+    public DropboxConsumerGetSingleTest() throws Exception {}
 
     @Test
     public void testCamelDropbox() throws Exception {
@@ -41,22 +39,18 @@ public class DropboxConsumerGetTest extends DropboxTestSupport {
 
         List<Exchange> exchanges = mock.getReceivedExchanges();
         Exchange exchange = exchanges.get(0);
-        Object headerCode =  exchange.getIn().getHeader(DropboxConstants.RESULT_OP_CODE);
-        Object header =  exchange.getIn().getHeader(DropboxConstants.DOWNLOADED_FILE);
+        Object header =  exchange.getIn().getHeader(DropboxResultHeader.DOWNLOADED_FILE.name());
         Object body = exchange.getIn().getBody();
-        assertNotNull(headerCode);
-        assertEquals(headerCode.toString(), DropboxResultOpCode.OK);
         assertNotNull(header);
         assertNotNull(body);
-
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                from("dropbox://get?"+getAuthParams()+"&remotePath=/XXX")
-                        .to("file:///XXX?fileName=XXX")
+                from("dropbox://get?"+getAuthParams()+"&remotePath=/test.pdf")
+                        .to("file:///home/hifly/Desktop?fileName=pp.pdf")
                         .to("mock:result");
             }
         };

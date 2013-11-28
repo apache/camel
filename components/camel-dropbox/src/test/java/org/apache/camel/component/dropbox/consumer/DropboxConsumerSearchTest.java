@@ -19,10 +19,8 @@ package org.apache.camel.component.dropbox.consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.dropbox.DropboxTestSupport;
-import org.apache.camel.component.dropbox.util.DropboxConstants;
-import org.apache.camel.component.dropbox.util.DropboxResultOpCode;
+import org.apache.camel.component.dropbox.util.DropboxResultHeader;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 import java.util.List;
@@ -40,22 +38,17 @@ public class DropboxConsumerSearchTest extends DropboxTestSupport {
 
         List<Exchange> exchanges = mock.getReceivedExchanges();
         Exchange exchange = exchanges.get(0);
-        Object headerCode =  exchange.getIn().getHeader(DropboxConstants.RESULT_OP_CODE);
-        Object header =  exchange.getIn().getHeader(DropboxConstants.DOWNLOADED_FILE);
+        Object header =  exchange.getIn().getHeader(DropboxResultHeader.FOUNDED_FILES.name());
         Object body = exchange.getIn().getBody();
-        assertNotNull(headerCode);
-        assertEquals(headerCode.toString(), DropboxResultOpCode.OK);
         assertNotNull(header);
         assertNotNull(body);
-
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                from("dropbox://search?"+getAuthParams()+"&remotePath=/XXX&query=XXX")
-                        .to("file:///XXX?fileName=XXX")
+                from("dropbox://search?" + getAuthParams() + "&remotePath=/XXX")
                         .to("mock:result");
             }
         };

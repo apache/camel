@@ -14,28 +14,22 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.dropbox.producer;
+package org.apache.camel.component.dropbox.dto;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.component.dropbox.DropboxConfiguration;
-import org.apache.camel.component.dropbox.DropboxEndpoint;
-import org.apache.camel.component.dropbox.core.DropboxAPIFacade;
-import org.apache.camel.component.dropbox.dto.DropboxResult;
+import org.apache.camel.component.dropbox.util.DropboxResultHeader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class DropboxSearchProducer extends DropboxProducer {
-    private static final transient Logger LOG = LoggerFactory.getLogger(DropboxSearchProducer.class);
 
-    public DropboxSearchProducer(DropboxEndpoint endpoint, DropboxConfiguration configuration) {
-        super(endpoint,configuration);
-    }
+public class DropboxMoveResult extends DropboxResult {
+
+    private static final transient Logger LOG = LoggerFactory.getLogger(DropboxMoveResult.class);
 
     @Override
-    public void process(Exchange exchange) throws Exception {
-        DropboxResult result = DropboxAPIFacade.getInstance(configuration.getClient())
-                .search(configuration.getRemotePath(),configuration.getQuery());
-        result.populateExchange(exchange);
+    public void populateExchange(Exchange exchange) {
+        String movedPath = (String)resultEntries;
+        exchange.getIn().setHeader(DropboxResultHeader.MOVED_PATH.name(),movedPath);
+        exchange.getIn().setBody(movedPath);
     }
-
 }

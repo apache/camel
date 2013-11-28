@@ -17,13 +17,10 @@
 package org.apache.camel.component.dropbox;
 
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.apache.camel.util.IntrospectionSupport;
 
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Properties;
 
 public class DropboxTestSupport extends CamelTestSupport {
@@ -50,17 +47,10 @@ public class DropboxTestSupport extends CamelTestSupport {
             e.printStackTrace();
             throw new IllegalAccessError("test-options.properties could not be found");
         }
-
-        Map<String, Object> options = new HashMap<String, Object>();
-        for (Map.Entry<Object, Object> entry : properties.entrySet()) {
-            options.put(entry.getKey().toString(), entry.getValue());
-        }
     }
 
     protected String getAuthParams() {
-        return "appKey=" + properties.get("appKey")
-                + "&appSecret=" + properties.get("appSecret")
-                + "&accessToken=" + properties.get("accessToken")
+        return "accessToken=" + properties.get("accessToken")
                 + "&clientIdentifier="+properties.get("clientIdentifier");
     }
 }

@@ -20,11 +20,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.component.dropbox.DropboxConfiguration;
 import org.apache.camel.component.dropbox.DropboxEndpoint;
 import org.apache.camel.component.dropbox.core.DropboxAPIFacade;
-import org.apache.camel.component.dropbox.dto.DropboxCamelResult;
+import org.apache.camel.component.dropbox.dto.DropboxResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.apache.camel.component.dropbox.util.DropboxResultOpCode.OK;
 
 public class DropboxMoveProducer extends DropboxProducer {
     private static final transient Logger LOG = LoggerFactory.getLogger(DropboxMoveProducer.class);
@@ -35,11 +33,10 @@ public class DropboxMoveProducer extends DropboxProducer {
 
     @Override
     public void process(Exchange exchange) throws Exception {
-        DropboxCamelResult result = DropboxAPIFacade.getInstance(this.configuration.getClient())
-                .move(this.configuration.getRemotePath(),this.configuration.getNewRemotePath());
-        result.createResultOpCode(exchange,OK);
+        DropboxResult result = DropboxAPIFacade.getInstance(configuration.getClient())
+                .move(configuration.getRemotePath(),configuration.getNewRemotePath());
         result.populateExchange(exchange);
-        log.info("Moved from " + this.configuration.getRemotePath()+" to "+this.configuration.getNewRemotePath());
+        log.info("Moved from " + configuration.getRemotePath()+" to "+configuration.getNewRemotePath());
     }
 
 }

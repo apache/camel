@@ -16,13 +16,23 @@
  */
 package org.apache.camel.component.dropbox.dto;
 
+import com.dropbox.core.DbxEntry;
 import org.apache.camel.Exchange;
+import org.apache.camel.component.dropbox.util.DropboxResultHeader;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-import static org.apache.camel.component.dropbox.util.DropboxConstants.UPLOADED_FILE;
+import java.util.List;
 
-public class DropboxGenericCamelResult extends DropboxCamelResult {
+
+public class DropboxDelResult extends DropboxResult {
+
+    private static final transient Logger LOG = LoggerFactory.getLogger(DropboxDelResult.class);
+
     @Override
     public void populateExchange(Exchange exchange) {
-       throw new UnsupportedOperationException("Method not implemented!");
+        String remotePath = (String)resultEntries;
+        exchange.getIn().setHeader(DropboxResultHeader.DELETED_PATH.name(),remotePath);
+        exchange.getIn().setBody(remotePath);
     }
 }

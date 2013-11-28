@@ -50,22 +50,22 @@ public class DropboxEndpoint extends DefaultEndpoint {
     }
 
     public Producer createProducer() throws Exception {
-        LOG.debug("resolve producer dropbox endpoint {" + this.configuration.getOperation().toString() + "}");
-        LOG.debug("resolve producer dropbox attached client:"+this.configuration.getClient());
-        if(this.configuration.getOperation() == DropboxOperation.put) {
-            return new DropboxPutProducer(this,this.configuration);
+        LOG.info("resolve producer dropbox endpoint {" + configuration.getOperation().toString() + "}");
+        LOG.info("resolve producer dropbox attached client:"+configuration.getClient());
+        if(configuration.getOperation() == DropboxOperation.put) {
+            return new DropboxPutProducer(this,configuration);
         }
         else if(this.configuration.getOperation() == DropboxOperation.search) {
-            return new DropboxSearchProducer(this,this.configuration);
+            return new DropboxSearchProducer(this,configuration);
         }
         else if(this.configuration.getOperation() == DropboxOperation.del) {
-            return new DropboxDelProducer(this,this.configuration);
+            return new DropboxDelProducer(this,configuration);
         }
         else if(this.configuration.getOperation() == DropboxOperation.get) {
-            return new DropboxGetProducer(this,this.configuration);
+            return new DropboxGetProducer(this,configuration);
         }
         else if(this.configuration.getOperation() == DropboxOperation.move) {
-            return new DropboxMoveProducer(this,this.configuration);
+            return new DropboxMoveProducer(this,configuration);
         }
         else {
             throw new DropboxException("operation specified is not valid for producer!");
@@ -73,16 +73,16 @@ public class DropboxEndpoint extends DefaultEndpoint {
     }
 
     public Consumer createConsumer(Processor processor) throws Exception {
-        LOG.debug("resolve consumer dropbox endpoint {" + this.configuration.getOperation().toString() + "}");
-        LOG.debug("resolve consumer dropbox attached client:"+this.configuration.getClient());
+        LOG.debug("resolve consumer dropbox endpoint {" + configuration.getOperation().toString() + "}");
+        LOG.debug("resolve consumer dropbox attached client:"+configuration.getClient());
         DropboxScheduledPollConsumer consumer = null;
         if(this.configuration.getOperation() == DropboxOperation.search) {
-            consumer = new DropboxScheduledPollSearchConsumer(this,processor,this.configuration);
+            consumer = new DropboxScheduledPollSearchConsumer(this,processor,configuration);
             consumer.setDelay(POLL_CONSUMER_DELAY);
             return consumer;
         }
         else if(this.configuration.getOperation() == DropboxOperation.get) {
-            consumer = new DropboxScheduledPollGetConsumer(this,processor,this.configuration);
+            consumer = new DropboxScheduledPollGetConsumer(this,processor,configuration);
             consumer.setDelay(POLL_CONSUMER_DELAY);
             return consumer;
         }

@@ -17,24 +17,20 @@
 package org.apache.camel.component.dropbox.dto;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.component.dropbox.util.DropboxResultOpCode;
 
-import static org.apache.camel.component.dropbox.util.DropboxConstants.RESULT_OP_CODE;
 
-public abstract class DropboxCamelResult {
+public abstract class DropboxResult {
 
-    protected Object[] dropboxObjs;
+    protected Object resultEntries;
 
     public abstract void populateExchange(Exchange exchange);
-    public void createResultOpCode(Exchange exchange,String code) {
-        exchange.getIn().setHeader(RESULT_OP_CODE, code);
+
+    public Object getResultEntries()  {
+        return resultEntries;
     }
 
-    public Object[] getDropboxObjs() {
-        return dropboxObjs;
+    public void setResultEntries(Object resultEntries) {
+        this.resultEntries = resultEntries;
     }
 
-    public void setDropboxObjs(Object... dropboxObjs) {
-        this.dropboxObjs = dropboxObjs;
-    }
 }

@@ -20,11 +20,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.component.dropbox.DropboxConfiguration;
 import org.apache.camel.component.dropbox.DropboxEndpoint;
 import org.apache.camel.component.dropbox.core.DropboxAPIFacade;
-import org.apache.camel.component.dropbox.dto.DropboxCamelResult;
+import org.apache.camel.component.dropbox.dto.DropboxResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import static org.apache.camel.component.dropbox.util.DropboxResultOpCode.OK;
 
 public class DropboxGetProducer extends DropboxProducer {
     private static final transient Logger LOG = LoggerFactory.getLogger(DropboxGetProducer.class);
@@ -35,9 +33,8 @@ public class DropboxGetProducer extends DropboxProducer {
 
     @Override
     public void process(Exchange exchange) throws Exception {
-        DropboxCamelResult result = DropboxAPIFacade.getInstance(this.configuration.getClient())
-                .get(this.configuration.getRemotePath());
-        result.createResultOpCode(exchange,OK);
+        DropboxResult result = DropboxAPIFacade.getInstance(configuration.getClient())
+                .get(configuration.getRemotePath());
         result.populateExchange(exchange);
         LOG.info("producer --> downloaded: " + result.toString());
 

@@ -16,10 +16,20 @@
  */
 package org.apache.camel.component.dropbox.util;
 
-public final class DropboxConstants {
+public enum DropboxUploadMode {
+    add("add"),
+    force("force");
 
-    private DropboxConstants() {}
+    private DropboxUploadMode(final String text) {
+        this.text = text;
+    }
 
-    public static final String DROPBOX_FILE_SEPARATOR = "/";
-    public static final long POLL_CONSUMER_DELAY = 60 * 60 * 1000L;
+    private final String text;
+
+    @Override
+    public String toString() {
+        return text;
+    }
+
 }
+

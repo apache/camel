@@ -16,9 +16,7 @@
  */
 package org.apache.camel.component.dropbox.util;
 
-public final class DropboxResultOpCode {
-
-    private DropboxResultOpCode() {}
-
-    public static final String OK = "OK";
+public enum DropboxResultCode {
+    OK,KO;
 }
+

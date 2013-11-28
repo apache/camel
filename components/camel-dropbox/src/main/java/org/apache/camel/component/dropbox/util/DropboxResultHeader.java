@@ -14,17 +14,9 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.dropbox.dto;
+package org.apache.camel.component.dropbox.util;
 
-import org.apache.camel.Exchange;
-
-import static org.apache.camel.component.dropbox.util.DropboxConstants.UPLOADED_FILE;
-
-public class DropboxFileUploadCamelResult extends DropboxCamelResult {
-    @Override
-    public void populateExchange(Exchange exchange) {
-        //set info in exchange
-        exchange.getIn().setHeader(UPLOADED_FILE, this.dropboxObjs[0].toString());
-        exchange.getIn().setBody(this.dropboxObjs[0].toString());
-    }
+public enum DropboxResultHeader {
+    DOWNLOADED_FILE,DOWNLOADED_FILES,UPLOADED_FILE,UPLOADED_FILES,FOUNDED_FILES,DELETED_PATH,MOVED_PATH;
 }
+

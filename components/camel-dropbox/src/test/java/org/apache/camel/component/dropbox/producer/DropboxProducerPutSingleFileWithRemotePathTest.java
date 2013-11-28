@@ -27,9 +27,9 @@ import org.junit.Test;
 
 import java.util.List;
 
-public class DropboxProducerSearchTest extends DropboxTestSupport {
+public class DropboxProducerPutSingleFileWithRemotePathTest extends DropboxTestSupport {
 
-    public DropboxProducerSearchTest() throws Exception {}
+    public DropboxProducerPutSingleFileWithRemotePathTest() throws Exception {}
 
     @Test
     public void testCamelDropbox() throws Exception {
@@ -47,11 +47,10 @@ public class DropboxProducerSearchTest extends DropboxTestSupport {
 
         List<Exchange> exchanges = mock.getReceivedExchanges();
         Exchange exchange = exchanges.get(0);
-        Object header =  exchange.getIn().getHeader(DropboxResultHeader.FOUNDED_FILES.name());
+        Object header =  exchange.getIn().getHeader(DropboxResultHeader.UPLOADED_FILE.name());
         Object body = exchange.getIn().getBody();
         assertNotNull(header);
         assertNotNull(body);
-
     }
 
     @Override
@@ -59,7 +58,7 @@ public class DropboxProducerSearchTest extends DropboxTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                        .to("dropbox://search?"+getAuthParams()+"&remotePath=/XXX")
+                        .to("dropbox://put?"+getAuthParams()+"&uploadMode=add&localPath=/XXX&remotePath=/XXX")
                         .to("mock:result");
             }
         };
