@@ -58,8 +58,8 @@
     <atomikos-transactions-version>3.8.0</atomikos-transactions-version>
     <avalon-bundle-version>4.3.1_1</avalon-bundle-version>
     <avalon-version>4.3.1</avalon-version>
-    <avro-version>1.7.3</avro-version>
-    <avro-bundle-version>1.7.3_1</avro-bundle-version>
+    <avro-version>1.7.5</avro-version>
+    <avro-bundle-version>1.7.5_1</avro-bundle-version>
     <aws-java-sdk-bundle-version>1.6.3_1</aws-java-sdk-bundle-version>
     <aws-java-sdk-version>1.6.3</aws-java-sdk-version>
     <axiom-version>1.2.14</axiom-version>
@@ -366,7 +366,7 @@
     <slf4j-version>1.7.5</slf4j-version>
     <smack-bundle-version>3.2.1_1</smack-bundle-version>
     <smack-version>3.2.1</smack-version>
-    <snappy-bundle-version>1.0.4.1_1</snappy-bundle-version>
+    <snappy-version>1.1.0.1</snappy-version>
     <snmp4j-version>2.2.2_1</snmp4j-version>
     <solr-bundle-version>4.5.1_1</solr-bundle-version>
     <solr-version>4.5.1</solr-version>

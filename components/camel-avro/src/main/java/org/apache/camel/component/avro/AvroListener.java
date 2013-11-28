@@ -45,10 +45,8 @@ public class AvroListener {
     private ConcurrentMap<String, AvroConsumer> consumerRegistry = new ConcurrentHashMap<String, AvroConsumer>();
     private AvroConsumer defaultConsumer;
     private final Server server;
-    private final AvroConfiguration configuration;
 
     public AvroListener(AvroEndpoint endpoint)  throws Exception {
-        configuration = endpoint.getConfiguration();
         server = initAndStartServer(endpoint.getConfiguration());
     }
 
