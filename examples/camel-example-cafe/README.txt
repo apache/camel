@@ -7,7 +7,7 @@ You will need to compile this example first:
   mvn compile
 
 To run the example type
-  mvn exec:java
+  mvn camel:run
 
 You can see the routing rules by looking at the java code in the
 src/main/java directory and the Spring XML configuration lives in
