@@ -53,6 +53,13 @@
       <artifactId>camel-cdi</artifactId>
     </dependency>
 
+    <!--for the hawtio goal -->
+    <dependency>
+      <groupId>io.hawt</groupId>
+      <artifactId>hawtio-app</artifactId>
+      <version>${hawtio-version}</version>
+    </dependency>
+
     <dependency>
       <groupId>org.codehaus.mojo</groupId>
       <artifactId>exec-maven-plugin</artifactId>
