@@ -120,6 +120,7 @@ import org.apache.camel.spi.ServicePool;
 import org.apache.camel.spi.ShutdownStrategy;
 import org.apache.camel.spi.StreamCachingStrategy;
 import org.apache.camel.spi.TypeConverterRegistry;
+import org.apache.camel.spi.UnitOfWorkFactory;
 import org.apache.camel.spi.UuidGenerator;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.CamelContextHelper;
@@ -218,6 +219,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     private ExecutorServiceManager executorServiceManager;
     private Debugger debugger;
     private UuidGenerator uuidGenerator = createDefaultUuidGenerator();
+    private UnitOfWorkFactory unitOfWorkFactory = new DefaultUnitOfWorkFactory();
     private final StopWatch stopWatch = new StopWatch(false);
     private Date startDate;
 
@@ -1402,6 +1404,14 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
 
     public ServicePool<Endpoint, Producer> getProducerServicePool() {
         return producerServicePool;
+    }
+
+    public UnitOfWorkFactory getUnitOfWorkFactory() {
+        return unitOfWorkFactory;
+    }
+
+    public void setUnitOfWorkFactory(UnitOfWorkFactory unitOfWorkFactory) {
+        this.unitOfWorkFactory = unitOfWorkFactory;
     }
 
     public String getUptime() {

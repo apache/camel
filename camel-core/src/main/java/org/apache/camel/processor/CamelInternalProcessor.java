@@ -615,7 +615,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
         }
 
         protected UnitOfWork createUnitOfWork(Exchange exchange) {
-            return UnitOfWorkHelper.createUoW(exchange);
+            return exchange.getContext().getUnitOfWorkFactory().createUnitOfWork(exchange);
         }
 
     }
