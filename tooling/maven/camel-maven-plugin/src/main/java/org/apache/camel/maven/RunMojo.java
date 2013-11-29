@@ -488,6 +488,8 @@ public class RunMojo extends AbstractExecMojo {
                         main.setAccessible(true);
                     }
                     main.invoke(main, new Object[] {arguments});
+
+                    afterBootstrapCamel();
                 } catch (Exception e) { // just pass it on
                     // let it be printed so end users can see the exception on the console
                     getLog().error("*************************************");
@@ -540,7 +542,14 @@ public class RunMojo extends AbstractExecMojo {
     /**
      * Allows plugin extensions to do custom logic before bootstrapping Camel.
      */
-    void beforeBootstrapCamel() throws Exception {
+    protected void beforeBootstrapCamel() throws Exception {
+        // noop
+    }
+
+    /**
+     * Allows plugin extensions to do custom logic after bootstrapping Camel.
+     */
+    protected void afterBootstrapCamel() throws Exception {
         // noop
     }
 

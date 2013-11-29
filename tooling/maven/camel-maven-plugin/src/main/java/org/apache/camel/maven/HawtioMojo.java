@@ -43,7 +43,7 @@ public class HawtioMojo extends RunMojo {
     }
 
     @Override
-    void beforeBootstrapCamel() throws Exception {
+    protected void beforeBootstrapCamel() throws Exception {
         getLog().info("Starting hawtio ...");
         Method hawtioMain = Thread.currentThread().getContextClassLoader().loadClass("io.hawt.app.App")
                 .getMethod("main", new Class[] {String[].class});
