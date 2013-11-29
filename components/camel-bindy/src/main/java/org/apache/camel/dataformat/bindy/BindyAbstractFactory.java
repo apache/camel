@@ -64,22 +64,33 @@ public abstract class BindyAbstractFactory implements BindyFactory {
      */
     public void initModel() throws Exception {
         models = new HashSet<Class<?>>();
-        models.add(type);
+        modelClassNames = new HashSet<String>();
         
-        for (Field field : type.getDeclaredFields()) {
+        loadModels(type);
+    }
+    
+    /**
+     * Recursively load model.
+     *  
+     * @param root
+     */
+    private void loadModels(Class<?> root) {
+        models.add(root);
+        modelClassNames.add(root.getName());
+        
+        for (Field field : root.getDeclaredFields()) {
             Link linkField = field.getAnnotation(Link.class);
 
             if (linkField != null) {
                 if (LOG.isDebugEnabled()) {
                     LOG.debug("Class linked: {}, Field: {}", field.getType(), field);
                 }
+                
                 models.add(field.getType());
+                modelClassNames.add(field.getType().getName());
+                
+                loadModels(field.getType());
             }
-        }
-        
-        modelClassNames = new HashSet<String>();
-        for (Class<?> clazz : models) {
-            modelClassNames.add(clazz.getName());
         }
     }
 
