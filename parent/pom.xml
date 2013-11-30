@@ -51,9 +51,8 @@
     <aries-util-version>1.1.0</aries-util-version>
     <arquillian-junit-container-version>1.0.0.CR7</arquillian-junit-container-version>
     <arquillian-weld-ee-embedded-version>1.0.0.CR3</arquillian-weld-ee-embedded-version>
-    <asm-bundle-version>3.3_2</asm-bundle-version>
-    <asm-version>3.1</asm-version>
-    <asm2-bundle-version>2.2.3_5</asm2-bundle-version>
+    <asm-bundle-version>3.3.1_1</asm-bundle-version>
+    <asm-version>3.3.1</asm-version>
     <aspectj-version>1.6.2</aspectj-version>
     <atomikos-transactions-version>3.8.0</atomikos-transactions-version>
     <avalon-bundle-version>4.3.1_1</avalon-bundle-version>

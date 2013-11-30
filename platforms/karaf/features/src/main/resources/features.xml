@@ -905,7 +905,6 @@
   <feature name='camel-script' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
     <bundle dependency='true'>mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.scripting-api-1.0/${servicemix-specs-version}</bundle>
-    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.asm/${asm2-bundle-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.antlr/${antlr-bundle-version}</bundle>
     <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.rhino/${rhino-bundle-version}</bundle>
     <bundle>mvn:org.codehaus.groovy/groovy-all/${groovy-version}</bundle>
