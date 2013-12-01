@@ -251,6 +251,9 @@ public class Mina2Producer extends DefaultProducer implements ServicePoolAware {
     }
 
     private void openConnection() {
+        if(this.address == null || !this.configuration.isCachedAddress()){
+            setSocketAddress(this.configuration.getProtocol());
+        }
         if (LOG.isDebugEnabled()) {
             LOG.debug("Creating connector to address: {} using connector: {} timeout: {} millis.", new Object[]{address, connector, timeout});
         }
@@ -444,6 +447,16 @@ public class Mina2Producer extends DefaultProducer implements ServicePoolAware {
             for (IoFilter ioFilter : filters) {
                 filterChain.addLast(ioFilter.getClass().getCanonicalName(), ioFilter);
             }
+        }
+    }
+
+    private void setSocketAddress(String protocol){
+        if(protocol.equals("tcp")){
+            this.address = new InetSocketAddress(configuration.getHost(), configuration.getPort());
+        }else if(configuration.isDatagramProtocol()){
+            this.address = new InetSocketAddress(configuration.getHost(), configuration.getPort());
+        }else if(protocol.equals("vm")){
+            this.address = new VmPipeAddress(configuration.getPort());
         }
     }
 
