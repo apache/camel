@@ -17,21 +17,32 @@
 package org.apache.camel.component.quartz2;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
 
 /**
  * @version 
  */
-public class QuartzRouteFireNowTest extends QuartzRouteTest {
-    
+public class QuartzRepeatIntervalTest extends CamelTestSupport {
+    protected MockEndpoint resultEndpoint;
+
+    @Test
+    public void testRepeatInterval() throws Exception {
+        resultEndpoint = getMockEndpoint("mock:result");
+        resultEndpoint.expectedMinimumMessageCount(5);
+
+        // lets test the receive worked
+        resultEndpoint.assertIsSatisfied();
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                // START SNIPPET: example
-                from("quartz2://myGroup/myTimerName?fireNow=true&trigger.repeatInterval=2000&trigger.repeatCount=2")
-                        .to("log:quartz")
+                from("quartz2://myGroup/myTimerName?trigger.repeatInterval=50").routeId("myRoute")
+                        .to("log:result")
                         .to("mock:result");
-                // END SNIPPET: example
             }
         };
     }
