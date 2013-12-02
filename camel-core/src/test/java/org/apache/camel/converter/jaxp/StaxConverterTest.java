@@ -58,7 +58,7 @@ public class StaxConverterTest extends ContextTestSupport {
             output = new ByteArrayOutputStream();
             // ensure UTF-8 encoding
             Exchange exchange = new DefaultExchange(context);
-            //exchange.setProperty(Exchange.CHARSET_NAME, ISO_8859_1.toString());
+            exchange.setProperty(Exchange.CHARSET_NAME, UTF_8.toString());
             writer = context.getTypeConverter().mandatoryConvertTo(XMLEventWriter.class, exchange, output);
             while (reader.hasNext()) {
                 writer.add(reader.nextEvent());
@@ -92,7 +92,7 @@ public class StaxConverterTest extends ContextTestSupport {
             output = new ByteArrayOutputStream();
             // ensure UTF-8 encoding
             Exchange exchange = new DefaultExchange(context);
-            //exchange.setProperty(Exchange.CHARSET_NAME, UTF_8.name());
+            exchange.setProperty(Exchange.CHARSET_NAME, UTF_8.name());
             writer = context.getTypeConverter().mandatoryConvertTo(XMLStreamWriter.class, exchange, output);
             // copy to writer
             while (reader.hasNext()) {
