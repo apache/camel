@@ -58,7 +58,7 @@ public class StaxConverterTest extends ContextTestSupport {
             output = new ByteArrayOutputStream();
             // ensure UTF-8 encoding
             Exchange exchange = new DefaultExchange(context);
-            exchange.setProperty(Exchange.CHARSET_NAME, UTF_8.name());
+            exchange.setProperty(Exchange.CHARSET_NAME, UTF_8.toString());
             writer = context.getTypeConverter().mandatoryConvertTo(XMLEventWriter.class, exchange, output);
             while (reader.hasNext()) {
                 writer.add(reader.nextEvent());
@@ -74,7 +74,6 @@ public class StaxConverterTest extends ContextTestSupport {
         assertNotNull(output);
 
         String result = new String(output.toByteArray(), UTF_8.name());
-
         boolean equals = TEST_XML_WITH_XML_HEADER.equals(result) || TEST_XML_WITH_XML_HEADER_ISO_8859_1.equals(result);
         assertTrue("Should match header", equals);
     }

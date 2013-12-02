@@ -45,14 +45,10 @@ public class HawtioMojo extends RunMojo {
     @Override
     protected void beforeBootstrapCamel() throws Exception {
         getLog().info("Starting hawtio ...");
-        Method hawtioMain = Thread.currentThread().getContextClassLoader().loadClass("io.hawt.app.App")
-                .getMethod("main", new Class[] {String[].class});
-        if (!hawtioMain.isAccessible()) {
-            getLog().debug("Setting accessibility to true in order to invoke main().");
-            hawtioMain.setAccessible(true);
-        }
+        Method hawtioMain = Thread.currentThread().getContextClassLoader()
+                .loadClass("io.hawt.app.App").getMethod("main", String[].class);
         String[] args = new String[]{"--port", "" + port, "--join", "false"};
-        hawtioMain.invoke(hawtioMain, new Object[]{args});
+        hawtioMain.invoke(null, new Object[]{args});
     }
 
 }
