@@ -37,6 +37,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.guice.inject.Injectors;
 import org.apache.camel.main.MainSupport;
+import org.apache.camel.model.Constants;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.view.ModelFileGenerator;
 
@@ -164,7 +165,6 @@ public class Main extends MainSupport {
     }
 
     protected ModelFileGenerator createModelFileGenerator() throws JAXBException {
-        return new ModelFileGenerator(
-            JAXBContext.newInstance("org.apache.camel.model:org.apache.camel.model.config:org.apache.camel.model.dataformat:org.apache.camel.model.language:org.apache.camel.model.loadbalancer"));
+        return new ModelFileGenerator(JAXBContext.newInstance(Constants.JAXB_CONTEXT_PACKAGES));
     }
 }

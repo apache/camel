@@ -367,12 +367,8 @@ public class RunMojo extends AbstractExecMojo {
             public void run() {
                 try {
                     Method main = Thread.currentThread().getContextClassLoader().loadClass(mainClass)
-                        .getMethod("main", new Class[] {String[].class});
-                    if (!main.isAccessible()) {
-                        getLog().debug("Setting accessibility to true in order to invoke main().");
-                        main.setAccessible(true);
-                    }
-                    main.invoke(main, new Object[] {arguments});
+                                        .getMethod("main", String[].class);
+                    main.invoke(null, new Object[] {arguments});
                 } catch (Exception e) { // just pass it on
                     Thread.currentThread().getThreadGroup().uncaughtException(Thread.currentThread(), e);
                 }
