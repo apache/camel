@@ -14,23 +14,18 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.avro;
+package org.apache.camel.spi;
 
-import org.apache.avro.Protocol;
-import org.apache.avro.ipc.reflect.ReflectResponder;
-import org.apache.avro.reflect.ReflectData;
+import org.apache.camel.Exchange;
 
-public class AvroReflectResponder extends ReflectResponder {
-    private AvroListener listener;
+public interface UnitOfWorkFactory {
 
-    public AvroReflectResponder(Protocol protocol, AvroListener listener) throws Exception {
-        super(protocol, listener);
-        this.listener = listener;
-    }
-
-    @Override
-    public Object respond(Protocol.Message message, Object request) throws Exception {
-        return listener.respond(message, request, ReflectData.get());
-    }
-
+    /**
+     * Creates a new {@link UnitOfWork}
+     *
+     * @param exchange  the exchange
+     * @return the created {@link UnitOfWork}
+     */
+    UnitOfWork createUnitOfWork(Exchange exchange);
 }
+

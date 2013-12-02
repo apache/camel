@@ -369,6 +369,7 @@ public class RunMojo extends AbstractExecMojo {
     private Properties originalSystemProperties;
 
     private String extraPluginDependencyArtifactId;
+    protected String extendedPluginDependencyArtifactId;
 
     /**
      * Execute goal.
@@ -455,7 +456,7 @@ public class RunMojo extends AbstractExecMojo {
             getLog().info("Using org.apache.camel.spring.Main to initiate a CamelContext");
             mainClass = "org.apache.camel.spring.Main";
         }
-        
+
         arguments = new String[args.size()];
         args.toArray(arguments);
         
@@ -474,9 +475,12 @@ public class RunMojo extends AbstractExecMojo {
         }
 
         IsolatedThreadGroup threadGroup = new IsolatedThreadGroup(mainClass /* name */);
-        Thread bootstrapThread = new Thread(threadGroup, new Runnable() {
+        final Thread bootstrapThread = new Thread(threadGroup, new Runnable() {
             public void run() {
                 try {
+                    beforeBootstrapCamel();
+
+                    getLog().info("Starting Camel ...");
                     Method main = Thread.currentThread().getContextClassLoader().loadClass(mainClass)
                         .getMethod("main", new Class[] {String[].class});
                     if (!main.isAccessible()) {
@@ -484,6 +488,8 @@ public class RunMojo extends AbstractExecMojo {
                         main.setAccessible(true);
                     }
                     main.invoke(main, new Object[] {arguments});
+
+                    afterBootstrapCamel();
                 } catch (Exception e) { // just pass it on
                     // let it be printed so end users can see the exception on the console
                     getLog().error("*************************************");
@@ -494,6 +500,7 @@ public class RunMojo extends AbstractExecMojo {
                 }
             }
         }, mainClass + ".main()");
+
         bootstrapThread.setContextClassLoader(getClassLoader());
         setSystemProperties();
 
@@ -530,6 +537,20 @@ public class RunMojo extends AbstractExecMojo {
         }
 
         registerSourceRoots();
+    }
+
+    /**
+     * Allows plugin extensions to do custom logic before bootstrapping Camel.
+     */
+    protected void beforeBootstrapCamel() throws Exception {
+        // noop
+    }
+
+    /**
+     * Allows plugin extensions to do custom logic after bootstrapping Camel.
+     */
+    protected void afterBootstrapCamel() throws Exception {
+        // noop
     }
 
     class IsolatedThreadGroup extends ThreadGroup {
@@ -743,7 +764,7 @@ public class RunMojo extends AbstractExecMojo {
      * @throws MojoExecutionException
      */
     private void addExtraPluginDependenciesToClasspath(Set<URL> path) throws MojoExecutionException {
-        if (extraPluginDependencyArtifactId == null) {
+        if (extraPluginDependencyArtifactId == null && extendedPluginDependencyArtifactId == null) {
             return;
         }
 
@@ -751,7 +772,8 @@ public class RunMojo extends AbstractExecMojo {
             Set<Artifact> artifacts = new HashSet<Artifact>(this.pluginDependencies);
             for (Artifact artifact : artifacts) {
                 // must
-                if (artifact.getArtifactId().equals(extraPluginDependencyArtifactId)) {
+                if (artifact.getArtifactId().equals(extraPluginDependencyArtifactId)
+                        || artifact.getArtifactId().equals(extendedPluginDependencyArtifactId)) {
                     getLog().debug("Adding extra plugin dependency artifact: " + artifact.getArtifactId()
                             + " to classpath");
                     path.add(artifact.getFile().toURI().toURL());

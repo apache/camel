@@ -14,23 +14,23 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.avro;
+package org.apache.camel.impl;
 
-import org.apache.avro.Protocol;
-import org.apache.avro.ipc.reflect.ReflectResponder;
-import org.apache.avro.reflect.ReflectData;
+import org.apache.camel.Exchange;
+import org.apache.camel.spi.UnitOfWork;
+import org.apache.camel.spi.UnitOfWorkFactory;
 
-public class AvroReflectResponder extends ReflectResponder {
-    private AvroListener listener;
-
-    public AvroReflectResponder(Protocol protocol, AvroListener listener) throws Exception {
-        super(protocol, listener);
-        this.listener = listener;
-    }
+public class DefaultUnitOfWorkFactory implements UnitOfWorkFactory {
 
     @Override
-    public Object respond(Protocol.Message message, Object request) throws Exception {
-        return listener.respond(message, request, ReflectData.get());
+    public UnitOfWork createUnitOfWork(Exchange exchange) {
+        UnitOfWork answer;
+        if (exchange.getContext().isUseMDCLogging()) {
+            answer = new MDCUnitOfWork(exchange);
+        } else {
+            answer = new DefaultUnitOfWork(exchange);
+        }
+        return answer;
     }
 
 }

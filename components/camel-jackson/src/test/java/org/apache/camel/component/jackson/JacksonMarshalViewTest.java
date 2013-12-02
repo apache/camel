@@ -36,7 +36,7 @@ public class JacksonMarshalViewTest extends CamelTestSupport {
 
         Object marshalled = template.requestBody("direct:inPojoAgeView", in);
         String marshalledAsString = context.getTypeConverter().convertTo(String.class, marshalled);
-        assertEquals("{\"age\":30,\"height\":190}", marshalledAsString);
+        assertEquals("{\"height\":190,\"age\":30}", marshalledAsString);
 
         template.sendBody("direct:backPojoAgeView", marshalled);
 

@@ -163,6 +163,7 @@ public abstract class AbstractFeatureTest {
                 // override the config.properties (to fix pax-exam bug)
                 replaceConfigurationFile("etc/config.properties", new File("src/test/resources/org/apache/camel/itest/karaf/config.properties")),
                 replaceConfigurationFile("etc/custom.properties", new File("src/test/resources/org/apache/camel/itest/karaf/custom.properties")),
+                replaceConfigurationFile("etc/jre.properties", new File("../../platforms/karaf/features/src/main/resources/config.properties")),
                 // we need INFO logging otherwise we cannot see what happens
                 logLevel(LogLevelOption.LogLevel.INFO),
                  // install the cxf jaxb spec as the karaf doesn't provide it by default
