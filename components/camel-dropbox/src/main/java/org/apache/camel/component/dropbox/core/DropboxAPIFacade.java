@@ -41,7 +41,8 @@ public class DropboxAPIFacade {
     private static DropboxAPIFacade instance;
     private static DbxClient client;
 
-    private DropboxAPIFacade(){}
+    private DropboxAPIFacade() {
+    }
 
     public static DropboxAPIFacade getInstance(DbxClient client) {
         if (instance == null) {
@@ -51,41 +52,38 @@ public class DropboxAPIFacade {
         return instance;
     }
 
-    public DropboxResult put(String localPath,String remotePath,DropboxUploadMode mode) throws Exception {
+    public DropboxResult put(String localPath, String remotePath, DropboxUploadMode mode) throws Exception {
         DropboxResult result = new DropboxFileUploadResult();
         //a map representing for each path the result of the put operation
-        Map<String,DropboxResultCode> resultEntries = null;
+        Map<String, DropboxResultCode> resultEntries = null;
         //in case the remote path is not specified, the remotePath = localPath
-        String dropboxPath = remotePath==null?localPath:remotePath;
+        String dropboxPath = remotePath == null ? localPath : remotePath;
         DbxEntry entry = instance.client.getMetadata(dropboxPath);
         File fileLocalPath = new File(localPath);
         //verify uploading of a single file
-        if(fileLocalPath.isFile()) {
+        if (fileLocalPath.isFile()) {
             //check if dropbox file exists
-            if(entry!=null && !entry.isFile()) {
-                throw new DropboxException(dropboxPath+" exists on dropbox and is not a file!");
+            if (entry != null && !entry.isFile()) {
+                throw new DropboxException(dropboxPath + " exists on dropbox and is not a file!");
             }
             //in case the entry not exists on dropbox check if the filename should be appended
-            if(entry==null) {
-                if(dropboxPath.endsWith(DROPBOX_FILE_SEPARATOR)) {
-                    dropboxPath=dropboxPath+fileLocalPath.getName();
+            if (entry == null) {
+                if (dropboxPath.endsWith(DROPBOX_FILE_SEPARATOR)) {
+                    dropboxPath = dropboxPath + fileLocalPath.getName();
                 }
             }
-            resultEntries = new HashMap<String,DropboxResultCode>(1);
+            resultEntries = new HashMap<String, DropboxResultCode>(1);
             try {
-                DbxEntry.File uploadedFile = putSingleFile(fileLocalPath,dropboxPath,mode);
-                if(uploadedFile == null) {
-                    resultEntries.put(dropboxPath,DropboxResultCode.KO);
-                }
-                else {
-                    resultEntries.put(dropboxPath,DropboxResultCode.OK);
+                DbxEntry.File uploadedFile = putSingleFile(fileLocalPath, dropboxPath, mode);
+                if (uploadedFile == null) {
+                    resultEntries.put(dropboxPath, DropboxResultCode.KO);
+                } else {
+                    resultEntries.put(dropboxPath, DropboxResultCode.OK);
                 }
 
-            }
-            catch(Exception ex) {
-                resultEntries.put(dropboxPath,DropboxResultCode.KO);
-            }
-            finally {
+            } catch (Exception ex) {
+                resultEntries.put(dropboxPath, DropboxResultCode.KO);
+            } finally {
                 result.setResultEntries(resultEntries);
             }
             return result;
@@ -94,40 +92,38 @@ public class DropboxAPIFacade {
         else {
             LOG.info("uploading a dir...");
             //check if dropbox folder exists
-            if(entry!=null && !entry.isFolder()) {
-                throw new DropboxException(dropboxPath+" exists on dropbox and is not a folder!");
+            if (entry != null && !entry.isFolder()) {
+                throw new DropboxException(dropboxPath + " exists on dropbox and is not a folder!");
             }
-            if(!dropboxPath.endsWith(DROPBOX_FILE_SEPARATOR)) {
-                dropboxPath=dropboxPath+DROPBOX_FILE_SEPARATOR;
+            if (!dropboxPath.endsWith(DROPBOX_FILE_SEPARATOR)) {
+                dropboxPath = dropboxPath + DROPBOX_FILE_SEPARATOR;
             }
             //revert to old path
             String oldDropboxPath = dropboxPath;
             //list all files in a dir
-            Collection<File> listFiles = FileUtils.listFiles(fileLocalPath,null,true);
-            if(listFiles == null || listFiles.isEmpty()) {
-                throw new DropboxException(localPath+" doesn't contain any files");
+            Collection<File> listFiles = FileUtils.listFiles(fileLocalPath, null, true);
+            if (listFiles == null || listFiles.isEmpty()) {
+                throw new DropboxException(localPath + " doesn't contain any files");
             }
-            resultEntries = new HashMap<String,DropboxResultCode>(listFiles.size());
-            for(File file:listFiles) {
+            resultEntries = new HashMap<String, DropboxResultCode>(listFiles.size());
+            for (File file : listFiles) {
                 String absPath = file.getAbsolutePath();
                 int indexRemainingPath = localPath.length();
-                if(!localPath.endsWith("/"))   {
-                    indexRemainingPath+=1;
+                if (!localPath.endsWith("/")) {
+                    indexRemainingPath += 1;
                 }
                 String remainingPath = absPath.substring(indexRemainingPath);
-                dropboxPath = dropboxPath+remainingPath;
+                dropboxPath = dropboxPath + remainingPath;
                 try {
-                    LOG.info("uploading:"+fileLocalPath+","+dropboxPath);
-                    DbxEntry.File uploadedFile = putSingleFile(file,dropboxPath,mode);
-                    if(uploadedFile == null) {
-                        resultEntries.put(dropboxPath,DropboxResultCode.KO);
+                    LOG.info("uploading:" + fileLocalPath + "," + dropboxPath);
+                    DbxEntry.File uploadedFile = putSingleFile(file, dropboxPath, mode);
+                    if (uploadedFile == null) {
+                        resultEntries.put(dropboxPath, DropboxResultCode.KO);
+                    } else {
+                        resultEntries.put(dropboxPath, DropboxResultCode.OK);
                     }
-                    else {
-                        resultEntries.put(dropboxPath,DropboxResultCode.OK);
-                    }
-                }
-                catch(Exception ex) {
-                    resultEntries.put(dropboxPath,DropboxResultCode.KO);
+                } catch (Exception ex) {
+                    resultEntries.put(dropboxPath, DropboxResultCode.KO);
                 }
                 dropboxPath = oldDropboxPath;
             }
@@ -136,38 +132,35 @@ public class DropboxAPIFacade {
         }
     }
 
-    private DbxEntry.File putSingleFile(File inputFile,String dropboxPath,DropboxUploadMode mode) throws Exception {
+    private DbxEntry.File putSingleFile(File inputFile, String dropboxPath, DropboxUploadMode mode) throws Exception {
         FileInputStream inputStream = new FileInputStream(inputFile);
         DbxEntry.File uploadedFile = null;
         try {
             DbxWriteMode uploadMode = null;
-            if(mode == DropboxUploadMode.force) {
+            if (mode == DropboxUploadMode.force) {
                 uploadMode = DbxWriteMode.force();
-            }
-            else {
+            } else {
                 uploadMode = DbxWriteMode.add();
             }
             uploadedFile =
                     instance.client.uploadFile(dropboxPath,
                             uploadMode, inputFile.length(), inputStream);
             return uploadedFile;
-        }
-        finally {
+        } finally {
             inputStream.close();
         }
     }
 
-    public DropboxResult search(String remotePath,String query) throws Exception {
+    public DropboxResult search(String remotePath, String query) throws Exception {
         DropboxResult result = new DropboxSearchResult();
         DbxEntry.WithChildren listing = null;
-        if(query == null) {
+        if (query == null) {
             LOG.info("search no query");
             listing = instance.client.getMetadataWithChildren(remotePath);
             result.setResultEntries(listing.children);
-        }
-        else {
-            LOG.info("search by query:"+query);
-            List<DbxEntry> entries = instance.client.searchFileAndFolderNames(remotePath,query);
+        } else {
+            LOG.info("search by query:" + query);
+            List<DbxEntry> entries = instance.client.searchFileAndFolderNames(remotePath, query);
             result.setResultEntries(entries);
         }
         return result;
@@ -181,28 +174,51 @@ public class DropboxAPIFacade {
         return result;
     }
 
-    public DropboxResult move(String remotePath,String newRemotePath) throws Exception {
+    public DropboxResult move(String remotePath, String newRemotePath) throws Exception {
         DropboxResult result = null;
         instance.client.move(remotePath, newRemotePath);
         result = new DropboxMoveResult();
-        result.setResultEntries(remotePath+"-"+newRemotePath);
+        result.setResultEntries(remotePath + "-" + newRemotePath);
         return result;
     }
 
     public DropboxResult get(String remotePath) throws Exception {
-        //TODO manage the case of get of an entire dir --> multiple files
         DropboxResult result = new DropboxFileDownloadResult();
         //a map representing for each path the result of the baos
-        Map<String,ByteArrayOutputStream> resultEntries = null;
-        //create a baos
-        final ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        DbxEntry.File downloadedFile = instance.client.getFile(remotePath,null,baos);
-        if(downloadedFile!=null) {
-            resultEntries = new HashMap<String,ByteArrayOutputStream>(1);
-            resultEntries.put(remotePath,baos);
-            result.setResultEntries(resultEntries);
-            LOG.info("downloaded baos size:"+baos.size());
-        }
+        Map<String, ByteArrayOutputStream> resultEntries = new HashMap<String, ByteArrayOutputStream>();
+        //iterate from the remotePath
+        downloadFilesInFolder(remotePath, resultEntries);
+        //put the map of baos as result
+        result.setResultEntries(resultEntries);
         return result;
+    }
+
+    private void downloadFilesInFolder(String path, Map<String, ByteArrayOutputStream> resultEntries) throws Exception {
+        DbxEntry.WithChildren listing = instance.client.getMetadataWithChildren(path);
+        if(listing.children == null) {
+            LOG.info("downloading a single file...");
+            downloadSingleFile(path,resultEntries);
+            return;
+        }
+        for (DbxEntry entry : listing.children) {
+            if (entry.isFile()) {
+                //get the baos of the file
+                downloadSingleFile(entry.path, resultEntries);
+            }
+            else {
+                //iterate on folder
+                downloadFilesInFolder(entry.path, resultEntries);
+            }
+        }
+    }
+
+    private void downloadSingleFile(String path, Map<String, ByteArrayOutputStream> resultEntries) throws Exception {
+        ByteArrayOutputStream baos = new ByteArrayOutputStream();
+        DbxEntry.File downloadedFile = instance.client.getFile(path, null, baos);
+        if (downloadedFile != null) {
+            resultEntries.put(path, baos);
+            LOG.info("downloaded path:"+path+" - baos size:" + baos.size());
+        }
+
     }
 }
