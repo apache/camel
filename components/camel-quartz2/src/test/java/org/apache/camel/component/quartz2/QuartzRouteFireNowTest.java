@@ -21,7 +21,7 @@ import org.apache.camel.builder.RouteBuilder;
 /**
  * @version 
  */
-public class QuartzRouteFireNowTest extends QuartzRouteTest {
+public class QuartzRouteFireNowTest extends BaseQuartzTest {
     
     @Override
     protected RouteBuilder createRouteBuilder() {

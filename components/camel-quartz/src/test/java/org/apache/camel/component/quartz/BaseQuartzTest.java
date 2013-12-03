@@ -14,20 +14,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.routepolicy.quartz;
+package org.apache.camel.component.quartz;
 
-import java.util.Date;
+import org.apache.camel.CamelContext;
+import org.apache.camel.test.junit4.CamelTestSupport;
 
-public class SimpleDate extends Date {
+public class BaseQuartzTest extends CamelTestSupport {
 
-    private static final long serialVersionUID = 1L;
-
-    public SimpleDate() {
-        this(3000);
+    protected boolean isEnableJmx() {
+        return true;
     }
 
-    public SimpleDate(long milliseconds) {
-        super(System.currentTimeMillis() + milliseconds);
+    @Override
+    protected CamelContext createCamelContext() throws Exception {
+        CamelContext context = super.createCamelContext();
+
+        QuartzComponent quartz = context.getComponent("quartz", QuartzComponent.class);
+        quartz.setEnableJmx(isEnableJmx());
+
+        return context;
     }
-    
+
 }

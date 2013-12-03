@@ -60,6 +60,7 @@ public class QuartzComponent extends DefaultComponent implements StartupListener
     private String propertiesFile;
     private int startDelayedSeconds;
     private boolean autoStartScheduler = true;
+    private boolean enableJmx = true;
 
     private static final class JobToAdd {
         private final JobDetail job;
@@ -410,6 +411,14 @@ public class QuartzComponent extends DefaultComponent implements StartupListener
         this.autoStartScheduler = autoStartScheduler;
     }
 
+    public boolean isEnableJmx() {
+        return enableJmx;
+    }
+
+    public void setEnableJmx(boolean enableJmx) {
+        this.enableJmx = enableJmx;
+    }
+
     // Implementation methods
     // -------------------------------------------------------------------------
 
@@ -439,6 +448,11 @@ public class QuartzComponent extends DefaultComponent implements StartupListener
 
             // force disabling update checker (will do online check over the internet)
             prop.put("org.quartz.scheduler.skipUpdateCheck", "true");
+
+            // enable jmx unless configured to not do so
+            if (enableJmx && !prop.containsKey("org.quartz.scheduler.jmx.export")) {
+                prop.put("org.quartz.scheduler.jmx.export", "true");
+            }
 
             answer = new StdSchedulerFactory(prop);
         } else {
@@ -471,6 +485,11 @@ public class QuartzComponent extends DefaultComponent implements StartupListener
 
             // force disabling update checker (will do online check over the internet)
             prop.put("org.quartz.scheduler.skipUpdateCheck", "true");
+
+            // enable jmx unless configured to not do so
+            if (enableJmx && !prop.containsKey("org.quartz.scheduler.jmx.export")) {
+                prop.put("org.quartz.scheduler.jmx.export", "true");
+            }
 
             answer = new StdSchedulerFactory(prop);
         }

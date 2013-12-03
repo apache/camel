@@ -16,20 +16,48 @@
  */
 package org.apache.camel.component.quartz;
 
+import javax.management.MBeanServer;
+import javax.management.ObjectName;
+
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
 
-public class QuartzStartDelayedTest extends BaseQuartzTest {
+public class QuartzManagementTest extends BaseQuartzTest {
+
+    @Override
+    protected boolean useJmx() {
+        return true;
+    }
+
+    @Override
+    protected boolean isEnableJmx() {
+        return true;
+    }
+
+    protected MBeanServer getMBeanServer() {
+        return context.getManagementStrategy().getManagementAgent().getMBeanServer();
+    }
 
     @Test
-    public void testStartDelayed() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.setMinimumResultWaitTime(1900);
-        mock.setResultWaitTime(3000);
-        mock.expectedMessageCount(2);
+    public void testQuartzRoute() throws Exception {
+        // JMX tests dont work well on AIX CI servers (hangs them)
+        if (isPlatform("aix")) {
+            return;
+        }
+
+        getMockEndpoint("mock:result").expectedMessageCount(2);
 
         assertMockEndpointsSatisfied();
+
+        MBeanServer mbeanServer = getMBeanServer();
+
+        String name = String.format("quartz:type=QuartzScheduler,name=DefaultQuartzScheduler-%s,instance=NON_CLUSTERED", context.getManagementName());
+
+        ObjectName on = ObjectName.getInstance(name);
+        assertTrue(mbeanServer.isRegistered(on));
+
+        Boolean started = (Boolean) mbeanServer.getAttribute(on, "Started");
+        assertEquals(true, started);
     }
 
     @Override
@@ -37,9 +65,6 @@ public class QuartzStartDelayedTest extends BaseQuartzTest {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                QuartzComponent quartz = context.getComponent("quartz", QuartzComponent.class);
-                quartz.setStartDelayedSeconds(2);
-
                 from("quartz://myGroup/myTimerName?trigger.repeatInterval=2&trigger.repeatCount=1").routeId("myRoute").to("mock:result");
             }
         };

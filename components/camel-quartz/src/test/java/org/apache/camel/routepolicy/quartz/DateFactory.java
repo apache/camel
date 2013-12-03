@@ -14,29 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.quartz2;
+package org.apache.camel.routepolicy.quartz;
 
-import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.mock.MockEndpoint;
-import org.junit.Test;
+import java.util.Date;
 
-public class QuartUnderscoreTimerNameTest extends BaseQuartzTest {
+public final class DateFactory {
 
-    @Test
-    public void testQuartzCronRouteUnderscore() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.expectedMinimumMessageCount(1);
-
-        assertMockEndpointsSatisfied();
+    private DateFactory() {
     }
 
-    @Override
-    protected RouteBuilder createRouteBuilder() {
-        return new RouteBuilder() {
-            public void configure() {
-                from("quartz2://my_group?cron=0/1+*+*+*+*+?").to("mock:result");
-            }
-        };
+    public static Date createDate(int future) {
+        return new Date(System.currentTimeMillis() + future);
     }
-
 }

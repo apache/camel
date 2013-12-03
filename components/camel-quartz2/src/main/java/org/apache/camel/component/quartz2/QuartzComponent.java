@@ -45,7 +45,6 @@ import org.slf4j.LoggerFactory;
  * <p>This component uses Quartz 2.x API and provide all the features from "camel-quartz". It has reused some
  * of the code, but mostly has been re-written in attempt to be more easier to maintain, and use Quartz more
  * fully.</p>
- *
  */
 public class QuartzComponent extends DefaultComponent implements StartupListener {
     private static final Logger LOG = LoggerFactory.getLogger(QuartzComponent.class);
@@ -56,6 +55,7 @@ public class QuartzComponent extends DefaultComponent implements StartupListener
     private int startDelayedSeconds;
     private boolean autoStartScheduler = true;
     private boolean prefixJobNameWithEndpointId;
+    private boolean enableJmx = true;
 
     public QuartzComponent() {
     }
@@ -78,6 +78,22 @@ public class QuartzComponent extends DefaultComponent implements StartupListener
 
     public void setAutoStartScheduler(boolean autoStartScheduler) {
         this.autoStartScheduler = autoStartScheduler;
+    }
+
+    public boolean isPrefixJobNameWithEndpointId() {
+        return prefixJobNameWithEndpointId;
+    }
+
+    public void setPrefixJobNameWithEndpointId(boolean prefixJobNameWithEndpointId) {
+        this.prefixJobNameWithEndpointId = prefixJobNameWithEndpointId;
+    }
+
+    public boolean isEnableJmx() {
+        return enableJmx;
+    }
+
+    public void setEnableJmx(boolean enableJmx) {
+        this.enableJmx = enableJmx;
     }
 
     public Properties getProperties() {
@@ -113,6 +129,11 @@ public class QuartzComponent extends DefaultComponent implements StartupListener
             prop.put("org.quartz.scheduler.skipUpdateCheck", "true");
             prop.put("org.terracotta.quartz.skipUpdateCheck", "true");
 
+            // enable jmx unless configured to not do so
+            if (enableJmx && !prop.containsKey("org.quartz.scheduler.jmx.export")) {
+                prop.put("org.quartz.scheduler.jmx.export", "true");
+            }
+
             answer = new StdSchedulerFactory(prop);
         } else {
             // read default props to be able to use a single scheduler per camel context
@@ -145,6 +166,11 @@ public class QuartzComponent extends DefaultComponent implements StartupListener
             // force disabling update checker (will do online check over the internet)
             prop.put("org.quartz.scheduler.skipUpdateCheck", "true");
             prop.put("org.terracotta.quartz.skipUpdateCheck=true", "true");
+
+            // enable jmx unless configured to not do so
+            if (enableJmx && !prop.containsKey("org.quartz.scheduler.jmx.export")) {
+                prop.put("org.quartz.scheduler.jmx.export", "true");
+            }
 
             answer = new StdSchedulerFactory(prop);
         }
