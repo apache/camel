@@ -163,7 +163,7 @@ public class QuartzComponent extends DefaultComponent implements StartupListener
 
             // force disabling update checker (will do online check over the internet)
             prop.put("org.quartz.scheduler.skipUpdateCheck", "true");
-            prop.put("org.terracotta.quartz.skipUpdateCheck=true", "true");
+            prop.put("org.terracotta.quartz.skipUpdateCheck", "true");
 
             // enable jmx unless configured to not do so
             if (enableJmx && !prop.containsKey("org.quartz.scheduler.jmx.export")) {
