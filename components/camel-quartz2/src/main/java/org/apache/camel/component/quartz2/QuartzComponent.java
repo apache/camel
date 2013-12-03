@@ -132,6 +132,7 @@ public class QuartzComponent extends DefaultComponent implements StartupListener
             // enable jmx unless configured to not do so
             if (enableJmx && !prop.containsKey("org.quartz.scheduler.jmx.export")) {
                 prop.put("org.quartz.scheduler.jmx.export", "true");
+                LOG.info("Setting org.quartz.scheduler.jmx.export=true to ensure QuartzScheduler(s) will be enlisted in JMX.");
             }
 
             answer = new StdSchedulerFactory(prop);
@@ -170,6 +171,7 @@ public class QuartzComponent extends DefaultComponent implements StartupListener
             // enable jmx unless configured to not do so
             if (enableJmx && !prop.containsKey("org.quartz.scheduler.jmx.export")) {
                 prop.put("org.quartz.scheduler.jmx.export", "true");
+                LOG.info("Setting org.quartz.scheduler.jmx.export=true to ensure QuartzScheduler(s) will be enlisted in JMX.");
             }
 
             answer = new StdSchedulerFactory(prop);
