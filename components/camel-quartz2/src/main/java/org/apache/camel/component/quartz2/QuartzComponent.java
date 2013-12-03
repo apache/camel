@@ -129,6 +129,10 @@ public class QuartzComponent extends DefaultComponent implements StartupListener
             prop.put("org.quartz.scheduler.skipUpdateCheck", "true");
             prop.put("org.terracotta.quartz.skipUpdateCheck", "true");
 
+            // camel context name will be a suffix to use one scheduler per context
+            String instName = createInstanceName(prop);
+            prop.setProperty(StdSchedulerFactory.PROP_SCHED_INSTANCE_NAME, instName);
+
             // enable jmx unless configured to not do so
             if (enableJmx && !prop.containsKey("org.quartz.scheduler.jmx.export")) {
                 prop.put("org.quartz.scheduler.jmx.export", "true");
@@ -154,14 +158,7 @@ public class QuartzComponent extends DefaultComponent implements StartupListener
             }
 
             // camel context name will be a suffix to use one scheduler per context
-            String identity = getCamelContext().getManagementName();
-
-            String instName = prop.getProperty(StdSchedulerFactory.PROP_SCHED_INSTANCE_NAME);
-            if (instName == null) {
-                instName = "scheduler-" + identity;
-            } else {
-                instName = instName + "-" + identity;
-            }
+            String instName = createInstanceName(prop);
             prop.setProperty(StdSchedulerFactory.PROP_SCHED_INSTANCE_NAME, instName);
 
             // force disabling update checker (will do online check over the internet)
@@ -182,6 +179,21 @@ public class QuartzComponent extends DefaultComponent implements StartupListener
             LOG.debug("Creating SchedulerFactory: {} with properties: {}", name, prop);
         }
         return answer;
+    }
+
+    protected String createInstanceName(Properties prop) {
+        String instName = prop.getProperty(StdSchedulerFactory.PROP_SCHED_INSTANCE_NAME);
+
+        // camel context name will be a suffix to use one scheduler per context
+        String identity = getCamelContext().getManagementName();
+        if (identity != null) {
+            if (instName == null) {
+                instName = "scheduler-" + identity;
+            } else {
+                instName = instName + "-" + identity;
+            }
+        }
+        return instName;
     }
 
     /**
