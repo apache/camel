@@ -130,13 +130,12 @@ public class ValidatingProcessor implements AsyncProcessor {
                 }
             }
 
+            //CAMEL-7036 We don't need to set the result if the source is an instance of StreamSource
             if (source instanceof DOMSource) {
                 result = new DOMResult();
-            } else if (source instanceof StreamSource) {
-                result = new StreamResult(new StringWriter());
             } else if (source instanceof SAXSource) {
                 result = new SAXResult();
-            } else if (source instanceof StAXSource) {
+            } else if (source instanceof StAXSource || source instanceof StreamSource) {
                 result = null;
             }
 
