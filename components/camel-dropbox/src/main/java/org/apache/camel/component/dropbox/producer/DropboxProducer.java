@@ -19,8 +19,12 @@ package org.apache.camel.component.dropbox.producer;
 import org.apache.camel.component.dropbox.DropboxConfiguration;
 import org.apache.camel.component.dropbox.DropboxEndpoint;
 import org.apache.camel.impl.DefaultProducer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public abstract class DropboxProducer extends DefaultProducer {
+
+    private static final transient Logger LOG = LoggerFactory.getLogger(DropboxProducer.class);
 
     protected DropboxEndpoint endpoint;
     protected DropboxConfiguration configuration;
@@ -29,5 +33,27 @@ public abstract class DropboxProducer extends DefaultProducer {
         super(endpoint);
         this.endpoint = endpoint;
         this.configuration = configuration;
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        if(configuration.getClient() == null) {
+            //create dropbox client
+            configuration.createClient();
+
+            LOG.info("producer dropbox client created");
+        }
+
+        super.doStart();
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        if (configuration.getClient() == null) {
+            configuration.setClient(null);
+
+            LOG.info("producer dropbox client deleted");
+        }
+        super.doStop();
     }
 }

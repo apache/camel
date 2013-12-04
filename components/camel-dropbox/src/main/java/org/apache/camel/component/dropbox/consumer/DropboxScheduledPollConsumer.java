@@ -37,4 +37,26 @@ public abstract class DropboxScheduledPollConsumer extends ScheduledPollConsumer
 
     @Override
     protected abstract int poll() throws Exception;
+
+    @Override
+    protected void doStart() throws Exception {
+        if(configuration.getClient() == null) {
+            //create dropbox client
+            configuration.createClient();
+
+            LOG.info("consumer dropbox client created");
+        }
+
+        super.doStart();
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        if (configuration.getClient() == null) {
+            configuration.setClient(null);
+
+            LOG.info("consumer dropbox client deleted");
+        }
+        super.doStop();
+    }
 }

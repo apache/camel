@@ -48,6 +48,10 @@ public class DropboxConfiguration {
     //reference to dropboxclient
     private DbxClient client;
 
+    public void setClient(DbxClient client) {
+        this.client = client;
+    }
+
     public DbxClient getClient() {
         return client;
     }

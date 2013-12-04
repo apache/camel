@@ -55,9 +55,6 @@ public class DropboxComponent extends DefaultComponent {
         // and then override from parameters
         setProperties(configuration, parameters);
 
-        //create dropbox client
-        configuration.createClient();
-
         LOG.info("dropbox configuration set!");
 
         Endpoint endpoint = new DropboxEndpoint(uri,this,configuration);
