@@ -33,6 +33,7 @@ import com.google.common.collect.Maps;
 import com.google.inject.Binding;
 import com.google.inject.Injector;
 import com.google.inject.Key;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.guice.inject.Injectors;
@@ -130,7 +131,7 @@ public class Main extends MainSupport {
     }
 
     protected void doStop() throws Exception {
-        LOG.info("Apache Camel stopping");
+        super.doStop();
 
         if (injector != null) {
             Injectors.close(injector);
@@ -148,7 +149,7 @@ public class Main extends MainSupport {
         for (CamelContext camelContext : getCamelContexts()) {
             return camelContext.createProducerTemplate();
         }
-        throw new IllegalArgumentException("No CamelContexts are available so cannot create a ProducerTemplate!");
+        throw new IllegalArgumentException("No CamelContext is available so cannot create a ProducerTemplate!");
     }
 
     protected Map<String, CamelContext> getCamelContextMap() {
