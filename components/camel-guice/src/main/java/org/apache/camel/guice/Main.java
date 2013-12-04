@@ -16,6 +16,7 @@
  */
 package org.apache.camel.guice;
 
+import java.io.BufferedInputStream;
 import java.net.URL;
 import java.util.LinkedList;
 import java.util.Map;
@@ -32,12 +33,12 @@ import com.google.common.collect.Maps;
 import com.google.inject.Binding;
 import com.google.inject.Injector;
 import com.google.inject.Key;
-
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.guice.inject.Injectors;
 import org.apache.camel.main.MainSupport;
 import org.apache.camel.model.Constants;
+import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.view.ModelFileGenerator;
 
@@ -107,7 +108,13 @@ public class Main extends MainSupport {
         }
         if (jndiPropertiesUrl != null) {
             Properties properties = new Properties();
-            properties.load(jndiPropertiesUrl.openStream());
+            BufferedInputStream bis = null;
+            try {
+                bis = IOHelper.buffered(jndiPropertiesUrl.openStream());
+                properties.load(bis);
+            } finally {
+                IOHelper.close(bis);
+            }
             context = new InitialContext(properties);
         } else {
             context = new InitialContext();

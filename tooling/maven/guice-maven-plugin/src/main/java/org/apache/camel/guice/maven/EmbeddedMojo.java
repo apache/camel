@@ -75,6 +75,16 @@ public class EmbeddedMojo extends AbstractExecMojo {
     protected boolean dotAggregationEnabled;
 
     /**
+     * Allows to provide a custom properties file to initialize a
+     * {@link javax.naming.InitialContext} object with. As an exmaple this
+     * argument can be be passed when making use of the GuiceyFruit JNDI
+     * Provider
+     * 
+     * @parameter property="jndiProperties"
+     */
+    protected String jndiProperties;
+
+    /**
      * Project classpath.
      *
      * @parameter property="project.testClasspathElements"
@@ -176,6 +186,14 @@ public class EmbeddedMojo extends AbstractExecMojo {
         this.mainClass = mainClass;
     }
 
+    public String getJndiProperties() {
+        return jndiProperties;
+    }
+
+    public void setJndiProperties(String jndiProperties) {
+        this.jndiProperties = jndiProperties;
+    }
+
     // Implementation methods
     //-------------------------------------------------------------------------
 
@@ -211,6 +229,11 @@ public class EmbeddedMojo extends AbstractExecMojo {
 
         args.add("-duration");
         args.add(getDuration());
+
+        if (getJndiProperties() != null) {
+            args.add("-j");
+            args.add(getJndiProperties());
+        }
 
         return args.toArray(new String[0]);
     }

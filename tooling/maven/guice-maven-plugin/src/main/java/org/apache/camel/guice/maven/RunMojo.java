@@ -108,6 +108,16 @@ public class RunMojo extends AbstractExecMojo {
     protected boolean dotEnabled;
 
     /**
+     * Allows to provide a custom properties file to initialize a
+     * {@link javax.naming.InitialContext} object with. As an exmaple this
+     * argument can be be passed when making use of the GuiceyFruit JNDI
+     * Provider
+     * 
+     * @parameter property="jndiProperties"
+     */
+    protected String jndiProperties;
+
+    /**
      * @component
      */
     private ArtifactResolver artifactResolver;
@@ -327,6 +337,10 @@ public class RunMojo extends AbstractExecMojo {
         if (dotDir != null && dotEnabled) {
             args.add("-o");
             args.add(dotDir);
+        }
+        if (jndiProperties != null) {
+            args.add("-j");
+            args.add(jndiProperties);
         }
         if (debug) {
             args.add("-x");

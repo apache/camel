@@ -128,6 +128,17 @@
                     </arguments>
                 </configuration>
             </plugin>
+
+            <!-- Allows the example to be run via 'mvn guice:run' -->
+            <plugin>
+                <groupId>org.apache.camel</groupId>
+                <artifactId>guice-maven-plugin</artifactId>
+                <version>${project.version}</version>
+                <configuration>
+                    <duration>5s</duration>
+                    <jndiProperties>/guicejndi.properties</jndiProperties>
+              </configuration>
+            </plugin>        
         </plugins>
 
     </build>
