@@ -85,8 +85,8 @@ public class RunMojo extends AbstractExecMojo {
      * milliseconds. A value <= 0 will run forever.
      * Adding a s indicates seconds - eg "5s" means 5 seconds.
      *
-     * @parameter property="-1"
-     *
+     * @parameter property="camel.duration"
+     *            default-value="-1"
      */
     protected String duration;
 
@@ -374,6 +374,11 @@ public class RunMojo extends AbstractExecMojo {
                     }
                     main.invoke(main, new Object[] {arguments});
                 } catch (Exception e) { // just pass it on
+                    // let it be printed so end users can see the exception on the console
+                    getLog().error("*************************************");
+                    getLog().error("Error occurred while running main from: " + mainClass);
+                    getLog().error(e);
+                    getLog().error("*************************************");
                     Thread.currentThread().getThreadGroup().uncaughtException(Thread.currentThread(), e);
                 }
             }
@@ -399,7 +404,7 @@ public class RunMojo extends AbstractExecMojo {
             try {
                 threadGroup.destroy();
             } catch (IllegalThreadStateException e) {
-                getLog().warn("Couldn't destroy threadgroup " + threadGroup, e);
+                getLog().warn("Couldn't destroy thread group " + threadGroup, e);
             }
         }
 
