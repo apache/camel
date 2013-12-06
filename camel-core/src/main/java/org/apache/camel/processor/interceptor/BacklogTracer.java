@@ -268,7 +268,7 @@ public class BacklogTracer extends ServiceSupport implements InterceptStrategy {
         List<BacklogTracerEventMessage> answer = new ArrayList<BacklogTracerEventMessage>();
         if (nodeId != null) {
             for (DefaultBacklogTracerEventMessage message : queue) {
-                if (nodeId.equals(message.getToNode())) {
+                if (nodeId.equals(message.getToNode()) || nodeId.equals(message.getRouteId())) {
                     answer.add(message);
                 }
             }
