@@ -85,8 +85,8 @@ public class RabbitMQProducer extends DefaultProducer {
             exchangeName = getEndpoint().getExchangeName();
         }
         String key = exchange.getIn().getHeader(RabbitMQConstants.ROUTING_KEY, null, String.class);
-        // we just need to make sure RoutingKey option take effect
-        if (key == null) {
+        // we just need to make sure RoutingKey option take effect if it is not BridgeEndpoint
+        if (key == null || getEndpoint().isBridgeEndpoint()) {
             key = getEndpoint().getRoutingKey() == null ? "" : getEndpoint().getRoutingKey();
         }
         if (ObjectHelper.isEmpty(key) && ObjectHelper.isEmpty(exchangeName)) {
