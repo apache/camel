@@ -19,7 +19,9 @@ package org.apache.camel.component.http4;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.zip.GZIPInputStream;
 import java.util.zip.GZIPOutputStream;
@@ -39,9 +41,11 @@ import org.apache.http.HttpResponseInterceptor;
 import org.apache.http.HttpStatus;
 import org.apache.http.entity.HttpEntityWrapper;
 import org.apache.http.localserver.LocalTestServer;
+import org.apache.http.localserver.ResponseBasicUnauthorized;
 import org.apache.http.message.BasicHeader;
-import org.apache.http.protocol.BasicHttpProcessor;
 import org.apache.http.protocol.HttpContext;
+import org.apache.http.protocol.HttpProcessor;
+import org.apache.http.protocol.ImmutableHttpProcessor;
 import org.apache.http.util.EntityUtils;
 import org.junit.Test;
 
@@ -74,12 +78,13 @@ public class HttpCompressionTest extends BaseHttpTest {
     }
 
     @Override
-    protected BasicHttpProcessor getBasicHttpProcessor() {
-        BasicHttpProcessor httpproc = new BasicHttpProcessor();
-        httpproc.addInterceptor(new RequestDecompressingInterceptor());
-
-        httpproc.addInterceptor(new ResponseCompressingInterceptor());
-
+    protected HttpProcessor getBasicHttpProcessor() {
+        List<HttpRequestInterceptor> requestInterceptors = new ArrayList<HttpRequestInterceptor>();
+        requestInterceptors.add(new RequestDecompressingInterceptor());
+        List<HttpResponseInterceptor> responseInterceptors = new ArrayList<HttpResponseInterceptor>();
+        responseInterceptors.add(new ResponseCompressingInterceptor());
+        responseInterceptors.add(new ResponseBasicUnauthorized());
+        ImmutableHttpProcessor httpproc = new ImmutableHttpProcessor(requestInterceptors, responseInterceptors);
         return httpproc;
     }
 

@@ -72,7 +72,7 @@ public class CamelSWFWorkflowClientTest {
         Date closeTimestamp = new Date();
         executionInfo.setCloseTimestamp(closeTimestamp);
         executionInfo.setExecutionStatus("CLOSED");
-        executionInfo.setTagList(Collections.EMPTY_LIST);
+        executionInfo.setTagList((List<String>)Collections.EMPTY_LIST);
 
         WorkflowExecutionDetail workflowExecutionDetail = new WorkflowExecutionDetail();
         workflowExecutionDetail.setExecutionInfo(executionInfo);

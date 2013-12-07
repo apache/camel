@@ -167,7 +167,7 @@ public final class HttpHelper {
         } else {
             CachedOutputStream cos = new CachedOutputStream(exchange);
             IOHelper.copyAndCloseInput(is, cos);
-            return cos.getStreamCache();
+            return cos.newStreamCache();
         }
     }
 

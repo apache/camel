@@ -20,8 +20,8 @@ import org.apache.http.auth.AuthScope;
 import org.apache.http.auth.Credentials;
 import org.apache.http.auth.NTCredentials;
 import org.apache.http.auth.UsernamePasswordCredentials;
-import org.apache.http.client.HttpClient;
-import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.client.BasicCredentialsProvider;
+import org.apache.http.impl.client.HttpClientBuilder;
 
 public class BasicAuthenticationHttpClientConfigurer implements HttpClientConfigurer {
     private final String username;
@@ -36,14 +36,16 @@ public class BasicAuthenticationHttpClientConfigurer implements HttpClientConfig
         this.host = host;
     }
 
-    public void configureHttpClient(HttpClient client) {
+    public void configureHttpClient(HttpClientBuilder clientBuilder) {
         Credentials defaultcreds;
         if (domain != null) {
             defaultcreds = new NTCredentials(username, password, host, domain);
         } else {
             defaultcreds = new UsernamePasswordCredentials(username, password);
         }
-        ((DefaultHttpClient) client).getCredentialsProvider().setCredentials(AuthScope.ANY, defaultcreds);
+        BasicCredentialsProvider credentialsProvider = new BasicCredentialsProvider();
+        credentialsProvider.setCredentials(AuthScope.ANY, defaultcreds);
+        clientBuilder.setDefaultCredentialsProvider(credentialsProvider);
     }
 
 }

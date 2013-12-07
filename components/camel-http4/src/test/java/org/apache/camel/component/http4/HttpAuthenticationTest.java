@@ -16,17 +16,22 @@
  */
 package org.apache.camel.component.http4;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.component.http4.handler.AuthenticationValidationHandler;
+import org.apache.http.HttpRequestInterceptor;
+import org.apache.http.HttpResponseInterceptor;
 import org.apache.http.HttpStatus;
 import org.apache.http.localserver.LocalTestServer;
 import org.apache.http.localserver.RequestBasicAuth;
 import org.apache.http.localserver.ResponseBasicUnauthorized;
-import org.apache.http.protocol.BasicHttpProcessor;
+import org.apache.http.protocol.HttpProcessor;
+import org.apache.http.protocol.ImmutableHttpProcessor;
 import org.apache.http.protocol.ResponseContent;
 import org.junit.Test;
 
@@ -45,7 +50,6 @@ public class HttpAuthenticationTest extends BaseHttpTest {
             public void process(Exchange exchange) throws Exception {
             }
         });
-
         assertExchange(exchange);
     }
     
@@ -82,13 +86,13 @@ public class HttpAuthenticationTest extends BaseHttpTest {
     }
 
     @Override
-    protected BasicHttpProcessor getBasicHttpProcessor() {
-        BasicHttpProcessor httpproc = new BasicHttpProcessor();
-        httpproc.addInterceptor(new RequestBasicAuth());
-
-        httpproc.addInterceptor(new ResponseContent());
-        httpproc.addInterceptor(new ResponseBasicUnauthorized());
-
+    protected HttpProcessor getBasicHttpProcessor() {
+        List<HttpRequestInterceptor> requestInterceptors = new ArrayList<HttpRequestInterceptor>();
+        requestInterceptors.add(new RequestBasicAuth());
+        List<HttpResponseInterceptor> responseInterceptors = new ArrayList<HttpResponseInterceptor>();
+        responseInterceptors.add(new ResponseContent());
+        responseInterceptors.add(new ResponseBasicUnauthorized());
+        ImmutableHttpProcessor httpproc = new ImmutableHttpProcessor(requestInterceptors, responseInterceptors);
         return httpproc;
     }
 
