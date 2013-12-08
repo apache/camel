@@ -21,25 +21,18 @@ import org.apache.camel.model.ModelHelper;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.felix.gogo.commands.Argument;
 import org.apache.felix.gogo.commands.Command;
-import org.apache.karaf.shell.console.OsgiCommandSupport;
 
 /**
  * Command to show the route marshaled in XML.
  */
 @Command(scope = "camel", name = "route-show", description = "Display the Camel route definition in XML.")
-public class RouteShow extends OsgiCommandSupport {
+public class RouteShow extends CamelCommandSupport {
 
     @Argument(index = 0, name = "route", description = "The Camel route ID.", required = true, multiValued = false)
     String route;
 
     @Argument(index = 1, name = "context", description = "The Camel context name.", required = false, multiValued = false)
     String context;
-
-    private CamelController camelController;
-
-    public void setCamelController(CamelController camelController) {
-        this.camelController = camelController;
-    }
 
     public Object doExecute() throws Exception {
         Route camelRoute = camelController.getRoute(route, context);

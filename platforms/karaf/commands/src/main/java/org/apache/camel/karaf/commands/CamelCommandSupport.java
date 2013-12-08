@@ -14,22 +14,19 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.api.management.mbean;
+package org.apache.camel.karaf.commands;
 
-import org.apache.camel.api.management.ManagedAttribute;
+import org.apache.karaf.shell.console.OsgiCommandSupport;
 
-public interface ManagedComponentMBean {
+/**
+ * The abstract base class for karaf commands.
+ */
+public abstract class CamelCommandSupport extends OsgiCommandSupport {
 
-    @ManagedAttribute(description = "Component Name")
-    String getComponentName();
+    protected CamelController camelController;
 
-    @ManagedAttribute(description = "Component State")
-    String getState();
-
-    @ManagedAttribute(description = "Camel ID")
-    String getCamelId();
-
-    @ManagedAttribute(description = "Camel ManagementName")
-    String getCamelManagementName();
+    public void setCamelController(CamelController camelController) {
+        this.camelController = camelController;
+    }
 
 }

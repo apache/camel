@@ -1148,9 +1148,14 @@ public class JmsEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         configuration.setReplyToType(type);
     }
 
-    @ManagedAttribute(description = "Camel id")
+    @ManagedAttribute(description = "Camel ID")
     public String getCamelId() {
         return getCamelContext().getName();
+    }
+
+    @ManagedAttribute(description = "Camel ManagementName")
+    public String getCamelManagementName() {
+        return getCamelContext().getManagementName();
     }
 
     @ManagedAttribute(description = "Endpoint Uri", mask = true)

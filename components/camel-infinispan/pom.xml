@@ -28,7 +28,7 @@
 
     <artifactId>camel-infinispan</artifactId>
     <packaging>bundle</packaging>
-    <name>Camel-Infinispan Component</name>
+    <name>Camel :: Infinispan</name>
     <description>Camel Infinispan support</description>
 
     <properties>

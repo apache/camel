@@ -14,22 +14,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.api.management.mbean;
+package org.apache.camel.karaf.commands.completers;
 
-import org.apache.camel.api.management.ManagedAttribute;
+import org.apache.camel.karaf.commands.CamelController;
 
-public interface ManagedComponentMBean {
+import org.apache.karaf.shell.console.Completer;
 
-    @ManagedAttribute(description = "Component Name")
-    String getComponentName();
+/**
+ * The abstract base class for completers.
+ */
+public abstract class CamelCompleterSupport implements Completer {
 
-    @ManagedAttribute(description = "Component State")
-    String getState();
+    protected CamelController camelController;
 
-    @ManagedAttribute(description = "Camel ID")
-    String getCamelId();
-
-    @ManagedAttribute(description = "Camel ManagementName")
-    String getCamelManagementName();
+    public void setCamelController(CamelController camelController) {
+        this.camelController = camelController;
+    }
 
 }

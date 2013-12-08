@@ -408,6 +408,10 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
     public void setSchemaLocations(List<String> schemas) {
         this.schemaLocations = schemas;    
     }
+    
+    public List<String> getSchemaLocations() {
+        return schemaLocations;
+    }
 
     /**
      * See documentation of {@link BindingStyle}.

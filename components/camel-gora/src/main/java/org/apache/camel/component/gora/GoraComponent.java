@@ -17,10 +17,6 @@
 
 package org.apache.camel.component.gora;
 
-import java.io.IOException;
-import java.util.Map;
-import java.util.Properties;
-
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.gora.persistency.Persistent;
@@ -28,11 +24,14 @@ import org.apache.gora.store.DataStore;
 import org.apache.gora.store.DataStoreFactory;
 import org.apache.hadoop.conf.Configuration;
 
+import java.io.IOException;
+import java.util.Map;
+import java.util.Properties;
+
 import static org.apache.camel.component.gora.GoraConstants.GORA_DEFAULT_DATASTORE_KEY;
 
 /**
  * Camel-Gora {@link Endpoint}.
- *
  */
 public class GoraComponent extends DefaultComponent {
 
@@ -40,34 +39,52 @@ public class GoraComponent extends DefaultComponent {
      * GORA datastore
      */
     private DataStore<Object, Persistent> dataStore;
-
     /**
      * GORA properties
      */
     private Properties goraProperties;
-
     /**
      * Hadoop configuration
      */
     private Configuration configuration;
 
     /**
-     *
      * Initialize class and create DataStore instance
      *
-     * @param config  component configuration
+     * @param config component configuration
      * @throws IOException
      */
     private void init(final GoraConfiguration config) throws IOException {
 
-        this.configuration = new Configuration();
         this.goraProperties = DataStoreFactory.createProps();
 
         this.dataStore = DataStoreFactory.getDataStore(goraProperties.getProperty(GORA_DEFAULT_DATASTORE_KEY,
-                                                                                  config.getDataStoreClass()),
-                                                        config.getKeyClass(),
-                                                        config.getValueClass(),
-                                                        this.configuration);
+                config.getDataStoreClass()),
+                config.getKeyClass(),
+                config.getValueClass(),
+                this.configuration);
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void doStart() throws Exception {
+
+       if (configuration == null) {
+            configuration = new Configuration();
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void doStop() throws Exception {
+
+        if (dataStore != null) {
+            dataStore.close();
+        }
     }
 
     /**

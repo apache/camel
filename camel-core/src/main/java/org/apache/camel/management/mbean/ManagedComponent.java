@@ -64,6 +64,10 @@ public class ManagedComponent implements ManagedInstance, ManagedComponentMBean 
         return component.getCamelContext().getName();
     }
 
+    public String getCamelManagementName() {
+        return component.getCamelContext().getManagementName();
+    }
+
     public Object getInstance() {
         return component;
     }

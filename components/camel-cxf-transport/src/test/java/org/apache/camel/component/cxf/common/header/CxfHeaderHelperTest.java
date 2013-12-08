@@ -17,6 +17,7 @@
 package org.apache.camel.component.cxf.common.header;
 
 import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
@@ -26,10 +27,14 @@ import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.DefaultHeaderFilterStrategy;
-
+import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.cxf.helpers.CastUtils;
+import org.apache.cxf.message.Message;
+import org.apache.cxf.message.MessageImpl;
+import org.easymock.EasyMock;
 import org.junit.Assert;
 import org.junit.Test;
+
 
 /**
  * 
@@ -104,7 +109,24 @@ public class CxfHeaderHelperTest extends Assert {
         assertEquals("peach", camelHeaders.get("MyFruitHeader"));
         assertEquals("cappuccino, espresso", camelHeaders.get("MyBrewHeader"));
     } 
-    
+
+    @Test
+    public void testContentType() {
+
+        Exchange camelExchange = EasyMock.createMock(Exchange.class);
+        HeaderFilterStrategy strategy = setupHeaderStrategy(camelExchange);
+        Message cxfMessage = new MessageImpl();
+        CxfHeaderHelper.propagateCamelToCxf(strategy, 
+            Collections.<String, Object>singletonMap("Content-Type", "text/xml"), cxfMessage, camelExchange);
+
+        Map<String, List<String>> cxfHeaders = CastUtils.cast((Map<?, ?>)cxfMessage.get(Message.PROTOCOL_HEADERS)); 
+        assertEquals(1, cxfHeaders.size());
+        assertEquals(1, cxfHeaders.get("Content-Type").size());
+        assertEquals("text/xml", cxfHeaders.get("Content-Type").get(0)); 
+      
+        assertEquals("text/xml", cxfMessage.get(Message.CONTENT_TYPE));   
+    }
+
     private void verifyHeader(Map<String, List<String>> headers, String name, List<String> value) {
         List<String> values = headers.get(name);
         assertTrue("The entry must be available", values != null && values.size() == ((List<?>)value).size());
@@ -116,4 +138,14 @@ public class CxfHeaderHelperTest extends Assert {
         assertTrue("The entry must be available", values != null && values.size() == 1);
         assertEquals("The value must match", value, values.get(0));
     }
+
+    private HeaderFilterStrategy setupHeaderStrategy(Exchange exchange) {
+
+        HeaderFilterStrategy strategy = EasyMock.createMock(HeaderFilterStrategy.class);
+        strategy.applyFilterToCamelHeaders("Content-Type", "text/xml", exchange);
+        EasyMock.expectLastCall().andReturn(false);
+        EasyMock.replay(strategy);
+        return strategy;
+    }
+
 }

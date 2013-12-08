@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.disruptor;
 
 import java.util.Collection;
@@ -32,8 +31,10 @@ import org.apache.camel.Exchange;
 import org.apache.camel.MultipleConsumersSupport;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.ServiceStatus;
 import org.apache.camel.WaitForTaskToComplete;
 import org.apache.camel.api.management.ManagedAttribute;
+import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,20 +44,16 @@ import org.slf4j.LoggerFactory;
  * for asynchronous SEDA exchanges on an
  * <a href="https://github.com/LMAX-Exchange/disruptor">LMAX Disruptor</a> within a CamelContext
  */
-
+@ManagedResource(description = "Managed Disruptor Endpoint")
 public class DisruptorEndpoint extends DefaultEndpoint implements MultipleConsumersSupport {
     public static final String DISRUPTOR_IGNORE_EXCHANGE = "disruptor.ignoreExchange";
     private static final Logger LOGGER = LoggerFactory.getLogger(DisruptorEndpoint.class);
-    
 
     private final int concurrentConsumers;
     private final boolean multipleConsumers;
     private WaitForTaskToComplete waitForTaskToComplete = WaitForTaskToComplete.IfReplyExpected;
-
     private long timeout = 30000;
-
     private boolean blockWhenFull;
-
     private final Set<DisruptorProducer> producers = new CopyOnWriteArraySet<DisruptorProducer>();
     private final Set<DisruptorConsumer> consumers = new CopyOnWriteArraySet<DisruptorConsumer>();
 
@@ -70,6 +67,31 @@ public class DisruptorEndpoint extends DefaultEndpoint implements MultipleConsum
         this.concurrentConsumers = concurrentConsumers;
         this.multipleConsumers = multipleConsumers;
         this.blockWhenFull = blockWhenFull;
+    }
+
+    @ManagedAttribute(description = "Camel ID")
+    public String getCamelId() {
+        return getCamelContext().getName();
+    }
+
+    @ManagedAttribute(description = "Camel ManagementName")
+    public String getCamelManagementName() {
+        return getCamelContext().getManagementName();
+    }
+
+    @ManagedAttribute(description = "Endpoint Uri", mask = true)
+    public String getEndpointUri() {
+        return super.getEndpointUri();
+    }
+
+    @ManagedAttribute(description = "Service State")
+    public String getState() {
+        ServiceStatus status = this.getStatus();
+        // if no status exists then its stopped
+        if (status == null) {
+            status = ServiceStatus.Stopped;
+        }
+        return status.name();
     }
 
     @ManagedAttribute(description = "Buffer max capacity")
@@ -86,7 +108,6 @@ public class DisruptorEndpoint extends DefaultEndpoint implements MultipleConsum
     public long getPendingExchangeCount() throws DisruptorNotStartedException {
         return getDisruptor().getPendingExchangeCount();
     }
-
 
     @ManagedAttribute(description = "Number of concurrent consumers")
     public int getConcurrentConsumers() {
@@ -165,22 +186,17 @@ public class DisruptorEndpoint extends DefaultEndpoint implements MultipleConsum
 
     @Override
     protected void doStart() throws Exception {
-        LOGGER.debug("Start enpoint {}", this);
         // notify reference we are shutting down this endpoint
         disruptorReference.addEndpoint(this);
-
-        super.doStart();    //To change body of overridden methods use File | Settings | File Templates.
+        super.doStart();
     }
 
     @Override
     protected void doStop() throws Exception {
-        LOGGER.debug("Stop enpoint {}", this);
         // notify reference we are shutting down this endpoint
         disruptorReference.removeEndpoint(this);
-
-        super.doStop();    //To change body of overridden methods use File | Settings | File Templates.
+        super.doStop();
     }
-
 
     @Override
     protected void doShutdown() throws Exception {
@@ -204,35 +220,24 @@ public class DisruptorEndpoint extends DefaultEndpoint implements MultipleConsum
                 throw new IllegalStateException(
                         "Multiple consumers for the same endpoint is not allowed: " + this);
             }
-
             if (consumers.add(consumer)) {
                 LOGGER.debug("Starting consumer {} on endpoint {}", consumer, getEndpointUri());
-
                 getDisruptor().reconfigure();
-
             } else {
-                LOGGER.debug("Tried to start Consumer {} on endpoint {} but it was already started", consumer,
-                        getEndpointUri());
+                LOGGER.debug("Tried to start Consumer {} on endpoint {} but it was already started", consumer, getEndpointUri());
             }
         }
-
     }
 
 
     void onStopped(final DisruptorConsumer consumer) throws Exception {
         synchronized (this) {
-
             if (consumers.remove(consumer)) {
                 LOGGER.debug("Stopping consumer {} on endpoint {}", consumer, getEndpointUri());
-
                 getDisruptor().reconfigure();
-
             } else {
-                LOGGER.debug("Tried to stop Consumer {} on endpoint {} but it was already stopped", consumer,
-                        getEndpointUri());
+                LOGGER.debug("Tried to stop Consumer {} on endpoint {} but it was already stopped", consumer, getEndpointUri());
             }
-
-
         }
     }
 

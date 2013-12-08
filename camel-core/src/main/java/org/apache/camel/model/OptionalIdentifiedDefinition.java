@@ -20,7 +20,6 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElement;
-import javax.xml.bind.annotation.XmlTransient;
 import javax.xml.bind.annotation.XmlType;
 
 import org.apache.camel.NamedNode;
@@ -35,8 +34,7 @@ import org.apache.camel.spi.NodeIdFactory;
 @XmlAccessorType(XmlAccessType.PROPERTY)
 public abstract class OptionalIdentifiedDefinition<T extends OptionalIdentifiedDefinition<T>> implements NamedNode {
     private String id;
-    @XmlTransient
-    private boolean customId;
+    private Boolean customId;
     private DescriptionDefinition description;
 
     /**
@@ -128,11 +126,20 @@ public abstract class OptionalIdentifiedDefinition<T extends OptionalIdentifiedD
         return getId();
     }
 
+    public Boolean isCustomId() {
+        return customId;
+    }
+
+    @XmlAttribute
+    public void setCustomId(Boolean customId) {
+        this.customId = customId;
+    }
+
     /**
      * Returns whether a custom id has been assigned
      */
     public boolean hasCustomIdAssigned() {
-        return customId;
+        return customId != null && customId;
     }
 
     /**

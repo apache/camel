@@ -38,7 +38,7 @@ import org.apache.karaf.util.StringEscapeUtils;
 public class RouteProfile extends AbstractRouteCommand {
 
     protected static final String HEADER_FORMAT = "%-30s %10s %12s %12s %12s %12s %12s %12s %12s";
-    protected static final String OUTPUT_FORMAT = "[%-28s] [%8d] [%10d] [%10d] [%10d] [%10d] [%10d] [%10d] [%10d]";
+    protected static final String OUTPUT_FORMAT = "%-30s %10d %12d %12d %12d %12d %12d %12d %12d";
 
     private String previousCamelContextName;
 
@@ -60,8 +60,6 @@ public class RouteProfile extends AbstractRouteCommand {
             System.out.println(StringEscapeUtils.unescapeJava("\tCamel Context: " + camelRoute.getRouteContext().getCamelContext().getName()));
             System.out.println(String.format(HEADER_FORMAT, "Id", "Count", "Last (ms)", "Delta (ms)", "Mean (ms)", "Min (ms)", "Max (ms)", "Total (ms)", "Self (ms)"));
         }
-//        System.out.println(StringEscapeUtils.unescapeJava("\u001B[1m\u001B[33mCamel Route " + camelRoute.getId() + "\u001B[0m"));
-//        System.out.println(StringEscapeUtils.unescapeJava("\tEndpoint uri: " + URISupport.sanitizeUri(camelRoute.getEndpoint().getEndpointUri())));
 
         ManagementAgent agent = camelContext.getManagementStrategy().getManagementAgent();
         if (agent != null) {

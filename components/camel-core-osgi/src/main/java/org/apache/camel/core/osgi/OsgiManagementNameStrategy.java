@@ -23,7 +23,7 @@ import org.apache.camel.impl.DefaultManagementNameStrategy;
 import org.osgi.framework.BundleContext;
 
 /**
- * OSGI enhanced {@link org.apache.camel.spi.ManagementNameStrategy}.
+ * OSGi enhanced {@link org.apache.camel.spi.ManagementNameStrategy}.
  * <p/>
  * This {@link org.apache.camel.spi.ManagementNameStrategy} supports the default
  * tokens (see {@link DefaultManagementNameStrategy}) and the following additional OSGi specific tokens
@@ -33,8 +33,9 @@ import org.osgi.framework.BundleContext;
  *     <li>#symbolicName# - The bundle symbolic name</li>
  * </ul>
  * <p/>
- * This implementation will by default use a name pattern as <tt>#bundleId#-#name#</tt> and in case
- * of a clash, then the pattern will fallback to be using the counter as <tt>#bundleId#-#name#-#counter#</tt>.
+ * This implementation will by default use a name pattern as <tt>#symbolicName#</tt> and in case
+ * of a clash (such as multiple versions of the same symbolicName),
+ * then the pattern will fallback to append an unique counter <tt>#symbolicName#-#counter#</tt>.
  *
  * @see DefaultManagementNameStrategy
  */
@@ -43,7 +44,7 @@ public class OsgiManagementNameStrategy extends DefaultManagementNameStrategy {
     private final BundleContext bundleContext;
 
     public OsgiManagementNameStrategy(CamelContext camelContext, BundleContext bundleContext) {
-        super(camelContext, "#bundleId#-#name#", "#bundleId#-#name#-#counter#");
+        super(camelContext, "#symbolicName#", "#symbolicName#-#counter#");
         this.bundleContext = bundleContext;
     }
 
