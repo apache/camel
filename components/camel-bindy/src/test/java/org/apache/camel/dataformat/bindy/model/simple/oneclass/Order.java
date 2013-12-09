@@ -161,6 +161,6 @@ public class Order {
     public String toString() {
         return "Model : " + Order.class.getName() + " : " + this.orderNr + ", " + this.orderType + ", " + String.valueOf(this.amount) + ", " + this.instrumentCode + ", "
                + this.instrumentNumber + ", " + this.instrumentType + ", " + this.currency + ", " + this.clientNr + ", " + this.firstName + ", " + this.lastName + ", "
-               + String.valueOf(this.orderDate) + ", hel" + String.valueOf(this.orderDateTime);
+               + String.valueOf(this.orderDate) + ", " + String.valueOf(this.orderDateTime);
     }
 }
