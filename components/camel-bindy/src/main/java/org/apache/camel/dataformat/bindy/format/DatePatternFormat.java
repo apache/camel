@@ -42,9 +42,7 @@ public class DatePatternFormat implements PatternFormat<Date> {
     public DatePatternFormat(String pattern, String timezone, Locale locale) {
         this.pattern = pattern;
         this.locale = locale;
-        if (timezone.isEmpty()) {
-            this.timezone = TimeZone.getDefault();
-        } else {
+        if (!timezone.isEmpty()) {
             this.timezone = TimeZone.getTimeZone(timezone);
         }
     }
