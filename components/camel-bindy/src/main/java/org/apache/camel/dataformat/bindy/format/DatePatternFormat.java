@@ -20,6 +20,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
+import java.util.TimeZone;
 
 import org.apache.camel.dataformat.bindy.PatternFormat;
 import org.apache.camel.util.ObjectHelper;
@@ -28,6 +29,7 @@ public class DatePatternFormat implements PatternFormat<Date> {
 
     private String pattern;
     private Locale locale;
+    private TimeZone timezone;
 
     public DatePatternFormat() {
     }
@@ -35,6 +37,16 @@ public class DatePatternFormat implements PatternFormat<Date> {
     public DatePatternFormat(String pattern, Locale locale) {
         this.pattern = pattern;
         this.locale = locale;
+    }
+
+    public DatePatternFormat(String pattern, String timezone, Locale locale) {
+        this.pattern = pattern;
+        this.locale = locale;
+        if (timezone.isEmpty()) {
+            this.timezone = TimeZone.getDefault();
+        } else {
+            this.timezone = TimeZone.getTimeZone(timezone);
+        }
     }
 
     public String format(Date object) throws Exception {
@@ -69,11 +81,16 @@ public class DatePatternFormat implements PatternFormat<Date> {
     }
 
     protected java.text.DateFormat getDateFormat() {
+        SimpleDateFormat result;
         if (locale != null) {
-            return new SimpleDateFormat(pattern, locale);
+            result = new SimpleDateFormat(pattern, locale);
         } else {
-            return new SimpleDateFormat(pattern);
+            result = new SimpleDateFormat(pattern);
         }
+        if (timezone != null) {
+            result.setTimeZone(timezone);
+        }
+        return result;
     }
 
     public String getPattern() {
