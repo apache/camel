@@ -55,12 +55,11 @@ public class GoraComponent extends DefaultComponent {
      *
      * Initialize class and create DataStore instance
      *
-     * @param config  component configuration
+     * @param config component configuration
      * @throws IOException
      */
     private void init(final GoraConfiguration config) throws IOException {
-
-        this.configuration = new Configuration();
+        
         this.goraProperties = DataStoreFactory.createProps();
 
         this.dataStore = DataStoreFactory.getDataStore(goraProperties.getProperty(GORA_DEFAULT_DATASTORE_KEY,
@@ -100,6 +99,27 @@ public class GoraComponent extends DefaultComponent {
     public DataStore<Object, Persistent> getDataStore() {
 
         return dataStore;
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void doStart() throws Exception {
+        if (configuration == null) {
+            configuration = new Configuration();
+        }
+    }
+
+    /**
+     * {@inheritDoc}
+     */
+    @Override
+    protected void doStop() throws Exception {
+
+        if (dataStore != null) {
+            dataStore.close();
+        }
     }
 
 }
