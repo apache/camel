@@ -58,6 +58,9 @@ public class Order {
     @DataField(pos = 11, pattern = "dd-MM-yyyy")
     private Date orderDate;
 
+    @DataField(pos = 12, pattern = "dd-MM-yyyy HH:mm:ss", timezone = "GMT+4")
+    private Date orderDateTime;
+
     public int getOrderNr() {
         return orderNr;
     }
@@ -146,10 +149,18 @@ public class Order {
         this.orderDate = orderDate;
     }
 
+    public Date getOrderDateTime() {
+        return orderDateTime;
+    }
+
+    public void setOrderDateTime(Date orderDateTime) {
+        this.orderDateTime = orderDateTime;
+    }
+
     @Override
     public String toString() {
         return "Model : " + Order.class.getName() + " : " + this.orderNr + ", " + this.orderType + ", " + String.valueOf(this.amount) + ", " + this.instrumentCode + ", "
                + this.instrumentNumber + ", " + this.instrumentType + ", " + this.currency + ", " + this.clientNr + ", " + this.firstName + ", " + this.lastName + ", "
-               + String.valueOf(this.orderDate);
+               + String.valueOf(this.orderDate) + ", " + String.valueOf(this.orderDateTime);
     }
 }

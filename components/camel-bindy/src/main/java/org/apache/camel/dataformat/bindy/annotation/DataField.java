@@ -60,6 +60,11 @@ public @interface DataField {
     String pattern() default "";
 
     /**
+     * @return String timezone ID
+     */
+    String timezone() default "";
+
+    /**
      * Length of the data block if the record is set to a fixed length
      */
     int length() default 0;
