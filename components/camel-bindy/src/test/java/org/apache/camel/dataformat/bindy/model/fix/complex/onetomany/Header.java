@@ -16,10 +16,10 @@
  */
 package org.apache.camel.dataformat.bindy.model.fix.complex.onetomany;
 
+import java.util.Date;
+
 import org.apache.camel.dataformat.bindy.annotation.KeyValuePairField;
 import org.apache.camel.dataformat.bindy.annotation.Link;
-
-import java.util.Date;
 
 @Link
 public class Header {

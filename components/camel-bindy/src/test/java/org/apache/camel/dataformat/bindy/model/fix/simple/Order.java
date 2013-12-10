@@ -16,11 +16,11 @@
  */
 package org.apache.camel.dataformat.bindy.model.fix.simple;
 
+import java.util.Date;
+
 import org.apache.camel.dataformat.bindy.annotation.KeyValuePairField;
 import org.apache.camel.dataformat.bindy.annotation.Link;
 import org.apache.camel.dataformat.bindy.annotation.Message;
-
-import java.util.Date;
 
 @Message(keyValuePairSeparator = "=", pairSeparator = "\\u0001", type = "FIX", version = "4.1")
 public class Order {

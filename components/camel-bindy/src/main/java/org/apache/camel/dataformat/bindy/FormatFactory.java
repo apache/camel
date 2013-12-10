@@ -67,8 +67,7 @@ public final class FormatFactory {
     @SuppressWarnings("unchecked")
     private static Format<?> doGetFormat(Class<?> clazz, String pattern, String locale,
                                          String timezone, int precision, boolean impliedDecimalSeparator)
-            throws Exception
-    {
+        throws Exception {
         if (clazz == byte.class || clazz == Byte.class) {
             return ObjectHelper.isNotEmpty(pattern)
                 ? new BytePatternFormat(pattern, getLocale(locale))

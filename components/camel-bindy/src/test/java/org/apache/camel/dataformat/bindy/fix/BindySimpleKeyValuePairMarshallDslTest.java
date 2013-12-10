@@ -16,7 +16,12 @@
  */
 package org.apache.camel.dataformat.bindy.fix;
 
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.TimeZone;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Produce;
