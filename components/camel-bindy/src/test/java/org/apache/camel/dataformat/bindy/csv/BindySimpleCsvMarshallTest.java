@@ -17,12 +17,7 @@
 package org.apache.camel.dataformat.bindy.csv;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.LoggingLevel;
@@ -57,7 +52,7 @@ public class BindySimpleCsvMarshallTest extends AbstractJUnit4SpringContextTests
     @DirtiesContext
     public void testMarshallMessage() throws Exception {
 
-        expected = "1,B2,Keira,Knightley,ISIN,XX23456789,BUY,Share,400.25,EUR,14-01-2009\r\n";
+        expected = "1,B2,Keira,Knightley,ISIN,XX23456789,BUY,Share,400.25,EUR,14-01-2009,17-02-2011 23:21:59\r\n";
 
         result.expectedBodiesReceived(expected);
 
@@ -84,6 +79,12 @@ public class BindySimpleCsvMarshallTest extends AbstractJUnit4SpringContextTests
         Calendar calendar = new GregorianCalendar();
         calendar.set(2009, 0, 14);
         order.setOrderDate(calendar.getTime());
+
+        calendar = Calendar.getInstance(TimeZone.getTimeZone("GMT"));
+        // 4 hour shift
+        // 17-02-2011 23:21:59 by GMT+4
+        calendar.set(2011, 1, 17, 19, 21, 59);
+        order.setOrderDateTime(calendar.getTime());
 
         modelObjects.put(order.getClass().getName(), order);
 
