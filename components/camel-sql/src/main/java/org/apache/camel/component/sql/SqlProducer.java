@@ -89,6 +89,9 @@ public class SqlProducer extends DefaultProducer {
                 } else {
                     boolean isResultSet = ps.execute();
                     if (isResultSet) {
+                        // preserve headers first, so we can override the SQL_ROW_COUNT header
+                        exchange.getOut().getHeaders().putAll(exchange.getIn().getHeaders());
+
                         ResultSet rs = ps.getResultSet();
                         SqlOutputType outputType = getEndpoint().getOutputType();
                         log.trace("Got result list from query: {}, outputType={}", rs, outputType);
@@ -115,9 +118,6 @@ public class SqlProducer extends DefaultProducer {
                         } else {
                             throw new IllegalArgumentException("Invalid outputType=" + outputType);
                         }
-
-                        // preserve headers
-                        exchange.getOut().getHeaders().putAll(exchange.getIn().getHeaders());
                     } else {
                         exchange.getIn().setHeader(SqlConstants.SQL_UPDATE_COUNT, ps.getUpdateCount());
                     }
