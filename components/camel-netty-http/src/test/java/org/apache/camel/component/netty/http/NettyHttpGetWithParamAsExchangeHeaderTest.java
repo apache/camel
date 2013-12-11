@@ -24,7 +24,7 @@ import org.junit.Test;
 
 public class NettyHttpGetWithParamAsExchangeHeaderTest extends BaseNettyTest {
 
-    private String serverUri = "netty-http:http://localhost:" + getPort() + "/myservice";
+    private String serverUri = "netty-http:http://localhost:" + getPort() + "/myservice?urlDecodeHeaders=true";
 
     @Test
     public void testHttpGetWithParamsViaURI() throws Exception {
@@ -34,7 +34,7 @@ public class NettyHttpGetWithParamAsExchangeHeaderTest extends BaseNettyTest {
         mock.expectedHeaderReceived("two", "twei");
         mock.expectedHeaderReceived(Exchange.HTTP_METHOD, "GET");
 
-        template.requestBody(serverUri + "?one=einz&two=twei", null, Object.class);
+        template.requestBody(serverUri + "&one=einz&two=twei", null, Object.class);
 
         assertMockEndpointsSatisfied();
     }
@@ -46,7 +46,7 @@ public class NettyHttpGetWithParamAsExchangeHeaderTest extends BaseNettyTest {
         mock.expectedHeaderReceived("message", "Keine g\u00FCltige GPS-Daten!");
         mock.expectedHeaderReceived(Exchange.HTTP_METHOD, "GET");
 
-        template.requestBody(serverUri + "?message=Keine%20g%C3%BCltige%20GPS-Daten!", null, Object.class);
+        template.requestBody(serverUri + "&message=Keine%20g%C3%BCltige%20GPS-Daten!", null, Object.class);
 
         assertMockEndpointsSatisfied();
     }
@@ -59,7 +59,7 @@ public class NettyHttpGetWithParamAsExchangeHeaderTest extends BaseNettyTest {
         mock.expectedHeaderReceived("message", "Keine g\u00C6ltige GPS-Daten!");
         mock.expectedHeaderReceived(Exchange.HTTP_METHOD, "GET");
 
-        template.requestBody(serverUri + "?message=Keine+g%C6ltige+GPS-Daten%21", null, Object.class);
+        template.requestBody(serverUri + "&message=Keine+g%C6ltige+GPS-Daten%21", null, Object.class);
 
         assertMockEndpointsSatisfied();
     }
@@ -72,7 +72,7 @@ public class NettyHttpGetWithParamAsExchangeHeaderTest extends BaseNettyTest {
         mock.expectedHeaderReceived(Exchange.HTTP_METHOD, "GET");
 
         // parameter starts with a space using %2B as decimal encoded
-        template.requestBody(serverUri + "?message=%2BWorld", null, Object.class);
+        template.requestBody(serverUri + "&message=%2BWorld", null, Object.class);
 
         assertMockEndpointsSatisfied();
     }
@@ -85,7 +85,7 @@ public class NettyHttpGetWithParamAsExchangeHeaderTest extends BaseNettyTest {
         mock.expectedHeaderReceived(Exchange.HTTP_METHOD, "GET");
 
         // parameter starts with a space using + decoded
-        template.requestBody(serverUri + "?message=+World", null, Object.class);
+        template.requestBody(serverUri + "&message=+World", null, Object.class);
 
         assertMockEndpointsSatisfied();
     }
