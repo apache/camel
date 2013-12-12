@@ -27,7 +27,6 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.Channel;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.Service;
 import org.apache.camel.model.ModelChannel;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.ProcessorDefinitionHelper;
@@ -37,7 +36,6 @@ import org.apache.camel.processor.CamelInternalProcessor;
 import org.apache.camel.processor.InterceptorToAsyncProcessorBridge;
 import org.apache.camel.processor.WrapProcessor;
 import org.apache.camel.spi.InterceptStrategy;
-import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.OrderedComparator;
 import org.apache.camel.util.ServiceHelper;
@@ -200,9 +198,9 @@ public class DefaultChannel extends CamelInternalProcessor implements ModelChann
 
         // then wrap the output with the backlog and tracer (backlog first, as we do not want regular tracer to tracer the backlog)
         InterceptStrategy tracer = getOrCreateBacklogTracer();
+        camelContext.addService(tracer);
         if (tracer instanceof BacklogTracer) {
             BacklogTracer backlogTracer = (BacklogTracer) tracer;
-            backlogTracer.addDefinition(targetOutputDef);
 
             RouteDefinition route = ProcessorDefinitionHelper.getRoute(definition);
             boolean first = false;
@@ -214,6 +212,7 @@ public class DefaultChannel extends CamelInternalProcessor implements ModelChann
 
             // add debugger as well so we have both tracing and debugging out of the box
             InterceptStrategy debugger = getOrCreateBacklogDebugger();
+            camelContext.addService(debugger);
             if (debugger instanceof BacklogDebugger) {
                 BacklogDebugger backlogDebugger = (BacklogDebugger) debugger;
                 addAdvice(new BacklogDebuggerAdvice(backlogDebugger, target, targetOutputDef));
@@ -229,6 +228,7 @@ public class DefaultChannel extends CamelInternalProcessor implements ModelChann
         // end users have to explicit enable the tracer to use it, and then its okay if we wrap
         // the processors (but by default tracer is disabled, and therefore we do not wrap processors)
         tracer = getOrCreateTracer();
+        camelContext.addService(tracer);
         if (tracer != null) {
             TraceInterceptor trace = (TraceInterceptor) tracer.wrapProcessorInInterceptors(routeContext.getCamelContext(), targetOutputDef, target, null);
             // trace interceptor need to have a reference to route context so we at runtime can enable/disable tracing on-the-fly
@@ -321,13 +321,6 @@ public class DefaultChannel extends CamelInternalProcessor implements ModelChann
             }
         }
 
-        // which we must manage as well
-        for (LifecycleStrategy strategy : camelContext.getLifecycleStrategies()) {
-            if (tracer instanceof Service) {
-                strategy.onServiceAdd(camelContext, (Service) tracer, null);
-            }
-        }
-
         return tracer;
     }
 
@@ -347,13 +340,6 @@ public class DefaultChannel extends CamelInternalProcessor implements ModelChann
             }
         }
 
-        // which we must manage as well
-        for (LifecycleStrategy strategy : camelContext.getLifecycleStrategies()) {
-            if (tracer instanceof Service) {
-                strategy.onServiceAdd(camelContext, (Service) tracer, null);
-            }
-        }
-
         return tracer;
     }
 
@@ -370,13 +356,6 @@ public class DefaultChannel extends CamelInternalProcessor implements ModelChann
             if (debugger == null) {
                 // fallback to use the default debugger
                 debugger = camelContext.getDefaultBacklogDebugger();
-            }
-        }
-
-        // which we must manage as well
-        for (LifecycleStrategy strategy : camelContext.getLifecycleStrategies()) {
-            if (debugger instanceof Service) {
-                strategy.onServiceAdd(camelContext, (Service) debugger, null);
             }
         }
 
