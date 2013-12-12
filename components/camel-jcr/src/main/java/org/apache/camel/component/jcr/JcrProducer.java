@@ -123,8 +123,12 @@ public class JcrProducer extends DefaultProducer {
         Node result = parent;
         for (String component : path.split("/")) {
             component = Text.escapeIllegalJcrChars(component);
-            if (component.length() > 0 && !result.hasNode(component)) {
-                result = result.addNode(component);
+            if (component.length() > 0) {
+                if (result.hasNode(component)) {
+                    result = result.getNode(component);
+                } else {
+                    result = result.addNode(component);
+                }
             }
         }
         return result;
