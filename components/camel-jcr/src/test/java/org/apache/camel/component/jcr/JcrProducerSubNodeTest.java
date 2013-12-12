@@ -77,7 +77,7 @@ public class JcrProducerSubNodeTest extends JcrRouteTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:a")
-                .to("jcr://user:pass@repository/home/test");
+                    .to("jcr://user:pass@repository/home/test");
             }
         };
     }
