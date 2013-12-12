@@ -75,12 +75,15 @@ public class CxfConsumerPayloadXPathTest extends CamelTestSupport {
         simpleTest(10000, new TestRouteWithXPathBuilder());
     }  
     
-   
-    
     //the textnode appears to have siblings!
     @Test
     public void size10000DomTest() throws Exception {
         simpleTest(10000, new TestRouteWithDomBuilder());
+    }
+  
+    @Test
+    public void size1000DomFirstTest() throws Exception {
+        simpleTest(1000, new TestRouteWithDomFirstOneOnlyBuilder());
     }
     
     private class TestRouteWithXPathBuilder extends BaseRouteBuilder {
@@ -153,6 +156,7 @@ public class CxfConsumerPayloadXPathTest extends CamelTestSupport {
         @Override
         public void process(Exchange exchange) throws Exception {
             Object obj =  exchange.getIn().getBody();
+            @SuppressWarnings("unchecked")
             CxfPayload<SoapHeader> payload = (CxfPayload<SoapHeader>) obj;
             Element el = (Element) payload.getBody().get(0);
             Text textnode = (Text) el.getFirstChild();
@@ -165,6 +169,7 @@ public class CxfConsumerPayloadXPathTest extends CamelTestSupport {
         @Override
         public void process(Exchange exchange) throws Exception {
             Object obj =  exchange.getIn().getBody();
+            @SuppressWarnings("unchecked")
             CxfPayload<SoapHeader> payload = (CxfPayload<SoapHeader>) obj;
             Element el = (Element) payload.getBody().get(0);
             Text textnode = (Text) el.getFirstChild();
