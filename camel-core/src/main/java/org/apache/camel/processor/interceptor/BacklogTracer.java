@@ -17,10 +17,8 @@
 package org.apache.camel.processor.interceptor;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
 import java.util.Queue;
-import java.util.Set;
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -32,9 +30,7 @@ import org.apache.camel.api.management.mbean.BacklogTracerEventMessage;
 import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.model.ProcessorDefinitionHelper;
 import org.apache.camel.model.RouteDefinition;
-import org.apache.camel.model.RouteDefinitionHelper;
 import org.apache.camel.spi.InterceptStrategy;
-import org.apache.camel.spi.NodeIdFactory;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.EndpointHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -68,15 +64,9 @@ public class BacklogTracer extends ServiceSupport implements InterceptStrategy {
     private String[] patterns;
     private String traceFilter;
     private Predicate predicate;
-    // remember the processors we are tracing, which we need later
-    private final Set<ProcessorDefinition<?>> processors = new HashSet<ProcessorDefinition<?>>();
 
     public BacklogTracer(CamelContext camelContext) {
         this.camelContext = camelContext;
-    }
-
-    public void addDefinition(ProcessorDefinition<?> definition) {
-        processors.add(definition);
     }
 
     public Queue<DefaultBacklogTracerEventMessage> getQueue() {
@@ -172,10 +162,6 @@ public class BacklogTracer extends ServiceSupport implements InterceptStrategy {
     }
 
     public void setEnabled(boolean enabled) {
-        // okay tracer is enabled then force auto assigning ids
-        if (enabled) {
-            forceAutoAssigningIds();
-        }
         this.enabled = enabled;
     }
 
@@ -322,10 +308,6 @@ public class BacklogTracer extends ServiceSupport implements InterceptStrategy {
         return traceCounter.incrementAndGet();
     }
 
-    void stopProcessor(ProcessorDefinition<?> processorDefinition) {
-        this.processors.remove(processorDefinition);
-    }
-
     @Override
     protected void doStart() throws Exception {
     }
@@ -333,22 +315,6 @@ public class BacklogTracer extends ServiceSupport implements InterceptStrategy {
     @Override
     protected void doStop() throws Exception {
         queue.clear();
-    }
-
-    @Override
-    protected void doShutdown() throws Exception {
-        queue.clear();
-        processors.clear();
-    }
-
-    private void forceAutoAssigningIds() {
-        NodeIdFactory factory = camelContext.getNodeIdFactory();
-        if (factory != null) {
-            for (ProcessorDefinition<?> child : processors) {
-                // ensure also the children get ids assigned
-                RouteDefinitionHelper.forceAssignIds(camelContext, child);
-            }
-        }
     }
 
 }
