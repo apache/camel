@@ -116,6 +116,18 @@ public class TwitterConfiguration {
      */
     @UriParam
     private Integer numberOfPages = new Integer(1);
+    
+    @UriParam
+    private String httpProxyHost;
+
+    @UriParam
+    private String httpProxyUser;
+
+    @UriParam
+    private String httpProxyPassword;
+
+    @UriParam
+    private Integer httpProxyPort;
 
     /**
      * Singleton, on demand instances of Twitter4J's Twitter & TwitterStream.
@@ -143,11 +155,25 @@ public class TwitterConfiguration {
      * @return Configuration
      */
     public Configuration getConfiguration() {
+        checkComplete();
         ConfigurationBuilder confBuilder = new ConfigurationBuilder();
         confBuilder.setOAuthConsumerKey(consumerKey);
         confBuilder.setOAuthConsumerSecret(consumerSecret);
         confBuilder.setOAuthAccessToken(accessToken);
         confBuilder.setOAuthAccessTokenSecret(accessTokenSecret);
+        if (getHttpProxyHost() != null) {
+            confBuilder.setHttpProxyHost(getHttpProxyHost());
+        }
+        if (getHttpProxyUser() != null) {
+            confBuilder.setHttpProxyHost(getHttpProxyUser());
+        }
+        if (getHttpProxyPassword() != null) {
+            confBuilder.setHttpProxyHost(getHttpProxyPassword());
+        }
+        if (httpProxyPort != null) {
+            confBuilder.setHttpProxyPort(httpProxyPort);
+        }
+        
         return confBuilder.build();
     }
 
@@ -314,6 +340,38 @@ public class TwitterConfiguration {
 
     public void setNumberOfPages(Integer numberOfPages) {
         this.numberOfPages = numberOfPages;
+    }
+    
+    public void setHttpProxyHost(String httpProxyHost) {
+        this.httpProxyHost = httpProxyHost;
+    }
+    
+    public String getHttpProxyHost() {
+        return httpProxyHost;
+    }
+    
+    public void setHttpProxyUser(String httpProxyUser) {
+        this.httpProxyUser = httpProxyUser;
+    }
+
+    public String getHttpProxyUser() {
+        return httpProxyUser;
+    }
+    
+    public void setHttpProxyPassword(String httpProxyPassword) {
+        this.httpProxyPassword = httpProxyPassword;
+    }
+
+    public String getHttpProxyPassword() {
+        return httpProxyPassword;
+    }
+    
+    public void setHttpProxyPort(int httpProxyPort) {
+        this.httpProxyPort = httpProxyPort;
+    }
+
+    public int getHttpProxyPort() {
+        return httpProxyPort;
     }
 }
 
