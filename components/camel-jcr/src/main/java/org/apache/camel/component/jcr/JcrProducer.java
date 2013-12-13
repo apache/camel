@@ -19,6 +19,8 @@ package org.apache.camel.component.jcr;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.util.Calendar;
+import java.util.Map;
+
 import javax.jcr.Node;
 import javax.jcr.Property;
 import javax.jcr.PropertyIterator;
@@ -46,7 +48,8 @@ public class JcrProducer extends DefaultProducer {
             if (JcrConstants.JCR_INSERT.equals(operation)) {
                 Node base = findOrCreateNode(session.getRootNode(), getJcrEndpoint().getBase());
                 Node node = findOrCreateNode(base, getNodeName(exchange));
-                for (String key : exchange.getProperties().keySet()) {
+                Map<String, Object> filteredProps = JcrHelper.filterJcrProperties(exchange.getProperties());
+                for (String key : filteredProps.keySet()) {
                     Value value = converter.convertTo(Value.class, exchange, exchange.getProperty(key));
                     node.setProperty(key, value);
                 }
