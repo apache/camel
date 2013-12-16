@@ -274,8 +274,7 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
 
         // set HTTP headers so we return these in the response
         if (!series.isEmpty()) {
-            Series<Header> httpHeaders = (Series<Header>) response.getAttributes().get(HeaderConstants.ATTRIBUTE_HEADERS);
-            httpHeaders.addAll(series);
+            response.getAttributes().put(HeaderConstants.ATTRIBUTE_HEADERS, series);
         }
     }
 
