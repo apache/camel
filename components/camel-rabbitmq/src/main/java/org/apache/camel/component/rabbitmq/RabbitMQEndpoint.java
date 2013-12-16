@@ -24,6 +24,7 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 import com.rabbitmq.client.AMQP;
+import com.rabbitmq.client.Address;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.Envelope;
@@ -54,6 +55,7 @@ public class RabbitMQEndpoint extends DefaultEndpoint {
     private String exchangeName;
     private String exchangeType = "direct";
     private String routingKey;
+    private Address[] addresses;
     
     public RabbitMQEndpoint() {
     }
@@ -107,7 +109,11 @@ public class RabbitMQEndpoint extends DefaultEndpoint {
         }
         factory.setHost(getHostname());
         factory.setPort(getPortNumber());
-        return factory.newConnection(executor);
+        if (getAddresses() == null) {
+            return factory.newConnection(executor);
+        } else {
+            return factory.newConnection(executor, getAddresses());
+        }
     }
 
     @Override
@@ -238,5 +244,16 @@ public class RabbitMQEndpoint extends DefaultEndpoint {
     
     public boolean isBridgeEndpoint() {
         return bridgeEndpoint;
+    }
+    
+    public void setAddresses(String addresses) {
+        Address[] addressArray = Address.parseAddresses(addresses);
+        if (addressArray.length > 0) {
+            this.addresses = addressArray;
+        }
+    }
+    
+    public Address[] getAddresses() {
+        return addresses;
     }
 }
