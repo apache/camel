@@ -16,12 +16,17 @@
  */
 package org.apache.camel.component.event;
 
+import java.util.LinkedHashSet;
 import java.util.Map;
+import java.util.Set;
 
 import org.apache.camel.impl.DefaultComponent;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.BeansException;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.ApplicationContextAware;
+import org.springframework.context.ApplicationEvent;
 import org.springframework.context.ConfigurableApplicationContext;
 
 /**
@@ -31,7 +36,9 @@ import org.springframework.context.ConfigurableApplicationContext;
  * @version 
  */
 public class EventComponent extends DefaultComponent implements ApplicationContextAware {
+    private static final Logger LOG = LoggerFactory.getLogger(EventComponent.class);
     private ApplicationContext applicationContext;
+    private final Set<EventEndpoint> endpoints = new LinkedHashSet<EventEndpoint>();
 
     public EventComponent() {
     }
@@ -59,6 +66,32 @@ public class EventComponent extends DefaultComponent implements ApplicationConte
 
     protected EventEndpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         EventEndpoint answer = new EventEndpoint(uri, this);
+        setProperties(answer, parameters);
         return answer;
+    }
+
+    protected void consumerStarted(EventEndpoint endpoint) {
+        endpoints.add(endpoint);
+    }
+
+    protected void consumerStopped(EventEndpoint endpoint) {
+        endpoints.remove(endpoint);
+    }
+
+    public void onApplicationEvent(ApplicationEvent event) {
+        // broadcast to the endpoints in use
+        for (EventEndpoint endpoint : endpoints) {
+            try {
+                endpoint.onApplicationEvent(event);
+            } catch (Exception e) {
+                LOG.warn("Error on application event " + event + ". This exception will be ignored.", e);
+            }
+        }
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        endpoints.clear();
+        super.doStop();
     }
 }
