@@ -59,7 +59,7 @@ public class SpringCamelContext extends DefaultCamelContext implements Initializ
     private static final Logger LOG = LoggerFactory.getLogger(SpringCamelContext.class);
     private static final ThreadLocal<Boolean> NO_START = new ThreadLocal<Boolean>();
     private ApplicationContext applicationContext;
-    private EventEndpoint eventEndpoint;
+    private EventComponent eventComponent;
 
     public SpringCamelContext() {
     }
@@ -127,10 +127,8 @@ public class SpringCamelContext extends DefaultCamelContext implements Initializ
             }
         }
 
-        if (eventEndpoint != null) {
-            eventEndpoint.onApplicationEvent(event);
-        } else {
-            LOG.info("No spring-event endpoint enabled to handle event: {}", event);
+        if (eventComponent != null) {
+            eventComponent.onApplicationEvent(event);
         }
     }
 
@@ -158,29 +156,24 @@ public class SpringCamelContext extends DefaultCamelContext implements Initializ
         if (applicationContext instanceof ConfigurableApplicationContext) {
             // only add if not already added
             if (hasComponent("spring-event") == null) {
-                addComponent("spring-event", new EventComponent(applicationContext));
+                eventComponent = new EventComponent(applicationContext);
+                addComponent("spring-event", eventComponent);
             }
         }
     }
 
+    @Deprecated
     public EventEndpoint getEventEndpoint() {
-        return eventEndpoint;
+        return null;
     }
 
+    @Deprecated
     public void setEventEndpoint(EventEndpoint eventEndpoint) {
-        this.eventEndpoint = eventEndpoint;
+        // noop
     }
 
     // Implementation methods
     // -----------------------------------------------------------------------
-
-    @Override
-    protected void doStart() throws Exception {
-        super.doStart();
-        if (eventEndpoint == null) {
-            eventEndpoint = createEventEndpoint();
-        }
-    }
 
     @Override
     protected Injector createInjector() {

@@ -48,7 +48,7 @@ public class DualCamelContextManagedAutoAssignedNameTest extends DualCamelContex
         assertTrue("Route 2 is missing", on1.getCanonicalName().contains("route2") || on2.getCanonicalName().contains("route2"));
 
         set = mbeanServer.queryNames(new ObjectName("*:type=endpoints,*"), null);
-        assertTrue("Size should be 7 or higher, was: " + set.size(), set.size() >= 7);
+        assertTrue("Size should be 4 or higher, was: " + set.size(), set.size() >= 4);
 
         for (ObjectName on : set) {
             String name = on.getCanonicalName();
