@@ -165,9 +165,6 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
                 Class<?> clazz = null;
                 for (ClassLoader loader : resolver.getClassLoaders()) {
                     try {
-                        if(name == null || name.isEmpty()){
-                            throw new ClassNotFoundException("Invalid class name [" + name + "]");
-                        }
                         clazz = ObjectHelper.loadClass(name, loader);
                         LOG.trace("Loaded {} as class {}", name, clazz);
                         classes.add(clazz);
