@@ -85,8 +85,8 @@ public class RunMojo extends AbstractExecMojo {
      * milliseconds. A value <= 0 will run forever.
      * Adding a s indicates seconds - eg "5s" means 5 seconds.
      *
-     * @parameter property="-1"
-     *
+     * @parameter property="camel.duration"
+     *            default-value="-1"
      */
     protected String duration;
 
@@ -106,6 +106,16 @@ public class RunMojo extends AbstractExecMojo {
      * @readonly
      */
     protected boolean dotEnabled;
+
+    /**
+     * Allows to provide a custom properties file on the classpath to initialize
+     * a {@link javax.naming.InitialContext} object with. This corresponds to
+     * the {@link org.apache.camel.guice.Main#setJndiProperties(String)} API
+     * method
+     * 
+     * @parameter property="jndiProperties"
+     */
+    protected String jndiProperties;
 
     /**
      * @component
@@ -328,6 +338,10 @@ public class RunMojo extends AbstractExecMojo {
             args.add("-o");
             args.add(dotDir);
         }
+        if (jndiProperties != null) {
+            args.add("-j");
+            args.add(jndiProperties);
+        }
         if (debug) {
             args.add("-x");
         }
@@ -367,13 +381,14 @@ public class RunMojo extends AbstractExecMojo {
             public void run() {
                 try {
                     Method main = Thread.currentThread().getContextClassLoader().loadClass(mainClass)
-                        .getMethod("main", new Class[] {String[].class});
-                    if (!main.isAccessible()) {
-                        getLog().debug("Setting accessibility to true in order to invoke main().");
-                        main.setAccessible(true);
-                    }
-                    main.invoke(main, new Object[] {arguments});
+                                        .getMethod("main", String[].class);
+                    main.invoke(null, new Object[] {arguments});
                 } catch (Exception e) { // just pass it on
+                    // let it be printed so end users can see the exception on the console
+                    getLog().error("*************************************");
+                    getLog().error("Error occurred while running main from: " + mainClass);
+                    getLog().error(e);
+                    getLog().error("*************************************");
                     Thread.currentThread().getThreadGroup().uncaughtException(Thread.currentThread(), e);
                 }
             }
@@ -399,7 +414,7 @@ public class RunMojo extends AbstractExecMojo {
             try {
                 threadGroup.destroy();
             } catch (IllegalThreadStateException e) {
-                getLog().warn("Couldn't destroy threadgroup " + threadGroup, e);
+                getLog().warn("Couldn't destroy thread group " + threadGroup, e);
             }
         }
 

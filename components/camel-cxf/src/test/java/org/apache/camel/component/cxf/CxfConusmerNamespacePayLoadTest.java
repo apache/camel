@@ -17,11 +17,11 @@
 package org.apache.camel.component.cxf;
 
 import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
 import org.junit.Test;
 
@@ -51,7 +51,7 @@ public class CxfConusmerNamespacePayLoadTest extends CxfConsumerPayloadTest {
         
         StringEntity entity = new StringEntity(ECHO_REQUEST, ContentType.create("text/xml", "ISO-8859-1"));
         post.setEntity(entity);
-        HttpClient httpclient = new DefaultHttpClient();
+        CloseableHttpClient httpclient = HttpClientBuilder.create().build();
 
         try {
             HttpResponse response = httpclient.execute(post);
@@ -60,7 +60,7 @@ public class CxfConusmerNamespacePayLoadTest extends CxfConsumerPayloadTest {
             
             assertEquals("Get a wrong response", ECHO_RESPONSE, responseBody);
         } finally {
-            httpclient.getConnectionManager().shutdown();
+            httpclient.close();
         }
 
     }

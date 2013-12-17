@@ -20,6 +20,8 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
@@ -208,10 +210,15 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
                 + "has & parameter separators. Check the uri if its missing a ? marker.");
         }
 
-        // check for uri containing double && markers
+        // check for uri containing double && markers without include by RAW
         if (uri.contains("&&")) {
-            throw new ResolveEndpointFailedException(uri, "Invalid uri syntax: Double && marker found. "
-                + "Check the uri and remove the duplicate & marker.");
+            Pattern pattern = Pattern.compile("RAW(.*&&.*)");
+            Matcher m = pattern.matcher(uri);
+            // we should skip the RAW part
+            if (!m.find()) {
+                throw new ResolveEndpointFailedException(uri, "Invalid uri syntax: Double && marker found. "
+                    + "Check the uri and remove the duplicate & marker.");
+            }
         }
 
         // if we have a trailing & then that is invalid as well

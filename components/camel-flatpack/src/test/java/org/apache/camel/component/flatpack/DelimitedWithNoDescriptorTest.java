@@ -34,7 +34,7 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 
 /**
- * @version 
+ * @version
  */
 @ContextConfiguration
 public class DelimitedWithNoDescriptorTest extends AbstractJUnit4SpringContextTests {
@@ -43,11 +43,11 @@ public class DelimitedWithNoDescriptorTest extends AbstractJUnit4SpringContextTe
     @EndpointInject(uri = "mock:results")
     protected MockEndpoint results;
 
-    protected String[] expectedItemDesc = {"James", "Claus"};
+    protected String[] expectedItemDesc = {"James", "Claus", "Antoine", "Xavier"};
 
     @Test
     public void testCamel() throws Exception {
-        results.expectedMessageCount(2);
+        results.expectedMessageCount(4);
         results.assertIsSatisfied();
 
         int counter = 0;

@@ -84,14 +84,13 @@ public class RabbitMQProducer extends DefaultProducer {
         if (exchangeName == null || getEndpoint().isBridgeEndpoint()) {
             exchangeName = getEndpoint().getExchangeName();
         }
-        if (ObjectHelper.isEmpty(exchangeName)) {
-            throw new IllegalArgumentException("ExchangeName is not provided in the endpoint: " + getEndpoint());
-        }
-
-        String key = exchange.getIn().getHeader(RabbitMQConstants.ROUTING_KEY, "", String.class);
-        // we just need to make sure RoutingKey option take effect
-        if (key.trim().length() == 0) {
+        String key = exchange.getIn().getHeader(RabbitMQConstants.ROUTING_KEY, null, String.class);
+        // we just need to make sure RoutingKey option take effect if it is not BridgeEndpoint
+        if (key == null || getEndpoint().isBridgeEndpoint()) {
             key = getEndpoint().getRoutingKey() == null ? "" : getEndpoint().getRoutingKey();
+        }
+        if (ObjectHelper.isEmpty(key) && ObjectHelper.isEmpty(exchangeName)) {
+            throw new IllegalArgumentException("ExchangeName and RoutingKey is not provided in the endpoint: " + getEndpoint());
         }
         byte[] messageBodyBytes = exchange.getIn().getMandatoryBody(byte[].class);
         AMQP.BasicProperties.Builder properties = buildProperties(exchange);

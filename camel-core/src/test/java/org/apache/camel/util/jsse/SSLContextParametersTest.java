@@ -553,13 +553,16 @@ public class SSLContextParametersTest extends AbstractJsseParametersTest {
         engine = context.createSSLEngine();
         socket = (SSLSocket) context.getSocketFactory().createSocket();
         serverSocket = (SSLServerSocket) context.getServerSocketFactory().createServerSocket();
-        
-        assertTrue(engine.getEnabledCipherSuites().length >= 1);
-        assertStartsWith(engine.getEnabledCipherSuites(), "TLS");
-        assertTrue(socket.getEnabledCipherSuites().length >= 1);
-        assertStartsWith(socket.getEnabledCipherSuites(), "TLS");
-        assertTrue(serverSocket.getEnabledCipherSuites().length >= 1);
-        assertStartsWith(serverSocket.getEnabledCipherSuites(), "TLS");
+
+        // not all platforms/JDKs have these cipher suites
+        if (!isPlatform("aix")) {
+            assertTrue(engine.getEnabledCipherSuites().length >= 1);
+            assertStartsWith(engine.getEnabledCipherSuites(), "TLS");
+            assertTrue(socket.getEnabledCipherSuites().length >= 1);
+            assertStartsWith(socket.getEnabledCipherSuites(), "TLS");
+            assertTrue(serverSocket.getEnabledCipherSuites().length >= 1);
+            assertStartsWith(serverSocket.getEnabledCipherSuites(), "TLS");
+        }
     }
 
     public void testSecureSocketProtocols() throws Exception {
@@ -619,13 +622,16 @@ public class SSLContextParametersTest extends AbstractJsseParametersTest {
         engine = context.createSSLEngine();
         socket = (SSLSocket) context.getSocketFactory().createSocket();
         serverSocket = (SSLServerSocket) context.getServerSocketFactory().createServerSocket();
-        
-        assertEquals(1, engine.getEnabledProtocols().length);
-        assertEquals("TLSv1", engine.getEnabledProtocols()[0]);
-        assertEquals(1, socket.getEnabledProtocols().length);
-        assertEquals("TLSv1", socket.getEnabledProtocols()[0]);
-        assertEquals(1, socket.getEnabledProtocols().length);
-        assertEquals("TLSv1", serverSocket.getEnabledProtocols()[0]);        
+
+        // not all platforms/JDKs have these cipher suites
+        if (!isPlatform("aix")) {
+            assertEquals(1, engine.getEnabledProtocols().length);
+            assertEquals("TLSv1", engine.getEnabledProtocols()[0]);
+            assertEquals(1, socket.getEnabledProtocols().length);
+            assertEquals("TLSv1", socket.getEnabledProtocols()[0]);
+            assertEquals(1, socket.getEnabledProtocols().length);
+            assertEquals("TLSv1", serverSocket.getEnabledProtocols()[0]);
+        }
     }
     
     public void testSecureSocketProtocolsFilter() throws Exception {
@@ -692,13 +698,16 @@ public class SSLContextParametersTest extends AbstractJsseParametersTest {
         engine = context.createSSLEngine();
         socket = (SSLSocket) context.getSocketFactory().createSocket();
         serverSocket = (SSLServerSocket) context.getServerSocketFactory().createServerSocket();
-        
-        assertTrue(engine.getEnabledProtocols().length >= 1);
-        assertStartsWith(engine.getEnabledProtocols(), "TLS");
-        assertTrue(socket.getEnabledProtocols().length >= 1);
-        assertStartsWith(socket.getEnabledProtocols(), "TLS");
-        assertTrue(socket.getEnabledProtocols().length >= 1);
-        assertStartsWith(serverSocket.getEnabledProtocols(), "TLS");        
+
+        // not all platforms/JDKs have these cipher suites
+        if (!isPlatform("aix")) {
+            assertTrue(engine.getEnabledProtocols().length >= 1);
+            assertStartsWith(engine.getEnabledProtocols(), "TLS");
+            assertTrue(socket.getEnabledProtocols().length >= 1);
+            assertStartsWith(socket.getEnabledProtocols(), "TLS");
+            assertTrue(socket.getEnabledProtocols().length >= 1);
+            assertStartsWith(serverSocket.getEnabledProtocols(), "TLS");
+        }
     }
     
     public void testSessionTimeout() throws Exception {

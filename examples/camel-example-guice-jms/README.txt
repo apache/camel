@@ -13,6 +13,12 @@ You will need to compile this example first:
 To run the example type
   mvn exec:java
 
+Alternatively to run the example you can also make use of the Guice Maven
+Plugin provided by Camel, so you can instead type
+  mvn guice:run
+
+See the POM of this example about how to make use of this Maven Plugin
+
 You can see the routing rules by looking at the java code in the
 src/main/java directory and the guicejndi.properties file lives in
 src/main/resources/guicejndi.properties

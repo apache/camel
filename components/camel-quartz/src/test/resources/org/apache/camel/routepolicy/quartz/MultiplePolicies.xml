@@ -22,23 +22,25 @@
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
 
-    <bean id="date" class="org.apache.camel.routepolicy.quartz.SimpleDate"/>
+  <bean id="now" class="org.apache.camel.routepolicy.quartz.DateFactory" factory-method="createDate">
+    <constructor-arg index="0" value="3000"/>
+  </bean>
 
-    <bean id="startPolicy" class="org.apache.camel.routepolicy.quartz.SimpleScheduledRoutePolicy">
-    	<property name="routeStartDate" ref="date"/>
-    	<property name="routeStartRepeatCount" value="1"/>
-    	<property name="routeStartRepeatInterval" value="3000"/>    	
-    </bean>
-    
-    <bean id="throttlePolicy" class="org.apache.camel.impl.ThrottlingInflightRoutePolicy">
-    	<property name="maxInflightExchanges" value="10"/>    	
-	</bean>
-	 	
-    <camelContext id="testRouteContext" xmlns="http://camel.apache.org/schema/spring">
-        <route id="testRoute" autoStartup="false" routePolicyRef="startPolicy, throttlePolicy">
-            <from uri="seda:foo?concurrentConsumers=20"/>
-            <to uri="mock:success"/>
-        </route>
-    </camelContext>
+  <bean id="startPolicy" class="org.apache.camel.routepolicy.quartz.SimpleScheduledRoutePolicy">
+    <property name="routeStartDate" ref="now"/>
+    <property name="routeStartRepeatCount" value="-1"/>
+    <property name="routeStartRepeatInterval" value="3000"/>
+  </bean>
+
+  <bean id="throttlePolicy" class="org.apache.camel.impl.ThrottlingInflightRoutePolicy">
+    <property name="maxInflightExchanges" value="10"/>
+  </bean>
+
+  <camelContext id="testRouteContext" xmlns="http://camel.apache.org/schema/spring">
+    <route id="testRoute" autoStartup="false" routePolicyRef="startPolicy, throttlePolicy">
+      <from uri="seda:foo?concurrentConsumers=20"/>
+      <to uri="mock:success"/>
+    </route>
+  </camelContext>
 
 </beans>

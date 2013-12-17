@@ -18,7 +18,6 @@ package org.apache.camel.component.quartz2;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.hamcrest.CoreMatchers;
 import org.junit.Assert;
 import org.junit.Test;
@@ -30,7 +29,7 @@ import org.quartz.Trigger;
  * This not only set SimpleTrigger as a timer endpoint in a route, and also test the trigger.XXX properties setter.
  * @version 
  */
-public class QuartzSimpleRouteTest extends CamelTestSupport {
+public class QuartzSimpleRouteTest extends BaseQuartzTest {
 
     @Test
     public void testQuartzCronRoute() throws Exception {

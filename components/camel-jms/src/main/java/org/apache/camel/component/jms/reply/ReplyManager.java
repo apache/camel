@@ -69,7 +69,7 @@ public interface ReplyManager extends MessageListener {
      * @param callback        the callback
      * @param originalCorrelationId  an optional original correlation id
      * @param correlationId   the correlation id to expect being used
-     * @param requestTimeout  an optional timeout
+     * @param requestTimeout  the timeout
      * @return the correlation id used
      */
     String registerReply(ReplyManager replyManager, Exchange exchange, AsyncCallback callback,
@@ -85,7 +85,7 @@ public interface ReplyManager extends MessageListener {
      *
      * @param correlationId     the provisional correlation id
      * @param newCorrelationId  the real correlation id
-     * @param requestTimeout    an optional timeout
+     * @param requestTimeout    the timeout
      */
     void updateCorrelationId(String correlationId, String newCorrelationId, long requestTimeout);
 

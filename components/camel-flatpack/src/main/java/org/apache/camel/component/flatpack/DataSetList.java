@@ -23,7 +23,7 @@ import java.util.Map;
 import net.sf.flatpack.DataSet;
 
 /**
- * @version 
+ * @version
  */
 public class DataSetList extends AbstractList<Map<String, Object>> {
     private final DataSet dataSet;
@@ -45,14 +45,18 @@ public class DataSetList extends AbstractList<Map<String, Object>> {
     public Iterator<Map<String, Object>> iterator() {
         dataSet.goTop();
         return new Iterator<Map<String, Object>>() {
+            private boolean hasNext = dataSet.next();
+
             public boolean hasNext() {
-                return dataSet.next();
+                return hasNext;
             }
 
             public Map<String, Object> next() {
                 // because of a limitation in split() we need to create an object for the current position
                 // otherwise strangeness occurs when the same object is used to represent each row
-                return FlatpackConverter.toMap(dataSet);
+                Map<String, Object> result = FlatpackConverter.toMap(dataSet);
+                hasNext = dataSet.next();
+                return result;
             }
 
             public void remove() {

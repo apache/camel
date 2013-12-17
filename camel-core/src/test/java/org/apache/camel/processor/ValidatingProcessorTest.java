@@ -20,6 +20,7 @@ import java.io.File;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.StringSource;
 import org.apache.camel.ValidationException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -53,6 +54,21 @@ public class ValidatingProcessorTest extends ContextTestSupport {
             + "</user>";
 
         template.sendBody("direct:start", xml);
+
+        assertMockEndpointsSatisfied();
+    }
+    
+    public void testStringSourceMessage() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:valid");
+        mock.expectedMessageCount(1);
+
+        String xml = "<?xml version=\"1.0\" encoding=\"iso-8859-1\"?>"
+            + "<user xmlns=\"http://foo.com/bar\">"
+            + "  <id>1</id>"
+            + "  <username>davsclaus</username>"
+            + "</user>";
+
+        template.sendBody("direct:start", new StringSource(xml));
 
         assertMockEndpointsSatisfied();
     }

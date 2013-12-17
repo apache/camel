@@ -16,7 +16,7 @@
  */
 package org.apache.camel.component.http4;
 
-import org.apache.http.client.HttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
 
 /**
  * A pluggable strategy for configuring the HttpClient used by this component
@@ -30,5 +30,5 @@ public interface HttpClientConfigurer {
      *
      * @param client the client
      */
-    void configureHttpClient(HttpClient client);
+    void configureHttpClient(HttpClientBuilder clientBuilder);
 }

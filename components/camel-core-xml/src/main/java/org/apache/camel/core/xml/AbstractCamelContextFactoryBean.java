@@ -85,6 +85,7 @@ import org.apache.camel.spi.ShutdownStrategy;
 import org.apache.camel.spi.StreamCachingStrategy;
 import org.apache.camel.spi.ThreadPoolFactory;
 import org.apache.camel.spi.ThreadPoolProfile;
+import org.apache.camel.spi.UnitOfWorkFactory;
 import org.apache.camel.spi.UuidGenerator;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -209,6 +210,11 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         if (eventFactory != null) {
             LOG.info("Using custom EventFactory: {}", eventFactory);
             getContext().getManagementStrategy().setEventFactory(eventFactory);
+        }
+        UnitOfWorkFactory unitOfWorkFactory = getBeanForType(UnitOfWorkFactory.class);
+        if (unitOfWorkFactory != null) {
+            LOG.info("Using custom UnitOfWorkFactory: {}", unitOfWorkFactory);
+            getContext().setUnitOfWorkFactory(unitOfWorkFactory);
         }
         // set the event notifier strategies if defined
         Map<String, EventNotifier> eventNotifiers = getContext().getRegistry().findByTypeWithName(EventNotifier.class);

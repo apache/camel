@@ -182,6 +182,9 @@ public class JmsProducer extends DefaultAsyncProducer {
 
         initReplyManager();
 
+        // the request timeout can be overruled by a header otherwise the endpoint configured value is used
+        final long timeout = exchange.getIn().getHeader(JmsConstants.JMS_REQUEST_TIMEOUT, endpoint.getRequestTimeout(), long.class);
+
         // when using message id as correlation id, we need at first to use a provisional correlation id
         // which we then update to the real JMSMessageID when the message has been sent
         // this is done with the help of the MessageSentCallback
@@ -189,7 +192,7 @@ public class JmsProducer extends DefaultAsyncProducer {
         final String provisionalCorrelationId = msgIdAsCorrId ? getUuidGenerator().generateUuid() : null;
         MessageSentCallback messageSentCallback = null;
         if (msgIdAsCorrId) {
-            messageSentCallback = new UseMessageIdAsCorrelationIdMessageSentCallback(replyManager, provisionalCorrelationId, endpoint.getRequestTimeout());
+            messageSentCallback = new UseMessageIdAsCorrelationIdMessageSentCallback(replyManager, provisionalCorrelationId, timeout);
         }
 
         final String originalCorrelationId = in.getHeader("JMSCorrelationID", String.class);
@@ -209,13 +212,16 @@ public class JmsProducer extends DefaultAsyncProducer {
                 if (replyTo == null) {
                     throw new RuntimeExchangeException("Failed to resolve replyTo destination", exchange);
                 }
-                LOG.debug("Using JMSReplyTo destination: {}", replyTo);
                 JmsMessageHelper.setJMSReplyTo(answer, replyTo);
                 replyManager.setReplyToSelectorHeader(in, answer);
 
                 String correlationId = determineCorrelationId(answer, provisionalCorrelationId);
-                replyManager.registerReply(replyManager, exchange, callback, originalCorrelationId, correlationId, endpoint.getRequestTimeout());
-                LOG.debug("Using JMSCorrelationID: {}", correlationId);
+                replyManager.registerReply(replyManager, exchange, callback, originalCorrelationId, correlationId, timeout);
+
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Using JMSCorrelationID: {}, JMSReplyTo destination: {}, with request timeout: {} ms.",
+                           new Object[]{correlationId, replyTo, timeout});
+                }
 
                 LOG.trace("Created javax.jms.Message: {}", answer);
                 return answer;

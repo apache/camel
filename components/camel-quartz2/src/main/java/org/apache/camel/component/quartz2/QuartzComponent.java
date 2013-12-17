@@ -45,7 +45,6 @@ import org.slf4j.LoggerFactory;
  * <p>This component uses Quartz 2.x API and provide all the features from "camel-quartz". It has reused some
  * of the code, but mostly has been re-written in attempt to be more easier to maintain, and use Quartz more
  * fully.</p>
- *
  */
 public class QuartzComponent extends DefaultComponent implements StartupListener {
     private static final Logger LOG = LoggerFactory.getLogger(QuartzComponent.class);
@@ -56,6 +55,7 @@ public class QuartzComponent extends DefaultComponent implements StartupListener
     private int startDelayedSeconds;
     private boolean autoStartScheduler = true;
     private boolean prefixJobNameWithEndpointId;
+    private boolean enableJmx = true;
 
     public QuartzComponent() {
     }
@@ -78,6 +78,22 @@ public class QuartzComponent extends DefaultComponent implements StartupListener
 
     public void setAutoStartScheduler(boolean autoStartScheduler) {
         this.autoStartScheduler = autoStartScheduler;
+    }
+
+    public boolean isPrefixJobNameWithEndpointId() {
+        return prefixJobNameWithEndpointId;
+    }
+
+    public void setPrefixJobNameWithEndpointId(boolean prefixJobNameWithEndpointId) {
+        this.prefixJobNameWithEndpointId = prefixJobNameWithEndpointId;
+    }
+
+    public boolean isEnableJmx() {
+        return enableJmx;
+    }
+
+    public void setEnableJmx(boolean enableJmx) {
+        this.enableJmx = enableJmx;
     }
 
     public Properties getProperties() {
@@ -111,6 +127,17 @@ public class QuartzComponent extends DefaultComponent implements StartupListener
 
             // force disabling update checker (will do online check over the internet)
             prop.put("org.quartz.scheduler.skipUpdateCheck", "true");
+            prop.put("org.terracotta.quartz.skipUpdateCheck", "true");
+
+            // camel context name will be a suffix to use one scheduler per context
+            String instName = createInstanceName(prop);
+            prop.setProperty(StdSchedulerFactory.PROP_SCHED_INSTANCE_NAME, instName);
+
+            // enable jmx unless configured to not do so
+            if (enableJmx && !prop.containsKey("org.quartz.scheduler.jmx.export")) {
+                prop.put("org.quartz.scheduler.jmx.export", "true");
+                LOG.info("Setting org.quartz.scheduler.jmx.export=true to ensure QuartzScheduler(s) will be enlisted in JMX.");
+            }
 
             answer = new StdSchedulerFactory(prop);
         } else {
@@ -131,18 +158,18 @@ public class QuartzComponent extends DefaultComponent implements StartupListener
             }
 
             // camel context name will be a suffix to use one scheduler per context
-            String identity = getCamelContext().getManagementName();
-
-            String instName = prop.getProperty(StdSchedulerFactory.PROP_SCHED_INSTANCE_NAME);
-            if (instName == null) {
-                instName = "scheduler-" + identity;
-            } else {
-                instName = instName + "-" + identity;
-            }
+            String instName = createInstanceName(prop);
             prop.setProperty(StdSchedulerFactory.PROP_SCHED_INSTANCE_NAME, instName);
 
             // force disabling update checker (will do online check over the internet)
             prop.put("org.quartz.scheduler.skipUpdateCheck", "true");
+            prop.put("org.terracotta.quartz.skipUpdateCheck", "true");
+
+            // enable jmx unless configured to not do so
+            if (enableJmx && !prop.containsKey("org.quartz.scheduler.jmx.export")) {
+                prop.put("org.quartz.scheduler.jmx.export", "true");
+                LOG.info("Setting org.quartz.scheduler.jmx.export=true to ensure QuartzScheduler(s) will be enlisted in JMX.");
+            }
 
             answer = new StdSchedulerFactory(prop);
         }
@@ -152,6 +179,21 @@ public class QuartzComponent extends DefaultComponent implements StartupListener
             LOG.debug("Creating SchedulerFactory: {} with properties: {}", name, prop);
         }
         return answer;
+    }
+
+    protected String createInstanceName(Properties prop) {
+        String instName = prop.getProperty(StdSchedulerFactory.PROP_SCHED_INSTANCE_NAME);
+
+        // camel context name will be a suffix to use one scheduler per context
+        String identity = getCamelContext().getManagementName();
+        if (identity != null) {
+            if (instName == null) {
+                instName = "scheduler-" + identity;
+            } else {
+                instName = instName + "-" + identity;
+            }
+        }
+        return instName;
     }
 
     /**

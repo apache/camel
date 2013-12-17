@@ -55,6 +55,7 @@ import org.apache.camel.spi.ServicePool;
 import org.apache.camel.spi.ShutdownStrategy;
 import org.apache.camel.spi.StreamCachingStrategy;
 import org.apache.camel.spi.TypeConverterRegistry;
+import org.apache.camel.spi.UnitOfWorkFactory;
 import org.apache.camel.spi.UuidGenerator;
 import org.apache.camel.util.LoadPropertiesException;
 
@@ -1258,5 +1259,15 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      * Sets a custom {@link StreamCachingStrategy} to use.
      */
     void setStreamCachingStrategy(StreamCachingStrategy streamCachingStrategy);
+
+    /**
+     * Gets the {@link UnitOfWorkFactory} to use.
+     */
+    UnitOfWorkFactory getUnitOfWorkFactory();
+
+    /**
+     * Sets a custom {@link UnitOfWorkFactory} to use.
+     */
+    void setUnitOfWorkFactory(UnitOfWorkFactory unitOfWorkFactory);
 
 }

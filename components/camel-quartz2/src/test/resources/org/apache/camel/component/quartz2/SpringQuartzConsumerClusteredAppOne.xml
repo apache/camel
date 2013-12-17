@@ -51,6 +51,7 @@
         <prop key="org.quartz.scheduler.instanceName">myscheduler</prop>
         <prop key="org.quartz.scheduler.instanceId">app-one</prop>
         <prop key="org.quartz.scheduler.skipUpdateCheck">true</prop>
+        <prop key="org.terracotta.quartz.skipUpdateCheck">true</prop>
         <prop key="org.quartz.jobStore.driverDelegateClass">org.quartz.impl.jdbcjobstore.StdJDBCDelegate</prop>
         <prop key="org.quartz.jobStore.isClustered">true</prop>
         <prop key="org.quartz.jobStore.clusterCheckinInterval">5000</prop>

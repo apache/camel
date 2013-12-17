@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.cxf.cxfbean;
 
-
 import java.net.URL;
 
 import javax.xml.namespace.QName;
@@ -31,12 +30,12 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.wsdl_first.Person;
 import org.apache.camel.wsdl_first.PersonService;
 import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -101,7 +100,7 @@ public class CxfBeanTest extends AbstractJUnit4SpringContextTests {
         HttpGet get = new HttpGet(getUrl);
         get.addHeader("Accept" , "application/json");
         get.addHeader("key", "customer");
-        HttpClient httpclient = new DefaultHttpClient();
+        CloseableHttpClient httpclient = HttpClientBuilder.create().build();
 
         try {
             HttpResponse response = httpclient.execute(get);
@@ -109,7 +108,7 @@ public class CxfBeanTest extends AbstractJUnit4SpringContextTests {
             assertEquals(expected,
                          EntityUtils.toString(response.getEntity()));
         } finally {
-            httpclient.getConnectionManager().shutdown();
+            httpclient.close();
         }
     }
     
@@ -158,14 +157,14 @@ public class CxfBeanTest extends AbstractJUnit4SpringContextTests {
         StringEntity entity = new StringEntity(PUT_REQUEST, "ISO-8859-1");
         entity.setContentType("text/xml; charset=ISO-8859-1");
         put.setEntity(entity);
-        HttpClient httpclient = new DefaultHttpClient();
+        CloseableHttpClient httpclient = HttpClientBuilder.create().build();
 
         try {
             HttpResponse response = httpclient.execute(put);
             assertEquals(200, response.getStatusLine().getStatusCode());
             assertEquals("", EntityUtils.toString(response.getEntity()));
         } finally {
-            httpclient.getConnectionManager().shutdown();
+            httpclient.close();
         }
     }
     
@@ -176,7 +175,7 @@ public class CxfBeanTest extends AbstractJUnit4SpringContextTests {
         StringEntity entity = new StringEntity(POST_REQUEST, "ISO-8859-1");
         entity.setContentType("text/xml; charset=ISO-8859-1");
         post.setEntity(entity);
-        HttpClient httpclient = new DefaultHttpClient();
+        CloseableHttpClient httpclient = HttpClientBuilder.create().build();
 
         try {
             HttpResponse response = httpclient.execute(post);
@@ -185,7 +184,7 @@ public class CxfBeanTest extends AbstractJUnit4SpringContextTests {
             assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><Customer><id>" + id + "</id><name>Jack</name></Customer>",
                          EntityUtils.toString(response.getEntity()));
         } finally {
-            httpclient.getConnectionManager().shutdown();
+            httpclient.close();
         }
     }
     
@@ -196,7 +195,7 @@ public class CxfBeanTest extends AbstractJUnit4SpringContextTests {
         StringEntity entity = new StringEntity(POST2_REQUEST, "ISO-8859-1");
         entity.setContentType("text/xml; charset=ISO-8859-1");
         post.setEntity(entity);
-        HttpClient httpclient = new DefaultHttpClient();
+        CloseableHttpClient httpclient = HttpClientBuilder.create().build();
 
         try {
             HttpResponse response = httpclient.execute(post);
@@ -205,14 +204,14 @@ public class CxfBeanTest extends AbstractJUnit4SpringContextTests {
             assertEquals("<?xml version=\"1.0\" encoding=\"UTF-8\" standalone=\"yes\"?><Customer><id>" + id + "</id><name>James</name></Customer>",
                          EntityUtils.toString(response.getEntity()));
         } finally {
-            httpclient.getConnectionManager().shutdown();
+            httpclient.close();
         }
     }
 
     private String getCustomerId(String name) throws Exception {
         HttpGet get = new HttpGet("http://localhost:" + PORT1 + "/customerservice/customers/");
         get.addHeader("Accept", "application/xml");
-        HttpClient httpclient = new DefaultHttpClient();
+        CloseableHttpClient httpclient = HttpClientBuilder.create().build();
 
         try {
             HttpResponse response = httpclient.execute(get);
@@ -222,7 +221,7 @@ public class CxfBeanTest extends AbstractJUnit4SpringContextTests {
             String answer = before.substring(before.lastIndexOf(">") + 1, before.length());
             return answer;
         } finally {
-            httpclient.getConnectionManager().shutdown();
+            httpclient.close();
         }
     }
 
@@ -237,7 +236,7 @@ public class CxfBeanTest extends AbstractJUnit4SpringContextTests {
         StringEntity entity = new StringEntity(body, "ISO-8859-1");
         entity.setContentType("text/xml; charset=ISO-8859-1");
         post.setEntity(entity);
-        HttpClient httpclient = new DefaultHttpClient();
+        CloseableHttpClient httpclient = HttpClientBuilder.create().build();
 
         try {
             HttpResponse response = httpclient.execute(post);
@@ -249,7 +248,7 @@ public class CxfBeanTest extends AbstractJUnit4SpringContextTests {
             
             assertEquals("Get a wrong response", correct, responseBody);
         } finally {
-            httpclient.getConnectionManager().shutdown();
+            httpclient.close();
         }
     }
     

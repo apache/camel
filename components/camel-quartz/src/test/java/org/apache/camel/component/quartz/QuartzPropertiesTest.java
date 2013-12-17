@@ -19,14 +19,13 @@ package org.apache.camel.component.quartz;
 import java.io.InputStream;
 import java.util.Properties;
 
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 import org.quartz.SchedulerException;
 
 /**
  * @version 
  */
-public class QuartzPropertiesTest extends CamelTestSupport {
+public class QuartzPropertiesTest extends BaseQuartzTest {
 
     private QuartzComponent quartz;
 

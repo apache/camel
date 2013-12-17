@@ -37,15 +37,15 @@ public class AbstractSObjectBase extends AbstractDTOBase {
     private String LastActivityDate;
 
     /**
-     * Utility method to clear all {@link AbstractSObjectBase} fields.
-     * <p>Used when reusing a DTO for a new record.</p>
+     * Utility method to clear all system {@link AbstractSObjectBase} fields.
+     * <p>Useful when reusing a DTO for a new record, or for update/upsert.</p>
+     * <p>This method does not clear {@code Name} to allow updating it, so it must be explicitly set to {@code null} if needed.</p>
      */
     public final void clearBaseFields() {
         attributes = null;
         Id = null;
         OwnerId = null;
         IsDeleted = null;
-        Name = null;
         CreatedDate = null;
         CreatedById = null;
         LastModifiedDate = null;

@@ -30,7 +30,7 @@ public class Http4RouteTest extends CamelTestSupport {
     @Test
     public void sendHttpGetRequestTest() {
         String response = template.requestBody("http4://localhost:" + port 
-                         + "/test?aa=bb&httpClient.soTimeout=10000&httpClient.connectionTimeout=10000"
+                         + "/test?aa=bb&httpClient.socketTimeout=10000&httpClient.connectTimeout=10000"
                          + "&bridgeEndpoint=true&throwExceptionOnFailure=false" , null, String.class);
         assertEquals("aa=bb", response);
     }

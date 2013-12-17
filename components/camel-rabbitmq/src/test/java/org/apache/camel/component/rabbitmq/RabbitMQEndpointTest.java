@@ -24,6 +24,7 @@ import java.util.UUID;
 import java.util.concurrent.ThreadPoolExecutor;
 
 import com.rabbitmq.client.AMQP;
+import com.rabbitmq.client.Address;
 import com.rabbitmq.client.Envelope;
 import com.rabbitmq.client.impl.LongStringHelper;
 import org.apache.camel.Exchange;
@@ -110,5 +111,14 @@ public class RabbitMQEndpointTest extends CamelTestSupport {
         RabbitMQEndpoint endpoint = context.getEndpoint("rabbitmq:localhost/exchange", RabbitMQEndpoint.class);
 
         assertTrue(endpoint.isSingleton());
+    }
+    
+    @Test
+    public void brokerEndpointAddressesSettings() throws Exception {
+        RabbitMQEndpoint endpoint = context.getEndpoint("rabbitmq:localhost/exchange?addresses=server1:12345,server2:12345", RabbitMQEndpoint.class);
+        assertEquals("Wrong size of endpoint addresses.", 2, endpoint.getAddresses().length);
+        assertEquals("Get a wrong endpoint address.", new Address("server1", 12345), endpoint.getAddresses()[0]);
+        assertEquals("Get a wrong endpoint address.", new Address("server2", 12345), endpoint.getAddresses()[1]);
+        
     }
 }

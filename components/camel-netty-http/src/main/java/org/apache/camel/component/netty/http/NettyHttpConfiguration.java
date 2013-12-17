@@ -28,7 +28,7 @@ import org.jboss.netty.channel.ChannelHandler;
  */
 public class NettyHttpConfiguration extends NettyConfiguration {
 
-    private boolean urlDecodeHeaders = true;
+    private boolean urlDecodeHeaders;
     private boolean mapHeaders = true;
     private boolean compression;
     private boolean throwExceptionOnFailure = true;

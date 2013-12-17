@@ -16,6 +16,8 @@
  */
 package org.apache.camel.dataformat.bindy.model.fix.complex.onetomany;
 
+import java.util.Date;
+
 import org.apache.camel.dataformat.bindy.annotation.KeyValuePairField;
 import org.apache.camel.dataformat.bindy.annotation.Link;
 
@@ -45,6 +47,10 @@ public class Header {
     @KeyValuePairField(tag = 56)
     // target company id
     private String targetCompId;
+
+    @KeyValuePairField(tag = 777, pattern = "dd-MM-yyyy HH:mm:ss", timezone = "GMT-3")
+    // created
+    private Date created;
 
     public String getBeginString() {
         return beginString;
@@ -94,10 +100,18 @@ public class Header {
         this.targetCompId = targetCompId;
     }
 
+    public Date getCreated() {
+        return created;
+    }
+
+    public void setCreated(Date created) {
+        this.created = created;
+    }
+
     @Override
     public String toString() {
         return Header.class.getName() + " --> 8: " + this.beginString + ", 9: " + this.bodyLength + ", 34: " + this.msgSeqNum + " , 35: " + this.msgType + ", 49: "
-               + this.sendCompId + ", 56: " + this.targetCompId;
+               + this.sendCompId + ", 56: " + this.targetCompId + ", 777: " + this.created;
     }
 
 }

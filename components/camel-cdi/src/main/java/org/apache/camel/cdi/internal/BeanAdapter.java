@@ -20,8 +20,6 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
-import javax.enterprise.inject.spi.BeanManager;
-import javax.inject.Inject;
 
 import org.apache.camel.Consume;
 import org.apache.camel.EndpointInject;
@@ -33,8 +31,6 @@ import org.apache.camel.impl.DefaultCamelBeanPostProcessor;
  * Contains the bean and the consume methods
  */
 public class BeanAdapter {
-    @Inject 
-    BeanManager beanManager;
     
     private final List<Method> consumeMethods = new ArrayList<Method>();
     private final List<Method> produceMethods = new ArrayList<Method>();
@@ -85,7 +81,7 @@ public class BeanAdapter {
             if (annotation != null) {
                 String contextName = CamelExtension.getCamelContextName(annotation.context(), startup);
                 DefaultCamelBeanPostProcessor postProcessor = camelExtension.getPostProcessor(
-                        contextName, beanManager);
+                        contextName);
                 if (postProcessor != null) {
                     postProcessor.getPostProcessorHelper().consumerInjection(method, reference, beanName);
                 }
@@ -96,7 +92,7 @@ public class BeanAdapter {
             if (annotation != null) {
                 String contextName = CamelExtension.getCamelContextName(annotation.context(), startup);
                 DefaultCamelBeanPostProcessor postProcessor = camelExtension.getPostProcessor(
-                        contextName, beanManager);
+                        contextName);
                 if (postProcessor != null && postProcessor.getPostProcessorHelper().matchContext(contextName)) {
                     postProcessor.setterInjection(method, reference, beanName, annotation.uri(), annotation.ref(),
                             annotation.property());
@@ -108,7 +104,7 @@ public class BeanAdapter {
             if (annotation != null) {
                 String contextName = CamelExtension.getCamelContextName(annotation.context(), startup);
                 DefaultCamelBeanPostProcessor postProcessor = camelExtension.getPostProcessor(
-                        contextName, beanManager);
+                        contextName);
                 if (postProcessor != null && postProcessor.getPostProcessorHelper().matchContext(contextName)) {
                     postProcessor.setterInjection(method, reference, beanName, annotation.uri(), annotation.ref(),
                             annotation.property());
@@ -121,7 +117,7 @@ public class BeanAdapter {
             if (annotation != null) {
                 String contextName = CamelExtension.getCamelContextName(annotation.context(), startup);
                 DefaultCamelBeanPostProcessor postProcessor = camelExtension.getPostProcessor(
-                        contextName, beanManager);
+                        contextName);
                 if (postProcessor != null && postProcessor.getPostProcessorHelper().matchContext(contextName)) {
                     postProcessor.injectField(field, annotation.uri(), annotation.ref(),
                             annotation.property(), reference, beanName);
@@ -132,7 +128,7 @@ public class BeanAdapter {
             EndpointInject annotation = field.getAnnotation(EndpointInject.class);
             String contextName = CamelExtension.getCamelContextName(annotation.context(), startup);
             DefaultCamelBeanPostProcessor postProcessor = camelExtension.getPostProcessor(
-                    contextName, beanManager);
+                    contextName);
             if (postProcessor != null && postProcessor.getPostProcessorHelper().matchContext(contextName)) {
                 postProcessor.injectField(field, annotation.uri(), annotation.ref(),
                         annotation.property(), reference, beanName);

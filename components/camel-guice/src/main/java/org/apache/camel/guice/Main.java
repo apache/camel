@@ -16,6 +16,7 @@
  */
 package org.apache.camel.guice;
 
+import java.io.BufferedInputStream;
 import java.net.URL;
 import java.util.LinkedList;
 import java.util.Map;
@@ -37,6 +38,8 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.guice.inject.Injectors;
 import org.apache.camel.main.MainSupport;
+import org.apache.camel.model.Constants;
+import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.view.ModelFileGenerator;
 
@@ -106,7 +109,13 @@ public class Main extends MainSupport {
         }
         if (jndiPropertiesUrl != null) {
             Properties properties = new Properties();
-            properties.load(jndiPropertiesUrl.openStream());
+            BufferedInputStream bis = null;
+            try {
+                bis = IOHelper.buffered(jndiPropertiesUrl.openStream());
+                properties.load(bis);
+            } finally {
+                IOHelper.close(bis);
+            }
             context = new InitialContext(properties);
         } else {
             context = new InitialContext();
@@ -122,7 +131,7 @@ public class Main extends MainSupport {
     }
 
     protected void doStop() throws Exception {
-        LOG.info("Apache Camel stopping");
+        super.doStop();
 
         if (injector != null) {
             Injectors.close(injector);
@@ -140,7 +149,7 @@ public class Main extends MainSupport {
         for (CamelContext camelContext : getCamelContexts()) {
             return camelContext.createProducerTemplate();
         }
-        throw new IllegalArgumentException("No CamelContexts are available so cannot create a ProducerTemplate!");
+        throw new IllegalArgumentException("No CamelContext is available so cannot create a ProducerTemplate!");
     }
 
     protected Map<String, CamelContext> getCamelContextMap() {
@@ -164,7 +173,6 @@ public class Main extends MainSupport {
     }
 
     protected ModelFileGenerator createModelFileGenerator() throws JAXBException {
-        return new ModelFileGenerator(
-            JAXBContext.newInstance("org.apache.camel.model:org.apache.camel.model.config:org.apache.camel.model.dataformat:org.apache.camel.model.language:org.apache.camel.model.loadbalancer"));
+        return new ModelFileGenerator(JAXBContext.newInstance(Constants.JAXB_CONTEXT_PACKAGES));
     }
 }
