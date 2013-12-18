@@ -84,6 +84,7 @@ public class FileInputStreamCache extends InputStream implements StreamCache {
                 pos += i;
             }
             s.close();
+            fc.close();
         } else {
             IOHelper.copy(getInputStream(), os);
         }
