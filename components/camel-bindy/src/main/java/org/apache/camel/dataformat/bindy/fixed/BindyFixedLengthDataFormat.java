@@ -265,12 +265,12 @@ public class BindyFixedLengthDataFormat extends BindyAbstractDataFormat {
         
         // Optionally initialize the header factory... using header model classes
         if (factory.hasHeader()) {
-            this.headerFactory = new BindyFixedLengthFactory(getClassType());
+            this.headerFactory = new BindyFixedLengthFactory(factory.header());
         }
         
         // Optionally initialize the footer factory... using footer model classes
         if (factory.hasFooter()) {
-            this.footerFactory = new BindyFixedLengthFactory(getClassType());
+            this.footerFactory = new BindyFixedLengthFactory(factory.footer());
         }
         
         return factory;
