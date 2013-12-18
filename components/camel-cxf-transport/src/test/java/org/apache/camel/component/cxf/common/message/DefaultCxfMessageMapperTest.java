@@ -52,7 +52,7 @@ public class DefaultCxfMessageMapperTest extends Assert {
     
     @Test
     public void testSecurityContext() {
-        DefaultCxfMessageMapper mapper = new DefaultCxfMessageMapper();
+        DefaultCxfMesssageMapper mapper = new DefaultCxfMesssageMapper();
 
         HttpServletRequest request = EasyMock.createMock(HttpServletRequest.class);
         request.getUserPrincipal();
