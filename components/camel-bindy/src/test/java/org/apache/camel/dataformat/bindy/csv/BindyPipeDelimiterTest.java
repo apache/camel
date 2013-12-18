@@ -17,7 +17,6 @@
 package org.apache.camel.dataformat.bindy.csv;
 
 import java.util.List;
-import java.util.Map;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -40,11 +39,11 @@ public class BindyPipeDelimiterTest extends CamelTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        Map<?, ?> map1 = (Map<?, ?>) mock.getReceivedExchanges().get(0).getIn().getBody(List.class).get(0);
-        Map<?, ?> map2 = (Map<?, ?>) mock.getReceivedExchanges().get(0).getIn().getBody(List.class).get(1);
-
-        MyData rec1 = (MyData) map1.values().iterator().next();
-        MyData rec2 = (MyData) map2.values().iterator().next();
+        MyData rec1 = (MyData) mock.getReceivedExchanges().get(0).getIn().getBody(List.class).get(0);
+        MyData rec2 = (MyData) mock.getReceivedExchanges().get(0).getIn().getBody(List.class).get(1);
+               
+        //MyData rec1 = (MyData) map1.values().iterator().next();
+        //MyData rec2 = (MyData) map2.values().iterator().next();
 
         assertEquals("COL1", rec1.getCol1());
         assertEquals("COL2", rec1.getCol2());

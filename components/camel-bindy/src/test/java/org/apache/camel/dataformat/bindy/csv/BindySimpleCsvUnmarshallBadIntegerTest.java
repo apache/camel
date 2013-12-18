@@ -16,8 +16,7 @@
  */
 package org.apache.camel.dataformat.bindy.csv;
 
-import java.util.List;
-import java.util.Map;
+import static org.junit.Assert.assertEquals;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
@@ -34,8 +33,6 @@ import org.slf4j.LoggerFactory;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
-
-import static org.junit.Assert.assertEquals;
 
 @ContextConfiguration
 public class BindySimpleCsvUnmarshallBadIntegerTest extends AbstractJUnit4SpringContextTests {
@@ -57,7 +54,6 @@ public class BindySimpleCsvUnmarshallBadIntegerTest extends AbstractJUnit4Spring
     @EndpointInject(uri = URI_MOCK_ERROR)
     private MockEndpoint error;
 
-    @SuppressWarnings("unchecked")
     @Test
     @DirtiesContext
     public void testIntegerMessage() throws Exception {
@@ -68,12 +64,10 @@ public class BindySimpleCsvUnmarshallBadIntegerTest extends AbstractJUnit4Spring
 
         result.expectedMessageCount(1);
         result.assertIsSatisfied();
-
-        List<Map<String, org.apache.camel.dataformat.bindy.model.simple.oneclassmath.Math>> model = (List<Map<String, org.apache.camel.dataformat.bindy.model.simple.oneclassmath.Math>>)result
-            .getExchanges().get(0).getIn().getBody();
-
-        LOG.info(">>> Model generated : " + model.get(0).get("org.apache.camel.dataformat.bindy.model.simple.oneclassmath.Math").toString());
-
+       
+        Object data = result.getReceivedExchanges().get(0).getIn().getBody();
+        
+        LOG.info(">>> Model generated : " + data.getClass().getName());
     }
 
     @Test

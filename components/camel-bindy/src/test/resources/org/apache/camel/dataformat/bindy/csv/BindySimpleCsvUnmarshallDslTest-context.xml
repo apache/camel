@@ -32,7 +32,7 @@
 	</camelContext>
 	
 	<bean id="csvBindyDataformat" class="org.apache.camel.dataformat.bindy.csv.BindyCsvDataFormat">
-		<constructor-arg value="org.apache.camel.dataformat.bindy.model.simple.oneclass" />
+		<constructor-arg value="org.apache.camel.dataformat.bindy.model.simple.oneclass.Order" />
 	</bean>
 
 </beans>

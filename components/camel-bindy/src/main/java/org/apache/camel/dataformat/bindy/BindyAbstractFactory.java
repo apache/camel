@@ -41,7 +41,6 @@ public abstract class BindyAbstractFactory implements BindyFactory {
     protected Set<String> modelClassNames;
     protected String crlf;
     
-    private String[] packageNames;
     private String locale;
     private Class<?> type;
     

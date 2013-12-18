@@ -16,9 +16,6 @@
  */
 package org.apache.camel.dataformat.bindy.csv;
 
-import java.util.List;
-import java.util.Map;
-
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.dataformat.bindy.model.car.Car;
@@ -51,10 +48,8 @@ public class BindyCarQuoteAndCommaDelimiterTest extends CamelTestSupport {
         template.sendBody("direct:out", HEADER + "\n" + ROW);
 
         assertMockEndpointsSatisfied();
-
-        Map<?, ?> map1 = (Map<?, ?>) mock.getReceivedExchanges().get(0).getIn().getBody(List.class).get(0);
-
-        Car rec1 = (Car) map1.values().iterator().next();
+        
+        Car rec1 = mock.getReceivedExchanges().get(0).getIn().getBody(Car.class);
 
         assertEquals("SS552", rec1.getStockid());
         assertEquals("TOYOTA", rec1.getMake());
@@ -87,12 +82,13 @@ public class BindyCarQuoteAndCommaDelimiterTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
 
+                Class<?> type = org.apache.camel.dataformat.bindy.model.car.Car.class;
                 BindyCsvDataFormat dataFormat = new BindyCsvDataFormat();
-                dataFormat.setClassType(org.apache.camel.dataformat.bindy.model.car.Car.class);
+                dataFormat.setClassType(type);
                 dataFormat.setLocale("en");
 
                 from("direct:out")
-                    .unmarshal().bindy(BindyType.Csv,org.apache.camel.dataformat.bindy.model.car.Car.class)
+                    .unmarshal().bindy(BindyType.Csv,type)
                     .to("mock:out");
                 from("direct:in")
                     .marshal(dataFormat)

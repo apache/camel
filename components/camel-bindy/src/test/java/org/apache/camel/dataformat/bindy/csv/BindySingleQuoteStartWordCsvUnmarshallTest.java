@@ -16,9 +16,6 @@
  */
 package org.apache.camel.dataformat.bindy.csv;
 
-import java.util.List;
-import java.util.Map;
-
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
@@ -56,8 +53,7 @@ public class BindySingleQuoteStartWordCsvUnmarshallTest extends AbstractJUnit4Sp
         result.expectedMessageCount(1);
         result.assertIsSatisfied();
 
-        Map<?, ?> map = (Map<?, ?>) result.getReceivedExchanges().get(0).getIn().getBody(List.class).get(0);
-        Order order = (Order) map.values().iterator().next();
+        Order order = result.getReceivedExchanges().get(0).getIn().getBody(Order.class);
         Assert.assertEquals(10, order.getOrderNr());
         Assert.assertEquals("Patric", order.getFirstName());
         Assert.assertEquals("'T jo", order.getLastName());

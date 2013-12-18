@@ -18,8 +18,6 @@ package org.apache.camel.dataformat.bindy.fixed.unmarshall.simple.trim;
 
 import java.math.BigDecimal;
 import java.util.Date;
-import java.util.List;
-import java.util.Map;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Produce;
@@ -61,8 +59,7 @@ public class BindySimpleFixedLengthUnmarshallTest extends AbstractJUnit4SpringCo
         result.assertIsSatisfied();
 
         // check the model
-        Map<?, ?> map = (Map<?, ?>) result.getReceivedExchanges().get(0).getIn().getBody(List.class).get(0);
-        BindySimpleFixedLengthUnmarshallTest.Order order = (BindySimpleFixedLengthUnmarshallTest.Order) map.values().iterator().next();
+        BindySimpleFixedLengthUnmarshallTest.Order order = result.getReceivedExchanges().get(0).getIn().getBody(BindySimpleFixedLengthUnmarshallTest.Order.class);
         Assert.assertEquals(10, order.getOrderNr());
         // the field is not trimmed
         Assert.assertEquals("  Pauline", order.getFirstName());
