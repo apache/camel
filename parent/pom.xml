@@ -384,6 +384,7 @@
     <spring-version>${spring32-version}</spring-version>
     <spring31-version>3.1.4.RELEASE</spring31-version>
     <spring32-version>3.2.5.RELEASE</spring32-version>
+    <spring4-version>4.0.0.RELEASE</spring4-version>
     <spring-osgi-version>1.2.1</spring-osgi-version>
     <spring-security-version>3.1.4.RELEASE</spring-security-version>
     <spring-ws-version>2.1.4.RELEASE</spring-ws-version>
@@ -2738,6 +2739,12 @@
       <id>spring3.2</id>
       <properties>
         <spring-version>${spring32-version}</spring-version>
+      </properties>
+    </profile>
+    <profile>
+      <id>spring4</id>
+      <properties>
+        <spring-version>${spring4-version}</spring-version>
       </properties>
     </profile>
 
