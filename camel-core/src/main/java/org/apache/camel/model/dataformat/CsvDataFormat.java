@@ -58,6 +58,11 @@ public class CsvDataFormat extends DataFormatDefinition {
         setDelimiter(delimiter);
     }
 
+    public CsvDataFormat(boolean lazyLoad) {
+        this();
+        setLazyLoad(lazyLoad);
+    }
+
     public Boolean isAutogenColumns() {
         return autogenColumns;
     }
