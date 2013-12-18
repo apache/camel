@@ -32,34 +32,32 @@ import java.util.List;
  */
 public class CsvUnmarshalStreamTest extends CamelTestSupport {
 
+    public static final int EXPECTED_COUNT = 3;
+
     @EndpointInject(uri = "mock:result")
     private MockEndpoint result;
 
     @SuppressWarnings("unchecked")
     @Test
     public void testCsvUnMarshal() throws Exception {
-        result.expectedMessageCount(1);
+        result.expectedMessageCount(EXPECTED_COUNT);
 
-        template.sendBody("direct:start",
-                "123|Camel in Action|\"1\n124\"|ActiveMQ in Action|2\n"
-                        + "333|Shark in Action|\"1\n124\"|Cassandra in Action|3\n"
-                        + "777|Penguin in Action|\"1\n124\"|Astyanax in Action|4\n");
+        String message = "";
+        for (int i = 0; i < EXPECTED_COUNT; ++i) {
+            message += i + "|\"" + i + "\n" + i + "\"\n";
+        }
+
+        template.sendBody("direct:start", message);
 
         assertMockEndpointsSatisfied();
 
-        Iterator<List<String>> body = result.getReceivedExchanges().get(0)
-                .getIn().getBody(Iterator.class);
-        assertTrue(body.hasNext());
-        List<String> row = body.next();
-        assertEquals(5, row.size());
-        assertEquals("123", row.get(0));
-        assertTrue(body.hasNext());
-        row = body.next();
-        assertEquals(5, row.size());
-        assertTrue(body.hasNext());
-        row = body.next();
-        assertEquals(5, row.size());
-        assertFalse(body.hasNext());
+        for (int i = 0; i < EXPECTED_COUNT; ++i) {
+            List<String> body = result.getReceivedExchanges().get(i)
+                    .getIn().getBody(List.class);
+            assertEquals(2, body.size());
+            assertEquals(String.valueOf(i), body.get(0));
+            assertEquals(String.format("%d\n%d", i, i), body.get(1));
+        }
     }
     
     @Override
@@ -71,8 +69,10 @@ public class CsvUnmarshalStreamTest extends CamelTestSupport {
                 csv.setLazyLoad(true);
                 csv.setDelimiter("|");
 
-                from("direct:start").unmarshal(csv)
-                    .to("mock:result");
+                from("direct:start")
+                        .unmarshal(csv)
+                        .split(body())
+                        .to("mock:result");
             }
         };
     }
