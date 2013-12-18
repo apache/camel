@@ -88,6 +88,7 @@ public final class FileInputStreamCache extends InputStream implements StreamCac
                 pos += i;
             }
             s.close();
+            fc.close();
         } else {
             IOHelper.copy(getInputStream(), os);
         }
