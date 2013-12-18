@@ -41,6 +41,8 @@ public class CsvIterator implements Iterator<List<String>>, Closeable {
         try {
             line = parser.getLine();
         } catch (IOException e) {
+            line = null;
+            IOHelper.close(in);
             throw new IllegalStateException(e);
         }
         if (line == null) {
