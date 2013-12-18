@@ -16,15 +16,11 @@
  */
 package org.apache.camel.dataformat.bindy.csv;
 
-import java.util.List;
-import java.util.Map;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.dataformat.bindy.model.tab.PurchaseOrder;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.apache.camel.util.CastUtils;
 import org.junit.Test;
 
 /**
@@ -45,14 +41,15 @@ public class BindyTabSeparatorTest extends CamelTestSupport {
         /*
         List<Map<?, PurchaseOrder>> rows = CastUtils.cast(mock.getReceivedExchanges().get(0).getIn().getBody(List.class));
         PurchaseOrder order = rows.get(0).get(PurchaseOrder.class.getName());
-
+        */
+        PurchaseOrder order = mock.getReceivedExchanges().get(0).getIn().getBody(PurchaseOrder.class);
+        
         assertEquals(123, order.getId());
         assertEquals("Camel in Action", order.getName());
         assertEquals(2, order.getAmount());
         assertEquals("Please hurry", order.getOrderText());
         assertEquals("Jane Doe", order.getSalesRef());
         assertEquals("John Doe", order.getCustomerRef());
-        */
     }
 
     @Test
@@ -84,11 +81,12 @@ public class BindyTabSeparatorTest extends CamelTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        //TODO: check
-        /*
-        List<Map<?, PurchaseOrder>> rows = CastUtils.cast(mock.getReceivedExchanges().get(0).getIn().getBody(List.class));
-        PurchaseOrder order = rows.get(0).get(PurchaseOrder.class.getName());
+        //List<Map<?, PurchaseOrder>> rows = CastUtils.cast(mock.getReceivedExchanges().get(0).getIn().getBody(List.class));
+        //PurchaseOrder order = rows.get(0).get(PurchaseOrder.class.getName());
 
+        /*TODO: cjeck
+        PurchaseOrder order = mock.getReceivedExchanges().get(0).getIn().getBody(PurchaseOrder.class);
+        
         assertEquals(123, order.getId());
         assertEquals("Camel in Action", order.getName());
         assertEquals(2, order.getAmount());

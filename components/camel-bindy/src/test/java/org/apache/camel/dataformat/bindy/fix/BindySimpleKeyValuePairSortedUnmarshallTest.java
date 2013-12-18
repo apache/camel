@@ -19,6 +19,7 @@ package org.apache.camel.dataformat.bindy.fix;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.dataformat.bindy.CommonBindyTest;
 import org.apache.camel.dataformat.bindy.kvp.BindyKeyValuePairDataFormat;
+import org.apache.camel.dataformat.bindy.model.fix.sorted.body.Order;
 import org.junit.Assert;
 import org.junit.Test;
 import org.springframework.test.annotation.DirtiesContext;
@@ -26,22 +27,23 @@ import org.springframework.test.context.ContextConfiguration;
 
 @ContextConfiguration
 public class BindySimpleKeyValuePairSortedUnmarshallTest extends CommonBindyTest {
-
+    
+    
     @Test
     @DirtiesContext
     public void testUnMarshallMessage() throws Exception {
         result.expectedMessageCount(1);
         result.assertIsSatisfied();
 
-        String body = result.getReceivedExchanges().get(0).getIn().getBody(String.class);
+        Order order = result.getReceivedExchanges().get(0).getIn().getBody(Order.class);
 
-        Assert.assertTrue(body.contains("10: 220"));
-        Assert.assertTrue(body.contains("BE.CHM.001, 11: CHM0001-01, 22: 4, 48: BE0001245678, 54: 1, 58: this is a camel - bindy test"));
-        Assert.assertTrue(body.contains("FIX.4.1, 9: 20, 34: 1 , 35: 0, 49: INVMGR, 56: BRKR"));
+        Assert.assertTrue(order.getTrailer().toString().contains("10: 220"));
+        Assert.assertTrue(order.toString().contains("BE.CHM.001, 11: CHM0001-01, 22: 4, 48: BE0001245678, 54: 1, 58: this is a camel - bindy test"));
+        Assert.assertTrue(order.getHeader().toString().contains("FIX.4.1, 9: 20, 34: 1 , 35: 0, 49: INVMGR, 56: BRKR"));
     }
 
     public static class ContextConfig extends RouteBuilder {
-        BindyKeyValuePairDataFormat kvpBindyDataFormat = new BindyKeyValuePairDataFormat(org.apache.camel.dataformat.bindy.model.fix.sorted.body.Order.class);
+        BindyKeyValuePairDataFormat kvpBindyDataFormat = new BindyKeyValuePairDataFormat(Order.class);
 
         public void configure() {
             from(URI_FILE_FIX).unmarshal(kvpBindyDataFormat).to(URI_MOCK_RESULT);

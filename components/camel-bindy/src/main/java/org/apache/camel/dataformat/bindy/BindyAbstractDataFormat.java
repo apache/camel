@@ -29,6 +29,7 @@ public abstract class BindyAbstractDataFormat implements DataFormat {
 
     public BindyAbstractDataFormat() {
     }
+    
     protected BindyAbstractDataFormat(Class<?> classType) {
         this.classType = classType;
     }

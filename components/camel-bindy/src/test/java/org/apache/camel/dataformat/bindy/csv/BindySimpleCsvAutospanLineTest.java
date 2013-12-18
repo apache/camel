@@ -16,14 +16,10 @@
  */
 package org.apache.camel.dataformat.bindy.csv;
 
-import java.util.List;
-import java.util.Map;
-
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.dataformat.bindy.model.simple.spanLastRecord.SpanLastRecord;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.apache.camel.util.CastUtils;
 import org.junit.Test;
 
 public class BindySimpleCsvAutospanLineTest extends CamelTestSupport {
@@ -37,9 +33,11 @@ public class BindySimpleCsvAutospanLineTest extends CamelTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        final List<Map<?, SpanLastRecord>> rows = CastUtils.cast(mock.getReceivedExchanges().get(0).getIn().getBody(List.class));
-        final SpanLastRecord order = rows.get(0).get(SpanLastRecord.class.getName());
+        //final List<Map<?, SpanLastRecord>> rows = CastUtils.cast(mock.getReceivedExchanges().get(0).getIn().getBody(List.class));
+        //final SpanLastRecord order = rows.get(0).get(SpanLastRecord.class.getName());
 
+        final SpanLastRecord order = mock.getReceivedExchanges().get(0).getIn().getBody(SpanLastRecord.class);
+        
         assertEquals(1, order.getRecordId());
         assertEquals("hei", order.getName());
         assertEquals("kommentar", order.getComment());
@@ -54,9 +52,8 @@ public class BindySimpleCsvAutospanLineTest extends CamelTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        final List<Map<?, SpanLastRecord>> rows = CastUtils.cast(mock.getReceivedExchanges().get(0).getIn().getBody(List.class));
-        final SpanLastRecord order = rows.get(0).get(SpanLastRecord.class.getName());
-
+        final SpanLastRecord order = mock.getReceivedExchanges().get(0).getIn().getBody(SpanLastRecord.class);
+        
         assertEquals(1, order.getRecordId());
         assertEquals("hei", order.getName());
         assertEquals("kommentar,test,noe,hei", order.getComment());
@@ -67,7 +64,8 @@ public class BindySimpleCsvAutospanLineTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                final BindyCsvDataFormat bindy = new BindyCsvDataFormat("org.apache.camel.dataformat.bindy.model.simple.spanLastRecord");
+                final BindyCsvDataFormat bindy = new BindyCsvDataFormat(
+                		org.apache.camel.dataformat.bindy.model.simple.spanLastRecord.SpanLastRecord.class);
 
                 from("direct:unmarshal")
                         .unmarshal(bindy)
