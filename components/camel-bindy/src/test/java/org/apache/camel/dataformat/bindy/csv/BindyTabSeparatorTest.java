@@ -16,6 +16,8 @@
  */
 package org.apache.camel.dataformat.bindy.csv;
 
+import java.util.List;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -37,11 +39,6 @@ public class BindyTabSeparatorTest extends CamelTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        // TODO: check
-        /*
-        List<Map<?, PurchaseOrder>> rows = CastUtils.cast(mock.getReceivedExchanges().get(0).getIn().getBody(List.class));
-        PurchaseOrder order = rows.get(0).get(PurchaseOrder.class.getName());
-        */
         PurchaseOrder order = mock.getReceivedExchanges().get(0).getIn().getBody(PurchaseOrder.class);
         
         assertEquals(123, order.getId());
@@ -70,6 +67,7 @@ public class BindyTabSeparatorTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @SuppressWarnings("unchecked")
     @Test
     public void testUnmarshalEmptyTrailingNoneRequiredFields() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:unmarshal");
@@ -81,11 +79,9 @@ public class BindyTabSeparatorTest extends CamelTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        //List<Map<?, PurchaseOrder>> rows = CastUtils.cast(mock.getReceivedExchanges().get(0).getIn().getBody(List.class));
-        //PurchaseOrder order = rows.get(0).get(PurchaseOrder.class.getName());
-
-        /*TODO: cjeck
-        PurchaseOrder order = mock.getReceivedExchanges().get(0).getIn().getBody(PurchaseOrder.class);
+              
+        List<PurchaseOrder> orders = (List<PurchaseOrder>)mock.getReceivedExchanges().get(0).getIn().getBody();
+        PurchaseOrder order = orders.get(0);
         
         assertEquals(123, order.getId());
         assertEquals("Camel in Action", order.getName());
@@ -93,7 +89,6 @@ public class BindyTabSeparatorTest extends CamelTestSupport {
         assertNull(order.getOrderText());
         assertNull(order.getSalesRef());
         assertNull(order.getCustomerRef());
-        */
     }
 
     @Test

@@ -81,24 +81,14 @@ public class BindyFixedLengthFactory extends BindyAbstractFactory implements Bin
      * bind the data. This process will scan for classes according to the
      * package name provided, check the annotated classes and fields
      */
-    public void initFixedLengthModel() throws Exception {
-
+    public void initFixedLengthModel() throws Exception {      
+        
         // Find annotated fields declared in the Model classes
         initAnnotatedFields();
 
         // initialize Fixed length parameter(s)
         // from @FixedLengthrecord annotation
         initFixedLengthRecordParameters();
-        
-        if(header != void.class) {
-            models.add(header);
-            modelClassNames.add(header.getName());
-        }
-        
-        if(footer != void.class) {
-            models.add(footer);
-            modelClassNames.add(footer.getName());
-        }
     }
 
     public void initAnnotatedFields() {
