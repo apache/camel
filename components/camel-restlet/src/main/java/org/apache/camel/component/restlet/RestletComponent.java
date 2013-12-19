@@ -57,9 +57,11 @@ public class RestletComponent extends HeaderFilterStrategyComponent {
     private Integer inboundBufferSize;
     private Integer minThreads;
     private Integer maxThreads;
+    private Integer lowThreads;
     private Integer maxConnectionsPerHost;
     private Integer maxTotalConnections;
     private Integer outboundBufferSize;
+    private Integer maxQueued;
     private Boolean persistingConnections;
     private Boolean pipeliningConnections;
     private Integer threadMaxIdleTimeMs;
@@ -237,6 +239,12 @@ public class RestletComponent extends HeaderFilterStrategyComponent {
                 if (getMaxThreads() != null) {
                     params.add("maxThreads", getMaxThreads().toString());
                 }
+                if (getLowThreads() != null) {
+                    params.add("lowThreads", getLowThreads().toString());
+                }
+                if (getMaxQueued() != null) {
+                    params.add("maxQueued", getMaxQueued().toString());
+                }
                 if (getMaxConnectionsPerHost() != null) {
                     params.add("maxConnectionsPerHost", getMaxConnectionsPerHost().toString());
                 }
@@ -261,6 +269,7 @@ public class RestletComponent extends HeaderFilterStrategyComponent {
                 if (getReuseAddress() != null) {
                     params.add("reuseAddress", getReuseAddress().toString());
                 }
+                
                 LOG.debug("Setting parameters: {} to server: {}", params, server);
                 server.getContext().setParameters(params);
 
@@ -372,6 +381,14 @@ public class RestletComponent extends HeaderFilterStrategyComponent {
     public void setMaxThreads(Integer maxThreads) {
         this.maxThreads = maxThreads;
     }
+    
+    public Integer getLowThreads() {
+        return lowThreads;
+    }
+
+    public void setLowThreads(Integer lowThreads) {
+        this.lowThreads = lowThreads;
+    }
 
     public Integer getMaxTotalConnections() {
         return maxTotalConnections;
@@ -435,5 +452,13 @@ public class RestletComponent extends HeaderFilterStrategyComponent {
 
     public void setReuseAddress(Boolean reuseAddress) {
         this.reuseAddress = reuseAddress;
+    }
+
+    public Integer getMaxQueued() {
+        return maxQueued;
+    }
+
+    public void setMaxQueued(Integer maxQueued) {
+        this.maxQueued = maxQueued;
     }
 }
