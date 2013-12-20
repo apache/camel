@@ -39,7 +39,7 @@ public class RabbitMQConsumerTest {
     private Channel channel = Mockito.mock(Channel.class);
 
     @Test
-    public void testStoppingConsumerShutsdownExecutor() throws Exception {
+    public void testStoppingConsumerShutdownExecutor() throws Exception {
         RabbitMQConsumer consumer = new RabbitMQConsumer(endpoint, processor);
 
         ThreadPoolExecutor e = (ThreadPoolExecutor) Executors.newFixedThreadPool(3);
@@ -55,7 +55,7 @@ public class RabbitMQConsumerTest {
     }
 
     @Test
-    public void testStoppingConsumerShutsdownConnection() throws Exception {
+    public void testStoppingConsumerShutdownConnection() throws Exception {
         RabbitMQConsumer consumer = new RabbitMQConsumer(endpoint, processor);
 
         Mockito.when(endpoint.createExecutor()).thenReturn(Executors.newFixedThreadPool(3));
@@ -65,6 +65,6 @@ public class RabbitMQConsumerTest {
         consumer.doStart();
         consumer.doStop();
 
-        Mockito.verify(conn).close();
+        Mockito.verify(conn).close(30 * 1000);
     }
 }
