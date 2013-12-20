@@ -21,9 +21,9 @@ import java.io.FileInputStream;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.nio.channels.FileChannel;
+import java.security.SecureRandom;
 import java.util.Iterator;
 import java.util.Locale;
-import java.util.Random;
 import java.util.Stack;
 
 import org.slf4j.Logger;
@@ -317,7 +317,7 @@ public final class FileUtil {
         }
 
         // create a sub folder with a random number
-        Random ran = new Random();
+        SecureRandom ran = new SecureRandom();
         int x = ran.nextInt(1000000);
 
         File f = new File(s, "camel-tmp-" + x);
