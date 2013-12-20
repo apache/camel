@@ -101,6 +101,15 @@ public class ZookeeperProducer extends DefaultProducer {
         }
     }
 
+    @Override
+    protected void doStop() throws Exception {
+        super.doStop();
+        if (log.isTraceEnabled()) {
+            log.trace(String.format("Shutting down zookeeper producer of '%s'", configuration.getPath()));
+        }
+        zkm.shutdown();
+    }
+
     private void asynchronouslyDeleteNode(ZooKeeper connection, ProductionContext context) {
         if (log.isDebugEnabled()) {
             log.debug(format("Deleting node '%s', not waiting for confirmation", context.node));
