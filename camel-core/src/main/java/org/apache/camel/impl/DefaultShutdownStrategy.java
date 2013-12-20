@@ -192,7 +192,7 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
                 return false;
             } else {
                 if (forceShutdown || shutdownNowOnTimeout) {
-                    LOG.warn("Timeout occurred. Now forcing the routes to be shutdown now.");
+                    LOG.warn("Timeout occurred. Forcing the routes to be shutdown now.");
                     // force the routes to shutdown now
                     shutdownRoutesNow(routesOrdered);
 
