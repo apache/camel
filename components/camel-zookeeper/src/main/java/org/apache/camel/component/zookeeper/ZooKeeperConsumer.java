@@ -78,12 +78,10 @@ public class ZooKeeperConsumer extends DefaultConsumer {
     protected void doStop() throws Exception {
         super.doStop();
         shuttingDown = true;
-        connection = connectionManager.getConnection();
         if (log.isTraceEnabled()) {
             log.trace(String.format("Shutting down zookeeper consumer of '%s'", configuration.getPath()));
         }
         executor.shutdown();
-        connectionManager.shutdown();
     }
 
     private void initializeConsumer() {
