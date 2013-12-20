@@ -30,6 +30,7 @@ import org.apache.camel.impl.DefaultConsumer;
 
 public class RabbitMQConsumer extends DefaultConsumer {
 
+    private int closeTimeout = 30 * 1000;
     ExecutorService executor;
     Connection conn;
     Channel channel;
@@ -43,9 +44,6 @@ public class RabbitMQConsumer extends DefaultConsumer {
 
     @Override
     protected void doStart() throws Exception {
-        super.doStart();
-        log.info("Starting RabbitMQ consumer");
-
         executor = endpoint.createExecutor();
         log.debug("Using executor {}", executor);
 
@@ -76,27 +74,24 @@ public class RabbitMQConsumer extends DefaultConsumer {
 
     @Override
     protected void doStop() throws Exception {
-        super.doStop();
-        log.info("Stopping RabbitMQ consumer");
-        if (conn != null) {
-            try {
-                conn.close();
-            } catch (Exception ignored) {
-                // ignored
-            }
+        if (channel != null) {
+            log.debug("Closing channel: {}", channel);
+            channel.close();
+            channel = null;
         }
-
-        channel = null;
-        conn = null;
-
+        if (conn != null) {
+            log.debug("Closing connection: {} with timeout: {} ms.", conn, closeTimeout);
+            conn.close(closeTimeout);
+            conn = null;
+        }
         if (executor != null) {
-            if (getEndpoint() != null && getEndpoint().getCamelContext() != null) {
-                getEndpoint().getCamelContext().getExecutorServiceManager().shutdownNow(executor);
+            if (endpoint != null && endpoint.getCamelContext() != null) {
+                endpoint.getCamelContext().getExecutorServiceManager().shutdownNow(executor);
             } else {
                 executor.shutdownNow();
             }
+            executor = null;
         }
-        executor = null;
     }
 
     class RabbitConsumer extends com.rabbitmq.client.DefaultConsumer {

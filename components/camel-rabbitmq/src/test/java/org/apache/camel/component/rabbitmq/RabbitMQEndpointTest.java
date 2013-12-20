@@ -119,6 +119,5 @@ public class RabbitMQEndpointTest extends CamelTestSupport {
         assertEquals("Wrong size of endpoint addresses.", 2, endpoint.getAddresses().length);
         assertEquals("Get a wrong endpoint address.", new Address("server1", 12345), endpoint.getAddresses()[0]);
         assertEquals("Get a wrong endpoint address.", new Address("server2", 12345), endpoint.getAddresses()[1]);
-        
     }
 }
