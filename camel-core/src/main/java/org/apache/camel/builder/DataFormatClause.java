@@ -181,6 +181,14 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
     }
 
     /**
+     * Uses the CSV data format for a huge file.
+     * Sequential access through an iterator.
+     */
+    public T csvLazyLoad() {
+        return dataFormat(new CsvDataFormat(true));
+    }
+
+    /**
      * Uses the custom data format
      */
     public T custom(String ref) {
