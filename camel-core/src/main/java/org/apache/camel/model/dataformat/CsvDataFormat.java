@@ -46,6 +46,8 @@ public class CsvDataFormat extends DataFormatDefinition {
     private String strategyRef;
     @XmlAttribute
     private Boolean skipFirstLine;
+    @XmlAttribute
+    private Boolean lazyLoad;
 
     public CsvDataFormat() {
         super("csv");
@@ -54,6 +56,11 @@ public class CsvDataFormat extends DataFormatDefinition {
     public CsvDataFormat(String delimiter) {
         this();
         setDelimiter(delimiter);
+    }
+
+    public CsvDataFormat(boolean lazyLoad) {
+        this();
+        setLazyLoad(lazyLoad);
     }
 
     public Boolean isAutogenColumns() {
@@ -96,6 +103,14 @@ public class CsvDataFormat extends DataFormatDefinition {
         this.skipFirstLine = skipFirstLine;
     }
 
+    public Boolean getLazyLoad() {
+        return lazyLoad;
+    }
+
+    public void setLazyLoad(Boolean lazyLoad) {
+        this.lazyLoad = lazyLoad;
+    }
+
     @Override
     protected DataFormat createDataFormat(RouteContext routeContext) {
         DataFormat csvFormat = super.createDataFormat(routeContext);
@@ -130,6 +145,10 @@ public class CsvDataFormat extends DataFormatDefinition {
 
         if (skipFirstLine != null) {
             setProperty(camelContext, dataFormat, "skipFirstLine", skipFirstLine);
+        }
+
+        if (lazyLoad != null) {
+            setProperty(camelContext, dataFormat, "lazyLoad", lazyLoad);
         }
     }
 }
