@@ -16,15 +16,15 @@
  */
 package org.apache.camel.dataformat.csv;
 
+import java.util.Arrays;
+import java.util.Iterator;
+
 import org.apache.camel.EndpointInject;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.spring.CamelSpringTestSupport;
 import org.junit.Test;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-
-import java.util.Arrays;
-import java.util.Iterator;
 
 public class CsvUnmarshalStreamSpringTest extends CamelSpringTestSupport {
 
