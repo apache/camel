@@ -16,13 +16,15 @@
  */
 package org.apache.camel.dataformat.csv;
 
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.ArrayList;
-import java.util.Arrays;
+import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -54,6 +56,10 @@ public class CsvDataFormat implements DataFormat {
     private boolean autogenColumns = true;
     private String delimiter;
     private boolean skipFirstLine;
+    /**
+     * Lazy row loading with iterator for big files.
+     */
+    private boolean lazyLoad;
 
     public void marshal(Exchange exchange, Object object, OutputStream outputStream) throws Exception {
         if (delimiter != null) {
@@ -96,32 +102,42 @@ public class CsvDataFormat implements DataFormat {
         strategy.setDelimiter(config.getDelimiter());
 
         InputStreamReader in = new InputStreamReader(inputStream, IOHelper.getCharsetName(exchange));
-
+        CsvIterator csvIterator;
         try {
-            CSVParser parser = new CSVParser(in, strategy);
-            List<List<String>> list = new ArrayList<List<String>>();
-            boolean isFirstLine = true;
-            while (true) {
-                String[] strings = parser.getLine();
-                if (isFirstLine) {
-                    isFirstLine = false;
-                    if (skipFirstLine) {
-                        // skip considering the first line if we're asked to do so
-                        continue;
-                    }
-                }
-                if (strings == null) {
-                    break;
-                }
-                List<String> line = Arrays.asList(strings);
-                list.add(line);
+            CSVParser parser = createParser(in);
+            if (parser == null) {
+                IOHelper.close(in);
+                return Collections.emptyIterator();
             }
-            return list;
-        } finally {
+            csvIterator = new CsvIterator(parser, in);
+        } catch (IOException e) {
             IOHelper.close(in);
+            throw e;
         }
+        if (lazyLoad) {
+            return csvIterator;
+        }
+        return loadAllAsList(csvIterator);
     }
-    
+
+    private CSVParser createParser(InputStreamReader in) throws IOException {
+        CSVParser parser = new CSVParser(in, strategy);
+        if (skipFirstLine) {
+            if (null == parser.getLine()) {
+                return null;
+            }
+        }
+        return parser;
+    }
+
+    private List<List<String>> loadAllAsList(CsvIterator iter) throws IOException {
+        List<List<String>> list = new ArrayList<List<String>>();
+        while (iter.hasNext()) {
+            list.add(iter.next());
+        }
+        return list;
+    }
+
     public String getDelimiter() {
         return delimiter;
     }
@@ -168,6 +184,14 @@ public class CsvDataFormat implements DataFormat {
 
     public void setSkipFirstLine(boolean skipFirstLine) {
         this.skipFirstLine = skipFirstLine;
+    }
+
+    public boolean isLazyLoad() {
+        return lazyLoad;
+    }
+
+    public void setLazyLoad(boolean lazyLoad) {
+        this.lazyLoad = lazyLoad;
     }
 
     private synchronized void updateFieldsInConfig(Set<?> set, Exchange exchange) {
