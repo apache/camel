@@ -16,15 +16,13 @@
  */
 package org.apache.camel.dataformat.csv;
 
+import java.util.List;
+
 import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
-
-import java.util.Arrays;
-import java.util.Iterator;
-import java.util.List;
 
 /**
  * Spring based integration test for the <code>CsvDataFormat</code>

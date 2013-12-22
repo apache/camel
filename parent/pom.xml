@@ -228,6 +228,7 @@
     <jing-bundle-version>20030619_5</jing-bundle-version>
     <jing-version>20030619</jing-version>
     <jline-version>0.9.94</jline-version>
+    <jmockit-version>1.5</jmockit-version>
     <jodatime-bundle-version>1.6.2</jodatime-bundle-version>
     <jodatime2-bundle-version>2.3</jodatime2-bundle-version>
     <josql-bundle-version>1.5_5</josql-bundle-version>

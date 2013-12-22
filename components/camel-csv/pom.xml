@@ -59,7 +59,7 @@
     <dependency>
       <groupId>com.googlecode.jmockit</groupId>
       <artifactId>jmockit</artifactId>
-      <version>1.5</version>
+      <version>${jmockit-version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
