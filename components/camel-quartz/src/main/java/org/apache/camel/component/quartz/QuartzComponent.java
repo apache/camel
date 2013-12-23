@@ -26,6 +26,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.atomic.AtomicInteger;
+import javax.imageio.stream.FileImageOutputStream;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.StartupListener;
@@ -435,7 +436,13 @@ public class QuartzComponent extends DefaultComponent implements StartupListener
                 answer.load(is);
             } catch (IOException e) {
                 throw new SchedulerException("Error loading Quartz properties file from classpath: " + getPropertiesFile(), e);
-            }
+            } finally {
+                 try {
+                     is.close();
+                 } catch (IOException ex) {
+                     LOG.warn("Error closing quartz.properties input stream");
+                 }
+              }
         }
         return answer;
     }
