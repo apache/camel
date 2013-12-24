@@ -19,6 +19,9 @@ package org.apache.camel.component.jcr;
 import java.io.InputStream;
 import java.math.BigDecimal;
 import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Map;
+
 import javax.jcr.Node;
 import javax.jcr.Property;
 import javax.jcr.PropertyIterator;
@@ -28,6 +31,7 @@ import javax.jcr.Session;
 import javax.jcr.Value;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.Message;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.jackrabbit.util.Text;
@@ -41,13 +45,15 @@ public class JcrProducer extends DefaultProducer {
     public void process(Exchange exchange) throws Exception {
         TypeConverter converter = exchange.getContext().getTypeConverter();
         Session session = openSession();
-        String operation = determineOperation(exchange);
+        Message message = exchange.getIn();
+        String operation = determineOperation(message);
         try {
             if (JcrConstants.JCR_INSERT.equals(operation)) {
                 Node base = findOrCreateNode(session.getRootNode(), getJcrEndpoint().getBase());
-                Node node = findOrCreateNode(base, getNodeName(exchange));
-                for (String key : exchange.getProperties().keySet()) {
-                    Value value = converter.convertTo(Value.class, exchange, exchange.getProperty(key));
+                Node node = findOrCreateNode(base, getNodeName(message));
+                Map<String, Object> headers = filterComponentHeaders(message.getHeaders());
+                for (String key : headers.keySet()) {
+                    Value value = converter.convertTo(Value.class, exchange, message.getHeader(key));
                     node.setProperty(key, value);
                 }
                 node.addMixin("mix:referenceable");
@@ -60,7 +66,7 @@ public class JcrProducer extends DefaultProducer {
                     Property property = properties.nextProperty();
                     Class<?> aClass = classForJCRType(property);
                     Object value = converter.convertTo(aClass, exchange, property.getValue());
-                    exchange.setProperty(property.getName(), value);
+                    message.setHeader(property.getName(), value);
                 }
             } else {
                 throw new RuntimeException("Unsupported operation: " + operation);
@@ -74,6 +80,17 @@ public class JcrProducer extends DefaultProducer {
         }
     }
 
+    private Map<String, Object> filterComponentHeaders(Map<String, Object> properties) {
+        Map<String, Object> result = new HashMap<String, Object>(properties.size());
+        for (Map.Entry<String, Object> entry : properties.entrySet()) {
+            String key = entry.getKey();
+            if (!key.equals(JcrConstants.JCR_NODE_NAME) && !key.equals(JcrConstants.JCR_OPERATION)) {
+                result.put(entry.getKey(), entry.getValue());
+            }
+        }
+        return result;
+    }
+    
     private Class<?> classForJCRType(Property property) throws RepositoryException {
         switch (property.getType()) {
         case PropertyType.STRING:
@@ -107,16 +124,14 @@ public class JcrProducer extends DefaultProducer {
         }
     }
 
-    private String determineOperation(Exchange exchange) {
-        String operation = exchange.getIn().getHeader(JcrConstants.JCR_OPERATION, String.class);
+    private String determineOperation(Message message) {
+        String operation = message.getHeader(JcrConstants.JCR_OPERATION, String.class);
         return operation != null ? operation : JcrConstants.JCR_INSERT;
     }
 
-    private String getNodeName(Exchange exchange) {
-        if (exchange.getProperty(JcrConstants.JCR_NODE_NAME) != null) {
-            return exchange.getProperty(JcrConstants.JCR_NODE_NAME, String.class);
-        }
-        return exchange.getExchangeId();
+    private String getNodeName(Message message) {
+        String nodeName = message.getHeader(JcrConstants.JCR_NODE_NAME, String.class);
+        return nodeName != null ? nodeName : message.getExchange().getExchangeId();
     }
 
     private Node findOrCreateNode(Node parent, String path) throws RepositoryException {

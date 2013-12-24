@@ -41,7 +41,7 @@ public class JcrProducerSubNodeTest extends JcrRouteTestSupport {
         try {
             // create node
             Exchange exchange1 = ExchangeBuilder.anExchange(context)
-                .withProperty(JcrConstants.JCR_NODE_NAME, "node")
+                .withHeader(JcrConstants.JCR_NODE_NAME, "node")
                 .build();
             Exchange out1 = template.send("direct:a", exchange1);
             assertNotNull(out1);
@@ -53,7 +53,7 @@ public class JcrProducerSubNodeTest extends JcrRouteTestSupport {
             
             // create sub node
             Exchange exchange2 = ExchangeBuilder.anExchange(context)
-                .withProperty(JcrConstants.JCR_NODE_NAME, "node/subnode")
+                .withHeader(JcrConstants.JCR_NODE_NAME, "node/subnode")
                 .build();
             Exchange out2 = template.send("direct:a", exchange2);
             assertNotNull(out2);
