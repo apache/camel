@@ -65,8 +65,8 @@ public class JcrNodePathCreationTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 // START SNIPPET: jcr
-                from("direct:a").setProperty(JcrConstants.JCR_NODE_NAME, constant("node/with/path"))
-                    .setProperty("my.contents.property", body()).to("jcr://user:pass@repository/home/test");
+                from("direct:a").setHeader(JcrConstants.JCR_NODE_NAME, constant("node/with/path"))
+                    .setHeader("my.contents.property", body()).to("jcr://user:pass@repository/home/test");
                 // END SNIPPET: jcr
             }
         };

@@ -53,8 +53,8 @@ public class JcrGetNodeByIdTest extends JcrRouteTestSupport {
     @Test
     public void testJcrProducer() throws Exception {
         result.expectedMessageCount(1);
-        result.expectedPropertyReceived("my.contents.property", CONTENT);
-        result.expectedPropertyReceived("content.approved", APPROVED);
+        result.expectedHeaderReceived("my.contents.property", CONTENT);
+        result.expectedHeaderReceived("content.approved", APPROVED);
 
         Exchange exchange = createExchangeWithBody(identifier);
         template.send("direct:a", exchange);
