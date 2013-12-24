@@ -27,6 +27,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.StartupListener;
 import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.quartz.Scheduler;
@@ -133,6 +134,8 @@ public class QuartzComponent extends DefaultComponent implements StartupListener
                 prop.load(is);
             } catch (IOException e) {
                 throw new SchedulerException("Error loading Quartz properties file from classpath: org/quartz/quartz.properties", e);
+            } finally {
+                IOHelper.close(is);
             }
 
             // camel context name will be a suffix to use one scheduler per context
@@ -188,6 +191,8 @@ public class QuartzComponent extends DefaultComponent implements StartupListener
                 answer.load(is);
             } catch (IOException e) {
                 throw new SchedulerException("Error loading Quartz properties file from classpath: " + getPropertiesFile(), e);
+            } finally {
+                IOHelper.close(is);
             }
         }
         return answer;
@@ -266,7 +271,6 @@ public class QuartzComponent extends DefaultComponent implements StartupListener
             group = camelContextName == null ? "Camel" : "Camel_" + camelContextName;
             name = host;
         }
-
 
         if (prefixJobNameWithEndpointId) {
             name = endpoint.getId() + "_" + name;
