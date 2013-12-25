@@ -46,10 +46,12 @@ public class CsvIteratorTest {
                 parser.getLine();
                 result = new IOException(HDD_CRASH);
 
+                // The reader will be closed when there is nothing left
                 reader.close();
             }
         };
 
+        @SuppressWarnings("resource")
         CsvIterator iterator = new CsvIterator(parser, reader);
         Assert.assertTrue(iterator.hasNext());
         Assert.assertEquals(Arrays.asList("1"), iterator.next());
@@ -70,7 +72,6 @@ public class CsvIteratorTest {
         } catch (NoSuchElementException e) {
             // okay
         }
-        iterator.close();
     }
 
     @Test
@@ -87,10 +88,12 @@ public class CsvIteratorTest {
                 parser.getLine();
                 result = null;
 
+                // The reader will be closed when there is nothing left
                 reader.close();
             }
         };
        
+        @SuppressWarnings("resource")
         CsvIterator iterator = new CsvIterator(parser, reader);
         Assert.assertTrue(iterator.hasNext());
         Assert.assertEquals(Arrays.asList("1"), iterator.next());
@@ -106,7 +109,6 @@ public class CsvIteratorTest {
         } catch (NoSuchElementException e) {
             // okay
         }
-        iterator.close();
-
+        
     }
 }
