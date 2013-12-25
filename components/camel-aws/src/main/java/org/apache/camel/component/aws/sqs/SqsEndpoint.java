@@ -83,8 +83,8 @@ public class SqsEndpoint extends ScheduledPollEndpoint {
         // If both region and Account ID is provided the queue URL can be built manually.
         // This allows accessing queues where you don't have permission to list queues or query queues
         if (configuration.getRegion() != null && configuration.getQueueOwnerAWSAccountId() != null) {
-            queueUrl = "https://sqs." + configuration.getRegion() + ".amazonaws.com/" +
-                    configuration.getQueueOwnerAWSAccountId() + "/" + configuration.getQueueName();
+            queueUrl = "https://sqs." + configuration.getRegion() + ".amazonaws.com/"
+                +  configuration.getQueueOwnerAWSAccountId() + "/" + configuration.getQueueName();
         } else if (configuration.getQueueOwnerAWSAccountId() != null) {
             GetQueueUrlRequest getQueueUrlRequest = new GetQueueUrlRequest();
             getQueueUrlRequest.setQueueName(configuration.getQueueName());
