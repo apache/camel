@@ -23,10 +23,12 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.ArrayList;
-import java.util.Collections;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Set;
+
 
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.DataFormat;
@@ -106,7 +108,7 @@ public class CsvDataFormat implements DataFormat {
             CSVParser parser = createParser(in);
             if (parser == null) {
                 IOHelper.close(in);
-                return Collections.emptyIterator();
+                return emptyIterator();
             }
             csvIterator = new CsvIterator(parser, in);
         } catch (IOException e) {
@@ -204,5 +206,19 @@ public class CsvDataFormat implements DataFormat {
                 }
             }
         }
+    }
+    
+    @SuppressWarnings("unchecked")
+    public static <T> Iterator<T> emptyIterator() {
+        return (Iterator<T>) EmptyIterator.EMPTY_ITERATOR;
+    }
+
+    private static class EmptyIterator<E> implements Iterator<E> {
+        static final EmptyIterator<Object> EMPTY_ITERATOR
+            = new EmptyIterator<Object>();
+
+        public boolean hasNext() { return false; }
+        public E next() { throw new NoSuchElementException(); }
+        public void remove() { throw new IllegalStateException(); }
     }
 }
