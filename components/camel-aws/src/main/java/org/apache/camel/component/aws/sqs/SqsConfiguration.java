@@ -22,7 +22,7 @@ import com.amazonaws.services.sqs.AmazonSQS;
 
 /**
  * The AWS SQS component configuration properties
- * 
+ *
  */
 public class SqsConfiguration {
 
@@ -33,7 +33,7 @@ public class SqsConfiguration {
     private String secretKey;
     private String amazonSQSEndpoint;
     private String queueOwnerAWSAccountId;
-    
+    private String region;
     // consumer properties
     private Boolean deleteAfterRead = Boolean.TRUE;
     private Boolean deleteIfFiltered = Boolean.TRUE;
@@ -42,20 +42,20 @@ public class SqsConfiguration {
     private Integer waitTimeSeconds;
     private Integer defaultVisibilityTimeout;
     private Boolean extendMessageVisibility = Boolean.FALSE;
-    
+
     // producer properties
     private Integer delaySeconds;
-    
+
     // queue properties
     private Integer maximumMessageSize;
     private Integer messageRetentionPeriod;
     private Integer receiveMessageWaitTimeSeconds;
     private String policy;
-    
+
     public void setAmazonSQSEndpoint(String amazonSQSEndpoint) {
         this.amazonSQSEndpoint = amazonSQSEndpoint;
     }
-    
+
     public String getAmazonSQSEndpoint() {
         return amazonSQSEndpoint;
     }
@@ -99,7 +99,7 @@ public class SqsConfiguration {
     public void setAmazonSQSClient(AmazonSQS amazonSQSClient) {
         this.amazonSQSClient = amazonSQSClient;
     }
-    
+
     public Integer getVisibilityTimeout() {
         return visibilityTimeout;
     }
@@ -107,7 +107,7 @@ public class SqsConfiguration {
     public void setVisibilityTimeout(Integer visibilityTimeout) {
         this.visibilityTimeout = visibilityTimeout;
     }
-    
+
     public Collection<String> getAttributeNames() {
         return attributeNames;
     }
@@ -115,7 +115,7 @@ public class SqsConfiguration {
     public void setAttributeNames(Collection<String> attributeNames) {
         this.attributeNames = attributeNames;
     }
-    
+
     public Integer getDefaultVisibilityTimeout() {
         return defaultVisibilityTimeout;
     }
@@ -147,7 +147,7 @@ public class SqsConfiguration {
     public void setMessageRetentionPeriod(Integer messageRetentionPeriod) {
         this.messageRetentionPeriod = messageRetentionPeriod;
     }
-    
+
     public String getPolicy() {
         return policy;
     }
@@ -179,7 +179,7 @@ public class SqsConfiguration {
     public void setWaitTimeSeconds(Integer waitTimeSeconds) {
         this.waitTimeSeconds = waitTimeSeconds;
     }
-    
+
     public String getQueueOwnerAWSAccountId() {
         return queueOwnerAWSAccountId;
     }
@@ -196,12 +196,20 @@ public class SqsConfiguration {
         this.deleteIfFiltered = deleteIfFiltered;
     }
 
+    public String getRegion() {
+        return region;
+    }
+
+    public void setRegion(String region) {
+        this.region = region;
+    }
+
     @Override
     public String toString() {
         return "SqsConfiguration[queueName=" + queueName
             + ", amazonSQSClient=" + amazonSQSClient
             + ", accessKey=" + accessKey
-            + ", secretKey=xxxxxxxxxxxxxxx" 
+            + ", secretKey=xxxxxxxxxxxxxxx"
             + ", deleteAfterRead=" + deleteAfterRead
             + ", deleteIfFiltered=" + deleteIfFiltered
             + ", visibilityTimeout=" + visibilityTimeout
@@ -215,6 +223,7 @@ public class SqsConfiguration {
             + ", policy=" + policy
             + ", extendMessageVisibility=" + extendMessageVisibility
             + ", queueOwnerAWSAccountId=" + queueOwnerAWSAccountId
+            + ", region=" + region
             + "]";
     }
 }
