@@ -20,10 +20,14 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Predicate;
 import org.jgroups.Address;
 import org.jgroups.View;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.component.jgroups.JGroupsEndpoint.HEADER_JGROUPS_CHANNEL_ADDRESS;
 
 public final class JGroupsFilters {
+
+    private static final Logger LOG = LoggerFactory.getLogger(JGroupsFilters.class);
 
     private static final int COORDINATOR_NODE_INDEX = 0;
 
@@ -42,11 +46,16 @@ public final class JGroupsFilters {
             @Override
             public boolean matches(Exchange exchange) {
                 Object body = exchange.getIn().getBody();
+                LOG.debug("Filtering message {}.", body);
                 if (body instanceof View) {
                     View view = (View) body;
+                    Address coordinatorNodeAddress =  view.getMembers().get(COORDINATOR_NODE_INDEX);
                     Address channelAddress = exchange.getIn().getHeader(HEADER_JGROUPS_CHANNEL_ADDRESS, Address.class);
-                    return channelAddress.equals(view.getMembers().get(COORDINATOR_NODE_INDEX));
+                    LOG.debug("Comparing endpoint channel address {} against the coordinator node address {}.",
+                            channelAddress, coordinatorNodeAddress);
+                    return channelAddress.equals(coordinatorNodeAddress);
                 }
+                LOG.debug("Body {} is not an instance of org.jgroups.View . Skipping filter.", body);
                 return true;
             }
         };
