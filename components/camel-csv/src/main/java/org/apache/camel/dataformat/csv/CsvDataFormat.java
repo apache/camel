@@ -29,11 +29,11 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Set;
 
-
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.IOHelper;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVStrategy;
 import org.apache.commons.csv.writer.CSVConfig;
@@ -107,13 +107,12 @@ public class CsvDataFormat implements DataFormat {
         try {
             CSVParser parser = createParser(in);
             if (parser == null) {
-                IOHelper.close(in);
-                return emptyIterator();
+                // return an empty Iterator
+                return ObjectHelper.createIterator(null);
             }
             csvIterator = new CsvIterator(parser, in);
-        } catch (IOException e) {
+        } finally {
             IOHelper.close(in);
-            throw e;
         }
         if (lazyLoad) {
             return csvIterator;
@@ -124,7 +123,7 @@ public class CsvDataFormat implements DataFormat {
     private CSVParser createParser(InputStreamReader in) throws IOException {
         CSVParser parser = new CSVParser(in, strategy);
         if (skipFirstLine) {
-            if (null == parser.getLine()) {
+            if (parser.getLine() == null) {
                 return null;
             }
         }
@@ -208,17 +207,4 @@ public class CsvDataFormat implements DataFormat {
         }
     }
     
-    @SuppressWarnings("unchecked")
-    public static <T> Iterator<T> emptyIterator() {
-        return (Iterator<T>) EmptyIterator.EMPTY_ITERATOR;
-    }
-
-    private static class EmptyIterator<E> implements Iterator<E> {
-        static final EmptyIterator<Object> EMPTY_ITERATOR
-            = new EmptyIterator<Object>();
-
-        public boolean hasNext() { return false; }
-        public E next() { throw new NoSuchElementException(); }
-        public void remove() { throw new IllegalStateException(); }
-    }
 }
