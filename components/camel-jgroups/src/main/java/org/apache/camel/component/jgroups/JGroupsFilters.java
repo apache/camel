@@ -50,7 +50,6 @@ public final class JGroupsFilters {
                 return true;
             }
         };
-
     }
 
 }
