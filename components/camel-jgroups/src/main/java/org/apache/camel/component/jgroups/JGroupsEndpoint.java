@@ -74,15 +74,20 @@ public class JGroupsEndpoint extends DefaultEndpoint {
         Exchange exchange = createExchange();
         exchange.getIn().setHeader(HEADER_JGROUPS_SRC, message.getSrc());
         exchange.getIn().setHeader(HEADER_JGROUPS_DEST, message.getDest());
-        exchange.getIn().setHeader(HEADER_JGROUPS_CHANNEL_ADDRESS, resolvedChannel.getAddress());
         exchange.getIn().setBody(message.getObject());
         return exchange;
     }
 
     public Exchange createExchange(View view) {
         Exchange exchange = createExchange();
-        exchange.getIn().setHeader(HEADER_JGROUPS_CHANNEL_ADDRESS, resolvedChannel.getAddress());
         exchange.getIn().setBody(view);
+        return exchange;
+    }
+
+    @Override
+    public Exchange createExchange() {
+        Exchange exchange = super.createExchange();
+        exchange.getIn().setHeader(HEADER_JGROUPS_CHANNEL_ADDRESS, resolvedChannel.getAddress());
         return exchange;
     }
 
