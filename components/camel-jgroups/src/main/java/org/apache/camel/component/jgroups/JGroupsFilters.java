@@ -18,15 +18,25 @@ package org.apache.camel.component.jgroups;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Predicate;
+import org.jgroups.Address;
 import org.jgroups.View;
 
 import static org.apache.camel.component.jgroups.JGroupsEndpoint.HEADER_JGROUPS_CHANNEL_ADDRESS;
 
 public final class JGroupsFilters {
 
+    private static final int COORDINATOR_NODE_INDEX = 0;
+
     private JGroupsFilters() {
     }
 
+    /**
+     * Creates predicate rejecting messages that are instances of {@link org.jgroups.View}, but have not been received
+     * by the coordinator JGroups node. This filter is useful for keeping only view messages indicating that receiving
+     * endpoint is a master node.
+     *
+     * @return predicate filtering out non-coordinator view messages.
+     */
     public static Predicate dropNonCoordinatorViews() {
         return new Predicate() {
             @Override
@@ -34,7 +44,8 @@ public final class JGroupsFilters {
                 Object body = exchange.getIn().getBody();
                 if (body instanceof View) {
                     View view = (View) body;
-                    return exchange.getIn().getHeader(HEADER_JGROUPS_CHANNEL_ADDRESS).equals(view.getMembers().get(0));
+                    Address channelAddress = exchange.getIn().getHeader(HEADER_JGROUPS_CHANNEL_ADDRESS, Address.class);
+                    return channelAddress.equals(view.getMembers().get(COORDINATOR_NODE_INDEX));
                 }
                 return true;
             }
