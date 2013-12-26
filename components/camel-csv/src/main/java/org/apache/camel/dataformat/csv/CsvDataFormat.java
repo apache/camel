@@ -103,16 +103,22 @@ public class CsvDataFormat implements DataFormat {
         strategy.setDelimiter(config.getDelimiter());
 
         InputStreamReader in = new InputStreamReader(inputStream, IOHelper.getCharsetName(exchange));
-        CsvIterator csvIterator;
+        boolean closeStream = false;
+        CsvIterator csvIterator = null;
         try {
             CSVParser parser = createParser(in);
             if (parser == null) {
+                closeStream = true;
                 // return an empty Iterator
                 return ObjectHelper.createIterator(null);
             }
             csvIterator = new CsvIterator(parser, in);
+        } catch (IOException ioe) {
+            closeStream = true;
         } finally {
-            IOHelper.close(in);
+            if (closeStream) {
+                IOHelper.close(in);
+            }
         }
         if (lazyLoad) {
             return csvIterator;
