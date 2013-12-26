@@ -27,6 +27,7 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.xbill.DNS.Message;
 import org.xbill.DNS.Section;
@@ -34,6 +35,7 @@ import org.xbill.DNS.Section;
 /**
  * Tests for the dig endpoint.
  */
+@Ignore("Wikipedia service is broken now")
 public class DnsDigEndpointTest extends CamelTestSupport {
 
     private static final String RESPONSE_MONKEY = "\"A Macaque, an old world species of "
