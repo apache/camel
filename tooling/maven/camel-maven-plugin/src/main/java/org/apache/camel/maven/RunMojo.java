@@ -131,6 +131,8 @@ public class RunMojo extends AbstractExecMojo {
      *            default-value="false"
      */
     protected boolean useCDI;
+    
+    protected String extendedPluginDependencyArtifactId;
 
     /**
      * @component
@@ -369,7 +371,7 @@ public class RunMojo extends AbstractExecMojo {
     private Properties originalSystemProperties;
 
     private String extraPluginDependencyArtifactId;
-    protected String extendedPluginDependencyArtifactId;
+    
 
     /**
      * Execute goal.
