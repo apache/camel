@@ -40,6 +40,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
+import java.util.NoSuchElementException;
 import java.util.Properties;
 import java.util.Scanner;
 
@@ -547,15 +548,18 @@ public final class ObjectHelper {
             if (isPrimitiveArrayType(value.getClass())) {
                 final Object array = value;
                 return new Iterator<Object>() {
-                    int idx = -1;
+                    private int idx;
 
                     public boolean hasNext() {
-                        return (idx + 1) < Array.getLength(array);
+                        return idx < Array.getLength(array);
                     }
 
                     public Object next() {
-                        idx++;
-                        return Array.get(array, idx);
+                        if (!hasNext()) {
+                            throw new NoSuchElementException("no more element available for '" + array + "' at the index " + idx);
+                        }
+
+                        return Array.get(array, idx++);
                     }
 
                     public void remove() {
@@ -571,15 +575,18 @@ public final class ObjectHelper {
             // lets iterate through DOM results after performing XPaths
             final NodeList nodeList = (NodeList) value;
             return new Iterator<Object>() {
-                int idx = -1;
+                private int idx;
 
                 public boolean hasNext() {
-                    return (idx + 1) < nodeList.getLength();
+                    return idx < nodeList.getLength();
                 }
 
                 public Object next() {
-                    idx++;
-                    return nodeList.item(idx);
+                    if (!hasNext()) {
+                        throw new NoSuchElementException("no more element available for '" + nodeList + "' at the index " + idx);
+                    }
+
+                    return nodeList.item(idx++);
                 }
 
                 public void remove() {
@@ -614,13 +621,17 @@ public final class ObjectHelper {
             } else {
                 // use a plain iterator that returns the value as is as there are only a single value
                 return new Iterator<Object>() {
-                    int idx = -1;
+                    private int idx;
 
                     public boolean hasNext() {
-                        return idx + 1 == 0 && (allowEmptyValues || ObjectHelper.isNotEmpty(s));
+                        return idx == 0 && (allowEmptyValues || ObjectHelper.isNotEmpty(s));
                     }
 
                     public Object next() {
+                        if (!hasNext()) {
+                            throw new NoSuchElementException("no more element available for '" + s + "' at the index " + idx);
+                        }
+
                         idx++;
                         return s;
                     }
