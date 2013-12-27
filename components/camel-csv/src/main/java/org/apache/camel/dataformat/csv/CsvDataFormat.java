@@ -129,7 +129,7 @@ public class CsvDataFormat implements DataFormat {
             }
             return list;
         } finally {
-            // close the stream as we've loaded all the data upfront
+            // close the iterator (which would close the stream) as we've loaded all the data upfront
             IOHelper.close(iter);
         }
     }
