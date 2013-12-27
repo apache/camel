@@ -17,7 +17,7 @@
 package org.apache.camel.processor;
 
 import java.io.Serializable;
-import java.util.Random;
+import java.security.SecureRandom;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.LoggingLevel;
@@ -75,7 +75,7 @@ import org.slf4j.LoggerFactory;
  * @version 
  */
 public class RedeliveryPolicy implements Cloneable, Serializable {
-    protected static Random randomNumberGenerator;
+    protected static SecureRandom randomNumberGenerator;
     private static final long serialVersionUID = -338222777701473252L;
     private static final Logger LOG = LoggerFactory.getLogger(RedeliveryPolicy.class);
 
@@ -217,7 +217,7 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
              * First random determines +/-, second random determines how far to
              * go in that direction. -cgs
              */
-            Random random = getRandomNumberGenerator();
+            SecureRandom random = getRandomNumberGenerator();
             double variance = (random.nextBoolean() ? collisionAvoidanceFactor : -collisionAvoidanceFactor)
                               * random.nextDouble();
             redeliveryDelayResult += redeliveryDelayResult * variance;
@@ -544,9 +544,9 @@ public class RedeliveryPolicy implements Cloneable, Serializable {
         this.useExponentialBackOff = useExponentialBackOff;
     }
 
-    protected static synchronized Random getRandomNumberGenerator() {
+    protected static synchronized SecureRandom getRandomNumberGenerator() {
         if (randomNumberGenerator == null) {
-            randomNumberGenerator = new Random();
+            randomNumberGenerator = new SecureRandom();
         }
         return randomNumberGenerator;
     }
