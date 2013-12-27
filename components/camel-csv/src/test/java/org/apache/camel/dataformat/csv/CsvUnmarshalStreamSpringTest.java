@@ -18,6 +18,7 @@ package org.apache.camel.dataformat.csv;
 
 import java.util.Arrays;
 import java.util.Iterator;
+import java.util.NoSuchElementException;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -33,7 +34,6 @@ public class CsvUnmarshalStreamSpringTest extends CamelSpringTestSupport {
     @EndpointInject(uri = "mock:result")
     private MockEndpoint result;
 
-    @SuppressWarnings("unchecked")
     @Test
     public void testCsvUnMarshal() throws Exception {
         result.expectedMessageCount(1);
@@ -42,15 +42,21 @@ public class CsvUnmarshalStreamSpringTest extends CamelSpringTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        Iterator<String> body = result.getReceivedExchanges().get(0)
-                .getIn().getBody(Iterator.class);
-        assertEquals(CsvIterator.class, body.getClass());
-        assertEquals(Arrays.asList(MESSAGE), body.next());
+        Iterator<?> body = result.getReceivedExchanges().get(0).getIn().getBody(Iterator.class);
+        CsvIterator iterator = assertIsInstanceOf(CsvIterator.class, body);
+        assertTrue(iterator.hasNext());
+        assertEquals(Arrays.asList(MESSAGE), iterator.next());
+        assertFalse(iterator.hasNext());
+        try {
+            iterator.next();
+            fail("Should have thrown exception");
+        } catch (NoSuchElementException nsee) {
+            // expected
+        }
     }
 
     @Override
     protected AbstractApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext(
-                "org/apache/camel/dataformat/csv/CsvUnmarshalStreamSpringTest-context.xml");
+        return new ClassPathXmlApplicationContext("org/apache/camel/dataformat/csv/CsvUnmarshalStreamSpringTest-context.xml");
     }
 }
