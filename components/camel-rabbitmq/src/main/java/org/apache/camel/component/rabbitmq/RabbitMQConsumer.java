@@ -29,12 +29,12 @@ import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultConsumer;
 
 public class RabbitMQConsumer extends DefaultConsumer {
-
-    private int closeTimeout = 30 * 1000;
     ExecutorService executor;
     Connection conn;
     Channel channel;
 
+    private int closeTimeout = 30 * 1000;
+    
     private final RabbitMQEndpoint endpoint;
 
     public RabbitMQConsumer(RabbitMQEndpoint endpoint, Processor processor) {
