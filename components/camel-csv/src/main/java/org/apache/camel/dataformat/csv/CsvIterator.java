@@ -36,8 +36,7 @@ public class CsvIterator implements Iterator<List<String>>, Closeable {
     private final InputStreamReader in;
     private String[] line;
 
-    public CsvIterator(CSVParser parser, InputStreamReader in) throws IOException
-    {
+    public CsvIterator(CSVParser parser, InputStreamReader in) throws IOException {
         this.parser = parser;
         this.in = in;
         line = parser.getLine();
@@ -58,11 +57,11 @@ public class CsvIterator implements Iterator<List<String>>, Closeable {
             line = parser.getLine();
         } catch (IOException e) {
             line = null;
-            IOHelper.close(in);
+            close();
             throw new IllegalStateException(e);
         }
         if (line == null) {
-            IOHelper.close(in);
+            close();
         }
         return result;
     }
@@ -73,7 +72,7 @@ public class CsvIterator implements Iterator<List<String>>, Closeable {
     }
 
     @Override
-    public void close() throws IOException {
-        in.close();
+    public void close() {
+        IOHelper.close(in);
     }
 }

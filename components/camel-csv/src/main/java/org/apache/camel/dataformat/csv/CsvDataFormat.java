@@ -16,24 +16,20 @@
  */
 package org.apache.camel.dataformat.csv;
 
-import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Writer;
 import java.util.ArrayList;
-import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
-import java.util.NoSuchElementException;
 import java.util.Set;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.IOHelper;
-import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVStrategy;
 import org.apache.commons.csv.writer.CSVConfig;
@@ -102,46 +98,40 @@ public class CsvDataFormat implements DataFormat {
         }
         strategy.setDelimiter(config.getDelimiter());
 
-        InputStreamReader in = new InputStreamReader(inputStream, IOHelper.getCharsetName(exchange));
-        boolean closeStream = false;
-        CsvIterator csvIterator = null;
+        InputStreamReader in = null;
+        boolean error = false;
         try {
-            CSVParser parser = createParser(in);
-            if (parser == null) {
-                closeStream = true;
-                // return an empty Iterator
-                return ObjectHelper.createIterator(null);
+            in = new InputStreamReader(inputStream, IOHelper.getCharsetName(exchange));
+            CSVParser parser = new CSVParser(in, strategy);
+
+            if (skipFirstLine) {
+                // read one line ahead
+                parser.getLine();
             }
-            csvIterator = new CsvIterator(parser, in);
-        } catch (IOException ioe) {
-            closeStream = true;
+
+            CsvIterator csvIterator = new CsvIterator(parser, in);
+            return lazyLoad ? csvIterator : loadAllAsList(csvIterator);
+        } catch (Exception e) {
+            error = true;
+            throw e;
         } finally {
-            if (closeStream) {
+            if (error) {
                 IOHelper.close(in);
             }
         }
-        if (lazyLoad) {
-            return csvIterator;
-        }
-        return loadAllAsList(csvIterator);
     }
 
-    private CSVParser createParser(InputStreamReader in) throws IOException {
-        CSVParser parser = new CSVParser(in, strategy);
-        if (skipFirstLine) {
-            if (parser.getLine() == null) {
-                return null;
+    private List<List<String>> loadAllAsList(CsvIterator iter) {
+        try {
+            List<List<String>> list = new ArrayList<List<String>>();
+            while (iter.hasNext()) {
+                list.add(iter.next());
             }
+            return list;
+        } finally {
+            // close the stream as we've loaded all the data upfront
+            IOHelper.close(iter);
         }
-        return parser;
-    }
-
-    private List<List<String>> loadAllAsList(CsvIterator iter) throws IOException {
-        List<List<String>> list = new ArrayList<List<String>>();
-        while (iter.hasNext()) {
-            list.add(iter.next());
-        }
-        return list;
     }
 
     public String getDelimiter() {

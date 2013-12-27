@@ -27,7 +27,7 @@ import org.junit.Test;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
- * Spring based integration test for the <code>CsvDataFormat</code> demonstrating the usage of
+ * Spring based test for the <code>CsvDataFormat</code> demonstrating the usage of
  * the <tt>skipFirstLine</tt> option.
  */
 public class CsvUnmarshalSkipFirstLineTest extends CamelSpringTestSupport {
@@ -60,8 +60,8 @@ public class CsvUnmarshalSkipFirstLineTest extends CamelSpringTestSupport {
     public void testCsvUnMarshalSingleLine() throws Exception {
         result.expectedMessageCount(1);
 
-        // the first line, the same as the second line as well, contains also a data row but as we set
-        // skipFirstLine to true the first row gets simply ignored and not unmarshalled
+        // the first line contains a data row but as we set skipFirstLine
+        // to true the first line gets simply skipped and not unmarshalled
         template.sendBody("direct:start", "124|ActiveMQ in Action|2\n123|Camel in Action|1");
 
         assertMockEndpointsSatisfied();
@@ -72,7 +72,20 @@ public class CsvUnmarshalSkipFirstLineTest extends CamelSpringTestSupport {
         assertEquals("Camel in Action", body.get(0).get(1));
         assertEquals("1", body.get(0).get(2));
     }
-    
+
+    @Test
+    public void testCsvUnMarshalNoLine() throws Exception {
+        result.expectedMessageCount(1);
+
+        // the first and last line we intend to skip
+        template.sendBody("direct:start", "123|Camel in Action|1\n");
+
+        assertMockEndpointsSatisfied();
+
+        List<?> body = result.getReceivedExchanges().get(0).getIn().getBody(List.class);
+        assertEquals(0, body.size());
+    }
+
     @Override
     protected ClassPathXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/dataformat/csv/CsvUnmarshalSkipFirstLineSpringTest-context.xml");
