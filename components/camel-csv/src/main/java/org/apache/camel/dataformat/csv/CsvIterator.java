@@ -19,7 +19,7 @@ package org.apache.camel.dataformat.csv;
 
 import java.io.Closeable;
 import java.io.IOException;
-import java.io.InputStreamReader;
+import java.io.Reader;
 import java.util.Arrays;
 import java.util.Iterator;
 import java.util.List;
@@ -33,12 +33,12 @@ import org.apache.commons.csv.CSVParser;
 public class CsvIterator implements Iterator<List<String>>, Closeable {
 
     private final CSVParser parser;
-    private final InputStreamReader in;
+    private final Reader reader;
     private String[] line;
 
-    public CsvIterator(CSVParser parser, InputStreamReader in) throws IOException {
+    public CsvIterator(CSVParser parser, Reader reader) throws IOException {
         this.parser = parser;
-        this.in = in;
+        this.reader = reader;
         line = parser.getLine();
     }
 
@@ -73,6 +73,6 @@ public class CsvIterator implements Iterator<List<String>>, Closeable {
 
     @Override
     public void close() {
-        IOHelper.close(in);
+        IOHelper.close(reader);
     }
 }
