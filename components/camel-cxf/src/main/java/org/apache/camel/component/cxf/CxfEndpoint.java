@@ -189,7 +189,7 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
 
     // This method is for CxfComponent setting the EndpointUri
     protected void updateEndpointUri(String endpointUri) {
-        super.setEndpointUri(UnsafeUriCharactersEncoder.encode(endpointUri));
+        super.setEndpointUri(UnsafeUriCharactersEncoder.encodeHttpURI(endpointUri));
     }
 
     public Producer createProducer() throws Exception {
@@ -881,7 +881,7 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     }
 
     public void setAddress(String address) {
-        super.setEndpointUri(UnsafeUriCharactersEncoder.encode(address));
+        super.setEndpointUri(UnsafeUriCharactersEncoder.encodeHttpURI(address));
         this.address = address;
     }
 

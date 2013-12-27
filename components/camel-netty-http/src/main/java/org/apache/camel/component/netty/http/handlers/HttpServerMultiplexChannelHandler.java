@@ -158,7 +158,7 @@ public class HttpServerMultiplexChannelHandler extends SimpleChannelUpstreamHand
             path = path.substring(0, path.length() - 1);
         }
 
-        return UnsafeUriCharactersEncoder.encode(path);
+        return UnsafeUriCharactersEncoder.encodeHttpURI(path);
     }
 
 }

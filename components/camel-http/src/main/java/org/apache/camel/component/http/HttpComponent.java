@@ -30,6 +30,7 @@ import org.apache.camel.util.CollectionHelper;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
+import org.apache.camel.util.UnsafeUriCharactersEncoder;
 import org.apache.commons.httpclient.HttpConnectionManager;
 import org.apache.commons.httpclient.MultiThreadedHttpConnectionManager;
 import org.apache.commons.httpclient.params.HttpClientParams;
@@ -198,9 +199,9 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        String addressUri = uri;
-        if (!uri.startsWith("http:") && !uri.startsWith("https:")) {
-            addressUri = remaining;
+        String addressUri = "http://" + remaining;
+        if (uri.startsWith("https:")) {
+            addressUri = "https://" + remaining;
         }
         Map<String, Object> httpClientParameters = new HashMap<String, Object>(parameters);
         // must extract well known parameters before we create the endpoint
@@ -235,6 +236,7 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
         // create the configurer to use for this endpoint (authMethods contains the used methods created by the configurer)
         final Set<AuthMethod> authMethods = new LinkedHashSet<AuthMethod>();
         HttpClientConfigurer configurer = createHttpClientConfigurer(parameters, authMethods);
+        addressUri = UnsafeUriCharactersEncoder.encodeHttpURI(addressUri);
         URI endpointUri = URISupport.createRemainingURI(new URI(addressUri), httpClientParameters);
        
         // create the endpoint and connectionManagerParams already be set

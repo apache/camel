@@ -21,6 +21,7 @@ import java.io.InputStream;
 import java.io.ObjectInputStream;
 import java.io.ObjectOutputStream;
 import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
 import java.net.URI;
 import java.net.URISyntaxException;
 import java.util.ArrayList;
@@ -212,7 +213,7 @@ public final class HttpHelper {
         }
 
         // ensure uri is encoded to be valid
-        uri = UnsafeUriCharactersEncoder.encode(uri);
+        uri = UnsafeUriCharactersEncoder.encodeHttpURI(uri);
 
         return uri;
     }
@@ -238,7 +239,7 @@ public final class HttpHelper {
         }
         if (queryString != null) {
             // need to encode query string
-            queryString = UnsafeUriCharactersEncoder.encode(queryString);
+            queryString = UnsafeUriCharactersEncoder.encodeHttpURI(queryString);
             uri = URISupport.createURIWithQuery(uri, queryString);
         }
         return uri;
