@@ -216,7 +216,8 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
                 addressUri = "http://" + remaining;
             }
         }
-        addressUri = UnsafeUriCharactersEncoder.encode(addressUri);
+        
+        addressUri = UnsafeUriCharactersEncoder.encodeHttpURI(addressUri);
         URI uriHttpUriAddress = new URI(addressUri);
 
         // validate http uri that end-user did not duplicate the http part that can be a common error
