@@ -20,6 +20,7 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.io.Reader;
 import java.io.Writer;
 import java.util.ArrayList;
 import java.util.List;
@@ -98,25 +99,25 @@ public class CsvDataFormat implements DataFormat {
         }
         strategy.setDelimiter(config.getDelimiter());
 
-        InputStreamReader in = null;
+        Reader reader = null;
         boolean error = false;
         try {
-            in = new InputStreamReader(inputStream, IOHelper.getCharsetName(exchange));
-            CSVParser parser = new CSVParser(in, strategy);
+            reader = IOHelper.buffered(new InputStreamReader(inputStream, IOHelper.getCharsetName(exchange)));
+            CSVParser parser = new CSVParser(reader, strategy);
 
             if (skipFirstLine) {
-                // read one line ahead
+                // read one line ahead and skip it
                 parser.getLine();
             }
 
-            CsvIterator csvIterator = new CsvIterator(parser, in);
+            CsvIterator csvIterator = new CsvIterator(parser, reader);
             return lazyLoad ? csvIterator : loadAllAsList(csvIterator);
         } catch (Exception e) {
             error = true;
             throw e;
         } finally {
             if (error) {
-                IOHelper.close(in);
+                IOHelper.close(reader);
             }
         }
     }
@@ -129,7 +130,7 @@ public class CsvDataFormat implements DataFormat {
             }
             return list;
         } finally {
-            // close the iterator (which would close the stream) as we've loaded all the data upfront
+            // close the iterator (which would also close the reader) as we've loaded all the data upfront
             IOHelper.close(iter);
         }
     }
