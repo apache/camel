@@ -76,7 +76,7 @@ public class FopEndpoint extends DefaultEndpoint {
 
         if (fopFactory == null) {
             fopFactory = FopFactory.newInstance();
-        }
+    }
 
         if (userConfigURL != null) {
             InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(getCamelContext().getClassResolver(), userConfigURL);
