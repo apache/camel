@@ -29,6 +29,8 @@ import org.jgroups.View;
 
 public class JGroupsEndpoint extends DefaultEndpoint {
 
+    public static final String HEADER_JGROUPS_ORIGINAL_MESSAGE = "JGROUPS_ORIGINAL_MESSAGE";
+
     public static final String HEADER_JGROUPS_SRC = "JGROUPS_SRC";
 
     public static final String HEADER_JGROUPS_DEST = "JGROUPS_DEST";
@@ -72,6 +74,7 @@ public class JGroupsEndpoint extends DefaultEndpoint {
 
     public Exchange createExchange(Message message) {
         Exchange exchange = createExchange();
+        exchange.getIn().setHeader(HEADER_JGROUPS_ORIGINAL_MESSAGE, message);
         exchange.getIn().setHeader(HEADER_JGROUPS_SRC, message.getSrc());
         exchange.getIn().setHeader(HEADER_JGROUPS_DEST, message.getDest());
         exchange.getIn().setBody(message.getObject());

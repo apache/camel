@@ -24,6 +24,8 @@ import org.jgroups.JChannel;
 import org.jgroups.Message;
 import org.junit.Test;
 
+import static org.apache.camel.component.jgroups.JGroupsEndpoint.HEADER_JGROUPS_ORIGINAL_MESSAGE;
+
 public class JGroupsConsumerTest extends CamelTestSupport {
 
     // Fixtures
@@ -69,6 +71,19 @@ public class JGroupsConsumerTest extends CamelTestSupport {
         // Given
         mockEndpoint.setExpectedMessageCount(1);
         mockEndpoint.expectedBodiesReceived(message);
+
+        // When
+        channel.send(new Message(null, null, message));
+
+        // Then
+        mockEndpoint.assertIsSatisfied();
+    }
+
+    @Test
+    public void shouldKeepOriginalMessage() throws Exception {
+        // Given
+        mockEndpoint.setExpectedMessageCount(1);
+        mockEndpoint.message(0).header(HEADER_JGROUPS_ORIGINAL_MESSAGE).isInstanceOf(Message.class);
 
         // When
         channel.send(new Message(null, null, message));
