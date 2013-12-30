@@ -66,6 +66,8 @@ public class JGroupsConsumerTest extends CamelTestSupport {
         super.tearDown();
     }
 
+    // Tests
+
     @Test
     public void shouldConsumeMulticastedMessage() throws Exception {
         // Given
@@ -76,7 +78,7 @@ public class JGroupsConsumerTest extends CamelTestSupport {
         channel.send(new Message(null, null, message));
 
         // Then
-        mockEndpoint.assertIsSatisfied();
+        assertMockEndpointsSatisfied();
     }
 
     @Test
@@ -89,7 +91,7 @@ public class JGroupsConsumerTest extends CamelTestSupport {
         channel.send(new Message(null, null, message));
 
         // Then
-        mockEndpoint.assertIsSatisfied();
+        assertMockEndpointsSatisfied();
     }
 
 }
