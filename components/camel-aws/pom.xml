@@ -40,7 +40,8 @@
           org.apache.camel.spi.ComponentResolver;component=aws-sdb,
           org.apache.camel.spi.ComponentResolver;component=aws-ses,
           org.apache.camel.spi.ComponentResolver;component=aws-sns,
-          org.apache.camel.spi.ComponentResolver;component=aws-sqs
+          org.apache.camel.spi.ComponentResolver;component=aws-sqs,
+          org.apache.camel.spi.ComponentResolver;component=aws-swf
         </camel.osgi.export.service>
     </properties>
 

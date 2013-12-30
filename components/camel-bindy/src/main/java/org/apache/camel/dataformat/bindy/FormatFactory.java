@@ -65,7 +65,9 @@ public final class FormatFactory {
      * @throws IllegalArgumentException if not suitable formatter is found
      */
     @SuppressWarnings("unchecked")
-    private static Format<?> doGetFormat(Class<?> clazz, String pattern, String locale, int precision, boolean impliedDecimalSeparator) throws Exception {
+    private static Format<?> doGetFormat(Class<?> clazz, String pattern, String locale,
+                                         String timezone, int precision, boolean impliedDecimalSeparator)
+        throws Exception {
         if (clazz == byte.class || clazz == Byte.class) {
             return ObjectHelper.isNotEmpty(pattern)
                 ? new BytePatternFormat(pattern, getLocale(locale))
@@ -97,7 +99,7 @@ public final class FormatFactory {
         } else if (clazz == String.class) {
             return new StringFormat();
         } else if (clazz == Date.class) {
-            return new DatePatternFormat(pattern, getLocale(locale));
+            return new DatePatternFormat(pattern, timezone, getLocale(locale));
         } else if (clazz == char.class || clazz == Character.class) {
             return new CharacterFormat();
         } else if (clazz.isEnum()) {
@@ -117,9 +119,10 @@ public final class FormatFactory {
      */
     public static Format<?> getFormat(Class<?> clazz, String locale, DataField data) throws Exception {
         String pattern = data.pattern();
+        String timezone = data.timezone();
         int precision = data.precision();
 
-        return doGetFormat(clazz, pattern, locale, precision, data.impliedDecimalSeparator());
+        return doGetFormat(clazz, pattern, locale, timezone, precision, data.impliedDecimalSeparator());
     }
 
     /**
@@ -132,9 +135,10 @@ public final class FormatFactory {
      */
     public static Format<?> getFormat(Class<?> clazz, String locale, KeyValuePairField data) throws Exception {
         String pattern = data.pattern();
+        String timezone = data.timezone();
         int precision = data.precision();
 
-        return doGetFormat(clazz, pattern, locale, precision, data.impliedDecimalSeparator());
+        return doGetFormat(clazz, pattern, locale, timezone, precision, data.impliedDecimalSeparator());
     }
 
     private static Locale getLocale(String locale) {

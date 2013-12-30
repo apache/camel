@@ -21,7 +21,6 @@ import java.net.URISyntaxException;
 
 import org.apache.camel.PollingConsumer;
 import org.apache.camel.Producer;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.http4.helper.HttpHelper;
 import org.apache.camel.impl.DefaultPollingEndpoint;
 import org.apache.camel.spi.HeaderFilterStrategy;
@@ -30,11 +29,10 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.http.HttpHost;
 import org.apache.http.client.CookieStore;
 import org.apache.http.client.HttpClient;
-import org.apache.http.conn.ClientConnectionManager;
-import org.apache.http.conn.params.ConnRoutePNames;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.params.BasicHttpParams;
-import org.apache.http.params.HttpParams;
+import org.apache.http.client.config.RequestConfig;
+import org.apache.http.conn.HttpClientConnectionManager;
+import org.apache.http.impl.client.BasicCookieStore;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.protocol.HttpContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,9 +50,9 @@ public class HttpEndpoint extends DefaultPollingEndpoint implements HeaderFilter
     private HttpContext httpContext;
     private HttpComponent component;
     private URI httpUri;
-    private HttpParams clientParams;
     private HttpClientConfigurer httpClientConfigurer;
-    private ClientConnectionManager clientConnectionManager;
+    private HttpClientConnectionManager clientConnectionManager;
+    private HttpClientBuilder clientBuilder;
     private HttpClient httpClient;
     private boolean throwExceptionOnFailure = true;
     private boolean bridgeEndpoint;
@@ -67,8 +65,8 @@ public class HttpEndpoint extends DefaultPollingEndpoint implements HeaderFilter
     private String httpMethodRestrict;
     private UrlRewrite urlRewrite;
     private boolean clearExpiredCookies = true;
-    private CookieStore cookieStore;
-
+    private CookieStore cookieStore = new BasicCookieStore();
+    
     public HttpEndpoint() {
     }
 
@@ -76,21 +74,21 @@ public class HttpEndpoint extends DefaultPollingEndpoint implements HeaderFilter
         this(endPointURI, component, httpURI, null);
     }
 
-    public HttpEndpoint(String endPointURI, HttpComponent component, URI httpURI, ClientConnectionManager clientConnectionManager) throws URISyntaxException {
-        this(endPointURI, component, httpURI, new BasicHttpParams(), clientConnectionManager, null);
+    public HttpEndpoint(String endPointURI, HttpComponent component, URI httpURI, HttpClientConnectionManager clientConnectionManager) throws URISyntaxException {
+        this(endPointURI, component, httpURI, HttpClientBuilder.create(), clientConnectionManager, null);
     }
     
-    public HttpEndpoint(String endPointURI, HttpComponent component, HttpParams clientParams,
-                        ClientConnectionManager clientConnectionManager, HttpClientConfigurer clientConfigurer) throws URISyntaxException {
-        this(endPointURI, component, null, clientParams, clientConnectionManager, clientConfigurer);
+    public HttpEndpoint(String endPointURI, HttpComponent component, HttpClientBuilder clientBuilder,
+                        HttpClientConnectionManager clientConnectionManager, HttpClientConfigurer clientConfigurer) throws URISyntaxException {
+        this(endPointURI, component, null, clientBuilder, clientConnectionManager, clientConfigurer);
     }
 
-    public HttpEndpoint(String endPointURI, HttpComponent component, URI httpURI, HttpParams clientParams,
-                        ClientConnectionManager clientConnectionManager, HttpClientConfigurer clientConfigurer) throws URISyntaxException {
+    public HttpEndpoint(String endPointURI, HttpComponent component, URI httpURI, HttpClientBuilder clientBuilder,
+                        HttpClientConnectionManager clientConnectionManager, HttpClientConfigurer clientConfigurer) throws URISyntaxException {
         super(endPointURI, component);
         this.component = component;
         this.httpUri = httpURI;
-        this.clientParams = clientParams;
+        this.clientBuilder = clientBuilder;
         this.httpClientConfigurer = clientConfigurer;
         this.clientConnectionManager = clientConnectionManager;
     }
@@ -125,13 +123,13 @@ public class HttpEndpoint extends DefaultPollingEndpoint implements HeaderFilter
      * Producers and consumers should use the {@link #getHttpClient()} method instead.
      */
     protected HttpClient createHttpClient() {
-        ObjectHelper.notNull(clientParams, "clientParams");
+        ObjectHelper.notNull(clientBuilder, "httpClientBuilder");
         ObjectHelper.notNull(clientConnectionManager, "httpConnectionManager");
 
-        DefaultHttpClient answer = new DefaultHttpClient(clientConnectionManager, getClientParams());
-        if (cookieStore != null) {
-            answer.setCookieStore(cookieStore);
-        }
+        // setup the cookieStore
+        clientBuilder.setDefaultCookieStore(cookieStore);
+        // setup the httpConnectionManager
+        clientBuilder.setConnectionManager(clientConnectionManager);
 
         // configure http proxy from camelContext
         if (ObjectHelper.isNotEmpty(getCamelContext().getProperty("http.proxyHost")) && ObjectHelper.isNotEmpty(getCamelContext().getProperty("http.proxyPort"))) {
@@ -143,27 +141,27 @@ public class HttpEndpoint extends DefaultPollingEndpoint implements HeaderFilter
                 scheme = HttpHelper.isSecureConnection(getEndpointUri()) ? "https" : "http";
             }
             LOG.debug("CamelContext properties http.proxyHost, http.proxyPort, and http.proxyScheme detected. Using http proxy host: {} port: {} scheme: {}", new Object[]{host, port, scheme});
-            try {
-                component.registerPort(HttpHelper.isSecureConnection(scheme), component.getX509HostnameVerifier(), port, component.getSslContextParameters());
-            } catch (Exception ex) {
-                throw new RuntimeCamelException(ex);
-            }
             HttpHost proxy = new HttpHost(host, port, scheme);
-            answer.getParams().setParameter(ConnRoutePNames.DEFAULT_PROXY, proxy);
+            clientBuilder.setProxy(proxy);
+        }
+        
+        if (isAuthenticationPreemptive()) {
+            // setup the PreemptiveAuthInterceptor here
+            clientBuilder.addInterceptorFirst(new PreemptiveAuthInterceptor());
         }
 
         HttpClientConfigurer configurer = getHttpClientConfigurer();
         if (configurer != null) {
-            configurer.configureHttpClient(answer);
+            configurer.configureHttpClient(clientBuilder);
         }
 
         if (isBridgeEndpoint()) {
             // need to use noop cookiestore as we do not want to keep cookies in memory
-            answer.setCookieStore(new NoopCookieStore());
+            clientBuilder.setDefaultCookieStore(new NoopCookieStore());
         }
 
-        LOG.debug("Created HttpClient {}", answer);
-        return answer;
+        LOG.debug("Setup the HttpClientBuilder {}", clientBuilder);
+        return clientBuilder.build();
     }
 
     public void connect(HttpConsumer consumer) throws Exception {
@@ -182,31 +180,39 @@ public class HttpEndpoint extends DefaultPollingEndpoint implements HeaderFilter
     public boolean isSingleton() {
         return true;
     }
+    
+    @Override
+    protected void doStop() throws Exception {
+        if (component != null && component.getClientConnectionManager() != clientConnectionManager) {
+            // need to shutdown the ConnectionManager
+            clientConnectionManager.shutdown();
+        }
+    }
 
 
     // Properties
     //-------------------------------------------------------------------------
 
     /**
-     * Provide access to the client parameters used on new {@link HttpClient} instances
+     * Provide access to the http client request parameters used on new {@link RequestConfig} instances
      * used by producers or consumers of this endpoint.
      */
-    public HttpParams getClientParams() {
-        return clientParams;
+    public HttpClientBuilder getClientBuilder() {
+        return clientBuilder;
     }
 
     /**
-     * Provide access to the client parameters used on new {@link HttpClient} instances
+     * Provide access to the http client request parameters used on new {@link RequestConfig} instances
      * used by producers or consumers of this endpoint.
      */
-    public void setClientParams(HttpParams clientParams) {
-        this.clientParams = clientParams;
+    public void setClientBuilder(HttpClientBuilder clientBuilder) {
+        this.clientBuilder = clientBuilder;
     }
 
     public HttpClientConfigurer getHttpClientConfigurer() {
         return httpClientConfigurer;
     }
-
+    
     public HttpContext getHttpContext() {
         return httpContext;
     }
@@ -272,11 +278,11 @@ public class HttpEndpoint extends DefaultPollingEndpoint implements HeaderFilter
         this.httpUri = httpUri;
     }
 
-    public ClientConnectionManager getClientConnectionManager() {
+    public HttpClientConnectionManager getClientConnectionManager() {
         return clientConnectionManager;
     }
 
-    public void setClientConnectionManager(ClientConnectionManager clientConnectionManager) {
+    public void setClientConnectionManager(HttpClientConnectionManager clientConnectionManager) {
         this.clientConnectionManager = clientConnectionManager;
     }
 

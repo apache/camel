@@ -27,37 +27,7 @@
     <bean id="properties" class="org.apache.camel.component.properties.PropertiesComponent"/>
     <bean id="httpComponent" class="org.apache.camel.component.http4.HttpComponent">
         <property name="camelContext" ref="camel"/>
-        <property name="clientConnectionManager" ref="clientConnectionManager"/>
         <property name="connectionsPerRoute" value="5" />
-    </bean>
-
-    <bean id="clientConnectionManager" class="org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager">
-        <constructor-arg ref="clientParams"/>
-        <constructor-arg ref="schemeRegistry"/>
-    </bean>
-
-    <bean id="clientParams" class="org.apache.http.params.BasicHttpParams" />
-    
-    <bean id="plainSocketFactory" class="org.apache.http.conn.scheme.PlainSocketFactory" factory-method="getSocketFactory" />
-    
-    <bean id="http" class="org.apache.http.conn.scheme.Scheme">
-    	<constructor-arg value="http" />
-    	<constructor-arg>
-    		<bean class="org.apache.http.conn.scheme.PlainSocketFactory" factory-method="getSocketFactory" />
-    	</constructor-arg>
-    	<constructor-arg value="80" />
-    </bean>
-    
-    <bean id="schemeRegistry" class="org.apache.http.conn.scheme.SchemeRegistry" />
-    
-    <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
-    	<property name="targetObject" ref="schemeRegistry"/>
-		<property name="targetMethod" value="register"/>
-    	<property name="arguments">
-    		<list>
-    			<ref bean="http"/>
-    		</list>
-    	</property>
     </bean>
 
     <!-- END SNIPPET: e1 -->

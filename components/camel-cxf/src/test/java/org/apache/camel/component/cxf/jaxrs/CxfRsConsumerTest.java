@@ -35,11 +35,11 @@ import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.component.cxf.jaxrs.testbean.Customer;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
 import org.junit.Test;
 
@@ -119,7 +119,7 @@ public class CxfRsConsumerTest extends CamelTestSupport {
     private void invokeGetCustomer(String uri, String expect) throws Exception {
         HttpGet get = new HttpGet(uri);
         get.addHeader("Accept" , "application/json");
-        HttpClient httpclient = new DefaultHttpClient();
+        CloseableHttpClient httpclient = HttpClientBuilder.create().build();
 
         try {
             HttpResponse response = httpclient.execute(get);
@@ -127,7 +127,7 @@ public class CxfRsConsumerTest extends CamelTestSupport {
             assertEquals(expect,
                          EntityUtils.toString(response.getEntity()));
         } finally {
-            httpclient.getConnectionManager().shutdown();
+            httpclient.close();
         }
     }
     
@@ -170,14 +170,14 @@ public class CxfRsConsumerTest extends CamelTestSupport {
         entity.setContentType("text/xml; charset=ISO-8859-1");
         put.addHeader("test", "header1;header2");
         put.setEntity(entity);
-        HttpClient httpclient = new DefaultHttpClient();
+        CloseableHttpClient httpclient = HttpClientBuilder.create().build();
 
         try {
             HttpResponse response = httpclient.execute(put);
             assertEquals(200, response.getStatusLine().getStatusCode());
             assertEquals("", EntityUtils.toString(response.getEntity()));
         } finally {
-            httpclient.getConnectionManager().shutdown();
+            httpclient.close();
         }
     }
         

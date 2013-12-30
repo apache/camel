@@ -29,7 +29,7 @@ import org.junit.Test;
 public class AdviceAndInterceptHttp4IssueTest extends CamelTestSupport {
 
     private String simpleProvider = "http4:fakeHTTPADDRESS.com:80?throwExceptionOnFailure=false";
-    private String providerWithParameter = "http4:fakeHTTPADDRESS.com:80?throwExceptionOnFailure=false&httpClient.cookiePolicy=ignoreCookies";
+    private String providerWithParameter = "http4:fakeHTTPADDRESS.com:80?throwExceptionOnFailure=false&httpClient.cookieSpec=ignoreCookies";
     private volatile boolean messageIntercepted;
 
     @Test

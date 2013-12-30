@@ -48,7 +48,6 @@ public class FailOverFeatureTest {
     public static void init() {
 
         // publish a web-service
-        String addr1 = "http://localhost:9001/hello";
         ServerFactoryBean factory = new ServerFactoryBean();
         factory.setAddress(SERVICE_ADDRESS);
         factory.setServiceBean(new HelloServiceImpl());

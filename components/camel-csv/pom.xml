@@ -57,6 +57,12 @@
       <scope>test</scope>
     </dependency>
     <dependency>
+      <groupId>com.googlecode.jmockit</groupId>
+      <artifactId>jmockit</artifactId>
+      <version>${jmockit-version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
       <scope>test</scope>

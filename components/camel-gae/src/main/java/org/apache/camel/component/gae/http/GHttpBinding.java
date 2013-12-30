@@ -164,7 +164,7 @@ public class GHttpBinding implements
         String uri = exchange.getIn().getHeader(Exchange.HTTP_URI, String.class);
         String query = exchange.getIn().getHeader(Exchange.HTTP_QUERY, String.class);
         if (uri != null && !endpoint.isBridgeEndpoint()) {
-            return getEndpointUrl(UnsafeUriCharactersEncoder.encode(uri), query);
+            return getEndpointUrl(UnsafeUriCharactersEncoder.encodeHttpURI(uri), query);
         }
         return getEndpointUrl(endpoint.getEndpointUri(), query);
     }

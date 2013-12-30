@@ -18,7 +18,6 @@
 package org.apache.camel.component.http4;
 
 import java.io.IOException;
-import java.util.List;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;

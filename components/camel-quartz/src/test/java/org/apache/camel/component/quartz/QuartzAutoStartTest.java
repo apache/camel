@@ -18,13 +18,12 @@ package org.apache.camel.component.quartz;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 /**
  * @version 
  */
-public class QuartzAutoStartTest extends CamelTestSupport {
+public class QuartzAutoStartTest extends BaseQuartzTest {
 
     @Test
     public void testQuartzAutoStart() throws Exception {

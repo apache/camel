@@ -48,4 +48,16 @@ public class UriConfigurationTest extends Assert {
         assertEquals(new Integer(50), twitterEndpoint.getProperties().getCount());
         assertEquals(new Integer(2), twitterEndpoint.getProperties().getNumberOfPages());
     }
+    
+    @Test
+    public void testHttpProxySetting() throws Exception {
+        Endpoint endpoint = context.getEndpoint("twitter:todo/todo?httpProxyHost=example.com&httpProxyPort=3338&httpProxyUser=test&httpProxyPassword=pwd");
+        assertTrue("Endpoint not a TwitterEndpoint: " + endpoint, endpoint instanceof TwitterEndpoint);
+        TwitterEndpoint twitterEndpoint = (TwitterEndpoint) endpoint;
+        
+        assertEquals("example.com", twitterEndpoint.getProperties().getHttpProxyHost());
+        assertEquals(3338, twitterEndpoint.getProperties().getHttpProxyPort());
+        assertEquals("test", twitterEndpoint.getProperties().getHttpProxyUser());
+        assertEquals("pwd", twitterEndpoint.getProperties().getHttpProxyPassword());
+    }
 }

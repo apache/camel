@@ -194,7 +194,7 @@ public final class NettyHttpHelper {
         }
 
         // ensure uri is encoded to be valid
-        uri = UnsafeUriCharactersEncoder.encode(uri);
+        uri = UnsafeUriCharactersEncoder.encodeHttpURI(uri);
 
         return uri;
     }
@@ -217,7 +217,7 @@ public final class NettyHttpHelper {
         }
         if (queryString != null) {
             // need to encode query string
-            queryString = UnsafeUriCharactersEncoder.encode(queryString);
+            queryString = UnsafeUriCharactersEncoder.encodeHttpURI(queryString);
             uri = URISupport.createURIWithQuery(uri, queryString);
         }
         return uri;

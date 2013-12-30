@@ -39,8 +39,8 @@ public class JcrAuthTokenWithLoginTest extends JcrAuthTestBase {
             @Override
             public void configure() throws Exception {
                 // START SNIPPET: jcr
-                from("direct:a").setProperty(JcrConstants.JCR_NODE_NAME,
-                        constant("node")).setProperty("my.contents.property",
+                from("direct:a").setHeader(JcrConstants.JCR_NODE_NAME,
+                        constant("node")).setHeader("my.contents.property",
                         body()).to(
                         "jcr://not-a-user:nonexisting-password@repository" + BASE_REPO_PATH);
                 // END SNIPPET: jcr

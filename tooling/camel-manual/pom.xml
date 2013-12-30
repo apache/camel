@@ -37,7 +37,20 @@
           <artifactId>tagsoup</artifactId>
       </dependency>
   </dependencies>
+  
+  <profiles>
+     <profile>
+         <id>fastinstall</id>
+         <properties>
+             <generate.manual.skip.exec>true</generate.manual.skip.exec>
+         </properties>
+     </profile>
+  </profiles>
 
+  <properties>
+      <generate.manual.skip.exec>false</generate.manual.skip.exec>
+  </properties>
+         
   <build>
     <plugins>
         <plugin>
@@ -81,6 +94,7 @@
                                 </script>
                             ]]></argument>
                             <argument>${project.build.directory}</argument>
+                            <argument>${generate.manual.skip.exec}</argument>
                         </arguments>
                     </configuration>
                 </execution>
@@ -97,6 +111,7 @@
               <goal>attach-artifact</goal>
             </goals>
             <configuration>
+              <skipAttach>true</skipAttach>
               <artifacts>
                 <artifact>
                   <file>${project.build.directory}/site/manual/camel-manual-${project.version}.html</file>

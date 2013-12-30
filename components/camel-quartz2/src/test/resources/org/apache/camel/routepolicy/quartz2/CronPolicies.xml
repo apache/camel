@@ -22,31 +22,29 @@
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
 
-    <bean id="date" class="org.apache.camel.routepolicy.quartz2.SimpleDate"/>
+  <bean id="defaultPolicy" class="org.apache.camel.routepolicy.quartz2.CronScheduledRoutePolicy"/>
 
-    <bean id="defaultPolicy" class="org.apache.camel.routepolicy.quartz2.CronScheduledRoutePolicy"/>
+  <bean id="startPolicy" class="org.apache.camel.routepolicy.quartz2.CronScheduledRoutePolicy">
+    <property name="routeStartTime" value="*/3 * * * * ?"/>
+  </bean>
 
-    <bean id="startPolicy" class="org.apache.camel.routepolicy.quartz2.CronScheduledRoutePolicy">
-    	<property name="routeStartTime" value="*/3 * * * * ?"/>
-    </bean>
-    
-    <bean id="stopPolicy" class="org.apache.camel.routepolicy.quartz2.CronScheduledRoutePolicy">
-    	<property name="routeStopTime" value="*/3 * * * * ?"/>
-	</bean>
-	
-	<bean id="suspendPolicy" class="org.apache.camel.routepolicy.quartz2.CronScheduledRoutePolicy">
-    	<property name="routeSuspendTime" value="*/3 * * * * ?"/>
-  	</bean>
-  	
-  	<bean id="resumePolicy" class="org.apache.camel.routepolicy.quartz2.CronScheduledRoutePolicy">
-    	<property name="routeResumeTime" value="*/3 * * * * ?"/>
- 	</bean> 
- 	
-    <routeContext id="testRouteContext" xmlns="http://camel.apache.org/schema/spring">
-        <route id="testRoute">
-            <from uri="direct:start"/>
-            <to uri="mock:success"/>
-        </route>
-    </routeContext>
+  <bean id="stopPolicy" class="org.apache.camel.routepolicy.quartz2.CronScheduledRoutePolicy">
+    <property name="routeStopTime" value="*/3 * * * * ?"/>
+  </bean>
+
+  <bean id="suspendPolicy" class="org.apache.camel.routepolicy.quartz2.CronScheduledRoutePolicy">
+    <property name="routeSuspendTime" value="*/3 * * * * ?"/>
+  </bean>
+
+  <bean id="resumePolicy" class="org.apache.camel.routepolicy.quartz2.CronScheduledRoutePolicy">
+    <property name="routeResumeTime" value="*/3 * * * * ?"/>
+  </bean>
+
+  <routeContext id="testRouteContext" xmlns="http://camel.apache.org/schema/spring">
+    <route id="testRoute">
+      <from uri="direct:start"/>
+      <to uri="mock:success"/>
+    </route>
+  </routeContext>
 
 </beans>

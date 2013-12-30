@@ -256,7 +256,7 @@ public class QuartzEndpoint extends DefaultEndpoint {
         JobDataMap jobDataMap = jobDetail.getJobDataMap();
         String camelContextName = getCamelContext().getManagementName();
         String endpointUri = getEndpointUri();
-        LOG.debug("Adding camelContextName={}, endpintUri={} into job data map.", camelContextName, endpointUri);
+        LOG.debug("Adding camelContextName={}, endpointUri={} into job data map.", camelContextName, endpointUri);
         jobDataMap.put(QuartzConstants.QUARTZ_CAMEL_CONTEXT_NAME, camelContextName);
         jobDataMap.put(QuartzConstants.QUARTZ_ENDPOINT_URI, endpointUri);
     }
@@ -276,18 +276,27 @@ public class QuartzEndpoint extends DefaultEndpoint {
                     .build();
         } else {
             LOG.debug("Creating SimpleTrigger.");
+            int repeat = SimpleTrigger.REPEAT_INDEFINITELY;
+            String repeatString = (String) triggerParameters.get("repeatCount");
+            if (repeatString != null) {
+                repeat = Integer.valueOf(repeatString);
+            }
+
+            // default use 1 sec interval
+            long interval = 1000;
+            String intervalString = (String) triggerParameters.get("repeatInterval");
+            if (intervalString != null) {
+                interval = Long.valueOf(intervalString);
+            }
+
             TriggerBuilder<SimpleTrigger> triggerBuilder = TriggerBuilder.newTrigger()
                     .withIdentity(triggerKey)
                     .startAt(startTime)
-                    .withSchedule(simpleSchedule().withMisfireHandlingInstructionFireNow());
+                    .withSchedule(simpleSchedule().withMisfireHandlingInstructionFireNow()
+                            .withRepeatCount(repeat).withIntervalInMilliseconds(interval));
 
-            // Enable trigger to fire now by setting startTime in the past.
             if (fireNow) {
-                String intervalString = (String) triggerParameters.get("repeatInterval");
-                if (intervalString != null) {
-                    long interval = Long.valueOf(intervalString);
-                    triggerBuilder.startAt(new Date(System.currentTimeMillis() - interval));
-                }
+                triggerBuilder.startNow();
             }
 
             result = triggerBuilder.build();

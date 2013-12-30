@@ -92,7 +92,7 @@ public class NettyHttpComponent extends NettyComponent implements HeaderFilterSt
         }
 
         // create the address uri which includes the remainder parameters (which is not configuration parameters for this component)
-        URI u = new URI(UnsafeUriCharactersEncoder.encode(remaining));
+        URI u = new URI(UnsafeUriCharactersEncoder.encodeHttpURI(remaining));
         String addressUri = URISupport.createRemainingURI(u, parameters).toString();
 
         NettyHttpEndpoint answer = new NettyHttpEndpoint(addressUri, this, config);
@@ -130,7 +130,7 @@ public class NettyHttpComponent extends NettyComponent implements HeaderFilterSt
     @Override
     protected NettyConfiguration parseConfiguration(NettyConfiguration configuration, String remaining, Map<String, Object> parameters) throws Exception {
         // ensure uri is encoded to be valid
-        String safe = UnsafeUriCharactersEncoder.encode(remaining);
+        String safe = UnsafeUriCharactersEncoder.encodeHttpURI(remaining);
         URI uri = new URI(safe);
         configuration.parseURI(uri, parameters, this, "http", "https");
 

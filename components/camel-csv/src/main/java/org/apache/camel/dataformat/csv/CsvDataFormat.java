@@ -20,9 +20,9 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
+import java.io.Reader;
 import java.io.Writer;
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
@@ -54,6 +54,10 @@ public class CsvDataFormat implements DataFormat {
     private boolean autogenColumns = true;
     private String delimiter;
     private boolean skipFirstLine;
+    /**
+     * Lazy row loading with iterator for big files.
+     */
+    private boolean lazyLoad;
 
     public void marshal(Exchange exchange, Object object, OutputStream outputStream) throws Exception {
         if (delimiter != null) {
@@ -95,33 +99,42 @@ public class CsvDataFormat implements DataFormat {
         }
         strategy.setDelimiter(config.getDelimiter());
 
-        InputStreamReader in = new InputStreamReader(inputStream, IOHelper.getCharsetName(exchange));
-
+        Reader reader = null;
+        boolean error = false;
         try {
-            CSVParser parser = new CSVParser(in, strategy);
+            reader = IOHelper.buffered(new InputStreamReader(inputStream, IOHelper.getCharsetName(exchange)));
+            CSVParser parser = new CSVParser(reader, strategy);
+
+            if (skipFirstLine) {
+                // read one line ahead and skip it
+                parser.getLine();
+            }
+
+            CsvIterator csvIterator = new CsvIterator(parser, reader);
+            return lazyLoad ? csvIterator : loadAllAsList(csvIterator);
+        } catch (Exception e) {
+            error = true;
+            throw e;
+        } finally {
+            if (error) {
+                IOHelper.close(reader);
+            }
+        }
+    }
+
+    private List<List<String>> loadAllAsList(CsvIterator iter) {
+        try {
             List<List<String>> list = new ArrayList<List<String>>();
-            boolean isFirstLine = true;
-            while (true) {
-                String[] strings = parser.getLine();
-                if (isFirstLine) {
-                    isFirstLine = false;
-                    if (skipFirstLine) {
-                        // skip considering the first line if we're asked to do so
-                        continue;
-                    }
-                }
-                if (strings == null) {
-                    break;
-                }
-                List<String> line = Arrays.asList(strings);
-                list.add(line);
+            while (iter.hasNext()) {
+                list.add(iter.next());
             }
             return list;
         } finally {
-            IOHelper.close(in);
+            // close the iterator (which would also close the reader) as we've loaded all the data upfront
+            IOHelper.close(iter);
         }
     }
-    
+
     public String getDelimiter() {
         return delimiter;
     }
@@ -170,6 +183,14 @@ public class CsvDataFormat implements DataFormat {
         this.skipFirstLine = skipFirstLine;
     }
 
+    public boolean isLazyLoad() {
+        return lazyLoad;
+    }
+
+    public void setLazyLoad(boolean lazyLoad) {
+        this.lazyLoad = lazyLoad;
+    }
+
     private synchronized void updateFieldsInConfig(Set<?> set, Exchange exchange) {
         for (Object value : set) {
             if (value != null) {
@@ -182,4 +203,5 @@ public class CsvDataFormat implements DataFormat {
             }
         }
     }
+    
 }

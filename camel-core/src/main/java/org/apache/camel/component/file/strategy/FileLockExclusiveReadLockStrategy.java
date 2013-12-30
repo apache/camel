@@ -63,9 +63,12 @@ public class FileLockExclusiveReadLockStrategy extends MarkerFileExclusiveReadLo
 
         LOG.trace("Waiting for exclusive read lock to file: {}", target);
 
+        FileChannel channel = null;
+        RandomAccessFile randomAccessFile = null;
         try {
+            randomAccessFile = new RandomAccessFile(target, "rw");
             // try to acquire rw lock on the file before we can consume it
-            FileChannel channel = new RandomAccessFile(target, "rw").getChannel();
+            channel = randomAccessFile.getChannel();
 
             boolean exclusive = false;
             StopWatch watch = new StopWatch();
@@ -113,6 +116,9 @@ public class FileLockExclusiveReadLockStrategy extends MarkerFileExclusiveReadLo
                 // we were interrupted while sleeping, we are likely being shutdown so return false
                 return false;
             }
+        } finally {
+            IOHelper.close(channel, "while acquiring exclusive read lock for file: " + lockFileName, LOG);
+            IOHelper.close(randomAccessFile, "while acquiring exclusive read lock for file: " + lockFileName, LOG);
         }
 
         return true;
@@ -131,7 +137,7 @@ public class FileLockExclusiveReadLockStrategy extends MarkerFileExclusiveReadLo
                 lock.release();
             } finally {
                 // must close channel first
-                IOHelper.close(channel, "while acquiring exclusive read lock for file: " + lockFileName, LOG);
+                IOHelper.close(channel, "while releasing exclusive read lock for file: " + lockFileName, LOG);
             }
         }
     }

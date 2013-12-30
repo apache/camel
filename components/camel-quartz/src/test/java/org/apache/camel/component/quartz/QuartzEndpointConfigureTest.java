@@ -17,7 +17,6 @@
 package org.apache.camel.component.quartz;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 import org.quartz.CronTrigger;
 import org.quartz.SimpleTrigger;
@@ -26,7 +25,7 @@ import org.quartz.Trigger;
 /**
  * @version 
  */
-public class QuartzEndpointConfigureTest extends CamelTestSupport {
+public class QuartzEndpointConfigureTest extends BaseQuartzTest {
 
     @Test
     public void testConfigureGroupAndName() throws Exception {

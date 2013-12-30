@@ -18,7 +18,6 @@ package org.apache.camel.component.quartz2;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.hamcrest.CoreMatchers;
 import org.junit.Assert;
 import org.junit.Test;
@@ -30,7 +29,7 @@ import org.quartz.Trigger;
  * This test the  CronTrigger as a timer endpoint in a route.
  * @version 
  */
-public class QuartzCronRouteTest extends CamelTestSupport {
+public class QuartzCronRouteTest extends BaseQuartzTest {
 
     @Test
     public void testQuartzCronRoute() throws Exception {

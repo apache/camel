@@ -37,7 +37,7 @@
     <abdera-version>1.1.3</abdera-version>
     <!-- Note that activemq dependency is only used for testing! -->
     <activemq-version>5.9.0</activemq-version>
-    <ahc-version>1.7.20</ahc-version>
+    <ahc-version>1.7.21</ahc-version>
     <ant-bundle-version>1.7.0_6</ant-bundle-version>
     <antlr-bundle-version>3.4_1</antlr-bundle-version>
     <antlr-runtime-bundle-version>3.4_2</antlr-runtime-bundle-version>
@@ -120,7 +120,7 @@
     <easymock-version>3.2</easymock-version>
     <eclipse-compiler-version>4.2.2</eclipse-compiler-version>
     <eclipse-equinox-common-version>3.3.0-v20070426</eclipse-equinox-common-version>
-    <ehcache-version>2.7.4</ehcache-version>
+    <ehcache-version>2.8.0</ehcache-version>
     <elasticsearch-bundle-version>0.90.5_1</elasticsearch-bundle-version>
     <elasticsearch-version>0.90.5</elasticsearch-version>
     <el-api-1.0-version>1.0.1</el-api-1.0-version>
@@ -173,20 +173,19 @@
     <hawtbuf-version>1.9</hawtbuf-version>
     <hawtdb-version>1.6</hawtdb-version>
     <hawtdispatch-version>1.18</hawtdispatch-version>
-    <hawtio-version>1.2.0</hawtio-version>
     <hazelcast-version>3.0.2</hazelcast-version>
     <hbase-version>0.94.10</hbase-version>
     <hbase-bundle-version>0.94.6_1</hbase-bundle-version>
     <hibernate-validator-version>5.0.1.Final</hibernate-validator-version>
     <hibernate-version>4.2.7.Final</hibernate-version>
     <httpunit-version>1.7</httpunit-version>
-    <httpcore4-version>4.3</httpcore4-version>
+    <httpcore4-version>4.3.1</httpcore4-version>
     <httpclient4-version>4.3.1</httpclient4-version>
     <httpclient-version>3.1</httpclient-version> 
     <ibatis-bundle-version>2.3.4.726_4</ibatis-bundle-version>
     <ibatis-version>2.3.4.726</ibatis-version>
     <ical4j-version>1.0.5.2</ical4j-version>
-    <infinispan-version>6.0.0.Final</infinispan-version>
+    <infinispan-version>6.0.1.Final</infinispan-version>
     <irclib-bundle-version>1.10_5</irclib-bundle-version>
     <irclib-version>1.10</irclib-version>
     <isorelax-bundle-version>20050913_4</isorelax-bundle-version>
@@ -209,11 +208,11 @@
     <jaxb-bundle-version>2.2.1.1_2</jaxb-bundle-version>
     <jaxen-version>1.1.4</jaxen-version>
     <jboss-javaee-6-version>1.0.0.Final</jboss-javaee-6-version>
-    <jboss-logging-version>3.1.3.GA</jboss-logging-version>
+    <jboss-logging-version>3.1.4.GA</jboss-logging-version>
     <jboss-marshalling-version>1.3.18.GA</jboss-marshalling-version>
-    <jclouds-version>1.6.2-incubating</jclouds-version>
+    <jclouds-version>1.7.0</jclouds-version>
     <!-- jclouds must use this guava version -->
-    <jclouds-google-guava-version>14.0.1</jclouds-google-guava-version>
+    <jclouds-google-guava-version>15.0</jclouds-google-guava-version>
     <jcr-version>2.0</jcr-version>
     <jdom-bundle-version>1.1_4</jdom-bundle-version>
     <jdom-version>1.1.3</jdom-version>
@@ -221,7 +220,7 @@
     <jetty-version>8.1.12.v20130726</jetty-version>
     <jetty6-bundle-version>6.1.26_4</jetty6-bundle-version>
     <jetty6-version>6.1.26</jetty6-version>
-    <jettison-version>1.3.4</jettison-version>
+    <jettison-version>1.3.5</jettison-version>
     <jexcelapi-bundle-version>2.4.2_4</jexcelapi-bundle-version>
     <jexcelapi-version>2.4.2</jexcelapi-version>
     <jgroups-version>3.4.1.Final</jgroups-version>
@@ -229,11 +228,12 @@
     <jing-bundle-version>20030619_5</jing-bundle-version>
     <jing-version>20030619</jing-version>
     <jline-version>0.9.94</jline-version>
+    <jmockit-version>1.5</jmockit-version>
     <jodatime-bundle-version>1.6.2</jodatime-bundle-version>
     <jodatime2-bundle-version>2.3</jodatime2-bundle-version>
     <josql-bundle-version>1.5_5</josql-bundle-version>
     <josql-version>1.5</josql-version>
-    <jruby-version>1.7.6</jruby-version>
+    <jruby-version>1.7.8</jruby-version>
     <jsendnsca-version>1.3.1</jsendnsca-version>
     <jsmpp-version>2.1.0_4</jsmpp-version>
     <jsch-version>0.1.49</jsch-version>
@@ -316,7 +316,7 @@
     <openejb-version>4.5.2</openejb-version>
     <openjpa-version>2.2.2</openjpa-version>
     <opensaml-version>2.5.1_2</opensaml-version>
-    <optaplanner-version>6.0.0.Final</optaplanner-version>
+    <optaplanner-version>6.0.1.Final</optaplanner-version>
     <oro-bundle-version>2.0.8_6</oro-bundle-version>
     <oscache-bundle-version>2.4_5</oscache-bundle-version>
     <osgi-version>4.3.1</osgi-version>
@@ -347,7 +347,7 @@
     <rome-version>1.0</rome-version>
     <rxjava-version>0.15.1</rxjava-version>
     <saaj-impl-version>1.3.2_2</saaj-impl-version>
-    <saxon-bundle-version>9.5.1-1_1</saxon-bundle-version>
+    <saxon-bundle-version>9.5.1-2_1</saxon-bundle-version>
     <saxon-version>9.5.1-2</saxon-version>
     <scala-version>2.10.3</scala-version>
     <scala-maven-plugin-version>3.1.6</scala-maven-plugin-version>
@@ -385,12 +385,13 @@
     <spring-version>${spring32-version}</spring-version>
     <spring31-version>3.1.4.RELEASE</spring31-version>
     <spring32-version>3.2.5.RELEASE</spring32-version>
+    <spring4-version>4.0.0.RELEASE</spring4-version>
     <spring-osgi-version>1.2.1</spring-osgi-version>
     <spring-security-version>3.1.4.RELEASE</spring-security-version>
     <spring-ws-version>2.1.4.RELEASE</spring-ws-version>
     <spymemcached-bundle-version>2.5_2</spymemcached-bundle-version> <!-- FIXME cmueller: not in sync! -->
     <spymemcached-version>2.8.4</spymemcached-version>
-    <sshd-version>0.8.0</sshd-version>
+    <sshd-version>0.9.0</sshd-version>
     <stompjms-version>1.18</stompjms-version>
     <stax-api-version>1.0.1</stax-api-version>
     <stax2-api-bundle-version>3.1.1</stax2-api-bundle-version>
@@ -439,8 +440,8 @@
     <xpp3-bundle-version>1.1.4c_6</xpp3-bundle-version>
     <xpp3-version>1.1.4c</xpp3-version>
     <xsdlib-version>2013.2</xsdlib-version>
-    <xstream-bundle-version>1.4.4_1</xstream-bundle-version>
-    <xstream-version>1.4.4</xstream-version>
+    <xstream-bundle-version>1.4.5_1</xstream-bundle-version>
+    <xstream-version>1.4.5</xstream-version>
     <xom-version>1.2.5</xom-version>
     <zookeeper-version>3.4.5</zookeeper-version>
 
@@ -816,6 +817,11 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-jetty</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-jgroups</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -2739,6 +2745,12 @@
       <id>spring3.2</id>
       <properties>
         <spring-version>${spring32-version}</spring-version>
+      </properties>
+    </profile>
+    <profile>
+      <id>spring4</id>
+      <properties>
+        <spring-version>${spring4-version}</spring-version>
       </properties>
     </profile>
 

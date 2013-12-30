@@ -78,7 +78,8 @@ public final class ExchangeBuilder {
     
     /**
      * Set the exchange property
-     * @param pattern exchange pattern
+     * @param key the key of the exchange property
+     * @param value the value of the exchange property
      * @return exchange builder
      */
     public ExchangeBuilder withProperty(String key, Object value) {

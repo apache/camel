@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.quartz2;
 
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 import org.quartz.Scheduler;
 import org.quartz.SchedulerFactory;
@@ -25,7 +24,7 @@ import org.quartz.impl.StdSchedulerFactory;
 /**
  * @version 
  */
-public class QuartzComponentTest extends CamelTestSupport {
+public class QuartzComponentTest extends BaseQuartzTest {
 
     @Test
     public void testQuartzComponentCustomScheduler() throws Exception {

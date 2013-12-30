@@ -104,7 +104,7 @@ public class AhcComponent extends HeaderFilterStrategyComponent {
         }
 
         // restructure uri to be based on the parameters left as we dont want to include the Camel internal options
-        addressUri = UnsafeUriCharactersEncoder.encode(addressUri);
+        addressUri = UnsafeUriCharactersEncoder.encodeHttpURI(addressUri);
         URI httpUri = URISupport.createRemainingURI(new URI(addressUri), parameters);
         endpoint.setHttpUri(httpUri);
         

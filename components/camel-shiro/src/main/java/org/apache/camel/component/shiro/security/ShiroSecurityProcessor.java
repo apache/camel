@@ -97,6 +97,9 @@ public class ShiroSecurityProcessor extends DelegateAsyncProcessor {
         if (token instanceof ShiroSecurityToken) {
             ShiroSecurityToken sst = (ShiroSecurityToken) token;
             encryptedToken = ShiroSecurityHelper.encrypt(sst, policy.getPassPhrase(), policy.getCipherService());
+            // Remove unencrypted token + replace with an encrypted token
+            exchange.getIn().removeHeader(ShiroSecurityConstants.SHIRO_SECURITY_TOKEN);
+            exchange.getIn().setHeader(ShiroSecurityConstants.SHIRO_SECURITY_TOKEN, encryptedToken);
         } else if (token instanceof String) {
             String data = (String) token;
             if (policy.isBase64()) {

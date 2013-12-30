@@ -44,6 +44,7 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
@@ -60,6 +61,9 @@ import org.apache.xml.security.keys.KeyInfo;
 import org.apache.xml.security.utils.Constants;
 import org.apache.xml.security.utils.EncryptionConstants;
 import org.apache.xml.security.utils.XMLUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
 
 
 public class XMLSecurityDataFormat implements DataFormat, CamelContextAware {
@@ -99,7 +103,9 @@ public class XMLSecurityDataFormat implements DataFormat, CamelContextAware {
      */
     @Deprecated
     public static final String XML_ENC_KEY_STORE_ALIAS = "CamelXmlEncryptionKeyAlias";
-        
+    
+    private static final Logger LOG = LoggerFactory.getLogger(XMLSecurityDataFormat.class);
+    private static final String DEFAULT_KEY = "Just another 24 Byte key";
 
     private String xmlCipherAlgorithm;
     private String keyCipherAlgorithm;
@@ -138,7 +144,7 @@ public class XMLSecurityDataFormat implements DataFormat, CamelContextAware {
     public XMLSecurityDataFormat() {
         this.xmlCipherAlgorithm = XMLCipher.TRIPLEDES;
         // set a default pass phrase as its required
-        this.passPhrase = "Just another 24 Byte key".getBytes();
+        this.passPhrase = DEFAULT_KEY.getBytes();
         this.secureTag = "";
         this.secureTagContents = true;
 
@@ -664,10 +670,13 @@ public class XMLSecurityDataFormat implements DataFormat, CamelContextAware {
             } else {
                 secretKey = new SecretKeySpec(passPhrase, "AES");
             }
+            if (Arrays.equals(passPhrase, DEFAULT_KEY.getBytes())) {
+                LOG.warn("Using the default encryption key is not secure");
+            }
         } catch (InvalidKeyException e) {
             throw new InvalidKeyException("InvalidKeyException due to invalid passPhrase: " + Arrays.toString(passPhrase));
         } catch (NoSuchAlgorithmException e) {
-            throw new NoSuchAlgorithmException("NoSuchAlgorithmException while using XMLCipher.TRIPLEDES algorithm: DESede");
+            throw new NoSuchAlgorithmException("NoSuchAlgorithmException while using algorithm: " + algorithm);
         } catch (InvalidKeySpecException e) {
             throw new InvalidKeySpecException("Invalid Key generated while using passPhrase: " + Arrays.toString(passPhrase));
         }

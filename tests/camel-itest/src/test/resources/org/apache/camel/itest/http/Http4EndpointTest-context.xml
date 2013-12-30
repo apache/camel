@@ -28,38 +28,16 @@
     
     <bean id="httpEndpoint" class="org.apache.camel.component.http4.HttpEndpoint">
         <property name="httpUri" value="http://127.0.0.1:${HttpTestServer.Port}/"/>
-        <property name="clientParams" ref="clientParams"/>
-        <property name="clientConnectionManager" ref="clientConnectionManager"/>
+        <property name="clientBuilder" ref="clientBuilder"/>
+        <property name="clientConnectionManager" ref="myManager"/>
     </bean>
+    
+    <bean id="myManager" class="org.apache.http.impl.conn.PoolingHttpClientConnectionManager"/>
 
-    <bean id="clientParams" class="org.apache.http.params.BasicHttpParams" />
+    <!-- You can set the client configuration by setting up the builder class -->
+    <bean id="clientBuilder" class="org.apache.http.impl.client.HttpClientBuilder" />
     
-    <bean id="clientConnectionManager" class="org.apache.http.impl.conn.tsccm.ThreadSafeClientConnManager">
-        <constructor-arg ref="clientParams"/>
-        <constructor-arg ref="schemeRegistry"/>
-    </bean>
     
-    <bean id="plainSocketFactory" class="org.apache.http.conn.scheme.PlainSocketFactory" factory-method="getSocketFactory" />
-    
-    <bean id="http" class="org.apache.http.conn.scheme.Scheme">
-    	<constructor-arg value="http" />
-    	<constructor-arg>
-    		<bean class="org.apache.http.conn.scheme.PlainSocketFactory" factory-method="getSocketFactory" />
-    	</constructor-arg>
-    	<constructor-arg value="80" />
-    </bean>
-    
-    <bean id="schemeRegistry" class="org.apache.http.conn.scheme.SchemeRegistry" />
-    
-    <bean class="org.springframework.beans.factory.config.MethodInvokingFactoryBean">
-    	<property name="targetObject" ref="schemeRegistry"/>
-		<property name="targetMethod" value="register"/>
-    	<property name="arguments">
-    		<list>
-    			<ref bean="http"/>
-    		</list>
-    	</property>
-    </bean>
     <!-- END SNIPPET: e1 -->
 
     <!-- START SNIPPET: e2 -->

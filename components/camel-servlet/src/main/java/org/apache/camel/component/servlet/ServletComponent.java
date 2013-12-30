@@ -59,7 +59,7 @@ public class ServletComponent extends HttpComponent {
         HeaderFilterStrategy headerFilterStrategy = resolveAndRemoveReferenceParameter(parameters, "headerFilterStrategy", HeaderFilterStrategy.class);
 
         // restructure uri to be based on the parameters left as we dont want to include the Camel internal options
-        URI httpUri = URISupport.createRemainingURI(new URI(UnsafeUriCharactersEncoder.encode(uri)), parameters);
+        URI httpUri = URISupport.createRemainingURI(new URI(UnsafeUriCharactersEncoder.encodeHttpURI(uri)), parameters);
 
         ServletEndpoint endpoint = createServletEndpoint(uri, this, httpUri, params, getHttpConnectionManager(), configurer);
         endpoint.setServletName(servletName);

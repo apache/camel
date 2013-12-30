@@ -17,6 +17,7 @@
 package org.apache.camel.converter.jaxp;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -243,11 +244,24 @@ public class XmlConverter {
      */
     @Converter
     public byte[] toByteArray(Source source, Exchange exchange) throws TransformerException {
-        String answer = toString(source, exchange);
-        if (exchange != null) {
-            return exchange.getContext().getTypeConverter().convertTo(byte[].class, exchange, answer);
+        if (source == null) {
+            return null;
+        } else if (source instanceof BytesSource) {
+            return ((BytesSource)source).getData();
         } else {
-            return answer.getBytes();
+            ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+            if (exchange != null) {
+                // check the camelContext properties first
+                Properties properties = ObjectHelper.getCamelPropertiesWithPrefix(OUTPUT_PROPERTIES_PREFIX,
+                                                                                  exchange.getContext());
+                if (properties.size() > 0) {
+                    toResult(source, new StreamResult(buffer), properties);
+                    return buffer.toByteArray();
+                }
+            }
+            // using the old way to deal with it
+            toResult(source, new StreamResult(buffer));
+            return buffer.toByteArray();
         }
     }
     
@@ -840,8 +854,7 @@ public class XmlConverter {
     
     @Converter
     public InputStream toInputStream(DOMSource source, Exchange exchange) throws TransformerException, IOException {
-        String s = toString(source, exchange);
-        return new ByteArrayInputStream(s.getBytes());
+        return new ByteArrayInputStream(toByteArray(source, exchange));
     }
 
     /**
@@ -854,8 +867,7 @@ public class XmlConverter {
     
     @Converter
     public InputStream toInputStream(Document dom, Exchange exchange) throws TransformerException, IOException {
-        String s = toString(dom, exchange);
-        return new ByteArrayInputStream(s.getBytes());
+        return toInputStream(new DOMSource(dom), exchange);
     }
 
     @Converter

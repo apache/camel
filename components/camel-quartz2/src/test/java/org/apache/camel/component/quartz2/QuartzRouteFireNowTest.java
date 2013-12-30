@@ -21,14 +21,16 @@ import org.apache.camel.builder.RouteBuilder;
 /**
  * @version 
  */
-public class QuartzRouteFireNowTest extends QuartzRouteTest {
+public class QuartzRouteFireNowTest extends BaseQuartzTest {
     
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
                 // START SNIPPET: example
-                from("quartz2://myGroup/myTimerName?fireNow=true&trigger.repeatInterval=25000&trigger.repeatCount=2").to("mock:result");
+                from("quartz2://myGroup/myTimerName?fireNow=true&trigger.repeatInterval=2000&trigger.repeatCount=2")
+                        .to("log:quartz")
+                        .to("mock:result");
                 // END SNIPPET: example
             }
         };

@@ -21,10 +21,10 @@ import java.security.PublicKey;
 import java.util.Arrays;
 
 import org.apache.camel.component.file.remote.BaseServerTestSupport;
+import org.apache.camel.component.ssh.FileKeyPairProvider;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.sshd.SshServer;
 import org.apache.sshd.common.NamedFactory;
-import org.apache.sshd.common.keyprovider.FileKeyPairProvider;
 import org.apache.sshd.server.Command;
 import org.apache.sshd.server.PublickeyAuthenticator;
 import org.apache.sshd.server.command.ScpCommandFactory;

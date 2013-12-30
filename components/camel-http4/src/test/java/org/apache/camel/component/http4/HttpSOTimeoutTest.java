@@ -30,7 +30,7 @@ public class HttpSOTimeoutTest extends BaseHttpTest {
 
     @Test
     public void httpGet() throws Exception {
-        Exchange exchange = template.request("http4://" + getHostName() + ":" + getPort() + "?httpClient.soTimeout=5000", new Processor() {
+        Exchange exchange = template.request("http4://" + getHostName() + ":" + getPort() + "?httpClient.SocketTimeout=5000", new Processor() {
             public void process(Exchange exchange) throws Exception {
             }
         });
@@ -40,7 +40,7 @@ public class HttpSOTimeoutTest extends BaseHttpTest {
 
     @Test
     public void httpGetShouldThrowASocketTimeoutException() throws Exception {
-        Exchange reply = template.request("http4://" + getHostName() + ":" + getPort() + "?httpClient.soTimeout=1000", new Processor() {
+        Exchange reply = template.request("http4://" + getHostName() + ":" + getPort() + "?httpClient.SocketTimeout=1000", new Processor() {
             public void process(Exchange exchange) throws Exception {
             }
         });
