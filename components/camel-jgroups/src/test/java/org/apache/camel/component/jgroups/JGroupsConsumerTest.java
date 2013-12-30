@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.jgroups;
 
+import org.apache.camel.EndpointInject;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
@@ -29,13 +30,14 @@ public class JGroupsConsumerTest extends CamelTestSupport {
 
     String clusterName = "clusterName";
 
-    String mockEndpoint = "mock:test";
-
     String message = "message";
 
     JChannel channel;
 
     // Routes fixture
+
+    @EndpointInject(uri = "mock:test")
+    MockEndpoint mockEndpoint;
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -65,15 +67,14 @@ public class JGroupsConsumerTest extends CamelTestSupport {
     @Test
     public void shouldConsumeMulticastedMessage() throws Exception {
         // Given
-        MockEndpoint mock = getMockEndpoint(mockEndpoint);
-        mock.setExpectedMessageCount(1);
-        mock.expectedBodiesReceived(message);
+        mockEndpoint.setExpectedMessageCount(1);
+        mockEndpoint.expectedBodiesReceived(message);
 
         // When
         channel.send(new Message(null, null, message));
 
         // Then
-        mock.assertIsSatisfied();
+        mockEndpoint.assertIsSatisfied();
     }
 
 }
