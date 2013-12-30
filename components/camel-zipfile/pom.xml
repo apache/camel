@@ -30,8 +30,17 @@
   <description>Camel Zip file support</description>
 
   <properties>
-    <camel.osgi.export.pkg>org.apache.camel.dataformat.zipfile.*</camel.osgi.export.pkg>
+    <camel.osgi.import>
+    	!org.apache.camel.dataformat.zipfile,
+    	!org.apache.camel.processor.aggregate.zipfile,
+    	*
+    </camel.osgi.import>
+    <camel.osgi.export>
+    	org.apache.camel.dataformat.zipfile;${camel.osgi.version},
+    	org.apache.camel.processor.aggregate.zipfile;${camel.osgi.version}
+    </camel.osgi.export>
     <camel.osgi.export.service>org.apache.camel.spi.DataFormatResolver;dataformat=zipfile</camel.osgi.export.service>
+    
   </properties>
 
   <dependencies>
