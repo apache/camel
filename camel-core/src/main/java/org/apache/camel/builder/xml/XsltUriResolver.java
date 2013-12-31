@@ -62,6 +62,10 @@ public class XsltUriResolver implements URIResolver {
     }
 
     public Source resolve(String href, String base) throws TransformerException {
+        // supports the empty href
+        if (ObjectHelper.isEmpty(href)) {
+            href = location;
+        }
         if (ObjectHelper.isEmpty(href)) {
             throw new TransformerException("include href is empty");
         }
