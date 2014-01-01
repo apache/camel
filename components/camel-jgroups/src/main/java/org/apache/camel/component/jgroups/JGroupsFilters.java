@@ -25,17 +25,24 @@ import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.component.jgroups.JGroupsEndpoint.HEADER_JGROUPS_CHANNEL_ADDRESS;
 
+/**
+ * JGroups-specific filters factory.
+ */
 public final class JGroupsFilters {
 
     private static final Logger LOG = LoggerFactory.getLogger(JGroupsFilters.class);
 
+    /**
+     * The index of the coordinator node in the {@code org.jgroups.View} instance. Coordinator node is always the first
+     * one in the members' list of the cluster view.
+     */
     private static final int COORDINATOR_NODE_INDEX = 0;
 
     private JGroupsFilters() {
     }
 
     /**
-     * Creates predicate rejecting messages that are instances of {@link org.jgroups.View}, but have not been received
+     * Creates predicate rejecting messages that are instances of {@code org.jgroups.View}, but have not been received
      * by the coordinator JGroups node. This filter is useful for keeping only view messages indicating that receiving
      * endpoint is a master node.
      *
