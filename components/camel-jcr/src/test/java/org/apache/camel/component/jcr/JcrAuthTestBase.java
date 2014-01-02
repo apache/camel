@@ -47,7 +47,7 @@ public abstract class JcrAuthTestBase extends CamelTestSupport {
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/repository");
+        deleteDirectory("target/repository_with_auth");
         super.setUp();
     }
 
@@ -71,20 +71,19 @@ public abstract class JcrAuthTestBase extends CamelTestSupport {
             user = userManager.createUser("test", "quatloos");
         }
         // set up permissions
-        String permissionsPath = session.getRootNode().getPath();
+        String path = session.getRootNode().getPath();
         AccessControlManager accessControlManager = session
                 .getAccessControlManager();
         AccessControlPolicyIterator acls = accessControlManager
-                .getApplicablePolicies(permissionsPath);
+                .getApplicablePolicies(path);
+        AccessControlList acl = null;
         if (acls.hasNext()) {
-            AccessControlList acl = (AccessControlList) acls.nextAccessControlPolicy();
-            acl.addAccessControlEntry(user.getPrincipal(), accessControlManager
-                    .getSupportedPrivileges(permissionsPath));
-            accessControlManager.setPolicy(permissionsPath, acl);
+            acl = (AccessControlList) acls.nextAccessControlPolicy();
         } else {
-            throw new Exception("could not set access control for path "
-                    + permissionsPath);
+            acl = (AccessControlList) accessControlManager.getPolicies(path)[0];
         }
+        acl.addAccessControlEntry(user.getPrincipal(), accessControlManager.getSupportedPrivileges(path));
+        accessControlManager.setPolicy(path, acl);
 
         session.save();
         session.logout();
