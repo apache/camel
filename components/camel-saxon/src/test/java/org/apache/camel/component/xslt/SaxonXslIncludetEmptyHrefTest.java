@@ -14,24 +14,25 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.jcr;
+package org.apache.camel.component.xslt;
 
-import javax.jcr.LoginException;
-
-import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-public class JcrAuthTokenWithLoginTest extends JcrAuthTestBase {
+public class SaxonXslIncludetEmptyHrefTest extends CamelTestSupport {
 
     @Test
-    public void testCreateNodeWithAuthentication() throws Exception {
-        Exchange exchange = createExchangeWithBody("<message>hello!</message>");
-        Exchange out = template.send("direct:a", exchange);
-        assertNotNull(out);
-        String uuid = out.getOut().getBody(String.class);
-        assertNull("Expected body to be null, found JCR node UUID", uuid);
-        assertTrue("Wrong exception type", out.getException() instanceof LoginException);
+    public void testXsltOutput() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        
+        mock.expectedBodiesReceived("<?xml version=\"1.0\" encoding=\"UTF-8\"?><MyDate>February</MyDate>");
+        mock.message(0).body().isInstanceOf(String.class);
+
+        template.sendBody("direct:start", "<root>1</root>");
+
+        assertMockEndpointsSatisfied();
     }
 
     @Override
@@ -39,12 +40,9 @@ public class JcrAuthTokenWithLoginTest extends JcrAuthTestBase {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                // START SNIPPET: jcr
-                from("direct:a").setHeader(JcrConstants.JCR_NODE_NAME,
-                        constant("node")).setHeader("my.contents.property",
-                        body()).to(
-                        "jcr://not-a-user:nonexisting-password@repository" + BASE_REPO_PATH);
-                // END SNIPPET: jcr
+                from("direct:start")
+                    .to("xslt:org/apache/camel/component/xslt/transform_includes_data.xsl")
+                    .to("mock:result");
             }
         };
     }
