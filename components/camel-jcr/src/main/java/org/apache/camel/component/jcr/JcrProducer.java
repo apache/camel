@@ -72,8 +72,8 @@ public class JcrProducer extends DefaultProducer {
                 throw new RuntimeException("Unsupported operation: " + operation);
             }
 
-        } finally {
             session.save();
+        } finally {
             if (session != null && session.isLive()) {
                 session.logout();
             }
