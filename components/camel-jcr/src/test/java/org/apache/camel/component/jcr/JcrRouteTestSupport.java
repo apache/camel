@@ -38,6 +38,7 @@ public abstract class JcrRouteTestSupport extends CamelTestSupport {
     @Override
     @Before
     public void setUp() throws Exception {
+        deleteDirectory("target/repository_with_auth");
         deleteDirectory("target/repository");
         super.setUp();
     }
