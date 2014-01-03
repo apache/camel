@@ -45,7 +45,6 @@ import org.apache.cxf.transport.Conduit;
 import org.apache.cxf.transport.ConduitInitiator;
 import org.apache.cxf.transport.MessageObserver;
 import org.apache.cxf.ws.addressing.EndpointReferenceType;
-import org.apache.cxf.wsdl.EndpointReferenceUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -195,13 +194,13 @@ public class CamelDestination extends AbstractDestination implements Configurabl
     }
 
     // this should deal with the cxf message
-    protected class BackChannelConduit extends AbstractConduit {
+    protected class BackChannelConduit extends AbstractBackChannelConduit {
         protected Message inMessage;
         Exchange camelExchange;
         org.apache.cxf.message.Exchange cxfExchange;
 
         BackChannelConduit(Message message) {
-            super(EndpointReferenceUtils.getAnonymousEndpointReference());
+            super();
             inMessage = message;
             cxfExchange = inMessage.getExchange();
             camelExchange = cxfExchange.get(Exchange.class);
