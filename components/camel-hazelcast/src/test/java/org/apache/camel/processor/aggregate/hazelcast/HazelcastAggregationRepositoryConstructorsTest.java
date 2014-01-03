@@ -20,7 +20,7 @@ public class HazelcastAggregationRepositoryConstructorsTest extends CamelTestSup
             Exchange newOne = new DefaultExchange(context());
             final String key = "abrakadabra";
             repo.add(context(), key, oldOne, newOne);
-            fail("OptimisticLockingException should have been thrown");
+            fail("OptimisticLockingException should has been thrown");
         } finally {
             repo.doStop();
         }
