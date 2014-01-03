@@ -1,38 +1,22 @@
 package org.apache.camel.processor.aggregate.hazelcast;
 
-import com.hazelcast.core.Hazelcast;
-import com.hazelcast.core.HazelcastInstance;
 import org.apache.camel.Exchange;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.AfterClass;
-import org.junit.BeforeClass;
 import org.junit.Test;
+
 import java.util.Set;
 
 
-public class HazelcastAggregationRepositoryOperationsTest extends CamelTestSupport {
+public class HazelcastAggregationRepositoryOperationsTest extends HazelcastAggregationRepositoryCamelTestSupport {
 
-    private static HazelcastInstance hzOne = null;
-    private static HazelcastInstance hzTwo = null;
+
     private static final String THREAD_SAFE_REPO = "threadSafeRepo";
     private static final String OPTIMISTIC_REPO = "optimisticRepo";
 
-    @BeforeClass
-    public static void setUpHazelcastCluster() {
-        hzOne = Hazelcast.newHazelcastInstance();
-        hzTwo = Hazelcast.newHazelcastInstance();
-    }
-
-    @AfterClass
-    public static void shutDownHazelcastCluster() {
-        hzOne.getLifecycleService().shutdown();
-        hzTwo.getLifecycleService().shutdown();
-    }
 
     @Test
     public void checkOptimisticAddOfNewExchange() throws Exception {
-        HazelcastAggregationRepository repoOne = new HazelcastAggregationRepository(OPTIMISTIC_REPO, true, hzOne);
-        HazelcastAggregationRepository repoTwo = new HazelcastAggregationRepository(OPTIMISTIC_REPO, true, hzTwo);
+        HazelcastAggregationRepository repoOne = new HazelcastAggregationRepository(OPTIMISTIC_REPO, true, getFirstInstance());
+        HazelcastAggregationRepository repoTwo = new HazelcastAggregationRepository(OPTIMISTIC_REPO, true, getSecondInstance());
 
         try {
             repoOne.doStart();
@@ -59,8 +43,8 @@ public class HazelcastAggregationRepositoryOperationsTest extends CamelTestSuppo
 
     @Test
     public void checkThreadSafeAddOfNewExchange() throws Exception {
-        HazelcastAggregationRepository repoOne = new HazelcastAggregationRepository(THREAD_SAFE_REPO, false, hzOne);
-        HazelcastAggregationRepository repoTwo = new HazelcastAggregationRepository(THREAD_SAFE_REPO, false, hzTwo);
+        HazelcastAggregationRepository repoOne = new HazelcastAggregationRepository(THREAD_SAFE_REPO, false, getFirstInstance());
+        HazelcastAggregationRepository repoTwo = new HazelcastAggregationRepository(THREAD_SAFE_REPO, false, getSecondInstance());
 
         try {
             repoOne.doStart();
@@ -87,8 +71,8 @@ public class HazelcastAggregationRepositoryOperationsTest extends CamelTestSuppo
 
     @Test
     public void checkOptimisticGet() throws Exception {
-        HazelcastAggregationRepository repoOne = new HazelcastAggregationRepository(THREAD_SAFE_REPO, true, hzOne);
-        HazelcastAggregationRepository repoTwo = new HazelcastAggregationRepository(THREAD_SAFE_REPO, true, hzTwo);
+        HazelcastAggregationRepository repoOne = new HazelcastAggregationRepository(THREAD_SAFE_REPO, true, getFirstInstance());
+        HazelcastAggregationRepository repoTwo = new HazelcastAggregationRepository(THREAD_SAFE_REPO, true, getSecondInstance());
         try {
             repoOne.doStart();
             repoTwo.doStart();
@@ -109,8 +93,8 @@ public class HazelcastAggregationRepositoryOperationsTest extends CamelTestSuppo
 
     @Test
     public void checkThreadSafeGet() throws Exception {
-        HazelcastAggregationRepository repoOne = new HazelcastAggregationRepository(OPTIMISTIC_REPO, false, hzOne);
-        HazelcastAggregationRepository repoTwo = new HazelcastAggregationRepository(OPTIMISTIC_REPO, false, hzTwo);
+        HazelcastAggregationRepository repoOne = new HazelcastAggregationRepository(OPTIMISTIC_REPO, false, getFirstInstance());
+        HazelcastAggregationRepository repoTwo = new HazelcastAggregationRepository(OPTIMISTIC_REPO, false, getSecondInstance());
 
         try {
             repoOne.doStart();
@@ -134,8 +118,8 @@ public class HazelcastAggregationRepositoryOperationsTest extends CamelTestSuppo
     @Test
     public void checkOptimisticPersistentRemove() throws Exception {
         final String persistentRepoName = String.format("%s-completed", OPTIMISTIC_REPO);
-        HazelcastAggregationRepository repoOne = new HazelcastAggregationRepository(OPTIMISTIC_REPO, persistentRepoName, true, hzOne);
-        HazelcastAggregationRepository repoTwo = new HazelcastAggregationRepository(OPTIMISTIC_REPO, persistentRepoName, true, hzTwo);
+        HazelcastAggregationRepository repoOne = new HazelcastAggregationRepository(OPTIMISTIC_REPO, persistentRepoName, true, getFirstInstance());
+        HazelcastAggregationRepository repoTwo = new HazelcastAggregationRepository(OPTIMISTIC_REPO, persistentRepoName, true, getSecondInstance());
 
         try {
             repoOne.doStart();
