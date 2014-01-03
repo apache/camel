@@ -39,7 +39,6 @@ import org.apache.cxf.io.CachedOutputStream;
 import org.apache.cxf.message.Message;
 import org.apache.cxf.message.MessageImpl;
 import org.apache.cxf.service.model.EndpointInfo;
-import org.apache.cxf.transport.AbstractConduit;
 import org.apache.cxf.transport.AbstractDestination;
 import org.apache.cxf.transport.Conduit;
 import org.apache.cxf.transport.ConduitInitiator;
