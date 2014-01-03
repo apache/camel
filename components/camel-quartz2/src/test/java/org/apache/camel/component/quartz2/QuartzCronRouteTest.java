@@ -44,6 +44,9 @@ public class QuartzCronRouteTest extends CamelTestSupport {
 
         JobDetail detail = mock.getReceivedExchanges().get(0).getIn().getHeader("jobDetail", JobDetail.class);
         Assert.assertThat(detail.getJobClass().equals(CamelJob.class), CoreMatchers.is(true));
+
+        Assert.assertThat(detail.getJobDataMap().get(QuartzConstants.QUARTZ_TRIGGER_TYPE).equals("cron"), CoreMatchers.is(true));
+        Assert.assertThat(detail.getJobDataMap().get(QuartzConstants.QUARTZ_TRIGGER_CRON_EXPRESSION).equals("0/2 * * * * ?"), CoreMatchers.is(true));
     }
 
     @Override

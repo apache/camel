@@ -43,6 +43,10 @@ public class QuartzSimpleRouteTest extends CamelTestSupport {
 
         JobDetail detail = mock.getReceivedExchanges().get(0).getIn().getHeader("jobDetail", JobDetail.class);
         Assert.assertThat(detail.getJobClass().equals(CamelJob.class), CoreMatchers.is(true));
+
+        Assert.assertThat(detail.getJobDataMap().get(QuartzConstants.QUARTZ_TRIGGER_TYPE).equals("simple"), CoreMatchers.is(true));
+        Assert.assertThat(detail.getJobDataMap().get(QuartzConstants.QUARTZ_TRIGGER_SIMPLE_REPEAT_COUNTER).equals(-1), CoreMatchers.is(true));
+        Assert.assertThat(detail.getJobDataMap().get(QuartzConstants.QUARTZ_TRIGGER_SIMPLE_REPEAT_INTERVAL).equals(2000L), CoreMatchers.is(true));
     }
 
     @Override
