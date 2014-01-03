@@ -24,8 +24,9 @@ import org.apache.camel.component.cxf.CxfEndpoint.CamelCxfClientImpl;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.SimpleRegistry;
 import org.apache.camel.spring.SpringCamelContext;
+import org.apache.cxf.Bus;
 import org.apache.cxf.BusFactory;
-import org.apache.cxf.bus.CXFBusImpl;
+import org.apache.cxf.bus.extension.ExtensionManagerBus;
 import org.apache.cxf.frontend.AbstractWSDLBasedEndpointFactory;
 import org.easymock.EasyMock;
 import org.junit.Assert;
@@ -67,11 +68,11 @@ public class CxfEndpointTest extends Assert {
 
     @Test
     public void testSettingClientBus() throws Exception {
-        CXFBusImpl bus = (CXFBusImpl) BusFactory.newInstance().createBus();
+        ExtensionManagerBus bus = (ExtensionManagerBus) BusFactory.newInstance().createBus();
         bus.setId("oldCXF");
         BusFactory.setThreadDefaultBus(bus);
         
-        CXFBusImpl newBus = (CXFBusImpl) BusFactory.newInstance().createBus();
+        ExtensionManagerBus newBus = (ExtensionManagerBus) BusFactory.newInstance().createBus();
         newBus.setId("newCXF");
         CxfComponent cxfComponent = new CxfComponent(new DefaultCamelContext());
         CxfEndpoint endpoint = (CxfEndpoint)cxfComponent.createEndpoint(routerEndpointURI);

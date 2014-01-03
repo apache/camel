@@ -26,7 +26,8 @@ import javax.xml.soap.SOAPMessage;
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 
-import org.apache.cxf.helpers.XMLUtils;
+import org.apache.cxf.staxutils.StaxUtils;
+
 
 public class SoapTargetBean {
     private static QName sayHi = new QName("http://apache.org/hello_world_soap_http/types", "sayHi");
@@ -83,7 +84,7 @@ public class SoapTargetBean {
     public SOAPMessage invokeStream(InputStream in) {
         SOAPMessage response = null;
         try {
-            Document doc = XMLUtils.parse(in);
+            Document doc = StaxUtils.read(in);
             if (doc.getElementsByTagNameNS(greetMe.getNamespaceURI(), 
                                            sayHi.getLocalPart()).getLength() == 1) {
                 response = sayHiResponse;

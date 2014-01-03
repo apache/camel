@@ -60,7 +60,6 @@ import org.apache.cxf.headers.Header;
 import org.apache.cxf.helpers.CastUtils;
 import org.apache.cxf.helpers.DOMUtils;
 import org.apache.cxf.helpers.HttpHeaderHelper;
-import org.apache.cxf.helpers.XMLUtils;
 import org.apache.cxf.jaxws.context.WrappedMessageContext;
 import org.apache.cxf.message.Attachment;
 import org.apache.cxf.message.Message;
@@ -72,6 +71,7 @@ import org.apache.cxf.service.model.BindingMessageInfo;
 import org.apache.cxf.service.model.BindingOperationInfo;
 import org.apache.cxf.service.model.MessagePartInfo;
 import org.apache.cxf.service.model.OperationInfo;
+import org.apache.cxf.staxutils.StaxUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -793,7 +793,7 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
                 
                 if (LOG.isTraceEnabled()) {
                     LOG.trace("Extract body element {}",
-                              element == null ? "null" : XMLUtils.toString(element));
+                              element == null ? "null" : getXMLString(element));
                 }
             } else if (part instanceof Element) {
                 addNamespace((Element)part, nsMap);
@@ -806,6 +806,15 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
         }
 
         return answer;
+    }
+    
+    private static String getXMLString(Element el) {
+        try {
+            return StaxUtils.toString(el);
+        } catch (Throwable t) {
+            //ignore
+        }
+        return "unknown content";
     }
 
     public static Object getBodyFromCamel(org.apache.camel.Message out,

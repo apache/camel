@@ -39,6 +39,7 @@ import org.apache.cxf.frontend.ClientProxy;
 import org.apache.cxf.helpers.DOMUtils;
 import org.apache.cxf.interceptor.LoggingInInterceptor;
 import org.apache.cxf.interceptor.LoggingOutInterceptor;
+import org.apache.cxf.staxutils.StaxUtils;
 import org.junit.Test;
 
 
@@ -77,7 +78,7 @@ public class CxfConsumerPayloadFaultTest extends CamelTestSupport {
                     public void process(final Exchange exchange) throws Exception {
                         QName faultCode = new QName("http://schemas.xmlsoap.org/soap/envelope/", "Server");
                         SoapFault fault = new SoapFault("Get the null value of person name", faultCode);
-                        Element details = DOMUtils.readXml(new StringReader(DETAILS)).getDocumentElement();
+                        Element details = StaxUtils.read(new StringReader(DETAILS)).getDocumentElement();
                         fault.setDetail(details);
                         exchange.setException(fault);
                         

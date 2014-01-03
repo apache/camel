@@ -19,6 +19,7 @@ package org.apache.camel.component.cxf.cxfbean;
 import java.io.IOException;
 
 import org.apache.camel.component.cxf.transport.CamelTransportFactory;
+import org.apache.cxf.Bus;
 import org.apache.cxf.service.model.EndpointInfo;
 import org.apache.cxf.transport.Destination;
 import org.slf4j.Logger;
@@ -36,12 +37,12 @@ public class CxfBeanTransportFactory extends CamelTransportFactory  {
     private CxfBeanComponent cxfBeanComponent;
  
     @Override
-    public Destination getDestination(EndpointInfo endpointInfo) throws IOException {
+    public Destination getDestination(EndpointInfo endpointInfo, Bus b) throws IOException {
         LOG.debug("Create CxfBeanDestination: {}", endpointInfo);
         
         // lookup endpoint from component instead of CamelContext because it may not
         // be added to the CamelContext yet.
-        return new CxfBeanDestination(cxfBeanComponent, getBus(), this, endpointInfo);
+        return new CxfBeanDestination(cxfBeanComponent, b, this, endpointInfo);
     }
 
     public void setCxfBeanComponent(CxfBeanComponent cxfBeanComponent) {
