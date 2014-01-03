@@ -144,6 +144,7 @@ public class QuartzComponent extends DefaultComponent implements StartupListener
 
         // create the trigger either cron or simple
         if (ObjectHelper.isNotEmpty(cron)) {
+            cron = encodeCronExpression(cron);
             trigger = createCronTrigger(cron);
         } else {
             trigger = new SimpleTrigger();
@@ -159,6 +160,22 @@ public class QuartzComponent extends DefaultComponent implements StartupListener
         QuartzEndpoint answer = new QuartzEndpoint(uri, this);
         setProperties(answer.getJobDetail(), jobParameters);
 
+        // enrich job data map with trigger information
+        if (cron != null) {
+            answer.getJobDetail().getJobDataMap().put(QuartzConstants.QUARTZ_TRIGGER_TYPE, "cron");
+            answer.getJobDetail().getJobDataMap().put(QuartzConstants.QUARTZ_TRIGGER_CRON_EXPRESSION, cron);
+        } else {
+            answer.getJobDetail().getJobDataMap().put(QuartzConstants.QUARTZ_TRIGGER_TYPE, "simple");
+            Long interval = getCamelContext().getTypeConverter().convertTo(Long.class, triggerParameters.get("repeatInterval"));
+            if (interval != null) {
+                answer.getJobDetail().getJobDataMap().put(QuartzConstants.QUARTZ_TRIGGER_SIMPLE_REPEAT_INTERVAL, interval);
+            }
+            Integer counter = getCamelContext().getTypeConverter().convertTo(Integer.class, triggerParameters.get("repeatCount"));
+            if (counter != null) {
+                answer.getJobDetail().getJobDataMap().put(QuartzConstants.QUARTZ_TRIGGER_SIMPLE_REPEAT_COUNTER, counter);
+            }
+        }
+
         setProperties(trigger, triggerParameters);
         trigger.setName(name);
         trigger.setGroup(group);
@@ -168,11 +185,14 @@ public class QuartzComponent extends DefaultComponent implements StartupListener
     }
 
     protected CronTrigger createCronTrigger(String path) throws ParseException {
-        // replace + back to space so it's a cron expression
-        path = path.replaceAll("\\+", " ");
         CronTrigger cron = new CronTrigger();
         cron.setCronExpression(path);
         return cron;
+    }
+
+    private static String encodeCronExpression(String path) {
+        // replace + back to space so it's a cron expression
+        return path.replaceAll("\\+", " ");
     }
 
     public void onCamelContextStarted(CamelContext camelContext, boolean alreadyStarted) throws Exception {
