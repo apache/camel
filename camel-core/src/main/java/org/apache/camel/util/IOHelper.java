@@ -337,6 +337,23 @@ public final class IOHelper {
             }
         }
     }
+    
+    /**
+     * Closes the given resource if it is available and don't catch the exception
+     *
+     * @param closeable the object to close
+     * @throws IOException
+      */
+    public static void closeWithException(Closeable closeable) throws IOException {
+        if (closeable != null) {
+            try {
+                closeable.close();
+            } catch (IOException e) {
+                // don't catch the exception here
+                throw e;
+            }
+        }
+    }
 
     /**
      * Closes the given channel if it is available, logging any closing exceptions to the given log.
