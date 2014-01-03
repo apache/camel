@@ -192,19 +192,20 @@ public class Splitter extends MulticastProcessor implements AsyncProcessor, Trac
 
         @Override
         public void close() throws IOException {
-            if (value instanceof Closeable) {
-                IOHelper.close((Closeable) value, value.getClass().getName(), LOG);
-            } else if (value instanceof Scanner) {
-                // special for Scanner as it does not implement Closeable
+            if (value instanceof Scanner) {
+                // special for Scanner which implement the Closeable since JDK7 
                 Scanner scanner = (Scanner) value;
                 scanner.close();
-
                 IOException ioException = scanner.ioException();
                 if (ioException != null) {
                     throw ioException;
                 }
+            } else if (value instanceof Closeable) {
+                // we should throw out the exception here   
+                IOHelper.closeWithException((Closeable) value);
             }
         }
+       
     }
 
     private Iterable<ProcessorExchangePair> createProcessorExchangePairsList(Exchange exchange, Object value) {
