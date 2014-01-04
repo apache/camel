@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.cxf;
 
+import java.security.Provider;
+
 import javax.xml.namespace.QName;
 
 import org.apache.camel.component.cxf.common.message.CxfConstants;
@@ -172,7 +174,12 @@ public class CxfSpringEndpoint extends CxfEndpoint implements ApplicationContext
 
         if (cls == null) {
             if (!getDataFormat().equals(DataFormat.POJO)) {
-                answer = new ServerFactoryBean(new WSDLServiceFactoryBean());
+                answer = new JaxWsServerFactoryBean(new WSDLServiceFactoryBean()) {
+                    {
+                        doInit = false;
+                    }
+                };
+                cls = Provider.class;
             } else {
                 ObjectHelper.notNull(cls, CxfConstants.SERVICE_CLASS);
             }

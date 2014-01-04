@@ -18,6 +18,7 @@ package org.apache.camel.component.cxf;
 
 import java.io.InputStream;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -53,7 +54,6 @@ import org.apache.cxf.binding.soap.Soap11;
 import org.apache.cxf.binding.soap.Soap12;
 import org.apache.cxf.binding.soap.SoapBindingConstants;
 import org.apache.cxf.binding.soap.SoapHeader;
-import org.apache.cxf.common.util.ReflectionUtil;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.endpoint.Endpoint;
 import org.apache.cxf.headers.Header;
@@ -869,7 +869,7 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
         Object httpresp = cxfExchange.getInMessage().get("HTTP.RESPONSE");
         if (httpresp != null) {
             try {
-                Method m = ReflectionUtil.findMethod(httpresp.getClass(), "setStatus", int.class);
+                Method m = findMethod(httpresp.getClass(), "setStatus", int.class);
                 if (m != null) {
                     m.invoke(httpresp, 202);
                 }
@@ -877,5 +877,37 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
                 LOG.warn("Unable to set the http ", e);
             }
         }
+    }
+    public static Method findMethod(Class<?> cls,
+                                    String name,
+                                    Class<?> ... params) {
+        if (cls == null) {
+            return null;
+        }
+        for (Class<?> cs : cls.getInterfaces()) {
+            if (Modifier.isPublic(cs.getModifiers())) {
+                Method m = findMethod(cs, name, params);
+                if (m != null && Modifier.isPublic(m.getModifiers())) {
+                    return m;
+                }
+            }
+        }
+        try {
+            Method m = cls.getDeclaredMethod(name, params);
+            if (m != null && Modifier.isPublic(m.getModifiers())) {
+                return m;
+            }
+        } catch (Exception e) {
+            //ignore
+        }
+        Method m = findMethod(cls.getSuperclass(), name, params);
+        if (m == null) {
+            try {
+                m = cls.getMethod(name, params);
+            } catch (Exception e) {
+                //ignore
+            }
+        }
+        return m;
     }
 }

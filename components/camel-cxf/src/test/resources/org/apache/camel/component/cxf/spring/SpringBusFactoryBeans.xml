@@ -24,12 +24,12 @@
     ">
     
   <bean id="cxfBus" class="org.apache.camel.component.cxf.spring.SpringBusFactoryBean">
-     <property name="cfgFiles" value="META-INF/cxf/cxf.xml;META-INF/cxf/cxf-extension-soap.xml" />
+     <property name="cfgFiles" value="META-INF/cxf/cxf.xml;META-INF/cxf/cxf.xml" />
      <property name="includeDefaultBus" value="false" />
   </bean>
   
   <bean id="myBus" class="org.apache.camel.component.cxf.spring.SpringBusFactoryBean">
-     <property name="cfgFiles" value="META-INF/cxf/cxf-extension-soap.xml" />
+     <property name="cfgFiles" value="META-INF/cxf/cxf.xml" />
      <property name="includeDefaultBus" value="true" />
   </bean>
 
