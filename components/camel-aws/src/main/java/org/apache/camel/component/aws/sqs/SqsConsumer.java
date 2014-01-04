@@ -16,23 +16,9 @@
  */
 package org.apache.camel.component.aws.sqs;
 
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Queue;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.ScheduledFuture;
-import java.util.concurrent.TimeUnit;
-
 import com.amazonaws.AmazonClientException;
 import com.amazonaws.services.sqs.AmazonSQS;
-import com.amazonaws.services.sqs.model.ChangeMessageVisibilityRequest;
-import com.amazonaws.services.sqs.model.DeleteMessageRequest;
-import com.amazonaws.services.sqs.model.Message;
-import com.amazonaws.services.sqs.model.MessageNotInflightException;
-import com.amazonaws.services.sqs.model.ReceiptHandleIsInvalidException;
-import com.amazonaws.services.sqs.model.ReceiveMessageRequest;
-import com.amazonaws.services.sqs.model.ReceiveMessageResult;
-
+import com.amazonaws.services.sqs.model.*;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.NoFactoryAvailableException;
@@ -44,6 +30,11 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.*;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.ScheduledFuture;
+import java.util.concurrent.TimeUnit;
 
 
 /**
@@ -74,7 +65,14 @@ public class SqsConsumer extends ScheduledBatchPollingConsumer {
 
         LOG.trace("Receiving messages with request [{}]...", request);
         
-        ReceiveMessageResult messageResult = getClient().receiveMessage(request);
+        ReceiveMessageResult messageResult = null;
+        try {
+            messageResult = getClient().receiveMessage(request);
+        } catch (QueueDoesNotExistException e){
+            LOG.info("Queue does not exist....recreating now...");
+            reConnectToQueue();
+            messageResult = getClient().receiveMessage(request);
+        }
 
         if (LOG.isTraceEnabled()) {
             LOG.trace("Received {} messages", messageResult.getMessages().size());
@@ -82,6 +80,22 @@ public class SqsConsumer extends ScheduledBatchPollingConsumer {
         
         Queue<Exchange> exchanges = createExchanges(messageResult.getMessages());
         return processBatch(CastUtils.cast(exchanges));
+    }
+
+    public void reConnectToQueue() {
+        try {
+            getEndpoint().createQueue(getClient());
+        } catch (QueueDeletedRecentlyException qdr) {
+            LOG.debug("Queue recently deleted, will retry in 30 seconds.");
+            try {
+                Thread.sleep(30000);
+                reConnectToQueue();
+            } catch (Exception e) {
+                LOG.error("failed to retry queue connection.", e);
+            }
+        } catch (Exception e) {
+            LOG.error("Could not connect to queue in amazon.", e);
+        }
     }
     
     protected Queue<Exchange> createExchanges(List<Message> messages) {
