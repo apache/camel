@@ -1,12 +1,10 @@
 package org.apache.camel.processor.aggregate.hazelcast;
 
 import org.apache.camel.EndpointInject;
-import org.apache.camel.Exchange;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.junit.Test;
 
 /**
@@ -83,18 +81,4 @@ public class HazelcastAggregationRepositoryRoutesTest extends HazelcastAggregati
         mock.assertIsSatisfied();
     }
 
-    private static class SumOfIntsAggregationStrategy implements AggregationStrategy {
-        @Override
-        public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
-            if (oldExchange == null) {
-                return newExchange;
-            } else {
-                Integer n = newExchange.getIn().getBody(Integer.class);
-                Integer o = oldExchange.getIn().getBody(Integer.class);
-                Integer v = (o == null ? 0 : o) + (n == null ? 0 : n);
-                oldExchange.getIn().setBody(v, Integer.class);
-                return oldExchange;
-            }
-        }
-    }
 }
