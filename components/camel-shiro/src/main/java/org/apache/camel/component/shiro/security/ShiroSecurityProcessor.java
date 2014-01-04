@@ -172,10 +172,14 @@ public class ShiroSecurityProcessor extends DelegateAsyncProcessor {
     private void authorizeUser(Subject currentUser, Exchange exchange) throws CamelAuthorizationException {
         boolean authorized = false;
         if (!policy.getPermissionsList().isEmpty()) {
-            for (Permission permission : policy.getPermissionsList()) {
-                if (currentUser.isPermitted(permission)) {
-                    authorized = true;
-                    break;
+            if (policy.isAllPermissionsRequired()) {
+                authorized = currentUser.isPermittedAll(policy.getPermissionsList());
+            } else {
+                for (Permission permission : policy.getPermissionsList()) {
+                    if (currentUser.isPermitted(permission)) {
+                        authorized = true;
+                        break;
+                    }
                 }
             }
         } else {

@@ -47,6 +47,7 @@ public class ShiroSecurityPolicy implements AuthorizationPolicy {
     private List<Permission> permissionsList;
     private boolean alwaysReauthenticate;
     private boolean base64;
+    private boolean allPermissionsRequired;
     
     public ShiroSecurityPolicy() {
         this.passPhrase = bits128;
@@ -157,5 +158,13 @@ public class ShiroSecurityPolicy implements AuthorizationPolicy {
 
     public void setBase64(boolean base64) {
         this.base64 = base64;
+    }
+
+    public boolean isAllPermissionsRequired() {
+        return allPermissionsRequired;
+    }
+
+    public void setAllPermissionsRequired(boolean allPermissionsRequired) {
+        this.allPermissionsRequired = allPermissionsRequired;
     }
 }
