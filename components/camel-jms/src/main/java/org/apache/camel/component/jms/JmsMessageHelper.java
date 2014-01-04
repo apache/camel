@@ -30,6 +30,8 @@ import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
 
 import static org.apache.camel.component.jms.JmsConfiguration.QUEUE_PREFIX;
+import static org.apache.camel.component.jms.JmsConfiguration.TEMP_QUEUE_PREFIX;
+import static org.apache.camel.component.jms.JmsConfiguration.TEMP_TOPIC_PREFIX;
 import static org.apache.camel.component.jms.JmsConfiguration.TOPIC_PREFIX;
 import static org.apache.camel.util.ObjectHelper.removeStartingCharacters;
 
@@ -169,19 +171,57 @@ public final class JmsMessageHelper {
     }
 
     /**
-     * Normalizes the destination name, by removing any leading queue or topic prefixes.
+     * Normalizes the destination name.
+     * <p/>
+     * This ensures the destination name is correct, and we do not create queues as <tt>queue://queue:foo</tt>, which
+     * was intended as <tt>queue://foo</tt>.
      *
      * @param destination the destination
      * @return the normalized destination
      */
     public static String normalizeDestinationName(String destination) {
+        // do not include prefix which is the current behavior when using this method.
+        return normalizeDestinationName(destination, false);
+    }
+
+    /**
+     * Normalizes the destination name.
+     * <p/>
+     * This ensures the destination name is correct, and we do not create queues as <tt>queue://queue:foo</tt>, which
+     * was intended as <tt>queue://foo</tt>.
+     *
+     * @param destination the destination
+     * @param includePrefix whether to include <tt>queue://</tt>, or <tt>topic://</tt> prefix in the normalized destination name
+     * @return the normalized destination
+     */
+    public static String normalizeDestinationName(String destination, boolean includePrefix) {
         if (ObjectHelper.isEmpty(destination)) {
             return destination;
         }
         if (destination.startsWith(QUEUE_PREFIX)) {
-            return removeStartingCharacters(destination.substring(QUEUE_PREFIX.length()), '/');
+            String s = removeStartingCharacters(destination.substring(QUEUE_PREFIX.length()), '/');
+            if (includePrefix) {
+                s = QUEUE_PREFIX + "//" + s;
+            }
+            return s;
+        } else if (destination.startsWith(TEMP_QUEUE_PREFIX)) {
+            String s = removeStartingCharacters(destination.substring(TEMP_QUEUE_PREFIX.length()), '/');
+            if (includePrefix) {
+                s = TEMP_QUEUE_PREFIX + "//" + s;
+            }
+            return s;
         } else if (destination.startsWith(TOPIC_PREFIX)) {
-            return removeStartingCharacters(destination.substring(TOPIC_PREFIX.length()), '/');
+            String s = removeStartingCharacters(destination.substring(TOPIC_PREFIX.length()), '/');
+            if (includePrefix) {
+                s = TOPIC_PREFIX + "//" + s;
+            }
+            return s;
+        } else if (destination.startsWith(TEMP_TOPIC_PREFIX)) {
+            String s = removeStartingCharacters(destination.substring(TEMP_TOPIC_PREFIX.length()), '/');
+            if (includePrefix) {
+                s = TEMP_TOPIC_PREFIX + "//" + s;
+            }
+            return s;
         } else {
             return destination;
         }
