@@ -319,8 +319,9 @@ public class JmsBinding {
                 jmsMessage.setJMSCorrelationID(ExchangeHelper.convertToType(exchange, String.class, headerValue));
             } else if (headerName.equals("JMSReplyTo") && headerValue != null) {
                 if (headerValue instanceof String) {
-                    // if the value is a String we must normalize it first
-                    headerValue = normalizeDestinationName((String) headerValue);
+                    // if the value is a String we must normalize it first, and must include the prefix
+                    // as ActiveMQ requires that when converting the String to a javax.jms.Destination type
+                    headerValue = normalizeDestinationName((String) headerValue, true);
                 }
                 Destination replyTo = ExchangeHelper.convertToType(exchange, Destination.class, headerValue);
                 JmsMessageHelper.setJMSReplyTo(jmsMessage, replyTo);
