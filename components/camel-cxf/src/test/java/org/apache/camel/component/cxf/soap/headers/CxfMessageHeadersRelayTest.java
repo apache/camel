@@ -54,7 +54,6 @@ import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.headers.Header;
 import org.apache.cxf.headers.Header.Direction;
 import org.apache.cxf.helpers.CastUtils;
-import org.apache.cxf.helpers.DOMUtils;
 import org.apache.cxf.jaxb.JAXBDataBinding;
 import org.apache.cxf.message.MessageContentsList;
 import org.apache.cxf.outofband.header.OutofBandHeader;

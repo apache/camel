@@ -24,7 +24,6 @@ import org.apache.camel.component.cxf.CxfEndpoint.CamelCxfClientImpl;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.SimpleRegistry;
 import org.apache.camel.spring.SpringCamelContext;
-import org.apache.cxf.Bus;
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.bus.extension.ExtensionManagerBus;
 import org.apache.cxf.frontend.AbstractWSDLBasedEndpointFactory;

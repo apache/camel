@@ -28,7 +28,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.wsdl_first.types.UnknownPersonFault;
 import org.apache.cxf.binding.soap.SoapFault;
-import org.apache.cxf.helpers.DOMUtils;
 import org.apache.cxf.staxutils.StaxUtils;
 
 
