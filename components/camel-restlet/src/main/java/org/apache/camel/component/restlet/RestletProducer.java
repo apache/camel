@@ -49,7 +49,9 @@ public class RestletProducer extends DefaultAsyncProducer {
         this.throwException = endpoint.isThrowExceptionOnFailure();
         client = new Client(endpoint.getProtocol());
         client.setContext(new Context());
+        client.setConnectTimeout(100);
         client.getContext().getParameters().add("socketTimeout", String.valueOf(endpoint.getSocketTimeout()));
+        client.getContext().getParameters().add("socketConnectTimeoutMs", String.valueOf(endpoint.getSocketTimeout()));
     }
 
     @Override
