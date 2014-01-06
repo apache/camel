@@ -67,6 +67,7 @@ import org.apache.cxf.message.MessageContentsList;
 import org.apache.cxf.message.MessageUtils;
 import org.apache.cxf.security.SecurityContext;
 import org.apache.cxf.service.Service;
+import org.apache.cxf.service.invoker.MethodDispatcher;
 import org.apache.cxf.service.model.BindingMessageInfo;
 import org.apache.cxf.service.model.BindingOperationInfo;
 import org.apache.cxf.service.model.MessagePartInfo;
@@ -193,10 +194,7 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
         if (boi != null) {
             Service service = cxfExchange.get(Service.class); 
             if (service != null) {
-                @SuppressWarnings("deprecation")
-                org.apache.cxf.frontend.MethodDispatcher md 
-                    = (org.apache.cxf.frontend.MethodDispatcher)service
-                        .get(org.apache.cxf.frontend.MethodDispatcher.class.getName());
+                MethodDispatcher md = (MethodDispatcher)service.get(MethodDispatcher.class.getName());
                 if (md != null) {
                     method = md.getMethod(boi);
                 }
