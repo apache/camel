@@ -64,9 +64,9 @@ public class SesProducer extends DefaultProducer {
 
     private com.amazonaws.services.simpleemail.model.Message createMessage(Exchange exchange) {
         com.amazonaws.services.simpleemail.model.Message message = new com.amazonaws.services.simpleemail.model.Message();
-        Boolean isHtmlEmail = exchange.getIn().getHeader(SesConstants.HTML_EMAIL, Boolean.class);
+        Boolean isHtmlEmail = exchange.getIn().getHeader(SesConstants.HTML_EMAIL, false, Boolean.class);
         String content = exchange.getIn().getBody(String.class);
-        if (isHtmlEmail != null && isHtmlEmail) {
+        if (isHtmlEmail) {
             message.setBody(new Body().withHtml(new Content().withData(content)));
         } else {
             message.setBody(new Body().withText(new Content().withData(content)));
