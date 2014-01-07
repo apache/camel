@@ -16,6 +16,7 @@
  */
 package org.apache.camel.model;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -89,7 +90,15 @@ public class MulticastDefinition extends OutputDefinition<MulticastDefinition> i
 
     @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
-        return this.createChildProcessor(routeContext, true);
+        Processor answer = this.createChildProcessor(routeContext, true);
+
+        // force the answer as a multicast processor even if there is only one child processor in the multicast
+        if (!(answer instanceof MulticastProcessor)) {
+            List<Processor> list = new ArrayList<Processor>(1);
+            list.add(answer);
+            answer = createCompositeProcessor(routeContext, list);
+        }
+        return answer;
     }
 
     // Fluent API
