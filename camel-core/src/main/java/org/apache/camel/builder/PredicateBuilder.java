@@ -86,7 +86,8 @@ public final class PredicateBuilder {
     }
 
     /**
-     * A helper method to combine multiple predicates by a logical OR
+     * A helper method to combine two predicates by a logical OR.
+     * If you want to combine multiple predicates see {@link #in(Predicate...)}
      */
     public static Predicate or(final Predicate left, final Predicate right) {
         notNull(left, "left");
@@ -124,6 +125,13 @@ public final class PredicateBuilder {
                 return "in (" + Arrays.asList(predicates) + ")";
             }
         };
+    }
+
+    /**
+     * A helper method to return true if any of the predicates matches.
+     */
+    public static Predicate in(List<Predicate> predicates) {
+        return in(predicates.toArray(new Predicate[0]));
     }
 
     public static Predicate isEqualTo(final Expression left, final Expression right) {
@@ -440,6 +448,17 @@ public final class PredicateBuilder {
             }
         }
         return answer;
+    }
+
+    /**
+     * Concat the given predicates into a single predicate, which only matches
+     * if all the predicates matches.
+     *
+     * @param predicates predicates
+     * @return a single predicate containing all the predicates
+     */
+    public static Predicate and(Predicate... predicates) {
+        return and(Arrays.asList(predicates));
     }
 
     /**
