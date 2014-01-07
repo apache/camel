@@ -23,17 +23,26 @@ import org.jgroups.Address;
 import org.jgroups.Channel;
 import org.jgroups.Message;
 
+/**
+ * Producer sending messages to the JGroups cluster.
+ */
 public class JGroupsProducer extends DefaultProducer {
+
+    // Producer settings
 
     private final Channel channel;
 
     private final String clusterName;
+
+    // Constructor
 
     public JGroupsProducer(Endpoint endpoint, Channel channel, String clusterName) {
         super(endpoint);
         this.channel = channel;
         this.clusterName = clusterName;
     }
+
+    // Life cycle callbacks
 
     @Override
     protected void doStart() throws Exception {
@@ -46,6 +55,8 @@ public class JGroupsProducer extends DefaultProducer {
         channel.disconnect();
         super.doStop();
     }
+
+    // Processing logic
 
     @Override
     public void process(Exchange exchange) throws Exception {
