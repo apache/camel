@@ -20,9 +20,7 @@ package org.apache.camel.dataformat.csv;
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.Reader;
-import java.util.Arrays;
 import java.util.Iterator;
-import java.util.List;
 import java.util.NoSuchElementException;
 
 import org.apache.camel.util.IOHelper;
@@ -30,15 +28,17 @@ import org.apache.commons.csv.CSVParser;
 
 /**
  */
-public class CsvIterator implements Iterator<List<String>>, Closeable {
+public class CsvIterator<T> implements Iterator<T>, Closeable {
 
     private final CSVParser parser;
     private final Reader reader;
+    private final CsvLineConverter<T> lineConverter;
     private String[] line;
 
-    public CsvIterator(CSVParser parser, Reader reader) throws IOException {
+    public CsvIterator(CSVParser parser, Reader reader, CsvLineConverter<T> lineConverter) throws IOException {
         this.parser = parser;
         this.reader = reader;
+        this.lineConverter = lineConverter;
         line = parser.getLine();
     }
 
@@ -48,11 +48,11 @@ public class CsvIterator implements Iterator<List<String>>, Closeable {
     }
 
     @Override
-    public List<String> next() {
+    public T next() {
         if (!hasNext()) {
             throw new NoSuchElementException();
         }
-        List<String> result = Arrays.asList(line);
+        T result = lineConverter.convertLine(line);
         try {
             line = parser.getLine();
         } catch (IOException e) {

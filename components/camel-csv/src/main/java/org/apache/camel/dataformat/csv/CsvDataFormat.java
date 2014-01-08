@@ -46,7 +46,7 @@ import org.apache.commons.csv.writer.CSVWriter;
  * Autogeneration can be disabled. In this case, only the fields defined in
  * csvConfig are written on the output.
  *
- * @version 
+ * @version
  */
 public class CsvDataFormat implements DataFormat {
     private CSVStrategy strategy = CSVStrategy.DEFAULT_STRATEGY;
@@ -58,6 +58,7 @@ public class CsvDataFormat implements DataFormat {
      * Lazy row loading with iterator for big files.
      */
     private boolean lazyLoad;
+    private boolean useMaps;
 
     public void marshal(Exchange exchange, Object object, OutputStream outputStream) throws Exception {
         if (delimiter != null) {
@@ -105,12 +106,18 @@ public class CsvDataFormat implements DataFormat {
             reader = IOHelper.buffered(new InputStreamReader(inputStream, IOHelper.getCharsetName(exchange)));
             CSVParser parser = new CSVParser(reader, strategy);
 
-            if (skipFirstLine) {
-                // read one line ahead and skip it
-                parser.getLine();
+            CsvLineConverter<?> lineConverter;
+            if (useMaps) {
+                lineConverter = CsvLineConverters.getMapLineConverter(parser.getLine());
+            } else {
+                lineConverter = CsvLineConverters.getListConverter();
+                if (skipFirstLine) {
+                    // read one line ahead and skip it
+                    parser.getLine();
+                }
             }
 
-            CsvIterator csvIterator = new CsvIterator(parser, reader);
+            @SuppressWarnings("unchecked") CsvIterator<?> csvIterator = new CsvIterator(parser, reader, lineConverter);
             return lazyLoad ? csvIterator : loadAllAsList(csvIterator);
         } catch (Exception e) {
             error = true;
@@ -122,9 +129,9 @@ public class CsvDataFormat implements DataFormat {
         }
     }
 
-    private List<List<String>> loadAllAsList(CsvIterator iter) {
+    private <T> List<T> loadAllAsList(CsvIterator<T> iter) {
         try {
-            List<List<String>> list = new ArrayList<List<String>>();
+            List<T> list = new ArrayList<T>();
             while (iter.hasNext()) {
                 list.add(iter.next());
             }
@@ -145,7 +152,7 @@ public class CsvDataFormat implements DataFormat {
         }
         this.delimiter = delimiter;
     }
-    
+
     public CSVConfig getConfig() {
         return config;
     }
@@ -191,6 +198,20 @@ public class CsvDataFormat implements DataFormat {
         this.lazyLoad = lazyLoad;
     }
 
+    public boolean isUseMaps() {
+        return useMaps;
+    }
+
+    /**
+     * Sets whether or not the result of the unmarshalling should be a {@code java.util.Map} instead of a {@code java.util.List}. It uses the first line as a
+     * header line and uses it as keys of the maps.
+     *
+     * @param useMaps {@code true} in order to use {@code java.util.Map} instead of {@code java.util.List}, {@code false} otherwise.
+     */
+    public void setUseMaps(boolean useMaps) {
+        this.useMaps = useMaps;
+    }
+
     private synchronized void updateFieldsInConfig(Set<?> set, Exchange exchange) {
         for (Object value : set) {
             if (value != null) {
@@ -203,5 +224,4 @@ public class CsvDataFormat implements DataFormat {
             }
         }
     }
-    
 }
