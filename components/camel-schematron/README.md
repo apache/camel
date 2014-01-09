@@ -9,9 +9,13 @@ Schematron Tutorials
 ======================
 
 http://www.schematron.com/spec.html
+
 http://www.xml.com/pub/a/2003/11/12/schematron.html
+
 http://www.data2type.de/en/xml-xslt-xslfo/schematron/
+
 http://www.mulberrytech.com/papers/schematron-Philly.pdf
+
 
 To build this project use
 
