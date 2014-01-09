@@ -17,7 +17,6 @@
 package org.apache.camel.processor.aggregate;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.util.ObjectHelper;
 
 /**
  * An {@link org.apache.camel.processor.aggregate.AggregationStrategy} which just uses the original exchange
@@ -32,8 +31,11 @@ public class UseOriginalAggregationStrategy implements AggregationStrategy {
     private final Exchange original;
     private final boolean propagateException;
 
+    public UseOriginalAggregationStrategy() {
+        this(null, true);
+    }
+
     public UseOriginalAggregationStrategy(Exchange original, boolean propagateException) {
-        ObjectHelper.notNull(original, "Original Exchange");
         this.original = original;
         this.propagateException = propagateException;
     }
@@ -45,7 +47,7 @@ public class UseOriginalAggregationStrategy implements AggregationStrategy {
                 original.setException(exception);
             }
         }
-        return original;
+        return original != null ? original : oldExchange;
     }
 
     protected Exception checkException(Exchange oldExchange, Exchange newExchange) {
