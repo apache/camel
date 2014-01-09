@@ -22,11 +22,12 @@ package org.apache.camel.dataformat.csv;
  * @param <T> Class for representing a single line
  */
 public interface CsvLineConverter<T> {
+
     /**
      * Converts a single CSV line.
      *
      * @param line CSV line
      * @return Another representation of the CSV line
      */
-    public T convertLine(String[] line);
+    T convertLine(String[] line);
 }

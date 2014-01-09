@@ -28,6 +28,10 @@ import java.util.Set;
  * This {@code CsvLineConverters} class provides common implementations of the {@code CsvLineConverter} interface.
  */
 public final class CsvLineConverters {
+
+    private CsvLineConverters() {
+        // Prevent instantiation
+    }
     /**
      * Provides an implementation of {@code CsvLineConverter} that converts a line into a {@code List}.
      *
@@ -49,7 +53,7 @@ public final class CsvLineConverters {
         return new MapLineConverter(headers);
     }
 
-    private static class ListLineConverter implements CsvLineConverter<List<String>> {
+    private static final class ListLineConverter implements CsvLineConverter<List<String>> {
         public static final ListLineConverter SINGLETON = new ListLineConverter();
 
         @Override
@@ -58,7 +62,7 @@ public final class CsvLineConverters {
         }
     }
 
-    private static class MapLineConverter implements CsvLineConverter<Map<String, String>> {
+    private static final class MapLineConverter implements CsvLineConverter<Map<String, String>> {
         private final String[] headers;
 
         private MapLineConverter(String[] headers) {
@@ -95,7 +99,4 @@ public final class CsvLineConverters {
         }
     }
 
-    private CsvLineConverters() {
-        // Prevent instantiation
-    }
 }

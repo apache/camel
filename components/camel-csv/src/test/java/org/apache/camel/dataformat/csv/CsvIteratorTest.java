@@ -21,11 +21,12 @@ import java.io.InputStreamReader;
 import java.util.Arrays;
 import java.util.List;
 import java.util.NoSuchElementException;
+
+import mockit.Expectations;
+import mockit.Injectable;
 import org.apache.commons.csv.CSVParser;
 import org.junit.Assert;
 import org.junit.Test;
-import mockit.Expectations;
-import mockit.Injectable;
 
 public class CsvIteratorTest {
 
