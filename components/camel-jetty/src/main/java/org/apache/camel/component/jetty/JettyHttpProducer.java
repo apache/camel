@@ -268,8 +268,8 @@ public class JettyHttpProducer extends DefaultProducer implements AsyncProcessor
         if (!sharedClient && client != null) {
             client.start();
             // start the thread pool
-            LOG.debug("Starting client thread pool {}", client.getThreadPool());
             if (client.getThreadPool() instanceof LifeCycle) {
+                LOG.debug("Starting client thread pool {}", client.getThreadPool());
                 ((LifeCycle) client.getThreadPool()).start();
             }
         }
@@ -283,8 +283,8 @@ public class JettyHttpProducer extends DefaultProducer implements AsyncProcessor
         if (!sharedClient && client != null) {
             client.stop();
             // stop thread pool
-            LOG.debug("Stopping client thread pool {}", client.getThreadPool());
             if (client.getThreadPool() instanceof LifeCycle) {
+                LOG.debug("Stopping client thread pool {}", client.getThreadPool());
                 ((LifeCycle) client.getThreadPool()).stop();
             }
         }
