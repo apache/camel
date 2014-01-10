@@ -18,7 +18,6 @@ package org.apache.camel.component.jetty;
 
 import javax.net.ssl.SSLContext;
 
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.util.ObjectHelper;
 import org.eclipse.jetty.client.HttpClient;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
