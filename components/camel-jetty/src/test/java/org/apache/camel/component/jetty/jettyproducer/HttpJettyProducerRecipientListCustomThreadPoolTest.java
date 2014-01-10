@@ -25,7 +25,7 @@ import org.junit.Test;
 /**
  * @version 
  */
-public class HttpJettyProducerRecipientListTest extends BaseJettyTest {
+public class HttpJettyProducerRecipientListCustomThreadPoolTest extends BaseJettyTest {
 
     @Test
     public void testRecipientList() throws Exception {
@@ -39,7 +39,7 @@ public class HttpJettyProducerRecipientListTest extends BaseJettyTest {
 
         Exchange a = template.request("direct:a", new Processor() {
             public void process(Exchange exchange) throws Exception {
-                exchange.getIn().setHeader("slip", "jetty://http://localhost:" + getPort() + "/myapp?foo=123&bar=cheese");
+                exchange.getIn().setHeader("slip", "jetty://http://localhost:" + getPort() + "/myapp?foo=123&bar=cheese&httpClientMinThreads=4&httpClientMaxThreads=8");
             }
         });
         assertNotNull(a);

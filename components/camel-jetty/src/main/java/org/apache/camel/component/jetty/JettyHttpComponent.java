@@ -708,13 +708,10 @@ public class JettyHttpComponent extends HttpComponent {
             QueuedThreadPool qtp = new QueuedThreadPool();
             qtp.setMinThreads(minThreads.intValue());
             qtp.setMaxThreads(maxThreads.intValue());
+            // and we want to use daemon threads
+            qtp.setDaemon(true);
             // let the thread names indicate they are from the client
             qtp.setName("CamelJettyClient(" + ObjectHelper.getIdentityHashCode(httpClient) + ")");
-            try {
-                qtp.start();
-            } catch (Exception e) {
-                throw new RuntimeCamelException("Error starting JettyHttpClient thread pool: " + qtp, e);
-            }
             httpClient.setThreadPool(qtp);
         }
 
