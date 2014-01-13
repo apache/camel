@@ -1,0 +1,4 @@
+{ "element": {
+    "@attribute": "attributeValue",
+    "#text": "elementContent"
+}}

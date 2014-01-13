@@ -16,7 +16,17 @@
  */
 package org.apache.camel.dataformat.xmljson;
 
+import java.io.ByteArrayInputStream;
+import java.io.IOException;
 import java.io.InputStream;
+
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
@@ -27,7 +37,7 @@ public class JsonToXmlAttributesTest extends CamelTestSupport {
     @Test
     public void shouldCreateAttribute() {
         // Given
-        InputStream inStream = getClass().getClassLoader().getResourceAsStream("org/apache/camel/dataformat/xmljson/jsonToXmlAttributesMessage.json");
+        InputStream inStream = getClass().getResourceAsStream("jsonToXmlAttributesMessage.json");
         String in = context.getTypeConverter().convertTo(String.class, inStream);
 
         // When
@@ -40,7 +50,7 @@ public class JsonToXmlAttributesTest extends CamelTestSupport {
     @Test
     public void shouldCreateOnlyOneAttribute() {
         // Given
-        InputStream inStream = getClass().getClassLoader().getResourceAsStream("org/apache/camel/dataformat/xmljson/jsonToXmlAttributesMessage.json");
+        InputStream inStream = getClass().getResourceAsStream("jsonToXmlAttributesMessage.json");
         String in = context.getTypeConverter().convertTo(String.class, inStream);
 
         // When
@@ -48,6 +58,25 @@ public class JsonToXmlAttributesTest extends CamelTestSupport {
 
         // Then
         assertFalse(xml.contains("a="));
+    }
+
+    @Test
+    public void shouldCreateElementWithAttribute() throws ParserConfigurationException, IOException, SAXException {
+        // Given
+        InputStream inStream = getClass().getResourceAsStream("jsonToXmlElementWithAttributeMessage.json");
+        String in = context.getTypeConverter().convertTo(String.class, inStream);
+
+        // When
+        String xml = template.requestBody("direct:unmarshal", in, String.class);
+
+        // Then
+        Document document = DocumentBuilderFactory.newInstance().newDocumentBuilder().
+                parse(new ByteArrayInputStream(xml.getBytes()));
+        NodeList nodeList = document.getDocumentElement().getElementsByTagName("element");
+        assertEquals(1, nodeList.getLength());
+        Element element = (Element) nodeList.item(0);
+        assertEquals("elementContent", element.getTextContent());
+        assertEquals("attributeValue", element.getAttribute("attribute"));
     }
 
     @Override
