@@ -944,6 +944,13 @@ public class XmlConverter {
         factory.setNamespaceAware(true);
         factory.setIgnoringElementContentWhitespace(true);
         factory.setIgnoringComments(true);
+        try {
+            // Disable the external-general-entitites by default
+            factory.setFeature("http://xml.org/sax/features/external-general-entities", false);
+        } catch (ParserConfigurationException e) {
+            LOG.warn("DocumentBuilderFactory doesn't support the feature {} with value {}, due to {}."
+                     , new Object[]{"http://xml.org/sax/features/external-general-entities", true, e});
+        }
         // setup the feature from the system property
         setupFeatures(factory);
         return factory;
