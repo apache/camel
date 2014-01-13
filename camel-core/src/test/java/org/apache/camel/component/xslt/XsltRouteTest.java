@@ -22,7 +22,6 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.converter.jaxp.XmlConverter;
 import org.apache.camel.impl.JndiRegistry;
 
 public class XsltRouteTest extends ContextTestSupport {
@@ -35,24 +34,6 @@ public class XsltRouteTest extends ContextTestSupport {
         sendMessageAndHaveItTransformed("<mail><subject>Hey</subject><body>Hello world!</body></mail>".getBytes());
     }
     
-    public void testSendEntityMessage() throws Exception {
-        
-        MockEndpoint endpoint = getMockEndpoint("mock:result");
-        endpoint.expectedMessageCount(1);
-        //String message = "<!DOCTYPE foo [<!ENTITY xxe SYSTEM \"file:///Users//jiangning//.CFUserTextEncoding\">]><task><name>&xxe;</name></task>";
-
-        String message = "<hello/>";
-        template.sendBody("direct:start2", message);
-
-        assertMockEndpointsSatisfied();
-        
-        List<Exchange> list = endpoint.getReceivedExchanges();
-        Exchange exchange = list.get(0);
-        String xml = exchange.getIn().getBody(String.class);
-        
-        System.out.println(xml);
-    }
-
     private void sendMessageAndHaveItTransformed(Object body) throws Exception {
         MockEndpoint endpoint = getMockEndpoint("mock:result");
         endpoint.expectedMessageCount(1);
@@ -64,8 +45,7 @@ public class XsltRouteTest extends ContextTestSupport {
         List<Exchange> list = endpoint.getReceivedExchanges();
         Exchange exchange = list.get(0);
         String xml = exchange.getIn().getBody(String.class);
-        System.out.println(xml);
-        
+       
         assertNotNull("The transformed XML should not be null", xml);
         assertTrue(xml.indexOf("transformed") > -1);
         // the cheese tag is in the transform.xsl
@@ -89,10 +69,7 @@ public class XsltRouteTest extends ContextTestSupport {
                     .multicast()
                         .beanRef("testBean")
                         .to("mock:result");
-                
-                from("direct:start2")
-                    .to("xslt:org/apache/camel/component/xslt/transform_text_imported.xsl")
-                    .to("mock:result");
+               
             }
         };
     }
