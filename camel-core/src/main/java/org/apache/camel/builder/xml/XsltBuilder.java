@@ -79,7 +79,7 @@ public class XsltBuilder implements Processor {
     private URIResolver uriResolver;
     private boolean deleteOutputFile;
     private ErrorListener errorListener = new XsltErrorListener();
-    private boolean allowStAX;
+    private boolean allowStAX = true;
 
     public XsltBuilder() {
     }
