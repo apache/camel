@@ -63,7 +63,7 @@ public class CouchbaseProducerTest {
         producer.process(exchange);
     }
 
-
+/*
     @Test
     public void testDocumentHeadersAreSet() throws Exception {
 
@@ -74,7 +74,7 @@ public class CouchbaseProducerTest {
         producer.process(exchange);
         verify(msg).setHeader(CouchbaseConstants.HEADER_ID, "1");
     }
-/*
+
     @SuppressWarnings("unchecked")
     @Test(expected = InvalidPayloadException.class)
     public void testNullSaveResponseThrowsError() throws Exception {
