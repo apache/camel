@@ -49,6 +49,11 @@ public class DropboxEndpoint extends DefaultEndpoint {
         super(endpointUri);
     }
 
+    /**
+     * Create one of the camel producer available based on the configuration
+     * @return the camel producer
+     * @throws Exception
+     */
     public Producer createProducer() throws Exception {
         LOG.info("resolve producer dropbox endpoint {" + configuration.getOperation().toString() + "}");
         LOG.info("resolve producer dropbox attached client:"+configuration.getClient());
@@ -72,6 +77,12 @@ public class DropboxEndpoint extends DefaultEndpoint {
         }
     }
 
+    /**
+     * Create one of the camel consumer available based on the configuration
+     * @param processor  the given processor
+     * @return the camel consumer
+     * @throws Exception
+     */
     public Consumer createConsumer(Processor processor) throws Exception {
         LOG.debug("resolve consumer dropbox endpoint {" + configuration.getOperation().toString() + "}");
         LOG.debug("resolve consumer dropbox attached client:"+configuration.getClient());

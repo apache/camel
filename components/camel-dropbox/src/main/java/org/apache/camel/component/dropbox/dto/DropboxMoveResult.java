@@ -26,6 +26,11 @@ public class DropboxMoveResult extends DropboxResult {
 
     private static final transient Logger LOG = LoggerFactory.getLogger(DropboxMoveResult.class);
 
+    /**
+     * Object payload contained in Exchange
+     * Exchange Header and Body contains the mode path
+     * @param exchange
+     */
     @Override
     public void populateExchange(Exchange exchange) {
         String movedPath = (String)resultEntries;

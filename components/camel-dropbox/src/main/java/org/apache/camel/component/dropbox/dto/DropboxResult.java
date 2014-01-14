@@ -23,6 +23,10 @@ public abstract class DropboxResult {
 
     protected Object resultEntries;
 
+    /**
+     * Populate the camel exchange with the results from dropbox method invocations.
+     * @param exchange
+     */
     public abstract void populateExchange(Exchange exchange);
 
     public Object getResultEntries()  {

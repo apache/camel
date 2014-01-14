@@ -28,6 +28,11 @@ import static org.apache.camel.component.dropbox.util.DropboxConstants.DROPBOX_F
 
 public class DropboxConfigurationValidator {
 
+    /**
+     * Validate the parameters passed in the incoming url.
+     * @param configuration object containing the parameters.
+     * @throws DropboxException
+     */
     public static void validate(DropboxConfiguration configuration) throws DropboxException{
         validateCommonProperties(configuration);
         DropboxOperation op = configuration.getOperation();

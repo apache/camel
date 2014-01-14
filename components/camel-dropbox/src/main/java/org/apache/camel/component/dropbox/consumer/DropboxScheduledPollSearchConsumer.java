@@ -30,6 +30,11 @@ public class DropboxScheduledPollSearchConsumer extends DropboxScheduledPollCons
         super(endpoint, processor,configuration);
     }
 
+    /**
+     * Poll from a dropbox remote path and put the result in the message exchange
+     * @return number of messages polled
+     * @throws Exception
+     */
     @Override
     protected int poll() throws Exception {
         Exchange exchange = endpoint.createExchange();

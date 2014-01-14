@@ -29,6 +29,12 @@ public class DropboxSearchResult extends DropboxResult {
 
     private static final transient Logger LOG = LoggerFactory.getLogger(DropboxSearchResult.class);
 
+    /**
+     * Object payload contained in Exchange
+     * Exchange Header is populated with the remote paths found.
+     * Exchange Body is populated with the list of DbxEntry found.
+     * @param exchange
+     */
     @Override
     public void populateExchange(Exchange exchange) {
         StringBuffer fileExtracted = new StringBuffer();

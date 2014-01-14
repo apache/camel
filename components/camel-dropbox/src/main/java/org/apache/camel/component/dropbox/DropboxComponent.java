@@ -31,6 +31,15 @@ public class DropboxComponent extends DefaultComponent {
 
     private static final transient Logger LOG = LoggerFactory.getLogger(DropboxComponent.class);
 
+    /**
+     * Create a camel endpoint after passing validation on the incoming url.
+     * @param uri the full URI of the endpoint
+     * @param remaining the remaining part of the URI without the query
+     *                parameters or component prefix
+     * @param parameters the optional parameters passed in
+     * @return the camel endpoint
+     * @throws Exception
+     */
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         DropboxConfiguration configuration = new DropboxConfiguration();
 

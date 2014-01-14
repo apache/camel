@@ -56,6 +56,10 @@ public class DropboxConfiguration {
         return client;
     }
 
+    /**
+     * Obtain a new instance of DbxClient and store it in configuration.
+     * @throws DropboxException
+     */
     public void createClient() throws DropboxException {
         DbxRequestConfig config =
                 new DbxRequestConfig(clientIdentifier, Locale.getDefault().toString());

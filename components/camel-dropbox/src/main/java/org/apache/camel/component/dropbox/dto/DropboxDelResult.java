@@ -29,6 +29,11 @@ public class DropboxDelResult extends DropboxResult {
 
     private static final transient Logger LOG = LoggerFactory.getLogger(DropboxDelResult.class);
 
+    /**
+     * Object payload contained in Exchange
+     * Exchange Body is populated with the remote path deleted on dropbox.
+     * @param exchange
+     */
     @Override
     public void populateExchange(Exchange exchange) {
         String remotePath = (String)resultEntries;
