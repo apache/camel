@@ -28,9 +28,6 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 
-/**
- * @author <a href="http://www.christianposta.com/blog">Christian Posta</a>
- */
 public class AvroGenericMarshaAndUnmarshaTest extends CamelTestSupport {
 
     private Schema schema;
