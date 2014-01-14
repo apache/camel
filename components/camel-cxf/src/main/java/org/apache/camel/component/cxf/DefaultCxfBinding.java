@@ -18,6 +18,7 @@ package org.apache.camel.component.cxf;
 
 import java.io.InputStream;
 import java.lang.reflect.Method;
+import java.lang.reflect.Modifier;
 import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -53,14 +54,12 @@ import org.apache.cxf.binding.soap.Soap11;
 import org.apache.cxf.binding.soap.Soap12;
 import org.apache.cxf.binding.soap.SoapBindingConstants;
 import org.apache.cxf.binding.soap.SoapHeader;
-import org.apache.cxf.common.util.ReflectionUtil;
 import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.endpoint.Endpoint;
 import org.apache.cxf.headers.Header;
 import org.apache.cxf.helpers.CastUtils;
 import org.apache.cxf.helpers.DOMUtils;
 import org.apache.cxf.helpers.HttpHeaderHelper;
-import org.apache.cxf.helpers.XMLUtils;
 import org.apache.cxf.jaxws.context.WrappedMessageContext;
 import org.apache.cxf.message.Attachment;
 import org.apache.cxf.message.Message;
@@ -68,10 +67,12 @@ import org.apache.cxf.message.MessageContentsList;
 import org.apache.cxf.message.MessageUtils;
 import org.apache.cxf.security.SecurityContext;
 import org.apache.cxf.service.Service;
+import org.apache.cxf.service.invoker.MethodDispatcher;
 import org.apache.cxf.service.model.BindingMessageInfo;
 import org.apache.cxf.service.model.BindingOperationInfo;
 import org.apache.cxf.service.model.MessagePartInfo;
 import org.apache.cxf.service.model.OperationInfo;
+import org.apache.cxf.staxutils.StaxUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -193,10 +194,7 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
         if (boi != null) {
             Service service = cxfExchange.get(Service.class); 
             if (service != null) {
-                @SuppressWarnings("deprecation")
-                org.apache.cxf.frontend.MethodDispatcher md 
-                    = (org.apache.cxf.frontend.MethodDispatcher)service
-                        .get(org.apache.cxf.frontend.MethodDispatcher.class.getName());
+                MethodDispatcher md = (MethodDispatcher)service.get(MethodDispatcher.class.getName());
                 if (md != null) {
                     method = md.getMethod(boi);
                 }
@@ -793,7 +791,7 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
                 
                 if (LOG.isTraceEnabled()) {
                     LOG.trace("Extract body element {}",
-                              element == null ? "null" : XMLUtils.toString(element));
+                              element == null ? "null" : getXMLString(element));
                 }
             } else if (part instanceof Element) {
                 addNamespace((Element)part, nsMap);
@@ -806,6 +804,15 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
         }
 
         return answer;
+    }
+    
+    private static String getXMLString(Element el) {
+        try {
+            return StaxUtils.toString(el);
+        } catch (Throwable t) {
+            //ignore
+        }
+        return "unknown content";
     }
 
     public static Object getBodyFromCamel(org.apache.camel.Message out,
@@ -860,7 +867,7 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
         Object httpresp = cxfExchange.getInMessage().get("HTTP.RESPONSE");
         if (httpresp != null) {
             try {
-                Method m = ReflectionUtil.findMethod(httpresp.getClass(), "setStatus", int.class);
+                Method m = findMethod(httpresp.getClass(), "setStatus", int.class);
                 if (m != null) {
                     m.invoke(httpresp, 202);
                 }
@@ -868,5 +875,37 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
                 LOG.warn("Unable to set the http ", e);
             }
         }
+    }
+    public static Method findMethod(Class<?> cls,
+                                    String name,
+                                    Class<?> ... params) {
+        if (cls == null) {
+            return null;
+        }
+        for (Class<?> cs : cls.getInterfaces()) {
+            if (Modifier.isPublic(cs.getModifiers())) {
+                Method m = findMethod(cs, name, params);
+                if (m != null && Modifier.isPublic(m.getModifiers())) {
+                    return m;
+                }
+            }
+        }
+        try {
+            Method m = cls.getDeclaredMethod(name, params);
+            if (m != null && Modifier.isPublic(m.getModifiers())) {
+                return m;
+            }
+        } catch (Exception e) {
+            //ignore
+        }
+        Method m = findMethod(cls.getSuperclass(), name, params);
+        if (m == null) {
+            try {
+                m = cls.getMethod(name, params);
+            } catch (Exception e) {
+                //ignore
+            }
+        }
+        return m;
     }
 }

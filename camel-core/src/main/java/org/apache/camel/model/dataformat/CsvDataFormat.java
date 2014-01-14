@@ -31,7 +31,7 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * Represents a CSV (Comma Separated Values) {@link org.apache.camel.spi.DataFormat}
  *
- * @version 
+ * @version
  */
 @XmlRootElement(name = "csv")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -48,6 +48,8 @@ public class CsvDataFormat extends DataFormatDefinition {
     private Boolean skipFirstLine;
     @XmlAttribute
     private Boolean lazyLoad;
+    @XmlAttribute
+    private Boolean useMaps;
 
     public CsvDataFormat() {
         super("csv");
@@ -111,6 +113,14 @@ public class CsvDataFormat extends DataFormatDefinition {
         this.lazyLoad = lazyLoad;
     }
 
+    public Boolean getUseMaps() {
+        return useMaps;
+    }
+
+    public void setUseMaps(Boolean useMaps) {
+        this.useMaps = useMaps;
+    }
+
     @Override
     protected DataFormat createDataFormat(RouteContext routeContext) {
         DataFormat csvFormat = super.createDataFormat(routeContext);
@@ -149,6 +159,10 @@ public class CsvDataFormat extends DataFormatDefinition {
 
         if (lazyLoad != null) {
             setProperty(camelContext, dataFormat, "lazyLoad", lazyLoad);
+        }
+
+        if (useMaps != null) {
+            setProperty(camelContext, dataFormat, "useMaps", useMaps);
         }
     }
 }

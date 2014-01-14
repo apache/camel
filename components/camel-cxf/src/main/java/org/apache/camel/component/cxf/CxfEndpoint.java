@@ -16,7 +16,9 @@
  */
 package org.apache.camel.component.cxf;
 
+import java.lang.reflect.Method;
 import java.lang.reflect.Proxy;
+import java.security.Provider;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.HashMap;
@@ -59,7 +61,6 @@ import org.apache.camel.spi.HeaderFilterStrategyAware;
 import org.apache.camel.util.EndpointHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
-
 import org.apache.cxf.Bus;
 import org.apache.cxf.BusFactory;
 import org.apache.cxf.binding.BindingConfiguration;
@@ -67,6 +68,7 @@ import org.apache.cxf.common.classloader.ClassLoaderUtils;
 import org.apache.cxf.common.injection.ResourceInjector;
 import org.apache.cxf.common.util.ClassHelper;
 import org.apache.cxf.common.util.ModCountCopyOnWriteArrayList;
+import org.apache.cxf.common.util.ReflectionUtil;
 import org.apache.cxf.databinding.DataBinding;
 import org.apache.cxf.databinding.source.SourceDataBinding;
 import org.apache.cxf.endpoint.Client;
@@ -91,8 +93,6 @@ import org.apache.cxf.message.MessageContentsList;
 import org.apache.cxf.resource.DefaultResourceManager;
 import org.apache.cxf.resource.ResourceManager;
 import org.apache.cxf.resource.ResourceResolver;
-import org.apache.cxf.service.factory.FactoryBeanListener;
-import org.apache.cxf.service.factory.ReflectionServiceFactoryBean;
 import org.apache.cxf.service.model.BindingOperationInfo;
 import org.apache.cxf.service.model.MessagePartInfo;
 import org.apache.cxf.staxutils.StaxSource;
@@ -155,7 +155,7 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     
     private BindingConfiguration bindingConfig;
     private DataBinding dataBinding;
-    private ReflectionServiceFactoryBean serviceFactoryBean;
+    private Object serviceFactoryBean;
     private CxfEndpointConfigurer configurer;
     
 
@@ -238,7 +238,7 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         }
         
         if (serviceFactoryBean != null) {
-            sfb.setServiceFactory(serviceFactoryBean);
+            setServiceFactory(sfb, serviceFactoryBean);
         }
         
         if (sfb instanceof JaxWsServerFactoryBean && handlers != null) {
@@ -297,7 +297,7 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
 
         // set the document-literal wrapped style
         if (getWrappedStyle() != null && getDataFormat().dealias() != DataFormat.CXF_MESSAGE) {
-            sfb.getServiceFactory().setWrapped(getWrappedStyle());
+            setWrapped(sfb, getWrappedStyle());
         }
 
         // any optional properties
@@ -340,18 +340,14 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
             return new JaxWsClientFactoryBean() {
                 @Override
                 protected Client createClient(Endpoint ep) {
-                    Client client = new CamelCxfClientImpl(getBus(), ep);
-                    this.getServiceFactory().sendEvent(FactoryBeanListener.Event.CLIENT_CREATED, client, ep);
-                    return client;
+                    return new CamelCxfClientImpl(getBus(), ep);
                 }
             };
         } else {
             return new ClientFactoryBean() {
                 @Override
                 protected Client createClient(Endpoint ep) {
-                    Client client = new CamelCxfClientImpl(getBus(), ep);
-                    this.getServiceFactory().sendEvent(FactoryBeanListener.Event.CLIENT_CREATED, client, ep);
-                    return client;
+                    return new CamelCxfClientImpl(getBus(), ep);
                 }
             };
         }
@@ -361,13 +357,10 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
      * Create a client factory bean object without serviceClass interface.
      */
     protected ClientFactoryBean createClientFactoryBean() {
-        return new ClientFactoryBean(new WSDLServiceFactoryBean()) {
-
+        ClientFactoryBean cf = new ClientFactoryBean() {
             @Override
             protected Client createClient(Endpoint ep) {
-                Client client = new CamelCxfClientImpl(getBus(), ep);
-                this.getServiceFactory().sendEvent(FactoryBeanListener.Event.CLIENT_CREATED, client, ep);
-                return client;
+                return new CamelCxfClientImpl(getBus(), ep);
             }
 
             @Override
@@ -375,13 +368,26 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
                 // Do nothing here
             }
         };
+        for (Method m : cf.getClass().getMethods()) {
+            if ("setServiceFactory".equals(m.getName())) {
+                try {
+                    ReflectionUtil.setAccessible(m).invoke(cf, new WSDLServiceFactoryBean());
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
+        return cf;
     }
 
-    protected void setupHandlers(ClientFactoryBean factoryBean, Client client) {
+    protected void setupHandlers(ClientFactoryBean factoryBean, Client client) 
+        throws Exception {
 
         if (factoryBean instanceof JaxWsClientFactoryBean && handlers != null) {
-            AnnotationHandlerChainBuilder builder = new AnnotationHandlerChainBuilder();
-            JaxWsServiceFactoryBean sf = (JaxWsServiceFactoryBean)factoryBean.getServiceFactory();
+            AnnotationHandlerChainBuilder
+            builder = new AnnotationHandlerChainBuilder();
+            Method m = factoryBean.getClass().getMethod("getServiceFactory");
+            JaxWsServiceFactoryBean sf = (JaxWsServiceFactoryBean)m.invoke(factoryBean);
             @SuppressWarnings("rawtypes")
             List<Handler> chain = new ArrayList<Handler>(handlers);
 
@@ -432,7 +438,7 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         }
         
         if (serviceFactoryBean != null) {
-            factoryBean.setServiceFactory(serviceFactoryBean);
+            setServiceFactory(factoryBean, serviceFactoryBean);
         }
 
         // address
@@ -477,7 +483,7 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
 
         // set the document-literal wrapped style
         if (getWrappedStyle() != null) {
-            factoryBean.getServiceFactory().setWrapped(getWrappedStyle());
+            setWrapped(factoryBean, getWrappedStyle());
         }
         
         // any optional properties
@@ -513,6 +519,28 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
 
     // Package private methods
     // -------------------------------------------------------------------------
+
+    private void setWrapped(Object factoryBean, boolean wrapped) {
+        try {
+            Object sf = factoryBean.getClass().getMethod("getServiceFactory").invoke(factoryBean);
+            sf.getClass().getMethod("setWrapped", Boolean.TYPE).invoke(sf, wrapped);
+        } catch (Throwable t) {
+            throw new RuntimeException(t);
+        }
+    }
+
+    private void setServiceFactory(Object factoryBean, Object serviceFactoryBean2) {
+        for (Method m : factoryBean.getClass().getMethods()) {
+            if ("setServiceFactory".equals(m.getName())
+                && m.getParameterTypes()[0].isInstance(serviceFactoryBean2)) {
+                try {
+                    ReflectionUtil.setAccessible(m).invoke(factoryBean, serviceFactoryBean2);
+                } catch (Exception e) {
+                    throw new RuntimeException(e);
+                }
+            }
+        }
+    }
 
     /**
      * Create a CXF client object
@@ -593,7 +621,12 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         if (cls == null) {
             checkName(portName, " endpoint/port name");
             checkName(serviceName, " service name");
-            answer = new ServerFactoryBean(new WSDLServiceFactoryBean());
+            answer = new JaxWsServerFactoryBean(new WSDLServiceFactoryBean()) {
+                {
+                    doInit = false;
+                }
+            };
+            cls = Provider.class;
         } else if (CxfEndpointUtils.hasWebServiceAnnotation(cls)) {
             answer = new JaxWsServerFactoryBean();
         } else {
@@ -1105,11 +1138,11 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         this.dataBinding = dataBinding;
     }
 
-    public ReflectionServiceFactoryBean getServiceFactoryBean() {
+    public Object getServiceFactoryBean() {
         return serviceFactoryBean;
     }
 
-    public void setServiceFactoryBean(ReflectionServiceFactoryBean serviceFactoryBean) {
+    public void setServiceFactoryBean(Object serviceFactoryBean) {
         this.serviceFactoryBean = serviceFactoryBean;
     }
 

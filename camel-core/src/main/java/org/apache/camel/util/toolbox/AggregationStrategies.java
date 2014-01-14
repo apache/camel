@@ -20,6 +20,7 @@ import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.processor.aggregate.AggregationStrategyBeanAdapter;
 import org.apache.camel.processor.aggregate.GroupedExchangeAggregationStrategy;
 import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
+import org.apache.camel.processor.aggregate.UseOriginalAggregationStrategy;
 
 /**
  * Toolbox class to create commonly used Aggregation Strategies in a fluent manner.
@@ -51,12 +52,22 @@ public final class AggregationStrategies {
 
     /**
      * Use the latest incoming exchange.
-     * @see UseLatestAggregationStrategy
+     *
+     * @see org.apache.camel.processor.aggregate.UseLatestAggregationStrategy
      */
     public static AggregationStrategy useLatest() {
         return new UseLatestAggregationStrategy();
     }
     
+    /**
+     * Use the original exchange.
+     *
+     * @see org.apache.camel.processor.aggregate.UseOriginalAggregationStrategy
+     */
+    public static AggregationStrategy useOriginal() {
+        return new UseOriginalAggregationStrategy();
+    }
+
     /**
      * Creates a {@link GroupedExchangeAggregationStrategy} aggregation strategy.
      */

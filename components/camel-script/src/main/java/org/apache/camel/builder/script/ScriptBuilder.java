@@ -293,20 +293,39 @@ public class ScriptBuilder extends ServiceSupport implements Expression, Predica
         return ObjectConverter.toBool(scriptValue);
     }
 
+    private static String[] getScriptNames(String name) {
+        if (name.equals("js")) {
+            return new String[]{"js", "javaScript", "ECMAScript"};
+        } else if (name.equals("javaScript")) {
+            return new String[]{"javaScript", "js", "ECMAScript"};
+        } else if (name.equals("ECMAScript")) {
+            return new String[]{"ECMAScript", "javaScript", "js"};
+        }
+        return new String[]{name};
+    }
+
     protected ScriptEngine createScriptEngine() {
         ScriptEngineManager manager = new ScriptEngineManager();
         ScriptEngine engine = null;
-        try {
-            engine = manager.getEngineByName(scriptEngineName);
-        } catch (NoClassDefFoundError ex) {
-            LOG.error("Cannot load the scriptEngine for " + scriptEngineName + ", the exception is " + ex
-                      + ", please ensure correct JARs is provided on classpath.");
+
+        // some script names has alias
+        String[] names = getScriptNames(scriptEngineName);
+        for (String name : names) {
+            try {
+                engine = manager.getEngineByName(name);
+                if (engine != null) {
+                    break;
+                }
+            } catch (NoClassDefFoundError ex) {
+                LOG.error("Cannot load the scriptEngine for " + name + ", the exception is " + ex
+                          + ", please ensure correct JARs is provided on classpath.");
+            }
         }
         if (engine == null) {
             engine = checkForOSGiEngine();
         }
         if (engine == null) {
-            throw new IllegalArgumentException("No script engine could be created for: " + getScriptEngineName());
+            throw new IllegalArgumentException("No script engine could be created for: " + scriptEngineName);
         }
         if (isPython()) {
             ScriptContext context = engine.getContext();
@@ -316,7 +335,7 @@ public class ScriptBuilder extends ServiceSupport implements Expression, Predica
     }
 
     private ScriptEngine checkForOSGiEngine() {
-        LOG.debug("No script engine found for " + scriptEngineName + " using standard javax.script auto-registration.  Checking OSGi registry...");
+        LOG.debug("No script engine found for " + scriptEngineName + " using standard javax.script auto-registration. Checking OSGi registry...");
         try {
             // Test the OSGi environment with the Activator
             Class<?> c = Class.forName("org.apache.camel.script.osgi.Activator");

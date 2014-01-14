@@ -21,7 +21,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.xml.ws.WebFault;
+
 import org.w3c.dom.Element;
+
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
@@ -38,8 +40,8 @@ import org.apache.cxf.message.FaultMode;
 import org.apache.cxf.message.Message;
 import org.apache.cxf.service.invoker.Invoker;
 import org.apache.cxf.service.model.BindingOperationInfo;
-import org.apache.cxf.ws.addressing.AddressingProperties;
 import org.apache.cxf.ws.addressing.ContextUtils;
+import org.apache.cxf.ws.addressing.EndpointReferenceType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -273,12 +275,18 @@ public class CxfConsumer extends DefaultConsumer {
         server.stop();
         super.doStop();
     }
-    
+    private EndpointReferenceType getReplyTo(Object o) {
+        try {
+            return (EndpointReferenceType)o.getClass().getMethod("getReplyTo").invoke(o);
+        } catch (Throwable t) {
+            throw new Fault(t);
+        }
+    }
     protected boolean isAsyncInvocationSupported(Exchange cxfExchange) {
         Message cxfMessage = cxfExchange.getInMessage();
-        AddressingProperties addressingProperties = (AddressingProperties) cxfMessage.get(CxfConstants.WSA_HEADERS_INBOUND);
+        Object addressingProperties = cxfMessage.get(CxfConstants.WSA_HEADERS_INBOUND);
         if (addressingProperties != null 
-               && !ContextUtils.isGenericAddress(addressingProperties.getReplyTo())) {
+               && !ContextUtils.isGenericAddress(getReplyTo(addressingProperties))) {
             //it's decoupled endpoint, so already switch thread and
             //use executors, which means underlying transport won't 
             //be block, so we shouldn't rely on continuation in 

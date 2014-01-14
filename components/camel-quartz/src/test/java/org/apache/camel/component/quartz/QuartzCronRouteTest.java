@@ -19,6 +19,7 @@ package org.apache.camel.component.quartz;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
+import org.quartz.JobDetail;
 
 /**
  * @version 
@@ -31,6 +32,12 @@ public class QuartzCronRouteTest extends BaseQuartzTest {
         mock.expectedMinimumMessageCount(3);
 
         assertMockEndpointsSatisfied();
+
+        JobDetail job = mock.getReceivedExchanges().get(0).getIn().getHeader("jobDetail", JobDetail.class);
+        assertNotNull(job);
+
+        assertEquals("cron", job.getJobDataMap().get(QuartzConstants.QUARTZ_TRIGGER_TYPE));
+        assertEquals("0/2 * * * * ?", job.getJobDataMap().get(QuartzConstants.QUARTZ_TRIGGER_CRON_EXPRESSION));
     }
 
     @Override

@@ -19,6 +19,7 @@ package org.apache.camel.component.quartz;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
+import org.quartz.JobDetail;
 
 /**
  * @version 
@@ -35,6 +36,13 @@ public class QuartzRouteTest extends BaseQuartzTest {
 
         // lets test the receive worked
         resultEndpoint.assertIsSatisfied();
+
+        JobDetail job = resultEndpoint.getReceivedExchanges().get(0).getIn().getHeader("jobDetail", JobDetail.class);
+        assertNotNull(job);
+
+        assertEquals("simple", job.getJobDataMap().get(QuartzConstants.QUARTZ_TRIGGER_TYPE));
+        assertEquals(2L, job.getJobDataMap().get(QuartzConstants.QUARTZ_TRIGGER_SIMPLE_REPEAT_INTERVAL));
+        assertEquals(1, job.getJobDataMap().get(QuartzConstants.QUARTZ_TRIGGER_SIMPLE_REPEAT_COUNTER));
     }
 
     @Override

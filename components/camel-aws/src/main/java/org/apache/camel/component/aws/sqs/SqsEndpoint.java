@@ -110,7 +110,7 @@ public class SqsEndpoint extends ScheduledPollEndpoint {
         }
     }
 
-    private void createQueue(AmazonSQS client) {
+    protected void createQueue(AmazonSQS client) {
         LOG.trace("Queue '{}' doesn't exist. Will create it...", configuration.getQueueName());
 
         // creates a new queue, or returns the URL of an existing one
@@ -220,7 +220,7 @@ public class SqsEndpoint extends ScheduledPollEndpoint {
     protected String getQueueUrl() {
         return queueUrl;
     }
-    
+
     public int getMaxMessagesPerPoll() {
         return maxMessagesPerPoll;
     }

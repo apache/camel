@@ -19,6 +19,7 @@ package org.apache.camel.dataformat.csv;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.Arrays;
+import java.util.List;
 import java.util.NoSuchElementException;
 
 import mockit.Expectations;
@@ -32,16 +33,14 @@ public class CsvIteratorTest {
     public static final String HDD_CRASH = "HDD crash";
 
     @Test
-    public void closeIfError(
-            @Injectable final  InputStreamReader reader,
-            @Injectable final CSVParser parser) throws IOException {
+    public void closeIfError(@Injectable final InputStreamReader reader, @Injectable final CSVParser parser) throws IOException {
         new Expectations() {
             {
                 parser.getLine();
-                result = new String[] {"1"};
+                result = new String[]{"1"};
 
                 parser.getLine();
-                result = new String[] {"2"};
+                result = new String[]{"2"};
 
                 parser.getLine();
                 result = new IOException(HDD_CRASH);
@@ -52,7 +51,7 @@ public class CsvIteratorTest {
         };
 
         @SuppressWarnings("resource")
-        CsvIterator iterator = new CsvIterator(parser, reader);
+        CsvIterator<List<String>> iterator = new CsvIterator<List<String>>(parser, reader, CsvLineConverters.getListConverter());
         Assert.assertTrue(iterator.hasNext());
         Assert.assertEquals(Arrays.asList("1"), iterator.next());
         Assert.assertTrue(iterator.hasNext());
@@ -75,15 +74,14 @@ public class CsvIteratorTest {
     }
 
     @Test
-    public void normalCycle(@Injectable final InputStreamReader reader,
-                            @Injectable final CSVParser parser) throws IOException {
+    public void normalCycle(@Injectable final InputStreamReader reader, @Injectable final CSVParser parser) throws IOException {
         new Expectations() {
             {
                 parser.getLine();
-                result = new String[] {"1"};
+                result = new String[]{"1"};
 
                 parser.getLine();
-                result = new String[] {"2"};
+                result = new String[]{"2"};
 
                 parser.getLine();
                 result = null;
@@ -92,9 +90,9 @@ public class CsvIteratorTest {
                 reader.close();
             }
         };
-       
+
         @SuppressWarnings("resource")
-        CsvIterator iterator = new CsvIterator(parser, reader);
+        CsvIterator<List<String>> iterator = new CsvIterator<List<String>>(parser, reader, CsvLineConverters.getListConverter());
         Assert.assertTrue(iterator.hasNext());
         Assert.assertEquals(Arrays.asList("1"), iterator.next());
 
@@ -109,6 +107,5 @@ public class CsvIteratorTest {
         } catch (NoSuchElementException e) {
             // okay
         }
-        
     }
 }

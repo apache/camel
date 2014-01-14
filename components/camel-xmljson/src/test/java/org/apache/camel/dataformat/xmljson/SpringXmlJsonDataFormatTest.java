@@ -35,7 +35,7 @@ public class SpringXmlJsonDataFormatTest extends CamelSpringTestSupport {
 
     @Test
     public void testMarshalAndUnmarshal() throws Exception {
-        InputStream inStream = getClass().getClassLoader().getResourceAsStream("org/apache/camel/dataformat/xmljson/testMessage1.xml");
+        InputStream inStream = getClass().getResourceAsStream("testMessage1.xml");
         String in = context.getTypeConverter().convertTo(String.class, inStream);
 
         MockEndpoint mockJSON = getMockEndpoint("mock:json");
@@ -59,7 +59,7 @@ public class SpringXmlJsonDataFormatTest extends CamelSpringTestSupport {
 
     @Test
     public void testSomeOptionsToXML() throws Exception {
-        InputStream inStream = getClass().getClassLoader().getResourceAsStream("org/apache/camel/dataformat/xmljson/testMessage1.json");
+        InputStream inStream = getClass().getResourceAsStream("testMessage1.json");
         String in = context.getTypeConverter().convertTo(String.class, inStream);
 
         MockEndpoint mockXML = getMockEndpoint("mock:xmlWithOptions");

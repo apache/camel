@@ -41,7 +41,7 @@ public class XmlJsonDataFormatTest extends CamelTestSupport {
 
     @Test
     public void testMarshalAndUnmarshal() throws Exception {
-        InputStream inStream = getClass().getClassLoader().getResourceAsStream("org/apache/camel/dataformat/xmljson/testMessage1.xml");
+        InputStream inStream = getClass().getResourceAsStream("testMessage1.xml");
         String in = context.getTypeConverter().convertTo(String.class, inStream);
 
         MockEndpoint mockJSON = getMockEndpoint("mock:json");
@@ -65,7 +65,7 @@ public class XmlJsonDataFormatTest extends CamelTestSupport {
 
     @Test
     public void testUnmarshalJSONObject() throws Exception {
-        InputStream inStream = getClass().getClassLoader().getResourceAsStream("org/apache/camel/dataformat/xmljson/testMessage1.json");
+        InputStream inStream = getClass().getResourceAsStream("testMessage1.json");
         String in = context.getTypeConverter().convertTo(String.class, inStream);
         JSON json = JSONSerializer.toJSON(in);
 
@@ -82,11 +82,11 @@ public class XmlJsonDataFormatTest extends CamelTestSupport {
 
     @Test
     public void testMarshalXMLSources() throws Exception {
-        InputStream inStream = getClass().getClassLoader().getResourceAsStream("org/apache/camel/dataformat/xmljson/testMessage1.xml");
+        InputStream inStream = getClass().getResourceAsStream("testMessage1.xml");
         DOMSource inDOM = context.getTypeConverter().convertTo(DOMSource.class, inStream);
-        inStream = getClass().getClassLoader().getResourceAsStream("org/apache/camel/dataformat/xmljson/testMessage1.xml");
+        inStream = getClass().getResourceAsStream("testMessage1.xml");
         SAXSource inSAX = context.getTypeConverter().convertTo(SAXSource.class, inStream);
-        inStream = getClass().getClassLoader().getResourceAsStream("org/apache/camel/dataformat/xmljson/testMessage1.xml");
+        inStream = getClass().getResourceAsStream("testMessage1.xml");
         Document inDocument = context.getTypeConverter().convertTo(Document.class, inStream);
 
         // save the expected body of the message to set it later
@@ -114,7 +114,7 @@ public class XmlJsonDataFormatTest extends CamelTestSupport {
     
     @Test
     public void testMarshalAndUnmarshalInline() throws Exception {
-        InputStream inStream = getClass().getClassLoader().getResourceAsStream("org/apache/camel/dataformat/xmljson/testMessage1.xml");
+        InputStream inStream = getClass().getResourceAsStream("testMessage1.xml");
         String in = context.getTypeConverter().convertTo(String.class, inStream);
 
         MockEndpoint mockJSON = getMockEndpoint("mock:jsonInline");
@@ -138,7 +138,7 @@ public class XmlJsonDataFormatTest extends CamelTestSupport {
     
     @Test
     public void testNamespacesDroppedInlineWithOptions() throws Exception {
-        InputStream inStream = getClass().getClassLoader().getResourceAsStream("org/apache/camel/dataformat/xmljson/testMessage2-namespaces.xml");
+        InputStream inStream = getClass().getResourceAsStream("testMessage2-namespaces.xml");
         String in = context.getTypeConverter().convertTo(String.class, inStream);
 
         MockEndpoint mockJSON = getMockEndpoint("mock:jsonInlineOptions");
@@ -162,7 +162,7 @@ public class XmlJsonDataFormatTest extends CamelTestSupport {
     
     @Test
     public void testUnmarshalToXMLInlineOptions() throws Exception {
-        InputStream inStream = getClass().getClassLoader().getResourceAsStream("org/apache/camel/dataformat/xmljson/testMessage1.json");
+        InputStream inStream = getClass().getResourceAsStream("testMessage1.json");
         String in = context.getTypeConverter().convertTo(String.class, inStream);
 
         MockEndpoint mockXML = getMockEndpoint("mock:xmlInlineOptions");

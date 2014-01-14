@@ -17,11 +17,11 @@
 package org.apache.camel.bam.processor;
 
 import java.lang.reflect.Method;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+
+import javax.persistence.EntityManager;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
@@ -35,12 +35,15 @@ import org.slf4j.LoggerFactory;
 import org.springframework.orm.jpa.JpaTemplate;
 import org.springframework.transaction.support.TransactionTemplate;
 
+import static org.apache.camel.bam.EntityManagers.closeNonTransactionalEntityManager;
+import static org.apache.camel.bam.EntityManagers.resolveEntityManager;
+
 /**
  * A base class for JPA based BAM which can use any entity to store the process
  * instance information which allows derived classes to specialise the process
  * instance entity.
  *
- * @version 
+ * @version
  */
 public class JpaBamProcessorSupport<T> extends BamProcessorSupport<T> {
     private static final Logger LOG = LoggerFactory.getLogger(JpaBamProcessorSupport.class);
@@ -53,14 +56,14 @@ public class JpaBamProcessorSupport<T> extends BamProcessorSupport<T> {
     private String keyPropertyName = "correlationKey";
     private boolean correlationKeyIsPrimary = true;
 
-    public JpaBamProcessorSupport(TransactionTemplate transactionTemplate, JpaTemplate template, 
+    public JpaBamProcessorSupport(TransactionTemplate transactionTemplate, JpaTemplate template,
             Expression correlationKeyExpression, ActivityRules activityRules, Class<T> entitytype) {
         super(transactionTemplate, correlationKeyExpression, entitytype);
         this.activityRules = activityRules;
         this.template = template;
     }
 
-    public JpaBamProcessorSupport(TransactionTemplate transactionTemplate, JpaTemplate template, 
+    public JpaBamProcessorSupport(TransactionTemplate transactionTemplate, JpaTemplate template,
             Expression correlationKeyExpression, ActivityRules activityRules) {
         super(transactionTemplate, correlationKeyExpression);
         this.activityRules = activityRules;
@@ -138,17 +141,21 @@ public class JpaBamProcessorSupport<T> extends BamProcessorSupport<T> {
 
     @SuppressWarnings("unchecked")
     protected T findEntityByCorrelationKey(Object key) {
-        if (isCorrelationKeyIsPrimary()) {
-            return template.find(getEntityType(), key);
-        } else {
-            Map<String, Object> params = new HashMap<String, Object>(1);
-            params.put("key", key);
-            List<T> list = template.findByNamedParams(getFindByKeyQuery(), params);
-            if (list.isEmpty()) {
-                return null;
+        EntityManager entityManager = null;
+        try {
+            entityManager = resolveEntityManager(template.getEntityManagerFactory());
+            if (isCorrelationKeyIsPrimary()) {
+                return entityManager.find(getEntityType(), key);
             } else {
-                return list.get(0);
+                List<T> list = entityManager.createQuery(getFindByKeyQuery()).setParameter("key", key).getResultList();
+                if (list.isEmpty()) {
+                    return null;
+                } else {
+                    return list.get(0);
+                }
             }
+        } finally {
+            closeNonTransactionalEntityManager(entityManager);
         }
     }
 

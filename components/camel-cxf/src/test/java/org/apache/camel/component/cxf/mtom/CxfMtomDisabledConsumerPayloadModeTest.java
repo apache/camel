@@ -30,11 +30,9 @@ import org.apache.camel.Processor;
 import org.apache.camel.component.cxf.CXFTestSupport;
 import org.apache.camel.component.cxf.CxfPayload;
 import org.apache.cxf.binding.soap.SoapHeader;
-import org.apache.cxf.helpers.DOMUtils;
 import org.apache.cxf.helpers.IOUtils;
-
+import org.apache.cxf.staxutils.StaxUtils;
 import org.junit.Assert;
-
 import org.springframework.test.context.ContextConfiguration;
 
 /**
@@ -71,7 +69,7 @@ public class CxfMtomDisabledConsumerPayloadModeTest extends CxfMtomConsumerPaylo
 
             // create response
             List<Source> elements = new ArrayList<Source>();
-            elements.add(new DOMSource(DOMUtils.readXml(new StringReader(MtomTestHelper.MTOM_DISABLED_RESP_MESSAGE)).getDocumentElement()));
+            elements.add(new DOMSource(StaxUtils.read(new StringReader(MtomTestHelper.MTOM_DISABLED_RESP_MESSAGE)).getDocumentElement()));
             CxfPayload<SoapHeader> body = new CxfPayload<SoapHeader>(new ArrayList<SoapHeader>(),
                 elements, null);
             exchange.getOut().setBody(body);

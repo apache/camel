@@ -215,7 +215,7 @@ public class QuartzEndpoint extends DefaultEndpoint {
         Trigger trigger = scheduler.getTrigger(triggerKey);
         if (trigger == null) {
             jobDetail = createJobDetail();
-            trigger = createTrigger();
+            trigger = createTrigger(jobDetail);
 
             updateJobDataMap(jobDetail);
 
@@ -261,7 +261,7 @@ public class QuartzEndpoint extends DefaultEndpoint {
         jobDataMap.put(QuartzConstants.QUARTZ_ENDPOINT_URI, endpointUri);
     }
 
-    private Trigger createTrigger() throws Exception {
+    private Trigger createTrigger(JobDetail jobDetail) throws Exception {
         Trigger result;
         Date startTime = new Date();
         if (getComponent().getScheduler().isStarted()) {
@@ -274,6 +274,11 @@ public class QuartzEndpoint extends DefaultEndpoint {
                     .startAt(startTime)
                     .withSchedule(cronSchedule(cron).withMisfireHandlingInstructionFireAndProceed())
                     .build();
+
+            // enrich job map with details
+            jobDetail.getJobDataMap().put(QuartzConstants.QUARTZ_TRIGGER_TYPE, "cron");
+            jobDetail.getJobDataMap().put(QuartzConstants.QUARTZ_TRIGGER_CRON_EXPRESSION, cron);
+
         } else {
             LOG.debug("Creating SimpleTrigger.");
             int repeat = SimpleTrigger.REPEAT_INDEFINITELY;
@@ -300,6 +305,11 @@ public class QuartzEndpoint extends DefaultEndpoint {
             }
 
             result = triggerBuilder.build();
+
+            // enrich job map with details
+            jobDetail.getJobDataMap().put(QuartzConstants.QUARTZ_TRIGGER_TYPE, "simple");
+            jobDetail.getJobDataMap().put(QuartzConstants.QUARTZ_TRIGGER_SIMPLE_REPEAT_COUNTER, repeat);
+            jobDetail.getJobDataMap().put(QuartzConstants.QUARTZ_TRIGGER_SIMPLE_REPEAT_INTERVAL, interval);
         }
 
         if (triggerParameters != null && triggerParameters.size() > 0) {

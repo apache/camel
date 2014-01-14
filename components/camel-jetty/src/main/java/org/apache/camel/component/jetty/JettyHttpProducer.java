@@ -43,6 +43,7 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 import org.eclipse.jetty.client.HttpClient;
 import org.eclipse.jetty.io.ByteArrayBuffer;
+import org.eclipse.jetty.util.component.LifeCycle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -266,6 +267,11 @@ public class JettyHttpProducer extends DefaultProducer implements AsyncProcessor
         // only start non-shared client
         if (!sharedClient && client != null) {
             client.start();
+            // start the thread pool
+            if (client.getThreadPool() instanceof LifeCycle) {
+                LOG.debug("Starting client thread pool {}", client.getThreadPool());
+                ((LifeCycle) client.getThreadPool()).start();
+            }
         }
         super.doStart();
     }
@@ -276,6 +282,11 @@ public class JettyHttpProducer extends DefaultProducer implements AsyncProcessor
         // only stop non-shared client
         if (!sharedClient && client != null) {
             client.stop();
+            // stop thread pool
+            if (client.getThreadPool() instanceof LifeCycle) {
+                LOG.debug("Stopping client thread pool {}", client.getThreadPool());
+                ((LifeCycle) client.getThreadPool()).stop();
+            }
         }
     }
 }
