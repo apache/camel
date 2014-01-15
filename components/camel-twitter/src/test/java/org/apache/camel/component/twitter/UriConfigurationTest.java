@@ -33,10 +33,11 @@ public class UriConfigurationTest extends Assert {
         assertTrue("Endpoint not a TwitterEndpoint: " + endpoint, endpoint instanceof TwitterEndpoint);
         TwitterEndpoint twitterEndpoint = (TwitterEndpoint) endpoint;
 
-        Assert.assertTrue(!twitterEndpoint.getProperties().getConsumerKey().isEmpty());
-        Assert.assertTrue(!twitterEndpoint.getProperties().getConsumerSecret().isEmpty());
-        Assert.assertTrue(!twitterEndpoint.getProperties().getAccessToken().isEmpty());
-        Assert.assertTrue(!twitterEndpoint.getProperties().getAccessTokenSecret().isEmpty());
+        assertTrue(!twitterEndpoint.getProperties().getConsumerKey().isEmpty());
+        assertTrue(!twitterEndpoint.getProperties().getConsumerSecret().isEmpty());
+        assertTrue(!twitterEndpoint.getProperties().getAccessToken().isEmpty());
+        assertTrue(!twitterEndpoint.getProperties().getAccessTokenSecret().isEmpty());
+        assertTrue(twitterEndpoint.getProperties().getUseSSL());
     }
     
     @Test
@@ -45,8 +46,8 @@ public class UriConfigurationTest extends Assert {
         assertTrue("Endpoint not a TwitterEndpoint: " + endpoint, endpoint instanceof TwitterEndpoint);
         TwitterEndpoint twitterEndpoint = (TwitterEndpoint) endpoint;
 
-        Assert.assertEquals(new Integer(50), twitterEndpoint.getProperties().getCount());
-        Assert.assertEquals(new Integer(2), twitterEndpoint.getProperties().getNumberOfPages());
+        assertEquals(new Integer(50), twitterEndpoint.getProperties().getCount());
+        assertEquals(new Integer(2), twitterEndpoint.getProperties().getNumberOfPages());
     }
     
     @Test
@@ -59,5 +60,15 @@ public class UriConfigurationTest extends Assert {
         assertEquals(3338, twitterEndpoint.getProperties().getHttpProxyPort());
         assertEquals("test", twitterEndpoint.getProperties().getHttpProxyUser());
         assertEquals("pwd", twitterEndpoint.getProperties().getHttpProxyPassword());
+    }
+    
+    @Test
+    public void testUseSSLSetting() throws Exception {
+        Endpoint endpoint = context.getEndpoint("twitter:todo/todo?useSSL=false");
+        assertTrue("Endpoint not a TwitterEndpoint: " + endpoint, endpoint instanceof TwitterEndpoint);
+        TwitterEndpoint twitterEndpoint = (TwitterEndpoint) endpoint;
+        
+        assertFalse(twitterEndpoint.getProperties().getUseSSL());
+        
     }
 }
