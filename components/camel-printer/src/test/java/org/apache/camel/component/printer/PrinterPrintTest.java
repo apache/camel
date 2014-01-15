@@ -329,6 +329,30 @@ public class PrinterPrintTest extends CamelTestSupport {
         assertEquals("middle", mediaTray.toString());
     }
     
+    @Test
+    public void printsWithLandscapeOrientation() throws Exception {
+        PrinterEndpoint endpoint = new PrinterEndpoint();
+        PrinterConfiguration configuration = new PrinterConfiguration();
+        configuration.setHostname("localhost");
+        configuration.setPort(631);
+        configuration.setPrintername("DefaultPrinter");
+        configuration.setMediaSizeName(MediaSizeName.ISO_A4);
+        configuration.setInternalSides(Sides.ONE_SIDED);
+        configuration.setMediaTray("middle");
+        configuration.setOrientation("landscape");
+
+        PrinterProducer producer = new PrinterProducer(endpoint, configuration);
+        producer.start();
+        PrinterOperations printerOperations = producer.getPrinterOperations();
+        PrintRequestAttributeSet attributeSet = printerOperations.getPrintRequestAttributeSet();
+
+        Attribute attribute = attributeSet.get(javax.print.attribute.standard.Media.class);
+        assertNotNull(attribute);
+        assertTrue(attribute instanceof MediaTray);
+        MediaTray mediaTray = (MediaTray) attribute;
+        assertEquals("middle", mediaTray.toString());
+    }
+
     protected void setupJavaPrint() {
         // "install" another default printer
         PrintService psDefault = mock(PrintService.class);
