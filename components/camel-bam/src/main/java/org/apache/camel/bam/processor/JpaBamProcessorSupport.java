@@ -117,8 +117,10 @@ public class JpaBamProcessorSupport<T> extends BamProcessorSupport<T> {
     // -----------------------------------------------------------------------
     protected T loadEntity(Exchange exchange, Object key) throws Exception {
         LOCK.lock();
+        EntityManager entityManager = null;
         try {
             LOG.trace("LoadEntity call");
+            entityManager = resolveEntityManager(template.getEntityManagerFactory());
             T entity = findEntityByCorrelationKey(key);
             if (entity == null) {
                 entity = createEntity(exchange, key);
@@ -126,16 +128,17 @@ public class JpaBamProcessorSupport<T> extends BamProcessorSupport<T> {
                 ProcessDefinition definition = ProcessDefinition.getRefreshedProcessDefinition(template,
                         getActivityRules().getProcessRules().getProcessDefinition());
                 setProcessDefinitionProperty(entity, definition);
-                template.persist(entity);
+                entityManager.persist(entity);
 
                 // Now we must flush to avoid concurrent updates clashing trying to
                 // insert the same row
                 LOG.debug("About to flush on entity: {} with key: {}", entity, key);
-                template.flush();
+                entityManager.flush();
             }
             return entity;
         } finally {
             LOCK.unlock();
+            closeNonTransactionalEntityManager(entityManager);
         }
     }
 
