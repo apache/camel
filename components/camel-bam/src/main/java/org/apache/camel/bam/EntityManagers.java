@@ -22,11 +22,22 @@ import javax.persistence.EntityManagerFactory;
 import org.springframework.orm.jpa.EntityManagerHolder;
 import org.springframework.transaction.support.TransactionSynchronizationManager;
 
+/**
+ * Utility class designed to orchestrate JPA {@link javax.persistence.EntityManager} and Spring transactions.
+ */
 public final class EntityManagers {
 
     private EntityManagers() {
     }
 
+    /**
+     * Fetches {@link javax.persistence.EntityManager} bound to the current Spring transaction or creates new manager.
+     *
+     * @param entityManagerFactory {@link javax.persistence.EntityManagerFactory} used either as a key for a Spring
+     *                             transaction resource lookup or as a factory to create new
+     *                             {@link javax.persistence.EntityManager}.
+     * @return {@link javax.persistence.EntityManager} bound to the existing Spring transaction or new manager instance.
+     */
     public static EntityManager resolveEntityManager(EntityManagerFactory entityManagerFactory) {
         EntityManagerHolder entityManagerHolder =
                 (EntityManagerHolder) TransactionSynchronizationManager.getResource(entityManagerFactory);
