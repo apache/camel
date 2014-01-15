@@ -97,7 +97,7 @@ public class TwitterConfiguration {
     private long sinceId  = 1;
 
     /**
-     * Used ot set the preferred language on which to search
+     * Used to set the preferred language on which to search
      */
     @UriParam
     private String lang;
@@ -128,6 +128,9 @@ public class TwitterConfiguration {
 
     @UriParam
     private Integer httpProxyPort;
+    
+    @UriParam
+    private boolean useSSL = true;
 
     /**
      * Singleton, on demand instances of Twitter4J's Twitter & TwitterStream.
@@ -161,6 +164,7 @@ public class TwitterConfiguration {
         confBuilder.setOAuthConsumerSecret(consumerSecret);
         confBuilder.setOAuthAccessToken(accessToken);
         confBuilder.setOAuthAccessTokenSecret(accessTokenSecret);
+        confBuilder.setUseSSL(useSSL);
         if (getHttpProxyHost() != null) {
             confBuilder.setHttpProxyHost(getHttpProxyHost());
         }
@@ -207,6 +211,14 @@ public class TwitterConfiguration {
 
     public void setAccessTokenSecret(String accessTokenSecret) {
         this.accessTokenSecret = accessTokenSecret;
+    }
+    
+    public boolean getUseSSL() {
+        return useSSL;
+    }
+    
+    public void setUseSSL(boolean useSSL) {
+        this.useSSL = useSSL;
     }
 
     public String getUser() {
