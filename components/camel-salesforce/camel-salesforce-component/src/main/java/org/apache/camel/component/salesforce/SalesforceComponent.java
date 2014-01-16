@@ -18,7 +18,13 @@ package org.apache.camel.component.salesforce;
 
 import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
-import java.util.*;
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -153,6 +159,7 @@ public class SalesforceComponent extends UriEndpointComponent implements Endpoin
         if (packages != null && packages.length > 0) {
             // parse the packages to create SObject name to class map
             classMap = parsePackages();
+            LOG.info("Found {} generated classes in packages: {}", classMap.size(), Arrays.asList(packages));
         } else {
             // use an empty map to avoid NPEs later
             LOG.warn("Missing property packages, getSObject* operations will NOT work");
