@@ -201,6 +201,10 @@ public class SalesforceComponent extends UriEndpointComponent implements Endpoin
                 httpClient.stop();
             }
         }
+
+        if (classMap != null) {
+            classMap.clear();
+        }
     }
 
     public SubscriptionHelper getSubscriptionHelper() throws Exception {
