@@ -52,10 +52,10 @@ public class PrinterConfiguration {
     public PrinterConfiguration(URI uri) throws URISyntaxException {
         this.uri = uri;
     }
-    
+
     public void parseURI(URI uri) throws Exception {
         String protocol = uri.getScheme();
-        
+
         if (!protocol.equalsIgnoreCase("lpr")) {
             throw new IllegalArgumentException("Unrecognized Print protocol: " + protocol + " for uri: " + uri);
         }
@@ -69,20 +69,20 @@ public class PrinterConfiguration {
         path = ObjectHelper.removeStartingCharacters(path, '/');
         path = ObjectHelper.removeStartingCharacters(path, '\\');
         setPrintername(path);
-        
+
         Map<String, Object> printSettings = URISupport.parseParameters(uri);
-        setFlavor((String)printSettings.get("flavor"));
-        setMimeType((String)printSettings.get("mimeType"));
+        setFlavor((String) printSettings.get("flavor"));
+        setMimeType((String) printSettings.get("mimeType"));
         setDocFlavor(assignDocFlavor(flavor, mimeType));
-        
-        setPrinterPrefix((String)printSettings.get("printerPrefix"));
-        
+
+        setPrinterPrefix((String) printSettings.get("printerPrefix"));
+
         if (printSettings.containsKey("copies")) {
             setCopies(Integer.valueOf((String) printSettings.get("copies")));
         }
-        setMediaSize((String)printSettings.get("mediaSize"));
-        setSides((String)printSettings.get("sides"));
-        setOrientation(((String)printSettings.get("orientation")));
+        setMediaSize((String) printSettings.get("mediaSize"));
+        setSides((String) printSettings.get("sides"));
+        setOrientation((String) printSettings.get("orientation"));
         setMediaSizeName(assignMediaSize(mediaSize));
         setInternalSides(assignSides(sides));
         setInternalOrientation(assignOrientation(orientation));
@@ -91,7 +91,6 @@ public class PrinterConfiguration {
                 setSendToPrinter(false);
             }
         }
-
 
         if (printSettings.containsKey("mediaTray")) {
             setMediaTray((String) printSettings.get("mediaTray"));
@@ -106,7 +105,7 @@ public class PrinterConfiguration {
         if (flavor == null) {
             flavor = "DocFlavor.BYTE_ARRAY";
         }
-        
+
         DocFlavor d = DocFlavor.BYTE_ARRAY.AUTOSENSE;
         DocFlavorAssigner docFlavorAssigner = new DocFlavorAssigner();
         if (mimeType.equalsIgnoreCase("AUTOSENSE")) {
@@ -156,10 +155,10 @@ public class PrinterConfiguration {
         } else if (mimeType.equalsIgnoreCase("RENDERABLE_IMAGE")) {
             d = docFlavorAssigner.forMimeTypeRENDERABLEIMAGE(flavor);
         }
-        
+
         return d;
     }
-    
+
     private MediaSizeName assignMediaSize(String size) {
         MediaSizeAssigner mediaSizeAssigner = new MediaSizeAssigner();
 
@@ -177,7 +176,7 @@ public class PrinterConfiguration {
         } else {
             answer = mediaSizeAssigner.selectMediaSizeNameOther(size);
         }
-        
+
         return answer;
     }
 
@@ -200,10 +199,10 @@ public class PrinterConfiguration {
         } else {
             answer = Sides.ONE_SIDED;
         }
-        
+
         return answer;
     }
-    
+
     public OrientationRequested assignOrientation(final String orientation) {
         OrientationRequested answer;
 
@@ -325,7 +324,7 @@ public class PrinterConfiguration {
         return orientation;
     }
 
-    public void setOrientation( String orientation ) {
+    public void setOrientation(String orientation) {
         this.orientation = orientation;
     }
 

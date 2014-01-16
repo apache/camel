@@ -76,7 +76,7 @@ public class PrinterPrintTest extends CamelTestSupport {
                 byte buffer[] = new byte[is.available()];
                 int n = is.available();
                 for (int i = 0; i < n; i++) {
-                    buffer[i] = (byte)is.read();
+                    buffer[i] = (byte) is.read();
                 }
 
                 is.close();
@@ -97,7 +97,7 @@ public class PrinterPrintTest extends CamelTestSupport {
                 byte buffer[] = new byte[is.available()];
                 int n = is.available();
                 for (int i = 0; i < n; i++) {
-                    buffer[i] = (byte)is.read();
+                    buffer[i] = (byte) is.read();
                 }
 
                 is.close();
@@ -118,7 +118,7 @@ public class PrinterPrintTest extends CamelTestSupport {
                 byte buffer[] = new byte[is.available()];
                 int n = is.available();
                 for (int i = 0; i < n; i++) {
-                    buffer[i] = (byte)is.read();
+                    buffer[i] = (byte) is.read();
                 }
 
                 is.close();
@@ -267,8 +267,8 @@ public class PrinterPrintTest extends CamelTestSupport {
         }
         assertNotNull(lp1);
         assertNotNull(lp2);
-        assertEquals("printer1", ((PrinterEndpoint)lp1).getConfig().getPrintername());
-        assertEquals("printer2", ((PrinterEndpoint)lp2).getConfig().getPrintername());
+        assertEquals("printer1", ((PrinterEndpoint) lp1).getConfig().getPrintername());
+        assertEquals("printer2", ((PrinterEndpoint) lp2).getConfig().getPrintername());
 
         template.sendBody("direct:start1", "Hello Printer 1");
 
@@ -329,11 +329,11 @@ public class PrinterPrintTest extends CamelTestSupport {
         PrinterEndpoint endpoint = new PrinterEndpoint();
         PrinterConfiguration configuration = new PrinterConfiguration();
         configuration.setHostname("localhost");
-        configuration.setPort( 631 );
-        configuration.setPrintername( "DefaultPrinter" );
-        configuration.setMediaSizeName( MediaSizeName.ISO_A4 );
-        configuration.setInternalSides( Sides.ONE_SIDED );
-        configuration.setInternalOrientation( OrientationRequested.PORTRAIT );
+        configuration.setPort(631);
+        configuration.setPrintername("DefaultPrinter");
+        configuration.setMediaSizeName(MediaSizeName.ISO_A4);
+        configuration.setInternalSides(Sides.ONE_SIDED);
+        configuration.setInternalOrientation(OrientationRequested.PORTRAIT);
         configuration.setMediaTray("middle");
 
         PrinterProducer producer = new PrinterProducer(endpoint, configuration);
@@ -357,7 +357,7 @@ public class PrinterPrintTest extends CamelTestSupport {
         configuration.setPrintername("DefaultPrinter");
         configuration.setMediaSizeName(MediaSizeName.ISO_A4);
         configuration.setInternalSides(Sides.ONE_SIDED);
-        configuration.setInternalOrientation( OrientationRequested.REVERSE_LANDSCAPE );
+        configuration.setInternalOrientation(OrientationRequested.REVERSE_LANDSCAPE);
         configuration.setMediaTray("middle");
         configuration.setSendToPrinter(false);
 
@@ -389,4 +389,5 @@ public class PrinterPrintTest extends CamelTestSupport {
         when(psDefault.getSupportedAttributeValues(Media.class, null, null)).thenReturn(trays);
         PrintServiceLookup.registerServiceProvider(psLookup);
     }
+
 }
