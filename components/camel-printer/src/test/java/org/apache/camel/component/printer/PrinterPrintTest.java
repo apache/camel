@@ -30,6 +30,7 @@ import javax.print.attribute.PrintRequestAttributeSet;
 import javax.print.attribute.standard.Media;
 import javax.print.attribute.standard.MediaSizeName;
 import javax.print.attribute.standard.MediaTray;
+import javax.print.attribute.standard.OrientationRequested;
 import javax.print.attribute.standard.Sides;
 
 import org.apache.camel.Endpoint;
@@ -181,6 +182,23 @@ public class PrinterPrintTest extends CamelTestSupport {
         sendJPEG();
     }
 
+    @Test
+    @Ignore
+    public void testSendingJPEGToPrinterWithLandscapePageOrientation() throws Exception {
+        if (isAwtHeadless()) {
+            return;
+        }
+        context.addRoutes(new RouteBuilder() {
+            public void configure() {
+                from("direct:start").to("lpr://localhost/default?flavor=DocFlavor.INPUT_STREAM"
+                        + "&mimeType=JPEG&sendToPrinter=false&orientation=landscape");
+            }
+        });
+        context.start();
+
+        sendJPEG();
+    }
+
     /**
      * Test for resolution of bug CAMEL-3446.
      * Not specifying mediaSize nor sides attributes make it use
@@ -199,14 +217,14 @@ public class PrinterPrintTest extends CamelTestSupport {
         });
         context.start();
     }
-    
+
     @Test
     public void moreThanOneLprEndpoint() throws Exception {
 
         if (isAwtHeadless()) {
             return;
         }
-        
+
         int numberOfPrintservicesBefore = PrintServiceLookup.lookupPrintServices(null, null).length;
 
         // setup javax.print 
@@ -224,7 +242,7 @@ public class PrinterPrintTest extends CamelTestSupport {
 
         DocPrintJob job1 = mock(DocPrintJob.class);
         when(ps1.createPrintJob()).thenReturn(job1);
-        
+
         context.addRoutes(new RouteBuilder() {
 
             public void configure() {
@@ -258,7 +276,7 @@ public class PrinterPrintTest extends CamelTestSupport {
 
         verify(job1, times(1)).print(any(Doc.class), any(PrintRequestAttributeSet.class));
     }
-    
+
     @Test
     public void printerNameTest() throws Exception {
         if (isAwtHeadless()) {
@@ -272,7 +290,7 @@ public class PrinterPrintTest extends CamelTestSupport {
         assertTrue("The Remote PrintService #1 should be registered.", res1);
         DocPrintJob job1 = mock(DocPrintJob.class);
         when(ps1.createPrintJob()).thenReturn(job1);
-        
+
         context.addRoutes(new RouteBuilder() {
 
             public void configure() {
@@ -280,14 +298,14 @@ public class PrinterPrintTest extends CamelTestSupport {
             }
         });
         context.start();
-        
+
         template.sendBody("direct:start1", "Hello Printer 1");
 
         context.stop();
 
         verify(job1, times(1)).print(any(Doc.class), any(PrintRequestAttributeSet.class));
     }
-    
+
     @Test
     public void setJobName() throws Exception {
         if (isAwtHeadless()) {
@@ -311,10 +329,11 @@ public class PrinterPrintTest extends CamelTestSupport {
         PrinterEndpoint endpoint = new PrinterEndpoint();
         PrinterConfiguration configuration = new PrinterConfiguration();
         configuration.setHostname("localhost");
-        configuration.setPort(631);
-        configuration.setPrintername("DefaultPrinter");
-        configuration.setMediaSizeName(MediaSizeName.ISO_A4);
-        configuration.setInternalSides(Sides.ONE_SIDED);
+        configuration.setPort( 631 );
+        configuration.setPrintername( "DefaultPrinter" );
+        configuration.setMediaSizeName( MediaSizeName.ISO_A4 );
+        configuration.setInternalSides( Sides.ONE_SIDED );
+        configuration.setInternalOrientation( OrientationRequested.PORTRAIT );
         configuration.setMediaTray("middle");
 
         PrinterProducer producer = new PrinterProducer(endpoint, configuration);
@@ -328,7 +347,30 @@ public class PrinterPrintTest extends CamelTestSupport {
         MediaTray mediaTray = (MediaTray) attribute;
         assertEquals("middle", mediaTray.toString());
     }
-    
+
+    @Test
+    public void printsWithLandscapeOrientation() throws Exception {
+        PrinterEndpoint endpoint = new PrinterEndpoint();
+        PrinterConfiguration configuration = new PrinterConfiguration();
+        configuration.setHostname("localhost");
+        configuration.setPort(631);
+        configuration.setPrintername("DefaultPrinter");
+        configuration.setMediaSizeName(MediaSizeName.ISO_A4);
+        configuration.setInternalSides(Sides.ONE_SIDED);
+        configuration.setInternalOrientation( OrientationRequested.REVERSE_LANDSCAPE );
+        configuration.setMediaTray("middle");
+        configuration.setSendToPrinter(false);
+
+        PrinterProducer producer = new PrinterProducer(endpoint, configuration);
+        producer.start();
+        PrinterOperations printerOperations = producer.getPrinterOperations();
+        PrintRequestAttributeSet attributeSet = printerOperations.getPrintRequestAttributeSet();
+
+        Attribute attribute = attributeSet.get(OrientationRequested.class);
+        assertNotNull(attribute);
+        assertEquals("reverse-landscape", attribute.toString());
+    }
+
     protected void setupJavaPrint() {
         // "install" another default printer
         PrintService psDefault = mock(PrintService.class);

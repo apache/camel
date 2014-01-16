@@ -71,7 +71,8 @@ public class PrinterProducer extends DefaultProducer {
         }
         printRequestAttributeSet.add(config.getMediaSizeName());
         printRequestAttributeSet.add(config.getInternalSides());
-        
+        printRequestAttributeSet.add(config.getInternalOrientation());
+
         if (config.getMediaTray() != null) {
             MediaTray mediaTray = resolveMediaTray(config.getMediaTray());
         
