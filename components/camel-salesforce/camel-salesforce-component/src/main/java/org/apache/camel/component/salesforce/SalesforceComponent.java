@@ -84,7 +84,7 @@ public class SalesforceComponent extends UriEndpointComponent implements Endpoin
         OperationName operationName = null;
         String topicName = null;
         try {
-            LOG.debug("Creating endpoint for ", remaining);
+            LOG.debug("Creating endpoint for: {}", remaining);
             operationName = OperationName.fromValue(remaining);
         } catch (IllegalArgumentException ex) {
             // if its not an operation name, treat is as topic name for consumer endpoints
@@ -113,10 +113,22 @@ public class SalesforceComponent extends UriEndpointComponent implements Endpoin
         return endpoint;
     }
 
+    private Map<String, Class<?>> parsePackages() {
+        Map<String, Class<?>> result = new HashMap<String, Class<?>>();
+        Set<Class<?>> classes = getCamelContext().getPackageScanClassResolver().
+                findImplementations(AbstractSObjectBase.class, packages);
+        for (Class<?> aClass : classes) {
+            // findImplementations also returns AbstractSObjectBase for some reason!!!
+            if (AbstractSObjectBase.class != aClass) {
+                result.put(aClass.getSimpleName(), aClass);
+            }
+        }
+
+        return Collections.unmodifiableMap(result);
+    }
+
     @Override
     protected void doStart() throws Exception {
-        super.doStart();
-
         // validate properties
         ObjectHelper.notNull(loginConfig, "loginConfig");
 
@@ -171,29 +183,18 @@ public class SalesforceComponent extends UriEndpointComponent implements Endpoin
         }
     }
 
-    private Map<String, Class<?>> parsePackages() {
-        Map<String, Class<?>> result = new HashMap<String, Class<?>>();
-        Set<Class<?>> classes = getCamelContext().getPackageScanClassResolver().
-            findImplementations(AbstractSObjectBase.class, packages);
-        for (Class<?> aClass : classes) {
-            // findImplementations also returns AbstractSObjectBase for some reason!!!
-            if (AbstractSObjectBase.class != aClass) {
-                result.put(aClass.getSimpleName(), aClass);
-            }
-        }
-
-        return Collections.unmodifiableMap(result);
-    }
-
     @Override
     protected void doStop() throws Exception {
-        super.doStop();
+        if (classMap != null) {
+            classMap.clear();
+        }
 
         try {
             if (subscriptionHelper != null) {
                 // shutdown all streaming connections
                 // note that this is done in the component, and not in consumer
                 ServiceHelper.stopService(subscriptionHelper);
+                subscriptionHelper = null;
             }
             if (session != null && session.getAccessToken() != null) {
                 try {
@@ -206,11 +207,9 @@ public class SalesforceComponent extends UriEndpointComponent implements Endpoin
             if (httpClient != null) {
                 // shutdown http client connections
                 httpClient.stop();
+                httpClient.destroy();
+                httpClient = null;
             }
-        }
-
-        if (classMap != null) {
-            classMap.clear();
         }
     }
 
