@@ -20,7 +20,6 @@ import java.lang.reflect.Field;
 import java.lang.reflect.Modifier;
 import java.util.ArrayList;
 import java.util.Arrays;
-import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
@@ -124,7 +123,7 @@ public class SalesforceComponent extends UriEndpointComponent implements Endpoin
             }
         }
 
-        return Collections.unmodifiableMap(result);
+        return result;
     }
 
     @Override
@@ -175,7 +174,7 @@ public class SalesforceComponent extends UriEndpointComponent implements Endpoin
         } else {
             // use an empty map to avoid NPEs later
             LOG.warn("Missing property packages, getSObject* operations will NOT work");
-            classMap = Collections.unmodifiableMap(new HashMap<String, Class<?>>());
+            classMap = new HashMap<String, Class<?>>(0);
         }
 
         if (subscriptionHelper != null) {
