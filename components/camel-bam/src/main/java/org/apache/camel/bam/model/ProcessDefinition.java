@@ -22,6 +22,7 @@ import java.util.Map;
 
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.EntityManager;
 import javax.persistence.Table;
 import org.apache.camel.bam.QueryUtils;
 import org.apache.camel.util.CastUtils;
@@ -29,6 +30,9 @@ import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.orm.jpa.JpaTemplate;
+
+import static org.apache.camel.bam.EntityManagers.closeNonTransactionalEntityManager;
+import static org.apache.camel.bam.EntityManagers.resolveEntityManager;
 
 /**
  * @version 
@@ -59,7 +63,13 @@ public class ProcessDefinition extends EntitySupport {
             LOG.warn("No primary key is available!");
             return findOrCreateProcessDefinition(template, definition.getName());
         }
-        definition = template.find(ProcessDefinition.class, id);
+        EntityManager entityManager = null;
+        try {
+            entityManager = resolveEntityManager(template.getEntityManagerFactory());
+            definition = entityManager.find(ProcessDefinition.class, id);
+        } finally {
+            closeNonTransactionalEntityManager(entityManager);
+        }
         return definition;
     }
 
