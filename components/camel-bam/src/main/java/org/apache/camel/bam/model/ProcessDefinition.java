@@ -23,9 +23,9 @@ import java.util.Map;
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
 import javax.persistence.Table;
 import org.apache.camel.bam.QueryUtils;
-import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -74,18 +74,24 @@ public class ProcessDefinition extends EntitySupport {
     }
 
     public static ProcessDefinition findOrCreateProcessDefinition(JpaTemplate template, String processName) {
-        Map<String, Object> params = new HashMap<String, Object>(1);
-        params.put("processName", processName);
-
-        List<ProcessDefinition> list = CastUtils.cast(template.findByNamedParams("select x from " + QueryUtils.getTypeName(ProcessDefinition.class)
-                                                                                 + " x where x.name = :processName", params));
-        if (!list.isEmpty()) {
-            return list.get(0);
-        } else {
-            ProcessDefinition answer = new ProcessDefinition();
-            answer.setName(processName);
-            template.persist(answer);
-            return answer;
+        EntityManager entityManager = null;
+        try {
+            entityManager = resolveEntityManager(template.getEntityManagerFactory());
+            String definitionsQuery = "select x from " + QueryUtils.getTypeName(ProcessDefinition.class)
+                    + " x where x.name = :processName";
+            List<ProcessDefinition> list = entityManager.createQuery(definitionsQuery, ProcessDefinition.class).
+                    setParameter("processName", processName).
+                    getResultList();
+            if (!list.isEmpty()) {
+                return list.get(0);
+            } else {
+                ProcessDefinition answer = new ProcessDefinition();
+                answer.setName(processName);
+                template.persist(answer);
+                return answer;
+            }
+        } finally {
+            closeNonTransactionalEntityManager(entityManager);
         }
     }
 }
