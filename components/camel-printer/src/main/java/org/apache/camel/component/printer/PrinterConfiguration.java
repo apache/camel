@@ -21,6 +21,7 @@ import java.net.URISyntaxException;
 import java.util.Map;
 import javax.print.DocFlavor;
 import javax.print.attribute.standard.MediaSizeName;
+import javax.print.attribute.standard.OrientationRequested;
 import javax.print.attribute.standard.Sides;
 
 import org.apache.camel.util.ObjectHelper;
@@ -40,6 +41,8 @@ public class PrinterConfiguration {
     private MediaSizeName mediaSizeName;
     private String sides;
     private Sides internalSides;
+    private String orientation;
+    private OrientationRequested internalOrientation;
     private boolean sendToPrinter = true;
     private String mediaTray;
 
@@ -79,13 +82,16 @@ public class PrinterConfiguration {
         }
         setMediaSize((String)printSettings.get("mediaSize"));
         setSides((String)printSettings.get("sides"));
-        setMediaSizeName(assignMediaSize(mediaSize));       
+        setOrientation(((String)printSettings.get("orientation")));
+        setMediaSizeName(assignMediaSize(mediaSize));
         setInternalSides(assignSides(sides));
+        setInternalOrientation(assignOrientation(orientation));
         if (printSettings.containsKey("sendToPrinter")) {
             if (!(Boolean.valueOf((String) printSettings.get("sendToPrinter")))) {
                 setSendToPrinter(false);
             }
         }
+
 
         if (printSettings.containsKey("mediaTray")) {
             setMediaTray((String) printSettings.get("mediaTray"));
@@ -198,6 +204,27 @@ public class PrinterConfiguration {
         return answer;
     }
     
+    public OrientationRequested assignOrientation(final String orientation) {
+        OrientationRequested answer;
+
+        if (orientation == null) {
+            // default to portrait
+            answer = OrientationRequested.PORTRAIT;
+        } else if (orientation.equalsIgnoreCase("portrait")) {
+            answer = OrientationRequested.PORTRAIT;
+        } else if (orientation.equalsIgnoreCase("landscape")) {
+            answer = OrientationRequested.LANDSCAPE;
+        } else if (orientation.equalsIgnoreCase("reverse-portrait")) {
+            answer = OrientationRequested.REVERSE_PORTRAIT;
+        } else if (orientation.equalsIgnoreCase("reverse-landscape")) {
+            answer = OrientationRequested.REVERSE_LANDSCAPE;
+        } else {
+            answer = OrientationRequested.PORTRAIT;
+        }
+
+        return answer;
+    }
+
     public URI getUri() {
         return uri;
     }
@@ -284,6 +311,22 @@ public class PrinterConfiguration {
 
     public void setInternalSides(Sides internalSides) {
         this.internalSides = internalSides;
+    }
+
+    public OrientationRequested getInternalOrientation() {
+        return internalOrientation;
+    }
+
+    public void setInternalOrientation(OrientationRequested internalOrientation) {
+        this.internalOrientation = internalOrientation;
+    }
+
+    public String getOrientation() {
+        return orientation;
+    }
+
+    public void setOrientation( String orientation ) {
+        this.orientation = orientation;
     }
 
     public String getMimeType() {
