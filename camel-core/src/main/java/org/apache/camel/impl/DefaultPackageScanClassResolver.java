@@ -509,11 +509,11 @@ public class DefaultPackageScanClassResolver extends ServiceSupport implements P
     }
 
     protected void doStart() throws Exception {
-        ServiceHelper.startService(jarCache);
+        // noop
     }
 
     protected void doStop() throws Exception {
-        ServiceHelper.stopService(jarCache);
+        jarCache.clear();
     }
 
 }
