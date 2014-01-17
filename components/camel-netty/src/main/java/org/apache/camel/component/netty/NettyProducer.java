@@ -514,7 +514,8 @@ public class NettyProducer extends DefaultAsyncProducer {
         @Override
         public void destroyObject(Channel channel) throws Exception {
             LOG.trace("Destroying channel: {}", channel);
-            // noop
+            NettyHelper.close(channel);
+            ALL_CHANNELS.remove(channel);
         }
 
         @Override

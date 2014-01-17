@@ -136,6 +136,10 @@ public class ClientChannelHandler extends SimpleChannelUpstreamHandler {
         }
 
         Exchange exchange = getExchange(ctx);
+        if (exchange == null) {
+            // we just ignore the received message as the channel is closed
+            return;
+        }
         AsyncCallback callback = getAsyncCallback(ctx);
 
         Message message;
