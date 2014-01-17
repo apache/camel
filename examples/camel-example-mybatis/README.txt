@@ -15,24 +15,11 @@ You will need to install this example first to your local maven repository with:
 
 This example requires running in Apache Karaf / ServiceMix
 
-To install Apache Camel in Karaf you type in the shell (we use version 2.12.0):
+You can install this example from the shell using this example's "features.xml"
+for easy provisioning.
 
-  features:chooseurl camel 2.12.0
-  features:install camel
-
-First you need to install the following features in Karaf/ServiceMix with:
-
-  features:install camel-mybatis
-
-Then you need to install JDBC connection pool and the Derby Database:
-
-  osgi:install -s mvn:commons-pool/commons-pool/1.6
-  osgi:install -s mvn:commons-dbcp/commons-dbcp/1.4
-  osgi:install -s mvn:org.apache.derby/derby/10.10.1.1
-
-Then you can install the Camel example:
-
-  osgi:install -s mvn:org.apache.camel/camel-example-mybatis/2.12.0
+  features:addUrl mvn:org.apache.camel/camel-example-mybatis/${version}/xml/features
+  features:install camel-example-mybatis
 
 And you can see the application running by tailing the logs
 
