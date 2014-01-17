@@ -63,7 +63,7 @@ public class QuartzPropertiesTest extends CamelTestSupport {
             quartz.start();
             fail("Should have thrown exception");
         } catch (SchedulerException e) {
-            assertEquals("Quartz properties file not found in classpath: doesnotexist.properties", e.getMessage());
+            assertEquals("Error loading Quartz properties file: doesnotexist.properties", e.getMessage());
         }
     }
 

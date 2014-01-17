@@ -33,6 +33,7 @@ import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.ResourceHelper;
 import org.quartz.CronTrigger;
 import org.quartz.JobDetail;
 import org.quartz.Scheduler;
@@ -438,15 +439,13 @@ public class QuartzComponent extends DefaultComponent implements StartupListener
         Properties answer = getProperties();
         if (answer == null && getPropertiesFile() != null) {
             LOG.info("Loading Quartz properties file from classpath: {}", getPropertiesFile());
-            InputStream is = getCamelContext().getClassResolver().loadResourceAsStream(getPropertiesFile());
-            if (is == null) {
-                throw new SchedulerException("Quartz properties file not found in classpath: " + getPropertiesFile());
-            }
-            answer = new Properties();
+            InputStream is = null;
             try {
+                is = ResourceHelper.resolveMandatoryResourceAsInputStream(getCamelContext().getClassResolver(), getPropertiesFile());
+                answer = new Properties();
                 answer.load(is);
             } catch (IOException e) {
-                throw new SchedulerException("Error loading Quartz properties file from classpath: " + getPropertiesFile(), e);
+                throw new SchedulerException("Error loading Quartz properties file: " + getPropertiesFile(), e);
             } finally {
                 IOHelper.close(is);
             }
