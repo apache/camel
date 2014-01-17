@@ -119,6 +119,7 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding {
         // uri is path and query parameters
         headers.put(Exchange.HTTP_URI, uri.getPath());
         headers.put(Exchange.HTTP_QUERY, uri.getQuery());
+        headers.put(Exchange.HTTP_RAW_QUERY, uri.getRawQuery());
 
         // strip the starting endpoint path so the path is relative to the endpoint uri
         String path = uri.getPath();
