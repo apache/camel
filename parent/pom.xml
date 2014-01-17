@@ -299,7 +299,7 @@
     <mustache-java-version>0.8.13</mustache-java-version>
     <mustache-bundle-version>0.8.13_1/</mustache-bundle-version>
     <mvel-version>2.1.7.Final</mvel-version>
-    <mybatis-version>3.2.2</mybatis-version>
+    <mybatis-version>3.2.4</mybatis-version>
     <neethi-bundle-version>3.0.1</neethi-bundle-version>
     <netty3-version>3.8.0.Final</netty3-version>
     <netty-version>4.0.8.Final</netty-version>

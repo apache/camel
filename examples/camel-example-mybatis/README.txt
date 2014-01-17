@@ -24,6 +24,12 @@ First you need to install the following features in Karaf/ServiceMix with:
 
   features:install camel-mybatis
 
+Then you need to install JDBC connection pool and the Derby Database:
+
+  osgi:install -s mvn:commons-pool/commons-pool/1.6
+  osgi:install -s mvn:commons-dbcp/commons-dbcp/1.4
+  osgi:install -s mvn:org.apache.derby/derby/10.10.1.1
+
 Then you can install the Camel example:
 
   osgi:install -s mvn:org.apache.camel/camel-example-mybatis/2.12.0
