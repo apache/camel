@@ -311,6 +311,13 @@ public class SalesforceComponent extends UriEndpointComponent implements Endpoin
         this.packages = packages;
     }
 
+    public void setPackages(String packages) {
+        // split using comma
+        if (packages != null) {
+            setPackages(packages.split(","));
+        }
+    }
+
     public SalesforceSession getSession() {
         return session;
     }
