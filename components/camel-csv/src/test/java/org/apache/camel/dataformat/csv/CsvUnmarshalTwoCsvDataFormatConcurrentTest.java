@@ -27,7 +27,7 @@ import org.junit.Test;
 /**
  * @version 
  */
-public class CsvUnmarshalTwoCsvDataFormatTest extends CamelTestSupport {
+public class CsvUnmarshalTwoCsvDataFormatConcurrentTest extends CamelTestSupport {
 
     @EndpointInject(uri = "mock:result")
     private MockEndpoint result;
