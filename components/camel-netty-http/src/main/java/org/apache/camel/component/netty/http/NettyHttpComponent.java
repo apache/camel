@@ -49,10 +49,6 @@ public class NettyHttpComponent extends NettyComponent implements HeaderFilterSt
     private NettyHttpSecurityConfiguration securityConfiguration;
 
     public NettyHttpComponent() {
-        // use the http configuration and filter strategy
-        setConfiguration(new NettyHttpConfiguration());
-        setHeaderFilterStrategy(new NettyHttpHeaderFilterStrategy());
-        setNettyHttpBinding(new DefaultNettyHttpBinding(getHeaderFilterStrategy()));
     }
 
     @Override
@@ -146,6 +142,9 @@ public class NettyHttpComponent extends NettyComponent implements HeaderFilterSt
     }
 
     public NettyHttpBinding getNettyHttpBinding() {
+        if (nettyHttpBinding == null) {
+            nettyHttpBinding = new DefaultNettyHttpBinding(getHeaderFilterStrategy());
+        }
         return nettyHttpBinding;
     }
 
@@ -154,6 +153,9 @@ public class NettyHttpComponent extends NettyComponent implements HeaderFilterSt
     }
 
     public HeaderFilterStrategy getHeaderFilterStrategy() {
+        if (headerFilterStrategy == null) {
+            headerFilterStrategy = new NettyHttpHeaderFilterStrategy();
+        }
         return headerFilterStrategy;
     }
 
@@ -189,6 +191,15 @@ public class NettyHttpComponent extends NettyComponent implements HeaderFilterSt
             bootstrapFactories.put(key, answer);
         }
         return answer;
+    }
+    
+    @Override
+    protected void doStart() throws Exception {
+        if (getConfiguration() == null) {
+            setConfiguration(new NettyHttpConfiguration());
+        }
+      
+        super.doStart();
     }
 
     @Override
