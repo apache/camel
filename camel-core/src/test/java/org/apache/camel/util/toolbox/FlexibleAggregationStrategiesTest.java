@@ -54,7 +54,7 @@ public class FlexibleAggregationStrategiesTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
         
-        List<String> resultList = (List<String>) getMockEndpoint("mock:result1").getReceivedExchanges()
+        List<String> resultList = getMockEndpoint("mock:result1").getReceivedExchanges()
                 .get(0).getIn().getBody(List.class);
         
         for (int i = 0; i < 5; i++) {
@@ -75,7 +75,7 @@ public class FlexibleAggregationStrategiesTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
         
-        List<String> resultList = (List<String>) getMockEndpoint("mock:result1").getReceivedExchanges()
+        List<String> resultList = getMockEndpoint("mock:result1").getReceivedExchanges()
                 .get(0).getIn().getBody(List.class);
         for (int i = 0; i < 3; i++) {
             assertEquals("AGGREGATE" + (i + 1), resultList.get(i));
@@ -95,7 +95,7 @@ public class FlexibleAggregationStrategiesTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
         
-        HashSet<String> resultSet = (HashSet<String>) getMockEndpoint("mock:result2").getReceivedExchanges().get(0)
+        HashSet<String> resultSet = getMockEndpoint("mock:result2").getReceivedExchanges().get(0)
                 .getProperty("AggregationResult", HashSet.class);
         assertEquals(3, resultSet.size());
         assertTrue(resultSet.contains("AGGREGATE1") && resultSet.contains("AGGREGATE2") && resultSet.contains("AGGREGATE3"));
@@ -195,7 +195,7 @@ public class FlexibleAggregationStrategiesTest extends ContextTestSupport {
 
         assertMockEndpointsSatisfied();
         
-        ArrayList<Node> list = (ArrayList<Node>) getMockEndpoint("mock:result.xpath1").getReceivedExchanges().get(0).getIn().getBody(ArrayList.class);
+        ArrayList<Node> list = getMockEndpoint("mock:result.xpath1").getReceivedExchanges().get(0).getIn().getBody(ArrayList.class);
         assertEquals(2, list.size());
         assertEquals("ok", list.get(0).getTextContent());
         assertEquals("error", list.get(1).getTextContent());

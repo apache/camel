@@ -158,7 +158,7 @@ public class CxfConsumerPayloadXPathTest extends CamelTestSupport {
             Object obj =  exchange.getIn().getBody();
             @SuppressWarnings("unchecked")
             CxfPayload<SoapHeader> payload = (CxfPayload<SoapHeader>) obj;
-            Element el = (Element) payload.getBody().get(0);
+            Element el = payload.getBody().get(0);
             Text textnode = (Text) el.getFirstChild();
             exchange.getOut().setBody(textnode.getNodeValue());
             exchange.getOut().setHeaders(exchange.getIn().getHeaders());
@@ -171,7 +171,7 @@ public class CxfConsumerPayloadXPathTest extends CamelTestSupport {
             Object obj =  exchange.getIn().getBody();
             @SuppressWarnings("unchecked")
             CxfPayload<SoapHeader> payload = (CxfPayload<SoapHeader>) obj;
-            Element el = (Element) payload.getBody().get(0);
+            Element el = payload.getBody().get(0);
             Text textnode = (Text) el.getFirstChild();
             
             StringBuilder b = new StringBuilder();

@@ -138,13 +138,13 @@ public class CamelTransportFactory extends AbstractTransportFactory implements C
         DestinationFactoryManager dfm = bus.getExtension(DestinationFactoryManager.class);
         if (null != dfm && getTransportIds() != null) {
             for (String ns : getTransportIds()) {
-                dfm.registerDestinationFactory(ns, (DestinationFactory)this);
+                dfm.registerDestinationFactory(ns, this);
             }
         }
         ConduitInitiatorManager cim = bus.getExtension(ConduitInitiatorManager.class);
         if (cim != null && getTransportIds() != null) {
             for (String ns : getTransportIds()) {
-                cim.registerConduitInitiator(ns, (ConduitInitiator)this);
+                cim.registerConduitInitiator(ns, this);
             }
         }
     }

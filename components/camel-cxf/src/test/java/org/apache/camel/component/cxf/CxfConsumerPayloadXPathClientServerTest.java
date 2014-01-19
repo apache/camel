@@ -74,7 +74,7 @@ public class CxfConsumerPayloadXPathClientServerTest extends CamelTestSupport {
                         
                         //attempt 2) in stead of XPATH, browse the DOM-tree
                         CxfPayload<SoapHeader> payload = (CxfPayload<SoapHeader>) request;
-                        Element el = (Element) payload.getBody().get(0);
+                        Element el = payload.getBody().get(0);
                         Element el2 = (Element) el.getFirstChild();
                         Text textnode = (Text) el2.getFirstChild();
                         receivedMessageByDom = textnode.getNodeValue();

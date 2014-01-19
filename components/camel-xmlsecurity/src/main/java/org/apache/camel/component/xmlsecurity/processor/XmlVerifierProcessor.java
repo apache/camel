@@ -170,7 +170,7 @@ public class XmlVerifierProcessor extends XmlSignatureProcessor {
                 @SuppressWarnings("unchecked")
                 @Override
                 public List<? extends XMLObject> getObjects() {
-                    return (List<? extends XMLObject>) signature.getObjects();
+                    return signature.getObjects();
                 }
 
                 @Override
