@@ -65,9 +65,9 @@ public class CsvDataFormat implements DataFormat {
         for (Field field : CSVStrategy.class.getFields()) {
             try {
                 if (field.get(null) == csvStrategy) {
-                    // return a safe copy of the declared constant so that we don't cause any side effect
-                    // by (potentially) other CsvDataFormat objects in use as we change properties of
-                    // the strategy (e.g. it's set delimiter through the #unmarshal() method below)
+                    // return a safe copy of the declared static constant so that we don't cause any side effect
+                    // by (potentially) other CsvDataFormat objects in use, as we change the properties of the
+                    // strategy itself (e.g. it's set delimiter through the #unmarshal() method below)
                     LOGGER.debug("Returning a clone of {} as it is the declared constant {} by the CSVStrategy class", csvStrategy, field.getName());
 
                     return (CSVStrategy) csvStrategy.clone();
@@ -77,7 +77,7 @@ public class CsvDataFormat implements DataFormat {
             }
         }
 
-        // not a declared constant of CSVStrategy, so return it as is
+        // not a declared static constant of CSVStrategy so return it as is
         return csvStrategy;
     }
 
