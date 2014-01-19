@@ -50,6 +50,7 @@ public class CsvUnmarshalTwoCsvDataFormatConcurrentTest extends CamelTestSupport
 
     private void sendAndVerify(String delimiter, MockEndpoint mock) throws InterruptedException {
         template.sendBody("direct:start", "123" + delimiter + "Camel in Action" + delimiter + "1\n124" + delimiter + "ActiveMQ in Action" + delimiter + "2");
+
         assertMockEndpointsSatisfied();
 
         @SuppressWarnings("unchecked")
@@ -73,15 +74,16 @@ public class CsvUnmarshalTwoCsvDataFormatConcurrentTest extends CamelTestSupport
                 CsvDataFormat csv2 = new CsvDataFormat();
                 csv2.setDelimiter(";");
 
-                from("direct:start").multicast().parallelProcessing().to("direct:csv", "direct:csv2");
+                from("direct:start")
+                    .multicast().parallelProcessing().to("direct:csv", "direct:csv2");
 
                 from("direct:csv")
-                        .unmarshal(csv)
-                        .to("mock:result");
+                    .unmarshal(csv)
+                    .to("mock:result");
 
                 from("direct:csv2")
-                        .unmarshal(csv2)
-                        .to("mock:result2");
+                    .unmarshal(csv2)
+                    .to("mock:result2");
             }
         };
     }
