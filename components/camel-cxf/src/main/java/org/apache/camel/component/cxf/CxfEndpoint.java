@@ -66,6 +66,7 @@ import org.apache.cxf.common.classloader.ClassLoaderUtils;
 import org.apache.cxf.common.injection.ResourceInjector;
 import org.apache.cxf.common.util.ClassHelper;
 import org.apache.cxf.common.util.ModCountCopyOnWriteArrayList;
+import org.apache.cxf.configuration.security.AuthorizationPolicy;
 import org.apache.cxf.databinding.DataBinding;
 import org.apache.cxf.databinding.source.SourceDataBinding;
 import org.apache.cxf.endpoint.Client;
@@ -162,6 +163,9 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     private ReflectionServiceFactoryBean serviceFactoryBean;
     private CxfEndpointConfigurer configurer;
     
+    // basic authentication option for the CXF client
+    private String username;
+    private String password;
 
     public CxfEndpoint(String remaining, CxfComponent cxfComponent) {
         super(remaining, cxfComponent);
@@ -493,6 +497,14 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
                 factoryBean.setProperties(getProperties());
             }
             LOG.debug("ClientFactoryBean: {} added properties: {}", factoryBean, getProperties());
+        }
+        
+        // setup the basic authentication property
+        if (ObjectHelper.isNotEmpty(username)) {
+            AuthorizationPolicy authPolicy = new AuthorizationPolicy();
+            authPolicy.setUserName(username);
+            authPolicy.setPassword(password);
+            factoryBean.getProperties().put(AuthorizationPolicy.class.getName(), authPolicy);
         }
         
         if (this.isSkipPayloadMessagePartCheck()) {
@@ -899,6 +911,22 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
 
     public boolean isMtomEnabled() {
         return mtomEnabled;
+    }
+    
+    public String getPassword() {
+        return password;
+    }
+    
+    public void setPassword(String password) {
+        this.password = password;
+    }
+    
+    public String getUsername() {
+        return username;
+    }
+    
+    public void setUsername(String username) {
+        this.username = username;
     }
 
     /**
