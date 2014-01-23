@@ -29,7 +29,6 @@ import org.apache.camel.bam.QueryUtils;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.orm.jpa.JpaTemplate;
 
 /**
  * @version 
@@ -50,8 +49,7 @@ public class ProcessDefinition extends EntitySupport {
         this.name = name;
     }
 
-    public static ProcessDefinition getRefreshedProcessDefinition(JpaTemplate template, ProcessDefinition definition) {
-        EntityManagerTemplate entityManagerTemplate = new EntityManagerTemplate(template.getEntityManagerFactory());
+    public static ProcessDefinition getRefreshedProcessDefinition(EntityManagerTemplate entityManagerTemplate, ProcessDefinition definition) {
         // TODO refresh doesn't tend to work - maybe its a spring thing?
         // template.refresh(definition);
 
@@ -59,7 +57,7 @@ public class ProcessDefinition extends EntitySupport {
         final Long id = definition.getId();
         if (id == null) {
             LOG.warn("No primary key is available!");
-            return findOrCreateProcessDefinition(template, definition.getName());
+            return findOrCreateProcessDefinition(entityManagerTemplate, definition.getName());
         }
         return entityManagerTemplate.execute(new EntityManagerCallback<ProcessDefinition>() {
             @Override
@@ -69,8 +67,7 @@ public class ProcessDefinition extends EntitySupport {
         });
     }
 
-    public static ProcessDefinition findOrCreateProcessDefinition(JpaTemplate template, final String processName) {
-        EntityManagerTemplate entityManagerTemplate = new EntityManagerTemplate(template.getEntityManagerFactory());
+    public static ProcessDefinition findOrCreateProcessDefinition(EntityManagerTemplate entityManagerTemplate, final String processName) {
         final String definitionsQuery = "select x from " + QueryUtils.getTypeName(ProcessDefinition.class)
                 + " x where x.name = :processName";
         List<ProcessDefinition> list = entityManagerTemplate.execute(new EntityManagerCallback<List<ProcessDefinition>>() {
@@ -86,7 +83,7 @@ public class ProcessDefinition extends EntitySupport {
         } else {
             ProcessDefinition answer = new ProcessDefinition();
             answer.setName(processName);
-            template.persist(answer);
+            entityManagerTemplate.persist(answer);
             return answer;
         }
     }

@@ -48,6 +48,7 @@ import static org.apache.camel.util.ObjectHelper.notNull;
 public abstract class ProcessBuilder extends RouteBuilder {
     private static int processCounter;
     private JpaTemplate jpaTemplate;
+    private EntityManagerTemplate entityManagerTemplate;
     private TransactionTemplate transactionTemplate;
     private String processName;
     private final List<ActivityBuilder> activityBuilders = new ArrayList<ActivityBuilder>();
@@ -67,6 +68,7 @@ public abstract class ProcessBuilder extends RouteBuilder {
         this.jpaTemplate = jpaTemplate;
         this.transactionTemplate = transactionTemplate;
         this.processName = processName;
+        this.entityManagerTemplate = new EntityManagerTemplate(jpaTemplate.getEntityManagerFactory());
     }
 
     protected static synchronized String createProcessName() {
@@ -117,6 +119,7 @@ public abstract class ProcessBuilder extends RouteBuilder {
 
     public void setJpaTemplate(JpaTemplate jpaTemplate) {
         this.jpaTemplate = jpaTemplate;
+        this.entityManagerTemplate = new EntityManagerTemplate(jpaTemplate.getEntityManagerFactory());
     }
 
     public TransactionTemplate getTransactionTemplate() {
@@ -189,8 +192,8 @@ public abstract class ProcessBuilder extends RouteBuilder {
         } else {
             ActivityDefinition answer = new ActivityDefinition();
             answer.setName(activityName);
-            answer.setProcessDefinition(ProcessDefinition.getRefreshedProcessDefinition(jpaTemplate, definition));
-            jpaTemplate.persist(answer);
+            answer.setProcessDefinition(ProcessDefinition.getRefreshedProcessDefinition(entityManagerTemplate, definition));
+            entityManagerTemplate.persist(answer);
             return answer;
         }
     }
@@ -206,7 +209,7 @@ public abstract class ProcessBuilder extends RouteBuilder {
         } else {
             ProcessDefinition answer = new ProcessDefinition();
             answer.setName(processName);
-            jpaTemplate.persist(answer);
+            entityManagerTemplate.persist(answer);
             return answer;
         }
     }

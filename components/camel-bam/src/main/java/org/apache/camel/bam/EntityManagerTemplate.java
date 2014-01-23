@@ -40,4 +40,14 @@ public class EntityManagerTemplate {
         }
     }
 
+    public void persist(final Object entity) {
+        execute(new EntityManagerCallback<Object>() {
+            @Override
+            public Object execute(EntityManager entityManager) {
+                entityManager.persist(entity);
+                return null;
+            }
+        });
+    }
+
 }

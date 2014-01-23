@@ -105,6 +105,7 @@ public class JpaBamProcessorSupport<T> extends BamProcessorSupport<T> {
 
     public void setTemplate(JpaTemplate template) {
         this.template = template;
+        this.entityManagerTemplate = new EntityManagerTemplate(template.getEntityManagerFactory());
     }
 
     public boolean isCorrelationKeyIsPrimary() {
@@ -125,7 +126,7 @@ public class JpaBamProcessorSupport<T> extends BamProcessorSupport<T> {
             if (entity == null) {
                 entity = createEntity(exchange, key);
                 setKeyProperty(entity, key);
-                ProcessDefinition definition = ProcessDefinition.getRefreshedProcessDefinition(template,
+                ProcessDefinition definition = ProcessDefinition.getRefreshedProcessDefinition(entityManagerTemplate,
                         getActivityRules().getProcessRules().getProcessDefinition());
                 setProcessDefinitionProperty(entity, definition);
                 final T finalEntity = entity;
