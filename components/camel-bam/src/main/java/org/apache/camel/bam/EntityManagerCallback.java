@@ -18,6 +18,14 @@ package org.apache.camel.bam;
 
 import javax.persistence.EntityManager;
 
+/**
+ * Function operating on the {@code EntityManager} instance. Intended to be executed as a part of the template method
+ * defined by the {@link org.apache.camel.bam.EntityManagerTemplate#execute(EntityManagerCallback)}.
+ * {@code EntityManager} should not be closed by the callback, as doing this is the responsibility of the
+ * {@link org.apache.camel.bam.EntityManagerTemplate}.
+ *
+ * @param <T>
+ */
 public interface EntityManagerCallback<T> {
 
     T execute(EntityManager entityManager);
