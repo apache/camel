@@ -27,7 +27,6 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.camel.CamelContext;
@@ -71,7 +70,7 @@ import org.slf4j.LoggerFactory;
  * The idea by the <tt>forced</tt> shutdown strategy, is to stop continue processing messages.
  * And force routes and its services to shutdown now. There is a risk when shutting down now,
  * that some resources is not properly shutdown, which can cause side effects. The timeout value
- * is by default 300 seconds, but can be customized. 
+ * is by default 300 seconds, but can be customized.
  * <p/>
  * As this strategy will politely wait until all exchanges has been completed it can potential wait
  * for a long time, and hence why a timeout value can be set. When the timeout triggers you can also
@@ -99,7 +98,7 @@ import org.slf4j.LoggerFactory;
  * to be logged. The option {@link #setSuppressLoggingOnTimeout(boolean)} can be used to suppress these
  * logs, so they are logged at TRACE level instead.
  *
- * @version 
+ * @version
  */
 public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownStrategy, CamelContextAware {
     private static final Logger LOG = LoggerFactory.getLogger(DefaultShutdownStrategy.class);
@@ -113,6 +112,7 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
     private boolean suppressLoggingOnTimeout;
     private volatile boolean forceShutdown;
     private final AtomicBoolean timeoutOccurred = new AtomicBoolean();
+    private volatile Future<?> currentShutdownTaskFuture;
 
     public DefaultShutdownStrategy() {
     }
@@ -173,15 +173,18 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
 
         // use another thread to perform the shutdowns so we can support timeout
         timeoutOccurred.set(false);
-        Future<?> future = getExecutorService().submit(new ShutdownTask(context, routesOrdered, timeout, timeUnit, suspendOnly, abortAfterTimeout, timeoutOccurred));
+        currentShutdownTaskFuture = getExecutorService().submit(new ShutdownTask(context, routesOrdered, timeout, timeUnit, suspendOnly, abortAfterTimeout, timeoutOccurred));
         try {
-            future.get(timeout, timeUnit);
-        } catch (TimeoutException e) {
+            currentShutdownTaskFuture.get(timeout, timeUnit);
+        } catch (ExecutionException e) {
+            // unwrap execution exception
+            throw ObjectHelper.wrapRuntimeCamelException(e.getCause());
+        } catch (Exception e) {
             // we hit a timeout, so set the flag
             timeoutOccurred.set(true);
 
             // timeout then cancel the task
-            future.cancel(true);
+            currentShutdownTaskFuture.cancel(true);
 
             // signal we are forcing shutdown now, since timeout occurred
             this.forceShutdown = forceShutdown;
@@ -206,9 +209,9 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
                     LOG.warn("Timeout occurred. Will ignore shutting down the remainder routes.");
                 }
             }
-        } catch (ExecutionException e) {
-            // unwrap execution exception
-            throw ObjectHelper.wrapRuntimeCamelException(e.getCause());
+        } finally {
+            // Clears the current shutdown task since it's completed
+            currentShutdownTaskFuture = null;
         }
 
         // convert to seconds as its easier to read than a big milli seconds number
@@ -277,6 +280,10 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
 
     public void setCamelContext(CamelContext camelContext) {
         this.camelContext = camelContext;
+    }
+
+    public Future<?> getCurrentShutdownTaskFuture() {
+        return currentShutdownTaskFuture;
     }
 
     /**
@@ -386,7 +393,7 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
     /**
      * Prepares the services for shutdown, by invoking the {@link ShutdownPrepared#prepareShutdown(boolean)} method
      * on the service if it implement this interface.
-     * 
+     *
      * @param service the service
      * @param forced  whether to force shutdown
      * @param includeChildren whether to prepare the child of the service as well
