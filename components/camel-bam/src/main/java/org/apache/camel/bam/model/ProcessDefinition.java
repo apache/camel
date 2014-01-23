@@ -22,14 +22,14 @@ import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
 import javax.persistence.Table;
+
+import org.apache.camel.bam.EntityManagerCallback;
+import org.apache.camel.bam.EntityManagerTemplate;
 import org.apache.camel.bam.QueryUtils;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.orm.jpa.JpaTemplate;
-
-import static org.apache.camel.bam.EntityManagers.closeNonTransactionalEntityManager;
-import static org.apache.camel.bam.EntityManagers.resolveEntityManager;
 
 /**
  * @version 
@@ -51,44 +51,44 @@ public class ProcessDefinition extends EntitySupport {
     }
 
     public static ProcessDefinition getRefreshedProcessDefinition(JpaTemplate template, ProcessDefinition definition) {
+        EntityManagerTemplate entityManagerTemplate = new EntityManagerTemplate(template.getEntityManagerFactory());
         // TODO refresh doesn't tend to work - maybe its a spring thing?
         // template.refresh(definition);
 
         ObjectHelper.notNull(definition, "definition");
-        Long id = definition.getId();
+        final Long id = definition.getId();
         if (id == null) {
             LOG.warn("No primary key is available!");
             return findOrCreateProcessDefinition(template, definition.getName());
         }
-        EntityManager entityManager = null;
-        try {
-            entityManager = resolveEntityManager(template.getEntityManagerFactory());
-            definition = entityManager.find(ProcessDefinition.class, id);
-        } finally {
-            closeNonTransactionalEntityManager(entityManager);
-        }
-        return definition;
+        return entityManagerTemplate.execute(new EntityManagerCallback<ProcessDefinition>() {
+            @Override
+            public ProcessDefinition execute(EntityManager entityManager) {
+                return entityManager.find(ProcessDefinition.class, id);
+            }
+        });
     }
 
-    public static ProcessDefinition findOrCreateProcessDefinition(JpaTemplate template, String processName) {
-        EntityManager entityManager = null;
-        try {
-            entityManager = resolveEntityManager(template.getEntityManagerFactory());
-            String definitionsQuery = "select x from " + QueryUtils.getTypeName(ProcessDefinition.class)
-                    + " x where x.name = :processName";
-            List<ProcessDefinition> list = entityManager.createQuery(definitionsQuery, ProcessDefinition.class).
-                    setParameter("processName", processName).
-                    getResultList();
-            if (!list.isEmpty()) {
-                return list.get(0);
-            } else {
-                ProcessDefinition answer = new ProcessDefinition();
-                answer.setName(processName);
-                template.persist(answer);
-                return answer;
+    public static ProcessDefinition findOrCreateProcessDefinition(JpaTemplate template, final String processName) {
+        EntityManagerTemplate entityManagerTemplate = new EntityManagerTemplate(template.getEntityManagerFactory());
+        final String definitionsQuery = "select x from " + QueryUtils.getTypeName(ProcessDefinition.class)
+                + " x where x.name = :processName";
+        List<ProcessDefinition> list = entityManagerTemplate.execute(new EntityManagerCallback<List<ProcessDefinition>>() {
+            @Override
+            public List<ProcessDefinition> execute(EntityManager entityManager) {
+                return entityManager.createQuery(definitionsQuery, ProcessDefinition.class).
+                        setParameter("processName", processName).
+                        getResultList();
             }
-        } finally {
-            closeNonTransactionalEntityManager(entityManager);
+        });
+        if (!list.isEmpty()) {
+            return list.get(0);
+        } else {
+            ProcessDefinition answer = new ProcessDefinition();
+            answer.setName(processName);
+            template.persist(answer);
+            return answer;
         }
     }
+
 }

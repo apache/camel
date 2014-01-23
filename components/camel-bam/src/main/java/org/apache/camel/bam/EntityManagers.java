@@ -48,8 +48,11 @@ public final class EntityManagers {
     }
 
     public static void closeNonTransactionalEntityManager(EntityManager entityManager) {
+        if (entityManager == null) {
+            return;
+        }
         boolean isTransactional = TransactionSynchronizationManager.hasResource(entityManager.getEntityManagerFactory());
-        if (entityManager != null && isTransactional) {
+        if (isTransactional) {
             entityManager.close();
         }
     }
