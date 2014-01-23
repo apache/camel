@@ -61,45 +61,54 @@ public class XmppPrivateChatProducer extends DefaultProducer {
                     + XmppEndpoint.getConnectionMessage(connection), exchange, e);
         }
 
+        String participant = exchange.getIn().getHeader(XmppConstants.TO, String.class);
+        String thread = endpoint.getChatId();
+        if(participant == null){
+            participant = getParticipant();
+        }else {
+            thread = "Chat:" + participant + ":" + endpoint.getUser();
+        }
+
         ChatManager chatManager = connection.getChatManager();
-        Chat chat = getOrCreateChat(chatManager);
+        Chat chat = getOrCreateChat(chatManager, participant, thread);
         Message message = null;
         try {
             message = new Message();
-            message.setTo(getParticipant());
-            message.setThread(endpoint.getChatId());
+
+            message.setTo(participant);
+            message.setThread(thread);
             message.setType(Message.Type.normal);
 
             endpoint.getBinding().populateXmppMessage(message, exchange);
 
             if (LOG.isDebugEnabled()) {
-                LOG.debug("Sending XMPP message to {} from {} : {}", new Object[]{endpoint.getParticipant(), endpoint.getUser(), message.getBody()});
+                LOG.debug("Sending XMPP message to {} from {} : {}", new Object[]{participant, endpoint.getUser(), message.getBody()});
             }
             chat.sendMessage(message);
         } catch (XMPPException xmppe) {
-            throw new RuntimeExchangeException("Cannot send XMPP message: to " + endpoint.getParticipant() + " from " + endpoint.getUser() + " : " + message
+            throw new RuntimeExchangeException("Could not send XMPP message: to " + participant + " from " + endpoint.getUser() + " : " + message
                     + " to: " + XmppEndpoint.getConnectionMessage(connection), exchange, xmppe);
         } catch (Exception e) {
-            throw new RuntimeExchangeException("Cannot send XMPP message to " + endpoint.getParticipant() + " from " + endpoint.getUser() + " : " + message
+            throw new RuntimeExchangeException("Could not send XMPP message to " + participant + " from " + endpoint.getUser() + " : " + message
                     + " to: " + XmppEndpoint.getConnectionMessage(connection), exchange, e);
         }
     }
 
-    private synchronized Chat getOrCreateChat(ChatManager chatManager) {
+    private synchronized Chat getOrCreateChat(ChatManager chatManager, final String participant, String thread) {
         if (LOG.isTraceEnabled()) {
             LOG.trace("Looking for existing chat instance with thread ID {}", endpoint.getChatId());
         }
-        Chat chat = chatManager.getThreadChat(endpoint.getChatId());
+        Chat chat = chatManager.getThreadChat(thread);
         if (chat == null) {
             if (LOG.isTraceEnabled()) {
-                LOG.trace("Creating new chat instance with thread ID {}", endpoint.getChatId());
+                LOG.trace("Creating new chat instance with thread ID {}", thread);
             }
-            chat = chatManager.createChat(getParticipant(), endpoint.getChatId(), new MessageListener() {
+            chat = chatManager.createChat(participant, thread, new MessageListener() {
                 public void processMessage(Chat chat, Message message) {
                     // not here to do conversation
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("Received and discarding message from {} : {}"
-                                , getParticipant(), message.getBody());
+                                , participant, message.getBody());
                     }
                 }
             });
