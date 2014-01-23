@@ -16,8 +16,12 @@
  */
 package org.apache.camel.bam;
 
+import java.util.List;
+import java.util.Map;
+
 import javax.persistence.EntityManager;
 import javax.persistence.EntityManagerFactory;
+import javax.persistence.TypedQuery;
 
 import static org.apache.camel.bam.EntityManagers.closeNonTransactionalEntityManager;
 import static org.apache.camel.bam.EntityManagers.resolveEntityManager;
@@ -46,6 +50,29 @@ public class EntityManagerTemplate {
             public Object execute(EntityManager entityManager) {
                 entityManager.persist(entity);
                 return null;
+            }
+        });
+    }
+
+    public void flush() {
+        execute(new EntityManagerCallback<Object>() {
+            @Override
+            public Object execute(EntityManager entityManager) {
+                entityManager.flush();
+                return null;
+            }
+        });
+    }
+
+    public <T> List<T> find(final Class<T> entity, final String query, final Map<String, Object> parameters) {
+        return execute(new EntityManagerCallback<List<T>>() {
+            @Override
+            public List<T> execute(EntityManager entityManager) {
+                TypedQuery<T> typedQuery = entityManager.createQuery(query, entity);
+                for (Map.Entry<String, Object> parameter : parameters.entrySet()) {
+                    typedQuery.setParameter(parameter.getKey(), parameter.getValue());
+                }
+                return typedQuery.getResultList();
             }
         });
     }

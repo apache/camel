@@ -22,6 +22,7 @@ import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
 
 import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
@@ -34,7 +35,6 @@ import org.apache.camel.bam.rules.ActivityRules;
 import org.apache.camel.util.IntrospectionSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.orm.jpa.JpaTemplate;
 import org.springframework.transaction.support.TransactionTemplate;
 
 /**
@@ -50,26 +50,24 @@ public class JpaBamProcessorSupport<T> extends BamProcessorSupport<T> {
     private static final Lock LOCK = new ReentrantLock(); // lock used for concurrency issues
 
     private ActivityRules activityRules;
-    private JpaTemplate template;
+    private EntityManagerFactory entityManagerFactory;
     private EntityManagerTemplate entityManagerTemplate;
     private String findByKeyQuery;
     private String keyPropertyName = "correlationKey";
     private boolean correlationKeyIsPrimary = true;
 
-    public JpaBamProcessorSupport(TransactionTemplate transactionTemplate, JpaTemplate template,
+    public JpaBamProcessorSupport(TransactionTemplate transactionTemplate, EntityManagerFactory entityManagerFactory,
             Expression correlationKeyExpression, ActivityRules activityRules, Class<T> entitytype) {
         super(transactionTemplate, correlationKeyExpression, entitytype);
         this.activityRules = activityRules;
-        this.template = template;
-        this.entityManagerTemplate = new EntityManagerTemplate(template.getEntityManagerFactory());
+        setEntityManagerFactory(entityManagerFactory);
     }
 
-    public JpaBamProcessorSupport(TransactionTemplate transactionTemplate, JpaTemplate template,
+    public JpaBamProcessorSupport(TransactionTemplate transactionTemplate, EntityManagerFactory entityManagerFactory,
             Expression correlationKeyExpression, ActivityRules activityRules) {
         super(transactionTemplate, correlationKeyExpression);
         this.activityRules = activityRules;
-        this.template = template;
-        this.entityManagerTemplate = new EntityManagerTemplate(template.getEntityManagerFactory());
+        setEntityManagerFactory(entityManagerFactory);
     }
 
     public String getFindByKeyQuery() {
@@ -99,13 +97,13 @@ public class JpaBamProcessorSupport<T> extends BamProcessorSupport<T> {
         this.keyPropertyName = keyPropertyName;
     }
 
-    public JpaTemplate getTemplate() {
-        return template;
+    public EntityManagerFactory getEntityManagerFactory() {
+        return entityManagerFactory;
     }
 
-    public void setTemplate(JpaTemplate template) {
-        this.template = template;
-        this.entityManagerTemplate = new EntityManagerTemplate(template.getEntityManagerFactory());
+    public void setEntityManagerFactory(EntityManagerFactory entityManagerFactory) {
+        this.entityManagerFactory = entityManagerFactory;
+        this.entityManagerTemplate = new EntityManagerTemplate(entityManagerFactory);
     }
 
     public boolean isCorrelationKeyIsPrimary() {
@@ -129,25 +127,12 @@ public class JpaBamProcessorSupport<T> extends BamProcessorSupport<T> {
                 ProcessDefinition definition = ProcessDefinition.getRefreshedProcessDefinition(entityManagerTemplate,
                         getActivityRules().getProcessRules().getProcessDefinition());
                 setProcessDefinitionProperty(entity, definition);
-                final T finalEntity = entity;
-                entityManagerTemplate.execute(new EntityManagerCallback<Object>() {
-                    @Override
-                    public Object execute(EntityManager entityManager) {
-                        entityManager.persist(finalEntity);
-                        return null;
-                    }
-                });
+                entityManagerTemplate.persist(entity);
 
                 // Now we must flush to avoid concurrent updates clashing trying to
                 // insert the same row
                 LOG.debug("About to flush on entity: {} with key: {}", entity, key);
-                entityManagerTemplate.execute(new EntityManagerCallback<Object>() {
-                    @Override
-                    public Object execute(EntityManager entityManager) {
-                        entityManager.flush();
-                        return null;
-                    }
-                });
+                entityManagerTemplate.flush();
             }
             return entity;
         } finally {
