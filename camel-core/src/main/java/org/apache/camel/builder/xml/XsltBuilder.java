@@ -27,6 +27,8 @@ import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
 
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.stream.XMLEventReader;
+import javax.xml.stream.XMLStreamReader;
 import javax.xml.transform.ErrorListener;
 import javax.xml.transform.Result;
 import javax.xml.transform.Source;
@@ -48,6 +50,7 @@ import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeTransformException;
 import org.apache.camel.TypeConverter;
+import org.apache.camel.converter.jaxp.StaxSource;
 import org.apache.camel.converter.jaxp.XmlConverter;
 import org.apache.camel.converter.jaxp.XmlErrorListener;
 import org.apache.camel.support.SynchronizationAdapter;
@@ -107,7 +110,7 @@ public class XsltBuilder implements Processor {
         transformer.setErrorListener(new DefaultTransformErrorHandler());
         ResultHandler resultHandler = resultHandlerFactory.createResult(exchange);
         Result result = resultHandler.getResult();
-
+        exchange.setProperty("isXalanTransformer", isXalanTransformer(transformer));
         // let's copy the headers before we invoke the transform in case they modify them
         Message out = exchange.getOut();
         out.copyFrom(exchange.getIn());
@@ -129,10 +132,16 @@ public class XsltBuilder implements Processor {
             LOG.trace("Transform complete with result {}", result);
             resultHandler.setBody(out);
         } finally {
+            // clean up the setting on the exchange
+            
             releaseTransformer(transformer);
             // IOHelper can handle if is is null
             IOHelper.close(is);
         }
+    }
+    
+    private boolean isXalanTransformer(Transformer transformer) {
+        return transformer.getClass().getName().startsWith("org.apache.xalan.transformer");
     }
 
     // Builder methods
@@ -447,14 +456,23 @@ public class XsltBuilder implements Processor {
      * </ul>
      */
     protected Source getSource(Exchange exchange, Object body) {
+        Boolean isXalanTransformer = exchange.getProperty("isXalanTransformer", Boolean.class);
         // body may already be a source
         if (body instanceof Source) {
             return (Source) body;
         }
         Source source = null;
         if (body != null) {
-            if (isAllowStAX()) {
-                source = exchange.getContext().getTypeConverter().tryConvertTo(StAXSource.class, exchange, body);
+            if (isXalanTransformer) {
+                XMLStreamReader reader = exchange.getContext().getTypeConverter().tryConvertTo(XMLStreamReader.class, exchange, body);
+                if (reader != null) {
+                    // create a new SAXSource with stax parser API
+                    source = new StaxSource(reader);
+                }
+            } else {
+                if (isAllowStAX()) {
+                    source = exchange.getContext().getTypeConverter().tryConvertTo(StAXSource.class, exchange, body);
+                }
             }
             if (source == null) {
                 // then try SAX
@@ -490,6 +508,7 @@ public class XsltBuilder implements Processor {
         }
         return source;
     }
+   
 
     /**
      * Configures the transformer with exchange specific parameters
