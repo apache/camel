@@ -35,7 +35,7 @@ public class XsltTestErrorListenerTest extends TestCase {
 
     public void testErrorListener() throws Exception {
         // Xalan transformer cannot work as expected, so we just skip the test
-        if (xsltBuilder.isXalanTransformer(xsltBuilder.getTemplate().newTransformer())) {
+        if (xsltBuilder.isXalanTransformer(xsltBuilder.getConverter().getTransformerFactory().newTransformer())) {
             return;
         }
         errorListener.error(EasyMock.<TransformerException>anyObject());
