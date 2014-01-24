@@ -21,6 +21,8 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.persistence.EntityManagerFactory;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
@@ -32,12 +34,11 @@ import org.apache.camel.bam.processor.JpaBamProcessor;
 import org.apache.camel.bam.rules.ProcessRules;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.ObjectHelper;
-import org.springframework.orm.jpa.JpaTemplate;
 import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallbackWithoutResult;
 import org.springframework.transaction.support.TransactionTemplate;
+
 import static org.apache.camel.util.ObjectHelper.notNull;
 
 /**
@@ -47,7 +48,8 @@ import static org.apache.camel.util.ObjectHelper.notNull;
  */
 public abstract class ProcessBuilder extends RouteBuilder {
     private static int processCounter;
-    private JpaTemplate jpaTemplate;
+    private EntityManagerFactory entityManagerFactory;
+    private EntityManagerTemplate entityManagerTemplate;
     private TransactionTemplate transactionTemplate;
     private String processName;
     private final List<ActivityBuilder> activityBuilders = new ArrayList<ActivityBuilder>();
@@ -59,12 +61,12 @@ public abstract class ProcessBuilder extends RouteBuilder {
     protected ProcessBuilder() {
     }
 
-    protected ProcessBuilder(JpaTemplate jpaTemplate, TransactionTemplate transactionTemplate) {
-        this(jpaTemplate, transactionTemplate, createProcessName());
+    protected ProcessBuilder(EntityManagerFactory entityManagerFactory, TransactionTemplate transactionTemplate) {
+        this(entityManagerFactory, transactionTemplate, createProcessName());
     }
 
-    protected ProcessBuilder(JpaTemplate jpaTemplate, TransactionTemplate transactionTemplate, String processName) {
-        this.jpaTemplate = jpaTemplate;
+    protected ProcessBuilder(EntityManagerFactory entityManagerFactory, TransactionTemplate transactionTemplate, String processName) {
+        setEntityManagerFactory(entityManagerFactory);
         this.transactionTemplate = transactionTemplate;
         this.processName = processName;
     }
@@ -92,13 +94,13 @@ public abstract class ProcessBuilder extends RouteBuilder {
     }
 
     public Processor createActivityProcessor(ActivityBuilder activityBuilder) {
-        notNull(jpaTemplate, "jpaTemplate");
+        notNull(entityManagerFactory, "entityManagerFactory");
         transactionTemplate.execute(new TransactionCallbackWithoutResult() {
             protected void doInTransactionWithoutResult(TransactionStatus status) {
                 processRules.setProcessDefinition(getProcessDefinition());
             }
         });
-        return new JpaBamProcessor(getTransactionTemplate(), getJpaTemplate(), activityBuilder.getCorrelationExpression(), activityBuilder.getActivityRules(), getEntityType());
+        return new JpaBamProcessor(transactionTemplate, entityManagerFactory, activityBuilder.getCorrelationExpression(), activityBuilder.getActivityRules(), getEntityType());
     }
 
     // Properties
@@ -111,12 +113,13 @@ public abstract class ProcessBuilder extends RouteBuilder {
         return entityType;
     }
 
-    public JpaTemplate getJpaTemplate() {
-        return jpaTemplate;
+    public EntityManagerFactory getEntityManagerFactory() {
+        return entityManagerFactory;
     }
 
-    public void setJpaTemplate(JpaTemplate jpaTemplate) {
-        this.jpaTemplate = jpaTemplate;
+    public void setEntityManagerFactory(EntityManagerFactory entityManagerFactory) {
+        this.entityManagerFactory = entityManagerFactory;
+        this.entityManagerTemplate = new EntityManagerTemplate(entityManagerFactory);
     }
 
     public TransactionTemplate getTransactionTemplate() {
@@ -152,12 +155,12 @@ public abstract class ProcessBuilder extends RouteBuilder {
     // Implementation methods
     // -------------------------------------------------------------------------
     protected void populateRoutes() throws Exception {
-        ObjectHelper.notNull(getJpaTemplate(), "jpaTemplate", this);
+        ObjectHelper.notNull(entityManagerFactory, "entityManagerFactory", this);
         ObjectHelper.notNull(getTransactionTemplate(), "transactionTemplate", this);
 
         // add the monitoring service - should there be an easier way??
         if (engine == null) {
-            engine = new ActivityMonitorEngine(getJpaTemplate(), getTransactionTemplate(), getProcessRules());
+            engine = new ActivityMonitorEngine(entityManagerFactory, getTransactionTemplate(), getProcessRules());
         }
         CamelContext camelContext = getContext();
         if (camelContext instanceof DefaultCamelContext) {
@@ -182,15 +185,15 @@ public abstract class ProcessBuilder extends RouteBuilder {
         params.put("definition", definition);
         params.put("name", activityName);
 
-        List<ActivityDefinition> list = CastUtils.cast(jpaTemplate.findByNamedParams("select x from "
-            + QueryUtils.getTypeName(ActivityDefinition.class) + " x where x.processDefinition = :definition and x.name = :name", params));
+        List<ActivityDefinition> list = entityManagerTemplate.find(ActivityDefinition.class, "select x from "
+            + QueryUtils.getTypeName(ActivityDefinition.class) + " x where x.processDefinition = :definition and x.name = :name", params);
         if (!list.isEmpty()) {
             return list.get(0);
         } else {
             ActivityDefinition answer = new ActivityDefinition();
             answer.setName(activityName);
-            answer.setProcessDefinition(ProcessDefinition.getRefreshedProcessDefinition(jpaTemplate, definition));
-            jpaTemplate.persist(answer);
+            answer.setProcessDefinition(ProcessDefinition.getRefreshedProcessDefinition(entityManagerTemplate, definition));
+            entityManagerTemplate.persist(answer);
             return answer;
         }
     }
@@ -199,14 +202,14 @@ public abstract class ProcessBuilder extends RouteBuilder {
         Map<String, Object> params = new HashMap<String, Object>(1);
         params.put("name", processName);
 
-        List<ProcessDefinition> list = CastUtils.cast(jpaTemplate.findByNamedParams("select x from "
-            + QueryUtils.getTypeName(ProcessDefinition.class) + " x where x.name = :name", params));
+        List<ProcessDefinition> list = entityManagerTemplate.find(ProcessDefinition.class, "select x from "
+            + QueryUtils.getTypeName(ProcessDefinition.class) + " x where x.name = :name", params);
         if (!list.isEmpty()) {
             return list.get(0);
         } else {
             ProcessDefinition answer = new ProcessDefinition();
             answer.setName(processName);
-            jpaTemplate.persist(answer);
+            entityManagerTemplate.persist(answer);
             return answer;
         }
     }

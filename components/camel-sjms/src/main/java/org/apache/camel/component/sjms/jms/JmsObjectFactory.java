@@ -127,9 +127,9 @@ public final class JmsObjectFactory {
                 }
             } else {
                 if (ObjectHelper.isNotEmpty(messageSelector)) {
-                    messageConsumer = session.createConsumer((Topic)destination, messageSelector, noLocal);
+                    messageConsumer = session.createConsumer(destination, messageSelector, noLocal);
                 } else {
-                    messageConsumer = session.createConsumer((Topic)destination);
+                    messageConsumer = session.createConsumer(destination);
                 }
             }
         } else {

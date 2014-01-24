@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.xslt;
 
+import java.io.InputStream;
 import java.util.List;
 
 import javax.xml.transform.TransformerException;
@@ -25,15 +26,28 @@ import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.converter.IOConverter;
+import org.apache.camel.impl.DefaultExchange;
 
 
 public class XsltDTDTest extends ContextTestSupport {
+    private static final String MESSAGE = 
+        "<!DOCTYPE foo [<!ENTITY xxe SYSTEM \"file:///etc//user//test\">]><task><name>&xxe;</name></task>";
     
-    public void testSendEntityMessage() throws Exception {
+    public void testSendingStringMessage() throws Exception {
+        sendEntityMessage(MESSAGE);
+    }
+    
+    public void testSendingInputStreamMessage() throws Exception {
+        InputStream is = IOConverter.toInputStream(MESSAGE, new DefaultExchange(context));
+        sendEntityMessage(is);   
+    }
+    
+    private void sendEntityMessage(Object message) throws Exception {
         
         MockEndpoint endpoint = getMockEndpoint("mock:result");
+        endpoint.reset();
         endpoint.expectedMessageCount(1);
-        String message = "<!DOCTYPE foo [<!ENTITY xxe SYSTEM \"file:///etc//user//test\">]><task><name>&xxe;</name></task>";
         
         template.sendBody("direct:start1", message);
 
@@ -43,6 +57,8 @@ public class XsltDTDTest extends ContextTestSupport {
         Exchange exchange = list.get(0);
         String xml = exchange.getIn().getBody(String.class);
         assertTrue("Get a wrong transformed message", xml.indexOf("<transformed subject=\"\">") > 0);
+        
+        
         
         try {
             template.sendBody("direct:start2", message);

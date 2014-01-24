@@ -14,29 +14,29 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.test.blueprint;
+package org.apache.camel.bam;
 
-import org.apache.camel.BeanInject;
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
-import org.apache.camel.builder.RouteBuilder;
+import javax.persistence.EntityManagerFactory;
 
-public class BlueprintBeanInjectRoute extends RouteBuilder {
+import org.junit.Assert;
+import org.junit.Test;
 
-    @BeanInject("foo")
-    private FooBar greeting;
+import static org.apache.camel.bam.EntityManagers.resolveEntityManager;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
 
-    @Override
-    public void configure() throws Exception {
-        from("direct:start")
-                .process(new Processor() {
-                    @Override
-                    public void process(Exchange exchange) throws Exception {
-                        String out = greeting.hello(exchange.getIn().getBody(String.class));
-                        exchange.getIn().setBody(out);
-                    }
-                })
-                .to("mock:result");
+public class EntityManagersTest extends Assert {
+
+    @Test
+    public void shouldCreateNewEntityManagerIfThereIsNoTransaction() {
+        // Given
+        EntityManagerFactory entityManagerFactory = mock(EntityManagerFactory.class);
+
+        // When
+        resolveEntityManager(entityManagerFactory);
+
+        // Then
+        verify(entityManagerFactory).createEntityManager();
     }
 
 }

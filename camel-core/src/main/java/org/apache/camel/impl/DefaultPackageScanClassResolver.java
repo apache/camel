@@ -48,7 +48,6 @@ import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.LRUSoftCache;
 import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.ServiceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -509,11 +508,11 @@ public class DefaultPackageScanClassResolver extends ServiceSupport implements P
     }
 
     protected void doStart() throws Exception {
-        ServiceHelper.startService(jarCache);
+        // noop
     }
 
     protected void doStop() throws Exception {
-        ServiceHelper.stopService(jarCache);
+        jarCache.clear();
     }
 
 }

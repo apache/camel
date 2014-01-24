@@ -14,29 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.test.blueprint;
+package org.apache.camel.bam;
 
-import org.apache.camel.BeanInject;
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
-import org.apache.camel.builder.RouteBuilder;
+import javax.persistence.EntityManager;
 
-public class BlueprintBeanInjectRoute extends RouteBuilder {
+/**
+ * Function operating on the {@code EntityManager} instance. Intended to be executed as a part of the template method
+ * defined by the {@link org.apache.camel.bam.EntityManagerTemplate#execute(EntityManagerCallback)}.
+ * {@code EntityManager} should not be closed by the callback, as doing this is the responsibility of the
+ * {@link org.apache.camel.bam.EntityManagerTemplate}.
+ *
+ * @param <T>
+ */
+public interface EntityManagerCallback<T> {
 
-    @BeanInject("foo")
-    private FooBar greeting;
-
-    @Override
-    public void configure() throws Exception {
-        from("direct:start")
-                .process(new Processor() {
-                    @Override
-                    public void process(Exchange exchange) throws Exception {
-                        String out = greeting.hello(exchange.getIn().getBody(String.class));
-                        exchange.getIn().setBody(out);
-                    }
-                })
-                .to("mock:result");
-    }
+    T execute(EntityManager entityManager);
 
 }

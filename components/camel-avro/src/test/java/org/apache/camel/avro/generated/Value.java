@@ -94,7 +94,7 @@ public class Value extends org.apache.avro.specific.SpecificRecordBase implement
     private Builder(org.apache.camel.avro.generated.Value other) {
             super(org.apache.camel.avro.generated.Value.SCHEMA$);
       if (isValidValue(fields()[0], other.value)) {
-        this.value = (java.lang.CharSequence) data().deepCopy(fields()[0].schema(), other.value);
+        this.value = data().deepCopy(fields()[0].schema(), other.value);
         fieldSetFlags()[0] = true;
       }
     }

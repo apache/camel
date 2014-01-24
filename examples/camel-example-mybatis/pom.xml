@@ -30,6 +30,10 @@
   <name>Camel :: Example :: MyBatis</name>
   <description>An example for showing Camel using MyBatis SQL mapper component</description>
 
+  <properties>
+    <camel.osgi.export.pkg>org.apache.camel.example.mybatis.*</camel.osgi.export.pkg>
+  </properties>
+
   <dependencies>
 
     <!-- Camel -->
@@ -55,26 +59,29 @@
   </dependencies>
 
   <build>
-
     <plugins>
-
-      <!-- to generate the MANIFEST-FILE of the bundle -->
       <plugin>
-        <groupId>org.apache.felix</groupId>
-        <artifactId>maven-bundle-plugin</artifactId>
-        <extensions>true</extensions>
-        <configuration>
-          <manifestLocation>target/META-INF</manifestLocation>
-          <instructions>
-            <Bundle-SymbolicName>${project.groupId}.${project.artifactId}</Bundle-SymbolicName>
-            <Export-Package>org.apache.camel.example.mybatis</Export-Package>
-            <Import-Package>
-              *
-            </Import-Package>
-          </instructions>
-        </configuration>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>build-helper-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>attach-artifacts</id>
+            <phase>package</phase>
+            <goals>
+              <goal>attach-artifact</goal>
+            </goals>
+            <configuration>
+              <artifacts>
+                <artifact>
+                  <file>target/classes/features.xml</file>
+                  <type>xml</type>
+                  <classifier>features</classifier>
+                </artifact>
+              </artifacts>
+            </configuration>
+          </execution>
+        </executions>
       </plugin>
-
     </plugins>
   </build>
 

@@ -22,9 +22,9 @@ import java.nio.charset.Charset;
 
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLEventWriter;
+import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
-import javax.xml.stream.events.XMLEvent;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -98,19 +98,19 @@ public class StaxConverterTest extends ContextTestSupport {
             while (reader.hasNext()) {
                 reader.next();
                 switch (reader.getEventType()) {
-                case XMLEvent.START_DOCUMENT:
+                case XMLStreamConstants.START_DOCUMENT:
                     writer.writeStartDocument();
                     break;
-                case XMLEvent.END_DOCUMENT:
+                case XMLStreamConstants.END_DOCUMENT:
                     writer.writeEndDocument();
                     break;
-                case XMLEvent.START_ELEMENT:
+                case XMLStreamConstants.START_ELEMENT:
                     writer.writeStartElement(reader.getName().getLocalPart());
                     break;
-                case XMLEvent.CHARACTERS:
+                case XMLStreamConstants.CHARACTERS:
                     writer.writeCharacters(reader.getText());
                     break;
-                case XMLEvent.END_ELEMENT:
+                case XMLStreamConstants.END_ELEMENT:
                     writer.writeEndElement();
                     break;
                 default:

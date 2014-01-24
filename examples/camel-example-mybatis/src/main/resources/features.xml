@@ -16,14 +16,13 @@
     limitations under the License.
 -->
 <features>
+
     <repository>mvn:org.apache.camel.karaf/apache-camel/${project.version}/xml/features</repository>
 
     <feature name="camel-example-mybatis" version="${project.version}">
-        <feature version="${project.version}">camel</feature>
+        <feature version="${project.version}">camel-blueprint</feature>
         <feature version="${project.version}">camel-mybatis</feature>
         <bundle>mvn:org.apache.derby/derby/${derby-version}</bundle>
-        <bundle>mvn:commons-pool/commons-pool/${commons-pool-version}</bundle>
-        <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.commons-dbcp/${commons-dbcp-bundle-version}</bundle>
         <bundle>mvn:org.apache.camel/camel-example-mybatis/${project.version}</bundle>
     </feature>
 

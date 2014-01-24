@@ -22,6 +22,7 @@ import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.Reader;
 import java.io.Writer;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
@@ -31,11 +32,14 @@ import org.apache.camel.Exchange;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.IOHelper;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.commons.csv.CSVParser;
 import org.apache.commons.csv.CSVStrategy;
 import org.apache.commons.csv.writer.CSVConfig;
 import org.apache.commons.csv.writer.CSVField;
 import org.apache.commons.csv.writer.CSVWriter;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * CSV Data format.
@@ -49,7 +53,9 @@ import org.apache.commons.csv.writer.CSVWriter;
  * @version
  */
 public class CsvDataFormat implements DataFormat {
-    private CSVStrategy strategy = CSVStrategy.DEFAULT_STRATEGY;
+    private static final Logger LOGGER = LoggerFactory.getLogger(CsvDataFormat.class);
+
+    private CSVStrategy strategy = cloneCSVStrategyIfNecessary(CSVStrategy.DEFAULT_STRATEGY);
     private CSVConfig config = new CSVConfig();
     private boolean autogenColumns = true;
     private String delimiter;
@@ -59,6 +65,26 @@ public class CsvDataFormat implements DataFormat {
      */
     private boolean lazyLoad;
     private boolean useMaps;
+
+    private static CSVStrategy cloneCSVStrategyIfNecessary(CSVStrategy csvStrategy) {
+        for (Field field : CSVStrategy.class.getFields()) {
+            try {
+                if (field.get(null) == csvStrategy) {
+                    // return a safe copy of the declared static constant so that we don't cause any side effect
+                    // by (potentially) other CsvDataFormat objects in use, as we change the properties of the
+                    // strategy itself (e.g. it's set delimiter through the #unmarshal() method below)
+                    LOGGER.debug("Returning a clone of {} as it is the declared constant {} by the CSVStrategy class", csvStrategy, field.getName());
+
+                    return (CSVStrategy) csvStrategy.clone();
+                }
+            } catch (Exception e) {
+                ObjectHelper.wrapRuntimeCamelException(e);
+            }
+        }
+
+        // not a declared static constant of CSVStrategy so return it as is
+        return csvStrategy;
+    }
 
     public void marshal(Exchange exchange, Object object, OutputStream outputStream) throws Exception {
         if (delimiter != null) {
@@ -117,7 +143,7 @@ public class CsvDataFormat implements DataFormat {
                 }
             }
 
-            @SuppressWarnings("unchecked") CsvIterator<?> csvIterator = new CsvIterator(parser, reader, lineConverter);
+            @SuppressWarnings({"unchecked", "rawtypes"}) CsvIterator<?> csvIterator = new CsvIterator(parser, reader, lineConverter);
             return lazyLoad ? csvIterator : loadAllAsList(csvIterator);
         } catch (Exception e) {
             error = true;
@@ -166,7 +192,7 @@ public class CsvDataFormat implements DataFormat {
     }
 
     public void setStrategy(CSVStrategy strategy) {
-        this.strategy = strategy;
+        this.strategy = cloneCSVStrategyIfNecessary(strategy);
     }
 
     public boolean isAutogenColumns() {
