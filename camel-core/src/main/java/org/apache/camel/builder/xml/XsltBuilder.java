@@ -140,7 +140,7 @@ public class XsltBuilder implements Processor {
         }
     }
     
-    private boolean isXalanTransformer(Transformer transformer) {
+    boolean isXalanTransformer(Transformer transformer) {
         return transformer.getClass().getName().startsWith("org.apache.xalan.transformer");
     }
 
@@ -463,14 +463,14 @@ public class XsltBuilder implements Processor {
         }
         Source source = null;
         if (body != null) {
-            if (isXalanTransformer) {
-                XMLStreamReader reader = exchange.getContext().getTypeConverter().tryConvertTo(XMLStreamReader.class, exchange, body);
-                if (reader != null) {
-                    // create a new SAXSource with stax parser API
-                    source = new StaxSource(reader);
-                }
-            } else {
-                if (isAllowStAX()) {
+            if (isAllowStAX()) {
+                if (isXalanTransformer) {
+                    XMLStreamReader reader = exchange.getContext().getTypeConverter().tryConvertTo(XMLStreamReader.class, exchange, body);
+                    if (reader != null) {
+                        // create a new SAXSource with stax parser API
+                        source = new StaxSource(reader);
+                    }
+                } else {
                     source = exchange.getContext().getTypeConverter().tryConvertTo(StAXSource.class, exchange, body);
                 }
             }
