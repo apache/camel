@@ -172,7 +172,7 @@
     <hapi-version>2.1</hapi-version>
     <hawtbuf-version>1.9</hawtbuf-version>
     <hawtdb-version>1.6</hawtdb-version>
-    <hawtdispatch-version>1.18</hawtdispatch-version>
+    <hawtdispatch-version>1.19</hawtdispatch-version>
     <hazelcast-version>2.6</hazelcast-version>
     <hbase-version>0.94.10</hbase-version>
     <hbase-bundle-version>0.94.6_1</hbase-bundle-version>
@@ -294,7 +294,7 @@
     <mock-javamail-version>1.7</mock-javamail-version>
     <mockito-version>1.9.5</mockito-version>
     <mongo-java-driver-version>2.11.3</mongo-java-driver-version>
-    <mqtt-client-version>1.6</mqtt-client-version>
+    <mqtt-client-version>1.7</mqtt-client-version>
     <msv-version>20050913</msv-version>
     <mustache-java-version>0.8.13</mustache-java-version>
     <mustache-bundle-version>0.8.13_1/</mustache-bundle-version>
