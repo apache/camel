@@ -45,17 +45,15 @@ public final class Utils {
         }
     }
 
-    /**
-     * Sets schematron validation header status for given report.
-     *
-     * @param report
-     * @param exchange
-     */
-    public static void setValidationStatus(final String report, final Exchange exchange) {
 
-        String status =  StringUtils.contains(report,
+    /**
+     * Get validation status SUCCESS OR FAILURE if there are any schematron validation errors.
+     * @param report
+     * @return
+     */
+    public static String getValidationStatus(final String report)
+    {
+        return StringUtils.contains(report,
                 Constants.FAILED_ASSERT)? Constants.FAILED : Constants.SUCCESS;
-        logger.info("Schematron validation : {}", status);
-        exchange.getOut().setHeader(Constants.VALIDATION_STATUS,status);
     }
 }

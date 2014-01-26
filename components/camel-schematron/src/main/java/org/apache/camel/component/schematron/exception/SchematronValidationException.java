@@ -14,4 +14,8 @@ public class SchematronValidationException extends RuntimeCamelException {
     {
         super(message,e);
     }
+
+    public SchematronValidationException(String message) {
+        super(message);
+    }
 }

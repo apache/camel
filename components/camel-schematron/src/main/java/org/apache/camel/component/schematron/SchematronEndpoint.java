@@ -21,6 +21,7 @@ public class SchematronEndpoint extends DefaultEndpoint {
     private Logger logger = LoggerFactory.getLogger(SchematronEndpoint.class);
     private SchematronEngineFactory factory;
     private String remaining;
+    private boolean abort;
 
     public SchematronEndpoint() {
     }
@@ -45,7 +46,12 @@ public class SchematronEndpoint extends DefaultEndpoint {
     public boolean isSingleton() {
         return true;
     }
-
+    public void setAbort(boolean abort) {
+        this.abort = abort;
+    }
+    public boolean isAbort() {
+        return abort;
+    }
     @Override
     protected void doStart() throws Exception {
         super.doStart();

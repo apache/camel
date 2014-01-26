@@ -3,6 +3,7 @@ package org.apache.camel.component.schematron;
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.schematron.engine.SchematronEngineFactory;
+import org.apache.camel.component.schematron.exception.SchematronValidationException;
 import org.apache.camel.component.schematron.util.Constants;
 import org.apache.camel.component.schematron.engine.SchematronEngine;
 import org.apache.camel.component.schematron.util.Utils;
@@ -44,13 +45,18 @@ public class SchematronProducer extends DefaultProducer {
         String payload = getPayload(exchange);
         SchematronEngine engine = factory.newScehamtronEngine(Constants.XSLT_VERSION_2_0);
         String report  = engine.validate(payload);
+        String status =  Utils.getValidationStatus(report);
+
+        if (this.endpoint.isAbort() && Constants.FAILED.equals(status))
+        {
+           throw new SchematronValidationException("Schematron validation failure \n" + report);
+        }
 
         // set the body out
         exchange.getOut().setBody(report);
-
-        // set all the incoming headers in the outbound message
+        logger.info("Schematron validation status : {}", status);
         exchange.getOut().setHeaders(exchange.getIn().getHeaders());
-        Utils.setValidationStatus(report, exchange);
+        exchange.getOut().setHeader(Constants.VALIDATION_STATUS,status);
 
     }
 
