@@ -30,7 +30,7 @@
 
   <!-- the builder with our activities -->
   <bean id="activities" class="org.apache.camel.example.bam.MyActivities">
-    <property name="jpaTemplate" ref="jpaTemplate"/>
+    <property name="entityManagerFactory" ref="entityManagerFactory"/>
     <property name="transactionTemplate" ref="transactionTemplate"/>
   </bean>
 
@@ -40,10 +40,6 @@
         <property name="entityManagerFactory" ref="entityManagerFactory"/>
       </bean>
     </property>
-  </bean>
-
-  <bean id="jpaTemplate" class="org.springframework.orm.jpa.JpaTemplate">
-    <property name="entityManagerFactory" ref="entityManagerFactory"/>
   </bean>
 
   <bean id="entityManagerFactory" class="org.springframework.orm.jpa.LocalContainerEntityManagerFactoryBean">
