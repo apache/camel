@@ -171,6 +171,34 @@ public final class JmsMessageHelper {
     }
 
     /**
+     * Whether the destination name has either queue or temp queue prefix.
+     *
+     * @param destination the destination
+     * @return <tt>true</tt> if queue or temp-queue prefix, <tt>false</tt> otherwise
+     */
+    public static boolean isQueuePrefix(String destination) {
+        if (ObjectHelper.isEmpty(destination)) {
+            return false;
+        }
+
+        return destination.startsWith(QUEUE_PREFIX) || destination.startsWith(TEMP_QUEUE_PREFIX);
+    }
+
+    /**
+     * Whether the destination name has either topic or temp topic prefix.
+     *
+     * @param destination the destination
+     * @return <tt>true</tt> if topic or temp-topic prefix, <tt>false</tt> otherwise
+     */
+    public static boolean isTopicPrefix(String destination) {
+        if (ObjectHelper.isEmpty(destination)) {
+            return false;
+        }
+
+        return destination.startsWith(TOPIC_PREFIX) || destination.startsWith(TEMP_TOPIC_PREFIX);
+    }
+
+    /**
      * Normalizes the destination name.
      * <p/>
      * This ensures the destination name is correct, and we do not create queues as <tt>queue://queue:foo</tt>, which
