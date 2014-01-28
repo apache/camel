@@ -293,7 +293,7 @@ public class QuartzComponent extends DefaultComponent implements StartupListener
 
         // Store CamelContext into QuartzContext space
         SchedulerContext quartzContext = scheduler.getContext();
-        String camelContextName = getCamelContext().getManagementName();
+        String camelContextName = QuartzHelper.getQuartzContextName(getCamelContext());
         LOG.debug("Storing camelContextName={} into Quartz Context space.", camelContextName);
         quartzContext.put(QuartzConstants.QUARTZ_CAMEL_CONTEXT + "-" + camelContextName, getCamelContext());
 

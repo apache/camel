@@ -198,9 +198,8 @@ public class QuartzComponent extends DefaultComponent implements StartupListener
 
     public void onCamelContextStarted(CamelContext camelContext, boolean alreadyStarted) throws Exception {
         if (scheduler != null) {
-            // register current camel context to scheduler so we can look it up when jobs is being triggered
-            // must use management name as it should be unique in the same JVM
-            scheduler.getContext().put(QuartzConstants.QUARTZ_CAMEL_CONTEXT + "-" + getCamelContext().getManagementName(), getCamelContext());
+            String uid = QuartzHelper.getQuartzContextName(camelContext);
+            scheduler.getContext().put(QuartzConstants.QUARTZ_CAMEL_CONTEXT + "-" + uid, camelContext);
         }
 
         // if not configure to auto start then don't start it
