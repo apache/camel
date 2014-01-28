@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.cache;
 
+import java.io.InputStream;
 import java.net.URI;
 import java.util.Map;
 
@@ -23,11 +24,13 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.ResourceHelper;
 import org.apache.camel.util.ServiceHelper;
 
 public class CacheComponent extends DefaultComponent {
     private CacheConfiguration configuration;
-    private CacheManagerFactory cacheManagerFactory = new DefaultCacheManagerFactory();
+    private CacheManagerFactory cacheManagerFactory;
+    private String configurationFile = "classpath:ehcache.xml";
     
     public CacheComponent() {
         configuration = new CacheConfiguration();
@@ -75,9 +78,29 @@ public class CacheComponent extends DefaultComponent {
         this.configuration = configuration;
     }
 
+    public String getConfigurationFile() {
+        return configurationFile;
+    }
+
+    /**
+     * Sets the location of the <tt>ehcache.xml</tt> file to load from classpath or file system.
+     * <p/>
+     * By default the file is loaded from <tt>classpath:ehcache.xml</tt>
+     */
+    public void setConfigurationFile(String configurationFile) {
+        this.configurationFile = configurationFile;
+    }
+
     @Override
     protected void doStart() throws Exception {
         super.doStart();
+        if (cacheManagerFactory == null) {
+            InputStream is = null;
+            if (configurationFile != null) {
+                is = ResourceHelper.resolveMandatoryResourceAsInputStream(getCamelContext().getClassResolver(), configurationFile);
+            }
+            cacheManagerFactory = new DefaultCacheManagerFactory(is);
+        }
         ServiceHelper.startService(cacheManagerFactory);
     }
 
