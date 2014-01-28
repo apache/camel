@@ -16,13 +16,36 @@
  */
 package org.apache.camel.component.cache;
 
+import java.io.InputStream;
+
 import net.sf.ehcache.CacheManager;
+import org.apache.camel.util.IOHelper;
 
 public class DefaultCacheManagerFactory extends CacheManagerFactory {
 
-    @Override
-    protected CacheManager createCacheManagerInstance() {
-        return EHCacheUtil.createCacheManager(getClass().getResourceAsStream("/ehcache.xml"));
+    private InputStream is;
+
+    public DefaultCacheManagerFactory() {
+        this(null);
     }
 
+    public DefaultCacheManagerFactory(InputStream is) {
+        this.is = is;
+    }
+
+    @Override
+    protected CacheManager createCacheManagerInstance() {
+        if (is == null) {
+            is = getClass().getResourceAsStream("/ehcache.xml");
+        }
+        return EHCacheUtil.createCacheManager(is);
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        if (is != null) {
+            IOHelper.close(is);
+        }
+        super.doStop();
+    }
 }
