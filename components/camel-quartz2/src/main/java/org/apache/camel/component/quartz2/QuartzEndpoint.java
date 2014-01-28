@@ -254,7 +254,7 @@ public class QuartzEndpoint extends DefaultEndpoint {
     private void updateJobDataMap(JobDetail jobDetail) {
         // Store this camelContext name into the job data
         JobDataMap jobDataMap = jobDetail.getJobDataMap();
-        String camelContextName = getCamelContext().getManagementName();
+        String camelContextName = QuartzHelper.getQuartzContextName(getCamelContext());
         String endpointUri = getEndpointUri();
         LOG.debug("Adding camelContextName={}, endpointUri={} into job data map.", camelContextName, endpointUri);
         jobDataMap.put(QuartzConstants.QUARTZ_CAMEL_CONTEXT_NAME, camelContextName);
