@@ -743,7 +743,7 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
         }
         MessageContentsList inObjects = MessageContentsList.getContentsList(message);
         if (inObjects == null) {
-            return null;
+            return new ArrayList<Source>(0);
         }
         org.apache.cxf.message.Exchange exchange = message.getExchange();
         BindingOperationInfo boi = exchange.getBindingOperationInfo();
