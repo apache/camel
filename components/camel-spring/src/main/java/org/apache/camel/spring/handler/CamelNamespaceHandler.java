@@ -76,7 +76,7 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
     protected BeanDefinitionParser beanPostProcessorParser = new BeanDefinitionParser(CamelBeanPostProcessor.class, false);
     protected Set<String> parserElementNames = new HashSet<String>();
     protected Map<String, BeanDefinitionParser> parserMap = new HashMap<String, BeanDefinitionParser>();
-    
+
     private JAXBContext jaxbContext;
     private Map<String, BeanDefinition> autoRegisterMap = new HashMap<String, BeanDefinition>();
 
@@ -100,7 +100,7 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
     public void init() {
         // register routeContext parser
         registerParser("routeContext", new RouteContextDefinitionParser());
-        
+
         addBeanDefinitionParser("keyStoreParameters", KeyStoreParametersFactoryBean.class, true, true);
         addBeanDefinitionParser("secureRandomParameters", SecureRandomParametersFactoryBean.class, true, true);
         registerBeanDefinitionParser("sslContextParameters", new SSLContextParametersFactoryBeanBeanDefinitionParser());
@@ -144,7 +144,7 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
         }
         if (osgi) {
             LOG.info("OSGi environment detected.");
-        } 
+        }
         LOG.debug("Using {} as CamelContextBeanDefinitionParser", cl.getCanonicalName());
         registerParser("camelContext", new CamelContextBeanDefinitionParser(cl));
     }
@@ -201,7 +201,7 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
         classes.add(org.apache.camel.util.spring.SSLContextParametersFactoryBean.class);
         return classes;
     }
-    
+
     protected class SSLContextParametersFactoryBeanBeanDefinitionParser extends BeanDefinitionParser {
 
         public SSLContextParametersFactoryBeanBeanDefinitionParser() {
@@ -211,8 +211,8 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
         @Override
         protected void doParse(Element element, ParserContext parserContext, BeanDefinitionBuilder builder) {
             super.doParse(element, builder);
-            
-            // Note: prefer to use doParse from parent and postProcess; however, parseUsingJaxb requires 
+
+            // Note: prefer to use doParse from parent and postProcess; however, parseUsingJaxb requires
             // parserContext for no apparent reason.
             Binder<Node> binder;
             try {
@@ -220,12 +220,12 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
             } catch (JAXBException e) {
                 throw new BeanDefinitionStoreException("Failed to create the JAXB binder", e);
             }
-            
+
             Object value = parseUsingJaxb(element, parserContext, binder);
-            
+
             if (value instanceof SSLContextParametersFactoryBean) {
                 SSLContextParametersFactoryBean bean = (SSLContextParametersFactoryBean)value;
-                
+
                 builder.addPropertyValue("cipherSuites", bean.getCipherSuites());
                 builder.addPropertyValue("cipherSuitesFilter", bean.getCipherSuitesFilter());
                 builder.addPropertyValue("secureSocketProtocols", bean.getSecureSocketProtocols());
@@ -233,7 +233,7 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
                 builder.addPropertyValue("keyManagers", bean.getKeyManagers());
                 builder.addPropertyValue("trustManagers", bean.getTrustManagers());
                 builder.addPropertyValue("secureRandom", bean.getSecureRandom());
-                
+
                 builder.addPropertyValue("clientParameters", bean.getClientParameters());
                 builder.addPropertyValue("serverParameters", bean.getServerParameters());
             } else {
@@ -267,6 +267,8 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
             if (value instanceof CamelRouteContextFactoryBean) {
                 CamelRouteContextFactoryBean factoryBean = (CamelRouteContextFactoryBean) value;
                 builder.addPropertyValue("routes", factoryBean.getRoutes());
+                builder.addPropertyValue("builderRefs", factoryBean.getBuilderRefs());
+                builder.addPropertyValue("routeRefs", factoryBean.getRouteRefs());
             }
 
             // lets inject the namespaces into any namespace aware POJOs

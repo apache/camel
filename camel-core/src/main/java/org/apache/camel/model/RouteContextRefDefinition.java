@@ -27,7 +27,7 @@ import org.apache.camel.CamelContext;
 /**
  * Represents an XML &lt;routeContextRef/&gt; element
  *
- * @version 
+ * @version
  */
 @XmlRootElement(name = "routeContextRef")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -51,9 +51,15 @@ public class RouteContextRefDefinition {
         this.ref = ref;
     }
 
-    @SuppressWarnings({"unchecked", "rawtypes"})
     public List<RouteDefinition> lookupRoutes(CamelContext camelContext) {
         return RouteContextRefDefinitionHelper.lookupRoutes(camelContext, ref);
     }
 
+    public List<RouteBuilderDefinition> lookupRouteBuilders(CamelContext camelContext) {
+        return RouteContextRefDefinitionHelper.lookupRouteBuilders(camelContext, ref);
+    }
+
+    public List<RouteContextRefDefinition> lookupRouteContextRefs(CamelContext camelContext) {
+        return RouteContextRefDefinitionHelper.lookupRouteContextRefs(camelContext, ref);
+    }
 }

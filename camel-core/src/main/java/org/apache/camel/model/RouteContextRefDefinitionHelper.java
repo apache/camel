@@ -61,18 +61,22 @@ public final class RouteContextRefDefinitionHelper {
         ObjectHelper.notNull(camelContext, "camelContext");
         ObjectHelper.notNull(ref, "ref");
 
-        List<RouteDefinition> answer = CamelContextHelper.lookup(camelContext, ref, List.class);
+        CamelRouteContext answer = CamelContextHelper.lookup(camelContext, ref, CamelRouteContext.class);
         if (answer == null) {
             throw new IllegalArgumentException("Cannot find RouteContext with id " + ref);
+        }
+
+        if ( answer.getRoutes() == null ) {
+            return Collections.emptyList();
         }
 
         // must clone the route definitions as they can be reused with multiple CamelContexts
         // and they would need their own instances of the definitions to not have side effects among
         // the CamelContext - for example property placeholder resolutions etc.
-        List<RouteDefinition> clones = new ArrayList<RouteDefinition>(answer.size());
+        List<RouteDefinition> clones = new ArrayList<RouteDefinition>(answer.getRoutes().size());
         try {
             JAXBContext jaxb = getOrCreateJAXBContext();
-            for (RouteDefinition def : answer) {
+            for (RouteDefinition def : answer.getRoutes()) {
                 RouteDefinition clone = cloneRouteDefinition(jaxb, def);
                 if (clone != null) {
                     clones.add(clone);
@@ -83,6 +87,30 @@ public final class RouteContextRefDefinitionHelper {
         }
 
         return clones;
+    }
+
+    public static synchronized List<RouteBuilderDefinition> lookupRouteBuilders(CamelContext camelContext, String ref) {
+        ObjectHelper.notNull(camelContext, "camelContext");
+        ObjectHelper.notNull(ref, "ref");
+
+        CamelRouteContext answer = CamelContextHelper.lookup(camelContext, ref, CamelRouteContext.class);
+        if (answer == null) {
+            throw new IllegalArgumentException("Cannot find RouteContext with id " + ref);
+        }
+
+        return answer.getBuilderRefs();
+    }
+
+    public static synchronized List<RouteContextRefDefinition> lookupRouteContextRefs(CamelContext camelContext, String ref) {
+        ObjectHelper.notNull(camelContext, "camelContext");
+        ObjectHelper.notNull(ref, "ref");
+
+        CamelRouteContext answer = CamelContextHelper.lookup(camelContext, ref, CamelRouteContext.class);
+        if (answer == null) {
+            throw new IllegalArgumentException("Cannot find RouteContext with id " + ref);
+        }
+
+        return answer.getRouteRefs();
     }
 
     private static synchronized JAXBContext getOrCreateJAXBContext() throws JAXBException {

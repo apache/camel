@@ -17,6 +17,7 @@
 package org.apache.camel.core.xml;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.Iterator;
 import java.util.List;
@@ -98,16 +99,16 @@ import org.slf4j.LoggerFactory;
  * or found by searching the classpath for Java classes which extend
  * {@link org.apache.camel.builder.RouteBuilder}.
  *
- * @version 
+ * @version
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContext> extends IdentifiedType implements RouteContainer {
-    
+
     /**
      * JVM system property to control lazy loading of type converters.
      */
     public static final String LAZY_LOAD_TYPE_CONVERTERS = "CamelLazyLoadTypeConverters";
-    
+
     private static final Logger LOG = LoggerFactory.getLogger(AbstractCamelContextFactoryBean.class);
 
     @XmlTransient
@@ -326,7 +327,7 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
     }
 
     protected abstract void initCustomRegistry(T context);
-    
+
     @SuppressWarnings("deprecation")
     protected void initLazyLoadTypeConverters() {
         if (getLazyLoadTypeConverters() != null) {
@@ -481,14 +482,14 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
                                                                              PropertiesParser.class);
                 pc.setPropertiesParser(parser);
             }
-            
+
             pc.setPropertyPrefix(def.getPropertyPrefix());
             pc.setPropertySuffix(def.getPropertySuffix());
-            
+
             if (def.isFallbackToUnaugmentedProperty() != null) {
                 pc.setFallbackToUnaugmentedProperty(def.isFallbackToUnaugmentedProperty());
             }
-            
+
             pc.setPrefixToken(def.getPrefixToken());
             pc.setSuffixToken(def.getSuffixToken());
 
@@ -498,18 +499,43 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
     }
 
     protected void initRouteRefs() throws Exception {
-        // add route refs to existing routes
-        if (getRouteRefs() != null) {
-            for (RouteContextRefDefinition ref : getRouteRefs()) {
-                List<RouteDefinition> defs = ref.lookupRoutes(getContext());
-                for (RouteDefinition def : defs) {
-                    LOG.debug("Adding route from {} -> {}", ref, def);
-                    // add in top as they are most likely to be common/shared
-                    // which you may want to start first
-                    getRoutes().add(0, def);
-                }
-            }
+    // add route refs to existing routes
+    if (getRouteRefs() != null) {
+      Map<String, RouteContextRefDefinition> flattenedRouteRefs = new HashMap<String, RouteContextRefDefinition>();
+      for (RouteContextRefDefinition ref : getRouteRefs()) {
+        flattenedRouteRefs.putAll(flattenRouteRefs(ref, flattenedRouteRefs));
+      }
+      for (RouteContextRefDefinition ref : flattenedRouteRefs.values() ) {
+        LOG.debug("Adding RouteContextRef {} items", ref);
+        addingRouteRefItems(ref);
+      }
+    }
+  }
+
+    protected Map<String, RouteContextRefDefinition> flattenRouteRefs(RouteContextRefDefinition ref, final Map<String, RouteContextRefDefinition> routeRefMap) throws Exception {
+      Map<String, RouteContextRefDefinition> currentRouteRefsMap = new HashMap<String, RouteContextRefDefinition>(routeRefMap);
+      if (!currentRouteRefsMap.containsKey(ref.getRef())) {
+        currentRouteRefsMap.put(ref.getRef(), ref);
+        for (RouteContextRefDefinition it : ref.lookupRouteContextRefs(getContext())) {
+          currentRouteRefsMap.putAll(flattenRouteRefs(it, currentRouteRefsMap));
         }
+      } else {
+        LOG.warn("Ignoring circular reference ", ref);
+      }
+      return currentRouteRefsMap;
+    }
+
+    protected void addingRouteRefItems(RouteContextRefDefinition ref) throws Exception {
+      for (final RouteBuilderDefinition builderRef : ref.lookupRouteBuilders(getContext())) {
+        LOG.debug("Adding BuilderRef {} ", builderRef);
+        getBuilderRefs().add(builderRef);
+      }
+      for (RouteDefinition def : ref.lookupRoutes(getContext())) {
+        LOG.debug("Adding route from {} -> {}", ref, def);
+        // add in top as they are most likely to be common/shared
+        // which you may want to start first
+        getRoutes().add(0, def);
+      }
     }
 
     protected abstract <S> S getBeanForType(Class<S> clazz);
