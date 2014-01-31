@@ -19,6 +19,7 @@ package org.apache.camel.dataformat.bindy.csv;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.OutputStream;
+import java.lang.reflect.Field;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -31,6 +32,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.dataformat.bindy.BindyAbstractDataFormat;
 import org.apache.camel.dataformat.bindy.BindyAbstractFactory;
 import org.apache.camel.dataformat.bindy.BindyCsvFactory;
+import org.apache.camel.dataformat.bindy.annotation.DataField;
+import org.apache.camel.dataformat.bindy.annotation.Link;
 import org.apache.camel.dataformat.bindy.util.ConverterUtils;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.PackageScanClassResolver;
@@ -88,6 +91,16 @@ public class BindyCsvDataFormat extends BindyAbstractDataFormat {
                 String name = model.getClass().getName();
                 Map<String, Object> row = new HashMap<String, Object>(1);
                 row.put(name, model);
+                // search for @Link-ed fields and add them to the model
+                for (Field field : model.getClass().getDeclaredFields()) {
+                    Link linkField = field.getAnnotation(Link.class);
+                    if (linkField != null) {
+                        boolean accessible = field.isAccessible();
+                        field.setAccessible(true);
+                        row.put(field.getType().getName(), field.get(model));
+                        field.setAccessible(accessible);
+                    }
+                } 
                 models.add(row);
             }
         }
