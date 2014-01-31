@@ -20,24 +20,25 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.Reader;
+import java.io.StringReader;
 import java.lang.reflect.Method;
+import java.util.HashMap;
 import java.util.Map;
-import java.util.WeakHashMap;
-
 import javax.script.Compilable;
 import javax.script.CompiledScript;
 import javax.script.ScriptContext;
 import javax.script.ScriptEngine;
+import javax.script.ScriptEngineFactory;
 import javax.script.ScriptEngineManager;
 import javax.script.ScriptException;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Message;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
-import org.apache.camel.converter.ObjectConverter;
-import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ResourceHelper;
@@ -50,7 +51,7 @@ import org.slf4j.LoggerFactory;
  *
  * @version 
  */
-public class ScriptBuilder extends ServiceSupport implements Expression, Predicate, Processor {
+public class ScriptBuilder implements Expression, Predicate, Processor {
 
     /**
      * Additional arguments to {@link ScriptEngine} provided as a header on the IN {@link org.apache.camel.Message}
@@ -60,31 +61,92 @@ public class ScriptBuilder extends ServiceSupport implements Expression, Predica
 
     private static final Logger LOG = LoggerFactory.getLogger(ScriptBuilder.class);
 
-    private String scriptEngineName;
-    private String scriptResource;
-    private String scriptText;
+    private Map<String, Object> attributes;
+    private final CamelContext camelContext;
+    private final ScriptEngineFactory scriptEngineFactory;
+    private final String scriptLanguage;
+    private final String scriptResource;
+    private final String scriptText;
     private CompiledScript compiledScript;
-    private Map<Thread, ScriptEngineHolder> engineHolders = new WeakHashMap<Thread, ScriptEngineHolder>();
-    private ThreadLocal<ScriptEngineHolder> engineHolder = new ThreadLocal<ScriptEngineHolder>();
 
     /**
      * Constructor.
      *
-     * @param scriptEngineName the name of the scripting language
+     * @param scriptLanguage the name of the scripting language
+     * @param scriptText the script text to be evaluated, or a reference to a script resource
      */
-    public ScriptBuilder(String scriptEngineName) {
-        this.scriptEngineName = scriptEngineName;
+    public ScriptBuilder(String scriptLanguage, String scriptText) {
+        this(null, scriptLanguage, scriptText, null);
     }
 
     /**
      * Constructor.
      *
-     * @param scriptEngineName the name of the scripting language
+     * @param scriptLanguage the name of the scripting language
      * @param scriptText the script text to be evaluated, or a reference to a script resource
      */
-    public ScriptBuilder(String scriptEngineName, String scriptText) {
-        this(scriptEngineName);
-        setScriptText(scriptText);
+    public ScriptBuilder(CamelContext camelContext, String scriptLanguage, String scriptText) {
+        this(camelContext, scriptLanguage, scriptText, null);
+    }
+
+    /**
+     * Constructor.
+     *
+     * @param scriptLanguage the name of the scripting language
+     * @param scriptText the script text to be evaluated, or a reference to a script resource
+     * @param scriptEngineFactory the script engine factory
+     */
+    public ScriptBuilder(CamelContext camelContext, String scriptLanguage, String scriptText, ScriptEngineFactory scriptEngineFactory) {
+        this.camelContext = camelContext;
+        this.scriptLanguage = scriptLanguage;
+        if (ResourceHelper.hasScheme(scriptText)) {
+            this.scriptResource = scriptText;
+            this.scriptText = null;
+        } else {
+            this.scriptResource = null;
+            this.scriptText = scriptText;
+        }
+        if (scriptEngineFactory == null) {
+            this.scriptEngineFactory = lookupScriptEngineFactory(scriptLanguage);
+        } else {
+            this.scriptEngineFactory = scriptEngineFactory;
+        }
+
+        if (this.scriptEngineFactory == null) {
+            throw new IllegalArgumentException("Cannot lookup ScriptEngineFactory for script language: " + scriptLanguage);
+        }
+
+        // bean shell is not compileable
+        if (isBeanShell(scriptLanguage)) {
+            return;
+        }
+
+        // pre-compile script which would execute faster if possible
+        Reader reader = null;
+        try {
+            // if we have camel context then load resources
+            if (camelContext != null && scriptResource != null) {
+                reader = createScriptReader(camelContext.getClassResolver(), scriptResource);
+            } else if (this.scriptText != null) {
+                reader = new StringReader(this.scriptText);
+            }
+
+            // pre-compile script if we have it as text
+            if (reader != null) {
+                ScriptEngine engine = this.scriptEngineFactory.getScriptEngine();
+                if (engine instanceof Compilable) {
+                    Compilable compilable = (Compilable) engine;
+                    this.compiledScript = compilable.compile(scriptText);
+                    LOG.debug("Using compiled script: {}", this.compiledScript);
+                }
+            }
+        } catch (IOException e) {
+            throw new ScriptEvaluationException("Cannot load " + scriptLanguage + " script from resource: " + scriptResource, e);
+        } catch (ScriptException e) {
+            throw new ScriptEvaluationException("Error compiling " + scriptLanguage + " script: " + scriptText, e);
+        } finally {
+            IOHelper.close(reader);
+        }
     }
 
     @Override
@@ -129,7 +191,10 @@ public class ScriptBuilder extends ServiceSupport implements Expression, Predica
      * @return this builder
      */
     public ScriptBuilder attribute(String name, Object value) {
-        getScriptContext().setAttribute(name, value, ScriptContext.ENGINE_SCOPE);
+        if (attributes == null) {
+            attributes = new HashMap<String, Object>();
+        }
+        attributes.put(name, value);
         return this;
     }
 
@@ -197,43 +262,12 @@ public class ScriptBuilder extends ServiceSupport implements Expression, Predica
     // Properties
     // -------------------------------------------------------------------------
 
-    public ScriptEngine getEngine() {
-        if (engineHolder.get() == null) {
-            ScriptEngineHolder holder = new ScriptEngineHolder();
-           
-            engineHolder.set(holder);
-            engineHolders.put(Thread.currentThread(), holder);
-        }
-        if (engineHolder.get()  == null) {
-            throw new IllegalArgumentException("No script engine could be created for: " + getScriptEngineName());
-        }
-        ScriptEngineHolder holder  = engineHolder.get();
-        if (holder.engine == null) {
-            holder.engine = createScriptEngine();
-            engineHolders.put(Thread.currentThread(), holder);
-        }
-        
-        return holder.engine;
-    }
-
     public CompiledScript getCompiledScript() {
         return compiledScript;
     }
 
-    public String getScriptText() {
-        return scriptText;
-    }
-
-    public void setScriptText(String scriptText) {
-        if (ResourceHelper.hasScheme(scriptText)) {
-            this.scriptResource = scriptText;
-        } else {
-            this.scriptText = scriptText;
-        }
-    }
-
-    public String getScriptEngineName() {
-        return scriptEngineName;
+    public String getScriptLanguage() {
+        return scriptLanguage;
     }
 
     /**
@@ -243,54 +277,19 @@ public class ScriptBuilder extends ServiceSupport implements Expression, Predica
      */
     public String getScriptDescription() {
         if (scriptText != null) {
-            return scriptEngineName + ": " + scriptText;
+            return scriptLanguage + ": " + scriptText;
         } else if (scriptResource != null) {
-            return scriptEngineName + ": " + scriptResource;
+            return scriptLanguage + ": " + scriptResource;
         } else {
-            return scriptEngineName + ": null script";
+            return scriptLanguage + ": null script";
         }
-    }
-
-    /**
-     * Access the script context so that it can be configured such as adding attributes
-     */
-    public ScriptContext getScriptContext() {
-        return getEngine().getContext();
-    }
-
-    /**
-     * Sets the context to use by the script
-     */
-    public void setScriptContext(ScriptContext scriptContext) {
-        getEngine().setContext(scriptContext);
     }
 
     // Implementation methods
     // -------------------------------------------------------------------------
-    protected void checkInitialised(Exchange exchange) {
-        if (scriptText == null && scriptResource == null) {
-            throw new IllegalArgumentException("Neither scriptText or scriptResource are specified");
-        }
-        ScriptEngineHolder holder = engineHolder.get();
-        if (holder  == null) {
-            holder = new ScriptEngineHolder();
-            engineHolder.set(holder);
-        }
-        holder = engineHolder.get();
-        if (holder.engine == null) {
-            holder.engine = createScriptEngine();
-            engineHolders.put(Thread.currentThread(), holder);
-        }
-        if (compiledScript == null) {
-            // BeanShell implements Compilable but throws an exception if you call compile
-            if (holder.engine instanceof Compilable && !isBeanShell()) { 
-                compileScript((Compilable)holder.engine, exchange);
-            }
-        }
-    }
 
     protected boolean matches(Exchange exchange, Object scriptValue) {
-        return ObjectConverter.toBool(scriptValue);
+        return exchange.getContext().getTypeConverter().convertTo(boolean.class, scriptValue);
     }
 
     private static String[] getScriptNames(String name) {
@@ -304,12 +303,32 @@ public class ScriptBuilder extends ServiceSupport implements Expression, Predica
         return new String[]{name};
     }
 
-    protected ScriptEngine createScriptEngine() {
+    protected static ScriptEngineFactory lookupScriptEngineFactory(String language) {
+        ScriptEngineManager manager = new ScriptEngineManager();
+        for (ScriptEngineFactory factory : manager.getEngineFactories()) {
+            // some script names has alias
+            String[] names = getScriptNames(language);
+            for (String name : names) {
+                if (factory.getLanguageName().equals(name)) {
+                    return factory;
+                }
+            }
+        }
+
+        // fallback to get engine by name
+        ScriptEngine engine = createScriptEngine(language);
+        if (engine != null) {
+            return engine.getFactory();
+        }
+        return null;
+    }
+
+    protected static ScriptEngine createScriptEngine(String language) {
         ScriptEngineManager manager = new ScriptEngineManager();
         ScriptEngine engine = null;
 
         // some script names has alias
-        String[] names = getScriptNames(scriptEngineName);
+        String[] names = getScriptNames(language);
         for (String name : names) {
             try {
                 engine = manager.getEngineByName(name);
@@ -322,20 +341,20 @@ public class ScriptBuilder extends ServiceSupport implements Expression, Predica
             }
         }
         if (engine == null) {
-            engine = checkForOSGiEngine();
+            engine = checkForOSGiEngine(language);
         }
         if (engine == null) {
-            throw new IllegalArgumentException("No script engine could be created for: " + scriptEngineName);
+            throw new IllegalArgumentException("No script engine could be created for: " + language);
         }
-        if (isPython()) {
+        if (isPython(language)) {
             ScriptContext context = engine.getContext();
             context.setAttribute("com.sun.script.jython.comp.mode", "eval", ScriptContext.ENGINE_SCOPE);
         }
         return engine;
     }
 
-    private ScriptEngine checkForOSGiEngine() {
-        LOG.debug("No script engine found for " + scriptEngineName + " using standard javax.script auto-registration. Checking OSGi registry...");
+    private static ScriptEngine checkForOSGiEngine(String language) {
+        LOG.debug("No script engine found for " + language + " using standard javax.script auto-registration. Checking OSGi registry...");
         try {
             // Test the OSGi environment with the Activator
             Class<?> c = Class.forName("org.apache.camel.script.osgi.Activator");
@@ -344,7 +363,7 @@ public class ScriptBuilder extends ServiceSupport implements Expression, Predica
             LOG.debug("Found OSGi BundleContext " + ctx);
             if (ctx != null) {
                 Method resolveScriptEngine = c.getDeclaredMethod("resolveScriptEngine", String.class);
-                return (ScriptEngine)resolveScriptEngine.invoke(null, scriptEngineName);
+                return (ScriptEngine)resolveScriptEngine.invoke(null, language);
             }
         } catch (Throwable t) {
             LOG.debug("Unable to load OSGi, script engine cannot be found", t);
@@ -352,33 +371,13 @@ public class ScriptBuilder extends ServiceSupport implements Expression, Predica
         return null;
     }
 
-    protected void compileScript(Compilable compilable, Exchange exchange) {
-        Reader reader = null;
-        try {
-            if (scriptText != null) {
-                compiledScript = compilable.compile(scriptText);
-            } else if (scriptResource != null) {
-                reader = createScriptReader(exchange);
-                compiledScript = compilable.compile(reader);
-            }
-        } catch (ScriptException e) {
-            if (LOG.isDebugEnabled()) {
-                LOG.debug("Script compile failed: " + e.getMessage(), e);
-            }
-            throw createScriptCompileException(e);
-        } catch (IOException e) {
-            throw createScriptCompileException(e);
-        } finally {
-            IOHelper.close(reader);
-        }
-    }
-
     protected Object evaluateScript(Exchange exchange) {
         try {
-            getScriptContext();
-            populateBindings(getEngine(), exchange);
-            addScriptEngineArguments(getEngine(), exchange);
-            Object result = runScript(exchange);
+            // get a new engine which we must for each exchange
+            ScriptEngine engine = scriptEngineFactory.getScriptEngine();
+            ScriptContext context = populateBindings(engine, exchange, attributes);
+            addScriptEngineArguments(engine, exchange);
+            Object result = runScript(engine, exchange, context);
             LOG.debug("The script evaluation result is: {}", result);
             return result;
         } catch (ScriptException e) {
@@ -395,22 +394,29 @@ public class ScriptBuilder extends ServiceSupport implements Expression, Predica
         }
     }
 
-    protected Object runScript(Exchange exchange) throws ScriptException, IOException {
-        checkInitialised(exchange);
-        Object result;
+    protected Object runScript(ScriptEngine engine, Exchange exchange, ScriptContext context) throws ScriptException, IOException {
+        Object result = null;
         if (compiledScript != null) {
-            result = compiledScript.eval();
+            LOG.trace("Evaluate using compiled script for context: {} on exchange: {}", context, exchange);
+            result = compiledScript.eval(context);
         } else {
             if (scriptText != null) {
-                result = getEngine().eval(scriptText);
-            } else {
-                result = getEngine().eval(createScriptReader(exchange));
+                LOG.trace("Evaluate script for context: {} on exchange: {}", context, exchange);
+                result = engine.eval(scriptText, context);
+            } else if (scriptResource != null) {
+                Reader reader = createScriptReader(exchange.getContext().getClassResolver(), scriptResource);
+                try {
+                    LOG.trace("Evaluate script for context: {} on exchange: {}", context, exchange);
+                    result = engine.eval(reader, context);
+                } finally {
+                    IOHelper.close(reader);
+                }
             }
         }
         return result;
     }
 
-    protected void populateBindings(ScriptEngine engine, Exchange exchange) {
+    protected ScriptContext populateBindings(ScriptEngine engine, Exchange exchange, Map<String, Object> attributes) {
         ScriptContext context = engine.getContext();
         int scope = ScriptContext.ENGINE_SCOPE;
         context.setAttribute("context", exchange.getContext(), scope);
@@ -427,6 +433,13 @@ public class ScriptBuilder extends ServiceSupport implements Expression, Predica
         }
         // to make using properties component easier
         context.setAttribute("properties", new ScriptPropertiesFunction(exchange.getContext()), scope);
+        // any additional attributes
+        if (attributes != null) {
+            for (Map.Entry<String, Object> entry : attributes.entrySet()) {
+                context.setAttribute(entry.getKey(), entry.getValue(), scope);
+            }
+        }
+        return context;
     }
 
     @SuppressWarnings("unchecked")
@@ -448,14 +461,9 @@ public class ScriptBuilder extends ServiceSupport implements Expression, Predica
         }
     }
 
-    protected InputStreamReader createScriptReader(Exchange exchange) throws IOException {
-        ObjectHelper.notNull(scriptResource, "scriptResource", this);
-        InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(exchange.getContext().getClassResolver(), scriptResource);
+    protected static InputStreamReader createScriptReader(ClassResolver classResolver, String resource) throws IOException {
+        InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(classResolver, resource);
         return new InputStreamReader(is);
-    }
-
-    protected ScriptEvaluationException createScriptCompileException(Exception e) {
-        return new ScriptEvaluationException("Failed to compile: " + getScriptDescription() + ". Cause: " + e, e);
     }
 
     protected ScriptEvaluationException createScriptEvaluationException(Throwable e) {
@@ -471,29 +479,12 @@ public class ScriptBuilder extends ServiceSupport implements Expression, Predica
         return new ScriptEvaluationException("Failed to evaluate: " + getScriptDescription() + ". Cause: " + e, e);
     }
 
-    protected boolean isPython() {
-        return "python".equals(scriptEngineName) || "jython".equals(scriptEngineName);
+    private static boolean isPython(String language) {
+        return "python".equals(language) || "jython".equals(language);
     }
 
-    protected boolean isBeanShell() {
-        return "beanshell".equals(scriptEngineName) || "bsh".equals(scriptEngineName);
+    private static boolean isBeanShell(String language) {
+        return "beanshell".equals(language) || "bsh".equals(language);
     }
 
-    @Override
-    protected void doStart() throws Exception {
-        // do nothing here
-    }
-
-    @Override
-    protected void doStop() throws Exception {
-        // we need to clean up the engines map
-        for (ScriptEngineHolder holder : engineHolders.values()) {
-            holder.engine = null;
-        }
-        engineHolders.clear();
-    }
-    
-    static class ScriptEngineHolder {
-        ScriptEngine engine;
-    }
 }
