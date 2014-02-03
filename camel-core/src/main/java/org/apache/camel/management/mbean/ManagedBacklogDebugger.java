@@ -19,10 +19,12 @@ package org.apache.camel.management.mbean;
 import java.util.Set;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.api.management.mbean.ManagedBacklogDebuggerMBean;
 import org.apache.camel.processor.interceptor.BacklogDebugger;
 import org.apache.camel.spi.ManagementStrategy;
+import org.apache.camel.util.ObjectHelper;
 
 @ManagedResource(description = "Managed BacklogDebugger")
 public class ManagedBacklogDebugger implements ManagedBacklogDebuggerMBean {
@@ -91,12 +93,42 @@ public class ManagedBacklogDebugger implements ManagedBacklogDebuggerMBean {
         backlogDebugger.resumeBreakpoint(nodeId);
     }
 
-    public void setMessageBodyOnBreakpoint(String nodeId, String body) {
+    public void setMessageBodyOnBreakpoint(String nodeId, Object body) {
         backlogDebugger.setMessageBodyOnBreakpoint(nodeId, body);
     }
 
-    public void setMessageHeaderOnBreakpoint(String nodeId, String headerName, String value) {
-        backlogDebugger.setMessageHeaderOnBreakpoint(nodeId, headerName, value);
+    public void setMessageBodyOnBreakpoint(String nodeId, Object body, String type) {
+        try {
+            Class<?> classType = camelContext.getClassResolver().resolveMandatoryClass(type);
+            backlogDebugger.setMessageBodyOnBreakpoint(nodeId, body, classType);
+        } catch (ClassNotFoundException e) {
+            throw ObjectHelper.wrapRuntimeCamelException(e);
+        }
+    }
+
+    public void removeMessageBodyOnBreakpoint(String nodeId) {
+        backlogDebugger.removeMessageBodyOnBreakpoint(nodeId);
+    }
+
+    public void setMessageHeaderOnBreakpoint(String nodeId, String headerName, Object value) {
+        try {
+            backlogDebugger.setMessageHeaderOnBreakpoint(nodeId, headerName, value);
+        } catch (NoTypeConversionAvailableException e) {
+            throw ObjectHelper.wrapRuntimeCamelException(e);
+        }
+    }
+
+    public void setMessageHeaderOnBreakpoint(String nodeId, String headerName, Object value, String type) {
+        try {
+            Class<?> classType = camelContext.getClassResolver().resolveMandatoryClass(type);
+            backlogDebugger.setMessageHeaderOnBreakpoint(nodeId, headerName, value, classType);
+        } catch (Exception e) {
+            throw ObjectHelper.wrapRuntimeCamelException(e);
+        }
+    }
+
+    public void removeMessageHeaderOnBreakpoint(String nodeId, String headerName) {
+        backlogDebugger.removeMessageHeaderOnBreakpoint(nodeId, headerName);
     }
 
     public void resumeAll() {
