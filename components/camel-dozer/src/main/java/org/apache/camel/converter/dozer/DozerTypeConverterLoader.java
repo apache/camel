@@ -30,6 +30,8 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.TypeConverterRegistry;
+import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ReflectionHelper;
 import org.apache.camel.util.ResourceHelper;
 import org.dozer.DozerBeanMapper;
@@ -58,7 +60,7 @@ import static org.dozer.classmap.MappingDirection.ONE_WAY;
  * The queried types are used to register the {@link TypeConverter} with the
  * context via its {@link TypeConverterRegistry}.
  */
-public class DozerTypeConverterLoader implements CamelContextAware {
+public class DozerTypeConverterLoader extends ServiceSupport implements CamelContextAware {
 
     private final Logger log = LoggerFactory.getLogger(getClass());
     private CamelContext camelContext;
@@ -82,7 +84,12 @@ public class DozerTypeConverterLoader implements CamelContextAware {
      *                     {@link DozerTypeConverter} in
      */
     public DozerTypeConverterLoader(CamelContext camelContext) {
-        init(camelContext, null);
+        this.camelContext = camelContext;
+        try {
+            camelContext.addService(this);
+        } catch (Exception e) {
+            throw ObjectHelper.wrapRuntimeCamelException(e);
+        }
     }
 
     /**
@@ -111,7 +118,14 @@ public class DozerTypeConverterLoader implements CamelContextAware {
         log.info("Using DozerBeanMapperConfiguration: {}", configuration);
         DozerBeanMapper mapper = createDozerBeanMapper(configuration);
 
-        init(camelContext, mapper);
+        this.camelContext = camelContext;
+        this.mapper = mapper;
+
+        try {
+            camelContext.addService(this);
+        } catch (Exception e) {
+            throw ObjectHelper.wrapRuntimeCamelException(e);
+        }
     }
 
     /**
@@ -125,7 +139,14 @@ public class DozerTypeConverterLoader implements CamelContextAware {
      */
     @Deprecated
     public DozerTypeConverterLoader(CamelContext camelContext, DozerBeanMapper mapper) {
-        init(camelContext, mapper);
+        this.camelContext = camelContext;
+        this.mapper = mapper;
+
+        try {
+            camelContext.addService(this);
+        } catch (Exception e) {
+            throw ObjectHelper.wrapRuntimeCamelException(e);
+        }
     }
 
     /**
@@ -307,7 +328,14 @@ public class DozerTypeConverterLoader implements CamelContextAware {
      * @param camelContext the CamelContext
      */
     public void setCamelContext(CamelContext camelContext) {
-        init(camelContext, null);
+        if (this.camelContext == null) {
+            this.camelContext = camelContext;
+            try {
+                camelContext.addService(this);
+            } catch (Exception e) {
+                throw ObjectHelper.wrapRuntimeCamelException(e);
+            }
+        }
     }
 
     public DozerBeanMapper getMapper() {
@@ -332,4 +360,13 @@ public class DozerTypeConverterLoader implements CamelContextAware {
         return url;
     }
 
+    @Override
+    protected void doStart() throws Exception {
+        init(camelContext, mapper);
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        // noop
+    }
 }
