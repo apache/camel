@@ -28,7 +28,7 @@ import org.apache.camel.processor.Throttler.TimeSlot;
 import static org.apache.camel.builder.Builder.constant;
 
 /**
- * @version 
+ * @version
  */
 public class ThrottlerTest extends ContextTestSupport {
     private static final int INTERVAL = 500;
@@ -47,7 +47,7 @@ public class ThrottlerTest extends ContextTestSupport {
         // to check that the throttle really does kick in
         resultEndpoint.assertIsSatisfied();
     }
-    
+
     public void testSendLotsOfMessagesSimultaneouslyButOnly3GetThrough() throws Exception {
         MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
         resultEndpoint.expectedMessageCount(messageCount);
@@ -85,7 +85,7 @@ public class ThrottlerTest extends ContextTestSupport {
         assertSame(slot, throttler.nextSlot());
         assertTrue(slot.isFull());
         assertTrue(slot.isActive());
-        
+
         TimeSlot next = throttler.nextSlot();
         // now we should have a new slot that starts somewhere in the future
         assertNotSame(slot, next);
@@ -157,6 +157,46 @@ public class ThrottlerTest extends ContextTestSupport {
         long delta = System.currentTimeMillis() - start + 200;
         assertTrue("Should take at least " + minimumTime + "ms, was: " + delta, delta >= minimumTime);
         executor.shutdownNow();
+    }
+
+    public void testConfigurationWithChangingHeaderExpression() throws Exception {
+        ExecutorService executor = Executors.newFixedThreadPool(messageCount);
+        MockEndpoint resultEndpoint = resolveMandatoryEndpoint("mock:result", MockEndpoint.class);
+        sendMessagesWithHeaderExpression(executor, resultEndpoint, 1);
+
+        resultEndpoint.reset();
+        sendMessagesWithHeaderExpression(executor, resultEndpoint, 10);
+
+        resultEndpoint.reset();
+        sendMessagesWithHeaderExpression(executor, resultEndpoint, 1);
+
+        executor.shutdownNow();
+    }
+
+    private void sendMessagesWithHeaderExpression(ExecutorService executor, MockEndpoint resultEndpoint, final int
+            throttle) throws InterruptedException {
+        resultEndpoint.expectedMessageCount(messageCount);
+
+        long start = System.currentTimeMillis();
+        for (int i = 0; i < messageCount; i++) {
+            executor.execute(new Runnable() {
+                public void run() {
+                    template.sendBodyAndHeader("direct:expressionHeader", "<message>payload</message>", "throttleValue",
+                            throttle);
+                }
+            });
+        }
+
+        // let's wait for the exchanges to arrive
+        resultEndpoint.assertIsSatisfied();
+
+        // now assert that they have actually been throttled
+        long minimumTime = (messageCount - 1) * INTERVAL / throttle;
+        // add a little slack
+        long delta = System.currentTimeMillis() - start + 200;
+        assertTrue("Should take at least " + minimumTime + "ms, was: " + delta, delta >= minimumTime);
+        long maxTime = (messageCount - 1) * INTERVAL / throttle * 3;
+        assertTrue("Should take at most " + maxTime + "ms, was: " + delta, delta <= maxTime);
     }
 
     protected RouteBuilder createRouteBuilder() {

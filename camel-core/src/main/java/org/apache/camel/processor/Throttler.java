@@ -35,8 +35,8 @@ import org.apache.camel.util.ObjectHelper;
  * as only allowing 100 requests per second; or if huge load can cause a
  * particular system to malfunction or to reduce its throughput you might want
  * to introduce some throttling.
- * 
- * @version 
+ *
+ * @version
  */
 public class Throttler extends DelayProcessorSupport implements Traceable {
     private volatile long maximumRequestsPerPeriod;
@@ -80,7 +80,7 @@ public class Throttler extends DelayProcessorSupport implements Traceable {
     public Expression getMaximumRequestsPerPeriodExpression() {
         return maxRequestsPerPeriodExpression;
     }
-    
+
     public long getTimePeriodMillis() {
         return timePeriodMillis.get();
     }
@@ -116,6 +116,9 @@ public class Throttler extends DelayProcessorSupport implements Traceable {
             if (maximumRequestsPerPeriod > 0 && longValue.longValue() != maximumRequestsPerPeriod) {
                 log.debug("Throttler changed maximum requests per period from {} to {}", maximumRequestsPerPeriod, longValue);
             }
+            if (maximumRequestsPerPeriod > longValue) {
+                slot.capacity = 0;
+            }
             maximumRequestsPerPeriod = longValue;
         }
 
@@ -131,7 +134,7 @@ public class Throttler extends DelayProcessorSupport implements Traceable {
             return 0;
         }
     }
-    
+
     /*
      * Determine what the next available time slot is for handling an Exchange
      */
@@ -139,7 +142,7 @@ public class Throttler extends DelayProcessorSupport implements Traceable {
         if (slot == null) {
             slot = new TimeSlot();
         }
-        if (slot.isFull() || !slot.isActive()) {
+        if (slot.isFull() || !slot.isPast()) {
             slot = slot.next();
         }
         slot.assign();
@@ -150,7 +153,7 @@ public class Throttler extends DelayProcessorSupport implements Traceable {
     * A time slot is capable of handling a number of exchanges within a certain period of time.
     */
     protected class TimeSlot {
-        
+
         private volatile long capacity = Throttler.this.maximumRequestsPerPeriod;
         private final long duration = Throttler.this.timePeriodMillis.get();
         private final long startTime;
@@ -166,7 +169,7 @@ public class Throttler extends DelayProcessorSupport implements Traceable {
         protected void assign() {
             capacity--;
         }
-        
+
         /*
          * Start the next time slot either now or in the future
          * (no time slots are being created in the past)
@@ -174,15 +177,20 @@ public class Throttler extends DelayProcessorSupport implements Traceable {
         protected TimeSlot next() {
             return new TimeSlot(Math.max(System.currentTimeMillis(), this.startTime + this.duration));
         }
-        
+
+        protected boolean isPast() {
+            long current = System.currentTimeMillis();
+            return current < (startTime + duration);
+        }
+
         protected boolean isActive() {
             long current = System.currentTimeMillis();
             return startTime <= current && current < (startTime + duration);
         }
-        
+
         protected boolean isFull() {
             return capacity <= 0;
-        }        
+        }
     }
 
     TimeSlot getSlot() {
