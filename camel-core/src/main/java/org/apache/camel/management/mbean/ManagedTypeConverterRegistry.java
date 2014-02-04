@@ -16,8 +16,16 @@
  */
 package org.apache.camel.management.mbean;
 
+import java.util.List;
+import javax.management.openmbean.CompositeData;
+import javax.management.openmbean.CompositeDataSupport;
+import javax.management.openmbean.CompositeType;
+import javax.management.openmbean.TabularData;
+import javax.management.openmbean.TabularDataSupport;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.api.management.ManagedResource;
+import org.apache.camel.api.management.mbean.CamelOpenMBeanTypes;
 import org.apache.camel.api.management.mbean.ManagedTypeConverterRegistryMBean;
 import org.apache.camel.spi.TypeConverterRegistry;
 import org.apache.camel.util.ObjectHelper;
@@ -81,4 +89,20 @@ public class ManagedTypeConverterRegistry extends ManagedService implements Mana
         }
     }
 
+    public TabularData listTypeConverters() {
+        try {
+            TabularData answer = new TabularDataSupport(CamelOpenMBeanTypes.listTypeConvertersTabularType());
+            List<Class[]> converters = registry.listAllTypeConvertersFromTo();
+            for (Class[] entry : converters) {
+                CompositeType ct = CamelOpenMBeanTypes.listTypeConvertersCompositeType();
+                String from = entry[0].getCanonicalName();
+                String to = entry[1].getCanonicalName();
+                CompositeData data = new CompositeDataSupport(ct, new String[]{"from", "to"}, new Object[]{from, to});
+                answer.put(data);
+            }
+            return answer;
+        } catch (Exception e) {
+            throw ObjectHelper.wrapRuntimeCamelException(e);
+        }
+    }
 }
