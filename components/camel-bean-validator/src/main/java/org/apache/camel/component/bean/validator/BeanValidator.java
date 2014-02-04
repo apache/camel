@@ -29,10 +29,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 
 /**
- * Bean validator that uses the JSR 303 reference implementation
- * (Hibernate Validator).
- *
- * @version 
+ * Bean validator that uses the JSR 303 reference implementation (Hibernate Validator).
+ * Throws {@link BeanValidationException} if constrain violations are detected.
  */
 public class BeanValidator implements Processor {
     

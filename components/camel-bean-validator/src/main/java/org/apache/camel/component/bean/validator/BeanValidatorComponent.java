@@ -37,7 +37,8 @@ import org.apache.camel.impl.ProcessorEndpoint;
  * @version 
  */
 public class BeanValidatorComponent extends DefaultComponent {
-    
+
+    @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         BeanValidator beanValidator = new BeanValidator();
 
@@ -74,4 +75,5 @@ public class BeanValidatorComponent extends DefaultComponent {
 
         return new ProcessorEndpoint(uri, this, beanValidator);
     }
+
 }
