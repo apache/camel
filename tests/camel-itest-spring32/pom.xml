@@ -25,13 +25,13 @@
     <version>2.13-SNAPSHOT</version>
   </parent>
 
-  <artifactId>camel-itest-spring31</artifactId>
-  <name>Camel :: Integration Tests :: Spring 3.1</name>
-  <description>Integration Test against Spring 3.1</description>
+  <artifactId>camel-itest-spring32</artifactId>
+  <name>Camel :: Integration Tests :: Spring 3.2</name>
+  <description>Integration Test against Spring 3.2</description>
 
-  <!-- force using spring 3.1.x -->
+  <!-- force using spring 3.2.x -->
   <properties>
-    <spring-version>${spring31-version}</spring-version>
+    <spring-version>${spring32-version}</spring-version>
   </properties>
 
   <dependencies>
