@@ -42,4 +42,10 @@ public interface ManagedTypeConverterRegistryMBean extends ManagedServiceMBean {
     @ManagedAttribute(description = "Utilization statistics enabled")
     void setStatisticsEnabled(boolean statisticsEnabled);
 
+    @ManagedAttribute(description = "Number of type converters in the registry")
+    int getNumberOfTypeConverters();
+
+    @ManagedOperation(description = "Checks whether a type converter exists for converting (from -> to)")
+    boolean hasTypeConverter(String fromType, String toType);
+
 }

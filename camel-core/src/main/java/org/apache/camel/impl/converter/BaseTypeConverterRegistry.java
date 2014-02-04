@@ -551,6 +551,11 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
     }
 
     @Override
+    public int size() {
+        return typeMappings.size();
+    }
+
+    @Override
     protected void doStart() throws Exception {
         // noop
     }

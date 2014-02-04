@@ -20,6 +20,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.api.management.mbean.ManagedTypeConverterRegistryMBean;
 import org.apache.camel.spi.TypeConverterRegistry;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  *
@@ -65,4 +66,19 @@ public class ManagedTypeConverterRegistry extends ManagedService implements Mana
     public void setStatisticsEnabled(boolean statisticsEnabled) {
         registry.getStatistics().setStatisticsEnabled(statisticsEnabled);
     }
+
+    public int getNumberOfTypeConverters() {
+        return registry.size();
+    }
+
+    public boolean hasTypeConverter(String fromType, String toType) {
+        try {
+            Class<?> from = getContext().getClassResolver().resolveMandatoryClass(fromType);
+            Class<?> to = getContext().getClassResolver().resolveMandatoryClass(toType);
+            return registry.lookup(to, from) != null;
+        } catch (ClassNotFoundException e) {
+            throw ObjectHelper.wrapRuntimeCamelException(e);
+        }
+    }
+
 }
