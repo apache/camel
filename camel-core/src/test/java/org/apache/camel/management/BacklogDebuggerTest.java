@@ -170,7 +170,7 @@ public class BacklogDebuggerTest extends ManagementTestSupport {
         }
 
         MBeanServer mbeanServer = getMBeanServer();
-        ObjectName on = new ObjectName("org.apache.camel:context=camel-1,type=tracer,name=BacklogDebugger");
+        ObjectName on = new ObjectName("org.apache.camel:context=localhost/camel-1,type=tracer,name=BacklogDebugger");
         assertNotNull(on);
         mbeanServer.isRegistered(on);
 
@@ -249,7 +249,7 @@ public class BacklogDebuggerTest extends ManagementTestSupport {
         }
 
         MBeanServer mbeanServer = getMBeanServer();
-        ObjectName on = new ObjectName("org.apache.camel:context=camel-1,type=tracer,name=BacklogDebugger");
+        ObjectName on = new ObjectName("org.apache.camel:context=localhost/camel-1,type=tracer,name=BacklogDebugger");
         assertNotNull(on);
         mbeanServer.isRegistered(on);
 
