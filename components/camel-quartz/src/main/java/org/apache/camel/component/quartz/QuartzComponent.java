@@ -527,7 +527,8 @@ public class QuartzComponent extends DefaultComponent implements StartupListener
 
         // register current camel context to scheduler so we can look it up when jobs is being triggered
         // must use management name as it should be unique in the same JVM
-        scheduler.getContext().put(QuartzConstants.QUARTZ_CAMEL_CONTEXT + "-" + getCamelContext().getManagementName(), getCamelContext());
+        String uid = QuartzHelper.getQuartzContextName(getCamelContext());
+        scheduler.getContext().put(QuartzConstants.QUARTZ_CAMEL_CONTEXT + "-" + uid, getCamelContext());
 
         // store Camel job counter
         AtomicInteger number = (AtomicInteger) scheduler.getContext().get("CamelJobs");
