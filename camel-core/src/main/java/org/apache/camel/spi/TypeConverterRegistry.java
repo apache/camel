@@ -128,4 +128,11 @@ public interface TypeConverterRegistry extends StaticService {
      */
     Statistics getStatistics();
 
+    /**
+     * Number of type converters in the registry.
+     *
+     * @return number of type converters in the registry.
+     */
+    int size();
+
 }

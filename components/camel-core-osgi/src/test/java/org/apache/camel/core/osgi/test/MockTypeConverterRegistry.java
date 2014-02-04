@@ -64,6 +64,10 @@ public class MockTypeConverterRegistry implements TypeConverterRegistry {
         return null;
     }
 
+    public int size() {
+        return typeConverters.size();
+    }
+
     public void start() throws Exception {
         // noop
     }
