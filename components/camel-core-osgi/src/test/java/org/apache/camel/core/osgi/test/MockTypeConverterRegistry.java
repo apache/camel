@@ -52,6 +52,10 @@ public class MockTypeConverterRegistry implements TypeConverterRegistry {
         return null;
     }
 
+    public List<Class[]> listAllTypeConvertersFromTo() {
+        return null;
+    }
+
     public void setInjector(Injector injector) {
        // do nothing
     }

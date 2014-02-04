@@ -16,8 +16,12 @@
  */
 package org.apache.camel.spi;
 
+import java.util.Iterator;
+import java.util.List;
+
 import org.apache.camel.StaticService;
 import org.apache.camel.TypeConverter;
+import org.apache.camel.util.KeyValueHolder;
 
 /**
  * Registry for type converters.
@@ -106,6 +110,13 @@ public interface TypeConverterRegistry extends StaticService {
      * @return the type converter or <tt>null</tt> if not found.
      */
     TypeConverter lookup(Class<?> toType, Class<?> fromType);
+
+    /**
+     * Gets a read-only list of the type converter from / to classes
+     *
+     * @return a list containing fromType/toType class names
+     */
+    List<Class[]> listAllTypeConvertersFromTo();
 
     /**
      * Sets the injector to be used for creating new instances during type conversions.
