@@ -19,6 +19,8 @@ package org.apache.camel.scala.dsl
 import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy
 import org.junit.Test
 import builder.RouteBuilder
+import org.apache.camel.Exchange
+import org.apache.camel.builder.ExchangeBuilder.anExchange
 
 /**
  * Test case for message aggregator
@@ -47,6 +49,28 @@ class AggregatorTest extends ScalaTestSupport {
     }
   }
 
+  @Test
+  def testWrappingFunctionalAggregator() {
+    "mock:c" expect {
+      _.received("foobar")
+    }
+    test {
+      "direct:c" ! "foo"
+      "direct:c" ! "bar"
+    }
+  }
+
+  @Test
+  def testFunctionalAggregator() {
+    "mock:d" expect {
+      _.received("foobar")
+    }
+    test {
+      "direct:d" ! "foo"
+      "direct:d" ! "bar"
+    }
+  }
+
   val builder =
     new RouteBuilder {
        "direct:a" ==> {
@@ -59,5 +83,22 @@ class AggregatorTest extends ScalaTestSupport {
          }
        }
        //END SNIPPET: block
-    }  
+
+      "direct:c" ==> {
+        val aggregator = (oldEx: Exchange, newEx: Exchange) => oldEx match {
+          case null => newEx.in[String]
+          case _ => oldEx.in[String] + newEx.in[String]
+        }
+        aggregate ("constant", aggregator) completionSize 2 to "mock:c"
+      }
+
+      "direct:d" ==> {
+        val aggregator = (oldEx: Exchange, newEx: Exchange) => oldEx match {
+          case null => newEx
+          case _ => anExchange(newEx.getContext).withBody(oldEx.in[String] + newEx.in[String]).build
+        }
+        aggregate ("constant", aggregator) completionSize 2 to "mock:d"
+      }
+    }
+
 }
