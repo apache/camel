@@ -21,9 +21,8 @@ import processor.aggregate.AggregationStrategy
 import org.apache.camel.builder.ExchangeBuilder.anExchange
 import org.apache.camel.scala.Preamble.FnAggregationStrategy.exchangeWrappingAggregator
 
-object Preamble extends Preamble
 /**
- * Trait containing common implicit conversion definitions
+ * Trait containing common implicit conversion definitions.
  */
 trait Preamble {
 
@@ -141,3 +140,12 @@ trait Preamble {
   }
 
 }
+
+/**
+ * Object globally exposing [[org.apache.camel.scala.Preamble]] trait. Useful to import explicit conversions
+ * without extending trait. For example:
+ *
+ * `import org.apache.camel.scala.Preamble._`
+ *
+ */
+object Preamble extends Preamble
