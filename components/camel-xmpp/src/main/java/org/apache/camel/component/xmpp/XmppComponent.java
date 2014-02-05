@@ -17,6 +17,7 @@
 package org.apache.camel.component.xmpp;
 
 import java.net.URI;
+import java.net.URISyntaxException;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -37,9 +38,10 @@ public class XmppComponent extends DefaultComponent {
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        if (endpointCache.containsKey(uri)) {
+        String cacheKey = extractCacheKeyFromUri(uri);
+        if (endpointCache.containsKey(cacheKey)) {
             LOG.debug("Using cached endpoint for URI {}", uri);
-            return endpointCache.get(uri);
+            return endpointCache.get(cacheKey);
         }
 
         LOG.debug("Creating new endpoint for URI {}", uri);
@@ -63,7 +65,7 @@ public class XmppComponent extends DefaultComponent {
             }
         }
 
-        endpointCache.put(uri, endpoint);
+        endpointCache.put(cacheKey, endpoint);
         
         return endpoint;
     }
@@ -74,4 +76,8 @@ public class XmppComponent extends DefaultComponent {
         endpointCache.clear();
     }
 
+    private String extractCacheKeyFromUri(String uri) throws URISyntaxException {
+        URI u = new URI(uri);
+        return u.getScheme() + u.getHost() + u.getPort() + u.getQuery();
+    }
 }
