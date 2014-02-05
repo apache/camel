@@ -48,6 +48,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.Traceable;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
+import org.apache.camel.processor.aggregate.CompletionAwareAggregationStrategy;
 import org.apache.camel.processor.aggregate.TimeoutAwareAggregationStrategy;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.TracedRouteNodes;
@@ -746,6 +747,12 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
         // we are done so close the pairs iterator
         if (pairs != null && pairs instanceof Closeable) {
             IOHelper.close((Closeable) pairs, "pairs", LOG);
+        }
+
+        AggregationStrategy strategy = getAggregationStrategy(subExchange);
+        // invoke the on completion callback
+        if (strategy instanceof CompletionAwareAggregationStrategy) {
+            ((CompletionAwareAggregationStrategy) strategy).onCompletion(subExchange);
         }
 
         // cleanup any per exchange aggregation strategy
