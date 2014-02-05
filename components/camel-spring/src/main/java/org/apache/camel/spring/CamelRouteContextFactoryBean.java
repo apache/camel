@@ -24,21 +24,28 @@ import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.model.IdentifiedType;
+import org.apache.camel.model.RouteBuilderDefinition;
+import org.apache.camel.model.RouteContextRefDefinition;
 import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.spi.CamelRouteContext;
 import org.springframework.beans.factory.FactoryBean;
 
 /**
- * @version 
+ * @version
  */
 @XmlRootElement(name = "routeContext")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class CamelRouteContextFactoryBean extends IdentifiedType implements FactoryBean<List<RouteDefinition>> {
+public class CamelRouteContextFactoryBean extends IdentifiedType implements CamelRouteContext, FactoryBean<CamelRouteContext> {
 
-    @XmlElement(name = "route", required = true)
+    @XmlElement(name = "route", required = false)
     private List<RouteDefinition> routes = new ArrayList<RouteDefinition>();
+    @XmlElement(name = "routeBuilder", required = false)
+    private List<RouteBuilderDefinition> builderRefs = new ArrayList<RouteBuilderDefinition>();
+    @XmlElement(name = "routeContextRef", required = false)
+    private List<RouteContextRefDefinition> routeRefs = new ArrayList<RouteContextRefDefinition>();
 
-    public List<RouteDefinition> getObject() throws Exception {
-        return routes;
+    public CamelRouteContext getObject() throws Exception {
+        return this;
     }
 
     public Class<?> getObjectType() {
@@ -56,5 +63,21 @@ public class CamelRouteContextFactoryBean extends IdentifiedType implements Fact
     public void setRoutes(List<RouteDefinition> routes) {
         this.routes = routes;
     }
-    
+
+    public List<RouteBuilderDefinition> getBuilderRefs() {
+        return builderRefs;
+    }
+
+    public void setBuilderRefs(List<RouteBuilderDefinition> builderRefs) {
+        this.builderRefs = builderRefs;
+    }
+
+    public List<RouteContextRefDefinition> getRouteRefs() {
+        return routeRefs;
+    }
+
+    public void setRouteRefs(List<RouteContextRefDefinition> routeRefs) {
+        this.routeRefs = routeRefs;
+    }
+
 }
