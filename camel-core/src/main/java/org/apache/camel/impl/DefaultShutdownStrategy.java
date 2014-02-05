@@ -177,7 +177,13 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
         currentShutdownTaskFuture = getExecutorService().submit(new ShutdownTask(context, routesOrdered, timeout, timeUnit, suspendOnly, abortAfterTimeout, timeoutOccurred));
         try {
             currentShutdownTaskFuture.get(timeout, timeUnit);
-        } catch (TimeoutException e) {
+        } catch (ExecutionException e) {
+            // unwrap execution exception
+            throw ObjectHelper.wrapRuntimeCamelException(e.getCause());
+        } catch (Exception e) {
+            // either timeout or interrupted exception was thrown so this is okay
+            // as interrupted would mean cancel was called on the currentShutdownTaskFuture to signal a forced timeout
+
             // we hit a timeout, so set the flag
             timeoutOccurred.set(true);
 
@@ -207,9 +213,6 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
                     LOG.warn("Timeout occurred. Will ignore shutting down the remainder routes.");
                 }
             }
-        } catch (ExecutionException e) {
-            // unwrap execution exception
-            throw ObjectHelper.wrapRuntimeCamelException(e.getCause());
         } finally {
             currentShutdownTaskFuture = null;
         }
