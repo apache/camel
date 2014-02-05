@@ -50,7 +50,7 @@ class AggregatorTest extends ScalaTestSupport {
   val builder =
     new RouteBuilder {
        "direct:a" ==> {
-         aggregate (_.in[String].substring(0, 7), new UseLatestAggregationStrategy()) completionSize(100) to "mock:a" }
+         aggregate (_.in[String].substring(0, 7), new UseLatestAggregationStrategy()) completionSize 100 to "mock:a" }
 
        //START SNIPPET: block
        "direct:b" ==> {
