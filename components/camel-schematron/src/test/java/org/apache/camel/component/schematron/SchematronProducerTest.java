@@ -1,6 +1,7 @@
 package org.apache.camel.component.schematron;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.component.schematron.engine.SchematronEngineFactory;
 import org.apache.camel.component.schematron.exception.SchematronValidationException;
 import org.apache.camel.component.schematron.util.Constants;
@@ -28,7 +29,7 @@ public class SchematronProducerTest extends CamelTestSupport {
 
     @Test
     public void testProcessValidXML() throws Exception {
-        Exchange exc = new DefaultExchange(context);
+        Exchange exc = new DefaultExchange(context, ExchangePattern.InOut);
         exc.getIn().setBody(ClassLoader.getSystemResourceAsStream("xml/article-1.xml"));
 
         // process xml payload
@@ -40,7 +41,7 @@ public class SchematronProducerTest extends CamelTestSupport {
 
     @Test
     public void testProcessInValidXML() throws Exception {
-        Exchange exc = new DefaultExchange(context);
+        Exchange exc = new DefaultExchange(context, ExchangePattern.InOut);
         exc.getIn().setBody(ClassLoader.getSystemResourceAsStream("xml/article-2.xml"));
 
         // process xml payload

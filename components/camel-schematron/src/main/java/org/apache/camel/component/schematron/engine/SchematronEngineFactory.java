@@ -53,11 +53,9 @@ public final class SchematronEngineFactory {
     /**
      * Creates an instance of SchematronEngine
      *
-     * @param version the XSLT version implementation of the schamtron rules.
-     * @return
+     * @return  an instance of SchematronEngine
      */
-    public SchematronEngine newScehamtronEngine(final String version) {
-        //TODO provide support for both xslt 1 and xslt2
+    public SchematronEngine newScehamtronEngine() {
         try {
 
             EntityResolver resolver = catalog == null ? null : getResolver(catalog);

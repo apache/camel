@@ -1,22 +1,16 @@
 package org.apache.camel.component.schematron;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.schematron.engine.SchematronEngineFactory;
 import org.apache.camel.component.schematron.exception.SchematronValidationException;
 import org.apache.camel.component.schematron.util.Constants;
-import org.apache.camel.component.schematron.engine.SchematronEngine;
 import org.apache.camel.component.schematron.util.Utils;
 import org.apache.camel.impl.DefaultProducer;
-import org.apache.commons.io.IOUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.IOException;
-import java.io.InputStream;
-
 /**
- * The schematron producer.
+ * The Schematron producer.
  */
 public class SchematronProducer extends DefaultProducer {
     private static final Logger logger = LoggerFactory.getLogger(SchematronProducer.class);
@@ -24,11 +18,10 @@ public class SchematronProducer extends DefaultProducer {
     private SchematronEngineFactory factory;
 
     /**
-     *
      * @param endpoint the schematron endpoint.
-     * @param factory the schematron factory.
+     * @param factory  the schematron factory.
      */
-    public SchematronProducer(SchematronEndpoint endpoint, SchematronEngineFactory factory) {
+    public SchematronProducer(final SchematronEndpoint endpoint, final SchematronEngineFactory factory) {
         super(endpoint);
         this.endpoint = endpoint;
         this.factory = factory;
@@ -42,40 +35,36 @@ public class SchematronProducer extends DefaultProducer {
      */
     public void process(Exchange exchange) throws Exception {
 
-        String payload = getPayload(exchange);
-        SchematronEngine engine = factory.newScehamtronEngine(Constants.XSLT_VERSION_2_0);
-        String report  = engine.validate(payload);
-        String status =  Utils.getValidationStatus(report);
+        String payload = exchange.getIn().getBody(String.class);
+        String report = factory.newScehamtronEngine().validate(payload);
 
-        if (this.endpoint.isAbort() && Constants.FAILED.equals(status))
-        {
-           throw new SchematronValidationException("Schematron validation failure \n" + report);
+        logger.debug("Schematron validation report \n {}", report);
+        String status = getValidationStatus(report);
+        logger.info("Schematron validation status : {}", status);
+
+        // if exchange pattern is In and Out set details on the Out message.
+        if (exchange.getPattern().isOutCapable()) {
+            exchange.getOut().setHeaders(exchange.getIn().getHeaders());
+            exchange.getOut().setHeader(Constants.VALIDATION_STATUS, status);
+            exchange.getOut().setHeader(Constants.VALIDATION_REPORT, report);
+        } else {
+            exchange.getIn().setHeader(Constants.VALIDATION_STATUS, status);
+            exchange.getIn().setHeader(Constants.VALIDATION_REPORT, report);
         }
 
-        // set the body out
-        exchange.getOut().setBody(report);
-        logger.info("Schematron validation status : {}", status);
-        exchange.getOut().setHeaders(exchange.getIn().getHeaders());
-        exchange.getOut().setHeader(Constants.VALIDATION_STATUS,status);
-
     }
-
-
 
     /**
-     * Gets the body payload either inputStream or String.
+     * Get validation status, SUCCESS or FAILURE
      *
-     * @param exchange
+     * @param report
      * @return
      */
-    private String getPayload(Exchange exchange) {
-        Object body =  exchange.getIn().getBody();
-        try {
-            return (body instanceof InputStream) ? IOUtils.toString((InputStream) body) : (String) body;
-        } catch (IOException e) {
-            logger.error("Unknown payload type: {}", body);
-            throw new RuntimeCamelException("Unknown payload type", e);
+    private String getValidationStatus(final String report) {
+        String status = Utils.getValidationStatus(report);
+        if (this.endpoint.isAbort() && Constants.FAILED.equals(status)) {
+            throw new SchematronValidationException("Schematron validation failure \n" + report);
         }
+        return status;
     }
-
 }

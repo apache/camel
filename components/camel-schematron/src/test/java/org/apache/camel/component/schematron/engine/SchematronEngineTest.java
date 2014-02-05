@@ -23,7 +23,7 @@ public class SchematronEngineTest {
     @BeforeClass
     public static void setUP() {
         InputStream rules = ClassLoader.getSystemResourceAsStream("sch/sample-schematron.sch");
-        engine = SchematronEngineFactory.newInstance(rules).newScehamtronEngine(null);
+        engine = SchematronEngineFactory.newInstance(rules).newScehamtronEngine();
     }
 
     @Test

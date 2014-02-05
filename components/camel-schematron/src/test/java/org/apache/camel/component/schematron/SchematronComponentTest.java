@@ -2,6 +2,7 @@ package org.apache.camel.component.schematron;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.component.schematron.util.Constants;
 import org.apache.camel.component.schematron.util.Utils;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.commons.io.IOUtils;
@@ -28,7 +29,7 @@ public class SchematronComponentTest extends CamelTestSupport {
         String expected = IOUtils.toString(ClassLoader.getSystemResourceAsStream("result/article-1-result.xml"));
         template.sendBody("direct:start", payload);
         assertMockEndpointsSatisfied();
-        String result = mock.getExchanges().get(0).getIn().getBody(String.class);
+        String result = mock.getExchanges().get(0).getIn().getHeader(Constants.VALIDATION_REPORT, String.class);
         DifferenceListener myDifferenceListener = new IgnoreTextAndAttributeValuesDifferenceListener();
         Diff myDiff = new Diff(expected, result);
         myDiff.overrideDifferenceListener(myDifferenceListener);
@@ -44,10 +45,9 @@ public class SchematronComponentTest extends CamelTestSupport {
         mock.expectedMinimumMessageCount(1);
 
         String payload = IOUtils.toString(ClassLoader.getSystemResourceAsStream("xml/article-2.xml"));
-        String expected = IOUtils.toString(ClassLoader.getSystemResourceAsStream("result/article-1-result.xml"));
         template.sendBody("direct:start", payload);
         assertMockEndpointsSatisfied();
-        String result = mock.getExchanges().get(0).getIn().getBody(String.class);
+        String result = mock.getExchanges().get(0).getIn().getHeader(Constants.VALIDATION_REPORT, String.class);
 
 
         // should throw two assertions because of the missing chapters in the XML.
