@@ -190,6 +190,27 @@ public class DefaultComponentTest extends ContextTestSupport {
         }
     }
 
+    public void testGetAndRemoveOrResolveReferenceParameter() {
+        Map<String, Object> parameters = new HashMap<String, Object>();
+        parameters.put("size", 123);
+        parameters.put("date", "#bean1");
+        MyComponent my = new MyComponent(this.context);
+
+        Integer value = my.getAndRemoveOrResolveReferenceParameter(parameters, "size", Integer.class);
+        assertNotNull(value);
+        assertEquals(123, value.intValue());
+        assertEquals(1, parameters.size());
+
+        Date bean1 = my.getAndRemoveOrResolveReferenceParameter(parameters, "date", Date.class);
+        assertNotNull(bean1);
+        assertEquals(new Date(10), bean1);
+        assertEquals(0, parameters.size());
+
+        Integer age = my.getAndRemoveOrResolveReferenceParameter(parameters, "age", Integer.class, 7);
+        assertNotNull(age);
+        assertEquals(7, age.intValue());
+    }
+
     public void testContextShouldBeSet() throws Exception {
         MyComponent my = new MyComponent(null);
         try {
