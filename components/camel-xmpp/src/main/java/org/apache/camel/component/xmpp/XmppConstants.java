@@ -28,4 +28,5 @@ public interface XmppConstants {
     String FROM = "CamelXmppFrom";
     String PACKET_ID = "CamelXmppPacketID";
     String TO = "CamelXmppTo";
+    String docHeader = "doc";
 }
