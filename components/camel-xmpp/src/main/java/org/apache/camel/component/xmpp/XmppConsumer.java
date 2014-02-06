@@ -31,9 +31,12 @@ import org.jivesoftware.smack.SmackConfiguration;
 import org.jivesoftware.smack.XMPPConnection;
 import org.jivesoftware.smack.XMPPException;
 import org.jivesoftware.smack.filter.AndFilter;
+import org.jivesoftware.smack.filter.MessageTypeFilter;
+import org.jivesoftware.smack.filter.OrFilter;
 import org.jivesoftware.smack.filter.PacketTypeFilter;
 import org.jivesoftware.smack.filter.ToContainsFilter;
 import org.jivesoftware.smack.packet.Message;
+import org.jivesoftware.smack.packet.Message.Type;
 import org.jivesoftware.smack.packet.Packet;
 import org.jivesoftware.smack.packet.Presence;
 import org.jivesoftware.smackx.muc.DiscussionHistory;
@@ -76,6 +79,14 @@ public class XmppConsumer extends DefaultConsumer implements PacketListener, Mes
 
         chatManager = connection.getChatManager();
         chatManager.addChatListener(this);
+        
+        OrFilter pubsubPacketFilter = new OrFilter();
+        if(endpoint.isPubsub()){
+        	//xep-0060: pubsub#notification_type can be 'headline' or 'normal'
+        	pubsubPacketFilter.addFilter(new MessageTypeFilter(Type.headline));
+        	pubsubPacketFilter.addFilter(new MessageTypeFilter(Type.normal));
+        	connection.addPacketListener(this, pubsubPacketFilter);
+        }
 
         if (endpoint.getRoom() == null) {
             privateChat = chatManager.getThreadChat(endpoint.getChatId());
@@ -206,6 +217,10 @@ public class XmppConsumer extends DefaultConsumer implements PacketListener, Mes
         }
 
         Exchange exchange = endpoint.createExchange(message);
+
+        if(endpoint.isDoc() == true) {
+        	exchange.getIn().setHeader(XmppConstants.docHeader, message);
+        }
         try {
             getProcessor().process(exchange);
         } catch (Exception e) {
@@ -219,4 +234,5 @@ public class XmppConsumer extends DefaultConsumer implements PacketListener, Mes
             }
         }
     }
+    
 }

@@ -62,6 +62,10 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
     private String nickname;
     private String serviceName;
     private XMPPConnection connection;
+    private boolean pubsub = false;
+    //Set a doc header on the IN message containing a Document form of the incoming packet; 
+    //default is true if pubsub is true, otherwise false
+    private boolean doc = false;
     private boolean testConnectionOnStartup = true;
     private int connectionPollDelay = 10;
 
@@ -81,6 +85,9 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
         if (room != null) {
             return createGroupChatProducer();
         } else {
+        	if(isPubsub() == true) {
+        		return createPubSubProducer();
+        	}
             if (getParticipant() == null) {
                 throw new IllegalArgumentException("No room or participant configured on this endpoint: " + this);
             }
@@ -95,6 +102,10 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
     public Producer createPrivateChatProducer(String participant) throws Exception {
         return new XmppPrivateChatProducer(this, participant);
     }
+    
+    public Producer createPubSubProducer() throws Exception {
+    	return new XmppPubSubProducer(this);
+    }
 
     public Consumer createConsumer(Processor processor) throws Exception {
         XmppConsumer answer = new XmppConsumer(this, processor);
@@ -107,14 +118,14 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
         return createExchange(pattern, null);
     }
 
-    public Exchange createExchange(Message message) {
-        return createExchange(getExchangePattern(), message);
+    public Exchange createExchange(Packet packet) {
+        return createExchange(getExchangePattern(), packet);
     }
 
-    private Exchange createExchange(ExchangePattern pattern, Message message) {
+    private Exchange createExchange(ExchangePattern pattern, Packet packet) {
         Exchange exchange = new DefaultExchange(this, getExchangePattern());
         exchange.setProperty(Exchange.BINDING, getBinding());
-        exchange.setIn(new XmppMessage(message));
+        exchange.setIn(new XmppMessage(packet));
         return exchange;
     }
 
@@ -368,6 +379,25 @@ public class XmppEndpoint extends DefaultEndpoint implements HeaderFilterStrateg
     public void setConnectionPollDelay(int connectionPollDelay) {
         this.connectionPollDelay = connectionPollDelay;
     }
+
+	public void setPubsub(boolean pubsub) {
+		this.pubsub = pubsub;
+		if(pubsub == true) {
+			setDoc(true);
+		}
+	}
+
+	public boolean isPubsub() {
+		return pubsub;
+	}
+
+	public void setDoc(boolean doc) {
+		this.doc = doc;
+	}
+
+	public boolean isDoc() {
+		return doc;
+	}
 
     // Implementation methods
     // -------------------------------------------------------------------------
