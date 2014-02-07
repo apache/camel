@@ -16,17 +16,20 @@
  */
 package org.apache.camel.component.vertx;
 
+import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.InvalidPayloadRuntimeException;
-import org.apache.camel.Message;
-import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.impl.DefaultAsyncProducer;
+import org.apache.camel.util.ExchangeHelper;
+import org.apache.camel.util.MessageHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.vertx.java.core.Handler;
 import org.vertx.java.core.eventbus.EventBus;
-import org.vertx.java.core.json.JsonArray;
-import org.vertx.java.core.json.JsonObject;
 
-public class VertxProducer extends DefaultProducer {
+import static org.apache.camel.component.vertx.VertxHelper.getVertxBody;
+
+public class VertxProducer extends DefaultAsyncProducer {
 
     private static final Logger LOG = LoggerFactory.getLogger(VertxProducer.class);
 
@@ -39,32 +42,57 @@ public class VertxProducer extends DefaultProducer {
         return (VertxEndpoint) super.getEndpoint();
     }
 
-    public void process(Exchange exchange) throws Exception {
+    @Override
+    public boolean process(Exchange exchange, AsyncCallback callback) {
         EventBus eventBus = getEndpoint().getEventBus();
         String address = getEndpoint().getAddress();
 
-        Message in = exchange.getIn();
+        boolean reply = ExchangeHelper.isOutCapable(exchange);
+        boolean pubSub = getEndpoint().isPubSub();
 
-        JsonObject jsonObject = in.getBody(JsonObject.class);
-        if (jsonObject != null) {
-            LOG.debug("Publishing to: {} with JsonObject: {}", address, jsonObject);
-            eventBus.publish(address, jsonObject);
-            return;
-        }
-        JsonArray jsonArray = in.getBody(JsonArray.class);
-        if (jsonArray != null) {
-            LOG.debug("Publishing to: {} with JsonArray: {}", address, jsonArray);
-            eventBus.publish(address, jsonArray);
-            return;
+        Object body = getVertxBody(exchange);
+        if (body != null) {
+            if (reply) {
+                LOG.debug("Sending to: {} with body: {}", address, body);
+                eventBus.send(address, body, new CamelReplyHandler(exchange, callback));
+                return false;
+            } else {
+                if (pubSub) {
+                    LOG.debug("Publishing to: {} with body: {}", address, body);
+                    eventBus.publish(address, body);
+                } else {
+                    LOG.debug("Sending to: {} with body: {}", address, body);
+                    eventBus.send(address, body);
+                }
+                callback.done(true);
+                return true;
+            }
         }
 
-        // and fallback and use string which almost all can be converted
-        String text = in.getBody(String.class);
-        if (text != null) {
-            LOG.debug("Publishing to: {} with String: {}", address, text);
-            eventBus.publish(address, new JsonObject(text));
-            return;
+        exchange.setException(new InvalidPayloadRuntimeException(exchange, String.class));
+        callback.done(true);
+        return true;
+    }
+
+    private static final class CamelReplyHandler implements Handler<org.vertx.java.core.eventbus.Message> {
+
+        private final Exchange exchange;
+        private final AsyncCallback callback;
+
+        private CamelReplyHandler(Exchange exchange, AsyncCallback callback) {
+            this.exchange = exchange;
+            this.callback = callback;
         }
-        throw new InvalidPayloadRuntimeException(exchange, String.class);
+
+        @Override
+        public void handle(org.vertx.java.core.eventbus.Message event) {
+            try {
+                // preserve headers
+                MessageHelper.copyHeaders(exchange.getIn(), exchange.getOut(), false);
+                exchange.getOut().setBody(event.body());
+            } finally {
+                callback.done(false);
+            }
+        }
     }
 }

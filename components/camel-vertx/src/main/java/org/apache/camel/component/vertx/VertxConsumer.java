@@ -18,12 +18,15 @@ package org.apache.camel.component.vertx;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
+import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultConsumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.vertx.java.core.Handler;
 import org.vertx.java.core.eventbus.Message;
+
+import static org.apache.camel.component.vertx.VertxHelper.getVertxBody;
 
 public class VertxConsumer extends DefaultConsumer {
     private static final Logger LOG = LoggerFactory.getLogger(VertxConsumer.class);
@@ -43,14 +46,21 @@ public class VertxConsumer extends DefaultConsumer {
     protected void onEventBusEvent(final Message event) {
         LOG.debug("onEvent {}", event);
 
-        final Exchange exchange = endpoint.createExchange();
+        final boolean reply = event.replyAddress() != null;
+        final Exchange exchange = endpoint.createExchange(reply ? ExchangePattern.InOut : ExchangePattern.InOnly);
         exchange.getIn().setBody(event.body());
 
         try {
             getAsyncProcessor().process(exchange, new AsyncCallback() {
                 @Override
                 public void done(boolean doneSync) {
-                    // noop
+                    if (reply) {
+                        Object body = getVertxBody(exchange);
+                        if (body != null) {
+                            LOG.debug("Sending reply to: {} with body: {}", event.replyAddress(), body);
+                            event.reply(body);
+                        }
+                    }
                 }
             });
         } catch (Exception e) {
