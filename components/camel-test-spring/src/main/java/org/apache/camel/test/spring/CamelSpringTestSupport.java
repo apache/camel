@@ -25,6 +25,7 @@ import org.apache.camel.spring.CamelBeanPostProcessor;
 import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.test.ExcludingPackageScanClassResolver;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.junit.After;
 import org.junit.AfterClass;
@@ -114,17 +115,15 @@ public abstract class CamelSpringTestSupport extends CamelTestSupport {
         super.tearDown();
 
         if (!isCreateCamelContextPerClass()) {
-            if (applicationContext != null) {
-                applicationContext.destroy();
-                applicationContext = null;
-            }
+            IOHelper.close(applicationContext);
+            applicationContext = null;
         }
     }
 
     @AfterClass
     public static void tearSpringDownAfterClass() throws Exception {
         if (threadAppContext.get() != null) {
-            threadAppContext.get().destroy();
+            IOHelper.close(threadAppContext.get());
             threadAppContext.remove();
         }
     }

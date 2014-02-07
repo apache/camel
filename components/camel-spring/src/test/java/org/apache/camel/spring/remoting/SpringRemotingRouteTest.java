@@ -19,6 +19,7 @@ package org.apache.camel.spring.remoting;
 import junit.framework.TestCase;
 import org.apache.camel.CamelContext;
 import org.apache.camel.spring.SpringCamelContext;
+import org.apache.camel.util.IOHelper;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -38,7 +39,7 @@ public class SpringRemotingRouteTest extends TestCase {
         // END SNIPPET: invoke
 
         camelContext.stop();
-        applicationContext.destroy();
+        IOHelper.close(applicationContext);
     }
 
     protected AbstractXmlApplicationContext createApplicationContext() {

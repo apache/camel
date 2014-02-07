@@ -18,6 +18,7 @@ package org.apache.camel.component.cxf;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.spring.SpringCamelContext;
+import org.apache.camel.util.IOHelper;
 import org.junit.After;
 import org.junit.Before;
 import org.springframework.context.support.AbstractXmlApplicationContext;
@@ -42,9 +43,7 @@ public class CxfPayLoadSoapHeaderSpringTest extends CxfPayLoadSoapHeaderTest {
 
     @After
     public void tearDown() throws Exception {
-        if (applicationContext != null) {
-            applicationContext.destroy();
-        }
+        IOHelper.close(applicationContext);
         super.tearDown();
     }
       
