@@ -36,7 +36,7 @@ public class AggregationStrategyBeanAdapterAllowNullTest extends ContextTestSupp
 
         assertMockEndpointsSatisfied();
 
-        List names = getMockEndpoint("mock:result").getReceivedExchanges().get(0).getIn().getBody(List.class);
+        List<?> names = getMockEndpoint("mock:result").getReceivedExchanges().get(0).getIn().getBody(List.class);
         assertEquals("Claus", names.get(0));
         assertEquals("James", names.get(1));
         assertEquals("Jonathan", names.get(2));
@@ -57,9 +57,9 @@ public class AggregationStrategyBeanAdapterAllowNullTest extends ContextTestSupp
 
     public static final class MyUserAppender {
 
-        public List addUsers(List names, User user) {
+        public List<String> addUsers(List<String> names, User user) {
             if (names == null) {
-                names = new ArrayList();
+                names = new ArrayList<String>();
             }
             names.add(user.getName());
             return names;

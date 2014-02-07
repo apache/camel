@@ -20,13 +20,11 @@ import java.util.Map;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.processor.aggregate.AggregationStrategyBeanAdapter;
 import org.apache.camel.util.toolbox.AggregationStrategies;
 
 public class AggregationStrategyBeanAdapterWithHeadersTest extends ContextTestSupport {
 
     private MyBodyAppender appender = new MyBodyAppender();
-    private AggregationStrategyBeanAdapter myStrategy;
 
     public void testAggregate() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("ABC");
@@ -54,7 +52,7 @@ public class AggregationStrategyBeanAdapterWithHeadersTest extends ContextTestSu
 
     public static final class MyBodyAppender {
 
-        public String appendWithHeaders(String existing, Map oldHeaders, String next, Map newHeaders) {
+        public String appendWithHeaders(String existing, Map<String, Integer> oldHeaders, String next, Map<String, Integer> newHeaders) {
             if (next != null) {
                 Integer count = (Integer) oldHeaders.get("count") + (Integer) newHeaders.get("count");
                 oldHeaders.put("count", count);
