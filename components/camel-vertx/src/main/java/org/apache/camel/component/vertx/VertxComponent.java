@@ -35,8 +35,8 @@ import org.vertx.java.core.VertxFactory;
 public class VertxComponent extends UriEndpointComponent implements EndpointCompleter {
     private static final Logger LOG = LoggerFactory.getLogger(VertxComponent.class);
     private Vertx vertx;
-    private String host = "127.0.0.1";
-    private int port = 5701;
+    private String host;
+    private int port;
 
     public VertxComponent() {
         super(VertxEndpoint.class);
@@ -88,10 +88,13 @@ public class VertxComponent extends UriEndpointComponent implements EndpointComp
         if (vertx == null) {
             // lets using a host / port if a host name is specified
             if (host != null && host.length() > 0) {
-                LOG.debug("Creating Vertx {}:{}", host, port);
+                LOG.info("Creating Clustered Vertx {}:{}", host, port);
                 vertx = VertxFactory.newVertx(port, host);
+            } else if (host != null) {
+                LOG.info("Creating Clustered Vertx {}", host);
+                vertx = VertxFactory.newVertx(host);
             } else {
-                LOG.debug("Creating Vertx");
+                LOG.info("Creating Non-Clustered Vertx");
                 vertx = VertxFactory.newVertx();
             }
         }
@@ -101,7 +104,7 @@ public class VertxComponent extends UriEndpointComponent implements EndpointComp
     protected void doStop() throws Exception {
         super.doStop();
 
-        LOG.debug("Stopping Vertx {}", vertx);
+        LOG.info("Stopping Vertx {}", vertx);
         vertx.stop();
     }
 }
