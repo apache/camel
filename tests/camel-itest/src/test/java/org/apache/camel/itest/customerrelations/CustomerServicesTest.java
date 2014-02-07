@@ -19,6 +19,7 @@ package org.apache.camel.itest.customerrelations;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.camel.util.IOHelper;
 import org.apache.cxf.helpers.CastUtils;
 import org.apache.cxf.interceptor.Fault;
 import org.apache.cxf.jaxws.EndpointImpl;
@@ -59,12 +60,7 @@ public class CustomerServicesTest extends Assert {
             assertNotNull("We should get Customer here", customer);
         } finally {
             // we're done so let's properly close the application contexts
-            if (clientContext != null) {
-                clientContext.close();
-            }
-            if (serverContext != null) {
-                serverContext.close();
-            }
+            IOHelper.close(clientContext, serverContext);
         }
     }
 

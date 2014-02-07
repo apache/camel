@@ -18,6 +18,7 @@ package org.apache.camel.example.client;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.ProducerTemplate;
+import org.apache.camel.util.IOHelper;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -48,7 +49,7 @@ public final class CamelFileClient {
         System.out.println("... Wrote " + SIZE + " files");
 
         // we're done so let's properly close the application context
-        context.close();
+        IOHelper.close(context);
     }
 
 }
