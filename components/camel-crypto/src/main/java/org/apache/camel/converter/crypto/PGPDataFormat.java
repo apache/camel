@@ -29,9 +29,13 @@ import java.security.SignatureException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.converter.crypto.PGPDataFormatUtil.PGPSecretKeyAndPrivateKeyAndUserId;
 import org.apache.camel.converter.stream.CachedOutputStream;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.support.ServiceSupport;
@@ -56,7 +60,6 @@ import org.bouncycastle.openpgp.PGPOnePassSignatureList;
 import org.bouncycastle.openpgp.PGPPrivateKey;
 import org.bouncycastle.openpgp.PGPPublicKey;
 import org.bouncycastle.openpgp.PGPPublicKeyEncryptedData;
-import org.bouncycastle.openpgp.PGPSecretKey;
 import org.bouncycastle.openpgp.PGPSignature;
 import org.bouncycastle.openpgp.PGPSignatureGenerator;
 import org.bouncycastle.openpgp.PGPSignatureList;
@@ -64,7 +67,6 @@ import org.bouncycastle.openpgp.PGPSignatureSubpacketGenerator;
 import org.bouncycastle.openpgp.PGPUtil;
 import org.bouncycastle.openpgp.operator.jcajce.JcaPGPContentSignerBuilder;
 import org.bouncycastle.openpgp.operator.jcajce.JcaPGPContentVerifierBuilderProvider;
-import org.bouncycastle.openpgp.operator.jcajce.JcePBESecretKeyDecryptorBuilder;
 import org.bouncycastle.openpgp.operator.jcajce.JcePGPDataEncryptorBuilder;
 import org.bouncycastle.openpgp.operator.jcajce.JcePublicKeyDataDecryptorFactoryBuilder;
 import org.bouncycastle.openpgp.operator.jcajce.JcePublicKeyKeyEncryptionMethodGenerator;
@@ -86,6 +88,7 @@ public class PGPDataFormat extends ServiceSupport implements DataFormat {
     public static final String SIGNATURE_KEY_FILE_NAME = "CamelPGPDataFormatSignatureKeyFileName";
     public static final String SIGNATURE_KEY_RING = "CamelPGPDataFormatSignatureKeyRing";
     public static final String SIGNATURE_KEY_USERID = "CamelPGPDataFormatSignatureKeyUserid";
+    public static final String SIGNATURE_KEY_USERIDS = "CamelPGPDataFormatSignatureKeyUserids";
     public static final String SIGNATURE_KEY_PASSWORD = "CamelPGPDataFormatSignatureKeyPassword";
     public static final String ENCRYPTION_ALGORITHM = "CamelPGPDataFormatEncryptionAlgorithm";
     public static final String SIGNATURE_HASH_ALGORITHM = "CamelPGPDataFormatSignatureHashAlgorithm";
@@ -109,8 +112,10 @@ public class PGPDataFormat extends ServiceSupport implements DataFormat {
     private byte[] encryptionKeyRing;
 
     // signature / verification key info (optional)
-    private String signatureKeyUserid; // for encryption
-    private String signaturePassword; // for encryption
+    private String signatureKeyUserid; // for signing and verification (optional for verification)
+    //For verification you can specify further User IDs in addition
+    private List<String> signatureKeyUserids; //only for signing with several keys and verifying;
+    private String signaturePassword; //only for signing, optional if you have several signature keys, then you should use passphaseAccessor
     private String signatureKeyFileName;
     // alternatively to the signature key file name you can specify the signature key ring as byte array
     private byte[] signatureKeyRing;
@@ -124,7 +129,7 @@ public class PGPDataFormat extends ServiceSupport implements DataFormat {
 
     private int compressionAlgorithm = CompressionAlgorithmTags.ZIP; // for encryption
 
-    private PGPPassphraseAccessor passphraseAccessor;
+    private PGPPassphraseAccessor passphraseAccessor; // for signing and decryption with multiple keys
 
     public PGPDataFormat() {
     }
@@ -166,6 +171,11 @@ public class PGPDataFormat extends ServiceSupport implements DataFormat {
 
     protected String findSignatureKeyUserid(Exchange exchange) {
         return exchange.getIn().getHeader(SIGNATURE_KEY_USERID, getSignatureKeyUserid(), String.class);
+    }
+
+    @SuppressWarnings("unchecked")
+    protected List<String> findSignatureKeyUserids(Exchange exchange) {
+        return exchange.getIn().getHeader(SIGNATURE_KEY_USERIDS, getSignatureKeyUserids(), List.class);
     }
 
     protected String findSignatureKeyPassword(Exchange exchange) {
@@ -218,7 +228,7 @@ public class PGPDataFormat extends ServiceSupport implements DataFormat {
         PGPCompressedDataGenerator comData = new PGPCompressedDataGenerator(findCompressionAlgorithm(exchange));
         OutputStream comOut = new BufferedOutputStream(comData.open(encOut));
 
-        PGPSignatureGenerator sigGen = createSignatureGenerator(exchange, comOut);
+        List<PGPSignatureGenerator> sigGens = createSignatureGenerator(exchange, comOut);
 
         PGPLiteralDataGenerator litData = new PGPLiteralDataGenerator();
         String fileName = exchange.getIn().getHeader(Exchange.FILE_NAME, String.class);
@@ -234,21 +244,29 @@ public class PGPDataFormat extends ServiceSupport implements DataFormat {
             int bytesRead;
             while ((bytesRead = input.read(buffer)) != -1) {
                 litOut.write(buffer, 0, bytesRead);
-                if (sigGen != null) {
-                    sigGen.update(buffer, 0, bytesRead);
+                if (sigGens != null && !sigGens.isEmpty()) {
+                    for (PGPSignatureGenerator sigGen : sigGens) {
+                        // not nested therefore it is the same for all
+                        // can this be improved that we only do it for one sigGen and set the result on the others?
+                        sigGen.update(buffer, 0, bytesRead);
+                    }
                 }
                 litOut.flush();
             }
         } finally {
             IOHelper.close(litOut);
-            if (sigGen != null) {
-                sigGen.generate().encode(comOut);
+            if (sigGens != null && !sigGens.isEmpty()) {
+                // reverse order
+                for (int i = sigGens.size() - 1; i > -1; i--) {
+                    PGPSignatureGenerator sigGen = sigGens.get(i);
+                    sigGen.generate().encode(comOut);
+                }
             }
             IOHelper.close(comOut, encOut, outputStream, input);
         }
     }
 
-    public List<String> determineEncryptionUserIds(Exchange exchange) {
+    protected List<String> determineEncryptionUserIds(Exchange exchange) {
         String userid = findKeyUserid(exchange);
         List<String> userids = findKeyUserids(exchange);
         // merge them together
@@ -270,44 +288,94 @@ public class PGPDataFormat extends ServiceSupport implements DataFormat {
         return result;
     }
 
-    protected PGPSignatureGenerator createSignatureGenerator(Exchange exchange, OutputStream out) throws IOException, PGPException,
+    protected List<String> determineSignaturenUserIds(Exchange exchange) {
+        String userid = findSignatureKeyUserid(exchange);
+        List<String> userids = findSignatureKeyUserids(exchange);
+        // merge them together
+        List<String> result;
+        if (userid != null) {
+            if (userids == null || userids.isEmpty()) {
+                result = Collections.singletonList(userid);
+            } else {
+                result = new ArrayList<String>(userids.size() + 1);
+                result.add(userid);
+                result.addAll(userids);
+            }
+        } else {
+            // userids can be empty or null!
+            result = userids;
+        }
+        return result;
+    }
+
+    protected List<PGPSignatureGenerator> createSignatureGenerator(Exchange exchange, OutputStream out) throws IOException, PGPException,
             NoSuchProviderException, NoSuchAlgorithmException {
 
         String sigKeyFileName = findSignatureKeyFileName(exchange);
-        String sigKeyUserid = findSignatureKeyUserid(exchange);
+        List<String> sigKeyUserids = determineSignaturenUserIds(exchange);
         String sigKeyPassword = findSignatureKeyPassword(exchange);
         byte[] sigKeyRing = findSignatureKeyRing(exchange);
 
-        if ((sigKeyFileName == null && sigKeyRing == null) || sigKeyUserid == null || sigKeyPassword == null) {
+        if ((sigKeyFileName == null && sigKeyRing == null) || sigKeyUserids == null || sigKeyUserids.isEmpty()
+                || (sigKeyPassword == null && passphraseAccessor == null)) {
             return null;
         }
 
-        PGPSecretKey sigSecretKey = PGPDataFormatUtil.findSecretKey(exchange.getContext(), sigKeyFileName, sigKeyRing, sigKeyPassword,
-                sigKeyUserid, getProvider());
-        if (sigSecretKey == null) {
+        List<PGPSecretKeyAndPrivateKeyAndUserId> sigSecretKeysWithPrivateKeyAndUserId = determineSecretKeysWithPrivateKeyAndUserId(
+                exchange, sigKeyFileName, sigKeyUserids, sigKeyPassword, sigKeyRing);
+
+        List<PGPSignatureGenerator> sigGens = new ArrayList<PGPSignatureGenerator>();
+        for (PGPSecretKeyAndPrivateKeyAndUserId sigSecretKeyWithPrivateKeyAndUserId : sigSecretKeysWithPrivateKeyAndUserId) {
+            PGPPrivateKey sigPrivateKey = sigSecretKeyWithPrivateKeyAndUserId.getPrivateKey();
+
+            PGPSignatureSubpacketGenerator spGen = new PGPSignatureSubpacketGenerator();
+            spGen.setSignerUserID(false, sigSecretKeyWithPrivateKeyAndUserId.getUserId());
+
+            int algorithm = sigSecretKeyWithPrivateKeyAndUserId.getSecretKey().getPublicKey().getAlgorithm();
+            PGPSignatureGenerator sigGen = new PGPSignatureGenerator(
+                    new JcaPGPContentSignerBuilder(algorithm, findHashAlgorithm(exchange)).setProvider(getProvider()));
+            sigGen.init(PGPSignature.BINARY_DOCUMENT, sigPrivateKey);
+            sigGen.setHashedSubpackets(spGen.generate());
+            sigGen.generateOnePassVersion(false).encode(out);
+            sigGens.add(sigGen);
+        }
+        return sigGens;
+    }
+
+    public List<PGPSecretKeyAndPrivateKeyAndUserId> determineSecretKeysWithPrivateKeyAndUserId(Exchange exchange, String sigKeyFileName,
+            List<String> sigKeyUserids, String sigKeyPassword, byte[] sigKeyRing) throws IOException, PGPException, NoSuchProviderException {
+
+        Map<String, String> sigKeyUserId2Password = determineSignatureKeyUserId2Password(sigKeyUserids, sigKeyPassword);
+
+        List<PGPSecretKeyAndPrivateKeyAndUserId> sigSecretKeysWithPrivateKeyAndUserId = PGPDataFormatUtil
+                .findSecretKeysWithPrivateKeyAndUserId(exchange.getContext(), sigKeyFileName, sigKeyRing, sigKeyUserId2Password,
+                        getProvider());
+
+        if (sigSecretKeysWithPrivateKeyAndUserId.isEmpty()) {
             throw new IllegalArgumentException(
                     String.format(
-                            "Cannot PGP encrypt message. No secret key found for User ID %s. Either add a key with this User ID to the secret keyring or change the configured User ID.",
-                            sigKeyUserid));
+                            "Cannot PGP sign message. No secret key found for User IDs %s. Either add keys with this User IDs to the secret keyring or change the configured User IDs.",
+                            sigKeyUserids));
         }
+        return sigSecretKeysWithPrivateKeyAndUserId;
+    }
 
-        PGPPrivateKey sigPrivateKey = sigSecretKey.extractPrivateKey(new JcePBESecretKeyDecryptorBuilder().setProvider(getProvider())
-                .build(sigKeyPassword.toCharArray()));
-        if (sigPrivateKey == null) {
-            // this exception will never happen
-            throw new IllegalArgumentException("Signature private key is null, cannot proceed");
+    public Map<String, String> determineSignatureKeyUserId2Password(List<String> sigKeyUserids, String sigKeyPassword) {
+        // we want to keep the order of the entries, therefore we use LinkedHashMap
+        Map<String, String> sigKeyUserId2Password = new LinkedHashMap<String, String>(sigKeyUserids.size());
+        for (String sigKeyUserid : sigKeyUserids) {
+            if (sigKeyPassword == null) {
+                sigKeyPassword = passphraseAccessor.getPassphrase(sigKeyUserid);
+            }
+            if (sigKeyPassword == null) {
+                throw new IllegalArgumentException(
+                        String.format(
+                                "No passphrase specified for signature key user ID %s. Either specify a passphrase or remove this user ID from the configuration.",
+                                sigKeyUserid));
+            }
+            sigKeyUserId2Password.put(sigKeyUserid, sigKeyPassword);
         }
-
-        PGPSignatureSubpacketGenerator spGen = new PGPSignatureSubpacketGenerator();
-        spGen.setSignerUserID(false, sigKeyUserid);
-
-        int algorithm = sigSecretKey.getPublicKey().getAlgorithm();
-        PGPSignatureGenerator sigGen = new PGPSignatureGenerator(
-                new JcaPGPContentSignerBuilder(algorithm, findHashAlgorithm(exchange)).setProvider(getProvider()));
-        sigGen.init(PGPSignature.BINARY_DOCUMENT, sigPrivateKey);
-        sigGen.setHashedSubpackets(spGen.generate());
-        sigGen.generateOnePassVersion(false).encode(out);
-        return sigGen;
+        return sigKeyUserId2Password;
     }
 
     @SuppressWarnings("resource")
@@ -333,6 +401,10 @@ public class PGPDataFormat extends ServiceSupport implements DataFormat {
             pbe = (PGPPublicKeyEncryptedData) enc.get(i);
             key = PGPDataFormatUtil.findPrivateKeyWithKeyId(exchange.getContext(), findKeyFileName(exchange),
                     findEncryptionKeyRing(exchange), pbe.getKeyID(), findKeyPassword(exchange), getPassphraseAccessor(), getProvider());
+            if (key != null) {
+                // take the first key
+                break;
+            }
         }
         if (key == null) {
             throw new PGPException("Provided input is encrypted with unknown pair of keys.");
@@ -368,7 +440,7 @@ public class PGPDataFormat extends ServiceSupport implements DataFormat {
             bos = new ByteArrayOutputStream();
             os = bos;
         }
-         
+
         try {
             byte[] buffer = new byte[BUFFER_SIZE];
             int bytesRead;
@@ -389,7 +461,7 @@ public class PGPDataFormat extends ServiceSupport implements DataFormat {
                 throw new SignatureException("Cannot verify PGP signature");
             }
         }
-        
+
         if (cos != null) {
             return cos.newStreamCache();
         } else {
@@ -410,6 +482,7 @@ public class PGPDataFormat extends ServiceSupport implements DataFormat {
     protected PGPOnePassSignature getSignature(Exchange exchange, PGPOnePassSignatureList signatureList) throws IOException, PGPException,
             NoSuchProviderException {
 
+        List<String> allowedUserIds = determineSignaturenUserIds(exchange);
         for (int i = 0; i < signatureList.size(); i++) {
             PGPOnePassSignature signature = signatureList.get(i);
             // Determine public key from signature keyId
@@ -418,9 +491,11 @@ public class PGPDataFormat extends ServiceSupport implements DataFormat {
             if (sigPublicKey == null) {
                 continue;
             }
-            // choose that signature for which a public key exists!
-            signature.init(new JcaPGPContentVerifierBuilderProvider().setProvider(getProvider()), sigPublicKey);
-            return signature;
+            if (isAllowedVerifyingKey(allowedUserIds, sigPublicKey)) {
+                // choose that signature for which a public key exists!
+                signature.init(new JcaPGPContentVerifierBuilderProvider().setProvider(getProvider()), sigPublicKey);
+                return signature;
+            }
         }
         if (signatureList.isEmpty()) {
             return null;
@@ -428,6 +503,31 @@ public class PGPDataFormat extends ServiceSupport implements DataFormat {
             throw new IllegalArgumentException("No public key found fitting to the signature key Id; cannot verify the signature");
         }
 
+    }
+
+    public boolean isAllowedVerifyingKey(List<String> allowedUserIds, PGPPublicKey verifyingPublicKey) {
+
+        if (allowedUserIds == null || allowedUserIds.isEmpty()) {
+            // no restrictions specified
+            return true;
+        }
+        String keyUserId = null;
+        for (@SuppressWarnings("unchecked")
+        Iterator<String> iterator = verifyingPublicKey.getUserIDs(); iterator.hasNext();) {
+            keyUserId = iterator.next();
+            for (String userid : allowedUserIds) {
+                if (keyUserId != null && keyUserId.contains(userid)) {
+                    LOG.debug(
+                            "Public key with  user ID {} fulfills the User ID restriction {}. Therefore this key will be used for the signature verification. ",
+                            keyUserId, allowedUserIds);
+                    return true;
+                }
+            }
+        }
+        LOG.warn(
+                "Public key with User ID {} does not fulfill the User ID restriction {}. Therefore this key will not be used for the signature verification.",
+                keyUserId, allowedUserIds);
+        return false;
     }
 
     /**
@@ -455,11 +555,8 @@ public class PGPDataFormat extends ServiceSupport implements DataFormat {
     }
 
     /**
-     * Userid of the key used to encrypt. If you want to encrypt with several
-     * keys then use the method {@link #setKeyUserids(List<String>)}. The User
-     * ID of this method and the User IDs of the method {@link
-     * #setKeyUserids(List<String>)} will be merged together and the
-     * corresponding public keys will be used for the encryption.
+     * User ID, or more precisely user ID part, of the key used for encryption.
+     * See also {@link #setKeyUserids(List<String>)}.
      */
     public void setKeyUserid(String keyUserid) {
         this.keyUserid = keyUserid;
@@ -474,11 +571,15 @@ public class PGPDataFormat extends ServiceSupport implements DataFormat {
     }
 
     /**
-     * KeyUserIds used to determine the public keys for encryption. If you just
-     * have one User ID, then you can also use the method
-     * {@link #setKeyUserid(String)} or this method. The User ID specified in
-     * {@link #setKeyUserid(String)} and in this method will be merged together
-     * and the corresponding public keys will be used for the encryption.
+     * Keys User IDs, or more precisely user ID parts, used for determining the
+     * public keys for encryption. If you just have one User ID, then you can
+     * also use the method {@link #setKeyUserid(String)}. The User ID specified
+     * in {@link #setKeyUserid(String)} and in this method will be merged
+     * together and the public keys which have a User ID which contain a value
+     * of the specified User IDs the will be used for the encryption. Be aware
+     * that you may get several public keys even if you specify only one User
+     * Id, because there can be several public keys which have a User ID which
+     * contains the specified User ID.
      */
     public void setKeyUserids(List<String> keyUserids) {
         this.keyUserids = keyUserids;
@@ -511,7 +612,9 @@ public class PGPDataFormat extends ServiceSupport implements DataFormat {
     }
 
     /**
-     * Userid of the signature key used to sign (marshal).
+     * Userid, or more precisely user ID part, of the signature key used for
+     * signing (marshal) and verifying (unmarshal). See also
+     * {@link #setSignatureKeyUserids(List)}.
      */
     public void setSignatureKeyUserid(String signatureKeyUserid) {
         this.signatureKeyUserid = signatureKeyUserid;
@@ -519,6 +622,44 @@ public class PGPDataFormat extends ServiceSupport implements DataFormat {
 
     public String getSignatureKeyUserid() {
         return signatureKeyUserid;
+    }
+
+    public List<String> getSignatureKeyUserids() {
+        return signatureKeyUserids;
+    }
+
+    /**
+     * User IDs, or more precisely user ID parts, used for signing and
+     * verification.
+     * <p>
+     * In the signing case, the User IDs specify the private keys which are used
+     * for signing. If the result are several private keys then several
+     * signatures will be created. If you just have one signature User ID, then
+     * you can also use the method {@link #setSignatureKeyUserid(String)} or
+     * this method. The User ID specified in
+     * {@link #setSignatureKeyUserid(String)} and in this method will be merged
+     * together and the private keys which have a User Id which contain one
+     * value out of the specified UserIds will be used for the signature
+     * creation. Be aware that you may get several private keys even if you
+     * specify only one User Id, because there can be several private keys which
+     * have a User ID which contains the specified User ID.
+     * <p>
+     * In the verification case the User IDs restrict the set of public keys
+     * which can be used for verification. The public keys used for verification
+     * must contain a User ID which contain one value of the User ID list. If
+     * you neither specify in this method and nor specify in the method
+     * {@link #setSignatureKeyUserid(String)} any value then any public key in
+     * the public key ring will be taken into consideration for the
+     * verification.
+     * <p>
+     * If you just have one User ID, then you can also use the method
+     * {@link #setSignatureKeyUserid(String)}. The User ID specified in
+     * {@link #setSignatureKeyUserid(String)} and in this method will be merged
+     * together and the corresponding public keys represent the potential keys
+     * for the verification of the message.
+     */
+    public void setSignatureKeyUserids(List<String> signatureKeyUserids) {
+        this.signatureKeyUserids = signatureKeyUserids;
     }
 
     /**
