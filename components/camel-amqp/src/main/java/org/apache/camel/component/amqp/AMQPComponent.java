@@ -27,7 +27,6 @@ import org.apache.camel.component.jms.JmsComponent;
 import org.apache.camel.component.jms.JmsConfiguration;
 import org.apache.qpid.amqp_1_0.jms.impl.ConnectionFactoryImpl;
 import org.apache.qpid.client.AMQConnectionFactory;
-import org.apache.qpid.url.URLSyntaxException;
 
 /**
  * This component supports the AMQP protocol using the Client API of the Apache Qpid project.
