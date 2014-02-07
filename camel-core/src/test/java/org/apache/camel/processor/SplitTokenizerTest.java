@@ -71,6 +71,15 @@ public class SplitTokenizerTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
     
+    public void testSplitTokenizerEWithSlash() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:split");
+        String xml = "<persons><person attr='/' /></persons>";
+        mock.expectedBodiesReceived("<person attr='/' />");
+        template.sendBody("direct:e", xml);
+        mock.assertIsSatisfied();
+        assertMockEndpointsSatisfied();
+    }
+    
     public void testSplitTokenizerF() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:split");
         mock.expectedBodiesReceived("<person name=\"Claus\"/>", "<person>James</person>", "<person>Willem</person>");
@@ -113,7 +122,6 @@ public class SplitTokenizerTest extends ContextTestSupport {
                         // it will call the ObjectHelper.evaluateValuePredicate()
                         .filter().simple("${body}")
                             .to("mock:split");
-                
               
             }
         };
