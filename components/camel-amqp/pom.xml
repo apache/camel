@@ -46,13 +46,15 @@
     </dependency>
     <dependency>
       <groupId>org.apache.qpid</groupId>
-      <artifactId>qpid-client</artifactId>
+      <artifactId>qpid-amqp-1-0-client-jms</artifactId>
       <version>${qpid-version}</version>
+      <optional>true</optional>
     </dependency>
     <dependency>
-      <groupId>org.apache.qpid</groupId>
-      <artifactId>qpid-common</artifactId>
-      <version>${qpid-version}</version>
+        <groupId>org.apache.qpid</groupId>
+        <artifactId>qpid-client</artifactId>
+        <version>${qpid-version}</version>
+        <optional>true</optional>
     </dependency>
 
     <!-- testing -->
