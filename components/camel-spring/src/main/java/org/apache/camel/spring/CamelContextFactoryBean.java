@@ -79,7 +79,6 @@ import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
  */
 @XmlRootElement(name = "camelContext")
 @XmlAccessorType(XmlAccessType.FIELD)
-@SuppressWarnings("unused")
 public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<SpringCamelContext>
         implements FactoryBean<SpringCamelContext>, InitializingBean, DisposableBean, ApplicationContextAware, ApplicationListener<ApplicationEvent> {
     private static final Logger LOG = LoggerFactory.getLogger(CamelContextFactoryBean.class);
