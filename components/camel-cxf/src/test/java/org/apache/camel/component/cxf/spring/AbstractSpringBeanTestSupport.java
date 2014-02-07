@@ -17,6 +17,8 @@
 
 package org.apache.camel.component.cxf.spring;
 
+import org.apache.camel.util.IOHelper;
+
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -35,7 +37,7 @@ public abstract class AbstractSpringBeanTestSupport extends Assert {
 
     @After
     public void tearDown() throws Exception {
-        ctx.close();        
+        IOHelper.close(ctx);
     }
 
 }
