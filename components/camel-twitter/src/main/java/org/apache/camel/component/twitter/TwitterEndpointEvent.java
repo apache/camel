@@ -48,6 +48,10 @@ public class TwitterEndpointEvent extends DirectEndpoint implements TwitterEndpo
         return properties;
     }
 
+    public void setProperties(TwitterConfiguration properties) {
+        this.properties = properties;
+    }
+
     @Override
     public EndpointType getEndpointType() {
         return EndpointType.EVENT;

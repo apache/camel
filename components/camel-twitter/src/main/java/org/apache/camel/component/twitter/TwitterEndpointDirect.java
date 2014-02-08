@@ -54,6 +54,10 @@ public class TwitterEndpointDirect extends DirectEndpoint implements TwitterEndp
         return properties;
     }
 
+    public void setProperties(TwitterConfiguration properties) {
+        this.properties = properties;
+    }
+
     @Override
     public EndpointType getEndpointType() {
         return EndpointType.DIRECT;
