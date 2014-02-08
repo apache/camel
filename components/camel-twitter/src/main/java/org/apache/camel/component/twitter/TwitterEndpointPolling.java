@@ -59,6 +59,10 @@ public class TwitterEndpointPolling extends DefaultPollingEndpoint implements Tw
         return properties;
     }
 
+    public void setProperties(TwitterConfiguration properties) {
+        this.properties = properties;
+    }
+
     @Override
     public EndpointType getEndpointType() {
         return EndpointType.POLLING;
