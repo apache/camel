@@ -32,13 +32,9 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-
 /**
- * @author Stephen Samuel
- *         <p/>
- *         <p/>
- *         The Producer IT tests require a Kafka broker running on 9092 and a zookeeper instance running on 2181.
- *         The broker must have a topic called test created.
+ * The Producer IT tests require a Kafka broker running on 9092 and a zookeeper instance running on 2181.
+ * The broker must have a topic called test created.
  */
 public class KafkaConsumerIT extends CamelTestSupport {
 

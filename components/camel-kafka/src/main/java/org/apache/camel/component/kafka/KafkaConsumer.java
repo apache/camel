@@ -34,9 +34,8 @@ import org.apache.camel.impl.DefaultConsumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 /**
- * @author Stephen Samuel
+ *
  */
 public class KafkaConsumer extends DefaultConsumer {
 
@@ -100,7 +99,11 @@ public class KafkaConsumer extends DefaultConsumer {
             consumer.shutdown();
         }
         if (executor != null) {
-            executor.shutdown();
+            if (getEndpoint() != null && getEndpoint().getCamelContext() != null) {
+                getEndpoint().getCamelContext().getExecutorServiceManager().shutdownNow(executor);
+            } else {
+                executor.shutdownNow();
+            }
         }
         executor = null;
     }

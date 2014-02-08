@@ -19,9 +19,6 @@ package org.apache.camel.component.kafka;
 import kafka.producer.Partitioner;
 import kafka.utils.VerifiableProperties;
 
-/**
- * @author Stephen Samuel
- */
 public class SimplePartitioner implements Partitioner<String> {
 
     public SimplePartitioner(VerifiableProperties props) {

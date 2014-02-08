@@ -17,7 +17,7 @@
 package org.apache.camel.component.kafka;
 
 /**
- * @author Stephen Samuel
+ *
  */
 public final class KafkaConstants {
 

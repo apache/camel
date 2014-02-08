@@ -34,9 +34,6 @@ import org.mockito.Mockito;
 
 import static org.junit.Assert.assertEquals;
 
-/**
- * @author Stephen Samuel
- */
 public class KafkaProducerTest {
 
     private KafkaProducer producer;

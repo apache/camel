@@ -25,9 +25,6 @@ import org.mockito.Mockito;
 
 import static org.junit.Assert.assertEquals;
 
-/**
- * @author Stephen Samuel
- */
 public class KafkaComponentTest {
 
     private CamelContext context = Mockito.mock(CamelContext.class);

@@ -17,11 +17,9 @@
 package org.apache.camel.component.kafka;
 
 import java.net.URISyntaxException;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadPoolExecutor;
+import java.util.concurrent.ExecutorService;
 
 import kafka.message.MessageAndMetadata;
-
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -31,9 +29,8 @@ import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.DefaultMessage;
 
-
 /**
- * @author Stephen Samuel
+ *
  */
 public class KafkaEndpoint extends DefaultEndpoint {
 
@@ -136,8 +133,8 @@ public class KafkaEndpoint extends DefaultEndpoint {
         return true;
     }
 
-    public ThreadPoolExecutor createExecutor() {
-        return (ThreadPoolExecutor) Executors.newFixedThreadPool(getConsumerStreams());
+    public ExecutorService createExecutor() {
+        return getCamelContext().getExecutorServiceManager().newFixedThreadPool(this, "KafkaTopic[" + getTopic() + "]", getConsumerStreams());
     }
 
 }

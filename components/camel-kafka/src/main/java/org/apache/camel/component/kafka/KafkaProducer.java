@@ -23,20 +23,19 @@ import kafka.producer.KeyedMessage;
 import kafka.producer.ProducerConfig;
 
 import org.apache.camel.CamelException;
+import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultProducer;
 
-
 /**
- * @author Stephen Samuel
+ *
  */
 public class KafkaProducer extends DefaultProducer {
 
     protected Producer<String, String> producer;
     private final KafkaEndpoint endpoint;
 
-    public KafkaProducer(KafkaEndpoint endpoint) throws ClassNotFoundException, IllegalAccessException,
-            InstantiationException {
+    public KafkaProducer(KafkaEndpoint endpoint) {
         super(endpoint);
         this.endpoint = endpoint;
     }
@@ -66,10 +65,9 @@ public class KafkaProducer extends DefaultProducer {
 
     @Override
     public void process(Exchange exchange) throws CamelException {
-
         Object partitionKey = exchange.getIn().getHeader(KafkaConstants.PARTITION_KEY);
         if (partitionKey == null) {
-            throw new CamelException("No partition key set");
+            throw new CamelExchangeException("No partition key set", exchange);
         }
         String msg = exchange.getIn().getBody(String.class);
 

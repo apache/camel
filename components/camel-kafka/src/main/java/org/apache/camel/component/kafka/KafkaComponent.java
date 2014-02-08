@@ -22,7 +22,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultComponent;
 
 /**
- * @author Stephen Samuel
+ *
  */
 public class KafkaComponent extends DefaultComponent {
 
