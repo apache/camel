@@ -55,6 +55,7 @@ import org.eclipse.jetty.servlets.CrossOriginFilter;
 import org.eclipse.jetty.util.resource.Resource;
 import org.eclipse.jetty.util.thread.QueuedThreadPool;
 import org.eclipse.jetty.util.thread.ThreadPool;
+import org.eclipse.jetty.websocket.WebSocketFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -157,6 +158,8 @@ public class WebsocketComponent extends DefaultComponent {
 
                 // Create ServletContextHandler
                 ServletContextHandler context = createContext(server, connector, endpoint.getHandlers());
+                // setup the WebSocketComponentServlet initial parameters 
+                setWebSocketComponentServletInitialParameter(context, endpoint);
                 server.setHandler(context);
 
                 // Apply CORS (http://www.w3.org/TR/cors/)
@@ -299,6 +302,24 @@ public class WebsocketComponent extends DefaultComponent {
 
         setProperties(endpoint, parameters);
         return endpoint;
+    }
+    
+    protected void setWebSocketComponentServletInitialParameter(ServletContextHandler context, WebsocketEndpoint endpoint) {
+        if (endpoint.getBufferSize() != null) {
+            context.setInitParameter("bufferSize", endpoint.getBufferSize().toString());
+        }
+        if (endpoint.getMaxIdleTime() != null) {
+            context.setInitParameter("maxIdleTime", endpoint.getMaxIdleTime().toString());
+        }
+        if (endpoint.getMaxTextMessageSize() != null) {
+            context.setInitParameter("maxTextMessageSize", endpoint.getMaxTextMessageSize().toString());
+        }
+        if (endpoint.getMaxBinaryMessageSize() != null) {
+            context.setInitParameter("maxBinaryMessageSize", endpoint.getMaxBinaryMessageSize().toString());
+        }
+        if (endpoint.getMinVersion() != null) {
+            context.setInitParameter("minVersion", endpoint.getMinVersion().toString());
+        }
     }
 
     protected Server createServer() throws Exception {
