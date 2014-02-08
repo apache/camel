@@ -20,17 +20,21 @@ import java.util.Map;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.twitter.data.EndpointType;
-import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.impl.UriEndpointComponent;
 
 /**
  * Twitter component
  */
-public class TwitterComponent extends DefaultComponent {
+public class TwitterComponent extends UriEndpointComponent {
 
     private String consumerKey;
     private String consumerSecret;
     private String accessToken;
     private String accessTokenSecret;
+
+    public TwitterComponent() {
+        super(TwitterEndpoint.class);
+    }
 
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
 
