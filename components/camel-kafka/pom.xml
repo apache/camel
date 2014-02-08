@@ -32,7 +32,9 @@
 
     <properties>
         <camel.osgi.export.pkg>org.apache.camel.component.kafka.*</camel.osgi.export.pkg>
-        <kafka.version>0.8.0</kafka.version>
+        <camel.osgi.export.service>
+          org.apache.camel.spi.ComponentResolver;component=kafka,
+        </camel.osgi.export.service>
     </properties>
 
     <dependencies>
@@ -43,7 +45,7 @@
         <dependency>
             <groupId>org.apache.kafka</groupId>
             <artifactId>kafka_2.10</artifactId>
-            <version>${kafka.version}</version>
+            <version>${kafka-version}</version>
         </dependency>
         <dependency>
             <groupId>org.scala-lang</groupId>
