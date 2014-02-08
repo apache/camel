@@ -1,3 +1,19 @@
+/**
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.apache.camel.component.kafka;
 
 import java.io.IOException;
@@ -9,6 +25,11 @@ import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
+import kafka.consumer.ConsumerConfig;
+import kafka.consumer.ConsumerIterator;
+import kafka.consumer.KafkaStream;
+import kafka.javaapi.consumer.ConsumerConnector;
+
 import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Produce;
@@ -19,10 +40,6 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-import kafka.consumer.ConsumerConfig;
-import kafka.consumer.ConsumerIterator;
-import kafka.consumer.KafkaStream;
-import kafka.javaapi.consumer.ConsumerConnector;
 
 /**
  * @author Stephen Samuel
@@ -35,12 +52,11 @@ public class KafkaProducerIT extends CamelTestSupport {
 
     public static final String TOPIC = "test";
 
-    @EndpointInject(uri =
-            "kafka:localhost:9092?topic=" + TOPIC + "&partitioner=org.apache.camel.component.kafka.SimplePartitioner")
+    @EndpointInject(uri = "kafka:localhost:9092?topic=" + TOPIC + "&partitioner=org.apache.camel.component.kafka.SimplePartitioner")
     private Endpoint to;
 
     @Produce(uri = "direct:start")
-    protected ProducerTemplate template;
+    private ProducerTemplate template;
 
     private ConsumerConnector kafkaConsumer;
 
@@ -101,8 +117,9 @@ public class KafkaProducerIT extends CamelTestSupport {
         }
 
         for (int k = 0; k < 20; k++) {
-            if (messages.size() == 10)
+            if (messages.size() == 10) {
                 return;
+            }
             Thread.sleep(200);
         }
 

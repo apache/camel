@@ -19,7 +19,7 @@ package org.apache.camel.component.kafka;
 /**
  * @author Stephen Samuel
  */
-public class KafkaConstants {
+public final class KafkaConstants {
 
     public static final String DEFAULT_GROUP = "group1";
 
@@ -27,4 +27,8 @@ public class KafkaConstants {
     public static final String PARTITION = "kafka.EXCHANGE_NAME";
     public static final String KEY = "kafka.CONTENT_TYPE";
     public static final String TOPIC = "kafka.TOPIC";
+
+    private KafkaConstants() {
+        // Utility class
+    }
 }

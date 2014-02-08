@@ -22,41 +22,45 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.concurrent.ExecutorService;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
-import org.apache.camel.impl.DefaultConsumer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import kafka.consumer.ConsumerConfig;
 import kafka.consumer.ConsumerIterator;
 import kafka.consumer.KafkaStream;
 import kafka.javaapi.consumer.ConsumerConnector;
 import kafka.message.MessageAndMetadata;
 
+import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
+import org.apache.camel.impl.DefaultConsumer;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+
 /**
  * @author Stephen Samuel
  */
 public class KafkaConsumer extends DefaultConsumer {
 
-    private static final Logger logger = LoggerFactory.getLogger(KafkaConsumer.class);
+    private static final Logger LOG = LoggerFactory.getLogger(KafkaConsumer.class);
 
+    protected ExecutorService executor;
     private final KafkaEndpoint endpoint;
     private final Processor processor;
 
-    ConsumerConnector consumer;
-    ExecutorService executor;
+    private ConsumerConnector consumer;
 
     public KafkaConsumer(KafkaEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
         this.endpoint = endpoint;
         this.processor = processor;
-        if (endpoint.getZookeeperHost() == null)
+        if (endpoint.getZookeeperHost() == null) {
             throw new IllegalArgumentException("zookeeper host must be specified");
-        if (endpoint.getZookeeperPort() == 0)
+        }
+        if (endpoint.getZookeeperPort() == 0) {
             throw new IllegalArgumentException("zookeeper port must be specified");
-        if (endpoint.getGroupId() == null)
+        }
+        if (endpoint.getGroupId() == null) {
             throw new IllegalArgumentException("groupId must not be null");
+        }
     }
 
     Properties getProps() {
@@ -92,10 +96,12 @@ public class KafkaConsumer extends DefaultConsumer {
         super.doStop();
         log.info("Stopping Kafka consumer");
 
-        if (consumer != null)
+        if (consumer != null) {
             consumer.shutdown();
-        if (executor != null)
+        }
+        if (executor != null) {
             executor.shutdown();
+        }
         executor = null;
     }
 

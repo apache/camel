@@ -20,6 +20,8 @@ import java.net.URISyntaxException;
 import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 
+import kafka.message.MessageAndMetadata;
+
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -29,7 +31,6 @@ import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.DefaultMessage;
 
-import kafka.message.MessageAndMetadata;
 
 /**
  * @author Stephen Samuel
@@ -43,6 +44,16 @@ public class KafkaEndpoint extends DefaultEndpoint {
     private int consumerStreams = 10;
     private String partitioner;
     private String topic;
+
+    public KafkaEndpoint() {
+    }
+
+    public KafkaEndpoint(String endpointUri,
+                         String remaining,
+                         KafkaComponent component) throws URISyntaxException {
+        super(endpointUri, component);
+        this.brokers = remaining.split("\\?")[0];
+    }
 
     public String getZookeeperHost() {
         return zookeeperHost;
@@ -94,16 +105,6 @@ public class KafkaEndpoint extends DefaultEndpoint {
 
     public void setConsumerStreams(int consumerStreams) {
         this.consumerStreams = consumerStreams;
-    }
-
-    public KafkaEndpoint() {
-    }
-
-    public KafkaEndpoint(String endpointUri,
-                         String remaining,
-                         KafkaComponent component) throws URISyntaxException {
-        super(endpointUri, component);
-        this.brokers = remaining.split("\\?")[0];
     }
 
     public Exchange createKafkaExchange(MessageAndMetadata<byte[], byte[]> mm) {

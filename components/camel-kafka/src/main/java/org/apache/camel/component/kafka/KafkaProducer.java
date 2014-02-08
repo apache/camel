@@ -18,21 +18,22 @@ package org.apache.camel.component.kafka;
 
 import java.util.Properties;
 
+import kafka.javaapi.producer.Producer;
+import kafka.producer.KeyedMessage;
+import kafka.producer.ProducerConfig;
+
 import org.apache.camel.CamelException;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultProducer;
 
-import kafka.javaapi.producer.Producer;
-import kafka.producer.KeyedMessage;
-import kafka.producer.ProducerConfig;
 
 /**
  * @author Stephen Samuel
  */
 public class KafkaProducer extends DefaultProducer {
 
+    protected Producer<String, String> producer;
     private final KafkaEndpoint endpoint;
-    Producer<String, String> producer;
 
     public KafkaProducer(KafkaEndpoint endpoint) throws ClassNotFoundException, IllegalAccessException,
             InstantiationException {
@@ -42,8 +43,9 @@ public class KafkaProducer extends DefaultProducer {
 
     @Override
     protected void doStop() throws Exception {
-        if (producer != null)
+        if (producer != null) {
             producer.close();
+        }
     }
 
     Properties getProps() {
@@ -66,12 +68,13 @@ public class KafkaProducer extends DefaultProducer {
     public void process(Exchange exchange) throws CamelException {
 
         Object partitionKey = exchange.getIn().getHeader(KafkaConstants.PARTITION_KEY);
-        if (partitionKey == null)
+        if (partitionKey == null) {
             throw new CamelException("No partition key set");
+        }
         String msg = exchange.getIn().getBody(String.class);
 
-        KeyedMessage<String, String> data =
-                new KeyedMessage<String, String>(endpoint.getTopic(), partitionKey.toString(), msg);
+        KeyedMessage<String, String> data = new KeyedMessage<String, String>(endpoint.getTopic(), partitionKey.toString(), msg);
         producer.send(data);
     }
+
 }
