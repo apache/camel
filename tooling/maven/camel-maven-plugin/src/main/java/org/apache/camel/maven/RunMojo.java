@@ -65,6 +65,8 @@ import org.codehaus.mojo.exec.Property;
  */
 public class RunMojo extends AbstractExecMojo {
 
+    protected String extendedPluginDependencyArtifactId;
+
     // this code is based on a copy-and-paste of maven-exec-plugin
     //
     // If we could avoid the mega-cut-n-paste it would really really help!
@@ -369,7 +371,6 @@ public class RunMojo extends AbstractExecMojo {
     private Properties originalSystemProperties;
 
     private String extraPluginDependencyArtifactId;
-    protected String extendedPluginDependencyArtifactId;
 
     /**
      * Execute goal.
