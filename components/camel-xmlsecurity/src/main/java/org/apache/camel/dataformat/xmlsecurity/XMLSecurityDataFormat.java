@@ -40,12 +40,11 @@ import javax.crypto.spec.DESedeKeySpec;
 import javax.crypto.spec.SecretKeySpec;
 import javax.xml.transform.dom.DOMSource;
 
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
@@ -62,7 +61,8 @@ import org.apache.xml.security.keys.KeyInfo;
 import org.apache.xml.security.utils.Constants;
 import org.apache.xml.security.utils.EncryptionConstants;
 import org.apache.xml.security.utils.XMLUtils;
-
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class XMLSecurityDataFormat implements DataFormat, CamelContextAware {
 
