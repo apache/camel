@@ -372,7 +372,14 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
     }
 
     public Map<String, Properties> findComponents() throws Exception {
-        return context.findComponents();
+        Map<String, Properties> answer = context.findComponents();
+        for (Map.Entry<String, Properties> entry : answer.entrySet()) {
+            // remove component as its not serializable over JMX
+            if (entry.getValue() != null) {
+                entry.getValue().remove("component");
+            }
+        }
+        return answer;
     }
 
     public String getComponentDocumentation(String componentName) throws IOException {
