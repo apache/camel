@@ -54,6 +54,8 @@ import org.apache.camel.spi.UriParams;
 import org.apache.camel.tools.apt.util.Func1;
 import org.apache.camel.tools.apt.util.Strings;
 
+import static org.apache.camel.tools.apt.util.Strings.canonicalClassName;
+
 /**
  * Processes all Camel endpoints
  */
@@ -240,7 +242,8 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
             TypeElement baseTypeElement = null;
             TypeMirror superclass = classElement.getSuperclass();
             if (superclass != null) {
-                baseTypeElement = findTypeElement(roundEnv, superclass.toString());
+                String superClassName = canonicalClassName(superclass.toString());
+                baseTypeElement = findTypeElement(roundEnv, superClassName);
             }
             if (baseTypeElement != null) {
                 classElement = baseTypeElement;
@@ -257,7 +260,7 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
             for (Element rootElement : rootElements) {
                 if (rootElement instanceof TypeElement) {
                     TypeElement typeElement = (TypeElement) rootElement;
-                    String aRootName = typeElement.getQualifiedName().toString();
+                    String aRootName = canonicalClassName(typeElement.getQualifiedName().toString());
                     if (className.equals(aRootName)) {
                         return typeElement;
                     }
