@@ -118,9 +118,9 @@ public abstract class AbstractCXFGreeterRouterTest extends CamelTestSupport {
     
     @Test
     public void testPublishEndpointUrl() throws Exception {
-        String response = template.requestBody("http://localhost:" + getPort2() + "/" + getClass().getSimpleName()
-                                               + "/CamelContext/RouterPort/"
-            + getClass().getSimpleName() + "?wsdl", null, String.class);
+        String url = "http://localhost:" + getPort2() + "/" + getClass().getSimpleName()
+            + "/CamelContext/RouterPort?wsdl";
+        String response = template.requestBody(url, null, String.class);
         assertTrue("Can't find the right service location.", response.indexOf("http://www.simple.com/services/test") > 0);
     }
     
