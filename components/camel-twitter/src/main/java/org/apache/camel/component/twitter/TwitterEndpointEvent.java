@@ -23,9 +23,13 @@ import org.apache.camel.component.direct.DirectEndpoint;
 import org.apache.camel.component.twitter.consumer.Twitter4JConsumer;
 import org.apache.camel.component.twitter.consumer.TwitterConsumerEvent;
 import org.apache.camel.component.twitter.data.EndpointType;
+import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
 
+@UriEndpoint(scheme = "twitter", consumerClass = Twitter4JConsumer.class)
 public class TwitterEndpointEvent extends DirectEndpoint implements TwitterEndpoint {
 
+    @UriParam
     private TwitterConfiguration properties;
 
     public TwitterEndpointEvent(String uri, TwitterComponent component, TwitterConfiguration properties) {

@@ -23,12 +23,16 @@ import org.apache.camel.component.twitter.consumer.Twitter4JConsumer;
 import org.apache.camel.component.twitter.consumer.TwitterConsumerPolling;
 import org.apache.camel.component.twitter.data.EndpointType;
 import org.apache.camel.impl.DefaultPollingEndpoint;
+import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
 
 /**
  * Twitter polling endpoint
  */
+@UriEndpoint(scheme = "twitter", consumerClass = Twitter4JConsumer.class)
 public class TwitterEndpointPolling extends DefaultPollingEndpoint implements TwitterEndpoint {
 
+    @UriParam
     private TwitterConfiguration properties;
 
     public TwitterEndpointPolling(String uri, TwitterComponent component, TwitterConfiguration properties) {

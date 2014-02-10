@@ -18,6 +18,7 @@ package org.apache.camel.component.twitter;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
+import org.apache.camel.EndpointConfiguration;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.Assert;
 import org.junit.Test;
@@ -69,6 +70,14 @@ public class UriConfigurationTest extends Assert {
         TwitterEndpoint twitterEndpoint = (TwitterEndpoint) endpoint;
         
         assertFalse(twitterEndpoint.getProperties().getUseSSL());
-        
     }
+
+    @Test
+    public void testComponentConfiguration() throws Exception {
+        TwitterComponent comp = context.getComponent("twitter", TwitterComponent.class);
+        EndpointConfiguration conf = comp.createConfiguration("twitter:search?keywords=camel");
+
+        assertEquals("camel", conf.getParameter("keywords"));
+    }
+
 }
