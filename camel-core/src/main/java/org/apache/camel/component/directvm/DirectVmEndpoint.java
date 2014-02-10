@@ -19,12 +19,15 @@ package org.apache.camel.component.directvm;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.component.direct.DirectConsumer;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 
 /**
  * The direct-vm endpoint.
  */
+@UriEndpoint(scheme = "direct-vm", consumerClass = DirectConsumer.class)
 public class DirectVmEndpoint extends DefaultEndpoint {
 
     @UriParam
