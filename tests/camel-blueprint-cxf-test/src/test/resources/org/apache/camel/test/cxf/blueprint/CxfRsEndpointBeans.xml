@@ -28,14 +28,23 @@
 
 	<cxf:rsServer id="routerEndpoint" address="http://localhost:8182"
 		serviceClass="org.apache.camel.component.cxf.jaxrs.testbean.CustomerService"
-		loggingFeatureEnabled="true"/>
+		loggingFeatureEnabled="true">
+		<cxf:providers>
+		     <ref component-id="jsonProvider" />
+		</cxf:providers>
+    </cxf:rsServer>
+		
 
 	<cxf:rsClient id="serviceEndpoint" address="http://localhost:8080"
 		serviceClass="org.apache.camel.component.cxf.jaxrs.testbean.CustomerService"
-		loggingFeatureEnabled="true" />
+		loggingFeatureEnabled="true">
+		<cxf:providers>
+		     <ref component-id="jsonProvider" />
+		</cxf:providers>
+    </cxf:rsClient>
 
 
-	<!--bean id="jsonProvider" class="org.apache.cxf.jaxrs.provider.JSONProvider" /-->
+	<bean id="jsonProvider" class="org.apache.cxf.jaxrs.provider.json.JSONProvider" />
 
 	<camel:camelContext id="camel">
 
