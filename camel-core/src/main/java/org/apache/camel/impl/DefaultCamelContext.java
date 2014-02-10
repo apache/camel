@@ -1029,7 +1029,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     }
 
     public String getComponentDocumentation(String componentName) throws IOException {
-        String path = CamelContextHelper.COMPONENT_DOCUMENTATION_PREFIX + componentName + ".html";
+        String path = CamelContextHelper.COMPONENT_DOCUMENTATION_PREFIX + componentName + "/" + componentName + ".html";
         InputStream inputStream = getClassResolver().loadResourceAsStream(path);
         if (inputStream != null) {
             try {
