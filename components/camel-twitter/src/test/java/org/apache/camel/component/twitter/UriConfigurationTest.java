@@ -17,6 +17,7 @@
 package org.apache.camel.component.twitter;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.ComponentConfiguration;
 import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointConfiguration;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -78,6 +79,13 @@ public class UriConfigurationTest extends Assert {
         EndpointConfiguration conf = comp.createConfiguration("twitter:search?keywords=camel");
 
         assertEquals("camel", conf.getParameter("keywords"));
+
+        ComponentConfiguration compConf = comp.createComponentConfiguration();
+        String json = compConf.createParameterJsonSchema();
+        assertNotNull(json);
+
+        assertTrue(json.contains("\"accessToken\": { \"type\": \"java.lang.String\" }"));
+        assertTrue(json.contains("\"consumerKey\": { \"type\": \"java.lang.String\" }"));
     }
 
 }
