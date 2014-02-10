@@ -81,7 +81,8 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
         if (uriEndpoint != null) {
             String scheme = uriEndpoint.scheme();
             if (!Strings.isNullOrEmpty(scheme)) {
-                String packageName = "org.apache.camel.component";
+                String name = canonicalClassName(classElement.getQualifiedName().toString());
+                String packageName = name.substring(0, name.lastIndexOf("."));
                 String fileName = scheme + ".html";
                 Func1<PrintWriter, Void> handler = new Func1<PrintWriter, Void>() {
                     @Override
@@ -90,7 +91,7 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
                         return null;
                     }
                 };
-                processFile(packageName, fileName, handler);
+                processFile(packageName, scheme, fileName, handler);
             }
         }
     }
@@ -274,7 +275,7 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
     /**
      * Helper method to produce class output text file using the given handler
      */
-    protected void processFile(String packageName, String fileName, Func1<PrintWriter, Void> handler) {
+    protected void processFile(String packageName, String scheme, String fileName, Func1<PrintWriter, Void> handler) {
         PrintWriter writer = null;
         try {
             Writer out = null;
