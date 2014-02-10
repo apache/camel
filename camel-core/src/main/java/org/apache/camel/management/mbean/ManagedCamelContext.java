@@ -408,8 +408,12 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
 
     public String componentParameterJsonSchema(String componentName) throws Exception {
         Component component = context.getComponent(componentName);
-        ComponentConfiguration configuration = component.createComponentConfiguration();
-        return configuration.createParameterJsonSchema();
+        if (component != null) {
+            ComponentConfiguration configuration = component.createComponentConfiguration();
+            return configuration.createParameterJsonSchema();
+        } else {
+            return null;
+        }
     }
 
     public void reset(boolean includeRoutes) throws Exception {
