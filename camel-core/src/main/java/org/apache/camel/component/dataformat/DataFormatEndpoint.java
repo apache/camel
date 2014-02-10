@@ -28,13 +28,18 @@ import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.processor.MarshalProcessor;
 import org.apache.camel.processor.UnmarshalProcessor;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
 import org.apache.camel.util.ServiceHelper;
 
+@UriEndpoint(scheme = "dataformat")
 public class DataFormatEndpoint extends DefaultEndpoint {
 
-    private DataFormat dataFormat;
     private MarshalProcessor marshal;
     private UnmarshalProcessor unmarshal;
+    @UriParam
+    private DataFormat dataFormat;
+    @UriParam
     private String operation;
 
     public DataFormatEndpoint() {

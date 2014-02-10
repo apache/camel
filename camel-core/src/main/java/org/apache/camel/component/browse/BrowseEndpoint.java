@@ -31,6 +31,7 @@ import org.apache.camel.processor.loadbalancer.LoadBalancer;
 import org.apache.camel.processor.loadbalancer.LoadBalancerConsumer;
 import org.apache.camel.processor.loadbalancer.TopicLoadBalancer;
 import org.apache.camel.spi.BrowsableEndpoint;
+import org.apache.camel.spi.UriEndpoint;
 
 /**
  * An endpoint which maintains a {@link List} of {@link Exchange} instances
@@ -38,7 +39,8 @@ import org.apache.camel.spi.BrowsableEndpoint;
  *
  * @version 
  */
-public class BrowseEndpoint extends DefaultEndpoint implements BrowsableEndpoint, Service {
+@UriEndpoint(scheme = "browse")
+public class BrowseEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
     private List<Exchange> exchanges;
     private final LoadBalancer loadBalancer = new TopicLoadBalancer();
 
