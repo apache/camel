@@ -33,7 +33,7 @@ public class TwitterComponent extends UriEndpointComponent {
     private String accessTokenSecret;
 
     public TwitterComponent() {
-        super(TwitterEndpoint.class);
+        super(TwitterEndpointEvent.class);
     }
 
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
