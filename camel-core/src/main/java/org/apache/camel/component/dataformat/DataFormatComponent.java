@@ -19,12 +19,17 @@ package org.apache.camel.component.dataformat;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.component.dataset.DataSetEndpoint;
+import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.util.EndpointHelper;
 import org.apache.camel.util.ObjectHelper;
 
-public class DataFormatComponent extends DefaultComponent {
+public class DataFormatComponent extends UriEndpointComponent {
+
+    public DataFormatComponent() {
+        super(DataSetEndpoint.class);
+    }
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
