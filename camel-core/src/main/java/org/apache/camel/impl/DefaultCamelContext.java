@@ -1032,7 +1032,11 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         String path = CamelContextHelper.COMPONENT_DOCUMENTATION_PREFIX + componentName + ".html";
         InputStream inputStream = getClassResolver().loadResourceAsStream(path);
         if (inputStream != null) {
-            return IOHelper.loadText(inputStream);
+            try {
+                return IOHelper.loadText(inputStream);
+            } finally {
+                IOHelper.close(inputStream);
+            }
         }
         return null;
     }
