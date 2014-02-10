@@ -21,7 +21,7 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
@@ -31,7 +31,11 @@ import org.apache.camel.util.UnsafeUriCharactersEncoder;
  *
  * @version 
  */
-public class TestComponent extends DefaultComponent {
+public class TestComponent extends UriEndpointComponent {
+
+    public TestComponent() {
+        super(TestEndpoint.class);
+    }
 
     public Endpoint createEndpoint(String uri) throws Exception {
         // lets not use the normal parameter handling so that all parameters are sent to the nested endpoint
