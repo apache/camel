@@ -35,11 +35,8 @@
             </filter>
         </route>
         <route>
-            <from uri="lazyQuickfix:example"/>
-            <filter>
-                <simple>${in.header.EventCategory} == 'AppMessageReceived'</simple>
-                <to uri="log:test"/>
-            </filter>
+            <from uri="vm:test"/>
+            <to uri="lazyQuickfix:example"/>
         </route>
     </camelContext>
 
@@ -60,7 +57,7 @@
         <property name="lazyCreateEngines" value="true" />
         <property name="configurations">
             <util:map>
-                <entry key="example" value-ref="quickfixjConfiguration"/>
+                <entry key="example" value-ref="lazyQuickfixjConfiguration"/>
             </util:map>
         </property>
         <property name="messageFactory">
@@ -96,5 +93,34 @@
         </property>
     </bean>
     <!-- END SNIPPET: e1 -->
+
+    <!-- lazy quickfix settings -->
+    <bean id="lazyQuickfixjConfiguration" class="org.apache.camel.component.quickfixj.QuickfixjConfiguration">
+        <property name="defaultSettings">
+            <util:map>
+                <entry key="SocketConnectProtocol" value="VM_PIPE"/>
+                <entry key="SocketAcceptProtocol" value="VM_PIPE"/>
+                <entry key="UseDataDictionary" value="N"/>
+            </util:map>
+        </property>
+        <property name="sessionSettings">
+            <util:map>
+                <entry key="FIX.4.2:INITIATOR->ACCEPTOR">
+                    <util:map>
+                        <entry key="ConnectionType" value="initiator"/>
+                        <entry key="SocketConnectHost" value="localhost"/>
+                        <entry key="SocketConnectPort" value="5001"/>
+                    </util:map>
+                </entry>
+                <entry key="FIX.4.2:ACCEPTOR->INITIATOR">
+                    <util:map>
+                        <entry key="ConnectionType" value="acceptor"/>
+                        <entry key="SocketAcceptPort" value="5001"/>
+                    </util:map>
+                </entry>
+            </util:map>
+        </property>
+    </bean>
+    <!-- END SNIPPET: e2 -->
 
 </beans>
