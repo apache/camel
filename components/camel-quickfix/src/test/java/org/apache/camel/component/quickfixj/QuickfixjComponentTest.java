@@ -168,6 +168,7 @@ public class QuickfixjComponentTest {
         Endpoint e1 = component.createEndpoint(getEndpointUri(settingsFile.getName(), null));
         assertThat(component.getProvisionalEngines().size(), is(1));
         assertThat(component.getProvisionalEngines().get(settingsFile.getName()), is(notNullValue()));
+        assertThat(component.getProvisionalEngines().get(settingsFile.getName()).isInitialized(), is(true));
         assertThat(component.getProvisionalEngines().get(settingsFile.getName()).isStarted(), is(false));
         assertThat(component.getEngines().size(), is(0));
         assertThat(((QuickfixjEndpoint)e1).getSessionID(), is(nullValue()));
@@ -178,6 +179,7 @@ public class QuickfixjComponentTest {
         Endpoint e2 = component.createEndpoint(getEndpointUri(settingsFile2.getName(), null));
         assertThat(component.getProvisionalEngines().size(), is(2));
         assertThat(component.getProvisionalEngines().get(settingsFile.getName()), is(notNullValue()));
+        assertThat(component.getProvisionalEngines().get(settingsFile.getName()).isInitialized(), is(true));
         assertThat(component.getProvisionalEngines().get(settingsFile.getName()).isStarted(), is(false));
         assertThat(component.getEngines().size(), is(0));
         assertThat(((QuickfixjEndpoint)e2).getSessionID(), is(nullValue()));
@@ -187,15 +189,16 @@ public class QuickfixjComponentTest {
 
         assertThat(component.getProvisionalEngines().size(), is(0));
         assertThat(component.getEngines().size(), is(2));
+        assertThat(component.getEngines().get(settingsFile.getName()).isInitialized(), is(true));
         assertThat(component.getEngines().get(settingsFile.getName()).isStarted(), is(true));
-        
+
         // Move these too an endpoint testcase if one exists
         assertThat(e1.isSingleton(), is(true));
         assertThat(((MultipleConsumersSupport)e1).isMultipleConsumersSupported(), is(true));
         assertThat(e2.isSingleton(), is(true));
         assertThat(((MultipleConsumersSupport)e2).isMultipleConsumersSupported(), is(true));
     }
-    
+
     @Test
     public void createEndpointAfterComponentStart() throws Exception {
         setUpComponent();
@@ -211,6 +214,7 @@ public class QuickfixjComponentTest {
         Endpoint e1 = component.createEndpoint(getEndpointUri(settingsFile.getName(), null));
         assertThat(component.getEngines().size(), is(1));
         assertThat(component.getEngines().get(settingsFile.getName()), is(notNullValue()));
+        assertThat(component.getEngines().get(settingsFile.getName()).isInitialized(), is(true));
         assertThat(component.getEngines().get(settingsFile.getName()).isStarted(), is(true));
         assertThat(component.getProvisionalEngines().size(), is(0));
         assertThat(((QuickfixjEndpoint)e1).getSessionID(), is(nullValue()));
@@ -218,9 +222,99 @@ public class QuickfixjComponentTest {
         Endpoint e2 = component.createEndpoint(getEndpointUri(settingsFile.getName(), sessionID));
         assertThat(component.getEngines().size(), is(1));
         assertThat(component.getEngines().get(settingsFile.getName()), is(notNullValue()));
+        assertThat(component.getEngines().get(settingsFile.getName()).isInitialized(), is(true));
         assertThat(component.getEngines().get(settingsFile.getName()).isStarted(), is(true));
         assertThat(component.getProvisionalEngines().size(), is(0));
         assertThat(((QuickfixjEndpoint)e2).getSessionID(), is(sessionID));
+    }
+
+    @Test
+    public void createEnginesLazily() throws Exception {
+        setUpComponent();
+        component.setLazyCreateEngines(true);
+
+        settings.setString(sessionID, SessionFactory.SETTING_CONNECTION_TYPE, SessionFactory.INITIATOR_CONNECTION_TYPE);
+        settings.setLong(sessionID, Initiator.SETTING_SOCKET_CONNECT_PORT, 1234);
+
+        writeSettings();
+
+        // start the component
+        camelContext.start();
+
+        QuickfixjEndpoint e1 = (QuickfixjEndpoint) component.createEndpoint(getEndpointUri(settingsFile.getName(), null));
+        assertThat(component.getEngines().size(), is(1));
+        assertThat(component.getProvisionalEngines().size(), is(0));
+        assertThat(component.getEngines().get(settingsFile.getName()), is(notNullValue()));
+        assertThat(component.getEngines().get(settingsFile.getName()).isInitialized(), is(false));
+        assertThat(component.getEngines().get(settingsFile.getName()).isStarted(), is(false));
+
+        e1.ensureInitialized();
+        assertThat(component.getEngines().get(settingsFile.getName()).isInitialized(), is(true));
+        assertThat(component.getEngines().get(settingsFile.getName()).isStarted(), is(true));
+    }
+
+    @Test
+    public void createEndpointsInNonLazyComponent() throws Exception {
+        setUpComponent();
+        // configuration will be done per endpoint
+        component.setLazyCreateEngines(false);
+
+        settings.setString(sessionID, SessionFactory.SETTING_CONNECTION_TYPE, SessionFactory.INITIATOR_CONNECTION_TYPE);
+        settings.setLong(sessionID, Initiator.SETTING_SOCKET_CONNECT_PORT, 1234);
+
+        writeSettings();
+
+        // will start the component
+        camelContext.start();
+
+        QuickfixjEndpoint e1 = (QuickfixjEndpoint) component.createEndpoint(getEndpointUri(settingsFile.getName(), null) + "?lazyCreateEngine=true");
+        assertThat(component.getEngines().get(settingsFile.getName()).isInitialized(), is(false));
+        assertThat(component.getEngines().get(settingsFile.getName()).isStarted(), is(false));
+        assertThat(component.getEngines().get(settingsFile.getName()).isLazy(), is(true));
+
+        e1.ensureInitialized();
+        assertThat(component.getEngines().get(settingsFile.getName()).isInitialized(), is(true));
+        assertThat(component.getEngines().get(settingsFile.getName()).isStarted(), is(true));
+
+        writeSettings(settings, false);
+
+        // will use connector's lazyCreateEngines setting 
+        component.createEndpoint(getEndpointUri(settingsFile2.getName(), sessionID));
+        assertThat(component.getEngines().get(settingsFile2.getName()).isInitialized(), is(true));
+        assertThat(component.getEngines().get(settingsFile2.getName()).isStarted(), is(true));
+        assertThat(component.getEngines().get(settingsFile2.getName()).isLazy(), is(false));
+    }
+
+    @Test
+    public void createEndpointsInLazyComponent() throws Exception {
+        setUpComponent();
+        component.setLazyCreateEngines(true);
+
+        settings.setString(sessionID, SessionFactory.SETTING_CONNECTION_TYPE, SessionFactory.INITIATOR_CONNECTION_TYPE);
+        settings.setLong(sessionID, Initiator.SETTING_SOCKET_CONNECT_PORT, 1234);
+
+        writeSettings();
+
+        // will start the component
+        camelContext.start();
+
+        // will use connector's lazyCreateEngines setting
+        QuickfixjEndpoint e1 = (QuickfixjEndpoint) component.createEndpoint(getEndpointUri(settingsFile.getName(), null));
+        assertThat(component.getEngines().get(settingsFile.getName()).isInitialized(), is(false));
+        assertThat(component.getEngines().get(settingsFile.getName()).isStarted(), is(false));
+        assertThat(component.getEngines().get(settingsFile.getName()).isLazy(), is(true));
+
+        e1.ensureInitialized();
+        assertThat(component.getEngines().get(settingsFile.getName()).isInitialized(), is(true));
+        assertThat(component.getEngines().get(settingsFile.getName()).isStarted(), is(true));
+
+        writeSettings(settings, false);
+
+        // will override connector's lazyCreateEngines setting
+        component.createEndpoint(getEndpointUri(settingsFile2.getName(), sessionID) + "&lazyCreateEngine=false");
+        assertThat(component.getEngines().get(settingsFile2.getName()).isInitialized(), is(true));
+        assertThat(component.getEngines().get(settingsFile2.getName()).isStarted(), is(true));
+        assertThat(component.getEngines().get(settingsFile2.getName()).isLazy(), is(false));
     }
 
     @Test
@@ -259,6 +353,8 @@ public class QuickfixjComponentTest {
         component.stop();
         
         assertThat(component.getEngines().get(settingsFile.getName()).isStarted(), is(false));
+        // it should still be initialized (ready to start again)
+        assertThat(component.getEngines().get(settingsFile.getName()).isInitialized(), is(true));
     }
 
     @Test
