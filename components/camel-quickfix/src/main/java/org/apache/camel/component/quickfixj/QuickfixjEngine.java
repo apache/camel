@@ -23,6 +23,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Set;
 import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.atomic.AtomicBoolean;
 
 import javax.management.JMException;
 import javax.management.ObjectName;
@@ -87,17 +88,20 @@ public class QuickfixjEngine extends ServiceSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(QuickfixjEngine.class);
 
-    private final Acceptor acceptor;
-    private final Initiator initiator;
-    private final JmxExporter jmxExporter;
-    private final MessageStoreFactory messageStoreFactory;
-    private final LogFactory sessionLogFactory;
-    private final MessageFactory messageFactory;
+    private Acceptor acceptor;
+    private Initiator initiator;
+    private JmxExporter jmxExporter;
+    private MessageStoreFactory messageStoreFactory;
+    private LogFactory sessionLogFactory;
+    private MessageFactory messageFactory;
     private final MessageCorrelator messageCorrelator = new MessageCorrelator();
     private List<QuickfixjEventListener> eventListeners = new CopyOnWriteArrayList<QuickfixjEventListener>();
     private final String uri;
     private ObjectName acceptorObjectName;
     private ObjectName initiatorObjectName;
+    private final SessionSettings settings;
+    private final AtomicBoolean initialized = new AtomicBoolean(false);
+    private boolean lazy;
 
     public enum ThreadModel {
         ThreadPerConnector, ThreadPerSession;
@@ -148,13 +152,48 @@ public class QuickfixjEngine extends ServiceSupport {
 
     public QuickfixjEngine(String uri, SessionSettings settings, MessageStoreFactory messageStoreFactoryOverride, LogFactory sessionLogFactoryOverride,
                            MessageFactory messageFactoryOverride) throws ConfigError, FieldConvertError, IOException, JMException {
+        this(uri, settings, messageStoreFactoryOverride, sessionLogFactoryOverride, messageFactoryOverride, false);
+    }
+
+    public QuickfixjEngine(String uri, SessionSettings settings, MessageStoreFactory messageStoreFactoryOverride, LogFactory sessionLogFactoryOverride,
+            MessageFactory messageFactoryOverride, boolean lazy) throws ConfigError, FieldConvertError, IOException, JMException {
         addEventListener(messageCorrelator);
 
         this.uri = uri;
-        
-        messageFactory = messageFactoryOverride != null ? messageFactoryOverride : new DefaultMessageFactory();
-        sessionLogFactory = sessionLogFactoryOverride != null ? sessionLogFactoryOverride : inferLogFactory(settings);
-        messageStoreFactory = messageStoreFactoryOverride != null ? messageStoreFactoryOverride : inferMessageStoreFactory(settings);
+        this.lazy = lazy;
+        this.settings = settings;
+
+        // overrides
+        if (messageFactoryOverride != null) {
+            messageFactory = messageFactoryOverride;
+        }
+        if (sessionLogFactoryOverride != null) {
+            sessionLogFactory = sessionLogFactoryOverride;
+        }
+        if (messageStoreFactoryOverride != null) {
+            messageStoreFactory = messageStoreFactoryOverride;
+        }
+
+        if (!lazy) {
+            initializeEngine();
+        }
+    }
+
+    /**
+     * Initializes the engine on demand. May be called immediately in constructor or when needed.
+     * If initializing later, it should be started afterwards.
+     */
+    void initializeEngine() throws ConfigError,
+            FieldConvertError, JMException {
+        if (messageFactory == null) {
+            messageFactory = new DefaultMessageFactory();
+        }
+        if (sessionLogFactory == null) {
+            sessionLogFactory = inferLogFactory(settings);
+        }
+        if (messageStoreFactory == null) {
+            messageStoreFactory = inferMessageStoreFactory(settings);
+        }
 
         // Set default session schedule if not specified in configuration
         if (!settings.isSetting(Session.SETTING_START_TIME)) {
@@ -208,9 +247,10 @@ public class QuickfixjEngine extends ServiceSupport {
         } finally {
             Thread.currentThread().setContextClassLoader(ccl);
         }
+        initialized.set(true);
     }
 
-    private static SessionSettings loadSettings(String settingsResourceName) throws ConfigError {
+    static SessionSettings loadSettings(String settingsResourceName) throws ConfigError {
         InputStream inputStream = ObjectHelper.loadResourceAsStream(settingsResourceName);
         if (inputStream == null) {
             throw new IllegalArgumentException("Could not load " + settingsResourceName);
@@ -505,6 +545,14 @@ public class QuickfixjEngine extends ServiceSupport {
 
     public MessageCorrelator getMessageCorrelator() {
         return messageCorrelator;
+    }
+
+    public boolean isInitialized() {
+        return this.initialized.get();
+    }
+
+    public boolean isLazy() {
+        return this.lazy;
     }
 
     // For Testing
