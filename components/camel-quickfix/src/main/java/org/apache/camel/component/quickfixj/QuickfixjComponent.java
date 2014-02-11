@@ -45,7 +45,7 @@ public class QuickfixjComponent extends DefaultComponent implements StartupListe
     private LogFactory logFactory;
     private MessageFactory messageFactory;
     private Map<String, QuickfixjConfiguration> configurations = new HashMap<String, QuickfixjConfiguration>();
-    private boolean lazyCreateEngines = false;
+    private boolean lazyCreateEngines;
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
@@ -68,8 +68,9 @@ public class QuickfixjComponent extends DefaultComponent implements StartupListe
                         settings = QuickfixjEngine.loadSettings(remaining);
                     }
                     Boolean lazyCreateEngineForEndpoint = super.getAndRemoveParameter(parameters, PARAMETER_LAZY_CREATE_ENGINE, Boolean.TYPE);
-                    if (lazyCreateEngineForEndpoint == null)
+                    if (lazyCreateEngineForEndpoint == null) {
                         lazyCreateEngineForEndpoint = isLazyCreateEngines();
+                    }
                     engine = new QuickfixjEngine(uri, settings, messageStoreFactory, logFactory, messageFactory,
                             lazyCreateEngineForEndpoint);
 

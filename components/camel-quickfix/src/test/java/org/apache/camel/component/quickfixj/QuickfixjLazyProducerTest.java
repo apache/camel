@@ -16,9 +16,6 @@
  */
 package org.apache.camel.component.quickfixj;
 
-import static org.hamcrest.CoreMatchers.*;
-import static org.junit.Assert.*;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.junit.Before;
@@ -33,6 +30,9 @@ import quickfix.SessionID;
 import quickfix.field.BeginString;
 import quickfix.field.SenderCompID;
 import quickfix.field.TargetCompID;
+
+import static org.hamcrest.CoreMatchers.*;
+import static org.junit.Assert.*;
 
 public class QuickfixjLazyProducerTest {
     private Exchange mockExchange;
