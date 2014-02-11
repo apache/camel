@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.quickfixj;
 
-import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
@@ -37,7 +36,7 @@ import quickfix.field.TargetCompID;
 public class QuickfixjConsumerTest {
     private Exchange mockExchange;
     private Processor mockProcessor;
-    private Endpoint mockEndpoint;
+    private QuickfixjEndpoint mockEndpoint;
     private Message inboundFixMessage;
     
     @Before
@@ -54,7 +53,7 @@ public class QuickfixjConsumerTest {
         Mockito.when(mockCamelMessage.getBody(quickfix.Message.class)).thenReturn(inboundFixMessage);
         
         mockProcessor = Mockito.mock(Processor.class);        
-        mockEndpoint = Mockito.mock(Endpoint.class);
+        mockEndpoint = Mockito.mock(QuickfixjEndpoint.class);
         Mockito.when(mockEndpoint.createExchange(ExchangePattern.InOnly)).thenReturn(mockExchange);  
     }
     
@@ -71,6 +70,7 @@ public class QuickfixjConsumerTest {
         Mockito.verifyZeroInteractions(mockProcessor);
         
         consumer.start();
+        Mockito.verify(mockEndpoint).ensureInitialized();
         Assert.assertThat(consumer.isStarted(), CoreMatchers.is(true));
         
         consumer.onExchange(mockExchange);
