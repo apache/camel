@@ -30,7 +30,7 @@ import org.apache.camel.util.ServiceHelper;
 public class CacheComponent extends DefaultComponent {
     private CacheConfiguration configuration;
     private CacheManagerFactory cacheManagerFactory;
-    private String configurationFile = "classpath:ehcache.xml";
+    private String configurationFile;
     
     public CacheComponent() {
         configuration = new CacheConfiguration();
