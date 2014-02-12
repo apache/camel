@@ -94,6 +94,18 @@ public class PGPDataFormat extends ServiceSupport implements DataFormat {
     public static final String SIGNATURE_HASH_ALGORITHM = "CamelPGPDataFormatSignatureHashAlgorithm";
     public static final String COMPRESSION_ALGORITHM = "CamelPGPDataFormatCompressionAlgorithm";
 
+    /**
+     * During encryption the number of asymmectirc encryption keys is set to
+     * this header parameter. The Value is of type Integer.
+     */
+    public static final String NUMBER_OF_ENCRYPTION_KEYS = "CamelPGPDataFormatNumberOfEncryptionKeys";
+    /**
+     * During signing the number of signing keys is set to this header
+     * parameter. This corresponds to the number of signatures. The Value is of
+     * type Integer.
+     */
+    public static final String NUMBER_OF_SIGNING_KEYS = "CamelPGPDataFormatNumberOfSigningKeys";
+
     private static final Logger LOG = LoggerFactory.getLogger(PGPDataFormat.class);
 
     private static final String BC = "BC";
@@ -210,6 +222,7 @@ public class PGPDataFormat extends ServiceSupport implements DataFormat {
             throw new IllegalArgumentException("Cannot PGP encrypt message. No public encryption key found for the User Ids " + userids
                     + " in the public keyring. Either specify other User IDs or add correct public keys to the keyring.");
         }
+        exchange.getOut().setHeader(NUMBER_OF_ENCRYPTION_KEYS, Integer.valueOf(keys.size()));
 
         InputStream input = ExchangeHelper.convertToMandatoryType(exchange, InputStream.class, graph);
 
@@ -324,6 +337,8 @@ public class PGPDataFormat extends ServiceSupport implements DataFormat {
         List<PGPSecretKeyAndPrivateKeyAndUserId> sigSecretKeysWithPrivateKeyAndUserId = determineSecretKeysWithPrivateKeyAndUserId(
                 exchange, sigKeyFileName, sigKeyUserids, sigKeyPassword, sigKeyRing);
 
+        exchange.getOut().setHeader(NUMBER_OF_SIGNING_KEYS, Integer.valueOf(sigSecretKeysWithPrivateKeyAndUserId.size()));
+
         List<PGPSignatureGenerator> sigGens = new ArrayList<PGPSignatureGenerator>();
         for (PGPSecretKeyAndPrivateKeyAndUserId sigSecretKeyWithPrivateKeyAndUserId : sigSecretKeysWithPrivateKeyAndUserId) {
             PGPPrivateKey sigPrivateKey = sigSecretKeyWithPrivateKeyAndUserId.getPrivateKey();
@@ -341,6 +356,7 @@ public class PGPDataFormat extends ServiceSupport implements DataFormat {
         }
         return sigGens;
     }
+
 
     public List<PGPSecretKeyAndPrivateKeyAndUserId> determineSecretKeysWithPrivateKeyAndUserId(Exchange exchange, String sigKeyFileName,
             List<String> sigKeyUserids, String sigKeyPassword, byte[] sigKeyRing) throws IOException, PGPException, NoSuchProviderException {
