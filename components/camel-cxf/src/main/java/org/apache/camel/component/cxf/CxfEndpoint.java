@@ -76,6 +76,7 @@ import org.apache.cxf.endpoint.Client;
 import org.apache.cxf.endpoint.ClientImpl;
 import org.apache.cxf.endpoint.Endpoint;
 import org.apache.cxf.feature.AbstractFeature;
+import org.apache.cxf.feature.Feature;
 import org.apache.cxf.feature.LoggingFeature;
 import org.apache.cxf.frontend.ClientFactoryBean;
 import org.apache.cxf.frontend.ServerFactoryBean;
@@ -146,7 +147,7 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     private List<Interceptor<? extends Message>> out = new ModCountCopyOnWriteArrayList<Interceptor<? extends Message>>();
     private List<Interceptor<? extends Message>> outFault = new ModCountCopyOnWriteArrayList<Interceptor<? extends Message>>();
     private List<Interceptor<? extends Message>> inFault = new ModCountCopyOnWriteArrayList<Interceptor<? extends Message>>();
-    private List<AbstractFeature> features = new ModCountCopyOnWriteArrayList<AbstractFeature>();
+    private List<Feature> features = new ModCountCopyOnWriteArrayList<Feature>();
 
     @SuppressWarnings("rawtypes")
     private List<Handler> handlers;
@@ -1092,11 +1093,11 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         outFault = interceptors;
     }
     
-    public void setFeatures(List<AbstractFeature> f) {
+    public void setFeatures(List<Feature> f) {
         features = f;
     }
 
-    public List<AbstractFeature> getFeatures() {
+    public List<Feature> getFeatures() {
         return features;
     }
     
