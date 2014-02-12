@@ -27,12 +27,14 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.Message;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.util.IOHelper;
 import org.bouncycastle.bcpg.CompressionAlgorithmTags;
 import org.bouncycastle.bcpg.HashAlgorithmTags;
 import org.bouncycastle.bcpg.SymmetricKeyAlgorithmTags;
+import org.bouncycastle.bcpg.sig.KeyFlags;
 import org.junit.Test;
 
 public class PGPDataFormatTest extends AbstractPGPDataFormatTest {
@@ -120,7 +122,7 @@ public class PGPDataFormatTest extends AbstractPGPDataFormatTest {
     public void testSeveralSignerKeys() throws Exception {
         doRoundTripEncryptionTests("direct:several-signer-keys");
     }
-    
+
     @Test
     public void testOneUserIdWithServeralKeys() throws Exception {
         doRoundTripEncryptionTests("direct:one-userid-several-keys");
@@ -142,7 +144,6 @@ public class PGPDataFormatTest extends AbstractPGPDataFormatTest {
         assertTrue(e.getMessage().contains("No public key found fitting to the signature key Id"));
 
     }
-    
 
     @Test
     public void testVerifyExceptionNoPassphraseSpecifiedForSignatureKeyUserId() throws Exception {
@@ -163,11 +164,35 @@ public class PGPDataFormatTest extends AbstractPGPDataFormatTest {
         assertTrue(e.getMessage().contains("No passphrase specified for signature key user ID"));
 
     }
-    
- 
 
-    protected RouteBuilder createRouteBuilder() {
-        return new RouteBuilder() {
+    /**
+     * You get three keys with the UserId "keyflag", a primary key and its two
+     * sub-keys. The sub-key with KeyFlag {@link KeyFlags#SIGN_DATA} should be
+     * used for signing and the sub-key with KeyFlag
+     * {@link KeyFlags#ENCRYPT_COMMS} or {@link KeyFlags#ENCRYPT_COMMS} or
+     * {@link KeyFlags#ENCRYPT_STORAGE} should be used for decryption.
+     * 
+     * @throws Exception
+     */
+    @Test
+    public void testKeyFlagSelectsCorrectKey() throws Exception {
+        MockEndpoint mockKeyFlag = getMockEndpoint("mock:encrypted_keyflag");
+        mockKeyFlag.setExpectedMessageCount(1);
+        template.sendBody("direct:keyflag", "Test Message");
+        assertMockEndpointsSatisfied();
+
+        List<Exchange> exchanges = mockKeyFlag.getExchanges();
+        assertEquals(1, exchanges.size());
+        Exchange exchange = exchanges.get(0);
+        Message inMess = exchange.getIn();
+        assertNotNull(inMess);
+        // must contain exactly one encryption key and one signature
+        assertEquals(1, inMess.getHeader(PGPDataFormat.NUMBER_OF_ENCRYPTION_KEYS));
+        assertEquals(1, inMess.getHeader(PGPDataFormat.NUMBER_OF_SIGNING_KEYS));
+    }
+
+    protected RouteBuilder[] createRouteBuilders() {
+        return new RouteBuilder[] {new RouteBuilder() {
             public void configure() throws Exception {
 
                 onException(IllegalArgumentException.class).handled(true).to("mock:exception");
@@ -231,7 +256,7 @@ public class PGPDataFormatTest extends AbstractPGPDataFormatTest {
 
                 // test verifying exception, no public key found corresponding to signature key userIds
                 from("direct:verify_exception_sig_userids").marshal(pgpSignAndEncrypt).to("mock:encrypted")
-                        .setHeader(PGPDataFormat.SIGNATURE_KEY_USERIDS).constant(Arrays.asList(new String[] {"wrong1", "wrong2"}))
+                        .setHeader(PGPDataFormat.SIGNATURE_KEY_USERIDS).constant(Arrays.asList(new String[] {"wrong1", "wrong2" }))
                         .setHeader(PGPDataFormat.SIGNATURE_KEY_USERID).constant("wrongUserID").unmarshal(pgpVerifyAndDecrypt)
                         .to("mock:unencrypted");
 
@@ -349,9 +374,23 @@ public class PGPDataFormatTest extends AbstractPGPDataFormatTest {
                         // only specify one expected signature key, to check the second signature
                         .setHeader(PGPDataFormat.SIGNATURE_KEY_USERID).constant("Third (comment third) <email@third.com>")
                         .unmarshal(pgpVerifyAndDecryptOneUserIdWithServeralKeys).to("mock:unencrypted");
+
             }
 
-        };
+        }, new RouteBuilder() {
+            public void configure() throws Exception {
+                // keyflag test
+                PGPDataFormat pgpKeyFlag = new PGPDataFormat();
+                // the following keyring contains a primary key with KeyFlag "Certify" and a subkey for signing and a subkey for encryption
+                pgpKeyFlag.setKeyFileName("org/apache/camel/component/crypto/pubringSubKeys.gpg");
+                pgpKeyFlag.setSignatureKeyFileName("org/apache/camel/component/crypto/secringSubKeys.gpg");
+                pgpKeyFlag.setSignaturePassword("Abcd1234");
+                pgpKeyFlag.setKeyUserid("keyflag");
+                pgpKeyFlag.setSignatureKeyUserid("keyflag");
+
+                from("direct:keyflag").marshal(pgpKeyFlag).to("mock:encrypted_keyflag");
+            }
+        } };
     }
 
     public static byte[] getPublicKeyRing() throws Exception {
