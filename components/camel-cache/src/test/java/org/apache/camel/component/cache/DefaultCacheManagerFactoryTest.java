@@ -24,13 +24,14 @@ import net.sf.ehcache.config.ConfigurationFactory;
 import org.junit.Assert;
 import org.junit.Test;
 
+import static org.hamcrest.CoreMatchers.*;
+
 /**
  * 
  */
 public class DefaultCacheManagerFactoryTest extends Assert {
 
     @Test
-    
     public void testEHCacheCompatiblity() throws Exception {
         // get the default cache manager
         CacheManagerFactory factory = new DefaultCacheManagerFactory();
@@ -56,4 +57,22 @@ public class DefaultCacheManagerFactoryTest extends Assert {
         // the default cache manger is shutdown
         assertEquals(Status.STATUS_SHUTDOWN, manager.getStatus());
     }
+
+    @Test
+    public void testNoProvidedConfiguration() throws Exception {
+        CacheManagerFactory factory = new DefaultCacheManagerFactory(getClass().getResourceAsStream("/ehcache.xml"));
+        CacheManager manager = factory.getInstance();
+        // CAMEL-7195
+        assertThat("There should be no peer providers configured", manager.getCacheManagerPeerProviders().size(), is(0));
+        assertThat("There should be no /ehcache.xml resource by default", getClass().getResourceAsStream("/ehcache.xml"), nullValue());
+    }
+
+    @Test
+    public void testFailSafeEHCacheManager() throws Exception {
+        CacheManagerFactory factory1 = new DefaultCacheManagerFactory(null);
+        CacheManagerFactory factory2 = new DefaultCacheManagerFactory();
+        assertSame("The cache managers should be the same, loaded from fallback ehcache config",
+            factory1.getInstance(), factory2.getInstance());
+    }
+
 }

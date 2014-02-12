@@ -36,7 +36,8 @@ public class DefaultCacheManagerFactory extends CacheManagerFactory {
     @Override
     protected CacheManager createCacheManagerInstance() {
         if (is == null) {
-            is = getClass().getResourceAsStream("/ehcache.xml");
+            // it will still look for "/ehcache.xml" before defaulting to "/ehcache-failsafe.xml"
+            return EHCacheUtil.createCacheManager();
         }
         return EHCacheUtil.createCacheManager(is);
     }
