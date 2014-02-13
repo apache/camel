@@ -19,26 +19,36 @@ package org.apache.camel.component.cache;
 import java.io.InputStream;
 
 import net.sf.ehcache.CacheManager;
+
+import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.util.IOHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class DefaultCacheManagerFactory extends CacheManagerFactory {
+    private static final Logger LOG = LoggerFactory.getLogger(DefaultCacheManagerFactory.class);
 
     private InputStream is;
 
+    private String configurationFile;
+
     public DefaultCacheManagerFactory() {
-        this(null);
+        this(null, null);
     }
 
-    public DefaultCacheManagerFactory(InputStream is) {
+    public DefaultCacheManagerFactory(InputStream is, String configurationFile) {
         this.is = is;
+        this.configurationFile = configurationFile;
     }
 
     @Override
     protected CacheManager createCacheManagerInstance() {
         if (is == null) {
             // it will still look for "/ehcache.xml" before defaulting to "/ehcache-failsafe.xml"
+            LOG.info("Creating CacheManager using Ehcache defaults");
             return EHCacheUtil.createCacheManager();
         }
+        LOG.info("Creating CacheManager using camel-cache configuration: {}", configurationFile);
         return EHCacheUtil.createCacheManager(is);
     }
 

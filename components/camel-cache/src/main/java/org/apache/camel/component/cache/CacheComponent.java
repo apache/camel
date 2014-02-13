@@ -99,7 +99,7 @@ public class CacheComponent extends DefaultComponent {
             if (configurationFile != null) {
                 is = ResourceHelper.resolveMandatoryResourceAsInputStream(getCamelContext().getClassResolver(), configurationFile);
             }
-            cacheManagerFactory = new DefaultCacheManagerFactory(is);
+            cacheManagerFactory = new DefaultCacheManagerFactory(is, configurationFile);
         }
         ServiceHelper.startService(cacheManagerFactory);
     }
