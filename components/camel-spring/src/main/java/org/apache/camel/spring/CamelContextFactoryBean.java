@@ -105,6 +105,8 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
     @XmlAttribute(required = false)
     private String useBreadcrumb;
     @XmlAttribute(required = false)
+    private String allowUseOriginalMessage;
+    @XmlAttribute(required = false)
     private String managementNamePattern;
     @XmlAttribute(required = false)
     private String threadNamePattern;
@@ -546,6 +548,14 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
 
     public void setUseBreadcrumb(String useBreadcrumb) {
         this.useBreadcrumb = useBreadcrumb;
+    }
+
+    public String getAllowUseOriginalMessage() {
+        return allowUseOriginalMessage;
+    }
+
+    public void setAllowUseOriginalMessage(String allowUseOriginalMessage) {
+        this.allowUseOriginalMessage = allowUseOriginalMessage;
     }
 
     public String getManagementNamePattern() {

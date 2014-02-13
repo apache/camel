@@ -185,6 +185,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     private Boolean typeConverterStatisticsEnabled = Boolean.FALSE;
     private Boolean useMDCLogging = Boolean.FALSE;
     private Boolean useBreadcrumb = Boolean.TRUE;
+    private Boolean allowUseOriginalMessage = Boolean.TRUE;
     private Long delay;
     private ErrorHandlerFactory errorHandlerBuilder;
     private final Object errorHandlerExecutorServiceLock = new Object();
@@ -1701,6 +1702,12 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                 }
             }
         }
+
+        if (isAllowUseOriginalMessage()) {
+            log.info("AllowUseOriginalMessage is enabled. If access to the original message is not needed,"
+                    + " then its recommended to turn this option off as it may improve performance.");
+        }
+
         if (streamCachingInUse) {
             // stream caching is in use so enable the strategy
             getStreamCachingStrategy().setEnabled(true);
@@ -2640,6 +2647,14 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
 
     public void setShutdownRunningTask(ShutdownRunningTask shutdownRunningTask) {
         this.shutdownRunningTask = shutdownRunningTask;
+    }
+
+    public void setAllowUseOriginalMessage(Boolean allowUseOriginalMessage) {
+        this.allowUseOriginalMessage = allowUseOriginalMessage;
+    }
+
+    public Boolean isAllowUseOriginalMessage() {
+        return allowUseOriginalMessage != null && allowUseOriginalMessage;
     }
 
     public ExecutorServiceManager getExecutorServiceManager() {
