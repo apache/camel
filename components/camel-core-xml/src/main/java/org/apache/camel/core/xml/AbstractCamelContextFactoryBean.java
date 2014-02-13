@@ -569,6 +569,8 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
 
     public abstract String getUseBreadcrumb();
 
+    public abstract String getAllowUseOriginalMessage();
+
     public abstract String getManagementNamePattern();
 
     public abstract String getThreadNamePattern();
@@ -641,6 +643,9 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         }
         if (getUseBreadcrumb() != null) {
             ctx.setUseBreadcrumb(CamelContextHelper.parseBoolean(getContext(), getUseBreadcrumb()));
+        }
+        if (getAllowUseOriginalMessage() != null) {
+            ctx.setAllowUseOriginalMessage(CamelContextHelper.parseBoolean(getContext(), getAllowUseOriginalMessage()));
         }
         if (getManagementNamePattern() != null) {
             ctx.getManagementNameStrategy().setNamePattern(getManagementNamePattern());

@@ -182,6 +182,22 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
         return String.format("%.2f", load.getLoad15());
     }
 
+    public boolean isUseBreadcrumb() {
+        return context.isUseBreadcrumb();
+    }
+
+    public boolean isAllowUseOriginalMessage() {
+        return context.isAllowUseOriginalMessage();
+    }
+
+    public boolean isMessageHistory() {
+        return context.isMessageHistory();
+    }
+
+    public boolean isUseMDCLogging() {
+        return context.isUseMDCLogging();
+    }
+
     public void onTimer() {
         load.update(getInflightExchanges());
     }

@@ -119,6 +119,18 @@ public interface ManagedCamelContextMBean extends ManagedPerformanceCounterMBean
     @ManagedAttribute(description = "Average load over the last fifteen minutes")
     String getLoad15();
 
+    @ManagedAttribute(description = "Whether breadcrumbs is in use")
+    boolean isUseBreadcrumb();
+
+    @ManagedAttribute(description = "Whether allowing access to the original message during routing")
+    boolean isAllowUseOriginalMessage();
+
+    @ManagedAttribute(description = "Whether message history is enabled")
+    boolean isMessageHistory();
+
+    @ManagedAttribute(description = "Whether MDC logging is supported")
+    boolean isUseMDCLogging();
+
     @ManagedOperation(description = "Start Camel")
     void start() throws Exception;
 

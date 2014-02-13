@@ -80,10 +80,10 @@ public interface UnitOfWork extends Service {
     /**
      * Gets the original IN {@link Message} this Unit of Work was started with.
      * <p/>
-     * <b>Important: </b> This is subject for change in a later Camel release, where we plan to only
-     * support getting the original IN message if you have enabled this option explicit.
+     * The original message is only returned if the option {@link org.apache.camel.RuntimeConfiguration#isAllowUseOriginalMessage()}
+     * is enabled. If its disabled, then <tt>null</tt> is returned.
      *
-     * @return the original IN {@link Message}, may return <tt>null</tt> in a later Camel release (see important note).
+     * @return the original IN {@link Message}, or <tt>null</tt> if using original message is disabled.
      */
     Message getOriginalInMessage();
 
