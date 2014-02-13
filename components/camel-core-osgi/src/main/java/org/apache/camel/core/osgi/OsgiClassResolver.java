@@ -20,9 +20,11 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.Enumeration;
+import java.util.Vector;
 
 import org.apache.camel.impl.DefaultClassResolver;
 import org.apache.camel.util.CastUtils;
+import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.BundleContext;
@@ -38,7 +40,8 @@ public class OsgiClassResolver extends DefaultClassResolver {
     public OsgiClassResolver(BundleContext context) {
         this.bundleContext = context;
     }
-    
+
+    @Override
     public Class<?> resolveClass(String name) {
         LOG.trace("Resolve class {}", name);
         name = ObjectHelper.normalizeClassName(name);
@@ -50,10 +53,12 @@ public class OsgiClassResolver extends DefaultClassResolver {
         return clazz;
     }
 
+    @Override
     public <T> Class<T> resolveClass(String name, Class<T> type) {
         return CastUtils.cast(resolveClass(name));
     }
 
+    @Override
     public InputStream loadResourceAsStream(String uri) {
         ObjectHelper.notEmpty(uri, "uri");
         URL url = loadResourceAsURL(uri);
@@ -68,6 +73,7 @@ public class OsgiClassResolver extends DefaultClassResolver {
         return answer;
     }
 
+    @Override
     public URL loadResourceAsURL(String uri) {
         ObjectHelper.notEmpty(uri, "uri");
         return bundleContext.getBundle().getResource(uri);
@@ -81,6 +87,35 @@ public class OsgiClassResolver extends DefaultClassResolver {
         } catch (IOException e) {
             throw new RuntimeException("Cannot load resource: " + uri, e);
         }
+    }
+
+    @Override
+    public Enumeration<URL> loadAllResourcesAsURL(String uri) {
+        ObjectHelper.notEmpty(uri, "uri");
+        Vector<URL> answer = new Vector<URL>();
+
+        try {
+            Enumeration<URL> e = bundleContext.getBundle().getResources(uri);
+            while (e != null && e.hasMoreElements()) {
+                answer.add(e.nextElement());
+            }
+
+            String path = FileUtil.onlyPath(uri);
+            String name = FileUtil.stripPath(uri);
+            if (path != null && name != null) {
+                for (Bundle bundle : bundleContext.getBundles()) {
+                    LOG.trace("Finding all entries in path: {} with pattern: {}", path, name);
+                    e = bundle.findEntries(path, name, false);
+                    while (e != null && e.hasMoreElements()) {
+                        answer.add(e.nextElement());
+                    }
+                }
+            }
+        } catch (IOException e) {
+            throw new RuntimeException("Cannot load resource: " + uri, e);
+        }
+
+        return answer.elements();
     }
 
     protected Class<?> doLoadClass(String name, Bundle loader) {

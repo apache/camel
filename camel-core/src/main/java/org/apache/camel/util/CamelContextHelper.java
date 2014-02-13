@@ -35,7 +35,10 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.NoSuchEndpointException;
+import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.RouteStartupOrder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.util.ObjectHelper.isEmpty;
 import static org.apache.camel.util.ObjectHelper.isNotEmpty;
@@ -50,6 +53,8 @@ public final class CamelContextHelper {
     public static final String COMPONENT_BASE = "META-INF/services/org/apache/camel/component/";
     public static final String COMPONENT_DESCRIPTOR = "META-INF/services/org/apache/camel/component.properties";
     public static final String COMPONENT_DOCUMENTATION_PREFIX = "org/apache/camel/component/";
+
+    private static final Logger LOG = LoggerFactory.getLogger(CamelContextHelper.class);
 
     /**
      * Utility classes should not have a public constructor.
@@ -359,7 +364,9 @@ public final class CamelContextHelper {
      * and from the {@link org.apache.camel.spi.Registry}.
      */
     public static SortedMap<String, Properties> findComponents(CamelContext camelContext) throws LoadPropertiesException {
-        Enumeration<URL> iter = camelContext.getClassResolver().loadResourcesAsURL(COMPONENT_DESCRIPTOR);
+        ClassResolver resolver = camelContext.getClassResolver();
+        LOG.info("Finding all components using class resolver: {} -> {}", new Object[]{resolver});
+        Enumeration<URL> iter = resolver.loadAllResourcesAsURL(COMPONENT_DESCRIPTOR);
         return findComponents(camelContext, iter);
     }
 
@@ -369,6 +376,7 @@ public final class CamelContextHelper {
         SortedMap<String, Properties> map = new TreeMap<String, Properties>();
         while (componentDescriptionIter != null && componentDescriptionIter.hasMoreElements()) {
             URL url = componentDescriptionIter.nextElement();
+            LOG.info("Finding components in url: {}", url);
             try {
                 Properties properties = new Properties();
                 properties.load(url.openStream());
@@ -382,7 +390,11 @@ public final class CamelContextHelper {
                         String className = null;
                         InputStream is = null;
                         try {
-                            is = camelContext.getClassResolver().loadResourceAsStream(COMPONENT_BASE + name);
+                            // now load the component name resource so we can grab its properties and the class name
+                            Enumeration<URL> urls = camelContext.getClassResolver().loadAllResourcesAsURL(COMPONENT_BASE + name);
+                            if (urls != null && urls.hasMoreElements()) {
+                                is = urls.nextElement().openStream();
+                            }
                             if (is != null) {
                                 Properties compProperties = new Properties();
                                 compProperties.load(is);
