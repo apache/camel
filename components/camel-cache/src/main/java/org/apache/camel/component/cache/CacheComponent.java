@@ -30,7 +30,7 @@ import org.apache.camel.util.ServiceHelper;
 public class CacheComponent extends DefaultComponent {
     private CacheConfiguration configuration;
     private CacheManagerFactory cacheManagerFactory;
-    private String configurationFile = "classpath:ehcache.xml";
+    private String configurationFile;
     
     public CacheComponent() {
         configuration = new CacheConfiguration();
@@ -99,7 +99,7 @@ public class CacheComponent extends DefaultComponent {
             if (configurationFile != null) {
                 is = ResourceHelper.resolveMandatoryResourceAsInputStream(getCamelContext().getClassResolver(), configurationFile);
             }
-            cacheManagerFactory = new DefaultCacheManagerFactory(is);
+            cacheManagerFactory = new DefaultCacheManagerFactory(is, configurationFile);
         }
         ServiceHelper.startService(cacheManagerFactory);
     }
