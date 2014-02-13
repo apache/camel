@@ -33,6 +33,11 @@ import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.component.cxf.jaxrs.testbean.Customer;
 import org.apache.camel.test.spring.CamelSpringTestSupport;
 import org.apache.camel.util.CastUtils;
+import org.apache.cxf.Bus;
+import org.apache.cxf.endpoint.Client;
+import org.apache.cxf.endpoint.Server;
+import org.apache.cxf.feature.Feature;
+import org.apache.cxf.interceptor.InterceptorProvider;
 import org.junit.Test;
 import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
@@ -70,7 +75,7 @@ public class CxfRsProducerTest extends CamelSpringTestSupport {
     }
     
     @Test
-    public void testGetCostumerWithClientProxyAPI() {
+    public void testGetCustomerWithClientProxyAPI() {
         // START SNIPPET: ProxyExample
         Exchange exchange = template.send("direct://proxy", new Processor() {
             public void process(Exchange exchange) throws Exception {
@@ -101,7 +106,7 @@ public class CxfRsProducerTest extends CamelSpringTestSupport {
     }
     
     @Test
-    public void testGetCostumersWithClientProxyAPI() {
+    public void testGetCustomersWithClientProxyAPI() {
         Exchange exchange = template.send("direct://proxy", new Processor() {
             public void process(Exchange exchange) throws Exception {
                 exchange.setPattern(ExchangePattern.InOut);
@@ -127,7 +132,7 @@ public class CxfRsProducerTest extends CamelSpringTestSupport {
     }
     
     @Test
-    public void testGetCostumerWithHttpCentralClientAPI() {
+    public void testGetCustomerWithHttpCentralClientAPI() {
      // START SNIPPET: HttpExample
         Exchange exchange = template.send("direct://http", new Processor() {
             public void process(Exchange exchange) throws Exception {
@@ -188,7 +193,7 @@ public class CxfRsProducerTest extends CamelSpringTestSupport {
     }
     
     @Test
-    public void testGetCustumerWithCxfRsEndpoint() {
+    public void testGetCustomerWithCxfRsEndpoint() {
         Exchange exchange 
             = template.send("cxfrs://http://localhost:" + getPort1() + "/" + getClass().getSimpleName() + "/?httpClientAPI=true", new Processor() {
                 public void process(Exchange exchange) throws Exception {
@@ -375,6 +380,36 @@ public class CxfRsProducerTest extends CamelSpringTestSupport {
 
         assertNotNull(response);
         assertTrue(response.endsWith("<name>Donald Duck</name></Customer>"));
+    }
+    
+    static class TestFeature implements Feature {
+        boolean initialized;
+        @Override
+        public void initialize(InterceptorProvider interceptorProvider, Bus bus) {
+            initialized = true;
+        }
+        @Override
+        public void initialize(Client client, Bus bus) {
+            //Do nothing
+        }
+        @Override
+        public void initialize(Server server, Bus bus) {
+            //Do nothing
+        }
+        @Override
+        public void initialize(Bus bus) {
+            //Do nothing
+        }
+    };
+
+    @Test
+    public void testProducerWithFeature() {
+        TestFeature feature = context().getRegistry().lookupByNameAndType("testFeature", TestFeature.class);
+        
+        template.requestBodyAndHeader("cxfrs:http://localhost:" + getPort1() + "/" + getClass().getSimpleName() + "/customerservice/customers/123?features=#myFeatures",
+                null, Exchange.HTTP_METHOD, "GET", String.class);
+
+        assertTrue("The feature should be initialized", feature.initialized);
     }
 
 }
