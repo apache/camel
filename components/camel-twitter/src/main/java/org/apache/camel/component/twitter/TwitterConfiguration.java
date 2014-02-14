@@ -117,7 +117,7 @@ public class TwitterConfiguration {
      * Number of page to iterate before stop (default is 1)
      */
     @UriParam
-    private Integer numberOfPages = new Integer(1);
+    private Integer numberOfPages = 1;
     
     @UriParam
     private String httpProxyHost;
@@ -344,7 +344,7 @@ public class TwitterConfiguration {
         return count;
     }
 
-    public void setCount(int count) {
+    public void setCount(Integer count) {
         this.count = count;
     }
 
