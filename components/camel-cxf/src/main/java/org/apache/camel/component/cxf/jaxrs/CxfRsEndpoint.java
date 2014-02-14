@@ -198,7 +198,7 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
         }
         // setup the features
         if (!getFeatures().isEmpty()) {
-            for (Feature feature: getFeatures()) {
+            for (Feature feature : getFeatures()) {
                 sfb.getFeatures().add(feature);
             }
         }
