@@ -41,6 +41,15 @@ public class PGPDataFormatDynamicTest extends PGPDataFormatTest {
         userids.add(getKeyUserId());
         return userids;
     }
+    
+    // setup a wrong signature userids
+    @Override
+    protected List<String> getSignatureKeyUserIds() {
+        List<String> userids = new ArrayList<String>(2);
+        userids.add("wrong1");
+        userids.add(getKeyUserId());
+        return userids;
+    }
 
     // setup a wrong password
     @Override
@@ -77,6 +86,7 @@ public class PGPDataFormatDynamicTest extends PGPDataFormatTest {
         headers.put(PGPDataFormat.ENCRYPTION_ALGORITHM, SymmetricKeyAlgorithmTags.AES_128);
         headers.put(PGPDataFormat.SIGNATURE_HASH_ALGORITHM, HashAlgorithmTags.SHA512);
         headers.put(PGPDataFormat.COMPRESSION_ALGORITHM, CompressionAlgorithmTags.ZLIB);
+        headers.put(PGPDataFormat.SIGNATURE_KEY_USERIDS, Collections.singletonList("second"));
         return headers;
     }
 }

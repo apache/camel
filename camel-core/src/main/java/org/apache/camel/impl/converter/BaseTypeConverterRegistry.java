@@ -513,6 +513,14 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
         return null;
     }
 
+    public List<Class[]> listAllTypeConvertersFromTo() {
+        List<Class[]> answer = new ArrayList<Class[]>(typeMappings.size());
+        for (TypeMapping mapping : typeMappings.keySet()) {
+            answer.add(new Class[]{mapping.getFromType(), mapping.getToType()});
+        }
+        return answer;
+    }
+
     /**
      * Loads the core type converters which is mandatory to use Camel
      */
@@ -548,6 +556,11 @@ public abstract class BaseTypeConverterRegistry extends ServiceSupport implement
     @Override
     public Statistics getStatistics() {
         return statistics;
+    }
+
+    @Override
+    public int size() {
+        return typeMappings.size();
     }
 
     @Override

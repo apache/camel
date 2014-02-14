@@ -26,6 +26,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.impl.MainSupport;
 import org.apache.camel.spring.handler.CamelNamespaceHandler;
+import org.apache.camel.util.IOHelper;
 import org.apache.camel.view.ModelFileGenerator;
 import org.springframework.context.ApplicationContext;
 import org.springframework.context.support.AbstractApplicationContext;
@@ -149,7 +150,7 @@ public class Main extends MainSupport {
         super.doStop();
         if (applicationContext != null) {
             LOG.debug("Stopping Spring ApplicationContext: " + applicationContext.getId());
-            applicationContext.close();
+            IOHelper.close(applicationContext);
         }
     }
 

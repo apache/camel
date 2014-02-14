@@ -17,8 +17,11 @@
 package org.apache.camel.component.twitter;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.ComponentConfiguration;
 import org.apache.camel.Endpoint;
+import org.apache.camel.EndpointConfiguration;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -69,6 +72,33 @@ public class UriConfigurationTest extends Assert {
         TwitterEndpoint twitterEndpoint = (TwitterEndpoint) endpoint;
         
         assertFalse(twitterEndpoint.getProperties().getUseSSL());
-        
     }
+
+    @Test
+    public void testComponentConfiguration() throws Exception {
+        TwitterComponent comp = context.getComponent("twitter", TwitterComponent.class);
+        EndpointConfiguration conf = comp.createConfiguration("twitter:search?keywords=camel");
+
+        assertEquals("camel", conf.getParameter("keywords"));
+
+        ComponentConfiguration compConf = comp.createComponentConfiguration();
+        String json = compConf.createParameterJsonSchema();
+        assertNotNull(json);
+
+        assertTrue(json.contains("\"accessToken\": { \"type\": \"java.lang.String\" }"));
+        assertTrue(json.contains("\"consumerKey\": { \"type\": \"java.lang.String\" }"));
+    }
+
+    @Test
+    public void testComponentDocumentation() throws Exception {
+        // cannot be tested on java 1.6
+        if (CamelTestSupport.isJava16()) {
+            return;
+        }
+
+        CamelContext context = new DefaultCamelContext();
+        String html = context.getComponentDocumentation("twitter");
+        assertNotNull("Should have found some auto-generated HTML if on Java 7", html);
+    }
+
 }

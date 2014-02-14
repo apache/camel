@@ -20,13 +20,18 @@ import java.util.Map;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.impl.UriEndpointComponent;
 
 /**
  * The <a href="http://camel.apache.org/browse.html">browse</a> component.
  *
  * @version 
  */
-public class BrowseComponent extends DefaultComponent {
+public class BrowseComponent extends UriEndpointComponent {
+
+    public BrowseComponent() {
+        super(BrowseEndpoint.class);
+    }
 
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         return new BrowseEndpoint(uri, this);

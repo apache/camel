@@ -29,6 +29,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.converter.jaxp.XmlConverter;
 import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.util.IOHelper;
 import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.frontend.ClientFactoryBean;
 import org.apache.cxf.frontend.ClientProxyFactoryBean;
@@ -78,9 +79,7 @@ public class CxfPayLoadMessageXmlBindingRouterTest extends CamelTestSupport {
     @After
     public void tearDown() throws Exception {
         
-        if (applicationContext != null) {
-            applicationContext.destroy();
-        }
+        IOHelper.close(applicationContext);
         super.tearDown();
     }
     

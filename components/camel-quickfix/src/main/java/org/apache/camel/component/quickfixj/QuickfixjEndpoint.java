@@ -136,6 +136,20 @@ public class QuickfixjEndpoint extends DefaultEndpoint implements QuickfixjEvent
         return true;
     }
 
+    /**
+     * Initializing and starts the engine if it wasn't initialized so far.
+     */
+    public void ensureInitialized() throws Exception {
+        if (!engine.isInitialized()) {
+            synchronized (engine) {
+                if (!engine.isInitialized()) {
+                    engine.initializeEngine();
+                    engine.start();
+                }
+            }
+        }
+    }
+
     public QuickfixjEngine getEngine() {
         return engine;
     }

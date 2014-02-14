@@ -690,7 +690,15 @@ public class XmlConverter {
      */
     @Converter(allowNull = true)
     public Document toDOMDocumentFromSingleNodeList(NodeList nl) throws ParserConfigurationException, TransformerException {
-        return nl.getLength() == 1 ? toDOMDocument(nl.item(0)) : null;
+        if (nl.getLength() == 1) {
+            return toDOMDocument(nl.item(0));
+        } else if (nl instanceof Node) {
+            // as XML parsers may often have nodes that implement both Node and NodeList then the type converter lookup
+            // may lookup either a type converter from NodeList or Node. So let's fallback and try with Node
+            return toDOMDocument((Node) nl);
+        } else {
+            return null;
+        }
     }
 
     /**

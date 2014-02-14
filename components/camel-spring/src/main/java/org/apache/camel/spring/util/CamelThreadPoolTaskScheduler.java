@@ -30,7 +30,8 @@ import org.springframework.scheduling.concurrent.ThreadPoolTaskScheduler;
  * other usages of thread pools in Camel.
  */
 public class CamelThreadPoolTaskScheduler extends ThreadPoolTaskScheduler {
-
+    
+    private static final long serialVersionUID = 1L;
     private final CamelContext camelContext;
     private final Object source;
     private final String name;

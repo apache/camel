@@ -23,7 +23,9 @@ import javax.validation.ConstraintValidatorFactory;
 import javax.validation.MessageInterpolator;
 import javax.validation.TraversableResolver;
 import javax.validation.Validation;
+import javax.validation.ValidationProviderResolver;
 import javax.validation.ValidatorFactory;
+import javax.validation.bootstrap.GenericBootstrap;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
@@ -35,17 +37,23 @@ import org.apache.camel.impl.ProcessorEndpoint;
  * @version 
  */
 public class BeanValidatorComponent extends DefaultComponent {
-    
+
+    @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         BeanValidator beanValidator = new BeanValidator();
-        
+
+        ValidationProviderResolver validationProviderResolver = resolveAndRemoveReferenceParameter(parameters, "validationProviderResolver", ValidationProviderResolver.class);
         MessageInterpolator messageInterpolator = resolveAndRemoveReferenceParameter(parameters, "messageInterpolator", MessageInterpolator.class);
         TraversableResolver traversableResolver = resolveAndRemoveReferenceParameter(parameters, "traversableResolver", TraversableResolver.class);
         ConstraintValidatorFactory constraintValidatorFactory = resolveAndRemoveReferenceParameter(parameters, "constraintValidatorFactory", ConstraintValidatorFactory.class);
         String group = getAndRemoveParameter(parameters, "group", String.class);
         
-        Configuration<?> configuration = Validation.byDefaultProvider().configure();
-        
+        GenericBootstrap bootstrap = Validation.byDefaultProvider();
+        if (validationProviderResolver != null) {
+            bootstrap.providerResolver(validationProviderResolver);
+        }
+        Configuration<?> configuration = bootstrap.configure();
+
         if (messageInterpolator != null) {
             configuration.messageInterpolator(messageInterpolator);
         }
@@ -67,4 +75,5 @@ public class BeanValidatorComponent extends DefaultComponent {
 
         return new ProcessorEndpoint(uri, this, beanValidator);
     }
+
 }

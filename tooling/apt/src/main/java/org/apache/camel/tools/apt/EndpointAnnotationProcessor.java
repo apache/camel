@@ -54,6 +54,8 @@ import org.apache.camel.spi.UriParams;
 import org.apache.camel.tools.apt.util.Func1;
 import org.apache.camel.tools.apt.util.Strings;
 
+import static org.apache.camel.tools.apt.util.Strings.canonicalClassName;
+
 /**
  * Processes all Camel endpoints
  */
@@ -79,7 +81,8 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
         if (uriEndpoint != null) {
             String scheme = uriEndpoint.scheme();
             if (!Strings.isNullOrEmpty(scheme)) {
-                String packageName = "org.apache.camel.component";
+                String name = canonicalClassName(classElement.getQualifiedName().toString());
+                String packageName = name.substring(0, name.lastIndexOf("."));
                 String fileName = scheme + ".html";
                 Func1<PrintWriter, Void> handler = new Func1<PrintWriter, Void>() {
                     @Override
@@ -88,7 +91,7 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
                         return null;
                     }
                 };
-                processFile(packageName, fileName, handler);
+                processFile(packageName, scheme, fileName, handler);
             }
         }
     }
@@ -240,7 +243,8 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
             TypeElement baseTypeElement = null;
             TypeMirror superclass = classElement.getSuperclass();
             if (superclass != null) {
-                baseTypeElement = findTypeElement(roundEnv, superclass.toString());
+                String superClassName = canonicalClassName(superclass.toString());
+                baseTypeElement = findTypeElement(roundEnv, superClassName);
             }
             if (baseTypeElement != null) {
                 classElement = baseTypeElement;
@@ -257,7 +261,7 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
             for (Element rootElement : rootElements) {
                 if (rootElement instanceof TypeElement) {
                     TypeElement typeElement = (TypeElement) rootElement;
-                    String aRootName = typeElement.getQualifiedName().toString();
+                    String aRootName = canonicalClassName(typeElement.getQualifiedName().toString());
                     if (className.equals(aRootName)) {
                         return typeElement;
                     }
@@ -271,7 +275,7 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
     /**
      * Helper method to produce class output text file using the given handler
      */
-    protected void processFile(String packageName, String fileName, Func1<PrintWriter, Void> handler) {
+    protected void processFile(String packageName, String scheme, String fileName, Func1<PrintWriter, Void> handler) {
         PrintWriter writer = null;
         try {
             Writer out = null;

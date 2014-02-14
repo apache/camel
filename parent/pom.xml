@@ -37,7 +37,7 @@
     <abdera-version>1.1.3</abdera-version>
     <!-- Note that activemq dependency is only used for testing! -->
     <activemq-version>5.9.0</activemq-version>
-    <ahc-version>1.7.21</ahc-version>
+    <ahc-version>1.8.1</ahc-version>
     <ant-bundle-version>1.7.0_6</ant-bundle-version>
     <antlr-bundle-version>3.4_1</antlr-bundle-version>
     <antlr-runtime-bundle-version>3.4_2</antlr-runtime-bundle-version>
@@ -106,7 +106,7 @@
     <commons-vfs2-version>2.0</commons-vfs2-version>
     <concurrentlinkedhashmap.version>1.4</concurrentlinkedhashmap.version>
     <cobertura-maven-plugin-version>2.5.2</cobertura-maven-plugin-version>
-    <cxf-version>2.7.8</cxf-version>
+    <cxf-version>2.7.10</cxf-version>
     <cxf-version-range>[2.6,4.0)</cxf-version-range>
     <cxf-xjc-utils-version>2.7.0</cxf-xjc-utils-version>
     <deltaspike-version>0.3-incubating</deltaspike-version>
@@ -172,11 +172,11 @@
     <hapi-version>2.1</hapi-version>
     <hawtbuf-version>1.9</hawtbuf-version>
     <hawtdb-version>1.6</hawtdb-version>
-    <hawtdispatch-version>1.18</hawtdispatch-version>
+    <hawtdispatch-version>1.20</hawtdispatch-version>
     <hazelcast-version>3.0.2</hazelcast-version>
     <hbase-version>0.94.10</hbase-version>
     <hbase-bundle-version>0.94.6_1</hbase-bundle-version>
-    <hibernate-validator-version>5.0.1.Final</hibernate-validator-version>
+    <hibernate-validator-version>5.0.3.Final</hibernate-validator-version>
     <hibernate-version>4.2.7.Final</hibernate-version>
     <httpunit-version>1.7</httpunit-version>
     <httpcore4-version>4.3.1</httpcore4-version>
@@ -236,8 +236,8 @@
     <jruby-version>1.7.10</jruby-version>
     <jsendnsca-version>1.3.1</jsendnsca-version>
     <jsmpp-version>2.1.0_4</jsmpp-version>
-    <jsch-version>0.1.49</jsch-version>
-    <jsch-bundle-version>0.1.49_1</jsch-bundle-version>
+    <jsch-version>0.1.50</jsch-version>
+    <jsch-bundle-version>0.1.50_1</jsch-bundle-version>
     <jsendnsca-bundle-version>1.3.1_3</jsendnsca-bundle-version>
     <jsonlib-bundle-version>2.4_1</jsonlib-bundle-version>
     <jsonlib-version>2.4</jsonlib-version>
@@ -252,6 +252,7 @@
     <junit-bundle-version>4.11_1</junit-bundle-version>
     <junit-version>4.11</junit-version>
     <jython-version>2.5.3</jython-version>
+    <kafka-version>0.8.0</kafka-version>
     <karaf-version>2.3.3</karaf-version>
     <kie-version>6.0.0.Final</kie-version>
     <krati-version>0.4.9</krati-version>
@@ -300,7 +301,7 @@
     <mock-javamail-version>1.7</mock-javamail-version>
     <mockito-version>1.9.5</mockito-version>
     <mongo-java-driver-version>2.11.3</mongo-java-driver-version>
-    <mqtt-client-version>1.6</mqtt-client-version>
+    <mqtt-client-version>1.8</mqtt-client-version>
     <msv-version>20050913</msv-version>
     <mustache-java-version>0.8.13</mustache-java-version>
     <mustache-bundle-version>0.8.13_1/</mustache-bundle-version>
@@ -333,7 +334,7 @@
     <protobuf-java-bundle-version>2.3.0_3</protobuf-java-bundle-version>
     <protobuf-version>2.3.0</protobuf-version>
     <qpid-bundle-version>0.22_1</qpid-bundle-version>
-    <qpid-version>0.22</qpid-version>
+    <qpid-version>0.24</qpid-version>
     <quartz-bundle-version>1.8.6_1</quartz-bundle-version>
     <quartz-version>1.8.6</quartz-version>
     <quartz2-version>2.2.1</quartz2-version>
@@ -362,7 +363,7 @@
     <shiro-version>1.2.2</shiro-version>
     <!-- use slf4j-api 1.6.x to be easy compatible with older Camel releases -->
     <slf4j-api-version>1.6.6</slf4j-api-version>
-    <slf4j-version>1.7.5</slf4j-version>
+    <slf4j-version>1.7.6</slf4j-version>
     <smack-bundle-version>3.2.1_1</smack-bundle-version>
     <smack-version>3.2.1</smack-version>
     <snappy-version>1.1.0.1</snappy-version>
@@ -379,20 +380,18 @@
     <spring-javaconfig-version>1.0.0-20090215</spring-javaconfig-version>
     <spring-ldap-version>1.3.1.RELEASE</spring-ldap-version>
     <spring-ldap-bundle-version>1.3.1.RELEASE_2</spring-ldap-bundle-version>
-    <spring-retry-version>1.0.2.RELEASE</spring-retry-version>
-    <!-- CAMEL-5768 using spring3.1.x by default -->
-    <spring-version-range>[3.1,3.3)</spring-version-range>
-    <spring-version>${spring32-version}</spring-version>
-    <spring31-version>3.1.4.RELEASE</spring31-version>
-    <spring32-version>3.2.6.RELEASE</spring32-version>
-    <spring4-version>4.0.0.RELEASE</spring4-version>
+    <spring-retry-version>1.0.2.RELEASE</spring-retry-version>  
+    <spring-version-range>[3.2,4)</spring-version-range>
+    <spring-version>${spring32-version}</spring-version>   
+    <spring32-version>3.2.7.RELEASE</spring32-version>
+    <spring4-version>4.0.1.RELEASE</spring4-version>
     <spring-osgi-version>1.2.1</spring-osgi-version>
     <spring-security-version>3.1.4.RELEASE</spring-security-version>
     <spring-ws-version>2.1.4.RELEASE</spring-ws-version>
     <spymemcached-bundle-version>2.5_2</spymemcached-bundle-version> <!-- FIXME cmueller: not in sync! -->
     <spymemcached-version>2.8.4</spymemcached-version>
     <sshd-version>0.9.0</sshd-version>
-    <stompjms-version>1.18</stompjms-version>
+    <stompjms-version>1.19</stompjms-version>
     <stax-api-version>1.0.1</stax-api-version>
     <stax2-api-bundle-version>3.1.1</stax2-api-bundle-version>
     <stringtemplate-bundle-version>4.0.2_2</stringtemplate-bundle-version>
@@ -418,7 +417,7 @@
     <woodstox-version>4.2.0</woodstox-version>
     <ws-commons-util-bundle-version>1.0.2_2</ws-commons-util-bundle-version>
     <wsdl4j-bundle-version>1.6.2_6</wsdl4j-bundle-version>
-    <xalan-bundle-version>2.7.1_5</xalan-bundle-version>
+    <xalan-bundle-version>2.7.1_7</xalan-bundle-version>
     <xalan-version>2.7.1</xalan-version>
     <xbean-spring-version>3.15</xbean-spring-version>
     <!-- xbean-asm4-bundle is used by openjpa -->
@@ -883,6 +882,11 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
+        <artifactId>camel-kafka</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
         <artifactId>camel-kestrel</artifactId>
         <version>${project.version}</version>
       </dependency>
@@ -959,11 +963,6 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-netty</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-netty4</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -2737,12 +2736,6 @@
     </profile>
     
     <!-- profiles for choosing default spring version -->
-    <profile>
-      <id>spring3.1</id>
-      <properties>
-        <spring-version>${spring31-version}</spring-version>
-      </properties>
-    </profile>
     <profile>
       <id>spring3.2</id>
       <properties>

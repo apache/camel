@@ -32,7 +32,6 @@ import org.apache.camel.model.IdentifiedType;
  */
 @XmlRootElement(name = "errorHandler")
 @XmlAccessorType(XmlAccessType.FIELD)
-@SuppressWarnings("unused")
 public class ErrorHandlerDefinition extends IdentifiedType {
     @XmlAttribute
     private ErrorHandlerType type = ErrorHandlerType.DefaultErrorHandler;

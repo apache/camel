@@ -20,12 +20,14 @@ import org.apache.camel.Component;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.ProcessorEndpoint;
+import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.util.ServiceHelper;
 
 /**
  * Logger endpoint.
  */
+@UriEndpoint(scheme = "log")
 public class LogEndpoint extends ProcessorEndpoint {
 
     private volatile Processor logger;

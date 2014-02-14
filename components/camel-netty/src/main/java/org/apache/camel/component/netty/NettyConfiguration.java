@@ -131,17 +131,17 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
         setHost(uri.getHost());
         setPort(uri.getPort());
 
-        ssl = component.getAndRemoveParameter(parameters, "ssl", boolean.class, false);
-        sslHandler = component.resolveAndRemoveReferenceParameter(parameters, "sslHandler", SslHandler.class, sslHandler);
-        passphrase = component.getAndRemoveParameter(parameters, "passphrase", String.class, passphrase);
-        keyStoreFormat = component.getAndRemoveParameter(parameters, "keyStoreFormat", String.class, keyStoreFormat == null ? "JKS" : keyStoreFormat);
-        securityProvider = component.getAndRemoveParameter(parameters, "securityProvider", String.class, securityProvider == null ? "SunX509" : securityProvider);
-        keyStoreFile = component.resolveAndRemoveReferenceParameter(parameters, "keyStoreFile", File.class, keyStoreFile);
-        trustStoreFile = component.resolveAndRemoveReferenceParameter(parameters, "trustStoreFile", File.class, trustStoreFile);
-        keyStoreResource = component.getAndRemoveParameter(parameters, "keyStoreResource", String.class, keyStoreResource);
-        trustStoreResource = component.getAndRemoveParameter(parameters, "trustStoreResource", String.class, trustStoreResource);
-        clientPipelineFactory = component.resolveAndRemoveReferenceParameter(parameters, "clientPipelineFactory", ClientPipelineFactory.class, clientPipelineFactory);
-        serverPipelineFactory = component.resolveAndRemoveReferenceParameter(parameters, "serverPipelineFactory", ServerPipelineFactory.class, serverPipelineFactory);
+        ssl = component.getAndRemoveOrResolveReferenceParameter(parameters, "ssl", boolean.class, false);
+        sslHandler = component.getAndRemoveOrResolveReferenceParameter(parameters, "sslHandler", SslHandler.class, sslHandler);
+        passphrase = component.getAndRemoveOrResolveReferenceParameter(parameters, "passphrase", String.class, passphrase);
+        keyStoreFormat = component.getAndRemoveOrResolveReferenceParameter(parameters, "keyStoreFormat", String.class, keyStoreFormat == null ? "JKS" : keyStoreFormat);
+        securityProvider = component.getAndRemoveOrResolveReferenceParameter(parameters, "securityProvider", String.class, securityProvider == null ? "SunX509" : securityProvider);
+        keyStoreFile = component.getAndRemoveOrResolveReferenceParameter(parameters, "keyStoreFile", File.class, keyStoreFile);
+        trustStoreFile = component.getAndRemoveOrResolveReferenceParameter(parameters, "trustStoreFile", File.class, trustStoreFile);
+        keyStoreResource = component.getAndRemoveOrResolveReferenceParameter(parameters, "keyStoreResource", String.class, keyStoreResource);
+        trustStoreResource = component.getAndRemoveOrResolveReferenceParameter(parameters, "trustStoreResource", String.class, trustStoreResource);
+        clientPipelineFactory = component.getAndRemoveOrResolveReferenceParameter(parameters, "clientPipelineFactory", ClientPipelineFactory.class, clientPipelineFactory);
+        serverPipelineFactory = component.getAndRemoveOrResolveReferenceParameter(parameters, "serverPipelineFactory", ServerPipelineFactory.class, serverPipelineFactory);
 
         // set custom encoders and decoders first
         List<ChannelHandler> referencedEncoders = component.resolveAndRemoveReferenceListParameter(parameters, "encoders", ChannelHandler.class, null);

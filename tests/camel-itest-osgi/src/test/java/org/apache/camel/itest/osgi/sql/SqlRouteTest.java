@@ -29,6 +29,7 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.sql.SqlConstants;
 import org.apache.camel.itest.osgi.OSGiIntegrationTestSupport;
 import org.apache.camel.spring.SpringCamelContext;
+import org.apache.camel.util.IOHelper;
 import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -56,7 +57,7 @@ public class SqlRouteTest extends OSGiIntegrationTestSupport {
     @After
     public void tearDown() throws Exception {
         super.tearDown();
-        applicationContext.destroy();
+        IOHelper.close(applicationContext);
     }
 
     @Override

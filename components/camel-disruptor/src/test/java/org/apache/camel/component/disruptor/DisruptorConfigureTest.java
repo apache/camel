@@ -56,16 +56,6 @@ public class DisruptorConfigureTest extends CamelTestSupport {
     }
 
     @Test
-    public void testSizeThroughQueueSizeComponentProperty() throws Exception {
-        final DisruptorComponent disruptor = context.getComponent("disruptor", DisruptorComponent.class);
-        disruptor.setQueueSize(2000);
-        assertEquals(2000, disruptor.getQueueSize());
-        final DisruptorEndpoint endpoint = resolveMandatoryEndpoint("disruptor:foo", DisruptorEndpoint.class);
-        assertEquals("size", 2048, endpoint.getBufferSize());
-        assertEquals("getRemainingCapacity", 2048, endpoint.getRemainingCapacity());
-    }
-
-    @Test
     public void testMultipleConsumersConfigured() {
         final DisruptorEndpoint endpoint = resolveMandatoryEndpoint("disruptor:foo?multipleConsumers=true",
                 DisruptorEndpoint.class);

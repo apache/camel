@@ -79,7 +79,7 @@ public class CamelJMXAgentDefinition extends IdentifiedType {
      * A flag that indicates whether the agent should be created
      */
     @XmlAttribute
-    private String createConnector = "true";
+    private String createConnector = "false";
 
     /**
      * A flag that indicates whether the platform mbean server should be used

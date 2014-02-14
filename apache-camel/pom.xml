@@ -340,6 +340,10 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
+      <artifactId>camel-kafka</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
       <artifactId>camel-kestrel</artifactId>
     </dependency>
     <dependency>
@@ -401,10 +405,6 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-netty</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-netty4</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>

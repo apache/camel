@@ -39,6 +39,8 @@ import org.apache.camel.spi.HeaderFilterStrategyAware;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.cxf.Bus;
 import org.apache.cxf.BusFactory;
+import org.apache.cxf.common.util.ModCountCopyOnWriteArrayList;
+import org.apache.cxf.feature.Feature;
 import org.apache.cxf.feature.LoggingFeature;
 import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
 import org.apache.cxf.jaxrs.client.JAXRSClientFactoryBean;
@@ -88,6 +90,8 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
     private AtomicBoolean getBusHasBeenCalled = new AtomicBoolean(false);
 
     private boolean isSetDefaultBus;
+    
+    private List<Feature> features = new ModCountCopyOnWriteArrayList<Feature>();
     
    
 
@@ -188,6 +192,16 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
             }
             sfb.setResourceClasses(res);
         }
+        // let customer to override the default setting of provider
+        if (!getProviders().isEmpty()) {
+            sfb.setProviders(getProviders());
+        }
+        // setup the features
+        if (!getFeatures().isEmpty()) {
+            for (Feature feature: getFeatures()) {
+                sfb.getFeatures().add(feature);
+            }
+        }
         sfb.setStart(false);
     }
 
@@ -199,6 +213,14 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
         if (getResourceClasses() != null && !getResourceClasses().isEmpty()) {
             cfb.setResourceClass(getResourceClasses().get(0));
             cfb.getServiceFactory().setResourceClasses(getResourceClasses());
+        }
+        // let customer to override the default setting of provider
+        if (!getProviders().isEmpty()) {
+            cfb.setProviders(getProviders());
+        }
+        // setup the features
+        if (!getFeatures().isEmpty()) {
+            cfb.setFeatures(getFeatures());
         }
         if (isLoggingFeatureEnabled()) {
             if (getLoggingSizeLimit() > 0) {
@@ -238,29 +260,8 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
 
 
     public JAXRSServerFactoryBean createJAXRSServerFactoryBean() {
-        
         JAXRSServerFactoryBean answer = newJAXRSServerFactoryBean();
         setupJAXRSServerFactoryBean(answer);
-        // let customer to override the default setting of provider
-        if (!getProviders().isEmpty()) {
-            answer.setProviders(getProviders());
-        }
-        if (schemaLocations != null) {
-            answer.setSchemaLocations(schemaLocations);
-        }
-        if (isLoggingFeatureEnabled()) {
-            if (getLoggingSizeLimit() > 0) {
-                answer.getFeatures().add(new LoggingFeature(getLoggingSizeLimit()));
-            } else {
-                answer.getFeatures().add(new LoggingFeature());
-            }
-        }
-        if (this.isSkipFaultLogging()) {
-            if (answer.getProperties() == null) {
-                answer.setProperties(new HashMap<String, Object>());
-            }
-            answer.getProperties().put(FaultListener.class.getName(), new NullFaultListener());
-        }
         return answer;
     }
     
@@ -270,29 +271,8 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
     }
     
     public JAXRSClientFactoryBean createJAXRSClientFactoryBean(String address) {
-        
         JAXRSClientFactoryBean answer = newJAXRSClientFactoryBean();
         setupJAXRSClientFactoryBean(answer, address);
-        // let customer to override the default setting of provider
-        if (!getProviders().isEmpty()) {
-            answer.setProviders(getProviders());
-        }
-        if (schemaLocations != null) {
-            answer.setSchemaLocations(schemaLocations);
-        }
-        if (isLoggingFeatureEnabled()) {
-            if (getLoggingSizeLimit() > 0) {
-                answer.getFeatures().add(new LoggingFeature(getLoggingSizeLimit()));
-            } else {
-                answer.getFeatures().add(new LoggingFeature());
-            }
-        }
-        if (this.isSkipFaultLogging()) {
-            if (answer.getProperties() == null) {
-                answer.setProperties(new HashMap<String, Object>());
-            }
-            answer.getProperties().put(FaultListener.class.getName(), new NullFaultListener());
-        }
         return answer;
     }
 
@@ -411,6 +391,14 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
     
     public List<String> getSchemaLocations() {
         return schemaLocations;
+    }
+
+    public List<Feature> getFeatures() {
+        return features;
+    }
+
+    public void setFeatures(List<Feature> features) {
+        this.features = features;
     }
 
     /**

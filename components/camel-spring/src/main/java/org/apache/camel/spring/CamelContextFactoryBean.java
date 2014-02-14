@@ -79,7 +79,6 @@ import static org.apache.camel.util.ObjectHelper.wrapRuntimeCamelException;
  */
 @XmlRootElement(name = "camelContext")
 @XmlAccessorType(XmlAccessType.FIELD)
-@SuppressWarnings("unused")
 public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<SpringCamelContext>
         implements FactoryBean<SpringCamelContext>, InitializingBean, DisposableBean, ApplicationContextAware, ApplicationListener<ApplicationEvent> {
     private static final Logger LOG = LoggerFactory.getLogger(CamelContextFactoryBean.class);
@@ -104,6 +103,8 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
     private String useMDCLogging;
     @XmlAttribute(required = false)
     private String useBreadcrumb;
+    @XmlAttribute(required = false)
+    private String allowUseOriginalMessage;
     @XmlAttribute(required = false)
     private String managementNamePattern;
     @XmlAttribute(required = false)
@@ -546,6 +547,14 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
 
     public void setUseBreadcrumb(String useBreadcrumb) {
         this.useBreadcrumb = useBreadcrumb;
+    }
+
+    public String getAllowUseOriginalMessage() {
+        return allowUseOriginalMessage;
+    }
+
+    public void setAllowUseOriginalMessage(String allowUseOriginalMessage) {
+        this.allowUseOriginalMessage = allowUseOriginalMessage;
     }
 
     public String getManagementNamePattern() {

@@ -182,6 +182,22 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
         return String.format("%.2f", load.getLoad15());
     }
 
+    public boolean isUseBreadcrumb() {
+        return context.isUseBreadcrumb();
+    }
+
+    public boolean isAllowUseOriginalMessage() {
+        return context.isAllowUseOriginalMessage();
+    }
+
+    public boolean isMessageHistory() {
+        return context.isMessageHistory();
+    }
+
+    public boolean isUseMDCLogging() {
+        return context.isUseMDCLogging();
+    }
+
     public void onTimer() {
         load.update(getInflightExchanges());
     }
@@ -372,7 +388,16 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
     }
 
     public Map<String, Properties> findComponents() throws Exception {
-        return context.findComponents();
+        Map<String, Properties> answer = context.findComponents();
+        for (Map.Entry<String, Properties> entry : answer.entrySet()) {
+            if (entry.getValue() != null) {
+                // remove component as its not serializable over JMX
+                entry.getValue().remove("component");
+                // .. and components which just list all the components in the JAR/bundle and that is verbose and not needed
+                entry.getValue().remove("components");
+            }
+        }
+        return answer;
     }
 
     public String getComponentDocumentation(String componentName) throws IOException {
@@ -401,8 +426,12 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
 
     public String componentParameterJsonSchema(String componentName) throws Exception {
         Component component = context.getComponent(componentName);
-        ComponentConfiguration configuration = component.createComponentConfiguration();
-        return configuration.createParameterJsonSchema();
+        if (component != null) {
+            ComponentConfiguration configuration = component.createComponentConfiguration();
+            return configuration.createParameterJsonSchema();
+        } else {
+            return null;
+        }
     }
 
     public void reset(boolean includeRoutes) throws Exception {
@@ -412,7 +441,6 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
         if (includeRoutes) {
             MBeanServer server = getContext().getManagementStrategy().getManagementAgent().getMBeanServer();
             if (server != null) {
-                // get all the routes mbeans and sort them accordingly to their index
                 String prefix = getContext().getManagementStrategy().getManagementAgent().getIncludeHostName() ? "*/" : "";
                 ObjectName query = ObjectName.getInstance("org.apache.camel:context=" + prefix + getContext().getManagementName() + ",type=routes,*");
                 Set<ObjectName> names = server.queryNames(query, null);

@@ -18,7 +18,7 @@ package org.apache.camel.scala.dsl
 
 import builder.RouteBuilder
 import org.junit.Test
-import org.scalatest.matchers.MustMatchers
+import org.scalatest.MustMatchers
 
 class STransformTest extends ScalaTestSupport with MustMatchers{
 

@@ -49,6 +49,8 @@ import org.apache.camel.impl.DefaultAsyncProducer;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.impl.InterceptSendToEndpoint;
 import org.apache.camel.spi.BrowsableEndpoint;
+import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.CaseInsensitiveMap;
 import org.apache.camel.util.ExchangeHelper;
@@ -75,12 +77,14 @@ import org.slf4j.LoggerFactory;
  *
  * @version 
  */
+@UriEndpoint(scheme = "mock")
 public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
     private static final Logger LOG = LoggerFactory.getLogger(MockEndpoint.class);
     // must be volatile so changes is visible between the thread which performs the assertions
     // and the threads which process the exchanges when routing messages in Camel
     protected volatile Processor reporter;
     protected boolean copyOnExchange = true;
+    @UriParam
     private volatile int expectedCount;
     private volatile int counter;
     private volatile Processor defaultProcessor;
@@ -89,10 +93,15 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
     private volatile List<Throwable> failures;
     private volatile List<Runnable> tests;
     private volatile CountDownLatch latch;
+    @UriParam
     private volatile long sleepForEmptyTest;
+    @UriParam
     private volatile long resultWaitTime;
+    @UriParam
     private volatile long resultMinimumWaitTime;
+    @UriParam
     private volatile long assertPeriod;
+    @UriParam
     private volatile int expectedMinimumCount;
     private volatile List<?> expectedBodyValues;
     private volatile List<Object> actualBodyValues;
@@ -100,7 +109,9 @@ public class MockEndpoint extends DefaultEndpoint implements BrowsableEndpoint {
     private volatile Map<String, Object> actualHeaderValues;
     private volatile Map<String, Object> expectedPropertyValues;
     private volatile Map<String, Object> actualPropertyValues;
+    @UriParam
     private volatile int retainFirst;
+    @UriParam
     private volatile int retainLast;
 
     public MockEndpoint(String endpointUri, Component component) {

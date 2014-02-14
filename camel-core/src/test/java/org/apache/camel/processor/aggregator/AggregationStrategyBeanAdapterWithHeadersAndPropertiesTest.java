@@ -54,8 +54,8 @@ public class AggregationStrategyBeanAdapterWithHeadersAndPropertiesTest extends 
 
     public static final class MyBodyAppender {
 
-        public String appendWithHeadersAndProperties(String existing, Map oldHeaders, Map oldProperties,
-                                                     String next, Map newHeaders, Map newProperties) {
+        public String appendWithHeadersAndProperties(String existing, Map<String, String> oldHeaders, Map<String, Integer> oldProperties,
+                                                     String next, Map<String, String> newHeaders, Map<String, Integer> newProperties) {
             if (next != null) {
                 Integer count = (Integer) oldProperties.get("count") + (Integer) newProperties.get("count");
                 oldProperties.put("count", count);

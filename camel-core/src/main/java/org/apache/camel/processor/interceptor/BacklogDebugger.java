@@ -31,6 +31,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.LoggingLevel;
+import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
 import org.apache.camel.api.management.mbean.BacklogTracerEventMessage;
@@ -268,26 +269,105 @@ public class BacklogDebugger extends ServiceSupport implements InterceptStrategy
         }
     }
 
-    public void setMessageBodyOnBreakpoint(String nodeId, String body) {
+    public void setMessageBodyOnBreakpoint(String nodeId, Object body) {
         SuspendedExchange se = suspendedBreakpoints.get(nodeId);
         if (se != null) {
-            logger.log("Breakpoint at node " + nodeId + " is updating message body on exchangeId: " + se.getExchange().getExchangeId() + " with new body: " + body);
-            if (se.getExchange().hasOut()) {
-                se.getExchange().getOut().setBody(body);
+            boolean remove = body == null;
+            if (remove) {
+                removeMessageBodyOnBreakpoint(nodeId);
             } else {
-                se.getExchange().getIn().setBody(body);
+                Class oldType;
+                if (se.getExchange().hasOut()) {
+                    oldType = se.getExchange().getOut().getBody() != null ? se.getExchange().getOut().getBody().getClass() : null;
+                } else {
+                    oldType = se.getExchange().getIn().getBody() != null ? se.getExchange().getIn().getBody().getClass() : null;
+                }
+                setMessageBodyOnBreakpoint(nodeId, body, oldType);
             }
         }
     }
 
-    public void setMessageHeaderOnBreakpoint(String nodeId, String headerName, String value) {
+    public void setMessageBodyOnBreakpoint(String nodeId, Object body, Class type) {
+        SuspendedExchange se = suspendedBreakpoints.get(nodeId);
+        if (se != null) {
+            boolean remove = body == null;
+            if (remove) {
+                removeMessageBodyOnBreakpoint(nodeId);
+            } else {
+                logger.log("Breakpoint at node " + nodeId + " is updating message body on exchangeId: " + se.getExchange().getExchangeId() + " with new body: " + body);
+                if (se.getExchange().hasOut()) {
+                    // preserve type
+                    if (type != null) {
+                        se.getExchange().getOut().setBody(body, type);
+                    } else {
+                        se.getExchange().getOut().setBody(body);
+                    }
+                } else {
+                    if (type != null) {
+                        se.getExchange().getIn().setBody(body, type);
+                    } else {
+                        se.getExchange().getIn().setBody(body);
+                    }
+                }
+            }
+        }
+    }
+
+    public void removeMessageBodyOnBreakpoint(String nodeId) {
+        SuspendedExchange se = suspendedBreakpoints.get(nodeId);
+        if (se != null) {
+            logger.log("Breakpoint at node " + nodeId + " is removing message body on exchangeId: " + se.getExchange().getExchangeId());
+            if (se.getExchange().hasOut()) {
+                se.getExchange().getOut().setBody(null);
+            } else {
+                se.getExchange().getIn().setBody(null);
+            }
+        }
+    }
+
+    public void setMessageHeaderOnBreakpoint(String nodeId, String headerName, Object value) throws NoTypeConversionAvailableException {
+        SuspendedExchange se = suspendedBreakpoints.get(nodeId);
+        if (se != null) {
+            Class oldType;
+            if (se.getExchange().hasOut()) {
+                oldType = se.getExchange().getOut().getHeader(headerName) != null ? se.getExchange().getOut().getHeader(headerName).getClass() : null;
+            } else {
+                oldType = se.getExchange().getIn().getHeader(headerName) != null ? se.getExchange().getIn().getHeader(headerName).getClass() : null;
+            }
+            setMessageHeaderOnBreakpoint(nodeId, headerName, value, oldType);
+        }
+    }
+
+    public void setMessageHeaderOnBreakpoint(String nodeId, String headerName, Object value, Class type) throws NoTypeConversionAvailableException {
         SuspendedExchange se = suspendedBreakpoints.get(nodeId);
         if (se != null) {
             logger.log("Breakpoint at node " + nodeId + " is updating message header on exchangeId: " + se.getExchange().getExchangeId() + " with header: " + headerName + " and value: " + value);
             if (se.getExchange().hasOut()) {
-                se.getExchange().getOut().setHeader(headerName, value);
+                if (type != null) {
+                    Object convertedValue = se.getExchange().getContext().getTypeConverter().mandatoryConvertTo(type, se.getExchange(), value);
+                    se.getExchange().getOut().setHeader(headerName, convertedValue);
+                } else {
+                    se.getExchange().getOut().setHeader(headerName, value);
+                }
             } else {
-                se.getExchange().getIn().setHeader(headerName, value);
+                if (type != null) {
+                    Object convertedValue = se.getExchange().getContext().getTypeConverter().mandatoryConvertTo(type, se.getExchange(), value);
+                    se.getExchange().getIn().setHeader(headerName, convertedValue);
+                } else {
+                    se.getExchange().getIn().setHeader(headerName, value);
+                }
+            }
+        }
+    }
+
+    public void removeMessageHeaderOnBreakpoint(String nodeId, String headerName) {
+        SuspendedExchange se = suspendedBreakpoints.get(nodeId);
+        if (se != null) {
+            logger.log("Breakpoint at node " + nodeId + " is removing message header on exchangeId: " + se.getExchange().getExchangeId() + " with header: " + headerName);
+            if (se.getExchange().hasOut()) {
+                se.getExchange().getOut().removeHeader(headerName);
+            } else {
+                se.getExchange().getIn().removeHeader(headerName);
             }
         }
     }

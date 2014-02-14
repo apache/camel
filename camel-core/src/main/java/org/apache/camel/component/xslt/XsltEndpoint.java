@@ -26,19 +26,25 @@ import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedOperation;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.builder.xml.XsltBuilder;
+import org.apache.camel.component.timer.TimerConsumer;
 import org.apache.camel.impl.ProcessorEndpoint;
+import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 @ManagedResource(description = "Managed XsltEndpoint")
+@UriEndpoint(scheme = "xslt")
 public class XsltEndpoint extends ProcessorEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(XsltEndpoint.class);
 
-    private XsltBuilder xslt;
-    private String resourceUri;
-    private boolean cacheStylesheet;
     private volatile boolean cacheCleared;
+    private XsltBuilder xslt;
+    @UriParam
+    private String resourceUri;
+    @UriParam
+    private boolean cacheStylesheet;
 
     public XsltEndpoint(String endpointUri, Component component, XsltBuilder xslt, String resourceUri,
             boolean cacheStylesheet) throws Exception {

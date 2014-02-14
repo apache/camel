@@ -52,6 +52,10 @@ public class MockTypeConverterRegistry implements TypeConverterRegistry {
         return null;
     }
 
+    public List<Class[]> listAllTypeConvertersFromTo() {
+        return null;
+    }
+
     public void setInjector(Injector injector) {
        // do nothing
     }
@@ -62,6 +66,10 @@ public class MockTypeConverterRegistry implements TypeConverterRegistry {
 
     public Statistics getStatistics() {
         return null;
+    }
+
+    public int size() {
+        return typeConverters.size();
     }
 
     public void start() throws Exception {

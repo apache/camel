@@ -43,7 +43,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * OSGi Blueprint based {@link CamelContext}.
+ * OSGi Blueprint based {@link org.apache.camel.CamelContext}.
  */
 public class BlueprintCamelContext extends DefaultCamelContext implements ServiceListener, BlueprintListener {
 

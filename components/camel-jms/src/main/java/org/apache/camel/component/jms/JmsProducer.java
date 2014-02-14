@@ -44,6 +44,8 @@ import org.springframework.jms.core.JmsOperations;
 import org.springframework.jms.core.MessageCreator;
 import org.springframework.jms.support.JmsUtils;
 
+import static org.apache.camel.component.jms.JmsMessageHelper.isQueuePrefix;
+import static org.apache.camel.component.jms.JmsMessageHelper.isTopicPrefix;
 import static org.apache.camel.component.jms.JmsMessageHelper.normalizeDestinationName;
 
 /**
@@ -332,24 +334,26 @@ public class JmsProducer extends DefaultAsyncProducer {
                 // the reply to is a String, so we need to look up its Destination instance
                 // and if needed create the destination using the session if needed to
                 if (jmsReplyTo != null && jmsReplyTo instanceof String) {
-                    // must normalize the destination name
-                    String before = (String) jmsReplyTo;
-                    String replyTo = normalizeDestinationName(before);
+                    String replyTo = (String) jmsReplyTo;
                     // we need to null it as we use the String to resolve it as a Destination instance
                     jmsReplyTo = null;
-                    LOG.trace("Normalized JMSReplyTo destination name {} -> {}", before, replyTo);
-
+                    boolean isPubSub = isTopicPrefix(replyTo) || (!isQueuePrefix(replyTo) && endpoint.isPubSubDomain());
                     // try using destination resolver to lookup the destination
                     if (endpoint.getDestinationResolver() != null) {
-                        jmsReplyTo = endpoint.getDestinationResolver().resolveDestinationName(session, replyTo, endpoint.isPubSubDomain());
+                        jmsReplyTo = endpoint.getDestinationResolver().resolveDestinationName(session, replyTo, isPubSub);
                         if (LOG.isDebugEnabled()) {
                             LOG.debug("Resolved JMSReplyTo destination {} using DestinationResolver {} as PubSubDomain {} -> {}",
-                                    new Object[]{replyTo, endpoint.getDestinationResolver(), endpoint.isPubSubDomain(), jmsReplyTo});
+                                    new Object[]{replyTo, endpoint.getDestinationResolver(), isPubSub, jmsReplyTo});
                         }
                     }
                     if (jmsReplyTo == null) {
-                        // okay then fallback and create the queue
-                        if (endpoint.isPubSubDomain()) {
+                        // must normalize the destination name
+                        String before = replyTo;
+                        replyTo = normalizeDestinationName(replyTo);
+                        LOG.trace("Normalized JMSReplyTo destination name {} -> {}", before, replyTo);
+
+                        // okay then fallback and create the queue/topic
+                        if (isPubSub) {
                             LOG.debug("Creating JMSReplyTo topic: {}", replyTo);
                             jmsReplyTo = session.createTopic(replyTo);
                         } else {

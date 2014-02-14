@@ -258,7 +258,8 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
             if (model.containsKey(clazz.getName())) {
 
                 Object obj = model.get(clazz.getName());
-                if (LOG.isDebugEnabled()) {
+                
+                if (obj != null && LOG.isDebugEnabled()) {
                     LOG.debug("Model object: {}, class: {}", obj, obj.getClass().getName());
                 }
                 if (obj != null) {

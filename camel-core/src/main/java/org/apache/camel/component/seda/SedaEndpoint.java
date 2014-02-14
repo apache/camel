@@ -29,6 +29,7 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.MultipleConsumersSupport;
+import org.apache.camel.PollingConsumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.WaitForTaskToComplete;
@@ -134,6 +135,13 @@ public class SedaEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
         }
 
         Consumer answer = new SedaConsumer(this, processor);
+        configureConsumer(answer);
+        return answer;
+    }
+
+    @Override
+    public PollingConsumer createPollingConsumer() throws Exception {
+        SedaPollingConsumer answer = new SedaPollingConsumer(this);
         configureConsumer(answer);
         return answer;
     }

@@ -18,7 +18,7 @@ package org.apache.camel.scala.converter
 
 import org.apache.camel.scala.CamelSpec
 import org.scalatest.FunSpec
-import org.scalatest.matchers.MustMatchers
+import org.scalatest.MustMatchers
 import org.scalatest.junit.JUnitRunner
 import org.junit.runner.RunWith
 
