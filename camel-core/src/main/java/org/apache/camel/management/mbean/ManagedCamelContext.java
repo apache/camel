@@ -18,6 +18,7 @@ package org.apache.camel.management.mbean;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashSet;
@@ -46,6 +47,7 @@ import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.ModelHelper;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RoutesDefinition;
+import org.apache.camel.util.URISupport;
 
 /**
  * @version 
@@ -292,7 +294,16 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
     }
 
     public void addOrUpdateRoutesFromXml(String xml) throws Exception {
-        // convert to model from xml
+        // do not decode so we function as before
+        addOrUpdateRoutesFromXml(xml, false);
+    }
+
+    public void addOrUpdateRoutesFromXml(String xml, boolean urlDecode) throws Exception {
+        // decode String as it may have been encoded, from its xml source
+        if (urlDecode) {
+            xml = URLDecoder.decode(xml, "UTF-8");
+        }
+
         InputStream is = context.getTypeConverter().mandatoryConvertTo(InputStream.class, xml);
         RoutesDefinition def = context.loadRoutesDefinition(is);
         if (def == null) {
