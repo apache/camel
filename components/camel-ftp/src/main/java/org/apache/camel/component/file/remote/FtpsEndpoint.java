@@ -27,6 +27,7 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLSocket;
 import javax.net.ssl.TrustManagerFactory;
 
+import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.jsse.SSLContextParameters;
 import org.apache.commons.net.ftp.FTPClient;
@@ -39,6 +40,7 @@ import org.apache.commons.net.ftp.FTPSClient;
  * 
  * @version 
  */
+@UriEndpoint(scheme = "ftps", consumerClass = FtpConsumer.class)
 public class FtpsEndpoint extends FtpEndpoint<FTPFile> {
     
     protected Map<String, Object> ftpClientKeyStoreParameters;
