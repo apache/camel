@@ -167,14 +167,7 @@ public class BacklogDebugger extends ServiceSupport implements InterceptStrategy
         } catch (Exception e) {
             // ignore
         }
-
-        // make sure to clear state and latches is counted down so we wont have hanging threads
-        breakpoints.clear();
-        for (SuspendedExchange se : suspendedBreakpoints.values()) {
-            se.getLatch().countDown();
-        }
-        suspendedBreakpoints.clear();
-        suspendedBreakpointMessages.clear();
+        clearBreakpoints();
     }
 
     public boolean isEnabled() {
@@ -495,7 +488,20 @@ public class BacklogDebugger extends ServiceSupport implements InterceptStrategy
     }
 
     protected void doStop() throws Exception {
-        disableDebugger();
+        if (enabled.get()) {
+            disableDebugger();
+        }
+        clearBreakpoints();
+    }
+
+    private void clearBreakpoints() {
+        // make sure to clear state and latches is counted down so we wont have hanging threads
+        breakpoints.clear();
+        for (SuspendedExchange se : suspendedBreakpoints.values()) {
+            se.getLatch().countDown();
+        }
+        suspendedBreakpoints.clear();
+        suspendedBreakpointMessages.clear();
     }
 
     /**
