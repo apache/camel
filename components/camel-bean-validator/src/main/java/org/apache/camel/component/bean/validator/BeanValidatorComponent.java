@@ -38,6 +38,8 @@ import org.apache.camel.impl.ProcessorEndpoint;
  */
 public class BeanValidatorComponent extends DefaultComponent {
 
+    private static final String OSGI_CONTEXT_CLASS_PREFIX = "Osgi";
+
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         BeanValidator beanValidator = new BeanValidator();
@@ -51,6 +53,8 @@ public class BeanValidatorComponent extends DefaultComponent {
         GenericBootstrap bootstrap = Validation.byDefaultProvider();
         if (validationProviderResolver != null) {
             bootstrap.providerResolver(validationProviderResolver);
+        } else if (isOsgiContext()) {
+            bootstrap.providerResolver(new HibernateValidationProviderResolver());
         }
         Configuration<?> configuration = bootstrap.configure();
 
@@ -74,6 +78,10 @@ public class BeanValidatorComponent extends DefaultComponent {
         }
 
         return new ProcessorEndpoint(uri, this, beanValidator);
+    }
+
+    protected boolean isOsgiContext() {
+        return getCamelContext().getClass().getSimpleName().startsWith(OSGI_CONTEXT_CLASS_PREFIX);
     }
 
 }
