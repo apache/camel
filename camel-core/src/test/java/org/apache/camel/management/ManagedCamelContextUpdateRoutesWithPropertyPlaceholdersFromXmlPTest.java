@@ -79,7 +79,7 @@ public class ManagedCamelContextUpdateRoutesWithPropertyPlaceholdersFromXmlPTest
                 + "</route>"
                 + "</routes>";
 
-        ObjectName on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=context,name=\"camel-1\"");
+        ObjectName on = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=context,name=\"camel-1\"");
         mbeanServer.invoke(on, "addOrUpdateRoutesFromXml", new Object[]{xml}, new String[]{"java.lang.String"});
 
         // there should be 2 routes now
@@ -128,7 +128,7 @@ public class ManagedCamelContextUpdateRoutesWithPropertyPlaceholdersFromXmlPTest
                 + "</route>"
                 + "</routes>";
 
-        ObjectName on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=context,name=\"camel-1\"");
+        ObjectName on = ObjectName.getInstance("org.apache.camel:context=localhost/camel-1,type=context,name=\"camel-1\"");
         mbeanServer.invoke(on, "addOrUpdateRoutesFromXml", new Object[]{xml, true}, new String[]{"java.lang.String", "boolean"});
 
         // there should be 2 routes now
