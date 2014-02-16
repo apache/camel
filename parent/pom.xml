@@ -120,7 +120,7 @@
     <easymock-version>3.2</easymock-version>
     <eclipse-compiler-version>4.2.2</eclipse-compiler-version>
     <eclipse-equinox-common-version>3.3.0-v20070426</eclipse-equinox-common-version>
-    <ehcache-version>2.8.0</ehcache-version>
+    <ehcache-version>2.8.1</ehcache-version>
     <elasticsearch-bundle-version>0.90.5_1</elasticsearch-bundle-version>
     <elasticsearch-version>0.90.5</elasticsearch-version>
     <el-api-1.0-version>1.0.1</el-api-1.0-version>
