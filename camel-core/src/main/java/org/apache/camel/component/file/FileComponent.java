@@ -21,6 +21,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.ComponentConfiguration;
 import org.apache.camel.spi.EndpointCompleter;
 import org.apache.camel.util.FileUtil;
@@ -31,6 +32,16 @@ import org.apache.camel.util.StringHelper;
  * File component.
  */
 public class FileComponent extends GenericFileComponent<File> implements EndpointCompleter {
+
+    public FileComponent() {
+        super();
+        setEndpointClass(FileEndpoint.class);
+    }
+
+    public FileComponent(CamelContext context) {
+        super(context);
+        setEndpointClass(FileEndpoint.class);
+    }
 
     /**
      * GenericFile property on Camel Exchanges.

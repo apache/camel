@@ -1030,7 +1030,8 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     }
 
     public String getComponentDocumentation(String componentName) throws IOException {
-        String path = CamelContextHelper.COMPONENT_DOCUMENTATION_PREFIX + componentName + "/" + componentName + ".html";
+        String packageName = sanitizeComponentName(componentName);
+        String path = CamelContextHelper.COMPONENT_DOCUMENTATION_PREFIX + packageName + "/" + componentName + ".html";
         ClassResolver resolver = getClassResolver();
         InputStream inputStream = resolver.loadResourceAsStream(path);
         log.debug("Loading component documentation for: {} using class resolver: {} -> {}", new Object[]{componentName, resolver, inputStream});
@@ -1042,6 +1043,18 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
             }
         }
         return null;
+    }
+
+    /**
+     * Sanitizes the component name by removing dash (-) in the name, when using the component name to load
+     * resources from the classpath.
+     */
+    private static String sanitizeComponentName(String componentName) {
+        // the ftp components are in a special package
+        if ("ftp".equals(componentName) || "ftps".equals(componentName) || "sftp".equals(componentName)) {
+            return "file/remote";
+        }
+        return componentName.replaceAll("-", "");
     }
 
     // Helper methods
