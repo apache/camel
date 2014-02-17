@@ -154,7 +154,8 @@ public final class StringHelper {
             return false;
         }
 
-        if (expression.indexOf("${") >= 0) {
+        // for the simple language the expression start token could be "${"
+        if ("simple".equalsIgnoreCase(language) && expression.indexOf("${") >= 0) {
             return true;
         }
 
