@@ -34,6 +34,20 @@ public class NIOConverterTest extends ContextTestSupport {
         assertNotNull(out);
         assertEquals(5, out.length);
     }
+    
+    /**
+     * Test if returned array size is only to limit of ByteBuffer.
+     * 
+     * If byteBuffer capacity is bigger that limit, we MUST return data only to the limit.
+     */
+    public void testToByteArrayBigBuffer() {
+        ByteBuffer bb = ByteBuffer.allocate(100);
+        bb.put("Hello".getBytes());
+        bb.flip();
+        byte[] out = NIOConverter.toByteArray(bb);
+        assertNotNull(out);
+        assertEquals(5, out.length);
+    }
 
     public void testToString() throws Exception {
         ByteBuffer bb = ByteBuffer.wrap("Hello".getBytes());
