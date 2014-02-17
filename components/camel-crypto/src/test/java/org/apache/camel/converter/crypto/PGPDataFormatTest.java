@@ -129,6 +129,11 @@ public class PGPDataFormatTest extends AbstractPGPDataFormatTest {
     }
 
     @Test
+    public void testKeyAccess() throws Exception {
+        doRoundTripEncryptionTests("direct:key_access");
+    }
+
+    @Test
     public void testVerifyExceptionNoPublicKeyFoundCorrespondingToSignatureUserIds() throws Exception {
         setupExpectations(context, 1, "mock:encrypted");
         MockEndpoint exception = setupExpectations(context, 1, "mock:exception");
@@ -389,6 +394,28 @@ public class PGPDataFormatTest extends AbstractPGPDataFormatTest {
                 pgpKeyFlag.setSignatureKeyUserid("keyflag");
 
                 from("direct:keyflag").marshal(pgpKeyFlag).to("mock:encrypted_keyflag");
+            }
+        }, new RouteBuilder() {
+            public void configure() throws Exception {
+
+                PGPPublicKeyAccess publicKeyAccess = new PGPPublicKeyAccessDefault(getPublicKeyRing());
+                //password cannot be set dynamically!
+                PGPSecretKeyAccess secretKeyAccess = new PGPSecretKeyAccessDefault(getSecKeyRing(), "sdude", getProvider());
+
+                PGPKeyAccessDataFormat dfEncryptSignKeyAccess = new PGPKeyAccessDataFormat();
+                dfEncryptSignKeyAccess.setPublicKeyAccess(publicKeyAccess);
+                dfEncryptSignKeyAccess.setSecretKeyAccess(secretKeyAccess);
+                dfEncryptSignKeyAccess.setKeyUserid(getKeyUserId());
+                dfEncryptSignKeyAccess.setSignatureKeyUserid(getKeyUserId());
+
+                PGPKeyAccessDataFormat dfDecryptVerifyKeyAccess = new PGPKeyAccessDataFormat();
+                dfDecryptVerifyKeyAccess.setPublicKeyAccess(publicKeyAccess);
+                dfDecryptVerifyKeyAccess.setSecretKeyAccess(secretKeyAccess);
+                dfDecryptVerifyKeyAccess.setSignatureKeyUserid(getKeyUserId());
+
+                from("direct:key_access").marshal(dfEncryptSignKeyAccess).to("mock:encrypted").unmarshal(dfDecryptVerifyKeyAccess)
+                        .to("mock:unencrypted");
+
             }
         } };
     }
