@@ -99,6 +99,7 @@ public final class NIOConverter {
             bytes = value.getBytes();
         }
         buf.put(bytes);
+        buf.flip();
         return buf;
     }
 
