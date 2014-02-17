@@ -92,40 +92,30 @@ public class NIOConverterTest extends ContextTestSupport {
     public void testToByteBufferShort() {
         ByteBuffer bb = NIOConverter.toByteBuffer(Short.valueOf("2"));
         assertNotNull(bb);
-
-        bb.position(0);
         assertEquals(2, bb.getShort());
     }
 
     public void testToByteBufferInteger() {
         ByteBuffer bb = NIOConverter.toByteBuffer(Integer.valueOf("2"));
         assertNotNull(bb);
-
-        bb.position(0);
         assertEquals(2, bb.getInt());
     }
 
     public void testToByteBufferLong() {
         ByteBuffer bb = NIOConverter.toByteBuffer(Long.valueOf("2"));
         assertNotNull(bb);
-
-        bb.position(0);
         assertEquals(2, bb.getLong());
     }
 
     public void testToByteBufferDouble() {
         ByteBuffer bb = NIOConverter.toByteBuffer(Double.valueOf("2"));
         assertNotNull(bb);
-
-        bb.position(0);
         assertEquals(2.0d, bb.getDouble());
     }
 
     public void testToByteBufferFloat() {
         ByteBuffer bb = NIOConverter.toByteBuffer(Float.valueOf("2"));
         assertNotNull(bb);
-
-        bb.position(0);
         assertEquals(2.0f, bb.getFloat());
     }
 
