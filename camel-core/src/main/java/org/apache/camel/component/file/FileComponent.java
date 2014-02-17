@@ -32,6 +32,15 @@ import org.apache.camel.util.StringHelper;
  * File component.
  */
 public class FileComponent extends GenericFileComponent<File> implements EndpointCompleter {
+    /**
+     * GenericFile property on Camel Exchanges.
+     */
+    public static final String FILE_EXCHANGE_FILE = "CamelFileExchangeFile";
+    
+    /**
+     * Default camel lock filename postfix
+     */
+    public static final String DEFAULT_LOCK_FILE_POSTFIX = ".camelLock";
 
     public FileComponent() {
         super();
@@ -42,16 +51,6 @@ public class FileComponent extends GenericFileComponent<File> implements Endpoin
         super(context);
         setEndpointClass(FileEndpoint.class);
     }
-
-    /**
-     * GenericFile property on Camel Exchanges.
-     */
-    public static final String FILE_EXCHANGE_FILE = "CamelFileExchangeFile";
-    
-    /**
-     * Default camel lock filename postfix
-     */
-    public static final String DEFAULT_LOCK_FILE_POSTFIX = ".camelLock";
 
     protected GenericFileEndpoint<File> buildFileEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         // the starting directory must be a static (not containing dynamic expressions)
