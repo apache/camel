@@ -47,7 +47,9 @@ public final class NIOConverter {
 
     @Converter
     public static byte[] toByteArray(ByteBuffer buffer) {
-        return buffer.array();
+        byte[] bArray = new byte[buffer.limit()];
+        buffer.get(bArray);
+        return bArray;
     }
 
     @Converter
