@@ -16,6 +16,7 @@ http://www.data2type.de/en/xml-xslt-xslfo/schematron/
 
 http://www.mulberrytech.com/papers/schematron-Philly.pdf
 
+http://www.ldodds.com/papers/schematron_xsltuk.html#c35e2592b6b7
 
 To build this project use
 

@@ -3,6 +3,7 @@
             xmlns:xs="http://www.w3.org/2001/XMLSchema"
             queryBinding="xslt2">
 
+    <!-- <sch:ns uri="http://apache.org/xml/xcatalog/example" prefix="art" /> -->
 
     <!-- Your constraints go here -->
     <sch:pattern>

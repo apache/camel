@@ -152,6 +152,7 @@
     <module>camel-saxon</module>
     <module>camel-salesforce</module>
     <module>camel-script</module>
+    <module>camel-schematron</module>
     <module>camel-servlet</module>
     <module>camel-servletlistener</module>
     <module>camel-shiro</module>

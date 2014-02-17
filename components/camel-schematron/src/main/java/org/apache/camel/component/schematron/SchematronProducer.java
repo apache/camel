@@ -1,9 +1,25 @@
+/**
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.apache.camel.component.schematron;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.component.schematron.contant.Constants;
 import org.apache.camel.component.schematron.engine.SchematronEngineFactory;
 import org.apache.camel.component.schematron.exception.SchematronValidationException;
-import org.apache.camel.component.schematron.util.Constants;
 import org.apache.camel.component.schematron.util.Utils;
 import org.apache.camel.impl.DefaultProducer;
 import org.slf4j.Logger;
@@ -13,18 +29,16 @@ import org.slf4j.LoggerFactory;
  * The Schematron producer.
  */
 public class SchematronProducer extends DefaultProducer {
-    private static final Logger logger = LoggerFactory.getLogger(SchematronProducer.class);
+    private Logger logger = LoggerFactory.getLogger(SchematronProducer.class);
     private SchematronEndpoint endpoint;
-    private SchematronEngineFactory factory;
+
 
     /**
      * @param endpoint the schematron endpoint.
-     * @param factory  the schematron factory.
      */
-    public SchematronProducer(final SchematronEndpoint endpoint, final SchematronEngineFactory factory) {
+    public SchematronProducer(final SchematronEndpoint endpoint) {
         super(endpoint);
         this.endpoint = endpoint;
-        this.factory = factory;
     }
 
     /**
@@ -36,12 +50,23 @@ public class SchematronProducer extends DefaultProducer {
     public void process(Exchange exchange) throws Exception {
 
         String payload = exchange.getIn().getBody(String.class);
-        String report = factory.newScehamtronEngine().validate(payload);
+        String report = SchematronEngineFactory.newScehamtronEngine(endpoint.getRules()).validate(payload);
 
         logger.debug("Schematron validation report \n {}", report);
         String status = getValidationStatus(report);
         logger.info("Schematron validation status : {}", status);
 
+        setValidationReport(exchange, report, status);
+    }
+
+    /**
+     * Sets validation report and status
+     *
+     * @param exchange
+     * @param report
+     * @param status
+     */
+    private void setValidationReport(Exchange exchange, String report, String status) {
         // if exchange pattern is In and Out set details on the Out message.
         if (exchange.getPattern().isOutCapable()) {
             exchange.getOut().setHeaders(exchange.getIn().getHeaders());
@@ -51,7 +76,6 @@ public class SchematronProducer extends DefaultProducer {
             exchange.getIn().setHeader(Constants.VALIDATION_STATUS, status);
             exchange.getIn().setHeader(Constants.VALIDATION_REPORT, report);
         }
-
     }
 
     /**
