@@ -126,16 +126,6 @@ public class SimpleScheduledRoutePolicy extends ScheduledRoutePolicy {
         return trigger;
     }
 
-    @Override
-    public void onRemove(Route route) {
-        try {
-            // stop and un-schedule jobs
-            doStop();
-        } catch (Exception e) {
-            throw ObjectHelper.wrapRuntimeCamelException(e);
-        }
-    }
-
     public Date getRouteStartDate() {
         return routeStartDate;
     }
