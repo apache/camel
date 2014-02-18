@@ -61,9 +61,13 @@ public class LanguageComponent extends UriEndpointComponent {
             if (ResourceHelper.hasScheme(resource)) {
                 // the script is a uri for a resource
                 resourceUri = resource;
+                // then the script should be null
+                script = null;
             } else {
                 // the script is provided as text in the uri, so decode to utf-8
                 script = URLDecoder.decode(script, "UTF-8");
+                // then the resource should be null
+                resourceUri = null;
             }
         }
 

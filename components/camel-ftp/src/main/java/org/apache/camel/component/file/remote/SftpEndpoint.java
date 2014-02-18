@@ -20,10 +20,12 @@ import com.jcraft.jsch.ChannelSftp;
 import com.jcraft.jsch.Proxy;
 import org.apache.camel.Processor;
 import org.apache.camel.component.file.GenericFileProducer;
+import org.apache.camel.spi.UriEndpoint;
 
 /**
  * Secure FTP endpoint
  */
+@UriEndpoint(scheme = "sftp", consumerClass = SftpConsumer.class)
 public class SftpEndpoint extends RemoteFileEndpoint<ChannelSftp.LsEntry> {
 
     Proxy proxy;

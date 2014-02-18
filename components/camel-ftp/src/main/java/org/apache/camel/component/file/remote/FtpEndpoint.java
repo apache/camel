@@ -25,6 +25,8 @@ import org.apache.camel.Processor;
 import org.apache.camel.component.file.GenericFileConfiguration;
 import org.apache.camel.component.file.GenericFileProducer;
 import org.apache.camel.component.file.remote.RemoteFileConfiguration.PathSeparator;
+import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
 import org.apache.commons.net.ftp.FTPClient;
 import org.apache.commons.net.ftp.FTPClientConfig;
 import org.apache.commons.net.ftp.FTPFile;
@@ -32,13 +34,16 @@ import org.apache.commons.net.ftp.FTPFile;
 /**
  * FTP endpoint
  */
+@UriEndpoint(scheme = "ftp", consumerClass = FtpConsumer.class)
 public class FtpEndpoint<T extends FTPFile> extends RemoteFileEndpoint<FTPFile> {
 
     protected FTPClient ftpClient;
     protected FTPClientConfig ftpClientConfig;
     protected Map<String, Object> ftpClientParameters;
     protected Map<String, Object> ftpClientConfigParameters;
+    @UriParam
     protected int soTimeout;
+    @UriParam
     protected int dataTimeout;
 
     public FtpEndpoint() {

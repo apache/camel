@@ -129,6 +129,11 @@ public class PGPDataFormatTest extends AbstractPGPDataFormatTest {
     }
 
     @Test
+    public void testKeyAccess() throws Exception {
+        doRoundTripEncryptionTests("direct:key_access");
+    }
+
+    @Test
     public void testVerifyExceptionNoPublicKeyFoundCorrespondingToSignatureUserIds() throws Exception {
         setupExpectations(context, 1, "mock:encrypted");
         MockEndpoint exception = setupExpectations(context, 1, "mock:exception");
@@ -321,7 +326,7 @@ public class PGPDataFormatTest extends AbstractPGPDataFormatTest {
                 Map<String, String> userId2Passphrase = new HashMap<String, String>();
                 userId2Passphrase.put("Third (comment third) <email@third.com>", "sdude");
                 userId2Passphrase.put("Second <email@second.com>", "sdude");
-                PGPPassphraseAccessor passphraseAccessorSeveralKeys = new PGPPassphraseAccessorDefault(userId2Passphrase);
+                PGPPassphraseAccessor passphraseAccessorSeveralKeys = new DefaultPGPPassphraseAccessor(userId2Passphrase);
                 pgpSignAndEncryptSeveralSignerKeys.setPassphraseAccessor(passphraseAccessorSeveralKeys);
 
                 PGPDataFormat pgpVerifyAndDecryptSeveralSignerKeys = new PGPDataFormat();
@@ -390,6 +395,28 @@ public class PGPDataFormatTest extends AbstractPGPDataFormatTest {
 
                 from("direct:keyflag").marshal(pgpKeyFlag).to("mock:encrypted_keyflag");
             }
+        }, new RouteBuilder() {
+            public void configure() throws Exception {
+
+                PGPPublicKeyAccess publicKeyAccess = new DefaultPGPPublicKeyAccess(getPublicKeyRing());
+                //password cannot be set dynamically!
+                PGPSecretKeyAccess secretKeyAccess = new DefaultPGPSecretKeyAccess(getSecKeyRing(), "sdude", getProvider());
+
+                PGPKeyAccessDataFormat dfEncryptSignKeyAccess = new PGPKeyAccessDataFormat();
+                dfEncryptSignKeyAccess.setPublicKeyAccess(publicKeyAccess);
+                dfEncryptSignKeyAccess.setSecretKeyAccess(secretKeyAccess);
+                dfEncryptSignKeyAccess.setKeyUserid(getKeyUserId());
+                dfEncryptSignKeyAccess.setSignatureKeyUserid(getKeyUserId());
+
+                PGPKeyAccessDataFormat dfDecryptVerifyKeyAccess = new PGPKeyAccessDataFormat();
+                dfDecryptVerifyKeyAccess.setPublicKeyAccess(publicKeyAccess);
+                dfDecryptVerifyKeyAccess.setSecretKeyAccess(secretKeyAccess);
+                dfDecryptVerifyKeyAccess.setSignatureKeyUserid(getKeyUserId());
+
+                from("direct:key_access").marshal(dfEncryptSignKeyAccess).to("mock:encrypted").unmarshal(dfDecryptVerifyKeyAccess)
+                        .to("mock:unencrypted");
+
+            }
         } };
     }
 
@@ -411,7 +438,7 @@ public class PGPDataFormatTest extends AbstractPGPDataFormatTest {
 
     public static PGPPassphraseAccessor getPassphraseAccessor() {
         Map<String, String> userId2Passphrase = Collections.singletonMap("Super <sdude@nowhere.net>", "sdude");
-        PGPPassphraseAccessor passphraseAccessor = new PGPPassphraseAccessorDefault(userId2Passphrase);
+        PGPPassphraseAccessor passphraseAccessor = new DefaultPGPPassphraseAccessor(userId2Passphrase);
         return passphraseAccessor;
     }
 

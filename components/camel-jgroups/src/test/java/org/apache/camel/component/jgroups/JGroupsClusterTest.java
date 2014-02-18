@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.jgroups;
 
+import static java.lang.String.format;
+import static java.util.UUID.randomUUID;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
@@ -29,21 +32,25 @@ import static org.apache.camel.component.jgroups.JGroupsFilters.dropNonCoordinat
 
 public class JGroupsClusterTest extends Assert {
 
-    // Routing fixtures
-
-    DefaultCamelContext firstCamelContext;
-
-    DefaultCamelContext secondCamelContext;
+    // Tested state
 
     String master;
 
     int nominationCount;
 
+    // Routing fixtures
+
+    String jgroupsEndpoint = format("jgroups:%s?enableViewMessages=true", randomUUID());
+
+    DefaultCamelContext firstCamelContext;
+
+    DefaultCamelContext secondCamelContext;
+
     class Builder extends RouteBuilder {
 
         @Override
         public void configure() throws Exception {
-            from("jgroups:cluster?enableViewMessages=true").
+            from(jgroupsEndpoint).
                     filter(dropNonCoordinatorViews()).
                     process(new Processor() {
                         @Override

@@ -63,6 +63,12 @@
             <groupId>org.springframework</groupId>
             <artifactId>spring-web</artifactId>
         </dependency>
+        
+        <dependency>
+            <groupId>org.apache.geronimo.specs</groupId>
+            <artifactId>geronimo-servlet_3.0_spec</artifactId>
+            <scope>provided</scope>
+        </dependency>
 
     <!-- mock mail server so we do not send an email for real -->
     <dependency>
@@ -85,12 +91,12 @@
 			<version>${cxf-version}</version>
 		</dependency>
 
-		<!-- regular http transport -->
-		<dependency>
-			<groupId>org.apache.cxf</groupId>
-			<artifactId>cxf-rt-transports-http</artifactId>
-			<version>${cxf-version}</version>
-		</dependency>
+        <!-- regular http transport -->
+	    <dependency>
+		    <groupId>org.apache.cxf</groupId>
+		    <artifactId>cxf-rt-transports-http</artifactId>
+		    <version>${cxf-version}</version>
+	    </dependency>
 
 		<!-- logging -->
 		<dependency>

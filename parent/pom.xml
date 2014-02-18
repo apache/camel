@@ -72,7 +72,7 @@
     <castor-bundle-version>1.3.2_2</castor-bundle-version>
     <cglib-bundle-version>2.1_3_7</cglib-bundle-version>
     <cglib-version>2.2</cglib-version>
-    <classmate-version>0.8.0</classmate-version>
+    <classmate-version>1.0.0</classmate-version>
     <cmis-version>0.8.0</cmis-version>
     <cometd-bayeux-version>6.1.11</cometd-bayeux-version>
     <cometd-java-client-version>2.4.3</cometd-java-client-version>
@@ -120,7 +120,7 @@
     <easymock-version>3.2</easymock-version>
     <eclipse-compiler-version>4.2.2</eclipse-compiler-version>
     <eclipse-equinox-common-version>3.3.0-v20070426</eclipse-equinox-common-version>
-    <ehcache-version>2.8.0</ehcache-version>
+    <ehcache-version>2.8.1</ehcache-version>
     <elasticsearch-bundle-version>0.90.5_1</elasticsearch-bundle-version>
     <elasticsearch-version>0.90.5</elasticsearch-version>
     <el-api-1.0-version>1.0.1</el-api-1.0-version>
@@ -210,7 +210,7 @@
     <jboss-javaee-6-version>1.0.0.Final</jboss-javaee-6-version>
     <jboss-logging-version>3.1.4.GA</jboss-logging-version>
     <jboss-marshalling-version>1.3.18.GA</jboss-marshalling-version>
-    <jclouds-version>1.7.0</jclouds-version>
+    <jclouds-version>1.7.1</jclouds-version>
     <!-- jclouds must use this guava version -->
     <jclouds-google-guava-version>15.0</jclouds-google-guava-version>
     <jcr-version>2.0</jcr-version>
@@ -259,8 +259,8 @@
     <kxml2-bundle-version>2.3.0_2</kxml2-bundle-version>
     <leveldbjni-version>1.8</leveldbjni-version>
     <log4j-version>1.2.17</log4j-version>
-    <lucene-bundle-version>4.5.1_1</lucene-bundle-version>
-    <lucene-version>4.5.1</lucene-version>
+    <lucene-bundle-version>4.6.1_1</lucene-bundle-version>
+    <lucene-version>4.6.1</lucene-version>
     <lucene-version-range>[4.5,5)</lucene-version-range>
     <lightcouch-version>0.0.6</lightcouch-version>
     <lightcouch-bundle-version>0.0.5_1</lightcouch-bundle-version>
@@ -441,8 +441,8 @@
     <xpp3-bundle-version>1.1.4c_6</xpp3-bundle-version>
     <xpp3-version>1.1.4c</xpp3-version>
     <xsdlib-version>2013.2</xsdlib-version>
-    <xstream-bundle-version>1.4.5_1</xstream-bundle-version>
-    <xstream-version>1.4.5</xstream-version>
+    <xstream-bundle-version>1.4.7_1</xstream-bundle-version>
+    <xstream-version>1.4.7</xstream-version>
     <xom-version>1.2.5</xom-version>
     <zookeeper-version>3.4.5</zookeeper-version>
 

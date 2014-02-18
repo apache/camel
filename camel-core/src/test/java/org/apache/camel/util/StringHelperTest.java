@@ -87,12 +87,13 @@ public class StringHelperTest extends TestCase {
         assertEquals(false, StringHelper.hasStartToken("Hello World", null));
         assertEquals(false, StringHelper.hasStartToken("Hello World", "simple"));
 
-        assertEquals(true, StringHelper.hasStartToken("${body}", null));
+        assertEquals(false, StringHelper.hasStartToken("${body}", null));
         assertEquals(true, StringHelper.hasStartToken("${body}", "simple"));
         assertEquals(true, StringHelper.hasStartToken("$simple{body}", "simple"));
 
-        assertEquals(true, StringHelper.hasStartToken("${body}", null));
-        assertEquals(true, StringHelper.hasStartToken("${body}", "foo"));
+        assertEquals(false, StringHelper.hasStartToken("${body}", null));
+        assertEquals(false, StringHelper.hasStartToken("${body}", "foo"));
+        // $foo{ is valid because its foo language
         assertEquals(true, StringHelper.hasStartToken("$foo{body}", "foo"));
     }
     
