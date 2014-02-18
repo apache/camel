@@ -128,7 +128,7 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
         Class<?> cl = CamelContextFactoryBean.class;
         // These code will try to detected if we are in the OSGi environment.
         // If so, camel will use the OSGi version of CamelContextFactoryBean to create the CamelContext.
-        if (PlatformHelper.isInOsgiEnvironment()) {
+        if (PlatformHelper.isInOsgiEnvironment(getClass().getClassLoader())) {
             try {
                 cl = Class.forName("org.apache.camel.osgi.CamelContextFactoryBean");
                 LOG.info("OSGi environment detected.");

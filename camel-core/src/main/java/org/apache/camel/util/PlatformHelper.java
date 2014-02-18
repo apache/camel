@@ -37,13 +37,14 @@ public final class PlatformHelper {
      * Determine whether Camel is running in the OSGi environment. Current implementation tries to load Camel activator
      * bundle (using reflection API and class loading) to determine if the code is executed in the OSGi environment.
      *
+     * @param classLoader caller class loader to be used to load Camel Bundle Activator
      * @return true if caller is running in the OSGi environment, false otherwise
      */
-    public static boolean isInOsgiEnvironment() {
+    public static boolean isInOsgiEnvironment(ClassLoader classLoader) {
         try {
             // Try to load the BundleActivator first
             Class.forName("org.osgi.framework.BundleActivator");
-            Class<?> activatorClass = currentThread().getContextClassLoader().loadClass("org.apache.camel.osgi.Activator");
+            Class<?> activatorClass = classLoader.loadClass("org.apache.camel.osgi.Activator");
             Method getBundleMethod = activatorClass.getDeclaredMethod("getBundle");
             Object bundle = getBundleMethod.invoke(null);
             return bundle != null;
@@ -51,6 +52,10 @@ public final class PlatformHelper {
             LOG.trace("Cannot find class so assuming not running in OSGi container: " + t.getMessage());
             return false;
         }
+    }
+
+    public static boolean isInOsgiEnvironment() {
+        return isInOsgiEnvironment(currentThread().getContextClassLoader());
     }
 
 }
