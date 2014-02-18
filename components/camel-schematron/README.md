@@ -5,6 +5,12 @@ Schematron is an XML-based language for validating XML instance documents. Schem
 Schematron is an ISO standard.
 Use Schematron to verify data interdependencies (co-constraints), check data cardinality, and perform algorithmic checks. A co-constraint is a dependency between data within an XML document or across XML documents. Cardinality refers to the presence or absence of data. An algorithmic check determines data validity by performing an algorithm on the data.
 
+Schematron engine
+======================
+
+Schemaron engine is an XSLT based implementation. XLST source code can be found here: https://code.google.com/p/schematron/
+
+
 Schematron Tutorials
 ======================
 
