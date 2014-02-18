@@ -18,6 +18,8 @@ package org.apache.camel.util;
 
 import java.lang.reflect.Method;
 
+import static java.lang.Thread.currentThread;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,7 +43,7 @@ public final class PlatformHelper {
         try {
             // Try to load the BundleActivator first
             Class.forName("org.osgi.framework.BundleActivator");
-            Class<?> activatorClass = Class.forName("org.apache.camel.osgi.Activator");
+            Class<?> activatorClass = currentThread().getContextClassLoader().loadClass("org.apache.camel.osgi.Activator");
             Method getBundleMethod = activatorClass.getDeclaredMethod("getBundle");
             Object bundle = getBundleMethod.invoke(null);
             return bundle != null;
