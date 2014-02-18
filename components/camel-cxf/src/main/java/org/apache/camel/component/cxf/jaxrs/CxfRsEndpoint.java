@@ -42,9 +42,13 @@ import org.apache.cxf.BusFactory;
 import org.apache.cxf.common.util.ModCountCopyOnWriteArrayList;
 import org.apache.cxf.feature.Feature;
 import org.apache.cxf.feature.LoggingFeature;
+import org.apache.cxf.interceptor.AbstractBasicInterceptorProvider;
+import org.apache.cxf.interceptor.Interceptor;
+import org.apache.cxf.jaxrs.AbstractJAXRSFactoryBean;
 import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
 import org.apache.cxf.jaxrs.client.JAXRSClientFactoryBean;
 import org.apache.cxf.logging.FaultListener;
+import org.apache.cxf.message.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -92,7 +96,8 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
     private boolean isSetDefaultBus;
     
     private List<Feature> features = new ModCountCopyOnWriteArrayList<Feature>();
-    
+    private InterceptorHolder interceptorHolder = new InterceptorHolder();
+    private Map<String, Object> properties;
    
 
     @Deprecated
@@ -192,16 +197,7 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
             }
             sfb.setResourceClasses(res);
         }
-        // let customer to override the default setting of provider
-        if (!getProviders().isEmpty()) {
-            sfb.setProviders(getProviders());
-        }
-        // setup the features
-        if (!getFeatures().isEmpty()) {
-            for (Feature feature : getFeatures()) {
-                sfb.getFeatures().add(feature);
-            }
-        }
+        setupCommonFactoryProperties(sfb);
         sfb.setStart(false);
     }
 
@@ -214,28 +210,48 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
             cfb.setResourceClass(getResourceClasses().get(0));
             cfb.getServiceFactory().setResourceClasses(getResourceClasses());
         }
+        setupCommonFactoryProperties(cfb);
+        cfb.setThreadSafe(true);
+    }
+    
+    protected void setupCommonFactoryProperties(AbstractJAXRSFactoryBean factory) {
         // let customer to override the default setting of provider
         if (!getProviders().isEmpty()) {
-            cfb.setProviders(getProviders());
+            factory.setProviders(getProviders());
         }
         // setup the features
         if (!getFeatures().isEmpty()) {
-            cfb.setFeatures(getFeatures());
+            factory.getFeatures().addAll(getFeatures());
         }
+        
+        factory.setInInterceptors(interceptorHolder.getInInterceptors());
+        factory.setOutInterceptors(interceptorHolder.getOutInterceptors());
+        factory.setOutFaultInterceptors(interceptorHolder.getOutFaultInterceptors());
+        factory.setInFaultInterceptors(interceptorHolder.getInFaultInterceptors()); 
+        
+        if (getProperties() != null) {
+            if (factory.getProperties() != null) {
+                // add to existing properties
+                factory.getProperties().putAll(getProperties());
+            } else {
+                factory.setProperties(getProperties());
+            }
+            LOG.debug("JAXRS FactoryBean: {} added properties: {}", factory, getProperties());
+        }
+        
         if (isLoggingFeatureEnabled()) {
             if (getLoggingSizeLimit() > 0) {
-                cfb.getFeatures().add(new LoggingFeature(getLoggingSizeLimit()));
+                factory.getFeatures().add(new LoggingFeature(getLoggingSizeLimit()));
             } else {
-                cfb.getFeatures().add(new LoggingFeature());
+                factory.getFeatures().add(new LoggingFeature());
             }
         }
         if (this.isSkipFaultLogging()) {
-            if (cfb.getProperties() == null) {
-                cfb.setProperties(new HashMap<String, Object>());
+            if (factory.getProperties() == null) {
+                factory.setProperties(new HashMap<String, Object>());
             }
-            cfb.getProperties().put(FaultListener.class.getName(), new NullFaultListener());
+            factory.getProperties().put(FaultListener.class.getName(), new NullFaultListener());
         }
-        cfb.setThreadSafe(true);
     }
     
     protected JAXRSServerFactoryBean newJAXRSServerFactoryBean() {
@@ -393,6 +409,38 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
         return schemaLocations;
     }
 
+    public List<Interceptor<? extends Message>> getOutFaultInterceptors() {
+        return interceptorHolder.getOutFaultInterceptors();
+    }
+
+    public List<Interceptor<? extends Message>> getInFaultInterceptors() {
+        return interceptorHolder.getInFaultInterceptors();
+    }
+
+    public List<Interceptor<? extends Message>> getInInterceptors() {
+        return interceptorHolder.getInInterceptors();
+    }
+
+    public List<Interceptor<? extends Message>> getOutInterceptors() {
+        return interceptorHolder.getOutInterceptors();
+    }
+
+    public void setInInterceptors(List<Interceptor<? extends Message>> interceptors) {
+        interceptorHolder.setInInterceptors(interceptors);
+    }
+
+    public void setInFaultInterceptors(List<Interceptor<? extends Message>> interceptors) {
+        interceptorHolder.setInFaultInterceptors(interceptors);
+    }
+
+    public void setOutInterceptors(List<Interceptor<? extends Message>> interceptors) {
+        interceptorHolder.setOutInterceptors(interceptors);
+    }
+
+    public void setOutFaultInterceptors(List<Interceptor<? extends Message>> interceptors) {
+        interceptorHolder.setOutFaultInterceptors(interceptors);
+    }
+    
     public List<Feature> getFeatures() {
         return features;
     }
@@ -401,6 +449,18 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
         this.features = features;
     }
 
+    public Map<String, Object> getProperties() {
+        return properties;
+    }
+    
+    public void setProperties(Map<String, Object> properties) {
+        if (this.properties == null) {
+            this.properties = properties;
+        } else {
+            this.properties.putAll(properties);
+        }
+    }
+    
     /**
      * See documentation of {@link BindingStyle}.
      */
@@ -426,4 +486,7 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
         // noop
     }
 
+
+    private static class InterceptorHolder extends AbstractBasicInterceptorProvider {
+    }
 }
