@@ -259,8 +259,8 @@
     <kxml2-bundle-version>2.3.0_2</kxml2-bundle-version>
     <leveldbjni-version>1.8</leveldbjni-version>
     <log4j-version>1.2.17</log4j-version>
-    <lucene-bundle-version>4.5.1_1</lucene-bundle-version>
-    <lucene-version>4.5.1</lucene-version>
+    <lucene-bundle-version>4.6.1_1</lucene-bundle-version>
+    <lucene-version>4.6.1</lucene-version>
     <lucene-version-range>[4.5,5)</lucene-version-range>
     <lightcouch-version>0.0.6</lightcouch-version>
     <lightcouch-bundle-version>0.0.5_1</lightcouch-bundle-version>
