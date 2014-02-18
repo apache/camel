@@ -88,4 +88,15 @@
   </persistence-unit>
   <!-- END SNIPPET: e2 -->
 
+  <persistence-unit name="hibernate" transaction-type="RESOURCE_LOCAL">
+  	<provider>org.hibernate.ejb.HibernatePersistence</provider>
+    <class>org.apache.camel.examples.VersionedItem</class>
+	
+  <properties>
+     <property name="hibernate.connection.driver_class" value="org.apache.derby.jdbc.EmbeddedDriver" />
+     <property name="hibernate.connection.url" value="jdbc:derby:target/hibernate;create=true" />
+     <property name="hibernate.hbm2ddl.auto" value="create"/>
+   </properties>
+  </persistence-unit>
+  
 </persistence>

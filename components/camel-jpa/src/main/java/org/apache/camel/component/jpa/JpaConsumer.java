@@ -17,6 +17,7 @@
 package org.apache.camel.component.jpa;
 
 import java.lang.reflect.Method;
+import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
@@ -26,7 +27,9 @@ import java.util.Queue;
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
 import javax.persistence.LockModeType;
+import javax.persistence.OptimisticLockException;
 import javax.persistence.PersistenceException;
+import javax.persistence.PessimisticLockException;
 import javax.persistence.Query;
 
 import org.apache.camel.Exchange;
@@ -45,6 +48,7 @@ import org.springframework.transaction.support.TransactionTemplate;
  */
 public class JpaConsumer extends ScheduledBatchPollingConsumer {
     private static final Logger LOG = LoggerFactory.getLogger(JpaConsumer.class);
+    private static final Map<String, Object> NOWAIT;
     private final EntityManager entityManager;
     private final TransactionTemplate transactionTemplate;
     private QueryFactory queryFactory;
@@ -53,10 +57,16 @@ public class JpaConsumer extends ScheduledBatchPollingConsumer {
     private String query;
     private String namedQuery;
     private String nativeQuery;
-    private LockModeType lockModeType = LockModeType.WRITE;
+    private LockModeType lockModeType = LockModeType.PESSIMISTIC_WRITE;
     private Map<String, Object> parameters;
     private Class<?> resultClass;
     private boolean transacted;
+    private boolean skipLockedEntity;
+
+    static {
+        NOWAIT = new HashMap<String, Object>();
+        NOWAIT.put("javax.persistence.lock.timeout", 0L);
+    }
 
     private static final class DataHolder {
         private Exchange exchange;
@@ -281,6 +291,21 @@ public class JpaConsumer extends ScheduledBatchPollingConsumer {
         this.transacted = transacted;
     }
 
+    /**
+     * Sets whether to use NOWAIT on lock and silently skip the entity. This
+     * allows different instances to process entities at the same time but not
+     * processing the same entity.
+     * 
+     * @param skipLockedEntity
+     */
+    public void setSkipLockedEntity(boolean skipLockedEntity) {
+        this.skipLockedEntity = skipLockedEntity;
+    }
+
+    public boolean isSkipLockedEntity() {
+        return skipLockedEntity;
+    }
+
     // Implementation methods
     // -------------------------------------------------------------------------
 
@@ -298,11 +323,19 @@ public class JpaConsumer extends ScheduledBatchPollingConsumer {
         }
         try {
             LOG.debug("Acquiring exclusive lock on entity: {}", entity);
-            entityManager.lock(entity, lockModeType);
+            if (isSkipLockedEntity()) {
+                entityManager.lock(entity, lockModeType, NOWAIT);
+            } else {
+                entityManager.lock(entity, lockModeType);
+            }
             return true;
         } catch (Exception e) {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Failed to achieve lock on entity: " + entity + ". Reason: " + e, e);
+            }
+            if (e instanceof PessimisticLockException || e instanceof OptimisticLockException) {
+                //transaction marked as rollback can't continue gracefully
+                throw (PersistenceException) e;
             }
             //TODO: Find if possible an alternative way to handle results of native queries.
             //Result of native queries are Arrays and cannot be locked by all JPA Providers.
