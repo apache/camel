@@ -66,6 +66,7 @@ public class SolrComponent extends DefaultComponent {
         }
     }
 
+    @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         Endpoint endpoint = new SolrEndpoint(uri, this, remaining);
         setProperties(endpoint, parameters);
@@ -95,7 +96,7 @@ public class SolrComponent extends DefaultComponent {
     void shutdownServers(SolrServerReference ref, boolean remove) {
         try {
             if (ref.getSolrServer() != null) {
-                LOG.info("Shutting down solr server: " + ref.getSolrServer());
+                LOG.info("Shutting down solr server: {}", ref.getSolrServer());
                 ref.getSolrServer().shutdown();
             }
         } catch (Exception e) {
@@ -103,7 +104,7 @@ public class SolrComponent extends DefaultComponent {
         }
         try {
             if (ref.getUpdateSolrServer() != null) {
-                LOG.info("Shutting down update solr server: " + ref.getUpdateSolrServer());
+                LOG.info("Shutting down update solr server: {}", ref.getUpdateSolrServer());
                 ref.getUpdateSolrServer().shutdownNow();
             }
         } catch (Exception e) {
