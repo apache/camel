@@ -1,5 +1,5 @@
-Schematron Component Project
-============================
+Schematron Component
+====================
 
 Schematron is an XML-based language for validating XML instance documents. Schematron is used to make assertions about data in an XML document. Schematron is used to express operational and business rules.
 Schematron is an ISO standard.
@@ -26,4 +26,4 @@ http://www.ldodds.com/papers/schematron_xsltuk.html#c35e2592b6b7
 
 To build this project use
 
-    mvn install
+    mvn clean install
