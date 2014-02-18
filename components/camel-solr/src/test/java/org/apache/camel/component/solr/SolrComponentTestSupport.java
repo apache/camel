@@ -20,8 +20,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.AvailablePortFinder;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.embedded.JettySolrRunner;
@@ -31,10 +29,8 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
 
-public class SolrComponentTestSupport extends CamelTestSupport {
-    public static final int PORT = AvailablePortFinder.getNextAvailable(8899);
-    public static final String SOLR_ROUTE_URI = "solr://localhost:" + PORT + "/solr";
-
+public class SolrComponentTestSupport extends SolrTestSupport {
+    protected static final String SOLR_ROUTE_URI = "solr://localhost:" + getPort() + "/solr";
     protected static final String TEST_ID = "test1";
     protected static final String TEST_ID2 = "test2";
     protected static JettySolrRunner solrRunner;
@@ -71,10 +67,10 @@ public class SolrComponentTestSupport extends CamelTestSupport {
         System.setProperty("solr.directoryFactory", "solr.RAMDirectoryFactory");
 
         // Start a Solr instance.
-        solrRunner = new JettySolrRunner("/solr", PORT);
+        solrRunner = new JettySolrRunner("/solr", getPort());
         solrRunner.start();
 
-        solrServer = new HttpSolrServer("http://localhost:" + PORT + "/solr");
+        solrServer = new HttpSolrServer("http://localhost:" + getPort() + "/solr");
     }
 
     @AfterClass
