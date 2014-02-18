@@ -250,5 +250,52 @@ public class SimpleScheduledRoutePolicyTest extends CamelTestSupport {
         context.getComponent("quartz2", QuartzComponent.class).stop();
         success.assertIsSatisfied();
     }
+
+    /**
+     * Unit test for CAMEL-7215.
+     * Removes a scheduled route and adds another with the same ID.
+     */
+    @Test
+    public void testAddRemoveScheduledRoutePolicy() throws Exception {
+
+        context.getComponent("quartz2", QuartzComponent.class).setPropertiesFile("org/apache/camel/routepolicy/quartz2/myquartz.properties");
+        context.addRoutes(new RouteBuilder() {
+            public void configure() {
+                SimpleScheduledRoutePolicy policy = new SimpleScheduledRoutePolicy();
+                long startTime = System.currentTimeMillis() + 3000L;
+                policy.setRouteStartDate(new Date(startTime));
+                policy.setRouteStartRepeatCount(1);
+                policy.setRouteStartRepeatInterval(3000);
+
+                from("direct:start")
+                    .routeId("test")
+                    .routePolicy(policy)
+                    .to("mock:success");
+            }
+        });
+        context.start();
+
+        // Stop and remove the route
+        context.stopRoute("test");
+        context.removeRoute("test");
+
+        // Create a new route with the same id
+        context.addRoutes(new RouteBuilder() {
+            public void configure() {
+                SimpleScheduledRoutePolicy policy = new SimpleScheduledRoutePolicy();
+                long startTime = System.currentTimeMillis() + 3000L;
+                policy.setRouteStartDate(new Date(startTime));
+                policy.setRouteStartRepeatCount(1);
+                policy.setRouteStartRepeatInterval(3000);
+
+                from("direct:start")
+                    .routeId("test")
+                    .routePolicy(policy)
+                    .to("mock:success");
+            }
+        });
+
+        context.getComponent("quartz2", QuartzComponent.class).stop();
+    }
     
 }
