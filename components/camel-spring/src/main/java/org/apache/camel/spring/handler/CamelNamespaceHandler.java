@@ -51,6 +51,7 @@ import org.apache.camel.spring.CamelThreadPoolFactoryBean;
 import org.apache.camel.spring.remoting.CamelProxyFactoryBean;
 import org.apache.camel.spring.remoting.CamelServiceExporter;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.PlatformHelper;
 import org.apache.camel.util.spring.KeyStoreParametersFactoryBean;
 import org.apache.camel.util.spring.SSLContextParametersFactoryBean;
 import org.apache.camel.util.spring.SecureRandomParametersFactoryBean;
@@ -124,27 +125,20 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
         parserMap.put("errorHandler", errorHandlerParser);
 
         // camel context
-        boolean osgi = false;
         Class<?> cl = CamelContextFactoryBean.class;
         // These code will try to detected if we are in the OSGi environment.
         // If so, camel will use the OSGi version of CamelContextFactoryBean to create the CamelContext.
-        try {
-            // Try to load the BundleActivator first
-            Class.forName("org.osgi.framework.BundleActivator");
-            Class<?> c = Class.forName("org.apache.camel.osgi.Activator");
-            Method mth = c.getDeclaredMethod("getBundle");
-            Object bundle = mth.invoke(null);
-            if (bundle != null) {
+        if (PlatformHelper.isInOsgiEnvironment()) {
+            try {
                 cl = Class.forName("org.apache.camel.osgi.CamelContextFactoryBean");
-                osgi = true;
+                LOG.info("OSGi environment detected.");
+            } catch (ClassNotFoundException e) {
+                LOG.trace("Cannot find CamelContextFactoryBean class so assuming not running in OSGi container: " + e.getMessage());
             }
-        } catch (Throwable t) {
-            // not running with camel-core-osgi so we fallback to the regular factory bean
-            LOG.trace("Cannot find class so assuming not running in OSGi container: " + t.getMessage());
+        } else {
+            LOG.info("Non-OSGi environment detected.");
         }
-        if (osgi) {
-            LOG.info("OSGi environment detected.");
-        } 
+
         LOG.debug("Using {} as CamelContextBeanDefinitionParser", cl.getCanonicalName());
         registerParser("camelContext", new CamelContextBeanDefinitionParser(cl));
     }
