@@ -35,6 +35,7 @@ import javax.xml.transform.stream.StreamSource;
 import java.io.File;
 import java.io.InputStream;
 
+
 /**
  * Class generating Templates for given schematron rules
  *
