@@ -42,7 +42,7 @@ import static org.junit.Assert.assertEquals;
 public class SolrSpringTest extends AbstractJUnit4SpringContextTests {
 
     static {
-        System.setProperty("SolrServer.Port", Integer.toString(SolrComponentTestSupport.PORT));
+        System.setProperty("SolrServer.Port", Integer.toString(SolrComponentTestSupport.getPort()));
     }
 
     private static JettySolrRunner solrRunner;
@@ -158,10 +158,10 @@ public class SolrSpringTest extends AbstractJUnit4SpringContextTests {
         System.setProperty("solr.directoryFactory", "solr.RAMDirectoryFactory");
 
         // Start a Solr instance.
-        solrRunner = new JettySolrRunner("/solr", SolrComponentTestSupport.PORT);
+        solrRunner = new JettySolrRunner("/solr", SolrComponentTestSupport.getPort());
         solrRunner.start();
 
-        solrServer = new HttpSolrServer("http://localhost:" + SolrComponentTestSupport.PORT + "/solr");
+        solrServer = new HttpSolrServer("http://localhost:" + SolrComponentTestSupport.getPort() + "/solr");
     }
 
     @AfterClass
