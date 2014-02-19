@@ -592,7 +592,7 @@
                 <osgi.classpath>
                     .,
                     WEB-INF/classes,
-                    WEB-INF/lib/jline-0.9.94.jar,
+                    WEB-INF/lib/jline-${jline-version}.jar,
                     WEB-INF/lib/jersey-core-${jersey-version}.jar,
                     WEB-INF/lib/jersey-server-${jersey-version}.jar,
                     WEB-INF/lib/jersey-spring-${jersey-version}.jar,
