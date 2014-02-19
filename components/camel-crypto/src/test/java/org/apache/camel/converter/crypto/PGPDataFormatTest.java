@@ -398,19 +398,19 @@ public class PGPDataFormatTest extends AbstractPGPDataFormatTest {
         }, new RouteBuilder() {
             public void configure() throws Exception {
 
-                PGPPublicKeyAccess publicKeyAccess = new DefaultPGPPublicKeyAccess(getPublicKeyRing());
+                PGPPublicKeyAccessor publicKeyAccessor = new DefaultPGPPublicKeyAccessor(getPublicKeyRing());
                 //password cannot be set dynamically!
-                PGPSecretKeyAccess secretKeyAccess = new DefaultPGPSecretKeyAccess(getSecKeyRing(), "sdude", getProvider());
+                PGPSecretKeyAccessor secretKeyAccessor = new DefaultPGPSecretKeyAccessor(getSecKeyRing(), "sdude", getProvider());
 
                 PGPKeyAccessDataFormat dfEncryptSignKeyAccess = new PGPKeyAccessDataFormat();
-                dfEncryptSignKeyAccess.setPublicKeyAccess(publicKeyAccess);
-                dfEncryptSignKeyAccess.setSecretKeyAccess(secretKeyAccess);
+                dfEncryptSignKeyAccess.setPublicKeyAccessor(publicKeyAccessor);
+                dfEncryptSignKeyAccess.setSecretKeyAccessor(secretKeyAccessor);
                 dfEncryptSignKeyAccess.setKeyUserid(getKeyUserId());
                 dfEncryptSignKeyAccess.setSignatureKeyUserid(getKeyUserId());
 
                 PGPKeyAccessDataFormat dfDecryptVerifyKeyAccess = new PGPKeyAccessDataFormat();
-                dfDecryptVerifyKeyAccess.setPublicKeyAccess(publicKeyAccess);
-                dfDecryptVerifyKeyAccess.setSecretKeyAccess(secretKeyAccess);
+                dfDecryptVerifyKeyAccess.setPublicKeyAccessor(publicKeyAccessor);
+                dfDecryptVerifyKeyAccess.setSecretKeyAccessor(secretKeyAccessor);
                 dfDecryptVerifyKeyAccess.setSignatureKeyUserid(getKeyUserId());
 
                 from("direct:key_access").marshal(dfEncryptSignKeyAccess).to("mock:encrypted").unmarshal(dfDecryptVerifyKeyAccess)

@@ -21,7 +21,7 @@ import java.util.List;
 import org.apache.camel.Exchange;
 import org.bouncycastle.openpgp.PGPPublicKey;
 
-public interface PGPPublicKeyAccess {
+public interface PGPPublicKeyAccessor {
 
     /**
      * Returns the encryption keys for the given user ID parts. This method is
