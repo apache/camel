@@ -70,12 +70,8 @@ public class InOnlyProducer extends SjmsProducer {
                 session = conn.createSession(false, getAcknowledgeMode());
             }
 
-            MessageProducer messageProducer;
-            if (isTopic()) {
-                messageProducer = JmsObjectFactory.createMessageProducer(session, getDestinationName(), isTopic(), isPersistent(), getTtl());
-            } else {
-                messageProducer = JmsObjectFactory.createQueueProducer(session, getDestinationName());
-            }
+            MessageProducer messageProducer = JmsObjectFactory.createMessageProducer(session, getDestinationName(), isTopic(), isPersistent(), getTtl());
+
             answer = new MessageProducerResources(session, messageProducer, commitStrategy);
         } catch (Exception e) {
             log.error("Unable to create the MessageProducer: " + e.getLocalizedMessage());
