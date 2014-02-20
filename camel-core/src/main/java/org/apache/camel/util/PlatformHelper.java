@@ -16,12 +16,11 @@
  */
 package org.apache.camel.util;
 
-import java.lang.reflect.Method;
-
-import static java.lang.Thread.currentThread;
-
+import org.osgi.framework.Bundle;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import static org.osgi.framework.FrameworkUtil.getBundle;
 
 /**
  * Utility dedicated for resolving runtime information related to the platform on which Camel is currently running.
@@ -34,28 +33,26 @@ public final class PlatformHelper {
     }
 
     /**
-     * Determine whether Camel is running in the OSGi environment. Current implementation tries to load Camel activator
-     * bundle (using reflection API and class loading) to determine if the code is executed in the OSGi environment.
+     * Determine whether Camel is running in the OSGi environment.
      *
-     * @param classLoader caller class loader to be used to load Camel Bundle Activator
+     * @param classFromBundle class to be tested against being deployed into OSGi
      * @return true if caller is running in the OSGi environment, false otherwise
      */
-    public static boolean isInOsgiEnvironment(ClassLoader classLoader) {
-        try {
-            // Try to load the BundleActivator first
-            Class.forName("org.osgi.framework.BundleActivator");
-            Class<?> activatorClass = classLoader.loadClass("org.apache.camel.impl.osgi.Activator");
-            Method getBundleMethod = activatorClass.getDeclaredMethod("getBundle");
-            Object bundle = getBundleMethod.invoke(null);
-            return bundle != null;
-        } catch (Throwable t) {
-            LOG.trace("Cannot find class so assuming not running in OSGi container: " + t.getMessage());
+    public static boolean isInOsgiEnvironment(Class classFromBundle) {
+        Bundle bundle = getBundle(classFromBundle);
+        if (bundle != null) {
+            LOG.trace("Found OSGi bundle {} for class {} so assuming running in the OSGi container.",
+                    bundle.getSymbolicName(), classFromBundle.getSimpleName());
+            return true;
+        } else {
+            LOG.trace("Cannot find OSGi bundle for class {} so assuming not running in the OSGi container.",
+                    classFromBundle.getSimpleName());
             return false;
         }
     }
 
     public static boolean isInOsgiEnvironment() {
-        return isInOsgiEnvironment(PlatformHelper.class.getClassLoader());
+        return isInOsgiEnvironment(PlatformHelper.class);
     }
 
 }
