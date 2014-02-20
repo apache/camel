@@ -16,16 +16,31 @@
  */
 package org.apache.camel.util;
 
+import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.Assert;
 import org.junit.Test;
 
-import static org.apache.camel.util.PlatformHelper.isInOsgiEnvironment;
+import static org.apache.camel.util.PlatformHelper.isOsgiContext;
 
 public class PlatformHelperTest extends Assert {
 
     @Test
-    public void shouldNotFindOsgiContext() {
-        assertFalse(isInOsgiEnvironment());
+    public void shouldNotMatchDefaultCamelContext() {
+        assertFalse(isOsgiContext(new DefaultCamelContext()));
     }
+
+    @Test
+    public void shouldMatchBlueprintCamelContext() {
+        assertTrue(isOsgiContext(new BlueprintCamelContext()));
+    }
+
+    @Test
+    public void shouldMatchOsgiDefaultCamelContext() {
+        assertTrue(isOsgiContext(new OsgiDefaultCamelContext()));
+    }
+
+    private class BlueprintCamelContext extends DefaultCamelContext { }
+
+    private class OsgiDefaultCamelContext extends DefaultCamelContext { }
 
 }

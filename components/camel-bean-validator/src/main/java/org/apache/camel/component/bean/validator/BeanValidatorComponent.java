@@ -30,8 +30,7 @@ import javax.validation.bootstrap.GenericBootstrap;
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.impl.ProcessorEndpoint;
-
-import static org.apache.camel.util.PlatformHelper.isInOsgiEnvironment;
+import org.apache.camel.util.PlatformHelper;
 
 /**
  * Bean Validator Component for validating Java beans against reference implementation of JSR 303 Validator (Hibernate
@@ -105,7 +104,7 @@ public class BeanValidatorComponent extends DefaultComponent {
      * @return true if component is executed in the OSGi environment. False otherwise.
      */
     protected boolean isOsgiContext() {
-        return isInOsgiEnvironment();
+        return PlatformHelper.isOsgiContext(getCamelContext());
     }
 
 }
