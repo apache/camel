@@ -24,7 +24,7 @@ import org.apache.camel.builder.RouteBuilder;
 /**
  * @version 
  */
-public class ManagedRouteLoadStatisticsTest extends ManagementTestSupport {
+public class ManagedRouteLoadstatisticsTest extends ManagementTestSupport {
 
     public void testLoadStatisticsAreDisabledByDefault() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
