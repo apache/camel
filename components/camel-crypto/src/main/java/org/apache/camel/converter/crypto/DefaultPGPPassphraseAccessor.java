@@ -36,11 +36,11 @@ import java.util.Map;
  */
 import org.apache.camel.util.ObjectHelper;
 
-public class PGPPassphraseAccessorDefault implements PGPPassphraseAccessor {
+public class DefaultPGPPassphraseAccessor implements PGPPassphraseAccessor {
 
     private final Map<String, String> userId2Passphrase;
 
-    public PGPPassphraseAccessorDefault(Map<String, String> userId2Passphrase) {
+    public DefaultPGPPassphraseAccessor(Map<String, String> userId2Passphrase) {
         ObjectHelper.notNull(userId2Passphrase, "userIdPassphrase");
 
         this.userId2Passphrase = userId2Passphrase;

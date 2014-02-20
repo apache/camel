@@ -321,7 +321,7 @@ public class PGPDataFormatTest extends AbstractPGPDataFormatTest {
                 Map<String, String> userId2Passphrase = new HashMap<String, String>();
                 userId2Passphrase.put("Third (comment third) <email@third.com>", "sdude");
                 userId2Passphrase.put("Second <email@second.com>", "sdude");
-                PGPPassphraseAccessor passphraseAccessorSeveralKeys = new PGPPassphraseAccessorDefault(userId2Passphrase);
+                PGPPassphraseAccessor passphraseAccessorSeveralKeys = new DefaultPGPPassphraseAccessor(userId2Passphrase);
                 pgpSignAndEncryptSeveralSignerKeys.setPassphraseAccessor(passphraseAccessorSeveralKeys);
 
                 PGPDataFormat pgpVerifyAndDecryptSeveralSignerKeys = new PGPDataFormat();
@@ -411,7 +411,7 @@ public class PGPDataFormatTest extends AbstractPGPDataFormatTest {
 
     public static PGPPassphraseAccessor getPassphraseAccessor() {
         Map<String, String> userId2Passphrase = Collections.singletonMap("Super <sdude@nowhere.net>", "sdude");
-        PGPPassphraseAccessor passphraseAccessor = new PGPPassphraseAccessorDefault(userId2Passphrase);
+        PGPPassphraseAccessor passphraseAccessor = new DefaultPGPPassphraseAccessor(userId2Passphrase);
         return passphraseAccessor;
     }
 
