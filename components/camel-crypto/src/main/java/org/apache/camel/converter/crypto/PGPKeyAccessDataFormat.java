@@ -68,8 +68,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * This PGP Data Format uses the interfaces {@link PGPPublicKeyAccess} and
- * {@link PGPSecretKeyAccess} to access the keys for encryption/signing and
+ * This PGP Data Format uses the interfaces {@link PGPPublicKeyAccessor} and
+ * {@link PGPSecretKeyAccessor} to access the keys for encryption/signing and
  * decryption/signature verification. These interfaces allow caching of the keys
  * which can improve the performance.
  * <p>
@@ -105,9 +105,9 @@ public class PGPKeyAccessDataFormat extends ServiceSupport implements DataFormat
     private static final String BC = "BC";
     private static final int BUFFER_SIZE = 16 * 1024;
     
-    PGPPublicKeyAccess publicKeyAccess;
+    PGPPublicKeyAccessor publicKeyAccessor;
 
-    PGPSecretKeyAccess secretKeyAccess;
+    PGPSecretKeyAccessor secretKeyAccessor;
 
     // Java Cryptography Extension provider, default is Bouncy Castle
     private String provider = BC;
@@ -166,7 +166,7 @@ public class PGPKeyAccessDataFormat extends ServiceSupport implements DataFormat
 
     public void marshal(Exchange exchange, Object graph, OutputStream outputStream) throws Exception {
         List<String> userids = determineEncryptionUserIds(exchange);
-        List<PGPPublicKey> keys = publicKeyAccess.getEncryptionKeys(exchange, userids);
+        List<PGPPublicKey> keys = publicKeyAccessor.getEncryptionKeys(exchange, userids);
         if (keys.isEmpty()) {
             throw new IllegalArgumentException("Cannot PGP encrypt message. No public encryption key found for the User Ids " + userids
                     + " in the public keyring. Either specify other User IDs or add correct public keys to the keyring.");
@@ -272,12 +272,12 @@ public class PGPKeyAccessDataFormat extends ServiceSupport implements DataFormat
 
     protected List<PGPSignatureGenerator> createSignatureGenerator(Exchange exchange, OutputStream out) throws Exception {
 
-        if (secretKeyAccess == null) {
+        if (secretKeyAccessor == null) {
             return null;
         }
 
         List<String> sigKeyUserids = determineSignaturenUserIds(exchange);
-        List<PGPSecretKeyAndPrivateKeyAndUserId> sigSecretKeysWithPrivateKeyAndUserId = secretKeyAccess.getSignerKeys(exchange,
+        List<PGPSecretKeyAndPrivateKeyAndUserId> sigSecretKeysWithPrivateKeyAndUserId = secretKeyAccessor.getSignerKeys(exchange,
                 sigKeyUserids);
         if (sigSecretKeysWithPrivateKeyAndUserId.isEmpty()) {
             return null;
@@ -324,7 +324,7 @@ public class PGPKeyAccessDataFormat extends ServiceSupport implements DataFormat
         // find encrypted data for which a private key exists in the secret key ring
         for (int i = 0; i < enc.size() && key == null; i++) {
             pbe = (PGPPublicKeyEncryptedData) enc.get(i);
-            key = secretKeyAccess.getPrivateKey(exchange, pbe.getKeyID());
+            key = secretKeyAccessor.getPrivateKey(exchange, pbe.getKeyID());
             if (key != null) {
                 // take the first key
                 break;
@@ -409,7 +409,7 @@ public class PGPKeyAccessDataFormat extends ServiceSupport implements DataFormat
         for (int i = 0; i < signatureList.size(); i++) {
             PGPOnePassSignature signature = signatureList.get(i);
             // Determine public key from signature keyId
-            PGPPublicKey sigPublicKey = publicKeyAccess.getPublicKey(exchange, signature.getKeyID());
+            PGPPublicKey sigPublicKey = publicKeyAccessor.getPublicKey(exchange, signature.getKeyID());
             if (sigPublicKey == null) {
                 continue;
             }
@@ -609,20 +609,20 @@ public class PGPKeyAccessDataFormat extends ServiceSupport implements DataFormat
         this.algorithm = algorithm;
     }
 
-    public PGPPublicKeyAccess getPublicKeyAccess() {
-        return publicKeyAccess;
+    public PGPPublicKeyAccessor getPublicKeyAccessor() {
+        return publicKeyAccessor;
     }
 
-    public void setPublicKeyAccess(PGPPublicKeyAccess publicKeyAccess) {
-        this.publicKeyAccess = publicKeyAccess;
+    public void setPublicKeyAccessor(PGPPublicKeyAccessor publicKeyAccessor) {
+        this.publicKeyAccessor = publicKeyAccessor;
     }
 
-    public PGPSecretKeyAccess getSecretKeyAccess() {
-        return secretKeyAccess;
+    public PGPSecretKeyAccessor getSecretKeyAccessor() {
+        return secretKeyAccessor;
     }
 
-    public void setSecretKeyAccess(PGPSecretKeyAccess secretKeyAccess) {
-        this.secretKeyAccess = secretKeyAccess;
+    public void setSecretKeyAccessor(PGPSecretKeyAccessor secretKeyAccessor) {
+        this.secretKeyAccessor = secretKeyAccessor;
     }
 
     @Override

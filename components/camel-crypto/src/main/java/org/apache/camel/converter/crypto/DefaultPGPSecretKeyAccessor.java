@@ -36,7 +36,7 @@ import org.bouncycastle.openpgp.PGPUtil;
  * the same.
  * 
  */
-public class DefaultPGPSecretKeyAccess implements PGPSecretKeyAccess {
+public class DefaultPGPSecretKeyAccessor implements PGPSecretKeyAccessor {
 
     private final Map<String, List<PGPSecretKeyAndPrivateKeyAndUserId>> userIdPart2SecretKeyList = new HashMap<String, List<PGPSecretKeyAndPrivateKeyAndUserId>>(
             3);
@@ -60,7 +60,7 @@ public class DefaultPGPSecretKeyAccess implements PGPSecretKeyAccess {
      * @throws PGPException
      * @throws IOException
      */
-    public DefaultPGPSecretKeyAccess(byte[] secretKeyRing, String password, String provider) throws PGPException, IOException {
+    public DefaultPGPSecretKeyAccessor(byte[] secretKeyRing, String password, String provider) throws PGPException, IOException {
         ObjectHelper.notNull(secretKeyRing, "secretKeyRing");
         ObjectHelper.notEmpty(password, "password");
         ObjectHelper.notEmpty(provider, "provider");

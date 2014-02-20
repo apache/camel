@@ -16,8 +16,7 @@
  */
 package org.apache.camel.util;
 
-import java.lang.reflect.Method;
-
+import org.apache.camel.CamelContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -32,21 +31,19 @@ public final class PlatformHelper {
     }
 
     /**
-     * Determine whether Camel is running in the OSGi environment. Current implementation tries to load Camel activator
-     * bundle (using reflection API and class loading) to determine if the code is executed in the OSGi environment.
+     * Determine whether Camel is OSGi-aware. Current implementation of the method checks if the name of the
+     * {@link CamelContext} matches the names of the known OSGi-aware contexts.
      *
-     * @return true if caller is running in the OSGi environment, false otherwise
+     * @param camelContext context to be tested against OSGi-awareness
+     * @return true if given context is OSGi-aware, false otherwise
      */
-    public static boolean isInOsgiEnvironment() {
-        try {
-            // Try to load the BundleActivator first
-            Class.forName("org.osgi.framework.BundleActivator");
-            Class<?> activatorClass = Class.forName("org.apache.camel.osgi.Activator");
-            Method getBundleMethod = activatorClass.getDeclaredMethod("getBundle");
-            Object bundle = getBundleMethod.invoke(null);
-            return bundle != null;
-        } catch (Throwable t) {
-            LOG.trace("Cannot find class so assuming not running in OSGi container: " + t.getMessage());
+    public static boolean isOsgiContext(CamelContext camelContext) {
+        String contextType = camelContext.getClass().getSimpleName();
+        if (contextType.startsWith("Osgi") || contextType.equals("BlueprintCamelContext")) {
+            LOG.trace("{} used - assuming running in the OSGi container.", contextType);
+            return true;
+        } else {
+            LOG.trace("{} used - assuming running in the OSGi container.", contextType);
             return false;
         }
     }

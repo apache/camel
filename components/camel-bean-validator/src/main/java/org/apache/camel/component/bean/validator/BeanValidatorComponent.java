@@ -30,19 +30,13 @@ import javax.validation.bootstrap.GenericBootstrap;
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.impl.ProcessorEndpoint;
+import org.apache.camel.util.PlatformHelper;
 
 /**
  * Bean Validator Component for validating Java beans against reference implementation of JSR 303 Validator (Hibernate
  * Validator).
  */
 public class BeanValidatorComponent extends DefaultComponent {
-
-    /**
-     * Prefix of the OSGi-aware implementations of {@code org.apache.camel.CamelContext} interface (like
-     * {@code org.apache.camel.core.osgi.OsgiDefaultCamelContext} or
-     * {@code org.apache.camel.osgi.OsgiSpringCamelContext} ).
-     */
-    private static final String OSGI_CONTEXT_CLASS_PREFIX = "Osgi";
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
@@ -105,14 +99,12 @@ public class BeanValidatorComponent extends DefaultComponent {
     }
 
     /**
-     * Recognizes if component is executed in the OSGi environment. This implementation assumes that component is
-     * deployed into OSGi environment if it uses implementation of {@code org.apache.camel.CamelContext} with class
-     * name starting with the "Osgi" prefix.
+     * Recognizes if component is executed in the OSGi environment.
      *
      * @return true if component is executed in the OSGi environment. False otherwise.
      */
     protected boolean isOsgiContext() {
-        return getCamelContext().getClass().getSimpleName().startsWith(OSGI_CONTEXT_CLASS_PREFIX);
+        return PlatformHelper.isOsgiContext(getCamelContext());
     }
 
 }

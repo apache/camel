@@ -31,11 +31,11 @@ import org.bouncycastle.openpgp.PGPUtil;
  * Caches a public key ring.
  * 
  */
-public class DefaultPGPPublicKeyAccess implements PGPPublicKeyAccess {
+public class DefaultPGPPublicKeyAccessor implements PGPPublicKeyAccessor {
 
     private final PGPPublicKeyRingCollection pgpPublicKeyRing;
 
-    public DefaultPGPPublicKeyAccess(byte[] publicKeyRing) throws IOException, PGPException {
+    public DefaultPGPPublicKeyAccessor(byte[] publicKeyRing) throws IOException, PGPException {
         ObjectHelper.notNull(publicKeyRing, "publicKeyRing");
         pgpPublicKeyRing = new PGPPublicKeyRingCollection(PGPUtil.getDecoderStream(new ByteArrayInputStream(publicKeyRing)));
     }

@@ -26,11 +26,11 @@ public class PGPKeyAccessDataFormatTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
 
-                PGPPublicKeyAccess publicKeyAccess = new DefaultPGPPublicKeyAccess(PGPDataFormatTest.getPublicKeyRing());
-                PGPSecretKeyAccess secretKeyAccess = new DefaultPGPSecretKeyAccess(PGPDataFormatTest.getSecKeyRing(), "sdude", "BC");
+                PGPPublicKeyAccessor publicKeyAccessor = new DefaultPGPPublicKeyAccessor(PGPDataFormatTest.getPublicKeyRing());
+                PGPSecretKeyAccessor secretKeyAccessor = new DefaultPGPSecretKeyAccessor(PGPDataFormatTest.getSecKeyRing(), "sdude", "BC");
                 PGPKeyAccessDataFormat dt = new PGPKeyAccessDataFormat();
-                dt.setPublicKeyAccess(publicKeyAccess);
-                dt.setSecretKeyAccess(secretKeyAccess);               
+                dt.setPublicKeyAccessor(publicKeyAccessor);
+                dt.setSecretKeyAccessor(secretKeyAccessor);               
                 dt.setKeyUserid("sdude");
                 dt.setSignatureKeyUserid("sdude");
 

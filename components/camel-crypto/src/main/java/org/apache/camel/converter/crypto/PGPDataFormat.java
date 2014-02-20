@@ -36,7 +36,7 @@ import org.bouncycastle.openpgp.PGPPublicKey;
  * See also {@link PGPKeyAccessDataFormat}.
  * 
  */
-public class PGPDataFormat extends PGPKeyAccessDataFormat implements PGPPublicKeyAccess, PGPSecretKeyAccess {
+public class PGPDataFormat extends PGPKeyAccessDataFormat implements PGPPublicKeyAccessor, PGPSecretKeyAccessor {
 
     public static final String KEY_FILE_NAME = "CamelPGPDataFormatKeyFileName";
     public static final String ENCRYPTION_KEY_RING = "CamelPGPDataFormatEncryptionKeyRing";
@@ -61,8 +61,8 @@ public class PGPDataFormat extends PGPKeyAccessDataFormat implements PGPPublicKe
 
     public PGPDataFormat() {
         super();
-        publicKeyAccess = this;
-        secretKeyAccess = this;
+        publicKeyAccessor = this;
+        secretKeyAccessor = this;
     }
 
     protected String findKeyFileName(Exchange exchange) {
@@ -263,12 +263,12 @@ public class PGPDataFormat extends PGPKeyAccessDataFormat implements PGPPublicKe
     }
 
     @Override
-    public void setPublicKeyAccess(PGPPublicKeyAccess publicKeyAccess) {
+    public void setPublicKeyAccessor(PGPPublicKeyAccessor publicKeyAccessor) {
         throw new UnsupportedOperationException("Use PGPKeyAccessDataFormat if you want to set the public key access");
     }
 
     @Override
-    public void setSecretKeyAccess(PGPSecretKeyAccess secretKeyAccess) {
+    public void setSecretKeyAccessor(PGPSecretKeyAccessor secretKeyAccessor) {
         throw new UnsupportedOperationException("Use PGPKeyAccessDataFormat if you want to set the secret key access");
     }
 

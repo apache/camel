@@ -227,7 +227,7 @@
     <jibx-version>1.2.5</jibx-version>
     <jing-bundle-version>20030619_5</jing-bundle-version>
     <jing-version>20030619</jing-version>
-    <jline-version>0.9.94</jline-version>
+    <jline-version>2.11</jline-version>
     <jmockit-version>1.5</jmockit-version>
     <jodatime-bundle-version>1.6.2</jodatime-bundle-version>
     <jodatime2-bundle-version>2.3</jodatime2-bundle-version>
@@ -306,7 +306,7 @@
     <mustache-java-version>0.8.13</mustache-java-version>
     <mustache-bundle-version>0.8.13_1/</mustache-bundle-version>
     <mvel-version>2.1.7.Final</mvel-version>
-    <mybatis-version>3.2.4</mybatis-version>
+    <mybatis-version>3.2.5</mybatis-version>
     <neethi-bundle-version>3.0.1</neethi-bundle-version>
     <netty3-version>3.8.0.Final</netty3-version>
     <netty-version>4.0.8.Final</netty-version>
@@ -368,8 +368,8 @@
     <smack-version>3.2.1</smack-version>
     <snappy-version>1.1.0.1</snappy-version>
     <snmp4j-version>2.2.3_1</snmp4j-version>
-    <solr-bundle-version>4.5.1_1</solr-bundle-version>
-    <solr-version>4.5.1</solr-version>
+    <solr-bundle-version>4.6.0_1</solr-bundle-version>
+    <solr-version>4.6.0</solr-version>
     <solr-version-range>[4.5,5)</solr-version-range>
     <splunk-version>1.2.0_1</splunk-version>
     <spring-batch-version>2.2.3.RELEASE</spring-batch-version>

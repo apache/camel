@@ -21,7 +21,7 @@ import java.util.List;
 import org.apache.camel.Exchange;
 import org.bouncycastle.openpgp.PGPPrivateKey;
 
-public interface PGPSecretKeyAccess {
+public interface PGPSecretKeyAccessor {
 
     /**
      * Returns the signer keys for the given user ID parts. This method is used
