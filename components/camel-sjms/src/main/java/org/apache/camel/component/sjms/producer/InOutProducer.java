@@ -248,11 +248,8 @@ public class InOutProducer extends SjmsProducer {
             } else {
                 session = conn.createSession(false, getAcknowledgeMode());
             }
-            if (isTopic()) {
-                messageProducer = JmsObjectFactory.createMessageProducer(session, getDestinationName(), isTopic(), isPersistent(), getTtl());
-            } else {
-                messageProducer = JmsObjectFactory.createQueueProducer(session, getDestinationName());
-            }
+
+            messageProducer = JmsObjectFactory.createMessageProducer(session, getDestinationName(), isTopic(), isPersistent(), getTtl());
 
             if (session == null) {
                 throw new CamelException("Message Consumer Creation Exception: Session is NULL");
