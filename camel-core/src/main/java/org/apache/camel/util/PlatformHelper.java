@@ -44,7 +44,7 @@ public final class PlatformHelper {
         try {
             // Try to load the BundleActivator first
             Class.forName("org.osgi.framework.BundleActivator");
-            Class<?> activatorClass = classLoader.loadClass("org.apache.camel.osgi.Activator");
+            Class<?> activatorClass = classLoader.loadClass("org.apache.camel.impl.osgi.Activator");
             Method getBundleMethod = activatorClass.getDeclaredMethod("getBundle");
             Object bundle = getBundleMethod.invoke(null);
             return bundle != null;
@@ -55,7 +55,7 @@ public final class PlatformHelper {
     }
 
     public static boolean isInOsgiEnvironment() {
-        return isInOsgiEnvironment(currentThread().getContextClassLoader());
+        return isInOsgiEnvironment(PlatformHelper.class.getClassLoader());
     }
 
 }
