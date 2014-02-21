@@ -291,7 +291,7 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
             File file = null;
             if (uri != null) {
                 try {
-                    file = new File(uri);
+                    file = new File(uri.getPath());
                 } catch (Exception e) {
                     warning("Could not convert output directory resource URI to a file " + e);
                 }
