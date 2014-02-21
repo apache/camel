@@ -85,7 +85,6 @@ public abstract class AbstractFeatureTest {
             } catch (Exception t) {
                 if (System.currentTimeMillis() < max) {
                     Thread.sleep(1000);
-                    continue;
                 } else {
                     throw t;
                 }
@@ -106,7 +105,6 @@ public abstract class AbstractFeatureTest {
             } catch (Exception t) {
                 if (System.currentTimeMillis() < max) {
                     Thread.sleep(1000);
-                    continue;
                 } else {
                     throw t;
                 }
