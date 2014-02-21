@@ -942,7 +942,7 @@ public class XmlConverter {
                 }
                 featureString.append(feature);
             }
-            LOG.info("DocumenterBuilderFactory has been set with features {{}}.", featureString.toString());
+            LOG.info("DocumentBuilderFactory has been set with features {{}}.", featureString.toString());
         }
         
     }
@@ -953,7 +953,7 @@ public class XmlConverter {
         factory.setIgnoringElementContentWhitespace(true);
         factory.setIgnoringComments(true);
         try {
-            // Disable the external-general-entitites by default
+            // Disable the external-general-entities by default
             factory.setFeature("http://xml.org/sax/features/external-general-entities", false);
         } catch (ParserConfigurationException e) {
             LOG.warn("DocumentBuilderFactory doesn't support the feature {} with value {}, due to {}."
