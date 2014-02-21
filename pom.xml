@@ -210,7 +210,7 @@
             <useReleaseProfile>false</useReleaseProfile>
             <preparationGoals>clean install</preparationGoals>
             <goals>deploy</goals>
-            <arguments>-Papache-release,enable-schemagen,sourcecheck,validate,hibernate</arguments>
+            <arguments>-Papache-release,enable-schemagen,apt,sourcecheck,validate,hibernate</arguments>
             <autoVersionSubmodules>true</autoVersionSubmodules>
           </configuration>
         </plugin>
