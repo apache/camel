@@ -113,12 +113,6 @@
             <artifactId>log4j</artifactId>
             <scope>test</scope>
         </dependency>
-
-        <!-- Tested modules -->
-        <dependency>
-            <groupId>org.apache.camel</groupId>
-            <artifactId>camel-ahc</artifactId>
-        </dependency>
     </dependencies>
 
     <build>

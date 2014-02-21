@@ -135,11 +135,9 @@ public abstract class AbstractFeatureTest {
         return sb.toString();
     }
 
-    
     public static UrlReference getCamelKarafFeatureUrl() {
-        String type = "xml/features";
         return mavenBundle().groupId("org.apache.camel.karaf").
-            artifactId("apache-camel").versionAsInProject().type(type);
+                artifactId("apache-camel").classifier("features").type("xml");
     }
     
     public static UrlReference getKarafFeatureUrl() {
