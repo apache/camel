@@ -166,10 +166,6 @@
                                 on this information to PAX mvn url
                             -->
                             <argLine>-Dorg.ops4j.pax.url.mvn.localRepository=${maven.repo.local}</argLine>
-                            <excludes>
-                                <!-- TODO: temporary disable unit test to let TC not hang -->
-                                <exclude>**/*Test.*</exclude>
-                            </excludes>
                             <systemPropertyVariables>
                                 <karafVersion>${karaf-version}</karafVersion>
                             </systemPropertyVariables>
