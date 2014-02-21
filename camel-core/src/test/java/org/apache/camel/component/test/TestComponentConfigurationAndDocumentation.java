@@ -20,7 +20,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ComponentConfiguration;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.EndpointConfiguration;
-import org.apache.camel.component.bean.BeanComponent;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.Test;
 
@@ -48,11 +47,6 @@ public class TestComponentConfigurationAndDocumentation extends ContextTestSuppo
 
     @Test
     public void testComponentDocumentation() throws Exception {
-        // cannot be tested on java 1.6
-        if (isJavaVersion("1.6")) {
-            return;
-        }
-
         CamelContext context = new DefaultCamelContext();
         String html = context.getComponentDocumentation("test");
         assertNotNull("Should have found some auto-generated HTML if on Java 7", html);

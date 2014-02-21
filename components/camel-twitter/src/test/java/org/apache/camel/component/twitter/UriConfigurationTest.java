@@ -21,7 +21,6 @@ import org.apache.camel.ComponentConfiguration;
 import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointConfiguration;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Assert;
 import org.junit.Test;
 
@@ -91,11 +90,6 @@ public class UriConfigurationTest extends Assert {
 
     @Test
     public void testComponentDocumentation() throws Exception {
-        // cannot be tested on java 1.6
-        if (CamelTestSupport.isJava16()) {
-            return;
-        }
-
         CamelContext context = new DefaultCamelContext();
         String html = context.getComponentDocumentation("twitter");
         assertNotNull("Should have found some auto-generated HTML if on Java 7", html);
