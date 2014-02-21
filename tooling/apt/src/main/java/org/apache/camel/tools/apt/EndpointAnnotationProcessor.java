@@ -101,7 +101,7 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
         writer.println("<header>");
         String scheme = uriEndpoint.scheme();
         String title = scheme + " endpoint";
-        writer.println("<title>" + "</title>");
+        writer.println("<title>" + title  +"</title>");
         writer.println("</header>");
         writer.println("<body>");
         writer.println("<h1>" + title + "</h1>");
