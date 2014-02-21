@@ -210,7 +210,7 @@
             <useReleaseProfile>false</useReleaseProfile>
             <preparationGoals>clean install</preparationGoals>
             <goals>deploy</goals>
-            <arguments>-Papache-release,enable-schemagen,apt,sourcecheck,validate,hibernate</arguments>
+            <arguments>-Prelease,enable-schemagen,apt,sourcecheck,validate,hibernate</arguments>
             <autoVersionSubmodules>true</autoVersionSubmodules>
           </configuration>
         </plugin>
@@ -492,6 +492,67 @@
                 <id>attach-sources</id>
                 <goals>
                   <goal>jar</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+        </plugins>
+      </build>
+    </profile>
+    <profile>
+       <id>release</id>
+       <activation>
+        <property>
+          <name>apache-release</name>
+        </property>
+      </activation>
+      <build>
+        <plugins> 
+          <!-- We want to deploy the artifact to a staging location for perusal -->
+          <plugin>
+            <inherited>true</inherited>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-deploy-plugin</artifactId>
+            <configuration>
+              <updateReleaseInfo>true</updateReleaseInfo>
+            </configuration>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-source-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>attach-sources</id>
+                <goals>
+                  <goal>jar</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-javadoc-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>attach-javadocs</id>
+                <goals>
+                  <goal>jar</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+          <!-- We want to sign the artifact, the POM, and all attached artifacts -->
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-gpg-plugin</artifactId>
+            <configuration>
+              <passphrase>${gpg.passphrase}</passphrase>
+              <useAgent>${gpg.useagent}</useAgent>
+            </configuration>
+            <executions>
+              <execution>
+                <goals>
+                  <goal>sign</goal>
                 </goals>
               </execution>
             </executions>
