@@ -47,11 +47,6 @@ public class LanguageComponentConfigurationAndDocumentation extends ContextTestS
 
     @Test
     public void testComponentDocumentation() throws Exception {
-        // cannot be tested on java 1.6
-        if (isJavaVersion("1.6")) {
-            return;
-        }
-
         CamelContext context = new DefaultCamelContext();
         String html = context.getComponentDocumentation("language");
         assertNotNull("Should have found some auto-generated HTML if on Java 7", html);

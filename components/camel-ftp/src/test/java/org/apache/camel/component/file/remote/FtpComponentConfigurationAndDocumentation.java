@@ -48,11 +48,6 @@ public class FtpComponentConfigurationAndDocumentation extends CamelTestSupport 
 
     @Test
     public void testComponentDocumentation() throws Exception {
-        // cannot be tested on java 1.6
-        if (CamelTestSupport.isJava16()) {
-            return;
-        }
-
         CamelContext context = new DefaultCamelContext();
         String html = context.getComponentDocumentation("ftp");
         assertNotNull("Should have found some auto-generated HTML if on Java 7", html);
