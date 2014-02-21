@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.test;
+package org.apache.camel.component.browse;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ComponentConfiguration;
@@ -23,7 +23,7 @@ import org.apache.camel.EndpointConfiguration;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.Test;
 
-public class TestComponentConfigurationAndDocumentation extends ContextTestSupport {
+public class BrowseComponentConfigurationAndDocumentationTest extends ContextTestSupport {
 
     @Override
     public boolean isUseRouteBuilder() {
@@ -32,23 +32,22 @@ public class TestComponentConfigurationAndDocumentation extends ContextTestSuppo
 
     @Test
     public void testComponentConfiguration() throws Exception {
-        TestComponent comp = context.getComponent("test", TestComponent.class);
-        EndpointConfiguration conf = comp.createConfiguration("test:my:foo?timeout=1000");
+        BrowseComponent comp = context.getComponent("browse", BrowseComponent.class);
+        EndpointConfiguration conf = comp.createConfiguration("browse:seda:foo?synchronous=true");
 
-        assertEquals("1000", conf.getParameter("timeout"));
+        assertEquals("true", conf.getParameter("synchronous"));
 
         ComponentConfiguration compConf = comp.createComponentConfiguration();
         String json = compConf.createParameterJsonSchema();
         assertNotNull(json);
 
-        assertTrue(json.contains("\"retainFirst\": { \"type\": \"int\" }"));
-        assertTrue(json.contains("\"timeout\": { \"type\": \"long\" }"));
+        assertTrue(json.contains("\"synchronous\": { \"type\": \"boolean\" }"));
     }
 
     @Test
     public void testComponentDocumentation() throws Exception {
         CamelContext context = new DefaultCamelContext();
-        String html = context.getComponentDocumentation("test");
+        String html = context.getComponentDocumentation("browse");
         assertNotNull("Should have found some auto-generated HTML if on Java 7", html);
     }
 

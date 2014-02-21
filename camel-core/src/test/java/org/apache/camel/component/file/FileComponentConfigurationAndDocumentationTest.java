@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.direct;
+package org.apache.camel.component.file;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ComponentConfiguration;
@@ -23,7 +23,7 @@ import org.apache.camel.EndpointConfiguration;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.Test;
 
-public class DirectComponentConfigurationAndDocumentation extends ContextTestSupport {
+public class FileComponentConfigurationAndDocumentationTest extends ContextTestSupport {
 
     @Override
     public boolean isUseRouteBuilder() {
@@ -32,23 +32,23 @@ public class DirectComponentConfigurationAndDocumentation extends ContextTestSup
 
     @Test
     public void testComponentConfiguration() throws Exception {
-        DirectComponent comp = context.getComponent("direct", DirectComponent.class);
-        EndpointConfiguration conf = comp.createConfiguration("direct:foo?block=true");
+        FileComponent comp = context.getComponent("file", FileComponent.class);
+        EndpointConfiguration conf = comp.createConfiguration("file:target/foo?delete=true");
 
-        assertEquals("true", conf.getParameter("block"));
+        assertEquals("true", conf.getParameter("delete"));
 
         ComponentConfiguration compConf = comp.createComponentConfiguration();
         String json = compConf.createParameterJsonSchema();
         assertNotNull(json);
 
-        assertTrue(json.contains("\"timeout\": { \"type\": \"long\" }"));
-        assertTrue(json.contains("\"block\": { \"type\": \"boolean\" }"));
+        assertTrue(json.contains("\"exclude\": { \"type\": \"java.lang.String\" }"));
+        assertTrue(json.contains("\"delete\": { \"type\": \"boolean\" }"));
     }
 
     @Test
     public void testComponentDocumentation() throws Exception {
         CamelContext context = new DefaultCamelContext();
-        String html = context.getComponentDocumentation("direct");
+        String html = context.getComponentDocumentation("file");
         assertNotNull("Should have found some auto-generated HTML if on Java 7", html);
     }
 

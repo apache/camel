@@ -14,16 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.log;
+package org.apache.camel.component.file.remote;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ComponentConfiguration;
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.EndpointConfiguration;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-public class LogComponentConfigurationAndDocumentation extends ContextTestSupport {
+public class FtpComponentConfigurationAndDocumentationTest extends CamelTestSupport {
 
     @Override
     public boolean isUseRouteBuilder() {
@@ -32,23 +32,24 @@ public class LogComponentConfigurationAndDocumentation extends ContextTestSuppor
 
     @Test
     public void testComponentConfiguration() throws Exception {
-        LogComponent comp = context.getComponent("log", LogComponent.class);
-        EndpointConfiguration conf = comp.createConfiguration("log:foo?level=DEBUG");
+        FtpComponent comp = context.getComponent("ftp", FtpComponent.class);
+        EndpointConfiguration conf = comp.createConfiguration("ftp:127.0.0.1?username=foo&password=secret");
 
-        assertEquals("DEBUG", conf.getParameter("level"));
+        assertEquals("foo", conf.getParameter("username"));
+        assertEquals("secret", conf.getParameter("password"));
 
         ComponentConfiguration compConf = comp.createComponentConfiguration();
         String json = compConf.createParameterJsonSchema();
         assertNotNull(json);
 
-        assertTrue(json.contains("\"level\": { \"type\": \"java.lang.String\" }"));
-        assertTrue(json.contains("\"groupInterval\": { \"type\": \"java.lang.Long\" }"));
+        assertTrue(json.contains("\"maximumReconnectAttempts\": { \"type\": \"int\" }"));
+        assertTrue(json.contains("\"dataTimeout\": { \"type\": \"int\" }"));
     }
 
     @Test
     public void testComponentDocumentation() throws Exception {
         CamelContext context = new DefaultCamelContext();
-        String html = context.getComponentDocumentation("log");
+        String html = context.getComponentDocumentation("ftp");
         assertNotNull("Should have found some auto-generated HTML if on Java 7", html);
     }
 

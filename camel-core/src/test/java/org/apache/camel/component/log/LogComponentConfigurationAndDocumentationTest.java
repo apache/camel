@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.language;
+package org.apache.camel.component.log;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ComponentConfiguration;
@@ -23,7 +23,7 @@ import org.apache.camel.EndpointConfiguration;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.Test;
 
-public class LanguageComponentConfigurationAndDocumentation extends ContextTestSupport {
+public class LogComponentConfigurationAndDocumentationTest extends ContextTestSupport {
 
     @Override
     public boolean isUseRouteBuilder() {
@@ -32,23 +32,23 @@ public class LanguageComponentConfigurationAndDocumentation extends ContextTestS
 
     @Test
     public void testComponentConfiguration() throws Exception {
-        LanguageComponent comp = context.getComponent("language", LanguageComponent.class);
-        EndpointConfiguration conf = comp.createConfiguration("language:simple:foo?transform=false");
+        LogComponent comp = context.getComponent("log", LogComponent.class);
+        EndpointConfiguration conf = comp.createConfiguration("log:foo?level=DEBUG");
 
-        assertEquals("false", conf.getParameter("transform"));
+        assertEquals("DEBUG", conf.getParameter("level"));
 
         ComponentConfiguration compConf = comp.createComponentConfiguration();
         String json = compConf.createParameterJsonSchema();
         assertNotNull(json);
 
-        assertTrue(json.contains("\"script\": { \"type\": \"java.lang.String\" }"));
-        assertTrue(json.contains("\"cacheScript\": { \"type\": \"boolean\" }"));
+        assertTrue(json.contains("\"level\": { \"type\": \"java.lang.String\" }"));
+        assertTrue(json.contains("\"groupInterval\": { \"type\": \"java.lang.Long\" }"));
     }
 
     @Test
     public void testComponentDocumentation() throws Exception {
         CamelContext context = new DefaultCamelContext();
-        String html = context.getComponentDocumentation("language");
+        String html = context.getComponentDocumentation("log");
         assertNotNull("Should have found some auto-generated HTML if on Java 7", html);
     }
 

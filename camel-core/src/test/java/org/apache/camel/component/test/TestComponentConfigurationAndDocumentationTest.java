@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.dataformat;
+package org.apache.camel.component.test;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ComponentConfiguration;
@@ -23,7 +23,7 @@ import org.apache.camel.EndpointConfiguration;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.Test;
 
-public class DataFormatComponentConfigurationAndDocumentation extends ContextTestSupport {
+public class TestComponentConfigurationAndDocumentationTest extends ContextTestSupport {
 
     @Override
     public boolean isUseRouteBuilder() {
@@ -32,23 +32,23 @@ public class DataFormatComponentConfigurationAndDocumentation extends ContextTes
 
     @Test
     public void testComponentConfiguration() throws Exception {
-        DataFormatComponent comp = context.getComponent("dataformat", DataFormatComponent.class);
-        EndpointConfiguration conf = comp.createConfiguration("dataformaat:marshal:string?charset=iso-8859-1");
+        TestComponent comp = context.getComponent("test", TestComponent.class);
+        EndpointConfiguration conf = comp.createConfiguration("test:my:foo?timeout=1000");
 
-        assertEquals("iso-8859-1", conf.getParameter("charset"));
+        assertEquals("1000", conf.getParameter("timeout"));
 
         ComponentConfiguration compConf = comp.createComponentConfiguration();
         String json = compConf.createParameterJsonSchema();
         assertNotNull(json);
 
-        assertTrue(json.contains("\"operation\": { \"type\": \"java.lang.String\" }"));
-        assertTrue(json.contains("\"synchronous\": { \"type\": \"boolean\" }"));
+        assertTrue(json.contains("\"retainFirst\": { \"type\": \"int\" }"));
+        assertTrue(json.contains("\"timeout\": { \"type\": \"long\" }"));
     }
 
     @Test
     public void testComponentDocumentation() throws Exception {
         CamelContext context = new DefaultCamelContext();
-        String html = context.getComponentDocumentation("dataformat");
+        String html = context.getComponentDocumentation("test");
         assertNotNull("Should have found some auto-generated HTML if on Java 7", html);
     }
 
