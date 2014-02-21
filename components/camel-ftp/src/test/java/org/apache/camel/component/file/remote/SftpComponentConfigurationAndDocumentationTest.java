@@ -23,7 +23,7 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-public class FtpsComponentConfigurationAndDocumentation extends CamelTestSupport {
+public class SftpComponentConfigurationAndDocumentationTest extends CamelTestSupport {
 
     @Override
     public boolean isUseRouteBuilder() {
@@ -32,8 +32,8 @@ public class FtpsComponentConfigurationAndDocumentation extends CamelTestSupport
 
     @Test
     public void testComponentConfiguration() throws Exception {
-        FtpsComponent comp = context.getComponent("ftps", FtpsComponent.class);
-        EndpointConfiguration conf = comp.createConfiguration("ftps:127.0.0.1?username=foo&password=secret");
+        SftpComponent comp = context.getComponent("sftp", SftpComponent.class);
+        EndpointConfiguration conf = comp.createConfiguration("sftp:127.0.0.1?username=foo&password=secret");
 
         assertEquals("foo", conf.getParameter("username"));
         assertEquals("secret", conf.getParameter("password"));
@@ -43,13 +43,13 @@ public class FtpsComponentConfigurationAndDocumentation extends CamelTestSupport
         assertNotNull(json);
 
         assertTrue(json.contains("\"maximumReconnectAttempts\": { \"type\": \"int\" }"));
-        assertTrue(json.contains("\"dataTimeout\": { \"type\": \"int\" }"));
+        assertTrue(json.contains("\"download\": { \"type\": \"boolean\" }"));
     }
 
     @Test
     public void testComponentDocumentation() throws Exception {
         CamelContext context = new DefaultCamelContext();
-        String html = context.getComponentDocumentation("ftps");
+        String html = context.getComponentDocumentation("sftp");
         assertNotNull("Should have found some auto-generated HTML if on Java 7", html);
     }
 

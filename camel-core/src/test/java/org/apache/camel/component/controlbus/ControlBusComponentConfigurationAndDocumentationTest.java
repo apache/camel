@@ -14,16 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.jms;
+package org.apache.camel.component.controlbus;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ComponentConfiguration;
+import org.apache.camel.ContextTestSupport;
 import org.apache.camel.EndpointConfiguration;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-public class JmsComponentConfigurationAndDocumentation extends CamelTestSupport {
+public class ControlBusComponentConfigurationAndDocumentationTest extends ContextTestSupport {
 
     @Override
     public boolean isUseRouteBuilder() {
@@ -32,23 +32,24 @@ public class JmsComponentConfigurationAndDocumentation extends CamelTestSupport 
 
     @Test
     public void testComponentConfiguration() throws Exception {
-        JmsComponent comp = context.getComponent("jms", JmsComponent.class);
-        EndpointConfiguration conf = comp.createConfiguration("jms:queue:foo?replyTo=bar");
+        ControlBusComponent comp = context.getComponent("controlbus", ControlBusComponent.class);
+        EndpointConfiguration conf = comp.createConfiguration("controlbus:route?routeId=bar&action=stop");
 
-        assertEquals("bar", conf.getParameter("replyTo"));
+        assertEquals("bar", conf.getParameter("routeId"));
+        assertEquals("stop", conf.getParameter("action"));
 
         ComponentConfiguration compConf = comp.createComponentConfiguration();
         String json = compConf.createParameterJsonSchema();
         assertNotNull(json);
 
-        assertTrue(json.contains("\"replyToDestination\": { \"type\": \"java.lang.String\" }"));
-        assertTrue(json.contains("\"transacted\": { \"type\": \"boolean\" }"));
+        assertTrue(json.contains("\"action\": { \"type\": \"java.lang.String\" }"));
+        assertTrue(json.contains("\"async\": { \"type\": \"boolean\" }"));
     }
 
     @Test
     public void testComponentDocumentation() throws Exception {
         CamelContext context = new DefaultCamelContext();
-        String html = context.getComponentDocumentation("jms");
+        String html = context.getComponentDocumentation("controlbus");
         assertNotNull("Should have found some auto-generated HTML if on Java 7", html);
     }
 

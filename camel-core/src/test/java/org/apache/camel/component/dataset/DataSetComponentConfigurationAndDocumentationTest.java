@@ -23,7 +23,7 @@ import org.apache.camel.EndpointConfiguration;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.Test;
 
-public class DataSetComponentConfigurationAndDocumentation extends ContextTestSupport {
+public class DataSetComponentConfigurationAndDocumentationTest extends ContextTestSupport {
 
     @Override
     public boolean isUseRouteBuilder() {

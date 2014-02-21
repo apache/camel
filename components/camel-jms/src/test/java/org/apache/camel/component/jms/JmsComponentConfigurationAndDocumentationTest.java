@@ -14,16 +14,16 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.browse;
+package org.apache.camel.component.jms;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ComponentConfiguration;
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.EndpointConfiguration;
 import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-public class BrowseComponentConfigurationAndDocumentation extends ContextTestSupport {
+public class JmsComponentConfigurationAndDocumentationTest extends CamelTestSupport {
 
     @Override
     public boolean isUseRouteBuilder() {
@@ -32,22 +32,23 @@ public class BrowseComponentConfigurationAndDocumentation extends ContextTestSup
 
     @Test
     public void testComponentConfiguration() throws Exception {
-        BrowseComponent comp = context.getComponent("browse", BrowseComponent.class);
-        EndpointConfiguration conf = comp.createConfiguration("browse:seda:foo?synchronous=true");
+        JmsComponent comp = context.getComponent("jms", JmsComponent.class);
+        EndpointConfiguration conf = comp.createConfiguration("jms:queue:foo?replyTo=bar");
 
-        assertEquals("true", conf.getParameter("synchronous"));
+        assertEquals("bar", conf.getParameter("replyTo"));
 
         ComponentConfiguration compConf = comp.createComponentConfiguration();
         String json = compConf.createParameterJsonSchema();
         assertNotNull(json);
 
-        assertTrue(json.contains("\"synchronous\": { \"type\": \"boolean\" }"));
+        assertTrue(json.contains("\"replyToDestination\": { \"type\": \"java.lang.String\" }"));
+        assertTrue(json.contains("\"transacted\": { \"type\": \"boolean\" }"));
     }
 
     @Test
     public void testComponentDocumentation() throws Exception {
         CamelContext context = new DefaultCamelContext();
-        String html = context.getComponentDocumentation("browse");
+        String html = context.getComponentDocumentation("jms");
         assertNotNull("Should have found some auto-generated HTML if on Java 7", html);
     }
 

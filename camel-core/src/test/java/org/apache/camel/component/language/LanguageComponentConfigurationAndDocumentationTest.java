@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.seda;
+package org.apache.camel.component.language;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ComponentConfiguration;
@@ -23,7 +23,7 @@ import org.apache.camel.EndpointConfiguration;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.Test;
 
-public class SedaComponentConfigurationAndDocumentation extends ContextTestSupport {
+public class LanguageComponentConfigurationAndDocumentationTest extends ContextTestSupport {
 
     @Override
     public boolean isUseRouteBuilder() {
@@ -32,23 +32,23 @@ public class SedaComponentConfigurationAndDocumentation extends ContextTestSuppo
 
     @Test
     public void testComponentConfiguration() throws Exception {
-        SedaComponent comp = context.getComponent("seda", SedaComponent.class);
-        EndpointConfiguration conf = comp.createConfiguration("seda:foo?blockWhenFull=true");
+        LanguageComponent comp = context.getComponent("language", LanguageComponent.class);
+        EndpointConfiguration conf = comp.createConfiguration("language:simple:foo?transform=false");
 
-        assertEquals("true", conf.getParameter("blockWhenFull"));
+        assertEquals("false", conf.getParameter("transform"));
 
         ComponentConfiguration compConf = comp.createComponentConfiguration();
         String json = compConf.createParameterJsonSchema();
         assertNotNull(json);
 
-        assertTrue(json.contains("\"timeout\": { \"type\": \"long\" }"));
-        assertTrue(json.contains("\"blockWhenFull\": { \"type\": \"boolean\" }"));
+        assertTrue(json.contains("\"script\": { \"type\": \"java.lang.String\" }"));
+        assertTrue(json.contains("\"cacheScript\": { \"type\": \"boolean\" }"));
     }
 
     @Test
     public void testComponentDocumentation() throws Exception {
         CamelContext context = new DefaultCamelContext();
-        String html = context.getComponentDocumentation("seda");
+        String html = context.getComponentDocumentation("language");
         assertNotNull("Should have found some auto-generated HTML if on Java 7", html);
     }
 

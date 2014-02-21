@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.mock;
+package org.apache.camel.component.timer;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.ComponentConfiguration;
@@ -23,7 +23,7 @@ import org.apache.camel.EndpointConfiguration;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.Test;
 
-public class MockComponentConfigurationAndDocumentation extends ContextTestSupport {
+public class TimerComponentConfigurationAndDocumentationTest extends ContextTestSupport {
 
     @Override
     public boolean isUseRouteBuilder() {
@@ -32,23 +32,23 @@ public class MockComponentConfigurationAndDocumentation extends ContextTestSuppo
 
     @Test
     public void testComponentConfiguration() throws Exception {
-        MockComponent comp = context.getComponent("mock", MockComponent.class);
-        EndpointConfiguration conf = comp.createConfiguration("mock:foo?retainFirst=10");
+        TimerComponent comp = context.getComponent("timer", TimerComponent.class);
+        EndpointConfiguration conf = comp.createConfiguration("timer:foo?period=2000");
 
-        assertEquals("10", conf.getParameter("retainFirst"));
+        assertEquals("2000", conf.getParameter("period"));
 
         ComponentConfiguration compConf = comp.createComponentConfiguration();
         String json = compConf.createParameterJsonSchema();
         assertNotNull(json);
 
-        assertTrue(json.contains("\"expectedCount\": { \"type\": \"int\" }"));
-        assertTrue(json.contains("\"retainFirst\": { \"type\": \"int\" }"));
+        assertTrue(json.contains("\"timerName\": { \"type\": \"java.lang.String\" }"));
+        assertTrue(json.contains("\"delay\": { \"type\": \"long\" }"));
     }
 
     @Test
     public void testComponentDocumentation() throws Exception {
         CamelContext context = new DefaultCamelContext();
-        String html = context.getComponentDocumentation("mock");
+        String html = context.getComponentDocumentation("timer");
         assertNotNull("Should have found some auto-generated HTML if on Java 7", html);
     }
 
