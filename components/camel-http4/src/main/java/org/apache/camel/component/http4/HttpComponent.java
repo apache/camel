@@ -262,14 +262,14 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
         setProperties(endpoint, parameters);
 
         // determine the portnumber (special case: default portnumber)
-        int port = getPort(uriHttpUriAddress);
+        //int port = getPort(uriHttpUriAddress);
 
         // we can not change the port of an URI, we must create a new one with an explicit port value
         URI httpUri = URISupport.createRemainingURI(
                 new URI(uriHttpUriAddress.getScheme(),
                         uriHttpUriAddress.getUserInfo(),
                         uriHttpUriAddress.getHost(),
-                        port,
+                        uriHttpUriAddress.getPort(),
                         uriHttpUriAddress.getPath(),
                         uriHttpUriAddress.getQuery(),
                         uriHttpUriAddress.getFragment()),
