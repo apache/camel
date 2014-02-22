@@ -26,5 +26,16 @@ public class HttpEndpointURLTest extends CamelTestSupport {
         HttpEndpoint endpoint = (HttpEndpoint)context.getEndpoint("http4://[2a00:8a00:6000:40::1413]:30300/test?test=true");
         assertEquals("http://[2a00:8a00:6000:40::1413]:30300/test?test=true", endpoint.getHttpUri().toString());
     }
+    
+    @Test
+    public void testHttpEndpointHttpUri() throws Exception {
+        HttpEndpoint http1 = context.getEndpoint("http4://www.google.com", HttpEndpoint.class);
+        HttpEndpoint http2 = context.getEndpoint("https4://www.google.com?test=parameter&proxyAuthHost=myotherproxy&proxyAuthPort=2345", HttpEndpoint.class);
+        HttpEndpoint http3 = context.getEndpoint("https4://www.google.com?test=parameter", HttpEndpoint.class);
+       
+        assertEquals("Get a wrong HttpUri of http1", "http://www.google.com", http1.getHttpUri().toString());
+        assertEquals("Get a wrong HttpUri of http2", "https://www.google.com?test=parameter", http2.getHttpUri().toString());
+        assertEquals("Get a wrong HttpUri of http2 andhttp3", http2.getHttpUri(), http3.getHttpUri());
+    }
 
 }
