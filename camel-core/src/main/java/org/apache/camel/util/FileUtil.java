@@ -51,6 +51,12 @@ public final class FileUtil {
         // Utils method
     }
 
+    private static boolean initWindowsOs() {
+        // initialize once as System.getProperty is not fast
+        String osName = System.getProperty("os.name").toLowerCase(Locale.US);
+        return osName.contains("windows");
+    }
+
     public static File getUserDir() {
         return USER_DIR;
     }
@@ -70,11 +76,6 @@ public final class FileUtil {
             // for other systems make sure we use / as separators
             return path.replace('\\', '/');
         }
-    }
-
-    private static boolean initWindowsOs() {
-        String osName = System.getProperty("os.name").toLowerCase(Locale.US);
-        return osName.indexOf("windows") > -1;
     }
 
     /**
