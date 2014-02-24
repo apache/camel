@@ -22,6 +22,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.Collections;
+
 import javax.xml.XMLConstants;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.Result;
@@ -38,6 +39,7 @@ import javax.xml.validation.Validator;
 
 import org.w3c.dom.Node;
 import org.w3c.dom.ls.LSResourceResolver;
+
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
 
@@ -50,9 +52,9 @@ import org.apache.camel.TypeConverter;
 import org.apache.camel.converter.jaxp.XmlConverter;
 import org.apache.camel.util.AsyncProcessorHelper;
 import org.apache.camel.util.IOHelper;
-
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 
 /**
  * A processor which validates the XML version of the inbound message body
@@ -62,9 +64,9 @@ public class ValidatingProcessor implements AsyncProcessor {
     private static final Logger LOG = LoggerFactory.getLogger(ValidatingProcessor.class);
     private XmlConverter converter = new XmlConverter();
     private String schemaLanguage = XMLConstants.W3C_XML_SCHEMA_NS_URI;
-    private Schema schema;
+    private volatile Schema schema;
     private Source schemaSource;
-    private SchemaFactory schemaFactory;
+    private volatile SchemaFactory schemaFactory;
     private URL schemaUrl;
     private File schemaFile;
     private byte[] schemaAsByteArray;
@@ -190,7 +192,11 @@ public class ValidatingProcessor implements AsyncProcessor {
 
     public Schema getSchema() throws IOException, SAXException {
         if (schema == null) {
-            schema = createSchema();
+            synchronized (this) {
+                if (schema == null) {
+                    schema = createSchema();
+                }
+            }
         }
         return schema;
     }
@@ -244,7 +250,11 @@ public class ValidatingProcessor implements AsyncProcessor {
 
     public SchemaFactory getSchemaFactory() {
         if (schemaFactory == null) {
-            schemaFactory = createSchemaFactory();
+            synchronized (this) {
+                if (schemaFactory == null) {
+                    schemaFactory = createSchemaFactory();
+                }
+            }
         }
         return schemaFactory;
     }
@@ -336,21 +346,29 @@ public class ValidatingProcessor implements AsyncProcessor {
 
         URL url = getSchemaUrl();
         if (url != null) {
-            return factory.newSchema(url);
+            synchronized (this) {
+                return factory.newSchema(url);
+            }
         }
 
         File file = getSchemaFile();
         if (file != null) {
-            return factory.newSchema(file);
+            synchronized (this) {
+                return factory.newSchema(file);
+            }
         }
 
         byte[] bytes = getSchemaAsByteArray();
         if (bytes != null) {
-            return factory.newSchema(new StreamSource(new ByteArrayInputStream(schemaAsByteArray)));
+            synchronized (this) {
+                return factory.newSchema(new StreamSource(new ByteArrayInputStream(schemaAsByteArray)));
+            }
         }
 
         Source source = getSchemaSource();
-        return factory.newSchema(source);
+        synchronized (this) {
+            return factory.newSchema(source);
+        }
     }
 
     /**
