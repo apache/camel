@@ -173,12 +173,12 @@ public class FlexibleAggregationStrategiesTest extends ContextTestSupport {
 
         template.sendBody("direct:start.timeoutAndCompletionAware", "AGGREGATE1");
         
-        assertTrue(timeoutLatch.await(1200, TimeUnit.MILLISECONDS));
+        assertTrue(timeoutLatch.await(2500, TimeUnit.MILLISECONDS));
         
         template.sendBody("direct:start.timeoutAndCompletionAware", "AGGREGATE2");
         template.sendBody("direct:start.timeoutAndCompletionAware", "AGGREGATE3");
 
-        assertTrue(completionLatch.await(1200, TimeUnit.MILLISECONDS));
+        assertTrue(completionLatch.await(2500, TimeUnit.MILLISECONDS));
 
         getMockEndpoint("mock:result.timeoutAndCompletionAware").getReceivedExchanges();
         assertMockEndpointsSatisfied();
