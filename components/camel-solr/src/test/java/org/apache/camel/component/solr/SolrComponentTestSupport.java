@@ -75,7 +75,9 @@ public class SolrComponentTestSupport extends SolrTestSupport {
 
     @AfterClass
     public static void afterClass() throws Exception {
-        solrRunner.stop();
+        if (solrRunner != null) {
+            solrRunner.stop();
+        }
     }
 
     @Override
@@ -96,8 +98,10 @@ public class SolrComponentTestSupport extends SolrTestSupport {
 
     @Before
     public void clearIndex() throws Exception {
-        // Clear the Solr index.
-        solrServer.deleteByQuery("*:*");
-        solrServer.commit();
+        if (solrServer != null) {
+            // Clear the Solr index.
+            solrServer.deleteByQuery("*:*");
+            solrServer.commit();
+        }
     }
 }
