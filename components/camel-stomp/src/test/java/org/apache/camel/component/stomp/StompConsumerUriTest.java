@@ -34,6 +34,13 @@ public class StompConsumerUriTest extends StompBaseTest {
 
     @Test
     public void testConsume() throws Exception {
+        if (!canTest()) {
+            return;
+        }
+
+        context.addRoutes(createRouteBuilder());
+        context.start();
+
         Stomp stomp = new Stomp("tcp://localhost:" + getPort());
         final BlockingConnection producerConnection = stomp.connectBlocking();
 
