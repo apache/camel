@@ -251,12 +251,17 @@
       <artifactId>camel-xmljson</artifactId>
       <scope>test</scope>
     </dependency>
-	<dependency>
-	  <groupId>org.apache.camel.tests</groupId>
-	  <artifactId>org.apache.camel.tests.mock-javamail_1.7</artifactId>
-	  <scope>test</scope>
+    <dependency>
+      <groupId>org.apache.camel.tests</groupId>
+      <artifactId>org.apache.camel.tests.mock-javamail_1.7</artifactId>
+      <scope>test</scope>
     </dependency>
-	<dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-base64</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-context-support</artifactId>      
       <scope>test</scope>
