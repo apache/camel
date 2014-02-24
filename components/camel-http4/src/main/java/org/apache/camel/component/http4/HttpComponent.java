@@ -261,9 +261,6 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
         // configure the endpoint
         setProperties(endpoint, parameters);
 
-        // determine the portnumber (special case: default portnumber)
-        //int port = getPort(uriHttpUriAddress);
-
         // we can not change the port of an URI, we must create a new one with an explicit port value
         URI httpUri = URISupport.createRemainingURI(
                 new URI(uriHttpUriAddress.getScheme(),
@@ -295,6 +292,9 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
         if (endpoint.getCookieStore() == null) {
             endpoint.setCookieStore(getCookieStore());
         }
+
+        // determine the portnumber (special case: default portnumber)
+        int port = getPort(uriHttpUriAddress);
         // register port on schema registry
         registerPort(secure, x509HostnameVerifier, port, sslContextParameters);
 
