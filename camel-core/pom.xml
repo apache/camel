@@ -455,6 +455,17 @@
         </dependency>
       </dependencies>
     </profile>
+    <profile>
+       <id>xerces</id>
+       <dependencies>
+        <!-- enable the xerces processor -->
+        <dependency>
+          <groupId>xerces</groupId>
+          <artifactId>xercesImpl</artifactId>
+          <version>${xerces-version}</version>
+        </dependency>
+      </dependencies>
+    </profile>
   </profiles>
 
 </project>
