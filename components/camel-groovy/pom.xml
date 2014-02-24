@@ -74,18 +74,24 @@
 	      <!-- set verbose to be true if you want lots of uninteresting messages -->
 	      <!-- <verbose>true</verbose> -->
 	    </configuration>
-	    <dependencies>
-	      <dependency>
-	        <groupId>org.codehaus.groovy</groupId>
-	        <artifactId>groovy-eclipse-compiler</artifactId>
-	        <version>2.7.0-01</version>
-	      </dependency>
-        <dependency>
-          <groupId>org.codehaus.groovy</groupId>
-          <artifactId>groovy-eclipse-batch</artifactId>
-          <version>2.1.8-01</version>
-        </dependency>
-	    </dependencies>
+            <dependencies>
+              <dependency>
+                <groupId>org.codehaus.groovy</groupId>
+                <artifactId>groovy-eclipse-compiler</artifactId>
+                <version>2.7.0-01</version>
+                <exclusions>
+                  <exclusion>
+                    <groupId>org.codehaus.groovy</groupId>
+                    <artifactId>groovy-eclipse-batch</artifactId>
+                  </exclusion>
+                </exclusions>
+              </dependency>
+              <dependency>
+                <groupId>org.codehaus.groovy</groupId>
+                <artifactId>groovy-eclipse-batch</artifactId>
+                <version>2.1.8-01</version>
+              </dependency>
+            </dependencies>
 	  </plugin>
       <plugin>
           <groupId>org.apache.maven.plugins</groupId>
