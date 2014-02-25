@@ -24,7 +24,7 @@ public class MyRouteConfig extends RouteBuilder {
     @Override
     public void configure() {
         from("restlet:/persons?restletMethod=POST")
-                .setBody(simple("insert into person(firstName, lastName) values('${header.firstName}','${header.lastName}"))
+                .setBody(simple("insert into person(firstName, lastName) values('${header.firstName}','${header.lastName}')"))
                 .to("jdbc:dataSource")
                 .setBody(simple("select * from person where id in (select max(id) from person)"))
                 .to("jdbc:dataSource");
