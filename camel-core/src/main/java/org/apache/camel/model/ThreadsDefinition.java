@@ -104,7 +104,7 @@ public class ThreadsDefinition extends OutputDefinition<ThreadsDefinition> imple
         } else {
             thread.setCallerRunsWhenRejected(getCallerRunsWhenRejected());
         }
-        thread.setRejectedPolicy(getRejectedPolicy());
+        thread.setRejectedPolicy(resolveRejectedPolicy(routeContext));
 
         List<Processor> pipe = new ArrayList<Processor>(2);
         pipe.add(thread);
@@ -117,6 +117,16 @@ public class ThreadsDefinition extends OutputDefinition<ThreadsDefinition> imple
                 return "Threads[" + getOutputs() + "]";
             }
         };
+    }
+
+    protected ThreadPoolRejectedPolicy resolveRejectedPolicy(RouteContext routeContext) {
+        if (getExecutorServiceRef() != null && getRejectedPolicy() == null) {
+            ThreadPoolProfile threadPoolProfile = routeContext.getCamelContext().getExecutorServiceManager().getThreadPoolProfile(getExecutorServiceRef());
+            if (threadPoolProfile != null) {
+                return threadPoolProfile.getRejectedPolicy();
+            }
+        }
+        return getRejectedPolicy();
     }
 
     @Override
