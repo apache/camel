@@ -77,8 +77,8 @@ public class MailContentTypeResolverTest extends CamelTestSupport {
 
         // as we use a custom content type resolver the content type should then be fixed and correct
         // content type should match
-        boolean match1 = ("image/jpeg; name=logo.jpeg").equals(handler.getContentType());
-        boolean match2 = ("application/octet-stream; name=logo.jpeg").equals(handler.getContentType());
+        boolean match1 = "image/jpeg; name=logo.jpeg".equals(handler.getContentType());
+        boolean match2 = "application/octet-stream; name=logo.jpeg".equals(handler.getContentType());
         assertTrue("Should match 1 or 2", match1 || match2);
 
         producer.stop();
