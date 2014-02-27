@@ -218,7 +218,7 @@ public class MailConsumer extends ScheduledBatchPollingConsumer {
 
     private void peekMessage(Message mail) {
         // this only applies to IMAP messages which has a setPeek method
-        if (mail.getClass().getName().startsWith("IMAP")) {
+        if (mail.getClass().getSimpleName().startsWith("IMAP")) {
             try {
                 LOG.trace("Calling setPeek(true) on mail message {}", mail);
                 IntrospectionSupport.setProperty(mail, "peek", true);
