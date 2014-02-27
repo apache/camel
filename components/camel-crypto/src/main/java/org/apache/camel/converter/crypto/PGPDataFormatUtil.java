@@ -100,6 +100,7 @@ public final class PGPDataFormatUtil {
         }
     }
 
+    @Deprecated
     public static PGPPublicKey findPublicKeyWithKeyId(CamelContext context, String filename, byte[] keyRing, long keyid,
             boolean forEncryption) throws IOException, PGPException, NoSuchProviderException {
         InputStream is = determineKeyRingInputStream(context, filename, keyRing, forEncryption);
@@ -110,6 +111,15 @@ public final class PGPDataFormatUtil {
             IOHelper.close(is);
         }
         return pubKey;
+    }
+    
+    public static PGPPublicKeyRingCollection getPublicKeyRingCollection(CamelContext context, String filename, byte[] keyRing, boolean forEncryption) throws IOException, PGPException {
+        InputStream is = determineKeyRingInputStream(context, filename, keyRing, forEncryption);
+        try {
+            return new PGPPublicKeyRingCollection(PGPUtil.getDecoderStream(is));
+        } finally {
+            IOHelper.close(is);
+        }
     }
 
     public static PGPPrivateKey findPrivateKeyWithKeyId(CamelContext context, String filename, byte[] secretKeyRing, long keyid,
@@ -483,4 +493,55 @@ public final class PGPDataFormatUtil {
         }
         return null; // no key flag
     }
+    
+    
+    /**
+     * Determines a public key from the keyring collection which has a certain key ID and which has a User ID which contains at least one of the User ID parts.
+     * 
+     * @param keyId key ID
+     * @param userIdParts user ID parts, can be empty, than no filter on the User ID is executed
+     * @param publicKeyringCollection keyring collection
+     * @return public key or <code>null</code> if no fitting key is found
+     * @throws PGPException
+     */
+    @SuppressWarnings("unchecked")
+    public static PGPPublicKey getPublicKeyWithKeyIdAndUserID(long keyId, List<String> userIdParts, PGPPublicKeyRingCollection publicKeyringCollection)
+        throws PGPException {
+        PGPPublicKeyRing publicKeyring = publicKeyringCollection.getPublicKeyRing(keyId);
+        if (publicKeyring == null) {
+            LOG.debug("No public key found for key ID {}.", Long.toString(keyId));
+            return null;
+        }
+        // publicKey can be a subkey the user IDs must therefore be provided by the primary/master key
+        if (isAllowedKey(userIdParts, publicKeyring.getPublicKey().getUserIDs())) {
+            return publicKeyring.getPublicKey(keyId);
+        } else {
+            return null;
+        }
+    }
+    
+    private static boolean isAllowedKey(List<String> allowedUserIds, Iterator<String> verifyingPublicKeyUserIds) {
+
+        if (allowedUserIds == null || allowedUserIds.isEmpty()) {
+            // no restrictions specified
+            return true;
+        }
+        String keyUserId = null;
+        for (; verifyingPublicKeyUserIds.hasNext();) {
+            keyUserId = verifyingPublicKeyUserIds.next();
+            for (String userid : allowedUserIds) {
+                if (keyUserId != null && keyUserId.contains(userid)) {
+                    LOG.debug(
+                            "Public key with  user ID {} fulfills the User ID restriction.",
+                            keyUserId, allowedUserIds);
+                    return true;
+                }
+            }
+        }
+        LOG.warn(
+                "Public key with User ID {} does not fulfill the User ID restriction.",
+                keyUserId, allowedUserIds);
+        return false;
+    }
+    
 }

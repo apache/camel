@@ -27,6 +27,7 @@ import org.apache.camel.Exchange;
 import org.bouncycastle.openpgp.PGPException;
 import org.bouncycastle.openpgp.PGPPrivateKey;
 import org.bouncycastle.openpgp.PGPPublicKey;
+import org.bouncycastle.openpgp.PGPPublicKeyRingCollection;
 
 /**
  * <code>PGPDataFormat</code> uses the <a
@@ -37,7 +38,7 @@ import org.bouncycastle.openpgp.PGPPublicKey;
  * 
  */
 public class PGPDataFormat extends PGPKeyAccessDataFormat implements PGPPublicKeyAccessor, PGPSecretKeyAccessor {
-
+    
     public static final String KEY_FILE_NAME = "CamelPGPDataFormatKeyFileName";
     public static final String ENCRYPTION_KEY_RING = "CamelPGPDataFormatEncryptionKeyRing";
     public static final String KEY_PASSWORD = "CamelPGPDataFormatKeyPassword";
@@ -256,10 +257,13 @@ public class PGPDataFormat extends PGPKeyAccessDataFormat implements PGPPublicKe
                 keyId, findKeyPassword(exchange), getPassphraseAccessor(), getProvider());
     }
 
+
+   
     @Override
-    public PGPPublicKey getPublicKey(Exchange exchange, long keyId) throws Exception {
-        return PGPDataFormatUtil.findPublicKeyWithKeyId(exchange.getContext(), findSignatureKeyFileName(exchange),
-                findSignatureKeyRing(exchange), keyId, false);
+    public PGPPublicKey getPublicKey(Exchange exchange, long keyId, List<String> userIdParts) throws Exception {
+        PGPPublicKeyRingCollection publicKeyringCollection = PGPDataFormatUtil.getPublicKeyRingCollection(exchange.getContext(), 
+                findSignatureKeyFileName(exchange), findSignatureKeyRing(exchange), false);
+        return PGPDataFormatUtil.getPublicKeyWithKeyIdAndUserID(keyId, userIdParts, publicKeyringCollection);      
     }
 
     @Override
@@ -271,5 +275,5 @@ public class PGPDataFormat extends PGPKeyAccessDataFormat implements PGPPublicKe
     public void setSecretKeyAccessor(PGPSecretKeyAccessor secretKeyAccessor) {
         throw new UnsupportedOperationException("Use PGPKeyAccessDataFormat if you want to set the secret key access");
     }
-
+    
 }

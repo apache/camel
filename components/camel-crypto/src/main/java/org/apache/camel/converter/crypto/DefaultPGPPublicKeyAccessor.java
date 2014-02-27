@@ -16,6 +16,8 @@
  */
 package org.apache.camel.converter.crypto;
 
+
+
 import java.io.ByteArrayInputStream;
 import java.io.IOException;
 import java.util.List;
@@ -32,6 +34,7 @@ import org.bouncycastle.openpgp.PGPUtil;
  * 
  */
 public class DefaultPGPPublicKeyAccessor implements PGPPublicKeyAccessor {
+    
 
     private final PGPPublicKeyRingCollection pgpPublicKeyRing;
 
@@ -46,8 +49,8 @@ public class DefaultPGPPublicKeyAccessor implements PGPPublicKeyAccessor {
     }
 
     @Override
-    public PGPPublicKey getPublicKey(Exchange exchange, long keyId) throws Exception {
-        return pgpPublicKeyRing.getPublicKey(keyId);
+    public PGPPublicKey getPublicKey(Exchange exchange, long keyId, List<String> userIdParts) throws Exception {       
+        return PGPDataFormatUtil.getPublicKeyWithKeyIdAndUserID(keyId, userIdParts, pgpPublicKeyRing);
     }
 
 }

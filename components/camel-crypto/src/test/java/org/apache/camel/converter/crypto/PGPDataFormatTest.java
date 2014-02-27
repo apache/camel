@@ -195,6 +195,26 @@ public class PGPDataFormatTest extends AbstractPGPDataFormatTest {
         assertEquals(1, inMess.getHeader(PGPDataFormat.NUMBER_OF_ENCRYPTION_KEYS));
         assertEquals(1, inMess.getHeader(PGPDataFormat.NUMBER_OF_SIGNING_KEYS));
     }
+    
+    /**
+     * You get three keys with the UserId "keyflag", a primary key and its two
+     * sub-keys. The sub-key with KeyFlag {@link KeyFlags#SIGN_DATA} should be
+     * used for signing and the sub-key with KeyFlag
+     * {@link KeyFlags#ENCRYPT_COMMS} or {@link KeyFlags#ENCRYPT_COMMS} or
+     * {@link KeyFlags#ENCRYPT_STORAGE} should be used for decryption.
+     * <p>
+     * Tests also the decryption and verifying part with the subkeys.
+     * @throws Exception
+     */
+    @Test
+    public void testDecryptVerifyWithSubkey() throws Exception {       
+        // do not use doRoundTripEncryptionTests("direct:subkey"); because otherwise you get an error in the dynamic test
+        String payload = "Test Message";
+        MockEndpoint mockSubkey = getMockEndpoint("mock:unencrypted");
+        mockSubkey.expectedBodiesReceived(payload);
+        template.sendBody("direct:subkey", payload);
+        assertMockEndpointsSatisfied();
+    }
 
     protected RouteBuilder[] createRouteBuilders() {
         return new RouteBuilder[] {new RouteBuilder() {
@@ -394,6 +414,17 @@ public class PGPDataFormatTest extends AbstractPGPDataFormatTest {
                 pgpKeyFlag.setSignatureKeyUserid("keyflag");
 
                 from("direct:keyflag").marshal(pgpKeyFlag).to("mock:encrypted_keyflag");
+                
+                PGPDataFormat pgpDecryptVerifySubkey = new PGPDataFormat();
+                // the following keyring contains a primary key with KeyFlag "Certify" and a subkey for signing and a subkey for encryption
+                pgpDecryptVerifySubkey.setKeyFileName("org/apache/camel/component/crypto/secringSubKeys.gpg");
+                pgpDecryptVerifySubkey.setSignatureKeyFileName("org/apache/camel/component/crypto/pubringSubKeys.gpg");
+                pgpDecryptVerifySubkey.setPassword("Abcd1234");
+                pgpDecryptVerifySubkey.setSignatureKeyUserid("keyflag");
+                
+                // test that the correct subkey is selected during decrypt and verify
+                from("direct:subkey").marshal(pgpKeyFlag).to("mock:encrypted").unmarshal(pgpDecryptVerifySubkey)
+                .to("mock:unencrypted");
             }
         }, new RouteBuilder() {
             public void configure() throws Exception {

@@ -26,7 +26,6 @@ import java.security.SignatureException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.camel.Exchange;
@@ -409,15 +408,13 @@ public class PGPKeyAccessDataFormat extends ServiceSupport implements DataFormat
         for (int i = 0; i < signatureList.size(); i++) {
             PGPOnePassSignature signature = signatureList.get(i);
             // Determine public key from signature keyId
-            PGPPublicKey sigPublicKey = publicKeyAccessor.getPublicKey(exchange, signature.getKeyID());
+            PGPPublicKey sigPublicKey = publicKeyAccessor.getPublicKey(exchange, signature.getKeyID(), allowedUserIds);
             if (sigPublicKey == null) {
                 continue;
             }
-            if (isAllowedVerifyingKey(allowedUserIds, sigPublicKey)) {
-                // choose that signature for which a public key exists!
-                signature.init(new JcaPGPContentVerifierBuilderProvider().setProvider(getProvider()), sigPublicKey);
-                return signature;
-            }
+            // choose that signature for which a public key exists!
+            signature.init(new JcaPGPContentVerifierBuilderProvider().setProvider(getProvider()), sigPublicKey);
+            return signature;
         }
         if (signatureList.isEmpty()) {
             return null;
@@ -425,31 +422,6 @@ public class PGPKeyAccessDataFormat extends ServiceSupport implements DataFormat
             throw new IllegalArgumentException("No public key found fitting to the signature key Id; cannot verify the signature");
         }
 
-    }
-
-    public boolean isAllowedVerifyingKey(List<String> allowedUserIds, PGPPublicKey verifyingPublicKey) {
-
-        if (allowedUserIds == null || allowedUserIds.isEmpty()) {
-            // no restrictions specified
-            return true;
-        }
-        String keyUserId = null;
-        for (@SuppressWarnings("unchecked")
-        Iterator<String> iterator = verifyingPublicKey.getUserIDs(); iterator.hasNext();) {
-            keyUserId = iterator.next();
-            for (String userid : allowedUserIds) {
-                if (keyUserId != null && keyUserId.contains(userid)) {
-                    LOG.debug(
-                            "Public key with  user ID {} fulfills the User ID restriction {}. Therefore this key will be used for the signature verification. ",
-                            keyUserId, allowedUserIds);
-                    return true;
-                }
-            }
-        }
-        LOG.warn(
-                "Public key with User ID {} does not fulfill the User ID restriction {}. Therefore this key will not be used for the signature verification.",
-                keyUserId, allowedUserIds);
-        return false;
     }
 
     /**
