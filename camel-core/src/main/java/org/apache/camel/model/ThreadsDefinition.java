@@ -95,6 +95,25 @@ public class ThreadsDefinition extends OutputDefinition<ThreadsDefinition> imple
                     .build();
             threadPool = manager.newThreadPool(this, name, profile);
             shutdownThreadPool = true;
+        } else {
+            if (getThreadName() != null && !getThreadName().equals("Threads")) {
+                throw new IllegalArgumentException("ThreadName and executorServiceRef options cannot be used together.");
+            }
+            if (getPoolSize() != null) {
+                throw new IllegalArgumentException("PoolSize and executorServiceRef options cannot be used together.");
+            }
+            if (getMaxPoolSize() != null) {
+                throw new IllegalArgumentException("MaxPoolSize and executorServiceRef options cannot be used together.");
+            }
+            if (getKeepAliveTime() != null) {
+                throw new IllegalArgumentException("KeepAliveTime and executorServiceRef options cannot be used together.");
+            }
+            if (getMaxQueueSize() != null) {
+                throw new IllegalArgumentException("MaxQueueSize and executorServiceRef options cannot be used together.");
+            }
+            if (getRejectedPolicy() != null) {
+                throw new IllegalArgumentException("RejectedPolicy and executorServiceRef options cannot be used together.");
+            }
         }
 
         ThreadsProcessor thread = new ThreadsProcessor(routeContext.getCamelContext(), threadPool, shutdownThreadPool);
