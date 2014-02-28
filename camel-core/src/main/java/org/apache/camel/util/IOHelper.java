@@ -493,4 +493,27 @@ public final class IOHelper {
             close(isr, in);
         }
     }
+    
+    /**
+     * Get the charset name from the content type string
+     * @param contentType
+     * @return the charset name, or <tt>UTF-8</tt> if no found
+     */
+    public static String getCharsetNameFromContentType(String contentType) {
+        String[] values = contentType.split(";"); 
+        String charset = "";
+
+        for (String value : values) {
+            value = value.trim();
+            if (value.toLowerCase().startsWith("charset=")) {
+                // Take the charset name
+                charset = value.substring(8);
+            }
+        }
+        if ("".equals(charset)) {
+            charset = "UTF-8"; 
+        }
+        return IOHelper.normalizeCharset(charset);
+
+    }
 }
