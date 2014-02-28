@@ -96,7 +96,7 @@ public class SqlProducer extends DefaultProducer {
                         SqlOutputType outputType = getEndpoint().getOutputType();
                         log.trace("Got result list from query: {}, outputType={}", rs, outputType);
                         if (outputType == SqlOutputType.SelectList) {
-                            List<Map<String, Object>> data = getEndpoint().queryForList(ps.getResultSet());
+                            List<Map<String, Object>> data = getEndpoint().queryForList(rs);
                             // for noop=true we still want to enrich with the row count header
                             if (getEndpoint().isNoop()) {
                                 exchange.getOut().setBody(exchange.getIn().getBody());
@@ -105,7 +105,7 @@ public class SqlProducer extends DefaultProducer {
                             }
                             exchange.getOut().setHeader(SqlConstants.SQL_ROW_COUNT, data.size());
                         } else if (outputType == SqlOutputType.SelectOne) {
-                            Object data = getEndpoint().queryForObject(ps.getResultSet());
+                            Object data = getEndpoint().queryForObject(rs);
                             if (data != null) {
                                 // for noop=true we still want to enrich with the row count header
                                 if (getEndpoint().isNoop()) {
