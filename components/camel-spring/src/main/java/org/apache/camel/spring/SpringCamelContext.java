@@ -61,7 +61,7 @@ public class SpringCamelContext extends DefaultCamelContext implements Initializ
     private static final ThreadLocal<Boolean> NO_START = new ThreadLocal<Boolean>();
     private ApplicationContext applicationContext;
     private EventComponent eventComponent;
-    private boolean shutdownEager = true;
+    private boolean shutdownEager;
 
     public SpringCamelContext() {
     }
@@ -188,9 +188,9 @@ public class SpringCamelContext extends DefaultCamelContext implements Initializ
      * Whether to shutdown this {@link org.apache.camel.spring.SpringCamelContext} eager (first)
      * when Spring {@link org.springframework.context.ApplicationContext} is being stopped.
      * <p/>
-     * <b>Important:</b> This option is default <tt>true</tt> which ensures we shutdown Camel
-     * before other beans. Setting this to <tt>false</tt> restores old behavior in earlier
-     * Camel releases, which can be used for special cases to behave as before.
+     * <b>Important:</b> This option is default <tt>false</tt> to be backwards compatible
+     * with current behavior. Setting this to <tt>true</tt> ensures we shutdown
+     * Camel before any beans, which is also the default behavior in Camel 2.13 onwards.
      *
      * @return <tt>true</tt> to shutdown eager (first), <tt>false</tt> to shutdown last
      */

@@ -31,7 +31,8 @@
     <property name="shutdownOrderBean" ref="order"/>
   </bean>
 
-  <camelContext id="myCamel" xmlns="http://camel.apache.org/schema/spring">
+  <!-- shutdown eager is true, to shutdown Camel eager (first) -->
+  <camelContext id="myCamel" shutdownEager="true" xmlns="http://camel.apache.org/schema/spring">
     <route>
       <from uri="seda:start"/>
       <to uri="bean:a?cache=false"/>
