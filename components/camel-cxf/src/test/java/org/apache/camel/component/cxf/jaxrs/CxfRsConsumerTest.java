@@ -91,6 +91,10 @@ public class CxfRsConsumerTest extends CamelTestSupport {
                                 if ("/customerservice/customers/456".equals(path)) {
                                     Response r = Response.status(404).entity("Can't found the customer with uri " + path).build();
                                     throw new WebApplicationException(r);
+                                } else if ("/customerservice/customers/234".equals(path)) {
+                                    Response r = Response.status(404).entity("Can't found the customer with uri " + path).build();
+                                    exchange.getOut().setBody(r);
+                                    exchange.getOut().setFault(true);
                                 } else {
                                     throw new RuntimeCamelException("Can't found the customer with uri " + path);
                                 }
@@ -153,6 +157,15 @@ public class CxfRsConsumerTest extends CamelTestSupport {
         } catch (FileNotFoundException exception) {
             // do nothing here
         }
+        
+        url = new URL("http://localhost:" + CXT + "/rest/customerservice/customers/234");
+        try {
+            url.openStream();
+            fail("Expect to get exception here");
+        } catch (FileNotFoundException exception) {
+            // do nothing here
+        }
+        
         url = new URL("http://localhost:" + CXT + "/rest/customerservice/customers/256");
         try {
             url.openStream();
