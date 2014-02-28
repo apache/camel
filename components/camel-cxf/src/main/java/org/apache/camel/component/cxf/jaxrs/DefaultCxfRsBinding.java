@@ -72,7 +72,8 @@ public class DefaultCxfRsBinding implements CxfRsBinding, HeaderFilterStrategyAw
     
     public Object populateCxfRsResponseFromExchange(Exchange camelExchange,
                                                     org.apache.cxf.message.Exchange cxfExchange) throws Exception {
-        if (camelExchange.isFailed()) {
+        // Need to check if the exchange has the exception
+        if (camelExchange.isFailed() && camelExchange.getException() != null) {
             throw camelExchange.getException();
         }
 
