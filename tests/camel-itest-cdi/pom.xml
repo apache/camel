@@ -68,7 +68,9 @@
             <includes>
               <include>**/*Test.java</include>
             </includes>
+            <!-- CDI embedded test doesnt work CAMEL-6976 -->
             <excludes>
+              <exclude>**/*Test.java</exclude>
               <exclude>**/*XXXTest.*</exclude>
             </excludes>
           </configuration>
