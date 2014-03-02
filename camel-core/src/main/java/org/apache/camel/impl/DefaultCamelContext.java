@@ -1171,6 +1171,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                 // of the camel context (its the container)
                 typeConverter = createTypeConverter();
                 try {
+                    // must add service eager
                     addService(typeConverter);
                 } catch (Exception e) {
                     throw ObjectHelper.wrapRuntimeCamelException(e);
@@ -1182,6 +1183,12 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
 
     public void setTypeConverter(TypeConverter typeConverter) {
         this.typeConverter = typeConverter;
+        try {
+            // must add service eager
+            addService(typeConverter);
+        } catch (Exception e) {
+            throw ObjectHelper.wrapRuntimeCamelException(e);
+        }
     }
 
     public TypeConverterRegistry getTypeConverterRegistry() {
