@@ -132,7 +132,7 @@ public class OSGiIntegrationTestSupport extends CamelTestSupport {
             new Option[] {
                       karafDistributionConfiguration()
                           .frameworkUrl(maven().groupId("org.apache.karaf").artifactId("apache-karaf").type("tar.gz").versionAsInProject())
-                          .karafVersion("2.3.3")
+                          .karafVersion("2.3.4")
                           .name("Apache Karaf")
                           .useDeployFolder(false).unpackDirectory(new File("target/paxexam/unpack/")),
 
