@@ -109,7 +109,7 @@
     <cxf-version>2.7.10</cxf-version>
     <cxf-version-range>[2.6,4.0)</cxf-version-range>
     <cxf-xjc-utils-version>2.7.0</cxf-xjc-utils-version>
-    <deltaspike-version>0.3-incubating</deltaspike-version>
+    <deltaspike-version>0.5</deltaspike-version>
     <derby-version>10.10.1.1</derby-version>
     <disruptor-version>3.2.0</disruptor-version>
     <dnsjava-version>2.1.1</dnsjava-version>
@@ -161,7 +161,7 @@
     <google-gdata-version>1.41.5.w1</google-gdata-version>
     <google-gdata-bundle-version>1.41.1_1</google-gdata-bundle-version>
     <!-- camel-cdi doesn't work with Guava 15.0.0 at present -->
-    <google-guava-version>14.0.1</google-guava-version>
+    <google-guava-version>16.0.1</google-guava-version>
     <groovy-version>2.2.2</groovy-version>
     <gson-version>2.2.4</gson-version>
     <guice-bundle-version>3.0_1</guice-bundle-version>
@@ -411,8 +411,8 @@
     <vertx-version>2.0.1-final</vertx-version>
     <vysper-version>0.7</vysper-version>
     <!-- should be in-sync with deltaspike -->
-    <weld-version>1.1.5.Final</weld-version>
-    <weld2-version>2.1.0.Final</weld2-version>
+    <weld-version>1.1.18.Final</weld-version>
+    <weld2-version>2.1.2.Final</weld2-version>
     <werken-xpath-bundle-version>0.9.4_5</werken-xpath-bundle-version>
     <woodstox-version>4.2.0</woodstox-version>
     <ws-commons-util-bundle-version>1.0.2_2</ws-commons-util-bundle-version>

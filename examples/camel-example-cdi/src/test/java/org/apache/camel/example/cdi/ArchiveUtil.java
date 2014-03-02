@@ -60,7 +60,7 @@ public final class ArchiveUtil {
 
         File[] libs = Maven.resolver()
                 .loadPomFromFile("pom.xml")
-                .resolve("org.apache.camel:camel-core", "org.apache.camel:camel-cdi", "org.apache.activemq:activemq-camel")
+                .resolve("org.apache.camel:camel-core", "org.apache.camel:camel-cdi")
                 .withTransitivity()
                 .as(File.class);
 

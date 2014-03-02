@@ -27,7 +27,7 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.cdi.store.Item;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.deltaspike.core.api.config.annotation.ConfigProperty;
+import org.apache.deltaspike.core.api.config.ConfigProperty;
 import org.junit.Test;
 
 public class EndpointDefinedUsingConfigPropertyTest extends CdiContextTestSupport {

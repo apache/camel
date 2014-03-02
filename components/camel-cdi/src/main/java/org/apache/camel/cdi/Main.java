@@ -21,7 +21,6 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 
@@ -108,15 +107,13 @@ public abstract class Main extends MainSupport { // abstract to prevent cdi mana
 
     protected Set<Class<?>> getJaxbPackages() {
         Set<Class<?>> classes = new HashSet<Class<?>>();
-        //classes.add(CamelContextFactoryBean.class);
-        //classes.add(AbstractCamelContextFactoryBean.class);
         classes.add(org.apache.camel.ExchangePattern.class);
         classes.add(org.apache.camel.model.RouteDefinition.class);
         classes.add(org.apache.camel.model.config.StreamResequencerConfig.class);
         classes.add(org.apache.camel.model.dataformat.DataFormatsDefinition.class);
         classes.add(org.apache.camel.model.language.ExpressionDefinition.class);
         classes.add(org.apache.camel.model.loadbalancer.RoundRobinLoadBalancerDefinition.class);
-        //classes.add(SSLContextParametersFactoryBean.class);
+        classes.add(org.apache.camel.model.loadbalancer.RoundRobinLoadBalancerDefinition.class);
         return classes;
     }
 
@@ -129,10 +126,11 @@ public abstract class Main extends MainSupport { // abstract to prevent cdi mana
         super.doStart();
     }
 
-
     @Override
     protected void doStop() throws Exception {
         super.doStop();
-        ((org.apache.deltaspike.cdise.api.CdiContainer) cdiContainer).shutdown();
+        if (cdiContainer != null) {
+            ((org.apache.deltaspike.cdise.api.CdiContainer) cdiContainer).shutdown();
+        }
     }
 }
