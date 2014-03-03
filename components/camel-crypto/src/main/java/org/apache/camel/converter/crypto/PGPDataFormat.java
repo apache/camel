@@ -401,19 +401,32 @@ public class PGPDataFormat extends ServiceSupport implements DataFormat {
         }
         InputStream in = PGPUtil.getDecoderStream(encryptedStream);
         PGPObjectFactory pgpFactory = new PGPObjectFactory(in);
-        Object o = pgpFactory.nextObject();
+        Object firstObject = pgpFactory.nextObject();
         // the first object might be a PGP marker packet 
         PGPEncryptedDataList enc;
-        if (o instanceof PGPEncryptedDataList) {
-            enc = (PGPEncryptedDataList) o;
+        if (firstObject instanceof PGPEncryptedDataList) {
+            enc = (PGPEncryptedDataList) firstObject;
         } else {
-            enc = (PGPEncryptedDataList) pgpFactory.nextObject();
+            Object secondObject = pgpFactory.nextObject();
+            if (secondObject instanceof PGPEncryptedDataList) {
+                enc = (PGPEncryptedDataList) pgpFactory.nextObject();
+            } else {
+                enc = null;
+            }
+        }
+
+        if (enc == null) {
+            throw getFormatException();
         }
 
         PGPPublicKeyEncryptedData pbe = null;
         PGPPrivateKey key = null;
         // find encrypted data for which a private key exists in the secret key ring
         for (int i = 0; i < enc.size() && key == null; i++) {
+            Object encryptedData = enc.get(i);
+            if (!(encryptedData instanceof PGPPublicKeyEncryptedData)) {
+                throw getFormatException();
+            }
             pbe = (PGPPublicKeyEncryptedData) enc.get(i);
             key = PGPDataFormatUtil.findPrivateKeyWithKeyId(exchange.getContext(), findKeyFileName(exchange),
                     findEncryptionKeyRing(exchange), pbe.getKeyID(), findKeyPassword(exchange), getPassphraseAccessor(), getProvider());
@@ -423,12 +436,16 @@ public class PGPDataFormat extends ServiceSupport implements DataFormat {
             }
         }
         if (key == null) {
-            throw new PGPException("Provided input is encrypted with unknown pair of keys.");
+            throw new PGPException("Message is encrypted with a key which could not be found in the Secret Key Ring.");
         }
 
         InputStream encData = pbe.getDataStream(new JcePublicKeyDataDecryptorFactoryBuilder().setProvider(getProvider()).build(key));
         pgpFactory = new PGPObjectFactory(encData);
-        PGPCompressedData comData = (PGPCompressedData) pgpFactory.nextObject();
+        Object compObj = pgpFactory.nextObject();
+        if (!(compObj instanceof PGPCompressedData)) {
+            throw getFormatException();
+        }
+        PGPCompressedData comData = (PGPCompressedData)compObj;
         pgpFactory = new PGPObjectFactory(comData.getDataStream());
         Object object = pgpFactory.nextObject();
 
@@ -440,7 +457,13 @@ public class PGPDataFormat extends ServiceSupport implements DataFormat {
             signature = null;
         }
 
-        PGPLiteralData ld = (PGPLiteralData) object;
+        PGPLiteralData ld;
+        if (object instanceof PGPLiteralData) {
+            ld = (PGPLiteralData) object;
+        } else {
+            throw getFormatException();
+        }
+
         InputStream litData = ld.getInputStream();
 
         // enable streaming via OutputStreamCache
@@ -483,6 +506,13 @@ public class PGPDataFormat extends ServiceSupport implements DataFormat {
         } else {
             return bos.toByteArray();
         }
+    }
+
+    private IllegalArgumentException getFormatException() {
+        return new IllegalArgumentException("The input message body has an invalid format. The PGP decryption/verification processor expects a sequence of PGP packets of the form "
+                + "(entries in brackets are optional and ellipses indicate repetition, comma represents  sequential composition, and vertical bar separates alternatives): "
+                + "Public Key Encrypted Session Key ..., Symmetrically Encrypted Data | Sym. Encrypted and Integrity Protected Data, Compressed Data, (One Pass Signature ...,) "
+                + "Literal Data, (Signature ...,)");
     }
 
     protected PGPSignature getSignatureWithKeyId(long keyID, PGPSignatureList sigList) {
