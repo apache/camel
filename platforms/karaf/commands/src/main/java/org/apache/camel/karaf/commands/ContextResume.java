@@ -20,14 +20,14 @@ import org.apache.camel.CamelContext;
 import org.apache.felix.gogo.commands.Command;
 
 /**
- * Command to stop a Camel context.
+ * Command to resume a Camel context.
  */
-@Command(scope = "camel", name = "context-stop", description = "Stop a Camel context.")
-public class ContextStop extends AbstractContextCommand {
+@Command(scope = "camel", name = "context-resume", description = "Resumes a Camel context.")
+public class ContextResume extends AbstractContextCommand {
 
     @Override
     protected void performContextCommand(CamelContext camelContext) throws Exception {
-        camelContext.stop();
+        camelContext.resume();
     }
 
 }

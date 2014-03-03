@@ -14,6 +14,8 @@
     \u001B[36mcamel:context-list\u001B[0m Lists all Camel contexts.
     \u001B[36mcamel:context-start\u001B[0m Start a Camel context.
     \u001B[36mcamel:context-stop\u001B[0m Stops a Camel context.
+    \u001B[36mcamel:context-suspend\u001B[0m Suspends a Camel context.
+    \u001B[36mcamel:context-resume\u001B[0m Resumes a Camel context.
     \u001B[36mcamel:route-info\u001B[0m Display information about a Camel route.
     \u001B[36mcamel:route-list\u001B[0m Lists the Camel routes.
     \u001B[36mcamel:route-resume\u001B[0m Resume a Camel route.
