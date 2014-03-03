@@ -38,6 +38,7 @@ import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.LRUSoftCache;
+import org.apache.cxf.Bus;
 import org.apache.cxf.jaxrs.JAXRSServiceFactoryBean;
 import org.apache.cxf.jaxrs.client.Client;
 import org.apache.cxf.jaxrs.client.JAXRSClientFactoryBean;
@@ -95,8 +96,11 @@ public class CxfRsProducer extends DefaultProducer {
         Message inMessage = exchange.getIn();
         JAXRSClientFactoryBean cfb = clientFactoryBeanCache.get(CxfEndpointUtils
             .getEffectiveAddress(exchange, ((CxfRsEndpoint)getEndpoint()).getAddress()));
-        
-        cfb.setBus(((CxfRsEndpoint)getEndpoint()).getBus());
+        Bus bus = ((CxfRsEndpoint)getEndpoint()).getBus();
+        // We need to apply the bus setting from the CxfRsEndpoint which is not use the default bus
+        if (bus != null) {
+            cfb.setBus(bus);
+        }
         WebClient client = cfb.createWebClient();
         String httpMethod = inMessage.getHeader(Exchange.HTTP_METHOD, String.class);
         Class<?> responseClass = inMessage.getHeader(CxfConstants.CAMEL_CXF_RS_RESPONSE_CLASS, Class.class);
@@ -196,9 +200,11 @@ public class CxfRsProducer extends DefaultProducer {
         
         JAXRSClientFactoryBean cfb = clientFactoryBeanCache.get(CxfEndpointUtils
                                    .getEffectiveAddress(exchange, ((CxfRsEndpoint)getEndpoint()).getAddress()));
-
-        cfb.setBus(((CxfRsEndpoint)getEndpoint()).getBus());
-        
+        Bus bus = ((CxfRsEndpoint)getEndpoint()).getBus();
+        // We need to apply the bus setting from the CxfRsEndpoint which is not use the default bus
+        if (bus != null) {
+            cfb.setBus(bus);
+        }
         if (varValues == null) {
             target = cfb.create();
         } else {
