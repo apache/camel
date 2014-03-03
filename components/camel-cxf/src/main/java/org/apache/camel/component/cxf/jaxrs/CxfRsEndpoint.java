@@ -84,9 +84,7 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
     private int loggingSizeLimit;
     private boolean skipFaultLogging;
     private BindingStyle bindingStyle = BindingStyle.Default;
-    
-    private AtomicBoolean getBusHasBeenCalled = new AtomicBoolean(false);
-
+   
     private boolean isSetDefaultBus;
     
    
@@ -362,18 +360,13 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
     
     public void setBus(Bus bus) {
         this.bus = bus;
-    }
-
-    public Bus getBus() {
-        if (bus == null) {
-            bus = CxfEndpointUtils.createBus(getCamelContext());
-            LOG.debug("Using DefaultBus {}", bus);
-        }
-
-        if (!getBusHasBeenCalled.getAndSet(true) && isSetDefaultBus) {
+        if (isSetDefaultBus) {
             BusFactory.setDefaultBus(bus);
             LOG.debug("Set bus {} as thread default bus", bus);
         }
+    }
+
+    public Bus getBus() {
         return bus;
     }
     
