@@ -31,6 +31,9 @@
   <description>Camel Salesforce support</description>
 
   <properties>
+    <camel.osgi.import.before.defaults>
+        org.joda.time.*;version="[1.6,3)"
+    </camel.osgi.import.before.defaults>
     <camel.osgi.export.pkg>
       org.apache.camel.component.salesforce,
       org.apache.camel.component.salesforce.api.*
