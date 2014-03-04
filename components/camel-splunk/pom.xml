@@ -31,6 +31,9 @@
   <packaging>bundle</packaging>
 
   <properties>
+    <camel.osgi.import.before.defaults>
+      org.joda.time.*;version="[1.6,3)"
+    </camel.osgi.import.before.defaults>
     <camel.osgi.export.pkg>org.apache.camel.component.splunk.*</camel.osgi.export.pkg>
     <camel.osgi.export.service>org.apache.camel.spi.ComponentResolver;component=splunk</camel.osgi.export.service>
   </properties>
@@ -87,13 +90,5 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
-
-  <!-- TODO: remove me when we use SMX bundle version for splunk -->
-  <repositories>
-    <repository>
-      <id>ext-release-local</id>
-      <url>http://splunk.artifactoryonline.com/splunk/ext-releases-local</url>
-    </repository>
-  </repositories>
 
 </project>
