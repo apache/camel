@@ -45,6 +45,10 @@ public class OsgiClassResolver extends DefaultClassResolver {
     public Class<?> resolveClass(String name) {
         LOG.trace("Resolve class {}", name);
         name = ObjectHelper.normalizeClassName(name);
+        if (ObjectHelper.isEmpty(name)) {
+            return null;
+        }
+        // we need to avoid the NPE issue of loading the class
         Class<?> clazz = ObjectHelper.loadSimpleType(name);
         if (clazz == null) {
             clazz = doLoadClass(name, bundleContext.getBundle());
