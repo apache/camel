@@ -251,7 +251,7 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
     /**
      * Gets a component from the context by name.
      *
-     * @param componentName the name of the component
+     * @param name                 the name of the component
      * @param autoCreateComponents whether or not the component should
      *                             be lazily created if it does not already exist
      * @return the component
@@ -1249,6 +1249,14 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      * Returns the HTML documentation for the given camel component
      */
     String getComponentDocumentation(String componentName) throws IOException;
+
+    /**
+     * Creates a JSON representation of all the <b>static</b> configured endpoints defined in the given route(s).
+     *
+     * @param routeId for a particular route, or <tt>null</tt> for all routes
+     * @return a JSON string
+     */
+    String createRouteStaticEndpointJson(String routeId);
 
     /**
      * Gets the {@link StreamCachingStrategy} to use.

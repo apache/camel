@@ -57,6 +57,24 @@ public class ManagedRouteDumpRouteAsXmlTest extends ManagementTestSupport {
         assertTrue(xml.contains("mock:result"));
     }
 
+    public void testCreateRouteStaticEndpointJson() throws Exception {
+        // JMX tests dont work well on AIX CI servers (hangs them)
+        if (isPlatform("aix")) {
+            return;
+        }
+
+        MBeanServer mbeanServer = getMBeanServer();
+        ObjectName on = getRouteObjectName(mbeanServer);
+
+        // get the json
+        String json = (String) mbeanServer.invoke(on, "createRouteStaticEndpointJson", null, null);
+        assertNotNull(json);
+        assertTrue(json.contains("\"myRoute\""));
+        assertTrue(json.contains("{ \"uri\": \"direct:start\" }"));
+        assertTrue(json.contains("{ \"uri\": \"mock:result\" }"));
+    }
+
+
     static ObjectName getRouteObjectName(MBeanServer mbeanServer) throws Exception {
         Set<ObjectName> set = mbeanServer.queryNames(new ObjectName("*:type=routes,*"), null);
         assertEquals(1, set.size());

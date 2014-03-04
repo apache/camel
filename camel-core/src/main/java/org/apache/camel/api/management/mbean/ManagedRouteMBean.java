@@ -104,4 +104,7 @@ public interface ManagedRouteMBean extends ManagedPerformanceCounterMBean {
     @ManagedOperation(description = "Reset counters")
     void reset(boolean includeProcessors) throws Exception;
 
+    @ManagedOperation(description = "Returns the JSON representation of all the static endpoints defined in this route")
+    String createRouteStaticEndpointJson();
+
 }

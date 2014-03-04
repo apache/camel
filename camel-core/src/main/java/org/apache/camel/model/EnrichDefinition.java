@@ -38,7 +38,7 @@ import org.apache.camel.util.ObjectHelper;
  */
 @XmlRootElement(name = "enrich")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class EnrichDefinition extends NoOutputDefinition<EnrichDefinition> {
+public class EnrichDefinition extends NoOutputDefinition<EnrichDefinition> implements EndpointRequiredDefinition {
     @XmlAttribute(name = "uri")
     private String resourceUri;
     // TODO: For Camel 3.0 we should remove this ref attribute as you can do that in the uri, by prefixing with ref:
@@ -83,6 +83,15 @@ public class EnrichDefinition extends NoOutputDefinition<EnrichDefinition> {
     @Override
     public String getShortName() {
         return "enrich";
+    }
+
+    @Override
+    public String getEndpointUri() {
+        if (resourceUri != null) {
+            return resourceUri;
+        } else {
+            return null;
+        }
     }
 
     @Override

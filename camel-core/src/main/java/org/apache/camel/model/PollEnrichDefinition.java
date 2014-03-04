@@ -38,7 +38,7 @@ import org.apache.camel.util.ObjectHelper;
  */
 @XmlRootElement(name = "pollEnrich")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class PollEnrichDefinition extends NoOutputDefinition<PollEnrichDefinition> {
+public class PollEnrichDefinition extends NoOutputDefinition<PollEnrichDefinition> implements EndpointRequiredDefinition {
     @XmlAttribute(name = "uri")
     private String resourceUri;
     // TODO: For Camel 3.0 we should remove this ref attribute as you can do that in the uri, by prefixing with ref:
@@ -81,6 +81,15 @@ public class PollEnrichDefinition extends NoOutputDefinition<PollEnrichDefinitio
     @Override
     public String getLabel() {
         return "pollEnrich[" + description() + "]";
+    }
+
+    @Override
+    public String getEndpointUri() {
+        if (resourceUri != null) {
+            return resourceUri;
+        } else {
+            return null;
+        }
     }
 
     @Override

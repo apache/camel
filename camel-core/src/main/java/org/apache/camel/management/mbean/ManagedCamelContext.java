@@ -432,6 +432,10 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
         return context.getComponentDocumentation(componentName);
     }
 
+    public String createRouteStaticEndpointJson() {
+        return context.createRouteStaticEndpointJson(null);
+    }
+
     public List<String> findComponentNames() throws Exception {
         Map<String, Properties> map = findComponents();
         return new ArrayList<String>(map.keySet());
