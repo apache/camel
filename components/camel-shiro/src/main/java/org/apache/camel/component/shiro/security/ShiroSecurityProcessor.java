@@ -182,13 +182,26 @@ public class ShiroSecurityProcessor extends DelegateAsyncProcessor {
                     }
                 }
             }
+        } else if (!policy.getRolesList().isEmpty()) {
+            if (policy.isAllRolesRequired()) {
+                authorized = currentUser.hasAllRoles(policy.getRolesList());
+            } else {
+                for (String role : policy.getRolesList()) {
+                    if (currentUser.hasRole(role)) {
+                        authorized = true;
+                        break;
+                    }
+                }
+            }
         } else {
-            LOG.trace("Valid Permissions List not specified for ShiroSecurityPolicy. No authorization checks will be performed for current user.");
+            LOG.trace("Valid Permissions or Roles List not specified for ShiroSecurityPolicy. "
+                      + "No authorization checks will be performed for current user.");
             authorized = true;
         }
 
         if (!authorized) {
-            throw new CamelAuthorizationException("Authorization Failed. Subject's role set does not have the necessary permissions to perform further processing.", exchange);
+            throw new CamelAuthorizationException("Authorization Failed. Subject's role set does "
+                                                  + "not have the necessary roles or permissions to perform further processing.", exchange);
         }
 
         LOG.debug("Current user {} is successfully authorized.", currentUser.getPrincipal());
