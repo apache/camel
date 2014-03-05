@@ -139,6 +139,7 @@ public final class HdfsConsumer extends ScheduledPollConsumer {
                     Message message = new DefaultMessage();
                     String fileName = StringUtils.substringAfterLast(status.getPath().toString(), "/");
                     message.setHeader(Exchange.FILE_NAME, fileName);
+                    message.setHeader(Exchange.FILE_PATH, status.getPath().toString());
                     if (key.value != null) {
                         message.setHeader(HdfsHeader.KEY.name(), key.value);
                     }
