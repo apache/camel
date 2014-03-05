@@ -22,7 +22,7 @@ import org.apache.felix.gogo.commands.Command;
 /**
  * Command to stop a Camel context.
  */
-@Command(scope = "camel", name = "context-stop", description = "Stop a Camel context.")
+@Command(scope = "camel", name = "context-stop", description = "Stop a Camel context. It becomes unavailable and can not be started again.")
 public class ContextStop extends AbstractContextCommand {
 
     @Override
