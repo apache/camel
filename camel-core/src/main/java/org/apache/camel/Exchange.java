@@ -193,6 +193,7 @@ public interface Exchange {
     String TRACE_EVENT_NODE_ID   = "CamelTraceEventNodeId";
     String TRACE_EVENT_TIMESTAMP = "CamelTraceEventTimestamp";
     String TRACE_EVENT_EXCHANGE  = "CamelTraceEventExchange";
+    String TRY_ROUTE_BLOCK       = "TryRouteBlock";
     String TRANSFER_ENCODING     = "Transfer-Encoding";
 
     String UNIT_OF_WORK_EXHAUSTED    = "CamelUnitOfWorkExhausted";

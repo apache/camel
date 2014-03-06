@@ -886,7 +886,10 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
     protected Processor createErrorHandler(RouteContext routeContext, Exchange exchange, Processor processor) {
         Processor answer;
 
-        if (routeContext != null) {
+        boolean tryBlock = exchange.getProperty(Exchange.TRY_ROUTE_BLOCK, false, boolean.class);
+
+        // do not wrap in error handler if we are inside a try block
+        if (!tryBlock && routeContext != null) {
             // wrap the producer in error handler so we have fine grained error handling on
             // the output side instead of the input side
             // this is needed to support redelivery on that output alone and not doing redelivery
