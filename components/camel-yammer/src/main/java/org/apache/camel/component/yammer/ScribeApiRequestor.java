@@ -47,7 +47,7 @@ public class ScribeApiRequestor implements ApiRequestor {
         request.addHeader("Authorization",  sb.toString());
 
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Yammer request url: %s", request.getCompleteUrl());
+            LOG.debug("Yammer request url: {}", request.getCompleteUrl());
         }
         
         Response response = request.send();
