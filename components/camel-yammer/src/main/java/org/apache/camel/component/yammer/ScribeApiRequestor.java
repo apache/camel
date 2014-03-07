@@ -20,9 +20,12 @@ import org.scribe.model.OAuthConstants;
 import org.scribe.model.OAuthRequest;
 import org.scribe.model.Response;
 import org.scribe.model.Verb;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class ScribeApiRequestor implements ApiRequestor {
 
+    private static final Logger LOG = LoggerFactory.getLogger(ScribeApiRequestor.class);
     String apiUrl;
     String apiAccessToken;   
     
@@ -32,8 +35,21 @@ public class ScribeApiRequestor implements ApiRequestor {
     }
     
     private String send(Verb verb, String params) throws Exception {
-        OAuthRequest request = new OAuthRequest(verb, apiUrl + ((params != null) ? params : ""));
+        String url = apiUrl + ((params != null) ? params : "");
+        
+        OAuthRequest request = new OAuthRequest(verb, url);
         request.addQuerystringParameter(OAuthConstants.ACCESS_TOKEN, apiAccessToken);
+        
+        // For more details on the “Bearer” token refer to http://tools.ietf.org/html/draft-ietf-oauth-v2-bearer-23
+        StringBuilder sb = new StringBuilder();
+        sb.append("Bearer ");
+        sb.append(apiAccessToken);
+        request.addHeader("Authorization",  sb.toString());
+
+        if (LOG.isDebugEnabled()) {
+            LOG.debug("Yammer request url: %s", request.getCompleteUrl());
+        }
+        
         Response response = request.send();
         if (response.isSuccessful()) {                    
             return response.getBody();
