@@ -49,8 +49,8 @@ public class DropboxConsumerGetSingleTest extends DropboxTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                from("dropbox://get?"+getAuthParams()+"&remotePath=/test.pdf")
-                        .to("file:///home/hifly/Desktop?fileName=pp.pdf")
+                from("dropbox://get?"+getAuthParams()+"&remotePath=XXX")
+                        .to("file:XXX")
                         .to("mock:result");
             }
         };
