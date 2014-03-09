@@ -161,7 +161,7 @@ public class QuartzComponent extends DefaultComponent implements StartupListener
         String instName = prop.getProperty(StdSchedulerFactory.PROP_SCHED_INSTANCE_NAME);
 
         // camel context name will be a suffix to use one scheduler per context
-        String identity = getCamelContext().getManagementName();
+        String identity = QuartzHelper.getQuartzContextName(getCamelContext());
         if (identity != null) {
             if (instName == null) {
                 instName = "scheduler-" + identity;
