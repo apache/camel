@@ -17,10 +17,10 @@
 package org.apache.camel.itest.security;
 
 import java.security.Principal;
+
 import javax.security.auth.Subject;
 
 import org.apache.camel.component.spring.security.DefaultAuthenticationAdapter;
-import org.apache.ws.security.WSUsernameTokenPrincipal;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
 import org.springframework.security.core.Authentication;
 
@@ -30,13 +30,26 @@ public class MyAuthenticationAdapter extends DefaultAuthenticationAdapter {
     protected Authentication convertToAuthentication(Subject subject) {
         Authentication answer = null;
         for (Principal principal : subject.getPrincipals()) {
-            if (principal instanceof WSUsernameTokenPrincipal) {
-                WSUsernameTokenPrincipal ut = (WSUsernameTokenPrincipal) principal;
-                answer = new UsernamePasswordAuthenticationToken(ut.getName(), ut.getPassword());
+            if (principal.getClass().getName().contains("UsernameToken")) {
+                answer = new UsernamePasswordAuthenticationToken(getName(principal), getPassword(principal));
                 break;
             }
         }
         return answer;
     }
 
+    private String getName(Principal p) {
+        try {
+            return (String)p.getClass().getMethod("getName").invoke(p);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
+    private String getPassword(Principal p) {
+        try {
+            return (String)p.getClass().getMethod("getPassword").invoke(p);
+        } catch (Exception e) {
+            throw new RuntimeException(e);
+        }
+    }
 }

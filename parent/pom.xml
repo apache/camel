@@ -1849,13 +1849,6 @@
         <version>${saxon-version}</version>
       </dependency>
 
-      <!-- optional CXF support -->
-      <dependency>
-        <groupId>org.apache.cxf</groupId>
-        <artifactId>cxf-rt-core</artifactId>
-        <version>${cxf-version}</version>
-      </dependency>
-
       <!-- unit testing frameworks -->
       <dependency>
         <groupId>junit</groupId>
