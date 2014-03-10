@@ -16,6 +16,7 @@
  */
 package org.apache.camel.processor;
 
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.concurrent.ExecutorService;
 
@@ -46,6 +47,7 @@ import static org.apache.camel.util.ObjectHelper.notNull;
  * @version 
  */
 public class RecipientList extends ServiceSupport implements AsyncProcessor {
+    private static final String IGNORE_DELIMITER_MARKER = "false";
     private final CamelContext camelContext;
     private ProducerCache producerCache;
     private Expression expression;
@@ -116,7 +118,13 @@ public class RecipientList extends ServiceSupport implements AsyncProcessor {
      * Sends the given exchange to the recipient list
      */
     public boolean sendToRecipientList(Exchange exchange, Object recipientList, AsyncCallback callback) {
-        Iterator<Object> iter = ObjectHelper.createIterator(recipientList, delimiter);
+        Iterator<Object> iter;
+
+        if (delimiter != null && delimiter.equalsIgnoreCase(IGNORE_DELIMITER_MARKER)) {
+            iter = ObjectHelper.createIterator(recipientList, null);
+        } else {
+            iter = ObjectHelper.createIterator(recipientList, delimiter);
+        }
 
         RecipientListProcessor rlp = new RecipientListProcessor(exchange.getContext(), producerCache, iter, getAggregationStrategy(),
                 isParallelProcessing(), getExecutorService(), isShutdownExecutorService(),
