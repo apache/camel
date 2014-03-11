@@ -26,6 +26,7 @@ import java.util.zip.ZipInputStream;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.impl.DefaultMessage;
+import org.apache.camel.util.IOHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -70,7 +71,7 @@ class ZipIterator implements Iterator<Message> {
             }
             return availableDataInCurrentEntry;            
         } catch (IOException e) {
-            LOGGER.error("Fail hasNext()", e);
+            LOGGER.warn("Fail hasNext()", e);
             return false;            
         }
     }
@@ -114,13 +115,8 @@ class ZipIterator implements Iterator<Message> {
 
     public void checkNullAnswer(Message answer) {
         if (answer == null && zipInputStream != null) {
-            try {
-                zipInputStream.close();
-            } catch (IOException ignore) {
-                // Do nothing here
-            } finally {
-                zipInputStream = null;
-            }            
+            IOHelper.close(zipInputStream);
+            zipInputStream = null;
         }
     }
 

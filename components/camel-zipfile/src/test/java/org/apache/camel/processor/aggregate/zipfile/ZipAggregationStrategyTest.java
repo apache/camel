@@ -16,35 +16,40 @@
  */
 package org.apache.camel.processor.aggregate.zipfile;
 
-
 import java.io.File;
 import java.io.FileInputStream;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
 
-import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.file.GenericFileMessage;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.util.IOHelper;
 import org.junit.Test;
 
 public class ZipAggregationStrategyTest extends CamelTestSupport {
 
     private static final int EXPECTED_NO_FILES = 3;
 
+    @Override
+    public void setUp() throws Exception {
+        deleteDirectory("target/out");
+        super.setUp();
+    }
+
     @Test
     public void testSplitter() throws Exception {
-        MockEndpoint aggregateToZipEntry = getMockEndpoint("mock:aggregateToZipEntry");
-        aggregateToZipEntry.expectedMessageCount(1);
+        MockEndpoint mock = getMockEndpoint("mock:aggregateToZipEntry");
+        mock.expectedMessageCount(1);
+
         assertMockEndpointsSatisfied();
 
-        Exchange out = aggregateToZipEntry.getExchanges().get(0);
-        assertTrue("Result message does not contain GenericFileMessage", GenericFileMessage.class.isAssignableFrom(out.getIn().getClass()));
-        File resultFile = out.getIn().getBody(File.class);
-        assertNotNull(resultFile);
-        assertTrue("Zip file should exist", resultFile.isFile());
-        assertTrue("Result file name does not end with .zip", resultFile.getName().endsWith(".zip"));
+        Thread.sleep(500);
+
+        File[] files = new File("target/out").listFiles();
+        assertTrue("Should be a file in target/out directory", files.length > 0);
+
+        File resultFile = files[0];
 
         ZipInputStream zin = new ZipInputStream(new FileInputStream(resultFile));
         try {
@@ -55,7 +60,7 @@ public class ZipAggregationStrategyTest extends CamelTestSupport {
             assertTrue("Zip file should contains " + ZipAggregationStrategyTest.EXPECTED_NO_FILES + " files",
                        fileCount == ZipAggregationStrategyTest.EXPECTED_NO_FILES);
         } finally {
-            zin.close();
+            IOHelper.close(zin);
         }
     }
 
@@ -70,8 +75,9 @@ public class ZipAggregationStrategyTest extends CamelTestSupport {
                         .constant(true)
                         .completionFromBatchConsumer()
                         .eagerCheckCompletion()
+                    .to("file:target/out")
                     .to("mock:aggregateToZipEntry")
-                    .log("Done processing big file: ${header.CamelFileName}");
+                    .log("Done processing zip file: ${header.CamelFileName}");
             }
         };
 
