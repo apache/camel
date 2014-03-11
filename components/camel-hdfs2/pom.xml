@@ -34,6 +34,18 @@
     <properties>
         <camel.osgi.export.pkg>org.apache.camel.component.hdfs2.*</camel.osgi.export.pkg>
         <camel.osgi.export.service>org.apache.camel.spi.ComponentResolver;component=hdfs2</camel.osgi.export.service>
+        <camel.osgi.import.additional>
+            org.apache.hadoop.hdfs,
+            org.apache.hadoop.hdfs.client,
+            org.apache.hadoop.hdfs.protocolPB,
+            org.apache.hadoop.hdfs.util,
+            org.apache.hadoop.hdfs.net,
+            org.apache.hadoop.hdfs.security.token.block,
+            org.apache.hadoop.hdfs.security.token.delegation,
+            org.apache.hadoop.hdfs.protocol,
+            org.apache.hadoop.hdfs.protocol.proto,
+            org.apache.hadoop.hdfs.protocol.datatransfer
+        </camel.osgi.import.additional>
     </properties>
 
     <dependencies>
