@@ -252,6 +252,7 @@
     <junit-version>4.11</junit-version>
     <jython-version>2.5.3</jython-version>
     <kafka-version>0.8.0</kafka-version>
+    <kafka-bundle-version>0.8.0_1</kafka-bundle-version>
     <karaf-version>2.3.3</karaf-version>
     <kie-version>6.0.0.Final</kie-version>
     <krati-version>0.4.9</krati-version>
@@ -443,6 +444,7 @@
     <xstream-bundle-version>1.4.7_1</xstream-bundle-version>
     <xstream-version>1.4.7</xstream-version>
     <xom-version>1.2.5</xom-version>
+    <yammer-metrics-version>2.2.0</yammer-metrics-version>
     <zookeeper-version>3.4.5</zookeeper-version>
 
     <!-- OSGi bundles properties -->
