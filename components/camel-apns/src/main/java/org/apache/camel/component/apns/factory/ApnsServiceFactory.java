@@ -161,6 +161,10 @@ public class ApnsServiceFactory implements CamelContextAware {
         return apnsDelegate;
     }
 
+    public void setApnsDelegate(ApnsDelegate apnsDelegate) {
+	this.apnsDelegate = apnsDelegate;
+    }
+
     public ApnsService getApnsService() {
         ApnsServiceBuilder builder = APNS.newService();
 
