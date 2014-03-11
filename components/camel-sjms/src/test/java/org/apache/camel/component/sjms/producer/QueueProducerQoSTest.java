@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.sjms.producer;
 
-
 import java.util.concurrent.TimeUnit;
 import org.apache.activemq.broker.BrokerService;
 import org.apache.activemq.broker.jmx.DestinationViewMBean;
@@ -28,8 +27,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.sjms.support.JmsTestSupport;
 import org.junit.Test;
 
-
-public class QueueProduerQoSTest extends JmsTestSupport {
+public class QueueProducerQoSTest extends JmsTestSupport {
 
     private static final String TEST_INONLY_DESTINATION_NAME = "queue.producer.test.qos.inonly";
     private static final String TEST_INOUT_DESTINATION_NAME = "queue.producer.test.qos.inout";
@@ -54,7 +52,7 @@ public class QueueProduerQoSTest extends JmsTestSupport {
         }
 
         // we should delay a bit so broker can run its expiration processes...
-        expireMatcher.matches(2, TimeUnit.SECONDS);
+        assertFalse(expireMatcher.matches(2, TimeUnit.SECONDS));
 
         DestinationViewMBean queue = getQueueMBean(TEST_INOUT_DESTINATION_NAME);
         assertEquals("There were unexpected messages left in the queue: " + TEST_INOUT_DESTINATION_NAME,
@@ -70,8 +68,7 @@ public class QueueProduerQoSTest extends JmsTestSupport {
         template.sendBody(endpoint, "test message");
 
         // we should delay a bit so broker can run its expiration processes...
-        expireMatcher.matches(2, TimeUnit.SECONDS);
-
+        assertFalse(expireMatcher.matches(2, TimeUnit.SECONDS));
 
         DestinationViewMBean queue = getQueueMBean(TEST_INONLY_DESTINATION_NAME);
         assertEquals("There were unexpected messages left in the queue: " + TEST_INONLY_DESTINATION_NAME,
