@@ -86,8 +86,7 @@ public class ZipFileDataFormat implements DataFormat {
 
                 entry = zis.getNextEntry();
                 if (entry != null) {
-                    throw new IllegalStateException(
-                            "Zip file has more than 1 entry.");
+                    throw new IllegalStateException("Zip file has more than 1 entry.");
                 }
 
                 return baos.toByteArray();
