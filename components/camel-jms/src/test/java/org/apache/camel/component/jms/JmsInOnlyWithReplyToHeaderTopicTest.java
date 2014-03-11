@@ -65,9 +65,14 @@ public class JmsInOnlyWithReplyToHeaderTopicTest extends CamelTestSupport {
             public void configure() throws Exception {
                 from("activemq:queue:foo")
                     .transform(body().prepend("Hello "))
+                    .to("log:result")
                     .to("mock:result");
 
-                from("activemq:topic:bar").to("mock:bar");
+                // we should disable reply to to avoid sending the message back to our self
+                // after we have consumed it
+                from("activemq:topic:bar?disableReplyTo=true")
+                    .to("log:bar")
+                    .to("mock:bar");
             }
         };
     }
