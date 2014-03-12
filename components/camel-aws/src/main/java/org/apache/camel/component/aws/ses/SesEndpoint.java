@@ -26,6 +26,7 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * Defines the <a href="http://camel.apache.org/aws.html">AWS SES Endpoint</a>.  
@@ -34,6 +35,8 @@ import org.apache.camel.impl.DefaultEndpoint;
 public class SesEndpoint extends DefaultEndpoint {
     
     private SesConfiguration configuration;
+    
+    private AmazonSimpleEmailService sesClient;
 
     @Deprecated
     public SesEndpoint(String uri, CamelContext context, SesConfiguration configuration) {
@@ -43,6 +46,18 @@ public class SesEndpoint extends DefaultEndpoint {
     public SesEndpoint(String uri, Component component, SesConfiguration configuration) {
         super(uri, component);
         this.configuration = configuration;
+    }
+    
+    @Override
+    public void doStart() throws Exception {
+        super.doStart();
+        sesClient = configuration.getAmazonSESClient() != null
+            ? configuration.getAmazonSESClient()
+            : createSESClient();
+            
+        if (ObjectHelper.isNotEmpty(configuration.getAmazonSESEndpoint())) {
+            sesClient.setEndpoint(configuration.getAmazonSESEndpoint());
+        }
     }
 
     public Consumer createConsumer(Processor processor) throws Exception {
@@ -62,18 +77,12 @@ public class SesEndpoint extends DefaultEndpoint {
     }
 
     public AmazonSimpleEmailService getSESClient() {
-        return configuration.getAmazonSESClient() != null
-                ? configuration.getAmazonSESClient()
-                : createSESClient();
+        return sesClient;
     }
 
     private AmazonSimpleEmailService createSESClient() {
         AWSCredentials credentials = new BasicAWSCredentials(configuration.getAccessKey(), configuration.getSecretKey());
         AmazonSimpleEmailService client = new AmazonSimpleEmailServiceClient(credentials);
-        if (configuration.getAmazonSESEndpoint() != null) {
-            client.setEndpoint(configuration.getAmazonSESEndpoint());
-        }
-        configuration.setAmazonSESClient(client);
         return client;
     }
 }

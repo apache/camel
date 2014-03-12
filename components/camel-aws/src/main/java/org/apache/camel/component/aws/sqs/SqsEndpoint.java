@@ -36,6 +36,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.ScheduledPollEndpoint;
+import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -77,6 +78,11 @@ public class SqsEndpoint extends ScheduledPollEndpoint {
     protected void doStart() throws Exception {
         client = getConfiguration().getAmazonSQSClient() != null
                 ? getConfiguration().getAmazonSQSClient() : getClient();
+
+         // Override the endpoint location
+        if (ObjectHelper.isNotEmpty(getConfiguration().getAmazonSQSEndpoint())) {
+            client.setEndpoint(getConfiguration().getAmazonSQSEndpoint());
+        }
 
         // check whether the queue already exists
         ListQueuesResult listQueuesResult = client.listQueues();
@@ -196,9 +202,6 @@ public class SqsEndpoint extends ScheduledPollEndpoint {
     AmazonSQS createClient() {
         AWSCredentials credentials = new BasicAWSCredentials(configuration.getAccessKey(), configuration.getSecretKey());
         AmazonSQS client = new AmazonSQSClient(credentials);
-        if (configuration.getAmazonSQSEndpoint() != null) {
-            client.setEndpoint(configuration.getAmazonSQSEndpoint());
-        }
         return client;
     }
 

@@ -36,6 +36,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.ScheduledPollEndpoint;
+import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -79,12 +80,19 @@ public class S3Endpoint extends ScheduledPollEndpoint {
     @Override
     public void doStart() throws Exception {
         super.doStart();
+
+        s3Client = configuration.getAmazonS3Client() != null
+            ? configuration.getAmazonS3Client() : createS3Client();
         
+        if (ObjectHelper.isNotEmpty(configuration.getAmazonS3Endpoint())) {
+            s3Client.setEndpoint(configuration.getAmazonS3Endpoint());
+        }
+
         String bucketName = getConfiguration().getBucketName();
         LOG.trace("Quering whether bucket [{}] already exists...", bucketName);
         
         try {
-            getS3Client().listObjects(new ListObjectsRequest(bucketName, null, null, null, 0));
+            s3Client.listObjects(new ListObjectsRequest(bucketName, null, null, null, 0));
             LOG.trace("Bucket [{}] already exists", bucketName);
             return;
         } catch (AmazonServiceException ase) {
@@ -104,14 +112,14 @@ public class S3Endpoint extends ScheduledPollEndpoint {
         
         LOG.trace("Creating bucket [{}] in region [{}] with request [{}]...", new Object[]{configuration.getBucketName(), configuration.getRegion(), createBucketRequest});
         
-        getS3Client().createBucket(createBucketRequest);
+        s3Client.createBucket(createBucketRequest);
         
         LOG.trace("Bucket created");
         
         if (configuration.getPolicy() != null) {
             LOG.trace("Updating bucket [{}] with policy [{}]", bucketName, configuration.getPolicy());
             
-            getS3Client().setBucketPolicy(bucketName, configuration.getPolicy());
+            s3Client.setBucketPolicy(bucketName, configuration.getPolicy());
             
             LOG.trace("Bucket policy updated");
         }
@@ -159,11 +167,6 @@ public class S3Endpoint extends ScheduledPollEndpoint {
     }
     
     public AmazonS3 getS3Client() {
-        if (s3Client == null) {
-            s3Client = configuration.getAmazonS3Client() != null
-                ? configuration.getAmazonS3Client() : createS3Client();
-        }
-        
         return s3Client;
     }
 
@@ -175,9 +178,6 @@ public class S3Endpoint extends ScheduledPollEndpoint {
     AmazonS3 createS3Client() {
         AWSCredentials credentials = new BasicAWSCredentials(configuration.getAccessKey(), configuration.getSecretKey());
         AmazonS3 client = new AmazonS3Client(credentials);
-        if (configuration.getAmazonS3Endpoint() != null) {
-            client.setEndpoint(configuration.getAmazonS3Endpoint());
-        }
         return client;
     }
 
