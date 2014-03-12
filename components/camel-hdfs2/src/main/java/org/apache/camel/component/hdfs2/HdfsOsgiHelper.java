@@ -1,4 +1,4 @@
-/*
+/**
  * Licensed to the Apache Software Foundation (ASF) under one or more
  * contributor license agreements.  See the NOTICE file distributed with
  * this work for additional information regarding copyright ownership.
@@ -14,7 +14,6 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-
 package org.apache.camel.component.hdfs2;
 
 import java.net.URI;
@@ -32,7 +31,7 @@ import org.slf4j.LoggerFactory;
  */
 public class HdfsOsgiHelper {
 
-    private static Logger LOG = LoggerFactory.getLogger(HdfsOsgiHelper.class.getName());
+    private static final Logger LOG = LoggerFactory.getLogger(HdfsOsgiHelper.class);
 
     /**
      * By using this constructor it is possible to perform static initialization of {@link FileSystem}.
@@ -42,7 +41,7 @@ public class HdfsOsgiHelper {
             // get bundle classloader for camel-hdfs2 bundle
             ClassLoader cl = getClass().getClassLoader();
             Configuration conf = new Configuration();
-            for (String key: fileSystems.keySet()) {
+            for (String key : fileSystems.keySet()) {
                 URI uri = URI.create(key);
                 conf.setClass(String.format("fs.%s.impl", uri.getScheme()), cl.loadClass(fileSystems.get(key)), FileSystem.class);
                 FileSystem.get(uri, conf);

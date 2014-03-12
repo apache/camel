@@ -47,11 +47,13 @@
         <dependency>
             <groupId>org.apache.hbase</groupId>
             <artifactId>hbase</artifactId>
+            <version>${hbase-version}</version>
         </dependency>
 
         <dependency>
             <groupId>org.apache.hadoop</groupId>
             <artifactId>hadoop-core</artifactId>
+            <version>${hadoop-version}</version>
             <exclusions>
                 <exclusion>
                     <groupId>commons-codec</groupId>

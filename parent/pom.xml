@@ -1904,29 +1904,6 @@
         <version>${ehcache-version}</version>
       </dependency>
 
-      <!-- Hadoop, Hbase -->
-      <dependency>
-        <groupId>org.apache.hadoop</groupId>
-        <artifactId>hadoop-core</artifactId>
-        <version>${hadoop-version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.hadoop</groupId>
-        <artifactId>hadoop-common</artifactId>
-        <version>${hadoop2-version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.hadoop</groupId>
-        <artifactId>hadoop-hdfs</artifactId>
-        <version>${hadoop2-version}</version>
-      </dependency>
-
-      <dependency>
-        <groupId>org.apache.hbase</groupId>
-        <artifactId>hbase</artifactId>
-        <version>${hbase-version}</version>
-      </dependency>
-
       <!-- hibernate and other db systems -->
       <dependency>
         <groupId>org.hibernate</groupId>
