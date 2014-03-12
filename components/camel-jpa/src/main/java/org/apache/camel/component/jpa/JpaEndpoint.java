@@ -53,6 +53,7 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
     private boolean flushOnSend = true;
     private int maxMessagesPerPoll;
     private boolean usePersist;
+    private boolean joinTransaction = true;
 
     public JpaEndpoint() {
     }
@@ -239,6 +240,14 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
 
     public void setUsePersist(boolean usePersist) {
         this.usePersist = usePersist;
+    }
+
+    public boolean isJoinTransaction() {
+        return joinTransaction;
+    }
+
+    public void setJoinTransaction(boolean joinTransaction) {
+        this.joinTransaction = joinTransaction;
     }
 
     // Implementation methods
