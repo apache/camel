@@ -472,6 +472,35 @@
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.xmlresolver/${xmlresolver-bundle-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.jsch/${jsch-bundle-version}</bundle>
   </feature>
+  <feature name='camel-hdfs2' version='${project.version}' resolver='(obr)' start-level='50'>
+    <feature version='${project.version}'>camel-core</feature>
+    <bundle dependency='true'>mvn:commons-lang/commons-lang/${commons-lang-version}</bundle>
+    <bundle dependency='true'>mvn:com.google.guava/guava/${google-guava-version}</bundle>
+    <bundle dependency='true'>mvn:com.google.protobuf/protobuf-java/2.5.0</bundle><!-- newer than ${protobuf-java-bundle-version} -->
+    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.guice/${guice-bundle-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.jsch/${jsch-bundle-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.paranamer/${paranamer-bundle-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.avro/1.7.3_1</bundle>
+    <bundle dependency='true'>mvn:org.apache.commons/commons-compress/${commons-compress-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.commons/commons-math3/3.1.1</bundle>
+    <bundle dependency='true'>mvn:commons-cli/commons-cli/1.2</bundle>
+    <bundle dependency='true'>mvn:commons-configuration/commons-configuration/${commons-configuration-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.commons-httpclient/${commons-httpclient-bundle-version}</bundle>
+    <bundle dependency='true'>mvn:io.netty/netty/${netty3-version}</bundle>
+    <bundle dependency='true'>mvn:org.codehaus.jackson/jackson-core-asl/${jackson-version}</bundle>
+    <bundle dependency='true'>mvn:org.codehaus.jackson/jackson-mapper-asl/${jackson-version}</bundle>
+    <bundle dependency='true'>mvn:org.xerial.snappy/snappy-java/${snappy-version}</bundle>
+    <bundle dependency='true'>mvn:commons-codec/commons-codec/${commons-codec-version}</bundle>
+    <bundle dependency='true'>mvn:commons-collections/commons-collections/${commons-collections-version}</bundle>
+    <bundle dependency='true'>mvn:commons-io/commons-io/${commons-io-version}</bundle>
+    <bundle dependency='true'>mvn:commons-net/commons-net/${commons-net-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.zookeeper/zookeeper/${zookeeper-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.xmlenc/0.52_1</bundle>
+    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.xerces/${xerces-bundle-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.xmlresolver/${xmlresolver-bundle-version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-hdfs2/${project.version}</bundle>
+    <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.hadoop-client/${hadoop2-bundle-version}</bundle>
+  </feature>
   <feature name='camel-hl7' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
     <bundle dependency='true'>mvn:org.apache.mina/mina-core/${mina2-version}</bundle>

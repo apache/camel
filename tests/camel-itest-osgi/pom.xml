@@ -192,7 +192,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-hdfs</artifactId>
+      <artifactId>camel-hdfs2</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
