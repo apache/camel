@@ -49,11 +49,21 @@ import org.junit.Assert;
 public class AmazonSNSClientMock extends AmazonSNSClient {
     
     private static final String DEFAULT_TOPIC_ARN = "arn:aws:sns:us-east-1:541925086079:MyTopic";
+    private String endpoint;
     
     public AmazonSNSClientMock() {
         super(new BasicAWSCredentials("myAccessKey", "mySecretKey"));
     }
-
+    
+    @Override
+    public void setEndpoint(String endpoint) {
+        this.endpoint = endpoint;
+    }
+    
+    public String getEndpoint() {
+        return endpoint;
+    }
+    
     @Override
     public ConfirmSubscriptionResult confirmSubscription(ConfirmSubscriptionRequest confirmSubscriptionRequest) throws AmazonServiceException, AmazonClientException {
         throw new UnsupportedOperationException();
