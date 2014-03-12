@@ -46,13 +46,13 @@ public class HdfsRouteTest extends OSGiIntegrationTestSupport {
             return;
         }
 
+//        final Path file = new Path("hdfs://localhost:9000/tmp/test/test-hdfs-file");
         final Path file = new Path(new File("../../../../target/test/test-camel-string").getAbsolutePath());
         org.apache.hadoop.conf.Configuration conf = new org.apache.hadoop.conf.Configuration();
+        // now set classes for filesystems. This is normally done using java.util.ServiceLoader which doesn't
+        // work inside OSGi.
         conf.setClass("fs.file.impl", org.apache.hadoop.fs.LocalFileSystem.class, FileSystem.class);
         conf.setClass("fs.hdfs.impl", org.apache.hadoop.hdfs.DistributedFileSystem.class, FileSystem.class);
-        //conf.setClassLoader(this.getClass().getClassLoader());
-        // add the default configure into the resource
-        conf.addResource(HdfsRouteTest.class.getResourceAsStream("core-default.xml"));
         SequenceFile.Writer writer = SequenceFile.createWriter(conf, SequenceFile.Writer.file(file),
             SequenceFile.Writer.keyClass(NullWritable.class), SequenceFile.Writer.valueClass(Text.class));
         NullWritable keyWritable = NullWritable.get();
@@ -65,6 +65,7 @@ public class HdfsRouteTest extends OSGiIntegrationTestSupport {
 
         context.addRoutes(new RouteBuilder() {
             public void configure() {
+//                from("hdfs2://localhost:9000/tmp/test/test-hdfs-file?fileSystemType=HDFS&fileType=SEQUENCE_FILE&initialDelay=0").to("mock:result");
                 from("hdfs2:///" + file.toUri() + "?fileSystemType=LOCAL&fileType=SEQUENCE_FILE&initialDelay=0").to("mock:result");
             }
         });

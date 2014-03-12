@@ -20,7 +20,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.itest.osgi.blueprint.OSGiBlueprintTestSupport;
-import org.apache.hadoop.fs.FileSystem;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.Option;
@@ -47,12 +46,6 @@ public class HdfsBlueprintRouteTest extends OSGiBlueprintTestSupport {
             return;
         }
 
-        // hadoop depends on java.util.ServiceLoader which doesn't work well inside OSGi...
-        org.apache.hadoop.conf.Configuration conf = new org.apache.hadoop.conf.Configuration();
-        conf.setClass("fs.file.impl", org.apache.hadoop.fs.LocalFileSystem.class, FileSystem.class);
-        conf.setClass("fs.hdfs.impl", org.apache.hadoop.hdfs.DistributedFileSystem.class, FileSystem.class);
-        FileSystem.getFileSystemClass("file", conf);
-
         getInstalledBundle("CamelBlueprintHdfsTestBundle").start();
         CamelContext ctx = getOsgiService(CamelContext.class, "(camel.context.symbolicname=CamelBlueprintHdfsTestBundle)", 20000);
 
@@ -69,12 +62,14 @@ public class HdfsBlueprintRouteTest extends OSGiBlueprintTestSupport {
 
         Option[] options = combine(
                 getDefaultCamelKarafOptions(),
-                provision(newBundle().add("core-default.xml", HdfsRouteTest.class.getResource("core-default.xml"))
+                provision(newBundle()
+                          .add("core-default.xml", HdfsRouteTest.class.getResource("/core-default.xml"))
+                          .add("hdfs-default.xml", HdfsRouteTest.class.getResource("/hdfs-default.xml"))
                           .add("OSGI-INF/blueprint/test.xml", HdfsRouteTest.class.getResource("blueprintCamelContext.xml"))
                           .set(Constants.BUNDLE_SYMBOLICNAME, "CamelBlueprintHdfsTestBundle")
                           .set(Constants.DYNAMICIMPORT_PACKAGE, "*")
                           .build()),
-               
+
                 // using the features to install the camel components
                 loadCamelFeatures(
                         "camel-blueprint", "camel-hdfs2"));

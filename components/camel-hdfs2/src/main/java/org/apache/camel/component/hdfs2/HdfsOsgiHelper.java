@@ -42,9 +42,10 @@ public class HdfsOsgiHelper {
             // get bundle classloader for camel-hdfs2 bundle
             ClassLoader cl = getClass().getClassLoader();
             Configuration conf = new Configuration();
-            for (String scheme: fileSystems.keySet()) {
-                conf.setClass(String.format("fs.%s.impl", scheme), cl.loadClass(fileSystems.get(scheme)), FileSystem.class);
-                FileSystem.get(URI.create(scheme + ":///"), conf);
+            for (String key: fileSystems.keySet()) {
+                URI uri = URI.create(key);
+                conf.setClass(String.format("fs.%s.impl", uri.getScheme()), cl.loadClass(fileSystems.get(key)), FileSystem.class);
+                FileSystem.get(uri, conf);
             }
         } catch (Exception e) {
             LOG.debug(e.getMessage());
