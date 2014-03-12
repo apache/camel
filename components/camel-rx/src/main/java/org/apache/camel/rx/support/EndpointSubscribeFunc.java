@@ -17,21 +17,30 @@
 package org.apache.camel.rx.support;
 
 import org.apache.camel.Endpoint;
+import org.apache.camel.Exchange;
 import rx.Observable;
+import rx.Observer;
+import rx.Subscriber;
+import rx.Subscription;
+import rx.util.functions.Func1;
 
-/**
- * An {@link Observable} Camel {@link Endpoint}
- */
-public class EndpointObservable<T> extends Observable<T> {
+public class EndpointSubscribeFunc<T> implements Observable.OnSubscribeFunc<T>, Observable.OnSubscribe<T> {
+
     private final Endpoint endpoint;
+    private final Func1<Exchange, T> converter;
 
-    public EndpointObservable(Endpoint endpoint, final OnSubscribe<T> func) {
-        super(func);
+    public EndpointSubscribeFunc(Endpoint endpoint, Func1<Exchange, T> converter) {
         this.endpoint = endpoint;
+        this.converter = converter;
     }
 
     @Override
-    public String toString() {
-        return "EndpointObservable[" + endpoint + "]";
+    public Subscription onSubscribe(Observer<? super T> observer) {
+        return new EndpointSubscription<T>(endpoint, observer, converter);
+    }
+
+    @Override
+    public void call(Subscriber<? super T> subscriber) {
+        onSubscribe(subscriber);
     }
 }
