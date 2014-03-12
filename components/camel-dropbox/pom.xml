@@ -36,6 +36,18 @@
         <camel.osgi.export.service>org.apache.camel.spi.ComponentResolver;component=dropbox</camel.osgi.export.service>
     </properties>
 
+    <profiles>
+        <profile>
+            <id>no-integration-test</id>
+            <activation>
+                <activeByDefault>true</activeByDefault>
+            </activation>
+            <properties>
+                <maven.test.skip>true</maven.test.skip>
+            </properties>
+        </profile>
+    </profiles>
+
     <dependencies>
         <dependency>
             <groupId>org.apache.camel</groupId>
