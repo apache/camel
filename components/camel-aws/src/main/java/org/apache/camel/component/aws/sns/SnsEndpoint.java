@@ -30,6 +30,7 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -80,12 +81,17 @@ public class SnsEndpoint extends DefaultEndpoint {
         
         LOG.trace("Topic created with Amazon resource name: {}", configuration.getTopicArn());
         
-        if (configuration.getPolicy() != null) {
+        if (ObjectHelper.isNotEmpty(configuration.getPolicy())) {
             LOG.trace("Updating topic [{}] with policy [{}]", configuration.getTopicArn(), configuration.getPolicy());
             
             getSNSClient().setTopicAttributes(new SetTopicAttributesRequest(configuration.getTopicArn(), "Policy", configuration.getPolicy()));
             
             LOG.trace("Topic policy updated");
+        }
+        
+        if (ObjectHelper.isNotEmpty(configuration.getAmazonSNSEndpoint())) {
+            LOG.trace("Updating the SNS region with : {} " + configuration.getAmazonSNSEndpoint());
+            getSNSClient().setEndpoint(configuration.getAmazonSNSEndpoint());
         }
     }
 
