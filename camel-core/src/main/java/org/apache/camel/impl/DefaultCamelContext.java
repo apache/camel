@@ -1324,6 +1324,27 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         return registry;
     }
 
+    public <T> T getRegistry(Class<T> type) {
+        Registry reg = getRegistry();
+
+        // unwrap the property placeholder delegate
+        if (reg instanceof PropertyPlaceholderDelegateRegistry) {
+            reg = ((PropertyPlaceholderDelegateRegistry) reg).getRegistry();
+        }
+
+        if (type.isAssignableFrom(reg.getClass())) {
+            return type.cast(reg);
+        } else if (reg instanceof CompositeRegistry) {
+            List<Registry> list = ((CompositeRegistry) reg).getRegistryList();
+            for (Registry r : list) {
+                if (type.isAssignableFrom(r.getClass())) {
+                    return type.cast(r);
+                }
+            }
+        }
+        return null;
+    }
+
     /**
      * Sets the registry to the given JNDI context
      *

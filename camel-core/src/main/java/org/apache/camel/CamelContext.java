@@ -664,6 +664,14 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
     Registry getRegistry();
 
     /**
+     * Returns the registry used to lookup components by name and as the given type
+     *
+     * @param type the registry type such as {@link org.apache.camel.impl.JndiRegistry}
+     * @return the registry, or <tt>null</tt> if the given type was not found as a registry implementation
+     */
+    <T> T getRegistry(Class<T> type);
+
+    /**
      * Returns the injector used to instantiate objects by type
      *
      * @return the injector
