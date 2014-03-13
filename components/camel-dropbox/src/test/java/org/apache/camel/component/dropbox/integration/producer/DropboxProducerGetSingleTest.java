@@ -14,23 +14,31 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.dropbox.consumer;
+package org.apache.camel.component.dropbox.integration.producer;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.dropbox.DropboxTestSupport;
+import org.apache.camel.component.dropbox.integration.DropboxTestSupport;
 import org.apache.camel.component.dropbox.util.DropboxResultHeader;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
 
 import java.util.List;
 
-public class DropboxConsumerSearchTest extends DropboxTestSupport {
+public class DropboxProducerGetSingleTest extends DropboxTestSupport {
 
-    public DropboxConsumerSearchTest() throws Exception {}
+    public DropboxProducerGetSingleTest() throws Exception {}
 
     @Test
     public void testCamelDropbox() throws Exception {
+        template.send("direct:start", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader("test", "test");
+            }
+        });
+
 
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(1);       
@@ -38,7 +46,7 @@ public class DropboxConsumerSearchTest extends DropboxTestSupport {
 
         List<Exchange> exchanges = mock.getReceivedExchanges();
         Exchange exchange = exchanges.get(0);
-        Object header =  exchange.getIn().getHeader(DropboxResultHeader.FOUNDED_FILES.name());
+        Object header =  exchange.getIn().getHeader(DropboxResultHeader.DOWNLOADED_FILE.name());
         Object body = exchange.getIn().getBody();
         assertNotNull(header);
         assertNotNull(body);
@@ -48,7 +56,9 @@ public class DropboxConsumerSearchTest extends DropboxTestSupport {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() {
-                from("dropbox://search?" + getAuthParams() + "&remotePath=/XXX")
+                from("direct:start")
+                        .to("dropbox://get?"+getAuthParams()+"&remotePath=/XXX")
+                        .to("file:///XXX?fileName=XXX")
                         .to("mock:result");
             }
         };

@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.dropbox.producer;
+package org.apache.camel.component.dropbox.integration.producer;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.component.dropbox.DropboxConfiguration;
@@ -24,20 +24,18 @@ import org.apache.camel.component.dropbox.dto.DropboxResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class DropboxDelProducer extends DropboxProducer {
-    private static final transient Logger LOG = LoggerFactory.getLogger(DropboxDelProducer.class);
+public class DropboxSearchProducer extends DropboxProducer {
+    private static final transient Logger LOG = LoggerFactory.getLogger(DropboxSearchProducer.class);
 
-    public DropboxDelProducer(DropboxEndpoint endpoint, DropboxConfiguration configuration) {
+    public DropboxSearchProducer(DropboxEndpoint endpoint, DropboxConfiguration configuration) {
         super(endpoint,configuration);
     }
 
     @Override
     public void process(Exchange exchange) throws Exception {
         DropboxResult result = DropboxAPIFacade.getInstance(configuration.getClient())
-                .del(configuration.getRemotePath());
+                .search(configuration.getRemotePath(),configuration.getQuery());
         result.populateExchange(exchange);
-        log.info("Deleted: " + configuration.getRemotePath());
-
     }
 
 }

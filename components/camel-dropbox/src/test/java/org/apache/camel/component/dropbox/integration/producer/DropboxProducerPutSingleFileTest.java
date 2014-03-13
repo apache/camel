@@ -14,22 +14,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.dropbox.producer;
+package org.apache.camel.component.dropbox.integration.producer;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.dropbox.DropboxTestSupport;
-import org.apache.camel.component.dropbox.util.DropboxConstants;
+import org.apache.camel.component.dropbox.integration.DropboxTestSupport;
 import org.apache.camel.component.dropbox.util.DropboxResultHeader;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
 
 import java.util.List;
 
-public class DropboxProducerMoveTest extends DropboxTestSupport {
+public class DropboxProducerPutSingleFileTest extends DropboxTestSupport {
 
-    public DropboxProducerMoveTest() throws Exception {}
+    public DropboxProducerPutSingleFileTest() throws Exception {}
 
     @Test
     public void testCamelDropbox() throws Exception {
@@ -47,7 +46,7 @@ public class DropboxProducerMoveTest extends DropboxTestSupport {
 
         List<Exchange> exchanges = mock.getReceivedExchanges();
         Exchange exchange = exchanges.get(0);
-        Object header =  exchange.getIn().getHeader(DropboxResultHeader.MOVED_PATH.name());
+        Object header =  exchange.getIn().getHeader(DropboxResultHeader.UPLOADED_FILE.name());
         Object body = exchange.getIn().getBody();
         assertNotNull(header);
         assertNotNull(body);
@@ -58,7 +57,7 @@ public class DropboxProducerMoveTest extends DropboxTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                        .to("dropbox://move?"+getAuthParams()+"&remotePath=/XXX&newRemotePath=/XXX")
+                        .to("dropbox://put?"+getAuthParams()+"&uploadMode=add&localPath=/XXX")
                         .to("mock:result");
             }
         };

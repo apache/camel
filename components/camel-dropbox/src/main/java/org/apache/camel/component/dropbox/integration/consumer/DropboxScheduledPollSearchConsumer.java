@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.dropbox.consumer;
+package org.apache.camel.component.dropbox.integration.consumer;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
@@ -22,7 +22,6 @@ import org.apache.camel.component.dropbox.DropboxConfiguration;
 import org.apache.camel.component.dropbox.DropboxEndpoint;
 import org.apache.camel.component.dropbox.core.DropboxAPIFacade;
 import org.apache.camel.component.dropbox.dto.DropboxResult;
-import org.apache.camel.component.dropbox.util.DropboxResultCode;
 
 public class DropboxScheduledPollSearchConsumer extends DropboxScheduledPollConsumer {
 

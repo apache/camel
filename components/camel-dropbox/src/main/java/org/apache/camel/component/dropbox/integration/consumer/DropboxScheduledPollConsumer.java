@@ -14,45 +14,58 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.dropbox.producer;
+package org.apache.camel.component.dropbox.integration.consumer;
 
 import org.apache.camel.component.dropbox.DropboxConfiguration;
 import org.apache.camel.component.dropbox.DropboxEndpoint;
-import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.Processor;
+import org.apache.camel.impl.ScheduledPollConsumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public abstract class DropboxProducer extends DefaultProducer {
 
-    private static final transient Logger LOG = LoggerFactory.getLogger(DropboxProducer.class);
-
+public abstract class DropboxScheduledPollConsumer extends ScheduledPollConsumer {
+    protected static final transient Logger LOG = LoggerFactory.getLogger(DropboxScheduledPollConsumer.class);
     protected DropboxEndpoint endpoint;
     protected DropboxConfiguration configuration;
 
-    public DropboxProducer(DropboxEndpoint endpoint, DropboxConfiguration configuration) {
-        super(endpoint);
+    public DropboxScheduledPollConsumer(DropboxEndpoint endpoint, Processor processor, DropboxConfiguration configuration) {
+        super(endpoint, processor);
         this.endpoint = endpoint;
         this.configuration = configuration;
     }
 
+    @Override
+    protected abstract int poll() throws Exception;
+
+    /**
+     * Lifecycle method invoked when the consumer has created.
+     * Internally create or reuse a connection to the low level dropbox client
+     * @throws Exception
+     */
     @Override
     protected void doStart() throws Exception {
         if(configuration.getClient() == null) {
             //create dropbox client
             configuration.createClient();
 
-            LOG.info("producer dropbox client created");
+            LOG.info("consumer dropbox client created");
         }
 
         super.doStart();
     }
 
+    /**
+     * Lifecycle method invoked when the consumer has destroyed.
+     * Erase the reference to the dropbox low level client
+     * @throws Exception
+     */
     @Override
     protected void doStop() throws Exception {
         if (configuration.getClient() == null) {
             configuration.setClient(null);
 
-            LOG.info("producer dropbox client deleted");
+            LOG.info("consumer dropbox client deleted");
         }
         super.doStop();
     }

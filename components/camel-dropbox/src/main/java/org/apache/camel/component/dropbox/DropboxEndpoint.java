@@ -16,10 +16,10 @@
  */
 package org.apache.camel.component.dropbox;
 
-import org.apache.camel.component.dropbox.consumer.DropboxScheduledPollConsumer;
-import org.apache.camel.component.dropbox.consumer.DropboxScheduledPollGetConsumer;
-import org.apache.camel.component.dropbox.consumer.DropboxScheduledPollSearchConsumer;
-import org.apache.camel.component.dropbox.producer.*;
+import org.apache.camel.component.dropbox.integration.consumer.DropboxScheduledPollConsumer;
+import org.apache.camel.component.dropbox.integration.consumer.DropboxScheduledPollGetConsumer;
+import org.apache.camel.component.dropbox.integration.consumer.DropboxScheduledPollSearchConsumer;
+import org.apache.camel.component.dropbox.integration.producer.*;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;

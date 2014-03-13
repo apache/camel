@@ -14,29 +14,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.dropbox.producer;
+package org.apache.camel.component.dropbox.integration.producer;
 
-import org.apache.camel.Exchange;
 import org.apache.camel.component.dropbox.DropboxConfiguration;
 import org.apache.camel.component.dropbox.DropboxEndpoint;
+import org.apache.camel.Exchange;
 import org.apache.camel.component.dropbox.core.DropboxAPIFacade;
 import org.apache.camel.component.dropbox.dto.DropboxResult;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class DropboxMoveProducer extends DropboxProducer {
-    private static final transient Logger LOG = LoggerFactory.getLogger(DropboxMoveProducer.class);
+public class DropboxPutProducer extends DropboxProducer {
+    private static final transient Logger LOG = LoggerFactory.getLogger(DropboxPutProducer.class);
 
-    public DropboxMoveProducer(DropboxEndpoint endpoint, DropboxConfiguration configuration) {
+    public DropboxPutProducer(DropboxEndpoint endpoint, DropboxConfiguration configuration) {
         super(endpoint,configuration);
     }
 
     @Override
     public void process(Exchange exchange) throws Exception {
         DropboxResult result = DropboxAPIFacade.getInstance(configuration.getClient())
-                .move(configuration.getRemotePath(),configuration.getNewRemotePath());
+                .put(configuration.getLocalPath(),configuration.getRemotePath(),configuration.getUploadMode());
         result.populateExchange(exchange);
-        log.info("Moved from " + configuration.getRemotePath()+" to "+configuration.getNewRemotePath());
+        LOG.info("Uploaded: " + result.toString());
+
     }
 
 }

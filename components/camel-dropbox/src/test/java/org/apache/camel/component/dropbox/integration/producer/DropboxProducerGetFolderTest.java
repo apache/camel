@@ -14,22 +14,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.dropbox.producer;
+package org.apache.camel.component.dropbox.integration.producer;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.dropbox.DropboxTestSupport;
-import org.apache.camel.component.dropbox.util.DropboxConstants;
+import org.apache.camel.component.dropbox.integration.DropboxTestSupport;
 import org.apache.camel.component.dropbox.util.DropboxResultHeader;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
 
 import java.util.List;
 
-public class DropboxProducerSearchQueryTest extends DropboxTestSupport {
+public class DropboxProducerGetFolderTest extends DropboxTestSupport {
 
-    public DropboxProducerSearchQueryTest() throws Exception {}
+    public DropboxProducerGetFolderTest() throws Exception {}
 
     @Test
     public void testCamelDropbox() throws Exception {
@@ -47,11 +46,12 @@ public class DropboxProducerSearchQueryTest extends DropboxTestSupport {
 
         List<Exchange> exchanges = mock.getReceivedExchanges();
         Exchange exchange = exchanges.get(0);
-        Object header =  exchange.getIn().getHeader(DropboxResultHeader.FOUNDED_FILES.name());
+        Object header =  exchange.getIn().getHeader(DropboxResultHeader.DOWNLOADED_FILES.name());
         Object body = exchange.getIn().getBody();
         assertNotNull(header);
         assertNotNull(body);
 
+        System.out.println(header.toString());
     }
 
     @Override
@@ -59,7 +59,7 @@ public class DropboxProducerSearchQueryTest extends DropboxTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                        .to("dropbox://search?"+getAuthParams()+"&remotePath=/XXX&query=XXX")
+                        .to("dropbox://get?"+getAuthParams()+"&remotePath=/XXX")
                         .to("mock:result");
             }
         };

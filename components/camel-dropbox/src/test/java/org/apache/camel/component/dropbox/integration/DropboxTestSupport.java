@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.dropbox;
+package org.apache.camel.component.dropbox.integration;
 
 import org.apache.camel.test.junit4.CamelTestSupport;
 

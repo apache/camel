@@ -14,45 +14,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.dropbox.consumer;
+package org.apache.camel.component.dropbox.integration.producer;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.Processor;
 import org.apache.camel.component.dropbox.DropboxConfiguration;
 import org.apache.camel.component.dropbox.DropboxEndpoint;
 import org.apache.camel.component.dropbox.core.DropboxAPIFacade;
 import org.apache.camel.component.dropbox.dto.DropboxResult;
-import org.apache.camel.component.dropbox.util.DropboxResultCode;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
-public class DropboxScheduledPollGetConsumer extends DropboxScheduledPollConsumer {
+public class DropboxGetProducer extends DropboxProducer {
+    private static final transient Logger LOG = LoggerFactory.getLogger(DropboxGetProducer.class);
 
-    public DropboxScheduledPollGetConsumer(DropboxEndpoint endpoint, Processor processor, DropboxConfiguration configuration) {
-        super(endpoint, processor,configuration);
+    public DropboxGetProducer(DropboxEndpoint endpoint, DropboxConfiguration configuration) {
+        super(endpoint,configuration);
     }
 
-    /**
-     * Poll from a dropbox remote path and put the result in the message exchange
-     * @return number of messages polled
-     * @throws Exception
-     */
     @Override
-    protected int poll() throws Exception {
-        Exchange exchange = endpoint.createExchange();
+    public void process(Exchange exchange) throws Exception {
         DropboxResult result = DropboxAPIFacade.getInstance(configuration.getClient())
                 .get(configuration.getRemotePath());
         result.populateExchange(exchange);
-        LOG.info("consumer --> downloaded: " + result.toString());
+        LOG.info("producer --> downloaded: " + result.toString());
 
-        try {
-            // send message to next processor in the route
-            getProcessor().process(exchange);
-            return 1; // number of messages polled
-        }
-        finally {
-            // log exception if an exception occurred and was not handled
-            if (exchange.getException() != null) {
-                getExceptionHandler().handleException("Error processing exchange", exchange, exchange.getException());
-            }
-        }
     }
+
 }
