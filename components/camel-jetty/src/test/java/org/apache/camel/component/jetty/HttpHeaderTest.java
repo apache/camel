@@ -32,7 +32,28 @@ public class HttpHeaderTest extends BaseJettyTest {
         String result = template.requestBody("direct:start", "hello", String.class);
         assertEquals("Should send a right http header to the server.", "Find the key!", result);
     }
-
+    
+    @Test
+    public void testServerHeader() throws Exception {
+        Exchange ex = template.request("http://localhost:{{port}}/server/mytest", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                // Do nothing here
+            }
+        });
+        
+        assertNotNull(ex.getOut().getHeader("Server"));
+        
+        ex = template.request("http://localhost:{{port2}}/server/mytest", new Processor() {
+            @Override
+            public void process(Exchange exchange) throws Exception {
+                // Do nothing here
+            }
+        });
+        
+        assertNull(ex.getOut().getHeader("Server"));
+    }
+   
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
@@ -57,7 +78,11 @@ public class HttpHeaderTest extends BaseJettyTest {
                         exchange.getOut().setBody("Cannot find the key!");
                     }
                 });
-
+                
+                from("jetty:http://localhost:{{port}}/server/mytest").transform(constant("Response!"));
+                
+                from("jetty:http://localhost:{{port2}}/server/mytest?sendServerVersion=false").transform(constant("Response!"));
+                
             }
         };
     }
