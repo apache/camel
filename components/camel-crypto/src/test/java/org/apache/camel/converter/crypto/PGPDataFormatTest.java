@@ -64,6 +64,7 @@ import org.bouncycastle.openpgp.operator.jcajce.JcePBEKeyEncryptionMethodGenerat
 import org.bouncycastle.openpgp.operator.jcajce.JcePBESecretKeyDecryptorBuilder;
 import org.bouncycastle.openpgp.operator.jcajce.JcePGPDataEncryptorBuilder;
 import org.bouncycastle.openpgp.operator.jcajce.JcePublicKeyKeyEncryptionMethodGenerator;
+import org.junit.Before;
 import org.junit.Test;
 
 public class PGPDataFormatTest extends AbstractPGPDataFormatTest {
@@ -71,6 +72,26 @@ public class PGPDataFormatTest extends AbstractPGPDataFormatTest {
     private static final String PUB_KEY_RING_SUBKEYS_FILE_NAME = "org/apache/camel/component/crypto/pubringSubKeys.gpg";
     private static final String SEC_KEY_RING_FILE_NAME = "org/apache/camel/component/crypto/secring.gpg";
     private static final String PUB_KEY_RING_FILE_NAME = "org/apache/camel/component/crypto/pubring.gpg";
+
+    PGPDataFormat encryptor = new PGPDataFormat();
+    PGPDataFormat decryptor = new PGPDataFormat();
+
+    @Before
+    public void setUpEncryptorAndDecryptor() {
+
+        // the following keyring contains a primary key with KeyFlag "Certify" and a subkey for signing and a subkey for encryption
+        encryptor.setKeyFileName(PUB_KEY_RING_SUBKEYS_FILE_NAME);
+        encryptor.setSignatureKeyFileName("org/apache/camel/component/crypto/secringSubKeys.gpg");
+        encryptor.setSignaturePassword("Abcd1234");
+        encryptor.setKeyUserid("keyflag");
+        encryptor.setSignatureKeyUserid("keyflag");
+
+        // the following keyring contains a primary key with KeyFlag "Certify" and a subkey for signing and a subkey for encryption
+        decryptor.setKeyFileName("org/apache/camel/component/crypto/secringSubKeys.gpg");
+        decryptor.setSignatureKeyFileName(PUB_KEY_RING_SUBKEYS_FILE_NAME);
+        decryptor.setPassword("Abcd1234");
+        decryptor.setSignatureKeyUserid("keyflag");
+    }
 
     protected String getKeyFileName() {
         return PUB_KEY_RING_FILE_NAME;
@@ -173,7 +194,7 @@ public class PGPDataFormatTest extends AbstractPGPDataFormatTest {
         template.sendBodyAndHeaders("direct:verify_exception_sig_userids", payload, headers);
         assertMockEndpointsSatisfied();
 
-        checkThrownException(exception, IllegalArgumentException.class, null, "No public key found fitting to the signature key Id");
+        checkThrownException(exception, IllegalArgumentException.class, null, "No public key found for the key ID(s)");
 
     }
 
@@ -299,7 +320,7 @@ public class PGPDataFormatTest extends AbstractPGPDataFormatTest {
         assertMockEndpointsSatisfied();
 
         checkThrownException(mock, PGPException.class, null,
-                "Message is encrypted with a key which could not be found in the Secret Key Ring");
+                "PGP message is encrypted with a key which could not be found in the Secret Keyring");
     }
 
     void createEncryptedNonCompressedData(ByteArrayOutputStream bos, String keyringPath) throws Exception, IOException, PGPException,
@@ -419,6 +440,49 @@ public class PGPDataFormatTest extends AbstractPGPDataFormatTest {
         checkThrownException(mock, IllegalArgumentException.class, null, "The input message body has an invalid format.");
     }
 
+    @Test
+    public void testExceptionForSignatureVerificationOptionNoSignatureAllowed() throws Exception {
+
+        decryptor.setSignatureVerificationOption(PGPDataFormat.SIGNATURE_VERIFICATION_OPTION_NO_SIGNATURE_ALLOWED);
+
+        MockEndpoint mock = getMockEndpoint("mock:exception");
+        mock.expectedMessageCount(1);
+        template.sendBody("direct:subkey", "Test Message");
+        assertMockEndpointsSatisfied();
+
+        checkThrownException(mock, PGPException.class, null, "PGP message contains a signature although a signature is not expected");
+    }
+
+    @Test
+    public void testExceptionForSignatureVerificationOptionRequired() throws Exception {
+
+        encryptor.setSignatureKeyUserid(null); // no signature
+        decryptor.setSignatureVerificationOption(PGPDataFormat.SIGNATURE_VERIFICATION_OPTION_REQUIRED);
+
+        MockEndpoint mock = getMockEndpoint("mock:exception");
+        mock.expectedMessageCount(1);
+        template.sendBody("direct:subkey", "Test Message");
+        assertMockEndpointsSatisfied();
+
+        checkThrownException(mock, PGPException.class, null, "PGP message does not contain any signatures although a signature is expected");
+    }
+
+    @Test
+    public void testSignatureVerificationOptionIgnore() throws Exception {
+
+        // encryptor is sending a PGP message with signature! Decryptor is ignoreing the signature
+        decryptor.setSignatureVerificationOption(PGPDataFormat.SIGNATURE_VERIFICATION_OPTION_IGNORE);
+        decryptor.setSignatureKeyUserids(null);
+        decryptor.setSignatureKeyFileName(null); // no public keyring! --> no signature validation possible
+
+        String payload = "Test Message";
+        MockEndpoint mock = getMockEndpoint("mock:unencrypted");
+        mock.expectedBodiesReceived(payload);
+        template.sendBody("direct:subkey", payload);
+        assertMockEndpointsSatisfied();
+
+    }
+
     protected RouteBuilder[] createRouteBuilders() {
         return new RouteBuilder[] {new RouteBuilder() {
             public void configure() throws Exception {
@@ -451,6 +515,7 @@ public class PGPDataFormatTest extends AbstractPGPDataFormatTest {
                 pgpDecrypt.setKeyFileName(keyFileNameSec);
                 pgpDecrypt.setPassword(keyPassword);
                 pgpDecrypt.setProvider(getProvider());
+                pgpDecrypt.setSignatureVerificationOption(PGPDataFormat.SIGNATURE_VERIFICATION_OPTION_NO_SIGNATURE_ALLOWED);
 
                 from("direct:inline2").marshal(pgpEncrypt).to("mock:encrypted").unmarshal(pgpDecrypt).to("mock:unencrypted");
 
@@ -523,6 +588,7 @@ public class PGPDataFormatTest extends AbstractPGPDataFormatTest {
                 pgpVerifyAndDecryptByteArray.setProvider(getProvider());
                 // restrict verification to public keys with certain User ID
                 pgpVerifyAndDecryptByteArray.setSignatureKeyUserids(getSignatureKeyUserIds());
+                pgpVerifyAndDecryptByteArray.setSignatureVerificationOption(PGPDataFormat.SIGNATURE_VERIFICATION_OPTION_REQUIRED);
 
                 from("direct:sign-key-ring-byte-array").streamCaching()
                 // encryption key ring can also be set as header
@@ -609,28 +675,13 @@ public class PGPDataFormatTest extends AbstractPGPDataFormatTest {
             public void configure() throws Exception {
 
                 onException(Exception.class).handled(true).to("mock:exception");
-                // keyflag test
-                PGPDataFormat pgpKeyFlag = new PGPDataFormat();
-                // the following keyring contains a primary key with KeyFlag "Certify" and a subkey for signing and a subkey for encryption
-                pgpKeyFlag.setKeyFileName(PUB_KEY_RING_SUBKEYS_FILE_NAME);
-                pgpKeyFlag.setSignatureKeyFileName("org/apache/camel/component/crypto/secringSubKeys.gpg");
-                pgpKeyFlag.setSignaturePassword("Abcd1234");
-                pgpKeyFlag.setKeyUserid("keyflag");
-                pgpKeyFlag.setSignatureKeyUserid("keyflag");
 
-                from("direct:keyflag").marshal(pgpKeyFlag).to("mock:encrypted_keyflag");
-
-                PGPDataFormat pgpDecryptVerifySubkey = new PGPDataFormat();
-                // the following keyring contains a primary key with KeyFlag "Certify" and a subkey for signing and a subkey for encryption
-                pgpDecryptVerifySubkey.setKeyFileName("org/apache/camel/component/crypto/secringSubKeys.gpg");
-                pgpDecryptVerifySubkey.setSignatureKeyFileName(PUB_KEY_RING_SUBKEYS_FILE_NAME);
-                pgpDecryptVerifySubkey.setPassword("Abcd1234");
-                pgpDecryptVerifySubkey.setSignatureKeyUserid("keyflag");
+                from("direct:keyflag").marshal(encryptor).to("mock:encrypted_keyflag");
 
                 // test that the correct subkey is selected during decrypt and verify
-                from("direct:subkey").marshal(pgpKeyFlag).to("mock:encrypted").unmarshal(pgpDecryptVerifySubkey).to("mock:unencrypted");
+                from("direct:subkey").marshal(encryptor).to("mock:encrypted").unmarshal(decryptor).to("mock:unencrypted");
 
-                from("direct:subkeyUnmarshal").unmarshal(pgpDecryptVerifySubkey).to("mock:unencrypted");
+                from("direct:subkeyUnmarshal").unmarshal(decryptor).to("mock:unencrypted");
             }
         }, new RouteBuilder() {
             public void configure() throws Exception {

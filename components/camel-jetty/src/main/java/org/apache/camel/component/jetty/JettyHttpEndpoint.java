@@ -48,6 +48,7 @@ public class JettyHttpEndpoint extends HttpEndpoint {
     private JettyHttpBinding jettyBinding;
     private boolean enableJmx;
     private boolean enableMultipartFilter;
+    private boolean sendServerVersion = true;
     private Filter multipartFilter;
     private List<Filter> filters;
     private Long continuationTimeout;
@@ -165,6 +166,14 @@ public class JettyHttpEndpoint extends HttpEndpoint {
 
     public void setEnableJmx(boolean enableJmx) {
         this.enableJmx = enableJmx;
+    }
+    
+    public boolean isSendServerVersion() {
+        return sendServerVersion;
+    }
+    
+    public void setSendServerVersion(boolean sendServerVersion) {
+        this.sendServerVersion = sendServerVersion;
     }
     
     public boolean isEnableMultipartFilter() {
