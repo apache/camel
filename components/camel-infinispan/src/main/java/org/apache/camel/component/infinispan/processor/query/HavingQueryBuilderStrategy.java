@@ -14,19 +14,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.infinispan;
+package org.apache.camel.component.infinispan.processor.query;
 
-interface InfinispanConstants {
-    String EVENT_TYPE = "CamelInfinispanEventType";
-    String IS_PRE = "CamelInfinispanIsPre";
-    String CACHE_NAME = "CamelInfinispanCacheName";
-    String KEY = "CamelInfinispanKey";
-    String VALUE = "CamelInfinispanValue";
-    String OPERATION = "CamelInfinispanOperation";
-    String PUT = "CamelInfinispanOperationPut";
-    String GET = "CamelInfinispanOperationGet";
-    String REMOVE = "CamelInfinispanOperationRemove";
-    String CLEAR = "CamelInfinispanOperationClear";
-    String QUERY = "CamelInfinispanOperationQuery";
-    String RESULT = "CamelInfinispanOperationResult";
+import org.infinispan.query.dsl.Query;
+import org.infinispan.query.dsl.QueryBuilder;
+import org.infinispan.query.dsl.QueryFactory;
+
+public class HavingQueryBuilderStrategy implements QueryBuilderStrategy {
+    private final Class aCLass;
+    private final String attribute;
+    private final String value;
+
+    public HavingQueryBuilderStrategy(Class aCLass, String attribute, String value) {
+        this.aCLass = aCLass;
+        this.attribute = attribute;
+        this.value = value;
+    }
+
+    @Override
+    public QueryBuilder<Query> createQueryBuilder(QueryFactory queryFactory) {
+        return queryFactory
+                .from(aCLass)
+                .having(attribute).eq(value)
+                .toBuilder();
+    }
 }

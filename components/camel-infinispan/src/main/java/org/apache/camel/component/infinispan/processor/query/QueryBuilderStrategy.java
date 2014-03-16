@@ -14,19 +14,12 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.infinispan;
+package org.apache.camel.component.infinispan.processor.query;
 
-interface InfinispanConstants {
-    String EVENT_TYPE = "CamelInfinispanEventType";
-    String IS_PRE = "CamelInfinispanIsPre";
-    String CACHE_NAME = "CamelInfinispanCacheName";
-    String KEY = "CamelInfinispanKey";
-    String VALUE = "CamelInfinispanValue";
-    String OPERATION = "CamelInfinispanOperation";
-    String PUT = "CamelInfinispanOperationPut";
-    String GET = "CamelInfinispanOperationGet";
-    String REMOVE = "CamelInfinispanOperationRemove";
-    String CLEAR = "CamelInfinispanOperationClear";
-    String QUERY = "CamelInfinispanOperationQuery";
-    String RESULT = "CamelInfinispanOperationResult";
+import org.infinispan.query.dsl.Query;
+import org.infinispan.query.dsl.QueryBuilder;
+import org.infinispan.query.dsl.QueryFactory;
+
+public interface QueryBuilderStrategy {
+    QueryBuilder<Query> createQueryBuilder(QueryFactory queryFactory);
 }
