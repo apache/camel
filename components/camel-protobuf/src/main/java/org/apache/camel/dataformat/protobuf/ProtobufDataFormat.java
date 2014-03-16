@@ -99,7 +99,7 @@ public class ProtobufDataFormat extends ServiceSupport implements DataFormat, Ca
         Class<?> instanceClass = context.getClassResolver().resolveMandatoryClass(className);
         if (Message.class.isAssignableFrom(instanceClass)) {
             try {
-                Method method = instanceClass.getMethod("getDefaultInstance", new Class[0]);
+                Method method = instanceClass.getMethod("getDefaultInstance");
                 return (Message) method.invoke(null, new Object[0]);
             } catch (Exception ex) {
                 throw new CamelException("Can't set the defaultInstance of ProtobufferDataFormat with "
