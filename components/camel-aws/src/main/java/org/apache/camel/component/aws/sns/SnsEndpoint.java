@@ -30,6 +30,7 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -69,23 +70,29 @@ public class SnsEndpoint extends DefaultEndpoint {
     @Override
     public void doStart() throws Exception {
         super.doStart();
-        
+        snsClient = configuration.getAmazonSNSClient() != null
+            ? configuration.getAmazonSNSClient() : createSNSClient();
         // creates a new topic, or returns the URL of an existing one
         CreateTopicRequest request = new CreateTopicRequest(configuration.getTopicName());
         
         LOG.trace("Creating topic [{}] with request [{}]...", configuration.getTopicName(), request);
         
-        CreateTopicResult result = getSNSClient().createTopic(request);
+        CreateTopicResult result = snsClient.createTopic(request);
         configuration.setTopicArn(result.getTopicArn());
         
         LOG.trace("Topic created with Amazon resource name: {}", configuration.getTopicArn());
         
-        if (configuration.getPolicy() != null) {
+        if (ObjectHelper.isNotEmpty(configuration.getPolicy())) {
             LOG.trace("Updating topic [{}] with policy [{}]", configuration.getTopicArn(), configuration.getPolicy());
             
-            getSNSClient().setTopicAttributes(new SetTopicAttributesRequest(configuration.getTopicArn(), "Policy", configuration.getPolicy()));
+            snsClient.setTopicAttributes(new SetTopicAttributesRequest(configuration.getTopicArn(), "Policy", configuration.getPolicy()));
             
             LOG.trace("Topic policy updated");
+        }
+        // Override the setting Endpoint from url
+        if (ObjectHelper.isNotEmpty(configuration.getAmazonSNSEndpoint())) {
+            LOG.trace("Updating the SNS region with : {} " + configuration.getAmazonSNSEndpoint());
+            snsClient.setEndpoint(configuration.getAmazonSNSEndpoint());
         }
     }
 
@@ -102,11 +109,6 @@ public class SnsEndpoint extends DefaultEndpoint {
     }
     
     public AmazonSNS getSNSClient() {
-        if (snsClient == null) {
-            snsClient = configuration.getAmazonSNSClient() != null
-                ? configuration.getAmazonSNSClient() : createSNSClient();
-        }
-        
         return snsClient;
     }
 
@@ -118,9 +120,6 @@ public class SnsEndpoint extends DefaultEndpoint {
     AmazonSNS createSNSClient() {
         AWSCredentials credentials = new BasicAWSCredentials(configuration.getAccessKey(), configuration.getSecretKey());
         AmazonSNS client = new AmazonSNSClient(credentials);
-        if (configuration.getAmazonSNSEndpoint() != null) {
-            client.setEndpoint(configuration.getAmazonSNSEndpoint());
-        }
         return client;
     }
 }

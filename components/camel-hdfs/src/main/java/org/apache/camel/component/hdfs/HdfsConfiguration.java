@@ -52,6 +52,7 @@ public class HdfsConfiguration {
     private int checkIdleInterval = HdfsConstants.DEFAULT_CHECK_IDLE_INTERVAL;
     private List<HdfsProducer.SplitStrategy> splitStrategies;
     private boolean connectOnStartup = true;
+    private String owner;
 
     public HdfsConfiguration() {
     }
@@ -406,5 +407,13 @@ public class HdfsConfiguration {
 
     public void setConnectOnStartup(boolean connectOnStartup) {
         this.connectOnStartup = connectOnStartup;
+    }
+
+    public String getOwner() {
+        return owner;
+    }
+
+    public void setOwner(String owner) {
+        this.owner = owner;
     }
 }

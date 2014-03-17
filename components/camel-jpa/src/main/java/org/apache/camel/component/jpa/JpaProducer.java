@@ -57,7 +57,9 @@ public class JpaProducer extends DefaultProducer {
         if (values != null) {
             transactionTemplate.execute(new TransactionCallback<Object>() {
                 public Object doInTransaction(TransactionStatus status) {
-                    entityManager.joinTransaction();
+                    if (getEndpoint().isJoinTransaction()) {
+                        entityManager.joinTransaction();
+                    }
                     if (values.getClass().isArray()) {
                         Object[] array = (Object[])values;
                         for (int index = 0; index < array.length; index++) {
@@ -77,7 +79,9 @@ public class JpaProducer extends DefaultProducer {
 
                     if (getEndpoint().isFlushOnSend()) {
                         // there may be concurrency so need to join tx before flush
-                        entityManager.joinTransaction();
+                        if (getEndpoint().isJoinTransaction()) {
+                            entityManager.joinTransaction();
+                        }
                         entityManager.flush();
                     }
 

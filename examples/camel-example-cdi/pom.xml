@@ -29,6 +29,7 @@
     <description>An example showing how to work with Camel and CDI for dependency injection</description>
 
 	  <!-- TODO this example is packaged as WAR why the osgi imports? -->
+    <!-- TODO: remove the arquillian tests - this should be a simple example -->
     <properties>
         <camel.osgi.export>org.apache.camel.example.cdi.*</camel.osgi.export>
         <camel.osgi.import>
@@ -48,6 +49,7 @@
     </properties>
 
     <dependencies>
+
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-cdi</artifactId>
@@ -60,16 +62,6 @@
             <artifactId>geronimo-ejb_3.1_spec</artifactId>
             <version>${geronimo-ejb_3.1_spec-version}</version>
             <scope>provided</scope>
-        </dependency>
-
-        <!-- activemq component -->
-        <dependency>
-            <groupId>org.apache.activemq</groupId>
-            <artifactId>activemq-camel</artifactId>
-        </dependency>
-        <dependency>
-            <groupId>org.apache.activemq</groupId>
-            <artifactId>activemq-pool</artifactId>
         </dependency>
 
         <!-- logging -->
@@ -192,9 +184,10 @@
                                 <arquillian>weld-ee-embedded</arquillian>
                             </systemPropertyVariables>
                             <includes>
-                                <include>**/*Test.java</include>
+                                <!--<include>**/*Test.java</include>-->
                             </includes>
                             <excludes>
+                                <exclude>**/*Test*.java</exclude>
                                 <exclude>**/*JBoss*.java</exclude>
                             </excludes>
                         </configuration>

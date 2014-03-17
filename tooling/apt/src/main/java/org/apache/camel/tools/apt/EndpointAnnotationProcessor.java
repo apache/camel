@@ -101,7 +101,7 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
         writer.println("<header>");
         String scheme = uriEndpoint.scheme();
         String title = scheme + " endpoint";
-        writer.println("<title>" + "</title>");
+        writer.println("<title>" + title  + "</title>");
         writer.println("</header>");
         writer.println("<body>");
         writer.println("<h1>" + title + "</h1>");
@@ -291,7 +291,7 @@ public class EndpointAnnotationProcessor extends AbstractProcessor {
             File file = null;
             if (uri != null) {
                 try {
-                    file = new File(uri);
+                    file = new File(uri.getPath());
                 } catch (Exception e) {
                     warning("Could not convert output directory resource URI to a file " + e);
                 }

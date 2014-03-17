@@ -27,5 +27,6 @@ interface InfinispanConstants {
     String GET = "CamelInfinispanOperationGet";
     String REMOVE = "CamelInfinispanOperationRemove";
     String CLEAR = "CamelInfinispanOperationClear";
+    String QUERY = "CamelInfinispanOperationQuery";
     String RESULT = "CamelInfinispanOperationResult";
 }

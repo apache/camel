@@ -132,6 +132,7 @@ import org.apache.camel.util.LoadPropertiesException;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
 import org.apache.camel.util.StopWatch;
+import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
@@ -1056,6 +1057,64 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         return componentName.replaceAll("-", "");
     }
 
+    public String createRouteStaticEndpointJson(String routeId) {
+        List<RouteDefinition> routes = new ArrayList<RouteDefinition>();
+        if (routeId != null) {
+            RouteDefinition route = getRouteDefinition(routeId);
+            if (route == null) {
+                throw new IllegalArgumentException("Route with id " + routeId + " does not exist");
+            }
+            routes.add(route);
+        } else {
+            routes.addAll(getRouteDefinitions());
+        }
+
+        StringBuilder buffer = new StringBuilder("{\n  \"routes\": {");
+        boolean firstRoute = true;
+        for (RouteDefinition route : routes) {
+            if (!firstRoute) {
+                buffer.append("\n    },");
+            } else {
+                firstRoute = false;
+            }
+
+            String id = route.getId();
+            buffer.append("\n    \"" + id + "\": {");
+            buffer.append("\n      \"inputs\": [");
+            Set<String> inputs = RouteDefinitionHelper.gatherAllStaticEndpointUris(route, true, false);
+            boolean first = true;
+            for (String input : inputs) {
+                if (!first) {
+                    buffer.append(",");
+                } else {
+                    first = false;
+                }
+                buffer.append("\n        ");
+                buffer.append(StringHelper.toJson("uri", input, true));
+            }
+            buffer.append("\n      ]");
+
+            buffer.append(",");
+            buffer.append("\n      \"outputs\": [");
+            Set<String> outputs = RouteDefinitionHelper.gatherAllStaticEndpointUris(route, false, true);
+            first = true;
+            for (String output : outputs) {
+                if (!first) {
+                    buffer.append(",");
+                } else {
+                    first = false;
+                }
+                buffer.append("\n        ");
+                buffer.append(StringHelper.toJson("uri", output, true));
+            }
+            buffer.append("\n      ]");
+        }
+        buffer.append("\n    }");
+        buffer.append("\n  }\n}\n");
+
+        return buffer.toString();
+    }
+
     // Helper methods
     // -----------------------------------------------------------------------
 
@@ -1171,6 +1230,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                 // of the camel context (its the container)
                 typeConverter = createTypeConverter();
                 try {
+                    // must add service eager
                     addService(typeConverter);
                 } catch (Exception e) {
                     throw ObjectHelper.wrapRuntimeCamelException(e);
@@ -1182,6 +1242,12 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
 
     public void setTypeConverter(TypeConverter typeConverter) {
         this.typeConverter = typeConverter;
+        try {
+            // must add service eager
+            addService(typeConverter);
+        } catch (Exception e) {
+            throw ObjectHelper.wrapRuntimeCamelException(e);
+        }
     }
 
     public TypeConverterRegistry getTypeConverterRegistry() {
@@ -1256,6 +1322,27 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
             setRegistry(registry);
         }
         return registry;
+    }
+
+    public <T> T getRegistry(Class<T> type) {
+        Registry reg = getRegistry();
+
+        // unwrap the property placeholder delegate
+        if (reg instanceof PropertyPlaceholderDelegateRegistry) {
+            reg = ((PropertyPlaceholderDelegateRegistry) reg).getRegistry();
+        }
+
+        if (type.isAssignableFrom(reg.getClass())) {
+            return type.cast(reg);
+        } else if (reg instanceof CompositeRegistry) {
+            List<Registry> list = ((CompositeRegistry) reg).getRegistryList();
+            for (Registry r : list) {
+                if (type.isAssignableFrom(r.getClass())) {
+                    return type.cast(r);
+                }
+            }
+        }
+        return null;
     }
 
     /**

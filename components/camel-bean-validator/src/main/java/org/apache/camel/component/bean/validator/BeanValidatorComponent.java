@@ -18,19 +18,18 @@ package org.apache.camel.component.bean.validator;
 
 import java.util.Map;
 
-import javax.validation.Configuration;
 import javax.validation.ConstraintValidatorFactory;
 import javax.validation.MessageInterpolator;
 import javax.validation.TraversableResolver;
-import javax.validation.Validation;
 import javax.validation.ValidationProviderResolver;
 import javax.validation.ValidatorFactory;
-import javax.validation.bootstrap.GenericBootstrap;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.impl.ProcessorEndpoint;
 import org.apache.camel.util.PlatformHelper;
+
+import static org.apache.camel.component.bean.validator.ValidatorFactories.buildValidatorFactory;
 
 /**
  * Bean Validator Component for validating Java beans against reference implementation of JSR 303 Validator (Hibernate
@@ -42,60 +41,20 @@ public class BeanValidatorComponent extends DefaultComponent {
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         BeanValidator beanValidator = new BeanValidator();
 
-        ValidationProviderResolver validationProviderResolver = resolveValidationProviderResolver(parameters);
-        MessageInterpolator messageInterpolator = resolveAndRemoveReferenceParameter(parameters, "messageInterpolator", MessageInterpolator.class);
-        TraversableResolver traversableResolver = resolveAndRemoveReferenceParameter(parameters, "traversableResolver", TraversableResolver.class);
-        ConstraintValidatorFactory constraintValidatorFactory = resolveAndRemoveReferenceParameter(parameters, "constraintValidatorFactory", ConstraintValidatorFactory.class);
-        String group = getAndRemoveParameter(parameters, "group", String.class);
-        
-        GenericBootstrap bootstrap = Validation.byDefaultProvider();
-        if (validationProviderResolver != null) {
-            bootstrap.providerResolver(validationProviderResolver);
-        }
-        Configuration<?> configuration = bootstrap.configure();
-
-        if (messageInterpolator != null) {
-            configuration.messageInterpolator(messageInterpolator);
-        }
-        
-        if (traversableResolver != null) {
-            configuration.traversableResolver(traversableResolver);
-        }
-        
-        if (constraintValidatorFactory != null) {
-            configuration.constraintValidatorFactory(constraintValidatorFactory);            
-        }
-        
-        ValidatorFactory validatorFactory = configuration.buildValidatorFactory();
+        ValidatorFactory validatorFactory = buildValidatorFactory(
+                isOsgiContext(),
+                resolveAndRemoveReferenceParameter(parameters, "validationProviderResolver", ValidationProviderResolver.class),
+                resolveAndRemoveReferenceParameter(parameters, "messageInterpolator", MessageInterpolator.class),
+                resolveAndRemoveReferenceParameter(parameters, "traversableResolver", TraversableResolver.class),
+                resolveAndRemoveReferenceParameter(parameters, "constraintValidatorFactory", ConstraintValidatorFactory.class));
         beanValidator.setValidatorFactory(validatorFactory);
-        
+
+        String group = getAndRemoveParameter(parameters, "group", String.class);
         if (group != null) {
             beanValidator.setGroup(getCamelContext().getClassResolver().resolveMandatoryClass(group));
         }
 
         return new ProcessorEndpoint(uri, this, beanValidator);
-    }
-
-    /**
-     * Resolves optional custom {@code javax.validation.ValidationProviderResolver} to be used by the component. By
-     * default component tries to use resolver instance bound to the Camel registry under name
-     * {@code validationProviderResolver} . If there is no such resolver instance in the registry and component is
-     * running in the OSGi environment, {@link HibernateValidationProviderResolver} will be used. In all the other
-     * cases this method will return null.
-     *
-     * @param parameters endpoint parameters
-     * @return {@code javax.validation.ValidationProviderResolver} instance or null if no custom resolver should
-     * be used by the component
-     */
-    protected ValidationProviderResolver resolveValidationProviderResolver(Map<String, Object> parameters) {
-        ValidationProviderResolver validationProviderResolver = resolveAndRemoveReferenceParameter(parameters, "validationProviderResolver", ValidationProviderResolver.class);
-        if (validationProviderResolver != null) {
-            return validationProviderResolver;
-        }
-        if (isOsgiContext()) {
-            return new HibernateValidationProviderResolver();
-        }
-        return null;
     }
 
     /**

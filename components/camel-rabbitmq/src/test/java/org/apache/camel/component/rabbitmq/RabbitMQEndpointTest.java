@@ -105,6 +105,12 @@ public class RabbitMQEndpointTest extends CamelTestSupport {
         ThreadPoolExecutor executor = assertIsInstanceOf(ThreadPoolExecutor.class,  endpoint.createExecutor());
         assertEquals(20, executor.getCorePoolSize());
     }
+    
+    @Test
+    public void createEndpointWithAutoAckDisabled() throws Exception {
+        RabbitMQEndpoint endpoint = context.getEndpoint("rabbitmq:localhost/exchange?autoAck=false", RabbitMQEndpoint.class);
+        assertEquals(false, endpoint.isAutoAck());
+    }
 
     @Test
     public void assertSingleton() throws Exception {

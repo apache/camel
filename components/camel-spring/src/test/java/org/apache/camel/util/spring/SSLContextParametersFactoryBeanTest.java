@@ -44,6 +44,7 @@ public class SSLContextParametersFactoryBeanTest {
         
         assertEquals("provider", scp.getProvider());
         assertEquals("protocol", scp.getSecureSocketProtocol());
+        assertEquals("alice", scp.getCertAlias());
         
         validateBaseSSLContextParameters(scp);
         

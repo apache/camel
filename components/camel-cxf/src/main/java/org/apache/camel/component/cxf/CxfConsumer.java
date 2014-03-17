@@ -236,7 +236,7 @@ public class CxfConsumer extends DefaultConsumer {
                         WebFault faultAnnotation = t.getClass().getAnnotation(WebFault.class);
                         Object faultInfo = null;
                         try {
-                            Method method = t.getClass().getMethod("getFaultInfo", new Class[0]);
+                            Method method = t.getClass().getMethod("getFaultInfo");
                             faultInfo = method.invoke(t, new Object[0]);
                         } catch (Exception e) {
                             // do nothing here                            

@@ -18,15 +18,16 @@ package org.apache.camel.converter.crypto;
 
 import java.io.BufferedOutputStream;
 import java.io.ByteArrayOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.security.SecureRandom;
 import java.security.Security;
 import java.security.SignatureException;
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collections;
 import java.util.Date;
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.camel.Exchange;
@@ -77,6 +78,10 @@ import org.slf4j.LoggerFactory;
  * array or file, then you should use the class {@link PGPDataFormat}.
  * 
  */
+/**
+ * @author D023101
+ * 
+ */
 public class PGPKeyAccessDataFormat extends ServiceSupport implements DataFormat {
 
     public static final String KEY_USERID = "CamelPGPDataFormatKeyUserid";
@@ -88,10 +93,40 @@ public class PGPKeyAccessDataFormat extends ServiceSupport implements DataFormat
     public static final String COMPRESSION_ALGORITHM = "CamelPGPDataFormatCompressionAlgorithm";
 
     /**
-     * During encryption the number of asymmectirc encryption keys is set to
-     * this header parameter. The Value is of type Integer.
+     * Signature verification option "optional": Used during unmarshaling. The
+     * PGP message can or cannot contain signatures. If it does contain
+     * signatures then one of them is verified. This is the default option.
+     */
+    public static final String SIGNATURE_VERIFICATION_OPTION_OPTIONAL = "optional";
+
+    /**
+     * Signature verification option "required": Used during unmarshaling. It is
+     * checked that the PGP message does contain at least one signature. If this
+     * is not the case a {@link PGPException} is thrown. One of the contained 
+     * signatures is verified.
+     */
+    public static final String SIGNATURE_VERIFICATION_OPTION_REQUIRED = "required";
+    
+    /**
+     * Signature verification option "required": Used during unmarshaling. If 
+     * the PGP message contains signatures then they are ignored. No 
+     * verification takes place.
+     */
+    public static final String SIGNATURE_VERIFICATION_OPTION_IGNORE = "ignore";
+
+    /**
+     * Signature verification option "no signature allowed": Used during
+     * unmarshaling. It is checked that the PGP message does contain not any
+     * signatures. If this is not the case a {@link PGPException} is thrown.
+     */
+    public static final String SIGNATURE_VERIFICATION_OPTION_NO_SIGNATURE_ALLOWED = "no_signature_allowed";
+
+    /**
+     * During encryption the number of asymmetric encryption keys is set to this
+     * header parameter. The Value is of type Integer.
      */
     public static final String NUMBER_OF_ENCRYPTION_KEYS = "CamelPGPDataFormatNumberOfEncryptionKeys";
+
     /**
      * During signing the number of signing keys is set to this header
      * parameter. This corresponds to the number of signatures. The Value is of
@@ -100,11 +135,13 @@ public class PGPKeyAccessDataFormat extends ServiceSupport implements DataFormat
     public static final String NUMBER_OF_SIGNING_KEYS = "CamelPGPDataFormatNumberOfSigningKeys";
 
     private static final Logger LOG = LoggerFactory.getLogger(PGPKeyAccessDataFormat.class);
-    
+
+    private static final List<String> SIGNATURE_VERIFICATION_OPTIONS = Arrays.asList(new String[] {SIGNATURE_VERIFICATION_OPTION_OPTIONAL,
+        SIGNATURE_VERIFICATION_OPTION_REQUIRED, SIGNATURE_VERIFICATION_OPTION_IGNORE, SIGNATURE_VERIFICATION_OPTION_NO_SIGNATURE_ALLOWED });
 
     private static final String BC = "BC";
     private static final int BUFFER_SIZE = 16 * 1024;
-    
+
     PGPPublicKeyAccessor publicKeyAccessor;
 
     PGPSecretKeyAccessor secretKeyAccessor;
@@ -130,6 +167,8 @@ public class PGPKeyAccessDataFormat extends ServiceSupport implements DataFormat
     private int algorithm = SymmetricKeyAlgorithmTags.CAST5; // for encryption
 
     private int compressionAlgorithm = CompressionAlgorithmTags.ZIP; // for encryption
+
+    private String signatureVerificationOption = "optional";
 
     public PGPKeyAccessDataFormat() {
     }
@@ -309,35 +348,9 @@ public class PGPKeyAccessDataFormat extends ServiceSupport implements DataFormat
             return null;
         }
         InputStream in = PGPUtil.getDecoderStream(encryptedStream);
-        PGPObjectFactory pgpFactory = new PGPObjectFactory(in);
-        Object o = pgpFactory.nextObject();
-        // the first object might be a PGP marker packet 
-        PGPEncryptedDataList enc;
-        if (o instanceof PGPEncryptedDataList) {
-            enc = (PGPEncryptedDataList) o;
-        } else {
-            enc = (PGPEncryptedDataList) pgpFactory.nextObject();
-        }
-
-        PGPPublicKeyEncryptedData pbe = null;
-        PGPPrivateKey key = null;
-        // find encrypted data for which a private key exists in the secret key ring
-        for (int i = 0; i < enc.size() && key == null; i++) {
-            pbe = (PGPPublicKeyEncryptedData) enc.get(i);
-            key = secretKeyAccessor.getPrivateKey(exchange, pbe.getKeyID());
-            if (key != null) {
-                // take the first key
-                break;
-            }
-        }
-        if (key == null) {
-            throw new PGPException("Provided input is encrypted with unknown pair of keys.");
-        }
-
-        InputStream encData = pbe.getDataStream(new JcePublicKeyDataDecryptorFactoryBuilder().setProvider(getProvider()).build(key));
-        pgpFactory = new PGPObjectFactory(encData);
-        PGPCompressedData comData = (PGPCompressedData) pgpFactory.nextObject();
-        pgpFactory = new PGPObjectFactory(comData.getDataStream());
+        InputStream encData = getDecryptedData(exchange, in);
+        InputStream uncompressedData = getUncompressedData(encData);
+        PGPObjectFactory pgpFactory = new PGPObjectFactory(uncompressedData);
         Object object = pgpFactory.nextObject();
 
         PGPOnePassSignature signature;
@@ -345,10 +358,20 @@ public class PGPKeyAccessDataFormat extends ServiceSupport implements DataFormat
             signature = getSignature(exchange, (PGPOnePassSignatureList) object);
             object = pgpFactory.nextObject();
         } else {
+            // no signature contained in PGP message
             signature = null;
+            if (SIGNATURE_VERIFICATION_OPTION_REQUIRED.equals(getSignatureVerificationOption())) {
+                throw new PGPException(
+                        "PGP message does not contain any signatures although a signature is expected. Either send a PGP message with signature or change the configuration of the PGP decryptor.");
+            }
         }
 
-        PGPLiteralData ld = (PGPLiteralData) object;
+        PGPLiteralData ld;
+        if (object instanceof PGPLiteralData) {
+            ld = (PGPLiteralData) object;
+        } else {
+            throw getFormatException();
+        }
         InputStream litData = ld.getInputStream();
 
         // enable streaming via OutputStreamCache
@@ -379,18 +402,88 @@ public class PGPKeyAccessDataFormat extends ServiceSupport implements DataFormat
             IOHelper.close(os, litData, encData, in);
         }
 
-        if (signature != null) {
-            PGPSignatureList sigList = (PGPSignatureList) pgpFactory.nextObject();
-            if (!signature.verify(getSignatureWithKeyId(signature.getKeyID(), sigList))) {
-                throw new SignatureException("Cannot verify PGP signature");
-            }
-        }
+        verifySignature(pgpFactory, signature);
 
         if (cos != null) {
             return cos.newStreamCache();
         } else {
             return bos.toByteArray();
         }
+    }
+
+    private InputStream getUncompressedData(InputStream encData) throws IOException, PGPException {
+        PGPObjectFactory pgpFactory = new PGPObjectFactory(encData);
+        Object compObj = pgpFactory.nextObject();
+        if (!(compObj instanceof PGPCompressedData)) {
+            throw getFormatException();
+        }
+        PGPCompressedData comData = (PGPCompressedData) compObj;
+        InputStream uncompressedData = comData.getDataStream();
+        return uncompressedData;
+    }
+
+    private InputStream getDecryptedData(Exchange exchange, InputStream encryptedStream) throws Exception, PGPException {
+        PGPObjectFactory pgpFactory = new PGPObjectFactory(encryptedStream);
+        Object firstObject = pgpFactory.nextObject();
+        // the first object might be a PGP marker packet 
+        PGPEncryptedDataList enc = getEcryptedDataList(pgpFactory, firstObject);
+
+        if (enc == null) {
+            throw getFormatException();
+        }
+        PGPPublicKeyEncryptedData pbe = null;
+        PGPPrivateKey key = null;
+        // find encrypted data for which a private key exists in the secret key ring
+        for (int i = 0; i < enc.size() && key == null; i++) {
+            Object encryptedData = enc.get(i);
+            if (!(encryptedData instanceof PGPPublicKeyEncryptedData)) {
+                throw getFormatException();
+            }
+            pbe = (PGPPublicKeyEncryptedData) encryptedData;
+            key = secretKeyAccessor.getPrivateKey(exchange, pbe.getKeyID());
+            if (key != null) {
+                // take the first key
+                break;
+            }
+        }
+        if (key == null) {
+            throw new PGPException("PGP message is encrypted with a key which could not be found in the Secret Keyring.");
+        }
+
+        InputStream encData = pbe.getDataStream(new JcePublicKeyDataDecryptorFactoryBuilder().setProvider(getProvider()).build(key));
+        return encData;
+    }
+
+    private PGPEncryptedDataList getEcryptedDataList(PGPObjectFactory pgpFactory, Object firstObject) throws IOException {
+        PGPEncryptedDataList enc;
+        if (firstObject instanceof PGPEncryptedDataList) {
+            enc = (PGPEncryptedDataList) firstObject;
+        } else {
+            Object secondObject = pgpFactory.nextObject();
+            if (secondObject instanceof PGPEncryptedDataList) {
+                enc = (PGPEncryptedDataList) secondObject;
+            } else {
+                enc = null;
+            }
+        }
+        return enc;
+    }
+
+    private void verifySignature(PGPObjectFactory pgpFactory, PGPOnePassSignature signature) throws IOException, PGPException, SignatureException {
+        if (signature != null) {
+            PGPSignatureList sigList = (PGPSignatureList) pgpFactory.nextObject();
+            if (!signature.verify(getSignatureWithKeyId(signature.getKeyID(), sigList))) {
+                throw new SignatureException("Verification of the PGP signature with the key ID " + signature.getKeyID() + " failed. The PGP message may have been tampered.");
+            }
+        }
+    }
+
+    private IllegalArgumentException getFormatException() {
+        return new IllegalArgumentException(
+                "The input message body has an invalid format. The PGP decryption/verification processor expects a sequence of PGP packets of the form "
+                        + "(entries in brackets are optional and ellipses indicate repetition, comma represents  sequential composition, and vertical bar separates alternatives): "
+                        + "Public Key Encrypted Session Key ..., Symmetrically Encrypted Data | Sym. Encrypted and Integrity Protected Data, Compressed Data, (One Pass Signature ...,) "
+                        + "Literal Data, (Signature ...,)");
     }
 
     protected PGPSignature getSignatureWithKeyId(long keyID, PGPSignatureList sigList) {
@@ -404,52 +497,32 @@ public class PGPKeyAccessDataFormat extends ServiceSupport implements DataFormat
     }
 
     protected PGPOnePassSignature getSignature(Exchange exchange, PGPOnePassSignatureList signatureList) throws Exception {
-
+        if (SIGNATURE_VERIFICATION_OPTION_IGNORE.equals(getSignatureVerificationOption())) {
+            return null;
+        }
+        if (SIGNATURE_VERIFICATION_OPTION_NO_SIGNATURE_ALLOWED.equals(getSignatureVerificationOption())) {
+            throw new PGPException(
+                    "PGP message contains a signature although a signature is not expected. Either change the configuration of the PGP decryptor or send a PGP message with no signature.");
+        }
         List<String> allowedUserIds = determineSignaturenUserIds(exchange);
         for (int i = 0; i < signatureList.size(); i++) {
             PGPOnePassSignature signature = signatureList.get(i);
             // Determine public key from signature keyId
-            PGPPublicKey sigPublicKey = publicKeyAccessor.getPublicKey(exchange, signature.getKeyID());
+            PGPPublicKey sigPublicKey = publicKeyAccessor.getPublicKey(exchange, signature.getKeyID(), allowedUserIds);
             if (sigPublicKey == null) {
                 continue;
             }
-            if (isAllowedVerifyingKey(allowedUserIds, sigPublicKey)) {
-                // choose that signature for which a public key exists!
-                signature.init(new JcaPGPContentVerifierBuilderProvider().setProvider(getProvider()), sigPublicKey);
-                return signature;
-            }
+            // choose that signature for which a public key exists!
+            signature.init(new JcaPGPContentVerifierBuilderProvider().setProvider(getProvider()), sigPublicKey);
+            return signature;
         }
         if (signatureList.isEmpty()) {
             return null;
         } else {
-            throw new IllegalArgumentException("No public key found fitting to the signature key Id; cannot verify the signature");
+            throw new IllegalArgumentException("Cannot verify the PGP signature: No public key found for the key ID(s) contained in the PGP signature(s). "
+                + "Either the received PGP message contains a signature from an unexpected sender or the Public Keyring does not contain the public key of the sender.");
         }
 
-    }
-
-    public boolean isAllowedVerifyingKey(List<String> allowedUserIds, PGPPublicKey verifyingPublicKey) {
-
-        if (allowedUserIds == null || allowedUserIds.isEmpty()) {
-            // no restrictions specified
-            return true;
-        }
-        String keyUserId = null;
-        for (@SuppressWarnings("unchecked")
-        Iterator<String> iterator = verifyingPublicKey.getUserIDs(); iterator.hasNext();) {
-            keyUserId = iterator.next();
-            for (String userid : allowedUserIds) {
-                if (keyUserId != null && keyUserId.contains(userid)) {
-                    LOG.debug(
-                            "Public key with  user ID {} fulfills the User ID restriction {}. Therefore this key will be used for the signature verification. ",
-                            keyUserId, allowedUserIds);
-                    return true;
-                }
-            }
-        }
-        LOG.warn(
-                "Public key with User ID {} does not fulfill the User ID restriction {}. Therefore this key will not be used for the signature verification.",
-                keyUserId, allowedUserIds);
-        return false;
     }
 
     /**
@@ -623,6 +696,32 @@ public class PGPKeyAccessDataFormat extends ServiceSupport implements DataFormat
 
     public void setSecretKeyAccessor(PGPSecretKeyAccessor secretKeyAccessor) {
         this.secretKeyAccessor = secretKeyAccessor;
+    }
+
+    public String getSignatureVerificationOption() {
+        return signatureVerificationOption;
+    }
+
+    /**
+     * Signature verification option. Controls the behavior for the signature
+     * verification during unmarshaling. Possible values are
+     * {@link #SIGNATURE_VERIFICATION_OPTION_OPTIONAL},
+     * {@link #SIGNATURE_VERIFICATION_OPTION_REQUIRED},
+     * {@link #SIGNATURE_VERIFICATION_OPTION_NO_SIGNATURE_ALLOWED}, and
+     * {@link #SIGNATURE_VERIFICATION_OPTION_IGNORE}. The default
+     * value is {@link #SIGNATURE_VERIFICATION_OPTION_OPTIONAL}
+     * 
+     * @param signatureVerificationOption
+     *            signature verification option
+     * @throws IllegalArgument
+     *             exception if an invalid value is entered
+     */
+    public void setSignatureVerificationOption(String signatureVerificationOption) {
+        if (SIGNATURE_VERIFICATION_OPTIONS.contains(signatureVerificationOption)) {
+            this.signatureVerificationOption = signatureVerificationOption;
+        } else {
+            throw new IllegalArgumentException(signatureVerificationOption + " is not a valid signature verification option");
+        }
     }
 
     @Override

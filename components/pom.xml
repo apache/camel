@@ -95,6 +95,7 @@
     <module>camel-hazelcast</module>
     <module>camel-hbase</module>
     <module>camel-hdfs</module>
+    <module>camel-hdfs2</module>
     <module>camel-hl7</module>
     <module>camel-ibatis</module>
     <module>camel-ical</module>
@@ -230,8 +231,7 @@
     <profile>
       <id>apt</id>
       <activation>
-        <!-- don't enable on jdk 1.6 as it would not work and also it causes build problems by the CI-Server -->
-        <jdk>[1.7,)</jdk>
+        <activeByDefault>true</activeByDefault>
       </activation>
 
       <dependencies>

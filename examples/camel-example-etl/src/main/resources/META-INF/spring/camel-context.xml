@@ -20,11 +20,11 @@
         http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
         http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
 
-  <camelContext id="camel" trace="true" xmlns="http://camel.apache.org/schema/spring" depends-on="entityManagerFactory">
+  <camelContext id="camel" trace="true" xmlns="http://camel.apache.org/schema/spring">
     <package>org.apache.camel.example.etl</package>
   </camelContext>
 
-  <bean id="jpa" class="org.apache.camel.component.jpa.JpaComponent" depends-on="entityManagerFactory">
+  <bean id="jpa" class="org.apache.camel.component.jpa.JpaComponent">
     <property name="entityManagerFactory" ref="entityManagerFactory" />
     <property name="transactionManager" ref="transactionManager" />
   </bean>

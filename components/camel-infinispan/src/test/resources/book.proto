@@ -1,0 +1,7 @@
+package org.apache.camel.component.infinispan;
+
+message Book {
+  required string id = 1;
+  required string title = 2;
+  required string isbn = 3;
+}

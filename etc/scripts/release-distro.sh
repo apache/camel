@@ -46,7 +46,7 @@ echo "${DOWNLOAD}/${VERSION}"
 wget -e robots=off --wait 3 --no-check-certificate \
  -r -np "--reject=html,txt" "--follow-tags=" \
  -P "${DOWNLOAD}/${VERSION}" -nH "--cut-dirs=3" "--level=1" "--ignore-length" \
- "http://repository.apache.org/content/repositories/releases/org/apache/camel/apache-camel/${VERSION}/"
+ "https://repository.apache.org/content/repositories/releases/org/apache/camel/apache-camel/${VERSION}/"
 # Remove the signature check sum files
 rm ${DOWNLOAD}/${VERSION}/org/apache/camel/apache-camel/${VERSION}/*.asc.md5
 rm ${DOWNLOAD}/${VERSION}/org/apache/camel/apache-camel/${VERSION}/*.asc.sha1

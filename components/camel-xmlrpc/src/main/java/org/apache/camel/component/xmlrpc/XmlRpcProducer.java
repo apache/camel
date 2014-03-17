@@ -44,12 +44,17 @@ public class XmlRpcProducer extends DefaultProducer implements AsyncProcessor {
         LOG.trace("Process exchange: {} in the sync way.", exchange);
         Message in = exchange.getIn();
         String operationName = in.getHeader(XmlRpcConstants.METHOD_NAME, String.class);
-        //TODO need to use the binding to handle the requests
-        Object result = client.execute(operationName, in.getBody(List.class));
-        //TODO what if the request is one way operation
-        // copy the in message header to the out message
-        exchange.getOut().getHeaders().putAll(exchange.getIn().getHeaders());
-        exchange.getOut().setBody(result);
+        try {
+            //TODO need to use the binding to handle the requests
+            Object result = client.execute(operationName, in.getBody(List.class));
+            //TODO what if the request is one way operation
+            // copy the in message header to the out message
+            exchange.getOut().getHeaders().putAll(exchange.getIn().getHeaders());
+            exchange.getOut().setBody(result);
+        } catch (Exception ex) {
+            LOG.warn("Got an exception {0} when invoke the XMLRPC service", ex);
+            exchange.setException(ex);
+        }
     }
     
     public boolean process(Exchange exchange, AsyncCallback callback) {

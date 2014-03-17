@@ -202,6 +202,22 @@ public class ManagedCamelContextTest extends ManagementTestSupport {
         assertEquals("camel-core", prop.get("artifactId"));
     }
 
+    public void testManagedCamelContextCreateRouteStaticEndpointJson() throws Exception {
+        // JMX tests dont work well on AIX CI servers (hangs them)
+        if (isPlatform("aix")) {
+            return;
+        }
+
+        MBeanServer mbeanServer = getMBeanServer();
+        ObjectName on = ObjectName.getInstance("org.apache.camel:context=19-camel-1,type=context,name=\"camel-1\"");
+
+        // get the json
+        String json = (String) mbeanServer.invoke(on, "createRouteStaticEndpointJson", null, null);
+        assertNotNull(json);
+        assertTrue(json.contains("{ \"uri\": \"direct:start\" }"));
+        assertTrue(json.contains("{ \"uri\": \"direct:foo\" }"));
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {

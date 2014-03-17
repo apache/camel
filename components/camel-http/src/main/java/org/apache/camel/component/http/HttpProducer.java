@@ -181,7 +181,9 @@ public class HttpProducer extends DefaultProducer {
             String value = header.getValue();
             if (name.toLowerCase().equals("content-type")) {
                 name = Exchange.CONTENT_TYPE;
+                exchange.setProperty(Exchange.CHARSET_NAME, IOHelper.getCharsetNameFromContentType(value));
             }
+            
             // use http helper to extract parameter value as it may contain multiple values
             Object extracted = HttpHelper.extractHttpParameterValue(value);
             if (strategy != null && !strategy.applyFilterToExternalHeaders(name, extracted, exchange)) {

@@ -35,6 +35,13 @@ public class StompProducerTest extends StompBaseTest {
 
     @Test
     public void testProduce() throws Exception {
+        if (!canTest()) {
+            return;
+        }
+
+        context.addRoutes(createRouteBuilder());
+        context.start();
+
         Stomp stomp = new Stomp("tcp://localhost:" + getPort());
         final BlockingConnection subscribeConnection = stomp.connectBlocking();
 
@@ -67,9 +74,8 @@ public class StompProducerTest extends StompBaseTest {
             producer.process(exchange);
         }
         latch.await(20, TimeUnit.SECONDS);
+
         assertTrue("Messages not consumed = " + latch.getCount(), latch.getCount() == 0);
-
-
     }
 
     protected RouteBuilder createRouteBuilder() {

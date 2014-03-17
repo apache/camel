@@ -45,9 +45,16 @@ public final class FileUtil {
     private static final File USER_DIR = new File(System.getProperty(USER_DIR_KEY));
     private static File defaultTempDir;
     private static Thread shutdownHook;
+    private static boolean windowsOs = initWindowsOs();
 
     private FileUtil() {
         // Utils method
+    }
+
+    private static boolean initWindowsOs() {
+        // initialize once as System.getProperty is not fast
+        String osName = System.getProperty("os.name").toLowerCase(Locale.US);
+        return osName.contains("windows");
     }
 
     public static File getUserDir() {
@@ -70,10 +77,12 @@ public final class FileUtil {
             return path.replace('\\', '/');
         }
     }
-    
+
+    /**
+     * Returns true, if the OS is windows
+     */
     public static boolean isWindows() {
-        String osName = System.getProperty("os.name").toLowerCase(Locale.US);
-        return osName.indexOf("windows") > -1;
+        return windowsOs;
     }
 
     @Deprecated

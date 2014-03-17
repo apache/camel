@@ -210,7 +210,7 @@
             <useReleaseProfile>false</useReleaseProfile>
             <preparationGoals>clean install</preparationGoals>
             <goals>deploy</goals>
-            <arguments>-Papache-release,enable-schemagen,sourcecheck,validate,hibernate</arguments>
+            <arguments>-Prelease,enable-schemagen,apt,sourcecheck,validate,hibernate</arguments>
             <autoVersionSubmodules>true</autoVersionSubmodules>
           </configuration>
         </plugin>
@@ -499,44 +499,63 @@
         </plugins>
       </build>
     </profile>
-
     <profile>
-      <id>apache-release</id>
-      <activation>
+       <id>release</id>
+       <activation>
         <property>
-          <name>apache-release</name>
+          <name>release</name>
         </property>
       </activation>
       <build>
-        <plugins>
-          <!-- waiting for release -->
+        <plugins> 
+          <!-- We want to deploy the artifact to a staging location for perusal -->
+          <plugin>
+            <inherited>true</inherited>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-deploy-plugin</artifactId>
+            <configuration>
+              <updateReleaseInfo>true</updateReleaseInfo>
+            </configuration>
+          </plugin>
           <plugin>
             <groupId>org.apache.maven.plugins</groupId>
-            <artifactId>maven-assembly-plugin</artifactId>
+            <artifactId>maven-source-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>attach-sources</id>
+                <goals>
+                  <goal>jar</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-javadoc-plugin</artifactId>
+            <executions>
+              <execution>
+                <id>attach-javadocs</id>
+                <goals>
+                  <goal>jar</goal>
+                </goals>
+              </execution>
+            </executions>
+          </plugin>
+          <!-- We want to sign the artifact, the POM, and all attached artifacts -->
+          <plugin>
+            <groupId>org.apache.maven.plugins</groupId>
+            <artifactId>maven-gpg-plugin</artifactId>
+            <configuration>
+              <passphrase>${gpg.passphrase}</passphrase>
+              <useAgent>${gpg.useagent}</useAgent>
+            </configuration>
             <executions>
               <execution>
                 <goals>
-                  <goal>single</goal>
+                  <goal>sign</goal>
                 </goals>
-                <phase>package</phase>
-                <configuration>
-                  <runOnlyAtExecutionRoot>true</runOnlyAtExecutionRoot>
-                  <descriptorRefs>
-                    <descriptorRef>source-release</descriptorRef>
-                  </descriptorRefs>
-                </configuration>
               </execution>
             </executions>
-            <dependencies>
-              <dependency>
-                <!-- apache version not yet released -->
-                <!--<groupId>org.apache</groupId> -->
-                <groupId>org.apache.geronimo.genesis</groupId>
-                <artifactId>apache-source-release-assembly-descriptor</artifactId>
-                <!-- apache version not yet known -->
-                <version>2.0</version>
-              </dependency>
-            </dependencies>
           </plugin>
         </plugins>
       </build>

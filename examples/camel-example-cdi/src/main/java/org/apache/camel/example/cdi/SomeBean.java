@@ -16,6 +16,9 @@
  */
 package org.apache.camel.example.cdi;
 
+import javax.inject.Singleton;
+
+@Singleton
 public class SomeBean {
 
     public void someMethod(String body) {

@@ -46,7 +46,7 @@ public class QuartzPropertiesTest extends BaseQuartzTest {
 
         quartz.start();
 
-        assertEquals("MyScheduler", quartz.getScheduler().getSchedulerName());
+        assertEquals("MyScheduler-" + context.getName(), quartz.getScheduler().getSchedulerName());
         assertEquals("2", quartz.getScheduler().getSchedulerInstanceId());
     }
 
@@ -75,7 +75,7 @@ public class QuartzPropertiesTest extends BaseQuartzTest {
 
         quartz.start();
 
-        assertEquals("MyScheduler", quartz.getScheduler().getSchedulerName());
+        assertEquals("MyScheduler-" + context.getName(), quartz.getScheduler().getSchedulerName());
         assertEquals("2", quartz.getScheduler().getSchedulerInstanceId());
     }
 

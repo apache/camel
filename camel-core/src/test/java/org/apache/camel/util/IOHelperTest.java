@@ -96,7 +96,7 @@ public class IOHelperTest extends TestCase {
     private File tempFile(String testname) throws Exception {
         return File.createTempFile(testname, "");
     }
-
+ 
     private void write(File file, String text) throws Exception {
         PrintWriter out = new PrintWriter(file);
         out.print(text);
@@ -114,5 +114,14 @@ public class IOHelperTest extends TestCase {
         exchange.getIn().removeHeader(Exchange.CHARSET_NAME);
         exchange.setProperty(Exchange.CHARSET_NAME, "iso-8859-1");
         assertEquals("iso-8859-1", IOHelper.getCharsetName(exchange, false));
+        
+    }
+    
+    public void testGetCharsetNameFromContentType() throws Exception {
+        String charsetName = IOHelper.getCharsetNameFromContentType("text/html; charset=iso-8859-1");
+        assertEquals("iso-8859-1", charsetName);
+        
+        charsetName = IOHelper.getCharsetNameFromContentType("text/html");
+        assertEquals("UTF-8", charsetName);
     }
 }

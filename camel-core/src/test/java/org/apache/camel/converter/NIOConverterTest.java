@@ -55,6 +55,20 @@ public class NIOConverterTest extends ContextTestSupport {
         assertNotNull(out);
         assertEquals("Hello", out);
     }
+    
+    /**
+     * ToString need to deal the array size issue as ToByteArray does 
+     */
+    public void testByteBufferToStringConversion() throws Exception {
+        String str = "123456789";
+        ByteBuffer buffer = ByteBuffer.allocate(16);
+        buffer.put(str.getBytes());
+        buffer.flip();
+
+        String out = NIOConverter.toString(buffer, null);
+        assertEquals(str, out);
+    }
+    
 
     public void testToByteBuffer() {
         ByteBuffer bb = NIOConverter.toByteBuffer("Hello".getBytes());

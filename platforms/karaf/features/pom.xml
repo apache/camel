@@ -150,7 +150,7 @@
       <repositories>
         <repository>
           <id>google.script.repo</id>
-          <name>Google Script Engine Deploy Repository </name>
+          <name>Google Script Engine Deploy Repository</name>
           <url>http://scriptengines.googlecode.com/svn/m2-repo/</url>
           <releases>
             <enabled>true</enabled>
@@ -191,6 +191,11 @@
       <id>com.springsource.repository.bundles.release</id>
       <name>SpringSource Enterprise Bundle Repository - SpringSource Bundle Releases</name>
       <url>http://repository.springsource.com/maven/bundles/release</url>
+    </repository>
+    <repository>
+      <id>com.springsource.repository.bundles.external</id>
+      <name>SpringSource Enterprise Bundle Repository - External Bundle Releases</name>
+      <url>http://repository.springsource.com/maven/bundles/external</url>
     </repository>
   </repositories>
 </project>

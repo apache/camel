@@ -24,10 +24,8 @@ import java.security.NoSuchProviderException;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Iterator;
-import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Map;
-import java.util.Set;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.util.IOHelper;
@@ -100,6 +98,7 @@ public final class PGPDataFormatUtil {
         }
     }
 
+    @Deprecated
     public static PGPPublicKey findPublicKeyWithKeyId(CamelContext context, String filename, byte[] keyRing, long keyid,
             boolean forEncryption) throws IOException, PGPException, NoSuchProviderException {
         InputStream is = determineKeyRingInputStream(context, filename, keyRing, forEncryption);
@@ -110,6 +109,15 @@ public final class PGPDataFormatUtil {
             IOHelper.close(is);
         }
         return pubKey;
+    }
+
+    public static PGPPublicKeyRingCollection getPublicKeyRingCollection(CamelContext context, String filename, byte[] keyRing, boolean forEncryption) throws IOException, PGPException {
+        InputStream is = determineKeyRingInputStream(context, filename, keyRing, forEncryption);
+        try {
+            return new PGPPublicKeyRingCollection(PGPUtil.getDecoderStream(is));
+        } finally {
+            IOHelper.close(is);
+        }
     }
 
     public static PGPPrivateKey findPrivateKeyWithKeyId(CamelContext context, String filename, byte[] secretKeyRing, long keyid,
@@ -194,35 +202,37 @@ public final class PGPDataFormatUtil {
         return findPublicKeys(userids, forEncryption, pgpSec);
     }
 
-    
     @SuppressWarnings("unchecked")
-    public static List<PGPPublicKey> findPublicKeys(List<String> userids, boolean forEncryption, PGPPublicKeyRingCollection pgpPublicKeyringCollection) {
-        List<PGPPublicKey> result = new ArrayList<PGPPublicKey>(userids.size());
+    public static List<PGPPublicKey> findPublicKeys(List<String> useridParts, boolean forEncryption, PGPPublicKeyRingCollection pgpPublicKeyringCollection) {
+        List<PGPPublicKey> result = new ArrayList<PGPPublicKey>(useridParts.size());
         for (Iterator<PGPPublicKeyRing> keyRingIter = pgpPublicKeyringCollection.getKeyRings(); keyRingIter.hasNext();) {
             PGPPublicKeyRing keyRing = keyRingIter.next();
-            Set<String> keyUserIds = getUserIds(keyRing);
+            PGPPublicKey primaryKey = keyRing.getPublicKey();
+            String[] foundKeyUserIdForUserIdPart = findFirstKeyUserIdContainingOneOfTheParts(useridParts, primaryKey);
+            if (foundKeyUserIdForUserIdPart == null) {
+                LOG.debug("No User ID found in primary key with key ID {} containing one of the parts {}", primaryKey.getKeyID(),
+                        useridParts);
+                continue;
+            }
+            LOG.debug("User ID {} found in primary key with key ID {} containing one of the parts {}", new Object[] {
+                foundKeyUserIdForUserIdPart[0], primaryKey.getKeyID(), useridParts });
+            // add adequate keys to the result
             for (Iterator<PGPPublicKey> keyIter = keyRing.getPublicKeys(); keyIter.hasNext();) {
                 PGPPublicKey key = keyIter.next();
-                for (String useridPart : userids) {
-                    for (String keyUserId : keyUserIds) {
-                        if (keyUserId != null && keyUserId.contains(useridPart)) {
-                            if (forEncryption) {
-                                if (isEncryptionKey(key)) {
-                                    LOG.debug(
-                                            "Public encryption key with key user ID {} and key ID {} found for specified user ID part {}",
-                                            new Object[] {keyUserId, Long.toString(key.getKeyID()), useridPart });
-                                    result.add(key);
-                                }
-                            } else if (!forEncryption && isSignatureKey(key)) {
-                                // not used!
-                                result.add(key);
-                                LOG.debug("Public key with key user ID {} and key ID {} found for specified user ID part {}", new Object[] {
-                                    keyUserId, Long.toString(key.getKeyID()), useridPart });
-                            }
-                        }
+                if (forEncryption) {
+                    if (isEncryptionKey(key)) {
+                        LOG.debug("Public encryption key with key user ID {} and key ID {} added to the encryption keys",
+                                foundKeyUserIdForUserIdPart[0], Long.toString(key.getKeyID()));
+                        result.add(key);
                     }
+                } else if (!forEncryption && isSignatureKey(key)) {
+                    // not used!
+                    result.add(key);
+                    LOG.debug("Public key with key user ID {} and key ID {} added to the signing keys", foundKeyUserIdForUserIdPart[0],
+                            Long.toString(key.getKeyID()));
                 }
             }
+
         }
 
         return result;
@@ -237,7 +247,7 @@ public final class PGPDataFormatUtil {
         if (hasEncryptionKeyFlags != null && !hasEncryptionKeyFlags) {
             LOG.debug(
                     "Public key with key key ID {} found for specified user ID. But this key will not be used for the encryption, because its key flags are not encryption key flags.",
-                    new Object[] {Long.toString(key.getKeyID()) });
+                    Long.toString(key.getKeyID()));
             return false;
         } else {
             // also without keyflags (hasEncryptionKeyFlags = null), true is returned!
@@ -251,31 +261,18 @@ public final class PGPDataFormatUtil {
     // the user IDs of the master / primary key. The master / primary key is the first key in
     // the keyring, and the rest of the keys are subkeys.
     // http://bouncy-castle.1462172.n4.nabble.com/How-to-find-PGP-subkeys-td1465289.html
-    @SuppressWarnings("unchecked")
-    private static Set<String> getUserIds(PGPPublicKeyRing keyRing) {
-        Set<String> userIds = new LinkedHashSet<String>(3);
-        for (Iterator<PGPPublicKey> keyIter = keyRing.getPublicKeys(); keyIter.hasNext();) {
-            PGPPublicKey key = keyIter.next();
-            for (Iterator<String> iterator = key.getUserIDs(); iterator.hasNext();) {
-                userIds.add(iterator.next());
+    private static String[] findFirstKeyUserIdContainingOneOfTheParts(List<String> useridParts, PGPPublicKey primaryKey) {
+        String[] foundKeyUserIdForUserIdPart = null;
+        for (@SuppressWarnings("unchecked")
+        Iterator<String> iterator = primaryKey.getUserIDs(); iterator.hasNext();) {
+            String keyUserId = iterator.next();
+            for (String userIdPart : useridParts) {
+                if (keyUserId.contains(userIdPart)) {
+                    foundKeyUserIdForUserIdPart = new String[] {keyUserId, userIdPart };
+                }
             }
         }
-        return userIds;
-    }
-
-    // Within a secret keyring, the master / primary key has the user ID(s); the subkeys don't
-    // have user IDs associated directly to them, but the subkeys are implicitly associated with
-    // the user IDs of the master / primary key. The master / primary key is the first key in
-    // the keyring, and the rest of the keys are subkeys.
-    // http://bouncy-castle.1462172.n4.nabble.com/How-to-find-PGP-subkeys-td1465289.html
-    @SuppressWarnings("unchecked")
-    private static Set<String> getUserIds(PGPSecretKeyRing keyRing) {
-        Set<String> userIds = new LinkedHashSet<String>(3);
-        PGPSecretKey key = keyRing.getSecretKey();
-        for (Iterator<String> iterator = key.getUserIDs(); iterator.hasNext();) {
-            userIds.add(iterator.next());
-        }
-        return userIds;
+        return foundKeyUserIdForUserIdPart;
     }
 
     private static boolean isSignatureKey(PGPPublicKey key) {
@@ -399,31 +396,33 @@ public final class PGPDataFormatUtil {
 
     public static List<PGPSecretKeyAndPrivateKeyAndUserId> findSecretKeysWithPrivateKeyAndUserId(Map<String, String> sigKeyUserId2Password,
             String provider, PGPSecretKeyRingCollection pgpSec) throws PGPException {
-        List<PGPSecretKeyAndPrivateKeyAndUserId> result = new ArrayList<PGPSecretKeyAndPrivateKeyAndUserId>(
-                sigKeyUserId2Password.size());
+        List<PGPSecretKeyAndPrivateKeyAndUserId> result = new ArrayList<PGPSecretKeyAndPrivateKeyAndUserId>(sigKeyUserId2Password.size());
         for (Iterator<?> i = pgpSec.getKeyRings(); i.hasNext();) {
             Object data = i.next();
             if (data instanceof PGPSecretKeyRing) {
                 PGPSecretKeyRing keyring = (PGPSecretKeyRing) data;
-                Set<String> keyUserIds = getUserIds(keyring);
+                PGPSecretKey primaryKey = keyring.getSecretKey();
+                List<String> useridParts = new ArrayList<String>(sigKeyUserId2Password.keySet());
+                String[] foundKeyUserIdForUserIdPart = findFirstKeyUserIdContainingOneOfTheParts(useridParts, primaryKey.getPublicKey());
+                if (foundKeyUserIdForUserIdPart == null) {
+                    LOG.debug("No User ID found in primary key with key ID {} containing one of the parts {}", primaryKey.getKeyID(),
+                            useridParts);
+                    continue;
+                }
+                LOG.debug("User ID {} found in primary key with key ID {} containing one of the parts {}", new Object[] {
+                    foundKeyUserIdForUserIdPart[0], primaryKey.getKeyID(), useridParts });
+                // add all signing keys
+                for (@SuppressWarnings("unchecked")
+                Iterator<PGPSecretKey> iterKey = keyring.getSecretKeys(); iterKey.hasNext();) {
+                    PGPSecretKey secKey = iterKey.next();
+                    if (isSigningKey(secKey)) {
+                        PGPPrivateKey privateKey = secKey.extractPrivateKey(new JcePBESecretKeyDecryptorBuilder().setProvider(provider)
+                                .build(sigKeyUserId2Password.get(foundKeyUserIdForUserIdPart[1]).toCharArray()));
+                        if (privateKey != null) {
+                            result.add(new PGPSecretKeyAndPrivateKeyAndUserId(secKey, privateKey, foundKeyUserIdForUserIdPart[0]));
+                            LOG.debug("Private key with user ID {} and key ID {} added to the signing keys",
+                                    foundKeyUserIdForUserIdPart[0], Long.toString(privateKey.getKeyID()));
 
-                for (String userIdPart : sigKeyUserId2Password.keySet()) {
-                    for (String keyUserId : keyUserIds) {
-                        if (keyUserId.contains(userIdPart)) {
-                            for (@SuppressWarnings("unchecked")
-                            Iterator<PGPSecretKey> iterKey = keyring.getSecretKeys(); iterKey.hasNext();) {
-                                PGPSecretKey secKey = iterKey.next();
-                                if (isSigningKey(secKey)) {
-                                    PGPPrivateKey privateKey = secKey.extractPrivateKey(new JcePBESecretKeyDecryptorBuilder().setProvider(
-                                            provider).build(sigKeyUserId2Password.get(userIdPart).toCharArray()));
-                                    if (privateKey != null) {
-                                        result.add(new PGPSecretKeyAndPrivateKeyAndUserId(secKey, privateKey, keyUserId));
-                                        LOG.debug("Private key with key user ID {} and key ID {} found for specified user ID part {}",
-                                                new Object[] {keyUserId, Long.toString(privateKey.getKeyID()), userIdPart });
-
-                                    }
-                                }
-                            }
                         }
                     }
                 }
@@ -483,4 +482,60 @@ public final class PGPDataFormatUtil {
         }
         return null; // no key flag
     }
+
+    /**
+     * Determines a public key from the keyring collection which has a certain
+     * key ID and which has a User ID which contains at least one of the User ID
+     * parts.
+     * 
+     * @param keyId
+     *            key ID
+     * @param userIdParts
+     *            user ID parts, can be empty, than no filter on the User ID is
+     *            executed
+     * @param publicKeyringCollection
+     *            keyring collection
+     * @return public key or <code>null</code> if no fitting key is found
+     * @throws PGPException
+     */
+    @SuppressWarnings("unchecked")
+    public static PGPPublicKey getPublicKeyWithKeyIdAndUserID(long keyId, List<String> userIdParts, PGPPublicKeyRingCollection publicKeyringCollection)
+        throws PGPException {
+        PGPPublicKeyRing publicKeyring = publicKeyringCollection.getPublicKeyRing(keyId);
+        if (publicKeyring == null) {
+            LOG.debug("No public key found for key ID {}.", Long.toString(keyId));
+            return null;
+        }
+        // publicKey can be a subkey the user IDs must therefore be provided by the primary/master key
+        if (isAllowedKey(userIdParts, publicKeyring.getPublicKey().getUserIDs())) {
+            return publicKeyring.getPublicKey(keyId);
+        } else {
+            return null;
+        }
+    }
+
+    private static boolean isAllowedKey(List<String> allowedUserIds, Iterator<String> verifyingPublicKeyUserIds) {
+
+        if (allowedUserIds == null || allowedUserIds.isEmpty()) {
+            // no restrictions specified
+            return true;
+        }
+        String keyUserId = null;
+        for (; verifyingPublicKeyUserIds.hasNext();) {
+            keyUserId = verifyingPublicKeyUserIds.next();
+            for (String userid : allowedUserIds) {
+                if (keyUserId != null && keyUserId.contains(userid)) {
+                    LOG.debug(
+                            "Public key with  user ID {} fulfills the User ID restriction.",
+                            keyUserId, allowedUserIds);
+                    return true;
+                }
+            }
+        }
+        LOG.warn(
+                "Public key with User ID {} does not fulfill the User ID restriction.",
+                keyUserId, allowedUserIds);
+        return false;
+    }
+
 }

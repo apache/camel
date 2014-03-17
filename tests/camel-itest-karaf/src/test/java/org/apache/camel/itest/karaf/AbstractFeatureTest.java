@@ -34,6 +34,7 @@ import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.karaf.tooling.exam.options.KarafDistributionOption.editConfigurationFilePut;
 import static org.apache.karaf.tooling.exam.options.KarafDistributionOption.karafDistributionConfiguration;
 import static org.apache.karaf.tooling.exam.options.KarafDistributionOption.logLevel;
 import static org.apache.karaf.tooling.exam.options.KarafDistributionOption.replaceConfigurationFile;
@@ -84,7 +85,6 @@ public abstract class AbstractFeatureTest {
             } catch (Exception t) {
                 if (System.currentTimeMillis() < max) {
                     Thread.sleep(1000);
-                    continue;
                 } else {
                     throw t;
                 }
@@ -105,7 +105,6 @@ public abstract class AbstractFeatureTest {
             } catch (Exception t) {
                 if (System.currentTimeMillis() < max) {
                     Thread.sleep(1000);
-                    continue;
                 } else {
                     throw t;
                 }
@@ -135,11 +134,11 @@ public abstract class AbstractFeatureTest {
         return sb.toString();
     }
 
-    
     public static UrlReference getCamelKarafFeatureUrl() {
-        String type = "xml/features";
-        return mavenBundle().groupId("org.apache.camel.karaf").
-            artifactId("apache-camel").versionAsInProject().type(type);
+        return mavenBundle().
+                groupId("org.apache.camel.karaf").
+                artifactId("apache-camel").
+                classifier("features").type("xml").versionAsInProject();
     }
     
     public static UrlReference getKarafFeatureUrl() {
@@ -164,7 +163,16 @@ public abstract class AbstractFeatureTest {
                 replaceConfigurationFile("etc/config.properties", new File("src/test/resources/org/apache/camel/itest/karaf/config.properties")),
                 replaceConfigurationFile("etc/custom.properties", new File("src/test/resources/org/apache/camel/itest/karaf/custom.properties")),
                 replaceConfigurationFile("etc/jre.properties", new File("../../platforms/karaf/features/src/main/resources/config.properties")),
-                // we need INFO logging otherwise we cannot see what happens
+                // Add apache-snapshots repository
+                editConfigurationFilePut("etc/org.ops4j.pax.url.mvn.cfg", "org.ops4j.pax.url.mvn.repositories",
+                    "http://repo1.maven.org/maven2@id=central, "
+                        + "http://svn.apache.org/repos/asf/servicemix/m2-repo@id=servicemix, "
+                        + "http://repository.springsource.com/maven/bundles/release@id=springsource.release, "
+                        + "http://repository.springsource.com/maven/bundles/external@id=springsource.external, "
+                        + "http://oss.sonatype.org/content/repositories/releases/@id=sonatype, "
+                        + "http://repository.apache.org/content/groups/snapshots-group@snapshots@noreleases@id=apache"),
+
+                    // we need INFO logging otherwise we cannot see what happens
                 logLevel(LogLevelOption.LogLevel.INFO),
                  // install the cxf jaxb spec as the karaf doesn't provide it by default
                 scanFeatures(getCamelKarafFeatureUrl(), "cxf-jaxb", "camel-core", "camel-spring", "camel-" + feature)};

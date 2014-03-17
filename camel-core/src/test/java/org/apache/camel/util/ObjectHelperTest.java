@@ -832,6 +832,7 @@ public class ObjectHelperTest extends TestCase {
         assertEquals("Should get the right class name", "my.package-info", ObjectHelper.normalizeClassName("my.package-info"));
         assertEquals("Should get the right class name", "Integer[]", ObjectHelper.normalizeClassName("Integer[] \r"));
         assertEquals("Should get the right class name", "Hello_World", ObjectHelper.normalizeClassName("Hello_World"));
+        assertEquals("Should get the right class name", "", ObjectHelper.normalizeClassName("////"));
     }
 
     public void testLookupConstantFieldValue() {

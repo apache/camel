@@ -50,6 +50,24 @@
                 <null/>
             </completers>
         </command>
+        <command name="camel/context-suspend">
+            <action class="org.apache.camel.karaf.commands.ContextSuspend">
+                <property name="camelController" ref="camelController"/>
+            </action>
+            <completers>
+                <ref component-id="camelContextCompleter"/>
+                <null/>
+            </completers>
+        </command>
+        <command name="camel/context-resume">
+            <action class="org.apache.camel.karaf.commands.ContextResume">
+                <property name="camelController" ref="camelController"/>
+            </action>
+            <completers>
+                <ref component-id="camelContextCompleter"/>
+                <null/>
+            </completers>
+        </command>
         <command name="camel/route-list">
             <action class="org.apache.camel.karaf.commands.RouteList">
                 <property name="camelController" ref="camelController"/>

@@ -192,7 +192,7 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-hdfs</artifactId>
+      <artifactId>camel-hdfs2</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -251,12 +251,17 @@
       <artifactId>camel-xmljson</artifactId>
       <scope>test</scope>
     </dependency>
-	<dependency>
-	  <groupId>org.apache.camel.tests</groupId>
-	  <artifactId>org.apache.camel.tests.mock-javamail_1.7</artifactId>
-	  <scope>test</scope>
+    <dependency>
+      <groupId>org.apache.camel.tests</groupId>
+      <artifactId>org.apache.camel.tests.mock-javamail_1.7</artifactId>
+      <scope>test</scope>
     </dependency>
-	<dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-base64</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-context-support</artifactId>      
       <scope>test</scope>
@@ -522,8 +527,6 @@
                             <include>**/*Test.*</include>
                         </includes>
                         <excludes>
-			            <!-- TODO: temporary disable unit test to let TC not hang -->
-	                    <exclude>**/*Test.*</exclude>
                             <!--There are some conflicts of the JAXB OSGi bundle and Hudson System jar
                                 so I comment out these JAXB related tests -->
                             <exclude>**/OSGiIntegrationSpringTest.*</exclude>

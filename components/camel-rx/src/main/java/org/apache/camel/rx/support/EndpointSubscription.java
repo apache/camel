@@ -16,6 +16,8 @@
  */
 package org.apache.camel.rx.support;
 
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
@@ -33,6 +35,7 @@ public class EndpointSubscription<T> implements Subscription {
     private final Endpoint endpoint;
     private final Observer<? super T> observer;
     private Consumer consumer;
+    private final AtomicBoolean unsubscribed = new AtomicBoolean(false);
 
     public EndpointSubscription(Endpoint endpoint, final Observer<? super T> observer,
                                 final Func1<Exchange, T> func) {
@@ -56,16 +59,22 @@ public class EndpointSubscription<T> implements Subscription {
 
     @Override
     public void unsubscribe() {
-        if (consumer != null) {
-            try {
-                ServiceHelper.stopServices(consumer);
-
-                // TODO should this fire the observer.onComplete()?
-                observer.onCompleted();
-            } catch (Exception e) {
-                observer.onError(e);
+        if (unsubscribed.compareAndSet(false, true)) {
+            if (consumer != null) {
+                try {
+                    ServiceHelper.stopServices(consumer);
+                    // TODO should this fire the observer.onComplete()?
+                    observer.onCompleted();
+                } catch (Exception e) {
+                    observer.onError(e);
+                }
             }
         }
+    }
+
+    @Override
+    public boolean isUnsubscribed() {
+        return unsubscribed.get();
     }
 
     public Endpoint getEndpoint() {

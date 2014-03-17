@@ -90,7 +90,9 @@ public class JpaConsumer extends ScheduledBatchPollingConsumer {
 
         Object messagePolled = transactionTemplate.execute(new TransactionCallback<Object>() {
             public Object doInTransaction(TransactionStatus status) {
-                entityManager.joinTransaction();
+                if (getEndpoint().isJoinTransaction()) {
+                    entityManager.joinTransaction();
+                }
 
                 Queue<DataHolder> answer = new LinkedList<DataHolder>();
 

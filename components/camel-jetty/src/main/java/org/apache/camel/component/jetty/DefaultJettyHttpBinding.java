@@ -29,6 +29,7 @@ import org.apache.camel.component.http.HttpHeaderFilterStrategy;
 import org.apache.camel.component.http.HttpOperationFailedException;
 import org.apache.camel.component.http.helper.HttpHelper;
 import org.apache.camel.spi.HeaderFilterStrategy;
+import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.MessageHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -104,6 +105,7 @@ public class DefaultJettyHttpBinding implements JettyHttpBinding {
 
                 if (name.toLowerCase().equals("content-type")) {
                     name = Exchange.CONTENT_TYPE;
+                    exchange.setProperty(Exchange.CHARSET_NAME, IOHelper.getCharsetNameFromContentType(value));
                 }
                 if (strategy != null && !strategy.applyFilterToExternalHeaders(name, value, exchange)) {
                     HttpHelper.appendHeader(answer.getHeaders(), name, value);

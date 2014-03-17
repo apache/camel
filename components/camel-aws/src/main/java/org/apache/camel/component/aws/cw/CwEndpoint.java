@@ -27,6 +27,7 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * Defines the <a href="http://aws.amazon.com/cloudwatch/">AWS CloudWatch Endpoint</a>
@@ -62,6 +63,13 @@ public class CwEndpoint extends DefaultEndpoint {
     @Override
     public void doStart() throws Exception {
         super.doStart();
+        
+        cloudWatchClient = configuration.getAmazonCwClient() != null
+            ? configuration.getAmazonCwClient() : createCloudWatchClient();
+            
+        if (ObjectHelper.isNotEmpty(configuration.getAmazonCwEndpoint())) {
+            cloudWatchClient.setEndpoint(configuration.getAmazonCwEndpoint());
+        }
     }
 
     public CwConfiguration getConfiguration() {
@@ -77,19 +85,12 @@ public class CwEndpoint extends DefaultEndpoint {
     }
 
     public AmazonCloudWatch getCloudWatchClient() {
-        if (cloudWatchClient == null) {
-            cloudWatchClient = configuration.getAmazonCwClient() != null
-                    ? configuration.getAmazonCwClient() : createCloudWatchClient();
-        }
         return cloudWatchClient;
     }
 
     AmazonCloudWatch createCloudWatchClient() {
         AWSCredentials credentials = new BasicAWSCredentials(configuration.getAccessKey(), configuration.getSecretKey());
         AmazonCloudWatch client = new AmazonCloudWatchClient(credentials);
-        if (configuration.getAmazonCwEndpoint() != null) {
-            client.setEndpoint(configuration.getAmazonCwEndpoint());
-        }
         return client;
     }
 }

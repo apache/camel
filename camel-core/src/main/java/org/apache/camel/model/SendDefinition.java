@@ -35,7 +35,7 @@ import org.apache.camel.util.ObjectHelper;
  * @version 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-public abstract class SendDefinition<Type extends ProcessorDefinition<Type>> extends NoOutputDefinition<Type> {
+public abstract class SendDefinition<Type extends ProcessorDefinition<Type>> extends NoOutputDefinition<Type> implements EndpointRequiredDefinition {
     @XmlAttribute
     protected String uri;
     @XmlAttribute
@@ -62,6 +62,14 @@ public abstract class SendDefinition<Type extends ProcessorDefinition<Type>> ext
         } else {
             return endpoint;
         }
+    }
+
+    @Override
+    public String getEndpointUri() {
+        if (uri != null) {
+            return uri;
+        }
+        return null;
     }
 
     // Properties

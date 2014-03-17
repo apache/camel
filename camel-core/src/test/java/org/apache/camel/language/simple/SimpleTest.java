@@ -216,6 +216,15 @@ public class SimpleTest extends LanguageTestSupport {
         assertExpression("${in.body[0][code]}", 4321);
         assertExpression("${body[0][code]}", 4321);
     }
+    
+    public void testOGNLCallReplace() throws Exception {
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put("cool", "Camel rocks");
+        map.put("dude", "Hey dude");
+        exchange.getIn().setHeaders(map);
+        
+        assertExpression("${headers.cool.replaceAll(\"rocks\", \"is so cool\")}", "Camel is so cool");
+    }
 
     public void testOGNLBodyListAndMapAndMethod() throws Exception {
         Map<String, Object> map = new HashMap<String, Object>();

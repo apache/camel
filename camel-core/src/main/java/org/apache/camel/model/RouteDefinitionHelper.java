@@ -17,6 +17,7 @@
 package org.apache.camel.model;
 
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -26,6 +27,8 @@ import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.EndpointHelper;
 import org.apache.camel.util.ObjectHelper;
+
+import static org.apache.camel.model.ProcessorDefinitionHelper.filterTypeInOutputs;
 
 /**
  * Helper for {@link RouteDefinition}
@@ -37,6 +40,37 @@ import org.apache.camel.util.ObjectHelper;
 public final class RouteDefinitionHelper {
 
     private RouteDefinitionHelper() {
+    }
+
+    /**
+     * Gather all the endpoint uri's the route is using from the EIPs that has a static endpoint defined.
+     *
+     * @param route          the route
+     * @param includeInputs  whether to include inputs
+     * @param includeOutputs whether to include outputs
+     * @return the endpoints uris
+     */
+    public static Set<String> gatherAllStaticEndpointUris(RouteDefinition route, boolean includeInputs, boolean includeOutputs) {
+        Set<String> answer = new LinkedHashSet<String>();
+
+        if (includeInputs) {
+            for (FromDefinition from : route.getInputs()) {
+                String uri = from.getEndpointUri();
+                if (uri != null) {
+                    answer.add(uri);
+                }
+            }
+        }
+
+        if (includeOutputs) {
+            Iterator<EndpointRequiredDefinition> it = filterTypeInOutputs(route.getOutputs(), EndpointRequiredDefinition.class);
+            while (it.hasNext()) {
+                String uri = it.next().getEndpointUri();
+                answer.add(uri);
+            }
+        }
+
+        return answer;
     }
 
     /**
@@ -260,7 +294,6 @@ public final class RouteDefinitionHelper {
     }
 
 
-
     private static void initOnExceptions(List<ProcessorDefinition<?>> abstracts, List<ProcessorDefinition<?>> upper,
                                          List<OnExceptionDefinition> onExceptions) {
         // add global on exceptions if any
@@ -456,7 +489,7 @@ public final class RouteDefinitionHelper {
      * This is needed when doing tracing or the likes, where each node should have its id assigned
      * so the tracing can pin point exactly.
      *
-     * @param context the camel context
+     * @param context   the camel context
      * @param processor the node
      */
     public static void forceAssignIds(CamelContext context, ProcessorDefinition processor) {

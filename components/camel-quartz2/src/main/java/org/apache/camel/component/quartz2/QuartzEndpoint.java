@@ -59,6 +59,8 @@ public class QuartzEndpoint extends DefaultEndpoint {
     private boolean fireNow;
     private boolean deleteJob = true;
     private boolean pauseJob;
+    private boolean durableJob;
+    private boolean recoverableJob;
     /** In case of scheduler has already started, we want the trigger start slightly after current time to
      * ensure endpoint is fully started before the job kicks in. */
     private long triggerStartDelay = 500; // in millis second
@@ -113,6 +115,22 @@ public class QuartzEndpoint extends DefaultEndpoint {
 
     public void setStateful(boolean stateful) {
         this.stateful = stateful;
+    }
+
+    public boolean isDurableJob() {
+        return durableJob;
+    }
+
+    public void setDurableJob(boolean durableJob) {
+        this.durableJob = durableJob;
+    }
+
+    public boolean isRecoverableJob() {
+        return recoverableJob;
+    }
+
+    public void setRecoverableJob(boolean recoverableJob) {
+        this.recoverableJob = recoverableJob;
     }
 
     public void setTriggerParameters(Map<String, Object> triggerParameters) {
@@ -301,7 +319,7 @@ public class QuartzEndpoint extends DefaultEndpoint {
                             .withRepeatCount(repeat).withIntervalInMilliseconds(interval));
 
             if (fireNow) {
-                triggerBuilder.startNow();
+                triggerBuilder = triggerBuilder.startNow();
             }
 
             result = triggerBuilder.build();
@@ -328,9 +346,17 @@ public class QuartzEndpoint extends DefaultEndpoint {
         Class<? extends Job> jobClass = stateful ? StatefulCamelJob.class : CamelJob.class;
         LOG.debug("Creating new {}.", jobClass.getSimpleName());
 
-        JobDetail result = JobBuilder.newJob(jobClass)
-                .withIdentity(name, group)
-                .build();
+        JobBuilder builder = JobBuilder.newJob(jobClass)
+                .withIdentity(name, group);
+
+        if (durableJob) {
+            builder = builder.storeDurably();
+        }
+        if (recoverableJob) {
+            builder = builder.requestRecovery();
+        }
+
+        JobDetail result = builder.build();
 
         // Let user parameters to further set JobDetail properties.
         if (jobParameters != null && jobParameters.size() > 0) {

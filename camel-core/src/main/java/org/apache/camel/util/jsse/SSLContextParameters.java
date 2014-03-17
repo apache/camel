@@ -28,6 +28,7 @@ import javax.net.ssl.SSLEngine;
 import javax.net.ssl.SSLServerSocketFactory;
 import javax.net.ssl.SSLSocketFactory;
 import javax.net.ssl.TrustManager;
+import javax.net.ssl.X509KeyManager;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -92,6 +93,12 @@ public class SSLContextParameters extends BaseSSLContextParameters {
      * standard protocol names.
      */
     private String secureSocketProtocol;    
+    
+    /**
+     * An optional certificate alias to use. This is useful when the keystore has multiple 
+     * certificates.
+     */
+    private String certAlias;
 
     public KeyManagersParameters getKeyManagers() {
         return keyManagers;
@@ -213,6 +220,19 @@ public class SSLContextParameters extends BaseSSLContextParameters {
         this.secureSocketProtocol = secureSocketProtocol;
     }
     
+    public String getCertAlias() {
+        return certAlias;
+    }
+
+    /**
+     * An optional certificate alias to use. This is useful when the keystore has multiple 
+     * certificates.
+     * @param certAlias an optional certificate alias to use
+     */
+    public void setCertAlias(String certAlias) {
+        this.certAlias = certAlias;
+    }
+    
     ////////////////////////////////////////////
     
     /**
@@ -243,6 +263,19 @@ public class SSLContextParameters extends BaseSSLContextParameters {
         } else {
             context = SSLContext.getInstance(this.parsePropertyValue(this.getSecureSocketProtocol()),
                                              this.parsePropertyValue(this.getProvider()));
+        }
+        
+        if (this.getCertAlias() != null && keyManagers != null) {
+            for (int idx = 0; idx < keyManagers.length; idx++) {
+                if (keyManagers[idx] instanceof X509KeyManager) {
+                    try {
+                        keyManagers[idx] = new AliasedX509ExtendedKeyManager(this.getCertAlias(),
+                                                                             (X509KeyManager)keyManagers[idx]);
+                    } catch (Exception e) {
+                        throw new GeneralSecurityException(e);
+                    }
+                }
+            }
         }
         
         LOG.debug("SSLContext [{}], initialized from [{}], is using provider [{}], protocol [{}], key managers {}, trust managers {}, and secure random [{}].",
@@ -354,6 +387,8 @@ public class SSLContextParameters extends BaseSSLContextParameters {
         builder.append(provider);
         builder.append(", secureSocketProtocol=");
         builder.append(secureSocketProtocol);
+        builder.append(", certAlias=");
+        builder.append(certAlias);
         builder.append(", getCipherSuites()=");
         builder.append(getCipherSuites());
         builder.append(", getCipherSuitesFilter()=");
@@ -369,4 +404,5 @@ public class SSLContextParameters extends BaseSSLContextParameters {
         builder.append("]");
         return builder.toString();
     }
+
 }

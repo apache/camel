@@ -36,6 +36,7 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.ScheduledPollEndpoint;
+import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,6 +47,7 @@ public class DdbEndpoint extends ScheduledPollEndpoint {
 
     private static final Logger LOG = LoggerFactory.getLogger(DdbEndpoint.class);
     private DdbConfiguration configuration;
+    private AmazonDynamoDB ddbClient;
 
     @Deprecated
     public DdbEndpoint(String uri, CamelContext context, DdbConfiguration configuration) {
@@ -74,7 +76,13 @@ public class DdbEndpoint extends ScheduledPollEndpoint {
     public void doStart() throws Exception {
         super.doStart();
 
-        AmazonDynamoDB ddbClient = getDdbClient();
+        ddbClient = configuration.getAmazonDDBClient() != null ? configuration.getAmazonDDBClient()
+            : createDdbClient();
+        
+        if (ObjectHelper.isNotEmpty(configuration.getAmazonDdbEndpoint())) {
+            ddbClient.setEndpoint(configuration.getAmazonDdbEndpoint());
+        }
+        
         String tableName = getConfiguration().getTableName();
         LOG.trace("Querying whether table [{}] already exists...", tableName);
 
@@ -116,18 +124,13 @@ public class DdbEndpoint extends ScheduledPollEndpoint {
     }
 
     public AmazonDynamoDB getDdbClient() {
-        return configuration.getAmazonDDBClient() != null ? configuration.getAmazonDDBClient()
-                : createDdbClient();
+        return ddbClient;
     }
 
     AmazonDynamoDB createDdbClient() {
         AWSCredentials credentials = new BasicAWSCredentials(configuration.getAccessKey(),
                 configuration.getSecretKey());
         AmazonDynamoDB client = new AmazonDynamoDBClient(credentials);
-        if (configuration.getAmazonDdbEndpoint() != null) {
-            client.setEndpoint(configuration.getAmazonDdbEndpoint());
-        }
-        configuration.setAmazonDDBClient(client);
         return client;
     }
 
