@@ -20,7 +20,7 @@ import ca.uhn.hl7v2.HL7Exception;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.parser.Parser;
 import ca.uhn.hl7v2.parser.PipeParser;
-
+import ca.uhn.hl7v2.validation.impl.NoValidation;
 import org.apache.camel.Converter;
 
 /**
@@ -33,22 +33,28 @@ public final class HL7Converter {
         // Helper class
     }
 
+    private static Parser getParser() {
+        PipeParser pipeParser = new PipeParser();
+        pipeParser.setValidationContext(new NoValidation());
+        return pipeParser;
+    }
+
     @Converter
     public static String toString(Message message) throws HL7Exception {
-        return encode(message, new PipeParser());
+        return encode(message, getParser());
     }
 
     @Converter
     public static Message toMessage(String body) throws HL7Exception {
-        return parse(body, new PipeParser());
+        return parse(body, getParser());
     }
-    
+
     static Message parse(String body, Parser parser) throws HL7Exception {
         return parser.parse(body);
-    }    
-    
+    }
+
     static String encode(Message message, Parser parser) throws HL7Exception {
         return parser.encode(message);
-    }    
+    }
 
 }
