@@ -99,11 +99,7 @@ public class SimpleBuilder implements Predicate, Expression {
         // resolve property placeholders
         try {
             String resolve = exchange.getContext().resolvePropertyPlaceholders(text);
-            Expression exp = simple.createExpression(resolve);
-            if (resultType != null) {
-                exp = ExpressionBuilder.convertToExpression(exp, resultType);
-            }
-            return exp;
+            return simple.createExpression(resolve, resultType);
         } catch (Exception e) {
             throw ObjectHelper.wrapCamelExecutionException(exchange, e);
         }
