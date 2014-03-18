@@ -268,19 +268,21 @@ public class SimpleFunctionExpression extends LiteralExpression {
             if (remainder.startsWith("[") && remainder.endsWith("]")) {
                 remainder = remainder.substring(1, remainder.length() - 1);
             }
+            // remove quotes from key
+            String key = StringHelper.removeLeadingAndEndingQuotes(remainder);
 
             // validate syntax
-            boolean invalid = OgnlHelper.isInvalidValidOgnlExpression(remainder);
+            boolean invalid = OgnlHelper.isInvalidValidOgnlExpression(key);
             if (invalid) {
                 throw new SimpleParserException("Valid syntax: ${header.name[key]} was: " + function, token.getIndex());
             }
 
-            if (OgnlHelper.isValidOgnlExpression(remainder)) {
+            if (OgnlHelper.isValidOgnlExpression(key)) {
                 // ognl based header
-                return ExpressionBuilder.headersOgnlExpression(remainder);
+                return ExpressionBuilder.headersOgnlExpression(key);
             } else {
                 // regular header
-                return ExpressionBuilder.headerExpression(remainder);
+                return ExpressionBuilder.headerExpression(key);
             }
         }
 
