@@ -29,20 +29,7 @@ import org.apache.jackrabbit.core.TransientRepository;
 import org.junit.Before;
 import org.junit.Test;
 
-public class JcrNodePathCreationTest extends CamelTestSupport {
-
-    protected static final String CONFIG_FILE = "target/test-classes/repository-simple-security.xml";
-
-    protected static final String REPO_PATH = "target/repository-simple-security";
-
-    private Repository repository;
-
-    @Override
-    @Before
-    public void setUp() throws Exception {
-        deleteDirectory(REPO_PATH);
-        super.setUp();
-    }
+public class JcrNodePathCreationTest extends JcrRouteTestSupport {
 
     @Test
     public void testJcrNodePathCreation() throws Exception {
@@ -51,7 +38,7 @@ public class JcrNodePathCreationTest extends CamelTestSupport {
         assertNotNull(out);
         String uuid = out.getOut().getBody(String.class);
         assertNotNull("Out body was null; expected JCR node UUID", uuid);
-        Session session = repository.login(new SimpleCredentials("user", "pass".toCharArray()));
+        Session session = openSession();
         try {
             Node node = session.getNodeByIdentifier(uuid);
             assertNotNull(node);
@@ -75,13 +62,5 @@ public class JcrNodePathCreationTest extends CamelTestSupport {
             }
         };
     }
-
-    @Override
-    protected Context createJndiContext() throws Exception {
-        Context context = super.createJndiContext();
-        repository = new TransientRepository(CONFIG_FILE, REPO_PATH);
-        context.bind("repository", repository);
-        return context;
-    }
-
+    
 }
