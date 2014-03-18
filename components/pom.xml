@@ -142,6 +142,7 @@
     <module>camel-paxlogging</module>
     <module>camel-printer</module>
     <module>camel-protobuf</module>
+    <module>camel-qrcode</module>
     <module>camel-quartz</module>
     <module>camel-quartz2</module>
     <module>camel-quickfix</module>
