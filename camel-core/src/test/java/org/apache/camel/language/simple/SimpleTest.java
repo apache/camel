@@ -524,6 +524,24 @@ public class SimpleTest extends LanguageTestSupport {
         assertExpression("${in.headers}", headers);
     }
 
+    public void testHeaderKeyWithSpace() throws Exception {
+        Map<String, Object> headers = exchange.getIn().getHeaders();
+        headers.put("some key", "Some Value");
+        assertEquals(3, headers.size());
+
+        assertExpression("${headerAs(foo,String)}", "abc");
+        assertExpression("${headerAs(some key,String)}", "Some Value");
+        assertExpression("${headerAs('some key',String)}", "Some Value");
+
+        assertExpression("${header[foo]}", "abc");
+        assertExpression("${header[some key]}", "Some Value");
+        assertExpression("${header['some key']}", "Some Value");
+
+        assertExpression("${headers[foo]}", "abc");
+        assertExpression("${headers[some key]}", "Some Value");
+        assertExpression("${headers['some key']}", "Some Value");
+    }
+
     public void testHeaderAs() throws Exception {
         assertExpression("${headerAs(foo,String)}", "abc");
 
