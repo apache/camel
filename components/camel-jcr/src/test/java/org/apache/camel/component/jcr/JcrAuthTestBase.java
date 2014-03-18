@@ -17,6 +17,7 @@
 package org.apache.camel.component.jcr;
 
 import java.io.File;
+
 import javax.jcr.Repository;
 import javax.jcr.SimpleCredentials;
 import javax.jcr.security.AccessControlList;
@@ -29,7 +30,6 @@ import org.apache.jackrabbit.api.security.user.User;
 import org.apache.jackrabbit.api.security.user.UserManager;
 import org.apache.jackrabbit.core.SessionImpl;
 import org.apache.jackrabbit.core.TransientRepository;
-
 import org.junit.Before;
 
 /**
@@ -40,27 +40,22 @@ public abstract class JcrAuthTestBase extends CamelTestSupport {
 
     protected static final String BASE_REPO_PATH = "/home/test";
 
-    private static final String CONFIG_FILE = "target/test-classes/repository_with_auth.xml";
+    protected static final String REPO_PATH = "target/repository";
 
     private Repository repository;
 
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/repository_with_auth");
+        deleteDirectory(REPO_PATH);
         super.setUp();
     }
 
     @Override
     protected Context createJndiContext() throws Exception {
         Context context = super.createJndiContext();
-
-        File config = new File(CONFIG_FILE);
-        if (!config.exists()) {
-            throw new Exception("missing config file: " + config.getPath());
-        }
-        repository = new TransientRepository(CONFIG_FILE,
-                "target/repository_with_auth");
+        
+        repository = new TransientRepository(new File(REPO_PATH));
 
         // set up a user to authenticate
         SessionImpl session = (SessionImpl) repository
