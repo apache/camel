@@ -27,13 +27,6 @@ import org.junit.Test;
 
 public class JcrProducerSubNodeTest extends JcrRouteTestSupport {
 
-    @Override
-    @Before
-    public void setUp() throws Exception {
-        deleteDirectory("target/repository");
-        super.setUp();
-    }
-
     @Test
     public void testCreateNodeAndSubNode() throws Exception {
         Session session = openSession();

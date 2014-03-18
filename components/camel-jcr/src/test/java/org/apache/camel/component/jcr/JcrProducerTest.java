@@ -26,13 +26,6 @@ import org.junit.Test;
 
 public class JcrProducerTest extends JcrRouteTestSupport {
 
-    @Override
-    @Before
-    public void setUp() throws Exception {
-        deleteDirectory("target/repository");
-        super.setUp();
-    }
-
     @Test
     public void testJcrProducer() throws Exception {
         Exchange exchange = createExchangeWithBody("<hello>world!</hello>");

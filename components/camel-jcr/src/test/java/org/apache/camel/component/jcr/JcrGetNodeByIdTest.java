@@ -37,7 +37,6 @@ public class JcrGetNodeByIdTest extends JcrRouteTestSupport {
     @Override
     @Before
     public void setUp() throws Exception {
-        deleteDirectory("target/repository");
         super.setUp();
 
         Session session = openSession();
