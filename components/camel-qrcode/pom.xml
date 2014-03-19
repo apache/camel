@@ -12,7 +12,6 @@
     <artifactId>camel-qrcode</artifactId>
     <packaging>bundle</packaging>
     <name>Camel :: QRCode</name>
-    <version>1.0-SNAPSHOT</version>
     <description>Camel QRCode support</description>
 
     <properties>
