@@ -119,7 +119,7 @@ public class MailEndpoint extends ScheduledPollEndpoint {
     private Exchange createExchange(ExchangePattern pattern, Message message) {
         Exchange exchange = new DefaultExchange(this, pattern);
         exchange.setProperty(Exchange.BINDING, getBinding());
-        exchange.setIn(new MailMessage(message));
+        exchange.setIn(new MailMessage(message, getConfiguration().isMapMailMessage()));
         return exchange;
     }
 
