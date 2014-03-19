@@ -43,7 +43,6 @@ public class RestletProducer extends DefaultAsyncProducer {
     private static final Pattern PATTERN = Pattern.compile("\\(([\\w\\.]*)\\)");
     private Client client;
     private boolean throwException;
-    private boolean forceSync;
 
     public RestletProducer(RestletEndpoint endpoint) throws Exception {
         super(endpoint);
