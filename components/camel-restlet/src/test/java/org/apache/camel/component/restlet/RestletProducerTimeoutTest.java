@@ -24,12 +24,13 @@ import org.junit.Test;
 public class RestletProducerTimeoutTest extends RestletTestSupport {
 
     @Test
-    public void testRestletProducerGet() throws Exception {
+    public void testRestletProducerTimeout() throws Exception {
         try {
-            String out = template.requestBodyAndHeader("restlet:http://localhost:" + portNum + "/users/123/basic?socketTimeout=100", null, "id", 123, String.class);
-            assertEquals("", null, out);
+            template.requestBodyAndHeader("restlet:http://localhost:" + portNum + "/users/123/basic?socketTimeout=100", null, "id", 123, String.class);
+            fail("Should have thrown exception");
         } catch (Exception ex) {
-            System.out.println("get the exception");
+            // expected
+            ex.printStackTrace();
         }
     }
 
@@ -38,13 +39,11 @@ public class RestletProducerTimeoutTest extends RestletTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").to("restlet:http://localhost:" + portNum + "/users/123/basic?socketTimeout=100").to("log:reply");
-
                 from("restlet:http://localhost:" + portNum + "/users/{id}/basic")
                         .process(new Processor() {
                             @Override
                             public void process(Exchange exchange) throws Exception {
-                                Thread.sleep(1000);
+                                Thread.sleep(2000);
                                 exchange.getOut().setBody("Here is the response");
                             }
                         });
