@@ -35,12 +35,18 @@ public class MailMessage extends DefaultMessage {
     // mail content, see more in MailBinding
     private Message originalMailMessage;
     private Message mailMessage;
+    private boolean mapMailMessage;
 
     public MailMessage() {
     }
 
     public MailMessage(Message message) {
+        this(message, true);
+    }
+
+    public MailMessage(Message message, boolean mapMailMessage) {
         this.originalMailMessage = this.mailMessage = message;
+        this.mapMailMessage = mapMailMessage;
     }
 
     @Override
@@ -56,10 +62,13 @@ public class MailMessage extends DefaultMessage {
         MailMessage answer = (MailMessage)super.copy();
         answer.originalMailMessage = originalMailMessage;
         answer.mailMessage = mailMessage;
-        // force attachments to be created (by getting attachments) to ensure they are always available due Camel error handler
-        // makes defensive copies, and we have optimized it to avoid populating initial attachments, when not needed,
-        // as all other Camel components do not use attachments
-        getAttachments();
+
+        if (mapMailMessage) {
+            // force attachments to be created (by getting attachments) to ensure they are always available due Camel error handler
+            // makes defensive copies, and we have optimized it to avoid populating initial attachments, when not needed,
+            // as all other Camel components do not use attachments
+            getAttachments();
+        }
         return answer;
     }
 
@@ -132,6 +141,7 @@ public class MailMessage extends DefaultMessage {
             MailMessage mailMessage = (MailMessage) that;
             this.originalMailMessage = mailMessage.originalMailMessage;
             this.mailMessage = mailMessage.mailMessage;
+            this.mapMailMessage = mailMessage.mapMailMessage;
         }
     }
 
