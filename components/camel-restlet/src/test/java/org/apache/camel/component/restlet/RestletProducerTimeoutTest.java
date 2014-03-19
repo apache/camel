@@ -30,7 +30,6 @@ public class RestletProducerTimeoutTest extends RestletTestSupport {
             fail("Should have thrown exception");
         } catch (Exception ex) {
             // expected
-            ex.printStackTrace();
         }
     }
 
