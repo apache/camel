@@ -16,13 +16,21 @@
 
 package org.apache.camel.dataformat.qrcode;
 
+import com.google.zxing.BarcodeFormat;
 import java.util.Map;
 
 /**
- *
+ * All configuration parameters for the code component.
+ * 
  * @author claus.straube
  */
 public class Parameters {
+    
+    /**
+     * The barcode format. Default is qr-code.
+     */
+    private BarcodeFormat format;
+    
     /**
      * The Image Type. Default is PNG.
      */
@@ -46,11 +54,12 @@ public class Parameters {
     /**
      * Default construtor creates default values.
      */
-    public Parameters(ImageType type, Integer width, Integer height, String charset) {
+    public Parameters(ImageType type, Integer width, Integer height, String charset, BarcodeFormat format) {
         this.charset = charset;
         this.height = height;
         this.width = width;
         this.type = type;
+        this.format = format;
     }
     
     /**
@@ -76,10 +85,16 @@ public class Parameters {
             this.setWidth(params.getWidth());
         }
         
-        if(headers.containsKey(QRCode.TYPE)) {
-            this.setType((ImageType) headers.get(QRCode.TYPE));
+        if(headers.containsKey(QRCode.IMAGE_TYPE)) {
+            this.setType((ImageType) headers.get(QRCode.IMAGE_TYPE));
         } else {
             this.setType(params.getType());
+        }
+        
+        if(headers.containsKey(QRCode.BARCODE_FORMAT)) {
+            this.setFormat((BarcodeFormat) headers.get(QRCode.BARCODE_FORMAT));
+        } else {
+            this.setFormat(params.getFormat());
         }
         
         if(headers.containsKey(QRCode.ENCODING)){
@@ -120,6 +135,14 @@ public class Parameters {
 
     public void setCharset(String charset) {
         this.charset = charset;
+    }
+
+    public BarcodeFormat getFormat() {
+        return format;
+    }
+
+    public void setFormat(BarcodeFormat format) {
+        this.format = format;
     }
     
 }

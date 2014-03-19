@@ -27,12 +27,14 @@ import com.google.zxing.client.j2se.BufferedImageLuminanceSource;
 import com.google.zxing.client.j2se.MatrixToImageWriter;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.common.HybridBinarizer;
+import com.google.zxing.datamatrix.DataMatrixWriter;
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
 import java.io.BufferedInputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.EnumMap;
 import java.util.Map;
+import java.util.Vector;
 import javax.imageio.ImageIO;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.DataFormat;
@@ -78,17 +80,23 @@ public class QRCodeDataFormat implements DataFormat {
         this.params.setWidth(width);
     }
 
+    public QRCodeDataFormat(ImageType type, boolean parameterized) {
+        this.parameterized = parameterized;
+        this.setDefaultParameters();
+        this.params.setType(type);
+    }
+    
+    public QRCodeDataFormat(BarcodeFormat format, boolean parameterized) {
+        this.parameterized = parameterized;
+        this.setDefaultParameters();
+        this.params.setFormat(format);
+    }
+    
     public QRCodeDataFormat(int height, int width, ImageType type, boolean parameterized) {
         this.parameterized = parameterized;
         this.setDefaultParameters();
         this.params.setHeight(height);
         this.params.setWidth(width);
-        this.params.setType(type);
-    }
-
-    public QRCodeDataFormat(ImageType type, boolean parameterized) {
-        this.parameterized = parameterized;
-        this.setDefaultParameters();
         this.params.setType(type);
     }
 
@@ -130,12 +138,11 @@ public class QRCodeDataFormat implements DataFormat {
         
         // create qr-code image
         Map<EncodeHintType, ErrorCorrectionLevel> hintMap = new EnumMap<EncodeHintType, ErrorCorrectionLevel>(EncodeHintType.class);
-        hintMap.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.L);    
+        hintMap.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.H);    
         
-        BitMatrix matrix;
-        matrix = new MultiFormatWriter().encode(
+        BitMatrix matrix = new MultiFormatWriter().encode(
                 new String(payload.getBytes(charset), charset),
-                format, 
+                p.getFormat(), 
                 p.getWidth(), 
                 p.getHeight(), 
                 hintMap);
@@ -154,7 +161,12 @@ public class QRCodeDataFormat implements DataFormat {
     @Override
     public Object unmarshal(Exchange exchange, InputStream stream) throws Exception {
         LOG.debug("Unmarshalling code image to string.");
-        Map<DecodeHintType, ErrorCorrectionLevel> hintMap = new EnumMap<DecodeHintType, ErrorCorrectionLevel>(DecodeHintType.class);
+        Map<DecodeHintType, Vector> hintMap = new EnumMap<DecodeHintType, Vector>(DecodeHintType.class);
+        Vector<BarcodeFormat> vector = new Vector<BarcodeFormat>(); 
+        vector.add(BarcodeFormat.DATA_MATRIX);
+        vector.add(BarcodeFormat.QR_CODE);
+        
+        hintMap.put(DecodeHintType.POSSIBLE_FORMATS, vector);
 
         BufferedInputStream in = exchange.getContext()
                 .getTypeConverter()
@@ -162,7 +174,13 @@ public class QRCodeDataFormat implements DataFormat {
         BinaryBitmap bitmap = new BinaryBitmap(
                 new HybridBinarizer(
                         new BufferedImageLuminanceSource(ImageIO.read(in))));
-        Result result = new MultiFormatReader().decode(bitmap, hintMap);
+        MultiFormatReader reader = new MultiFormatReader();
+        reader.setHints(hintMap);
+        Result result = reader.decodeWithState(bitmap);
+        
+        // write the found barcode format into the header
+        exchange.getOut().setHeader(QRCode.BARCODE_UNMARSHAL_FORMAT, result.getBarcodeFormat());
+        
         return result.getText();
     }
     
@@ -173,10 +191,11 @@ public class QRCodeDataFormat implements DataFormat {
      *  <li>image width: 100px</li>
      *  <li>image heigth: 100px</li>
      *  <li>encoding: UTF-8</li>
+     *  <li>barcode format: QR-Code</li>
      * </ul>
      */
     private void setDefaultParameters() {
-        this.params = new Parameters(ImageType.PNG, 100, 100, "UTF-8");
+        this.params = new Parameters(ImageType.PNG, 100, 100, "UTF-8", BarcodeFormat.QR_CODE);
     }
 
     public Parameters getParams() {

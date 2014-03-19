@@ -14,6 +14,7 @@
  */
 package org.apache.camel.dataformat.qrcode;
 
+import com.google.zxing.BarcodeFormat;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
@@ -94,6 +95,18 @@ public class QRCodeDataFormatTest extends CamelTestSupport {
         assertMockEndpointsSatisfied(5, TimeUnit.SECONDS);
         this.checkImage(image, 200, 200, "JPEG");
     }
+    
+    @Test
+    public void testQRCodeWithModifiedBarcodeFormat() throws Exception {
+        out.expectedBodiesReceived(MSG);
+        image.expectedMessageCount(1);
+
+        template.sendBody("direct:qrcode6", MSG);
+
+        assertMockEndpointsSatisfied(5, TimeUnit.SECONDS);
+        this.checkImage(image, 100, 100, ImageType.PNG.toString());
+        assertEquals(BarcodeFormat.DATA_MATRIX, out.getExchanges().get(0).getIn().getHeader(QRCode.BARCODE_UNMARSHAL_FORMAT));
+    }
 
     @Test
     public void testQRCodeWithParameterizedSize() throws Exception {
@@ -103,7 +116,7 @@ public class QRCodeDataFormatTest extends CamelTestSupport {
         headers.put(QRCode.WIDTH, 200);
         headers.put(QRCode.HEIGHT, 200);
 
-        template.sendBodyAndHeaders("direct:qrcode6", MSG, headers);
+        template.sendBodyAndHeaders("direct:qrcode_param", MSG, headers);
 
         assertMockEndpointsSatisfied(5, TimeUnit.SECONDS);
         this.checkImage(image, 200, 200, ImageType.PNG.toString());
@@ -114,9 +127,9 @@ public class QRCodeDataFormatTest extends CamelTestSupport {
         out.expectedBodiesReceived(MSG);
         image.expectedMessageCount(1);
         HashMap<String, Object> headers = new HashMap<String, Object>();
-        headers.put(QRCode.TYPE, ImageType.JPG);
+        headers.put(QRCode.IMAGE_TYPE, ImageType.JPG);
 
-        template.sendBodyAndHeaders("direct:qrcode6", MSG, headers);
+        template.sendBodyAndHeaders("direct:qrcode_param", MSG, headers);
 
         assertMockEndpointsSatisfied(5, TimeUnit.SECONDS);
         this.checkImage(image, 100, 100, "JPEG");
@@ -129,9 +142,9 @@ public class QRCodeDataFormatTest extends CamelTestSupport {
         HashMap<String, Object> headers = new HashMap<String, Object>();
         headers.put(QRCode.WIDTH, 200);
         headers.put(QRCode.HEIGHT, 200);
-        headers.put(QRCode.TYPE, ImageType.JPG);
+        headers.put(QRCode.IMAGE_TYPE, ImageType.JPG);
 
-        template.sendBodyAndHeaders("direct:qrcode6", MSG, headers);
+        template.sendBodyAndHeaders("direct:qrcode_param", MSG, headers);
 
         assertMockEndpointsSatisfied(5, TimeUnit.SECONDS);
         this.checkImage(image, 200, 200, "JPEG");
@@ -144,7 +157,7 @@ public class QRCodeDataFormatTest extends CamelTestSupport {
         HashMap<String, Object> headers = new HashMap<String, Object>();
         headers.put(QRCode.NAME, "foo");
 
-        template.sendBodyAndHeaders("direct:qrcode6", MSG, headers);
+        template.sendBodyAndHeaders("direct:qrcode_param", MSG, headers);
 
         assertMockEndpointsSatisfied(5, TimeUnit.SECONDS);
         assertEquals("foo.png", image.getExchanges().get(0).getIn().getHeader(Exchange.FILE_NAME_ONLY));
@@ -158,10 +171,10 @@ public class QRCodeDataFormatTest extends CamelTestSupport {
         HashMap<String, Object> headers = new HashMap<String, Object>();
         headers.put(QRCode.WIDTH, 200);
         headers.put(QRCode.HEIGHT, 200);
-        headers.put(QRCode.TYPE, ImageType.JPG);
+        headers.put(QRCode.IMAGE_TYPE, ImageType.JPG);
         headers.put(QRCode.NAME, "foo");
 
-        template.sendBodyAndHeaders("direct:qrcode6", MSG, headers);
+        template.sendBodyAndHeaders("direct:qrcode_param", MSG, headers);
 
         assertMockEndpointsSatisfied(5, TimeUnit.SECONDS);
         assertEquals("foo.jpg", image.getExchanges().get(0).getIn().getHeader(Exchange.FILE_NAME_ONLY));
@@ -209,11 +222,16 @@ public class QRCodeDataFormatTest extends CamelTestSupport {
                         .marshal(qrcode5)
                         .to("file:target/out");
 
-                // QR-Code with modified size and image type
-                DataFormat qrcode6 = new QRCodeDataFormat(true);
-
+                // Code with modified format
+                DataFormat code6 = new QRCodeDataFormat(BarcodeFormat.DATA_MATRIX, false);
+                
                 from("direct:qrcode6")
-                        .marshal(qrcode6)
+                        .marshal(code6)
+                        .to("file:target/out");
+                
+                // QR-Code with parameters
+                from("direct:qrcode_param")
+                        .marshal(new QRCodeDataFormat(true))
                         .to("file:target/out");
 
                 // generic file read --->
