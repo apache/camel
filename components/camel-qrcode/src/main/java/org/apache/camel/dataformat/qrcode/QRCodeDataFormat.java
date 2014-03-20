@@ -18,16 +18,12 @@ package org.apache.camel.dataformat.qrcode;
 
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.BinaryBitmap;
-import com.google.zxing.DecodeHintType;
 import com.google.zxing.EncodeHintType;
-import com.google.zxing.MultiFormatReader;
-import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.Result;
 import com.google.zxing.client.j2se.BufferedImageLuminanceSource;
 import com.google.zxing.client.j2se.MatrixToImageWriter;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.common.HybridBinarizer;
-import com.google.zxing.datamatrix.DataMatrixWriter;
 import com.google.zxing.qrcode.QRCodeReader;
 import com.google.zxing.qrcode.QRCodeWriter;
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
@@ -36,7 +32,6 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.util.EnumMap;
 import java.util.Map;
-import java.util.Vector;
 import javax.imageio.ImageIO;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.DataFormat;
@@ -58,6 +53,16 @@ public class QRCodeDataFormat implements DataFormat {
      * The barcode format. Default is QR-Code.
      */
     private final BarcodeFormat format = BarcodeFormat.QR_CODE;
+    
+    /**
+     * The {@link QRCodeWriter} instance.
+     */
+    private final QRCodeWriter writer = new QRCodeWriter();
+    
+    /**
+     * The {@link QRCodeReader} instance.
+     */
+    private final QRCodeReader reader = new QRCodeReader();
     
     /**
      * The default parameters.
@@ -136,7 +141,6 @@ public class QRCodeDataFormat implements DataFormat {
         Map<EncodeHintType, ErrorCorrectionLevel> hintMap = new EnumMap<EncodeHintType, ErrorCorrectionLevel>(EncodeHintType.class);
         hintMap.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.H);    
         
-        QRCodeWriter writer = new QRCodeWriter();
         BitMatrix matrix = writer.encode(
                 new String(payload.getBytes(charset), charset),
                 format, 
@@ -165,7 +169,6 @@ public class QRCodeDataFormat implements DataFormat {
         BinaryBitmap bitmap = new BinaryBitmap(
                 new HybridBinarizer(
                         new BufferedImageLuminanceSource(ImageIO.read(in))));
-        QRCodeReader reader = new QRCodeReader();
         Result result = reader.decode(bitmap);
         
         // write the found barcode format into the header
