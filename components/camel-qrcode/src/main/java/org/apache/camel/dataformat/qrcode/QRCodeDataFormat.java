@@ -45,7 +45,7 @@ import org.slf4j.LoggerFactory;
  * 
  * @author claus.straube
  */
-public class QRCodeDataFormat implements DataFormat {
+public class QRCodeDataFormat extends CodeDataFormat {
 
     private static final Logger LOG = LoggerFactory.getLogger(QRCodeDataFormat.class);
 
@@ -63,51 +63,37 @@ public class QRCodeDataFormat implements DataFormat {
      * The {@link QRCodeReader} instance.
      */
     private final QRCodeReader reader = new QRCodeReader();
-    
-    /**
-     * The default parameters.
-     */
-    private Parameters params;
-    
-    /**
-     * If true, the header parameters of a message will be used to configure
-     * the component.
-     */
-    private boolean parameterized = true;
 
+    /**
+     * {@inheritDoc}
+     */
     public QRCodeDataFormat(boolean parameterized) {
-        this.parameterized = parameterized;
-        this.setDefaultParameters();
-    }
-
-    public QRCodeDataFormat(int height, int width, boolean parameterized) {
-        this.parameterized = parameterized;
-        this.setDefaultParameters();
-        this.params.setHeight(height);
-        this.params.setWidth(width);
-    }
-
-    public QRCodeDataFormat(ImageType type, boolean parameterized) {
-        this.parameterized = parameterized;
-        this.setDefaultParameters();
-        this.params.setType(type);
-    }
-    
-    public QRCodeDataFormat(int height, int width, ImageType type, boolean parameterized) {
-        this.parameterized = parameterized;
-        this.setDefaultParameters();
-        this.params.setHeight(height);
-        this.params.setWidth(width);
-        this.params.setType(type);
+        super(parameterized);
     }
 
     /**
-     * Marshall a {@link String} payload to a code image.
-     * 
-     * @param exchange
-     * @param graph
-     * @param stream
-     * @throws Exception 
+     * {@inheritDoc}
+     */
+    public QRCodeDataFormat(int height, int width, boolean parameterized) {
+        super(height, width, parameterized);
+    }
+ 
+    /**
+     * {@inheritDoc}
+     */
+    public QRCodeDataFormat(ImageType type, boolean parameterized) {
+        super(type, parameterized);
+    }
+    
+    /**
+     * {@inheritDoc}
+     */
+    public QRCodeDataFormat(int height, int width, ImageType type, boolean parameterized) {
+        super(height, width, type, parameterized);
+    }
+
+    /**
+     * {@inheritDoc}
      */
     @Override
     public void marshal(Exchange exchange, Object graph, OutputStream stream) throws Exception {
@@ -152,12 +138,7 @@ public class QRCodeDataFormat implements DataFormat {
     }
 
     /**
-     * Unmarshall a code image to a {@link String} payload.
-     * 
-     * @param exchange
-     * @param stream
-     * @return
-     * @throws Exception 
+     * {@inheritDoc}
      */
     @Override
     public Object unmarshal(Exchange exchange, InputStream stream) throws Exception {
@@ -175,26 +156,5 @@ public class QRCodeDataFormat implements DataFormat {
         exchange.getOut().setHeader(QRCode.BARCODE_FORMAT, result.getBarcodeFormat());
         
         return result.getText();
-    }
-    
-    /**
-     * Sets the default parameters:
-     * <ul>
-     *  <li>image type: PNG</li>
-     *  <li>image width: 100px</li>
-     *  <li>image heigth: 100px</li>
-     *  <li>encoding: UTF-8</li>
-     * </ul>
-     */
-    private void setDefaultParameters() {
-        this.params = new Parameters(ImageType.PNG, 100, 100, "UTF-8");
-    }
-
-    public Parameters getParams() {
-        return params;
-    }
-
-    public boolean isParameterized() {
-        return parameterized;
     }
 }
