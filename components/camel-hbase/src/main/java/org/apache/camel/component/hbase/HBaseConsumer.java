@@ -106,15 +106,31 @@ public class HBaseConsumer extends ScheduledBatchPollingConsumer {
 
                 List<KeyValue> keyValues = result.list();
                 if (keyValues != null) {
-                    for (KeyValue keyValue : keyValues) {
-                        String qualifier = new String(keyValue.getQualifier());
-                        String family = new String(keyValue.getFamily());
-                        HBaseCell resultCell = new HBaseCell();
-                        resultCell.setFamily(family);
-                        resultCell.setQualifier(qualifier);
-                        resultCell.setValue(endpoint.getCamelContext().getTypeConverter().convertTo(String.class, keyValue.getValue()));
-                        resultRow.getCells().add(resultCell);
+                    Set<HBaseCell> cellModels = rowModel.getCells();
+                    if (cellModels.size() > 0) {
+                        for (HBaseCell modelCell : cellModels) {
+                            HBaseCell resultCell = new HBaseCell();
+                            String family = modelCell.getFamily();
+                            String column = modelCell.getQualifier();
+                            resultCell.setValue(endpoint.getCamelContext().getTypeConverter().convertTo(modelCell.getValueType(),
+                                    result.getValue(HBaseHelper.getHBaseFieldAsBytes(family), HBaseHelper.getHBaseFieldAsBytes(column))));
+                            resultCell.setFamily(modelCell.getFamily());
+                            resultCell.setQualifier(modelCell.getQualifier());
+                            resultRow.getCells().add(resultCell);
+                        }
+                    } else {
+                        // just need to put every key value into the result Cells
+                        for (KeyValue keyValue : keyValues) {
+                            String qualifier = new String(keyValue.getQualifier());
+                            String family = new String(keyValue.getFamily());
+                            HBaseCell resultCell = new HBaseCell();
+                            resultCell.setFamily(family);
+                            resultCell.setQualifier(qualifier);
+                            resultCell.setValue(endpoint.getCamelContext().getTypeConverter().convertTo(String.class, keyValue.getValue()));
+                            resultRow.getCells().add(resultCell); 
+                        }
                     }
+               
                     data.getRows().add(resultRow);
                     exchange = endpoint.createExchange();
                     // Probably overkill but kept it here for consistency.
