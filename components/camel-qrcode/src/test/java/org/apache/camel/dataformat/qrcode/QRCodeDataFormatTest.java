@@ -14,24 +14,16 @@
  */
 package org.apache.camel.dataformat.qrcode;
 
-import com.google.zxing.BarcodeFormat;
-import java.awt.image.BufferedImage;
-import java.io.File;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
-import javax.imageio.ImageIO;
-import javax.imageio.ImageReader;
-import javax.imageio.stream.ImageInputStream;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.DataFormat;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-public class QRCodeDataFormatTest extends CamelTestSupport {
+public class QRCodeDataFormatTest extends CodeTestBase {
 
     private final static String MSG = "This is a testmessage!";
 
@@ -229,20 +221,5 @@ public class QRCodeDataFormatTest extends CamelTestSupport {
 
             }
         };
-    }
-
-    private void checkImage(MockEndpoint mock, int height, int width, String type) throws IOException {
-        Exchange ex = mock.getReceivedExchanges().get(0);
-        File in = ex.getIn().getBody(File.class);
-
-        // check image
-        BufferedImage i = ImageIO.read(in);
-        assertEquals(height, i.getHeight());
-        assertEquals(width, i.getWidth());
-        ImageInputStream iis = ImageIO.createImageInputStream(in);
-        ImageReader reader = ImageIO.getImageReaders(iis).next();
-        String format = reader.getFormatName();
-        assertEquals(type, format.toUpperCase());
-        in.delete();
     }
 }

@@ -16,13 +16,10 @@
 
 package org.apache.camel.dataformat.qrcode;
 
-import org.apache.camel.test.junit4.CamelTestSupport;
-
 /**
  *
  * @author claus.straube
  */
-public class DataMatrixDataFormatTest extends CamelTestSupport {
-    
+public class DataMatrixDataFormatTest extends CodeTestBase {
     
 }
