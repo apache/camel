@@ -16,7 +16,6 @@
 
 package org.apache.camel.dataformat.qrcode;
 
-import com.google.zxing.BarcodeFormat;
 import java.util.Map;
 
 /**
@@ -44,13 +43,13 @@ public class Parameters {
     /**
      * The message encoding. Default is UTF-8.
      */
-    private String charset;
+    private String encoding;
 
     /**
      * Default construtor creates default values.
      */
-    public Parameters(ImageType type, Integer width, Integer height, String charset) {
-        this.charset = charset;
+    public Parameters(ImageType type, Integer width, Integer height, String encoding) {
+        this.encoding = encoding;
         this.height = height;
         this.width = width;
         this.type = type;
@@ -86,9 +85,9 @@ public class Parameters {
         }
         
         if(headers.containsKey(QRCode.ENCODING)){
-            this.setCharset((String) headers.get(QRCode.ENCODING));
+            this.setEncoding((String) headers.get(QRCode.ENCODING));
         } else {
-            this.setCharset(params.getCharset());
+            this.setEncoding(params.getEncoding());
         }
         
     }
@@ -117,11 +116,12 @@ public class Parameters {
         this.height = height;
     }
 
-    public String getCharset() {
-        return charset;
+    public String getEncoding() {
+        return encoding;
     }
 
-    public void setCharset(String charset) {
-        this.charset = charset;
-    }    
+    public void setEncoding(String encoding) {
+        this.encoding = encoding;
+    }
+    
 }

@@ -92,9 +92,9 @@ public class ParametersTest {
         }
 
         if (encoding) {
-            assertEquals(ENCODING, p.getCharset());
+            assertEquals(ENCODING, p.getEncoding());
         } else {
-            assertEquals("UTF-8", p.getCharset());
+            assertEquals("UTF-8", p.getEncoding());
         }
 
     }

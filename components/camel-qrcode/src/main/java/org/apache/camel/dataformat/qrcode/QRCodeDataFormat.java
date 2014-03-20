@@ -97,44 +97,8 @@ public class QRCodeDataFormat extends CodeDataFormat {
      */
     @Override
     public void marshal(Exchange exchange, Object graph, OutputStream stream) throws Exception {
-        String payload = ExchangeHelper.convertToMandatoryType(exchange, String.class, graph);
+        String payload = super.printImage(exchange, graph, stream, writer, format);
         LOG.debug(String.format("Marshalling body '%s' to %s - code.", payload, format.toString()));
-        
-        // set default values
-        Parameters p = this.params;
-        String name = exchange.getExchangeId();
-        
-        // if message headers should be used, create a new parameters object
-        if(this.parameterized) {
-            Map<String, Object> headers = exchange.getIn().getHeaders();
-            p = new Parameters(headers, params);
-            
-            // if a qrcode filename is set, take it
-            if(headers.containsKey(QRCode.NAME)) {
-                name = (String) headers.get(QRCode.NAME);
-            }
-        } 
-
-        // set values
-        String type = p.getType().toString();
-        String charset = p.getCharset(); 
-        
-        // set file name (<exchangeid>.<imagetype>)       
-        String filename = String.format("%s.%s", name, type.toLowerCase());
-        exchange.getOut().setHeader(Exchange.FILE_NAME, filename);
-        
-        // create qr-code image
-        Map<EncodeHintType, ErrorCorrectionLevel> hintMap = new EnumMap<EncodeHintType, ErrorCorrectionLevel>(EncodeHintType.class);
-        hintMap.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.H);    
-        
-        BitMatrix matrix = writer.encode(
-                new String(payload.getBytes(charset), charset),
-                format, 
-                p.getWidth(), 
-                p.getHeight(), 
-                hintMap);
-        
-        MatrixToImageWriter.writeToStream(matrix, type, stream);
     }
 
     /**
@@ -143,18 +107,6 @@ public class QRCodeDataFormat extends CodeDataFormat {
     @Override
     public Object unmarshal(Exchange exchange, InputStream stream) throws Exception {
         LOG.debug("Unmarshalling code image to string.");
-
-        BufferedInputStream in = exchange.getContext()
-                .getTypeConverter()
-                .mandatoryConvertTo(BufferedInputStream.class, stream);
-        BinaryBitmap bitmap = new BinaryBitmap(
-                new HybridBinarizer(
-                        new BufferedImageLuminanceSource(ImageIO.read(in))));
-        Result result = reader.decode(bitmap);
-        
-        // write the found barcode format into the header
-        exchange.getOut().setHeader(QRCode.BARCODE_FORMAT, result.getBarcodeFormat());
-        
-        return result.getText();
+        return super.readImage(exchange, stream, reader);
     }
 }
