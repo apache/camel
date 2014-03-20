@@ -12,6 +12,20 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *//*
+ * Copyright 2014 The Apache Software Foundation.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 
 package org.apache.camel.dataformat.qrcode;
@@ -19,6 +33,7 @@ package org.apache.camel.dataformat.qrcode;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.BinaryBitmap;
 import com.google.zxing.ChecksumException;
+import com.google.zxing.DecodeHintType;
 import com.google.zxing.EncodeHintType;
 import com.google.zxing.FormatException;
 import com.google.zxing.NotFoundException;
@@ -64,6 +79,9 @@ public abstract class CodeDataFormat implements DataFormat {
     protected boolean parameterized = true;
     
     protected final Map<EncodeHintType, ErrorCorrectionLevel> writerHintMap = new EnumMap<EncodeHintType, ErrorCorrectionLevel>(EncodeHintType.class);
+    
+    protected final Map<DecodeHintType, Object> readerHintMap = new EnumMap<DecodeHintType, Object>(DecodeHintType.class);
+            
 
     /**
      * Create instance with default parameters.
@@ -151,6 +169,7 @@ public abstract class CodeDataFormat implements DataFormat {
     protected void setDefaultParameters() {
         this.params = new Parameters(ImageType.PNG, 100, 100, "UTF-8");
         this.writerHintMap.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.H);
+        this.readerHintMap.put(DecodeHintType.TRY_HARDER, Boolean.TRUE);
     }
     
     /**
@@ -243,7 +262,7 @@ public abstract class CodeDataFormat implements DataFormat {
         BinaryBitmap bitmap = new BinaryBitmap(
                 new HybridBinarizer(
                         new BufferedImageLuminanceSource(ImageIO.read(in))));
-        Result result = reader.decode(bitmap);
+        Result result = reader.decode(bitmap, readerHintMap);
         
         // write the found barcode format into the header
         exchange.getOut().setHeader(QRCode.BARCODE_FORMAT, result.getBarcodeFormat());
