@@ -27,11 +27,6 @@ import java.util.Map;
 public class Parameters {
     
     /**
-     * The barcode format. Default is qr-code.
-     */
-    private BarcodeFormat format;
-    
-    /**
      * The Image Type. Default is PNG.
      */
     private ImageType type;
@@ -54,12 +49,11 @@ public class Parameters {
     /**
      * Default construtor creates default values.
      */
-    public Parameters(ImageType type, Integer width, Integer height, String charset, BarcodeFormat format) {
+    public Parameters(ImageType type, Integer width, Integer height, String charset) {
         this.charset = charset;
         this.height = height;
         this.width = width;
         this.type = type;
-        this.format = format;
     }
     
     /**
@@ -89,12 +83,6 @@ public class Parameters {
             this.setType((ImageType) headers.get(QRCode.IMAGE_TYPE));
         } else {
             this.setType(params.getType());
-        }
-        
-        if(headers.containsKey(QRCode.BARCODE_FORMAT)) {
-            this.setFormat((BarcodeFormat) headers.get(QRCode.BARCODE_FORMAT));
-        } else {
-            this.setFormat(params.getFormat());
         }
         
         if(headers.containsKey(QRCode.ENCODING)){
@@ -135,14 +123,5 @@ public class Parameters {
 
     public void setCharset(String charset) {
         this.charset = charset;
-    }
-
-    public BarcodeFormat getFormat() {
-        return format;
-    }
-
-    public void setFormat(BarcodeFormat format) {
-        this.format = format;
-    }
-    
+    }    
 }

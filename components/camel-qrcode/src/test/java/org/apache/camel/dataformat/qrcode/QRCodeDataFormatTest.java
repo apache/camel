@@ -95,18 +95,6 @@ public class QRCodeDataFormatTest extends CamelTestSupport {
         assertMockEndpointsSatisfied(5, TimeUnit.SECONDS);
         this.checkImage(image, 200, 200, "JPEG");
     }
-    
-    @Test
-    public void testQRCodeWithModifiedBarcodeFormat() throws Exception {
-        out.expectedBodiesReceived(MSG);
-        image.expectedMessageCount(1);
-
-        template.sendBody("direct:qrcode6", MSG);
-
-        assertMockEndpointsSatisfied(5, TimeUnit.SECONDS);
-        this.checkImage(image, 100, 100, ImageType.PNG.toString());
-        assertEquals(BarcodeFormat.DATA_MATRIX, out.getExchanges().get(0).getIn().getHeader(QRCode.BARCODE_UNMARSHAL_FORMAT));
-    }
 
     @Test
     public void testQRCodeWithParameterizedSize() throws Exception {
@@ -220,13 +208,6 @@ public class QRCodeDataFormatTest extends CamelTestSupport {
 
                 from("direct:qrcode5")
                         .marshal(qrcode5)
-                        .to("file:target/out");
-
-                // Code with modified format
-                DataFormat code6 = new QRCodeDataFormat(BarcodeFormat.DATA_MATRIX, false);
-                
-                from("direct:qrcode6")
-                        .marshal(code6)
                         .to("file:target/out");
                 
                 // QR-Code with parameters

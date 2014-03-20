@@ -28,6 +28,8 @@ import com.google.zxing.client.j2se.MatrixToImageWriter;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.common.HybridBinarizer;
 import com.google.zxing.datamatrix.DataMatrixWriter;
+import com.google.zxing.qrcode.QRCodeReader;
+import com.google.zxing.qrcode.QRCodeWriter;
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
 import java.io.BufferedInputStream;
 import java.io.InputStream;
@@ -86,12 +88,6 @@ public class QRCodeDataFormat implements DataFormat {
         this.params.setType(type);
     }
     
-    public QRCodeDataFormat(BarcodeFormat format, boolean parameterized) {
-        this.parameterized = parameterized;
-        this.setDefaultParameters();
-        this.params.setFormat(format);
-    }
-    
     public QRCodeDataFormat(int height, int width, ImageType type, boolean parameterized) {
         this.parameterized = parameterized;
         this.setDefaultParameters();
@@ -140,9 +136,10 @@ public class QRCodeDataFormat implements DataFormat {
         Map<EncodeHintType, ErrorCorrectionLevel> hintMap = new EnumMap<EncodeHintType, ErrorCorrectionLevel>(EncodeHintType.class);
         hintMap.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.H);    
         
-        BitMatrix matrix = new MultiFormatWriter().encode(
+        QRCodeWriter writer = new QRCodeWriter();
+        BitMatrix matrix = writer.encode(
                 new String(payload.getBytes(charset), charset),
-                p.getFormat(), 
+                format, 
                 p.getWidth(), 
                 p.getHeight(), 
                 hintMap);
@@ -161,12 +158,6 @@ public class QRCodeDataFormat implements DataFormat {
     @Override
     public Object unmarshal(Exchange exchange, InputStream stream) throws Exception {
         LOG.debug("Unmarshalling code image to string.");
-        Map<DecodeHintType, Vector> hintMap = new EnumMap<DecodeHintType, Vector>(DecodeHintType.class);
-        Vector<BarcodeFormat> vector = new Vector<BarcodeFormat>(); 
-        vector.add(BarcodeFormat.DATA_MATRIX);
-        vector.add(BarcodeFormat.QR_CODE);
-        
-        hintMap.put(DecodeHintType.POSSIBLE_FORMATS, vector);
 
         BufferedInputStream in = exchange.getContext()
                 .getTypeConverter()
@@ -174,12 +165,11 @@ public class QRCodeDataFormat implements DataFormat {
         BinaryBitmap bitmap = new BinaryBitmap(
                 new HybridBinarizer(
                         new BufferedImageLuminanceSource(ImageIO.read(in))));
-        MultiFormatReader reader = new MultiFormatReader();
-        reader.setHints(hintMap);
-        Result result = reader.decodeWithState(bitmap);
+        QRCodeReader reader = new QRCodeReader();
+        Result result = reader.decode(bitmap);
         
         // write the found barcode format into the header
-        exchange.getOut().setHeader(QRCode.BARCODE_UNMARSHAL_FORMAT, result.getBarcodeFormat());
+        exchange.getOut().setHeader(QRCode.BARCODE_FORMAT, result.getBarcodeFormat());
         
         return result.getText();
     }
@@ -191,11 +181,10 @@ public class QRCodeDataFormat implements DataFormat {
      *  <li>image width: 100px</li>
      *  <li>image heigth: 100px</li>
      *  <li>encoding: UTF-8</li>
-     *  <li>barcode format: QR-Code</li>
      * </ul>
      */
     private void setDefaultParameters() {
-        this.params = new Parameters(ImageType.PNG, 100, 100, "UTF-8", BarcodeFormat.QR_CODE);
+        this.params = new Parameters(ImageType.PNG, 100, 100, "UTF-8");
     }
 
     public Parameters getParams() {

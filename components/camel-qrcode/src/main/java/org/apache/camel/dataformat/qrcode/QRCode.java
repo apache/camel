@@ -60,11 +60,6 @@ public interface QRCode {
     public final static String BARCODE_FORMAT = "QRCodeBarcodeFormat";
     
     /**
-     * Format of the barcode (please use {@link BarcodeFormat})
-     */
-    public final static String BARCODE_UNMARSHAL_FORMAT = "QRCodeUnmarshalBarcodeFormat";
-    
-    /**
      * Type of the qr-code encoding.
      */
     public final static String ENCODING = "QRCodeEncoding";
