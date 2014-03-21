@@ -187,6 +187,7 @@
     <module>camel-vertx</module>
     <module>camel-weather</module>
     <module>camel-websocket</module>
+    <module>camel-ws</module>
     <module>camel-xmlbeans</module>
     <module>camel-xmljson</module>
     <module>camel-xmlrpc</module>
