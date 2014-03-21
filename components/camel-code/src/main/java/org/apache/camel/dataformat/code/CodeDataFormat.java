@@ -177,8 +177,8 @@ public abstract class CodeDataFormat implements DataFormat {
             p = new Parameters(headers, params);
             
             // if a qrcode filename is set, take it
-            if(headers.containsKey(QRCode.NAME)) {
-                name = (String) headers.get(QRCode.NAME);
+            if(headers.containsKey(Code.NAME)) {
+                name = (String) headers.get(Code.NAME);
             } 
         } 
         
@@ -256,7 +256,7 @@ public abstract class CodeDataFormat implements DataFormat {
         Result result = reader.decode(bitmap, readerHintMap);
         
         // write the found barcode format into the header
-        exchange.getOut().setHeader(QRCode.BARCODE_FORMAT, result.getBarcodeFormat());
+        exchange.getOut().setHeader(Code.BARCODE_FORMAT, result.getBarcodeFormat());
         
         String text = result.getText();
         System.out.println("TEXT --> " + text);

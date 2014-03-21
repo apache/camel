@@ -11,30 +11,30 @@
  * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
  * or implied. See the License for the specific language governing permissions and limitations under
  * the License.
+ *//**
+ * Licensed to the Apache Software Foundation (ASF) under one or more contributor license
+ * agreements. See the NOTICE file distributed with this work for additional information regarding
+ * copyright ownership. The ASF licenses this file to You under the Apache License, Version 2.0 (the
+ * "License"); you may not use this file except in compliance with the License. You may obtain a
+ * copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under the License
+ * is distributed on an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express
+ * or implied. See the License for the specific language governing permissions and limitations under
+ * the License.
  */
 package org.apache.camel.dataformat.code;
 
-import org.apache.camel.dataformat.code.QRCode;
-import org.apache.camel.dataformat.code.ImageType;
-import org.apache.camel.dataformat.code.QRCodeDataFormat;
 import java.util.HashMap;
 import java.util.concurrent.TimeUnit;
-import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.DataFormat;
 import org.junit.Test;
 
 public class QRCodeDataFormatTest extends CodeTestBase {
-
-    private final static String MSG = "This is a testmessage!";
-
-    @EndpointInject(uri = "mock:out")
-    MockEndpoint out;
-
-    @EndpointInject(uri = "mock:image")
-    MockEndpoint image;
 
     @Test
     public void testDefaultQRCode() throws Exception {
@@ -96,8 +96,8 @@ public class QRCodeDataFormatTest extends CodeTestBase {
         out.expectedBodiesReceived(MSG);
         image.expectedMessageCount(1);
         HashMap<String, Object> headers = new HashMap<String, Object>();
-        headers.put(QRCode.WIDTH, 200);
-        headers.put(QRCode.HEIGHT, 200);
+        headers.put(Code.WIDTH, 200);
+        headers.put(Code.HEIGHT, 200);
 
         template.sendBodyAndHeaders("direct:qrcode_param", MSG, headers);
 
@@ -110,7 +110,7 @@ public class QRCodeDataFormatTest extends CodeTestBase {
         out.expectedBodiesReceived(MSG);
         image.expectedMessageCount(1);
         HashMap<String, Object> headers = new HashMap<String, Object>();
-        headers.put(QRCode.IMAGE_TYPE, ImageType.JPG);
+        headers.put(Code.IMAGE_TYPE, ImageType.JPG);
 
         template.sendBodyAndHeaders("direct:qrcode_param", MSG, headers);
 
@@ -123,9 +123,9 @@ public class QRCodeDataFormatTest extends CodeTestBase {
         out.expectedBodiesReceived(MSG);
         image.expectedMessageCount(1);
         HashMap<String, Object> headers = new HashMap<String, Object>();
-        headers.put(QRCode.WIDTH, 200);
-        headers.put(QRCode.HEIGHT, 200);
-        headers.put(QRCode.IMAGE_TYPE, ImageType.JPG);
+        headers.put(Code.WIDTH, 200);
+        headers.put(Code.HEIGHT, 200);
+        headers.put(Code.IMAGE_TYPE, ImageType.JPG);
 
         template.sendBodyAndHeaders("direct:qrcode_param", MSG, headers);
 
@@ -138,7 +138,7 @@ public class QRCodeDataFormatTest extends CodeTestBase {
         out.expectedBodiesReceived(MSG);
         image.expectedMessageCount(1);
         HashMap<String, Object> headers = new HashMap<String, Object>();
-        headers.put(QRCode.NAME, "foo");
+        headers.put(Code.NAME, "foo");
 
         template.sendBodyAndHeaders("direct:qrcode_param", MSG, headers);
 
@@ -152,10 +152,10 @@ public class QRCodeDataFormatTest extends CodeTestBase {
         out.expectedBodiesReceived(MSG);
         image.expectedMessageCount(1);
         HashMap<String, Object> headers = new HashMap<String, Object>();
-        headers.put(QRCode.WIDTH, 200);
-        headers.put(QRCode.HEIGHT, 200);
-        headers.put(QRCode.IMAGE_TYPE, ImageType.JPG);
-        headers.put(QRCode.NAME, "foo");
+        headers.put(Code.WIDTH, 200);
+        headers.put(Code.HEIGHT, 200);
+        headers.put(Code.IMAGE_TYPE, ImageType.JPG);
+        headers.put(Code.NAME, "foo");
 
         template.sendBodyAndHeaders("direct:qrcode_param", MSG, headers);
 

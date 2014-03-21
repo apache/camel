@@ -66,26 +66,26 @@ public class Parameters {
     
     private void setParameters(Map<String,Object> headers, Parameters params) {
         
-        if(headers.containsKey(QRCode.HEIGHT)) {
-            this.setHeight((Integer) headers.get(QRCode.HEIGHT));
+        if(headers.containsKey(Code.HEIGHT)) {
+            this.setHeight((Integer) headers.get(Code.HEIGHT));
         } else {
             this.setHeight(params.getHeight());
         }
         
-        if(headers.containsKey(QRCode.WIDTH)) {
-            this.setWidth((Integer) headers.get(QRCode.WIDTH));
+        if(headers.containsKey(Code.WIDTH)) {
+            this.setWidth((Integer) headers.get(Code.WIDTH));
         } else {
             this.setWidth(params.getWidth());
         }
         
-        if(headers.containsKey(QRCode.IMAGE_TYPE)) {
-            this.setType((ImageType) headers.get(QRCode.IMAGE_TYPE));
+        if(headers.containsKey(Code.IMAGE_TYPE)) {
+            this.setType((ImageType) headers.get(Code.IMAGE_TYPE));
         } else {
             this.setType(params.getType());
         }
         
-        if(headers.containsKey(QRCode.ENCODING)){
-            this.setEncoding((String) headers.get(QRCode.ENCODING));
+        if(headers.containsKey(Code.ENCODING)){
+            this.setEncoding((String) headers.get(Code.ENCODING));
         } else {
             this.setEncoding(params.getEncoding());
         }

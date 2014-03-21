@@ -17,25 +17,12 @@
 package org.apache.camel.dataformat.code;
 
 import com.google.zxing.BarcodeFormat;
-import com.google.zxing.BinaryBitmap;
-import com.google.zxing.EncodeHintType;
-import com.google.zxing.Result;
-import com.google.zxing.client.j2se.BufferedImageLuminanceSource;
-import com.google.zxing.client.j2se.MatrixToImageWriter;
-import com.google.zxing.common.BitMatrix;
-import com.google.zxing.common.HybridBinarizer;
 import com.google.zxing.qrcode.QRCodeReader;
 import com.google.zxing.qrcode.QRCodeWriter;
-import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
-import java.io.BufferedInputStream;
 import java.io.InputStream;
 import java.io.OutputStream;
-import java.util.EnumMap;
-import java.util.Map;
-import javax.imageio.ImageIO;
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.DataFormat;
-import org.apache.camel.util.ExchangeHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

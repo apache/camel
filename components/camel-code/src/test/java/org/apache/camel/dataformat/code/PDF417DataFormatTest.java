@@ -64,17 +64,6 @@ public class PDF417DataFormatTest extends CodeTestBase {
         this.checkImage(image, HEIGHT, WIDTH, ImageType.GIF.toString());
     }
     
-    @Test
-    public void testDefaultPDF417CodeWithModifiedDimension() throws Exception {
-        out.expectedBodiesReceived(MSG);
-        image.expectedMessageCount(1);
-
-        template.sendBody("direct:code4", MSG);
-
-        assertMockEndpointsSatisfied(5, TimeUnit.SECONDS);
-        this.checkImage(image, HEIGHT, WIDTH, ImageType.PNG.toString());
-    }
-    
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
@@ -100,13 +89,6 @@ public class PDF417DataFormatTest extends CodeTestBase {
                 
                 from("direct:code3")
                         .marshal(code3)
-                        .to("file:target/out");
-                
-                // dimension
-                DataFormat code4 = new PDF417DataFormat(200, 200, true);
-                
-                from("direct:code4")
-                        .marshal(code4)
                         .to("file:target/out");
 
                 // generic file read --->

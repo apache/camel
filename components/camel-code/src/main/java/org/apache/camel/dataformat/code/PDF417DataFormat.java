@@ -17,8 +17,6 @@
 package org.apache.camel.dataformat.code;
 
 import com.google.zxing.BarcodeFormat;
-import com.google.zxing.datamatrix.DataMatrixReader;
-import com.google.zxing.datamatrix.DataMatrixWriter;
 import com.google.zxing.pdf417.PDF417Reader;
 import com.google.zxing.pdf417.PDF417Writer;
 import java.io.InputStream;
@@ -28,8 +26,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- *
- * @author claus
+ * Apache Camel {@link DataFormat} component to generate a PDF417 image from a text message
+ * and vice versa.
+ * 
+ * @author claus.straube
  */
 public class PDF417DataFormat extends CodeDataFormat {
 
@@ -52,10 +52,6 @@ public class PDF417DataFormat extends CodeDataFormat {
     
     public PDF417DataFormat(boolean parameterized) {
         super(parameterized);
-    }
-
-    public PDF417DataFormat(int height, int width, boolean parameterized) {
-        super(height, width, parameterized);
     }
 
     public PDF417DataFormat(ImageType type, boolean parameterized) {

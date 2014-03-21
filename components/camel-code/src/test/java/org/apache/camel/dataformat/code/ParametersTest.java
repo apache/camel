@@ -12,10 +12,24 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
+ *//*
+ * Copyright 2014 The Apache Software Foundation.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License");
+ * you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
  */
 package org.apache.camel.dataformat.code;
 
-import org.apache.camel.dataformat.code.QRCode;
+import org.apache.camel.dataformat.code.Code;
 import org.apache.camel.dataformat.code.ImageType;
 import org.apache.camel.dataformat.code.Parameters;
 import java.util.HashMap;
@@ -110,19 +124,19 @@ public class ParametersTest {
         Map<String, Object> headers = new HashMap<String, Object>();
 
         if (type) {
-            headers.put(QRCode.IMAGE_TYPE, TYPE);
+            headers.put(Code.IMAGE_TYPE, TYPE);
         }
 
         if (width) {
-            headers.put(QRCode.WIDTH, WIDTH);
+            headers.put(Code.WIDTH, WIDTH);
         }
 
         if (height) {
-            headers.put(QRCode.HEIGHT, HEIGHT);
+            headers.put(Code.HEIGHT, HEIGHT);
         }
 
         if (encoding) {
-            headers.put(QRCode.ENCODING, ENCODING);
+            headers.put(Code.ENCODING, ENCODING);
         }
 
         return headers;
