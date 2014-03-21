@@ -12,20 +12,6 @@
  * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
  * See the License for the specific language governing permissions and
  * limitations under the License.
- *//*
- * Copyright 2014 The Apache Software Foundation.
- *
- * Licensed under the Apache License, Version 2.0 (the "License");
- * you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at
- *
- *      http://www.apache.org/licenses/LICENSE-2.0
- *
- * Unless required by applicable law or agreed to in writing, software
- * distributed under the License is distributed on an "AS IS" BASIS,
- * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
- * See the License for the specific language governing permissions and
- * limitations under the License.
  */
 
 package org.apache.camel.dataformat.qrcode;
@@ -34,6 +20,7 @@ import com.google.zxing.BarcodeFormat;
 import com.google.zxing.BinaryBitmap;
 import com.google.zxing.ChecksumException;
 import com.google.zxing.DecodeHintType;
+import com.google.zxing.Dimension;
 import com.google.zxing.EncodeHintType;
 import com.google.zxing.FormatException;
 import com.google.zxing.NotFoundException;
@@ -78,7 +65,7 @@ public abstract class CodeDataFormat implements DataFormat {
      */
     protected boolean parameterized = true;
     
-    protected final Map<EncodeHintType, ErrorCorrectionLevel> writerHintMap = new EnumMap<EncodeHintType, ErrorCorrectionLevel>(EncodeHintType.class);
+    protected final Map<EncodeHintType, Object> writerHintMap = new EnumMap<EncodeHintType, Object>(EncodeHintType.class);
     
     protected final Map<DecodeHintType, Object> readerHintMap = new EnumMap<DecodeHintType, Object>(DecodeHintType.class);
             
@@ -227,6 +214,10 @@ public abstract class CodeDataFormat implements DataFormat {
         // set values
         String type = p.getType().toString();
         String encoding = p.getEncoding(); 
+        
+        // set hints
+//        Dimension dimension = new Dimension(p.getWidth(), p.getHeight());
+//        writerHintMap.put(EncodeHintType.MIN_SIZE, dimension);
         
         // create code image  
         BitMatrix matrix = writer.encode(

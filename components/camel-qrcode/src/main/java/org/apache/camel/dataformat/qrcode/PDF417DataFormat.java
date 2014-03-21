@@ -62,10 +62,6 @@ public class PDF417DataFormat extends CodeDataFormat {
         super(type, parameterized);
     }
 
-    public PDF417DataFormat(int height, int width, ImageType type, boolean parameterized) {
-        super(height, width, type, parameterized);
-    }
-
     @Override
     public void marshal(Exchange exchange, Object graph, OutputStream stream) throws Exception {
         String payload = super.printImage(exchange, graph, stream, writer, format);

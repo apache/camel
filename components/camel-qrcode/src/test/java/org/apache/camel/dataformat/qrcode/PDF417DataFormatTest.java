@@ -26,6 +26,9 @@ import org.junit.Test;
  */
 public class PDF417DataFormatTest extends CodeTestBase {
 
+    private static final int WIDTH = 300;
+    private static final int HEIGHT = 116;
+    
     @Test
     public void testDefaultPDF417Code() throws Exception {
         out.expectedBodiesReceived(MSG);
@@ -34,7 +37,40 @@ public class PDF417DataFormatTest extends CodeTestBase {
         template.sendBody("direct:code1", MSG);
 
         assertMockEndpointsSatisfied(5, TimeUnit.SECONDS);
-        this.checkImage(image, 116, 300, ImageType.PNG.toString());
+        this.checkImage(image, HEIGHT, WIDTH, ImageType.PNG.toString());
+    }
+    
+    @Test
+    public void testDefaultPDF417CodeWithJPEG() throws Exception {
+        out.expectedBodiesReceived(MSG);
+        image.expectedMessageCount(1);
+
+        template.sendBody("direct:code2", MSG);
+
+        assertMockEndpointsSatisfied(5, TimeUnit.SECONDS);
+        this.checkImage(image, HEIGHT, WIDTH, "JPEG");
+    }
+    
+    @Test
+    public void testDefaultPDF417CodeWithGIF() throws Exception {
+        out.expectedBodiesReceived(MSG);
+        image.expectedMessageCount(1);
+
+        template.sendBody("direct:code3", MSG);
+
+        assertMockEndpointsSatisfied(5, TimeUnit.SECONDS);
+        this.checkImage(image, HEIGHT, WIDTH, ImageType.GIF.toString());
+    }
+    
+    @Test
+    public void testDefaultPDF417CodeWithModifiedDimension() throws Exception {
+        out.expectedBodiesReceived(MSG);
+        image.expectedMessageCount(1);
+
+        template.sendBody("direct:code4", MSG);
+
+        assertMockEndpointsSatisfied(5, TimeUnit.SECONDS);
+        this.checkImage(image, HEIGHT, WIDTH, ImageType.PNG.toString());
     }
     
     @Override
@@ -48,6 +84,27 @@ public class PDF417DataFormatTest extends CodeTestBase {
 
                 from("direct:code1")
                         .marshal(code1)
+                        .to("file:target/out");
+                
+                // jpeg
+                DataFormat code2 = new PDF417DataFormat(ImageType.JPG, false);
+                
+                from("direct:code2")
+                        .marshal(code2)
+                        .to("file:target/out");
+                
+                // gif
+                DataFormat code3 = new PDF417DataFormat(ImageType.GIF, false);
+                
+                from("direct:code3")
+                        .marshal(code3)
+                        .to("file:target/out");
+                
+                // dimension
+                DataFormat code4 = new PDF417DataFormat(200, 200, true);
+                
+                from("direct:code4")
+                        .marshal(code4)
                         .to("file:target/out");
 
                 // generic file read --->
