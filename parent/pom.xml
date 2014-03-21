@@ -594,6 +594,11 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
+        <artifactId>camel-code</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
         <artifactId>camel-cometd</artifactId>
         <version>${project.version}</version>
       </dependency>
@@ -1001,11 +1006,6 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-protobuf</artifactId>
-        <version>${project.version}</version>
-      </dependency>
-      <dependency>
-        <groupId>org.apache.camel</groupId>
-        <artifactId>camel-qrcode</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>

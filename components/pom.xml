@@ -68,6 +68,7 @@
     <module>camel-castor</module>
     <module>camel-cdi</module>
     <module>camel-cmis</module>
+    <module>camel-code</module>
     <module>camel-cometd</module>
     <module>camel-context</module>
     <module>camel-couchdb</module>
@@ -142,7 +143,6 @@
     <module>camel-paxlogging</module>
     <module>camel-printer</module>
     <module>camel-protobuf</module>
-    <module>camel-qrcode</module>
     <module>camel-quartz</module>
     <module>camel-quartz2</module>
     <module>camel-quickfix</module>
