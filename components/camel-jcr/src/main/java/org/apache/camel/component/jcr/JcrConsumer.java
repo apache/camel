@@ -179,11 +179,13 @@ public class JcrConsumer extends DefaultConsumer implements SuspendableService {
 
             boolean isSessionLive = false;
 
-            if (JcrConsumer.this.session != null) {
-                try {
-                    isSessionLive = JcrConsumer.this.session.isLive();
-                } catch (Exception e) {
-                    LOG.debug("Exception while checking jcr session", e);
+            synchronized (this) {
+                if (JcrConsumer.this.session != null) {
+                    try {
+                        isSessionLive = JcrConsumer.this.session.isLive();
+                    } catch (Exception e) {
+                        LOG.debug("Exception while checking jcr session", e);
+                    }
                 }
             }
 
