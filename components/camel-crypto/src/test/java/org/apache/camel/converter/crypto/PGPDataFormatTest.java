@@ -85,6 +85,7 @@ public class PGPDataFormatTest extends AbstractPGPDataFormatTest {
         encryptor.setSignaturePassword("Abcd1234");
         encryptor.setKeyUserid("keyflag");
         encryptor.setSignatureKeyUserid("keyflag");
+        encryptor.setIntegrity(false);
 
         // the following keyring contains a primary key with KeyFlag "Certify" and a subkey for signing and a subkey for encryption
         decryptor.setKeyFileName("org/apache/camel/component/crypto/secringSubKeys.gpg");

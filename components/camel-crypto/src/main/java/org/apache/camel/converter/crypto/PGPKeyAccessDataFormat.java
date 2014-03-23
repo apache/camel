@@ -398,12 +398,11 @@ public class PGPKeyAccessDataFormat extends ServiceSupport implements DataFormat
                 }
                 os.flush();
             }
+            verifySignature(pgpFactory, signature);
         } finally {
             IOHelper.close(os, litData, encData, in);
         }
-
-        verifySignature(pgpFactory, signature);
-
+      
         if (cos != null) {
             return cos.newStreamCache();
         } else {
