@@ -25,6 +25,7 @@ import javax.management.ObjectName;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.util.StringHelper;
 
 /**
  * @version 
@@ -214,6 +215,8 @@ public class ManagedCamelContextTest extends ManagementTestSupport {
         // get the json
         String json = (String) mbeanServer.invoke(on, "createRouteStaticEndpointJson", null, null);
         assertNotNull(json);
+        assertEquals(7, StringHelper.countChar(json, '{'));
+        assertEquals(7, StringHelper.countChar(json, '}'));
         assertTrue(json.contains("{ \"uri\": \"direct:start\" }"));
         assertTrue(json.contains("{ \"uri\": \"direct:foo\" }"));
     }
