@@ -1109,7 +1109,9 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
             }
             buffer.append("\n      ]");
         }
-        buffer.append("\n    }");
+        if (!firstRoute) {
+            buffer.append("\n    }");
+        }
         buffer.append("\n  }\n}\n");
 
         return buffer.toString();
