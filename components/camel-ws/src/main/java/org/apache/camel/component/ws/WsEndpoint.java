@@ -20,12 +20,9 @@ import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.CharArrayReader;
 import java.io.IOException;
-import java.net.URI;
 import java.util.HashSet;
 import java.util.Set;
 import java.util.concurrent.ExecutionException;
-
-import javax.net.ssl.SSLContext;
 
 import com.ning.http.client.AsyncHttpClient;
 import com.ning.http.client.AsyncHttpClientConfig;
@@ -39,28 +36,22 @@ import com.ning.http.client.websocket.WebSocketUpgradeHandler;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.impl.DefaultEndpoint;
-import org.apache.camel.util.jsse.SSLContextParameters;
+import org.apache.camel.component.ahc.AhcEndpoint;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  *
  */
-public class WsEndpoint extends DefaultEndpoint {
+public class WsEndpoint extends AhcEndpoint {
     private static final transient Logger LOG = LoggerFactory.getLogger(WsEndpoint.class);
 
+    // for using websocket streaming/fragments
     private static final boolean GRIZZLY_AVAILABLE = 
         probeClass("com.ning.http.client.providers.grizzly.GrizzlyAsyncHttpProvider");
     
-    private AsyncHttpClient client;
-    private AsyncHttpClientConfig clientConfig;
     private WebSocket websocket;
     private Set<WsConsumer> consumers;
-    private URI wsUri;
-    private boolean throwExceptionOnFailure = true;
-    private boolean transferException;
-    private SSLContextParameters sslContextParameters;
     private boolean useStreaming;
 
     private static boolean probeClass(String name) {
@@ -73,7 +64,7 @@ public class WsEndpoint extends DefaultEndpoint {
     }
     
     public WsEndpoint(String endpointUri, WsComponent component) {
-        super(endpointUri, component);
+        super(endpointUri, component, null);
         this.consumers = new HashSet<WsConsumer>();
     }
 
@@ -92,20 +83,13 @@ public class WsEndpoint extends DefaultEndpoint {
         return new WsConsumer(this, processor);
     }
 
-
-    @Override
-    public boolean isSingleton() {
-        return true;
-    }
-
     WebSocket getWebSocket() {
         synchronized (this) {
             if (websocket == null) {
                 try { 
                     connect();
                 } catch (Exception e) {
-                    // TODO add the throw exception in the method 
-                    e.printStackTrace();
+                    LOG.error("Failed to connect", e);
                 }
             }
         }
@@ -114,46 +98,6 @@ public class WsEndpoint extends DefaultEndpoint {
 
     void setWebSocket(WebSocket websocket) {
         this.websocket = websocket;
-    }
-
-    public AsyncHttpClientConfig getClientConfig() {
-        return clientConfig;
-    }
-
-    public void setClientConfig(AsyncHttpClientConfig clientConfig) {
-        this.clientConfig = clientConfig;
-    }
-
-    public boolean isThrowExceptionOnFailure() {
-        return throwExceptionOnFailure;
-    }
-
-    public void setThrowExceptionOnFailure(boolean throwExceptionOnFailure) {
-        this.throwExceptionOnFailure = throwExceptionOnFailure;
-    }
-
-    public boolean isTransferException() {
-        return transferException;
-    }
-
-    public void setTransferException(boolean transferException) {
-        this.transferException = transferException;
-    }
-    
-    public SSLContextParameters getSslContextParameters() {
-        return sslContextParameters;
-    }
-
-    public void setSslContextParameters(SSLContextParameters sslContextParameters) {
-        this.sslContextParameters = sslContextParameters;
-    }
-
-    public URI getWsUri() {
-        return wsUri;
-    }
-
-    public void setWsUri(URI wsUri) {
-        this.wsUri = wsUri;
     }
 
     /**
@@ -170,60 +114,36 @@ public class WsEndpoint extends DefaultEndpoint {
         this.useStreaming = useStreaming;
     }
 
+    /* (non-Javadoc)
+     * @see org.apache.camel.component.ahc.AhcEndpoint#createClient(com.ning.http.client.AsyncHttpClientConfig)
+     */
+    @Override
+    protected AsyncHttpClient createClient(AsyncHttpClientConfig config) {
+        AsyncHttpClient client;
+        if (config == null) {
+            config = new AsyncHttpClientConfig.Builder().build();
+        }
+        AsyncHttpProvider ahp = getAsyncHttpProvider(config);
+        if (ahp == null) {
+            client = new AsyncHttpClient(config);
+        } else {
+            client = new AsyncHttpClient(ahp, config);
+        }
+        return client; 
+    }
+
     public void connect() throws InterruptedException, ExecutionException, IOException {
-        websocket = client.prepareGet(wsUri.toASCIIString()).execute(
+        websocket = getClient().prepareGet(getHttpUri().toASCIIString()).execute(
             new WebSocketUpgradeHandler.Builder()
                 .addWebSocketListener(new WsListener()).build()).get();
     }
     
     @Override
-    protected void doStart() throws Exception {
-        super.doStart();
-        if (client == null) {
-            
-            AsyncHttpClientConfig config = null;
-            
-            if (clientConfig != null) {
-                AsyncHttpClientConfig.Builder builder = WsComponent.cloneConfig(clientConfig);
-                
-                if (sslContextParameters != null) {
-                    SSLContext ssl = sslContextParameters.createSSLContext();
-                    builder.setSSLContext(ssl);
-                }
-                
-                config = builder.build();
-            } else {
-                if (sslContextParameters != null) {
-                    AsyncHttpClientConfig.Builder builder = new AsyncHttpClientConfig.Builder();
-                    SSLContext ssl = sslContextParameters.createSSLContext();
-                    builder.setSSLContext(ssl);
-                    config = builder.build();
-                }
-            }
-            
-            if (config == null) {
-                config = new AsyncHttpClientConfig.Builder().build();
-            }
-            
-            AsyncHttpProvider ahp = getAsyncHttpProvider(config);
-            if (ahp == null) {
-                client = new AsyncHttpClient(config);
-            } else {
-                client = new AsyncHttpClient(ahp, config);
-            }
-        }
-    }
-
-    @Override
     protected void doStop() throws Exception {
-        super.doStop();
         if (websocket != null && websocket.isOpen()) {
             websocket.close();
         }
-        if (client != null && !client.isClosed()) {
-            client.close();
-        }
-        client = null;
+        super.doStop();
     }
 
     void connect(WsConsumer wsConsumer) {
