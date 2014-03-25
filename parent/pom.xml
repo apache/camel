@@ -383,7 +383,7 @@
     <sshd-version>0.8.0</sshd-version>
     <stompjms-version>1.19</stompjms-version>
     <stax-api-version>1.0.1</stax-api-version>
-    <stax2-api-bundle-version>3.1.1</stax2-api-bundle-version>
+    <stax2-api-bundle-version>3.1.4</stax2-api-bundle-version>
     <stringtemplate-bundle-version>4.0.2_2</stringtemplate-bundle-version>
     <stringtemplate-version>4.0.2</stringtemplate-version>
     <taglist-maven-plugin-version>2.4</taglist-maven-plugin-version>
