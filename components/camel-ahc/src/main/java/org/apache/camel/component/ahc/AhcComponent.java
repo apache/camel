@@ -50,11 +50,11 @@ public class AhcComponent extends HeaderFilterStrategyComponent {
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        String addressUri = remaining;
+        String addressUri = createAddressUri(uri, remaining);
 
         // Do not set the HTTP URI because we still have all of the Camel internal
         // parameters in the URI at this point.
-        AhcEndpoint endpoint = new AhcEndpoint(uri, this, null);
+        AhcEndpoint endpoint = createAhcEndpoint(uri, this, null);
         setEndpointHeaderFilterStrategy(endpoint);
         endpoint.setClient(getClient());
         endpoint.setClientConfig(getClientConfig());
@@ -145,7 +145,15 @@ public class AhcComponent extends HeaderFilterStrategyComponent {
     public void setSslContextParameters(SSLContextParameters sslContextParameters) {
         this.sslContextParameters = sslContextParameters;
     }
-    
+
+    protected String createAddressUri(String uri, String remaining) {
+        return remaining;
+    }
+
+    protected AhcEndpoint createAhcEndpoint(String endpointUri, AhcComponent component, URI httpUri) {
+        return new AhcEndpoint(endpointUri, component, httpUri);
+    }
+
     /**
      * Creates a new client configuration builder using {@code clientConfig} as a template for
      * the builder.
