@@ -19,7 +19,7 @@ package org.apache.camel.component.kafka;
 import kafka.producer.Partitioner;
 import kafka.utils.VerifiableProperties;
 
-public class SimplePartitioner implements Partitioner<String> {
+public class SimplePartitioner implements Partitioner {
 
     public SimplePartitioner(VerifiableProperties props) {
     }
@@ -31,7 +31,7 @@ public class SimplePartitioner implements Partitioner<String> {
      * @return an integer between 0 and numPartitions-1
      */
     @Override
-    public int partition(String key, int numPartitions) {
+    public int partition(Object key, int numPartitions) {
         return key.hashCode() % numPartitions;
     }
 

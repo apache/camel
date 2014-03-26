@@ -18,8 +18,10 @@ package org.apache.camel.component.kafka;
 
 import java.net.URISyntaxException;
 
+import kafka.message.Message;
 import kafka.message.MessageAndMetadata;
 
+import kafka.serializer.DefaultDecoder;
 import org.apache.camel.Exchange;
 import org.junit.Test;
 
@@ -32,8 +34,10 @@ public class KafkaEndpointTest {
     public void testCreatingKafkaExchangeSetsHeaders() throws URISyntaxException {
         KafkaEndpoint endpoint = new KafkaEndpoint("kafka:localhost", "localhost", new KafkaComponent());
 
+        Message message = new Message("mymessage".getBytes(), "somekey".getBytes());
+        DefaultDecoder decoder = new DefaultDecoder(null);
         MessageAndMetadata<byte[], byte[]> mm =
-                new MessageAndMetadata<byte[], byte[]>("somekey".getBytes(), "mymessage".getBytes(), "topic", 4, 56);
+                new MessageAndMetadata<byte[], byte[]>("topic", 4, message, 56, decoder, decoder);
 
         Exchange exchange = endpoint.createKafkaExchange(mm);
         assertEquals("somekey", exchange.getIn().getHeader(KafkaConstants.KEY));
