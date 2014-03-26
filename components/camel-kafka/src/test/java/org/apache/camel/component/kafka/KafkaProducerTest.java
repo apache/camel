@@ -70,6 +70,46 @@ public class KafkaProducerTest {
         Mockito.verify(producer.producer).send(Matchers.any(KeyedMessage.class));
     }
 
+    @Test
+    public void processSendsMesssageWithTopicHeaderAndNoTopicInEndPoint() throws Exception {
+
+        endpoint.setTopic(null);
+        Mockito.when(exchange.getIn()).thenReturn(in);
+        in.setHeader(KafkaConstants.PARTITION_KEY, "4");
+        in.setHeader(KafkaConstants.TOPIC, "anotherTopic");
+
+        producer.process(exchange);
+
+        ArgumentCaptor<KeyedMessage> captor = ArgumentCaptor.forClass(KeyedMessage.class);
+        Mockito.verify(producer.producer).send(captor.capture());
+        assertEquals("4", captor.getValue().key());
+        assertEquals("anotherTopic", captor.getValue().topic());
+    }
+
+    @Test
+    public void processSendsMesssageWithTopicHeaderAndEndPoint() throws Exception {
+
+        endpoint.setTopic("sometopic");
+        Mockito.when(exchange.getIn()).thenReturn(in);
+        in.setHeader(KafkaConstants.PARTITION_KEY, "4");
+        in.setHeader(KafkaConstants.TOPIC, "anotherTopic");
+
+        producer.process(exchange);
+
+        ArgumentCaptor<KeyedMessage> captor = ArgumentCaptor.forClass(KeyedMessage.class);
+        Mockito.verify(producer.producer).send(captor.capture());
+        assertEquals("4", captor.getValue().key());
+        assertEquals("anotherTopic", captor.getValue().topic());
+    }
+
+    @Test(expected = CamelException.class)
+    public void processRequiresTopicInEndpointOrInHeader() throws Exception {
+        endpoint.setTopic(null);
+        Mockito.when(exchange.getIn()).thenReturn(in);
+        in.setHeader(KafkaConstants.PARTITION_KEY, "4");
+        producer.process(exchange);
+    }
+
     @Test(expected = CamelException.class)
     public void processRequiresPartitionHeader() throws Exception {
         endpoint.setTopic("sometopic");
