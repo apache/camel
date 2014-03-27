@@ -17,13 +17,14 @@
 package org.apache.camel.component.kafka;
 
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
+import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+import java.util.concurrent.TimeUnit;
 
 import kafka.consumer.ConsumerConfig;
 import kafka.consumer.ConsumerIterator;
@@ -47,6 +48,7 @@ import org.junit.Test;
 public class KafkaProducerIT extends CamelTestSupport {
 
     public static final String TOPIC = "test";
+    public static final String TOPIC_IN_HEADER = "testHeader";
 
     @EndpointInject(uri = "kafka:localhost:9092?topic=" + TOPIC + "&partitioner=org.apache.camel.component.kafka.SimplePartitioner")
     private Endpoint to;
@@ -86,40 +88,63 @@ public class KafkaProducerIT extends CamelTestSupport {
 
     @Test
     public void producedMessageIsReceivedByKafka() throws InterruptedException, IOException {
+        int messageInTopic = 10;
+        int messageInOtherTopic = 5;
 
-        final List<String> messages = new ArrayList<String>();
+        CountDownLatch messagesLatch = new CountDownLatch(messageInTopic + messageInOtherTopic);
 
         Map<String, Integer> topicCountMap = new HashMap<String, Integer>();
         topicCountMap.put(TOPIC, 5);
+        topicCountMap.put(TOPIC_IN_HEADER, 5);
+        createKafkaMessageConsumer(messagesLatch, topicCountMap);
+
+        sendMessagesInRoute(messageInTopic, "IT test message", KafkaConstants.PARTITION_KEY, "1");
+        sendMessagesInRoute(messageInOtherTopic, "IT test message in other topic", KafkaConstants.PARTITION_KEY, "1", KafkaConstants.TOPIC, TOPIC_IN_HEADER);
+
+        boolean allMessagesReceived = messagesLatch.await(200, TimeUnit.MILLISECONDS);
+
+        assertTrue("Not all messages were published to the kafka topics", allMessagesReceived);
+    }
+
+    private void createKafkaMessageConsumer(CountDownLatch messagesLatch, Map<String, Integer> topicCountMap) {
         Map<String, List<KafkaStream<byte[], byte[]>>> consumerMap = kafkaConsumer.createMessageStreams(topicCountMap);
-        List<KafkaStream<byte[], byte[]>> streams = consumerMap.get(TOPIC);
 
-        ExecutorService executor = Executors.newFixedThreadPool(5);
-        for (final KafkaStream stream : streams) {
-            executor.submit(new Runnable() {
-                @Override
-                public void run() {
-                    ConsumerIterator<byte[], byte[]> it = stream.iterator();
-                    while (it.hasNext()) {
-                        String msg = new String(it.next().message());
-                        messages.add(msg);
-                    }
-                }
-            });
+        ExecutorService executor = Executors.newFixedThreadPool(10);
+        for (final KafkaStream stream : consumerMap.get(TOPIC)) {
+            executor.submit(new KakfaTopicConsumer(stream, messagesLatch));
+        }
+        for (final KafkaStream stream : consumerMap.get(TOPIC_IN_HEADER)) {
+            executor.submit(new KakfaTopicConsumer(stream, messagesLatch));
+        }
+    }
+
+    private void sendMessagesInRoute(int messageInOtherTopic, String bodyOther, String... headersWithValue) {
+        Map<String, Object> headerMap = new HashMap<String, Object>();
+        for (int i = 0; i < headersWithValue.length; i = i + 2) {
+            headerMap.put(headersWithValue[i], headersWithValue[i + 1]);
         }
 
-        for (int k = 0; k < 10; k++) {
-            template.sendBodyAndHeader("IT test message", KafkaConstants.PARTITION_KEY, "1");
+        for (int k = 0; k < messageInOtherTopic; k++) {
+            template.sendBodyAndHeaders(bodyOther, headerMap);
+        }
+    }
+
+    private static class KakfaTopicConsumer implements Runnable {
+        private final KafkaStream stream;
+        private final CountDownLatch latch;
+
+        public KakfaTopicConsumer(KafkaStream stream, CountDownLatch latch) {
+            this.stream = stream;
+            this.latch = latch;
         }
 
-        for (int k = 0; k < 20; k++) {
-            if (messages.size() == 10) {
-                return;
+        @Override
+        public void run() {
+            ConsumerIterator<byte[], byte[]> it = stream.iterator();
+            while (it.hasNext()) {
+                String msg = new String(it.next().message());
+                latch.countDown();
             }
-            Thread.sleep(200);
         }
-
-        fail();
     }
 }
-
