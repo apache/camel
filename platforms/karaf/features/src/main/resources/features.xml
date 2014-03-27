@@ -59,6 +59,11 @@
     <bundle dependency='true'>mvn:io.netty/netty/${netty3-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-ahc/${project.version}</bundle>
   </feature>
+  <feature name='camel-ahc-ws' version='${project.version}' resolver='(obr)' start-level='50'>
+    <feature version='${project.version}'>camel-core</feature>
+    <feature version='${project.version}'>camel-ahc</feature>
+    <bundle>mvn:org.apache.camel/camel-ahc-ws/${project.version}</bundle>
+  </feature>
   <feature name='camel-amqp' version='${project.version}' resolver='(obr)' start-level='50'>
     <bundle dependency='true'>mvn:commons-lang/commons-lang/${commons-lang-version}</bundle>
     <bundle dependency='true'>mvn:commons-collections/commons-collections/${commons-collections-version}</bundle>
@@ -1186,11 +1191,6 @@
     <feature version='${project.version}'>camel-core</feature>
     <bundle dependency='true'>mvn:org.apache.geronimo.specs/geronimo-servlet_3.0_spec/${geronimo-servlet-spec-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-websocket/${project.version}</bundle>
-  </feature>
-  <feature name='camel-ws' version='${project.version}' resolver='(obr)' start-level='50'>
-    <feature version='${project.version}'>camel-core</feature>
-    <feature version='${project.version}'>camel-ahc</feature>
-    <bundle>mvn:org.apache.camel/camel-ws/${project.version}</bundle>
   </feature>
   <feature name='camel-xmlbeans' version='${project.version}' resolver='(obr)' start-level='50'>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.ant/${ant-bundle-version}</bundle>

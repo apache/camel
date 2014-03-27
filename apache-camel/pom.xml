@@ -57,6 +57,10 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
+      <artifactId>camel-ahc-ws</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
       <artifactId>camel-amqp</artifactId>
     </dependency>
     <dependency>
@@ -645,10 +649,6 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-websocket</artifactId>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-ws</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>

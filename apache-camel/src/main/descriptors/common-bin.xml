@@ -25,6 +25,7 @@
       <scope>runtime</scope>
       <includes>
         <include>org.apache.camel:camel-ahc</include>
+        <include>org.apache.camel:camel-ahc-ws</include>
         <include>org.apache.camel:camel-amqp</include>
         <include>org.apache.camel:camel-apns</include>
         <include>org.apache.camel:camel-atom</include>
@@ -173,7 +174,6 @@
         <include>org.apache.camel:camel-vertx</include>
         <include>org.apache.camel:camel-weather</include>
         <include>org.apache.camel:camel-websocket</include>
-        <include>org.apache.camel:camel-ws</include>
         <include>org.apache.camel:camel-xmlbeans</include>
         <include>org.apache.camel:camel-xmljson</include>
         <include>org.apache.camel:camel-xmlrpc</include>

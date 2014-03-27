@@ -55,6 +55,7 @@
 
     <!-- regular modules in alphabetic order -->
     <module>camel-ahc</module>
+    <module>camel-ahc-ws</module>
     <module>camel-amqp</module>
     <module>camel-apns</module>
     <module>camel-atom</module>
@@ -187,7 +188,6 @@
     <module>camel-vertx</module>
     <module>camel-weather</module>
     <module>camel-websocket</module>
-    <module>camel-ws</module>
     <module>camel-xmlbeans</module>
     <module>camel-xmljson</module>
     <module>camel-xmlrpc</module>
