@@ -35,12 +35,7 @@ import org.apache.camel.impl.DefaultMessage;
 public class KafkaEndpoint extends DefaultEndpoint {
 
     private String brokers;
-    private String zookeeperHost;
-    private int zookeeperPort;
-    private String groupId;
-    private int consumerStreams = 10;
-    private String partitioner;
-    private String topic;
+    private KafkaConfiguration configuration = new KafkaConfiguration();
 
     public KafkaEndpoint() {
     }
@@ -52,69 +47,19 @@ public class KafkaEndpoint extends DefaultEndpoint {
         this.brokers = remaining.split("\\?")[0];
     }
 
-    public String getZookeeperHost() {
-        return zookeeperHost;
+    public KafkaConfiguration getConfiguration() {
+        if(configuration == null) {
+            configuration = createConfiguration();
+        }
+        return configuration;
     }
 
-    public void setZookeeperHost(String zookeeperHost) {
-        this.zookeeperHost = zookeeperHost;
+    public void setConfiguration(KafkaConfiguration configuration) {
+        this.configuration = configuration;
     }
 
-    public int getZookeeperPort() {
-        return zookeeperPort;
-    }
-
-    public void setZookeeperPort(int zookeeperPort) {
-        this.zookeeperPort = zookeeperPort;
-    }
-
-    public String getGroupId() {
-        return groupId;
-    }
-
-    public void setGroupId(String groupId) {
-        this.groupId = groupId;
-    }
-
-    public String getPartitioner() {
-        return partitioner;
-    }
-
-    public void setPartitioner(String partitioner) {
-        this.partitioner = partitioner;
-    }
-
-    public String getTopic() {
-        return topic;
-    }
-
-    public void setTopic(String topic) {
-        this.topic = topic;
-    }
-
-    public String getBrokers() {
-        return brokers;
-    }
-
-    public int getConsumerStreams() {
-        return consumerStreams;
-    }
-
-    public void setConsumerStreams(int consumerStreams) {
-        this.consumerStreams = consumerStreams;
-    }
-
-    public Exchange createKafkaExchange(MessageAndMetadata<byte[], byte[]> mm) {
-        Exchange exchange = new DefaultExchange(getCamelContext(), getExchangePattern());
-
-        Message message = new DefaultMessage();
-        message.setHeader(KafkaConstants.PARTITION, mm.partition());
-        message.setHeader(KafkaConstants.TOPIC, mm.topic());
-        message.setHeader(KafkaConstants.KEY, new String(mm.key()));
-        message.setBody(mm.message());
-        exchange.setIn(message);
-
-        return exchange;
+    protected KafkaConfiguration createConfiguration() {
+        return new KafkaConfiguration();
     }
 
     @Override
@@ -135,7 +80,76 @@ public class KafkaEndpoint extends DefaultEndpoint {
     }
 
     public ExecutorService createExecutor() {
-        return getCamelContext().getExecutorServiceManager().newFixedThreadPool(this, "KafkaTopic[" + getTopic() + "]", getConsumerStreams());
+        return getCamelContext().getExecutorServiceManager().newFixedThreadPool(this, "KafkaTopic[" + configuration.getTopic() + "]", configuration.getConsumerStreams());
+    }
+
+    public Exchange createKafkaExchange(MessageAndMetadata<byte[], byte[]> mm) {
+        Exchange exchange = new DefaultExchange(getCamelContext(), getExchangePattern());
+
+        Message message = new DefaultMessage();
+        message.setHeader(KafkaConstants.PARTITION, mm.partition());
+        message.setHeader(KafkaConstants.TOPIC, mm.topic());
+        message.setHeader(KafkaConstants.KEY, new String(mm.key()));
+        message.setBody(mm.message());
+        exchange.setIn(message);
+
+        return exchange;
+    }
+
+
+    // Delegated properties from the configuration
+    //-------------------------------------------------------------------------
+
+    public String getZookeeperHost() {
+        return configuration.getZookeeperHost();
+    }
+
+    public void setZookeeperHost(String zookeeperHost) {
+        configuration.setZookeeperHost(zookeeperHost);
+    }
+
+    public int getZookeeperPort() {
+        return configuration.getZookeeperPort();
+    }
+
+    public void setZookeeperPort(int zookeeperPort) {
+        configuration.setZookeeperPort(zookeeperPort);
+    }
+
+    public String getGroupId() {
+        return configuration.getGroupId();
+    }
+
+    public void setGroupId(String groupId) {
+        configuration.setGroupId(groupId);
+    }
+
+    public String getPartitioner() {
+        return configuration.getPartitioner();
+    }
+
+    public void setPartitioner(String partitioner) {
+        configuration.setPartitioner(partitioner);
+    }
+
+    public String getTopic() {
+        return configuration.getTopic();
+    }
+
+    public void setTopic(String topic) {
+        configuration.setTopic(topic);
+    }
+
+    public String getBrokers() {
+        return brokers;
+    }
+
+    public int getConsumerStreams() {
+        return configuration.getConsumerStreams();
+    }
+
+    public void setConsumerStreams(int consumerStreams) {
+        configuration.setConsumerStreams(consumerStreams);
     }
 
 }
