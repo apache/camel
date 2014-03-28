@@ -201,11 +201,10 @@ public class RoutingSlip extends ServiceSupport implements AsyncProcessor, Trace
                 break;
             }
 
-            // prepare and process the routing slip
-            Exchange copy = prepareExchangeForRoutingSlip(current, endpoint);
-            boolean sync = processExchange(endpoint, copy, exchange, callback, iter);
-            current = copy;
-
+            //process and prepare the routing slip
+            boolean sync = processExchange(endpoint, current, exchange, callback, iter);
+            current = prepareExchangeForRoutingSlip(current, endpoint);
+            
             if (!sync) {
                 log.trace("Processing exchangeId: {} is continued being processed asynchronously", exchange.getExchangeId());
                 // the remainder of the routing slip will be completed async
@@ -298,7 +297,7 @@ public class RoutingSlip extends ServiceSupport implements AsyncProcessor, Trace
                         }
 
                         // continue processing the routing slip asynchronously
-                        Exchange current = exchange;
+                        Exchange current = prepareExchangeForRoutingSlip(exchange, endpoint);
 
                         while (iter.hasNext(current)) {
 
@@ -333,9 +332,8 @@ public class RoutingSlip extends ServiceSupport implements AsyncProcessor, Trace
                             }
 
                             // prepare and process the routing slip
-                            Exchange copy = prepareExchangeForRoutingSlip(current, endpoint);
-                            boolean sync = processExchange(endpoint, copy, original, callback, iter);
-                            current = copy;
+                            boolean sync = processExchange(endpoint, current, original, callback, iter);
+                            current = prepareExchangeForRoutingSlip(current, endpoint);
 
                             if (!sync) {
                                 log.trace("Processing exchangeId: {} is continued being processed asynchronously", original.getExchangeId());
