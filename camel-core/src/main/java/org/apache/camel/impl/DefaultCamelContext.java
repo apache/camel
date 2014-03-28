@@ -1912,6 +1912,8 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
 
         // and clear start date
         startDate = null;
+
+        Container.Instance.unmanage(this);
     }
 
     /**
