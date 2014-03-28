@@ -51,6 +51,7 @@ import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.ProcessorFactory;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.spi.RouteStartupOrder;
+import org.apache.camel.spi.RuntimeEndpointRegistry;
 import org.apache.camel.spi.ServicePool;
 import org.apache.camel.spi.ShutdownStrategy;
 import org.apache.camel.spi.StreamCachingStrategy;
@@ -1259,12 +1260,21 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
     String getComponentDocumentation(String componentName) throws IOException;
 
     /**
-     * Creates a JSON representation of all the <b>static</b> configured endpoints defined in the given route(s).
+     * Creates a JSON representation of all the <b>static</b> and <b>dynamic</b> configured endpoints defined in the given route(s).
      *
      * @param routeId for a particular route, or <tt>null</tt> for all routes
      * @return a JSON string
      */
     String createRouteStaticEndpointJson(String routeId);
+
+    /**
+     * Creates a JSON representation of all the <b>static</b> (and possible <b>dynamic</b>) configured endpoints defined in the given route(s).
+     *
+     * @param routeId for a particular route, or <tt>null</tt> for all routes
+     * @param includeDynamic whether to include dynamic endpoints
+     * @return a JSON string
+     */
+    String createRouteStaticEndpointJson(String routeId, boolean includeDynamic);
 
     /**
      * Gets the {@link StreamCachingStrategy} to use.
@@ -1285,5 +1295,15 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      * Sets a custom {@link UnitOfWorkFactory} to use.
      */
     void setUnitOfWorkFactory(UnitOfWorkFactory unitOfWorkFactory);
+
+    /**
+     * Gets the {@link org.apache.camel.spi.RuntimeEndpointRegistry} to use, or <tt>null</tt> if none is in use.
+     */
+    RuntimeEndpointRegistry getRuntimeEndpointRegistry();
+
+    /**
+     * Sets a custom {@link org.apache.camel.spi.RuntimeEndpointRegistry} to use.
+     */
+    void setRuntimeEndpointRegistry(RuntimeEndpointRegistry runtimeEndpointRegistry);
 
 }

@@ -81,6 +81,7 @@ import org.apache.camel.spi.NodeIdFactory;
 import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.PackageScanFilter;
 import org.apache.camel.spi.ProcessorFactory;
+import org.apache.camel.spi.RuntimeEndpointRegistry;
 import org.apache.camel.spi.ShutdownStrategy;
 import org.apache.camel.spi.StreamCachingStrategy;
 import org.apache.camel.spi.ThreadPoolFactory;
@@ -215,6 +216,11 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         if (unitOfWorkFactory != null) {
             LOG.info("Using custom UnitOfWorkFactory: {}", unitOfWorkFactory);
             getContext().setUnitOfWorkFactory(unitOfWorkFactory);
+        }
+        RuntimeEndpointRegistry runtimeEndpointRegistry = getBeanForType(RuntimeEndpointRegistry.class);
+        if (runtimeEndpointRegistry != null) {
+            LOG.info("Using custom RuntimeEndpointRegistry: {}", runtimeEndpointRegistry);
+            getContext().setRuntimeEndpointRegistry(runtimeEndpointRegistry);
         }
         // set the event notifier strategies if defined
         Map<String, EventNotifier> eventNotifiers = getContext().getRegistry().findByTypeWithName(EventNotifier.class);
@@ -571,6 +577,8 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
 
     public abstract String getAllowUseOriginalMessage();
 
+    public abstract String getRuntimeEndpointRegistryEnabled();
+
     public abstract String getManagementNamePattern();
 
     public abstract String getThreadNamePattern();
@@ -646,6 +654,9 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         }
         if (getAllowUseOriginalMessage() != null) {
             ctx.setAllowUseOriginalMessage(CamelContextHelper.parseBoolean(getContext(), getAllowUseOriginalMessage()));
+        }
+        if (getRuntimeEndpointRegistryEnabled() != null) {
+            ctx.getRuntimeEndpointRegistry().setEnabled(CamelContextHelper.parseBoolean(getContext(), getRuntimeEndpointRegistryEnabled()));
         }
         if (getManagementNamePattern() != null) {
             ctx.getManagementNameStrategy().setNamePattern(getManagementNamePattern());

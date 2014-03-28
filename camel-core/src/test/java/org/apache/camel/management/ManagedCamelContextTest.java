@@ -217,8 +217,8 @@ public class ManagedCamelContextTest extends ManagementTestSupport {
         assertNotNull(json);
         assertEquals(7, StringHelper.countChar(json, '{'));
         assertEquals(7, StringHelper.countChar(json, '}'));
-        assertTrue(json.contains("{ \"uri\": \"direct:start\" }"));
-        assertTrue(json.contains("{ \"uri\": \"direct:foo\" }"));
+        assertTrue(json.contains("{ \"uri\": \"direct://start\" }"));
+        assertTrue(json.contains("{ \"uri\": \"direct://foo\" }"));
     }
 
     @Override

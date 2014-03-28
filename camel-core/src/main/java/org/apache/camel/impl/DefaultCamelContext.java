@@ -116,6 +116,7 @@ import org.apache.camel.spi.ProcessorFactory;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.RouteStartupOrder;
+import org.apache.camel.spi.RuntimeEndpointRegistry;
 import org.apache.camel.spi.ServicePool;
 import org.apache.camel.spi.ShutdownStrategy;
 import org.apache.camel.spi.StreamCachingStrategy;
@@ -212,6 +213,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     private InterceptStrategy defaultBacklogTracer;
     private InterceptStrategy defaultBacklogDebugger;
     private InflightRepository inflightRepository = new DefaultInflightRepository();
+    private RuntimeEndpointRegistry runtimeEndpointRegistry = new DefaultRuntimeEndpointRegistry();
     private final List<RouteStartupOrder> routeStartupOrder = new ArrayList<RouteStartupOrder>();
     // start auto assigning route ids using numbering 1000 and upwards
     private int defaultRouteStartupOrder = 1000;
@@ -1058,6 +1060,11 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     }
 
     public String createRouteStaticEndpointJson(String routeId) {
+        // lets include dynamic as well as we want as much data as possible
+        return createRouteStaticEndpointJson(routeId, true);
+    }
+
+    public String createRouteStaticEndpointJson(String routeId, boolean includeDynamic) {
         List<RouteDefinition> routes = new ArrayList<RouteDefinition>();
         if (routeId != null) {
             RouteDefinition route = getRouteDefinition(routeId);
@@ -1081,7 +1088,8 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
             String id = route.getId();
             buffer.append("\n    \"" + id + "\": {");
             buffer.append("\n      \"inputs\": [");
-            Set<String> inputs = RouteDefinitionHelper.gatherAllStaticEndpointUris(route, true, false);
+            // for inputs we do not need to check dynamic as we have the data from the route definition
+            Set<String> inputs = RouteDefinitionHelper.gatherAllStaticEndpointUris(this, route, true, false);
             boolean first = true;
             for (String input : inputs) {
                 if (!first) {
@@ -1096,7 +1104,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
 
             buffer.append(",");
             buffer.append("\n      \"outputs\": [");
-            Set<String> outputs = RouteDefinitionHelper.gatherAllStaticEndpointUris(route, false, true);
+            Set<String> outputs = RouteDefinitionHelper.gatherAllEndpointUris(this, route, false, true, includeDynamic);
             first = true;
             for (String output : outputs) {
                 if (!first) {
@@ -1522,6 +1530,14 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         this.unitOfWorkFactory = unitOfWorkFactory;
     }
 
+    public RuntimeEndpointRegistry getRuntimeEndpointRegistry() {
+        return runtimeEndpointRegistry;
+    }
+
+    public void setRuntimeEndpointRegistry(RuntimeEndpointRegistry runtimeEndpointRegistry) {
+        this.runtimeEndpointRegistry = runtimeEndpointRegistry;
+    }
+
     public String getUptime() {
         // compute and log uptime
         if (startDate == null) {
@@ -1772,6 +1788,13 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         addService(inflightRepository);
         addService(shutdownStrategy);
         addService(packageScanClassResolver);
+
+        if (runtimeEndpointRegistry != null) {
+            if (runtimeEndpointRegistry instanceof EventNotifier) {
+                getManagementStrategy().addEventNotifier((EventNotifier) runtimeEndpointRegistry);
+            }
+            addService(runtimeEndpointRegistry);
+        }
 
         // eager lookup any configured properties component to avoid subsequent lookup attempts which may impact performance
         // due we use properties component for property placeholder resolution at runtime
@@ -2369,6 +2392,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         getLanguageResolver();
         getTypeConverterRegistry();
         getTypeConverter();
+        getRuntimeEndpointRegistry();
 
         if (isTypeConverterStatisticsEnabled() != null) {
             getTypeConverterRegistry().getStatistics().setStatisticsEnabled(isTypeConverterStatisticsEnabled());

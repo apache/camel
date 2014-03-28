@@ -258,7 +258,10 @@ public interface ManagedCamelContextMBean extends ManagedPerformanceCounterMBean
     @ManagedOperation(description = "Returns the HTML documentation for the given camel component")
     String getComponentDocumentation(String componentName) throws IOException;
 
-    @ManagedOperation(description = "Returns the JSON representation of all the static endpoints defined in all the routes")
+    @ManagedOperation(description = "Returns the JSON representation of all the static and dynamic endpoints defined in all the routes")
     String createRouteStaticEndpointJson();
+
+    @ManagedOperation(description = "Returns the JSON representation of all the static endpoints (and possible dynamic) defined in all the routes")
+    String createRouteStaticEndpointJson(boolean includeDynamic);
 
 }

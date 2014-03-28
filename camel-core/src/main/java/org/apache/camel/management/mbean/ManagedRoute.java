@@ -362,6 +362,11 @@ public class ManagedRoute extends ManagedPerformanceCounter implements TimerList
     }
 
     @Override
+    public String createRouteStaticEndpointJson(boolean includeDynamic) {
+        return getContext().createRouteStaticEndpointJson(getRouteId(), includeDynamic);
+    }
+
+    @Override
     public boolean equals(Object o) {
         return this == o || (o != null && getClass() == o.getClass() && route.equals(((ManagedRoute)o).route));
     }

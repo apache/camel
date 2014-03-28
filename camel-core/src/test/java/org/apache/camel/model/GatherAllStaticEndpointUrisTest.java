@@ -25,23 +25,23 @@ public class GatherAllStaticEndpointUrisTest extends ContextTestSupport {
 
     public void testGatherAllStaticEndpointUris() throws Exception {
         RouteDefinition route = context.getRouteDefinition("foo");
-        Set<String> uris = RouteDefinitionHelper.gatherAllStaticEndpointUris(route, true, true);
+        Set<String> uris = RouteDefinitionHelper.gatherAllStaticEndpointUris(context, route, true, true);
         assertNotNull(uris);
         assertEquals(5, uris.size());
 
         RouteDefinition route2 = context.getRouteDefinition("bar");
-        Set<String> uris2 = RouteDefinitionHelper.gatherAllStaticEndpointUris(route2, true, true);
+        Set<String> uris2 = RouteDefinitionHelper.gatherAllStaticEndpointUris(context, route2, true, true);
         assertNotNull(uris2);
         assertEquals(2, uris2.size());
 
-        Set<String> uris2out = RouteDefinitionHelper.gatherAllStaticEndpointUris(route2, false, true);
+        Set<String> uris2out = RouteDefinitionHelper.gatherAllStaticEndpointUris(context, route2, false, true);
         assertNotNull(uris2out);
         assertEquals(1, uris2out.size());
 
         String json = context.createRouteStaticEndpointJson(null);
         assertNotNull(json);
-        assertTrue(json.contains("{ \"uri\": \"direct:foo\" }"));
-        assertTrue(json.contains("{ \"uri\": \"seda:bar\" }"));
+        assertTrue(json.contains("{ \"uri\": \"direct://foo\" }"));
+        assertTrue(json.contains("{ \"uri\": \"seda://bar\" }"));
     }
 
     @Override

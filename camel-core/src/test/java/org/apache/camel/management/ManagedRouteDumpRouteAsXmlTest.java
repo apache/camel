@@ -70,8 +70,8 @@ public class ManagedRouteDumpRouteAsXmlTest extends ManagementTestSupport {
         String json = (String) mbeanServer.invoke(on, "createRouteStaticEndpointJson", null, null);
         assertNotNull(json);
         assertTrue(json.contains("\"myRoute\""));
-        assertTrue(json.contains("{ \"uri\": \"direct:start\" }"));
-        assertTrue(json.contains("{ \"uri\": \"mock:result\" }"));
+        assertTrue(json.contains("{ \"uri\": \"direct://start\" }"));
+        assertTrue(json.contains("{ \"uri\": \"mock://result\" }"));
     }
 
 
