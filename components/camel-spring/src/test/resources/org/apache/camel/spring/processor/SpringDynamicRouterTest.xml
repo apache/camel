@@ -37,7 +37,6 @@
         <route>
             <from uri="direct:foo"/>
             <transform><constant>Bye World</constant></transform>
-            <to uri="mock:foo"/>
         </route>
 
     </camelContext>

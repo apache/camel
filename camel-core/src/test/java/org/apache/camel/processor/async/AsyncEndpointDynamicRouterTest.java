@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.processor;
+package org.apache.camel.processor.async;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,31 +22,25 @@ import java.util.List;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 
-/**
- * @version 
- */
-public class DynamicRouterTest extends ContextTestSupport {
+public class AsyncEndpointDynamicRouterTest extends ContextTestSupport {
 
     private static int invoked;
-    private static List<String> bodies = new ArrayList<String>();
-
-    public void testDynamicRouter() throws Exception {
-        getMockEndpoint("mock:a").expectedBodiesReceived("Hello World");
-        getMockEndpoint("mock:b").expectedBodiesReceived("Hello World");
-        getMockEndpoint("mock:c").expectedBodiesReceived("Hello World");
+    private static List<String> bodies = new ArrayList<String>();    
+    
+    public void testAsyncEndpoint() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Bye World");
 
-        template.sendBody("direct:start", "Hello World");
+        String reply = template.requestBody("direct:start", "Hello Camel", String.class);
+        assertEquals("Bye World", reply);
 
         assertMockEndpointsSatisfied();
-
-        assertEquals(5, invoked);
-        assertEquals(5, bodies.size());
-        assertEquals("Hello World", bodies.get(0));
-        assertEquals("Hello World", bodies.get(1));
-        assertEquals("Hello World", bodies.get(2));
+        
+        assertEquals(4, invoked);
+        assertEquals(4, bodies.size());
+        assertEquals("Hello Camel", bodies.get(0));
+        assertEquals("Bye Camel", bodies.get(1));
+        assertEquals("Bye World", bodies.get(2));
         assertEquals("Bye World", bodies.get(3));
-        assertEquals("Bye World", bodies.get(4));
     }
 
     @Override
@@ -54,18 +48,16 @@ public class DynamicRouterTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                // START SNIPPET: e1
-                from("direct:start")
-                    // use a bean as the dynamic router
-                    .dynamicRouter(method(DynamicRouterTest.class, "slip"));
-                // END SNIPPET: e1
+                context.addComponent("async", new MyAsyncComponent());
 
+                from("direct:start")
+                    .dynamicRouter(method(AsyncEndpointDynamicRouterTest.class, "slip"));
+                
                 from("direct:foo").transform(constant("Bye World"));
             }
         };
     }
-
-    // START SNIPPET: e2
+    
     /**
      * Use this method to compute dynamic where we should route next.
      *
@@ -77,18 +69,15 @@ public class DynamicRouterTest extends ContextTestSupport {
         invoked++;
 
         if (invoked == 1) {
-            return "mock:a";
+            return "async:bye:camel";
         } else if (invoked == 2) {
-            return "mock:b,mock:c";
-        } else if (invoked == 3) {
             return "direct:foo";
-        } else if (invoked == 4) {
+        } else if (invoked == 3) {
             return "mock:result";
         }
 
         // no more so return null
         return null;
-    }
-    // END SNIPPET: e2
+    }    
 
 }
