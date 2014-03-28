@@ -109,6 +109,8 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
     @XmlAttribute(required = false)
     private String allowUseOriginalMessage;
     @XmlAttribute(required = false)
+    private String runtimeEndpointRegistryEnabled;
+    @XmlAttribute(required = false)
     private String managementNamePattern;
     @XmlAttribute(required = false)
     private String threadNamePattern;
@@ -577,6 +579,14 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
 
     public void setAllowUseOriginalMessage(String allowUseOriginalMessage) {
         this.allowUseOriginalMessage = allowUseOriginalMessage;
+    }
+
+    public String getRuntimeEndpointRegistryEnabled() {
+        return runtimeEndpointRegistryEnabled;
+    }
+
+    public void setRuntimeEndpointRegistryEnabled(String runtimeEndpointRegistryEnabled) {
+        this.runtimeEndpointRegistryEnabled = runtimeEndpointRegistryEnabled;
     }
 
     public String getManagementNamePattern() {

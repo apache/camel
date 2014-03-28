@@ -16,6 +16,8 @@
  */
 package org.apache.camel.model;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
@@ -27,6 +29,7 @@ import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.EndpointHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.URISupport;
 
 import static org.apache.camel.model.ProcessorDefinitionHelper.filterTypeInOutputs;
 
@@ -50,12 +53,25 @@ public final class RouteDefinitionHelper {
      * @param includeOutputs whether to include outputs
      * @return the endpoints uris
      */
-    public static Set<String> gatherAllStaticEndpointUris(RouteDefinition route, boolean includeInputs, boolean includeOutputs) {
+    public static Set<String> gatherAllStaticEndpointUris(CamelContext camelContext, RouteDefinition route, boolean includeInputs, boolean includeOutputs) {
+        return gatherAllEndpointUris(camelContext, route, includeInputs, includeOutputs, false);
+    }
+
+    /**
+     * Gather all the endpoint uri's the route is using from the EIPs that has a static or dynamic endpoint defined.
+     *
+     * @param route          the route
+     * @param includeInputs  whether to include inputs
+     * @param includeOutputs whether to include outputs
+     * @param includeDynamic whether to include dynamic outputs which has been in use during routing at runtime, gathered from the {@link org.apache.camel.spi.RuntimeEndpointRegistry}.
+     * @return the endpoints uris
+     */
+    public static Set<String> gatherAllEndpointUris(CamelContext camelContext, RouteDefinition route, boolean includeInputs, boolean includeOutputs, boolean includeDynamic) {
         Set<String> answer = new LinkedHashSet<String>();
 
         if (includeInputs) {
             for (FromDefinition from : route.getInputs()) {
-                String uri = from.getEndpointUri();
+                String uri = normalizeUri(from.getEndpointUri());
                 if (uri != null) {
                     answer.add(uri);
                 }
@@ -65,12 +81,33 @@ public final class RouteDefinitionHelper {
         if (includeOutputs) {
             Iterator<EndpointRequiredDefinition> it = filterTypeInOutputs(route.getOutputs(), EndpointRequiredDefinition.class);
             while (it.hasNext()) {
-                String uri = it.next().getEndpointUri();
-                answer.add(uri);
+                String uri = normalizeUri(it.next().getEndpointUri());
+                if (uri != null) {
+                    answer.add(uri);
+                }
+            }
+            if (includeDynamic && camelContext.getRuntimeEndpointRegistry() != null) {
+                List<String> endpoints = camelContext.getRuntimeEndpointRegistry().getEndpointsPerRoute(route.getId(), false);
+                for (String uri : endpoints) {
+                    if (uri != null) {
+                        answer.add(uri);
+                    }
+                }
             }
         }
 
         return answer;
+    }
+
+    private static String normalizeUri(String uri) {
+        try {
+            return URISupport.normalizeUri(uri);
+        } catch (UnsupportedEncodingException e) {
+            // ignore
+        } catch (URISyntaxException e) {
+            // ignore
+        }
+        return null;
     }
 
     /**
