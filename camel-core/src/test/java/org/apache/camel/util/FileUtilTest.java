@@ -221,4 +221,15 @@ public class FileUtilTest extends TestCase {
         assertFalse(tmpDir.exists());
     }
 
+    public void testRenameUsingDelete() throws Exception {
+        File file = new File("target/foo.txt");
+        if (!file.exists()) {
+            FileUtil.createNewFile(file);
+        }
+        
+        File target = new File("target/bar.txt");
+        FileUtil.renameFileUsingCopy(file, target);
+        assertTrue("File not copied", target.exists());
+        assertFalse("File not deleted", file.exists());
+    }
 }
