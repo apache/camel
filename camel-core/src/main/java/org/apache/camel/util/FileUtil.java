@@ -425,17 +425,41 @@ public final class FileUtil {
         if (!renamed && copyAndDeleteOnRenameFail) {
             // now do a copy and delete as all rename attempts failed
             LOG.debug("Cannot rename file from: {} to: {}, will now use a copy/delete approach instead", from, to);
-            copyFile(from, to);
-            if (!deleteFile(from)) {
-                throw new IOException("Renaming file from: " + from + " to: " + to + " failed due cannot delete from file: " + from + " after copy succeeded");
-            } else {
-                renamed = true;
-            }
+            renameFileUsingCopy(from, to);
         }
 
         if (LOG.isDebugEnabled() && count > 0) {
             LOG.debug("Tried {} to rename file: {} to: {} with result: {}", new Object[]{count, from, to, renamed});
         }
+        return renamed;
+    }
+
+    /**
+     * Rename file using copy and delete strategy. This is primarily used in
+     * environments where the regular rename operation is unreliable.
+     * 
+     * @param from the file to be renamed
+     * @param to the new target file
+     * @return <tt>true</tt> if the file was renamed successfully, otherwise <tt>false</tt>
+     * @throws IOException If an I/O error occurs during copy or delete operations.
+     */
+    public static boolean renameFileUsingCopy(File from, File to) throws IOException {
+        // do not try to rename non existing files
+        if (!from.exists()) {
+            return false;
+        }
+
+        boolean renamed = false;
+
+        LOG.debug("Rename file '{}' to '{}' using copy/delete strategy.", from, to);
+
+        copyFile(from, to);
+        if (!deleteFile(from)) {
+            throw new IOException("Renaming file from '" + from + "' to '" + to + "' failed: Cannot delete file '" + from + "' after copy succeeded");
+        } else {
+            renamed = true;
+        }
+
         return renamed;
     }
 

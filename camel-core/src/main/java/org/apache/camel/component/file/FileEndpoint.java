@@ -41,6 +41,8 @@ public class FileEndpoint extends GenericFileEndpoint<File> {
     @UriParam
     private boolean copyAndDeleteOnRenameFail = true;
     @UriParam
+    private boolean renameUsingCopy;
+    @UriParam
     private boolean forceWrites = true;
 
     public FileEndpoint() {
@@ -172,6 +174,14 @@ public class FileEndpoint extends GenericFileEndpoint<File> {
 
     public void setCopyAndDeleteOnRenameFail(boolean copyAndDeleteOnRenameFail) {
         this.copyAndDeleteOnRenameFail = copyAndDeleteOnRenameFail;
+    }
+
+    public boolean isRenameUsingCopy() {
+        return renameUsingCopy;
+    }
+
+    public void setRenameUsingCopy(boolean renameUsingCopy) {
+        this.renameUsingCopy = renameUsingCopy;
     }
 
     public boolean isForceWrites() {
