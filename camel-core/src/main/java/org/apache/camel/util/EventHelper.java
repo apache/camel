@@ -323,6 +323,62 @@ public final class EventHelper {
         }
     }
 
+    public static void notifyRouteAdded(CamelContext context, Route route) {
+        ManagementStrategy management = context.getManagementStrategy();
+        if (management == null) {
+            return;
+        }
+
+        List<EventNotifier> notifiers = management.getEventNotifiers();
+        if (notifiers == null || notifiers.isEmpty()) {
+            return;
+        }
+
+        for (EventNotifier notifier : notifiers) {
+            if (notifier.isIgnoreRouteEvents()) {
+                continue;
+            }
+
+            EventFactory factory = management.getEventFactory();
+            if (factory == null) {
+                return;
+            }
+            EventObject event = factory.createRouteAddedEvent(route);
+            if (event == null) {
+                return;
+            }
+            doNotifyEvent(notifier, event);
+        }
+    }
+
+    public static void notifyRouteRemoved(CamelContext context, Route route) {
+        ManagementStrategy management = context.getManagementStrategy();
+        if (management == null) {
+            return;
+        }
+
+        List<EventNotifier> notifiers = management.getEventNotifiers();
+        if (notifiers == null || notifiers.isEmpty()) {
+            return;
+        }
+
+        for (EventNotifier notifier : notifiers) {
+            if (notifier.isIgnoreRouteEvents()) {
+                continue;
+            }
+
+            EventFactory factory = management.getEventFactory();
+            if (factory == null) {
+                return;
+            }
+            EventObject event = factory.createRouteRemovedEvent(route);
+            if (event == null) {
+                return;
+            }
+            doNotifyEvent(notifier, event);
+        }
+    }
+
     public static void notifyExchangeCreated(CamelContext context, Exchange exchange) {
         if (exchange.getProperty(Exchange.NOTIFY_EVENT, false, Boolean.class)) {
             // do not generate events for an notify event

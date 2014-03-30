@@ -120,6 +120,22 @@ public interface EventFactory {
     EventObject createRouteStoppedEvent(Route route);
 
     /**
+     * Creates an {@link EventObject} for {@link Route} has been added successfully.
+     *
+     * @param route the route
+     * @return the created event
+     */
+    EventObject createRouteAddedEvent(Route route);
+
+    /**
+     * Creates an {@link EventObject} for {@link Route} has been removed successfully.
+     *
+     * @param route the route
+     * @return the created event
+     */
+    EventObject createRouteRemovedEvent(Route route);
+
+    /**
      * Creates an {@link EventObject} when an {@link org.apache.camel.Exchange} has been created
      *
      * @param exchange the exchange

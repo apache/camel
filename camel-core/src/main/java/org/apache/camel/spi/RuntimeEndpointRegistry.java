@@ -53,20 +53,21 @@ public interface RuntimeEndpointRegistry extends Service {
     void reset();
 
     /**
-     * Number of endpoints in the cache.
+     * Number of endpoints currently in the cache.
      */
     int size();
 
     /**
-     * Gets all the endpoint uris captured during runtime that are in-use.
+     * Gets all the endpoint uris captured during runtime routing that are in-use of the routes.
      *
      * @param includeInputs whether to include route inputs
      */
     List<String> getAllEndpoints(boolean includeInputs);
 
     /**
-     * Gets all the endpoint uris from the given route captured during runtime that are in-use.
+     * Gets all the endpoint uris captured from the given route during runtime routing that are in-use of the routes.
      *
+     * @param routeId       the route id
      * @param includeInputs whether to include route inputs
      */
     List<String> getEndpointsPerRoute(String routeId, boolean includeInputs);
