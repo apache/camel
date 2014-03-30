@@ -156,6 +156,9 @@ public class RouteService extends ChildServiceSupport {
                     }
                 }
                 startChildService(route, childServices);
+
+                // fire event
+                EventHelper.notifyRouteAdded(camelContext, route);
             }
 
             // ensure lifecycle strategy is invoked which among others enlist the route in JMX
@@ -273,6 +276,8 @@ public class RouteService extends ChildServiceSupport {
                     routePolicy.onRemove(route);
                 }
             }
+            // fire event
+            EventHelper.notifyRouteRemoved(camelContext, route);
         }
 
         // need to call onRoutesRemove when the CamelContext is shutting down or Route is shutdown
