@@ -63,12 +63,9 @@ public class KafkaConsumer extends DefaultConsumer {
     }
 
     Properties getProps() {
-        Properties props = new Properties();
+        Properties props = endpoint.getConfiguration().createConsumerProperties();
         props.put("zookeeper.connect", endpoint.getZookeeperHost() + ":" + endpoint.getZookeeperPort());
         props.put("group.id", endpoint.getGroupId());
-        props.put("zookeeper.session.timeout.ms", "400");
-        props.put("zookeeper.sync.time.ms", "200");
-        props.put("auto.commit.interval.ms", "1000");
         return props;
     }
 
