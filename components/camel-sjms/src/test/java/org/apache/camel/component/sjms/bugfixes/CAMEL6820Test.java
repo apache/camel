@@ -31,7 +31,7 @@ import org.junit.Test;
  * support the Camel File Component more cleanly along with better support 
  * for ByteMessages. 
  */
-public class CAMEL_6820Test extends JmsTestSupport {
+public class CAMEL6820Test extends JmsTestSupport {
 
     private static final String TEST_DATA_DIR = "target/testdata";
     private static final String FILE_OUTPUT_URI = "file:" + TEST_DATA_DIR;
