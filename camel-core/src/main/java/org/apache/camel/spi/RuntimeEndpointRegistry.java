@@ -36,14 +36,14 @@ public interface RuntimeEndpointRegistry extends Service {
     void setEnabled(boolean enabled);
 
     /**
-     * Maximum number of endpoints to keep in the cache.
+     * Maximum number of endpoints to keep in the cache per route.
      * <p/>
      * The default value is <tt>1000</tt>
      */
     int getLimit();
 
     /**
-     * Sets the maximum number of endpoints to keep in the cache.
+     * Sets the maximum number of endpoints to keep in the cache per route.
      */
     void setLimit(int limit);
 
