@@ -45,12 +45,9 @@ public final class SqlConstants {
     public static final String SQL_GENERATED_COLUMNS = "CamelGeneratedColumns";
 
     /**
-     * <tt>org.springframework.jdbc.support.KeyHolder</tt> output header containing the generated keys retrieved
-     * 
-     * @see <a href="http://docs.spring.io/spring/docs/3.2.x/javadoc-api/org/springframework/jdbc/support/KeyHolder.html">
-     *      org.springframework.jdbc.support.KeyHolder</a>
+     * <tt>List<Map<String, Object>></tt> output header containing the generated keys retrieved
      */
-    public static final String SQL_GENERATED_KEY_HOLDER = "CamelSqlGeneratedKeyHolder";
+    public static final String SQL_GENERATED_KEYS_DATA = "CamelSqlGeneratedKeyRows";
 
     private SqlConstants() {
         // Utility class

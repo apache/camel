@@ -21,6 +21,7 @@ import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.sql.Statement;
+import java.util.Collections;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -30,8 +31,6 @@ import org.apache.camel.impl.DefaultProducer;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCallback;
 import org.springframework.jdbc.core.PreparedStatementCreator;
-import org.springframework.jdbc.support.GeneratedKeyHolder;
-import org.springframework.jdbc.support.KeyHolder;
 
 public class SqlProducer extends DefaultProducer {
     private String query;
@@ -159,11 +158,10 @@ public class SqlProducer extends DefaultProducer {
                 if (shouldRetrieveGeneratedKeys) {
                     if (isResultSet) {
                         // we won't return generated keys for SELECT statements
-                        exchange.getOut().setHeader(SqlConstants.SQL_GENERATED_KEY_HOLDER, new GeneratedKeyHolder());
+                        exchange.getOut().setHeader(SqlConstants.SQL_GENERATED_KEYS_DATA, Collections.EMPTY_LIST);
                     } else {
                         List<Map<String, Object>> generatedKeys = getEndpoint().queryForList(ps.getGeneratedKeys());
-                        KeyHolder holder = new GeneratedKeyHolder(generatedKeys);
-                        exchange.getOut().setHeader(SqlConstants.SQL_GENERATED_KEY_HOLDER, holder);
+                        exchange.getOut().setHeader(SqlConstants.SQL_GENERATED_KEYS_DATA, generatedKeys);
                     }
                 }
 
