@@ -1,6 +1,7 @@
 package org.apache.camel.component.kafka;
 
-import kafka.consumer.ConsumerConfig;
+import java.util.Properties;
+
 import kafka.producer.DefaultPartitioner;
 
 public class KafkaConfiguration {
@@ -15,48 +16,77 @@ public class KafkaConfiguration {
     private String clientId = null;
 
     //Consumer configuration properties
-    private String consumerId = null;
-    private int socketTimeoutMs = ConsumerConfig.SocketTimeout();
-    private int socketReceiveBufferBytes = ConsumerConfig.SocketBufferSize();
-    private int fetchMessageMaxBytes = ConsumerConfig.FetchSize();
-    private boolean autoCommitEnable = ConsumerConfig.AutoCommit();
-    private int autoCommitIntervalMs = ConsumerConfig.AutoCommitInterval();
-    private int queuedMaxMessages = ConsumerConfig.MaxQueuedChunks();
-    private int rebalanceMaxRetries = ConsumerConfig.MaxRebalanceRetries();
-    private int fetchMinBytes = ConsumerConfig.MinFetchBytes();
-    private int fetchWaitMaxMs = ConsumerConfig.MaxFetchWaitMs();
-    private Integer rebalanceBackoffMs = null;
-    private int refreshLeaderBackoffMs = ConsumerConfig.RefreshMetadataBackoffMs();
-    private String autoOffsetReset = ConsumerConfig.AutoOffsetReset();
-    private int consumerTimeoutMs = ConsumerConfig.ConsumerTimeoutMs();
+    private String consumerId;
+    private Integer socketTimeoutMs;
+    private Integer socketReceiveBufferBytes;
+    private Integer fetchMessageMaxBytes;
+    private Boolean autoCommitEnable;
+    private Integer autoCommitIntervalMs;
+    private Integer queuedMaxMessages;
+    private Integer rebalanceMaxRetries;
+    private Integer fetchMinBytes;
+    private Integer fetchWaitMaxMs;
+    private Integer rebalanceBackoffMs;
+    private Integer refreshLeaderBackoffMs;
+    private String autoOffsetReset;
+    private Integer consumerTimeoutMs;
 
     //Zookeepr configuration properties
-    private int zookeeperSessionTimeoutMs = 6000;
-    private Integer zookeeperConnectionTimeoutMs = null;
-    private int zookeeperSyncTimeMs = 2000;
+    private Integer zookeeperSessionTimeoutMs;
+    private Integer zookeeperConnectionTimeoutMs;
+    private Integer zookeeperSyncTimeMs;
 
     //Producer configuration properties
-    private String producerType = "sync";
-    private String compressionCodec = "none";
-    private String compressedTopics = null;
-    private int messageSendMaxRetries = 3;
-    private int retryBackoffMs = 100;
-    private int topicMetadataRefreshIntervalMs = 600 * 1000;
+    private String producerType;
+    private String compressionCodec;
+    private String compressedTopics;
+    private Integer messageSendMaxRetries;
+    private Integer retryBackoffMs;
+    private Integer topicMetadataRefreshIntervalMs;
 
     //Sync producer config
-    private int sendBufferBytes = 100 * 1024;
-    private short requestRequiredAcks = 0;
-    private int requestTimeoutMs = 10000;
+    private Integer sendBufferBytes;
+    private short requestRequiredAcks;
+    private Integer requestTimeoutMs;
 
     //Async producer config
-    private int queueBufferingMaxMs = 5000;
-    private int queueBufferingMaxMessages = 10000;
-    private int queueEnqueueTimeoutMs = -1;
-    private int batchNumMessages = 200;
-    private String serializerClass = kafka.serializer.DefaultEncoder.class.getCanonicalName();
-    private String keySerializerClass = "";
+    private Integer queueBufferingMaxMs;
+    private Integer queueBufferingMaxMessages;
+    private Integer queueEnqueueTimeoutMs;
+    private Integer batchNumMessages;
+    private String serializerClass;
+    private String keySerializerClass;
 
     public KafkaConfiguration() {
+    }
+
+    public Properties createProducerProperties() {
+        Properties props = new Properties();
+        addPropertyIfNotNull(props, "request.required.acks", getRequestRequiredAcks());
+        addPropertyIfNotNull(props, "partitioner.class", getPartitioner());
+        addPropertyIfNotNull(props, "serializer.class", getSerializerClass());
+        addPropertyIfNotNull(props, "key.serializer.class", getKeySerializerClass());
+        addPropertyIfNotNull(props, "request.timeout.ms", getRequestTimeoutMs());
+        addPropertyIfNotNull(props, "producer.type", getProducerType());
+        addPropertyIfNotNull(props, "compression.codec", getCompressionCodec());
+        addPropertyIfNotNull(props, "compressed.topics", getCompressedTopics());
+        addPropertyIfNotNull(props, "message.send.max.retries", getMessageSendMaxRetries());
+        addPropertyIfNotNull(props, "retry.backoff.ms", getRetryBackoffMs());
+        addPropertyIfNotNull(props, "topic.metadata.refresh.interval.ms", getTopicMetadataRefreshIntervalMs());
+        addPropertyIfNotNull(props, "queue.buffering.max.ms", getQueueBufferingMaxMs());
+        addPropertyIfNotNull(props, "queue.buffering.max.messages", getQueueBufferingMaxMessages());
+        addPropertyIfNotNull(props, "queue.enqueue.timeout.ms", getQueueEnqueueTimeoutMs());
+        addPropertyIfNotNull(props, "batch.num.messages", getBatchNumMessages());
+        addPropertyIfNotNull(props, "send.buffer.bytes", getSendBufferBytes());
+        addPropertyIfNotNull(props, "client.id", getClientId());
+        return props;
+    }
+
+    private static <T> void addPropertyIfNotNull(Properties props, String key, T value) {
+        if(value != null) {
+            // Kafka expects all properties as String
+            props.put(key, value.toString());
+        }
     }
 
     public String getZookeeperHost() {
@@ -123,75 +153,75 @@ public class KafkaConfiguration {
         this.consumerId = consumerId;
     }
 
-    public int getSocketTimeoutMs() {
+    public Integer getSocketTimeoutMs() {
         return socketTimeoutMs;
     }
 
-    public void setSocketTimeoutMs(int socketTimeoutMs) {
+    public void setSocketTimeoutMs(Integer socketTimeoutMs) {
         this.socketTimeoutMs = socketTimeoutMs;
     }
 
-    public int getSocketReceiveBufferBytes() {
+    public Integer getSocketReceiveBufferBytes() {
         return socketReceiveBufferBytes;
     }
 
-    public void setSocketReceiveBufferBytes(int socketReceiveBufferBytes) {
+    public void setSocketReceiveBufferBytes(Integer socketReceiveBufferBytes) {
         this.socketReceiveBufferBytes = socketReceiveBufferBytes;
     }
 
-    public int getFetchMessageMaxBytes() {
+    public Integer getFetchMessageMaxBytes() {
         return fetchMessageMaxBytes;
     }
 
-    public void setFetchMessageMaxBytes(int fetchMessageMaxBytes) {
+    public void setFetchMessageMaxBytes(Integer fetchMessageMaxBytes) {
         this.fetchMessageMaxBytes = fetchMessageMaxBytes;
     }
 
-    public boolean isAutoCommitEnable() {
+    public Boolean isAutoCommitEnable() {
         return autoCommitEnable;
     }
 
-    public void setAutoCommitEnable(boolean autoCommitEnable) {
+    public void setAutoCommitEnable(Boolean autoCommitEnable) {
         this.autoCommitEnable = autoCommitEnable;
     }
 
-    public int getAutoCommitIntervalMs() {
+    public Integer getAutoCommitIntervalMs() {
         return autoCommitIntervalMs;
     }
 
-    public void setAutoCommitIntervalMs(int autoCommitIntervalMs) {
+    public void setAutoCommitIntervalMs(Integer autoCommitIntervalMs) {
         this.autoCommitIntervalMs = autoCommitIntervalMs;
     }
 
-    public int getQueuedMaxMessages() {
+    public Integer getQueuedMaxMessages() {
         return queuedMaxMessages;
     }
 
-    public void setQueuedMaxMessages(int queuedMaxMessages) {
+    public void setQueuedMaxMessages(Integer queuedMaxMessages) {
         this.queuedMaxMessages = queuedMaxMessages;
     }
 
-    public int getRebalanceMaxRetries() {
+    public Integer getRebalanceMaxRetries() {
         return rebalanceMaxRetries;
     }
 
-    public void setRebalanceMaxRetries(int rebalanceMaxRetries) {
+    public void setRebalanceMaxRetries(Integer rebalanceMaxRetries) {
         this.rebalanceMaxRetries = rebalanceMaxRetries;
     }
 
-    public int getFetchMinBytes() {
+    public Integer getFetchMinBytes() {
         return fetchMinBytes;
     }
 
-    public void setFetchMinBytes(int fetchMinBytes) {
+    public void setFetchMinBytes(Integer fetchMinBytes) {
         this.fetchMinBytes = fetchMinBytes;
     }
 
-    public int getFetchWaitMaxMs() {
+    public Integer getFetchWaitMaxMs() {
         return fetchWaitMaxMs;
     }
 
-    public void setFetchWaitMaxMs(int fetchWaitMaxMs) {
+    public void setFetchWaitMaxMs(Integer fetchWaitMaxMs) {
         this.fetchWaitMaxMs = fetchWaitMaxMs;
     }
 
@@ -203,11 +233,11 @@ public class KafkaConfiguration {
         this.rebalanceBackoffMs = rebalanceBackoffMs;
     }
 
-    public int getRefreshLeaderBackoffMs() {
+    public Integer getRefreshLeaderBackoffMs() {
         return refreshLeaderBackoffMs;
     }
 
-    public void setRefreshLeaderBackoffMs(int refreshLeaderBackoffMs) {
+    public void setRefreshLeaderBackoffMs(Integer refreshLeaderBackoffMs) {
         this.refreshLeaderBackoffMs = refreshLeaderBackoffMs;
     }
 
@@ -219,19 +249,19 @@ public class KafkaConfiguration {
         this.autoOffsetReset = autoOffsetReset;
     }
 
-    public int getConsumerTimeoutMs() {
+    public Integer getConsumerTimeoutMs() {
         return consumerTimeoutMs;
     }
 
-    public void setConsumerTimeoutMs(int consumerTimeoutMs) {
+    public void setConsumerTimeoutMs(Integer consumerTimeoutMs) {
         this.consumerTimeoutMs = consumerTimeoutMs;
     }
 
-    public int getZookeeperSessionTimeoutMs() {
+    public Integer getZookeeperSessionTimeoutMs() {
         return zookeeperSessionTimeoutMs;
     }
 
-    public void setZookeeperSessionTimeoutMs(int zookeeperSessionTimeoutMs) {
+    public void setZookeeperSessionTimeoutMs(Integer zookeeperSessionTimeoutMs) {
         this.zookeeperSessionTimeoutMs = zookeeperSessionTimeoutMs;
     }
 
@@ -243,11 +273,11 @@ public class KafkaConfiguration {
         this.zookeeperConnectionTimeoutMs = zookeeperConnectionTimeoutMs;
     }
 
-    public int getZookeeperSyncTimeMs() {
+    public Integer getZookeeperSyncTimeMs() {
         return zookeeperSyncTimeMs;
     }
 
-    public void setZookeeperSyncTimeMs(int zookeeperSyncTimeMs) {
+    public void setZookeeperSyncTimeMs(Integer zookeeperSyncTimeMs) {
         this.zookeeperSyncTimeMs = zookeeperSyncTimeMs;
     }
 
@@ -275,35 +305,35 @@ public class KafkaConfiguration {
         this.compressedTopics = compressedTopics;
     }
 
-    public int getMessageSendMaxRetries() {
+    public Integer getMessageSendMaxRetries() {
         return messageSendMaxRetries;
     }
 
-    public void setMessageSendMaxRetries(int messageSendMaxRetries) {
+    public void setMessageSendMaxRetries(Integer messageSendMaxRetries) {
         this.messageSendMaxRetries = messageSendMaxRetries;
     }
 
-    public int getRetryBackoffMs() {
+    public Integer getRetryBackoffMs() {
         return retryBackoffMs;
     }
 
-    public void setRetryBackoffMs(int retryBackoffMs) {
+    public void setRetryBackoffMs(Integer retryBackoffMs) {
         this.retryBackoffMs = retryBackoffMs;
     }
 
-    public int getTopicMetadataRefreshIntervalMs() {
+    public Integer getTopicMetadataRefreshIntervalMs() {
         return topicMetadataRefreshIntervalMs;
     }
 
-    public void setTopicMetadataRefreshIntervalMs(int topicMetadataRefreshIntervalMs) {
+    public void setTopicMetadataRefreshIntervalMs(Integer topicMetadataRefreshIntervalMs) {
         this.topicMetadataRefreshIntervalMs = topicMetadataRefreshIntervalMs;
     }
 
-    public int getSendBufferBytes() {
+    public Integer getSendBufferBytes() {
         return sendBufferBytes;
     }
 
-    public void setSendBufferBytes(int sendBufferBytes) {
+    public void setSendBufferBytes(Integer sendBufferBytes) {
         this.sendBufferBytes = sendBufferBytes;
     }
 
@@ -315,43 +345,43 @@ public class KafkaConfiguration {
         this.requestRequiredAcks = requestRequiredAcks;
     }
 
-    public int getRequestTimeoutMs() {
+    public Integer getRequestTimeoutMs() {
         return requestTimeoutMs;
     }
 
-    public void setRequestTimeoutMs(int requestTimeoutMs) {
+    public void setRequestTimeoutMs(Integer requestTimeoutMs) {
         this.requestTimeoutMs = requestTimeoutMs;
     }
 
-    public int getQueueBufferingMaxMs() {
+    public Integer getQueueBufferingMaxMs() {
         return queueBufferingMaxMs;
     }
 
-    public void setQueueBufferingMaxMs(int queueBufferingMaxMs) {
+    public void setQueueBufferingMaxMs(Integer queueBufferingMaxMs) {
         this.queueBufferingMaxMs = queueBufferingMaxMs;
     }
 
-    public int getQueueBufferingMaxMessages() {
+    public Integer getQueueBufferingMaxMessages() {
         return queueBufferingMaxMessages;
     }
 
-    public void setQueueBufferingMaxMessages(int queueBufferingMaxMessages) {
+    public void setQueueBufferingMaxMessages(Integer queueBufferingMaxMessages) {
         this.queueBufferingMaxMessages = queueBufferingMaxMessages;
     }
 
-    public int getQueueEnqueueTimeoutMs() {
+    public Integer getQueueEnqueueTimeoutMs() {
         return queueEnqueueTimeoutMs;
     }
 
-    public void setQueueEnqueueTimeoutMs(int queueEnqueueTimeoutMs) {
+    public void setQueueEnqueueTimeoutMs(Integer queueEnqueueTimeoutMs) {
         this.queueEnqueueTimeoutMs = queueEnqueueTimeoutMs;
     }
 
-    public int getBatchNumMessages() {
+    public Integer getBatchNumMessages() {
         return batchNumMessages;
     }
 
-    public void setBatchNumMessages(int batchNumMessages) {
+    public void setBatchNumMessages(Integer batchNumMessages) {
         this.batchNumMessages = batchNumMessages;
     }
 
