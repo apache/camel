@@ -82,6 +82,29 @@ public class KafkaConfiguration {
         return props;
     }
 
+    public Properties createConsumerProperties() {
+        Properties props = new Properties();
+        addPropertyIfNotNull(props, "consumer.id", getConsumerId());
+        addPropertyIfNotNull(props, "socket.timeout.ms", getSocketTimeoutMs());
+        addPropertyIfNotNull(props, "socket.receive.buffer.bytes", getSocketReceiveBufferBytes());
+        addPropertyIfNotNull(props, "fetch.message.max.bytes", getFetchMessageMaxBytes());
+        addPropertyIfNotNull(props, "auto.commit.enable", isAutoCommitEnable());
+        addPropertyIfNotNull(props, "auto.commit.interval.ms", getAutoCommitIntervalMs());
+        addPropertyIfNotNull(props, "queued.max.message.chunks", getQueueBufferingMaxMessages());
+        addPropertyIfNotNull(props, "fetch.min.bytes", getFetchMinBytes());
+        addPropertyIfNotNull(props, "fetch.wait.max.ms", getFetchWaitMaxMs());
+        addPropertyIfNotNull(props, "rebalance.max.retries", getRebalanceMaxRetries());
+        addPropertyIfNotNull(props, "rebalance.backoff.ms", getRebalanceBackoffMs());
+        addPropertyIfNotNull(props, "refresh.leader.backoff.ms", getRefreshLeaderBackoffMs());
+        addPropertyIfNotNull(props, "auto.offset.reset", getAutoOffsetReset());
+        addPropertyIfNotNull(props, "consumer.timeout.ms", getConsumerTimeoutMs());
+        addPropertyIfNotNull(props, "client.id", getClientId());
+        addPropertyIfNotNull(props, "zookeeper.session.timeout.ms ", getZookeeperSessionTimeoutMs());
+        addPropertyIfNotNull(props, "zookeeper.connection.timeout.ms", getZookeeperConnectionTimeoutMs());
+        addPropertyIfNotNull(props, "zookeeper.sync.time.ms ", getZookeeperSyncTimeMs());
+        return props;
+    }
+
     private static <T> void addPropertyIfNotNull(Properties props, String key, T value) {
         if(value != null) {
             // Kafka expects all properties as String
