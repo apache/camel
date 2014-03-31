@@ -91,7 +91,6 @@ public class InOutConcurrentConsumerTest extends JmsTestSupport {
                             Thread.sleep(1000);
                             exchange.getOut().setBody("Bye " + body);
                             exchange.getOut().setHeader("threadName", Thread.currentThread().getName());
-                            System.out.println("Thread ID : " + Thread.currentThread().getName());
                         }
                     });
             }
