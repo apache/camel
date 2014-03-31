@@ -30,8 +30,6 @@ import org.junit.Test;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabase;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseBuilder;
 import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
-import org.springframework.jdbc.support.KeyHolder;
-
 
 public class SqlGeneratedKeysTest extends CamelTestSupport {
 
@@ -70,6 +68,7 @@ public class SqlGeneratedKeysTest extends CamelTestSupport {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void testRetrieveGeneratedKey() throws Exception {
         // first we create our exchange using the endpoint
         Endpoint endpoint = context.getEndpoint("direct:insert");
@@ -84,20 +83,21 @@ public class SqlGeneratedKeysTest extends CamelTestSupport {
         // assertions of the response
         assertNotNull(out);
         assertNotNull(out.getOut());
-        assertNotNull(out.getIn().getHeader(SqlConstants.SQL_GENERATED_KEY_HOLDER));
+        assertNotNull(out.getIn().getHeader(SqlConstants.SQL_GENERATED_KEYS_DATA));
 
-        KeyHolder generatedKeys = out.getIn().getHeader(SqlConstants.SQL_GENERATED_KEY_HOLDER, KeyHolder.class);
-        assertNotNull("out body could not be converted to a KeyHolder - was: "
+        List<Map<String, Object>> generatedKeys = out.getIn().getHeader(SqlConstants.SQL_GENERATED_KEYS_DATA, List.class);
+        assertNotNull("out body could not be converted to a List - was: "
                 + out.getIn().getBody(), generatedKeys);
-        assertEquals(1, generatedKeys.getKeyList().get(0).size());
+        assertEquals(1, generatedKeys.get(0).size());
 
-        Map<String, Object> row = generatedKeys.getKeys();
+        Map<String, Object> row = generatedKeys.get(0);
         assertEquals("auto increment value should be 3", Integer.valueOf(3), row.get("ID"));
 
-        assertEquals("generated keys row count should be one", 1, generatedKeys.getKeyList().size());
+        assertEquals("generated keys row count should be one", 1, generatedKeys.size());
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void testRetrieveGeneratedKeys() throws Exception {
         // first we create our exchange using the endpoint
         Endpoint endpoint = context.getEndpoint("direct:insert2");
@@ -113,21 +113,22 @@ public class SqlGeneratedKeysTest extends CamelTestSupport {
         // assertions of the response
         assertNotNull(out);
         assertNotNull(out.getOut());
-        assertNotNull(out.getIn().getHeader(SqlConstants.SQL_GENERATED_KEY_HOLDER));
+        assertNotNull(out.getIn().getHeader(SqlConstants.SQL_GENERATED_KEYS_DATA));
 
-        KeyHolder generatedKeys = out.getIn().getHeader(SqlConstants.SQL_GENERATED_KEY_HOLDER, KeyHolder.class);
-        assertNotNull("out body could not be converted to a KeyHolder - was: "
+        List<Map<String, Object>> generatedKeys = out.getIn().getHeader(SqlConstants.SQL_GENERATED_KEYS_DATA, List.class);
+        assertNotNull("out body could not be converted to a List - was: "
             + out.getIn().getBody(), generatedKeys);
-        assertEquals(2, generatedKeys.getKeyList().get(0).size());
+        assertEquals(2, generatedKeys.get(0).size());
 
-        Map<String, Object> row = generatedKeys.getKeys();
+        Map<String, Object> row = generatedKeys.get(0);
         assertEquals("auto increment value of ID1 should be 5", Integer.valueOf(5), row.get("ID1"));
         assertEquals("auto increment value of ID2 should be 6", Integer.valueOf(6), row.get("ID2"));
 
-        assertEquals("generated keys row count should be one", 1, generatedKeys.getKeyList().size());
+        assertEquals("generated keys row count should be one", 1, generatedKeys.size());
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void testRetrieveGeneratedKeysForBatch() throws Exception {
         // first we create our exchange using the endpoint
         Endpoint endpoint = context.getEndpoint("direct:batch");
@@ -147,23 +148,24 @@ public class SqlGeneratedKeysTest extends CamelTestSupport {
         // assertions of the response
         assertNotNull(out);
         assertNotNull(out.getOut());
-        assertNotNull(out.getIn().getHeader(SqlConstants.SQL_GENERATED_KEY_HOLDER));
+        assertNotNull(out.getIn().getHeader(SqlConstants.SQL_GENERATED_KEYS_DATA));
 
-        KeyHolder generatedKeys = out.getIn().getHeader(SqlConstants.SQL_GENERATED_KEY_HOLDER, KeyHolder.class);
-        assertNotNull("out body could not be converted to a KeyHolder - was: "
+        List<Map<String, Object>> generatedKeys = out.getIn().getHeader(SqlConstants.SQL_GENERATED_KEYS_DATA, List.class);
+        assertNotNull("out body could not be converted to a List - was: "
             + out.getIn().getBody(), generatedKeys);
 
          // it seems not to work with Derby...
-        assertEquals(4, generatedKeys.getKeyList().size());
+        assertEquals(4, generatedKeys.size());
 
         int id = 3;
-        for (Map<String, Object> row: generatedKeys.getKeyList()) {
+        for (Map<String, Object> row: generatedKeys) {
             assertEquals("auto increment value should be " + id, Integer.valueOf(id++), row.get("ID"));
         }
         
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void testRetrieveGeneratedKeyWithStringGeneratedColumns() throws Exception {
         // first we create our exchange using the endpoint
         Endpoint endpoint = context.getEndpoint("direct:insert");
@@ -179,20 +181,21 @@ public class SqlGeneratedKeysTest extends CamelTestSupport {
         // assertions of the response
         assertNotNull(out);
         assertNotNull(out.getOut());
-        assertNotNull(out.getIn().getHeader(SqlConstants.SQL_GENERATED_KEY_HOLDER));
+        assertNotNull(out.getIn().getHeader(SqlConstants.SQL_GENERATED_KEYS_DATA));
 
-        KeyHolder generatedKeys = out.getIn().getHeader(SqlConstants.SQL_GENERATED_KEY_HOLDER, KeyHolder.class);
-        assertNotNull("out body could not be converted to a KeyHolder - was: "
+        List<Map<String, Object>> generatedKeys = out.getIn().getHeader(SqlConstants.SQL_GENERATED_KEYS_DATA, List.class);
+        assertNotNull("out body could not be converted to a List - was: "
                 + out.getIn().getBody(), generatedKeys);
-        assertEquals(1, generatedKeys.getKeyList().get(0).size());
+        assertEquals(1, generatedKeys.get(0).size());
 
-        Map<String, Object> row = generatedKeys.getKeys();
+        Map<String, Object> row = generatedKeys.get(0);
         assertEquals("auto increment value should be 3", Integer.valueOf(3), row.get("ID"));
 
-        assertEquals("generated keys row count should be one", 1, generatedKeys.getKeyList().size());
+        assertEquals("generated keys row count should be one", 1, generatedKeys.size());
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void testRetrieveGeneratedKeyWithIntGeneratedColumns() throws Exception {
         // first we create our exchange using the endpoint
         Endpoint endpoint = context.getEndpoint("direct:insert");
@@ -207,17 +210,17 @@ public class SqlGeneratedKeysTest extends CamelTestSupport {
 
         // assertions of the response
         assertNotNull(out);
-        assertNotNull(out.getIn().getHeader(SqlConstants.SQL_GENERATED_KEY_HOLDER));
+        assertNotNull(out.getIn().getHeader(SqlConstants.SQL_GENERATED_KEYS_DATA));
 
-        KeyHolder generatedKeys = out.getIn().getHeader(SqlConstants.SQL_GENERATED_KEY_HOLDER, KeyHolder.class);
-        assertNotNull("out body could not be converted to a KeyHolder - was: "
+        List<Map<String, Object>> generatedKeys = out.getIn().getHeader(SqlConstants.SQL_GENERATED_KEYS_DATA, List.class);
+        assertNotNull("out body could not be converted to a List - was: "
                 + out.getIn().getBody(), generatedKeys);
-        assertEquals(1, generatedKeys.getKeyList().get(0).size());
+        assertEquals(1, generatedKeys.get(0).size());
 
-        Map<String, Object> row = generatedKeys.getKeys();
+        Map<String, Object> row = generatedKeys.get(0);
         assertEquals("auto increment value should be 3", Integer.valueOf(3), row.get("ID"));
 
-        assertEquals("generated keys row count should be one", 1, generatedKeys.getKeyList().size());
+        assertEquals("generated keys row count should be one", 1, generatedKeys.size());
     }
 
     @Test
@@ -240,6 +243,7 @@ public class SqlGeneratedKeysTest extends CamelTestSupport {
     }
 
     @Test
+    @SuppressWarnings("unchecked")
     public void testNoKeysForSelect() throws Exception {
         // first we create our exchange using the endpoint
         Endpoint endpoint = context.getEndpoint("direct:select");
@@ -251,11 +255,10 @@ public class SqlGeneratedKeysTest extends CamelTestSupport {
         // now we send the exchange to the endpoint, and receives the response from Camel
         Exchange out = template.send(endpoint, exchange);
 
-        @SuppressWarnings("unchecked")
         List<Map<String, Object>> result = out.getIn().getBody(List.class);
         assertEquals("We should get 3 projects", 3, result.size());
 
-        KeyHolder holder = out.getIn().getHeader(SqlConstants.SQL_GENERATED_KEY_HOLDER, KeyHolder.class);
-        assertEquals("We should not get any keys", 0, holder.getKeyList().size());
+        List<Map<String, Object>> generatedKeys = out.getIn().getHeader(SqlConstants.SQL_GENERATED_KEYS_DATA, List.class);
+        assertEquals("We should not get any keys", 0, generatedKeys.size());
     }
 }
