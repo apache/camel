@@ -50,7 +50,8 @@ public class KafkaProducerIT extends CamelTestSupport {
     public static final String TOPIC = "test";
     public static final String TOPIC_IN_HEADER = "testHeader";
 
-    @EndpointInject(uri = "kafka:localhost:9092?topic=" + TOPIC + "&partitioner=org.apache.camel.component.kafka.SimplePartitioner")
+    @EndpointInject(uri = "kafka:localhost:9092?topic=" + TOPIC 
+        + "&partitioner=org.apache.camel.component.kafka.SimplePartitioner&serializerClass=kafka.serializer.StringEncoder&requestRequiredAcks=1")
     private Endpoint to;
 
     @Produce(uri = "direct:start")
