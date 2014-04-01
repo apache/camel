@@ -42,7 +42,12 @@ public final class SqlConstants {
      * @see <a href="http://docs.oracle.com/javase/6/docs/api/java/sql/Statement.html#execute(java.lang.String, java.lang.String[])">
      *      java.sql.Statement.execute(java.lang.String, java.lang.String[])</a>
      */
-    public static final String SQL_GENERATED_COLUMNS = "CamelGeneratedColumns";
+    public static final String SQL_GENERATED_COLUMNS = "CamelSqlGeneratedColumns";
+
+    /**
+     * int output header giving the number of rows of generated keys
+     */
+    public static final String SQL_GENERATED_KEYS_ROW_COUNT = "CamelSqlGeneratedKeysRowCount";
 
     /**
      * <tt>List<Map<String, Object>></tt> output header containing the generated keys retrieved
