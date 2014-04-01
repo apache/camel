@@ -28,6 +28,7 @@ import org.apache.camel.processor.DefaultExchangeFormatter;
 import org.apache.camel.processor.ThroughputLogger;
 import org.apache.camel.spi.ExchangeFormatter;
 import org.apache.camel.util.CamelLogger;
+import org.slf4j.Logger;
 
 /**
  * The <a href="http://camel.apache.org/log.html">Log Component</a>
@@ -45,12 +46,18 @@ public class LogComponent extends UriEndpointComponent {
     
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         LoggingLevel level = getLoggingLevel(parameters);
+        Logger providedLogger = getLogger(parameters);
 
         LogEndpoint endpoint = new LogEndpoint(uri, this);
         endpoint.setLevel(level.name());
         setProperties(endpoint, parameters);
 
-        CamelLogger camelLogger = new CamelLogger(remaining, level, endpoint.getMarker());
+        CamelLogger camelLogger = null; 
+        if (providedLogger == null) {
+            camelLogger = new CamelLogger(remaining, level, endpoint.getMarker());
+        } else {
+            camelLogger = new CamelLogger(providedLogger, level, endpoint.getMarker());
+        }
         Processor logger;
         if (endpoint.getGroupSize() != null) {
             logger = new ThroughputLogger(camelLogger, endpoint.getGroupSize());
@@ -87,6 +94,17 @@ public class LogComponent extends UriEndpointComponent {
     protected LoggingLevel getLoggingLevel(Map<String, Object> parameters) {
         String levelText = getAndRemoveParameter(parameters, "level", String.class, "INFO");
         return LoggingLevel.valueOf(levelText.toUpperCase(Locale.ENGLISH));
+    }
+
+    /**
+     * Gets optional {@link Logger} instance from parameters. If non-null, the provided instance will be used as
+     * {@link Logger} in {@link CamelLogger}
+     * 
+     * @param parameters
+     * @return
+     */
+    protected Logger getLogger(Map<String, Object> parameters) {
+        return getAndRemoveOrResolveReferenceParameter(parameters, "logger", Logger.class);
     }
 
     public ExchangeFormatter getExchangeFormatter() {
