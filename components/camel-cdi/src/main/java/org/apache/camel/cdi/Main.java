@@ -113,7 +113,6 @@ public abstract class Main extends MainSupport { // abstract to prevent cdi mana
         classes.add(org.apache.camel.model.dataformat.DataFormatsDefinition.class);
         classes.add(org.apache.camel.model.language.ExpressionDefinition.class);
         classes.add(org.apache.camel.model.loadbalancer.RoundRobinLoadBalancerDefinition.class);
-        classes.add(org.apache.camel.model.loadbalancer.RoundRobinLoadBalancerDefinition.class);
         return classes;
     }
 
