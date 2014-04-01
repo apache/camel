@@ -54,6 +54,7 @@
     <asm-bundle-version>3.3.1_1</asm-bundle-version>
     <asm-version>3.3.1</asm-version>
     <aspectj-version>1.6.2</aspectj-version>
+    <atmosphere-version>2.1.0</atmosphere-version>
     <atomikos-transactions-version>3.9.2</atomikos-transactions-version>
     <avalon-bundle-version>4.3.1_1</avalon-bundle-version>
     <avalon-version>4.3.1</avalon-version>
@@ -532,6 +533,11 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-apns</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-atmosphere-websocket</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
