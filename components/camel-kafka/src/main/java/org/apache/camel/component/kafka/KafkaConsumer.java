@@ -27,19 +27,14 @@ import kafka.consumer.ConsumerIterator;
 import kafka.consumer.KafkaStream;
 import kafka.javaapi.consumer.ConsumerConnector;
 import kafka.message.MessageAndMetadata;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultConsumer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  *
  */
 public class KafkaConsumer extends DefaultConsumer {
-
-    private static final Logger LOG = LoggerFactory.getLogger(KafkaConsumer.class);
 
     protected ExecutorService executor;
     private final KafkaEndpoint endpoint;
@@ -82,7 +77,7 @@ public class KafkaConsumer extends DefaultConsumer {
         List<KafkaStream<byte[], byte[]>> streams = consumerMap.get(endpoint.getTopic());
 
         executor = endpoint.createExecutor();
-        for (final KafkaStream stream : streams) {
+        for (final KafkaStream<byte[], byte[]> stream : streams) {
             executor.submit(new ConsumerTask(stream));
         }
     }
@@ -107,9 +102,9 @@ public class KafkaConsumer extends DefaultConsumer {
 
     class ConsumerTask implements Runnable {
 
-        private KafkaStream stream;
+        private KafkaStream<byte[], byte[]> stream;
 
-        public ConsumerTask(KafkaStream stream) {
+        public ConsumerTask(KafkaStream<byte[], byte[]> stream) {
             this.stream = stream;
         }
 

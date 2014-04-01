@@ -41,14 +41,18 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 /**
  * The Producer IT tests require a Kafka broker running on 9092 and a zookeeper instance running on 2181.
  * The broker must have a topic called test created.
  */
 public class KafkaProducerIT extends CamelTestSupport {
-
+    
     public static final String TOPIC = "test";
     public static final String TOPIC_IN_HEADER = "testHeader";
+
+    private static final Logger LOG = LoggerFactory.getLogger(KafkaProducerIT.class);
 
     @EndpointInject(uri = "kafka:localhost:9092?topic=" + TOPIC 
         + "&partitioner=org.apache.camel.component.kafka.SimplePartitioner&serializerClass=kafka.serializer.StringEncoder&requestRequiredAcks=1")
@@ -111,10 +115,10 @@ public class KafkaProducerIT extends CamelTestSupport {
         Map<String, List<KafkaStream<byte[], byte[]>>> consumerMap = kafkaConsumer.createMessageStreams(topicCountMap);
 
         ExecutorService executor = Executors.newFixedThreadPool(10);
-        for (final KafkaStream stream : consumerMap.get(TOPIC)) {
+        for (final KafkaStream<byte[], byte[]> stream : consumerMap.get(TOPIC)) {
             executor.submit(new KakfaTopicConsumer(stream, messagesLatch));
         }
-        for (final KafkaStream stream : consumerMap.get(TOPIC_IN_HEADER)) {
+        for (final KafkaStream<byte[], byte[]> stream : consumerMap.get(TOPIC_IN_HEADER)) {
             executor.submit(new KakfaTopicConsumer(stream, messagesLatch));
         }
     }
@@ -131,10 +135,10 @@ public class KafkaProducerIT extends CamelTestSupport {
     }
 
     private static class KakfaTopicConsumer implements Runnable {
-        private final KafkaStream stream;
+        private final KafkaStream<byte[], byte[]> stream;
         private final CountDownLatch latch;
 
-        public KakfaTopicConsumer(KafkaStream stream, CountDownLatch latch) {
+        public KakfaTopicConsumer(KafkaStream<byte[], byte[]> stream, CountDownLatch latch) {
             this.stream = stream;
             this.latch = latch;
         }
@@ -144,6 +148,7 @@ public class KafkaProducerIT extends CamelTestSupport {
             ConsumerIterator<byte[], byte[]> it = stream.iterator();
             while (it.hasNext()) {
                 String msg = new String(it.next().message());
+                LOG.info("Get the message" + msg);
                 latch.countDown();
             }
         }
