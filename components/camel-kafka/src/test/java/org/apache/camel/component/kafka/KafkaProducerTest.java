@@ -42,6 +42,7 @@ public class KafkaProducerTest {
     private Exchange exchange = Mockito.mock(Exchange.class);
     private Message in = new DefaultMessage();
 
+    @SuppressWarnings({"unchecked"})
     public KafkaProducerTest() throws IllegalAccessException, InstantiationException, ClassNotFoundException,
             URISyntaxException {
         endpoint = new KafkaEndpoint("kafka:broker1:1234,broker2:4567?topic=sometopic",
@@ -59,6 +60,7 @@ public class KafkaProducerTest {
     }
 
     @Test
+    @SuppressWarnings({"unchecked"})
     public void processSendsMesssage() throws Exception {
 
         endpoint.setTopic("sometopic");
@@ -80,10 +82,7 @@ public class KafkaProducerTest {
 
         producer.process(exchange);
 
-        ArgumentCaptor<KeyedMessage> captor = ArgumentCaptor.forClass(KeyedMessage.class);
-        Mockito.verify(producer.producer).send(captor.capture());
-        assertEquals("4", captor.getValue().key());
-        assertEquals("anotherTopic", captor.getValue().topic());
+        verifySendMessage("4", "anotherTopic");
     }
 
     @Test
@@ -96,10 +95,8 @@ public class KafkaProducerTest {
 
         producer.process(exchange);
 
-        ArgumentCaptor<KeyedMessage> captor = ArgumentCaptor.forClass(KeyedMessage.class);
-        Mockito.verify(producer.producer).send(captor.capture());
-        assertEquals("4", captor.getValue().key());
-        assertEquals("anotherTopic", captor.getValue().topic());
+        verifySendMessage("4", "anotherTopic");
+      
     }
 
     @Test(expected = CamelException.class)
@@ -116,19 +113,26 @@ public class KafkaProducerTest {
         Mockito.when(exchange.getIn()).thenReturn(in);
         producer.process(exchange);
     }
-
+    
     @Test
+    
     public void processSendsMesssageWithPartitionKeyHeader() throws Exception {
 
-        endpoint.setTopic("sometopic");
+        endpoint.setTopic("someTopic");
         Mockito.when(exchange.getIn()).thenReturn(in);
         in.setHeader(KafkaConstants.PARTITION_KEY, "4");
 
         producer.process(exchange);
 
+        verifySendMessage("4", "someTopic");
+        
+    }
+    
+    @SuppressWarnings({"unchecked", "rawtypes"})
+    protected void verifySendMessage(String key, String topic) {
         ArgumentCaptor<KeyedMessage> captor = ArgumentCaptor.forClass(KeyedMessage.class);
         Mockito.verify(producer.producer).send(captor.capture());
-        assertEquals("4", captor.getValue().key());
-        assertEquals("sometopic", captor.getValue().topic());
+        assertEquals(key, captor.getValue().key());
+        assertEquals(topic, captor.getValue().topic());
     }
 }
