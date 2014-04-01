@@ -27,7 +27,7 @@
     <artifactId>camel-cometd</artifactId>
     <packaging>bundle</packaging>
     <name>Camel :: Cometd</name>
-    <description>Camel Cometd support</description>
+    <description>Camel Cometd support based on Jetty </description>
 
     <properties>
         <camel.osgi.export.pkg>org.apache.camel.component.cometd.*</camel.osgi.export.pkg>

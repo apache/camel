@@ -27,7 +27,7 @@
     <artifactId>camel-cmis</artifactId>
     <packaging>bundle</packaging>
     <name>Camel :: CMIS</name>
-    <description>Camel CMIS</description>
+    <description>Camel CMIS which is based on Apache Chemistry support</description>
 
     <properties>
         <camel.osgi.export.pkg>org.apache.camel.component.cmis.*</camel.osgi.export.pkg>

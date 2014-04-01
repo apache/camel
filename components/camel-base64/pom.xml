@@ -27,7 +27,7 @@
   <artifactId>camel-base64</artifactId>
   <packaging>bundle</packaging>
   <name>Camel :: Base64</name>
-  <description>Camel Base64 support</description>
+  <description>Camel Base64 data format support</description>
 
   <properties>
     <camel.osgi.export.pkg>

@@ -27,7 +27,7 @@
     <artifactId>camel-bindy</artifactId>
     <packaging>bundle</packaging>
     <name>Camel :: Bindy</name>
-    <description>Camel Bindy support</description>
+    <description>Camel Bindy data format support</description>
 
     <properties>
         <camel.osgi.export.pkg>

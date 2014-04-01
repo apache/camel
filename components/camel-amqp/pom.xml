@@ -27,7 +27,7 @@
   <artifactId>camel-amqp</artifactId>
   <packaging>bundle</packaging>
   <name>Camel :: AMQP</name>
-  <description>Camel AMQP support</description>
+  <description>Camel AMQP component which is based on the Apache Qid project</description>
 
   <properties>
     <camel.osgi.export.pkg>org.apache.camel.component.amqp.*</camel.osgi.export.pkg>

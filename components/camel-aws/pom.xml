@@ -29,7 +29,7 @@
     <packaging>bundle</packaging>
 
     <name>Camel :: AWS</name>
-    <description>A Camel Amazon Web Services Component</description>
+    <description>A Camel Amazon Web Services Components</description>
 
     <properties>
         <camel.osgi.export.pkg>org.apache.camel.component.aws.*</camel.osgi.export.pkg>

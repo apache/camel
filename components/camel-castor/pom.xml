@@ -27,7 +27,7 @@
     <artifactId>camel-castor</artifactId>
     <packaging>bundle</packaging>
     <name>Camel :: Castor</name>
-    <description>Camel Castor support</description>
+    <description>Camel Castor data format support</description>
 
     <properties>
         <camel.osgi.export.pkg>org.apache.camel.dataformat.castor.*</camel.osgi.export.pkg>

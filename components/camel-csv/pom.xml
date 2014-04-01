@@ -27,7 +27,7 @@
   <artifactId>camel-csv</artifactId>
   <packaging>bundle</packaging>
   <name>Camel :: CSV</name>
-  <description>Camel CSV support</description>
+  <description>Camel CSV data format support</description>
 
   <properties>
 	<camel.osgi.export.pkg>org.apache.camel.dataformat.csv.*</camel.osgi.export.pkg>

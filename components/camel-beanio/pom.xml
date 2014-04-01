@@ -28,7 +28,7 @@
   <packaging>bundle</packaging>
 
   <name>Camel :: BeanIO</name>
-  <description>Camel BeanIO support</description>
+  <description>Camel BeanIO data format support</description>
   <url>http://www.beanio.org</url>
 
   <properties>
