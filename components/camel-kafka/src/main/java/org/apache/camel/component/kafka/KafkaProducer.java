@@ -48,11 +48,8 @@ public class KafkaProducer extends DefaultProducer {
     }
 
     Properties getProps() {
-        Properties props = new Properties();
+        Properties props = endpoint.getConfiguration().createProducerProperties();
         props.put("metadata.broker.list", endpoint.getBrokers());
-        props.put("serializer.class", "kafka.serializer.StringEncoder");
-        props.put("partitioner.class", endpoint.getPartitioner());
-        props.put("request.required.acks", "1");
         return props;
     }
 
