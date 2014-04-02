@@ -46,16 +46,16 @@ import org.junit.Test;
  */
 public class DataMatrixDataFormatTest extends CodeTestBase {
 
-    @Test
-    public void testDefaultMDCode() throws Exception {
-        out.expectedBodiesReceived(MSG);
-        image.expectedMessageCount(1);
-
-        template.sendBody("direct:code1", MSG);
-
-        assertMockEndpointsSatisfied(5, TimeUnit.SECONDS);
-        this.checkImage(image, 100, 100, ImageType.PNG.toString());
-    }
+//    @Test
+//    public void testDefaultMDCode() throws Exception {
+//        out.expectedBodiesReceived(MSG);
+//        image.expectedMessageCount(1);
+//
+//        template.sendBody("direct:code1", MSG);
+//
+//        assertMockEndpointsSatisfied(5, TimeUnit.SECONDS);
+//        this.checkImage(image, 100, 100, ImageType.PNG.toString());
+//    }
     
 //    @Test
 //    public void testDataMatrix() {

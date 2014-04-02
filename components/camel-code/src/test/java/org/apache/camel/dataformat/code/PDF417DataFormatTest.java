@@ -15,8 +15,6 @@
  */
 package org.apache.camel.dataformat.code;
 
-import org.apache.camel.dataformat.code.ImageType;
-import org.apache.camel.dataformat.code.PDF417DataFormat;
 import java.util.concurrent.TimeUnit;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.DataFormat;
