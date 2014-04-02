@@ -347,48 +347,54 @@ public class PGPKeyAccessDataFormat extends ServiceSupport implements DataFormat
         if (encryptedStream == null) {
             return null;
         }
-        InputStream in = PGPUtil.getDecoderStream(encryptedStream);
-        InputStream encData = getDecryptedData(exchange, in);
-        InputStream uncompressedData = getUncompressedData(encData);
-        PGPObjectFactory pgpFactory = new PGPObjectFactory(uncompressedData);
-        Object object = pgpFactory.nextObject();
+        InputStream in = null;
+        InputStream encData = null;
+        InputStream uncompressedData = null;
+        InputStream litData = null;
 
-        PGPOnePassSignature signature;
-        if (object instanceof PGPOnePassSignatureList) {
-            signature = getSignature(exchange, (PGPOnePassSignatureList) object);
-            object = pgpFactory.nextObject();
-        } else {
-            // no signature contained in PGP message
-            signature = null;
-            if (SIGNATURE_VERIFICATION_OPTION_REQUIRED.equals(getSignatureVerificationOption())) {
-                throw new PGPException(
-                        "PGP message does not contain any signatures although a signature is expected. Either send a PGP message with signature or change the configuration of the PGP decryptor.");
-            }
-        }
-
-        PGPLiteralData ld;
-        if (object instanceof PGPLiteralData) {
-            ld = (PGPLiteralData) object;
-        } else {
-            throw getFormatException();
-        }
-        InputStream litData = ld.getInputStream();
-
-        // enable streaming via OutputStreamCache
         CachedOutputStream cos;
         ByteArrayOutputStream bos;
-        OutputStream os;
-        if (exchange.getContext().getStreamCachingStrategy().isEnabled()) {
-            cos = new CachedOutputStream(exchange);
-            bos = null;
-            os = cos;
-        } else {
-            cos = null;
-            bos = new ByteArrayOutputStream();
-            os = bos;
-        }
+        OutputStream os = null;
 
         try {
+            in = PGPUtil.getDecoderStream(encryptedStream);
+            encData = getDecryptedData(exchange, in);
+            uncompressedData = getUncompressedData(encData);
+            PGPObjectFactory pgpFactory = new PGPObjectFactory(uncompressedData);
+            Object object = pgpFactory.nextObject();
+
+            PGPOnePassSignature signature;
+            if (object instanceof PGPOnePassSignatureList) {
+                signature = getSignature(exchange, (PGPOnePassSignatureList) object);
+                object = pgpFactory.nextObject();
+            } else {
+                // no signature contained in PGP message
+                signature = null;
+                if (SIGNATURE_VERIFICATION_OPTION_REQUIRED.equals(getSignatureVerificationOption())) {
+                    throw new PGPException(
+                            "PGP message does not contain any signatures although a signature is expected. Either send a PGP message with signature or change the configuration of the PGP decryptor.");
+                }
+            }
+
+            PGPLiteralData ld;
+            if (object instanceof PGPLiteralData) {
+                ld = (PGPLiteralData) object;
+            } else {
+                throw getFormatException();
+            }
+            litData = ld.getInputStream();
+
+            // enable streaming via OutputStreamCache
+            if (exchange.getContext().getStreamCachingStrategy().isEnabled()) {
+                cos = new CachedOutputStream(exchange);
+                bos = null;
+                os = cos;
+            } else {
+                cos = null;
+                bos = new ByteArrayOutputStream();
+                os = bos;
+            }
+
             byte[] buffer = new byte[BUFFER_SIZE];
             int bytesRead;
             while ((bytesRead = litData.read(buffer)) != -1) {
@@ -400,9 +406,9 @@ public class PGPKeyAccessDataFormat extends ServiceSupport implements DataFormat
             }
             verifySignature(pgpFactory, signature);
         } finally {
-            IOHelper.close(os, litData, encData, in);
+            IOHelper.close(os, litData, uncompressedData, encData, in, encryptedStream);
         }
-      
+
         if (cos != null) {
             return cos.newStreamCache();
         } else {
