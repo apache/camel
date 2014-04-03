@@ -150,6 +150,9 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
         }
         
         LOG.trace("Populate exchange from CXF response message: {}", cxfMessage);
+
+        // copy the InMessage header to OutMessage header
+        camelExchange.getOut().getHeaders().putAll(camelExchange.getIn().getHeaders());
         
         // propagate body
         camelExchange.getOut().setBody(DefaultCxfBinding.getContentFromCxf(cxfMessage, 
