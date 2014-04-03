@@ -154,8 +154,6 @@ public class CxfProducer extends DefaultProducer implements AsyncProcessor {
         } finally {
             // bind the CXF response to Camel exchange
             if (!boi.getOperationInfo().isOneWay()) {
-                // copy the InMessage header to OutMessage header
-                camelExchange.getOut().getHeaders().putAll(camelExchange.getIn().getHeaders());
                 endpoint.getCxfBinding().populateExchangeFromCxfResponse(camelExchange, cxfExchange,
                         responseContext);
             }

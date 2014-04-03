@@ -57,8 +57,6 @@ public class CxfClientCallback extends ClientCallback {
             // for one way messages callback is already called in 
             // process method of org.apache.camel.component.cxf.CxfProducer
             if (!boi.getOperationInfo().isOneWay()) {
-                // copy the InMessage header to OutMessage header
-                camelExchange.getOut().getHeaders().putAll(camelExchange.getIn().getHeaders());
                 binding.populateExchangeFromCxfResponse(camelExchange, cxfExchange, ctx);
                 camelAsyncCallback.done(false);
             }
@@ -91,8 +89,6 @@ public class CxfClientCallback extends ClientCallback {
             // for one way messages callback is already called in 
             // process method of org.apache.camel.component.cxf.CxfProducer
             if (!boi.getOperationInfo().isOneWay()) {
-                // copy the InMessage header to OutMessage header
-                camelExchange.getOut().getHeaders().putAll(camelExchange.getIn().getHeaders());
                 binding.populateExchangeFromCxfResponse(camelExchange, cxfExchange, ctx);
                 camelAsyncCallback.done(false);
             }
