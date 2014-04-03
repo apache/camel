@@ -22,13 +22,16 @@ import java.util.Map;
 import org.apache.camel.Endpoint;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.Processor;
+import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.processor.CamelLogProcessor;
 import org.apache.camel.processor.DefaultExchangeFormatter;
 import org.apache.camel.processor.ThroughputLogger;
 import org.apache.camel.spi.ExchangeFormatter;
+import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.CamelLogger;
 import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The <a href="http://camel.apache.org/log.html">Log Component</a>
@@ -37,22 +40,32 @@ import org.slf4j.Logger;
  * @version 
  */
 public class LogComponent extends UriEndpointComponent {
+    private static final Logger LOG = LoggerFactory.getLogger(LogComponent.class);
 
     private ExchangeFormatter exchangeFormatter;
 
     public LogComponent() {
         super(LogEndpoint.class);
     }
-    
+
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         LoggingLevel level = getLoggingLevel(parameters);
         Logger providedLogger = getLogger(parameters);
 
+        if (providedLogger == null) {
+            // try to look up the logger in registry
+            Map<String, Logger> availableLoggers = getCamelContext().getRegistry().findByTypeWithName(Logger.class);
+            if (availableLoggers.size() == 1) {
+                providedLogger = availableLoggers.values().iterator().next();
+            } else if (availableLoggers.size() > 1) {
+                LOG.info("More than one {} instance found in the registry. Falling back to creating logger from URI {}.", Logger.class.getName(), uri);
+            }
+        }
         LogEndpoint endpoint = new LogEndpoint(uri, this);
         endpoint.setLevel(level.name());
         setProperties(endpoint, parameters);
 
-        CamelLogger camelLogger = null; 
+        CamelLogger camelLogger = null;
         if (providedLogger == null) {
             camelLogger = new CamelLogger(remaining, level, endpoint.getMarker());
         } else {
@@ -66,7 +79,7 @@ public class LogComponent extends UriEndpointComponent {
             Long groupDelay = endpoint.getGroupDelay();
             logger = new ThroughputLogger(camelLogger, this.getCamelContext(), endpoint.getGroupInterval(), groupDelay, groupActiveOnly);
         } else {
-            // first, try to use the user-specified formatter (or the one picked up from the Registry and transferred to 
+            // first, try to use the user-specified formatter (or the one picked up from the Registry and transferred to
             // the property by a previous endpoint initialisation); if null, try to pick it up from the Registry now
             ExchangeFormatter localFormatter = exchangeFormatter;
             if (localFormatter == null) {
