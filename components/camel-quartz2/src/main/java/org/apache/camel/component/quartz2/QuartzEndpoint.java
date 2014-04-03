@@ -66,8 +66,8 @@ public class QuartzEndpoint extends DefaultEndpoint {
     private long triggerStartDelay = 500; // in millis second
 
     // An internal variables to track whether a job has been in scheduler or not, and has it paused or not.
-    private AtomicBoolean jobAdded = new AtomicBoolean(false);
-    private AtomicBoolean jobPaused = new AtomicBoolean(false);
+    private final AtomicBoolean jobAdded = new AtomicBoolean(false);
+    private final AtomicBoolean jobPaused = new AtomicBoolean(false);
     
     public QuartzEndpoint(String uri, QuartzComponent quartzComponent) {
         super(uri, quartzComponent);
@@ -210,13 +210,7 @@ public class QuartzEndpoint extends DefaultEndpoint {
                 jobAdded.set(false);
             }
         } else if (pauseJob) {
-            boolean isClustered = scheduler.getMetaData().isJobStoreClustered();
-            if (!scheduler.isShutdown() && !isClustered) {
-                LOG.info("Pausing job {}", triggerKey);
-                scheduler.pauseTrigger(triggerKey);
-
-                jobAdded.set(false);
-            }
+            pauseTrigger();
         }
 
         // Decrement camel job count for this endpoint
@@ -374,13 +368,15 @@ public class QuartzEndpoint extends DefaultEndpoint {
     }
 
     public void pauseTrigger() throws Exception {
-        if (jobPaused.get()) {
+        Scheduler scheduler = getComponent().getScheduler();
+        boolean isClustered = scheduler.getMetaData().isJobStoreClustered();
+
+        if (jobPaused.get() || isClustered) {
             return;
         }
+        
         jobPaused.set(true);
-
-        Scheduler scheduler = getComponent().getScheduler();
-        if (scheduler != null && !scheduler.isShutdown()) {
+        if (!scheduler.isShutdown()) {
             LOG.info("Pausing trigger {}", triggerKey);
             scheduler.pauseTrigger(triggerKey);
         }
