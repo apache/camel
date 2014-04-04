@@ -16,20 +16,21 @@
  */
 package org.apache.camel.component.log;
 
+import java.io.StringWriter;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.impl.DefaultCamelContext;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.impl.PropertyPlaceholderDelegateRegistry;
 import org.apache.camel.impl.SimpleRegistry;
-import org.apache.log4j.*;
+import org.apache.log4j.AppenderSkeleton;
+import org.apache.log4j.Level;
+import org.apache.log4j.Logger;
 import org.apache.log4j.spi.LoggingEvent;
 import org.junit.Before;
 import org.junit.Test;
 import org.slf4j.LoggerFactory;
-
-import java.io.StringWriter;
 
 import static org.hamcrest.CoreMatchers.equalTo;
 import static org.junit.Assert.assertThat;
@@ -44,7 +45,7 @@ public class LogCustomLoggerTest extends ContextTestSupport {
     // to capture the warnings from LogComponent
     private static StringWriter sw2;
 
-    private static class CapturingAppender extends AppenderSkeleton {
+    private static final class CapturingAppender extends AppenderSkeleton {
         private StringWriter sw;
 
         private CapturingAppender(StringWriter sw) {
