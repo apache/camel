@@ -29,12 +29,12 @@ import org.apache.camel.Exchange;
 public class GroupedExchangeAggregationStrategy extends AbstractListAggregationStrategy<Exchange> {
 
     @Override
-    @SuppressWarnings("unchecked")
+   
     public void onCompletion(Exchange exchange) {
         if (isStoreAsBodyOnCompletion()) {
             // lets be backwards compatible
             // TODO: Remove this method in Camel 3.0
-            List list = (List) exchange.getProperty(Exchange.GROUPED_EXCHANGE);
+            List<?> list = (List<?>) exchange.getProperty(Exchange.GROUPED_EXCHANGE);
             if (list != null) {
                 exchange.getIn().setBody(list);
             }
