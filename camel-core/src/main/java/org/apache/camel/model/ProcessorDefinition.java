@@ -1541,6 +1541,23 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
+     * Creates a log message to be logged at the given level using provided logger.
+     *
+     * @param loggingLevel the logging level to use
+     * @param logger the logger to use
+     * @param message the log message, (you can use {@link org.apache.camel.language.simple.SimpleLanguage} syntax)
+     * @return the builder
+     */
+    @SuppressWarnings("unchecked")
+    public Type log(LoggingLevel loggingLevel, Logger logger, String message) {
+        LogDefinition answer = new LogDefinition(message);
+        answer.setLoggingLevel(loggingLevel);
+        answer.setLogger(logger);
+        addOutput(answer);
+        return (Type) this;
+    }
+
+    /**
      * Creates a log message to be logged at the given level and name.
      *
      *
@@ -1555,6 +1572,26 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
         LogDefinition answer = new LogDefinition(message);
         answer.setLoggingLevel(loggingLevel);
         answer.setLogName(logName);
+        answer.setMarker(marker);
+        addOutput(answer);
+        return (Type) this;
+    }
+
+    /**
+     * Creates a log message to be logged at the given level using provided logger.
+     *
+     *
+     * @param loggingLevel the logging level to use
+     * @param logger the logger to use
+     * @param marker  log marker name
+     * @param message the log message, (you can use {@link org.apache.camel.language.simple.SimpleLanguage} syntax)
+     * @return the builder
+     */
+    @SuppressWarnings("unchecked")
+    public Type log(LoggingLevel loggingLevel, Logger logger, String marker, String message) {
+        LogDefinition answer = new LogDefinition(message);
+        answer.setLoggingLevel(loggingLevel);
+        answer.setLogger(logger);
         answer.setMarker(marker);
         addOutput(answer);
         return (Type) this;
