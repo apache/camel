@@ -33,10 +33,17 @@
     <cxf:providers>
        <ref bean="jsonProvider"/>
     </cxf:providers>
+    <cxf:inInterceptors>
+        <bean class="org.apache.camel.component.cxf.jaxrs.TestInInterceptor"/>
+    </cxf:inInterceptors>
   </cxf:rsServer>
 
   <cxf:rsClient id="rsClient" address="http://localhost:9002/helloworld"
-    serviceClass="org.apache.camel.component.cxf.jaxrs.testbean.CustomerService"/>
+    serviceClass="org.apache.camel.component.cxf.jaxrs.testbean.CustomerService">
+    <cxf:inInterceptors>
+        <bean class="org.apache.camel.component.cxf.jaxrs.TestInInterceptor"/>
+    </cxf:inInterceptors>
+  </cxf:rsClient>
 
   <bean id="jsonProvider" class="org.apache.cxf.jaxrs.provider.json.JSONProvider"/>
 

@@ -222,10 +222,19 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
             factory.getFeatures().addAll(getFeatures());
         }
         
-        factory.setInInterceptors(interceptorHolder.getInInterceptors());
-        factory.setOutInterceptors(interceptorHolder.getOutInterceptors());
-        factory.setOutFaultInterceptors(interceptorHolder.getOutFaultInterceptors());
-        factory.setInFaultInterceptors(interceptorHolder.getInFaultInterceptors()); 
+        // we need to avoid flushing the setting from spring or blueprint
+        if (!interceptorHolder.getInInterceptors().isEmpty()) {
+            factory.setInInterceptors(interceptorHolder.getInInterceptors());
+        } 
+        if (!interceptorHolder.getOutInterceptors().isEmpty()) {
+            factory.setOutInterceptors(interceptorHolder.getOutInterceptors());
+        }
+        if (!interceptorHolder.getOutFaultInterceptors().isEmpty()) {
+            factory.setOutFaultInterceptors(interceptorHolder.getOutFaultInterceptors());
+        }
+        if (!interceptorHolder.getInFaultInterceptors().isEmpty()) {
+            factory.setInFaultInterceptors(interceptorHolder.getInFaultInterceptors()); 
+        }
         
         if (getProperties() != null) {
             if (factory.getProperties() != null) {
