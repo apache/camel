@@ -43,6 +43,7 @@ public class CxfRsSpringEndpointTest extends CamelSpringTestSupport {
         assertEquals("Get a wrong resource class", sfb.getResourceClasses().get(0), CustomerService.class);
         assertEquals("Got the wrong loggingFeatureEnabled", true, sfb.isLoggingFeatureEnabled());
         assertEquals("Got the wrong loggingSizeLimit", 200, sfb.getLoggingSizeLimit());
+        assertEquals("Got a wrong size of interceptors", 1, sfb.getInInterceptors().size());
         
         Map<String, Object> endpointProps = sfb.getProperties();
         // The beanId key is put by the AbstractCxfBeanDefinitionParser, so the size is 2
@@ -59,6 +60,8 @@ public class CxfRsSpringEndpointTest extends CamelSpringTestSupport {
         assertTrue("Get a wrong resource class instance", cfb.create() instanceof CustomerService);
         assertEquals("Got the wrong loggingFeatureEnabled", false, cfb.isLoggingFeatureEnabled());
         assertEquals("Got the wrong loggingSizeLimit", 0, cfb.getLoggingSizeLimit());
+        assertEquals("Got a wrong size of interceptors", 1, cfb.getInInterceptors().size());
+
     }
     
     @Override
