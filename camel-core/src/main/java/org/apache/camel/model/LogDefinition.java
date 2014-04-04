@@ -20,14 +20,20 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.Expression;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.Processor;
 import org.apache.camel.processor.LogProcessor;
 import org.apache.camel.spi.RouteContext;
+import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.CamelLogger;
 import org.apache.camel.util.ObjectHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
+
+import java.util.Map;
 
 /**
  * Represents an XML &lt;log/&gt; element
@@ -45,6 +51,10 @@ public class LogDefinition extends NoOutputDefinition<LogDefinition> {
     private String logName;
     @XmlAttribute
     private String marker;
+    @XmlAttribute
+    private String loggerRef;
+    @XmlTransient
+    private Logger logger;
 
     public LogDefinition() {
     }
@@ -75,15 +85,38 @@ public class LogDefinition extends NoOutputDefinition<LogDefinition> {
         // use simple language for the message string to give it more power
         Expression exp = routeContext.getCamelContext().resolveLanguage("simple").createExpression(message);
 
-        String name = getLogName();
-        if (name == null) {
-            name = routeContext.getRoute().getId();
+        // get logger explicitely set in the definition
+        Logger logger = this.getLogger();
+
+        // get logger which may be set in XML definition
+        if (logger == null && ObjectHelper.isNotEmpty(loggerRef)) {
+            logger = CamelContextHelper.mandatoryLookup(routeContext.getCamelContext(), loggerRef, Logger.class);
         }
+
+        if (logger == null) {
+            // first - try to lookup single instance in the registry, just like LogComponent
+            Map<String, Logger> availableLoggers = routeContext.lookupByType(Logger.class);
+            if (availableLoggers.size() == 1) {
+                logger = availableLoggers.values().iterator().next();
+            } else if (availableLoggers.size() > 1) {
+                // we should log about this somewhere...
+                //LOG.info("More than one {} instance found in the registry. Falling back to creating logger by name.", Logger.class.getName());
+            }
+        }
+
+        if (logger == null) {
+            String name = getLogName();
+            if (name == null) {
+                name = routeContext.getRoute().getId();
+            }
+            logger = LoggerFactory.getLogger(name);
+        }
+
         // should be INFO by default
         LoggingLevel level = getLoggingLevel() != null ? getLoggingLevel() : LoggingLevel.INFO;
-        CamelLogger logger = new CamelLogger(name, level, getMarker());
+        CamelLogger camelLogger = new CamelLogger(logger, level, getMarker());
 
-        return new LogProcessor(exp, logger);
+        return new LogProcessor(exp, camelLogger);
     }
 
     @Override
@@ -122,5 +155,21 @@ public class LogDefinition extends NoOutputDefinition<LogDefinition> {
 
     public void setMarker(String marker) {
         this.marker = marker;
+    }
+
+    public String getLoggerRef() {
+        return loggerRef;
+    }
+
+    public void setLoggerRef(String loggerRef) {
+        this.loggerRef = loggerRef;
+    }
+
+    public Logger getLogger() {
+        return logger;
+    }
+
+    public void setLogger(Logger logger) {
+        this.logger = logger;
     }
 }
