@@ -16,6 +16,8 @@
  */
 package org.apache.camel.model;
 
+import java.util.Map;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -26,14 +28,13 @@ import org.apache.camel.Expression;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.Processor;
 import org.apache.camel.processor.LogProcessor;
+import org.apache.camel.processor.aggregate.AggregateProcessor;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.CamelLogger;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.Map;
 
 /**
  * Represents an XML &lt;log/&gt; element
@@ -43,6 +44,8 @@ import java.util.Map;
 @XmlRootElement(name = "log")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class LogDefinition extends NoOutputDefinition<LogDefinition> {
+    @XmlTransient
+    private static final Logger LOG = LoggerFactory.getLogger(LogDefinition.class);
     @XmlAttribute(required = true)
     private String message;
     @XmlAttribute
@@ -100,7 +103,7 @@ public class LogDefinition extends NoOutputDefinition<LogDefinition> {
                 logger = availableLoggers.values().iterator().next();
             } else if (availableLoggers.size() > 1) {
                 // we should log about this somewhere...
-                //LOG.info("More than one {} instance found in the registry. Falling back to creating logger by name.", Logger.class.getName());
+                LOG.info("More than one {} instance found in the registry. Falling back to create logger by name.", Logger.class.getName());
             }
         }
 
@@ -108,6 +111,7 @@ public class LogDefinition extends NoOutputDefinition<LogDefinition> {
             String name = getLogName();
             if (name == null) {
                 name = routeContext.getRoute().getId();
+                LOG.info("The LogName is null. Falling back to create logger by using the route id {}.", name);
             }
             logger = LoggerFactory.getLogger(name);
         }
