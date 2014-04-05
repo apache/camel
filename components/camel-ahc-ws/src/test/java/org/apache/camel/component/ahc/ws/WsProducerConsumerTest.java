@@ -44,9 +44,7 @@ public class WsProducerConsumerTest extends CamelTestSupport {
         context.addServlet(servletHolder, "/*");
         
         server.start();
-        System.out.println("started");
-        assertTrue(server.isStarted());
-        
+        assertTrue(server.isStarted());      
     }
     
     public void stopTestServer() throws Exception {
