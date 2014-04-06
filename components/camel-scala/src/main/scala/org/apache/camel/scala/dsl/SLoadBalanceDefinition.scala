@@ -25,8 +25,8 @@ import org.apache.camel.Exchange
  */
 case class SLoadBalanceDefinition(override val target: LoadBalanceDefinition)(implicit val builder: RouteBuilder) extends SAbstractDefinition[LoadBalanceDefinition] {
 
-  def circuitbreaker(threshold: Int, halfOpenAfter: Long, exceptions: Class[_]*)
-  = wrap(target.circuitBreaker(threshold, halfOpenAfter, exceptions))
+  def circuitbreaker(threshold: Int, halfOpenAfter: Long, classes: Class[_]*)
+  = wrap(target.circuitBreaker(threshold, halfOpenAfter, classesb: _*))
 
   def failover(classes: Class[_]*) = wrap(target.failover(classes: _*))
 
