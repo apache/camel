@@ -94,7 +94,6 @@
     <dependency>
       <groupId>org.apache.aries.blueprint</groupId>
       <artifactId>org.apache.aries.blueprint.core</artifactId>
-      <version>${aries-blueprint-core-version}</version>
       <scope>provided</scope>
     </dependency>
     
@@ -172,7 +171,6 @@
       <plugin>
         <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-codegen-plugin</artifactId>
-        <version>${cxf-version}</version>
         <executions>
           <execution>
             <id>generate-test-sources</id>

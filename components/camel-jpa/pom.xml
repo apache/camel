@@ -105,7 +105,6 @@
     <dependency>
     	<groupId>org.hibernate</groupId>
     	<artifactId>hibernate-entitymanager</artifactId>
-    	<version>${hibernate-version}</version>
     	<scope>test</scope>
     </dependency>
   </dependencies>
