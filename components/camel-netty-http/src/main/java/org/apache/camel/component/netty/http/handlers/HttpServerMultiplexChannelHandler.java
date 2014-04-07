@@ -38,7 +38,7 @@ import org.jboss.netty.handler.codec.http.HttpResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.jboss.netty.handler.codec.http.HttpResponseStatus.SERVICE_UNAVAILABLE;
+import static org.jboss.netty.handler.codec.http.HttpResponseStatus.NOT_FOUND;
 import static org.jboss.netty.handler.codec.http.HttpVersion.HTTP_1_1;
 
 /**
@@ -102,8 +102,8 @@ public class HttpServerMultiplexChannelHandler extends SimpleChannelUpstreamHand
             ctx.setAttachment(handler);
             handler.messageReceived(ctx, messageEvent);
         } else {
-            // this service is not available, so send empty response back
-            HttpResponse response = new DefaultHttpResponse(HTTP_1_1, SERVICE_UNAVAILABLE);
+            // this resource is not found, so send empty response back
+            HttpResponse response = new DefaultHttpResponse(HTTP_1_1, NOT_FOUND);
             response.setHeader(Exchange.CONTENT_TYPE, "text/plain");
             response.setHeader(Exchange.CONTENT_LENGTH, 0);
             response.setContent(ChannelBuffers.copiedBuffer(new byte[]{}));
