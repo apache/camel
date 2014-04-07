@@ -136,7 +136,13 @@ public abstract class DefaultEndpoint extends ServiceSupport implements Endpoint
 
     @Override
     public String toString() {
-        return String.format("Endpoint[%s]", URISupport.sanitizeUri(getEndpointUri()));
+        String value = null;
+        try {
+            value = getEndpointUri();
+        } catch (RuntimeException e) {
+            // ignore any exception and use null for building the string value
+        }
+        return String.format("Endpoint[%s]", URISupport.sanitizeUri(value));
     }
 
     /**
