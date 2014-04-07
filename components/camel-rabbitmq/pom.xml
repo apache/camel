@@ -24,7 +24,6 @@
     <version>2.14-SNAPSHOT</version>
   </parent>
 
-  <groupId>org.apache.camel</groupId>
   <artifactId>camel-rabbitmq</artifactId>
   <packaging>bundle</packaging>
   <name>Camel :: RabbitMQ</name>

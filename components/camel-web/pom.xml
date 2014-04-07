@@ -179,7 +179,6 @@
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-webapp</artifactId>
-            <version>${jetty-version}</version>
             <scope>test</scope>
         </dependency>
 
@@ -255,7 +254,6 @@
             <plugin>
                 <groupId>org.mortbay.jetty</groupId>
                 <artifactId>jetty-maven-plugin</artifactId>
-                <version>${jetty-version}</version>
                 <configuration>
                     <!--
                              <connectors> <connector implementation="org.eclipse.jetty.server.nio.SelectChannelConnector">

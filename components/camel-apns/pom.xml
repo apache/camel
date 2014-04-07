@@ -24,7 +24,6 @@
     <version>2.14-SNAPSHOT</version>
   </parent>
 
-  <groupId>org.apache.camel</groupId>
   <artifactId>camel-apns</artifactId>
   <packaging>bundle</packaging>
 

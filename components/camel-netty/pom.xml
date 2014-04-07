@@ -48,7 +48,6 @@
         <dependency>
             <groupId>commons-pool</groupId>
             <artifactId>commons-pool</artifactId>
-            <version>${commons-pool-version}</version>
         </dependency>
 
 		<!-- testing -->

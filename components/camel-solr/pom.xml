@@ -23,7 +23,6 @@
     <version>2.14-SNAPSHOT</version>
   </parent>
 
-  <groupId>org.apache.camel</groupId>
   <artifactId>camel-solr</artifactId>
   <packaging>bundle</packaging>
   <name>Camel :: Solr</name>
@@ -90,19 +89,16 @@
     <dependency>
       <groupId>org.eclipse.jetty</groupId>
       <artifactId>jetty-server</artifactId>
-      <version>${jetty-version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.eclipse.jetty</groupId>
       <artifactId>jetty-servlet</artifactId>
-      <version>${jetty-version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>xml-apis</groupId>
       <artifactId>xml-apis</artifactId>
-      <version>${xml-apis-version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>

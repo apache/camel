@@ -24,7 +24,6 @@
     <version>2.14-SNAPSHOT</version>
   </parent>
 
-  <groupId>org.apache.camel</groupId>
   <artifactId>camel-spring-javaconfig</artifactId>
   <name>Camel :: Spring JavaConfig</name>
   <description>Camel Spring JavaConfig support</description>
@@ -52,7 +51,6 @@
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-test</artifactId>
-      <version>${spring-version}</version>
     </dependency>
     <dependency>
       <groupId>org.apache.servicemix.bundles</groupId>

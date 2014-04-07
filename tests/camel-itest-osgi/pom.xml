@@ -78,14 +78,12 @@
     <dependency>
       <groupId>org.osgi</groupId>
       <artifactId>org.osgi.compendium</artifactId>
-      <version>${osgi-version}</version>
       <scope>compile</scope>
       <optional>true</optional>
     </dependency> 
     <dependency>
       <groupId>org.osgi</groupId>
       <artifactId>org.osgi.core</artifactId>
-      <version>${osgi-version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>

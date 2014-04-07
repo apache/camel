@@ -41,9 +41,7 @@
         <dependency>
             <groupId>net.sf.dozer</groupId>
             <artifactId>dozer</artifactId>
-            <version>${dozer-version}</version>
         </dependency>
-
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-test-spring</artifactId>

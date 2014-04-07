@@ -62,7 +62,6 @@
         <dependency>
             <groupId>org.apache.aries.blueprint</groupId>
             <artifactId>org.apache.aries.blueprint</artifactId>
-          <version>${aries-blueprint-core-version}</version>
         </dependency>
         <dependency>
             <groupId>org.apache.aries</groupId>
@@ -97,7 +96,6 @@
         <dependency>
             <groupId>org.ops4j.pax.swissbox</groupId>
             <artifactId>pax-swissbox-tinybundles</artifactId>
-            <version>${pax-tiny-bundle-version}</version>
         </dependency>
         <dependency>
             <groupId>commons-logging</groupId>

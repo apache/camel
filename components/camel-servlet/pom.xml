@@ -24,7 +24,6 @@
         <version>2.14-SNAPSHOT</version>
     </parent>
     
-  <groupId>org.apache.camel</groupId>
   <artifactId>camel-servlet</artifactId>
   <packaging>bundle</packaging>
   <name>Camel :: Servlet</name>
@@ -57,7 +56,6 @@
     <dependency>
       <groupId>org.osgi</groupId>
       <artifactId>org.osgi.compendium</artifactId>
-      <version>${osgi-version}</version>
       <scope>provided</scope>
     </dependency>
     <dependency>

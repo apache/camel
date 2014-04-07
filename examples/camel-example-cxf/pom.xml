@@ -109,7 +109,6 @@
         <dependency>
             <groupId>org.apache.geronimo.specs</groupId>
             <artifactId>geronimo-j2ee-connector_1.5_spec</artifactId>
-            <version>${geronimo-j2ee-connector-spec-version}</version>
             <scope>provided</scope>
         </dependency>
 
