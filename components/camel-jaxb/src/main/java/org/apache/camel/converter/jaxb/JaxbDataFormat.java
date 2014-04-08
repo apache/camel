@@ -91,7 +91,7 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, CamelC
     private JaxbNamespacePrefixMapper namespacePrefixMapper;
     private JaxbXmlStreamWriterWrapper xmlStreamWriterWrapper;
     private TypeConverter typeConverter;
-    private volatile Schema cachedSchema;
+    private Schema cachedSchema;
 
     public JaxbDataFormat() {
     }
@@ -341,6 +341,9 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, CamelC
             namespacePrefixMapper = NamespacePrefixMapperFactory.newNamespacePrefixMapper(camelContext, namespacePrefix);
         }
         typeConverter = camelContext.getTypeConverter();
+        if (schema != null) {
+            cachedSchema = createSchema(getSources());
+        }
     }
 
     @Override
@@ -372,7 +375,7 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, CamelC
         MalformedURLException {
         Unmarshaller unmarshaller = getContext().createUnmarshaller();
         if (schema != null) {
-            unmarshaller.setSchema(getCachedSchema());
+            unmarshaller.setSchema(cachedSchema);
             unmarshaller.setEventHandler(new ValidationEventHandler() {
                 public boolean handleEvent(ValidationEvent event) {
                     // stop unmarshalling if the event is an ERROR or FATAL
@@ -390,7 +393,7 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, CamelC
         MalformedURLException {
         Marshaller marshaller = getContext().createMarshaller();
         if (schema != null) {
-            marshaller.setSchema(getCachedSchema());
+            marshaller.setSchema(cachedSchema);
             marshaller.setEventHandler(new ValidationEventHandler() {
                 public boolean handleEvent(ValidationEvent event) {
                     // stop marshalling if the event is an ERROR or FATAL ERROR
@@ -401,17 +404,6 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, CamelC
         }
 
         return marshaller;
-    }
-    
-    private Schema getCachedSchema() throws FileNotFoundException, MalformedURLException, SAXException {
-        if (cachedSchema == null) {
-            synchronized (this) {
-                if (cachedSchema == null) {
-                    cachedSchema = createSchema(getSources());
-                }
-            }
-        }
-        return cachedSchema;
     }
     
     private Schema createSchema(Source[] sources) throws SAXException {
