@@ -91,6 +91,7 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, CamelC
     private JaxbNamespacePrefixMapper namespacePrefixMapper;
     private JaxbXmlStreamWriterWrapper xmlStreamWriterWrapper;
     private TypeConverter typeConverter;
+    private volatile Schema cachedSchema;
 
     public JaxbDataFormat() {
     }
@@ -367,46 +368,59 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, CamelC
         }
     }
     
-    protected Unmarshaller createUnmarshaller() throws JAXBException, SAXException, FileNotFoundException, MalformedURLException {
+    protected Unmarshaller createUnmarshaller() throws JAXBException, SAXException, FileNotFoundException,
+        MalformedURLException {
         Unmarshaller unmarshaller = getContext().createUnmarshaller();
         if (schema != null) {
-            SchemaFactory factory = getOrCreateSchemaFactory();
-            try {
-                Schema newSchema = factory.newSchema(getSources());
-                unmarshaller.setSchema(newSchema);
-                unmarshaller.setEventHandler(new ValidationEventHandler() {
-                    public boolean handleEvent(ValidationEvent event) {
-                        // stop unmarshalling if the event is an ERROR or FATAL ERROR
-                        return event.getSeverity() == ValidationEvent.WARNING;
-                    }
-                });
-            } finally {
-                returnSchemaFactory(factory);
-            }
+            unmarshaller.setSchema(getCachedSchema());
+            unmarshaller.setEventHandler(new ValidationEventHandler() {
+                public boolean handleEvent(ValidationEvent event) {
+                    // stop unmarshalling if the event is an ERROR or FATAL
+                    // ERROR
+                    return event.getSeverity() == ValidationEvent.WARNING;
+                }
+            });
+
         }
 
         return unmarshaller;
     }
 
-    protected Marshaller createMarshaller() throws JAXBException, SAXException, FileNotFoundException, MalformedURLException {
+    protected Marshaller createMarshaller() throws JAXBException, SAXException, FileNotFoundException,
+        MalformedURLException {
         Marshaller marshaller = getContext().createMarshaller();
         if (schema != null) {
-            SchemaFactory factory = getOrCreateSchemaFactory();
-            try {
-                Schema newSchema = factory.newSchema(getSources());
-                marshaller.setSchema(newSchema);
-                marshaller.setEventHandler(new ValidationEventHandler() {
-                    public boolean handleEvent(ValidationEvent event) {
-                        // stop marshalling if the event is an ERROR or FATAL ERROR
-                        return event.getSeverity() == ValidationEvent.WARNING;
-                    }
-                });
-            } finally {
-                returnSchemaFactory(factory);
-            }
+            marshaller.setSchema(getCachedSchema());
+            marshaller.setEventHandler(new ValidationEventHandler() {
+                public boolean handleEvent(ValidationEvent event) {
+                    // stop marshalling if the event is an ERROR or FATAL ERROR
+                    return event.getSeverity() == ValidationEvent.WARNING;
+                }
+            });
+
         }
 
         return marshaller;
+    }
+    
+    private Schema getCachedSchema() throws FileNotFoundException, MalformedURLException, SAXException {
+        if (cachedSchema == null) {
+            synchronized (this) {
+                if (cachedSchema == null) {
+                    cachedSchema = createSchema(getSources());
+                }
+            }
+        }
+        return cachedSchema;
+    }
+    
+    private Schema createSchema(Source[] sources) throws SAXException {
+        SchemaFactory factory = getOrCreateSchemaFactory();
+        try {
+            return factory.newSchema(sources);
+        } finally {
+            returnSchemaFactory(factory);
+        }
     }
 
     private Source[] getSources() throws FileNotFoundException, MalformedURLException {
