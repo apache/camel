@@ -55,6 +55,7 @@ public class LogComponent extends UriEndpointComponent {
             Map<String, Logger> availableLoggers = getCamelContext().getRegistry().findByTypeWithName(Logger.class);
             if (availableLoggers.size() == 1) {
                 providedLogger = availableLoggers.values().iterator().next();
+                LOG.info("Using custom Logger: {}", providedLogger);
             } else if (availableLoggers.size() > 1) {
                 LOG.info("More than one {} instance found in the registry. Falling back to creating logger from URI {}.", Logger.class.getName(), uri);
             }

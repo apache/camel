@@ -100,6 +100,7 @@ public class LogDefinition extends NoOutputDefinition<LogDefinition> {
             Map<String, Logger> availableLoggers = routeContext.lookupByType(Logger.class);
             if (availableLoggers.size() == 1) {
                 logger = availableLoggers.values().iterator().next();
+                LOG.info("Using custom Logger: {}", logger);
             } else if (availableLoggers.size() > 1) {
                 // we should log about this somewhere...
                 LOG.info("More than one {} instance found in the registry. Falling back to create logger by name.", Logger.class.getName());
