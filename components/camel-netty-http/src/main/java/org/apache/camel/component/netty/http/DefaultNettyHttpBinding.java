@@ -32,6 +32,7 @@ import java.util.Map;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.NoTypeConversionAvailableException;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.util.ExchangeHelper;
@@ -55,16 +56,24 @@ import org.slf4j.LoggerFactory;
 /**
  * Default {@link NettyHttpBinding}.
  */
-public class DefaultNettyHttpBinding implements NettyHttpBinding {
+public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultNettyHttpBinding.class);
-    private HeaderFilterStrategy headerFilterStrategy;
+    private HeaderFilterStrategy headerFilterStrategy = new NettyHttpHeaderFilterStrategy();
 
     public DefaultNettyHttpBinding() {
     }
 
     public DefaultNettyHttpBinding(HeaderFilterStrategy headerFilterStrategy) {
         this.headerFilterStrategy = headerFilterStrategy;
+    }
+    
+    public DefaultNettyHttpBinding copy() {
+        try {
+            return (DefaultNettyHttpBinding)this.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeCamelException(e);
+        }
     }
 
     @Override
