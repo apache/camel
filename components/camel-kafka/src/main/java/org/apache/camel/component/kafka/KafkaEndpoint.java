@@ -89,7 +89,9 @@ public class KafkaEndpoint extends DefaultEndpoint {
         Message message = new DefaultMessage();
         message.setHeader(KafkaConstants.PARTITION, mm.partition());
         message.setHeader(KafkaConstants.TOPIC, mm.topic());
-        message.setHeader(KafkaConstants.KEY, new String(mm.key()));
+        if (mm.key() != null) {
+            message.setHeader(KafkaConstants.KEY, new String(mm.key()));
+        }
         message.setBody(mm.message());
         exchange.setIn(message);
 
