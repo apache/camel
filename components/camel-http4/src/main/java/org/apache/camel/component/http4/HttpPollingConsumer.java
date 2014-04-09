@@ -28,9 +28,10 @@ import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpRequestBase;
-import org.apache.http.params.HttpConnectionParams;
+import org.apache.http.client.protocol.HttpClientContext;
 import org.apache.http.util.EntityUtils;
 
 /**
@@ -63,16 +64,18 @@ public class HttpPollingConsumer extends PollingConsumerSupport {
     protected Exchange doReceive(int timeout) {
         Exchange exchange = endpoint.createExchange();
         HttpRequestBase method = createMethod(exchange);
+        HttpClientContext httpClientContext = new HttpClientContext();
 
         // set optional timeout in millis
         if (timeout > 0) {
-            HttpConnectionParams.setSoTimeout(method.getParams(), timeout);
+            RequestConfig requestConfig = RequestConfig.custom().setSocketTimeout(timeout).build();
+            httpClientContext.setRequestConfig(requestConfig);
         }
 
         HttpEntity responeEntity = null;
         try {
             // execute request
-            HttpResponse response = httpClient.execute(method);
+            HttpResponse response = httpClient.execute(method, httpClientContext);
             int responseCode = response.getStatusLine().getStatusCode();
             responeEntity = response.getEntity();
             Object body = HttpHelper.readResponseBodyFromInputStream(responeEntity.getContent(), exchange);

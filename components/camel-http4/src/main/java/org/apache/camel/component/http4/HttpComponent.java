@@ -302,20 +302,6 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
         
         return endpoint;
     }
-   
-    private static int getPort(URI uri) {
-        int port = uri.getPort();
-        if (port < 0) {
-            if ("http4".equals(uri.getScheme()) || "http".equals(uri.getScheme())) {
-                port = 80;
-            } else if ("https4".equals(uri.getScheme()) || "https".equals(uri.getScheme())) {
-                port = 443;
-            } else {
-                throw new IllegalArgumentException("Unknown scheme, cannot determine port number for uri: " + uri);
-            }
-        }
-        return port;
-    }
     
     protected Registry<ConnectionSocketFactory> createConnectionRegistry(X509HostnameVerifier x509HostnameVerifier, SSLContextParameters sslContextParams)
         throws GeneralSecurityException, IOException {
