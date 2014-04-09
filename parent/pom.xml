@@ -274,29 +274,17 @@
     <maven-antrun-plugin-version>1.6</maven-antrun-plugin-version>
     <maven-archetype-plugin-version>2.0</maven-archetype-plugin-version>
     <maven-archetype-packaging-version>2.0</maven-archetype-packaging-version>
-    <maven-assembly-plugin-version>2.4</maven-assembly-plugin-version>
     <maven-bundle-version>${maven-bundle-plugin-version}</maven-bundle-version>
     <!-- problems by upgrading to maven-bundle-plugin 2.4.0 -->
     <maven-bundle-plugin-version>2.3.7</maven-bundle-plugin-version>
     <!-- maven-checkstyle-plugin 2.10 has problems to validate the license header in properties files-->
     <maven-checkstyle-plugin-version>2.9.1</maven-checkstyle-plugin-version>
-    <maven-clean-plugin-version>2.5</maven-clean-plugin-version>
-    <maven-compiler-plugin-version>2.5.1</maven-compiler-plugin-version>
-    <maven-dependency-plugin-version>2.8</maven-dependency-plugin-version>
     <maven-eclipse-plugin-version>2.9</maven-eclipse-plugin-version>
-    <maven-failsafe-plugin-version>2.13</maven-failsafe-plugin-version>
-    <maven-install-plugin-version>2.4</maven-install-plugin-version>
-    <maven-jar-plugin-version>2.4</maven-jar-plugin-version>
-    <maven-javadoc-plugin-version>2.9.1</maven-javadoc-plugin-version>
     <maven-jboss-as-maven-plugin-version>7.4.Final</maven-jboss-as-maven-plugin-version>
-    <maven-plugin-plugin-version>3.2</maven-plugin-plugin-version>
     <maven-remote-resources-plugin-version>1.4</maven-remote-resources-plugin-version>
-    <maven-resources-plugin-version>2.6</maven-resources-plugin-version>
     <maven-reporting-api-version>2.2.1</maven-reporting-api-version>
     <maven-reporting-impl-version>2.0.5</maven-reporting-impl-version>
     <maven-shade-plugin-version>2.1</maven-shade-plugin-version>
-    <maven-source-plugin-version>2.2.1</maven-source-plugin-version>
-    <maven-surefire-plugin-version>2.16</maven-surefire-plugin-version>
     <maven-surefire-report-plugin-version>2.13</maven-surefire-report-plugin-version>
     <maven-war-plugin-version>2.4</maven-war-plugin-version>
     <maven-version>2.0</maven-version>
@@ -2268,11 +2256,6 @@
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-assembly-plugin</artifactId>
-          <version>${maven-assembly-plugin-version}</version>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-checkstyle-plugin</artifactId>
           <version>${maven-checkstyle-plugin-version}</version>
           <dependencies>
@@ -2316,7 +2299,6 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-clean-plugin</artifactId>
-          <version>${maven-clean-plugin-version}</version>
           <configuration>
             <filesets>
               <fileset>
@@ -2330,18 +2312,12 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-compiler-plugin</artifactId>
-          <version>${maven-compiler-plugin-version}</version>
           <configuration>
             <source>1.6</source>
             <target>1.6</target>
             <maxmem>256M</maxmem>
             <fork>${compiler.fork}</fork>
           </configuration>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-dependency-plugin</artifactId>
-          <version>${maven-dependency-plugin-version}</version>
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
@@ -2365,23 +2341,7 @@
         </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-failsafe-plugin</artifactId>
-          <version>${maven-failsafe-plugin-version}</version>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-install-plugin</artifactId>
-          <version>${maven-install-plugin-version}</version>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-jar-plugin</artifactId>
-          <version>${maven-jar-plugin-version}</version>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-javadoc-plugin</artifactId>
-          <version>${maven-javadoc-plugin-version}</version>
           <configuration>
             <attach>true</attach>
             <source>1.6</source>
@@ -2392,20 +2352,9 @@
             <encoding>UTF-8</encoding>
           </configuration>
         </plugin>
-       <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-plugin-plugin</artifactId>
-          <version>${maven-plugin-plugin-version}</version>
-        </plugin>
-        <plugin>
-          <groupId>org.apache.maven.plugins</groupId>
-          <artifactId>maven-remote-resources-plugin</artifactId>
-          <version>${maven-remote-resources-plugin-version}</version>
-        </plugin>
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-resources-plugin</artifactId>
-          <version>${maven-resources-plugin-version}</version>
           <configuration>
             <encoding>UTF-8</encoding>
           </configuration>
@@ -2418,7 +2367,6 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-source-plugin</artifactId>
-          <version>${maven-source-plugin-version}</version>
           <configuration>
             <archive>
               <manifestEntries>
@@ -2652,7 +2600,6 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-surefire-plugin</artifactId>
-        <version>${maven-surefire-plugin-version}</version>
         <configuration>
           <!--forkMode>pertest</forkMode -->
           <forkedProcessTimeoutInSeconds>300</forkedProcessTimeoutInSeconds>
@@ -2722,7 +2669,6 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
-        <version>${maven-javadoc-plugin-version}</version>
         <configuration>
           <links>
             <link>http://download.oracle.com/javase/6/docs/api/</link>

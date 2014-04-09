@@ -19,7 +19,7 @@
   <parent>
     <groupId>org.apache</groupId>
     <artifactId>apache</artifactId>
-    <version>13</version>
+    <version>14</version>
   </parent>
 
   <modelVersion>4.0.0</modelVersion>
@@ -164,7 +164,6 @@
           <plugin>
             <groupId>org.apache.rat</groupId>
             <artifactId>apache-rat-plugin</artifactId>
-            <version>0.9</version>
             <configuration>
               <excludeSubProjects>false</excludeSubProjects>
               <excludes>
@@ -201,8 +200,6 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-release-plugin</artifactId>
-          <!-- see http://jira.codehaus.org/browse/MRELEASE-812 -->
-          <version>2.4.1</version>
           <configuration>
             <localCheckout>true</localCheckout>
             <pushChanges>true</pushChanges>
@@ -372,7 +369,6 @@
             <plugin>
               <groupId>org.apache.maven.plugins</groupId>
               <artifactId>maven-antrun-plugin</artifactId>
-              <version>1.6</version>
               <dependencies>
                 <dependency>
                   <groupId>com.sun.xml.bind</groupId>
