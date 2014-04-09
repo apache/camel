@@ -29,7 +29,7 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 /**
- * Marhsal tests with List objects.
+ * Marshal tests with List objects.
  */
 public class MarshalListTest extends CamelTestSupport {
 
