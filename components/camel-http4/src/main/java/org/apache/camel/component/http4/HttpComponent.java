@@ -208,14 +208,7 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
         boolean secure = HttpHelper.isSecureConnection(uri) || sslContextParameters != null;
 
         // need to set scheme on address uri depending on if its secure or not
-        String addressUri = remaining.startsWith("http") ? remaining : null;
-        if (addressUri == null) {
-            if (secure) {
-                addressUri = "https://" + remaining;
-            } else {
-                addressUri = "http://" + remaining;
-            }
-        }
+        String addressUri = (secure ? "https://" : "http://") + remaining;
         
         addressUri = UnsafeUriCharactersEncoder.encodeHttpURI(addressUri);
         URI uriHttpUriAddress = new URI(addressUri);
