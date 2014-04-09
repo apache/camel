@@ -58,7 +58,14 @@ public abstract class AbstractXStreamWrapper implements DataFormat {
     public AbstractXStreamWrapper(XStream xstream) {
         this.xstream = xstream;
     }
-    
+
+    /**
+     * Resolves the XStream instance to be used by this data format. If XStream is not explicitly set, new instance will
+     * be created and cached.
+     *
+     * @param resolver class resolver to be used during a configuration of the XStream instance.
+     * @return XStream instance used by this data format.
+     */
     public XStream getXStream(ClassResolver resolver) {
         if (xstream == null) {
             xstream = createXStream(resolver);
