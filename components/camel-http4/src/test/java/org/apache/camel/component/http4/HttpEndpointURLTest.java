@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.http4;
 
+import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
@@ -32,10 +33,20 @@ public class HttpEndpointURLTest extends CamelTestSupport {
         HttpEndpoint http1 = context.getEndpoint("http4://www.google.com", HttpEndpoint.class);
         HttpEndpoint http2 = context.getEndpoint("https4://www.google.com?test=parameter&proxyAuthHost=myotherproxy&proxyAuthPort=2345", HttpEndpoint.class);
         HttpEndpoint http3 = context.getEndpoint("https4://www.google.com?test=parameter", HttpEndpoint.class);
-       
+        
         assertEquals("Get a wrong HttpUri of http1", "http://www.google.com", http1.getHttpUri().toString());
         assertEquals("Get a wrong HttpUri of http2", "https://www.google.com?test=parameter", http2.getHttpUri().toString());
         assertEquals("Get a wrong HttpUri of http2 andhttp3", http2.getHttpUri(), http3.getHttpUri());
+        
+        try {
+            // need to catch the exception here
+            context.getEndpoint("https4://http://www.google.com", HttpEndpoint.class);
+            fail("need to throw an exception here");
+        } catch (ResolveEndpointFailedException ex) {
+            assertTrue("Get a wrong exception message", ex.getMessage().indexOf("You have duplicated the http(s) protocol") > 0);
+        }
+         
+        
     }
 
 }
