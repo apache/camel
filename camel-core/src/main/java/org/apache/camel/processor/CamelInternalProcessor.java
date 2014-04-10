@@ -519,7 +519,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
                         backlogTracer.isBodyIncludeStreams(), backlogTracer.isBodyIncludeFiles(), backlogTracer.getBodyMaxChars());
 
                 // if first we should add a pseudo trace message as well, so we have a starting message (eg from the route)
-                String routeId = routeDefinition.getId();
+                String routeId = routeDefinition != null ? routeDefinition.getId() : null;
                 if (first) {
                     Date created = exchange.getProperty(Exchange.CREATED_TIMESTAMP, timestamp, Date.class);
                     DefaultBacklogTracerEventMessage pseudo = new DefaultBacklogTracerEventMessage(backlogTracer.incrementTraceCounter(), created, routeId, null, exchangeId, messageAsXml);
