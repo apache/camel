@@ -19,7 +19,6 @@ package org.apache.camel.component.cxf.jaxrs;
 import java.lang.reflect.Method;
 
 import javax.ws.rs.WebApplicationException;
-import javax.ws.rs.core.Response;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.ExchangePattern;
@@ -156,12 +155,8 @@ public class CxfRsInvoker extends JAXRSInvoker {
                 } else {
                     throw (WebApplicationException)exception;
                 }
-            } else {
-                // Send the exception message back 
-                WebApplicationException webApplicationException = new WebApplicationException(exception, Response.serverError().entity(exception.toString()).build());
-                throw webApplicationException;
-            }
-            
+            } 
+            //CAMEL-7357 throw out other exception to make sure the ExceptionMapper work
         }
         return endpoint.getBinding().populateCxfRsResponseFromExchange(camelExchange, cxfExchange);
     }
