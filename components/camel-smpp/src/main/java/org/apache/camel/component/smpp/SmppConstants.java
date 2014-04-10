@@ -55,7 +55,7 @@ public interface SmppConstants {
     String SUBMITTED = "CamelSmppSubmitted";
     String SUBMIT_DATE = "CamelSmppSubmitDate";
     String SYSTEM_ID = "CamelSmppSystemId";
-    String PASSWORD = "CamelSmppSystemId";
+    String PASSWORD = "CamelSmppPassword";
     String VALIDITY_PERIOD = "CamelSmppValidityPeriod";
     String OPTIONAL_PARAMETERS = "CamelSmppOptionalParameters";
     String OPTIONAL_PARAMETER = "CamelSmppOptionalParameter";
