@@ -23,11 +23,11 @@ public enum DropboxOperation {
     get("get"),
     move("move");
 
+    private final String text;
+
     private DropboxOperation(final String text) {
         this.text = text;
     }
-
-    private final String text;
 
     @Override
     public String toString() {

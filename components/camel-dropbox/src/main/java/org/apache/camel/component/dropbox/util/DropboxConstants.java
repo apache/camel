@@ -18,8 +18,9 @@ package org.apache.camel.component.dropbox.util;
 
 public final class DropboxConstants {
 
-    private DropboxConstants() {}
-
     public static final String DROPBOX_FILE_SEPARATOR = "/";
     public static final long POLL_CONSUMER_DELAY = 60 * 60 * 1000L;
+
+    private DropboxConstants() { }
+
 }

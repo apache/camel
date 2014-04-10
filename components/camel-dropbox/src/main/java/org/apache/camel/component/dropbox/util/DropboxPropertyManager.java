@@ -21,15 +21,15 @@ import java.io.InputStream;
 import java.net.URL;
 import java.util.Properties;
 
-public class DropboxPropertyManager {
+public final class DropboxPropertyManager {
 
     private static Properties properties;
     private static DropboxPropertyManager instance;
 
-    private DropboxPropertyManager(){}
+    private DropboxPropertyManager() { }
 
     public static synchronized DropboxPropertyManager getInstance() throws Exception {
-        if(instance==null) {
+        if (instance == null) {
             instance = new DropboxPropertyManager();
             properties = loadProperties();
         }
@@ -46,16 +46,14 @@ public class DropboxPropertyManager {
         InputStream inStream;
         try {
             inStream = url.openStream();
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
             throw new DropboxException("dropbox.properties could not be found");
         }
         properties = new Properties();
         try {
             properties.load(inStream);
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
             throw new DropboxException("dropbox.properties can't be read");
         }

@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.dropbox.integration.consumer;
 
+import java.util.List;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.dropbox.integration.DropboxTestSupport;
@@ -23,11 +25,10 @@ import org.apache.camel.component.dropbox.util.DropboxResultHeader;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
 
-import java.util.List;
 
 public class DropboxConsumerSearchTest extends DropboxTestSupport {
 
-    public DropboxConsumerSearchTest() throws Exception {}
+    public DropboxConsumerSearchTest() throws Exception { }
 
     @Test
     public void testCamelDropbox() throws Exception {

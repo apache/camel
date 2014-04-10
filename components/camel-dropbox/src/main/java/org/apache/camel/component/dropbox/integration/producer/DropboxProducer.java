@@ -37,7 +37,7 @@ public abstract class DropboxProducer extends DefaultProducer {
 
     @Override
     protected void doStart() throws Exception {
-        if(configuration.getClient() == null) {
+        if (configuration.getClient() == null) {
             //create dropbox client
             configuration.createClient();
 

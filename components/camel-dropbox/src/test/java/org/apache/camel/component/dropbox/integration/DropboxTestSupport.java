@@ -16,12 +16,13 @@
  */
 package org.apache.camel.component.dropbox.integration;
 
-import org.apache.camel.test.junit4.CamelTestSupport;
-
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.URL;
 import java.util.Properties;
+
+import org.apache.camel.test.junit4.CamelTestSupport;
+
 
 public class DropboxTestSupport extends CamelTestSupport {
 
@@ -33,8 +34,7 @@ public class DropboxTestSupport extends CamelTestSupport {
         InputStream inStream;
         try {
             inStream = url.openStream();
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
             throw new IllegalAccessError("test-options.properties could not be found");
         }
@@ -42,8 +42,7 @@ public class DropboxTestSupport extends CamelTestSupport {
         properties = new Properties();
         try {
             properties.load(inStream);
-        }
-        catch (IOException e) {
+        } catch (IOException e) {
             e.printStackTrace();
             throw new IllegalAccessError("test-options.properties could not be found");
         }
@@ -51,6 +50,6 @@ public class DropboxTestSupport extends CamelTestSupport {
 
     protected String getAuthParams() {
         return "accessToken=" + properties.get("accessToken")
-                + "&clientIdentifier="+properties.get("clientIdentifier");
+                + "&clientIdentifier=" + properties.get("clientIdentifier");
     }
 }

@@ -26,7 +26,7 @@ import org.apache.camel.component.dropbox.dto.DropboxResult;
 public class DropboxScheduledPollGetConsumer extends DropboxScheduledPollConsumer {
 
     public DropboxScheduledPollGetConsumer(DropboxEndpoint endpoint, Processor processor, DropboxConfiguration configuration) {
-        super(endpoint, processor,configuration);
+        super(endpoint, processor, configuration);
     }
 
     /**
@@ -46,8 +46,7 @@ public class DropboxScheduledPollGetConsumer extends DropboxScheduledPollConsume
             // send message to next processor in the route
             getProcessor().process(exchange);
             return 1; // number of messages polled
-        }
-        finally {
+        } finally {
             // log exception if an exception occurred and was not handled
             if (exchange.getException() != null) {
                 getExceptionHandler().handleException("Error processing exchange", exchange, exchange.getException());

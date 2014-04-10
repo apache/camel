@@ -16,11 +16,11 @@
  */
 package org.apache.camel.component.dropbox.dto;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.component.dropbox.util.DropboxResultHeader;
-
 import java.io.ByteArrayOutputStream;
 import java.util.Map;
+
+import org.apache.camel.Exchange;
+import org.apache.camel.component.dropbox.util.DropboxResultHeader;
 
 public class DropboxFileDownloadResult extends DropboxResult {
 
@@ -36,24 +36,23 @@ public class DropboxFileDownloadResult extends DropboxResult {
     @Override
     public void populateExchange(Exchange exchange) {
         //in case we have only one baos put it directly in body
-        Map<String,ByteArrayOutputStream> map = (Map<String,ByteArrayOutputStream>)resultEntries;
-        if(map.size()==1) {
+        Map<String, ByteArrayOutputStream> map = (Map<String, ByteArrayOutputStream>)resultEntries;
+        if (map.size() == 1) {
             //set info in exchange
             String pathExtracted = null;
             ByteArrayOutputStream baosExtracted = null;
-            for(Map.Entry<String,ByteArrayOutputStream> entry: map.entrySet()) {
+            for (Map.Entry<String, ByteArrayOutputStream> entry : map.entrySet()) {
                 pathExtracted = entry.getKey();
                 baosExtracted = entry.getValue();
             }
-            exchange.getIn().setHeader(DropboxResultHeader.DOWNLOADED_FILE.name(),pathExtracted);
+            exchange.getIn().setHeader(DropboxResultHeader.DOWNLOADED_FILE.name(), pathExtracted);
             exchange.getIn().setBody(baosExtracted);
-        }
-        else {
+        } else {
             StringBuffer pathsExtracted = new StringBuffer();
-            for(Map.Entry<String,ByteArrayOutputStream> entry: map.entrySet()) {
-                pathsExtracted.append(entry.getKey()+"\n");
+            for (Map.Entry<String, ByteArrayOutputStream> entry : map.entrySet()) {
+                pathsExtracted.append(entry.getKey() + "\n");
             }
-            exchange.getIn().setHeader(DropboxResultHeader.DOWNLOADED_FILES.name(),pathsExtracted.toString());
+            exchange.getIn().setHeader(DropboxResultHeader.DOWNLOADED_FILES.name(), pathsExtracted.toString());
             exchange.getIn().setBody(map);
         }
     }

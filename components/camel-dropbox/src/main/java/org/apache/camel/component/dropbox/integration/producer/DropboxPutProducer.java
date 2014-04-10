@@ -16,9 +16,9 @@
  */
 package org.apache.camel.component.dropbox.integration.producer;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.component.dropbox.DropboxConfiguration;
 import org.apache.camel.component.dropbox.DropboxEndpoint;
-import org.apache.camel.Exchange;
 import org.apache.camel.component.dropbox.core.DropboxAPIFacade;
 import org.apache.camel.component.dropbox.dto.DropboxResult;
 import org.slf4j.Logger;
@@ -28,13 +28,13 @@ public class DropboxPutProducer extends DropboxProducer {
     private static final transient Logger LOG = LoggerFactory.getLogger(DropboxPutProducer.class);
 
     public DropboxPutProducer(DropboxEndpoint endpoint, DropboxConfiguration configuration) {
-        super(endpoint,configuration);
+        super(endpoint, configuration);
     }
 
     @Override
     public void process(Exchange exchange) throws Exception {
         DropboxResult result = DropboxAPIFacade.getInstance(configuration.getClient())
-                .put(configuration.getLocalPath(),configuration.getRemotePath(),configuration.getUploadMode());
+                .put(configuration.getLocalPath(), configuration.getRemotePath(), configuration.getUploadMode());
         result.populateExchange(exchange);
         LOG.info("Uploaded: " + result.toString());
 

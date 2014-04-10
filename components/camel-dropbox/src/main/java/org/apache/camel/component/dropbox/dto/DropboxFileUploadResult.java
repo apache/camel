@@ -16,12 +16,12 @@
  */
 package org.apache.camel.component.dropbox.dto;
 
+import java.util.Map;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.component.dropbox.util.DropboxResultCode;
 import org.apache.camel.component.dropbox.util.DropboxResultHeader;
 
-import java.io.ByteArrayOutputStream;
-import java.util.Map;
 
 public class DropboxFileUploadResult extends DropboxResult {
 
@@ -36,24 +36,23 @@ public class DropboxFileUploadResult extends DropboxResult {
      */
     @Override
     public void populateExchange(Exchange exchange) {
-        Map<String,DropboxResultCode> map = (Map<String,DropboxResultCode>)resultEntries;
-        if(map.size()==1) {
+        Map<String, DropboxResultCode> map = (Map<String, DropboxResultCode>)resultEntries;
+        if (map.size() == 1) {
             //set info in exchange
             String pathExtracted = null;
             DropboxResultCode codeExtracted = null;
-            for(Map.Entry<String,DropboxResultCode> entry: map.entrySet()) {
+            for (Map.Entry<String, DropboxResultCode> entry : map.entrySet()) {
                 pathExtracted = entry.getKey();
                 codeExtracted = entry.getValue();
             }
-            exchange.getIn().setHeader(DropboxResultHeader.UPLOADED_FILE.name(),pathExtracted);
+            exchange.getIn().setHeader(DropboxResultHeader.UPLOADED_FILE.name(), pathExtracted);
             exchange.getIn().setBody(codeExtracted.name());
-        }
-        else {
+        } else {
             StringBuffer pathsExtracted = new StringBuffer();
-            for(Map.Entry<String,DropboxResultCode> entry: map.entrySet()) {
-                pathsExtracted.append(entry.getKey()+"\n");
+            for (Map.Entry<String, DropboxResultCode> entry : map.entrySet()) {
+                pathsExtracted.append(entry.getKey() + "\n");
             }
-            exchange.getIn().setHeader(DropboxResultHeader.UPLOADED_FILES.name(),pathsExtracted.toString());
+            exchange.getIn().setHeader(DropboxResultHeader.UPLOADED_FILES.name(), pathsExtracted.toString());
             exchange.getIn().setBody(map);
         }
     }

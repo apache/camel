@@ -16,9 +16,9 @@
  */
 package org.apache.camel.component.dropbox.integration.consumer;
 
+import org.apache.camel.Processor;
 import org.apache.camel.component.dropbox.DropboxConfiguration;
 import org.apache.camel.component.dropbox.DropboxEndpoint;
-import org.apache.camel.Processor;
 import org.apache.camel.impl.ScheduledPollConsumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -45,7 +45,7 @@ public abstract class DropboxScheduledPollConsumer extends ScheduledPollConsumer
      */
     @Override
     protected void doStart() throws Exception {
-        if(configuration.getClient() == null) {
+        if (configuration.getClient() == null) {
             //create dropbox client
             configuration.createClient();
 

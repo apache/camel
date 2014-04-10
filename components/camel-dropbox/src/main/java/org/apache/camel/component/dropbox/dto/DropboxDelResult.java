@@ -16,14 +16,10 @@
  */
 package org.apache.camel.component.dropbox.dto;
 
-import com.dropbox.core.DbxEntry;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.dropbox.util.DropboxResultHeader;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import java.util.List;
-
 
 public class DropboxDelResult extends DropboxResult {
 
@@ -37,7 +33,7 @@ public class DropboxDelResult extends DropboxResult {
     @Override
     public void populateExchange(Exchange exchange) {
         String remotePath = (String)resultEntries;
-        exchange.getIn().setHeader(DropboxResultHeader.DELETED_PATH.name(),remotePath);
+        exchange.getIn().setHeader(DropboxResultHeader.DELETED_PATH.name(), remotePath);
         exchange.getIn().setBody(remotePath);
     }
 }

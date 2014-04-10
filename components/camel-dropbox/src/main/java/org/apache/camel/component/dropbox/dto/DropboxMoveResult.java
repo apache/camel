@@ -34,7 +34,7 @@ public class DropboxMoveResult extends DropboxResult {
     @Override
     public void populateExchange(Exchange exchange) {
         String movedPath = (String)resultEntries;
-        exchange.getIn().setHeader(DropboxResultHeader.MOVED_PATH.name(),movedPath);
+        exchange.getIn().setHeader(DropboxResultHeader.MOVED_PATH.name(), movedPath);
         exchange.getIn().setBody(movedPath);
     }
 }

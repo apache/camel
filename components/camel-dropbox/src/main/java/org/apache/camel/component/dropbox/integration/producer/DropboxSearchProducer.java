@@ -28,13 +28,13 @@ public class DropboxSearchProducer extends DropboxProducer {
     private static final transient Logger LOG = LoggerFactory.getLogger(DropboxSearchProducer.class);
 
     public DropboxSearchProducer(DropboxEndpoint endpoint, DropboxConfiguration configuration) {
-        super(endpoint,configuration);
+        super(endpoint, configuration);
     }
 
     @Override
     public void process(Exchange exchange) throws Exception {
         DropboxResult result = DropboxAPIFacade.getInstance(configuration.getClient())
-                .search(configuration.getRemotePath(),configuration.getQuery());
+                .search(configuration.getRemotePath(), configuration.getQuery());
         result.populateExchange(exchange);
     }
 

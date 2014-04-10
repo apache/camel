@@ -20,11 +20,11 @@ public enum DropboxUploadMode {
     add("add"),
     force("force");
 
+    private final String text;
+
     private DropboxUploadMode(final String text) {
         this.text = text;
     }
-
-    private final String text;
 
     @Override
     public String toString() {

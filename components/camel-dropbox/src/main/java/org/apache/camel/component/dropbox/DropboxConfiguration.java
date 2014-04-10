@@ -16,14 +16,16 @@
  */
 package org.apache.camel.component.dropbox;
 
-import com.dropbox.core.*;
+import java.util.Locale;
+
+import com.dropbox.core.DbxClient;
+import com.dropbox.core.DbxRequestConfig;
 import org.apache.camel.component.dropbox.util.DropboxException;
 import org.apache.camel.component.dropbox.util.DropboxOperation;
 import org.apache.camel.component.dropbox.util.DropboxUploadMode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.util.Locale;
 
 public class DropboxConfiguration {
 
@@ -64,7 +66,7 @@ public class DropboxConfiguration {
         DbxRequestConfig config =
                 new DbxRequestConfig(clientIdentifier, Locale.getDefault().toString());
         DbxClient client = new DbxClient(config, accessToken);
-        if(client == null) {
+        if (client == null) {
             throw new DropboxException("can't establish a Dropbox conenction!");
         }
         this.client = client;

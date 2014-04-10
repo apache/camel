@@ -51,10 +51,10 @@ public class DropboxComponent extends DefaultComponent {
         configuration.setQuery((String)parameters.get("query"));
         configuration.setOperation(DropboxOperation.valueOf(remaining));
         configuration.setClientIdentifier(
-                parameters.get("clientIdentifier")==null?
-                        DropboxPropertyManager.getInstance().getProperty("clientIdentifier")
-                        :(String) parameters.get("clientIdentifier"));
-        if(parameters.get("uploadMode")!=null) {
+                parameters.get("clientIdentifier") == null
+                        ? DropboxPropertyManager.getInstance().getProperty("clientIdentifier")
+                        : (String) parameters.get("clientIdentifier"));
+        if (parameters.get("uploadMode") != null) {
             configuration.setUploadMode(DropboxUploadMode.valueOf((String)parameters.get("uploadMode")));
         }
 
@@ -66,7 +66,7 @@ public class DropboxComponent extends DefaultComponent {
 
         LOG.info("dropbox configuration set!");
 
-        Endpoint endpoint = new DropboxEndpoint(uri,this,configuration);
+        Endpoint endpoint = new DropboxEndpoint(uri, this, configuration);
         return endpoint;
     }
 

@@ -28,15 +28,15 @@ public class DropboxMoveProducer extends DropboxProducer {
     private static final transient Logger LOG = LoggerFactory.getLogger(DropboxMoveProducer.class);
 
     public DropboxMoveProducer(DropboxEndpoint endpoint, DropboxConfiguration configuration) {
-        super(endpoint,configuration);
+        super(endpoint, configuration);
     }
 
     @Override
     public void process(Exchange exchange) throws Exception {
         DropboxResult result = DropboxAPIFacade.getInstance(configuration.getClient())
-                .move(configuration.getRemotePath(),configuration.getNewRemotePath());
+                .move(configuration.getRemotePath(), configuration.getNewRemotePath());
         result.populateExchange(exchange);
-        log.info("Moved from " + configuration.getRemotePath()+" to "+configuration.getNewRemotePath());
+        log.info("Moved from " + configuration.getRemotePath() + " to " + configuration.getNewRemotePath());
     }
 
 }

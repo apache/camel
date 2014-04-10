@@ -16,11 +16,25 @@
  */
 package org.apache.camel.component.dropbox.core;
 
+import java.io.ByteArrayOutputStream;
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.IOException;
+import java.util.Collection;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
+
 import com.dropbox.core.DbxClient;
 import com.dropbox.core.DbxEntry;
 import com.dropbox.core.DbxException;
 import com.dropbox.core.DbxWriteMode;
-import org.apache.camel.component.dropbox.dto.*;
+import org.apache.camel.component.dropbox.dto.DropboxDelResult;
+import org.apache.camel.component.dropbox.dto.DropboxFileDownloadResult;
+import org.apache.camel.component.dropbox.dto.DropboxFileUploadResult;
+import org.apache.camel.component.dropbox.dto.DropboxMoveResult;
+import org.apache.camel.component.dropbox.dto.DropboxResult;
+import org.apache.camel.component.dropbox.dto.DropboxSearchResult;
 import org.apache.camel.component.dropbox.util.DropboxException;
 import org.apache.camel.component.dropbox.util.DropboxResultCode;
 import org.apache.camel.component.dropbox.util.DropboxUploadMode;
@@ -28,24 +42,18 @@ import org.apache.commons.io.FileUtils;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileInputStream;
-import java.io.IOException;
-import java.util.*;
 
 import static org.apache.camel.component.dropbox.util.DropboxConstants.DROPBOX_FILE_SEPARATOR;
 
 
-public class DropboxAPIFacade {
+public final class DropboxAPIFacade {
 
     private static final transient Logger LOG = LoggerFactory.getLogger(DropboxAPIFacade.class);
 
     private static DropboxAPIFacade instance;
     private static DbxClient client;
 
-    private DropboxAPIFacade() {
-    }
+    private DropboxAPIFacade() { }
 
     /**
      * Return a singleton instance of this class
@@ -80,9 +88,8 @@ public class DropboxAPIFacade {
         DbxEntry entry = null;
         try {
             entry = instance.client.getMetadata(dropboxPath);
-        }
-        catch (DbxException e) {
-            throw new DropboxException(dropboxPath+" does not exist or can't obtain metadata");
+        } catch (DbxException e) {
+            throw new DropboxException(dropboxPath + " does not exist or can't obtain metadata");
         }
         File fileLocalPath = new File(localPath);
         //verify uploading of a single file
@@ -112,9 +119,7 @@ public class DropboxAPIFacade {
                 result.setResultEntries(resultEntries);
             }
             return result;
-        }
-        //verify uploading of a list of files inside a dir
-        else {
+        } else {       //verify uploading of a list of files inside a dir
             LOG.info("uploading a dir...");
             //check if dropbox folder exists
             if (entry != null && !entry.isFolder()) {
@@ -147,8 +152,7 @@ public class DropboxAPIFacade {
                     } else {
                         resultEntries.put(dropboxPath, DropboxResultCode.OK);
                     }
-                }
-                catch (Exception ex) {
+                } catch (Exception ex) {
                     resultEntries.put(dropboxPath, DropboxResultCode.KO);
                 }
                 dropboxPath = oldDropboxPath;
@@ -192,20 +196,17 @@ public class DropboxAPIFacade {
             LOG.info("search no query");
             try {
                 listing = instance.client.getMetadataWithChildren(remotePath);
-            }
-            catch (DbxException e) {
-                throw new DropboxException(remotePath+" does not exist or can't obtain metadata");
+            } catch (DbxException e) {
+                throw new DropboxException(remotePath + " does not exist or can't obtain metadata");
             }
             result.setResultEntries(listing.children);
-        }
-        else {
+        } else {
             LOG.info("search by query:" + query);
             List<DbxEntry> entries = null;
             try {
                 entries = instance.client.searchFileAndFolderNames(remotePath, query);
-            }
-            catch (DbxException e) {
-                throw new DropboxException(remotePath+" does not exist or can't obtain metadata");
+            } catch (DbxException e) {
+                throw new DropboxException(remotePath + " does not exist or can't obtain metadata");
             }
             result.setResultEntries(entries);
         }
@@ -223,9 +224,8 @@ public class DropboxAPIFacade {
         DropboxResult result = null;
         try {
             instance.client.delete(remotePath);
-        }
-        catch (DbxException e) {
-            throw new DropboxException(remotePath+" does not exist or can't obtain metadata");
+        } catch (DbxException e) {
+            throw new DropboxException(remotePath + " does not exist or can't obtain metadata");
         }
         result = new DropboxDelResult();
         result.setResultEntries(remotePath);
@@ -243,9 +243,8 @@ public class DropboxAPIFacade {
         DropboxResult result = null;
         try {
             instance.client.move(remotePath, newRemotePath);
-        }
-        catch (DbxException e) {
-            throw new DropboxException(remotePath+" does not exist or can't obtain metadata");
+        } catch (DbxException e) {
+            throw new DropboxException(remotePath + " does not exist or can't obtain metadata");
         }
         result = new DropboxMoveResult();
         result.setResultEntries(remotePath + "-" + newRemotePath);
@@ -273,13 +272,12 @@ public class DropboxAPIFacade {
         DbxEntry.WithChildren listing = null;
         try {
             listing = instance.client.getMetadataWithChildren(path);
+        } catch (DbxException e) {
+            throw new DropboxException(path + " does not exist or can't obtain metadata");
         }
-        catch (DbxException e) {
-            throw new DropboxException(path+" does not exist or can't obtain metadata");
-        }
-        if(listing.children == null) {
+        if (listing.children == null) {
             LOG.info("downloading a single file...");
-            downloadSingleFile(path,resultEntries);
+            downloadSingleFile(path, resultEntries);
             return;
         }
         for (DbxEntry entry : listing.children) {
@@ -287,12 +285,10 @@ public class DropboxAPIFacade {
                 try {
                     //get the baos of the file
                     downloadSingleFile(entry.path, resultEntries);
-                }
-                catch(DropboxException e) {
+                } catch (DropboxException e) {
                     LOG.warn("can't download from " + entry.path);
                 }
-            }
-            else {
+            } else {
                 //iterate on folder
                 downloadFilesInFolder(entry.path, resultEntries);
             }
@@ -301,19 +297,17 @@ public class DropboxAPIFacade {
 
     private void downloadSingleFile(String path, Map<String, ByteArrayOutputStream> resultEntries) throws DropboxException {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
-        DbxEntry.File downloadedFile = null;
+        DbxEntry.File downloadedFile;
         try {
             downloadedFile = instance.client.getFile(path, null, baos);
-        }
-        catch (DbxException e) {
-            throw new DropboxException(path+" does not exist or can't obtain metadata");
-        }
-        catch (IOException e) {
-            throw new DropboxException(path+" can't obtain a stream");
+        } catch (DbxException e) {
+            throw new DropboxException(path + " does not exist or can't obtain metadata");
+        } catch (IOException e) {
+            throw new DropboxException(path + " can't obtain a stream");
         }
         if (downloadedFile != null) {
             resultEntries.put(path, baos);
-            LOG.info("downloaded path:"+path+" - baos size:" + baos.size());
+            LOG.info("downloaded path:" + path + " - baos size:" + baos.size());
         }
 
     }

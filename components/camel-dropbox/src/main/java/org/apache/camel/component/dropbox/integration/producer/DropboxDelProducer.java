@@ -28,7 +28,7 @@ public class DropboxDelProducer extends DropboxProducer {
     private static final transient Logger LOG = LoggerFactory.getLogger(DropboxDelProducer.class);
 
     public DropboxDelProducer(DropboxEndpoint endpoint, DropboxConfiguration configuration) {
-        super(endpoint,configuration);
+        super(endpoint, configuration);
     }
 
     @Override
