@@ -280,6 +280,7 @@
     <!-- maven-checkstyle-plugin 2.10 has problems to validate the license header in properties files-->
     <maven-checkstyle-plugin-version>2.9.1</maven-checkstyle-plugin-version>
     <maven-eclipse-plugin-version>2.9</maven-eclipse-plugin-version>
+    <maven-javadoc-plugin-version>2.9.1</maven-javadoc-plugin-version>
     <maven-jboss-as-maven-plugin-version>7.4.Final</maven-jboss-as-maven-plugin-version>
     <maven-remote-resources-plugin-version>1.4</maven-remote-resources-plugin-version>
     <maven-reporting-api-version>2.2.1</maven-reporting-api-version>
@@ -2669,6 +2670,7 @@
       <plugin>
         <groupId>org.apache.maven.plugins</groupId>
         <artifactId>maven-javadoc-plugin</artifactId>
+        <version>${maven-javadoc-plugin-version}</version>
         <configuration>
           <links>
             <link>http://download.oracle.com/javase/6/docs/api/</link>
