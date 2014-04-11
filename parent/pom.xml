@@ -117,6 +117,7 @@
     <dom4j-bundle-version>1.6.1_5</dom4j-bundle-version>
     <dozer-version>5.4.0</dozer-version>
     <drools-version>6.0.0.Final</drools-version>
+    <dropbox-version>1.7.5</dropbox-version>
     <easymock-version>3.2</easymock-version>
     <eclipse-compiler-version>4.2.2</eclipse-compiler-version>
     <eclipse-equinox-common-version>3.3.0-v20070426</eclipse-equinox-common-version>
@@ -1756,6 +1757,13 @@
         <groupId>net.sf.dozer</groupId>
         <artifactId>dozer</artifactId>
         <version>${dozer-version}</version>
+      </dependency>
+
+      <!-- optional Dropbox dependencies -->
+      <dependency>
+        <groupId>com.dropbox.core</groupId>
+        <artifactId>dropbox-core-sdk</artifactId>
+        <version>${dropbox-version}</version>
       </dependency>
 
       <!-- optional mina dependencies -->
