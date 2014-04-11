@@ -446,7 +446,7 @@ public class SimpleTest extends LanguageTestSupport {
     public void testBodyAs() throws Exception {
         assertExpression("${bodyAs(String)}", "<hello id='m123'>world!</hello>");
         assertExpression("${bodyAs('String')}", "<hello id='m123'>world!</hello>");
-
+       
         exchange.getIn().setBody(null);
         assertExpression("${bodyAs('String')}", null);
 
@@ -460,6 +460,14 @@ public class SimpleTest extends LanguageTestSupport {
             fail("Should have thrown an exception");
         } catch (CamelExecutionException e) {
             assertIsInstanceOf(ClassNotFoundException.class, e.getCause());
+        }
+        
+        exchange.getIn().setBody("hello");
+        try {
+            assertExpression("${bodyAs(String).test}", "hello.test");
+            fail("should have thrown an exception");
+        } catch (SimpleIllegalSyntaxException e) {
+            assertTrue("Get a wrong message", e.getMessage().indexOf("bodyAs(String).test") > 0);
         }
     }
 
@@ -485,6 +493,13 @@ public class SimpleTest extends LanguageTestSupport {
             fail("Should have thrown an exception");
         } catch (CamelExecutionException e) {
             assertIsInstanceOf(ClassNotFoundException.class, e.getCause());
+        }
+        
+        try {
+            assertExpression("${mandatoryBodyAs(String).test}", "hello.test");
+            fail("should have thrown an exception");
+        } catch (SimpleIllegalSyntaxException e) {
+            assertTrue("Get a wrong message", e.getMessage().indexOf("mandatoryBodyAs(String).test") > 0);
         }
     }
 
