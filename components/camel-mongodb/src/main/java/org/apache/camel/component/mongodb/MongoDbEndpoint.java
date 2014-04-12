@@ -197,7 +197,7 @@ public class MongoDbEndpoint extends DefaultEndpoint {
         if (dynamicIndex != null && !dynamicIndex.isEmpty()) {
             for (DBObject index : dynamicIndex) {
                 LOG.debug("create BDObject Index {}", index);
-                collection.ensureIndex(index);
+                collection.createIndex(index);
             }
         }
     }
@@ -423,8 +423,9 @@ public class MongoDbEndpoint extends DefaultEndpoint {
         for (Class<?> inClass : innerClasses) {
             if (inClass.getSuperclass() == ReadPreference.class && inClass.getName().equals(readPreference)) {
                 try {
-                    this.readPreference = (ReadPreference) inClass.getConstructor((Class<?>) null).newInstance((Object[]) null);
+                    this.readPreference = (ReadPreference) inClass.getConstructor().newInstance();
                 } catch (Exception e) {
+                    LOG.debug("Error setting the read preference. This exception will be ignored.", e);
                     continue;
                 }
                 break;
