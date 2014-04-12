@@ -582,6 +582,13 @@ public class SimpleTest extends LanguageTestSupport {
         } catch (ExpressionIllegalSyntaxException e) {
             assertTrue(e.getMessage().startsWith("Valid syntax: ${headerAs(key, type)} was: headerAs(unknown String)"));
         }
+        
+        try {
+            assertExpression("${headerAs(fool,String).test}", null);
+            fail("Should have thrown an exception");
+        } catch (ExpressionIllegalSyntaxException e) {
+            assertTrue(e.getMessage().startsWith("Valid syntax: ${headerAs(key, type)} was: headerAs(fool,String).test"));
+        }
 
         try {
             assertExpression("${headerAs(bar,XXX)}", 123);
