@@ -26,11 +26,19 @@ public class SpringSimpleExpressionTest extends SpringTestSupport {
     protected AbstractXmlApplicationContext createApplicationContext() {
         return new ClassPathXmlApplicationContext("org/apache/camel/language/SpringSimpleExpressionTest.xml");
     }
-    
-    public void testSimpleEmptyString() throws Exception {
-        getMockEndpoint("mock:result").expectedBodiesReceived("False");
+
+    public void testSimpleWhenString() throws Exception {
+        getMockEndpoint("mock:result").expectedBodiesReceived("correct");
 
         template.sendBody("direct:start", "Hello World");
+
+        assertMockEndpointsSatisfied();
+    }
+
+    public void testSimpleOtherwiseString() throws Exception {
+        getMockEndpoint("mock:result").expectedBodiesReceived("incorrect");
+
+        template.sendBody("direct:start", "Bye World");
 
         assertMockEndpointsSatisfied();
     }
