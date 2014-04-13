@@ -27,7 +27,7 @@ import static org.apache.camel.component.mock.MockEndpoint.expectsMessageCount;
 
 public class CircuitBreakerLoadBalancerTest extends ContextTestSupport {
 
-    private static class MyExceptionProcessor extends RuntimeException {
+    private static class MyCustomException extends RuntimeException {
     }
 
     private MockEndpoint result;
@@ -42,7 +42,7 @@ public class CircuitBreakerLoadBalancerTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start").loadBalance()
-                    .circuitBreaker(2, 1000L, MyExceptionProcessor.class)
+                    .circuitBreaker(2, 1000L, MyCustomException.class)
                         .to("mock:result");
             }
         };
@@ -62,7 +62,7 @@ public class CircuitBreakerLoadBalancerTest extends ContextTestSupport {
         result.whenAnyExchangeReceived(new Processor() {
             @Override
             public void process(Exchange exchange) throws Exception {
-                exchange.setException(new MyExceptionProcessor());
+                exchange.setException(new MyCustomException());
             }
         });
 
@@ -71,8 +71,8 @@ public class CircuitBreakerLoadBalancerTest extends ContextTestSupport {
         Exchange exchangeThree = sendMessage("direct:start", "message three");
         assertMockEndpointsSatisfied();
 
-        assertTrue(exchangeOne.getException() instanceof MyExceptionProcessor);
-        assertTrue(exchangeTwo.getException() instanceof MyExceptionProcessor);
+        assertTrue(exchangeOne.getException() instanceof MyCustomException);
+        assertTrue(exchangeTwo.getException() instanceof MyCustomException);
         assertTrue(exchangeThree.getException() instanceof RejectedExecutionException);
     }
 
@@ -81,7 +81,7 @@ public class CircuitBreakerLoadBalancerTest extends ContextTestSupport {
         result.whenAnyExchangeReceived(new Processor() {
             @Override
             public void process(Exchange exchange) throws Exception {
-                exchange.setException(new MyExceptionProcessor());
+                exchange.setException(new MyCustomException());
             }
         });
 

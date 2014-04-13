@@ -31,9 +31,9 @@ import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * Represents an XML &lt;circuitbreaker/&gt; element
+ * Represents an XML &lt;circuitBreaker/&gt; element
  */
-@XmlRootElement(name = "circuitbreaker")
+@XmlRootElement(name = "circuitBreaker")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class CircuitBreakerLoadBalancerDefinition extends LoadBalancerDefinition {
     @XmlElement(name = "exception")
