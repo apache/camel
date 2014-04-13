@@ -428,13 +428,17 @@ public class MongoDbEndpoint extends DefaultEndpoint {
                     LOG.debug("Error setting the read preference. This exception will be ignored.", e);
                     continue;
                 }
+                // break the loop as we could successfully set the read preference property
                 break;
             }
         }
 
-        String msg = "Could not resolve specified ReadPreference of type " + readPreference
-                + ". Read preferences are resolved from inner classes of com.mongodb.ReadPreference.";
-        throw new IllegalArgumentException(msg);
+        // were we able to set the read preference?
+        if (getReadPreference() == null) {
+            String msg = "Could not resolve specified ReadPreference of type " + readPreference
+                    + ". Read preferences are resolved from inner classes of com.mongodb.ReadPreference.";
+            throw new IllegalArgumentException(msg);
+        }
     }
 
     public ReadPreference getReadPreference() {
