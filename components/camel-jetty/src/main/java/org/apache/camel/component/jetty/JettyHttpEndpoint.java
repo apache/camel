@@ -49,6 +49,7 @@ public class JettyHttpEndpoint extends HttpEndpoint {
     private boolean enableJmx;
     private boolean enableMultipartFilter;
     private boolean sendServerVersion = true;
+    private boolean sendDateHeader;
     private Filter multipartFilter;
     private List<Filter> filters;
     private Long continuationTimeout;
@@ -174,6 +175,14 @@ public class JettyHttpEndpoint extends HttpEndpoint {
     
     public void setSendServerVersion(boolean sendServerVersion) {
         this.sendServerVersion = sendServerVersion;
+    }
+    
+    public boolean isSendDateHeader() { 
+        return sendDateHeader;
+    }
+    
+    public void setSendDateHeader(boolean sendDateHeader) { 
+        this.sendDateHeader = sendDateHeader;
     }
     
     public boolean isEnableMultipartFilter() {

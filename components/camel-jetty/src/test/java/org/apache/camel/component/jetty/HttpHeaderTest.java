@@ -43,6 +43,7 @@ public class HttpHeaderTest extends BaseJettyTest {
         });
         
         assertNotNull(ex.getOut().getHeader("Server"));
+        assertNull(ex.getOut().getHeader("Date"));
         
         ex = template.request("http://localhost:{{port2}}/server/mytest", new Processor() {
             @Override
@@ -52,7 +53,9 @@ public class HttpHeaderTest extends BaseJettyTest {
         });
         
         assertNull(ex.getOut().getHeader("Server"));
+        assertNotNull(ex.getOut().getHeader("Date"));
     }
+    
    
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -81,8 +84,10 @@ public class HttpHeaderTest extends BaseJettyTest {
                 
                 from("jetty:http://localhost:{{port}}/server/mytest").transform(constant("Response!"));
                 
-                from("jetty:http://localhost:{{port2}}/server/mytest?sendServerVersion=false").transform(constant("Response!"));
+                //The setting only effect on a new server endpoint
+                from("jetty:http://localhost:{{port2}}/server/mytest?sendServerVersion=false&sendDateHeader=true").transform(constant("Response!"));
                 
+               
             }
         };
     }

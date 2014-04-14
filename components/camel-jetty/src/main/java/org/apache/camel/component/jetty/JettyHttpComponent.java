@@ -299,6 +299,8 @@ public class JettyHttpComponent extends HttpComponent {
                 // just set if we need sendServerVersion, the default value is true
                 server.setSendServerVersion(endpoint.isSendServerVersion());
                 server.addConnector(connector);
+                
+                server.setSendDateHeader(endpoint.isSendDateHeader());
 
                 connectorRef = new ConnectorRef(server, connector, createServletForConnector(server, connector, endpoint.getHandlers(), endpoint));
                 // must enable session before we start
