@@ -246,7 +246,10 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
         LOG.debug("Creating endpoint uri {}", endpointUriString);
         HttpClientConnectionManager localConnectionManager = clientConnectionManager;
         if (localConnectionManager == null) {
-            localConnectionManager = createConnectionManager(createConnectionRegistry(x509HostnameVerifier, sslContextParameters));
+            // need to check the parameters of maxTotalConnections and connectionsPerRoute
+            int maxTotalConnections = getAndRemoveParameter(parameters, "maxTotalConnections", int.class, 0);
+            int connectionsPerRoute = getAndRemoveParameter(parameters, "connectionsPerRoute", int.class, 0);
+            localConnectionManager = createConnectionManager(createConnectionRegistry(x509HostnameVerifier, sslContextParameters), maxTotalConnections, connectionsPerRoute);
         }
         HttpEndpoint endpoint = new HttpEndpoint(endpointUriString, this, clientBuilder, localConnectionManager, configurer);
         if (urlRewrite != null) {
@@ -313,19 +316,32 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
     }
     
     protected HttpClientConnectionManager createConnectionManager(Registry<ConnectionSocketFactory> registry) {
+        return createConnectionManager(registry, 0, 0);
+    }
+    
+    protected HttpClientConnectionManager createConnectionManager(Registry<ConnectionSocketFactory> registry, int maxTotalConnections, int connectionsPerRoute) {
         // setup the connection live time
         PoolingHttpClientConnectionManager answer = 
             new PoolingHttpClientConnectionManager(registry, null, null, null, getConnectionTimeToLive(), TimeUnit.MILLISECONDS);
-        if (getMaxTotalConnections() > 0) {
-            answer.setMaxTotal(getMaxTotalConnections());
+        int localMaxTotalConnections = maxTotalConnections;
+        if (localMaxTotalConnections == 0) {
+            localMaxTotalConnections = getMaxTotalConnections();
         }
-        if (getConnectionsPerRoute() > 0) {
-            answer.setDefaultMaxPerRoute(getConnectionsPerRoute());
+        if (localMaxTotalConnections > 0) {
+            answer.setMaxTotal(localMaxTotalConnections);
+        }
+        int localConnectionsPerRoute = connectionsPerRoute;
+        if (localConnectionsPerRoute == 0) {
+            localConnectionsPerRoute = getConnectionsPerRoute();
+        }
+        if (localConnectionsPerRoute > 0) {
+            answer.setDefaultMaxPerRoute(localConnectionsPerRoute);
         }
         LOG.info("Created ClientConnectionManager " + answer);
 
         return answer;
     }
+    
 
     @Override
     protected boolean useIntrospectionOnEndpoint() {

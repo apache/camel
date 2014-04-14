@@ -18,6 +18,8 @@ package org.apache.camel.component.http4;
 
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.http.conn.HttpClientConnectionManager;
+import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
 import org.junit.Test;
 
 public class HttpEndpointURLTest extends CamelTestSupport {
@@ -47,6 +49,17 @@ public class HttpEndpointURLTest extends CamelTestSupport {
         }
          
         
+    }
+    
+    @Test
+    public void testConnectionManagerFromHttpUri() throws Exception {
+        HttpEndpoint http1 = context.getEndpoint("http4://www.google.com?maxTotalConnections=40&connectionsPerRoute=5", HttpEndpoint.class);
+        HttpClientConnectionManager connectionManager = http1.getClientConnectionManager();
+        assertTrue("Get a wrong type of connection manager", connectionManager instanceof PoolingHttpClientConnectionManager);
+        @SuppressWarnings("resource")
+        PoolingHttpClientConnectionManager poolManager = (PoolingHttpClientConnectionManager)connectionManager;
+        assertEquals("Get a wrong setting of maxTotalConnections", 40, poolManager.getMaxTotal());
+        assertEquals("Get a wrong setting of connectionsPerRoute", 5, poolManager.getDefaultMaxPerRoute());
     }
 
 }
