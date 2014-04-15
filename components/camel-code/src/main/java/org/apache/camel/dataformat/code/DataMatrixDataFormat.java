@@ -17,8 +17,10 @@
 package org.apache.camel.dataformat.code;
 
 import com.google.zxing.BarcodeFormat;
+import com.google.zxing.EncodeHintType;
 import com.google.zxing.datamatrix.DataMatrixReader;
 import com.google.zxing.datamatrix.DataMatrixWriter;
+import com.google.zxing.datamatrix.encoder.SymbolShapeHint;
 import java.io.InputStream;
 import java.io.OutputStream;
 import org.apache.camel.Exchange;
@@ -53,6 +55,7 @@ public class DataMatrixDataFormat extends CodeDataFormat {
      */
     public DataMatrixDataFormat(boolean parameterized) {
         super(parameterized);
+        super.addToHintMap(EncodeHintType.DATA_MATRIX_SHAPE, SymbolShapeHint.FORCE_SQUARE);
     }
 
     /**
@@ -60,6 +63,7 @@ public class DataMatrixDataFormat extends CodeDataFormat {
      */
     public DataMatrixDataFormat(int height, int width, boolean parameterized) {
         super(height, width, parameterized);
+        super.addToHintMap(EncodeHintType.DATA_MATRIX_SHAPE, SymbolShapeHint.FORCE_SQUARE);
     }
 
     /**
@@ -67,6 +71,7 @@ public class DataMatrixDataFormat extends CodeDataFormat {
      */
     public DataMatrixDataFormat(ImageType type, boolean parameterized) {
         super(type, parameterized);
+        super.addToHintMap(EncodeHintType.DATA_MATRIX_SHAPE, SymbolShapeHint.FORCE_SQUARE);
     }
 
     /**
@@ -74,6 +79,7 @@ public class DataMatrixDataFormat extends CodeDataFormat {
      */
     public DataMatrixDataFormat(int height, int width, ImageType type, boolean parameterized) {
         super(height, width, type, parameterized);
+        super.addToHintMap(EncodeHintType.DATA_MATRIX_SHAPE, SymbolShapeHint.FORCE_SQUARE);
     }
  
     /**

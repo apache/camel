@@ -20,7 +20,6 @@ import com.google.zxing.BarcodeFormat;
 import com.google.zxing.BinaryBitmap;
 import com.google.zxing.ChecksumException;
 import com.google.zxing.DecodeHintType;
-import com.google.zxing.Dimension;
 import com.google.zxing.EncodeHintType;
 import com.google.zxing.FormatException;
 import com.google.zxing.NotFoundException;
@@ -153,7 +152,7 @@ public abstract class CodeDataFormat implements DataFormat {
      *  <li>encoding: UTF-8</li>
      * </ul>
      */
-    protected void setDefaultParameters() {
+    protected final void setDefaultParameters() {
         this.params = new Parameters(ImageType.PNG, 100, 100, "UTF-8");
         this.writerHintMap.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.H);
         this.readerHintMap.put(DecodeHintType.TRY_HARDER, Boolean.TRUE);
@@ -261,6 +260,14 @@ public abstract class CodeDataFormat implements DataFormat {
         String text = result.getText();
         System.out.println("TEXT --> " + text);
         return text;
+    }
+    
+    public void addToHintMap(EncodeHintType hintType, Object value) {
+        this.writerHintMap.put(hintType, value);
+    }
+    
+    public void addToHintMap(DecodeHintType hintType, Object value) {
+        this.readerHintMap.put(hintType, value);
     }
 
     public Parameters getParams() {

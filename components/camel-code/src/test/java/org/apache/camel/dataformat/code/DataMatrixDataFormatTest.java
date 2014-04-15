@@ -33,8 +33,6 @@ import java.nio.file.Paths;
 import java.util.EnumMap;
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
-import java.util.logging.Level;
-import java.util.logging.Logger;
 import javax.imageio.ImageIO;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.spi.DataFormat;
@@ -45,6 +43,8 @@ import org.junit.Test;
  * @author claus.straube
  */
 public class DataMatrixDataFormatTest extends CodeTestBase {
+    
+    private final static String FOLDER = "file:target/out/datamatrix";
 
 //    @Test
 //    public void testDefaultMDCode() throws Exception {
@@ -56,34 +56,69 @@ public class DataMatrixDataFormatTest extends CodeTestBase {
 //        assertMockEndpointsSatisfied(5, TimeUnit.SECONDS);
 //        this.checkImage(image, 100, 100, ImageType.PNG.toString());
 //    }
-    
+//    
 //    @Test
-//    public void testDataMatrix() {
-//        try {
-//            writeDataMatrix();
-//            String result = readDataMatrix("/home/claus/NetBeansProjects/camel/components/camel-qrcode/target/out/data_matrix.png", "UTF-8", new EnumMap<DecodeHintType, Object>(DecodeHintType.class));
-//            assertEquals("my message", result);
-//        } catch (Exception ex) {
-//            ex.printStackTrace();
-//        }
+//    public void testDataMatrixWithModifiedSize() throws Exception {
+//        out.expectedBodiesReceived(MSG);
+//        image.expectedMessageCount(1);
+//
+//        template.sendBody("direct:code2", MSG);
+//
+//        assertMockEndpointsSatisfied(5, TimeUnit.SECONDS);
+//        this.checkImage(image, 200, 200, ImageType.PNG.toString());
 //    }
-    
-//    public static void writeDataMatrix() throws IOException {
-//        DataMatrixWriter writer = new DataMatrixWriter();
-//        BitMatrix matrix = writer.encode("my message", BarcodeFormat.DATA_MATRIX, 100, 100);
-//        
-//        MatrixToImageWriter.writeToPath(matrix, "PNG", Paths.get("/home/claus/NetBeansProjects/camel/components/camel-qrcode/target/out/data_matrix.png"));
+//    
+//    @Test
+//    public void testDataMatrixWithJPEGType() throws Exception {
+//        out.expectedBodiesReceived(MSG);
+//        image.expectedMessageCount(1);
+//
+//        template.sendBody("direct:code3", MSG);
+//
+//        assertMockEndpointsSatisfied(5, TimeUnit.SECONDS);
+//        this.checkImage(image, 100, 100, "JPEG");
 //    }
 //
-//    public static String readDataMatrix(String filePath, String charset, Map hintMap)
-//            throws FileNotFoundException, IOException, NotFoundException {
-//        BinaryBitmap binaryBitmap = new BinaryBitmap(new HybridBinarizer(
-//                new BufferedImageLuminanceSource(
-//                        ImageIO.read(new FileInputStream(filePath)))));
-//        Result qrCodeResult = new MultiFormatReader().decode(binaryBitmap,
-//                hintMap);
-//        return qrCodeResult.getText();
+//    @Test
+//    public void testDataMatrixGIFType() throws Exception {
+//        out.expectedBodiesReceived(MSG);
+//        image.expectedMessageCount(1);
+//
+//        template.sendBody("direct:code4", MSG);
+//
+//        assertMockEndpointsSatisfied(5, TimeUnit.SECONDS);
+//        this.checkImage(image, 100, 100, ImageType.GIF.toString());
 //    }
+    
+    @Test
+    public void simpleDataMatrixTest() throws IOException, FileNotFoundException, NotFoundException {
+        String filePath = System.getProperty("user.home")+ "/tmp/zxing/data_matrix.png";
+        String text = "hello world";
+        
+        writeDataMatrix(filePath, text);
+        String result = readDataMatrix(filePath, "UTF-8", new EnumMap<DecodeHintType, Object>(DecodeHintType.class));
+        
+        assertEquals(text, result);
+    }
+    
+    
+    public static void writeDataMatrix(String filePath, String text) throws IOException {
+        DataMatrixWriter writer = new DataMatrixWriter();
+        BitMatrix matrix = writer.encode(text, BarcodeFormat.DATA_MATRIX, 100, 100);
+        
+        MatrixToImageWriter.writeToPath(matrix, "PNG", Paths.get(filePath));
+        System.out.println("file written...");
+    }
+
+    public static String readDataMatrix(String filePath, String charset, Map hintMap)
+            throws FileNotFoundException, IOException, NotFoundException {
+        BinaryBitmap binaryBitmap = new BinaryBitmap(new HybridBinarizer(
+                new BufferedImageLuminanceSource(
+                        ImageIO.read(new FileInputStream(filePath)))));
+        System.out.println("file read...");
+        Result qrCodeResult = new MultiFormatReader().decode(binaryBitmap, hintMap);
+        return qrCodeResult.getText();
+    }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -96,45 +131,46 @@ public class DataMatrixDataFormatTest extends CodeTestBase {
 
                 from("direct:code1")
                         .marshal(code1)
-                        .to("file:target/out");
+                        .to(FOLDER);
 
                 // Code with modified size
                 DataFormat code2 = new DataMatrixDataFormat(200, 200, false);
 
                 from("direct:code2")
                         .marshal(code2)
-                        .to("file:target/out");
+                        .to(FOLDER);
 
                 // Code with JPEG type
                 DataFormat code3 = new DataMatrixDataFormat(ImageType.JPG, false);
 
                 from("direct:code3")
                         .marshal(code3)
-                        .to("file:target/out");
+                        .to(FOLDER);
 
                 // Code with GIF type
                 DataFormat code4 = new DataMatrixDataFormat(ImageType.GIF, false);
 
                 from("direct:code4")
                         .marshal(code4)
-                        .to("file:target/out");
+                        .to(FOLDER);
 
                 // Code with modified size and image type
                 DataFormat code5 = new DataMatrixDataFormat(200, 200, ImageType.JPG, false);
 
                 from("direct:code5")
                         .marshal(code5)
-                        .to("file:target/out");
+                        .to(FOLDER);
 
                 // QR-Code with parameters
                 from("direct:code_param")
                         .marshal(new DataMatrixDataFormat(true))
-                        .to("file:target/out");
+                        .to(FOLDER);
 
                 // generic file read --->
                 // 
                 // read file and route it
-                from("file:target/out?noop=true")
+                from(FOLDER + "?noop=true")
+//                        .multicast().to("mock:image");
                         .multicast().to("direct:marshall", "mock:image");
 
                 // get the message from qrcode
