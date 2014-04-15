@@ -185,6 +185,7 @@ public class DefaultAhcBinding implements AhcBinding {
 
     @Override
     public void onStatusReceived(AhcEndpoint endpoint, Exchange exchange, HttpResponseStatus responseStatus) throws Exception {
+        exchange.getOut().setHeaders(exchange.getIn().getHeaders());
         exchange.getOut().setHeader(Exchange.HTTP_RESPONSE_CODE, responseStatus.getStatusCode());
     }
 
