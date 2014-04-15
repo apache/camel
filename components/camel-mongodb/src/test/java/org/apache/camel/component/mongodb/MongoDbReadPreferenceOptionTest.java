@@ -29,7 +29,7 @@ public class MongoDbReadPreferenceOptionTest extends AbstractMongoDbTest {
         try {
             createMongoDbEndpoint("mongodb:myDb?database={{mongodb.testDb}}&readPreference=foo");
             fail("Should have thrown exception");
-        } catch (Exception iae) {
+        } catch (IllegalArgumentException iae) {
             assertTrue(iae.getMessage(), iae.getMessage().endsWith("No match for read preference of foo"));
         }
     }
