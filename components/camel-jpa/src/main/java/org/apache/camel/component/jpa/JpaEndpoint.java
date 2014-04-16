@@ -54,6 +54,7 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
     private int maxMessagesPerPoll;
     private boolean usePersist;
     private boolean joinTransaction = true;
+    private boolean usePassedInEntityManager = false;
 
     public JpaEndpoint() {
     }
@@ -248,6 +249,14 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
 
     public void setJoinTransaction(boolean joinTransaction) {
         this.joinTransaction = joinTransaction;
+    }
+
+    public boolean isUsePassedInEntityManager() {
+        return this.usePassedInEntityManager;
+    }
+
+    public void setUsePassedInEntityManager(boolean usePassedIn) {
+        this.usePassedInEntityManager = usePassedIn;
     }
 
     // Implementation methods
