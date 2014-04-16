@@ -42,7 +42,14 @@ import org.springframework.context.support.FileSystemXmlApplicationContext;
 
 /**
  * A command line tool for booting up a CamelContext using an optional Spring
- * ApplicationContext
+ * {@link org.springframework.context.ApplicationContext}.
+ * <p/>
+ * By placing a file in the {@link #LOCATION_PROPERTIES} directory of any JARs on the classpath,
+ * allows this Main class to load those additional Spring XML files as Spring
+ * {@link org.springframework.context.ApplicationContext} to be included.
+ * <p/>
+ * Each line in the {@link #LOCATION_PROPERTIES} is a reference to a Spring XML file to include,
+ * which by default gets loaded from classpath.
  */
 @SuppressWarnings("deprecation")
 public class Main extends MainSupport {
