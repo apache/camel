@@ -25,16 +25,14 @@ import org.ops4j.pax.exam.junit.JUnit4TestRunner;
 @RunWith(JUnit4TestRunner.class)
 public class CamelAhcTest extends AbstractFeatureTest {
 
-    public static final String COMPONENT = extractName(CamelAhcTest.class);
-
     @Test
     public void test() throws Exception {
-        testComponent(COMPONENT);
+        testComponent();
     }
 
     @Configuration
-    public static Option[] configure() {
-        return configure(COMPONENT);
+    public Option[] configure() {
+        return configureComponent();
     }
 
 }
