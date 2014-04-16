@@ -31,7 +31,7 @@ import org.slf4j.LoggerFactory;
  *
  * @author claus.straube
  */
-public class DataMatrixDataFormat extends CodeDataFormat {
+public class DataMatrixDataFormat extends BarcodeDataFormat {
 
     private static final Logger LOG = LoggerFactory.getLogger(DataMatrixDataFormat.class);
     

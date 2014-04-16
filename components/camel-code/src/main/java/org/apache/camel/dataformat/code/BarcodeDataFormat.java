@@ -51,7 +51,7 @@ import org.apache.camel.util.ExchangeHelper;
  * 
  * @author claus.straube
  */
-public abstract class CodeDataFormat implements DataFormat {
+public abstract class BarcodeDataFormat implements DataFormat {
 
     /**
      * The default parameters.
@@ -74,7 +74,7 @@ public abstract class CodeDataFormat implements DataFormat {
      * 
      * @param parameterized if true you can override default values with header parameters
      */
-    public CodeDataFormat(boolean parameterized) {
+    public BarcodeDataFormat(boolean parameterized) {
         this.parameterized = parameterized;
         this.setDefaultParameters();
     }
@@ -86,7 +86,7 @@ public abstract class CodeDataFormat implements DataFormat {
      * @param width the image width
      * @param parameterized if true you can override default values with header parameters
      */
-    public CodeDataFormat(int height, int width, boolean parameterized) {
+    public BarcodeDataFormat(int height, int width, boolean parameterized) {
         this.parameterized = parameterized;
         this.setDefaultParameters();
         this.params.setHeight(height);
@@ -99,7 +99,7 @@ public abstract class CodeDataFormat implements DataFormat {
      * @param type the type (format) of the image. e.g. PNG
      * @param parameterized if true you can override default values with header parameters
      */
-    public CodeDataFormat(ImageType type, boolean parameterized) {
+    public BarcodeDataFormat(ImageType type, boolean parameterized) {
         this.parameterized = parameterized;
         this.setDefaultParameters();
         this.params.setType(type);
@@ -113,7 +113,7 @@ public abstract class CodeDataFormat implements DataFormat {
      * @param type the type (format) of the image. e.g. PNG
      * @param parameterized if true you can override default values with header parameters
      */
-    public CodeDataFormat(int height, int width, ImageType type, boolean parameterized) {
+    public BarcodeDataFormat(int height, int width, ImageType type, boolean parameterized) {
         this.parameterized = parameterized;
         this.setDefaultParameters();
         this.params.setHeight(height);

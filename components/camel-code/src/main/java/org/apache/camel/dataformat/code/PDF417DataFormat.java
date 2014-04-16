@@ -31,7 +31,7 @@ import org.slf4j.LoggerFactory;
  * 
  * @author claus.straube
  */
-public class PDF417DataFormat extends CodeDataFormat {
+public class PDF417DataFormat extends BarcodeDataFormat {
 
     private static final Logger LOG = LoggerFactory.getLogger(PDF417DataFormat.class);
     

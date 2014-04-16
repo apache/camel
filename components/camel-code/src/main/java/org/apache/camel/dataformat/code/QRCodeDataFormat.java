@@ -32,7 +32,7 @@ import org.slf4j.LoggerFactory;
  * 
  * @author claus.straube
  */
-public class QRCodeDataFormat extends CodeDataFormat {
+public class QRCodeDataFormat extends BarcodeDataFormat {
 
     private static final Logger LOG = LoggerFactory.getLogger(QRCodeDataFormat.class);
 
