@@ -1,5 +1,25 @@
+/**
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.apache.camel.processor.aggregate.hazelcast;
 
+import java.util.Collections;
+import java.util.Set;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.locks.Lock;
 
 import com.hazelcast.config.Config;
 import com.hazelcast.config.XmlConfigBuilder;
@@ -9,6 +29,7 @@ import com.hazelcast.core.IMap;
 import com.hazelcast.core.TransactionalMap;
 import com.hazelcast.transaction.TransactionContext;
 import com.hazelcast.transaction.TransactionOptions;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultExchange;
@@ -16,12 +37,6 @@ import org.apache.camel.impl.DefaultExchangeHolder;
 import org.apache.camel.spi.OptimisticLockingAggregationRepository;
 import org.apache.camel.spi.RecoverableAggregationRepository;
 import org.apache.camel.support.ServiceSupport;
-
-import java.util.Collections;
-import java.util.Set;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.locks.Lock;
-
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -41,16 +56,17 @@ import org.slf4j.LoggerFactory;
 public final class HazelcastAggregationRepository extends ServiceSupport
                                                   implements RecoverableAggregationRepository,
                                                              OptimisticLockingAggregationRepository {
+    private static final Logger LOG = LoggerFactory.getLogger(HazelcastAggregationRepository.class.getName());
+    private static final String COMPLETED_SUFFIX = "-completed";
+    
     private boolean optimistic;
     private boolean useLocalHzInstance;
     private boolean useRecovery = true;
     private IMap<String, DefaultExchangeHolder> cache;
     private IMap<String, DefaultExchangeHolder> persistedCache;
-    private static final Logger LOG = LoggerFactory.getLogger(HazelcastAggregationRepository.class.getName()) ;
     private HazelcastInstance hzInstance;
     private String mapName;
     private String persistenceMapName;
-    private static final String COMPLETED_SUFFIX = "-completed";
     private String deadLetterChannel;
     private long recoveryInterval = 5000;
     private int maximumRedeliveries = 3;
@@ -187,7 +203,7 @@ public final class HazelcastAggregationRepository extends ServiceSupport
 
     @Override
     public Exchange add(CamelContext camelContext, String key, Exchange exchange) {
-        if (optimistic){
+        if (optimistic) {
             throw new UnsupportedOperationException();
         }
         LOG.trace("Adding an Exchange with ID {} for key {} in a thread-safe manner.", exchange.getExchangeId(), key);
@@ -208,10 +224,9 @@ public final class HazelcastAggregationRepository extends ServiceSupport
         if (useRecovery) {
             LOG.trace("Scanning for exchanges to recover in {} context", camelContext.getName());
             Set<String> scanned = Collections.unmodifiableSet(persistedCache.keySet());
-            LOG.trace("Found {} keys for exchanges to recover in {} context", scanned.size(),camelContext.getName());
+            LOG.trace("Found {} keys for exchanges to recover in {} context", scanned.size(), camelContext.getName());
             return scanned;
-        }
-        else {
+        } else {
             LOG.warn("What for to run recovery scans in {} context while repository {} is running in non-recoverable aggregation repository mode?!",
                     camelContext.getName(), mapName);
             return Collections.emptySet();
