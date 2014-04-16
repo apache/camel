@@ -16,7 +16,14 @@
  */
 package org.apache.camel.spring;
 
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.URL;
+import java.nio.charset.Charset;
+import java.util.Enumeration;
 import java.util.HashMap;
+import java.util.LinkedHashSet;
 import java.util.LinkedList;
 import java.util.Map;
 import java.util.Set;
@@ -36,12 +43,13 @@ import org.springframework.context.support.FileSystemXmlApplicationContext;
 /**
  * A command line tool for booting up a CamelContext using an optional Spring
  * ApplicationContext
- *
- * @version 
  */
 @SuppressWarnings("deprecation")
 public class Main extends MainSupport {
+
+    public static final String LOCATION_PROPERTIES = "META-INF/spring/location.properties";
     protected static Main instance;
+    private static final Charset UTF8 = Charset.forName("UTF-8");
 
     private String applicationContextUri = "META-INF/spring/*.xml";
     private String fileApplicationContextUri;
@@ -82,7 +90,7 @@ public class Main extends MainSupport {
     public static Main getInstance() {
         return instance;
     }
-    
+
     // Properties
     // -------------------------------------------------------------------------
     public AbstractApplicationContext getApplicationContext() {
@@ -165,12 +173,15 @@ public class Main extends MainSupport {
         return getCamelContexts().get(0).createProducerTemplate();
     }
 
-    protected AbstractApplicationContext createDefaultApplicationContext() {
+    protected AbstractApplicationContext createDefaultApplicationContext() throws IOException {
+        // daisy chain the parent and additional contexts
+        ApplicationContext parentContext = getParentApplicationContext();
+        parentContext = addAdditionalLocationsFromClasspath(parentContext);
+
         // file based
         if (getFileApplicationContextUri() != null) {
             String[] args = getFileApplicationContextUri().split(";");
 
-            ApplicationContext parentContext = getParentApplicationContext();
             if (parentContext != null) {
                 return new FileSystemXmlApplicationContext(args, parentContext);
             } else {
@@ -180,14 +191,13 @@ public class Main extends MainSupport {
 
         // default to classpath based
         String[] args = getApplicationContextUri().split(";");
-        ApplicationContext parentContext = getParentApplicationContext();
         if (parentContext != null) {
             return new ClassPathXmlApplicationContext(args, parentContext);
         } else {
             return new ClassPathXmlApplicationContext(args);
         }
     }
-    
+
     protected Map<String, CamelContext> getCamelContextMap() {
         Map<String, SpringCamelContext> map = applicationContext.getBeansOfType(SpringCamelContext.class);
         Set<Map.Entry<String, SpringCamelContext>> entries = map.entrySet();
@@ -203,4 +213,52 @@ public class Main extends MainSupport {
     protected ModelFileGenerator createModelFileGenerator() throws JAXBException {
         return new ModelFileGenerator(new CamelNamespaceHandler().getJaxbContext());
     }
+
+    protected ApplicationContext addAdditionalLocationsFromClasspath(ApplicationContext parentContext) throws IOException {
+        StringBuilder sb = new StringBuilder();
+
+        Set<String> locations = new LinkedHashSet<String>();
+        findLocations(locations, Main.class.getClassLoader());
+
+        if (!locations.isEmpty()) {
+            LOG.info("Found locations for additional Spring XML files: {}", locations);
+
+            String[] locs = locations.toArray(new String[locations.size()]);
+            ClassPathXmlApplicationContext additionalContext;
+            if (parentContext != null) {
+                additionalContext = new ClassPathXmlApplicationContext(locs, parentContext);
+            } else {
+                additionalContext = new ClassPathXmlApplicationContext(locs);
+            }
+            // and we must start the app context as well
+            additionalContext.start();
+            return additionalContext;
+        } else {
+            return null;
+        }
+    }
+
+    protected void findLocations(Set<String> locations, ClassLoader classLoader) throws IOException {
+        Enumeration<URL> resources = classLoader.getResources(LOCATION_PROPERTIES);
+        while (resources.hasMoreElements()) {
+            URL url = resources.nextElement();
+            BufferedReader reader = IOHelper.buffered(new InputStreamReader(url.openStream(), UTF8));
+            try {
+                while (true) {
+                    String line = reader.readLine();
+                    if (line == null) {
+                        break;
+                    }
+                    line = line.trim();
+                    if (line.startsWith("#") || line.length() == 0) {
+                        continue;
+                    }
+                    locations.add(line);
+                }
+            } finally {
+                IOHelper.close(reader, null, LOG);
+            }
+        }
+    }
+
 }
