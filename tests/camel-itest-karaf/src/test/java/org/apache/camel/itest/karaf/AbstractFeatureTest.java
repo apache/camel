@@ -74,6 +74,10 @@ public abstract class AbstractFeatureTest {
         }
     }
 
+    protected void testComponent() throws Exception {
+        testComponent(extractName(getClass()));
+    }
+
     protected void testDataFormat(String format) throws Exception {
         long max = System.currentTimeMillis() + 10000;
         while (true) {
@@ -178,6 +182,10 @@ public abstract class AbstractFeatureTest {
                 scanFeatures(getCamelKarafFeatureUrl(), "cxf-jaxb", "camel-core", "camel-spring", "camel-" + feature)};
 
         return options;
+    }
+
+    protected Option[] configureComponent() {
+        return configure(extractName(getClass()));
     }
 
 }
