@@ -21,6 +21,6 @@ package org.apache.camel.dataformat.code;
  * 
  * @author claus
  */
-public enum ImageType {
+public enum BarcodeImageType {
     JPG, GIF, PNG
 }

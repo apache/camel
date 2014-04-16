@@ -22,15 +22,16 @@ import com.google.zxing.ChecksumException;
 import com.google.zxing.DecodeHintType;
 import com.google.zxing.EncodeHintType;
 import com.google.zxing.FormatException;
+import com.google.zxing.MultiFormatReader;
+import com.google.zxing.MultiFormatWriter;
 import com.google.zxing.NotFoundException;
-import com.google.zxing.Reader;
 import com.google.zxing.Result;
-import com.google.zxing.Writer;
 import com.google.zxing.WriterException;
 import com.google.zxing.client.j2se.BufferedImageLuminanceSource;
 import com.google.zxing.client.j2se.MatrixToImageWriter;
 import com.google.zxing.common.BitMatrix;
 import com.google.zxing.common.HybridBinarizer;
+import com.google.zxing.datamatrix.encoder.SymbolShapeHint;
 import com.google.zxing.qrcode.decoder.ErrorCorrectionLevel;
 import java.io.BufferedInputStream;
 import java.io.IOException;
@@ -45,38 +46,57 @@ import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.TypeConversionException;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.util.ExchangeHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
- * The super class for all code data formats.
+ * {@link DataFormat} to create (encode) and 
+ * read (decode) barcodes. For more info about
+ * the available barcodes have a look at:<br/><br/>
+ * 
+ * https://github.com/zxing/zxing
  * 
  * @author claus.straube
  */
-public abstract class BarcodeDataFormat implements DataFormat {
+public class BarcodeDataFormat implements DataFormat {
 
-    /**
-     * The default parameters.
-     */
-    protected Parameters params;
+    private static final Logger LOG = LoggerFactory.getLogger(BarcodeDataFormat.class);
+    
+
     
     /**
-     * If true, the header parameters of a message will be used to configure
-     * the component.
+     * The bean for the default parameters.
      */
-    protected boolean parameterized = true;
+    protected BarcodeParameters params;
     
+    /**
+     * The encoding hint map, used for writing a barcode.
+     */
     protected final Map<EncodeHintType, Object> writerHintMap = new EnumMap<EncodeHintType, Object>(EncodeHintType.class);
     
+    /**
+     * The decoding hint map, used for reading a barcode.
+     */
     protected final Map<DecodeHintType, Object> readerHintMap = new EnumMap<DecodeHintType, Object>(DecodeHintType.class);
             
 
     /**
      * Create instance with default parameters.
-     * 
-     * @param parameterized if true you can override default values with header parameters
      */
-    public BarcodeDataFormat(boolean parameterized) {
-        this.parameterized = parameterized;
+    public BarcodeDataFormat() {
         this.setDefaultParameters();
+        this.optimizeHints();
+    }
+    
+    /**
+     * Create instance with custom {@link BarcodeFormat}. The other values are default.
+     * 
+     * @param format the barcode format
+     */
+    public BarcodeDataFormat(BarcodeFormat format) {
+        this.setDefaultParameters();
+        this.params.setFormat(format);
+        this.optimizeHints();
     }
 
     /**
@@ -84,25 +104,23 @@ public abstract class BarcodeDataFormat implements DataFormat {
      * 
      * @param height the image height
      * @param width the image width
-     * @param parameterized if true you can override default values with header parameters
      */
-    public BarcodeDataFormat(int height, int width, boolean parameterized) {
-        this.parameterized = parameterized;
+    public BarcodeDataFormat(int width, int height) {
         this.setDefaultParameters();
         this.params.setHeight(height);
         this.params.setWidth(width);
+        this.optimizeHints();
     }
 
     /**
-     * Create instance with custom {@link ImageType}. The other values are default.
+     * Create instance with custom {@link BarcodeImageType}. The other values are default.
      * 
      * @param type the type (format) of the image. e.g. PNG
-     * @param parameterized if true you can override default values with header parameters
      */
-    public BarcodeDataFormat(ImageType type, boolean parameterized) {
-        this.parameterized = parameterized;
+    public BarcodeDataFormat(BarcodeImageType type) {
         this.setDefaultParameters();
         this.params.setType(type);
+        this.optimizeHints();
     }
     
     /**
@@ -111,14 +129,15 @@ public abstract class BarcodeDataFormat implements DataFormat {
      * @param height the image height
      * @param width the image width
      * @param type the type (format) of the image. e.g. PNG
-     * @param parameterized if true you can override default values with header parameters
+     * @param format the barcode format
      */
-    public BarcodeDataFormat(int height, int width, ImageType type, boolean parameterized) {
-        this.parameterized = parameterized;
+    public BarcodeDataFormat(int width, int height, BarcodeImageType type, BarcodeFormat format) {
         this.setDefaultParameters();
         this.params.setHeight(height);
         this.params.setWidth(width);
         this.params.setType(type);
+        this.params.setFormat(format);
+        this.optimizeHints();
     }
     
     /**
@@ -130,7 +149,9 @@ public abstract class BarcodeDataFormat implements DataFormat {
      * @throws Exception 
      */
     @Override
-    public abstract void marshal(Exchange exchange, Object graph, OutputStream stream) throws Exception;
+    public void marshal(Exchange exchange, Object graph, OutputStream stream) throws Exception {
+        this.printImage(exchange, graph, stream);
+    }
 
     /**
      * Unmarshall a code image to a {@link String} payload.
@@ -141,94 +162,62 @@ public abstract class BarcodeDataFormat implements DataFormat {
      * @throws Exception 
      */
     @Override
-    public abstract Object unmarshal(Exchange exchange, InputStream stream) throws Exception;
-    
-    /**
-     * Sets the default parameters:
-     * <ul>
-     *  <li>image type: PNG</li>
-     *  <li>image width: 100px</li>
-     *  <li>image heigth: 100px</li>
-     *  <li>encoding: UTF-8</li>
-     * </ul>
-     */
-    protected final void setDefaultParameters() {
-        this.params = new Parameters(ImageType.PNG, 100, 100, "UTF-8");
-        this.writerHintMap.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.H);
-        this.readerHintMap.put(DecodeHintType.TRY_HARDER, Boolean.TRUE);
+    public Object unmarshal(Exchange exchange, InputStream stream) throws Exception {
+        return this.readImage(exchange, stream);
     }
     
     /**
-     * Creates and fille a {@link Parameters} object with the 
-     * given header parameters. 
-     * 
-     * @param exchange the camel {@link Exchange}
-     * @return a filled {@link Parameters} instance 
+     * Sets the default parameters.
      */
-    protected Parameters setRequestParameters(Exchange exchange) {
-        // set default values
-        Parameters p = this.params;
-        String name = exchange.getExchangeId();
+    protected final void setDefaultParameters() {
+        this.params = new BarcodeParameters();
+    }
+    
+    protected final void optimizeHints() {
+        // writer hints
+        this.writerHintMap.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.H);
         
-        // if message headers should be used, create a new parameters object
-        if(this.parameterized) {
-            Map<String, Object> headers = exchange.getIn().getHeaders();
-            p = new Parameters(headers, params);
-            
-            // if a qrcode filename is set, take it
-            if(headers.containsKey(Code.NAME)) {
-                name = (String) headers.get(Code.NAME);
-            } 
-        } 
+        if (this.params.getFormat().toString().equals(BarcodeFormat.DATA_MATRIX.toString())) {
+            this.writerHintMap.put(EncodeHintType.MARGIN, 5);
+            this.writerHintMap.put(EncodeHintType.DATA_MATRIX_SHAPE, SymbolShapeHint.FORCE_SQUARE);
+        }
         
-        // set file name (<exchangeid>.<imagetype>)       
-        String filename = String.format("%s.%s", name, p.getType().toString().toLowerCase());
-        exchange.getOut().setHeader(Exchange.FILE_NAME, filename);
-        
-        return p;
+        // reader hints
+        this.readerHintMap.put(DecodeHintType.TRY_HARDER, Boolean.TRUE);
     }
     
     /**
      * Writes the image file to the output stream.
      * 
-     * @param writer the zxing wiriter instance
      * @param graph the object graph
      * @param exchange the camel exchange
-     * @param format the barcode format
      * @param stream the output stream
-     * @return the message payload
      * @throws WriterException
      * @throws UnsupportedEncodingException
      * @throws IOException 
+     * @throws org.apache.camel.NoTypeConversionAvailableException 
      */
-    protected String printImage(Exchange exchange
+    protected void printImage(Exchange exchange
             , Object graph
-            , OutputStream stream
-            , Writer writer
-            , BarcodeFormat format) throws WriterException, UnsupportedEncodingException, IOException, TypeConversionException, NoTypeConversionAvailableException {
+            , OutputStream stream) throws WriterException, UnsupportedEncodingException, IOException, TypeConversionException, NoTypeConversionAvailableException {
          
         String payload = ExchangeHelper.convertToMandatoryType(exchange, String.class, graph);
-        Parameters p = this.setRequestParameters(exchange);
+        MultiFormatWriter writer = new MultiFormatWriter();
 
         // set values
-        String type = p.getType().toString();
-        String encoding = p.getEncoding(); 
-        
-        // set hints
-//        Dimension dimension = new Dimension(p.getWidth(), p.getHeight());
-//        writerHintMap.put(EncodeHintType.MIN_SIZE, dimension);
+        String type = this.params.getType().toString();
+        String encoding = this.params.getEncoding(); 
         
         // create code image  
         BitMatrix matrix = writer.encode(
                 new String(payload.getBytes(encoding), encoding),
-                format, 
-                p.getWidth(), 
-                p.getHeight(), 
+                this.params.getFormat(), 
+                this.params.getWidth(), 
+                this.params.getHeight(), 
                 writerHintMap);
         
+        // write image back to stream
         MatrixToImageWriter.writeToStream(matrix, type, stream);
-        
-        return payload;
     }
     
     /**
@@ -236,7 +225,6 @@ public abstract class BarcodeDataFormat implements DataFormat {
      * 
      * @param exchange
      * @param stream
-     * @param reader
      * @return
      * @throws TypeConversionException
      * @throws NoTypeConversionAvailableException
@@ -245,7 +233,8 @@ public abstract class BarcodeDataFormat implements DataFormat {
      * @throws ChecksumException
      * @throws FormatException 
      */
-    protected String readImage(Exchange exchange, InputStream stream, Reader reader) throws TypeConversionException, NoTypeConversionAvailableException, IOException, NotFoundException, ChecksumException, FormatException {
+    protected String readImage(Exchange exchange, InputStream stream) throws TypeConversionException, NoTypeConversionAvailableException, IOException, NotFoundException, ChecksumException, FormatException {
+        MultiFormatReader reader = new MultiFormatReader();
         BufferedInputStream in = exchange.getContext()
                 .getTypeConverter()
                 .mandatoryConvertTo(BufferedInputStream.class, stream);
@@ -255,26 +244,76 @@ public abstract class BarcodeDataFormat implements DataFormat {
         Result result = reader.decode(bitmap, readerHintMap);
         
         // write the found barcode format into the header
-        exchange.getOut().setHeader(Code.BARCODE_FORMAT, result.getBarcodeFormat());
+        exchange.getOut().setHeader(Barcode.BARCODE_FORMAT, result.getBarcodeFormat());
         
         String text = result.getText();
-        System.out.println("TEXT --> " + text);
         return text;
     }
     
+    /**
+     * Adds a new hint value to writer (encode) hint map.
+     * 
+     * @param hintType
+     * @param value 
+     */
     public void addToHintMap(EncodeHintType hintType, Object value) {
         this.writerHintMap.put(hintType, value);
+        LOG.info(String.format("Added '%s' with value '%s' to writer hint map.", hintType.toString(), value.toString()));
     }
     
+    /**
+     * Adds a new hint value to reader (decode) hint map.
+     * 
+     * @param hintType
+     * @param value 
+     */
     public void addToHintMap(DecodeHintType hintType, Object value) {
         this.readerHintMap.put(hintType, value);
     }
+    
+    /**
+     * Removes a hint from writer (encode) hint map.
+     * 
+     * @param hintType 
+     */
+    public void removeFromHintMap(EncodeHintType hintType) {
+        if(this.writerHintMap.containsKey(hintType)) {
+            this.writerHintMap.remove(hintType);
+            LOG.info(String.format("Removed '%s' from writer hint map.", hintType.toString()));
+        } else {
+            LOG.warn(String.format("Could not find encode hint type '%s' in writer hint map.", hintType.toString()));
+        }
+    }
+    
+    /**
+     * Removes a hint from reader (decode) hint map.
+     * 
+     * @param hintType 
+     */
+    public void removeFromHintMap(DecodeHintType hintType) {
+        if(this.readerHintMap.containsKey(hintType)) {
+            this.readerHintMap.remove(hintType);
+            LOG.info(String.format("Removed '%s' from reader hint map.", hintType.toString()));
+        } else {
+            LOG.warn(String.format("Could not find decode hint type '%s' in reader hint map.", hintType.toString()));
+        }
+    }
 
-    public Parameters getParams() {
+    /**
+     * The (default) parameters.
+     * 
+     * @return 
+     */
+    public BarcodeParameters getParams() {
         return params;
     }
 
-    public boolean isParameterized() {
-        return parameterized;
+    public Map<EncodeHintType, Object> getWriterHintMap() {
+        return writerHintMap;
     }
+
+    public Map<DecodeHintType, Object> getReaderHintMap() {
+        return readerHintMap;
+    }
+    
 }

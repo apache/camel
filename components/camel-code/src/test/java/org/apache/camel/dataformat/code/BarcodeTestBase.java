@@ -31,9 +31,12 @@ import static org.junit.Assert.assertEquals;
  *
  * @author claus.straube
  */
-public class CodeTestBase extends CamelTestSupport {
+public class BarcodeTestBase extends CamelTestSupport {
 
     protected final static String MSG = "This is a testmessage!";
+    
+    protected final static String PATH = "target/out";
+    protected final static String FILE_ENDPOINT = "file:" + PATH;
 
     @EndpointInject(uri = "mock:out")
     MockEndpoint out;
@@ -49,10 +52,21 @@ public class CodeTestBase extends CamelTestSupport {
         BufferedImage i = ImageIO.read(in);
         assertTrue(height >= i.getHeight());
         assertTrue(width >= i.getWidth());
-        ImageInputStream iis = ImageIO.createImageInputStream(in);
+        this.checkType(in, type);
+        in.delete();
+    }
+    
+    protected void checkImage(MockEndpoint mock, String type) throws IOException {
+        Exchange ex = mock.getReceivedExchanges().get(0);
+        File in = ex.getIn().getBody(File.class);
+        this.checkType(in, type);
+        in.delete();
+    }
+    
+    private void checkType(File file, String type) throws IOException {
+        ImageInputStream iis = ImageIO.createImageInputStream(file);
         ImageReader reader = ImageIO.getImageReaders(iis).next();
         String format = reader.getFormatName();
         assertEquals(type, format.toUpperCase());
-        in.delete();
     }
 }
