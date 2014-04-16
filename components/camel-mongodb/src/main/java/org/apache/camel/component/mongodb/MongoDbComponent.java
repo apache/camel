@@ -39,7 +39,7 @@ public class MongoDbComponent extends DefaultComponent {
             new HashSet<MongoDbOperation>(Arrays.asList(MongoDbOperation.insert, MongoDbOperation.save, 
                     MongoDbOperation.update, MongoDbOperation.remove));
     private static final Logger LOG = LoggerFactory.getLogger(MongoDbComponent.class);
-    private Mongo db;
+    private volatile Mongo db;
 
     /**
      * Should access a singleton of type Mongo
@@ -47,6 +47,7 @@ public class MongoDbComponent extends DefaultComponent {
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         if (db == null) {
             db = CamelContextHelper.mandatoryLookup(getCamelContext(), remaining, Mongo.class);
+            LOG.debug("Resolved the connection with the name {} as {}", remaining, db);
         }
 
         Endpoint endpoint = new MongoDbEndpoint(uri, this);
@@ -60,7 +61,7 @@ public class MongoDbComponent extends DefaultComponent {
     protected void doShutdown() throws Exception {
         if (db != null) {
             // properly close the underlying physical connection to MongoDB
-            LOG.debug("closing the connection {} on {}", db, this);
+            LOG.debug("Closing the connection {} on {}", db, this);
             db.close();
         }
 
