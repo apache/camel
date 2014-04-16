@@ -28,6 +28,6 @@ public interface Barcode {
     /**
      * Format of the barcode (please use {@link BarcodeFormat})
      */
-    public final static String BARCODE_FORMAT = "QRCodeBarcodeFormat";
+    public final static String BARCODE_FORMAT = "BarcodeFormat";
     
 }
