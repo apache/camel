@@ -54,7 +54,7 @@ public class JpaEndpoint extends ScheduledPollEndpoint {
     private int maxMessagesPerPoll;
     private boolean usePersist;
     private boolean joinTransaction = true;
-    private boolean usePassedInEntityManager = false;
+    private boolean usePassedInEntityManager;
 
     public JpaEndpoint() {
     }
