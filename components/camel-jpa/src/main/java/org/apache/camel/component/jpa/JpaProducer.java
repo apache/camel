@@ -51,14 +51,15 @@ public class JpaProducer extends DefaultProducer {
     }
 
     public void process(final Exchange exchange) {
-        exchange.getIn().setHeader(JpaConstants.ENTITYMANAGER, entityManager);
+        final EntityManager targetEntityManager = getTargetEntityManager(exchange);
+        exchange.getIn().setHeader(JpaConstants.ENTITYMANAGER, targetEntityManager);
 
         final Object values = expression.evaluate(exchange, Object.class);
         if (values != null) {
             transactionTemplate.execute(new TransactionCallback<Object>() {
                 public Object doInTransaction(TransactionStatus status) {
                     if (getEndpoint().isJoinTransaction()) {
-                        entityManager.joinTransaction();
+                        targetEntityManager.joinTransaction();
                     }
                     if (values.getClass().isArray()) {
                         Object[] array = (Object[])values;
@@ -80,9 +81,9 @@ public class JpaProducer extends DefaultProducer {
                     if (getEndpoint().isFlushOnSend()) {
                         // there may be concurrency so need to join tx before flush
                         if (getEndpoint().isJoinTransaction()) {
-                            entityManager.joinTransaction();
+                            targetEntityManager.joinTransaction();
                         }
-                        entityManager.flush();
+                        targetEntityManager.flush();
                     }
 
                     return null;
@@ -94,16 +95,27 @@ public class JpaProducer extends DefaultProducer {
                  */
                 private Object save(final Object entity) {
                     // there may be concurrency so need to join tx before persist/merge
-                    entityManager.joinTransaction();
+                    targetEntityManager.joinTransaction();
                     if (getEndpoint().isUsePersist()) {
-                        entityManager.persist(entity);
+                        targetEntityManager.persist(entity);
                         return entity;
                     } else {
-                        return entityManager.merge(entity);
+                        return targetEntityManager.merge(entity);
                     }
                 }
             });
         }
+    }
+
+    private EntityManager getTargetEntityManager(Exchange exchange) {
+        EntityManager em = this.entityManager;
+        if (getEndpoint().isUsePassedInEntityManager()) {
+            EntityManager passedIn = exchange.getIn().getHeader(JpaConstants.ENTITYMANAGER, EntityManager.class);
+            if (passedIn != null) {
+                em = passedIn;
+            }
+        }
+        return em;
     }
 
     @Override
