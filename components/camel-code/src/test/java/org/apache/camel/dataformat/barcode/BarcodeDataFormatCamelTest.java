@@ -14,14 +14,16 @@
  * limitations under the License.
  */
 
-package org.apache.camel.dataformat.code;
+package org.apache.camel.dataformat.barcode;
 
+import org.apache.camel.dataformat.barcode.BarcodeImageType;
+import org.apache.camel.dataformat.barcode.BarcodeDataFormat;
 import com.google.zxing.BarcodeFormat;
 import java.io.File;
 import java.util.concurrent.TimeUnit;
 import org.apache.camel.builder.RouteBuilder;
-import static org.apache.camel.dataformat.code.BarcodeTestBase.FILE_ENDPOINT;
-import static org.apache.camel.dataformat.code.BarcodeTestBase.MSG;
+import static org.apache.camel.dataformat.barcode.BarcodeTestBase.FILE_ENDPOINT;
+import static org.apache.camel.dataformat.barcode.BarcodeTestBase.MSG;
 import org.apache.camel.spi.DataFormat;
 import org.junit.Before;
 import org.junit.Test;

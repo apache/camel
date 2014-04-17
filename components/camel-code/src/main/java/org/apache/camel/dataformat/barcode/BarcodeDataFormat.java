@@ -14,7 +14,7 @@
  * limitations under the License.
  */
 
-package org.apache.camel.dataformat.code;
+package org.apache.camel.dataformat.barcode;
 
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.BinaryBitmap;

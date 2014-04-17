@@ -14,8 +14,11 @@
  * limitations under the License.
  */
 
-package org.apache.camel.dataformat.code;
+package org.apache.camel.dataformat.barcode;
 
+import org.apache.camel.dataformat.barcode.BarcodeParameters;
+import org.apache.camel.dataformat.barcode.BarcodeDataFormat;
+import org.apache.camel.dataformat.barcode.BarcodeImageType;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.DecodeHintType;
 import com.google.zxing.EncodeHintType;

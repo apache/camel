@@ -13,7 +13,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.dataformat.code;
+package org.apache.camel.dataformat.barcode;
 
 import java.awt.image.BufferedImage;
 import java.io.File;
