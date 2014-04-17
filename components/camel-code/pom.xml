@@ -9,14 +9,14 @@
         <version>2.14-SNAPSHOT</version>
     </parent>
 
-    <artifactId>camel-code</artifactId>
+    <artifactId>camel-barcode</artifactId>
     <packaging>bundle</packaging>
-    <name>Camel :: Code</name>
-    <description>Camel Code (e.g. QRcode, PDF417, DataMatrix) support</description>
+    <name>Camel :: Barcode</name>
+    <description>Camel Barcode (e.g. QRcode, PDF417, DataMatrix) support</description>
 
     <properties>
-        <camel.osgi.export.pkg>org.apache.camel.dataformat.code.*</camel.osgi.export.pkg>
-        <camel.osgi.export.service>org.apache.camel.spi.DataFormatResolver;dataformat=code</camel.osgi.export.service>
+        <camel.osgi.export.pkg>org.apache.camel.dataformat.barcode.*</camel.osgi.export.pkg>
+        <camel.osgi.export.service>org.apache.camel.spi.DataFormatResolver;dataformat=barcode</camel.osgi.export.service>
     </properties>
 
     <dependencies>
