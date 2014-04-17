@@ -49,10 +49,24 @@ public class MongoDbReadPreferenceOptionTest extends AbstractMongoDbTest {
     }
 
     @Test
+    public void testPrimaryPreferredReadPreferenceOptionValue() throws Exception {
+        endpoint = createMongoDbEndpoint("mongodb:myDb?database={{mongodb.testDb}}&readPreference=primaryPreferred");
+        assertSame(ReadPreference.primaryPreferred(), endpoint.getReadPreference());
+        assertSame(ReadPreference.primaryPreferred(), endpoint.getMongoConnection().getReadPreference());
+    }
+
+    @Test
     public void testSecondaryReadPreferenceOptionValue() throws Exception {
         endpoint = createMongoDbEndpoint("mongodb:myDb?database={{mongodb.testDb}}&readPreference=secondary");
         assertSame(ReadPreference.secondary(), endpoint.getReadPreference());
         assertSame(ReadPreference.secondary(), endpoint.getMongoConnection().getReadPreference());
+    }
+
+    @Test
+    public void testSecondaryPreferredReadPreferenceOptionValue() throws Exception {
+        endpoint = createMongoDbEndpoint("mongodb:myDb?database={{mongodb.testDb}}&readPreference=secondaryPreferred");
+        assertSame(ReadPreference.secondaryPreferred(), endpoint.getReadPreference());
+        assertSame(ReadPreference.secondaryPreferred(), endpoint.getMongoConnection().getReadPreference());
     }
 
     @Test
@@ -63,8 +77,7 @@ public class MongoDbReadPreferenceOptionTest extends AbstractMongoDbTest {
     }
 
     private MongoDbEndpoint createMongoDbEndpoint(String uri) throws Exception {
-        MongoDbComponent component = context().getComponent("mongodb", MongoDbComponent.class);
-        Endpoint endpoint = component.createEndpoint(uri);
+        Endpoint endpoint = context().getComponent("mongodb").createEndpoint(uri);
         endpoint.start();
         return (MongoDbEndpoint) endpoint;
 
