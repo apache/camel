@@ -123,9 +123,6 @@ public class BarcodeDataFormatTest {
         assertTrue("error correction hint incorrect.", 
                 instance.getWriterHintMap()
                         .containsKey(EncodeHintType.ERROR_CORRECTION));
-        assertTrue("margin hint incorrect.", 
-                instance.getWriterHintMap()
-                        .containsKey(EncodeHintType.MARGIN));
         assertTrue("data matrix shape hint incorrect.", 
                 instance.getWriterHintMap()
                         .containsKey(EncodeHintType.DATA_MATRIX_SHAPE));
