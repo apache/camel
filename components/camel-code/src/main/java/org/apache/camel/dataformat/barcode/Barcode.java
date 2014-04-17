@@ -16,18 +16,14 @@
 
 package org.apache.camel.dataformat.barcode;
 
-import com.google.zxing.BarcodeFormat;
-
 /**
  * Header variables for the barcode data format.
- * 
  * @author claus.straube
  */
 public interface Barcode {
     
     /**
-     * Format of the barcode (please use {@link BarcodeFormat})
+     * Format of the barcode (please use {@link BarcodeFormat}).
      */
-    public final static String BARCODE_FORMAT = "BarcodeFormat";
-    
+    public static final String BARCODE_FORMAT = "BarcodeFormat";  
 }

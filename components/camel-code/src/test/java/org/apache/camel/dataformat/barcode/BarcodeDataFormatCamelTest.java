@@ -16,8 +16,6 @@
 
 package org.apache.camel.dataformat.barcode;
 
-import org.apache.camel.dataformat.barcode.BarcodeImageType;
-import org.apache.camel.dataformat.barcode.BarcodeDataFormat;
 import com.google.zxing.BarcodeFormat;
 import java.io.File;
 import java.util.concurrent.TimeUnit;
@@ -40,6 +38,7 @@ public class BarcodeDataFormatCamelTest extends BarcodeTestBase {
     private static final Logger LOG = LoggerFactory.getLogger(BarcodeDataFormatCamelTest.class);
     
     @Before
+    @Override
     public void setUp() throws Exception {
         super.setUp();
         

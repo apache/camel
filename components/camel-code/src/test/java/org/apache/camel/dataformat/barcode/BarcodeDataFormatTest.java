@@ -16,9 +16,6 @@
 
 package org.apache.camel.dataformat.barcode;
 
-import org.apache.camel.dataformat.barcode.BarcodeParameters;
-import org.apache.camel.dataformat.barcode.BarcodeDataFormat;
-import org.apache.camel.dataformat.barcode.BarcodeImageType;
 import com.google.zxing.BarcodeFormat;
 import com.google.zxing.DecodeHintType;
 import com.google.zxing.EncodeHintType;
@@ -27,66 +24,121 @@ import org.junit.Test;
 import static org.junit.Assert.*;
 
 /**
- * This class tests all Camel independend test cases for {@link BarcodeDataFormat}.
- * 
+ * This class tests all Camel independend test cases 
+ * for {@link BarcodeDataFormat}.
  * @author claus.straube
  */
 public class BarcodeDataFormatTest {
     
+    /**
+     * Test default constructor.
+     */
     @Test
-    public void testDefaultConstructor() {
+    public final void testDefaultConstructor() {
         BarcodeDataFormat barcodeDataFormat = new BarcodeDataFormat();
-        this.checkParams(BarcodeParameters.IMAGE_TYPE, BarcodeParameters.WIDTH, BarcodeParameters.HEIGHT, BarcodeParameters.ENCODING, BarcodeParameters.FORMAT, barcodeDataFormat.getParams());
+        this.checkParams(BarcodeParameters.IMAGE_TYPE
+                , BarcodeParameters.WIDTH
+                , BarcodeParameters.HEIGHT
+                , BarcodeParameters.ENCODING
+                , BarcodeParameters.FORMAT
+                , barcodeDataFormat.getParams());
     }
     
+    /**
+     * Test constructor with barcode format.
+     */
     @Test
-    public void testConstructorWithBarcodeFormat() {
-        BarcodeDataFormat barcodeDataFormat = new BarcodeDataFormat(BarcodeFormat.AZTEC);
-        this.checkParams(BarcodeParameters.IMAGE_TYPE, BarcodeParameters.WIDTH, BarcodeParameters.HEIGHT, BarcodeParameters.ENCODING, BarcodeFormat.AZTEC, barcodeDataFormat.getParams());
+    public final void testConstructorWithBarcodeFormat() {
+        BarcodeDataFormat barcodeDataFormat = 
+                new BarcodeDataFormat(BarcodeFormat.AZTEC);
+        this.checkParams(BarcodeParameters.IMAGE_TYPE
+                , BarcodeParameters.WIDTH
+                , BarcodeParameters.HEIGHT
+                , BarcodeParameters.ENCODING
+                , BarcodeFormat.AZTEC
+                , barcodeDataFormat.getParams());
     }
     
+    /**
+     * Test constructor with size.
+     */
     @Test
-    public void testConstructorWithSize() {
-        BarcodeDataFormat barcodeDataFormat = new BarcodeDataFormat(200, 250);
-        this.checkParams(BarcodeParameters.IMAGE_TYPE, 200, 250, BarcodeParameters.ENCODING, BarcodeParameters.FORMAT, barcodeDataFormat.getParams());
+    public final void testConstructorWithSize() {
+        BarcodeDataFormat barcodeDataFormat = 
+                new BarcodeDataFormat(200, 250);
+        this.checkParams(BarcodeParameters.IMAGE_TYPE
+                , 200, 250, BarcodeParameters.ENCODING
+                , BarcodeParameters.FORMAT
+                , barcodeDataFormat.getParams());
     }
     
+    /**
+     * Test constructor with image type.
+     */
     @Test
-    public void testConstructorWithImageType() {
-        BarcodeDataFormat barcodeDataFormat = new BarcodeDataFormat(BarcodeImageType.JPG);
-        this.checkParams(BarcodeImageType.JPG, BarcodeParameters.WIDTH, BarcodeParameters.HEIGHT, BarcodeParameters.ENCODING, BarcodeParameters.FORMAT, barcodeDataFormat.getParams());
+    public final void testConstructorWithImageType() {
+        BarcodeDataFormat barcodeDataFormat = 
+                new BarcodeDataFormat(BarcodeImageType.JPG);
+        this.checkParams(BarcodeImageType.JPG
+                , BarcodeParameters.WIDTH
+                , BarcodeParameters.HEIGHT
+                , BarcodeParameters.ENCODING
+                , BarcodeParameters.FORMAT
+                , barcodeDataFormat.getParams());
     }
     
+    /**
+     * Test constructor with all.
+     */
     @Test
-    public void testConstructorWithAll() {
-        BarcodeDataFormat barcodeDataFormat = new BarcodeDataFormat(200, 250, BarcodeImageType.JPG, BarcodeFormat.AZTEC);
-        this.checkParams(BarcodeImageType.JPG, 200, 250, BarcodeParameters.ENCODING, BarcodeFormat.AZTEC, barcodeDataFormat.getParams());
+    public final void testConstructorWithAll() {
+        BarcodeDataFormat barcodeDataFormat = 
+                new BarcodeDataFormat(200, 250, BarcodeImageType.JPG
+                        , BarcodeFormat.AZTEC);
+        this.checkParams(BarcodeImageType.JPG
+                , 200, 250
+                , BarcodeParameters.ENCODING
+                , BarcodeFormat.AZTEC
+                , barcodeDataFormat.getParams());
     }
 
     /**
      * Test of optimizeHints method, of class BarcodeDataFormat.
      */
     @Test
-    public void testOptimizeHints() {
+    public final void testOptimizeHints() {
         BarcodeDataFormat instance = new BarcodeDataFormat();
-        assertTrue(instance.getWriterHintMap().containsKey(EncodeHintType.ERROR_CORRECTION));
-        assertTrue(instance.getReaderHintMap().containsKey(DecodeHintType.TRY_HARDER));
+        assertTrue(instance.getWriterHintMap()
+                .containsKey(EncodeHintType.ERROR_CORRECTION));
+        assertTrue(instance.getReaderHintMap()
+                .containsKey(DecodeHintType.TRY_HARDER));
     }
     
+    /**
+     * Test optimized hints for data matrix.
+     */
     @Test
-    public void testOptimizieHintsForDataMatrix() {
+    public final void testOptimizieHintsForDataMatrix() {
         BarcodeDataFormat instance = new BarcodeDataFormat(BarcodeFormat.DATA_MATRIX);
-        assertTrue("error correction hint incorrect.", instance.getWriterHintMap().containsKey(EncodeHintType.ERROR_CORRECTION));
-        assertTrue("margin hint incorrect.", instance.getWriterHintMap().containsKey(EncodeHintType.MARGIN));
-        assertTrue("data matrix shape hint incorrect.", instance.getWriterHintMap().containsKey(EncodeHintType.DATA_MATRIX_SHAPE));
-        assertTrue("try harder hint incorrect.",instance.getReaderHintMap().containsKey(DecodeHintType.TRY_HARDER));
+        assertTrue("error correction hint incorrect.", 
+                instance.getWriterHintMap()
+                        .containsKey(EncodeHintType.ERROR_CORRECTION));
+        assertTrue("margin hint incorrect.", 
+                instance.getWriterHintMap()
+                        .containsKey(EncodeHintType.MARGIN));
+        assertTrue("data matrix shape hint incorrect.", 
+                instance.getWriterHintMap()
+                        .containsKey(EncodeHintType.DATA_MATRIX_SHAPE));
+        assertTrue("try harder hint incorrect.",
+                instance.getReaderHintMap()
+                        .containsKey(DecodeHintType.TRY_HARDER));
     }
 
     /**
      * Test of addToHintMap method, of class BarcodeDataFormat.
      */
     @Test
-    public void testAddToHintMap_EncodeHintType_Object() {
+    public final void testAddToHintMapEncodeHintTypeObject() {
         EncodeHintType hintType = EncodeHintType.MARGIN;
         Object value = 10;
         BarcodeDataFormat instance = new BarcodeDataFormat();
@@ -99,7 +151,7 @@ public class BarcodeDataFormatTest {
      * Test of addToHintMap method, of class BarcodeDataFormat.
      */
     @Test
-    public void testAddToHintMap_DecodeHintType_Object() {
+    public final void testAddToHintMapDecodeHintTypeObject() {
         DecodeHintType hintType = DecodeHintType.CHARACTER_SET;
         Object value = "UTF-8";
         BarcodeDataFormat instance = new BarcodeDataFormat();
@@ -112,7 +164,7 @@ public class BarcodeDataFormatTest {
      * Test of removeFromHintMap method, of class BarcodeDataFormat.
      */
     @Test
-    public void testRemoveFromHintMap_EncodeHintType() {
+    public final void testRemoveFromHintMapEncodeHintType() {
         EncodeHintType hintType = EncodeHintType.ERROR_CORRECTION;
         BarcodeDataFormat instance = new BarcodeDataFormat();
         instance.removeFromHintMap(hintType);
@@ -123,7 +175,7 @@ public class BarcodeDataFormatTest {
      * Test of removeFromHintMap method, of class BarcodeDataFormat.
      */
     @Test
-    public void testRemoveFromHintMap_DecodeHintType() {
+    public final void testRemoveFromHintMapDecodeHintType() {
         DecodeHintType hintType = DecodeHintType.TRY_HARDER;
         BarcodeDataFormat instance = new BarcodeDataFormat();
         instance.removeFromHintMap(hintType);
@@ -134,7 +186,7 @@ public class BarcodeDataFormatTest {
      * Test of getParams method, of class BarcodeDataFormat.
      */
     @Test
-    public void testGetParams() {
+    public final void testGetParams() {
         BarcodeDataFormat instance = new BarcodeDataFormat();
         BarcodeParameters result = instance.getParams();
         assertNotNull(result);
@@ -144,7 +196,7 @@ public class BarcodeDataFormatTest {
      * Test of getWriterHintMap method, of class BarcodeDataFormat.
      */
     @Test
-    public void testGetWriterHintMap() {
+    public final void testGetWriterHintMap() {
         BarcodeDataFormat instance = new BarcodeDataFormat();
         Map<EncodeHintType, Object> result = instance.getWriterHintMap();
         assertNotNull(result);
@@ -154,13 +206,24 @@ public class BarcodeDataFormatTest {
      * Test of getReaderHintMap method, of class BarcodeDataFormat.
      */
     @Test
-    public void testGetReaderHintMap() {
+    public final void testGetReaderHintMap() {
         BarcodeDataFormat instance = new BarcodeDataFormat();
         Map<DecodeHintType, Object> result = instance.getReaderHintMap();
         assertNotNull(result);
     }
     
-    private void checkParams(BarcodeImageType imageType, int width, int height, String encoding, BarcodeFormat format, BarcodeParameters params) {
+    /**
+     * Helper to check the saved parameters.
+     * 
+     * @param imageType
+     * @param width
+     * @param height
+     * @param encoding
+     * @param format
+     * @param params 
+     */
+    private void checkParams(BarcodeImageType imageType, int width, int height
+            , String encoding, BarcodeFormat format, BarcodeParameters params) {
         assertEquals(params.getType(), imageType);
         assertTrue(params.getWidth() == width);
         assertTrue(params.getHeight() == height);

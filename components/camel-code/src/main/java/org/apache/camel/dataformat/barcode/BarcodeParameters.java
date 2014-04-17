@@ -28,27 +28,27 @@ public class BarcodeParameters {
     /**
      * Default image type: PNG
      */
-    public final static BarcodeImageType IMAGE_TYPE = BarcodeImageType.PNG;
+    public static final BarcodeImageType IMAGE_TYPE = BarcodeImageType.PNG;
     
     /**
      * Default width: 100px
      */
-    public final static int WIDTH = 100;
+    public static final int WIDTH = 100;
     
     /**
      * Default height: 100px
      */
-    public final static int HEIGHT = 100;
+    public static final int HEIGHT = 100;
     
     /**
      * Default encoding: UTF-8
      */
-    public final static String ENCODING = "UTF-8";
+    public static final String ENCODING = "UTF-8";
     
     /**
      * Default barcode format: QR-CODE
      */
-    public final static BarcodeFormat FORMAT = BarcodeFormat.QR_CODE;
+    public static final BarcodeFormat FORMAT = BarcodeFormat.QR_CODE;
     
     /**
      * The Image Type. 
@@ -92,14 +92,14 @@ public class BarcodeParameters {
     
     /**
      * Constructor with parameters.
-     * 
      * @param type
      * @param width
      * @param height
      * @param encoding
      * @param format
      */
-    public BarcodeParameters(BarcodeImageType type, Integer width, Integer height, String encoding, BarcodeFormat format) {
+    public BarcodeParameters(final BarcodeImageType type, final int width, 
+            final int height, final String encoding, final BarcodeFormat format) {
         this.encoding = encoding;
         this.height = height;
         this.width = width;

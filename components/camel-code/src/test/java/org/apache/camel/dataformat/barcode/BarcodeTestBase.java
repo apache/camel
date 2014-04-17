@@ -33,10 +33,10 @@ import static org.junit.Assert.assertEquals;
  */
 public class BarcodeTestBase extends CamelTestSupport {
 
-    protected final static String MSG = "This is a testmessage!";
+    protected static final String MSG = "This is a testmessage!";
     
-    protected final static String PATH = "target/out";
-    protected final static String FILE_ENDPOINT = "file:" + PATH;
+    protected static final String PATH = "target/out";
+    protected static final String FILE_ENDPOINT = "file:" + PATH;
 
     @EndpointInject(uri = "mock:out")
     MockEndpoint out;

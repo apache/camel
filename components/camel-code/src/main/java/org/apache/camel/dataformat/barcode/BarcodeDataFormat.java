@@ -60,24 +60,27 @@ import org.slf4j.LoggerFactory;
  */
 public class BarcodeDataFormat implements DataFormat {
 
+    /**
+     * Logger.
+     */
     private static final Logger LOG = LoggerFactory.getLogger(BarcodeDataFormat.class);
-    
-
     
     /**
      * The bean for the default parameters.
      */
-    protected BarcodeParameters params;
+    private BarcodeParameters params;
     
     /**
      * The encoding hint map, used for writing a barcode.
      */
-    protected final Map<EncodeHintType, Object> writerHintMap = new EnumMap<EncodeHintType, Object>(EncodeHintType.class);
+    private final Map<EncodeHintType, Object> writerHintMap = 
+            new EnumMap<EncodeHintType, Object>(EncodeHintType.class);
     
     /**
      * The decoding hint map, used for reading a barcode.
      */
-    protected final Map<DecodeHintType, Object> readerHintMap = new EnumMap<DecodeHintType, Object>(DecodeHintType.class);
+    private final Map<DecodeHintType, Object> readerHintMap = 
+            new EnumMap<DecodeHintType, Object>(DecodeHintType.class);
             
 
     /**
@@ -89,23 +92,25 @@ public class BarcodeDataFormat implements DataFormat {
     }
     
     /**
-     * Create instance with custom {@link BarcodeFormat}. The other values are default.
+     * Create instance with custom {@link BarcodeFormat}. The other 
+     * values are default.
      * 
      * @param format the barcode format
      */
-    public BarcodeDataFormat(BarcodeFormat format) {
+    public BarcodeDataFormat(final BarcodeFormat format) {
         this.setDefaultParameters();
         this.params.setFormat(format);
         this.optimizeHints();
     }
 
     /**
-     * Create instance with custom height and width. The other values are default.
+     * Create instance with custom height and width. The other 
+     * values are default.
      * 
      * @param height the image height
      * @param width the image width
      */
-    public BarcodeDataFormat(int width, int height) {
+    public BarcodeDataFormat(final int width, final int height) {
         this.setDefaultParameters();
         this.params.setHeight(height);
         this.params.setWidth(width);
@@ -113,25 +118,28 @@ public class BarcodeDataFormat implements DataFormat {
     }
 
     /**
-     * Create instance with custom {@link BarcodeImageType}. The other values are default.
+     * Create instance with custom {@link BarcodeImageType}. The other 
+     * values are default.
      * 
      * @param type the type (format) of the image. e.g. PNG
      */
-    public BarcodeDataFormat(BarcodeImageType type) {
+    public BarcodeDataFormat(final BarcodeImageType type) {
         this.setDefaultParameters();
         this.params.setType(type);
         this.optimizeHints();
     }
     
     /**
-     * Create instance with custom height, width and image type. The other values are default.
+     * Create instance with custom height, width and image type. The other 
+     * values are default.
      * 
      * @param height the image height
      * @param width the image width
      * @param type the type (format) of the image. e.g. PNG
      * @param format the barcode format
      */
-    public BarcodeDataFormat(int width, int height, BarcodeImageType type, BarcodeFormat format) {
+    public BarcodeDataFormat(final int width, final int height
+            , final BarcodeImageType type, final BarcodeFormat format) {
         this.setDefaultParameters();
         this.params.setHeight(height);
         this.params.setWidth(width);
@@ -149,7 +157,8 @@ public class BarcodeDataFormat implements DataFormat {
      * @throws Exception 
      */
     @Override
-    public void marshal(Exchange exchange, Object graph, OutputStream stream) throws Exception {
+    public void marshal(final Exchange exchange, final Object graph
+            , final OutputStream stream) throws Exception {
         this.printImage(exchange, graph, stream);
     }
 
@@ -162,7 +171,8 @@ public class BarcodeDataFormat implements DataFormat {
      * @throws Exception 
      */
     @Override
-    public Object unmarshal(Exchange exchange, InputStream stream) throws Exception {
+    public Object unmarshal(final Exchange exchange, final InputStream stream)
+            throws Exception {
         return this.readImage(exchange, stream);
     }
     
@@ -178,11 +188,14 @@ public class BarcodeDataFormat implements DataFormat {
      */
     protected final void optimizeHints() {
         // writer hints
-        this.writerHintMap.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.H);
+        this.writerHintMap
+                .put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.H);
         
-        if (this.params.getFormat().toString().equals(BarcodeFormat.DATA_MATRIX.toString())) {
-            this.writerHintMap.put(EncodeHintType.MARGIN, 5);
-            this.writerHintMap.put(EncodeHintType.DATA_MATRIX_SHAPE, SymbolShapeHint.FORCE_SQUARE);
+        if (this.params.getFormat().toString()
+                .equals(BarcodeFormat.DATA_MATRIX.toString())) {
+            this.writerHintMap
+                    .put(EncodeHintType.DATA_MATRIX_SHAPE
+                            , SymbolShapeHint.FORCE_SQUARE);
         }
         
         // reader hints
@@ -200,19 +213,25 @@ public class BarcodeDataFormat implements DataFormat {
      * @throws IOException 
      * @throws org.apache.camel.NoTypeConversionAvailableException 
      */
-    protected void printImage(Exchange exchange
-            , Object graph
-            , OutputStream stream) throws WriterException, UnsupportedEncodingException, IOException, TypeConversionException, NoTypeConversionAvailableException {
+    private void printImage(final Exchange exchange
+            , final Object graph
+            , final OutputStream stream) 
+            throws WriterException
+            , UnsupportedEncodingException
+            , IOException
+            , TypeConversionException
+            , NoTypeConversionAvailableException {
          
-        String payload = ExchangeHelper.convertToMandatoryType(exchange, String.class, graph);
-        MultiFormatWriter writer = new MultiFormatWriter();
+        final String payload = ExchangeHelper
+                .convertToMandatoryType(exchange, String.class, graph);
+        final MultiFormatWriter writer = new MultiFormatWriter();
 
         // set values
-        String type = this.params.getType().toString();
-        String encoding = this.params.getEncoding(); 
+        final String type = this.params.getType().toString();
+        final String encoding = this.params.getEncoding(); 
         
         // create code image  
-        BitMatrix matrix = writer.encode(
+        final BitMatrix matrix = writer.encode(
                 new String(payload.getBytes(encoding), encoding),
                 this.params.getFormat(), 
                 this.params.getWidth(), 
@@ -236,21 +255,27 @@ public class BarcodeDataFormat implements DataFormat {
      * @throws ChecksumException
      * @throws FormatException 
      */
-    protected String readImage(Exchange exchange, InputStream stream) throws TypeConversionException, NoTypeConversionAvailableException, IOException, NotFoundException, ChecksumException, FormatException {
-        MultiFormatReader reader = new MultiFormatReader();
-        BufferedInputStream in = exchange.getContext()
+    private String readImage(final Exchange exchange, final InputStream stream) 
+            throws TypeConversionException
+            , NoTypeConversionAvailableException
+            , IOException
+            , NotFoundException
+            , ChecksumException
+            , FormatException {
+        final MultiFormatReader reader = new MultiFormatReader();
+        final BufferedInputStream in = exchange.getContext()
                 .getTypeConverter()
                 .mandatoryConvertTo(BufferedInputStream.class, stream);
-        BinaryBitmap bitmap = new BinaryBitmap(
+        final BinaryBitmap bitmap = new BinaryBitmap(
                 new HybridBinarizer(
                         new BufferedImageLuminanceSource(ImageIO.read(in))));
-        Result result = reader.decode(bitmap, readerHintMap);
+        final Result result = reader.decode(bitmap, readerHintMap);
         
         // write the found barcode format into the header
-        exchange.getOut().setHeader(Barcode.BARCODE_FORMAT, result.getBarcodeFormat());
+        exchange.getOut()
+                .setHeader(Barcode.BARCODE_FORMAT, result.getBarcodeFormat());
         
-        String text = result.getText();
-        return text;
+        return result.getText();
     }
     
     /**
@@ -259,9 +284,12 @@ public class BarcodeDataFormat implements DataFormat {
      * @param hintType
      * @param value 
      */
-    public void addToHintMap(EncodeHintType hintType, Object value) {
+    public final void addToHintMap(final EncodeHintType hintType
+            , final Object value) {
         this.writerHintMap.put(hintType, value);
-        LOG.info(String.format("Added '%s' with value '%s' to writer hint map.", hintType.toString(), value.toString()));
+        LOG.info(
+                String.format("Added '%s' with value '%s' to writer hint map."
+                        , hintType.toString(), value.toString()));
     }
     
     /**
@@ -270,7 +298,8 @@ public class BarcodeDataFormat implements DataFormat {
      * @param hintType
      * @param value 
      */
-    public void addToHintMap(DecodeHintType hintType, Object value) {
+    public final void addToHintMap(final DecodeHintType hintType
+            , final Object value) {
         this.readerHintMap.put(hintType, value);
     }
     
@@ -279,12 +308,16 @@ public class BarcodeDataFormat implements DataFormat {
      * 
      * @param hintType 
      */
-    public void removeFromHintMap(EncodeHintType hintType) {
-        if(this.writerHintMap.containsKey(hintType)) {
+    public final void removeFromHintMap(final EncodeHintType hintType) {
+        if(this.writerHintMap.containsKey(hintType)){
             this.writerHintMap.remove(hintType);
-            LOG.info(String.format("Removed '%s' from writer hint map.", hintType.toString()));
+            LOG.info(
+                    String.format("Removed '%s' from writer hint map."
+                            , hintType.toString()));
         } else {
-            LOG.warn(String.format("Could not find encode hint type '%s' in writer hint map.", hintType.toString()));
+            LOG.warn(
+                    String.format("Could not find encode hint type '%s' in "
+                            + "writer hint map.", hintType.toString()));
         }
     }
     
@@ -293,12 +326,16 @@ public class BarcodeDataFormat implements DataFormat {
      * 
      * @param hintType 
      */
-    public void removeFromHintMap(DecodeHintType hintType) {
+    public final void removeFromHintMap(final DecodeHintType hintType) {
         if(this.readerHintMap.containsKey(hintType)) {
             this.readerHintMap.remove(hintType);
-            LOG.info(String.format("Removed '%s' from reader hint map.", hintType.toString()));
+            LOG.info(
+                    String.format("Removed '%s' from reader hint map."
+                            , hintType.toString()));
         } else {
-            LOG.warn(String.format("Could not find decode hint type '%s' in reader hint map.", hintType.toString()));
+            LOG.warn(
+                    String.format("Could not find decode hint type '%s' in"
+                            + " reader hint map.", hintType.toString()));
         }
     }
 
@@ -307,7 +344,7 @@ public class BarcodeDataFormat implements DataFormat {
      * 
      * @return 
      */
-    public BarcodeParameters getParams() {
+    public final BarcodeParameters getParams() {
         return params;
     }
 
@@ -316,7 +353,7 @@ public class BarcodeDataFormat implements DataFormat {
      * 
      * @return 
      */
-    public Map<EncodeHintType, Object> getWriterHintMap() {
+    public final Map<EncodeHintType, Object> getWriterHintMap() {
         return writerHintMap;
     }
 
@@ -325,8 +362,7 @@ public class BarcodeDataFormat implements DataFormat {
      * 
      * @return 
      */
-    public Map<DecodeHintType, Object> getReaderHintMap() {
+    public final Map<DecodeHintType, Object> getReaderHintMap() {
         return readerHintMap;
     }
-    
 }
