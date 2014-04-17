@@ -11,3 +11,6 @@ target
 *.log
 test-salesforce-login.properties
 dependency-reduced-pom.xml
+/components/camel-code/nbactions.xml
+/components/camel-code/nb-configuration.xml
+/nbactions.xml
