@@ -29,7 +29,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- *
+ * This class tests all Camel dependend cases for {@link BarcodeDataFormat}. 
+ * 
  * @author claus.straube
  */
 public class BarcodeDataFormatCamelTest extends BarcodeTestBase {
@@ -43,16 +44,22 @@ public class BarcodeDataFormatCamelTest extends BarcodeTestBase {
         // clean directory
         File directory = new File(PATH);
         if(!directory.isDirectory() || !directory.exists()) {
-            LOG.error(String.format("Cannot delete files from directory '%s', because path is not a directory, or it doesn't exist.", PATH));
+            LOG.error(String.format("cannot delete files from directory '%s', because path is not a directory, or it doesn't exist.", PATH));
         } else {
-            LOG.info("Deleting files from " + PATH);
+            LOG.info("deleting files from " + PATH + "...");
             File[] files = directory.listFiles();
             for (File file : files) {
+                LOG.info(String.format("deleting %s", file.getName()));
                 file.delete();
             }
         }
     }
 
+    /**
+     * tests barcode (QR-Code) generation and reading.
+     * 
+     * @throws Exception 
+     */
     @Test
     public void testDefaultQRCode() throws Exception {
         out.expectedBodiesReceived(MSG);
@@ -64,6 +71,11 @@ public class BarcodeDataFormatCamelTest extends BarcodeTestBase {
         this.checkImage(image, 100, 100, BarcodeImageType.PNG.toString());
     }
     
+    /**
+     * tests barcode (QR-Code) generation with modified size and reading.
+     * 
+     * @throws Exception 
+     */
     @Test
     public void testQRCodeWithModifiedSize() throws Exception {
         out.expectedBodiesReceived(MSG);
@@ -75,6 +87,11 @@ public class BarcodeDataFormatCamelTest extends BarcodeTestBase {
         this.checkImage(image, 200, 200, BarcodeImageType.PNG.toString());
     }
     
+    /**
+     * tests barcode (QR-Code) generation with modified image type and reading.
+     * 
+     * @throws Exception 
+     */
     @Test
     public void testQRCodeWithJPEGType() throws Exception {
         out.expectedBodiesReceived(MSG);
@@ -86,6 +103,11 @@ public class BarcodeDataFormatCamelTest extends BarcodeTestBase {
         this.checkImage(image, 100, 100, "JPEG");
     }
     
+    /**
+     * tests barcode (PDF-417) with modiefied size and image taype generation and reading.
+     * 
+     * @throws Exception 
+     */
     @Test
     public void testPDF417CodeWidthModifiedSizeAndImageType() throws Exception {
         out.expectedBodiesReceived(MSG);
