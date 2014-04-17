@@ -19,7 +19,7 @@ package org.apache.camel.dataformat.code;
 import com.google.zxing.BarcodeFormat;
 
 /**
- * Header Variables for the qr-code data format.
+ * Header variables for the barcode data format.
  * 
  * @author claus.straube
  */

@@ -173,6 +173,9 @@ public class BarcodeDataFormat implements DataFormat {
         this.params = new BarcodeParameters();
     }
     
+    /**
+     * Sets hints optimized for different barcode types.
+     */
     protected final void optimizeHints() {
         // writer hints
         this.writerHintMap.put(EncodeHintType.ERROR_CORRECTION, ErrorCorrectionLevel.H);
@@ -308,10 +311,20 @@ public class BarcodeDataFormat implements DataFormat {
         return params;
     }
 
+    /**
+     * The writer (encode) hint map.
+     * 
+     * @return 
+     */
     public Map<EncodeHintType, Object> getWriterHintMap() {
         return writerHintMap;
     }
 
+    /**
+     * The reader (decode) hint map.
+     * 
+     * @return 
+     */
     public Map<DecodeHintType, Object> getReaderHintMap() {
         return readerHintMap;
     }
