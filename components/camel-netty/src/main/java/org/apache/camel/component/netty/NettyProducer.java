@@ -56,7 +56,7 @@ import org.slf4j.LoggerFactory;
 
 public class NettyProducer extends DefaultAsyncProducer {
     private static final Logger LOG = LoggerFactory.getLogger(NettyProducer.class);
-    private static final ChannelGroup ALL_CHANNELS = new DefaultChannelGroup("NettyProducer");
+    private final ChannelGroup allChannels = new DefaultChannelGroup("NettyProducer");
     private CamelContext context;
     private NettyConfiguration configuration;
     private ChannelFactory channelFactory;
@@ -148,8 +148,8 @@ public class NettyProducer extends DefaultAsyncProducer {
     protected void doStop() throws Exception {
         LOG.debug("Stopping producer at address: {}", configuration.getAddress());
         // close all channels
-        LOG.trace("Closing {} channels", ALL_CHANNELS.size());
-        ChannelGroupFuture future = ALL_CHANNELS.close();
+        LOG.trace("Closing {} channels", allChannels.size());
+        ChannelGroupFuture future = allChannels.close();
         future.awaitUninterruptibly();
 
         // and then release other resources
@@ -400,7 +400,7 @@ public class NettyProducer extends DefaultAsyncProducer {
             connectionlessClientBootstrap.setPipelineFactory(pipelineFactory);
             // bind and store channel so we can close it when stopping
             Channel channel = connectionlessClientBootstrap.bind(new InetSocketAddress(0));
-            ALL_CHANNELS.add(channel);
+            allChannels.add(channel);
             answer = connectionlessClientBootstrap.connect(new InetSocketAddress(configuration.getHost(), configuration.getPort()));
 
             if (LOG.isDebugEnabled()) {
@@ -442,7 +442,7 @@ public class NettyProducer extends DefaultAsyncProducer {
         }
         Channel answer = channelFuture.getChannel();
         // to keep track of all channels in use
-        ALL_CHANNELS.add(answer);
+        allChannels.add(answer);
 
         if (LOG.isDebugEnabled()) {
             LOG.debug("Creating connector to address: {}", configuration.getAddress());
@@ -467,7 +467,7 @@ public class NettyProducer extends DefaultAsyncProducer {
     }
 
     public ChannelGroup getAllChannels() {
-        return ALL_CHANNELS;
+        return allChannels;
     }
 
     /**
@@ -515,7 +515,7 @@ public class NettyProducer extends DefaultAsyncProducer {
         public void destroyObject(Channel channel) throws Exception {
             LOG.trace("Destroying channel: {}", channel);
             NettyHelper.close(channel);
-            ALL_CHANNELS.remove(channel);
+            allChannels.remove(channel);
         }
 
         @Override
