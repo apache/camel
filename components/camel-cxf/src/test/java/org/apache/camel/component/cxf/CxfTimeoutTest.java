@@ -25,6 +25,7 @@ import javax.xml.ws.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.spring.CamelSpringTestSupport;
 import org.apache.hello_world_soap_http.Greeter;
 import org.junit.BeforeClass;
@@ -63,6 +64,19 @@ public class CxfTimeoutTest extends CamelSpringTestSupport {
     @Test
     public void testInvokingJaxWsServerWithCxfEndpoint() throws Exception {
         sendTimeOutMessage("cxf://bean:springEndpoint");
+    }
+    
+    @Test
+    public void testInvokingFromCamelRoute() throws Exception {
+        sendTimeOutMessage("direct:start");
+    }
+    
+    @Test
+    public void testDoCatchWithTimeOutException() throws Exception {
+        MockEndpoint error = context.getEndpoint("mock:error", MockEndpoint.class);
+        error.expectedMessageCount(1);
+        sendTimeOutMessage("direct:doCatch");
+        error.assertIsSatisfied();
     }
     
     protected void sendTimeOutMessage(String endpointUri) throws Exception {
