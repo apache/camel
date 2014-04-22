@@ -296,10 +296,10 @@ public class JettyHttpComponent extends HttpComponent {
                 if (endpoint.isEnableJmx()) {
                     enableJmx(server);
                 }
+                // This setting is only work for the first endpoint which create the server
                 // just set if we need sendServerVersion, the default value is true
                 server.setSendServerVersion(endpoint.isSendServerVersion());
                 server.addConnector(connector);
-                
                 server.setSendDateHeader(endpoint.isSendDateHeader());
 
                 connectorRef = new ConnectorRef(server, connector, createServletForConnector(server, connector, endpoint.getHandlers(), endpoint));
