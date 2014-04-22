@@ -313,6 +313,7 @@
     <openejb-version>4.5.2</openejb-version>
     <openjpa-version>2.3.0</openjpa-version>
     <opensaml-version>2.5.1_2</opensaml-version>
+    <openshift-java-client-version>2.5.0.Final</openshift-java-client-version>
     <optaplanner-version>6.0.1.Final</optaplanner-version>
     <oro-bundle-version>2.0.8_6</oro-bundle-version>
     <oscache-bundle-version>2.4_5</oscache-bundle-version>
@@ -994,6 +995,11 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-ognl</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-openshift</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>

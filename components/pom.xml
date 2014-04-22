@@ -141,6 +141,7 @@
     <module>camel-netty</module>
     <module>camel-netty-http</module>
     <module>camel-ognl</module>
+    <module>camel-openshift</module>
     <module>camel-optaplanner</module>
     <module>camel-paxlogging</module>
     <module>camel-printer</module>
