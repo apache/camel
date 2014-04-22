@@ -125,7 +125,27 @@ public class JdbcProducer extends DefaultProducer {
 
         try {
             final String preparedQuery = getEndpoint().getPrepareStatementStrategy().prepareQuery(sql, getEndpoint().isAllowNamedParameters());
-            ps = conn.prepareStatement(preparedQuery);
+
+            Boolean shouldRetrieveGeneratedKeys =
+                    exchange.getIn().getHeader(JdbcConstants.JDBC_RETRIEVE_GENERATED_KEYS, false, Boolean.class);
+
+            if (shouldRetrieveGeneratedKeys) {
+                Object expectedGeneratedColumns = exchange.getIn().getHeader(JdbcConstants.JDBC_GENERATED_COLUMNS);
+                if (expectedGeneratedColumns == null) {
+                    ps = conn.prepareStatement(preparedQuery, Statement.RETURN_GENERATED_KEYS);
+                } else if (expectedGeneratedColumns instanceof String[]) {
+                    ps = conn.prepareStatement(preparedQuery, (String[]) expectedGeneratedColumns);
+                } else if (expectedGeneratedColumns instanceof int[]) {
+                    ps = conn.prepareStatement(preparedQuery, (int[]) expectedGeneratedColumns);
+                } else {
+                    throw new IllegalArgumentException(
+                            "Header specifying expected returning columns isn't an instance of String[] or int[] but "
+                                    + expectedGeneratedColumns.getClass());
+                }
+            } else {
+                ps = conn.prepareStatement(preparedQuery);
+            }
+
             int expectedCount = ps.getParameterMetaData().getParameterCount();
 
             if (expectedCount > 0) {
@@ -142,6 +162,10 @@ public class JdbcProducer extends DefaultProducer {
             } else {
                 int updateCount = ps.getUpdateCount();
                 exchange.getOut().setHeader(JdbcConstants.JDBC_UPDATE_COUNT, updateCount);
+            }
+
+            if (shouldRetrieveGeneratedKeys) {
+                setGeneratedKeys(exchange, ps.getGeneratedKeys());
             }
         } finally {
             closeQuietly(rs);

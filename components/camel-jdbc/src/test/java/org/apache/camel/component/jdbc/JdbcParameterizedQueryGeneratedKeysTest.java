@@ -19,38 +19,44 @@ package org.apache.camel.component.jdbc;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
 
+import java.util.HashMap;
+import java.util.Map;
 
-public class JdbcGeneratedKeysTest extends AbstractJdbcGeneratedKeysTest {
+public class JdbcParameterizedQueryGeneratedKeysTest extends AbstractJdbcGeneratedKeysTest {
+
+    private static final Map<String, Object> valueMap;
+
+    static {
+        valueMap = new HashMap<String, Object>();
+        valueMap.put("value", "testValue");
+    }
 
     @Test
     public void testRetrieveGeneratedKeys() throws Exception {
-        super.testRetrieveGeneratedKeys("insert into tableWithAutoIncr (content) values ('value2')");
+        super.testRetrieveGeneratedKeys("insert into tableWithAutoIncr (content) values (:?value)", valueMap);
     }
 
     @Test
     public void testRetrieveGeneratedKeysWithStringGeneratedColumns() throws Exception {
-        super.testRetrieveGeneratedKeysWithStringGeneratedColumns("insert into tableWithAutoIncr (content) values ('value2')");
+        super.testRetrieveGeneratedKeysWithStringGeneratedColumns("insert into tableWithAutoIncr (content) values (:?value)", valueMap);
     }
 
     @Test
     public void testRetrieveGeneratedKeysWithIntGeneratedColumns() throws Exception {
-        super.testRetrieveGeneratedKeysWithIntGeneratedColumns("insert into tableWithAutoIncr (content) values ('value2')");
+        super.testRetrieveGeneratedKeysWithIntGeneratedColumns("insert into tableWithAutoIncr (content) values (:?value)", valueMap);
     }
 
     @Test
     public void testGivenAnInvalidGeneratedColumnsHeaderThenAnExceptionIsThrown() throws Exception {
-        super.testGivenAnInvalidGeneratedColumnsHeaderThenAnExceptionIsThrown("insert into tableWithAutoIncr (content) values ('value2')");
+        super.testGivenAnInvalidGeneratedColumnsHeaderThenAnExceptionIsThrown("insert into tableWithAutoIncr (content) values (:?value)", valueMap);
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
-            // START SNIPPET: route
-            // lets add simple route
-            public void configure() throws Exception {
-                from("direct:hello").to("jdbc:testdb?readSize=100");
+            public void configure() {
+                from("direct:hello").to("jdbc:testdb?useHeadersAsParameters=true&readSize=100");
             }
-            // END SNIPPET: route
         };
     }
 
