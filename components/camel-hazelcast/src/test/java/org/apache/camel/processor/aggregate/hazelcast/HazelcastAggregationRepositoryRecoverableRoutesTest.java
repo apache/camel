@@ -138,8 +138,9 @@ public class HazelcastAggregationRepositoryRecoverableRoutesTest extends Hazelca
             super(cause);
         }
 
-        private EverythingIsLostException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
-            super(message, cause, enableSuppression, writableStackTrace);
-        }
+        // not in jdk6
+//        private EverythingIsLostException(String message, Throwable cause, boolean enableSuppression, boolean writableStackTrace) {
+//            super(message, cause, enableSuppression, writableStackTrace);
+//        }
     }
 }
