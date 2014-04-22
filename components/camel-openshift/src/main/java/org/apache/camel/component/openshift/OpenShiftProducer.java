@@ -50,7 +50,12 @@ public class OpenShiftProducer extends DefaultProducer {
 
     @Override
     public void process(Exchange exchange) throws Exception {
-        String openshiftServer = new OpenShiftConfiguration().getLibraServer();
+        String openshiftServer;
+        if (getEndpoint().getServer() != null) {
+            openshiftServer = getEndpoint().getServer();
+        } else {
+            openshiftServer = new OpenShiftConfiguration().getLibraServer();
+        }
 
         IOpenShiftConnection connection =
                 new OpenShiftConnectionFactory().getConnection(getEndpoint().getClientId(), getEndpoint().getUsername(), getEndpoint().getPassword(), openshiftServer);

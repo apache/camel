@@ -31,6 +31,7 @@ public class OpenShiftEndpoint extends DefaultEndpoint {
     private String password;
     private String clientId;
     private String domain;
+    private String server;
     private OpenShiftOperation operation;
     private String application;
 
@@ -86,6 +87,14 @@ public class OpenShiftEndpoint extends DefaultEndpoint {
 
     public void setDomain(String domain) {
         this.domain = domain;
+    }
+
+    public String getServer() {
+        return server;
+    }
+
+    public void setServer(String server) {
+        this.server = server;
     }
 
     public OpenShiftOperation getOperation() {

@@ -26,6 +26,7 @@ public class OpenShiftComponent extends UriEndpointComponent {
     private String username;
     private String password;
     private String domain;
+    private String server;
 
     public OpenShiftComponent() {
         super(OpenShiftEndpoint.class);
@@ -65,5 +66,13 @@ public class OpenShiftComponent extends UriEndpointComponent {
 
     public void setDomain(String domain) {
         this.domain = domain;
+    }
+
+    public String getServer() {
+        return server;
+    }
+
+    public void setServer(String server) {
+        this.server = server;
     }
 }
