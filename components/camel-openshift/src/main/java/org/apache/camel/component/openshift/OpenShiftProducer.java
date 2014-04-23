@@ -80,6 +80,8 @@ public class OpenShiftProducer extends DefaultProducer {
     protected void doList(Exchange exchange, IDomain domain) {
         StringBuilder sb = new StringBuilder("{\n  \"applications\": [");
 
+        // TODO: option to output as pojo or json
+
         boolean first = true;
         for (IApplication application : domain.getApplications()) {
             if (!first) {
@@ -203,13 +205,8 @@ public class OpenShiftProducer extends DefaultProducer {
         if (app == null) {
             throw new CamelExchangeException("Application with id " + name + " not found.", exchange);
         } else {
-            for (IGearGroup group : app.getGearGroups()) {
-                for (IGear gear : group.getGears()) {
-                    String state = gear.getState().name().toLowerCase(Locale.ENGLISH);
-                    exchange.getIn().setBody(state);
-                    break;
-                }
-            }
+            String state = OpenShiftHelper.getStateForApplication(app);
+            exchange.getIn().setBody(state);
         }
     }
 

@@ -45,6 +45,8 @@ public class OpenShiftEndpoint extends ScheduledPollEndpoint {
     private String operation;
     @UriParam
     private String application;
+    @UriParam
+    private String pollMode = OpenShiftPollMode.all.name();
 
     public OpenShiftEndpoint(String endpointUri, Component component) {
         super(endpointUri, component);
@@ -55,11 +57,16 @@ public class OpenShiftEndpoint extends ScheduledPollEndpoint {
         ObjectHelper.notEmpty(clientId, "clientId", this);
         ObjectHelper.notEmpty(username, "username", this);
         ObjectHelper.notEmpty(password, "password", this);
+
         return new OpenShiftProducer(this);
     }
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
+        ObjectHelper.notEmpty(clientId, "clientId", this);
+        ObjectHelper.notEmpty(username, "username", this);
+        ObjectHelper.notEmpty(password, "password", this);
+
         Consumer consumer = new OpenShiftConsumer(this, processor);
         configureConsumer(consumer);
         return consumer;
@@ -134,5 +141,17 @@ public class OpenShiftEndpoint extends ScheduledPollEndpoint {
 
     public void setApplication(String application) {
         this.application = application;
+    }
+
+    public String getPollMode() {
+        return pollMode;
+    }
+
+    public void setPollMode(String pollMode) {
+        this.pollMode = pollMode;
+    }
+
+    public void setPollMode(OpenShiftPollMode pollMode) {
+        this.pollMode = pollMode.name();
     }
 }

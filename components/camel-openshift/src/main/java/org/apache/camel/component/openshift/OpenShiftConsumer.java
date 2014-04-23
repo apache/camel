@@ -16,7 +16,9 @@
  */
 package org.apache.camel.component.openshift;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import com.openshift.client.IApplication;
 import com.openshift.client.IDomain;
@@ -26,6 +28,9 @@ import org.apache.camel.Processor;
 import org.apache.camel.impl.ScheduledPollConsumer;
 
 public class OpenShiftConsumer extends ScheduledPollConsumer {
+
+    private final Map<ApplicationState, ApplicationState> oldState = new HashMap<ApplicationState, ApplicationState>();
+    private volatile boolean initialPoll;
 
     public OpenShiftConsumer(Endpoint endpoint, Processor processor) {
         super(endpoint, processor);
@@ -37,6 +42,12 @@ public class OpenShiftConsumer extends ScheduledPollConsumer {
     }
 
     @Override
+    protected void doStart() throws Exception {
+        initialPoll = true;
+        super.doStart();
+    }
+
+    @Override
     protected int poll() throws Exception {
         String openshiftServer = OpenShiftHelper.getOpenShiftServer(getEndpoint());
         IDomain domain = OpenShiftHelper.loginAndGetDomain(getEndpoint(), openshiftServer);
@@ -44,11 +55,15 @@ public class OpenShiftConsumer extends ScheduledPollConsumer {
             return 0;
         }
 
+        if (getEndpoint().getPollMode().equals(OpenShiftPollMode.all.name())) {
+            return doPollAll(domain);
+        } else {
+            return doPollOnChange(domain);
+        }
+    }
+
+    protected int doPollAll(IDomain domain) {
         List<IApplication> apps = domain.getApplications();
-
-        // TODO grab state
-        // TODO: option to only emit if state changes
-
         for (IApplication app : apps) {
             Exchange exchange = getEndpoint().createExchange(app);
             try {
@@ -60,8 +75,168 @@ public class OpenShiftConsumer extends ScheduledPollConsumer {
                 getExceptionHandler().handleException("Error during processing exchange.", exchange, exchange.getException());
             }
         }
-
         return apps.size();
+    }
+
+    protected int doPollOnChange(IDomain domain) {
+
+        // an app can either be
+        // - added
+        // - removed
+        // - state changed
+
+        Map<ApplicationState, ApplicationState> newState = new HashMap<ApplicationState, ApplicationState>();
+
+        List<IApplication> apps = domain.getApplications();
+        for (IApplication app : apps) {
+            ApplicationState state = new ApplicationState(app.getUUID(), app, OpenShiftHelper.getStateForApplication(app));
+            newState.put(state, state);
+        }
+
+        // compute what is the delta from last time
+        // so we split up into 3 groups, of added/removed/changed
+        Map<ApplicationState, ApplicationState> added = new HashMap<ApplicationState, ApplicationState>();
+        Map<ApplicationState, ApplicationState> removed = new HashMap<ApplicationState, ApplicationState>();
+        Map<ApplicationState, ApplicationState> changed = new HashMap<ApplicationState, ApplicationState>();
+
+        for (ApplicationState state : newState.keySet()) {
+            if (!oldState.containsKey(state)) {
+                // its a new app added
+                added.put(state, state);
+            } else {
+                ApplicationState old = oldState.get(state);
+                if (old != null && !old.getState().equals(state.getState())) {
+                    // the state changed
+                    state.setOldState(old.getState());
+                    changed.put(state, state);
+                }
+            }
+        }
+        for (ApplicationState state : oldState.keySet()) {
+            if (!newState.containsKey(state)) {
+                // its a app removed
+                removed.put(state, state);
+            }
+        }
+
+        // only emit if needed
+        int processed = 0;
+        if (!initialPoll || initialPoll && getEndpoint().getPollMode().equals(OpenShiftPollMode.onChangeWithInitial.name())) {
+
+            for (ApplicationState add : added.keySet()) {
+                Exchange exchange = getEndpoint().createExchange(add.getApplication());
+                exchange.getIn().setHeader(OpenShiftConstants.EVENT_TYPE, "added");
+                try {
+                    processed++;
+                    getProcessor().process(exchange);
+                } catch (Exception e) {
+                    exchange.setException(e);
+                }
+                if (exchange.getException() != null) {
+                    getExceptionHandler().handleException("Error during processing exchange.", exchange, exchange.getException());
+                }
+            }
+            for (ApplicationState remove : removed.keySet()) {
+                Exchange exchange = getEndpoint().createExchange(remove.getApplication());
+                exchange.getIn().setHeader(OpenShiftConstants.EVENT_TYPE, "removed");
+                try {
+                    processed++;
+                    getProcessor().process(exchange);
+                } catch (Exception e) {
+                    exchange.setException(e);
+                }
+                if (exchange.getException() != null) {
+                    getExceptionHandler().handleException("Error during processing exchange.", exchange, exchange.getException());
+                }
+            }
+
+            for (ApplicationState change : changed.keySet()) {
+                Exchange exchange = getEndpoint().createExchange(change.getApplication());
+                exchange.getIn().setHeader(OpenShiftConstants.EVENT_TYPE, "changed");
+                exchange.getIn().setHeader(OpenShiftConstants.EVENT_OLD_STATE, change.getOldState());
+                exchange.getIn().setHeader(OpenShiftConstants.EVENT_NEW_STATE, change.getState());
+                try {
+                    processed++;
+                    getProcessor().process(exchange);
+                } catch (Exception e) {
+                    exchange.setException(e);
+                }
+                if (exchange.getException() != null) {
+                    getExceptionHandler().handleException("Error during processing exchange.", exchange, exchange.getException());
+                }
+            }
+        }
+
+        // update old state with latest state for next poll
+        oldState.clear();
+        oldState.putAll(newState);
+
+        initialPoll = false;
+
+        return processed;
+    }
+
+    private static final class ApplicationState {
+        private final String uuid;
+        private final IApplication application;
+        private final String state;
+        private String oldState;
+
+        private ApplicationState(String uuid, IApplication application, String state) {
+            this.uuid = uuid;
+            this.application = application;
+            this.state = state;
+        }
+
+        public String getUuid() {
+            return uuid;
+        }
+
+        public IApplication getApplication() {
+            return application;
+        }
+
+        public String getState() {
+            return state;
+        }
+
+        public String getOldState() {
+            return oldState;
+        }
+
+        public void setOldState(String oldState) {
+            this.oldState = oldState;
+        }
+
+        // only use uuid and state for equals as that is what we want to use for state change detection
+
+        @Override
+        public boolean equals(Object o) {
+            if (this == o) {
+                return true;
+            }
+            if (o == null || getClass() != o.getClass()) {
+                return false;
+            }
+
+            ApplicationState that = (ApplicationState) o;
+
+            if (!state.equals(that.state)) {
+                return false;
+            }
+            if (!uuid.equals(that.uuid)) {
+                return false;
+            }
+
+            return true;
+        }
+
+        @Override
+        public int hashCode() {
+            int result = uuid.hashCode();
+            result = 31 * result + state.hashCode();
+            return result;
+        }
     }
 
 }

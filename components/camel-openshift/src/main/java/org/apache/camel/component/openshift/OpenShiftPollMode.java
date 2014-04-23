@@ -16,14 +16,7 @@
  */
 package org.apache.camel.component.openshift;
 
-public final class OpenShiftConstants {
+public enum OpenShiftPollMode {
 
-    public static final String OPERATION = "CamelOpenShiftOperation";
-    public static final String APPLICATION = "CamelOpenShiftApplication";
-    public static final String EVENT_TYPE = "CamelOpenShiftEventType";
-    public static final String EVENT_OLD_STATE = "CamelOpenShiftEventOldState";
-    public static final String EVENT_NEW_STATE = "CamelOpenShiftEventNewState";
-
-    private OpenShiftConstants() {
-    }
+    all, onChange, onChangeWithInitial
 }

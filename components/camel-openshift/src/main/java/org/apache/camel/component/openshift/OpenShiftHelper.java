@@ -17,8 +17,12 @@
 package org.apache.camel.component.openshift;
 
 import java.io.IOException;
+import java.util.Locale;
 
+import com.openshift.client.IApplication;
 import com.openshift.client.IDomain;
+import com.openshift.client.IGear;
+import com.openshift.client.IGearGroup;
 import com.openshift.client.IOpenShiftConnection;
 import com.openshift.client.IUser;
 import com.openshift.client.OpenShiftConnectionFactory;
@@ -57,5 +61,15 @@ public final class OpenShiftHelper {
         }
 
         return domain;
+    }
+
+    public static String getStateForApplication(IApplication application) {
+        for (IGearGroup group : application.getGearGroups()) {
+            for (IGear gear : group.getGears()) {
+                String state = gear.getState().name().toLowerCase(Locale.ENGLISH);
+                return state;
+            }
+        }
+        return "unknown";
     }
 }
