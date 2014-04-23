@@ -333,6 +333,7 @@
     <qpid-version>0.26</qpid-version>
     <quartz-bundle-version>1.8.6_1</quartz-bundle-version>
     <quartz-version>1.8.6</quartz-version>
+    <quartz-version-range>[1.8,2)</quartz-version-range>
     <quartz2-version>2.2.1</quartz2-version>
     <quickfix-bundle-version>1.5.3_1</quickfix-bundle-version>
     <rabbitmq-amqp-client-version>3.2.2</rabbitmq-amqp-client-version>
