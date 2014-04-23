@@ -46,7 +46,7 @@ public class OpenShiftEndpoint extends ScheduledPollEndpoint {
     @UriParam
     private String application;
     @UriParam
-    private String pollMode = OpenShiftPollMode.all.name();
+    private String mode;
 
     public OpenShiftEndpoint(String endpointUri, Component component) {
         super(endpointUri, component);
@@ -143,15 +143,11 @@ public class OpenShiftEndpoint extends ScheduledPollEndpoint {
         this.application = application;
     }
 
-    public String getPollMode() {
-        return pollMode;
+    public String getMode() {
+        return mode;
     }
 
-    public void setPollMode(String pollMode) {
-        this.pollMode = pollMode;
-    }
-
-    public void setPollMode(OpenShiftPollMode pollMode) {
-        this.pollMode = pollMode.name();
+    public void setMode(String mode) {
+        this.mode = mode;
     }
 }

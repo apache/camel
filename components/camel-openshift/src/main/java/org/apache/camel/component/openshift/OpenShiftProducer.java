@@ -55,9 +55,6 @@ public class OpenShiftProducer extends DefaultProducer {
         OpenShiftOperation operation = exchange.getIn().getHeader(OpenShiftConstants.OPERATION, getEndpoint().getOperation(), OpenShiftOperation.class);
 
         switch (operation) {
-        case list:
-            doList(exchange, domain);
-            break;
         case start:
             doStart(exchange, domain);
             break;
@@ -70,17 +67,20 @@ public class OpenShiftProducer extends DefaultProducer {
         case state:
             doState(exchange, domain);
             break;
+        case list:
         default:
             // and do list by default
-            doList(exchange, domain);
+            if (getEndpoint().getMode().equals("json")) {
+                doListJson(exchange, domain);
+            } else {
+                doListPojo(exchange, domain);
+            }
             break;
         }
     }
 
-    protected void doList(Exchange exchange, IDomain domain) {
+    protected void doListJson(Exchange exchange, IDomain domain) {
         StringBuilder sb = new StringBuilder("{\n  \"applications\": [");
-
-        // TODO: option to output as pojo or json
 
         boolean first = true;
         for (IApplication application : domain.getApplications()) {
@@ -151,6 +151,10 @@ public class OpenShiftProducer extends DefaultProducer {
         sb.append("\n}");
 
         exchange.getIn().setBody(sb.toString());
+    }
+
+    protected void doListPojo(Exchange exchange, IDomain domain) {
+        exchange.getIn().setBody(domain.getApplications());
     }
 
     protected void doStart(Exchange exchange, IDomain domain) throws CamelExchangeException {

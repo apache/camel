@@ -55,11 +55,7 @@ public class OpenShiftConsumer extends ScheduledPollConsumer {
             return 0;
         }
 
-        if (getEndpoint().getPollMode().equals(OpenShiftPollMode.all.name())) {
-            return doPollAll(domain);
-        } else {
-            return doPollOnChange(domain);
-        }
+        return doPollOnChange(domain);
     }
 
     protected int doPollAll(IDomain domain) {
@@ -119,9 +115,9 @@ public class OpenShiftConsumer extends ScheduledPollConsumer {
             }
         }
 
-        // only emit if needed
+        // only start emitting events after first init poll
         int processed = 0;
-        if (!initialPoll || initialPoll && getEndpoint().getPollMode().equals(OpenShiftPollMode.onChangeWithInitial.name())) {
+        if (!initialPoll) {
 
             for (ApplicationState add : added.keySet()) {
                 Exchange exchange = getEndpoint().createExchange(add.getApplication());

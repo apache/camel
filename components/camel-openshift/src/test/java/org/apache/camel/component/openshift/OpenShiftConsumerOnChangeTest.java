@@ -49,7 +49,7 @@ public class OpenShiftConsumerOnChangeTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                fromF("openshift:myApp?username=%s&password=%s&delay=5s&pollMode=onChange", username, password)
+                fromF("openshift:myApp?username=%s&password=%s&delay=5s", username, password)
                     .log("Event ${header.CamelOpenShiftEventType} for app ${body.name}")
                     .to("mock:result");
             }

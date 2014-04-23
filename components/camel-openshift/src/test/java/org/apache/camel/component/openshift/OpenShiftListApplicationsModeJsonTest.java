@@ -20,7 +20,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-public class OpenShiftConsumerOnChangeWithInitialTest extends CamelTestSupport {
+public class OpenShiftListApplicationsModeJsonTest extends CamelTestSupport {
 
     private String username;
     private String password;
@@ -34,12 +34,14 @@ public class OpenShiftConsumerOnChangeWithInitialTest extends CamelTestSupport {
     }
 
     @Test
-    public void testConsumer() throws Exception {
+    public void testListApplications() throws Exception {
         if (username == null) {
             return;
         }
 
-        getMockEndpoint("mock:result").expectedMinimumMessageCount(1);
+        getMockEndpoint("mock:result").expectedMessageCount(1);
+
+        template.sendBody("direct:start", "Hello World");
 
         assertMockEndpointsSatisfied();
     }
@@ -49,8 +51,8 @@ public class OpenShiftConsumerOnChangeWithInitialTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                fromF("openshift:myApp?username=%s&password=%s&delay=5s&pollMode=onChangeWithInitial", username, password)
-                    .log("Event ${header.CamelOpenShiftEventType} for app ${body.name}")
+                from("direct:start")
+                    .toF("openshift:myApp?operation=list&mode=json&username=%s&password=%s", username, password)
                     .to("mock:result");
             }
         };
