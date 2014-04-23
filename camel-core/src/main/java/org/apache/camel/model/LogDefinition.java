@@ -100,10 +100,10 @@ public class LogDefinition extends NoOutputDefinition<LogDefinition> {
             Map<String, Logger> availableLoggers = routeContext.lookupByType(Logger.class);
             if (availableLoggers.size() == 1) {
                 logger = availableLoggers.values().iterator().next();
-                LOG.info("Using custom Logger: {}", logger);
+                LOG.debug("Using custom Logger: {}", logger);
             } else if (availableLoggers.size() > 1) {
                 // we should log about this somewhere...
-                LOG.info("More than one {} instance found in the registry. Falling back to create logger by name.", Logger.class.getName());
+                LOG.debug("More than one {} instance found in the registry. Falling back to create logger by name.", Logger.class.getName());
             }
         }
 
@@ -111,7 +111,7 @@ public class LogDefinition extends NoOutputDefinition<LogDefinition> {
             String name = getLogName();
             if (name == null) {
                 name = routeContext.getRoute().getId();
-                LOG.info("The LogName is null. Falling back to create logger by using the route id {}.", name);
+                LOG.debug("The LogName is null. Falling back to create logger by using the route id {}.", name);
             }
             logger = LoggerFactory.getLogger(name);
         }
