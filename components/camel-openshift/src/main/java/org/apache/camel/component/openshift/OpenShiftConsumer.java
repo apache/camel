@@ -29,11 +29,17 @@ import org.apache.camel.impl.ScheduledPollConsumer;
 
 public class OpenShiftConsumer extends ScheduledPollConsumer {
 
+    // lets by default poll every 10 sec
+    private static final long INITIAL_DELAY = 1 * 1000L;
+    private static final long DELAY = 10 * 1000L;
+
     private final Map<ApplicationState, ApplicationState> oldState = new HashMap<ApplicationState, ApplicationState>();
     private volatile boolean initialPoll;
 
     public OpenShiftConsumer(Endpoint endpoint, Processor processor) {
         super(endpoint, processor);
+        setInitialDelay(INITIAL_DELAY);
+        setDelay(DELAY);
     }
 
     @Override
