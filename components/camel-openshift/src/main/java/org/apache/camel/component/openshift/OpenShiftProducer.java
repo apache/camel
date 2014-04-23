@@ -25,11 +25,7 @@ import com.openshift.client.IApplication;
 import com.openshift.client.IDomain;
 import com.openshift.client.IGear;
 import com.openshift.client.IGearGroup;
-import com.openshift.client.IOpenShiftConnection;
-import com.openshift.client.IUser;
-import com.openshift.client.OpenShiftConnectionFactory;
 import com.openshift.client.cartridge.IEmbeddedCartridge;
-import com.openshift.client.configuration.OpenShiftConfiguration;
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
@@ -50,24 +46,8 @@ public class OpenShiftProducer extends DefaultProducer {
 
     @Override
     public void process(Exchange exchange) throws Exception {
-        String openshiftServer;
-        if (getEndpoint().getServer() != null) {
-            openshiftServer = getEndpoint().getServer();
-        } else {
-            openshiftServer = new OpenShiftConfiguration().getLibraServer();
-        }
-
-        IOpenShiftConnection connection =
-                new OpenShiftConnectionFactory().getConnection(getEndpoint().getClientId(), getEndpoint().getUsername(), getEndpoint().getPassword(), openshiftServer);
-
-        IUser user = connection.getUser();
-
-        IDomain domain;
-        if (getEndpoint().getDomain() != null) {
-            domain = user.getDomain(getEndpoint().getDomain());
-        } else {
-            domain = user.getDefaultDomain();
-        }
+        String openshiftServer = OpenShiftHelper.getOpenShiftServer(getEndpoint());
+        IDomain domain = OpenShiftHelper.loginAndGetDomain(getEndpoint(), openshiftServer);
         if (domain == null) {
             throw new CamelExchangeException("User has no domain with id " + getEndpoint().getDomain(), exchange);
         }
