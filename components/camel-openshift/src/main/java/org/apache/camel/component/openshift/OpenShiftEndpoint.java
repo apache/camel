@@ -22,17 +22,25 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
 import org.apache.camel.util.ObjectHelper;
 
 @UriEndpoint(scheme = "openshift")
 public class OpenShiftEndpoint extends DefaultEndpoint {
 
+    @UriParam
     private String username;
+    @UriParam
     private String password;
+    @UriParam
     private String clientId;
+    @UriParam
     private String domain;
+    @UriParam
     private String server;
-    private OpenShiftOperation operation;
+    @UriParam
+    private String operation;
+    @UriParam
     private String application;
 
     public OpenShiftEndpoint(String endpointUri, Component component) {
@@ -97,12 +105,16 @@ public class OpenShiftEndpoint extends DefaultEndpoint {
         this.server = server;
     }
 
-    public OpenShiftOperation getOperation() {
+    public String getOperation() {
         return operation;
     }
 
-    public void setOperation(OpenShiftOperation operation) {
+    public void setOperation(String operation) {
         this.operation = operation;
+    }
+
+    public void setOperation(OpenShiftOperation operation) {
+        this.operation = operation.name();
     }
 
     public String getApplication() {
