@@ -116,7 +116,7 @@
     <dnsjava-version>2.1.1</dnsjava-version>
     <dnsjava-bundle-version>2.1.1_1</dnsjava-bundle-version>
     <dom4j-bundle-version>1.6.1_5</dom4j-bundle-version>
-    <dozer-version>5.4.0</dozer-version>
+    <dozer-version>5.5.1</dozer-version>
     <drools-version>6.0.0.Final</drools-version>
     <dropbox-version>1.7.5</dropbox-version>
     <easymock-version>3.2</easymock-version>
