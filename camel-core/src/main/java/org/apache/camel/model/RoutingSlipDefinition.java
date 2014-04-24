@@ -41,6 +41,8 @@ public class RoutingSlipDefinition<Type extends ProcessorDefinition<Type>> exten
     private String uriDelimiter;
     @XmlAttribute
     private Boolean ignoreInvalidEndpoints;
+    @XmlAttribute
+    private Integer cacheSize;
 
     public RoutingSlipDefinition() {
         this((String)null, DEFAULT_DELIMITER);
@@ -88,6 +90,9 @@ public class RoutingSlipDefinition<Type extends ProcessorDefinition<Type>> exten
         if (getIgnoreInvalidEndpoints() != null) {
             routingSlip.setIgnoreInvalidEndpoints(getIgnoreInvalidEndpoints());
         }
+        if (getCacheSize() != null) {
+            routingSlip.setCacheSize(getCacheSize());
+        }
         return routingSlip;
     }
 
@@ -111,7 +116,15 @@ public class RoutingSlipDefinition<Type extends ProcessorDefinition<Type>> exten
     public Boolean getIgnoreInvalidEndpoints() {
         return ignoreInvalidEndpoints;
     }
-    
+
+    public Integer getCacheSize() {
+        return cacheSize;
+    }
+
+    public void setCacheSize(Integer cacheSize) {
+        this.cacheSize = cacheSize;
+    }
+
     // Fluent API
     // -------------------------------------------------------------------------
 
@@ -142,4 +155,17 @@ public class RoutingSlipDefinition<Type extends ProcessorDefinition<Type>> exten
         setUriDelimiter(uriDelimiter);
         return this;
     }
+
+    /**
+     * Sets the maximum size used by the {@link org.apache.camel.impl.ProducerCache} which is used
+     * to cache and reuse producers when using this recipient list, when uris are reused.
+     *
+     * @param cacheSize  the cache size, use <tt>0</tt> for default cache size, or <tt>-1</tt> to turn cache off.
+     * @return the builder
+     */
+    public RoutingSlipDefinition<Type> cacheSize(int cacheSize) {
+        setCacheSize(cacheSize);
+        return this;
+    }
+
 }
