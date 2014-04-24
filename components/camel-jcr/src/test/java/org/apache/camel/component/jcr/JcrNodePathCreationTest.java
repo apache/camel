@@ -17,16 +17,10 @@
 package org.apache.camel.component.jcr;
 
 import javax.jcr.Node;
-import javax.jcr.Repository;
 import javax.jcr.Session;
-import javax.jcr.SimpleCredentials;
-import javax.naming.Context;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.apache.jackrabbit.core.TransientRepository;
-import org.junit.Before;
 import org.junit.Test;
 
 public class JcrNodePathCreationTest extends JcrRouteTestSupport {
