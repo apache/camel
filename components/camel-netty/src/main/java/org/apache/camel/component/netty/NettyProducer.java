@@ -327,6 +327,7 @@ public class NettyProducer extends DefaultAsyncProducer {
             if (bp == null) {
                 // create new pool which we should shutdown when stopping as its not shared
                 bossPool = new NettyClientBossPoolBuilder()
+                        .withTimer(getEndpoint().getTimer())
                         .withBossCount(configuration.getBossCount())
                         .withName("NettyClientTCPBoss")
                         .build();
