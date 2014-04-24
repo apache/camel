@@ -16,39 +16,39 @@
  */
 package org.apache.camel.component.jdbc;
 
-import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
-
 import java.util.HashMap;
 import java.util.Map;
 
+import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
+
 public class JdbcParameterizedQueryGeneratedKeysTest extends AbstractJdbcGeneratedKeysTest {
 
-    private static final Map<String, Object> valueMap;
+    private static final Map<String, Object> VALUE_MAP;
 
     static {
-        valueMap = new HashMap<String, Object>();
-        valueMap.put("value", "testValue");
+        VALUE_MAP = new HashMap<String, Object>();
+        VALUE_MAP.put("value", "testValue");
     }
 
     @Test
     public void testRetrieveGeneratedKeys() throws Exception {
-        super.testRetrieveGeneratedKeys("insert into tableWithAutoIncr (content) values (:?value)", valueMap);
+        super.testRetrieveGeneratedKeys("insert into tableWithAutoIncr (content) values (:?value)", VALUE_MAP);
     }
 
     @Test
     public void testRetrieveGeneratedKeysWithStringGeneratedColumns() throws Exception {
-        super.testRetrieveGeneratedKeysWithStringGeneratedColumns("insert into tableWithAutoIncr (content) values (:?value)", valueMap);
+        super.testRetrieveGeneratedKeysWithStringGeneratedColumns("insert into tableWithAutoIncr (content) values (:?value)", VALUE_MAP);
     }
 
     @Test
     public void testRetrieveGeneratedKeysWithIntGeneratedColumns() throws Exception {
-        super.testRetrieveGeneratedKeysWithIntGeneratedColumns("insert into tableWithAutoIncr (content) values (:?value)", valueMap);
+        super.testRetrieveGeneratedKeysWithIntGeneratedColumns("insert into tableWithAutoIncr (content) values (:?value)", VALUE_MAP);
     }
 
     @Test
     public void testGivenAnInvalidGeneratedColumnsHeaderThenAnExceptionIsThrown() throws Exception {
-        super.testGivenAnInvalidGeneratedColumnsHeaderThenAnExceptionIsThrown("insert into tableWithAutoIncr (content) values (:?value)", valueMap);
+        super.testGivenAnInvalidGeneratedColumnsHeaderThenAnExceptionIsThrown("insert into tableWithAutoIncr (content) values (:?value)", VALUE_MAP);
     }
 
     @Override
