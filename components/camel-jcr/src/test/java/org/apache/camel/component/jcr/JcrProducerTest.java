@@ -21,7 +21,6 @@ import javax.jcr.Session;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Before;
 import org.junit.Test;
 
 public class JcrProducerTest extends JcrRouteTestSupport {
