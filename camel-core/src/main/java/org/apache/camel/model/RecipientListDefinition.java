@@ -19,7 +19,6 @@ package org.apache.camel.model;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
-
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -77,6 +76,8 @@ public class RecipientListDefinition<Type extends ProcessorDefinition<Type>> ext
     private Processor onPrepare;
     @XmlAttribute
     private Boolean shareUnitOfWork;
+    @XmlAttribute
+    private Integer cacheSize;
 
     public RecipientListDefinition() {
     }
@@ -118,6 +119,9 @@ public class RecipientListDefinition<Type extends ProcessorDefinition<Type>> ext
         answer.setParallelProcessing(isParallelProcessing());
         answer.setStreaming(isStreaming());   
         answer.setShareUnitOfWork(isShareUnitOfWork());
+        if (getCacheSize() != null) {
+            answer.setCacheSize(getCacheSize());
+        }
         if (onPrepareRef != null) {
             onPrepare = CamelContextHelper.mandatoryLookup(routeContext.getCamelContext(), onPrepareRef, Processor.class);
         }
@@ -367,6 +371,18 @@ public class RecipientListDefinition<Type extends ProcessorDefinition<Type>> ext
         return this;
     }
 
+    /**
+     * Sets the maximum size used by the {@link org.apache.camel.impl.ProducerCache} which is used
+     * to cache and reuse producers when using this recipient list, when uris are reused.
+     *
+     * @param cacheSize  the cache size, use <tt>0</tt> for default cache size, or <tt>-1</tt> to turn cache off.
+     * @return the builder
+     */
+    public RecipientListDefinition<Type> cacheSize(int cacheSize) {
+        setCacheSize(cacheSize);
+        return this;
+    }
+
     // Properties
     //-------------------------------------------------------------------------
 
@@ -510,4 +526,11 @@ public class RecipientListDefinition<Type extends ProcessorDefinition<Type>> ext
         return shareUnitOfWork != null && shareUnitOfWork;
     }
 
+    public Integer getCacheSize() {
+        return cacheSize;
+    }
+
+    public void setCacheSize(Integer cacheSize) {
+        this.cacheSize = cacheSize;
+    }
 }
