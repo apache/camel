@@ -20,7 +20,7 @@ import java.util.concurrent.Executors;
 
 import org.jboss.netty.channel.socket.nio.BossPool;
 import org.jboss.netty.channel.socket.nio.NioClientBossPool;
-import org.jboss.netty.util.HashedWheelTimer;
+import org.jboss.netty.util.Timer;
 
 /**
  * A builder to create Netty {@link org.jboss.netty.channel.socket.nio.BossPool} which can be used for sharing boos pools
@@ -31,6 +31,7 @@ public final class NettyClientBossPoolBuilder {
     private String name = "NettyClientBoss";
     private String pattern;
     private int bossCount = 1;
+    private Timer timer;
 
     public void setName(String name) {
         this.name = name;
@@ -42,6 +43,10 @@ public final class NettyClientBossPoolBuilder {
 
     public void setBossCount(int bossCount) {
         this.bossCount = bossCount;
+    }
+
+    public void setTimer(Timer timer) {
+        this.timer = timer;
     }
 
     public NettyClientBossPoolBuilder withName(String name) {
@@ -59,10 +64,15 @@ public final class NettyClientBossPoolBuilder {
         return this;
     }
 
+    public NettyClientBossPoolBuilder withTimer(Timer timer) {
+        setTimer(timer);
+        return this;
+    }
+
     /**
      * Creates a new boss pool.
      */
     BossPool build() {
-        return new NioClientBossPool(Executors.newCachedThreadPool(), bossCount, new HashedWheelTimer(), new CamelNettyThreadNameDeterminer(pattern, name));
+        return new NioClientBossPool(Executors.newCachedThreadPool(), bossCount, timer, new CamelNettyThreadNameDeterminer(pattern, name));
     }
 }
