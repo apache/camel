@@ -150,18 +150,24 @@ public class RabbitMQEndpointTest extends CamelTestSupport {
         assertEquals(ConnectionFactory.DEFAULT_FRAME_MAX, connectionFactory.getRequestedFrameMax());
         assertEquals(ConnectionFactory.DEFAULT_HEARTBEAT, connectionFactory.getRequestedHeartbeat());
         assertFalse(connectionFactory.isSSL());
+        assertFalse(connectionFactory.isAutomaticRecoveryEnabled());
+        assertEquals(5000, connectionFactory.getNetworkRecoveryInterval());
+        assertTrue(connectionFactory.isTopologyRecoveryEnabled());
     }
 
     @Test
     public void testCreateConnectionFactory_Custom() throws Exception {
         ConnectionFactory connectionFactory=createConnectionFactory("rabbitmq:localhost:1234/exchange" +
-				"?username=userxxx" +
-				"&password=passxxx" +
-				"&connectionTimeout=123" +
-				"&requestedChannelMax=456" +
-				"&requestedFrameMax=789" +
-				"&requestedHeartbeat=987" +
-				"&sslProtocol=true");
+                "?username=userxxx" +
+                "&password=passxxx" +
+                "&connectionTimeout=123" +
+                "&requestedChannelMax=456" +
+                "&requestedFrameMax=789" +
+                "&requestedHeartbeat=987" +
+                "&sslProtocol=true" +
+                "&automaticRecoveryEnabled=true" +
+                "&networkRecoveryInterval=654" +
+                "&topologyRecoveryEnabled=false");
 
         assertEquals("localhost",connectionFactory.getHost());
         assertEquals(1234,connectionFactory.getPort());
@@ -172,5 +178,8 @@ public class RabbitMQEndpointTest extends CamelTestSupport {
         assertEquals(789, connectionFactory.getRequestedFrameMax());
         assertEquals(987, connectionFactory.getRequestedHeartbeat());
         assertTrue(connectionFactory.isSSL());
+        assertTrue(connectionFactory.isAutomaticRecoveryEnabled());
+        assertEquals(654, connectionFactory.getNetworkRecoveryInterval());
+        assertFalse(connectionFactory.isTopologyRecoveryEnabled());
     }
 }

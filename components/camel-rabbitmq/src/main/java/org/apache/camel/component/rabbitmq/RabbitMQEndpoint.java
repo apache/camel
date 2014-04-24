@@ -58,6 +58,9 @@ public class RabbitMQEndpoint extends DefaultEndpoint {
     private TrustManager trustManager;
     private Map<String, Object> clientProperties;
     private ConnectionFactory connectionFactory;
+    private Boolean automaticRecoveryEnabled;
+    private Integer networkRecoveryInterval;
+    private Boolean topologyRecoveryEnabled;
 
     public RabbitMQEndpoint() {
     }
@@ -143,7 +146,15 @@ public class RabbitMQEndpoint extends DefaultEndpoint {
                     throw new IllegalArgumentException("Invalid sslProtocol " + sslProtocol, e);
                 }
             }
-
+            if (getAutomaticRecoveryEnabled()!=null) {
+                factory.setAutomaticRecoveryEnabled(getAutomaticRecoveryEnabled());
+            }
+            if (getNetworkRecoveryInterval()!=null) {
+                factory.setNetworkRecoveryInterval(getNetworkRecoveryInterval());
+            }
+            if (getTopologyRecoveryEnabled()!=null) {
+                factory.setTopologyRecoveryEnabled(getTopologyRecoveryEnabled());
+            }
             connectionFactory=factory;
         }
         return connectionFactory;
@@ -352,5 +363,29 @@ public class RabbitMQEndpoint extends DefaultEndpoint {
 
     public void setClientProperties(Map<String, Object> clientProperties) {
         this.clientProperties = clientProperties;
+    }
+
+    public Boolean getAutomaticRecoveryEnabled() {
+        return automaticRecoveryEnabled;
+    }
+
+    public void setAutomaticRecoveryEnabled(Boolean automaticRecoveryEnabled) {
+        this.automaticRecoveryEnabled = automaticRecoveryEnabled;
+    }
+
+    public Integer getNetworkRecoveryInterval() {
+        return networkRecoveryInterval;
+    }
+
+    public void setNetworkRecoveryInterval(Integer networkRecoveryInterval) {
+        this.networkRecoveryInterval = networkRecoveryInterval;
+    }
+
+    public Boolean getTopologyRecoveryEnabled() {
+        return topologyRecoveryEnabled;
+    }
+
+    public void setTopologyRecoveryEnabled(Boolean topologyRecoveryEnabled) {
+        this.topologyRecoveryEnabled = topologyRecoveryEnabled;
     }
 }
