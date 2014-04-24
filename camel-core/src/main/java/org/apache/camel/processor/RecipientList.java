@@ -16,7 +16,6 @@
  */
 package org.apache.camel.processor;
 
-import java.util.Collections;
 import java.util.Iterator;
 import java.util.concurrent.ExecutorService;
 
@@ -27,14 +26,18 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
+import org.apache.camel.impl.EmptyProducerCache;
 import org.apache.camel.impl.ProducerCache;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.AsyncProcessorHelper;
+import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.util.ObjectHelper.notNull;
 
@@ -47,6 +50,8 @@ import static org.apache.camel.util.ObjectHelper.notNull;
  * @version 
  */
 public class RecipientList extends ServiceSupport implements AsyncProcessor {
+
+    private static final Logger LOG = LoggerFactory.getLogger(RecipientList.class);
     private static final String IGNORE_DELIMITER_MARKER = "false";
     private final CamelContext camelContext;
     private ProducerCache producerCache;
@@ -57,6 +62,7 @@ public class RecipientList extends ServiceSupport implements AsyncProcessor {
     private boolean ignoreInvalidEndpoints;
     private boolean streaming;
     private long timeout;
+    private int cacheSize;
     private Processor onPrepare;
     private boolean shareUnitOfWork;
     private ExecutorService executorService;
@@ -171,7 +177,16 @@ public class RecipientList extends ServiceSupport implements AsyncProcessor {
 
     protected void doStart() throws Exception {
         if (producerCache == null) {
-            producerCache = new ProducerCache(this, camelContext);
+            if (cacheSize < 0) {
+                producerCache = new EmptyProducerCache(this, camelContext);
+                LOG.debug("RecipientList {} is not using ProducerCache", this);
+            } else if (cacheSize == 0) {
+                producerCache = new ProducerCache(this, camelContext);
+                LOG.debug("RecipientList {} using ProducerCache with default cache size", this);
+            } else {
+                producerCache = new ProducerCache(this, camelContext, cacheSize);
+                LOG.debug("RecipientList {} using ProducerCache with cacheSize={}", this, cacheSize);
+            }
         }
         ServiceHelper.startServices(aggregationStrategy, producerCache);
     }
@@ -266,5 +281,13 @@ public class RecipientList extends ServiceSupport implements AsyncProcessor {
 
     public void setShareUnitOfWork(boolean shareUnitOfWork) {
         this.shareUnitOfWork = shareUnitOfWork;
+    }
+
+    public int getCacheSize() {
+        return cacheSize;
+    }
+
+    public void setCacheSize(int cacheSize) {
+        this.cacheSize = cacheSize;
     }
 }
