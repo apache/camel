@@ -193,6 +193,23 @@ public final class NettyHttpHelper {
             throw new RuntimeExchangeException("Cannot resolve property placeholders with uri: " + uri, exchange, e);
         }
 
+        // append HTTP_PATH to HTTP_URI if it is provided in the header
+        String path = exchange.getIn().getHeader(Exchange.HTTP_PATH, String.class);
+        // NOW the HTTP_PATH is just related path, we don't need to trim it
+        if (path != null) {
+            if (path.startsWith("/")) {
+                path = path.substring(1);
+            }
+            if (path.length() > 0) {
+                // make sure that there is exactly one "/" between HTTP_URI and
+                // HTTP_PATH
+                if (!uri.endsWith("/")) {
+                    uri = uri + "/";
+                }
+                uri = uri.concat(path);
+            }
+        }
+
         // ensure uri is encoded to be valid
         uri = UnsafeUriCharactersEncoder.encodeHttpURI(uri);
 
