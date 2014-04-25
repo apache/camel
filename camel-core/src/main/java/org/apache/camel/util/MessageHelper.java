@@ -460,7 +460,7 @@ public final class MessageHelper {
 
         // and then each history
         for (MessageHistory history : list) {
-            routeId = history.getRouteId();
+            routeId = history.getRouteId() != null ? history.getRouteId() : "";
             id = history.getNode().getId();
             label = history.getNode().getLabel();
             elapsed = history.getElapsed();
