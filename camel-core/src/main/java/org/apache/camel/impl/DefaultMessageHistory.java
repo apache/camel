@@ -26,12 +26,14 @@ public class DefaultMessageHistory implements MessageHistory {
 
     private final String routeId;
     private final NamedNode node;
+    private final String nodeId;
     private final Date timestamp;
     private final StopWatch stopWatch;
 
     public DefaultMessageHistory(String routeId, NamedNode node, Date timestamp) {
         this.routeId = routeId;
         this.node = node;
+        this.nodeId = node.getId();
         this.timestamp = timestamp;
         this.stopWatch = new StopWatch();
     }
@@ -60,7 +62,7 @@ public class DefaultMessageHistory implements MessageHistory {
     public String toString() {
         return "DefaultMessageHistory["
                 + "routeId=" + routeId
-                + ", node=" + node.getId()
+                + ", node=" + nodeId
                 + ']';
     }
 }
