@@ -244,6 +244,10 @@ public class CxfRsProducer extends DefaultProducer {
         }
     }
     
+    protected ClientFactoryBeanCache getClientFactoryBeanCache() { 
+        return clientFactoryBeanCache;
+    }
+    
     private Map<String, String> getQueryParametersFromQueryString(String queryString, String charset) throws UnsupportedEncodingException {
         Map<String, String> answer  = new LinkedHashMap<String, String>();
         for (String param : queryString.split("&")) {
@@ -343,7 +347,7 @@ public class CxfRsProducer extends DefaultProducer {
     /**
      * Cache contains {@link org.apache.cxf.jaxrs.client.JAXRSClientFactoryBean}
      */
-    private class ClientFactoryBeanCache {
+    class ClientFactoryBeanCache {
         private LRUSoftCache<String, JAXRSClientFactoryBean> cache;    
         
         public ClientFactoryBeanCache(final int maxCacheSize) {
