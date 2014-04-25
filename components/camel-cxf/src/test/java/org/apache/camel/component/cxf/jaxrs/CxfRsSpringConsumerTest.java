@@ -26,8 +26,7 @@ import org.apache.camel.component.cxf.jaxrs.testbean.CustomException;
 import org.apache.camel.test.spring.CamelSpringTestSupport;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.impl.client.CloseableHttpClient;
-import org.apache.http.impl.client.HttpClientBuilder;
+import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.util.EntityUtils;
 import org.junit.Test;
 import org.springframework.context.support.AbstractApplicationContext;
@@ -61,14 +60,14 @@ public class CxfRsSpringConsumerTest extends CamelSpringTestSupport {
     public void testMappingException() throws Exception {
         HttpGet get = new HttpGet("http://localhost:" + port1 + "/CxfRsSpringConsumerTest/customerservice/customers/126");
         get.addHeader("Accept" , "application/json");
-        CloseableHttpClient httpclient = HttpClientBuilder.create().build();
+        DefaultHttpClient httpclient = new DefaultHttpClient();
 
         try {
             HttpResponse response = httpclient.execute(get);
             assertEquals("Get a wrong status code", 500, response.getStatusLine().getStatusCode());
             assertEquals("Get a worng message header", "exception: Here is the exception", response.getHeaders("exception")[0].toString());
         } finally {
-            httpclient.close();
+            httpclient.getConnectionManager().shutdown();
         }
     }
 
