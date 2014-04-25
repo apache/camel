@@ -21,12 +21,16 @@ import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
+import java.util.concurrent.Executors;
 import java.util.concurrent.ThreadPoolExecutor;
 
 import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Address;
+import com.rabbitmq.client.Connection;
+import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.Envelope;
 import com.rabbitmq.client.impl.LongStringHelper;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
@@ -125,5 +129,57 @@ public class RabbitMQEndpointTest extends CamelTestSupport {
         assertEquals("Wrong size of endpoint addresses.", 2, endpoint.getAddresses().length);
         assertEquals("Get a wrong endpoint address.", new Address("server1", 12345), endpoint.getAddresses()[0]);
         assertEquals("Get a wrong endpoint address.", new Address("server2", 12345), endpoint.getAddresses()[1]);
+    }
+
+    private ConnectionFactory createConnectionFactory(String uri) {
+        RabbitMQEndpoint endpoint = context.getEndpoint(uri, RabbitMQEndpoint.class); 
+        return endpoint.getConnectionFactory();
+    }
+
+    @Test
+    public void testCreateConnectionFactoryDefault() throws Exception {
+        ConnectionFactory connectionFactory = createConnectionFactory("rabbitmq:localhost:1234/exchange");
+
+        assertEquals("localhost", connectionFactory.getHost());
+        assertEquals(1234, connectionFactory.getPort());
+        assertEquals(ConnectionFactory.DEFAULT_VHOST, connectionFactory.getVirtualHost());
+        assertEquals(ConnectionFactory.DEFAULT_USER, connectionFactory.getUsername());
+        assertEquals(ConnectionFactory.DEFAULT_PASS, connectionFactory.getPassword());
+        assertEquals(ConnectionFactory.DEFAULT_CONNECTION_TIMEOUT, connectionFactory.getConnectionTimeout());
+        assertEquals(ConnectionFactory.DEFAULT_CHANNEL_MAX, connectionFactory.getRequestedChannelMax());
+        assertEquals(ConnectionFactory.DEFAULT_FRAME_MAX, connectionFactory.getRequestedFrameMax());
+        assertEquals(ConnectionFactory.DEFAULT_HEARTBEAT, connectionFactory.getRequestedHeartbeat());
+        assertFalse(connectionFactory.isSSL());
+        assertFalse(connectionFactory.isAutomaticRecoveryEnabled());
+        assertEquals(5000, connectionFactory.getNetworkRecoveryInterval());
+        assertTrue(connectionFactory.isTopologyRecoveryEnabled());
+    }
+
+    @Test
+    public void testCreateConnectionFactoryCustom() throws Exception {
+        ConnectionFactory connectionFactory  = createConnectionFactory("rabbitmq:localhost:1234/exchange"
+                                                                      + "?username=userxxx"
+                                                                      + "&password=passxxx"
+                                                                      + "&connectionTimeout=123"
+                                                                      + "&requestedChannelMax=456"
+                                                                      + "&requestedFrameMax=789"
+                                                                      + "&requestedHeartbeat=987"
+                                                                      + "&sslProtocol=true"
+                                                                      + "&automaticRecoveryEnabled=true"
+                                                                      + "&networkRecoveryInterval=654"
+                                                                      + "&topologyRecoveryEnabled=false");
+
+        assertEquals("localhost", connectionFactory.getHost());
+        assertEquals(1234, connectionFactory.getPort());
+        assertEquals("userxxx", connectionFactory.getUsername());
+        assertEquals("passxxx", connectionFactory.getPassword());
+        assertEquals(123, connectionFactory.getConnectionTimeout());
+        assertEquals(456, connectionFactory.getRequestedChannelMax());
+        assertEquals(789, connectionFactory.getRequestedFrameMax());
+        assertEquals(987, connectionFactory.getRequestedHeartbeat());
+        assertTrue(connectionFactory.isSSL());
+        assertTrue(connectionFactory.isAutomaticRecoveryEnabled());
+        assertEquals(654, connectionFactory.getNetworkRecoveryInterval());
+        assertFalse(connectionFactory.isTopologyRecoveryEnabled());
     }
 }

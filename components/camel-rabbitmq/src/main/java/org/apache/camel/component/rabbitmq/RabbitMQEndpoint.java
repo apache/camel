@@ -18,10 +18,14 @@ package org.apache.camel.component.rabbitmq;
 
 import java.io.IOException;
 import java.net.URISyntaxException;
+import java.security.KeyManagementException;
+import java.security.NoSuchAlgorithmException;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
+import javax.net.ssl.TrustManager;
 
 import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Address;
@@ -41,9 +45,9 @@ import org.apache.camel.impl.DefaultMessage;
 
 public class RabbitMQEndpoint extends DefaultEndpoint {
 
-    private String username;
-    private String password;
-    private String vhost;
+    private String username = ConnectionFactory.DEFAULT_USER;
+    private String password = ConnectionFactory.DEFAULT_PASS;
+    private String vhost = ConnectionFactory.DEFAULT_VHOST;
     private String hostname;
     private int threadPoolSize = 10;
     private int portNumber;
@@ -56,12 +60,28 @@ public class RabbitMQEndpoint extends DefaultEndpoint {
     private String exchangeType = "direct";
     private String routingKey;
     private Address[] addresses;
-    
+    private int connectionTimeout = ConnectionFactory.DEFAULT_CONNECTION_TIMEOUT;
+    private int requestedChannelMax = ConnectionFactory.DEFAULT_CHANNEL_MAX;
+    private int requestedFrameMax = ConnectionFactory.DEFAULT_FRAME_MAX;
+    private int requestedHeartbeat = ConnectionFactory.DEFAULT_HEARTBEAT;
+    private String sslProtocol;
+    private TrustManager trustManager;
+    private Map<String, Object> clientProperties;
+    private ConnectionFactory connectionFactory;
+    private Boolean automaticRecoveryEnabled;
+    private Integer networkRecoveryInterval;
+    private Boolean topologyRecoveryEnabled;
+
     public RabbitMQEndpoint() {
     }
 
     public RabbitMQEndpoint(String endpointUri, RabbitMQComponent component) throws URISyntaxException {
         super(endpointUri, component);
+    }
+
+    public RabbitMQEndpoint(String endpointUri, RabbitMQComponent component, ConnectionFactory connectionFactory) throws URISyntaxException {
+        super(endpointUri, component);
+        this.connectionFactory = connectionFactory;
     }
 
     public Exchange createRabbitExchange(Envelope envelope, AMQP.BasicProperties properties, byte[] body) {
@@ -99,21 +119,55 @@ public class RabbitMQEndpoint extends DefaultEndpoint {
     }
 
     public Connection connect(ExecutorService executor) throws IOException {
-        ConnectionFactory factory = new ConnectionFactory();
-        factory.setUsername(getUsername());
-        factory.setPassword(getPassword());
-        if (getVhost() == null) {
-            factory.setVirtualHost("/");
-        } else {
-            factory.setVirtualHost(getVhost());
-        }
-        factory.setHost(getHostname());
-        factory.setPort(getPortNumber());
         if (getAddresses() == null) {
-            return factory.newConnection(executor);
+            return getOrCreateConnectionFactory().newConnection(executor);
         } else {
-            return factory.newConnection(executor, getAddresses());
+            return getOrCreateConnectionFactory().newConnection(executor, getAddresses());
         }
+    }
+
+    private ConnectionFactory getOrCreateConnectionFactory() {
+        if (connectionFactory == null) {
+            ConnectionFactory factory = new ConnectionFactory();
+            factory.setUsername(getUsername());
+            factory.setPassword(getPassword());
+            factory.setVirtualHost(getVhost());
+            factory.setHost(getHostname());
+            factory.setPort(getPortNumber());
+            if (getClientProperties() != null) {
+                factory.setClientProperties(getClientProperties());
+            }
+            factory.setConnectionTimeout(getConnectionTimeout());
+            factory.setRequestedChannelMax(getRequestedChannelMax());
+            factory.setRequestedFrameMax(getRequestedFrameMax());
+            factory.setRequestedHeartbeat(getRequestedHeartbeat());
+            if (getSslProtocol() != null) {
+                try {
+                    if (getSslProtocol().equals("true")) {
+                        factory.useSslProtocol();
+                    } else if (getTrustManager() == null) {
+                        factory.useSslProtocol(getSslProtocol());
+                    } else {
+                        factory.useSslProtocol(getSslProtocol(), getTrustManager());
+                    }
+                } catch (NoSuchAlgorithmException e) {
+                    throw new IllegalArgumentException("Invalid sslProtocol " + sslProtocol, e);
+                } catch (KeyManagementException e) {
+                    throw new IllegalArgumentException("Invalid sslProtocol " + sslProtocol, e);
+                }
+            }
+            if (getAutomaticRecoveryEnabled() != null) {
+                factory.setAutomaticRecoveryEnabled(getAutomaticRecoveryEnabled());
+            }
+            if (getNetworkRecoveryInterval() != null) {
+                factory.setNetworkRecoveryInterval(getNetworkRecoveryInterval());
+            }
+            if (getTopologyRecoveryEnabled() != null) {
+                factory.setTopologyRecoveryEnabled(getTopologyRecoveryEnabled());
+            }
+            connectionFactory = factory;
+        }
+        return connectionFactory;
     }
 
     @Override
@@ -255,5 +309,93 @@ public class RabbitMQEndpoint extends DefaultEndpoint {
     
     public Address[] getAddresses() {
         return addresses;
+    }
+
+    public int getConnectionTimeout() {
+        return connectionTimeout;
+    }
+
+    public void setConnectionTimeout(int connectionTimeout) {
+        this.connectionTimeout = connectionTimeout;
+    }
+
+    public int getRequestedChannelMax() {
+        return requestedChannelMax;
+    }
+
+    public void setRequestedChannelMax(int requestedChannelMax) {
+        this.requestedChannelMax = requestedChannelMax;
+    }
+
+    public int getRequestedFrameMax() {
+        return requestedFrameMax;
+    }
+
+    public void setRequestedFrameMax(int requestedFrameMax) {
+        this.requestedFrameMax = requestedFrameMax;
+    }
+
+    public int getRequestedHeartbeat() {
+        return requestedHeartbeat;
+    }
+
+    public void setRequestedHeartbeat(int requestedHeartbeat) {
+        this.requestedHeartbeat = requestedHeartbeat;
+    }
+
+    public String getSslProtocol() {
+        return sslProtocol;
+    }
+
+    public void setSslProtocol(String sslProtocol) {
+        this.sslProtocol = sslProtocol;
+    }
+
+    public ConnectionFactory getConnectionFactory() {
+        return connectionFactory;
+    }
+
+    public void setConnectionFactory(ConnectionFactory connectionFactory) {
+        this.connectionFactory = connectionFactory;
+    }
+
+    public TrustManager getTrustManager() {
+        return trustManager;
+    }
+
+    public void setTrustManager(TrustManager trustManager) {
+        this.trustManager = trustManager;
+    }
+
+    public Map<String, Object> getClientProperties() {
+        return clientProperties;
+    }
+
+    public void setClientProperties(Map<String, Object> clientProperties) {
+        this.clientProperties = clientProperties;
+    }
+
+    public Boolean getAutomaticRecoveryEnabled() {
+        return automaticRecoveryEnabled;
+    }
+
+    public void setAutomaticRecoveryEnabled(Boolean automaticRecoveryEnabled) {
+        this.automaticRecoveryEnabled = automaticRecoveryEnabled;
+    }
+
+    public Integer getNetworkRecoveryInterval() {
+        return networkRecoveryInterval;
+    }
+
+    public void setNetworkRecoveryInterval(Integer networkRecoveryInterval) {
+        this.networkRecoveryInterval = networkRecoveryInterval;
+    }
+
+    public Boolean getTopologyRecoveryEnabled() {
+        return topologyRecoveryEnabled;
+    }
+
+    public void setTopologyRecoveryEnabled(Boolean topologyRecoveryEnabled) {
+        this.topologyRecoveryEnabled = topologyRecoveryEnabled;
     }
 }
