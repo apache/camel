@@ -17,6 +17,7 @@
 package org.apache.camel.processor.aggregate;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.impl.DefaultExchange;
 
 /**
  * Aggregate all exchanges into a single combined Exchange holding all the aggregated exchanges
@@ -31,6 +32,16 @@ public class GroupedExchangeAggregationStrategy extends AbstractListAggregationS
     public boolean isStoreAsBodyOnCompletion() {
         // keep the list as a property to be compatible with old behavior
         return false;
+    }
+
+    @Override
+    public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
+        if (oldExchange == null) {
+            // for the first time we must create a new empty exchange as the holder, as the outgoing exchange
+            // must not be one of the grouped exchanges, as that causes a endless circular reference
+            oldExchange = new DefaultExchange(newExchange);
+        }
+        return super.aggregate(oldExchange, newExchange);
     }
 
     @Override
