@@ -21,7 +21,12 @@ import org.junit.Test;
 
 public class SolrDeleteTest extends SolrComponentTestSupport {
 
-    @Test
+    public SolrDeleteTest(Boolean useHttps) {
+		super(useHttps);
+		// TODO Auto-generated constructor stub
+	}
+
+	@Test
     public void testDeleteById() throws Exception {
 
         //insert, commit and verify

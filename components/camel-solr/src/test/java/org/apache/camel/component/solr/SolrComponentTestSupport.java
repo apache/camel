@@ -16,28 +16,49 @@
  */
 package org.apache.camel.component.solr;
 
+import java.util.Arrays;
+import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.SortedMap;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.solr.client.solrj.SolrQuery;
+import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.SolrServerException;
 import org.apache.solr.client.solrj.embedded.JettySolrRunner;
 import org.apache.solr.client.solrj.impl.HttpSolrServer;
 import org.apache.solr.client.solrj.response.QueryResponse;
+import org.eclipse.jetty.servlet.ServletHolder;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameters;
 
+@RunWith(Parameterized.class)
 public class SolrComponentTestSupport extends SolrTestSupport {
-    protected static final String SOLR_ROUTE_URI = "solr://localhost:" + getPort() + "/solr";
     protected static final String TEST_ID = "test1";
     protected static final String TEST_ID2 = "test2";
-    protected static JettySolrRunner solrRunner;
-    protected static HttpSolrServer solrServer;
+   
+    private SolrFixtures solrFixtures;
+   
 
     protected void solrInsertTestEntry() {
         solrInsertTestEntry(TEST_ID);
+    }
+    
+    protected static Collection secureOrNot() {
+    	return Arrays.asList(new Object[][] {{true}, {false}});
+    }
+    
+    public SolrComponentTestSupport(Boolean useHttps) {
+    	this.solrFixtures = new SolrFixtures(useHttps);
+    }
+    
+    String solrRouteUri() {
+    	return solrFixtures.solrRouteUri();
     }
 
     protected void solrInsertTestEntry(String id) {
@@ -54,30 +75,18 @@ public class SolrComponentTestSupport extends SolrTestSupport {
     protected QueryResponse executeSolrQuery(String query) throws SolrServerException {
         SolrQuery solrQuery = new SolrQuery();
         solrQuery.setQuery(query);
+        SolrServer solrServer = solrFixtures.getServer();
         return solrServer.query(solrQuery);
     }
 
     @BeforeClass
     public static void beforeClass() throws Exception {
-        // Set appropriate paths for Solr to use.
-        System.setProperty("solr.solr.home", "src/test/resources/solr");
-        System.setProperty("solr.data.dir", "target/test-classes/solr/data");
-
-        // Instruct Solr to keep the index in memory, for faster testing.
-        System.setProperty("solr.directoryFactory", "solr.RAMDirectoryFactory");
-
-        // Start a Solr instance.
-        solrRunner = new JettySolrRunner("src/test/resources/solr", "/solr", getPort());
-        solrRunner.start();
-
-        solrServer = new HttpSolrServer("http://localhost:" + getPort() + "/solr");
+        SolrFixtures.createSolrFixtures();
     }
-
+ 
     @AfterClass
     public static void afterClass() throws Exception {
-        if (solrRunner != null) {
-            solrRunner.stop();
-        }
+    	SolrFixtures.teardownSolrFixtures();
     }
 
     @Override
@@ -85,23 +94,25 @@ public class SolrComponentTestSupport extends SolrTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").to(SOLR_ROUTE_URI);
+                from("direct:start").to(solrRouteUri());
                 from("direct:splitThenCommit")
                     .split(body())
-                        .to(SOLR_ROUTE_URI)
+                        .to(solrRouteUri())
                     .end()
                     .setHeader(SolrConstants.OPERATION, constant(SolrConstants.OPERATION_COMMIT))
-                    .to(SOLR_ROUTE_URI);
+                    .to(solrRouteUri());
             }
         };
+    }
+    
+    @Parameters
+    public static Collection<Object[]> serverTypes() {
+    	Object[][] serverTypes = {{true}, {false}};
+    	return Arrays.asList(serverTypes);
     }
 
     @Before
     public void clearIndex() throws Exception {
-        if (solrServer != null) {
-            // Clear the Solr index.
-            solrServer.deleteByQuery("*:*");
-            solrServer.commit();
-        }
+    	solrFixtures.clearIndex();	
     }
 }

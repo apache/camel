@@ -21,7 +21,11 @@ import org.junit.Test;
 
 public class SolrAddBeanTest extends SolrComponentTestSupport {
 
-    @Test
+    public SolrAddBeanTest(Boolean useHttps) {
+		super(useHttps);
+	}
+
+	@Test
     public void testAddBean() throws Exception {
 
         //add bean

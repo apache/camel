@@ -31,13 +31,18 @@ import org.junit.Test;
 
 public class SolrUpdateTest extends SolrComponentTestSupport {
 
-    private SolrEndpoint solrEndpoint;
+    public SolrUpdateTest(Boolean useHttps) {
+		super(useHttps);
+		// TODO Auto-generated constructor stub
+	}
+
+	private SolrEndpoint solrEndpoint;
 
     @Override
     @Before
     public void setUp() throws Exception {
         super.setUp();
-        solrEndpoint = getMandatoryEndpoint(SOLR_ROUTE_URI, SolrEndpoint.class);
+        solrEndpoint = getMandatoryEndpoint(solrRouteUri(), SolrEndpoint.class);
     }
 
     @Test
