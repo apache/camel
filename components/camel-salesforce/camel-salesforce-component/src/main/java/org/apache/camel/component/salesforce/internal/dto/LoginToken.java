@@ -17,13 +17,18 @@
 package org.apache.camel.component.salesforce.internal.dto;
 
 import org.codehaus.jackson.annotate.JsonProperty;
+import org.codehaus.jackson.annotate.JsonIgnoreProperties;
 
 /**
  * DTO for Salesforce login
+ * To prevent problem in future when extra properties are added use @JsonIgnoreProperties.
  */
+@JsonIgnoreProperties(ignoreUnknown=true) 
 public class LoginToken {
 
     private String accessToken;
+
+    private String tokenType;
 
     private String instanceUrl;
 
@@ -42,6 +47,17 @@ public class LoginToken {
     public void setAccessToken(String accessToken) {
         this.accessToken = accessToken;
     }
+    
+    @JsonProperty("token_type")
+    public String getTokenType() {
+        return tokenType;
+    }
+
+    @JsonProperty("token_type")
+    public void setTokenType(String tokenType) {
+        this.tokenType = tokenType;
+    }
+
 
     @JsonProperty("instance_url")
     public String getInstanceUrl() {
