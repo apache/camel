@@ -33,6 +33,8 @@ public class LoginToken {
 
     private String issuedAt;
 
+    private String tokenType;
+
     @JsonProperty("access_token")
     public String getAccessToken() {
         return accessToken;
@@ -78,4 +80,15 @@ public class LoginToken {
     public void setIssuedAt(String issuedAt) {
         this.issuedAt = issuedAt;
     }
+
+    @JsonProperty("token_type")
+    public String getTokenType() {
+        return tokenType;
+    }
+
+    @JsonProperty("token_type")
+    public void setTokenType(String tokenType) {
+        this.tokenType = tokenType;
+    }
+
 }
