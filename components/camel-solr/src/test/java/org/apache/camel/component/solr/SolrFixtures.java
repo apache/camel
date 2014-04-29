@@ -16,6 +16,7 @@ public class SolrFixtures {
     private static HttpSolrServer solrServer;
     private static HttpSolrServer solrHttpsServer;
     boolean useHttps;
+    private static SolrCloudFixture cloudFixture;
     
 	private static int port;
 	private static int httpsPort;
@@ -53,6 +54,8 @@ public class SolrFixtures {
     	solrServer = new HttpSolrServer("http://localhost:" + port + "/solr");
     	
     	log.info("Started Test Server: " + solrRunner.getBaseUrl());
+    	
+    	cloudFixture = new SolrCloudFixture("src/test/resources/solr");
 
     }
     
