@@ -90,6 +90,8 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
     private int loggingSizeLimit;
     private boolean skipFaultLogging;
     private BindingStyle bindingStyle = BindingStyle.Default;
+    // The continuation timeout value for CXF continuation to use
+    private long continuationTimeout = 30000;
    
     private boolean isSetDefaultBus;
     
@@ -486,6 +488,15 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
     @Override
     protected void doStop() throws Exception {
         // noop
+    }
+
+
+    public long getContinuationTimeout() {
+        return continuationTimeout;
+    }
+
+    public void setContinuationTimeout(long continuationTimeout) {
+        this.continuationTimeout = continuationTimeout;
     }
 
 

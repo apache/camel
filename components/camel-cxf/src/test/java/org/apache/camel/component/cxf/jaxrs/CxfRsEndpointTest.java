@@ -49,13 +49,15 @@ public class CxfRsEndpointTest extends CamelTestSupport {
     public void testCxfRsEndpointParameters() throws Exception {
         CxfRsComponent component = new CxfRsComponent(context);
         String endpointUri = "cxfrs://http://localhost:" + CTX + "/templatetest/TID/ranges/start=0;end=1?"
-            + "httpClientAPI=true&loggingFeatureEnabled=true&loggingSizeLimit=200&q1=11&q2=12";
+            + "continuationTimeout=80000&httpClientAPI=true&loggingFeatureEnabled=true&loggingSizeLimit=200&q1=11&q2=12";
+           
         CxfRsEndpoint endpoint = (CxfRsEndpoint)component.createEndpoint(endpointUri);
         
         assertEquals("Get a wrong URI ", endpointUri, endpoint.getEndpointUri());
         assertEquals("Get a wrong usingClientAPI option", true, endpoint.isHttpClientAPI());
         assertNotNull("The Parameter should not be null" + endpoint.getParameters());
         assertEquals("Get a wrong parameter map", "{q1=11, q2=12}", endpoint.getParameters().toString());
+        assertEquals("Get a wrong continucationTimeout", 80000, endpoint.getContinuationTimeout());
     }
     
     @Test
@@ -70,6 +72,8 @@ public class CxfRsEndpointTest extends CamelTestSupport {
         assertEquals("Get a wrong address ", endpointUri, endpoint.getEndpointUri());
         assertEquals("Get a wrong size of resouces classes", 1, endpoint.getResourceClasses().size());
         assertEquals("Get a wrong resources class", CustomerService.class, endpoint.getResourceClasses().get(0));
+        // check the default continuation value
+        assertEquals("Get a wrong continucationTimeout", 30000, endpoint.getContinuationTimeout());
     }
     
     @Test

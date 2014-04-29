@@ -34,8 +34,8 @@ import org.slf4j.LoggerFactory;
 public class CxfRsInvoker extends JAXRSInvoker {
     private static final Logger LOG = LoggerFactory.getLogger(CxfRsInvoker.class);
     private static final String SUSPENED = "org.apache.camel.component.cxf.jaxrs.suspend";
-    private CxfRsConsumer cxfRsConsumer;
-    private CxfRsEndpoint endpoint;
+    private final CxfRsConsumer cxfRsConsumer;
+    private final CxfRsEndpoint endpoint;
     
     public CxfRsInvoker(CxfRsEndpoint endpoint, CxfRsConsumer consumer) {
         this.endpoint = endpoint;
@@ -82,9 +82,8 @@ public class CxfRsInvoker extends JAXRSInvoker {
                 cxfRsConsumer.createUoW(camelExchange);
                 // Now we don't set up the timeout value
                 LOG.trace("Suspending continuation of exchangeId: {}", camelExchange.getExchangeId());
-                // TODO Support to set the timeout in case the Camel can't send the response back on time.
                 // The continuation could be called before the suspend is called
-                continuation.suspend(0);
+                continuation.suspend(endpoint.getContinuationTimeout());
                 cxfExchange.put(SUSPENED, Boolean.TRUE);
                 cxfRsConsumer.getAsyncProcessor().process(camelExchange, new AsyncCallback() {
                     public void done(boolean doneSync) {

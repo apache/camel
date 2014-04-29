@@ -160,6 +160,9 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
     private Object serviceFactoryBean;
     private CxfEndpointConfigurer configurer;
     
+    // The continuation timeout value for CXF continuation to use
+    private long continuationTimeout = 30000;
+    
     // basic authentication option for the CXF client
     private String username;
     private String password;
@@ -1181,6 +1184,14 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
 
     public void setCxfEndpointConfigurer(CxfEndpointConfigurer configurer) {
         this.configurer = configurer;
+    }
+
+    public long getContinuationTimeout() {
+        return continuationTimeout;
+    }
+
+    public void setContinuationTimeout(long continuationTimeout) {
+        this.continuationTimeout = continuationTimeout;
     }
 
     

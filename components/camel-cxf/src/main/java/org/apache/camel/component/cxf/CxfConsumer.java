@@ -57,10 +57,11 @@ import org.slf4j.LoggerFactory;
 public class CxfConsumer extends DefaultConsumer {
     private static final Logger LOG = LoggerFactory.getLogger(CxfConsumer.class);
     private Server server;
+    private CxfEndpoint cxfEndpoint;
 
     public CxfConsumer(final CxfEndpoint endpoint, Processor processor) throws Exception {
         super(endpoint, processor);
-        
+        cxfEndpoint = endpoint;
         // create server
         ServerFactoryBean svrBean = endpoint.createServerFactoryBean();
         svrBean.setInvoker(new Invoker() {
@@ -86,9 +87,9 @@ public class CxfConsumer extends DefaultConsumer {
                         
                         // Now we don't set up the timeout value
                         LOG.trace("Suspending continuation of exchangeId: {}", camelExchange.getExchangeId());
-                        // TODO Support to set the timeout in case the Camel can't send the response back on time.
+                        
                         // The continuation could be called before the suspend is called
-                        continuation.suspend(0);
+                        continuation.suspend(cxfEndpoint.getContinuationTimeout());
 
                         // use the asynchronous API to process the exchange
                         getAsyncProcessor().process(camelExchange, new AsyncCallback() {
