@@ -59,8 +59,8 @@
     <avalon-version>4.3.1</avalon-version>
     <avro-version>1.7.6</avro-version>
     <avro-bundle-version>1.7.6_1</avro-bundle-version>
-    <aws-java-sdk-bundle-version>1.7.1_1</aws-java-sdk-bundle-version>
-    <aws-java-sdk-version>1.7.1</aws-java-sdk-version>
+    <aws-java-sdk-bundle-version>1.7.5_1</aws-java-sdk-bundle-version>
+    <aws-java-sdk-version>1.7.5</aws-java-sdk-version>
     <axiom-version>1.2.14</axiom-version>
     <backport-util-concurrent-version>3.1</backport-util-concurrent-version>
     <bcel-bundle-version>5.2_4</bcel-bundle-version>
@@ -258,7 +258,7 @@
     <jython-version>2.5.3</jython-version>
     <kafka-version>0.8.1</kafka-version>
     <kafka-bundle-version>0.8.1_1</kafka-bundle-version>
-    <karaf-version>2.3.3</karaf-version>
+    <karaf-version>2.3.5</karaf-version>
     <kie-version>6.0.0.Final</kie-version>
     <krati-version>0.4.9</krati-version>
     <kxml2-bundle-version>2.3.0_2</kxml2-bundle-version>
