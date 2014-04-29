@@ -43,10 +43,14 @@ public class SolrFixtures {
     static void createSolrFixtures() throws Exception {
     	solrHttpsRunner = JettySolrFactory.createJettyTestFixture(true);
     	httpsPort = solrHttpsRunner.getLocalPort();
-    	log.info("Started Https Test Server: " + solrHttpsRunner.getBaseUrl());;
+    	log.info("Started Https Test Server: " + solrHttpsRunner.getBaseUrl());
+        solrHttpsServer = new HttpSolrServer("https://localhost:" + httpsPort + "/solr");
+        solrHttpsServer.setConnectionTimeout(60000);
     	
     	solrRunner = JettySolrFactory.createJettyTestFixture(false);
     	port = solrRunner.getLocalPort();
+    	
+    	solrServer = new HttpSolrServer("http://localhost:" + port + "/solr");
     	
     	log.info("Started Test Server: " + solrRunner.getBaseUrl());
 
@@ -61,19 +65,7 @@ public class SolrFixtures {
         }
     }
     
-    public void clearFixtures() throws SolrServerException, IOException {
-    	 if (solrServer != null) {
-             // Clear the Solr index.
-             solrServer.deleteByQuery("*:*");
-             solrServer.commit();
-         }
-         if (solrHttpsServer != null) {
-         	solrHttpsServer.deleteByQuery("*:*");
-         	solrHttpsServer.commit();
-         }
-    }
-    
-    public void clearIndex() throws SolrServerException, IOException {
+    public static void clearIndex() throws SolrServerException, IOException {
     	 if (solrServer != null) {
              // Clear the Solr index.
              solrServer.deleteByQuery("*:*");

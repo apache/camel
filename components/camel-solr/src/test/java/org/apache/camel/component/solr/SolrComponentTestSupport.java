@@ -113,6 +113,6 @@ public class SolrComponentTestSupport extends SolrTestSupport {
 
     @Before
     public void clearIndex() throws Exception {
-    	solrFixtures.clearIndex();	
+    	SolrFixtures.clearIndex();	
     }
 }
