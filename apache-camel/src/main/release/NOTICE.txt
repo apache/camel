@@ -34,3 +34,10 @@ endorse or promote products derived from this software without
 prior written permission. For written permission, please contact
 rod.johnson@interface21.com or juergen.hoeller@interface21.com.
 
+=========================================================================
+==  OpenShift Notice                                                   ==
+=========================================================================
+
+This product includes software developed by
+the OpenShift Project (https://github.com/openshift/openshift-java-client/).
+
