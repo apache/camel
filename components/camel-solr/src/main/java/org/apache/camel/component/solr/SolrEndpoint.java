@@ -41,10 +41,14 @@ public class SolrEndpoint extends DefaultEndpoint {
     private Integer maxTotalConnections;
     private Boolean followRedirects;
     private Boolean allowCompression;
+    private String scheme = "http://";
 
     public SolrEndpoint(String endpointUri, SolrComponent component, String address) throws Exception {
         super(endpointUri, component);
-        URL url = new URL("http://" + address);
+        if (endpointUri.startsWith("solrs")) {
+        	scheme = "https://";
+        }
+        URL url = new URL(scheme + address);
         this.url = url.toString();
     }
 

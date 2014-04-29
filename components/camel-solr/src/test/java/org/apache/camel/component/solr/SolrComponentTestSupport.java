@@ -65,11 +65,11 @@ public class SolrComponentTestSupport extends SolrTestSupport {
         Map<String, Object> headers = new HashMap<String, Object>();
         headers.put(SolrConstants.OPERATION, SolrConstants.OPERATION_INSERT);
         headers.put("SolrField.id", id);
-        template.sendBodyAndHeaders("direct:start", null, headers);
+        template.sendBodyAndHeaders("direct:start", "", headers);
     }
 
     protected void solrCommit() {
-        template.sendBodyAndHeader("direct:start", null, SolrConstants.OPERATION, SolrConstants.OPERATION_COMMIT);
+        template.sendBodyAndHeader("direct:start", "", SolrConstants.OPERATION, SolrConstants.OPERATION_COMMIT);
     }
 
     protected QueryResponse executeSolrQuery(String query) throws SolrServerException {
