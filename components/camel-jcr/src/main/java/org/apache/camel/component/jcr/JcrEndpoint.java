@@ -56,7 +56,7 @@ public class JcrEndpoint extends DefaultEndpoint {
                 String[] creds = uri.getUserInfo().split(":");
                 if (creds != null) {
                     String username = creds[0];
-                    String password = creds.length > 1 ? creds[1] : null;
+                    String password = creds.length > 1 ? creds[1] : "";
                     this.credentials = new SimpleCredentials(username, password.toCharArray());
                 }
             }
