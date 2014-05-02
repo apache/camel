@@ -57,6 +57,7 @@ import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.apache.camel.component.jms.JmsConstants.JMS_X_GROUP_ID;
 import static org.apache.camel.component.jms.JmsMessageHelper.normalizeDestinationName;
 import static org.apache.camel.component.jms.JmsMessageType.Bytes;
 import static org.apache.camel.component.jms.JmsMessageType.Map;
@@ -169,7 +170,7 @@ public class JmsBinding {
                 map.put("JMSType", JmsMessageHelper.getJMSType(jmsMessage));
 
                 // this works around a bug in the ActiveMQ property handling
-                map.put("JMSXGroupID", jmsMessage.getStringProperty("JMSXGroupID"));
+                map.put(JMS_X_GROUP_ID, jmsMessage.getStringProperty(JMS_X_GROUP_ID));
                 map.put("JMSXUserID", jmsMessage.getStringProperty("JMSXUserID"));
             } catch (JMSException e) {
                 throw new RuntimeCamelException(e);
