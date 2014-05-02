@@ -114,7 +114,7 @@
   <feature name='camel-aws' version='${project.version}' resolver='(obr)' start-level='50'>
     <bundle dependency='true'>mvn:org.apache.httpcomponents/httpcore-osgi/${httpcore4-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.httpcomponents/httpclient-osgi/${httpclient4-version}</bundle>
-    <bundle dependency='true'>mvn:joda-time/joda-time/${jodatime-bundle-version}</bundle>
+    <bundle dependency='true'>mvn:joda-time/joda-time/${jodatime2-bundle-version}</bundle>
     <bundle dependency='true'>mvn:javax.mail/mail/${javax-mail-version}</bundle>
     <bundle dependency='true'>mvn:commons-codec/commons-codec/${commons-codec-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.specs/org.apache.servicemix.specs.stax-api-1.0/${servicemix-specs-version}</bundle>
