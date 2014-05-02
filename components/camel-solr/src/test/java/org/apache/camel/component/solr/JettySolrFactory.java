@@ -109,6 +109,10 @@ public class JettySolrFactory {
 		boolean stopAtShutdown = true;
 		SortedMap<ServletHolder, String> extraServlets = null;
 		
+		if (!useSsl) {
+	        System.setProperty("tests.jettySsl", "false");
+		}
+		
 		return createJetty(solrHome, configFile, schemaFile, context, stopAtShutdown, extraServlets, useSsl);
 		
 	}
