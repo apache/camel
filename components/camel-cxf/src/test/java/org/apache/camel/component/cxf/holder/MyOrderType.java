@@ -16,18 +16,12 @@
  */
 package org.apache.camel.component.cxf.holder;
 
-import org.apache.camel.builder.RouteBuilder;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlElement;
 
-public class CXFHolderRouteTest extends CxfHolderConsumerTest {
-    
-    protected RouteBuilder createRouteBuilder() {
-        return new RouteBuilder() {
-            public void configure() {
-                from(CXF_ENDPOINT_URI).wireTap("seda:tap").process(new MyProcessor());
-                
-                from("seda:tap").to("log:myEndpoint");
-            }
-        };
-    }
-
+@XmlAccessorType(XmlAccessType.FIELD)
+public class MyOrderType {
+    @XmlElement(required = true)
+    protected int iAmount;
 }
