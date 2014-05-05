@@ -45,11 +45,10 @@ public class RabbitMQProducer extends DefaultProducer {
     public RabbitMQEndpoint getEndpoint() {
         return (RabbitMQEndpoint) super.getEndpoint();
     }
-
-    @Override
-    protected void doStart() throws Exception {
-        this.executorService = getEndpoint().getCamelContext().getExecutorServiceManager().newSingleThreadExecutor(this, "CamelRabbitMQProducer[" + getEndpoint().getQueue() + "]");
-
+    /**
+     * Open connection and channel
+     */
+    private void openConnectionAndChannel() throws IOException {
         log.trace("Creating connection...");
         this.conn = getEndpoint().connect(executorService);
         log.debug("Created connection: {}", conn);
@@ -60,7 +59,20 @@ public class RabbitMQProducer extends DefaultProducer {
     }
 
     @Override
-    protected void doStop() throws Exception {
+    protected void doStart() throws Exception {
+        this.executorService = getEndpoint().getCamelContext().getExecutorServiceManager().newSingleThreadExecutor(this, "CamelRabbitMQProducer[" + getEndpoint().getQueue() + "]");
+
+        try {
+            openConnectionAndChannel();
+        } catch (IOException e) {
+            log.warn("Failed to create connection", e);
+        }
+    }
+
+    /**
+     * If needed, close Connection and Channel
+     */
+    private void closeConnectionAndChannel() throws IOException {
         if (channel != null) {
             log.debug("Closing channel: {}", channel);
             channel.close();
@@ -71,6 +83,11 @@ public class RabbitMQProducer extends DefaultProducer {
             conn.close(closeTimeout);
             conn = null;
         }
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        closeConnectionAndChannel();
         if (executorService != null) {
             getEndpoint().getCamelContext().getExecutorServiceManager().shutdownNow(executorService);
             executorService = null;
@@ -95,6 +112,10 @@ public class RabbitMQProducer extends DefaultProducer {
         byte[] messageBodyBytes = exchange.getIn().getMandatoryBody(byte[].class);
         AMQP.BasicProperties.Builder properties = buildProperties(exchange);
 
+        if (channel==null) {
+            // Open connection and channel lazily
+            openConnectionAndChannel();
+        }
         channel.basicPublish(exchangeName, key, properties.build(), messageBodyBytes);
     }
 

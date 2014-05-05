@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
@@ -29,6 +30,7 @@ import javax.net.ssl.TrustManager;
 
 import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Address;
+import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.Envelope;
@@ -123,6 +125,26 @@ public class RabbitMQEndpoint extends DefaultEndpoint {
             return getOrCreateConnectionFactory().newConnection(executor);
         } else {
             return getOrCreateConnectionFactory().newConnection(executor, getAddresses());
+        }
+    }
+
+	/**
+     * If needed, declare Exchange, declare Queue and bind them with Routing Key
+     */
+    public void declareExchangeAndQueue(Channel channel) throws IOException {
+        channel.exchangeDeclare(getExchangeName(),
+                getExchangeType(),
+                isDurable(),
+                isAutoDelete(),
+                new HashMap<String, Object>());
+        if (getQueue()!=null) {
+            // need to make sure the queueDeclare is same with the exchange declare
+            channel.queueDeclare(getQueue(), isDurable(), false,
+                    isAutoDelete(), null);
+            channel.queueBind(
+                    getQueue(),
+                    getExchangeName(),
+                    getRoutingKey() == null ? "" : getRoutingKey());
         }
     }
 
