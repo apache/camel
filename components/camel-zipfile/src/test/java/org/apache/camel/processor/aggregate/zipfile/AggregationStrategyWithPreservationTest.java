@@ -60,7 +60,6 @@ public class AggregationStrategyWithPreservationTest extends CamelTestSupport {
         try {
             int fileCount = 0;
             for (ZipEntry ze = zin.getNextEntry(); ze != null; ze = zin.getNextEntry()) {
-                System.out.println(ze.toString());
                 expectedZipFiles.remove(ze.toString());
                 fileCount++;
             }
