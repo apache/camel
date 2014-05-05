@@ -25,6 +25,7 @@ import java.util.zip.ZipInputStream;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.impl.DefaultMessage;
 import org.apache.camel.util.IOHelper;
 import org.slf4j.Logger;
@@ -70,9 +71,9 @@ class ZipIterator implements Iterator<Message> {
                 }                
             }
             return availableDataInCurrentEntry;            
-        } catch (IOException e) {
-            LOGGER.warn("Fail hasNext()", e);
-            return false;            
+        } catch (IOException exception) {
+            //Just wrap the IOException as CamelRuntimeException
+            throw new RuntimeCamelException(exception);      
         }
     }
 
@@ -106,7 +107,9 @@ class ZipIterator implements Iterator<Message> {
                 } else {
                     LOGGER.trace("close zipInputStream");
                 }
-            } catch (IOException ignore) {
+            } catch (IOException exception) {
+                //Just wrap the IOException as CamelRuntimeException
+                throw new RuntimeCamelException(exception);
             }
         }        
         

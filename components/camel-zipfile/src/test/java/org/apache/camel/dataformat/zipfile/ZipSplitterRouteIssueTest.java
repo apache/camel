@@ -38,17 +38,30 @@ public class ZipSplitterRouteIssueTest extends CamelTestSupport {
 
         assertMockEndpointsSatisfied();
     }
+    
+    @Test
+    public void testSplitterWithWrongFile() throws Exception {
+        getMockEndpoint("mock:entry").expectedMessageCount(0);
+        getMockEndpoint("mock:errors").expectedMessageCount(1);
+        //Send a file which is not exit
+        template.sendBody("seda:decompressFiles", new File("src/test/resources/data"));
+        
+        assertMockEndpointsSatisfied();
+        
+    }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
+                errorHandler(deadLetterChannel("mock:errors"));
+                
                 from("seda:decompressFiles")
                     .split(new ZipSplitter()).streaming().shareUnitOfWork()
                         .log("we are splitting")
-                        .to("mock:entry")
-                        .to("file:target/zip/?fileName=decompressed.txt&fileExist=Append");
+                        .to("mock:entry");
+                        //.to("file:target/zip/?fileName=decompressed.txt&fileExist=Append");
             }
         };
     }
