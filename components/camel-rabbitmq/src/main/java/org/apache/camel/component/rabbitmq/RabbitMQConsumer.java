@@ -63,14 +63,14 @@ public class RabbitMQConsumer extends DefaultConsumer {
         log.trace("Creating channel...");
         this.channel = conn.createChannel();
         log.debug("Created channel: {}", channel);
-    }
+
+		getEndpoint().declareExchangeAndQueue(channel);
+	}
 
     /**
      * If needed, create Exchange and Queue, then add message listener
      */
     private void addConsumer() throws IOException {
-        getEndpoint().declareExchangeAndQueue(channel);
-
         channel.basicConsume(endpoint.getQueue(), endpoint.isAutoAck(),
                 new RabbitConsumer(this, channel));
     }
