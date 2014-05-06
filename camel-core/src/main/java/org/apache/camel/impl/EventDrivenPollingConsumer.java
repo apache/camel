@@ -18,6 +18,7 @@ package org.apache.camel.impl;
 
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
+import java.util.concurrent.LinkedBlockingDeque;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.TimeUnit;
 
@@ -43,15 +44,51 @@ public class EventDrivenPollingConsumer extends PollingConsumerSupport implement
     private final BlockingQueue<Exchange> queue;
     private ExceptionHandler interruptedExceptionHandler;
     private Consumer consumer;
+    private boolean blockWhenFull = true;
+    private final int queueCapacity;
 
     public EventDrivenPollingConsumer(Endpoint endpoint) {
-        this(endpoint, new ArrayBlockingQueue<Exchange>(1000));
+        this(endpoint, 1000);
+    }
+
+    public EventDrivenPollingConsumer(Endpoint endpoint, int queueSize) {
+        super(endpoint);
+        this.queueCapacity = queueSize;
+        if (queueSize <= 0) {
+            this.queue = new LinkedBlockingDeque<Exchange>();
+        } else {
+            this.queue = new ArrayBlockingQueue<Exchange>(queueSize);
+        }
+        this.interruptedExceptionHandler = new LoggingExceptionHandler(endpoint.getCamelContext(), EventDrivenPollingConsumer.class);
     }
 
     public EventDrivenPollingConsumer(Endpoint endpoint, BlockingQueue<Exchange> queue) {
         super(endpoint);
         this.queue = queue;
+        this.queueCapacity = queue.remainingCapacity();
         this.interruptedExceptionHandler = new LoggingExceptionHandler(endpoint.getCamelContext(), EventDrivenPollingConsumer.class);
+    }
+
+    public boolean isBlockWhenFull() {
+        return blockWhenFull;
+    }
+
+    public void setBlockWhenFull(boolean blockWhenFull) {
+        this.blockWhenFull = blockWhenFull;
+    }
+
+    /**
+     * Gets the queue capacity.
+     */
+    public int getQueueCapacity() {
+        return queueCapacity;
+    }
+
+    /**
+     * Gets the current queue size (no of elements in the queue).
+     */
+    public int getQueueSize() {
+        return queue.size();
     }
 
     public Exchange receiveNoWait() {
@@ -98,7 +135,16 @@ public class EventDrivenPollingConsumer extends PollingConsumerSupport implement
     }
 
     public void process(Exchange exchange) throws Exception {
-        queue.offer(exchange);
+        if (isBlockWhenFull()) {
+            try {
+                queue.put(exchange);
+            } catch (InterruptedException e) {
+                // ignore
+                log.debug("Put interrupted, are we stopping? {}", isStopping() || isStopped());
+            }
+        } else {
+            queue.add(exchange);
+        }
     }
 
     public ExceptionHandler getInterruptedExceptionHandler() {
@@ -155,5 +201,6 @@ public class EventDrivenPollingConsumer extends PollingConsumerSupport implement
 
     protected void doShutdown() throws Exception {
         ServiceHelper.stopAndShutdownService(consumer);
+        queue.clear();
     }
 }
