@@ -16,6 +16,10 @@
  */
 package org.apache.camel.dataformat.csv;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.List;
 
 import org.apache.camel.EndpointInject;
@@ -38,6 +42,7 @@ public class CsvUnmarshalStreamTest extends CamelTestSupport {
     @SuppressWarnings("unchecked")
     @Test
     public void testCsvUnMarshal() throws Exception {
+        result.reset();
         result.expectedMessageCount(EXPECTED_COUNT);
 
         String message = "";
@@ -56,6 +61,39 @@ public class CsvUnmarshalStreamTest extends CamelTestSupport {
             assertEquals(String.valueOf(i), body.get(0));
             assertEquals(String.format("%d\n%d", i, i), body.get(1));
         }
+    }
+    
+    @SuppressWarnings("unchecked")
+    @Test
+    public void testCsvUnMarshalWithFile() throws Exception {
+        result.reset();
+        result.expectedMessageCount(EXPECTED_COUNT);
+
+        
+        template.sendBody("direct:start", new MyFileInputStream(new File("src/test/resources/data.csv")));
+
+        assertMockEndpointsSatisfied();
+
+        for (int i = 0; i < EXPECTED_COUNT; ++i) {
+            List<String> body = result.getReceivedExchanges().get(i)
+                    .getIn().getBody(List.class);
+            assertEquals(2, body.size());
+            assertEquals(String.valueOf(i), body.get(0));
+            assertEquals(String.format("%d\n%d", i, i), body.get(1));
+        }
+    }
+    
+    class MyFileInputStream extends FileInputStream {
+
+        public MyFileInputStream(File file) throws FileNotFoundException {
+            super(file);
+        }
+        
+        public void close() throws IOException {
+            // Use this to find out how camel close the FileInputStream
+            super.close();
+        }
+        
     }
     
     @Override
