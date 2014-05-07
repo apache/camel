@@ -158,7 +158,7 @@ public class SqlGeneratedKeysTest extends CamelTestSupport {
         assertEquals(4, generatedKeys.size());
 
         int id = 3;
-        for (Map<String, Object> row: generatedKeys) {
+        for (Map<String, Object> row : generatedKeys) {
             assertEquals("auto increment value should be " + id, Integer.valueOf(id++), row.get("ID"));
         }
 
