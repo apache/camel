@@ -18,7 +18,7 @@ package org.apache.camel.impl;
 
 import java.util.concurrent.ArrayBlockingQueue;
 import java.util.concurrent.BlockingQueue;
-import java.util.concurrent.LinkedBlockingDeque;
+import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.TimeUnit;
 
@@ -55,7 +55,7 @@ public class EventDrivenPollingConsumer extends PollingConsumerSupport implement
         super(endpoint);
         this.queueCapacity = queueSize;
         if (queueSize <= 0) {
-            this.queue = new LinkedBlockingDeque<Exchange>();
+            this.queue = new LinkedBlockingQueue<Exchange>();
         } else {
             this.queue = new ArrayBlockingQueue<Exchange>(queueSize);
         }
