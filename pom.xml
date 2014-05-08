@@ -51,7 +51,7 @@
     <maven-compiler-plugin-version>2.5.1</maven-compiler-plugin-version>
 
     <!-- eclipse plugin need the jaxb in this pom.xml file -->
-    <jaxb-version>2.1.13</jaxb-version>
+    <jaxb-version>2.2.7</jaxb-version>
   </properties>
 
   <mailingLists>
@@ -135,7 +135,29 @@
 
   <build>
     <defaultGoal>install</defaultGoal>
-
+    <plugins>
+        <plugin>
+            <groupId>org.codehaus.mojo</groupId>
+            <artifactId>properties-maven-plugin</artifactId>
+            <version>1.0-alpha-2</version>
+            <executions>
+                <execution>
+                    <phase>initialize</phase>
+                    <goals>
+                        <goal>set-system-properties</goal>
+                    </goals>
+                    <configuration>
+                        <properties>
+                            <property>
+                                <name>javax.xml.accessExternalSchema</name>
+                                <value>file,http</value>
+                            </property>
+                        </properties>
+                    </configuration>
+                </execution>
+            </executions>
+        </plugin>            
+    </plugins>
     <pluginManagement>
       <plugins>
         <plugin>
@@ -382,7 +404,7 @@
                 </dependency>
                 <dependency>
                   <groupId>com.sun.xml.bind</groupId>
-                  <artifactId>jaxb-xjc</artifactId>
+                  <artifactId>jaxb-jxc</artifactId>
                   <version>${jaxb-version}</version>
                 </dependency>
                 <dependency>

@@ -254,7 +254,7 @@
           </execution>
           <execution>
             <id>generate-sources</id>
-            <phase>generate-sources</phase>
+            <phase>process-classes</phase>
             <configuration>
               <target>
                 <taskdef name="schemagen" classname="com.sun.tools.jxc.SchemaGenTask" classpathref="maven.plugin.classpath" />
@@ -308,6 +308,10 @@
                 <copy file="${project.build.directory}/schema/camel-spring.xsd" tofile="${project.build.directory}/schema/camel-spring-v${camel.schema.version}.xsd" />
                 <replace file="${project.build.directory}/schema/camel-spring-v${camel.schema.version}.xsd" token="http://camel.apache.org/schema/spring" value="http://camel.apache.org/schema/spring/v${camel.schema.version}" />
 
+                <copy todir="${project.build.directory}/classes">
+                  <fileset dir="${project.build.directory}/schema"/>
+                </copy>
+
               </target>
             </configuration>
             <goals>
@@ -321,7 +325,7 @@
         <artifactId>properties-maven-plugin</artifactId>
         <executions>
           <execution>
-            <phase>generate-sources</phase>
+            <phase>process-classes</phase>
             <goals>
               <goal>read-project-properties</goal>
             </goals>

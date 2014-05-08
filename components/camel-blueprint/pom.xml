@@ -267,7 +267,7 @@
                   <executions>
                       <execution>
                           <id>process-sources</id>
-                          <phase>process-sources</phase>
+                          <phase>process-classes</phase>
                           <configuration>
                               <target>
                                   <taskdef name="schemagen" classname="com.sun.tools.jxc.SchemaGenTask" classpathref="maven.plugin.classpath" />
@@ -301,6 +301,9 @@
                                       <classpath refid="maven.compile.classpath" />
                                   </schemagen>
                                   <replace file="${project.build.directory}/schema/camel-blueprint.xsd" token="http://camel.apache.org/schema/spring" value="http://camel.apache.org/schema/blueprint" />
+                                  <copy todir="${project.build.directory}/classes">
+                                      <fileset dir="${project.build.directory}/schema"/>
+                                  </copy>
 
                               </target>
                           </configuration>

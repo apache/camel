@@ -32,7 +32,7 @@
     <properties>
         <camel.osgi.export.pkg>org.apache.camel.web.*</camel.osgi.export.pkg>
         <jaxb-api-version>2.1</jaxb-api-version>
-        <scalate-version>1.6.1</scalate-version>
+        <scalate-version>1.7.0</scalate-version>
         <jersey-version>1.17.1</jersey-version>
         <jetty-port>8080</jetty-port>
         <webdriver-version>0.9.7376</webdriver-version>
@@ -130,8 +130,8 @@
             <optional>true</optional>
         </dependency>
         <dependency>
-            <groupId>org.fusesource.scalate</groupId>
-            <artifactId>scalate-core_2.10</artifactId>
+            <groupId>org.scalatra.scalate</groupId>
+            <artifactId>scalate-core_2.11</artifactId>
             <version>${scalate-version}</version>
         </dependency>
 
@@ -230,8 +230,8 @@
             </plugin>
 
             <plugin>
-                <groupId>org.fusesource.scalate</groupId>
-                <artifactId>maven-scalate-plugin_2.10</artifactId>
+                <groupId>org.scalatra.scalate</groupId>
+                <artifactId>maven-scalate-plugin_2.11</artifactId>
                 <version>${scalate-version}</version>
                 <executions>
                     <execution>
@@ -373,7 +373,8 @@
                     </additionalparam>
                 </configuration>
             </plugin>
-
+<!-- Disable wadl generation for now, fails on Java 8-->
+<!--
             <plugin>
                 <groupId>com.sun.jersey.contribs</groupId>
                 <artifactId>maven-wadl-plugin</artifactId>
@@ -384,11 +385,6 @@
                         <goals>
                             <goal>generate</goal>
                         </goals>
-                        <!--
-                                    TODO - for some reason using a compile phase with maven 2.2.1 and jetty:run causes an odd classloader bug
-
-                                    <phase>compile</phase>
-                        -->
                         <phase>package</phase>
                     </execution>
                 </executions>
@@ -431,8 +427,8 @@
                         </wadlGeneratorDescription>
                     </wadlGenerators>
                 </configuration>
-
-            </plugin>
+          </plugin>
+-->
             <plugin>
                 <groupId>org.codehaus.mojo</groupId>
                 <artifactId>build-helper-maven-plugin</artifactId>
@@ -461,7 +457,7 @@
                 <executions>
                     <execution>
                         <id>process-sources</id>
-                        <phase>process-sources</phase>
+                        <phase>process-classes</phase>
                         <configuration>
                             <target>
                                 <taskdef name="schemagen" classname="com.sun.tools.jxc.SchemaGenTask" classpathref="maven.plugin.classpath" />
@@ -484,6 +480,10 @@
                                     <schema namespace="http://camel.apache.org/schema/web" file="camel-web.xsd" />
                                     <classpath refid="maven.compile.classpath" />
                                 </schemagen>
+
+                                <copy todir="${project.build.directory}/classes">
+                                  <fileset dir="${project.build.directory}/schema"/>
+                                </copy>
 
                             </target>
                         </configuration>

@@ -94,7 +94,7 @@ class ConverterSpec extends FunSpec with CamelSpec with MustMatchers {
   }
 
   describe("mutable collections converter") {
-    import collection.mutable.{ConcurrentMap, Buffer, Map, Seq, Set}
+    import collection.mutable.{Buffer, Map, Seq, Set}
     import java.util.{Dictionary => JDictionary, Hashtable => JHashtable, Collections, List => JList, Map => JMap, Set => JSet}
     import java.util.concurrent.{ConcurrentHashMap => JConcurrentHashMap}
 
@@ -129,7 +129,7 @@ class ConverterSpec extends FunSpec with CamelSpec with MustMatchers {
     }
     it("must convert java concurrent map") {
       val m = new JConcurrentHashMap[String,Int](Collections.singletonMap("a", 1))
-      to[ConcurrentMap[String,Int]](m) must be('defined)
+      to[scala.collection.concurrent.Map[String,Int]](m) must be('defined)
     }
     it("must convert scala seq") {
       val s = Seq(1)

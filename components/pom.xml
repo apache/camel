@@ -49,7 +49,6 @@
     <module>camel-jetty</module>
     <module>camel-cxf</module>
     <module>camel-cxf-transport</module>
-    <module>camel-web</module>
     <module>camel-web-standalone</module>
     <module>camel-jms</module>
 
@@ -112,7 +111,6 @@
     <module>camel-jcr</module>
     <module>camel-jdbc</module>
     <module>camel-jgroups</module>
-    <module>camel-jibx</module>
     <module>camel-jing</module>
     <module>camel-jmx</module>
     <module>camel-josql</module>
@@ -190,6 +188,7 @@
     <module>camel-velocity</module>
     <module>camel-vertx</module>
     <module>camel-weather</module>
+    <module>camel-web</module>
     <module>camel-websocket</module>
     <module>camel-xmlbeans</module>
     <module>camel-xmljson</module>
@@ -260,11 +259,34 @@
   </reporting>
 
   <profiles>
+
+    <!-- Some components don't support Java 8 Yet. -->
+    <profile>
+      <id>jdk-7</id>
+      <modules>
+        <module>camel-jibx</module>
+      </modules>
+      <activation>
+        <jdk>1.7</jdk>
+      </activation>
+    </profile>
+    <profile>
+      <id>jdk-6</id>
+      <modules>
+        <module>camel-jibx</module>
+      </modules>
+      <activation>
+        <jdk>1.6</jdk>
+      </activation>
+    </profile>
+    
     <!-- enables the APT dependency so that it can be disabled in IDE builds -->
     <profile>
       <id>apt</id>
       <activation>
-        <activeByDefault>true</activeByDefault>
+        <property>
+            <name>!dummy.prop.to.keep.this.profile.active.even.when.other.profiles.are.active</name>
+        </property>
       </activation>
 
       <dependencies>
