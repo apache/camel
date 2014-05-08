@@ -17,7 +17,6 @@
 
 package org.apache.camel.converter.jaxp;
 
-import javax.xml.XMLConstants;
 import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
@@ -42,7 +41,7 @@ public class StaxSource extends SAXSource implements XMLReader {
     private XMLStreamReader streamReader;
 
     private ContentHandler contentHandler;
-    
+
     private LexicalHandler lexicalHandler;
 
     public StaxSource(XMLStreamReader streamReader) {
@@ -101,7 +100,7 @@ public class StaxSource extends SAXSource implements XMLReader {
                         int start = streamReader.getTextStart();
                         char[] chars = streamReader.getTextCharacters();
                         lexicalHandler.comment(chars, start, length);
-                    } 
+                    }
                     break;
                 case XMLStreamConstants.DTD:
                     break;
@@ -112,9 +111,18 @@ public class StaxSource extends SAXSource implements XMLReader {
                     String uri = streamReader.getNamespaceURI();
                     String localName = streamReader.getLocalName();
                     String prefix = streamReader.getPrefix();
-                    String qname = prefix != null && prefix.length() > 0 
+                    String qname = prefix != null && prefix.length() > 0
                         ? prefix + ":" + localName : localName;
                     contentHandler.endElement(uri, localName, qname);
+                    // namespaces
+                    for (int i = 0; i < streamReader.getNamespaceCount(); i++) {
+                        String nsPrefix = streamReader.getNamespacePrefix(i);
+                        String nsUri = streamReader.getNamespaceURI(i);
+                        if (nsUri == null) {
+                            nsUri = "";
+                        }
+                        contentHandler.endPrefixMapping(nsPrefix);
+                    }
                     break;
                 }
                 case XMLStreamConstants.ENTITY_DECLARATION:
@@ -131,8 +139,17 @@ public class StaxSource extends SAXSource implements XMLReader {
                     String uri = streamReader.getNamespaceURI();
                     String localName = streamReader.getLocalName();
                     String prefix = streamReader.getPrefix();
-                    String qname = prefix != null && prefix.length() > 0 
+                    String qname = prefix != null && prefix.length() > 0
                         ? prefix + ":" + localName : localName;
+                    // namespaces
+                    for (int i = 0; i < streamReader.getNamespaceCount(); i++) {
+                        String nsPrefix = streamReader.getNamespacePrefix(i);
+                        String nsUri = streamReader.getNamespaceURI(i);
+                        if (nsUri == null) {
+                            nsUri = "";
+                        }
+                        contentHandler.startPrefixMapping(nsPrefix, nsUri);
+                    }
                     contentHandler.startElement(uri == null ? "" : uri, localName, qname, getAttributes());
                     break;
                 }
@@ -169,30 +186,7 @@ public class StaxSource extends SAXSource implements XMLReader {
 
     protected Attributes getAttributes() {
         AttributesImpl attrs = new AttributesImpl();
-        // Adding namespace declaration as attributes is necessary because
-        // the xalan implementation that ships with SUN JDK 1.4 is bugged
-        // and does not handle the startPrefixMapping method
-        for (int i = 0; i < streamReader.getNamespaceCount(); i++) {
-            String prefix = streamReader.getNamespacePrefix(i);
-            String uri = streamReader.getNamespaceURI(i);
-            if (uri == null) {
-                uri = "";
-            }
-            // Default namespace
-            if (prefix == null || prefix.length() == 0) {
-                attrs.addAttribute("", 
-                                   "", 
-                                   XMLConstants.XMLNS_ATTRIBUTE, 
-                                   "CDATA", 
-                                   uri);
-            } else {
-                attrs.addAttribute(XMLConstants.XMLNS_ATTRIBUTE_NS_URI, 
-                                   prefix, 
-                                   XMLConstants.XMLNS_ATTRIBUTE + ":" + prefix, 
-                                   "CDATA", 
-                                   uri);
-            }
-        }
+
         for (int i = 0; i < streamReader.getAttributeCount(); i++) {
             String uri = streamReader.getAttributeNamespace(i);
             String localName = streamReader.getAttributeLocalName(i);
@@ -218,7 +212,7 @@ public class StaxSource extends SAXSource implements XMLReader {
         return false;
     }
 
-    public void setFeature(String name, boolean value) 
+    public void setFeature(String name, boolean value)
         throws SAXNotRecognizedException, SAXNotSupportedException {
     }
 
@@ -226,7 +220,7 @@ public class StaxSource extends SAXSource implements XMLReader {
         return null;
     }
 
-    public void setProperty(String name, Object value) 
+    public void setProperty(String name, Object value)
         throws SAXNotRecognizedException, SAXNotSupportedException {
         if ("http://xml.org/sax/properties/lexical-handler".equals(name)) {
             lexicalHandler = (LexicalHandler) value;
