@@ -210,8 +210,14 @@ public class SedaProducer extends DefaultAsyncProducer {
      * @param exchange the exchange to add to the queue
      */
     protected void addToQueue(Exchange exchange) throws SedaConsumerNotAvailableException {
+        BlockingQueue<Exchange> queue = null;
         QueueReference queueReference = endpoint.getQueueReference();
-        BlockingQueue<Exchange> queue = queueReference.getQueue();
+        if (queueReference != null) {
+            queue = queueReference.getQueue();
+        }
+        if (queue == null) {
+            throw new SedaConsumerNotAvailableException("No queue available on endpoint: " + endpoint, exchange);
+        }
 
         if (endpoint.isFailIfNoConsumers() && !queueReference.hasConsumers()) {
             throw new SedaConsumerNotAvailableException("No consumers available on endpoint: " + endpoint, exchange);

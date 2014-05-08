@@ -179,12 +179,13 @@ public class SedaEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
         }
     }
 
+    /**
+     * Get's the {@link QueueReference} for the this endpoint.
+     * @return the reference, or <tt>null</tt> if no queue reference exists.
+     */
     public synchronized QueueReference getQueueReference() {
         String key = getComponent().getQueueKey(getEndpointUri());
-        QueueReference ref =  getComponent().getQueueReference(key);
-        if (ref == null) {
-            LOG.warn("There was no queue reference for the endpoint {0}", getEndpointUri());
-        }
+        QueueReference ref = getComponent().getQueueReference(key);
         return ref;
     }
 
