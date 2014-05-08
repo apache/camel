@@ -126,9 +126,18 @@
     </wsdl:binding>
 
     <wsdl:service name="GreeterService">
-        <wsdl:port binding="tns:Greeter_SOAPBinding" name="GreeterPort">
-            <soap:address location="http://localhost:8000/SoapContext/GreeterPort"/>
+        <wsdl:port binding="tns:Greeter_SOAPBinding" name="GreeterSignaturePort">
+            <soap:address location="http://localhost:8000/SoapContext/GreeterSignaturePort"/>
             <wswa:UsingAddressing xmlns:wswa="http://www.w3.org/2005/02/addressing/wsdl"/>
+        </wsdl:port>
+        <wsdl:port binding="tns:Greeter_SOAPBinding" name="GreeterUsernameTokenPort">
+            <soap:address location="http://localhost:8000/SoapContext/GreeterUsernameTokenPort"/>
+        </wsdl:port>
+        <wsdl:port binding="tns:Greeter_SOAPBinding" name="GreeterEncryptionPort">
+            <soap:address location="http://localhost:8000/SoapContext/GreeterEncryptionPort"/>
+        </wsdl:port>
+        <wsdl:port binding="tns:Greeter_SOAPBinding" name="GreeterSecurityPolicyPort">
+            <soap:address location="http://localhost:8000/SoapContext/GreeterSecurityPolicyPort"/>
         </wsdl:port>
     </wsdl:service>
 </wsdl:definitions>
