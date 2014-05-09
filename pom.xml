@@ -381,6 +381,11 @@
                   <version>${jaxb-version}</version>
                 </dependency>
                 <dependency>
+                  <groupId>com.sun.xml.bind</groupId>
+                  <artifactId>jaxb-xjc</artifactId>
+                  <version>${jaxb-version}</version>
+                </dependency>
+                <dependency>
                   <groupId>ant-contrib</groupId>
                   <artifactId>ant-contrib</artifactId>
                   <version>1.0b3</version>
@@ -558,3 +563,4 @@
     </profile>
   </profiles>
 </project>
+
