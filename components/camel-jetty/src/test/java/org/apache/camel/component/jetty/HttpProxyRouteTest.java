@@ -17,6 +17,8 @@
 package org.apache.camel.component.jetty;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.Message;
+import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.TimeUtils;
@@ -53,6 +55,12 @@ public class HttpProxyRouteTest extends BaseJettyTest {
         String out = template.requestBody("http://localhost:{{port}}/proxyServer", null, String.class);
         assertEquals("Get a wrong host header", "localhost:" + getPort2(), out);
     }
+    
+    @Test
+    public void testHttpProxyFormHeader() throws Exception {
+        String out = template.requestBodyAndHeader("http://localhost:{{port}}/form", "username=abc&pass=password", Exchange.CONTENT_TYPE, "application/x-www-form-urlencoded", String.class);
+        assertEquals("Get a wrong response message", "username=abc&pass=password", out);
+    }
 
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
@@ -71,6 +79,19 @@ public class HttpProxyRouteTest extends BaseJettyTest {
                     .to("http://localhost:{{port2}}/host?bridgeEndpoint=true");
                 
                 from("jetty://http://localhost:{{port2}}/host").transform(header("host"));
+                
+                // check the from request
+                from("jetty://http://localhost:{{port}}/form?bridgeEndpoint=true")
+                    .process(new Processor() {
+                        @Override
+                        public void process(Exchange exchange) throws Exception {
+                            // just take out the message body and send it back
+                            Message in = exchange.getIn();
+                            String request = in.getBody(String.class);
+                            exchange.getOut().setBody(request);
+                        }
+                        
+                    });
             }
         };
     }    

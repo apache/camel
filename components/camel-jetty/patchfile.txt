@@ -1,0 +1,40 @@
+diff --git src/main/java/org/apache/camel/component/jetty/JettyHttpComponent.java src/main/java/org/apache/camel/component/jetty/JettyHttpComponent.java
+index 670a4a5..adc504f 100644
+--- src/main/java/org/apache/camel/component/jetty/JettyHttpComponent.java
++++ src/main/java/org/apache/camel/component/jetty/JettyHttpComponent.java
+@@ -299,6 +299,8 @@ public class JettyHttpComponent extends HttpComponent {
+                 // just set if we need sendServerVersion, the default value is true
+                 server.setSendServerVersion(endpoint.isSendServerVersion());
+                 server.addConnector(connector);
++                
++                server.setSendDateHeader(endpoint.isSendDateHeader());
+ 
+                 connectorRef = new ConnectorRef(server, connector, createServletForConnector(server, connector, endpoint.getHandlers(), endpoint));
+                 // must enable session before we start
+diff --git src/main/java/org/apache/camel/component/jetty/JettyHttpEndpoint.java src/main/java/org/apache/camel/component/jetty/JettyHttpEndpoint.java
+index 089e159..ea04e6e 100644
+--- src/main/java/org/apache/camel/component/jetty/JettyHttpEndpoint.java
++++ src/main/java/org/apache/camel/component/jetty/JettyHttpEndpoint.java
+@@ -49,6 +49,7 @@ public class JettyHttpEndpoint extends HttpEndpoint {
+     private boolean enableJmx;
+     private boolean enableMultipartFilter;
+     private boolean sendServerVersion = true;
++    private boolean sendDateHeader = false;     
+     private Filter multipartFilter;
+     private List<Filter> filters;
+     private Long continuationTimeout;
+@@ -176,6 +177,14 @@ public class JettyHttpEndpoint extends HttpEndpoint {
+         this.sendServerVersion = sendServerVersion;
+     }
+     
++    public boolean isSendDateHeader() { 
++    	return sendDateHeader;
++    }
++    
++    public void setSendDateHeader(boolean sendDateHeader) { 
++    	this.sendDateHeader = sendDateHeader;
++    }
++    
+     public boolean isEnableMultipartFilter() {
+         return enableMultipartFilter;
+     }
