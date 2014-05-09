@@ -171,9 +171,11 @@ public class DefaultHttpBinding implements HttpBinding {
         }
 
         LOG.trace("HTTP method {} with Content-Type {}", request.getMethod(), request.getContentType());
-        
+        Boolean flag = message.getHeader(Exchange.SKIP_WWW_FORM_URLENCODED, Boolean.class);
+        boolean skipWwwFormUrlEncoding =  flag != null ? flag : false; 
         if (request.getMethod().equals("POST") && request.getContentType() != null
-                && request.getContentType().startsWith(HttpConstants.CONTENT_TYPE_WWW_FORM_URLENCODED)) {
+                && request.getContentType().startsWith(HttpConstants.CONTENT_TYPE_WWW_FORM_URLENCODED)
+                && !skipWwwFormUrlEncoding) {
             String charset = request.getCharacterEncoding();
             if (charset == null) {
                 charset = "UTF-8";
