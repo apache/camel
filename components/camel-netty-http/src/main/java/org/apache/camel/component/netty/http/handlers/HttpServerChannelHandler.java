@@ -269,6 +269,7 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
     protected void beforeProcess(Exchange exchange, MessageEvent messageEvent) {
         if (consumer.getConfiguration().isBridgeEndpoint()) {
             exchange.setProperty(Exchange.SKIP_GZIP_ENCODING, Boolean.TRUE);
+            exchange.setProperty(Exchange.SKIP_WWW_FORM_URLENCODED, Boolean.TRUE);
         }
     }
 
