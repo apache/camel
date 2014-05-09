@@ -41,6 +41,11 @@ public class HttpMessage extends DefaultMessage {
         this.setHeader(Exchange.HTTP_SERVLET_REQUEST, request);
         this.setHeader(Exchange.HTTP_SERVLET_RESPONSE, response);
 
+        // Check the setting of exchange
+        Boolean flag = exchange.getProperty(Exchange.SKIP_WWW_FORM_URLENCODED, Boolean.class);
+        if (flag != null && flag) {
+            this.setHeader(Exchange.SKIP_WWW_FORM_URLENCODED, Boolean.TRUE);
+        }
         // use binding to read the request allowing end users to use their
         // implementation of the binding
         getEndpoint().getBinding().readRequest(request, this);
