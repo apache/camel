@@ -50,6 +50,10 @@ public class ServiceInterfaceStrategyTest extends Assert {
         QName elName3 = strategy.findQNameForSoapActionOrType("http://customerservice.example.com/getAllCustomers",
                 null);
         assertNull(elName3);
+        
+        QName elName4 = strategy.findQNameForSoapActionOrType("http://customerservice.example.com/getAllAmericanCustomers",
+                null);
+        assertNull(elName4);
 
         try {
             elName = strategy.findQNameForSoapActionOrType("test", Class.class);
