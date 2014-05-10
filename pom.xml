@@ -9,7 +9,7 @@
   <version>2.13.0</version>
 
   <name>Camel Metrics Component</name>
-  <url>http://www.myorganization.org</url>
+  <url>http://camel.apache.org</url>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
@@ -21,6 +21,11 @@
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-core</artifactId>
       <version>2.13.0</version>
+    </dependency>
+    <dependency>
+        <groupId>com.codahale.metrics</groupId>
+        <artifactId>metrics-core</artifactId>
+        <version>3.0.1</version>
     </dependency>
 
     <!-- logging -->
