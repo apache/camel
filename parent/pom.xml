@@ -175,7 +175,7 @@
     <hapi-version>2.1</hapi-version>
     <hawtbuf-version>1.10</hawtbuf-version>
     <hawtdb-version>1.6</hawtdb-version>
-    <hawtdispatch-version>1.20</hawtdispatch-version>
+    <hawtdispatch-version>1.21</hawtdispatch-version>
     <hazelcast-version>3.0.3</hazelcast-version>
     <hbase-version>0.94.10</hbase-version>
     <hbase-bundle-version>0.94.6_1</hbase-bundle-version>
@@ -195,7 +195,7 @@
     <isorelax-bundle-version>20050913_4</isorelax-bundle-version>
     <jini-version>2.1</jini-version>
     <jackson-version>1.9.12</jackson-version>
-    <jackson2-version>2.3.2</jackson2-version>
+    <jackson2-version>2.3.3</jackson2-version>
     <jackrabbit-version>2.6.5</jackrabbit-version>
     <jain-sip-ri-bundle-version>1.2.154_2</jain-sip-ri-bundle-version>
     <jasper-bundle-version>6.0.36_1</jasper-bundle-version>

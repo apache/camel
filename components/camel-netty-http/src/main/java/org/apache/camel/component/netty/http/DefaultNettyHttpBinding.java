@@ -195,8 +195,10 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
         }
 
         // if body is application/x-www-form-urlencoded then extract the body as query string and append as headers
+        // if it is a bridgeEndpoint we need to skip this part of work
         if (request.getMethod().getName().equals("POST") && request.getHeader(Exchange.CONTENT_TYPE) != null
-                && request.getHeader(Exchange.CONTENT_TYPE).startsWith(NettyHttpConstants.CONTENT_TYPE_WWW_FORM_URLENCODED)) {
+                && request.getHeader(Exchange.CONTENT_TYPE).startsWith(NettyHttpConstants.CONTENT_TYPE_WWW_FORM_URLENCODED)
+                && !configuration.isBridgeEndpoint()) {
 
             String charset = "UTF-8";
 
