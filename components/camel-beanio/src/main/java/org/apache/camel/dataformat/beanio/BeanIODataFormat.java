@@ -26,6 +26,7 @@ import java.nio.charset.Charset;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Properties;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
@@ -62,6 +63,7 @@ public class BeanIODataFormat extends ServiceSupport implements DataFormat, Came
     private boolean ignoreUnexpectedRecords;
     private boolean ignoreInvalidRecords;
     private Charset encoding = Charset.defaultCharset();
+    private Properties properties;
 
     public BeanIODataFormat() {
     }
@@ -81,7 +83,11 @@ public class BeanIODataFormat extends ServiceSupport implements DataFormat, Came
             // Load the mapping file using the resource helper to ensure it can be loaded in OSGi and other environments
             InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(getCamelContext().getClassResolver(), mapping);
             try {
-                factory.load(is);
+                if (properties != null) {
+                    factory.load(is, properties);
+                } else {
+                    factory.load(is);
+                }
             } finally {
                 IOHelper.close(is);
             }
@@ -246,5 +252,13 @@ public class BeanIODataFormat extends ServiceSupport implements DataFormat, Came
 
     public void setStreamName(String streamName) {
         this.streamName = streamName;
+    }
+
+    public Properties getProperties() {
+        return properties;
+    }
+
+    public void setProperties(Properties properties) {
+        this.properties = properties;
     }
 }
