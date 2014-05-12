@@ -76,7 +76,7 @@ public class DefaultTraceEventMessageTest extends ContextTestSupport {
         exchange.getIn().setBody(new File("target/test"));
         DefaultTraceEventMessage em = new DefaultTraceEventMessage(new Date(), null, exchange);
         
-        assertEquals("Get a wrong body string", "[Body is file based: target/test]", em.getBody());
+        assertEquals("Get a wrong body string", "[Body is file based: target" + File.separator + "test]", em.getBody());
         
         exchange.getIn().setBody(new ByteArrayInputStream("target/test".getBytes()));
         em = new DefaultTraceEventMessage(new Date(), null, exchange);
