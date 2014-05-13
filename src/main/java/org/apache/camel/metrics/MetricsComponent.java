@@ -9,6 +9,7 @@ import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.metrics.counter.CounterEndpoint;
 import org.apache.camel.metrics.meter.MeterEndpoint;
 import org.apache.camel.spi.Registry;
+import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -20,7 +21,7 @@ import com.codahale.metrics.Slf4jReporter;
  */
 public class MetricsComponent extends DefaultComponent {
 
-    public static final String NAME_METRIC_REGISTRY = "metricRegistry";
+    public static final String METRIC_REGISTRY_NAME = "metricRegistry";
     public static final MetricsType DEFAULT_METRICS_TYPE = MetricsType.METER;
     public static final long DEFAULT_REPORTING_INTERVAL_SECONDS = 60L;
 
@@ -30,8 +31,10 @@ public class MetricsComponent extends DefaultComponent {
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        Registry camelRegistry = getCamelContext().getRegistry();
-        getOrCreateMetricRegistry(camelRegistry, NAME_METRIC_REGISTRY);
+        if (metricRegistry == null) {
+            Registry camelRegistry = getCamelContext().getRegistry();
+            metricRegistry = getOrCreateMetricRegistry(camelRegistry, METRIC_REGISTRY_NAME);
+        }
         String metricsName = getMetricsName(remaining);
         MetricsType metricsType = getMetricsType(remaining);
         LOG.info("Metrics type: {}; name: {}", metricsType, metricsName);
@@ -41,8 +44,8 @@ public class MetricsComponent extends DefaultComponent {
     }
 
     String getMetricsName(String remaining) {
-        int index = remaining.indexOf(":");
-        return index < 0 ? remaining : remaining.substring(index + 1);
+        String name = ObjectHelper.after(remaining, ":");
+        return name == null ? remaining : name;
     }
 
     Endpoint createNewEndpoint(MetricRegistry registry, MetricsType type, String metricsName) {
@@ -61,14 +64,12 @@ public class MetricsComponent extends DefaultComponent {
     }
 
     MetricsType getMetricsType(String remaining) {
-        int index = remaining.indexOf(":");
-        String name = null;
+        String name = ObjectHelper.before(remaining, ":");
         MetricsType type;
-        if (index < 0) {
+        if (name == null) {
             type = DEFAULT_METRICS_TYPE;
         }
         else {
-            name = remaining.substring(0, index);
             type = MetricsType.getByName(name);
         }
         if (type == null) {
@@ -78,16 +79,14 @@ public class MetricsComponent extends DefaultComponent {
     }
 
     MetricRegistry getOrCreateMetricRegistry(Registry camelRegistry, String registryName) {
-        if (metricRegistry == null) {
-            LOG.debug("Looking up MetricRegistry from Camel Registry for name \"{}\"", registryName);
-            metricRegistry = getMetricRegistryFromCamelRegistry(camelRegistry, registryName);
-        }
-        if (metricRegistry == null) {
+        LOG.debug("Looking up MetricRegistry from Camel Registry for name \"{}\"", registryName);
+        MetricRegistry result = getMetricRegistryFromCamelRegistry(camelRegistry, registryName);
+        if (result == null) {
             LOG.debug("MetricRegistry not found from Camel Registry for name \"{}\"", registryName);
             LOG.info("Creating new default MetricRegistry");
-            metricRegistry = createMetricRegistry();
+            result = createMetricRegistry();
         }
-        return metricRegistry;
+        return result;
     }
 
     MetricRegistry getMetricRegistryFromCamelRegistry(Registry camelRegistry, String registryName) {
