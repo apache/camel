@@ -127,20 +127,4 @@
 
   </dependencies>
 
-  <build>
-
-	<plugins>
-      <plugin>
-        <artifactId>maven-surefire-plugin</artifactId>
-        <configuration>
-          <excludes>
-            <!-- tests may fail on CI servers -->
-            <exclude>**/*Test.*</exclude>            
-          </excludes>
-        </configuration>
-      </plugin>
-    </plugins>
-
-  </build>
-
 </project>
