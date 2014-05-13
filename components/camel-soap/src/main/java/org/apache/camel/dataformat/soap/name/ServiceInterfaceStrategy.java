@@ -158,13 +158,15 @@ public class ServiceInterfaceStrategy implements ElementNameStrategy {
             MethodInfo info = analyzeMethod(method);
             for (int i = 0; i < info.getIn().length; i++) {
                 TypeInfo ti = info.getIn()[i];
-                if (inTypeNameToQName.containsKey(ti.getTypeName())
-                    && (!(ti.getTypeName().equals("javax.xml.ws.Holder")))
-                    && (!(inTypeNameToQName.get(ti.getTypeName()).equals(ti.getElName())))) {
-                    LOG.warn("Ambiguous QName mapping. The type [ "
-                                                    + ti.getTypeName()
-                                                    + " ] is already mapped to a QName in this context.");
-                    continue;
+                if (inTypeNameToQName.containsKey(ti.getTypeName())) {
+                    if (ti.getTypeName() != null) {
+                        if (!(ti.getTypeName().equals("javax.xml.ws.Holder"))
+                            && (!(inTypeNameToQName.get(ti.getTypeName()).equals(ti.getElName())))) {
+                            LOG.warn("Ambiguous QName mapping. The type [ " + ti.getTypeName()
+                                     + " ] is already mapped to a QName in this context.");
+                            continue;
+                        }
+                    }
                 }
                 inTypeNameToQName.put(ti.getTypeName(), ti.getElName());
             }
