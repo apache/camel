@@ -26,8 +26,7 @@ public class MetricsComponentRouteTest extends CamelTestSupport {
             @Override
             public void configure() {
                 from("direct:start")
-                        // .to("metrics")
-                        // .to("metrics:")
+                        .to("metrics:timer:T?action=start")
                         .to("metrics:A")
                         .to("metrics:counter://B")
                         .to("metrics:counter:C?increment=19291")
@@ -36,7 +35,9 @@ public class MetricsComponentRouteTest extends CamelTestSupport {
                         .to("metrics:meter:D")
                         .to("metrics:meter:D?mark=90001")
                         .to("metrics:histogram:E")
+                        .to("metrics:timer:T")
                         .to("metrics:histogram:E?value=12000000031")
+                        .to("metrics:timer:T?action=stop")
                         .to("mock:result");
             }
         };
