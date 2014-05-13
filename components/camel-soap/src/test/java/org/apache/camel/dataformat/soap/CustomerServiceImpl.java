@@ -18,6 +18,7 @@ package org.apache.camel.dataformat.soap;
 
 import com.example.customerservice.Customer;
 import com.example.customerservice.CustomerService;
+import com.example.customerservice.GetAllAmericanCustomersResponse;
 import com.example.customerservice.GetAllCustomersResponse;
 import com.example.customerservice.GetCustomersByName;
 import com.example.customerservice.GetCustomersByNameResponse;
@@ -66,6 +67,18 @@ public class CustomerServiceImpl implements CustomerService {
         GetAllCustomersResponse response = new GetAllCustomersResponse();
         Customer customer = new Customer();
         customer.setName("Smith");
+        customer.setRevenue(100000);
+        response.getReturn().add(customer);
+        return response;
+    }
+    
+    /**
+     * This method is to test a call without input parameter
+     */
+    public GetAllAmericanCustomersResponse getAllAmericanCustomers() {
+        GetAllAmericanCustomersResponse response = new GetAllAmericanCustomersResponse();
+        Customer customer = new Customer();
+        customer.setName("Schmitz");
         customer.setRevenue(100000);
         response.getReturn().add(customer);
         return response;
