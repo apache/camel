@@ -16,6 +16,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.metrics.counter.CounterEndpoint;
+import org.apache.camel.metrics.histogram.HistogramEndpoint;
 import org.apache.camel.metrics.meter.MeterEndpoint;
 import org.apache.camel.spi.Registry;
 import org.junit.Before;
@@ -135,9 +136,11 @@ public class MetricsComponentTest {
         component.createNewEndpoint(metricRegistry, MetricsType.GAUGE, "a name");
     }
 
-    @Test(expected = RuntimeCamelException.class)
+    @Test
     public void testCreateNewEndpointForHistogram() throws Exception {
-        component.createNewEndpoint(metricRegistry, MetricsType.HISTOGRAM, "a name");
+        Endpoint endpoint = component.createNewEndpoint(metricRegistry, MetricsType.HISTOGRAM, "a name");
+        assertThat(endpoint, is(notNullValue()));
+        assertThat(endpoint, is(instanceOf(HistogramEndpoint.class)));
     }
 
     @Test(expected = RuntimeCamelException.class)

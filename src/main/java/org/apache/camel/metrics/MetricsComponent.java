@@ -7,6 +7,7 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.metrics.counter.CounterEndpoint;
+import org.apache.camel.metrics.histogram.HistogramEndpoint;
 import org.apache.camel.metrics.meter.MeterEndpoint;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.util.ObjectHelper;
@@ -56,6 +57,9 @@ public class MetricsComponent extends DefaultComponent {
                 break;
             case METER:
                 endpoint = new MeterEndpoint(registry, metricsName);
+                break;
+            case HISTOGRAM:
+                endpoint = new HistogramEndpoint(registry, metricsName);
                 break;
             default:
                 throw new RuntimeCamelException("Metrics type \"" + type.toString() + "\" not supported");

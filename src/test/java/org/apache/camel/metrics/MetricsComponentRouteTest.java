@@ -35,6 +35,8 @@ public class MetricsComponentRouteTest extends CamelTestSupport {
                         .to("metrics:counter:C")
                         .to("metrics:meter:D")
                         .to("metrics:meter:D?mark=90001")
+                        .to("metrics:histogram:E")
+                        .to("metrics:histogram:E?value=12000000031")
                         .to("mock:result");
             }
         };
