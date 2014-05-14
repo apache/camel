@@ -564,7 +564,7 @@ public class BindyCsvFactory extends BindyAbstractFactory implements BindyFactor
                     }
 
                     quoting = record.quoting();
-                    LOG.debug("CSV will be quoted: {}", messageOrdered);
+                    LOG.debug("CSV will be quoted: {}", quoting);
 
                     autospanLine = record.autospanLine();
                     LOG.debug("Autospan line in last record: {}", autospanLine);
