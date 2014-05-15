@@ -132,8 +132,8 @@ public class RabbitMQEndpointTest extends CamelTestSupport {
     }
 
     private ConnectionFactory createConnectionFactory(String uri) {
-        RabbitMQEndpoint endpoint = context.getEndpoint(uri, RabbitMQEndpoint.class); 
-        return endpoint.getConnectionFactory();
+        RabbitMQEndpoint endpoint = context.getEndpoint(uri, RabbitMQEndpoint.class);
+        return endpoint.getOrCreateConnectionFactory();
     }
 
     @Test

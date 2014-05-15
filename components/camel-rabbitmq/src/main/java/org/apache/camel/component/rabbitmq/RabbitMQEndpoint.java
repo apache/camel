@@ -126,7 +126,7 @@ public class RabbitMQEndpoint extends DefaultEndpoint {
         }
     }
 
-    private ConnectionFactory getOrCreateConnectionFactory() {
+    protected ConnectionFactory getOrCreateConnectionFactory() {
         if (connectionFactory == null) {
             ConnectionFactory factory = new ConnectionFactory();
             factory.setUsername(getUsername());
