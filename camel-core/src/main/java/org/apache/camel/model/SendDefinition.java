@@ -16,23 +16,29 @@
  */
 package org.apache.camel.model;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URISyntaxException;
+import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.processor.SendProcessor;
 import org.apache.camel.spi.Required;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.URISupport;
 
 /**
  * Base class for sending to an endpoint with an optional {@link ExchangePattern}
  *
- * @version 
+ * @version
  */
 @XmlAccessorType(XmlAccessType.FIELD)
 public abstract class SendDefinition<Type extends ProcessorDefinition<Type>> extends NoOutputDefinition<Type> implements EndpointRequiredDefinition {
@@ -40,6 +46,8 @@ public abstract class SendDefinition<Type extends ProcessorDefinition<Type>> ext
     protected String uri;
     @XmlAttribute
     protected String ref;
+    @XmlElementRef
+    private List<UriOption> uriOptions; // Only available through XML unmarshalling
     @XmlTransient
     protected Endpoint endpoint;
 
@@ -66,10 +74,7 @@ public abstract class SendDefinition<Type extends ProcessorDefinition<Type>> ext
 
     @Override
     public String getEndpointUri() {
-        if (uri != null) {
-            return uri;
-        }
-        return null;
+        return getUri();
     }
 
     // Properties
@@ -83,12 +88,24 @@ public abstract class SendDefinition<Type extends ProcessorDefinition<Type>> ext
     }
 
     public String getUri() {
-        return uri;
+        if (this.uri != null && this.uriOptions != null) {
+            try {
+                this.uri = URISupport.appendParametersToURI(this.uri, UriOption.transformOptions(this.uriOptions));
+            } catch (URISyntaxException e) {
+                throw new RuntimeCamelException(String.format("Cannot append uri options to %s", this.uri), e);
+            } catch (UnsupportedEncodingException e) {
+                throw new RuntimeCamelException(String.format("Cannot append uri options to %s", this.uri), e);
+            } finally {
+                this.uriOptions = null;
+            }
+        }
+        return this.uri;
     }
 
     @Required
     public void setUri(String uri) {
         this.uri = uri;
+        this.uriOptions = null;
     }
 
     /**
@@ -106,6 +123,7 @@ public abstract class SendDefinition<Type extends ProcessorDefinition<Type>> ext
     public void setEndpoint(Endpoint endpoint) {
         this.endpoint = endpoint;
         this.uri = null;
+        this.uriOptions = null;
         if (endpoint != null) {
             this.uri = endpoint.getEndpointUri();
         }

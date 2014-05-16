@@ -48,12 +48,12 @@ public class URISupportTest extends ContextTestSupport {
         out1 = URISupport.normalizeUri("seda:foo?concurrentConsumer=2");
         out2 = URISupport.normalizeUri("seda:foo");
         assertNotSame(out1, out2);
-        
+
         out1 = URISupport.normalizeUri("foo:?test=1");
         out2 = URISupport.normalizeUri("foo://?test=1");
         assertEquals("foo://?test=1", out2);
         assertEquals(out1, out2);
-        
+
     }
 
     public void testNormalizeEndpointUriNoParam() throws Exception {
@@ -94,9 +94,9 @@ public class URISupportTest extends ContextTestSupport {
         assertEquals(out1, out2);
         assertTrue("Should have //", out1.startsWith("http://"));
         assertTrue("Should have //", out2.startsWith("http://"));
-        
+
     }
-    
+
     public void testNormalizeIPv6HttpEndpoint() throws Exception {
         String result = URISupport.normalizeUri("http://[2a00:8a00:6000:40::1413]:30300/test");
         assertEquals("http://[2a00:8a00:6000:40::1413]:30300/test", result);
@@ -212,13 +212,13 @@ public class URISupportTest extends ContextTestSupport {
         String expected = "jt400://GEORGE:xxxxxx@LIVERPOOL/QSYS.LIB/BEATLES.LIB/PENNYLANE.DTAQ";
         assertEquals(expected, URISupport.sanitizeUri(uri));
     }
-    
+
     public void testSanitizePathWithUserInfo() {
         String path = "GEORGE:HARRISON@LIVERPOOL/QSYS.LIB/BEATLES.LIB/PENNYLANE.PGM";
         String expected = "GEORGE:xxxxxx@LIVERPOOL/QSYS.LIB/BEATLES.LIB/PENNYLANE.PGM";
         assertEquals(expected, URISupport.sanitizePath(path));
     }
-    
+
     public void testSanitizePathWithoutSensitiveInfoIsUnchanged() {
         String path = "myhost:8080/mypath";
         assertEquals(path, URISupport.sanitizePath(path));
@@ -288,4 +288,27 @@ public class URISupportTest extends ContextTestSupport {
         assertEquals("somechat", map.get("serviceName"));
     }
 
+    public void testAppendParameterToUriWithoutParameters() throws Exception {
+        Map<String, Object> newParameters = new HashMap<String, Object>();
+        newParameters.put("foo", "123");
+        String newUri = URISupport.appendParametersToURI("direct:foo", newParameters);
+
+        assertEquals("direct://foo?foo=123", newUri);
+    }
+
+    public void testAppendParameterToUri() throws Exception {
+        Map<String, Object> newParameters = new HashMap<String, Object>();
+        newParameters.put("bar", "456");
+        String newUri = URISupport.appendParametersToURI("direct:foo?foo=123", newParameters);
+
+        assertEquals("direct://foo?foo=123&bar=456", newUri);
+    }
+
+    public void testAppendParameterToUriAndReplaceExistingOne() throws Exception {
+        Map<String, Object> newParameters = new HashMap<String, Object>();
+        newParameters.put("foo", "456");
+        String newUri = URISupport.appendParametersToURI("direct:foo?foo=123", newParameters);
+
+        assertEquals("direct://foo?foo=456", newUri);
+    }
 }
