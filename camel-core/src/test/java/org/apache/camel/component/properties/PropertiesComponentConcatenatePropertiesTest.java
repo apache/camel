@@ -108,5 +108,22 @@ public class PropertiesComponentConcatenatePropertiesTest extends ContextTestSup
 
         assertMockEndpointsSatisfied();
     }
+    
+    public void testWithDottedComplexPropertiesComponentDefault() throws Exception {
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("direct:start").setBody(simple("${properties:completedotted.property}"))
+                .to("mock:result");
+            }
+        });
+        context.start();
+
+        getMockEndpoint("mock:result").expectedBodiesReceived("file.dirname.l");
+
+        template.sendBody("direct:start", "Test");
+
+        assertMockEndpointsSatisfied();
+    }
 
 }
