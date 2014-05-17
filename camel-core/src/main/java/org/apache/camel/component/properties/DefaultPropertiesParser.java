@@ -152,6 +152,18 @@ public class DefaultPropertiesParser implements AugmentedPropertyNameAwareProper
         if (ObjectHelper.isNotEmpty(uri)) {
             uri = uri.trim();
             if (uri.startsWith(prefixToken) && uri.endsWith(suffixToken)) {
+                if (!isConcatenateProperty(uri, prefixToken, suffixToken)){
+                	return true;
+                }
+            }
+        }
+        return false;
+    }
+    
+    private boolean isConcatenateProperty(String uri, String prefixToken, String suffixToken) {
+        if (ObjectHelper.isNotEmpty(uri)) {
+            uri = uri.trim();
+            if (uri.startsWith(prefixToken) && uri.endsWith(suffixToken) && uri.contains(suffixToken + prefixToken)) {
                 return true;
             }
         }
