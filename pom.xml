@@ -52,6 +52,8 @@
 
     <!-- eclipse plugin need the jaxb in this pom.xml file -->
     <jaxb-version>2.2.7</jaxb-version>
+    
+    <properties-maven-plugin-version>1.0-alpha-2</properties-maven-plugin-version>
   </properties>
 
   <mailingLists>
@@ -139,7 +141,7 @@
         <plugin>
             <groupId>org.codehaus.mojo</groupId>
             <artifactId>properties-maven-plugin</artifactId>
-            <version>1.0-alpha-2</version>
+            <version>${properties-maven-plugin-version}</version>
             <executions>
                 <execution>
                     <phase>initialize</phase>
@@ -235,6 +237,31 @@
             <goals>deploy</goals>
             <arguments>-Prelease,enable-schemagen,apt,sourcecheck,validate,hibernate</arguments>
             <autoVersionSubmodules>true</autoVersionSubmodules>
+          </configuration>
+        </plugin>
+        <!-- Eclipse m2e Lifecycle Management -->
+        <plugin>
+          <groupId>org.eclipse.m2e</groupId>
+          <artifactId>lifecycle-mapping</artifactId>
+          <version>1.0.0</version>
+          <configuration>
+            <lifecycleMappingMetadata>
+              <pluginExecutions>
+                <pluginExecution>
+                  <pluginExecutionFilter>
+                    <groupId>org.codehaus.mojo</groupId>
+                    <artifactId>properties-maven-plugin</artifactId>
+                    <versionRange>${properties-maven-plugin-version}</versionRange>
+                    <goals>
+                      <goal>set-system-properties</goal>
+                    </goals>
+                  </pluginExecutionFilter>
+                  <action>
+                    <ignore />
+                  </action>
+                </pluginExecution>
+              </pluginExecutions>
+            </lifecycleMappingMetadata>
           </configuration>
         </plugin>
       </plugins>
