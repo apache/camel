@@ -2527,6 +2527,13 @@
               </plugin>
             </plugins>
           </configuration>
+          <dependencies>
+              <dependency>
+                  <groupId>xerces</groupId>
+                  <artifactId>xercesImpl</artifactId>
+                  <version>2.11.0</version>
+              </dependency>
+          </dependencies>
         </plugin>
         <plugin>
           <groupId>org.mortbay.jetty</groupId>
