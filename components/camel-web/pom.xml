@@ -538,8 +538,8 @@
                                 </pluginExecution>
                                 <pluginExecution>
                                     <pluginExecutionFilter>
-                                        <groupId>org.fusesource.scalate</groupId>
-                                        <artifactId>maven-scalate-plugin_2.10</artifactId>
+                                        <groupId>org.scalatra.scalate</groupId>
+                                        <artifactId>maven-scalate-plugin_2.11</artifactId>
                                         <versionRange>${scalate-version}</versionRange>
                                         <goals>
                                             <goal>precompile</goal>
