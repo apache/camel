@@ -28,5 +28,42 @@
       </unmarshal>
       <to uri="mock:result" />
     </route>
+
+	<!-- skipFirstLine="false" since there's no heder into the CSV (let's use 
+		confugured one) -->
+	<route>
+		<from uri="direct:start2" />
+		<unmarshal>
+			<!-- make use of a configuration to setup map headers -->
+			<csv delimiter="|" useMaps="true" configRef="csvConfig" />
+		</unmarshal>
+		<to uri="mock:result2" />
+	</route>
+
+	<!-- skip first line since we want to use our custom header -->
+	<route>
+		<from uri="direct:start3" />
+		<unmarshal>
+			<!-- make use of a configuration to setup map headers -->
+			<csv delimiter="|" useMaps="true" skipFirstLine="true" configRef="csvConfig" />
+		</unmarshal>
+		<to uri="mock:result3" />
+	</route>
   </camelContext>
+
+	<bean id="csvConfig" class="org.apache.commons.csv.writer.CSVConfig">
+		<property name="fields">
+			<list>
+				<bean class="org.apache.commons.csv.writer.CSVField">
+					<property name="name" value="MyOrderId" />
+				</bean>
+				<bean class="org.apache.commons.csv.writer.CSVField">
+					<property name="name" value="MyItem" />
+				</bean>
+				<bean class="org.apache.commons.csv.writer.CSVField">
+					<property name="name" value="MyAmount" />
+				</bean>
+			</list>
+		</property>
+	</bean>
 </beans>
