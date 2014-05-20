@@ -41,7 +41,6 @@ public class MyProcessor implements Processor {
             exchange.getOut().setBody(parameters);
         } else {
             List<Object> parameters = in.getBody(List.class);
-            System.out.println(parameters);
             int amount = (Integer) parameters.remove(0);
             Holder<String> securityOrder = (Holder<String>)parameters.get(0);
             securityOrder.value = "secureParts";
