@@ -44,7 +44,7 @@ public class CounterProducerTest {
     public void setUp() throws Exception {
         producer = new CounterProducer(endpoint);
         inOrder = Mockito.inOrder(endpoint, exchange, registry, counter);
-        when(endpoint.getMetricsName()).thenReturn(ENDPOINT_NAME);
+        when(endpoint.getMetricsName(exchange)).thenReturn(ENDPOINT_NAME);
         when(endpoint.getRegistry()).thenReturn(registry);
         when(registry.counter(ENDPOINT_NAME)).thenReturn(counter);
     }
@@ -59,7 +59,7 @@ public class CounterProducerTest {
         when(endpoint.getIncrement()).thenReturn(INCREMENT);
         when(endpoint.getDecrement()).thenReturn(null);
         producer.process(exchange);
-        inOrder.verify(endpoint, times(1)).getMetricsName();
+        inOrder.verify(endpoint, times(1)).getMetricsName(exchange);
         inOrder.verify(endpoint, times(1)).getRegistry();
         inOrder.verify(registry, times(1)).counter(ENDPOINT_NAME);
         inOrder.verify(endpoint, times(1)).getIncrement();
@@ -73,7 +73,7 @@ public class CounterProducerTest {
         when(endpoint.getIncrement()).thenReturn(null);
         when(endpoint.getDecrement()).thenReturn(DECREMENT);
         producer.process(exchange);
-        inOrder.verify(endpoint, times(1)).getMetricsName();
+        inOrder.verify(endpoint, times(1)).getMetricsName(exchange);
         inOrder.verify(endpoint, times(1)).getRegistry();
         inOrder.verify(registry, times(1)).counter(ENDPOINT_NAME);
         inOrder.verify(endpoint, times(1)).getIncrement();
@@ -87,7 +87,7 @@ public class CounterProducerTest {
         when(endpoint.getIncrement()).thenReturn(INCREMENT);
         when(endpoint.getDecrement()).thenReturn(DECREMENT);
         producer.process(exchange);
-        inOrder.verify(endpoint, times(1)).getMetricsName();
+        inOrder.verify(endpoint, times(1)).getMetricsName(exchange);
         inOrder.verify(endpoint, times(1)).getRegistry();
         inOrder.verify(registry, times(1)).counter(ENDPOINT_NAME);
         inOrder.verify(endpoint, times(1)).getIncrement();
@@ -101,7 +101,7 @@ public class CounterProducerTest {
         when(endpoint.getIncrement()).thenReturn(null);
         when(endpoint.getDecrement()).thenReturn(null);
         producer.process(exchange);
-        inOrder.verify(endpoint, times(1)).getMetricsName();
+        inOrder.verify(endpoint, times(1)).getMetricsName(exchange);
         inOrder.verify(endpoint, times(1)).getRegistry();
         inOrder.verify(registry, times(1)).counter(ENDPOINT_NAME);
         inOrder.verify(endpoint, times(1)).getIncrement();

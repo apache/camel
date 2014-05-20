@@ -21,7 +21,7 @@ public class HistogramProducer extends DefaultProducer {
     public void process(Exchange exchange) throws Exception {
         HistogramEndpoint endpoint = (HistogramEndpoint) getEndpoint();
         MetricRegistry registry = endpoint.getRegistry();
-        String metricsName = endpoint.getMetricsName();
+        String metricsName = endpoint.getMetricsName(exchange);
         Histogram histogram = registry.histogram(metricsName);
         Long value = endpoint.getValue();
         if (value != null) {

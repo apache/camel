@@ -44,7 +44,7 @@ public class HistogramProducerTest {
         producer = new HistogramProducer(endpoint);
         inOrder = Mockito.inOrder(endpoint, registry, histogram, exchange);
         when(endpoint.getRegistry()).thenReturn(registry);
-        when(endpoint.getMetricsName()).thenReturn(METRICS_NAME);
+        when(endpoint.getMetricsName(exchange)).thenReturn(METRICS_NAME);
         when(registry.histogram(METRICS_NAME)).thenReturn(histogram);
     }
 
@@ -58,7 +58,7 @@ public class HistogramProducerTest {
         when(endpoint.getValue()).thenReturn(VALUE);
         producer.process(exchange);
         inOrder.verify(endpoint, times(1)).getRegistry();
-        inOrder.verify(endpoint, times(1)).getMetricsName();
+        inOrder.verify(endpoint, times(1)).getMetricsName(exchange);
         inOrder.verify(registry, times(1)).histogram(METRICS_NAME);
         inOrder.verify(endpoint, times(1)).getValue();
         inOrder.verify(histogram, times(1)).update(VALUE);
@@ -70,7 +70,7 @@ public class HistogramProducerTest {
         when(endpoint.getValue()).thenReturn(null);
         producer.process(exchange);
         inOrder.verify(endpoint, times(1)).getRegistry();
-        inOrder.verify(endpoint, times(1)).getMetricsName();
+        inOrder.verify(endpoint, times(1)).getMetricsName(exchange);
         inOrder.verify(registry, times(1)).histogram(METRICS_NAME);
         inOrder.verify(endpoint, times(1)).getValue();
         inOrder.verifyNoMoreInteractions();

@@ -26,6 +26,7 @@ public class MetricsComponent extends DefaultComponent {
     public static final String METRIC_REGISTRY_NAME = "metricRegistry";
     public static final MetricsType DEFAULT_METRICS_TYPE = MetricsType.METER;
     public static final long DEFAULT_REPORTING_INTERVAL_SECONDS = 60L;
+    public static final String HEADER_METRIC_NAME = "org.apache.camel.metrics.metricName";
 
     private static final Logger LOG = LoggerFactory.getLogger(MetricsComponent.class);
 

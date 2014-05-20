@@ -15,7 +15,7 @@ public class CounterProducer extends DefaultProducer {
     @Override
     public void process(Exchange exchange) throws Exception {
         CounterEndpoint endpoint = (CounterEndpoint) getEndpoint();
-        String metricName = endpoint.getMetricsName();
+        String metricName = endpoint.getMetricsName(exchange);
         Counter counter = endpoint.getRegistry().counter(metricName);
         Long increment = endpoint.getIncrement();
         Long decrement = endpoint.getDecrement();

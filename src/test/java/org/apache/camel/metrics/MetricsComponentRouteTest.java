@@ -1,5 +1,9 @@
 package org.apache.camel.metrics;
 
+import java.util.Date;
+import java.util.HashMap;
+import java.util.Map;
+
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
@@ -17,6 +21,24 @@ public class MetricsComponentRouteTest extends CamelTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(1);
         template.sendBody(new Object());
+        assertMockEndpointsSatisfied();
+    }
+
+    @Test
+    public void testMessageContentDelivery() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        String body = "Message Body";
+        String header1 = "Header 1";
+        String header2 = "Header 2";
+        Object value1 = new Date();
+        Object value2 = System.currentTimeMillis();
+        mock.expectedBodiesReceived(body);
+        mock.expectedHeaderReceived(header1, value1);
+        mock.expectedHeaderReceived(header2, value2);
+        Map<String, Object> headers = new HashMap<String, Object>();
+        headers.put(header1, value1);
+        headers.put(header2, value2);
+        template.sendBodyAndHeaders(body, headers);
         assertMockEndpointsSatisfied();
     }
 

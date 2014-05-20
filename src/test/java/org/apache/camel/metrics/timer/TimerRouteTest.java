@@ -1,4 +1,4 @@
-package org.apache.camel.metrics;
+package org.apache.camel.metrics.timer;
 
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.when;
@@ -8,6 +8,7 @@ import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.metrics.MetricsComponent;
 import org.apache.camel.spring.javaconfig.SingleRouteCamelConfiguration;
 import org.apache.camel.test.spring.CamelSpringDelegatingTestContextLoader;
 import org.apache.camel.test.spring.CamelSpringJUnit4ClassRunner;
@@ -20,15 +21,15 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.ContextConfiguration;
 
-import com.codahale.metrics.Counter;
 import com.codahale.metrics.MetricRegistry;
+import com.codahale.metrics.Timer;
 
 @RunWith(CamelSpringJUnit4ClassRunner.class)
 @ContextConfiguration(
-        classes = { MetricComponentSpringTest.TestConfig.class },
+        classes = { TimerRouteTest.TestConfig.class },
         loader = CamelSpringDelegatingTestContextLoader.class)
 @MockEndpoints
-public class MetricComponentSpringTest {
+public class TimerRouteTest {
 
     @EndpointInject(uri = "mock:out")
     private MockEndpoint endpoint;
@@ -47,7 +48,7 @@ public class MetricComponentSpringTest {
                 @Override
                 public void configure() throws Exception {
                     from("direct:in")
-                            .to("metrics:counter:A?increment=512")
+                            .to("metrics:timer:A?action=start")
                             .to("mock:out");
                 }
             };
@@ -60,18 +61,18 @@ public class MetricComponentSpringTest {
     }
 
     @Test
-    public void testMetricsRegistryFromCamelRegistry() throws Exception {
+    public void testOverrideMetricsName() throws Exception {
         // TODO - 12.05.2014, Lauri - is there any better way to set this up?
         MetricRegistry mockRegistry = endpoint.getCamelContext().getRegistry().lookupByNameAndType(MetricsComponent.METRIC_REGISTRY_NAME, MetricRegistry.class);
-        Counter mockCounter = Mockito.mock(Counter.class);
-        InOrder inOrder = Mockito.inOrder(mockRegistry, mockCounter);
-        when(mockRegistry.counter("A")).thenReturn(mockCounter);
+        Timer mockTimer = Mockito.mock(Timer.class);
+        InOrder inOrder = Mockito.inOrder(mockRegistry, mockTimer);
+        when(mockRegistry.timer("B")).thenReturn(mockTimer);
 
         endpoint.expectedMessageCount(1);
-        producer.sendBody(new Object());
+        producer.sendBodyAndHeader(new Object(), MetricsComponent.HEADER_METRIC_NAME, "B");
         endpoint.assertIsSatisfied();
-        inOrder.verify(mockRegistry, times(1)).counter("A");
-        inOrder.verify(mockCounter, times(1)).inc(512L);
+        inOrder.verify(mockRegistry, times(1)).timer("B");
+        inOrder.verify(mockTimer, times(1)).time();
         inOrder.verifyNoMoreInteractions();
     }
 }

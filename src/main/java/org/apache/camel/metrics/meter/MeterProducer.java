@@ -16,7 +16,7 @@ public class MeterProducer extends DefaultProducer {
     @Override
     public void process(Exchange exchange) throws Exception {
         MeterEndpoint endpoint = (MeterEndpoint) getEndpoint();
-        String metricsName = endpoint.getMetricsName();
+        String metricsName = endpoint.getMetricsName(exchange);
         MetricRegistry registry = endpoint.getRegistry();
         Meter meter = registry.meter(metricsName);
         Long mark = endpoint.getMark();

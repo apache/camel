@@ -22,7 +22,7 @@ public class TimerProducer extends DefaultProducer {
     public void process(Exchange exchange) throws Exception {
         TimerEndpoint endpoint = (TimerEndpoint) getEndpoint();
         MetricRegistry registry = endpoint.getRegistry();
-        String metricsName = endpoint.getMetricsName();
+        String metricsName = endpoint.getMetricsName(exchange);
         TimerAction action = endpoint.getAction();
         if (action == TimerAction.start) {
             handleStart(exchange, registry, metricsName);

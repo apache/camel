@@ -57,6 +57,22 @@ MetricRegistry instance can be configured by adding bean with name ```metricRegi
 
 Each metric has type and name. Supported types are ```counter```, ```meter```, ```histogram``` and ```timer```. Metric name is simple string. If metric type is not provided then type ```meter``` is used by default.
 
+### Headers
+
+Metric name defined in URI can be overridden by using Header with name ```org.apache.camel.metrics.metricName```.
+
+For example
+
+```java
+from("direct:in")
+    .setHeader(MetricsComponent.HEADER_METRIC_NAME, constant("new.name"))
+    .to("metrics:counter:name.not.used")
+    .to("direct:out")
+```
+
+will update counter with name ```new.name``` instead of ```name.not.used```.
+
+
 ## Metrics type counter
 
 ```
