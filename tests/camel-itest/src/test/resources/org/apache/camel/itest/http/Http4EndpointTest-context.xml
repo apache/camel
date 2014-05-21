@@ -27,7 +27,7 @@
     <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"/>
     
     <bean id="httpEndpoint" class="org.apache.camel.component.http4.HttpEndpoint">
-        <property name="httpUri" value="http://127.0.0.1:${HttpTestServer.Port}/"/>
+        <property name="httpUri" value="http://localhost:${HttpTestServer.Port}/"/>
         <property name="clientBuilder" ref="clientBuilder"/>
         <property name="clientConnectionManager" ref="myManager"/>
     </bean>
