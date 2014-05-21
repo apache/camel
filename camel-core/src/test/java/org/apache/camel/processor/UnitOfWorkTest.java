@@ -41,6 +41,7 @@ public class UnitOfWorkTest extends ContextTestSupport {
         assertTrue("Exchange did not complete.", doneLatch.await(5, TimeUnit.SECONDS));
         assertNull("Should not have failed", failed);
         assertNotNull("Should have received completed notification", completed);
+        assertEquals("Should have propagated the header inside the Synchronization.onComplete() callback", "bar", completed.getIn().getHeader("foo"));
 
         log.info("Received completed: " + completed);
     }
@@ -51,6 +52,7 @@ public class UnitOfWorkTest extends ContextTestSupport {
         assertTrue("Exchange did not complete.", doneLatch.await(5, TimeUnit.SECONDS));
         assertNull("Should not have completed", completed);
         assertNotNull("Should have received failed notification", failed);
+        assertEquals("Should have propagated the header inside the Synchronization.onFailure() callback", "bar", failed.getIn().getHeader("foo"));
 
         log.info("Received fail: " + failed);
     }
@@ -61,6 +63,7 @@ public class UnitOfWorkTest extends ContextTestSupport {
         assertTrue("Exchange did not complete.", doneLatch.await(5, TimeUnit.SECONDS));
         assertNull("Should not have completed", completed);
         assertNotNull("Should have received failed notification", failed);
+        assertEquals("Should have propagated the header inside the Synchronization.onFailure() callback", "bar", failed.getIn().getHeader("foo"));
 
         log.info("Received fail: " + failed);
     }
@@ -86,6 +89,7 @@ public class UnitOfWorkTest extends ContextTestSupport {
         
         template.send(uri, new Processor() {
             public void process(Exchange exchange) throws Exception {
+                exchange.getIn().setHeader("foo", "bar");
                 exchange.getIn().setBody("<hello>world!</hello>");
             }
         });
