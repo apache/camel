@@ -32,8 +32,10 @@ import org.apache.camel.spi.Synchronization;
  */
 public class SedaUnitOfWorkTest extends ContextTestSupport {
 
-    private static volatile String sync;
-    private static volatile String lastOne;
+    private volatile Object foo;
+    private volatile Object kaboom;
+    private volatile String sync;
+    private volatile String lastOne;
 
     public void testSedaUOW() throws Exception {
         NotifyBuilder notify = new NotifyBuilder(context).whenDone(2).create();
@@ -41,13 +43,26 @@ public class SedaUnitOfWorkTest extends ContextTestSupport {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
 
-        template.sendBody("direct:start", "Hello World");
+        template.sendBodyAndHeader("direct:start", "Hello World", "foo", "bar");
 
         assertMockEndpointsSatisfied();
         notify.matchesMockWaitTime();
 
         assertEquals("onCompleteA", sync);
         assertEquals("onCompleteA", lastOne);
+        assertEquals("Should have propagated the header inside the Synchronization.onComplete() callback", "bar", foo);
+    }
+
+    public void testSedaUOWWithException() throws Exception {
+        NotifyBuilder notify = new NotifyBuilder(context).whenDone(2).create();
+
+        template.sendBodyAndHeader("direct:start", "Hello World", "kaboom", "yes");
+
+        notify.matchesMockWaitTime();
+
+        assertEquals("onFailureA", sync);
+        assertEquals("onFailureA", lastOne);
+        assertEquals("Should have propagated the header inside the Synchronization.onFailure() callback", "yes", kaboom);
     }
 
     @Override
@@ -58,7 +73,7 @@ public class SedaUnitOfWorkTest extends ContextTestSupport {
                 context.setTracing(true);
 
                 from("direct:start")
-                        .process(new MyUOWProcessor("A"))
+                        .process(new MyUOWProcessor(SedaUnitOfWorkTest.this, "A"))
                         .to("seda:foo");
 
                 from("seda:foo")
@@ -72,6 +87,14 @@ public class SedaUnitOfWorkTest extends ContextTestSupport {
                                 lastOne = "processor";
                             }
                         })
+                        .process(new Processor() {
+                            public void process(Exchange exchange) throws Exception {    
+                                if ("yes".equals(exchange.getIn().getHeader("kaboom"))) {
+                                    throw new IllegalStateException("kaboom done!");
+                                }
+                                lastOne = "processor2";
+                            }
+                        })
                         .to("mock:result");
             }
         };
@@ -79,22 +102,26 @@ public class SedaUnitOfWorkTest extends ContextTestSupport {
 
     private static final class MyUOWProcessor implements Processor {
 
+        private SedaUnitOfWorkTest test;
         private String id;
 
-        private MyUOWProcessor(String id) {
+        private MyUOWProcessor(SedaUnitOfWorkTest test, String id) {
+            this.test = test;
             this.id = id;
         }
 
         public void process(Exchange exchange) throws Exception {
             exchange.getUnitOfWork().addSynchronization(new Synchronization() {
                 public void onComplete(Exchange exchange) {
-                    sync = "onComplete" + id;
-                    lastOne = sync;
+                    test.sync = "onComplete" + id;
+                    test.lastOne = test.sync;
+                    test.foo = exchange.getIn().getHeader("foo");
                 }
 
                 public void onFailure(Exchange exchange) {
-                    sync = "onFailure" + id;
-                    lastOne = sync;
+                    test.sync = "onFailure" + id;
+                    test.lastOne = test.sync;
+                    test.kaboom = exchange.getIn().getHeader("kaboom");
                 }
             });
         }
