@@ -300,6 +300,22 @@ public final class JmsMessageHelper {
 
         return null;
     }
+    
+    /**
+     * Gets the String Properties from the message.
+     *
+     * @param message  the message
+     * @return the type, can be <tt>null</tt>
+     */
+    public static String getStringProperty(Message message, String propertyName) {
+        try {
+            return message.getStringProperty(propertyName);
+        } catch (Exception e) {
+            // ignore due some broker client does not support accessing StringProperty
+        }
+
+        return null;
+    }
 
     /**
      * Gets the JMSRedelivered from the message.
