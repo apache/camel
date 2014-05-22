@@ -169,8 +169,8 @@ public class JmsBinding {
                 map.put("JMSType", JmsMessageHelper.getJMSType(jmsMessage));
 
                 // this works around a bug in the ActiveMQ property handling
-                map.put("JMSXGroupID", jmsMessage.getStringProperty("JMSXGroupID"));
-                map.put("JMSXUserID", jmsMessage.getStringProperty("JMSXUserID"));
+                map.put("JMSXGroupID", JmsMessageHelper.getStringProperty(jmsMessage, "JMSXGroupID"));
+                map.put("JMSXUserID", JmsMessageHelper.getStringProperty(jmsMessage, "JMSXUserID"));
             } catch (JMSException e) {
                 throw new RuntimeCamelException(e);
             }
