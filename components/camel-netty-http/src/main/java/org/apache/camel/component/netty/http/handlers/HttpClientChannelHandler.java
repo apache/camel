@@ -29,6 +29,7 @@ import org.jboss.netty.channel.MessageEvent;
 import org.jboss.netty.handler.codec.http.HttpChunk;
 import org.jboss.netty.handler.codec.http.HttpChunkTrailer;
 import org.jboss.netty.handler.codec.http.HttpResponse;
+import org.jboss.netty.handler.codec.http.HttpResponseStatus;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -93,7 +94,11 @@ public class HttpClientChannelHandler extends ClientChannelHandler {
             if (LOG.isTraceEnabled()) {
                 LOG.trace("HttpResponse received: {} chunked:", response, response.isChunked());
             }
-            if (!response.isChunked()) {
+            if (response.getStatus().getCode() == HttpResponseStatus.CONTINUE.getCode()) {
+                if (LOG.isTraceEnabled()) {
+                    LOG.trace("HttpResponse received: {}: {}", response, response.getStatus());
+                }
+            } else if (!response.isChunked()) {
                 // the response is not chunked so we have all the content
                 super.messageReceived(ctx, messageEvent);
             } else {
