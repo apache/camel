@@ -81,13 +81,6 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
 
         LOG.debug("Message received: {}", request);
 
-        if (is100ContinueExpected(request)) {
-            // send back http 100 response to continue
-            HttpResponse response = new DefaultHttpResponse(HTTP_1_1, CONTINUE);
-            messageEvent.getChannel().write(response);
-            return;
-        }
-
         if (consumer.isSuspended()) {
             // are we suspended?
             LOG.debug("Consumer suspended, cannot service request {}", request);
