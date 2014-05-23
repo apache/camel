@@ -18,9 +18,12 @@ package org.apache.camel.example.cxf.httptojms;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.cxf.CxfComponent;
+import org.apache.camel.component.cxf.CxfEndpoint;
 import org.apache.camel.component.properties.PropertiesComponent;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.AvailablePortFinder;
+import org.apache.hello_world_soap_http.Greeter;
 
 /**
  * An example for demonstrating how Camel works as a Router.
@@ -29,7 +32,9 @@ import org.apache.camel.test.AvailablePortFinder;
  */
 public final class CamelCxfExample {
     private static final String ROUTER_ADDRESS = "http://localhost:{{routerPort}}/SoapContext/SoapPort";
-    private static final String SERVICE_ADDRESS = "http://localhost:{{servicePort}}/SoapContext/SoapPort";
+    private static final String SERVICE_ADDRESS = "jms:jndi:dynamicQueues/test.soap.jmstransport.queue?jndiInitialContextFactory="
+            + "org.apache.activemq.jndi.ActiveMQInitialContextFactory&jndiConnectionFactoryName="
+            + "ConnectionFactory&jndiURL=vm://localhost";
     private static final String SERVICE_CLASS = "serviceClass=org.apache.hello_world_soap_http.Greeter";
     private static final String WSDL_LOCATION = "wsdlURL=wsdl/hello_world.wsdl";
     private static final String SERVICE_NAME = "serviceName={http://apache.org/hello_world_soap_http}SOAPService";
@@ -38,9 +43,7 @@ public final class CamelCxfExample {
 
     private static final String ROUTER_ENDPOINT_URI = "cxf://" + ROUTER_ADDRESS + "?" + SERVICE_CLASS + "&"
                                                    + WSDL_LOCATION + "&" + SERVICE_NAME + "&" + SOAP_OVER_HTTP_ROUTER + "&dataFormat=POJO";
-    private static final String SERVICE_ENDPOINT_URI = "cxf://" + SERVICE_ADDRESS + "?" + SERVICE_CLASS + "&"
-                                                   + WSDL_LOCATION + "&" + SERVICE_NAME + "&" + SOAP_OVER_JMS + "&dataFormat=POJO";
-
+   
     private CamelCxfExample() {
     }
     
@@ -51,10 +54,13 @@ public final class CamelCxfExample {
             // Set system properties for use with Camel property placeholders for running the example tests.
             System.setProperty("routerPort", String.valueOf(AvailablePortFinder.getNextAvailable()));
             System.setProperty("servicePort", String.valueOf(AvailablePortFinder.getNextAvailable()));
+            CxfComponent cxfComponent = new CxfComponent(getContext());
+            CxfEndpoint serviceEndpoint = new CxfEndpoint(SERVICE_ADDRESS, cxfComponent);
+            serviceEndpoint.setServiceClass(Greeter.class); 
             
             // Here we just pass the exception back, don't need to use errorHandler
             errorHandler(noErrorHandler());
-            from(ROUTER_ENDPOINT_URI).to(SERVICE_ENDPOINT_URI);
+            from(ROUTER_ENDPOINT_URI).to(serviceEndpoint);
         }
         
     }
@@ -82,9 +88,12 @@ public final class CamelCxfExample {
             // START SNIPPET: e3
             context.addRoutes(new RouteBuilder() {
                 public void configure() {
+                    CxfComponent cxfComponent = new CxfComponent(getContext());
+                    CxfEndpoint serviceEndpoint = new CxfEndpoint(SERVICE_ADDRESS, cxfComponent);
+                    serviceEndpoint.setServiceClass(Greeter.class);
                     // Here we just pass the exception back, don't need to use errorHandler
                     errorHandler(noErrorHandler());
-                    from(ROUTER_ENDPOINT_URI).to(SERVICE_ENDPOINT_URI);
+                    from(ROUTER_ENDPOINT_URI).to(serviceEndpoint);
                 }
             });
             // END SNIPPET: e3
