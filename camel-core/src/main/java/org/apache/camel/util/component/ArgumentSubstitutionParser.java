@@ -1,7 +1,6 @@
 package org.apache.camel.util.component;
 
 import java.util.ArrayList;
-import java.util.HashMap;
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
@@ -13,7 +12,7 @@ import java.util.regex.Pattern;
  */
 public class ArgumentSubstitutionParser<T> extends ApiMethodParser<T> {
 
-    private final HashMap<Pattern, Map<Pattern, List<NameReplacement>>> methodMap;
+    private final Map<Pattern, Map<Pattern, List<NameReplacement>>> methodMap;
 
     /**
      * Create a parser using regular expressions to adapt parameter names.
@@ -22,7 +21,7 @@ public class ArgumentSubstitutionParser<T> extends ApiMethodParser<T> {
      */
     public ArgumentSubstitutionParser(Class<T> proxyType, Substitution[] substitutions) {
         super(proxyType);
-        Map<String, Map<String, List<NameReplacement>>> regexMap = new HashMap<String, Map<String, List<NameReplacement>>>();
+        Map<String, Map<String, List<NameReplacement>>> regexMap = new LinkedHashMap<String, Map<String, List<NameReplacement>>>();
 
         for (Substitution tuple : substitutions) {
             tuple.validate();
@@ -35,7 +34,7 @@ public class ArgumentSubstitutionParser<T> extends ApiMethodParser<T> {
 
             Map<String, List<NameReplacement>> replacementMap = regexMap.get(tuple.method);
             if (replacementMap == null) {
-                replacementMap = new HashMap<String, List<NameReplacement>>();
+                replacementMap = new LinkedHashMap<String, List<NameReplacement>>();
                 regexMap.put(tuple.method, replacementMap);
             }
             List<NameReplacement> replacements = replacementMap.get(tuple.argName);
@@ -85,7 +84,7 @@ public class ArgumentSubstitutionParser<T> extends ApiMethodParser<T> {
                         updatedArguments.add(argument);
                     }
 
-                    model = new ApiMethodModel(model.getName(), model.getUniqueName(), model.getResultType(),
+                    model = new ApiMethodModel(model.getUniqueName(), model.getName(), model.getResultType(),
                             updatedArguments, model.getMethod());
                 }
             }
