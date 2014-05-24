@@ -88,7 +88,7 @@ public abstract class ApiMethodParser<T> {
      * Parses the method signatures from {@code getSignatures()}.
      * @return list of Api methods as {@link ApiMethodModel}
      */
-    public List<ApiMethodModel> parse() {
+    public final List<ApiMethodModel> parse() {
         // parse sorted signatures and generate descriptions
         List<ApiMethodModel> result = new ArrayList<ApiMethodModel>();
         for (String signature: signatures) {
@@ -123,6 +123,8 @@ public abstract class ApiMethodParser<T> {
             }
             result.add(new ApiMethodModel(name, resultType, arguments, method));
         }
+
+        result = processResults(result);
 
         Collections.sort(result, new Comparator<ApiMethodModel>() {
             @Override
@@ -168,6 +170,10 @@ public abstract class ApiMethodParser<T> {
             }
             model.uniqueName = uniqueName;
         }
+        return result;
+    }
+
+    protected List<ApiMethodModel> processResults(List<ApiMethodModel> result) {
         return result;
     }
 

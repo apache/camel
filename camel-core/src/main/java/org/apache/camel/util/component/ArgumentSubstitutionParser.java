@@ -57,10 +57,10 @@ public class ArgumentSubstitutionParser<T> extends ApiMethodParser<T> {
     }
 
     @Override
-    public List<ApiMethodModel> parse() {
+    public List<ApiMethodModel> processResults(List<ApiMethodModel> parseResult) {
         final List<ApiMethodModel> result = new ArrayList<ApiMethodModel>();
 
-        for (ApiMethodModel model : super.parse()) {
+        for (ApiMethodModel model : parseResult) {
             // look for method name matches
             for (Map.Entry<Pattern, Map<Pattern, List<NameReplacement>>> methodEntry : methodMap.entrySet()) {
                 if (methodEntry.getKey().matcher(model.getName()).matches()) {
