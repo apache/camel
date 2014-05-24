@@ -33,6 +33,7 @@
     <module>camel-package-maven-plugin</module>
     <module>camel-maven-plugin</module>
     <module>guice-maven-plugin</module>
+    <module>camel-component-util-maven-plugin</module>
   </modules>
 
   <dependencies>
