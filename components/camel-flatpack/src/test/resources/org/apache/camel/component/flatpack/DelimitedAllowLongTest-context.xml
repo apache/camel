@@ -33,6 +33,7 @@
             <multicast>
                 <to uri="flatpack:delim:INVENTORY-Delimited.pzmap.xml?ignoreExtraColumns=true"/>
                 <to uri="direct:df"/>
+                <to uri="direct:xml"/>
             </multicast>
         </route>
 
@@ -46,6 +47,14 @@
             <from uri="direct:df"/>
             <unmarshal ref="df"/>
             <to uri="mock:results-df"/>
+        </route>
+
+        <route>
+            <from uri="direct:xml"/>
+            <unmarshal>
+                <flatpack definition="INVENTORY-Delimited.pzmap.xml" fixed="false" ignoreExtraColumns="true"/>
+            </unmarshal>
+            <to uri="mock:results-xml"/>
         </route>
 
     </camelContext>
