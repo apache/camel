@@ -65,6 +65,26 @@ public class CsvUnmarshalMapLineTest extends CamelSpringTestSupport {
         List<?> body = result.getReceivedExchanges().get(0).getIn().getBody(List.class);
         assertEquals(0, body.size());
     }
+    
+    @SuppressWarnings("unchecked")
+    @Test
+    public void testCsvSkipFirstLineUnMarshal() throws Exception {
+        result.expectedMessageCount(1);
+
+        // the first line contains the column names which we intend to skip
+        template.sendBody("direct:skipFirstline", "Camel CSV test\nOrderId|Item|Amount\n123|Camel in Action|1\n124|ActiveMQ in Action|2");
+
+        assertMockEndpointsSatisfied();
+
+        List<Map<String, String>> body = result.getReceivedExchanges().get(0).getIn().getBody(List.class);
+        assertEquals(2, body.size());
+        assertEquals("123", body.get(0).get("OrderId"));
+        assertEquals("Camel in Action", body.get(0).get("Item"));
+        assertEquals("1", body.get(0).get("Amount"));
+        assertEquals("124", body.get(1).get("OrderId"));
+        assertEquals("ActiveMQ in Action", body.get(1).get("Item"));
+        assertEquals("2", body.get(1).get("Amount"));
+    }
 
     @Override
     protected ClassPathXmlApplicationContext createApplicationContext() {

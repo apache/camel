@@ -28,5 +28,12 @@
       </unmarshal>
       <to uri="mock:result" />
     </route>
+    <route>
+      <from uri="direct:skipFirstline" />
+      <unmarshal>
+        <csv delimiter="|" useMaps="true" skipFirstLine="true"/>
+      </unmarshal>
+      <to uri="mock:result" />
+    </route>
   </camelContext>
 </beans>

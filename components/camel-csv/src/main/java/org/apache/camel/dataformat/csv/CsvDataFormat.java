@@ -137,17 +137,17 @@ public class CsvDataFormat implements DataFormat {
             }
             CsvLineConverter<?> lineConverter;
             if (useMaps) {
-            	final CSVField[] fields=this.config.getFields();
-            	final String[] fieldS;
-            	if (fields!=null){
-            		fieldS=new String[fields.length];
-	            	for (int i=0; i<fields.length; i++){
-	            		fieldS[i]=fields[i].getName();
-	            	}
-            	} else {
-            		fieldS=parser.getLine();
-            	}
-            	lineConverter = CsvLineConverters.getMapLineConverter(fieldS);
+                final CSVField[] fields = this.config.getFields();
+                final String[] fieldS;
+                if (fields != null && fields.length > 0) {
+                    fieldS = new String[fields.length];
+                    for (int i = 0; i < fields.length; i++) {
+                        fieldS[i] = fields[i].getName();
+                    }
+                } else {
+                    fieldS = parser.getLine();
+                }
+                lineConverter = CsvLineConverters.getMapLineConverter(fieldS);
             } else {
                 lineConverter = CsvLineConverters.getListConverter();
             }
