@@ -1,5 +1,8 @@
 package org.apache.camel.metrics.counter;
 
+import static org.apache.camel.metrics.MetricsComponent.HEADER_COUNTER_DECREMENT;
+import static org.apache.camel.metrics.MetricsComponent.HEADER_COUNTER_INCREMENT;
+
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultProducer;
@@ -19,11 +22,13 @@ public class CounterProducer extends DefaultProducer {
         Counter counter = endpoint.getRegistry().counter(metricName);
         Long increment = endpoint.getIncrement();
         Long decrement = endpoint.getDecrement();
-        if (increment != null) {
-            counter.inc(increment);
+        Long finalIncrement = endpoint.getLongHeader(exchange, HEADER_COUNTER_INCREMENT, increment);
+        Long finalDecrement = endpoint.getLongHeader(exchange, HEADER_COUNTER_DECREMENT, decrement);
+        if (finalIncrement != null) {
+            counter.inc(finalIncrement);
         }
-        else if (decrement != null) {
-            counter.dec(decrement);
+        else if (finalDecrement != null) {
+            counter.dec(finalDecrement);
         }
         else {
             counter.inc();

@@ -59,7 +59,7 @@ Each metric has type and name. Supported types are ```counter```, ```meter```, `
 
 ### Headers
 
-Metric name defined in URI can be overridden by using Header with name ```org.apache.camel.metrics.metricName```.
+Metric name defined in URI can be overridden by using Header with name ```CamelMetricsName```.
 
 For example
 
@@ -90,18 +90,48 @@ If neither ```increment``` or ```decrement``` is defined counter value will be i
 
 ```java
 // update counter simple.counter by 7
-from("direct:in").to("metric:counter:simple.counter?increment=7").to("direct:out")
+from("direct:in")
+    .to("metric:counter:simple.counter?increment=7")
+    .to("direct:out")
 ```
 
 ```java
 // increment counter simple.counter by 1
-from("direct:in").to("metric:counter:simple.counter").to("direct:out")
+from("direct:in")
+    .to("metric:counter:simple.counter")
+    .to("direct:out")
 ```
 
 ```java
 // decrement counter simple.counter by 3
-from("direct:in").to("metric:counter:simple.counter?decrement=3").to("direct:out")
+from("direct:in")
+    .to("metric:counter:simple.counter?decrement=3")
+    .to("direct:out")
 ```
+
+### Headers
+
+| Name                         | Description
+|------------------------------|---------------------------------|
+| CamelMetricsCounterIncrement | Override increment value in URI |
+| CamelMetricsCounterDecrement | Override decrement value in URI |
+
+```java
+// update counter simple.counter by 417
+from("direct:in")
+    .setHeader(MetricsComponent.HEADER_COUNTER_INCREMENT, constant(417L))
+    .to("metric:counter:simple.counter?increment=7")
+    .to("direct:out")
+```
+
+```java
+// updates counter using simple language to evaluate body.length
+from("direct:in")
+    .setHeader(MetricsComponent.HEADER_COUNTER_INCREMENT, simple("${body.length}"))
+    .to("metrics:counter:body.length")
+    .to("mock:out");
+```
+
 
 ## Metric type meter
 
@@ -119,12 +149,16 @@ If ```mark``` is not set ```meter.mark()``` is called without argument.
 
 ```java
 // marks simple.meter without value
-from("direct:in").to("metric:simple.meter").to("direct:out")
+from("direct:in")
+    .to("metric:simple.meter")
+    .to("direct:out")
 ```
 
 ```java
 // marks simple.meter with value 81
-from("direct:in").to("metric:meter:simple.meter?mark=81").to("direct:out")
+from("direct:in")
+    .to("metric:meter:simple.meter?mark=81")
+    .to("direct:out")
 ```
 
 ## Metric type histogram
@@ -143,12 +177,16 @@ If no ```value``` is not set nothing is added to histogram and warning is logged
 
 ```java
 // adds value 9923 to simple.histogram
-from("direct:in").to("metric:histogram:simple.histogram?value=9923").to("direct:out")
+from("direct:in")
+    .to("metric:histogram:simple.histogram?value=9923")
+    .to("direct:out")
 ```
 
 ```java
 // nothing is added to simple.histogram; warning is logged
-from("direct:in").to("metric:histogram:simple.histogram").to("direct:out")
+from("direct:in")
+    .to("metric:histogram:simple.histogram")
+    .to("direct:out")
 ```
 
 ## Metrics type timer
