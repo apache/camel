@@ -32,6 +32,12 @@ public class CsvUnmarshalMapLineTest extends CamelSpringTestSupport {
 
     @EndpointInject(uri = "mock:result")
     private MockEndpoint result;
+    
+    @EndpointInject(uri = "mock:result2")
+    private MockEndpoint result2;
+
+    @EndpointInject(uri = "mock:result3")
+    private MockEndpoint result3;
 
     @SuppressWarnings("unchecked")
     @Test
@@ -64,6 +70,46 @@ public class CsvUnmarshalMapLineTest extends CamelSpringTestSupport {
 
         List<?> body = result.getReceivedExchanges().get(0).getIn().getBody(List.class);
         assertEquals(0, body.size());
+    }
+    
+    @SuppressWarnings("unchecked")
+    @Test
+    public void testCsvUnMarshalWithoutHeader() throws Exception {
+        result2.expectedMessageCount(1);
+
+        // the first line contains the column names which we intend to skip
+        template.sendBody("direct:start2", "123|Camel in Action|1\n124|ActiveMQ in Action|2");
+
+        assertMockEndpointsSatisfied();
+
+        List<Map<String, String>> body = result2.getReceivedExchanges().get(0).getIn().getBody(List.class);
+        assertEquals(2, body.size());
+        assertEquals("123", body.get(0).get("MyOrderId"));
+        assertEquals("Camel in Action", body.get(0).get("MyItem"));
+        assertEquals("1", body.get(0).get("MyAmount"));
+        assertEquals("124", body.get(1).get("MyOrderId"));
+        assertEquals("ActiveMQ in Action", body.get(1).get("MyItem"));
+        assertEquals("2", body.get(1).get("MyAmount"));
+    }
+    
+    @SuppressWarnings("unchecked")
+    @Test
+    public void testCsvUnMarshalWithCustomHeader() throws Exception {
+        result3.expectedMessageCount(1);
+
+        // the first line contains the column names which we intend to skip
+        template.sendBody("direct:start3", "OrderId|Item|Amount\n123|Camel in Action|1\n124|ActiveMQ in Action|2");
+
+        assertMockEndpointsSatisfied();
+
+        List<Map<String, String>> body = result3.getReceivedExchanges().get(0).getIn().getBody(List.class);
+        assertEquals(2, body.size());
+        assertEquals("123", body.get(0).get("MyOrderId"));
+        assertEquals("Camel in Action", body.get(0).get("MyItem"));
+        assertEquals("1", body.get(0).get("MyAmount"));
+        assertEquals("124", body.get(1).get("MyOrderId"));
+        assertEquals("ActiveMQ in Action", body.get(1).get("MyItem"));
+        assertEquals("2", body.get(1).get("MyAmount"));
     }
 
     @Override
