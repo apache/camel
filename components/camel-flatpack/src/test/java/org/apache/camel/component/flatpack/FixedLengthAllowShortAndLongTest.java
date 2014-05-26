@@ -16,9 +16,7 @@
  */
 package org.apache.camel.component.flatpack;
 
-import java.util.List;
-import java.util.Map;
-
+import java.util.*;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -30,11 +28,10 @@ import org.slf4j.LoggerFactory;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 
 /**
- * @version 
+ * @version
  */
 @ContextConfiguration
 public class FixedLengthAllowShortAndLongTest extends AbstractJUnit4SpringContextTests {
@@ -45,6 +42,9 @@ public class FixedLengthAllowShortAndLongTest extends AbstractJUnit4SpringContex
 
     @EndpointInject(uri = "mock:results-df")
     protected MockEndpoint resultsdf;
+
+    @EndpointInject(uri = "mock:results-xml")
+    protected MockEndpoint resultsxml;
 
     protected String[] expectedFirstName = {"JOHN-LONG", "JIMMY-SHORT", "JANE-LONG", "FRED-NORMAL"};
 
@@ -72,6 +72,20 @@ public class FixedLengthAllowShortAndLongTest extends AbstractJUnit4SpringContex
         resultsdf.assertIsSatisfied();
 
         Exchange exchange = resultsdf.getReceivedExchanges().get(0);
+        DataSetList data = exchange.getIn().getBody(DataSetList.class);
+        int counter = 0;
+        for (Map<String, Object> map : data) {
+            assertEquals("FIRSTNAME", expectedFirstName[counter], map.get("FIRSTNAME"));
+            counter++;
+        }
+    }
+
+    @Test
+    public void testFlatpackDataFormatXML() throws Exception {
+        resultsxml.expectedMessageCount(1);
+        resultsxml.assertIsSatisfied();
+
+        Exchange exchange = resultsxml.getReceivedExchanges().get(0);
         DataSetList data = exchange.getIn().getBody(DataSetList.class);
         int counter = 0;
         for (Map<String, Object> map : data) {

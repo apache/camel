@@ -17,9 +17,7 @@
 
 package org.apache.camel.component.flatpack;
 
-import java.util.List;
-import java.util.Map;
-
+import java.util.*;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
@@ -31,8 +29,7 @@ import org.slf4j.LoggerFactory;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.*;
 
 @ContextConfiguration
 public class DelimitedAllowLongTest extends AbstractJUnit4SpringContextTests {
@@ -43,6 +40,9 @@ public class DelimitedAllowLongTest extends AbstractJUnit4SpringContextTests {
 
     @EndpointInject(uri = "mock:results-df")
     protected MockEndpoint resultsdf;
+
+    @EndpointInject(uri = "mock:results-xml")
+    protected MockEndpoint resultsxml;
 
     protected String[] expectedItemDescriptions = {"SOME VALVE", "AN ENGINE", "A BELT", "A BOLT"};
 
@@ -70,6 +70,20 @@ public class DelimitedAllowLongTest extends AbstractJUnit4SpringContextTests {
         resultsdf.assertIsSatisfied();
 
         Exchange exchange = resultsdf.getReceivedExchanges().get(0);
+        DataSetList data = exchange.getIn().getBody(DataSetList.class);
+        int counter = 0;
+        for (Map<String, Object> map : data) {
+            assertEquals("ITEM_DESC", expectedItemDescriptions[counter], map.get("ITEM_DESC"));
+            counter++;
+        }
+    }
+
+    @Test
+    public void testFlatpackDataFormatXML() throws Exception {
+        resultsxml.expectedMessageCount(1);
+        resultsxml.assertIsSatisfied();
+
+        Exchange exchange = resultsxml.getReceivedExchanges().get(0);
         DataSetList data = exchange.getIn().getBody(DataSetList.class);
         int counter = 0;
         for (Map<String, Object> map : data) {
