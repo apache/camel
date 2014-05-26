@@ -24,8 +24,6 @@ import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.camel.util.component.ApiMethodParser;
-import org.apache.camel.util.component.ArgumentSubstitutionParser;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
@@ -35,30 +33,23 @@ import org.apache.maven.plugins.annotations.ResolutionScope;
 /**
  * Parses ApiMethod signatures from a File.
  */
-@Mojo(name = "fromFile", requiresDependencyResolution = ResolutionScope.RUNTIME, requiresProject = true,
+@Mojo(name = "fromFile", requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME, requiresProject = true,
         defaultPhase = LifecyclePhase.GENERATE_SOURCES)
-public class FileApiMethodGeneratorMojo extends ApiMethodGeneratorMojo {
+public class FileApiMethodGeneratorMojo extends AbstractApiMethodGeneratorMojo {
 
-    @Parameter(required = true, property = "camel.component.util.signatures")
-    protected File signatures;
-
-    @Parameter(property = "camel.component.util.substitutions")
-    protected Substitution[] substitutions;
-
-    @Override
-    protected ApiMethodParser createAdapterParser(Class proxyType) {
-        return new ArgumentSubstitutionParser(proxyType, getArgumentSubstitutions());
-    }
+    @Parameter(required = true, property = PREFIX + "signatureFile")
+    protected File signatureFile;
 
     @Override
     public List<String> getSignatureList() throws MojoExecutionException {
-        // get signatures as a list of Strings
+        // get signatureFile as a list of Strings
         List<String> result = new ArrayList<String>();
         try {
-            BufferedReader reader = new BufferedReader(new FileReader(this.signatures));
+            BufferedReader reader = new BufferedReader(new FileReader(this.signatureFile));
             String line = reader.readLine();
             while (line != null) {
                 result.add(line);
+                line = reader.readLine();
             }
         } catch (FileNotFoundException e) {
             throw new MojoExecutionException(e.getMessage(), e);
@@ -66,17 +57,8 @@ public class FileApiMethodGeneratorMojo extends ApiMethodGeneratorMojo {
             throw new MojoExecutionException(e.getMessage(), e);
         }
         if (result.isEmpty()) {
-            throw new MojoExecutionException("Signature file " + signatures.getPath() + " is empty");
+            throw new MojoExecutionException("Signature file " + signatureFile.getPath() + " is empty");
         }
         return result;
-    }
-
-    public ArgumentSubstitutionParser.Substitution[] getArgumentSubstitutions() {
-        ArgumentSubstitutionParser.Substitution[] subs = new ArgumentSubstitutionParser.Substitution[substitutions.length];
-        for (int i = 0; i < substitutions.length; i++) {
-            subs[i] = new ArgumentSubstitutionParser.Substitution(substitutions[i].getMethod(),
-                    substitutions[i].getArgName(), substitutions[i].getArgType(), substitutions[i].getReplacement());
-        }
-        return subs;
     }
 }

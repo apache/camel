@@ -60,6 +60,13 @@
       <artifactId>velocity</artifactId>
       <version>${velocity-version}</version>
     </dependency>
+<!--
+    <dependency>
+      <groupId>net.sourceforge.htmlunit</groupId>
+      <artifactId>htmlunit</artifactId>
+      <version>2.14</version>
+    </dependency>
+-->
 
     <!-- add some logging to the classpath -->
     <dependency>
@@ -74,6 +81,14 @@
     <dependency>
       <groupId>junit</groupId>
       <artifactId>junit</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <!-- VelocityEngine javadoc for testing -->
+    <dependency>
+      <groupId>org.apache.velocity</groupId>
+      <artifactId>velocity</artifactId>
+      <version>${velocity-version}</version>
+      <classifier>javadoc</classifier>
       <scope>test</scope>
     </dependency>
   </dependencies>

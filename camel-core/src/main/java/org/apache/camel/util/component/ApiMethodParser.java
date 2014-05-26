@@ -178,10 +178,14 @@ public abstract class ApiMethodParser<T> {
     }
 
     protected Class<?> forName(String className) {
-        return forName(className, classLoader);
+        try {
+            return forName(className, classLoader);
+        } catch (ClassNotFoundException e1) {
+            throw new IllegalArgumentException("Error loading class " + className);
+        }
     }
 
-    public static Class<?> forName(String className, ClassLoader classLoader) {
+    public static Class<?> forName(String className, ClassLoader classLoader) throws ClassNotFoundException {
         Class<?> result;
         try {
             // lookup primitive types first
@@ -196,12 +200,8 @@ public abstract class ApiMethodParser<T> {
                 final int nDimensions = (className.length() - firstDim) / 2;
                 return Array.newInstance(forName(className.substring(0, firstDim), classLoader), new int[nDimensions]).getClass();
             }
-            try {
-                // try loading from default Java package java.lang
-                result = Class.forName(JAVA_LANG + className, true, classLoader);
-            } catch (ClassNotFoundException e1) {
-                throw new IllegalArgumentException("Error loading class " + className);
-            }
+            // try loading from default Java package java.lang
+            result = Class.forName(JAVA_LANG + className, true, classLoader);
         }
 
         return result;

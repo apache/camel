@@ -18,7 +18,6 @@ package org.apache.camel.maven;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.ArrayList;
 import java.util.Collections;
 import java.util.List;
 
@@ -28,35 +27,28 @@ import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.project.MavenProject;
 import org.junit.Test;
+import static org.junit.Assert.assertTrue;
 
 /**
- * Tests api-method-enum.vm
+ * Tests {@link FileApiMethodGeneratorMojo}
  */
-public class ApiMethodEnumTest {
+public class FileApiMethodGeneratorMojoTest extends AbstractGeneratorMojoTest {
 
     @Test
-    public void testTemplate() throws IOException, MojoFailureException, MojoExecutionException {
+    public void testExecute() throws IOException, MojoFailureException, MojoExecutionException {
 
-        final FileApiMethodGeneratorMojo mojo = new FileApiMethodGeneratorMojo() {
+        // delete target file to begin
+        final File outFile = new File(OUT_DIR, PACKAGE_PATH + "/TestProxyApiMethod.java");
+        if (outFile.exists()) {
+            outFile.delete();
+        }
 
-            @Override
-            public List<String> getSignatureList() throws MojoExecutionException {
-                final ArrayList<String> signatures = new ArrayList<String>();
-                signatures.add("public String sayHi();");
-                signatures.add("public String sayHi(final String name);");
-                signatures.add("public final String greetMe(final String name);");
-                signatures.add("public final String greetUs(final String name1, String name2);");
-                signatures.add("public final String greetAll(String[] names);");
-                signatures.add("public final String greetAll(java.util.List<String> names);");
-                signatures.add("public final String[] greetTimes(String name, int times);");
-                return signatures;
-            }
-        };
+        final FileApiMethodGeneratorMojo mojo = new FileApiMethodGeneratorMojo();
         mojo.substitutions = new Substitution[1];
         mojo.substitutions[0] = new Substitution(".+", "(.+)", "java.util.List", "$1List");
 
-        mojo.outDir = new File("target/generated-test-sources/camelComponent");
-        mojo.outPackage = "org.apache.camel.component.util";
+        mojo.outDir = new File(OUT_DIR);
+        mojo.outPackage = AbstractGeneratorMojo.OUT_PACKAGE;
         mojo.proxyClass = TestProxy.class.getCanonicalName();
         mojo.project = new MavenProject((Model) null) {
             @Override
@@ -64,8 +56,12 @@ public class ApiMethodEnumTest {
                 return Collections.EMPTY_LIST;
             }
         };
+        mojo.signatureFile = new File("src/test/resources/test-proxy-signatures.txt");
 
         mojo.execute();
+
+        // check target file was generated
+        assertTrue("Generated file not found " + outFile.getPath(), outFile.exists());
     }
 
 }
