@@ -29,6 +29,7 @@ public class MetricsComponent extends DefaultComponent {
     public static final String HEADER_METRIC_NAME = "CamelMetricsName";
     public static final String HEADER_COUNTER_INCREMENT = "CamelMetricsCounterIncrement";
     public static final String HEADER_COUNTER_DECREMENT = "CamelMetricsCounterDecrement";
+    public static final String HEADER_HISTOGRAM_VALUE = "CamelMetricsHistogramValue";
 
     private static final Logger LOG = LoggerFactory.getLogger(MetricsComponent.class);
 

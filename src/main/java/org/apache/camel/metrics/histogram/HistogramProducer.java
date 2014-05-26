@@ -1,5 +1,7 @@
 package org.apache.camel.metrics.histogram;
 
+import static org.apache.camel.metrics.MetricsComponent.HEADER_HISTOGRAM_VALUE;
+
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.impl.DefaultProducer;
@@ -24,8 +26,9 @@ public class HistogramProducer extends DefaultProducer {
         String metricsName = endpoint.getMetricsName(exchange);
         Histogram histogram = registry.histogram(metricsName);
         Long value = endpoint.getValue();
-        if (value != null) {
-            histogram.update(value);
+        Long finalValue = endpoint.getLongHeader(exchange, HEADER_HISTOGRAM_VALUE, value);
+        if (finalValue != null) {
+            histogram.update(finalValue);
         }
         else {
             LOG.warn("Cannot update histogram \"{}\" with null value", metricsName);

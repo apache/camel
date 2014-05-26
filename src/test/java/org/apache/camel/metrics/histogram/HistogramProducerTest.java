@@ -1,5 +1,6 @@
 package org.apache.camel.metrics.histogram;
 
+import static org.apache.camel.metrics.MetricsComponent.HEADER_HISTOGRAM_VALUE;
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
 import static org.mockito.Mockito.times;
@@ -56,11 +57,13 @@ public class HistogramProducerTest {
     @Test
     public void testProcessValueSet() throws Exception {
         when(endpoint.getValue()).thenReturn(VALUE);
+        when(endpoint.getLongHeader(exchange, HEADER_HISTOGRAM_VALUE, VALUE)).thenReturn(VALUE);
         producer.process(exchange);
         inOrder.verify(endpoint, times(1)).getRegistry();
         inOrder.verify(endpoint, times(1)).getMetricsName(exchange);
         inOrder.verify(registry, times(1)).histogram(METRICS_NAME);
         inOrder.verify(endpoint, times(1)).getValue();
+        inOrder.verify(endpoint, times(1)).getLongHeader(exchange, HEADER_HISTOGRAM_VALUE, VALUE);
         inOrder.verify(histogram, times(1)).update(VALUE);
         inOrder.verifyNoMoreInteractions();
     }
@@ -68,11 +71,41 @@ public class HistogramProducerTest {
     @Test
     public void testProcessValueNotSet() throws Exception {
         when(endpoint.getValue()).thenReturn(null);
+        when(endpoint.getLongHeader(exchange, HEADER_HISTOGRAM_VALUE, null)).thenReturn(null);
         producer.process(exchange);
         inOrder.verify(endpoint, times(1)).getRegistry();
         inOrder.verify(endpoint, times(1)).getMetricsName(exchange);
         inOrder.verify(registry, times(1)).histogram(METRICS_NAME);
         inOrder.verify(endpoint, times(1)).getValue();
+        inOrder.verify(endpoint, times(1)).getLongHeader(exchange, HEADER_HISTOGRAM_VALUE, null);
+        inOrder.verifyNoMoreInteractions();
+    }
+
+    @Test
+    public void testProcessOverrideValue() throws Exception {
+        when(endpoint.getValue()).thenReturn(VALUE);
+        when(endpoint.getLongHeader(exchange, HEADER_HISTOGRAM_VALUE, VALUE)).thenReturn(VALUE + 3);
+        producer.process(exchange);
+        inOrder.verify(endpoint, times(1)).getRegistry();
+        inOrder.verify(endpoint, times(1)).getMetricsName(exchange);
+        inOrder.verify(registry, times(1)).histogram(METRICS_NAME);
+        inOrder.verify(endpoint, times(1)).getValue();
+        inOrder.verify(endpoint, times(1)).getLongHeader(exchange, HEADER_HISTOGRAM_VALUE, VALUE);
+        inOrder.verify(histogram, times(1)).update(VALUE + 3);
+        inOrder.verifyNoMoreInteractions();
+    }
+
+    @Test
+    public void testProcessOverrideUriValueNotSet() throws Exception {
+        when(endpoint.getValue()).thenReturn(null);
+        when(endpoint.getLongHeader(exchange, HEADER_HISTOGRAM_VALUE, null)).thenReturn(VALUE + 2);
+        producer.process(exchange);
+        inOrder.verify(endpoint, times(1)).getRegistry();
+        inOrder.verify(endpoint, times(1)).getMetricsName(exchange);
+        inOrder.verify(registry, times(1)).histogram(METRICS_NAME);
+        inOrder.verify(endpoint, times(1)).getValue();
+        inOrder.verify(endpoint, times(1)).getLongHeader(exchange, HEADER_HISTOGRAM_VALUE, null);
+        inOrder.verify(histogram, times(1)).update(VALUE + 2);
         inOrder.verifyNoMoreInteractions();
     }
 }

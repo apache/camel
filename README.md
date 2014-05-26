@@ -189,6 +189,20 @@ from("direct:in")
     .to("direct:out")
 ```
 
+### Headers
+
+| Name                       | Description
+|----------------------------|---------------------------------|
+| CamelMetricsHistogramValue | Override increment value in URI |
+
+```java
+// adds value 992 to simple.histogram
+from("direct:in")
+    .setHeader(MetricsComponent.HEADER_HISTOGRAM_VALUE, constant(992L))
+    .to("metric:histogram:simple.histogram?value=700")
+    .to("direct:out")
+```
+
 ## Metrics type timer
 
 ```
