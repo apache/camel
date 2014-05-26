@@ -38,7 +38,7 @@ public class FileApiMethodGeneratorMojoTest extends AbstractGeneratorMojoTest {
     public void testExecute() throws IOException, MojoFailureException, MojoExecutionException {
 
         // delete target file to begin
-        final File outFile = new File(OUT_DIR, PACKAGE_PATH + "/TestProxyApiMethod.java");
+        final File outFile = new File(OUT_DIR, PACKAGE_PATH + "TestProxyApiMethod.java");
         if (outFile.exists()) {
             outFile.delete();
         }

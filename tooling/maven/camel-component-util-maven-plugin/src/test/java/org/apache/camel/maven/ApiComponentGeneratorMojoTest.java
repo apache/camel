@@ -41,7 +41,7 @@ public class ApiComponentGeneratorMojoTest extends AbstractGeneratorMojoTest {
         final File outDir = new File(OUT_DIR);
         FileUtil.removeDir(outDir);
 
-        final File collectionFile = new File(OUT_DIR, PACKAGE_PATH + "/" + COMPONENT_NAME + "ApiCollection.java");
+        final File collectionFile = new File(OUT_DIR, PACKAGE_PATH + COMPONENT_NAME + "ApiCollection.java");
 
         final ApiComponentGeneratorMojo mojo = new ApiComponentGeneratorMojo();
         mojo.componentName = COMPONENT_NAME;

@@ -38,7 +38,7 @@ public class JavadocApiMethodGeneratorMojoTest extends AbstractGeneratorMojoTest
     public void testExecute() throws IOException, MojoFailureException, MojoExecutionException {
 
         // delete target file to begin
-        final File outFile = new File(OUT_DIR, AbstractGeneratorMojo.OUT_PACKAGE.replaceAll("\\.", "/") + "/VelocityEngineApiMethod.java");
+        final File outFile = new File(OUT_DIR, PACKAGE_PATH + "VelocityEngineApiMethod.java");
         if (outFile.exists()) {
             outFile.delete();
         }
@@ -62,5 +62,4 @@ public class JavadocApiMethodGeneratorMojoTest extends AbstractGeneratorMojoTest
         // check target file was generated
         assertExists(outFile);
     }
-
 }

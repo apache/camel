@@ -27,7 +27,7 @@ import static org.junit.Assert.assertTrue;
  */
 public class AbstractGeneratorMojoTest {
     protected static final String OUT_DIR = "target/generated-test-sources/camelComponent";
-    protected static final String PACKAGE_PATH = AbstractGeneratorMojo.OUT_PACKAGE.replaceAll("\\.", "/");
+    protected static final String PACKAGE_PATH = AbstractGeneratorMojo.OUT_PACKAGE.replaceAll("\\.", "/") + "/";
 
     protected void assertExists(File outFile) {
         assertTrue("Generated file not found " + outFile.getPath(), outFile.exists());
