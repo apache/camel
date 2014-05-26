@@ -68,11 +68,11 @@ public class CsvUnmarshalMapLineTest extends CamelSpringTestSupport {
     
     @SuppressWarnings("unchecked")
     @Test
-    public void testCsvSkipFirstLineUnMarshal() throws Exception {
+    public void testCsvSkipFirstLineWithHeaderUnMarshal() throws Exception {
         result.expectedMessageCount(1);
 
         // the first line contains the column names which we intend to skip
-        template.sendBody("direct:skipFirstline", "Camel CSV test\nOrderId|Item|Amount\n123|Camel in Action|1\n124|ActiveMQ in Action|2");
+        template.sendBody("direct:start2", "Camel CSV test\nOrderId|Item|Amount\n123|Camel in Action|1\n124|ActiveMQ in Action|2");
 
         assertMockEndpointsSatisfied();
 
@@ -84,6 +84,26 @@ public class CsvUnmarshalMapLineTest extends CamelSpringTestSupport {
         assertEquals("124", body.get(1).get("OrderId"));
         assertEquals("ActiveMQ in Action", body.get(1).get("Item"));
         assertEquals("2", body.get(1).get("Amount"));
+    }
+    
+    @SuppressWarnings("unchecked")
+    @Test
+    public void testCsvSkipFirstLineWithoutHeaderUnMarshalWithoutHeader() throws Exception {
+        result.expectedMessageCount(1);
+
+        // the first line contains the column names which we intend to skip
+        template.sendBody("direct:start3", "123|Camel in Action|1\n124|ActiveMQ in Action|2");
+
+        assertMockEndpointsSatisfied();
+
+        List<Map<String, String>> body = result.getReceivedExchanges().get(0).getIn().getBody(List.class);
+        assertEquals(2, body.size());
+        assertEquals("123", body.get(0).get("MyOrderId"));
+        assertEquals("Camel in Action", body.get(0).get("MyItem"));
+        assertEquals("1", body.get(0).get("MyAmount"));
+        assertEquals("124", body.get(1).get("MyOrderId"));
+        assertEquals("ActiveMQ in Action", body.get(1).get("MyItem"));
+        assertEquals("2", body.get(1).get("MyAmount"));
     }
 
     @Override
