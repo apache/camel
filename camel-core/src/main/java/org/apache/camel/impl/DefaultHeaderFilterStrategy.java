@@ -17,6 +17,7 @@
 package org.apache.camel.impl;
 
 import java.util.HashSet;
+import java.util.Iterator;
 import java.util.Locale;
 import java.util.Set;
 import java.util.regex.Pattern;
@@ -49,6 +50,7 @@ public class DefaultHeaderFilterStrategy implements HeaderFilterStrategy {
 
     private boolean lowerCase;
     private boolean allowNullValues;
+    private boolean caseInsensitive;
     
     public boolean applyFilterToCamelHeaders(String headerName, Object headerValue, Exchange exchange) {
         return doFiltering(Direction.OUT, headerName, headerValue, exchange);
@@ -180,6 +182,28 @@ public class DefaultHeaderFilterStrategy implements HeaderFilterStrategy {
     public void setLowerCase(boolean value) {
         lowerCase = value;
     }
+
+    /**
+     * Gets the caseInsensitive property which is a boolean to determine
+     * whether header names should be case insensitive.
+     * It does not affect filtering using regular expression pattern.
+     * 
+     * @return <tt>true</tt> if header names is case insensitive. 
+     */
+    public boolean isCaseInsensitive() {
+        return caseInsensitive;
+    }
+
+    /**
+     * Sets the caseInsensitive property which is a boolean to determine
+     * whether header names should be case insensitive.
+     * It does not affect filtering using regular expression pattern,
+     * 
+     * @param caseInsensitive <tt>true</tt> if header names is case insensitive.
+     */
+    public void setCaseInsensitive(boolean caseInsensitive) {
+        this.caseInsensitive = caseInsensitive;
+    }
     
     public boolean isAllowNullValues() {
         return allowNullValues;
@@ -218,7 +242,15 @@ public class DefaultHeaderFilterStrategy implements HeaderFilterStrategy {
         }
             
         if (filter != null) {
-            if (isLowerCase()) {
+            if (isCaseInsensitive()) {
+                Iterator<String> it = filter.iterator();
+                while (it.hasNext()) {
+                    String filterString = (String) it.next();
+                    if (filterString.equalsIgnoreCase(headerName)) {
+                        return true;
+                    }
+                }
+            } else if (isLowerCase()) {
                 if (filter.contains(headerName.toLowerCase(Locale.ENGLISH))) {
                     return true;
                 }
