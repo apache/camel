@@ -25,6 +25,7 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Scanner;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Pattern;
@@ -49,6 +50,7 @@ import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.support.ExpressionAdapter;
 import org.apache.camel.support.TokenPairExpressionIterator;
 import org.apache.camel.support.TokenXMLExpressionIterator;
+import org.apache.camel.support.XMLTokenExpressionIterator;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.GroupIterator;
@@ -1227,8 +1229,13 @@ public final class ExpressionBuilder {
                 inheritNamespaceTagName = inheritNamespaceTagName + ">";
             }
         }
-
         return new TokenXMLExpressionIterator(tagName, inheritNamespaceTagName);
+    }
+
+    public static Expression tokenizeXMLAwareExpression(String path, boolean wrap) {
+        ObjectHelper.notEmpty(path, "path");
+
+        return new XMLTokenExpressionIterator(path, wrap);
     }
 
     /**

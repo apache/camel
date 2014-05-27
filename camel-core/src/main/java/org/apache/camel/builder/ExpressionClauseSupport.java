@@ -43,6 +43,7 @@ import org.apache.camel.model.language.SpELExpression;
 import org.apache.camel.model.language.SqlExpression;
 import org.apache.camel.model.language.TokenizerExpression;
 import org.apache.camel.model.language.VtdXmlExpression;
+import org.apache.camel.model.language.XMLTokenizerExpression;
 import org.apache.camel.model.language.XPathExpression;
 import org.apache.camel.model.language.XQueryExpression;
 
@@ -596,6 +597,18 @@ public class ExpressionClauseSupport<T> {
         expression.setToken(tagName);
         expression.setInheritNamespaceTagName(inheritNamespaceTagName);
         expression.setXml(true);
+        if (group > 0) {
+            expression.setGroup(group);
+        }
+        setExpressionType(expression);
+        return result;
+    }
+
+    public T tokenizeXML(String path, boolean wrap, Namespaces namespaces, int group) {
+        XMLTokenizerExpression expression = new XMLTokenizerExpression(path);
+        expression.setWrap(wrap);
+        expression.setNamespaces(namespaces.getNamespaces());
+
         if (group > 0) {
             expression.setGroup(group);
         }

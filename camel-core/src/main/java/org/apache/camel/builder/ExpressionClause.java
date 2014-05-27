@@ -569,6 +569,14 @@ public class ExpressionClause<T> extends ExpressionDefinition {
         return delegate.tokenizeXMLPair(tagName, inheritNamespaceTagName, group);
     }
 
+    public T tokenizeXML(String path, boolean wrap, Namespaces namespaces) {
+        return tokenizeXML(path, wrap, namespaces, 0);
+    }
+
+    public T tokenizeXML(String path, boolean wrap, Namespaces namespaces, int group) {
+        return delegate.tokenizeXML(path, wrap, namespaces, group);
+    }
+
     /**
      * Evaluates an <a href="http://camel.apache.org/vtdxml.html">XPath
      * expression using the VTD-XML library</a>
