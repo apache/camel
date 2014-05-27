@@ -64,6 +64,7 @@
     <module>camel-base64</module>
     <module>camel-beanio</module>
     <module>camel-bean-validator</module>
+    <module>camel-barcode</module>
     <module>camel-bindy</module>
     <module>camel-cache</module>
     <module>camel-castor</module>
@@ -165,7 +166,6 @@
     <module>camel-smpp</module>
     <module>camel-snmp</module>
     <module>camel-sjms</module>
-    <module>camel-soap</module>
     <module>camel-solr</module>
     <module>camel-splunk</module>
     <module>camel-spring-batch</module>
