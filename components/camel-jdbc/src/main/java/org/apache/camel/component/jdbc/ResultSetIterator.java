@@ -22,8 +22,14 @@ import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
 import java.sql.Statement;
 import java.sql.Types;
-import java.util.*;
-import java.util.concurrent.atomic.*;
+import java.util.HashSet;
+import java.util.Iterator;
+import java.util.LinkedHashMap;
+import java.util.Map;
+import java.util.NoSuchElementException;
+import java.util.Set;
+import java.util.concurrent.atomic.AtomicBoolean;
+
 import org.apache.camel.RuntimeCamelException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -150,14 +156,15 @@ public class ResultSetIterator implements Iterator<Map<String, Object>> {
     }
 
     private static interface Column {
+
         String getName();
 
         Object getValue(ResultSet resultSet) throws SQLException;
     }
 
-    private static class DefaultColumn implements Column {
+    private static final class DefaultColumn implements Column {
+        private final int columnNumber;
         private final String name;
-        protected final int columnNumber;
 
         private DefaultColumn(String name, int columnNumber) {
             this.name = name;
@@ -175,9 +182,18 @@ public class ResultSetIterator implements Iterator<Map<String, Object>> {
         }
     }
 
-    private static final class BlobColumn extends DefaultColumn {
+    private static final class BlobColumn implements Column {
+        private final int columnNumber;
+        private final String name;
+
         private BlobColumn(String name, int columnNumber) {
-            super(name, columnNumber);
+            this.name = name;
+            this.columnNumber = columnNumber;
+        }
+
+        @Override
+        public String getName() {
+            return name;
         }
 
         @Override
