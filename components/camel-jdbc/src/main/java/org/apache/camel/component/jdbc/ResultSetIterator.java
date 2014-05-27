@@ -155,7 +155,7 @@ public class ResultSetIterator implements Iterator<Map<String, Object>> {
         }
     }
 
-    private static interface Column {
+    private interface Column {
 
         String getName();
 
