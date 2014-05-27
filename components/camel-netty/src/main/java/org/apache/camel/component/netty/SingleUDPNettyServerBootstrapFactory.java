@@ -26,6 +26,7 @@ import java.util.concurrent.ThreadFactory;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.util.ObjectHelper;
 import org.jboss.netty.bootstrap.ConnectionlessBootstrap;
 import org.jboss.netty.channel.Channel;
 import org.jboss.netty.channel.ChannelPipelineFactory;
@@ -161,6 +162,7 @@ public class SingleUDPNettyServerBootstrapFactory extends ServiceSupport impleme
             datagramChannel = (DatagramChannel)connectionlessBootstrap.bind(hostAddress);
             String networkInterface = configuration.getNetworkInterface() == null ? LOOPBACK_INTERFACE : configuration.getNetworkInterface();
             multicastNetworkInterface = NetworkInterface.getByName(networkInterface);
+            ObjectHelper.notNull(multicastNetworkInterface, "No network interface found for '" + networkInterface + "'.");
             LOG.info("ConnectionlessBootstrap joining {}:{} using network interface: {}", new Object[]{configuration.getHost(), configuration.getPort(), multicastNetworkInterface.getName()});
             datagramChannel.joinGroup(hostAddress, multicastNetworkInterface);
             allChannels.add(datagramChannel);
