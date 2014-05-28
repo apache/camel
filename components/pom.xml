@@ -32,7 +32,7 @@
   <packaging>pom</packaging>
 
   <modules>
-	<!-- we want to test these modules first to catch any errors early as possible -->
+	  <!-- we want to test these modules first to catch any errors early as possible -->
     <module>camel-test</module>
     <module>camel-testng</module>
     <module>camel-test-blueprint</module>
@@ -91,6 +91,7 @@
     <module>camel-ftp</module>
     <module>camel-gae</module>
     <module>camel-geocoder</module>
+    <module>camel-gora</module>
     <module>camel-gson</module>
     <module>camel-guava-eventbus</module>
     <module>camel-guice</module>
