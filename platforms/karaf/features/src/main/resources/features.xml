@@ -162,6 +162,12 @@
     <bundle dependency='true'>mvn:org.beanio/beanio/${beanio-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-beanio/${project.version}</bundle>
   </feature>
+  <feature name='camel-barcode' version='${project.version}' resolver='(obr)' start-level='50'>
+    <feature version='${project.version}'>camel-core</feature>
+    <bundle dependency='true'>mvn:com.google.zxing/core/${zxing-version}</bundle>
+    <bundle dependency='true'>mvn:com.google.zxing/javase/${zxing-version}</bundle>
+    <bundle>mvn:org.apache.camel/camel-barcode/${project.version}</bundle>
+  </feature>
   <feature name='camel-bindy' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>
     <bundle>mvn:org.apache.camel/camel-bindy/${project.version}</bundle>

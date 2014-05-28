@@ -446,6 +446,7 @@
     <xstream-version>1.4.7</xstream-version>
     <xom-version>1.2.5</xom-version>
     <yammer-metrics-version>2.2.0</yammer-metrics-version>
+    <zxing-version>3.0.0</zxing-version>
     <zookeeper-version>3.4.6</zookeeper-version>
 
     <!-- OSGi bundles properties -->
@@ -569,6 +570,11 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-bean-validator</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-barcode</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
