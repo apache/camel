@@ -30,9 +30,11 @@ import org.apache.camel.util.component.ApiMethodHelper;
 /**
  * Camel {@link ApiCollection} for $componentName
  */
-public class $collectionName extends ApiCollection {
+public final class $collectionName extends ApiCollection {
 
-    public ${collectionName}() {
+    private static $collectionName collection;
+
+    private ${collectionName}() {
         final Map<String, String> aliases = new HashMap<String, String>();
 #foreach( $api in $apis )
         aliases.clear();
@@ -42,5 +44,12 @@ public class $collectionName extends ApiCollection {
 #set( $apiMethod = $helper.getApiMethod($api.ProxyClass) )
         apis.put("$api.ApiName", new ApiMethodHelper<$apiMethod>(${apiMethod}.class, aliases));
 #end
+    }
+
+    public static final synchronized $collectionName getCollection() {
+        if (collection == null) {
+            collection = new $collectionName();
+        }
+        return collection;
     }
 }
