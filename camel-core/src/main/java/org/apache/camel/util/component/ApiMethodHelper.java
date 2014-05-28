@@ -128,7 +128,7 @@ public final class ApiMethodHelper<T extends Enum<T> & ApiMethod> {
                 // also collect argument names for all methods, and detect clashes here
                 final Class<?> previousType = VALID_ARGUMENTS.get(argName);
                 if (previousType != null && previousType != argType) {
-                    throw new ExceptionInInitializerError(String.format(
+                    throw new IllegalArgumentException(String.format(
                         "Argument %s has ambiguous types (%s, %s) across methods!",
                         name, previousType, argType));
                 } else if (previousType == null) {
@@ -334,14 +334,16 @@ public final class ApiMethodHelper<T extends Enum<T> & ApiMethod> {
                     }
                     value = array;
                 } else if (value.getClass().isArray()
-                    && type.getComponentType().isAssignableFrom(value.getClass().getComponentType())) {
-                    // convert derived array to super array
-                    final int size = Array.getLength(value);
-                    Object array = Array.newInstance(type.getComponentType(), size);
-                    for (int i = 0; i < size; i++) {
-                        Array.set(array, i, Array.get(value, i));
+                        && type.getComponentType().isAssignableFrom(value.getClass().getComponentType())) {
+                    // convert derived array to super array if needed
+                    if (type.getComponentType() != value.getClass().getComponentType()) {
+                        final int size = Array.getLength(value);
+                        Object array = Array.newInstance(type.getComponentType(), size);
+                        for (int i = 0; i < size; i++) {
+                            Array.set(array, i, Array.get(value, i));
+                        }
+                        value = array;
                     }
-                    value = array;
                 } else {
                     throw new IllegalArgumentException(
                         String.format("Cannot convert %s to %s", value.getClass(), type));
