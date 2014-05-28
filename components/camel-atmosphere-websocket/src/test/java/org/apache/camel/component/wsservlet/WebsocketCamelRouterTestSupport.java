@@ -30,8 +30,9 @@ import org.junit.Before;
 public class WebsocketCamelRouterTestSupport extends CamelTestSupport {
     public static final String CONTEXT = "/mycontext";
     public static final String CONTEXT_URL = "http://localhost/mycontext";
+    protected static final int PORT = AvailablePortFinder.getNextAvailable();
     protected boolean startCamelContext = true;
-    protected int PORT = AvailablePortFinder.getNextAvailable();
+    
     protected Server server;
 
     @Before

@@ -16,6 +16,13 @@
  */
 package org.apache.camel.component.wsservlet;
 
+import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.concurrent.CountDownLatch;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.TimeUnit;
+
 import com.ning.http.client.AsyncHttpClient;
 import com.ning.http.client.AsyncHttpClientConfig;
 import com.ning.http.client.websocket.WebSocket;
@@ -23,13 +30,6 @@ import com.ning.http.client.websocket.WebSocketByteListener;
 import com.ning.http.client.websocket.WebSocketTextListener;
 import com.ning.http.client.websocket.WebSocketUpgradeHandler;
 
-import java.io.IOException;
-import java.io.UnsupportedEncodingException;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.concurrent.CountDownLatch;
-import java.util.concurrent.ExecutionException;
-import java.util.concurrent.TimeUnit;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -65,7 +65,7 @@ public class TestClient {
     public void connect() throws InterruptedException, ExecutionException, IOException {
         websocket = client.prepareGet(url).execute(
             new WebSocketUpgradeHandler.Builder()
-            .addWebSocketListener(new TestWebSocketListener()).build()).get();
+                .addWebSocketListener(new TestWebSocketListener()).build()).get();
     }
 
     public void sendTextMessage(String message) {
