@@ -21,9 +21,7 @@ import java.io.File;
 import static org.junit.Assert.assertTrue;
 
 /**
- * User: dbokde
- * Date: 5/26/14
- * Time: 4:49 AM
+ * Base class for Generator MOJO tests.
  */
 public class AbstractGeneratorMojoTest {
     protected static final String OUT_DIR = "target/generated-test-sources/camelComponent";
