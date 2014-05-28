@@ -65,7 +65,8 @@ public class XMLTokenizeWrapLanguageTest extends ContextTestSupport {
             "<?xml version='1.0' encoding='UTF-8'?><c:parent xmlns:c='urn:c'><c:child some_attr='c'></c:child></c:parent>");
 
         template.sendBody("direct:start",
-            "<?xml version='1.0' encoding='UTF-8'?><c:parent xmlns:c='urn:c'><c:child some_attr='a' anotherAttr='a'>ha</c:child><c:child some_attr='b' anotherAttr='b' /><c:child some_attr='c'></c:child></c:parent>");
+            "<?xml version='1.0' encoding='UTF-8'?><c:parent xmlns:c='urn:c'><c:child some_attr='a' anotherAttr='a'>ha</c:child>"
+            + "<c:child some_attr='b' anotherAttr='b' /><c:child some_attr='c'></c:child></c:parent>");
 
         assertMockEndpointsSatisfied();
     }
@@ -88,7 +89,8 @@ public class XMLTokenizeWrapLanguageTest extends ContextTestSupport {
             "<?xml version='1.0' encoding='UTF-8'?><c:parent xmlns:c='urn:c'><c:child xmlns:c='urn:c' some_attr='b' anotherAttr='b' /></c:parent>");
 
         template.sendBody("direct:start",
-            "<?xml version='1.0' encoding='UTF-8'?><c:parent xmlns:c='urn:c'><c:child xmlns:c='urn:c' some_attr='a' anotherAttr='a'></c:child><c:child xmlns:c='urn:c' some_attr='b' anotherAttr='b' /></c:parent>");
+            "<?xml version='1.0' encoding='UTF-8'?><c:parent xmlns:c='urn:c'><c:child xmlns:c='urn:c' some_attr='a' anotherAttr='a'></c:child>"
+            + "<c:child xmlns:c='urn:c' some_attr='b' anotherAttr='b' /></c:parent>");
 
         assertMockEndpointsSatisfied();
     }
