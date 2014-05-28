@@ -132,6 +132,21 @@ public class ApiMethodHelperTest {
         properties.put("name1", "Dave");
         properties.put("name2", "Frank");
         assertEquals("greetUs(name1, name2)", "Greetings Dave, Frank", apiMethodHelper.invokeMethod(proxy, TestMethod.GREETUS, properties));
+
+        properties.clear();
+        properties.put("names", new String[] { "Dave", "Frank" });
+        assertEquals("greetAll(names)", "Greetings Dave, Frank", apiMethodHelper.invokeMethod(proxy, TestMethod.GREETALL, properties));
+
+        // test with a derived proxy
+        proxy = new TestProxy() {
+            @Override
+            public String sayHi(String name) {
+                return "Howdy " + name;
+            }
+        };
+        properties.clear();
+        properties.put("name", "Dave");
+        assertEquals("Derived sayHi(name)", "Howdy Dave", apiMethodHelper.invokeMethod(proxy, TestMethod.SAYHI_1, properties));
     }
 
     static enum TestMethod implements ApiMethod {
