@@ -45,7 +45,6 @@ public class MeterProducerTest {
         producer = new MeterProducer(endpoint);
         inOrder = Mockito.inOrder(endpoint, registry, meter, exchange);
         when(endpoint.getRegistry()).thenReturn(registry);
-        when(endpoint.getMetricsName(exchange)).thenReturn(METRICS_NAME);
         when(registry.meter(METRICS_NAME)).thenReturn(meter);
     }
 
@@ -58,9 +57,7 @@ public class MeterProducerTest {
     @Test
     public void testProcessMarkSet() throws Exception {
         when(endpoint.getMark()).thenReturn(MARK);
-        producer.process(exchange);
-        inOrder.verify(endpoint, times(1)).getMetricsName(exchange);
-        inOrder.verify(endpoint, times(1)).getRegistry();
+        producer.doProcess(exchange, endpoint, registry, METRICS_NAME);
         inOrder.verify(registry, times(1)).meter(METRICS_NAME);
         inOrder.verify(endpoint, times(1)).getMark();
         inOrder.verify(meter, times(1)).mark(MARK);
@@ -70,9 +67,7 @@ public class MeterProducerTest {
     @Test
     public void testProcessMarkNotSet() throws Exception {
         when(endpoint.getMark()).thenReturn(null);
-        producer.process(exchange);
-        inOrder.verify(endpoint, times(1)).getMetricsName(exchange);
-        inOrder.verify(endpoint, times(1)).getRegistry();
+        producer.doProcess(exchange, endpoint, registry, METRICS_NAME);
         inOrder.verify(registry, times(1)).meter(METRICS_NAME);
         inOrder.verify(endpoint, times(1)).getMark();
         inOrder.verify(meter, times(1)).mark();

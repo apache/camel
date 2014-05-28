@@ -2,7 +2,6 @@ package org.apache.camel.metrics;
 
 import static org.hamcrest.CoreMatchers.is;
 import static org.hamcrest.MatcherAssert.assertThat;
-import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.when;
 
 import org.apache.camel.Exchange;
@@ -93,69 +92,5 @@ public class AbstractMetricsEndpointTest {
     @Test
     public void testGetMetricsName() throws Exception {
         assertThat(endpoint.getMetricsName(), is(METRICS_NAME));
-    }
-
-    @Test
-    public void testGetStringHeaderValue() {
-        when(in.getHeader(HEADER, String.class)).thenReturn(STRING_VALUE);
-        assertThat(endpoint.getStringHeader(exchange, HEADER, DEFAULT_STRING_VALUE), is(STRING_VALUE));
-        inOrder.verify(exchange, times(1)).getIn();
-        inOrder.verify(in, times(1)).getHeader(HEADER, String.class);
-    }
-
-    @Test
-    public void testGetStringHeaderValueNotFound() {
-        when(in.getHeader(HEADER, String.class)).thenReturn(null);
-        assertThat(endpoint.getStringHeader(exchange, HEADER, DEFAULT_STRING_VALUE), is(DEFAULT_STRING_VALUE));
-        inOrder.verify(exchange, times(1)).getIn();
-        inOrder.verify(in, times(1)).getHeader(HEADER, String.class);
-    }
-
-    @Test
-    public void testGetStringHeaderValueEmptyString() {
-        when(in.getHeader(HEADER, String.class)).thenReturn("");
-        assertThat(endpoint.getStringHeader(exchange, HEADER, DEFAULT_STRING_VALUE), is(DEFAULT_STRING_VALUE));
-        inOrder.verify(exchange, times(1)).getIn();
-        inOrder.verify(in, times(1)).getHeader(HEADER, String.class);
-    }
-
-    @Test
-    public void testGetStringHeaderValueWhiteSpaces() {
-        when(in.getHeader(HEADER, String.class)).thenReturn(" \n\t\r");
-        assertThat(endpoint.getStringHeader(exchange, HEADER, DEFAULT_STRING_VALUE), is(DEFAULT_STRING_VALUE));
-        inOrder.verify(exchange, times(1)).getIn();
-        inOrder.verify(in, times(1)).getHeader(HEADER, String.class);
-    }
-
-    @Test
-    public void testGetLongHeaderValue() {
-        when(in.getHeader(HEADER, DEFAULT_LONG_VALUE, Long.class)).thenReturn(LONG_VALUE);
-        assertThat(endpoint.getLongHeader(exchange, HEADER, DEFAULT_LONG_VALUE), is(LONG_VALUE));
-        inOrder.verify(exchange, times(1)).getIn();
-        inOrder.verify(in, times(1)).getHeader(HEADER, DEFAULT_LONG_VALUE, Long.class);
-    }
-
-    @Test
-    public void testGetLongHeaderValueNotFound() {
-        when(in.getHeader(HEADER, DEFAULT_LONG_VALUE, Long.class)).thenReturn(DEFAULT_LONG_VALUE);
-        assertThat(endpoint.getLongHeader(exchange, HEADER, DEFAULT_LONG_VALUE), is(DEFAULT_LONG_VALUE));
-        inOrder.verify(exchange, times(1)).getIn();
-        inOrder.verify(in, times(1)).getHeader(HEADER, DEFAULT_LONG_VALUE, Long.class);
-    }
-
-    @Test
-    public void testGetMetricsNameFromExchange() {
-        when(in.getHeader(MetricsComponent.HEADER_METRIC_NAME, String.class)).thenReturn(STRING_VALUE);
-        assertThat(endpoint.getMetricsName(exchange), is(STRING_VALUE));
-        inOrder.verify(exchange, times(1)).getIn();
-        inOrder.verify(in, times(1)).getHeader(MetricsComponent.HEADER_METRIC_NAME, String.class);
-    }
-
-    @Test
-    public void testGetMetricsNameFromExchangeNotFound() {
-        when(in.getHeader(MetricsComponent.HEADER_METRIC_NAME, String.class)).thenReturn(null);
-        assertThat(endpoint.getMetricsName(exchange), is(METRICS_NAME));
-        inOrder.verify(exchange, times(1)).getIn();
-        inOrder.verify(in, times(1)).getHeader(MetricsComponent.HEADER_METRIC_NAME, String.class);
     }
 }

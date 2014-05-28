@@ -1,5 +1,9 @@
 package org.apache.camel.metrics;
 
+import static org.apache.camel.metrics.MetricsComponent.HEADER_HISTOGRAM_VALUE;
+import static org.apache.camel.metrics.MetricsComponent.HEADER_METRIC_NAME;
+import static org.apache.camel.metrics.MetricsComponent.HEADER_PERFIX;
+
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
@@ -13,14 +17,17 @@ import org.junit.Test;
 
 public class MetricsComponentRouteTest extends CamelTestSupport {
 
-    @Produce(uri = "direct:start")
-    protected ProducerTemplate template;
+    @Produce(uri = "direct:start-1")
+    protected ProducerTemplate template1;
+
+    @Produce(uri = "direct:start-2")
+    protected ProducerTemplate template2;
 
     @Test
     public void testMetrics() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMinimumMessageCount(1);
-        template.sendBody(new Object());
+        template1.sendBody(new Object());
         assertMockEndpointsSatisfied();
     }
 
@@ -38,7 +45,28 @@ public class MetricsComponentRouteTest extends CamelTestSupport {
         Map<String, Object> headers = new HashMap<String, Object>();
         headers.put(header1, value1);
         headers.put(header2, value2);
-        template.sendBodyAndHeaders(body, headers);
+        template1.sendBodyAndHeaders(body, headers);
+        assertMockEndpointsSatisfied();
+    }
+
+    @Test
+    public void testHeaderRemoval() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        Object body = new Object();
+        Date now = new Date();
+
+        mock.expectedBodiesReceived(body);
+        mock.expectedHeaderReceived("." + HEADER_PERFIX, "value");
+        mock.expectedHeaderReceived("date", now);
+
+        Map<String, Object> headers = new HashMap<String, Object>();
+        headers.put(HEADER_METRIC_NAME, "a name");
+        headers.put(HEADER_HISTOGRAM_VALUE, 34L);
+        headers.put(HEADER_PERFIX + "notExistingHeader", "?");
+        headers.put("." + HEADER_PERFIX, "value");
+        headers.put("date", now);
+
+        template2.sendBodyAndHeaders(body, headers);
         assertMockEndpointsSatisfied();
     }
 
@@ -47,7 +75,7 @@ public class MetricsComponentRouteTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() {
-                from("direct:start")
+                from("direct:start-1")
                         .to("metrics:timer:T?action=start")
                         .to("metrics:A")
                         .to("metrics:counter://B")
@@ -60,6 +88,10 @@ public class MetricsComponentRouteTest extends CamelTestSupport {
                         .to("metrics:timer:T")
                         .to("metrics:histogram:E?value=12000000031")
                         .to("metrics:timer:T?action=stop")
+                        .to("mock:result");
+
+                from("direct:start-2")
+                        .to("metrics:meter:F?mark=88")
                         .to("mock:result");
             }
         };

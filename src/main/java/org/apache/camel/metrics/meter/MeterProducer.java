@@ -1,23 +1,19 @@
 package org.apache.camel.metrics.meter;
 
-import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
-import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.metrics.AbstractMetricsProducer;
 
 import com.codahale.metrics.Meter;
 import com.codahale.metrics.MetricRegistry;
 
-public class MeterProducer extends DefaultProducer {
+public class MeterProducer extends AbstractMetricsProducer<MeterEndpoint> {
 
-    public MeterProducer(Endpoint endpoint) {
+    public MeterProducer(MeterEndpoint endpoint) {
         super(endpoint);
     }
 
     @Override
-    public void process(Exchange exchange) throws Exception {
-        MeterEndpoint endpoint = (MeterEndpoint) getEndpoint();
-        String metricsName = endpoint.getMetricsName(exchange);
-        MetricRegistry registry = endpoint.getRegistry();
+    protected void doProcess(Exchange exchange, MeterEndpoint endpoint, MetricRegistry registry, String metricsName) throws Exception {
         Meter meter = registry.meter(metricsName);
         Long mark = endpoint.getMark();
         if (mark == null) {

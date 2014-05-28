@@ -26,10 +26,11 @@ public class MetricsComponent extends DefaultComponent {
     public static final String METRIC_REGISTRY_NAME = "metricRegistry";
     public static final MetricsType DEFAULT_METRICS_TYPE = MetricsType.METER;
     public static final long DEFAULT_REPORTING_INTERVAL_SECONDS = 60L;
-    public static final String HEADER_METRIC_NAME = "CamelMetricsName";
-    public static final String HEADER_COUNTER_INCREMENT = "CamelMetricsCounterIncrement";
-    public static final String HEADER_COUNTER_DECREMENT = "CamelMetricsCounterDecrement";
-    public static final String HEADER_HISTOGRAM_VALUE = "CamelMetricsHistogramValue";
+    public static final String HEADER_PERFIX = "CamelMetrics";
+    public static final String HEADER_METRIC_NAME = HEADER_PERFIX + "Name";
+    public static final String HEADER_COUNTER_INCREMENT = HEADER_PERFIX + "CounterIncrement";
+    public static final String HEADER_COUNTER_DECREMENT = HEADER_PERFIX + "CounterDecrement";
+    public static final String HEADER_HISTOGRAM_VALUE = HEADER_PERFIX + "HistogramValue";
 
     private static final Logger LOG = LoggerFactory.getLogger(MetricsComponent.class);
 

@@ -4,9 +4,6 @@ import static org.apache.camel.metrics.MetricsComponent.HEADER_COUNTER_DECREMENT
 import static org.apache.camel.metrics.MetricsComponent.HEADER_COUNTER_INCREMENT;
 import static org.apache.camel.metrics.MetricsComponent.HEADER_METRIC_NAME;
 import static org.apache.camel.metrics.MetricsComponent.METRIC_REGISTRY_NAME;
-import static org.hamcrest.MatcherAssert.assertThat;
-import static org.hamcrest.Matchers.instanceOf;
-import static org.junit.Assert.fail;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.times;
@@ -15,7 +12,6 @@ import static org.mockito.Mockito.when;
 import java.util.HashMap;
 import java.util.Map;
 
-import org.apache.camel.CamelExecutionException;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Produce;
 import org.apache.camel.ProducerTemplate;
@@ -167,14 +163,8 @@ public class CounterRouteTest {
     @Test
     public void testOverrideIncrementWithWrongType() throws Exception {
         when(mockRegistry.counter("A")).thenReturn(mockCounter);
-        endpoint.expectedMessageCount(0);
-        try {
-            producer1.sendBodyAndHeader(new Object(), HEADER_COUNTER_INCREMENT, "this is not a valid long value");
-            fail("Exception expected");
-        }
-        catch (Exception e) {
-            assertThat(e, instanceOf(CamelExecutionException.class));
-        }
+        endpoint.expectedMessageCount(1);
+        producer1.sendBodyAndHeader(new Object(), HEADER_COUNTER_INCREMENT, "this is not a valid long value");
         endpoint.assertIsSatisfied();
         inOrder.verify(mockRegistry, times(1)).counter("A");
         inOrder.verifyNoMoreInteractions();

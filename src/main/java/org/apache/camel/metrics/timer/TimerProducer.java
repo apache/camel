@@ -1,8 +1,7 @@
 package org.apache.camel.metrics.timer;
 
-import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
-import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.metrics.AbstractMetricsProducer;
 import org.apache.camel.metrics.timer.TimerEndpoint.TimerAction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -10,19 +9,16 @@ import org.slf4j.LoggerFactory;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Timer;
 
-public class TimerProducer extends DefaultProducer {
+public class TimerProducer extends AbstractMetricsProducer<TimerEndpoint> {
 
     private static final Logger LOG = LoggerFactory.getLogger(TimerProducer.class);
 
-    public TimerProducer(Endpoint endpoint) {
+    public TimerProducer(TimerEndpoint endpoint) {
         super(endpoint);
     }
 
     @Override
-    public void process(Exchange exchange) throws Exception {
-        TimerEndpoint endpoint = (TimerEndpoint) getEndpoint();
-        MetricRegistry registry = endpoint.getRegistry();
-        String metricsName = endpoint.getMetricsName(exchange);
+    protected void doProcess(Exchange exchange, TimerEndpoint endpoint, MetricRegistry registry, String metricsName) throws Exception {
         TimerAction action = endpoint.getAction();
         if (action == TimerAction.start) {
             handleStart(exchange, registry, metricsName);

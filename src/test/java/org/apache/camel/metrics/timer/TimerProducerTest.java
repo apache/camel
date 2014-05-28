@@ -51,7 +51,6 @@ public class TimerProducerTest {
         producer = new TimerProducer(endpoint);
         inOrder = Mockito.inOrder(endpoint, exchange, registry, timer, context);
         when(endpoint.getRegistry()).thenReturn(registry);
-        when(endpoint.getMetricsName(exchange)).thenReturn(METRICS_NAME);
         when(registry.timer(METRICS_NAME)).thenReturn(timer);
         when(timer.time()).thenReturn(context);
     }
@@ -66,9 +65,7 @@ public class TimerProducerTest {
     public void testProcessStart() throws Exception {
         when(endpoint.getAction()).thenReturn(TimerAction.start);
         when(exchange.getProperty(PROPERTY_NAME, Timer.Context.class)).thenReturn(null);
-        producer.process(exchange);
-        inOrder.verify(endpoint, times(1)).getRegistry();
-        inOrder.verify(endpoint, times(1)).getMetricsName(exchange);
+        producer.doProcess(exchange, endpoint, registry, METRICS_NAME);
         inOrder.verify(endpoint, times(1)).getAction();
         inOrder.verify(exchange, times(1)).getProperty(PROPERTY_NAME, Timer.Context.class);
         inOrder.verify(registry, times(1)).timer(METRICS_NAME);
@@ -81,9 +78,7 @@ public class TimerProducerTest {
     public void testProcessStop() throws Exception {
         when(endpoint.getAction()).thenReturn(TimerAction.stop);
         when(exchange.getProperty(PROPERTY_NAME, Timer.Context.class)).thenReturn(context);
-        producer.process(exchange);
-        inOrder.verify(endpoint, times(1)).getRegistry();
-        inOrder.verify(endpoint, times(1)).getMetricsName(exchange);
+        producer.doProcess(exchange, endpoint, registry, METRICS_NAME);
         inOrder.verify(endpoint, times(1)).getAction();
         inOrder.verify(exchange, times(1)).getProperty(PROPERTY_NAME, Timer.Context.class);
         inOrder.verify(context, times(1)).stop();
@@ -94,9 +89,7 @@ public class TimerProducerTest {
     @Test
     public void testProcessNoAction() throws Exception {
         when(endpoint.getAction()).thenReturn(null);
-        producer.process(exchange);
-        inOrder.verify(endpoint, times(1)).getRegistry();
-        inOrder.verify(endpoint, times(1)).getMetricsName(exchange);
+        producer.doProcess(exchange, endpoint, registry, METRICS_NAME);
         inOrder.verify(endpoint, times(1)).getAction();
         inOrder.verifyNoMoreInteractions();
     }

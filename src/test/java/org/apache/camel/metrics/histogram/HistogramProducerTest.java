@@ -7,6 +7,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.when;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.Message;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -36,6 +37,9 @@ public class HistogramProducerTest {
     @Mock
     private Exchange exchange;
 
+    @Mock
+    private Message in;
+
     private HistogramProducer producer;
 
     private InOrder inOrder;
@@ -43,10 +47,10 @@ public class HistogramProducerTest {
     @Before
     public void setUp() throws Exception {
         producer = new HistogramProducer(endpoint);
-        inOrder = Mockito.inOrder(endpoint, registry, histogram, exchange);
+        inOrder = Mockito.inOrder(endpoint, registry, histogram, exchange, in);
         when(endpoint.getRegistry()).thenReturn(registry);
-        when(endpoint.getMetricsName(exchange)).thenReturn(METRICS_NAME);
         when(registry.histogram(METRICS_NAME)).thenReturn(histogram);
+        when(exchange.getIn()).thenReturn(in);
     }
 
     @Test
@@ -57,13 +61,12 @@ public class HistogramProducerTest {
     @Test
     public void testProcessValueSet() throws Exception {
         when(endpoint.getValue()).thenReturn(VALUE);
-        when(endpoint.getLongHeader(exchange, HEADER_HISTOGRAM_VALUE, VALUE)).thenReturn(VALUE);
-        producer.process(exchange);
-        inOrder.verify(endpoint, times(1)).getRegistry();
-        inOrder.verify(endpoint, times(1)).getMetricsName(exchange);
+        when(in.getHeader(HEADER_HISTOGRAM_VALUE, VALUE, Long.class)).thenReturn(VALUE);
+        producer.doProcess(exchange, endpoint, registry, METRICS_NAME);
+        inOrder.verify(exchange, times(1)).getIn();
         inOrder.verify(registry, times(1)).histogram(METRICS_NAME);
         inOrder.verify(endpoint, times(1)).getValue();
-        inOrder.verify(endpoint, times(1)).getLongHeader(exchange, HEADER_HISTOGRAM_VALUE, VALUE);
+        inOrder.verify(in, times(1)).getHeader(HEADER_HISTOGRAM_VALUE, VALUE, Long.class);
         inOrder.verify(histogram, times(1)).update(VALUE);
         inOrder.verifyNoMoreInteractions();
     }
@@ -71,26 +74,24 @@ public class HistogramProducerTest {
     @Test
     public void testProcessValueNotSet() throws Exception {
         when(endpoint.getValue()).thenReturn(null);
-        when(endpoint.getLongHeader(exchange, HEADER_HISTOGRAM_VALUE, null)).thenReturn(null);
-        producer.process(exchange);
-        inOrder.verify(endpoint, times(1)).getRegistry();
-        inOrder.verify(endpoint, times(1)).getMetricsName(exchange);
+        when(in.getHeader(HEADER_HISTOGRAM_VALUE, null, Long.class)).thenReturn(null);
+        producer.doProcess(exchange, endpoint, registry, METRICS_NAME);
+        inOrder.verify(exchange, times(1)).getIn();
         inOrder.verify(registry, times(1)).histogram(METRICS_NAME);
         inOrder.verify(endpoint, times(1)).getValue();
-        inOrder.verify(endpoint, times(1)).getLongHeader(exchange, HEADER_HISTOGRAM_VALUE, null);
+        inOrder.verify(in, times(1)).getHeader(HEADER_HISTOGRAM_VALUE, null, Long.class);
         inOrder.verifyNoMoreInteractions();
     }
 
     @Test
     public void testProcessOverrideValue() throws Exception {
         when(endpoint.getValue()).thenReturn(VALUE);
-        when(endpoint.getLongHeader(exchange, HEADER_HISTOGRAM_VALUE, VALUE)).thenReturn(VALUE + 3);
-        producer.process(exchange);
-        inOrder.verify(endpoint, times(1)).getRegistry();
-        inOrder.verify(endpoint, times(1)).getMetricsName(exchange);
+        when(in.getHeader(HEADER_HISTOGRAM_VALUE, VALUE, Long.class)).thenReturn(VALUE + 3);
+        producer.doProcess(exchange, endpoint, registry, METRICS_NAME);
+        inOrder.verify(exchange, times(1)).getIn();
         inOrder.verify(registry, times(1)).histogram(METRICS_NAME);
         inOrder.verify(endpoint, times(1)).getValue();
-        inOrder.verify(endpoint, times(1)).getLongHeader(exchange, HEADER_HISTOGRAM_VALUE, VALUE);
+        inOrder.verify(in, times(1)).getHeader(HEADER_HISTOGRAM_VALUE, VALUE, Long.class);
         inOrder.verify(histogram, times(1)).update(VALUE + 3);
         inOrder.verifyNoMoreInteractions();
     }
@@ -98,13 +99,12 @@ public class HistogramProducerTest {
     @Test
     public void testProcessOverrideUriValueNotSet() throws Exception {
         when(endpoint.getValue()).thenReturn(null);
-        when(endpoint.getLongHeader(exchange, HEADER_HISTOGRAM_VALUE, null)).thenReturn(VALUE + 2);
-        producer.process(exchange);
-        inOrder.verify(endpoint, times(1)).getRegistry();
-        inOrder.verify(endpoint, times(1)).getMetricsName(exchange);
+        when(in.getHeader(HEADER_HISTOGRAM_VALUE, null, Long.class)).thenReturn(VALUE + 2);
+        producer.doProcess(exchange, endpoint, registry, METRICS_NAME);
+        inOrder.verify(exchange, times(1)).getIn();
         inOrder.verify(registry, times(1)).histogram(METRICS_NAME);
         inOrder.verify(endpoint, times(1)).getValue();
-        inOrder.verify(endpoint, times(1)).getLongHeader(exchange, HEADER_HISTOGRAM_VALUE, null);
+        inOrder.verify(in, times(1)).getHeader(HEADER_HISTOGRAM_VALUE, null, Long.class);
         inOrder.verify(histogram, times(1)).update(VALUE + 2);
         inOrder.verifyNoMoreInteractions();
     }

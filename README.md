@@ -72,6 +72,9 @@ from("direct:in")
 
 will update counter with name ```new.name``` instead of ```name.not.used```.
 
+All Metrics specific headers are removed from the message once Metrics endpoint finishes processing of exchange.
+While processing exchange Metrics endpoint will catch all exceptions and write log entry using level warn.
+
 
 ## Metrics type counter
 
@@ -133,34 +136,6 @@ from("direct:in")
 ```
 
 
-## Metric type meter
-
-```
-metrics:meter:metricname[?options]
-```
-
-Where options are
-
-| Name | Default | Description               |
-|------|---------|---------------------------|
-| mark |         | long value to use as mark |
-
-If ```mark``` is not set ```meter.mark()``` is called without argument.
-
-```java
-// marks simple.meter without value
-from("direct:in")
-    .to("metric:simple.meter")
-    .to("direct:out")
-```
-
-```java
-// marks simple.meter with value 81
-from("direct:in")
-    .to("metric:meter:simple.meter?mark=81")
-    .to("direct:out")
-```
-
 ## Metric type histogram
 
 ```
@@ -202,6 +177,36 @@ from("direct:in")
     .to("metric:histogram:simple.histogram?value=700")
     .to("direct:out")
 ```
+
+
+## Metric type meter
+
+```
+metrics:meter:metricname[?options]
+```
+
+Where options are
+
+| Name | Default | Description               |
+|------|---------|---------------------------|
+| mark |         | long value to use as mark |
+
+If ```mark``` is not set ```meter.mark()``` is called without argument.
+
+```java
+// marks simple.meter without value
+from("direct:in")
+    .to("metric:simple.meter")
+    .to("direct:out")
+```
+
+```java
+// marks simple.meter with value 81
+from("direct:in")
+    .to("metric:meter:simple.meter?mark=81")
+    .to("direct:out")
+```
+
 
 ## Metrics type timer
 
