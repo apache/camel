@@ -124,7 +124,28 @@ public abstract class ApiMethodParser<T> {
             result.add(new ApiMethodModel(name, resultType, arguments, method));
         }
 
+        // allow derived classes to post process
         result = processResults(result);
+
+        // check that argument names have the same type across methods
+        Map<String, Class<?>> allArguments = new HashMap<String, Class<?>>();
+        for (ApiMethodModel model : result) {
+            for (Argument argument : model.getArguments()) {
+                String name = argument.getName();
+                Class<?> argClass = allArguments.get(name);
+                Class<?> type = argument.getType();
+                if (argClass == null) {
+                    allArguments.put(name, type);
+                } else {
+                    if (argClass != type) {
+                        throw new IllegalArgumentException("Argument [" + name +
+                                "] is used in multiple methods with different types " +
+                                argClass.getCanonicalName() + ", " + type.getCanonicalName());
+                    }
+                }
+            }
+        }
+        allArguments.clear();
 
         Collections.sort(result, new Comparator<ApiMethodModel>() {
             @Override
