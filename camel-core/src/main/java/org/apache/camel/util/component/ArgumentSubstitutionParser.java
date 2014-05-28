@@ -74,7 +74,7 @@ public class ArgumentSubstitutionParser<T> extends ApiMethodParser<T> {
                             if (matcher.find()) {
                                 final List<NameReplacement> adapters = argEntry.getValue();
                                 for (NameReplacement adapter : adapters) {
-                                    if (adapter.type == null || adapter.type.isAssignableFrom(argument.getType())) {
+                                    if (adapter.type == null || adapter.type == argument.getType()) {
                                         argument = new Argument(matcher.replaceAll(adapter.replacement), argument.getType());
                                     }
                                 }
