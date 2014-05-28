@@ -19,8 +19,7 @@ package org.apache.camel.dataformat.barcode;
 
 /**
  * Endings for the supported image types.
- * 
- * @author claus
+ *
  */
 public enum BarcodeImageType {
     /**

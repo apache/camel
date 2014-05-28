@@ -33,7 +33,6 @@ import static org.junit.Assert.assertTrue;
 /**
  * This class tests all Camel independend test cases 
  * for {@link BarcodeDataFormat}.
- * @author claus.straube
  */
 public class BarcodeDataFormatTest {
     

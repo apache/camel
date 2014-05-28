@@ -57,7 +57,6 @@ import org.slf4j.LoggerFactory;
  * 
  * https://github.com/zxing/zxing
  * 
- * @author claus.straube
  */
 public class BarcodeDataFormat implements DataFormat {
 
