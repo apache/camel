@@ -56,6 +56,8 @@ public class JavadocApiMethodGeneratorMojoTest extends AbstractGeneratorMojoTest
             }
         };
         mojo.excludePackages = JavadocApiMethodGeneratorMojo.DEFAULT_EXCLUDE_PACKAGES;
+        Substitution substitution = new Substitution(".*", "key", "java.lang.Object", "applicationKey");
+        mojo.substitutions = new Substitution[]{ substitution };
 
         mojo.execute();
 
