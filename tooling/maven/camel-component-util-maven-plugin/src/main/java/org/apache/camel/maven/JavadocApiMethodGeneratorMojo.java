@@ -134,7 +134,9 @@ public class JavadocApiMethodGeneratorMojo extends AbstractApiMethodGeneratorMoj
         }
         try {
             final Method method = aClass.getMethod(name, argTypes);
-            if ((method.getModifiers() & Modifier.PUBLIC) != 0) {
+            // only include non-static public methods
+            int modifiers = method.getModifiers();
+            if (Modifier.isPublic(modifiers) && !Modifier.isStatic(modifiers)) {
                 return method.getReturnType().getCanonicalName();
             } else {
                 return null;
@@ -188,11 +190,6 @@ public class JavadocApiMethodGeneratorMojo extends AbstractApiMethodGeneratorMoj
                     parserState = ParserState.METHOD;
                 }
             }
-        }
-
-        @Override
-        protected void endTag(boolean omitted) {
-            super.endTag(omitted);    //To change body of overridden methods use File | Settings | File Templates.
         }
 
         @Override
