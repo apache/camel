@@ -53,6 +53,11 @@ public class WsEndpoint extends AhcEndpoint {
     private WebSocket websocket;
     private Set<WsConsumer> consumers;
     private boolean useStreaming;
+    
+    public WsEndpoint(String endpointUri, WsComponent component) {
+        super(endpointUri, component, null);
+        this.consumers = new HashSet<WsConsumer>();
+    }
 
     private static boolean probeClass(String name) {
         try {
@@ -63,11 +68,6 @@ public class WsEndpoint extends AhcEndpoint {
         }
     }
     
-    public WsEndpoint(String endpointUri, WsComponent component) {
-        super(endpointUri, component, null);
-        this.consumers = new HashSet<WsConsumer>();
-    }
-
     @Override
     public WsComponent getComponent() {
         return (WsComponent) super.getComponent();

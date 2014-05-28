@@ -45,11 +45,12 @@ import org.junit.Test;
 public abstract class WsProducerTestBase extends Assert {
     
     protected static final String TEST_MESSAGE = "Hello World!";
+    protected static final int PORT = AvailablePortFinder.getNextAvailable();
     
     protected CamelContext camelContext;
     protected ProducerTemplate template;
     protected Server server;
-    protected int PORT = AvailablePortFinder.getNextAvailable();
+   
     protected List<Object> messages;
     
     public void startTestServer() throws Exception {
