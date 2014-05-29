@@ -159,10 +159,10 @@ public class BarcodeDataFormatCamelTest extends BarcodeTestBase {
                 // 
                 // read file and route it
                 from(FILE_ENDPOINT + "?noop=true")
-                        .multicast().to("direct:marshall", "mock:image");
+                        .multicast().to("direct:unmarshall", "mock:image");
 
                 // get the message from code
-                from("direct:marshall")
+                from("direct:unmarshall")
                         .unmarshal(code1) // for unmarshalling, the instance doesn't matter
                         .to("log:OUT")
                         .to("mock:out");

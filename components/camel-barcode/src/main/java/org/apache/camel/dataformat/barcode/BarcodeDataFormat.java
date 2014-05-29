@@ -348,4 +348,22 @@ public class BarcodeDataFormat implements DataFormat {
     public final Map<DecodeHintType, Object> getReaderHintMap() {
         return readerHintMap;
     }
+    
+    // these set method is used for BarcodeDataFormat XML DSL
+    public void setBarcodeImageType(BarcodeImageType type) {
+        this.params.setType(type);
+        this.optimizeHints();
+    }
+    
+    public void setBarcodeFormat(BarcodeFormat format) {
+        this.params.setFormat(format);
+    }
+    
+    public void setWidth(Integer width) {
+        this.params.setWidth(width);
+    }
+    
+    public void setHeight(Integer height) {
+        this.params.setHeight(height);
+    }
 }
