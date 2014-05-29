@@ -55,7 +55,6 @@ public class JmsComponent extends UriEndpointComponent implements ApplicationCon
     private QueueBrowseStrategy queueBrowseStrategy;
     private HeaderFilterStrategy headerFilterStrategy;
     private ExecutorService asyncStartStopExecutorService;
-    private MessageListenerContainerFactory messageListenerContainerFactory;
 
     public JmsComponent() {
         super(JmsEndpoint.class);
@@ -538,7 +537,7 @@ public class JmsComponent extends UriEndpointComponent implements ApplicationCon
                     parameters, KEY_FORMAT_STRATEGY_PARAM, JmsKeyFormatStrategy.class));
         }
 
-        messageListenerContainerFactory = resolveAndRemoveReferenceParameter(parameters,
+        MessageListenerContainerFactory messageListenerContainerFactory = resolveAndRemoveReferenceParameter(parameters,
                 "messageListenerContainerFactoryRef", MessageListenerContainerFactory.class);
         if (messageListenerContainerFactory != null) {
             endpoint.setMessageListenerContainerFactory(messageListenerContainerFactory);
