@@ -1,5 +1,7 @@
 # Metrics Component
 
+[![Build Status](https://travis-ci.org/laurikimmel/camel-metrics.svg?branch=master)](https://travis-ci.org/laurikimmel/camel-metrics)
+
 **Available as of Camel 2.13**
 
 The **metrics:** component allows you to collect various metrics directly from Camel routes. Supported metric types are _counter_, _meter_, _histogram_ and _timer_. [Metrics](http://metrics.codahale.com) provides simple way to measure behaviour of your application. Configurable reporting _backend_ is enabling different integration options for collecting and visualizing statistics. 
@@ -86,8 +88,8 @@ Where options are
 
 | Name      | Default | Description                             |
 |-----------|---------|-----------------------------------------|
-| increment |         | long value to add to the counter        |
-| decrement |         | long value to subtract from the counter |
+| increment | -       | Long value to add to the counter        |
+| decrement | -       | Long value to subtract from the counter |
 
 If neither ```increment``` or ```decrement``` is defined counter value will be incremented by one. If ```increment``` and ```decrement``` are both defined only increment operation is called.
 
@@ -114,10 +116,10 @@ from("direct:in")
 
 ### Headers
 
-| Name                         | Description
-|------------------------------|---------------------------------|
-| CamelMetricsCounterIncrement | Override increment value in URI |
-| CamelMetricsCounterDecrement | Override decrement value in URI |
+| Name                         | Description                     | Expected type |
+|------------------------------|---------------------------------|---------------|
+| CamelMetricsCounterIncrement | Override increment value in URI | Long          |
+| CamelMetricsCounterDecrement | Override decrement value in URI | Long          |
 
 ```java
 // update counter simple.counter by 417
@@ -146,7 +148,7 @@ Where options are
 
 | Name  | Default | Description               |
 |-------|---------|---------------------------|
-| value |         | value to use in histogram |
+| value | -       | Value to use in histogram |
 
 If no ```value``` is not set nothing is added to histogram and warning is logged.
 
@@ -166,9 +168,9 @@ from("direct:in")
 
 ### Headers
 
-| Name                       | Description
-|----------------------------|---------------------------------|
-| CamelMetricsHistogramValue | Override increment value in URI |
+| Name                       | Description                     | Expected type |
+|----------------------------|---------------------------------|---------------|
+| CamelMetricsHistogramValue | Override increment value in URI | Long          |
 
 ```java
 // adds value 992 to simple.histogram
@@ -189,7 +191,7 @@ Where options are
 
 | Name | Default | Description               |
 |------|---------|---------------------------|
-| mark |         | long value to use as mark |
+| mark | -       | Long value to use as mark |
 
 If ```mark``` is not set ```meter.mark()``` is called without argument.
 
@@ -218,7 +220,7 @@ Where options are
 
 | Name   | Default | Description               |
 |--------|---------|---------------------------|
-| action |         | ```start``` or ```stop``` |
+| action | -       | ```start``` or ```stop``` |
 
 If no ```action``` or invalid value is provided warning is logged and no timer is updated. If ```action``` ```start``` is called on already running timer or ```stop``` is called on not running timer nothing is updated and warning is logged.
 
@@ -230,4 +232,4 @@ from("direct:in")
     .to("metrics:timer:simple.timer?action=stop");
 ```
 
-Timer Context objects are stored as Exchange properties.
+`Timer Context` objects are stored as `Exchange` properties.
