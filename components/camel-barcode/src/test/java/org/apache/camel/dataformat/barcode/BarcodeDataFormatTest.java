@@ -45,7 +45,6 @@ public class BarcodeDataFormatTest {
         this.checkParams(BarcodeParameters.IMAGE_TYPE
                 , BarcodeParameters.WIDTH
                 , BarcodeParameters.HEIGHT
-                , BarcodeParameters.ENCODING
                 , BarcodeParameters.FORMAT
                 , barcodeDataFormat.getParams());
     }
@@ -60,7 +59,6 @@ public class BarcodeDataFormatTest {
         this.checkParams(BarcodeParameters.IMAGE_TYPE
                 , BarcodeParameters.WIDTH
                 , BarcodeParameters.HEIGHT
-                , BarcodeParameters.ENCODING
                 , BarcodeFormat.AZTEC
                 , barcodeDataFormat.getParams());
     }
@@ -73,7 +71,7 @@ public class BarcodeDataFormatTest {
         BarcodeDataFormat barcodeDataFormat = 
                 new BarcodeDataFormat(200, 250);
         this.checkParams(BarcodeParameters.IMAGE_TYPE
-                , 200, 250, BarcodeParameters.ENCODING
+                , 200, 250
                 , BarcodeParameters.FORMAT
                 , barcodeDataFormat.getParams());
     }
@@ -88,7 +86,6 @@ public class BarcodeDataFormatTest {
         this.checkParams(BarcodeImageType.JPG
                 , BarcodeParameters.WIDTH
                 , BarcodeParameters.HEIGHT
-                , BarcodeParameters.ENCODING
                 , BarcodeParameters.FORMAT
                 , barcodeDataFormat.getParams());
     }
@@ -103,7 +100,6 @@ public class BarcodeDataFormatTest {
                         , BarcodeFormat.AZTEC);
         this.checkParams(BarcodeImageType.JPG
                 , 200, 250
-                , BarcodeParameters.ENCODING
                 , BarcodeFormat.AZTEC
                 , barcodeDataFormat.getParams());
     }
@@ -226,11 +222,10 @@ public class BarcodeDataFormatTest {
      * @param params 
      */
     private void checkParams(BarcodeImageType imageType, int width, int height
-            , String encoding, BarcodeFormat format, BarcodeParameters params) {
+            , BarcodeFormat format, BarcodeParameters params) {
         assertEquals(params.getType(), imageType);
         assertTrue(params.getWidth() == width);
         assertTrue(params.getHeight() == height);
-        assertEquals(params.getEncoding(), encoding);
         assertEquals(params.getFormat(), format);
     }
 }

@@ -41,11 +41,6 @@ public class BarcodeParameters {
     public static final int HEIGHT = 100;
     
     /**
-     * Default encoding: UTF-8
-     */
-    public static final String ENCODING = "UTF-8";
-    
-    /**
      * Default barcode format: QR-CODE
      */
     public static final BarcodeFormat FORMAT = BarcodeFormat.QR_CODE;
@@ -66,11 +61,6 @@ public class BarcodeParameters {
     private Integer height = HEIGHT;
     
     /**
-     * The message encoding.
-     */
-    private String encoding = ENCODING;
-    
-    /**
      * The barcode format (e.g. QR-Code, DataMatrix,...).
      */
     private BarcodeFormat format = FORMAT;
@@ -82,7 +72,6 @@ public class BarcodeParameters {
      *  <li>image type: PNG</li>
      *  <li>image width: 100px</li>
      *  <li>image heigth: 100px</li>
-     *  <li>encoding: UTF-8</li>
      *  <li>format: QR-Code</li>
      * </ul>
      */
@@ -95,12 +84,10 @@ public class BarcodeParameters {
      * @param type
      * @param width
      * @param height
-     * @param encoding
      * @param format
      */
     public BarcodeParameters(final BarcodeImageType type, final int width, 
-            final int height, final String encoding, final BarcodeFormat format) {
-        this.encoding = encoding;
+            final int height, final BarcodeFormat format) {
         this.height = height;
         this.width = width;
         this.type = type;
@@ -130,15 +117,7 @@ public class BarcodeParameters {
     public void setHeight(Integer height) {
         this.height = height;
     }
-
-    public String getEncoding() {
-        return encoding;
-    }
-
-    public void setEncoding(String encoding) {
-        this.encoding = encoding;
-    }
-
+   
     public BarcodeFormat getFormat() {
         return format;
     }

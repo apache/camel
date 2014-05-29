@@ -222,11 +222,10 @@ public class BarcodeDataFormat implements DataFormat {
 
         // set values
         final String type = this.params.getType().toString();
-        final String encoding = this.params.getEncoding(); 
         
         // create code image  
         final BitMatrix matrix = writer.encode(
-                new String(payload.getBytes(encoding), encoding),
+                payload,
                 this.params.getFormat(), 
                 this.params.getWidth(), 
                 this.params.getHeight(), 
