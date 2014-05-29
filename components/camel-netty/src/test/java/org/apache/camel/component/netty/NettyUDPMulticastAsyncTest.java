@@ -29,28 +29,26 @@ import org.junit.Test;
 
 /**
  * To run this test manually through Maven first remove the {@link Ignore}
- * annotation below, then make sure you've got a Network interface with the name
+ * annotation below, then make sure you've got a network interface with the name
  * <code>en0</code> as given by the route below. If this is not the case run
- * your OS specific command to find out which Network interfaces you've got
- * supporting IPv4. For example on OS-X you can use the following command for
- * this:
+ * your OS specific command to find out which network interfaces you've got
+ * supporting IPv4 (e.g. on OS-X that would be the {@code ifconfig -a} command.
+ * Next you need to enable UDP multicast on your OS for the given multicast
+ * address of this test ({@code 224.1.2.3}). For this purpose e.g. on OS-X
+ * follow the steps being described <a href=
+ * "http://blogs.agilefaqs.com/2009/11/08/enabling-multicast-on-your-macos-unix/"
+ * >here</a>. Now running the test manually should succeed (<b>but only</b> when
+ * using Java7+):
  * 
  * <pre>
- *   <code>$> ifconfig -a</code>
+ *   mvn test -Djava.net.preferIPv4Stack=true -Dtest=NettyUDPMulticastAsyncTest
  * </pre>
  * 
- * Then replace the <code>en0</code> Network interface name below with your own
- * one. Now running the test manually should succeed (<b>only</b> when using
- * Java7+):
- * 
- * <pre>
- *   <code>mvn test -Djava.net.preferIPv4Stack=true -Dtest=NettyUDPMulticastAsyncTest</code>
- * </pre>
- * 
- * Note that the usage of JUnit {@link BeforeClass} annotation to achieve the
- * same effect would not work in this case as at that stage it would be too late
- * to use {@link System#setProperty(String, String) the Java API} to reach the
- * same effect. Also setting such a system property through the surefire-plugin
+ * Please note that using the JUnit {@link BeforeClass} annotation together with
+ * the corresponding {@link System#setProperty(String, String) Java API} to set
+ * the {@code java.net.preferIPv4Stack} system property would not work here as
+ * at that moment it would be too <b>late</b> to set this system property. On
+ * the other hand setting such a system property through the surefire-plugin
  * would cause side effect by the other tests of this component.
  */
 @Ignore("See the Javadoc")
