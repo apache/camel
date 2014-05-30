@@ -14,7 +14,7 @@ import org.jboss.netty.handler.codec.frame.FrameDecoder;
 /**
  * @author svenrienstra
  */
-public class Rfc5426FrameDecoder extends FrameDecoder implements ChannelHandlerFactory {
+public class Rfc5425FrameDecoder extends FrameDecoder implements ChannelHandlerFactory {
 
     private Integer currentFramelength;
 
@@ -95,6 +95,6 @@ public class Rfc5426FrameDecoder extends FrameDecoder implements ChannelHandlerF
 
     @Override
     public ChannelHandler newChannelHandler() {
-        return new Rfc5426FrameDecoder();
+        return new Rfc5425FrameDecoder();
     }
 }

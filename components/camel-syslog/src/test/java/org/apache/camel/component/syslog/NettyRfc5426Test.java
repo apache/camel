@@ -21,8 +21,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.component.syslog.netty.Rfc5426Encoder;
-import org.apache.camel.component.syslog.netty.Rfc5426FrameDecoder;
+import org.apache.camel.component.syslog.netty.Rfc5425Encoder;
+import org.apache.camel.component.syslog.netty.Rfc5425FrameDecoder;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.test.AvailablePortFinder;
@@ -48,8 +48,8 @@ public class NettyRfc5426Test extends CamelTestSupport {
     @Override
     protected JndiRegistry createRegistry() throws Exception {
         JndiRegistry jndi = super.createRegistry();
-        jndi.bind("decoder", new Rfc5426FrameDecoder());
-        jndi.bind("encoder", new Rfc5426Encoder());
+        jndi.bind("decoder", new Rfc5425FrameDecoder());
+        jndi.bind("encoder", new Rfc5425Encoder());
         return jndi;
     }
 
@@ -70,7 +70,7 @@ public class NettyRfc5426Test extends CamelTestSupport {
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
-        context().getRegistry(JndiRegistry.class).bind("rfc5426FrameDecoder", new Rfc5426FrameDecoder());
+        context().getRegistry(JndiRegistry.class).bind("rfc5426FrameDecoder", new Rfc5425FrameDecoder());
 
         return new RouteBuilder() {
             @Override

@@ -17,7 +17,7 @@ import org.jboss.netty.handler.codec.oneone.OneToOneEncoder;
  * @author svenrienstra
  */
 @Sharable
-public class Rfc5426Encoder extends OneToOneEncoder {
+public class Rfc5425Encoder extends OneToOneEncoder {
 
     @Override
     protected Object encode(ChannelHandlerContext ctx, Channel channel, Object msg) throws Exception {
