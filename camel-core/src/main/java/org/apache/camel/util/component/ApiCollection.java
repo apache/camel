@@ -16,8 +16,10 @@
  */
 package org.apache.camel.util.component;
 
+import java.util.Collections;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 /**
  * Base class for a collection of ApiMethods. Meant to be extended by Components to create the api name map.
@@ -30,4 +32,7 @@ public abstract class ApiCollection {
         return apis.get(apiName);
     }
 
+    public final Set<String> getApiNames() {
+        return Collections.unmodifiableSet(apis.keySet());
+    }
 }

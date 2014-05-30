@@ -93,7 +93,7 @@ public abstract class ApiMethodParser<T> {
         List<ApiMethodModel> result = new ArrayList<ApiMethodModel>();
         for (String signature: signatures) {
             // remove all type parameters and modifiers
-            signature = signature.replaceAll("<[^>]*>|public|final", "");
+            signature = signature.replaceAll("<[^>]*>|\\s*(public|final|synchronized|native)\\s*", "");
             log.debug("Processing " + signature);
 
             final Matcher methodMatcher = METHOD_PATTERN.matcher(signature);
