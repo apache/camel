@@ -61,7 +61,6 @@
         <dependency>
           <groupId>org.apache.geronimo.specs</groupId>
           <artifactId>geronimo-servlet_3.0_spec</artifactId>
-          <version>${geronimo-servlet-spec-version}</version>
         </dependency>
 
         <!--  atmosphere -->
@@ -106,7 +105,6 @@
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-servlet</artifactId>
-            <version>${jetty-version}</version>
             <scope>test</scope>
         </dependency>
 
