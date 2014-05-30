@@ -17,24 +17,24 @@
 
 package org.apache.camel.component.syslog;
 
-import java.io.IOException;
-import java.net.DatagramPacket;
-import java.net.DatagramSocket;
-import java.net.InetAddress;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.component.syslog.netty.Rfc5426Encoder;
+import org.apache.camel.component.syslog.netty.Rfc5426FrameDecoder;
+import org.apache.camel.impl.JndiRegistry;
+import org.apache.camel.spi.DataFormat;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.jboss.netty.buffer.BigEndianHeapChannelBuffer;
 import org.junit.BeforeClass;
 import org.junit.Test;
 
-public class AutomatedConversionTest extends CamelTestSupport {
+public class NettyRfc5426Test extends CamelTestSupport {
 
+    private static String uri;
     private static int serverPort;
-    private final int messageCount = 1;
     private final String rfc3164Message = "<165>Aug  4 05:34:00 mymachine myproc[10]: %% It's\n         time to make the do-nuts.  %%  Ingredients: Mix=OK, Jelly=OK #\n"
                                           + "         Devices: Mixer=OK, Jelly_Injector=OK, Frier=OK # Transport:\n" + "         Conveyer1=OK, Conveyer2=OK # %%";
     private final String rfc5424Message = "<34>1 2003-10-11T22:14:15.003Z mymachine.example.com su - ID47 - BOM'su root' failed for lonvick on /dev/pts/8";
@@ -42,10 +42,19 @@ public class AutomatedConversionTest extends CamelTestSupport {
     @BeforeClass
     public static void initPort() {
         serverPort = AvailablePortFinder.getNextAvailable();
+        uri = "netty:tcp://localhost:" + serverPort + "?sync=false&allowDefaultCodec=false&decoders=#decoder&encoder=#encoder";
+    }
+
+    @Override
+    protected JndiRegistry createRegistry() throws Exception {
+        JndiRegistry jndi = super.createRegistry();
+        jndi.bind("decoder", new Rfc5426FrameDecoder());
+        jndi.bind("encoder", new Rfc5426Encoder());
+        return jndi;
     }
 
     @Test
-    public void testSendingRawUDP() throws IOException, InterruptedException {
+    public void testSendingCamel() throws Exception {
 
         MockEndpoint mock = getMockEndpoint("mock:syslogReceiver");
         MockEndpoint mock2 = getMockEndpoint("mock:syslogReceiver2");
@@ -53,40 +62,29 @@ public class AutomatedConversionTest extends CamelTestSupport {
         mock2.expectedMessageCount(2);
         mock2.expectedBodiesReceived(rfc3164Message, rfc5424Message);
 
-        DatagramSocket socket = new DatagramSocket();
-        try {
-            InetAddress address = InetAddress.getByName("127.0.0.1");
-            for (int i = 0; i < messageCount; i++) {
-                byte[] data = rfc3164Message.getBytes();
-                DatagramPacket packet = new DatagramPacket(data, data.length, address, serverPort);
-                socket.send(packet);
-                Thread.sleep(100);
-            }
-            for (int i = 0; i < messageCount; i++) {
-                byte[] data = rfc5424Message.getBytes();
-                DatagramPacket packet = new DatagramPacket(data, data.length, address, serverPort);
-                socket.send(packet);
-                Thread.sleep(100);
-            }
-        } finally {
-            socket.close();
-        }
+        template.sendBody(uri, new BigEndianHeapChannelBuffer(rfc3164Message.getBytes("UTF8")));
+        template.sendBody(uri, new BigEndianHeapChannelBuffer(rfc5424Message.getBytes("UTF8")));
 
         assertMockEndpointsSatisfied();
     }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
+        context().getRegistry(JndiRegistry.class).bind("rfc5426FrameDecoder", new Rfc5426FrameDecoder());
+
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
+                context.setTracing(true);
+                DataFormat syslogDataFormat = new SyslogDataFormat();
+
                 // we setup a Syslog listener on a random port.
-                from("mina:udp://127.0.0.1:" + serverPort).unmarshal().syslog().process(new Processor() {
+                from(uri).unmarshal(syslogDataFormat).process(new Processor() {
                     @Override
                     public void process(Exchange ex) {
                         assertTrue(ex.getIn().getBody() instanceof SyslogMessage);
                     }
-                }).to("mock:syslogReceiver").marshal().syslog().to("mock:syslogReceiver2");
+                }).to("mock:syslogReceiver").marshal(syslogDataFormat).to("mock:syslogReceiver2");
             }
         };
     }
