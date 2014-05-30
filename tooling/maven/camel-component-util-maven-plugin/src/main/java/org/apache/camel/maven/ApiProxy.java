@@ -16,7 +16,6 @@
  */
 package org.apache.camel.maven;
 
-import java.io.File;
 import java.util.Collections;
 import java.util.Map;
 
@@ -26,13 +25,6 @@ import java.util.Map;
 public class ApiProxy {
     private String apiName;
     private String proxyClass;
-
-    private Substitution[] substitutions = new Substitution[0];
-
-    private String excludePackages = JavadocApiMethodGeneratorMojo.DEFAULT_EXCLUDE_PACKAGES;
-    private String excludeClasses;
-
-    private File signatureFile;
 
     private Map<String, String> aliases = Collections.EMPTY_MAP;
 
@@ -50,38 +42,6 @@ public class ApiProxy {
 
     public void setProxyClass(String proxyClass) {
         this.proxyClass = proxyClass;
-    }
-
-    public Substitution[] getSubstitutions() {
-        return substitutions;
-    }
-
-    public void setSubstitutions(Substitution[] substitutions) {
-        this.substitutions = substitutions;
-    }
-
-    public String getExcludePackages() {
-        return excludePackages;
-    }
-
-    public void setExcludePackages(String excludePackages) {
-        this.excludePackages = excludePackages;
-    }
-
-    public String getExcludeClasses() {
-        return excludeClasses;
-    }
-
-    public void setExcludeClasses(String excludeClasses) {
-        this.excludeClasses = excludeClasses;
-    }
-
-    public File getSignatureFile() {
-        return signatureFile;
-    }
-
-    public void setSignatureFile(File signatureFile) {
-        this.signatureFile = signatureFile;
     }
 
     public Map<String, String> getAliases() {

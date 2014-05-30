@@ -17,7 +17,13 @@
 package org.apache.camel.maven;
 
 import java.io.File;
+import java.util.Collections;
+import java.util.List;
 
+import org.apache.maven.artifact.DependencyResolutionRequiredException;
+import org.apache.maven.model.Build;
+import org.apache.maven.model.Model;
+import org.apache.maven.project.MavenProject;
 import static org.junit.Assert.assertTrue;
 
 /**
@@ -26,8 +32,34 @@ import static org.junit.Assert.assertTrue;
 public class AbstractGeneratorMojoTest {
     protected static final String OUT_DIR = "target/generated-test-sources/camelComponent";
     protected static final String PACKAGE_PATH = AbstractGeneratorMojo.OUT_PACKAGE.replaceAll("\\.", "/") + "/";
+    protected static final String COMPONENT_NAME = "TestComponent";
+    protected static final String SCHEME = "testComponent";
 
     protected void assertExists(File outFile) {
         assertTrue("Generated file not found " + outFile.getPath(), outFile.exists());
+    }
+
+    protected void configureMojo(AbstractGeneratorMojo mojo) {
+        mojo.componentName = COMPONENT_NAME;
+        mojo.scheme = SCHEME;
+        mojo.generatedSrcDir = new File(OUT_DIR);
+        mojo.generatedTestDir = new File(OUT_DIR);
+        mojo.outPackage = AbstractGeneratorMojo.OUT_PACKAGE;
+        mojo.project = new MavenProject((Model) null) {
+            @Override
+            public List getTestClasspathElements() throws DependencyResolutionRequiredException {
+                return Collections.EMPTY_LIST;
+            }
+
+            @Override
+            public Build getBuild() {
+                return new Build() {
+                    @Override
+                    public String getTestSourceDirectory() {
+                        return OUT_DIR;
+                    }
+                };
+            }
+        };
     }
 }

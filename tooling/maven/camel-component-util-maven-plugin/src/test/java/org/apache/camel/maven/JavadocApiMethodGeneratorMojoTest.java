@@ -18,15 +18,10 @@ package org.apache.camel.maven;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Collections;
-import java.util.List;
 
-import org.apache.maven.artifact.DependencyResolutionRequiredException;
-import org.apache.maven.model.Model;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.project.MavenProject;
-import org.apache.velocity.app.VelocityEngine;
+import org.apache.velocity.VelocityContext;
 import org.junit.Test;
 
 /**
@@ -38,23 +33,17 @@ public class JavadocApiMethodGeneratorMojoTest extends AbstractGeneratorMojoTest
     public void testExecute() throws IOException, MojoFailureException, MojoExecutionException {
 
         // delete target file to begin
-        final File outFile = new File(OUT_DIR, PACKAGE_PATH + "VelocityEngineApiMethod.java");
+        final File outFile = new File(OUT_DIR, PACKAGE_PATH + "VelocityContextApiMethod.java");
         if (outFile.exists()) {
             outFile.delete();
         }
 
         final JavadocApiMethodGeneratorMojo mojo = new JavadocApiMethodGeneratorMojo();
 
-        mojo.outDir = new File(OUT_DIR);
-        mojo.outPackage = AbstractGeneratorMojo.OUT_PACKAGE;
+        configureMojo(mojo);
+
         // use VelocityEngine javadoc
-        mojo.proxyClass = VelocityEngine.class.getCanonicalName();
-        mojo.project = new MavenProject((Model) null) {
-            @Override
-            public List getRuntimeClasspathElements() throws DependencyResolutionRequiredException {
-                return Collections.EMPTY_LIST;
-            }
-        };
+        mojo.proxyClass = VelocityContext.class.getCanonicalName();
         mojo.excludePackages = JavadocApiMethodGeneratorMojo.DEFAULT_EXCLUDE_PACKAGES;
         Substitution substitution = new Substitution(".*", "key", "java.lang.Object", "applicationKey");
         mojo.substitutions = new Substitution[]{ substitution };
@@ -64,4 +53,5 @@ public class JavadocApiMethodGeneratorMojoTest extends AbstractGeneratorMojoTest
         // check target file was generated
         assertExists(outFile);
     }
+
 }

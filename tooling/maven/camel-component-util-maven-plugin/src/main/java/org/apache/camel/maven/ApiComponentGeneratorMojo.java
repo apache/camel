@@ -18,7 +18,6 @@ package org.apache.camel.maven;
 
 import java.io.File;
 
-import org.apache.maven.plugin.AbstractMojoExecutionException;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
@@ -35,46 +34,12 @@ import org.apache.velocity.VelocityContext;
 public class ApiComponentGeneratorMojo extends AbstractGeneratorMojo {
 
     @Parameter(required = true)
-    protected String componentName;
-
-    @Parameter(required = true)
     protected ApiProxy[] apis;
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         if (apis == null || apis.length == 0) {
             throw new MojoExecutionException("One or more API proxies are required");
-        }
-
-        // generate ApiMethods
-        for (int i = 0; i < apis.length; i++) {
-            apis[i].validate();
-
-            AbstractApiMethodGeneratorMojo generator;
-            if (apis[i].getSignatureFile() != null) {
-                generator = new FileApiMethodGeneratorMojo();
-                ((FileApiMethodGeneratorMojo)generator).signatureFile = apis[i].getSignatureFile();
-            } else {
-                generator = new JavadocApiMethodGeneratorMojo();
-                ((JavadocApiMethodGeneratorMojo)generator).excludePackages = apis[i].getExcludePackages();
-                ((JavadocApiMethodGeneratorMojo)generator).excludeClasses = apis[i].getExcludeClasses();
-            }
-            // set API properties
-            generator.proxyClass = apis[i].getProxyClass();
-            generator.substitutions = apis[i].getSubstitutions();
-            // set shared properties
-            generator.outDir = outDir;
-            generator.outPackage = outPackage;
-            // set shared state
-            generator.setEngine(getEngine());
-            generator.setProjectClassLoader(getProjectClassLoader());
-
-            try {
-                generator.execute();
-            } catch (AbstractMojoExecutionException e) {
-                throw new MojoExecutionException("Error generating ApiMethod for " +
-                        apis[i].getProxyClass() + ": " + e.getMessage(), e);
-            }
         }
 
         // TODO generate Component classes
@@ -96,7 +61,7 @@ public class ApiComponentGeneratorMojo extends AbstractGeneratorMojo {
         final StringBuilder fileName = new StringBuilder();
         fileName.append(outPackage.replaceAll("\\.", File.separator)).append(File.separator);
         fileName.append(getApiCollectionName()).append(".java");
-        return new File(outDir, fileName.toString());
+        return new File(generatedSrcDir, fileName.toString());
     }
 
     private String getApiCollectionName() {

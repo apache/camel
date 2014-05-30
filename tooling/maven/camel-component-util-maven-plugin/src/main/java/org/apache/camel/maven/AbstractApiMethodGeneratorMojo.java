@@ -17,10 +17,13 @@
 package org.apache.camel.maven;
 
 import java.io.File;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.camel.util.component.ApiMethodParser;
 import org.apache.camel.util.component.ArgumentSubstitutionParser;
+import org.apache.commons.lang.ClassUtils;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.apache.maven.plugins.annotations.Parameter;
@@ -56,20 +59,17 @@ public abstract class AbstractApiMethodGeneratorMojo extends AbstractGeneratorMo
 
         // generate enumeration from model
         mergeTemplate(getApiMethodContext(models), getApiMethodFile(), "/api-method-enum.vm");
+
+        // generate junit test if it doesn't already exist under test source directory
+        // i.e. it may have been generated then moved there and populated with test values
+        final String testFilePath = getTestFilePath();
+        if (!new File(project.getBuild().getTestSourceDirectory(), testFilePath).exists()) {
+            mergeTemplate(getApiTestContext(models), new File(generatedTestDir, testFilePath), "/api-route-test.vm");
+        }
     }
 
     protected ApiMethodParser createAdapterParser(Class proxyType) {
         return new ArgumentSubstitutionParser(proxyType, getArgumentSubstitutions()){};
-    }
-
-    private VelocityContext getApiMethodContext(List<ApiMethodParser.ApiMethodModel> models) throws MojoExecutionException {
-        VelocityContext context = new VelocityContext();
-        context.put("packageName", outPackage);
-        context.put("enumName", getEnumName());
-        context.put("models", models);
-        context.put("proxyType", getProxyType());
-        context.put("helper", getClass());
-        return context;
     }
 
     public abstract List<String> getSignatureList() throws MojoExecutionException;
@@ -86,15 +86,56 @@ public abstract class AbstractApiMethodGeneratorMojo extends AbstractGeneratorMo
         return proxyType;
     }
 
+    private VelocityContext getApiMethodContext(List<ApiMethodParser.ApiMethodModel> models) throws MojoExecutionException {
+        VelocityContext context = getCommonContext(models);
+        context.put("enumName", getEnumName());
+        return context;
+    }
+
     public File getApiMethodFile() throws MojoExecutionException {
         final StringBuilder fileName = new StringBuilder();
         fileName.append(outPackage.replaceAll("\\.", File.separator)).append(File.separator);
         fileName.append(getEnumName()).append(".java");
-        return new File(outDir, fileName.toString());
+        return new File(generatedSrcDir, fileName.toString());
     }
 
     private String getEnumName() throws MojoExecutionException {
         return getProxyType().getSimpleName() + "ApiMethod";
+    }
+
+    private VelocityContext getApiTestContext(List<ApiMethodParser.ApiMethodModel> models) throws MojoExecutionException {
+        VelocityContext context = getCommonContext(models);
+        context.put("testName", getUnitTestName());
+        context.put("scheme", scheme);
+        return context;
+    }
+
+    private String getTestFilePath() throws MojoExecutionException {
+        final StringBuilder fileName = new StringBuilder();
+        fileName.append(outPackage.replaceAll("\\.", File.separator)).append(File.separator);
+        fileName.append(getUnitTestName()).append(".java");
+        return fileName.toString();
+    }
+
+    private String getUnitTestName() throws MojoExecutionException {
+        return getProxyType().getSimpleName() + "IntegrationTest";
+    }
+
+    private VelocityContext getCommonContext(List<ApiMethodParser.ApiMethodModel> models) throws MojoExecutionException {
+        VelocityContext context = new VelocityContext();
+        context.put("models", models);
+        context.put("proxyType", getProxyType());
+        context.put("helper", this);
+        return context;
+    }
+
+    public ArgumentSubstitutionParser.Substitution[] getArgumentSubstitutions() {
+        ArgumentSubstitutionParser.Substitution[] subs = new ArgumentSubstitutionParser.Substitution[substitutions.length];
+        for (int i = 0; i < substitutions.length; i++) {
+            subs[i] = new ArgumentSubstitutionParser.Substitution(substitutions[i].getMethod(),
+                    substitutions[i].getArgName(), substitutions[i].getArgType(), substitutions[i].getReplacement());
+        }
+        return subs;
     }
 
     public static String getType(Class<?> clazz) {
@@ -106,12 +147,56 @@ public abstract class AbstractApiMethodGeneratorMojo extends AbstractGeneratorMo
         }
     }
 
-    public ArgumentSubstitutionParser.Substitution[] getArgumentSubstitutions() {
-        ArgumentSubstitutionParser.Substitution[] subs = new ArgumentSubstitutionParser.Substitution[substitutions.length];
-        for (int i = 0; i < substitutions.length; i++) {
-            subs[i] = new ArgumentSubstitutionParser.Substitution(substitutions[i].getMethod(),
-                    substitutions[i].getArgName(), substitutions[i].getArgType(), substitutions[i].getReplacement());
+    public static String getTestName(ApiMethodParser.ApiMethodModel model) {
+        final StringBuilder builder = new StringBuilder();
+        final String name = model.getMethod().getName();
+        builder.append(Character.toUpperCase(name.charAt(0)));
+        builder.append(name.substring(1));
+        // find overloaded method suffix from unique name
+        final String uniqueName = model.getUniqueName();
+        if (uniqueName.length() > name.length()) {
+            builder.append(uniqueName.substring(name.length()));
         }
-        return subs;
+        return builder.toString();
+    }
+
+    public static boolean isVoidType(Class<?> resultType) {
+        return resultType == Void.TYPE;
+    }
+
+    public String getPropertyPrefix() {
+        return componentName + ".";
+    }
+
+    public static String getResultDeclaration(Class<?> resultType) {
+        if (resultType.isPrimitive()) {
+            return ClassUtils.primitiveToWrapper(resultType).getSimpleName();
+        } else {
+            return resultType.getCanonicalName();
+        }
+    }
+
+    private static final Map<Class<?>, String> PRIMITIVE_VALUES;
+
+    static {
+        PRIMITIVE_VALUES = new HashMap<Class<?>, String>();
+        PRIMITIVE_VALUES.put(Boolean.TYPE, "Boolean.FALSE");
+        PRIMITIVE_VALUES.put(Byte.TYPE, "(byte) 0");
+        PRIMITIVE_VALUES.put(Character.TYPE, "(char) 0");
+        PRIMITIVE_VALUES.put(Short.TYPE, "(short) 0");
+        PRIMITIVE_VALUES.put(Integer.TYPE, "0");
+        PRIMITIVE_VALUES.put(Long.TYPE, "0L");
+        PRIMITIVE_VALUES.put(Float.TYPE, "0.0f");
+        PRIMITIVE_VALUES.put(Double.TYPE, "0.0d");
+    }
+
+    public static String getDefaultArgValue(Class<?> aClass) {
+        if (aClass.isPrimitive()) {
+            // lookup default primitive value string
+            return PRIMITIVE_VALUES.get(aClass);
+        } else {
+            // return type cast null string
+            return "null";
+        }
     }
 }

@@ -36,6 +36,7 @@ import org.apache.maven.project.MavenProject;
 import org.apache.velocity.Template;
 import org.apache.velocity.VelocityContext;
 import org.apache.velocity.app.VelocityEngine;
+import org.apache.velocity.exception.VelocityException;
 import org.apache.velocity.runtime.RuntimeConstants;
 import org.apache.velocity.runtime.log.Log4JLogChute;
 import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
@@ -56,17 +57,22 @@ public abstract class AbstractGeneratorMojo extends AbstractMojo {
     MavenProject project;
 
     @Parameter(defaultValue = "${project.build.directory}/generated-sources/camel")
-    protected File outDir;
+    protected File generatedSrcDir;
+
+    @Parameter(defaultValue = "${project.build.directory}/generated-test-sources/camel")
+    protected File generatedTestDir;
 
     @Parameter(defaultValue = OUT_PACKAGE)
     protected String outPackage;
 
+    @Parameter(required = true, property = PREFIX + "scheme")
+    protected String scheme;
+
+    @Parameter(required = true, property = PREFIX + "componentName")
+    protected String componentName;
+
     private VelocityEngine engine;
     private ClassLoader projectClassLoader;
-
-    public void setEngine(VelocityEngine engine) {
-        this.engine = engine;
-    }
 
     public VelocityEngine getEngine() {
         if (engine == null) {
@@ -82,15 +88,11 @@ public abstract class AbstractGeneratorMojo extends AbstractMojo {
         return engine;
     }
 
-    protected void setProjectClassLoader(ClassLoader projectClassLoader) {
-        this.projectClassLoader = projectClassLoader;
-    }
-
     protected ClassLoader getProjectClassLoader() throws MojoExecutionException {
         if (projectClassLoader == null)  {
             final List classpathElements;
             try {
-                classpathElements = project.getRuntimeClasspathElements();
+                classpathElements = project.getTestClasspathElements();
             } catch (org.apache.maven.artifact.DependencyResolutionRequiredException e) {
                 throw new MojoExecutionException(e.getMessage(), e);
             }
@@ -115,6 +117,8 @@ public abstract class AbstractGeneratorMojo extends AbstractMojo {
 
         // add generated date
         context.put("generatedDate", new Date().toString());
+        // add output package
+        context.put("packageName", outPackage);
 
         // load velocity template
         final Template template = getEngine().getTemplate(templateName, "UTF-8");
@@ -125,6 +129,8 @@ public abstract class AbstractGeneratorMojo extends AbstractMojo {
             writer = new BufferedWriter(new FileWriter(outFile));
             template.merge(context, writer);
         } catch (IOException e) {
+            throw new MojoExecutionException(e.getMessage(), e);
+        } catch (VelocityException e) {
             throw new MojoExecutionException(e.getMessage(), e);
         } finally {
             if (writer != null) {

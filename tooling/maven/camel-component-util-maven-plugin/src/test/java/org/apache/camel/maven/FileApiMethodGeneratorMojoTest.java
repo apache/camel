@@ -18,14 +18,9 @@ package org.apache.camel.maven;
 
 import java.io.File;
 import java.io.IOException;
-import java.util.Collections;
-import java.util.List;
 
-import org.apache.maven.artifact.DependencyResolutionRequiredException;
-import org.apache.maven.model.Model;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
-import org.apache.maven.project.MavenProject;
 import org.junit.Test;
 import static org.junit.Assert.assertTrue;
 
@@ -47,15 +42,8 @@ public class FileApiMethodGeneratorMojoTest extends AbstractGeneratorMojoTest {
         mojo.substitutions = new Substitution[1];
         mojo.substitutions[0] = new Substitution(".+", "(.+)", "java.util.List", "$1List");
 
-        mojo.outDir = new File(OUT_DIR);
-        mojo.outPackage = AbstractGeneratorMojo.OUT_PACKAGE;
+        configureMojo(mojo);
         mojo.proxyClass = TestProxy.class.getCanonicalName();
-        mojo.project = new MavenProject((Model) null) {
-            @Override
-            public List getRuntimeClasspathElements() throws DependencyResolutionRequiredException {
-                return Collections.EMPTY_LIST;
-            }
-        };
         mojo.signatureFile = new File("src/test/resources/test-proxy-signatures.txt");
 
         mojo.execute();

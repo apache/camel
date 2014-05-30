@@ -40,11 +40,12 @@ import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
 import org.apache.maven.plugins.annotations.Parameter;
 import org.apache.maven.plugins.annotations.ResolutionScope;
+import org.codehaus.plexus.util.IOUtil;
 
 /**
  * Parses ApiMethod signatures from Javadoc.
  */
-@Mojo(name = "fromJavaDoc", requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME, requiresProject = true,
+@Mojo(name = "fromJavaDoc", requiresDependencyResolution = ResolutionScope.TEST, requiresProject = true,
         defaultPhase = LifecyclePhase.GENERATE_SOURCES)
 public class JavadocApiMethodGeneratorMojo extends AbstractApiMethodGeneratorMojo {
 
@@ -63,8 +64,8 @@ public class JavadocApiMethodGeneratorMojo extends AbstractApiMethodGeneratorMoj
 
     @Override
     public List<String> getSignatureList() throws MojoExecutionException {
-        // get signatures as a list of Strings
-        List<String> result = new ArrayList<String>();
+        // signatures as map from signature with no arg names to arg names from JavadocParser
+        Map<String, String> result = new HashMap<String, String>();
 
         final Pattern packages = Pattern.compile(excludePackages);
         Pattern classes = null;
@@ -74,16 +75,19 @@ public class JavadocApiMethodGeneratorMojo extends AbstractApiMethodGeneratorMoj
 
         // for proxy class and super classes not matching excluded packages or classes
         for (Class aClass = getProxyType();
-             !packages.matcher(aClass.getPackage().getName()).matches() && (classes == null ||
-                     !classes.matcher(aClass.getSimpleName()).matches()); aClass = aClass.getSuperclass()) {
+             aClass != null && !packages.matcher(aClass.getPackage().getName()).matches() &&
+                     (classes == null || !classes.matcher(aClass.getSimpleName()).matches());
+             aClass = aClass.getSuperclass()) {
 
             final String javaDocPath = aClass.getName().replaceAll("\\.", "/") + ".html";
 
             // read javadoc html text for class
+            InputStream inputStream = null;
             try {
-                final InputStream inputStream = getProjectClassLoader().getResourceAsStream(javaDocPath);
+                inputStream = getProjectClassLoader().getResourceAsStream(javaDocPath);
                 if (inputStream == null) {
-                    throw new MojoExecutionException("JavaDoc not found using classpath for " + aClass.getName());
+                    LOG.debug("JavaDoc not found on classpath for " + aClass.getName());
+                    break;
                 }
                 // transform the HTML to get method summary as text
                 // dummy DTD
@@ -94,28 +98,37 @@ public class JavadocApiMethodGeneratorMojo extends AbstractApiMethodGeneratorMoj
                 // get public method signature
                 final Map<String, String> methodMap = htmlParser.getMethodText();
                 for (String method : htmlParser.getMethods()) {
-                    final int leftBracket = method.indexOf('(');
-                    final String name = method.substring(0, leftBracket);
-                    final String args = method.substring(leftBracket + 1, method.length() - 1);
-                    String[] types;
-                    if (args.isEmpty()) {
-                        types = new String[0];
-                    } else {
-                        types = args.split(",");
-                    }
-                    final String resultType = getResultType(aClass, name, types);
-                    if (resultType != null) {
-                        final StringBuilder signature = new StringBuilder(resultType);
-                        signature.append(" ").append(name).append(methodMap.get(method));
-                        result.add(signature.toString());
+                    if (!result.containsKey(method)) {
+
+                        final int leftBracket = method.indexOf('(');
+                        final String name = method.substring(0, leftBracket);
+                        final String args = method.substring(leftBracket + 1, method.length() - 1);
+                        String[] types;
+                        if (args.isEmpty()) {
+                            types = new String[0];
+                        } else {
+                            types = args.split(",");
+                        }
+                        final String resultType = getResultType(aClass, name, types);
+                        if (resultType != null) {
+                            final StringBuilder signature = new StringBuilder(resultType);
+                            signature.append(" ").append(name).append(methodMap.get(method));
+                            result.put(method, signature.toString());
+                        }
                     }
                 }
             } catch (IOException e) {
                 throw new MojoExecutionException(e.getMessage(), e);
+            } finally {
+                IOUtil.close(inputStream);
             }
         }
 
-        return result;
+        if (result.isEmpty()) {
+            throw new MojoExecutionException("No public non-static methods found, " +
+                    "make sure Javadoc is available as project test dependency");
+        }
+        return new ArrayList<String>(result.values());
     }
 
     private String getResultType(Class<?> aClass, String name, String[] types) throws MojoExecutionException {
