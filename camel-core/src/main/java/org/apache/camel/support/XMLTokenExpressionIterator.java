@@ -119,7 +119,7 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
         private static final Logger LOG = LoggerFactory.getLogger(XMLTokenIterator.class);
         private static final Pattern NAMESPACE_PATTERN = Pattern.compile("xmlns(:\\w+|)\\s*=\\s*('[^']+'|\"[^\"]+\")");
 
-        private QName[] splitpath;
+        private AttributedQName[] splitpath;
         private int index;
         private boolean wrap;
         private RecordableInputStream in;
@@ -138,13 +138,15 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
         
         public XMLTokenIterator(String path, Map<String, String> nsmap, boolean wrap, InputStream in, Exchange exchange) throws XMLStreamException {
             final String[] sl = path.substring(1).split("/");
-            this.splitpath = new QName[sl.length];
+            this.splitpath = new AttributedQName[sl.length];
             for (int i = 0; i < sl.length; i++) {
                 String s = sl[i];
                 if (s.length() > 0) {
                     int d = s.indexOf(':');
                     String pfx = d > 0 ? s.substring(0, d) : "";
-                    this.splitpath[i] = new QName(nsmap.get(pfx), d > 0 ? s.substring(d + 1) : s, pfx);
+                    this.splitpath[i] = 
+                        new AttributedQName(
+                            "*".equals(pfx) ? "*" : nsmap.get(pfx), d > 0 ? s.substring(d + 1) : s, pfx);
                 }
             }
             
@@ -154,7 +156,8 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
             this.reader = new StaxConverter().createXMLStreamReader(this.in, exchange);
 
             LOG.trace("reader.class: {}", reader.getClass());
-            if (reader.getLocation().getCharacterOffset() < 0) {
+            int coff = reader.getLocation().getCharacterOffset();
+            if (coff != 0) {
                 LOG.error("XMLStreamReader {} not supporting Location");
                 throw new XMLStreamException("reader not supporting Location");
             }
@@ -177,11 +180,11 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
             return splitpath[index] == null;
         }
         
-        private QName current() {
+        private AttributedQName current() {
             return splitpath[index + (isDoS() ? 1 : 0)];
         }
         
-        private QName ancestor() {
+        private AttributedQName ancestor() {
             return index == 0 ? null : splitpath[index - 1];
         }
 
@@ -335,7 +338,8 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
                 sb.append(token.substring(0, stag.length() - (empty ? 2 : 1)));
                 for (Entry<String, String> e : getCurrentNamespaceBindings().entrySet()) {
                     if (!skip.contains(e.getKey())) {
-                        sb.append(" xmlns:").append(e.getKey()).append("=").append(quote).append(e.getValue()).append(quote);
+                        sb.append(e.getKey().length() == 0 ? " xmlns" : " xmlns:")
+                            .append(e.getKey()).append("=").append(quote).append(e.getValue()).append(quote);
                     }
                 }
                 sb.append(token.substring(stag.length() - (empty ? 2 : 1)));
@@ -367,7 +371,7 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
                         pushNamespaces(reader);
                     }
                     backtrack = false;
-                    if (matches(name, current())) {
+                    if (current().matches(name)) {
                         // mark the position of the match in the segments list
                         if (isBottom()) {
                             // final match
@@ -417,7 +421,7 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
                         }
 
                         if ((ancestor() == null && !isTop())
-                            || (ancestor() != null && matches(endname, ancestor()))) {
+                            || (ancestor() != null && ancestor().matches(endname))) {
                             up();
                         }
                     }
@@ -435,10 +439,6 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
         private static String makeName(QName qname) {
             String pfx = qname.getPrefix();
             return pfx.length() == 0 ? qname.getLocalPart() : qname.getPrefix() + ":" + qname.getLocalPart();
-        }
-
-        private static boolean matches(QName a, QName b) {
-            return a.getNamespaceURI().equals(b.getNamespaceURI()) && a.getLocalPart().equals(b.getLocalPart());
         }
 
         @Override
@@ -472,4 +472,46 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
         }
     }
 
+    static class AttributedQName extends QName {
+        private static final long serialVersionUID = 9878370226894144L;
+        private Pattern lcpattern;
+        private boolean nsany;
+        
+        public AttributedQName(String localPart) {
+            super(localPart);
+            checkWildcard("", localPart);
+        }
+
+        public AttributedQName(String namespaceURI, String localPart, String prefix) {
+            super(namespaceURI, localPart, prefix);
+            checkWildcard(namespaceURI, localPart);
+        }
+
+        public AttributedQName(String namespaceURI, String localPart) {
+            super(namespaceURI, localPart);
+            checkWildcard(namespaceURI, localPart);
+        }
+
+        public boolean matches(QName qname) {
+            return (nsany || getNamespaceURI().equals(qname.getNamespaceURI()))
+                && (lcpattern != null 
+                ? lcpattern.matcher(qname.getLocalPart()).matches() 
+                : getLocalPart().equals(qname.getLocalPart()));
+        }
+        
+        private void checkWildcard(String nsa, String lcp) {
+            nsany = "*".equals(nsa);
+            boolean wc = false;
+            for (int i = 0; i < lcp.length(); i++) {
+                char c = lcp.charAt(i);
+                if (c == '?' || c == '*') {
+                    wc = true;
+                    break;
+                }
+            }
+            if (wc) {
+                lcpattern = Pattern.compile(lcp.replace(".", "\\.").replace("*", ".*").replace("?", "."));
+            }
+        }
+    }
 }

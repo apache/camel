@@ -55,7 +55,21 @@ public class XMLTokenExpressionIteratorTest extends TestCase {
             + "</c:parent>"
             + "</grandparent>"
             + "</g:greatgrandparent>").getBytes();
-    
+
+    private static final byte[] TEST_BODY_NS_MIXED =
+        ("<?xml version='1.0' encoding='UTF-8'?>"
+            + "<g:greatgrandparent xmlns:g='urn:g'><grandparent>"
+            + "<parent some_attr='1' xmlns:c='urn:c' xmlns=\"urn:c\">"
+            + "<child some_attr='a' anotherAttr='a'></child>"
+            + "<x:child xmlns:x='urn:c' some_attr='b' anotherAttr='b'/>"
+            + "</parent>"
+            + "<c:parent some_attr='2' xmlns:c='urn:c'>"
+            + "<child some_attr='c' anotherAttr='c' xmlns='urn:c'></child>"
+            + "<c:child some_attr='d' anotherAttr='d'/>"
+            + "</c:parent>"
+            + "</grandparent>"
+            + "</g:greatgrandparent>").getBytes();
+
     private static final String[] RESULTS_CHILD_WRAPPED = {
         "<?xml version='1.0' encoding='UTF-8'?>"
             + "<g:greatgrandparent xmlns:g='urn:g'><grandparent><uncle/><aunt>emma</aunt>"
@@ -87,6 +101,28 @@ public class XMLTokenExpressionIteratorTest extends TestCase {
             + "<c:parent some_attr='3' xmlns:c='urn:c' xmlns:d=\"urn:d\">"
             + "<c:child some_attr='f' anotherAttr='f'/>"
             + "</c:parent></grandparent></g:greatgrandparent>"
+    };
+
+    private static final String[] RESULTS_CHILD_MIXED = {
+        "<child some_attr='a' anotherAttr='a' xmlns=\"urn:c\" xmlns:g=\"urn:g\" xmlns:c=\"urn:c\"></child>",
+        "<x:child xmlns:x='urn:c' some_attr='b' anotherAttr='b' xmlns='urn:c' xmlns:g='urn:g' xmlns:c='urn:c'/>",
+        "<child some_attr='c' anotherAttr='c' xmlns='urn:c' xmlns:g='urn:g' xmlns:c='urn:c'></child>",
+        "<c:child some_attr='d' anotherAttr='d' xmlns:g=\"urn:g\" xmlns:c=\"urn:c\"/>"
+    };
+
+    private static final String[] RESULTS_CHILD_MIXED_WRAPPED = {
+        "<?xml version='1.0' encoding='UTF-8'?><g:greatgrandparent xmlns:g='urn:g'><grandparent>"
+            + "<parent some_attr='1' xmlns:c='urn:c' xmlns=\"urn:c\">"
+            + "<child some_attr='a' anotherAttr='a'></child></parent></grandparent></g:greatgrandparent>",
+        "<?xml version='1.0' encoding='UTF-8'?><g:greatgrandparent xmlns:g='urn:g'><grandparent>"
+            + "<parent some_attr='1' xmlns:c='urn:c' xmlns=\"urn:c\">"
+            + "<x:child xmlns:x='urn:c' some_attr='b' anotherAttr='b'/></parent></grandparent></g:greatgrandparent>",
+        "<?xml version='1.0' encoding='UTF-8'?><g:greatgrandparent xmlns:g='urn:g'><grandparent>"
+            + "<c:parent some_attr='2' xmlns:c='urn:c'>"
+            + "<child some_attr='c' anotherAttr='c' xmlns='urn:c'></child></c:parent></grandparent></g:greatgrandparent>",
+        "<?xml version='1.0' encoding='UTF-8'?><g:greatgrandparent xmlns:g='urn:g'><grandparent>"
+            + "<c:parent some_attr='2' xmlns:c='urn:c'>"
+            + "<c:child some_attr='d' anotherAttr='d'/></c:parent></grandparent></g:greatgrandparent>"
     };
 
     private static final String[] RESULTS_CHILD = {
@@ -147,7 +183,10 @@ public class XMLTokenExpressionIteratorTest extends TestCase {
         "<aunt xmlns:g=\"urn:g\">emma</aunt>",
         "<aunt xmlns:g=\"urn:g\"/>"
     };    
-    
+
+    private static final String[] RESULTS_NULL = {
+    };
+ 
 
     private Map<String, String> nsmap;
     private Exchange exchange;
@@ -168,6 +207,26 @@ public class XMLTokenExpressionIteratorTest extends TestCase {
 
     public void testExtractChildInjected() throws Exception {
         invokeAndVerify("//C:child", false, new ByteArrayInputStream(TEST_BODY), RESULTS_CHILD);
+    }
+
+    public void testExtractChildNSMixed() throws Exception {
+        invokeAndVerify("//*:child", true, new ByteArrayInputStream(TEST_BODY_NS_MIXED), RESULTS_CHILD_MIXED_WRAPPED);
+    }
+
+    public void testExtractChildNSMixedInjected() throws Exception {
+        invokeAndVerify("//*:child", false, new ByteArrayInputStream(TEST_BODY_NS_MIXED), RESULTS_CHILD_MIXED);
+    }
+
+    public void testExtractAnyChild() throws Exception {
+        invokeAndVerify("//*:child", true, new ByteArrayInputStream(TEST_BODY), RESULTS_CHILD_WRAPPED);
+    }
+
+    public void testExtractCxxxd() throws Exception {
+        invokeAndVerify("//C:c*d", false, new ByteArrayInputStream(TEST_BODY), RESULTS_CHILD);
+    }
+
+    public void testExtractUnqualifiedChild() throws Exception {
+        invokeAndVerify("//child", true, new ByteArrayInputStream(TEST_BODY), RESULTS_NULL);
     }
 
     public void testExtractChildWithAncestorGGPdGP() throws Exception {
