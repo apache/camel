@@ -569,12 +569,16 @@ public class ExpressionClause<T> extends ExpressionDefinition {
         return delegate.tokenizeXMLPair(tagName, inheritNamespaceTagName, group);
     }
 
-    public T tokenizeXML(String path, boolean wrap, Namespaces namespaces) {
-        return tokenizeXML(path, wrap, namespaces, 0);
+    public T xtokenize(String path, Namespaces namespaces) {
+        return xtokenize(path, 'i', namespaces);
     }
 
-    public T tokenizeXML(String path, boolean wrap, Namespaces namespaces, int group) {
-        return delegate.tokenizeXML(path, wrap, namespaces, group);
+    public T xtokenize(String path, char mode, Namespaces namespaces) {
+        return xtokenize(path, mode, namespaces, 0);
+    }
+
+    public T xtokenize(String path, char mode, Namespaces namespaces, int group) {
+        return delegate.xtokenize(path, mode, namespaces, group);
     }
 
     /**

@@ -16,8 +16,6 @@
  */
 package org.apache.camel.language.tokenizer;
 
-import java.util.Map;
-
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.builder.ExpressionBuilder;
@@ -30,37 +28,38 @@ import org.apache.camel.util.ObjectHelper;
  * <p/>
  * This xmltokenizer language can operate in the following modes:
  * <ul>
+ *     <li>inject - injecting the contextual namespace bindings into the extracted token</li>
  *     <li>wrap - wrapping the extracted token in its ancestor context</li>
- *     <li>injected - injecting the contextual namespace bindings into the extracted token</li>
+ *     <li>unwrap - unwrapping the extracted token to its child content</li>
  * </ul>
  */
 public class XMLTokenizeLanguage extends LanguageSupport {
 
     private String path;
     private String headerName;
-    private boolean wrap;
+    private char mode;
     private int group;
 
-    public static Expression tokenize(String token) {
-        return tokenize(token, false);
+    public static Expression tokenize(String path) {
+        return tokenize(path, 'i');
     }
 
-    public static Expression tokenize(String token, boolean wrap) {
+    public static Expression tokenize(String path, char mode) {
         XMLTokenizeLanguage language = new XMLTokenizeLanguage();
-        language.setPath(token);
-        language.setWrap(wrap);
+        language.setPath(path);
+        language.setMode(mode);
         return language.createExpression(null);
     }
 
-    public static Expression tokenize(String headerName, String token) {
-        return tokenize(headerName, token, false);
+    public static Expression tokenize(String headerName, String path) {
+        return tokenize(headerName, path, 'i');
     }
 
-    public static Expression tokenize(String headerName, String token, boolean wrap) {
+    public static Expression tokenize(String headerName, String path, char mode) {
         XMLTokenizeLanguage language = new XMLTokenizeLanguage();
         language.setHeaderName(headerName);
-        language.setPath(token);
-        language.setWrap(wrap);
+        language.setPath(path);
+        language.setMode(mode);
         return language.createExpression(null);
     }
 
@@ -74,7 +73,7 @@ public class XMLTokenizeLanguage extends LanguageSupport {
     public Expression createExpression() {
         ObjectHelper.notNull(path, "token");
 
-        Expression answer = ExpressionBuilder.tokenizeXMLAwareExpression(path, wrap);
+        Expression answer = ExpressionBuilder.tokenizeXMLAwareExpression(path, mode);
 
         // if group then wrap answer in group expression
         if (group > 0) {
@@ -108,12 +107,12 @@ public class XMLTokenizeLanguage extends LanguageSupport {
         this.headerName = headerName;
     }
 
-    public boolean isWrap() {
-        return wrap;
+    public char getMode() {
+        return mode;
     }
 
-    public void setWrap(boolean wrap) {
-        this.wrap = wrap;
+    public void setMode(char mode) {
+        this.mode = mode;
     }
     public int getGroup() {
         return group;

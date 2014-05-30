@@ -184,6 +184,11 @@ public class XMLTokenExpressionIteratorTest extends TestCase {
         "<aunt xmlns:g=\"urn:g\"/>"
     };    
 
+    private static final String[] RESULTS_AUNT_UNWRAPPED = {
+        "emma",
+        ""
+    };
+
     private static final String[] RESULTS_NULL = {
     };
  
@@ -202,85 +207,100 @@ public class XMLTokenExpressionIteratorTest extends TestCase {
 
 
     public void testExtractChild() throws Exception {
-        invokeAndVerify("//C:child", true, new ByteArrayInputStream(TEST_BODY), RESULTS_CHILD_WRAPPED);
+        invokeAndVerify("//C:child", 'w', new ByteArrayInputStream(TEST_BODY), RESULTS_CHILD_WRAPPED);
     }
 
     public void testExtractChildInjected() throws Exception {
-        invokeAndVerify("//C:child", false, new ByteArrayInputStream(TEST_BODY), RESULTS_CHILD);
+        invokeAndVerify("//C:child", 'i', new ByteArrayInputStream(TEST_BODY), RESULTS_CHILD);
     }
 
     public void testExtractChildNSMixed() throws Exception {
-        invokeAndVerify("//*:child", true, new ByteArrayInputStream(TEST_BODY_NS_MIXED), RESULTS_CHILD_MIXED_WRAPPED);
+        invokeAndVerify("//*:child", 'w', new ByteArrayInputStream(TEST_BODY_NS_MIXED), RESULTS_CHILD_MIXED_WRAPPED);
     }
 
     public void testExtractChildNSMixedInjected() throws Exception {
-        invokeAndVerify("//*:child", false, new ByteArrayInputStream(TEST_BODY_NS_MIXED), RESULTS_CHILD_MIXED);
+        invokeAndVerify("//*:child", 'i', new ByteArrayInputStream(TEST_BODY_NS_MIXED), RESULTS_CHILD_MIXED);
     }
 
     public void testExtractAnyChild() throws Exception {
-        invokeAndVerify("//*:child", true, new ByteArrayInputStream(TEST_BODY), RESULTS_CHILD_WRAPPED);
+        invokeAndVerify("//*:child", 'w', new ByteArrayInputStream(TEST_BODY), RESULTS_CHILD_WRAPPED);
     }
 
     public void testExtractCxxxd() throws Exception {
-        invokeAndVerify("//C:c*d", false, new ByteArrayInputStream(TEST_BODY), RESULTS_CHILD);
+        invokeAndVerify("//C:c*d", 'i', new ByteArrayInputStream(TEST_BODY), RESULTS_CHILD);
     }
 
     public void testExtractUnqualifiedChild() throws Exception {
-        invokeAndVerify("//child", true, new ByteArrayInputStream(TEST_BODY), RESULTS_NULL);
+        invokeAndVerify("//child", 'w', new ByteArrayInputStream(TEST_BODY), RESULTS_NULL);
     }
 
     public void testExtractChildWithAncestorGGPdGP() throws Exception {
         invokeAndVerify("/G:greatgrandparent/grandparent//C:child", 
-                        true, new ByteArrayInputStream(TEST_BODY), RESULTS_CHILD_WRAPPED);
+                        'w', new ByteArrayInputStream(TEST_BODY), RESULTS_CHILD_WRAPPED);
     }
 
     public void testExtractChildWithAncestorGGPdP() throws Exception {
         invokeAndVerify("/G:greatgrandparent//C:parent/C:child", 
-                        true, new ByteArrayInputStream(TEST_BODY), RESULTS_CHILD_WRAPPED);
+                        'w', new ByteArrayInputStream(TEST_BODY), RESULTS_CHILD_WRAPPED);
     }
 
     public void testExtractChildWithAncestorGPddP() throws Exception {
         invokeAndVerify("//grandparent//C:parent/C:child", 
-                        true, new ByteArrayInputStream(TEST_BODY), RESULTS_CHILD_WRAPPED);
+                        'w', new ByteArrayInputStream(TEST_BODY), RESULTS_CHILD_WRAPPED);
     }
 
     public void testExtractChildWithAncestorGPdP() throws Exception {
         invokeAndVerify("//grandparent/C:parent/C:child", 
-                        true, new ByteArrayInputStream(TEST_BODY), RESULTS_CHILD_WRAPPED);
+                        'w', new ByteArrayInputStream(TEST_BODY), RESULTS_CHILD_WRAPPED);
     }
 
     public void testExtractChildWithAncestorP() throws Exception {
         invokeAndVerify("//C:parent/C:child", 
-                        true, new ByteArrayInputStream(TEST_BODY), RESULTS_CHILD_WRAPPED);
+                        'w', new ByteArrayInputStream(TEST_BODY), RESULTS_CHILD_WRAPPED);
     }
 
     public void testExtractChildWithAncestorGGPdGPdP() throws Exception {
         invokeAndVerify("/G:greatgrandparent/grandparent/C:parent/C:child", 
-                        true, new ByteArrayInputStream(TEST_BODY), RESULTS_CHILD_WRAPPED);
+                        'w', new ByteArrayInputStream(TEST_BODY), RESULTS_CHILD_WRAPPED);
     }
     
-    public void textExtractParent() throws Exception {
+    public void testExtractParent() throws Exception {
         invokeAndVerify("//C:parent", 
-                        true, new ByteArrayInputStream(TEST_BODY), RESULTS_PARENT_WRAPPED);
+                        'w', new ByteArrayInputStream(TEST_BODY), RESULTS_PARENT_WRAPPED);
     }
     
-    public void textExtractParentInjected() throws Exception {
+    public void testExtractParentInjected() throws Exception {
         invokeAndVerify("//C:parent", 
-                        false, new ByteArrayInputStream(TEST_BODY), RESULTS_PARENT);
+                        'i', new ByteArrayInputStream(TEST_BODY), RESULTS_PARENT);
     }
     
-    public void textExtractAunt() throws Exception {
-        invokeAndVerify("//aunt", 
-                        true, new ByteArrayInputStream(TEST_BODY), RESULTS_AUNT_WRAPPED);
+    public void testExtractAuntWC1() throws Exception {
+        invokeAndVerify("//a*t", 
+                        'w', new ByteArrayInputStream(TEST_BODY), RESULTS_AUNT_WRAPPED);
     }
 
-    public void textExtractAuntInjected() throws Exception {
-        invokeAndVerify("//aunt", 
-                        false, new ByteArrayInputStream(TEST_BODY), RESULTS_AUNT);
+    public void testExtractAuntWC2() throws Exception {
+        invokeAndVerify("//au?t", 
+                        'w', new ByteArrayInputStream(TEST_BODY), RESULTS_AUNT_WRAPPED);
     }
 
-    private void invokeAndVerify(String path, boolean wrap, InputStream in, String[] expected) throws Exception {
-        XMLTokenExpressionIterator xtei = new XMLTokenExpressionIterator(path, wrap);
+    public void testExtractAunt() throws Exception {
+        invokeAndVerify("//aunt", 
+                        'w', new ByteArrayInputStream(TEST_BODY), RESULTS_AUNT_WRAPPED);
+    }
+
+    public void testExtractAuntInjected() throws Exception {
+        invokeAndVerify("//aunt", 
+                        'i', new ByteArrayInputStream(TEST_BODY), RESULTS_AUNT);
+    }
+
+    public void testExtractAuntUnwrapped() throws Exception {
+        invokeAndVerify("//aunt", 
+                        'u', new ByteArrayInputStream(TEST_BODY), RESULTS_AUNT_UNWRAPPED);
+    }
+
+    private void invokeAndVerify(String path, char mode, InputStream in, String[] expected) throws Exception {
+        XMLTokenExpressionIterator xtei = new XMLTokenExpressionIterator(path, mode);
         xtei.setNamespaces(nsmap);
         
         Iterator<?> it = xtei.createIterator(in, exchange);

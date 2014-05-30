@@ -23,6 +23,8 @@ import java.util.List;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
+import org.apache.camel.builder.xml.Namespaces;
+import org.apache.camel.spi.NamespaceAware;
 import org.apache.camel.util.ExpressionToPredicateAdapter;
 
 /**
@@ -179,6 +181,16 @@ public class ValueBuilder implements Expression, Predicate {
 
     public ValueBuilder tokenizeXML(String tagName, String inheritNamespaceTagName) {
         Expression newExp = ExpressionBuilder.tokenizeXMLExpression(tagName, inheritNamespaceTagName);
+        return new ValueBuilder(newExp);
+    }
+
+    public ValueBuilder xtokenize(String path, Namespaces namespaces) {
+        return xtokenize(path, 'i', namespaces);
+    }
+
+    public ValueBuilder xtokenize(String path, char mode, Namespaces namespaces) {
+        Expression newExp = ExpressionBuilder.tokenizeXMLAwareExpression(path, mode);
+        ((NamespaceAware)newExp).setNamespaces(namespaces.getNamespaces());
         return new ValueBuilder(newExp);
     }
 

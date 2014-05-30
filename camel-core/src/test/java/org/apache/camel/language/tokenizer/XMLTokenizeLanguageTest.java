@@ -123,7 +123,7 @@ public class XMLTokenizeLanguageTest extends ContextTestSupport {
             Namespaces ns = new Namespaces("C", "urn:c");
             public void configure() {
                 from("direct:start")
-                    .split().tokenizeXML("//C:child", false, ns)
+                    .split().xtokenize("//C:child", ns)
                         .to("mock:result")
                     .end();
             }

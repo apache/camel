@@ -604,9 +604,19 @@ public class ExpressionClauseSupport<T> {
         return result;
     }
 
-    public T tokenizeXML(String path, boolean wrap, Namespaces namespaces, int group) {
+    /**
+     * Evaluates an XML token expression on the message body with XML content
+     * 
+     * @param path the xpath like path notation specifying the child nodes to tokenize
+     * @param mode one of 'i', 'w', or 'u' to inject the namespaces to the token, to
+     *        wrap the token with its ancestor contet, or to unwrap to its element child
+     * @param namespaces the namespace map to the namespace bindings 
+     * @param group to group by the given number
+     * @return
+     */
+    public T xtokenize(String path, char mode, Namespaces namespaces, int group) {
         XMLTokenizerExpression expression = new XMLTokenizerExpression(path);
-        expression.setWrap(wrap);
+        expression.setMode(Character.toString(mode));
         expression.setNamespaces(namespaces.getNamespaces());
 
         if (group > 0) {

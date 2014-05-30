@@ -36,5 +36,6 @@ SpELExpression
 SqlExpression
 TokenizerExpression
 VtdXmlExpression
+XMLTokenizerExpression
 XPathExpression
 XQueryExpression

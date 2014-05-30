@@ -126,7 +126,7 @@ public class XMLTokenizeWrapLanguageTest extends ContextTestSupport {
             Namespaces ns = new Namespaces("C", "urn:c");
             public void configure() {
                 from("direct:start")
-                    .split().tokenizeXML("//C:child", true, ns)
+                    .split().xtokenize("//C:child", 'w', ns)
                         .to("mock:result")
                     .end();
             }

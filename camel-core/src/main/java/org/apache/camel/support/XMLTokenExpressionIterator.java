@@ -48,13 +48,13 @@ import org.slf4j.LoggerFactory;
  */
 public class XMLTokenExpressionIterator extends ExpressionAdapter implements NamespaceAware {
     protected final String path;
-    protected boolean wrap;
+    protected char mode;
     protected Map<String, String> nsmap;
 
-    public XMLTokenExpressionIterator(String path, boolean wrap) {
+    public XMLTokenExpressionIterator(String path, char mode) {
         ObjectHelper.notEmpty(path, "path");
         this.path = path;
-        this.wrap = wrap;
+        this.mode = mode;
     }
 
     @Override
@@ -62,12 +62,16 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
         this.nsmap = nsmap;
     }
 
-    public void setWrap(boolean wrap) {
-        this.wrap = wrap;
+    public void setMode(char mode) {
+        this.mode = mode;
+    }
+
+    public void setMode(String mode) {
+        this.mode = mode != null ? mode.charAt(0) : 0;
     }
     
     protected Iterator<?> createIterator(InputStream in, Exchange exchange) throws XMLStreamException {
-        XMLTokenIterator iterator = new XMLTokenIterator(path, nsmap, wrap, in, exchange);
+        XMLTokenIterator iterator = new XMLTokenIterator(path, nsmap, mode, in, exchange);
         return iterator;
     }
 
@@ -121,7 +125,7 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
 
         private AttributedQName[] splitpath;
         private int index;
-        private boolean wrap;
+        private char mode;
         private RecordableInputStream in;
         private XMLStreamReader reader;
         private List<QName> path;
@@ -136,7 +140,7 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
         
         private Object nextToken;
         
-        public XMLTokenIterator(String path, Map<String, String> nsmap, boolean wrap, InputStream in, Exchange exchange) throws XMLStreamException {
+        public XMLTokenIterator(String path, Map<String, String> nsmap, char mode, InputStream in, Exchange exchange) throws XMLStreamException {
             final String[] sl = path.substring(1).split("/");
             this.splitpath = new AttributedQName[sl.length];
             for (int i = 0; i < sl.length; i++) {
@@ -150,7 +154,7 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
                 }
             }
             
-            this.wrap = wrap;
+            this.mode = mode != 0 ? mode : 'i';
             String charset = IOHelper.getCharsetName(exchange, false);
             this.in = new RecordableInputStream(in, charset);
             this.reader = new StaxConverter().createXMLStreamReader(this.in, exchange);
@@ -165,10 +169,10 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
             this.path = new ArrayList<QName>();
             
             // wrapped mode needs the segments and the injected mode needs the namespaces
-            if (wrap) {
+            if (this.mode == 'w') {
                 this.segments = new ArrayList<String>();
                 this.segmentlog = new ArrayList<QName>();
-            } else {
+            } else if (this.mode == 'i') {
                 this.namespaces = new ArrayList<Map<String, String>>();
             }
                         
@@ -297,7 +301,7 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
             popName();
             
             String token = createContextualToken(getCurrenText());
-            if (!wrap) {
+            if (mode == 'i') {
                 popNamespaces();
             }
             
@@ -306,7 +310,7 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
 
         private String createContextualToken(String token) {
             StringBuilder sb = new StringBuilder();
-            if (wrap) {
+            if (mode == 'w') {
                 for (int i = 0; i < segments.size(); i++) {
                     sb.append(segments.get(i));
                 }
@@ -316,7 +320,7 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
                     sb.append("</").append(makeName(q)).append(">");
                 }
 
-            } else {
+            } else if (mode == 'i') {
                 final String stag = token.substring(0, token.indexOf('>') + 1);
                 Set<String> skip = new HashSet<String>();
                 Matcher matcher = NAMESPACE_PATTERN.matcher(stag);
@@ -343,6 +347,12 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
                     }
                 }
                 sb.append(token.substring(stag.length() - (empty ? 2 : 1)));
+            } else if (mode == 'u') {
+                int bp = token.indexOf(">");
+                int ep = token.lastIndexOf("</");
+                if (bp > 0 && ep > 0) {
+                    sb.append(token.substring(bp + 1, ep));
+                }
             }
 
             return sb.toString();
@@ -363,11 +373,11 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
                     
                     String token = getCurrenText();
                     LOG.trace("token={}", token);
-                    if (!backtrack && wrap) {
+                    if (!backtrack && mode == 'w') {
                         pushSegment(name, token);
                     }
                     pushName(name);
-                    if (!wrap) {
+                    if (mode == 'i') {
                         pushNamespaces(reader);
                     }
                     backtrack = false;
@@ -396,7 +406,7 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
                     LOG.trace("ee={}", endname);
                     
                     popName();
-                    if (!wrap) {
+                    if (mode == 'i') {
                         popNamespaces();
                     }
                     
@@ -405,7 +415,7 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
                         // reactive backtrack if not backtracking and update the track depth
                         backtrack = true;
                         trackdepth--;
-                        if (wrap) {
+                        if (mode == 'w') {
                             while (!endname.equals(peekLog())) {
                                 pc++;
                                 popLog();
@@ -414,7 +424,7 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
                     }
 
                     if (backtrack) {
-                        if (wrap) {
+                        if (mode == 'w') {
                             for (int i = 0; i < pc; i++) {
                                 popSegment();
                             }

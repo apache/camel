@@ -467,6 +467,21 @@
         <platform.skip.tests>org/apache/camel/spring/management/**/*.java</platform.skip.tests>
       </properties>
     </profile>
+    <profile>
+       <id>woodstox</id>
+       <activation>
+         <activeByDefault>true</activeByDefault>
+       </activation>
+       <dependencies>
+          <!-- xmltokenizer using woodstox -->
+          <dependency>
+            <groupId>org.codehaus.woodstox</groupId>
+            <artifactId>woodstox-core-asl</artifactId>
+            <version>${woodstox-version}</version>
+            <scope>test</scope>
+          </dependency>
+        </dependencies>
+    </profile>
   </profiles>
     
   <reporting>

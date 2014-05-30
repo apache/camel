@@ -169,14 +169,6 @@
       <scope>test</scope>
     </dependency>
 
-    <!-- xmltokenizer using woodstox -->
-    <dependency>
-      <groupId>org.codehaus.woodstox</groupId>
-      <artifactId>woodstox-core-asl</artifactId>
-      <version>${woodstox-version}</version>
-      <scope>test</scope>
-    </dependency>
-
   </dependencies>
 
 
@@ -501,6 +493,21 @@
           <version>${xerces-version}</version>
         </dependency>
       </dependencies>
+    </profile>
+    <profile>
+       <id>woodstox</id>
+       <activation>
+         <activeByDefault>true</activeByDefault>
+       </activation>
+       <dependencies>
+          <!-- xmltokenizer using woodstox -->
+          <dependency>
+            <groupId>org.codehaus.woodstox</groupId>
+            <artifactId>woodstox-core-asl</artifactId>
+            <version>${woodstox-version}</version>
+            <scope>test</scope>
+          </dependency>
+        </dependencies>
     </profile>
   </profiles>
 

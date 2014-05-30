@@ -25,7 +25,6 @@ import java.util.Comparator;
 import java.util.Date;
 import java.util.Iterator;
 import java.util.List;
-import java.util.Map;
 import java.util.Scanner;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.regex.Pattern;
@@ -1232,10 +1231,10 @@ public final class ExpressionBuilder {
         return new TokenXMLExpressionIterator(tagName, inheritNamespaceTagName);
     }
 
-    public static Expression tokenizeXMLAwareExpression(String path, boolean wrap) {
+    public static Expression tokenizeXMLAwareExpression(String path, char mode) {
         ObjectHelper.notEmpty(path, "path");
 
-        return new XMLTokenExpressionIterator(path, wrap);
+        return new XMLTokenExpressionIterator(path, mode);
     }
 
     /**

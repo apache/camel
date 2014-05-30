@@ -25,20 +25,19 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
 import org.apache.camel.language.tokenizer.XMLTokenizeLanguage;
-import org.apache.camel.util.ExpressionToPredicateAdapter;
 
 /**
  * For expressions and predicates using a body or header tokenizer.
  *
  * @see XMLTokenizeLanguage
  */
-@XmlRootElement(name = "xmlTokenize")
+@XmlRootElement(name = "xtokenize")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class XMLTokenizerExpression extends NamespaceAwareExpression {
     @XmlAttribute
     private String headerName;
     @XmlAttribute
-    private Boolean wrap;
+    private String mode;
     @XmlAttribute
     private Integer group;
 
@@ -62,12 +61,12 @@ public class XMLTokenizerExpression extends NamespaceAwareExpression {
         this.headerName = headerName;
     }
 
-    public void setWrap(boolean wrap) {
-        this.wrap = wrap;
+    public void setMode(String mode) {
+        this.mode = mode;
     }
 
-    public Boolean getWrap() {
-        return wrap;
+    public String getMode() {
+        return mode;
     }
 
     public Integer getGroup() {
@@ -81,16 +80,16 @@ public class XMLTokenizerExpression extends NamespaceAwareExpression {
     @Override
     protected void configureExpression(CamelContext camelContext, Expression expression) {
         super.configureExpression(camelContext, expression);
-        if (wrap != null) {
-            setProperty(expression, "wrap", wrap);
+        if (mode != null) {
+            setProperty(expression, "mode", mode);
         }
     }
 
     @Override
     protected void configurePredicate(CamelContext camelContext, Predicate predicate) {
         super.configurePredicate(camelContext, predicate);
-        if (wrap != null) {
-            setProperty(predicate, "wrap", wrap);
+        if (mode != null) {
+            setProperty(predicate, "mode", mode);
         }
     }
 }
