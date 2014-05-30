@@ -46,7 +46,7 @@ public final class $collectionName extends ApiCollection {
 #end
     }
 
-    public static final synchronized $collectionName getCollection() {
+    public static synchronized $collectionName getCollection() {
         if (collection == null) {
             collection = new $collectionName();
         }

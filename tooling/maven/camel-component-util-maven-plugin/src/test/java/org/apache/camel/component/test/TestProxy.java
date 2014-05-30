@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.maven;
+package org.apache.camel.component.test;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -22,6 +22,10 @@ import java.util.List;
 public class TestProxy {
     public String sayHi() {
         return "Hello!";
+    }
+
+    public String sayHi(boolean hello) {
+        return hello ? "Hello!" : "Hi!";
     }
 
     public String sayHi(final String name) {

@@ -20,6 +20,7 @@ import java.io.File;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.TreeMap;
 
 import org.apache.camel.util.component.ApiMethodParser;
 import org.apache.camel.util.component.ArgumentSubstitutionParser;
@@ -59,6 +60,9 @@ public abstract class AbstractApiMethodGeneratorMojo extends AbstractGeneratorMo
 
         // generate enumeration from model
         mergeTemplate(getApiMethodContext(models), getApiMethodFile(), "/api-method-enum.vm");
+
+        // generate EndpointConfiguration for this Api
+        mergeTemplate(getEndpointContext(models), getConfigurationFile(), "/api-endpoint-config.vm");
 
         // generate junit test if it doesn't already exist under test source directory
         // i.e. it may have been generated then moved there and populated with test values
@@ -121,6 +125,42 @@ public abstract class AbstractApiMethodGeneratorMojo extends AbstractGeneratorMo
         return getProxyType().getSimpleName() + "IntegrationTest";
     }
 
+    private VelocityContext getEndpointContext(List<ApiMethodParser.ApiMethodModel> models) throws MojoExecutionException {
+        VelocityContext context = getCommonContext(models);
+        context.put("configName", getConfigName());
+        context.put("componentName", componentName);
+        context.put("componentPackage", componentPackage);
+
+        // generate parameter names and types for configuration, sorted by parameter name
+        Map<String, Class<?>> parameters = new TreeMap<String, Class<?>>();
+        for (ApiMethodParser.ApiMethodModel model : models) {
+            for (ApiMethodParser.Argument argument : model.getArguments()) {
+                if (!parameters.containsKey(argument.getName())) {
+                    Class<?> type = argument.getType();
+                    if (type.isPrimitive()) {
+                        // replace primitives with wrapper classes
+                        type = ClassUtils.primitiveToWrapper(type);
+                    }
+                    parameters.put(argument.getName(), type);
+                }
+            }
+        }
+        context.put("parameters", parameters);
+        return context;
+    }
+
+    private File getConfigurationFile() throws MojoExecutionException {
+        final StringBuilder fileName = new StringBuilder();
+        // endpoint configuration goes in component package
+        fileName.append(componentPackage.replaceAll("\\.", File.separator)).append(File.separator);
+        fileName.append(getConfigName()).append(".java");
+        return new File(generatedSrcDir, fileName.toString());
+    }
+
+    private String getConfigName() throws MojoExecutionException {
+        return getProxyType().getSimpleName() + "EndpointConfiguration";
+    }
+
     private VelocityContext getCommonContext(List<ApiMethodParser.ApiMethodModel> models) throws MojoExecutionException {
         VelocityContext context = new VelocityContext();
         context.put("models", models);
@@ -141,9 +181,9 @@ public abstract class AbstractApiMethodGeneratorMojo extends AbstractGeneratorMo
     public static String getType(Class<?> clazz) {
         if (clazz.isArray()) {
             // create a zero length array and get the class from the instance
-            return "new " + clazz.getCanonicalName().replaceAll("\\[\\]", "[0]") + ".getClass()";
+            return "new " + getCanonicalName(clazz).replaceAll("\\[\\]", "[0]") + ".getClass()";
         } else {
-            return clazz.getCanonicalName() + ".class";
+            return getCanonicalName(clazz) + ".class";
         }
     }
 
@@ -172,7 +212,7 @@ public abstract class AbstractApiMethodGeneratorMojo extends AbstractGeneratorMo
         if (resultType.isPrimitive()) {
             return ClassUtils.primitiveToWrapper(resultType).getSimpleName();
         } else {
-            return resultType.getCanonicalName();
+            return getCanonicalName(resultType);
         }
     }
 
@@ -198,5 +238,23 @@ public abstract class AbstractApiMethodGeneratorMojo extends AbstractGeneratorMo
             // return type cast null string
             return "null";
         }
+    }
+
+    public static String getPropertySuffix(String parameter) {
+        // capitalize first character
+        StringBuilder builder = new StringBuilder();
+        builder.append(Character.toUpperCase(parameter.charAt(0)));
+        builder.append(parameter.substring(1));
+        return builder.toString();
+    }
+
+    public static String getCanonicalName(Class<?> type) {
+        // remove java.lang prefix for default Java package
+        String canonicalName = type.getCanonicalName();
+        final int pkgEnd = canonicalName.lastIndexOf('.');
+        if (pkgEnd > 0 && canonicalName.substring(0, pkgEnd).equals("java.lang")) {
+            canonicalName = canonicalName.substring(pkgEnd + 1);
+        }
+        return canonicalName;
     }
 }

@@ -47,19 +47,16 @@ import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
 public abstract class AbstractGeneratorMojo extends AbstractMojo {
 
     protected static final String PREFIX = "org.apache.camel.";
-    protected static final String OUT_PACKAGE = PREFIX + "component";
-
+    protected static final String OUT_PACKAGE = PREFIX + "component.internal";
+    protected static final String COMPONENT_PACKAGE = PREFIX + "component";
 
     // used for velocity logging, to avoid creating velocity.log
     protected final Logger LOG = Logger.getLogger(this.getClass());
 
-    @Parameter(defaultValue = "${project}", readonly = true)
-    MavenProject project;
-
-    @Parameter(defaultValue = "${project.build.directory}/generated-sources/camel")
+    @Parameter(defaultValue = "${project.build.directory}/generated-sources/camel-component")
     protected File generatedSrcDir;
 
-    @Parameter(defaultValue = "${project.build.directory}/generated-test-sources/camel")
+    @Parameter(defaultValue = "${project.build.directory}/generated-test-sources/camel-component")
     protected File generatedTestDir;
 
     @Parameter(defaultValue = OUT_PACKAGE)
@@ -70,6 +67,12 @@ public abstract class AbstractGeneratorMojo extends AbstractMojo {
 
     @Parameter(required = true, property = PREFIX + "componentName")
     protected String componentName;
+
+    @Parameter(defaultValue = COMPONENT_PACKAGE)
+    protected String componentPackage;
+
+    @Parameter(defaultValue = "${project}", readonly = true)
+    MavenProject project;
 
     private VelocityEngine engine;
     private ClassLoader projectClassLoader;
@@ -101,6 +104,7 @@ public abstract class AbstractGeneratorMojo extends AbstractMojo {
             for (Iterator it = classpathElements.iterator(); it.hasNext(); i++) {
                 try {
                     urls[i] = new File((String) it.next()).toURI().toURL();
+                    LOG.debug("Adding project path " + urls[i]);
                 } catch (MalformedURLException e) {
                     throw new MojoExecutionException(e.getMessage(), e);
                 }

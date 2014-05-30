@@ -53,13 +53,13 @@ public class ${testName} extends CamelTestSupport {
 ## single argument, use as body
 #if ( $args.size() == 1 )
 #set ( $argType = $args.get(0).Type )
-        // using $argType.CanonicalName message body for single parameter "$args.get(0).Name"
+        // using $helper.getCanonicalName($argType) message body for single parameter "$args.get(0).Name"
 ## multiple arguments, pass them as headers
 #elseif ( $args.size() > 1 )
         final HashMap<String, Object> headers = new HashMap<String, Object>();
 #foreach ( $arg in $args )
 #if ( !$arg.Type.isPrimitive() )
-        // parameter type is $arg.Type.CanonicalName
+        // parameter type is $helper.getCanonicalName($arg.Type)
         headers.put("${helper.getPropertyPrefix()}${arg.Name}", null);
 #else
         headers.put("${helper.getPropertyPrefix()}${arg.Name}", $helper.getDefaultArgValue($arg.Type));
@@ -70,10 +70,10 @@ public class ${testName} extends CamelTestSupport {
         #if ( !$voidResult )#set ( $type = $helper.getResultDeclaration($resultType) ) $type result = (${type})#end
 ## actual template call
 #if ( $args.isEmpty() )
-template().requestBody("direct://${model.UniqueName}", (java.lang.Object)null);
+template().requestBody("direct://${model.UniqueName}", (Object)null);
 #elseif ( $args.size() == 1 )
 ## typecast body to avoid requestBody() conflict
-template().requestBody("direct://${model.UniqueName}", (${argType.CanonicalName}) $helper.getDefaultArgValue($argType));
+template().requestBody("direct://${model.UniqueName}", (${helper.getCanonicalName($argType)}) $helper.getDefaultArgValue($argType));
 #else
 template().requestBodyAndHeader("direct://${model.UniqueName}", null, headers);
 #end
@@ -89,12 +89,18 @@ template().requestBodyAndHeader("direct://${model.UniqueName}", null, headers);
         return new RouteBuilder() {
             public void configure() {
 #foreach ( $model in $models )
-                // test route for $name
+                // test route for $model.Name
                 from("direct://${model.UniqueName}")
                   .to("${scheme}://${model.Name}");
 
 #end
             }
         };
+    }
+
+    @Override
+    public boolean isCreateCamelContextPerClass() {
+        // only create the context once for this class
+        return true;
     }
 }

@@ -44,9 +44,10 @@ public class JavadocApiMethodGeneratorMojoTest extends AbstractGeneratorMojoTest
 
         // use VelocityEngine javadoc
         mojo.proxyClass = VelocityContext.class.getCanonicalName();
-        mojo.excludePackages = JavadocApiMethodGeneratorMojo.DEFAULT_EXCLUDE_PACKAGES;
         Substitution substitution = new Substitution(".*", "key", "java.lang.Object", "applicationKey");
         mojo.substitutions = new Substitution[]{ substitution };
+        mojo.excludePackages = JavadocApiMethodGeneratorMojo.DEFAULT_EXCLUDE_PACKAGES;
+        mojo.excludeMethods = "clone|Current|internal|icache";
 
         mojo.execute();
 

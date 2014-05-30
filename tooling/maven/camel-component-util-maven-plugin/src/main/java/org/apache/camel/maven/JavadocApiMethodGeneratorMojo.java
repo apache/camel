@@ -45,7 +45,7 @@ import org.codehaus.plexus.util.IOUtil;
 /**
  * Parses ApiMethod signatures from Javadoc.
  */
-@Mojo(name = "fromJavaDoc", requiresDependencyResolution = ResolutionScope.TEST, requiresProject = true,
+@Mojo(name = "fromJavadoc", requiresDependencyResolution = ResolutionScope.TEST, requiresProject = true,
         defaultPhase = LifecyclePhase.GENERATE_SOURCES)
 public class JavadocApiMethodGeneratorMojo extends AbstractApiMethodGeneratorMojo {
 
@@ -57,6 +57,9 @@ public class JavadocApiMethodGeneratorMojo extends AbstractApiMethodGeneratorMoj
     @Parameter(property = "camel.component.util.excludeClasses")
     protected String excludeClasses;
 
+    @Parameter(property = "camel.component.util.excludeMethods")
+    protected String excludeMethods;
+
     @Override
     protected ApiMethodParser createAdapterParser(Class proxyType) {
         return new ArgumentSubstitutionParser(proxyType, getArgumentSubstitutions());
@@ -67,18 +70,23 @@ public class JavadocApiMethodGeneratorMojo extends AbstractApiMethodGeneratorMoj
         // signatures as map from signature with no arg names to arg names from JavadocParser
         Map<String, String> result = new HashMap<String, String>();
 
-        final Pattern packages = Pattern.compile(excludePackages);
-        Pattern classes = null;
+        final Pattern packagePatterns = Pattern.compile(excludePackages);
+        Pattern classPatterns = null;
         if (excludeClasses != null) {
-            classes = Pattern.compile(excludeClasses);
+            classPatterns = Pattern.compile(excludeClasses);
+        }
+        Pattern methodPatterns = null;
+        if (excludeMethods != null) {
+            methodPatterns = Pattern.compile(excludeMethods);
         }
 
         // for proxy class and super classes not matching excluded packages or classes
         for (Class aClass = getProxyType();
-             aClass != null && !packages.matcher(aClass.getPackage().getName()).matches() &&
-                     (classes == null || !classes.matcher(aClass.getSimpleName()).matches());
+             aClass != null && !packagePatterns.matcher(aClass.getPackage().getName()).matches() &&
+                     (classPatterns == null || !classPatterns.matcher(aClass.getSimpleName()).matches());
              aClass = aClass.getSuperclass()) {
 
+            LOG.debug("Processing " + aClass.getName());
             final String javaDocPath = aClass.getName().replaceAll("\\.", "/") + ".html";
 
             // read javadoc html text for class
@@ -98,7 +106,8 @@ public class JavadocApiMethodGeneratorMojo extends AbstractApiMethodGeneratorMoj
                 // get public method signature
                 final Map<String, String> methodMap = htmlParser.getMethodText();
                 for (String method : htmlParser.getMethods()) {
-                    if (!result.containsKey(method)) {
+                    if (!result.containsKey(method) &&
+                            (methodPatterns == null || !methodPatterns.matcher(method).find())) {
 
                         final int leftBracket = method.indexOf('(');
                         final String name = method.substring(0, leftBracket);

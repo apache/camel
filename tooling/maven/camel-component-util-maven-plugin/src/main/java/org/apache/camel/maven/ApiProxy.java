@@ -28,6 +28,14 @@ public class ApiProxy {
 
     private Map<String, String> aliases = Collections.EMPTY_MAP;
 
+    public ApiProxy() {
+    }
+
+    public ApiProxy(String apiName, String proxyClass) {
+        this.apiName = apiName;
+        this.proxyClass = proxyClass;
+    }
+
     public String getApiName() {
         return apiName;
     }

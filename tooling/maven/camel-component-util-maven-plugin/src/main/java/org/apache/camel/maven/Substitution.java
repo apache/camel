@@ -26,6 +26,9 @@ public class Substitution {
     private String argType;
     private String replacement;
 
+    public Substitution() {
+    }
+
     public Substitution(String method, String argName, String argType, String replacement) {
         this.method = method;
         this.argName = argName;

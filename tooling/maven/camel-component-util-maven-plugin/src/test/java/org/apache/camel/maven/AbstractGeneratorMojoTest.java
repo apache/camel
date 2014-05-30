@@ -30,9 +30,15 @@ import static org.junit.Assert.assertTrue;
  * Base class for Generator MOJO tests.
  */
 public class AbstractGeneratorMojoTest {
-    protected static final String OUT_DIR = "target/generated-test-sources/camelComponent";
-    protected static final String PACKAGE_PATH = AbstractGeneratorMojo.OUT_PACKAGE.replaceAll("\\.", "/") + "/";
-    protected static final String COMPONENT_NAME = "TestComponent";
+    protected static final String OUT_DIR = "target/generated-test-sources/camel-component";
+
+    private static final String COMPONENT_PACKAGE = "org.apache.camel.component.test";
+    private static final String OUT_PACKAGE = COMPONENT_PACKAGE + ".internal";
+
+    protected static final String PACKAGE_PATH = OUT_PACKAGE.replaceAll("\\.", "/") + "/";
+    protected static final String COMPONENT_PACKAGE_PATH = COMPONENT_PACKAGE.replaceAll("\\.", "/") + "/";
+
+    protected static final String COMPONENT_NAME = "Test";
     protected static final String SCHEME = "testComponent";
 
     protected void assertExists(File outFile) {
@@ -44,7 +50,8 @@ public class AbstractGeneratorMojoTest {
         mojo.scheme = SCHEME;
         mojo.generatedSrcDir = new File(OUT_DIR);
         mojo.generatedTestDir = new File(OUT_DIR);
-        mojo.outPackage = AbstractGeneratorMojo.OUT_PACKAGE;
+        mojo.outPackage = OUT_PACKAGE;
+        mojo.componentPackage = COMPONENT_PACKAGE;
         mojo.project = new MavenProject((Model) null) {
             @Override
             public List getTestClasspathElements() throws DependencyResolutionRequiredException {
