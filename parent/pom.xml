@@ -111,7 +111,7 @@
     <cxf-version-range>[2.6,4.0)</cxf-version-range>
     <cxf-xjc-utils-version>2.7.0</cxf-xjc-utils-version>
     <deltaspike-version>0.7</deltaspike-version>
-    <derby-version>10.10.1.1</derby-version>
+    <derby-version>10.10.2.0</derby-version>
     <disruptor-version>3.2.1</disruptor-version>
     <dnsjava-version>2.1.1</dnsjava-version>
     <dnsjava-bundle-version>2.1.1_1</dnsjava-bundle-version>
