@@ -1,6 +1,9 @@
 package org.apache.camel.metrics.meter;
 
+import static org.apache.camel.metrics.MetricsComponent.HEADER_METER_MARK;
+
 import org.apache.camel.Exchange;
+import org.apache.camel.Message;
 import org.apache.camel.metrics.AbstractMetricsProducer;
 
 import com.codahale.metrics.Meter;
@@ -14,13 +17,15 @@ public class MeterProducer extends AbstractMetricsProducer<MeterEndpoint> {
 
     @Override
     protected void doProcess(Exchange exchange, MeterEndpoint endpoint, MetricRegistry registry, String metricsName) throws Exception {
+        Message in = exchange.getIn();
         Meter meter = registry.meter(metricsName);
         Long mark = endpoint.getMark();
-        if (mark == null) {
+        Long finalMark = getLongHeader(in, HEADER_METER_MARK, mark);
+        if (finalMark == null) {
             meter.mark();
         }
         else {
-            meter.mark(mark);
+            meter.mark(finalMark);
         }
     }
 }

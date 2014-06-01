@@ -31,6 +31,7 @@ public class MetricsComponent extends DefaultComponent {
     public static final String HEADER_COUNTER_INCREMENT = HEADER_PERFIX + "CounterIncrement";
     public static final String HEADER_COUNTER_DECREMENT = HEADER_PERFIX + "CounterDecrement";
     public static final String HEADER_HISTOGRAM_VALUE = HEADER_PERFIX + "HistogramValue";
+    public static final String HEADER_METER_MARK = HEADER_PERFIX + "MeterMark";
 
     private static final Logger LOG = LoggerFactory.getLogger(MetricsComponent.class);
 

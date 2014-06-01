@@ -26,8 +26,8 @@ metrics:[ meter | counter | histogram | timer ]:metricname[?options]
 
 # Metric Registry
 
-If MetricRegistry instance for name ```metricRegistry``` is not found from Camel registry default one is used. Default MetricRegistry uses Slf4jReporter and 60 second reporting interval.
-MetricRegistry instance can be configured by adding bean with name ```metricRegistry``` to Camel registry. For example using Spring Java Configuration.
+If MetricRegistry instance for name `metricRegistry` is not found from Camel registry default one is used. Default MetricRegistry uses Slf4jReporter and 60 second reporting interval.
+MetricRegistry instance can be configured by adding bean with name `metricRegistry` to Camel registry. For example using Spring Java Configuration.
 
 ```java
 
@@ -57,11 +57,11 @@ MetricRegistry instance can be configured by adding bean with name ```metricRegi
 
 # Usage
 
-Each metric has type and name. Supported types are ```counter```, ```meter```, ```histogram``` and ```timer```. Metric name is simple string. If metric type is not provided then type ```meter``` is used by default.
+Each metric has type and name. Supported types are `counter`, `meter`, `histogram` and `timer`. Metric name is simple string. If metric type is not provided then type `meter` is used by default.
 
 ### Headers
 
-Metric name defined in URI can be overridden by using Header with name ```CamelMetricsName```.
+Metric name defined in URI can be overridden by using header with name `CamelMetricsName`.
 
 For example
 
@@ -72,10 +72,10 @@ from("direct:in")
     .to("direct:out")
 ```
 
-will update counter with name ```new.name``` instead of ```name.not.used```.
+will update counter with name `new.name` instead of `name.not.used`.
 
 All Metrics specific headers are removed from the message once Metrics endpoint finishes processing of exchange.
-While processing exchange Metrics endpoint will catch all exceptions and write log entry using level warn.
+While processing exchange Metrics endpoint will catch all exceptions and write log entry using level `warn`.
 
 
 ## Metrics type counter
@@ -91,7 +91,7 @@ Where options are
 | increment | -       | Long value to add to the counter        |
 | decrement | -       | Long value to subtract from the counter |
 
-If neither ```increment``` or ```decrement``` is defined counter value will be incremented by one. If ```increment``` and ```decrement``` are both defined only increment operation is called.
+If neither `increment` or `decrement` is defined counter value will be incremented by one. If `increment` and `decrement` are both defined only increment operation is called.
 
 ```java
 // update counter simple.counter by 7
@@ -115,6 +115,8 @@ from("direct:in")
 ```
 
 ### Headers
+
+Message headers can be used to override `increment` and `decrement` values specified in Metrics component URI.
 
 | Name                         | Description                     | Expected type |
 |------------------------------|---------------------------------|---------------|
@@ -150,7 +152,7 @@ Where options are
 |-------|---------|---------------------------|
 | value | -       | Value to use in histogram |
 
-If no ```value``` is not set nothing is added to histogram and warning is logged.
+If no `value` is not set nothing is added to histogram and warning is logged.
 
 ```java
 // adds value 9923 to simple.histogram
@@ -168,9 +170,11 @@ from("direct:in")
 
 ### Headers
 
+Message header can be used to override `value` specified in Metrics component URI.
+
 | Name                       | Description                     | Expected type |
 |----------------------------|---------------------------------|---------------|
-| CamelMetricsHistogramValue | Override increment value in URI | Long          |
+| CamelMetricsHistogramValue | Override histogram value in URI | Long          |
 
 ```java
 // adds value 992 to simple.histogram
@@ -193,7 +197,7 @@ Where options are
 |------|---------|---------------------------|
 | mark | -       | Long value to use as mark |
 
-If ```mark``` is not set ```meter.mark()``` is called without argument.
+If `mark` is not set `meter.mark()` is called without argument.
 
 ```java
 // marks simple.meter without value
@@ -209,6 +213,22 @@ from("direct:in")
     .to("direct:out")
 ```
 
+### Headers
+
+Message header can be used to override `mark` value specified in Metrics component URI.
+
+| Name                  | Description                | Expected type |
+|-----------------------|----------------------------|---------------|
+| CamelMetricsMeterMark | Override mark value in URI | Long          |
+
+```java
+// updates meter simple.meter with value 345
+from("direct:in")
+    .setHeader(MetricsComponent.HEADER_METER_MARK, constant(345L))
+    .to("metric:meter:simple.meter?mark=123")
+    .to("direct:out")
+```
+
 
 ## Metrics type timer
 
@@ -218,11 +238,11 @@ metrics:timer:metricname[?options]
 
 Where options are
 
-| Name   | Default | Description               |
-|--------|---------|---------------------------|
-| action | -       | ```start``` or ```stop``` |
+| Name   | Default | Description       |
+|--------|---------|-------------------|
+| action | -       | `start` or `stop` |
 
-If no ```action``` or invalid value is provided warning is logged and no timer is updated. If ```action``` ```start``` is called on already running timer or ```stop``` is called on not running timer nothing is updated and warning is logged.
+If no `action` or invalid value is provided warning is logged and no timer is updated. If `action` `start` is called on already running timer or `stop` is called on not running timer nothing is updated and warning is logged.
 
 ```java
 // measure time taken by route calculate
@@ -232,4 +252,4 @@ from("direct:in")
     .to("metrics:timer:simple.timer?action=stop");
 ```
 
-`Timer Context` objects are stored as `Exchange` properties.
+`Timer Context` objects are stored as `Exchange` properties between different Metrics component calls.
