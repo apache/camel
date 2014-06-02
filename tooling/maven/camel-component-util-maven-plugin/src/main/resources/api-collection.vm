@@ -30,7 +30,7 @@ import org.apache.camel.util.component.ApiMethodHelper;
 /**
  * Camel {@link ApiCollection} for $componentName
  */
-public final class $collectionName extends ApiCollection {
+public final class $collectionName extends ApiCollection<${apiNameEnum}> {
 
     private static $collectionName collection;
 
@@ -42,7 +42,7 @@ public final class $collectionName extends ApiCollection {
         aliases.put("$alias.Key", "$alias.Value");
 #end
 #set( $apiMethod = $helper.getApiMethod($api.ProxyClass) )
-        apis.put("$api.ApiName", new ApiMethodHelper<$apiMethod>(${apiMethod}.class, aliases));
+        apis.put(${apiNameEnum}.${helper.getEnumConstant($api.ApiName)}, new ApiMethodHelper<$apiMethod>(${apiMethod}.class, aliases));
 #end
     }
 

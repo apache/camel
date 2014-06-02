@@ -42,33 +42,70 @@ public class ApiComponentGeneratorMojo extends AbstractGeneratorMojo {
             throw new MojoExecutionException("One or more API proxies are required");
         }
 
-        // TODO generate Component classes
         // generate ApiCollection
-        mergeTemplate(getApiCollectionContext(), getApiCollectionFile(), "/api-collection.vm");
+        mergeTemplate(getApiContext(), getApiCollectionFile(), "/api-collection.vm");
+
+        // generate ApiName
+        mergeTemplate(getApiContext(), getApiNameFile(), "/api-name-enum.vm");
     }
 
-    private VelocityContext getApiCollectionContext() {
+    private VelocityContext getApiContext() {
         final VelocityContext context = new VelocityContext();
         context.put("componentName", componentName);
-        context.put("collectionName", getApiCollectionName());
         context.put("packageName", outPackage);
         context.put("apis", apis);
         context.put("helper", getClass());
+        context.put("collectionName", getApiCollectionName());
+        context.put("apiNameEnum", getApiNameEnum());
         return context;
-    }
-
-    private File getApiCollectionFile() {
-        final StringBuilder fileName = new StringBuilder();
-        fileName.append(outPackage.replaceAll("\\.", File.separator)).append(File.separator);
-        fileName.append(getApiCollectionName()).append(".java");
-        return new File(generatedSrcDir, fileName.toString());
     }
 
     private String getApiCollectionName() {
         return componentName + "ApiCollection";
     }
 
+    private String getApiNameEnum() {
+        return componentName + "ApiName";
+    }
+
+    private File getApiCollectionFile() {
+        final StringBuilder fileName = getFileBuilder();
+        fileName.append(getApiCollectionName()).append(".java");
+        return new File(generatedSrcDir, fileName.toString());
+    }
+
+    private File getApiNameFile() {
+        final StringBuilder fileName = getFileBuilder();
+        fileName.append(getApiNameEnum()).append(".java");
+        return new File(generatedSrcDir, fileName.toString());
+    }
+
+    private StringBuilder getFileBuilder() {
+        final StringBuilder fileName = new StringBuilder();
+        fileName.append(outPackage.replaceAll("\\.", File.separator)).append(File.separator);
+        return fileName;
+    }
+
     public static String getApiMethod(String proxyClass) {
         return proxyClass.substring(proxyClass.lastIndexOf('.') + 1) + "ApiMethod";
+    }
+
+    public static String getEnumConstant(String enumValue) {
+        if (enumValue == null || enumValue.isEmpty()) {
+            return "DEFAULT";
+        }
+        StringBuilder builder = new StringBuilder();
+        if (!Character.isJavaIdentifierStart(enumValue.charAt(0))) {
+            builder.append('_');
+        }
+        for (char c : enumValue.toCharArray()) {
+            char upperCase = Character.toUpperCase(c);
+            if (!Character.isJavaIdentifierPart(upperCase)) {
+                builder.append('_');
+            } else {
+                builder.append(upperCase);
+            }
+        }
+        return builder.toString();
     }
 }
