@@ -253,3 +253,19 @@ from("direct:in")
 ```
 
 `Timer Context` objects are stored as `Exchange` properties between different Metrics component calls.
+
+### Headers
+
+Message header can be used to override `action` value specified in Metrics component URI.
+
+| Name                    | Description                  | Expected type                                            |
+|-------------------------|------------------------------|----------------------------------------------------------|
+| CamelMetricsTimerAction | Override timer action in URI | org.apache.camel.metrics.timer.TimerEndpoint.TimerAction |
+
+```java
+// sets timer action using header
+from("direct:in")
+    .setHeader(MetricsComponent.HEADER_TIMER_ACTION, TimerAction.start)
+    .to("metric:timer:simple.timer")
+    .to("direct:out")
+```

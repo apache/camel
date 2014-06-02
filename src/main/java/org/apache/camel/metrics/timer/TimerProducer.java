@@ -1,6 +1,10 @@
 package org.apache.camel.metrics.timer;
 
+import static org.apache.camel.metrics.MetricsComponent.HEADER_TIMER_ACTION;
+import static org.apache.camel.metrics.timer.TimerEndpoint.ENDPOINT_URI;
+
 import org.apache.camel.Exchange;
+import org.apache.camel.Message;
 import org.apache.camel.metrics.AbstractMetricsProducer;
 import org.apache.camel.metrics.timer.TimerEndpoint.TimerAction;
 import org.slf4j.Logger;
@@ -19,11 +23,13 @@ public class TimerProducer extends AbstractMetricsProducer<TimerEndpoint> {
 
     @Override
     protected void doProcess(Exchange exchange, TimerEndpoint endpoint, MetricRegistry registry, String metricsName) throws Exception {
+        Message in = exchange.getIn();
         TimerAction action = endpoint.getAction();
-        if (action == TimerAction.start) {
+        TimerAction finalAction = in.getHeader(HEADER_TIMER_ACTION, action, TimerAction.class);
+        if (finalAction == TimerAction.start) {
             handleStart(exchange, registry, metricsName);
         }
-        else if (action == TimerAction.stop) {
+        else if (finalAction == TimerAction.stop) {
             handleStop(exchange, registry, metricsName);
         }
         else {
@@ -57,7 +63,7 @@ public class TimerProducer extends AbstractMetricsProducer<TimerEndpoint> {
     }
 
     String getPropertyName(String metricsName) {
-        return new StringBuilder(TimerEndpoint.ENDPOINT_URI)
+        return new StringBuilder(ENDPOINT_URI)
                 .append(":")
                 .append(metricsName)
                 .toString();
