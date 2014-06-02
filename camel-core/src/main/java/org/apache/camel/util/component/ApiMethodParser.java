@@ -178,8 +178,15 @@ public abstract class ApiMethodParser<T> {
         // assign unique names to every method model
         final Map<String, Integer> dups = new HashMap<String, Integer>();
         for (ApiMethodModel model : result) {
-            // TODO watch out, this uses default locale to convert to upper case
-            String uniqueName = model.name.toUpperCase();
+            // locale independent upper case conversion
+            final String name = model.getName();
+            final char[] upperCase = new char[name.length()];
+            final char[] lowerCase = name.toCharArray();
+            for (int i = 0; i < upperCase.length; i++) {
+                upperCase[i] = Character.toUpperCase(lowerCase[i]);
+            }
+            String uniqueName = new String(upperCase);
+
             Integer suffix = dups.get(uniqueName);
             if (suffix == null) {
                 dups.put(uniqueName, 1);

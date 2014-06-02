@@ -16,29 +16,14 @@
  */
 package org.apache.camel.util.component;
 
-import java.util.Collections;
-import java.util.HashMap;
-import java.util.HashSet;
-import java.util.Map;
-import java.util.Set;
-
 /**
- * Base class for a collection of ApiMethods. Meant to be extended by Components to create the api name map.
+ * Marker interface for ApiName enumerations.
  */
-@SuppressWarnings("unused")
-public abstract class ApiCollection<T extends Enum & ApiName> {
+public interface ApiName {
 
-    protected final Map<T, ApiMethodHelper> apis = new HashMap<T, ApiMethodHelper>();
-
-    public final ApiMethodHelper getHelper(T apiName) {
-        return apis.get(apiName);
-    }
-
-    public final Set<String> getApiNames() {
-        final Set<String> result = new HashSet<String>();
-        for (T api : apis.keySet()) {
-            result.add(api.getName());
-        }
-        return Collections.unmodifiableSet(result);
-    }
+    /**
+     * Returns API name prefix path element for endpoint uri.
+     * @return unique API name prefix
+     */
+    String getName();
 }
