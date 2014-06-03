@@ -32,6 +32,7 @@
 
   <modules>
     <module>camel-archetype-activemq</module>
+    <module>camel-archetype-api-component</module>
     <module>camel-archetype-blueprint</module>
     <module>camel-archetype-component</module>
     <module>camel-archetype-component-scala</module>
