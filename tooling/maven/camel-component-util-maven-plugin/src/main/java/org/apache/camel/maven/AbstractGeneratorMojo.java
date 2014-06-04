@@ -28,6 +28,7 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 
+import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -49,6 +50,7 @@ public abstract class AbstractGeneratorMojo extends AbstractMojo {
     protected static final String PREFIX = "org.apache.camel.";
     protected static final String OUT_PACKAGE = PREFIX + "component.internal";
     protected static final String COMPONENT_PACKAGE = PREFIX + "component";
+    private static final String LOGGER_PREFIX = "log4j.logger";
 
     // used for velocity logging, to avoid creating velocity.log
     protected final Logger LOG = Logger.getLogger(this.getClass());
@@ -77,6 +79,24 @@ public abstract class AbstractGeneratorMojo extends AbstractMojo {
     private VelocityEngine engine;
     private ClassLoader projectClassLoader;
 
+    protected AbstractGeneratorMojo() {
+        // configure Log4J from system properties
+        for (String propertyName : System.getProperties().stringPropertyNames())
+        {
+            if (propertyName.startsWith(LOGGER_PREFIX)) {
+                String loggerName = propertyName.substring(LOGGER_PREFIX.length());
+                String levelName = System.getProperty(propertyName, "");
+                Level level = Level.toLevel(levelName); // defaults to DEBUG
+                if (!"".equals(levelName) && !levelName.toUpperCase().equals(level.toString())) {
+                    LOG.warn("Skipping unrecognized log4j log level " + levelName + ": -D" + propertyName + "=" + levelName);
+                    continue;
+                }
+                LOG.debug("Setting " + loggerName + " => " + level.toString());
+                Logger.getLogger(loggerName).setLevel(level);
+            }
+        }
+    }
+
     public VelocityEngine getEngine() {
         if (engine == null) {
             // initialize velocity to load resources from class loader and use Log4J
@@ -84,7 +104,7 @@ public abstract class AbstractGeneratorMojo extends AbstractMojo {
             velocityProperties.setProperty(RuntimeConstants.RESOURCE_LOADER, "cloader");
             velocityProperties.setProperty("cloader.resource.loader.class", ClasspathResourceLoader.class.getName());
             velocityProperties.setProperty(RuntimeConstants.RUNTIME_LOG_LOGSYSTEM_CLASS, Log4JLogChute.class.getName());
-            velocityProperties.setProperty(RuntimeConstants.RUNTIME_LOG_LOGSYSTEM + ".log4j.logger", LOG.getName());
+            velocityProperties.setProperty(Log4JLogChute.RUNTIME_LOG_LOG4J_LOGGER, LOG.getName());
             engine = new VelocityEngine(velocityProperties);
             engine.init();
         }

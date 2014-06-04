@@ -34,13 +34,13 @@ public final class $configName extends ${componentName}Config {
 #foreach( $parameter in $parameters.entrySet() )
 #set ( $name = $parameter.Key )
 #set ( $type = $helper.getCanonicalName($parameter.Value) )
-#set ( $propertySuffix = $helper.getPropertySuffix($name) )
+#set ( $suffix = $helper.getBeanPropertySuffix($name) )
 
-    public $type get${propertySuffix}() {
+    public $type get${suffix}() {
         return $name;
     }
 
-    public void set${propertySuffix}($type $name) {
+    public void set${suffix}($type $name) {
         this.$name = $name;
     }
 #end

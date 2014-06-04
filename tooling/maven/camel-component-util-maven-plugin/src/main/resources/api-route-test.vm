@@ -60,9 +60,9 @@ public class ${testName} extends CamelTestSupport {
 #foreach ( $arg in $args )
 #if ( !$arg.Type.isPrimitive() )
         // parameter type is $helper.getCanonicalName($arg.Type)
-        headers.put("${helper.getPropertyPrefix()}${arg.Name}", null);
+        headers.put("${helper.getExchangePropertyPrefix()}${arg.Name}", null);
 #else
-        headers.put("${helper.getPropertyPrefix()}${arg.Name}", $helper.getDefaultArgValue($arg.Type));
+        headers.put("${helper.getExchangePropertyPrefix()}${arg.Name}", $helper.getDefaultArgValue($arg.Type));
 #end
 #end
 #end

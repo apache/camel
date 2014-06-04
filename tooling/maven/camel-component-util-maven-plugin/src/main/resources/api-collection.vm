@@ -24,13 +24,19 @@ package $packageName;
 import java.util.Map;
 import java.util.HashMap;
 
+#set( $componentConfig = "${componentName}Config" )
+import ${componentPackage}.${componentConfig};
+#foreach ( $api in $apis )
+import ${componentPackage}.${helper.getEndpointConfig($api.ProxyClass)};
+#end
+
 import org.apache.camel.util.component.ApiCollection;
 import org.apache.camel.util.component.ApiMethodHelper;
 
 /**
  * Camel {@link ApiCollection} for $componentName
  */
-public final class $collectionName extends ApiCollection<${apiNameEnum}> {
+public final class $collectionName extends ApiCollection<${apiNameEnum}, ${componentConfig}> {
 
     private static $collectionName collection;
 
@@ -38,12 +44,24 @@ public final class $collectionName extends ApiCollection<${apiNameEnum}> {
         final Map<String, String> aliases = new HashMap<String, String>();
 #foreach( $api in $apis )
         aliases.clear();
-#foreach( $alias in $api.Aliases.entrySet() )
-        aliases.put("$alias.Key", "$alias.Value");
+#foreach( $alias in $api.Aliases )
+        aliases.put("$alias.MethodPattern", "$alias.MethodAlias");
 #end
 #set( $apiMethod = $helper.getApiMethod($api.ProxyClass) )
         apis.put(${apiNameEnum}.${helper.getEnumConstant($api.ApiName)}, new ApiMethodHelper<$apiMethod>(${apiMethod}.class, aliases));
 #end
+    }
+
+    public $componentConfig getEndpointConfiguration(${apiNameEnum} apiName) {
+        $componentConfig result = null;
+        switch (apiName) {
+#foreach( $api in $apis )
+        case ${helper.getEnumConstant($api.ApiName)}:
+            result = new ${helper.getEndpointConfig($api.ProxyClass)}();
+            break;
+#end
+        }
+        return result;
     }
 
     public static synchronized $collectionName getCollection() {

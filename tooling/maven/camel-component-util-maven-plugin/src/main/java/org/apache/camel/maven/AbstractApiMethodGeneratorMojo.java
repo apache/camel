@@ -204,8 +204,9 @@ public abstract class AbstractApiMethodGeneratorMojo extends AbstractGeneratorMo
         return resultType == Void.TYPE;
     }
 
-    public String getPropertyPrefix() {
-        return componentName + ".";
+    public String getExchangePropertyPrefix() {
+        // exchange property prefix
+        return "Camel" + componentName + ".";
     }
 
     public static String getResultDeclaration(Class<?> resultType) {
@@ -240,7 +241,7 @@ public abstract class AbstractApiMethodGeneratorMojo extends AbstractGeneratorMo
         }
     }
 
-    public static String getPropertySuffix(String parameter) {
+    public static String getBeanPropertySuffix(String parameter) {
         // capitalize first character
         StringBuilder builder = new StringBuilder();
         builder.append(Character.toUpperCase(parameter.charAt(0)));

@@ -17,6 +17,8 @@
 package org.apache.camel.maven;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.List;
 
 import org.apache.camel.component.test.TestProxy;
 import org.apache.velocity.VelocityContext;
@@ -40,7 +42,10 @@ public class ApiComponentGeneratorMojoTest extends AbstractGeneratorMojoTest {
 
         mojo.apis = new ApiProxy[2];
         mojo.apis[0] = new ApiProxy("test", TestProxy.class.getName());
-        mojo.apis[1] = new ApiProxy("velocity", VelocityContext.class.getName());
+        List<ApiMethodAlias> aliases = new ArrayList<ApiMethodAlias>();
+        aliases.add(new ApiMethodAlias("get(.+)", "$1"));
+        aliases.add(new ApiMethodAlias("set(.+)", "$1"));
+        mojo.apis[1] = new ApiProxy("velocity", VelocityContext.class.getName(), aliases);
 
         mojo.execute();
 

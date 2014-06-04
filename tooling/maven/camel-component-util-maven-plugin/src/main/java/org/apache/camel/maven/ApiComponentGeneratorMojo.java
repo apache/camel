@@ -52,7 +52,7 @@ public class ApiComponentGeneratorMojo extends AbstractGeneratorMojo {
     private VelocityContext getApiContext() {
         final VelocityContext context = new VelocityContext();
         context.put("componentName", componentName);
-        context.put("packageName", outPackage);
+        context.put("componentPackage", componentPackage);
         context.put("apis", apis);
         context.put("helper", getClass());
         context.put("collectionName", getApiCollectionName());
@@ -88,6 +88,10 @@ public class ApiComponentGeneratorMojo extends AbstractGeneratorMojo {
 
     public static String getApiMethod(String proxyClass) {
         return proxyClass.substring(proxyClass.lastIndexOf('.') + 1) + "ApiMethod";
+    }
+
+    public static String getEndpointConfig(String proxyClass) {
+        return proxyClass.substring(proxyClass.lastIndexOf('.') + 1) + "EndpointConfiguration";
     }
 
     public static String getEnumConstant(String enumValue) {

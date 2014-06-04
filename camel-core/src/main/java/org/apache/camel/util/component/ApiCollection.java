@@ -26,14 +26,23 @@ import java.util.Set;
  * Base class for a collection of ApiMethods. Meant to be extended by Components to create the api name map.
  */
 @SuppressWarnings("unused")
-public abstract class ApiCollection<T extends Enum & ApiName> {
+public abstract class ApiCollection<T extends Enum & ApiName, C> {
 
     protected final Map<T, ApiMethodHelper> apis = new HashMap<T, ApiMethodHelper>();
 
+    /**
+     * Returns a {@link ApiMethodHelper} for a particular API.
+     * @param apiName name of the API
+     * @return helper class to work with {@link ApiMethod}
+     */
     public final ApiMethodHelper getHelper(T apiName) {
         return apis.get(apiName);
     }
 
+    /**
+     * Returns a list of API name strings.
+     * @return list of API names.
+     */
     public final Set<String> getApiNames() {
         final Set<String> result = new HashSet<String>();
         for (T api : apis.keySet()) {
@@ -41,4 +50,11 @@ public abstract class ApiCollection<T extends Enum & ApiName> {
         }
         return Collections.unmodifiableSet(result);
     }
+
+    /**
+     * Creates an endpoint configuration for a particular API
+     * @param apiName name of the API.
+     * @return Endpoint configuration object for the API.
+     */
+    public abstract C getEndpointConfiguration(T apiName);
 }

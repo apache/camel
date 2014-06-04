@@ -17,7 +17,7 @@
 package org.apache.camel.maven;
 
 import java.util.Collections;
-import java.util.Map;
+import java.util.List;
 
 /**
  * Represents an API to use for generating Camel Component.
@@ -26,7 +26,7 @@ public class ApiProxy {
     private String apiName;
     private String proxyClass;
 
-    private Map<String, String> aliases = Collections.EMPTY_MAP;
+    private List<ApiMethodAlias> aliases = Collections.EMPTY_LIST;
 
     public ApiProxy() {
     }
@@ -34,6 +34,11 @@ public class ApiProxy {
     public ApiProxy(String apiName, String proxyClass) {
         this.apiName = apiName;
         this.proxyClass = proxyClass;
+    }
+
+    public ApiProxy(String apiName, String proxyClass, List<ApiMethodAlias> aliases) {
+        this(apiName, proxyClass);
+        this.aliases = aliases;
     }
 
     public String getApiName() {
@@ -52,11 +57,11 @@ public class ApiProxy {
         this.proxyClass = proxyClass;
     }
 
-    public Map<String, String> getAliases() {
+    public List<ApiMethodAlias> getAliases() {
         return aliases;
     }
 
-    public void setAliases(Map<String, String> aliases) {
+    public void setAliases(List<ApiMethodAlias> aliases) {
         this.aliases = aliases;
     }
 
