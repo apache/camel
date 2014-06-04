@@ -71,7 +71,15 @@ public class RabbitMQEndpoint extends DefaultEndpoint {
     private Boolean automaticRecoveryEnabled;
     private Integer networkRecoveryInterval;
     private Boolean topologyRecoveryEnabled;
-
+    
+    //Define will be used basicOqs
+    private boolean prefetchEnabled = false;
+    //Default in RabbitMq is 0.
+    private Integer prefetchSize = 0;
+    private Integer prefetchCount = 0;
+    //Default vaule in RabbitMQ is false.
+    private boolean prefetchGlobal = false;
+    
     public RabbitMQEndpoint() {
     }
 
@@ -397,5 +405,37 @@ public class RabbitMQEndpoint extends DefaultEndpoint {
 
     public void setTopologyRecoveryEnabled(Boolean topologyRecoveryEnabled) {
         this.topologyRecoveryEnabled = topologyRecoveryEnabled;
+    }
+
+    public boolean isPrefetchEnabled() {
+	return prefetchEnabled;
+    }
+    
+    public void setPrefetchEnabled(boolean prefetchEnabled) {
+	this.prefetchEnabled = prefetchEnabled;
+    }
+    
+    public void setPrefetchSize(Integer prefetchSize) {
+	this.prefetchSize = prefetchSize;
+    }
+    
+    public Integer getPrefetchSize() {
+	return prefetchSize;
+    }
+    
+    public void setPrefetchCount(Integer prefetchCount) {
+	this.prefetchCount = prefetchCount;
+    }
+    
+    public Integer getPrefetchCount() {
+	return prefetchCount;
+    }
+    
+    public void setPrefetchGlobal(boolean prefetchGlobal) {
+	this.prefetchGlobal = prefetchGlobal;
+    }
+    
+    public boolean isPrefetchGlobal() {
+	return prefetchGlobal;
     }
 }
