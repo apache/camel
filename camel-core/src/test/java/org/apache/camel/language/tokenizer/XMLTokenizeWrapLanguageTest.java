@@ -120,6 +120,20 @@ public class XMLTokenizeWrapLanguageTest extends ContextTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    public void testSendParentMessagesWithDifferentAttributesToTokenize() throws Exception {
+        getMockEndpoint("mock:result").expectedBodiesReceived(
+                "<?xml version='1.0' encoding='UTF-8'?><g:grandparent xmlns:g='urn:g'><c:parent name='e' xmlns:c='urn:c' xmlns:d=\"urn:d\">"
+                + "<c:child some_attr='a' anotherAttr='a'></c:child></c:parent></g:grandparent>",
+                "<?xml version='1.0' encoding='UTF-8'?><g:grandparent xmlns:g='urn:g'><c:parent name='f' xmlns:c='urn:c' xmlns:d=\"urn:d\">"
+                + "<c:child some_attr='b' anotherAttr='b'/></c:parent></g:grandparent>");
+
+        template.sendBody("direct:start",
+                "<?xml version='1.0' encoding='UTF-8'?><g:grandparent xmlns:g='urn:g'><c:parent name='e' xmlns:c='urn:c' xmlns:d=\"urn:d\">"
+                + "<c:child some_attr='a' anotherAttr='a'></c:child></c:parent><c:parent name='f' xmlns:c='urn:c' xmlns:d=\"urn:d\"><c:child some_attr='b' anotherAttr='b'/>"
+                + "</c:parent></g:grandparent>");
+        assertMockEndpointsSatisfied();
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
