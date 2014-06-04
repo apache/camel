@@ -72,13 +72,13 @@ public class RabbitMQEndpoint extends DefaultEndpoint {
     private Integer networkRecoveryInterval;
     private Boolean topologyRecoveryEnabled;
     
-    //Define will be used basicOqs
-    private boolean prefetchEnabled = false;
+    //If it is true, prefetchSize, prefetchCount, prefetchGlobal will be used for basicOqs before starting RabbitMQConsumer
+    private boolean prefetchEnabled;
     //Default in RabbitMq is 0.
-    private Integer prefetchSize = 0;
-    private Integer prefetchCount = 0;
-    //Default vaule in RabbitMQ is false.
-    private boolean prefetchGlobal = false;
+    private int prefetchSize;
+    private int prefetchCount;
+    //Default value in RabbitMQ is false.
+    private boolean prefetchGlobal;
     
     public RabbitMQEndpoint() {
     }
@@ -408,34 +408,34 @@ public class RabbitMQEndpoint extends DefaultEndpoint {
     }
 
     public boolean isPrefetchEnabled() {
-	return prefetchEnabled;
+        return prefetchEnabled;
     }
-    
+
     public void setPrefetchEnabled(boolean prefetchEnabled) {
-	this.prefetchEnabled = prefetchEnabled;
+        this.prefetchEnabled = prefetchEnabled;
     }
-    
-    public void setPrefetchSize(Integer prefetchSize) {
-	this.prefetchSize = prefetchSize;
+
+    public void setPrefetchSize(int prefetchSize) {
+        this.prefetchSize = prefetchSize;
     }
-    
-    public Integer getPrefetchSize() {
-	return prefetchSize;
+
+    public int getPrefetchSize() {
+        return prefetchSize;
     }
-    
-    public void setPrefetchCount(Integer prefetchCount) {
-	this.prefetchCount = prefetchCount;
+
+    public void setPrefetchCount(int prefetchCount) {
+        this.prefetchCount = prefetchCount;
     }
-    
-    public Integer getPrefetchCount() {
-	return prefetchCount;
+
+    public int getPrefetchCount() {
+        return prefetchCount;
     }
-    
+
     public void setPrefetchGlobal(boolean prefetchGlobal) {
-	this.prefetchGlobal = prefetchGlobal;
+        this.prefetchGlobal = prefetchGlobal;
     }
-    
+
     public boolean isPrefetchGlobal() {
-	return prefetchGlobal;
+        return prefetchGlobal;
     }
 }

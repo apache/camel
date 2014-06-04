@@ -53,10 +53,10 @@ public class RabbitMQConsumer extends DefaultConsumer {
         channel = conn.createChannel();
         log.debug("Using channel {}", channel);
 
-	if (endpoint.isPrefetchEnabled()) {
-	    channel.basicQos(endpoint.getPrefetchSize(), 
-		    endpoint.getPrefetchCount(), endpoint.isPrefetchGlobal());
-	}
+        if (endpoint.isPrefetchEnabled()) {
+            channel.basicQos(endpoint.getPrefetchSize(), 
+                             endpoint.getPrefetchCount(), endpoint.isPrefetchGlobal());
+        }
         
         channel.exchangeDeclare(endpoint.getExchangeName(),
                 endpoint.getExchangeType(),
