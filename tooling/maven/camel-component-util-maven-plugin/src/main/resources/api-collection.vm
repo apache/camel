@@ -24,7 +24,7 @@ package $packageName;
 import java.util.Map;
 import java.util.HashMap;
 
-#set( $componentConfig = "${componentName}Config" )
+#set( $componentConfig = "${componentName}Configuration" )
 import ${componentPackage}.${componentConfig};
 #foreach ( $api in $apis )
 import ${componentPackage}.${helper.getEndpointConfig($api.ProxyClass)};

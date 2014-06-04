@@ -25,7 +25,7 @@ package ${componentPackage};
  * Camel EndpointConfiguration for $proxyType.Name
  */
 @SuppressWarnings("unused")
-public final class $configName extends ${componentName}Config {
+public final class $configName extends ${componentName}Configuration {
 
 #foreach( $parameter in $parameters.entrySet() )
     private $helper.getCanonicalName($parameter.Value) $parameter.Key;

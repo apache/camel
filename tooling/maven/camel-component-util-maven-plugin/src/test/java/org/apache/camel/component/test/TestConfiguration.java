@@ -17,7 +17,7 @@
 package org.apache.camel.component.test;
 
 /**
- * Dummy component config.
+ * Dummy component configuration.
  */
-public class TestConfig {
+public class TestConfiguration {
 }

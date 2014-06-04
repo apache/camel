@@ -25,7 +25,7 @@ import static org.junit.Assert.assertEquals;
 
 public class ApiMethodPropertiesHelperTest {
 
-    private static final String TEST_PREFIX = "TestComponent.";
+    private static final String TEST_PREFIX = "CamelTest.";
 
     private static final String PROPERTY_1 = TEST_PREFIX + "property1";
     private static final String PROPERTY_2 = TEST_PREFIX + "property2";
@@ -38,7 +38,7 @@ public class ApiMethodPropertiesHelperTest {
     private static final String VALUE_4 = "true";
 
     private static ApiMethodPropertiesHelper propertiesHelper =
-            new ApiMethodPropertiesHelper(TestComponentConfiguration.class, TEST_PREFIX);
+            new ApiMethodPropertiesHelper(TestComponentConfiguration.class, TEST_PREFIX){};
 
     @Test
     public void testGetExchangeProperties() throws Exception {

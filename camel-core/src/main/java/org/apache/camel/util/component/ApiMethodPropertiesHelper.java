@@ -29,19 +29,19 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Helper class to work with ApiMethod arguments.
+ * Helper class to work with ApiMethod arguments to be extended by components.
  */
-public final class ApiMethodPropertiesHelper<C> {
+public abstract class ApiMethodPropertiesHelper<C> {
 
-    private final Logger LOG = LoggerFactory.getLogger(ApiMethodPropertiesHelper.class);
+    protected Logger LOG = LoggerFactory.getLogger(ApiMethodPropertiesHelper.class);
 
     // set of field names which are specific to the api, to be excluded from method argument considerations
-    private final Set<String> COMPONENT_CONFIG_FIELDS = new HashSet<String>();
+    protected final Set<String> COMPONENT_CONFIG_FIELDS = new HashSet<String>();
 
-    private final Class<?> componentConfigClass;
-    private final String propertyPrefix;
+    protected final Class<?> componentConfigClass;
+    protected final String propertyPrefix;
 
-    public ApiMethodPropertiesHelper(Class<C> componentConfiguration, String propertyPrefix) {
+    protected ApiMethodPropertiesHelper(Class<C> componentConfiguration, String propertyPrefix) {
 
         this.componentConfigClass = componentConfiguration;
         this.propertyPrefix = propertyPrefix;
