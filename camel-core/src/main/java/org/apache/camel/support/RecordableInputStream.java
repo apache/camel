@@ -84,6 +84,10 @@ class RecordableInputStream extends FilterInputStream {
         recording = true;
     }
 
+    int size() {
+        return buf.size();
+    }
+
     private static class TrimmableByteArrayOutputStream extends ByteArrayOutputStream {
         public void trim(int head, int tail) {
             System.arraycopy(buf, head, buf, 0, count - head - tail);
