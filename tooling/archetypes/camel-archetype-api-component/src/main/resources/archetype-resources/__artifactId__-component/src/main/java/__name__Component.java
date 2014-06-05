@@ -72,7 +72,7 @@ public class ${name}Component extends UriEndpointComponent {
         try {
             apiName = ${name}ApiName.fromValue(apiNameStr);
         } catch (IllegalArgumentException e) {
-            throw new CamelException("Invalid URI path [" + apiNameStr +
+            throw new CamelException("Invalid URI path prefix [" + remaining +
                 "], must be one of " + collection.getApiNames());
         }
 
