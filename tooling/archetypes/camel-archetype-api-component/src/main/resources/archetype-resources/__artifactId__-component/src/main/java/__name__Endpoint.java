@@ -81,8 +81,8 @@ public class ${name}Endpoint extends DefaultEndpoint {
 
         // TODO manage API proxies
         proxyCache = new HashMap<${name}ApiName, Object>();
-        proxyCache.put(${name}ApiName.HELLO1, new ${name}FileSigApi());
-        proxyCache.put(${name}ApiName.HELLO2, new ${name}JavadocSigApi());
+        proxyCache.put(${name}ApiName.HELLO_FILE, new ${name}FileHello());
+        proxyCache.put(${name}ApiName.HELLO_JAVADOC, new ${name}JavadocHello());
     }
 
     public Producer createProducer() throws Exception {

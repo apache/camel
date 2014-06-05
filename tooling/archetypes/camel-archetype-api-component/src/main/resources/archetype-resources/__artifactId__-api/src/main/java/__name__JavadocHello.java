@@ -19,7 +19,7 @@ package ${package};
 /**
  * Sample API used by ${name} Component whose method signatures are read from Javadoc.
  */
-public class ${name}JavadocSigApi {
+public class ${name}JavadocHello {
 
     public String sayHi() {
         return "Hello!";

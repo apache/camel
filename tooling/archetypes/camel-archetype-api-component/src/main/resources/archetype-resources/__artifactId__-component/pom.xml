@@ -149,7 +149,7 @@
               <componentPackage>${componentPackage}</componentPackage>
               <scheme>${schemeName}</scheme>
               <componentName>${componentName}</componentName>
-              <proxyClass>${package}.${name}FileSigApi</proxyClass>
+              <proxyClass>${package}.${name}FileHello</proxyClass>
               <!-- Use substitutions to manipulate parameter names and avoid name clashes
               <substitutions>
                 <substitution>
@@ -173,7 +173,7 @@
               <componentPackage>${componentPackage}</componentPackage>
               <scheme>${schemeName}</scheme>
               <componentName>${componentName}</componentName>
-              <proxyClass>${package}.${name}JavadocSigApi</proxyClass>
+              <proxyClass>${package}.${name}JavadocHello</proxyClass>
               <!-- Use substitutions to manipulate parameter names and avoid name clashes
               <substitutions>
                 <substitution>
@@ -203,8 +203,8 @@
               <componentName>${componentName}</componentName>
               <apis>
                 <api>
-                  <apiName>hello1</apiName>
-                  <proxyClass>${package}.${name}FileSigApi</proxyClass>
+                  <apiName>hello-file</apiName>
+                  <proxyClass>${package}.${name}FileHello</proxyClass>
                   <!-- Use method aliases in endpoint URIs, e.g. support 'widget' as alias for getWidget or setWidget
                   <aliases>
                     <alias>
@@ -219,8 +219,8 @@
                   -->
                 </api>
                 <api>
-                  <apiName>hello2</apiName>
-                  <proxyClass>${package}.${name}JavadocSigApi</proxyClass>
+                  <apiName>hello-javadoc</apiName>
+                  <proxyClass>${package}.${name}JavadocHello</proxyClass>
                 </api>
               </apis>
             </configuration>

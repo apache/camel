@@ -19,7 +19,7 @@ package ${package};
 /**
  * Sample API used by ${name} Component whose method signatures are read from File.
  */
-public class ${name}FileSigApi {
+public class ${name}FileHello {
 
     public String sayHi() {
         return "Hello!";
