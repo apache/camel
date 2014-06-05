@@ -43,12 +43,15 @@ public final class $collectionName extends ApiCollection<${apiNameEnum}, ${compo
     private ${collectionName}() {
         final Map<String, String> aliases = new HashMap<String, String>();
 #foreach( $api in $apis )
+
         aliases.clear();
 #foreach( $alias in $api.Aliases )
         aliases.put("$alias.MethodPattern", "$alias.MethodAlias");
 #end
-#set( $apiMethod = $helper.getApiMethod($api.ProxyClass) )
-        apis.put(${apiNameEnum}.${helper.getEnumConstant($api.ApiName)}, new ApiMethodHelper<$apiMethod>(${apiMethod}.class, aliases));
+#set( $apiMethod = "${helper.getApiMethod($api.ProxyClass)}.class" )
+#set( $apiName = "${apiNameEnum}.${helper.getEnumConstant($api.ApiName)}" )
+        apis.put($apiName, new ApiMethodHelper<$apiMethod>(${apiMethod}, aliases));
+        apiMethods.put(${apiMethod}, ${apiName});
 #end
     }
 

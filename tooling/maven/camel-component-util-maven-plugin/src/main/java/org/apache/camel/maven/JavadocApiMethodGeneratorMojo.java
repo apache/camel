@@ -49,6 +49,11 @@ import org.codehaus.plexus.util.IOUtil;
         defaultPhase = LifecyclePhase.GENERATE_SOURCES)
 public class JavadocApiMethodGeneratorMojo extends AbstractApiMethodGeneratorMojo {
 
+    static {
+        // set Java AWT to headless before using Swing HTML parser
+        System.setProperty("java.awt.headless", "true");
+    }
+
     protected static final String DEFAULT_EXCLUDE_PACKAGES = "javax?\\.lang.*";
 
     @Parameter(property = "camel.component.util.excludePackages", defaultValue = DEFAULT_EXCLUDE_PACKAGES)

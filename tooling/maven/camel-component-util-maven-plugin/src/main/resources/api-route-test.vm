@@ -32,11 +32,13 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Test class for $proxyType.Name APIs.
- * TODO Copy the file to src/test/java, populate parameter values, and remove @Ignore annotations.
+ * TODO Move the file to src/test/java, populate parameter values, and remove @Ignore annotations.
+ * The class source won't be generated again if the generator MOJO finds it under src/test/java.
  */
 public class ${testName} extends CamelTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(${testName}.class);
+    private static final String PATH_PREFIX = ${componentName}ApiCollection.getCollection().getApiName(${enumName}.class).getName();
 
 #foreach ( $model in $models )
 #set ( $testName = $helper.getTestName($model) )
@@ -89,9 +91,10 @@ template().requestBodyAndHeader("direct://${model.UniqueName}", null, headers);
         return new RouteBuilder() {
             public void configure() {
 #foreach ( $model in $models )
+#set ( $args = $model.Arguments )
                 // test route for $model.Name
                 from("direct://${model.UniqueName}")
-                  .to("${scheme}://${model.Name}");
+                  .to("${scheme}://" + PATH_PREFIX + "${model.Name}#if ( $args.size() == 1 )?inBody=${args.get(0).Name}#end");
 
 #end
             }

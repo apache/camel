@@ -111,6 +111,8 @@ public abstract class AbstractApiMethodGeneratorMojo extends AbstractGeneratorMo
         VelocityContext context = getCommonContext(models);
         context.put("testName", getUnitTestName());
         context.put("scheme", scheme);
+        context.put("componentName", componentName);
+        context.put("enumName", getEnumName());
         return context;
     }
 
