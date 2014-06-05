@@ -70,6 +70,14 @@
       <scope>test</scope>
     </dependency>
 
+    <!-- Camel annotations in provided scope to avoid compile errors in IDEs -->
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>spi-annotations</artifactId>
+      <version>${camel-version}</version>
+      <scope>provided</scope>
+    </dependency>
+
     <!-- testing -->
     <dependency>
       <groupId>org.apache.camel</groupId>

@@ -41,12 +41,12 @@ public class ${name}Component extends UriEndpointComponent {
 
     private final ${name}ApiCollection collection = ${name}ApiCollection.getCollection();
 
-    public ${name}Component(Class<? extends Endpoint> endpointClass) {
-        super(endpointClass);
+    public ${name}Component() {
+        super(${name}Endpoint.class);
     }
 
-    public ${name}Component(CamelContext context, Class<? extends Endpoint> endpointClass) {
-        super(context, endpointClass);
+    public ${name}Component(CamelContext context) {
+        super(context, ${name}Endpoint.class);
     }
 
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
@@ -81,12 +81,18 @@ public class ${name}Component extends UriEndpointComponent {
 
         // set endpoint property inBody
         setProperties(endpoint, parameters);
+
+        // configure endpoint properties and initialize state
+        endpoint.configureProperties(parameters);
+
         return endpoint;
     }
 
     private ${name}Configuration createEndpointConfiguration(${name}ApiName name) throws Exception {
         final Map<String, Object> componentProperties = new HashMap<String, Object>();
-        IntrospectionSupport.getProperties(configuration, componentProperties, null, false);
+        if (configuration != null) {
+            IntrospectionSupport.getProperties(configuration, componentProperties, null, false);
+        }
 
         // create endpoint configuration with component properties
         final ${name}Configuration endpointConfiguration = collection.getEndpointConfiguration(name);
