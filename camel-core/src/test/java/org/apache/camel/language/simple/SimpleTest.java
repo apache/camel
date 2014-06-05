@@ -1329,7 +1329,7 @@ public class SimpleTest extends LanguageTestSupport {
     }
 
     public void testSimpleMapBoolean() throws Exception {
-        Map map = new HashMap();
+        Map<String, Object> map = new HashMap<String, Object>();
         exchange.getIn().setBody(map);
 
         map.put("isCredit", true);

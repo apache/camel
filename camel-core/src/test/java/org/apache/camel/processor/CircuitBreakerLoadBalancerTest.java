@@ -28,6 +28,8 @@ import static org.apache.camel.component.mock.MockEndpoint.expectsMessageCount;
 public class CircuitBreakerLoadBalancerTest extends ContextTestSupport {
 
     private static class MyCustomException extends RuntimeException {
+
+        private static final long serialVersionUID = 1L;
     }
 
     private MockEndpoint result;

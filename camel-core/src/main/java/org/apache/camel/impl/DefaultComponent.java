@@ -28,7 +28,6 @@ import org.apache.camel.Component;
 import org.apache.camel.ComponentConfiguration;
 import org.apache.camel.Endpoint;
 import org.apache.camel.EndpointConfiguration;
-import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.CamelContextHelper;
