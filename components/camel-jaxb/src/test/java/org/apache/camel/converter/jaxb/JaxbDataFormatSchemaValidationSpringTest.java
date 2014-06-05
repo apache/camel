@@ -76,7 +76,7 @@ public class JaxbDataFormatSchemaValidationSpringTest extends CamelSpringTestSup
             assertIsInstanceOf(IOException.class, cause);
             assertTrue(cause.getMessage().contains("javax.xml.bind.MarshalException"));
             assertTrue(cause.getMessage().contains("org.xml.sax.SAXParseException"));
-            assertTrue(cause.getMessage().contains("Invalid content was found"));
+            assertTrue(cause.getMessage().contains("cvc-complex-type.2.4.a"));
         }
     }
 
@@ -119,7 +119,7 @@ public class JaxbDataFormatSchemaValidationSpringTest extends CamelSpringTestSup
             assertIsInstanceOf(IOException.class, cause);
             assertTrue(cause.getMessage().contains("javax.xml.bind.UnmarshalException"));
             assertTrue(cause.getMessage().contains("org.xml.sax.SAXParseException"));
-            assertTrue(cause.getMessage().contains("The content of element 'person' is not complete"));
+            assertTrue(cause.getMessage().contains("cvc-complex-type.2.4.b"));
         }
     }
 
