@@ -69,7 +69,7 @@ public class ${testName} extends CamelTestSupport {
 #end
 #end
 ## method invocation result
-        #if ( !$voidResult )#set ( $type = $helper.getResultDeclaration($resultType) ) $type result = (${type})#end
+        #if ( !$voidResult )#set ( $type = $helper.getResultDeclaration($resultType) )$type result = (${type})#end
 ## actual template call
 #if ( $args.isEmpty() )
 template().requestBody("direct://${model.UniqueName}", (Object)null);
