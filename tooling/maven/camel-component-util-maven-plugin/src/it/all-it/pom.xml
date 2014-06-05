@@ -152,23 +152,12 @@
           </execution>
         </executions>
       </plugin>
-      <!-- add generated source and test source to build -->
+      <!-- add generated source and test source to build for test-compile -->
       <plugin>
         <groupId>org.codehaus.mojo</groupId>
         <artifactId>build-helper-maven-plugin</artifactId>
         <version>@build-helper-maven-plugin-version@</version>
         <executions>
-          <execution>
-            <id>add-generated-sources</id>
-            <goals>
-              <goal>add-source</goal>
-            </goals>
-            <configuration>
-              <sources>
-                <source>${project.build.directory}/generated-sources/camel-component</source>
-              </sources>
-            </configuration>
-          </execution>
           <execution>
             <id>add-generated-test-sources</id>
             <goals>
@@ -176,6 +165,7 @@
             </goals>
             <configuration>
               <sources>
+                <source>${project.build.directory}/generated-sources/camel-component</source>
                 <source>${project.build.directory}/generated-test-sources/camel-component</source>
               </sources>
             </configuration>
