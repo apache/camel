@@ -20,7 +20,6 @@ import java.util.Properties;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.dataformat.beanio.BeanIODataFormat;
-import org.apache.camel.spi.DataFormat;
 
 public class CsvTestWithProperties extends CsvTest {
     
