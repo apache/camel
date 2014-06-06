@@ -300,8 +300,6 @@ public class BeanExpression implements Expression, Predicate {
 
                 // prepare for next bean to invoke
                 beanToCall = result;
-                // we need to set the result to the exchange for further processing
-                resultExchange.getIn().setBody(result);
             }
         }
 
