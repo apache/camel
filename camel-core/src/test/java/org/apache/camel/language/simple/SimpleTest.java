@@ -146,12 +146,12 @@ public class SimpleTest extends LanguageTestSupport {
     
     public void testBodyExpressionWithArray() throws Exception {
         exchange.getIn().setBody(new MyClass());
-        Expression exp = SimpleLanguage.simple("body.getMyArray");
+        Expression exp = SimpleLanguage.simple("body.myArray");
         assertNotNull(exp);
         Object val = exp.evaluate(exchange, Object.class);
         assertIsInstanceOf(Object[].class, val);
         
-        exp = SimpleLanguage.simple("body.getMyArray.length");
+        exp = SimpleLanguage.simple("body.myArray.length");
         assertNotNull(exp);
         val = exp.evaluate(exchange, Object.class);
         assertIsInstanceOf(Integer.class, val);
