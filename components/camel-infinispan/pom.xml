@@ -51,21 +51,6 @@
             <artifactId>infinispan-client-hotrod</artifactId>
             <version>${infinispan-version}</version>
         </dependency>
-        <dependency>
-            <groupId>org.infinispan</groupId>
-            <artifactId>infinispan-query-dsl</artifactId>
-            <version>${infinispan-version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.infinispan</groupId>
-            <artifactId>infinispan-remote-query-client</artifactId>
-            <version>${infinispan-version}</version>
-        </dependency>
-        <dependency>
-            <groupId>org.infinispan</groupId>
-            <artifactId>infinispan-query</artifactId>
-            <version>${infinispan-version}</version>
-        </dependency>
 
         <!-- testing -->
         <dependency>
@@ -90,23 +75,4 @@
             <scope>test</scope>
         </dependency>
     </dependencies>
-    <profiles>
-        <profile>
-            <id>integration-test-infinispan</id>
-            <activation>
-                <property>
-                    <name>integration-test</name>
-                </property>
-            </activation>
-            <dependencies>
-                <dependency>
-                    <groupId>org.infinispan</groupId>
-                    <artifactId>infinispan-jboss-client</artifactId>
-                    <version>${infinispan-version}</version>
-                    <scope>system</scope>
-                    <systemPath>${basedir}/jboss-client.jar</systemPath>
-                </dependency>
-            </dependencies>
-        </profile>
-    </profiles>
 </project>

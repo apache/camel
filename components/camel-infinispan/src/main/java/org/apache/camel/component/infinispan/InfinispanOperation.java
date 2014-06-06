@@ -16,34 +16,22 @@
  */
 package org.apache.camel.component.infinispan;
 
-import java.util.List;
-
 import org.apache.camel.Exchange;
-import org.infinispan.Cache;
-import org.infinispan.client.hotrod.RemoteCache;
-import org.infinispan.client.hotrod.Search;
 import org.infinispan.commons.api.BasicCache;
-import org.infinispan.query.SearchManager;
-import org.infinispan.query.dsl.QueryBuilder;
-import org.infinispan.query.dsl.QueryFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class InfinispanOperation {
     private static final transient Logger LOGGER = LoggerFactory.getLogger(InfinispanOperation.class);
     private final BasicCache<Object, Object> cache;
-    private final InfinispanConfiguration configuration;
 
-    public InfinispanOperation(BasicCache<Object, Object> cache, InfinispanConfiguration configuration) {
+    public InfinispanOperation(BasicCache<Object, Object> cache) {
         this.cache = cache;
-        this.configuration = configuration;
     }
 
     public void process(Exchange exchange) {
         Operation operation = getOperation(exchange);
-        operation.setBasicCache(cache);
-        operation.setConfiguration(configuration);
-        operation.execute(exchange);
+        operation.execute(cache, exchange);
     }
 
     private Operation getOperation(Exchange exchange) {
@@ -58,61 +46,30 @@ public class InfinispanOperation {
     enum Operation {
         PUT {
             @Override
-            void execute(Exchange exchange) {
+            void execute(BasicCache<Object, Object> cache, Exchange exchange) {
                 Object result = cache.put(getKey(exchange), getValue(exchange));
                 setResult(result, exchange);
             }
         }, GET {
             @Override
-            void execute(Exchange exchange) {
+            void execute(BasicCache<Object, Object> cache, Exchange exchange) {
                 Object result = cache.get(getKey(exchange));
                 setResult(result, exchange);
             }
         }, REMOVE {
             @Override
-            void execute(Exchange exchange) {
+            void execute(BasicCache<Object, Object> cache, Exchange exchange) {
                 Object result = cache.remove(getKey(exchange));
                 setResult(result, exchange);
             }
+
+
         }, CLEAR {
             @Override
-            void execute(Exchange exchange) {
+            void execute(BasicCache<Object, Object> cache, Exchange exchange) {
                 cache.clear();
             }
-        }, QUERY {
-            @Override
-            void execute(Exchange exchange) {
-                if (configuration.getQueryBuilderStrategy() == null) {
-                    throw new RuntimeException("QueryBuilderStrategy is required for executing queries!");
-                }
-
-                QueryFactory factory;
-                if (cache instanceof RemoteCache) {
-                    factory = Search.getQueryFactory((RemoteCache) cache);
-                } else {
-                    SearchManager searchManager = org.infinispan.query.Search.getSearchManager((Cache) cache);
-                    factory = searchManager.getQueryFactory();
-                }
-
-                QueryBuilder queryBuilder = configuration.getQueryBuilderStrategy().createQueryBuilder(factory);
-                if (queryBuilder == null) {
-                    throw new RuntimeException("QueryBuilder not created!");
-                }
-                List<?> result = queryBuilder.build().list();
-                setResult(result, exchange);
-            }
         };
-
-        InfinispanConfiguration configuration;
-        BasicCache cache;
-
-        public void setConfiguration(InfinispanConfiguration configuration) {
-            this.configuration = configuration;
-        }
-
-        public void setBasicCache(BasicCache cache) {
-            this.cache = cache;
-        }
 
         void setResult(Object result, Exchange exchange) {
             exchange.getIn().setHeader(InfinispanConstants.RESULT, result);
@@ -126,7 +83,7 @@ public class InfinispanOperation {
             return exchange.getIn().getHeader(InfinispanConstants.VALUE);
         }
 
-        abstract void execute(Exchange exchange);
+        abstract void execute(BasicCache<Object, Object> cache, Exchange exchange);
     }
 
 }
