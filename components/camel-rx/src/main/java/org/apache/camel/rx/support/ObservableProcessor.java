@@ -19,11 +19,10 @@ package org.apache.camel.rx.support;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.support.ServiceSupport;
-
 import rx.Observable;
+import rx.functions.Func1;
 import rx.subjects.PublishSubject;
 import rx.subjects.Subject;
-import rx.util.functions.Func1;
 
 /**
  * A base class for implementing a {@link Processor} which provides access to an {@link Observable}

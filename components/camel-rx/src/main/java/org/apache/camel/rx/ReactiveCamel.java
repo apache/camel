@@ -27,7 +27,7 @@ import org.apache.camel.rx.support.ExchangeToMessageFunc1;
 import org.apache.camel.rx.support.ObserverSender;
 import org.apache.camel.util.CamelContextHelper;
 import rx.Observable;
-import rx.util.functions.Func1;
+import rx.functions.Func1;
 
 /**
  * Provides the <a href="https://rx.codeplex.com/">Reactive Extensions</a> support for

@@ -22,7 +22,7 @@ import rx.Observable;
 import rx.Observer;
 import rx.Subscriber;
 import rx.Subscription;
-import rx.util.functions.Func1;
+import rx.functions.Func1;
 
 public class EndpointSubscribeFunc<T> implements Observable.OnSubscribeFunc<T>, Observable.OnSubscribe<T> {
 
