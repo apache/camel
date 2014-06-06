@@ -127,7 +127,7 @@ public class SmppConfiguration implements Cloneable {
     }
 
     public void setDataCoding(byte dataCoding) {
-        this.alphabet = dataCoding;
+        this.dataCoding = dataCoding;
     }
     
     public byte getAlphabet() {
