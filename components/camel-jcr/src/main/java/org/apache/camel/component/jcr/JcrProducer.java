@@ -58,6 +58,7 @@ public class JcrProducer extends DefaultProducer {
                 }
                 node.addMixin("mix:referenceable");
                 exchange.getOut().setBody(node.getIdentifier());
+                session.save();
             } else if (JcrConstants.JCR_GET_BY_ID.equals(operation)) {
                 Node node = session.getNodeByIdentifier(exchange.getIn()
                         .getMandatoryBody(String.class));
@@ -71,8 +72,6 @@ public class JcrProducer extends DefaultProducer {
             } else {
                 throw new RuntimeException("Unsupported operation: " + operation);
             }
-
-            session.save();
         } finally {
             if (session != null && session.isLive()) {
                 session.logout();
