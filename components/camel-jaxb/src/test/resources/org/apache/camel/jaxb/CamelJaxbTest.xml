@@ -43,7 +43,7 @@
     <route>
       <from uri="direct:marshal"/>
       <marshal>
-        <jaxb contextPath="org.apache.camel.foo.bar"/>
+        <jaxb contextPath="org.apache.camel.foo.bar" schemaLocation="person.xsd"/>
       </marshal>          
       <to uri="mock:result"/>
     </route>

@@ -77,6 +77,8 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, CamelC
     private JAXBContext context;
     private String contextPath;
     private String schema;
+    private String schemaLocation;
+   
     private boolean prettyPrint = true;
     private boolean ignoreJAXBElement = true;
     private boolean filterNonXmlChars;
@@ -122,6 +124,9 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, CamelC
             }
             if (isFragment()) {
                 marshaller.setProperty(Marshaller.JAXB_FRAGMENT, Boolean.TRUE);
+            }
+            if (ObjectHelper.isNotEmpty(schemaLocation)) {
+                marshaller.setProperty(Marshaller.JAXB_SCHEMA_LOCATION, schemaLocation);
             }
             if (namespacePrefixMapper != null) {
                 marshaller.setProperty(namespacePrefixMapper.getRegistrationKey(), namespacePrefixMapper);
@@ -320,6 +325,14 @@ public class JaxbDataFormat extends ServiceSupport implements DataFormat, CamelC
 
     public void setXmlStreamWriterWrapper(JaxbXmlStreamWriterWrapper xmlStreamWriterWrapper) {
         this.xmlStreamWriterWrapper = xmlStreamWriterWrapper;
+    }
+    
+    public String getSchemaLocation() {
+        return schemaLocation;
+    }
+
+    public void setSchemaLocation(String schemaLocation) {
+        this.schemaLocation = schemaLocation;
     }
 
     @Override
