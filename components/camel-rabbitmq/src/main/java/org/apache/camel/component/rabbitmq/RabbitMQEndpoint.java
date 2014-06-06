@@ -20,6 +20,7 @@ import java.io.IOException;
 import java.net.URISyntaxException;
 import java.security.KeyManagementException;
 import java.security.NoSuchAlgorithmException;
+import java.util.HashMap;
 import java.util.Map;
 import java.util.UUID;
 import java.util.concurrent.ExecutorService;
@@ -29,6 +30,7 @@ import javax.net.ssl.TrustManager;
 
 import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Address;
+import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.Envelope;
@@ -71,7 +73,7 @@ public class RabbitMQEndpoint extends DefaultEndpoint {
     private Boolean automaticRecoveryEnabled;
     private Integer networkRecoveryInterval;
     private Boolean topologyRecoveryEnabled;
-    
+
     //If it is true, prefetchSize, prefetchCount, prefetchGlobal will be used for basicOqs before starting RabbitMQConsumer
     private boolean prefetchEnabled;
     //Default in RabbitMq is 0.
@@ -79,7 +81,7 @@ public class RabbitMQEndpoint extends DefaultEndpoint {
     private int prefetchCount;
     //Default value in RabbitMQ is false.
     private boolean prefetchGlobal;
-    
+
     public RabbitMQEndpoint() {
     }
 
@@ -134,7 +136,27 @@ public class RabbitMQEndpoint extends DefaultEndpoint {
         }
     }
 
-    protected ConnectionFactory getOrCreateConnectionFactory() {
+    /**
+     * If needed, declare Exchange, declare Queue and bind them with Routing Key
+     */
+    public void declareExchangeAndQueue(Channel channel) throws IOException {
+        channel.exchangeDeclare(getExchangeName(),
+                getExchangeType(),
+                isDurable(),
+                isAutoDelete(),
+                new HashMap<String, Object>());
+        if (getQueue() != null) {
+            // need to make sure the queueDeclare is same with the exchange declare
+            channel.queueDeclare(getQueue(), isDurable(), false,
+                    isAutoDelete(), null);
+            channel.queueBind(
+                    getQueue(),
+                    getExchangeName(),
+                    getRoutingKey() == null ? "" : getRoutingKey());
+        }
+    }
+
+    private ConnectionFactory getOrCreateConnectionFactory() {
         if (connectionFactory == null) {
             ConnectionFactory factory = new ConnectionFactory();
             factory.setUsername(getUsername());
@@ -299,22 +321,22 @@ public class RabbitMQEndpoint extends DefaultEndpoint {
     public void setRoutingKey(String routingKey) {
         this.routingKey = routingKey;
     }
-    
+
     public void setBridgeEndpoint(boolean bridgeEndpoint) {
         this.bridgeEndpoint = bridgeEndpoint;
     }
-    
+
     public boolean isBridgeEndpoint() {
         return bridgeEndpoint;
     }
-    
+
     public void setAddresses(String addresses) {
         Address[] addressArray = Address.parseAddresses(addresses);
         if (addressArray.length > 0) {
             this.addresses = addressArray;
         }
     }
-    
+
     public Address[] getAddresses() {
         return addresses;
     }
