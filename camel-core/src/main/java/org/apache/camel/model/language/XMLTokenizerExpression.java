@@ -24,6 +24,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Expression;
 import org.apache.camel.Predicate;
+import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.language.tokenizer.XMLTokenizeLanguage;
 
 /**
@@ -91,5 +92,17 @@ public class XMLTokenizerExpression extends NamespaceAwareExpression {
         if (mode != null) {
             setProperty(predicate, "mode", mode);
         }
+    }
+
+    @Override
+    public Expression createExpression(CamelContext camelContext) {
+        Expression answer = super.createExpression(camelContext); 
+        if (group != null) {
+            if (group >0) {
+                //REVISIT wrap the xml tokens with a group element to turn the result into xml?
+                answer = ExpressionBuilder.groupIteratorExpression(answer, null, group);
+            }
+        }
+        return answer;
     }
 }
