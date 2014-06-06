@@ -39,8 +39,7 @@ public final class CamelCxfExample {
     private static final String WSDL_LOCATION = "wsdlURL=wsdl/hello_world.wsdl";
     private static final String SERVICE_NAME = "serviceName={http://apache.org/hello_world_soap_http}SOAPService";
     private static final String SOAP_OVER_HTTP_ROUTER = "portName={http://apache.org/hello_world_soap_http}SoapOverHttpRouter";
-    private static final String SOAP_OVER_JMS = "portName={http://apache.org/hello_world_soap_http}SoapOverJms";
-
+    
     private static final String ROUTER_ENDPOINT_URI = "cxf://" + ROUTER_ADDRESS + "?" + SERVICE_CLASS + "&"
                                                    + WSDL_LOCATION + "&" + SERVICE_NAME + "&" + SOAP_OVER_HTTP_ROUTER + "&dataFormat=POJO";
    
