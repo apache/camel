@@ -63,7 +63,7 @@ public final class DropboxAPIFacade {
     public static DropboxAPIFacade getInstance(DbxClient client) {
         if (instance == null) {
             instance = new DropboxAPIFacade();
-            instance.client = client;
+            DropboxAPIFacade.client = client;
         }
         return instance;
     }
@@ -87,7 +87,7 @@ public final class DropboxAPIFacade {
         String dropboxPath = remotePath == null ? localPath : remotePath;
         DbxEntry entry = null;
         try {
-            entry = instance.client.getMetadata(dropboxPath);
+            entry = DropboxAPIFacade.client.getMetadata(dropboxPath);
         } catch (DbxException e) {
             throw new DropboxException(dropboxPath + " does not exist or can't obtain metadata");
         }
@@ -173,7 +173,7 @@ public final class DropboxAPIFacade {
                 uploadMode = DbxWriteMode.add();
             }
             uploadedFile =
-                    instance.client.uploadFile(dropboxPath,
+                DropboxAPIFacade.client.uploadFile(dropboxPath,
                             uploadMode, inputFile.length(), inputStream);
             return uploadedFile;
         } finally {
@@ -195,7 +195,7 @@ public final class DropboxAPIFacade {
         if (query == null) {
             LOG.info("search no query");
             try {
-                listing = instance.client.getMetadataWithChildren(remotePath);
+                listing = DropboxAPIFacade.client.getMetadataWithChildren(remotePath);
             } catch (DbxException e) {
                 throw new DropboxException(remotePath + " does not exist or can't obtain metadata");
             }
@@ -204,7 +204,7 @@ public final class DropboxAPIFacade {
             LOG.info("search by query:" + query);
             List<DbxEntry> entries = null;
             try {
-                entries = instance.client.searchFileAndFolderNames(remotePath, query);
+                entries = DropboxAPIFacade.client.searchFileAndFolderNames(remotePath, query);
             } catch (DbxException e) {
                 throw new DropboxException(remotePath + " does not exist or can't obtain metadata");
             }
@@ -223,7 +223,7 @@ public final class DropboxAPIFacade {
     public DropboxResult del(String remotePath) throws DropboxException {
         DropboxResult result = null;
         try {
-            instance.client.delete(remotePath);
+            DropboxAPIFacade.client.delete(remotePath);
         } catch (DbxException e) {
             throw new DropboxException(remotePath + " does not exist or can't obtain metadata");
         }
@@ -242,7 +242,7 @@ public final class DropboxAPIFacade {
     public DropboxResult move(String remotePath, String newRemotePath) throws DropboxException {
         DropboxResult result = null;
         try {
-            instance.client.move(remotePath, newRemotePath);
+            DropboxAPIFacade.client.move(remotePath, newRemotePath);
         } catch (DbxException e) {
             throw new DropboxException(remotePath + " does not exist or can't obtain metadata");
         }
@@ -271,7 +271,7 @@ public final class DropboxAPIFacade {
     private void downloadFilesInFolder(String path, Map<String, ByteArrayOutputStream> resultEntries) throws DropboxException {
         DbxEntry.WithChildren listing = null;
         try {
-            listing = instance.client.getMetadataWithChildren(path);
+            listing = DropboxAPIFacade.client.getMetadataWithChildren(path);
         } catch (DbxException e) {
             throw new DropboxException(path + " does not exist or can't obtain metadata");
         }
@@ -299,7 +299,7 @@ public final class DropboxAPIFacade {
         ByteArrayOutputStream baos = new ByteArrayOutputStream();
         DbxEntry.File downloadedFile;
         try {
-            downloadedFile = instance.client.getFile(path, null, baos);
+            downloadedFile = DropboxAPIFacade.client.getFile(path, null, baos);
         } catch (DbxException e) {
             throw new DropboxException(path + " does not exist or can't obtain metadata");
         } catch (IOException e) {
