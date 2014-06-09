@@ -40,8 +40,9 @@ public class FileApiMethodGeneratorMojoTest extends AbstractGeneratorMojoTest {
         }
 
         final FileApiMethodGeneratorMojo mojo = new FileApiMethodGeneratorMojo();
-        mojo.substitutions = new Substitution[1];
-        mojo.substitutions[0] = new Substitution(".+", "(.+)", "java.util.List", "$1List");
+        mojo.substitutions = new Substitution[2];
+        mojo.substitutions[0] = new Substitution(".+", "(.+)", "java.util.List", "$1List", false);
+        mojo.substitutions[1] = new Substitution(".+", "(.+)", ".*?(\\w++)\\[\\]", "$1Array", true);
 
         configureMojo(mojo);
         mojo.proxyClass = TestProxy.class.getCanonicalName();

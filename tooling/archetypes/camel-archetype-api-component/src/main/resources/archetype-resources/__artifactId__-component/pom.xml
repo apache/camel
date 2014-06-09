@@ -157,6 +157,7 @@
                   <argName>^.+$</argName>
                   <argType>java.lang.String</argType>
                   <replacement>$1Param</replacement>
+                  <replaceWithType>false</replaceWithType>
                 </substitution>
               </substitutions>
               -->
@@ -181,6 +182,7 @@
                   <argName>^.+$</argName>
                   <argType>java.lang.String</argType>
                   <replacement>$1Arg</replacement>
+                  <replaceWithType>false</replaceWithType>
                 </substitution>
               </substitutions>
               -->

@@ -14,10 +14,11 @@ public class ArgumentSubstitutionParserTest {
     @Test
     public void testParse() throws Exception {
 
-        final Substitution[] adapters = new Substitution[3];
+        final Substitution[] adapters = new Substitution[4];
         adapters[0] = new Substitution(".+", "name", PERSON);
         adapters[1] = new Substitution("greet.+", "person([0-9]+)", "astronaut$1");
         adapters[2] = new Substitution(".+", "(.+)", "java.util.List", "$1List");
+        adapters[3] = new Substitution(".+", "(.+)", ".*?(\\w++)\\[\\]", "$1Array", true);
 
         final ApiMethodParser<TestProxy> parser = new ArgumentSubstitutionParser<TestProxy>(TestProxy.class, adapters);
 
@@ -45,8 +46,11 @@ public class ArgumentSubstitutionParserTest {
         assertEquals("astronaut1", greetUs.getArguments().get(0).getName());
         assertEquals("astronaut2", greetUs.getArguments().get(1).getName());
 
-        final ApiMethodParser.ApiMethodModel greetAll = methodModels.get(1);
+        final ApiMethodParser.ApiMethodModel greetAll = methodModels.get(0);
         assertEquals("personsList", greetAll.getArguments().get(0).getName());
+
+        final ApiMethodParser.ApiMethodModel greetAll1 = methodModels.get(1);
+        assertEquals("stringArray", greetAll1.getArguments().get(0).getName());
     }
 
 }

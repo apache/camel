@@ -25,15 +25,17 @@ public class Substitution {
     private String argName;
     private String argType;
     private String replacement;
+    private boolean replaceWithType;
 
     public Substitution() {
     }
 
-    public Substitution(String method, String argName, String argType, String replacement) {
+    public Substitution(String method, String argName, String argType, String replacement, boolean replaceWithType) {
         this.method = method;
         this.argName = argName;
         this.argType = argType;
         this.replacement = replacement;
+        this.replaceWithType = replaceWithType;
     }
 
     public String getMethod() {
@@ -66,5 +68,13 @@ public class Substitution {
 
     public void setReplacement(String replacement) {
         this.replacement = replacement;
+    }
+
+    public boolean isReplaceWithType() {
+        return replaceWithType;
+    }
+
+    public void setReplaceWithType(boolean replaceWithType) {
+        this.replaceWithType = replaceWithType;
     }
 }

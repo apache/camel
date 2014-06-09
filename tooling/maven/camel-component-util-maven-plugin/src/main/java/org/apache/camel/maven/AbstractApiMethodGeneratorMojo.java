@@ -174,8 +174,10 @@ public abstract class AbstractApiMethodGeneratorMojo extends AbstractGeneratorMo
     public ArgumentSubstitutionParser.Substitution[] getArgumentSubstitutions() {
         ArgumentSubstitutionParser.Substitution[] subs = new ArgumentSubstitutionParser.Substitution[substitutions.length];
         for (int i = 0; i < substitutions.length; i++) {
-            subs[i] = new ArgumentSubstitutionParser.Substitution(substitutions[i].getMethod(),
-                    substitutions[i].getArgName(), substitutions[i].getArgType(), substitutions[i].getReplacement());
+            final Substitution substitution = substitutions[i];
+            subs[i] = new ArgumentSubstitutionParser.Substitution(substitution.getMethod(),
+                    substitution.getArgName(), substitution.getArgType(),
+                    substitution.getReplacement(), substitution.isReplaceWithType());
         }
         return subs;
     }

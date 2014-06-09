@@ -89,6 +89,13 @@
                   <argType>java.util.List</argType>
                   <replacement>$1List</replacement>
                 </substitution>
+                <substitution>
+                  <method>.+</method>
+                  <argName>(.+)</argName>
+                  <argType>.*?(\w++)\[\]</argType>
+                  <replacement>$1Array</replacement>
+                  <replaceWithType>true</replaceWithType>
+                </substitution>
               </substitutions>
               <signatureFile>../../../src/test/resources/test-proxy-signatures.txt</signatureFile>
             </configuration>

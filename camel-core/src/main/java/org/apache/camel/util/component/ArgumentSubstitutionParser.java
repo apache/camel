@@ -23,24 +23,25 @@ public class ArgumentSubstitutionParser<T> extends ApiMethodParser<T> {
         super(proxyType);
         Map<String, Map<String, List<NameReplacement>>> regexMap = new LinkedHashMap<String, Map<String, List<NameReplacement>>>();
 
-        for (Substitution tuple : substitutions) {
-            tuple.validate();
+        for (Substitution substitution : substitutions) {
+            substitution.validate();
 
             final NameReplacement nameReplacement = new NameReplacement();
-            nameReplacement.replacement = tuple.replacement;
-            if (tuple.argType != null) {
-                nameReplacement.type = forName(tuple.argType);
+            nameReplacement.replacement = substitution.replacement;
+            if (substitution.argType != null) {
+                nameReplacement.typePattern = Pattern.compile(substitution.argType);
             }
+            nameReplacement.replaceWithType = substitution.replaceWithType;
 
-            Map<String, List<NameReplacement>> replacementMap = regexMap.get(tuple.method);
+            Map<String, List<NameReplacement>> replacementMap = regexMap.get(substitution.method);
             if (replacementMap == null) {
                 replacementMap = new LinkedHashMap<String, List<NameReplacement>>();
-                regexMap.put(tuple.method, replacementMap);
+                regexMap.put(substitution.method, replacementMap);
             }
-            List<NameReplacement> replacements = replacementMap.get(tuple.argName);
+            List<NameReplacement> replacements = replacementMap.get(substitution.argName);
             if (replacements == null) {
                 replacements = new ArrayList<NameReplacement>();
-                replacementMap.put(tuple.argName, replacements);
+                replacementMap.put(substitution.argName, replacements);
             }
             replacements.add(nameReplacement);
         }
@@ -63,19 +64,40 @@ public class ArgumentSubstitutionParser<T> extends ApiMethodParser<T> {
         for (ApiMethodModel model : parseResult) {
             // look for method name matches
             for (Map.Entry<Pattern, Map<Pattern, List<NameReplacement>>> methodEntry : methodMap.entrySet()) {
+                // match the whole method name
                 if (methodEntry.getKey().matcher(model.getName()).matches()) {
 
                     // look for arg name matches
                     final List<Argument> updatedArguments = new ArrayList<Argument>();
                     final Map<Pattern, List<NameReplacement>> argMap = methodEntry.getValue();
                     for (Argument argument : model.getArguments()) {
+                        final Class<?> argType = argument.getType();
+                        final String argTypeName = argType.getCanonicalName();
+
                         for (Map.Entry<Pattern, List<NameReplacement>> argEntry : argMap.entrySet()) {
                             final Matcher matcher = argEntry.getKey().matcher(argument.getName());
+
+                            // match argument name substring
                             if (matcher.find()) {
                                 final List<NameReplacement> adapters = argEntry.getValue();
                                 for (NameReplacement adapter : adapters) {
-                                    if (adapter.type == null || adapter.type == argument.getType()) {
-                                        argument = new Argument(matcher.replaceAll(adapter.replacement), argument.getType());
+                                    if (adapter.typePattern == null) {
+                                        // no type pattern
+                                        final String newName = getJavaArgName(matcher.replaceAll(adapter.replacement));
+                                        argument = new Argument(newName, argType);
+                                    } else {
+                                        final Matcher typeMatcher = adapter.typePattern.matcher(argTypeName);
+                                        if (typeMatcher.find()) {
+                                            if (!adapter.replaceWithType) {
+                                                // replace argument name
+                                                final String newName = getJavaArgName(matcher.replaceAll(adapter.replacement));
+                                                argument = new Argument(newName, argType);
+                                            } else {
+                                                // replace name with argument type name
+                                                final String newName = getJavaArgName(typeMatcher.replaceAll(adapter.replacement));
+                                                argument = new Argument(newName, argType);
+                                            }
+                                        }
                                     }
                                 }
                             }
@@ -95,12 +117,24 @@ public class ArgumentSubstitutionParser<T> extends ApiMethodParser<T> {
         return result;
     }
 
+    private String getJavaArgName(String name) {
+        // make sure the first character is lowercase
+        // useful for replacement using type names
+        char firstChar = name.charAt(0);
+        if (Character.isLowerCase(firstChar)) {
+            return name;
+        } else {
+            return Character.toLowerCase(firstChar) + name.substring(1);
+        }
+    }
+
     public static class Substitution {
 
         private String method;
         private String argName;
         private String argType;
         private String replacement;
+        private boolean replaceWithType;
 
         /**
          * Creates a substitution for all argument types.
@@ -122,10 +156,21 @@ public class ArgumentSubstitutionParser<T> extends ApiMethodParser<T> {
          * @param replacement replacement text for argument name
          */
         public Substitution(String method, String argName, String argType, String replacement) {
-            this.method = method;
-            this.argName = argName;
+            this(method, argName, replacement);
             this.argType = argType;
-            this.replacement = replacement;
+        }
+
+        /**
+         * Create a substitution for a specific argument type and flag to indicate whether the replacement uses
+         * @param method
+         * @param argName
+         * @param argType
+         * @param replacement
+         * @param replaceWithType
+         */
+        public Substitution(String method, String argName, String argType, String replacement, boolean replaceWithType) {
+            this(method, argName, argType, replacement);
+            this.replaceWithType = replaceWithType;
         }
 
         public void validate() {
@@ -137,6 +182,7 @@ public class ArgumentSubstitutionParser<T> extends ApiMethodParser<T> {
 
     private static class NameReplacement {
         private String replacement;
-        private Class<?> type;
+        private Pattern typePattern;
+        private boolean replaceWithType;
     }
 }
