@@ -43,6 +43,8 @@ public class DataSetComponentConfigurationAndDocumentationTest extends ContextTe
 
         assertTrue(json.contains("\"preloadSize\": { \"type\": \"long\" }"));
         assertTrue(json.contains("\"minRate\": { \"type\": \"int\" }"));
+        assertTrue(json.contains("\"exchangePattern\": { \"type\": \"string\", \"enum\":"));
+        assertTrue(json.contains("\"InOut\""));
     }
 
     @Test
