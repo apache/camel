@@ -136,7 +136,7 @@
       <!-- generate Component source and test source -->
       <plugin>
         <groupId>org.apache.camel</groupId>
-        <artifactId>camel-component-util-maven-plugin</artifactId>
+        <artifactId>camel-api-component-maven-plugin</artifactId>
         <version>${camel-version}</version>
         <executions>
           <execution>

@@ -24,10 +24,10 @@
     <version>2.14-SNAPSHOT</version>
   </parent>
 
-  <artifactId>camel-component-util-maven-plugin</artifactId>
+  <artifactId>camel-api-component-maven-plugin</artifactId>
   <packaging>maven-plugin</packaging>
-  <name>Camel :: Maven Plugins :: Camel Component Utilities</name>
-  <description>Maven plugin to generate Camel Components for APIs</description>
+  <name>Camel :: Maven Plugins :: Camel API Component Plugin</name>
+  <description>Maven plugin to generate code for Camel Components based on third party APIs</description>
 
   <dependencies>
     <dependency>
