@@ -98,7 +98,7 @@ public class XMLTokenizerExpression extends NamespaceAwareExpression {
     public Expression createExpression(CamelContext camelContext) {
         Expression answer = super.createExpression(camelContext); 
         if (group != null) {
-            if (group >0) {
+            if (group > 0) {
                 //REVISIT wrap the xml tokens with a group element to turn the result into xml?
                 answer = ExpressionBuilder.groupIteratorExpression(answer, null, group);
             }
