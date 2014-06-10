@@ -36,10 +36,11 @@ import org.apache.ibatis.session.SqlSessionFactory;
 public class MyBatisEndpoint extends DefaultPollingEndpoint {
 
     private MyBatisProcessingStrategy processingStrategy = new DefaultMyBatisProcessingStrategy();
+    private ExecutorType executorType;
     @UriParam
     private String statement;
+    @UriParam
     private StatementType statementType;
-    private ExecutorType executorType;
     @UriParam
     private int maxMessagesPerPoll;
 
