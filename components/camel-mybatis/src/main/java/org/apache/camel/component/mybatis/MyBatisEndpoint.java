@@ -35,7 +35,7 @@ import org.apache.ibatis.session.SqlSessionFactory;
 @UriEndpoint(scheme = "mybatis", consumerClass =  MyBatisConsumer.class)
 public class MyBatisEndpoint extends DefaultPollingEndpoint {
 
-    private MyBatisProcessingStrategy processingStrategy;
+    private MyBatisProcessingStrategy processingStrategy = new DefaultMyBatisProcessingStrategy();
     @UriParam
     private String statement;
     private StatementType statementType;
@@ -106,10 +106,7 @@ public class MyBatisEndpoint extends DefaultPollingEndpoint {
         this.executorType = ExecutorType.valueOf(executorType.toUpperCase());
     }
 
-    public synchronized MyBatisProcessingStrategy getProcessingStrategy() {
-        if (processingStrategy == null) {
-            processingStrategy = new DefaultMyBatisProcessingStrategy();
-        }
+    public MyBatisProcessingStrategy getProcessingStrategy() {
         return processingStrategy;
     }
 
