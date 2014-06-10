@@ -333,8 +333,8 @@
     <pojosr-version>0.2.1</pojosr-version>  
     <powermock-version>1.5.1</powermock-version>
     <protobuf-version>2.5.0</protobuf-version>
-    <qpid-bundle-version>0.26_1</qpid-bundle-version>
-    <qpid-version>0.26</qpid-version>
+    <qpid-bundle-version>0.28_1</qpid-bundle-version>
+    <qpid-version>0.28</qpid-version>
     <quartz-bundle-version>1.8.6_1</quartz-bundle-version>
     <quartz-version>1.8.6</quartz-version>
     <quartz-version-range>[1.8,2)</quartz-version-range>
