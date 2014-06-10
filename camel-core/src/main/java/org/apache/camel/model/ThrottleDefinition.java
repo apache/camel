@@ -51,6 +51,8 @@ public class ThrottleDefinition extends ExpressionNode implements ExecutorServic
     private Boolean asyncDelayed;
     @XmlAttribute
     private Boolean callerRunsWhenRejected;
+    @XmlAttribute
+    private Boolean rejectExecution;
     
     public ThrottleDefinition() {
     }
@@ -84,7 +86,7 @@ public class ThrottleDefinition extends ExpressionNode implements ExecutorServic
 
         boolean shutdownThreadPool = ProcessorDefinitionHelper.willCreateNewThreadPool(routeContext, this, isAsyncDelayed());
         ScheduledExecutorService threadPool = ProcessorDefinitionHelper.getConfiguredScheduledExecutorService(routeContext, "Throttle", this, isAsyncDelayed());
-
+        
         // should be default 1000 millis
         long period = getTimePeriodMillis() != null ? getTimePeriodMillis() : 1000L;
 
@@ -94,7 +96,7 @@ public class ThrottleDefinition extends ExpressionNode implements ExecutorServic
             throw new IllegalArgumentException("MaxRequestsPerPeriod expression must be provided on " + this);
         }
 
-        Throttler answer = new Throttler(routeContext.getCamelContext(), childProcessor, maxRequestsExpression, period, threadPool, shutdownThreadPool);
+        Throttler answer = new Throttler(routeContext.getCamelContext(), childProcessor, maxRequestsExpression, period, threadPool, shutdownThreadPool, isRejectExecution());
 
         if (getAsyncDelayed() != null) {
             answer.setAsyncDelayed(getAsyncDelayed());
@@ -164,6 +166,19 @@ public class ThrottleDefinition extends ExpressionNode implements ExecutorServic
         setAsyncDelayed(true);
         return this;
     }
+    
+    /**
+     * Whether or not throttler throws the RejectExceutionException when the exchange exceeds the request limit
+     * <p/>
+     * Is by default <tt>false</tt>
+     *
+     * @param throw the RejectExecutionException if the exchange exceeds the request limit 
+     * @return the builder
+     */
+    public ThrottleDefinition rejectExecution(boolean rejectExecution) {
+        setRejectExecution(rejectExecution);
+        return this;
+    }
 
     public ThrottleDefinition executorService(ExecutorService executorService) {
         setExecutorService(executorService);
@@ -174,6 +189,8 @@ public class ThrottleDefinition extends ExpressionNode implements ExecutorServic
         setExecutorServiceRef(executorServiceRef);
         return this;
     }
+    
+    
 
     // Properties
     // -------------------------------------------------------------------------
@@ -220,5 +237,13 @@ public class ThrottleDefinition extends ExpressionNode implements ExecutorServic
 
     public void setExecutorServiceRef(String executorServiceRef) {
         this.executorServiceRef = executorServiceRef;
+    }
+    
+    public boolean isRejectExecution() {
+        return rejectExecution != null ? rejectExecution : false;
+    }
+
+    public void setRejectExecution(Boolean rejectExecution) {
+        this.rejectExecution = rejectExecution;
     }
 }

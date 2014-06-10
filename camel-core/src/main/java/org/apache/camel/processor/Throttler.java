@@ -16,9 +16,11 @@
  */
 package org.apache.camel.processor;
 
+import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.atomic.AtomicLong;
 
+import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
@@ -43,10 +45,12 @@ public class Throttler extends DelayProcessorSupport implements Traceable {
     private Expression maxRequestsPerPeriodExpression;
     private AtomicLong timePeriodMillis = new AtomicLong(1000);
     private volatile TimeSlot slot;
+    private boolean rejectExecution;
 
     public Throttler(CamelContext camelContext, Processor processor, Expression maxRequestsPerPeriodExpression, long timePeriodMillis,
-                     ScheduledExecutorService executorService, boolean shutdownExecutorService) {
+                     ScheduledExecutorService executorService, boolean shutdownExecutorService, boolean rejectExecution) {
         super(camelContext, processor, executorService, shutdownExecutorService);
+        this.rejectExecution = rejectExecution;
 
         ObjectHelper.notNull(maxRequestsPerPeriodExpression, "maxRequestsPerPeriodExpression");
         this.maxRequestsPerPeriodExpression = maxRequestsPerPeriodExpression;
@@ -195,5 +199,24 @@ public class Throttler extends DelayProcessorSupport implements Traceable {
 
     TimeSlot getSlot() {
         return this.slot;
+    }
+
+    public boolean isRejectExecution() {
+        return rejectExecution;
+    }
+
+    public void setRejectExecution(boolean rejectExecution) {
+        this.rejectExecution = rejectExecution;
+    }
+    
+    @Override
+    protected boolean processDelay(Exchange exchange, AsyncCallback callback, long delay) {
+        if (isRejectExecution() && delay > 0) {
+            exchange.setException(new RejectedExecutionException("Exceed the max request limit!"));
+            callback.done(true);
+            return true;
+        } else {
+            return super.processDelay(exchange, callback, delay);
+        }
     }
 }
