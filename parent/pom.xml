@@ -59,8 +59,8 @@
     <avalon-version>4.3.1</avalon-version>
     <avro-version>1.7.6</avro-version>
     <avro-bundle-version>1.7.6_1</avro-bundle-version>
-    <aws-java-sdk-bundle-version>1.7.1_1</aws-java-sdk-bundle-version>
-    <aws-java-sdk-version>1.7.1</aws-java-sdk-version>
+    <aws-java-sdk-bundle-version>1.7.12_1</aws-java-sdk-bundle-version>
+    <aws-java-sdk-version>1.7.12</aws-java-sdk-version>
     <axiom-version>1.2.14</axiom-version>
     <backport-util-concurrent-version>3.1</backport-util-concurrent-version>
     <bcel-bundle-version>5.2_4</bcel-bundle-version>
