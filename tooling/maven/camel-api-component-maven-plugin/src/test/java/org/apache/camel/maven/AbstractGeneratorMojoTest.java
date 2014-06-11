@@ -29,7 +29,7 @@ import static org.junit.Assert.assertTrue;
 /**
  * Base class for Generator MOJO tests.
  */
-public class AbstractGeneratorMojoTest {
+public abstract class AbstractGeneratorMojoTest {
     protected static final String OUT_DIR = "target/generated-test-sources/camel-component";
 
     private static final String COMPONENT_PACKAGE = "org.apache.camel.component.test";

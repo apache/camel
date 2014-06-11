@@ -56,13 +56,13 @@ public class JavadocApiMethodGeneratorMojo extends AbstractApiMethodGeneratorMoj
 
     protected static final String DEFAULT_EXCLUDE_PACKAGES = "javax?\\.lang.*";
 
-    @Parameter(property = "camel.component.util.excludePackages", defaultValue = DEFAULT_EXCLUDE_PACKAGES)
+    @Parameter(property = PREFIX + "excludePackages", defaultValue = DEFAULT_EXCLUDE_PACKAGES)
     protected String excludePackages;
 
-    @Parameter(property = "camel.component.util.excludeClasses")
+    @Parameter(property = PREFIX + "excludeClasses")
     protected String excludeClasses;
 
-    @Parameter(property = "camel.component.util.excludeMethods")
+    @Parameter(property = PREFIX + "excludeMethods")
     protected String excludeMethods;
 
     @Override

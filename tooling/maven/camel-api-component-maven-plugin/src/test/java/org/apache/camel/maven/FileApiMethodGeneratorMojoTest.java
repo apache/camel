@@ -48,6 +48,10 @@ public class FileApiMethodGeneratorMojoTest extends AbstractGeneratorMojoTest {
         mojo.proxyClass = TestProxy.class.getCanonicalName();
         mojo.signatureFile = new File("src/test/resources/test-proxy-signatures.txt");
 
+        // exclude name2, and int times
+        mojo.excludeConfigNames = "name2";
+        mojo.excludeConfigTypes = "int";
+
         mojo.execute();
 
         // check target file was generated

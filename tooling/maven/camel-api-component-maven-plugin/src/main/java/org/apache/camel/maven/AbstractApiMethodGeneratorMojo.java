@@ -21,6 +21,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.TreeMap;
+import java.util.regex.Pattern;
 
 import org.apache.camel.util.component.ApiMethodParser;
 import org.apache.camel.util.component.ArgumentSubstitutionParser;
@@ -41,14 +42,31 @@ public abstract class AbstractApiMethodGeneratorMojo extends AbstractGeneratorMo
     @Parameter(property = PREFIX + "substitutions")
     protected Substitution[] substitutions = new Substitution[0];
 
+    @Parameter(property = PREFIX + "excludeConfigNames")
+    protected String excludeConfigNames;
+
+    @Parameter(property = PREFIX + "excludeConfigTypes")
+    protected String excludeConfigTypes;
+
     // cached fields
     private Class<?> proxyType;
+
+    private Pattern propertyNamePattern;
+    private Pattern propertyTypePattern;
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
 
         // load proxy class and get enumeration file to generate
         final Class proxyType = getProxyType();
+
+        // parse pattern for excluded endpoint properties
+        if (excludeConfigNames != null) {
+            propertyNamePattern = Pattern.compile(excludeConfigNames);
+        }
+        if (excludeConfigTypes != null) {
+            propertyTypePattern = Pattern.compile(excludeConfigTypes);
+        }
 
         // create parser
         ApiMethodParser parser = createAdapterParser(proxyType);
@@ -137,13 +155,17 @@ public abstract class AbstractApiMethodGeneratorMojo extends AbstractGeneratorMo
         Map<String, Class<?>> parameters = new TreeMap<String, Class<?>>();
         for (ApiMethodParser.ApiMethodModel model : models) {
             for (ApiMethodParser.Argument argument : model.getArguments()) {
-                if (!parameters.containsKey(argument.getName())) {
-                    Class<?> type = argument.getType();
+                final String name = argument.getName();
+                Class<?> type = argument.getType();
+                final String typeName = type.getCanonicalName();
+                if (!parameters.containsKey(name) &&
+                        (propertyNamePattern == null || !propertyNamePattern.matcher(name).matches()) &&
+                        (propertyTypePattern == null || !propertyTypePattern.matcher(typeName).matches())) {
                     if (type.isPrimitive()) {
                         // replace primitives with wrapper classes
                         type = ClassUtils.primitiveToWrapper(type);
                     }
-                    parameters.put(argument.getName(), type);
+                    parameters.put(name, type);
                 }
             }
         }
