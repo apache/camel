@@ -21,8 +21,8 @@
  */
 package $packageName;
 
-import java.util.Map;
 import java.util.HashMap;
+import java.util.Map;
 
 #set( $componentConfig = "${componentName}Configuration" )
 import ${componentPackage}.${componentConfig};

@@ -55,25 +55,26 @@ public class ${name}Component extends UriEndpointComponent {
         String apiNameStr;
         String methodName;
         switch (pathElements.length) {
-            case 1:
-                apiNameStr = "";
-                methodName = pathElements[0];
-                break;
-            case 2:
-                apiNameStr = pathElements[0];
-                methodName = pathElements[1];
-                break;
-            default:
-                throw new CamelException("Invalid URI path [" + remaining +
-                "], must be of the format " + collection.getApiNames() + "/<operation-apiName>");
+        case 1:
+            apiNameStr = "";
+            methodName = pathElements[0];
+            break;
+        case 2:
+            apiNameStr = pathElements[0];
+            methodName = pathElements[1];
+            break;
+        default:
+            throw new CamelException("Invalid URI path [" + remaining
+                + "], must be of the format " + collection.getApiNames() + "/<operation-name>");
         }
+
         // get API enum from apiName string
         final ${name}ApiName apiName;
         try {
             apiName = ${name}ApiName.fromValue(apiNameStr);
         } catch (IllegalArgumentException e) {
-            throw new CamelException("Invalid URI path prefix [" + remaining +
-                "], must be one of " + collection.getApiNames());
+            throw new CamelException("Invalid URI path prefix [" + remaining
+                + "], must be one of " + collection.getApiNames());
         }
 
         final ${name}Configuration endpointConfiguration = createEndpointConfiguration(apiName);
