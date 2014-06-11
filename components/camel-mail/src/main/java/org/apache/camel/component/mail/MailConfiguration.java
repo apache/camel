@@ -25,6 +25,8 @@ import javax.mail.Session;
 import javax.net.ssl.SSLContext;
 
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriParams;
 import org.apache.camel.util.jsse.SSLContextParameters;
 
 /**
@@ -32,37 +34,63 @@ import org.apache.camel.util.jsse.SSLContextParameters;
  *
  * @version 
  */
+@UriParams
 public class MailConfiguration implements Cloneable {   
 
     private JavaMailSender javaMailSender;
     private Properties javaMailProperties;
     private Properties additionalJavaMailProperties;
+    @UriParam
     private String protocol;
+    @UriParam
     private String host;
+    @UriParam
     private int port = -1;
+    @UriParam
     private String username;
+    @UriParam
     private String password;
+    @UriParam
     private String subject;
     private Session session;
+    @UriParam
     private boolean mapMailMessage = true;
+    @UriParam
     private String from = MailConstants.MAIL_DEFAULT_FROM;
+    @UriParam
     private String folderName = MailConstants.MAIL_DEFAULT_FOLDER;
+    @UriParam
     private boolean delete;
+    @UriParam
     private String copyTo;
+    @UriParam
     private boolean unseen = true;
+    @UriParam
     private boolean ignoreUriScheme;
     private Map<Message.RecipientType, String> recipients = new HashMap<Message.RecipientType, String>();
+    @UriParam
     private String replyTo;
+    @UriParam
     private int fetchSize = -1;
+    @UriParam
     private boolean debugMode;
+    @UriParam
     private int connectionTimeout = MailConstants.MAIL_DEFAULT_CONNECTION_TIMEOUT;
+    @UriParam
     private boolean dummyTrustManager;
+    @UriParam
     private String contentType = "text/plain";
+    @UriParam
     private String alternativeBodyHeader = MailConstants.MAIL_ALTERNATIVE_BODY;
+    @UriParam
     private boolean useInlineAttachments;
+    @UriParam
     private boolean ignoreUnsupportedCharset;
+    @UriParam
     private boolean disconnect;
+    @UriParam
     private boolean closeFolder = true;
+    @UriParam
     private boolean peek = true;
     private SSLContextParameters sslContextParameters;
 

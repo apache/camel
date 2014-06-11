@@ -28,17 +28,22 @@ import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.DefaultHeaderFilterStrategy;
 import org.apache.camel.impl.ScheduledPollEndpoint;
 import org.apache.camel.spi.HeaderFilterStrategy;
+import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
 
 /**
  * Endpoint for Camel Mail.
  *
  * @version 
  */
+@UriEndpoint(scheme = "mail", consumerClass = MailConsumer.class)
 public class MailEndpoint extends ScheduledPollEndpoint {
     private MailBinding binding;
+    @UriParam
     private MailConfiguration configuration;
     private HeaderFilterStrategy headerFilterStrategy = new DefaultHeaderFilterStrategy();
     private ContentTypeResolver contentTypeResolver;
+    @UriParam
     private int maxMessagesPerPoll;
     private SearchTerm searchTerm;
 
