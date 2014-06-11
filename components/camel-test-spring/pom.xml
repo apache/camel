@@ -31,7 +31,7 @@
     <description>Camel Testing Library using JUnit and Spring</description>
 
     <properties>
-        <camel.osgi.export.pkg>org.apache.camel.test.junit4.*,org.apache.camel.test.spring.*</camel.osgi.export.pkg>
+        <camel.osgi.export.pkg>org.apache.camel.test.spring.*</camel.osgi.export.pkg>
     </properties>
 
     <dependencies>
