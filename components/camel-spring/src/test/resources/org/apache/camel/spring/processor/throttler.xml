@@ -23,6 +23,11 @@
     ">
 
     <camelContext xmlns="http://camel.apache.org/schema/spring">
+        <onException>
+            <exception>java.util.concurrent.RejectedExecutionException</exception>
+            <handled><constant>true</constant></handled>
+            <to uri="mock:error"/>
+        </onException>
 
         <!-- START SNIPPET: example -->
         <route>
@@ -62,6 +67,16 @@
             </throttle>
         </route>
         <!-- END SNIPPET: e2 -->
+        
+        <route>
+            <from uri="direct:start"/>
+            <!-- throttle 2 messages per 10 sec -->
+            <throttle timePeriodMillis="10000" rejectExecution="true">
+                <constant>2</constant>
+                <to uri="mock:result"/>
+            </throttle>
+            
+        </route>
 
     </camelContext>
 
