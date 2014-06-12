@@ -66,6 +66,19 @@ public class ElasticsearchConfigurationTest extends CamelTestSupport {
         assertFalse(conf.isLocal());
         assertFalse(conf.isData());
     }
+    
+    @Test
+    public void clusterConfWithIpAddress() throws Exception {
+        URI uri = new URI("elasticsearch://clustername?operation=INDEX&indexName=twitter&indexType=tweet&ip=127.0.0.1");
+        Map<String, Object> parameters = URISupport.parseParameters(uri);
+        ElasticsearchConfiguration conf = new ElasticsearchConfiguration(uri, parameters);
+        assertEquals("clustername", conf.getClusterName());
+        assertEquals("INDEX", conf.getOperation());
+        assertFalse(conf.isLocal());
+        assertFalse(conf.isData());
+        assertEquals("127.0.0.1", conf.getIp());
+        assertEquals(9300, conf.getPort().intValue());
+    }
 
     @Test
     public void localDataNode() throws Exception {
