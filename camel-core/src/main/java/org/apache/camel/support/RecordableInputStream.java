@@ -58,16 +58,16 @@ class RecordableInputStream extends FilterInputStream {
     public String getText(int pos) {
         String t = null;
         recording = false;
-        final byte[] ba = buf.toByteArray(pos);
-        buf.trim(pos, 0);
         try {        
             if (charset == null) {
-                t = new String(ba);
+                t = new String(buf.getByteArray(), 0, pos);
             } else {
-                t = new String(ba, charset);
+                t = new String(buf.getByteArray(), 0, pos, charset);
             }
         } catch (UnsupportedEncodingException e) {
             // ignore it as this encoding exception should have been caught earlier while scanning.
+        } finally {
+            buf.trim(pos, 0);
         }
 
         return t;
@@ -98,6 +98,10 @@ class RecordableInputStream extends FilterInputStream {
             byte[] b = new byte[len];
             System.arraycopy(buf, 0, b, 0, len);
             return b;
+        }
+
+        byte[] getByteArray() {
+            return buf;
         }
     }
 
