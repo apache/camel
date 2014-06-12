@@ -68,14 +68,19 @@ public class ElasticsearchEndpoint extends DefaultEndpoint {
         } else {
             LOG.info("Joining ElasticSearch cluster " + config.getClusterName());
         }
-        node = config.buildNode();
-        if (config.getIp() != null && !config.isLocal()) {
+        if (config.getIp() != null) {
+            LOG.info("REMOTE ELASTICSEARCH: {}", config.getIp());
             Settings settings = ImmutableSettings.settingsBuilder()
-                    .put("cluster.name", config.getClusterName()).put("node.client", true).build();
+                    .put("cluster.name", config.getClusterName())
+                    .put("client.transport.ignore_cluster_name", false)
+                    .put("node.client", true)
+                    .put("client.transport.sniff", true)
+                    .build();
             Client client = new TransportClient(settings)
                     .addTransportAddress(new InetSocketTransportAddress(config.getIp(), config.getPort()));
             this.client = client;
         } else {
+            node = config.buildNode();
             client = node.client();
         }
     }
