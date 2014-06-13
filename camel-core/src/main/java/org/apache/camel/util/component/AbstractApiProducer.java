@@ -134,6 +134,7 @@ public abstract class AbstractApiProducer extends DefaultAsyncProducer {
      * Do additional result processing, for example, add custom headers, etc.
      * @param resultExchange API method result as exchange.
      */
+    @SuppressWarnings("unused")
     protected void doProcessResult(Exchange resultExchange) {
         // do nothing by default
     }

@@ -273,6 +273,14 @@ public final class ApiMethodHelper<T extends Enum<T> & ApiMethod> {
     }
 
     /**
+     * Returns alias map.
+     * @return alias names mapped to method names.
+     */
+    public Map<String, Set<String>> getAliases() {
+        return Collections.unmodifiableMap(ALIASES);
+    }
+
+    /**
      * Get argument types and names used by all methods.
      * @return map with argument names as keys, and types as values
      */

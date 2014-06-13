@@ -29,7 +29,15 @@ import java.util.Set;
 public abstract class ApiCollection<T extends Enum & ApiName, C> {
 
     protected final Map<T, ApiMethodHelper> apis = new HashMap<T, ApiMethodHelper>();
-    protected final Map<Class<? extends ApiMethod>, T> apiMethods = new HashMap<Class<? extends ApiMethod>, T>();
+    protected final HashMap<Class<? extends ApiMethod>, T> apiMethods = new HashMap<Class<? extends ApiMethod>, T>();
+
+    public final Map<T, ApiMethodHelper> getApiHelpers() {
+        return Collections.unmodifiableMap(apis);
+    }
+
+    public final Map<Class<? extends ApiMethod>, T> getApiMethods() {
+        return Collections.unmodifiableMap(apiMethods);
+    }
 
     /**
      * Returns a {@link ApiMethodHelper} for a particular API.

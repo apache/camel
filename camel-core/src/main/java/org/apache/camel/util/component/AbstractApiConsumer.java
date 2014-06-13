@@ -110,6 +110,7 @@ public abstract class AbstractApiConsumer extends ScheduledPollConsumer {
      * Used to add any custom/hidden method arguments, which MUST be provided in getMethodArguments() override.
      * @param argNames argument names.
      */
+    @SuppressWarnings("unused")
     protected void interceptArgumentNames(Set<String> argNames) {
         // do nothing by default
     }
@@ -172,6 +173,7 @@ public abstract class AbstractApiConsumer extends ScheduledPollConsumer {
      * Derived classes can do additional result exchange processing, for example, adding custom headers.
      * @param resultExchange result as a Camel exchange.
      */
+    @SuppressWarnings("unused")
     protected void doProcessResult(Exchange resultExchange) {
         // do nothing by default
     }
@@ -190,7 +192,7 @@ public abstract class AbstractApiConsumer extends ScheduledPollConsumer {
      * Return method arguments to use in doInvokeMethod().
      * Derived classes can override it to add custom arguments.
      * Overriding method MUST first call super.getMethodArguments() to get endpoint properties.
-     * @return
+     * @return argument names mapped to argument values
      */
     protected Map<String, Object> getMethodArguments() {
         Map<String, Object> arguments = new HashMap<String, Object>();
