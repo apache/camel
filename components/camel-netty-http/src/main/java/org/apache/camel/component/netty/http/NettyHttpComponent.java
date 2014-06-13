@@ -64,6 +64,8 @@ public class NettyHttpComponent extends NettyComponent implements HeaderFilterSt
             config = new NettyHttpConfiguration();
         }
 
+        HeaderFilterStrategy headerFilterStrategy = resolveAndRemoveReferenceParameter(parameters, "headerFilterStrategy", HeaderFilterStrategy.class);
+
         // merge any custom bootstrap configuration on the config
         NettyServerBootstrapConfiguration bootstrapConfiguration = resolveAndRemoveReferenceParameter(parameters, "bootstrapConfiguration", NettyServerBootstrapConfiguration.class);
         if (bootstrapConfiguration != null) {
@@ -106,7 +108,9 @@ public class NettyHttpComponent extends NettyComponent implements HeaderFilterSt
             DefaultNettyHttpBinding nettyHttpBinding = (DefaultNettyHttpBinding)getNettyHttpBinding();
             answer.setNettyHttpBinding(nettyHttpBinding.copy());
         }
-        if (answer.getHeaderFilterStrategy() == null) {
+        if (headerFilterStrategy != null) {
+            answer.setHeaderFilterStrategy(headerFilterStrategy);
+        } else if (answer.getHeaderFilterStrategy() == null) {
             answer.setHeaderFilterStrategy(getHeaderFilterStrategy());
         }
 
