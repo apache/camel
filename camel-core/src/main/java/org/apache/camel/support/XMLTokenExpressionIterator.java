@@ -354,6 +354,16 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
                 if (bp > 0 && ep > 0) {
                     sb.append(token.substring(bp + 1, ep));
                 }
+            } else if (mode == 't') {
+                int bp = 0;
+                for (;;) {
+                    int ep = token.indexOf('>', bp);
+                    bp = token.indexOf('<', ep);
+                    if (bp < 0) {
+                        break;
+                    }
+                    sb.append(token.substring(ep + 1, bp));
+                }
             }
 
             return sb.toString();

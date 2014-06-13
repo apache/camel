@@ -189,6 +189,11 @@ public class XMLTokenExpressionIteratorTest extends TestCase {
         ""
     };
 
+    private static final String[] RESULTS_GRANDPARENT_TEXT = {
+        "emma",
+        "ben"
+    };
+
     private static final String[] RESULTS_NULL = {
     };
  
@@ -297,6 +302,11 @@ public class XMLTokenExpressionIteratorTest extends TestCase {
     public void testExtractAuntUnwrapped() throws Exception {
         invokeAndVerify("//aunt", 
                         'u', new ByteArrayInputStream(TEST_BODY), RESULTS_AUNT_UNWRAPPED);
+    }
+
+    public void testExtractGrandParentText() throws Exception {
+        invokeAndVerify("//grandparent", 
+                        't', new ByteArrayInputStream(TEST_BODY), RESULTS_GRANDPARENT_TEXT);
     }
 
     private void invokeAndVerify(String path, char mode, InputStream in, String[] expected) throws Exception {
