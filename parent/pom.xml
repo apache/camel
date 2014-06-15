@@ -2364,6 +2364,10 @@
               <nature>org.eclipse.jdt.core.javanature</nature>
               <nature>net.sf.eclipsecs.core.CheckstyleNature</nature>
             </projectnatures>
+            <!-- exclude the old JSR173 1.0 transitive dependency through com.sun.xml.bind:jaxb-impl:jar:2.2.7 -->
+            <excludes>
+              <exclude>javax.xml.bind:jsr173_api</exclude>
+            </excludes>
             <additionalConfig>
               <file>
                 <name>.checkstyle</name>
