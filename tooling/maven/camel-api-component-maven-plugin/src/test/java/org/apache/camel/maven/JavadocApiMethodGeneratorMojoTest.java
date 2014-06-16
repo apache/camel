@@ -40,7 +40,7 @@ public class JavadocApiMethodGeneratorMojoTest extends AbstractGeneratorMojoTest
 
         final JavadocApiMethodGeneratorMojo mojo = new JavadocApiMethodGeneratorMojo();
 
-        configureMojo(mojo);
+        configureSourceGeneratorMojo(mojo);
 
         // use VelocityEngine javadoc
         mojo.proxyClass = VelocityContext.class.getCanonicalName();

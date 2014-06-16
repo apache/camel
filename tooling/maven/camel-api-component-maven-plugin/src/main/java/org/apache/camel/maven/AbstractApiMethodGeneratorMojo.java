@@ -34,7 +34,7 @@ import org.apache.velocity.VelocityContext;
 /**
  * Base Mojo class for ApiMethod generators.
  */
-public abstract class AbstractApiMethodGeneratorMojo extends AbstractGeneratorMojo {
+public abstract class AbstractApiMethodGeneratorMojo extends AbstractSourceGeneratorMojo {
 
     @Parameter(required = true, property = PREFIX + "proxyClass")
     protected String proxyClass;
@@ -275,13 +275,4 @@ public abstract class AbstractApiMethodGeneratorMojo extends AbstractGeneratorMo
         return builder.toString();
     }
 
-    public static String getCanonicalName(Class<?> type) {
-        // remove java.lang prefix for default Java package
-        String canonicalName = type.getCanonicalName();
-        final int pkgEnd = canonicalName.lastIndexOf('.');
-        if (pkgEnd > 0 && canonicalName.substring(0, pkgEnd).equals("java.lang")) {
-            canonicalName = canonicalName.substring(pkgEnd + 1);
-        }
-        return canonicalName;
-    }
 }

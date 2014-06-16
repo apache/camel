@@ -28,7 +28,6 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Properties;
 
-import org.apache.log4j.Level;
 import org.apache.log4j.Logger;
 import org.apache.maven.plugin.AbstractMojo;
 import org.apache.maven.plugin.MojoExecutionException;
@@ -43,23 +42,16 @@ import org.apache.velocity.runtime.log.Log4JLogChute;
 import org.apache.velocity.runtime.resource.loader.ClasspathResourceLoader;
 
 /**
- * Base class for Api based code generation MOJOs.
+ * Base class for API based generation MOJOs.
  */
 public abstract class AbstractGeneratorMojo extends AbstractMojo {
 
     protected static final String PREFIX = "org.apache.camel.";
     protected static final String OUT_PACKAGE = PREFIX + "component.internal";
     protected static final String COMPONENT_PACKAGE = PREFIX + "component";
-    private static final String LOGGER_PREFIX = "log4j.logger";
 
     // used for velocity logging, to avoid creating velocity.log
-    protected final Logger LOG = Logger.getLogger(this.getClass());
-
-    @Parameter(defaultValue = "${project.build.directory}/generated-sources/camel-component")
-    protected File generatedSrcDir;
-
-    @Parameter(defaultValue = "${project.build.directory}/generated-test-sources/camel-component")
-    protected File generatedTestDir;
+    protected final Logger log = Logger.getLogger(this.getClass());
 
     @Parameter(defaultValue = OUT_PACKAGE)
     protected String outPackage;
@@ -70,31 +62,23 @@ public abstract class AbstractGeneratorMojo extends AbstractMojo {
     @Parameter(required = true, property = PREFIX + "componentName")
     protected String componentName;
 
-    @Parameter(defaultValue = COMPONENT_PACKAGE)
+    @Parameter(required = true, defaultValue = COMPONENT_PACKAGE)
     protected String componentPackage;
 
-    @Parameter(defaultValue = "${project}", readonly = true)
+    @Parameter(required = true, defaultValue = "${project}", readonly = true)
     MavenProject project;
 
     private VelocityEngine engine;
     private ClassLoader projectClassLoader;
 
-    protected AbstractGeneratorMojo() {
-        // configure Log4J from system properties
-        for (String propertyName : System.getProperties().stringPropertyNames())
-        {
-            if (propertyName.startsWith(LOGGER_PREFIX)) {
-                String loggerName = propertyName.substring(LOGGER_PREFIX.length());
-                String levelName = System.getProperty(propertyName, "");
-                Level level = Level.toLevel(levelName); // defaults to DEBUG
-                if (!"".equals(levelName) && !levelName.toUpperCase().equals(level.toString())) {
-                    LOG.warn("Skipping unrecognized log4j log level " + levelName + ": -D" + propertyName + "=" + levelName);
-                    continue;
-                }
-                LOG.debug("Setting " + loggerName + " => " + level.toString());
-                Logger.getLogger(loggerName).setLevel(level);
-            }
+    public static String getCanonicalName(Class<?> type) {
+        // remove java.lang prefix for default Java package
+        String canonicalName = type.getCanonicalName();
+        final int pkgEnd = canonicalName.lastIndexOf('.');
+        if (pkgEnd > 0 && canonicalName.substring(0, pkgEnd).equals("java.lang")) {
+            canonicalName = canonicalName.substring(pkgEnd + 1);
         }
+        return canonicalName;
     }
 
     public VelocityEngine getEngine() {
@@ -104,7 +88,7 @@ public abstract class AbstractGeneratorMojo extends AbstractMojo {
             velocityProperties.setProperty(RuntimeConstants.RESOURCE_LOADER, "cloader");
             velocityProperties.setProperty("cloader.resource.loader.class", ClasspathResourceLoader.class.getName());
             velocityProperties.setProperty(RuntimeConstants.RUNTIME_LOG_LOGSYSTEM_CLASS, Log4JLogChute.class.getName());
-            velocityProperties.setProperty(Log4JLogChute.RUNTIME_LOG_LOG4J_LOGGER, LOG.getName());
+            velocityProperties.setProperty(Log4JLogChute.RUNTIME_LOG_LOG4J_LOGGER, log.getName());
             engine = new VelocityEngine(velocityProperties);
             engine.init();
         }
@@ -124,7 +108,7 @@ public abstract class AbstractGeneratorMojo extends AbstractMojo {
             for (Iterator it = classpathElements.iterator(); it.hasNext(); i++) {
                 try {
                     urls[i] = new File((String) it.next()).toURI().toURL();
-                    LOG.debug("Adding project path " + urls[i]);
+                    log.debug("Adding project path " + urls[i]);
                 } catch (MalformedURLException e) {
                     throw new MojoExecutionException(e.getMessage(), e);
                 }
@@ -137,7 +121,10 @@ public abstract class AbstractGeneratorMojo extends AbstractMojo {
 
     protected void mergeTemplate(VelocityContext context, File outFile, String templateName) throws MojoExecutionException {
         // ensure parent directories exist
-        outFile.getParentFile().mkdirs();
+        final File outDir = outFile.getParentFile();
+        if (!outDir.isDirectory() && !outDir.mkdirs()) {
+            throw new MojoExecutionException("Error creating directory " + outDir);
+        }
 
         // add generated date
         context.put("generatedDate", new Date().toString());
@@ -160,7 +147,7 @@ public abstract class AbstractGeneratorMojo extends AbstractMojo {
             if (writer != null) {
                 try {
                     writer.close();
-                } catch (IOException ignore) {}
+                } catch (IOException ignore) { }
             }
         }
     }

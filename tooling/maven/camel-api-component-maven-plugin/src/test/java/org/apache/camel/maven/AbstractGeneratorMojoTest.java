@@ -45,11 +45,15 @@ public abstract class AbstractGeneratorMojoTest {
         assertTrue("Generated file not found " + outFile.getPath(), outFile.exists());
     }
 
-    protected void configureMojo(AbstractGeneratorMojo mojo) {
-        mojo.componentName = COMPONENT_NAME;
-        mojo.scheme = SCHEME;
+    protected void configureSourceGeneratorMojo(AbstractSourceGeneratorMojo mojo) {
+        configureGeneratorMojo(mojo);
         mojo.generatedSrcDir = new File(OUT_DIR);
         mojo.generatedTestDir = new File(OUT_DIR);
+    }
+
+    protected void configureGeneratorMojo(AbstractGeneratorMojo mojo) {
+        mojo.componentName = COMPONENT_NAME;
+        mojo.scheme = SCHEME;
         mojo.outPackage = OUT_PACKAGE;
         mojo.componentPackage = COMPONENT_PACKAGE;
         mojo.project = new MavenProject((Model) null) {
@@ -66,6 +70,21 @@ public abstract class AbstractGeneratorMojoTest {
                         return OUT_DIR;
                     }
                 };
+            }
+
+            @Override
+            public String getGroupId() {
+                return "org.apache.camel.component";
+            }
+
+            @Override
+            public String getArtifactId() {
+                return "camel-test";
+            }
+
+            @Override
+            public String getVersion() {
+                return "1.0-SNAPSHOT";
             }
         };
     }

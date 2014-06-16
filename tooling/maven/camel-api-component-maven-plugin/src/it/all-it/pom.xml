@@ -77,10 +77,6 @@
               <goal>fromFile</goal>
             </goals>
             <configuration>
-              <outPackage>${outPackage}</outPackage>
-              <componentPackage>${componentPackage}</componentPackage>
-              <scheme>${scheme}</scheme>
-              <componentName>${componentName}</componentName>
               <proxyClass>org.apache.camel.component.test.TestProxy</proxyClass>
               <substitutions>
                 <substitution>
@@ -107,10 +103,6 @@
               <goal>fromJavadoc</goal>
             </goals>
             <configuration>
-              <outPackage>${outPackage}</outPackage>
-              <componentPackage>${componentPackage}</componentPackage>
-              <scheme>${scheme}</scheme>
-              <componentName>${componentName}</componentName>
               <proxyClass>org.apache.velocity.VelocityContext</proxyClass>
               <substitutions>
                 <substitution>
@@ -131,10 +123,6 @@
               <goal>fromApis</goal>
             </goals>
             <configuration>
-              <outPackage>${outPackage}</outPackage>
-              <componentPackage>${componentPackage}</componentPackage>
-              <scheme>${scheme}</scheme>
-              <componentName>${componentName}</componentName>
               <apis>
                 <api>
                   <apiName>test</apiName>
@@ -180,6 +168,37 @@
         </executions>
       </plugin>
     </plugins>
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>@project.groupId@</groupId>
+          <artifactId>@project.artifactId@</artifactId>
+          <version>@project.version@</version>
+          <configuration>
+            <scheme>${scheme}</scheme>
+            <componentName>${componentName}</componentName>
+            <outPackage>${outPackage}</outPackage>
+            <componentPackage>${componentPackage}</componentPackage>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
   </build>
+
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>@project.groupId@</groupId>
+        <artifactId>@project.artifactId@</artifactId>
+        <version>@project.version@</version>
+        <configuration>
+          <outPackage>${outPackage}</outPackage>
+          <componentPackage>${componentPackage}</componentPackage>
+          <scheme>${scheme}</scheme>
+          <componentName>${componentName}</componentName>
+        </configuration>
+      </plugin>
+    </plugins>
+  </reporting>
 
 </project>

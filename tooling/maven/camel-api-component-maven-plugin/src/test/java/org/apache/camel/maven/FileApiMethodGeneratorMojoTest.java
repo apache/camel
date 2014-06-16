@@ -44,7 +44,7 @@ public class FileApiMethodGeneratorMojoTest extends AbstractGeneratorMojoTest {
         mojo.substitutions[0] = new Substitution(".+", "(.+)", "java.util.List", "$1List", false);
         mojo.substitutions[1] = new Substitution(".+", "(.+)", ".*?(\\w++)\\[\\]", "$1Array", true);
 
-        configureMojo(mojo);
+        configureSourceGeneratorMojo(mojo);
         mojo.proxyClass = TestProxy.class.getCanonicalName();
         mojo.signatureFile = new File("src/test/resources/test-proxy-signatures.txt");
 
@@ -55,7 +55,7 @@ public class FileApiMethodGeneratorMojoTest extends AbstractGeneratorMojoTest {
         mojo.execute();
 
         // check target file was generated
-        assertTrue("Generated file not found " + outFile.getPath(), outFile.exists());
+        assertExists(outFile);
     }
 
 }

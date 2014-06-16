@@ -145,10 +145,6 @@
               <goal>fromFile</goal>
             </goals>
             <configuration>
-              <outPackage>${outPackage}</outPackage>
-              <componentPackage>${componentPackage}</componentPackage>
-              <scheme>${schemeName}</scheme>
-              <componentName>${componentName}</componentName>
               <proxyClass>${package}.${name}FileHello</proxyClass>
               <!-- Use substitutions to manipulate parameter names and avoid name clashes
               <substitutions>
@@ -170,10 +166,6 @@
               <goal>fromJavadoc</goal>
             </goals>
             <configuration>
-              <outPackage>${outPackage}</outPackage>
-              <componentPackage>${componentPackage}</componentPackage>
-              <scheme>${schemeName}</scheme>
-              <componentName>${componentName}</componentName>
               <proxyClass>${package}.${name}JavadocHello</proxyClass>
               <!-- Use substitutions to manipulate parameter names and avoid name clashes
               <substitutions>
@@ -199,10 +191,6 @@
               <goal>fromApis</goal>
             </goals>
             <configuration>
-              <outPackage>${outPackage}</outPackage>
-              <componentPackage>${componentPackage}</componentPackage>
-              <scheme>${schemeName}</scheme>
-              <componentName>${componentName}</componentName>
               <apis>
                 <api>
                   <apiName>hello-file</apiName>
@@ -262,6 +250,38 @@
       </plugin>
 
     </plugins>
+
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.camel</groupId>
+          <artifactId>camel-api-component-maven-plugin</artifactId>
+          <version>${camel-version}</version>
+          <configuration>
+            <scheme>${schemeName}</scheme>
+            <componentName>${componentName}</componentName>
+            <componentPackage>${componentPackage}</componentPackage>
+            <outPackage>${outPackage}</outPackage>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
   </build>
+
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-api-component-maven-plugin</artifactId>
+        <version>${camel-version}</version>
+        <configuration>
+          <scheme>${schemeName}</scheme>
+          <componentName>${componentName}</componentName>
+          <componentPackage>${componentPackage}</componentPackage>
+          <outPackage>${outPackage}</outPackage>
+        </configuration>
+      </plugin>
+    </plugins>
+  </reporting>
 
 </project>

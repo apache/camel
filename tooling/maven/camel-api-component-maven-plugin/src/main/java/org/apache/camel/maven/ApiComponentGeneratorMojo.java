@@ -31,7 +31,7 @@ import org.apache.velocity.VelocityContext;
  */
 @Mojo(name = "fromApis", requiresDependencyResolution = ResolutionScope.COMPILE_PLUS_RUNTIME, requiresProject = true,
         defaultPhase = LifecyclePhase.GENERATE_SOURCES)
-public class ApiComponentGeneratorMojo extends AbstractGeneratorMojo {
+public class ApiComponentGeneratorMojo extends AbstractSourceGeneratorMojo {
 
     @Parameter(required = true)
     protected ApiProxy[] apis;

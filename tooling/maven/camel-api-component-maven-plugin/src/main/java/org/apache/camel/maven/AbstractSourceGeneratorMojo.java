@@ -14,19 +14,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.test;
+package org.apache.camel.maven;
+
+import java.io.File;
+
+import org.apache.maven.plugins.annotations.Parameter;
 
 /**
- * Dummy component configuration.
+ * Base class for API based code generation MOJOs.
  */
-public class TestConfiguration {
-    private String testProperty;
+public abstract class AbstractSourceGeneratorMojo extends AbstractGeneratorMojo {
 
-    public String getTestProperty() {
-        return testProperty;
-    }
+    @Parameter(defaultValue = "${project.build.directory}/generated-sources/camel-component")
+    protected File generatedSrcDir;
 
-    public void setTestProperty(String testProperty) {
-        this.testProperty = testProperty;
-    }
+    @Parameter(defaultValue = "${project.build.directory}/generated-test-sources/camel-component")
+    protected File generatedTestDir;
+
 }

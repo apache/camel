@@ -91,7 +91,7 @@ public class JavadocApiMethodGeneratorMojo extends AbstractApiMethodGeneratorMoj
                      (classPatterns == null || !classPatterns.matcher(aClass.getSimpleName()).matches());
              aClass = aClass.getSuperclass()) {
 
-            LOG.debug("Processing " + aClass.getName());
+            log.debug("Processing " + aClass.getName());
             final String javaDocPath = aClass.getName().replaceAll("\\.", "/") + ".html";
 
             // read javadoc html text for class
@@ -99,7 +99,7 @@ public class JavadocApiMethodGeneratorMojo extends AbstractApiMethodGeneratorMoj
             try {
                 inputStream = getProjectClassLoader().getResourceAsStream(javaDocPath);
                 if (inputStream == null) {
-                    LOG.debug("JavaDoc not found on classpath for " + aClass.getName());
+                    log.debug("JavaDoc not found on classpath for " + aClass.getName());
                     break;
                 }
                 // transform the HTML to get method summary as text

@@ -17,39 +17,33 @@
 package org.apache.camel.maven;
 
 import java.io.File;
-import java.util.ArrayList;
-import java.util.List;
 
-import org.apache.camel.component.test.TestProxy;
-import org.apache.velocity.VelocityContext;
+import org.junit.Ignore;
 import org.junit.Test;
 
 /**
- * Tests {@link ApiComponentGeneratorMojo}
+ * Tests {@link org.apache.camel.maven.FileApiMethodGeneratorMojo}
  */
-public class ApiComponentGeneratorMojoTest extends AbstractGeneratorMojoTest {
+public class DocumentGeneratorMojoTest extends AbstractGeneratorMojoTest {
 
+    @Ignore(value = "Can only be run manually after generating and compiling code from other generators")
     @Test
     public void testExecute() throws Exception {
+        // delete target file to begin
+        final File outDir = new File("target/site/camelDocs");
+        final File outFile = new File(outDir, "TestComponent.html");
+        if (outFile.exists()) {
+            outFile.delete();
+        }
 
-        final File collectionFile = new File(OUT_DIR, PACKAGE_PATH + COMPONENT_NAME + "ApiCollection.java");
-
-        // delete target files to begin
-        collectionFile.delete();
-
-        final ApiComponentGeneratorMojo mojo = new ApiComponentGeneratorMojo();
-        configureSourceGeneratorMojo(mojo);
-
-        mojo.apis = new ApiProxy[2];
-        mojo.apis[0] = new ApiProxy("test", TestProxy.class.getName());
-        List<ApiMethodAlias> aliases = new ArrayList<ApiMethodAlias>();
-        aliases.add(new ApiMethodAlias("get(.+)", "$1"));
-        aliases.add(new ApiMethodAlias("set(.+)", "$1"));
-        mojo.apis[1] = new ApiProxy("velocity", VelocityContext.class.getName(), aliases);
+        final DocumentGeneratorMojo mojo = new DocumentGeneratorMojo();
+        configureGeneratorMojo(mojo);
+        mojo.setReportOutputDirectory(outDir);
 
         mojo.execute();
 
         // check target file was generated
-        assertExists(collectionFile);
+        assertExists(outFile);
     }
+
 }
