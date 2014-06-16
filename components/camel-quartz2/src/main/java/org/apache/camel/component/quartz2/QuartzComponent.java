@@ -26,7 +26,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.StartupListener;
-import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
@@ -48,7 +48,7 @@ import org.slf4j.LoggerFactory;
  * of the code, but mostly has been re-written in attempt to be more easier to maintain, and use Quartz more
  * fully.</p>
  */
-public class QuartzComponent extends DefaultComponent implements StartupListener {
+public class QuartzComponent extends UriEndpointComponent implements StartupListener {
     private static final Logger LOG = LoggerFactory.getLogger(QuartzComponent.class);
     private SchedulerFactory schedulerFactory;
     private Scheduler scheduler;
@@ -60,10 +60,11 @@ public class QuartzComponent extends DefaultComponent implements StartupListener
     private boolean enableJmx = true;
 
     public QuartzComponent() {
+        super(QuartzEndpoint.class);
     }
 
     public QuartzComponent(CamelContext camelContext) {
-        super(camelContext);
+        super(camelContext, QuartzEndpoint.class);
     }
 
     public int getStartDelayedSeconds() {
