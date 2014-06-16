@@ -54,7 +54,7 @@ import org.springframework.context.support.FileSystemXmlApplicationContext;
 @SuppressWarnings("deprecation")
 public class Main extends MainSupport {
 
-    public static final String LOCATION_PROPERTIES = "META-INF/spring/location.properties";
+    public static final String LOCATION_PROPERTIES = "META-INF/camel-spring/location.properties";
     protected static Main instance;
     private static final Charset UTF8 = Charset.forName("UTF-8");
 
@@ -62,6 +62,7 @@ public class Main extends MainSupport {
     private String fileApplicationContextUri;
     private AbstractApplicationContext applicationContext;
     private AbstractApplicationContext parentApplicationContext;
+    private AbstractApplicationContext additionalApplicationContext;
     private String parentApplicationContextUri;
 
     public Main() {
@@ -155,6 +156,16 @@ public class Main extends MainSupport {
         if (applicationContext == null) {
             applicationContext = createDefaultApplicationContext();
         }
+
+        // then start any additional after Camel has been started
+        if (additionalApplicationContext == null) {
+            additionalApplicationContext = createAdditionalLocationsFromClasspath();
+            if (additionalApplicationContext != null) {
+                LOG.debug("Starting Additional ApplicationContext: " + additionalApplicationContext.getId());
+                additionalApplicationContext.start();
+            }
+        }
+
         LOG.debug("Starting Spring ApplicationContext: " + applicationContext.getId());
         applicationContext.start();
 
@@ -163,6 +174,10 @@ public class Main extends MainSupport {
 
     protected void doStop() throws Exception {
         super.doStop();
+        if (additionalApplicationContext != null) {
+            LOG.debug("Stopping Additional ApplicationContext: " + additionalApplicationContext.getId());
+            IOHelper.close(additionalApplicationContext);
+        }
         if (applicationContext != null) {
             LOG.debug("Stopping Spring ApplicationContext: " + applicationContext.getId());
             IOHelper.close(applicationContext);
@@ -181,9 +196,7 @@ public class Main extends MainSupport {
     }
 
     protected AbstractApplicationContext createDefaultApplicationContext() throws IOException {
-        // daisy chain the parent and additional contexts
         ApplicationContext parentContext = getParentApplicationContext();
-        parentContext = addAdditionalLocationsFromClasspath(parentContext);
 
         // file based
         if (getFileApplicationContextUri() != null) {
@@ -221,9 +234,7 @@ public class Main extends MainSupport {
         return new ModelFileGenerator(new CamelNamespaceHandler().getJaxbContext());
     }
 
-    protected ApplicationContext addAdditionalLocationsFromClasspath(ApplicationContext parentContext) throws IOException {
-        StringBuilder sb = new StringBuilder();
-
+    protected AbstractApplicationContext createAdditionalLocationsFromClasspath() throws IOException {
         Set<String> locations = new LinkedHashSet<String>();
         findLocations(locations, Main.class.getClassLoader());
 
@@ -231,15 +242,7 @@ public class Main extends MainSupport {
             LOG.info("Found locations for additional Spring XML files: {}", locations);
 
             String[] locs = locations.toArray(new String[locations.size()]);
-            ClassPathXmlApplicationContext additionalContext;
-            if (parentContext != null) {
-                additionalContext = new ClassPathXmlApplicationContext(locs, parentContext);
-            } else {
-                additionalContext = new ClassPathXmlApplicationContext(locs);
-            }
-            // and we must start the app context as well
-            additionalContext.start();
-            return additionalContext;
+            return new ClassPathXmlApplicationContext(locs);
         } else {
             return null;
         }
