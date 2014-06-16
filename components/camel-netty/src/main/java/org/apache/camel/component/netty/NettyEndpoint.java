@@ -29,13 +29,17 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.impl.SynchronousDelegateProducer;
+import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
 import org.apache.camel.util.ObjectHelper;
 import org.jboss.netty.channel.ChannelHandlerContext;
 import org.jboss.netty.channel.MessageEvent;
 import org.jboss.netty.handler.ssl.SslHandler;
 import org.jboss.netty.util.Timer;
 
+@UriEndpoint(scheme = "netty", consumerClass = NettyConsumer.class)
 public class NettyEndpoint extends DefaultEndpoint {
+    @UriParam
     private NettyConfiguration configuration;
     private Timer timer;
 
