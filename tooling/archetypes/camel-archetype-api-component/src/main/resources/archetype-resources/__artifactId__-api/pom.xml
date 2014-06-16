@@ -28,6 +28,7 @@
   <artifactId>${artifactId}-api</artifactId>
   <name>Camel ${name} Component API</name>
   <url>http://www.myorganization.org</url>
+  <description>API for Camel ${name} Component</description>
 
   <properties>
     <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>

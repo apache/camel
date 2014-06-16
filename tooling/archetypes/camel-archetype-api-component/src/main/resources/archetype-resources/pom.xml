@@ -26,6 +26,7 @@
 
   <name>Camel ${name} Component Parent</name>
   <url>http://www.myorganization.org</url>
+  <description>Parent project for Camel {$name} Component</description>
 
   <modules>
     <module>${artifactId}-component</module>
