@@ -25,6 +25,8 @@ import java.util.Map;
 
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriParams;
 import org.apache.camel.util.EndpointHelper;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
@@ -36,33 +38,56 @@ import org.jboss.netty.util.CharsetUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@UriParams
 public class NettyConfiguration extends NettyServerBootstrapConfiguration implements Cloneable {
     private static final Logger LOG = LoggerFactory.getLogger(NettyConfiguration.class);
 
+    @UriParam
     private long requestTimeout;
+    @UriParam
     private boolean sync = true;
+    @UriParam
     private boolean textline;
+    @UriParam
     private TextLineDelimiter delimiter = TextLineDelimiter.LINE;
+    @UriParam
     private boolean autoAppendDelimiter = true;
+    @UriParam
     private int decoderMaxLineLength = 1024;
+    @UriParam
     private String encoding;
     private List<ChannelHandler> encoders = new ArrayList<ChannelHandler>();
     private List<ChannelHandler> decoders = new ArrayList<ChannelHandler>();
+    @UriParam
     private boolean disconnect;
+    @UriParam
     private boolean lazyChannelCreation = true;
+    @UriParam
     private boolean transferExchange;
+    @UriParam
     private boolean disconnectOnNoReply = true;
+    @UriParam
     private LoggingLevel noReplyLogLevel = LoggingLevel.WARN;
+    @UriParam
     private LoggingLevel serverExceptionCaughtLogLevel = LoggingLevel.WARN;
+    @UriParam
     private LoggingLevel serverClosedChannelExceptionCaughtLogLevel = LoggingLevel.DEBUG;
+    @UriParam
     private boolean allowDefaultCodec = true;
     private ClientPipelineFactory clientPipelineFactory;
+    @UriParam
     private int maximumPoolSize = 16;
+    @UriParam
     private boolean orderedThreadPoolExecutor = true;
+    @UriParam
     private int producerPoolMaxActive = -1;
+    @UriParam
     private int producerPoolMinIdle;
+    @UriParam
     private int producerPoolMaxIdle = 100;
+    @UriParam
     private long producerPoolMinEvictableIdle = 5 * 60 * 1000L;
+    @UriParam
     private boolean producerPoolEnabled = true;
 
     /**
