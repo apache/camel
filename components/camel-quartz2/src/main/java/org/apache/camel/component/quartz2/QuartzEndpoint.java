@@ -28,6 +28,8 @@ import org.apache.camel.Route;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.processor.loadbalancer.LoadBalancer;
 import org.apache.camel.processor.loadbalancer.RoundRobinLoadBalancer;
+import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
 import org.quartz.Job;
 import org.quartz.JobBuilder;
 import org.quartz.JobDataMap;
@@ -48,21 +50,30 @@ import static org.quartz.SimpleScheduleBuilder.simpleSchedule;
  * call back into {@link #onConsumerStart(QuartzConsumer)} to add/resume or {@link #onConsumerStop(QuartzConsumer)}
  * to pause the scheduler trigger.
  */
+@UriEndpoint(scheme = "quartz2", consumerClass = QuartzComponent.class)
 public class QuartzEndpoint extends DefaultEndpoint {
     private static final Logger LOG = LoggerFactory.getLogger(QuartzEndpoint.class);
     private TriggerKey triggerKey;
+    @UriParam
     private String cron;
     private LoadBalancer consumerLoadBalancer;
     private Map<String, Object> triggerParameters;
     private Map<String, Object> jobParameters;
+    @UriParam
     private boolean stateful;
+    @UriParam
     private boolean fireNow;
+    @UriParam
     private boolean deleteJob = true;
+    @UriParam
     private boolean pauseJob;
+    @UriParam
     private boolean durableJob;
+    @UriParam
     private boolean recoverableJob;
     /** In case of scheduler has already started, we want the trigger start slightly after current time to
      * ensure endpoint is fully started before the job kicks in. */
+    @UriParam
     private long triggerStartDelay = 500; // in millis second
 
     // An internal variables to track whether a job has been in scheduler or not, and has it paused or not.
