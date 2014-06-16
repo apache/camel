@@ -22,11 +22,14 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
 import org.jgroups.Channel;
 import org.jgroups.JChannel;
 import org.jgroups.Message;
 import org.jgroups.View;
 
+@UriEndpoint(scheme = "jgroups", consumerClass = JGroupsConsumer.class)
 public class JGroupsEndpoint extends DefaultEndpoint {
 
     public static final String HEADER_JGROUPS_ORIGINAL_MESSAGE = "JGROUPS_ORIGINAL_MESSAGE";
@@ -41,12 +44,16 @@ public class JGroupsEndpoint extends DefaultEndpoint {
 
     private Channel resolvedChannel;
 
+    @UriParam
     private String clusterName;
 
+    @UriParam
     private String channelProperties;
 
+    @UriParam
     private Boolean enableViewMessages;
 
+    @UriParam
     private boolean resolvedEnableViewMessages;
 
     public JGroupsEndpoint(String endpointUri, Component component, Channel channel, String clusterName, String channelProperties, Boolean enableViewMessages) {

@@ -19,19 +19,23 @@ package org.apache.camel.component.jgroups;
 import java.util.Map;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.impl.UriEndpointComponent;
 import org.jgroups.Channel;
 
 /**
  * Component providing support for messages multicasted from- or to JGroups channels ({@code org.jgroups.Channel}).
  */
-public class JGroupsComponent extends DefaultComponent {
+public class JGroupsComponent extends UriEndpointComponent {
 
     private Channel channel;
 
     private String channelProperties;
 
     private Boolean enableViewMessages;
+
+    public JGroupsComponent() {
+        super(JGroupsEndpoint.class);
+    }
 
     @Override
     protected Endpoint createEndpoint(String uri, String clusterName, Map<String, Object> parameters) throws Exception {
