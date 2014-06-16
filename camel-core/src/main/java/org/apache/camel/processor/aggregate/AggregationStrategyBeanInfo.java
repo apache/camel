@@ -16,6 +16,7 @@
  */
 package org.apache.camel.processor.aggregate;
 
+import java.lang.annotation.Annotation;
 import java.lang.reflect.Method;
 import java.util.ArrayList;
 import java.util.List;
@@ -62,10 +63,11 @@ public class AggregationStrategyBeanInfo {
         }
 
         // must not have annotations as they are not supported (yet)
-        for (int i = 0; i < size; i++) {
-            Class<?> type = parameterTypes[i];
-            if (type.getAnnotations().length > 0) {
-                throw new IllegalArgumentException("Parameter annotations at index " + i + " is not supported on method: " + method);
+        Annotation[][] parameterAnnotations = method.getParameterAnnotations();
+        for (int i = 0; i < parameterAnnotations.length; i++) {
+            Annotation[] annotations = parameterAnnotations[i];
+            if (annotations.length > 0) {
+                throw new IllegalArgumentException("Method parameter annotation: " + annotations[0] + " at index: " + i + " is not supported on method: " + method);
             }
         }
 
