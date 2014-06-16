@@ -62,8 +62,8 @@ public class ClientChannelHandler extends SimpleChannelUpstreamHandler {
     public void exceptionCaught(ChannelHandlerContext ctx, ExceptionEvent exceptionEvent) throws Exception {
         if (LOG.isTraceEnabled()) {
             LOG.trace("Exception caught at Channel: " + ctx.getChannel(), exceptionEvent.getCause());
-
         }
+         
         if (exceptionHandled) {
             // ignore subsequent exceptions being thrown
             return;
@@ -108,6 +108,8 @@ public class ClientChannelHandler extends SimpleChannelUpstreamHandler {
         producer.getAllChannels().remove(ctx.getChannel());
 
         if (producer.getConfiguration().isSync() && !messageReceived && !exceptionHandled) {
+            // To avoid call the callback.done twice 
+            exceptionHandled = true;
             // session was closed but no message received. This could be because the remote server had an internal error
             // and could not return a response. We should count down to stop waiting for a response
             if (LOG.isDebugEnabled()) {
