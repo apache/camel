@@ -23,6 +23,8 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.util.component.AbstractApiEndpoint;
 import org.apache.camel.util.component.ApiMethodPropertiesHelper;
 
+import ${package}.api.${name}FileHello;
+import ${package}.api.${name}JavadocHello;
 import ${package}.internal.${name}ApiCollection;
 import ${package}.internal.${name}ApiName;
 import ${package}.internal.${name}PropertiesHelper;

@@ -14,12 +14,12 @@
 ## See the License for the specific language governing permissions and
 ## limitations under the License.
 ## ------------------------------------------------------------------------
-package ${package};
+package ${package}.api;
 
 /**
- * Sample API used by ${name} Component whose method signatures are read from Javadoc.
+ * Sample API used by ${name} Component whose method signatures are read from File.
  */
-public class ${name}JavadocHello {
+public class ${name}FileHello {
 
     public String sayHi() {
         return "Hello!";

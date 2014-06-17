@@ -128,8 +128,21 @@
         <extensions>true</extensions>
         <configuration>
           <instructions>
+            <Bundle-Name>Camel Component for ${componentName}</Bundle-Name>
             <Bundle-SymbolicName>${groupId}.${artifactId}</Bundle-SymbolicName>
-            <Export-Service>org.apache.camel.spi.ComponentResolver;component=${scheme}</Export-Service>
+            <Export-Service>org.apache.camel.spi.ComponentResolver;component=${schemeName}</Export-Service>
+            <Export-Package>${componentPackage};version=${project.version}</Export-Package>
+            <Import-Package>
+              ${componentPackage}.api;version=${project.version},
+              ${componentPackage};version=${project.version},
+              org.apache.camel.*;version=${camel-version}
+            </Import-Package>
+            <Private-Package>${outPackage}</Private-Package>
+            <Implementation-Title>Apache Camel</Implementation-Title>
+            <Implementation-Version>${project.version}</Implementation-Version>
+            <Karaf-Info>Camel;${project.artifactId}=${project.version}</Karaf-Info>
+            <_versionpolicy>[$(version;==;$(@)),$(version;+;$(@)))</_versionpolicy>
+            <_failok>false</_failok>
           </instructions>
         </configuration>
       </plugin>
@@ -146,7 +159,7 @@
               <goal>fromFile</goal>
             </goals>
             <configuration>
-              <proxyClass>${package}.${name}FileHello</proxyClass>
+              <proxyClass>${package}.api.${name}FileHello</proxyClass>
               <!-- Use substitutions to manipulate parameter names and avoid name clashes
               <substitutions>
                 <substitution>
@@ -167,7 +180,7 @@
               <goal>fromJavadoc</goal>
             </goals>
             <configuration>
-              <proxyClass>${package}.${name}JavadocHello</proxyClass>
+              <proxyClass>${package}.api.${name}JavadocHello</proxyClass>
               <!-- Use substitutions to manipulate parameter names and avoid name clashes
               <substitutions>
                 <substitution>
@@ -195,7 +208,7 @@
               <apis>
                 <api>
                   <apiName>hello-file</apiName>
-                  <proxyClass>${package}.${name}FileHello</proxyClass>
+                  <proxyClass>${package}.api.${name}FileHello</proxyClass>
                   <!-- Use method aliases in endpoint URIs, e.g. support 'widget' as alias for getWidget or setWidget
                   <aliases>
                     <alias>
@@ -211,7 +224,7 @@
                 </api>
                 <api>
                   <apiName>hello-javadoc</apiName>
-                  <proxyClass>${package}.${name}JavadocHello</proxyClass>
+                  <proxyClass>${package}.api.${name}JavadocHello</proxyClass>
                 </api>
               </apis>
             </configuration>
