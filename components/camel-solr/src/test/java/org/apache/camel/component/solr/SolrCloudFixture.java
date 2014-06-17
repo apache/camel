@@ -2,28 +2,40 @@ package org.apache.camel.component.solr;
 
 import java.io.File;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.log4j.Logger;
+import org.apache.solr.SolrTestCaseJ4;
 import org.apache.solr.client.solrj.embedded.JettySolrRunner;
 import org.apache.solr.client.solrj.impl.CloudSolrServer;
+import org.apache.solr.client.solrj.request.QueryRequest;
 import org.apache.solr.cloud.AbstractZkTestCase;
+import org.apache.solr.cloud.MiniSolrCloudCluster;
+import org.apache.solr.cloud.ZkController;
 import org.apache.solr.cloud.ZkTestServer;
+import org.apache.solr.common.SolrInputDocument;
 import org.apache.solr.common.cloud.ClusterState;
 import org.apache.solr.common.cloud.Slice;
 import org.apache.solr.common.cloud.SolrZkClient;
 import org.apache.solr.common.cloud.ZkNodeProps;
 import org.apache.solr.common.cloud.ZkStateReader;
+import org.apache.solr.common.params.CoreAdminParams;
+import org.apache.solr.common.params.ModifiableSolrParams;
+import org.apache.solr.common.params.CollectionParams.CollectionAction;
+import org.apache.solr.common.util.NamedList;
 import org.apache.solr.servlet.SolrDispatchFilter;
 import org.apache.zookeeper.CreateMode;
 
+/**
+ * 
+ */
 public class SolrCloudFixture {
 
+	MiniSolrCloudCluster miniCluster;
 	File testDir;
-	ZkTestServer zkServer;
-	JettySolrRunner jetty1;
-	AtomicInteger nodeCnt;
+	SolrZkClient zkClient = null;
 
 	CloudSolrServer solrClient = null;
 
@@ -43,11 +55,26 @@ public class SolrCloudFixture {
 					"To run tests, you need to define system property 'tempDir' or 'java.io.tmpdir'.");
 		TEMP_DIR = new File(s);
 		TEMP_DIR.mkdirs();
+		System.out.println("Created: " + TEMP_DIR.getAbsolutePath());
 	}
 
 	public static void putConfig(String confName, SolrZkClient zkClient,
 			File solrhome, final String name) throws Exception {
 		putConfig(confName, zkClient, solrhome, name, name);
+	}
+
+	protected NamedList<Object> createCollection(CloudSolrServer server,
+			String name, int numShards, int replicationFactor, String configName)
+			throws Exception {
+		ModifiableSolrParams modParams = new ModifiableSolrParams();
+		modParams.set(CoreAdminParams.ACTION, CollectionAction.CREATE.name());
+		modParams.set("name", name);
+		modParams.set("numShards", numShards);
+		modParams.set("replicationFactor", replicationFactor);
+		modParams.set("collection.configName", configName);
+		QueryRequest request = new QueryRequest(modParams);
+		request.setPath("/admin/collections");
+		return server.request(request);
 	}
 
 	public static void putConfig(String confName, SolrZkClient zkClient,
@@ -69,31 +96,27 @@ public class SolrCloudFixture {
 	// static to share with distrib test
 	public void buildZooKeeper(String zkHost, String zkAddress, File solrhome,
 			String config, String schema) throws Exception {
-		SolrZkClient zkClient = new SolrZkClient(zkHost, 60000);
-		zkClient.makePath("/solr", false, true);
-		zkClient.close();
-
 		zkClient = new SolrZkClient(zkAddress, 60000);
 
 		Map<String, Object> props = new HashMap<String, Object>();
 		props.put("configName", "conf1");
 		final ZkNodeProps zkProps = new ZkNodeProps(props);
 
-		zkClient.makePath("/collections/collection1",
-				ZkStateReader.toJSON(zkProps), CreateMode.PERSISTENT, true);
-		zkClient.makePath("/collections/collection1/shards",
-				CreateMode.PERSISTENT, true);
-		zkClient.makePath("/collections/control_collection",
-				ZkStateReader.toJSON(zkProps), CreateMode.PERSISTENT, true);
-		zkClient.makePath("/collections/control_collection/shards",
-				CreateMode.PERSISTENT, true);
+		// zkClient.makePath("/collections/collection1",
+		// ZkStateReader.toJSON(zkProps), CreateMode.PERSISTENT, true);
+		// zkClient.makePath("/collections/collection1/shards",
+		// CreateMode.PERSISTENT, true);
+		// zkClient.makePath("/collections/control_collection",
+		// ZkStateReader.toJSON(zkProps), CreateMode.PERSISTENT, true);
+		// zkClient.makePath("/collections/control_collection/shards",
+		// CreateMode.PERSISTENT, true);
 
 		// for now, always upload the config and schema to the canonical names
 		putConfig("conf1", zkClient, solrhome, config, "solrconfig.xml");
 		putConfig("conf1", zkClient, solrhome, schema, "schema.xml");
 
-		putConfig("conf1", zkClient, solrhome,
-				"solrconfig.snippet.randomindexconfig.xml");
+		// putConfig("conf1", zkClient, solrhome,
+		// "solrconfig.snippet.randomindexconfig.xml");
 		putConfig("conf1", zkClient, solrhome, "stopwords.txt");
 		putConfig("conf1", zkClient, solrhome, "stopwords_en.txt");
 		putConfig("conf1", zkClient, solrhome, "protwords.txt");
@@ -107,67 +130,43 @@ public class SolrCloudFixture {
 		zkClient.close();
 	}
 
-	public JettySolrRunner createJetty(File solrHome, String dataDir,
-			String shardList, String solrConfigOverride, String schemaOverride,
-			boolean explicitCoreNodeName) throws Exception {
-
-		boolean stopAtShutdown = true;
-		JettySolrRunner jetty = new JettySolrRunner(solrHome.getAbsolutePath(),
-				"/solr", 0, solrConfigOverride, schemaOverride, stopAtShutdown,
-				null, null, null);
-		jetty.setShards(shardList);
-		jetty.setDataDir(dataDir);
-		if (explicitCoreNodeName) {
-			jetty.setCoreNodeName(Integer.toString(nodeCnt.get()));
-		}
-		jetty.start();
-		log.info("Test SolrCloud Jetty started at: " + jetty.getBaseUrl());
-
-		return jetty;
-	}
-
 	public SolrCloudFixture(String solrHome) throws Exception {
 
-		nodeCnt = new AtomicInteger(1);
-		testDir = new File(TEMP_DIR, getClass().getName() + "-"
-				+ System.currentTimeMillis());
-		testDir.mkdirs();
-		String zkDir = testDir.getAbsolutePath() + File.separator
-				+ "zookeeper/server1/data";
-		zkServer = new ZkTestServer(zkDir);
-		zkServer.run();
+		// String testHome = SolrTestCaseJ4.TEST_HOME();
+		// miniCluster = new MiniSolrCloudCluster(NUM_SERVERS, null, new
+		// File(testHome, "solr-no-core.xml"),
+		// null, null);
+		miniCluster = new MiniSolrCloudCluster(1, "/solr", new File(solrHome,
+				"solr-no-core.xml"), null, null);
+		String zkAddr = miniCluster.getZkServer().getZkAddress();
+		String zkHost = miniCluster.getZkServer().getZkHost();
 
-		System.setProperty("solrcloud.skip.autorecovery", "true");
-		System.setProperty("zkHost", zkServer.getZkAddress());
-		System.setProperty("jetty.port", "0000");
-		System.setProperty("solr.test.sys.prop1", "propone");
-		System.setProperty("solr.test.sys.prop2", "proptwo");
+		buildZooKeeper(zkHost, zkAddr, new File(solrHome), "solrconfig.xml",
+				"schema.xml");
+		List<JettySolrRunner> jettys = miniCluster.getJettySolrRunners();
+		for (JettySolrRunner jetty : jettys) {
+			if (!jetty.isRunning()) {
+				System.out.println("JETTY NOT RUNNING!");
+			} else {
+				// jetty.stop();
+				// jetty.start();
+				System.out.println("JETTY RUNNING");
+				System.out.println("AT:  " + jetty.getBaseUrl());
+				System.out.println("PORTT" + jetty.getLocalPort());
+			}
+		}
 
-		File solrHomeFile = new File(solrHome);
-		buildZooKeeper(zkServer.getZkHost(), zkServer.getZkAddress(),
-				solrHomeFile, "solrconfig.xml", "schema.xml");
+		solrClient = new CloudSolrServer(zkAddr, true);
+		solrClient.connect();
 
-		int aShard = nodeCnt.get();
-		String shardName = "shard" + aShard;
-		jetty1 = createJetty(solrHomeFile, testDir.getAbsolutePath() + "/shard"
-				+ aShard + "/data", shardName, "solrconfig.xml", "schema.xml",
-				true);
-
-		log.info("Waiting for leader for shard: " + shardName);
-		ZkStateReader zkStateReader = ((SolrDispatchFilter) jetty1
-				.getDispatchFilter().getFilter()).getCores().getZkController()
-				.getZkStateReader();
-		zkStateReader.getLeaderRetry("collection1", shardName, 15000);
-
-		zkStateReader.updateClusterState(true);
-		ClusterState clusterState = zkStateReader.getClusterState();
-		Map<String, Slice> slices = clusterState.getSlicesMap("collection1");
-
-		solrClient = new CloudSolrServer(zkServer.getZkAddress());
+		createCollection(solrClient, "collection1", 1, 1, "conf1");
 		solrClient.setDefaultCollection("collection1");
-		solrClient.deleteByQuery("*:*");
-		solrClient.commit();
 
+		SolrInputDocument doc = new SolrInputDocument();
+		doc.setField("id", "1");
+
+		solrClient.add(doc);
+		solrClient.commit();
 	}
 
 	public void teardown() {

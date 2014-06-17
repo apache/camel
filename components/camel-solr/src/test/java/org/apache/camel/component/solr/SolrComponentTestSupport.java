@@ -33,12 +33,13 @@ import org.eclipse.jetty.servlet.ServletHolder;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
+import org.junit.Ignore;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
 @RunWith(Parameterized.class)
-public class SolrComponentTestSupport extends SolrTestSupport {
+public abstract class SolrComponentTestSupport extends SolrTestSupport {
     protected static final String TEST_ID = "test1";
     protected static final String TEST_ID2 = "test2";
    

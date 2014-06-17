@@ -55,7 +55,7 @@ public class SolrFixtures {
     	
     	log.info("Started Test Server: " + solrRunner.getBaseUrl());
     	
-    	//cloudFixture = new SolrCloudFixture("src/test/resources/solr");
+    	cloudFixture = new SolrCloudFixture("src/test/resources/solr");
 
     }
     
