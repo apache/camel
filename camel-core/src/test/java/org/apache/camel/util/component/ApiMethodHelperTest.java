@@ -28,7 +28,7 @@ import static org.junit.Assert.assertEquals;
 
 public class ApiMethodHelperTest {
 
-    private static TestMethod[] sayHis = new TestMethod[] { TestMethod.SAYHI, TestMethod.SAYHI_1};
+    private static TestMethod[] sayHis = new TestMethod[] {TestMethod.SAYHI, TestMethod.SAYHI_1};
     private static ApiMethodHelper<TestMethod> apiMethodHelper;
 
     static {

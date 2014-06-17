@@ -33,10 +33,10 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class ApiMethodPropertiesHelper<C> {
 
-    protected Logger LOG = LoggerFactory.getLogger(ApiMethodPropertiesHelper.class);
+    protected static final Logger LOG = LoggerFactory.getLogger(ApiMethodPropertiesHelper.class);
 
     // set of field names which are specific to the api, to be excluded from method argument considerations
-    protected final Set<String> COMPONENT_CONFIG_FIELDS = new HashSet<String>();
+    protected final Set<String> componentConfigFields = new HashSet<String>();
 
     protected final Class<?> componentConfigClass;
     protected final String propertyPrefix;
@@ -47,7 +47,7 @@ public abstract class ApiMethodPropertiesHelper<C> {
         this.propertyPrefix = propertyPrefix;
 
         for (Field field : componentConfiguration.getDeclaredFields()) {
-            COMPONENT_CONFIG_FIELDS.add(field.getName());
+            componentConfigFields.add(field.getName());
         }
     }
 
@@ -77,7 +77,7 @@ public abstract class ApiMethodPropertiesHelper<C> {
         if (IntrospectionSupport.getProperties(endpointConfiguration, properties, null, false)) {
             final Set<String> names = properties.keySet();
             // remove component config properties so we only have endpoint properties
-            names.removeAll(COMPONENT_CONFIG_FIELDS);
+            names.removeAll(componentConfigFields);
         }
         if (LOG.isDebugEnabled()) {
             final Set<String> names = properties.keySet();

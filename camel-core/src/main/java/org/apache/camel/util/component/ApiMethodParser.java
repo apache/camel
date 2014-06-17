@@ -138,9 +138,9 @@ public abstract class ApiMethodParser<T> {
                     allArguments.put(name, type);
                 } else {
                     if (argClass != type) {
-                        throw new IllegalArgumentException("Argument [" + name +
-                                "] is used in multiple methods with different types " +
-                                argClass.getCanonicalName() + ", " + type.getCanonicalName());
+                        throw new IllegalArgumentException("Argument [" + name 
+                                + "] is used in multiple methods with different types " 
+                                + argClass.getCanonicalName() + ", " + type.getCanonicalName());
                     }
                 }
             }

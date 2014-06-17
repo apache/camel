@@ -51,7 +51,7 @@ public final class ApiMethodHelper<T extends Enum<T> & ApiMethod> {
     private final Map<String, Class<?>> validArguments = new HashMap<String, Class<?>>();
 
     // maps aliases to actual method names
-    private final HashMap<String, Set<String>> aliases = new HashMap<String, Set<String>>();
+    private final HashMap<String, Set<String>> aliasesMap = new HashMap<String, Set<String>>();
 
     /**
      * Create a helper to work with a {@link ApiMethod}, using optional method aliases.
@@ -95,10 +95,10 @@ public final class ApiMethodHelper<T extends Enum<T> & ApiMethod> {
                         builder.append(Character.toLowerCase(firstChar)).append(alias.substring(1));
                         alias = builder.toString();
                     }
-                    Set<String> names = this.aliases.get(alias);
+                    Set<String> names = aliasesMap.get(alias);
                     if (names == null) {
                         names = new HashSet<String>();
-                        this.aliases.put(alias, names);
+                        aliasesMap.put(alias, names);
                     }
                     names.add(name);
                 }
@@ -158,9 +158,9 @@ public final class ApiMethodHelper<T extends Enum<T> & ApiMethod> {
     public List<ApiMethod> getCandidateMethods(String name, String... argNames) {
         List<T> methods = methodMap.get(name);
         if (methods == null) {
-            if (aliases.containsKey(name)) {
+            if (aliasesMap.containsKey(name)) {
                 methods = new ArrayList<T>();
-                for (String method : aliases.get(name)) {
+                for (String method : aliasesMap.get(name)) {
                     methods.addAll(methodMap.get(method));
                 }
             }
@@ -241,9 +241,9 @@ public final class ApiMethodHelper<T extends Enum<T> & ApiMethod> {
     public List<Object> getArguments(final String name) throws IllegalArgumentException {
         List<Object> arguments = argumentsMap.get(name);
         if (arguments == null) {
-            if (aliases.containsKey(name)) {
+            if (aliasesMap.containsKey(name)) {
                 arguments = new ArrayList<Object>();
-                for (String method : aliases.get(name)) {
+                for (String method : aliasesMap.get(name)) {
                     arguments.addAll(argumentsMap.get(method));
                 }
             }
@@ -279,7 +279,7 @@ public final class ApiMethodHelper<T extends Enum<T> & ApiMethod> {
      * @return alias names mapped to method names.
      */
     public Map<String, Set<String>> getAliases() {
-        return Collections.unmodifiableMap(aliases);
+        return Collections.unmodifiableMap(aliasesMap);
     }
 
     /**

@@ -38,7 +38,7 @@ public class ApiMethodPropertiesHelperTest {
     private static final String VALUE_4 = "true";
 
     private static ApiMethodPropertiesHelper propertiesHelper =
-            new ApiMethodPropertiesHelper<TestComponentConfiguration>(TestComponentConfiguration.class, TEST_PREFIX){};
+            new ApiMethodPropertiesHelper<TestComponentConfiguration>(TestComponentConfiguration.class, TEST_PREFIX) { };
 
     @Test
     public void testGetExchangeProperties() throws Exception {
