@@ -17,6 +17,7 @@
 package org.apache.camel.util.component;
 
 import java.lang.reflect.Array;
+import java.lang.reflect.InvocationTargetException;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
@@ -375,6 +376,11 @@ public final class ApiMethodHelper<T extends Enum<T> & ApiMethod> {
         try {
             return method.getMethod().invoke(proxy, values);
         } catch (Throwable e) {
+            if (e instanceof InvocationTargetException) {
+                // get API exception
+                final Throwable cause = e.getCause();
+                e = (cause != null) ? cause : e;
+            }
             throw new RuntimeCamelException(
                 String.format("Error invoking %s with %s: %s", method.getName(), properties, e.getMessage()), e);
         }
