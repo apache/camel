@@ -425,7 +425,7 @@ public final class FileUtil {
         if (!renamed && copyAndDeleteOnRenameFail) {
             // now do a copy and delete as all rename attempts failed
             LOG.debug("Cannot rename file from: {} to: {}, will now use a copy/delete approach instead", from, to);
-            renameFileUsingCopy(from, to);
+            renamed = renameFileUsingCopy(from, to);
         }
 
         if (LOG.isDebugEnabled() && count > 0) {
@@ -449,18 +449,14 @@ public final class FileUtil {
             return false;
         }
 
-        boolean renamed = false;
-
         LOG.debug("Rename file '{}' to '{}' using copy/delete strategy.", from, to);
 
         copyFile(from, to);
         if (!deleteFile(from)) {
             throw new IOException("Renaming file from '" + from + "' to '" + to + "' failed: Cannot delete file '" + from + "' after copy succeeded");
-        } else {
-            renamed = true;
         }
 
-        return renamed;
+        return true;
     }
 
     public static void copyFile(File from, File to) throws IOException {
