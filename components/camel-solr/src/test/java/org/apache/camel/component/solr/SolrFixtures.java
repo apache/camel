@@ -48,6 +48,8 @@ public class SolrFixtures {
     	solrHttpsServer = new HttpSolrServer("https://localhost:" + httpsPort + "/solr");
         solrHttpsServer.setConnectionTimeout(60000);
         
+       // solrHttpsServer.deleteByQuery("*:*");
+        
     	solrRunner = JettySolrFactory.createJettyTestFixture(false);
     	port = solrRunner.getLocalPort();
     	
@@ -55,7 +57,7 @@ public class SolrFixtures {
     	
     	log.info("Started Test Server: " + solrRunner.getBaseUrl());
     	
-    	cloudFixture = new SolrCloudFixture("src/test/resources/solr");
+    	//cloudFixture = new SolrCloudFixture("src/test/resources/solr");
 
     }
     

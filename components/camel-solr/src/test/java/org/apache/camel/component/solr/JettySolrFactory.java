@@ -28,6 +28,7 @@ public class JettySolrFactory {
 
 	public static File TEST_KEYSTORE = new File("./target/test-classes/solrtest.keystore");
 	private static boolean mockedSslClient = false;
+	private static int data_dir_no = 0;
 
 	private static String TEST_KEYSTORE_PATH = TEST_KEYSTORE.getAbsolutePath();
 	private static String TEST_KEYSTORE_PASSWORD = "secret";
@@ -84,7 +85,7 @@ public class JettySolrFactory {
 		// Set appropriate paths for Solr to use.
         System.setProperty("solr.solr.home", solrHome);
         System.setProperty("jetty.testMode", "true");
-        System.setProperty("solr.data.dir", "target/test-classes/solr/data");
+        System.setProperty("solr.data.dir", "target/test-classes/solr/data" + (data_dir_no++));
 
         // Instruct Solr to keep the index in memory, for faster testing.
         System.setProperty("solr.directoryFactory", "solr.RAMDirectoryFactory");
@@ -111,7 +112,7 @@ public class JettySolrFactory {
 		
 		if (!useSsl) {
 	        System.setProperty("tests.jettySsl", "false");
-		}
+		} 
 		
 		return createJetty(solrHome, configFile, schemaFile, context, stopAtShutdown, extraServlets, useSsl);
 		
