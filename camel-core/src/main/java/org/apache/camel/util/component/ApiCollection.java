@@ -26,16 +26,16 @@ import java.util.Set;
  * Base class for a collection of ApiMethods. Meant to be extended by Components to create the api name map.
  */
 @SuppressWarnings("unused")
-public abstract class ApiCollection<T extends Enum & ApiName, C> {
+public abstract class ApiCollection<E extends Enum<E> & ApiName, T> {
 
-    protected final Map<T, ApiMethodHelper> apis = new HashMap<T, ApiMethodHelper>();
-    protected final HashMap<Class<? extends ApiMethod>, T> apiMethods = new HashMap<Class<? extends ApiMethod>, T>();
+    protected final Map<E, ApiMethodHelper<? extends ApiMethod>> apis = new HashMap<E, ApiMethodHelper<? extends ApiMethod>>();
+    protected final HashMap<Class<? extends ApiMethod>, E> apiMethods = new HashMap<Class<? extends ApiMethod>, E>();
 
-    public final Map<T, ApiMethodHelper> getApiHelpers() {
+    public final Map<E, ApiMethodHelper<? extends ApiMethod>> getApiHelpers() {
         return Collections.unmodifiableMap(apis);
     }
 
-    public final Map<Class<? extends ApiMethod>, T> getApiMethods() {
+    public final Map<Class<? extends ApiMethod>, E> getApiMethods() {
         return Collections.unmodifiableMap(apiMethods);
     }
 
@@ -44,7 +44,7 @@ public abstract class ApiCollection<T extends Enum & ApiName, C> {
      * @param apiName name of the API
      * @return helper class to work with {@link ApiMethod}
      */
-    public final ApiMethodHelper getHelper(T apiName) {
+    public final ApiMethodHelper<? extends ApiMethod> getHelper(E apiName) {
         return apis.get(apiName);
     }
 
@@ -54,13 +54,13 @@ public abstract class ApiCollection<T extends Enum & ApiName, C> {
      */
     public final Set<String> getApiNames() {
         final Set<String> result = new HashSet<String>();
-        for (T api : apis.keySet()) {
+        for (E api : apis.keySet()) {
             result.add(api.getName());
         }
         return Collections.unmodifiableSet(result);
     }
 
-    public final T getApiName(Class<? extends ApiMethod> apiMethod) {
+    public final E getApiName(Class<? extends ApiMethod> apiMethod) {
         return apiMethods.get(apiMethod);
     }
 
@@ -69,5 +69,5 @@ public abstract class ApiCollection<T extends Enum & ApiName, C> {
      * @param apiName name of the API.
      * @return Endpoint configuration object for the API.
      */
-    public abstract C getEndpointConfiguration(T apiName);
+    public abstract T getEndpointConfiguration(E apiName);
 }

@@ -34,34 +34,39 @@ import org.slf4j.LoggerFactory;
 /**
  * Abstract base class for API Component Endpoints.
  */
-public abstract class AbstractApiEndpoint extends DefaultEndpoint {
+public abstract class AbstractApiEndpoint<E extends ApiName, T> extends DefaultEndpoint {
 
     // logger
     protected final Logger log = LoggerFactory.getLogger(getClass());
 
     // API name
-    protected final ApiName apiName;
+    protected final E apiName;
 
     // API method name
     protected final String methodName;
 
     // API method helper
-    protected final ApiMethodHelper methodHelper;
+    protected final ApiMethodHelper<? extends ApiMethod> methodHelper;
+
+    // endpoint configuration
+    @UriParam
+    protected final T configuration;
 
     // property name for Exchange 'In' message body
     @UriParam
     protected String inBody;
 
     // candidate methods based on method name and endpoint configuration
-    private List<Enum<? extends ApiMethod>> candidates;
+    private List<ApiMethod> candidates;
 
     public AbstractApiEndpoint(String endpointUri, Component component,
-                               ApiName apiName, String methodName, ApiMethodHelper methodHelper) {
+                               E apiName, String methodName, ApiMethodHelper<? extends ApiMethod> methodHelper, T endpointConfiguration) {
         super(endpointUri, component);
 
         this.apiName = apiName;
         this.methodName = methodName;
         this.methodHelper = methodHelper;
+        this.configuration = endpointConfiguration;
     }
 
     public boolean isSingleton() {
@@ -72,7 +77,7 @@ public abstract class AbstractApiEndpoint extends DefaultEndpoint {
      * Returns generated helper that extends {@link ApiMethodPropertiesHelper} to work with API properties.
      * @return properties helper.
      */
-    protected abstract ApiMethodPropertiesHelper getPropertiesHelper();
+    protected abstract ApiMethodPropertiesHelper<T> getPropertiesHelper();
 
     @Override
     public void configureProperties(Map<String, Object> options) {
@@ -80,11 +85,11 @@ public abstract class AbstractApiEndpoint extends DefaultEndpoint {
 
         // set configuration properties first
         try {
-            Object configuration = getConfiguration();
+            T configuration = getConfiguration();
             EndpointHelper.setReferenceProperties(getCamelContext(), configuration, options);
             EndpointHelper.setProperties(getCamelContext(), configuration, options);
         } catch (Exception e) {
-            throw new IllegalArgumentException(e.getMessage(), e);
+            throw new IllegalArgumentException(e);
         }
 
         // validate and initialize state
@@ -101,7 +106,6 @@ public abstract class AbstractApiEndpoint extends DefaultEndpoint {
     /**
      * Initialize endpoint state, including endpoint arguments, find candidate methods, etc.
      */
-    @SuppressWarnings("unchecked")
     protected void initState() {
 
         // get endpoint property names
@@ -117,7 +121,7 @@ public abstract class AbstractApiEndpoint extends DefaultEndpoint {
         final String[] argNames = arguments.toArray(new String[arguments.size()]);
 
         // create a list of candidate methods
-        candidates = new ArrayList<Enum<? extends ApiMethod>>();
+        candidates = new ArrayList<ApiMethod>();
         candidates.addAll(methodHelper.getCandidateMethods(methodName, argNames));
 
         // error if there are no candidates
@@ -148,15 +152,18 @@ public abstract class AbstractApiEndpoint extends DefaultEndpoint {
     /**
      * Returns endpoint configuration object.
      * One of the generated *EndpointConfiguration classes that extends component configuration class.
+     *
      * @return endpoint configuration object
      */
-    public abstract Object getConfiguration();
+    public T getConfiguration() {
+        return configuration;
+    }
 
     /**
      * Returns API name.
      * @return apiName property.
      */
-    public ApiName getApiName() {
+    public E getApiName() {
         return apiName;
     }
 
@@ -172,7 +179,7 @@ public abstract class AbstractApiEndpoint extends DefaultEndpoint {
      * Returns method helper.
      * @return methodHelper property.
      */
-    public ApiMethodHelper getMethodHelper() {
+    public ApiMethodHelper<? extends ApiMethod> getMethodHelper() {
         return methodHelper;
     }
 
@@ -180,7 +187,7 @@ public abstract class AbstractApiEndpoint extends DefaultEndpoint {
      * Returns candidate methods for this endpoint.
      * @return list of candidate methods.
      */
-    public List<Enum<? extends ApiMethod>> getCandidates() {
+    public List<ApiMethod> getCandidates() {
         return Collections.unmodifiableList(candidates);
     }
 

@@ -36,24 +36,24 @@ import org.slf4j.LoggerFactory;
 /**
  * Base class for API based Producers
  */
-public abstract class AbstractApiProducer extends DefaultAsyncProducer {
+public abstract class AbstractApiProducer<E extends Enum<E> & ApiName, T> extends DefaultAsyncProducer {
 
     // thread pool executor
     protected static ExecutorService executorService;
 
     // API Endpoint
-    protected final AbstractApiEndpoint endpoint;
+    protected final AbstractApiEndpoint<E, T> endpoint;
 
     // properties helper
     protected final ApiMethodPropertiesHelper propertiesHelper;
 
     // method helper
-    protected final ApiMethodHelper methodHelper;
+    protected final ApiMethodHelper<?> methodHelper;
 
     // logger
     private final transient Logger log = LoggerFactory.getLogger(getClass());
 
-    public AbstractApiProducer(AbstractApiEndpoint endpoint, ApiMethodPropertiesHelper propertiesHelper) {
+    public AbstractApiProducer(AbstractApiEndpoint<E, T> endpoint, ApiMethodPropertiesHelper propertiesHelper) {
         super(endpoint);
         this.propertiesHelper = propertiesHelper;
         this.endpoint = endpoint;
@@ -70,7 +70,7 @@ public abstract class AbstractApiProducer extends DefaultAsyncProducer {
         interceptProperties(properties);
 
         // decide which method to invoke
-        final Enum<? extends ApiMethod> method = findMethod(exchange, properties);
+        final ApiMethod method = findMethod(exchange, properties);
         if (method == null) {
             // synchronous failure
             callback.done(true);
@@ -84,7 +84,7 @@ public abstract class AbstractApiProducer extends DefaultAsyncProducer {
             public void run() {
                 try {
                     if (log.isDebugEnabled()) {
-                        log.debug("Invoking operation {} with {}", ((ApiMethod) method).getName(), properties.keySet());
+                        log.debug("Invoking operation {} with {}", method.getName(), properties.keySet());
                     }
 
                     Object result = doInvokeMethod(method, properties);
@@ -125,9 +125,8 @@ public abstract class AbstractApiProducer extends DefaultAsyncProducer {
      * @return API method invocation result.
      * @throws RuntimeCamelException on error. Exceptions thrown by API method are wrapped.
      */
-    @SuppressWarnings("unchecked")
-    protected Object doInvokeMethod(Enum<? extends ApiMethod> method, Map<String, Object> properties) throws RuntimeCamelException {
-        return methodHelper.invokeMethod(endpoint.getApiProxy(), method, properties);
+    protected Object doInvokeMethod(ApiMethod method, Map<String, Object> properties) throws RuntimeCamelException {
+        return ApiMethodHelper.invokeMethod(endpoint.getApiProxy(), method, properties);
     }
 
     /**
@@ -139,16 +138,15 @@ public abstract class AbstractApiProducer extends DefaultAsyncProducer {
         // do nothing by default
     }
 
-    @SuppressWarnings("unchecked")
-    private Enum<? extends ApiMethod> findMethod(Exchange exchange, Map<String, Object> properties) {
+    private ApiMethod findMethod(Exchange exchange, Map<String, Object> properties) {
 
-        Enum<? extends ApiMethod> method = null;
-        final List<Enum<? extends ApiMethod>> candidates = endpoint.getCandidates();
+        ApiMethod method = null;
+        final List<ApiMethod> candidates = endpoint.getCandidates();
         if (processInBody(exchange, properties)) {
 
             // filter candidates based on endpoint and exchange properties
             final Set<String> argNames = properties.keySet();
-            final List<Enum<? extends ApiMethod>> filteredMethods = methodHelper.filterMethods(candidates,
+            final List<ApiMethod> filteredMethods = ApiMethodHelper.filterMethods(candidates,
                     ApiMethodHelper.MatchType.SUPER_SET,
                     argNames.toArray(new String[argNames.size()]));
 
@@ -161,7 +159,7 @@ public abstract class AbstractApiProducer extends DefaultAsyncProducer {
                 // found an exact match
                 method = filteredMethods.get(0);
             } else {
-                method = methodHelper.getHighestPriorityMethod(filteredMethods);
+                method = ApiMethodHelper.getHighestPriorityMethod(filteredMethods);
                 log.warn("Calling highest priority operation {} from operations {}", method, filteredMethods);
             }
         }

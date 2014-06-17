@@ -39,7 +39,7 @@ public class ApiMethodHelperTest {
 
     @Test
     public void testGetCandidateMethods() {
-        List<TestMethod> methods = apiMethodHelper.getCandidateMethods("sayHi");
+        List<ApiMethod> methods = apiMethodHelper.getCandidateMethods("sayHi");
         assertEquals("Can't find sayHi(*)", 2, methods.size());
 
         methods = apiMethodHelper.getCandidateMethods("hi");
@@ -57,22 +57,22 @@ public class ApiMethodHelperTest {
 
     @Test
     public void testFilterMethods() {
-        List<TestMethod> methods = apiMethodHelper.filterMethods(Arrays.asList(sayHis), ApiMethodHelper.MatchType.EXACT);
+        List<ApiMethod> methods = ApiMethodHelper.filterMethods(Arrays.asList(sayHis), ApiMethodHelper.MatchType.EXACT);
         assertEquals("Exact match failed for sayHi()", 1, methods.size());
         assertEquals("Exact match failed for sayHi()", TestMethod.SAYHI, methods.get(0));
 
-        methods = apiMethodHelper.filterMethods(Arrays.asList(sayHis), ApiMethodHelper.MatchType.SUBSET);
+        methods = ApiMethodHelper.filterMethods(Arrays.asList(sayHis), ApiMethodHelper.MatchType.SUBSET);
         assertEquals("Subset match failed for sayHi(*)", 2, methods.size());
 
-        methods = apiMethodHelper.filterMethods(Arrays.asList(sayHis), ApiMethodHelper.MatchType.SUBSET, "name");
+        methods = ApiMethodHelper.filterMethods(Arrays.asList(sayHis), ApiMethodHelper.MatchType.SUBSET, "name");
         assertEquals("Subset match failed for sayHi(name)", 1, methods.size());
         assertEquals("Exact match failed for sayHi()", TestMethod.SAYHI_1, methods.get(0));
 
-        methods = apiMethodHelper.filterMethods(Arrays.asList(sayHis), ApiMethodHelper.MatchType.SUPER_SET, "name");
+        methods = ApiMethodHelper.filterMethods(Arrays.asList(sayHis), ApiMethodHelper.MatchType.SUPER_SET, "name");
         assertEquals("Super set match failed for sayHi(name)", 1, methods.size());
         assertEquals("Exact match failed for sayHi()", TestMethod.SAYHI_1, methods.get(0));
 
-        methods = apiMethodHelper.filterMethods(Arrays.asList(TestMethod.values()), ApiMethodHelper.MatchType.SUPER_SET, "name");
+        methods = ApiMethodHelper.filterMethods(Arrays.asList(TestMethod.values()), ApiMethodHelper.MatchType.SUPER_SET, "name");
         assertEquals("Super set match failed for sayHi(name)", 2, methods.size());
     }
 
@@ -114,28 +114,28 @@ public class ApiMethodHelperTest {
     @Test
     public void testGetHighestPriorityMethod() throws Exception {
         assertEquals("Get highest priority method",
-                TestMethod.SAYHI_1, apiMethodHelper.getHighestPriorityMethod(Arrays.asList(sayHis)));
+                TestMethod.SAYHI_1, ApiMethodHelper.getHighestPriorityMethod(Arrays.asList(sayHis)));
     }
 
     @Test
     public void testInvokeMethod() throws Exception {
         TestProxy proxy = new TestProxy();
-        assertEquals("sayHi()", "Hello!", apiMethodHelper.invokeMethod(proxy, TestMethod.SAYHI, Collections.EMPTY_MAP));
+        assertEquals("sayHi()", "Hello!", ApiMethodHelper.invokeMethod(proxy, TestMethod.SAYHI, Collections.<String, Object>emptyMap()));
 
         final HashMap<String, Object> properties = new HashMap<String, Object>();
         properties.put("name", "Dave");
 
-        assertEquals("sayHi(name)", "Hello Dave", apiMethodHelper.invokeMethod(proxy, TestMethod.SAYHI_1, properties));
-        assertEquals("greetMe(name)", "Greetings Dave", apiMethodHelper.invokeMethod(proxy, TestMethod.GREETME, properties));
+        assertEquals("sayHi(name)", "Hello Dave", ApiMethodHelper.invokeMethod(proxy, TestMethod.SAYHI_1, properties));
+        assertEquals("greetMe(name)", "Greetings Dave", ApiMethodHelper.invokeMethod(proxy, TestMethod.GREETME, properties));
 
         properties.clear();
         properties.put("name1", "Dave");
         properties.put("name2", "Frank");
-        assertEquals("greetUs(name1, name2)", "Greetings Dave, Frank", apiMethodHelper.invokeMethod(proxy, TestMethod.GREETUS, properties));
+        assertEquals("greetUs(name1, name2)", "Greetings Dave, Frank", ApiMethodHelper.invokeMethod(proxy, TestMethod.GREETUS, properties));
 
         properties.clear();
         properties.put("names", new String[] { "Dave", "Frank" });
-        assertEquals("greetAll(names)", "Greetings Dave, Frank", apiMethodHelper.invokeMethod(proxy, TestMethod.GREETALL, properties));
+        assertEquals("greetAll(names)", "Greetings Dave, Frank", ApiMethodHelper.invokeMethod(proxy, TestMethod.GREETALL, properties));
 
         // test with a derived proxy
         proxy = new TestProxy() {
@@ -146,7 +146,7 @@ public class ApiMethodHelperTest {
         };
         properties.clear();
         properties.put("name", "Dave");
-        assertEquals("Derived sayHi(name)", "Howdy Dave", apiMethodHelper.invokeMethod(proxy, TestMethod.SAYHI_1, properties));
+        assertEquals("Derived sayHi(name)", "Howdy Dave", ApiMethodHelper.invokeMethod(proxy, TestMethod.SAYHI_1, properties));
     }
 
     static enum TestMethod implements ApiMethod {

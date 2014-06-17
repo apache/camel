@@ -42,16 +42,16 @@ public final class ApiMethodHelper<T extends Enum<T> & ApiMethod> {
     private static final Logger LOG = LoggerFactory.getLogger(ApiMethodHelper.class);
 
     // maps method name to ApiMethod
-    private final Map<String, List<T>> METHOD_MAP = new HashMap<String, List<T>>();
+    private final Map<String, List<T>> methodMap = new HashMap<String, List<T>>();
 
     // maps method name to method arguments of the form Class type1, String name1, Class type2, String name2,...
-    private final Map<String, List<Object>> ARGUMENTS_MAP = new HashMap<String, List<Object>>();
+    private final Map<String, List<Object>> argumentsMap = new HashMap<String, List<Object>>();
 
     // maps argument name to argument type
-    private final Map<String, Class<?>> VALID_ARGUMENTS = new HashMap<String, Class<?>>();
+    private final Map<String, Class<?>> validArguments = new HashMap<String, Class<?>>();
 
     // maps aliases to actual method names
-    private final HashMap<String, Set<String>> ALIASES = new HashMap<String, Set<String>>();
+    private final HashMap<String, Set<String>> aliases = new HashMap<String, Set<String>>();
 
     /**
      * Create a helper to work with a {@link ApiMethod}, using optional method aliases.
@@ -95,28 +95,28 @@ public final class ApiMethodHelper<T extends Enum<T> & ApiMethod> {
                         builder.append(Character.toLowerCase(firstChar)).append(alias.substring(1));
                         alias = builder.toString();
                     }
-                    Set<String> names = ALIASES.get(alias);
+                    Set<String> names = this.aliases.get(alias);
                     if (names == null) {
                         names = new HashSet<String>();
-                        ALIASES.put(alias, names);
+                        this.aliases.put(alias, names);
                     }
                     names.add(name);
                 }
             }
 
             // map method name to Enum
-            List<T> overloads = METHOD_MAP.get(name);
+            List<T> overloads = methodMap.get(name);
             if (overloads == null) {
                 overloads = new ArrayList<T>();
-                METHOD_MAP.put(method.getName(), overloads);
+                methodMap.put(method.getName(), overloads);
             }
             overloads.add(method);
 
             // add arguments for this method
-            List<Object> arguments = ARGUMENTS_MAP.get(name);
+            List<Object> arguments = argumentsMap.get(name);
             if (arguments == null) {
                 arguments = new ArrayList<Object>();
-                ARGUMENTS_MAP.put(name, arguments);
+                argumentsMap.put(name, arguments);
             }
 
             // process all arguments for this method
@@ -132,35 +132,36 @@ public final class ApiMethodHelper<T extends Enum<T> & ApiMethod> {
                 }
 
                 // also collect argument names for all methods, and detect clashes here
-                final Class<?> previousType = VALID_ARGUMENTS.get(argName);
+                final Class<?> previousType = validArguments.get(argName);
                 if (previousType != null && previousType != argType) {
                     throw new IllegalArgumentException(String.format(
                         "Argument %s has ambiguous types (%s, %s) across methods!",
                         name, previousType, argType));
                 } else if (previousType == null) {
-                    VALID_ARGUMENTS.put(argName, argType);
+                    validArguments.put(argName, argType);
                 }
             }
 
         }
 
-        LOG.debug("Found {} unique method names in {} methods", METHOD_MAP.size(), methods.length);
+        LOG.debug("Found {} unique method names in {} methods", methodMap.size(), methods.length);
     }
 
     /**
      * Gets methods that match the given name and arguments.<p/>
      * Note that the args list is a required subset of arguments for returned methods.
+     *
      * @param name case sensitive method name or alias to lookup
      * @param argNames unordered required argument names
      * @return non-null unmodifiable list of methods that take all of the given arguments, empty if there is no match
      */
-    public List<T> getCandidateMethods(String name, String... argNames) {
-        List<T> methods = METHOD_MAP.get(name);
+    public List<ApiMethod> getCandidateMethods(String name, String... argNames) {
+        List<T> methods = methodMap.get(name);
         if (methods == null) {
-            if (ALIASES.containsKey(name)) {
+            if (aliases.containsKey(name)) {
                 methods = new ArrayList<T>();
-                for (String method : ALIASES.get(name)) {
-                    methods.addAll(METHOD_MAP.get(method));
+                for (String method : aliases.get(name)) {
+                    methods.addAll(methodMap.get(method));
                 }
             }
         }
@@ -171,9 +172,9 @@ public final class ApiMethodHelper<T extends Enum<T> & ApiMethod> {
         int nArgs = argNames != null ? argNames.length : 0;
         if (nArgs == 0) {
             LOG.debug("Found {} methods for method {}", methods.size(), name);
-            return Collections.unmodifiableList(methods);
+            return Collections.<ApiMethod>unmodifiableList(methods);
         } else {
-            final List<T> filteredSet = filterMethods(methods, MatchType.SUBSET, argNames);
+            final List<ApiMethod> filteredSet = filterMethods(methods, MatchType.SUBSET, argNames);
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Found {} filtered methods for {}",
                     filteredSet.size(), name + Arrays.toString(argNames).replace('[', '(').replace(']', ')'));
@@ -191,14 +192,14 @@ public final class ApiMethodHelper<T extends Enum<T> & ApiMethod> {
      * @return methods with arguments that satisfy the match type.<p/>
      * For SUPER_SET match, if methods with exact match are found, methods that take a subset are ignored
      */
-    public List<T> filterMethods(List<T> methods, MatchType matchType,
+    public static List<ApiMethod> filterMethods(List<? extends ApiMethod> methods, MatchType matchType,
                                                           String... argNames) {
         List<String> argsList = Arrays.asList(argNames);
         // list of methods that have all args in the given names
-        final List<T> result = new ArrayList<T>();
-        final List<T> extraArgs = new ArrayList<T>();
+        final List<ApiMethod> result = new ArrayList<ApiMethod>();
+        final List<ApiMethod> extraArgs = new ArrayList<ApiMethod>();
 
-        for (T method : methods) {
+        for (ApiMethod method : methods) {
             final List<String> methodArgs = method.getArgNames();
             switch (matchType) {
             case EXACT:
@@ -238,12 +239,12 @@ public final class ApiMethodHelper<T extends Enum<T> & ApiMethod> {
      * @return list of arguments of the form Class type1, String name1, Class type2, String name2,...
      */
     public List<Object> getArguments(final String name) throws IllegalArgumentException {
-        List<Object> arguments = ARGUMENTS_MAP.get(name);
+        List<Object> arguments = argumentsMap.get(name);
         if (arguments == null) {
-            if (ALIASES.containsKey(name)) {
+            if (aliases.containsKey(name)) {
                 arguments = new ArrayList<Object>();
-                for (String method : ALIASES.get(name)) {
-                    arguments.addAll(ARGUMENTS_MAP.get(method));
+                for (String method : aliases.get(name)) {
+                    arguments.addAll(argumentsMap.get(method));
                 }
             }
         }
@@ -278,7 +279,7 @@ public final class ApiMethodHelper<T extends Enum<T> & ApiMethod> {
      * @return alias names mapped to method names.
      */
     public Map<String, Set<String>> getAliases() {
-        return Collections.unmodifiableMap(ALIASES);
+        return Collections.unmodifiableMap(aliases);
     }
 
     /**
@@ -286,7 +287,7 @@ public final class ApiMethodHelper<T extends Enum<T> & ApiMethod> {
      * @return map with argument names as keys, and types as values
      */
     public Map<String, Class<?>> allArguments() {
-        return Collections.unmodifiableMap(VALID_ARGUMENTS);
+        return Collections.unmodifiableMap(validArguments);
     }
 
     /**
@@ -295,17 +296,20 @@ public final class ApiMethodHelper<T extends Enum<T> & ApiMethod> {
      * @return argument type
      */
     public Class<?> getType(String argName) throws IllegalArgumentException {
-        final Class<?> type = VALID_ARGUMENTS.get(argName);
+        final Class<?> type = validArguments.get(argName);
         if (type == null) {
             throw new IllegalArgumentException(argName);
         }
         return type;
     }
 
-    public T getHighestPriorityMethod(List<T> filteredMethods) {
-        T highest = null;
-        for (T method : filteredMethods) {
-            if (highest == null || method.compareTo(highest) > 0) {
+    // this method is always called with Enum value lists, so the cast inside is safe
+    // the alternative of trying to convert ApiMethod and associated classes to generic classes would a bear!!!
+    @SuppressWarnings("unchecked")
+    public static ApiMethod getHighestPriorityMethod(List<? extends ApiMethod> filteredMethods) {
+        ApiMethod highest = null;
+        for (ApiMethod method : filteredMethods) {
+            if (highest == null || ((Enum)method).compareTo((Enum) highest) > 0) {
                 highest = method;
             }
         }
@@ -321,7 +325,7 @@ public final class ApiMethodHelper<T extends Enum<T> & ApiMethod> {
      * @return result of method invocation
      * @throws org.apache.camel.RuntimeCamelException on errors
      */
-    public Object invokeMethod(Object proxy, T method, Map<String, Object> properties)
+    public static Object invokeMethod(Object proxy, ApiMethod method, Map<String, Object> properties)
         throws RuntimeCamelException {
 
         if (LOG.isDebugEnabled()) {

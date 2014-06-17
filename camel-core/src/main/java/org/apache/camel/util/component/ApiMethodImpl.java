@@ -119,5 +119,4 @@ public final class ApiMethodImpl implements ApiMethod {
             .append("}");
         return builder.toString();
     }
-
 }

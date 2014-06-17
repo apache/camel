@@ -22,11 +22,12 @@ import java.util.List;
 /**
  * Represents an API to use for generating Camel Component.
  */
+@SuppressWarnings("unused")
 public class ApiProxy {
     private String apiName;
     private String proxyClass;
 
-    private List<ApiMethodAlias> aliases = Collections.EMPTY_LIST;
+    private List<ApiMethodAlias> aliases = Collections.emptyList();
 
     public ApiProxy() {
     }

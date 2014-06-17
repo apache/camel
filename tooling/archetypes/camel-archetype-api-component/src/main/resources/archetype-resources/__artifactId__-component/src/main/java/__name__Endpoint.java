@@ -20,7 +20,6 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.spi.UriEndpoint;
-import org.apache.camel.spi.UriParam;
 import org.apache.camel.util.component.AbstractApiEndpoint;
 import org.apache.camel.util.component.ApiMethodPropertiesHelper;
 
@@ -32,19 +31,15 @@ import ${package}.internal.${name}PropertiesHelper;
  * Represents a ${name} endpoint.
  */
 @UriEndpoint(scheme = "${scheme}", consumerClass = ${name}Consumer.class, consumerPrefix = "consumer")
-public class ${name}Endpoint extends AbstractApiEndpoint {
-
-    @UriParam
-    protected final ${name}Configuration configuration;
+public class ${name}Endpoint extends AbstractApiEndpoint<${name}ApiName, ${name}Configuration> {
 
     // TODO create and manage API proxy
     private Object apiProxy;
 
     public ${name}Endpoint(String uri, ${name}Component component,
                          ${name}ApiName apiName, String methodName, ${name}Configuration endpointConfiguration) {
-        super(uri, component, apiName, methodName, ${name}ApiCollection.getCollection().getHelper(apiName));
+        super(uri, component, apiName, methodName, ${name}ApiCollection.getCollection().getHelper(apiName), endpointConfiguration);
 
-        this.configuration = endpointConfiguration;
     }
 
     public Producer createProducer() throws Exception {
@@ -63,7 +58,7 @@ public class ${name}Endpoint extends AbstractApiEndpoint {
     }
 
     @Override
-    protected ApiMethodPropertiesHelper getPropertiesHelper() {
+    protected ApiMethodPropertiesHelper<${name}Configuration> getPropertiesHelper() {
         return ${name}PropertiesHelper.getHelper();
     }
 
@@ -76,12 +71,10 @@ public class ${name}Endpoint extends AbstractApiEndpoint {
                 break;
             case HELLO_JAVADOC:
                 apiProxy = new ${name}JavadocHello();
+                break;
+            default:
+                throw new IllegalArgumentException("Invalid API name " + apiName);
         }
-    }
-
-    @Override
-    public ${name}Configuration getConfiguration() {
-        return configuration;
     }
 
     @Override

@@ -38,7 +38,7 @@ public class ApiMethodPropertiesHelperTest {
     private static final String VALUE_4 = "true";
 
     private static ApiMethodPropertiesHelper propertiesHelper =
-            new ApiMethodPropertiesHelper(TestComponentConfiguration.class, TEST_PREFIX){};
+            new ApiMethodPropertiesHelper<TestComponentConfiguration>(TestComponentConfiguration.class, TEST_PREFIX){};
 
     @Test
     public void testGetExchangeProperties() throws Exception {
@@ -77,6 +77,7 @@ public class ApiMethodPropertiesHelperTest {
         assertEquals(2, propertiesHelper.getValidEndpointProperties(new TestEndpointConfiguration()).size());
     }
 
+    @SuppressWarnings("unused")
     private static class TestComponentConfiguration {
         private String property1;
         private Long property2;
@@ -98,6 +99,7 @@ public class ApiMethodPropertiesHelperTest {
         }
     }
 
+    @SuppressWarnings("unused")
     private static class TestEndpointConfiguration extends TestComponentConfiguration {
         private String property3;
         private Boolean property4;

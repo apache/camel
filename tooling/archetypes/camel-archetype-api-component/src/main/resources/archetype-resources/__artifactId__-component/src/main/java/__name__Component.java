@@ -16,16 +16,10 @@
 ## ------------------------------------------------------------------------
 package ${package};
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.apache.camel.CamelContext;
-import org.apache.camel.CamelException;
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.spi.UriEndpoint;
-import org.apache.camel.spi.UriParam;
-import org.apache.camel.util.IntrospectionSupport;
+import org.apache.camel.util.component.AbstractApiComponent;
 
 import ${package}.internal.${name}ApiCollection;
 import ${package}.internal.${name}ApiName;
@@ -34,78 +28,24 @@ import ${package}.internal.${name}ApiName;
  * Represents the component that manages {@link ${name}Endpoint}.
  */
 @UriEndpoint(scheme = "${scheme}", consumerClass = ${name}Consumer.class, consumerPrefix = "consumer")
-public class ${name}Component extends UriEndpointComponent {
-
-    @UriParam
-    private ${name}Configuration configuration;
-
-    private final ${name}ApiCollection collection = ${name}ApiCollection.getCollection();
+public class ${name}Component extends AbstractApiComponent<${name}ApiName, ${name}Configuration, ${name}ApiCollection> {
 
     public ${name}Component() {
-        super(${name}Endpoint.class);
+        super(${name}Endpoint.class, ${name}ApiName.class, ${name}ApiCollection.getCollection());
     }
 
     public ${name}Component(CamelContext context) {
-        super(context, ${name}Endpoint.class);
+        super(context, ${name}Endpoint.class, ${name}ApiName.class, ${name}ApiCollection.getCollection());
     }
 
-    protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        // split remaining path to get API name and method
-        final String[] pathElements = remaining.split("/");
-        String apiNameStr;
-        String methodName;
-        switch (pathElements.length) {
-        case 1:
-            apiNameStr = "";
-            methodName = pathElements[0];
-            break;
-        case 2:
-            apiNameStr = pathElements[0];
-            methodName = pathElements[1];
-            break;
-        default:
-            throw new CamelException("Invalid URI path [" + remaining
-                + "], must be of the format " + collection.getApiNames() + "/<operation-name>");
-        }
-
-        // get API enum from apiName string
-        final ${name}ApiName apiName;
-        try {
-            apiName = ${name}ApiName.fromValue(apiNameStr);
-        } catch (IllegalArgumentException e) {
-            throw new CamelException("Invalid URI path prefix [" + remaining
-                + "], must be one of " + collection.getApiNames());
-        }
-
-        final ${name}Configuration endpointConfiguration = createEndpointConfiguration(apiName);
-        final Endpoint endpoint = new ${name}Endpoint(uri, this, apiName, methodName, endpointConfiguration);
-
-        // set endpoint property inBody
-        setProperties(endpoint, parameters);
-
-        // configure endpoint properties and initialize state
-        endpoint.configureProperties(parameters);
-
-        return endpoint;
+    @Override
+    protected ${name}ApiName getApiName(String apiNameStr) throws IllegalArgumentException {
+        return ${name}ApiName.fromValue(apiNameStr);
     }
 
-    private ${name}Configuration createEndpointConfiguration(${name}ApiName name) throws Exception {
-        final Map<String, Object> componentProperties = new HashMap<String, Object>();
-        if (configuration != null) {
-            IntrospectionSupport.getProperties(configuration, componentProperties, null, false);
-        }
-
-        // create endpoint configuration with component properties
-        final ${name}Configuration endpointConfiguration = collection.getEndpointConfiguration(name);
-        IntrospectionSupport.setProperties(endpointConfiguration, componentProperties);
-        return endpointConfiguration;
-    }
-
-    public ${name}Configuration getConfiguration() {
-        return configuration;
-    }
-
-    public void setConfiguration(${name}Configuration configuration) {
-        this.configuration = configuration;
+    @Override
+    protected Endpoint createEndpoint(String uri, String methodName, ${name}ApiName apiName,
+                                      ${name}Configuration endpointConfiguration) {
+        return new ${name}Endpoint(uri, this, apiName, methodName, endpointConfiguration);
     }
 }

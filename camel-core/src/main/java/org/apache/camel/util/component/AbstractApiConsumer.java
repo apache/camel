@@ -35,25 +35,25 @@ import org.slf4j.LoggerFactory;
 /**
  * Abstract base class for API Component Consumers.
  */
-public abstract class AbstractApiConsumer extends ScheduledPollConsumer {
+public abstract class AbstractApiConsumer<E extends Enum<E> & ApiName, T> extends ScheduledPollConsumer {
 
     // logger
     protected final Logger log = LoggerFactory.getLogger(getClass());
 
     // API Endpoint
-    protected final AbstractApiEndpoint endpoint;
+    protected final AbstractApiEndpoint<E, T> endpoint;
 
     // helpers
-    protected final ApiMethodPropertiesHelper propertiesHelper;
-    protected final ApiMethodHelper methodHelper;
+    protected final ApiMethodPropertiesHelper<T> propertiesHelper;
+    protected final ApiMethodHelper<? extends ApiMethod> methodHelper;
 
     // API method to invoke
-    protected final Enum<? extends ApiMethod> method;
+    protected final ApiMethod method;
 
     // properties used to invoke
     protected final Map<String, Object> endpointProperties;
 
-    public AbstractApiConsumer(AbstractApiEndpoint endpoint, Processor processor) {
+    public AbstractApiConsumer(AbstractApiEndpoint<E, T> endpoint, Processor processor) {
         super(endpoint, processor);
 
         this.endpoint = endpoint;
@@ -76,10 +76,9 @@ public abstract class AbstractApiConsumer extends ScheduledPollConsumer {
         return false;
     }
 
-    @SuppressWarnings("unchecked")
-    private Enum<? extends ApiMethod> findMethod() {
+    private ApiMethod findMethod() {
 
-        Enum<? extends ApiMethod> result;
+        ApiMethod result;
         // find one that takes the largest subset of endpoint parameters
         final Set<String> argNames = new HashSet<String>();
         argNames.addAll(propertiesHelper.getEndpointPropertyNames(endpoint.getConfiguration()));
@@ -87,7 +86,7 @@ public abstract class AbstractApiConsumer extends ScheduledPollConsumer {
         interceptArgumentNames(argNames);
 
         final String[] argNamesArray = argNames.toArray(new String[argNames.size()]);
-        List<Enum<? extends ApiMethod>> filteredMethods = methodHelper.filterMethods(
+        List<ApiMethod> filteredMethods = ApiMethodHelper.filterMethods(
                 endpoint.getCandidates(), ApiMethodHelper.MatchType.SUPER_SET, argNamesArray);
 
         if (filteredMethods.isEmpty()) {
@@ -99,9 +98,10 @@ public abstract class AbstractApiConsumer extends ScheduledPollConsumer {
             // single match
             result = filteredMethods.get(0);
         } else {
-            result = methodHelper.getHighestPriorityMethod(filteredMethods);
+            result = ApiMethodHelper.getHighestPriorityMethod(filteredMethods);
             log.warn("Using highest priority operation {} from operations {}", method, filteredMethods);
         }
+
         return result;
     }
 
@@ -147,9 +147,8 @@ public abstract class AbstractApiConsumer extends ScheduledPollConsumer {
      * @param args method arguments from endpoint parameters.
      * @return method invocation result.
      */
-    @SuppressWarnings("unchecked")
     protected Object doInvokeMethod(Map<String, Object> args) {
-        return methodHelper.invokeMethod(endpoint.getApiProxy(), method, args);
+        return ApiMethodHelper.invokeMethod(endpoint.getApiProxy(), method, args);
     }
 
     private void processResult(Object result) throws Exception {

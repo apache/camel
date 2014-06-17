@@ -19,6 +19,7 @@ package org.apache.camel.maven;
 /**
  * Represents method alias
  */
+@SuppressWarnings("unused")
 public class ApiMethodAlias {
 
     private String methodPattern;
