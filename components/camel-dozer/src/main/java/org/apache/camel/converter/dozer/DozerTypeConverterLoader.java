@@ -64,7 +64,7 @@ public class DozerTypeConverterLoader extends ServiceSupport implements CamelCon
 
     private final Logger log = LoggerFactory.getLogger(getClass());
     private CamelContext camelContext;
-    private DozerBeanMapperConfiguration configuration;
+    private transient DozerBeanMapperConfiguration configuration;
     private transient DozerBeanMapper mapper;
 
     /**
@@ -120,6 +120,7 @@ public class DozerTypeConverterLoader extends ServiceSupport implements CamelCon
 
         this.camelContext = camelContext;
         this.mapper = mapper;
+        this.configuration = configuration;
 
         try {
             camelContext.addService(this);
@@ -174,6 +175,20 @@ public class DozerTypeConverterLoader extends ServiceSupport implements CamelCon
 
         // add any dozer bean mapper configurations
         Map<String, DozerBeanMapperConfiguration> configurations = lookupDozerBeanMapperConfigurations();
+        if (configurations != null && configuration != null) {
+            // filter out existing configuration, as we do not want to use it twice
+            String key = null;
+            for (Map.Entry<String, DozerBeanMapperConfiguration> entry : configurations.entrySet()) {
+                if (entry.getValue() == configuration) {
+                    key = entry.getKey();
+                    break;
+                }
+            }
+            if (key != null) {
+                configurations.remove(key);
+            }
+        }
+
         if (configurations != null) {
             if (configurations.size() > 1) {
                 log.warn("Loaded " + configurations.size() + " Dozer configurations from Camel registry."
