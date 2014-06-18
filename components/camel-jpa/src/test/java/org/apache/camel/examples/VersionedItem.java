@@ -69,6 +69,7 @@ public class VersionedItem {
 
     @Override
     public String toString() {
-        return "VersionedItem [id=" + id + ", name=" + name + "]";
+        // OpenJPA warns about fields being accessed directly in methods if NOT using the corresponding getters.
+        return "VersionedItem[id: " + getId() + ", name: " + getName() + ", version: " + getVersion() + "]";
     }
 }
