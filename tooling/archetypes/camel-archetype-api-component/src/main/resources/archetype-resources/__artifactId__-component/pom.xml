@@ -151,7 +151,6 @@
       <plugin>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-api-component-maven-plugin</artifactId>
-        <version>${camel-version}</version>
         <executions>
           <execution>
             <id>generate-from-file-api</id>

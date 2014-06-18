@@ -17,6 +17,9 @@
 package org.apache.camel.maven;
 
 import java.io.File;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
@@ -36,10 +39,25 @@ public class ApiComponentGeneratorMojo extends AbstractSourceGeneratorMojo {
     @Parameter(required = true)
     protected ApiProxy[] apis;
 
+    @Parameter
+    private List<ApiMethodAlias> aliases = Collections.emptyList();
+
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
         if (apis == null || apis.length == 0) {
             throw new MojoExecutionException("One or more API proxies are required");
+        }
+
+        // if set, merge common aliases with every API proxy's aliases
+        if (!aliases.isEmpty()) {
+            for (ApiProxy api : apis) {
+                List<ApiMethodAlias> apiAliases = api.getAliases();
+                if (apiAliases.isEmpty()) {
+                    apiAliases = new ArrayList<ApiMethodAlias>();
+                    apiAliases.addAll(aliases);
+                }
+                api.setAliases(apiAliases);
+            }
         }
 
         // generate ApiCollection
