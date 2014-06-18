@@ -134,7 +134,7 @@ public class ApiMethodHelperTest {
         assertEquals("greetUs(name1, name2)", "Greetings Dave, Frank", ApiMethodHelper.invokeMethod(proxy, TestMethod.GREETUS, properties));
 
         properties.clear();
-        properties.put("names", new String[] { "Dave", "Frank" });
+        properties.put("names", new String[] {"Dave", "Frank"});
         assertEquals("greetAll(names)", "Greetings Dave, Frank", ApiMethodHelper.invokeMethod(proxy, TestMethod.GREETALL, properties));
 
         // test with a derived proxy

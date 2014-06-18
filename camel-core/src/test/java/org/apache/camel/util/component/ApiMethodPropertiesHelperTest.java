@@ -37,7 +37,7 @@ public class ApiMethodPropertiesHelperTest {
     private static final String VALUE_3 = "value3";
     private static final String VALUE_4 = "true";
 
-    private static ApiMethodPropertiesHelper propertiesHelper =
+    private static ApiMethodPropertiesHelper<TestComponentConfiguration> propertiesHelper =
             new ApiMethodPropertiesHelper<TestComponentConfiguration>(TestComponentConfiguration.class, TEST_PREFIX) { };
 
     @Test
