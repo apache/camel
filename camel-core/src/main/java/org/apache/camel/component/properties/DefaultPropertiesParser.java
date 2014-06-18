@@ -16,189 +16,278 @@
  */
 package org.apache.camel.component.properties;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
 import java.util.Properties;
+import java.util.Set;
 
-import org.apache.camel.util.ObjectHelper;
-import org.apache.camel.util.StringHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static java.lang.String.format;
+
 /**
  * A parser to parse a string which contains property placeholders
- *
- * @version 
  */
 public class DefaultPropertiesParser implements AugmentedPropertyNameAwarePropertiesParser {
     protected final Logger log = LoggerFactory.getLogger(getClass());
-    
+
     @Override
     public String parseUri(String text, Properties properties, String prefixToken, String suffixToken) throws IllegalArgumentException {
         return parseUri(text, properties, prefixToken, suffixToken, null, null, false);
     }
 
-    public String parseUri(String text, Properties properties, String prefixToken, String suffixToken,
-                           String propertyPrefix, String propertySuffix, boolean fallbackToUnaugmentedProperty) throws IllegalArgumentException {
-        String answer = text;
-        boolean done = false;
-
-        // the placeholders can contain nested placeholders so we need to do recursive parsing
-        // we must therefore also do circular reference check and must keep a list of visited keys
-        List<String> visited = new ArrayList<String>();
-        while (!done) {
-            List<String> replaced = new ArrayList<String>();
-            answer = doParseUri(answer, properties, replaced, prefixToken, suffixToken, propertyPrefix, propertySuffix, fallbackToUnaugmentedProperty);
-
-            // check the replaced with the visited to avoid circular reference
-            for (String replace : replaced) {
-                if (visited.contains(replace)) {
-                    throw new IllegalArgumentException("Circular reference detected with key [" + replace + "] from text: " + text);
-                }
-            }
-            // okay all okay so add the replaced as visited
-            visited.addAll(replaced);
-
-            // we are done when we can no longer find any prefix tokens in the answer
-            done = findTokenPosition(answer, 0, prefixToken) == -1;
-        }
-        return answer;
+    public String parseUri(String text, Properties properties, String prefixToken, String suffixToken, String propertyPrefix, String propertySuffix,
+                           boolean fallbackToUnaugmentedProperty) throws IllegalArgumentException {
+        ParsingContext context = new ParsingContext(properties, prefixToken, suffixToken, propertyPrefix, propertySuffix, fallbackToUnaugmentedProperty);
+        return context.parse(text);
     }
 
     public String parseProperty(String key, String value, Properties properties) {
         return value;
     }
 
-    private String doParseUri(String uri, Properties properties, List<String> replaced, String prefixToken, String suffixToken,
-                              String propertyPrefix, String propertySuffix, boolean fallbackToUnaugmentedProperty) {
-        StringBuilder sb = new StringBuilder();
+    /**
+     * This inner class helps replacing properties.
+     */
+    private final class ParsingContext {
+        private final Properties properties;
+        private final String prefixToken;
+        private final String suffixToken;
+        private final String propertyPrefix;
+        private final String propertySuffix;
+        private final boolean fallbackToUnaugmentedProperty;
 
-        int pivot = 0;
-        int size = uri.length();
-        while (pivot < size) {
-            int idx = findTokenPosition(uri, pivot, prefixToken);
-            if (idx < 0) {
-                sb.append(createConstantPart(uri, pivot, size));
-                break;
-            } else {
-                if (pivot < idx) {
-                    sb.append(createConstantPart(uri, pivot, idx));
-                }
-                pivot = idx + prefixToken.length();
-                int endIdx = findTokenPosition(uri, pivot, suffixToken);
-                if (endIdx < 0) {
-                    throw new IllegalArgumentException("Expecting " + suffixToken + " but found end of string from text: " + uri);
-                }
-                String key = uri.substring(pivot, endIdx);
-                String augmentedKey = key;
-                
-                if (propertyPrefix != null) {
-                    log.debug("Augmenting property key [{}] with prefix: {}", key, propertyPrefix);
-                    augmentedKey = propertyPrefix + augmentedKey;
-                }
-                
-                if (propertySuffix != null) {
-                    log.debug("Augmenting property key [{}] with suffix: {}", key, propertySuffix);
-                    augmentedKey = augmentedKey + propertySuffix;
+        public ParsingContext(Properties properties, String prefixToken, String suffixToken, String propertyPrefix, String propertySuffix,
+                              boolean fallbackToUnaugmentedProperty) {
+            this.properties = properties;
+            this.prefixToken = prefixToken;
+            this.suffixToken = suffixToken;
+            this.propertyPrefix = propertyPrefix;
+            this.propertySuffix = propertySuffix;
+            this.fallbackToUnaugmentedProperty = fallbackToUnaugmentedProperty;
+        }
+
+        /**
+         * Parses the given input string and replaces all properties
+         *
+         * @param input Input string
+         * @return Evaluated string
+         */
+        public String parse(String input) {
+            return doParse(input, new HashSet<String>());
+        }
+
+        /**
+         * Recursively parses the given input string and replaces all properties
+         *
+         * @param input                Input string
+         * @param replacedPropertyKeys Already replaced property keys used for tracking circular references
+         * @return Evaluated string
+         */
+        private String doParse(String input, Set<String> replacedPropertyKeys) {
+            String answer = input;
+            Property property;
+            while ((property = readProperty(answer)) != null) {
+                // Check for circular references
+                if (replacedPropertyKeys.contains(property.getKey())) {
+                    throw new IllegalArgumentException("Circular reference detected with key [" + property.getKey() + "] from text: " + input);
                 }
 
-                String part = createPlaceholderPart(augmentedKey, properties, replaced, prefixToken, suffixToken);
-                
-                // Note: Only fallback to unaugmented when the original key was actually augmented
-                if (part == null && fallbackToUnaugmentedProperty && (propertyPrefix != null || propertySuffix != null)) {
-                    log.debug("Property wth key [{}] not found, attempting with unaugmented key: {}", augmentedKey, key);
-                    part = createPlaceholderPart(key, properties, replaced, prefixToken, suffixToken);
-                }
-                
-                if (part == null) {
-                    StringBuilder esb = new StringBuilder();
-                    esb.append("Property with key [").append(augmentedKey).append("] ");
-                    if (fallbackToUnaugmentedProperty && (propertyPrefix != null || propertySuffix != null)) {
-                        esb.append("(and original key [").append(key).append("]) ");
-                    }
-                    esb.append("not found in properties from text: ").append(uri);
-                    throw new IllegalArgumentException(esb.toString());
-                }
-                sb.append(part);
-                pivot = endIdx + suffixToken.length();
-            }
-        }
-        return sb.toString();
-    }
-    
-    private int findTokenPosition(String uri, int pivot, String token) {
-        int idx = uri.indexOf(token, pivot);
-        while (idx > 0) {
-            // grab part as the previous char + token + next char, to test if the token is quoted
-            String part = null;
-            int len = idx + token.length() + 1;
-            if (uri.length() >= len) {
-                part = uri.substring(idx - 1, len);
-            }
-            if (StringHelper.isQuoted(part)) {
-                // the token was quoted, so regard it as a literal
-                // and then try to find from next position
-                pivot = idx + token.length() + 1;
-                idx = uri.indexOf(token, pivot);
-            } else {
-                // found token
-                return idx;
-            }
-        }
-        return idx;
-    }
-    
-    private boolean isNestProperty(String uri, String prefixToken, String suffixToken) {
-        if (ObjectHelper.isNotEmpty(uri)) {
-            uri = uri.trim();
-            if (uri.startsWith(prefixToken) && uri.endsWith(suffixToken)) {
-                return true;
-            }
-        }
-        return false;
-    }
-    
-    private String takeOffNestTokes(String uri, String prefixToken, String suffixToken) {
-        int start = prefixToken.length(); 
-        int end = uri.length() - suffixToken.length();
-        return uri.substring(start, end); 
-    }
+                Set<String> newReplaced = new HashSet<String>(replacedPropertyKeys);
+                newReplaced.add(property.getKey());
 
-    private String createConstantPart(String uri, int start, int end) {
-        return uri.substring(start, end);
-    }
-
-    private String createPlaceholderPart(String key, Properties properties, List<String> replaced, String prefixToken, String suffixToken) {
-        // keep track of which parts we have replaced
-        replaced.add(key);
-        
-        String propertyValue = System.getProperty(key);
-        if (propertyValue != null) {
-            log.debug("Found a JVM system property: {} with value: {} to be used.", key, propertyValue);
-        } else if (properties != null) {
-            propertyValue = properties.getProperty(key);
-        }
-        
-        // we need to check if the propertyValue is nested
-        // we need to check if there is cycle dependency of the nested properties
-        List<String> visited = new ArrayList<String>();
-        while (isNestProperty(propertyValue, prefixToken, suffixToken)) {
-            visited.add(key);
-            // need to take off the token first
-            String value = takeOffNestTokes(propertyValue, prefixToken, suffixToken);
-            key = parseUri(value, properties, prefixToken, suffixToken);
-            if (visited.contains(key)) {
-                throw new IllegalArgumentException("Circular reference detected with key [" + key + "] from text: " + propertyValue);
+                String before = answer.substring(0, property.getBeginIndex());
+                String after = answer.substring(property.getEndIndex());
+                answer = before + doParse(property.getValue(), newReplaced) + after;
             }
-            propertyValue = System.getProperty(key);
-            if (propertyValue != null) {
-                log.debug("Found a JVM system property: {} with value: {} to be used.", key, propertyValue);
+            return answer;
+        }
+
+        /**
+         * Finds a property in the given string. It returns {@code null} if there's no property defined.
+         *
+         * @param input Input string
+         * @return A property in the given string or {@code null} if not found
+         */
+        private Property readProperty(String input) {
+            // Find the index of the first valid suffix token
+            int suffix = getSuffixIndex(input);
+
+            // If not found, ensure that there is no valid prefix token in the string
+            if (suffix == -1) {
+                if (getMatchingPrefixIndex(input, input.length()) != -1) {
+                    throw new IllegalArgumentException(format("Missing %s from the text: %s", suffixToken, input));
+                }
+                return null;
+            }
+
+            // Find the index of the prefix token that matches the suffix token
+            int prefix = getMatchingPrefixIndex(input, suffix);
+            if (prefix == -1) {
+                throw new IllegalArgumentException(format("Missing %s from the text: %s", prefixToken, input));
+            }
+
+            String key = input.substring(prefix + prefixToken.length(), suffix);
+            String value = getPropertyValue(key, input);
+            return new Property(prefix, suffix + suffixToken.length(), key, value);
+        }
+
+        /**
+         * Gets the first index of the suffix token that is not surrounded by quotes
+         *
+         * @param input Input string
+         * @return First index of the suffix token that is not surrounded by quotes
+         */
+        private int getSuffixIndex(String input) {
+            int index = -1;
+            do {
+                index = input.indexOf(suffixToken, index + 1);
+            } while (index != -1 && isQuoted(input, index, suffixToken));
+            return index;
+        }
+
+        /**
+         * Gets the index of the prefix token that matches the suffix at the given index and that is not surrounded by quotes
+         *
+         * @param input       Input string
+         * @param suffixIndex Index of the suffix token
+         * @return Index of the prefix token that matches the suffix at the given index and that is not surrounded by quotes
+         */
+        private int getMatchingPrefixIndex(String input, int suffixIndex) {
+            int index = suffixIndex;
+            do {
+                index = input.lastIndexOf(prefixToken, index - 1);
+            } while (index != -1 && isQuoted(input, index, prefixToken));
+            return index;
+        }
+
+        /**
+         * Indicates whether or not the token at the given index is surrounded by single or double quotes
+         *
+         * @param input Input string
+         * @param index Index of the token
+         * @param token Token
+         * @return {@code true}
+         */
+        private boolean isQuoted(String input, int index, String token) {
+            int beforeIndex = index - 1;
+            int afterIndex = index + token.length();
+            if (beforeIndex >= 0 && afterIndex < input.length()) {
+                char before = input.charAt(beforeIndex);
+                char after = input.charAt(afterIndex);
+                return (before == after) && (before == '\'' || before == '"');
+            }
+            return false;
+        }
+
+        /**
+         * Gets the value of the property with given key
+         *
+         * @param key   Key of the property
+         * @param input Input string (used for exception message if value not found)
+         * @return Value of the property with the given key
+         */
+        private String getPropertyValue(String key, String input) {
+            String augmentedKey = getAugmentedKey(key);
+            boolean shouldFallback = fallbackToUnaugmentedProperty && !key.equals(augmentedKey);
+
+            String value = doGetPropertyValue(augmentedKey);
+            if (value == null && shouldFallback) {
+                log.debug("Property with key [{}] not found, attempting with unaugmented key: {}", augmentedKey, key);
+                value = doGetPropertyValue(key);
+            }
+
+            if (value == null) {
+                StringBuilder esb = new StringBuilder();
+                esb.append("Property with key [").append(augmentedKey).append("] ");
+                if (shouldFallback) {
+                    esb.append("(and original key [").append(key).append("]) ");
+                }
+                esb.append("not found in properties from text: ").append(input);
+                throw new IllegalArgumentException(esb.toString());
+            }
+
+            return value;
+        }
+
+        /**
+         * Gets the augmented key of the given base key
+         *
+         * @param key Base key
+         * @return Augmented key
+         */
+        private String getAugmentedKey(String key) {
+            String augmentedKey = key;
+            if (propertyPrefix != null) {
+                log.debug("Augmenting property key [{}] with prefix: {}", key, propertyPrefix);
+                augmentedKey = propertyPrefix + augmentedKey;
+            }
+            if (propertySuffix != null) {
+                log.debug("Augmenting property key [{}] with suffix: {}", key, propertySuffix);
+                augmentedKey = augmentedKey + propertySuffix;
+            }
+            return augmentedKey;
+        }
+
+        /**
+         * Gets the property with the given key, it returns {@code null} if the property is not found
+         *
+         * @param key Key of the property
+         * @return Value of the property or {@code null} if not found
+         */
+        private String doGetPropertyValue(String key) {
+            String value = System.getProperty(key);
+            if (value != null) {
+                log.debug("Found a JVM system property: {} with value: {} to be used.", key, value);
             } else if (properties != null) {
-                propertyValue = properties.getProperty(key);
+                value = properties.getProperty(key);
             }
+            return value;
         }
-
-        return parseProperty(key, propertyValue, properties);
     }
 
+    /**
+     * This inner class is the definition of a property used in a string
+     */
+    private static final class Property {
+        private final int beginIndex;
+        private final int endIndex;
+        private final String key;
+        private final String value;
+
+        private Property(int beginIndex, int endIndex, String key, String value) {
+            this.beginIndex = beginIndex;
+            this.endIndex = endIndex;
+            this.key = key;
+            this.value = value;
+        }
+
+        /**
+         * Gets the begin index of the property (including the prefix token).
+         */
+        public int getBeginIndex() {
+            return beginIndex;
+        }
+
+        /**
+         * Gets the end index of the property (including the suffix token).
+         */
+        public int getEndIndex() {
+            return endIndex;
+        }
+
+        /**
+         * Gets the key of the property.
+         */
+        public String getKey() {
+            return key;
+        }
+
+        /**
+         * Gets the value of the property.
+         */
+        public String getValue() {
+            return value;
+        }
+    }
 }
