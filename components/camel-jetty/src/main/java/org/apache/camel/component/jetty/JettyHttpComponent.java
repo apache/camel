@@ -308,6 +308,13 @@ public class JettyHttpComponent extends HttpComponent {
                 CONNECTORS.put(connectorKey, connectorRef);
                 
             } else {
+                
+                if (endpoint.getHandlers() != null && !endpoint.getHandlers().isEmpty()) {
+                    // As the server is started, we need to stop the server for a while to add the new handler
+                    connectorRef.server.stop();
+                    addJettyHandlers(connectorRef.server, endpoint.getHandlers());
+                    connectorRef.server.start();
+                }
                 // ref track the connector
                 connectorRef.increment();
             }
@@ -921,19 +928,7 @@ public class JettyHttpComponent extends HttpComponent {
         ServletContextHandler context = new ServletContextHandler(server, "/", ServletContextHandler.NO_SECURITY | ServletContextHandler.NO_SESSIONS);
         context.setConnectorNames(new String[] {connector.getName()});
 
-        if (handlers != null && !handlers.isEmpty()) {
-            for (Handler handler : handlers) {
-                if (handler instanceof HandlerWrapper) {
-                    ((HandlerWrapper) handler).setHandler(server.getHandler());
-                    server.setHandler(handler);
-                } else {
-                    HandlerCollection handlerCollection = new HandlerCollection();
-                    handlerCollection.addHandler(server.getHandler());
-                    handlerCollection.addHandler(handler);
-                    server.setHandler(handlerCollection);
-                }
-            }
-        }
+        addJettyHandlers(server, handlers);
 
         CamelServlet camelServlet;
         boolean jetty = endpoint.getUseContinuation() != null ? endpoint.getUseContinuation() : isUseContinuation();
@@ -962,6 +957,23 @@ public class JettyHttpComponent extends HttpComponent {
         context.addServlet(holder, "/*");
 
         return camelServlet;
+    }
+    
+    protected void addJettyHandlers(Server server, List<Handler> handlers) {
+        if (handlers != null && !handlers.isEmpty()) {
+            for (Handler handler : handlers) {
+                if (handler instanceof HandlerWrapper) {
+                    ((HandlerWrapper) handler).setHandler(server.getHandler());
+                    server.setHandler(handler);
+                } else {
+                    HandlerCollection handlerCollection = new HandlerCollection();
+                    handlerCollection.addHandler(server.getHandler());
+                    handlerCollection.addHandler(handler);
+                    server.setHandler(handlerCollection);
+                }
+            }
+        }
+        
     }
     
     protected Server createServer() throws Exception {
