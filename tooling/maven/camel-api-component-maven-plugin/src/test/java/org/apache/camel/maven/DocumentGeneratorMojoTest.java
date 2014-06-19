@@ -30,7 +30,7 @@ public class DocumentGeneratorMojoTest extends AbstractGeneratorMojoTest {
     @Test
     public void testExecute() throws Exception {
         // delete target file to begin
-        final File outDir = new File("target/site/camelDocs");
+        final File outDir = new File("target/site/cameldocs");
         final File outFile = new File(outDir, "TestComponent.html");
         if (outFile.exists()) {
             outFile.delete();
@@ -38,7 +38,8 @@ public class DocumentGeneratorMojoTest extends AbstractGeneratorMojoTest {
 
         final DocumentGeneratorMojo mojo = new DocumentGeneratorMojo();
         configureGeneratorMojo(mojo);
-        mojo.setReportOutputDirectory(outDir);
+        mojo.setDestDir("cameldocs");
+        mojo.setReportOutputDirectory(outDir.getParentFile());
 
         mojo.execute();
 

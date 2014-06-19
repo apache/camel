@@ -92,8 +92,8 @@
     </p>
 #else
     <p>
-        Producer endpoints can use endpoint prefixes followed by endpoint names and options described next.
-        A shorthand alias can be used for some endpoints. The URI MUST specify one of the following prefixes.
+        Producer endpoints can use endpoint prefixes followed by endpoint names and associated options described next.
+        A shorthand alias can be used for some endpoints. The endpoint URI MUST contain a prefix.
     </p>
 #end
     <p>
@@ -145,9 +145,9 @@
 ## multiple API use case, list API names and their methods and options
 #foreach( $apiMethod in $apiMethods.entrySet() )
 #set( $apiName = $apiMethod.Key )
-    <h3>${foreach.count}. Endpoint Prefix $apiName</h3>
+    <h3>${foreach.count}. Endpoint Prefix <em>$apiName</em></h3>
     <hr/>
-    <p>The following endpoints can be invoked with the prefix $apiName as follows:</p>
+    <p>The following endpoints can be invoked with the prefix <code>$apiName</code> as follows:</p>
     <pre>
         ${scheme}://${apiName}/endpoint?[options]
     </pre>
@@ -169,7 +169,7 @@
         </tr>
 #end
     </table>
-    <h4>URI Options for $apiName</h4>
+    <h4>URI Options for <em>$apiName</em></h4>
     <hr/>
     <table>
         <tr>

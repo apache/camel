@@ -60,9 +60,13 @@ import org.codehaus.plexus.util.StringUtils;
 public class DocumentGeneratorMojo extends AbstractGeneratorMojo implements MavenReport {
 
     // document output directory
-    @Parameter(property = "reportOutputDirectory",
-            defaultValue = "${project.reporting.outputDirectory}/cameldocs", required = true)
+    @Parameter(property = PREFIX + "reportOutputDirectory",
+        defaultValue = "${project.reporting.outputDirectory}/cameldocs")
     private File reportOutputDirectory;
+
+    // name of destination directory
+    @Parameter(property = PREFIX + "destDir", defaultValue = "cameldocs")
+    private String destDir;
 
     /**
      * The name of the Camel report to be displayed in the Maven Generated Reports page
@@ -122,6 +126,7 @@ public class DocumentGeneratorMojo extends AbstractGeneratorMojo implements Mave
 
         // component URI format
         // look for single API, no endpoint-prefix
+        @SuppressWarnings("unchecked")
         final Set<String> apiNames = new TreeSet<String>(collection.getApiNames());
         context.put("apiNames", apiNames);
         String suffix;
@@ -147,6 +152,7 @@ public class DocumentGeneratorMojo extends AbstractGeneratorMojo implements Mave
             Map.Entry entry = (Map.Entry) element;
             final String name = ((ApiName) entry.getValue()).getName();
 
+            @SuppressWarnings("unchecked")
             Class<? extends ApiMethod> apiMethod = (Class<? extends ApiMethod>) entry.getKey();
             apiMethods.put(name, apiMethod);
 
@@ -209,7 +215,11 @@ public class DocumentGeneratorMojo extends AbstractGeneratorMojo implements Mave
     }
 
     private File getDocumentFile() {
-        return new File(getReportOutputDirectory(), getOutputName() + ".html");
+        return new File(getReportOutputDirectory(), getDocumentName() + ".html");
+    }
+
+    private String getDocumentName() {
+        return this.componentName + "Component";
     }
 
     @Override
@@ -226,12 +236,16 @@ public class DocumentGeneratorMojo extends AbstractGeneratorMojo implements Mave
 
     @Override
     public String getOutputName() {
-        return this.componentName + "Component";
+        return this.destDir + "/" + getDocumentName();
     }
 
     @Override
     public String getCategoryName() {
         return CATEGORY_PROJECT_REPORTS;
+    }
+
+    public void setName(String name) {
+        this.name = name;
     }
 
     @Override
@@ -240,6 +254,10 @@ public class DocumentGeneratorMojo extends AbstractGeneratorMojo implements Mave
             return getBundle(locale).getString("report.cameldoc.name");
         }
         return name;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     @Override
@@ -251,13 +269,32 @@ public class DocumentGeneratorMojo extends AbstractGeneratorMojo implements Mave
     }
 
     @Override
-    public void setReportOutputDirectory(File reportOutputDirectory) {
-        this.reportOutputDirectory = reportOutputDirectory;
+    public File getReportOutputDirectory() {
+        return reportOutputDirectory;
     }
 
     @Override
-    public File getReportOutputDirectory() {
-        return reportOutputDirectory;
+    public void setReportOutputDirectory(File reportOutputDirectory) {
+        updateReportOutputDirectory(reportOutputDirectory);
+    }
+
+    private void updateReportOutputDirectory(File reportOutputDirectory) {
+        // append destDir if needed
+        if (this.destDir != null && reportOutputDirectory != null &&
+            !reportOutputDirectory.getAbsolutePath().endsWith(destDir)) {
+            this.reportOutputDirectory = new File(reportOutputDirectory, destDir);
+        } else {
+            this.reportOutputDirectory = reportOutputDirectory;
+        }
+    }
+
+    public String getDestDir() {
+        return destDir;
+    }
+
+    public void setDestDir(String destDir) {
+        this.destDir = destDir;
+        updateReportOutputDirectory(this.reportOutputDirectory);
     }
 
     @Override
