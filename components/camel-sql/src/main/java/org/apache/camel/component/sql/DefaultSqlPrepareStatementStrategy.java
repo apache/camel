@@ -130,8 +130,8 @@ public class DefaultSqlPrepareStatementStrategy implements SqlPrepareStatementSt
     }
 
     private static final class PopulateIterator implements Iterator<Object> {
-        private static final String MISSING_PARAMETER_EXCEPTION
-                = "Cannot find key [%s] in message body or headers to use when setting named parameter in query [%s]";
+        private static final String MISSING_PARAMETER_EXCEPTION =
+            "Cannot find key [%s] in message body or headers to use when setting named parameter in query [%s]";
         private final String query;
         private final NamedQueryParser parser;
         private final Exchange exchange;
