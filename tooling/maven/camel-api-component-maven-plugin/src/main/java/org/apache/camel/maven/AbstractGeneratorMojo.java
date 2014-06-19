@@ -71,16 +71,6 @@ public abstract class AbstractGeneratorMojo extends AbstractMojo {
     private VelocityEngine engine;
     private ClassLoader projectClassLoader;
 
-    public static String getCanonicalName(Class<?> type) {
-        // remove java.lang prefix for default Java package
-        String canonicalName = type.getCanonicalName();
-        final int pkgEnd = canonicalName.lastIndexOf('.');
-        if (pkgEnd > 0 && canonicalName.substring(0, pkgEnd).equals("java.lang")) {
-            canonicalName = canonicalName.substring(pkgEnd + 1);
-        }
-        return canonicalName;
-    }
-
     public VelocityEngine getEngine() {
         if (engine == null) {
             // initialize velocity to load resources from class loader and use Log4J
@@ -150,5 +140,15 @@ public abstract class AbstractGeneratorMojo extends AbstractMojo {
                 } catch (IOException ignore) { }
             }
         }
+    }
+
+    public static String getCanonicalName(Class<?> type) {
+        // remove java.lang prefix for default Java package
+        String canonicalName = type.getCanonicalName();
+        final int pkgEnd = canonicalName.lastIndexOf('.');
+        if (pkgEnd > 0 && canonicalName.substring(0, pkgEnd).equals("java.lang")) {
+            canonicalName = canonicalName.substring(pkgEnd + 1);
+        }
+        return canonicalName;
     }
 }

@@ -179,7 +179,7 @@
 #foreach( $field in $endpointConfig.DeclaredFields )
         <tr>
             <td>$field.Name</td>
-            <td>$helper.getCanonicalName($field.Type)</td>
+            <td>$helper.getCanonicalName($field)</td>
         </tr>
 #end
     </table>

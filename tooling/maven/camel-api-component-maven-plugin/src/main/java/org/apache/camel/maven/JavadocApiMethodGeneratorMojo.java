@@ -19,10 +19,8 @@ package org.apache.camel.maven;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -36,6 +34,7 @@ import javax.swing.text.html.parser.Parser;
 import javax.swing.text.html.parser.TagElement;
 
 import org.apache.camel.util.component.ApiMethodParser;
+import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
@@ -72,14 +71,8 @@ public class JavadocApiMethodGeneratorMojo extends AbstractApiMethodGeneratorMoj
         Map<String, String> result = new HashMap<String, String>();
 
         final Pattern packagePatterns = Pattern.compile(excludePackages);
-        Pattern classPatterns = null;
-        if (excludeClasses != null) {
-            classPatterns = Pattern.compile(excludeClasses);
-        }
-        Pattern methodPatterns = null;
-        if (excludeMethods != null) {
-            methodPatterns = Pattern.compile(excludeMethods);
-        }
+        final Pattern classPatterns = (excludeClasses != null) ? Pattern.compile(excludeClasses) : null;
+        final Pattern methodPatterns = (excludeMethods != null) ? Pattern.compile(excludeMethods) : null;
 
         // for proxy class and super classes not matching excluded packages or classes
         for (Class aClass = getProxyType();
@@ -103,6 +96,12 @@ public class JavadocApiMethodGeneratorMojo extends AbstractApiMethodGeneratorMoj
                 final DTD dtd = DTD.getDTD("html.dtd");
                 final JavadocParser htmlParser = new JavadocParser(dtd, javaDocPath);
                 htmlParser.parse(new InputStreamReader(inputStream, "UTF-8"));
+
+                // look for parse errors
+                final String parseError = htmlParser.getErrorMessage();
+                if (parseError != null) {
+                    throw new MojoExecutionException(parseError);
+                }
 
                 // get public method signature
                 final Map<String, String> methodMap = htmlParser.getMethodText();
@@ -185,6 +184,7 @@ public class JavadocApiMethodGeneratorMojo extends AbstractApiMethodGeneratorMoj
 
         private List<String> methods = new ArrayList<String>();
         private Map<String, String> methodText = new HashMap<String, String>();
+        private String errorMessage;
 
         public JavadocParser(DTD dtd, String docPath) {
             super(dtd);
@@ -211,11 +211,7 @@ public class JavadocApiMethodGeneratorMojo extends AbstractApiMethodGeneratorMoj
                             if (href != null) {
                                 String hrefAttr = (String) href;
                                 if (hrefAttr.contains(hrefPattern)) {
-                                    try {
-                                        methodWithTypes = URLDecoder.decode(hrefAttr.substring(hrefAttr.indexOf('#') + 1), "UTF-8");
-                                    } catch (UnsupportedEncodingException e) {
-                                        throw new IllegalStateException(e);
-                                    }
+                                    methodWithTypes = StringEscapeUtils.unescapeHtml(hrefAttr.substring(hrefAttr.indexOf('#') + 1));
                                 }
                             }
                         }
@@ -249,11 +245,13 @@ public class JavadocApiMethodGeneratorMojo extends AbstractApiMethodGeneratorMoj
                 return "()";
             }
             final String[] types = typeString.split(",");
-            String argText = methodTextBuilder.toString().replaceAll("&nbsp;", " ").replaceAll("&nbsp", " ");
+            // use HTTP decode
+            String argText = StringEscapeUtils.unescapeHtml(methodTextBuilder.toString());
             final String[] args = argText.substring(argText.indexOf('(') + 1, argText.indexOf(')')).split(",");
             StringBuilder builder = new StringBuilder("(");
             for (int i = 0; i < types.length; i++) {
-                final String[] arg = args[i].trim().split(" ");
+                // split on space or non-breaking space
+                final String[] arg = args[i].trim().split(" |\u00A0");
                 builder.append(types[i]).append(" ").append(arg[1].trim()).append(",");
             }
             builder.deleteCharAt(builder.length() - 1);
@@ -266,6 +264,17 @@ public class JavadocApiMethodGeneratorMojo extends AbstractApiMethodGeneratorMoj
             if (parserState == ParserState.METHOD && methodWithTypes != null) {
                 methodTextBuilder.append(text);
             }
+        }
+
+        @Override
+        protected void handleError(int ln, String msg) {
+            if (msg.startsWith("exception ")) {
+                this.errorMessage = "Exception parsing Javadoc line " + ln + ": " + msg;
+            }
+        }
+
+        private String getErrorMessage() {
+            return errorMessage;
         }
 
         private List<String> getMethods() {

@@ -74,6 +74,7 @@ public abstract class AbstractApiMethodGeneratorMojo extends AbstractSourceGener
         parser.setClassLoader(getProjectClassLoader());
 
         // parse signatures
+        @SuppressWarnings("unchecked")
         final List<ApiMethodParser.ApiMethodModel> models = parser.parse();
 
         // generate enumeration from model
@@ -90,6 +91,7 @@ public abstract class AbstractApiMethodGeneratorMojo extends AbstractSourceGener
         }
     }
 
+    @SuppressWarnings("unchecked")
     protected ApiMethodParser createAdapterParser(Class proxyType) {
         return new ArgumentSubstitutionParser(proxyType, getArgumentSubstitutions());
     }
@@ -152,7 +154,7 @@ public abstract class AbstractApiMethodGeneratorMojo extends AbstractSourceGener
         context.put("componentPackage", componentPackage);
 
         // generate parameter names and types for configuration, sorted by parameter name
-        Map<String, Class<?>> parameters = new TreeMap<String, Class<?>>();
+        Map<String,ApiMethodParser.Argument> parameters = new TreeMap<String, ApiMethodParser.Argument>();
         for (ApiMethodParser.ApiMethodModel model : models) {
             for (ApiMethodParser.Argument argument : model.getArguments()) {
                 final String name = argument.getName();
@@ -161,11 +163,7 @@ public abstract class AbstractApiMethodGeneratorMojo extends AbstractSourceGener
                 if (!parameters.containsKey(name) &&
                         (propertyNamePattern == null || !propertyNamePattern.matcher(name).matches()) &&
                         (propertyTypePattern == null || !propertyTypePattern.matcher(typeName).matches())) {
-                    if (type.isPrimitive()) {
-                        // replace primitives with wrapper classes
-                        type = ClassUtils.primitiveToWrapper(type);
-                    }
-                    parameters.put(name, type);
+                    parameters.put(name, argument);
                 }
             }
         }
@@ -275,4 +273,63 @@ public abstract class AbstractApiMethodGeneratorMojo extends AbstractSourceGener
         return builder.toString();
     }
 
+    public String getCanonicalName(ApiMethodParser.Argument argument) throws MojoExecutionException {
+
+        // replace primitives with wrapper classes
+        final Class<?> type = argument.getType();
+        if (type.isPrimitive()) {
+            return getCanonicalName(ClassUtils.primitiveToWrapper(type));
+        }
+
+        // get default name prefix
+        String canonicalName = getCanonicalName(type);
+
+        final String typeArgs = argument.getTypeArgs();
+        if (typeArgs != null) {
+
+            // add generic type arguments
+            StringBuilder parameterizedType = new StringBuilder(canonicalName);
+            parameterizedType.append('<');
+
+            String[] argTypes = typeArgs.split(",");
+            boolean ignore = false;
+            for (String argType : argTypes) {
+
+                // try loading as is first
+                try {
+                    parameterizedType.append(getCanonicalName(getProjectClassLoader().loadClass(argType)));
+                } catch (ClassNotFoundException e) {
+
+                    // try loading with default java.lang package prefix
+                    try {
+                        if (log.isDebugEnabled()) {
+                            log.debug("Could not load " + argType + ", trying to load java.lang." + argType);
+                        }
+                        parameterizedType.append(
+                            getCanonicalName(getProjectClassLoader().loadClass("java.lang." + argType)));
+                    } catch (ClassNotFoundException e1) {
+                        log.warn("Ignoring type parameters " + typeArgs + "> for argument " + argument.getName() +
+                            ", unable to load parameteric type argument " + argType, e1);
+                        ignore = true;
+                    }
+                }
+
+                if (ignore) {
+                    // give up
+                    break;
+                } else {
+                    parameterizedType.append(",");
+                }
+            }
+
+            if (!ignore) {
+                // replace the last ',' with '>'
+                parameterizedType.deleteCharAt(parameterizedType.length() - 1);
+                parameterizedType.append('>');
+                canonicalName = parameterizedType.toString();
+            }
+        }
+
+        return canonicalName;
+    }
 }

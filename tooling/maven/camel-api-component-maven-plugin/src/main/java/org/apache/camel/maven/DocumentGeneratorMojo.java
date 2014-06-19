@@ -20,6 +20,8 @@ import java.io.File;
 import java.lang.reflect.Field;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+import java.lang.reflect.ParameterizedType;
+import java.lang.reflect.Type;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -405,6 +407,37 @@ public class DocumentGeneratorMojo extends AbstractGeneratorMojo implements Mave
         } else {
             return "";
         }
+    }
+
+    public static String getCanonicalName(Field field) {
+        final Type fieldType = field.getGenericType();
+        if (fieldType instanceof ParameterizedType) {
+            return getCanonicalName((ParameterizedType) fieldType);
+        } else {
+            return getCanonicalName(field.getType());
+        }
+    }
+
+    private static String getCanonicalName(ParameterizedType fieldType) {
+        final Type[] typeArguments = fieldType.getActualTypeArguments();
+
+        if (typeArguments.length > 0) {
+            final StringBuilder result = new StringBuilder(getCanonicalName((Class<?>) fieldType.getRawType()));
+            result.append("&lt;");
+            for (Type typeArg : typeArguments) {
+                if (typeArg instanceof ParameterizedType) {
+                    result.append(getCanonicalName((ParameterizedType) typeArg));
+                } else {
+                    result.append(getCanonicalName((Class<?>) typeArg));
+                }
+                result.append(',');
+            }
+            result.deleteCharAt(result.length() - 1);
+            result.append("&gt;");
+            return result.toString();
+        }
+
+        return getCanonicalName((Class<?>) fieldType.getRawType());
     }
 
     public static class EndpointInfo {
