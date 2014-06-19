@@ -242,7 +242,7 @@ public class DefaultPropertiesParser implements AugmentedPropertyNameAwareProper
             } else if (properties != null) {
                 value = properties.getProperty(key);
             }
-            return value;
+            return parseProperty(key, value, properties);
         }
     }
 
