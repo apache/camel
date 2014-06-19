@@ -1,4 +1,23 @@
+/**
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.apache.camel.component.jms.issues;
+
+import java.util.UUID;
+import javax.jms.ConnectionFactory;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
@@ -8,12 +27,11 @@ import org.apache.camel.component.jms.CamelJmsTestHelper;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-import javax.jms.ConnectionFactory;
-
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentTransacted;
 
 public class JmsDeadLetterChannelHandlerExceptionTest extends CamelTestSupport {
-    public class BadErrorHandler {
+    @SuppressWarnings("unused")
+    public static class BadErrorHandler {
         @Handler
         public void onException(Exchange exchange, Exception exception) throws Exception {
             throw new RuntimeException("error in errorhandler");
@@ -27,7 +45,7 @@ public class JmsDeadLetterChannelHandlerExceptionTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                errorHandler(deadLetterChannel("bean:org.apache.camel.component.jms.issues.JmsDeadLetterChannelHandlerExceptionTest.BadErrorHandler"));
+                errorHandler(deadLetterChannel("bean:" + BadErrorHandler.class.getName()));
 
                 from(testingEndpoint).throwException(new RuntimeException("bad error"));
             }
@@ -35,17 +53,13 @@ public class JmsDeadLetterChannelHandlerExceptionTest extends CamelTestSupport {
     }
 
     @Test
-    public void should_not_lose_messages_on_exception_in_errorhandler() throws Exception {
-        String message = getTestMethodName();
+    public void shouldNotLoseMessagesOnExceptionInErrorHandler() throws Exception {
+        UUID message = UUID.randomUUID();
         template.sendBody(testingEndpoint, message);
 
-        Thread.sleep(3000);
-
         Object dlqBody = consumer.receiveBody("activemq:ActiveMQ.DLQ", 3000);
-        Object testingEndpointBody = consumer.receiveBody(testingEndpoint, 3000);
-        Object testingEndpointSpecificDlqBody = consumer.receiveBody(testingEndpoint + ".DLQ", 3000);
 
-        assertTrue("no messages in any queues", dlqBody != null || testingEndpointBody != null || testingEndpointSpecificDlqBody != null);
+        assertEquals(message, dlqBody);
     }
 
     protected CamelContext createCamelContext() throws Exception {
