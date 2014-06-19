@@ -91,7 +91,7 @@ public abstract class AbstractApiMethodGeneratorMojo extends AbstractSourceGener
     }
 
     protected ApiMethodParser createAdapterParser(Class proxyType) {
-        return new ArgumentSubstitutionParser(proxyType, getArgumentSubstitutions()){};
+        return new ArgumentSubstitutionParser(proxyType, getArgumentSubstitutions());
     }
 
     public abstract List<String> getSignatureList() throws MojoExecutionException;

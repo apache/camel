@@ -34,7 +34,6 @@ import javax.swing.text.html.parser.Parser;
 import javax.swing.text.html.parser.TagElement;
 
 import org.apache.camel.util.component.ApiMethodParser;
-import org.apache.camel.util.component.ArgumentSubstitutionParser;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
@@ -64,11 +63,6 @@ public class JavadocApiMethodGeneratorMojo extends AbstractApiMethodGeneratorMoj
 
     @Parameter(property = PREFIX + "excludeMethods")
     protected String excludeMethods;
-
-    @Override
-    protected ApiMethodParser createAdapterParser(Class proxyType) {
-        return new ArgumentSubstitutionParser(proxyType, getArgumentSubstitutions());
-    }
 
     @Override
     public List<String> getSignatureList() throws MojoExecutionException {
@@ -159,18 +153,25 @@ public class JavadocApiMethodGeneratorMojo extends AbstractApiMethodGeneratorMoj
                 throw new MojoExecutionException(e.getCause().getMessage(), e.getCause());
             }
         }
+        // return null for non-public and non-static methods
+        String result = null;
         try {
             final Method method = aClass.getMethod(name, argTypes);
             // only include non-static public methods
             int modifiers = method.getModifiers();
-            if (Modifier.isPublic(modifiers) && !Modifier.isStatic(modifiers)) {
-                return method.getReturnType().getCanonicalName();
-            } else {
-                return null;
+            if (!Modifier.isStatic(modifiers)) {
+                result = method.getReturnType().getCanonicalName();
             }
         } catch (NoSuchMethodException e) {
-            throw new MojoExecutionException(e.getMessage(), e);
+            // could be a non-public method
+            try {
+                aClass.getDeclaredMethod(name, argTypes);
+            } catch (NoSuchMethodException e1) {
+                throw new MojoExecutionException(e1.getMessage(), e1);
+            }
         }
+
+        return result;
     }
 
     private class JavadocParser extends Parser {
