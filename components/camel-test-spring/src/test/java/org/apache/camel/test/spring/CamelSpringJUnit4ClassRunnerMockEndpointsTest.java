@@ -19,16 +19,21 @@ package org.apache.camel.test.spring;
 import org.apache.camel.EndpointInject;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.component.seda.SedaEndpoint;
+import org.apache.camel.impl.InterceptSendToEndpoint;
 import org.junit.Test;
-
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertTrue;
 
-@MockEndpoints("mock:c*")
+@MockEndpoints("seda:context2.seda")
 public class CamelSpringJUnit4ClassRunnerMockEndpointsTest
         extends CamelSpringJUnit4ClassRunnerPlainTest {
 
-    @EndpointInject(uri = "mock:mock:c", context = "camelContext2")
-    protected MockEndpoint mockMockC;
+    @EndpointInject(uri = "mock:seda:context2.seda", context = "camelContext2")
+    protected MockEndpoint mock;
+    
+    @EndpointInject(uri = "seda:context2.seda", context = "camelContext2")
+    private InterceptSendToEndpoint original;
     
     @Test
     @Override
@@ -39,12 +44,14 @@ public class CamelSpringJUnit4ClassRunnerMockEndpointsTest
         
         mockA.expectedBodiesReceived("David");
         mockB.expectedBodiesReceived("Hello David");
-        mockC.expectedBodiesReceived("Hello David");
-        mockMockC.expectedBodiesReceived("Hello David");
+        mockC.expectedBodiesReceived("David");
+        mock.expectedBodiesReceived("Hello David");
         
         start.sendBody("David");
         start2.sendBody("David");
         
         MockEndpoint.assertIsSatisfied(camelContext);
+        MockEndpoint.assertIsSatisfied(camelContext2);
+        assertTrue("Original endpoint should be invoked", ((SedaEndpoint) original.getDelegate()).getExchanges().size() == 1);
     }
 }

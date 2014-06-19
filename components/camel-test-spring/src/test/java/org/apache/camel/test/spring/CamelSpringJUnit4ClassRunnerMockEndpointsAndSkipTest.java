@@ -50,6 +50,7 @@ public class CamelSpringJUnit4ClassRunnerMockEndpointsAndSkipTest
         start2.sendBody("David");
 
         MockEndpoint.assertIsSatisfied(camelContext);
+        MockEndpoint.assertIsSatisfied(camelContext2);
         assertTrue("Original endpoint was invoked", ((SedaEndpoint) original.getDelegate()).getExchanges().isEmpty());
     }
 }
