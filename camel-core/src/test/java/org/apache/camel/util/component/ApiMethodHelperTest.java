@@ -22,9 +22,12 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 
-import org.junit.Test;
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import org.junit.Test;
 
 public class ApiMethodHelperTest {
 
@@ -53,6 +56,9 @@ public class ApiMethodHelperTest {
 
         methods = apiMethodHelper.getCandidateMethods("greetUs", "name1");
         assertEquals("Can't find greetUs(name1, name2)", 1, methods.size());
+
+        methods = apiMethodHelper.getCandidateMethods("greetAll", "nameMap");
+        assertEquals("Can't find greetAll(nameMap)", 1, methods.size());
     }
 
     @Test
@@ -81,6 +87,7 @@ public class ApiMethodHelperTest {
         assertEquals("GetArguments failed for hi", 2, apiMethodHelper.getArguments("hi").size());
         assertEquals("GetArguments failed for greetMe", 2, apiMethodHelper.getArguments("greetMe").size());
         assertEquals("GetArguments failed for greetUs", 4, apiMethodHelper.getArguments("greetUs").size());
+        assertEquals("GetArguments failed for greetAll", 6, apiMethodHelper.getArguments("greetAll").size());
     }
 
     @Test
@@ -101,7 +108,7 @@ public class ApiMethodHelperTest {
 
     @Test
     public void testAllArguments() throws Exception {
-        assertEquals("Get all arguments", 6, apiMethodHelper.allArguments().size());
+        assertEquals("Get all arguments", 7, apiMethodHelper.allArguments().size());
     }
 
     @Test
@@ -109,6 +116,7 @@ public class ApiMethodHelperTest {
         assertEquals("Get type name", String.class, apiMethodHelper.getType("name"));
         assertEquals("Get type name1", String.class, apiMethodHelper.getType("name1"));
         assertEquals("Get type name2", String.class, apiMethodHelper.getType("name2"));
+        assertEquals("Get type nameMap", Map.class, apiMethodHelper.getType("nameMap"));
     }
 
     @Test
@@ -137,6 +145,17 @@ public class ApiMethodHelperTest {
         properties.put("names", new String[] {"Dave", "Frank"});
         assertEquals("greetAll(names)", "Greetings Dave, Frank", ApiMethodHelper.invokeMethod(proxy, TestMethod.GREETALL, properties));
 
+        properties.clear();
+        Map<String, String> nameMap = new HashMap<String, String>();
+        nameMap.put("Dave", "Hello");
+        nameMap.put("Frank", "Goodbye");
+        properties.put("nameMap", nameMap);
+        final Map<String, String> result = (Map<String, String>) ApiMethodHelper.invokeMethod(proxy, TestMethod.GREETALL_2, properties);
+        assertNotNull("greetAll(nameMap)", result);
+        for (Map.Entry<String, String> entry : result.entrySet()) {
+            assertTrue("greetAll(nameMap)", entry.getValue().endsWith(entry.getKey()));
+        }
+
         // test with a derived proxy
         proxy = new TestProxy() {
             @Override
@@ -157,6 +176,7 @@ public class ApiMethodHelperTest {
         GREETUS(String.class, "greetUs", String.class, "name1", String.class, "name2"),
         GREETALL(String.class, "greetAll", new String[0].getClass(), "names"),
         GREETALL_1(String.class, "greetAll", List.class, "nameList"),
+        GREETALL_2(Map.class, "greetAll", Map.class, "nameMap"),
         GREETTIMES(new String[0].getClass(), "greetTimes", String.class, "name", int.class, "times");
 
         private final ApiMethod apiMethod;

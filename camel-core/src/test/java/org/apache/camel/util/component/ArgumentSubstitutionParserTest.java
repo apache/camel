@@ -19,9 +19,9 @@ package org.apache.camel.util.component;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.junit.Test;
-import static org.apache.camel.util.component.ArgumentSubstitutionParser.*;
+import static org.apache.camel.util.component.ArgumentSubstitutionParser.Substitution;
 import static org.junit.Assert.assertEquals;
+import org.junit.Test;
 
 public class ArgumentSubstitutionParserTest {
 
@@ -45,28 +45,32 @@ public class ArgumentSubstitutionParserTest {
         signatures.add("public final String greetUs(final String name1, String name2);");
         signatures.add("public final String greetAll(String[] names);");
         signatures.add("public final String greetAll(java.util.List<String> names);");
+        signatures.add("public final java.util.Map<String, String> greetAll(java.util.Map<String> nameMap);");
         signatures.add("public final String[] greetTimes(String name, int times);");
         parser.setSignatures(signatures);
 
         final List<ApiMethodParser.ApiMethodModel> methodModels = parser.parse();
-        assertEquals(7, methodModels.size());
+        assertEquals(8, methodModels.size());
 
-        final ApiMethodParser.ApiMethodModel sayHi1 = methodModels.get(6);
+        final ApiMethodParser.ApiMethodModel sayHi1 = methodModels.get(7);
         assertEquals(PERSON, sayHi1.getArguments().get(0).getName());
         assertEquals("SAYHI_1", sayHi1.getUniqueName());
 
-        final ApiMethodParser.ApiMethodModel greetMe = methodModels.get(2);
+        final ApiMethodParser.ApiMethodModel greetMe = methodModels.get(3);
         assertEquals(PERSON, greetMe.getArguments().get(0).getName());
 
-        final ApiMethodParser.ApiMethodModel greetUs = methodModels.get(4);
+        final ApiMethodParser.ApiMethodModel greetUs = methodModels.get(5);
         assertEquals("astronaut1", greetUs.getArguments().get(0).getName());
         assertEquals("astronaut2", greetUs.getArguments().get(1).getName());
 
         final ApiMethodParser.ApiMethodModel greetAll = methodModels.get(0);
-        assertEquals("personsList", greetAll.getArguments().get(0).getName());
+        assertEquals("personMap", greetAll.getArguments().get(0).getName());
 
         final ApiMethodParser.ApiMethodModel greetAll1 = methodModels.get(1);
-        assertEquals("stringArray", greetAll1.getArguments().get(0).getName());
+        assertEquals("personsList", greetAll1.getArguments().get(0).getName());
+
+        final ApiMethodParser.ApiMethodModel greetAll2 = methodModels.get(2);
+        assertEquals("stringArray", greetAll2.getArguments().get(0).getName());
     }
 
 }

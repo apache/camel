@@ -17,7 +17,9 @@
 package org.apache.camel.util.component;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 class TestProxy {
     public String sayHi() {
@@ -60,5 +62,15 @@ class TestProxy {
             result.add("Greetings " + name);
         }
         return result.toArray(new String[result.size()]);
+    }
+
+    public Map<String, String> greetAll(Map<String, String> nameMap) {
+        Map<String, String> result = new HashMap<String, String>();
+        for (Map.Entry<String, String> entry : nameMap.entrySet()) {
+            final String name = entry.getKey();
+            final String greeting = entry.getValue();
+            result.put(name, greeting + " " + name);
+        }
+        return result;
     }
 }

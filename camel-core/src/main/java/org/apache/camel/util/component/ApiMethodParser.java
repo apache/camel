@@ -35,10 +35,12 @@ import org.slf4j.LoggerFactory;
  */
 public abstract class ApiMethodParser<T> {
 
-    private static final String METHOD_PREFIX = "^(\\s*(public|final|synchronized|native)\\s+)*(\\s*<[^\\>]>)?\\s*(\\S+)\\s+([^\\(]+\\s*)\\(";
-    private static final Pattern METHOD_PATTERN = Pattern.compile("\\s*(\\S+)\\s+(\\S+)\\s*\\(\\s*([\\S\\s,]*)\\)\\s*;?\\s*");
-    private static final Pattern ARGS_PATTERN = Pattern.compile("\\s*(\\S+)\\s+([^\\s,]+)\\s*,?");
-    private static final Pattern GENERIC_ARG_PATTERN = Pattern.compile("(\\S+)<([^>]+)>");
+    // also used by JavadocApiMethodGeneratorMojo
+    public static final Pattern ARGS_PATTERN = Pattern.compile("\\s*([^<\\s]+)\\s*(<[^>]+>)?\\s+([^\\s,]+)\\s*,?");
+
+    private static final String METHOD_PREFIX = "^(\\s*(public|final|synchronized|native)\\s+)*(\\s*<[^>]>)?\\s*(\\S+)\\s+([^\\(]+\\s*)\\(";
+    private static final Pattern METHOD_PATTERN = Pattern.compile("\\s*([^<\\s]+)\\s*(<[^>]+>)?\\s+(\\S+)\\s*\\(\\s*([\\S\\s,]*)\\)\\s*;?\\s*");
+
     private static final String JAVA_LANG = "java.lang.";
     private static final Map<String, Class> PRIMITIVE_TYPES;
 
@@ -110,32 +112,22 @@ public abstract class ApiMethodParser<T> {
                 throw new IllegalArgumentException("Invalid method signature " + signature);
             }
 
-            // drop any generic type parameters in result, if any
-            final String resultTypeWithArgs = methodMatcher.group(1);
-            final Matcher resultMatcher = GENERIC_ARG_PATTERN.matcher(resultTypeWithArgs);
-            final Class<?> resultType = (resultMatcher.matches()) ?
-                forName(resultMatcher.group(1)) : forName(resultTypeWithArgs);
-
-            final String name = methodMatcher.group(2);
-            final String argSignature = methodMatcher.group(3);
+            // ignore generic type parameters in result, if any
+            final Class<?> resultType = forName(methodMatcher.group(1));
+            final String name = methodMatcher.group(3);
+            final String argSignature = methodMatcher.group(4);
 
             final List<Argument> arguments = new ArrayList<Argument>();
+            final List<Class<?>> argTypes = new ArrayList<Class<?>>();
 
-            List<Class<?>> argTypes = new ArrayList<Class<?>>();
             final Matcher argsMatcher = ARGS_PATTERN.matcher(argSignature);
             while (argsMatcher.find()) {
-                final String argTypeWithParams = argsMatcher.group(1);
-                final Matcher genericMatcher = GENERIC_ARG_PATTERN.matcher(argTypeWithParams);
-                Class<?> type;
-                String typeArgs = null;
-                if (genericMatcher.matches()) {
-                    type = forName(genericMatcher.group(1));
-                    typeArgs = genericMatcher.group(2);
-                } else {
-                    type = forName(argTypeWithParams);
-                }
-                arguments.add(new Argument(argsMatcher.group(2), type, typeArgs));
+
+                final Class<?> type = forName(argsMatcher.group(1));
                 argTypes.add(type);
+
+                final String typeArgs = argsMatcher.group(2) != null ? argsMatcher.group(2).replaceAll(" ", "") : null;
+                arguments.add(new Argument(argsMatcher.group(3), type, typeArgs));
             }
 
             Method method;
