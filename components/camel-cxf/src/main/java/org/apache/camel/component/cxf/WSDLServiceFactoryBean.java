@@ -48,6 +48,11 @@ public class WSDLServiceFactoryBean extends JaxWsServiceFactoryBean {
     public WSDLServiceFactoryBean() {
         setServiceClass(Provider.class);
     }
+    
+    public WSDLServiceFactoryBean(Class<?> serviceClass) {
+        setServiceClass(serviceClass);
+    }
+    
     public void setServiceClass(Class<?> serviceClass) {
         if (serviceClass != null) {
             super.setServiceClass(serviceClass);
