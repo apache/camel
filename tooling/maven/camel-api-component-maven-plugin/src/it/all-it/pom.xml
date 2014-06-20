@@ -44,19 +44,19 @@
       <artifactId>velocity</artifactId>
       <version>@velocity-version@</version>
     </dependency>
-
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-test</artifactId>
-      <version>@project.version@</version>
-      <scope>test</scope>
-    </dependency>
-    <!-- VelocityEngine javadoc for testing -->
+    <!-- VelocityEngine javadoc for generating API classes -->
     <dependency>
       <groupId>org.apache.velocity</groupId>
       <artifactId>velocity</artifactId>
       <version>@velocity-version@</version>
       <classifier>javadoc</classifier>
+      <scope>provided</scope>
+    </dependency>
+
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-test</artifactId>
+      <version>@project.version@</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
@@ -69,9 +69,10 @@
         <artifactId>@project.artifactId@</artifactId>
         <version>@project.version@</version>
         <executions>
+          <!-- using generate-test-sources instead of generate-sources to be able to load TestProxy.class -->
+<!--
           <execution>
             <id>generate-file-api-method</id>
-            <!-- using generate-test-sources instead of generate-sources to be able to load TestProxy.class -->
             <phase>generate-test-sources</phase>
             <goals>
               <goal>fromFile</goal>
@@ -116,6 +117,7 @@
               <excludeMethods>clone|Current|internal|icache</excludeMethods>
             </configuration>
           </execution>
+-->
           <execution>
             <id>generate-test-component-classes</id>
             <phase>generate-test-sources</phase>
@@ -127,10 +129,38 @@
                 <api>
                   <apiName>test</apiName>
                   <proxyClass>org.apache.camel.component.test.TestProxy</proxyClass>
+                  <substitutions>
+                    <substitution>
+                      <method>.+</method>
+                      <argName>(.+)</argName>
+                      <argType>java.util.List</argType>
+                      <replacement>$1List</replacement>
+                    </substitution>
+                    <substitution>
+                      <method>.+</method>
+                      <argName>(.+)</argName>
+                      <argType>.*?(\w++)\[\]</argType>
+                      <replacement>$1Array</replacement>
+                      <replaceWithType>true</replaceWithType>
+                    </substitution>
+                  </substitutions>
+                  <fromSignatureFile>../../../src/test/resources/test-proxy-signatures.txt</fromSignatureFile>
                 </api>
                 <api>
                   <apiName>velocity</apiName>
                   <proxyClass>org.apache.velocity.VelocityContext</proxyClass>
+                  <substitutions>
+                    <substitution>
+                      <method>.+</method>
+                      <argName>key</argName>
+                      <argType>java.lang.Object</argType>
+                      <replacement>applicationKey</replacement>
+                    </substitution>
+                  </substitutions>
+                  <fromJavadoc>
+                    <excludeClasses>InternalContextBase</excludeClasses>
+                    <excludeMethods>clone|Current|internal|icache</excludeMethods>
+                  </fromJavadoc>
                   <aliases>
                     <alias>
                       <methodPattern>get(.+)</methodPattern>

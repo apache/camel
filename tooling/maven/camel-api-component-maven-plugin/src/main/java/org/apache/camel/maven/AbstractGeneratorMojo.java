@@ -66,19 +66,36 @@ public abstract class AbstractGeneratorMojo extends AbstractMojo {
     protected String componentPackage;
 
     @Parameter(required = true, defaultValue = "${project}", readonly = true)
-    MavenProject project;
+    protected MavenProject project;
 
-    private VelocityEngine engine;
-    private ClassLoader projectClassLoader;
+    private static VelocityEngine engine;
+    private static ClassLoader projectClassLoader;
 
-    public VelocityEngine getEngine() {
+    private static boolean sharedProjectState;
+
+    public static void setSharedProjectState(boolean sharedProjectState) {
+        AbstractGeneratorMojo.sharedProjectState = sharedProjectState;
+    }
+
+    protected static void clearSharedProjectState() {
+        if (!sharedProjectState) {
+            projectClassLoader = null;
+        }
+    }
+
+    protected AbstractGeneratorMojo() {
+        clearSharedProjectState();
+    }
+
+    protected static VelocityEngine getEngine() {
         if (engine == null) {
             // initialize velocity to load resources from class loader and use Log4J
             Properties velocityProperties = new Properties();
             velocityProperties.setProperty(RuntimeConstants.RESOURCE_LOADER, "cloader");
             velocityProperties.setProperty("cloader.resource.loader.class", ClasspathResourceLoader.class.getName());
             velocityProperties.setProperty(RuntimeConstants.RUNTIME_LOG_LOGSYSTEM_CLASS, Log4JLogChute.class.getName());
-            velocityProperties.setProperty(Log4JLogChute.RUNTIME_LOG_LOG4J_LOGGER, log.getName());
+            final Logger velocityLogger = Logger.getLogger("org.apache.camel.maven.Velocity");
+            velocityProperties.setProperty(Log4JLogChute.RUNTIME_LOG_LOG4J_LOGGER, velocityLogger.getName());
             engine = new VelocityEngine(velocityProperties);
             engine.init();
         }
@@ -150,5 +167,45 @@ public abstract class AbstractGeneratorMojo extends AbstractMojo {
             canonicalName = canonicalName.substring(pkgEnd + 1);
         }
         return canonicalName;
+    }
+
+    public String getOutPackage() {
+        return outPackage;
+    }
+
+    public void setOutPackage(String outPackage) {
+        this.outPackage = outPackage;
+    }
+
+    public String getScheme() {
+        return scheme;
+    }
+
+    public void setScheme(String scheme) {
+        this.scheme = scheme;
+    }
+
+    public String getComponentName() {
+        return componentName;
+    }
+
+    public void setComponentName(String componentName) {
+        this.componentName = componentName;
+    }
+
+    public String getComponentPackage() {
+        return componentPackage;
+    }
+
+    public void setComponentPackage(String componentPackage) {
+        this.componentPackage = componentPackage;
+    }
+
+    public MavenProject getProject() {
+        return project;
+    }
+
+    public void setProject(MavenProject project) {
+        this.project = project;
     }
 }

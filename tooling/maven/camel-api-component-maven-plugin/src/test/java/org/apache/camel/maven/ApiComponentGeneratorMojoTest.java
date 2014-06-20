@@ -41,11 +41,32 @@ public class ApiComponentGeneratorMojoTest extends AbstractGeneratorMojoTest {
         configureSourceGeneratorMojo(mojo);
 
         mojo.apis = new ApiProxy[2];
-        mojo.apis[0] = new ApiProxy("test", TestProxy.class.getName());
+        mojo.apis[0] = new ApiProxy();
+        mojo.apis[0].setApiName("test");
+        mojo.apis[0].setProxyClass(TestProxy.class.getName());
+        mojo.apis[0].setFromSignatureFile(new File("src/test/resources/test-proxy-signatures.txt"));
+        Substitution[] substitutions = new Substitution[2];
+        substitutions[0] = new Substitution(".+", "(.+)", "java.util.List", "$1List", false);
+        substitutions[1] = new Substitution(".+", "(.+)", ".*?(\\w++)\\[\\]", "$1Array", true);
+        mojo.apis[0].setSubstitutions(substitutions);
+        // exclude name2, and int times
+        mojo.apis[0].setExcludeConfigNames("name2");
+        mojo.apis[0].setExcludeConfigTypes("int");
+
+
         List<ApiMethodAlias> aliases = new ArrayList<ApiMethodAlias>();
         aliases.add(new ApiMethodAlias("get(.+)", "$1"));
         aliases.add(new ApiMethodAlias("set(.+)", "$1"));
-        mojo.apis[1] = new ApiProxy("velocity", VelocityContext.class.getName(), aliases);
+        mojo.apis[1] = new ApiProxy();
+        mojo.apis[1].setApiName("velocity");
+        mojo.apis[1].setProxyClass(VelocityContext.class.getName());
+        mojo.apis[1].setAliases(aliases);
+        Substitution substitution = new Substitution(".*", "key", "java.lang.Object", "applicationKey", false);
+        mojo.apis[1].setSubstitutions(new Substitution[]{ substitution });
+        final FromJavadoc fromJavadoc = new FromJavadoc();
+        fromJavadoc.setExcludePackages(JavadocApiMethodGeneratorMojo.DEFAULT_EXCLUDE_PACKAGES);
+        fromJavadoc.setExcludeMethods("clone|Current|internal|icache");
+        mojo.apis[1].setFromJavadoc(fromJavadoc);
 
         mojo.execute();
 

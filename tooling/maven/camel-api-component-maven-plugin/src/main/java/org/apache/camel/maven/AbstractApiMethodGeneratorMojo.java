@@ -34,25 +34,24 @@ import org.apache.velocity.VelocityContext;
 /**
  * Base Mojo class for ApiMethod generators.
  */
-public abstract class AbstractApiMethodGeneratorMojo extends AbstractSourceGeneratorMojo {
+public abstract class AbstractApiMethodGeneratorMojo extends AbstractApiMethodBaseMojo {
 
     @Parameter(required = true, property = PREFIX + "proxyClass")
     protected String proxyClass;
-
-    @Parameter(property = PREFIX + "substitutions")
-    protected Substitution[] substitutions = new Substitution[0];
-
-    @Parameter(property = PREFIX + "excludeConfigNames")
-    protected String excludeConfigNames;
-
-    @Parameter(property = PREFIX + "excludeConfigTypes")
-    protected String excludeConfigTypes;
 
     // cached fields
     private Class<?> proxyType;
 
     private Pattern propertyNamePattern;
     private Pattern propertyTypePattern;
+
+    public String getProxyClass() {
+        return proxyClass;
+    }
+
+    public void setProxyClass(String proxyClass) {
+        this.proxyClass = proxyClass;
+    }
 
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {

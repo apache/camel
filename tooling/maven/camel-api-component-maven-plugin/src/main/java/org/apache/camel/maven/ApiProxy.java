@@ -16,31 +16,33 @@
  */
 package org.apache.camel.maven;
 
+import java.io.File;
 import java.util.Collections;
 import java.util.List;
+
+import org.apache.maven.plugin.MojoExecutionException;
 
 /**
  * Represents an API to use for generating Camel Component.
  */
 @SuppressWarnings("unused")
 public class ApiProxy {
+
     private String apiName;
+
     private String proxyClass;
 
+    private File fromSignatureFile;
+
+    private FromJavadoc fromJavadoc;
+
+    private Substitution[] substitutions = new Substitution[0];
+
+    private String excludeConfigNames;
+
+    private String excludeConfigTypes;
+
     private List<ApiMethodAlias> aliases = Collections.emptyList();
-
-    public ApiProxy() {
-    }
-
-    public ApiProxy(String apiName, String proxyClass) {
-        this.apiName = apiName;
-        this.proxyClass = proxyClass;
-    }
-
-    public ApiProxy(String apiName, String proxyClass, List<ApiMethodAlias> aliases) {
-        this(apiName, proxyClass);
-        this.aliases = aliases;
-    }
 
     public String getApiName() {
         return apiName;
@@ -58,6 +60,46 @@ public class ApiProxy {
         this.proxyClass = proxyClass;
     }
 
+    public File getFromSignatureFile() {
+        return fromSignatureFile;
+    }
+
+    public void setFromSignatureFile(File fromSignatureFile) {
+        this.fromSignatureFile = fromSignatureFile;
+    }
+
+    public FromJavadoc getFromJavadoc() {
+        return fromJavadoc;
+    }
+
+    public void setFromJavadoc(FromJavadoc fromJavadoc) {
+        this.fromJavadoc = fromJavadoc;
+    }
+
+    public Substitution[] getSubstitutions() {
+        return substitutions;
+    }
+
+    public void setSubstitutions(Substitution[] substitutions) {
+        this.substitutions = substitutions;
+    }
+
+    public String getExcludeConfigNames() {
+        return excludeConfigNames;
+    }
+
+    public void setExcludeConfigNames(String excludeConfigNames) {
+        this.excludeConfigNames = excludeConfigNames;
+    }
+
+    public String getExcludeConfigTypes() {
+        return excludeConfigTypes;
+    }
+
+    public void setExcludeConfigTypes(String excludeConfigTypes) {
+        this.excludeConfigTypes = excludeConfigTypes;
+    }
+
     public List<ApiMethodAlias> getAliases() {
         return aliases;
     }
@@ -66,9 +108,9 @@ public class ApiProxy {
         this.aliases = aliases;
     }
 
-    public void validate() {
+    public void validate() throws MojoExecutionException {
         if (apiName == null || proxyClass == null) {
-            throw new IllegalArgumentException("Properties apiName and proxyClass are required");
+            throw new MojoExecutionException("Properties apiName and proxyClass are required");
         }
     }
 }

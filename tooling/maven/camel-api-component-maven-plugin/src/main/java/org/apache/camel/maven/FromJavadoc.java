@@ -16,34 +16,38 @@
  */
 package org.apache.camel.maven;
 
-import java.io.File;
-
-import org.apache.maven.plugins.annotations.Parameter;
-
 /**
- * Base class for API based code generation MOJOs.
+ * Javadoc API generator properties.
  */
-public abstract class AbstractSourceGeneratorMojo extends AbstractGeneratorMojo {
+public class FromJavadoc {
 
-    @Parameter(defaultValue = "${project.build.directory}/generated-sources/camel-component")
-    protected File generatedSrcDir;
+    protected String excludePackages = JavadocApiMethodGeneratorMojo.DEFAULT_EXCLUDE_PACKAGES;
 
-    @Parameter(defaultValue = "${project.build.directory}/generated-test-sources/camel-component")
-    protected File generatedTestDir;
+    protected String excludeClasses;
 
-    public File getGeneratedSrcDir() {
-        return generatedSrcDir;
+    protected String excludeMethods;
+
+    public String getExcludePackages() {
+        return excludePackages;
     }
 
-    public void setGeneratedSrcDir(File generatedSrcDir) {
-        this.generatedSrcDir = generatedSrcDir;
+    public void setExcludePackages(String excludePackages) {
+        this.excludePackages = excludePackages;
     }
 
-    public File getGeneratedTestDir() {
-        return generatedTestDir;
+    public String getExcludeClasses() {
+        return excludeClasses;
     }
 
-    public void setGeneratedTestDir(File generatedTestDir) {
-        this.generatedTestDir = generatedTestDir;
+    public void setExcludeClasses(String excludeClasses) {
+        this.excludeClasses = excludeClasses;
+    }
+
+    public String getExcludeMethods() {
+        return excludeMethods;
+    }
+
+    public void setExcludeMethods(String excludeMethods) {
+        this.excludeMethods = excludeMethods;
     }
 }
