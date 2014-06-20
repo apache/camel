@@ -97,7 +97,7 @@ public abstract class AbstractApiMethodGeneratorMojo extends AbstractApiMethodBa
 
     public abstract List<String> getSignatureList() throws MojoExecutionException;
 
-    public Class getProxyType() throws MojoExecutionException {
+    public Class<?> getProxyType() throws MojoExecutionException {
         if (proxyType == null) {
             // load proxy class from Project runtime dependencies
             try {
@@ -290,6 +290,7 @@ public abstract class AbstractApiMethodGeneratorMojo extends AbstractApiMethodBa
             StringBuilder parameterizedType = new StringBuilder(canonicalName);
             parameterizedType.append('<');
 
+            // Note: its ok to split, since we don't support parsing nested type arguments
             String[] argTypes = typeArgs.split(",");
             boolean ignore = false;
             for (String argType : argTypes) {

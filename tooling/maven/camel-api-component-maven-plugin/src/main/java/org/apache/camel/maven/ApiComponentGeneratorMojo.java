@@ -163,6 +163,8 @@ public class ApiComponentGeneratorMojo extends AbstractApiMethodBaseMojo {
                     apiFromJavadoc.getExcludeClasses() : fromJavadoc.getExcludeClasses();
                 javadocMojo.excludeMethods = apiFromJavadoc.getExcludeMethods() != null ?
                     apiFromJavadoc.getExcludeMethods() : fromJavadoc.getExcludeMethods();
+                javadocMojo.includeStaticMethods = apiFromJavadoc.getIncludeStaticMethods() != null ?
+                    apiFromJavadoc.getIncludeStaticMethods() : fromJavadoc.getIncludeStaticMethods();
 
                 apiMethodGenerator = javadocMojo;
             }

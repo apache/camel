@@ -25,6 +25,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import javax.swing.text.ChangedCharSetException;
 import javax.swing.text.SimpleAttributeSet;
@@ -55,6 +56,8 @@ public class JavadocApiMethodGeneratorMojo extends AbstractApiMethodGeneratorMoj
     }
 
     protected static final String DEFAULT_EXCLUDE_PACKAGES = "javax?\\.lang.*";
+    private static final Pattern ARGTYPES_PATTERN = Pattern.compile("\\s*([^<\\s,]+\\s*(<[^>]+>)?)\\s*,?");
+    private static final Pattern RAW_ARGTYPES_PATTERN = Pattern.compile("\\s*([^<\\s,]+)\\s*(<[^>]+>)?\\s*,?");
 
     @Parameter(property = PREFIX + "excludePackages", defaultValue = DEFAULT_EXCLUDE_PACKAGES)
     protected String excludePackages;
@@ -64,6 +67,9 @@ public class JavadocApiMethodGeneratorMojo extends AbstractApiMethodGeneratorMoj
 
     @Parameter(property = PREFIX + "excludeMethods")
     protected String excludeMethods;
+
+    @Parameter(property = PREFIX + "includeStaticMethods")
+    protected Boolean includeStaticMethods;
 
     @Override
     public List<String> getSignatureList() throws MojoExecutionException {
@@ -116,7 +122,13 @@ public class JavadocApiMethodGeneratorMojo extends AbstractApiMethodGeneratorMoj
                         if (args.isEmpty()) {
                             types = new String[0];
                         } else {
-                            types = args.split(",");
+                            // get raw types from args
+                            final List<String> rawTypes = new ArrayList<String>();
+                            final Matcher argTypesMatcher = RAW_ARGTYPES_PATTERN.matcher(args);
+                            while (argTypesMatcher.find()) {
+                                rawTypes.add(argTypesMatcher.group(1));
+                            }
+                            types = rawTypes.toArray(new String[rawTypes.size()]);
                         }
                         final String resultType = getResultType(aClass, name, types);
                         if (resultType != null) {
@@ -146,7 +158,7 @@ public class JavadocApiMethodGeneratorMojo extends AbstractApiMethodGeneratorMoj
         for (int i = 0; i < types.length; i++) {
             try {
                 try {
-                    argTypes[i] = ApiMethodParser.forName(types[i].trim(), classLoader);
+                    argTypes[i] = ApiMethodParser.forName(types[i], classLoader);
                 } catch (ClassNotFoundException e) {
                     throw new MojoExecutionException(e.getMessage(), e);
                 }
@@ -154,13 +166,13 @@ public class JavadocApiMethodGeneratorMojo extends AbstractApiMethodGeneratorMoj
                 throw new MojoExecutionException(e.getCause().getMessage(), e.getCause());
             }
         }
-        // return null for non-public and non-static methods
+
+        // return null for non-public methods, and for non-static methods if includeStaticMethods is null or false
         String result = null;
         try {
             final Method method = aClass.getMethod(name, argTypes);
-            // only include non-static public methods
             int modifiers = method.getModifiers();
-            if (!Modifier.isStatic(modifiers)) {
+            if (!Modifier.isStatic(modifiers) || Boolean.TRUE.equals(includeStaticMethods)) {
                 result = method.getReturnType().getCanonicalName();
             }
         } catch (NoSuchMethodException e) {
@@ -175,7 +187,8 @@ public class JavadocApiMethodGeneratorMojo extends AbstractApiMethodGeneratorMoj
         return result;
     }
 
-    private class JavadocParser extends Parser {
+    private static class JavadocParser extends Parser {
+        private static final String NON_BREAKING_SPACE = "\u00A0";
         private String hrefPattern;
 
         private ParserState parserState;
@@ -211,7 +224,8 @@ public class JavadocApiMethodGeneratorMojo extends AbstractApiMethodGeneratorMoj
                             if (href != null) {
                                 String hrefAttr = (String) href;
                                 if (hrefAttr.contains(hrefPattern)) {
-                                    methodWithTypes = StringEscapeUtils.unescapeHtml(hrefAttr.substring(hrefAttr.indexOf('#') + 1));
+                                    // unescape HTML
+                                    methodWithTypes = unescapeHtml(hrefAttr.substring(hrefAttr.indexOf('#') + 1));
                                 }
                             }
                         }
@@ -220,6 +234,10 @@ public class JavadocApiMethodGeneratorMojo extends AbstractApiMethodGeneratorMoj
                     parserState = ParserState.METHOD;
                 }
             }
+        }
+
+        private static String unescapeHtml(String htmlString) {
+            return StringEscapeUtils.unescapeHtml(htmlString).replaceAll(NON_BREAKING_SPACE, " ");
         }
 
         @Override
@@ -244,15 +262,34 @@ public class JavadocApiMethodGeneratorMojo extends AbstractApiMethodGeneratorMoj
             if (typeString.isEmpty()) {
                 return "()";
             }
-            final String[] types = typeString.split(",");
-            // use HTTP decode
-            String argText = StringEscapeUtils.unescapeHtml(methodTextBuilder.toString());
-            final String[] args = argText.substring(argText.indexOf('(') + 1, argText.indexOf(')')).split(",");
+
+            // split types list
+            final List<String> typeList = new ArrayList<String>();
+            final Matcher typeMatcher = ARGTYPES_PATTERN.matcher(typeString);
+            while (typeMatcher.find()) {
+                typeList.add(typeMatcher.group(1).replaceAll(" ", ""));
+            }
+
+            // unescape HTML method text
+            final String plainText = unescapeHtml(methodTextBuilder.toString());
+            final String argsString = plainText.substring(plainText.indexOf('(') + 1, plainText.indexOf(')'));
+            final Matcher argMatcher = ApiMethodParser.ARGS_PATTERN.matcher(argsString);
+            final List<String> argNames = new ArrayList<String>();
+            while (argMatcher.find()) {
+                argNames.add(argMatcher.group(3));
+            }
+
+            // make sure number of types and names match
+            if (typeList.size() != argNames.size()) {
+                throw new IllegalArgumentException("Unexpected Javadoc error, different number of arg types and names");
+            }
+
+            final String[] names = argNames.toArray(new String[argNames.size()]);
             StringBuilder builder = new StringBuilder("(");
-            for (int i = 0; i < types.length; i++) {
+            int i = 0;
+            for (String type : typeList) {
                 // split on space or non-breaking space
-                final String[] arg = args[i].trim().split(" |\u00A0");
-                builder.append(types[i]).append(" ").append(arg[1].trim()).append(",");
+                builder.append(type).append(" ").append(names[i]).append(",");
             }
             builder.deleteCharAt(builder.length() - 1);
             builder.append(")");

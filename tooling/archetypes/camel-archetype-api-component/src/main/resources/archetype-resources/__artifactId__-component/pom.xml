@@ -202,6 +202,7 @@
                     <excludePackages>package-name-patterns</excludePackages>
                     <excludeClasses>class-name-patterns</excludeClasses>
                     <excludeMethods>method-name-patterns</excludeMethods>
+                    <includeStaticMethods>use 'true' to include static methods, false by default<includeStaticMethods>
                     -->
                   </fromJavadoc>
                 </api>
