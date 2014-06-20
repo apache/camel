@@ -16,9 +16,8 @@
  */
 package org.apache.camel.component.cxf;
 
-import java.security.Provider;
-
 import javax.xml.namespace.QName;
+import javax.xml.ws.Provider;
 
 import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.util.ObjectHelper;
