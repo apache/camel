@@ -32,7 +32,7 @@ public class ZipSplitterRouteIssueTest extends CamelTestSupport {
 
     @Test
     public void testSplitter() throws Exception {
-        getMockEndpoint("mock:entry").expectedMessageCount(2);
+        getMockEndpoint("mock:entry").expectedMessageCount(3);
 
         template.sendBody("seda:decompressFiles", new File("src/test/resources/data.zip"));
 
