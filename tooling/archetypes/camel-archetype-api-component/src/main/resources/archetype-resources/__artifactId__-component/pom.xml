@@ -60,7 +60,7 @@
       <scope>provided</scope>
     </dependency>
 
-    <!-- Component API javadoc in test scope to read API signatures -->
+    <!-- Component API javadoc in provided scope to read API signatures -->
     <dependency>
       <groupId>${groupId}</groupId>
       <artifactId>${artifactId}-api</artifactId>
