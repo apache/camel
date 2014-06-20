@@ -379,7 +379,8 @@ public class CxfEndpoint extends DefaultEndpoint implements HeaderFilterStrategy
         for (Method m : cf.getClass().getMethods()) {
             if ("setServiceFactory".equals(m.getName())) {
                 try {
-                    ReflectionUtil.setAccessible(m).invoke(cf, new WSDLServiceFactoryBean());
+                    // Set Object class as the service class of WSDLServiceFactoryBean 
+                    ReflectionUtil.setAccessible(m).invoke(cf, new WSDLServiceFactoryBean(Object.class));
                 } catch (Exception e) {
                     throw new RuntimeException(e);
                 }
