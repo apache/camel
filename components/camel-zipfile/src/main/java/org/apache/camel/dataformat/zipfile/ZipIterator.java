@@ -94,7 +94,7 @@ class ZipIterator implements Iterator<Message> {
         
         if (zipInputStream != null) {
             try {
-                ZipEntry current = zipInputStream.getNextEntry();
+                ZipEntry current = getNextEntry();
 
                 if (current != null) {
                     LOGGER.debug("read zipEntry {}", current.getName());
@@ -122,6 +122,16 @@ class ZipIterator implements Iterator<Message> {
             zipInputStream = null;
         }
     }
+    
+	private ZipEntry getNextEntry() throws IOException {
+		ZipEntry entry = null;
+		
+		while ((entry = zipInputStream.getNextEntry()) != null)
+			if (!entry.isDirectory())
+				return entry;
+		
+		return null;
+	}
 
     @Override
     public void remove() {
