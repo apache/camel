@@ -52,6 +52,23 @@
       <version>${version}</version>
     </dependency>
 
+    <!-- Camel annotations in provided scope to avoid compile errors in IDEs -->
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>spi-annotations</artifactId>
+      <version>${camel-version}</version>
+      <scope>provided</scope>
+    </dependency>
+
+    <!-- Component API javadoc in test scope to read API signatures -->
+    <dependency>
+      <groupId>${groupId}</groupId>
+      <artifactId>${artifactId}-api</artifactId>
+      <version>${version}</version>
+      <classifier>javadoc</classifier>
+      <scope>provided</scope>
+    </dependency>
+
     <!-- logging -->
     <dependency>
       <groupId>org.slf4j</groupId>
@@ -71,27 +88,11 @@
       <scope>test</scope>
     </dependency>
 
-    <!-- Camel annotations in provided scope to avoid compile errors in IDEs -->
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>spi-annotations</artifactId>
-      <version>${camel-version}</version>
-      <scope>provided</scope>
-    </dependency>
-
     <!-- testing -->
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-test</artifactId>
       <version>${camel-version}</version>
-      <scope>test</scope>
-    </dependency>
-    <!-- include component API javadoc in test scope to read API signatures -->
-    <dependency>
-      <groupId>${groupId}</groupId>
-      <artifactId>${artifactId}-api</artifactId>
-      <version>${version}</version>
-      <classifier>javadoc</classifier>
       <scope>test</scope>
     </dependency>
   </dependencies>
@@ -151,63 +152,35 @@
       <plugin>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-api-component-maven-plugin</artifactId>
+        <version>${camel-version}</version>
         <executions>
-          <execution>
-            <id>generate-from-file-api</id>
-            <goals>
-              <goal>fromFile</goal>
-            </goals>
-            <configuration>
-              <proxyClass>${package}.api.${name}FileHello</proxyClass>
-              <!-- Use substitutions to manipulate parameter names and avoid name clashes
-              <substitutions>
-                <substitution>
-                  <method>^.+$</method>
-                  <argName>^.+$</argName>
-                  <argType>java.lang.String</argType>
-                  <replacement>$1Param</replacement>
-                  <replaceWithType>false</replaceWithType>
-                </substitution>
-              </substitutions>
-              -->
-              <signatureFile>signatures/file-sig-api.txt</signatureFile>
-            </configuration>
-          </execution>
-          <execution>
-            <id>generate-from-javadoc-api</id>
-            <goals>
-              <goal>fromJavadoc</goal>
-            </goals>
-            <configuration>
-              <proxyClass>${package}.api.${name}JavadocHello</proxyClass>
-              <!-- Use substitutions to manipulate parameter names and avoid name clashes
-              <substitutions>
-                <substitution>
-                  <method>^.+$</method>
-                  <argName>^.+$</argName>
-                  <argType>java.lang.String</argType>
-                  <replacement>$1Arg</replacement>
-                  <replaceWithType>false</replaceWithType>
-                </substitution>
-              </substitutions>
-              -->
-              <!-- Use exclude patterns to limit what gets exposed in component endpoint
-              <excludePackages>package-name-patterns</excludePackages>
-              <excludeClasses>class-name-patterns</excludeClasses>
-              <excludeMethods>method-name-patterns</excludeMethods>
-              -->
-            </configuration>
-          </execution>
           <execution>
             <id>generate-test-component-classes</id>
             <goals>
               <goal>fromApis</goal>
             </goals>
             <configuration>
+              <scheme>${schemeName}</scheme>
+              <componentName>${componentName}</componentName>
+              <componentPackage>${componentPackage}</componentPackage>
+              <outPackage>${outPackage}</outPackage>
               <apis>
                 <api>
                   <apiName>hello-file</apiName>
                   <proxyClass>${package}.api.${name}FileHello</proxyClass>
+                  <fromSignatureFile>signatures/file-sig-api.txt</fromSignatureFile>
+                  <!-- Use substitutions to manipulate parameter names and avoid name clashes
+                  <substitutions>
+                    <substitution>
+                      <method>^.+$</method>
+                      <argName>^.+$</argName>
+                      <argType>java.lang.String</argType>
+                      <replacement>$1Param</replacement>
+                      <replaceWithType>false</replaceWithType>
+                    </substitution>
+                  </substitutions>
+                  -->
+
                   <!-- Use method aliases in endpoint URIs, e.g. support 'widget' as alias for getWidget or setWidget
                   <aliases>
                     <alias>
@@ -224,8 +197,20 @@
                 <api>
                   <apiName>hello-javadoc</apiName>
                   <proxyClass>${package}.api.${name}JavadocHello</proxyClass>
+                  <fromJavadoc>
+                    <!-- Use exclude patterns to limit what gets exposed in component endpoint
+                    <excludePackages>package-name-patterns</excludePackages>
+                    <excludeClasses>class-name-patterns</excludeClasses>
+                    <excludeMethods>method-name-patterns</excludeMethods>
+                    -->
+                  </fromJavadoc>
                 </api>
               </apis>
+              <!-- Specify global values for all APIs here, only aliases are merged, others are overridden at API level
+              <substitutions/>
+              <fromJavadoc/>
+              <aliases/>
+              -->
             </configuration>
           </execution>
         </executions>
@@ -264,21 +249,6 @@
 
     </plugins>
 
-    <pluginManagement>
-      <plugins>
-        <plugin>
-          <groupId>org.apache.camel</groupId>
-          <artifactId>camel-api-component-maven-plugin</artifactId>
-          <version>${camel-version}</version>
-          <configuration>
-            <scheme>${schemeName}</scheme>
-            <componentName>${componentName}</componentName>
-            <componentPackage>${componentPackage}</componentPackage>
-            <outPackage>${outPackage}</outPackage>
-          </configuration>
-        </plugin>
-      </plugins>
-    </pluginManagement>
   </build>
 
   <reporting>
