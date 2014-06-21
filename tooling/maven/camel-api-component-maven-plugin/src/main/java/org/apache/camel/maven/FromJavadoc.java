@@ -25,6 +25,8 @@ public class FromJavadoc {
 
     protected String excludeClasses;
 
+    protected String includeMethods;
+
     protected String excludeMethods;
 
     protected Boolean includeStaticMethods;
@@ -43,6 +45,14 @@ public class FromJavadoc {
 
     public void setExcludeClasses(String excludeClasses) {
         this.excludeClasses = excludeClasses;
+    }
+
+    public String getIncludeMethods() {
+        return includeMethods;
+    }
+
+    public void setIncludeMethods(String includeMethods) {
+        this.includeMethods = includeMethods;
     }
 
     public String getExcludeMethods() {

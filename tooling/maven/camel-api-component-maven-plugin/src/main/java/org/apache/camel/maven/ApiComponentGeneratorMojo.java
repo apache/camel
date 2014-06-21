@@ -120,26 +120,26 @@ public class ApiComponentGeneratorMojo extends AbstractApiMethodBaseMojo {
     private void configureMethodGenerator(AbstractApiMethodGeneratorMojo mojo, ApiProxy apiProxy) {
 
         // set AbstractGeneratorMojo properties
-        mojo.setComponentName(componentName);
-        mojo.setScheme(scheme);
-        mojo.setOutPackage(outPackage);
-        mojo.setComponentPackage(componentPackage);
-        mojo.setProject(project);
+        mojo.componentName = componentName;
+        mojo.scheme = scheme;
+        mojo.outPackage = outPackage;
+        mojo.componentPackage = componentPackage;
+        mojo.project = project;
 
         // set AbstractSourceGeneratorMojo properties
-        mojo.setGeneratedSrcDir(generatedSrcDir);
-        mojo.setGeneratedTestDir(generatedTestDir);
+        mojo.generatedSrcDir = generatedSrcDir;
+        mojo.generatedTestDir = generatedTestDir;
 
         // set AbstractAPIMethodBaseMojo properties
-        mojo.setSubstitutions(apiProxy.getSubstitutions().length != 0 ?
-            apiProxy.getSubstitutions() : substitutions);
-        mojo.setExcludeConfigNames(apiProxy.getExcludeConfigNames() != null ?
-            apiProxy.getExcludeConfigNames() : excludeConfigNames);
-        mojo.setExcludeConfigTypes(apiProxy.getExcludeConfigTypes() != null ?
-            apiProxy.getExcludeConfigTypes() : excludeConfigTypes);
+        mojo.substitutions = apiProxy.getSubstitutions().length != 0 ?
+            apiProxy.getSubstitutions() : substitutions;
+        mojo.excludeConfigNames = apiProxy.getExcludeConfigNames() != null ?
+            apiProxy.getExcludeConfigNames() : excludeConfigNames;
+        mojo.excludeConfigTypes = apiProxy.getExcludeConfigTypes() != null ?
+            apiProxy.getExcludeConfigTypes() : excludeConfigTypes;
 
         // set AbstractAPIMethodGeneratorMojo properties
-        mojo.setProxyClass(apiProxy.getProxyClass());
+        mojo.proxyClass = apiProxy.getProxyClass();
     }
 
     private AbstractApiMethodGeneratorMojo getApiMethodGenerator(ApiProxy api) {
@@ -161,6 +161,8 @@ public class ApiComponentGeneratorMojo extends AbstractApiMethodBaseMojo {
                     apiFromJavadoc.getExcludePackages() : fromJavadoc.getExcludePackages();
                 javadocMojo.excludeClasses = apiFromJavadoc.getExcludeClasses() != null ?
                     apiFromJavadoc.getExcludeClasses() : fromJavadoc.getExcludeClasses();
+                javadocMojo.includeMethods = apiFromJavadoc.getIncludeMethods() != null ?
+                    apiFromJavadoc.getIncludeMethods() : fromJavadoc.getIncludeMethods();
                 javadocMojo.excludeMethods = apiFromJavadoc.getExcludeMethods() != null ?
                     apiFromJavadoc.getExcludeMethods() : fromJavadoc.getExcludeMethods();
                 javadocMojo.includeStaticMethods = apiFromJavadoc.getIncludeStaticMethods() != null ?

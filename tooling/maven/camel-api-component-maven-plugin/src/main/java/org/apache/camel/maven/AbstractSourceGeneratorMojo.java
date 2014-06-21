@@ -30,20 +30,4 @@ public abstract class AbstractSourceGeneratorMojo extends AbstractGeneratorMojo 
 
     @Parameter(defaultValue = "${project.build.directory}/generated-test-sources/camel-component")
     protected File generatedTestDir;
-
-    public File getGeneratedSrcDir() {
-        return generatedSrcDir;
-    }
-
-    public void setGeneratedSrcDir(File generatedSrcDir) {
-        this.generatedSrcDir = generatedSrcDir;
-    }
-
-    public File getGeneratedTestDir() {
-        return generatedTestDir;
-    }
-
-    public void setGeneratedTestDir(File generatedTestDir) {
-        this.generatedTestDir = generatedTestDir;
-    }
 }

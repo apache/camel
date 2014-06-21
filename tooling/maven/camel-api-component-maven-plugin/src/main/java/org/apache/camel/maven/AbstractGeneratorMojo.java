@@ -168,44 +168,4 @@ public abstract class AbstractGeneratorMojo extends AbstractMojo {
         }
         return canonicalName;
     }
-
-    public String getOutPackage() {
-        return outPackage;
-    }
-
-    public void setOutPackage(String outPackage) {
-        this.outPackage = outPackage;
-    }
-
-    public String getScheme() {
-        return scheme;
-    }
-
-    public void setScheme(String scheme) {
-        this.scheme = scheme;
-    }
-
-    public String getComponentName() {
-        return componentName;
-    }
-
-    public void setComponentName(String componentName) {
-        this.componentName = componentName;
-    }
-
-    public String getComponentPackage() {
-        return componentPackage;
-    }
-
-    public void setComponentPackage(String componentPackage) {
-        this.componentPackage = componentPackage;
-    }
-
-    public MavenProject getProject() {
-        return project;
-    }
-
-    public void setProject(MavenProject project) {
-        this.project = project;
-    }
 }

@@ -65,6 +65,9 @@ public class JavadocApiMethodGeneratorMojo extends AbstractApiMethodGeneratorMoj
     @Parameter(property = PREFIX + "excludeClasses")
     protected String excludeClasses;
 
+    @Parameter(property = PREFIX + "includeMethods")
+    protected String includeMethods;
+
     @Parameter(property = PREFIX + "excludeMethods")
     protected String excludeMethods;
 
@@ -78,7 +81,8 @@ public class JavadocApiMethodGeneratorMojo extends AbstractApiMethodGeneratorMoj
 
         final Pattern packagePatterns = Pattern.compile(excludePackages);
         final Pattern classPatterns = (excludeClasses != null) ? Pattern.compile(excludeClasses) : null;
-        final Pattern methodPatterns = (excludeMethods != null) ? Pattern.compile(excludeMethods) : null;
+        final Pattern includeMethodPatterns = (includeMethods != null) ? Pattern.compile(includeMethods) : null;
+        final Pattern excludeMethodPatterns = (excludeMethods != null) ? Pattern.compile(excludeMethods) : null;
 
         // for proxy class and super classes not matching excluded packages or classes
         for (Class aClass = getProxyType();
@@ -113,7 +117,8 @@ public class JavadocApiMethodGeneratorMojo extends AbstractApiMethodGeneratorMoj
                 final Map<String, String> methodMap = htmlParser.getMethodText();
                 for (String method : htmlParser.getMethods()) {
                     if (!result.containsKey(method) &&
-                            (methodPatterns == null || !methodPatterns.matcher(method).find())) {
+                            (includeMethodPatterns == null || includeMethodPatterns.matcher(method).find()) &&
+                            (excludeMethodPatterns == null || !excludeMethodPatterns.matcher(method).find())) {
 
                         final int leftBracket = method.indexOf('(');
                         final String name = method.substring(0, leftBracket);

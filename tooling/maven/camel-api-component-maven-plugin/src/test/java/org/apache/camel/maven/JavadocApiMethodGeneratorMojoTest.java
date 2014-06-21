@@ -47,6 +47,7 @@ public class JavadocApiMethodGeneratorMojoTest extends AbstractGeneratorMojoTest
         Substitution substitution = new Substitution(".*", "key", "java.lang.Object", "applicationKey", false);
         mojo.substitutions = new Substitution[]{ substitution };
         mojo.excludePackages = JavadocApiMethodGeneratorMojo.DEFAULT_EXCLUDE_PACKAGES;
+        mojo.includeMethods = ".+";
         mojo.excludeMethods = "clone|Current|internal|icache";
 
         mojo.execute();

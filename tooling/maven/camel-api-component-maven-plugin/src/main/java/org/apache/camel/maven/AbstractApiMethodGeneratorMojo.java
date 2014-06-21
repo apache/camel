@@ -45,14 +45,6 @@ public abstract class AbstractApiMethodGeneratorMojo extends AbstractApiMethodBa
     private Pattern propertyNamePattern;
     private Pattern propertyTypePattern;
 
-    public String getProxyClass() {
-        return proxyClass;
-    }
-
-    public void setProxyClass(String proxyClass) {
-        this.proxyClass = proxyClass;
-    }
-
     @Override
     public void execute() throws MojoExecutionException, MojoFailureException {
 

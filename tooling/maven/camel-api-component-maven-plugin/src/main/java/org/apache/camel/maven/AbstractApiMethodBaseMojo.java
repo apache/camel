@@ -31,28 +31,4 @@ public abstract class AbstractApiMethodBaseMojo extends AbstractSourceGeneratorM
 
     @Parameter(property = PREFIX + "excludeConfigTypes")
     protected String excludeConfigTypes;
-
-    public Substitution[] getSubstitutions() {
-        return substitutions;
-    }
-
-    public void setSubstitutions(Substitution[] substitutions) {
-        this.substitutions = substitutions;
-    }
-
-    public String getExcludeConfigNames() {
-        return excludeConfigNames;
-    }
-
-    public void setExcludeConfigNames(String excludeConfigNames) {
-        this.excludeConfigNames = excludeConfigNames;
-    }
-
-    public String getExcludeConfigTypes() {
-        return excludeConfigTypes;
-    }
-
-    public void setExcludeConfigTypes(String excludeConfigTypes) {
-        this.excludeConfigTypes = excludeConfigTypes;
-    }
 }
