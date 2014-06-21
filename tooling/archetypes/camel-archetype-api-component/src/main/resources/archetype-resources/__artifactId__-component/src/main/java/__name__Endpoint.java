@@ -16,11 +16,14 @@
 ## ------------------------------------------------------------------------
 package ${package};
 
+import java.util.Map;
+
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.util.component.AbstractApiEndpoint;
+import org.apache.camel.util.component.ApiMethod;
 import org.apache.camel.util.component.ApiMethodPropertiesHelper;
 
 import ${package}.api.${name}FileHello;
@@ -80,7 +83,7 @@ public class ${name}Endpoint extends AbstractApiEndpoint<${name}ApiName, ${name}
     }
 
     @Override
-    public Object getApiProxy() {
+    public Object getApiProxy(ApiMethod method, Map<String, Object> args) {
         return apiProxy;
     }
 }

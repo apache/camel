@@ -67,6 +67,8 @@ public abstract class AbstractApiProducer<E extends Enum<E> & ApiName, T> extend
         propertiesHelper.getEndpointProperties(endpoint.getConfiguration(), properties);
         propertiesHelper.getExchangeProperties(exchange, properties);
 
+        // let the endpoint and the Producer intercept properties
+        endpoint.interceptProperties(properties);
         interceptProperties(properties);
 
         // decide which method to invoke
@@ -110,7 +112,7 @@ public abstract class AbstractApiProducer<E extends Enum<E> & ApiName, T> extend
 
     /**
      * Intercept method invocation arguments used to find and invoke API method.
-     * Can be overridden to add custom method properties.
+     * Can be overridden to add custom/hidden method arguments.
      * @param properties method invocation arguments.
      */
     @SuppressWarnings("unused")
@@ -126,7 +128,7 @@ public abstract class AbstractApiProducer<E extends Enum<E> & ApiName, T> extend
      * @throws RuntimeCamelException on error. Exceptions thrown by API method are wrapped.
      */
     protected Object doInvokeMethod(ApiMethod method, Map<String, Object> properties) throws RuntimeCamelException {
-        return ApiMethodHelper.invokeMethod(endpoint.getApiProxy(), method, properties);
+        return ApiMethodHelper.invokeMethod(endpoint.getApiProxy(method, properties), method, properties);
     }
 
     /**
@@ -174,7 +176,7 @@ public abstract class AbstractApiProducer<E extends Enum<E> & ApiName, T> extend
 
             Object value = exchange.getIn().getBody();
             try {
-                value = getEndpoint().getCamelContext().getTypeConverter().mandatoryConvertTo(
+                value = endpoint.getCamelContext().getTypeConverter().mandatoryConvertTo(
                         endpoint.getConfiguration().getClass().getDeclaredField(inBodyProperty).getType(),
                         exchange, value);
             } catch (Exception e) {

@@ -83,7 +83,7 @@ public abstract class AbstractApiConsumer<E extends Enum<E> & ApiName, T> extend
         final Set<String> argNames = new HashSet<String>();
         argNames.addAll(propertiesHelper.getEndpointPropertyNames(endpoint.getConfiguration()));
 
-        interceptArgumentNames(argNames);
+        interceptPropertyNames(argNames);
 
         final String[] argNamesArray = argNames.toArray(new String[argNames.size()]);
         List<ApiMethod> filteredMethods = ApiMethodHelper.filterMethods(
@@ -105,20 +105,16 @@ public abstract class AbstractApiConsumer<E extends Enum<E> & ApiName, T> extend
         return result;
     }
 
-    /**
-     * Intercept argument names used to find consumer method.
-     * Used to add any custom/hidden method arguments, which MUST be provided in getMethodArguments() override.
-     * @param argNames argument names.
-     */
-    @SuppressWarnings("unused")
-    protected void interceptArgumentNames(Set<String> argNames) {
-        // do nothing by default
-    }
-
     @Override
     protected int poll() throws Exception {
         // invoke the consumer method
-        final Map<String, Object> args = getMethodArguments();
+        final Map<String, Object> args = new HashMap<String, Object>();
+        args.putAll(endpointProperties);
+
+        // let the endpoint and the Consumer intercept properties
+        endpoint.interceptProperties(args);
+        interceptProperties(args);
+
         try {
             Object result = doInvokeMethod(args);
 
@@ -141,6 +137,26 @@ public abstract class AbstractApiConsumer<E extends Enum<E> & ApiName, T> extend
     }
 
     /**
+     * Intercept property names used to find Consumer method.
+     * Used to add any custom/hidden method arguments, which MUST be provided in interceptProperties() override.
+     * @param propertyNames argument names.
+     */
+    @SuppressWarnings("unused")
+    protected void interceptPropertyNames(Set<String> propertyNames) {
+        // do nothing by default
+    }
+
+    /**
+     * Intercept method invocation arguments used to find and invoke API method.
+     * Can be overridden to add custom/hidden method arguments.
+     * @param properties method invocation arguments.
+     */
+    @SuppressWarnings("unused")
+    protected void interceptProperties(Map<String, Object> properties) {
+        // do nothing by default
+    }
+
+    /**
      * Invoke the API method.
      * This method can be overridden, for example to synchronize API calls for thread-unsafe proxies.
      * Derived class MUST call super.doInvokeMethod() to invoke the API method.
@@ -148,14 +164,14 @@ public abstract class AbstractApiConsumer<E extends Enum<E> & ApiName, T> extend
      * @return method invocation result.
      */
     protected Object doInvokeMethod(Map<String, Object> args) {
-        return ApiMethodHelper.invokeMethod(endpoint.getApiProxy(), method, args);
+        return ApiMethodHelper.invokeMethod(endpoint.getApiProxy(method, args), method, args);
     }
 
     private void processResult(Object result) throws Exception {
         Exchange exchange = getEndpoint().createExchange();
         exchange.getIn().setBody(result);
 
-        doProcessResult(exchange);
+        interceptResult(exchange);
         try {
             // send message to next processor in the route
             getProcessor().process(exchange);
@@ -173,7 +189,7 @@ public abstract class AbstractApiConsumer<E extends Enum<E> & ApiName, T> extend
      * @param resultExchange result as a Camel exchange.
      */
     @SuppressWarnings("unused")
-    protected void doProcessResult(Exchange resultExchange) {
+    protected void interceptResult(Exchange resultExchange) {
         // do nothing by default
     }
 
@@ -185,17 +201,5 @@ public abstract class AbstractApiConsumer<E extends Enum<E> & ApiName, T> extend
         // must be a Collection
         Collection<?> collection = (Collection<?>) result;
         return collection.toArray(new Object[collection.size()]);
-    }
-
-    /**
-     * Return method arguments to use in doInvokeMethod().
-     * Derived classes can override it to add custom arguments.
-     * Overriding method MUST first call super.getMethodArguments() to get endpoint properties.
-     * @return argument names mapped to argument values
-     */
-    protected Map<String, Object> getMethodArguments() {
-        Map<String, Object> arguments = new HashMap<String, Object>();
-        arguments.putAll(endpointProperties);
-        return arguments;
     }
 }

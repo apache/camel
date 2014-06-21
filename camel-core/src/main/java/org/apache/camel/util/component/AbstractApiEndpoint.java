@@ -112,7 +112,7 @@ public abstract class AbstractApiEndpoint<E extends ApiName, T> extends DefaultE
         final Set<String> arguments = new HashSet<String>();
         arguments.addAll(getPropertiesHelper().getEndpointPropertyNames(getConfiguration()));
 
-        interceptEndpointArguments(arguments);
+        interceptPropertyNames(arguments);
 
         // add inBody argument for producers
         if (inBody != null) {
@@ -141,11 +141,23 @@ public abstract class AbstractApiEndpoint<E extends ApiName, T> extends DefaultE
     }
 
     /**
-     * Intercept initial endpoint arguments to add custom/hidden arguments for method calls, etc.
-     * @param arguments argument names
+     * Intercept property names used to find Consumer and Producer methods.
+     * Used to add any custom/hidden method arguments, which MUST be provided in interceptProperties() override
+     * either in Endpoint, or Consumer and Producer.
+     * @param propertyNames argument names.
      */
     @SuppressWarnings("unused")
-    protected void interceptEndpointArguments(Set<String> arguments) {
+    protected void interceptPropertyNames(Set<String> propertyNames) {
+        // do nothing by default
+    }
+
+    /**
+     * Intercept method invocation arguments used to find and invoke API method. Called by Consumer and Producer.
+     * Must be overridden if also overriding interceptPropertyName() to add custom/hidden method properties.
+     * @param properties method invocation arguments.
+     */
+    @SuppressWarnings("unused")
+    protected void interceptProperties(Map<String, Object> properties) {
         // do nothing by default
     }
 
@@ -214,11 +226,14 @@ public abstract class AbstractApiEndpoint<E extends ApiName, T> extends DefaultE
     }
 
     /**
-     * Returns an instance of an API Proxy based on apiName.
+     * Returns an instance of an API Proxy based on apiName, method and args.
      * Called by {@link AbstractApiConsumer} or {@link AbstractApiProducer}.
+     *
+     * @param method method about to be invoked
+     * @param args method arguments
      * @return a Java object that implements the method to be invoked.
      * @see AbstractApiProducer
      * @see AbstractApiConsumer
      */
-    public abstract Object getApiProxy();
+    public abstract Object getApiProxy(ApiMethod method, Map<String, Object> args);
 }
