@@ -19,9 +19,10 @@ package org.apache.camel.util.component;
 import java.util.ArrayList;
 import java.util.List;
 
-import static org.apache.camel.util.component.ArgumentSubstitutionParser.Substitution;
-import static org.junit.Assert.assertEquals;
+import org.apache.camel.util.component.ArgumentSubstitutionParser.Substitution;
 import org.junit.Test;
+
+import static org.junit.Assert.assertEquals;
 
 public class ArgumentSubstitutionParserTest {
 

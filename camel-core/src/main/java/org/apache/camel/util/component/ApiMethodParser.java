@@ -96,7 +96,7 @@ public abstract class ApiMethodParser<T> {
     public final List<ApiMethodModel> parse() {
         // parse sorted signatures and generate descriptions
         List<ApiMethodModel> result = new ArrayList<ApiMethodModel>();
-        for (String signature: signatures) {
+        for (String signature : signatures) {
 
             // remove all modifiers and type parameters for method
             signature = signature.replaceAll(METHOD_PREFIX, "$4 $5(");
