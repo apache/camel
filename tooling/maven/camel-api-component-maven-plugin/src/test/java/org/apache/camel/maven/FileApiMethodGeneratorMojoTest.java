@@ -23,7 +23,6 @@ import org.apache.camel.component.test.TestProxy;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugin.MojoFailureException;
 import org.junit.Test;
-import static org.junit.Assert.assertTrue;
 
 /**
  * Tests {@link FileApiMethodGeneratorMojo}

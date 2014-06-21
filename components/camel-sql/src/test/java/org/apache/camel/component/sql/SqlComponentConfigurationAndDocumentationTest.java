@@ -23,8 +23,6 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-import javax.swing.*;
-
 public class SqlComponentConfigurationAndDocumentationTest extends CamelTestSupport {
 
     @Override

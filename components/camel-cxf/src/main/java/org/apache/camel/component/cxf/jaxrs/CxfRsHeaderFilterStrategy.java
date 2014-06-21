@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.cxf.jaxrs;
 
-import org.apache.camel.Exchange;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.impl.DefaultHeaderFilterStrategy;
 

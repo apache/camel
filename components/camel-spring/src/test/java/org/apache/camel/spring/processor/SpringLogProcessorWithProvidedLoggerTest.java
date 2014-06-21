@@ -16,11 +16,10 @@
  */
 package org.apache.camel.spring.processor;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.processor.LogProcessorTest;
-import org.apache.camel.processor.LogProcessorWithProvidedLoggerTest;
-
 import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
+
+import org.apache.camel.CamelContext;
+import org.apache.camel.processor.LogProcessorWithProvidedLoggerTest;
 
 public class SpringLogProcessorWithProvidedLoggerTest extends LogProcessorWithProvidedLoggerTest {
 

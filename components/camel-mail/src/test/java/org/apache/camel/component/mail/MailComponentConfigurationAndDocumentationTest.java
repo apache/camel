@@ -23,8 +23,6 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-import java.util.List;
-
 public class MailComponentConfigurationAndDocumentationTest extends CamelTestSupport {
 
     @Override
