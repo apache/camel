@@ -34,10 +34,10 @@ import org.springframework.jdbc.datasource.embedded.EmbeddedDatabaseType;
  */
 public class SqlProducerExpressionParameterTest extends CamelTestSupport {
 
-    private EmbeddedDatabase db;
-
     @EndpointInject(uri = "mock:result")
     MockEndpoint result;
+
+    private EmbeddedDatabase db;
 
     @Before
     public void setUp() throws Exception {
