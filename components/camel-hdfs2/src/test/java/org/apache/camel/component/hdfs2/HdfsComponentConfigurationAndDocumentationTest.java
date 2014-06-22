@@ -33,8 +33,8 @@ public class HdfsComponentConfigurationAndDocumentationTest extends CamelTestSup
     @Test
     public void testComponentConfiguration() throws Exception {
         HdfsComponent comp = context.getComponent("hdfs2", HdfsComponent.class);
-        EndpointConfiguration conf = comp.createConfiguration("hdfs2://localhost/tmp/simple-file?" +
-                "splitStrategy=IDLE:1000,BYTES:5&fileSystemType=LOCAL&fileType=ARRAY_FILE&initialDelay=0");
+        EndpointConfiguration conf = comp.createConfiguration("hdfs2://localhost/tmp/simple-file?"
+                + "splitStrategy=IDLE:1000,BYTES:5&fileSystemType=LOCAL&fileType=ARRAY_FILE&initialDelay=0");
 
         assertEquals("LOCAL", conf.getParameter("fileSystemType"));
         assertEquals("ARRAY_FILE", conf.getParameter("fileType"));
