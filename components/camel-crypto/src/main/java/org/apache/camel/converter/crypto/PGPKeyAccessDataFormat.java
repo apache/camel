@@ -78,10 +78,6 @@ import org.slf4j.LoggerFactory;
  * array or file, then you should use the class {@link PGPDataFormat}.
  * 
  */
-/**
- * @author D023101
- * 
- */
 public class PGPKeyAccessDataFormat extends ServiceSupport implements DataFormat {
 
     public static final String KEY_USERID = "CamelPGPDataFormatKeyUserid";

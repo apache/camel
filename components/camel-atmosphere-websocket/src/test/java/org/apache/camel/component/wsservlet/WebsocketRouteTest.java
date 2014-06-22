@@ -165,9 +165,9 @@ public class WebsocketRouteTest extends WebsocketCamelRouterTestSupport {
     }
     
     private static byte[] createByteResponse(byte[] req) {
-        byte[] resp = new byte[((byte[])req).length + RESPONSE_GREETING_BYTES.length];
+        byte[] resp = new byte[req.length + RESPONSE_GREETING_BYTES.length];
         System.arraycopy(RESPONSE_GREETING_BYTES, 0, resp, 0, RESPONSE_GREETING_BYTES.length);
-        System.arraycopy(req, 0, resp, RESPONSE_GREETING_BYTES.length, ((byte[])req).length);
+        System.arraycopy(req, 0, resp, RESPONSE_GREETING_BYTES.length, req.length);
         return resp;
     }
 

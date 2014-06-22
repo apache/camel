@@ -31,6 +31,7 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 import javax.xml.namespace.QName;
+import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 
@@ -278,9 +279,9 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
             int d = depth;
             while (d <= depth) {
                 int code = reader.next();
-                if (code == XMLStreamReader.START_ELEMENT) {
+                if (code == XMLStreamConstants.START_ELEMENT) {
                     depth++;
-                } else if (code == XMLStreamReader.END_ELEMENT) {
+                } else if (code == XMLStreamConstants.END_ELEMENT) {
                     depth--;
                 }
             }
@@ -289,7 +290,7 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
                 code = reader.next();
             } else {
                 code = reader.getEventType();
-                if (code == XMLStreamReader.END_ELEMENT) {
+                if (code == XMLStreamConstants.END_ELEMENT) {
                     // revert the depth count to avoid double counting the up event
                     depth++;
                 }
@@ -360,11 +361,11 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
 
         private String getNextToken() throws XMLStreamException {
             int code = 0;
-            while (code != XMLStreamReader.END_DOCUMENT) {
+            while (code != XMLStreamConstants.END_DOCUMENT) {
                 code = readNext();
 
                 switch (code) {
-                case XMLStreamReader.START_ELEMENT:
+                case XMLStreamConstants.START_ELEMENT:
                     depth++;
                     QName name = reader.getName();
                     if (LOG.isTraceEnabled()) {
@@ -400,7 +401,7 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
                         readCurrent(false);
                     }
                     break;
-                case XMLStreamReader.END_ELEMENT:
+                case XMLStreamConstants.END_ELEMENT:
                     depth--;
                     QName endname = reader.getName();
                     LOG.trace("ee={}", endname);
@@ -436,7 +437,7 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
                         }
                     }
                     break;
-                case XMLStreamReader.END_DOCUMENT:
+                case XMLStreamConstants.END_DOCUMENT:
                     LOG.trace("depth={}", depth);
                     break;
                 default:

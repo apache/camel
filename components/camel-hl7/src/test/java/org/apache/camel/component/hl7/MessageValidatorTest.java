@@ -44,8 +44,9 @@ public class MessageValidatorTest extends CamelTestSupport {
     protected void doPreSetup() throws Exception {
         defaultContext = new DefaultValidation();
         customContext = new DefaultValidation();
-        @SuppressWarnings("serial")
         MessageRule rule = new MessageRule() {
+
+            private static final long serialVersionUID = 1L;
 
             @Override
             public String getDescription() {

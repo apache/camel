@@ -66,7 +66,6 @@ public class XmlVerifierProcessor extends XmlSignatureProcessor {
     private final XmlVerifierConfiguration config;
 
     public XmlVerifierProcessor(XmlVerifierConfiguration config) {
-        super();
         this.config = config;
     }
 

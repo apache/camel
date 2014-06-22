@@ -24,13 +24,13 @@ import java.util.Map;
 import org.joda.time.format.DateTimeFormat;
 import org.joda.time.format.DateTimeFormatter;
 
-@SuppressWarnings("serial")
 public class SplunkEvent implements Serializable {
 
     // ----------------------------------
     // Common event fields
     // ----------------------------------
 
+    private static final long serialVersionUID = 1L;
     /**
      * A device-specific classification provided as part of the event.
      */

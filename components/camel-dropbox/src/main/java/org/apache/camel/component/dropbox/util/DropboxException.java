@@ -17,6 +17,9 @@
 package org.apache.camel.component.dropbox.util;
 
 public class DropboxException extends Exception {
+
+    private static final long serialVersionUID = 1L;
+
     public DropboxException(String message) {
         super(message);
     }

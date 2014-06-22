@@ -65,6 +65,9 @@ public abstract class AbstractGeneratorMojoTest {
             @Override
             public Build getBuild() {
                 return new Build() {
+
+                    private static final long serialVersionUID = 1L;
+
                     @Override
                     public String getTestSourceDirectory() {
                         return OUT_DIR;

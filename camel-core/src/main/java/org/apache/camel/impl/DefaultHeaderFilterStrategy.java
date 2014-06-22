@@ -247,7 +247,7 @@ public class DefaultHeaderFilterStrategy implements HeaderFilterStrategy {
             if (isCaseInsensitive()) {
                 Iterator<String> it = filter.iterator();
                 while (it.hasNext()) {
-                    String filterString = (String) it.next();
+                    String filterString = it.next();
                     if (filterString.equalsIgnoreCase(headerName)) {
                         return true;
                     }

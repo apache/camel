@@ -49,9 +49,9 @@ public class WsProducer extends DefaultProducer {
         log.debug("Sending out {}", message);
         if (message != null) {
             if (message instanceof String) {
-                sendMessage(getWebSocket(), (String)message, ((WsEndpoint)getEndpoint()).isUseStreaming());
+                sendMessage(getWebSocket(), (String)message, getEndpoint().isUseStreaming());
             } else if (message instanceof byte[]) {
-                sendMessage(getWebSocket(), (byte[])message, ((WsEndpoint)getEndpoint()).isUseStreaming());
+                sendMessage(getWebSocket(), (byte[])message, getEndpoint().isUseStreaming());
             } else if (message instanceof InputStream) {
                 sendStreamMessage(getWebSocket(), (InputStream)message);
             } else {
@@ -133,6 +133,6 @@ public class WsProducer extends DefaultProducer {
     }
     
     private WebSocket getWebSocket() {
-        return ((WsEndpoint)getEndpoint()).getWebSocket();
+        return getEndpoint().getWebSocket();
     }
 }

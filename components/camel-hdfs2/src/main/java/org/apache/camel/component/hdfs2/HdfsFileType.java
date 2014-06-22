@@ -348,10 +348,10 @@ public enum HdfsFileType {
                 HdfsInfo hdfsInfo = HdfsInfoFactory.newHdfsInfo(hdfsPath);
                 Class<? extends WritableComparable> keyWritableClass = configuration.getKeyType().getWritableClass();
                 Class<? extends WritableComparable> valueWritableClass = configuration.getValueType().getWritableClass();
-                rout = new BloomMapFile.Writer(hdfsInfo.getConf(), new Path(hdfsPath), BloomMapFile.Writer.keyClass(keyWritableClass),
-                        BloomMapFile.Writer.valueClass(valueWritableClass),
-                        BloomMapFile.Writer.compression(configuration.getCompressionType(), configuration.getCompressionCodec().getCodec()),
-                        BloomMapFile.Writer.progressable(new Progressable() {
+                rout = new BloomMapFile.Writer(hdfsInfo.getConf(), new Path(hdfsPath), org.apache.hadoop.io.MapFile.Writer.keyClass(keyWritableClass),
+                        org.apache.hadoop.io.MapFile.Writer.valueClass(valueWritableClass),
+                        org.apache.hadoop.io.MapFile.Writer.compression(configuration.getCompressionType(), configuration.getCompressionCodec().getCodec()),
+                        org.apache.hadoop.io.MapFile.Writer.progressable(new Progressable() {
                             @Override
                             public void progress() {
                             }

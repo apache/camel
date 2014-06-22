@@ -199,7 +199,6 @@ public class CamelDestination extends AbstractDestination implements Configurabl
         org.apache.cxf.message.Exchange cxfExchange;
 
         BackChannelConduit(Message message) {
-            super();
             inMessage = message;
             cxfExchange = inMessage.getExchange();
             camelExchange = cxfExchange.get(Exchange.class);

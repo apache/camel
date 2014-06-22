@@ -54,7 +54,7 @@ public class AggregationStrategyBeanAdapterWithHeadersTest extends ContextTestSu
 
         public String appendWithHeaders(String existing, Map<String, Integer> oldHeaders, String next, Map<String, Integer> newHeaders) {
             if (next != null) {
-                Integer count = (Integer) oldHeaders.get("count") + (Integer) newHeaders.get("count");
+                Integer count = oldHeaders.get("count") + newHeaders.get("count");
                 oldHeaders.put("count", count);
                 return existing + next;
             } else {

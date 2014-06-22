@@ -61,7 +61,6 @@ public class PGPDataFormat extends PGPKeyAccessDataFormat implements PGPPublicKe
     private PGPPassphraseAccessor passphraseAccessor; // for signing and decryption with multiple keys
 
     public PGPDataFormat() {
-        super();
         publicKeyAccessor = this;
         secretKeyAccessor = this;
     }

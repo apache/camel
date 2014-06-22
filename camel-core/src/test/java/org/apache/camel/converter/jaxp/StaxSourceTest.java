@@ -52,7 +52,7 @@ public class StaxSourceTest extends ContextTestSupport {
         StaxSource staxSource = new StaxSource(reader);
         StreamSource templateSource = new StreamSource(getClass().getResourceAsStream("/xslt/common/copy.xsl"));
         Transformer transformer = trf.newTransformer(templateSource);
-        //System.out.println("Used transformer: " + transformer.getClass().getName());
+        log.info("Used transformer: {}", transformer.getClass().getName());
         transformer.setOutputProperty(OutputKeys.OMIT_XML_DECLARATION, "yes");
         transformer.transform(staxSource, new StreamResult(baos));
         writer.flush();

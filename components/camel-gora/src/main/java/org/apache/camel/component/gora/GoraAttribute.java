@@ -19,8 +19,6 @@ package org.apache.camel.component.gora;
 
 /**
  * Camel-Gora attributes
- *
- * @author ipolyzos
  */
 public enum GoraAttribute {
 

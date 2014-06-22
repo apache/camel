@@ -28,8 +28,6 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Gora endpoint
- *
- * @author ipolyzos
  */
 public class GoraEndpoint extends DefaultEndpoint {
 

@@ -28,6 +28,7 @@ import org.apache.camel.hello_world_soap_http.GreeterService;
 import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.cxf.Bus;
+import org.apache.cxf.BusFactory;
 import org.apache.cxf.bus.spring.SpringBusFactory;
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
@@ -69,8 +70,8 @@ public class WSSecurityRouteTest extends CamelTestSupport {
         URL busFile = WSSecurityRouteTest.class.getResource("../client/wssec.xml");
 
         Bus bus = bf.createBus(busFile.toString());
-        SpringBusFactory.setDefaultBus(bus);
-        SpringBusFactory.setThreadDefaultBus(bus);
+        BusFactory.setDefaultBus(bus);
+        BusFactory.setThreadDefaultBus(bus);
         
         GreeterService gs = new GreeterService();
         Greeter greeter = gs.getGreeterSignaturePort();
@@ -90,8 +91,8 @@ public class WSSecurityRouteTest extends CamelTestSupport {
         URL busFile = WSSecurityRouteTest.class.getResource("../client/wssec.xml");
 
         Bus bus = bf.createBus(busFile.toString());
-        SpringBusFactory.setDefaultBus(bus);
-        SpringBusFactory.setThreadDefaultBus(bus);
+        BusFactory.setDefaultBus(bus);
+        BusFactory.setThreadDefaultBus(bus);
         
         GreeterService gs = new GreeterService();
         Greeter greeter = gs.getGreeterUsernameTokenPort();
@@ -111,8 +112,8 @@ public class WSSecurityRouteTest extends CamelTestSupport {
         URL busFile = WSSecurityRouteTest.class.getResource("../client/wssec.xml");
 
         Bus bus = bf.createBus(busFile.toString());
-        SpringBusFactory.setDefaultBus(bus);
-        SpringBusFactory.setThreadDefaultBus(bus);
+        BusFactory.setDefaultBus(bus);
+        BusFactory.setThreadDefaultBus(bus);
         
         GreeterService gs = new GreeterService();
         Greeter greeter = gs.getGreeterEncryptionPort();
@@ -132,8 +133,8 @@ public class WSSecurityRouteTest extends CamelTestSupport {
         URL busFile = WSSecurityRouteTest.class.getResource("../client/wssec.xml");
 
         Bus bus = bf.createBus(busFile.toString());
-        SpringBusFactory.setDefaultBus(bus);
-        SpringBusFactory.setThreadDefaultBus(bus);
+        BusFactory.setDefaultBus(bus);
+        BusFactory.setThreadDefaultBus(bus);
         
         GreeterService gs = new GreeterService();
         Greeter greeter = gs.getGreeterSecurityPolicyPort();

@@ -79,9 +79,9 @@ public class FileKeyPairProvider extends AbstractKeyPairProvider {
             throw new IllegalStateException("BouncyCastle must be registered as a JCE provider");
         }
         List<KeyPair> keys = new ArrayList<KeyPair>();
-        for (int i = 0; i < files.length; i++) {
+        for (String file : files) {
             try {
-                PEMParser r = new PEMParser(new InputStreamReader(new FileInputStream(files[i])));
+                PEMParser r = new PEMParser(new InputStreamReader(new FileInputStream(file)));
                 try {
                     Object o = r.readObject();
                     
@@ -104,7 +104,7 @@ public class FileKeyPairProvider extends AbstractKeyPairProvider {
                     r.close();
                 }
             } catch (Exception e) {
-                log.warn("Unable to read key {}: {}", files[i], e);
+                log.warn("Unable to read key {}: {}", file, e);
             }
         }
         return keys;

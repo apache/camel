@@ -109,7 +109,6 @@ public class XmlSignerConfiguration extends XmlSignatureConfiguration {
     private String propertiesName;
 
     public XmlSignerConfiguration() {
-        super();
     }
 
     public XmlSignerConfiguration copy() {

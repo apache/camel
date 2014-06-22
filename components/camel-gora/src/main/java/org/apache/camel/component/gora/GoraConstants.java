@@ -19,8 +19,6 @@ package org.apache.camel.component.gora;
 
 /**
  * Camel Gora component constants
- *
- * @author ipolyzos
  */
 public final class GoraConstants {
 

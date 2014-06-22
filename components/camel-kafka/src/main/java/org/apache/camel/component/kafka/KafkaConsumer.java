@@ -110,7 +110,7 @@ public class KafkaConsumer extends DefaultConsumer {
 
         public void run() {
             ConsumerIterator<byte[], byte[]> it = stream.iterator();
-            while ((Boolean) it.hasNext()) {
+            while (it.hasNext()) {
                 MessageAndMetadata<byte[], byte[]> mm = it.next();
                 Exchange exchange = endpoint.createKafkaExchange(mm);
                 try {

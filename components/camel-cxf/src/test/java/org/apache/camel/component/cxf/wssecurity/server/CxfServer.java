@@ -20,6 +20,7 @@ import java.net.URL;
 
 import org.apache.camel.component.cxf.wssecurity.camel.WSSecurityRouteTest;
 import org.apache.cxf.Bus;
+import org.apache.cxf.BusFactory;
 import org.apache.cxf.bus.spring.SpringBusFactory;
 
 public class CxfServer {
@@ -29,8 +30,8 @@ public class CxfServer {
         URL busFile = WSSecurityRouteTest.class.getResource("../server/wssec.xml");
 
         Bus bus = bf.createBus(busFile.toString());
-        SpringBusFactory.setDefaultBus(bus);
-        SpringBusFactory.setThreadDefaultBus(bus);
+        BusFactory.setDefaultBus(bus);
+        BusFactory.setThreadDefaultBus(bus);
     }
     
 }

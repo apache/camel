@@ -18,8 +18,6 @@ package org.apache.camel.component.gora;
 
 /**
  * Camel-Gora Operations.
- *
- * @author ipolyzos
  */
 public enum GoraOperation {
 

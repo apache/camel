@@ -63,7 +63,7 @@ public class CsvTest extends CamelTestSupport {
         if (verbose) {
             for (Exchange exchange : exchanges) {
                 Object body = exchange.getIn().getBody();
-                System.out.println("received message " + body + " of class " + body.getClass().getName());
+                log.info("received message {} of class {}", body, body.getClass().getName());
             }
         }
         List<Map> results = new ArrayList<Map>();
