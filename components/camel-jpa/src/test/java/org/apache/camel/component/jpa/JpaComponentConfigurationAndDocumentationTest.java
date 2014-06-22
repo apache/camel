@@ -33,8 +33,8 @@ public class JpaComponentConfigurationAndDocumentationTest extends CamelTestSupp
     @Test
     public void testComponentConfiguration() throws Exception {
         JpaComponent comp = context.getComponent("jpa", JpaComponent.class);
-        EndpointConfiguration conf = comp.createConfiguration("jpa://org.apache.camel.examples.SendEmail" +
-                "?usePersist=true&persistenceUnit=custom");
+        EndpointConfiguration conf = comp.createConfiguration("jpa://org.apache.camel.examples.SendEmail"
+                + "?usePersist=true&persistenceUnit=custom");
 
         assertEquals("true", conf.getParameter("usePersist"));
         assertEquals("custom", conf.getParameter("persistenceUnit"));
