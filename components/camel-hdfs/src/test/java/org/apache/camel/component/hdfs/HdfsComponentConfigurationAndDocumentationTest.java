@@ -33,8 +33,8 @@ public class HdfsComponentConfigurationAndDocumentationTest extends CamelTestSup
     @Test
     public void testComponentConfiguration() throws Exception {
         HdfsComponent comp = context.getComponent("hdfs", HdfsComponent.class);
-        EndpointConfiguration conf = comp.createConfiguration("hdfs://localhost/tmp/simple-file?" +
-                "fileSystemType=LOCAL&fileType=SEQUENCE_FILE&initialDelay=0");
+        EndpointConfiguration conf = comp.createConfiguration("hdfs://localhost/tmp/simple-file?"
+                + "fileSystemType=LOCAL&fileType=SEQUENCE_FILE&initialDelay=0");
 
         assertEquals("LOCAL", conf.getParameter("fileSystemType"));
         assertEquals("SEQUENCE_FILE", conf.getParameter("fileType"));
