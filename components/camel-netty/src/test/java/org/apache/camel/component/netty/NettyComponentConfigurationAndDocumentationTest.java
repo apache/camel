@@ -33,8 +33,8 @@ public class NettyComponentConfigurationAndDocumentationTest extends CamelTestSu
     @Test
     public void testComponentConfiguration() throws Exception {
         NettyComponent comp = context.getComponent("netty", NettyComponent.class);
-        EndpointConfiguration conf = comp.createConfiguration("netty:tcp://localhost:5150?sync=true" +
-                "&maximumPoolSize=32&ssl=true&passphrase=#password");
+        EndpointConfiguration conf = comp.createConfiguration("netty:tcp://localhost:5150?sync=true"
+                + "&maximumPoolSize=32&ssl=true&passphrase=#password");
 
         assertEquals("true", conf.getParameter("sync"));
         assertEquals("32", conf.getParameter("maximumPoolSize"));
