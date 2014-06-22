@@ -32,8 +32,8 @@ import static org.junit.Assert.assertTrue;
 public abstract class AbstractGeneratorMojoTest {
     protected static final String OUT_DIR = "target/generated-test-sources/camel-component";
 
-    private static final String COMPONENT_PACKAGE = "org.apache.camel.component.test";
-    private static final String OUT_PACKAGE = COMPONENT_PACKAGE + ".internal";
+    protected static final String COMPONENT_PACKAGE = "org.apache.camel.component.test";
+    protected static final String OUT_PACKAGE = COMPONENT_PACKAGE + ".internal";
 
     protected static final String PACKAGE_PATH = OUT_PACKAGE.replaceAll("\\.", "/") + "/";
     protected static final String COMPONENT_PACKAGE_PATH = COMPONENT_PACKAGE.replaceAll("\\.", "/") + "/";

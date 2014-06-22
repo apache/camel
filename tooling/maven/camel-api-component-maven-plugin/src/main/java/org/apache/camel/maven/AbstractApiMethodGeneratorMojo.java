@@ -36,6 +36,8 @@ import org.apache.velocity.VelocityContext;
  */
 public abstract class AbstractApiMethodGeneratorMojo extends AbstractApiMethodBaseMojo {
 
+    private static final Map<Class<?>, String> PRIMITIVE_VALUES;
+
     @Parameter(required = true, property = PREFIX + "proxyClass")
     protected String proxyClass;
 
@@ -145,15 +147,15 @@ public abstract class AbstractApiMethodGeneratorMojo extends AbstractApiMethodBa
         context.put("componentPackage", componentPackage);
 
         // generate parameter names and types for configuration, sorted by parameter name
-        Map<String,ApiMethodParser.Argument> parameters = new TreeMap<String, ApiMethodParser.Argument>();
+        Map<String, ApiMethodParser.Argument> parameters = new TreeMap<String, ApiMethodParser.Argument>();
         for (ApiMethodParser.ApiMethodModel model : models) {
             for (ApiMethodParser.Argument argument : model.getArguments()) {
                 final String name = argument.getName();
                 Class<?> type = argument.getType();
                 final String typeName = type.getCanonicalName();
-                if (!parameters.containsKey(name) &&
-                        (propertyNamePattern == null || !propertyNamePattern.matcher(name).matches()) &&
-                        (propertyTypePattern == null || !propertyTypePattern.matcher(typeName).matches())) {
+                if (!parameters.containsKey(name)
+                        && (propertyNamePattern == null || !propertyNamePattern.matcher(name).matches())
+                        && (propertyTypePattern == null || !propertyTypePattern.matcher(typeName).matches())) {
                     parameters.put(name, argument);
                 }
             }
@@ -232,8 +234,6 @@ public abstract class AbstractApiMethodGeneratorMojo extends AbstractApiMethodBa
         }
     }
 
-    private static final Map<Class<?>, String> PRIMITIVE_VALUES;
-
     static {
         PRIMITIVE_VALUES = new HashMap<Class<?>, String>();
         PRIMITIVE_VALUES.put(Boolean.TYPE, "Boolean.FALSE");
@@ -300,8 +300,8 @@ public abstract class AbstractApiMethodGeneratorMojo extends AbstractApiMethodBa
                         parameterizedType.append(
                             getCanonicalName(getProjectClassLoader().loadClass("java.lang." + argType)));
                     } catch (ClassNotFoundException e1) {
-                        log.warn("Ignoring type parameters " + typeArgs + "> for argument " + argument.getName() +
-                            ", unable to load parameteric type argument " + argType, e1);
+                        log.warn("Ignoring type parameters " + typeArgs + "> for argument " + argument.getName()
+                                 + ", unable to load parameteric type argument " + argType, e1);
                         ignore = true;
                     }
                 }

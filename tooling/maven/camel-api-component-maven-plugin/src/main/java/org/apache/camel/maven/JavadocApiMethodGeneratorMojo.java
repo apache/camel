@@ -86,8 +86,8 @@ public class JavadocApiMethodGeneratorMojo extends AbstractApiMethodGeneratorMoj
 
         // for proxy class and super classes not matching excluded packages or classes
         for (Class aClass = getProxyType();
-             aClass != null && !packagePatterns.matcher(aClass.getPackage().getName()).matches() &&
-                     (classPatterns == null || !classPatterns.matcher(aClass.getSimpleName()).matches());
+             aClass != null && !packagePatterns.matcher(aClass.getPackage().getName()).matches()
+                     && (classPatterns == null || !classPatterns.matcher(aClass.getSimpleName()).matches());
              aClass = aClass.getSuperclass()) {
 
             log.debug("Processing " + aClass.getName());
@@ -116,9 +116,9 @@ public class JavadocApiMethodGeneratorMojo extends AbstractApiMethodGeneratorMoj
                 // get public method signature
                 final Map<String, String> methodMap = htmlParser.getMethodText();
                 for (String method : htmlParser.getMethods()) {
-                    if (!result.containsKey(method) &&
-                            (includeMethodPatterns == null || includeMethodPatterns.matcher(method).find()) &&
-                            (excludeMethodPatterns == null || !excludeMethodPatterns.matcher(method).find())) {
+                    if (!result.containsKey(method)
+                            && (includeMethodPatterns == null || includeMethodPatterns.matcher(method).find())
+                            && (excludeMethodPatterns == null || !excludeMethodPatterns.matcher(method).find())) {
 
                         final int leftBracket = method.indexOf('(');
                         final String name = method.substring(0, leftBracket);
@@ -151,8 +151,8 @@ public class JavadocApiMethodGeneratorMojo extends AbstractApiMethodGeneratorMoj
         }
 
         if (result.isEmpty()) {
-            throw new MojoExecutionException("No public non-static methods found, " +
-                    "make sure Javadoc is available as project test dependency");
+            throw new MojoExecutionException("No public non-static methods found, "
+                    + "make sure Javadoc is available as project test dependency");
         }
         return new ArrayList<String>(result.values());
     }

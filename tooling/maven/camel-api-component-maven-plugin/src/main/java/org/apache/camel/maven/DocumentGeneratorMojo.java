@@ -280,8 +280,8 @@ public class DocumentGeneratorMojo extends AbstractGeneratorMojo implements Mave
 
     private void updateReportOutputDirectory(File reportOutputDirectory) {
         // append destDir if needed
-        if (this.destDir != null && reportOutputDirectory != null &&
-            !reportOutputDirectory.getAbsolutePath().endsWith(destDir)) {
+        if (this.destDir != null && reportOutputDirectory != null
+                && !reportOutputDirectory.getAbsolutePath().endsWith(destDir)) {
             this.reportOutputDirectory = new File(reportOutputDirectory, destDir);
         } else {
             this.reportOutputDirectory = reportOutputDirectory;

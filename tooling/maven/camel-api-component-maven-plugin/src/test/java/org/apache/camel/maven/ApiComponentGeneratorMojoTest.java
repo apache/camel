@@ -62,7 +62,7 @@ public class ApiComponentGeneratorMojoTest extends AbstractGeneratorMojoTest {
         mojo.apis[1].setProxyClass(VelocityContext.class.getName());
         mojo.apis[1].setAliases(aliases);
         Substitution substitution = new Substitution(".*", "key", "java.lang.Object", "applicationKey", false);
-        mojo.apis[1].setSubstitutions(new Substitution[]{ substitution });
+        mojo.apis[1].setSubstitutions(new Substitution[] {substitution});
         final FromJavadoc fromJavadoc = new FromJavadoc();
         fromJavadoc.setExcludePackages(JavadocApiMethodGeneratorMojo.DEFAULT_EXCLUDE_PACKAGES);
         fromJavadoc.setExcludeMethods("clone|Current|internal|icache");

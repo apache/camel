@@ -50,6 +50,11 @@ public abstract class AbstractGeneratorMojo extends AbstractMojo {
     protected static final String OUT_PACKAGE = PREFIX + "component.internal";
     protected static final String COMPONENT_PACKAGE = PREFIX + "component";
 
+    private static VelocityEngine engine;
+    private static ClassLoader projectClassLoader;
+
+    private static boolean sharedProjectState;
+
     // used for velocity logging, to avoid creating velocity.log
     protected final Logger log = Logger.getLogger(this.getClass());
 
@@ -68,10 +73,9 @@ public abstract class AbstractGeneratorMojo extends AbstractMojo {
     @Parameter(required = true, defaultValue = "${project}", readonly = true)
     protected MavenProject project;
 
-    private static VelocityEngine engine;
-    private static ClassLoader projectClassLoader;
-
-    private static boolean sharedProjectState;
+    protected AbstractGeneratorMojo() {
+        clearSharedProjectState();
+    }
 
     public static void setSharedProjectState(boolean sharedProjectState) {
         AbstractGeneratorMojo.sharedProjectState = sharedProjectState;
@@ -81,10 +85,6 @@ public abstract class AbstractGeneratorMojo extends AbstractMojo {
         if (!sharedProjectState) {
             projectClassLoader = null;
         }
-    }
-
-    protected AbstractGeneratorMojo() {
-        clearSharedProjectState();
     }
 
     protected static VelocityEngine getEngine() {

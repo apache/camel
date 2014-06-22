@@ -88,8 +88,8 @@ public class ApiComponentGeneratorMojo extends AbstractApiMethodBaseMojo {
                         }
                     }
                     if (!found) {
-                        throw new MojoExecutionException("Missing one of fromSignatureFile or fromJavadoc for " +
-                            proxyClass);
+                        throw new MojoExecutionException("Missing one of fromSignatureFile or fromJavadoc for "
+                                + proxyClass);
                     }
                 }
 
@@ -131,12 +131,12 @@ public class ApiComponentGeneratorMojo extends AbstractApiMethodBaseMojo {
         mojo.generatedTestDir = generatedTestDir;
 
         // set AbstractAPIMethodBaseMojo properties
-        mojo.substitutions = apiProxy.getSubstitutions().length != 0 ?
-            apiProxy.getSubstitutions() : substitutions;
-        mojo.excludeConfigNames = apiProxy.getExcludeConfigNames() != null ?
-            apiProxy.getExcludeConfigNames() : excludeConfigNames;
-        mojo.excludeConfigTypes = apiProxy.getExcludeConfigTypes() != null ?
-            apiProxy.getExcludeConfigTypes() : excludeConfigTypes;
+        mojo.substitutions = apiProxy.getSubstitutions().length != 0
+                ? apiProxy.getSubstitutions() : substitutions;
+        mojo.excludeConfigNames = apiProxy.getExcludeConfigNames() != null
+                ? apiProxy.getExcludeConfigNames() : excludeConfigNames;
+        mojo.excludeConfigTypes = apiProxy.getExcludeConfigTypes() != null
+                ? apiProxy.getExcludeConfigTypes() : excludeConfigTypes;
 
         // set AbstractAPIMethodGeneratorMojo properties
         mojo.proxyClass = apiProxy.getProxyClass();
@@ -157,16 +157,16 @@ public class ApiComponentGeneratorMojo extends AbstractApiMethodBaseMojo {
             final FromJavadoc apiFromJavadoc = api.getFromJavadoc();
             if (apiFromJavadoc != null) {
                 final JavadocApiMethodGeneratorMojo javadocMojo = new JavadocApiMethodGeneratorMojo();
-                javadocMojo.excludePackages = apiFromJavadoc.getExcludePackages() != null ?
-                    apiFromJavadoc.getExcludePackages() : fromJavadoc.getExcludePackages();
-                javadocMojo.excludeClasses = apiFromJavadoc.getExcludeClasses() != null ?
-                    apiFromJavadoc.getExcludeClasses() : fromJavadoc.getExcludeClasses();
-                javadocMojo.includeMethods = apiFromJavadoc.getIncludeMethods() != null ?
-                    apiFromJavadoc.getIncludeMethods() : fromJavadoc.getIncludeMethods();
-                javadocMojo.excludeMethods = apiFromJavadoc.getExcludeMethods() != null ?
-                    apiFromJavadoc.getExcludeMethods() : fromJavadoc.getExcludeMethods();
-                javadocMojo.includeStaticMethods = apiFromJavadoc.getIncludeStaticMethods() != null ?
-                    apiFromJavadoc.getIncludeStaticMethods() : fromJavadoc.getIncludeStaticMethods();
+                javadocMojo.excludePackages = apiFromJavadoc.getExcludePackages() != null
+                        ? apiFromJavadoc.getExcludePackages() : fromJavadoc.getExcludePackages();
+                javadocMojo.excludeClasses = apiFromJavadoc.getExcludeClasses() != null
+                        ? apiFromJavadoc.getExcludeClasses() : fromJavadoc.getExcludeClasses();
+                javadocMojo.includeMethods = apiFromJavadoc.getIncludeMethods() != null
+                        ? apiFromJavadoc.getIncludeMethods() : fromJavadoc.getIncludeMethods();
+                javadocMojo.excludeMethods = apiFromJavadoc.getExcludeMethods() != null
+                        ? apiFromJavadoc.getExcludeMethods() : fromJavadoc.getExcludeMethods();
+                javadocMojo.includeStaticMethods = apiFromJavadoc.getIncludeStaticMethods() != null
+                        ? apiFromJavadoc.getIncludeStaticMethods() : fromJavadoc.getIncludeStaticMethods();
 
                 apiMethodGenerator = javadocMojo;
             }
