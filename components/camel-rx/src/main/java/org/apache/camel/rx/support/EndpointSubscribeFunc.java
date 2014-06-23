@@ -19,12 +19,10 @@ package org.apache.camel.rx.support;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import rx.Observable;
-import rx.Observer;
 import rx.Subscriber;
-import rx.Subscription;
 import rx.functions.Func1;
 
-public class EndpointSubscribeFunc<T> implements Observable.OnSubscribeFunc<T>, Observable.OnSubscribe<T> {
+public class EndpointSubscribeFunc<T> implements Observable.OnSubscribe<T> {
 
     private final Endpoint endpoint;
     private final Func1<Exchange, T> converter;
@@ -35,12 +33,7 @@ public class EndpointSubscribeFunc<T> implements Observable.OnSubscribeFunc<T>, 
     }
 
     @Override
-    public Subscription onSubscribe(Observer<? super T> observer) {
-        return new EndpointSubscription<T>(endpoint, observer, converter);
-    }
-
-    @Override
     public void call(Subscriber<? super T> subscriber) {
-        onSubscribe(subscriber);
+        new EndpointSubscription<T>(endpoint, subscriber, converter);
     }
 }
