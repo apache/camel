@@ -98,14 +98,9 @@ public class ApiComponentGeneratorMojo extends AbstractApiMethodBaseMojo {
                     }
                 }
 
-                // if set, merge common aliases with proxy's aliases
-                if (!aliases.isEmpty()) {
-                    final List<ApiMethodAlias> apiAliases = api.getAliases();
-                    if (apiAliases.isEmpty()) {
-                        api.setAliases(aliases);
-                    } else {
-                        apiAliases.addAll(aliases);
-                    }
+                // set common aliases if needed
+                if (!aliases.isEmpty() && api.getAliases().isEmpty()) {
+                    api.setAliases(aliases);
                 }
             }
 
