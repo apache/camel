@@ -76,7 +76,12 @@ public class ApiComponentGeneratorMojo extends AbstractApiMethodBaseMojo {
                 if (apiMethodGenerator != null) {
                     // configure API method properties and generate Proxy classes
                     configureMethodGenerator(apiMethodGenerator, api);
-                    apiMethodGenerator.execute();
+                    try {
+                        apiMethodGenerator.execute();
+                    } catch (Exception e) {
+                        final String msg = "Error generating source for " + api.getProxyClass() + ": " + e.getMessage();
+                        throw new MojoExecutionException(msg, e);
+                    }
                 } else {
                     // make sure the proxy class is being generated elsewhere
                     final String proxyClass = api.getProxyClass();
