@@ -48,6 +48,10 @@ public class AhcComponent extends HeaderFilterStrategyComponent {
     private AhcBinding binding;
     private SSLContextParameters sslContextParameters;
 
+    public AhcComponent() {
+        super(AhcEndpoint.class);
+    }
+
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         String addressUri = createAddressUri(uri, remaining);

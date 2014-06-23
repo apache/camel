@@ -73,6 +73,10 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
     // It's MILLISECONDS, the default value is always keep alive
     protected long connectionTimeToLive = -1;
 
+    public HttpComponent() {
+        super(HttpEndpoint.class);
+    }
+
     /**
      * Connects the URL specified on the endpoint to the specified processor.
      *
