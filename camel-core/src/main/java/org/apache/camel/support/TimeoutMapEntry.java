@@ -16,55 +16,44 @@
  */
 package org.apache.camel.support;
 
-import java.util.Map;
-
 import org.apache.camel.TimeoutMap;
 
 /**
  * Represents an entry in a {@link TimeoutMap}
- *
- * @version 
  */
-public class TimeoutMapEntry<K, V> implements Comparable<Object>, Map.Entry<K, V> {
-    private K key;
-    private V value;
-    private long timeout;
-    private long expireTime;
+final class TimeoutMapEntry<K, V> implements Comparable<Object> {
+    private final K key;
+    private final V value;
+    private final long valueTimeout;
+    private volatile long expireTime;
+    private volatile long keyExpireTime;
+    private volatile long valueExpireTime;
 
-    public TimeoutMapEntry(K id, V handler, long timeout) {
+    public TimeoutMapEntry(K id, V handler, long keyTimeout, long valueTimeout) {
         this.key = id;
         this.value = handler;
-        this.timeout = timeout;
+        this.valueTimeout = valueTimeout;
+
+        updateExpireTime(computeExpireTime(keyTimeout), computeExpireTime(valueTimeout));
+    }
+
+    public void updateKeyExpireTimeWithPrevious(TimeoutMapEntry<K, V> previous) {
+        if (previous != null && previous.keyExpireTime < keyExpireTime) {
+            updateExpireTime(keyExpireTime, valueExpireTime);
+        }
     }
 
     public K getKey() {
         return key;
     }
 
-    public long getExpireTime() {
-        return expireTime;
-    }
-
-    public void setExpireTime(long expireTime) {
-        this.expireTime = expireTime;
-    }
-
     public V getValue() {
+        updateExpireTime(keyExpireTime, computeExpireTime(valueTimeout));
         return value;
     }
 
-    public V setValue(V value) {
-        V oldValue = this.value;
-        this.value = value;
-        return oldValue;
-    }
-
-    public long getTimeout() {
-        return timeout;
-    }
-
-    public void setTimeout(long timeout) {
-        this.timeout = timeout;
+    public long getExpireTime() {
+        return expireTime;
     }
 
     @SuppressWarnings("unchecked")
@@ -89,6 +78,16 @@ public class TimeoutMapEntry<K, V> implements Comparable<Object>, Map.Entry<K, V
     }
 
     public String toString() {
-        return key + " (times out after " + timeout + " millis)";
+        return key + " (times out after " + valueTimeout + " millis)";
+    }
+
+    private void updateExpireTime(long keyExpireTime, long valueExpireTime) {
+        this.keyExpireTime = keyExpireTime;
+        this.valueExpireTime = valueExpireTime;
+        this.expireTime = Math.min(keyExpireTime, valueExpireTime);
+    }
+
+    private static long computeExpireTime(long timeout) {
+        return timeout > 0 ? System.currentTimeMillis() + timeout : Long.MAX_VALUE;
     }
 }

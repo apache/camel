@@ -18,10 +18,9 @@ package org.apache.camel;
 
 /**
  * Represents a map of values which timeout after a period of inactivity.
- *
- * @version 
  */
 public interface TimeoutMap<K, V> extends Runnable {
+    public static final long NO_TIMEOUT = 0;
 
     /**
      * Looks up the value in the map by the given key.
@@ -49,11 +48,12 @@ public interface TimeoutMap<K, V> extends Runnable {
      * Adds the key value pair into the map such that some time after the given
      * timeout the entry will be evicted
      *
-     * @param key   the key
+     * @param key the key
      * @param value the value
-     * @param timeoutMillis  timeout in millis
+     * @param keyTimeout timeout of the key in millis
+     * @param valueTimeout timeout of the value in millis
      */
-    void put(K key, V value, long timeoutMillis);
+    void put(K key, V value, long keyTimeout, long valueTimeout);
 
     /**
      * Callback when the value has been evicted
@@ -61,14 +61,14 @@ public interface TimeoutMap<K, V> extends Runnable {
      * @param key the key
      * @param value the value
      * @return <tt>true</tt> to remove the evicted value,
-     *         or <tt>false</tt> to veto the eviction and thus keep the value.
+     * or <tt>false</tt> to veto the eviction and thus keep the value.
      */
     boolean onEviction(K key, V value);
 
     /**
      * Removes the object with the given key
      *
-     * @param key  key for the object to remove
+     * @param key key for the object to remove
      * @return the value for the given key or <tt>null</tt> if it is not present (or has timed out)
      */
     V remove(K key);

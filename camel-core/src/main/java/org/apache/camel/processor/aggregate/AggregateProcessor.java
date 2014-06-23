@@ -121,6 +121,8 @@ public class AggregateProcessor extends ServiceSupport implements AsyncProcessor
     private Predicate completionPredicate;
     private long completionTimeout;
     private Expression completionTimeoutExpression;
+    private long completionMaxTimeout;
+    private Expression completionMaxTimeoutExpression;
     private long completionInterval;
     private int completionSize;
     private Expression completionSizeExpression;
@@ -226,7 +228,7 @@ public class AggregateProcessor extends ServiceSupport implements AsyncProcessor
                     break;
                 } catch (OptimisticLockingAggregationRepository.OptimisticLockingException e) {
                     LOG.trace("On attempt {} OptimisticLockingAggregationRepository: {} threw OptimisticLockingException while trying to add() key: {} and exchange: {}",
-                              new Object[]{attempt, aggregationRepository, key, copy, e});
+                            new Object[]{attempt, aggregationRepository, key, copy, e});
                     optimisticLockRetryPolicy.doDelay(attempt);
                 }
             } while (optimisticLockRetryPolicy.shouldRetry(attempt));
@@ -280,7 +282,7 @@ public class AggregateProcessor extends ServiceSupport implements AsyncProcessor
      * The returned {@link Exchange} should be send downstream using the {@link #onSubmitCompletion(String, org.apache.camel.Exchange)}
      * method which sends out the aggregated and completed {@link Exchange}.
      *
-     * @param key      the correlation key
+     * @param key the correlation key
      * @param newExchange the exchange
      * @return the aggregated exchange(s) which is complete, or <tt>null</tt> if not yet complete
      * @throws org.apache.camel.CamelExchangeException is thrown if error aggregating
@@ -379,7 +381,7 @@ public class AggregateProcessor extends ServiceSupport implements AsyncProcessor
         LOG.trace("In progress aggregated oldExchange: {}, newExchange: {} with correlation key: {}", new Object[]{oldExchange, newExchange, key});
         if (optimisticLocking) {
             try {
-                ((OptimisticLockingAggregationRepository)aggregationRepository).add(camelContext, key, oldExchange, newExchange);
+                ((OptimisticLockingAggregationRepository) aggregationRepository).add(camelContext, key, oldExchange, newExchange);
             } catch (OptimisticLockingAggregationRepository.OptimisticLockingException e) {
                 onOptimisticLockingFailure(oldExchange, newExchange);
                 throw e;
@@ -392,15 +394,15 @@ public class AggregateProcessor extends ServiceSupport implements AsyncProcessor
     protected void onOptimisticLockingFailure(Exchange oldExchange, Exchange newExchange) {
         if (aggregationStrategy instanceof OptimisticLockingAwareAggregationStrategy) {
             LOG.trace("onOptimisticLockFailure with AggregationStrategy: {}, oldExchange: {}, newExchange: {}",
-                      new Object[]{aggregationStrategy, oldExchange, newExchange});
-            ((OptimisticLockingAwareAggregationStrategy)aggregationStrategy).onOptimisticLockFailure(oldExchange, newExchange);
+                    new Object[]{aggregationStrategy, oldExchange, newExchange});
+            ((OptimisticLockingAwareAggregationStrategy) aggregationStrategy).onOptimisticLockFailure(oldExchange, newExchange);
         }
     }
 
     /**
      * Tests whether the given exchange is complete or not
      *
-     * @param key      the correlation key
+     * @param key the correlation key
      * @param exchange the incoming exchange
      * @return <tt>null</tt> if not completed, otherwise a String with the type that triggered the completion
      */
@@ -445,29 +447,28 @@ public class AggregateProcessor extends ServiceSupport implements AsyncProcessor
 
         // timeout can be either evaluated based on an expression or from a fixed value
         // expression takes precedence
-        boolean timeoutSet = false;
-        if (getCompletionTimeoutExpression() != null) {
-            Long value = getCompletionTimeoutExpression().evaluate(exchange, Long.class);
-            if (value != null && value > 0) {
-                if (LOG.isTraceEnabled()) {
-                    LOG.trace("Updating correlation key {} to timeout after {} ms. as exchange received: {}",
-                            new Object[]{key, value, exchange});
-                }
-                addExchangeToTimeoutMap(key, exchange, value);
-                timeoutSet = true;
-            }
-        }
-        if (!timeoutSet && getCompletionTimeout() > 0) {
-            // timeout is used so use the timeout map to keep an eye on this
+        long timeout = computeTimeout(exchange, getCompletionTimeoutExpression(), getCompletionTimeout());
+        long maxTimeout = computeTimeout(exchange, getCompletionMaxTimeoutExpression(), getCompletionMaxTimeout());
+        if (timeout > 0 || maxTimeout > 0) {
             if (LOG.isTraceEnabled()) {
                 LOG.trace("Updating correlation key {} to timeout after {} ms. as exchange received: {}",
-                        new Object[]{key, getCompletionTimeout(), exchange});
+                        new Object[]{key, timeout, exchange});
             }
-            addExchangeToTimeoutMap(key, exchange, getCompletionTimeout());
+            addExchangeToTimeoutMap(key, exchange, timeout, maxTimeout);
         }
 
         // not complete
         return null;
+    }
+
+    private long computeTimeout(Exchange exchange, Expression timeoutExpression, long timeout) {
+        if (timeoutExpression != null) {
+            Long value = timeoutExpression.evaluate(exchange, Long.class);
+            if (value != null && value > 0) {
+                return value;
+            }
+        }
+        return timeout;
     }
 
     protected Exchange onAggregation(Exchange oldExchange, Exchange newExchange) {
@@ -581,9 +582,10 @@ public class AggregateProcessor extends ServiceSupport implements AsyncProcessor
             Exchange exchange = aggregationRepository.get(camelContext, key);
             // grab the timeout value
             long timeout = exchange.hasProperties() ? exchange.getProperty(Exchange.AGGREGATED_TIMEOUT, 0, long.class) : 0;
-            if (timeout > 0) {
+            long maxTimeout = exchange.hasProperties() ? exchange.getProperty(Exchange.AGGREGATED_MAX_TIMEOUT, 0, long.class) : 0;
+            if (timeout > 0 || maxTimeout > 0) {
                 LOG.trace("Restoring CompletionTimeout for exchangeId: {} with timeout: {} millis.", exchange.getExchangeId(), timeout);
-                addExchangeToTimeoutMap(key, exchange, timeout);
+                addExchangeToTimeoutMap(key, exchange, timeout, maxTimeout);
             }
         }
 
@@ -595,14 +597,16 @@ public class AggregateProcessor extends ServiceSupport implements AsyncProcessor
     /**
      * Adds the given exchange to the timeout map, which is used by the timeout checker task to trigger timeouts.
      *
-     * @param key      the correlation key
+     * @param key the correlation key
      * @param exchange the exchange
-     * @param timeout  the timeout value in millis
+     * @param timeout the timeout value in millis
+     * @param maxTimeout the maximum timeout value in millis
      */
-    private void addExchangeToTimeoutMap(String key, Exchange exchange, long timeout) {
+    private void addExchangeToTimeoutMap(String key, Exchange exchange, long timeout, long maxTimeout) {
         // store the timeout value on the exchange as well, in case we need it later
         exchange.setProperty(Exchange.AGGREGATED_TIMEOUT, timeout);
-        timeoutMap.put(key, exchange.getExchangeId(), timeout);
+        exchange.setProperty(Exchange.AGGREGATED_MAX_TIMEOUT, maxTimeout);
+        timeoutMap.put(key, exchange.getExchangeId(), maxTimeout, timeout);
     }
 
     public Predicate getCompletionPredicate() {
@@ -635,6 +639,22 @@ public class AggregateProcessor extends ServiceSupport implements AsyncProcessor
 
     public void setCompletionTimeoutExpression(Expression completionTimeoutExpression) {
         this.completionTimeoutExpression = completionTimeoutExpression;
+    }
+
+    public long getCompletionMaxTimeout() {
+        return completionMaxTimeout;
+    }
+
+    public void setCompletionMaxTimeout(long completionMaxTimeout) {
+        this.completionMaxTimeout = completionMaxTimeout;
+    }
+
+    public Expression getCompletionMaxTimeoutExpression() {
+        return completionMaxTimeoutExpression;
+    }
+
+    public void setCompletionMaxTimeoutExpression(Expression completionMaxTimeoutExpression) {
+        this.completionMaxTimeoutExpression = completionMaxTimeoutExpression;
     }
 
     public long getCompletionInterval() {
@@ -821,11 +841,15 @@ public class AggregateProcessor extends ServiceSupport implements AsyncProcessor
         @Override
         public void purge() {
             // must acquire the shared aggregation lock to be able to purge
-            if (!optimisticLocking) { lock.lock(); }
+            if (!optimisticLocking) {
+                lock.lock();
+            }
             try {
                 super.purge();
             } finally {
-                if (!optimisticLocking) { lock.unlock(); }
+                if (!optimisticLocking) {
+                    lock.unlock();
+                }
             }
         }
 
@@ -859,7 +883,7 @@ public class AggregateProcessor extends ServiceSupport implements AsyncProcessor
 
             if (optimisticLocking && evictionStolen) {
                 LOG.debug("Another Camel instance has already successfully correlated or processed this timeout eviction "
-                          + "for exchange with id: {} and correlation id: {}", exchangeId, key);
+                        + "for exchange with id: {} and correlation id: {}", exchangeId, key);
             }
             return true;
         }
@@ -884,7 +908,9 @@ public class AggregateProcessor extends ServiceSupport implements AsyncProcessor
 
             if (keys != null && !keys.isEmpty()) {
                 // must acquire the shared aggregation lock to be able to trigger interval completion
-                if (!optimisticLocking) { lock.lock(); }
+                if (!optimisticLocking) {
+                    lock.lock();
+                }
                 try {
                     for (String key : keys) {
                         boolean stolenInterval = false;
@@ -909,7 +935,9 @@ public class AggregateProcessor extends ServiceSupport implements AsyncProcessor
                         }
                     }
                 } finally {
-                    if (!optimisticLocking) { lock.unlock(); }
+                    if (!optimisticLocking) {
+                        lock.unlock();
+                    }
                 }
             }
 
@@ -1019,9 +1047,10 @@ public class AggregateProcessor extends ServiceSupport implements AsyncProcessor
     protected void doStart() throws Exception {
         if (getCompletionTimeout() <= 0 && getCompletionInterval() <= 0 && getCompletionSize() <= 0 && getCompletionPredicate() == null
                 && !isCompletionFromBatchConsumer() && getCompletionTimeoutExpression() == null
-                && getCompletionSizeExpression() == null) {
+                && getCompletionSizeExpression() == null
+                && getCompletionMaxTimeout() <= 0 && getCompletionMaxTimeoutExpression() == null) {
             throw new IllegalStateException("At least one of the completions options"
-                    + " [completionTimeout, completionInterval, completionSize, completionPredicate, completionFromBatchConsumer] must be set");
+                    + " [completionTimeout, completionInterval, completionSize, completionPredicate, completionFromBatchConsumer, completionMaxTimeout] must be set");
         }
 
         if (getCloseCorrelationKeyOnCompletion() != null) {
@@ -1095,7 +1124,8 @@ public class AggregateProcessor extends ServiceSupport implements AsyncProcessor
         }
 
         // start timeout service if its in use
-        if (getCompletionTimeout() > 0 || getCompletionTimeoutExpression() != null) {
+        if (getCompletionTimeout() > 0 || getCompletionTimeoutExpression() != null
+                || getCompletionMaxTimeout() > 0 || getCompletionMaxTimeoutExpression() != null) {
             LOG.info("Using CompletionTimeout to trigger after " + getCompletionTimeout() + " millis of inactivity.");
             if (getTimeoutCheckerExecutorService() == null) {
                 setTimeoutCheckerExecutorService(camelContext.getExecutorServiceManager().newScheduledThreadPool(this, AGGREGATE_TIMEOUT_CHECKER, 1));
@@ -1197,7 +1227,9 @@ public class AggregateProcessor extends ServiceSupport implements AsyncProcessor
         int total = 0;
         if (keys != null && !keys.isEmpty()) {
             // must acquire the shared aggregation lock to be able to trigger force completion
-            if (!optimisticLocking) { lock.lock(); }
+            if (!optimisticLocking) {
+                lock.lock();
+            }
             total = keys.size();
             try {
                 for (String key : keys) {
@@ -1213,7 +1245,9 @@ public class AggregateProcessor extends ServiceSupport implements AsyncProcessor
                     }
                 }
             } finally {
-                if (!optimisticLocking) { lock.unlock(); }
+                if (!optimisticLocking) {
+                    lock.unlock();
+                }
             }
         }
         LOG.trace("Completed force completion of all groups task");

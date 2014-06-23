@@ -47,7 +47,7 @@ import org.apache.camel.util.concurrent.SynchronousExecutorService;
 /**
  * Represents an XML &lt;aggregate/&gt; element
  *
- * @version 
+ * @version
  */
 @XmlRootElement(name = "aggregate")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -58,6 +58,8 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
     private ExpressionSubElementDefinition completionPredicate;
     @XmlElement(name = "completionTimeout")
     private ExpressionSubElementDefinition completionTimeoutExpression;
+    @XmlElement(name = "completionMaxTimeout")
+    private ExpressionSubElementDefinition completionMaxTimeoutExpression;
     @XmlElement(name = "completionSize")
     private ExpressionSubElementDefinition completionSizeExpression;
     @XmlElement(name = "optimisticLockRetryPolicy")
@@ -99,6 +101,8 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
     @XmlAttribute
     private Long completionTimeout;
     @XmlAttribute
+    private Long completionMaxTimeout;
+    @XmlAttribute
     private Boolean completionFromBatchConsumer;
     @XmlAttribute
     private Boolean groupExchanges;
@@ -120,8 +124,8 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
         if (predicate != null) {
             setExpression(ExpressionNodeHelper.toExpressionDefinition(predicate));
         }
-    }    
-    
+    }
+
     public AggregateDefinition(Expression correlationExpression) {
         if (correlationExpression != null) {
             setExpression(ExpressionNodeHelper.toExpressionDefinition(correlationExpression));
@@ -141,7 +145,7 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
     public String toString() {
         return "Aggregate[" + description() + " -> " + getOutputs() + "]";
     }
-    
+
     protected String description() {
         return getExpression() != null ? getExpression().getLabel() : "";
     }
@@ -223,6 +227,13 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
         }
         if (getCompletionTimeout() != null) {
             answer.setCompletionTimeout(getCompletionTimeout());
+        }
+        if (getCompletionMaxTimeoutExpression() != null) {
+            Expression expression = getCompletionMaxTimeoutExpression().createExpression(routeContext);
+            answer.setCompletionMaxTimeoutExpression(expression);
+        }
+        if (getCompletionMaxTimeout() != null) {
+            answer.setCompletionMaxTimeout(getCompletionMaxTimeout());
         }
         if (getCompletionInterval() != null) {
             answer.setCompletionInterval(getCompletionInterval());
@@ -402,6 +413,14 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
         this.completionTimeout = completionTimeout;
     }
 
+    public Long getCompletionMaxTimeout() {
+        return completionMaxTimeout;
+    }
+
+    public void setCompletionMaxTimeout(Long completionMaxTimeout) {
+        this.completionMaxTimeout = completionMaxTimeout;
+    }
+
     public ExpressionSubElementDefinition getCompletionPredicate() {
         return completionPredicate;
     }
@@ -412,6 +431,14 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
 
     public ExpressionSubElementDefinition getCompletionTimeoutExpression() {
         return completionTimeoutExpression;
+    }
+
+    public ExpressionSubElementDefinition getCompletionMaxTimeoutExpression() {
+        return completionMaxTimeoutExpression;
+    }
+
+    public void setCompletionMaxTimeoutExpression(ExpressionSubElementDefinition completionMaxTimeoutExpression) {
+        this.completionMaxTimeoutExpression = completionMaxTimeoutExpression;
     }
 
     public void setCompletionTimeoutExpression(ExpressionSubElementDefinition completionTimeoutExpression) {
@@ -565,7 +592,7 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
     public void setDiscardOnCompletionTimeout(Boolean discardOnCompletionTimeout) {
         this.discardOnCompletionTimeout = discardOnCompletionTimeout;
     }
-    
+
     public void setTimeoutCheckerExecutorService(ScheduledExecutorService timeoutCheckerExecutorService) {
         this.timeoutCheckerExecutorService = timeoutCheckerExecutorService;
     }
@@ -706,6 +733,30 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
     }
 
     /**
+     * Sets the completion max timeout, which would cause the aggregate to consider the group as complete
+     * and send out the aggregated exchange.
+     *
+     * @param completionMaxTimeout the max timeout in millis
+     * @return the builder
+     */
+    public AggregateDefinition completionMaxTimeout(long completionMaxTimeout) {
+        setCompletionMaxTimeout(completionMaxTimeout);
+        return this;
+    }
+
+    /**
+     * Sets the completion max timeout, which would cause the aggregate to consider the group as complete
+     * and send out the aggregated exchange.
+     *
+     * @param completionMaxTimeout the timeout as an {@link Expression} which is evaluated as a {@link Long} type
+     * @return the builder
+     */
+    public AggregateDefinition completionMaxTimeout(Expression completionMaxTimeout) {
+        setCompletionMaxTimeoutExpression(new ExpressionSubElementDefinition(completionMaxTimeout));
+        return this;
+    }
+
+    /**
      * Sets the aggregate strategy to use
      *
      * @param aggregationStrategy  the aggregate strategy to use
@@ -841,7 +892,7 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
         setOptimisticLockRetryPolicy(policy);
         return this;
     }
-    
+
     public AggregateDefinition executorService(ExecutorService executorService) {
         setExecutorService(executorService);
         return this;
@@ -861,7 +912,7 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
         setTimeoutCheckerExecutorServiceRef(executorServiceRef);
         return this;
     }
-    
+
     protected void checkNoCompletedPredicate() {
         if (getCompletionPredicate() != null) {
             throw new IllegalArgumentException("There is already a completionPredicate defined for this aggregator: " + this);
@@ -882,7 +933,7 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
 
     public ExpressionDefinition getExpression() {
         if (expression == null && correlationExpression != null) {
-            expression = correlationExpression.getExpressionType();            
+            expression = correlationExpression.getExpressionType();
         }
         return expression;
     }

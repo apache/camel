@@ -23,11 +23,12 @@ import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.ScheduledThreadPoolExecutor;
 
 import junit.framework.TestCase;
+import org.apache.camel.TimeoutMap;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * @version 
+ * @version
  */
 public class DefaultTimeoutMapTest extends TestCase {
 
@@ -37,7 +38,6 @@ public class DefaultTimeoutMapTest extends TestCase {
     public void testDefaultTimeoutMap() throws Exception {
         DefaultTimeoutMap<?, ?> map = new DefaultTimeoutMap<Object, Object>(executor);
         map.start();
-        assertTrue(map.currentTime() > 0);
 
         assertEquals(0, map.size());
 
@@ -47,11 +47,10 @@ public class DefaultTimeoutMapTest extends TestCase {
     public void testDefaultTimeoutMapPurge() throws Exception {
         DefaultTimeoutMap<String, Integer> map = new DefaultTimeoutMap<String, Integer>(executor, 100);
         map.start();
-        assertTrue(map.currentTime() > 0);
 
         assertEquals(0, map.size());
 
-        map.put("A", 123, 50);
+        map.put("A", 123, TimeoutMap.NO_TIMEOUT, 50);
         assertEquals(1, map.size());
 
         Thread.sleep(250);
@@ -68,11 +67,10 @@ public class DefaultTimeoutMapTest extends TestCase {
     public void testDefaultTimeoutMapForcePurge() throws Exception {
         DefaultTimeoutMap<String, Integer> map = new DefaultTimeoutMap<String, Integer>(executor, 100);
         map.start();
-        assertTrue(map.currentTime() > 0);
 
         assertEquals(0, map.size());
 
-        map.put("A", 123, 50);
+        map.put("A", 123, TimeoutMap.NO_TIMEOUT, 50);
         assertEquals(1, map.size());
 
         Thread.sleep(250);
@@ -86,14 +84,13 @@ public class DefaultTimeoutMapTest extends TestCase {
     public void testDefaultTimeoutMapGetRemove() throws Exception {
         DefaultTimeoutMap<String, Integer> map = new DefaultTimeoutMap<String, Integer>(executor, 100);
         map.start();
-        assertTrue(map.currentTime() > 0);
 
         assertEquals(0, map.size());
 
-        map.put("A", 123, 50);
+        map.put("A", 123, TimeoutMap.NO_TIMEOUT, 50);
         assertEquals(1, map.size());
 
-        assertEquals(123, (int)map.get("A"));
+        assertEquals(123, (int) map.get("A"));
 
         Object old = map.remove("A");
         assertEquals(123, old);
@@ -106,12 +103,11 @@ public class DefaultTimeoutMapTest extends TestCase {
     public void testDefaultTimeoutMapGetKeys() throws Exception {
         DefaultTimeoutMap<String, Integer> map = new DefaultTimeoutMap<String, Integer>(executor, 100);
         map.start();
-        assertTrue(map.currentTime() > 0);
 
         assertEquals(0, map.size());
 
-        map.put("A", 123, 50);
-        map.put("B", 456, 50);
+        map.put("A", 123, TimeoutMap.NO_TIMEOUT, 50);
+        map.put("B", 456, TimeoutMap.NO_TIMEOUT, 50);
         assertEquals(2, map.size());
 
         Object[] keys = map.getKeys();
@@ -126,7 +122,7 @@ public class DefaultTimeoutMapTest extends TestCase {
         map.start();
         assertEquals(50, map.getPurgePollTime());
 
-        map.put("A", 123, 100);
+        map.put("A", 123, TimeoutMap.NO_TIMEOUT, 100);
         assertEquals(1, map.size());
 
         Thread.sleep(250);
@@ -158,13 +154,13 @@ public class DefaultTimeoutMapTest extends TestCase {
         map.start();
         assertEquals(0, map.size());
 
-        map.put("A", 1, 50);
-        map.put("B", 2, 30);
-        map.put("C", 3, 40);
-        map.put("D", 4, 20);
-        map.put("E", 5, 40);
+        map.put("A", 1, TimeoutMap.NO_TIMEOUT, 50);
+        map.put("B", 2, TimeoutMap.NO_TIMEOUT, 30);
+        map.put("C", 3, TimeoutMap.NO_TIMEOUT, 40);
+        map.put("D", 4, TimeoutMap.NO_TIMEOUT, 20);
+        map.put("E", 5, TimeoutMap.NO_TIMEOUT, 40);
         // is not expired
-        map.put("F", 6, 800);
+        map.put("F", 6, TimeoutMap.NO_TIMEOUT, 800);
 
         Thread.sleep(250);
 
@@ -206,10 +202,10 @@ public class DefaultTimeoutMapTest extends TestCase {
         map.start();
         assertEquals(0, map.size());
 
-        map.put("A", 1, 90);
-        map.put("B", 2, 100);
-        map.put("gold", 9, 110);
-        map.put("C", 3, 120);
+        map.put("A", 1, TimeoutMap.NO_TIMEOUT, 90);
+        map.put("B", 2, TimeoutMap.NO_TIMEOUT, 100);
+        map.put("gold", 9, TimeoutMap.NO_TIMEOUT, 110);
+        map.put("C", 3, TimeoutMap.NO_TIMEOUT, 120);
 
         Thread.sleep(250);
 
@@ -233,13 +229,13 @@ public class DefaultTimeoutMapTest extends TestCase {
     public void testDefaultTimeoutMapStopStart() throws Exception {
         DefaultTimeoutMap<String, Integer> map = new DefaultTimeoutMap<String, Integer>(executor, 100);
         map.start();
-        map.put("A", 1, 500);
+        map.put("A", 1, TimeoutMap.NO_TIMEOUT, 500);
 
         assertEquals(1, map.size());
         map.stop();
 
         assertEquals(0, map.size());
-        map.put("A", 1, 50);
+        map.put("A", 1, TimeoutMap.NO_TIMEOUT, 50);
 
         // should not timeout as the scheduler doesn't run
         Thread.sleep(250);
@@ -260,4 +256,20 @@ public class DefaultTimeoutMapTest extends TestCase {
         map.stop();
     }
 
+    public void testMaximumTimeout() throws Exception {
+        DefaultTimeoutMap<String, String> map = new DefaultTimeoutMap<String, String>(executor, 100);
+        map.start();
+        map.put("key", "a", 50, 10000);
+        map.put("key", "b", 50, 10000);
+        map.put("key", "c", 50, 10000);
+
+        //start and wait for scheduler to purge
+        Thread.sleep(250);
+        if (map.size() > 0) {
+            LOG.warn("Waiting extra due slow CI box");
+            Thread.sleep(1000);
+        }
+        // now it should be gone
+        assertEquals(0, map.size());
+    }
 }

@@ -17,7 +17,6 @@
 package org.apache.camel.component.jms.reply;
 
 import java.util.concurrent.atomic.AtomicBoolean;
-
 import javax.jms.Destination;
 import javax.jms.ExceptionListener;
 import javax.jms.JMSException;
@@ -28,6 +27,7 @@ import javax.jms.TemporaryQueue;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.TimeoutMap;
 import org.apache.camel.component.jms.DefaultJmsMessageListenerContainer;
 import org.apache.camel.component.jms.DefaultSpringErrorHandler;
 import org.springframework.jms.listener.AbstractMessageListenerContainer;
@@ -36,13 +36,11 @@ import org.springframework.jms.support.destination.DestinationResolver;
 
 /**
  * A {@link ReplyManager} when using temporary queues.
- *
- * @version 
  */
 public class TemporaryQueueReplyManager extends ReplyManagerSupport {
-    
+
     final TemporaryReplyQueueDestinationResolver destResolver = new TemporaryReplyQueueDestinationResolver();
-    
+
     public TemporaryQueueReplyManager(CamelContext camelContext) {
         super(camelContext);
     }
@@ -56,12 +54,12 @@ public class TemporaryQueueReplyManager extends ReplyManagerSupport {
         }
         return super.getReplyTo();
     }
-    
+
     public String registerReply(ReplyManager replyManager, Exchange exchange, AsyncCallback callback,
                                 String originalCorrelationId, String correlationId, long requestTimeout) {
         // add to correlation map
         TemporaryQueueReplyHandler handler = new TemporaryQueueReplyHandler(this, exchange, callback, originalCorrelationId, correlationId, requestTimeout);
-        correlation.put(correlationId, handler, requestTimeout);
+        correlation.put(correlationId, handler, TimeoutMap.NO_TIMEOUT, requestTimeout);
         return correlationId;
     }
 
@@ -70,7 +68,7 @@ public class TemporaryQueueReplyManager extends ReplyManagerSupport {
 
         ReplyHandler handler = correlation.remove(correlationId);
         if (handler != null) {
-            correlation.put(newCorrelationId, handler, requestTimeout);
+            correlation.put(newCorrelationId, handler, TimeoutMap.NO_TIMEOUT, requestTimeout);
         }
     }
 
@@ -135,7 +133,7 @@ public class TemporaryQueueReplyManager extends ReplyManagerSupport {
 
         // we cannot do request-reply over JMS with transaction
         answer.setSessionTransacted(false);
-        
+
         // other optional properties
         answer.setExceptionListener(new TemporaryReplyQueueExceptionListener(destResolver, endpoint.getExceptionListener()));
 
@@ -174,8 +172,8 @@ public class TemporaryQueueReplyManager extends ReplyManagerSupport {
         private final TemporaryReplyQueueDestinationResolver destResolver;
         private final ExceptionListener delegate;
 
-        private TemporaryReplyQueueExceptionListener(TemporaryReplyQueueDestinationResolver destResolver, 
-                ExceptionListener delegate) {
+        private TemporaryReplyQueueExceptionListener(TemporaryReplyQueueDestinationResolver destResolver,
+                                                     ExceptionListener delegate) {
             this.destResolver = destResolver;
             this.delegate = delegate;
         }
@@ -184,7 +182,7 @@ public class TemporaryQueueReplyManager extends ReplyManagerSupport {
         public void onException(JMSException exception) {
             // capture exceptions, and schedule a refresh of the ReplyTo destination
             log.warn("Exception inside the DMLC for Temporary ReplyTo Queue for destination " + endpoint.getDestinationName()
-                     + ", refreshing ReplyTo destination", exception);
+                    + ", refreshing ReplyTo destination", exception);
             destResolver.scheduleRefresh();
             // serve as a proxy for any exception listener the user may have set explicitly
             if (delegate != null) {
@@ -212,11 +210,11 @@ public class TemporaryQueueReplyManager extends ReplyManagerSupport {
             }
             return queue;
         }
-        
+
         public void scheduleRefresh() {
             refreshWanted.set(true);
         }
-        
+
         public void destinationReady() throws InterruptedException {
             if (refreshWanted.get()) {
                 synchronized (refreshWanted) {

@@ -24,8 +24,6 @@ import org.apache.camel.support.DefaultTimeoutMap;
  * A {@link org.apache.camel.TimeoutMap} which is used to track reply messages which
  * has been timed out, and thus should trigger the waiting {@link org.apache.camel.Exchange} to
  * timeout as well.
- *
- * @version 
  */
 public class CorrelationTimeoutMap extends DefaultTimeoutMap<String, ReplyHandler> {
 
@@ -64,7 +62,7 @@ public class CorrelationTimeoutMap extends DefaultTimeoutMap<String, ReplyHandle
     }
 
     @Override
-    public void put(String key, ReplyHandler value, long timeoutMillis) {
+    public void put(String key, ReplyHandler value, long keyTimeout, long valueTimeout) {
         try {
             if (listener != null) {
                 listener.onPut(key);
@@ -73,13 +71,8 @@ public class CorrelationTimeoutMap extends DefaultTimeoutMap<String, ReplyHandle
             // ignore
         }
 
-        if (timeoutMillis <= 0) {
-            // no timeout (must use Integer.MAX_VALUE)
-            super.put(key, value, Integer.MAX_VALUE);
-        } else {
-            super.put(key, value, timeoutMillis);
-        }
-        log.trace("Added correlationID: {} to timeout after: {} millis", key, timeoutMillis);
+        super.put(key, value, keyTimeout, valueTimeout);
+        log.trace("Added correlationID: {} to timeout after: {} millis", key, valueTimeout);
     }
 
     @Override
