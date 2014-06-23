@@ -294,7 +294,7 @@ public class JavadocApiMethodGeneratorMojo extends AbstractApiMethodGeneratorMoj
             int i = 0;
             for (String type : typeList) {
                 // split on space or non-breaking space
-                builder.append(type).append(" ").append(names[i]).append(",");
+                builder.append(type).append(" ").append(names[i++]).append(",");
             }
             builder.deleteCharAt(builder.length() - 1);
             builder.append(")");
