@@ -152,7 +152,6 @@
       <plugin>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-api-component-maven-plugin</artifactId>
-        <version>${camel-version}</version>
         <executions>
           <execution>
             <id>generate-test-component-classes</id>
@@ -160,10 +159,6 @@
               <goal>fromApis</goal>
             </goals>
             <configuration>
-              <scheme>${schemeName}</scheme>
-              <componentName>${componentName}</componentName>
-              <componentPackage>${componentPackage}</componentPackage>
-              <outPackage>${outPackage}</outPackage>
               <apis>
                 <api>
                   <apiName>hello-file</apiName>
@@ -261,6 +256,22 @@
       </plugin>
 
     </plugins>
+
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.camel</groupId>
+          <artifactId>camel-api-component-maven-plugin</artifactId>
+          <version>${camel-version}</version>
+          <configuration>
+            <scheme>${schemeName}</scheme>
+            <componentName>${componentName}</componentName>
+            <componentPackage>${componentPackage}</componentPackage>
+            <outPackage>${outPackage}</outPackage>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
 
   </build>
 

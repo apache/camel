@@ -74,16 +74,13 @@ public abstract class ApiMethodPropertiesHelper<C> {
     public void getEndpointProperties(Object endpointConfiguration,
                                              Map<String, Object> properties) {
 
+        Set<String> names = null;
         if (IntrospectionSupport.getProperties(endpointConfiguration, properties, null, false)) {
-            final Set<String> names = properties.keySet();
+            names = properties.keySet();
             // remove component config properties so we only have endpoint properties
             names.removeAll(componentConfigFields);
         }
-        if (LOG.isDebugEnabled()) {
-            final Set<String> names = properties.keySet();
-            LOG.debug("Found endpoint properties {}",
-                    names.retainAll(getValidEndpointProperties(endpointConfiguration)));
-        }
+        LOG.debug("Found endpoint properties {}", names);
     }
 
     public Set<String> getEndpointPropertyNames(Object endpointConfiguration) {
