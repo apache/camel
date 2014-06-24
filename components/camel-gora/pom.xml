@@ -124,6 +124,13 @@
             <groupId>org.apache.gora</groupId>
             <artifactId>gora-core</artifactId>
             <version>${apache-gora-version}</version>
+            <exclusions>
+                <!-- because we have a direct dependency to org.apache.servicemix.bundles:org.apache.servicemix.bundles.hadoop-core -->
+                <exclusion>
+                    <groupId>org.apache.hadoop</groupId>
+                    <artifactId>hadoop-core</artifactId>
+                </exclusion>
+            </exclusions>
         </dependency>
 
         <!-- hadoop -->
