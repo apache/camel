@@ -181,7 +181,8 @@
     <hbase-version>0.94.10</hbase-version>
     <hbase-bundle-version>0.94.6_1</hbase-bundle-version>
     <hibernate-validator-version>5.0.3.Final</hibernate-validator-version>
-    <hibernate-version>4.2.12.Final</hibernate-version>
+    <!-- Spring 3.2.x and 4.0.x still stick to JPA 2.0. Hibernate 4.3.x upgraded to JPA 2.1. -->
+    <hibernate-version>4.2.13.Final</hibernate-version>
     <hsqldb-version>2.3.2</hsqldb-version>
     <httpunit-version>1.7</httpunit-version>
     <httpcore4-version>4.3.2</httpcore4-version>
