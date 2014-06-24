@@ -838,12 +838,19 @@ public abstract class RedeliveryErrorHandler extends ErrorHandlerSupport impleme
             AsyncProcessor afp = AsyncProcessorConverterHelper.convert(processor);
             sync = afp.process(exchange, new AsyncCallback() {
                 public void done(boolean sync) {
-                    log.trace("Failure processor done: {} processing Exchange: {}", processor, exchange);
                     try {
-                        prepareExchangeAfterFailure(exchange, data, shouldHandle, shouldContinue);
-                        // fire event as we had a failure processor to handle it, which there is a event for
-                        boolean deadLetterChannel = processor == data.deadLetterProcessor && data.deadLetterProcessor != null;
-                        EventHelper.notifyExchangeFailureHandled(exchange.getContext(), exchange, processor, deadLetterChannel);
+                        boolean hadExceptionInErrorHandler = exchange.getException() != null;
+                        if (!hadExceptionInErrorHandler) {
+                            log.trace("Failure processor done: {} processing Exchange: {}", processor, exchange);
+                            prepareExchangeAfterFailure(exchange, data, shouldHandle, shouldContinue);
+                            // fire event as we had a failure processor to handle it, which there is a event for
+                            boolean deadLetterChannel = processor == data.deadLetterProcessor && data.deadLetterProcessor != null;
+                            EventHelper.notifyExchangeFailureHandled(exchange.getContext(), exchange, processor, deadLetterChannel);
+                        } else {
+                            log.error("Caught exception in the error handler, proceed the default way", exchange.getException());
+                            exchange.setException(null);
+                            prepareExchangeAfterFailure(exchange, data, false, false);
+                        }
                     } finally {
                         // if the fault was handled asynchronously, this should be reflected in the callback as well
                         data.sync &= sync;
