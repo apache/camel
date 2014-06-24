@@ -95,11 +95,12 @@ public class CacheComponent extends DefaultComponent {
     protected void doStart() throws Exception {
         super.doStart();
         if (cacheManagerFactory == null) {
-            InputStream is = null;
             if (configurationFile != null) {
-                is = ResourceHelper.resolveMandatoryResourceAsInputStream(getCamelContext().getClassResolver(), configurationFile);
+                InputStream is = ResourceHelper.resolveMandatoryResourceAsInputStream(getCamelContext().getClassResolver(), configurationFile);
+                cacheManagerFactory = new DefaultCacheManagerFactory(is, configurationFile);
+            } else {
+                cacheManagerFactory = new DefaultCacheManagerFactory();
             }
-            cacheManagerFactory = new DefaultCacheManagerFactory(is, configurationFile);
         }
         ServiceHelper.startService(cacheManagerFactory);
     }
