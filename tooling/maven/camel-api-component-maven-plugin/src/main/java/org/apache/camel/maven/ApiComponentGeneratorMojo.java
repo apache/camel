@@ -137,6 +137,8 @@ public class ApiComponentGeneratorMojo extends AbstractApiMethodBaseMojo {
                 ? apiProxy.getExcludeConfigNames() : excludeConfigNames;
         mojo.excludeConfigTypes = apiProxy.getExcludeConfigTypes() != null
                 ? apiProxy.getExcludeConfigTypes() : excludeConfigTypes;
+        mojo.extraOptions = apiProxy.getExtraOptions() != null
+                ? apiProxy.getExtraOptions() : extraOptions;
 
         // set AbstractAPIMethodGeneratorMojo properties
         mojo.proxyClass = apiProxy.getProxyClass();

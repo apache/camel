@@ -150,8 +150,9 @@ public abstract class AbstractApiMethodGeneratorMojo extends AbstractApiMethodBa
         Map<String, ApiMethodParser.Argument> parameters = new TreeMap<String, ApiMethodParser.Argument>();
         for (ApiMethodParser.ApiMethodModel model : models) {
             for (ApiMethodParser.Argument argument : model.getArguments()) {
+
                 final String name = argument.getName();
-                Class<?> type = argument.getType();
+                final Class<?> type = argument.getType();
                 final String typeName = type.getCanonicalName();
                 if (!parameters.containsKey(name)
                         && (propertyNamePattern == null || !propertyNamePattern.matcher(name).matches())
@@ -160,6 +161,30 @@ public abstract class AbstractApiMethodGeneratorMojo extends AbstractApiMethodBa
                 }
             }
         }
+
+        // add custom parameters
+        if (extraOptions != null && extraOptions.length > 0) {
+            for (ExtraOption option : extraOptions) {
+                final String name = option.getName();
+                final String argWithTypes = option.getType().replaceAll(" ", "");
+                final int rawEnd = argWithTypes.indexOf('<');
+                String typeArgs = null;
+                Class<?> argType;
+                try {
+                    if (rawEnd != -1) {
+                        argType = getProjectClassLoader().loadClass(argWithTypes.substring(0, rawEnd));
+                        typeArgs = argWithTypes.substring(rawEnd + 1, argWithTypes.lastIndexOf('>'));
+                    } else {
+                        argType = getProjectClassLoader().loadClass(argWithTypes);
+                    }
+                } catch (ClassNotFoundException e) {
+                    throw new MojoExecutionException(String.format("Error loading extra option [%s %s] : %s",
+                        argWithTypes, name, e.getMessage()), e);
+                }
+                parameters.put(name, new ApiMethodParser.Argument(name, argType, typeArgs));
+            }
+        }
+
         context.put("parameters", parameters);
         return context;
     }
@@ -300,8 +325,8 @@ public abstract class AbstractApiMethodGeneratorMojo extends AbstractApiMethodBa
                         parameterizedType.append(
                             getCanonicalName(getProjectClassLoader().loadClass("java.lang." + argType)));
                     } catch (ClassNotFoundException e1) {
-                        log.warn("Ignoring type parameters " + typeArgs + "> for argument " + argument.getName()
-                                 + ", unable to load parameteric type argument " + argType, e1);
+                        log.warn("Ignoring type parameters < " + typeArgs + "> for argument " + argument.getName()
+                                 + ", unable to load parametric type argument " + argType, e1);
                         ignore = true;
                     }
                 }

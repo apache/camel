@@ -31,4 +31,7 @@ public abstract class AbstractApiMethodBaseMojo extends AbstractSourceGeneratorM
 
     @Parameter(property = PREFIX + "excludeConfigTypes")
     protected String excludeConfigTypes;
+
+    @Parameter
+    protected ExtraOption[] extraOptions;
 }

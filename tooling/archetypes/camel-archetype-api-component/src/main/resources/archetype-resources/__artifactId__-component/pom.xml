@@ -180,7 +180,20 @@
                     </substitution>
                   </substitutions>
                   -->
-
+                  <!-- Exclude automatically generated endpoint options by name
+                  <excludeConfigNames>name-pattern<excludeConfigNames>
+                  -->
+                  <!-- Exclude automatically generated endpoint options by type
+                  <excludeConfigTypes>type-pattern<excludeConfigTypes>
+                  -->
+                  <!-- Add custom endpoint options to generated EndpointConfiguration class for this API
+                  <extraOptions>
+                    <extraOption>
+                      <type>java.util.List&lt;String&gt;</type>
+                      <name>customOption</name>
+                    </extraOption>
+                  </extraOptions>
+                  -->
                   <!-- Use method aliases in endpoint URIs, e.g. support 'widget' as alias for getWidget or setWidget
                   <aliases>
                     <alias>
@@ -203,8 +216,11 @@
                   </fromJavadoc>
                 </api>
               </apis>
-              <!-- Specify global values for all APIs here, only aliases are merged, others are overridden at API level
+              <!-- Specify global values for all APIs here, these are overridden at API level
               <substitutions/>
+              <excludeConfigNames/>
+              <excludeConfigTypes/>
+              <extraOptions>
               <fromJavadoc/>
               <aliases/>
               -->

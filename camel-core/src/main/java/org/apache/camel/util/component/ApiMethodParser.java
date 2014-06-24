@@ -315,7 +315,7 @@ public abstract class ApiMethodParser<T> {
         private final Class<?> type;
         private final String typeArgs;
 
-        protected Argument(String name, Class<?> type, String typeArgs) {
+        public Argument(String name, Class<?> type, String typeArgs) {
             this.name = name;
             this.type = type;
             this.typeArgs = typeArgs;

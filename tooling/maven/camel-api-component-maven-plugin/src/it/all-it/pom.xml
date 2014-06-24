@@ -144,6 +144,12 @@
                       <replaceWithType>true</replaceWithType>
                     </substitution>
                   </substitutions>
+                  <extraOptions>
+                    <extraOption>
+                      <type>java.util.List&lt;String&gt;</type>
+                      <name>extraString</name>
+                    </extraOption>
+                  </extraOptions>
                   <fromSignatureFile>../../../src/test/resources/test-proxy-signatures.txt</fromSignatureFile>
                 </api>
                 <api>
@@ -157,17 +163,19 @@
                       <replacement>applicationKey</replacement>
                     </substitution>
                   </substitutions>
+                  <extraOptions>
+                    <extraOption>
+                      <type>java.util.Map&lt;String, String&gt;</type>
+                      <name>extraMap</name>
+                    </extraOption>
+                  </extraOptions>
                   <fromJavadoc>
                     <excludeClasses>InternalContextBase</excludeClasses>
                     <excludeMethods>clone|Current|internal|icache</excludeMethods>
                   </fromJavadoc>
                   <aliases>
                     <alias>
-                      <methodPattern>get(.+)</methodPattern>
-                      <methodAlias>$1</methodAlias>
-                    </alias>
-                    <alias>
-                      <methodPattern>set(.+)</methodPattern>
+                      <methodPattern>[gs]et(.+)</methodPattern>
                       <methodAlias>$1</methodAlias>
                     </alias>
                   </aliases>

@@ -46,6 +46,9 @@ public class JavadocApiMethodGeneratorMojoTest extends AbstractGeneratorMojoTest
         mojo.proxyClass = VelocityContext.class.getCanonicalName();
         Substitution substitution = new Substitution(".*", "key", "java.lang.Object", "applicationKey", false);
         mojo.substitutions = new Substitution[] {substitution};
+        mojo.extraOptions = new ExtraOption[1];
+        mojo.extraOptions[0] = new ExtraOption("java.util.Map<String, String>", "extraMap");
+
         mojo.excludePackages = JavadocApiMethodGeneratorMojo.DEFAULT_EXCLUDE_PACKAGES;
         mojo.includeMethods = ".+";
         mojo.excludeMethods = "clone|Current|internal|icache";

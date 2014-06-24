@@ -53,7 +53,6 @@ public class ApiComponentGeneratorMojoTest extends AbstractGeneratorMojoTest {
         mojo.apis[0].setExcludeConfigNames("name2");
         mojo.apis[0].setExcludeConfigTypes("int");
 
-
         List<ApiMethodAlias> aliases = new ArrayList<ApiMethodAlias>();
         aliases.add(new ApiMethodAlias("get(.+)", "$1"));
         aliases.add(new ApiMethodAlias("set(.+)", "$1"));
@@ -63,6 +62,11 @@ public class ApiComponentGeneratorMojoTest extends AbstractGeneratorMojoTest {
         mojo.apis[1].setAliases(aliases);
         Substitution substitution = new Substitution(".*", "key", "java.lang.Object", "applicationKey", false);
         mojo.apis[1].setSubstitutions(new Substitution[] {substitution});
+        mojo.apis[1].setExtraOptions(new ExtraOption[] { new ExtraOption("java.util.Map<String, String>", "extraMap") });
+
+        mojo.extraOptions = new ExtraOption[1];
+        mojo.extraOptions[0] = new ExtraOption("java.util.List<String>", "extraStrings");
+
         final FromJavadoc fromJavadoc = new FromJavadoc();
         fromJavadoc.setExcludePackages(JavadocApiMethodGeneratorMojo.DEFAULT_EXCLUDE_PACKAGES);
         fromJavadoc.setExcludeMethods("clone|Current|internal|icache");

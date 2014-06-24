@@ -42,6 +42,8 @@ public class ApiProxy {
 
     private String excludeConfigTypes;
 
+    private ExtraOption[] extraOptions;
+
     private List<ApiMethodAlias> aliases = Collections.emptyList();
 
     public String getApiName() {
@@ -98,6 +100,14 @@ public class ApiProxy {
 
     public void setExcludeConfigTypes(String excludeConfigTypes) {
         this.excludeConfigTypes = excludeConfigTypes;
+    }
+
+    public ExtraOption[] getExtraOptions() {
+        return extraOptions;
+    }
+
+    public void setExtraOptions(ExtraOption[] extraOptions) {
+        this.extraOptions = extraOptions;
     }
 
     public List<ApiMethodAlias> getAliases() {
