@@ -112,12 +112,13 @@ public abstract class AbstractApiEndpoint<E extends ApiName, T> extends DefaultE
         final Set<String> arguments = new HashSet<String>();
         arguments.addAll(getPropertiesHelper().getEndpointPropertyNames(getConfiguration()));
 
-        interceptPropertyNames(arguments);
-
         // add inBody argument for producers
         if (inBody != null) {
             arguments.add(inBody);
         }
+
+        interceptPropertyNames(arguments);
+
         final String[] argNames = arguments.toArray(new String[arguments.size()]);
 
         // create a list of candidate methods
