@@ -33,8 +33,8 @@ public class HttpComponentConfigurationAndDocumentationTest extends CamelTestSup
     @Test
     public void testComponentConfiguration() throws Exception {
         HttpComponent comp = context.getComponent("http4", HttpComponent.class);
-        EndpointConfiguration conf = comp.createConfiguration("http4://www.google.com?proxyAuthHost=myproxy&" +
-                "proxyAuthPort=1234&chunked=false");
+        EndpointConfiguration conf = comp.createConfiguration("http4://www.google.com?proxyAuthHost=myproxy&"
+                + "proxyAuthPort=1234&chunked=false");
 
         assertEquals("myproxy", conf.getParameter("proxyAuthHost"));
         assertEquals("false", conf.getParameter("chunked"));
