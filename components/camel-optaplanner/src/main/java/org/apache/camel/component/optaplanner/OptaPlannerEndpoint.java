@@ -20,6 +20,7 @@ import org.apache.camel.Component;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.component.ResourceEndpoint;
+import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.util.ObjectHelper;
 import org.optaplanner.core.api.solver.Solver;
 import org.optaplanner.core.api.solver.SolverFactory;
@@ -28,6 +29,7 @@ import org.optaplanner.core.impl.solution.Solution;
 /**
  * OptaPlanner endpoint for Camel
  */
+@UriEndpoint(scheme = "optaplanner")
 public class OptaPlannerEndpoint extends ResourceEndpoint {
 
     private SolverFactory solverFactory;
