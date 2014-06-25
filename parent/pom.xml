@@ -174,7 +174,7 @@
     <hadoop2-version>2.3.0</hadoop2-version>
     <hamcrest-version>1.3</hamcrest-version>
     <hapi-version>2.1</hapi-version>
-    <hawtbuf-version>1.10</hawtbuf-version>
+    <hawtbuf-version>1.11</hawtbuf-version>
     <hawtdb-version>1.6</hawtdb-version>
     <hawtdispatch-version>1.21</hawtdispatch-version>
     <hazelcast-version>3.0.3</hazelcast-version>
