@@ -62,7 +62,7 @@ public class ApiComponentGeneratorMojoTest extends AbstractGeneratorMojoTest {
         mojo.apis[1].setAliases(aliases);
         Substitution substitution = new Substitution(".*", "key", "java.lang.Object", "applicationKey", false);
         mojo.apis[1].setSubstitutions(new Substitution[] {substitution});
-        mojo.apis[1].setExtraOptions(new ExtraOption[] { new ExtraOption("java.util.Map<String, String>", "extraMap") });
+        mojo.apis[1].setExtraOptions(new ExtraOption[] {new ExtraOption("java.util.Map<String, String>", "extraMap")});
 
         mojo.extraOptions = new ExtraOption[1];
         mojo.extraOptions[0] = new ExtraOption("java.util.List<String>", "extraStrings");
