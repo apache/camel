@@ -72,7 +72,12 @@ public class StringTemplateEndpoint extends ResourceEndpoint {
     @Override
     protected void onExchange(Exchange exchange) throws Exception {
         StringWriter buffer = new StringWriter();
-        Map<String, Object> variableMap = ExchangeHelper.createVariableMap(exchange);
+        
+        @SuppressWarnings("unchecked")
+        Map<String, Object> variableMap = exchange.getIn().getHeader(StringTemplateConstants.STRINGTEMPLATE_VARIABLE_MAP, Map.class);
+        if (variableMap == null) {
+            variableMap = ExchangeHelper.createVariableMap(exchange);
+        }
 
         // getResourceAsInputStream also considers the content cache
         String text = exchange.getContext().getTypeConverter().mandatoryConvertTo(String.class, getResourceAsInputStream());
