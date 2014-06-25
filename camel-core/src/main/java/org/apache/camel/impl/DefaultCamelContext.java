@@ -1055,6 +1055,8 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         // the ftp components are in a special package
         if ("ftp".equals(componentName) || "ftps".equals(componentName) || "sftp".equals(componentName)) {
             return "file/remote";
+        } else if ("cxfrs".equals(componentName)) {
+            return "cxf/jaxrs";
         }
         return componentName.replaceAll("-", "");
     }
