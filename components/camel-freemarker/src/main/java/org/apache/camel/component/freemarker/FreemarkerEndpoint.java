@@ -16,13 +16,15 @@
  */
 package org.apache.camel.component.freemarker;
 
+
+
 import java.io.Reader;
 import java.io.StringReader;
 import java.io.StringWriter;
-import java.util.Map;
 
 import freemarker.template.Configuration;
 import freemarker.template.Template;
+
 import org.apache.camel.Component;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -118,16 +120,18 @@ public class FreemarkerEndpoint extends ResourceEndpoint {
             // remove the header to avoid it being propagated in the routing
             exchange.getIn().removeHeader(FreemarkerConstants.FREEMARKER_TEMPLATE);
         }
-
-        Map<String, Object> variableMap = ExchangeHelper.createVariableMap(exchange);
+        Object dataModle = exchange.getIn().getHeader(FreemarkerConstants.FREEMARKER_DATA_MODLE, Object.class);
+        if (dataModle == null) {
+            dataModle = ExchangeHelper.createVariableMap(exchange);
+        }
         // let freemarker parse and generate the result in buffer
         Template template;
 
         if (reader != null) {
-            log.debug("Freemarker is evaluating template read from header {} using context: {}", FreemarkerConstants.FREEMARKER_TEMPLATE, variableMap);
+            log.debug("Freemarker is evaluating template read from header {} using context: {}", FreemarkerConstants.FREEMARKER_TEMPLATE, dataModle);
             template = new Template("temp", reader, new Configuration());
         } else {
-            log.debug("Freemarker is evaluating {} using context: {}", path, variableMap);
+            log.debug("Freemarker is evaluating {} using context: {}", path, dataModle);
             if (getEncoding() != null) {
                 template = configuration.getTemplate(path, getEncoding());
             } else {
@@ -135,7 +139,7 @@ public class FreemarkerEndpoint extends ResourceEndpoint {
             }
         }
         StringWriter buffer = new StringWriter();
-        template.process(variableMap, buffer);
+        template.process(dataModle, buffer);
         buffer.flush();
 
         // now lets output the results to the exchange
