@@ -16,6 +16,7 @@
  */
 package org.apache.camel.core.osgi;
 
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.regex.Matcher;
 
 import org.apache.camel.CamelContext;
@@ -41,6 +42,7 @@ import org.osgi.framework.BundleContext;
  */
 public class OsgiManagementNameStrategy extends DefaultManagementNameStrategy {
 
+    private static final AtomicInteger CONTEXT_COUNTER = new AtomicInteger(0);
     private final BundleContext bundleContext;
 
     public OsgiManagementNameStrategy(CamelContext camelContext, BundleContext bundleContext) {
@@ -62,6 +64,11 @@ public class OsgiManagementNameStrategy extends DefaultManagementNameStrategy {
         answer = answer.replaceFirst("#bundleId#", bundleId);
         answer = answer.replaceFirst("#symbolicName#", symbolicName);
         answer = answer.replaceFirst("#version#", version);
+
+        // we got a candidate then find a free name
+        // true = check fist if the candidate as-is is free, if not then use the counter
+        answer = OsgiNamingHelper.findFreeCamelContextName(bundleContext, answer, OsgiCamelContextPublisher.CONTEXT_MANAGEMENT_NAME_PROPERTY, CONTEXT_COUNTER, true);
+
         return answer;
     }
     
