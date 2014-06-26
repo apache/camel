@@ -124,6 +124,7 @@ public abstract class AbstractApiMethodGeneratorMojo extends AbstractApiMethodBa
         VelocityContext context = getCommonContext(models);
         context.put("testName", getUnitTestName());
         context.put("scheme", scheme);
+        context.put("componentPackage", componentPackage);
         context.put("componentName", componentName);
         context.put("enumName", getEnumName());
         return context;
@@ -131,7 +132,7 @@ public abstract class AbstractApiMethodGeneratorMojo extends AbstractApiMethodBa
 
     private String getTestFilePath() throws MojoExecutionException {
         final StringBuilder fileName = new StringBuilder();
-        fileName.append(outPackage.replaceAll("\\.", File.separator)).append(File.separator);
+        fileName.append(componentPackage.replaceAll("\\.", File.separator)).append(File.separator);
         fileName.append(getUnitTestName()).append(".java");
         return fileName.toString();
     }

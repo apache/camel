@@ -57,7 +57,8 @@
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-test</artifactId>
       <version>@project.version@</version>
-      <scope>test</scope>
+      <!-- compile scope to avoid having to move AbstractTestTestSupport to src/test/java -->
+      <scope>compile</scope>
     </dependency>
   </dependencies>
 
