@@ -114,7 +114,17 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
 
         // time how long time it takes to poll
         StopWatch stop = new StopWatch();
-        boolean limitHit = !pollDirectory(name, files, 0);
+        boolean limitHit;
+        try {
+            limitHit = !pollDirectory(name, files, 0);
+        } catch (Exception e) {
+            // during poll directory we add files to the in progress repository, in case of any exception thrown after this work
+            // we must then drain the in progress files before rethrowing the exception
+            log.debug("Error occurred during poll directory: " + name + " due " + e.getMessage() + ". Removing " + files.size() + " files marked as in-progress.");
+            removeExcessiveInProgressFiles(files);
+            throw e;
+        }
+
         long delta = stop.stop();
         if (log.isDebugEnabled()) {
             log.debug("Took {} to poll: {}", TimeUtils.printDuration(delta), name);
@@ -225,6 +235,18 @@ public abstract class GenericFileConsumer<T> extends ScheduledBatchPollingConsum
             // must remove last
             Exchange exchange = exchanges.removeLast();
             GenericFile<?> file = exchange.getProperty(FileComponent.FILE_EXCHANGE_FILE, GenericFile.class);
+            String key = file.getAbsoluteFilePath();
+            endpoint.getInProgressRepository().remove(key);
+        }
+    }
+
+    /**
+     * Drain any in progress files as we are done with the files
+     *
+     * @param files  the files
+     */
+    protected void removeExcessiveInProgressFiles(List<GenericFile<T>> files) {
+        for (GenericFile file : files) {
             String key = file.getAbsoluteFilePath();
             endpoint.getInProgressRepository().remove(key);
         }
