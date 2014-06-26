@@ -68,7 +68,6 @@ public class RedisIdempotentRepository extends ServiceSupport implements Idempot
 
     @ManagedOperation(description = "Remove the key from the store")
     public boolean remove(String key) {
-        System.out.println("Remove the key" + key);
         return setOperations.remove(processorName, key) != null;
     }
 
