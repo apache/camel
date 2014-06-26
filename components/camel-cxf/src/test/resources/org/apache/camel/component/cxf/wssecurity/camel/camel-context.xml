@@ -26,7 +26,7 @@
     
     <bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"/>
     
-    <import resource="classpath:META-INF/cxf/cxf.xml"/>
+    <!--import resource="classpath:META-INF/cxf/cxf.xml"/-->
     
     <cxf:cxfEndpoint 
         id="signatureRoute" 
@@ -117,11 +117,11 @@
         </route>
         <route errorHandlerRef="noErrorHandler">
             <from uri="cxf:bean:encryptionRoute"/>
-            <to uri="cxf:bean:encryptionService"/>
+            <to uri="cxf:bean:encryptionService?DefaultOperationName=greetMe"/>
         </route>
         <route errorHandlerRef="noErrorHandler">
             <from uri="cxf:bean:securityPolicyRoute"/>
-            <to uri="cxf:bean:securityPolicyService"/>
+            <to uri="cxf:bean:securityPolicyService?DefaultOperationName=greetMe"/>
         </route>
     </camelContext>
     
