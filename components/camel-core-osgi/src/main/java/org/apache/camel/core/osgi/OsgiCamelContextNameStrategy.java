@@ -18,13 +18,8 @@ package org.apache.camel.core.osgi;
 
 import java.util.concurrent.atomic.AtomicInteger;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.spi.CamelContextNameStrategy;
 import org.osgi.framework.BundleContext;
-import org.osgi.framework.InvalidSyntaxException;
-import org.osgi.framework.ServiceReference;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.core.osgi.OsgiCamelContextPublisher.CONTEXT_NAME_PROPERTY;
 
@@ -37,7 +32,6 @@ import static org.apache.camel.core.osgi.OsgiCamelContextPublisher.CONTEXT_NAME_
  */
 public class OsgiCamelContextNameStrategy implements CamelContextNameStrategy {
 
-    private static final Logger LOG = LoggerFactory.getLogger(OsgiCamelContextNameStrategy.class);
     private static final AtomicInteger CONTEXT_COUNTER = new AtomicInteger(0);
     private final BundleContext context;
     private final String prefix = "camel";
@@ -57,45 +51,13 @@ public class OsgiCamelContextNameStrategy implements CamelContextNameStrategy {
 
     @Override
     public synchronized String getNextName() {
-        String candidate = null;
-        boolean clash = false;
-
-        do {
-            try {
-                clash = false;
-
-                // generate new candidate
-                candidate = prefix + "-" + getNextCounter();
-                LOG.trace("Checking OSGi Service Registry for existence of existing CamelContext with name: {}", candidate);
-
-                ServiceReference[] refs = context.getServiceReferences(CamelContext.class.getName(), "(" + CONTEXT_NAME_PROPERTY + "=" + candidate + ")");
-                if (refs != null && refs.length > 0) {
-                    for (ServiceReference ref : refs) {
-                        Object id = ref.getProperty(CONTEXT_NAME_PROPERTY);
-                        if (id != null && candidate.equals(id)) {
-                            clash = true;
-                            break;
-                        }
-                    }
-                }
-            } catch (InvalidSyntaxException e) {
-                LOG.debug("Error finding free Camel name in OSGi Service Registry due " + e.getMessage() + ". This exception is ignored.", e);
-                break;
-            }
-        } while (clash);
-
-        LOG.debug("Generated CamelContext name for bundle id: {}, clash: {} -> {}", new Object[]{context.getBundle().getBundleId(), clash, candidate});
-        return candidate;
+        // false = do no check fist, but add the counter asap, so we have camel-1
+        return OsgiNamingHelper.findFreeCamelContextName(context, prefix, CONTEXT_NAME_PROPERTY, CONTEXT_COUNTER, false);
     }
 
     @Override
     public boolean isFixedName() {
         return false;
-    }
-
-    public static int getNextCounter() {
-        // we want to start counting from 1, so increment first
-        return CONTEXT_COUNTER.incrementAndGet();
     }
 
 }
