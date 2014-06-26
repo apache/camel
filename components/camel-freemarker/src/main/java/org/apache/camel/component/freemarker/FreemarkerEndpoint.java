@@ -120,18 +120,18 @@ public class FreemarkerEndpoint extends ResourceEndpoint {
             // remove the header to avoid it being propagated in the routing
             exchange.getIn().removeHeader(FreemarkerConstants.FREEMARKER_TEMPLATE);
         }
-        Object dataModle = exchange.getIn().getHeader(FreemarkerConstants.FREEMARKER_DATA_MODLE, Object.class);
-        if (dataModle == null) {
-            dataModle = ExchangeHelper.createVariableMap(exchange);
+        Object dataModel = exchange.getIn().getHeader(FreemarkerConstants.FREEMARKER_DATA_MODEL, Object.class);
+        if (dataModel == null) {
+            dataModel = ExchangeHelper.createVariableMap(exchange);
         }
         // let freemarker parse and generate the result in buffer
         Template template;
 
         if (reader != null) {
-            log.debug("Freemarker is evaluating template read from header {} using context: {}", FreemarkerConstants.FREEMARKER_TEMPLATE, dataModle);
+            log.debug("Freemarker is evaluating template read from header {} using context: {}", FreemarkerConstants.FREEMARKER_TEMPLATE, dataModel);
             template = new Template("temp", reader, new Configuration());
         } else {
-            log.debug("Freemarker is evaluating {} using context: {}", path, dataModle);
+            log.debug("Freemarker is evaluating {} using context: {}", path, dataModel);
             if (getEncoding() != null) {
                 template = configuration.getTemplate(path, getEncoding());
             } else {
@@ -139,7 +139,7 @@ public class FreemarkerEndpoint extends ResourceEndpoint {
             }
         }
         StringWriter buffer = new StringWriter();
-        template.process(dataModle, buffer);
+        template.process(dataModel, buffer);
         buffer.flush();
 
         // now lets output the results to the exchange

@@ -64,7 +64,7 @@ public class FreemarkerTest extends CamelTestSupport {
                 variableMap.put("headers", headersMap);
                 variableMap.put("body", "Monday");
                 variableMap.put("exchange", exchange);
-                exchange.getIn().setHeader(FreemarkerConstants.FREEMARKER_DATA_MODLE, variableMap);
+                exchange.getIn().setHeader(FreemarkerConstants.FREEMARKER_DATA_MODEL, variableMap);
                 exchange.setProperty("item", "7");
             }
         });
