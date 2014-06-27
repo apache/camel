@@ -62,13 +62,6 @@
       <version>${httpclient4-version}</version>
     </dependency>
     
-    <!--<dependency>
-        <groupId>jdk.tools</groupId>
-        <artifactId>jdk.tools</artifactId>
-        <scope>system</scope>
-        <systemPath>C:/Program Files/Java/jdk1.7.0_21/lib/tools.jar</systemPath>
-    </dependency> -->
-
     <!-- test dependencies -->
     <dependency>
       <groupId>org.apache.camel</groupId>
