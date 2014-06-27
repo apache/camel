@@ -88,6 +88,14 @@ public class DefaultSparkBinding implements SparkBinding {
                 SparkHelper.appendHeader(headers, key, decoded);
             }
         }
+
+        String[] splat = request.splat();
+        String key = "splat";
+        if (headerFilterStrategy != null
+                && !headerFilterStrategy.applyFilterToExternalHeaders(key, splat, exchange)) {
+            SparkHelper.appendHeader(headers, key, splat);
+        }
+
     }
 
     /**
