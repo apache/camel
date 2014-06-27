@@ -84,6 +84,7 @@ template().requestBody("direct://${model.UniqueName}", (${helper.getCanonicalNam
 template().requestBodyAndHeaders("direct://${model.UniqueName}", null, headers);
 #end
 #if ( !$voidResult )
+
         assertNotNull("${model.Name} result", result);
         LOG.debug("${model.Name}: " + result);
 #end
