@@ -66,6 +66,7 @@
     <module>camel-bean-validator</module>
     <module>camel-barcode</module>
     <module>camel-bindy</module>
+    <module>camel-box</module>
     <module>camel-cache</module>
     <module>camel-castor</module>
     <module>camel-cdi</module>
