@@ -51,16 +51,16 @@ public abstract class CamelHBaseTestSupport extends CamelTestSupport {
     protected final String[] family = {"info", "birthdate", "address"};
     //comlumn[family][column]
     protected final String[][] column = {
-        {"firstName", "middleName", "lastName"},
+        {"id", "firstName", "lastName"},
         {"day", "month", "year"},
         {"street", "number", "zip"}
     };
 
     //body[row][family][column]
     protected final String[][][] body = {
-        {{"Ioannis", "D.", "Canellos"}, {"09", "03", "1980"}, {"Awesome Street", "23", "15344"}},
-        {{"John", "", "Dow"}, {"01", "01", "1979"}, {"Unknown Street", "1", "1010"}},
-        {{"Jane", "", "Dow"}, {"09", "01", "1979"}, {"Another Unknown Street", "14", "2020"}}
+        {{"1", "Ioannis", "Canellos"}, {"09", "03", "1980"}, {"Awesome Street", "23", "15344"}},
+        {{"2", "John", "Dow"}, {"01", "01", "1979"}, {"Unknown Street", "1", "1010"}},
+        {{"3", "Christian", "Mueller"}, {"09", "01", "1979"}, {"Another Unknown Street", "14", "2020"}}
     };
 
     protected final byte[][] families = {
