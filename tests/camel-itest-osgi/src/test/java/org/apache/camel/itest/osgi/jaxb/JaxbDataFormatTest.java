@@ -16,10 +16,12 @@
  */
 package org.apache.camel.itest.osgi.jaxb;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.converter.jaxb.JaxbDataFormat;
 import org.apache.camel.itest.osgi.OSGiIntegrationTestSupport;
+import org.apache.karaf.tooling.exam.options.KarafDistributionOption;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.Option;
@@ -38,6 +40,13 @@ public class JaxbDataFormatTest extends OSGiIntegrationTestSupport {
                 from("direct:start").unmarshal(person).to("mock:bar");
             }
         };
+    }
+
+    @Override
+    protected CamelContext createCamelContext() throws Exception {
+        CamelContext context = super.createCamelContext();
+        context.setApplicationContextClassLoader(this.getClass().getClassLoader());
+        return context;
     }
 
     @Test
@@ -59,7 +68,7 @@ public class JaxbDataFormatTest extends OSGiIntegrationTestSupport {
     public static Option[] configure() {
         Option[] options = combine(
             getDefaultCamelKarafOptions(),
-            // using the features to install the other camel components             
+            // using the features to install the other camel components
             loadCamelFeatures("camel-jaxb"));
         
         return options;
