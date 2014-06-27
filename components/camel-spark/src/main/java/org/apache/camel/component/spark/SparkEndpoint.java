@@ -36,7 +36,7 @@ public class SparkEndpoint extends DefaultEndpoint {
     @UriParam
     private String path;
     @UriParam
-    private String acceptType;
+    private String accept;
 
     public SparkEndpoint(String endpointUri, Component component) {
         super(endpointUri, component);
@@ -74,12 +74,12 @@ public class SparkEndpoint extends DefaultEndpoint {
         this.path = path;
     }
 
-    public String getAcceptType() {
-        return acceptType;
+    public String getAccept() {
+        return accept;
     }
 
-    public void setAcceptType(String acceptType) {
-        this.acceptType = acceptType;
+    public void setAccept(String accept) {
+        this.accept = accept;
     }
 
     @Override
