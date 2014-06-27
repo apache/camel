@@ -16,18 +16,20 @@
  */
 package org.apache.camel.component.solr;
 
-import java.io.File;
-import java.util.Arrays;
-import java.util.List;
 import org.apache.camel.Exchange;
 import org.apache.solr.client.solrj.impl.HttpSolrServer;
 import org.apache.solr.client.solrj.response.QueryResponse;
 import org.apache.solr.client.solrj.util.ClientUtils;
 import org.apache.solr.common.SolrDocument;
 import org.apache.solr.common.SolrInputDocument;
+import org.apache.solr.common.params.UpdateParams;
 import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
+
+import java.io.File;
+import java.util.Arrays;
+import java.util.List;
 
 public class SolrUpdateTest extends SolrComponentTestSupport {
 
@@ -128,6 +130,7 @@ public class SolrUpdateTest extends SolrComponentTestSupport {
 
         template.send("direct:start", exchange);
 
+        //noinspection ThrowableResultOfMethodCallIgnored
         assertEquals(HttpSolrServer.RemoteSolrException.class, exchange.getException().getClass());
     }
 
@@ -215,6 +218,7 @@ public class SolrUpdateTest extends SolrComponentTestSupport {
 
         Exchange exchange = createExchangeWithBody(new File("src/test/resources/data/books.csv"));
         exchange.getIn().setHeader(SolrConstants.OPERATION, SolrConstants.OPERATION_INSERT);
+        exchange.getIn().setHeader(SolrConstants.PARAM + UpdateParams.ASSUME_CONTENT_TYPE, "text/csv");
         template.send("direct:start", exchange);
         solrCommit();
 
@@ -234,6 +238,7 @@ public class SolrUpdateTest extends SolrComponentTestSupport {
 
         Exchange exchange = createExchangeWithBody(new File("src/test/resources/data/books.csv"));
         exchange.getIn().setHeader(SolrConstants.OPERATION, SolrConstants.OPERATION_INSERT);
+        exchange.getIn().setHeader(SolrConstants.PARAM + UpdateParams.ASSUME_CONTENT_TYPE, "text/csv");
         exchange.getIn().setHeader("SolrParam.fieldnames", "id,cat,name,price,inStock,author_t,series_t,sequence_i,genre_s");
         exchange.getIn().setHeader("SolrParam.skip", "cat,sequence_i,genre_s");
         exchange.getIn().setHeader("SolrParam.skipLines", 1);
