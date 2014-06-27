@@ -20,6 +20,7 @@ import java.util.Arrays;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -27,41 +28,16 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.util.IOHelper;
 import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.hbase.TableExistsException;
 import org.apache.hadoop.hbase.client.Get;
 import org.apache.hadoop.hbase.client.HTable;
 import org.apache.hadoop.hbase.client.Result;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 
 public class HBaseProducerTest extends CamelHBaseTestSupport {
 
-    @Before
-    public void setUp() throws Exception {
-        if (systemReady) {
-            try {
-                hbaseUtil.createTable(HBaseHelper.getHBaseFieldAsBytes(PERSON_TABLE), families);
-            } catch (TableExistsException ex) {
-                //Ignore if table exists
-            }
-
-            super.setUp();
-        }
-    }
-
-    @After
-    public void tearDown() throws Exception {
-        if (systemReady) {
-            hbaseUtil.deleteTable(PERSON_TABLE.getBytes());
-            super.tearDown();
-        }
-    }
-
     @Test
     public void testPut() throws Exception {
         if (systemReady) {
-            ProducerTemplate template = context.createProducerTemplate();
             Map<String, Object> headers = new HashMap<String, Object>();
             headers.put(HbaseAttribute.HBASE_ROW_ID.asHeader(), key[0]);
             headers.put(HbaseAttribute.HBASE_FAMILY.asHeader(), family[0]);
@@ -82,7 +58,6 @@ public class HBaseProducerTest extends CamelHBaseTestSupport {
             IOHelper.close(table);
         }
     }
-
 
     @Test
     public void testPutAndGet() throws Exception {
@@ -131,7 +106,6 @@ public class HBaseProducerTest extends CamelHBaseTestSupport {
             assertEquals(body[0][1][2], resp.getOut().getHeader(HbaseAttribute.HBASE_VALUE.asHeader(2)));
         }
     }
-
 
     @Test
     public void testPutMultiRows() throws Exception {
@@ -185,7 +159,6 @@ public class HBaseProducerTest extends CamelHBaseTestSupport {
         }
     }
 
-
     @Test
     public void testPutMultiColumns() throws Exception {
         if (systemReady) {
@@ -217,7 +190,6 @@ public class HBaseProducerTest extends CamelHBaseTestSupport {
         }
     }
 
-
     @Test
     public void testPutAndGetMultiColumns() throws Exception {
         testPutMultiColumns();
@@ -238,7 +210,6 @@ public class HBaseProducerTest extends CamelHBaseTestSupport {
             }
         }
     }
-
 
     @Test
     public void testPutAndGetAndDeleteMultiRows() throws Exception {
@@ -297,13 +268,13 @@ public class HBaseProducerTest extends CamelHBaseTestSupport {
             @Override
             public void configure() {
                 from("direct:start")
-                        .to("hbase://" + PERSON_TABLE);
+                    .to("hbase://" + PERSON_TABLE);
 
                 from("direct:start-with-model")
-                        .to("hbase://" + PERSON_TABLE + "?family=info&qualifier=firstName&family2=birthdate&qualifier2=year");
+                    .to("hbase://" + PERSON_TABLE + "?family=info&qualifier=firstName&family2=birthdate&qualifier2=year");
 
                 from("direct:scan")
-                        .to("hbase://" + PERSON_TABLE + "?operation=" + HBaseConstants.SCAN + "&maxResults=2");
+                    .to("hbase://" + PERSON_TABLE + "?operation=" + HBaseConstants.SCAN + "&maxResults=2");
             }
         };
     }
