@@ -23,6 +23,8 @@ import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
+import org.apache.camel.util.ObjectHelper;
+import spark.route.HttpMethod;
 
 @UriEndpoint(scheme = "spark", consumerClass =  SparkConsumer.class)
 public class SparkEndpoint extends DefaultEndpoint {
@@ -90,7 +92,6 @@ public class SparkEndpoint extends DefaultEndpoint {
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
         CamelSparkRoute route = new CamelSparkRoute(this, processor);
-
         Consumer consumer = new SparkConsumer(this, processor, route);
         configureConsumer(consumer);
         return consumer;
@@ -99,5 +100,16 @@ public class SparkEndpoint extends DefaultEndpoint {
     @Override
     public boolean isSingleton() {
         return true;
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+
+        ObjectHelper.notEmpty(verb, "verb", this);
+        ObjectHelper.notEmpty(path, "path", this);
+
+        // verb must be supported by Spark
+        HttpMethod.valueOf(verb);
     }
 }

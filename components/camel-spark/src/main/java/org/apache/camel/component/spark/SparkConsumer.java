@@ -19,7 +19,6 @@ package org.apache.camel.component.spark;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultConsumer;
-import spark.Spark;
 
 public class SparkConsumer extends DefaultConsumer {
 
@@ -39,20 +38,16 @@ public class SparkConsumer extends DefaultConsumer {
     protected void doStart() throws Exception {
         super.doStart();
 
-        String path = getEndpoint().getPath();
         String verb = getEndpoint().getVerb();
+        String path = getEndpoint().getPath();
         String accept = getEndpoint().getAccept();
 
-        // TODO: reuse our spark route builder DSL instead of this code
-
-        if ("get".equals(verb)) {
-            log.info("get(/{})", verb);
-            if (accept != null) {
-                Spark.get(path, accept, route);
-            } else {
-                Spark.get(path, route);
-            }
+        if (accept != null) {
+            log.info("Spark: {}({}) accepting: {}", new Object[]{verb, path, accept});
+        } else {
+            log.info("Spark: {}({})", verb, path);
         }
+        CamelSpark.spark(verb, path, accept, route);
     }
 
 }
