@@ -16,6 +16,9 @@
  */
 package org.apache.camel.component.test;
 
+import java.util.Map;
+
+import org.apache.camel.CamelExecutionException;
 import org.apache.camel.test.junit4.CamelTestSupport;
 
 /**
@@ -27,5 +30,16 @@ public class AbstractTestTestSupport extends CamelTestSupport {
     public boolean isCreateCamelContextPerClass() {
         // only create the context once for this class
         return true;
+    }
+
+    @SuppressWarnings("unchecked")
+    protected <T> T requestBodyAndHeaders(String endpointUri, Object body, Map<String, Object> headers)
+        throws CamelExecutionException {
+        return (T) template().requestBodyAndHeaders(endpointUri, body, headers);
+    }
+
+    @SuppressWarnings("unchecked")
+    protected <T> T requestBody(String endpoint, Object body) throws CamelExecutionException {
+        return (T) template().requestBody(endpoint, body);
     }
 }

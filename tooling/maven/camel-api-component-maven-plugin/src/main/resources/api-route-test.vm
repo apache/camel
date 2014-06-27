@@ -73,15 +73,15 @@ public class ${testName} extends Abstract${componentName}TestSupport {
 
 #end
 ## method invocation result
-        #if ( !$voidResult )#set ( $type = $helper.getResultDeclaration($resultType) )$type result = (${type})#end
+        #if ( !$voidResult )#set ( $type = $helper.getResultDeclaration($resultType) )final $type result = #end
 ## actual template call
 #if ( $args.isEmpty() )
-template().requestBody("direct://${model.UniqueName}", (Object)null);
+requestBody("direct://${model.UniqueName}", null);
 #elseif ( $args.size() == 1 )
 ## typecast body to avoid requestBody() conflict
-template().requestBody("direct://${model.UniqueName}", (${helper.getCanonicalName($argType)}) $helper.getDefaultArgValue($argType));
+requestBody("direct://${model.UniqueName}", $helper.getDefaultArgValue($argType));
 #else
-template().requestBodyAndHeaders("direct://${model.UniqueName}", null, headers);
+requestBodyAndHeaders("direct://${model.UniqueName}", null, headers);
 #end
 #if ( !$voidResult )
 

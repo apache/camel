@@ -23,6 +23,7 @@ import java.util.Map;
 import java.util.Properties;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.CamelExecutionException;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.util.IntrospectionSupport;
 
@@ -67,5 +68,16 @@ public class Abstract${name}TestSupport extends CamelTestSupport {
     public boolean isCreateCamelContextPerClass() {
         // only create the context once for this class
         return true;
+    }
+
+    @SuppressWarnings("unchecked")
+    protected <T> T requestBodyAndHeaders(String endpointUri, Object body, Map<String, Object> headers)
+        throws CamelExecutionException {
+        return (T) template().requestBodyAndHeaders(endpointUri, body, headers);
+    }
+
+    @SuppressWarnings("unchecked")
+    protected <T> T requestBody(String endpoint, Object body) throws CamelExecutionException {
+        return (T) template().requestBody(endpoint, body);
     }
 }
