@@ -99,7 +99,6 @@
                         <configuration>
                             <sources>
                                 <source>../camel-test-spring/src/test/java</source>
-
                             </sources>
                         </configuration>
                     </execution>
