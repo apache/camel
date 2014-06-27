@@ -21,11 +21,22 @@ import java.util.Map;
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.UriEndpointComponent;
 import spark.Spark;
+import spark.SparkBase;
 
 public class SparkComponent extends UriEndpointComponent {
 
+    private int port = SparkBase.SPARK_DEFAULT_PORT;
+
     public SparkComponent() {
         super(SparkEndpoint.class);
+    }
+
+    public int getPort() {
+        return port;
+    }
+
+    public void setPort(int port) {
+        this.port = port;
     }
 
     @Override
@@ -42,6 +53,12 @@ public class SparkComponent extends UriEndpointComponent {
         answer.setPath(parts[1]);
 
         return answer;
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        super.doStart();
+        Spark.setPort(getPort());
     }
 
     @Override

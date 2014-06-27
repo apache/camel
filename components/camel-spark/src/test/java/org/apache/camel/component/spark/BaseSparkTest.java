@@ -16,30 +16,31 @@
  */
 package org.apache.camel.component.spark;
 
-import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
+import org.apache.camel.CamelContext;
+import org.apache.camel.test.AvailablePortFinder;
+import org.apache.camel.test.junit4.CamelTestSupport;
 
-public class CamelSparkTest extends BaseSparkTest {
+public abstract class BaseSparkTest extends CamelTestSupport {
 
-    @Test
-    public void testSparkGet() throws Exception {
-        getMockEndpoint("mock:foo").expectedMessageCount(1);
+    protected int port;
 
-        String out = template.requestBody("http://0.0.0.0:" + getPort() + "/hello", null, String.class);
-        assertEquals("Bye World", out);
-
-        assertMockEndpointsSatisfied();
+    public int getPort() {
+        return port;
     }
 
     @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
-        return new RouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-                from("spark:get:hello")
-                        .to("mock:foo")
-                        .transform().constant("Bye World");
-            }
-        };
+    public void setUp() throws Exception {
+        port = AvailablePortFinder.getNextAvailable(24500);
+        super.setUp();
+    }
+
+    @Override
+    protected CamelContext createCamelContext() throws Exception {
+        CamelContext context = super.createCamelContext();
+
+        SparkComponent spark = context.getComponent("spark", SparkComponent.class);
+        spark.setPort(port);
+
+        return context;
     }
 }
