@@ -28,6 +28,8 @@ public class SparkConfiguration {
     private boolean disableStreamCache;
     @UriParam
     private boolean urlDecodeHeaders;
+    @UriParam
+    private boolean transferException;
 
     public boolean isMapHeaders() {
         return mapHeaders;
@@ -51,5 +53,13 @@ public class SparkConfiguration {
 
     public void setUrlDecodeHeaders(boolean urlDecodeHeaders) {
         this.urlDecodeHeaders = urlDecodeHeaders;
+    }
+
+    public boolean isTransferException() {
+        return transferException;
+    }
+
+    public void setTransferException(boolean transferException) {
+        this.transferException = transferException;
     }
 }

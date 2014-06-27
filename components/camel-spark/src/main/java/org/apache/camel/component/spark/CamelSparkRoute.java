@@ -20,6 +20,7 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
+import org.apache.camel.util.ObjectHelper;
 import spark.Request;
 import spark.Response;
 import spark.Route;
@@ -47,8 +48,12 @@ public class CamelSparkRoute implements Route {
             exchange.setException(e);
         }
 
-        if (exchange.getException() != null) {
-            // TODO: how to handle exchange failures
+        Message msg = exchange.hasOut() ? exchange.getOut() : exchange.getIn();
+
+        try {
+            endpoint.getSparkBinding().toSparkResponse(msg, response, endpoint.getSparkConfiguration());
+        } catch (Exception e) {
+            throw ObjectHelper.wrapRuntimeCamelException(e);
         }
 
         if (exchange.hasOut()) {

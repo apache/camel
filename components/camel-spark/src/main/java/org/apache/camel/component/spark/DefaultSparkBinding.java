@@ -16,16 +16,27 @@
  */
 package org.apache.camel.component.spark;
 
+import java.io.ByteArrayOutputStream;
+import java.io.ObjectOutputStream;
+import java.io.PrintWriter;
+import java.io.StringWriter;
 import java.io.UnsupportedEncodingException;
 import java.net.URLDecoder;
+import java.util.Iterator;
 import java.util.Map;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.TypeConverter;
 import org.apache.camel.spi.HeaderFilterStrategy;
+import org.apache.camel.util.ExchangeHelper;
+import org.apache.camel.util.IOHelper;
+import org.apache.camel.util.MessageHelper;
+import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import spark.Request;
+import spark.Response;
 
 public class DefaultSparkBinding implements SparkBinding {
 
@@ -90,12 +101,88 @@ public class DefaultSparkBinding implements SparkBinding {
         }
 
         String[] splat = request.splat();
-        String key = "splat";
+        String key = SparkConstants.SPLAT;
         if (headerFilterStrategy != null
                 && !headerFilterStrategy.applyFilterToExternalHeaders(key, splat, exchange)) {
             SparkHelper.appendHeader(headers, key, splat);
         }
+    }
 
+    @Override
+    public void toSparkResponse(Message message, Response response, SparkConfiguration configuration) throws Exception {
+        LOG.trace("toSparkResponse: {}", message);
+
+        // the response code is 200 for OK and 500 for failed
+        boolean failed = message.getExchange().isFailed();
+        int defaultCode = failed ? 500 : 200;
+
+        int code = message.getHeader(Exchange.HTTP_RESPONSE_CODE, defaultCode, int.class);
+        response.status(code);
+        LOG.trace("HTTP Status Code: {}", code);
+
+        TypeConverter tc = message.getExchange().getContext().getTypeConverter();
+
+        // append headers
+        // must use entrySet to ensure case of keys is preserved
+        for (Map.Entry<String, Object> entry : message.getHeaders().entrySet()) {
+            String key = entry.getKey();
+            Object value = entry.getValue();
+            // use an iterator as there can be multiple values. (must not use a delimiter)
+            final Iterator<?> it = ObjectHelper.createIterator(value, null);
+            while (it.hasNext()) {
+                String headerValue = tc.convertTo(String.class, it.next());
+                if (headerValue != null && headerFilterStrategy != null
+                        && !headerFilterStrategy.applyFilterToCamelHeaders(key, headerValue, message.getExchange())) {
+                    LOG.trace("HTTP-Header: {}={}", key, headerValue);
+                    response.header(key, headerValue);
+                }
+            }
+        }
+
+        // set the content type in the response.
+        String contentType = MessageHelper.getContentType(message);
+        if (contentType != null) {
+            // set content-type
+            response.header(Exchange.CONTENT_TYPE, contentType);
+            LOG.trace("Content-Type: {}", contentType);
+        }
+
+        Object body = message.getBody();
+        Exception cause = message.getExchange().getException();
+
+        // if there was an exception then use that as body
+        if (cause != null) {
+            if (configuration.isTransferException()) {
+                // we failed due an exception, and transfer it as java serialized object
+                ByteArrayOutputStream bos = new ByteArrayOutputStream();
+                ObjectOutputStream oos = new ObjectOutputStream(bos);
+                oos.writeObject(cause);
+                oos.flush();
+                IOHelper.close(oos, bos);
+
+                body = bos.toByteArray();
+                // force content type to be serialized java object
+                message.setHeader(Exchange.CONTENT_TYPE, SparkConstants.CONTENT_TYPE_JAVA_SERIALIZED_OBJECT);
+            } else {
+                // we failed due an exception so print it as plain text
+                StringWriter sw = new StringWriter();
+                PrintWriter pw = new PrintWriter(sw);
+                cause.printStackTrace(pw);
+
+                // the body should then be the stacktrace
+                body = sw.toString().getBytes();
+                // force content type to be text/plain as that is what the stacktrace is
+                message.setHeader(Exchange.CONTENT_TYPE, "text/plain");
+            }
+
+            // and mark the exception as failure handled, as we handled it by returning it as the response
+            ExchangeHelper.setFailureHandled(message.getExchange());
+        }
+
+        if (body != null) {
+            String str = tc.mandatoryConvertTo(String.class, message.getExchange(), body);
+            response.body(str);
+        }
     }
 
     /**

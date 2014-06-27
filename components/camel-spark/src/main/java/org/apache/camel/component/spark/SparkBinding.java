@@ -21,13 +21,14 @@ import java.util.Map;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import spark.Request;
+import spark.Response;
 
 public interface SparkBinding {
 
     /**
      * Binds from Spark {@link Request} to Camel {@link org.apache.camel.Message}.
      *
-     * @param request       the netty http request
+     * @param request       the Spark request
      * @param exchange      the exchange that should contain the returned message.
      * @param configuration configuration
      * @return the message to store on the given exchange
@@ -35,6 +36,25 @@ public interface SparkBinding {
      */
     Message toCamelMessage(Request request, Exchange exchange, SparkConfiguration configuration) throws Exception;
 
+    /**
+     * Binds from Spark {@link Request} to Camel headers as a {@link Map}.
+     *
+     * @param request       the Spark request
+     * @param headers       the Camel headers that should be populated
+     * @param exchange      the exchange that should contain the returned message.
+     * @param configuration the endpoint configuration
+     * @throws Exception is thrown if error during binding
+     */
     void populateCamelHeaders(Request request, Map<String, Object> headers, Exchange exchange, SparkConfiguration configuration) throws Exception;
+
+    /**
+     * Binds from Camel {@link Message} to Spark {@link Response}.
+     *
+     * @param message       the Camel message
+     * @param response      the Spark response to bind to
+     * @param configuration the endpoint configuration
+     * @throws Exception is thrown if error during binding
+     */
+    void toSparkResponse(Message message, Response response, SparkConfiguration configuration) throws Exception;
 
 }
