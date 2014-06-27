@@ -30,6 +30,7 @@ import org.apache.camel.processor.loadbalancer.LoadBalancer;
 import org.apache.camel.processor.loadbalancer.RoundRobinLoadBalancer;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
+import org.apache.camel.util.EndpointHelper;
 import org.quartz.Job;
 import org.quartz.JobBuilder;
 import org.quartz.JobDataMap;
@@ -41,7 +42,6 @@ import org.quartz.TriggerBuilder;
 import org.quartz.TriggerKey;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import static org.quartz.CronScheduleBuilder.cronSchedule;
 import static org.quartz.SimpleScheduleBuilder.simpleSchedule;
 
@@ -307,14 +307,18 @@ public class QuartzEndpoint extends DefaultEndpoint {
             int repeat = SimpleTrigger.REPEAT_INDEFINITELY;
             String repeatString = (String) triggerParameters.get("repeatCount");
             if (repeatString != null) {
-                repeat = Integer.valueOf(repeatString);
+                repeat = EndpointHelper.resloveStringParameter(getCamelContext(), repeatString, Integer.class);
+                // need to update the parameters
+                triggerParameters.put("repeatCount", repeat);
             }
 
             // default use 1 sec interval
             long interval = 1000;
             String intervalString = (String) triggerParameters.get("repeatInterval");
             if (intervalString != null) {
-                interval = Long.valueOf(intervalString);
+                interval = EndpointHelper.resloveStringParameter(getCamelContext(), intervalString, Long.class);
+                // need to update the parameters
+                triggerParameters.put("repeatInterval", interval);
             }
 
             TriggerBuilder<SimpleTrigger> triggerBuilder = TriggerBuilder.newTrigger()
