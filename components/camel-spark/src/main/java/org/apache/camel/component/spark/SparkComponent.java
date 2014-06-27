@@ -20,12 +20,15 @@ import java.util.Map;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.util.ObjectHelper;
 import spark.Spark;
 import spark.SparkBase;
 
 public class SparkComponent extends UriEndpointComponent {
 
     private int port = SparkBase.SPARK_DEFAULT_PORT;
+    private SparkConfiguration sparkConfiguration = new SparkConfiguration();
+    private SparkBinding sparkBinding = new DefaultSparkBinding();
 
     public SparkComponent() {
         super(SparkEndpoint.class);
@@ -39,18 +42,38 @@ public class SparkComponent extends UriEndpointComponent {
         this.port = port;
     }
 
+    public SparkConfiguration getSparkConfiguration() {
+        return sparkConfiguration;
+    }
+
+    public void setSparkConfiguration(SparkConfiguration sparkConfiguration) {
+        this.sparkConfiguration = sparkConfiguration;
+    }
+
+    public SparkBinding getSparkBinding() {
+        return sparkBinding;
+    }
+
+    public void setSparkBinding(SparkBinding sparkBinding) {
+        this.sparkBinding = sparkBinding;
+    }
+
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         SparkEndpoint answer = new SparkEndpoint(uri, this);
+        answer.setSparkConfiguration(getSparkConfiguration());
+        answer.setSparkBinding(getSparkBinding());
         setProperties(answer, parameters);
 
-        String[] parts = remaining.split(":");
-        if (parts.length != 2) {
+        if (!remaining.contains(":")) {
             throw new IllegalArgumentException("Invalid syntax. Must be spark:verb:path");
         }
 
-        answer.setVerb(parts[0]);
-        answer.setPath(parts[1]);
+        String verb = ObjectHelper.before(remaining, ":");
+        String path = ObjectHelper.after(remaining, ":");
+
+        answer.setVerb(verb);
+        answer.setPath(path);
 
         return answer;
     }

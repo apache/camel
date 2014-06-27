@@ -41,10 +41,15 @@ public class SparkConsumer extends DefaultConsumer {
 
         String path = getEndpoint().getPath();
         String verb = getEndpoint().getVerb();
+        String acceptType = getEndpoint().getAcceptType();
 
         if ("get".equals(verb)) {
             log.info("get(/{})", verb);
-            Spark.get(path, route);
+            if (acceptType != null) {
+                Spark.get(path, acceptType, route);
+            } else {
+                Spark.get(path, route);
+            }
         }
     }
 

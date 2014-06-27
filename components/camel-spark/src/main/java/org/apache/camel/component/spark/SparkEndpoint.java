@@ -28,12 +28,34 @@ import org.apache.camel.spi.UriParam;
 public class SparkEndpoint extends DefaultEndpoint {
 
     @UriParam
+    SparkConfiguration sparkConfiguration;
+    @UriParam
+    private SparkBinding sparkBinding;
+    @UriParam
     private String verb;
     @UriParam
     private String path;
+    @UriParam
+    private String acceptType;
 
     public SparkEndpoint(String endpointUri, Component component) {
         super(endpointUri, component);
+    }
+
+    public SparkConfiguration getSparkConfiguration() {
+        return sparkConfiguration;
+    }
+
+    public void setSparkConfiguration(SparkConfiguration sparkConfiguration) {
+        this.sparkConfiguration = sparkConfiguration;
+    }
+
+    public SparkBinding getSparkBinding() {
+        return sparkBinding;
+    }
+
+    public void setSparkBinding(SparkBinding sparkBinding) {
+        this.sparkBinding = sparkBinding;
     }
 
     public String getVerb() {
@@ -50,6 +72,14 @@ public class SparkEndpoint extends DefaultEndpoint {
 
     public void setPath(String path) {
         this.path = path;
+    }
+
+    public String getAcceptType() {
+        return acceptType;
+    }
+
+    public void setAcceptType(String acceptType) {
+        this.acceptType = acceptType;
     }
 
     @Override

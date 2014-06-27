@@ -18,6 +18,7 @@ package org.apache.camel.component.spark;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.Message;
 import org.apache.camel.Processor;
 import spark.Request;
 import spark.Response;
@@ -35,14 +36,19 @@ public class CamelSparkRoute implements Route {
 
     @Override
     public Object handle(Request request, Response response) {
-
         Exchange exchange = endpoint.createExchange(ExchangePattern.InOut);
-        exchange.getIn().setBody(request);
 
         try {
+            Message in = endpoint.getSparkBinding().toCamelMessage(request, exchange, endpoint.getSparkConfiguration());
+            exchange.setIn(in);
+
             processor.process(exchange);
         } catch (Exception e) {
             exchange.setException(e);
+        }
+
+        if (exchange.getException() != null) {
+            // TODO: how to handle exchange failures
         }
 
         if (exchange.hasOut()) {
