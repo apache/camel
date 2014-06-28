@@ -73,7 +73,6 @@ public class RabbitMQEndpoint extends DefaultEndpoint {
     private Boolean automaticRecoveryEnabled;
     private Integer networkRecoveryInterval;
     private Boolean topologyRecoveryEnabled;
-
     //If it is true, prefetchSize, prefetchCount, prefetchGlobal will be used for basicOqs before starting RabbitMQConsumer
     private boolean prefetchEnabled;
     //Default in RabbitMq is 0.
@@ -81,7 +80,9 @@ public class RabbitMQEndpoint extends DefaultEndpoint {
     private int prefetchCount;
     //Default value in RabbitMQ is false.
     private boolean prefetchGlobal;
-
+    //Declares a queue and exchange in RabbitMQ, then binds both.
+    private boolean declare = true;
+    
     public RabbitMQEndpoint() {
     }
 
@@ -460,4 +461,12 @@ public class RabbitMQEndpoint extends DefaultEndpoint {
     public boolean isPrefetchGlobal() {
         return prefetchGlobal;
     }
+
+    public boolean isDeclare() {
+        return declare;
+    }
+
+    public void setDeclare(boolean declare) {
+        this.declare = declare;
+    }        
 }

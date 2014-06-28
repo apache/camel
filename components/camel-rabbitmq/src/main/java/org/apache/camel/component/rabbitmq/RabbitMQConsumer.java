@@ -69,7 +69,9 @@ public class RabbitMQConsumer extends DefaultConsumer {
             channel.basicQos(endpoint.getPrefetchSize(), 
                              endpoint.getPrefetchCount(), endpoint.isPrefetchGlobal());
         }
-        getEndpoint().declareExchangeAndQueue(channel);
+        if (getEndpoint().isDeclare()) {
+            getEndpoint().declareExchangeAndQueue(channel);
+        }
     }
 
     /**
