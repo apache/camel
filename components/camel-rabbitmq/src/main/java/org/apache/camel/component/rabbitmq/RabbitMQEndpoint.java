@@ -81,8 +81,11 @@ public class RabbitMQEndpoint extends DefaultEndpoint {
     private int prefetchCount;
     //Default value in RabbitMQ is false.
     private boolean prefetchGlobal;
-
-    public RabbitMQEndpoint() {
+	/**
+	 * Number of concurrent consumer threads
+	 */
+	private int concurrentConsumers = 1;
+	public RabbitMQEndpoint() {
     }
 
     public RabbitMQEndpoint(String endpointUri, RabbitMQComponent component) throws URISyntaxException {
@@ -460,4 +463,12 @@ public class RabbitMQEndpoint extends DefaultEndpoint {
     public boolean isPrefetchGlobal() {
         return prefetchGlobal;
     }
+
+	public int getConcurrentConsumers() {
+		return concurrentConsumers;
+	}
+
+	public void setConcurrentConsumers(int concurrentConsumers) {
+		this.concurrentConsumers = concurrentConsumers;
+	}
 }
