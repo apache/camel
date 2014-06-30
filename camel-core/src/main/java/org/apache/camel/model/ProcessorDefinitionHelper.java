@@ -198,9 +198,6 @@ public final class ProcessorDefinitionHelper {
         }
 
         for (ProcessorDefinition out : outputs) {
-            if (type.isInstance(out)) {
-                found.add((T)out);
-            }
 
             // send is much common
             if (out instanceof SendDefinition) {
@@ -222,6 +219,9 @@ public final class ProcessorDefinitionHelper {
                     List<ProcessorDefinition<?>> children = choice.getOtherwise().getOutputs();
                     doFindType(children, type, found);
                 }
+
+                // do not check children as we already did that
+                continue;
             }
 
             // special for try ... catch ... finally
@@ -251,6 +251,10 @@ public final class ProcessorDefinitionHelper {
 
                 // do not check children as we already did that
                 continue;
+            }
+
+            if (type.isInstance(out)) {
+                found.add((T)out);
             }
 
             // try children as well
