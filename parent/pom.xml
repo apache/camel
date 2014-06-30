@@ -32,7 +32,7 @@
 
   <properties>
     <compiler.fork>true</compiler.fork>
-    
+
     <!-- dependency versions -->
     <abdera-version>1.1.3</abdera-version>
     <!-- Note that activemq dependency is only used for testing! -->
@@ -184,7 +184,7 @@
     <httpunit-version>1.7</httpunit-version>
     <httpcore4-version>4.2.4</httpcore4-version>
     <httpclient4-version>4.2.5</httpclient4-version>
-    <httpclient-version>3.1</httpclient-version> 
+    <httpclient-version>3.1</httpclient-version>
     <ibatis-bundle-version>2.3.4.726_4</ibatis-bundle-version>
     <ibatis-version>2.3.4.726</ibatis-version>
     <ical4j-version>1.0.5.2</ical4j-version>
@@ -250,7 +250,7 @@
     <junit-bundle-version>4.11_1</junit-bundle-version>
     <junit-version>4.11</junit-version>
     <jython-version>2.5.3</jython-version>
-    <karaf-version>2.3.4</karaf-version>
+    <karaf-version>2.3.3</karaf-version>
     <krati-version>0.4.9</krati-version>
     <kxml2-bundle-version>2.3.0_2</kxml2-bundle-version>
     <leveldbjni-version>1.8</leveldbjni-version>
@@ -2159,8 +2159,8 @@
             </defaultOptions>
           </configuration>
           <dependencies>
-            <!-- needed to add this to get around the following error on 
-              IBM's JDK org.apache.xerces.impl.dv.DVFactoryException: DTD factory class 
+            <!-- needed to add this to get around the following error on
+              IBM's JDK org.apache.xerces.impl.dv.DVFactoryException: DTD factory class
               org.apache.xerces.impl.dv.dtd.DTDDVFactoryImpl does not extend from DTDDVFactory. -->
             <dependency>
               <groupId>xerces</groupId>
@@ -2392,8 +2392,8 @@
           <version>${maven-war-plugin-version}</version>
           <configuration>
             <webResources>
-              <!-- HACK: Include legal files explicitly, otherwise they will 
-                end up in the wrong path or in another jar file in the war. NOTE: targetPath 
+              <!-- HACK: Include legal files explicitly, otherwise they will
+                end up in the wrong path or in another jar file in the war. NOTE: targetPath
                 is broken for webResources (as documented) -->
               <resource>
                 <directory>${project.build.outputDirectory}</directory>
@@ -2666,7 +2666,7 @@
         <activeByDefault>true</activeByDefault>
       </activation>
     </profile>
-    
+
     <profile>
       <id>fastinstall</id>
       <activation>
@@ -2680,7 +2680,7 @@
         <noassembly>true</noassembly>
       </properties>
     </profile>
-    
+
     <profile>
       <id>sourcecheck</id>
       <build>
@@ -2692,7 +2692,7 @@
         </plugins>
       </build>
     </profile>
-    
+
     <profile>
       <id>setup.eclipse</id>
       <build>
@@ -2715,7 +2715,7 @@
         </plugins>
       </build>
     </profile>
-    
+
     <!-- profiles for choosing default spring version -->
     <profile>
       <id>spring3.1</id>
@@ -2748,5 +2748,5 @@
       </dependencies>
     </profile>
   </profiles>
-  
+
 </project>
