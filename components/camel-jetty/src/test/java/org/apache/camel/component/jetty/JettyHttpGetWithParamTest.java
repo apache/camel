@@ -55,10 +55,25 @@ public class JettyHttpGetWithParamTest extends BaseJettyTest {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
+    public void testHttpGetFromOtherRoute() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:result");
+        mock.expectedBodiesReceived("Bye World");
+        mock.expectedHeaderReceived("one", "eins");
+        mock.expectedHeaderReceived("two", "zwei");
+
+        template.requestBodyAndHeader("direct:start", "Hello World", "parameters", "one=uno&two=dos");
+
+        assertMockEndpointsSatisfied();
+    }
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 from("jetty:" + serverUri).process(processor).to("mock:result");
+                from("direct:start")
+                    .setHeader(Exchange.HTTP_METHOD, constant("GET"))
+                    .setHeader(Exchange.HTTP_URI, simple(serverUri + "?${in.headers.parameters}"))
+                    .to("http://example");
             }
         };
     }
