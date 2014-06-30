@@ -41,12 +41,12 @@ public class RabbitMQConsumer extends DefaultConsumer {
      * Task in charge of starting consumer
      */
     private StartConsumerCallable startConsumerCallable;
-	/**
-	 * Running consumers
-	 */
-	private final List<RabbitConsumer> consumers=new ArrayList<RabbitConsumer>();
+    /**
+     * Running consumers
+     */
+    private final List<RabbitConsumer> consumers = new ArrayList<RabbitConsumer>();
 
-	public RabbitMQConsumer(RabbitMQEndpoint endpoint, Processor processor) {
+    public RabbitMQConsumer(RabbitMQEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
         this.endpoint = endpoint;
     }
@@ -66,42 +66,44 @@ public class RabbitMQConsumer extends DefaultConsumer {
         log.debug("Created connection: {}", conn);
     }
 
-	/**
-	 * Open channel
-	 */
-	private Channel openChannel() throws IOException {
-		log.trace("Creating channel...");
-		Channel channel = conn.createChannel();
-		log.debug("Created channel: {}", channel);
-		// setup the basicQos
-		if (endpoint.isPrefetchEnabled()) {
-			channel.basicQos(endpoint.getPrefetchSize(),
-					endpoint.getPrefetchCount(), endpoint.isPrefetchGlobal());
-		}
-		return channel;
-	}
-	/**
-	 * Add a consummer thread for given channel
-	 */
-	private void startConsumers() throws IOException {
-		// First channel used to declare Exchange and Queue
-		Channel channel=openChannel();
-		endpoint.declareExchangeAndQueue(channel);
-		startConsumer(channel);
-		// Other channels
-		for(int i=1; i<endpoint.getConcurrentConsumers();i++) {
-			channel=openChannel();
-			startConsumer(channel);
-		}
-	}
-	/**
+    /**
+     * Open channel
+     */
+    private Channel openChannel() throws IOException {
+        log.trace("Creating channel...");
+        Channel channel = conn.createChannel();
+        log.debug("Created channel: {}", channel);
+        // setup the basicQos
+        if (endpoint.isPrefetchEnabled()) {
+            channel.basicQos(endpoint.getPrefetchSize(), endpoint.getPrefetchCount(),
+                             endpoint.isPrefetchGlobal());
+        }
+        return channel;
+    }
+
+    /**
+     * Add a consummer thread for given channel
+     */
+    private void startConsumers() throws IOException {
+        // First channel used to declare Exchange and Queue
+        Channel channel = openChannel();
+        endpoint.declareExchangeAndQueue(channel);
+        startConsumer(channel);
+        // Other channels
+        for (int i = 1; i < endpoint.getConcurrentConsumers(); i++) {
+            channel = openChannel();
+            startConsumer(channel);
+        }
+    }
+
+    /**
      * Add a consummer thread for given channel
      */
     private void startConsumer(Channel channel) throws IOException {
-		RabbitConsumer consumer = new RabbitConsumer(this, channel);
-		consumer.start();
-		this.consumers.add(consumer);
-	}
+        RabbitConsumer consumer = new RabbitConsumer(this, channel);
+        consumer.start();
+        this.consumers.add(consumer);
+    }
 
     @Override
     protected void doStart() throws Exception {
@@ -126,10 +128,10 @@ public class RabbitMQConsumer extends DefaultConsumer {
         if (startConsumerCallable != null) {
             startConsumerCallable.stop();
         }
-		for(RabbitConsumer consumer: this.consumers) {
-			consumer.stop();
-		}
-		this.consumers.clear();
+        for (RabbitConsumer consumer : this.consumers) {
+            consumer.stop();
+        }
+        this.consumers.clear();
         if (conn != null) {
             log.debug("Closing connection: {} with timeout: {} ms.", conn, closeTimeout);
             conn.close(closeTimeout);
@@ -155,7 +157,7 @@ public class RabbitMQConsumer extends DefaultConsumer {
 
         private final RabbitMQConsumer consumer;
         private final Channel channel;
-		private String tag;
+        private String tag;
         /**
          * Constructs a new instance and records its association to the
          * passed-in channel.
@@ -233,23 +235,23 @@ public class RabbitMQConsumer extends DefaultConsumer {
             }
         }
 
-		/**
-		 * Bind consumer to channel
-		 */
-		public void start() throws IOException {
-			tag=channel.basicConsume(endpoint.getQueue(), endpoint.isAutoAck(), this);
-		}
+        /**
+         * Bind consumer to channel
+         */
+        public void start() throws IOException {
+            tag = channel.basicConsume(endpoint.getQueue(), endpoint.isAutoAck(), this);
+        }
 
-		/**
-		 * Unbind consumer from channel
-		 */
-		public void stop() throws IOException{
-			if (tag!=null) {
-				channel.basicCancel(tag);
-			}
-			channel.close();
-		}
-	}
+        /**
+         * Unbind consumer from channel
+         */
+        public void stop() throws IOException {
+            if (tag != null) {
+                channel.basicCancel(tag);
+            }
+            channel.close();
+        }
+    }
 
     /**
      * Task in charge of opening connection and adding listener when consumer is started

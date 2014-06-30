@@ -16,14 +16,6 @@
  */
 package org.apache.camel.component.rabbitmq;
 
-import com.rabbitmq.client.AlreadyClosedException;
-import org.apache.camel.*;
-import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
-import org.junit.Test;
-
-import java.net.ConnectException;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
@@ -31,22 +23,31 @@ import java.util.concurrent.Executors;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
 
+import org.apache.camel.Endpoint;
+import org.apache.camel.EndpointInject;
+import org.apache.camel.Produce;
+import org.apache.camel.ProducerTemplate;
+import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.test.junit4.CamelTestSupport;
+import org.junit.Test;
+
 /**
  * Integration test to check that RabbitMQ Endpoint is able handle heavy load using multiple producers and
  * consumers
  */
 public class RabbitMQLoadIntTest extends CamelTestSupport {
-	private static final int PRODUCER_COUNT=10;
-	private static final int CONSUMER_COUNT=10;
-	private static final int MESSAGE_COUNT=100;
-	public static final String ROUTING_KEY = "rk4";
-	@Produce(uri = "direct:rabbitMQ")
+    public static final String ROUTING_KEY = "rk4";
+    private static final int PRODUCER_COUNT = 10;
+    private static final int CONSUMER_COUNT = 10;
+    private static final int MESSAGE_COUNT = 100;
+    
+    @Produce(uri = "direct:rabbitMQ")
     protected ProducerTemplate directProducer;
 
     @EndpointInject(uri = "rabbitmq:localhost:5672/ex4?username=cameltest&password=cameltest"
-                          + "&queue=q4&routingKey="+ROUTING_KEY
-			+"&threadPoolSize="+(CONSUMER_COUNT+5)
-			+"&concurrentConsumers="+CONSUMER_COUNT)
+                          + "&queue=q4&routingKey=" + ROUTING_KEY + "&threadPoolSize=" + (CONSUMER_COUNT + 5)
+                          + "&concurrentConsumers=" + CONSUMER_COUNT)
     private Endpoint rabbitMQEndpoint;
 
     @EndpointInject(uri = "mock:producing")
@@ -76,24 +77,25 @@ public class RabbitMQLoadIntTest extends CamelTestSupport {
 
     @Test
     public void testSendEndReceive() throws Exception {
-		// Start producers
-		ExecutorService executorService= Executors.newFixedThreadPool(PRODUCER_COUNT);
-		List<Future> futures=new ArrayList<Future>(PRODUCER_COUNT);
-		for(int i = 0 ; i < PRODUCER_COUNT; i++) {
-			futures.add(executorService.submit(new Runnable() {
-				@Override
-				public void run() {
-					for (int i = 0; i < MESSAGE_COUNT; i++) {
-						directProducer.sendBodyAndHeader("Message #" + i, RabbitMQConstants.ROUTING_KEY, ROUTING_KEY);
-					}
-				}
-			}));
-		}
-		// Wait for producers to end
-		for(Future future:futures) {
-			future.get(5, TimeUnit.SECONDS);
-		}
-		// Check message count
+        // Start producers
+        ExecutorService executorService = Executors.newFixedThreadPool(PRODUCER_COUNT);
+        List<Future> futures = new ArrayList<Future>(PRODUCER_COUNT);
+        for (int i = 0; i < PRODUCER_COUNT; i++) {
+            futures.add(executorService.submit(new Runnable() {
+                @Override
+                public void run() {
+                    for (int i = 0; i < MESSAGE_COUNT; i++) {
+                        directProducer.sendBodyAndHeader("Message #" + i, RabbitMQConstants.ROUTING_KEY,
+                                                         ROUTING_KEY);
+                    }
+                }
+            }));
+        }
+        // Wait for producers to end
+        for (Future future : futures) {
+            future.get(5, TimeUnit.SECONDS);
+        }
+        // Check message count
         producingMockEndpoint.expectedMessageCount(PRODUCER_COUNT * MESSAGE_COUNT);
         consumingMockEndpoint.expectedMessageCount(PRODUCER_COUNT * MESSAGE_COUNT);
         assertMockEndpointsSatisfied(5, TimeUnit.SECONDS);
