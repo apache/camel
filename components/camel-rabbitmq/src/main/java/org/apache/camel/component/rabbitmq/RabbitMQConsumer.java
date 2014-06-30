@@ -17,6 +17,8 @@
 package org.apache.camel.component.rabbitmq;
 
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.concurrent.Callable;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -25,6 +27,7 @@ import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.Envelope;
+import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultConsumer;
@@ -32,17 +35,18 @@ import org.apache.camel.impl.DefaultConsumer;
 public class RabbitMQConsumer extends DefaultConsumer {
     ExecutorService executor;
     Connection conn;
-    Channel channel;
-
     private int closeTimeout = 30 * 1000;
-    
     private final RabbitMQEndpoint endpoint;
     /**
      * Task in charge of starting consumer
      */
     private StartConsumerCallable startConsumerCallable;
+	/**
+	 * Running consumers
+	 */
+	private final List<RabbitConsumer> consumers=new ArrayList<RabbitConsumer>();
 
-    public RabbitMQConsumer(RabbitMQEndpoint endpoint, Processor processor) {
+	public RabbitMQConsumer(RabbitMQEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
         this.endpoint = endpoint;
     }
@@ -54,39 +58,58 @@ public class RabbitMQConsumer extends DefaultConsumer {
     }
 
     /**
-     * Open connection and channel
+     * Open connection
      */
-    private void openConnectionAndChannel() throws IOException {
+    private void openConnection() throws IOException {
         log.trace("Creating connection...");
         this.conn = getEndpoint().connect(executor);
         log.debug("Created connection: {}", conn);
-
-        log.trace("Creating channel...");
-        this.channel = conn.createChannel();
-        log.debug("Created channel: {}", channel);
-        // setup the basicQos
-        if (endpoint.isPrefetchEnabled()) {
-            channel.basicQos(endpoint.getPrefetchSize(), 
-                             endpoint.getPrefetchCount(), endpoint.isPrefetchGlobal());
-        }
-        getEndpoint().declareExchangeAndQueue(channel);
     }
 
-    /**
-     * If needed, create Exchange and Queue, then add message listener
+	/**
+	 * Open channel
+	 */
+	private Channel openChannel() throws IOException {
+		log.trace("Creating channel...");
+		Channel channel = conn.createChannel();
+		log.debug("Created channel: {}", channel);
+		// setup the basicQos
+		if (endpoint.isPrefetchEnabled()) {
+			channel.basicQos(endpoint.getPrefetchSize(),
+					endpoint.getPrefetchCount(), endpoint.isPrefetchGlobal());
+		}
+		return channel;
+	}
+	/**
+	 * Add a consummer thread for given channel
+	 */
+	private void startConsumers() throws IOException {
+		// First channel used to declare Exchange and Queue
+		Channel channel=openChannel();
+		endpoint.declareExchangeAndQueue(channel);
+		startConsumer(channel);
+		// Other channels
+		for(int i=1; i<endpoint.getConcurrentConsumers();i++) {
+			channel=openChannel();
+			startConsumer(channel);
+		}
+	}
+	/**
+     * Add a consummer thread for given channel
      */
-    private void addConsumer() throws IOException {
-        channel.basicConsume(endpoint.getQueue(), endpoint.isAutoAck(),
-                new RabbitConsumer(this, channel));
-    }
+    private void startConsumer(Channel channel) throws IOException {
+		RabbitConsumer consumer = new RabbitConsumer(this, channel);
+		consumer.start();
+		this.consumers.add(consumer);
+	}
 
     @Override
     protected void doStart() throws Exception {
         executor = endpoint.createExecutor();
         log.debug("Using executor {}", executor);
         try {
-            openConnectionAndChannel();
-            addConsumer();
+            openConnection();
+            startConsumers();
         } catch (Exception e) {
             // Open connection, and start message listener in background
             Integer networkRecoveryInterval = getEndpoint().getNetworkRecoveryInterval();
@@ -97,17 +120,16 @@ public class RabbitMQConsumer extends DefaultConsumer {
     }
 
     /**
-     * If needed, close Connection and Channel
+     * If needed, close Connection and Channels
      */
     private void closeConnectionAndChannel() throws IOException {
         if (startConsumerCallable != null) {
             startConsumerCallable.stop();
         }
-        if (channel != null) {
-            log.debug("Closing channel: {}", channel);
-            channel.close();
-            channel = null;
-        }
+		for(RabbitConsumer consumer: this.consumers) {
+			consumer.stop();
+		}
+		this.consumers.clear();
         if (conn != null) {
             log.debug("Closing connection: {} with timeout: {} ms.", conn, closeTimeout);
             conn.close(closeTimeout);
@@ -133,7 +155,7 @@ public class RabbitMQConsumer extends DefaultConsumer {
 
         private final RabbitMQConsumer consumer;
         private final Channel channel;
-
+		private String tag;
         /**
          * Constructs a new instance and records its association to the
          * passed-in channel.
@@ -211,7 +233,23 @@ public class RabbitMQConsumer extends DefaultConsumer {
             }
         }
 
-    }
+		/**
+		 * Bind consumer to channel
+		 */
+		public void start() throws IOException {
+			tag=channel.basicConsume(endpoint.getQueue(), endpoint.isAutoAck(), this);
+		}
+
+		/**
+		 * Unbind consumer from channel
+		 */
+		public void stop() throws IOException{
+			if (tag!=null) {
+				channel.basicCancel(tag);
+			}
+			channel.close();
+		}
+	}
 
     /**
      * Task in charge of opening connection and adding listener when consumer is started
@@ -233,7 +271,7 @@ public class RabbitMQConsumer extends DefaultConsumer {
             // Reconnection loop
             while (running.get() && connectionFailed) {
                 try {
-                    openConnectionAndChannel();
+                    openConnection();
                     connectionFailed = false;
                 } catch (Exception e) {
                     log.debug("Connection failed, will retry in " + connectionRetryInterval + "ms", e);
@@ -241,7 +279,7 @@ public class RabbitMQConsumer extends DefaultConsumer {
                 }
             }
             if (!connectionFailed) {
-                addConsumer();
+                startConsumers();
             }
             stop();
             return null;
