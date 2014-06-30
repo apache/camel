@@ -1,0 +1,70 @@
+<!--
+    Licensed to the Apache Software Foundation (ASF) under one or more
+    contributor license agreements.  See the NOTICE file distributed with
+    this work for additional information regarding copyright ownership.
+    The ASF licenses this file to You under the Apache License, Version 2.0
+    (the "License"); you may not use this file except in compliance with
+    the License.  You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+
+    Unless required by applicable law or agreed to in writing, software
+    distributed under the License is distributed on an "AS IS" BASIS,
+    WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+    See the License for the specific language governing permissions and
+    limitations under the License.
+-->
+<html>
+
+<body>
+<h2>Spark and Apache Tomcat example</h2>
+
+This example shows how to use Spark Java to define REST endpoints in Camel routes using the CamelSparkRouteBuilder DSL
+
+<br/>
+The routes are defined in Java code, in the <tt>org.apache.camel.example.spark.MySparkRouteBuilder</tt> class.
+
+<p/>
+There is a <i>hello</i> REST service that supports different content-type
+ <ul>
+   <li>text/plain</li>
+   <li>text/xml</li>
+   <li>application/xml</li>
+ </ul>
+
+The REST service is defined using Spark syntax as <tt>hello/:me</tt> which means that it starts with a fixed <tt>hello/</tt>
+path, and then accepts a parameter which is named <b>:me</b> which will be mapped to a Camel header with key <b>me</b>.
+
+<br/>
+This allows you to access the REST service and include a parameter, for example
+<p/>
+    <tt>hello/world</tt>
+<p/>
+This means that world is the parameter.
+
+<p/>
+You can access the <i>text/plain</i> service from the web browser by clicking <a href="hello/yourname">this link</a>.
+<p/>
+You can try the <i>text/xml</i> or <i>application/json</i> from the command line using <b>curl</b> or similar tool.
+
+<pre>
+    curl -H "Accept: application/json" http://localhost:8080/camel-example-spark-tomcat/hello/you
+    curl -H "Accept: text/xml" http://localhost:8080/camel-example-spark-tomcat/hello/you
+</pre>
+
+This assume you installed the example by copying the .war as <tt>camel-example-spark-tomcat.war</tt>
+into the <b>webapps</b> directory of Apache Tomcat.
+
+<p/>
+If you hit any problems please let us know on the
+<a href="http://camel.apache.org/discussion-forums.html">Camel Forums</a>
+<br/>
+<br/>
+Please help us make Apache Camel better - we appreciate any feedback you may
+have. Enjoy!
+<br/>
+<br/>
+The Camel riders!
+</body>
+
+</html>

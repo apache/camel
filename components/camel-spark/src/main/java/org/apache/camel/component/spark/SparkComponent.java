@@ -81,7 +81,10 @@ public class SparkComponent extends UriEndpointComponent {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
-        Spark.setPort(getPort());
+
+        if (getPort() != SparkBase.SPARK_DEFAULT_PORT) {
+            Spark.setPort(getPort());
+        }
     }
 
     @Override
