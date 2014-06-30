@@ -243,6 +243,16 @@ public final class ProcessorDefinitionHelper {
                 continue;
             }
 
+            // special for some types which has special outputs
+            if (out instanceof OutputDefinition) {
+                OutputDefinition outDef = (OutputDefinition) out;
+                List<ProcessorDefinition<?>> outDefOut = outDef.getOutputs();
+                doFindType(outDefOut, type, found);
+
+                // do not check children as we already did that
+                continue;
+            }
+
             // try children as well
             List<ProcessorDefinition<?>> children = out.getOutputs();
             doFindType(children, type, found);
