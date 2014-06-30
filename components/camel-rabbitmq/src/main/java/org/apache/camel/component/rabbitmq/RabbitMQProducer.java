@@ -56,8 +56,9 @@ public class RabbitMQProducer extends DefaultProducer {
         log.trace("Creating channel...");
         this.channel = conn.createChannel();
         log.debug("Created channel: {}", channel);
-
-        getEndpoint().declareExchangeAndQueue(this.channel);
+        if (getEndpoint().isDeclare()) {
+            getEndpoint().declareExchangeAndQueue(this.channel);
+        }        
     }
 
     @Override
