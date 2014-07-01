@@ -68,9 +68,9 @@ public final class BoxClientHelper {
         LOG.debug("Creating BoxClient for login:{}, client_id:{} ...", userName, clientId);
 
         // if set, use configured connection manager builder
-        final BoxConnectionManagerBuilder configBuilder = configuration.getConnectionManagerBuilder();
-        final BoxConnectionManagerBuilder connectionManager = configBuilder != null
-            ? configBuilder : new BoxConnectionManagerBuilder();
+        final BoxConnectionManagerBuilder connectionManagerBuilder = configuration.getConnectionManagerBuilder();
+        final BoxConnectionManagerBuilder connectionManager = connectionManagerBuilder != null
+            ? connectionManagerBuilder : new BoxConnectionManagerBuilder();
 
         // create REST client for BoxClient
         final ClientConnectionManager[] clientConnectionManager = new ClientConnectionManager[1];
