@@ -18,13 +18,19 @@ package org.apache.camel.util.component;
 
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.ExecutorService;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.spi.ExecutorServiceManager;
+import org.apache.camel.spi.ThreadPoolProfile;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.util.EndpointHelper;
 import org.apache.camel.util.ObjectHelper;
@@ -34,7 +40,11 @@ import org.slf4j.LoggerFactory;
 /**
  * Abstract base class for API Component Endpoints.
  */
-public abstract class AbstractApiEndpoint<E extends ApiName, T> extends DefaultEndpoint {
+public abstract class AbstractApiEndpoint<E extends ApiName, T>
+    extends DefaultEndpoint implements PropertyNamesInterceptor, PropertiesInterceptor {
+
+    // thread pool executor with Endpoint Class name as keys
+    private static Map<String, ExecutorService> executorServiceMap = new ConcurrentHashMap<String, ExecutorService>();
 
     // logger
     protected final Logger log = LoggerFactory.getLogger(getClass());
@@ -58,6 +68,13 @@ public abstract class AbstractApiEndpoint<E extends ApiName, T> extends DefaultE
 
     // candidate methods based on method name and endpoint configuration
     private List<ApiMethod> candidates;
+
+    // cached Executor service
+    private ExecutorService executorService;
+
+    // cached property names and values
+    private Set<String> endpointPropertyNames;
+    private Map<String, Object> endpointProperties;
 
     public AbstractApiEndpoint(String endpointUri, Component component,
                                E apiName, String methodName, ApiMethodHelper<? extends ApiMethod> methodHelper, T endpointConfiguration) {
@@ -106,11 +123,18 @@ public abstract class AbstractApiEndpoint<E extends ApiName, T> extends DefaultE
     /**
      * Initialize endpoint state, including endpoint arguments, find candidate methods, etc.
      */
-    protected void initState() {
+    private void initState() {
+
+        // compute endpoint property names and values
+        this.endpointPropertyNames = Collections.unmodifiableSet(
+            getPropertiesHelper().getEndpointPropertyNames(configuration));
+        final HashMap<String, Object> properties = new HashMap<String, Object>();
+        getPropertiesHelper().getEndpointProperties(configuration, properties);
+        this.endpointProperties = Collections.unmodifiableMap(properties);
 
         // get endpoint property names
         final Set<String> arguments = new HashSet<String>();
-        arguments.addAll(getPropertiesHelper().getEndpointPropertyNames(getConfiguration()));
+        arguments.addAll(endpointPropertyNames);
 
         // add inBody argument for producers
         if (inBody != null) {
@@ -124,6 +148,7 @@ public abstract class AbstractApiEndpoint<E extends ApiName, T> extends DefaultE
         // create a list of candidate methods
         candidates = new ArrayList<ApiMethod>();
         candidates.addAll(methodHelper.getCandidateMethods(methodName, argNames));
+        candidates = Collections.unmodifiableList(candidates);
 
         // error if there are no candidates
         if (candidates.isEmpty()) {
@@ -141,24 +166,15 @@ public abstract class AbstractApiEndpoint<E extends ApiName, T> extends DefaultE
         }
     }
 
-    /**
-     * Intercept property names used to find Consumer and Producer methods.
-     * Used to add any custom/hidden method arguments, which MUST be provided in interceptProperties() override
-     * either in Endpoint, or Consumer and Producer.
-     * @param propertyNames argument names.
-     */
+    @Override
     @SuppressWarnings("unused")
-    protected void interceptPropertyNames(Set<String> propertyNames) {
+    public void interceptPropertyNames(Set<String> propertyNames) {
         // do nothing by default
     }
 
-    /**
-     * Intercept method invocation arguments used to find and invoke API method. Called by Consumer and Producer.
-     * Must be overridden if also overriding interceptPropertyName() to add custom/hidden method properties.
-     * @param properties method invocation arguments.
-     */
+    @Override
     @SuppressWarnings("unused")
-    protected void interceptProperties(Map<String, Object> properties) {
+    public void interceptProperties(Map<String, Object> properties) {
         // do nothing by default
     }
 
@@ -168,7 +184,7 @@ public abstract class AbstractApiEndpoint<E extends ApiName, T> extends DefaultE
      *
      * @return endpoint configuration object
      */
-    public T getConfiguration() {
+    public final T getConfiguration() {
         return configuration;
     }
 
@@ -176,7 +192,7 @@ public abstract class AbstractApiEndpoint<E extends ApiName, T> extends DefaultE
      * Returns API name.
      * @return apiName property.
      */
-    public E getApiName() {
+    public final E getApiName() {
         return apiName;
     }
 
@@ -184,7 +200,7 @@ public abstract class AbstractApiEndpoint<E extends ApiName, T> extends DefaultE
      * Returns method name.
      * @return methodName property.
      */
-    public String getMethodName() {
+    public final String getMethodName() {
         return methodName;
     }
 
@@ -192,7 +208,7 @@ public abstract class AbstractApiEndpoint<E extends ApiName, T> extends DefaultE
      * Returns method helper.
      * @return methodHelper property.
      */
-    public ApiMethodHelper<? extends ApiMethod> getMethodHelper() {
+    public final ApiMethodHelper<? extends ApiMethod> getMethodHelper() {
         return methodHelper;
     }
 
@@ -200,15 +216,15 @@ public abstract class AbstractApiEndpoint<E extends ApiName, T> extends DefaultE
      * Returns candidate methods for this endpoint.
      * @return list of candidate methods.
      */
-    public List<ApiMethod> getCandidates() {
-        return Collections.unmodifiableList(candidates);
+    public final List<ApiMethod> getCandidates() {
+        return candidates;
     }
 
     /**
      * Returns name of parameter passed in the exchange In Body.
      * @return inBody property.
      */
-    public String getInBody() {
+    public final String getInBody() {
         return inBody;
     }
 
@@ -217,13 +233,21 @@ public abstract class AbstractApiEndpoint<E extends ApiName, T> extends DefaultE
      * @param inBody parameter name
      * @throws IllegalArgumentException for invalid parameter name.
      */
-    public void setInBody(String inBody) throws IllegalArgumentException {
+    public final void setInBody(String inBody) throws IllegalArgumentException {
         // validate property name
         ObjectHelper.notNull(inBody, "inBody");
         if (!getPropertiesHelper().getValidEndpointProperties(getConfiguration()).contains(inBody)) {
             throw new IllegalArgumentException("Unknown property " + inBody);
         }
         this.inBody = inBody;
+    }
+
+    public final Set<String> getEndpointPropertyNames() {
+        return endpointPropertyNames;
+    }
+
+    public final Map<String, Object> getEndpointProperties() {
+        return endpointProperties;
     }
 
     /**
@@ -237,4 +261,50 @@ public abstract class AbstractApiEndpoint<E extends ApiName, T> extends DefaultE
      * @see AbstractApiConsumer
      */
     public abstract Object getApiProxy(ApiMethod method, Map<String, Object> args);
+
+    private static ExecutorService getExecutorService(
+        Class<? extends AbstractApiEndpoint> endpointClass, CamelContext context, String threadProfileName) {
+
+        // lookup executorService for extending class name
+        final String endpointClassName = endpointClass.getName();
+        ExecutorService executorService = executorServiceMap.get(endpointClassName);
+
+        // CamelContext will shutdown thread pool when it shutdown so we can
+        // lazy create it on demand
+        // but in case of hot-deploy or the likes we need to be able to
+        // re-create it (its a shared static instance)
+        if (executorService == null || executorService.isTerminated() || executorService.isShutdown()) {
+            final ExecutorServiceManager manager = context.getExecutorServiceManager();
+
+            // try to lookup a pool first based on profile
+            ThreadPoolProfile poolProfile = manager.getThreadPoolProfile(
+                threadProfileName);
+            if (poolProfile == null) {
+                poolProfile = manager.getDefaultThreadPoolProfile();
+            }
+
+            // create a new pool using the custom or default profile
+            executorService = manager.newScheduledThreadPool(endpointClass, threadProfileName, poolProfile);
+
+            executorServiceMap.put(endpointClassName, executorService);
+        }
+
+        return executorService;
+    }
+
+    public final ExecutorService getExecutorService() {
+        if (this.executorService == null) {
+            // synchronize on class to avoid creating duplicate class level executors
+            synchronized (getClass()) {
+                this.executorService = getExecutorService(getClass(), getCamelContext(), getThreadProfileName());
+            }
+        }
+        return this.executorService;
+    }
+
+    /**
+     * Returns Thread profile name. Generated as a constant THREAD_PROFILE_NAME in *Constants.
+     * @return thread profile name to use.
+     */
+    protected abstract String getThreadProfileName();
 }

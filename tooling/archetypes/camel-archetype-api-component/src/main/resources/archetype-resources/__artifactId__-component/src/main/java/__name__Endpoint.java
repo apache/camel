@@ -30,6 +30,7 @@ import ${package}.api.${name}FileHello;
 import ${package}.api.${name}JavadocHello;
 import ${package}.internal.${name}ApiCollection;
 import ${package}.internal.${name}ApiName;
+import ${package}.internal.${name}Constants;
 import ${package}.internal.${name}PropertiesHelper;
 
 /**
@@ -65,6 +66,10 @@ public class ${name}Endpoint extends AbstractApiEndpoint<${name}ApiName, ${name}
     @Override
     protected ApiMethodPropertiesHelper<${name}Configuration> getPropertiesHelper() {
         return ${name}PropertiesHelper.getHelper();
+    }
+
+    protected String getThreadProfileName() {
+        return ${name}Constants.THREAD_PROFILE_NAME;
     }
 
     @Override

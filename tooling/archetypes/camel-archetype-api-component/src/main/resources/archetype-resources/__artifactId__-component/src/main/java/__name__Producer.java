@@ -19,7 +19,6 @@ package ${package};
 import org.apache.camel.util.component.AbstractApiProducer;
 
 import ${package}.internal.${name}ApiName;
-import ${package}.internal.${name}Constants;
 import ${package}.internal.${name}PropertiesHelper;
 
 /**
@@ -29,9 +28,5 @@ public class ${name}Producer extends AbstractApiProducer<${name}ApiName, ${name}
 
     public ${name}Producer(${name}Endpoint endpoint) {
         super(endpoint, ${name}PropertiesHelper.getHelper());
-    }
-
-    protected String getThreadProfileName() {
-        return ${name}Constants.THREAD_PROFILE_NAME;
     }
 }

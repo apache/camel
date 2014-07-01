@@ -16,12 +16,8 @@
  */
 package org.apache.camel.util.component;
 
-import java.lang.reflect.Array;
 import java.util.Collection;
-import java.util.Collections;
 import java.util.HashMap;
-import java.util.HashSet;
-import java.util.List;
 import java.util.Map;
 import java.util.Set;
 
@@ -35,7 +31,8 @@ import org.slf4j.LoggerFactory;
 /**
  * Abstract base class for API Component Consumers.
  */
-public abstract class AbstractApiConsumer<E extends Enum<E> & ApiName, T> extends ScheduledPollConsumer {
+public abstract class AbstractApiConsumer<E extends Enum<E> & ApiName, T>
+    extends ScheduledPollConsumer implements PropertyNamesInterceptor, PropertiesInterceptor, ResultInterceptor {
 
     // logger
     protected final Logger log = LoggerFactory.getLogger(getClass());
@@ -43,31 +40,17 @@ public abstract class AbstractApiConsumer<E extends Enum<E> & ApiName, T> extend
     // API Endpoint
     protected final AbstractApiEndpoint<E, T> endpoint;
 
-    // helpers
-    protected final ApiMethodPropertiesHelper<T> propertiesHelper;
-    protected final ApiMethodHelper<? extends ApiMethod> methodHelper;
-
     // API method to invoke
     protected final ApiMethod method;
 
-    // properties used to invoke
-    protected final Map<String, Object> endpointProperties;
+    // split Array or Collection API method results into multiple Exchanges
+    private boolean splitResult = true;
 
     public AbstractApiConsumer(AbstractApiEndpoint<E, T> endpoint, Processor processor) {
         super(endpoint, processor);
 
         this.endpoint = endpoint;
-
-        // cache helpers
-        this.methodHelper = endpoint.getMethodHelper();
-        this.propertiesHelper = endpoint.getPropertiesHelper();
-
-        // get endpoint properties in a map
-        final HashMap<String, Object> properties = new HashMap<String, Object>();
-        propertiesHelper.getEndpointProperties(endpoint.getConfiguration(), properties);
-        this.endpointProperties = Collections.unmodifiableMap(properties);
-
-        this.method = findMethod();
+        this.method = ApiConsumerHelper.findMethod(endpoint, this);
     }
 
     @Override
@@ -76,83 +59,35 @@ public abstract class AbstractApiConsumer<E extends Enum<E> & ApiName, T> extend
         return false;
     }
 
-    private ApiMethod findMethod() {
-
-        ApiMethod result;
-        // find one that takes the largest subset of endpoint parameters
-        final Set<String> argNames = new HashSet<String>();
-        argNames.addAll(propertiesHelper.getEndpointPropertyNames(endpoint.getConfiguration()));
-
-        interceptPropertyNames(argNames);
-
-        final String[] argNamesArray = argNames.toArray(new String[argNames.size()]);
-        List<ApiMethod> filteredMethods = ApiMethodHelper.filterMethods(
-                endpoint.getCandidates(), ApiMethodHelper.MatchType.SUPER_SET, argNamesArray);
-
-        if (filteredMethods.isEmpty()) {
-            throw new IllegalArgumentException(
-                    String.format("Missing properties for %s/%s, need one or more from %s",
-                            endpoint.getApiName().getName(), endpoint.getMethodName(),
-                            methodHelper.getMissingProperties(endpoint.getMethodName(), argNames)));
-        } else if (filteredMethods.size() == 1) {
-            // single match
-            result = filteredMethods.get(0);
-        } else {
-            result = ApiMethodHelper.getHighestPriorityMethod(filteredMethods);
-            log.warn("Using highest priority operation {} from operations {}", method, filteredMethods);
-        }
-
-        return result;
-    }
-
     @Override
     protected int poll() throws Exception {
         // invoke the consumer method
         final Map<String, Object> args = new HashMap<String, Object>();
-        args.putAll(endpointProperties);
+        args.putAll(endpoint.getEndpointProperties());
 
         // let the endpoint and the Consumer intercept properties
         endpoint.interceptProperties(args);
         interceptProperties(args);
 
         try {
-            Object result = doInvokeMethod(args);
 
-            // process result according to type
-            if (result != null && (result instanceof Collection || result.getClass().isArray())) {
-                // create an exchange for every element
-                final Object array = getResultAsArray(result);
-                final int length = Array.getLength(array);
-                for (int i = 0; i < length; i++) {
-                    processResult(Array.get(array, i));
-                }
-                return length;
-            } else {
-                processResult(result);
-                return 1; // number of messages polled
-            }
+            Object result = doInvokeMethod(args);
+            return ApiConsumerHelper.getResultsProcessed(this, result, isSplitResult());
+
         } catch (Throwable t) {
             throw ObjectHelper.wrapRuntimeCamelException(t);
         }
     }
 
-    /**
-     * Intercept property names used to find Consumer method.
-     * Used to add any custom/hidden method arguments, which MUST be provided in interceptProperties() override.
-     * @param propertyNames argument names.
-     */
+    @Override
     @SuppressWarnings("unused")
-    protected void interceptPropertyNames(Set<String> propertyNames) {
+    public void interceptPropertyNames(Set<String> propertyNames) {
         // do nothing by default
     }
 
-    /**
-     * Intercept method invocation arguments used to find and invoke API method.
-     * Can be overridden to add custom/hidden method arguments.
-     * @param properties method invocation arguments.
-     */
+    @Override
     @SuppressWarnings("unused")
-    protected void interceptProperties(Map<String, Object> properties) {
+    public void interceptProperties(Map<String, Object> properties) {
         // do nothing by default
     }
 
@@ -167,33 +102,24 @@ public abstract class AbstractApiConsumer<E extends Enum<E> & ApiName, T> extend
         return ApiMethodHelper.invokeMethod(endpoint.getApiProxy(method, args), method, args);
     }
 
-    private void processResult(Object result) throws Exception {
-        Exchange exchange = getEndpoint().createExchange();
-        exchange.getIn().setBody(result);
-
-        interceptResult(exchange);
-        try {
-            // send message to next processor in the route
-            getProcessor().process(exchange);
-        } finally {
-            // log exception if an exception occurred and was not handled
-            final Exception exception = exchange.getException();
-            if (exception != null) {
-                getExceptionHandler().handleException("Error processing exchange", exchange, exception);
-            }
+    @Override
+    public Object splitResult(Object result) {
+        // process result according to type
+        if (splitResult && result != null && (result instanceof Collection || result.getClass().isArray())) {
+            // create an exchange for every element
+            return getResultAsArray(result);
+        } else {
+            return result;
         }
     }
 
-    /**
-     * Derived classes can do additional result exchange processing, for example, adding custom headers.
-     * @param resultExchange result as a Camel exchange.
-     */
+    @Override
     @SuppressWarnings("unused")
-    protected void interceptResult(Exchange resultExchange) {
+    public void interceptResult(Object result, Exchange resultExchange) {
         // do nothing by default
     }
 
-    private Object getResultAsArray(Object result) {
+    private static Object getResultAsArray(Object result) {
         if (result.getClass().isArray()) {
             // no conversion needed
             return result;
@@ -201,5 +127,14 @@ public abstract class AbstractApiConsumer<E extends Enum<E> & ApiName, T> extend
         // must be a Collection
         Collection<?> collection = (Collection<?>) result;
         return collection.toArray(new Object[collection.size()]);
+    }
+
+    public final boolean isSplitResult() {
+        return splitResult;
+    }
+
+    @SuppressWarnings("unused")
+    public final void setSplitResult(boolean splitResult) {
+        this.splitResult = splitResult;
     }
 }

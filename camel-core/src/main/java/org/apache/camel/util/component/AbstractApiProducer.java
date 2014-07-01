@@ -23,12 +23,9 @@ import java.util.Set;
 import java.util.concurrent.ExecutorService;
 
 import org.apache.camel.AsyncCallback;
-import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.impl.DefaultAsyncProducer;
-import org.apache.camel.spi.ExecutorServiceManager;
-import org.apache.camel.spi.ThreadPoolProfile;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -36,10 +33,8 @@ import org.slf4j.LoggerFactory;
 /**
  * Base class for API based Producers
  */
-public abstract class AbstractApiProducer<E extends Enum<E> & ApiName, T> extends DefaultAsyncProducer {
-
-    // thread pool executor
-    protected static ExecutorService executorService;
+public abstract class AbstractApiProducer<E extends Enum<E> & ApiName, T>
+    extends DefaultAsyncProducer implements PropertiesInterceptor, ResultInterceptor {
 
     // API Endpoint
     protected final AbstractApiEndpoint<E, T> endpoint;
@@ -53,6 +48,9 @@ public abstract class AbstractApiProducer<E extends Enum<E> & ApiName, T> extend
     // logger
     private final transient Logger log = LoggerFactory.getLogger(getClass());
 
+    // cached Endpoint executor service
+    private ExecutorService executorService;
+
     public AbstractApiProducer(AbstractApiEndpoint<E, T> endpoint, ApiMethodPropertiesHelper propertiesHelper) {
         super(endpoint);
         this.propertiesHelper = propertiesHelper;
@@ -64,7 +62,7 @@ public abstract class AbstractApiProducer<E extends Enum<E> & ApiName, T> extend
     public boolean process(final Exchange exchange, final AsyncCallback callback) {
         // properties for method arguments
         final Map<String, Object> properties = new HashMap<String, Object>();
-        propertiesHelper.getEndpointProperties(endpoint.getConfiguration(), properties);
+        properties.putAll(endpoint.getEndpointProperties());
         propertiesHelper.getExchangeProperties(exchange, properties);
 
         // let the endpoint and the Producer intercept properties
@@ -96,7 +94,7 @@ public abstract class AbstractApiProducer<E extends Enum<E> & ApiName, T> extend
                     // copy headers
                     exchange.getOut().setHeaders(exchange.getIn().getHeaders());
 
-                    doProcessResult(exchange);
+                    interceptResult(result, exchange);
 
                 } catch (Throwable t) {
                     exchange.setException(ObjectHelper.wrapRuntimeCamelException(t));
@@ -106,17 +104,13 @@ public abstract class AbstractApiProducer<E extends Enum<E> & ApiName, T> extend
             }
         };
 
-        getExecutorService(getEndpoint().getCamelContext()).submit(invocation);
+        endpoint.getExecutorService().submit(invocation);
         return false;
     }
 
-    /**
-     * Intercept method invocation arguments used to find and invoke API method.
-     * Can be overridden to add custom/hidden method arguments.
-     * @param properties method invocation arguments.
-     */
+    @Override
     @SuppressWarnings("unused")
-    protected void interceptProperties(Map<String, Object> properties) {
+    public void interceptProperties(Map<String, Object> properties) {
         // do nothing by default
     }
 
@@ -131,12 +125,15 @@ public abstract class AbstractApiProducer<E extends Enum<E> & ApiName, T> extend
         return ApiMethodHelper.invokeMethod(endpoint.getApiProxy(method, properties), method, properties);
     }
 
-    /**
-     * Do additional result processing, for example, add custom headers, etc.
-     * @param resultExchange API method result as exchange.
-     */
+    @Override
+    public final Object splitResult(Object result) {
+        // producer never splits results
+        return result;
+    }
+
+    @Override
     @SuppressWarnings("unused")
-    protected void doProcessResult(Exchange resultExchange) {
+    public void interceptResult(Object methodResult, Exchange resultExchange) {
         // do nothing by default
     }
 
@@ -192,34 +189,4 @@ public abstract class AbstractApiProducer<E extends Enum<E> & ApiName, T> extend
 
         return true;
     }
-
-    private synchronized ExecutorService getExecutorService(CamelContext context) {
-        // CamelContext will shutdown thread pool when it shutdown so we can
-        // lazy create it on demand
-        // but in case of hot-deploy or the likes we need to be able to
-        // re-create it (its a shared static instance)
-        if (executorService == null || executorService.isTerminated() || executorService.isShutdown()) {
-            final ExecutorServiceManager manager = context.getExecutorServiceManager();
-
-            // try to lookup a pool first based on profile
-            final String threadProfileName = getThreadProfileName();
-            ThreadPoolProfile poolProfile = manager.getThreadPoolProfile(
-                    threadProfileName);
-            if (poolProfile == null) {
-                poolProfile = manager.getDefaultThreadPoolProfile();
-            }
-
-            // create a new pool using the custom or default profile
-            executorService = manager.newScheduledThreadPool(getClass(),
-                    threadProfileName, poolProfile);
-        }
-
-        return executorService;
-    }
-
-    /**
-     * Returns Thread profile name. Generated as a constant THREAD_PROFILE_NAME in *Constants.
-     * @return thread profile name to use.
-     */
-    protected abstract String getThreadProfileName();
 }
