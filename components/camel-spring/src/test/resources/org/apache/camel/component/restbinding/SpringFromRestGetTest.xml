@@ -22,14 +22,18 @@
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
 
-  <import resource="../interceptor/transactionalClientDataSource.xml"/>
+  <!-- use a dummy rest component and enlist it in the CamelContext -->
+  <bean id="dummy-rest" class="org.apache.camel.component.restbinding.DummyRestBindingCapableComponent"
+        init-method="enlist"/>
 
-  <camelContext id="myCamelContext" xmlns="http://camel.apache.org/schema/spring">
-    <route id="route1">
-      <from uri="seda:start"/>
-      <transacted/>
-      <to id="mock-a" uri="mock:a"/>
-      <to id="mock-b" uri="mock:b"/>
+  <camelContext xmlns="http://camel.apache.org/schema/spring">
+    <route id="foo">
+      <fromRest verb="get" path="/hello"/>
+      <to uri="mock:foo"/>
+      <transform>
+        <constant>Bye World</constant>
+      </transform>
     </route>
   </camelContext>
+
 </beans>

@@ -28,6 +28,10 @@ import org.apache.camel.spi.RestBindingCapable;
 
 public class DummyRestBindingCapableComponent extends DefaultComponent implements RestBindingCapable {
 
+    public void enlist() {
+        getCamelContext().addComponent("dummy-rest", this);
+    }
+
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         return null;
