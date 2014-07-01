@@ -38,20 +38,20 @@ public final class BoxConverter {
 
     @Converter
     public static BoxFileUploadRequestObject genericFileToBoxFileUploadRequestObject(GenericFile<?> file, Exchange exchange) throws IOException, NoTypeConversionAvailableException, BoxRestException, BoxJSONException {
-        String parentId = "0";
+        String folderId = "0";
         if (exchange != null) {
-            parentId = exchange.getProperty(BoxConstants.PROPERTY_PREFIX + "parentId", "0", String.class);
+            folderId = exchange.getProperty(BoxConstants.PROPERTY_PREFIX + "folderId", "0", String.class);
         }
         if (file.getFile() instanceof File) {
             // prefer to use a file input stream if its a java.io.File
             File f = (File) file.getFile();
-            return BoxFileUploadRequestObject.uploadFileRequestObject(parentId, file.getFileName(), f);
+            return BoxFileUploadRequestObject.uploadFileRequestObject(folderId, file.getFileName(), f);
         }
         if (exchange != null) {
             // otherwise ensure the body is loaded as we want the input stream of the body
             file.getBinding().loadContent(exchange, file);
             InputStream is = exchange.getContext().getTypeConverter().convertTo(InputStream.class, exchange, file.getBody());
-            return BoxFileUploadRequestObject.uploadFileRequestObject(parentId, file.getFileName(), is);
+            return BoxFileUploadRequestObject.uploadFileRequestObject(folderId, file.getFileName(), is);
         }
         return null;
     }
