@@ -107,6 +107,10 @@ public class JettyHttpComponent extends HttpComponent {
     protected String proxyHost;
     private Integer proxyPort;
 
+    public JettyHttpComponent() {
+        super(JettyHttpEndpoint.class);
+    }
+
     class ConnectorRef {
         Server server;
         Connector connector;
