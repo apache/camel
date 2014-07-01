@@ -56,7 +56,7 @@ public class BoxConsumer extends DefaultConsumer
     public BoxConsumer(BoxEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
 
-        apiMethod = ApiConsumerHelper.findMethod(endpoint, this, log);
+        apiMethod = ApiConsumerHelper.findMethod(endpoint, this);
 
         properties = new HashMap<String, Object>();
         properties.putAll(endpoint.getEndpointProperties());
