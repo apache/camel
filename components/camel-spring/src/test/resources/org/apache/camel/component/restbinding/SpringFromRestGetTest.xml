@@ -22,14 +22,33 @@
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
 
-  <!-- use a dummy rest component and enlist it in the CamelContext -->
-  <bean id="dummy-rest" class="org.apache.camel.component.restbinding.DummyRestBindingCapableComponent"
-        init-method="enlist"/>
+  <!-- use a dummy rest component for the rest engine -->
+  <bean id="dummy-rest" class="org.apache.camel.component.restbinding.DummyRestBindingCapableComponent"/>
 
   <camelContext xmlns="http://camel.apache.org/schema/spring">
-    <route id="foo">
-      <fromRest verb="get" path="/hello"/>
-      <to uri="mock:foo"/>
+
+    <rest component="dummy-rest">
+      <path uri="/say">
+        <get uri="/hello">
+          <to uri="direct:hello"/>
+        </get>
+        <get uri="/bye">
+          <to uri="direct:bye"/>
+        </get>
+        <post>
+          <to uri="seda:update"/>
+        </post>
+      </path>
+    </rest>
+
+    <route>
+      <to uri="direct:hello"/>
+      <transform>
+        <constant>Hello World</constant>
+      </transform>
+    </route>
+    <route>
+      <to uri="direct:bye"/>
       <transform>
         <constant>Bye World</constant>
       </transform>

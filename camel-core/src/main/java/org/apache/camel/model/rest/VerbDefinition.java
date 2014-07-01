@@ -14,27 +14,37 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.model;
+package org.apache.camel.model.rest;
 
-/**
- * Various constants.
- *
- * @version 
- */
-public final class Constants {
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElementRef;
 
-    public static final String JAXB_CONTEXT_PACKAGES = ""
-        + "org.apache.camel:"
-        + "org.apache.camel.model:"
-        + "org.apache.camel.model.config:"
-        + "org.apache.camel.model.dataformat:"
-        + "org.apache.camel.model.language:"
-        + "org.apache.camel.model.loadbalancer:"
-        + "org.apache.camel.model.rest";
+import org.apache.camel.model.ToDefinition;
 
-    public static final String PLACEHOLDER_QNAME = "http://camel.apache.org/schema/placeholder";
+@XmlAccessorType(XmlAccessType.FIELD)
+public abstract class VerbDefinition {
 
-    private Constants() {
+    @XmlAttribute
+    private String uri;
+
+    @XmlElementRef(required = true)
+    private ToDefinition to;
+
+    public String getUri() {
+        return uri;
     }
 
+    public void setUri(String uri) {
+        this.uri = uri;
+    }
+
+    public ToDefinition getTo() {
+        return to;
+    }
+
+    public void setTo(ToDefinition to) {
+        this.to = to;
+    }
 }

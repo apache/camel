@@ -14,27 +14,35 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.model;
+package org.apache.camel.model.rest;
+
+import java.util.ArrayList;
+import java.util.List;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElementRef;
+import javax.xml.bind.annotation.XmlRootElement;
 
 /**
- * Various constants.
- *
- * @version 
+ * Represents an XML &lt;rest/&gt; element
  */
-public final class Constants {
+@XmlRootElement(name = "rest")
+@XmlAccessorType(XmlAccessType.PROPERTY)
+public class RestDefinition {
 
-    public static final String JAXB_CONTEXT_PACKAGES = ""
-        + "org.apache.camel:"
-        + "org.apache.camel.model:"
-        + "org.apache.camel.model.config:"
-        + "org.apache.camel.model.dataformat:"
-        + "org.apache.camel.model.language:"
-        + "org.apache.camel.model.loadbalancer:"
-        + "org.apache.camel.model.rest";
+    @XmlAttribute
+    private String component;
 
-    public static final String PLACEHOLDER_QNAME = "http://camel.apache.org/schema/placeholder";
+    private List<PathDefinition> paths = new ArrayList<PathDefinition>();
 
-    private Constants() {
+    public List<PathDefinition> getPaths() {
+        return paths;
+    }
+
+    @XmlElementRef
+    public void setPaths(List<PathDefinition> paths) {
+        this.paths = paths;
     }
 
 }

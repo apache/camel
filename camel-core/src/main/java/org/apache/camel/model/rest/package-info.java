@@ -14,27 +14,10 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.model;
+
 
 /**
- * Various constants.
- *
- * @version 
+ * The JAXB POJOs for the REST DSL
  */
-public final class Constants {
-
-    public static final String JAXB_CONTEXT_PACKAGES = ""
-        + "org.apache.camel:"
-        + "org.apache.camel.model:"
-        + "org.apache.camel.model.config:"
-        + "org.apache.camel.model.dataformat:"
-        + "org.apache.camel.model.language:"
-        + "org.apache.camel.model.loadbalancer:"
-        + "org.apache.camel.model.rest";
-
-    public static final String PLACEHOLDER_QNAME = "http://camel.apache.org/schema/placeholder";
-
-    private Constants() {
-    }
-
-}
+@javax.xml.bind.annotation.XmlSchema(namespace = "http://camel.apache.org/schema/spring", elementFormDefault = javax.xml.bind.annotation.XmlNsForm.QUALIFIED)
+package org.apache.camel.model.rest;

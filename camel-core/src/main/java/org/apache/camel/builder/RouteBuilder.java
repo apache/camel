@@ -69,16 +69,6 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
     public abstract void configure() throws Exception;
 
     /**
-     * Creates a new REST route
-     */
-    public RouteDefinition fromRest(String verb, String path) {
-        getRouteCollection().setCamelContext(getContext());
-        RouteDefinition answer = getRouteCollection().fromRest(verb, path);
-        configureRoute(answer);
-        return answer;
-    }
-
-    /**
      * Creates a new route from the given URI input
      *
      * @param uri  the from uri

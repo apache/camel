@@ -14,27 +14,28 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.model;
+package org.apache.camel.model.rest;
+
+import java.util.List;
+import javax.xml.bind.annotation.XmlElementRef;
 
 /**
- * Various constants.
- *
- * @version 
+ * Container to hold {@link RestDefinition Rest}.
  */
-public final class Constants {
+public interface RestContainer {
 
-    public static final String JAXB_CONTEXT_PACKAGES = ""
-        + "org.apache.camel:"
-        + "org.apache.camel.model:"
-        + "org.apache.camel.model.config:"
-        + "org.apache.camel.model.dataformat:"
-        + "org.apache.camel.model.language:"
-        + "org.apache.camel.model.loadbalancer:"
-        + "org.apache.camel.model.rest";
+    /**
+     * Returns the RESTs
+     *
+     * @return the RESTs
+     */
+    @XmlElementRef
+    List<RestDefinition> getRests();
 
-    public static final String PLACEHOLDER_QNAME = "http://camel.apache.org/schema/placeholder";
-
-    private Constants() {
-    }
-
+    /**
+     * Sets the RESTs to use
+     *
+     * @param rests the RESTs
+     */
+    void setRests(List<RestDefinition> rests);
 }

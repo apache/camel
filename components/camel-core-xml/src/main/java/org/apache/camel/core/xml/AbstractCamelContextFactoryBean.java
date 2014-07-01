@@ -60,6 +60,8 @@ import org.apache.camel.model.RouteDefinitionHelper;
 import org.apache.camel.model.ThreadPoolProfileDefinition;
 import org.apache.camel.model.config.PropertiesDefinition;
 import org.apache.camel.model.dataformat.DataFormatsDefinition;
+import org.apache.camel.model.rest.RestContainer;
+import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.processor.interceptor.BacklogTracer;
 import org.apache.camel.processor.interceptor.Delayer;
 import org.apache.camel.processor.interceptor.HandleFault;
@@ -102,7 +104,7 @@ import org.slf4j.LoggerFactory;
  * @version 
  */
 @XmlAccessorType(XmlAccessType.FIELD)
-public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContext> extends IdentifiedType implements RouteContainer {
+public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContext> extends IdentifiedType implements RouteContainer, RestContainer {
     
     /**
      * JVM system property to control lazy loading of type converters.
@@ -534,6 +536,8 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
     public abstract T getContext(boolean create);
 
     public abstract List<RouteDefinition> getRoutes();
+
+    public abstract List<RestDefinition> getRests();
 
     public abstract List<? extends AbstractCamelEndpointFactoryBean> getEndpoints();
 
