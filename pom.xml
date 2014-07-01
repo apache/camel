@@ -163,7 +163,7 @@
             <downloadJavadocs>false</downloadJavadocs>
           </configuration>
         </plugin>
-        
+
           <plugin>
             <groupId>org.apache.rat</groupId>
             <artifactId>apache-rat-plugin</artifactId>
@@ -179,7 +179,7 @@
                 <exclude>**/test/data*/**/*</exclude>
                 <exclude>.gitignore</exclude>
                 <exclude>.git/**/*</exclude>
-                <!-- tooling/camel-manual/src/styles/print.css use a different 
+                <!-- tooling/camel-manual/src/styles/print.css use a different
                   license -->
                 <exclude>**/src/styles/print.css</exclude>
                 <!-- cxf does not handle comments here -->
@@ -199,10 +199,19 @@
               </excludes>
             </configuration>
           </plugin>
-          
+
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-release-plugin</artifactId>
+          <!-- see http://jira.codehaus.org/browse/MRELEASE-812 -->
+          <version>2.4.2</version>
+          <dependencies>
+            <dependency>
+              <groupId>org.apache.maven.scm</groupId>
+              <artifactId>maven-scm-provider-gitexe</artifactId>
+              <version>1.9</version>
+            </dependency>
+          </dependencies>
           <configuration>
             <localCheckout>true</localCheckout>
             <pushChanges>true</pushChanges>
@@ -232,7 +241,7 @@
     </profile>
     <profile>
       <id>setup.eclipse</id>
-      <!-- set up the eclipse workspace and generate the .classpath and .project 
+      <!-- set up the eclipse workspace and generate the .classpath and .project
         files for modules -->
       <properties>
         <eclipse.workspace.dir>${basedir}/../workspace</eclipse.workspace.dir>
@@ -357,9 +366,9 @@
         </plugins>
       </build>
     </profile>
-    
+
     <profile>
-      <!-- When not on the Mac, we need to add tools.jar to the antrun plugin 
+      <!-- When not on the Mac, we need to add tools.jar to the antrun plugin
         for schemagen to work -->
       <id>not-mac</id>
       <activation>
@@ -451,7 +460,7 @@
         </plugins>
       </build>
     </profile>
-    
+
     <profile>
       <id>deploy</id>
       <build>
@@ -512,7 +521,7 @@
         </property>
       </activation>
       <build>
-        <plugins> 
+        <plugins>
           <!-- We want to deploy the artifact to a staging location for perusal -->
           <plugin>
             <inherited>true</inherited>
