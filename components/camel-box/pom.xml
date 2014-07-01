@@ -12,7 +12,7 @@
 
   <artifactId>camel-box</artifactId>
   <packaging>bundle</packaging>
-  <name>Camel Box.com Component</name>
+  <name>Camel :: Box.com</name>
   <description>Camel Component for Box.com</description>
 
   <properties>
