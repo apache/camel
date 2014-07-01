@@ -51,6 +51,12 @@ public class HazelcastComponent extends DefaultComponent {
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
 
+        HazelcastInstance hzInstance = resolveAndRemoveReferenceParameter(parameters, "hazelcastInstance",
+                HazelcastInstance.class);
+        if (hzInstance != null) {
+            hazelcastInstance = hzInstance;
+        }
+
         HazelcastDefaultEndpoint endpoint = null;
 
         // check type of endpoint
