@@ -54,7 +54,6 @@ public class IBoxFilesManagerIntegrationTest extends AbstractBoxTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(IBoxFilesManagerIntegrationTest.class);
     private static final String PATH_PREFIX = BoxApiName.FILES.getName();
-    private static final String CAMEL_TEST_FILE = "CamelTestFile";
     private static final BoxImageRequestObject BOX_IMAGE_REQUEST_OBJECT = BoxImageRequestObject.previewRequestObject();
     private static final String PNG_EXTENSION = "png";
     private static final String TEST_UPLOAD_FILE = "/log4j.properties";

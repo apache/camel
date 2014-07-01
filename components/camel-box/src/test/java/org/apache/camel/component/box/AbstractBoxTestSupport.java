@@ -44,6 +44,7 @@ import org.junit.AfterClass;
 public abstract class AbstractBoxTestSupport extends CamelTestSupport {
 
     protected static final String CAMEL_TEST_TAG = "camel_was_here";
+    protected static final String CAMEL_TEST_FILE = "CamelTestFile";
     private static final String LINE_SEPARATOR = System.getProperty("line.separator");
     private static final String TEST_OPTIONS_PROPERTIES = "/test-options.properties";
     private static final String REFRESH_TOKEN_PROPERTY = "refreshToken";

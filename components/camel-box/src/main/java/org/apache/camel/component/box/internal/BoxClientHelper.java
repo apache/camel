@@ -206,14 +206,14 @@ public final class BoxClientHelper {
 
                 LOG.debug("Revoking OAuth refresh token for {}", cachedBoxClient);
 
+                // revoke OAuth token
+                boxClient.getOAuthManager().revokeOAuth(boxClient.getAuthData().getAccessToken(),
+                    configuration.getClientId(), configuration.getClientSecret());
+
                 // notify the OAuthListener of revoked token
                 cachedBoxClient.getListener().onRefresh(null);
                 // mark auth data revoked
                 boxClient.getOAuthDataController().setOAuthData(null);
-
-                // revoke OAuth token
-                boxClient.getOAuthManager().revokeOAuth(boxClient.getAuthData().getAccessToken(),
-                    configuration.getClientId(), configuration.getClientSecret());
             }
         }
     }

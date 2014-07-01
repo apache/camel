@@ -26,6 +26,7 @@ import org.apache.camel.Producer;
 import org.apache.camel.component.box.internal.BoxApiCollection;
 import org.apache.camel.component.box.internal.BoxApiName;
 import org.apache.camel.component.box.internal.BoxClientHelper;
+import org.apache.camel.component.box.internal.BoxConstants;
 import org.apache.camel.component.box.internal.BoxPropertiesHelper;
 import org.apache.camel.component.box.internal.CachedBoxClient;
 import org.apache.camel.spi.UriEndpoint;
@@ -61,6 +62,11 @@ public class BoxEndpoint extends AbstractApiEndpoint<BoxApiName, BoxConfiguratio
     }
 
     public Producer createProducer() throws Exception {
+        // validate producer APIs
+        if (getApiName() == BoxApiName.POLL_EVENTS) {
+            throw new IllegalArgumentException("Producer endpoints do not support endpoint prefix "
+                + BoxApiName.POLL_EVENTS.getName());
+        }
         return new BoxProducer(this);
     }
 
@@ -68,6 +74,12 @@ public class BoxEndpoint extends AbstractApiEndpoint<BoxApiName, BoxConfiguratio
         // make sure inBody is not set for consumers
         if (inBody != null) {
             throw new IllegalArgumentException("Option inBody is not supported for consumer endpoint");
+        }
+
+        // validate consumer APIs
+        if (getApiName() != BoxApiName.POLL_EVENTS) {
+            throw new IllegalArgumentException("Consumer endpoint only supports endpoint prefix "
+                + BoxApiName.POLL_EVENTS.getName());
         }
         final BoxConsumer consumer = new BoxConsumer(this, processor);
         // also set consumer.* properties
@@ -78,6 +90,10 @@ public class BoxEndpoint extends AbstractApiEndpoint<BoxApiName, BoxConfiguratio
     @Override
     protected ApiMethodPropertiesHelper<BoxConfiguration> getPropertiesHelper() {
         return BoxPropertiesHelper.getHelper();
+    }
+
+    protected String getThreadProfileName() {
+        return BoxConstants.THREAD_PROFILE_NAME;
     }
 
     @Override
@@ -120,7 +136,7 @@ public class BoxEndpoint extends AbstractApiEndpoint<BoxApiName, BoxConfiguratio
     }
 
     @Override
-    protected void interceptProperties(Map<String, Object> properties) {
+    public void interceptProperties(Map<String, Object> properties) {
         // set shared link and password from configuration if not set as header properties
         if (!properties.containsKey(SHARED_LINK_PROPERTY) && !ObjectHelper.isEmpty(sharedLink)) {
             properties.put(SHARED_LINK_PROPERTY, sharedLink);
@@ -226,5 +242,9 @@ public class BoxEndpoint extends AbstractApiEndpoint<BoxApiName, BoxConfiguratio
             cachedBoxClient = null;
             super.doShutdown();
         }
+    }
+
+    public CachedBoxClient getBoxClient() {
+        return cachedBoxClient;
     }
 }

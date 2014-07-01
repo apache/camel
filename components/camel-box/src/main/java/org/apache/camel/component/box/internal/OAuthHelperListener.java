@@ -41,6 +41,7 @@ class OAuthHelperListener implements OAuthRefreshListener {
 
     @Override
     public void onRefresh(IAuthData newAuthData) {
+
         // look for refresh token update or revocation
         if (authSecureStorage != null
             && (newAuthData == null || !newAuthData.getRefreshToken().equals(refreshToken))) {
@@ -49,5 +50,8 @@ class OAuthHelperListener implements OAuthRefreshListener {
         if (configListener != null) {
             configListener.onRefresh(newAuthData);
         }
+
+        // update cached refresh token
+        refreshToken = newAuthData != null ? newAuthData.getRefreshToken() : null;
     }
 }

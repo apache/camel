@@ -16,16 +16,14 @@
  */
 package org.apache.camel.component.box.internal;
 
+import com.box.boxjavalibv2.dao.BoxEventCollection;
+
 /**
- * Constants for Box component.
+ * Callback interface to handle BoxEvents received from long polling.
  */
-public interface BoxConstants {
+public interface EventCallback {
 
-    // suffix for parameters when passed as exchange header properties
-    String PROPERTY_PREFIX = "CamelBox.";
-    String NEXT_STREAM_POSITION_PROPERTY = PROPERTY_PREFIX + "nextStreamPosition";
-    String CHUNK_SIZE_PROPERTY = PROPERTY_PREFIX + "chunkSize";
+    void onEvent(BoxEventCollection events) throws Exception;
 
-    // thread profile name for this component
-    String THREAD_PROFILE_NAME = "CamelBox";
+    void onException(Exception e);
 }

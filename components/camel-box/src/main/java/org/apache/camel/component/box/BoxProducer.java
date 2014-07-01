@@ -29,8 +29,4 @@ public class BoxProducer extends AbstractApiProducer<BoxApiName, BoxConfiguratio
     public BoxProducer(BoxEndpoint endpoint) {
         super(endpoint, BoxPropertiesHelper.getHelper());
     }
-
-    protected String getThreadProfileName() {
-        return BoxConstants.THREAD_PROFILE_NAME;
-    }
 }
