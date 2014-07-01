@@ -14,16 +14,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.restbinding;
+package org.apache.camel.spi;
 
+import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
-import org.apache.camel.impl.DefaultConsumer;
+import org.apache.camel.component.restbinding.RestBindingEndpoint;
 
-public class RestBindingConsumer extends DefaultConsumer {
+public interface RestBindingCapable {
 
-    public RestBindingConsumer(RestBindingEndpoint endpoint, Processor processor) {
-        super(endpoint, processor);
-    }
-
-    // TODO: lookup which components support rest binding and create an endpoint and create the delegate consumer
+    /**
+     * Creates a new REST <a
+     * href="http://camel.apache.org/event-driven-consumer.html">Event
+     * Driven Consumer</a>, using the details from the {@link org.apache.camel.component.restbinding.RestBindingEndpoint},
+     * which consumes messages from the endpoint using the given processor
+     *
+     * @param endpoint  the binding endpoint
+     * @param processor the processor
+     * @return a newly created REST consumer
+     * @throws Exception can be thrown
+     */
+    Consumer createConsumer(RestBindingEndpoint endpoint, Processor processor) throws Exception;
 }

@@ -16,15 +16,17 @@
  */
 package org.apache.camel.component.restbinding;
 
-import org.apache.camel.Component;
+import java.util.Map;
+
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.spi.RestBindingCapable;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 
-@UriEndpoint(scheme = "rest", consumerClass = RestBindingConsumer.class)
+@UriEndpoint(scheme = "rest-binding")
 public class RestBindingEndpoint extends DefaultEndpoint {
 
     @UriParam
@@ -34,8 +36,15 @@ public class RestBindingEndpoint extends DefaultEndpoint {
     @UriParam
     private String accept;
 
-    public RestBindingEndpoint(String endpointUri, Component component) {
+    private Map<String, Object> parameters;
+
+    public RestBindingEndpoint(String endpointUri, RestBindingComponent component) {
         super(endpointUri, component);
+    }
+
+    @Override
+    public RestBindingComponent getComponent() {
+        return (RestBindingComponent) super.getComponent();
     }
 
     public String getVerb() {
@@ -62,6 +71,14 @@ public class RestBindingEndpoint extends DefaultEndpoint {
         this.accept = accept;
     }
 
+    public Map<String, Object> getParameters() {
+        return parameters;
+    }
+
+    public void setParameters(Map<String, Object> parameters) {
+        this.parameters = parameters;
+    }
+
     @Override
     public Producer createProducer() throws Exception {
         throw new UnsupportedOperationException("Producer not supported");
@@ -69,13 +86,22 @@ public class RestBindingEndpoint extends DefaultEndpoint {
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        Consumer consumer = new RestBindingConsumer(this, processor);
-        configureConsumer(consumer);
-        return consumer;
+        // create the consumer directly from the component that supports rest binding
+        // TODO: should we have a RestBindingConsumer class that delegates to the actual consumer?
+        // TODO: what if there is 2+ RestBindingCapable components in the registry?
+        RestBindingCapable component = getComponent().lookupRestBindingCapableComponent();
+        if (component != null) {
+            Consumer consumer = component.createConsumer(this, processor);
+            configureConsumer(consumer);
+            return consumer;
+        } else {
+            throw new IllegalStateException("There are no registered components in CamelContext that is RestBindingCapable");
+        }
     }
 
     @Override
     public boolean isSingleton() {
         return true;
     }
+
 }

@@ -149,6 +149,17 @@ public class RoutesDefinition extends OptionalIdentifiedDefinition<RoutesDefinit
     }
 
     /**
+     * Creates a new REST route
+     *
+     * @return the builder
+     */
+    public RouteDefinition fromRest(String verb, String path) {
+        RouteDefinition route = createRoute();
+        route.fromRest(verb, path);
+        return route(route);
+    }
+
+    /**
      * Creates a new route from the given URI input
      *
      * @param uri  the from uri

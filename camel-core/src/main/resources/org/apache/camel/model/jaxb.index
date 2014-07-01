@@ -30,6 +30,7 @@ ExpressionSubElementDefinition
 FilterDefinition
 FinallyDefinition
 FromDefinition
+RestFromDefinition
 IdempotentConsumerDefinition
 InOnlyDefinition
 InOutDefinition

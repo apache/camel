@@ -284,6 +284,16 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
     // -----------------------------------------------------------------------
 
     /**
+     * Creates an REST input to the route
+     *
+     * @return the builder
+     */
+    public RouteDefinition fromRest(String verb, String path) {
+        getInputs().add(new FromRestDefinition(verb, path));
+        return this;
+    }
+
+    /**
      * Creates an input to the route
      *
      * @param uri the from uri

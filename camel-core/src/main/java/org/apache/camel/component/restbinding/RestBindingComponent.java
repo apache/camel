@@ -18,8 +18,10 @@ package org.apache.camel.component.restbinding;
 
 import java.util.Map;
 
+import org.apache.camel.Component;
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.spi.RestBindingCapable;
 import org.apache.camel.util.ObjectHelper;
 
 public class RestBindingComponent extends UriEndpointComponent {
@@ -30,8 +32,11 @@ public class RestBindingComponent extends UriEndpointComponent {
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
+        preCheckConditions();
+
         RestBindingEndpoint answer = new RestBindingEndpoint(uri, this);
         setProperties(answer, parameters);
+        answer.setParameters(parameters);
 
         if (!remaining.contains(":")) {
             throw new IllegalArgumentException("Invalid syntax. Must be rest-binding:verb:path");
@@ -45,4 +50,22 @@ public class RestBindingComponent extends UriEndpointComponent {
 
         return answer;
     }
+
+
+    protected void preCheckConditions() throws Exception {
+        if (lookupRestBindingCapableComponent() == null) {
+            throw new IllegalStateException("There are no registered components in CamelContext that is RestBindingCapable");
+        }
+    }
+
+    public RestBindingCapable lookupRestBindingCapableComponent() {
+        for (String id : getCamelContext().getComponentNames()) {
+            Component component = getCamelContext().getComponent(id);
+            if (component instanceof RestBindingCapable) {
+                return (RestBindingCapable) component;
+            }
+        }
+        return null;
+    }
+
 }
