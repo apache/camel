@@ -478,9 +478,11 @@
               <useFile>true</useFile>
               <forkMode>once</forkMode>
               <forkedProcessTimeoutInSeconds>300</forkedProcessTimeoutInSeconds>
-              <excludes/>
+              <excludes>
+                  <exclude>**/*XXXTest.java</exclude>
+              </excludes>
               <includes>
-                <include>**/*IntegrationTest.java</include>
+                <include>**/*Test.java</include>
               </includes>
             </configuration>
           </plugin>
