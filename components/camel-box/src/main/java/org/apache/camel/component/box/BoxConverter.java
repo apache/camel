@@ -22,6 +22,7 @@ import com.box.restclientv2.requestsbase.BoxFileUploadRequestObject;
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
 import org.apache.camel.NoTypeConversionAvailableException;
+import org.apache.camel.component.box.internal.BoxConstants;
 import org.apache.camel.component.file.GenericFile;
 
 import java.io.File;
@@ -39,7 +40,7 @@ public final class BoxConverter {
     public static BoxFileUploadRequestObject genericFileToBoxFileUploadRequestObject(GenericFile<?> file, Exchange exchange) throws IOException, NoTypeConversionAvailableException, BoxRestException, BoxJSONException {
         String parentId = "0";
         if (exchange != null) {
-            parentId = exchange.getProperty("box.parentId", "0", String.class);
+            parentId = exchange.getProperty(BoxConstants.PROPERTY_PREFIX + "parentId", "0", String.class);
         }
         if (file.getFile() instanceof File) {
             // prefer to use a file input stream if its a java.io.File
