@@ -19,23 +19,17 @@ package org.apache.camel.management;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
-import org.apache.camel.CamelContext;
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.restbinding.DummyRestBindingCapableComponent;
-import org.apache.camel.model.rest.PathDefinition;
-import org.apache.camel.model.rest.RestDefinition;
+import org.apache.camel.component.restbinding.DummyRestConsumerFactory;
+import org.apache.camel.impl.JndiRegistry;
 
 public class ManagedFromRestGetTest extends ManagementTestSupport {
 
     @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext context = super.createCamelContext();
-
-        // register our dummy rest capable component
-        context.addComponent("dummy-rest", new DummyRestBindingCapableComponent());
-
-        return context;
+    protected JndiRegistry createRegistry() throws Exception {
+        JndiRegistry jndi = super.createRegistry();
+        jndi.bind("dummy-test", new DummyRestConsumerFactory());
+        return jndi;
     }
 
     public void testFromRestModel() throws Exception {

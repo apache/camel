@@ -18,34 +18,26 @@ package org.apache.camel.component.restbinding;
 
 import java.util.Map;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.Consumer;
-import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
 import org.apache.camel.component.seda.SedaEndpoint;
 import org.apache.camel.impl.ActiveMQUuidGenerator;
-import org.apache.camel.impl.DefaultComponent;
-import org.apache.camel.spi.RestBindingCapable;
+import org.apache.camel.spi.RestConsumerFactory;
 
-public class DummyRestBindingCapableComponent extends DefaultComponent implements RestBindingCapable {
-
-    public void enlist() {
-        getCamelContext().addComponent("dummy-rest", this);
-    }
+public class DummyRestConsumerFactory implements RestConsumerFactory {
 
     @Override
-    protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        return null;
-    }
-
-    @Override
-    public Consumer createConsumer(RestBindingEndpoint endpoint, Processor processor) throws Exception {
+    public Consumer createConsumer(CamelContext camelContext, Processor processor,
+                                   String verb, String path, String accept, Map<String, Object> parameters) throws Exception {
         // just use a seda endpoint for testing purpose
-        String id = ActiveMQUuidGenerator.generateSanitizedId(endpoint.getPath());
+        String id = ActiveMQUuidGenerator.generateSanitizedId(path);
         // remove leading dash as we add that ourselves
         if (id.startsWith("-")) {
             id = id.substring(1);
         }
-        SedaEndpoint seda = getCamelContext().getEndpoint("seda:" + endpoint.getVerb() + "-" + id, SedaEndpoint.class);
+        SedaEndpoint seda = camelContext.getEndpoint("seda:" + verb + "-" + id, SedaEndpoint.class);
         return seda.createConsumer(processor);
     }
+
 }

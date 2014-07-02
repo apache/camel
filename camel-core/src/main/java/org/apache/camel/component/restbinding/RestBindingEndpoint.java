@@ -17,12 +17,14 @@
 package org.apache.camel.component.restbinding;
 
 import java.util.Map;
+import java.util.Set;
 
+import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
-import org.apache.camel.spi.RestBindingCapable;
+import org.apache.camel.spi.RestConsumerFactory;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 
@@ -35,6 +37,8 @@ public class RestBindingEndpoint extends DefaultEndpoint {
     private String path;
     @UriParam
     private String accept;
+    @UriParam
+    private String componentName;
 
     private Map<String, Object> parameters;
 
@@ -71,6 +75,14 @@ public class RestBindingEndpoint extends DefaultEndpoint {
         this.accept = accept;
     }
 
+    public String getComponentName() {
+        return componentName;
+    }
+
+    public void setComponentName(String componentName) {
+        this.componentName = componentName;
+    }
+
     public Map<String, Object> getParameters() {
         return parameters;
     }
@@ -86,16 +98,42 @@ public class RestBindingEndpoint extends DefaultEndpoint {
 
     @Override
     public Consumer createConsumer(Processor processor) throws Exception {
-        // create the consumer directly from the component that supports rest binding
-        // TODO: should we have a RestBindingConsumer class that delegates to the actual consumer?
-        // TODO: what if there is 2+ RestBindingCapable components in the registry?
-        RestBindingCapable component = getComponent().lookupRestBindingCapableComponent();
-        if (component != null) {
-            Consumer consumer = component.createConsumer(this, processor);
+        RestConsumerFactory factory = null;
+
+        if (getComponentName() != null) {
+            Component comp = getCamelContext().getComponent(getComponentName());
+            if (comp != null && comp instanceof RestConsumerFactory) {
+                factory = (RestConsumerFactory) comp;
+            } else {
+                throw new IllegalArgumentException("Component " + getComponentName() + " is not a RestConsumerFactory");
+            }
+        }
+
+        // try all components
+        if (factory == null) {
+            for (String name : getCamelContext().getComponentNames()) {
+                Component comp = getCamelContext().getComponent(name);
+                if (comp != null && comp instanceof RestConsumerFactory) {
+                    factory = (RestConsumerFactory) comp;
+                    break;
+                }
+            }
+        }
+
+        // lookup in registry
+        if (factory == null) {
+            Set<RestConsumerFactory> factories = getCamelContext().getRegistry().findByType(RestConsumerFactory.class);
+            if (factories != null && factories.size() == 1) {
+                factory = factories.iterator().next();
+            }
+        }
+
+        if (factory != null) {
+            Consumer consumer = factory.createConsumer(getCamelContext(), processor, getVerb(), getPath(), getAccept(), getParameters());
             configureConsumer(consumer);
             return consumer;
         } else {
-            throw new IllegalStateException("There are no registered components in CamelContext that is RestBindingCapable");
+            throw new IllegalStateException("Cannot find RestConsumerFactory in Registry or as a Component to use");
         }
     }
 

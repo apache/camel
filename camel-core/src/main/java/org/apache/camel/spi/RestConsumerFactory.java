@@ -16,22 +16,28 @@
  */
 package org.apache.camel.spi;
 
+import java.util.Map;
+
+import org.apache.camel.CamelContext;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
-import org.apache.camel.component.restbinding.RestBindingEndpoint;
 
-public interface RestBindingCapable {
+public interface RestConsumerFactory {
 
     /**
      * Creates a new REST <a
      * href="http://camel.apache.org/event-driven-consumer.html">Event
-     * Driven Consumer</a>, using the details from the {@link org.apache.camel.component.restbinding.RestBindingEndpoint},
-     * which consumes messages from the endpoint using the given processor
+     * Driven Consumer</a>, which consumes messages from the endpoint using the given processor
      *
-     * @param endpoint  the binding endpoint
-     * @param processor the processor
+     * @param camelContext the camel context
+     * @param processor    the processor
+     * @param verb         HTTP verb such as GET, POST
+     * @param path         HTTP context-path
+     * @param accept       accept-type, is <tt>null</tt> to accept anything
+     * @param parameters   additional parameters
      * @return a newly created REST consumer
      * @throws Exception can be thrown
      */
-    Consumer createConsumer(RestBindingEndpoint endpoint, Processor processor) throws Exception;
+    Consumer createConsumer(CamelContext camelContext, Processor processor,
+                            String verb, String path, String accept, Map<String, Object> parameters) throws Exception;
 }

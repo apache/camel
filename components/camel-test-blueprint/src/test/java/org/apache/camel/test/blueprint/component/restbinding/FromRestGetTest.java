@@ -16,6 +16,7 @@
  */
 package org.apache.camel.test.blueprint.component.restbinding;
 
+import org.apache.camel.model.ToDefinition;
 import org.apache.camel.model.rest.PathDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.test.blueprint.CamelBlueprintTestSupport;
@@ -30,7 +31,7 @@ public class FromRestGetTest extends CamelBlueprintTestSupport {
 
     @Test
     public void testFromRestModel() {
-        assertEquals(2, context.getRoutes().size());
+        assertEquals(2 + 3, context.getRoutes().size());
 
         RestDefinition rest = context.getRestDefinitions().get(0);
         assertNotNull(rest);
@@ -40,13 +41,14 @@ public class FromRestGetTest extends CamelBlueprintTestSupport {
         assertEquals("/say", path.getUri());
 
         assertEquals("/hello", path.getVerbs().get(0).getUri());
-        assertEquals("direct:hello", path.getVerbs().get(0).getTo().getUri());
+        ToDefinition to = assertIsInstanceOf(ToDefinition.class, path.getVerbs().get(0).getOutputs().get(0));
+        assertEquals("direct:hello", to.getUri());
 
         assertEquals("/bye", path.getVerbs().get(1).getUri());
-        assertEquals("direct:bye", path.getVerbs().get(1).getTo().getUri());
+        to = assertIsInstanceOf(ToDefinition.class, path.getVerbs().get(1).getOutputs().get(0));
+        assertEquals("direct:bye", to.getUri());
 
         assertEquals(null, path.getVerbs().get(2).getUri());
     }
-
 
 }

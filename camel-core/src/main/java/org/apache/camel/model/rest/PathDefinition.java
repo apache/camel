@@ -87,7 +87,7 @@ public class PathDefinition {
         }
 
         VerbDefinition verb = getVerbs().get(getVerbs().size() - 1);
-        verb.setTo(new ToDefinition(url));
+        verb.addOutput(new ToDefinition(url));
 
         return this;
     }

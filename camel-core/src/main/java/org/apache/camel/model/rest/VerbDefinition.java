@@ -16,13 +16,15 @@
  */
 package org.apache.camel.model.rest;
 
+import java.util.ArrayList;
+import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
 
-import org.apache.camel.model.ToDefinition;
+import org.apache.camel.model.ProcessorDefinition;
 
 @XmlRootElement(name = "verb")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -34,8 +36,8 @@ public class VerbDefinition {
     @XmlAttribute
     private String uri;
 
-    @XmlElementRef(required = false)
-    private ToDefinition to;
+    @XmlElementRef
+    private List<ProcessorDefinition<?>> outputs = new ArrayList<ProcessorDefinition<?>>();
 
     public String getMethod() {
         return method;
@@ -53,12 +55,21 @@ public class VerbDefinition {
         this.uri = uri;
     }
 
-    public ToDefinition getTo() {
-        return to;
+    public List<ProcessorDefinition<?>> getOutputs() {
+        return outputs;
     }
 
-    public void setTo(ToDefinition to) {
-        this.to = to;
+    public void setOutputs(List<ProcessorDefinition<?>> outputs) {
+        this.outputs = outputs;
+
+        if (outputs != null) {
+            for (ProcessorDefinition<?> output : outputs) {
+                output.configureChild(output);
+            }
+        }
     }
 
+    public void addOutput(ProcessorDefinition<?> output) {
+        outputs.add(output);
+    }
 }

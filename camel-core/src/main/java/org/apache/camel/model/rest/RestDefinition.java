@@ -90,7 +90,7 @@ public class RestDefinition {
                 RouteDefinition route = new RouteDefinition();
                 route.fromRest(from);
                 answer.add(route);
-                route.getOutputs().add(verb.getTo());
+                route.getOutputs().addAll(verb.getOutputs());
             }
         }
 

@@ -263,7 +263,7 @@ public class AggregateDefinition extends ProcessorDefinition<AggregateDefinition
     }
 
     @Override
-    protected void configureChild(ProcessorDefinition<?> output) {
+    public void configureChild(ProcessorDefinition<?> output) {
         if (expression != null && expression instanceof ExpressionClause) {
             ExpressionClause<?> clause = (ExpressionClause<?>) expression;
             if (clause.getExpressionType() != null) {

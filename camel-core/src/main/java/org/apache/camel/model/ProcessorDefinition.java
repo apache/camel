@@ -641,7 +641,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      *
      * @param output the child to be added as output to this
      */
-    protected void configureChild(ProcessorDefinition<?> output) {
+    public void configureChild(ProcessorDefinition<?> output) {
         // noop
     }
 

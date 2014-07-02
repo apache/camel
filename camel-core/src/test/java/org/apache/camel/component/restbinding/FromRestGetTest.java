@@ -16,22 +16,20 @@
  */
 package org.apache.camel.component.restbinding;
 
-import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.impl.JndiRegistry;
+import org.apache.camel.model.ToDefinition;
 import org.apache.camel.model.rest.PathDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 
 public class FromRestGetTest extends ContextTestSupport {
 
     @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext context = super.createCamelContext();
-
-        // register our dummy rest capable component
-        context.addComponent("dummy-rest", new DummyRestBindingCapableComponent());
-
-        return context;
+    protected JndiRegistry createRegistry() throws Exception {
+        JndiRegistry jndi = super.createRegistry();
+        jndi.bind("dummy-test", new DummyRestConsumerFactory());
+        return jndi;
     }
 
     public void testFromRestModel() {
@@ -45,10 +43,12 @@ public class FromRestGetTest extends ContextTestSupport {
         assertEquals("/say", path.getUri());
 
         assertEquals("/hello", path.getVerbs().get(0).getUri());
-        assertEquals("direct:hello", path.getVerbs().get(0).getTo().getUri());
+        ToDefinition to = assertIsInstanceOf(ToDefinition.class, path.getVerbs().get(0).getOutputs().get(0));
+        assertEquals("direct:hello", to.getUri());
 
         assertEquals("/bye", path.getVerbs().get(1).getUri());
-        assertEquals("direct:bye", path.getVerbs().get(1).getTo().getUri());
+        to = assertIsInstanceOf(ToDefinition.class, path.getVerbs().get(1).getOutputs().get(0));
+        assertEquals("direct:bye", to.getUri());
 
         assertEquals(null, path.getVerbs().get(2).getUri());
     }
