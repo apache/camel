@@ -77,5 +77,22 @@ public class RestsDefinition extends OptionalIdentifiedDefinition<RestsDefinitio
     // Fluent API
     //-------------------------------------------------------------------------
 
+    public RestDefinition rest() {
+        RestDefinition rest = createRest();
+        return rest(rest);
+
+    }
+
+    public RestDefinition rest(RestDefinition rest) {
+        getRests().add(rest);
+        return rest;
+    }
+
+    // Implementation methods
+    //-------------------------------------------------------------------------
+    protected RestDefinition createRest() {
+        RestDefinition rest = new RestDefinition();
+        return rest;
+    }
 
 }

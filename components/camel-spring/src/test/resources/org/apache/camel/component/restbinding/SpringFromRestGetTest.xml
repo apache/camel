@@ -27,7 +27,7 @@
 
   <camelContext xmlns="http://camel.apache.org/schema/spring">
 
-    <rest component="dummy-rest">
+    <rest component="dummy-rest" routeId="myRestRoute">
       <path uri="/say">
         <get uri="/hello">
           <to uri="direct:hello"/>
@@ -41,14 +41,14 @@
       </path>
     </rest>
 
-    <route>
-      <to uri="direct:hello"/>
+    <route id="helloRoute">
+      <from uri="direct:hello"/>
       <transform>
         <constant>Hello World</constant>
       </transform>
     </route>
-    <route>
-      <to uri="direct:bye"/>
+    <route id="byeRoute">
+      <from uri="direct:bye"/>
       <transform>
         <constant>Bye World</constant>
       </transform>

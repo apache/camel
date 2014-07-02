@@ -31,10 +31,27 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlAccessorType(XmlAccessType.PROPERTY)
 public class RestDefinition {
 
-    @XmlAttribute
     private String component;
-
+    private String routeId;
     private List<PathDefinition> paths = new ArrayList<PathDefinition>();
+
+    public String getComponent() {
+        return component;
+    }
+
+    @XmlAttribute
+    public void setComponent(String component) {
+        this.component = component;
+    }
+
+    public String getRouteId() {
+        return routeId;
+    }
+
+    @XmlAttribute
+    public void setRouteId(String routeId) {
+        this.routeId = routeId;
+    }
 
     public List<PathDefinition> getPaths() {
         return paths;
@@ -43,6 +60,16 @@ public class RestDefinition {
     @XmlElementRef
     public void setPaths(List<PathDefinition> paths) {
         this.paths = paths;
+    }
+
+    // Fluent API
+    //-------------------------------------------------------------------------
+
+    public PathDefinition path(String url) {
+        PathDefinition answer = new PathDefinition();
+        getPaths().add(answer);
+        answer.setUrl(url);
+        return answer;
     }
 
 }

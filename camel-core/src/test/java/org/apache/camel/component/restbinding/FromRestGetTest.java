@@ -59,9 +59,17 @@ public class FromRestGetTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-//                rest()
-//                    .get("/hello").to("mock:foo")
-//                    .get("/bye").to("mock:bar");
+                rest()
+                    .path("/say")
+                        .get("/hello").to("direct:hello")
+                        .get("/bye").to("direct:bye")
+                        .post().to("seda:update");
+
+                from("direct:hello")
+                    .transform().constant("Hello World");
+
+                from("direct:bye")
+                    .transform().constant("Bye World");
             }
         };
     }

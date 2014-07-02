@@ -31,6 +31,8 @@ import org.apache.camel.model.OnExceptionDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RoutesDefinition;
 
+import org.apache.camel.model.rest.RestDefinition;
+import org.apache.camel.model.rest.RestsDefinition;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -43,6 +45,7 @@ import org.slf4j.LoggerFactory;
 public abstract class RouteBuilder extends BuilderSupport implements RoutesBuilder {
     protected Logger log = LoggerFactory.getLogger(getClass());
     private AtomicBoolean initialized = new AtomicBoolean(false);
+    private RestsDefinition restCollection = new RestsDefinition();
     private RoutesDefinition routeCollection = new RoutesDefinition();
 
     public RouteBuilder() {
@@ -67,6 +70,18 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
      * @throws Exception can be thrown during configuration
      */
     public abstract void configure() throws Exception;
+
+    /**
+     * Creates a new REST service
+     *
+     * @return the builder
+     */
+    public RestDefinition rest() {
+        getRestCollection().setCamelContext(getContext());
+        RestDefinition answer = getRestCollection().rest();
+        configureRest(answer);
+        return answer;
+    }
 
     /**
      * Creates a new route from the given URI input
@@ -337,6 +352,14 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
         camelContext.addRouteDefinitions(getRouteCollection().getRoutes());
     }
 
+    public RestsDefinition getRestCollection() {
+        return restCollection;
+    }
+
+    public void setRestCollection(RestsDefinition restCollection) {
+        this.restCollection = restCollection;
+    }
+
     public void setRouteCollection(RoutesDefinition routeCollection) {
         this.routeCollection = routeCollection;
     }
@@ -352,6 +375,10 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
      */
     protected ModelCamelContext createContainer() {
         return new DefaultCamelContext();
+    }
+
+    protected void configureRest(RestDefinition rest) {
+        // noop
     }
 
     protected void configureRoute(RouteDefinition route) {

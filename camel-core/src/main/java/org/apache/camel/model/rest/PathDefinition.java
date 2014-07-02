@@ -24,22 +24,24 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.apache.camel.model.ToDefinition;
+
 @XmlRootElement(name = "path")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class PathDefinition {
 
     @XmlAttribute
-    private String uri;
+    private String url;
 
     @XmlElementRef
     private List<VerbDefinition> verbs = new ArrayList<VerbDefinition>();
 
-    public String getUri() {
-        return uri;
+    public String getUrl() {
+        return url;
     }
 
-    public void setUri(String uri) {
-        this.uri = uri;
+    public void setUrl(String url) {
+        this.url = url;
     }
 
     public List<VerbDefinition> getVerbs() {
@@ -49,4 +51,46 @@ public class PathDefinition {
     public void setVerbs(List<VerbDefinition> verbs) {
         this.verbs = verbs;
     }
+
+    // Fluent API
+    //-------------------------------------------------------------------------
+
+    public PathDefinition get() {
+        return get(null);
+    }
+
+    public PathDefinition get(String url) {
+        GetVerbDefinition answer = new GetVerbDefinition();
+        getVerbs().add(answer);
+        if (url != null) {
+            answer.setUri(url);
+        }
+        return this;
+    }
+
+    public PathDefinition post() {
+        return post(null);
+    }
+
+    public PathDefinition post(String url) {
+        PostVerbDefinition answer = new PostVerbDefinition();
+        getVerbs().add(answer);
+        if (url != null) {
+            answer.setUri(url);
+        }
+        return this;
+    }
+
+    public PathDefinition to(String url) {
+        // add to last verb
+        if (getVerbs().isEmpty()) {
+            throw new IllegalArgumentException("Must add verb first, such as get/post/delete");
+        }
+
+        VerbDefinition verb = getVerbs().get(getVerbs().size() - 1);
+        verb.setTo(new ToDefinition(url));
+
+        return this;
+    }
+
 }
