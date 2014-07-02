@@ -189,6 +189,7 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
     }
 
     protected Set<Class<?>> getJaxbPackages() {
+        // we nedd to have a class from each different package with jaxb models
         Set<Class<?>> classes = new HashSet<Class<?>>();
         classes.add(org.apache.camel.spring.CamelContextFactoryBean.class);
         classes.add(CamelJMXAgentDefinition.class);
@@ -198,6 +199,7 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
         classes.add(org.apache.camel.model.dataformat.DataFormatsDefinition.class);
         classes.add(org.apache.camel.model.language.ExpressionDefinition.class);
         classes.add(org.apache.camel.model.loadbalancer.RoundRobinLoadBalancerDefinition.class);
+        classes.add(org.apache.camel.model.rest.RestDefinition.class);
         classes.add(org.apache.camel.util.spring.SSLContextParametersFactoryBean.class);
         return classes;
     }

@@ -39,11 +39,6 @@
           <to uri="seda:update"/>
         </post>
       </path>
-      <path uri="/foo">
-        <verb method="get" uri="/bla">
-          <to uri="somewhere"/>
-        </verb>
-      </path>
     </rest>
 
     <route id="helloRoute">

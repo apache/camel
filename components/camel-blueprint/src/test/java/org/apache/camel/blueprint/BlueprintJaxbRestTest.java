@@ -21,16 +21,15 @@ import javax.xml.bind.Unmarshaller;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 
+import org.apache.camel.blueprint.handler.CamelNamespaceHandler;
+import org.apache.camel.test.junit4.TestSupport;
+import org.junit.Test;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
-import org.apache.camel.blueprint.handler.CamelNamespaceHandler;
-import org.apache.camel.test.junit4.TestSupport;
-import org.junit.Test;
-
-public class BlueprintJaxbTest extends TestSupport {
+public class BlueprintJaxbRestTest extends TestSupport {
 
     @Test
     public void test() throws Exception {
@@ -42,7 +41,7 @@ public class BlueprintJaxbTest extends TestSupport {
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         dbf.setNamespaceAware(true);
         DocumentBuilder db = dbf.newDocumentBuilder();
-        Document doc = db.parse(getClass().getClassLoader().getResourceAsStream("test.xml"));
+        Document doc = db.parse(getClass().getClassLoader().getResourceAsStream("test-rest.xml"));
         Element elem = null;
         NodeList nl = doc.getDocumentElement().getChildNodes();
         for (int i = 0; i < nl.getLength(); i++) {
@@ -66,13 +65,17 @@ public class BlueprintJaxbTest extends TestSupport {
         assertNotNull(object);
         assertTrue(object instanceof CamelContextFactoryBean);
         assertNotNull(((CamelContextFactoryBean) object).getRoutes());
-        assertEquals(1, ((CamelContextFactoryBean) object).getRoutes().size());
-        assertNotNull(((CamelContextFactoryBean) object).getRoutes().get(0));
-        assertNotNull(((CamelContextFactoryBean) object).getRoutes().get(0).getInputs());
-        assertEquals(1, ((CamelContextFactoryBean) object).getRoutes().get(0).getInputs().size());
-        assertNotNull(((CamelContextFactoryBean) object).getRoutes().get(0).getOutputs());
-        assertEquals(1, ((CamelContextFactoryBean) object).getRoutes().get(0).getOutputs().size());
-        assertTrue(((CamelContextFactoryBean) object).getCamelPropertyPlaceholder().isCache());
-        assertTrue(((CamelContextFactoryBean) object).getCamelPropertyPlaceholder().isIgnoreMissingLocation());
+        assertEquals(0, ((CamelContextFactoryBean) object).getRoutes().size());
+
+        CamelContextFactoryBean cfb = (CamelContextFactoryBean) object;
+        assertEquals(1, cfb.getRests().size());
+        assertEquals(1, cfb.getRests().get(0).getPaths().size());
+        assertEquals("/say", cfb.getRests().get(0).getPaths().get(0).getUri());
+        assertEquals(3, cfb.getRests().get(0).getPaths().get(0).getVerbs().size());
+        assertEquals("get", cfb.getRests().get(0).getPaths().get(0).getVerbs().get(0).getMethod());
+        assertEquals("/hello", cfb.getRests().get(0).getPaths().get(0).getVerbs().get(0).getUri());
+        assertEquals("get", cfb.getRests().get(0).getPaths().get(0).getVerbs().get(1).getMethod());
+        assertEquals("/bye", cfb.getRests().get(0).getPaths().get(0).getVerbs().get(1).getUri());
+        assertEquals("post", cfb.getRests().get(0).getPaths().get(0).getVerbs().get(2).getMethod());
     }
 }

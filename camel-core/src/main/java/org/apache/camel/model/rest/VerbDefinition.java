@@ -34,7 +34,7 @@ public class VerbDefinition {
     @XmlAttribute
     private String uri;
 
-    @XmlElementRef
+    @XmlElementRef(required = false)
     private ToDefinition to;
 
     public String getMethod() {
