@@ -39,6 +39,10 @@ public class ServletComponent extends HttpComponent {
     private String servletName = "CamelServlet";
     private HttpRegistry httpRegistry;
 
+    public ServletComponent() {
+        super(ServletEndpoint.class);
+    }
+
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         HttpClientParams params = new HttpClientParams();
