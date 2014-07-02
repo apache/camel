@@ -164,6 +164,9 @@ public interface ManagedCamelContextMBean extends ManagedPerformanceCounterMBean
     @ManagedOperation(description = "Request body and headers (in out)")
     Object requestBodyAndHeaders(String endpointUri, Object body, Map<String, Object> headers) throws Exception;
 
+    @ManagedOperation(description = "Dumps the rests as XML")
+    String dumpRestsAsXml() throws Exception;
+
     @ManagedOperation(description = "Dumps the routes as XML")
     String dumpRoutesAsXml() throws Exception;
 

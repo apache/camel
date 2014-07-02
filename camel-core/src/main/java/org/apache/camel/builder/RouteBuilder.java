@@ -408,7 +408,7 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
     }
 
     protected void configureRoute(RouteDefinition route) {
-        route.setGroup(getClass().getName());
+        // noop
     }
 
     /**

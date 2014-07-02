@@ -80,6 +80,7 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
     // keep state whether the error handler is context scoped or not
     // (will by default be context scoped of no explicit error handler configured)
     private boolean contextScopedErrorHandler = true;
+    private Boolean rest;
 
     public RouteDefinition() {
     }
@@ -90,6 +91,14 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
 
     public RouteDefinition(Endpoint endpoint) {
         from(endpoint);
+    }
+
+    /**
+     * This route is created from the REST DSL.
+     */
+    public void fromRest(String uri) {
+        from(uri);
+        rest = true;
     }
 
     /**
@@ -763,6 +772,11 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
      */
     public void setErrorHandlerBuilder(ErrorHandlerFactory errorHandlerBuilder) {
         this.errorHandlerBuilder = errorHandlerBuilder;
+    }
+
+    @XmlAttribute
+    public Boolean isRest() {
+        return rest;
     }
 
     @SuppressWarnings("deprecation")
