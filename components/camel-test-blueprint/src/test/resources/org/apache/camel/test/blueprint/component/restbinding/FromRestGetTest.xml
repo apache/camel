@@ -34,7 +34,7 @@
           <to uri="direct:bye"/>
         </get>
         <post>
-          <to uri="seda:update"/>
+          <to uri="mock:update"/>
         </post>
       </path>
     </rest>

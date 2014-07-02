@@ -32,7 +32,7 @@ public class FromRestGetTest extends ContextTestSupport {
         return jndi;
     }
 
-    public void testFromRestModel() {
+    public void testFromRestModel() throws Exception {
         assertEquals(2 + 3, context.getRoutes().size());
 
         RestDefinition rest = context.getRestDefinitions().get(0);
@@ -51,6 +51,17 @@ public class FromRestGetTest extends ContextTestSupport {
         assertEquals("direct:bye", to.getUri());
 
         assertEquals(null, path.getVerbs().get(2).getUri());
+
+        // the rest becomes routes and the input is a seda endpoint created by the DummyRestConsumerFactory
+
+        getMockEndpoint("mock:update").expectedMessageCount(1);
+        template.sendBody("seda:post-say", "I was here");
+        assertMockEndpointsSatisfied();
+
+        String out = template.requestBody("seda:get-say-hello", "Me", String.class);
+        assertEquals("Hello World", out);
+        String out2 = template.requestBody("seda:get-say-bye", "Me", String.class);
+        assertEquals("Bye World", out2);
     }
 
     @Override
@@ -62,7 +73,7 @@ public class FromRestGetTest extends ContextTestSupport {
                     .path("/say")
                         .get("/hello").to("direct:hello")
                         .get("/bye").to("direct:bye")
-                        .post().to("seda:update");
+                        .post().to("mock:update");
 
                 from("direct:hello")
                     .transform().constant("Hello World");

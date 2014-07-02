@@ -19,17 +19,19 @@ package org.apache.camel.management;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.restbinding.DummyRestConsumerFactory;
-import org.apache.camel.impl.JndiRegistry;
+import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.impl.SimpleRegistry;
 
 public class ManagedFromRestGetTest extends ManagementTestSupport {
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
-        jndi.bind("dummy-test", new DummyRestConsumerFactory());
-        return jndi;
+    protected CamelContext createCamelContext() throws Exception {
+        SimpleRegistry registry = new SimpleRegistry();
+        registry.put("dummy-test", new DummyRestConsumerFactory());
+        return new DefaultCamelContext(registry);
     }
 
     public void testFromRestModel() throws Exception {
@@ -69,7 +71,7 @@ public class ManagedFromRestGetTest extends ManagementTestSupport {
                     .path("/say")
                         .get("/hello").to("direct:hello")
                         .get("/bye").to("direct:bye")
-                        .post().to("seda:update");
+                        .post().to("mock:update");
 
                 from("direct:hello")
                     .transform().constant("Hello World");
