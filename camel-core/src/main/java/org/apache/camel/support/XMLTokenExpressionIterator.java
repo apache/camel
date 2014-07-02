@@ -151,7 +151,7 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
                     String pfx = d > 0 ? s.substring(0, d) : "";
                     this.splitpath[i] = 
                         new AttributedQName(
-                            "*".equals(pfx) ? "*" : nsmap.get(pfx), d > 0 ? s.substring(d + 1) : s, pfx);
+                            "*".equals(pfx) ? "*" : nsmap == null ? "" : nsmap.get(pfx), d > 0 ? s.substring(d + 1) : s, pfx);
                 }
             }
             
