@@ -277,6 +277,11 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
         configureRoutes((ModelCamelContext)context);
         // add routes to Camel by populating them
         populateRoutes();
+
+        // after routes then configure and populate rests
+        configureRests((ModelCamelContext) context);
+        // add rests to Camel by populating them
+        populateRests();
     }
 
     /**
@@ -291,6 +296,19 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
         checkInitialized();
         routeCollection.setCamelContext(context);
         return routeCollection;
+    }
+
+    /**
+     * Configures the rests
+     *
+     * @param context the Camel context
+     * @return the rests configured
+     * @throws Exception can be thrown during configuration
+     */
+    public RestsDefinition configureRests(ModelCamelContext context) throws Exception {
+        setContext(context);
+        restCollection.setCamelContext(context);
+        return restCollection;
     }
 
     /**
@@ -350,6 +368,15 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
         }
         getRouteCollection().setCamelContext(camelContext);
         camelContext.addRouteDefinitions(getRouteCollection().getRoutes());
+    }
+
+    protected void populateRests() throws Exception {
+        ModelCamelContext camelContext = getContext();
+        if (camelContext == null) {
+            throw new IllegalArgumentException("CamelContext has not been injected!");
+        }
+        getRestCollection().setCamelContext(camelContext);
+        camelContext.addRestDefinitions(getRestCollection().getRests());
     }
 
     public RestsDefinition getRestCollection() {

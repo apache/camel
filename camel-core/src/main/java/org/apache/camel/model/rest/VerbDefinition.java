@@ -20,11 +20,15 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElementRef;
+import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.model.ToDefinition;
 
+@XmlRootElement(name = "verb")
 @XmlAccessorType(XmlAccessType.FIELD)
-public abstract class VerbDefinition {
+public class VerbDefinition {
+
+    // TODO: we would ideally want this to be abstract and not in the XML DSL
 
     @XmlAttribute
     private String uri;
@@ -47,4 +51,5 @@ public abstract class VerbDefinition {
     public void setTo(ToDefinition to) {
         this.to = to;
     }
+
 }

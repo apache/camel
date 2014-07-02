@@ -65,10 +65,10 @@ public class RestDefinition {
     // Fluent API
     //-------------------------------------------------------------------------
 
-    public PathDefinition path(String url) {
+    public PathDefinition path(String uri) {
         PathDefinition answer = new PathDefinition();
         getPaths().add(answer);
-        answer.setUrl(url);
+        answer.setUri(uri);
         return answer;
     }
 

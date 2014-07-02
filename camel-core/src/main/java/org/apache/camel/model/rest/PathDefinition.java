@@ -31,17 +31,17 @@ import org.apache.camel.model.ToDefinition;
 public class PathDefinition {
 
     @XmlAttribute
-    private String url;
+    private String uri;
 
     @XmlElementRef
     private List<VerbDefinition> verbs = new ArrayList<VerbDefinition>();
 
-    public String getUrl() {
-        return url;
+    public String getUri() {
+        return uri;
     }
 
-    public void setUrl(String url) {
-        this.url = url;
+    public void setUri(String uri) {
+        this.uri = uri;
     }
 
     public List<VerbDefinition> getVerbs() {

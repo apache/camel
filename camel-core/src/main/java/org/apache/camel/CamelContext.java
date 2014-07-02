@@ -29,6 +29,7 @@ import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RoutesDefinition;
+import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.spi.CamelContextNameStrategy;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.DataFormat;
@@ -385,6 +386,24 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      */
     @Deprecated
     RouteDefinition getRouteDefinition(String id);
+
+    /**
+     * Returns a list of the current REST definitions
+     *
+     * @return list of the current REST definitions
+     * @deprecated use {@link org.apache.camel.model.ModelCamelContext#getRestDefinitions()}
+     */
+    @Deprecated
+    List<RestDefinition> getRestDefinitions();
+
+    /**
+     * Adds a collection of rest definitions to the context
+     *
+     * @param restDefinitions the rest(s) definition to add
+     * @throws Exception if the rest definitions could not be created for whatever reason
+     */
+    @Deprecated
+    void addRestDefinitions(Collection<RestDefinition> restDefinitions) throws Exception;
 
     /**
      * Returns the order in which the route inputs was started.

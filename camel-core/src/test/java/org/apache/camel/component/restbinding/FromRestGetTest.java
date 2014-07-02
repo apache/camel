@@ -19,7 +19,8 @@ package org.apache.camel.component.restbinding;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.model.rest.PathDefinition;
+import org.apache.camel.model.rest.RestDefinition;
 
 public class FromRestGetTest extends ContextTestSupport {
 
@@ -33,26 +34,24 @@ public class FromRestGetTest extends ContextTestSupport {
         return context;
     }
 
-/*    public void testFromRestModel() {
-        assertEquals(1, context.getRoutes().size());
+    public void testFromRestModel() {
+        assertEquals(2, context.getRoutes().size());
 
-        RouteDefinition route = context.getRouteDefinition("foo");
-        assertNotNull(route);
+        RestDefinition rest = context.getRestDefinitions().get(0);
+        assertNotNull(rest);
 
-        FromRestDefinition from = (FromRestDefinition) route.getInputs().get(0);
-        assertNotNull(from);
-        assertEquals("get", from.getVerb());
-        assertEquals("/hello", from.getPath());
-        assertNull(from.getAccept());
+        PathDefinition path = rest.getPaths().get(0);
+        assertNotNull(0);
+        assertEquals("/say", path.getUri());
+
+        assertEquals("/hello", path.getVerbs().get(0).getUri());
+        assertEquals("direct:hello", path.getVerbs().get(0).getTo().getUri());
+
+        assertEquals("/bye", path.getVerbs().get(1).getUri());
+        assertEquals("direct:bye", path.getVerbs().get(1).getTo().getUri());
+
+        assertEquals(null, path.getVerbs().get(2).getUri());
     }
-
-    public void testFromRest() throws Exception {
-        getMockEndpoint("mock:foo").expectedMessageCount(1);
-
-        template.sendBody("seda:get-hello", "Hello World");
-
-        assertMockEndpointsSatisfied();
-    }*/
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {

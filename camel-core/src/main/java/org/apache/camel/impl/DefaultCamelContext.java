@@ -82,6 +82,7 @@ import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RouteDefinitionHelper;
 import org.apache.camel.model.RoutesDefinition;
+import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.processor.interceptor.BacklogDebugger;
 import org.apache.camel.processor.interceptor.BacklogTracer;
 import org.apache.camel.processor.interceptor.Debug;
@@ -171,6 +172,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     private ManagementStrategy managementStrategy;
     private ManagementMBeanAssembler managementMBeanAssembler;
     private final List<RouteDefinition> routeDefinitions = new ArrayList<RouteDefinition>();
+    private final List<RestDefinition> restDefinitions = new ArrayList<RestDefinition>();
     private List<InterceptStrategy> interceptStrategies = new ArrayList<InterceptStrategy>();
 
     // special flags to control the first startup which can are special
@@ -1405,6 +1407,18 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
             }
         }
         return null;
+    }
+
+    public synchronized List<RestDefinition> getRestDefinitions() {
+        return restDefinitions;
+    }
+
+    public void addRestDefinitions(Collection<RestDefinition> restDefinitions) throws Exception {
+        this.restDefinitions.addAll(restDefinitions);
+        // TODO: should we support not starting rest?
+        //if (shouldStartRoutes()) {
+        //    startRouteDefinitions(routeDefinitions);
+        //}
     }
 
     public List<InterceptStrategy> getInterceptStrategies() {
