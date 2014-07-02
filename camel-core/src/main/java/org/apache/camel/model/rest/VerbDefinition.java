@@ -28,13 +28,22 @@ import org.apache.camel.model.ToDefinition;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class VerbDefinition {
 
-    // TODO: we would ideally want this to be abstract and not in the XML DSL
+    @XmlAttribute
+    private String method;
 
     @XmlAttribute
     private String uri;
 
-    @XmlElementRef(required = true)
+    @XmlElementRef
     private ToDefinition to;
+
+    public String getMethod() {
+        return method;
+    }
+
+    public void setMethod(String method) {
+        this.method = method;
+    }
 
     public String getUri() {
         return uri;

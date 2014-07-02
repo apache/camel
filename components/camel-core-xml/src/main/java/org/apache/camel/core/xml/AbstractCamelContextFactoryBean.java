@@ -311,6 +311,9 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
 
             findRouteBuilders();
             installRoutes();
+
+            // and add the rests
+            getContext().addRestDefinitions(getRests());
         }
     }
 

@@ -27,19 +27,17 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.camel.model.ToDefinition;
 
 @XmlRootElement(name = "path")
-@XmlAccessorType(XmlAccessType.FIELD)
+@XmlAccessorType(XmlAccessType.PROPERTY)
 public class PathDefinition {
 
-    @XmlAttribute
     private String uri;
-
-    @XmlElementRef
     private List<VerbDefinition> verbs = new ArrayList<VerbDefinition>();
 
     public String getUri() {
         return uri;
     }
 
+    @XmlAttribute
     public void setUri(String uri) {
         this.uri = uri;
     }
@@ -48,6 +46,7 @@ public class PathDefinition {
         return verbs;
     }
 
+    @XmlElementRef
     public void setVerbs(List<VerbDefinition> verbs) {
         this.verbs = verbs;
     }
