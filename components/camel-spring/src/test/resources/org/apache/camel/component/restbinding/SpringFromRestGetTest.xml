@@ -23,7 +23,7 @@
     ">
 
   <!-- use a dummy rest component for the rest engine -->
-  <bean id="dummy-rest" class="org.apache.camel.component.restbinding.DummyRestBindingCapableComponent"/>
+  <bean id="dummy-rest" class="org.apache.camel.component.restbinding.DummyRestBindingCapableComponent" init-method="enlist"/>
 
   <camelContext xmlns="http://camel.apache.org/schema/spring">
 

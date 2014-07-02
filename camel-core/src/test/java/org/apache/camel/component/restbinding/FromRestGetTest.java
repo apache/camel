@@ -35,7 +35,7 @@ public class FromRestGetTest extends ContextTestSupport {
     }
 
     public void testFromRestModel() {
-        assertEquals(2, context.getRoutes().size());
+        assertEquals(2 + 3, context.getRoutes().size());
 
         RestDefinition rest = context.getRestDefinitions().get(0);
         assertNotNull(rest);

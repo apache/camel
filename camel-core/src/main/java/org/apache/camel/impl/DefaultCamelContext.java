@@ -1415,10 +1415,13 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
 
     public void addRestDefinitions(Collection<RestDefinition> restDefinitions) throws Exception {
         this.restDefinitions.addAll(restDefinitions);
-        // TODO: should we support not starting rest?
-        //if (shouldStartRoutes()) {
-        //    startRouteDefinitions(routeDefinitions);
-        //}
+
+        // convert rests into routes so we reuse routes for runtime
+        List<RouteDefinition> routes = new ArrayList<RouteDefinition>();
+        for (RestDefinition rest : restDefinitions) {
+            routes.addAll(rest.asRouteDefinition(this));
+        }
+        addRouteDefinitions(routes);
     }
 
     public List<InterceptStrategy> getInterceptStrategies() {

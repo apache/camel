@@ -24,6 +24,9 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.apache.camel.model.ModelCamelContext;
+import org.apache.camel.model.RouteDefinition;
+
 /**
  * Represents an XML &lt;rest/&gt; element
  */
@@ -69,6 +72,27 @@ public class RestDefinition {
         PathDefinition answer = new PathDefinition();
         getPaths().add(answer);
         answer.setUri(uri);
+        return answer;
+    }
+
+    /**
+     * Transforms this REST definition into a list of {@link org.apache.camel.model.RouteDefinition} which
+     * Camel routing engine can add and run. This allows us to define REST services using this
+     * REST DSL and turn those into regular Camel routes.
+     */
+    public List<RouteDefinition> asRouteDefinition(ModelCamelContext camelContext) throws Exception {
+        List<RouteDefinition> answer = new ArrayList<RouteDefinition>();
+
+        for (PathDefinition path : getPaths()) {
+            String uri = path.getUri();
+            for (VerbDefinition verb : path.getVerbs()) {
+                String from = "rest-binding:" + verb.getMethod() + ":" + uri + (verb.getUri() != null ? verb.getUri() : "");
+                RouteDefinition route = new RouteDefinition(from);
+                answer.add(route);
+                route.getOutputs().add(verb.getTo());
+            }
+        }
+
         return answer;
     }
 

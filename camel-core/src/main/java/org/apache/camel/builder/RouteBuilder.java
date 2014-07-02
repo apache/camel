@@ -274,14 +274,13 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
     }
 
     public void addRoutesToCamelContext(CamelContext context) throws Exception {
+        // must configure routes before rests
         configureRoutes((ModelCamelContext)context);
-        // add routes to Camel by populating them
-        populateRoutes();
-
-        // after routes then configure and populate rests
         configureRests((ModelCamelContext) context);
-        // add rests to Camel by populating them
+
+        // but populate rests before routes, as we want to turn rests into routes
         populateRests();
+        populateRoutes();
     }
 
     /**
