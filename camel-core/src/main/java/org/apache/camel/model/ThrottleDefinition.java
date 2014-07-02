@@ -168,7 +168,7 @@ public class ThrottleDefinition extends ExpressionNode implements ExecutorServic
     }
     
     /**
-     * Whether or not throttler throws the RejectExceutionException when the exchange exceeds the request limit
+     * Whether or not throttler throws the ThrottlerRejectedExecutionException when the exchange exceeds the request limit
      * <p/>
      * Is by default <tt>false</tt>
      *
