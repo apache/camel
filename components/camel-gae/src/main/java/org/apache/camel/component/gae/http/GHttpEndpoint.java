@@ -40,6 +40,8 @@ import org.apache.camel.component.http.HttpBinding;
 import org.apache.camel.component.http.HttpClientConfigurer;
 import org.apache.camel.component.servlet.ServletComponent;
 import org.apache.camel.component.servlet.ServletEndpoint;
+import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
 import org.apache.commons.httpclient.HttpConnectionManager;
@@ -49,12 +51,17 @@ import org.apache.commons.httpclient.params.HttpClientParams;
  * Represents a <a href="http://camel.apache.org/ghttp.html">Google App Engine
  * HTTP endpoint</a>.
  */
+@UriEndpoint(scheme = "ghttp")
 public class GHttpEndpoint extends ServletEndpoint implements OutboundBindingSupport<GHttpEndpoint, HTTPRequest, HTTPResponse> {
 
+    @UriParam
     public static final String GHTTP_SCHEME = "ghttp";
+    @UriParam
     public static final String GHTTPS_SCHEME = "ghttps";
-    
+
+    @UriParam
     public static final String HTTP_SCHEME = "http";
+    @UriParam
     public static final String HTTPS_SCHEME = "https";
     
     private URLFetchService urlFetchService;
