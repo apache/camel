@@ -22,14 +22,18 @@ import com.google.appengine.api.mail.MailService.Message;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.gae.bind.OutboundBinding;
-import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.impl.UriEndpointComponent;
 
 /**
  * The <a href="http://camel.apache.org/gmail.html">Google App Engine Mail
  * Component</a> supports outbound mail communication. It makes use of the mail
  * service provided by Google App Engine.
  */
-public class GMailComponent extends DefaultComponent {
+public class GMailComponent extends UriEndpointComponent {
+
+    public GMailComponent() {
+        super(GMailEndpoint.class);
+    }
 
     @Override
     @SuppressWarnings("unchecked")
