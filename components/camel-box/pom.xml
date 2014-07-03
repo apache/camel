@@ -488,6 +488,12 @@
               <includes>
                 <include>**/*Test.java</include>
               </includes>
+              <systemPropertyVariables>
+                <camel.box.userName>${camel.box.userName}</camel.box.userName>
+                <camel.box.userPassword>${camel.box.userPassword}</camel.box.userPassword>
+                <camel.box.clientId>${camel.box.clientId}</camel.box.clientId>
+                <camel.box.clientSecret>${camel.box.clientSecret}</camel.box.clientSecret>
+              </systemPropertyVariables>
             </configuration>
           </plugin>
         </plugins>

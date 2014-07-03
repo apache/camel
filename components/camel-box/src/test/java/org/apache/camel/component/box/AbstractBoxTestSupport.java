@@ -82,6 +82,15 @@ public abstract class AbstractBoxTestSupport extends CamelTestSupport {
                 e);
         }
 
+        addSystemProperty("camel.box.userName",     "userName",     properties);
+        addSystemProperty("camel.box.userPassword", "userPassword", properties);
+        addSystemProperty("camel.box.clientId",     "clientId",     properties);
+        addSystemProperty("camel.box.clientSecret", "clientSecret", properties);
+        addSystemProperty("camel.box.refreshToken", "refreshToken", properties);
+        addSystemProperty("camel.box.testFolderId", "testFolderId", properties);
+        addSystemProperty("camel.box.testFileId", "testFileId",   properties);
+        addSystemProperty("camel.box.testUserId", "testUserId", properties);
+
         // cache test properties
         refreshToken = properties.getProperty(REFRESH_TOKEN_PROPERTY);
         testFolderId = properties.getProperty("testFolderId");
@@ -134,6 +143,13 @@ public abstract class AbstractBoxTestSupport extends CamelTestSupport {
         context.addComponent("box", component);
 
         return context;
+    }
+
+    private void addSystemProperty(String sourceName, String targetName, Properties properties) {
+        String value = System.getProperty(sourceName);
+        if( value!=null && !value.trim().isEmpty() ) {
+            properties.put(targetName, value);
+        }
     }
 
     @AfterClass
