@@ -24,15 +24,20 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.http.HttpClientConfigurer;
 import org.apache.camel.component.servlet.ServletEndpoint;
+import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
 import org.apache.commons.httpclient.HttpConnectionManager;
 import org.apache.commons.httpclient.params.HttpClientParams;
 
 /**
  *
  */
+@UriEndpoint(scheme = "atmosphere-websocket", consumerClass = WebsocketConsumer.class)
 public class WebsocketEndpoint extends ServletEndpoint {
     private WebSocketStore store;
+    @UriParam
     private boolean sendToAll;
+    @UriParam
     private boolean useStreaming;
     
     public WebsocketEndpoint(String endPointURI, WebsocketComponent component, URI httpUri, HttpClientParams params, HttpConnectionManager httpConnectionManager,
