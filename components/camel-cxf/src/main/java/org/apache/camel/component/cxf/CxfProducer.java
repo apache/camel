@@ -330,6 +330,7 @@ public class CxfProducer extends DefaultProducer implements AsyncProcessor {
     private BindingOperationInfo getBindingOperationInfo(Exchange ex) {
         CxfEndpoint endpoint = (CxfEndpoint)this.getEndpoint();
         BindingOperationInfo answer = null;
+        LOG.info("If '{}' header is not specified, the Producer will pick up the first available operation", CxfConstants.OPERATION_NAME);
         String lp = ex.getIn().getHeader(CxfConstants.OPERATION_NAME, String.class);
         if (lp == null) {
             lp = endpoint.getDefaultOperationName();
