@@ -24,7 +24,7 @@ package $packageName;
 import java.lang.reflect.Method;
 import java.util.List;
 
-import $proxyType.Name;
+import $proxyType.CanonicalName;
 
 import org.apache.camel.util.component.ApiMethod;
 import org.apache.camel.util.component.ApiMethodImpl;
