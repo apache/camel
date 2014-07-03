@@ -20,8 +20,6 @@
     <componentName>Box</componentName>
     <componentPackage>org.apache.camel.component.box</componentPackage>
     <outPackage>org.apache.camel.component.box.internal</outPackage>
-    <boxjavalibv2.version>3.0.9</boxjavalibv2.version>
-    <htmlunit.version>2.15</htmlunit.version>
 
     <camel.osgi.export.pkg>${componentPackage}</camel.osgi.export.pkg>
     <camel.osgi.private.pkg>${outPackage}</camel.osgi.private.pkg>
