@@ -33,7 +33,7 @@ public abstract class AbstractMetricsProducer<T extends AbstractMetricsEndpoint>
             doProcess(exchange, endpoint, registry, finalMetricsName);
         }
         catch (Exception e) {
-            LOG.warn("Failed to produce metrics for {} in {} - {}", finalMetricsName, getClass().getSimpleName(), e.getMessage());
+            LOG.warn("Failed to produce metrics for {} in {} - {}", new Object[] { finalMetricsName, getClass().getSimpleName(), e.getMessage() });
         }
         clearMetricsHeaders(in);
     }

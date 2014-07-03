@@ -7,7 +7,7 @@ import org.apache.camel.spi.UriParam;
 
 import com.codahale.metrics.MetricRegistry;
 
-@UriEndpoint(scheme = "metrics:counter")
+@UriEndpoint(scheme = "metrics")
 public class CounterEndpoint extends AbstractMetricsEndpoint {
 
     public static final String ENDPOINT_URI = "metrics:counter";

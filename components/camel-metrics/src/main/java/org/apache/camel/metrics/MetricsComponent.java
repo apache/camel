@@ -88,7 +88,7 @@ public class MetricsComponent extends DefaultComponent {
             type = MetricsType.getByName(name);
         }
         if (type == null) {
-            throw new RuntimeCamelException("Unknow metrics type \"" + name + "\"");
+            throw new RuntimeCamelException("Unknown metrics type \"" + name + "\"");
         }
         return type;
     }

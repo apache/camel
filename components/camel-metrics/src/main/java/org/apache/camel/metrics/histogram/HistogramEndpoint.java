@@ -7,7 +7,7 @@ import org.apache.camel.spi.UriParam;
 
 import com.codahale.metrics.MetricRegistry;
 
-@UriEndpoint(scheme = "metrics:histogram")
+@UriEndpoint(scheme = "metrics")
 public class HistogramEndpoint extends AbstractMetricsEndpoint {
 
     public static String ENDPOINT_URI = "metrics:histogram";
