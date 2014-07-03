@@ -1058,7 +1058,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         } else if ("cxfrs".equals(componentName)) {
             return "cxf/jaxrs";
         } else if ("gauth".equals(componentName) || "ghttp".equals(componentName) || "glogin".equals(componentName)
-                ||"gmail".equals(componentName) || "gtask".equals(componentName) ) {
+                || "gmail".equals(componentName) || "gtask".equals(componentName)) {
             return "gae/" + componentName.substring(1);
         }
         return componentName.replaceAll("-", "");
