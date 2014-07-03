@@ -1060,6 +1060,8 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         } else if ("gauth".equals(componentName) || "ghttp".equals(componentName) || "glogin".equals(componentName)
                 || "gmail".equals(componentName) || "gtask".equals(componentName)) {
             return "gae/" + componentName.substring(1);
+        } else if ("atmosphere-websocket".equals(componentName)) {
+            return "atmosphere/websocket";
         }
         return componentName.replaceAll("-", "");
     }
