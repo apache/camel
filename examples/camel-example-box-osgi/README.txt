@@ -13,14 +13,14 @@ Then you will need to compile the example:
 To run the example on Apache ServiceMix 4.x or Apache Karaf 2.2.x
 
 1) launch karaf
-  
+
 2) Add features required
 features:addUrl mvn:org.apache.camel.karaf/apache-camel/${version}/xml/features
 features:install camel-spring
 features:install camel-box
-  
+
 3) Deploy the example
-osgi:install -s mvn:org.apache.camel/camel-example-cxf-osgi/${version}
+osgi:install -s mvn:org.apache.camel/camel-example-box-osgi/${version}
 
 4) Copy files to the inbox directory.
 

@@ -23,13 +23,24 @@
            http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
            ">
 
+  <bean id="placeholder" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+    <property name="locations">
+      <list>
+        <value>file:box.com.properties</value>
+      </list>
+    </property>
+    <property name="ignoreResourceNotFound" value="true" />
+    <property name="searchSystemEnvironment" value="true" />
+    <property name="systemPropertiesModeName" value="SYSTEM_PROPERTIES_MODE_OVERRIDE" />
+  </bean>
+
   <bean id="box" class="org.apache.camel.component.box.BoxComponent">
     <property name="configuration">
       <bean class="org.apache.camel.component.box.BoxConfiguration">
-        <property name="userName" value=""/>
-        <property name="userPassword" value=""/>
-        <property name="clientId" value=""/>
-        <property name="clientSecret" value=""/>
+        <property name="userName" value="${box.userName}"/>
+        <property name="userPassword" value="${box.userPassword}"/>
+        <property name="clientId" value="${box.clientId}"/>
+        <property name="clientSecret" value="${box.clientSecret}"/>
       </bean>
     </property>
   </bean>
