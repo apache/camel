@@ -49,6 +49,14 @@ public class ManagedBacklogDebugger implements ManagedBacklogDebuggerMBean {
         return backlogDebugger;
     }
 
+    public String getCamelId() {
+        return camelContext.getName();
+    }
+
+    public String getCamelManagementName() {
+        return camelContext.getManagementName();
+    }
+
     public String getLoggingLevel() {
         return backlogDebugger.getLoggingLevel();
     }
