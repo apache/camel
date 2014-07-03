@@ -1,17 +1,31 @@
+/**
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.apache.camel.metrics.timer;
 
-import static org.apache.camel.metrics.MetricsComponent.HEADER_TIMER_ACTION;
-import static org.apache.camel.metrics.timer.TimerEndpoint.ENDPOINT_URI;
-
+import com.codahale.metrics.MetricRegistry;
+import com.codahale.metrics.Timer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.metrics.AbstractMetricsProducer;
 import org.apache.camel.metrics.timer.TimerEndpoint.TimerAction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
-import com.codahale.metrics.MetricRegistry;
-import com.codahale.metrics.Timer;
+import static org.apache.camel.metrics.MetricsComponent.HEADER_TIMER_ACTION;
+import static org.apache.camel.metrics.timer.TimerEndpoint.ENDPOINT_URI;
 
 public class TimerProducer extends AbstractMetricsProducer<TimerEndpoint> {
 
@@ -28,11 +42,9 @@ public class TimerProducer extends AbstractMetricsProducer<TimerEndpoint> {
         TimerAction finalAction = in.getHeader(HEADER_TIMER_ACTION, action, TimerAction.class);
         if (finalAction == TimerAction.start) {
             handleStart(exchange, registry, metricsName);
-        }
-        else if (finalAction == TimerAction.stop) {
+        } else if (finalAction == TimerAction.stop) {
             handleStop(exchange, registry, metricsName);
-        }
-        else {
+        } else {
             LOG.warn("No action provided for timer \"{}\"", metricsName);
         }
     }
@@ -44,8 +56,7 @@ public class TimerProducer extends AbstractMetricsProducer<TimerEndpoint> {
             Timer timer = registry.timer(metricsName);
             context = timer.time();
             exchange.setProperty(propertyName, context);
-        }
-        else {
+        } else {
             LOG.warn("Timer \"{}\" already running", metricsName);
         }
     }
@@ -56,8 +67,7 @@ public class TimerProducer extends AbstractMetricsProducer<TimerEndpoint> {
         if (context != null) {
             context.stop();
             exchange.removeProperty(propertyName);
-        }
-        else {
+        } else {
             LOG.warn("Timer \"{}\" not found", metricsName);
         }
     }

@@ -1,14 +1,30 @@
+/**
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.apache.camel.metrics.counter;
 
-import static org.apache.camel.metrics.MetricsComponent.HEADER_COUNTER_DECREMENT;
-import static org.apache.camel.metrics.MetricsComponent.HEADER_COUNTER_INCREMENT;
-
-import org.apache.camel.Exchange;
-import org.apache.camel.Message;
-import org.apache.camel.metrics.AbstractMetricsProducer;
 
 import com.codahale.metrics.Counter;
 import com.codahale.metrics.MetricRegistry;
+import org.apache.camel.Exchange;
+import org.apache.camel.Message;
+import org.apache.camel.metrics.AbstractMetricsProducer;
+import static org.apache.camel.metrics.MetricsComponent.HEADER_COUNTER_DECREMENT;
+import static org.apache.camel.metrics.MetricsComponent.HEADER_COUNTER_INCREMENT;
+
 
 public class CounterProducer extends AbstractMetricsProducer<CounterEndpoint> {
 
@@ -26,11 +42,9 @@ public class CounterProducer extends AbstractMetricsProducer<CounterEndpoint> {
         Long finalDecrement = getLongHeader(in, HEADER_COUNTER_DECREMENT, decrement);
         if (finalIncrement != null) {
             counter.inc(finalIncrement);
-        }
-        else if (finalDecrement != null) {
+        } else if (finalDecrement != null) {
             counter.dec(finalDecrement);
-        }
-        else {
+        } else {
             counter.inc();
         }
     }
