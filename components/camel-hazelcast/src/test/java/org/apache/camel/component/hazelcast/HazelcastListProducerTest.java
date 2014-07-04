@@ -109,13 +109,13 @@ public class HazelcastListProducerTest extends HazelcastCamelTestSupport {
             @Override
             public void configure() throws Exception {
 
-                from("direct:addInvalid").setHeader(HazelcastConstants.OPERATION, constant("bogus")).to(String.format("hazelcast:%sbar", HazelcastConstants.LIST_PREFIX));
+                from("direct:addInvalid").setHeader(HazelcastConstants.OPERATION, constant("bogus")).toF("hazelcast:%sbar", HazelcastConstants.LIST_PREFIX);
 
-                from("direct:add").setHeader(HazelcastConstants.OPERATION, constant(HazelcastConstants.ADD_OPERATION)).to(String.format("hazelcast:%sbar", HazelcastConstants.LIST_PREFIX));
+                from("direct:add").setHeader(HazelcastConstants.OPERATION, constant(HazelcastConstants.ADD_OPERATION)).toF("hazelcast:%sbar", HazelcastConstants.LIST_PREFIX);
 
-                from("direct:set").setHeader(HazelcastConstants.OPERATION, constant(HazelcastConstants.SETVALUE_OPERATION)).to(String.format("hazelcast:%sbar", HazelcastConstants.LIST_PREFIX));
+                from("direct:set").setHeader(HazelcastConstants.OPERATION, constant(HazelcastConstants.SETVALUE_OPERATION)).toF("hazelcast:%sbar", HazelcastConstants.LIST_PREFIX);
 
-                from("direct:get").setHeader(HazelcastConstants.OPERATION, constant(HazelcastConstants.GET_OPERATION)).to(String.format("hazelcast:%sbar", HazelcastConstants.LIST_PREFIX))
+                from("direct:get").setHeader(HazelcastConstants.OPERATION, constant(HazelcastConstants.GET_OPERATION)).toF("hazelcast:%sbar", HazelcastConstants.LIST_PREFIX)
                         .to("seda:out");
 
                 from("direct:removevalue").setHeader(HazelcastConstants.OPERATION, constant(HazelcastConstants.REMOVEVALUE_OPERATION)).to(
