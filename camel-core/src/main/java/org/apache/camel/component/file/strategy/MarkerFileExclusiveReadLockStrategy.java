@@ -37,6 +37,8 @@ import org.slf4j.LoggerFactory;
 public class MarkerFileExclusiveReadLockStrategy implements GenericFileExclusiveReadLockStrategy<File> {
     private static final Logger LOG = LoggerFactory.getLogger(MarkerFileExclusiveReadLockStrategy.class);
 
+    private boolean markerFile = true;
+
     @Override
     public void prepareOnStartup(GenericFileOperations<File> operations, GenericFileEndpoint<File> endpoint) {
         String dir = endpoint.getConfiguration().getDirectory();
@@ -56,6 +58,12 @@ public class MarkerFileExclusiveReadLockStrategy implements GenericFileExclusive
     @Override
     public boolean acquireExclusiveReadLock(GenericFileOperations<File> operations,
                                             GenericFile<File> file, Exchange exchange) throws Exception {
+
+        if (!markerFile) {
+            // if not using marker file then we assume acquired
+            return true;
+        }
+
         String lockFileName = getLockFileName(file);
         LOG.trace("Locking the file: {} using the lock file name: {}", file, lockFileName);
 
@@ -70,6 +78,11 @@ public class MarkerFileExclusiveReadLockStrategy implements GenericFileExclusive
     @Override
     public void releaseExclusiveReadLock(GenericFileOperations<File> operations,
                                          GenericFile<File> file, Exchange exchange) throws Exception {
+        if (!markerFile) {
+            // if not using marker file then nothing to release
+            return;
+        }
+
         String lockFileName = exchange.getProperty(Exchange.FILE_LOCK_FILE_NAME, getLockFileName(file), String.class);
         File lock = new File(lockFileName);
         // only release the file if camel get the lock before
@@ -95,6 +108,11 @@ public class MarkerFileExclusiveReadLockStrategy implements GenericFileExclusive
     @Override
     public void setReadLockLoggingLevel(LoggingLevel readLockLoggingLevel) {
         // noop
+    }
+
+    @Override
+    public void setMarkerFiler(boolean markerFile) {
+        this.markerFile = markerFile;
     }
 
     private static void deleteLockFiles(File dir, boolean recursive) {
