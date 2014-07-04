@@ -159,6 +159,7 @@ public class MethodInfo {
             recipientList.setStopOnException(recipientListAnnotation.stopOnException());
             recipientList.setIgnoreInvalidEndpoints(recipientListAnnotation.ignoreInvalidEndpoints());
             recipientList.setParallelProcessing(recipientListAnnotation.parallelProcessing());
+            recipientList.setParallelAggregate(recipientListAnnotation.parallelAggregate());
             recipientList.setStreaming(recipientListAnnotation.streaming());
             recipientList.setTimeout(recipientListAnnotation.timeout());
             recipientList.setShareUnitOfWork(recipientListAnnotation.shareUnitOfWork());

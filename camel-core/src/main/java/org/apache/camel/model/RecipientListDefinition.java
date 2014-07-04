@@ -78,6 +78,8 @@ public class RecipientListDefinition<Type extends ProcessorDefinition<Type>> ext
     private Boolean shareUnitOfWork;
     @XmlAttribute
     private Integer cacheSize;
+    @XmlAttribute
+    private Boolean parallelAggregate;
 
     public RecipientListDefinition() {
     }
@@ -117,7 +119,8 @@ public class RecipientListDefinition<Type extends ProcessorDefinition<Type>> ext
         }
         answer.setAggregationStrategy(createAggregationStrategy(routeContext));
         answer.setParallelProcessing(isParallelProcessing());
-        answer.setStreaming(isStreaming());   
+        answer.setParallelAggregate(isParallelAggregate());
+        answer.setStreaming(isStreaming());
         answer.setShareUnitOfWork(isShareUnitOfWork());
         if (getCacheSize() != null) {
             answer.setCacheSize(getCacheSize());
@@ -284,7 +287,20 @@ public class RecipientListDefinition<Type extends ProcessorDefinition<Type>> ext
         setParallelProcessing(true);
         return this;
     }
-    
+
+    /**
+     * Doing the aggregate work in parallel
+     * <p/>
+     * Notice that if enabled, then the {@link org.apache.camel.processor.aggregate.AggregationStrategy} in use
+     * must be implemented as thread safe, as concurrent threads can call the <tt>aggregate</tt> methods at the same time.
+     *
+     * @return the builder
+     */
+    public RecipientListDefinition<Type> parallelAggregate() {
+        setParallelAggregate(true);
+        return this;
+    }
+
     /**
      * Doing the recipient list work in streaming model
      *
@@ -532,5 +548,23 @@ public class RecipientListDefinition<Type extends ProcessorDefinition<Type>> ext
 
     public void setCacheSize(Integer cacheSize) {
         this.cacheSize = cacheSize;
+    }
+
+    public Boolean getParallelAggregate() {
+        return parallelAggregate;
+    }
+
+    /**
+     * Whether to aggregate using a sequential single thread, or allow parallel aggregation.
+     * <p/>
+     * Notice that if enabled, then the {@link org.apache.camel.processor.aggregate.AggregationStrategy} in use
+     * must be implemented as thread safe, as concurrent threads can call the <tt>aggregate</tt> methods at the same time.
+     */
+    public boolean isParallelAggregate() {
+        return parallelAggregate != null && parallelAggregate;
+    }
+
+    public void setParallelAggregate(Boolean parallelAggregate) {
+        this.parallelAggregate = parallelAggregate;
     }
 }
