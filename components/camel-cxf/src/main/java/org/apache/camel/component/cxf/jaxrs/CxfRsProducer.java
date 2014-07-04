@@ -90,8 +90,36 @@ public class CxfRsProducer extends DefaultProducer {
             invokeProxyClient(exchange);
         }
     }
-
+    
     @SuppressWarnings("unchecked")
+    protected void setupClientQueryAndHeaders(Client client, Exchange exchange) throws Exception {
+        Message inMessage = exchange.getIn();
+        CxfRsEndpoint cxfRsEndpoint = (CxfRsEndpoint) getEndpoint();
+        // check if there is a query map in the message header
+        Map<String, String> maps = inMessage.getHeader(CxfConstants.CAMEL_CXF_RS_QUERY_MAP, Map.class);
+        if (maps == null) {
+            // Get the map from HTTP_QUERY header
+            String queryString = inMessage.getHeader(Exchange.HTTP_QUERY, String.class);
+            if (queryString != null) {
+                maps = getQueryParametersFromQueryString(queryString,
+                                                         IOHelper.getCharsetName(exchange));
+            }
+        }
+        if (maps == null) {
+            maps = cxfRsEndpoint.getParameters();
+        }
+        if (maps != null) {
+            for (Map.Entry<String, String> entry : maps.entrySet()) {
+                client.query(entry.getKey(), entry.getValue());
+            }
+        }
+        
+        CxfRsBinding binding = cxfRsEndpoint.getBinding();
+        // set headers
+        client.headers(binding.bindCamelHeadersToRequestHeaders(inMessage.getHeaders(), exchange));
+        
+    }
+
     protected void invokeHttpClient(Exchange exchange) throws Exception {
         Message inMessage = exchange.getIn();
         JAXRSClientFactoryBean cfb = clientFactoryBeanCache.get(CxfEndpointUtils
@@ -119,24 +147,6 @@ public class CxfRsProducer extends DefaultProducer {
         }
 
         CxfRsEndpoint cxfRsEndpoint = (CxfRsEndpoint) getEndpoint();
-        // check if there is a query map in the message header
-        Map<String, String> maps = inMessage.getHeader(CxfConstants.CAMEL_CXF_RS_QUERY_MAP, Map.class);
-        if (maps == null) {
-            // Get the map from HTTP_QUERY header
-            String queryString = inMessage.getHeader(Exchange.HTTP_QUERY, String.class);
-            if (queryString != null) {
-                maps = getQueryParametersFromQueryString(queryString,
-                                                         IOHelper.getCharsetName(exchange));
-            }
-        }
-        if (maps == null) {
-            maps = cxfRsEndpoint.getParameters();
-        }
-        if (maps != null) {
-            for (Map.Entry<String, String> entry : maps.entrySet()) {
-                client.query(entry.getKey(), entry.getValue());
-            }
-        }
 
         CxfRsBinding binding = cxfRsEndpoint.getBinding();
 
@@ -150,9 +160,8 @@ public class CxfRsProducer extends DefaultProducer {
             }
         }
 
-        // set headers
-        client.headers(binding.bindCamelHeadersToRequestHeaders(inMessage.getHeaders(), exchange));
-
+        setupClientQueryAndHeaders(client, exchange);
+        
         // invoke the client
         Object response = null;
         if (responseClass == null || Response.class.equals(responseClass)) {
@@ -210,6 +219,9 @@ public class CxfRsProducer extends DefaultProducer {
         } else {
             target = cfb.createWithValues(varValues);
         }
+        
+        setupClientQueryAndHeaders(target, exchange);
+        
         // find out the method which we want to invoke
         JAXRSServiceFactoryBean sfb = cfb.getServiceFactory();
         sfb.getResourceClasses();
