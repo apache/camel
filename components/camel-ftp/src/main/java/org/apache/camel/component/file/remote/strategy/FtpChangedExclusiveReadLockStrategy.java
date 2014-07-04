@@ -148,6 +148,11 @@ public class FtpChangedExclusiveReadLockStrategy implements GenericFileExclusive
         this.readLockLoggingLevel = readLockLoggingLevel;
     }
 
+    @Override
+    public void setMarkerFiler(boolean markerFiler) {
+        // noop - not supported by ftp
+    }
+
     public long getMinLength() {
         return minLength;
     }
