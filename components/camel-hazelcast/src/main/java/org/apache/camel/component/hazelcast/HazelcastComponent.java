@@ -51,10 +51,19 @@ public class HazelcastComponent extends DefaultComponent {
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
 
+        // Query param named 'hazelcastInstance' (if exists) overrides the instance that was set
+        // programmatically and cancels local instance creation as well.
         HazelcastInstance hzInstance = resolveAndRemoveReferenceParameter(parameters, "hazelcastInstance",
                 HazelcastInstance.class);
         if (hzInstance != null) {
             hazelcastInstance = hzInstance;
+            createOwnInstance = false;
+        }
+
+        // Instance was neither set programmtically nor provided as a bean reference.
+        if (hazelcastInstance == null) {
+            createOwnInstance = true;
+            createOwnInstance();
         }
 
         HazelcastDefaultEndpoint endpoint = null;
@@ -116,13 +125,6 @@ public class HazelcastComponent extends DefaultComponent {
     @Override
     public void doStart() throws Exception {
         super.doStart();
-        if (hazelcastInstance == null) {
-            createOwnInstance = true;
-            Config config = new XmlConfigBuilder().build();
-            // Disable the version check
-            config.getProperties().setProperty("hazelcast.version.check.enabled", "false");
-            hazelcastInstance = Hazelcast.newHazelcastInstance(config);
-        }
     }
 
     @Override
@@ -139,5 +141,12 @@ public class HazelcastComponent extends DefaultComponent {
 
     public void setHazelcastInstance(HazelcastInstance hazelcastInstance) {
         this.hazelcastInstance = hazelcastInstance;
+    }
+
+    private void createOwnInstance() {
+        Config config = new XmlConfigBuilder().build();
+        // Disable the version check
+        config.getProperties().setProperty("hazelcast.version.check.enabled", "false");
+        hazelcastInstance = Hazelcast.newHazelcastInstance(config);
     }
 }
