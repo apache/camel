@@ -1,0 +1,308 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/maven-v4_0_0.xsd">
+
+  <modelVersion>4.0.0</modelVersion>
+
+  <parent>
+    <groupId>org.apache.camel</groupId>
+    <artifactId>camel-google-drive-parent</artifactId>
+    <version>2.14-SNAPSHOT</version>
+  </parent>
+
+  <artifactId>camel-google-drive</artifactId>
+  <packaging>bundle</packaging>
+  <name>Camel GoogleDrive Component</name>
+  <description>Camel Component for GoogleDrive</description>
+  <url>http://www.myorganization.org</url>
+
+  <properties>
+    <schemeName>google-drive</schemeName>
+    <componentName>GoogleDrive</componentName>
+    <componentPackage>org.apache.camel.component.google.drive</componentPackage>
+    <outPackage>org.apache.camel.component.google.drive.internal</outPackage>
+    <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+    <project.reporting.outputEncoding>UTF-8</project.reporting.outputEncoding>
+  </properties>
+
+  <dependencies>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-core</artifactId>
+      <version>2.14-SNAPSHOT</version>
+    </dependency>
+    <dependency>
+        <groupId>com.google.api-client</groupId>
+        <artifactId>google-api-client</artifactId>
+        <version>1.18.0-rc</version>
+    </dependency>
+    <dependency>
+        <groupId>com.google.oauth-client</groupId>
+        <artifactId>google-oauth-client-jetty</artifactId>
+        <version>1.18.0-rc</version>
+    </dependency>
+    <dependency>
+        <groupId>com.google.http-client</groupId>
+        <artifactId>google-http-client-jackson2</artifactId>
+        <version>1.18.0-rc</version>
+    </dependency>
+    <dependency>
+        <groupId>com.google.apis</groupId>
+        <artifactId>google-api-services-drive</artifactId>
+        <version>v2-rev123-1.18.0-rc</version>
+    </dependency>
+
+    <!-- Camel annotations in provided scope to avoid compile errors in IDEs -->
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>spi-annotations</artifactId>
+      <version>2.14-SNAPSHOT</version>
+      <scope>provided</scope>
+    </dependency>
+
+    <!-- Component API javadoc in provided scope to read API signatures -->
+    <dependency>
+        <groupId>com.google.apis</groupId>
+        <artifactId>google-api-services-drive</artifactId>
+        <version>v2-rev123-1.18.0-rc</version>
+      <classifier>javadoc</classifier>
+      <scope>provided</scope>
+    </dependency>
+
+    <!-- logging -->
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-api</artifactId>
+      <version>1.7.7</version>
+    </dependency>
+    <dependency>
+      <groupId>org.slf4j</groupId>
+      <artifactId>slf4j-log4j12</artifactId>
+      <version>1.7.7</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>log4j</groupId>
+      <artifactId>log4j</artifactId>
+      <version>1.2.17</version>
+      <scope>test</scope>
+    </dependency>
+
+    <!-- testing -->
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-test</artifactId>
+      <version>2.14-SNAPSHOT</version>
+      <scope>test</scope>
+    </dependency>
+  </dependencies>
+
+  <build>
+    <defaultGoal>install</defaultGoal>
+
+    <plugins>
+      
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <version>2.5.1</version>
+        <configuration>
+          <source>1.6</source>
+          <target>1.6</target>
+        </configuration>
+      </plugin>
+      
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-resources-plugin</artifactId>
+        <version>2.6</version>
+        <configuration>
+          <encoding>UTF-8</encoding>
+        </configuration>
+      </plugin>
+
+      <!-- to generate the MANIFEST-FILE of the bundle -->
+      <plugin>
+        <groupId>org.apache.felix</groupId>
+        <artifactId>maven-bundle-plugin</artifactId>
+        <version>2.3.7</version>
+        <extensions>true</extensions>
+        <configuration>
+          <instructions>
+            <Bundle-Name>Camel Component for ${componentName}</Bundle-Name>
+            <Bundle-SymbolicName>org.apache.camel.camel-google-drive</Bundle-SymbolicName>
+            <Export-Service>org.apache.camel.spi.ComponentResolver;component=${schemeName}</Export-Service>
+            <Export-Package>${componentPackage};version=${project.version}</Export-Package>
+            <Import-Package>
+              ${componentPackage}.api;version=${project.version},
+              ${componentPackage};version=${project.version},
+              org.apache.camel.*;version=2.14-SNAPSHOT
+            </Import-Package>
+            <Private-Package>${outPackage}</Private-Package>
+            <Implementation-Title>Apache Camel</Implementation-Title>
+            <Implementation-Version>${project.version}</Implementation-Version>
+            <Karaf-Info>Camel;${project.artifactId}=${project.version}</Karaf-Info>
+            <_versionpolicy>[$(version;==;$(@)),$(version;+;$(@)))</_versionpolicy>
+            <_failok>false</_failok>
+          </instructions>
+        </configuration>
+      </plugin>
+
+      <!-- generate Component source and test source -->
+      <plugin>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-api-component-maven-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>generate-test-component-classes</id>
+            <goals>
+              <goal>fromApis</goal>
+            </goals>
+            <configuration>
+              <apis>
+                <api>
+                  <apiName>drive-about</apiName>
+                  <proxyClass>com.google.api.services.drive.Drive$About</proxyClass>
+                  <fromJavadoc/>
+                </api>
+                <api>
+                  <apiName>drive-apps</apiName>
+                  <proxyClass>com.google.api.services.drive.Drive$Apps</proxyClass>
+                  <fromJavadoc/>
+                </api>
+                <api>
+                  <apiName>drive-changes</apiName>
+                  <proxyClass>com.google.api.services.drive.Drive$Changes</proxyClass>
+                  <fromJavadoc/>
+                </api>
+                <api>
+                  <apiName>drive-channels</apiName>
+                  <proxyClass>com.google.api.services.drive.Drive$Channels</proxyClass>
+                  <fromJavadoc/>
+                </api>
+                <api>
+                  <apiName>drive-children</apiName>
+                  <proxyClass>com.google.api.services.drive.Drive$Children</proxyClass>
+                  <fromJavadoc/>
+                </api>
+                <api>
+                  <apiName>drive-comments</apiName>
+                  <proxyClass>com.google.api.services.drive.Drive$Comments</proxyClass>
+                  <fromJavadoc/>
+                </api>
+                <api>
+                  <apiName>drive-files</apiName>
+                  <proxyClass>com.google.api.services.drive.Drive$Files</proxyClass>
+                  <fromJavadoc/>
+                </api>
+                <api>
+                  <apiName>drive-parents</apiName>
+                  <proxyClass>com.google.api.services.drive.Drive$Parents</proxyClass>
+                  <fromJavadoc/>
+                </api>
+                <api>
+                  <apiName>drive-permissions</apiName>
+                  <proxyClass>com.google.api.services.drive.Drive$Permissions</proxyClass>
+                  <fromJavadoc/>
+                </api>
+                <api>
+                  <apiName>drive-properties</apiName>
+                  <proxyClass>com.google.api.services.drive.Drive$Properties</proxyClass>
+                  <fromJavadoc/>
+                </api>
+                <api>
+                  <apiName>drive-realtime</apiName>
+                  <proxyClass>com.google.api.services.drive.Drive$Realtime</proxyClass>
+                  <fromJavadoc/>
+                </api>
+                <api>
+                  <apiName>drive-replies</apiName>
+                  <proxyClass>com.google.api.services.drive.Drive$Replies</proxyClass>
+                  <fromJavadoc/>
+                </api>
+                <api>
+                  <apiName>drive-revisions</apiName>
+                  <proxyClass>com.google.api.services.drive.Drive$Revisions</proxyClass>
+                  <fromJavadoc/>
+                </api>
+              </apis>
+                  <substitutions>
+                    <substitution>
+                      <method>^.+$</method>
+                      <argName>content</argName>
+                      <argType>com.google.api.services.drive.model.Channel</argType>
+                      <replacement>contentChannel</replacement>
+                    </substitution>
+                  </substitutions> 
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+      <!-- add generated source and test source to build -->
+      <plugin>
+        <groupId>org.codehaus.mojo</groupId>
+        <artifactId>build-helper-maven-plugin</artifactId>
+        <version>1.8</version>
+        <executions>
+          <execution>
+            <id>add-generated-sources</id>
+            <goals>
+              <goal>add-source</goal>
+            </goals>
+            <configuration>
+              <sources>
+                <source>${project.build.directory}/generated-sources/camel-component</source>
+              </sources>
+            </configuration>
+          </execution>
+          <execution>
+            <id>add-generated-test-sources</id>
+            <goals>
+              <goal>add-test-source</goal>
+            </goals>
+            <configuration>
+              <sources>
+                <source>${project.build.directory}/generated-test-sources/camel-component</source>
+              </sources>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
+
+    </plugins>
+
+    <pluginManagement>
+      <plugins>
+        <plugin>
+          <groupId>org.apache.camel</groupId>
+          <artifactId>camel-api-component-maven-plugin</artifactId>
+          <version>2.14-SNAPSHOT</version>
+          <configuration>
+            <scheme>${schemeName}</scheme>
+            <componentName>${componentName}</componentName>
+            <componentPackage>${componentPackage}</componentPackage>
+            <outPackage>${outPackage}</outPackage>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
+
+  </build>
+
+  <reporting>
+    <plugins>
+      <plugin>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-api-component-maven-plugin</artifactId>
+        <version>2.14-SNAPSHOT</version>
+        <configuration>
+          <scheme>${schemeName}</scheme>
+          <componentName>${componentName}</componentName>
+          <componentPackage>${componentPackage}</componentPackage>
+          <outPackage>${outPackage}</outPackage>
+        </configuration>
+      </plugin>
+    </plugins>
+  </reporting>
+
+</project>
