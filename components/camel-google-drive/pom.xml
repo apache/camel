@@ -135,7 +135,8 @@
             <Import-Package>
               ${componentPackage}.api;version=${project.version},
               ${componentPackage};version=${project.version},
-              org.apache.camel.*;version=2.14-SNAPSHOT
+              org.apache.camel.*;version=2.14-SNAPSHOT,
+              *
             </Import-Package>
             <Private-Package>${outPackage}</Private-Package>
             <Implementation-Title>Apache Camel</Implementation-Title>
