@@ -21,6 +21,7 @@ import java.util.TimeZone;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Consumer;
 import org.apache.camel.component.quartz2.QuartzComponent;
+import org.apache.camel.component.quartz2.QuartzConstants;
 import org.apache.camel.spi.ScheduledPollConsumerScheduler;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
@@ -151,6 +152,10 @@ public class QuartzScheduledPollConsumerScheduler extends ServiceSupport impleme
 
         JobDataMap map = new JobDataMap();
         map.put("task", runnable);
+        map.put(QuartzConstants.QUARTZ_TRIGGER_TYPE, "cron");
+        map.put(QuartzConstants.QUARTZ_TRIGGER_CRON_EXPRESSION, getCron());
+        map.put(QuartzConstants.QUARTZ_TRIGGER_CRON_TIMEZONE, getTimeZone().getID());
+
         job = JobBuilder.newJob(QuartzScheduledPollConsumerJob.class)
                 .usingJobData(map)
                 .build();

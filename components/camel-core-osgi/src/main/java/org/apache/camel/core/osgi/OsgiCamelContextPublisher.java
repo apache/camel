@@ -43,6 +43,7 @@ public class OsgiCamelContextPublisher extends EventNotifierSupport {
     public static final String CONTEXT_SYMBOLIC_NAME_PROPERTY = "camel.context.symbolicname";
     public static final String CONTEXT_VERSION_PROPERTY = "camel.context.version";
     public static final String CONTEXT_NAME_PROPERTY = "camel.context.name";
+    public static final String CONTEXT_MANAGEMENT_NAME_PROPERTY = "camel.context.managementname";
 
     private final BundleContext bundleContext;
     private final Map<CamelContext, ServiceRegistration> registrations = new ConcurrentHashMap<CamelContext, ServiceRegistration>();
@@ -93,12 +94,22 @@ public class OsgiCamelContextPublisher extends EventNotifierSupport {
 
     public ServiceRegistration registerCamelContext(CamelContext camelContext) throws InvalidSyntaxException {
         // avoid registering the same service again
-        ServiceReference[] refs = bundleContext.getServiceReferences(CamelContext.class.getName(), "(camel.context.symbolicname=" + bundleContext.getBundle().getSymbolicName() + ")");
-        if (refs == null) {
+        // we must include unique camel management name so the symbolic name becomes unique,
+        // in case the bundle has more than one CamelContext
+        String name = camelContext.getName();
+        String managementName = camelContext.getManagementName();
+        String symbolicName = bundleContext.getBundle().getSymbolicName();
+
+        if (!lookupCamelContext(bundleContext, symbolicName, name)) {
+            Version bundleVersion = getBundleVersion(bundleContext.getBundle());
+
             Dictionary<String, Object > props = new Hashtable<String, Object>();
-            props.put(CONTEXT_SYMBOLIC_NAME_PROPERTY, bundleContext.getBundle().getSymbolicName());
-            props.put(CONTEXT_VERSION_PROPERTY, getBundleVersion(bundleContext.getBundle()));
-            props.put(CONTEXT_NAME_PROPERTY, camelContext.getName());
+            props.put(CONTEXT_SYMBOLIC_NAME_PROPERTY, symbolicName);
+            props.put(CONTEXT_VERSION_PROPERTY, bundleVersion);
+            props.put(CONTEXT_NAME_PROPERTY, name);
+            if (managementName != null) {
+                props.put(CONTEXT_MANAGEMENT_NAME_PROPERTY, managementName);
+            }
 
             if (log.isDebugEnabled()) {
                 log.debug("Registering CamelContext [{}] of in OSGi registry", camelContext.getName());
@@ -118,6 +129,20 @@ public class OsgiCamelContextPublisher extends EventNotifierSupport {
         Dictionary<?, ?> headers = bundle.getHeaders();
         String version = (String) headers.get(Constants.BUNDLE_VERSION);
         return (version != null) ? Version.parseVersion(version) : Version.emptyVersion;
+    }
+
+    /**
+     * Lookup in the OSGi Service Registry whether a {@link org.apache.camel.CamelContext} is already registered with the given symbolic name.
+     *
+     * @return <tt>true</tt> if exists, <tt>false</tt> otherwise
+     */
+    public static boolean lookupCamelContext(BundleContext bundleContext, String symbolicName, String contextName) throws InvalidSyntaxException {
+        Version bundleVersion = getBundleVersion(bundleContext.getBundle());
+        ServiceReference[] refs = bundleContext.getServiceReferences(CamelContext.class.getName(),
+                "(&(" + CONTEXT_SYMBOLIC_NAME_PROPERTY + "=" + symbolicName + ")"
+                + "(" + CONTEXT_NAME_PROPERTY + "=" + contextName + ")"
+                + "(" + CONTEXT_VERSION_PROPERTY + "=" + bundleVersion + "))");
+        return refs != null && refs.length > 0;
     }
 
 }

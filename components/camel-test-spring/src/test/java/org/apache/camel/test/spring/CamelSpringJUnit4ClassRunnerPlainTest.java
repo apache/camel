@@ -83,6 +83,7 @@ public class CamelSpringJUnit4ClassRunnerPlainTest {
         start2.sendBody("David");
         
         MockEndpoint.assertIsSatisfied(camelContext);
+        MockEndpoint.assertIsSatisfied(camelContext2);
     }
     
     @Test

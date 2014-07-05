@@ -29,7 +29,7 @@
 	<!-- Here we define Camel, notice the namespace it uses -->
   <camelContext xmlns="http://camel.apache.org/schema/spring">
 	  <!-- Camel route to feed the ActiveMQ inbox queue once per second -->
-	  <route>
+	  <route id="timerToInRoute">
 		  <from uri="timer:foo?period=1s"/>
 		  <transform>
 			  <simple>Message at ${date:now:yyyy-MM-dd HH:mm:ss}</simple>
@@ -38,7 +38,7 @@
 	  </route>
 
 	  <!-- Camel route to move messages from the ActiveMQ inbox to its outbox queue -->
-	  <route>
+	  <route id="inToOutRoute">
 		  <from uri="activemq:queue:inbox"/>
 		  <log message="Routing message from inbox to outbox queue with data ${body}"/>
 		  <to uri="activemq:queue:outbox"/>

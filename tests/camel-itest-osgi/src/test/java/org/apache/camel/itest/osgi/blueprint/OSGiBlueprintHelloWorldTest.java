@@ -36,7 +36,7 @@ import static org.ops4j.pax.swissbox.tinybundles.core.TinyBundles.newBundle;
 @RunWith(JUnit4TestRunner.class)
 public class OSGiBlueprintHelloWorldTest extends OSGiBlueprintTestSupport {
 
-    private String name = OSGiBlueprintHelloWorldTest.class.getName();
+    private static final String NAME = OSGiBlueprintHelloWorldTest.class.getName();
 
     @Override
     public void setUp() throws Exception {
@@ -47,12 +47,10 @@ public class OSGiBlueprintHelloWorldTest extends OSGiBlueprintTestSupport {
     @Test
     public void testHelloWorld() throws Exception {
         // start bundle
-        getInstalledBundle(name).start();
+        getInstalledBundle(NAME).start();
 
         // must use the camel context from osgi
-        CamelContext ctx = getOsgiService(CamelContext.class, 
-               //"(camel.context.symbolicname=" + name + ")"
-               "camel.context.name=camel1", 10000);
+        CamelContext ctx = getOsgiService(CamelContext.class, "(camel.context.symbolicname=" + NAME + ")", 10000);
 
         ProducerTemplate myTemplate = ctx.createProducerTemplate();
         myTemplate.start();
@@ -76,7 +74,7 @@ public class OSGiBlueprintHelloWorldTest extends OSGiBlueprintTestSupport {
 
                 bundle(newBundle()
                         .add("OSGI-INF/blueprint/test.xml", OSGiBlueprintTestSupport.class.getResource("blueprint-13.xml"))
-                        .set(Constants.BUNDLE_SYMBOLICNAME, OSGiBlueprintHelloWorldTest.class.getName())
+                        .set(Constants.BUNDLE_SYMBOLICNAME, NAME)
                         .build()).noStart(),
                 
                 // using the features to install the camel components

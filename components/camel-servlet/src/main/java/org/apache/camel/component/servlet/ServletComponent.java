@@ -27,6 +27,7 @@ import org.apache.camel.component.http.HttpBinding;
 import org.apache.camel.component.http.HttpClientConfigurer;
 import org.apache.camel.component.http.HttpComponent;
 import org.apache.camel.component.http.HttpConsumer;
+import org.apache.camel.component.http.HttpEndpoint;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.URISupport;
@@ -38,6 +39,15 @@ public class ServletComponent extends HttpComponent {
 
     private String servletName = "CamelServlet";
     private HttpRegistry httpRegistry;
+
+    public ServletComponent() {
+        super(ServletEndpoint.class);
+    }
+
+    public ServletComponent(Class<? extends HttpEndpoint> endpointClass) {
+        super(endpointClass);
+    }
+
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
@@ -59,7 +69,7 @@ public class ServletComponent extends HttpComponent {
         HeaderFilterStrategy headerFilterStrategy = resolveAndRemoveReferenceParameter(parameters, "headerFilterStrategy", HeaderFilterStrategy.class);
 
         // restructure uri to be based on the parameters left as we dont want to include the Camel internal options
-        URI httpUri = URISupport.createRemainingURI(new URI(UnsafeUriCharactersEncoder.encode(uri)), parameters);
+        URI httpUri = URISupport.createRemainingURI(new URI(UnsafeUriCharactersEncoder.encodeHttpURI(uri)), parameters);
 
         ServletEndpoint endpoint = createServletEndpoint(uri, this, httpUri, params, getHttpConnectionManager(), configurer);
         endpoint.setServletName(servletName);

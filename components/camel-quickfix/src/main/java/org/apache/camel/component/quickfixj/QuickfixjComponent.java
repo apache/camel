@@ -26,6 +26,7 @@ import org.apache.camel.StartupListener;
 import org.apache.camel.impl.DefaultComponent;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 import quickfix.LogFactory;
 import quickfix.MessageFactory;
 import quickfix.MessageStoreFactory;
@@ -33,6 +34,7 @@ import quickfix.SessionSettings;
 
 public class QuickfixjComponent extends DefaultComponent implements StartupListener {
     private static final Logger LOG = LoggerFactory.getLogger(QuickfixjComponent.class);
+    private static final String PARAMETER_LAZY_CREATE_ENGINE = "lazyCreateEngine";
 
     private final Object engineInstancesLock = new Object();
     private final Map<String, QuickfixjEngine> engines = new HashMap<String, QuickfixjEngine>();
@@ -43,6 +45,7 @@ public class QuickfixjComponent extends DefaultComponent implements StartupListe
     private LogFactory logFactory;
     private MessageFactory messageFactory;
     private Map<String, QuickfixjConfiguration> configurations = new HashMap<String, QuickfixjConfiguration>();
+    private boolean lazyCreateEngines;
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
@@ -58,12 +61,18 @@ public class QuickfixjComponent extends DefaultComponent implements StartupListe
                 }
                 if (engine == null) {
                     QuickfixjConfiguration configuration = configurations.get(remaining);
+                    SessionSettings settings = null;
                     if (configuration != null) {
-                        SessionSettings settings = configuration.createSessionSettings();
-                        engine = new QuickfixjEngine(uri, settings, messageStoreFactory, logFactory, messageFactory);
+                        settings = configuration.createSessionSettings();
                     } else {
-                        engine = new QuickfixjEngine(uri, remaining, messageStoreFactory, logFactory, messageFactory);
+                        settings = QuickfixjEngine.loadSettings(remaining);
                     }
+                    Boolean lazyCreateEngineForEndpoint = super.getAndRemoveParameter(parameters, PARAMETER_LAZY_CREATE_ENGINE, Boolean.TYPE);
+                    if (lazyCreateEngineForEndpoint == null) {
+                        lazyCreateEngineForEndpoint = isLazyCreateEngines();
+                    }
+                    engine = new QuickfixjEngine(uri, settings, messageStoreFactory, logFactory, messageFactory,
+                            lazyCreateEngineForEndpoint);
 
                     // only start engine if CamelContext is already started, otherwise the engines gets started
                     // automatic later when CamelContext has been started using the StartupListener
@@ -112,8 +121,12 @@ public class QuickfixjComponent extends DefaultComponent implements StartupListe
     }
 
     private void startQuickfixjEngine(QuickfixjEngine engine) throws Exception {
-        LOG.info("Starting QuickFIX/J engine: {}", engine.getUri());
-        engine.start();
+        if (!engine.isLazy()) {
+            LOG.info("Starting QuickFIX/J engine: {}", engine.getUri());
+            engine.start();
+        } else {
+            LOG.info("QuickFIX/J engine: {} will start lazily", engine.getUri());
+        }
     }
 
     // Test Support
@@ -151,6 +164,20 @@ public class QuickfixjComponent extends DefaultComponent implements StartupListe
 
     public void setConfigurations(Map<String, QuickfixjConfiguration> configurations) {
         this.configurations = configurations;
+    }
+
+    public boolean isLazyCreateEngines() {
+        return this.lazyCreateEngines;
+    }
+
+    /**
+     * If set to <code>true</code>, the engines will be created and started when needed (when first message
+     * is send)
+     *
+     * @param lazyCreateEngines
+     */
+    public void setLazyCreateEngines(boolean lazyCreateEngines) {
+        this.lazyCreateEngines = lazyCreateEngines;
     }
 
     @Override

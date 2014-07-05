@@ -130,7 +130,7 @@ public class CxfHeaderHelperTest extends Assert {
     private void verifyHeader(Map<String, List<String>> headers, String name, List<String> value) {
         List<String> values = headers.get(name);
         assertTrue("The entry must be available", values != null && values.size() == ((List<?>)value).size());
-        assertEquals("The value must match", (List<?>)value, values);
+        assertEquals("The value must match", value, values);
     }
 
     private void verifyHeader(Map<String, List<String>> headers, String name, String value) {

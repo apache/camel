@@ -51,10 +51,12 @@ import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.ProcessorFactory;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.spi.RouteStartupOrder;
+import org.apache.camel.spi.RuntimeEndpointRegistry;
 import org.apache.camel.spi.ServicePool;
 import org.apache.camel.spi.ShutdownStrategy;
 import org.apache.camel.spi.StreamCachingStrategy;
 import org.apache.camel.spi.TypeConverterRegistry;
+import org.apache.camel.spi.UnitOfWorkFactory;
 import org.apache.camel.spi.UuidGenerator;
 import org.apache.camel.util.LoadPropertiesException;
 
@@ -250,7 +252,7 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
     /**
      * Gets a component from the context by name.
      *
-     * @param componentName the name of the component
+     * @param name                 the name of the component
      * @param autoCreateComponents whether or not the component should
      *                             be lazily created if it does not already exist
      * @return the component
@@ -661,6 +663,14 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      * @return the registry
      */
     Registry getRegistry();
+
+    /**
+     * Returns the registry used to lookup components by name and as the given type
+     *
+     * @param type the registry type such as {@link org.apache.camel.impl.JndiRegistry}
+     * @return the registry, or <tt>null</tt> if the given type was not found as a registry implementation
+     */
+    <T> T getRegistry(Class<T> type);
 
     /**
      * Returns the injector used to instantiate objects by type
@@ -1250,6 +1260,23 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
     String getComponentDocumentation(String componentName) throws IOException;
 
     /**
+     * Creates a JSON representation of all the <b>static</b> and <b>dynamic</b> configured endpoints defined in the given route(s).
+     *
+     * @param routeId for a particular route, or <tt>null</tt> for all routes
+     * @return a JSON string
+     */
+    String createRouteStaticEndpointJson(String routeId);
+
+    /**
+     * Creates a JSON representation of all the <b>static</b> (and possible <b>dynamic</b>) configured endpoints defined in the given route(s).
+     *
+     * @param routeId for a particular route, or <tt>null</tt> for all routes
+     * @param includeDynamic whether to include dynamic endpoints
+     * @return a JSON string
+     */
+    String createRouteStaticEndpointJson(String routeId, boolean includeDynamic);
+
+    /**
      * Gets the {@link StreamCachingStrategy} to use.
      */
     StreamCachingStrategy getStreamCachingStrategy();
@@ -1258,5 +1285,25 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      * Sets a custom {@link StreamCachingStrategy} to use.
      */
     void setStreamCachingStrategy(StreamCachingStrategy streamCachingStrategy);
+
+    /**
+     * Gets the {@link UnitOfWorkFactory} to use.
+     */
+    UnitOfWorkFactory getUnitOfWorkFactory();
+
+    /**
+     * Sets a custom {@link UnitOfWorkFactory} to use.
+     */
+    void setUnitOfWorkFactory(UnitOfWorkFactory unitOfWorkFactory);
+
+    /**
+     * Gets the {@link org.apache.camel.spi.RuntimeEndpointRegistry} to use, or <tt>null</tt> if none is in use.
+     */
+    RuntimeEndpointRegistry getRuntimeEndpointRegistry();
+
+    /**
+     * Sets a custom {@link org.apache.camel.spi.RuntimeEndpointRegistry} to use.
+     */
+    void setRuntimeEndpointRegistry(RuntimeEndpointRegistry runtimeEndpointRegistry);
 
 }

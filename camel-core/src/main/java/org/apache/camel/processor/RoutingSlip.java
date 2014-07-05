@@ -32,6 +32,7 @@ import org.apache.camel.Producer;
 import org.apache.camel.Traceable;
 import org.apache.camel.builder.ExpressionBuilder;
 import org.apache.camel.impl.DefaultExchange;
+import org.apache.camel.impl.EmptyProducerCache;
 import org.apache.camel.impl.ProducerCache;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.AsyncProcessorHelper;
@@ -57,6 +58,7 @@ import static org.apache.camel.util.ObjectHelper.notNull;
 public class RoutingSlip extends ServiceSupport implements AsyncProcessor, Traceable {
     protected final Logger log = LoggerFactory.getLogger(getClass());
     protected ProducerCache producerCache;
+    protected int cacheSize;
     protected boolean ignoreInvalidEndpoints;
     protected String header;
     protected Expression expression;
@@ -111,6 +113,14 @@ public class RoutingSlip extends ServiceSupport implements AsyncProcessor, Trace
     
     public void setIgnoreInvalidEndpoints(boolean ignoreInvalidEndpoints) {
         this.ignoreInvalidEndpoints = ignoreInvalidEndpoints;
+    }
+
+    public int getCacheSize() {
+        return cacheSize;
+    }
+
+    public void setCacheSize(int cacheSize) {
+        this.cacheSize = cacheSize;
     }
 
     @Override
@@ -201,11 +211,10 @@ public class RoutingSlip extends ServiceSupport implements AsyncProcessor, Trace
                 break;
             }
 
-            // prepare and process the routing slip
-            Exchange copy = prepareExchangeForRoutingSlip(current, endpoint);
-            boolean sync = processExchange(endpoint, copy, exchange, callback, iter);
-            current = copy;
-
+            //process and prepare the routing slip
+            boolean sync = processExchange(endpoint, current, exchange, callback, iter);
+            current = prepareExchangeForRoutingSlip(current, endpoint);
+            
             if (!sync) {
                 log.trace("Processing exchangeId: {} is continued being processed asynchronously", exchange.getExchangeId());
                 // the remainder of the routing slip will be completed async
@@ -298,7 +307,7 @@ public class RoutingSlip extends ServiceSupport implements AsyncProcessor, Trace
                         }
 
                         // continue processing the routing slip asynchronously
-                        Exchange current = exchange;
+                        Exchange current = prepareExchangeForRoutingSlip(exchange, endpoint);
 
                         while (iter.hasNext(current)) {
 
@@ -333,9 +342,8 @@ public class RoutingSlip extends ServiceSupport implements AsyncProcessor, Trace
                             }
 
                             // prepare and process the routing slip
-                            Exchange copy = prepareExchangeForRoutingSlip(current, endpoint);
-                            boolean sync = processExchange(endpoint, copy, original, callback, iter);
-                            current = copy;
+                            boolean sync = processExchange(endpoint, current, original, callback, iter);
+                            current = prepareExchangeForRoutingSlip(current, endpoint);
 
                             if (!sync) {
                                 log.trace("Processing exchangeId: {} is continued being processed asynchronously", original.getExchangeId());
@@ -361,7 +369,16 @@ public class RoutingSlip extends ServiceSupport implements AsyncProcessor, Trace
 
     protected void doStart() throws Exception {
         if (producerCache == null) {
-            producerCache = new ProducerCache(this, camelContext);
+            if (cacheSize < 0) {
+                producerCache = new EmptyProducerCache(this, camelContext);
+                log.debug("RoutingSlip {} is not using ProducerCache", this);
+            } else if (cacheSize == 0) {
+                producerCache = new ProducerCache(this, camelContext);
+                log.debug("RoutingSlip {} using ProducerCache with default cache size", this);
+            } else {
+                producerCache = new ProducerCache(this, camelContext, cacheSize);
+                log.debug("RoutingSlip {} using ProducerCache with cacheSize={}", this, cacheSize);
+            }
         }
         ServiceHelper.startService(producerCache);
     }

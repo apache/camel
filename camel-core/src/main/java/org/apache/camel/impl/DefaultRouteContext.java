@@ -320,6 +320,14 @@ public class DefaultRouteContext implements RouteContext {
         this.shutdownRoute = shutdownRoute;
     }
 
+    public void setAllowUseOriginalMessage(Boolean allowUseOriginalMessage) {
+        throw new IllegalArgumentException("This option can only be configured on CamelContext");
+    }
+
+    public Boolean isAllowUseOriginalMessage() {
+        return getCamelContext().isAllowUseOriginalMessage();
+    }
+
     public ShutdownRoute getShutdownRoute() {
         if (shutdownRoute != null) {
             return shutdownRoute;

@@ -106,7 +106,9 @@ public class Main extends MainSupport {
     protected void doStart() throws Exception {
         super.doStart();
         postProcessContext();
-        getCamelContexts().get(0).start();
+        if (getCamelContexts().size() > 0) {
+            getCamelContexts().get(0).start();
+        }
     }
 
     protected void doStop() throws Exception {
@@ -117,7 +119,11 @@ public class Main extends MainSupport {
     }
 
     protected ProducerTemplate findOrCreateCamelTemplate() {
-        return getCamelContexts().get(0).createProducerTemplate();
+        if (getCamelContexts().size() > 0) {
+            return getCamelContexts().get(0).createProducerTemplate();
+        } else {
+            return null;
+        }
     }
 
     protected Map<String, CamelContext> getCamelContextMap() {

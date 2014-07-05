@@ -29,6 +29,12 @@ public final class QuartzConstants {
 
     public static final String QUARTZ_CAMEL_CONTEXT = "CamelQuartzCamelContext";
 
+    public static final String QUARTZ_TRIGGER_TYPE = "CamelQuartzTriggerType";
+    public static final String QUARTZ_TRIGGER_CRON_EXPRESSION = "CamelQuartzTriggerCronExpression";
+    public static final String QUARTZ_TRIGGER_CRON_TIMEZONE = "CamelQuartzTriggerCronTimeZone";
+    public static final String QUARTZ_TRIGGER_SIMPLE_REPEAT_COUNTER = "CamelQuartzTriggerSimpleRepeatCounter";
+    public static final String QUARTZ_TRIGGER_SIMPLE_REPEAT_INTERVAL = "CamelQuartzTriggerSimpleRepeatInterval";
+
     private QuartzConstants() {
         // Utility class
     }

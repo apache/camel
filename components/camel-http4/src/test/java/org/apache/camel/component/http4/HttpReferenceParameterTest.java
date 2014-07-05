@@ -19,7 +19,7 @@ package org.apache.camel.component.http4;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.apache.http.client.HttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HttpContext;
 import org.junit.Test;
@@ -94,7 +94,7 @@ public class HttpReferenceParameterTest extends CamelTestSupport {
 
     private static class TestClientConfigurer implements HttpClientConfigurer {
 
-        public void configureHttpClient(HttpClient client) {
+        public void configureHttpClient(HttpClientBuilder clientBuilder) {
         }
     }
 }

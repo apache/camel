@@ -66,36 +66,43 @@ public class CachedOutputStream extends OutputStream {
     private File tempFile;
     private FileInputStreamCache fileInputStreamCache;
     private CipherPair ciphers;
+    private final boolean closedOnCompletion;
 
     public CachedOutputStream(Exchange exchange) {
         this(exchange, true);
     }
 
-    public CachedOutputStream(Exchange exchange, boolean closedOnCompletion) {
+    public CachedOutputStream(Exchange exchange, final boolean closedOnCompletion) {
+        this.closedOnCompletion = closedOnCompletion;
         this.strategy = exchange.getContext().getStreamCachingStrategy();
         currentStream = new CachedByteArrayOutputStream(strategy.getBufferSize());
         
-        if (closedOnCompletion) {
-            // add on completion so we can cleanup after the exchange is done such as deleting temporary files
-            exchange.addOnCompletion(new SynchronizationAdapter() {
-                @Override
-                public void onDone(Exchange exchange) {
-                    try {
-                        if (fileInputStreamCache != null) {
-                            fileInputStreamCache.close();
-                        }
-                        close();
-                    } catch (Exception e) {
-                        LOG.warn("Error deleting temporary cache file: " + tempFile, e);
+        // add on completion so we can cleanup after the exchange is done such as deleting temporary files
+        exchange.addOnCompletion(new SynchronizationAdapter() {
+            @Override
+            public void onDone(Exchange exchange) {
+                try {
+                    if (fileInputStreamCache != null) {
+                        fileInputStreamCache.close();
                     }
+                    if (closedOnCompletion) {
+                        close();
+                        try {
+                            cleanUpTempFile();
+                        } catch (Exception e) {
+                            LOG.warn("Error deleting temporary cache file: " + tempFile + ". This exception will be ignored.", e);
+                        }
+                    }
+                } catch (Exception e) {
+                    LOG.warn("Error closing streams. This exception will be ignored.", e);
                 }
+            }
     
-                @Override
-                public String toString() {
-                    return "OnCompletion[CachedOutputStream]";
-                }
-            });
-        }
+            @Override
+            public String toString() {
+                return "OnCompletion[CachedOutputStream]";
+            }
+        });
     }
 
     public void flush() throws IOException {
@@ -104,7 +111,14 @@ public class CachedOutputStream extends OutputStream {
 
     public void close() throws IOException {
         currentStream.close();
-        cleanUpTempFile();
+        // need to clean up the temp file this time
+        if (!closedOnCompletion) {
+            try {
+                cleanUpTempFile();
+            } catch (Exception e) {
+                LOG.warn("Error deleting temporary cache file: " + tempFile + ". This exception will be ignored.", e);
+            }
+        }
     }
 
     public boolean equals(Object obj) {

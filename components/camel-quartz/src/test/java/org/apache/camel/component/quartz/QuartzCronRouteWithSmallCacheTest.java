@@ -23,7 +23,6 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 /**
@@ -32,7 +31,7 @@ import org.junit.Test;
  * <p/>
  * We simulate this behavior with a capacity of 1 element.
  */
-public class QuartzCronRouteWithSmallCacheTest extends CamelTestSupport {
+public class QuartzCronRouteWithSmallCacheTest extends BaseQuartzTest {
 
     private final CountDownLatch latch = new CountDownLatch(3);
 

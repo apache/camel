@@ -23,7 +23,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>tests</artifactId>
-        <version>2.13-SNAPSHOT</version>
+        <version>2.14-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-itest-karaf</artifactId>
@@ -76,7 +76,6 @@
         <dependency>
             <groupId>org.osgi</groupId>
             <artifactId>org.osgi.core</artifactId>
-            <version>${osgi-version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
@@ -116,6 +115,35 @@
     </dependencies>
 
     <build>
+        <pluginManagement>
+            <plugins>
+                <!-- Eclipse m2e Lifecycle Management -->
+                <plugin>
+                    <groupId>org.eclipse.m2e</groupId>
+                    <artifactId>lifecycle-mapping</artifactId>
+                    <version>${lifecycle-mapping-version}</version>
+                    <configuration>
+                        <lifecycleMappingMetadata>
+                            <pluginExecutions>
+                                <pluginExecution>
+                                    <pluginExecutionFilter>
+                                        <groupId>org.apache.servicemix.tooling</groupId>
+                                        <artifactId>depends-maven-plugin</artifactId>
+                                        <versionRange>${depends-maven-plugin-version}</versionRange>
+                                        <goals>
+                                            <goal>generate-depends-file</goal>
+                                        </goals>
+                                    </pluginExecutionFilter>
+                                    <action>
+                                        <ignore />
+                                    </action>
+                                </pluginExecution>
+                            </pluginExecutions>
+                        </lifecycleMappingMetadata>
+                    </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
         <plugins>
             <!-- generate dependencies versions -->
             <plugin>
@@ -166,10 +194,6 @@
                                 on this information to PAX mvn url
                             -->
                             <argLine>-Dorg.ops4j.pax.url.mvn.localRepository=${maven.repo.local}</argLine>
-                            <excludes>
-                                <!-- TODO: temporary disable unit test to let TC not hang -->
-                                <exclude>**/*Test.*</exclude>
-                            </excludes>
                             <systemPropertyVariables>
                                 <karafVersion>${karaf-version}</karafVersion>
                             </systemPropertyVariables>

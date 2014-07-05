@@ -17,6 +17,7 @@
 -->
 <beans xmlns="http://www.springframework.org/schema/beans" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
 	xmlns:cxf="http://camel.apache.org/schema/cxf" xmlns:jaxrs="http://cxf.apache.org/jaxrs"
+	xmlns:cxfcore="http://cxf.apache.org/core"
 	xmlns:httpj="http://cxf.apache.org/transports/http-jetty/configuration" xmlns:sec="http://cxf.apache.org/configuration/security"
 	xmlns:http="http://cxf.apache.org/transports/http/configuration" xsi:schemaLocation="
 	http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
@@ -25,9 +26,10 @@
 	http://camel.apache.org/schema/spring/camel-spring.xsd http://cxf.apache.org/transports/http-jetty/configuration
 	http://cxf.apache.org/schemas/configuration/http-jetty.xsd http://cxf.apache.org/configuration/security
 	http://cxf.apache.org/schemas/configuration/security.xsd http://cxf.apache.org/transports/http/configuration
-	http://cxf.apache.org/schemas/configuration/http-conf.xsd ">
+	http://cxf.apache.org/schemas/configuration/http-conf.xsd 
+	http://cxf.apache.org/core http://cxf.apache.org/schemas/core.xsd">
 	<bean class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer"/>
-
+    
 	<jaxrs:server id="restService" address="https://localhost:${mySecurePort}/CxfRsProducerTest/"
 		staticSubresourceResolution="true">
 		<jaxrs:serviceBeans>
@@ -41,12 +43,13 @@
 		<route>
 			<from uri="direct://http"/>
 			<recipientList>
-				<simple>cxfrs://https://localhost:${header.clientPort}/CxfRsProducerTest/</simple>
+			    <!-- need to pass the spring http conduit setting the CxfProducer, as we don't create a default bus for the CxfRsEndpoint anymore -->
+				<simple>cxfrs://https://localhost:${header.clientPort}/CxfRsProducerTest/?bus=#cxf</simple>
 			</recipientList>
 		</route>
 	</camelContext>
 
-	<httpj:engine-factory id="tls-config">
+	<httpj:engine-factory id="tls-config" >
 		<httpj:engine port="${mySecurePort}">
 			<httpj:tlsServerParameters>
 				<sec:keyManagers keyPassword="password">

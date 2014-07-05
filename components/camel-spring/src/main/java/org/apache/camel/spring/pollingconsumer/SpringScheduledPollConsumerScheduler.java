@@ -45,7 +45,7 @@ public class SpringScheduledPollConsumerScheduler extends ServiceSupport impleme
     private volatile CronTrigger trigger;
     private volatile ThreadPoolTaskScheduler taskScheduler;
     private boolean destroyTaskScheduler;
-    private volatile ScheduledFuture future;
+    private volatile ScheduledFuture<?> future;
 
     @Override
     public void onInit(Consumer consumer) {

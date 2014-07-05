@@ -106,7 +106,8 @@ public class SalesforceSession implements Service {
 
             // login to Salesforce and get session id
             final StatusExceptionExchange loginPost = new StatusExceptionExchange(true);
-            loginPost.setURL(config.getLoginUrl() + OAUTH2_TOKEN_PATH);
+            String url = config.getLoginUrl() + OAUTH2_TOKEN_PATH;
+            loginPost.setURL(url);
             loginPost.setMethod(HttpMethods.POST);
             loginPost.setRequestContentType(FORM_CONTENT_TYPE);
 
@@ -119,6 +120,8 @@ public class SalesforceSession implements Service {
             nvps.put("format", "json");
 
             try {
+
+                LOG.info("Logging clientId: {} into Salesforce url: {}", config.getClientId(), url);
 
                 // set form content
                 loginPost.setRequestContent(new ByteArrayBuffer(

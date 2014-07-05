@@ -519,7 +519,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
                         backlogTracer.isBodyIncludeStreams(), backlogTracer.isBodyIncludeFiles(), backlogTracer.getBodyMaxChars());
 
                 // if first we should add a pseudo trace message as well, so we have a starting message (eg from the route)
-                String routeId = routeDefinition.getId();
+                String routeId = routeDefinition != null ? routeDefinition.getId() : null;
                 if (first) {
                     Date created = exchange.getProperty(Exchange.CREATED_TIMESTAMP, timestamp, Date.class);
                     DefaultBacklogTracerEventMessage pseudo = new DefaultBacklogTracerEventMessage(backlogTracer.incrementTraceCounter(), created, routeId, null, exchangeId, messageAsXml);
@@ -615,7 +615,7 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
         }
 
         protected UnitOfWork createUnitOfWork(Exchange exchange) {
-            return UnitOfWorkHelper.createUoW(exchange);
+            return exchange.getContext().getUnitOfWorkFactory().createUnitOfWork(exchange);
         }
 
     }
@@ -726,7 +726,11 @@ public class CamelInternalProcessor extends DelegateAsyncProcessor {
 
         @Override
         public void after(Exchange exchange, StreamCache sc) throws Exception {
-            // noop
+            Object body = exchange.getIn().getBody();
+            if (body != null && body instanceof StreamCache) {
+                // reset so the cache is ready to be reused after processing
+                ((StreamCache) body).reset();
+            }
         }
     }
 

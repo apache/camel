@@ -36,7 +36,6 @@ public class HttpWithHttpUriHeaderTest extends BaseHttpTest {
                 exchange.getIn().setHeader(Exchange.HTTP_URI, "http4://" + getHostName() + ":" + getPort() + "/");
             }
         });
-
         assertExchange(exchange);
     }
 }

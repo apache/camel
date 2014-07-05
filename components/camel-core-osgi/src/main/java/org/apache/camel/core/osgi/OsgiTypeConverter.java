@@ -17,6 +17,7 @@
 package org.apache.camel.core.osgi;
 
 import java.util.Collections;
+import java.util.List;
 import java.util.Set;
 
 import org.apache.camel.Exchange;
@@ -139,6 +140,10 @@ public class OsgiTypeConverter extends ServiceSupport implements TypeConverter, 
         return getDelegate().lookup(toType, fromType);
     }
 
+    public List<Class[]> listAllTypeConvertersFromTo() {
+        return getDelegate().listAllTypeConvertersFromTo();
+    }
+
     public void setInjector(Injector injector) {
         getDelegate().setInjector(injector);
     }
@@ -149,6 +154,10 @@ public class OsgiTypeConverter extends ServiceSupport implements TypeConverter, 
 
     public Statistics getStatistics() {
         return getDelegate().getStatistics();
+    }
+
+    public int size() {
+        return getDelegate().size();
     }
 
     public synchronized DefaultTypeConverter getDelegate() {

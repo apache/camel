@@ -38,6 +38,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.ScheduledPollEndpoint;
+import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -79,8 +80,18 @@ public class SqsEndpoint extends ScheduledPollEndpoint {
     protected void doStart() throws Exception {
         client = getConfiguration().getAmazonSQSClient() != null
             ? getConfiguration().getAmazonSQSClient() : getClient();
+            
+        // Override the endpoint location
+        if (ObjectHelper.isNotEmpty(getConfiguration().getAmazonSQSEndpoint())) {
+            client.setEndpoint(getConfiguration().getAmazonSQSEndpoint());
+        }
 
-        if (configuration.getQueueOwnerAWSAccountId() != null) {
+        // If both region and Account ID is provided the queue URL can be built manually.
+        // This allows accessing queues where you don't have permission to list queues or query queues
+        if (configuration.getRegion() != null && configuration.getQueueOwnerAWSAccountId() != null) {
+            queueUrl = "https://sqs." + configuration.getRegion() + ".amazonaws.com/"
+                +  configuration.getQueueOwnerAWSAccountId() + "/" + configuration.getQueueName();
+        } else if (configuration.getQueueOwnerAWSAccountId() != null) {
             GetQueueUrlRequest getQueueUrlRequest = new GetQueueUrlRequest();
             getQueueUrlRequest.setQueueName(configuration.getQueueName());
             getQueueUrlRequest.setQueueOwnerAWSAccountId(configuration.getQueueOwnerAWSAccountId());
@@ -105,7 +116,7 @@ public class SqsEndpoint extends ScheduledPollEndpoint {
         }
     }
 
-    private void createQueue(AmazonSQS client) {
+    protected void createQueue(AmazonSQS client) {
         LOG.trace("Queue '{}' doesn't exist. Will create it...", configuration.getQueueName());
 
         // creates a new queue, or returns the URL of an existing one
@@ -206,16 +217,13 @@ public class SqsEndpoint extends ScheduledPollEndpoint {
     AmazonSQS createClient() {
         AWSCredentials credentials = new BasicAWSCredentials(configuration.getAccessKey(), configuration.getSecretKey());
         AmazonSQS client = new AmazonSQSClient(credentials);
-        if (configuration.getAmazonSQSEndpoint() != null) {
-            client.setEndpoint(configuration.getAmazonSQSEndpoint());
-        }
         return client;
     }
 
     protected String getQueueUrl() {
         return queueUrl;
     }
-    
+
     public int getMaxMessagesPerPoll() {
         return maxMessagesPerPoll;
     }

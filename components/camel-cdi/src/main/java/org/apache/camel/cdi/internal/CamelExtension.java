@@ -224,7 +224,7 @@ public class CamelExtension implements Extension {
         throws Exception {
         for (CamelContextBean bean : camelContextBeans) {
             String name = bean.getCamelContextName();
-            CamelContext context = getCamelContext(name, beanManager);
+            CamelContext context = getCamelContext(name);
             if (context == null) {
                 throw new IllegalStateException(
                         "CamelContext '" + name + "' has not been injected into the CamelContextMap");
@@ -318,8 +318,8 @@ public class CamelExtension implements Extension {
         return adapter;
     }
 
-    protected DefaultCamelBeanPostProcessor getPostProcessor(String context, BeanManager beanManager) {
-        CamelContext camelContext = getCamelContext(context, beanManager);
+    protected DefaultCamelBeanPostProcessor getPostProcessor(String context) {
+        CamelContext camelContext = getCamelContext(context);
         if (camelContext != null) {
             return new DefaultCamelBeanPostProcessor(camelContext);
         } else {
@@ -327,13 +327,9 @@ public class CamelExtension implements Extension {
         }
     }
 
-    protected CamelContext getCamelContext(String context, BeanManager beanManager) {
+    protected CamelContext getCamelContext(String context) {
         if (camelContextMap == null) {
-            //camelContextMap = BeanProvider.getContextualReference(CamelContextMap.class);
-            Set<Bean<?>> beans = beanManager.getBeans(CamelContextMap.class);
-            Bean<?> bean = beanManager.resolve(beans);
-            CreationalContext<?> creationalContext = beanManager.createCreationalContext(bean);
-            camelContextMap = (CamelContextMap) beanManager.getReference(bean, bean.getBeanClass(), creationalContext);
+            camelContextMap = BeanProvider.getContextualReference(CamelContextMap.class);
             ObjectHelper.notNull(camelContextMap, "Could not resolve CamelContextMap");
         }
         return camelContextMap.getCamelContext(context);

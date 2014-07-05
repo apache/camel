@@ -18,17 +18,15 @@ package org.apache.camel.component.hbase;
 
 import java.util.HashMap;
 import java.util.Map;
+
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.util.IOHelper;
 import org.apache.hadoop.conf.Configuration;
-import org.apache.hadoop.hbase.TableExistsException;
 import org.apache.hadoop.hbase.client.Get;
 import org.apache.hadoop.hbase.client.HTable;
 import org.apache.hadoop.hbase.client.Result;
 import org.apache.hadoop.hbase.util.Bytes;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 
 public class HBaseConvertionsTest extends CamelHBaseTestSupport {
@@ -37,27 +35,6 @@ public class HBaseConvertionsTest extends CamelHBaseTestSupport {
     protected final Object[] body = {1L, false, "3"};
     protected final String[] column = {"DEFAULTCOLUMN"};
     protected final byte[][] families = {INFO_FAMILY.getBytes()};
-
-    @Before
-    public void setUp() throws Exception {
-        if (systemReady) {
-            try {
-                hbaseUtil.createTable(HBaseHelper.getHBaseFieldAsBytes(PERSON_TABLE), families);
-            } catch (TableExistsException ex) {
-                //Ignore if table exists
-            }
-
-            super.setUp();
-        }
-    }
-
-    @After
-    public void tearDown() throws Exception {
-        if (systemReady) {
-            hbaseUtil.deleteTable(PERSON_TABLE.getBytes());
-            super.tearDown();
-        }
-    }
 
     @Test
     public void testPutMultiRows() throws Exception {
@@ -111,7 +88,6 @@ public class HBaseConvertionsTest extends CamelHBaseTestSupport {
         }
     }
 
-
     /**
      * Factory method which derived classes can use to create a {@link org.apache.camel.builder.RouteBuilder}
      * to define the routes for testing
@@ -122,10 +98,10 @@ public class HBaseConvertionsTest extends CamelHBaseTestSupport {
             @Override
             public void configure() {
                 from("direct:start")
-                        .to("hbase://" + PERSON_TABLE);
+                    .to("hbase://" + PERSON_TABLE);
 
                 from("direct:scan")
-                        .to("hbase://" + PERSON_TABLE + "?operation=" + HBaseConstants.SCAN + "&maxResults=2&family=family1&qualifier=column1");
+                    .to("hbase://" + PERSON_TABLE + "?operation=" + HBaseConstants.SCAN + "&maxResults=2&family=family1&qualifier=column1");
             }
         };
     }

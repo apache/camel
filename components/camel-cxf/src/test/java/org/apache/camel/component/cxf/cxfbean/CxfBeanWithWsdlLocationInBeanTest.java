@@ -18,18 +18,17 @@ package org.apache.camel.component.cxf.cxfbean;
 
 import org.apache.camel.component.cxf.CXFTestSupport;
 import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpPost;
 import org.apache.http.entity.ContentType;
 import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
 import org.junit.Test;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
 
 import static org.junit.Assert.assertEquals;
-
 /**
  *
  * @version 
@@ -47,7 +46,7 @@ public class CxfBeanWithWsdlLocationInBeanTest extends AbstractJUnit4SpringConte
         
         StringEntity entity = new StringEntity(body, ContentType.create("text/xml", "ISO-8859-1"));
         post.setEntity(entity);
-        HttpClient httpclient = new DefaultHttpClient();
+        CloseableHttpClient httpclient = HttpClientBuilder.create().build();
 
         try {
             HttpResponse response = httpclient.execute(post);
@@ -59,7 +58,7 @@ public class CxfBeanWithWsdlLocationInBeanTest extends AbstractJUnit4SpringConte
             
             assertEquals("Get a wrong response", correct, responseBody);
         } finally {
-            httpclient.getConnectionManager().shutdown();
+            httpclient.close();
         }
     }
     

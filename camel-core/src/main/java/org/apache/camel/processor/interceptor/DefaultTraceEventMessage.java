@@ -72,7 +72,8 @@ public final class DefaultTraceEventMessage implements Serializable, TraceEventM
         this.exchangePattern = exchange.getPattern().toString();
         this.properties = exchange.getProperties().isEmpty() ? null : exchange.getProperties().toString();
         this.headers = in.getHeaders().isEmpty() ? null : in.getHeaders().toString();
-        this.body = MessageHelper.extractBodyAsString(in);
+        // We should not turn the message body into String
+        this.body = MessageHelper.extractBodyForLogging(in, "");
         this.bodyType = MessageHelper.getBodyTypeName(in);
         if (exchange.hasOut()) {
             Message out = exchange.getOut();

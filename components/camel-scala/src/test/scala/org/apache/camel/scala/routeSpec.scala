@@ -16,8 +16,7 @@
  */
 package org.apache.camel.scala
 
-import org.scalatest.FunSpec
-import org.scalatest.matchers.MustMatchers
+import org.scalatest.{MustMatchers, FunSpec}
 import org.scalatest.junit.JUnitRunner
 import org.junit.runner.RunWith
 

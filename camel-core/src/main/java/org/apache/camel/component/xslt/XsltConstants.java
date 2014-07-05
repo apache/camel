@@ -21,6 +21,9 @@ package org.apache.camel.component.xslt;
  */
 public final class XsltConstants {
 
+    @Deprecated 
+    // XsltComponent don't support this message any more
+    // Please create the XsltEndpoint directly from the URI
     public static final String XSLT_RESOURCE_URI = "CamelXsltResourceUri";
 
     private XsltConstants() {

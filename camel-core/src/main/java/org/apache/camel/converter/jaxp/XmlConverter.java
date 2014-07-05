@@ -17,6 +17,7 @@
 package org.apache.camel.converter.jaxp;
 
 import java.io.ByteArrayInputStream;
+import java.io.ByteArrayOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -243,11 +244,24 @@ public class XmlConverter {
      */
     @Converter
     public byte[] toByteArray(Source source, Exchange exchange) throws TransformerException {
-        String answer = toString(source, exchange);
-        if (exchange != null) {
-            return exchange.getContext().getTypeConverter().convertTo(byte[].class, exchange, answer);
+        if (source == null) {
+            return null;
+        } else if (source instanceof BytesSource) {
+            return ((BytesSource)source).getData();
         } else {
-            return answer.getBytes();
+            ByteArrayOutputStream buffer = new ByteArrayOutputStream();
+            if (exchange != null) {
+                // check the camelContext properties first
+                Properties properties = ObjectHelper.getCamelPropertiesWithPrefix(OUTPUT_PROPERTIES_PREFIX,
+                                                                                  exchange.getContext());
+                if (properties.size() > 0) {
+                    toResult(source, new StreamResult(buffer), properties);
+                    return buffer.toByteArray();
+                }
+            }
+            // using the old way to deal with it
+            toResult(source, new StreamResult(buffer));
+            return buffer.toByteArray();
         }
     }
     
@@ -676,7 +690,15 @@ public class XmlConverter {
      */
     @Converter(allowNull = true)
     public Document toDOMDocumentFromSingleNodeList(NodeList nl) throws ParserConfigurationException, TransformerException {
-        return nl.getLength() == 1 ? toDOMDocument(nl.item(0)) : null;
+        if (nl.getLength() == 1) {
+            return toDOMDocument(nl.item(0));
+        } else if (nl instanceof Node) {
+            // as XML parsers may often have nodes that implement both Node and NodeList then the type converter lookup
+            // may lookup either a type converter from NodeList or Node. So let's fallback and try with Node
+            return toDOMDocument((Node) nl);
+        } else {
+            return null;
+        }
     }
 
     /**
@@ -840,8 +862,7 @@ public class XmlConverter {
     
     @Converter
     public InputStream toInputStream(DOMSource source, Exchange exchange) throws TransformerException, IOException {
-        String s = toString(source, exchange);
-        return new ByteArrayInputStream(s.getBytes());
+        return new ByteArrayInputStream(toByteArray(source, exchange));
     }
 
     /**
@@ -854,8 +875,7 @@ public class XmlConverter {
     
     @Converter
     public InputStream toInputStream(Document dom, Exchange exchange) throws TransformerException, IOException {
-        String s = toString(dom, exchange);
-        return new ByteArrayInputStream(s.getBytes());
+        return toInputStream(new DOMSource(dom), exchange);
     }
 
     @Converter
@@ -922,7 +942,7 @@ public class XmlConverter {
                 }
                 featureString.append(feature);
             }
-            LOG.info("DocumenterBuilderFactory has been set with features {{}}.", featureString.toString());
+            LOG.info("DocumentBuilderFactory has been set with features {{}}.", featureString.toString());
         }
         
     }
@@ -932,6 +952,13 @@ public class XmlConverter {
         factory.setNamespaceAware(true);
         factory.setIgnoringElementContentWhitespace(true);
         factory.setIgnoringComments(true);
+        try {
+            // Disable the external-general-entities by default
+            factory.setFeature("http://xml.org/sax/features/external-general-entities", false);
+        } catch (ParserConfigurationException e) {
+            LOG.warn("DocumentBuilderFactory doesn't support the feature {} with value {}, due to {}."
+                     , new Object[]{"http://xml.org/sax/features/external-general-entities", true, e});
+        }
         // setup the feature from the system property
         setupFeatures(factory);
         return factory;
@@ -962,6 +989,12 @@ public class XmlConverter {
 
     public TransformerFactory createTransformerFactory() {
         TransformerFactory factory = TransformerFactory.newInstance();
+        // Enable the Security feature by default
+        try {
+            factory.setFeature(javax.xml.XMLConstants.FEATURE_SECURE_PROCESSING, true);
+        } catch (TransformerConfigurationException e) {
+            LOG.warn("TransformerFactory doesn't support the feature {} with value {}, due to {}.", new Object[]{javax.xml.XMLConstants.FEATURE_SECURE_PROCESSING, "true", e});
+        }
         factory.setErrorListener(new XmlErrorListener());
         return factory;
     }

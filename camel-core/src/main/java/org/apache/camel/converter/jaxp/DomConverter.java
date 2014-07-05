@@ -18,6 +18,7 @@ package org.apache.camel.converter.jaxp;
 
 import java.io.ByteArrayInputStream;
 import java.io.InputStream;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
@@ -32,6 +33,7 @@ import org.w3c.dom.Text;
 
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
+import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 
 /**
@@ -133,14 +135,14 @@ public final class DomConverter {
     }
 
     @Converter
-    public InputStream toInputStream(NodeList nodeList, Exchange exchange) throws TransformerException {
+    public InputStream toInputStream(NodeList nodeList, Exchange exchange) throws TransformerException, UnsupportedEncodingException {
         return new ByteArrayInputStream(toByteArray(nodeList, exchange));
     }
 
     @Converter
-    public byte[] toByteArray(NodeList nodeList, Exchange exchange) throws TransformerException {
+    public byte[] toByteArray(NodeList nodeList, Exchange exchange) throws TransformerException, UnsupportedEncodingException {
         String data = toString(nodeList, exchange);
-        return data.getBytes();
+        return data.getBytes(IOHelper.getCharsetName(exchange));
     }
 
     private static void append(StringBuilder buffer, NodeList nodeList) {

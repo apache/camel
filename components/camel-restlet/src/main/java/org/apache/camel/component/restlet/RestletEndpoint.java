@@ -39,6 +39,8 @@ public class RestletEndpoint extends DefaultEndpoint implements HeaderFilterStra
     private static final int DEFAULT_PORT = 80;
     private static final String DEFAULT_PROTOCOL = "http";
     private static final String DEFAULT_HOST = "localhost";
+    private static final int DEFAULT_SOCKET_TIMEOUT = 30000;
+    private static final int DEFAULT_CONNECT_TIMEOUT = 30000;
 
     private Method restletMethod = Method.GET;
 
@@ -49,6 +51,8 @@ public class RestletEndpoint extends DefaultEndpoint implements HeaderFilterStra
     private String protocol = DEFAULT_PROTOCOL;
     private String host = DEFAULT_HOST;
     private int port = DEFAULT_PORT;
+    private int socketTimeout = DEFAULT_SOCKET_TIMEOUT;
+    private int connectTimeout = DEFAULT_CONNECT_TIMEOUT;
     private String uriPattern;
 
     // Optional and for consumer only. This allows a single route to service multiple URI patterns.
@@ -122,6 +126,22 @@ public class RestletEndpoint extends DefaultEndpoint implements HeaderFilterStra
 
     public void setPort(int port) {
         this.port = port;
+    }
+
+    public int getSocketTimeout() {
+        return socketTimeout;
+    }
+
+    public void setSocketTimeout(int socketTimeout) {
+        this.socketTimeout = socketTimeout;
+    }
+    
+    public int getConnectTimeout() {
+        return connectTimeout;
+    }
+
+    public void setConnectTimeout(int connectTimeout) {
+        this.connectTimeout = connectTimeout;
     }
 
     public String getUriPattern() {

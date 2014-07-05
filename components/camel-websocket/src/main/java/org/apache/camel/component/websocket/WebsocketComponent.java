@@ -23,6 +23,7 @@ import java.util.EnumSet;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+
 import javax.management.MBeanServer;
 import javax.servlet.DispatcherType;
 
@@ -157,6 +158,8 @@ public class WebsocketComponent extends DefaultComponent {
 
                 // Create ServletContextHandler
                 ServletContextHandler context = createContext(server, connector, endpoint.getHandlers());
+                // setup the WebSocketComponentServlet initial parameters 
+                setWebSocketComponentServletInitialParameter(context, endpoint);
                 server.setHandler(context);
 
                 // Apply CORS (http://www.w3.org/TR/cors/)
@@ -299,6 +302,24 @@ public class WebsocketComponent extends DefaultComponent {
 
         setProperties(endpoint, parameters);
         return endpoint;
+    }
+    
+    protected void setWebSocketComponentServletInitialParameter(ServletContextHandler context, WebsocketEndpoint endpoint) {
+        if (endpoint.getBufferSize() != null) {
+            context.setInitParameter("bufferSize", endpoint.getBufferSize().toString());
+        }
+        if (endpoint.getMaxIdleTime() != null) {
+            context.setInitParameter("maxIdleTime", endpoint.getMaxIdleTime().toString());
+        }
+        if (endpoint.getMaxTextMessageSize() != null) {
+            context.setInitParameter("maxTextMessageSize", endpoint.getMaxTextMessageSize().toString());
+        }
+        if (endpoint.getMaxBinaryMessageSize() != null) {
+            context.setInitParameter("maxBinaryMessageSize", endpoint.getMaxBinaryMessageSize().toString());
+        }
+        if (endpoint.getMinVersion() != null) {
+            context.setInitParameter("minVersion", endpoint.getMinVersion().toString());
+        }
     }
 
     protected Server createServer() throws Exception {

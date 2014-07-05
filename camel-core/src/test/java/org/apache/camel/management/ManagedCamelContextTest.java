@@ -25,6 +25,7 @@ import javax.management.ObjectName;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.util.StringHelper;
 
 /**
  * @version 
@@ -64,6 +65,12 @@ public class ManagedCamelContextTest extends ManagementTestSupport {
 
         Boolean messageHistory = (Boolean) mbeanServer.getAttribute(on, "MessageHistory");
         assertEquals(Boolean.TRUE, messageHistory);
+
+        Integer total = (Integer) mbeanServer.getAttribute(on, "TotalRoutes");
+        assertEquals(2, total.intValue());
+
+        Integer started = (Integer) mbeanServer.getAttribute(on, "StartedRoutes");
+        assertEquals(2, started.intValue());
 
         // invoke operations
         MockEndpoint mock = getMockEndpoint("mock:result");
@@ -191,8 +198,27 @@ public class ManagedCamelContextTest extends ManagementTestSupport {
         assertEquals(22, info.size());
         Properties prop = info.get("seda");
         assertNotNull(prop);
+        assertEquals("seda", prop.get("name"));
         assertEquals("org.apache.camel", prop.get("groupId"));
         assertEquals("camel-core", prop.get("artifactId"));
+    }
+
+    public void testManagedCamelContextCreateRouteStaticEndpointJson() throws Exception {
+        // JMX tests dont work well on AIX CI servers (hangs them)
+        if (isPlatform("aix")) {
+            return;
+        }
+
+        MBeanServer mbeanServer = getMBeanServer();
+        ObjectName on = ObjectName.getInstance("org.apache.camel:context=19-camel-1,type=context,name=\"camel-1\"");
+
+        // get the json
+        String json = (String) mbeanServer.invoke(on, "createRouteStaticEndpointJson", null, null);
+        assertNotNull(json);
+        assertEquals(7, StringHelper.countChar(json, '{'));
+        assertEquals(7, StringHelper.countChar(json, '}'));
+        assertTrue(json.contains("{ \"uri\": \"direct://start\" }"));
+        assertTrue(json.contains("{ \"uri\": \"direct://foo\" }"));
     }
 
     @Override

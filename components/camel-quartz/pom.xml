@@ -21,7 +21,7 @@
   <parent>
     <groupId>org.apache.camel</groupId>
     <artifactId>components</artifactId>
-    <version>2.13-SNAPSHOT</version>
+    <version>2.14-SNAPSHOT</version>
   </parent>
 
   <artifactId>camel-quartz</artifactId>
@@ -38,6 +38,7 @@
       !org.apache.camel.component.quartz.*,
       !org.apache.camel.routepolicy.quartz.*,
       ${camel.osgi.import.defaults},
+      org.quartz.*;version="${quartz-version-range}",
       *
     </camel.osgi.import.pkg>
     <camel.osgi.export.service>org.apache.camel.spi.ComponentResolver;component=quartz</camel.osgi.export.service>

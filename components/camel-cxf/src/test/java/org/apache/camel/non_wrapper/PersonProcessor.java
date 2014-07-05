@@ -32,7 +32,7 @@ public class PersonProcessor implements Processor {
     public void process(Exchange exchange) throws Exception {
         LOG.info("processing exchange in camel");
 
-        BindingOperationInfo boi = (BindingOperationInfo)exchange.getProperty(BindingOperationInfo.class.toString());
+        BindingOperationInfo boi = (BindingOperationInfo)exchange.getProperty(BindingOperationInfo.class.getName());
         if (boi != null) {
             LOG.info("boi.isUnwrapped" + boi.isUnwrapped());
         }

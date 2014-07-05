@@ -22,8 +22,10 @@ import java.util.TimerTask;
 import java.util.concurrent.atomic.AtomicLong;
 
 import org.apache.camel.AsyncCallback;
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
+import org.apache.camel.StartupListener;
 import org.apache.camel.impl.DefaultConsumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,10 +35,11 @@ import org.slf4j.LoggerFactory;
  *
  * @version 
  */
-public class TimerConsumer extends DefaultConsumer {
+public class TimerConsumer extends DefaultConsumer implements StartupListener {
     private static final Logger LOG = LoggerFactory.getLogger(TimerConsumer.class);
     private final TimerEndpoint endpoint;
     private volatile TimerTask task;
+    private volatile boolean configured;
 
     public TimerConsumer(TimerEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
@@ -53,6 +56,7 @@ public class TimerConsumer extends DefaultConsumer {
             public void run() {
                 if (!isTaskRunAllowed()) {
                     // do not run timer task as it was not allowed
+                    LOG.debug("Run now allowed for timer: {}", endpoint);
                     return;
                 }
 
@@ -74,8 +78,12 @@ public class TimerConsumer extends DefaultConsumer {
             }
         };
 
-        Timer timer = endpoint.getTimer();
-        configureTask(task, timer);
+        // only configure task if CamelContext already started, otherwise the StartupListener
+        // is configuring the task later
+        if (!configured && endpoint.getCamelContext().getStatus().isStarted()) {
+            Timer timer = endpoint.getTimer();
+            configureTask(task, timer);
+        }
     }
 
     @Override
@@ -84,6 +92,15 @@ public class TimerConsumer extends DefaultConsumer {
             task.cancel();
         }
         task = null;
+        configured = false;
+    }
+
+    @Override
+    public void onCamelContextStarted(CamelContext context, boolean alreadyStarted) throws Exception {
+        if (task != null && !configured) {
+            Timer timer = endpoint.getTimer();
+            configureTask(task, timer);
+        }
     }
 
     /**
@@ -117,6 +134,7 @@ public class TimerConsumer extends DefaultConsumer {
                 }
             }
         }
+        configured = true;
     }
 
     protected void sendTimerExchange(long counter) {

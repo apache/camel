@@ -43,6 +43,7 @@ import org.apache.camel.model.language.SpELExpression;
 import org.apache.camel.model.language.SqlExpression;
 import org.apache.camel.model.language.TokenizerExpression;
 import org.apache.camel.model.language.VtdXmlExpression;
+import org.apache.camel.model.language.XMLTokenizerExpression;
 import org.apache.camel.model.language.XPathExpression;
 import org.apache.camel.model.language.XQueryExpression;
 
@@ -324,6 +325,21 @@ public class ExpressionClauseSupport<T> {
     }
 
     /**
+     * Evaluates a <a href="http://camel.apache.org/jsonpath.html">Json Path
+     * expression</a>
+     *
+     * @param text the expression to be evaluated
+     * @param resultType the return type expected by the expression
+     * @return the builder to continue processing the DSL
+     */
+    public T jsonpath(String text, Class<?> resultType) {
+        JsonPathExpression expression = new JsonPathExpression(text);
+        expression.setResultType(resultType);
+        setExpressionType(expression);
+        return result;
+    }
+
+    /**
      * Evaluates a <a href="http://commons.apache.org/jxpath/">JXPath expression</a>
      *
      * @param text the expression to be evaluated
@@ -581,6 +597,28 @@ public class ExpressionClauseSupport<T> {
         expression.setToken(tagName);
         expression.setInheritNamespaceTagName(inheritNamespaceTagName);
         expression.setXml(true);
+        if (group > 0) {
+            expression.setGroup(group);
+        }
+        setExpressionType(expression);
+        return result;
+    }
+
+    /**
+     * Evaluates an XML token expression on the message body with XML content
+     * 
+     * @param path the xpath like path notation specifying the child nodes to tokenize
+     * @param mode one of 'i', 'w', or 'u' to inject the namespaces to the token, to
+     *        wrap the token with its ancestor contet, or to unwrap to its element child
+     * @param namespaces the namespace map to the namespace bindings 
+     * @param group to group by the given number
+     * @return
+     */
+    public T xtokenize(String path, char mode, Namespaces namespaces, int group) {
+        XMLTokenizerExpression expression = new XMLTokenizerExpression(path);
+        expression.setMode(Character.toString(mode));
+        expression.setNamespaces(namespaces.getNamespaces());
+
         if (group > 0) {
             expression.setGroup(group);
         }

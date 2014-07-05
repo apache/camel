@@ -27,6 +27,7 @@ import java.net.URI;
 import java.net.URISyntaxException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.net.URLDecoder;
 import java.util.Map;
 
 import org.apache.camel.spi.ClassResolver;
@@ -105,6 +106,7 @@ public final class ResourceHelper {
     public static InputStream resolveResourceAsInputStream(ClassResolver classResolver, String uri) throws IOException {
         if (uri.startsWith("file:")) {
             uri = ObjectHelper.after(uri, "file:");
+            uri = tryDecodeUri(uri);
             LOG.trace("Loading resource: {} from file system", uri);
             return new FileInputStream(uri);
         } else if (uri.startsWith("http:")) {
@@ -124,6 +126,7 @@ public final class ResourceHelper {
             }
         } else if (uri.startsWith("classpath:")) {
             uri = ObjectHelper.after(uri, "classpath:");
+            uri = tryDecodeUri(uri);
         }
 
         // load from classpath by default
@@ -163,6 +166,7 @@ public final class ResourceHelper {
         if (uri.startsWith("file:")) {
             // check if file exists first
             String name = ObjectHelper.after(uri, "file:");
+            uri = tryDecodeUri(uri);
             LOG.trace("Loading resource: {} from file system", uri);
             File file = new File(name);
             if (!file.exists()) {
@@ -174,6 +178,7 @@ public final class ResourceHelper {
             return new URL(uri);
         } else if (uri.startsWith("classpath:")) {
             uri = ObjectHelper.after(uri, "classpath:");
+            uri = tryDecodeUri(uri);
         }
 
         // load from classpath by default
@@ -227,6 +232,23 @@ public final class ResourceHelper {
     private static String resolveUriPath(String name) {
         // compact the path and use / as separator as that's used for loading resources on the classpath
         return FileUtil.compactPath(name, '/');
+    }
+
+    /**
+     * Tries decoding the uri.
+     *
+     * @param uri the uri
+     * @return the decoded uri, or the original uri
+     */
+    private static String tryDecodeUri(String uri) {
+        try {
+            // try to decode as the uri may contain %20 for spaces etc
+            uri = URLDecoder.decode(uri, "UTF-8");
+        } catch (Exception e) {
+            LOG.trace("Error URL decoding uri using UTF-8 encoding: {}. This exception is ignored.", uri);
+            // ignore
+        }
+        return uri;
     }
 
 }

@@ -73,16 +73,7 @@ public class CronScheduledRoutePolicy extends ScheduledRoutePolicy implements Sc
             scheduleRoute(Action.RESUME, route);
         }
     }
-
-    public void onRemove(Route route) {
-        try {
-            // stop and un-schedule jobs
-            doStop();
-        } catch (Exception e) {
-            throw ObjectHelper.wrapRuntimeCamelException(e);
-        }
-    }
-
+    
     @Override
     protected Trigger createTrigger(Action action, Route route) throws Exception {
         CronTrigger trigger = null;

@@ -21,7 +21,7 @@
   <parent>
     <groupId>org.apache.camel</groupId>
     <artifactId>components</artifactId>
-    <version>2.13-SNAPSHOT</version>
+    <version>2.14-SNAPSHOT</version>
   </parent>
 
   <artifactId>camel-gae</artifactId>
@@ -30,6 +30,9 @@
   <description>Camel GAE support</description>
 
   <properties>
+        <camel.osgi.import.before.defaults>
+            javax.servlet.*;version="${servlet-version-range}"
+        </camel.osgi.import.before.defaults>
 	<camel.osgi.export.pkg>org.apache.camel.component.gae.*</camel.osgi.export.pkg>
 	<camel.osgi.export.service>
 		org.apache.camel.spi.ComponentResolver;component=gauth,

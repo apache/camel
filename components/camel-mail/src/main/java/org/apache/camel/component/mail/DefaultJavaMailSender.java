@@ -38,7 +38,8 @@ public class DefaultJavaMailSender implements JavaMailSender {
     private String host;
     private String username;
     private String password;
-    private int port;
+    // -1 means using the default port to access the service
+    private int port = -1;
     private String protocol;
     private Session session;
 
@@ -109,7 +110,6 @@ public class DefaultJavaMailSender implements JavaMailSender {
         Transport transport = getTransport(getSession());
         LOG.debug("Connecting to {}:{}", host, port);
         transport.connect(getHost(), getPort(), getUsername(), getPassword());
-
         try {
             if (mimeMessage.getSentDate() == null) {
                 mimeMessage.setSentDate(new Date());

@@ -20,6 +20,8 @@ import java.net.URI;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
@@ -208,10 +210,15 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
                 + "has & parameter separators. Check the uri if its missing a ? marker.");
         }
 
-        // check for uri containing double && markers
+        // check for uri containing double && markers without include by RAW
         if (uri.contains("&&")) {
-            throw new ResolveEndpointFailedException(uri, "Invalid uri syntax: Double && marker found. "
-                + "Check the uri and remove the duplicate & marker.");
+            Pattern pattern = Pattern.compile("RAW(.*&&.*)");
+            Matcher m = pattern.matcher(uri);
+            // we should skip the RAW part
+            if (!m.find()) {
+                throw new ResolveEndpointFailedException(uri, "Invalid uri syntax: Double && marker found. "
+                    + "Check the uri and remove the duplicate & marker.");
+            }
         }
 
         // if we have a trailing & then that is invalid as well
@@ -307,6 +314,40 @@ public abstract class DefaultComponent extends ServiceSupport implements Compone
         }
 
         return CamelContextHelper.convertTo(getCamelContext(), type, value);
+    }
+
+    /**
+     * Gets the parameter and remove it from the parameter map. This method resolves
+     * reference parameters in the registry as well.
+     *
+     * @param parameters    the parameters
+     * @param key           the key
+     * @param type          the requested type to convert the value from the parameter
+     * @return  the converted value parameter
+     */
+    public <T> T getAndRemoveOrResolveReferenceParameter(Map<String, Object> parameters, String key, Class<T> type) {
+        return getAndRemoveOrResolveReferenceParameter(parameters, key, type, null);
+    }
+
+    /**
+     * Gets the parameter and remove it from the parameter map. This method resolves
+     * reference parameters in the registry as well.
+     *
+     * @param parameters    the parameters
+     * @param key           the key
+     * @param type          the requested type to convert the value from the parameter
+     * @param defaultValue  use this default value if the parameter does not contain the key
+     * @return  the converted value parameter
+     */
+    public <T> T getAndRemoveOrResolveReferenceParameter(Map<String, Object> parameters, String key, Class<T> type, T defaultValue) {
+        String value = getAndRemoveParameter(parameters, key, String.class);
+        if (value == null) {
+            return defaultValue;
+        } else if (EndpointHelper.isReferenceParameter(value)) {
+            return EndpointHelper.resolveReferenceParameter(getCamelContext(), value, type);
+        } else {
+            return getCamelContext().getTypeConverter().convertTo(type, value);
+        }
     }
 
     /**

@@ -64,7 +64,11 @@ public class SoapUnMarshalTest extends CamelTestSupport {
 
             @Override
             public void configure() throws Exception {
-                from("direct:start").unmarshal().soapjaxb(SERVICE_PACKAGE)
+                SoapJaxbDataFormat dataFormate = new SoapJaxbDataFormat();
+                dataFormate.setContextPath(SERVICE_PACKAGE);
+                dataFormate.setSchema("classpath:org/apache/camel/dataformat/soap/CustomerService.xsd,classpath:soap.xsd");
+                
+                from("direct:start").unmarshal(dataFormate)
                         .to("mock:result");
             }
         };

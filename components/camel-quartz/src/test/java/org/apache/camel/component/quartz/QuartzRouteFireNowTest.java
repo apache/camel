@@ -17,12 +17,34 @@
 package org.apache.camel.component.quartz;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
+import org.junit.Test;
+import org.quartz.JobDetail;
 
 /**
  * @version 
  */
-public class QuartzRouteFireNowTest extends QuartzRouteTest {
-    
+public class QuartzRouteFireNowTest extends BaseQuartzTest {
+    protected MockEndpoint resultEndpoint;
+
+    @Test
+    public void testQuartzRoute() throws Exception {
+        resultEndpoint = getMockEndpoint("mock:result");
+        resultEndpoint.expectedMessageCount(2);
+        resultEndpoint.message(0).header("triggerName").isEqualTo("myTimerName");
+        resultEndpoint.message(0).header("triggerGroup").isEqualTo("myGroup");
+
+        // lets test the receive worked
+        resultEndpoint.assertIsSatisfied();
+
+        JobDetail job = resultEndpoint.getReceivedExchanges().get(0).getIn().getHeader("jobDetail", JobDetail.class);
+        assertNotNull(job);
+
+        assertEquals("simple", job.getJobDataMap().get(QuartzConstants.QUARTZ_TRIGGER_TYPE));
+        assertEquals(25000L, job.getJobDataMap().get(QuartzConstants.QUARTZ_TRIGGER_SIMPLE_REPEAT_INTERVAL));
+        assertEquals(2, job.getJobDataMap().get(QuartzConstants.QUARTZ_TRIGGER_SIMPLE_REPEAT_COUNTER));
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {

@@ -162,7 +162,7 @@ public class StreamConsumer extends DefaultConsumer implements Runnable {
                 eos = line == null;
                 if (!eos && isRunAllowed()) {
                     // read ahead if there is more data
-                    line2 = br.readLine();
+                    line2 = readAhead(br);
                     boolean last = line2 == null;
                     index = processLine(line, last, index);
                 }
@@ -228,6 +228,15 @@ public class StreamConsumer extends DefaultConsumer implements Runnable {
         }
         if (inputStream == System.in) {
             System.out.print(endpoint.getPromptMessage());
+        }
+    }
+
+    private String readAhead(BufferedReader br) throws IOException {
+        if (uri.equals("in")) {
+            // do not read ahead with reading from system in
+            return null;
+        } else {
+            return br.readLine();
         }
     }
 

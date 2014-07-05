@@ -25,11 +25,11 @@ import org.junit.Test;
 
 public class NettyHttpProducerQueryParamTest extends BaseNettyTest {
 
-    private String url = "netty-http:http://0.0.0.0:" + getPort() + "/cheese";
+    private String url = "netty-http:http://0.0.0.0:" + getPort() + "/cheese?urlDecodeHeaders=true";
 
     @Test
     public void testQueryParameters() throws Exception {
-        Exchange exchange = template.request(url + "?quote=Camel%20rocks", null);
+        Exchange exchange = template.request(url + "&quote=Camel%20rocks", null);
         assertNotNull(exchange);
 
         String body = exchange.getOut().getBody(String.class);

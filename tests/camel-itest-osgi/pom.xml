@@ -22,7 +22,7 @@
   <parent>
     <groupId>org.apache.camel</groupId>
     <artifactId>tests</artifactId>
-    <version>2.13-SNAPSHOT</version>
+    <version>2.14-SNAPSHOT</version>
   </parent>
 
   <artifactId>camel-itest-osgi</artifactId>
@@ -78,14 +78,12 @@
     <dependency>
       <groupId>org.osgi</groupId>
       <artifactId>org.osgi.compendium</artifactId>
-      <version>${osgi-version}</version>
       <scope>compile</scope>
       <optional>true</optional>
     </dependency> 
     <dependency>
       <groupId>org.osgi</groupId>
       <artifactId>org.osgi.core</artifactId>
-      <version>${osgi-version}</version>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -182,12 +180,17 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
+      <artifactId>camel-mvel</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
       <artifactId>camel-hazelcast</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-hdfs</artifactId>
+      <artifactId>camel-hdfs2</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -246,12 +249,17 @@
       <artifactId>camel-xmljson</artifactId>
       <scope>test</scope>
     </dependency>
-	<dependency>
-	  <groupId>org.apache.camel.tests</groupId>
-	  <artifactId>org.apache.camel.tests.mock-javamail_1.7</artifactId>
-	  <scope>test</scope>
+    <dependency>
+      <groupId>org.apache.camel.tests</groupId>
+      <artifactId>org.apache.camel.tests.mock-javamail_1.7</artifactId>
+      <scope>test</scope>
     </dependency>
-	<dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-base64</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-context-support</artifactId>      
       <scope>test</scope>
@@ -408,6 +416,48 @@
   </dependencies>
 
   <build>
+    <pluginManagement>
+      <plugins>
+        <!-- Eclipse m2e Lifecycle Management -->
+        <plugin>
+          <groupId>org.eclipse.m2e</groupId>
+          <artifactId>lifecycle-mapping</artifactId>
+          <version>${lifecycle-mapping-version}</version>
+          <configuration>
+            <lifecycleMappingMetadata>
+              <pluginExecutions>
+                <pluginExecution>
+                  <pluginExecutionFilter>
+                    <groupId>org.apache.servicemix.tooling</groupId>
+                    <artifactId>depends-maven-plugin</artifactId>
+                    <versionRange>${depends-maven-plugin-version}</versionRange>
+                    <goals>
+                      <goal>generate-depends-file</goal>
+                    </goals>
+                  </pluginExecutionFilter>
+                  <action>
+                    <ignore />
+                  </action>
+                </pluginExecution>
+                <pluginExecution>
+                  <pluginExecutionFilter>
+                    <groupId>org.apache.openjpa</groupId>
+                    <artifactId>openjpa-maven-plugin</artifactId>
+                    <versionRange>[1.0.0,)</versionRange>
+                    <goals>
+                      <goal>test-enhance</goal>
+                    </goals>
+                  </pluginExecutionFilter>
+                  <action>
+                    <ignore />
+                  </action>
+                </pluginExecution>
+              </pluginExecutions>
+            </lifecycleMappingMetadata>
+          </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
     <plugins>
       <!-- generate dependencies versions -->
       <plugin>
@@ -517,8 +567,6 @@
                             <include>**/*Test.*</include>
                         </includes>
                         <excludes>
-			            <!-- TODO: temporary disable unit test to let TC not hang -->
-	                    <exclude>**/*Test.*</exclude>
                             <!--There are some conflicts of the JAXB OSGi bundle and Hudson System jar
                                 so I comment out these JAXB related tests -->
                             <exclude>**/OSGiIntegrationSpringTest.*</exclude>

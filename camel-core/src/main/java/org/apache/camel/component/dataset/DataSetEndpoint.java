@@ -26,6 +26,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.Service;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.processor.ThroughputLogger;
+import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.util.CamelLogger;
 import org.apache.camel.util.ExchangeHelper;
@@ -39,6 +40,7 @@ import org.slf4j.LoggerFactory;
  *
  * @version 
  */
+@UriEndpoint(scheme = "dataset", consumerClass = DataSetConsumer.class)
 public class DataSetEndpoint extends MockEndpoint implements Service {
     private final transient Logger log;
     private volatile DataSet dataSet;

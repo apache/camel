@@ -27,18 +27,26 @@ import org.apache.camel.Producer;
 import org.apache.camel.component.gae.bind.OutboundBinding;
 import org.apache.camel.component.gae.bind.OutboundBindingSupport;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
 
 /**
  * Represents a <a href="http://camel.apache.org/gmail.html">Google App Engine Mail endpoint</a>.
  */
+@UriEndpoint(scheme = "gmail")
 public class GMailEndpoint extends DefaultEndpoint implements OutboundBindingSupport<GMailEndpoint, Message, Void> {
 
     private OutboundBinding<GMailEndpoint, Message, Void> outboundBinding;
     private MailService mailService;
+    @UriParam
     private String sender;
+    @UriParam
     private String subject;
+    @UriParam
     private String to;
+    @UriParam
     private String cc;
+    @UriParam
     private String bcc;
     
     public GMailEndpoint(String endpointUri, Component component, String sender) {

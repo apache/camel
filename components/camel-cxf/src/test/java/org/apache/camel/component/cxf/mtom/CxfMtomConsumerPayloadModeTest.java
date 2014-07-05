@@ -38,14 +38,13 @@ import org.apache.camel.component.cxf.CXFTestSupport;
 import org.apache.camel.component.cxf.CxfPayload;
 import org.apache.camel.converter.jaxp.XmlConverter;
 import org.apache.cxf.binding.soap.SoapHeader;
-import org.apache.cxf.helpers.DOMUtils;
 import org.apache.cxf.helpers.IOUtils;
 import org.apache.cxf.helpers.XPathUtils;
+import org.apache.cxf.staxutils.StaxUtils;
 import org.junit.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.junit4.AbstractJUnit4SpringContextTests;
-
 import static org.junit.Assert.assertEquals;
 
 
@@ -73,7 +72,7 @@ public class CxfMtomConsumerPayloadModeTest extends AbstractJUnit4SpringContextT
                 exchange.setPattern(ExchangePattern.InOut);
                 assertEquals("Get a wrong Content-Type header", "application/xop+xml", exchange.getIn().getHeader("Content-Type"));
                 List<Source> elements = new ArrayList<Source>();
-                elements.add(new DOMSource(DOMUtils.readXml(new StringReader(getRequestMessage())).getDocumentElement()));
+                elements.add(new DOMSource(StaxUtils.read(new StringReader(getRequestMessage())).getDocumentElement()));
                 CxfPayload<SoapHeader> body = new CxfPayload<SoapHeader>(new ArrayList<SoapHeader>(),
                     elements, null);
                 exchange.getIn().setBody(body);
@@ -122,7 +121,7 @@ public class CxfMtomConsumerPayloadModeTest extends AbstractJUnit4SpringContextT
 
             // create response
             List<Source> elements = new ArrayList<Source>();
-            elements.add(new DOMSource(DOMUtils.readXml(new StringReader(MtomTestHelper.RESP_MESSAGE)).getDocumentElement()));
+            elements.add(new DOMSource(StaxUtils.read(new StringReader(MtomTestHelper.RESP_MESSAGE)).getDocumentElement()));
             CxfPayload<SoapHeader> sbody = new CxfPayload<SoapHeader>(new ArrayList<SoapHeader>(),
                 elements, null);
             exchange.getOut().setBody(sbody);

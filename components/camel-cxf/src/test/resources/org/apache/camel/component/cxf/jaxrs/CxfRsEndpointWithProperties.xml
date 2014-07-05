@@ -28,6 +28,9 @@
   <cxf:rsServer id="testEndpoint" address="{{address}}"
     serviceClass="org.apache.camel.component.cxf.jaxrs.testbean.CustomerService"
     loggingFeatureEnabled="true" loggingSizeLimit="200">
+    <cxf:properties>
+        <entry key="aKey" value="aValue"/>
+    </cxf:properties>
   </cxf:rsServer>
  
   <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">

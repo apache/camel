@@ -21,13 +21,13 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>2.13-SNAPSHOT</version>
+        <version>2.14-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-bindy</artifactId>
     <packaging>bundle</packaging>
     <name>Camel :: Bindy</name>
-    <description>Camel Bindy support</description>
+    <description>Camel Bindy data format support</description>
 
     <properties>
         <camel.osgi.export.pkg>

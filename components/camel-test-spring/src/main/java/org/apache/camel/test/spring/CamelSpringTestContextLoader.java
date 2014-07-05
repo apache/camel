@@ -79,7 +79,7 @@ public class CamelSpringTestContextLoader extends AbstractContextLoader {
         }
         
         try {            
-            GenericApplicationContext context = createContext(testClass);
+            GenericApplicationContext context = createContext(testClass, mergedConfig);
             context.getEnvironment().setActiveProfiles(mergedConfig.getActiveProfiles());
             loadBeanDefinitions(context, mergedConfig);
             return loadContext(context, testClass);
@@ -111,7 +111,7 @@ public class CamelSpringTestContextLoader extends AbstractContextLoader {
         }
         
         try {
-            GenericApplicationContext context = createContext(testClass);
+            GenericApplicationContext context = createContext(testClass, null);
             loadBeanDefinitions(context, locations);
             return loadContext(context, testClass);
         } finally {
@@ -196,8 +196,14 @@ public class CamelSpringTestContextLoader extends AbstractContextLoader {
      * @param testClass the test class that is being executed
      * @return the loaded Spring context
      */
-    protected GenericApplicationContext createContext(Class<?> testClass) {
+    protected GenericApplicationContext createContext(Class<?> testClass, MergedContextConfiguration mergedConfig) {
+        ApplicationContext parentContext = null;
         GenericApplicationContext routeExcludingContext = null;
+        
+        if (mergedConfig != null) {
+            parentContext = mergedConfig.getParentApplicationContext();
+
+        }
         
         if (testClass.isAnnotationPresent(ExcludeRoutes.class)) {
             Class<?>[] excludedClasses = testClass.getAnnotation(ExcludeRoutes.class).value();
@@ -208,7 +214,11 @@ public class CamelSpringTestContextLoader extends AbstractContextLoader {
                             + "annotation was found. Excluding [" + StringUtils.arrayToCommaDelimitedString(excludedClasses) + "].");
                 }
                 
-                routeExcludingContext = new GenericApplicationContext();
+                if (parentContext == null) {
+                    routeExcludingContext = new GenericApplicationContext();
+                } else {
+                    routeExcludingContext = new GenericApplicationContext(parentContext);
+                }
                 routeExcludingContext.registerBeanDefinition("excludingResolver", new RootBeanDefinition(ExcludingPackageScanClassResolver.class));
                 routeExcludingContext.refresh();
                 
@@ -228,7 +238,11 @@ public class CamelSpringTestContextLoader extends AbstractContextLoader {
         if (routeExcludingContext != null) {
             context = new GenericApplicationContext(routeExcludingContext);
         } else {
-            context = new GenericApplicationContext();
+            if (parentContext != null) {
+                context = new GenericApplicationContext(parentContext);
+            } else {
+                context = new GenericApplicationContext();
+            }
         }
         
         return context;

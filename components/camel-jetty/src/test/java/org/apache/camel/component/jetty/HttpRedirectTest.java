@@ -21,10 +21,11 @@ import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.http.HttpOperationFailedException;
+import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
 
 /**
- * @version 
+ * @version
  */
 public class HttpRedirectTest extends BaseJettyTest {
 
@@ -34,7 +35,8 @@ public class HttpRedirectTest extends BaseJettyTest {
             template.requestBody("http://localhost:{{port}}/test", "Hello World", String.class);
             fail("Should have thrown an exception");
         } catch (RuntimeCamelException e) {
-            HttpOperationFailedException cause = assertIsInstanceOf(HttpOperationFailedException.class, e.getCause());
+            HttpOperationFailedException cause = assertIsInstanceOf(HttpOperationFailedException.class,
+                                                                    e.getCause());
             assertEquals(301, cause.getStatusCode());
             assertEquals(true, cause.isRedirectError());
             assertEquals(true, cause.hasRedirectLocation());
@@ -43,18 +45,44 @@ public class HttpRedirectTest extends BaseJettyTest {
         }
     }
 
+    @Test
+    public void testHttpRedirectFromCamelRoute() throws Exception {
+        MockEndpoint errorEndpoint = context.getEndpoint("mock:error", MockEndpoint.class);
+        errorEndpoint.expectedMessageCount(1);
+        MockEndpoint resultEndpoint = context.getEndpoint("mock:result", MockEndpoint.class);
+        resultEndpoint.expectedMessageCount(0);
+        try {
+            template.requestBody("direct:start", "Hello World", String.class);
+            fail("Should have thrown an exception");
+        } catch (RuntimeCamelException e) {
+            HttpOperationFailedException cause = assertIsInstanceOf(HttpOperationFailedException.class,
+                                                                    e.getCause());
+            assertEquals(302, cause.getStatusCode());
+        }
+        errorEndpoint.assertIsSatisfied();
+        resultEndpoint.assertIsSatisfied();
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("jetty://http://localhost:{{port}}/test")
-                    .process(new Processor() {
-                        public void process(Exchange exchange) throws Exception {
-                            exchange.getOut().setHeader(Exchange.HTTP_RESPONSE_CODE, 301);
-                            exchange.getOut().setHeader("location", "http://localhost:" + getPort() + "/newtest");
-                        }
-                    });
+                from("jetty://http://localhost:{{port}}/test").process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        exchange.getOut().setHeader(Exchange.HTTP_RESPONSE_CODE, 301);
+                        exchange.getOut().setHeader("location", "http://localhost:" + getPort() + "/newtest");
+                    }
+                });
+                from("jetty://http://localhost:{{port}}/remove").process(new Processor() {
+                    public void process(Exchange exchange) throws Exception {
+                        exchange.getOut().setHeader(Exchange.HTTP_RESPONSE_CODE, 302);
+                    }
+                });
+                
+                from("direct:start").onException(HttpOperationFailedException.class).to("mock:error").end()
+                    .to("http://localhost:{{port}}/remove?throwExceptionOnFailure=true").to("mock:result");
+
             }
         };
     }

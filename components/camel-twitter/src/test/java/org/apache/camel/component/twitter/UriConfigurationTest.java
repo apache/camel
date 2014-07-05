@@ -17,7 +17,9 @@
 package org.apache.camel.component.twitter;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.ComponentConfiguration;
 import org.apache.camel.Endpoint;
+import org.apache.camel.EndpointConfiguration;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.junit.Assert;
 import org.junit.Test;
@@ -37,6 +39,7 @@ public class UriConfigurationTest extends Assert {
         assertTrue(!twitterEndpoint.getProperties().getConsumerSecret().isEmpty());
         assertTrue(!twitterEndpoint.getProperties().getAccessToken().isEmpty());
         assertTrue(!twitterEndpoint.getProperties().getAccessTokenSecret().isEmpty());
+        assertTrue(twitterEndpoint.getProperties().getUseSSL());
     }
     
     @Test
@@ -48,4 +51,48 @@ public class UriConfigurationTest extends Assert {
         assertEquals(new Integer(50), twitterEndpoint.getProperties().getCount());
         assertEquals(new Integer(2), twitterEndpoint.getProperties().getNumberOfPages());
     }
+    
+    @Test
+    public void testHttpProxySetting() throws Exception {
+        Endpoint endpoint = context.getEndpoint("twitter:todo/todo?httpProxyHost=example.com&httpProxyPort=3338&httpProxyUser=test&httpProxyPassword=pwd");
+        assertTrue("Endpoint not a TwitterEndpoint: " + endpoint, endpoint instanceof TwitterEndpoint);
+        TwitterEndpoint twitterEndpoint = (TwitterEndpoint) endpoint;
+        
+        assertEquals("example.com", twitterEndpoint.getProperties().getHttpProxyHost());
+        assertEquals(3338, twitterEndpoint.getProperties().getHttpProxyPort());
+        assertEquals("test", twitterEndpoint.getProperties().getHttpProxyUser());
+        assertEquals("pwd", twitterEndpoint.getProperties().getHttpProxyPassword());
+    }
+    
+    @Test
+    public void testUseSSLSetting() throws Exception {
+        Endpoint endpoint = context.getEndpoint("twitter:todo/todo?useSSL=false");
+        assertTrue("Endpoint not a TwitterEndpoint: " + endpoint, endpoint instanceof TwitterEndpoint);
+        TwitterEndpoint twitterEndpoint = (TwitterEndpoint) endpoint;
+        
+        assertFalse(twitterEndpoint.getProperties().getUseSSL());
+    }
+
+    @Test
+    public void testComponentConfiguration() throws Exception {
+        TwitterComponent comp = context.getComponent("twitter", TwitterComponent.class);
+        EndpointConfiguration conf = comp.createConfiguration("twitter:search?keywords=camel");
+
+        assertEquals("camel", conf.getParameter("keywords"));
+
+        ComponentConfiguration compConf = comp.createComponentConfiguration();
+        String json = compConf.createParameterJsonSchema();
+        assertNotNull(json);
+
+        assertTrue(json.contains("\"accessToken\": { \"type\": \"java.lang.String\" }"));
+        assertTrue(json.contains("\"consumerKey\": { \"type\": \"java.lang.String\" }"));
+    }
+
+    @Test
+    public void testComponentDocumentation() throws Exception {
+        CamelContext context = new DefaultCamelContext();
+        String html = context.getComponentDocumentation("twitter");
+        assertNotNull("Should have found some auto-generated HTML if on Java 7", html);
+    }
+
 }

@@ -182,12 +182,15 @@ public class VelocityEndpoint extends ResourceEndpoint {
         // getResourceAsInputStream also considers the content cache
         StringWriter buffer = new StringWriter();
         String logTag = getClass().getName();
-        Map<String, Object> variableMap = ExchangeHelper.createVariableMap(exchange);
-        Context velocityContext = new VelocityContext(variableMap);
+        Context velocityContext = exchange.getIn().getHeader(VelocityConstants.VELOCITY_CONTEXT, Context.class);
+        if (velocityContext == null) {
+            Map<String, Object> variableMap = ExchangeHelper.createVariableMap(exchange);
+            velocityContext = new VelocityContext(variableMap);
+        }
 
         // let velocity parse and generate the result in buffer
         VelocityEngine engine = getVelocityEngine();
-        log.debug("Velocity is evaluating using velocity context: {}", variableMap);
+        log.debug("Velocity is evaluating using velocity context: {}", velocityContext);
         engine.evaluate(velocityContext, buffer, logTag, reader);
 
         // now lets output the results to the exchange

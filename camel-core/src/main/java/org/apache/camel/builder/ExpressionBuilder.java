@@ -49,6 +49,7 @@ import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.support.ExpressionAdapter;
 import org.apache.camel.support.TokenPairExpressionIterator;
 import org.apache.camel.support.TokenXMLExpressionIterator;
+import org.apache.camel.support.XMLTokenExpressionIterator;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.GroupIterator;
@@ -1227,8 +1228,13 @@ public final class ExpressionBuilder {
                 inheritNamespaceTagName = inheritNamespaceTagName + ">";
             }
         }
-
         return new TokenXMLExpressionIterator(tagName, inheritNamespaceTagName);
+    }
+
+    public static Expression tokenizeXMLAwareExpression(String path, char mode) {
+        ObjectHelper.notEmpty(path, "path");
+
+        return new XMLTokenExpressionIterator(path, mode);
     }
 
     /**

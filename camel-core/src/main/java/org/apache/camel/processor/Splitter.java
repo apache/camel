@@ -63,11 +63,20 @@ public class Splitter extends MulticastProcessor implements AsyncProcessor, Trac
         this(camelContext, expression, destination, aggregationStrategy, false, null, false, false, false, 0, null, false);
     }
 
+    @Deprecated
     public Splitter(CamelContext camelContext, Expression expression, Processor destination, AggregationStrategy aggregationStrategy,
                     boolean parallelProcessing, ExecutorService executorService, boolean shutdownExecutorService,
                     boolean streaming, boolean stopOnException, long timeout, Processor onPrepare, boolean useSubUnitOfWork) {
+        this(camelContext, expression, destination, aggregationStrategy, parallelProcessing, executorService, shutdownExecutorService,
+                streaming, stopOnException, timeout, onPrepare, useSubUnitOfWork, false);
+    }
+
+    public Splitter(CamelContext camelContext, Expression expression, Processor destination, AggregationStrategy aggregationStrategy,
+                    boolean parallelProcessing, ExecutorService executorService, boolean shutdownExecutorService,
+                    boolean streaming, boolean stopOnException, long timeout, Processor onPrepare, boolean useSubUnitOfWork,
+                    boolean parallelAggregate) {
         super(camelContext, Collections.singleton(destination), aggregationStrategy, parallelProcessing, executorService,
-                shutdownExecutorService, streaming, stopOnException, timeout, onPrepare, useSubUnitOfWork);
+                shutdownExecutorService, streaming, stopOnException, timeout, onPrepare, useSubUnitOfWork, parallelAggregate);
         this.expression = expression;
         notNull(expression, "expression");
         notNull(destination, "destination");
@@ -192,19 +201,20 @@ public class Splitter extends MulticastProcessor implements AsyncProcessor, Trac
 
         @Override
         public void close() throws IOException {
-            if (value instanceof Closeable) {
-                IOHelper.close((Closeable) value, value.getClass().getName(), LOG);
-            } else if (value instanceof Scanner) {
-                // special for Scanner as it does not implement Closeable
+            if (value instanceof Scanner) {
+                // special for Scanner which implement the Closeable since JDK7 
                 Scanner scanner = (Scanner) value;
                 scanner.close();
-
                 IOException ioException = scanner.ioException();
                 if (ioException != null) {
                     throw ioException;
                 }
+            } else if (value instanceof Closeable) {
+                // we should throw out the exception here   
+                IOHelper.closeWithException((Closeable) value);
             }
         }
+       
     }
 
     private Iterable<ProcessorExchangePair> createProcessorExchangePairsList(Exchange exchange, Object value) {

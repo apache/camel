@@ -17,22 +17,24 @@
 package org.apache.camel.bam.processor;
 
 import java.lang.reflect.Method;
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReentrantLock;
+
+import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
 import org.apache.camel.Processor;
+import org.apache.camel.bam.EntityManagerCallback;
+import org.apache.camel.bam.EntityManagerTemplate;
 import org.apache.camel.bam.QueryUtils;
 import org.apache.camel.bam.model.ProcessDefinition;
 import org.apache.camel.bam.rules.ActivityRules;
 import org.apache.camel.util.IntrospectionSupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.springframework.orm.jpa.JpaTemplate;
 import org.springframework.transaction.support.TransactionTemplate;
 
 /**
@@ -40,7 +42,7 @@ import org.springframework.transaction.support.TransactionTemplate;
  * instance information which allows derived classes to specialise the process
  * instance entity.
  *
- * @version 
+ * @version
  */
 public class JpaBamProcessorSupport<T> extends BamProcessorSupport<T> {
     private static final Logger LOG = LoggerFactory.getLogger(JpaBamProcessorSupport.class);
@@ -48,23 +50,24 @@ public class JpaBamProcessorSupport<T> extends BamProcessorSupport<T> {
     private static final Lock LOCK = new ReentrantLock(); // lock used for concurrency issues
 
     private ActivityRules activityRules;
-    private JpaTemplate template;
+    private EntityManagerFactory entityManagerFactory;
+    private EntityManagerTemplate entityManagerTemplate;
     private String findByKeyQuery;
     private String keyPropertyName = "correlationKey";
     private boolean correlationKeyIsPrimary = true;
 
-    public JpaBamProcessorSupport(TransactionTemplate transactionTemplate, JpaTemplate template, 
+    public JpaBamProcessorSupport(TransactionTemplate transactionTemplate, EntityManagerFactory entityManagerFactory,
             Expression correlationKeyExpression, ActivityRules activityRules, Class<T> entitytype) {
         super(transactionTemplate, correlationKeyExpression, entitytype);
         this.activityRules = activityRules;
-        this.template = template;
+        setEntityManagerFactory(entityManagerFactory);
     }
 
-    public JpaBamProcessorSupport(TransactionTemplate transactionTemplate, JpaTemplate template, 
+    public JpaBamProcessorSupport(TransactionTemplate transactionTemplate, EntityManagerFactory entityManagerFactory,
             Expression correlationKeyExpression, ActivityRules activityRules) {
         super(transactionTemplate, correlationKeyExpression);
         this.activityRules = activityRules;
-        this.template = template;
+        setEntityManagerFactory(entityManagerFactory);
     }
 
     public String getFindByKeyQuery() {
@@ -94,12 +97,13 @@ public class JpaBamProcessorSupport<T> extends BamProcessorSupport<T> {
         this.keyPropertyName = keyPropertyName;
     }
 
-    public JpaTemplate getTemplate() {
-        return template;
+    public EntityManagerFactory getEntityManagerFactory() {
+        return entityManagerFactory;
     }
 
-    public void setTemplate(JpaTemplate template) {
-        this.template = template;
+    public void setEntityManagerFactory(EntityManagerFactory entityManagerFactory) {
+        this.entityManagerFactory = entityManagerFactory;
+        this.entityManagerTemplate = new EntityManagerTemplate(entityManagerFactory);
     }
 
     public boolean isCorrelationKeyIsPrimary() {
@@ -120,15 +124,15 @@ public class JpaBamProcessorSupport<T> extends BamProcessorSupport<T> {
             if (entity == null) {
                 entity = createEntity(exchange, key);
                 setKeyProperty(entity, key);
-                ProcessDefinition definition = ProcessDefinition.getRefreshedProcessDefinition(template,
+                ProcessDefinition definition = ProcessDefinition.getRefreshedProcessDefinition(entityManagerTemplate,
                         getActivityRules().getProcessRules().getProcessDefinition());
                 setProcessDefinitionProperty(entity, definition);
-                template.persist(entity);
+                entityManagerTemplate.persist(entity);
 
                 // Now we must flush to avoid concurrent updates clashing trying to
                 // insert the same row
                 LOG.debug("About to flush on entity: {} with key: {}", entity, key);
-                template.flush();
+                entityManagerTemplate.flush();
             }
             return entity;
         } finally {
@@ -137,13 +141,21 @@ public class JpaBamProcessorSupport<T> extends BamProcessorSupport<T> {
     }
 
     @SuppressWarnings("unchecked")
-    protected T findEntityByCorrelationKey(Object key) {
+    protected T findEntityByCorrelationKey(final Object key) {
         if (isCorrelationKeyIsPrimary()) {
-            return template.find(getEntityType(), key);
+            return entityManagerTemplate.execute(new EntityManagerCallback<T>() {
+                @Override
+                public T execute(EntityManager entityManager) {
+                    return entityManager.find(getEntityType(), key);
+                }
+            });
         } else {
-            Map<String, Object> params = new HashMap<String, Object>(1);
-            params.put("key", key);
-            List<T> list = template.findByNamedParams(getFindByKeyQuery(), params);
+            List<T> list = entityManagerTemplate.execute(new EntityManagerCallback<List<T>>() {
+                @Override
+                public List<T> execute(EntityManager entityManager) {
+                    return entityManager.createQuery(getFindByKeyQuery()).setParameter("key", key).getResultList();
+                }
+            });
             if (list.isEmpty()) {
                 return null;
             } else {

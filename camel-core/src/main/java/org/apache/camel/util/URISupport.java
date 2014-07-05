@@ -155,7 +155,7 @@ public final class URISupport {
                 char ch = uri.charAt(i);
                 // look ahead of the next char
                 char next;
-                if (i < uri.length() - 2) {
+                if (i <= uri.length() - 2) {
                     next = uri.charAt(i + 1);
                 } else {
                     next = '\u0000';
@@ -464,7 +464,11 @@ public final class URISupport {
             path = path.substring(0, idx);
         }
 
-        path = UnsafeUriCharactersEncoder.encode(path);
+        if (u.getScheme().startsWith("http")) {
+            path = UnsafeUriCharactersEncoder.encodeHttpURI(path);
+        } else {
+            path = UnsafeUriCharactersEncoder.encode(path);
+        }
 
         // okay if we have user info in the path and they use @ in username or password,
         // then we need to encode them (but leave the last @ sign before the hostname)

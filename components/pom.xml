@@ -21,7 +21,7 @@
   <parent>
     <groupId>org.apache.camel</groupId>
     <artifactId>camel-parent</artifactId>
-    <version>2.13-SNAPSHOT</version>
+    <version>2.14-SNAPSHOT</version>
     <relativePath>../parent</relativePath>
   </parent>
 
@@ -31,7 +31,7 @@
   <packaging>pom</packaging>
 
   <modules>
-	<!-- we want to test these modules first to catch any errors early as possible -->
+	  <!-- we want to test these modules first to catch any errors early as possible -->
     <module>camel-test</module>
     <module>camel-testng</module>
     <module>camel-test-blueprint</module>
@@ -48,21 +48,24 @@
     <module>camel-jetty</module>
     <module>camel-cxf</module>
     <module>camel-cxf-transport</module>
-    <module>camel-web</module>
     <module>camel-web-standalone</module>
     <module>camel-jms</module>
 
     <!-- regular modules in alphabetic order -->
     <module>camel-ahc</module>
+    <module>camel-ahc-ws</module>
     <module>camel-amqp</module>
     <module>camel-apns</module>
+    <module>camel-atmosphere-websocket</module>
     <module>camel-atom</module>
     <module>camel-avro</module>  
     <module>camel-aws</module>
     <module>camel-base64</module>
     <module>camel-beanio</module>
     <module>camel-bean-validator</module>
+    <module>camel-barcode</module>
     <module>camel-bindy</module>
+    <module>camel-box</module>
     <module>camel-cache</module>
     <module>camel-castor</module>
     <module>camel-cdi</module>
@@ -75,6 +78,7 @@
     <module>camel-disruptor</module>
     <module>camel-dns</module>
     <module>camel-dozer</module>
+    <module>camel-dropbox</module>
     <module>camel-eclipse</module>
     <module>camel-ejb</module>
     <module>camel-elasticsearch</module>
@@ -87,6 +91,7 @@
     <module>camel-ftp</module>
     <module>camel-gae</module>
     <module>camel-geocoder</module>
+    <module>camel-gora</module>
     <module>camel-gson</module>
     <module>camel-guava-eventbus</module>
     <module>camel-guice</module>
@@ -94,6 +99,7 @@
     <module>camel-hazelcast</module>
     <module>camel-hbase</module>
     <module>camel-hdfs</module>
+    <module>camel-hdfs2</module>
     <module>camel-hl7</module>
     <module>camel-ibatis</module>
     <module>camel-ical</module>
@@ -106,7 +112,7 @@
     <module>camel-jclouds</module>
     <module>camel-jcr</module>
     <module>camel-jdbc</module>
-    <module>camel-jibx</module>
+    <module>camel-jgroups</module>
     <module>camel-jing</module>
     <module>camel-jmx</module>
     <module>camel-josql</module>
@@ -116,6 +122,7 @@
     <module>camel-jt400</module>
     <module>camel-juel</module>
     <module>camel-jxpath</module>
+    <module>camel-kafka</module>
     <module>camel-kestrel</module>
     <module>camel-krati</module>
     <module>camel-ldap</module>
@@ -132,9 +139,10 @@
     <module>camel-mybatis</module>
     <module>camel-nagios</module>
     <module>camel-netty</module>
-    <module>camel-netty4</module>
     <module>camel-netty-http</module>
     <module>camel-ognl</module>
+    <module>camel-openshift</module>
+    <module>camel-optaplanner</module>
     <module>camel-paxlogging</module>
     <module>camel-printer</module>
     <module>camel-protobuf</module>
@@ -162,6 +170,7 @@
     <module>camel-sjms</module>
     <module>camel-soap</module>
     <module>camel-solr</module>
+    <module>camel-spark-rest</module>
     <module>camel-splunk</module>
     <module>camel-spring-batch</module>
     <module>camel-spring-javaconfig</module>
@@ -183,6 +192,7 @@
     <module>camel-velocity</module>
     <module>camel-vertx</module>
     <module>camel-weather</module>
+    <module>camel-web</module>
     <module>camel-websocket</module>
     <module>camel-xmlbeans</module>
     <module>camel-xmljson</module>
@@ -197,6 +207,35 @@
 
 
   <build>
+    <pluginManagement>
+      <plugins>
+        <!-- Eclipse m2e Lifecycle Management -->
+        <plugin>
+         <groupId>org.eclipse.m2e</groupId>
+         <artifactId>lifecycle-mapping</artifactId>
+         <version>${lifecycle-mapping-version}</version>
+         <configuration>
+           <lifecycleMappingMetadata>
+             <pluginExecutions>
+               <pluginExecution>
+                 <pluginExecutionFilter>
+                   <groupId>org.apache.camel</groupId>
+                   <artifactId>camel-package-maven-plugin</artifactId>
+                   <versionRange>${project.version}</versionRange>
+                   <goals>
+                     <goal>generate-components-list</goal>
+                   </goals>
+                 </pluginExecutionFilter>
+                 <action>
+                   <ignore />
+                 </action>
+               </pluginExecution>
+             </pluginExecutions>
+           </lifecycleMappingMetadata>
+         </configuration>
+        </plugin>
+      </plugins>
+    </pluginManagement>
     <plugins>
       <plugin>
         <groupId>org.apache.camel</groupId>
@@ -224,12 +263,34 @@
   </reporting>
 
   <profiles>
+
+    <!-- Some components don't support Java 8 Yet. -->
+    <profile>
+      <id>jdk-7</id>
+      <modules>
+        <module>camel-jibx</module>
+      </modules>
+      <activation>
+        <jdk>1.7</jdk>
+      </activation>
+    </profile>
+    <profile>
+      <id>jdk-6</id>
+      <modules>
+        <module>camel-jibx</module>
+      </modules>
+      <activation>
+        <jdk>1.6</jdk>
+      </activation>
+    </profile>
+    
     <!-- enables the APT dependency so that it can be disabled in IDE builds -->
     <profile>
       <id>apt</id>
       <activation>
-        <!-- don't enable on jdk 1.6 as it would not work and also it causes build problems by the CI-Server -->
-        <jdk>[1.7,)</jdk>
+        <property>
+            <name>!dummy.prop.to.keep.this.profile.active.even.when.other.profiles.are.active</name>
+        </property>
       </activation>
 
       <dependencies>

@@ -38,7 +38,7 @@ public class SyslogSpringNettyTest extends CamelSpringTestSupport {
 
     @BeforeClass
     public static void initPort() {
-        serverPort = AvailablePortFinder.getNextAvailable();
+        serverPort = AvailablePortFinder.getNextAvailable(4000);
         System.setProperty("server-port", new Integer(serverPort).toString());
     }
     
@@ -58,7 +58,7 @@ public class SyslogSpringNettyTest extends CamelSpringTestSupport {
 
         DatagramSocket socket = new DatagramSocket();
         try {
-            InetAddress address = InetAddress.getByName("127.0.0.1");
+            InetAddress address = InetAddress.getByName("localhost");
             for (int i = 0; i < messageCount; i++) {
 
                 byte[] data = message.getBytes();

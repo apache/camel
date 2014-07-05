@@ -107,6 +107,10 @@ public class JettyHttpComponent extends HttpComponent {
     protected String proxyHost;
     private Integer proxyPort;
 
+    public JettyHttpComponent() {
+        super(JettyHttpEndpoint.class);
+    }
+
     class ConnectorRef {
         Server server;
         Connector connector;
@@ -166,7 +170,7 @@ public class JettyHttpComponent extends HttpComponent {
         Map<String, Object> httpClientParameters = IntrospectionSupport.extractProperties(parameters, "httpClient.");
 
         String address = remaining;
-        URI addressUri = new URI(UnsafeUriCharactersEncoder.encode(address));
+        URI addressUri = new URI(UnsafeUriCharactersEncoder.encodeHttpURI(address));
         URI endpointUri = URISupport.createRemainingURI(addressUri, parameters);
         // restructure uri to be based on the parameters left as we dont want to include the Camel internal options
         URI httpUri = URISupport.createRemainingURI(addressUri, parameters);
@@ -296,7 +300,11 @@ public class JettyHttpComponent extends HttpComponent {
                 if (endpoint.isEnableJmx()) {
                     enableJmx(server);
                 }
+                // This setting is only work for the first endpoint which create the server
+                // just set if we need sendServerVersion, the default value is true
+                server.setSendServerVersion(endpoint.isSendServerVersion());
                 server.addConnector(connector);
+                server.setSendDateHeader(endpoint.isSendDateHeader());
 
                 connectorRef = new ConnectorRef(server, connector, createServletForConnector(server, connector, endpoint.getHandlers(), endpoint));
                 // must enable session before we start
@@ -308,6 +316,13 @@ public class JettyHttpComponent extends HttpComponent {
                 CONNECTORS.put(connectorKey, connectorRef);
                 
             } else {
+                
+                if (endpoint.getHandlers() != null && !endpoint.getHandlers().isEmpty()) {
+                    // As the server is started, we need to stop the server for a while to add the new handler
+                    connectorRef.server.stop();
+                    addJettyHandlers(connectorRef.server, endpoint.getHandlers());
+                    connectorRef.server.start();
+                }
                 // ref track the connector
                 connectorRef.increment();
             }
@@ -708,13 +723,10 @@ public class JettyHttpComponent extends HttpComponent {
             QueuedThreadPool qtp = new QueuedThreadPool();
             qtp.setMinThreads(minThreads.intValue());
             qtp.setMaxThreads(maxThreads.intValue());
+            // and we want to use daemon threads
+            qtp.setDaemon(true);
             // let the thread names indicate they are from the client
             qtp.setName("CamelJettyClient(" + ObjectHelper.getIdentityHashCode(httpClient) + ")");
-            try {
-                qtp.start();
-            } catch (Exception e) {
-                throw new RuntimeCamelException("Error starting JettyHttpClient thread pool: " + qtp, e);
-            }
             httpClient.setThreadPool(qtp);
         }
 
@@ -924,19 +936,7 @@ public class JettyHttpComponent extends HttpComponent {
         ServletContextHandler context = new ServletContextHandler(server, "/", ServletContextHandler.NO_SECURITY | ServletContextHandler.NO_SESSIONS);
         context.setConnectorNames(new String[] {connector.getName()});
 
-        if (handlers != null && !handlers.isEmpty()) {
-            for (Handler handler : handlers) {
-                if (handler instanceof HandlerWrapper) {
-                    ((HandlerWrapper) handler).setHandler(server.getHandler());
-                    server.setHandler(handler);
-                } else {
-                    HandlerCollection handlerCollection = new HandlerCollection();
-                    handlerCollection.addHandler(server.getHandler());
-                    handlerCollection.addHandler(handler);
-                    server.setHandler(handlerCollection);
-                }
-            }
-        }
+        addJettyHandlers(server, handlers);
 
         CamelServlet camelServlet;
         boolean jetty = endpoint.getUseContinuation() != null ? endpoint.getUseContinuation() : isUseContinuation();
@@ -965,6 +965,23 @@ public class JettyHttpComponent extends HttpComponent {
         context.addServlet(holder, "/*");
 
         return camelServlet;
+    }
+    
+    protected void addJettyHandlers(Server server, List<Handler> handlers) {
+        if (handlers != null && !handlers.isEmpty()) {
+            for (Handler handler : handlers) {
+                if (handler instanceof HandlerWrapper) {
+                    ((HandlerWrapper) handler).setHandler(server.getHandler());
+                    server.setHandler(handler);
+                } else {
+                    HandlerCollection handlerCollection = new HandlerCollection();
+                    handlerCollection.addHandler(server.getHandler());
+                    handlerCollection.addHandler(handler);
+                    server.setHandler(handlerCollection);
+                }
+            }
+        }
+        
     }
     
     protected Server createServer() throws Exception {

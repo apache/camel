@@ -18,6 +18,7 @@ package org.apache.camel.component.hbase;
 
 import java.util.LinkedList;
 import java.util.List;
+
 import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -26,36 +27,12 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.hbase.filters.ModelAwareColumnMatchingFilter;
 import org.apache.camel.impl.JndiRegistry;
-import org.apache.hadoop.hbase.TableExistsException;
 import org.apache.hadoop.hbase.filter.Filter;
-import org.junit.After;
-import org.junit.Before;
 import org.junit.Test;
 
 public class CamelHBaseFilterTest extends CamelHBaseTestSupport {
 
     List<Filter> filters = new LinkedList<Filter>();
-
-    @Before
-    public void setUp() throws Exception {
-        if (systemReady) {
-            try {
-                hbaseUtil.createTable(HBaseHelper.getHBaseFieldAsBytes(PERSON_TABLE), families);
-            } catch (TableExistsException ex) {
-                //Ignore if table exists
-            }
-
-            super.setUp();
-        }
-    }
-
-    @After
-    public void tearDown() throws Exception {
-        if (systemReady) {
-            hbaseUtil.deleteTable(PERSON_TABLE.getBytes());
-            super.tearDown();
-        }
-    }
 
     @Override
     protected JndiRegistry createRegistry() throws Exception {
@@ -92,11 +69,11 @@ public class CamelHBaseFilterTest extends CamelHBaseTestSupport {
             @Override
             public void configure() {
                 from("direct:start")
-                        .to("hbase://" + PERSON_TABLE);
+                    .to("hbase://" + PERSON_TABLE);
+
                 from("direct:scan")
-                        .to("hbase://" + PERSON_TABLE + "?operation=" + HBaseConstants.SCAN + "&maxResults=2&filters=#myFilters");
+                    .to("hbase://" + PERSON_TABLE + "?operation=" + HBaseConstants.SCAN + "&maxResults=2&filters=#myFilters");
             }
         };
     }
-
 }

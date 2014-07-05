@@ -21,13 +21,13 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>2.13-SNAPSHOT</version>
+        <version>2.14-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-cdi</artifactId>
     <packaging>bundle</packaging>
     <name>Camel :: CDI</name>
-    <description>Camel CDI</description>
+    <description>Camel Contexts and Dependency Injection (JSR-299) support</description>
 
     <properties>
         <camel.osgi.import>
@@ -78,16 +78,19 @@
             <groupId>org.apache.geronimo.specs</groupId>
             <artifactId>geronimo-atinject_1.0_spec</artifactId>
             <version>${geronimo-atinject-1.0-spec-version}</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.geronimo.specs</groupId>
             <artifactId>geronimo-jcdi_1.0_spec</artifactId>
             <version>${geronimo-jcdi-1.0-spec-version}</version>
+            <scope>provided</scope>
         </dependency>
         <dependency>
             <groupId>org.apache.geronimo.specs</groupId>
             <artifactId>geronimo-interceptor_1.1_spec</artifactId>
             <version>${geronimo-interceptor-1.1-spec-version}</version>
+            <scope>provided</scope>
         </dependency>
 
         <!-- logging -->

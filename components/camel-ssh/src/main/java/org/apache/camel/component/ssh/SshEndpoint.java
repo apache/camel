@@ -98,55 +98,68 @@ public class SshEndpoint extends ScheduledPollEndpoint {
 
         log.debug("Connected to {}:{}", getHost(), getPort());
 
-        AuthFuture authResult;
-        ClientSession session = connectFuture.getSession();
+        ClientChannel channel = null;
+        ClientSession session = null;
+        
+        try {
+            AuthFuture authResult;
+            session = connectFuture.getSession();
+    
+            KeyPairProvider keyPairProvider;
+            final String certResource = getCertResource();
+            if (certResource != null) {
+                log.debug("Attempting to authenticate using ResourceKey '{}'...", certResource);
+                keyPairProvider = new ResourceHelperKeyPairProvider(new String[]{certResource}, getCamelContext().getClassResolver());
+            } else {
+                keyPairProvider = getKeyPairProvider();
+            }
+    
+            if (keyPairProvider != null) {
+                log.debug("Attempting to authenticate username '{}' using Key...", getUsername());
+                KeyPair pair = keyPairProvider.loadKey(getKeyType());
+                authResult = session.authPublicKey(getUsername(), pair);
+            } else {
+                log.debug("Attempting to authenticate username '{}' using Password...", getUsername());
+                authResult = session.authPassword(getUsername(), getPassword());
+            }
+    
+            authResult.await(getTimeout());
+    
+            if (!authResult.isDone() || authResult.isFailure()) {
+                log.debug("Failed to authenticate");
+                throw new RuntimeCamelException("Failed to authenticate username " + getUsername());
+            }
+        
+            channel = session.createChannel(ClientChannel.CHANNEL_EXEC, command);
 
-        KeyPairProvider keyPairProvider;
-        final String certResource = getCertResource();
-        if (certResource != null) {
-            log.debug("Attempting to authenticate using ResourceKey '{}'...", certResource);
-            keyPairProvider = new ResourceHelperKeyPairProvider(new String[]{certResource}, getCamelContext().getClassResolver());
-        } else {
-            keyPairProvider = getKeyPairProvider();
+            ByteArrayInputStream in = new ByteArrayInputStream(new byte[]{0});
+            channel.setIn(in);
+    
+            ByteArrayOutputStream out = new ByteArrayOutputStream();
+            channel.setOut(out);
+    
+            ByteArrayOutputStream err = new ByteArrayOutputStream();
+            channel.setErr(err);
+            OpenFuture openFuture = channel.open();
+            openFuture.await(getTimeout());
+            if (openFuture.isOpened()) {
+                channel.waitFor(ClientChannel.CLOSED, 0);
+                result = new SshResult(command, channel.getExitStatus(),
+                        new ByteArrayInputStream(out.toByteArray()),
+                        new ByteArrayInputStream(err.toByteArray()));
+    
+            }
+            return result;
+        } finally {
+            if (channel != null) {
+                channel.close(true);
+            }
+            // need to make sure the session is closed 
+            if (session != null) {
+                session.close(false);
+            }
         }
-
-        if (keyPairProvider != null) {
-            log.debug("Attempting to authenticate username '{}' using Key...", getUsername());
-            KeyPair pair = keyPairProvider.loadKey(getKeyType());
-            authResult = session.authPublicKey(getUsername(), pair);
-        } else {
-            log.debug("Attempting to authenticate username '{}' using Password...", getUsername());
-            authResult = session.authPassword(getUsername(), getPassword());
-        }
-
-        authResult.await(getTimeout());
-
-        if (!authResult.isDone() || authResult.isFailure()) {
-            log.debug("Failed to authenticate");
-            throw new RuntimeCamelException("Failed to authenticate username " + getUsername());
-        }
-
-        ClientChannel channel = session.createChannel(ClientChannel.CHANNEL_EXEC, command);
-
-        ByteArrayInputStream in = new ByteArrayInputStream(new byte[]{0});
-        channel.setIn(in);
-
-        ByteArrayOutputStream out = new ByteArrayOutputStream();
-        channel.setOut(out);
-
-        ByteArrayOutputStream err = new ByteArrayOutputStream();
-        channel.setErr(err);
-        OpenFuture openFuture = channel.open();
-        openFuture.await(getTimeout());
-        if (openFuture.isOpened()) {
-            channel.waitFor(ClientChannel.CLOSED, 0);
-            result = new SshResult(command, channel.getExitStatus(),
-                    new ByteArrayInputStream(out.toByteArray()),
-                    new ByteArrayInputStream(err.toByteArray()));
-
-        }
-
-        return result;
+        
     }
 
     @Override

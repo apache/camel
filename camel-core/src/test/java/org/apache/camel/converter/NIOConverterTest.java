@@ -34,6 +34,20 @@ public class NIOConverterTest extends ContextTestSupport {
         assertNotNull(out);
         assertEquals(5, out.length);
     }
+    
+    /**
+     * Test if returned array size is only to limit of ByteBuffer.
+     * 
+     * If byteBuffer capacity is bigger that limit, we MUST return data only to the limit.
+     */
+    public void testToByteArrayBigBuffer() {
+        ByteBuffer bb = ByteBuffer.allocate(100);
+        bb.put("Hello".getBytes());
+        bb.flip();
+        byte[] out = NIOConverter.toByteArray(bb);
+        assertNotNull(out);
+        assertEquals(5, out.length);
+    }
 
     public void testToString() throws Exception {
         ByteBuffer bb = ByteBuffer.wrap("Hello".getBytes());
@@ -41,6 +55,20 @@ public class NIOConverterTest extends ContextTestSupport {
         assertNotNull(out);
         assertEquals("Hello", out);
     }
+    
+    /**
+     * ToString need to deal the array size issue as ToByteArray does 
+     */
+    public void testByteBufferToStringConversion() throws Exception {
+        String str = "123456789";
+        ByteBuffer buffer = ByteBuffer.allocate(16);
+        buffer.put(str.getBytes());
+        buffer.flip();
+
+        String out = NIOConverter.toString(buffer, null);
+        assertEquals(str, out);
+    }
+    
 
     public void testToByteBuffer() {
         ByteBuffer bb = NIOConverter.toByteBuffer("Hello".getBytes());
@@ -64,40 +92,30 @@ public class NIOConverterTest extends ContextTestSupport {
     public void testToByteBufferShort() {
         ByteBuffer bb = NIOConverter.toByteBuffer(Short.valueOf("2"));
         assertNotNull(bb);
-
-        bb.position(0);
         assertEquals(2, bb.getShort());
     }
 
     public void testToByteBufferInteger() {
         ByteBuffer bb = NIOConverter.toByteBuffer(Integer.valueOf("2"));
         assertNotNull(bb);
-
-        bb.position(0);
         assertEquals(2, bb.getInt());
     }
 
     public void testToByteBufferLong() {
         ByteBuffer bb = NIOConverter.toByteBuffer(Long.valueOf("2"));
         assertNotNull(bb);
-
-        bb.position(0);
         assertEquals(2, bb.getLong());
     }
 
     public void testToByteBufferDouble() {
         ByteBuffer bb = NIOConverter.toByteBuffer(Double.valueOf("2"));
         assertNotNull(bb);
-
-        bb.position(0);
         assertEquals(2.0d, bb.getDouble());
     }
 
     public void testToByteBufferFloat() {
         ByteBuffer bb = NIOConverter.toByteBuffer(Float.valueOf("2"));
         assertNotNull(bb);
-
-        bb.position(0);
         assertEquals(2.0f, bb.getFloat());
     }
 

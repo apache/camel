@@ -29,6 +29,7 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.MultipleConsumersSupport;
+import org.apache.camel.PollingConsumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.WaitForTaskToComplete;
@@ -138,6 +139,13 @@ public class SedaEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
         return answer;
     }
 
+    @Override
+    public PollingConsumer createPollingConsumer() throws Exception {
+        SedaPollingConsumer answer = new SedaPollingConsumer(this);
+        configureConsumer(answer);
+        return answer;
+    }
+
     public synchronized BlockingQueue<Exchange> getQueue() {
         if (queue == null) {
             // prefer to lookup queue from component, so if this endpoint is re-created or re-started
@@ -171,12 +179,13 @@ public class SedaEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
         }
     }
 
+    /**
+     * Get's the {@link QueueReference} for the this endpoint.
+     * @return the reference, or <tt>null</tt> if no queue reference exists.
+     */
     public synchronized QueueReference getQueueReference() {
         String key = getComponent().getQueueKey(getEndpointUri());
-        QueueReference ref =  getComponent().getQueueReference(key);
-        if (ref == null) {
-            LOG.warn("There was no queue reference for the endpoint {0}", getEndpointUri());
-        }
+        QueueReference ref = getComponent().getQueueReference(key);
         return ref;
     }
 
@@ -308,6 +317,7 @@ public class SedaEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
         this.purgeWhenStopping = purgeWhenStopping;
     }
 
+    @ManagedAttribute(description = "Singleton")
     public boolean isSingleton() {
         return true;
     }
@@ -423,6 +433,11 @@ public class SedaEndpoint extends DefaultEndpoint implements BrowsableEndpoint, 
     @ManagedAttribute(description = "Camel ManagementName")
     public String getCamelManagementName() {
         return getCamelContext().getManagementName();
+    }
+
+    @ManagedAttribute(description = "Endpoint URI", mask = true)
+    public String getEndpointUri() {
+        return super.getEndpointUri();
     }
 
     @ManagedAttribute(description = "Endpoint service state")

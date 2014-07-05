@@ -30,7 +30,7 @@ public interface ManagedCamelContextMBean extends ManagedPerformanceCounterMBean
     @ManagedAttribute(description = "Camel ID")
     String getCamelId();
 
-    @ManagedAttribute(description = "Camel Management Name")
+    @ManagedAttribute(description = "Camel ManagementName")
     String getManagementName();
 
     @ManagedAttribute(description = "Camel Version")
@@ -86,6 +86,12 @@ public interface ManagedCamelContextMBean extends ManagedPerformanceCounterMBean
     @ManagedAttribute(description = "Current number of inflight Exchanges")
     Integer getInflightExchanges();
 
+    @ManagedAttribute(description = "Total number of routes")
+    Integer getTotalRoutes();
+
+    @ManagedAttribute(description = "Current number of started routes")
+    Integer getStartedRoutes();
+
     @ManagedAttribute(description = "Shutdown timeout")
     void setTimeout(long timeout);
 
@@ -112,6 +118,18 @@ public interface ManagedCamelContextMBean extends ManagedPerformanceCounterMBean
 
     @ManagedAttribute(description = "Average load over the last fifteen minutes")
     String getLoad15();
+
+    @ManagedAttribute(description = "Whether breadcrumbs is in use")
+    boolean isUseBreadcrumb();
+
+    @ManagedAttribute(description = "Whether allowing access to the original message during routing")
+    boolean isAllowUseOriginalMessage();
+
+    @ManagedAttribute(description = "Whether message history is enabled")
+    boolean isMessageHistory();
+
+    @ManagedAttribute(description = "Whether MDC logging is supported")
+    boolean isUseMDCLogging();
 
     @ManagedOperation(description = "Start Camel")
     void start() throws Exception;
@@ -151,6 +169,9 @@ public interface ManagedCamelContextMBean extends ManagedPerformanceCounterMBean
 
     @ManagedOperation(description = "Adds or updates existing routes from XML")
     void addOrUpdateRoutesFromXml(String xml) throws Exception;
+
+    @ManagedOperation(description = "Adds or updates existing routes from XML")
+    void addOrUpdateRoutesFromXml(String xml, boolean urlDecode) throws Exception;
 
     @ManagedOperation(description = "Dumps the routes stats as XML")
     String dumpRoutesStatsAsXml(boolean fullStats, boolean includeProcessors) throws Exception;
@@ -236,5 +257,11 @@ public interface ManagedCamelContextMBean extends ManagedPerformanceCounterMBean
      */
     @ManagedOperation(description = "Returns the HTML documentation for the given camel component")
     String getComponentDocumentation(String componentName) throws IOException;
+
+    @ManagedOperation(description = "Returns the JSON representation of all the static and dynamic endpoints defined in all the routes")
+    String createRouteStaticEndpointJson();
+
+    @ManagedOperation(description = "Returns the JSON representation of all the static endpoints (and possible dynamic) defined in all the routes")
+    String createRouteStaticEndpointJson(boolean includeDynamic);
 
 }

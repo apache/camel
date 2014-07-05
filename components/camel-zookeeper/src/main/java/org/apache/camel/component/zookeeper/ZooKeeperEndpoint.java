@@ -204,5 +204,13 @@ public class ZooKeeperEndpoint extends DefaultEndpoint {
     public void setSendEmptyMessageOnDelete(boolean sendEmptyMessageOnDelete) {
         getConfiguration().setSendEmptyMessageOnDelete(sendEmptyMessageOnDelete);
     }
+    
+    @Override
+    protected void doStop() throws Exception {
+        if (connectionManager != null) {
+            // It releases the zookeeper connection when calling the shutdown method
+            connectionManager.shutdown();
+        }
+    }
 
 }

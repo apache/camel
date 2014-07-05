@@ -44,6 +44,8 @@ import org.springframework.jms.core.JmsOperations;
 import org.springframework.jms.core.MessageCreator;
 import org.springframework.jms.support.JmsUtils;
 
+import static org.apache.camel.component.jms.JmsMessageHelper.isQueuePrefix;
+import static org.apache.camel.component.jms.JmsMessageHelper.isTopicPrefix;
 import static org.apache.camel.component.jms.JmsMessageHelper.normalizeDestinationName;
 
 /**
@@ -182,6 +184,9 @@ public class JmsProducer extends DefaultAsyncProducer {
 
         initReplyManager();
 
+        // the request timeout can be overruled by a header otherwise the endpoint configured value is used
+        final long timeout = exchange.getIn().getHeader(JmsConstants.JMS_REQUEST_TIMEOUT, endpoint.getRequestTimeout(), long.class);
+
         // when using message id as correlation id, we need at first to use a provisional correlation id
         // which we then update to the real JMSMessageID when the message has been sent
         // this is done with the help of the MessageSentCallback
@@ -189,7 +194,7 @@ public class JmsProducer extends DefaultAsyncProducer {
         final String provisionalCorrelationId = msgIdAsCorrId ? getUuidGenerator().generateUuid() : null;
         MessageSentCallback messageSentCallback = null;
         if (msgIdAsCorrId) {
-            messageSentCallback = new UseMessageIdAsCorrelationIdMessageSentCallback(replyManager, provisionalCorrelationId, endpoint.getRequestTimeout());
+            messageSentCallback = new UseMessageIdAsCorrelationIdMessageSentCallback(replyManager, provisionalCorrelationId, timeout);
         }
 
         final String originalCorrelationId = in.getHeader("JMSCorrelationID", String.class);
@@ -209,13 +214,16 @@ public class JmsProducer extends DefaultAsyncProducer {
                 if (replyTo == null) {
                     throw new RuntimeExchangeException("Failed to resolve replyTo destination", exchange);
                 }
-                LOG.debug("Using JMSReplyTo destination: {}", replyTo);
                 JmsMessageHelper.setJMSReplyTo(answer, replyTo);
                 replyManager.setReplyToSelectorHeader(in, answer);
 
                 String correlationId = determineCorrelationId(answer, provisionalCorrelationId);
-                replyManager.registerReply(replyManager, exchange, callback, originalCorrelationId, correlationId, endpoint.getRequestTimeout());
-                LOG.debug("Using JMSCorrelationID: {}", correlationId);
+                replyManager.registerReply(replyManager, exchange, callback, originalCorrelationId, correlationId, timeout);
+
+                if (LOG.isDebugEnabled()) {
+                    LOG.debug("Using JMSCorrelationID: {}, JMSReplyTo destination: {}, with request timeout: {} ms.",
+                           new Object[]{correlationId, replyTo, timeout});
+                }
 
                 LOG.trace("Created javax.jms.Message: {}", answer);
                 return answer;
@@ -326,24 +334,26 @@ public class JmsProducer extends DefaultAsyncProducer {
                 // the reply to is a String, so we need to look up its Destination instance
                 // and if needed create the destination using the session if needed to
                 if (jmsReplyTo != null && jmsReplyTo instanceof String) {
-                    // must normalize the destination name
-                    String before = (String) jmsReplyTo;
-                    String replyTo = normalizeDestinationName(before);
+                    String replyTo = (String) jmsReplyTo;
                     // we need to null it as we use the String to resolve it as a Destination instance
                     jmsReplyTo = null;
-                    LOG.trace("Normalized JMSReplyTo destination name {} -> {}", before, replyTo);
-
+                    boolean isPubSub = isTopicPrefix(replyTo) || (!isQueuePrefix(replyTo) && endpoint.isPubSubDomain());
                     // try using destination resolver to lookup the destination
                     if (endpoint.getDestinationResolver() != null) {
-                        jmsReplyTo = endpoint.getDestinationResolver().resolveDestinationName(session, replyTo, endpoint.isPubSubDomain());
+                        jmsReplyTo = endpoint.getDestinationResolver().resolveDestinationName(session, replyTo, isPubSub);
                         if (LOG.isDebugEnabled()) {
                             LOG.debug("Resolved JMSReplyTo destination {} using DestinationResolver {} as PubSubDomain {} -> {}",
-                                    new Object[]{replyTo, endpoint.getDestinationResolver(), endpoint.isPubSubDomain(), jmsReplyTo});
+                                    new Object[]{replyTo, endpoint.getDestinationResolver(), isPubSub, jmsReplyTo});
                         }
                     }
                     if (jmsReplyTo == null) {
-                        // okay then fallback and create the queue
-                        if (endpoint.isPubSubDomain()) {
+                        // must normalize the destination name
+                        String before = replyTo;
+                        replyTo = normalizeDestinationName(replyTo);
+                        LOG.trace("Normalized JMSReplyTo destination name {} -> {}", before, replyTo);
+
+                        // okay then fallback and create the queue/topic
+                        if (isPubSub) {
                             LOG.debug("Creating JMSReplyTo topic: {}", replyTo);
                             jmsReplyTo = session.createTopic(replyTo);
                         } else {

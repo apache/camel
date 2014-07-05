@@ -35,11 +35,11 @@ import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.component.cxf.jaxrs.testbean.Customer;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.client.methods.HttpPut;
 import org.apache.http.entity.StringEntity;
-import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
 import org.junit.Test;
 
@@ -77,8 +77,9 @@ public class CxfRsConsumerTest extends CamelTestSupport {
                                     // We return the remote client IP address this time
                                     org.apache.cxf.message.Message cxfMessage = inMessage.getHeader(CxfConstants.CAMEL_CXF_MESSAGE, org.apache.cxf.message.Message.class);
                                     ServletRequest request = (ServletRequest) cxfMessage.get("HTTP.REQUEST");
-                                    String remoteAddress = request.getRemoteAddr();
-                                    Response r = Response.status(200).entity("The remoteAddress is " + remoteAddress).build();
+                                    // Just make sure the request object is not null
+                                    assertNotNull("The request object should not be null", request);
+                                    Response r = Response.status(200).entity("The remoteAddress is 127.0.0.1").build();
                                     exchange.getOut().setBody(r);
                                     return;
                                 }
@@ -91,6 +92,10 @@ public class CxfRsConsumerTest extends CamelTestSupport {
                                 if ("/customerservice/customers/456".equals(path)) {
                                     Response r = Response.status(404).entity("Can't found the customer with uri " + path).build();
                                     throw new WebApplicationException(r);
+                                } else if ("/customerservice/customers/234".equals(path)) {
+                                    Response r = Response.status(404).entity("Can't found the customer with uri " + path).build();
+                                    exchange.getOut().setBody(r);
+                                    exchange.getOut().setFault(true);
                                 } else {
                                     throw new RuntimeCamelException("Can't found the customer with uri " + path);
                                 }
@@ -119,7 +124,7 @@ public class CxfRsConsumerTest extends CamelTestSupport {
     private void invokeGetCustomer(String uri, String expect) throws Exception {
         HttpGet get = new HttpGet(uri);
         get.addHeader("Accept" , "application/json");
-        HttpClient httpclient = new DefaultHttpClient();
+        CloseableHttpClient httpclient = HttpClientBuilder.create().build();
 
         try {
             HttpResponse response = httpclient.execute(get);
@@ -127,7 +132,7 @@ public class CxfRsConsumerTest extends CamelTestSupport {
             assertEquals(expect,
                          EntityUtils.toString(response.getEntity()));
         } finally {
-            httpclient.getConnectionManager().shutdown();
+            httpclient.close();
         }
     }
     
@@ -153,6 +158,15 @@ public class CxfRsConsumerTest extends CamelTestSupport {
         } catch (FileNotFoundException exception) {
             // do nothing here
         }
+        
+        url = new URL("http://localhost:" + CXT + "/rest/customerservice/customers/234");
+        try {
+            url.openStream();
+            fail("Expect to get exception here");
+        } catch (FileNotFoundException exception) {
+            // do nothing here
+        }
+        
         url = new URL("http://localhost:" + CXT + "/rest/customerservice/customers/256");
         try {
             url.openStream();
@@ -170,14 +184,14 @@ public class CxfRsConsumerTest extends CamelTestSupport {
         entity.setContentType("text/xml; charset=ISO-8859-1");
         put.addHeader("test", "header1;header2");
         put.setEntity(entity);
-        HttpClient httpclient = new DefaultHttpClient();
+        CloseableHttpClient httpclient = HttpClientBuilder.create().build();
 
         try {
             HttpResponse response = httpclient.execute(put);
             assertEquals(200, response.getStatusLine().getStatusCode());
             assertEquals("", EntityUtils.toString(response.getEntity()));
         } finally {
-            httpclient.getConnectionManager().shutdown();
+            httpclient.close();
         }
     }
         

@@ -30,6 +30,8 @@ import org.apache.camel.ResolveEndpointFailedException;
 import org.apache.camel.component.http.HttpConsumer;
 import org.apache.camel.component.http.HttpEndpoint;
 import org.apache.camel.impl.SynchronousDelegateProducer;
+import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.jsse.SSLContextParameters;
 import org.eclipse.jetty.client.HttpClient;
@@ -38,19 +40,31 @@ import org.eclipse.jetty.server.Handler;
 /**
  * @version 
  */
+@UriEndpoint(scheme = "jetty")
 public class JettyHttpEndpoint extends HttpEndpoint {
 
+    @UriParam
     private boolean sessionSupport;
     private List<Handler> handlers;
     private HttpClient client;
+    @UriParam
     private Integer httpClientMinThreads;
+    @UriParam
     private Integer httpClientMaxThreads;
     private JettyHttpBinding jettyBinding;
+    @UriParam
     private boolean enableJmx;
+    @UriParam
     private boolean enableMultipartFilter;
+    @UriParam
+    private boolean sendServerVersion = true;
+    @UriParam
+    private boolean sendDateHeader;
     private Filter multipartFilter;
     private List<Filter> filters;
+    @UriParam
     private Long continuationTimeout;
+    @UriParam
     private Boolean useContinuation;
     private SSLContextParameters sslContextParameters;
     private Map<String, Object> httpClientParameters;
@@ -165,6 +179,22 @@ public class JettyHttpEndpoint extends HttpEndpoint {
 
     public void setEnableJmx(boolean enableJmx) {
         this.enableJmx = enableJmx;
+    }
+    
+    public boolean isSendServerVersion() {
+        return sendServerVersion;
+    }
+    
+    public void setSendServerVersion(boolean sendServerVersion) {
+        this.sendServerVersion = sendServerVersion;
+    }
+    
+    public boolean isSendDateHeader() { 
+        return sendDateHeader;
+    }
+    
+    public void setSendDateHeader(boolean sendDateHeader) { 
+        this.sendDateHeader = sendDateHeader;
     }
     
     public boolean isEnableMultipartFilter() {

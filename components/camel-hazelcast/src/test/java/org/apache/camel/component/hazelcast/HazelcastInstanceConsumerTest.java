@@ -53,7 +53,6 @@ public class HazelcastInstanceConsumerTest extends HazelcastCamelTestSupport {
     private ArgumentCaptor<MembershipListener> argument;
 
     @Override
-    @SuppressWarnings("unchecked")
     protected void trainHazelcastInstance(HazelcastInstance hazelcastInstance) {
         when(hazelcastInstance.getCluster()).thenReturn(cluster);
         argument = ArgumentCaptor.forClass(MembershipListener.class);
@@ -61,7 +60,6 @@ public class HazelcastInstanceConsumerTest extends HazelcastCamelTestSupport {
     }
 
     @Override
-    @SuppressWarnings("unchecked")
     protected void verifyHazelcastInstance(HazelcastInstance hazelcastInstance) {
         verify(hazelcastInstance).getCluster();
         verify(cluster).addMembershipListener(any(MembershipListener.class));

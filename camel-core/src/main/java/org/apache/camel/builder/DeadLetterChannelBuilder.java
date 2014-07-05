@@ -37,6 +37,7 @@ import org.slf4j.LoggerFactory;
  * @version 
  */
 public class DeadLetterChannelBuilder extends DefaultErrorHandlerBuilder {
+    boolean checkException;
 
     public DeadLetterChannelBuilder() {
         // no-arg constructor used by Spring DSL
@@ -48,6 +49,11 @@ public class DeadLetterChannelBuilder extends DefaultErrorHandlerBuilder {
 
     public DeadLetterChannelBuilder(String uri) {
         setDeadLetterUri(uri);
+    }
+    
+    public DeadLetterChannelBuilder checkException() {
+        checkException = true;
+        return this;
     }
 
     public Processor createErrorHandler(RouteContext routeContext, Processor processor) throws Exception {
@@ -78,7 +84,9 @@ public class DeadLetterChannelBuilder extends DefaultErrorHandlerBuilder {
     public Processor getFailureProcessor() {
         if (failureProcessor == null) {
             // force MEP to be InOnly so when sending to DLQ we would not expect a reply if the MEP was InOut
-            failureProcessor = new SendProcessor(deadLetter, ExchangePattern.InOnly);
+            // If the checkException is true, sendProcessor will checkException 
+            // and mark the exchange ERRORHANDLER_HANDLED property to false
+            failureProcessor = new SendProcessor(deadLetter, ExchangePattern.InOnly, checkException);
         }
         return failureProcessor;
     }

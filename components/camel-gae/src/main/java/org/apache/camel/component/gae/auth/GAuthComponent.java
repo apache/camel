@@ -22,7 +22,7 @@ import com.google.gdata.client.authn.oauth.GoogleOAuthParameters;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.component.gae.bind.OutboundBinding;
-import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.impl.UriEndpointComponent;
 
 /**
  * The <a href="http://camel.apache.org/gauth.html">GAuth Component</a>
@@ -33,18 +33,18 @@ import org.apache.camel.impl.DefaultComponent;
  * href="http://code.google.com/apis/gdata/docs/auth/oauth.html">GData developer
  * guide for OAuth.</a>.
  */
-public class GAuthComponent extends DefaultComponent {
+public class GAuthComponent extends UriEndpointComponent {
 
     private String consumerKey;
     private String consumerSecret;
     private GAuthKeyLoader keyLoader;
 
     public GAuthComponent() {
-        this(null);
+        super(GAuthEndpoint.class);
     }
 
     public GAuthComponent(CamelContext context) {
-        super(context);
+        super(context, GAuthEndpoint.class);
     }
 
     public String getConsumerKey() {

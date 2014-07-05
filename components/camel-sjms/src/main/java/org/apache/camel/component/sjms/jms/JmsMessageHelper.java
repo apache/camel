@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.sjms.jms;
 
+import java.io.ByteArrayOutputStream;
 import java.io.InputStream;
 import java.io.Serializable;
 import java.util.Collection;
@@ -119,6 +120,21 @@ public final class JmsMessageHelper {
                 TextMessage textMessage = session.createTextMessage();
                 textMessage.setText((String)payload);
                 answer = textMessage;
+                break;
+            case Stream:
+                ByteArrayOutputStream baos = new ByteArrayOutputStream();
+                InputStream is = (InputStream)payload;
+                int reads = is.read(); 
+                while (reads != -1) {
+                    baos.write(reads);
+                    reads = is.read();
+                }
+
+                BytesMessage bytesStreamMessage = session.createBytesMessage();
+                bytesStreamMessage.writeBytes(baos.toByteArray());
+                baos.close();
+                is.close();
+                answer = bytesStreamMessage;
                 break;
             default:
                 break;

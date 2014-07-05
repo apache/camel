@@ -20,11 +20,15 @@ import java.io.ByteArrayInputStream;
 import java.io.InputStream;
 import java.util.Collections;
 
+import javax.servlet.http.HttpServletRequest;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.component.cxf.transport.CamelTransportConstants;
 import org.apache.camel.spi.HeaderFilterStrategy;
+import org.apache.cxf.common.security.SimplePrincipal;
 import org.apache.cxf.message.ExchangeImpl;
 import org.apache.cxf.message.Message;
+import org.apache.cxf.security.SecurityContext;
 import org.easymock.EasyMock;
 import org.junit.Assert;
 import org.junit.Test;
@@ -36,17 +40,40 @@ public class DefaultCxfMessageMapperTest extends Assert {
         final String requestURI = "/path;a=b";
         final String requestPath = "/path";
 
-        DefaultCxfMesssageMapper mapper = new DefaultCxfMesssageMapper();
+        DefaultCxfMessageMapper mapper = new DefaultCxfMessageMapper();
 
-        Exchange camelExchange = setupCamelExchange(requestURI, requestPath);
+        Exchange camelExchange = setupCamelExchange(requestURI, requestPath, null);
         Message cxfMessage = mapper.createCxfMessageFromCamelExchange(
             camelExchange, EasyMock.createMock(HeaderFilterStrategy.class));
 
         assertEquals(requestURI, cxfMessage.get(Message.REQUEST_URI).toString());
         assertEquals(requestPath, cxfMessage.get(Message.BASE_PATH).toString());
     }
+    
+    @Test
+    public void testSecurityContext() {
+        DefaultCxfMessageMapper mapper = new DefaultCxfMessageMapper();
 
-    private Exchange setupCamelExchange(String requestURI, String requestPath) {
+        HttpServletRequest request = EasyMock.createMock(HttpServletRequest.class);
+        request.getUserPrincipal();
+        EasyMock.expectLastCall().andReturn(new SimplePrincipal("barry"));
+        request.isUserInRole("role1");
+        EasyMock.expectLastCall().andReturn(true);
+        request.isUserInRole("role2");
+        EasyMock.expectLastCall().andReturn(false);
+        EasyMock.replay(request);
+        Exchange camelExchange = setupCamelExchange("/", "/", request);
+        
+        Message cxfMessage = mapper.createCxfMessageFromCamelExchange(
+            camelExchange, EasyMock.createMock(HeaderFilterStrategy.class));
+        SecurityContext sc = cxfMessage.get(SecurityContext.class);
+        assertNotNull(sc);
+        assertEquals("barry", sc.getUserPrincipal().getName());
+        assertTrue(sc.isUserInRole("role1"));
+        assertFalse(sc.isUserInRole("role2"));
+    }
+
+    private Exchange setupCamelExchange(String requestURI, String requestPath, HttpServletRequest request) {
         org.apache.camel.Message camelMessage = EasyMock
             .createMock(org.apache.camel.Message.class);
         Exchange camelExchange = EasyMock.createMock(Exchange.class);
@@ -78,7 +105,7 @@ public class DefaultCxfMessageMapperTest extends Assert {
         camelMessage.getHeader(Exchange.HTTP_QUERY, String.class);
         EasyMock.expectLastCall().andReturn("");
         camelMessage.getHeader(Exchange.HTTP_SERVLET_REQUEST);
-        EasyMock.expectLastCall().andReturn(null);
+        EasyMock.expectLastCall().andReturn(request);
         camelMessage.getHeader(Exchange.HTTP_SERVLET_RESPONSE);
         EasyMock.expectLastCall().andReturn(null);
 

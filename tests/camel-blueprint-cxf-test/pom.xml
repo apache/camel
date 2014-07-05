@@ -22,7 +22,7 @@
   <parent>
     <groupId>org.apache.camel</groupId>
     <artifactId>tests</artifactId>
-    <version>2.13-SNAPSHOT</version>
+    <version>2.14-SNAPSHOT</version>
   </parent>
 
   <artifactId>camel-blueprint-cxf-test</artifactId>
@@ -126,6 +126,18 @@
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-ws-rm</artifactId>
       <version>${cxf-version}</version>
+      <scope>test</scope>
+    </dependency>
+    <!-- for jaxrs providers test -->
+    <dependency>
+      <groupId>org.apache.cxf</groupId>
+      <artifactId>cxf-rt-rs-extension-providers</artifactId>
+      <version>${cxf-version}</version>
+      <scope>test</scope>
+    </dependency>  
+    <dependency>
+      <groupId>org.codehaus.jettison</groupId>
+      <artifactId>jettison</artifactId>
       <scope>test</scope>
     </dependency>
 

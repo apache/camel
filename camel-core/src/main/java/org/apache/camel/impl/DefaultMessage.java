@@ -16,7 +16,7 @@
  */
 package org.apache.camel.impl;
 
-import java.util.HashMap;
+import java.util.LinkedHashMap;
 import java.util.Map;
 import java.util.Set;
 import javax.activation.DataHandler;
@@ -205,7 +205,7 @@ public class DefaultMessage extends MessageSupport {
      * @return return a newly constructed Map
      */
     protected Map<String, DataHandler> createAttachments() {
-        Map<String, DataHandler> map = new HashMap<String, DataHandler>();
+        Map<String, DataHandler> map = new LinkedHashMap<String, DataHandler>();
         populateInitialAttachments(map);
         return map;
     }

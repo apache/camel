@@ -21,7 +21,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>2.13-SNAPSHOT</version>
+        <version>2.14-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-jetty</artifactId>
@@ -30,6 +30,9 @@
     <description>Camel Jetty support</description>
 
     <properties>
+        <camel.osgi.import.before.defaults>
+            javax.servlet.*;version="${servlet-version-range}"
+        </camel.osgi.import.before.defaults>
         <camel.osgi.export.pkg>org.apache.camel.component.jetty.*</camel.osgi.export.pkg>
         <camel.osgi.export.service>org.apache.camel.spi.ComponentResolver;component=jetty</camel.osgi.export.service>
     </properties>
@@ -65,7 +68,6 @@
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-servlet</artifactId>
-            <version>${jetty-version}</version>
         </dependency>
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
@@ -74,7 +76,6 @@
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-servlets</artifactId>
-            <version>${jetty-version}</version>
         </dependency>
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
@@ -83,7 +84,6 @@
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-jmx</artifactId>
-            <version>${jetty-version}</version>
         </dependency>
         
         <!-- test dependencies -->

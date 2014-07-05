@@ -29,6 +29,8 @@ import com.amazonaws.services.sqs.model.ChangeMessageVisibilityRequest;
 import com.amazonaws.services.sqs.model.DeleteMessageRequest;
 import com.amazonaws.services.sqs.model.Message;
 import com.amazonaws.services.sqs.model.MessageNotInflightException;
+import com.amazonaws.services.sqs.model.QueueDeletedRecentlyException;
+import com.amazonaws.services.sqs.model.QueueDoesNotExistException;
 import com.amazonaws.services.sqs.model.ReceiptHandleIsInvalidException;
 import com.amazonaws.services.sqs.model.ReceiveMessageRequest;
 import com.amazonaws.services.sqs.model.ReceiveMessageResult;
@@ -44,6 +46,7 @@ import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
 
 
 /**
@@ -74,7 +77,14 @@ public class SqsConsumer extends ScheduledBatchPollingConsumer {
 
         LOG.trace("Receiving messages with request [{}]...", request);
         
-        ReceiveMessageResult messageResult = getClient().receiveMessage(request);
+        ReceiveMessageResult messageResult = null;
+        try {
+            messageResult = getClient().receiveMessage(request);
+        } catch (QueueDoesNotExistException e) {
+            LOG.info("Queue does not exist....recreating now...");
+            reConnectToQueue();
+            messageResult = getClient().receiveMessage(request);
+        }
 
         if (LOG.isTraceEnabled()) {
             LOG.trace("Received {} messages", messageResult.getMessages().size());
@@ -82,6 +92,22 @@ public class SqsConsumer extends ScheduledBatchPollingConsumer {
         
         Queue<Exchange> exchanges = createExchanges(messageResult.getMessages());
         return processBatch(CastUtils.cast(exchanges));
+    }
+
+    public void reConnectToQueue() {
+        try {
+            getEndpoint().createQueue(getClient());
+        } catch (QueueDeletedRecentlyException qdr) {
+            LOG.debug("Queue recently deleted, will retry in 30 seconds.");
+            try {
+                Thread.sleep(30000);
+                getEndpoint().createQueue(getClient());
+            } catch (Exception e) {
+                LOG.error("failed to retry queue connection.", e);
+            }
+        } catch (Exception e) {
+            LOG.error("Could not connect to queue in amazon.", e);
+        }
     }
     
     protected Queue<Exchange> createExchanges(List<Message> messages) {

@@ -89,8 +89,12 @@ public class DefaultClassResolver implements ClassResolver {
         return ObjectHelper.loadResourceAsURL(uri);
     }
 
-    @Override
     public Enumeration<URL> loadResourcesAsURL(String uri) {
+        return loadAllResourcesAsURL(uri);
+    }
+
+    @Override
+    public Enumeration<URL> loadAllResourcesAsURL(String uri) {
         ObjectHelper.notEmpty(uri, "uri");
         return ObjectHelper.loadResourcesAsURL(uri);
     }

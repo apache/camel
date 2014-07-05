@@ -44,6 +44,9 @@ import org.apache.commons.httpclient.params.HttpClientParams;
  * for installing a web hook.
  */
 public class GTaskComponent extends ServletComponent {
+    public GTaskComponent() {
+        super(GTaskEndpoint.class);
+    }
 
     @Override
     @SuppressWarnings("unchecked")

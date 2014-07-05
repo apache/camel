@@ -33,10 +33,11 @@ public class CxfComponent extends HeaderFilterStrategyComponent {
     Boolean allowStreaming;
     
     public CxfComponent() {
+        super(CxfEndpoint.class);
     }
 
     public CxfComponent(CamelContext context) {
-        super(context);
+        super(context, CxfEndpoint.class);
     }
     
     public void setAllowStreaming(Boolean b) {

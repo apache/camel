@@ -40,8 +40,8 @@ public class HttpRedirectTest extends BaseHttpTest {
         localServer.register("/test", new RedirectHandler(HttpStatus.SC_MOVED_PERMANENTLY));
 
         String uri = "http4://" + getHostName() + ":" + getPort()
-                + "/test?httpClient.handleRedirects=false&httpClient.soTimeout=60000&httpClient.connectionTimeout=60000"
-                + "&httpClient.staleCheckingEnabled=false";
+                + "/test?httpClient.redirectsEnabled=false&httpClient.socketTimeout=60000&httpClient.connectTimeout=60000"
+                + "&httpClient.staleConnectionCheckEnabled=false";
         Exchange out = template.request(uri, new Processor() {
             public void process(Exchange exchange) throws Exception {
                 // no data
@@ -62,8 +62,8 @@ public class HttpRedirectTest extends BaseHttpTest {
         localServer.register("/someplaceelse", new BasicValidationHandler("GET", null, null, "Bye World"));
 
         String uri = "http4://" + getHostName() + ":" + getPort()
-                + "/test?httpClient.soTimeout=60000&httpClient.connectionTimeout=60000"
-                + "&httpClient.staleCheckingEnabled=false";
+                + "/test?httpClient.socketTimeout=60000&httpClient.connectTimeout=60000"
+                + "&httpClient.staleConnectionCheckEnabled=false";
         Exchange out = template.request(uri, new Processor() {
             public void process(Exchange exchange) throws Exception {
                 // no data

@@ -20,10 +20,13 @@ import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.text.MessageFormat;
+import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.LinkedHashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Scanner;
+import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
@@ -47,9 +50,10 @@ import org.apache.camel.util.ObjectHelper;
 public class TokenXMLExpressionIterator extends ExpressionAdapter {
     private static final Pattern NAMESPACE_PATTERN = Pattern.compile("xmlns(:\\w+|)\\s*=\\s*('[^']+'|\"[^\"]+\")");
     private static final String SCAN_TOKEN_NS_PREFIX_REGEX = "([^:<>]{1,15}?:|)";
-    private static final String SCAN_BLOCK_TOKEN_REGEX_TEMPLATE = "<{0}(\\s+[^/^>]*)?/>|<{0}(\\s+[^>]*)?>(?:(?!(</{0}\\s*>)).)*</{0}\\s*>";
+    private static final String SCAN_BLOCK_TOKEN_REGEX_TEMPLATE = "<{0}(\\s+[^>]*)?/>|<{0}(\\s+[^>]*)?>(?:(?!(</{0}\\s*>)).)*</{0}\\s*>";
     private static final String SCAN_PARENT_TOKEN_REGEX_TEMPLATE = "<{0}(\\s+[^>]*\\s*)?>";
-    
+    private static final String OPTION_WRAP_TOKEN = "<*>";
+
     protected final String tagToken;
     protected final String inheritNamespaceToken;
 
@@ -126,12 +130,14 @@ public class TokenXMLExpressionIterator extends ExpressionAdapter {
 
         private final Pattern tagTokenPattern;
         private final String inheritNamespaceToken;
+        private final boolean wrapToken;
         private Pattern inheritNamespaceTokenPattern;
         private String rootTokenNamespaces;
+        private String wrapHead;
+        private String wrapTail;
 
         XMLTokenIterator(String tagToken, String inheritNamespaceToken, InputStream in, String charset) {
             this.tagToken = tagToken;
-            this.in = in;
             this.charset = charset;
           
             // remove any beginning < and ending > as we need to support ns prefixes and attributes, so we use a reg exp patterns
@@ -141,13 +147,20 @@ public class TokenXMLExpressionIterator extends ExpressionAdapter {
                                                      Pattern.MULTILINE | Pattern.DOTALL);
             
             this.inheritNamespaceToken = inheritNamespaceToken;
-            if (inheritNamespaceToken != null) {
-                // the inherit namespace token may itself have a namespace prefix
-                // the namespaces on the parent tag can be in multi line, so we need to instruct the dot to support multilines
-                this.inheritNamespaceTokenPattern = 
-                    Pattern.compile(MessageFormat.format(SCAN_PARENT_TOKEN_REGEX_TEMPLATE,
-                                                         SCAN_TOKEN_NS_PREFIX_REGEX + inheritNamespaceToken.substring(1, inheritNamespaceToken.length() - 1)), 
-                                                         Pattern.MULTILINE | Pattern.DOTALL);
+            if (inheritNamespaceToken != null && OPTION_WRAP_TOKEN.equals(inheritNamespaceToken)) {
+                this.wrapToken = true;
+                this.in = new RecordableInputStream(in, charset);
+            } else {
+                this.wrapToken = false;
+                this.in = in;
+                if (inheritNamespaceToken != null) {
+                    // the inherit namespace token may itself have a namespace prefix
+                    // the namespaces on the parent tag can be in multi line, so we need to instruct the dot to support multilines
+                    this.inheritNamespaceTokenPattern = 
+                        Pattern.compile(MessageFormat.format(SCAN_PARENT_TOKEN_REGEX_TEMPLATE,
+                                                             SCAN_TOKEN_NS_PREFIX_REGEX + inheritNamespaceToken.substring(1, inheritNamespaceToken.length() - 1)), 
+                                                             Pattern.MULTILINE | Pattern.DOTALL);
+                }
             }
         }
 
@@ -159,7 +172,7 @@ public class TokenXMLExpressionIterator extends ExpressionAdapter {
 
         String getNext(boolean first) {
             // initialize inherited namespaces on first
-            if (first && inheritNamespaceToken != null) {
+            if (first && inheritNamespaceToken != null && !wrapToken) {
                 rootTokenNamespaces =  getNamespacesFromNamespaceToken(scanner.findWithinHorizon(inheritNamespaceTokenPattern, 0));
             }
 
@@ -167,10 +180,15 @@ public class TokenXMLExpressionIterator extends ExpressionAdapter {
             if (next == null) {
                 return null;
             }
+            if (first && wrapToken) {
+                MatchResult mres = scanner.match();
+                wrapHead = ((RecordableInputStream)in).getText(mres.start());
+                wrapTail = buildXMLTail(wrapHead);
+            }
 
             // build answer accordingly to whether namespaces should be inherited or not
-            // REVISIT should skip the prefixes that are declared within the child itself.
             if (inheritNamespaceToken != null && rootTokenNamespaces != null) {
+                // REVISIT should skip the prefixes that are declared within the child itself.
                 String head = ObjectHelper.before(next, ">");
                 boolean empty = false;
                 if (head.endsWith("/")) {
@@ -183,6 +201,10 @@ public class TokenXMLExpressionIterator extends ExpressionAdapter {
                 String tail = ObjectHelper.after(next, ">");
                 // build result with inherited namespaces
                 next = sb.append(head).append(rootTokenNamespaces).append(empty ? "/>" : ">").append(tail).toString();
+            } else if (wrapToken) {
+                // wrap the token
+                StringBuilder sb = new StringBuilder();
+                next = sb.append(wrapHead).append(next).append(wrapTail).toString();
             }
             
             return next;
@@ -267,4 +289,37 @@ public class TokenXMLExpressionIterator extends ExpressionAdapter {
 
     }
 
+    private static String buildXMLTail(String xmlhead) {
+        // assume the input text is a portion of a well-formed xml
+        List<String> tags = new ArrayList<String>();
+        int p = 0;
+        while (p < xmlhead.length()) {
+            p = xmlhead.indexOf('<', p);
+            if (p < 0) {
+                break;
+            }
+            int nc = xmlhead.charAt(p + 1); 
+            if (nc == '?') {
+                p++;
+                continue;
+            } else if (nc == '/') {
+                p++;
+                tags.remove(tags.size() - 1);
+            } else {
+                final int ep = xmlhead.indexOf('>', p);
+                if (xmlhead.charAt(ep - 1) == '/') {
+                    p++;
+                    continue;
+                }
+                final int sp = xmlhead.substring(p, ep).indexOf(' ');
+                tags.add(xmlhead.substring(p + 1, sp > 0 ? p + sp : ep));
+                p = ep;
+            }
+        }
+        StringBuilder sb = new StringBuilder();
+        for (int i = tags.size() - 1; i >= 0; i--) {
+            sb.append("</").append(tags.get(i)).append(">");
+        }
+        return sb.toString();
+    }
 }

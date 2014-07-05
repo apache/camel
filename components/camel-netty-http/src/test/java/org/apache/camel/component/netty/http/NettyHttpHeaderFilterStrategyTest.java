@@ -25,9 +25,6 @@ import org.junit.Test;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
-/**
- * @author <a href="http://www.christianposta.com/blog">Christian Posta</a>
- */
 public class NettyHttpHeaderFilterStrategyTest {
     
     private NettyHttpHeaderFilterStrategy filter;

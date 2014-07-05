@@ -81,6 +81,7 @@ public class XsltBlueprintRouteTest extends OSGiBlueprintTestSupport {
                         .add("OSGI-INF/blueprint/test.xml", XsltBlueprintRouteTest.class.getResource("XsltBlueprintRouter.xml"))
                         .add("transform.xsl", XsltBlueprintRouteTest.class.getResource("transform.xsl"))
                         .set(Constants.BUNDLE_SYMBOLICNAME, "XsltBlueprintRouteTest")
+                        .set(Constants.DYNAMICIMPORT_PACKAGE, "*")
                         .build(withBnd())).noStart()
 
         );

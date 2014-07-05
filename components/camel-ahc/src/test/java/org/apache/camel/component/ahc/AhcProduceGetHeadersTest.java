@@ -52,6 +52,8 @@ public class AhcProduceGetHeadersTest extends BaseAhcTest {
                     .to("mock:result");
 
                 from(getTestServerEndpointUri())
+                        // Remove the message header here
+                        .removeHeaders("*")
                         .transform(constant("Bye World"));
             }
         };

@@ -44,6 +44,7 @@ public class JpaMessageIdRepository extends ServiceSupport implements Idempotent
     private final String processorName;
     private final EntityManager entityManager;
     private final TransactionTemplate transactionTemplate;
+    private boolean joinTransaction = true;
 
     public JpaMessageIdRepository(EntityManagerFactory entityManagerFactory, String processorName) {
         this(entityManagerFactory, createTransactionTemplate(entityManagerFactory), processorName);
@@ -75,7 +76,9 @@ public class JpaMessageIdRepository extends ServiceSupport implements Idempotent
         // Run this in single transaction.
         Boolean rc = transactionTemplate.execute(new TransactionCallback<Boolean>() {
             public Boolean doInTransaction(TransactionStatus arg0) {
-                entityManager.joinTransaction();
+                if (isJoinTransaction()) {
+                    entityManager.joinTransaction();
+                }
 
                 List<?> list = query(messageId);
                 if (list.isEmpty()) {
@@ -99,7 +102,9 @@ public class JpaMessageIdRepository extends ServiceSupport implements Idempotent
         // Run this in single transaction.
         Boolean rc = transactionTemplate.execute(new TransactionCallback<Boolean>() {
             public Boolean doInTransaction(TransactionStatus arg0) {
-                entityManager.joinTransaction();
+                if (isJoinTransaction()) {
+                    entityManager.joinTransaction();
+                }
 
                 List<?> list = query(messageId);
                 if (list.isEmpty()) {
@@ -116,7 +121,9 @@ public class JpaMessageIdRepository extends ServiceSupport implements Idempotent
     public boolean remove(final String messageId) {
         Boolean rc = transactionTemplate.execute(new TransactionCallback<Boolean>() {
             public Boolean doInTransaction(TransactionStatus arg0) {
-                entityManager.joinTransaction();
+                if (isJoinTransaction()) {
+                    entityManager.joinTransaction();
+                }
 
                 List<?> list = query(messageId);
                 if (list.isEmpty()) {
@@ -147,6 +154,14 @@ public class JpaMessageIdRepository extends ServiceSupport implements Idempotent
     @ManagedAttribute(description = "The processor name")
     public String getProcessorName() {
         return processorName;
+    }
+
+    public boolean isJoinTransaction() {
+        return joinTransaction;
+    }
+
+    public void setJoinTransaction(boolean joinTransaction) {
+        this.joinTransaction = joinTransaction;
     }
 
     @Override

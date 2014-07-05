@@ -38,19 +38,27 @@
     </jaxrs:serviceBeans>       
   </jaxrs:server>
   
-  <!--  bean id="jsonProvider" class="org.apache.cxf.jaxrs.provider.JSONProvider"/-->
+  <bean id="jsonProvider" class="org.apache.cxf.jaxrs.provider.json.JSONProvider"/>
 
   <bean id="customerService" class="org.apache.camel.component.cxf.jaxrs.testbean.CustomerService" />
    
   <!-- Defined the server endpoint to create the cxf-rs consumer --> 
   <cxf:rsServer id="rsServer" address="http://localhost:${CXFTestSupport.port1}/CxfRsRouterTest/route"
     serviceClass="org.apache.camel.component.cxf.jaxrs.testbean.CustomerService" 
-    loggingFeatureEnabled="true" loggingSizeLimit="20" skipFaultLogging="true"/>
+    loggingFeatureEnabled="true" loggingSizeLimit="20" skipFaultLogging="true">
+    <cxf:providers>
+       <ref bean="jsonProvider"/>
+    </cxf:providers>
+  </cxf:rsServer>
 
   <!-- Defined the client endpoint to create the cxf-rs consumer -->
   <cxf:rsClient id="rsClient" address="http://localhost:${CXFTestSupport.port2}/CxfRsRouterTest/rest"
     serviceClass="org.apache.camel.component.cxf.jaxrs.testbean.CustomerService"
-    loggingFeatureEnabled="true" skipFaultLogging="true"/>
+    loggingFeatureEnabled="true" skipFaultLogging="true">
+    <cxf:providers>
+       <ref bean="jsonProvider"/>
+    </cxf:providers>
+  </cxf:rsClient>
   
   <!-- The camel route context -->
   <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">

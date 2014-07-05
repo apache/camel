@@ -24,7 +24,7 @@ public class AvroReflectResponder extends ReflectResponder {
     private AvroListener listener;
 
     public AvroReflectResponder(Protocol protocol, AvroListener listener) throws Exception {
-        super(protocol, null);
+        super(protocol, listener);
         this.listener = listener;
     }
 

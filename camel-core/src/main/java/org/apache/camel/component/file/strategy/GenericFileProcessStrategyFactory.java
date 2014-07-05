@@ -102,6 +102,10 @@ public final class GenericFileProcessStrategyFactory {
                 if (timeout != null) {
                     readLockStrategy.setTimeout(timeout);
                 }
+                Boolean readLockMarkerFile = (Boolean) params.get("readLockMarkerFile");
+                if (readLockMarkerFile != null) {
+                    readLockStrategy.setMarkerFiler(readLockMarkerFile);
+                }
                 return readLockStrategy;
             }
         }

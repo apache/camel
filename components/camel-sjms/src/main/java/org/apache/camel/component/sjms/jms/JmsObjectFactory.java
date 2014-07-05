@@ -61,15 +61,15 @@ public final class JmsObjectFactory {
     }
 
     public static MessageConsumer createQueueConsumer(Session session, String destinationName) throws Exception {
-        return createMessageConsumer(session, destinationName, null, false, null, true);
+        return createMessageConsumer(session, destinationName, null, false, null);
     }
 
     public static MessageConsumer createQueueConsumer(Session session, String destinationName, String messageSelector) throws Exception {
-        return createMessageConsumer(session, destinationName, messageSelector, false, null, true);
+        return createMessageConsumer(session, destinationName, messageSelector, false, null);
     }
 
     public static MessageConsumer createTopicConsumer(Session session, String destinationName, String messageSelector) throws Exception {
-        return createMessageConsumer(session, destinationName, messageSelector, true, null, true);
+        return createMessageConsumer(session, destinationName, messageSelector, true, null);
     }
     
     public static MessageConsumer createTemporaryMessageConsumer(
@@ -88,7 +88,8 @@ public final class JmsObjectFactory {
             String messageSelector, 
             boolean topic, 
             String durableSubscriptionId) throws Exception {
-        return createMessageConsumer(session, destinationName, messageSelector, topic, durableSubscriptionId, true);
+        // noLocal is default false accordingly to JMS spec
+        return createMessageConsumer(session, destinationName, messageSelector, topic, durableSubscriptionId, false);
     }
     
     public static MessageConsumer createMessageConsumer(
@@ -127,9 +128,9 @@ public final class JmsObjectFactory {
                 }
             } else {
                 if (ObjectHelper.isNotEmpty(messageSelector)) {
-                    messageConsumer = session.createConsumer((Topic)destination, messageSelector, noLocal);
+                    messageConsumer = session.createConsumer(destination, messageSelector, noLocal);
                 } else {
-                    messageConsumer = session.createConsumer((Topic)destination);
+                    messageConsumer = session.createConsumer(destination);
                 }
             }
         } else {

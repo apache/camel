@@ -31,6 +31,7 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 import static org.apache.camel.component.jms.JmsComponent.jmsComponentAutoAcknowledge;
+import static org.apache.camel.component.jms.JmsConstants.JMS_X_GROUP_ID;
 
 /**
  * @version 
@@ -213,9 +214,9 @@ public class JmsProducerWithJMSHeaderTest extends CamelTestSupport {
     public void testInOnlyJMSXGroupID() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
-        mock.message(0).header("JMSXGroupID").isEqualTo("atom");
+        mock.message(0).header(JMS_X_GROUP_ID).isEqualTo("atom");
 
-        template.sendBodyAndHeader("activemq:queue:foo", "Hello World", "JMSXGroupID", "atom");
+        template.sendBodyAndHeader("activemq:queue:foo", "Hello World", JMS_X_GROUP_ID, "atom");
 
         assertMockEndpointsSatisfied();
     }

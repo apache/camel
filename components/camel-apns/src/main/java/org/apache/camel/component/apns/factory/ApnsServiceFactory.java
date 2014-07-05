@@ -161,8 +161,13 @@ public class ApnsServiceFactory implements CamelContextAware {
         return apnsDelegate;
     }
 
+    public void setApnsDelegate(ApnsDelegate apnsDelegate) {
+        this.apnsDelegate = apnsDelegate;
+    }
+
     public ApnsService getApnsService() {
         ApnsServiceBuilder builder = APNS.newService();
+        builder = configureServiceBuilder(builder);
 
         configureConnectionStrategy(builder);
         configureReconnectionPolicy(builder);
@@ -176,6 +181,10 @@ public class ApnsServiceFactory implements CamelContextAware {
 
         ApnsService apnsService = builder.build();
         return apnsService;
+    }
+
+    protected ApnsServiceBuilder configureServiceBuilder(ApnsServiceBuilder serviceBuilder) {
+        return serviceBuilder;
     }
 
     private void configureApnsCertificate(ApnsServiceBuilder builder) throws IOException {

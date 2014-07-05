@@ -16,6 +16,7 @@
  */
 package org.apache.camel.management;
 
+import javax.management.AttributeNotFoundException;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
@@ -37,6 +38,7 @@ public class ManagedResourceTest extends ManagementTestSupport {
                 from("direct:start")
                         .bean(MyManagedBean.class).id("myManagedBean")
                         .log("${body}")
+                        .to("seda:foo")
                         .to("mock:result");
             }
         };
@@ -84,5 +86,12 @@ public class ManagedResourceTest extends ManagementTestSupport {
 
         camelsSeenCount = (Integer) mBeanServer.getAttribute(onManagedBean, "CamelsSeenCount");
         TestCase.assertEquals(0, camelsSeenCount);
+
+        try {
+            mBeanServer.getAttribute(onManagedBean, "CamelId");
+            fail("The CamelId attribute should not exist");
+        } catch (AttributeNotFoundException e) {
+            // expected
+        }
     }
 }

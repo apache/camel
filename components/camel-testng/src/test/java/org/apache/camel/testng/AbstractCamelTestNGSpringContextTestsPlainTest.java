@@ -102,9 +102,10 @@ public class AbstractCamelTestNGSpringContextTestsPlainTest
     @Test
     public void testStopwatch() {
         StopWatch stopWatch = StopWatchTestExecutionListener.getStopWatch();
-        
+
+        // some servers is slower
         assertNotNull(stopWatch);
-        assertTrue(stopWatch.taken() < 100);
+        assertTrue(stopWatch.taken() < 1000);
     }
     
     @Test

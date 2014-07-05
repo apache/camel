@@ -41,8 +41,6 @@ import org.apache.camel.util.ObjectHelper;
 /**
  * An abstract class which implement <a href="http://camel.apache.org/data-format.html">data format</a>
  * ({@link DataFormat}) interface which leverage the XStream library for XML or JSON's marshaling and unmarshaling
- *
- * @version 
  */
 public abstract class AbstractXStreamWrapper implements DataFormat {
     
@@ -60,7 +58,14 @@ public abstract class AbstractXStreamWrapper implements DataFormat {
     public AbstractXStreamWrapper(XStream xstream) {
         this.xstream = xstream;
     }
-    
+
+    /**
+     * Resolves the XStream instance to be used by this data format. If XStream is not explicitly set, new instance will
+     * be created and cached.
+     *
+     * @param resolver class resolver to be used during a configuration of the XStream instance.
+     * @return XStream instance used by this data format.
+     */
     public XStream getXStream(ClassResolver resolver) {
         if (xstream == null) {
             xstream = createXStream(resolver);

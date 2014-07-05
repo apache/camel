@@ -24,6 +24,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.itest.osgi.OSGiIntegrationTestSupport;
 import org.apache.camel.spring.SpringCamelContext;
+import org.apache.camel.util.IOHelper;
 import org.junit.After;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -69,7 +70,7 @@ public class JpaRouteTest extends OSGiIntegrationTestSupport {
             super.tearDown();
             if (applicationContext != null) {                
                 if (applicationContext.isActive()) {
-                    applicationContext.destroy();
+                    IOHelper.close(applicationContext);
                 }
                 applicationContext = null;
             }

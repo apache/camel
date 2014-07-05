@@ -116,10 +116,12 @@ import org.apache.camel.spi.ProcessorFactory;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.RouteStartupOrder;
+import org.apache.camel.spi.RuntimeEndpointRegistry;
 import org.apache.camel.spi.ServicePool;
 import org.apache.camel.spi.ShutdownStrategy;
 import org.apache.camel.spi.StreamCachingStrategy;
 import org.apache.camel.spi.TypeConverterRegistry;
+import org.apache.camel.spi.UnitOfWorkFactory;
 import org.apache.camel.spi.UuidGenerator;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.CamelContextHelper;
@@ -131,6 +133,7 @@ import org.apache.camel.util.LoadPropertiesException;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
 import org.apache.camel.util.StopWatch;
+import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.URISupport;
 import org.slf4j.Logger;
@@ -184,6 +187,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     private Boolean typeConverterStatisticsEnabled = Boolean.FALSE;
     private Boolean useMDCLogging = Boolean.FALSE;
     private Boolean useBreadcrumb = Boolean.TRUE;
+    private Boolean allowUseOriginalMessage = Boolean.TRUE;
     private Long delay;
     private ErrorHandlerFactory errorHandlerBuilder;
     private final Object errorHandlerExecutorServiceLock = new Object();
@@ -209,6 +213,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     private InterceptStrategy defaultBacklogTracer;
     private InterceptStrategy defaultBacklogDebugger;
     private InflightRepository inflightRepository = new DefaultInflightRepository();
+    private RuntimeEndpointRegistry runtimeEndpointRegistry = new DefaultRuntimeEndpointRegistry();
     private final List<RouteStartupOrder> routeStartupOrder = new ArrayList<RouteStartupOrder>();
     // start auto assigning route ids using numbering 1000 and upwards
     private int defaultRouteStartupOrder = 1000;
@@ -218,6 +223,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     private ExecutorServiceManager executorServiceManager;
     private Debugger debugger;
     private UuidGenerator uuidGenerator = createDefaultUuidGenerator();
+    private UnitOfWorkFactory unitOfWorkFactory = new DefaultUnitOfWorkFactory();
     private final StopWatch stopWatch = new StopWatch(false);
     private Date startDate;
 
@@ -638,7 +644,11 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
 
     public List<Route> getRoutes() {
         // lets return a copy of the collection as objects are removed later when services are stopped
-        return new ArrayList<Route>(routes);
+        if (routes.isEmpty()) {
+            return Collections.emptyList();
+        } else {
+            return new ArrayList<Route>(routes);
+        }
     }
 
     public Route getRoute(String id) {
@@ -1022,12 +1032,104 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     }
 
     public String getComponentDocumentation(String componentName) throws IOException {
-        String path = CamelContextHelper.COMPONENT_DOCUMENTATION_PREFIX + componentName + ".html";
-        InputStream inputStream = getClassResolver().loadResourceAsStream(path);
+        String packageName = sanitizeComponentName(componentName);
+        String path = CamelContextHelper.COMPONENT_DOCUMENTATION_PREFIX + packageName + "/" + componentName + ".html";
+        ClassResolver resolver = getClassResolver();
+        InputStream inputStream = resolver.loadResourceAsStream(path);
+        log.debug("Loading component documentation for: {} using class resolver: {} -> {}", new Object[]{componentName, resolver, inputStream});
         if (inputStream != null) {
-            return IOHelper.loadText(inputStream);
+            try {
+                return IOHelper.loadText(inputStream);
+            } finally {
+                IOHelper.close(inputStream);
+            }
         }
         return null;
+    }
+
+    /**
+     * Sanitizes the component name by removing dash (-) in the name, when using the component name to load
+     * resources from the classpath.
+     */
+    private static String sanitizeComponentName(String componentName) {
+        // the ftp components are in a special package
+        if ("ftp".equals(componentName) || "ftps".equals(componentName) || "sftp".equals(componentName)) {
+            return "file/remote";
+        } else if ("cxfrs".equals(componentName)) {
+            return "cxf/jaxrs";
+        } else if ("gauth".equals(componentName) || "ghttp".equals(componentName) || "glogin".equals(componentName)
+                || "gmail".equals(componentName) || "gtask".equals(componentName)) {
+            return "gae/" + componentName.substring(1);
+        } else if ("atmosphere-websocket".equals(componentName)) {
+            return "atmosphere/websocket";
+        }
+        return componentName.replaceAll("-", "");
+    }
+
+    public String createRouteStaticEndpointJson(String routeId) {
+        // lets include dynamic as well as we want as much data as possible
+        return createRouteStaticEndpointJson(routeId, true);
+    }
+
+    public String createRouteStaticEndpointJson(String routeId, boolean includeDynamic) {
+        List<RouteDefinition> routes = new ArrayList<RouteDefinition>();
+        if (routeId != null) {
+            RouteDefinition route = getRouteDefinition(routeId);
+            if (route == null) {
+                throw new IllegalArgumentException("Route with id " + routeId + " does not exist");
+            }
+            routes.add(route);
+        } else {
+            routes.addAll(getRouteDefinitions());
+        }
+
+        StringBuilder buffer = new StringBuilder("{\n  \"routes\": {");
+        boolean firstRoute = true;
+        for (RouteDefinition route : routes) {
+            if (!firstRoute) {
+                buffer.append("\n    },");
+            } else {
+                firstRoute = false;
+            }
+
+            String id = route.getId();
+            buffer.append("\n    \"" + id + "\": {");
+            buffer.append("\n      \"inputs\": [");
+            // for inputs we do not need to check dynamic as we have the data from the route definition
+            Set<String> inputs = RouteDefinitionHelper.gatherAllStaticEndpointUris(this, route, true, false);
+            boolean first = true;
+            for (String input : inputs) {
+                if (!first) {
+                    buffer.append(",");
+                } else {
+                    first = false;
+                }
+                buffer.append("\n        ");
+                buffer.append(StringHelper.toJson("uri", input, true));
+            }
+            buffer.append("\n      ]");
+
+            buffer.append(",");
+            buffer.append("\n      \"outputs\": [");
+            Set<String> outputs = RouteDefinitionHelper.gatherAllEndpointUris(this, route, false, true, includeDynamic);
+            first = true;
+            for (String output : outputs) {
+                if (!first) {
+                    buffer.append(",");
+                } else {
+                    first = false;
+                }
+                buffer.append("\n        ");
+                buffer.append(StringHelper.toJson("uri", output, true));
+            }
+            buffer.append("\n      ]");
+        }
+        if (!firstRoute) {
+            buffer.append("\n    }");
+        }
+        buffer.append("\n  }\n}\n");
+
+        return buffer.toString();
     }
 
     // Helper methods
@@ -1145,6 +1247,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                 // of the camel context (its the container)
                 typeConverter = createTypeConverter();
                 try {
+                    // must add service eager
                     addService(typeConverter);
                 } catch (Exception e) {
                     throw ObjectHelper.wrapRuntimeCamelException(e);
@@ -1156,6 +1259,12 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
 
     public void setTypeConverter(TypeConverter typeConverter) {
         this.typeConverter = typeConverter;
+        try {
+            // must add service eager
+            addService(typeConverter);
+        } catch (Exception e) {
+            throw ObjectHelper.wrapRuntimeCamelException(e);
+        }
     }
 
     public TypeConverterRegistry getTypeConverterRegistry() {
@@ -1230,6 +1339,27 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
             setRegistry(registry);
         }
         return registry;
+    }
+
+    public <T> T getRegistry(Class<T> type) {
+        Registry reg = getRegistry();
+
+        // unwrap the property placeholder delegate
+        if (reg instanceof PropertyPlaceholderDelegateRegistry) {
+            reg = ((PropertyPlaceholderDelegateRegistry) reg).getRegistry();
+        }
+
+        if (type.isAssignableFrom(reg.getClass())) {
+            return type.cast(reg);
+        } else if (reg instanceof CompositeRegistry) {
+            List<Registry> list = ((CompositeRegistry) reg).getRegistryList();
+            for (Registry r : list) {
+                if (type.isAssignableFrom(r.getClass())) {
+                    return type.cast(r);
+                }
+            }
+        }
+        return null;
     }
 
     /**
@@ -1397,6 +1527,22 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
 
     public ServicePool<Endpoint, Producer> getProducerServicePool() {
         return producerServicePool;
+    }
+
+    public UnitOfWorkFactory getUnitOfWorkFactory() {
+        return unitOfWorkFactory;
+    }
+
+    public void setUnitOfWorkFactory(UnitOfWorkFactory unitOfWorkFactory) {
+        this.unitOfWorkFactory = unitOfWorkFactory;
+    }
+
+    public RuntimeEndpointRegistry getRuntimeEndpointRegistry() {
+        return runtimeEndpointRegistry;
+    }
+
+    public void setRuntimeEndpointRegistry(RuntimeEndpointRegistry runtimeEndpointRegistry) {
+        this.runtimeEndpointRegistry = runtimeEndpointRegistry;
     }
 
     public String getUptime() {
@@ -1650,6 +1796,13 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         addService(shutdownStrategy);
         addService(packageScanClassResolver);
 
+        if (runtimeEndpointRegistry != null) {
+            if (runtimeEndpointRegistry instanceof EventNotifier) {
+                getManagementStrategy().addEventNotifier((EventNotifier) runtimeEndpointRegistry);
+            }
+            addService(runtimeEndpointRegistry);
+        }
+
         // eager lookup any configured properties component to avoid subsequent lookup attempts which may impact performance
         // due we use properties component for property placeholder resolution at runtime
         Component existing = lookupPropertiesComponent();
@@ -1680,6 +1833,12 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                 }
             }
         }
+
+        if (isAllowUseOriginalMessage()) {
+            log.info("AllowUseOriginalMessage is enabled. If access to the original message is not needed,"
+                    + " then its recommended to turn this option off as it may improve performance.");
+        }
+
         if (streamCachingInUse) {
             // stream caching is in use so enable the strategy
             getStreamCachingStrategy().setEnabled(true);
@@ -1783,6 +1942,8 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
 
         // and clear start date
         startDate = null;
+
+        Container.Instance.unmanage(this);
     }
 
     /**
@@ -2238,6 +2399,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         getLanguageResolver();
         getTypeConverterRegistry();
         getTypeConverter();
+        getRuntimeEndpointRegistry();
 
         if (isTypeConverterStatisticsEnabled() != null) {
             getTypeConverterRegistry().getStatistics().setStatisticsEnabled(isTypeConverterStatisticsEnabled());
@@ -2619,6 +2781,14 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
 
     public void setShutdownRunningTask(ShutdownRunningTask shutdownRunningTask) {
         this.shutdownRunningTask = shutdownRunningTask;
+    }
+
+    public void setAllowUseOriginalMessage(Boolean allowUseOriginalMessage) {
+        this.allowUseOriginalMessage = allowUseOriginalMessage;
+    }
+
+    public Boolean isAllowUseOriginalMessage() {
+        return allowUseOriginalMessage != null && allowUseOriginalMessage;
     }
 
     public ExecutorServiceManager getExecutorServiceManager() {

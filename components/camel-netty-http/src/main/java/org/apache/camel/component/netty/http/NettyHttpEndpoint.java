@@ -137,6 +137,7 @@ public class NettyHttpEndpoint extends NettyEndpoint implements HeaderFilterStra
 
     public void setHeaderFilterStrategy(HeaderFilterStrategy headerFilterStrategy) {
         this.headerFilterStrategy = headerFilterStrategy;
+        getNettyHttpBinding().setHeaderFilterStrategy(headerFilterStrategy);
     }
 
     public boolean isTraceEnabled() {

@@ -22,8 +22,8 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.http.ConnectionReuseStrategy;
 import org.apache.http.HttpResponseFactory;
 import org.apache.http.localserver.LocalTestServer;
-import org.apache.http.protocol.BasicHttpProcessor;
 import org.apache.http.protocol.HttpExpectationVerifier;
+import org.apache.http.protocol.HttpProcessor;
 import org.junit.After;
 import org.junit.Before;
 
@@ -68,9 +68,9 @@ public abstract class HttpServerTestSupport extends CamelTestSupport {
      * Returns the org.apache.http.protocol.BasicHttpProcessor which should be
      * used by the server.
      *
-     * @return basicHttpProcessor
+     * @return HttpProcessor
      */
-    protected BasicHttpProcessor getBasicHttpProcessor() {
+    protected HttpProcessor getBasicHttpProcessor() {
         return null;
     }
 

@@ -22,7 +22,7 @@ import com.mongodb.Bytes;
 import com.mongodb.DBCollection;
 import com.mongodb.DBCursor;
 import com.mongodb.DBObject;
-import com.mongodb.MongoException.CursorNotFound;
+import com.mongodb.MongoCursorNotFoundException;
 
 import org.apache.camel.Exchange;
 
@@ -154,15 +154,12 @@ public class MongoDbTailingProcess implements Runnable {
                 }
                 tailTracking.setLastVal(dbObj);
             }
-        } catch (CursorNotFound e) {
+        } catch (MongoCursorNotFoundException e) {
             // we only log the warning if we are not stopping, otherwise it is expected because the stop() method kills the cursor just in case it is blocked
             // waiting for more data to arrive
             if (keepRunning) {
                 LOG.debug("Cursor not found exception from MongoDB, will regenerate cursor. This is normal behaviour with tailable cursors.", e);
             }
-        } catch (NullPointerException e) {
-            // The MongoDB Java Driver throws this uncontrolled NPE when the cursor is closed while blocked at DBCursor#hasMore.
-            // See https://jira.mongodb.org/browse/JAVA-605
         }
 
         // the loop finished, persist the lastValue just in case we are shutting down

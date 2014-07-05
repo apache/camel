@@ -40,6 +40,7 @@ import java.io.UnsupportedEncodingException;
 import java.io.Writer;
 import java.net.URL;
 import java.nio.charset.UnsupportedCharsetException;
+import java.util.Properties;
 
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
@@ -427,6 +428,33 @@ public final class IOConverter {
         return new ByteArrayInputStream(os.toByteArray());
     }
 
+    @Converter
+    public static Properties toProperties(File file) throws IOException {
+        return toProperties(new FileInputStream(file));
+    }
+
+    @Converter
+    public static Properties toProperties(InputStream is) throws IOException {
+        Properties prop = new Properties();
+        try {
+            prop.load(is);
+        } finally {
+            IOHelper.close(is);
+        }
+        return prop;
+    }
+
+    @Converter
+    public static Properties toProperties(Reader reader) throws IOException {
+        Properties prop = new Properties();
+        try {
+            prop.load(reader);
+        } finally {
+            IOHelper.close(reader);
+        }
+        return prop;
+    }
+
     /**
      * Gets the charset name if set as header or property {@link Exchange#CHARSET_NAME}.
      *
@@ -510,5 +538,5 @@ public final class IOConverter {
     public static void validateCharset(String charset) throws UnsupportedCharsetException {
         IOHelper.validateCharset(charset);
     }
-    
+
 }

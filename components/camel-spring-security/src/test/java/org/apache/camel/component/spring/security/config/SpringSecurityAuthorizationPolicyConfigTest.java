@@ -17,6 +17,7 @@
 package org.apache.camel.component.spring.security.config;
 
 import org.apache.camel.component.spring.security.SpringSecurityAuthorizationPolicy;
+import org.apache.camel.util.IOHelper;
 import org.junit.After;
 import org.junit.Assert;
 import org.junit.Before;
@@ -36,10 +37,7 @@ public class SpringSecurityAuthorizationPolicyConfigTest extends Assert {
     
     @After
     public void tearDown() {
-        if (context != null) {
-            context.close();
-        }
-        
+        IOHelper.close(context);
     }
     
     @Test

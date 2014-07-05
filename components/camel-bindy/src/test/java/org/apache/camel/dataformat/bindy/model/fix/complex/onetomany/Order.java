@@ -16,6 +16,7 @@
  */
 package org.apache.camel.dataformat.bindy.model.fix.complex.onetomany;
 
+import java.util.Date;
 import java.util.List;
 
 import org.apache.camel.dataformat.bindy.annotation.KeyValuePairField;
@@ -43,6 +44,10 @@ public class Order {
     @KeyValuePairField(tag = 58)
     // Free text
     private String text;
+
+    @KeyValuePairField(tag = 777, pattern = "dd-MM-yyyy HH:mm:ss", timezone = "GMT-3")
+    // created
+    private Date created;
 
     @OneToMany(mappedTo = "org.apache.camel.dataformat.bindy.model.fix.complex.onetomany.Security")
     private List<Security> securities;
@@ -95,10 +100,19 @@ public class Order {
         this.text = text;
     }
 
+    public Date getCreated() {
+        return created;
+    }
+
+    public void setCreated(Date created) {
+        this.created = created;
+    }
+
     @Override
     public String toString() {
         StringBuilder temp = new StringBuilder();
-        temp.append(Order.class.getName() + " --> 1: " + this.account + ", 11: " + this.clOrdId + ", 58: " + this.text);
+        temp.append(Order.class.getName() + " --> 1: " + this.account + ", 11: " + this.clOrdId
+                + ", 58: " + this.text + ", 777: " + this.created);
         temp.append("\r");
 
         if (this.securities != null) {

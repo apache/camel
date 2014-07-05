@@ -77,9 +77,9 @@ public final class Twitter4JFactory {
             case DIRECTMESSAGE:
                 return new DirectMessageConsumer(te);
             case SEARCH:
-                boolean hasKeywords = te.getProperties().getKeywords() == null
+                boolean hasNoKeywords = te.getProperties().getKeywords() == null
                         || te.getProperties().getKeywords().trim().isEmpty();
-                if (hasKeywords) {
+                if (hasNoKeywords) {
                     throw new IllegalArgumentException("Type set to SEARCH but no keywords were provided.");
                 } else {
                     return new SearchConsumer(te);

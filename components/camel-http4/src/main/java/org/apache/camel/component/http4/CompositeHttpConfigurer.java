@@ -19,7 +19,7 @@ package org.apache.camel.component.http4;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.http.client.HttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
 
 public class CompositeHttpConfigurer implements HttpClientConfigurer {
 
@@ -35,9 +35,9 @@ public class CompositeHttpConfigurer implements HttpClientConfigurer {
         configurers.remove(configurer);
     }
 
-    public void configureHttpClient(HttpClient client) {
+    public void configureHttpClient(HttpClientBuilder clientBuilder) {
         for (HttpClientConfigurer configurer : configurers) {
-            configurer.configureHttpClient(client);
+            configurer.configureHttpClient(clientBuilder);
         }
     }
 

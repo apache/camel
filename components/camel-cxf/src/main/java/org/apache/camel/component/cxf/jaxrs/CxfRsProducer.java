@@ -38,6 +38,7 @@ import org.apache.camel.component.cxf.common.message.CxfConstants;
 import org.apache.camel.impl.DefaultProducer;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.LRUSoftCache;
+import org.apache.cxf.Bus;
 import org.apache.cxf.jaxrs.JAXRSServiceFactoryBean;
 import org.apache.cxf.jaxrs.client.Client;
 import org.apache.cxf.jaxrs.client.JAXRSClientFactoryBean;
@@ -89,31 +90,10 @@ public class CxfRsProducer extends DefaultProducer {
             invokeProxyClient(exchange);
         }
     }
-
+    
     @SuppressWarnings("unchecked")
-    protected void invokeHttpClient(Exchange exchange) throws Exception {
+    protected void setupClientQueryAndHeaders(Client client, Exchange exchange) throws Exception {
         Message inMessage = exchange.getIn();
-        JAXRSClientFactoryBean cfb = clientFactoryBeanCache.get(CxfEndpointUtils
-            .getEffectiveAddress(exchange, ((CxfRsEndpoint)getEndpoint()).getAddress()));
-        
-        cfb.setBus(((CxfRsEndpoint)getEndpoint()).getBus());
-        WebClient client = cfb.createWebClient();
-        String httpMethod = inMessage.getHeader(Exchange.HTTP_METHOD, String.class);
-        Class<?> responseClass = inMessage.getHeader(CxfConstants.CAMEL_CXF_RS_RESPONSE_CLASS, Class.class);
-        Type genericType = inMessage.getHeader(CxfConstants.CAMEL_CXF_RS_RESPONSE_GENERIC_TYPE, Type.class);
-        String path = inMessage.getHeader(Exchange.HTTP_PATH, String.class);
-
-        if (LOG.isTraceEnabled()) {
-            LOG.trace("HTTP method = {}", httpMethod);
-            LOG.trace("path = {}", path);
-            LOG.trace("responseClass = {}", responseClass);
-        }
-
-        // set the path
-        if (path != null) {
-            client.path(path);
-        }
-
         CxfRsEndpoint cxfRsEndpoint = (CxfRsEndpoint) getEndpoint();
         // check if there is a query map in the message header
         Map<String, String> maps = inMessage.getHeader(CxfConstants.CAMEL_CXF_RS_QUERY_MAP, Map.class);
@@ -133,6 +113,40 @@ public class CxfRsProducer extends DefaultProducer {
                 client.query(entry.getKey(), entry.getValue());
             }
         }
+        
+        CxfRsBinding binding = cxfRsEndpoint.getBinding();
+        // set headers
+        client.headers(binding.bindCamelHeadersToRequestHeaders(inMessage.getHeaders(), exchange));
+        
+    }
+
+    protected void invokeHttpClient(Exchange exchange) throws Exception {
+        Message inMessage = exchange.getIn();
+        JAXRSClientFactoryBean cfb = clientFactoryBeanCache.get(CxfEndpointUtils
+            .getEffectiveAddress(exchange, ((CxfRsEndpoint)getEndpoint()).getAddress()));
+        Bus bus = ((CxfRsEndpoint)getEndpoint()).getBus();
+        // We need to apply the bus setting from the CxfRsEndpoint which is not use the default bus
+        if (bus != null) {
+            cfb.setBus(bus);
+        }
+        WebClient client = cfb.createWebClient();
+        String httpMethod = inMessage.getHeader(Exchange.HTTP_METHOD, String.class);
+        Class<?> responseClass = inMessage.getHeader(CxfConstants.CAMEL_CXF_RS_RESPONSE_CLASS, Class.class);
+        Type genericType = inMessage.getHeader(CxfConstants.CAMEL_CXF_RS_RESPONSE_GENERIC_TYPE, Type.class);
+        String path = inMessage.getHeader(Exchange.HTTP_PATH, String.class);
+
+        if (LOG.isTraceEnabled()) {
+            LOG.trace("HTTP method = {}", httpMethod);
+            LOG.trace("path = {}", path);
+            LOG.trace("responseClass = {}", responseClass);
+        }
+
+        // set the path
+        if (path != null) {
+            client.path(path);
+        }
+
+        CxfRsEndpoint cxfRsEndpoint = (CxfRsEndpoint) getEndpoint();
 
         CxfRsBinding binding = cxfRsEndpoint.getBinding();
 
@@ -146,9 +160,8 @@ public class CxfRsProducer extends DefaultProducer {
             }
         }
 
-        // set headers
-        client.headers(binding.bindCamelHeadersToRequestHeaders(inMessage.getHeaders(), exchange));
-
+        setupClientQueryAndHeaders(client, exchange);
+        
         // invoke the client
         Object response = null;
         if (responseClass == null || Response.class.equals(responseClass)) {
@@ -196,14 +209,19 @@ public class CxfRsProducer extends DefaultProducer {
         
         JAXRSClientFactoryBean cfb = clientFactoryBeanCache.get(CxfEndpointUtils
                                    .getEffectiveAddress(exchange, ((CxfRsEndpoint)getEndpoint()).getAddress()));
-
-        cfb.setBus(((CxfRsEndpoint)getEndpoint()).getBus());
-        
+        Bus bus = ((CxfRsEndpoint)getEndpoint()).getBus();
+        // We need to apply the bus setting from the CxfRsEndpoint which is not use the default bus
+        if (bus != null) {
+            cfb.setBus(bus);
+        }
         if (varValues == null) {
             target = cfb.create();
         } else {
             target = cfb.createWithValues(varValues);
         }
+        
+        setupClientQueryAndHeaders(target, exchange);
+        
         // find out the method which we want to invoke
         JAXRSServiceFactoryBean sfb = cfb.getServiceFactory();
         sfb.getResourceClasses();
@@ -236,6 +254,10 @@ public class CxfRsProducer extends DefaultProducer {
             exchange.getOut().getHeaders().putAll(binding.bindResponseHeadersToCamelHeaders(response, exchange));
             exchange.getOut().setHeader(Exchange.HTTP_RESPONSE_CODE, statesCode);
         }
+    }
+    
+    protected ClientFactoryBeanCache getClientFactoryBeanCache() { 
+        return clientFactoryBeanCache;
     }
     
     private Map<String, String> getQueryParametersFromQueryString(String queryString, String charset) throws UnsupportedEncodingException {
@@ -337,7 +359,7 @@ public class CxfRsProducer extends DefaultProducer {
     /**
      * Cache contains {@link org.apache.cxf.jaxrs.client.JAXRSClientFactoryBean}
      */
-    private class ClientFactoryBeanCache {
+    class ClientFactoryBeanCache {
         private LRUSoftCache<String, JAXRSClientFactoryBean> cache;    
         
         public ClientFactoryBeanCache(final int maxCacheSize) {

@@ -16,6 +16,7 @@
  */
 package org.apache.camel.model;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.ExecutorService;
 import javax.xml.bind.annotation.XmlAccessType;
@@ -68,6 +69,8 @@ public class MulticastDefinition extends OutputDefinition<MulticastDefinition> i
     private Processor onPrepare;
     @XmlAttribute
     private Boolean shareUnitOfWork;
+    @XmlAttribute
+    private Boolean parallelAggregate;
 
     public MulticastDefinition() {
     }
@@ -89,7 +92,15 @@ public class MulticastDefinition extends OutputDefinition<MulticastDefinition> i
 
     @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
-        return this.createChildProcessor(routeContext, true);
+        Processor answer = this.createChildProcessor(routeContext, true);
+
+        // force the answer as a multicast processor even if there is only one child processor in the multicast
+        if (!(answer instanceof MulticastProcessor)) {
+            List<Processor> list = new ArrayList<Processor>(1);
+            list.add(answer);
+            answer = createCompositeProcessor(routeContext, list);
+        }
+        return answer;
     }
 
     // Fluent API
@@ -146,7 +157,20 @@ public class MulticastDefinition extends OutputDefinition<MulticastDefinition> i
         setParallelProcessing(true);
         return this;
     }
-    
+
+    /**
+     * Doing the aggregate work in parallel
+     * <p/>
+     * Notice that if enabled, then the {@link org.apache.camel.processor.aggregate.AggregationStrategy} in use
+     * must be implemented as thread safe, as concurrent threads can call the <tt>aggregate</tt> methods at the same time.
+     *
+     * @return the builder
+     */
+    public MulticastDefinition parallelAggregate() {
+        setParallelAggregate(true);
+        return this;
+    }
+
     /**
      * Aggregates the responses as the are done (e.g. out of order sequence)
      *
@@ -252,7 +276,7 @@ public class MulticastDefinition extends OutputDefinition<MulticastDefinition> i
         }
 
         MulticastProcessor answer = new MulticastProcessor(routeContext.getCamelContext(), list, strategy, isParallelProcessing(),
-                                      threadPool, shutdownThreadPool, isStreaming(), isStopOnException(), timeout, onPrepare, isShareUnitOfWork());
+                                      threadPool, shutdownThreadPool, isStreaming(), isStopOnException(), timeout, onPrepare, isShareUnitOfWork(), isParallelAggregate());
         if (isShareUnitOfWork()) {
             // wrap answer in a sub unit of work, since we share the unit of work
             CamelInternalProcessor internalProcessor = new CamelInternalProcessor(answer);
@@ -407,6 +431,24 @@ public class MulticastDefinition extends OutputDefinition<MulticastDefinition> i
 
     public boolean isShareUnitOfWork() {
         return shareUnitOfWork != null && shareUnitOfWork;
+    }
+
+    public Boolean getParallelAggregate() {
+        return parallelAggregate;
+    }
+
+    /**
+     * Whether to aggregate using a sequential single thread, or allow parallel aggregation.
+     * <p/>
+     * Notice that if enabled, then the {@link org.apache.camel.processor.aggregate.AggregationStrategy} in use
+     * must be implemented as thread safe, as concurrent threads can call the <tt>aggregate</tt> methods at the same time.
+     */
+    public boolean isParallelAggregate() {
+        return parallelAggregate != null && parallelAggregate;
+    }
+
+    public void setParallelAggregate(Boolean parallelAggregate) {
+        this.parallelAggregate = parallelAggregate;
     }
 
 }

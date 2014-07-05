@@ -132,7 +132,7 @@ public class OSGiIntegrationTestSupport extends CamelTestSupport {
             new Option[] {
                       karafDistributionConfiguration()
                           .frameworkUrl(maven().groupId("org.apache.karaf").artifactId("apache-karaf").type("tar.gz").versionAsInProject())
-                          .karafVersion("2.3.3")
+                          .karafVersion("2.3.5")
                           .name("Apache Karaf")
                           .useDeployFolder(false).unpackDirectory(new File("target/paxexam/unpack/")),
 
@@ -140,6 +140,8 @@ public class OSGiIntegrationTestSupport extends CamelTestSupport {
                       // override the config.properties (to fix pax-exam bug)
                       replaceConfigurationFile("etc/config.properties", new File("src/test/resources/org/apache/camel/itest/karaf/config.properties")),
                       replaceConfigurationFile("etc/custom.properties", new File("src/test/resources/org/apache/camel/itest/karaf/custom.properties")),
+                      replaceConfigurationFile("etc/org.ops4j.pax.url.mvn.cfg", new File("src/test/resources/org/apache/camel/itest/karaf/org.ops4j.pax.url.mvn.cfg")),
+
 
                      // we need INFO logging otherwise we cannot see what happens
                      logLevel(LogLevelOption.LogLevel.INFO),

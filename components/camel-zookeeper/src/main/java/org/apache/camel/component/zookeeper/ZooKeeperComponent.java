@@ -56,9 +56,12 @@ public class ZooKeeperComponent extends DefaultComponent {
     }
 
     private void extractConfigFromUri(String remaining, ZooKeeperConfiguration config) throws URISyntaxException {
-        URI u = new URI(remaining);
-        config.addZookeeperServer(u.getHost() + (u.getPort() != -1 ? ":" + u.getPort() : ""));
-        config.setPath(u.getPath());
+        URI fullUri = new URI(remaining);
+        String[] hosts = fullUri.getAuthority().split(",");
+        for (String host : hosts) {
+            config.addZookeeperServer(host.trim());
+        }
+        config.setPath(fullUri.getPath());
     }
 
     public ZooKeeperConfiguration getConfiguration() {

@@ -30,15 +30,18 @@ import org.apache.camel.component.file.GenericFileOperations;
  * This implementation is only supported by the File component, that leverages the {@link MarkerFileExclusiveReadLockStrategy}
  * as well, to ensure only acquiring locks on files, which is not already in progress by another process,
  * that have marked this using the marker file.
+ * <p/>
+ * Setting the option {@link #setMarkerFiler(boolean)} to <tt>false</tt> allows to turn off using marker files.
  */
 public class FileRenameExclusiveReadLockStrategy extends GenericFileRenameExclusiveReadLockStrategy<File> {
 
     private MarkerFileExclusiveReadLockStrategy marker = new MarkerFileExclusiveReadLockStrategy();
+    private boolean markerFile = true;
 
     @Override
     public boolean acquireExclusiveReadLock(GenericFileOperations<File> operations, GenericFile<File> file, Exchange exchange) throws Exception {
         // must call marker first
-        if (!marker.acquireExclusiveReadLock(operations, file, exchange)) {
+        if (markerFile && !marker.acquireExclusiveReadLock(operations, file, exchange)) {
             return false;
         }
 
@@ -50,10 +53,18 @@ public class FileRenameExclusiveReadLockStrategy extends GenericFileRenameExclus
                                          GenericFile<File> file, Exchange exchange) throws Exception {
         // must call marker first
         try {
-            marker.releaseExclusiveReadLock(operations, file, exchange);
+            if (markerFile) {
+                marker.releaseExclusiveReadLock(operations, file, exchange);
+            }
         } finally {
             super.releaseExclusiveReadLock(operations, file, exchange);
         }
+    }
+
+
+    @Override
+    public void setMarkerFiler(boolean markerFile) {
+        this.markerFile = markerFile;
     }
 
 }

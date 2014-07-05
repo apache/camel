@@ -21,6 +21,7 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spring.SpringCamelContext;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.util.IOHelper;
 import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
@@ -80,7 +81,7 @@ public class JmsDestinationResolverTest extends CamelTestSupport {
     @After
     public void tearDown() throws Exception {
         super.tearDown();
-        applicationContext.close();
+        IOHelper.close(applicationContext);
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {

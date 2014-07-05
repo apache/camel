@@ -46,8 +46,8 @@ public class EmbeddedMojo extends AbstractExecMojo {
      * A value <= 0 will run forever. 
      * Adding a s indicates seconds - eg "5s" means 5 seconds.
      *
-     * @parameter property="-1"
-     * @readonly
+     * @parameter property="camel.duration"
+     *            default-value="-1"
      */
     protected String duration;
     

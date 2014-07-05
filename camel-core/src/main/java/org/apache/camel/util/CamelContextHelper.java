@@ -17,8 +17,10 @@
 package org.apache.camel.util;
 
 import java.io.IOException;
+import java.io.InputStream;
 import java.net.URL;
 import java.util.Enumeration;
+import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Properties;
@@ -33,7 +35,10 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.NoSuchEndpointException;
+import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.RouteStartupOrder;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 import static org.apache.camel.util.ObjectHelper.isEmpty;
 import static org.apache.camel.util.ObjectHelper.isNotEmpty;
@@ -45,8 +50,11 @@ import static org.apache.camel.util.ObjectHelper.notNull;
  * @version 
  */
 public final class CamelContextHelper {
+    public static final String COMPONENT_BASE = "META-INF/services/org/apache/camel/component/";
     public static final String COMPONENT_DESCRIPTOR = "META-INF/services/org/apache/camel/component.properties";
     public static final String COMPONENT_DOCUMENTATION_PREFIX = "org/apache/camel/component/";
+
+    private static final Logger LOG = LoggerFactory.getLogger(CamelContextHelper.class);
 
     /**
      * Utility classes should not have a public constructor.
@@ -352,10 +360,13 @@ public final class CamelContextHelper {
     }
 
     /**
-     * Finds all possible Components on the classpath and Registry
+     * Finds all possible Components on the classpath, already registered in {@link org.apache.camel.CamelContext},
+     * and from the {@link org.apache.camel.spi.Registry}.
      */
     public static SortedMap<String, Properties> findComponents(CamelContext camelContext) throws LoadPropertiesException {
-        Enumeration<URL> iter = camelContext.getClassResolver().loadResourcesAsURL(COMPONENT_DESCRIPTOR);
+        ClassResolver resolver = camelContext.getClassResolver();
+        LOG.debug("Finding all components using class resolver: {} -> {}", new Object[]{resolver});
+        Enumeration<URL> iter = resolver.loadAllResourcesAsURL(COMPONENT_DESCRIPTOR);
         return findComponents(camelContext, iter);
     }
 
@@ -365,6 +376,7 @@ public final class CamelContextHelper {
         SortedMap<String, Properties> map = new TreeMap<String, Properties>();
         while (componentDescriptionIter != null && componentDescriptionIter.hasMoreElements()) {
             URL url = componentDescriptionIter.nextElement();
+            LOG.trace("Finding components in url: {}", url);
             try {
                 Properties properties = new Properties();
                 properties.load(url.openStream());
@@ -373,11 +385,59 @@ public final class CamelContextHelper {
                     StringTokenizer tok = new StringTokenizer(names);
                     while (tok.hasMoreTokens()) {
                         String name = tok.nextToken();
-                        map.put(name, properties);
+
+                        // try to find the class name for this component
+                        String className = null;
+                        InputStream is = null;
+                        try {
+                            // now load the component name resource so we can grab its properties and the class name
+                            Enumeration<URL> urls = camelContext.getClassResolver().loadAllResourcesAsURL(COMPONENT_BASE + name);
+                            if (urls != null && urls.hasMoreElements()) {
+                                is = urls.nextElement().openStream();
+                            }
+                            if (is != null) {
+                                Properties compProperties = new Properties();
+                                compProperties.load(is);
+                                if (!compProperties.isEmpty()) {
+                                    className = compProperties.getProperty("class");
+                                }
+                            }
+                        } catch (Exception e) {
+                            // ignore
+                        } finally {
+                            IOHelper.close(is);
+                        }
+
+                        // inherit properties we loaded first, as it has maven details
+                        Properties prop = new Properties();
+                        prop.putAll(properties);
+                        if (camelContext.hasComponent(name) != null) {
+                            prop.put("component", camelContext.getComponent(name));
+                        }
+                        if (className != null) {
+                            prop.put("class", className);
+                        }
+                        prop.put("name", name);
+                        map.put(name, prop);
                     }
                 }
             } catch (IOException e) {
                 throw new LoadPropertiesException(url, e);
+            }
+        }
+
+        // lets see what other components are registered on camel context
+        List<String> names = camelContext.getComponentNames();
+        for (String name : names) {
+            if (!map.containsKey(name)) {
+                Component component = camelContext.getComponent(name);
+                if (component != null) {
+                    Properties properties = new Properties();
+                    properties.put("component", component);
+                    properties.put("class", component.getClass().getName());
+                    properties.put("name", name);
+                    map.put(name, properties);
+                }
             }
         }
 
@@ -387,11 +447,12 @@ public final class CamelContextHelper {
         for (Map.Entry<String, Component> entry : entries) {
             String name = entry.getKey();
             if (!map.containsKey(name)) {
-                Properties properties = new Properties();
                 Component component = entry.getValue();
                 if (component != null) {
-                    properties.put("component", component);
+                    Properties properties = new Properties();
+                    properties.put("component", name);
                     properties.put("class", component.getClass().getName());
+                    properties.put("name", name);
                     map.put(name, properties);
                 }
             }

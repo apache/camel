@@ -21,16 +21,13 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.rx.support.EndpointObservable;
-import org.apache.camel.rx.support.EndpointSubscription;
+import org.apache.camel.rx.support.EndpointSubscribeFunc;
 import org.apache.camel.rx.support.ExchangeToBodyFunc1;
 import org.apache.camel.rx.support.ExchangeToMessageFunc1;
 import org.apache.camel.rx.support.ObserverSender;
 import org.apache.camel.util.CamelContextHelper;
-
 import rx.Observable;
-import rx.Observer;
-import rx.Subscription;
-import rx.util.functions.Func1;
+import rx.functions.Func1;
 
 /**
  * Provides the <a href="https://rx.codeplex.com/">Reactive Extensions</a> support for
@@ -109,12 +106,7 @@ public class ReactiveCamel {
      */
     protected <T> Observable<T> createEndpointObservable(final Endpoint endpoint,
                                                          final Func1<Exchange, T> converter) {
-        Observable.OnSubscribeFunc<T> func = new Observable.OnSubscribeFunc<T>() {
-            @Override
-            public Subscription onSubscribe(Observer<? super T> observer) {
-                return new EndpointSubscription<T>(endpoint, observer, converter);
-            }
-        };
+        Observable.OnSubscribe<T> func = new EndpointSubscribeFunc<T>(endpoint, converter);
         return new EndpointObservable<T>(endpoint, func);
     }
 

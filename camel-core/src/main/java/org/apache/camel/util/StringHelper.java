@@ -16,6 +16,8 @@
  */
 package org.apache.camel.util;
 
+import static org.apache.camel.util.StringQuoteHelper.doubleQuote;
+
 /**
  * Helper methods for working with Strings. 
  */
@@ -154,7 +156,8 @@ public final class StringHelper {
             return false;
         }
 
-        if (expression.indexOf("${") >= 0) {
+        // for the simple language the expression start token could be "${"
+        if ("simple".equalsIgnoreCase(language) && expression.indexOf("${") >= 0) {
             return true;
         }
 
@@ -213,6 +216,22 @@ public final class StringHelper {
             i++;
         }
         return sb.toString();
+    }
+
+    /**
+     * Creates a json tuple with the given name/value pair.
+     *
+     * @param name  the name
+     * @param value the value
+     * @param isMap whether the tuple should be map
+     * @return the json
+     */
+    public static String toJson(String name, String value, boolean isMap) {
+        if (isMap) {
+            return "{ " + doubleQuote(name) + ": " + doubleQuote(value) + " }";
+        } else {
+            return doubleQuote(name) + ": " + doubleQuote(value);
+        }
     }
 
 }

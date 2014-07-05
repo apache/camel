@@ -21,17 +21,9 @@ import javax.jcr.Session;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Before;
 import org.junit.Test;
 
 public class JcrProducerTest extends JcrRouteTestSupport {
-
-    @Override
-    @Before
-    public void setUp() throws Exception {
-        deleteDirectory("target/repository");
-        super.setUp();
-    }
 
     @Test
     public void testJcrProducer() throws Exception {
@@ -58,8 +50,8 @@ public class JcrProducerTest extends JcrRouteTestSupport {
             @Override
             public void configure() throws Exception {
                 // START SNIPPET: jcr-create-node
-                from("direct:a").setProperty(JcrConstants.JCR_NODE_NAME, constant("node"))
-                        .setProperty("my.contents.property", body())
+                from("direct:a").setHeader(JcrConstants.JCR_NODE_NAME, constant("node"))
+                        .setHeader("my.contents.property", body())
                         .to("jcr://user:pass@repository/home/test");
                 // END SNIPPET: jcr-create-node
             }

@@ -21,7 +21,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>2.13-SNAPSHOT</version>
+        <version>2.14-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-jibx</artifactId>
@@ -75,6 +75,35 @@
                 </property>
             </activation>
             <build>
+                <pluginManagement>
+                    <plugins>
+                        <!-- Eclipse m2e Lifecycle Management -->
+                        <plugin>
+                         <groupId>org.eclipse.m2e</groupId>
+                         <artifactId>lifecycle-mapping</artifactId>
+                         <version>${lifecycle-mapping-version}</version>
+                         <configuration>
+                           <lifecycleMappingMetadata>
+                             <pluginExecutions>
+                               <pluginExecution>
+                                 <pluginExecutionFilter>
+                                   <groupId>org.jibx</groupId>
+                                   <artifactId>maven-jibx-plugin</artifactId>
+                                   <versionRange>${jibx-version}</versionRange>
+                                   <goals>
+                                     <goal>test-bind</goal>
+                                   </goals>
+                                 </pluginExecutionFilter>
+                                 <action>
+                                   <ignore />
+                                 </action>
+                               </pluginExecution>
+                             </pluginExecutions>
+                           </lifecycleMappingMetadata>
+                         </configuration>
+                        </plugin>
+                    </plugins>
+                </pluginManagement>
                 <plugins>
                     <plugin>
                         <groupId>org.jibx</groupId>

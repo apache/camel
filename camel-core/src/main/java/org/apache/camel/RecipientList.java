@@ -46,6 +46,7 @@ public @interface RecipientList {
     String context() default "";
     String delimiter() default ",";
     boolean parallelProcessing() default false;
+    boolean parallelAggregate() default false;
     boolean stopOnException() default false;
     boolean streaming() default false;
     boolean ignoreInvalidEndpoints() default false;

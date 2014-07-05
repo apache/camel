@@ -30,7 +30,7 @@ import org.apache.camel.spi.Registry;
  * This registry will look up the object with the sequence of the registry list until it finds the Object.
  */
 public class CompositeRegistry implements Registry {
-    private List<Registry> registryList;
+    private final List<Registry> registryList;
     
     public CompositeRegistry() {
         registryList = new ArrayList<Registry>();
@@ -42,6 +42,10 @@ public class CompositeRegistry implements Registry {
     
     public void addRegistry(Registry registry) {
         registryList.add(registry);
+    }
+
+    List<Registry> getRegistryList() {
+        return registryList;
     }
 
     public <T> T lookupByNameAndType(String name, Class<T> type) {

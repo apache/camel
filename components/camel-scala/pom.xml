@@ -21,7 +21,7 @@
     <parent>
         <groupId>org.apache.camel</groupId>
         <artifactId>components</artifactId>
-        <version>2.13-SNAPSHOT</version>
+        <version>2.14-SNAPSHOT</version>
     </parent>
 
     <artifactId>camel-scala</artifactId>
@@ -51,7 +51,7 @@
         <!-- test dependencies -->
         <dependency>
             <groupId>org.scalatest</groupId>
-            <artifactId>scalatest_2.10</artifactId>
+            <artifactId>scalatest_2.11</artifactId>
             <version>${scalatest-version}</version>
             <scope>test</scope>
             <!-- exclude scala compiler so we can control which version we are using -->
@@ -113,6 +113,36 @@
     </dependencies>
 
     <build>
+        <pluginManagement>
+            <plugins>
+                <!-- Eclipse m2e Lifecycle Management -->
+                <plugin>
+                 <groupId>org.eclipse.m2e</groupId>
+                 <artifactId>lifecycle-mapping</artifactId>
+                 <version>${lifecycle-mapping-version}</version>
+                 <configuration>
+                   <lifecycleMappingMetadata>
+                     <pluginExecutions>
+                       <pluginExecution>
+                         <pluginExecutionFilter>
+                           <groupId>net.alchim31.maven</groupId>
+                            <artifactId>scala-maven-plugin</artifactId>
+                           <versionRange>${scala-maven-plugin-version}</versionRange>
+                           <goals>
+                             <goal>compile</goal>
+                             <goal>testCompile</goal>
+                           </goals>
+                         </pluginExecutionFilter>
+                         <action>
+                           <ignore />
+                         </action>
+                       </pluginExecution>
+                     </pluginExecutions>
+                   </lifecycleMappingMetadata>
+                 </configuration>
+                </plugin>
+            </plugins>
+        </pluginManagement>
         <sourceDirectory>src/main/scala</sourceDirectory>
         <testSourceDirectory>src/test/scala</testSourceDirectory>
         <plugins>

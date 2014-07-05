@@ -18,6 +18,7 @@ package org.apache.camel.component.cxf.jaxrs;
 
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultConsumer;
+import org.apache.cxf.Bus;
 import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
 
@@ -34,6 +35,11 @@ public class CxfRsConsumer extends DefaultConsumer {
         super(endpoint, processor);
         CxfRsInvoker cxfRsInvoker = new CxfRsInvoker(endpoint, this);
         JAXRSServerFactoryBean svrBean = endpoint.createJAXRSServerFactoryBean();
+        Bus bus = ((CxfRsEndpoint)getEndpoint()).getBus();
+        // We need to apply the bus setting from the CxfRsEndpoint which is not use the default bus
+        if (bus != null) {
+            svrBean.setBus(bus);
+        }
         svrBean.setInvoker(cxfRsInvoker);
         server = svrBean.create();
     }

@@ -116,6 +116,11 @@ public class FileConsumerBridgeRouteExceptionHandlerTest extends ContextTestSupp
             // noop
         }
 
+        @Override
+        public void setMarkerFiler(boolean markerFile) {
+            // noop
+        }
+
         public int getCounter() {
             return counter;
         }

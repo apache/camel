@@ -21,6 +21,7 @@ import java.util.concurrent.TimeUnit;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.model.ModelCamelContext;
+import org.apache.camel.util.IOHelper;
 import org.springframework.context.support.AbstractApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
@@ -41,10 +42,8 @@ public class SpringComponentScanTest extends ContextTestSupport {
 
     @Override
     protected void tearDown() throws Exception {
-        if (applicationContext != null) {
-            // we're done so let's properly close the application context
-            applicationContext.close();
-        }
+        // we're done so let's properly close the application context
+        IOHelper.close(applicationContext);
 
         super.tearDown();
     }

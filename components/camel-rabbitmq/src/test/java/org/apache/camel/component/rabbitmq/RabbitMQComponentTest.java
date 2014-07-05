@@ -19,11 +19,17 @@ package org.apache.camel.component.rabbitmq;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.rabbitmq.client.ConnectionFactory;
+
 import org.apache.camel.CamelContext;
+import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.impl.SimpleRegistry;
 import org.junit.Test;
 import org.mockito.Mockito;
 
 import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertNull;
+import static org.junit.Assert.assertSame;
 
 public class RabbitMQComponentTest {
 
@@ -39,6 +45,11 @@ public class RabbitMQComponentTest {
         assertEquals(true, endpoint.isAutoDelete());
         assertEquals(true, endpoint.isDurable());
         assertEquals("direct", endpoint.getExchangeType());
+        assertEquals(ConnectionFactory.DEFAULT_CONNECTION_TIMEOUT, endpoint.getConnectionTimeout());
+        assertEquals(ConnectionFactory.DEFAULT_CHANNEL_MAX, endpoint.getRequestedChannelMax());
+        assertEquals(ConnectionFactory.DEFAULT_FRAME_MAX, endpoint.getRequestedFrameMax());
+        assertEquals(ConnectionFactory.DEFAULT_HEARTBEAT, endpoint.getRequestedHeartbeat());
+        assertNull(endpoint.getConnectionFactory());
     }
 
     @Test
@@ -53,6 +64,10 @@ public class RabbitMQComponentTest {
         params.put("hostname", "special.host");
         params.put("queue", "queuey");
         params.put("exchangeType", "topic");
+        params.put("connectionTimeout", 123);
+        params.put("requestedChannelMax", 456);
+        params.put("requestedFrameMax", 789);
+        params.put("requestedHeartbeat", 321);
 
         RabbitMQEndpoint endpoint = createEndpoint(params);
 
@@ -67,6 +82,10 @@ public class RabbitMQComponentTest {
         assertEquals(true, endpoint.isAutoDelete());
         assertEquals(true, endpoint.isDurable());
         assertEquals("topic", endpoint.getExchangeType());
+        assertEquals(123, endpoint.getConnectionTimeout());
+        assertEquals(456, endpoint.getRequestedChannelMax());
+        assertEquals(789, endpoint.getRequestedFrameMax());
+        assertEquals(321, endpoint.getRequestedHeartbeat());
     }
 
     private RabbitMQEndpoint createEndpoint(Map<String, Object> params) throws Exception {
@@ -75,4 +94,22 @@ public class RabbitMQComponentTest {
 
         return new RabbitMQComponent(context).createEndpoint(uri, remaining, params);
     }
+
+    @Test
+    public void testConnectionFactoryRef() throws Exception {
+        SimpleRegistry registry = new SimpleRegistry();
+        ConnectionFactory connectionFactoryMock = Mockito.mock(ConnectionFactory.class);
+        registry.put("connectionFactoryMock", connectionFactoryMock);
+
+        CamelContext defaultContext = new DefaultCamelContext(registry);
+
+        Map<String, Object> params = new HashMap<String, Object>();
+        params.put("connectionFactory", "#connectionFactoryMock");
+
+        RabbitMQEndpoint endpoint = new RabbitMQComponent(defaultContext).createEndpoint("rabbitmq:localhost/exchange", "localhost/exchange", params);
+
+        assertSame(connectionFactoryMock, endpoint.getConnectionFactory());
+
+    }
+
 }

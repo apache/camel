@@ -21,14 +21,12 @@ import java.lang.reflect.Type;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
-import java.util.UUID;
 import javax.enterprise.context.ApplicationScoped;
 import javax.enterprise.context.spi.CreationalContext;
 import javax.enterprise.inject.spi.Bean;
 import javax.enterprise.inject.spi.BeanManager;
 import javax.enterprise.inject.spi.InjectionPoint;
 import javax.enterprise.inject.spi.InjectionTarget;
-import javax.enterprise.inject.spi.PassivationCapable;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.cdi.CdiCamelContext;
@@ -40,9 +38,7 @@ import org.apache.deltaspike.core.api.literal.DefaultLiteral;
  * Description of camel context bean.
  */
 @SuppressWarnings("unchecked")
-public class CamelContextBean implements Bean<CdiCamelContext>, PassivationCapable {
-
-    private static final UUID UNIQUE_ID = UUID.randomUUID();
+public class CamelContextBean implements Bean<CdiCamelContext> {
 
     private final BeanManager beanManager;
     private final String name;
@@ -132,10 +128,5 @@ public class CamelContextBean implements Bean<CdiCamelContext>, PassivationCapab
 
     public void configureCamelContext(CdiCamelContext camelContext) {
         config.configure(camelContext, beanManager);
-    }
-
-    @Override 
-    public String getId() {
-        return UNIQUE_ID.toString();
     }
 }

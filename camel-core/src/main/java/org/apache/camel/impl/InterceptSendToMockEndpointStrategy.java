@@ -17,7 +17,7 @@
 package org.apache.camel.impl;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.Processor;
+import org.apache.camel.Producer;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.spi.EndpointStrategy;
 import org.apache.camel.util.EndpointHelper;
@@ -77,7 +77,7 @@ public class InterceptSendToMockEndpointStrategy implements EndpointStrategy {
         } else if (endpoint instanceof MockEndpoint) {
             // we should not intercept mock endpoints
             return endpoint;
-        } else if (uri == null || pattern == null || EndpointHelper.matchEndpoint(endpoint.getCamelContext(), uri, pattern)) {
+        } else if (matchPattern(uri, endpoint, pattern)) {
             // if pattern is null then it mean to match all
 
             // only proxy if the uri is matched decorate endpoint with our proxy
@@ -94,19 +94,47 @@ public class InterceptSendToMockEndpointStrategy implements EndpointStrategy {
             LOG.info("Adviced endpoint [" + uri + "] with mock endpoint [" + key + "]");
 
             MockEndpoint mock = endpoint.getCamelContext().getEndpoint(key, MockEndpoint.class);
-            Processor producer;
+            Producer producer;
             try {
                 producer = mock.createProducer();
             } catch (Exception e) {
                 throw wrapRuntimeCamelException(e);
             }
 
+            // allow custom logic
+            producer = onInterceptEndpoint(uri, endpoint, mock, producer);
             proxy.setDetour(producer);
+
             return proxy;
         } else {
             // no proxy so return regular endpoint
             return endpoint;
         }
+    }
+
+    /**
+     * Does the pattern match the endpoint?
+     *
+     * @param uri          the uri
+     * @param endpoint     the endpoint
+     * @param pattern      the pattern
+     * @return <tt>true</tt> to match and therefore intercept, <tt>false</tt> if not matched and should not intercept
+     */
+    protected boolean matchPattern(String uri, Endpoint endpoint, String pattern) {
+        return uri == null || pattern == null || EndpointHelper.matchEndpoint(endpoint.getCamelContext(), uri, pattern);
+    }
+
+    /**
+     * Callback when an endpoint was intercepted with the given mock endpoint
+     *
+     * @param uri          the uri
+     * @param endpoint     the endpoint
+     * @param mockEndpoint the mocked endpoint
+     * @param mockProducer the mock producer
+     * @return the mock producer
+     */
+    protected Producer onInterceptEndpoint(String uri, Endpoint endpoint, MockEndpoint mockEndpoint, Producer mockProducer) {
+        return mockProducer;
     }
 
     @Override

@@ -25,7 +25,7 @@ public class AvroSpecificResponder extends SpecificResponder {
 
 
     public AvroSpecificResponder(Protocol protocol, AvroListener listener)  throws Exception {
-        super(protocol, null);
+        super(protocol, listener);
         this.listener = listener;
     }
 

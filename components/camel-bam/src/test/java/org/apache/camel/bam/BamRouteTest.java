@@ -16,6 +16,7 @@
  */
 package org.apache.camel.bam;
 
+import javax.persistence.EntityManagerFactory;
 
 import org.apache.camel.bam.model.ActivityState;
 import org.apache.camel.builder.RouteBuilder;
@@ -24,9 +25,7 @@ import org.apache.camel.test.spring.CamelSpringTestSupport;
 import org.junit.Before;
 import org.junit.Test;
 
-
 import org.springframework.context.support.ClassPathXmlApplicationContext;
-import org.springframework.orm.jpa.JpaTemplate;
 import org.springframework.transaction.support.TransactionTemplate;
 
 import static org.apache.camel.util.Time.seconds;
@@ -66,11 +65,11 @@ public class BamRouteTest extends CamelSpringTestSupport {
     }
 
     protected RouteBuilder createRouteBuilder() throws Exception {
-        JpaTemplate jpaTemplate = getMandatoryBean(JpaTemplate.class, "jpaTemplate");
+        EntityManagerFactory entityManagerFactory = getMandatoryBean(EntityManagerFactory.class, "entityManagerFactory");
         TransactionTemplate transactionTemplate = getMandatoryBean(TransactionTemplate.class, "transactionTemplate");
 
         // START SNIPPET: example
-        return new ProcessBuilder(jpaTemplate, transactionTemplate) {
+        return new ProcessBuilder(entityManagerFactory, transactionTemplate) {
             public void configure() throws Exception {
 
                 // let's define some activities, correlating on an XPath on the message bodies

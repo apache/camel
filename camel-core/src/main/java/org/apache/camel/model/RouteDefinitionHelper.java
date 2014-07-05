@@ -16,7 +16,10 @@
  */
 package org.apache.camel.model;
 
+import java.io.UnsupportedEncodingException;
+import java.net.URISyntaxException;
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 import java.util.List;
 import java.util.Set;
@@ -26,6 +29,9 @@ import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.EndpointHelper;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.URISupport;
+
+import static org.apache.camel.model.ProcessorDefinitionHelper.filterTypeInOutputs;
 
 /**
  * Helper for {@link RouteDefinition}
@@ -37,6 +43,71 @@ import org.apache.camel.util.ObjectHelper;
 public final class RouteDefinitionHelper {
 
     private RouteDefinitionHelper() {
+    }
+
+    /**
+     * Gather all the endpoint uri's the route is using from the EIPs that has a static endpoint defined.
+     *
+     * @param route          the route
+     * @param includeInputs  whether to include inputs
+     * @param includeOutputs whether to include outputs
+     * @return the endpoints uris
+     */
+    public static Set<String> gatherAllStaticEndpointUris(CamelContext camelContext, RouteDefinition route, boolean includeInputs, boolean includeOutputs) {
+        return gatherAllEndpointUris(camelContext, route, includeInputs, includeOutputs, false);
+    }
+
+    /**
+     * Gather all the endpoint uri's the route is using from the EIPs that has a static or dynamic endpoint defined.
+     *
+     * @param route          the route
+     * @param includeInputs  whether to include inputs
+     * @param includeOutputs whether to include outputs
+     * @param includeDynamic whether to include dynamic outputs which has been in use during routing at runtime, gathered from the {@link org.apache.camel.spi.RuntimeEndpointRegistry}.
+     * @return the endpoints uris
+     */
+    public static Set<String> gatherAllEndpointUris(CamelContext camelContext, RouteDefinition route, boolean includeInputs, boolean includeOutputs, boolean includeDynamic) {
+        Set<String> answer = new LinkedHashSet<String>();
+
+        if (includeInputs) {
+            for (FromDefinition from : route.getInputs()) {
+                String uri = normalizeUri(from.getEndpointUri());
+                if (uri != null) {
+                    answer.add(uri);
+                }
+            }
+        }
+
+        if (includeOutputs) {
+            Iterator<EndpointRequiredDefinition> it = filterTypeInOutputs(route.getOutputs(), EndpointRequiredDefinition.class);
+            while (it.hasNext()) {
+                String uri = normalizeUri(it.next().getEndpointUri());
+                if (uri != null) {
+                    answer.add(uri);
+                }
+            }
+            if (includeDynamic && camelContext.getRuntimeEndpointRegistry() != null) {
+                List<String> endpoints = camelContext.getRuntimeEndpointRegistry().getEndpointsPerRoute(route.getId(), false);
+                for (String uri : endpoints) {
+                    if (uri != null) {
+                        answer.add(uri);
+                    }
+                }
+            }
+        }
+
+        return answer;
+    }
+
+    private static String normalizeUri(String uri) {
+        try {
+            return URISupport.normalizeUri(uri);
+        } catch (UnsupportedEncodingException e) {
+            // ignore
+        } catch (URISyntaxException e) {
+            // ignore
+        }
+        return null;
     }
 
     /**
@@ -54,7 +125,11 @@ public final class RouteDefinitionHelper {
             // if there was a custom id assigned, then make sure to support property placeholders
             if (route.hasCustomIdAssigned()) {
                 String id = route.getId();
-                route.setId(context.resolvePropertyPlaceholders(id));
+                id = context.resolvePropertyPlaceholders(id);
+                // only set id if its changed, such as we did property placeholder
+                if (!route.getId().equals(id)) {
+                    route.setId(id);
+                }
             }
         }
     }
@@ -260,7 +335,6 @@ public final class RouteDefinitionHelper {
     }
 
 
-
     private static void initOnExceptions(List<ProcessorDefinition<?>> abstracts, List<ProcessorDefinition<?>> upper,
                                          List<OnExceptionDefinition> onExceptions) {
         // add global on exceptions if any
@@ -456,7 +530,7 @@ public final class RouteDefinitionHelper {
      * This is needed when doing tracing or the likes, where each node should have its id assigned
      * so the tracing can pin point exactly.
      *
-     * @param context the camel context
+     * @param context   the camel context
      * @param processor the node
      */
     public static void forceAssignIds(CamelContext context, ProcessorDefinition processor) {
@@ -467,7 +541,11 @@ public final class RouteDefinitionHelper {
         if (processor.hasCustomIdAssigned()) {
             String id = processor.getId();
             try {
-                processor.setId(context.resolvePropertyPlaceholders(id));
+                id = context.resolvePropertyPlaceholders(id);
+                // only set id if its changed, such as we did property placeholder
+                if (!processor.getId().equals(id)) {
+                    processor.setId(id);
+                }
             } catch (Exception e) {
                 throw ObjectHelper.wrapRuntimeCamelException(e);
             }

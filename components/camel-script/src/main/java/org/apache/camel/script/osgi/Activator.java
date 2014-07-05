@@ -117,7 +117,6 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer {
         return null;
     }
 
-
     protected void registerScriptEngines(Bundle bundle, List<BundleScriptEngineResolver> resolvers) {
         URL configURL = null;
         for (Enumeration<?> e = bundle.findEntries(META_INF_SERVICES_DIR, SCRIPT_ENGINE_SERVICE_FILE, false); e != null && e.hasMoreElements();) {
@@ -128,9 +127,11 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer {
             resolvers.add(new BundleScriptEngineResolver(bundle, configURL));
         }
     } 
+
     public interface ScriptEngineResolver {
         ScriptEngine resolveScriptEngine(String name);
     }
+
     protected static class BundleScriptEngineResolver implements ScriptEngineResolver {
         protected final Bundle bundle;
         private ServiceRegistration reg;
@@ -140,13 +141,15 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer {
             this.bundle = bundle;
             this.configFile = configFile;
         }
+
         public void register() {
-            reg = bundle.getBundleContext().registerService(ScriptEngineResolver.class.getName(), 
-                                                            this, null);
+            reg = bundle.getBundleContext().registerService(ScriptEngineResolver.class.getName(), this, null);
         }
+
         public void unregister() {
             reg.unregister();
         }
+
         public ScriptEngine resolveScriptEngine(String name) {
             try {
                 BufferedReader in = IOHelper.buffered(new InputStreamReader(configFile.openStream()));
@@ -179,6 +182,19 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer {
                 LOG.warn("Cannot create ScriptEngineFactory: " + e.getClass().getName(), e);
                 return null;
             }
+        }
+
+        private boolean matchEngine(String name, String engineName) {
+            if (name.equals(engineName)) {
+                return true;
+            }
+
+            // javascript have many aliases
+            if (name.equals("js") || name.equals("javaScript") || name.equals("ECMAScript")) {
+                return engineName.equals("js") || engineName.equals("javaScript") || engineName.equals("ECMAScript");
+            }
+
+            return false;
         }
 
         @Override

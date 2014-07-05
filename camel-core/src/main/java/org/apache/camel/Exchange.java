@@ -136,6 +136,7 @@ public interface Exchange {
     String HTTP_PATH               = "CamelHttpPath";
     String HTTP_PROTOCOL_VERSION   = "CamelHttpProtocolVersion";
     String HTTP_QUERY              = "CamelHttpQuery";
+    String HTTP_RAW_QUERY          = "CamelHttpRawQuery";
     String HTTP_RESPONSE_CODE      = "CamelHttpResponseCode";
     String HTTP_URI                = "CamelHttpUri";
     String HTTP_URL                = "CamelHttpUrl";
@@ -178,6 +179,7 @@ public interface Exchange {
 
     String SOAP_ACTION        = "CamelSoapAction";
     String SKIP_GZIP_ENCODING = "CamelSkipGzipEncoding";
+    String SKIP_WWW_FORM_URLENCODED = "CamelSkipWwwFormUrlEncoding"; 
     String SLIP_ENDPOINT      = "CamelSlipEndpoint";
     String SPLIT_INDEX        = "CamelSplitIndex";
     String SPLIT_COMPLETE     = "CamelSplitComplete";
@@ -193,6 +195,7 @@ public interface Exchange {
     String TRACE_EVENT_NODE_ID   = "CamelTraceEventNodeId";
     String TRACE_EVENT_TIMESTAMP = "CamelTraceEventTimestamp";
     String TRACE_EVENT_EXCHANGE  = "CamelTraceEventExchange";
+    String TRY_ROUTE_BLOCK       = "TryRouteBlock";
     String TRANSFER_ENCODING     = "Transfer-Encoding";
 
     String UNIT_OF_WORK_EXHAUSTED    = "CamelUnitOfWorkExhausted";

@@ -43,7 +43,7 @@
     <camelContext id="camel" xmlns="http://camel.apache.org/schema/spring">
         <route>
             <from uri="direct:testEndpoint" />
-            <to uri="cxf:bean:serviceEndpoint" />
+            <to uri="cxf:bean:serviceEndpoint?defaultOperationName=Detail" />
         </route>
     </camelContext>
 

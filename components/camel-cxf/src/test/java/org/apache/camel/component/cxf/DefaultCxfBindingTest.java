@@ -149,6 +149,30 @@ public class DefaultCxfBindingTest extends Assert {
     }
 
     @Test
+    public void testPopupalteExchangeFromCxfResponseOfNullBody() {
+        DefaultCxfBinding cxfBinding = new DefaultCxfBinding();
+        cxfBinding.setHeaderFilterStrategy(new DefaultHeaderFilterStrategy());
+        Exchange exchange = new DefaultExchange(context);
+        org.apache.cxf.message.Exchange cxfExchange = new org.apache.cxf.message.ExchangeImpl();
+        exchange.setProperty(CxfConstants.DATA_FORMAT_PROPERTY, DataFormat.PAYLOAD);
+        Map<String, Object> responseContext = new HashMap<String, Object>();
+        responseContext.put(org.apache.cxf.message.Message.RESPONSE_CODE, Integer.valueOf(200));
+        Map<String, List<String>> headers = new TreeMap<String, List<String>>(String.CASE_INSENSITIVE_ORDER);
+        responseContext.put(org.apache.cxf.message.Message.PROTOCOL_HEADERS, headers);
+        org.apache.cxf.message.Message cxfMessage = new org.apache.cxf.message.MessageImpl();
+        cxfExchange.setInMessage(cxfMessage);
+        
+        cxfBinding.populateExchangeFromCxfResponse(exchange, cxfExchange, responseContext);
+
+        CxfPayload<?> cxfPayload = exchange.getOut().getBody(CxfPayload.class);
+
+        assertNotNull(cxfPayload);
+        List<?> body = cxfPayload.getBody(); 
+        assertNotNull(body);
+        assertEquals(0, body.size());
+    }
+    
+    @Test
     public void testPopupalteCxfResponseFromExchange() {
         DefaultCxfBinding cxfBinding = new DefaultCxfBinding();
         cxfBinding.setHeaderFilterStrategy(new DefaultHeaderFilterStrategy());
@@ -231,6 +255,7 @@ public class DefaultCxfBindingTest extends Assert {
         assertNotNull(camelAttachments.get("att-1"));
         
     }
+
     @Test
     public void testPopupalteExchangeFromCxfRequestWithHeaderMerged() {
         DefaultCxfBinding cxfBinding = new DefaultCxfBinding();
@@ -258,7 +283,7 @@ public class DefaultCxfBindingTest extends Assert {
     private void verifyHeader(Map<String, List<String>> headers, String name, List<String> value) {
         List<String> values = headers.get(name);
         assertTrue("The entry must be available", values != null && values.size() == ((List<?>)value).size());
-        assertEquals("The value must match", (List<?>)value, values);
+        assertEquals("The value must match", value, values);
     }
 
     private void verifyHeader(Map<String, List<String>> headers, String name, String value) {

@@ -32,6 +32,7 @@ import java.util.Map;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.NoTypeConversionAvailableException;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.util.ExchangeHelper;
@@ -55,16 +56,24 @@ import org.slf4j.LoggerFactory;
 /**
  * Default {@link NettyHttpBinding}.
  */
-public class DefaultNettyHttpBinding implements NettyHttpBinding {
+public class DefaultNettyHttpBinding implements NettyHttpBinding, Cloneable {
 
     private static final Logger LOG = LoggerFactory.getLogger(DefaultNettyHttpBinding.class);
-    private HeaderFilterStrategy headerFilterStrategy;
+    private HeaderFilterStrategy headerFilterStrategy = new NettyHttpHeaderFilterStrategy();
 
     public DefaultNettyHttpBinding() {
     }
 
     public DefaultNettyHttpBinding(HeaderFilterStrategy headerFilterStrategy) {
         this.headerFilterStrategy = headerFilterStrategy;
+    }
+    
+    public DefaultNettyHttpBinding copy() {
+        try {
+            return (DefaultNettyHttpBinding)this.clone();
+        } catch (CloneNotSupportedException e) {
+            throw new RuntimeCamelException(e);
+        }
     }
 
     @Override
@@ -119,6 +128,7 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding {
         // uri is path and query parameters
         headers.put(Exchange.HTTP_URI, uri.getPath());
         headers.put(Exchange.HTTP_QUERY, uri.getQuery());
+        headers.put(Exchange.HTTP_RAW_QUERY, uri.getRawQuery());
 
         // strip the starting endpoint path so the path is relative to the endpoint uri
         String path = uri.getPath();
@@ -185,8 +195,10 @@ public class DefaultNettyHttpBinding implements NettyHttpBinding {
         }
 
         // if body is application/x-www-form-urlencoded then extract the body as query string and append as headers
+        // if it is a bridgeEndpoint we need to skip this part of work
         if (request.getMethod().getName().equals("POST") && request.getHeader(Exchange.CONTENT_TYPE) != null
-                && request.getHeader(Exchange.CONTENT_TYPE).startsWith(NettyHttpConstants.CONTENT_TYPE_WWW_FORM_URLENCODED)) {
+                && request.getHeader(Exchange.CONTENT_TYPE).startsWith(NettyHttpConstants.CONTENT_TYPE_WWW_FORM_URLENCODED)
+                && !configuration.isBridgeEndpoint()) {
 
             String charset = "UTF-8";
 

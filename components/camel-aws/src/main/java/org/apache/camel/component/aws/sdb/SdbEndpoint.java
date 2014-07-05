@@ -30,6 +30,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.component.aws.s3.S3Endpoint;
 import org.apache.camel.impl.ScheduledPollEndpoint;
+import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -41,6 +42,7 @@ public class SdbEndpoint extends ScheduledPollEndpoint {
     
     private static final Logger LOG = LoggerFactory.getLogger(S3Endpoint.class);
     private SdbConfiguration configuration;
+    private AmazonSimpleDB sdbClient;
 
     @Deprecated
     public SdbEndpoint(String uri, CamelContext context, SdbConfiguration configuration) {
@@ -68,7 +70,11 @@ public class SdbEndpoint extends ScheduledPollEndpoint {
     public void doStart() throws Exception {
         super.doStart();
         
-        AmazonSimpleDB sdbClient = getSdbClient();
+        sdbClient = configuration.getAmazonSDBClient() != null ? configuration.getAmazonSDBClient() : createSdbClient();
+        if (ObjectHelper.isNotEmpty(configuration.getAmazonSdbEndpoint())) {
+            sdbClient.setEndpoint(configuration.getAmazonSdbEndpoint());
+        }
+        
         String domainName = getConfiguration().getDomainName();
         LOG.trace("Querying whether domain [{}] already exists...", domainName);
 
@@ -89,16 +95,12 @@ public class SdbEndpoint extends ScheduledPollEndpoint {
     }
 
     public AmazonSimpleDB getSdbClient() {
-        return configuration.getAmazonSDBClient() != null ? configuration.getAmazonSDBClient() : createSdbClient();
+        return sdbClient;
     }
 
     AmazonSimpleDB createSdbClient() {
         AWSCredentials credentials = new BasicAWSCredentials(configuration.getAccessKey(), configuration.getSecretKey());
         AmazonSimpleDB client = new AmazonSimpleDBClient(credentials);
-        if (configuration.getAmazonSdbEndpoint() != null) {
-            client.setEndpoint(configuration.getAmazonSdbEndpoint());
-        }
-        configuration.setAmazonSDBClient(client);
         return client;
     }
 }

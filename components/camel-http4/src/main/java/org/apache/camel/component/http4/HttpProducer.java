@@ -49,8 +49,6 @@ import org.apache.camel.util.URISupport;
 import org.apache.http.Header;
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
-import org.apache.http.auth.AuthScope;
-import org.apache.http.auth.Credentials;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpEntityEnclosingRequestBase;
 import org.apache.http.client.methods.HttpRequestBase;
@@ -61,8 +59,7 @@ import org.apache.http.entity.FileEntity;
 import org.apache.http.entity.InputStreamEntity;
 import org.apache.http.entity.StringEntity;
 import org.apache.http.impl.auth.BasicScheme;
-import org.apache.http.impl.client.DefaultHttpClient;
-import org.apache.http.params.CoreProtocolPNames;
+import org.apache.http.protocol.BasicHttpContext;
 import org.apache.http.protocol.HttpContext;
 import org.apache.http.util.EntityUtils;
 import org.slf4j.Logger;
@@ -88,11 +85,9 @@ public class HttpProducer extends DefaultProducer {
 
     public void process(Exchange exchange) throws Exception {
 
-        if (getEndpoint().isClearExpiredCookies()) {
-            if (httpClient instanceof DefaultHttpClient) {
-                boolean cleared = ((DefaultHttpClient) httpClient).getCookieStore().clearExpired(new Date());
-                log.debug("Any expired cookies cleared: {}", cleared);
-            }
+        if (getEndpoint().isClearExpiredCookies() && !getEndpoint().isBridgeEndpoint()) {
+            // create the cookies before the invocation
+            getEndpoint().getCookieStore().clearExpired(new Date());
         }
 
         // if we bridge endpoint then we need to skip matching headers with the HTTP_QUERY to avoid sending
@@ -109,15 +104,11 @@ public class HttpProducer extends DefaultProducer {
             exchange.getIn().getHeaders().remove("host");
         }
         HttpRequestBase httpRequest = createMethod(exchange);
-        if (getEndpoint().isAuthenticationPreemptive()) {
-            Credentials creds = ((DefaultHttpClient) httpClient).getCredentialsProvider().getCredentials(AuthScope.ANY);
-            httpRequest.addHeader(new BasicScheme().authenticate(creds, httpRequest));
-        }
         Message in = exchange.getIn();
         String httpProtocolVersion = in.getHeader(Exchange.HTTP_PROTOCOL_VERSION, String.class);
         if (httpProtocolVersion != null) {
             // set the HTTP protocol version
-            httpRequest.getParams().setParameter(CoreProtocolPNames.PROTOCOL_VERSION, HttpHelper.parserHttpVersion(httpProtocolVersion));
+            httpRequest.setProtocolVersion(HttpHelper.parserHttpVersion(httpProtocolVersion));
         }
         HeaderFilterStrategy strategy = getEndpoint().getHeaderFilterStrategy();
 
@@ -205,6 +196,7 @@ public class HttpProducer extends DefaultProducer {
             String value = header.getValue();
             if (name.toLowerCase().equals("content-type")) {
                 name = Exchange.CONTENT_TYPE;
+                exchange.setProperty(Exchange.CHARSET_NAME, IOHelper.getCharsetNameFromContentType(value));
             }
             // use http helper to extract parameter value as it may contain multiple values
             Object extracted = HttpHelper.extractHttpParameterValue(value);
@@ -255,11 +247,15 @@ public class HttpProducer extends DefaultProducer {
      * @throws IOException can be thrown
      */
     protected HttpResponse executeMethod(HttpUriRequest httpRequest) throws IOException {
-        if (httpContext != null) {
-            return httpClient.execute(httpRequest, httpContext);
-        } else {
-            return httpClient.execute(httpRequest);
+        HttpContext localContext = new BasicHttpContext();
+        if (getEndpoint().isAuthenticationPreemptive()) {
+            BasicScheme basicAuth = new BasicScheme();
+            localContext.setAttribute("preemptive-auth", basicAuth);
         }
+        if (httpContext != null) {
+            localContext = new BasicHttpContext(httpContext);
+        }
+        return httpClient.execute(httpRequest, localContext);
     }
 
     /**

@@ -36,4 +36,17 @@ public final class Strings {
     public static String getOrElse(String text, String defaultValue) {
         return (text != null) ? text : defaultValue;
     }
+
+    /**
+     * Returns the canonical class name by removing any generic type information.
+     */
+    public static String canonicalClassName(String className) {
+        // remove generics
+        int pos = className.indexOf('<');
+        if (pos != -1) {
+            return className.substring(0, pos);
+        } else {
+            return className;
+        }
+    }
 }

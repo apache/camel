@@ -70,6 +70,10 @@ public class CxfConsumerTest extends CamelTestSupport {
                         ServletRequest request = (ServletRequest)cxfMessage.get("HTTP.REQUEST");
                         assertNotNull("Should get the ServletRequest", request);
                         assertNotNull("Should get the RemoteAddress", request.getRemoteAddr());
+                        // Could verify the HttpRequest 
+                        String contentType = in.getHeader(Exchange.CONTENT_TYPE, String.class);
+                        assertNotNull("Should get the contentType.", contentType);
+                        
                         // Get the parameter list
                         List<?> parameter = in.getBody(List.class);
                         // Get the operation name
@@ -118,7 +122,7 @@ public class CxfConsumerTest extends CamelTestSupport {
     
     @Test
     public void testXmlDeclaration() throws Exception {
-        String response = template.requestBody(SIMPLE_ENDPOINT_ADDRESS, ECHO_REQUEST, String.class);
+        String response = template.requestBodyAndHeader(SIMPLE_ENDPOINT_ADDRESS, ECHO_REQUEST, Exchange.CONTENT_TYPE, "text/xml; charset=UTF-8", String.class);
         assertTrue("Can't find the xml declaration.", response.startsWith("<?xml version='1.0' encoding="));
     }
     

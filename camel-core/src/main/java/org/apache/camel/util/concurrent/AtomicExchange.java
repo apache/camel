@@ -23,7 +23,8 @@ import org.apache.camel.Exchange;
 /**
  * Convenience class for holding an {@link Exchange} in a thread-safe way
  */
-@SuppressWarnings("serial")
 public class AtomicExchange extends AtomicReference<Exchange> {
+
+    private static final long serialVersionUID = 1L;
 
 }

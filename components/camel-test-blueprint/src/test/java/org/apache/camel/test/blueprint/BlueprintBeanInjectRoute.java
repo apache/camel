@@ -19,7 +19,6 @@ package org.apache.camel.test.blueprint;
 import org.apache.camel.BeanInject;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
-import org.apache.camel.PropertyInject;
 import org.apache.camel.builder.RouteBuilder;
 
 public class BlueprintBeanInjectRoute extends RouteBuilder {

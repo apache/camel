@@ -18,15 +18,14 @@ package org.apache.camel.component.quartz;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-public class QuartzStartDelayedOptionTest extends CamelTestSupport {
+public class QuartzStartDelayedOptionTest extends BaseQuartzTest {
 
     @Test
     public void testStartDelayed() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
-        mock.setMinimumResultWaitTime(1900);
+        mock.setMinimumResultWaitTime(1500);
         mock.setResultWaitTime(3000);
         mock.expectedMessageCount(2);
 

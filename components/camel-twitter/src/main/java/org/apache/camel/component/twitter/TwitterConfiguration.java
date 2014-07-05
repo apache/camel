@@ -21,6 +21,7 @@ import java.text.SimpleDateFormat;
 import java.util.Date;
 
 import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriParams;
 import twitter4j.Twitter;
 import twitter4j.TwitterFactory;
 import twitter4j.TwitterStream;
@@ -28,6 +29,7 @@ import twitter4j.TwitterStreamFactory;
 import twitter4j.conf.Configuration;
 import twitter4j.conf.ConfigurationBuilder;
 
+@UriParams
 public class TwitterConfiguration {
 
     /**
@@ -97,7 +99,7 @@ public class TwitterConfiguration {
     private long sinceId  = 1;
 
     /**
-     * Used ot set the preferred language on which to search
+     * Used to set the preferred language on which to search
      */
     @UriParam
     private String lang;
@@ -115,7 +117,22 @@ public class TwitterConfiguration {
      * Number of page to iterate before stop (default is 1)
      */
     @UriParam
-    private Integer numberOfPages = new Integer(1);
+    private Integer numberOfPages = 1;
+    
+    @UriParam
+    private String httpProxyHost;
+
+    @UriParam
+    private String httpProxyUser;
+
+    @UriParam
+    private String httpProxyPassword;
+
+    @UriParam
+    private Integer httpProxyPort;
+    
+    @UriParam
+    private boolean useSSL = true;
 
     /**
      * Singleton, on demand instances of Twitter4J's Twitter & TwitterStream.
@@ -143,11 +160,26 @@ public class TwitterConfiguration {
      * @return Configuration
      */
     public Configuration getConfiguration() {
+        checkComplete();
         ConfigurationBuilder confBuilder = new ConfigurationBuilder();
         confBuilder.setOAuthConsumerKey(consumerKey);
         confBuilder.setOAuthConsumerSecret(consumerSecret);
         confBuilder.setOAuthAccessToken(accessToken);
         confBuilder.setOAuthAccessTokenSecret(accessTokenSecret);
+        confBuilder.setUseSSL(useSSL);
+        if (getHttpProxyHost() != null) {
+            confBuilder.setHttpProxyHost(getHttpProxyHost());
+        }
+        if (getHttpProxyUser() != null) {
+            confBuilder.setHttpProxyHost(getHttpProxyUser());
+        }
+        if (getHttpProxyPassword() != null) {
+            confBuilder.setHttpProxyHost(getHttpProxyPassword());
+        }
+        if (httpProxyPort != null) {
+            confBuilder.setHttpProxyPort(httpProxyPort);
+        }
+        
         return confBuilder.build();
     }
 
@@ -181,6 +213,14 @@ public class TwitterConfiguration {
 
     public void setAccessTokenSecret(String accessTokenSecret) {
         this.accessTokenSecret = accessTokenSecret;
+    }
+    
+    public boolean getUseSSL() {
+        return useSSL;
+    }
+    
+    public void setUseSSL(boolean useSSL) {
+        this.useSSL = useSSL;
     }
 
     public String getUser() {
@@ -304,7 +344,7 @@ public class TwitterConfiguration {
         return count;
     }
 
-    public void setCount(int count) {
+    public void setCount(Integer count) {
         this.count = count;
     }
 
@@ -314,6 +354,38 @@ public class TwitterConfiguration {
 
     public void setNumberOfPages(Integer numberOfPages) {
         this.numberOfPages = numberOfPages;
+    }
+    
+    public void setHttpProxyHost(String httpProxyHost) {
+        this.httpProxyHost = httpProxyHost;
+    }
+    
+    public String getHttpProxyHost() {
+        return httpProxyHost;
+    }
+    
+    public void setHttpProxyUser(String httpProxyUser) {
+        this.httpProxyUser = httpProxyUser;
+    }
+
+    public String getHttpProxyUser() {
+        return httpProxyUser;
+    }
+    
+    public void setHttpProxyPassword(String httpProxyPassword) {
+        this.httpProxyPassword = httpProxyPassword;
+    }
+
+    public String getHttpProxyPassword() {
+        return httpProxyPassword;
+    }
+    
+    public void setHttpProxyPort(int httpProxyPort) {
+        this.httpProxyPort = httpProxyPort;
+    }
+
+    public int getHttpProxyPort() {
+        return httpProxyPort;
     }
 }
 

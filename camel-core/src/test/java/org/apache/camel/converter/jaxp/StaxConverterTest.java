@@ -22,9 +22,9 @@ import java.nio.charset.Charset;
 
 import javax.xml.stream.XMLEventReader;
 import javax.xml.stream.XMLEventWriter;
+import javax.xml.stream.XMLStreamConstants;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.stream.XMLStreamWriter;
-import javax.xml.stream.events.XMLEvent;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.Exchange;
@@ -58,7 +58,7 @@ public class StaxConverterTest extends ContextTestSupport {
             output = new ByteArrayOutputStream();
             // ensure UTF-8 encoding
             Exchange exchange = new DefaultExchange(context);
-            exchange.setProperty(Exchange.CHARSET_NAME, UTF_8.name());
+            exchange.setProperty(Exchange.CHARSET_NAME, UTF_8.toString());
             writer = context.getTypeConverter().mandatoryConvertTo(XMLEventWriter.class, exchange, output);
             while (reader.hasNext()) {
                 writer.add(reader.nextEvent());
@@ -74,7 +74,10 @@ public class StaxConverterTest extends ContextTestSupport {
         assertNotNull(output);
 
         String result = new String(output.toByteArray(), UTF_8.name());
-
+        // normalize the auotation mark
+        if (result.indexOf('\'') > 0) {
+            result = result.replace('\'', '"');
+        }
         boolean equals = TEST_XML_WITH_XML_HEADER.equals(result) || TEST_XML_WITH_XML_HEADER_ISO_8859_1.equals(result);
         assertTrue("Should match header", equals);
     }
@@ -99,19 +102,19 @@ public class StaxConverterTest extends ContextTestSupport {
             while (reader.hasNext()) {
                 reader.next();
                 switch (reader.getEventType()) {
-                case XMLEvent.START_DOCUMENT:
+                case XMLStreamConstants.START_DOCUMENT:
                     writer.writeStartDocument();
                     break;
-                case XMLEvent.END_DOCUMENT:
+                case XMLStreamConstants.END_DOCUMENT:
                     writer.writeEndDocument();
                     break;
-                case XMLEvent.START_ELEMENT:
+                case XMLStreamConstants.START_ELEMENT:
                     writer.writeStartElement(reader.getName().getLocalPart());
                     break;
-                case XMLEvent.CHARACTERS:
+                case XMLStreamConstants.CHARACTERS:
                     writer.writeCharacters(reader.getText());
                     break;
-                case XMLEvent.END_ELEMENT:
+                case XMLStreamConstants.END_ELEMENT:
                     writer.writeEndElement();
                     break;
                 default:

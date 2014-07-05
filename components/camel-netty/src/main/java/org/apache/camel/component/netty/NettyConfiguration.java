@@ -25,6 +25,8 @@ import java.util.Map;
 
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriParams;
 import org.apache.camel.util.EndpointHelper;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
@@ -36,33 +38,56 @@ import org.jboss.netty.util.CharsetUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@UriParams
 public class NettyConfiguration extends NettyServerBootstrapConfiguration implements Cloneable {
     private static final Logger LOG = LoggerFactory.getLogger(NettyConfiguration.class);
 
+    @UriParam
     private long requestTimeout;
+    @UriParam
     private boolean sync = true;
+    @UriParam
     private boolean textline;
+    @UriParam
     private TextLineDelimiter delimiter = TextLineDelimiter.LINE;
+    @UriParam
     private boolean autoAppendDelimiter = true;
+    @UriParam
     private int decoderMaxLineLength = 1024;
+    @UriParam
     private String encoding;
     private List<ChannelHandler> encoders = new ArrayList<ChannelHandler>();
     private List<ChannelHandler> decoders = new ArrayList<ChannelHandler>();
+    @UriParam
     private boolean disconnect;
+    @UriParam
     private boolean lazyChannelCreation = true;
+    @UriParam
     private boolean transferExchange;
+    @UriParam
     private boolean disconnectOnNoReply = true;
+    @UriParam
     private LoggingLevel noReplyLogLevel = LoggingLevel.WARN;
+    @UriParam
     private LoggingLevel serverExceptionCaughtLogLevel = LoggingLevel.WARN;
+    @UriParam
     private LoggingLevel serverClosedChannelExceptionCaughtLogLevel = LoggingLevel.DEBUG;
+    @UriParam
     private boolean allowDefaultCodec = true;
     private ClientPipelineFactory clientPipelineFactory;
+    @UriParam
     private int maximumPoolSize = 16;
+    @UriParam
     private boolean orderedThreadPoolExecutor = true;
+    @UriParam
     private int producerPoolMaxActive = -1;
+    @UriParam
     private int producerPoolMinIdle;
+    @UriParam
     private int producerPoolMaxIdle = 100;
+    @UriParam
     private long producerPoolMinEvictableIdle = 5 * 60 * 1000L;
+    @UriParam
     private boolean producerPoolEnabled = true;
 
     /**
@@ -131,17 +156,17 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
         setHost(uri.getHost());
         setPort(uri.getPort());
 
-        ssl = component.getAndRemoveParameter(parameters, "ssl", boolean.class, false);
-        sslHandler = component.resolveAndRemoveReferenceParameter(parameters, "sslHandler", SslHandler.class, sslHandler);
-        passphrase = component.getAndRemoveParameter(parameters, "passphrase", String.class, passphrase);
-        keyStoreFormat = component.getAndRemoveParameter(parameters, "keyStoreFormat", String.class, keyStoreFormat == null ? "JKS" : keyStoreFormat);
-        securityProvider = component.getAndRemoveParameter(parameters, "securityProvider", String.class, securityProvider == null ? "SunX509" : securityProvider);
-        keyStoreFile = component.resolveAndRemoveReferenceParameter(parameters, "keyStoreFile", File.class, keyStoreFile);
-        trustStoreFile = component.resolveAndRemoveReferenceParameter(parameters, "trustStoreFile", File.class, trustStoreFile);
-        keyStoreResource = component.getAndRemoveParameter(parameters, "keyStoreResource", String.class, keyStoreResource);
-        trustStoreResource = component.getAndRemoveParameter(parameters, "trustStoreResource", String.class, trustStoreResource);
-        clientPipelineFactory = component.resolveAndRemoveReferenceParameter(parameters, "clientPipelineFactory", ClientPipelineFactory.class, clientPipelineFactory);
-        serverPipelineFactory = component.resolveAndRemoveReferenceParameter(parameters, "serverPipelineFactory", ServerPipelineFactory.class, serverPipelineFactory);
+        ssl = component.getAndRemoveOrResolveReferenceParameter(parameters, "ssl", boolean.class, false);
+        sslHandler = component.getAndRemoveOrResolveReferenceParameter(parameters, "sslHandler", SslHandler.class, sslHandler);
+        passphrase = component.getAndRemoveOrResolveReferenceParameter(parameters, "passphrase", String.class, passphrase);
+        keyStoreFormat = component.getAndRemoveOrResolveReferenceParameter(parameters, "keyStoreFormat", String.class, keyStoreFormat == null ? "JKS" : keyStoreFormat);
+        securityProvider = component.getAndRemoveOrResolveReferenceParameter(parameters, "securityProvider", String.class, securityProvider == null ? "SunX509" : securityProvider);
+        keyStoreFile = component.getAndRemoveOrResolveReferenceParameter(parameters, "keyStoreFile", File.class, keyStoreFile);
+        trustStoreFile = component.getAndRemoveOrResolveReferenceParameter(parameters, "trustStoreFile", File.class, trustStoreFile);
+        keyStoreResource = component.getAndRemoveOrResolveReferenceParameter(parameters, "keyStoreResource", String.class, keyStoreResource);
+        trustStoreResource = component.getAndRemoveOrResolveReferenceParameter(parameters, "trustStoreResource", String.class, trustStoreResource);
+        clientPipelineFactory = component.getAndRemoveOrResolveReferenceParameter(parameters, "clientPipelineFactory", ClientPipelineFactory.class, clientPipelineFactory);
+        serverPipelineFactory = component.getAndRemoveOrResolveReferenceParameter(parameters, "serverPipelineFactory", ServerPipelineFactory.class, serverPipelineFactory);
 
         // set custom encoders and decoders first
         List<ChannelHandler> referencedEncoders = component.resolveAndRemoveReferenceListParameter(parameters, "encoders", ChannelHandler.class, null);

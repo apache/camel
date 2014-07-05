@@ -34,7 +34,6 @@ public class DynamicRouterTest extends ContextTestSupport {
         getMockEndpoint("mock:a").expectedBodiesReceived("Hello World");
         getMockEndpoint("mock:b").expectedBodiesReceived("Hello World");
         getMockEndpoint("mock:c").expectedBodiesReceived("Hello World");
-        getMockEndpoint("mock:foo").expectedBodiesReceived("Bye World");
         getMockEndpoint("mock:result").expectedBodiesReceived("Bye World");
 
         template.sendBody("direct:start", "Hello World");
@@ -61,7 +60,7 @@ public class DynamicRouterTest extends ContextTestSupport {
                     .dynamicRouter(method(DynamicRouterTest.class, "slip"));
                 // END SNIPPET: e1
 
-                from("direct:foo").transform(constant("Bye World")).to("mock:foo");
+                from("direct:foo").transform(constant("Bye World"));
             }
         };
     }

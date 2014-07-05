@@ -154,8 +154,6 @@ public class CxfProducer extends DefaultProducer implements AsyncProcessor {
         } finally {
             // bind the CXF response to Camel exchange
             if (!boi.getOperationInfo().isOneWay()) {
-                // copy the InMessage header to OutMessage header
-                camelExchange.getOut().getHeaders().putAll(camelExchange.getIn().getHeaders());
                 endpoint.getCxfBinding().populateExchangeFromCxfResponse(camelExchange, cxfExchange,
                         responseContext);
             }
@@ -334,10 +332,12 @@ public class CxfProducer extends DefaultProducer implements AsyncProcessor {
         BindingOperationInfo answer = null;
         String lp = ex.getIn().getHeader(CxfConstants.OPERATION_NAME, String.class);
         if (lp == null) {
+            LOG.info("CxfProducer cannot find the {} from message header, try to use the defaultOperationName", CxfConstants.OPERATION_NAME);
             lp = endpoint.getDefaultOperationName();
         }
         if (lp == null) {
-            LOG.debug("Try to find a default operation. You should set '{}' in header.", CxfConstants.OPERATION_NAME);
+            LOG.info("CxfProducer cannot find the {} from message header and there is no DefaultOperationName setting, CxfProducer will pick up the first available operation.",
+                     CxfConstants.OPERATION_NAME);
             Collection<BindingOperationInfo> bois = 
                 client.getEndpoint().getEndpointInfo().getBinding().getOperations();
             

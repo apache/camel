@@ -21,7 +21,9 @@ import java.util.HashMap;
 import java.util.Map;
 
 import javax.xml.ws.WebFault;
+
 import org.w3c.dom.Element;
+
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Processor;
@@ -38,8 +40,8 @@ import org.apache.cxf.message.FaultMode;
 import org.apache.cxf.message.Message;
 import org.apache.cxf.service.invoker.Invoker;
 import org.apache.cxf.service.model.BindingOperationInfo;
-import org.apache.cxf.ws.addressing.AddressingProperties;
 import org.apache.cxf.ws.addressing.ContextUtils;
+import org.apache.cxf.ws.addressing.EndpointReferenceType;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -55,10 +57,11 @@ import org.slf4j.LoggerFactory;
 public class CxfConsumer extends DefaultConsumer {
     private static final Logger LOG = LoggerFactory.getLogger(CxfConsumer.class);
     private Server server;
+    private CxfEndpoint cxfEndpoint;
 
     public CxfConsumer(final CxfEndpoint endpoint, Processor processor) throws Exception {
         super(endpoint, processor);
-        
+        cxfEndpoint = endpoint;
         // create server
         ServerFactoryBean svrBean = endpoint.createServerFactoryBean();
         svrBean.setInvoker(new Invoker() {
@@ -84,9 +87,9 @@ public class CxfConsumer extends DefaultConsumer {
                         
                         // Now we don't set up the timeout value
                         LOG.trace("Suspending continuation of exchangeId: {}", camelExchange.getExchangeId());
-                        // TODO Support to set the timeout in case the Camel can't send the response back on time.
+                        
                         // The continuation could be called before the suspend is called
-                        continuation.suspend(0);
+                        continuation.suspend(cxfEndpoint.getContinuationTimeout());
 
                         // use the asynchronous API to process the exchange
                         getAsyncProcessor().process(camelExchange, new AsyncCallback() {
@@ -234,7 +237,7 @@ public class CxfConsumer extends DefaultConsumer {
                         WebFault faultAnnotation = t.getClass().getAnnotation(WebFault.class);
                         Object faultInfo = null;
                         try {
-                            Method method = t.getClass().getMethod("getFaultInfo", new Class[0]);
+                            Method method = t.getClass().getMethod("getFaultInfo");
                             faultInfo = method.invoke(t, new Object[0]);
                         } catch (Exception e) {
                             // do nothing here                            
@@ -273,12 +276,18 @@ public class CxfConsumer extends DefaultConsumer {
         server.stop();
         super.doStop();
     }
-    
+    private EndpointReferenceType getReplyTo(Object o) {
+        try {
+            return (EndpointReferenceType)o.getClass().getMethod("getReplyTo").invoke(o);
+        } catch (Throwable t) {
+            throw new Fault(t);
+        }
+    }
     protected boolean isAsyncInvocationSupported(Exchange cxfExchange) {
         Message cxfMessage = cxfExchange.getInMessage();
-        AddressingProperties addressingProperties = (AddressingProperties) cxfMessage.get(CxfConstants.WSA_HEADERS_INBOUND);
+        Object addressingProperties = cxfMessage.get(CxfConstants.WSA_HEADERS_INBOUND);
         if (addressingProperties != null 
-               && !ContextUtils.isGenericAddress(addressingProperties.getReplyTo())) {
+               && !ContextUtils.isGenericAddress(getReplyTo(addressingProperties))) {
             //it's decoupled endpoint, so already switch thread and
             //use executors, which means underlying transport won't 
             //be block, so we shouldn't rely on continuation in 

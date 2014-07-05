@@ -167,7 +167,7 @@ public final class HttpHelper {
         } else {
             CachedOutputStream cos = new CachedOutputStream(exchange);
             IOHelper.copyAndCloseInput(is, cos);
-            return cos.getStreamCache();
+            return cos.newStreamCache();
         }
     }
 
@@ -212,7 +212,7 @@ public final class HttpHelper {
         }
 
         // ensure uri is encoded to be valid
-        uri = UnsafeUriCharactersEncoder.encode(uri);
+        uri = UnsafeUriCharactersEncoder.encodeHttpURI(uri);
 
         return uri;
     }
@@ -238,7 +238,7 @@ public final class HttpHelper {
         }
         if (queryString != null) {
             // need to encode query string
-            queryString = UnsafeUriCharactersEncoder.encode(queryString);
+            queryString = UnsafeUriCharactersEncoder.encodeHttpURI(queryString);
             uri = URISupport.createURIWithQuery(uri, queryString);
         }
         return uri;

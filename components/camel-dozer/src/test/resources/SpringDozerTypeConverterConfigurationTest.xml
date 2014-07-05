@@ -29,7 +29,11 @@
   </camelContext>
 
   <bean id="customer-processor" class="org.apache.camel.converter.dozer.CustomerProcessor"/>
-  <bean id="dozerConverterLoader" class="org.apache.camel.converter.dozer.DozerTypeConverterLoader"/>
+
+  <bean id="dozerConverterLoader" class="org.apache.camel.converter.dozer.DozerTypeConverterLoader">
+    <constructor-arg index="0" ref="camel"/>
+    <constructor-arg index="1" ref="mapper"/>
+  </bean>
 
   <!-- use bean mapping configuration -->
   <bean id="mapper" class="org.apache.camel.converter.dozer.DozerBeanMapperConfiguration">

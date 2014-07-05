@@ -45,18 +45,20 @@ public class SnsComponentConfigurationTest extends CamelTestSupport {
         ((JndiRegistry) ((PropertyPlaceholderDelegateRegistry) context.getRegistry()).getRegistry()).bind("amazonSNSClient", mock);
         
         SnsComponent component = new SnsComponent(context);
-        SnsEndpoint endpoint = (SnsEndpoint) component.createEndpoint("aws-sns://MyTopic?amazonSNSClient=#amazonSNSClient");
+        SnsEndpoint endpoint = (SnsEndpoint) component.createEndpoint("aws-sns://MyTopic?amazonSNSClient=#amazonSNSClient&amazonSNSEndpoint=sns.ap-southeast-2.amazonaws.com");
         
         assertEquals("MyTopic", endpoint.getConfiguration().getTopicName());
         assertNull(endpoint.getConfiguration().getAccessKey());
         assertNull(endpoint.getConfiguration().getSecretKey());
         assertNull(endpoint.getConfiguration().getTopicArn());
         assertNull(endpoint.getConfiguration().getSubject());
-        assertNull(endpoint.getConfiguration().getAmazonSNSEndpoint());
+        assertNotNull(endpoint.getConfiguration().getAmazonSNSEndpoint());
         assertNull(endpoint.getConfiguration().getPolicy());
         endpoint.start();
         
         assertEquals("arn:aws:sns:us-east-1:541925086079:MyTopic", endpoint.getConfiguration().getTopicArn());
+        // check the setting of AmazonSNSEndpoint
+        assertEquals("sns.ap-southeast-2.amazonaws.com", mock.getEndpoint());
         
         endpoint.stop();
     }

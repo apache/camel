@@ -60,7 +60,7 @@ public class DefaultManagementMBeanAssembler implements ManagementMBeanAssembler
             if (custom != null && ObjectHelper.hasAnnotation(custom.getClass().getAnnotations(), ManagedResource.class)) {
                 LOG.trace("Assembling MBeanInfo for: {} from custom @ManagedResource object: {}", name, custom);
                 // get the mbean info from the custom managed object
-                mbi = assembler.getMBeanInfo(obj, custom, name.toString());
+                mbi = assembler.getMBeanInfo(null, custom, name.toString());
                 // and let the custom object be registered in JMX
                 obj = custom;
             }

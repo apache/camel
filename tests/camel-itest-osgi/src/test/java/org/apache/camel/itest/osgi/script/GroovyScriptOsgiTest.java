@@ -16,6 +16,7 @@
  */
 package org.apache.camel.itest.osgi.script;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.itest.osgi.OSGiIntegrationTestSupport;
 
@@ -48,7 +49,15 @@ public class GroovyScriptOsgiTest extends OSGiIntegrationTestSupport {
 
         assertMockEndpointsSatisfied();
     }
-    
+
+    @Override
+    protected CamelContext createCamelContext() throws Exception {
+        CamelContext context = super.createCamelContext();
+        // without this, "groovy.lang.*" classes will be loaded by classloader of camel-spring bundle
+        context.setApplicationContextClassLoader(this.getClass().getClassLoader());
+        return context;
+    }
+
     @Configuration
     public static Option[] configure() {
         Option[] options = combine(

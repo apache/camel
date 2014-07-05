@@ -28,24 +28,33 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
 import org.apache.camel.util.ObjectHelper;
 
 /**
  * A JCR endpoint
  */
+@UriEndpoint(scheme = "jcr", consumerClass = JcrConsumer.class)
 public class JcrEndpoint extends DefaultEndpoint {
 
     private Credentials credentials;
     private Repository repository;
     private String base;
 
+    @UriParam
     private int eventTypes;
+    @UriParam
     private boolean deep;
+    @UriParam
     private String uuids;
+    @UriParam
     private String nodeTypeNames;
+    @UriParam
     private boolean noLocal;
-
+    @UriParam
     private long sessionLiveCheckIntervalOnStart = 3000L;
+    @UriParam
     private long sessionLiveCheckInterval = 60000L;
 
     protected JcrEndpoint(String endpointUri, JcrComponent component) {
@@ -56,7 +65,7 @@ public class JcrEndpoint extends DefaultEndpoint {
                 String[] creds = uri.getUserInfo().split(":");
                 if (creds != null) {
                     String username = creds[0];
-                    String password = creds.length > 1 ? creds[1] : null;
+                    String password = creds.length > 1 ? creds[1] : "";
                     this.credentials = new SimpleCredentials(username, password.toCharArray());
                 }
             }

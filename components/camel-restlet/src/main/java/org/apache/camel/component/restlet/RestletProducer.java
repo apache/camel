@@ -29,7 +29,6 @@ import org.restlet.Client;
 import org.restlet.Context;
 import org.restlet.Request;
 import org.restlet.Response;
-import org.restlet.Uniform;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -49,6 +48,8 @@ public class RestletProducer extends DefaultAsyncProducer {
         this.throwException = endpoint.isThrowExceptionOnFailure();
         client = new Client(endpoint.getProtocol());
         client.setContext(new Context());
+        client.getContext().getParameters().add("socketTimeout", String.valueOf(endpoint.getSocketTimeout()));
+        client.getContext().getParameters().add("socketConnectTimeoutMs", String.valueOf(endpoint.getSocketTimeout()));
     }
 
     @Override
@@ -80,7 +81,30 @@ public class RestletProducer extends DefaultAsyncProducer {
             return true;
         }
 
+        // TODO: due to https://github.com/restlet/restlet-framework-java/issues/871
+        // we force sync behavior until that is fixed, then we can switch back to async support
+
+        LOG.debug("Sending request: {} for exchangeId: {}", request, exchange.getExchangeId());
+        Response response = client.handle(request);
+        LOG.debug("Received response: {} for exchangeId: {}", response, exchange.getExchangeId());
+        try {
+            if (response != null) {
+                Integer respCode = response.getStatus().getCode();
+                if (respCode > 207 && throwException) {
+                    exchange.setException(populateRestletProducerException(exchange, response, respCode));
+                } else {
+                    binding.populateExchangeFromRestletResponse(exchange, response);
+                }
+            }
+        } catch (Exception e) {
+            exchange.setException(e);
+        }
+
+        callback.done(true);
+        return true;
+
         // process the request asynchronously
+        /*
         LOG.debug("Sending request: {} for exchangeId: {}", request, exchange.getExchangeId());
         client.handle(request, new Uniform() {
             @Override
@@ -97,12 +121,14 @@ public class RestletProducer extends DefaultAsyncProducer {
                     }
                 } catch (Exception e) {
                     exchange.setException(e);
+                } finally {
+                    callback.done(false);
                 }
-                callback.done(false);
             }
         });
 
-        return false;
+        // we continue routing async
+        return false;*/
     }
 
     private static String buildUri(RestletEndpoint endpoint, Exchange exchange) throws CamelExchangeException {

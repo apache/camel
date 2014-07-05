@@ -429,6 +429,15 @@ public class XmlConverterTest extends ContextTestSupport {
         assertEquals("<foo>bar</foo>", context.getTypeConverter().convertTo(String.class, is));
     }
 
+    public void testToInputStreamNonAsciiFromDocument() throws Exception {
+        XmlConverter conv = new XmlConverter();
+        Document doc = context.getTypeConverter().convertTo(Document.class, "<?xml version=\"1.0\" encoding=\"UTF-8\"?><foo>\u99f1\u99ddb\u00e4r</foo>");
+
+        InputStream is = conv.toInputStream(doc, null);
+        assertNotNull(is);
+        assertEquals("<foo>\u99f1\u99ddb\u00e4r</foo>", context.getTypeConverter().convertTo(String.class, is));
+    }
+
     public void testToDocumentFromFile() throws Exception {
         XmlConverter conv = new XmlConverter();
         File file = new File("src/test/resources/org/apache/camel/converter/stream/test.xml");
@@ -448,6 +457,17 @@ public class XmlConverterTest extends ContextTestSupport {
 
         String s = context.getTypeConverter().convertTo(String.class, out);
         assertEquals("<foo>bar</foo>", s);
+    }
+
+    public void testToInputStreamNonAsciiByDomSource() throws Exception {
+        XmlConverter conv = new XmlConverter();
+
+        DOMSource source = conv.toDOMSource("<foo>\u99f1\u99ddb\u00e4r</foo>");
+        InputStream out = conv.toInputStream(source, null);
+        assertNotSame(source, out);
+
+        String s = context.getTypeConverter().convertTo(String.class, out);
+        assertEquals("<foo>\u99f1\u99ddb\u00e4r</foo>", s);
     }
 
     public void testToInputSource() throws Exception {

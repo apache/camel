@@ -20,6 +20,8 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.itest.osgi.OSGiIntegrationTestSupport;
+import org.apache.karaf.tooling.exam.options.KarafDistributionConfigurationFileExtendOption;
+import org.apache.karaf.tooling.exam.options.KarafDistributionOption;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.Option;
@@ -52,27 +54,16 @@ public class DisruptorTest extends OSGiIntegrationTestSupport {
         template.sendBody("disruptor:foo", "Hello World");
         assertMockEndpointsSatisfied();        
     }
-    
-    @Test
-    public void testCamelContextName() throws Exception {
-        // should get the context name with osgi bundle id
-        String name1 = context.getName();
 
-        CamelContext context2 = createCamelContext();
-        String name2 = context2.getName();
-
-        assertNotSame(name1, name2);
-
-        String id = "" + bundleContext.getBundle().getBundleId();
-        assertTrue(name1.startsWith(id));
-        assertTrue(name2.startsWith(id));
-    }
-    
     @Configuration
     public static Option[] configure() {
         Option[] options = combine(
             getDefaultCamelKarafOptions(),
-            // using the features to install the other camel components             
+            // disruptor requires sun.misc packages
+            new KarafDistributionConfigurationFileExtendOption("etc/jre.properties", "jre-1.6", ",sun.misc"),
+            new KarafDistributionConfigurationFileExtendOption("etc/jre.properties", "jre-1.7", ",sun.misc"),
+            new KarafDistributionConfigurationFileExtendOption("etc/jre.properties", "jre-1.8", ",sun.misc"),
+            // using the features to install the other camel components
             loadCamelFeatures("camel-disruptor"));
         
         return options;

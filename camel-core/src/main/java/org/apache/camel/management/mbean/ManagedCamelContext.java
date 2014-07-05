@@ -18,6 +18,7 @@ package org.apache.camel.management.mbean;
 
 import java.io.IOException;
 import java.io.InputStream;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.LinkedHashSet;
@@ -36,6 +37,7 @@ import org.apache.camel.ComponentConfiguration;
 import org.apache.camel.Endpoint;
 import org.apache.camel.ManagementStatisticsLevel;
 import org.apache.camel.ProducerTemplate;
+import org.apache.camel.Route;
 import org.apache.camel.TimerListener;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.api.management.mbean.ManagedCamelContextMBean;
@@ -131,6 +133,20 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
         return context.getInflightRepository().size();
     }
 
+    public Integer getTotalRoutes() {
+        return context.getRoutes().size();
+    }
+
+    public Integer getStartedRoutes() {
+        int started = 0;
+        for (Route route : context.getRoutes()) {
+            if (context.getRouteStatus(route.getId()).isStarted()) {
+                started++;
+            }
+        }
+        return started;
+    }
+
     public void setTimeout(long timeout) {
         context.getShutdownStrategy().setTimeout(timeout);
     }
@@ -154,17 +170,51 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
     public boolean isShutdownNowOnTimeout() {
         return context.getShutdownStrategy().isShutdownNowOnTimeout();
     }
-    
+
     public String getLoad01() {
-        return String.format("%.2f", load.getLoad1());
+        double load1 = load.getLoad1();
+        if (Double.isNaN(load1)) {
+            // empty string if load statistics is disabled
+            return "";
+        } else {
+            return String.format("%.2f", load1);
+        }
     }
 
     public String getLoad05() {
-        return String.format("%.2f", load.getLoad5());
+        double load5 = load.getLoad5();
+        if (Double.isNaN(load5)) {
+            // empty string if load statistics is disabled
+            return "";
+        } else {
+            return String.format("%.2f", load5);
+        }
     }
 
     public String getLoad15() {
-        return String.format("%.2f", load.getLoad15());
+        double load15 = load.getLoad15();
+        if (Double.isNaN(load15)) {
+            // empty string if load statistics is disabled
+            return "";
+        } else {
+            return String.format("%.2f", load15);
+        }
+    }
+
+    public boolean isUseBreadcrumb() {
+        return context.isUseBreadcrumb();
+    }
+
+    public boolean isAllowUseOriginalMessage() {
+        return context.isAllowUseOriginalMessage();
+    }
+
+    public boolean isMessageHistory() {
+        return context.isMessageHistory();
+    }
+
+    public boolean isUseMDCLogging() {
+        return context.isUseMDCLogging();
     }
 
     public void onTimer() {
@@ -261,7 +311,16 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
     }
 
     public void addOrUpdateRoutesFromXml(String xml) throws Exception {
-        // convert to model from xml
+        // do not decode so we function as before
+        addOrUpdateRoutesFromXml(xml, false);
+    }
+
+    public void addOrUpdateRoutesFromXml(String xml, boolean urlDecode) throws Exception {
+        // decode String as it may have been encoded, from its xml source
+        if (urlDecode) {
+            xml = URLDecoder.decode(xml, "UTF-8");
+        }
+
         InputStream is = context.getTypeConverter().mandatoryConvertTo(InputStream.class, xml);
         RoutesDefinition def = context.loadRoutesDefinition(is);
         if (def == null) {
@@ -357,11 +416,28 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
     }
 
     public Map<String, Properties> findComponents() throws Exception {
-        return context.findComponents();
+        Map<String, Properties> answer = context.findComponents();
+        for (Map.Entry<String, Properties> entry : answer.entrySet()) {
+            if (entry.getValue() != null) {
+                // remove component as its not serializable over JMX
+                entry.getValue().remove("component");
+                // .. and components which just list all the components in the JAR/bundle and that is verbose and not needed
+                entry.getValue().remove("components");
+            }
+        }
+        return answer;
     }
 
     public String getComponentDocumentation(String componentName) throws IOException {
         return context.getComponentDocumentation(componentName);
+    }
+
+    public String createRouteStaticEndpointJson() {
+        return createRouteStaticEndpointJson(true);
+    }
+
+    public String createRouteStaticEndpointJson(boolean includeDynamic) {
+        return context.createRouteStaticEndpointJson(null, includeDynamic);
     }
 
     public List<String> findComponentNames() throws Exception {
@@ -386,8 +462,12 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
 
     public String componentParameterJsonSchema(String componentName) throws Exception {
         Component component = context.getComponent(componentName);
-        ComponentConfiguration configuration = component.createComponentConfiguration();
-        return configuration.createParameterJsonSchema();
+        if (component != null) {
+            ComponentConfiguration configuration = component.createComponentConfiguration();
+            return configuration.createParameterJsonSchema();
+        } else {
+            return null;
+        }
     }
 
     public void reset(boolean includeRoutes) throws Exception {
@@ -397,7 +477,6 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
         if (includeRoutes) {
             MBeanServer server = getContext().getManagementStrategy().getManagementAgent().getMBeanServer();
             if (server != null) {
-                // get all the routes mbeans and sort them accordingly to their index
                 String prefix = getContext().getManagementStrategy().getManagementAgent().getIncludeHostName() ? "*/" : "";
                 ObjectName query = ObjectName.getInstance("org.apache.camel:context=" + prefix + getContext().getManagementName() + ",type=routes,*");
                 Set<ObjectName> names = server.queryNames(query, null);

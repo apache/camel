@@ -62,15 +62,17 @@ public class HdfsBlueprintRouteTest extends OSGiBlueprintTestSupport {
 
         Option[] options = combine(
                 getDefaultCamelKarafOptions(),
-                provision(newBundle().add("core-default.xml", HdfsRouteTest.class.getResource("core-default.xml"))
+                provision(newBundle()
+                          .add("core-default.xml", HdfsRouteTest.class.getResource("/core-default.xml"))
+                          .add("hdfs-default.xml", HdfsRouteTest.class.getResource("/hdfs-default.xml"))
                           .add("OSGI-INF/blueprint/test.xml", HdfsRouteTest.class.getResource("blueprintCamelContext.xml"))
                           .set(Constants.BUNDLE_SYMBOLICNAME, "CamelBlueprintHdfsTestBundle")
                           .set(Constants.DYNAMICIMPORT_PACKAGE, "*")
                           .build()),
-               
+
                 // using the features to install the camel components
                 loadCamelFeatures(
-                        "camel-blueprint", "camel-hdfs"));
+                        "camel-blueprint", "camel-hdfs2"));
                 
         return options;
     }

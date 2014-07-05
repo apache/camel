@@ -42,7 +42,6 @@ public class SearchConsumer extends Twitter4JConsumer {
     }
 
     public List<Status> pollConsume() throws TwitterException {
-        
         String keywords = te.getProperties().getKeywords();
         Query query = new Query(keywords);
         if (te.getProperties().isFilterOld()) {
@@ -54,7 +53,6 @@ public class SearchConsumer extends Twitter4JConsumer {
     }
 
     public List<Status> directConsume() throws TwitterException {
-        
         String keywords = te.getProperties().getKeywords();
         if (keywords == null || keywords.trim().length() == 0) {
             return Collections.emptyList();
@@ -80,7 +78,7 @@ public class SearchConsumer extends Twitter4JConsumer {
             numberOfPages = te.getProperties().getNumberOfPages();
         }
         
-        LOG.debug("Searching with " + numberOfPages + " pages.");
+        LOG.debug("Searching with {} pages.", numberOfPages);
 
         Twitter twitter = te.getProperties().getTwitter();
         QueryResult qr = twitter.search(query);

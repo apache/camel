@@ -53,6 +53,6 @@ public class LogRouteTest extends OSGiIntegrationTestSupport {
     public boolean isUseRouteBuilder() {
         return false;
     }
-   
+
 
 }

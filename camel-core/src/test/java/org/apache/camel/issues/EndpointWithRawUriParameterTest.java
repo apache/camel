@@ -92,7 +92,7 @@ public class EndpointWithRawUriParameterTest extends ContextTestSupport {
     public void testRawUriParameter() throws Exception {
         getMockEndpoint("mock:result").expectedMessageCount(1);
         getMockEndpoint("mock:result").expectedHeaderReceived("username", "scott");
-        getMockEndpoint("mock:result").expectedHeaderReceived("password", "++%%w?rd");
+        getMockEndpoint("mock:result").expectedHeaderReceived("password", "++%%w?rd)");
 
         template.sendBody("direct:start", "Hello World");
 
@@ -108,7 +108,7 @@ public class EndpointWithRawUriParameterTest extends ContextTestSupport {
                 context.addComponent("mycomponent", new MyComponent());
 
                 from("direct:start")
-                    .to("mycomponent:foo?password=RAW(++%%w?rd)&username=scott")
+                    .to("mycomponent:foo?username=scott&password=RAW(++%%w?rd))")
                     .to("mock:result");
             }
         };

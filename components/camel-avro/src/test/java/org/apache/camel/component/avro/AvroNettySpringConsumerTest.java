@@ -21,6 +21,7 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.avro.impl.KeyValueProtocolImpl;
 import org.apache.camel.avro.test.TestReflectionImpl;
 import org.apache.camel.spring.SpringCamelContext;
+import org.apache.camel.util.IOHelper;
 
 import org.junit.After;
 import org.junit.Before;
@@ -46,9 +47,7 @@ public class AvroNettySpringConsumerTest extends AvroNettyConsumerTest {
     public void tearDown() throws Exception {
         super.tearDown();
 
-        if (applicationContext != null) {
-            applicationContext.destroy();
-        }
+        IOHelper.close(applicationContext);
     }
 
     @Override

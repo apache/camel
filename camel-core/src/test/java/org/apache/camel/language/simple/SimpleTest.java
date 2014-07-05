@@ -143,6 +143,20 @@ public class SimpleTest extends LanguageTestSupport {
         assertIsInstanceOf(Integer.class, val);
         assertEquals(123, val);
     }
+    
+    public void testBodyExpressionWithArray() throws Exception {
+        exchange.getIn().setBody(new MyClass());
+        Expression exp = SimpleLanguage.simple("body.myArray");
+        assertNotNull(exp);
+        Object val = exp.evaluate(exchange, Object.class);
+        assertIsInstanceOf(Object[].class, val);
+        
+        exp = SimpleLanguage.simple("body.myArray.length");
+        assertNotNull(exp);
+        val = exp.evaluate(exchange, Object.class);
+        assertIsInstanceOf(Integer.class, val);
+        assertEquals(3, val);
+    }
 
     public void testSimpleExpressions() throws Exception {
         assertExpression("exchangeId", exchange.getExchangeId());
@@ -215,6 +229,21 @@ public class SimpleTest extends LanguageTestSupport {
         assertExpression("${body[0][cool]}", "Camel rocks");
         assertExpression("${in.body[0][code]}", 4321);
         assertExpression("${body[0][code]}", 4321);
+    }
+    
+    public void testOGNLBodyExpression() throws Exception {
+        exchange.getIn().setBody("hello world");
+        assertPredicate("${body} == 'hello world'", true);
+        assertPredicate("${body.toUpperCase()} == 'HELLO WORLD'", true);
+    }
+    
+    public void testOGNLCallReplace() throws Exception {
+        Map<String, Object> map = new HashMap<String, Object>();
+        map.put("cool", "Camel rocks");
+        map.put("dude", "Hey dude");
+        exchange.getIn().setHeaders(map);
+        
+        assertExpression("${headers.cool.replaceAll(\"rocks\", \"is so cool\")}", "Camel is so cool");
     }
 
     public void testOGNLBodyListAndMapAndMethod() throws Exception {
@@ -431,7 +460,7 @@ public class SimpleTest extends LanguageTestSupport {
     public void testBodyAs() throws Exception {
         assertExpression("${bodyAs(String)}", "<hello id='m123'>world!</hello>");
         assertExpression("${bodyAs('String')}", "<hello id='m123'>world!</hello>");
-
+       
         exchange.getIn().setBody(null);
         assertExpression("${bodyAs('String')}", null);
 
@@ -445,6 +474,14 @@ public class SimpleTest extends LanguageTestSupport {
             fail("Should have thrown an exception");
         } catch (CamelExecutionException e) {
             assertIsInstanceOf(ClassNotFoundException.class, e.getCause());
+        }
+        
+        exchange.getIn().setBody("hello");
+        try {
+            assertExpression("${bodyAs(String).test}", "hello.test");
+            fail("should have thrown an exception");
+        } catch (SimpleIllegalSyntaxException e) {
+            assertTrue("Get a wrong message", e.getMessage().indexOf("bodyAs(String).test") > 0);
         }
     }
 
@@ -470,6 +507,13 @@ public class SimpleTest extends LanguageTestSupport {
             fail("Should have thrown an exception");
         } catch (CamelExecutionException e) {
             assertIsInstanceOf(ClassNotFoundException.class, e.getCause());
+        }
+        
+        try {
+            assertExpression("${mandatoryBodyAs(String).test}", "hello.test");
+            fail("should have thrown an exception");
+        } catch (SimpleIllegalSyntaxException e) {
+            assertTrue("Get a wrong message", e.getMessage().indexOf("mandatoryBodyAs(String).test") > 0);
         }
     }
 
@@ -515,6 +559,24 @@ public class SimpleTest extends LanguageTestSupport {
         assertExpression("${in.headers}", headers);
     }
 
+    public void testHeaderKeyWithSpace() throws Exception {
+        Map<String, Object> headers = exchange.getIn().getHeaders();
+        headers.put("some key", "Some Value");
+        assertEquals(3, headers.size());
+
+        assertExpression("${headerAs(foo,String)}", "abc");
+        assertExpression("${headerAs(some key,String)}", "Some Value");
+        assertExpression("${headerAs('some key',String)}", "Some Value");
+
+        assertExpression("${header[foo]}", "abc");
+        assertExpression("${header[some key]}", "Some Value");
+        assertExpression("${header['some key']}", "Some Value");
+
+        assertExpression("${headers[foo]}", "abc");
+        assertExpression("${headers[some key]}", "Some Value");
+        assertExpression("${headers['some key']}", "Some Value");
+    }
+
     public void testHeaderAs() throws Exception {
         assertExpression("${headerAs(foo,String)}", "abc");
 
@@ -533,6 +595,13 @@ public class SimpleTest extends LanguageTestSupport {
             fail("Should have thrown an exception");
         } catch (ExpressionIllegalSyntaxException e) {
             assertTrue(e.getMessage().startsWith("Valid syntax: ${headerAs(key, type)} was: headerAs(unknown String)"));
+        }
+        
+        try {
+            assertExpression("${headerAs(fool,String).test}", null);
+            fail("Should have thrown an exception");
+        } catch (ExpressionIllegalSyntaxException e) {
+            assertTrue(e.getMessage().startsWith("Valid syntax: ${headerAs(key, type)} was: headerAs(fool,String).test"));
         }
 
         try {
@@ -1274,7 +1343,7 @@ public class SimpleTest extends LanguageTestSupport {
     }
 
     public void testSimpleMapBoolean() throws Exception {
-        Map map = new HashMap();
+        Map<String, Object> map = new HashMap<String, Object>();
         exchange.getIn().setBody(map);
 
         map.put("isCredit", true);
@@ -1373,6 +1442,12 @@ public class SimpleTest extends LanguageTestSupport {
 
         public String getName() {
             return name;
+        }
+    }
+    
+    public static class MyClass {
+        public Object[] getMyArray() {
+            return new Object[]{"Hallo", "World", "!"};
         }
     }
 }

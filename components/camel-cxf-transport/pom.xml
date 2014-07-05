@@ -21,7 +21,7 @@
   <parent>
     <groupId>org.apache.camel</groupId>
     <artifactId>components</artifactId>
-    <version>2.13-SNAPSHOT</version>
+    <version>2.14-SNAPSHOT</version>
   </parent>
 
   <artifactId>camel-cxf-transport</artifactId>
@@ -39,6 +39,7 @@
       javax.ws.rs*;version="[0.0,2)",
       javax.xml.stream*;version="[0.0,2)",
       javax.xml.ws*;version="[0.0,3.0)",
+      javax.servlet*;resolution="optional";version="[0,4)",
       org.apache.camel.*;${camel.osgi.import.camel.version},
       org.springframework.beans*;resolution:=optional,
       ${camel.osgi.import.defaults},
@@ -61,11 +62,6 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-core</artifactId>
-    </dependency>
-    
-     <dependency>
-      <groupId>org.apache.cxf</groupId>
-      <artifactId>cxf-rt-core</artifactId>
     </dependency>
     
     <dependency>
@@ -98,7 +94,6 @@
     <dependency>
       <groupId>org.apache.aries.blueprint</groupId>
       <artifactId>org.apache.aries.blueprint.core</artifactId>
-      <version>${aries-blueprint-core-version}</version>
       <scope>provided</scope>
     </dependency>
     
@@ -176,7 +171,6 @@
       <plugin>
         <groupId>org.apache.cxf</groupId>
         <artifactId>cxf-codegen-plugin</artifactId>
-        <version>${cxf-version}</version>
         <executions>
           <execution>
             <id>generate-test-sources</id>

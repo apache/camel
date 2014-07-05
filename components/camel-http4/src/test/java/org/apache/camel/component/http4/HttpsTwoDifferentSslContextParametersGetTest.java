@@ -21,8 +21,10 @@ import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.util.jsse.SSLContextParameters;
 import org.apache.http.conn.ssl.AllowAllHostnameVerifier;
+import org.junit.Ignore;
 import org.junit.Test;
 
+@Ignore("Now we support to set sslContextParameters on different endpoints")
 public class HttpsTwoDifferentSslContextParametersGetTest extends BaseHttpsTest {
     
     @Override

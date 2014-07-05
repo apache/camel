@@ -24,13 +24,13 @@ import java.util.concurrent.ConcurrentMap;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.impl.UriEndpointComponent;
 
 /**
  * Represents the component that manages {@link DirectVmEndpoint}. It holds the
  * list of named direct-vm endpoints.
  */
-public class DirectVmComponent extends DefaultComponent {
+public class DirectVmComponent extends UriEndpointComponent {
 
     private static final AtomicInteger START_COUNTER = new AtomicInteger();
 
@@ -40,6 +40,10 @@ public class DirectVmComponent extends DefaultComponent {
     private static final ConcurrentMap<String, DirectVmConsumer> CONSUMERS = new ConcurrentHashMap<String, DirectVmConsumer>();
     private boolean block;
     private long timeout = 30000L;
+
+    public DirectVmComponent() {
+        super(DirectVmEndpoint.class);
+    }
 
     /**
      * Gets all the consumer endpoints.

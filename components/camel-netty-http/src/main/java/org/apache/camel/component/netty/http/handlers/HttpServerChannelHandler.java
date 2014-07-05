@@ -21,6 +21,7 @@ import java.net.URI;
 import java.nio.channels.ClosedChannelException;
 import java.nio.charset.Charset;
 import java.util.Iterator;
+
 import javax.security.auth.Subject;
 import javax.security.auth.login.LoginException;
 
@@ -49,10 +50,8 @@ import org.jboss.netty.handler.codec.http.HttpResponse;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.jboss.netty.handler.codec.http.HttpHeaders.is100ContinueExpected;
 import static org.jboss.netty.handler.codec.http.HttpHeaders.isKeepAlive;
 import static org.jboss.netty.handler.codec.http.HttpResponseStatus.BAD_REQUEST;
-import static org.jboss.netty.handler.codec.http.HttpResponseStatus.CONTINUE;
 import static org.jboss.netty.handler.codec.http.HttpResponseStatus.METHOD_NOT_ALLOWED;
 import static org.jboss.netty.handler.codec.http.HttpResponseStatus.SERVICE_UNAVAILABLE;
 import static org.jboss.netty.handler.codec.http.HttpResponseStatus.UNAUTHORIZED;
@@ -80,13 +79,6 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
         request = (HttpRequest) messageEvent.getMessage();
 
         LOG.debug("Message received: {}", request);
-
-        if (is100ContinueExpected(request)) {
-            // send back http 100 response to continue
-            HttpResponse response = new DefaultHttpResponse(HTTP_1_1, CONTINUE);
-            messageEvent.getChannel().write(response);
-            return;
-        }
 
         if (consumer.isSuspended()) {
             // are we suspended?
@@ -269,6 +261,7 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
     protected void beforeProcess(Exchange exchange, MessageEvent messageEvent) {
         if (consumer.getConfiguration().isBridgeEndpoint()) {
             exchange.setProperty(Exchange.SKIP_GZIP_ENCODING, Boolean.TRUE);
+            exchange.setProperty(Exchange.SKIP_WWW_FORM_URLENCODED, Boolean.TRUE);
         }
     }
 

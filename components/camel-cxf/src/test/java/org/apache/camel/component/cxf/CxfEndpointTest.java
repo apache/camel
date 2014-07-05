@@ -25,7 +25,7 @@ import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.SimpleRegistry;
 import org.apache.camel.spring.SpringCamelContext;
 import org.apache.cxf.BusFactory;
-import org.apache.cxf.bus.CXFBusImpl;
+import org.apache.cxf.bus.extension.ExtensionManagerBus;
 import org.apache.cxf.frontend.AbstractWSDLBasedEndpointFactory;
 import org.easymock.EasyMock;
 import org.junit.Assert;
@@ -51,6 +51,14 @@ public class CxfEndpointTest extends Assert {
         + "&dataFormat=PAYLOAD";
 
     @Test
+    public void testSettingContinucationTimout() throws Exception {
+        CamelContext context = new DefaultCamelContext();
+        CxfEndpoint endpoint = context.getEndpoint(routerEndpointURI + "&continuationTimeout=800000",
+                                                   CxfEndpoint.class);
+        assertEquals("Get a wrong continucationTimeout value", 800000, endpoint.getContinuationTimeout());
+    }
+    
+    @Test
     public void testSpringCxfEndpoint() throws Exception {
 
         ClassPathXmlApplicationContext ctx =
@@ -67,11 +75,11 @@ public class CxfEndpointTest extends Assert {
 
     @Test
     public void testSettingClientBus() throws Exception {
-        CXFBusImpl bus = (CXFBusImpl) BusFactory.newInstance().createBus();
+        ExtensionManagerBus bus = (ExtensionManagerBus) BusFactory.newInstance().createBus();
         bus.setId("oldCXF");
         BusFactory.setThreadDefaultBus(bus);
         
-        CXFBusImpl newBus = (CXFBusImpl) BusFactory.newInstance().createBus();
+        ExtensionManagerBus newBus = (ExtensionManagerBus) BusFactory.newInstance().createBus();
         newBus.setId("newCXF");
         CxfComponent cxfComponent = new CxfComponent(new DefaultCamelContext());
         CxfEndpoint endpoint = (CxfEndpoint)cxfComponent.createEndpoint(routerEndpointURI);

@@ -96,6 +96,10 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Blu
     @XmlAttribute(required = false)
     private String useBreadcrumb;
     @XmlAttribute(required = false)
+    private String allowUseOriginalMessage;
+    @XmlAttribute(required = false)
+    private String runtimeEndpointRegistryEnabled;
+    @XmlAttribute(required = false)
     private String managementNamePattern;
     @XmlAttribute(required = false)
     private String threadNamePattern;
@@ -330,6 +334,22 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Blu
 
     public void setUseBreadcrumb(String useBreadcrumb) {
         this.useBreadcrumb = useBreadcrumb;
+    }
+
+    public String getAllowUseOriginalMessage() {
+        return allowUseOriginalMessage;
+    }
+
+    public void setAllowUseOriginalMessage(String allowUseOriginalMessage) {
+        this.allowUseOriginalMessage = allowUseOriginalMessage;
+    }
+
+    public String getRuntimeEndpointRegistryEnabled() {
+        return runtimeEndpointRegistryEnabled;
+    }
+
+    public void setRuntimeEndpointRegistryEnabled(String runtimeEndpointRegistryEnabled) {
+        this.runtimeEndpointRegistryEnabled = runtimeEndpointRegistryEnabled;
     }
 
     public String getManagementNamePattern() {
