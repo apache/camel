@@ -52,7 +52,7 @@ public abstract class NumberPatternFormat<T> implements PatternFormat<T> {
      */
     protected NumberFormat getNumberFormat() {
         if (locale == null) {
-            return null;
+        	locale = Locale.getDefault();
         }
 
         NumberFormat format = NumberFormat.getNumberInstance(locale);
