@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.restbinding;
+package org.apache.camel.component.rest;
 
 import java.util.Map;
 import java.util.Set;
@@ -28,8 +28,8 @@ import org.apache.camel.spi.RestConsumerFactory;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
 
-@UriEndpoint(scheme = "rest-binding")
-public class RestBindingEndpoint extends DefaultEndpoint {
+@UriEndpoint(scheme = "rest")
+public class RestEndpoint extends DefaultEndpoint {
 
     @UriParam
     private String verb;
@@ -42,13 +42,13 @@ public class RestBindingEndpoint extends DefaultEndpoint {
 
     private Map<String, Object> parameters;
 
-    public RestBindingEndpoint(String endpointUri, RestBindingComponent component) {
+    public RestEndpoint(String endpointUri, RestComponent component) {
         super(endpointUri, component);
     }
 
     @Override
-    public RestBindingComponent getComponent() {
-        return (RestBindingComponent) super.getComponent();
+    public RestComponent getComponent() {
+        return (RestComponent) super.getComponent();
     }
 
     public String getVerb() {

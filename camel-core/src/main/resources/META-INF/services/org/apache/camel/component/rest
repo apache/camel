@@ -15,4 +15,4 @@
 # limitations under the License.
 #
 
-class=org.apache.camel.component.restbinding.RestBindingComponent
+class=org.apache.camel.component.rest.RestComponent

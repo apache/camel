@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.restbinding;
+package org.apache.camel.component.rest;
 
 import java.util.Map;
 
@@ -22,20 +22,20 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.util.ObjectHelper;
 
-public class RestBindingComponent extends UriEndpointComponent {
+public class RestComponent extends UriEndpointComponent {
 
-    public RestBindingComponent() {
-        super(RestBindingEndpoint.class);
+    public RestComponent() {
+        super(RestEndpoint.class);
     }
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
-        RestBindingEndpoint answer = new RestBindingEndpoint(uri, this);
+        RestEndpoint answer = new RestEndpoint(uri, this);
         setProperties(answer, parameters);
         answer.setParameters(parameters);
 
         if (!remaining.contains(":")) {
-            throw new IllegalArgumentException("Invalid syntax. Must be rest-binding:verb:path");
+            throw new IllegalArgumentException("Invalid syntax. Must be rest:verb:path");
         }
 
         String verb = ObjectHelper.before(remaining, ":");

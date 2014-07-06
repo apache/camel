@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.restbinding;
+package org.apache.camel.component.rest;
 
 import org.apache.camel.CamelContext;
 
@@ -23,7 +23,7 @@ import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCam
 public class SpringFromRestGetTest extends FromRestGetTest {
 
     protected CamelContext createCamelContext() throws Exception {
-        return createSpringCamelContext(this, "org/apache/camel/component/restbinding/SpringFromRestGetTest.xml");
+        return createSpringCamelContext(this, "org/apache/camel/component/rest/SpringFromRestGetTest.xml");
     }
 
 }

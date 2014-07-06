@@ -21,7 +21,7 @@ import javax.management.ObjectName;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.restbinding.DummyRestConsumerFactory;
+import org.apache.camel.component.rest.DummyRestConsumerFactory;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.SimpleRegistry;
 

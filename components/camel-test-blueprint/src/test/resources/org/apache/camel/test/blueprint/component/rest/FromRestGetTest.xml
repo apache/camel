@@ -21,7 +21,7 @@
              http://www.osgi.org/xmlns/blueprint/v1.0.0 http://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd">
 
   <!-- use a dummy rest consumer factory for the rest engine -->
-  <bean id="dummy-rest" class="org.apache.camel.test.blueprint.component.restbinding.DummyRestConsumerFactory"/>
+  <bean id="dummy-rest" class="org.apache.camel.test.blueprint.component.rest.DummyRestConsumerFactory"/>
 
   <camelContext xmlns="http://camel.apache.org/schema/blueprint">
 

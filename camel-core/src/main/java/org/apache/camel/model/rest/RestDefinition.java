@@ -86,7 +86,7 @@ public class RestDefinition {
         for (PathDefinition path : getPaths()) {
             String uri = path.getUri();
             for (VerbDefinition verb : path.getVerbs()) {
-                String from = "rest-binding:" + verb.getMethod() + ":" + uri + (verb.getUri() != null ? verb.getUri() : "");
+                String from = "rest:" + verb.getMethod() + ":" + uri + (verb.getUri() != null ? verb.getUri() : "");
                 RouteDefinition route = new RouteDefinition();
                 route.fromRest(from);
                 answer.add(route);

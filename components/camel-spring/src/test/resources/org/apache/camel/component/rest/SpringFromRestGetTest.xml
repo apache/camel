@@ -23,7 +23,7 @@
     ">
 
   <!-- use a dummy rest consumer factory for the rest engine -->
-  <bean id="dummy-rest" class="org.apache.camel.component.restbinding.DummyRestConsumerFactory"/>
+  <bean id="dummy-rest" class="org.apache.camel.component.rest.DummyRestConsumerFactory"/>
 
   <camelContext xmlns="http://camel.apache.org/schema/spring">
 
