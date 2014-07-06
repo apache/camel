@@ -60,7 +60,7 @@ public final class FormatFactory {
      * @param pattern is the pattern to be used during the formatting of the data
      * @param locale optional locale for NumberFormat and DateFormat parsing.
      * @param precision optional scale for BigDecimal parsing.
-     * @param impliedDecimalSeparator optional flag for floatign-point values
+     * @param impliedDecimalSeparator optional flag for floating-point values
      * @return Format the formatter
      * @throws IllegalArgumentException if not suitable formatter is found
      */
@@ -142,8 +142,12 @@ public final class FormatFactory {
     }
 
     private static Locale getLocale(String locale) {
+        if ("default".equals(locale)) {
+            return Locale.getDefault();
+        }
+
         Locale answer = null;
-        if (locale != null && !(locale.length() == 0)) {
+        if (ObjectHelper.isNotEmpty(locale)) {
             String[] result = locale.split("-");
             if (result.length <= 2) {
                 answer = result.length == 1 ? new Locale(result[0]) : new Locale(result[0], result[1]);
