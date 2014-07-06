@@ -16,45 +16,103 @@
  */
 package org.apache.camel.dataformat.bindy.csv;
 
+import java.util.Arrays;
+import java.util.Collection;
+import java.util.Locale;
+
+import org.apache.camel.builder.AdviceWithRouteBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.dataformat.bindy.model.padding.Unity;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
+import org.junit.runner.RunWith;
+import org.junit.runners.Parameterized;
+import org.junit.runners.Parameterized.Parameters;
 
 /**
- * @version
+ * @version 
  */
+@RunWith(Parameterized.class)
 public class BindyPatternLocaleTest extends CamelTestSupport {
+	
+	private String locale;
+	
+	public BindyPatternLocaleTest(String locale) {
+			this.locale = locale;
+   }
 
-    @Test
-    public void testMarshalling() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:marshal");
-        mock.expectedMessageCount(1);
-        mock.expectedBodiesReceived("050,010\r\n");
+	@Parameters
+	public static Collection<String[]> localeList() {
+		return Arrays.asList(new String[][] { 
+				{Locale.CANADA.getCountry()}, 
+				{Locale.CANADA_FRENCH.getCountry()},
+				{Locale.CHINA.getCountry()},
+				{Locale.CHINESE.getLanguage()},
+				{Locale.ENGLISH.getLanguage()},
+				{Locale.FRANCE.getCountry()},
+				{Locale.FRENCH.getLanguage()},
+				{Locale.GERMAN.getLanguage()},
+				{Locale.GERMANY.getCountry()},
+				{Locale.ITALIAN.getLanguage()},
+				{Locale.ITALY.getCountry()},
+				{Locale.JAPAN.getCountry()},
+				{Locale.JAPANESE.getLanguage()},
+				{Locale.KOREA.getCountry()},
+				{Locale.KOREAN.getLanguage()},
+				{Locale.PRC.getCountry()},
+				{Locale.SIMPLIFIED_CHINESE.getLanguage()},
+				{Locale.TAIWAN.getCountry()},
+				{Locale.TRADITIONAL_CHINESE.getLanguage()},
+				{Locale.UK.getCountry()},
+				{Locale.US.getCountry()},
+		});
+	}
 
-        Unity unity = new Unity();
-        unity.setMandant(50f);
-        unity.setReceiver(10f);
-        template.sendBody("direct:marshal", unity);
+	@Test
+	public void testMarshalling() throws Exception {
+		context.getRouteDefinitions().get(0)
+				.adviceWith(context, new AdviceWithRouteBuilder() {
+					@Override
+					public void configure() throws Exception {
+						BindyCsvDataFormat bindy = new BindyCsvDataFormat(
+								Unity.class);
 
-        assertMockEndpointsSatisfied();
-    }
+						// As recommended, when we use @Datafield Pattern we
+						// must specify the default locale
+						bindy.setLocale(locale);
 
-    @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
-        return new RouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-                BindyCsvDataFormat bindy = new BindyCsvDataFormat(Unity.class);
+						// weave the node in the route which has id = marshaller
+						// and replace it with the following route path
+						weaveById("marshaller").replace().marshal(bindy);
+					}
+				});
+		MockEndpoint mock = getMockEndpoint("mock:marshal");
+		mock.expectedMessageCount(1);
+		mock.expectedBodiesReceived("050,010\r\n");
 
-                // As recommended, when we use @Datafield Pattern we must specify the default locale
-                bindy.setLocale("default");
-                
-                from("direct:marshal")
-                        .marshal(bindy)
-                        .to("mock:marshal");
-            }
-        };
-    }
+		Unity unity = new Unity();
+		unity.setMandant(50f);
+		unity.setReceiver(10f);
+		template.sendBody("direct:marshal", unity);
+
+		assertMockEndpointsSatisfied();
+	}
+
+	@Override
+	protected RouteBuilder createRouteBuilder() throws Exception {
+		return new RouteBuilder() {
+			@Override
+			public void configure() throws Exception {
+				BindyCsvDataFormat bindy = new BindyCsvDataFormat(Unity.class);
+
+				// As recommended, when we use @Datafield Pattern we must
+				// specify the default locale
+				bindy.setLocale("default");
+
+				from("direct:marshal").marshal(bindy).id("marshaller")
+						.to("mock:marshal");
+			}
+		};
+	}
 }
