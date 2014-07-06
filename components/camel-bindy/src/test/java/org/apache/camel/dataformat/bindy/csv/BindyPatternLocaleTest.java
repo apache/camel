@@ -16,8 +16,9 @@
  */
 package org.apache.camel.dataformat.bindy.csv;
 
-import java.util.Arrays;
+import java.text.DateFormat;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.Locale;
 
 import org.apache.camel.builder.AdviceWithRouteBuilder;
@@ -31,42 +32,26 @@ import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
 
 /**
- * @version 
+ * @version
  */
 @RunWith(Parameterized.class)
 public class BindyPatternLocaleTest extends CamelTestSupport {
-	
+
 	private String locale;
-	
+
 	public BindyPatternLocaleTest(String locale) {
-			this.locale = locale;
-   }
+		this.locale = locale;
+	}
 
 	@Parameters
 	public static Collection<String[]> localeList() {
-		return Arrays.asList(new String[][] { 
-				{Locale.CANADA.getCountry()}, 
-				{Locale.CANADA_FRENCH.getCountry()},
-				{Locale.CHINA.getCountry()},
-				{Locale.CHINESE.getLanguage()},
-				{Locale.ENGLISH.getLanguage()},
-				{Locale.FRANCE.getCountry()},
-				{Locale.FRENCH.getLanguage()},
-				{Locale.GERMAN.getLanguage()},
-				{Locale.GERMANY.getCountry()},
-				{Locale.ITALIAN.getLanguage()},
-				{Locale.ITALY.getCountry()},
-				{Locale.JAPAN.getCountry()},
-				{Locale.JAPANESE.getLanguage()},
-				{Locale.KOREA.getCountry()},
-				{Locale.KOREAN.getLanguage()},
-				{Locale.PRC.getCountry()},
-				{Locale.SIMPLIFIED_CHINESE.getLanguage()},
-				{Locale.TAIWAN.getCountry()},
-				{Locale.TRADITIONAL_CHINESE.getLanguage()},
-				{Locale.UK.getCountry()},
-				{Locale.US.getCountry()},
-		});
+		Locale list[] = DateFormat.getAvailableLocales();
+		Collection<String[]> collection = new HashSet<String[]>();
+		for (Locale aLocale : list) {
+			String[] localeLanguage = { aLocale.getLanguage() };
+			collection.add(localeLanguage);
+		}
+		return collection;
 	}
 
 	@Test
@@ -78,8 +63,7 @@ public class BindyPatternLocaleTest extends CamelTestSupport {
 						BindyCsvDataFormat bindy = new BindyCsvDataFormat(
 								Unity.class);
 
-						// As recommended, when we use @Datafield Pattern we
-						// must specify the default locale
+						// Injection of one of the available locale
 						bindy.setLocale(locale);
 
 						// weave the node in the route which has id = marshaller
