@@ -50,6 +50,7 @@ public class NettyHttpComponent extends NettyComponent implements HeaderFilterSt
 
     public NettyHttpComponent() {
         // use the http configuration and filter strategy
+        super(NettyHttpEndpoint.class);
         setConfiguration(new NettyHttpConfiguration());
         setHeaderFilterStrategy(new NettyHttpHeaderFilterStrategy());
         setNettyHttpBinding(new DefaultNettyHttpBinding(getHeaderFilterStrategy()));
