@@ -24,7 +24,7 @@ import junit.framework.TestCase;
 /**
  * 
  */
-public class RecordableInputStreamTest extends TestCase {
+public class RecordableReaderTest extends TestCase {
     private static final byte[] DATA;
     
     static {
