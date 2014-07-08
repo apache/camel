@@ -31,7 +31,7 @@
 
   <properties>
     <compiler.fork>true</compiler.fork>
-    
+
     <!-- dependency versions -->
     <abdera-version>1.1.3</abdera-version>
     <!-- Note that activemq dependency is only used for testing! -->
@@ -111,7 +111,7 @@
     <cobertura-maven-plugin-version>2.5.2</cobertura-maven-plugin-version>
     <cxf-version>3.0.0</cxf-version>
     <cxf-version-range>[2.7,4.0)</cxf-version-range>
-    <cxf-xjc-utils-version>2.7.0</cxf-xjc-utils-version>
+    <cxf-xjc-utils-version>3.0.1</cxf-xjc-utils-version>
     <deltaspike-version>1.0.0</deltaspike-version>
     <derby-version>10.10.2.0</derby-version>
     <disruptor-version>3.2.1</disruptor-version>
@@ -189,7 +189,7 @@
     <httpunit-version>1.7</httpunit-version>
     <httpcore4-version>4.3.2</httpcore4-version>
     <httpclient4-version>4.3.3</httpclient4-version>
-    <httpclient-version>3.1</httpclient-version> 
+    <httpclient-version>3.1</httpclient-version>
     <ibatis-bundle-version>2.3.4.726_4</ibatis-bundle-version>
     <ibatis-version>2.3.4.726</ibatis-version>
     <ical4j-version>1.0.5.2</ical4j-version>
@@ -335,7 +335,7 @@
     <pdfbox-version>1.6.0</pdfbox-version>
     <plexus-container-default-version>1.0-alpha-48</plexus-container-default-version>
     <plexus-utils-version>1.5.6</plexus-utils-version>
-    <pojosr-version>0.2.1</pojosr-version>  
+    <pojosr-version>0.2.1</pojosr-version>
     <powermock-version>1.5.1</powermock-version>
     <protobuf-version>2.5.0</protobuf-version>
     <qpid-bundle-version>0.28_1</qpid-bundle-version>
@@ -387,9 +387,9 @@
     <spring-ldap-version>1.3.1.RELEASE</spring-ldap-version>
     <spring-ldap-bundle-version>1.3.1.RELEASE_2</spring-ldap-bundle-version>
     <spring-retry-version>1.0.3.RELEASE</spring-retry-version>
-    <!-- spring-dm does not support spring 4.x so import-range must be 3.x only until a solution in karaf exists -->  
+    <!-- spring-dm does not support spring 4.x so import-range must be 3.x only until a solution in karaf exists -->
     <spring-version-range>[3.2,4)</spring-version-range>
-    <spring-version>${spring32-version}</spring-version>   
+    <spring-version>${spring32-version}</spring-version>
     <spring32-version>3.2.9.RELEASE</spring32-version>
     <spring4-version>4.0.5.RELEASE</spring4-version>
     <spring-osgi-version>1.2.1</spring-osgi-version>
@@ -913,7 +913,7 @@
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-jsonpath</artifactId>
         <version>${project.version}</version>
-      </dependency>      
+      </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-jt400</artifactId>
@@ -1163,12 +1163,12 @@
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-spark-rest</artifactId>
         <version>${project.version}</version>
-      </dependency>    
+      </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-splunk</artifactId>
         <version>${project.version}</version>
-      </dependency>      
+      </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-snmp</artifactId>
@@ -2248,8 +2248,8 @@
             </defaultOptions>
           </configuration>
           <dependencies>
-            <!-- needed to add this to get around the following error on 
-              IBM's JDK org.apache.xerces.impl.dv.DVFactoryException: DTD factory class 
+            <!-- needed to add this to get around the following error on
+              IBM's JDK org.apache.xerces.impl.dv.DVFactoryException: DTD factory class
               org.apache.xerces.impl.dv.dtd.DTDDVFactoryImpl does not extend from DTDDVFactory. -->
             <dependency>
               <groupId>xerces</groupId>
@@ -2446,8 +2446,8 @@
           <version>${maven-war-plugin-version}</version>
           <configuration>
             <webResources>
-              <!-- HACK: Include legal files explicitly, otherwise they will 
-                end up in the wrong path or in another jar file in the war. NOTE: targetPath 
+              <!-- HACK: Include legal files explicitly, otherwise they will
+                end up in the wrong path or in another jar file in the war. NOTE: targetPath
                 is broken for webResources (as documented) -->
               <resource>
                 <directory>${project.build.outputDirectory}</directory>
@@ -2769,7 +2769,7 @@
         <activeByDefault>true</activeByDefault>
       </activation>
     </profile>
-    
+
     <profile>
       <id>fastinstall</id>
       <activation>
@@ -2783,7 +2783,7 @@
         <noassembly>true</noassembly>
       </properties>
     </profile>
-    
+
     <profile>
       <id>sourcecheck</id>
       <build>
@@ -2795,7 +2795,7 @@
         </plugins>
       </build>
     </profile>
-    
+
     <profile>
       <id>setup.eclipse</id>
       <build>
@@ -2818,7 +2818,7 @@
         </plugins>
       </build>
     </profile>
-    
+
     <!-- profiles for choosing default spring version -->
     <profile>
       <id>spring3.2</id>
@@ -2851,5 +2851,5 @@
       </dependencies>
     </profile>
   </profiles>
-  
+
 </project>
