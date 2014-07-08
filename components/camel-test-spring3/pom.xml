@@ -25,10 +25,10 @@
         <version>2.14-SNAPSHOT</version>
     </parent>
 
-    <artifactId>camel-test-spring</artifactId>
+    <artifactId>camel-test-spring3</artifactId>
     <packaging>bundle</packaging>
     <name>Camel :: Test :: Spring</name>
-    <description>Camel Testing Library using JUnit and Spring4</description>
+    <description>Camel Testing Library using JUnit and Spring3</description>
 
     <properties>
         <camel.osgi.export.pkg>org.apache.camel.test.spring.*</camel.osgi.export.pkg>
@@ -47,40 +47,39 @@
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-test</artifactId>
-            <version>${spring4-version}</version>
+            <version>${spring32-version}</version>
         </dependency>
         <!-- we need to override the other spring version -->
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-context</artifactId>
-            <version>${spring4-version}</version>
+            <version>${spring32-version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-beans</artifactId>
-            <version>${spring4-version}</version>
+            <version>${spring32-version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-expression</artifactId>
-            <version>${spring4-version}</version>
+            <version>${spring32-version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-aop</artifactId>
-            <version>${spring4-version}</version>
+            <version>${spring32-version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-tx</artifactId>
-            <version>${spring4-version}</version>
+            <version>${spring32-version}</version>
         </dependency>
         <dependency>
             <groupId>org.springframework</groupId>
             <artifactId>spring-core</artifactId>
-            <version>${spring4-version}</version>
+            <version>${spring32-version}</version>
         </dependency>
-
 
         <!-- test dependencies -->
         <dependency>
