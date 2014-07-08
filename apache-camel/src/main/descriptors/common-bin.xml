@@ -152,8 +152,8 @@
         <include>org.apache.camel:camel-snmp</include>
         <include>org.apache.camel:camel-soap</include>
         <include>org.apache.camel:camel-solr</include>
-        <include>org.apache.camel:camel-spark-rest</include>  
-        <include>org.apache.camel:camel-splunk</include>        
+        <include>org.apache.camel:camel-spark-rest</include>
+        <include>org.apache.camel:camel-splunk</include>
         <include>org.apache.camel:camel-spring</include>
         <include>org.apache.camel:camel-spring-batch</include>
         <include>org.apache.camel:camel-spring-integration</include>
@@ -173,6 +173,7 @@
         <include>org.apache.camel:camel-test</include>
         <include>org.apache.camel:camel-test-blueprint</include>
         <include>org.apache.camel:camel-test-spring</include>
+        <include>org.apache.camel:camel-test-spring3</include>
         <include>org.apache.camel:camel-testng</include>
         <include>org.apache.camel:camel-twitter</include>
         <include>org.apache.camel:camel-urlrewrite</include>
