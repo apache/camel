@@ -92,7 +92,7 @@ public class CxfRsProducer extends DefaultProducer {
     }
     
     @SuppressWarnings("unchecked")
-    protected void setupClientQueryAndHeaders(Client client, Exchange exchange) throws Exception {
+    protected void setupClientQueryAndHeaders(WebClient client, Exchange exchange) throws Exception {
         Message inMessage = exchange.getIn();
         CxfRsEndpoint cxfRsEndpoint = (CxfRsEndpoint) getEndpoint();
         // check if there is a query map in the message header
@@ -114,10 +114,16 @@ public class CxfRsProducer extends DefaultProducer {
             }
         }
         
+        setupClientHeaders(client, exchange);
+        
+    }
+    
+    protected void setupClientHeaders(Client client, Exchange exchange) throws Exception {
+        Message inMessage = exchange.getIn();
+        CxfRsEndpoint cxfRsEndpoint = (CxfRsEndpoint) getEndpoint();
         CxfRsBinding binding = cxfRsEndpoint.getBinding();
         // set headers
         client.headers(binding.bindCamelHeadersToRequestHeaders(inMessage.getHeaders(), exchange));
-        
     }
 
     protected void invokeHttpClient(Exchange exchange) throws Exception {
@@ -220,7 +226,7 @@ public class CxfRsProducer extends DefaultProducer {
             target = cfb.createWithValues(varValues);
         }
         
-        setupClientQueryAndHeaders(target, exchange);
+        setupClientHeaders(target, exchange);
         
         // find out the method which we want to invoke
         JAXRSServiceFactoryBean sfb = cfb.getServiceFactory();
