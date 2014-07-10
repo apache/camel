@@ -17,13 +17,10 @@
 package org.apache.camel.component.google.drive;
 
 import java.io.BufferedReader;
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.io.StringReader;
-import java.net.URL;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Properties;
@@ -72,13 +69,13 @@ public abstract class AbstractGoogleDriveTestSupport extends CamelTestSupport {
             throw new IOException(String.format("%s could not be loaded: %s", TEST_OPTIONS_PROPERTIES, e.getMessage()),
                 e);
         }
-
-        // cache test properties
-        refreshToken = properties.getProperty(REFRESH_TOKEN_PROPERTY);
-        testFolderId = properties.getProperty("testFolderId");
-        testFileId = properties.getProperty("testFileId");
-        testUserId = properties.getProperty("testUserId");
-
+//
+//        // cache test properties
+//        refreshToken = properties.getProperty(REFRESH_TOKEN_PROPERTY);
+//        testFolderId = properties.getProperty("testFolderId");
+//        testFileId = properties.getProperty("testFileId");
+//        testUserId = properties.getProperty("testUserId");
+//
         Map<String, Object> options = new HashMap<String, Object>();
         for (Map.Entry<Object, Object> entry : properties.entrySet()) {
             options.put(entry.getKey().toString(), entry.getValue());
@@ -92,7 +89,7 @@ public abstract class AbstractGoogleDriveTestSupport extends CamelTestSupport {
         final GoogleDriveComponent component = new GoogleDriveComponent(context);
 
         component.setConfiguration(configuration);
-        context.addComponent("box", component);
+        context.addComponent("google-drive", component);
 
         return context;
     }

@@ -5,6 +5,7 @@
 package org.apache.camel.component.google.drive;
 
 import java.util.HashMap;
+import java.util.Iterator;
 import java.util.Map;
 
 import org.apache.camel.builder.RouteBuilder;
@@ -12,98 +13,129 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.apache.camel.component.google.drive.internal.GoogleDriveApiCollection;
 import org.apache.camel.component.google.drive.internal.DriveFilesApiMethod;
 
+import com.google.api.client.http.FileContent;
+import com.google.api.client.util.DateTime;
+import com.google.api.services.drive.model.File;
+import com.google.api.services.drive.model.FileList;
+
 /**
  * Test class for com.google.api.services.drive.Drive$Files APIs.
- * TODO Move the file to src/test/java, populate parameter values, and remove @Ignore annotations.
- * The class source won't be generated again if the generator MOJO finds it under src/test/java.
  */
 public class DriveFilesIntegrationTest extends AbstractGoogleDriveTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(DriveFilesIntegrationTest.class);
     private static final String PATH_PREFIX = GoogleDriveApiCollection.getCollection().getApiName(DriveFilesApiMethod.class).getName();
-
-    // TODO provide parameter values for copy
-    @Ignore
+    private static final String TEST_UPLOAD_FILE = "src/test/resources/log4j.properties";
+    private static final String TEST_UPLOAD_IMG = "src/test/resources/camel-box-small.png";
+    private static final java.io.File UPLOAD_FILE = new java.io.File(TEST_UPLOAD_FILE);
+    
     @Test
     public void testCopy() throws Exception {
+        File testFile = uploadTestFile();
+        String fromFileId = testFile.getId();
+        
+        File toFile = new File();
+        toFile.setTitle(UPLOAD_FILE.getName() + "_copy");
+        
         final Map<String, Object> headers = new HashMap<String, Object>();
         // parameter type is String
-        headers.put("CamelGoogleDrive.fileId", null);
+        headers.put("CamelGoogleDrive.fileId", fromFileId);
         // parameter type is com.google.api.services.drive.model.File
-        headers.put("CamelGoogleDrive.content", null);
+        headers.put("CamelGoogleDrive.content", toFile);
 
-        final com.google.api.services.drive.Drive.Files.Copy result = requestBodyAndHeaders("direct://COPY", null, headers);
+        final File result = requestBodyAndHeaders("direct://COPY", null, headers);
 
         assertNotNull("copy result", result);
+        assertEquals(toFile.getTitle(), result.getTitle());        
         LOG.debug("copy: " + result);
     }
 
-    // TODO provide parameter values for delete
-    @Ignore
     @Test
     public void testDelete() throws Exception {
+        File testFile = uploadTestFile();
+        String fileId = testFile.getId();
+        
         // using String message body for single parameter "fileId"
-        final com.google.api.services.drive.Drive.Files.Delete result = requestBody("direct://DELETE", null);
+        sendBody("direct://DELETE", fileId);
 
-        assertNotNull("delete result", result);
-        LOG.debug("delete: " + result);
+        // the file should be gone now
+        final File result = requestBody("direct://GET", fileId);
+        assertNull("get result", result);
     }
 
-    // TODO provide parameter values for get
-    @Ignore
     @Test
     public void testGet() throws Exception {
+        File testFile = uploadTestFile();
+        String fileId = testFile.getId();
+        
         // using String message body for single parameter "fileId"
-        final com.google.api.services.drive.Drive.Files.Get result = requestBody("direct://GET", null);
+        final File result = requestBody("direct://GET", fileId);
 
         assertNotNull("get result", result);
         LOG.debug("get: " + result);
     }
 
-    // TODO provide parameter values for insert
-    @Ignore
     @Test
     public void testInsert() throws Exception {
+        File file = new File();        
+        file.setTitle(UPLOAD_FILE.getName());
         // using com.google.api.services.drive.model.File message body for single parameter "content"
-        final com.google.api.services.drive.Drive.Files.Insert result = requestBody("direct://INSERT", null);
-
+        File result = requestBody("direct://INSERT", file);
         assertNotNull("insert result", result);
         LOG.debug("insert: " + result);
     }
 
-    // TODO provide parameter values for insert
-    @Ignore
-    @Test
-    public void testInsert_1() throws Exception {
+    private File uploadTestFile() {
+        File fileMetadata = new File();
+        fileMetadata.setTitle(UPLOAD_FILE.getName());
+        FileContent mediaContent = new FileContent(null, UPLOAD_FILE);
+        
         final Map<String, Object> headers = new HashMap<String, Object>();
         // parameter type is com.google.api.services.drive.model.File
-        headers.put("CamelGoogleDrive.content", null);
+        headers.put("CamelGoogleDrive.content", fileMetadata);
         // parameter type is com.google.api.client.http.AbstractInputStreamContent
-        headers.put("CamelGoogleDrive.mediaContent", null);
+        headers.put("CamelGoogleDrive.mediaContent", mediaContent);
 
-        final com.google.api.services.drive.Drive.Files.Insert result = requestBodyAndHeaders("direct://INSERT_1", null, headers);
+        File result = requestBodyAndHeaders("direct://INSERT_1", null, headers);
+        return result;
+    }
+
+    @Test
+    public void testInsert_1() throws Exception {        
+        File result = uploadTestFile();
 
         assertNotNull("insert result", result);
         LOG.debug("insert: " + result);
     }
 
-    @Ignore
     @Test
     public void testList() throws Exception {
-        final com.google.api.services.drive.Drive.Files.List result = requestBody("direct://LIST", null);
-
+        // upload a test file
+        File theTestFile = uploadTestFile();
+        
+        final FileList result = requestBody("direct://LIST", null);
         assertNotNull("list result", result);
         LOG.debug("list: " + result);
     }
 
-    // TODO provide parameter values for patch
     @Ignore
     @Test
     public void testPatch() throws Exception {
+        // TODO have to support setting patch parameters before callinfg execute like:
+        /*
+      File file = new File();
+      file.setTitle(newTitle);
+
+      // Rename the file using a patch request.
+      Files.Patch patchRequest = service.files().patch(fileId, file);
+      patchRequest.setFields("title");
+
+      File updatedFile = patchRequest.execute();
+         */        
+        
         final Map<String, Object> headers = new HashMap<String, Object>();
         // parameter type is String
         headers.put("CamelGoogleDrive.fileId", null);
@@ -116,68 +148,72 @@ public class DriveFilesIntegrationTest extends AbstractGoogleDriveTestSupport {
         LOG.debug("patch: " + result);
     }
 
-    // TODO provide parameter values for touch
-    @Ignore
     @Test
     public void testTouch() throws Exception {
+        File theTestFile = uploadTestFile();
+        DateTime createdDate = theTestFile.getModifiedDate();
         // using String message body for single parameter "fileId"
-        final com.google.api.services.drive.Drive.Files.Touch result = requestBody("direct://TOUCH", null);
+        File result = requestBody("direct://TOUCH", theTestFile.getId());
 
         assertNotNull("touch result", result);
-        LOG.debug("touch: " + result);
+        assertTrue(result.getModifiedDate().getValue() > createdDate.getValue());
     }
 
-    // TODO provide parameter values for trash
-    @Ignore
     @Test
     public void testTrash() throws Exception {
-        // using String message body for single parameter "fileId"
-        final com.google.api.services.drive.Drive.Files.Trash result = requestBody("direct://TRASH", null);
+        File testFile = uploadTestFile();
+        String fileId = testFile.getId();       
 
-        assertNotNull("trash result", result);
-        LOG.debug("trash: " + result);
-    }
+        assertNotNull("trash result", requestBody("direct://TRASH", fileId));
+        assertNotNull("untrash result", requestBody("direct://UNTRASH", fileId));
 
-    // TODO provide parameter values for untrash
-    @Ignore
-    @Test
-    public void testUntrash() throws Exception {
-        // using String message body for single parameter "fileId"
-        final com.google.api.services.drive.Drive.Files.Untrash result = requestBody("direct://UNTRASH", null);
+    }   
 
-        assertNotNull("untrash result", result);
-        LOG.debug("untrash: " + result);
-    }
-
-    // TODO provide parameter values for update
-    @Ignore
     @Test
     public void testUpdate() throws Exception {
+        File theTestFile = uploadTestFile();
+        
         final Map<String, Object> headers = new HashMap<String, Object>();
         // parameter type is String
-        headers.put("CamelGoogleDrive.fileId", null);
+        headers.put("CamelGoogleDrive.fileId", theTestFile.getId());
         // parameter type is com.google.api.services.drive.model.File
-        headers.put("CamelGoogleDrive.content", null);
+        headers.put("CamelGoogleDrive.content", theTestFile);
 
-        final com.google.api.services.drive.Drive.Files.Update result = requestBodyAndHeaders("direct://UPDATE", null, headers);
+        File result = requestBodyAndHeaders("direct://UPDATE", null, headers);
 
         assertNotNull("update result", result);
         LOG.debug("update: " + result);
     }
 
-    // TODO provide parameter values for update
-    @Ignore
     @Test
-    public void testUpdate_1() throws Exception {
+    public void testUpdate_1() throws Exception {       
+        
+        // First retrieve the file from the API.
+        File testFile = uploadTestFile();
+        String fileId = testFile.getId();
+        
+        // using String message body for single parameter "fileId"
+        final File file = requestBody("direct://GET", fileId);
+
+        // File's new metadata.
+        file.setTitle("camel.png");
+        file.setMimeType("application/vnd.google-apps.photo");
+
+        // File's new content.
+        java.io.File fileContent = new java.io.File(TEST_UPLOAD_IMG);
+        FileContent mediaContent = new FileContent("application/vnd.google-apps.photo", fileContent);
+
+        // Send the request to the API.
+        
         final Map<String, Object> headers = new HashMap<String, Object>();
         // parameter type is String
-        headers.put("CamelGoogleDrive.fileId", null);
+        headers.put("CamelGoogleDrive.fileId", fileId);
         // parameter type is com.google.api.services.drive.model.File
-        headers.put("CamelGoogleDrive.content", null);
+        headers.put("CamelGoogleDrive.content", file);
         // parameter type is com.google.api.client.http.AbstractInputStreamContent
-        headers.put("CamelGoogleDrive.mediaContent", null);
+        headers.put("CamelGoogleDrive.mediaContent", mediaContent);
 
-        final com.google.api.services.drive.Drive.Files.Update result = requestBodyAndHeaders("direct://UPDATE_1", null, headers);
+        File result = requestBodyAndHeaders("direct://UPDATE_1", null, headers);
 
         assertNotNull("update result", result);
         LOG.debug("update: " + result);
