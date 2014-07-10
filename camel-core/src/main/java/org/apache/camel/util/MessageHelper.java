@@ -462,7 +462,8 @@ public final class MessageHelper {
         for (MessageHistory history : list) {
             routeId = history.getRouteId() != null ? history.getRouteId() : "";
             id = history.getNode().getId();
-            label = history.getNode().getLabel();
+            // we need to avoid leak the sensibale information here
+            label =  URISupport.sanitizeUri(history.getNode().getLabel());
             elapsed = history.getElapsed();
 
             sb.append(String.format(MESSAGE_HISTORY_OUTPUT, routeId, id, label, elapsed));
