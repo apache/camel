@@ -285,19 +285,22 @@ public class JavadocApiMethodGeneratorMojo extends AbstractApiMethodGeneratorMoj
             }
 
             // make sure number of types and names match
-            if (typeList.size() != argNames.size()) {
+            final int nTypes = typeList.size();
+            if (nTypes != argNames.size()) {
                 throw new IllegalArgumentException("Unexpected Javadoc error, different number of arg types and names");
             }
 
-            final String[] names = argNames.toArray(new String[argNames.size()]);
-            StringBuilder builder = new StringBuilder("(");
+            final String[] names = argNames.toArray(new String[nTypes]);
+            final StringBuilder builder = new StringBuilder("(");
             int i = 0;
             for (String type : typeList) {
                 // split on space or non-breaking space
-                builder.append(type).append(" ").append(names[i++]).append(",");
+                builder.append(type).append(' ').append(names[i++]);
+                if (i < nTypes) {
+                    builder.append(',');
+                }
             }
-            builder.deleteCharAt(builder.length() - 1);
-            builder.append(")");
+            builder.append(')');
             return builder.toString();
         }
 

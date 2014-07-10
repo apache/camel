@@ -145,7 +145,7 @@ public abstract class AbstractApiProducer<E extends Enum<E> & ApiName, T>
 
             // filter candidates based on endpoint and exchange properties
             final Set<String> argNames = properties.keySet();
-            final List<ApiMethod> filteredMethods = ApiMethodHelper.filterMethods(candidates,
+            final List<ApiMethod> filteredMethods = methodHelper.filterMethods(candidates,
                     ApiMethodHelper.MatchType.SUPER_SET,
                     argNames.toArray(new String[argNames.size()]));
 
@@ -172,15 +172,24 @@ public abstract class AbstractApiProducer<E extends Enum<E> & ApiName, T>
         if (inBodyProperty != null) {
 
             Object value = exchange.getIn().getBody();
-            try {
-                value = endpoint.getCamelContext().getTypeConverter().mandatoryConvertTo(
+            if (value != null) {
+                try {
+                    value = endpoint.getCamelContext().getTypeConverter().mandatoryConvertTo(
                         endpoint.getConfiguration().getClass().getDeclaredField(inBodyProperty).getType(),
                         exchange, value);
-            } catch (Exception e) {
-                exchange.setException(new RuntimeCamelException(String.format(
-                        "Error converting value %s to property %s: %s", value, inBodyProperty, e.getMessage()), e));
+                } catch (Exception e) {
+                    exchange.setException(new RuntimeCamelException(String.format(
+                            "Error converting value %s to property %s: %s", value, inBodyProperty, e.getMessage()), e));
 
-                return false;
+                    return false;
+                }
+            } else {
+                // allow null values for inBody only if its a nullable option
+                if (!methodHelper.getNullableArguments().contains(inBodyProperty)) {
+                    exchange.setException(new NullPointerException(inBodyProperty));
+
+                    return false;
+                }
             }
 
             log.debug("Property [{}] has message body value {}", inBodyProperty, value);

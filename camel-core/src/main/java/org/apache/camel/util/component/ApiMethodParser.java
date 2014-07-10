@@ -126,7 +126,9 @@ public abstract class ApiMethodParser<T> {
                 final Class<?> type = forName(argsMatcher.group(1));
                 argTypes.add(type);
 
-                final String typeArgs = argsMatcher.group(2) != null ? argsMatcher.group(2).replaceAll(" ", "") : null;
+                final String typeArgsGroup = argsMatcher.group(2);
+                final String typeArgs = typeArgsGroup != null
+                    ? typeArgsGroup.substring(1, typeArgsGroup.length() - 1).replaceAll(" ", "") : null;
                 arguments.add(new Argument(argsMatcher.group(3), type, typeArgs));
             }
 

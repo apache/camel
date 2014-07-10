@@ -309,8 +309,10 @@ public abstract class AbstractApiMethodGeneratorMojo extends AbstractApiMethodBa
             parameterizedType.append('<');
 
             // Note: its ok to split, since we don't support parsing nested type arguments
-            String[] argTypes = typeArgs.split(",");
+            final String[] argTypes = typeArgs.split(",");
             boolean ignore = false;
+            final int nTypes = argTypes.length;
+            int i = 0;
             for (String argType : argTypes) {
 
                 // try loading as is first
@@ -326,7 +328,7 @@ public abstract class AbstractApiMethodGeneratorMojo extends AbstractApiMethodBa
                         parameterizedType.append(
                             getCanonicalName(getProjectClassLoader().loadClass("java.lang." + argType)));
                     } catch (ClassNotFoundException e1) {
-                        log.warn("Ignoring type parameters < " + typeArgs + "> for argument " + argument.getName()
+                        log.warn("Ignoring type parameters <" + typeArgs + "> for argument " + argument.getName()
                                  + ", unable to load parametric type argument " + argType, e1);
                         ignore = true;
                     }
@@ -335,14 +337,12 @@ public abstract class AbstractApiMethodGeneratorMojo extends AbstractApiMethodBa
                 if (ignore) {
                     // give up
                     break;
-                } else {
+                } else if (++i < nTypes) {
                     parameterizedType.append(",");
                 }
             }
 
             if (!ignore) {
-                // replace the last ',' with '>'
-                parameterizedType.deleteCharAt(parameterizedType.length() - 1);
                 parameterizedType.append('>');
                 canonicalName = parameterizedType.toString();
             }

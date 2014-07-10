@@ -24,11 +24,10 @@ import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 
-import org.junit.Test;
-
 import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
+import org.junit.Test;
 
 public class ApiMethodHelperTest {
 
@@ -38,7 +37,7 @@ public class ApiMethodHelperTest {
     static {
         final HashMap<String, String> aliases = new HashMap<String, String>();
         aliases.put("say(.*)", "$1");
-        apiMethodHelper = new ApiMethodHelper<TestMethod>(TestMethod.class, aliases);
+        apiMethodHelper = new ApiMethodHelper<TestMethod>(TestMethod.class, aliases, Arrays.asList("names"));
     }
 
     @Test
@@ -64,23 +63,29 @@ public class ApiMethodHelperTest {
 
     @Test
     public void testFilterMethods() {
-        List<ApiMethod> methods = ApiMethodHelper.filterMethods(Arrays.asList(sayHis), ApiMethodHelper.MatchType.EXACT);
+        List<ApiMethod> methods = apiMethodHelper.filterMethods(Arrays.asList(sayHis), ApiMethodHelper.MatchType.EXACT);
         assertEquals("Exact match failed for sayHi()", 1, methods.size());
         assertEquals("Exact match failed for sayHi()", TestMethod.SAYHI, methods.get(0));
 
-        methods = ApiMethodHelper.filterMethods(Arrays.asList(sayHis), ApiMethodHelper.MatchType.SUBSET);
+        methods = apiMethodHelper.filterMethods(Arrays.asList(sayHis), ApiMethodHelper.MatchType.SUBSET);
         assertEquals("Subset match failed for sayHi(*)", 2, methods.size());
 
-        methods = ApiMethodHelper.filterMethods(Arrays.asList(sayHis), ApiMethodHelper.MatchType.SUBSET, "name");
+        methods = apiMethodHelper.filterMethods(Arrays.asList(sayHis), ApiMethodHelper.MatchType.SUBSET, "name");
         assertEquals("Subset match failed for sayHi(name)", 1, methods.size());
         assertEquals("Exact match failed for sayHi()", TestMethod.SAYHI_1, methods.get(0));
 
-        methods = ApiMethodHelper.filterMethods(Arrays.asList(sayHis), ApiMethodHelper.MatchType.SUPER_SET, "name");
+        methods = apiMethodHelper.filterMethods(Arrays.asList(sayHis), ApiMethodHelper.MatchType.SUPER_SET, "name");
         assertEquals("Super set match failed for sayHi(name)", 1, methods.size());
         assertEquals("Exact match failed for sayHi()", TestMethod.SAYHI_1, methods.get(0));
 
-        methods = ApiMethodHelper.filterMethods(Arrays.asList(TestMethod.values()), ApiMethodHelper.MatchType.SUPER_SET, "name");
+        methods = apiMethodHelper.filterMethods(Arrays.asList(TestMethod.values()), ApiMethodHelper.MatchType.SUPER_SET, "name");
         assertEquals("Super set match failed for sayHi(name)", 2, methods.size());
+
+        // test nullable names
+        methods = apiMethodHelper.filterMethods(
+            Arrays.asList(TestMethod.GREETALL, TestMethod.GREETALL_1, TestMethod.GREETALL_2),
+            ApiMethodHelper.MatchType.SUPER_SET);
+        assertEquals("Super set match with null args failed for greetAll(names)", 1, methods.size());
     }
 
     @Test

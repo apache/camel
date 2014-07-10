@@ -55,7 +55,7 @@ public final class ApiConsumerHelper {
         propertyNamesInterceptor.interceptPropertyNames(argNames);
 
         final String[] argNamesArray = argNames.toArray(new String[argNames.size()]);
-        List<ApiMethod> filteredMethods = ApiMethodHelper.filterMethods(
+        List<ApiMethod> filteredMethods = endpoint.methodHelper.filterMethods(
                 endpoint.getCandidates(), ApiMethodHelper.MatchType.SUPER_SET, argNamesArray);
 
         if (filteredMethods.isEmpty()) {

@@ -35,7 +35,7 @@ public class IBoxSharedItemsManagerIntegrationTest extends AbstractBoxTestSuppor
     @Test
     public void testGetSharedItem() throws Exception {
         // using com.box.restclientv2.requestsbase.BoxDefaultRequestObject message body for single parameter "defaultRequest"
-        BoxItem result = requestBody("direct://GETSHAREDITEM", BOX_DEFAULT_REQUEST_OBJECT);
+        BoxItem result = requestBody("direct://GETSHAREDITEM", null);
 
         assertNotNull("getSharedItem result", result);
         LOG.debug("getSharedItem: " + result);

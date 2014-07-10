@@ -103,7 +103,7 @@ public class IBoxGroupsManagerIntegrationTest extends AbstractBoxTestSupport {
         // parameter type is String
         headers.put("CamelBox.groupId", groupId);
         // parameter type is com.box.restclientv2.requestsbase.BoxDefaultRequestObject
-        headers.put("CamelBox.defaultRequest", BOX_DEFAULT_REQUEST_OBJECT);
+//        headers.put("CamelBox.defaultRequest", null);
 
         requestBodyAndHeaders("direct://DELETEGROUP", null, headers);
     }
@@ -119,7 +119,7 @@ public class IBoxGroupsManagerIntegrationTest extends AbstractBoxTestSupport {
             // parameter type is String
             headers.put("CamelBox.membershipId", membership.getId());
             // parameter type is com.box.restclientv2.requestsbase.BoxDefaultRequestObject
-            headers.put("CamelBox.defaultRequest", BOX_DEFAULT_REQUEST_OBJECT);
+//            headers.put("CamelBox.defaultRequest", null);
             requestBodyAndHeaders("direct://DELETEMEMBERSHIP", null, headers);
         } finally {
             deleteGroup(group.getId());
@@ -134,7 +134,7 @@ public class IBoxGroupsManagerIntegrationTest extends AbstractBoxTestSupport {
             // parameter type is String
             headers.put("CamelBox.groupId", group.getId());
             // parameter type is com.box.restclientv2.requestsbase.BoxDefaultRequestObject
-            headers.put("CamelBox.defaultRequest", BOX_DEFAULT_REQUEST_OBJECT);
+//            headers.put("CamelBox.defaultRequest", null);
 
             BoxCollection result = requestBodyAndHeaders("direct://GETALLCOLLABORATIONS", null, headers);
 
@@ -148,7 +148,7 @@ public class IBoxGroupsManagerIntegrationTest extends AbstractBoxTestSupport {
     @Test
     public void testGetAllGroups() throws Exception {
         // using com.box.restclientv2.requestsbase.BoxDefaultRequestObject message body for single parameter "defaultRequest"
-        BoxCollection result = requestBody("direct://GETALLGROUPS", BOX_DEFAULT_REQUEST_OBJECT);
+        BoxCollection result = requestBody("direct://GETALLGROUPS", null);
 
         assertNotNull("getAllGroups result", result);
         LOG.debug("getAllGroups: " + result);
@@ -165,7 +165,7 @@ public class IBoxGroupsManagerIntegrationTest extends AbstractBoxTestSupport {
             // parameter type is String
             headers.put("CamelBox.membershipId", membership.getId());
             // parameter type is com.box.restclientv2.requestsbase.BoxDefaultRequestObject
-            headers.put("CamelBox.defaultRequest", BOX_DEFAULT_REQUEST_OBJECT);
+//            headers.put("CamelBox.defaultRequest", null);
 
             BoxGroupMembership result = requestBodyAndHeaders("direct://GETMEMBERSHIP", null, headers);
 

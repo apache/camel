@@ -89,7 +89,7 @@ public class IBoxUsersManagerIntegrationTest extends AbstractBoxTestSupport {
         // parameter type is String
         headers.put("CamelBox.emailId", CAMEL_EMAIL_ALIAS);
         // parameter type is com.box.restclientv2.requestsbase.BoxDefaultRequestObject
-        headers.put("CamelBox.defaultRequest", BOX_DEFAULT_REQUEST_OBJECT);
+//        headers.put("CamelBox.defaultRequest", null);
 
         requestBodyAndHeaders("direct://DELETEEMAILALIAS", null, headers);
     }
@@ -125,7 +125,7 @@ public class IBoxUsersManagerIntegrationTest extends AbstractBoxTestSupport {
     @Test
     public void testGetCurrentUser() throws Exception {
         // using com.box.restclientv2.requestsbase.BoxDefaultRequestObject message body for single parameter "defaultRequest"
-        BoxUser result = requestBody("direct://GETCURRENTUSER", BOX_DEFAULT_REQUEST_OBJECT);
+        BoxUser result = requestBody("direct://GETCURRENTUSER", null);
 
         assertNotNull("getCurrentUser result", result);
         LOG.debug("getCurrentUser: " + result);
@@ -140,7 +140,7 @@ public class IBoxUsersManagerIntegrationTest extends AbstractBoxTestSupport {
             // parameter type is String
             headers.put("CamelBox.userId", enterpriseUser.getId());
             // parameter type is com.box.restclientv2.requestsbase.BoxDefaultRequestObject
-            headers.put("CamelBox.defaultRequest", BOX_DEFAULT_REQUEST_OBJECT);
+//            headers.put("CamelBox.defaultRequest", null);
 
             List result = requestBodyAndHeaders("direct://GETEMAILALIASES", null, headers);
 

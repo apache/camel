@@ -42,7 +42,7 @@ public class IBoxEventsManagerIntegrationTest extends AbstractBoxTestSupport {
     @Test
     public void testGetEventOptions() throws Exception {
         // using com.box.restclientv2.requestsbase.BoxDefaultRequestObject message body for single parameter "defaultRequest"
-        BoxCollection result = requestBody("direct://GETEVENTOPTIONS", BOX_DEFAULT_REQUEST_OBJECT);
+        BoxCollection result = requestBody("direct://GETEVENTOPTIONS", null);
 
         assertNotNull("getEventOptions result", result);
         LOG.debug("getEventOptions: " + result);

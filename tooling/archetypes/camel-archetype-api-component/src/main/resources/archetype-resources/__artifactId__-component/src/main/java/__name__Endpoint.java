@@ -75,7 +75,7 @@ public class ${name}Endpoint extends AbstractApiEndpoint<${name}ApiName, ${name}
     @Override
     protected void afterConfigureProperties() {
         // TODO create API proxy, set connection properties, etc.
-        switch ((${name}ApiName) apiName) {
+        switch (apiName) {
             case HELLO_FILE:
                 apiProxy = new ${name}FileHello();
                 break;

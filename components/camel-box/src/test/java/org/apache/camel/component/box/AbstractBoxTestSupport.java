@@ -48,7 +48,6 @@ public abstract class AbstractBoxTestSupport extends CamelTestSupport {
     private static final String LINE_SEPARATOR = System.getProperty("line.separator");
     private static final String TEST_OPTIONS_PROPERTIES = "/test-options.properties";
     private static final String REFRESH_TOKEN_PROPERTY = "refreshToken";
-    protected static final BoxDefaultRequestObject BOX_DEFAULT_REQUEST_OBJECT = new BoxDefaultRequestObject();
     protected static final BoxPagingRequestObject BOX_PAGING_REQUEST_OBJECT = BoxPagingRequestObject.pagingRequestObject(100, 0);
     protected static String testUserId;
 

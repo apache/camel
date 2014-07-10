@@ -52,6 +52,7 @@ public class ApiComponentGeneratorMojoTest extends AbstractGeneratorMojoTest {
         // exclude name2, and int times
         mojo.apis[0].setExcludeConfigNames("name2");
         mojo.apis[0].setExcludeConfigTypes("int");
+        mojo.apis[0].setNullableOptions(new String[] {"namesList"});
 
         List<ApiMethodAlias> aliases = new ArrayList<ApiMethodAlias>();
         aliases.add(new ApiMethodAlias("get(.+)", "$1"));

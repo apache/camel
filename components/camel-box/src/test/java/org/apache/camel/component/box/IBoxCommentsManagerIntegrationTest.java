@@ -73,7 +73,7 @@ public class IBoxCommentsManagerIntegrationTest extends AbstractBoxTestSupport {
         // parameter type is String
         headers.put("CamelBox.commentId", commentId);
         // parameter type is com.box.restclientv2.requestsbase.BoxDefaultRequestObject
-        headers.put("CamelBox.defaultRequest", BOX_DEFAULT_REQUEST_OBJECT);
+//        headers.put("CamelBox.defaultRequest", null);
         requestBodyAndHeaders("direct://DELETECOMMENT", null, headers);
     }
 
@@ -85,7 +85,7 @@ public class IBoxCommentsManagerIntegrationTest extends AbstractBoxTestSupport {
             // parameter type is String
             headers.put("CamelBox.commentId", comment.getId());
             // parameter type is com.box.restclientv2.requestsbase.BoxDefaultRequestObject
-            headers.put("CamelBox.defaultRequest", BOX_DEFAULT_REQUEST_OBJECT);
+//            headers.put("CamelBox.defaultRequest", null);
             BoxComment result = requestBodyAndHeaders("direct://GETCOMMENT", null, headers);
 
             LOG.debug("getComment: " + result);

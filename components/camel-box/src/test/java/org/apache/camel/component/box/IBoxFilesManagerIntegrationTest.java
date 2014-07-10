@@ -114,7 +114,7 @@ public class IBoxFilesManagerIntegrationTest extends AbstractBoxTestSupport {
         // parameter type is String
         headers.put("CamelBox.fileId", testFileId);
         // parameter type is com.box.restclientv2.requestsbase.BoxDefaultRequestObject
-        headers.put("CamelBox.defaultRequest", BOX_DEFAULT_REQUEST_OBJECT);
+//        headers.put("CamelBox.defaultRequest", null);
         InputStream result = requestBodyAndHeaders("direct://DOWNLOADFILE", null, headers);
 
         assertNotNull("downloadFile result", result);
@@ -134,7 +134,7 @@ public class IBoxFilesManagerIntegrationTest extends AbstractBoxTestSupport {
         final FileTransferListener fileTransferListener = new FileTransferListener();
         headers.put("CamelBox.listener", fileTransferListener);
         // parameter type is com.box.restclientv2.requestsbase.BoxDefaultRequestObject
-        headers.put("CamelBox.defaultRequest", BOX_DEFAULT_REQUEST_OBJECT);
+//        headers.put("CamelBox.defaultRequest", null);
 
         requestBodyAndHeaders("direct://DOWNLOADFILE_1", null, headers);
 
@@ -164,7 +164,7 @@ public class IBoxFilesManagerIntegrationTest extends AbstractBoxTestSupport {
         final FileTransferListener fileTransferListener = new FileTransferListener();
         headers.put("CamelBox.listener", fileTransferListener);
         // parameter type is com.box.restclientv2.requestsbase.BoxDefaultRequestObject
-        headers.put("CamelBox.defaultRequest", BOX_DEFAULT_REQUEST_OBJECT);
+//        headers.put("CamelBox.defaultRequest", null);
 
         requestBodyAndHeaders("direct://DOWNLOADFILE_2", null, headers);
 
@@ -195,9 +195,8 @@ public class IBoxFilesManagerIntegrationTest extends AbstractBoxTestSupport {
         // parameter type is String
         headers.put("CamelBox.fileId", testFileId);
         // parameter type is com.box.restclientv2.requestsbase.BoxDefaultRequestObject
-        headers.put("CamelBox.defaultRequest", BOX_DEFAULT_REQUEST_OBJECT);
+//        headers.put("CamelBox.defaultRequest", null);
 
-//        BoxFile result = requestBodyAndHeaders("direct://GETFILE", null, headers);
         BoxFile result = requestBodyAndHeaders("direct://GETFILE", null, headers);
 
         assertNotNull("getFile result", result);
@@ -210,7 +209,7 @@ public class IBoxFilesManagerIntegrationTest extends AbstractBoxTestSupport {
         // parameter type is String
         headers.put("CamelBox.fileId", testFileId);
         // parameter type is com.box.restclientv2.requestsbase.BoxDefaultRequestObject
-        headers.put("CamelBox.defaultRequest", BOX_DEFAULT_REQUEST_OBJECT);
+//        headers.put("CamelBox.defaultRequest", null);
 
         com.box.boxjavalibv2.dao.BoxCollection result = requestBodyAndHeaders("direct://GETFILECOMMENTS", null, headers);
 
@@ -224,7 +223,7 @@ public class IBoxFilesManagerIntegrationTest extends AbstractBoxTestSupport {
         // parameter type is String
         headers.put("CamelBox.fileId", testFileId);
         // parameter type is com.box.restclientv2.requestsbase.BoxDefaultRequestObject
-        headers.put("CamelBox.defaultRequest", BOX_DEFAULT_REQUEST_OBJECT);
+//        headers.put("CamelBox.defaultRequest", null);
 
         java.util.List result = requestBodyAndHeaders("direct://GETFILEVERSIONS", null, headers);
 

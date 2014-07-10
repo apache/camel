@@ -128,7 +128,7 @@ public class IBoxFoldersManagerIntegrationTest extends AbstractBoxTestSupport {
         // parameter type is String
         headers.put("CamelBox.folderId", "0");
         // parameter type is com.box.restclientv2.requestsbase.BoxDefaultRequestObject
-        headers.put("CamelBox.defaultRequest", BOX_DEFAULT_REQUEST_OBJECT);
+//        headers.put("CamelBox.defaultRequest", null);
 
         final BoxFolder result = (BoxFolder) requestBodyAndHeaders("direct://GETFOLDER", null, headers);
         assertNotNull("getFolder result", result);
@@ -145,7 +145,7 @@ public class IBoxFoldersManagerIntegrationTest extends AbstractBoxTestSupport {
             // parameter type is String
             headers.put("CamelBox.folderId", testFolder.getId());
             // parameter type is com.box.restclientv2.requestsbase.BoxDefaultRequestObject
-            headers.put("CamelBox.defaultRequest", BOX_DEFAULT_REQUEST_OBJECT);
+//            headers.put("CamelBox.defaultRequest", null);
 
             List result = requestBodyAndHeaders("direct://GETFOLDERCOLLABORATIONS", null, headers);
             assertNotNull("getFolderCollaborations result", result);

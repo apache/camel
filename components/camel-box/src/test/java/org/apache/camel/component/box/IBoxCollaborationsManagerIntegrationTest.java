@@ -68,7 +68,7 @@ public class IBoxCollaborationsManagerIntegrationTest extends AbstractBoxTestSup
         // parameter type is String
         headers.put("CamelBox.collabId", collabId);
         // parameter type is com.box.restclientv2.requestsbase.BoxDefaultRequestObject
-        headers.put("CamelBox.defaultRequest", BOX_DEFAULT_REQUEST_OBJECT);
+//        headers.put("CamelBox.defaultRequest", null);
         requestBodyAndHeaders("direct://DELETECOLLABORATION", null, headers);
     }
 

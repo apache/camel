@@ -313,6 +313,7 @@
                   <proxyClass>org.apache.camel.component.box.internal.LongPollingEventsManager</proxyClass>
                   <fromSignatureFile>${project.basedir}/src/signatures/long-polling-events-manager.txt</fromSignatureFile>
                   <excludeConfigNames>callback</excludeConfigNames>
+                  <nullableOptions/>
                 </api>
                 <api>
                   <apiName>search</apiName>
@@ -388,6 +389,9 @@
               <fromJavadoc>
                 <excludeClasses>BoxResourceManager|BoxItemsManager</excludeClasses>
               </fromJavadoc>
+              <nullableOptions>
+                <nullableOption>defaultRequest</nullableOption>
+              </nullableOptions>
               <aliases>
                 <alias>
                   <methodPattern>[gs]et(.+)</methodPattern>
