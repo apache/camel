@@ -74,8 +74,7 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
         this.mode = mode != null ? mode.charAt(0) : 0;
     }
     
-    protected Iterator<?> createIterator(InputStream in, Exchange exchange) throws XMLStreamException, UnsupportedEncodingException {
-        String charset = IOHelper.getCharsetName(exchange, false);
+    protected Iterator<?> createIterator(InputStream in, String charset) throws XMLStreamException, UnsupportedEncodingException {
         Reader reader;
         if (charset == null) {
             reader = new InputStreamReader(in);
@@ -116,7 +115,8 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
         InputStream in = null;
         try {
             in = exchange.getIn().getMandatoryBody(InputStream.class);
-            return createIterator(in, exchange);
+            String charset = IOHelper.getCharsetName(exchange);
+            return createIterator(in, charset);
         } catch (InvalidPayloadException e) {
             exchange.setException(e);
             // must close input stream

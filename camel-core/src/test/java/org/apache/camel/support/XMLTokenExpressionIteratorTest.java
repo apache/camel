@@ -27,10 +27,6 @@ import java.util.Map;
 
 import junit.framework.TestCase;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.builder.ExchangeBuilder;
-import org.apache.camel.impl.DefaultCamelContext;
-
 
 /**
  *
@@ -247,15 +243,12 @@ public class XMLTokenExpressionIteratorTest extends TestCase {
  
 
     private Map<String, String> nsmap;
-    private Exchange exchange;
 
     @Override
     protected void setUp() throws Exception {
         nsmap = new HashMap<String, String>();
         nsmap.put("G", "urn:g");
         nsmap.put("C", "urn:c");
-        
-        exchange = ExchangeBuilder.anExchange(new DefaultCamelContext()).build();
     }
 
 
@@ -384,7 +377,7 @@ public class XMLTokenExpressionIteratorTest extends TestCase {
         XMLTokenExpressionIterator xtei = new XMLTokenExpressionIterator(path, mode);
         xtei.setNamespaces(nsmap);
         
-        Iterator<?> it = xtei.createIterator(in, exchange);
+        Iterator<?> it = xtei.createIterator(in, "utf-8");
         List<String> results = new ArrayList<String>();
         while (it.hasNext()) {
             results.add((String)it.next());

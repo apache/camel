@@ -32,11 +32,6 @@ import javax.xml.stream.XMLStreamException;
 
 import junit.framework.TestCase;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.builder.ExchangeBuilder;
-import org.apache.camel.impl.DefaultCamelContext;
-
-
 /**
  *
  */
@@ -59,8 +54,6 @@ public class XMLTokenExpressionIteratorCharsetTest extends TestCase {
 
     private static final Map<String, String> NSMAP = Collections.singletonMap("", "http://www.apache.org/xml/test");
 
-    private Exchange exchange;
-
     private static byte[] getBytes(String template, String charset) {
         try {
             return MessageFormat.format(template, charset).getBytes(charset);
@@ -70,25 +63,18 @@ public class XMLTokenExpressionIteratorCharsetTest extends TestCase {
         return null;
     }
     
-    @Override
-    protected void setUp() throws Exception {
-        exchange = ExchangeBuilder.anExchange(new DefaultCamelContext()).build();
-    }
-
     public void testTokenzeWithUTF8() throws Exception {
         XMLTokenExpressionIterator xtei = new XMLTokenExpressionIterator("//statement", 'i');
         xtei.setNamespaces(NSMAP);
 
-        exchange.getIn().setHeader(Exchange.CHARSET_NAME, "utf-8");
-        invokeAndVerify(xtei.createIterator(new ByteArrayInputStream(DATA_UTF8), exchange));
+        invokeAndVerify(xtei.createIterator(new ByteArrayInputStream(DATA_UTF8), "utf-8"));
     }
 
     public void testTokenizeWithISOLatin() throws Exception {
         XMLTokenExpressionIterator xtei = new XMLTokenExpressionIterator("//statement", 'i');
         xtei.setNamespaces(NSMAP);
 
-        exchange.getIn().setHeader(Exchange.CHARSET_NAME, "iso-8859-1");
-        invokeAndVerify(xtei.createIterator(new ByteArrayInputStream(DATA_ISOLATIN), exchange));
+        invokeAndVerify(xtei.createIterator(new ByteArrayInputStream(DATA_ISOLATIN), "iso-8859-1"));
     }
 
     public void testTokenizeWithReader() throws Exception {
