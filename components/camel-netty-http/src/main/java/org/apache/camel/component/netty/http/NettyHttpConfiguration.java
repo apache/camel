@@ -38,6 +38,8 @@ public class NettyHttpConfiguration extends NettyConfiguration {
     private String path;
     private boolean disableStreamCache;
     private boolean send503whenSuspended = true;
+    private int chunkedMaxContentLength = 1024 * 1024;
+    private boolean chunked = true;
 
     public NettyHttpConfiguration() {
         // we need sync=true as http is request/reply by nature
@@ -142,4 +144,21 @@ public class NettyHttpConfiguration extends NettyConfiguration {
     public void setSend503whenSuspended(boolean send503whenSuspended) {
         this.send503whenSuspended = send503whenSuspended;
     }
+
+    public boolean isChunked() {
+        return chunked;
+    }
+
+    public void setChunked(boolean chunked) {
+        this.chunked = chunked;
+    }
+
+    public int getChunkedMaxContentLength() {
+        return chunkedMaxContentLength;
+    }
+
+    public void setChunkedMaxContentLength(int chunkedMaxContentLength) {
+        this.chunkedMaxContentLength = chunkedMaxContentLength;
+    }
+
 }

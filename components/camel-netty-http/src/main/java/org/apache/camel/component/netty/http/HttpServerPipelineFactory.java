@@ -45,7 +45,7 @@ public class HttpServerPipelineFactory extends ServerPipelineFactory {
     private static final Logger LOG = LoggerFactory.getLogger(HttpServerPipelineFactory.class);
     protected NettyHttpConsumer consumer;
     protected SSLContext sslContext;
-    protected NettyServerBootstrapConfiguration configuration;
+    protected NettyHttpConfiguration configuration;
 
     public HttpServerPipelineFactory() {
         // default constructor needed
@@ -84,7 +84,7 @@ public class HttpServerPipelineFactory extends ServerPipelineFactory {
         }
 
         pipeline.addLast("decoder", new HttpRequestDecoder());
-        pipeline.addLast("aggregator", new HttpChunkAggregator(1048576));
+        pipeline.addLast("aggregator", new HttpChunkAggregator(configuration.getChunkedMaxContentLength()));
 
         pipeline.addLast("encoder", new HttpResponseEncoder());
         if (supportCompressed()) {
