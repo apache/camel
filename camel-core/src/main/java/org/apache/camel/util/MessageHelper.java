@@ -152,10 +152,43 @@ public final class MessageHelper {
     }
 
     /**
+     * Extracts the value for logging purpose.
+     * <p/>
+     * Will clip the value if its too big for logging.
+     *
+     * @see org.apache.camel.Exchange#LOG_DEBUG_BODY_STREAMS
+     * @see org.apache.camel.Exchange#LOG_DEBUG_BODY_MAX_CHARS
+     * @param value   the value
+     * @param message the message
+     * @return the logging message
+     */
+    public static String extractValueForLogging(Object value, Message message) {
+        boolean streams = false;
+        if (message.getExchange() != null) {
+            String property = message.getExchange().getContext().getProperty(Exchange.LOG_DEBUG_BODY_STREAMS);
+            if (property != null) {
+                streams = message.getExchange().getContext().getTypeConverter().convertTo(Boolean.class, message.getExchange(), property);
+            }
+        }
+
+        // default to 1000 chars
+        int maxChars = 1000;
+
+        if (message.getExchange() != null) {
+            String property = message.getExchange().getContext().getProperty(Exchange.LOG_DEBUG_BODY_MAX_CHARS);
+            if (property != null) {
+                maxChars = message.getExchange().getContext().getTypeConverter().convertTo(Integer.class, property);
+            }
+        }
+
+        return extractValueForLogging(value, message, "", streams, false, maxChars);
+    }
+
+    /**
      * Extracts the body for logging purpose.
      * <p/>
      * Will clip the body if its too big for logging.
-     * 
+     *
      * @see org.apache.camel.Exchange#LOG_DEBUG_BODY_STREAMS
      * @see org.apache.camel.Exchange#LOG_DEBUG_BODY_MAX_CHARS
      * @param message the message
@@ -198,11 +231,28 @@ public final class MessageHelper {
      * @return the logging message
      */
     public static String extractBodyForLogging(Message message, String prepend, boolean allowStreams, boolean allowFiles, int maxChars) {
+        return extractValueForLogging(message.getBody(), message, prepend, allowStreams, allowFiles, maxChars);
+    }
+
+    /**
+     * Extracts the value for logging purpose.
+     * <p/>
+     * Will clip the value if its too big for logging.
+     *
+     * @see org.apache.camel.Exchange#LOG_DEBUG_BODY_MAX_CHARS
+     * @param obj     the value
+     * @param message the message
+     * @param prepend a message to prepend
+     * @param allowStreams whether or not streams is allowed
+     * @param allowFiles whether or not files is allowed (currently not in use)
+     * @param maxChars limit to maximum number of chars. Use 0 for not limit, and -1 for turning logging message body off.
+     * @return the logging message
+     */
+    public static String extractValueForLogging(Object obj, Message message, String prepend, boolean allowStreams, boolean allowFiles, int maxChars) {
         if (maxChars < 0) {
             return prepend + "[Body is not logged]";
         }
 
-        Object obj = message.getBody();
         if (obj == null) {
             return prepend + "[Body is null]";
         }
