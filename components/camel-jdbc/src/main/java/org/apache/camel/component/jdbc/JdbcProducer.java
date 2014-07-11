@@ -67,8 +67,6 @@ public class JdbcProducer extends DefaultProducer {
         } else {
             processingSqlWithoutSettingAutoCommit(exchange);
         }
-        // populate headers
-        exchange.getOut().getHeaders().putAll(exchange.getIn().getHeaders());
     }
 
     private void processingSqlBySettingAutoCommit(Exchange exchange) throws Exception {
@@ -141,6 +139,9 @@ public class JdbcProducer extends DefaultProducer {
                 setResultSet(exchange, rs);
             } else {
                 int updateCount = ps.getUpdateCount();
+                // preserve headers
+                exchange.getOut().getHeaders().putAll(exchange.getIn().getHeaders());
+                // and then set the new header
                 exchange.getOut().setHeader(JdbcConstants.JDBC_UPDATE_COUNT, updateCount);
             }
         } finally {
@@ -262,6 +263,9 @@ public class JdbcProducer extends DefaultProducer {
      * Sets the result from the ResultSet to the Exchange as its OUT body.
      */
     protected void setResultSet(Exchange exchange, ResultSet rs) throws SQLException {
+        // preserve headers
+        exchange.getOut().getHeaders().putAll(exchange.getIn().getHeaders());
+
         JdbcOutputType outputType = getEndpoint().getOutputType();
 
         if (outputType == JdbcOutputType.SelectList) {
