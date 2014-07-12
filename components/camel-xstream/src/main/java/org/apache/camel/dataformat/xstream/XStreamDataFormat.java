@@ -44,6 +44,8 @@ import org.apache.camel.util.IOHelper;
 public class XStreamDataFormat extends AbstractXStreamWrapper  {
     String encoding;
     
+    int mode;
+    
     public XStreamDataFormat() {
     }
 
@@ -59,7 +61,15 @@ public class XStreamDataFormat extends AbstractXStreamWrapper  {
         return encoding;
     }
 
-    /**
+    public int getMode() {
+		return mode;
+	}
+
+	public void setMode(int mode) {
+		this.mode = mode;
+	}
+
+	/**
      * A factory method which takes a collection of types to be annotated
      */
     public static XStreamDataFormat processAnnotations(ClassResolver resolver, Iterable<Class<?>> types) {
