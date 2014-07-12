@@ -27,6 +27,8 @@ import org.apache.camel.component.netty.NettyEndpoint;
 import org.apache.camel.impl.SynchronousDelegateProducer;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
+import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
 import org.apache.camel.util.ObjectHelper;
 import org.jboss.netty.channel.ChannelHandlerContext;
 import org.jboss.netty.channel.MessageEvent;
@@ -37,12 +39,15 @@ import org.slf4j.LoggerFactory;
 /**
  * HTTP based {@link NettyEndpoint}
  */
+@UriEndpoint(scheme = "netty-http", consumerClass = NettyHttpConsumer.class)
 public class NettyHttpEndpoint extends NettyEndpoint implements HeaderFilterStrategyAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(NettyHttpEndpoint.class);
     private NettyHttpBinding nettyHttpBinding;
     private HeaderFilterStrategy headerFilterStrategy;
+    @UriParam
     private boolean traceEnabled;
+    @UriParam
     private String httpMethodRestrict;
     private NettySharedHttpServer nettySharedHttpServer;
     private NettyHttpSecurityConfiguration securityConfiguration;

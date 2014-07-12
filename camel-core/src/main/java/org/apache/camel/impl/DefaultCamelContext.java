@@ -1062,6 +1062,8 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
             return "gae/" + componentName.substring(1);
         } else if ("atmosphere-websocket".equals(componentName)) {
             return "atmosphere/websocket";
+        } else if ("netty-http".equals(componentName)) {
+            return "netty/http";
         }
         return componentName.replaceAll("-", "");
     }
