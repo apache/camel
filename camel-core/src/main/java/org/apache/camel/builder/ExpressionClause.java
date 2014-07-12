@@ -162,7 +162,7 @@ public class ExpressionClause<T> extends ExpressionDefinition {
 
     /**
      * Evaluates an expression using the <a
-     * href="http://camel.apache.org/bean-language.html>bean language</a>
+     * href="http://camel.apache.org/bean-language.html">bean language</a>
      * which basically means the bean is invoked to determine the expression
      * value.
      * 
@@ -175,7 +175,7 @@ public class ExpressionClause<T> extends ExpressionDefinition {
     
     /**
      * Evaluates an expression using the <a
-     * href="http://camel.apache.org/bean-language.html>bean language</a>
+     * href="http://camel.apache.org/bean-language.html">bean language</a>
      * which basically means the bean is invoked to determine the expression
      * value.
      *
@@ -188,7 +188,7 @@ public class ExpressionClause<T> extends ExpressionDefinition {
 
     /**
      * Evaluates an expression using the <a
-     * href="http://camel.apache.org/bean-language.html>bean language</a>
+     * href="http://camel.apache.org/bean-language.html">bean language</a>
      * which basically means the bean is invoked to determine the expression
      * value.
      * 
@@ -201,7 +201,7 @@ public class ExpressionClause<T> extends ExpressionDefinition {
 
     /**
      * Evaluates an expression using the <a
-     * href="http://camel.apache.org/bean-language.html>bean language</a>
+     * href="http://camel.apache.org/bean-language.html">bean language</a>
      * which basically means the bean is invoked to determine the expression
      * value.
      * 
@@ -215,7 +215,7 @@ public class ExpressionClause<T> extends ExpressionDefinition {
     
     /**
      * Evaluates an expression using the <a
-     * href="http://camel.apache.org/bean-language.html>bean language</a>
+     * href="http://camel.apache.org/bean-language.html">bean language</a>
      * which basically means the bean is invoked to determine the expression
      * value.
      *
@@ -229,7 +229,7 @@ public class ExpressionClause<T> extends ExpressionDefinition {
 
     /**
      * Evaluates an expression using the <a
-     * href="http://camel.apache.org/bean-language.html>bean language</a>
+     * href="http://camel.apache.org/bean-language.html">bean language</a>
      * which basically means the bean is invoked to determine the expression
      * value.
      * 
