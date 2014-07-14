@@ -33,8 +33,8 @@ import java.util.List;
 
 public class SolrUpdateTest extends SolrComponentTestSupport {
 
-    public SolrUpdateTest(Boolean useHttps) {
-		super(useHttps);
+    public SolrUpdateTest(SolrFixtures.TestServerType serverToTest) {
+		super(serverToTest);
 		// TODO Auto-generated constructor stub
 	}
 

@@ -21,8 +21,8 @@ import org.junit.Test;
 
 public class SolrAddBeanTest extends SolrComponentTestSupport {
 
-    public SolrAddBeanTest(Boolean useHttps) {
-		super(useHttps);
+    public SolrAddBeanTest(SolrFixtures.TestServerType serverToTest) {
+		super(serverToTest);
 	}
 
 	@Test

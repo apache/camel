@@ -20,8 +20,8 @@ import org.junit.Test;
 
 public class SolrTransactionsTest extends SolrComponentTestSupport {
 
-    public SolrTransactionsTest(Boolean useHttps) {
-		super(useHttps);
+    public SolrTransactionsTest(SolrFixtures.TestServerType serverToTest) {
+		super(serverToTest);
 		// TODO Auto-generated constructor stub
 	}
 

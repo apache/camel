@@ -54,8 +54,8 @@ public abstract class SolrComponentTestSupport extends SolrTestSupport {
     	return Arrays.asList(new Object[][] {{true}, {false}});
     }
     
-    public SolrComponentTestSupport(Boolean useHttps) {
-    	this.solrFixtures = new SolrFixtures(useHttps);
+    public SolrComponentTestSupport(SolrFixtures.TestServerType serverToTest) {
+    	this.solrFixtures = new SolrFixtures(serverToTest);
     }
     
     String solrRouteUri() {
@@ -108,7 +108,9 @@ public abstract class SolrComponentTestSupport extends SolrTestSupport {
     
     @Parameters
     public static Collection<Object[]> serverTypes() {
-    	Object[][] serverTypes = {{true}, {false}};
+    	Object[][] serverTypes = {{SolrFixtures.TestServerType.USE_CLOUD},
+    							  {SolrFixtures.TestServerType.USE_HTTPS},
+    							  {SolrFixtures.TestServerType.USE_HTTP}};
     	return Arrays.asList(serverTypes);
     }
 

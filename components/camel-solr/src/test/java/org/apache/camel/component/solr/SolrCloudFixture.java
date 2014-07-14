@@ -155,11 +155,13 @@ public class SolrCloudFixture {
 				System.out.println("PORTT" + jetty.getLocalPort());
 			}
 		}
+		
 
 		solrClient = new CloudSolrServer(zkAddr, true);
 		solrClient.connect();
 
 		createCollection(solrClient, "collection1", 1, 1, "conf1");
+		Thread.sleep(1000); // takes some time to setup the collection... otherwise you'll get no live solr servers		
 		solrClient.setDefaultCollection("collection1");
 
 		SolrInputDocument doc = new SolrInputDocument();
@@ -169,13 +171,12 @@ public class SolrCloudFixture {
 		solrClient.commit();
 	}
 
-	public void teardown() {
-		System.clearProperty("zkHost");
-		System.clearProperty("solr.test.sys.prop1");
-		System.clearProperty("solr.test.sys.prop2");
-		System.clearProperty("solrcloud.skip.autorecovery");
-		System.clearProperty("jetty.port");
-
+	public void teardown() throws Exception {
+		solrClient.shutdown();
+		miniCluster.shutdown();
+		
+		solrClient = null;
+		miniCluster = null;
 	}
 
 }

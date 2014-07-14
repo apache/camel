@@ -21,8 +21,8 @@ import org.junit.Test;
 
 public class SolrDeleteTest extends SolrComponentTestSupport {
 
-    public SolrDeleteTest(Boolean useHttps) {
-		super(useHttps);
+    public SolrDeleteTest(SolrFixtures.TestServerType serverToTest) {
+		super(serverToTest);
 		// TODO Auto-generated constructor stub
 	}
 
