@@ -26,14 +26,14 @@ public final class JcloudsConstants {
     public static final String NODE_STATE = "CamelJcloudsNodeState";
 
     public static final String OPERATION = "CamelJcloudsOperation";
-    public static final String PUT = "CamelJcloudsPut";
-    public static final String GET = "CamelJcloudsGet";
-    public static final String LIST_IMAGES = "CamelJcloudsListImages";
-    public static final String LIST_HARDWARE = "CamelJcloudsListHardware";
-    public static final String LIST_NODES = "CamelJcloudsListNodes";
-    public static final String CREATE_NODE = "CamelJcloudsCreateNode";
-    public static final String DESTROY_NODE = "CamelJcloudsDestroyNode";
-    public static final String RUN_SCRIPT = "CamelJcloudsRunScript";
+    public static final String PUT = "Put";
+    public static final String GET = "Get";
+    public static final String LIST_IMAGES = "ListImages";
+    public static final String LIST_HARDWARE = "ListHardware";
+    public static final String LIST_NODES = "ListNodes";
+    public static final String CREATE_NODE = "CreateNode";
+    public static final String DESTROY_NODE = "DestroyNode";
+    public static final String RUN_SCRIPT = "RunScript";
     
     public static final String CONTENT_LANGUAGE = "CamelJcloudsContentLanguage";
     public static final String CONTENT_DISPOSITION = "CamelJcloudsContentDisposition";
