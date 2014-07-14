@@ -38,10 +38,9 @@ public class SolrFixtures {
 		if (serverType == TestServerType.USE_HTTPS) {
 			return "solrs://localhost:" + httpsPort + "/solr";
 		} else if (serverType == TestServerType.USE_CLOUD) {
-			String zkHostStr = cloudFixture.miniCluster.getZkServer()
-					.getZkHost();
+			String zkAddrStr = cloudFixture.miniCluster.getZkServer().getZkAddress();
 			return "solrCloud://localhost:" + httpsPort + "/solr?zkHost="
-					+ zkHostStr + "&collection=collection1";
+					+ zkAddrStr + "&collection=collection1";
 		} else {
 			return "solr://localhost:" + port + "/solr";
 		}
