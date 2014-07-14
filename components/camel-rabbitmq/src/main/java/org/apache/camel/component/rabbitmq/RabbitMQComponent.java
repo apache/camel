@@ -46,6 +46,9 @@ public class RabbitMQComponent extends DefaultComponent {
         URI host = new URI("http://" + remaining);
         String hostname = host.getHost();
         int portNumber = host.getPort();
+        if (host.getPath().trim().length() <= 1) {
+            throw new IllegalArgumentException("No URI path as the exchangeName for the RabbitMQEndpoint, the URI is " + uri);
+        }
         String exchangeName = host.getPath().substring(1);
 
         // ConnectionFactory reference
