@@ -45,7 +45,7 @@
             <artifactId>spring-data-redis</artifactId>
             <version>${spring-data-redis-version}</version>
         </dependency>
-
+        <!-- need to add the dependency of jedis as redis client lib -->
         <dependency>
             <groupId>org.apache.camel</groupId>
             <artifactId>camel-test</artifactId>
@@ -69,6 +69,11 @@
         <dependency>
             <groupId>log4j</groupId>
             <artifactId>log4j</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>commons-pool</groupId>
+            <artifactId>commons-pool</artifactId>
             <scope>test</scope>
         </dependency>
     </dependencies>

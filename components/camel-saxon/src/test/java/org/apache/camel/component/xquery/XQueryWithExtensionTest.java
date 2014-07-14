@@ -101,6 +101,9 @@ public class XQueryWithExtensionTest extends CamelTestSupport {
         @Override
         public ExtensionFunctionCall makeCallExpression() {
             return new ExtensionFunctionCall() {
+
+                private static final long serialVersionUID = 1L;
+
                 @Override
                 public Sequence call(XPathContext xPathContext, Sequence[] sequences) throws XPathException {
                     // get value of first arg passed to the function

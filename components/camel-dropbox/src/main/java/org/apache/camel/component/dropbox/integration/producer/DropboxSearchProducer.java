@@ -21,12 +21,9 @@ import org.apache.camel.component.dropbox.DropboxConfiguration;
 import org.apache.camel.component.dropbox.DropboxEndpoint;
 import org.apache.camel.component.dropbox.core.DropboxAPIFacade;
 import org.apache.camel.component.dropbox.dto.DropboxResult;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class DropboxSearchProducer extends DropboxProducer {
-    private static final transient Logger LOG = LoggerFactory.getLogger(DropboxSearchProducer.class);
-
+    
     public DropboxSearchProducer(DropboxEndpoint endpoint, DropboxConfiguration configuration) {
         super(endpoint, configuration);
     }

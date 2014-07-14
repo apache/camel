@@ -21,15 +21,16 @@ import org.apache.camel.Endpoint;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
 
-public abstract class HeaderFilterStrategyComponent extends DefaultComponent implements HeaderFilterStrategyAware {
+public abstract class HeaderFilterStrategyComponent extends UriEndpointComponent implements HeaderFilterStrategyAware {
     
     private HeaderFilterStrategy headerFilterStrategy;
     
-    public HeaderFilterStrategyComponent() {
+    public HeaderFilterStrategyComponent(Class<? extends Endpoint> endpointClass) {
+        super(endpointClass);
     }
 
-    public HeaderFilterStrategyComponent(CamelContext context) {
-        super(context);
+    public HeaderFilterStrategyComponent(CamelContext context, Class<? extends Endpoint> endpointClass) {
+        super(context, endpointClass);
     }
     
     public HeaderFilterStrategy getHeaderFilterStrategy() {

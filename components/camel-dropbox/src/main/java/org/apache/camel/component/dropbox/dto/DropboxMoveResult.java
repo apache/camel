@@ -18,14 +18,10 @@ package org.apache.camel.component.dropbox.dto;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.component.dropbox.util.DropboxResultHeader;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 
 public class DropboxMoveResult extends DropboxResult {
-
-    private static final transient Logger LOG = LoggerFactory.getLogger(DropboxMoveResult.class);
-
+    
     /**
      * Object payload contained in Exchange
      * Exchange Header and Body contains the mode path

@@ -46,6 +46,7 @@ import org.apache.hadoop.hbase.filter.FilterList;
  * The HBase producer.
  */
 public class HBaseProducer extends DefaultProducer implements ServicePoolAware {
+
     private HBaseEndpoint endpoint;
     private String tableName;
     private final HTablePool tablePool;
@@ -58,7 +59,6 @@ public class HBaseProducer extends DefaultProducer implements ServicePoolAware {
         this.tablePool = tablePool;
         this.rowModel = endpoint.getRowModel();
     }
-
 
     public void process(Exchange exchange) throws Exception {
         HTableInterface table = tablePool.getTable(tableName.getBytes());
@@ -101,10 +101,9 @@ public class HBaseProducer extends DefaultProducer implements ServicePoolAware {
                 mappingStrategy.applyScanResults(exchange.getOut(), new HBaseData(scanOperationResult));
             }
         } finally {
-            tablePool.putTable(table);
+            table.close();
         }
     }
-
 
     /**
      * Creates an HBase {@link Put} on a specific row, using a collection of values (family/column/value pairs).
@@ -179,7 +178,6 @@ public class HBaseProducer extends DefaultProducer implements ServicePoolAware {
         return resultRow;
     }
 
-
     /**
      * Creates an HBase {@link Delete} on a specific row, using a collection of values (family/column/value pairs).
      *
@@ -191,7 +189,6 @@ public class HBaseProducer extends DefaultProducer implements ServicePoolAware {
         ObjectHelper.notNull(hRow.getId(), "HBase row id");
         return new Delete(endpoint.getCamelContext().getTypeConverter().convertTo(byte[].class, hRow.getId()));
     }
-
 
     /**
      * Perfoms an HBase {@link Get} on a specific row, using a collection of values (family/column/value pairs).
@@ -246,7 +243,6 @@ public class HBaseProducer extends DefaultProducer implements ServicePoolAware {
         }
         return rowSet;
     }
-
 
     /**
      * This methods fill possible gaps in the {@link Exchange} headers, with values passed from the Endpoint.

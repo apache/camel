@@ -43,7 +43,6 @@ public class FileComponent extends GenericFileComponent<File> implements Endpoin
     public static final String DEFAULT_LOCK_FILE_POSTFIX = ".camelLock";
 
     public FileComponent() {
-        super();
         setEndpointClass(FileEndpoint.class);
     }
 

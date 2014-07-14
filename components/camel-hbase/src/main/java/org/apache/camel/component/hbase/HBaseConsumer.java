@@ -149,7 +149,6 @@ public class HBaseConsumer extends ScheduledBatchPollingConsumer {
         }
     }
 
-
     @Override
     public int processBatch(Queue<Object> exchanges) throws Exception {
         int total = exchanges.size();
@@ -206,5 +205,3 @@ public class HBaseConsumer extends ScheduledBatchPollingConsumer {
         this.rowModel = rowModel;
     }
 }
-
-

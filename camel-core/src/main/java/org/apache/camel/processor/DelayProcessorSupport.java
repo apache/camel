@@ -90,30 +90,8 @@ public abstract class DelayProcessorSupport extends DelegateAsyncProcessor {
         this.executorService = executorService;
         this.shutdownExecutorService = shutdownExecutorService;
     }
-
-    @Override
-    public boolean process(Exchange exchange, AsyncCallback callback) {
-        if (!isRunAllowed()) {
-            exchange.setException(new RejectedExecutionException("Run is not allowed"));
-            callback.done(true);
-            return true;
-        }
-
-        // calculate delay and wait
-        long delay;
-        try {
-            delay = calculateDelay(exchange);
-            if (delay <= 0) {
-                // no delay then continue routing
-                log.trace("No delay for exchangeId: {}", exchange.getExchangeId());
-                return processor.process(exchange, callback);
-            }
-        } catch (Throwable e) {
-            exchange.setException(e);
-            callback.done(true);
-            return true;
-        }
-
+    
+    protected boolean processDelay(Exchange exchange, AsyncCallback callback, long delay) {
         if (!isAsyncDelayed() || exchange.isTransacted()) {
             // use synchronous delay (also required if using transactions)
             try {
@@ -162,6 +140,32 @@ public abstract class DelayProcessorSupport extends DelegateAsyncProcessor {
                 return true;
             }
         }
+    }
+
+    @Override
+    public boolean process(Exchange exchange, AsyncCallback callback) {
+        if (!isRunAllowed()) {
+            exchange.setException(new RejectedExecutionException("Run is not allowed"));
+            callback.done(true);
+            return true;
+        }
+
+        // calculate delay and wait
+        long delay;
+        try {
+            delay = calculateDelay(exchange);
+            if (delay <= 0) {
+                // no delay then continue routing
+                log.trace("No delay for exchangeId: {}", exchange.getExchangeId());
+                return processor.process(exchange, callback);
+            }
+        } catch (Throwable e) {
+            exchange.setException(e);
+            callback.done(true);
+            return true;
+        }
+        
+        return processDelay(exchange, callback, delay);
     }
 
     public boolean isAsyncDelayed() {

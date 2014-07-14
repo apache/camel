@@ -16,32 +16,22 @@
  */
 package org.apache.camel.component.rmi;
 
-import java.net.URL;
-import java.net.URLClassLoader;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
-import org.apache.camel.test.AvailablePortFinder;
-import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 /**
  * @version 
  */
-public class RmiIllegalArgumentExceptionTest extends CamelTestSupport {
+public class RmiIllegalArgumentExceptionTest extends RmiRouteTestSupport {
+    private boolean created;
 
-    private static boolean created;
-
-    private int port;
-
-    protected int getPort() {
-        if (port == 0) {
-            port = AvailablePortFinder.getNextAvailable(37502);
-        }
-        return port;
+    protected int getStartPort() {
+        return 37502;
     }
 
     @Override
@@ -97,23 +87,4 @@ public class RmiIllegalArgumentExceptionTest extends CamelTestSupport {
         };
     }
 
-    private boolean classPathHasSpaces() {
-        ClassLoader cl = getClass().getClassLoader();
-        if (cl instanceof URLClassLoader) {
-            URLClassLoader ucl = (URLClassLoader)cl;
-            URL[] urls = ucl.getURLs();
-            for (URL url : urls) {
-                if (url.getPath().contains(" ")) {
-                    log.error("=======================================================================");
-                    log.error(" TEST Skipped: " + this.getClass().getName());
-                    log.error("   Your probably on windows.  We detected that the classpath");
-                    log.error("   has a space in it.  Try running maven with the following option: ");
-                    log.error("   -Dmaven.repo.local=C:\\DOCUME~1\\userid\\.m2\\repository");
-                    log.error("=======================================================================");
-                    return true;
-                }
-            }
-        }
-        return false;
-    }
 }

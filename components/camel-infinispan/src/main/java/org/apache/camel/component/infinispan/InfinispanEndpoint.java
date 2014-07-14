@@ -20,8 +20,12 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
 
+@UriEndpoint(scheme = "infinispan", consumerClass = InfinispanConsumer.class)
 public class InfinispanEndpoint extends DefaultEndpoint {
+    @UriParam
     private InfinispanConfiguration configuration;
 
     public InfinispanEndpoint() {

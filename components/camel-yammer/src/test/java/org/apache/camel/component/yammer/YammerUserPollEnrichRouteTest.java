@@ -25,7 +25,6 @@ import org.junit.Test;
 
 public class YammerUserPollEnrichRouteTest extends YammerComponentTestSupport {
 
-    @SuppressWarnings("unchecked")
     @Test
     public void testConsumeAllUsers() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");

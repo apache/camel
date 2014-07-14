@@ -28,5 +28,34 @@
       </unmarshal>
       <to uri="mock:result" />
     </route>
+    <route>
+      <from uri="direct:start2" />
+      <unmarshal>
+        <csv delimiter="|" useMaps="true" skipFirstLine="true"/>
+      </unmarshal>
+      <to uri="mock:result" />
+    </route>
+    <route>
+      <from uri="direct:start3" />
+      <unmarshal>
+        <csv delimiter="|" useMaps="true" configRef="csvConfig" />
+      </unmarshal>
+      <to uri="mock:result" />
+    </route>
   </camelContext>
+  <bean id="csvConfig" class="org.apache.commons.csv.writer.CSVConfig">
+		<property name="fields">
+			<list>
+				<bean class="org.apache.commons.csv.writer.CSVField">
+					<property name="name" value="MyOrderId" />
+				</bean>
+				<bean class="org.apache.commons.csv.writer.CSVField">
+					<property name="name" value="MyItem" />
+				</bean>
+				<bean class="org.apache.commons.csv.writer.CSVField">
+					<property name="name" value="MyAmount" />
+				</bean>
+			</list>
+		</property>
+	</bean>
 </beans>

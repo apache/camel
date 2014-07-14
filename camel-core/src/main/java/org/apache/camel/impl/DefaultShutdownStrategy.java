@@ -27,7 +27,6 @@ import java.util.concurrent.ExecutionException;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Future;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.camel.CamelContext;
@@ -195,11 +194,11 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
 
             // if set, stop processing and return false to indicate that the shutdown is aborting
             if (!forceShutdown && abortAfterTimeout) {
-                LOG.warn("Timeout occurred. Aborting the shutdown now.");
+                LOG.warn("Timeout occurred. Aborting the shutdown now.  Some resources may still be running.");
                 return false;
             } else {
                 if (forceShutdown || shutdownNowOnTimeout) {
-                    LOG.warn("Timeout occurred. Forcing the routes to be shutdown now.");
+                    LOG.warn("Timeout occurred. Forcing the routes to be shutdown now.  Some resources may still be running.");
                     // force the routes to shutdown now
                     shutdownRoutesNow(routesOrdered);
 
@@ -210,7 +209,7 @@ public class DefaultShutdownStrategy extends ServiceSupport implements ShutdownS
                         }
                     }
                 } else {
-                    LOG.warn("Timeout occurred. Will ignore shutting down the remainder routes.");
+                    LOG.warn("Timeout occurred. Will ignore shutting down the remainder routes. Some resources may still be running.");
                 }
             }
         } finally {

@@ -37,7 +37,7 @@ public final class DropboxPropertyManager {
     }
 
     public String getProperty(String key) {
-        return (String)properties.getProperty(key);
+        return properties.getProperty(key);
     }
 
 

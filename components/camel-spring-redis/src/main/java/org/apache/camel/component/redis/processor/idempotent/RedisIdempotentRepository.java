@@ -54,7 +54,11 @@ public class RedisIdempotentRepository extends ServiceSupport implements Idempot
 
     @ManagedOperation(description = "Adds the key to the store")
     public boolean add(String key) {
-        return setOperations.add(processorName, key) != null;
+        if (!contains(key)) { 
+            return setOperations.add(processorName, key) != null;
+        } else {
+            return false;
+        }
     }
 
     @ManagedOperation(description = "Does the store contain the given key")

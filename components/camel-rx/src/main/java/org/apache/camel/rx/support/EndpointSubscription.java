@@ -26,7 +26,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.util.ServiceHelper;
 import rx.Observer;
 import rx.Subscription;
-import rx.util.functions.Func1;
+import rx.functions.Func1;
 
 /**
  * An RX {@link Subscription} on a Camel {@link Endpoint}

@@ -41,6 +41,8 @@ public class SoapJaxbDataFormat extends DataFormatDefinition {
     private String version;
     @XmlAttribute
     private String namespacePrefixRef;
+    @XmlAttribute
+    private String schema;
 
     public SoapJaxbDataFormat() {
         super("soapjaxb");
@@ -110,6 +112,14 @@ public class SoapJaxbDataFormat extends DataFormatDefinition {
     public void setNamespacePrefixRef(String namespacePrefixRef) {
         this.namespacePrefixRef = namespacePrefixRef;
     }
+    
+    public String getSchema() {
+        return schema;
+    }
+    
+    public void setSchema(String schema) {
+        this.schema = schema;
+    }
 
     @Override
     protected void configureDataFormat(DataFormat dataFormat, CamelContext camelContext) {
@@ -127,6 +137,9 @@ public class SoapJaxbDataFormat extends DataFormatDefinition {
         }
         if (namespacePrefixRef != null) {
             setProperty(camelContext, dataFormat, "namespacePrefixRef", namespacePrefixRef);
+        }
+        if (schema != null) {
+            setProperty(camelContext, dataFormat, "schema", schema);
         }
         setProperty(camelContext, dataFormat, "contextPath", contextPath);
     }

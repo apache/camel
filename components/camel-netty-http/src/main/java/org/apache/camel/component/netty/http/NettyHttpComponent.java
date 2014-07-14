@@ -50,6 +50,7 @@ public class NettyHttpComponent extends NettyComponent implements HeaderFilterSt
 
     public NettyHttpComponent() {
         // use the http configuration and filter strategy
+        super(NettyHttpEndpoint.class);
         setConfiguration(new NettyHttpConfiguration());
         setHeaderFilterStrategy(new NettyHttpHeaderFilterStrategy());
         setNettyHttpBinding(new DefaultNettyHttpBinding(getHeaderFilterStrategy()));
@@ -63,6 +64,8 @@ public class NettyHttpComponent extends NettyComponent implements HeaderFilterSt
         } else {
             config = new NettyHttpConfiguration();
         }
+
+        HeaderFilterStrategy headerFilterStrategy = resolveAndRemoveReferenceParameter(parameters, "headerFilterStrategy", HeaderFilterStrategy.class);
 
         // merge any custom bootstrap configuration on the config
         NettyServerBootstrapConfiguration bootstrapConfiguration = resolveAndRemoveReferenceParameter(parameters, "bootstrapConfiguration", NettyServerBootstrapConfiguration.class);
@@ -93,6 +96,7 @@ public class NettyHttpComponent extends NettyComponent implements HeaderFilterSt
 
         // create the address uri which includes the remainder parameters (which is not configuration parameters for this component)
         URI u = new URI(UnsafeUriCharactersEncoder.encodeHttpURI(remaining));
+        
         String addressUri = URISupport.createRemainingURI(u, parameters).toString();
 
         NettyHttpEndpoint answer = new NettyHttpEndpoint(addressUri, this, config);
@@ -105,7 +109,9 @@ public class NettyHttpComponent extends NettyComponent implements HeaderFilterSt
             DefaultNettyHttpBinding nettyHttpBinding = (DefaultNettyHttpBinding)getNettyHttpBinding();
             answer.setNettyHttpBinding(nettyHttpBinding.copy());
         }
-        if (answer.getHeaderFilterStrategy() == null) {
+        if (headerFilterStrategy != null) {
+            answer.setHeaderFilterStrategy(headerFilterStrategy);
+        } else if (answer.getHeaderFilterStrategy() == null) {
             answer.setHeaderFilterStrategy(getHeaderFilterStrategy());
         }
 

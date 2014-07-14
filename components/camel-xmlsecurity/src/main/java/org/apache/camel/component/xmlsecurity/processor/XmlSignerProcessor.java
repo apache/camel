@@ -174,7 +174,6 @@ public class XmlSignerProcessor extends XmlSignatureProcessor {
     private final XmlSignerConfiguration config;
 
     public XmlSignerProcessor(XmlSignerConfiguration config) {
-        super();
         this.config = config;
     }
 

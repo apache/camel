@@ -48,6 +48,14 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
     protected HttpBinding httpBinding;
     protected HttpConfiguration httpConfiguration;
 
+    public HttpComponent() {
+        super(HttpEndpoint.class);
+    }
+
+    public HttpComponent(Class<? extends HttpEndpoint> endpointClass) {
+        super(endpointClass);
+    }
+
     /**
      * Connects the URL specified on the endpoint to the specified processor.
      *

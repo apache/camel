@@ -31,7 +31,9 @@ case class SSplitDefinition(override val target: SplitDefinition)(implicit val b
   def aggregationStrategyRef(ref: String) = wrap(target.aggregationStrategyRef(ref))
   
   def parallelProcessing = wrap(target.parallelProcessing)
-  
+
+  def parallelAggregate = wrap(target.parallelAggregate)
+
   def streaming = wrap(target.streaming)
   
   def stopOnException = wrap(target.stopOnException)

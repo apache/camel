@@ -51,6 +51,14 @@ public class CxfEndpointTest extends Assert {
         + "&dataFormat=PAYLOAD";
 
     @Test
+    public void testSettingContinucationTimout() throws Exception {
+        CamelContext context = new DefaultCamelContext();
+        CxfEndpoint endpoint = context.getEndpoint(routerEndpointURI + "&continuationTimeout=800000",
+                                                   CxfEndpoint.class);
+        assertEquals("Get a wrong continucationTimeout value", 800000, endpoint.getContinuationTimeout());
+    }
+    
+    @Test
     public void testSpringCxfEndpoint() throws Exception {
 
         ClassPathXmlApplicationContext ctx =

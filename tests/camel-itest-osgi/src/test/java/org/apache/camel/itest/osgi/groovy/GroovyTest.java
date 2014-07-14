@@ -16,9 +16,11 @@
  */
 package org.apache.camel.itest.osgi.groovy;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.itest.osgi.OSGiIntegrationTestSupport;
+import org.apache.karaf.tooling.exam.options.KarafDistributionOption;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.Option;
@@ -38,7 +40,15 @@ public class GroovyTest extends OSGiIntegrationTestSupport {
         template.sendBody("direct:groovy", "Hello");
         result.assertIsSatisfied();
     }
-        
+
+    @Override
+    protected CamelContext createCamelContext() throws Exception {
+        CamelContext context = super.createCamelContext();
+        // without this, "groovy.lang.*" classes will be loaded by classloader of camel-spring bundle
+        context.setApplicationContextClassLoader(this.getClass().getClassLoader());
+        return context;
+    }
+
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
@@ -51,7 +61,7 @@ public class GroovyTest extends OSGiIntegrationTestSupport {
     public static Option[] configure() {
         Option[] options = combine(
             getDefaultCamelKarafOptions(),
-            // using the features to install the other camel components             
+            // using the features to install the other camel components
             loadCamelFeatures("camel-groovy"));
         
         return options;

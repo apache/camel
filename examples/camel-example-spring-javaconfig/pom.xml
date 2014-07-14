@@ -25,12 +25,21 @@
   </parent>
 
   <artifactId>camel-example-spring-javaconfig</artifactId>
-  <packaging>jar</packaging>
+  <packaging>bundle</packaging>
   <name>Camel :: Example :: Spring :: JavaConfig</name>
   <description>An example showing how to work with Camel and Spring Java Config</description>
 
   <properties>    
     <junit-version>4.8.1</junit-version>
+    <camel.osgi.export.pkg>org.apache.camel.example.spring.javaconfig</camel.osgi.export.pkg>
+     <!--We need to import the cglib packages here, and spring-core 3.2.x includes cglib  -->
+     <!--If the spring version is below 3.2.x, the import package should be changed to start with org.sf -->
+     <camel.osgi.import>
+        org.springframework.cglib.core,
+        org.springframework.cglib.proxy,
+        org.springframework.cglib.reflect,
+        *
+     </camel.osgi.import>
   </properties>
 
   <dependencies>

@@ -30,8 +30,6 @@ import org.apache.qpid.client.AMQConnectionFactory;
 
 /**
  * This component supports the AMQP protocol using the Client API of the Apache Qpid project.
- * 
- * @version 
  */
 public class AMQPComponent extends JmsComponent {
 
@@ -56,9 +54,11 @@ public class AMQPComponent extends JmsComponent {
         }
         return new AMQPComponent(ConnectionFactoryImpl.createFromURL(uri));
     }
+
     public static Component amqpComponentOld(String uri) throws URISyntaxException {
         return new AMQPComponent(new AMQConnectionFactory(uri));
     }
+
     public static Component amqpComponent(String uri) throws MalformedURLException {
         return new AMQPComponent(ConnectionFactoryImpl.createFromURL(uri));
     }

@@ -29,7 +29,6 @@ import org.restlet.Client;
 import org.restlet.Context;
 import org.restlet.Request;
 import org.restlet.Response;
-import org.restlet.Uniform;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

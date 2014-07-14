@@ -107,6 +107,7 @@ public class CamelBlueprint4Test extends OSGiBlueprintTestSupport {
                         .add("OSGI-INF/blueprint/test.xml", OSGiBlueprintTestSupport.class.getResource("blueprint-19.xml"))
                         .add("org/apache/camel/itest/osgi/blueprint/example.xsl", OSGiBlueprintTestSupport.class.getResource("example.xsl"))
                         .set(Constants.BUNDLE_SYMBOLICNAME, "CamelBlueprintTestBundle19")
+                        .set(Constants.DYNAMICIMPORT_PACKAGE, "*")
                         .build()).noStart(),
 
                 bundle(newBundle()

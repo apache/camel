@@ -16,8 +16,6 @@
  */
 package org.apache.camel.test.cxf.blueprint;
 
-import java.util.Properties;
-import org.apache.camel.component.cxf.CXFTestSupport;
 import org.apache.camel.component.cxf.jaxrs.CxfRsEndpoint;
 import org.apache.camel.test.blueprint.CamelBlueprintTestSupport;
 import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;

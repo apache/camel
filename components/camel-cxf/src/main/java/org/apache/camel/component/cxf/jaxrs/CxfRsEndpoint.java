@@ -23,7 +23,6 @@ import java.util.HashMap;
 import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
-import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Component;
@@ -31,11 +30,12 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.Service;
-import org.apache.camel.component.cxf.CxfEndpointUtils;
 import org.apache.camel.component.cxf.NullFaultListener;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
+import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.cxf.Bus;
 import org.apache.cxf.BusFactory;
@@ -52,8 +52,8 @@ import org.apache.cxf.message.Message;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+@UriEndpoint(scheme = "cxfrs", consumerClass = CxfRsConsumer.class)
 public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrategyAware, Service {
-    
     public enum BindingStyle {
         /**
          * <i>Only available for consumers.</i>
@@ -82,15 +82,26 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
     private List<Class<?>> resourceClasses;
     private HeaderFilterStrategy headerFilterStrategy;
     private CxfRsBinding binding;
+    @UriParam
     private boolean httpClientAPI = true;
+    @UriParam
     private String address;
+    @UriParam
     private boolean throwExceptionOnFailure = true;
+    @UriParam
     private int maxClientCacheSize = 10;
+    @UriParam
     private boolean loggingFeatureEnabled;
+    @UriParam
     private int loggingSizeLimit;
+    @UriParam
     private boolean skipFaultLogging;
+    @UriParam
     private BindingStyle bindingStyle = BindingStyle.Default;
-   
+    // The continuation timeout value for CXF continuation to use
+    @UriParam
+    private long continuationTimeout = 30000;
+    @UriParam
     private boolean isSetDefaultBus;
     
     private List<Feature> features = new ModCountCopyOnWriteArrayList<Feature>();
@@ -486,6 +497,15 @@ public class CxfRsEndpoint extends DefaultEndpoint implements HeaderFilterStrate
     @Override
     protected void doStop() throws Exception {
         // noop
+    }
+
+
+    public long getContinuationTimeout() {
+        return continuationTimeout;
+    }
+
+    public void setContinuationTimeout(long continuationTimeout) {
+        this.continuationTimeout = continuationTimeout;
     }
 
 

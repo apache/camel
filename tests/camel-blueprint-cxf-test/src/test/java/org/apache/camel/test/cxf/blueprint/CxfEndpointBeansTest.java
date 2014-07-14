@@ -28,13 +28,9 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.cxf.CXFTestSupport;
 import org.apache.camel.component.cxf.CxfEndpoint;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
-import org.apache.camel.component.cxf.jaxrs.CxfRsEndpoint;
 import org.apache.camel.test.blueprint.CamelBlueprintTestSupport;
 import org.apache.camel.util.URISupport;
-import org.apache.cxf.jaxrs.JAXRSServerFactoryBean;
-import org.apache.cxf.jaxrs.client.JAXRSClientFactoryBean;
 import org.apache.cxf.transport.http.HTTPException;
-
 import org.junit.Test;
 
 public class CxfEndpointBeansTest extends CamelBlueprintTestSupport {

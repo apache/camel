@@ -21,8 +21,8 @@ import java.util.List;
 
 public class ShutdownOrderBean {
 
-    private List start = new ArrayList();
-    private List shutdown = new ArrayList();
+    private List<String> start = new ArrayList<String>();
+    private List<String> shutdown = new ArrayList<String>();
 
     public void start(String name) {
         start.add(name);
@@ -32,11 +32,11 @@ public class ShutdownOrderBean {
         shutdown.add(name);
     }
 
-    public List getStart() {
+    public List<String> getStart() {
         return start;
     }
 
-    public List getShutdown() {
+    public List<String> getShutdown() {
         return shutdown;
     }
 }

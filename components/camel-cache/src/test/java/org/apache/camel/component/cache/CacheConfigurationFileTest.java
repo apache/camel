@@ -29,11 +29,10 @@ public class CacheConfigurationFileTest extends CamelTestSupport {
     private CacheComponent cache;
 
     @Test
-    @SuppressWarnings("unchecked")
     public void testConfigurationFile() throws Exception {
         getMockEndpoint("mock:foo").expectedMessageCount(1);
 
-        Map map = new HashMap();
+        Map<String, Object> map = new HashMap<String, Object>();
         map.put(CacheConstants.CACHE_KEY, "myKey");
         map.put(CacheConstants.CACHE_OPERATION, "ADD");
         template.sendBodyAndHeaders("direct:start", "Hello World", map);

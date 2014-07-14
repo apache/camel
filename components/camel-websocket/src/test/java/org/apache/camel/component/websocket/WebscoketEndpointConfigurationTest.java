@@ -50,7 +50,7 @@ public class WebscoketEndpointConfigurationTest extends CamelTestSupport {
         assertEquals(WebsocketConsumer.class, consumer.getClass());
         
         // just check the servlet initial parameters
-        ConnectorRef conector = component.getConnectors().values().iterator().next();
+        ConnectorRef conector = WebsocketComponent.getConnectors().values().iterator().next();
         
         ServletContextHandler context = (ServletContextHandler)conector.server.getHandler();
         String buffersize = context.getInitParameter("bufferSize");

@@ -25,6 +25,8 @@ import org.apache.camel.component.http4.helper.HttpHelper;
 import org.apache.camel.impl.DefaultPollingEndpoint;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
+import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.http.HttpHost;
 import org.apache.http.client.CookieStore;
@@ -42,6 +44,7 @@ import org.slf4j.LoggerFactory;
  *
  * @version 
  */
+@UriEndpoint(scheme = "http4", consumerClass = HttpConsumer.class)
 public class HttpEndpoint extends DefaultPollingEndpoint implements HeaderFilterStrategyAware {
 
     private static final Logger LOG = LoggerFactory.getLogger(HttpEndpoint.class);
@@ -54,16 +57,26 @@ public class HttpEndpoint extends DefaultPollingEndpoint implements HeaderFilter
     private HttpClientConnectionManager clientConnectionManager;
     private HttpClientBuilder clientBuilder;
     private HttpClient httpClient;
+    @UriParam
     private boolean throwExceptionOnFailure = true;
+    @UriParam
     private boolean bridgeEndpoint;
+    @UriParam
     private boolean matchOnUriPrefix;
+    @UriParam
     private boolean chunked = true;
+    @UriParam
     private boolean disableStreamCache;
+    @UriParam
     private boolean transferException;
+    @UriParam
     private boolean traceEnabled;
+    @UriParam
     private boolean authenticationPreemptive;
+    @UriParam
     private String httpMethodRestrict;
     private UrlRewrite urlRewrite;
+    @UriParam
     private boolean clearExpiredCookies = true;
     private CookieStore cookieStore = new BasicCookieStore();
     

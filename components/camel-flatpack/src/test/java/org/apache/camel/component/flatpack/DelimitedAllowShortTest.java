@@ -44,6 +44,9 @@ public class DelimitedAllowShortTest extends AbstractJUnit4SpringContextTests {
     @EndpointInject(uri = "mock:results-df")
     protected MockEndpoint resultsdf;
 
+    @EndpointInject(uri = "mock:results-xml")
+    protected MockEndpoint resultsxml;
+
     protected String[] expectedItemDescriptions = {"SOME VALVE", "AN ENGINE", "A BELT", "A BOLT"};
 
     @Test
@@ -70,6 +73,20 @@ public class DelimitedAllowShortTest extends AbstractJUnit4SpringContextTests {
         resultsdf.assertIsSatisfied();
 
         Exchange exchange = resultsdf.getReceivedExchanges().get(0);
+        DataSetList data = exchange.getIn().getBody(DataSetList.class);
+        int counter = 0;
+        for (Map<String, Object> map : data) {
+            assertEquals("ITEM_DESC", expectedItemDescriptions[counter], map.get("ITEM_DESC"));
+            counter++;
+        }
+    }
+
+    @Test
+    public void testFlatpackDataFormatXML() throws Exception {
+        resultsxml.expectedMessageCount(1);
+        resultsxml.assertIsSatisfied();
+
+        Exchange exchange = resultsxml.getReceivedExchanges().get(0);
         DataSetList data = exchange.getIn().getBody(DataSetList.class);
         int counter = 0;
         for (Map<String, Object> map : data) {

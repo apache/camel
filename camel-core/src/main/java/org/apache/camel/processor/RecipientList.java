@@ -32,7 +32,6 @@ import org.apache.camel.processor.aggregate.AggregationStrategy;
 import org.apache.camel.processor.aggregate.UseLatestAggregationStrategy;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.AsyncProcessorHelper;
-import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
@@ -58,6 +57,7 @@ public class RecipientList extends ServiceSupport implements AsyncProcessor {
     private Expression expression;
     private final String delimiter;
     private boolean parallelProcessing;
+    private boolean parallelAggregate;
     private boolean stopOnException;
     private boolean ignoreInvalidEndpoints;
     private boolean streaming;
@@ -134,7 +134,7 @@ public class RecipientList extends ServiceSupport implements AsyncProcessor {
 
         RecipientListProcessor rlp = new RecipientListProcessor(exchange.getContext(), producerCache, iter, getAggregationStrategy(),
                 isParallelProcessing(), getExecutorService(), isShutdownExecutorService(),
-                isStreaming(), isStopOnException(), getTimeout(), getOnPrepare(), isShareUnitOfWork()) {
+                isStreaming(), isStopOnException(), getTimeout(), getOnPrepare(), isShareUnitOfWork(), isParallelAggregate()) {
             @Override
             protected synchronized ExecutorService createAggregateExecutorService(String name) {
                 // use a shared executor service to avoid creating new thread pools
@@ -225,6 +225,14 @@ public class RecipientList extends ServiceSupport implements AsyncProcessor {
 
     public void setParallelProcessing(boolean parallelProcessing) {
         this.parallelProcessing = parallelProcessing;
+    }
+
+    public boolean isParallelAggregate() {
+        return parallelAggregate;
+    }
+
+    public void setParallelAggregate(boolean parallelAggregate) {
+        this.parallelAggregate = parallelAggregate;
     }
 
     public boolean isStopOnException() {

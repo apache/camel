@@ -143,6 +143,20 @@ public class SimpleTest extends LanguageTestSupport {
         assertIsInstanceOf(Integer.class, val);
         assertEquals(123, val);
     }
+    
+    public void testBodyExpressionWithArray() throws Exception {
+        exchange.getIn().setBody(new MyClass());
+        Expression exp = SimpleLanguage.simple("body.myArray");
+        assertNotNull(exp);
+        Object val = exp.evaluate(exchange, Object.class);
+        assertIsInstanceOf(Object[].class, val);
+        
+        exp = SimpleLanguage.simple("body.myArray.length");
+        assertNotNull(exp);
+        val = exp.evaluate(exchange, Object.class);
+        assertIsInstanceOf(Integer.class, val);
+        assertEquals(3, val);
+    }
 
     public void testSimpleExpressions() throws Exception {
         assertExpression("exchangeId", exchange.getExchangeId());
@@ -1329,7 +1343,7 @@ public class SimpleTest extends LanguageTestSupport {
     }
 
     public void testSimpleMapBoolean() throws Exception {
-        Map map = new HashMap();
+        Map<String, Object> map = new HashMap<String, Object>();
         exchange.getIn().setBody(map);
 
         map.put("isCredit", true);
@@ -1428,6 +1442,12 @@ public class SimpleTest extends LanguageTestSupport {
 
         public String getName() {
             return name;
+        }
+    }
+    
+    public static class MyClass {
+        public Object[] getMyArray() {
+            return new Object[]{"Hallo", "World", "!"};
         }
     }
 }

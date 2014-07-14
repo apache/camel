@@ -63,8 +63,8 @@ public class JpaProducer extends DefaultProducer {
                     }
                     if (values.getClass().isArray()) {
                         Object[] array = (Object[])values;
-                        for (int index = 0; index < array.length; index++) {
-                            save(array[index]);
+                        for (Object element : array) {
+                            save(element);
                         }
                     } else if (values instanceof Collection) {
                         Collection<?> collection = (Collection<?>)values;

@@ -19,6 +19,7 @@ package org.apache.camel.component.ssh;
 import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.sshd.SshServer;
+import org.apache.sshd.common.keyprovider.FileKeyPairProvider;
 
 public class SshComponentTestSupport extends CamelTestSupport {
     protected SshServer sshd;

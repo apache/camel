@@ -31,7 +31,6 @@ import com.thoughtworks.xstream.converters.Converter;
 import com.thoughtworks.xstream.io.HierarchicalStreamDriver;
 import com.thoughtworks.xstream.io.HierarchicalStreamReader;
 import com.thoughtworks.xstream.io.HierarchicalStreamWriter;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.converter.jaxp.StaxConverter;
 import org.apache.camel.spi.ClassResolver;
@@ -51,6 +50,7 @@ public abstract class AbstractXStreamWrapper implements DataFormat {
     private Map<String, String> aliases;
     private Map<String, String[]> omitFields;
     private Map<String, String[]> implicitCollections;
+    private String mode;
 
     public AbstractXStreamWrapper() {
     }
@@ -136,13 +136,37 @@ public abstract class AbstractXStreamWrapper implements DataFormat {
 
                     xstream.registerConverter(converter);
                 }
+                
+                if (mode != null) {
+                    xstream.setMode(getModeFromString(mode));
+                }
             }
         } catch (Exception e) {
             throw new RuntimeException("Unable to build XStream instance", e);
         }
 
         return xstream;
-    }    
+    } 
+    
+    protected int getModeFromString(String modeString) {
+        int result;
+        if ("NO_REFERENCES".equalsIgnoreCase(modeString)) {
+            result = XStream.NO_REFERENCES;
+        } else if ("ID_REFERENCES".equalsIgnoreCase(modeString)) {
+            result = XStream.ID_REFERENCES;
+        } else if ("XPATH_RELATIVE_REFERENCES".equalsIgnoreCase(modeString)) {
+            result = XStream.XPATH_RELATIVE_REFERENCES;
+        } else if ("XPATH_ABSOLUTE_REFERENCES".equalsIgnoreCase(modeString)) {
+            result = XStream.XPATH_ABSOLUTE_REFERENCES;
+        } else if ("SINGLE_NODE_XPATH_RELATIVE_REFERENCES".equalsIgnoreCase(modeString)) {
+            result = XStream.SINGLE_NODE_XPATH_RELATIVE_REFERENCES;
+        } else if ("SINGLE_NODE_XPATH_ABSOLUTE_REFERENCES".equalsIgnoreCase(modeString)) {
+            result = XStream.SINGLE_NODE_XPATH_ABSOLUTE_REFERENCES;
+        } else {
+            throw new IllegalArgumentException("Unknown mode : " + modeString);
+        }
+        return result;
+    }
 
     public StaxConverter getStaxConverter() {
         if (staxConverter == null) {
@@ -193,6 +217,14 @@ public abstract class AbstractXStreamWrapper implements DataFormat {
 
     public void setXstreamDriver(HierarchicalStreamDriver xstreamDriver) {
         this.xstreamDriver = xstreamDriver;
+    }
+    
+    public String getMode() {
+        return mode;
+    }
+    
+    public void setMode(String mode) {
+        this.mode = mode;
     }
 
     public XStream getXstream() {

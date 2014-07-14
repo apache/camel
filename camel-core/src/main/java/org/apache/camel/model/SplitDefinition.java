@@ -69,6 +69,8 @@ public class SplitDefinition extends ExpressionNode implements ExecutorServiceAw
     private Processor onPrepare;
     @XmlAttribute
     private Boolean shareUnitOfWork;
+    @XmlAttribute
+    private Boolean parallelAggregate;
 
     public SplitDefinition() {
     }
@@ -116,7 +118,7 @@ public class SplitDefinition extends ExpressionNode implements ExecutorServiceAw
 
         Splitter answer = new Splitter(routeContext.getCamelContext(), exp, childProcessor, aggregationStrategy,
                             isParallelProcessing(), threadPool, shutdownThreadPool, isStreaming(), isStopOnException(),
-                            timeout, onPrepare, isShareUnitOfWork());
+                            timeout, onPrepare, isShareUnitOfWork(), isParallelAggregate());
         if (isShareUnitOfWork()) {
             // wrap answer in a sub unit of work, since we share the unit of work
             CamelInternalProcessor internalProcessor = new CamelInternalProcessor(answer);
@@ -206,6 +208,19 @@ public class SplitDefinition extends ExpressionNode implements ExecutorServiceAw
         return this;
     }
     
+    /**
+     * Doing the aggregate work in parallel
+     * <p/>
+     * Notice that if enabled, then the {@link org.apache.camel.processor.aggregate.AggregationStrategy} in use
+     * must be implemented as thread safe, as concurrent threads can call the <tt>aggregate</tt> methods at the same time.
+     *
+     * @return the builder
+     */
+    public SplitDefinition parallelAggregate() {
+        setParallelAggregate(true);
+        return this;
+    }
+
     /**
      * Enables streaming. 
      * See {@link org.apache.camel.model.SplitDefinition#isStreaming()} for more information
@@ -333,6 +348,24 @@ public class SplitDefinition extends ExpressionNode implements ExecutorServiceAw
      */
     public boolean isStreaming() {
         return streaming != null && streaming;
+    }
+
+    public Boolean getParallelAggregate() {
+        return parallelAggregate;
+    }
+
+    /**
+     * Whether to aggregate using a sequential single thread, or allow parallel aggregation.
+     * <p/>
+     * Notice that if enabled, then the {@link org.apache.camel.processor.aggregate.AggregationStrategy} in use
+     * must be implemented as thread safe, as concurrent threads can call the <tt>aggregate</tt> methods at the same time.
+     */
+    public boolean isParallelAggregate() {
+        return parallelAggregate != null && parallelAggregate;
+    }
+
+    public void setParallelAggregate(Boolean parallelAggregate) {
+        this.parallelAggregate = parallelAggregate;
     }
 
     public Boolean getStopOnException() {

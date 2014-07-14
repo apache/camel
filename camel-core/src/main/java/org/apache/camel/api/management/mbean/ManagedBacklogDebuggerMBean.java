@@ -23,6 +23,12 @@ import org.apache.camel.api.management.ManagedOperation;
 
 public interface ManagedBacklogDebuggerMBean {
 
+    @ManagedAttribute(description = "Camel ID")
+    String getCamelId();
+
+    @ManagedAttribute(description = "Camel ManagementName")
+    String getCamelManagementName();
+
     @ManagedAttribute(description = "Logging Level")
     String getLoggingLevel();
 

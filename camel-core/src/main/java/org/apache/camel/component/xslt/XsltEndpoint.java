@@ -17,6 +17,7 @@
 package org.apache.camel.component.xslt;
 
 import java.io.IOException;
+
 import javax.xml.transform.Source;
 import javax.xml.transform.TransformerException;
 
@@ -26,7 +27,6 @@ import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedOperation;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.builder.xml.XsltBuilder;
-import org.apache.camel.component.timer.TimerConsumer;
 import org.apache.camel.impl.ProcessorEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;

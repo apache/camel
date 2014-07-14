@@ -29,6 +29,8 @@ import org.apache.camel.InvalidPayloadRuntimeException;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.ScheduledPollEndpoint;
+import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
 import org.apache.camel.support.ExpressionAdapter;
 import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.IntrospectionSupport;
@@ -39,21 +41,31 @@ import org.springframework.transaction.PlatformTransactionManager;
 import org.springframework.transaction.TransactionDefinition;
 import org.springframework.transaction.support.TransactionTemplate;
 
+@UriEndpoint(scheme = "jpa", consumerClass = JpaConsumer.class)
 public class JpaEndpoint extends ScheduledPollEndpoint {
 
     private EntityManagerFactory entityManagerFactory;
     private PlatformTransactionManager transactionManager;
+    @UriParam
     private String persistenceUnit = "camel";
     private Expression producerExpression;
+    @UriParam
     private int maximumResults = -1;
     private Class<?> entityType;
     private Map<String, Object> entityManagerProperties;
+    @UriParam
     private boolean consumeDelete = true;
+    @UriParam
     private boolean consumeLockEntity = true;
+    @UriParam
     private boolean flushOnSend = true;
+    @UriParam
     private int maxMessagesPerPoll;
+    @UriParam
     private boolean usePersist;
+    @UriParam
     private boolean joinTransaction = true;
+    @UriParam
     private boolean usePassedInEntityManager;
 
     public JpaEndpoint() {

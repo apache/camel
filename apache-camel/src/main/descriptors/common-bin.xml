@@ -33,10 +33,12 @@
         <include>org.apache.camel:camel-aws</include>
         <include>org.apache.camel:camel-avro</include>
         <include>org.apache.camel:camel-bam</include>
+        <include>org.apache.camel:camel-barcode</include>
         <include>org.apache.camel:camel-base64</include>
         <include>org.apache.camel:camel-beanio</include>
         <include>org.apache.camel:camel-bean-validator</include>
         <include>org.apache.camel:camel-bindy</include>
+        <include>org.apache.camel:camel-box</include>
         <include>org.apache.camel:camel-blueprint</include>
         <include>org.apache.camel:camel-cache</include>
         <include>org.apache.camel:camel-castor</include>
@@ -66,6 +68,7 @@
         <include>org.apache.camel:camel-ftp</include>
         <include>org.apache.camel:camel-gae</include>
         <include>org.apache.camel:camel-geocoder</include>
+        <include>org.apache.camel:camel-gora</include>
         <include>org.apache.camel:camel-groovy</include>
         <include>org.apache.camel:camel-guava-eventbus</include>
         <include>org.apache.camel:camel-guice</include>
@@ -149,7 +152,8 @@
         <include>org.apache.camel:camel-snmp</include>
         <include>org.apache.camel:camel-soap</include>
         <include>org.apache.camel:camel-solr</include>
-        <include>org.apache.camel:camel-splunk</include>        
+        <include>org.apache.camel:camel-spark-rest</include>
+        <include>org.apache.camel:camel-splunk</include>
         <include>org.apache.camel:camel-spring</include>
         <include>org.apache.camel:camel-spring-batch</include>
         <include>org.apache.camel:camel-spring-integration</include>
@@ -169,6 +173,7 @@
         <include>org.apache.camel:camel-test</include>
         <include>org.apache.camel:camel-test-blueprint</include>
         <include>org.apache.camel:camel-test-spring</include>
+        <include>org.apache.camel:camel-test-spring3</include>
         <include>org.apache.camel:camel-testng</include>
         <include>org.apache.camel:camel-twitter</include>
         <include>org.apache.camel:camel-urlrewrite</include>

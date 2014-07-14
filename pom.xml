@@ -46,8 +46,12 @@
     <jdk.version>1.6</jdk.version>
     <compiler.fork>1.6</compiler.fork>
 
+    <!-- use maven compiler 2.5.1 as 3.0/3.1 recompiles everything even if nothingh has changed, or only 1 file,
+         so 2.5.1 is much faster to use for development -->
+    <maven-compiler-plugin-version>2.5.1</maven-compiler-plugin-version>
+
     <!-- eclipse plugin need the jaxb in this pom.xml file -->
-    <jaxb-version>2.1.13</jaxb-version>
+    <jaxb-version>2.2.7</jaxb-version>
   </properties>
 
   <mailingLists>
@@ -131,7 +135,6 @@
 
   <build>
     <defaultGoal>install</defaultGoal>
-
     <pluginManagement>
       <plugins>
         <plugin>
@@ -160,7 +163,7 @@
             <downloadJavadocs>false</downloadJavadocs>
           </configuration>
         </plugin>
-        
+
           <plugin>
             <groupId>org.apache.rat</groupId>
             <artifactId>apache-rat-plugin</artifactId>
@@ -176,7 +179,7 @@
                 <exclude>**/test/data*/**/*</exclude>
                 <exclude>.gitignore</exclude>
                 <exclude>.git/**/*</exclude>
-                <!-- tooling/camel-manual/src/styles/print.css use a different 
+                <!-- tooling/camel-manual/src/styles/print.css use a different
                   license -->
                 <exclude>**/src/styles/print.css</exclude>
                 <!-- cxf does not handle comments here -->
@@ -196,10 +199,19 @@
               </excludes>
             </configuration>
           </plugin>
-          
+
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-release-plugin</artifactId>
+          <!-- see http://jira.codehaus.org/browse/MRELEASE-812 -->
+          <version>2.4.2</version>
+          <dependencies>
+            <dependency>
+              <groupId>org.apache.maven.scm</groupId>
+              <artifactId>maven-scm-provider-gitexe</artifactId>
+              <version>1.9</version>
+            </dependency>
+          </dependencies>
           <configuration>
             <localCheckout>true</localCheckout>
             <pushChanges>true</pushChanges>
@@ -229,7 +241,7 @@
     </profile>
     <profile>
       <id>setup.eclipse</id>
-      <!-- set up the eclipse workspace and generate the .classpath and .project 
+      <!-- set up the eclipse workspace and generate the .classpath and .project
         files for modules -->
       <properties>
         <eclipse.workspace.dir>${basedir}/../workspace</eclipse.workspace.dir>
@@ -241,6 +253,7 @@
             <plugin>
               <groupId>org.apache.maven.plugins</groupId>
               <artifactId>maven-compiler-plugin</artifactId>
+              <version>${maven-compiler-plugin-version}</version>
               <configuration>
                 <source>${jdk.version}</source>
                 <target>${jdk.version}</target>
@@ -353,9 +366,9 @@
         </plugins>
       </build>
     </profile>
-    
+
     <profile>
-      <!-- When not on the Mac, we need to add tools.jar to the antrun plugin 
+      <!-- When not on the Mac, we need to add tools.jar to the antrun plugin
         for schemagen to work -->
       <id>not-mac</id>
       <activation>
@@ -377,8 +390,13 @@
                 </dependency>
                 <dependency>
                   <groupId>com.sun.xml.bind</groupId>
-                  <artifactId>jaxb-xjc</artifactId>
+                  <artifactId>jaxb-jxc</artifactId>
                   <version>${jaxb-version}</version>
+                </dependency>
+                <dependency>
+                  <groupId>xerces</groupId>
+                  <artifactId>xercesImpl</artifactId>
+                  <version>2.11.0</version>
                 </dependency>
                 <dependency>
                   <groupId>ant-contrib</groupId>
@@ -442,7 +460,7 @@
         </plugins>
       </build>
     </profile>
-    
+
     <profile>
       <id>deploy</id>
       <build>
@@ -503,7 +521,7 @@
         </property>
       </activation>
       <build>
-        <plugins> 
+        <plugins>
           <!-- We want to deploy the artifact to a staging location for perusal -->
           <plugin>
             <inherited>true</inherited>

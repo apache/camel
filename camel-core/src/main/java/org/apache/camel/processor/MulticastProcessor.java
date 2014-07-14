@@ -147,6 +147,7 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
     private final AggregationStrategy aggregationStrategy;
     private final boolean parallelProcessing;
     private final boolean streaming;
+    private final boolean parallelAggregate;
     private final boolean stopOnException;
     private final ExecutorService executorService;
     private final boolean shutdownExecutorService;
@@ -160,12 +161,21 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
     }
 
     public MulticastProcessor(CamelContext camelContext, Collection<Processor> processors, AggregationStrategy aggregationStrategy) {
-        this(camelContext, processors, aggregationStrategy, false, null, false, false, false, 0, null, false);
+        this(camelContext, processors, aggregationStrategy, false, null, false, false, false, 0, null, false, false);
     }
 
+    @Deprecated
     public MulticastProcessor(CamelContext camelContext, Collection<Processor> processors, AggregationStrategy aggregationStrategy,
                               boolean parallelProcessing, ExecutorService executorService, boolean shutdownExecutorService,
                               boolean streaming, boolean stopOnException, long timeout, Processor onPrepare, boolean shareUnitOfWork) {
+        this(camelContext, processors, aggregationStrategy, parallelProcessing, executorService, shutdownExecutorService,
+                streaming, stopOnException, timeout, onPrepare, shareUnitOfWork, false);
+    }
+
+    public MulticastProcessor(CamelContext camelContext, Collection<Processor> processors, AggregationStrategy aggregationStrategy,
+                              boolean parallelProcessing, ExecutorService executorService, boolean shutdownExecutorService, boolean streaming,
+                              boolean stopOnException, long timeout, Processor onPrepare, boolean shareUnitOfWork,
+                              boolean parallelAggregate) {
         notNull(camelContext, "camelContext");
         this.camelContext = camelContext;
         this.processors = processors;
@@ -179,6 +189,7 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
         this.timeout = timeout;
         this.onPrepare = onPrepare;
         this.shareUnitOfWork = shareUnitOfWork;
+        this.parallelAggregate = parallelAggregate;
     }
 
     @Override
@@ -535,7 +546,12 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
 
             LOG.trace("Sequential processing complete for number {} exchange: {}", total, subExchange);
 
-            doAggregate(getAggregationStrategy(subExchange), result, subExchange);
+            if (parallelAggregate) {
+                doAggregateInternal(getAggregationStrategy(subExchange), result, subExchange);
+            } else {
+                doAggregate(getAggregationStrategy(subExchange), result, subExchange);
+            }
+            
             total.incrementAndGet();
         }
 
@@ -610,7 +626,11 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
                     }
 
                     try {
-                        doAggregate(getAggregationStrategy(subExchange), result, subExchange);
+                        if (parallelAggregate) {
+                            doAggregateInternal(getAggregationStrategy(subExchange), result, subExchange);
+                        } else {
+                            doAggregate(getAggregationStrategy(subExchange), result, subExchange);
+                        }
                     } catch (Throwable e) {
                         // wrap in exception to explain where it failed
                         subExchange.setException(new CamelExchangeException("Sequential processing failed for number " + total, subExchange, e));
@@ -655,7 +675,11 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
 
                         // must catch any exceptions from aggregation
                         try {
-                            doAggregate(getAggregationStrategy(subExchange), result, subExchange);
+                            if (parallelAggregate) {
+                                doAggregateInternal(getAggregationStrategy(subExchange), result, subExchange);
+                            } else {
+                                doAggregate(getAggregationStrategy(subExchange), result, subExchange);
+                            }
                         } catch (Throwable e) {
                             // wrap in exception to explain where it failed
                             subExchange.setException(new CamelExchangeException("Sequential processing failed for number " + total, subExchange, e));
@@ -800,6 +824,19 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
      * @param exchange the exchange to be added to the result
      */
     protected synchronized void doAggregate(AggregationStrategy strategy, AtomicExchange result, Exchange exchange) {
+        doAggregateInternal(strategy, result, exchange);
+    }
+
+    /**
+     * Aggregate the {@link Exchange) with the current result.
+     * This method is unsynchronized and is called directly when parallelAggregate is enabled.
+     * In all other cases, this method is called from the doAggregate which is a synchronized method
+     *
+     * @param strategy
+     * @param result
+     * @param exchange
+     */
+    protected void doAggregateInternal(AggregationStrategy strategy, AtomicExchange result, Exchange exchange) {
         if (strategy != null) {
             // prepare the exchanges for aggregation
             Exchange oldExchange = result.get();

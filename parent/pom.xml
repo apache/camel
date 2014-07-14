@@ -35,13 +35,14 @@
     <!-- dependency versions -->
     <abdera-version>1.1.3</abdera-version>
     <!-- Note that activemq dependency is only used for testing! -->
-    <activemq-version>5.9.1</activemq-version>
+    <activemq-version>5.10.0</activemq-version>
     <ahc-version>1.8.5</ahc-version>
     <ant-bundle-version>1.7.0_6</ant-bundle-version>
     <antlr-bundle-version>3.4_1</antlr-bundle-version>
     <antlr-runtime-bundle-version>3.4_2</antlr-runtime-bundle-version>
     <aopalliance-bundle-version>1.0_6</aopalliance-bundle-version>
     <apacheds-version>1.5.7</apacheds-version>
+    <apache-gora-version>0.4</apache-gora-version>
     <apache-mime4j-version>0.7.2</apache-mime4j-version>
     <aries-blueprint-api-version>1.0.0</aries-blueprint-api-version>
     <aries-blueprint-core-version>1.1.0</aries-blueprint-core-version>
@@ -59,8 +60,8 @@
     <avalon-version>4.3.1</avalon-version>
     <avro-version>1.7.6</avro-version>
     <avro-bundle-version>1.7.6_1</avro-bundle-version>
-    <aws-java-sdk-bundle-version>1.7.1_1</aws-java-sdk-bundle-version>
-    <aws-java-sdk-version>1.7.1</aws-java-sdk-version>
+    <aws-java-sdk-bundle-version>1.7.12_1</aws-java-sdk-bundle-version>
+    <aws-java-sdk-version>1.7.12</aws-java-sdk-version>
     <axiom-version>1.2.14</axiom-version>
     <backport-util-concurrent-version>3.1</backport-util-concurrent-version>
     <bcel-bundle-version>5.2_4</bcel-bundle-version>
@@ -68,6 +69,7 @@
     <bsh-version>2.0b5</bsh-version>
     <!-- bouncycastle 1.50 does not work in OSGi - http://www.bouncycastle.org/jira/browse/BJA-476 -->
     <bouncycastle-version>1.49</bouncycastle-version>
+    <boxjavalibv2.version>3.0.9</boxjavalibv2.version>
     <build-helper-maven-plugin-version>1.8</build-helper-maven-plugin-version>
     <c3p0-version>0.9.1.2</c3p0-version>
     <castor-bundle-version>1.3.2_2</castor-bundle-version>
@@ -107,22 +109,22 @@
     <commons-vfs2-version>2.0</commons-vfs2-version>
     <concurrentlinkedhashmap.version>1.4</concurrentlinkedhashmap.version>
     <cobertura-maven-plugin-version>2.5.2</cobertura-maven-plugin-version>
-    <cxf-version>2.7.11</cxf-version>
-    <cxf-version-range>[2.6,4.0)</cxf-version-range>
-    <cxf-xjc-utils-version>2.7.0</cxf-xjc-utils-version>
-    <deltaspike-version>0.6</deltaspike-version>
-    <derby-version>10.10.1.1</derby-version>
+    <cxf-version>3.0.0</cxf-version>
+    <cxf-version-range>[2.7,4.0)</cxf-version-range>
+    <cxf-xjc-utils-version>3.0.1</cxf-xjc-utils-version>
+    <deltaspike-version>1.0.0</deltaspike-version>
+    <derby-version>10.10.2.0</derby-version>
     <disruptor-version>3.2.1</disruptor-version>
     <dnsjava-version>2.1.1</dnsjava-version>
     <dnsjava-bundle-version>2.1.1_1</dnsjava-bundle-version>
     <dom4j-bundle-version>1.6.1_5</dom4j-bundle-version>
     <dozer-version>5.5.1</dozer-version>
-    <drools-version>6.0.0.Final</drools-version>
-    <dropbox-version>1.7.5</dropbox-version>
+    <drools-version>6.0.1.Final</drools-version>
+    <dropbox-version>1.7.6</dropbox-version>
     <easymock-version>3.2</easymock-version>
     <eclipse-compiler-version>4.2.2</eclipse-compiler-version>
     <eclipse-equinox-common-version>3.3.0-v20070426</eclipse-equinox-common-version>
-    <ehcache-version>2.8.1</ehcache-version>
+    <ehcache-version>2.8.3</ehcache-version>
     <elasticsearch-bundle-version>1.0.0_1</elasticsearch-bundle-version>
     <elasticsearch-version>1.0.0</elasticsearch-version>
     <el-api-1.0-version>1.0.1</el-api-1.0-version>
@@ -162,8 +164,8 @@
     <google-app-engine-bundle-version>1.8.3_1</google-app-engine-bundle-version>
     <google-gdata-version>1.41.5.w1</google-gdata-version>
     <google-gdata-bundle-version>1.41.1_1</google-gdata-bundle-version>
-    <google-guava-version>16.0.1</google-guava-version>
-    <groovy-version>2.2.2</groovy-version>
+    <google-guava-version>17.0</google-guava-version>
+    <groovy-version>2.3.3</groovy-version>
     <gson-version>2.2.4</gson-version>
     <guice-bundle-version>3.0_1</guice-bundle-version>
     <guice-version>3.0</guice-version>
@@ -173,15 +175,17 @@
     <hadoop2-version>2.3.0</hadoop2-version>
     <hamcrest-version>1.3</hamcrest-version>
     <hapi-version>2.1</hapi-version>
-    <hawtbuf-version>1.10</hawtbuf-version>
+    <hawtbuf-version>1.11</hawtbuf-version>
     <hawtdb-version>1.6</hawtdb-version>
-    <hawtdispatch-version>1.20</hawtdispatch-version>
+    <hawtdispatch-version>1.21</hawtdispatch-version>
     <hazelcast-version>3.0.3</hazelcast-version>
     <hbase-version>0.94.10</hbase-version>
     <hbase-bundle-version>0.94.6_1</hbase-bundle-version>
     <hibernate-validator-version>5.0.3.Final</hibernate-validator-version>
-    <hibernate-version>4.2.12.Final</hibernate-version>
+    <!-- Spring 3.2.x and 4.0.x still stick to JPA 2.0. Hibernate 4.3.x upgraded to JPA 2.1. -->
+    <hibernate-version>4.2.13.Final</hibernate-version>
     <hsqldb-version>2.3.2</hsqldb-version>
+    <htmlunit.version>2.15</htmlunit.version>
     <httpunit-version>1.7</httpunit-version>
     <httpcore4-version>4.3.2</httpcore4-version>
     <httpclient4-version>4.3.3</httpclient4-version>
@@ -189,18 +193,18 @@
     <ibatis-bundle-version>2.3.4.726_4</ibatis-bundle-version>
     <ibatis-version>2.3.4.726</ibatis-version>
     <ical4j-version>1.0.5.2</ical4j-version>
-    <infinispan-version>6.0.1.Final</infinispan-version>
+    <infinispan-version>6.0.2.Final</infinispan-version>
     <irclib-bundle-version>1.10_5</irclib-bundle-version>
     <irclib-version>1.10</irclib-version>
     <isorelax-bundle-version>20050913_4</isorelax-bundle-version>
     <jini-version>2.1</jini-version>
     <jackson-version>1.9.12</jackson-version>
-    <jackson2-version>2.3.2</jackson2-version>
-    <jackrabbit-version>2.6.5</jackrabbit-version>
+    <jackson2-version>2.3.3</jackson2-version>
+    <jackrabbit-version>2.8.0</jackrabbit-version>
     <jain-sip-ri-bundle-version>1.2.154_2</jain-sip-ri-bundle-version>
     <jasper-bundle-version>6.0.36_1</jasper-bundle-version>
-    <jasypt-bundle-version>1.9.1_1</jasypt-bundle-version>
-    <jasypt-version>1.9.1</jasypt-version>
+    <jasypt-bundle-version>1.9.2_1</jasypt-bundle-version>
+    <jasypt-version>1.9.2</jasypt-version>
     <java-apns-bundle-version>0.2.3_1</java-apns-bundle-version>
     <java-apns-version>0.2.3</java-apns-version>
     <javacrumbs-version>0.22</javacrumbs-version>
@@ -224,6 +228,7 @@
     <jetty-version>8.1.14.v20131031</jetty-version>
     <jetty6-bundle-version>6.1.26_4</jetty6-bundle-version>
     <jetty6-version>6.1.26</jetty6-version>
+    <jetty9-version>9.2.1.v20140609</jetty9-version>
     <jettison-version>1.3.5</jettison-version>
     <jexcelapi-bundle-version>2.4.2_4</jexcelapi-bundle-version>
     <jexcelapi-version>2.4.2</jexcelapi-version>
@@ -258,7 +263,7 @@
     <jython-version>2.5.3</jython-version>
     <kafka-version>0.8.1</kafka-version>
     <kafka-bundle-version>0.8.1_1</kafka-bundle-version>
-    <karaf-version>2.3.3</karaf-version>
+    <karaf-version>2.3.5</karaf-version>
     <kie-version>6.0.0.Final</kie-version>
     <krati-version>0.4.9</krati-version>
     <kxml2-bundle-version>2.3.0_2</kxml2-bundle-version>
@@ -285,6 +290,8 @@
     <maven-javadoc-plugin-version>2.9.1</maven-javadoc-plugin-version>
     <maven-jboss-as-maven-plugin-version>7.4.Final</maven-jboss-as-maven-plugin-version>
     <maven-remote-resources-plugin-version>1.4</maven-remote-resources-plugin-version>
+    <!-- resources plugin needed by Camel maven archetypes -->
+    <maven-resources-plugin-version>2.6</maven-resources-plugin-version>
     <maven-reporting-api-version>2.2.1</maven-reporting-api-version>
     <maven-reporting-impl-version>2.0.5</maven-reporting-impl-version>
     <maven-shade-plugin-version>2.1</maven-shade-plugin-version>
@@ -299,13 +306,14 @@
     <mongo-java-driver-version>2.12.0</mongo-java-driver-version>
     <mqtt-client-version>1.10</mqtt-client-version>
     <msv-version>20050913</msv-version>
-    <mustache-java-version>0.8.13</mustache-java-version>
-    <mustache-bundle-version>0.8.13_1/</mustache-bundle-version>
-    <mvel-version>2.1.7.Final</mvel-version>
-    <mybatis-version>3.2.5</mybatis-version>
+    <mustache-java-version>0.8.15</mustache-java-version>
+    <mustache-bundle-version>0.8.15_1/</mustache-bundle-version>
+    <mvel-version>2.1.9.Final</mvel-version>
+    <mybatis-version>3.2.7</mybatis-version>
     <neethi-bundle-version>3.0.1</neethi-bundle-version>
-    <netty3-version>3.9.0.Final</netty3-version>
-    <netty-version>4.0.17.Final</netty-version>
+    <netty3-version>3.9.2.Final</netty3-version>
+    <netty-version>4.0.20.Final</netty-version>
+    <noggit-bundle-version>0.5_1</noggit-bundle-version>
     <ode-version>1.3.4</ode-version>
     <!-- should be in-sync with deltaspike -->
     <openwebbeans-version>1.1.5</openwebbeans-version>
@@ -328,9 +336,10 @@
     <plexus-container-default-version>1.0-alpha-48</plexus-container-default-version>
     <plexus-utils-version>1.5.6</plexus-utils-version>
     <pojosr-version>0.2.1</pojosr-version>  
+    <powermock-version>1.5.1</powermock-version>
     <protobuf-version>2.5.0</protobuf-version>
-    <qpid-bundle-version>0.26_1</qpid-bundle-version>
-    <qpid-version>0.26</qpid-version>
+    <qpid-bundle-version>0.28_1</qpid-bundle-version>
+    <qpid-version>0.28</qpid-version>
     <quartz-bundle-version>1.8.6_1</quartz-bundle-version>
     <quartz-version>1.8.6</quartz-version>
     <quartz-version-range>[1.8,2)</quartz-version-range>
@@ -343,18 +352,17 @@
     <rhino-version>1.7R2</rhino-version>
     <rome-bundle-version>1.0_3</rome-bundle-version>
     <rome-version>1.0</rome-version>
-    <rxjava-version>0.17.5</rxjava-version>
+    <rxjava-version>0.19.4</rxjava-version>
     <saaj-impl-version>1.3.2_2</saaj-impl-version>
-    <saxon-bundle-version>9.5.1-4_1</saxon-bundle-version>
-    <saxon-version>9.5.1-4</saxon-version>
-    <scala-version>2.10.4</scala-version>
+    <saxon-bundle-version>9.5.1-5_1</saxon-bundle-version>
+    <saxon-version>9.5.1-5</saxon-version>
+    <scala-version>2.11.0</scala-version>
     <scala-maven-plugin-version>3.1.6</scala-maven-plugin-version>
-    <scalatest-version>2.0</scalatest-version>
+    <scalatest-version>2.1.5</scalatest-version>
     <scribe-version>1.3.5</scribe-version>
     <scriptengines-version>1.1</scriptengines-version>
     <serp-bundle-version>1.14.1_1</serp-bundle-version>
     <servicemix-specs-version>2.2.0</servicemix-specs-version>
-    <servlet-api-2.5-version>1.1.2</servlet-api-2.5-version>
     <servlet-api-3.0-version>1.0</servlet-api-3.0-version>
     <servlet-version-range>[2.5,4)</servlet-version-range>
     <shiro-version>1.2.3</shiro-version>
@@ -364,30 +372,32 @@
     <smack-bundle-version>3.2.1_1</smack-bundle-version>
     <smack-version>3.2.1</smack-version>
     <snappy-version>1.1.0.1</snappy-version>
-    <snmp4j-version>2.2.5_1</snmp4j-version>
+    <snmp4j-version>2.3.0_1</snmp4j-version>
     <solr-bundle-version>4.8.9_1</solr-bundle-version>
     <solr-version>4.8.0</solr-version>
     <solr-version-range>[4.8,5)</solr-version-range>
-    <splunk-version>1.2.0_1</splunk-version>
+    <spark-rest-version>2.0.0</spark-rest-version>
+    <splunk-version>1.3.0_1</splunk-version>
     <spring-batch-version>2.2.5.RELEASE</spring-batch-version>
     <spring-castor-bundle-version>1.2.0</spring-castor-bundle-version>
     <spring-data-commons-version>1.5.0.RELEASE</spring-data-commons-version>
-    <spring-data-redis-version>1.1.1.RELEASE</spring-data-redis-version>
+    <spring-data-redis-version>1.3.0.RELEASE</spring-data-redis-version>
     <spring-integration-version>2.2.6.RELEASE</spring-integration-version>
     <spring-javaconfig-version>1.0.0-20090215</spring-javaconfig-version>
     <spring-ldap-version>1.3.1.RELEASE</spring-ldap-version>
     <spring-ldap-bundle-version>1.3.1.RELEASE_2</spring-ldap-bundle-version>
     <spring-retry-version>1.0.3.RELEASE</spring-retry-version>  
+    <!-- spring-dm does not support spring 4.x so import-range must be 3.x only until a solution in karaf exists -->
     <spring-version-range>[3.2,4)</spring-version-range>
     <spring-version>${spring32-version}</spring-version>   
-    <spring32-version>3.2.8.RELEASE</spring32-version>
-    <spring4-version>4.0.2.RELEASE</spring4-version>
+    <spring32-version>3.2.9.RELEASE</spring32-version>
+    <spring4-version>4.0.5.RELEASE</spring4-version>
     <spring-osgi-version>1.2.1</spring-osgi-version>
-    <spring-security-version>3.1.4.RELEASE</spring-security-version>
+    <spring-security-version>3.1.6.RELEASE</spring-security-version>
     <spring-ws-version>2.1.4.RELEASE</spring-ws-version>
     <spymemcached-bundle-version>2.5_2</spymemcached-bundle-version> <!-- FIXME cmueller: not in sync! -->
     <spymemcached-version>2.8.4</spymemcached-version>
-    <sshd-version>0.10.1</sshd-version>
+    <sshd-version>0.11.0</sshd-version>
     <stompjms-version>1.19</stompjms-version>
     <stax-api-version>1.0.1</stax-api-version>
     <stax2-api-bundle-version>3.1.4</stax2-api-bundle-version>
@@ -416,7 +426,7 @@
     <wsdl4j-bundle-version>1.6.2_6</wsdl4j-bundle-version>
     <xalan-bundle-version>2.7.1_7</xalan-bundle-version>
     <xalan-version>2.7.1</xalan-version>
-    <xbean-spring-version>3.16</xbean-spring-version>
+    <xbean-spring-version>3.18</xbean-spring-version>
     <!-- xbean-asm4-bundle is used by openjpa -->
     <xbean-asm4-bundle-version>3.14</xbean-asm4-bundle-version>
     <xerces-bundle-version>2.11.0_1</xerces-bundle-version>
@@ -442,6 +452,7 @@
     <xstream-version>1.4.7</xstream-version>
     <xom-version>1.2.5</xom-version>
     <yammer-metrics-version>2.2.0</yammer-metrics-version>
+    <zxing-version>3.0.0</zxing-version>
     <zookeeper-version>3.4.6</zookeeper-version>
 
     <!-- OSGi bundles properties -->
@@ -569,7 +580,17 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
+        <artifactId>camel-barcode</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
         <artifactId>camel-bindy</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-box</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -711,6 +732,11 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-ftp</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-gora</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -1135,6 +1161,11 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
+        <artifactId>camel-spark-rest</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
         <artifactId>camel-splunk</artifactId>
         <version>${project.version}</version>
       </dependency>      
@@ -1241,6 +1272,11 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-test-spring</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-test-spring3</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -1459,6 +1495,11 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
+        <artifactId>camel-example-spark-rest-tomcat</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
         <artifactId>camel-example-spring</artifactId>
         <version>${project.version}</version>
       </dependency>
@@ -1539,7 +1580,7 @@
       </dependency>
       <dependency>
         <groupId>com.sun.xml.bind</groupId>
-        <artifactId>jaxb-xjc</artifactId>
+        <artifactId>jaxb-jxc</artifactId>
         <version>${jaxb-version}</version>
       </dependency>
       <dependency>
@@ -2213,7 +2254,7 @@
             <dependency>
               <groupId>xerces</groupId>
               <artifactId>xercesImpl</artifactId>
-              <version>2.8.1</version>
+              <version>${xerces-version}</version>
             </dependency>
           </dependencies>
         </plugin>
@@ -2229,7 +2270,7 @@
             </dependency>
             <dependency>
               <groupId>com.sun.xml.bind</groupId>
-              <artifactId>jaxb-xjc</artifactId>
+              <artifactId>jaxb-jxc</artifactId>
               <version>${jaxb-version}</version>
             </dependency>
             <dependency>
@@ -2329,6 +2370,7 @@
         <plugin>
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-compiler-plugin</artifactId>
+          <version>${maven-compiler-plugin-version}</version>
           <configuration>
             <source>1.6</source>
             <target>1.6</target>
@@ -2348,6 +2390,10 @@
               <nature>org.eclipse.jdt.core.javanature</nature>
               <nature>net.sf.eclipsecs.core.CheckstyleNature</nature>
             </projectnatures>
+            <!-- exclude the old JSR173 1.0 transitive dependency through com.sun.xml.bind:jaxb-impl:jar:2.2.7 -->
+            <excludes>
+              <exclude>javax.xml.bind:jsr173_api</exclude>
+            </excludes>
             <additionalConfig>
               <file>
                 <name>.checkstyle</name>
@@ -2524,6 +2570,13 @@
               </plugin>
             </plugins>
           </configuration>
+          <dependencies>
+              <dependency>
+                  <groupId>xerces</groupId>
+                  <artifactId>xercesImpl</artifactId>
+                  <version>${xerces-version}</version>
+              </dependency>
+          </dependencies>
         </plugin>
         <plugin>
           <groupId>org.mortbay.jetty</groupId>
@@ -2625,6 +2678,8 @@
           <failIfNoTests>false</failIfNoTests>
           <runOrder>alphabetical</runOrder>
           <systemPropertyVariables>
+            <javax.xml.accessExternalSchema>file,http</javax.xml.accessExternalSchema>
+            <javax.xml.accessExternalDTD>file,http</javax.xml.accessExternalDTD>
             <derby.stream.error.file>target/derby.log</derby.stream.error.file>
             <java.awt.headless>${java.awt.headless}</java.awt.headless>
             <java.util.logging.config.file>${basedir}/target/test-classes/logging.properties</java.util.logging.config.file>
@@ -2785,7 +2840,7 @@
       </activation>
 
       <properties>
-        <jaxb-version>2.2.6</jaxb-version>
+        <jaxb-version>2.2.7</jaxb-version>
       </properties>
 
       <dependencies>

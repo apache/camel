@@ -75,6 +75,7 @@ public class RestletComponent extends HeaderFilterStrategyComponent {
     public RestletComponent(Component component) {
         // Allow the Component to be injected, so that the RestletServlet may be
         // configured within a webapp
+        super(RestletEndpoint.class);
         this.component = component;
     }
 

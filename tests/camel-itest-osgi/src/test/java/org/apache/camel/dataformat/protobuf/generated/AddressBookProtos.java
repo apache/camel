@@ -501,7 +501,9 @@ public final class AddressBookProtos {
       private byte memoizedIsInitialized = -1;
       public final boolean isInitialized() {
         byte isInitialized = memoizedIsInitialized;
-        if (isInitialized != -1) return isInitialized == 1;
+        if (isInitialized != -1) {
+            return isInitialized == 1;
+        }
 
         if (!hasNumber()) {
           memoizedIsInitialized = 0;
@@ -526,7 +528,9 @@ public final class AddressBookProtos {
       private int memoizedSerializedSize = -1;
       public int getSerializedSize() {
         int size = memoizedSerializedSize;
-        if (size != -1) return size;
+        if (size != -1) {
+            return size;
+        }
 
         size = 0;
         if (((bitField0_ & 0x00000001) == 0x00000001)) {
@@ -708,7 +712,9 @@ public final class AddressBookProtos {
         }
 
         public Builder mergeFrom(org.apache.camel.dataformat.protobuf.generated.AddressBookProtos.Person.PhoneNumber other) {
-          if (other == org.apache.camel.dataformat.protobuf.generated.AddressBookProtos.Person.PhoneNumber.getDefaultInstance()) return this;
+          if (other == org.apache.camel.dataformat.protobuf.generated.AddressBookProtos.Person.PhoneNumber.getDefaultInstance()) {
+            return this;
+        }
           if (other.hasNumber()) {
             bitField0_ |= 0x00000001;
             number_ = other.number_;
@@ -1017,7 +1023,9 @@ public final class AddressBookProtos {
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
       byte isInitialized = memoizedIsInitialized;
-      if (isInitialized != -1) return isInitialized == 1;
+      if (isInitialized != -1) {
+        return isInitialized == 1;
+    }
 
       if (!hasName()) {
         memoizedIsInitialized = 0;
@@ -1058,7 +1066,9 @@ public final class AddressBookProtos {
     private int memoizedSerializedSize = -1;
     public int getSerializedSize() {
       int size = memoizedSerializedSize;
-      if (size != -1) return size;
+      if (size != -1) {
+        return size;
+    }
 
       size = 0;
       if (((bitField0_ & 0x00000001) == 0x00000001)) {
@@ -1270,7 +1280,9 @@ public final class AddressBookProtos {
       }
 
       public Builder mergeFrom(org.apache.camel.dataformat.protobuf.generated.AddressBookProtos.Person other) {
-        if (other == org.apache.camel.dataformat.protobuf.generated.AddressBookProtos.Person.getDefaultInstance()) return this;
+        if (other == org.apache.camel.dataformat.protobuf.generated.AddressBookProtos.Person.getDefaultInstance()) {
+            return this;
+        }
         if (other.hasName()) {
           bitField0_ |= 0x00000001;
           name_ = other.name_;
@@ -1954,7 +1966,9 @@ public final class AddressBookProtos {
     private byte memoizedIsInitialized = -1;
     public final boolean isInitialized() {
       byte isInitialized = memoizedIsInitialized;
-      if (isInitialized != -1) return isInitialized == 1;
+      if (isInitialized != -1) {
+        return isInitialized == 1;
+    }
 
       for (int i = 0; i < getPersonCount(); i++) {
         if (!getPerson(i).isInitialized()) {
@@ -1978,7 +1992,9 @@ public final class AddressBookProtos {
     private int memoizedSerializedSize = -1;
     public int getSerializedSize() {
       int size = memoizedSerializedSize;
-      if (size != -1) return size;
+      if (size != -1) {
+        return size;
+    }
 
       size = 0;
       for (int i = 0; i < person_.size(); i++) {
@@ -2158,7 +2174,9 @@ public final class AddressBookProtos {
       }
 
       public Builder mergeFrom(org.apache.camel.dataformat.protobuf.generated.AddressBookProtos.AddressBook other) {
-        if (other == org.apache.camel.dataformat.protobuf.generated.AddressBookProtos.AddressBook.getDefaultInstance()) return this;
+        if (other == org.apache.camel.dataformat.protobuf.generated.AddressBookProtos.AddressBook.getDefaultInstance()) {
+            return this;
+        }
         if (personBuilder_ == null) {
           if (!other.person_.isEmpty()) {
             if (person_.isEmpty()) {

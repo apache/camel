@@ -74,6 +74,10 @@ public class StaxConverterTest extends ContextTestSupport {
         assertNotNull(output);
 
         String result = new String(output.toByteArray(), UTF_8.name());
+        // normalize the auotation mark
+        if (result.indexOf('\'') > 0) {
+            result = result.replace('\'', '"');
+        }
         boolean equals = TEST_XML_WITH_XML_HEADER.equals(result) || TEST_XML_WITH_XML_HEADER_ISO_8859_1.equals(result);
         assertTrue("Should match header", equals);
     }

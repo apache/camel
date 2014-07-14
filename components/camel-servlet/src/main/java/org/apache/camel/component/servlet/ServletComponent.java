@@ -27,6 +27,7 @@ import org.apache.camel.component.http.HttpBinding;
 import org.apache.camel.component.http.HttpClientConfigurer;
 import org.apache.camel.component.http.HttpComponent;
 import org.apache.camel.component.http.HttpConsumer;
+import org.apache.camel.component.http.HttpEndpoint;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.URISupport;
@@ -38,6 +39,15 @@ public class ServletComponent extends HttpComponent {
 
     private String servletName = "CamelServlet";
     private HttpRegistry httpRegistry;
+
+    public ServletComponent() {
+        super(ServletEndpoint.class);
+    }
+
+    public ServletComponent(Class<? extends HttpEndpoint> endpointClass) {
+        super(endpointClass);
+    }
+
 
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {

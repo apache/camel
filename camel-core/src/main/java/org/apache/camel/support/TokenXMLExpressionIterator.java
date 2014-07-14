@@ -16,12 +16,9 @@
  */
 package org.apache.camel.support;
 
-import java.io.ByteArrayOutputStream;
 import java.io.Closeable;
-import java.io.FilterInputStream;
 import java.io.IOException;
 import java.io.InputStream;
-import java.io.UnsupportedEncodingException;
 import java.text.MessageFormat;
 import java.util.ArrayList;
 import java.util.Iterator;
@@ -324,47 +321,5 @@ public class TokenXMLExpressionIterator extends ExpressionAdapter {
             sb.append("</").append(tags.get(i)).append(">");
         }
         return sb.toString();
-    }
-
-    // this input stream records the stream until the first text extraction occurs.
-    private static class RecordableInputStream extends FilterInputStream {
-        private ByteArrayOutputStream buf;
-        private String charset;
-        private boolean recording;
-        protected RecordableInputStream(InputStream in, String charset) {
-            super(in);
-            this.buf = new ByteArrayOutputStream();
-            this.charset = charset;
-            this.recording = true;
-        }
-
-        @Override
-        public int read() throws IOException {
-            int c = super.read();
-            if (c > 0 && recording) {
-                buf.write(c);
-            }
-            return c;
-        }
-
-        @Override
-        public int read(byte[] b, int off, int len) throws IOException {
-            int n = super.read(b, off, len);
-            if (n > 0 && recording) {
-                buf.write(b, off, n);
-            }
-            return n;
-        }
-
-        public String getText(int pos) {
-            String t = null;
-            recording = false;
-            try {
-                t = new String(buf.toByteArray(), 0, pos, charset);
-            } catch (UnsupportedEncodingException e) {
-                // ignore it as this should have be caught while scanning.
-            }
-            return t;
-        }
     }
 }

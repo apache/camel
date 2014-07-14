@@ -20,17 +20,22 @@ import java.util.Arrays;
 import java.util.HashSet;
 import java.util.Set;
 
-import org.apache.camel.component.infinispan.processor.query.QueryBuilderStrategy;
+import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriParams;
 import org.infinispan.commons.api.BasicCacheContainer;
 
+@UriParams
 public class InfinispanConfiguration {
     private BasicCacheContainer cacheContainer;
+    @UriParam
     private String cacheName;
+    @UriParam
     private String host;
+    @UriParam
     private String command;
+    @UriParam
     private boolean sync = true;
     private Set<String> eventTypes;
-    private QueryBuilderStrategy queryBuilderStrategy;
 
     public String getCommand() {
         return command;
@@ -82,13 +87,5 @@ public class InfinispanConfiguration {
 
     public void setEventTypes(String eventTypes) {
         this.eventTypes = new HashSet<String>(Arrays.asList(eventTypes.split(",")));
-    }
-
-    public QueryBuilderStrategy getQueryBuilderStrategy() {
-        return queryBuilderStrategy;
-    }
-
-    public void setQueryBuilderStrategy(QueryBuilderStrategy queryBuilderStrategy) {
-        this.queryBuilderStrategy = queryBuilderStrategy;
     }
 }

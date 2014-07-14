@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.ahc.ws;
 
-import org.apache.camel.component.ahc.ws.WsComponent;
 import org.apache.camel.util.jsse.ClientAuthentication;
 import org.apache.camel.util.jsse.KeyManagersParameters;
 import org.apache.camel.util.jsse.KeyStoreParameters;

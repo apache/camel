@@ -360,6 +360,16 @@ public final class EndpointHelper {
             return result;
         }
     }
+    
+    public static <T> T resloveStringParameter(CamelContext context, String value, Class<T> type) {
+        T result = null;
+        if (EndpointHelper.isReferenceParameter(value)) {
+            result = EndpointHelper.resolveReferenceParameter(context, value, type);
+        } else {
+            result = context.getTypeConverter().convertTo(type, value);
+        }
+        return result;
+    }
 
     /**
      * Gets the route id for the given endpoint in which there is a consumer listening.

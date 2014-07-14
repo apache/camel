@@ -19,6 +19,7 @@ package org.apache.camel.processor.aggregate;
 import java.util.List;
 
 import org.apache.camel.Exchange;
+import org.apache.camel.impl.DefaultExchange;
 
 /**
  * Aggregate all exchanges into a single combined Exchange holding all the aggregated exchanges
@@ -29,7 +30,6 @@ import org.apache.camel.Exchange;
 public class GroupedExchangeAggregationStrategy extends AbstractListAggregationStrategy<Exchange> {
 
     @Override
-   
     public void onCompletion(Exchange exchange) {
         if (isStoreAsBodyOnCompletion()) {
             // lets be backwards compatible
@@ -43,13 +43,12 @@ public class GroupedExchangeAggregationStrategy extends AbstractListAggregationS
 
     @Override
     public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
-        Exchange answer = super.aggregate(oldExchange, newExchange);
         if (oldExchange == null) {
-            // for the first time we must do a copy as the answer, so the outgoing
-            // exchange is not one of the grouped exchanges, as that causes a endless circular reference
-            answer = answer.copy();
+            // for the first time we must create a new empty exchange as the holder, as the outgoing exchange
+            // must not be one of the grouped exchanges, as that causes a endless circular reference
+            oldExchange = new DefaultExchange(newExchange);
         }
-        return answer;
+        return super.aggregate(oldExchange, newExchange);
     }
 
     @Override

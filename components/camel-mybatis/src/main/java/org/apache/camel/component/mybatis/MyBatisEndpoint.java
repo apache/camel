@@ -23,6 +23,8 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultPollingEndpoint;
+import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.ibatis.session.ExecutorType;
 import org.apache.ibatis.session.SqlSessionFactory;
@@ -30,12 +32,16 @@ import org.apache.ibatis.session.SqlSessionFactory;
 /**
  * @version 
  */
+@UriEndpoint(scheme = "mybatis", consumerClass =  MyBatisConsumer.class)
 public class MyBatisEndpoint extends DefaultPollingEndpoint {
 
-    private MyBatisProcessingStrategy processingStrategy;
-    private String statement;
-    private StatementType statementType;
+    private MyBatisProcessingStrategy processingStrategy = new DefaultMyBatisProcessingStrategy();
     private ExecutorType executorType;
+    @UriParam
+    private String statement;
+    @UriParam
+    private StatementType statementType;
+    @UriParam
     private int maxMessagesPerPoll;
 
     public MyBatisEndpoint() {
@@ -101,10 +107,7 @@ public class MyBatisEndpoint extends DefaultPollingEndpoint {
         this.executorType = ExecutorType.valueOf(executorType.toUpperCase());
     }
 
-    public synchronized MyBatisProcessingStrategy getProcessingStrategy() {
-        if (processingStrategy == null) {
-            processingStrategy = new DefaultMyBatisProcessingStrategy();
-        }
+    public MyBatisProcessingStrategy getProcessingStrategy() {
         return processingStrategy;
     }
 

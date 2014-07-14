@@ -31,8 +31,8 @@ public class ZipFileMultipleFilesSplitterTest extends ZipSplitterRouteTest {
     public void testSplitter() throws InterruptedException {
         MockEndpoint processZipEntry = getMockEndpoint("mock:processZipEntry");
         MockEndpoint splitResult = getMockEndpoint("mock:splitResult");
-        processZipEntry.expectedBodiesReceivedInAnyOrder("chau", "hi", "hola");
-        splitResult.expectedBodiesReceivedInAnyOrder("chiau.txt", "hi.txt", "hola.txt");
+        processZipEntry.expectedBodiesReceivedInAnyOrder("chau", "hi", "hola", "another_chiau", "another_hi");
+        splitResult.expectedBodiesReceivedInAnyOrder("chiau.txt", "hi.txt", "hola.txt", "directoryOne/another_chiau.txt", "directoryOne/another_hi.txt");
         assertMockEndpointsSatisfied();
     }
     

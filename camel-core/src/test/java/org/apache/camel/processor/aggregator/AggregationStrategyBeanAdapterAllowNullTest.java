@@ -18,6 +18,7 @@ package org.apache.camel.processor.aggregator;
 
 import java.util.ArrayList;
 import java.util.List;
+import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
@@ -66,6 +67,10 @@ public class AggregationStrategyBeanAdapterAllowNullTest extends ContextTestSupp
         }
     }
 
+    /**
+     * We support annotations on the types.
+     */
+    @XmlRootElement(name = "user")
     public static final class User {
         private String name;
 

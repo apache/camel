@@ -19,15 +19,12 @@ package org.apache.camel.component.dropbox.dto;
 import java.util.List;
 
 import com.dropbox.core.DbxEntry;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.component.dropbox.util.DropboxResultHeader;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 
 public class DropboxSearchResult extends DropboxResult {
-
-    private static final transient Logger LOG = LoggerFactory.getLogger(DropboxSearchResult.class);
 
     /**
      * Object payload contained in Exchange

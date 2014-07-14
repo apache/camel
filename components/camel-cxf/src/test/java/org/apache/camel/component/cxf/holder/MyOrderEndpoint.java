@@ -16,10 +16,20 @@
  */
 package org.apache.camel.component.cxf.holder;
 
+import javax.jws.WebParam;
 import javax.jws.WebService;
+import javax.xml.bind.annotation.XmlSeeAlso;
 import javax.xml.ws.Holder;
+import javax.xml.ws.RequestWrapper;
 
 @WebService
+@XmlSeeAlso({MyOrderType.class})
 public interface MyOrderEndpoint {
     String myOrder(Holder<String> strPart, int iAmount, Holder<String> strCustomer);
+    @RequestWrapper(className = "org.apache.camel.component.cxf.holder.MyOrderType")
+    String mySecureOrder(
+        @WebParam(name = "iAmount")                 
+        int iAmount, 
+        @WebParam(mode = WebParam.Mode.INOUT, name = "ENVELOPE_HEADER", header = true)
+        Holder<String> envelopeHeader);
 }

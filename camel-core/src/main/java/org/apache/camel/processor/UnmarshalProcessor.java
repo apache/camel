@@ -17,6 +17,7 @@
 package org.apache.camel.processor;
 
 import java.io.InputStream;
+import java.util.Iterator;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
@@ -55,6 +56,7 @@ public class UnmarshalProcessor extends ServiceSupport implements AsyncProcessor
         ObjectHelper.notNull(dataFormat, "dataFormat");
 
         InputStream stream = null;
+        Object result = null;
         try {
             stream = exchange.getIn().getMandatoryBody(InputStream.class);
 
@@ -62,7 +64,7 @@ public class UnmarshalProcessor extends ServiceSupport implements AsyncProcessor
             Message out = exchange.getOut();
             out.copyFrom(exchange.getIn());
 
-            Object result = dataFormat.unmarshal(exchange, stream);
+            result = dataFormat.unmarshal(exchange, stream);
             if (result instanceof Exchange) {
                 if (result != exchange) {
                     // it's not allowed to return another exchange other than the one provided to dataFormat
@@ -79,9 +81,11 @@ public class UnmarshalProcessor extends ServiceSupport implements AsyncProcessor
             exchange.setOut(null);
             exchange.setException(e);
         } finally {
-            IOHelper.close(stream, "input stream");
+            // The Iterator will close the stream itself
+            if (!(result instanceof Iterator)) {
+                IOHelper.close(stream, "input stream");
+            }
         }
-
         callback.done(true);
         return true;
     }

@@ -18,13 +18,9 @@ package org.apache.camel.component.dropbox.dto;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.component.dropbox.util.DropboxResultHeader;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 public class DropboxDelResult extends DropboxResult {
-
-    private static final transient Logger LOG = LoggerFactory.getLogger(DropboxDelResult.class);
-
+    
     /**
      * Object payload contained in Exchange
      * Exchange Body is populated with the remote path deleted on dropbox.

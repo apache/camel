@@ -28,7 +28,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.ResourceEndpoint;
-import org.apache.camel.component.direct.DirectConsumer;
 import org.apache.camel.spi.Language;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;

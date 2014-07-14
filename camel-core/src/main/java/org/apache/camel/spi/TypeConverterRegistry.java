@@ -16,12 +16,10 @@
  */
 package org.apache.camel.spi;
 
-import java.util.Iterator;
 import java.util.List;
 
 import org.apache.camel.StaticService;
 import org.apache.camel.TypeConverter;
-import org.apache.camel.util.KeyValueHolder;
 
 /**
  * Registry for type converters.

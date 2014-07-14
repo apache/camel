@@ -45,6 +45,7 @@ import org.w3c.dom.Node;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
+import org.apache.camel.component.cxf.util.CxfUtils;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.HeaderFilterStrategyAware;
 import org.apache.camel.util.ExchangeHelper;
@@ -121,13 +122,19 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
         // propagate attachments
         Set<Attachment> attachments = null;
         boolean isXop = Boolean.valueOf(camelExchange.getProperty(Message.MTOM_ENABLED, String.class));
-        for (Map.Entry<String, DataHandler> entry : camelExchange.getIn().getAttachments().entrySet()) {
-            if (attachments == null) {
-                attachments = new HashSet<Attachment>();
+        DataFormat dataFormat = camelExchange.getProperty(CxfConstants.DATA_FORMAT_PROPERTY,  
+                                                          DataFormat.class);
+        // we should avoid adding the attachments if the data format is CXFMESSAGE, as the message stream 
+        // already has the attachment information
+        if (!DataFormat.CXF_MESSAGE.equals(dataFormat)) {
+            for (Map.Entry<String, DataHandler> entry : camelExchange.getIn().getAttachments().entrySet()) {
+                if (attachments == null) {
+                    attachments = new HashSet<Attachment>();
+                }
+                AttachmentImpl attachment = new AttachmentImpl(entry.getKey(), entry.getValue());
+                attachment.setXOP(isXop);
+                attachments.add(attachment);
             }
-            AttachmentImpl attachment = new AttachmentImpl(entry.getKey(), entry.getValue());
-            attachment.setXOP(isXop);
-            attachments.add(attachment);
         }
         
         if (attachments != null) {
@@ -495,6 +502,9 @@ public class DefaultCxfBinding implements CxfBinding, HeaderFilterStrategyAware 
         Map<String, List<String>> cxfHeaders = CastUtils.cast((Map<?, ?>)cxfMessage.get(Message.PROTOCOL_HEADERS));
         Map<String, Object> camelHeaders = camelMessage.getHeaders();
         camelHeaders.put(CxfConstants.CAMEL_CXF_MESSAGE, cxfMessage);
+        
+        // Copy the http header to CAMEL as we do in camel-cxfrs
+        CxfUtils.copyHttpHeadersFromCxfToCamel(cxfMessage, camelMessage);
         
         if (cxfHeaders != null) {
             for (Map.Entry<String, List<String>> entry : cxfHeaders.entrySet()) {

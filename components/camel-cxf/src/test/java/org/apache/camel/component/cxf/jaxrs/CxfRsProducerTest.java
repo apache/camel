@@ -88,6 +88,8 @@ public class CxfRsProducerTest extends CamelSpringTestSupport {
                 inMessage.setHeader(CxfConstants.CAMEL_CXF_RS_USING_HTTP_API, Boolean.FALSE);
                 // set a customer header
                 inMessage.setHeader("key", "value");
+                // setup the accept content type
+                inMessage.setHeader(Exchange.ACCEPT_CONTENT_TYPE, "application/json");
                 // set the parameters , if you just have one parameter 
                 // camel will put this object into an Object[] itself
                 inMessage.setBody("123");
@@ -163,6 +165,33 @@ public class CxfRsProducerTest extends CamelSpringTestSupport {
         assertEquals("Get a wrong response code", 200, exchange.getOut().getHeader(Exchange.HTTP_RESPONSE_CODE));
         assertEquals("Get a wrong header value", "value", exchange.getOut().getHeader("key"));
         // END SNIPPET: HttpExample 
+    }
+    
+    @Test
+    public void testSuppressGetCustomerExceptionWithCxfRsEndpoint() {
+        Exchange exchange 
+            = template.send("cxfrs://http://localhost:" + getPort1() + "/" + getClass().getSimpleName() + "/?httpClientAPI=true&throwExceptionOnFailure=false", new Processor() {
+                public void process(Exchange exchange) throws Exception {
+                    exchange.setPattern(ExchangePattern.InOut);
+                    Message message = exchange.getIn();
+                    // set the Http method
+                    message.setHeader(Exchange.HTTP_METHOD, "PUT");
+                    // set the relative path
+                    message.setHeader(Exchange.HTTP_PATH, "/customerservice/customers");
+                    // we just setup the customer with a wrong id
+                    Customer customer = new Customer();
+                    customer.setId(222);
+                    customer.setName("user");
+                    message.setBody(customer);                
+                }
+            });
+ 
+        // we should get the exception here 
+        assertNull("Don't expect the exception here", exchange.getException());
+        Message result = exchange.getOut();
+        assertEquals("Get a wrong http status code.", result.getHeader(Exchange.HTTP_RESPONSE_CODE), 406);
+        
+        
     }
     
     @Test

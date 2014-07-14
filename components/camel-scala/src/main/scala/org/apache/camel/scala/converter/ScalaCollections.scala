@@ -72,7 +72,7 @@ class ScalaImmutableCollections {
 
 @Converter
 class ScalaMutableCollections {
-  import collection.mutable.{ConcurrentMap, Buffer, Map, Seq, Set}
+  import collection.mutable.{Buffer, Map, Seq, Set}
   import java.util.{Dictionary => JDictionary, List => JList, Map => JMap, Set => JSet}
   import java.util.concurrent.{ConcurrentMap => JConcurrentMap}
 
@@ -101,10 +101,10 @@ class ScalaMutableCollections {
   def toScalaMap[A,B](map: JMap[A,B]): Map[A,B] = map
 
   @Converter
-  def toJavaConcurrentMap[A,B](map: ConcurrentMap[A,B]): JConcurrentMap[A,B] = map
+  def toJavaConcurrentMap[A,B](map: scala.collection.concurrent.Map[A,B]): JConcurrentMap[A,B] = map
 
   @Converter
-  def toScalaConcurrentMap[A,B](map: JConcurrentMap[A,B]): ConcurrentMap[A,B] = map
+  def toScalaConcurrentMap[A,B](map: JConcurrentMap[A,B]): scala.collection.concurrent.Map[A,B] = map
 
   @Converter
   def toJavaList[T](seq: Seq[T]): JList[T] = seq

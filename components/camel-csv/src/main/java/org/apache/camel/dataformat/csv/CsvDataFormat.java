@@ -131,16 +131,25 @@ public class CsvDataFormat implements DataFormat {
         try {
             reader = IOHelper.buffered(new InputStreamReader(inputStream, IOHelper.getCharsetName(exchange)));
             CSVParser parser = new CSVParser(reader, strategy);
-
+            if (skipFirstLine) {
+                // read one line ahead and skip it
+                parser.getLine();
+            }
             CsvLineConverter<?> lineConverter;
             if (useMaps) {
-                lineConverter = CsvLineConverters.getMapLineConverter(parser.getLine());
+                final CSVField[] fields = this.config.getFields();
+                final String[] fieldS;
+                if (fields != null && fields.length > 0) {
+                    fieldS = new String[fields.length];
+                    for (int i = 0; i < fields.length; i++) {
+                        fieldS[i] = fields[i].getName();
+                    }
+                } else {
+                    fieldS = parser.getLine();
+                }
+                lineConverter = CsvLineConverters.getMapLineConverter(fieldS);
             } else {
                 lineConverter = CsvLineConverters.getListConverter();
-                if (skipFirstLine) {
-                    // read one line ahead and skip it
-                    parser.getLine();
-                }
             }
 
             @SuppressWarnings({"unchecked", "rawtypes"}) CsvIterator<?> csvIterator = new CsvIterator(parser, reader, lineConverter);

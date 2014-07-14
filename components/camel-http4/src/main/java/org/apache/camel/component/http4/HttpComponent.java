@@ -42,6 +42,7 @@ import org.apache.http.conn.socket.ConnectionSocketFactory;
 import org.apache.http.conn.socket.PlainConnectionSocketFactory;
 import org.apache.http.conn.ssl.BrowserCompatHostnameVerifier;
 import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
+import org.apache.http.conn.ssl.SSLContexts;
 import org.apache.http.conn.ssl.X509HostnameVerifier;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.impl.conn.PoolingHttpClientConnectionManager;
@@ -71,6 +72,10 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
     protected int connectionsPerRoute = 20;
     // It's MILLISECONDS, the default value is always keep alive
     protected long connectionTimeToLive = -1;
+
+    public HttpComponent() {
+        super(HttpEndpoint.class);
+    }
 
     /**
      * Connects the URL specified on the endpoint to the specified processor.
@@ -309,8 +314,8 @@ public class HttpComponent extends HeaderFilterStrategyComponent {
             builder.register("https", new SSLConnectionSocketFactory(sslContextParams.createSSLContext(), x509HostnameVerifier));
             builder.register("https4", new SSLConnectionSocketFactory(sslContextParams.createSSLContext(), x509HostnameVerifier));
         } else {
-            builder.register("https4", SSLConnectionSocketFactory.getSocketFactory());
-            builder.register("https", SSLConnectionSocketFactory.getSocketFactory());
+            builder.register("https4", new SSLConnectionSocketFactory(SSLContexts.createDefault(), x509HostnameVerifier));
+            builder.register("https", new SSLConnectionSocketFactory(SSLContexts.createDefault(), x509HostnameVerifier));
         }
         return builder.build();
     }

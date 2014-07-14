@@ -20,7 +20,7 @@ import java.util.Map;
 import javax.persistence.EntityManagerFactory;
 
 import org.apache.camel.Endpoint;
-import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -32,11 +32,15 @@ import org.springframework.transaction.support.TransactionTemplate;
  *
  * @version 
  */
-public class JpaComponent extends DefaultComponent {
+public class JpaComponent extends UriEndpointComponent {
     private static final Logger LOG = LoggerFactory.getLogger(JpaComponent.class);
     private EntityManagerFactory entityManagerFactory;
     private PlatformTransactionManager transactionManager;
     private boolean joinTransaction = true;
+
+    public JpaComponent() {
+        super(JpaEndpoint.class);
+    }
 
     // Properties
     //-------------------------------------------------------------------------

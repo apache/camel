@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.rabbitmq;
 
+import java.io.IOException;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashMap;
@@ -26,7 +27,6 @@ import java.util.concurrent.ThreadPoolExecutor;
 
 import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Address;
-import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.ConnectionFactory;
 import com.rabbitmq.client.Envelope;
 import com.rabbitmq.client.impl.LongStringHelper;
@@ -109,7 +109,7 @@ public class RabbitMQEndpointTest extends CamelTestSupport {
         ThreadPoolExecutor executor = assertIsInstanceOf(ThreadPoolExecutor.class,  endpoint.createExecutor());
         assertEquals(20, executor.getCorePoolSize());
     }
-    
+
     @Test
     public void createEndpointWithAutoAckDisabled() throws Exception {
         RabbitMQEndpoint endpoint = context.getEndpoint("rabbitmq:localhost/exchange?autoAck=false", RabbitMQEndpoint.class);
@@ -122,7 +122,7 @@ public class RabbitMQEndpointTest extends CamelTestSupport {
 
         assertTrue(endpoint.isSingleton());
     }
-    
+
     @Test
     public void brokerEndpointAddressesSettings() throws Exception {
         RabbitMQEndpoint endpoint = context.getEndpoint("rabbitmq:localhost/exchange?addresses=server1:12345,server2:12345", RabbitMQEndpoint.class);
@@ -132,7 +132,13 @@ public class RabbitMQEndpointTest extends CamelTestSupport {
     }
 
     private ConnectionFactory createConnectionFactory(String uri) {
-        RabbitMQEndpoint endpoint = context.getEndpoint(uri, RabbitMQEndpoint.class); 
+        RabbitMQEndpoint endpoint = context.getEndpoint(uri, RabbitMQEndpoint.class);
+        try {
+            endpoint.connect(Executors.newSingleThreadExecutor());
+        } catch (IOException ioExc) {
+            // Doesn't matter if RabbitMQ is not available
+            log.debug("RabbitMQ not available", ioExc);
+        }
         return endpoint.getConnectionFactory();
     }
 
@@ -157,17 +163,17 @@ public class RabbitMQEndpointTest extends CamelTestSupport {
 
     @Test
     public void testCreateConnectionFactoryCustom() throws Exception {
-        ConnectionFactory connectionFactory  = createConnectionFactory("rabbitmq:localhost:1234/exchange"
-                                                                      + "?username=userxxx"
-                                                                      + "&password=passxxx"
-                                                                      + "&connectionTimeout=123"
-                                                                      + "&requestedChannelMax=456"
-                                                                      + "&requestedFrameMax=789"
-                                                                      + "&requestedHeartbeat=987"
-                                                                      + "&sslProtocol=true"
-                                                                      + "&automaticRecoveryEnabled=true"
-                                                                      + "&networkRecoveryInterval=654"
-                                                                      + "&topologyRecoveryEnabled=false");
+        ConnectionFactory connectionFactory = createConnectionFactory("rabbitmq:localhost:1234/exchange"
+            + "?username=userxxx"
+            + "&password=passxxx"
+            + "&connectionTimeout=123"
+            + "&requestedChannelMax=456"
+            + "&requestedFrameMax=789"
+            + "&requestedHeartbeat=987"
+            + "&sslProtocol=true"
+            + "&automaticRecoveryEnabled=true"
+            + "&networkRecoveryInterval=654"
+            + "&topologyRecoveryEnabled=false");
 
         assertEquals("localhost", connectionFactory.getHost());
         assertEquals(1234, connectionFactory.getPort());

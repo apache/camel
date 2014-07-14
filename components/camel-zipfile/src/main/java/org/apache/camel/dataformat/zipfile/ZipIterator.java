@@ -17,6 +17,7 @@
 package org.apache.camel.dataformat.zipfile;
 
 import java.io.BufferedInputStream;
+import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
 import java.util.Iterator;
@@ -25,6 +26,7 @@ import java.util.zip.ZipInputStream;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
+import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.impl.DefaultMessage;
 import org.apache.camel.util.IOHelper;
 import org.slf4j.Logger;
@@ -34,7 +36,7 @@ import org.slf4j.LoggerFactory;
  * The Iterator which can go through the ZipInputStream according to ZipEntry
  * Based on the thread <a href="http://camel.465427.n5.nabble.com/zip-file-best-practices-td5713437.html">zip file best practices</a>
  */
-class ZipIterator implements Iterator<Message> {
+public class ZipIterator implements Iterator<Message>, Closeable {
     static final Logger LOGGER = LoggerFactory.getLogger(ZipIterator.class);
     
     private final Message inputMessage;
@@ -70,9 +72,9 @@ class ZipIterator implements Iterator<Message> {
                 }                
             }
             return availableDataInCurrentEntry;            
-        } catch (IOException e) {
-            LOGGER.warn("Fail hasNext()", e);
-            return false;            
+        } catch (IOException exception) {
+            //Just wrap the IOException as CamelRuntimeException
+            throw new RuntimeCamelException(exception);      
         }
     }
 
@@ -93,7 +95,7 @@ class ZipIterator implements Iterator<Message> {
         
         if (zipInputStream != null) {
             try {
-                ZipEntry current = zipInputStream.getNextEntry();
+                ZipEntry current = getNextEntry();
 
                 if (current != null) {
                     LOGGER.debug("read zipEntry {}", current.getName());
@@ -106,7 +108,9 @@ class ZipIterator implements Iterator<Message> {
                 } else {
                     LOGGER.trace("close zipInputStream");
                 }
-            } catch (IOException ignore) {
+            } catch (IOException exception) {
+                //Just wrap the IOException as CamelRuntimeException
+                throw new RuntimeCamelException(exception);
             }
         }        
         
@@ -120,8 +124,27 @@ class ZipIterator implements Iterator<Message> {
         }
     }
 
+    private ZipEntry getNextEntry() throws IOException {
+        ZipEntry entry;
+
+        while ((entry = zipInputStream.getNextEntry()) != null) {
+            if (!entry.isDirectory()) {
+                return entry;
+            }
+        }
+
+        return null;
+    }
+
     @Override
     public void remove() {
         throw new UnsupportedOperationException();
+    }
+
+    @Override
+    public void close() throws IOException {
+        if (zipInputStream != null) {
+            zipInputStream.close();
+        }
     }
 }

@@ -65,7 +65,9 @@ public class OsgiClassResolver extends DefaultClassResolver {
     @Override
     public InputStream loadResourceAsStream(String uri) {
         ObjectHelper.notEmpty(uri, "uri");
-        URL url = loadResourceAsURL(uri);
+
+        String resolvedName = resolveUriPath(uri);
+        URL url = loadResourceAsURL(resolvedName);
         InputStream answer = null;
         if (url != null) {
             try {
@@ -80,14 +82,16 @@ public class OsgiClassResolver extends DefaultClassResolver {
     @Override
     public URL loadResourceAsURL(String uri) {
         ObjectHelper.notEmpty(uri, "uri");
-        return bundleContext.getBundle().getResource(uri);
+        String resolvedName = resolveUriPath(uri);
+        return bundleContext.getBundle().getResource(resolvedName);
     }
 
     @Override
     public Enumeration<URL> loadResourcesAsURL(String uri) {
         ObjectHelper.notEmpty(uri, "uri");
         try {
-            return bundleContext.getBundle().getResources(uri);
+            String resolvedName = resolveUriPath(uri);
+            return bundleContext.getBundle().getResources(resolvedName);
         } catch (IOException e) {
             throw new RuntimeException("Cannot load resource: " + uri, e);
         }
@@ -99,7 +103,9 @@ public class OsgiClassResolver extends DefaultClassResolver {
         Vector<URL> answer = new Vector<URL>();
 
         try {
-            Enumeration<URL> e = bundleContext.getBundle().getResources(uri);
+            String resolvedName = resolveUriPath(uri);
+
+            Enumeration<URL> e = bundleContext.getBundle().getResources(resolvedName);
             while (e != null && e.hasMoreElements()) {
                 answer.add(e.nextElement());
             }
@@ -137,5 +143,19 @@ public class OsgiClassResolver extends DefaultClassResolver {
         }
         return answer;
     }
+
+    /**
+     * Helper operation used to remove relative path notation from
+     * resources.  Most critical for resources on the Classpath
+     * as resource loaders will not resolve the relative paths correctly.
+     *
+     * @param name the name of the resource to load
+     * @return the modified or unmodified string if there were no changes
+     */
+    private static String resolveUriPath(String name) {
+        // compact the path and use / as separator as that's used for loading resources on the classpath
+        return FileUtil.compactPath(name, '/');
+    }
+
     
 }

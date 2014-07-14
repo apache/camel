@@ -23,6 +23,7 @@ import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.impl.DefaultProducer;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.xmlrpc.client.XmlRpcClient;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,10 +44,16 @@ public class XmlRpcProducer extends DefaultProducer implements AsyncProcessor {
     public void process(Exchange exchange) throws Exception {
         LOG.trace("Process exchange: {} in the sync way.", exchange);
         Message in = exchange.getIn();
-        String operationName = in.getHeader(XmlRpcConstants.METHOD_NAME, String.class);
+        String methodName = in.getHeader(XmlRpcConstants.METHOD_NAME, String.class);
+        if (ObjectHelper.isEmpty(methodName)) {
+            methodName = endpoint.getDefaultMethodName();
+        }
+        if (ObjectHelper.isEmpty(methodName)) {
+            throw new IllegalArgumentException("CamelXmlRpcMethodName header is empty, please set the message header or defaultMethodName option on the endpoint.");
+        }
         try {
             //TODO need to use the binding to handle the requests
-            Object result = client.execute(operationName, in.getBody(List.class));
+            Object result = client.execute(methodName, in.getBody(List.class));
             //TODO what if the request is one way operation
             // copy the in message header to the out message
             exchange.getOut().getHeaders().putAll(exchange.getIn().getHeaders());
@@ -60,11 +67,17 @@ public class XmlRpcProducer extends DefaultProducer implements AsyncProcessor {
     public boolean process(Exchange exchange, AsyncCallback callback) {
         LOG.trace("Process exchange: {} in the async way.", exchange);
         Message in = exchange.getIn();
-        String operationName = in.getHeader(XmlRpcConstants.METHOD_NAME, String.class);
+        String methodName = in.getHeader(XmlRpcConstants.METHOD_NAME, String.class);
+        if (ObjectHelper.isEmpty(methodName)) {
+            methodName = endpoint.getDefaultMethodName();
+        }
+        if (ObjectHelper.isEmpty(methodName)) {
+            throw new IllegalArgumentException("CamelXmlRpcMethodName header is empty, please set the message header or defaultMethodName option on the endpoint.");
+        }
         XmlRpcAsyncCallback xmlRpcAsyncCallback = new XmlRpcAsyncCallback(exchange, callback);
         //TODO need to use the binding to handle the requests
         try {
-            client.executeAsync(operationName, in.getBody(List.class), xmlRpcAsyncCallback);
+            client.executeAsync(methodName, in.getBody(List.class), xmlRpcAsyncCallback);
             return false;
         } catch (Exception ex) {
             exchange.setException(ex);

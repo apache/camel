@@ -206,9 +206,9 @@ public class PGPDataFormatTest extends AbstractPGPDataFormatTest {
         String payload = "Hi Alice, Be careful Eve is listening, signed Bob";
         Map<String, Object> headers = new HashMap<String, Object>();
         // add signature user id which does not have a passphrase
-        headers.put(PGPDataFormat.SIGNATURE_KEY_USERID, "userIDWithNoPassphrase");
+        headers.put(PGPKeyAccessDataFormat.SIGNATURE_KEY_USERID, "userIDWithNoPassphrase");
         // the following entry is necessary for the dynamic test
-        headers.put(PGPDataFormat.KEY_USERID, "second");
+        headers.put(PGPKeyAccessDataFormat.KEY_USERID, "second");
         template.sendBodyAndHeaders("direct:several-signer-keys", payload, headers);
         assertMockEndpointsSatisfied();
 
@@ -237,8 +237,8 @@ public class PGPDataFormatTest extends AbstractPGPDataFormatTest {
         Message inMess = exchange.getIn();
         assertNotNull(inMess);
         // must contain exactly one encryption key and one signature
-        assertEquals(1, inMess.getHeader(PGPDataFormat.NUMBER_OF_ENCRYPTION_KEYS));
-        assertEquals(1, inMess.getHeader(PGPDataFormat.NUMBER_OF_SIGNING_KEYS));
+        assertEquals(1, inMess.getHeader(PGPKeyAccessDataFormat.NUMBER_OF_ENCRYPTION_KEYS));
+        assertEquals(1, inMess.getHeader(PGPKeyAccessDataFormat.NUMBER_OF_SIGNING_KEYS));
     }
 
     /**
@@ -347,7 +347,7 @@ public class PGPDataFormatTest extends AbstractPGPDataFormatTest {
         PGPPrivateKey pgpPrivKey = pgpSec.extractPrivateKey(new JcePBESecretKeyDecryptorBuilder().setProvider(getProvider()).build(
                 "sdude".toCharArray()));
         PGPSignatureGenerator sGen = new PGPSignatureGenerator(new JcaPGPContentSignerBuilder(pgpSec.getPublicKey().getAlgorithm(),
-                PGPUtil.SHA1).setProvider(getProvider()));
+                HashAlgorithmTags.SHA1).setProvider(getProvider()));
 
         sGen.init(PGPSignature.BINARY_DOCUMENT, pgpPrivKey);
 
@@ -444,7 +444,7 @@ public class PGPDataFormatTest extends AbstractPGPDataFormatTest {
     @Test
     public void testExceptionForSignatureVerificationOptionNoSignatureAllowed() throws Exception {
 
-        decryptor.setSignatureVerificationOption(PGPDataFormat.SIGNATURE_VERIFICATION_OPTION_NO_SIGNATURE_ALLOWED);
+        decryptor.setSignatureVerificationOption(PGPKeyAccessDataFormat.SIGNATURE_VERIFICATION_OPTION_NO_SIGNATURE_ALLOWED);
 
         MockEndpoint mock = getMockEndpoint("mock:exception");
         mock.expectedMessageCount(1);
@@ -458,7 +458,7 @@ public class PGPDataFormatTest extends AbstractPGPDataFormatTest {
     public void testExceptionForSignatureVerificationOptionRequired() throws Exception {
 
         encryptor.setSignatureKeyUserid(null); // no signature
-        decryptor.setSignatureVerificationOption(PGPDataFormat.SIGNATURE_VERIFICATION_OPTION_REQUIRED);
+        decryptor.setSignatureVerificationOption(PGPKeyAccessDataFormat.SIGNATURE_VERIFICATION_OPTION_REQUIRED);
 
         MockEndpoint mock = getMockEndpoint("mock:exception");
         mock.expectedMessageCount(1);
@@ -472,7 +472,7 @@ public class PGPDataFormatTest extends AbstractPGPDataFormatTest {
     public void testSignatureVerificationOptionIgnore() throws Exception {
 
         // encryptor is sending a PGP message with signature! Decryptor is ignoreing the signature
-        decryptor.setSignatureVerificationOption(PGPDataFormat.SIGNATURE_VERIFICATION_OPTION_IGNORE);
+        decryptor.setSignatureVerificationOption(PGPKeyAccessDataFormat.SIGNATURE_VERIFICATION_OPTION_IGNORE);
         decryptor.setSignatureKeyUserids(null);
         decryptor.setSignatureKeyFileName(null); // no public keyring! --> no signature validation possible
 
@@ -516,7 +516,7 @@ public class PGPDataFormatTest extends AbstractPGPDataFormatTest {
                 pgpDecrypt.setKeyFileName(keyFileNameSec);
                 pgpDecrypt.setPassword(keyPassword);
                 pgpDecrypt.setProvider(getProvider());
-                pgpDecrypt.setSignatureVerificationOption(PGPDataFormat.SIGNATURE_VERIFICATION_OPTION_NO_SIGNATURE_ALLOWED);
+                pgpDecrypt.setSignatureVerificationOption(PGPKeyAccessDataFormat.SIGNATURE_VERIFICATION_OPTION_NO_SIGNATURE_ALLOWED);
 
                 from("direct:inline2").marshal(pgpEncrypt).to("mock:encrypted").unmarshal(pgpDecrypt).to("mock:unencrypted");
 
@@ -550,8 +550,8 @@ public class PGPDataFormatTest extends AbstractPGPDataFormatTest {
 
                 // test verifying exception, no public key found corresponding to signature key userIds
                 from("direct:verify_exception_sig_userids").marshal(pgpSignAndEncrypt).to("mock:encrypted")
-                        .setHeader(PGPDataFormat.SIGNATURE_KEY_USERIDS).constant(Arrays.asList(new String[] {"wrong1", "wrong2" }))
-                        .setHeader(PGPDataFormat.SIGNATURE_KEY_USERID).constant("wrongUserID").unmarshal(pgpVerifyAndDecrypt)
+                        .setHeader(PGPKeyAccessDataFormat.SIGNATURE_KEY_USERIDS).constant(Arrays.asList(new String[] {"wrong1", "wrong2" }))
+                        .setHeader(PGPKeyAccessDataFormat.SIGNATURE_KEY_USERID).constant("wrongUserID").unmarshal(pgpVerifyAndDecrypt)
                         .to("mock:unencrypted");
 
                 /* ---- key ring as byte array -- */
@@ -589,7 +589,7 @@ public class PGPDataFormatTest extends AbstractPGPDataFormatTest {
                 pgpVerifyAndDecryptByteArray.setProvider(getProvider());
                 // restrict verification to public keys with certain User ID
                 pgpVerifyAndDecryptByteArray.setSignatureKeyUserids(getSignatureKeyUserIds());
-                pgpVerifyAndDecryptByteArray.setSignatureVerificationOption(PGPDataFormat.SIGNATURE_VERIFICATION_OPTION_REQUIRED);
+                pgpVerifyAndDecryptByteArray.setSignatureVerificationOption(PGPKeyAccessDataFormat.SIGNATURE_VERIFICATION_OPTION_REQUIRED);
 
                 from("direct:sign-key-ring-byte-array").streamCaching()
                 // encryption key ring can also be set as header
@@ -647,27 +647,27 @@ public class PGPDataFormatTest extends AbstractPGPDataFormatTest {
                 pgpVerifyAndDecryptOneUserIdWithServeralKeys.setSignatureKeyUserids(expectedSigUserIds);
                 from("direct:one-userid-several-keys")
                         // there are two keys which have a User ID which contains the string "econd"
-                        .setHeader(PGPDataFormat.KEY_USERID)
+                        .setHeader(PGPKeyAccessDataFormat.KEY_USERID)
                         .constant("econd")
-                        .setHeader(PGPDataFormat.SIGNATURE_KEY_USERID)
+                        .setHeader(PGPKeyAccessDataFormat.SIGNATURE_KEY_USERID)
                         .constant("econd")
                         .marshal(pgpSignAndEncryptOneUserIdWithServeralKeys)
                         // it is recommended to remove the header immediately when it is no longer needed
-                        .removeHeader(PGPDataFormat.KEY_USERID)
-                        .removeHeader(PGPDataFormat.SIGNATURE_KEY_USERID)
+                        .removeHeader(PGPKeyAccessDataFormat.KEY_USERID)
+                        .removeHeader(PGPKeyAccessDataFormat.SIGNATURE_KEY_USERID)
                         .to("mock:encrypted")
                         // only specify one expected signature key, to check the first signature
-                        .setHeader(PGPDataFormat.SIGNATURE_KEY_USERID)
+                        .setHeader(PGPKeyAccessDataFormat.SIGNATURE_KEY_USERID)
                         .constant("Second <email@second.com>")
                         .unmarshal(pgpVerifyAndDecryptOneUserIdWithServeralKeys)
                         // do it again but now check the second signature key
                         // there are two keys which have a User ID which contains the string "econd"
-                        .setHeader(PGPDataFormat.KEY_USERID).constant("econd").setHeader(PGPDataFormat.SIGNATURE_KEY_USERID)
+                        .setHeader(PGPKeyAccessDataFormat.KEY_USERID).constant("econd").setHeader(PGPKeyAccessDataFormat.SIGNATURE_KEY_USERID)
                         .constant("econd").marshal(pgpSignAndEncryptOneUserIdWithServeralKeys)
                         // it is recommended to remove the header immediately when it is no longer needed
-                        .removeHeader(PGPDataFormat.KEY_USERID).removeHeader(PGPDataFormat.SIGNATURE_KEY_USERID)
+                        .removeHeader(PGPKeyAccessDataFormat.KEY_USERID).removeHeader(PGPKeyAccessDataFormat.SIGNATURE_KEY_USERID)
                         // only specify one expected signature key, to check the second signature
-                        .setHeader(PGPDataFormat.SIGNATURE_KEY_USERID).constant("Third (comment third) <email@third.com>")
+                        .setHeader(PGPKeyAccessDataFormat.SIGNATURE_KEY_USERID).constant("Third (comment third) <email@third.com>")
                         .unmarshal(pgpVerifyAndDecryptOneUserIdWithServeralKeys).to("mock:unencrypted");
 
             }

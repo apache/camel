@@ -125,7 +125,11 @@ public final class RouteDefinitionHelper {
             // if there was a custom id assigned, then make sure to support property placeholders
             if (route.hasCustomIdAssigned()) {
                 String id = route.getId();
-                route.setId(context.resolvePropertyPlaceholders(id));
+                id = context.resolvePropertyPlaceholders(id);
+                // only set id if its changed, such as we did property placeholder
+                if (!route.getId().equals(id)) {
+                    route.setId(id);
+                }
             }
         }
     }
@@ -537,7 +541,11 @@ public final class RouteDefinitionHelper {
         if (processor.hasCustomIdAssigned()) {
             String id = processor.getId();
             try {
-                processor.setId(context.resolvePropertyPlaceholders(id));
+                id = context.resolvePropertyPlaceholders(id);
+                // only set id if its changed, such as we did property placeholder
+                if (!processor.getId().equals(id)) {
+                    processor.setId(id);
+                }
             } catch (Exception e) {
                 throw ObjectHelper.wrapRuntimeCamelException(e);
             }

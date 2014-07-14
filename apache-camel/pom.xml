@@ -101,7 +101,15 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
+      <artifactId>camel-barcode</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
       <artifactId>camel-bindy</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-box</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
@@ -222,6 +230,10 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-guice</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-gora</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
@@ -552,6 +564,10 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
+      <artifactId>camel-spark-rest</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
       <artifactId>camel-splunk</artifactId>
     </dependency>
     <dependency>
@@ -629,7 +645,11 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-test-spring</artifactId>
-    </dependency>    
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-test-spring3</artifactId>
+    </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-testng</artifactId>

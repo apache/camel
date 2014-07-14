@@ -97,8 +97,8 @@ public class HdfsProducerSplitTest extends HdfsTestSupport {
         FileSystem fs = FileSystem.get(new Configuration());
         FileStatus[] status = fs.listStatus(new Path("file:///" + BASE_FILE.toUri() + routeNr));
         assertEquals(10, status.length);
-        for (int i = 0; i < status.length; i++) {
-            BufferedReader br = new BufferedReader(new InputStreamReader(fs.open(status[i].getPath())));
+        for (FileStatus fileStatus : status) {
+            BufferedReader br = new BufferedReader(new InputStreamReader(fs.open(fileStatus.getPath())));
             assertTrue(br.readLine().startsWith("CIAO"));
             assertNull(br.readLine());
         }

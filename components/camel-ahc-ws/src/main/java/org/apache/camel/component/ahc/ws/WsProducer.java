@@ -19,11 +19,11 @@ package org.apache.camel.component.ahc.ws;
 import java.io.IOException;
 import java.io.InputStream;
 
+import com.ning.http.client.websocket.WebSocket;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.impl.DefaultProducer;
-
-import com.ning.http.client.websocket.WebSocket;
 
 /**
  *
@@ -49,9 +49,9 @@ public class WsProducer extends DefaultProducer {
         log.debug("Sending out {}", message);
         if (message != null) {
             if (message instanceof String) {
-                sendMessage(getWebSocket(), (String)message, ((WsEndpoint)getEndpoint()).isUseStreaming());
+                sendMessage(getWebSocket(), (String)message, getEndpoint().isUseStreaming());
             } else if (message instanceof byte[]) {
-                sendMessage(getWebSocket(), (byte[])message, ((WsEndpoint)getEndpoint()).isUseStreaming());
+                sendMessage(getWebSocket(), (byte[])message, getEndpoint().isUseStreaming());
             } else if (message instanceof InputStream) {
                 sendStreamMessage(getWebSocket(), (InputStream)message);
             } else {
@@ -133,6 +133,6 @@ public class WsProducer extends DefaultProducer {
     }
     
     private WebSocket getWebSocket() {
-        return ((WsEndpoint)getEndpoint()).getWebSocket();
+        return getEndpoint().getWebSocket();
     }
 }

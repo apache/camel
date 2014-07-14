@@ -155,7 +155,7 @@ public final class URISupport {
                 char ch = uri.charAt(i);
                 // look ahead of the next char
                 char next;
-                if (i < uri.length() - 2) {
+                if (i <= uri.length() - 2) {
                     next = uri.charAt(i + 1);
                 } else {
                     next = '\u0000';

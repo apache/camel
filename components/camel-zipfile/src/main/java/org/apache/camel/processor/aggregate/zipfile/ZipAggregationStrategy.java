@@ -49,7 +49,20 @@ public class ZipAggregationStrategy implements AggregationStrategy {
 
     private String filePrefix;
     private String fileSuffix = ".zip";
+    private boolean preserveFolderStructure;
 
+    public ZipAggregationStrategy() {
+        this(false);
+    }
+    
+    /**
+     * @param preserveFolderStructure if true, the folder structure is preserved when the source is
+     * a type of {@link GenericFileMessage}.  If used with a file, use recursive=true.
+     */
+    public ZipAggregationStrategy(boolean preserveFolderStructure) {
+        this.preserveFolderStructure = preserveFolderStructure;
+    }
+    
     /**
      * Gets the prefix used when creating the ZIP file name.
      * @return the prefix
@@ -110,7 +123,7 @@ public class ZipAggregationStrategy implements AggregationStrategy {
             try {
                 File appendFile =  newExchange.getIn().getBody(File.class);
                 if (appendFile != null) {
-                    addFilesToZip(zipFile, new File[]{appendFile});
+                    addFileToZip(zipFile, appendFile, this.preserveFolderStructure ? newExchange.getIn().toString() : null);
                     GenericFile<File> genericFile = 
                         FileConsumer.asGenericFile(
                             zipFile.getParent(), 
@@ -139,7 +152,7 @@ public class ZipAggregationStrategy implements AggregationStrategy {
         return answer;
     }
     
-    private static void addFilesToZip(File source, File[] files) throws IOException {
+    private static void addFileToZip(File source, File file, String fileName) throws IOException {
         File tmpZip = File.createTempFile(source.getName(), null);
         tmpZip.delete();
         if (!source.renameTo(tmpZip)) {
@@ -149,15 +162,13 @@ public class ZipAggregationStrategy implements AggregationStrategy {
         ZipInputStream zin = new ZipInputStream(new FileInputStream(tmpZip));
         ZipOutputStream out = new ZipOutputStream(new FileOutputStream(source));
 
-        for (int i = 0; i < files.length; i++) {
-            InputStream in = new FileInputStream(files[i]);
-            out.putNextEntry(new ZipEntry(files[i].getName()));
-            for (int read = in.read(buffer); read > -1; read = in.read(buffer)) {
-                out.write(buffer, 0, read);
-            }
-            out.closeEntry();
-            in.close();
+        InputStream in = new FileInputStream(file);
+        out.putNextEntry(new ZipEntry(fileName == null ? file.getName() : fileName));
+        for (int read = in.read(buffer); read > -1; read = in.read(buffer)) {
+            out.write(buffer, 0, read);
         }
+        out.closeEntry();
+        in.close();
 
         for (ZipEntry ze = zin.getNextEntry(); ze != null; ze = zin.getNextEntry()) {
             out.putNextEntry(ze);
