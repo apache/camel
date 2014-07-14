@@ -123,6 +123,16 @@ public class ZipIterator implements Iterator<Message>, Closeable {
             zipInputStream = null;
         }
     }
+    
+	private ZipEntry getNextEntry() throws IOException {
+		ZipEntry entry = null;
+		
+		while ((entry = zipInputStream.getNextEntry()) != null)
+			if (!entry.isDirectory())
+				return entry;
+		
+		return null;
+	}
 
     private ZipEntry getNextEntry() throws IOException {
         ZipEntry entry;
