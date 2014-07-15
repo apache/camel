@@ -24,7 +24,6 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
-import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.impl.CloudSolrServer;
 import org.apache.solr.client.solrj.impl.ConcurrentUpdateSolrServer;
 import org.apache.solr.client.solrj.impl.HttpSolrServer;
@@ -57,22 +56,7 @@ public class SolrEndpoint extends DefaultEndpoint {
         URL url = new URL(scheme + address);
         this.url = url.toString();
     }
-    
-    
-    private SolrServer createSolrServer() {
-        SolrServer server = null;
-        String zkHost = this.getZkHost();
-        if (zkHost == null) {
-            server = new HttpSolrServer(this.url);
-        } else {
-            CloudSolrServer cServer = new CloudSolrServer(zkHost);
-            cServer.setDefaultCollection(this.getCollection());
-            server = cServer;
-        }
-        return server;
-    }
-
-    
+   
     public void setZkHost(String zkHost) throws UnsupportedEncodingException {
         String decoded = URLDecoder.decode(zkHost, "UTF-8");
         this.zkHost = decoded;
