@@ -322,7 +322,7 @@
     <openjpa-version>2.3.0</openjpa-version>
     <opensaml-version>2.5.1_2</opensaml-version>
     <openshift-java-client-version>2.5.0.Final</openshift-java-client-version>
-    <optaplanner-version>6.0.1.Final</optaplanner-version>
+    <optaplanner-version>6.1.0.CR2</optaplanner-version>
     <oro-bundle-version>2.0.8_6</oro-bundle-version>
     <oscache-bundle-version>2.4_5</oscache-bundle-version>
     <osgi-version>4.3.1</osgi-version>
