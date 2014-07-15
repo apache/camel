@@ -36,7 +36,7 @@
     <java.awt.headless>true</java.awt.headless>
   </properties>
 
-  <dependencies>
+  <dependencies> 
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-core</artifactId>
@@ -61,13 +61,31 @@
       <artifactId>httpmime</artifactId>
       <version>${httpclient4-version}</version>
     </dependency>
-
+    
     <!-- test dependencies -->
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-test</artifactId>
       <scope>test</scope>
     </dependency>
+    <dependency>
+      <groupId>org.apache.solr</groupId>
+      <artifactId>solr-test-framework</artifactId>
+      <version>${solr-version}</version>
+      <scope>test</scope>
+      <exclusions>
+        <!-- exclude rome 0.9 which is not a valid Maven artifact -->
+        <!-- rome is not a needed dependency -->
+        <exclusion>
+          <groupId>rome</groupId>
+          <artifactId>rome</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>jdk.tools</groupId>
+          <artifactId>jdk.tools</artifactId>
+        </exclusion>
+      </exclusions>
+    </dependency>    
     <dependency>
       <groupId>org.apache.solr</groupId>
       <artifactId>solr-cell</artifactId>

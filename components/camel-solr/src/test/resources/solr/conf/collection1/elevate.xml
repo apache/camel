@@ -16,22 +16,21 @@
  limitations under the License.
 -->
 
-<!--
- All (relative) paths are relative to the installation path
-  
-  persistent: Save changes made via the API to this file
-  sharedLib: path to a lib directory that will be shared across all cores
+<!-- If this file is found in the config directory, it will only be
+     loaded once at startup.  If it is found in Solr's data
+     directory, it will be re-loaded every commit.
 -->
-<solr>
 
-  <solrcloud>
-    <str name="host">127.0.0.1</str>
-  </solrcloud>
-
-  <shardHandlerFactory name="shardHandlerFactory"
-    class="HttpShardHandlerFactory">
-    <int name="socketTimeout">${socketTimeout:0}</int>
-    <int name="connTimeout">${connTimeout:0}</int>
-  </shardHandlerFactory>
-
-</solr>
+<elevate>
+ <query text="foo bar">
+  <doc id="1" />
+  <doc id="2" />
+  <doc id="3" />
+ </query>
+ 
+ <query text="ipod">
+   <doc id="MA147LL/A" />  <!-- put the actual ipod at the top -->
+   <doc id="IW-02" exclude="true" /> <!-- exclude this cable -->
+ </query>
+ 
+</elevate>

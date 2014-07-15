@@ -20,7 +20,12 @@ import org.junit.Test;
 
 public class SolrTransactionsTest extends SolrComponentTestSupport {
 
-    @Test
+    public SolrTransactionsTest(SolrFixtures.TestServerType serverToTest) {
+		super(serverToTest);
+		// TODO Auto-generated constructor stub
+	}
+
+	@Test
     public void testCommit() throws Exception {
 
         //insert and verify
