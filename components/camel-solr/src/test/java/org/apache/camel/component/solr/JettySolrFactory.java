@@ -27,12 +27,10 @@ import javax.net.ssl.SSLContext;
 import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
-import org.apache.http.conn.ssl.SSLConnectionSocketFactory;
 import org.apache.http.conn.ssl.SSLContextBuilder;
 import org.apache.http.conn.ssl.TrustSelfSignedStrategy;
 import org.apache.solr.client.solrj.embedded.JettySolrRunner;
 import org.apache.solr.client.solrj.embedded.SSLConfig;
-import org.apache.solr.client.solrj.impl.HttpClientConfigurer;
 import org.eclipse.jetty.servlet.ServletHolder;
 
 // Create embedded's Solrs for testing,
@@ -42,7 +40,6 @@ public final class JettySolrFactory {
     public static final File TEST_KEYSTORE = new File("./target/test-classes/solrtest.keystore");
     private static final String TEST_KEYSTORE_PATH = TEST_KEYSTORE.getAbsolutePath();
     private static final String TEST_KEYSTORE_PASSWORD = "secret";
-    private static final HttpClientConfigurer DEFAULT_CONFIGURER = new HttpClientConfigurer();
     private static boolean mockedSslClient;
     private static int dataDirNo;
     
@@ -60,8 +57,7 @@ public final class JettySolrFactory {
         NoSuchAlgorithmException, KeyStoreException {
         SSLContextBuilder builder = new SSLContextBuilder();
         builder.loadTrustMaterial(null, new TrustSelfSignedStrategy());
-        SSLConnectionSocketFactory sslsf = new SSLConnectionSocketFactory(builder.build());
-
+        
         // // Create a trust manager that does not validate certificate chains
         final TrustManager[] trustAllCerts = new TrustManager[] {new X509TrustManager() {
             @Override
@@ -114,7 +110,7 @@ public final class JettySolrFactory {
                                                     stopAtShutdown, extraServlets, sslConfig);
 
         jetty.start();
-        int port = jetty.getLocalPort();
+        
         return jetty;
     }
 

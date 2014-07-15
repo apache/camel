@@ -64,11 +64,7 @@ public class SolrCloudFixture {
     CloudSolrServer solrClient;
     
     public SolrCloudFixture(String solrHome) throws Exception {
-
-        // String testHome = SolrTestCaseJ4.TEST_HOME();
-        // miniCluster = new MiniSolrCloudCluster(NUM_SERVERS, null, new
-        // File(testHome, "solr-no-core.xml"),
-        // null, null);
+       
         miniCluster = new MiniSolrCloudCluster(1, "/solr", new File(solrHome, "solr-no-core.xml"), null, null);
         String zkAddr = miniCluster.getZkServer().getZkAddress();
         String zkHost = miniCluster.getZkServer().getZkHost();
@@ -77,13 +73,9 @@ public class SolrCloudFixture {
         List<JettySolrRunner> jettys = miniCluster.getJettySolrRunners();
         for (JettySolrRunner jetty : jettys) {
             if (!jetty.isRunning()) {
-                System.out.println("JETTY NOT RUNNING!");
+                log.warn("JETTY NOT RUNNING!");
             } else {
-                // jetty.stop();
-                // jetty.start();
-                System.out.println("JETTY RUNNING");
-                System.out.println("AT:  " + jetty.getBaseUrl());
-                System.out.println("PORTT" + jetty.getLocalPort());
+                log.info("JETTY RUNNING AT " + jetty.getBaseUrl() + " PORT " + jetty.getLocalPort());
             }
         }
 
