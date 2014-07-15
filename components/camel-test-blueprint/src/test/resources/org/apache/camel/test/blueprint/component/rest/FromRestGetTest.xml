@@ -30,7 +30,7 @@
         <get uri="/hello" routeId="hello">
           <to uri="direct:hello"/>
         </get>
-        <get uri="/bye" routeId="bye">
+        <get uri="/bye" accept="application/json" routeId="bye">
           <to uri="direct:bye"/>
         </get>
         <post>

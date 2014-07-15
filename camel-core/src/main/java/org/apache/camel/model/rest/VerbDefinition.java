@@ -39,6 +39,9 @@ public class VerbDefinition {
     @XmlAttribute
     private String uri;
 
+    @XmlAttribute
+    private String accept;
+
     @XmlElementRef
     private List<ProcessorDefinition<?>> outputs = new ArrayList<ProcessorDefinition<?>>();
 
@@ -64,6 +67,14 @@ public class VerbDefinition {
 
     public void setUri(String uri) {
         this.uri = uri;
+    }
+
+    public String getAccept() {
+        return accept;
+    }
+
+    public void setAccept(String accept) {
+        this.accept = accept;
     }
 
     public List<ProcessorDefinition<?>> getOutputs() {

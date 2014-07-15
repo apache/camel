@@ -89,6 +89,18 @@ public class PathDefinition {
         return this;
     }
 
+    public PathDefinition accept(String accept) {
+        // add to last verb
+        if (getVerbs().isEmpty()) {
+            throw new IllegalArgumentException("Must add verb first, such as get/post/delete");
+        }
+
+        VerbDefinition verb = getVerbs().get(getVerbs().size() - 1);
+        verb.setAccept(accept);
+
+        return this;
+    }
+
     public PathDefinition to(String url) {
         // add to last verb
         if (getVerbs().isEmpty()) {

@@ -51,6 +51,7 @@ public class FromRestGetTest extends ContextTestSupport {
         assertEquals("direct:hello", to.getUri());
 
         assertEquals("/bye", path.getVerbs().get(1).getUri());
+        assertEquals("application/json", path.getVerbs().get(1).getAccept());
         to = assertIsInstanceOf(ToDefinition.class, path.getVerbs().get(1).getOutputs().get(0));
         assertEquals("direct:bye", to.getUri());
 
@@ -76,7 +77,7 @@ public class FromRestGetTest extends ContextTestSupport {
                 rest()
                     .path("/say")
                         .get("/hello").routeId("hello").to("direct:hello")
-                        .get("/bye").routeId("bye").to("direct:bye")
+                        .get("/bye").accept("application/json").routeId("bye").to("direct:bye")
                         .post().to("mock:update");
 
                 from("direct:hello")
