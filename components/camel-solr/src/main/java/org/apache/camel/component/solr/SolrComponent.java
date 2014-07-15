@@ -61,11 +61,11 @@ public class SolrComponent extends DefaultComponent {
         }
         
         public CloudSolrServer getCloudSolrServer() {
-        	return cloudSolrServer;
+            return cloudSolrServer;
         }
-        
+
         public void setCloudSolrServer(CloudSolrServer cloudServer) {
-        	cloudSolrServer = cloudServer;
+            cloudSolrServer = cloudServer;
         }
 
         public int addReference() {
@@ -105,10 +105,10 @@ public class SolrComponent extends DefaultComponent {
     }
     
     private void shutdownServer(SolrServer server) {
-    	if (server != null) {
+        if (server != null) {
             LOG.info("Shutting down solr server: {}", server);
             server.shutdown();
-        }    	
+        }
     }
 
     void shutdownServers(SolrServerReference ref, boolean remove) {

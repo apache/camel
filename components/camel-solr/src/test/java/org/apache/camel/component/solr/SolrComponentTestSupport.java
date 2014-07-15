@@ -20,20 +20,15 @@ import java.util.Arrays;
 import java.util.Collection;
 import java.util.HashMap;
 import java.util.Map;
-import java.util.SortedMap;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.solr.client.solrj.SolrQuery;
 import org.apache.solr.client.solrj.SolrServer;
 import org.apache.solr.client.solrj.SolrServerException;
-import org.apache.solr.client.solrj.embedded.JettySolrRunner;
-import org.apache.solr.client.solrj.impl.HttpSolrServer;
 import org.apache.solr.client.solrj.response.QueryResponse;
-import org.eclipse.jetty.servlet.ServletHolder;
 import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.BeforeClass;
-import org.junit.Ignore;
 import org.junit.runner.RunWith;
 import org.junit.runners.Parameterized;
 import org.junit.runners.Parameterized.Parameters;
@@ -44,22 +39,23 @@ public abstract class SolrComponentTestSupport extends SolrTestSupport {
     protected static final String TEST_ID2 = "test2";
    
     private SolrFixtures solrFixtures;
-   
+
+    public SolrComponentTestSupport(SolrFixtures.TestServerType serverToTest) {
+        this.solrFixtures = new SolrFixtures(serverToTest);
+    }
+    
 
     protected void solrInsertTestEntry() {
         solrInsertTestEntry(TEST_ID);
     }
     
     protected static Collection secureOrNot() {
-    	return Arrays.asList(new Object[][] {{true}, {false}});
+        return Arrays.asList(new Object[][] {{true}, {false}});
     }
-    
-    public SolrComponentTestSupport(SolrFixtures.TestServerType serverToTest) {
-    	this.solrFixtures = new SolrFixtures(serverToTest);
-    }
+
     
     String solrRouteUri() {
-    	return solrFixtures.solrRouteUri();
+        return solrFixtures.solrRouteUri();
     }
 
     protected void solrInsertTestEntry(String id) {
@@ -87,7 +83,7 @@ public abstract class SolrComponentTestSupport extends SolrTestSupport {
  
     @AfterClass
     public static void afterClass() throws Exception {
-    	SolrFixtures.teardownSolrFixtures();
+        SolrFixtures.teardownSolrFixtures();
     }
 
     @Override
@@ -108,14 +104,14 @@ public abstract class SolrComponentTestSupport extends SolrTestSupport {
     
     @Parameters
     public static Collection<Object[]> serverTypes() {
-    	Object[][] serverTypes = {{SolrFixtures.TestServerType.USE_CLOUD},
-    							  {SolrFixtures.TestServerType.USE_HTTPS},
-    							  {SolrFixtures.TestServerType.USE_HTTP}};
-    	return Arrays.asList(serverTypes);
+        Object[][] serverTypes = {{SolrFixtures.TestServerType.USE_CLOUD},
+                                  {SolrFixtures.TestServerType.USE_HTTPS},
+                                  {SolrFixtures.TestServerType.USE_HTTP}};
+        return Arrays.asList(serverTypes);
     }
 
     @Before
     public void clearIndex() throws Exception {
-    	SolrFixtures.clearIndex();	
+        SolrFixtures.clearIndex();
     }
 }

@@ -50,13 +50,13 @@ public class SolrProducer extends DefaultProducer {
     }
     
     private SolrServer getBestSolrServer(String operation) {
-    	if (this.cloudSolrServer != null) {
-    		return this.cloudSolrServer;
-    	} else if (operation == SolrConstants.OPERATION_INSERT_STREAMING) {
-    		return this.concSolrServer;
-    	} else {
-    		return this.httpServer;
-    	}
+        if (this.cloudSolrServer != null) {
+            return this.cloudSolrServer;
+        } else if (operation == SolrConstants.OPERATION_INSERT_STREAMING) {
+            return this.concSolrServer;
+        } else {
+            return this.httpServer;
+        }
     }
 
     @Override
@@ -75,17 +75,17 @@ public class SolrProducer extends DefaultProducer {
         } else if (operation.equalsIgnoreCase(SolrConstants.OPERATION_INSERT_STREAMING)) {
             insert(exchange, serverToUse);
         } else if (operation.equalsIgnoreCase(SolrConstants.OPERATION_DELETE_BY_ID)) {
-        	serverToUse.deleteById(exchange.getIn().getBody(String.class));
+            serverToUse.deleteById(exchange.getIn().getBody(String.class));
         } else if (operation.equalsIgnoreCase(SolrConstants.OPERATION_DELETE_BY_QUERY)) {
-        	serverToUse.deleteByQuery(exchange.getIn().getBody(String.class));
+            serverToUse.deleteByQuery(exchange.getIn().getBody(String.class));
         } else if (operation.equalsIgnoreCase(SolrConstants.OPERATION_ADD_BEAN)) {
-        	serverToUse.addBean(exchange.getIn().getBody());
+            serverToUse.addBean(exchange.getIn().getBody());
         } else if (operation.equalsIgnoreCase(SolrConstants.OPERATION_COMMIT)) {
-        	serverToUse.commit();
+            serverToUse.commit();
         } else if (operation.equalsIgnoreCase(SolrConstants.OPERATION_ROLLBACK)) {
-        	serverToUse.rollback();
+            serverToUse.rollback();
         } else if (operation.equalsIgnoreCase(SolrConstants.OPERATION_OPTIMIZE)) {
-        	serverToUse.optimize();
+            serverToUse.optimize();
         } else {
             throw new IllegalArgumentException(SolrConstants.OPERATION + " header value '" + operation + "' is not supported");
         }

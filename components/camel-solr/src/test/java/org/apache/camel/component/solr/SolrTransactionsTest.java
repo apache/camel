@@ -21,11 +21,10 @@ import org.junit.Test;
 public class SolrTransactionsTest extends SolrComponentTestSupport {
 
     public SolrTransactionsTest(SolrFixtures.TestServerType serverToTest) {
-		super(serverToTest);
-		// TODO Auto-generated constructor stub
-	}
+        super(serverToTest);
+    }
 
-	@Test
+    @Test
     public void testCommit() throws Exception {
 
         //insert and verify

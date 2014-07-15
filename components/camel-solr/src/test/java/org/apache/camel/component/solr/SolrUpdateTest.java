@@ -16,6 +16,10 @@
  */
 package org.apache.camel.component.solr;
 
+import java.io.File;
+import java.util.Arrays;
+import java.util.List;
+
 import org.apache.camel.Exchange;
 import org.apache.solr.client.solrj.impl.HttpSolrServer;
 import org.apache.solr.client.solrj.response.QueryResponse;
@@ -27,19 +31,13 @@ import org.junit.Before;
 import org.junit.Ignore;
 import org.junit.Test;
 
-import java.io.File;
-import java.util.Arrays;
-import java.util.List;
-
 public class SolrUpdateTest extends SolrComponentTestSupport {
+    private SolrEndpoint solrEndpoint;
 
     public SolrUpdateTest(SolrFixtures.TestServerType serverToTest) {
-		super(serverToTest);
-		// TODO Auto-generated constructor stub
-	}
-
-	private SolrEndpoint solrEndpoint;
-
+        super(serverToTest);
+    }
+    
     @Override
     @Before
     public void setUp() throws Exception {

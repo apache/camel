@@ -22,10 +22,10 @@ import org.junit.Test;
 public class SolrAddBeanTest extends SolrComponentTestSupport {
 
     public SolrAddBeanTest(SolrFixtures.TestServerType serverToTest) {
-		super(serverToTest);
-	}
+        super(serverToTest);
+    }
 
-	@Test
+    @Test
     public void testAddBean() throws Exception {
 
         //add bean
