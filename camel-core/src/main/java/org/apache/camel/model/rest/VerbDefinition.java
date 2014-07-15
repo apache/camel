@@ -102,4 +102,36 @@ public class VerbDefinition extends OutputDefinition<VerbDefinition> {
         return path.post(url);
     }
 
+    public PathDefinition put() {
+        return path.put();
+    }
+
+    public PathDefinition put(String url) {
+        return path.put(url);
+    }
+
+    public PathDefinition delete() {
+        return path.delete();
+    }
+
+    public PathDefinition delete(String url) {
+        return path.delete(url);
+    }
+
+    public PathDefinition head() {
+        return path.head();
+    }
+
+    public PathDefinition head(String url) {
+        return path.head(url);
+    }
+
+    public PathDefinition verb(String verb) {
+        return path.verb(verb);
+    }
+
+    public PathDefinition verb(String verb, String url) {
+        return path.verb(verb, url);
+    }
+
 }

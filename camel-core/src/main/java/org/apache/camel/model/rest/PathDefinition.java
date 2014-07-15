@@ -37,7 +37,7 @@ public class PathDefinition {
         return uri;
     }
 
-    @XmlAttribute
+    @XmlAttribute(required = true)
     public void setUri(String uri) {
         this.uri = uri;
     }
@@ -64,31 +64,51 @@ public class PathDefinition {
     }
 
     public PathDefinition get() {
-        return get(null);
+        return addVerb("get", null);
     }
 
     public PathDefinition get(String url) {
-        GetVerbDefinition answer = new GetVerbDefinition();
-        answer.setPath(this);
-        getVerbs().add(answer);
-        if (url != null) {
-            answer.setUri(url);
-        }
-        return this;
+        return addVerb("get", url);
     }
 
     public PathDefinition post() {
-        return post(null);
+        return addVerb("post", null);
     }
 
     public PathDefinition post(String url) {
-        PostVerbDefinition answer = new PostVerbDefinition();
-        answer.setPath(this);
-        getVerbs().add(answer);
-        if (url != null) {
-            answer.setUri(url);
-        }
-        return this;
+        return addVerb("post", url);
+    }
+
+    public PathDefinition put() {
+        return addVerb("put", null);
+    }
+
+    public PathDefinition put(String url) {
+        return addVerb("put", url);
+    }
+
+    public PathDefinition delete() {
+        return addVerb("delete", null);
+    }
+
+    public PathDefinition delete(String url) {
+        return addVerb("delete", url);
+    }
+
+    public PathDefinition head() {
+        return addVerb("head", null);
+    }
+
+    public PathDefinition head(String url) {
+        return addVerb("head", url);
+    }
+
+    public PathDefinition verb(String verb) {
+        return addVerb(verb, null);
+    }
+
+    public PathDefinition verb(String verb, String url) {
+        return addVerb(verb, url);
     }
 
     public PathDefinition accept(String accept) {
@@ -103,6 +123,7 @@ public class PathDefinition {
         return this;
     }
 
+    @Deprecated
     public VerbDefinition to(String url) {
         // add to last verb
         if (getVerbs().isEmpty()) {
@@ -113,6 +134,17 @@ public class PathDefinition {
         verb.addOutput(new ToDefinition(url));
 
         return verb;
+    }
+
+    private PathDefinition addVerb(String verb, String url) {
+        VerbDefinition answer = new VerbDefinition();
+        answer.setMethod(verb);
+        answer.setPath(this);
+        getVerbs().add(answer);
+        if (url != null) {
+            answer.setUri(url);
+        }
+        return this;
     }
 
 }
