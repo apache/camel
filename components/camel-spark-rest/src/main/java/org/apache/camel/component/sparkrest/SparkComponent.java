@@ -18,13 +18,17 @@ package org.apache.camel.component.sparkrest;
 
 import java.util.Map;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
+import org.apache.camel.Processor;
 import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.spi.RestConsumerFactory;
 import org.apache.camel.util.ObjectHelper;
 import spark.Spark;
 import spark.SparkBase;
 
-public class SparkComponent extends UriEndpointComponent {
+public class SparkComponent extends UriEndpointComponent implements RestConsumerFactory {
 
     private int port = SparkBase.SPARK_DEFAULT_PORT;
     private SparkConfiguration sparkConfiguration = new SparkConfiguration();
@@ -91,5 +95,20 @@ public class SparkComponent extends UriEndpointComponent {
     protected void doShutdown() throws Exception {
         super.doShutdown();
         Spark.stop();
+    }
+
+    @Override
+    public Consumer createConsumer(CamelContext camelContext, Processor processor,
+                                   String verb, String path, String accept, Map<String, Object> parameters) throws Exception {
+        // get the endpoint
+        SparkEndpoint endpoint;
+        if (accept != null) {
+            endpoint = camelContext.getEndpoint("spark-rest:" + verb + ":" + path + "?accept=" + accept, SparkEndpoint.class);
+        } else {
+            endpoint = camelContext.getEndpoint("spark-rest:" + verb + ":" + path, SparkEndpoint.class);
+        }
+        setProperties(endpoint, parameters);
+
+        return endpoint.createConsumer(processor);
     }
 }

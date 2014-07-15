@@ -31,6 +31,9 @@ import org.apache.camel.model.ProcessorDefinition;
 public class VerbDefinition {
 
     @XmlAttribute
+    private String routeId;
+
+    @XmlAttribute
     private String method;
 
     @XmlAttribute
@@ -38,6 +41,14 @@ public class VerbDefinition {
 
     @XmlElementRef
     private List<ProcessorDefinition<?>> outputs = new ArrayList<ProcessorDefinition<?>>();
+
+    public String getRouteId() {
+        return routeId;
+    }
+
+    public void setRouteId(String routeId) {
+        this.routeId = routeId;
+    }
 
     public String getMethod() {
         return method;

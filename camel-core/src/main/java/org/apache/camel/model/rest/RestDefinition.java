@@ -35,7 +35,6 @@ import org.apache.camel.model.RouteDefinition;
 public class RestDefinition {
 
     private String component;
-    private String routeId;
     private List<PathDefinition> paths = new ArrayList<PathDefinition>();
 
     public String getComponent() {
@@ -45,15 +44,6 @@ public class RestDefinition {
     @XmlAttribute
     public void setComponent(String component) {
         this.component = component;
-    }
-
-    public String getRouteId() {
-        return routeId;
-    }
-
-    @XmlAttribute
-    public void setRouteId(String routeId) {
-        this.routeId = routeId;
     }
 
     public List<PathDefinition> getPaths() {
@@ -68,6 +58,17 @@ public class RestDefinition {
     // Fluent API
     //-------------------------------------------------------------------------
 
+    /**
+     * To use a specific Camel rest component
+     */
+    public RestDefinition component(String componentId) {
+        setComponent(componentId);
+        return this;
+    }
+
+    /**
+     * Defines the rest path to use
+     */
     public PathDefinition path(String uri) {
         PathDefinition answer = new PathDefinition();
         getPaths().add(answer);
@@ -86,9 +87,13 @@ public class RestDefinition {
         for (PathDefinition path : getPaths()) {
             String uri = path.getUri();
             for (VerbDefinition verb : path.getVerbs()) {
-                String from = "rest:" + verb.getMethod() + ":" + uri + (verb.getUri() != null ? verb.getUri() : "");
+                String from = "rest:" + verb.getMethod() + ":" + uri + (verb.getUri() != null ? verb.getUri() : "")
+                        + (getComponent() != null ? "?componentName=" + getComponent() : "");
                 RouteDefinition route = new RouteDefinition();
                 route.fromRest(from);
+                if (verb.getRouteId() != null) {
+                    route.setId(verb.getRouteId());
+                }
                 answer.add(route);
                 route.getOutputs().addAll(verb.getOutputs());
             }

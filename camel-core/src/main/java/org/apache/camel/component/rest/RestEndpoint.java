@@ -104,7 +104,7 @@ public class RestEndpoint extends DefaultEndpoint {
             Component comp = getCamelContext().getComponent(getComponentName());
             if (comp != null && comp instanceof RestConsumerFactory) {
                 factory = (RestConsumerFactory) comp;
-            } else {
+            } else if (comp != null) {
                 throw new IllegalArgumentException("Component " + getComponentName() + " is not a RestConsumerFactory");
             }
         }

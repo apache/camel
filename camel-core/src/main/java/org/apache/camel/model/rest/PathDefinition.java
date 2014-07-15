@@ -54,6 +54,15 @@ public class PathDefinition {
     // Fluent API
     //-------------------------------------------------------------------------
 
+    public PathDefinition routeId(String routeId) {
+        // set on last verb
+        if (verbs != null && !verbs.isEmpty()) {
+            VerbDefinition last = verbs.get(verbs.size() - 1);
+            last.setRouteId(routeId);
+        }
+        return this;
+    }
+
     public PathDefinition get() {
         return get(null);
     }

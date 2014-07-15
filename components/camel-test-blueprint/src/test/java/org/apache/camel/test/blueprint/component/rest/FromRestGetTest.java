@@ -33,6 +33,10 @@ public class FromRestGetTest extends CamelBlueprintTestSupport {
     public void testFromRestModel() {
         assertEquals(2 + 3, context.getRoutes().size());
 
+        // we should have a hello and bye route
+        assertNotNull(context.getRouteDefinition("hello"));
+        assertNotNull(context.getRouteDefinition("bye"));
+
         RestDefinition rest = context.getRestDefinitions().get(0);
         assertNotNull(rest);
 

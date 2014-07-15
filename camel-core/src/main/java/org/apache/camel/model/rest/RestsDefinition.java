@@ -80,7 +80,6 @@ public class RestsDefinition extends OptionalIdentifiedDefinition<RestsDefinitio
     public RestDefinition rest() {
         RestDefinition rest = createRest();
         return rest(rest);
-
     }
 
     public RestDefinition rest(RestDefinition rest) {

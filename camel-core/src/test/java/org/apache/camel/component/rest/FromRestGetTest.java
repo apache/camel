@@ -38,6 +38,10 @@ public class FromRestGetTest extends ContextTestSupport {
         RestDefinition rest = context.getRestDefinitions().get(0);
         assertNotNull(rest);
 
+        // we should have a hello and bye route
+        assertNotNull(context.getRouteDefinition("hello"));
+        assertNotNull(context.getRouteDefinition("bye"));
+
         PathDefinition path = rest.getPaths().get(0);
         assertNotNull(0);
         assertEquals("/say", path.getUri());
@@ -71,8 +75,8 @@ public class FromRestGetTest extends ContextTestSupport {
             public void configure() throws Exception {
                 rest()
                     .path("/say")
-                        .get("/hello").to("direct:hello")
-                        .get("/bye").to("direct:bye")
+                        .get("/hello").routeId("hello").to("direct:hello")
+                        .get("/bye").routeId("bye").to("direct:bye")
                         .post().to("mock:update");
 
                 from("direct:hello")
