@@ -20,14 +20,14 @@ import java.util.concurrent.ThreadFactory;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.SuspendableService;
-import org.jboss.netty.channel.Channel;
-import org.jboss.netty.channel.ChannelPipelineFactory;
+import io.netty.channel.Channel;
+import io.netty.channel.ChannelPipelineFactory;
 
 /**
- * Factory for setting up Netty {@link org.jboss.netty.bootstrap.ServerBootstrap} and all
+ * Factory for setting up Netty {@link io.netty.bootstrap.ServerBootstrap} and all
  * the needed logic for doing that.
  * <p/>
- * This factory allows for consumers to reuse existing {@link org.jboss.netty.bootstrap.ServerBootstrap} which
+ * This factory allows for consumers to reuse existing {@link io.netty.bootstrap.ServerBootstrap} which
  * allows to share the same port for multiple consumers.
  */
 public interface NettyServerBootstrapFactory extends SuspendableService {

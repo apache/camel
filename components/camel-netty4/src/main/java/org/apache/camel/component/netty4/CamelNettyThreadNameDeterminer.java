@@ -17,7 +17,7 @@
 package org.apache.camel.component.netty4;
 
 import org.apache.camel.util.concurrent.ThreadHelper;
-import org.jboss.netty.util.ThreadNameDeterminer;
+import io.netty.util.ThreadNameDeterminer;
 
 public class CamelNettyThreadNameDeterminer implements ThreadNameDeterminer {
 

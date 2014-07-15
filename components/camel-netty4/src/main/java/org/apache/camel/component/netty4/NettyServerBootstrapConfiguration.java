@@ -20,9 +20,9 @@ import java.io.File;
 import java.util.Map;
 
 import org.apache.camel.util.jsse.SSLContextParameters;
-import org.jboss.netty.channel.socket.nio.BossPool;
-import org.jboss.netty.channel.socket.nio.WorkerPool;
-import org.jboss.netty.handler.ssl.SslHandler;
+import io.netty.channel.socket.nio.BossPool;
+import io.netty.channel.socket.nio.WorkerPool;
+import io.netty.handler.ssl.SslHandler;
 
 public class NettyServerBootstrapConfiguration implements Cloneable {
 

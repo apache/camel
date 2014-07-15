@@ -16,20 +16,21 @@
  */
 package org.apache.camel.component.netty4;
 
+import java.nio.channels.Channels;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLEngine;
 
+import io.netty.channel.Channel;
+import io.netty.channel.ChannelHandler;
+import io.netty.channel.ChannelPipeline;
+import io.netty.handler.ssl.SslHandler;
+import io.netty.handler.timeout.ReadTimeoutHandler;
 import org.apache.camel.component.netty4.handlers.ClientChannelHandler;
 import org.apache.camel.component.netty4.ssl.SSLEngineFactory;
 import org.apache.camel.util.ObjectHelper;
-import org.jboss.netty.channel.ChannelHandler;
-import org.jboss.netty.channel.ChannelPipeline;
-import org.jboss.netty.channel.Channels;
-import org.jboss.netty.handler.ssl.SslHandler;
-import org.jboss.netty.handler.timeout.ReadTimeoutHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -48,14 +49,14 @@ public class DefaultClientPipelineFactory extends ClientPipelineFactory  {
         }
     }
 
-    public ChannelPipeline getPipeline() throws Exception {
+    protected void initChannel(Channel ch) throws Exception {
         // create a new pipeline
-        ChannelPipeline channelPipeline = Channels.pipeline();
+        ChannelPipeline channelPipeline = ch.pipeline();
 
         SslHandler sslHandler = configureClientSSLOnDemand();
         if (sslHandler != null) {
-            // must close on SSL exception
-            sslHandler.setCloseOnSSLException(true);
+            //TODO  must close on SSL exception
+            //sslHandler.setCloseOnSSLException(true);
             LOG.debug("Client SSL handler configured and added to the ChannelPipeline: {}", sslHandler);
             addToPipeline("ssl", channelPipeline, sslHandler);
         }
@@ -93,7 +94,7 @@ public class DefaultClientPipelineFactory extends ClientPipelineFactory  {
         addToPipeline("handler", channelPipeline, new ClientChannelHandler(producer));
 
         LOG.trace("Created ChannelPipeline: {}", channelPipeline);
-        return channelPipeline;
+        
     }
 
     private void addToPipeline(String name, ChannelPipeline pipeline, ChannelHandler handler) {

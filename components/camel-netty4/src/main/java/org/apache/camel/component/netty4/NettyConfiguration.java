@@ -30,11 +30,11 @@ import org.apache.camel.spi.UriParams;
 import org.apache.camel.util.EndpointHelper;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
-import org.jboss.netty.buffer.ChannelBuffer;
-import org.jboss.netty.channel.ChannelHandler;
-import org.jboss.netty.handler.codec.frame.Delimiters;
-import org.jboss.netty.handler.ssl.SslHandler;
-import org.jboss.netty.util.CharsetUtil;
+import io.netty.buffer.ChannelBuffer;
+import io.netty.channel.ChannelHandler;
+import io.netty.handler.codec.frame.Delimiters;
+import io.netty.handler.ssl.SslHandler;
+import io.netty.util.CharsetUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

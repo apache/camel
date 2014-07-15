@@ -18,8 +18,8 @@ package org.apache.camel.component.netty4;
 
 import java.util.concurrent.Executors;
 
-import org.jboss.netty.channel.socket.nio.NioWorkerPool;
-import org.jboss.netty.channel.socket.nio.WorkerPool;
+import io.netty.channel.socket.nio.NioWorkerPool;
+import io.netty.channel.socket.nio.WorkerPool;
 
 /**
  * A builder to create Netty {@link WorkerPool} which can be used for sharing worker pools

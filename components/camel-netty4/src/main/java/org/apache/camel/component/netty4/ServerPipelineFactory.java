@@ -16,8 +16,8 @@
  */
 package org.apache.camel.component.netty4;
 
-import org.jboss.netty.channel.ChannelPipeline;
-import org.jboss.netty.channel.ChannelPipelineFactory;
+import io.netty.channel.ChannelPipeline;
+import io.netty.channel.ChannelPipelineFactory;
 
 /**
  * Factory to create {@link ChannelPipeline} for clients, eg {@link NettyConsumer}.

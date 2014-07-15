@@ -30,9 +30,9 @@ import org.w3c.dom.Document;
 
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
-import org.jboss.netty.buffer.ChannelBuffer;
-import org.jboss.netty.buffer.ChannelBufferInputStream;
-import org.jboss.netty.buffer.ChannelBuffers;
+import io.netty.buffer.ChannelBuffer;
+import io.netty.buffer.ChannelBufferInputStream;
+import io.netty.buffer.ChannelBuffers;
 
 /**
  * A set of converter methods for working with Netty types

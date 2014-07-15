@@ -23,13 +23,13 @@ import org.apache.camel.Exchange;
 import org.apache.camel.component.netty4.NettyConstants;
 import org.apache.camel.component.netty4.NettyConsumer;
 import org.apache.camel.component.netty4.NettyHelper;
-import org.jboss.netty.channel.ChannelFuture;
-import org.jboss.netty.channel.ChannelFutureListener;
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelFutureListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * A {@link org.jboss.netty.channel.ChannelFutureListener} that performs the disconnect logic when
+ * A {@link io.netty.channel.ChannelFutureListener} that performs the disconnect logic when
  * sending the response is complete.
  */
 public class ServerResponseFutureListener implements ChannelFutureListener {

@@ -18,12 +18,12 @@ package org.apache.camel.component.netty4;
 
 import java.util.concurrent.Executors;
 
-import org.jboss.netty.channel.socket.nio.BossPool;
-import org.jboss.netty.channel.socket.nio.NioClientBossPool;
-import org.jboss.netty.util.Timer;
+import io.netty.channel.socket.nio.BossPool;
+import io.netty.channel.socket.nio.NioClientBossPool;
+import io.netty.util.Timer;
 
 /**
- * A builder to create Netty {@link org.jboss.netty.channel.socket.nio.BossPool} which can be used for sharing boss pools
+ * A builder to create Netty {@link io.netty.channel.socket.nio.BossPool} which can be used for sharing boos pools
  * with multiple Netty {@link NettyServerBootstrapFactory} server bootstrap configurations.
  */
 public final class NettyClientBossPoolBuilder {

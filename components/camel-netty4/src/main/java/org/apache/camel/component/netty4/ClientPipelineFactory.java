@@ -16,8 +16,9 @@
  */
 package org.apache.camel.component.netty4;
 
-import org.jboss.netty.channel.ChannelPipeline;
-import org.jboss.netty.channel.ChannelPipelineFactory;
+import io.netty.channel.Channel;
+import io.netty.channel.ChannelInitializer;
+import io.netty.channel.ChannelPipeline;
 
 /**
  * Factory to create {@link ChannelPipeline} for clients, eg {@link NettyProducer}.
@@ -26,9 +27,9 @@ import org.jboss.netty.channel.ChannelPipelineFactory;
  * to the given {@link NettyProducer} using the {@link #createPipelineFactory(NettyProducer)}
  * method.
  *
- * @see ChannelPipelineFactory
+ * @see ChannelInitializer
  */
-public abstract class ClientPipelineFactory implements ChannelPipelineFactory {
+public abstract class ClientPipelineFactory extends ChannelInitializer<Channel> {
 
     /**
      * Creates a new {@link ClientPipelineFactory} using the given {@link NettyProducer}

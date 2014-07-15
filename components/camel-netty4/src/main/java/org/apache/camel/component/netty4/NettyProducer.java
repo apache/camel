@@ -36,23 +36,23 @@ import org.apache.camel.util.IOHelper;
 import org.apache.commons.pool.ObjectPool;
 import org.apache.commons.pool.PoolableObjectFactory;
 import org.apache.commons.pool.impl.GenericObjectPool;
-import org.jboss.netty.bootstrap.ClientBootstrap;
-import org.jboss.netty.bootstrap.ConnectionlessBootstrap;
-import org.jboss.netty.channel.Channel;
-import org.jboss.netty.channel.ChannelFactory;
-import org.jboss.netty.channel.ChannelFuture;
-import org.jboss.netty.channel.ChannelFutureListener;
-import org.jboss.netty.channel.group.ChannelGroup;
-import org.jboss.netty.channel.group.ChannelGroupFuture;
-import org.jboss.netty.channel.group.DefaultChannelGroup;
-import org.jboss.netty.channel.socket.DatagramChannelFactory;
-import org.jboss.netty.channel.socket.nio.BossPool;
-import org.jboss.netty.channel.socket.nio.NioClientSocketChannelFactory;
-import org.jboss.netty.channel.socket.nio.NioDatagramChannelFactory;
-import org.jboss.netty.channel.socket.nio.NioDatagramWorkerPool;
-import org.jboss.netty.channel.socket.nio.WorkerPool;
-import org.jboss.netty.util.HashedWheelTimer;
-import org.jboss.netty.util.Timer;
+import io.netty.bootstrap.ClientBootstrap;
+import io.netty.bootstrap.ConnectionlessBootstrap;
+import io.netty.channel.Channel;
+import io.netty.channel.ChannelFactory;
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelFutureListener;
+import io.netty.channel.group.ChannelGroup;
+import io.netty.channel.group.ChannelGroupFuture;
+import io.netty.channel.group.DefaultChannelGroup;
+import io.netty.channel.socket.DatagramChannelFactory;
+import io.netty.channel.socket.nio.BossPool;
+import io.netty.channel.socket.nio.NioClientSocketChannelFactory;
+import io.netty.channel.socket.nio.NioDatagramChannelFactory;
+import io.netty.channel.socket.nio.NioDatagramWorkerPool;
+import io.netty.channel.socket.nio.WorkerPool;
+import io.netty.util.HashedWheelTimer;
+import io.netty.util.Timer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -435,14 +435,14 @@ public class NettyProducer extends DefaultAsyncProducer {
                 channelLatch.countDown();
             }
         });
-         
+
         try {
             channelLatch.await(configuration.getConnectTimeout(), TimeUnit.MILLISECONDS);
         } catch (InterruptedException ex) {
             throw new CamelException("Interrupted while waiting for " + "connection to "
                                      + configuration.getAddress());
         }
-        
+
 
         if (!channelFuture.isDone() || !channelFuture.isSuccess()) {
             ConnectException cause = new ConnectException("Cannot connect to " + configuration.getAddress());

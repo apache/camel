@@ -18,15 +18,16 @@ package org.apache.camel.component.netty4;
 
 import java.nio.charset.Charset;
 
-import org.jboss.netty.buffer.ChannelBuffer;
-import org.jboss.netty.channel.ChannelHandler;
-import org.jboss.netty.handler.codec.frame.DelimiterBasedFrameDecoder;
-import org.jboss.netty.handler.codec.frame.LengthFieldBasedFrameDecoder;
-import org.jboss.netty.handler.codec.serialization.ClassResolvers;
-import org.jboss.netty.handler.codec.serialization.ObjectDecoder;
-import org.jboss.netty.handler.codec.serialization.ObjectEncoder;
-import org.jboss.netty.handler.codec.string.StringDecoder;
-import org.jboss.netty.handler.codec.string.StringEncoder;
+import io.netty.buffer.ByteBuf;
+import io.netty.channel.ChannelHandler;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.handler.codec.DelimiterBasedFrameDecoder;
+import io.netty.handler.codec.LengthFieldBasedFrameDecoder;
+import io.netty.handler.codec.serialization.ClassResolvers;
+import io.netty.handler.codec.serialization.ObjectDecoder;
+import io.netty.handler.codec.serialization.ObjectEncoder;
+import io.netty.handler.codec.string.StringDecoder;
+import io.netty.handler.codec.string.StringEncoder;
 
 /**
  * Helper to create commonly used {@link ChannelHandlerFactory} instances.
@@ -50,6 +51,24 @@ public final class ChannelHandlerFactories {
             public ChannelHandler newChannelHandler() {
                 return new ObjectDecoder(ClassResolvers.weakCachingResolver(null));
             }
+
+            @Override
+            public void handlerAdded(ChannelHandlerContext ctx) throws Exception {
+                // TODO Auto-generated method stub
+                
+            }
+
+            @Override
+            public void handlerRemoved(ChannelHandlerContext ctx) throws Exception {
+                // TODO Auto-generated method stub
+                
+            }
+
+            @Override
+            public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+                // TODO Auto-generated method stub
+                
+            }
         };
     }
 
@@ -57,11 +76,29 @@ public final class ChannelHandlerFactories {
         return new ShareableChannelHandlerFactory(new ObjectEncoder());
     }
 
-    public static ChannelHandlerFactory newDelimiterBasedFrameDecoder(final int maxFrameLength, final ChannelBuffer[] delimiters) {
+    public static ChannelHandlerFactory newDelimiterBasedFrameDecoder(final int maxFrameLength, final ByteBuf[] delimiters) {
         return new ChannelHandlerFactory() {
             @Override
             public ChannelHandler newChannelHandler() {
                 return new DelimiterBasedFrameDecoder(maxFrameLength, true, delimiters);
+            }
+
+            @Override
+            public void handlerAdded(ChannelHandlerContext ctx) throws Exception {
+                // TODO Auto-generated method stub
+                
+            }
+
+            @Override
+            public void handlerRemoved(ChannelHandlerContext ctx) throws Exception {
+                // TODO Auto-generated method stub
+                
+            }
+
+            @Override
+            public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+                // TODO Auto-generated method stub
+                
             }
         };
     }
@@ -73,6 +110,24 @@ public final class ChannelHandlerFactories {
             @Override
             public ChannelHandler newChannelHandler() {
                 return new LengthFieldBasedFrameDecoder(maxFrameLength, lengthFieldOffset, lengthFieldLength, lengthAdjustment, initialBytesToStrip);
+            }
+
+            @Override
+            public void handlerAdded(ChannelHandlerContext ctx) throws Exception {
+                // TODO Auto-generated method stub
+                
+            }
+
+            @Override
+            public void handlerRemoved(ChannelHandlerContext ctx) throws Exception {
+                // TODO Auto-generated method stub
+                
+            }
+
+            @Override
+            public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+                // TODO Auto-generated method stub
+                
             }
         };
     }

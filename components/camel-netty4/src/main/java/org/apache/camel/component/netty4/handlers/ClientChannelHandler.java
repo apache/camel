@@ -26,12 +26,12 @@ import org.apache.camel.component.netty4.NettyHelper;
 import org.apache.camel.component.netty4.NettyPayloadHelper;
 import org.apache.camel.component.netty4.NettyProducer;
 import org.apache.camel.util.ExchangeHelper;
-import org.jboss.netty.channel.ChannelHandler;
-import org.jboss.netty.channel.ChannelHandlerContext;
-import org.jboss.netty.channel.ChannelStateEvent;
-import org.jboss.netty.channel.ExceptionEvent;
-import org.jboss.netty.channel.MessageEvent;
-import org.jboss.netty.channel.SimpleChannelUpstreamHandler;
+import io.netty.channel.ChannelHandler;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.ChannelStateEvent;
+import io.netty.channel.ExceptionEvent;
+import io.netty.channel.MessageEvent;
+import io.netty.channel.SimpleChannelUpstreamHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -63,7 +63,7 @@ public class ClientChannelHandler extends SimpleChannelUpstreamHandler {
         if (LOG.isTraceEnabled()) {
             LOG.trace("Exception caught at Channel: " + ctx.getChannel(), exceptionEvent.getCause());
         }
-         
+
         if (exceptionHandled) {
             // ignore subsequent exceptions being thrown
             return;
@@ -108,7 +108,7 @@ public class ClientChannelHandler extends SimpleChannelUpstreamHandler {
         producer.getAllChannels().remove(ctx.getChannel());
 
         if (producer.getConfiguration().isSync() && !messageReceived && !exceptionHandled) {
-            // To avoid call the callback.done twice 
+            // To avoid call the callback.done twice
             exceptionHandled = true;
             // session was closed but no message received. This could be because the remote server had an internal error
             // and could not return a response. We should count down to stop waiting for a response
@@ -168,12 +168,12 @@ public class ClientChannelHandler extends SimpleChannelUpstreamHandler {
             } else {
                 close = exchange.getIn().getHeader(NettyConstants.NETTY_CLOSE_CHANNEL_WHEN_COMPLETE, Boolean.class);
             }
-            
+
             // check the setting on the exchange property
             if (close == null) {
                 close = exchange.getProperty(NettyConstants.NETTY_CLOSE_CHANNEL_WHEN_COMPLETE, Boolean.class);
             }
-            
+
             // should we disconnect, the header can override the configuration
             boolean disconnect = producer.getConfiguration().isDisconnect();
             if (close != null) {

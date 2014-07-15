@@ -18,7 +18,7 @@ package org.apache.camel.component.netty4;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
-import org.jboss.netty.channel.socket.nio.WorkerPool;
+import io.netty.channel.socket.nio.WorkerPool;
 import org.junit.Test;
 
 /**

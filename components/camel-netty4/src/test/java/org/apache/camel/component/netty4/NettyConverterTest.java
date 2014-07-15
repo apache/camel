@@ -18,8 +18,8 @@ package org.apache.camel.component.netty4;
 
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.test.junit4.CamelTestSupport;
-import org.jboss.netty.buffer.ChannelBuffer;
-import org.jboss.netty.buffer.DynamicChannelBuffer;
+import io.netty.buffer.ChannelBuffer;
+import io.netty.buffer.DynamicChannelBuffer;
 import org.junit.Before;
 import org.junit.Test;
 
