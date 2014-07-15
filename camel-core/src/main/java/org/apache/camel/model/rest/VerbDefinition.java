@@ -16,19 +16,17 @@
  */
 package org.apache.camel.model.rest;
 
-import java.util.ArrayList;
-import java.util.List;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
-import org.apache.camel.model.ProcessorDefinition;
+import org.apache.camel.model.OutputDefinition;
 
 @XmlRootElement(name = "verb")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class VerbDefinition {
+public class VerbDefinition extends OutputDefinition<VerbDefinition> {
 
     @XmlAttribute
     private String routeId;
@@ -42,8 +40,16 @@ public class VerbDefinition {
     @XmlAttribute
     private String accept;
 
-    @XmlElementRef
-    private List<ProcessorDefinition<?>> outputs = new ArrayList<ProcessorDefinition<?>>();
+    @XmlTransient
+    private PathDefinition path;
+
+    public PathDefinition getPath() {
+        return path;
+    }
+
+    public void setPath(PathDefinition path) {
+        this.path = path;
+    }
 
     public String getRouteId() {
         return routeId;
@@ -77,21 +83,23 @@ public class VerbDefinition {
         this.accept = accept;
     }
 
-    public List<ProcessorDefinition<?>> getOutputs() {
-        return outputs;
+    // Fluent API
+    // -------------------------------------------------------------------------
+
+    public PathDefinition get() {
+        return path.get();
     }
 
-    public void setOutputs(List<ProcessorDefinition<?>> outputs) {
-        this.outputs = outputs;
-
-        if (outputs != null) {
-            for (ProcessorDefinition<?> output : outputs) {
-                output.configureChild(output);
-            }
-        }
+    public PathDefinition get(String url) {
+        return path.get(url);
     }
 
-    public void addOutput(ProcessorDefinition<?> output) {
-        outputs.add(output);
+    public PathDefinition post() {
+        return path.post();
     }
+
+    public PathDefinition post(String url) {
+        return path.post(url);
+    }
+
 }

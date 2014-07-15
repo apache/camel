@@ -69,6 +69,7 @@ public class PathDefinition {
 
     public PathDefinition get(String url) {
         GetVerbDefinition answer = new GetVerbDefinition();
+        answer.setPath(this);
         getVerbs().add(answer);
         if (url != null) {
             answer.setUri(url);
@@ -82,6 +83,7 @@ public class PathDefinition {
 
     public PathDefinition post(String url) {
         PostVerbDefinition answer = new PostVerbDefinition();
+        answer.setPath(this);
         getVerbs().add(answer);
         if (url != null) {
             answer.setUri(url);
@@ -101,7 +103,7 @@ public class PathDefinition {
         return this;
     }
 
-    public PathDefinition to(String url) {
+    public VerbDefinition to(String url) {
         // add to last verb
         if (getVerbs().isEmpty()) {
             throw new IllegalArgumentException("Must add verb first, such as get/post/delete");
@@ -110,7 +112,7 @@ public class PathDefinition {
         VerbDefinition verb = getVerbs().get(getVerbs().size() - 1);
         verb.addOutput(new ToDefinition(url));
 
-        return this;
+        return verb;
     }
 
 }

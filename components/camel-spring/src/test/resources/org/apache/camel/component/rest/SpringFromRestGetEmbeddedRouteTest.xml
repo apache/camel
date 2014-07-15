@@ -30,11 +30,13 @@
     <rest component="dummy-rest">
       <path uri="/say">
         <get uri="/hello" routeId="hello">
+          <to uri="mock:hello"/>
           <transform>
             <constant>Hello World</constant>
           </transform>
         </get>
         <get uri="/bye" accept="application/json" routeId="bye">
+          <to uri="mock:bye"/>
           <transform>
             <constant>Bye World</constant>
           </transform>
@@ -44,6 +46,7 @@
         </post>
       </path>
     </rest>
+
   </camelContext>
 
 </beans>

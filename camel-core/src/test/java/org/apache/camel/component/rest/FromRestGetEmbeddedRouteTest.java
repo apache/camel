@@ -23,7 +23,7 @@ import org.apache.camel.model.ToDefinition;
 import org.apache.camel.model.rest.PathDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 
-public class FromRestGetTest extends ContextTestSupport {
+public class FromRestGetEmbeddedRouteTest extends ContextTestSupport {
 
     @Override
     protected JndiRegistry createRegistry() throws Exception {
@@ -33,7 +33,7 @@ public class FromRestGetTest extends ContextTestSupport {
     }
 
     protected int getExpectedNumberOfRoutes() {
-        return 2 + 3;
+        return 3;
     }
 
     public void testFromRestModel() throws Exception {
@@ -52,12 +52,12 @@ public class FromRestGetTest extends ContextTestSupport {
 
         assertEquals("/hello", path.getVerbs().get(0).getUri());
         ToDefinition to = assertIsInstanceOf(ToDefinition.class, path.getVerbs().get(0).getOutputs().get(0));
-        assertEquals("direct:hello", to.getUri());
+        assertEquals("mock:hello", to.getUri());
 
         assertEquals("/bye", path.getVerbs().get(1).getUri());
         assertEquals("application/json", path.getVerbs().get(1).getAccept());
         to = assertIsInstanceOf(ToDefinition.class, path.getVerbs().get(1).getOutputs().get(0));
-        assertEquals("direct:bye", to.getUri());
+        assertEquals("mock:bye", to.getUri());
 
         assertEquals(null, path.getVerbs().get(2).getUri());
 
@@ -80,15 +80,14 @@ public class FromRestGetTest extends ContextTestSupport {
             public void configure() throws Exception {
                 rest()
                     .path("/say")
-                        .get("/hello").routeId("hello").to("direct:hello").endPath()
-                        .get("/bye").accept("application/json").routeId("bye").to("direct:bye").endPath()
-                        .post().to("mock:update");
-
-                from("direct:hello")
-                    .transform().constant("Hello World");
-
-                from("direct:bye")
-                    .transform().constant("Bye World");
+                        .get("/hello").routeId("hello")
+                            .to("mock:hello")
+                            .transform(constant("Hello World"))
+                        .get("/bye").accept("application/json").routeId("bye")
+                            .to("mock:bye")
+                            .transform(constant("Bye World"))
+                        .post()
+                            .to("mock:update");
             }
         };
     }

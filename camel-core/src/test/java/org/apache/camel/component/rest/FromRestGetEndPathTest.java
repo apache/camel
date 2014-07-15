@@ -16,14 +16,27 @@
  */
 package org.apache.camel.component.rest;
 
-import org.apache.camel.CamelContext;
+import org.apache.camel.builder.RouteBuilder;
 
-import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
+public class FromRestGetEndPathTest extends FromRestGetTest {
 
-public class SpringFromRestGetEmbeddedRouteTest extends FromRestGetEmbeddedRouteTest {
+    @Override
+    protected RouteBuilder createRouteBuilder() throws Exception {
+        return new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                rest()
+                    .path("/say")
+                        .get("/hello").routeId("hello").to("direct:hello").endPath()
+                        .get("/bye").accept("application/json").routeId("bye").to("direct:bye").endPath()
+                        .post().to("mock:update");
 
-    protected CamelContext createCamelContext() throws Exception {
-        return createSpringCamelContext(this, "org/apache/camel/component/rest/SpringFromRestGetEmbeddedRouteTest.xml");
+                from("direct:hello")
+                    .transform().constant("Hello World");
+
+                from("direct:bye")
+                    .transform().constant("Bye World");
+            }
+        };
     }
-
 }
