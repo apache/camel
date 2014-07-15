@@ -16,24 +16,18 @@
  */
 package org.apache.camel.component.rest;
 
-import org.apache.camel.ContextTestSupport;
-import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.JndiRegistry;
-import org.apache.camel.model.ToDefinition;
+import org.apache.camel.CamelContext;
+import org.apache.camel.model.TransformDefinition;
 import org.apache.camel.model.rest.PathDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 
-public class FromRestGetTest extends ContextTestSupport {
+import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
+
+public class SpringFromRestGetEmbeddedRouteTest extends FromRestGetTest {
 
     @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
-        jndi.bind("dummy-test", new DummyRestConsumerFactory());
-        return jndi;
-    }
-
     protected int getExpectedNumberOfRoutes() {
-        return 2 + 3;
+        return 3;
     }
 
     public void testFromRestModel() throws Exception {
@@ -51,13 +45,10 @@ public class FromRestGetTest extends ContextTestSupport {
         assertEquals("/say", path.getUri());
 
         assertEquals("/hello", path.getVerbs().get(0).getUri());
-        ToDefinition to = assertIsInstanceOf(ToDefinition.class, path.getVerbs().get(0).getOutputs().get(0));
-        assertEquals("direct:hello", to.getUri());
+        assertIsInstanceOf(TransformDefinition.class, path.getVerbs().get(1).getOutputs().get(0));
 
         assertEquals("/bye", path.getVerbs().get(1).getUri());
         assertEquals("application/json", path.getVerbs().get(1).getAccept());
-        to = assertIsInstanceOf(ToDefinition.class, path.getVerbs().get(1).getOutputs().get(0));
-        assertEquals("direct:bye", to.getUri());
 
         assertEquals(null, path.getVerbs().get(2).getUri());
 
@@ -73,23 +64,8 @@ public class FromRestGetTest extends ContextTestSupport {
         assertEquals("Bye World", out2);
     }
 
-    @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
-        return new RouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-                rest()
-                    .path("/say")
-                        .get("/hello").routeId("hello").to("direct:hello")
-                        .get("/bye").accept("application/json").routeId("bye").to("direct:bye")
-                        .post().to("mock:update");
-
-                from("direct:hello")
-                    .transform().constant("Hello World");
-
-                from("direct:bye")
-                    .transform().constant("Bye World");
-            }
-        };
+    protected CamelContext createCamelContext() throws Exception {
+        return createSpringCamelContext(this, "org/apache/camel/component/rest/SpringFromRestGetEmbeddedRouteTest.xml");
     }
+
 }
