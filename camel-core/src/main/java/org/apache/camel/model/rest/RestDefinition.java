@@ -17,7 +17,9 @@
 package org.apache.camel.model.rest;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
@@ -26,6 +28,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.util.URISupport;
 
 /**
  * Represents an XML &lt;rest/&gt; element
@@ -88,7 +91,20 @@ public class RestDefinition {
         for (PathDefinition path : getPaths()) {
             String uri = path.getUri();
             for (VerbDefinition verb : path.getVerbs()) {
-                String from = "rest:" + verb.asVerb() + ":" + uri + (getComponent() != null ? "?componentName=" + getComponent() : "");
+                String from = "rest:" + verb.asVerb() + ":" + uri;
+                // append options
+                Map<String, Object> options = new HashMap<String, Object>();
+                if (getComponent() != null) {
+                    options.put("componentName", getComponent());
+                }
+                if (verb.getConsumes() != null) {
+                    options.put("consumes", verb.getConsumes());
+                }
+                if (!options.isEmpty()) {
+                    String query = URISupport.createQueryString(options);
+                    from = from + "?" + query;
+                }
+
                 RouteDefinition route = new RouteDefinition();
                 route.fromRest(from);
                 answer.add(route);

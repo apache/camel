@@ -29,7 +29,7 @@ public class DummyRestConsumerFactory implements RestConsumerFactory {
 
     @Override
     public Consumer createConsumer(CamelContext camelContext, Processor processor,
-                                   String verb, String path, String accept, Map<String, Object> parameters) throws Exception {
+                                   String verb, String path, String consumes, Map<String, Object> parameters) throws Exception {
         // just use a seda endpoint for testing purpose
         String id = ActiveMQUuidGenerator.generateSanitizedId(path);
         // remove leading dash as we add that ourselves

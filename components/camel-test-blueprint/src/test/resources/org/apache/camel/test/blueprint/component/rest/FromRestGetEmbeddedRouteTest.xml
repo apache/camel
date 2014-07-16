@@ -35,7 +35,7 @@
         </get>
       </path>
       <path uri="/say/bye">
-        <get accept="application/json">
+        <get consumes="application/json">
           <to uri="mock:bye"/>
           <transform>
             <constant>Bye World</constant>

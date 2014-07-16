@@ -34,7 +34,7 @@
         </get>
       </path>
       <path uri="/say/bye">
-        <get accept="application/json">
+        <get consumes="application/json">
           <to uri="direct:bye"/>
         </get>
         <post>

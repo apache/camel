@@ -99,11 +99,11 @@ public class SparkComponent extends UriEndpointComponent implements RestConsumer
 
     @Override
     public Consumer createConsumer(CamelContext camelContext, Processor processor,
-                                   String verb, String path, String accept, Map<String, Object> parameters) throws Exception {
+                                   String verb, String path, String consumes, Map<String, Object> parameters) throws Exception {
         // get the endpoint
         SparkEndpoint endpoint;
-        if (accept != null) {
-            endpoint = camelContext.getEndpoint("spark-rest:" + verb + ":" + path + "?accept=" + accept, SparkEndpoint.class);
+        if (consumes != null) {
+            endpoint = camelContext.getEndpoint("spark-rest:" + verb + ":" + path + "?accept=" + consumes, SparkEndpoint.class);
         } else {
             endpoint = camelContext.getEndpoint("spark-rest:" + verb + ":" + path, SparkEndpoint.class);
         }

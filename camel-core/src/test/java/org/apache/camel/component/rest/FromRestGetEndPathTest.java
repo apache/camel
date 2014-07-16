@@ -29,7 +29,7 @@ public class FromRestGetEndPathTest extends FromRestGetTest {
                     .path("/say/hello")
                         .get().to("direct:hello").endPath()
                     .path("/say/bye")
-                        .get().accept("application/json").to("direct:bye").endPath()
+                        .get().consumes("application/json").to("direct:bye").endPath()
                         .post().to("mock:update");
 
                 from("direct:hello")

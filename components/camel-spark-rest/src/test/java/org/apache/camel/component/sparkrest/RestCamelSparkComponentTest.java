@@ -27,9 +27,10 @@ public class RestCamelSparkComponentTest extends RestCamelSparkTest {
             public void configure() throws Exception {
                 // explicit configure that we want to use spark-rest component
                 rest().component("spark-rest")
-                    .path("/spark")
-                        .get("/hello").to("direct:hello")
-                        .get("/bye").to("direct:bye")
+                    .path("/spark/hello")
+                        .get().to("direct:hello")
+                    .path("/spark/bye")
+                        .get().to("direct:bye")
                         .post().to("mock:update");
 
                 from("direct:hello")

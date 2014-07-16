@@ -32,7 +32,7 @@ public class VerbDefinition extends OutputDefinition<VerbDefinition> {
     private String method;
 
     @XmlAttribute
-    private String accept;
+    private String consumes;
 
     @XmlTransient
     private PathDefinition path;
@@ -53,12 +53,12 @@ public class VerbDefinition extends OutputDefinition<VerbDefinition> {
         this.method = method;
     }
 
-    public String getAccept() {
-        return accept;
+    public String getConsumes() {
+        return consumes;
     }
 
-    public void setAccept(String accept) {
-        this.accept = accept;
+    public void setConsumes(String consumes) {
+        this.consumes = consumes;
     }
 
     // Fluent API

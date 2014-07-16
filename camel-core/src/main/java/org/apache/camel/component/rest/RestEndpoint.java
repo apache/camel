@@ -36,7 +36,7 @@ public class RestEndpoint extends DefaultEndpoint {
     @UriParam
     private String path;
     @UriParam
-    private String accept;
+    private String consumes;
     @UriParam
     private String componentName;
 
@@ -67,12 +67,12 @@ public class RestEndpoint extends DefaultEndpoint {
         this.path = path;
     }
 
-    public String getAccept() {
-        return accept;
+    public String getConsumes() {
+        return consumes;
     }
 
-    public void setAccept(String accept) {
-        this.accept = accept;
+    public void setConsumes(String consumes) {
+        this.consumes = consumes;
     }
 
     public String getComponentName() {
@@ -129,7 +129,7 @@ public class RestEndpoint extends DefaultEndpoint {
         }
 
         if (factory != null) {
-            Consumer consumer = factory.createConsumer(getCamelContext(), processor, getVerb(), getPath(), getAccept(), getParameters());
+            Consumer consumer = factory.createConsumer(getCamelContext(), processor, getVerb(), getPath(), getConsumes(), getParameters());
             configureConsumer(consumer);
             return consumer;
         } else {

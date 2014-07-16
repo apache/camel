@@ -37,7 +37,7 @@ public class RestCamelSparkTest extends BaseSparkTest {
     public void testSparkPost() throws Exception {
         getMockEndpoint("mock:update").expectedBodiesReceived("I did this");
 
-        template.requestBody("http://0.0.0.0:" + getPort() + "/spark", "I did this", String.class);
+        template.requestBody("http://0.0.0.0:" + getPort() + "/spark/bye", "I did this", String.class);
 
         assertMockEndpointsSatisfied();
     }
@@ -49,7 +49,7 @@ public class RestCamelSparkTest extends BaseSparkTest {
             public void configure() throws Exception {
                 // will automatic find the spark component to use, as we setup that component in the BaseSparkTest
                 rest()
-                    .path("/spark/hello").to("direct:hello")
+                    .path("/spark/hello").get().to("direct:hello")
                     .path("/spark/bye").get().to("direct:bye")
                     .path("/spark/bye").post().to("mock:update");
 

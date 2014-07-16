@@ -70,7 +70,7 @@ public class ManagedFromRestGetTest extends ManagementTestSupport {
                     .path("/say/hello")
                         .get().to("direct:hello")
                     .path("/say/bye")
-                        .get().accept("application/json").to("direct:bye")
+                        .get().consumes("application/json").to("direct:bye")
                         .post().to("mock:update");
 
                 from("direct:hello")

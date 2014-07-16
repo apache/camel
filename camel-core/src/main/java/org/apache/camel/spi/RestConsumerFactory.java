@@ -33,11 +33,11 @@ public interface RestConsumerFactory {
      * @param processor    the processor
      * @param verb         HTTP verb such as GET, POST
      * @param path         HTTP context-path
-     * @param accept       accept-type, is <tt>null</tt> to accept anything
+     * @param consumes     accept-type, is <tt>null</tt> to accept anything
      * @param parameters   additional parameters
      * @return a newly created REST consumer
      * @throws Exception can be thrown
      */
     Consumer createConsumer(CamelContext camelContext, Processor processor,
-                            String verb, String path, String accept, Map<String, Object> parameters) throws Exception;
+                            String verb, String path, String consumes, Map<String, Object> parameters) throws Exception;
 }

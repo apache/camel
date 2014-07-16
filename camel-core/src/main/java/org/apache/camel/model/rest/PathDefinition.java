@@ -94,14 +94,14 @@ public class PathDefinition {
         return addVerb(verb, null);
     }
 
-    public PathDefinition accept(String accept) {
+    public PathDefinition consumes(String accept) {
         // add to last verb
         if (getVerbs().isEmpty()) {
             throw new IllegalArgumentException("Must add verb first, such as get/post/delete");
         }
 
         VerbDefinition verb = getVerbs().get(getVerbs().size() - 1);
-        verb.setAccept(accept);
+        verb.setConsumes(accept);
 
         return this;
     }
