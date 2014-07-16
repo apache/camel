@@ -1319,7 +1319,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
-     * Ends the current block and returns back to the {@link ChoiceDefinition choice()} DSL.
+     * Ends the current block and returns back to the {@link PathDefinition path()} DSL.
      *
      * @return the builder
      */

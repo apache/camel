@@ -23,6 +23,7 @@ import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
+import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.model.ToDefinition;
 
@@ -32,6 +33,7 @@ public class PathDefinition {
 
     private String uri;
     private List<VerbDefinition> verbs = new ArrayList<VerbDefinition>();
+    private RestDefinition rest;
 
     public String getUri() {
         return uri;
@@ -51,64 +53,45 @@ public class PathDefinition {
         this.verbs = verbs;
     }
 
+     public RestDefinition getRest() {
+        return rest;
+    }
+
+    @XmlTransient
+    public void setRest(RestDefinition rest) {
+        this.rest = rest;
+    }
+
     // Fluent API
     //-------------------------------------------------------------------------
 
-    public PathDefinition routeId(String routeId) {
-        // set on last verb
-        if (verbs != null && !verbs.isEmpty()) {
-            VerbDefinition last = verbs.get(verbs.size() - 1);
-            last.setRouteId(routeId);
-        }
-        return this;
+    public PathDefinition path(String uri) {
+        // add a new path on the rest
+        return rest.path(uri);
     }
 
     public PathDefinition get() {
         return addVerb("get", null);
     }
 
-    public PathDefinition get(String url) {
-        return addVerb("get", url);
-    }
-
     public PathDefinition post() {
         return addVerb("post", null);
-    }
-
-    public PathDefinition post(String url) {
-        return addVerb("post", url);
     }
 
     public PathDefinition put() {
         return addVerb("put", null);
     }
 
-    public PathDefinition put(String url) {
-        return addVerb("put", url);
-    }
-
     public PathDefinition delete() {
         return addVerb("delete", null);
-    }
-
-    public PathDefinition delete(String url) {
-        return addVerb("delete", url);
     }
 
     public PathDefinition head() {
         return addVerb("head", null);
     }
 
-    public PathDefinition head(String url) {
-        return addVerb("head", url);
-    }
-
     public PathDefinition verb(String verb) {
         return addVerb(verb, null);
-    }
-
-    public PathDefinition verb(String verb, String url) {
-        return addVerb(verb, url);
     }
 
     public PathDefinition accept(String accept) {
@@ -141,9 +124,6 @@ public class PathDefinition {
         answer.setMethod(verb);
         answer.setPath(this);
         getVerbs().add(answer);
-        if (url != null) {
-            answer.setUri(url);
-        }
         return this;
     }
 

@@ -42,27 +42,19 @@ public class FromRestGetTest extends ContextTestSupport {
         RestDefinition rest = context.getRestDefinitions().get(0);
         assertNotNull(rest);
 
-        // we should have a hello and bye route
-        assertNotNull(context.getRouteDefinition("hello"));
-        assertNotNull(context.getRouteDefinition("bye"));
-
+        assertEquals(2, rest.getPaths().size());
         PathDefinition path = rest.getPaths().get(0);
-        assertNotNull(0);
-        assertEquals("/say", path.getUri());
-
-        assertEquals("/hello", path.getVerbs().get(0).getUri());
+        assertEquals("/say/hello", path.getUri());
         ToDefinition to = assertIsInstanceOf(ToDefinition.class, path.getVerbs().get(0).getOutputs().get(0));
-        assertEquals("direct:hello", to.getUri());
+        assertEquals("mock:hello", to.getUri());
 
-        assertEquals("/bye", path.getVerbs().get(1).getUri());
+        path = rest.getPaths().get(1);
+        assertEquals("/say/bye", path.getUri());
         assertEquals("application/json", path.getVerbs().get(1).getAccept());
         to = assertIsInstanceOf(ToDefinition.class, path.getVerbs().get(1).getOutputs().get(0));
-        assertEquals("direct:bye", to.getUri());
-
-        assertEquals(null, path.getVerbs().get(2).getUri());
+        assertEquals("mock:bye", to.getUri());
 
         // the rest becomes routes and the input is a seda endpoint created by the DummyRestConsumerFactory
-
         getMockEndpoint("mock:update").expectedMessageCount(1);
         template.sendBody("seda:post-say", "I was here");
         assertMockEndpointsSatisfied();
@@ -79,9 +71,10 @@ public class FromRestGetTest extends ContextTestSupport {
             @Override
             public void configure() throws Exception {
                 rest()
-                    .path("/say")
-                        .get("/hello").routeId("hello").to("direct:hello").endPath()
-                        .get("/bye").accept("application/json").routeId("bye").to("direct:bye").endPath()
+                    .path("/say/hello")
+                        .get().to("direct:hello")
+                    .path("/say/bye")
+                        .get().accept("application/json").to("direct:bye")
                         .post().to("mock:update");
 
                 from("direct:hello")

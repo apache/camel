@@ -26,14 +26,16 @@
   <camelContext xmlns="http://camel.apache.org/schema/blueprint">
 
     <rest component="dummy-rest">
-      <path uri="/say">
-        <get uri="/hello" routeId="hello">
+      <path uri="/say/hello">
+        <get>
           <to uri="mock:hello"/>
           <transform>
             <constant>Hello World</constant>
           </transform>
         </get>
-        <get uri="/bye" accept="application/json" routeId="bye">
+      </path>
+      <path uri="/say/bye">
+        <get accept="application/json">
           <to uri="mock:bye"/>
           <transform>
             <constant>Bye World</constant>

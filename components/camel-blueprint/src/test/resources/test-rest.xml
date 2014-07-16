@@ -21,11 +21,13 @@
 
     <camelContext xmlns="http://camel.apache.org/schema/blueprint">
       <rest component="dummy-rest">
-        <path uri="/say">
-          <get uri="/hello">
+        <path uri="/say/hello">
+          <get>
             <to uri="direct:hello"/>
           </get>
-          <get uri="/bye">
+        </path>
+        <path uri="/say/bye">
+          <get>
             <to uri="direct:bye"/>
           </get>
           <post>

@@ -29,13 +29,7 @@ import org.apache.camel.model.OutputDefinition;
 public class VerbDefinition extends OutputDefinition<VerbDefinition> {
 
     @XmlAttribute
-    private String routeId;
-
-    @XmlAttribute
     private String method;
-
-    @XmlAttribute
-    private String uri;
 
     @XmlAttribute
     private String accept;
@@ -51,28 +45,12 @@ public class VerbDefinition extends OutputDefinition<VerbDefinition> {
         this.path = path;
     }
 
-    public String getRouteId() {
-        return routeId;
-    }
-
-    public void setRouteId(String routeId) {
-        this.routeId = routeId;
-    }
-
     public String getMethod() {
         return method;
     }
 
     public void setMethod(String method) {
         this.method = method;
-    }
-
-    public String getUri() {
-        return uri;
-    }
-
-    public void setUri(String uri) {
-        this.uri = uri;
     }
 
     public String getAccept() {
@@ -86,52 +64,33 @@ public class VerbDefinition extends OutputDefinition<VerbDefinition> {
     // Fluent API
     // -------------------------------------------------------------------------
 
-    public PathDefinition get() {
-        return path.get();
+    public PathDefinition path(String uri) {
+        PathDefinition parent = endPath();
+        return parent.path(uri);
     }
 
-    public PathDefinition get(String url) {
-        return path.get(url);
+    public PathDefinition get() {
+        return path.get();
     }
 
     public PathDefinition post() {
         return path.post();
     }
 
-    public PathDefinition post(String url) {
-        return path.post(url);
-    }
-
     public PathDefinition put() {
         return path.put();
-    }
-
-    public PathDefinition put(String url) {
-        return path.put(url);
     }
 
     public PathDefinition delete() {
         return path.delete();
     }
 
-    public PathDefinition delete(String url) {
-        return path.delete(url);
-    }
-
     public PathDefinition head() {
         return path.head();
     }
 
-    public PathDefinition head(String url) {
-        return path.head(url);
-    }
-
     public PathDefinition verb(String verb) {
         return path.verb(verb);
-    }
-
-    public PathDefinition verb(String verb, String url) {
-        return path.verb(verb, url);
     }
 
 }

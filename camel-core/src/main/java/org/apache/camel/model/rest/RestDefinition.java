@@ -71,6 +71,7 @@ public class RestDefinition {
      */
     public PathDefinition path(String uri) {
         PathDefinition answer = new PathDefinition();
+        answer.setRest(this);
         getPaths().add(answer);
         answer.setUri(uri);
         return answer;
@@ -87,13 +88,9 @@ public class RestDefinition {
         for (PathDefinition path : getPaths()) {
             String uri = path.getUri();
             for (VerbDefinition verb : path.getVerbs()) {
-                String from = "rest:" + verb.getMethod() + ":" + uri + (verb.getUri() != null ? verb.getUri() : "")
-                        + (getComponent() != null ? "?componentName=" + getComponent() : "");
+                String from = "rest:" + verb.getMethod() + ":" + uri + (getComponent() != null ? "?componentName=" + getComponent() : "");
                 RouteDefinition route = new RouteDefinition();
                 route.fromRest(from);
-                if (verb.getRouteId() != null) {
-                    route.setId(verb.getRouteId());
-                }
                 answer.add(route);
                 route.getOutputs().addAll(verb.getOutputs());
             }

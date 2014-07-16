@@ -28,11 +28,13 @@
   <camelContext xmlns="http://camel.apache.org/schema/spring">
 
     <rest component="dummy-rest">
-      <path uri="/say">
-        <get uri="/hello" routeId="hello">
+      <path uri="/say/hello">
+        <get>
           <to uri="direct:hello"/>
         </get>
-        <get uri="/bye" accept="application/json" routeId="bye">
+      </path>
+      <path uri="/say/bye">
+        <get accept="application/json">
           <to uri="direct:bye"/>
         </get>
         <post>

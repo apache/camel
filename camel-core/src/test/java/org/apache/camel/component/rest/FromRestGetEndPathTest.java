@@ -26,9 +26,10 @@ public class FromRestGetEndPathTest extends FromRestGetTest {
             @Override
             public void configure() throws Exception {
                 rest()
-                    .path("/say")
-                        .get("/hello").routeId("hello").to("direct:hello").endPath()
-                        .get("/bye").accept("application/json").routeId("bye").to("direct:bye").endPath()
+                    .path("/say/hello")
+                        .get().to("direct:hello").endPath()
+                    .path("/say/bye")
+                        .get().accept("application/json").to("direct:bye").endPath()
                         .post().to("mock:update");
 
                 from("direct:hello")

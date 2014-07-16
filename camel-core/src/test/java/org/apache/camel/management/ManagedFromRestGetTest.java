@@ -59,7 +59,6 @@ public class ManagedFromRestGetTest extends ManagementTestSupport {
         log.info(xml2);
         // and we should have rest in the routes that indicate its from a rest dsl
         assertTrue(xml2.contains("rest=\"true\""));
-
     }
 
     @Override
@@ -68,9 +67,10 @@ public class ManagedFromRestGetTest extends ManagementTestSupport {
             @Override
             public void configure() throws Exception {
                 rest()
-                    .path("/say")
-                        .get("/hello").to("direct:hello")
-                        .get("/bye").to("direct:bye")
+                    .path("/say/hello")
+                        .get().to("direct:hello")
+                    .path("/say/bye")
+                        .get().accept("application/json").to("direct:bye")
                         .post().to("mock:update");
 
                 from("direct:hello")
