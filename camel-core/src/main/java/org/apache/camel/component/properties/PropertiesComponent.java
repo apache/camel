@@ -326,13 +326,8 @@ public class PropertiesComponent extends DefaultComponent {
         LOG.trace("Parsing propertyPrefix: {} ", propertyPrefix);
 
         try {
-            String parsedPropertyPrefix = SystemAndEnvPropertyResolver.resolveString(propertyPrefix);
-            LOG.debug("Parsed propertyPrefix: {} ", parsedPropertyPrefix);
-            if (ObjectHelper.isNotEmpty(parsedPropertyPrefix)) {
-                answer = parsedPropertyPrefix;
-            } else {
-                LOG.warn("PropertyPrefix resolves to empty string: {} -> {}. Using the unparsed form", propertyPrefix, parsedPropertyPrefix);
-            }
+            answer = SystemAndEnvPropertyResolver.resolveString(propertyPrefix);
+            LOG.debug("Parsed propertyPrefix: {} ", answer);
         } catch (IllegalArgumentException e) {
             throw e;
         }
@@ -346,13 +341,8 @@ public class PropertiesComponent extends DefaultComponent {
         LOG.trace("Parsing propertySuffix: {} ", propertySuffix);
 
         try {
-            String parsedPropertySuffix = SystemAndEnvPropertyResolver.resolveString(propertySuffix);
-            LOG.debug("Parsed propertySuffix: {} ", parsedPropertySuffix);
-            if (ObjectHelper.isNotEmpty(parsedPropertySuffix)) {
-                answer = parsedPropertySuffix;
-            } else {
-                LOG.warn("PropertySuffix resolves to empty string: {} -> {}. Using the unparsed form", propertySuffix, parsedPropertySuffix);
-            }
+            answer = SystemAndEnvPropertyResolver.resolveString(propertySuffix);
+            LOG.debug("Parsed propertySuffix: {} ", answer);
         } catch (IllegalArgumentException e) {
             throw e;
         }

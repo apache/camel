@@ -133,6 +133,44 @@ public class PropertiesComponentDefaultTest extends ContextTestSupport {
         }
     }
 
+    public void testPropertyPrefixParsing() throws Exception {
+        System.setProperty("testPropertyPrefix","bar");
+        PropertiesComponent pc = new PropertiesComponent();
+        pc.setCamelContext(context);
+        pc.setPropertyPrefix("${testPropertyPrefix}.");
+        pc.setLocation("org/apache/camel/component/properties/bar.properties");
+        context.addComponent("properties",pc);
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("direct:start").to("{{end}}");
+            }
+        });
+        context.start();
+        getMockEndpoint("mock:bar").expectedMessageCount(1);
+        template.sendBody("direct:start", "Hello World");
+        assertMockEndpointsSatisfied();
+    }
+
+    public void testPropertySuffixParsing() throws Exception {
+        System.setProperty("testPropertySuffix","end");
+        PropertiesComponent pc = new PropertiesComponent();
+        pc.setCamelContext(context);
+        pc.setPropertySuffix(".${testPropertySuffix}");
+        pc.setLocation("org/apache/camel/component/properties/bar.properties");
+        context.addComponent("properties",pc);
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("direct:start").to("{{bar}}");
+            }
+        });
+        context.start();
+        getMockEndpoint("mock:bar").expectedMessageCount(1);
+        template.sendBody("direct:start", "Hello World");
+        assertMockEndpointsSatisfied();
+    }
+
     @Override
     public boolean isUseRouteBuilder() {
         return false;
