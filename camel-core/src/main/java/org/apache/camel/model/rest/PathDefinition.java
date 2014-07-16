@@ -28,18 +28,20 @@ import javax.xml.bind.annotation.XmlTransient;
 import org.apache.camel.model.ToDefinition;
 
 @XmlRootElement(name = "path")
-@XmlAccessorType(XmlAccessType.PROPERTY)
+@XmlAccessorType(XmlAccessType.FIELD)
 public class PathDefinition {
 
+    @XmlAttribute(required = true)
     private String uri;
+    @XmlElementRef
     private List<VerbDefinition> verbs = new ArrayList<VerbDefinition>();
+    @XmlTransient
     private RestDefinition rest;
 
     public String getUri() {
         return uri;
     }
 
-    @XmlAttribute(required = true)
     public void setUri(String uri) {
         this.uri = uri;
     }
@@ -48,7 +50,6 @@ public class PathDefinition {
         return verbs;
     }
 
-    @XmlElementRef
     public void setVerbs(List<VerbDefinition> verbs) {
         this.verbs = verbs;
     }
@@ -57,7 +58,6 @@ public class PathDefinition {
         return rest;
     }
 
-    @XmlTransient
     public void setRest(RestDefinition rest) {
         this.rest = rest;
     }
@@ -120,8 +120,23 @@ public class PathDefinition {
     }
 
     private PathDefinition addVerb(String verb, String url) {
-        VerbDefinition answer = new VerbDefinition();
-        answer.setMethod(verb);
+        VerbDefinition answer;
+
+        if ("get".equals(verb)) {
+            answer = new GetVerbDefinition();
+        } else if ("post".equals(verb)) {
+            answer = new PostVerbDefinition();
+        } else if ("delete".equals(verb)) {
+            answer = new DeleteVerbDefinition();
+        } else if ("head".equals(verb)) {
+            answer = new HeadVerbDefinition();
+        } else if ("put".equals(verb)) {
+            answer = new PutVerbDefinition();
+        } else {
+            answer = new VerbDefinition();
+            answer.setMethod(verb);
+        }
+
         answer.setPath(this);
         getVerbs().add(answer);
         return this;

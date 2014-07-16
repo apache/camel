@@ -48,13 +48,13 @@ public class FromRestGetEmbeddedRouteTest extends CamelBlueprintTestSupport {
 
         path = rest.getPaths().get(1);
         assertEquals("/say/bye", path.getUri());
-        assertEquals("application/json", path.getVerbs().get(1).getAccept());
-        to = assertIsInstanceOf(ToDefinition.class, path.getVerbs().get(1).getOutputs().get(0));
+        assertEquals("application/json", path.getVerbs().get(0).getAccept());
+        to = assertIsInstanceOf(ToDefinition.class, path.getVerbs().get(0).getOutputs().get(0));
         assertEquals("mock:bye", to.getUri());
 
         // the rest becomes routes and the input is a seda endpoint created by the DummyRestConsumerFactory
         getMockEndpoint("mock:update").expectedMessageCount(1);
-        template.sendBody("seda:post-say", "I was here");
+        template.sendBody("seda:post-say-bye", "I was here");
         assertMockEndpointsSatisfied();
 
         String out = template.requestBody("seda:get-say-hello", "Me", String.class);

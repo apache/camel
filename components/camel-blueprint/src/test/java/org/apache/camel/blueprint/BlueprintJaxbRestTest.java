@@ -75,8 +75,8 @@ public class BlueprintJaxbRestTest extends TestSupport {
 
         assertEquals(1, cfb.getRests().get(0).getPaths().get(0).getVerbs().size());
         assertEquals(2, cfb.getRests().get(0).getPaths().get(1).getVerbs().size());
-        assertEquals("get", cfb.getRests().get(0).getPaths().get(0).getVerbs().get(0).getMethod());
-        assertEquals("get", cfb.getRests().get(0).getPaths().get(1).getVerbs().get(0).getMethod());
-        assertEquals("post", cfb.getRests().get(0).getPaths().get(1).getVerbs().get(1).getMethod());
+        assertEquals("get", cfb.getRests().get(0).getPaths().get(0).getVerbs().get(0).asVerb());
+        assertEquals("get", cfb.getRests().get(0).getPaths().get(1).getVerbs().get(0).asVerb());
+        assertEquals("post", cfb.getRests().get(0).getPaths().get(1).getVerbs().get(1).asVerb());
     }
 }

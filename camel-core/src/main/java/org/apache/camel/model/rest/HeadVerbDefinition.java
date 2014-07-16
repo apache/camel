@@ -24,7 +24,4 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class HeadVerbDefinition extends VerbDefinition {
 
-    public HeadVerbDefinition() {
-        setMethod("head");
-    }
 }

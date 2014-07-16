@@ -46,17 +46,17 @@ public class FromRestGetTest extends ContextTestSupport {
         PathDefinition path = rest.getPaths().get(0);
         assertEquals("/say/hello", path.getUri());
         ToDefinition to = assertIsInstanceOf(ToDefinition.class, path.getVerbs().get(0).getOutputs().get(0));
-        assertEquals("mock:hello", to.getUri());
+        assertEquals("direct:hello", to.getUri());
 
         path = rest.getPaths().get(1);
         assertEquals("/say/bye", path.getUri());
-        assertEquals("application/json", path.getVerbs().get(1).getAccept());
-        to = assertIsInstanceOf(ToDefinition.class, path.getVerbs().get(1).getOutputs().get(0));
-        assertEquals("mock:bye", to.getUri());
+        assertEquals("application/json", path.getVerbs().get(0).getAccept());
+        to = assertIsInstanceOf(ToDefinition.class, path.getVerbs().get(0).getOutputs().get(0));
+        assertEquals("direct:bye", to.getUri());
 
         // the rest becomes routes and the input is a seda endpoint created by the DummyRestConsumerFactory
         getMockEndpoint("mock:update").expectedMessageCount(1);
-        template.sendBody("seda:post-say", "I was here");
+        template.sendBody("seda:post-say-bye", "I was here");
         assertMockEndpointsSatisfied();
 
         String out = template.requestBody("seda:get-say-hello", "Me", String.class);

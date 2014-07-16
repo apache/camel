@@ -93,4 +93,22 @@ public class VerbDefinition extends OutputDefinition<VerbDefinition> {
         return path.verb(verb);
     }
 
+    public String asVerb() {
+        // we do not want the jaxb model to repeat itself, by outputting <get method="get">
+        // so we defer the verb from the instance type
+        if (this instanceof GetVerbDefinition) {
+            return "get";
+        } else if (this instanceof PostVerbDefinition) {
+            return "post";
+        } else if (this instanceof PutVerbDefinition) {
+            return "put";
+        } else if (this instanceof DeleteVerbDefinition) {
+            return "delete";
+        } else if (this instanceof HeadVerbDefinition) {
+            return "head";
+        } else {
+            return method;
+        }
+    }
+
 }

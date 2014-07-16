@@ -31,17 +31,18 @@ import org.apache.camel.model.RouteDefinition;
  * Represents an XML &lt;rest/&gt; element
  */
 @XmlRootElement(name = "rest")
-@XmlAccessorType(XmlAccessType.PROPERTY)
+@XmlAccessorType(XmlAccessType.FIELD)
 public class RestDefinition {
 
+    @XmlAttribute
     private String component;
+    @XmlElementRef
     private List<PathDefinition> paths = new ArrayList<PathDefinition>();
 
     public String getComponent() {
         return component;
     }
 
-    @XmlAttribute
     public void setComponent(String component) {
         this.component = component;
     }
@@ -50,7 +51,6 @@ public class RestDefinition {
         return paths;
     }
 
-    @XmlElementRef
     public void setPaths(List<PathDefinition> paths) {
         this.paths = paths;
     }
@@ -88,7 +88,7 @@ public class RestDefinition {
         for (PathDefinition path : getPaths()) {
             String uri = path.getUri();
             for (VerbDefinition verb : path.getVerbs()) {
-                String from = "rest:" + verb.getMethod() + ":" + uri + (getComponent() != null ? "?componentName=" + getComponent() : "");
+                String from = "rest:" + verb.asVerb() + ":" + uri + (getComponent() != null ? "?componentName=" + getComponent() : "");
                 RouteDefinition route = new RouteDefinition();
                 route.fromRest(from);
                 answer.add(route);

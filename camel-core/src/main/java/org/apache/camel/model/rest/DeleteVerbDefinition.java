@@ -24,7 +24,4 @@ import javax.xml.bind.annotation.XmlRootElement;
 @XmlAccessorType(XmlAccessType.FIELD)
 public class DeleteVerbDefinition extends VerbDefinition {
 
-    public DeleteVerbDefinition() {
-        setMethod("delete");
-    }
 }

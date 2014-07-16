@@ -50,10 +50,10 @@ public class ManagedFromRestGetTest extends ManagementTestSupport {
 
         assertTrue(xml.contains("rests"));
         assertTrue(xml.contains("rest"));
-        assertTrue(xml.contains("<path uri=\"/say\">"));
-        assertTrue(xml.contains("<get method=\"get\" uri=\"/hello\">"));
-        assertTrue(xml.contains("<get method=\"get\" uri=\"/bye\">"));
-        assertTrue(xml.contains("<post method=\"post\">"));
+        assertTrue(xml.contains("<path uri=\"/say/hello\">"));
+        assertTrue(xml.contains("<path uri=\"/say/bye\">"));
+        assertTrue(xml.contains("<get>"));
+        assertTrue(xml.contains("<post>"));
 
         String xml2 = (String) mbeanServer.invoke(on, "dumpRoutesAsXml", null, null);
         log.info(xml2);
