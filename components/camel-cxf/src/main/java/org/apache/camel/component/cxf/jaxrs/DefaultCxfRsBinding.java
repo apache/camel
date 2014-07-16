@@ -22,6 +22,7 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import javax.security.auth.Subject;
 import javax.ws.rs.core.MultivaluedMap;
 import javax.ws.rs.core.Response;
 
@@ -34,6 +35,7 @@ import org.apache.camel.spi.HeaderFilterStrategyAware;
 import org.apache.cxf.jaxrs.impl.MetadataMap;
 import org.apache.cxf.jaxrs.model.OperationResourceInfoStack;
 import org.apache.cxf.message.MessageContentsList;
+import org.apache.cxf.security.SecurityContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -117,7 +119,15 @@ public class DefaultCxfRsBinding implements CxfRsBinding, HeaderFilterStrategyAw
         
         camelMessage.setHeader(CxfConstants.CAMEL_CXF_MESSAGE, cxfMessage);
         
-        camelMessage.setBody(new MessageContentsList(paramArray));        
+        camelMessage.setBody(new MessageContentsList(paramArray));
+        
+        // propagate the security subject from CXF security context
+        SecurityContext securityContext = cxfMessage.get(SecurityContext.class);
+        if (securityContext != null && securityContext.getUserPrincipal() != null) {
+            Subject subject = new Subject();
+            subject.getPrincipals().add(securityContext.getUserPrincipal());
+            camelExchange.getIn().getHeaders().put(Exchange.AUTHENTICATION, subject);
+        }
     }
 
     
