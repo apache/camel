@@ -187,7 +187,7 @@ public class SqsEndpoint extends ScheduledPollEndpoint {
         message.setHeader(SqsConstants.MD5_OF_BODY, msg.getMD5OfBody());
         message.setHeader(SqsConstants.RECEIPT_HANDLE, msg.getReceiptHandle());
         message.setHeader(SqsConstants.ATTRIBUTES, msg.getAttributes());
-        
+        message.setHeader(SqsConstants.MESSAGE_ATTRIBUTES, msg.getMessageAttributes());
         return exchange;
     }
 

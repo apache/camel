@@ -39,6 +39,7 @@ public class SqsConfiguration {
     private Boolean deleteIfFiltered = Boolean.TRUE;
     private Integer visibilityTimeout;
     private Collection<String> attributeNames;
+    private Collection<String> messageAttributeNames;
     private Integer waitTimeSeconds;
     private Integer defaultVisibilityTimeout;
     private Boolean extendMessageVisibility = Boolean.FALSE;
@@ -114,6 +115,14 @@ public class SqsConfiguration {
 
     public void setAttributeNames(Collection<String> attributeNames) {
         this.attributeNames = attributeNames;
+    }
+
+    public Collection<String> getMessageAttributeNames() {
+        return messageAttributeNames;
+    }
+
+    public void setMessageAttributeNames(Collection<String> messageAttributeNames) {
+        this.messageAttributeNames = messageAttributeNames;
     }
 
     public Integer getDefaultVisibilityTimeout() {
@@ -214,6 +223,7 @@ public class SqsConfiguration {
             + ", deleteIfFiltered=" + deleteIfFiltered
             + ", visibilityTimeout=" + visibilityTimeout
             + ", attributeNames=" + attributeNames
+            + ", messageAttributeNames=" + messageAttributeNames
             + ", waitTimeSeconds=" + waitTimeSeconds
             + ", defaultVisibilityTimeout=" + defaultVisibilityTimeout
             + ", maximumMessageSize=" + maximumMessageSize

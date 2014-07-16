@@ -73,6 +73,7 @@ public class SqsConsumer extends ScheduledBatchPollingConsumer {
         request.setMaxNumberOfMessages(getMaxMessagesPerPoll() > 0 ? getMaxMessagesPerPoll() : null);
         request.setVisibilityTimeout(getConfiguration().getVisibilityTimeout() != null ? getConfiguration().getVisibilityTimeout() : null);
         request.setAttributeNames(getConfiguration().getAttributeNames() != null ? getConfiguration().getAttributeNames() : null);
+        request.setMessageAttributeNames(getConfiguration().getMessageAttributeNames() != null ? getConfiguration().getMessageAttributeNames() : null);
         request.setWaitTimeSeconds(getConfiguration().getWaitTimeSeconds() != null ? getConfiguration().getWaitTimeSeconds() : null);
 
         LOG.trace("Receiving messages with request [{}]...", request);
