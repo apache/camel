@@ -25,7 +25,7 @@ import java.util.Properties;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
-import org.apache.camel.util.FilePathResolver;
+import org.apache.camel.util.SystemAndEnvPropertyResolver;
 import org.apache.camel.util.LRUSoftCache;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -120,7 +120,7 @@ public class PropertiesComponent extends DefaultComponent {
     public String parseUri(String uri, String... paths) throws Exception {
         Properties prop = null;
         if (paths != null) {
-            // location may contain JVM system property or OS environment variables
+            // location may contain JVM system properties or OS environment variables
             // so we need to parse those
             String[] locations = parseLocations(paths);
 
@@ -135,11 +135,24 @@ public class PropertiesComponent extends DefaultComponent {
             }
         }
 
+        // propertyPrefix and propertySuffix may contain JVM system properties or OS environment variables
+        // so we need to parse those
+        String parsedPropertyPrefix = propertyPrefix;
+        if (ObjectHelper.isNotEmpty(propertyPrefix)) {
+            parsedPropertyPrefix = parsePropertyPrefix(propertyPrefix);
+        }
+        String parsedPropertySuffix = propertySuffix;
+        if (ObjectHelper.isNotEmpty(propertySuffix)) {
+            parsedPropertySuffix = parsePropertySuffix(propertySuffix);
+        }
+
         // use override properties
-        if (prop != null && overrideProperties != null) {
-            // make a copy to avoid affecting the original properties
+        if (overrideProperties != null) {
             Properties override = new Properties();
-            override.putAll(prop);
+            if (null != prop) {
+                // make a copy to avoid affecting the original properties
+                override.putAll(prop);
+            }
             override.putAll(overrideProperties);
             prop = override;
         }
@@ -156,7 +169,7 @@ public class PropertiesComponent extends DefaultComponent {
         
         if (propertiesParser instanceof AugmentedPropertyNameAwarePropertiesParser) {
             return ((AugmentedPropertyNameAwarePropertiesParser) propertiesParser).parseUri(uri, prop, prefixToken, suffixToken,
-                                                                                            propertyPrefix, propertySuffix, fallbackToUnaugmentedProperty);
+                                                                                            parsedPropertyPrefix, parsedPropertySuffix, fallbackToUnaugmentedProperty);
         } else {
             return propertiesParser.parseUri(uri, prop, prefixToken, suffixToken);
         }
@@ -289,7 +302,7 @@ public class PropertiesComponent extends DefaultComponent {
             LOG.trace("Parsing location: {} ", location);
 
             try {
-                location = FilePathResolver.resolvePath(location);
+                location = SystemAndEnvPropertyResolver.resolveString(location);
                 LOG.debug("Parsed location: {} ", location);
                 if (ObjectHelper.isNotEmpty(location)) {
                     answer.add(location);
@@ -305,6 +318,46 @@ public class PropertiesComponent extends DefaultComponent {
 
         // must return a not-null answer
         return answer.toArray(new String[answer.size()]);
+    }
+
+    private String parsePropertyPrefix(String propertyPrefix) {
+        String answer = propertyPrefix;
+
+        LOG.trace("Parsing propertyPrefix: {} ", propertyPrefix);
+
+        try {
+            String parsedPropertyPrefix = SystemAndEnvPropertyResolver.resolveString(propertyPrefix);
+            LOG.debug("Parsed propertyPrefix: {} ", parsedPropertyPrefix);
+            if (ObjectHelper.isNotEmpty(parsedPropertyPrefix)) {
+                answer = parsedPropertyPrefix;
+            } else {
+                LOG.warn("PropertyPrefix resolves to empty string: {} -> {}. Using the unparsed form", propertyPrefix, parsedPropertyPrefix);
+            }
+        } catch (IllegalArgumentException e) {
+            throw e;
+        }
+
+        return answer;
+    }
+
+    private String parsePropertySuffix(String propertySuffix) {
+        String answer = propertySuffix;
+
+        LOG.trace("Parsing propertySuffix: {} ", propertySuffix);
+
+        try {
+            String parsedPropertySuffix = SystemAndEnvPropertyResolver.resolveString(propertySuffix);
+            LOG.debug("Parsed propertySuffix: {} ", parsedPropertySuffix);
+            if (ObjectHelper.isNotEmpty(parsedPropertySuffix)) {
+                answer = parsedPropertySuffix;
+            } else {
+                LOG.warn("PropertySuffix resolves to empty string: {} -> {}. Using the unparsed form", propertySuffix, parsedPropertySuffix);
+            }
+        } catch (IllegalArgumentException e) {
+            throw e;
+        }
+
+        return answer;
     }
 
     /**

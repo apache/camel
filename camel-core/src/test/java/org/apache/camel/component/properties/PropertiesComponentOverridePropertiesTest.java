@@ -32,13 +32,51 @@ public class PropertiesComponentOverridePropertiesTest extends ContextTestSuppor
         return false;
     }
 
-    public void testPropertiesComponentEndpoint() throws Exception {
+    public void testOverridingProperties() throws Exception {
+        PropertiesComponent pc = new PropertiesComponent();
+        pc.setLocation("classpath:org/apache/camel/component/properties/myproperties.properties");
+        context.addComponent("properties", pc);
+
+        Properties extra = new Properties();
+        extra.put("cool.result", "extra");
+        extra.put("hey", "mock:hey");
+        pc.setOverrideProperties(extra);
+
         context.addRoutes(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
                 from("direct:start")
-                    .to("{{hey}}")
-                    .to("mock:{{cool.result}}");
+                    .to("{{hey}}") // new from override: mock:hey
+                    .to("mock:{{cool.result}}") // override mock:result -> mock:extra
+                    .to("{{cool.end}}"); // no override
+            }
+        });
+        context.start();
+
+        getMockEndpoint("mock:extra").expectedMessageCount(1);
+        getMockEndpoint("mock:hey").expectedMessageCount(1);
+        getMockEndpoint("mock:result").expectedMessageCount(1);
+
+        template.sendBody("direct:start", "Hello World");
+
+        assertMockEndpointsSatisfied();
+    }
+
+    public void testOverridesOnly() throws Exception {
+        PropertiesComponent pc = new PropertiesComponent();
+        context.addComponent("properties", pc);
+
+        Properties extra = new Properties();
+        extra.put("cool.result", "extra");
+        extra.put("hey", "mock:hey");
+        pc.setOverrideProperties(extra);
+
+        context.addRoutes(new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                from("direct:start")
+                        .to("{{hey}}") // new from override: mock:hey
+                        .to("mock:{{cool.result}}"); // new from override: mock:extra
             }
         });
         context.start();
@@ -51,21 +89,4 @@ public class PropertiesComponentOverridePropertiesTest extends ContextTestSuppor
 
         assertMockEndpointsSatisfied();
     }
-
-    @Override
-    protected CamelContext createCamelContext() throws Exception {
-        CamelContext context = super.createCamelContext();
-
-        PropertiesComponent pc = new PropertiesComponent();
-        pc.setLocation("classpath:org/apache/camel/component/properties/myproperties.properties");
-        context.addComponent("properties", pc);
-
-        Properties extra = new Properties();
-        extra.put("cool.result", "extra");
-        extra.put("hey", "mock:hey");
-        pc.setOverrideProperties(extra);
-
-        return context;
-    }
-
 }

@@ -20,19 +20,19 @@ import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 /**
- * A resolver for file paths that supports resolving with system and environment properties.
+ * A resolver for strings that supports resolving with system and environment properties.
  */
-public final class FilePathResolver {
+public final class SystemAndEnvPropertyResolver {
 
     // must be non greedy patterns
     private static final Pattern ENV_PATTERN = Pattern.compile("\\$\\{env:(.*?)\\}", Pattern.DOTALL);
     private static final Pattern SYS_PATTERN = Pattern.compile("\\$\\{(.*?)\\}", Pattern.DOTALL);
 
-    private FilePathResolver() {
+    private SystemAndEnvPropertyResolver() {
     }
 
     /**
-     * Resolves the path.
+     * Resolves the string.
      * <p/>
      * The pattern is:
      * <ul>
@@ -41,12 +41,12 @@ public final class FilePathResolver {
      * </ul>
      * For example: <tt>${env.KARAF_HOME}/data/logs</tt>
      *
-     * @param path  the path
-     * @return the resolved path
+     * @param s  the string
+     * @return the resolved string
      * @throws IllegalArgumentException is thrown if system property / environment not found
      */
-    public static String resolvePath(String path) throws IllegalArgumentException {
-        Matcher matcher = ENV_PATTERN.matcher(path);
+    public static String resolveString(String s) throws IllegalArgumentException {
+        Matcher matcher = ENV_PATTERN.matcher(s);
         while (matcher.find()) {
             String key = matcher.group(1);
             String value = System.getenv(key);
@@ -55,12 +55,12 @@ public final class FilePathResolver {
             }
             // must quote the replacement to have it work as literal replacement
             value = Matcher.quoteReplacement(value);
-            path = matcher.replaceFirst(value);
+            s = matcher.replaceFirst(value);
             // must match again as location is changed
-            matcher = ENV_PATTERN.matcher(path);
+            matcher = ENV_PATTERN.matcher(s);
         }
 
-        matcher = SYS_PATTERN.matcher(path);
+        matcher = SYS_PATTERN.matcher(s);
         while (matcher.find()) {
             String key = matcher.group(1);
             String value = System.getProperty(key);
@@ -69,12 +69,12 @@ public final class FilePathResolver {
             }
             // must quote the replacement to have it work as literal replacement
             value = Matcher.quoteReplacement(value);
-            path = matcher.replaceFirst(value);
+            s = matcher.replaceFirst(value);
             // must match again as location is changed
-            matcher = SYS_PATTERN.matcher(path);
+            matcher = SYS_PATTERN.matcher(s);
         }
 
-        return path;
+        return s;
     }
 
 }

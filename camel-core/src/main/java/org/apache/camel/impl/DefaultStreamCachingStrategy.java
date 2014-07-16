@@ -28,7 +28,7 @@ import org.apache.camel.CamelContextAware;
 import org.apache.camel.Exchange;
 import org.apache.camel.StreamCache;
 import org.apache.camel.spi.StreamCachingStrategy;
-import org.apache.camel.util.FilePathResolver;
+import org.apache.camel.util.SystemAndEnvPropertyResolver;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IOHelper;
 import org.slf4j.Logger;
@@ -223,7 +223,7 @@ public class DefaultStreamCachingStrategy extends org.apache.camel.support.Servi
             String uuid = UUID.randomUUID().toString();
             pattern = pattern.replaceFirst("#uuid#", uuid);
         }
-        return FilePathResolver.resolvePath(pattern);
+        return SystemAndEnvPropertyResolver.resolveString(pattern);
     }
 
     @Override
