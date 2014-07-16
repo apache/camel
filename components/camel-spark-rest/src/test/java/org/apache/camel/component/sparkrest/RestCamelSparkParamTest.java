@@ -19,26 +19,16 @@ package org.apache.camel.component.sparkrest;
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
 
-public class CamelSparkRouteBuilderTest extends BaseSparkTest {
-
-    @Test
-    public void testSparkGet() throws Exception {
-        getMockEndpoint("mock:foo").expectedMessageCount(1);
-
-        String out = template.requestBody("http://0.0.0.0:" + getPort() + "/hello", null, String.class);
-        assertEquals("Bye World", out);
-
-        assertMockEndpointsSatisfied();
-    }
+public class RestCamelSparkParamTest extends CamelSparkParamTest {
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
-        return new SparkRouteBuilder() {
+        return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                get("hello")
+                rest().path("/hello/{name}").get()
                     .to("mock:foo")
-                    .transform().constant("Bye World");
+                    .transform().simple("Bye ${header.name}");
             }
         };
     }

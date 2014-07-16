@@ -17,28 +17,17 @@
 package org.apache.camel.component.sparkrest;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
 
-public class CamelSparkRouteBuilderPostTest extends BaseSparkTest {
-
-    @Test
-    public void testSparkPost() throws Exception {
-        getMockEndpoint("mock:foo").expectedMessageCount(1);
-
-        String out = template.requestBody("http://0.0.0.0:" + getPort() + "/hello", "I was here", String.class);
-        assertEquals("Bye I was here", out);
-
-        assertMockEndpointsSatisfied();
-    }
+public class RestCamelSparkAcceptTest extends CamelSparkAcceptTest {
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
-        return new SparkRouteBuilder() {
+        return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                post("hello")
+                rest().path("/hello").get().consumes("application/json")
                     .to("mock:foo")
-                    .transform().simple("Bye ${body}");
+                    .transform().constant("{ \"reply\": \"Bye World\" }");
             }
         };
     }

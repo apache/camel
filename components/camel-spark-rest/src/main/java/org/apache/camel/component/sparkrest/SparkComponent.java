@@ -17,6 +17,8 @@
 package org.apache.camel.component.sparkrest;
 
 import java.util.Map;
+import java.util.regex.Matcher;
+import java.util.regex.Pattern;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Consumer;
@@ -29,6 +31,8 @@ import spark.Spark;
 import spark.SparkBase;
 
 public class SparkComponent extends UriEndpointComponent implements RestConsumerFactory {
+
+    private final Pattern pattern = Pattern.compile("\\{(.*?)\\}");
 
     private int port = SparkBase.SPARK_DEFAULT_PORT;
     private SparkConfiguration sparkConfiguration = new SparkConfiguration();
@@ -100,6 +104,13 @@ public class SparkComponent extends UriEndpointComponent implements RestConsumer
     @Override
     public Consumer createConsumer(CamelContext camelContext, Processor processor,
                                    String verb, String path, String consumes, Map<String, Object> parameters) throws Exception {
+
+        if (ObjectHelper.isNotEmpty(path)) {
+            // spark-rest uses :name syntax instead of {name} so we need to replace those
+            Matcher matcher = pattern.matcher(path);
+            path = matcher.replaceAll(":$1");
+        }
+
         // get the endpoint
         SparkEndpoint endpoint;
         if (consumes != null) {
