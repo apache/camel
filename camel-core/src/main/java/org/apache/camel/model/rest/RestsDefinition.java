@@ -28,7 +28,7 @@ import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.OptionalIdentifiedDefinition;
 
 /**
- * Represents a collection of RESTs
+ * Represents a collection of {@link org.apache.camel.model.rest.RestDefinition REST's}
  */
 @XmlRootElement(name = "rests")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -77,12 +77,28 @@ public class RestsDefinition extends OptionalIdentifiedDefinition<RestsDefinitio
     // Fluent API
     //-------------------------------------------------------------------------
 
+    /**
+     * Creates a rest DSL
+     */
+    public RestDefinition rest() {
+        RestDefinition rest = createRest();
+        return rest(rest);
+    }
+
+    /**
+     * Creates a rest DSL
+     *
+     * @param uri the rest path
+     */
     public RestDefinition rest(String uri) {
         RestDefinition rest = createRest();
         rest.setUri(uri);
         return rest(rest);
     }
 
+    /**
+     * Adds the {@link org.apache.camel.model.rest.RestsDefinition}
+     */
     public RestDefinition rest(RestDefinition rest) {
         getRests().add(rest);
         return rest;

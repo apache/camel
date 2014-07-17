@@ -16,42 +16,26 @@
  */
 package org.apache.camel.component.rest;
 
-import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.model.ToDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 
-public class FromRestGetTest extends ContextTestSupport {
-
-    @Override
-    protected JndiRegistry createRegistry() throws Exception {
-        JndiRegistry jndi = super.createRegistry();
-        jndi.bind("dummy-rest", new DummyRestConsumerFactory());
-        return jndi;
-    }
-
-    protected int getExpectedNumberOfRoutes() {
-        return 2 + 3;
-    }
+public class FromRestUriPrefixTest extends FromRestGetTest {
 
     public void testFromRestModel() throws Exception {
         assertEquals(getExpectedNumberOfRoutes(), context.getRoutes().size());
 
-        assertEquals(2, context.getRestDefinitions().size());
+        assertEquals(1, context.getRestDefinitions().size());
         RestDefinition rest = context.getRestDefinitions().get(0);
         assertNotNull(rest);
-        assertEquals("/say/hello", rest.getUri());
-        assertEquals(1, rest.getVerbs().size());
+        assertEquals("/say/", rest.getUri());
+        assertEquals(3, rest.getVerbs().size());
+        assertEquals("/hello", rest.getVerbs().get(0).getUri());
+        assertEquals("bye", rest.getVerbs().get(1).getUri());
+        assertEquals("/bye", rest.getVerbs().get(2).getUri());
         ToDefinition to = assertIsInstanceOf(ToDefinition.class, rest.getVerbs().get(0).getOutputs().get(0));
         assertEquals("direct:hello", to.getUri());
-
-        rest = context.getRestDefinitions().get(1);
-        assertNotNull(rest);
-        assertEquals("/say/bye", rest.getUri());
-        assertEquals(2, rest.getVerbs().size());
-        assertEquals("application/json", rest.getVerbs().get(0).getConsumes());
-        to = assertIsInstanceOf(ToDefinition.class, rest.getVerbs().get(0).getOutputs().get(0));
+        to = assertIsInstanceOf(ToDefinition.class, rest.getVerbs().get(1).getOutputs().get(0));
         assertEquals("direct:bye", to.getUri());
 
         // the rest becomes routes and the input is a seda endpoint created by the DummyRestConsumerFactory
@@ -70,12 +54,11 @@ public class FromRestGetTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                rest("/say/hello")
-                    .get().to("direct:hello");
-
-                rest("/say/bye")
-                    .get().consumes("application/json").to("direct:bye")
-                    .post().to("mock:update");
+                // we have logic to cleanup those paths so there is only one / between the paths
+                rest("/say/")
+                    .get("/hello").to("direct:hello")
+                    .get("bye").consumes("application/json").to("direct:bye")
+                    .post("/bye").to("mock:update");
 
                 from("direct:hello")
                     .transform().constant("Hello World");

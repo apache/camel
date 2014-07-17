@@ -29,6 +29,7 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.ToDefinition;
+import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.URISupport;
 
 /**
@@ -73,6 +74,14 @@ public class RestDefinition {
     //-------------------------------------------------------------------------
 
     /**
+     * To set the uri
+     */
+    public RestDefinition uri(String uri) {
+        setUri(uri);
+        return this;
+    }
+
+    /**
      * To use a specific Camel rest component
      */
     public RestDefinition component(String componentId) {
@@ -84,24 +93,48 @@ public class RestDefinition {
         return addVerb("get", null);
     }
 
+    public RestDefinition get(String uri) {
+        return addVerb("get", uri);
+    }
+
     public RestDefinition post() {
         return addVerb("post", null);
+    }
+
+    public RestDefinition post(String uri) {
+        return addVerb("post", uri);
     }
 
     public RestDefinition put() {
         return addVerb("put", null);
     }
 
+    public RestDefinition put(String uri) {
+        return addVerb("put", uri);
+    }
+
     public RestDefinition delete() {
         return addVerb("delete", null);
+    }
+
+    public RestDefinition delete(String uri) {
+        return addVerb("delete", uri);
     }
 
     public RestDefinition head() {
         return addVerb("head", null);
     }
 
+    public RestDefinition head(String uri) {
+        return addVerb("head", uri);
+    }
+
     public RestDefinition verb(String verb) {
         return addVerb(verb, null);
+    }
+
+    public RestDefinition verb(String verb, String uri) {
+        return addVerb(verb, uri);
     }
 
     public RestDefinition consumes(String accept) {
@@ -132,7 +165,7 @@ public class RestDefinition {
     // Implementation
     //-------------------------------------------------------------------------
 
-    private RestDefinition addVerb(String verb, String url) {
+    private RestDefinition addVerb(String verb, String uri) {
         VerbDefinition answer;
 
         if ("get".equals(verb)) {
@@ -151,6 +184,7 @@ public class RestDefinition {
         }
 
         answer.setRest(this);
+        answer.setUri(uri);
         getVerbs().add(answer);
         return this;
     }
@@ -164,7 +198,7 @@ public class RestDefinition {
         List<RouteDefinition> answer = new ArrayList<RouteDefinition>();
 
         for (VerbDefinition verb : getVerbs()) {
-            String from = "rest:" + verb.asVerb() + ":" + uri;
+            String from = "rest:" + verb.asVerb() + ":" + buildUri(verb);
             // append options
             Map<String, Object> options = new HashMap<String, Object>();
             if (getComponent() != null) {
@@ -185,6 +219,21 @@ public class RestDefinition {
         }
 
         return answer;
+    }
+
+    private String buildUri(VerbDefinition verb) {
+        if (uri != null && verb.getUri() != null) {
+            // make sure there is only one / slash separator between the two
+            String s = FileUtil.stripTrailingSeparator(uri);
+            String s2 = FileUtil.stripLeadingSeparator(verb.getUri());
+            return s + "/" + s2;
+        } else if (uri != null) {
+            return uri;
+        } else if (verb.getUri() != null) {
+            return verb.getUri();
+        } else {
+            return "";
+        }
     }
 
 }

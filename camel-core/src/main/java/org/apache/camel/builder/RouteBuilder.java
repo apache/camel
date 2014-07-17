@@ -74,6 +74,18 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
     /**
      * Creates a new REST service
      *
+     * @return the builder
+     */
+    public RestDefinition rest() {
+        getRestCollection().setCamelContext(getContext());
+        RestDefinition answer = getRestCollection().rest();
+        configureRest(answer);
+        return answer;
+    }
+
+    /**
+     * Creates a new REST service
+     *
      * @param uri  the path
      * @return the builder
      */

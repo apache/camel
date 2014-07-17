@@ -32,6 +32,9 @@ public class VerbDefinition extends OutputDefinition<VerbDefinition> {
     private String method;
 
     @XmlAttribute
+    private String uri;
+
+    @XmlAttribute
     private String consumes;
 
     @XmlTransient
@@ -53,6 +56,14 @@ public class VerbDefinition extends OutputDefinition<VerbDefinition> {
         this.method = method;
     }
 
+    public String getUri() {
+        return uri;
+    }
+
+    public void setUri(String uri) {
+        this.uri = uri;
+    }
+
     public String getConsumes() {
         return consumes;
     }
@@ -68,24 +79,48 @@ public class VerbDefinition extends OutputDefinition<VerbDefinition> {
         return rest.get();
     }
 
+    public RestDefinition get(String uri) {
+        return rest.get(uri);
+    }
+
     public RestDefinition post() {
         return rest.post();
+    }
+
+    public RestDefinition post(String uri) {
+        return rest.post(uri);
     }
 
     public RestDefinition put() {
         return rest.put();
     }
 
+    public RestDefinition put(String uri) {
+        return rest.put(uri);
+    }
+
     public RestDefinition delete() {
         return rest.delete();
+    }
+
+    public RestDefinition delete(String uri) {
+        return rest.delete(uri);
     }
 
     public RestDefinition head() {
         return rest.head();
     }
 
+    public RestDefinition head(String uri) {
+        return rest.head(uri);
+    }
+
     public RestDefinition verb(String verb) {
         return rest.verb(verb);
+    }
+
+    public RestDefinition verb(String verb, String uri) {
+        return rest.verb(verb, uri);
     }
 
     public String asVerb() {

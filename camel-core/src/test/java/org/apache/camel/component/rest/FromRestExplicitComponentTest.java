@@ -14,30 +14,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.example.spark;
+package org.apache.camel.component.rest;
 
 import org.apache.camel.builder.RouteBuilder;
 
-/**
- * Define REST services using the Camel REST DSL
- */
-public class MySparkRouteBuilder extends RouteBuilder {
+public class FromRestExplicitComponentTest extends FromRestGetTest {
 
     @Override
-    public void configure() throws Exception {
+    protected RouteBuilder createRouteBuilder() throws Exception {
+        return new RouteBuilder() {
+            @Override
+            public void configure() throws Exception {
+                rest("/say/hello").component("dummy-rest")
+                        .get().to("direct:hello");
 
-        // we only have a GET service, but we have PUT, POST, and all the other REST verbs we can use
+                rest().component("dummy-rest").uri("/say/bye")
+                        .get().consumes("application/json").to("direct:bye").endRest()
+                        .post().to("mock:update");
 
-       rest().component("spark-rest").uri("hello/:me")
-           .get().consumes("text/plain")
-               .to("log:input")
-               .transform().simple("Hello ${header.me}").endRest()
-           .get().consumes("application/json")
-               .to("log:input")
-               .transform().simple("{ \"message\": \"Hello ${header.me}\" }").endRest()
-           .get().consumes("text/xml")
-               .to("log:input")
-               .transform().simple("<message>Hello ${header.me}</message>");
+                from("direct:hello")
+                    .transform().constant("Hello World");
+
+                from("direct:bye")
+                    .transform().constant("Bye World");
+            }
+        };
     }
-
 }
