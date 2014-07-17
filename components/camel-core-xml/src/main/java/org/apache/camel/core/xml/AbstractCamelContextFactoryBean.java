@@ -84,6 +84,7 @@ import org.apache.camel.spi.NodeIdFactory;
 import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.PackageScanFilter;
 import org.apache.camel.spi.ProcessorFactory;
+import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RuntimeEndpointRegistry;
 import org.apache.camel.spi.ShutdownStrategy;
 import org.apache.camel.spi.StreamCachingStrategy;
@@ -687,7 +688,7 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
             ctx.setTypeConverterStatisticsEnabled(getTypeConverterStatisticsEnabled());
         }
         if (getRestConfiguration() != null) {
-            ctx.setRestConfigurationDefinition(getRestConfiguration());
+            ctx.setRestConfiguration(getRestConfiguration().asRestConfiguration(ctx));
         }
     }
 

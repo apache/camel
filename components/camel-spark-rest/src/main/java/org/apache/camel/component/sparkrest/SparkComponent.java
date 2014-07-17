@@ -25,6 +25,7 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestConsumerFactory;
 import org.apache.camel.util.ObjectHelper;
 import spark.Spark;
@@ -92,6 +93,15 @@ public class SparkComponent extends UriEndpointComponent implements RestConsumer
 
         if (getPort() != SparkBase.SPARK_DEFAULT_PORT) {
             Spark.setPort(getPort());
+        } else {
+            // if no explicit port configured, then use port from rest configuration
+            RestConfiguration config = getCamelContext().getRestConfiguration();
+            if (config != null && (config.getComponent() == null || config.getComponent().equals("spark-rest"))) {
+                int port = config.getPort();
+                if (port > 0) {
+                    Spark.setPort(port);
+                }
+            }
         }
     }
 

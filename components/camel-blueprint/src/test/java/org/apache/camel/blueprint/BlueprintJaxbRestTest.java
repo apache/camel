@@ -77,5 +77,9 @@ public class BlueprintJaxbRestTest extends TestSupport {
         assertEquals("get", cfb.getRests().get(0).getVerbs().get(0).asVerb());
         assertEquals("get", cfb.getRests().get(1).getVerbs().get(0).asVerb());
         assertEquals("post", cfb.getRests().get(1).getVerbs().get(1).asVerb());
+
+        assertEquals("dummy-rest", cfb.getRestConfiguration().getComponent());
+        assertEquals("localhost", cfb.getRestConfiguration().getHost());
+        assertEquals("9090", cfb.getRestConfiguration().getPort());
     }
 }

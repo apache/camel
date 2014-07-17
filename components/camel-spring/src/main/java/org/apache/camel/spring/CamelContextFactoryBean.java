@@ -410,7 +410,7 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
         return restConfiguration;
     }
 
-    public void setRestConfigurationDefinition(RestConfigurationDefinition restConfiguration) {
+    public void setRestConfiguration(RestConfigurationDefinition restConfiguration) {
         this.restConfiguration = restConfiguration;
     }
 

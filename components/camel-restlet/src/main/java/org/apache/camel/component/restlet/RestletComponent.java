@@ -27,9 +27,8 @@ import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.HeaderFilterStrategyComponent;
-import org.apache.camel.model.ModelCamelContext;
+import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestConsumerFactory;
-import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
@@ -476,18 +475,18 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
 
         path = FileUtil.stripLeadingSeparator(path);
 
-        ModelCamelContext model = (ModelCamelContext) getCamelContext();
-
-        String host = "0.0.0.0";
         int port = 0;
-        if (model.getRestConfigurationDefinition() != null) {
-            String value = model.getRestConfigurationDefinition().getPort();
-            if (value != null) {
-                port = CamelContextHelper.parseInteger(model, value);
+        String host = "0.0.0.0";
+
+        // if no explicit port/host configured, then use port from rest configuration
+        RestConfiguration config = getCamelContext().getRestConfiguration();
+        if (config != null && (config.getComponent() == null || config.getComponent().equals("restlet"))) {
+            int num = config.getPort();
+            if (num > 0) {
+                port = num;
             }
-            value = model.getRestConfigurationDefinition().getHost();
-            if (value != null) {
-                host = CamelContextHelper.parseText(model, value);
+            if (config.getHost() != null) {
+                host = config.getHost();
             }
         }
 

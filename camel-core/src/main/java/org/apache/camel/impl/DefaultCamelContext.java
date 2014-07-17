@@ -82,7 +82,6 @@ import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RouteDefinitionHelper;
 import org.apache.camel.model.RoutesDefinition;
-import org.apache.camel.model.rest.RestConfigurationDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.processor.interceptor.BacklogDebugger;
 import org.apache.camel.processor.interceptor.BacklogTracer;
@@ -116,6 +115,7 @@ import org.apache.camel.spi.NodeIdFactory;
 import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.ProcessorFactory;
 import org.apache.camel.spi.Registry;
+import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.RouteStartupOrder;
 import org.apache.camel.spi.RuntimeEndpointRegistry;
@@ -174,7 +174,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     private ManagementMBeanAssembler managementMBeanAssembler;
     private final List<RouteDefinition> routeDefinitions = new ArrayList<RouteDefinition>();
     private final List<RestDefinition> restDefinitions = new ArrayList<RestDefinition>();
-    private RestConfigurationDefinition restConfigurationDefinition = new RestConfigurationDefinition();
+    private RestConfiguration restConfiguration;
     private List<InterceptStrategy> interceptStrategies = new ArrayList<InterceptStrategy>();
 
     // special flags to control the first startup which can are special
@@ -713,6 +713,9 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     }
 
     public synchronized void addRouteDefinitions(Collection<RouteDefinition> routeDefinitions) throws Exception {
+        if (routeDefinitions == null || routeDefinitions.isEmpty()) {
+            return;
+        }
         for (RouteDefinition routeDefinition : routeDefinitions) {
             removeRouteDefinition(routeDefinition);
         }
@@ -1416,22 +1419,26 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     }
 
     public void addRestDefinitions(Collection<RestDefinition> restDefinitions) throws Exception {
+        if (restDefinitions == null || restDefinitions.isEmpty()) {
+            return;
+        }
+
         this.restDefinitions.addAll(restDefinitions);
 
         // convert rests into routes so we reuse routes for runtime
         List<RouteDefinition> routes = new ArrayList<RouteDefinition>();
         for (RestDefinition rest : restDefinitions) {
-            routes.addAll(rest.asRouteDefinition(this, restConfigurationDefinition));
+            routes.addAll(rest.asRouteDefinition(this));
         }
         addRouteDefinitions(routes);
     }
 
-    public RestConfigurationDefinition getRestConfigurationDefinition() {
-        return restConfigurationDefinition;
+    public RestConfiguration getRestConfiguration() {
+        return restConfiguration;
     }
 
-    public void setRestConfigurationDefinition(RestConfigurationDefinition restConfigurationDefinition) {
-        this.restConfigurationDefinition = restConfigurationDefinition;
+    public void setRestConfiguration(RestConfiguration restConfiguration) {
+        this.restConfiguration = restConfiguration;
     }
 
     public List<InterceptStrategy> getInterceptStrategies() {

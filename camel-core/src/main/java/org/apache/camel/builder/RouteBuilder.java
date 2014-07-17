@@ -33,6 +33,7 @@ import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.model.rest.RestConfigurationDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.RestsDefinition;
+import org.apache.camel.spi.RestConfiguration;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,6 +47,7 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
     protected Logger log = LoggerFactory.getLogger(getClass());
     private AtomicBoolean initialized = new AtomicBoolean(false);
     private RestsDefinition restCollection = new RestsDefinition();
+    private RestConfigurationDefinition restConfiguration;
     private RoutesDefinition routeCollection = new RoutesDefinition();
 
     public RouteBuilder() {
@@ -72,16 +74,15 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
     public abstract void configure() throws Exception;
 
     /**
-     * Creates a new REST service
+     * Configures the REST services
      *
      * @return the builder
      */
     public RestConfigurationDefinition restConfiguration() {
-        if (getContext().getRestConfigurationDefinition() == null) {
-            RestConfigurationDefinition config = new RestConfigurationDefinition();
-            getContext().setRestConfigurationDefinition(config);
+        if (restConfiguration == null) {
+            restConfiguration = new RestConfigurationDefinition();
         }
-        return getContext().getRestConfigurationDefinition();
+        return restConfiguration;
     }
 
     /**
@@ -401,11 +402,21 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
             throw new IllegalArgumentException("CamelContext has not been injected!");
         }
         getRestCollection().setCamelContext(camelContext);
+
+        // setup rest configuration before adding the rests
+        if (getRestConfiguration() != null) {
+            RestConfiguration config = getRestConfiguration().asRestConfiguration(getContext());
+            camelContext.setRestConfiguration(config);
+        }
         camelContext.addRestDefinitions(getRestCollection().getRests());
     }
 
     public RestsDefinition getRestCollection() {
         return restCollection;
+    }
+
+    public RestConfigurationDefinition getRestConfiguration() {
+        return restConfiguration;
     }
 
     public void setRestCollection(RestsDefinition restCollection) {

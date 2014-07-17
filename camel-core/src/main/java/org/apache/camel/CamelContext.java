@@ -51,6 +51,7 @@ import org.apache.camel.spi.NodeIdFactory;
 import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.ProcessorFactory;
 import org.apache.camel.spi.Registry;
+import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RouteStartupOrder;
 import org.apache.camel.spi.RuntimeEndpointRegistry;
 import org.apache.camel.spi.ServicePool;
@@ -404,6 +405,20 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      */
     @Deprecated
     void addRestDefinitions(Collection<RestDefinition> restDefinitions) throws Exception;
+
+    /**
+     * Sets a custom {@link org.apache.camel.spi.RestConfiguration}
+     *
+     * @param restConfiguration the REST configuration
+     */
+    void setRestConfiguration(RestConfiguration restConfiguration);
+
+    /**
+     * Gets the current REST configuration
+     *
+     * @return the configuration, or <tt>null</tt> if none has been configured.
+     */
+    RestConfiguration getRestConfiguration();
 
     /**
      * Returns the order in which the route inputs was started.
