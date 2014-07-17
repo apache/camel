@@ -1,7 +1,7 @@
 Camel Spark REST and Apache Tomcat example
 =======================================
 
-This example shows how to use Spark REST to define REST endpoints in Camel routes using the CamelSparkRouteBuilder DSL
+This example shows how to use Spark REST to define REST endpoints in Camel routes using the Rest DSL
 
 You will need to package this example first:
   mvn package

@@ -21,6 +21,7 @@ import java.util.Set;
 
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
+import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
@@ -101,11 +102,22 @@ public class RestEndpoint extends DefaultEndpoint {
         RestConsumerFactory factory = null;
 
         if (getComponentName() != null) {
-            Component comp = getCamelContext().getComponent(getComponentName());
+            Object comp = getCamelContext().getRegistry().lookupByName(getComponentName());
             if (comp != null && comp instanceof RestConsumerFactory) {
                 factory = (RestConsumerFactory) comp;
-            } else if (comp != null) {
-                throw new IllegalArgumentException("Component " + getComponentName() + " is not a RestConsumerFactory");
+            } else {
+                comp = getCamelContext().getComponent(getComponentName());
+                if (comp != null && comp instanceof RestConsumerFactory) {
+                    factory = (RestConsumerFactory) comp;
+                }
+            }
+
+            if (factory == null) {
+                if (comp != null) {
+                    throw new IllegalArgumentException("Component " + getComponentName() + " is not a RestConsumerFactory");
+                } else {
+                    throw new NoSuchBeanException(getComponentName(), RestConsumerFactory.class.getName());
+                }
             }
         }
 

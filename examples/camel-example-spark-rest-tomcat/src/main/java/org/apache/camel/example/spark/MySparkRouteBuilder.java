@@ -16,29 +16,30 @@
  */
 package org.apache.camel.example.spark;
 
-import org.apache.camel.component.sparkrest.SparkRouteBuilder;
+import org.apache.camel.builder.RouteBuilder;
 
 /**
- * Define REST services using {@link SparkRouteBuilder}.
+ * Define REST services using the Camel REST DSL
  */
-public class MySparkRouteBuilder extends SparkRouteBuilder {
+public class MySparkRouteBuilder extends RouteBuilder {
 
     @Override
     public void configure() throws Exception {
-        // this is a very simple Camel route, but we can do more routing
-        // as SparkRouteBuilder extends the regular RouteBuilder from camel-core
-        // which means we can do any kind of Camel Java DSL routing here
 
         // we only have a GET service, but we have PUT, POST, and all the other REST verbs we can use
 
-        get("hello/:me", "text/plain")
-            .transform().simple("Hello ${header.me}");
-
-        get("hello/:me", "application/json")
-            .transform().simple("{ \"message\": \"Hello ${header.me}\" }");
-
-        get("hello/:me", "text/xml")
-            .transform().simple("<message>Hello ${header.me}</message>");
+       rest().component("spark-rest")
+           .path("hello/:me").get().consumes("text/plain")
+               .to("log:input")
+               .transform().simple("Hello ${header.me}")
+           .endPath()
+           .path("hello/:me").get().consumes("application/json")
+               .to("log:input")
+               .transform().simple("{ \"message\": \"Hello ${header.me}\" }")
+           .endPath()
+           .path("hello/:me").get().consumes("text/xml")
+               .to("log:input")
+               .transform().simple("<message>Hello ${header.me}</message>");
     }
 
 }
