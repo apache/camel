@@ -77,8 +77,9 @@ public class RestsDefinition extends OptionalIdentifiedDefinition<RestsDefinitio
     // Fluent API
     //-------------------------------------------------------------------------
 
-    public RestDefinition rest() {
+    public RestDefinition rest(String uri) {
         RestDefinition rest = createRest();
+        rest.setUri(uri);
         return rest(rest);
     }
 

@@ -25,7 +25,7 @@ public class RestCamelSparkRequestBeanTest extends CamelSparkRequestBeanTest {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                rest().path("/hello/*/to/*").get()
+                rest("/hello/*/to/*").get()
                     .to("mock:foo")
                     .bean(RestCamelSparkRequestBeanTest.class, "doSomething");
             }

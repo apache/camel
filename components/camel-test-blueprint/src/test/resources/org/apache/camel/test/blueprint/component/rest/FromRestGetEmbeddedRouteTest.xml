@@ -25,26 +25,24 @@
 
   <camelContext xmlns="http://camel.apache.org/schema/blueprint">
 
-    <rest component="dummy-rest">
-      <path uri="/say/hello">
-        <get>
-          <to uri="mock:hello"/>
-          <transform>
-            <constant>Hello World</constant>
-          </transform>
-        </get>
-      </path>
-      <path uri="/say/bye">
-        <get consumes="application/json">
-          <to uri="mock:bye"/>
-          <transform>
-            <constant>Bye World</constant>
-          </transform>
-        </get>
-        <post>
-          <to uri="mock:update"/>
-        </post>
-      </path>
+    <rest uri="/say/hello">
+      <get>
+        <to uri="mock:hello"/>
+        <transform>
+          <constant>Hello World</constant>
+        </transform>
+      </get>
+    </rest>
+    <rest uri="/say/bye">
+      <get consumes="application/json">
+        <to uri="mock:bye"/>
+        <transform>
+          <constant>Bye World</constant>
+        </transform>
+      </get>
+      <post>
+        <to uri="mock:update"/>
+      </post>
     </rest>
 
   </camelContext>

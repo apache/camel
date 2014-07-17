@@ -25,7 +25,7 @@ public class RestCamelSparkSplatTest extends CamelSparkSplatTest {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                rest().path("/hello/*/to/*").get()
+                rest("/hello/*/to/*").get()
                     .to("mock:foo")
                     .transform().simple("Bye big ${header.splat[1]} from ${header.splat[0]}");
             }

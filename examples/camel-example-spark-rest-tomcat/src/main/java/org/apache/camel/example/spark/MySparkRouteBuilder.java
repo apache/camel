@@ -28,16 +28,14 @@ public class MySparkRouteBuilder extends RouteBuilder {
 
         // we only have a GET service, but we have PUT, POST, and all the other REST verbs we can use
 
-       rest().component("spark-rest")
-           .path("hello/:me").get().consumes("text/plain")
+       rest("hello/:me").component("spark-rest")
+           .get().consumes("text/plain")
                .to("log:input")
-               .transform().simple("Hello ${header.me}")
-           .endPath()
-           .path("hello/:me").get().consumes("application/json")
+               .transform().simple("Hello ${header.me}").endRest()
+           .get().consumes("application/json")
                .to("log:input")
-               .transform().simple("{ \"message\": \"Hello ${header.me}\" }")
-           .endPath()
-           .path("hello/:me").get().consumes("text/xml")
+               .transform().simple("{ \"message\": \"Hello ${header.me}\" }").endRest()
+           .get().consumes("text/xml")
                .to("log:input")
                .transform().simple("<message>Hello ${header.me}</message>");
     }

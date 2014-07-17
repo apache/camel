@@ -35,14 +35,14 @@ public class VerbDefinition extends OutputDefinition<VerbDefinition> {
     private String consumes;
 
     @XmlTransient
-    private PathDefinition path;
+    private RestDefinition rest;
 
-    public PathDefinition getPath() {
-        return path;
+    public RestDefinition getRest() {
+        return rest;
     }
 
-    public void setPath(PathDefinition path) {
-        this.path = path;
+    public void setRest(RestDefinition rest) {
+        this.rest = rest;
     }
 
     public String getMethod() {
@@ -64,33 +64,28 @@ public class VerbDefinition extends OutputDefinition<VerbDefinition> {
     // Fluent API
     // -------------------------------------------------------------------------
 
-    public PathDefinition path(String uri) {
-        PathDefinition parent = endPath();
-        return parent.path(uri);
+    public RestDefinition get() {
+        return rest.get();
     }
 
-    public PathDefinition get() {
-        return path.get();
+    public RestDefinition post() {
+        return rest.post();
     }
 
-    public PathDefinition post() {
-        return path.post();
+    public RestDefinition put() {
+        return rest.put();
     }
 
-    public PathDefinition put() {
-        return path.put();
+    public RestDefinition delete() {
+        return rest.delete();
     }
 
-    public PathDefinition delete() {
-        return path.delete();
+    public RestDefinition head() {
+        return rest.head();
     }
 
-    public PathDefinition head() {
-        return path.head();
-    }
-
-    public PathDefinition verb(String verb) {
-        return path.verb(verb);
+    public RestDefinition verb(String verb) {
+        return rest.verb(verb);
     }
 
     public String asVerb() {

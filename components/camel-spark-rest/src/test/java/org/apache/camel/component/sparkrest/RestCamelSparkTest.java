@@ -48,16 +48,18 @@ public class RestCamelSparkTest extends BaseSparkTest {
             @Override
             public void configure() throws Exception {
                 // will automatic find the spark component to use, as we setup that component in the BaseSparkTest
-                rest()
-                    .path("/spark/hello").get().to("direct:hello")
-                    .path("/spark/bye").get().to("direct:bye")
-                    .path("/spark/bye").post().to("mock:update");
+                rest("/spark/hello")
+                    .get().to("direct:hello");
+
+                rest("/spark/bye")
+                    .get().to("direct:bye")
+                    .post().to("mock:update");
 
                 from("direct:hello")
-                        .transform().constant("Hello World");
+                    .transform().constant("Hello World");
 
                 from("direct:bye")
-                        .transform().constant("Bye World");
+                    .transform().constant("Bye World");
             }
         };
     }

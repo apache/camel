@@ -19,22 +19,20 @@
 -->
 <blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0">
 
-    <camelContext xmlns="http://camel.apache.org/schema/blueprint">
-      <rest component="dummy-rest">
-        <path uri="/say/hello">
-          <get>
-            <to uri="direct:hello"/>
-          </get>
-        </path>
-        <path uri="/say/bye">
-          <get>
-            <to uri="direct:bye"/>
-          </get>
-          <post>
-            <to uri="seda:update"/>
-          </post>
-        </path>
-      </rest>
-    </camelContext>
+  <camelContext xmlns="http://camel.apache.org/schema/blueprint">
+    <rest component="dummy-rest" uri="/say/hello">
+      <get>
+        <to uri="direct:hello"/>
+      </get>
+    </rest>
+    <rest component="dummy-rest" uri="/say/bye">
+      <get>
+        <to uri="direct:bye"/>
+      </get>
+      <post>
+        <to uri="seda:update"/>
+      </post>
+    </rest>
+  </camelContext>
 
 </blueprint>

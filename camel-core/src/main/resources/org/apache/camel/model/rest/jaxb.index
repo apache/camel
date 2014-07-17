@@ -16,7 +16,6 @@
 ## ------------------------------------------------------------------------
 GetVerbDefinition
 PostVerbDefinition
-PathDefinition
 RestDefinition
 RestsDefinition
 VerbDefinition

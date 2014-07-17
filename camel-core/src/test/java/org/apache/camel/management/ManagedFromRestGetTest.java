@@ -48,12 +48,14 @@ public class ManagedFromRestGetTest extends ManagementTestSupport {
         assertNotNull(xml);
         log.info(xml);
 
-        assertTrue(xml.contains("rests"));
-        assertTrue(xml.contains("rest"));
-        assertTrue(xml.contains("<path uri=\"/say/hello\">"));
-        assertTrue(xml.contains("<path uri=\"/say/bye\">"));
+        assertTrue(xml.contains("<rests"));
+        assertTrue(xml.contains("<rest uri=\"/say/hello\">"));
+        assertTrue(xml.contains("<rest uri=\"/say/bye\">"));
+        assertTrue(xml.contains("</rest>"));
         assertTrue(xml.contains("<get>"));
         assertTrue(xml.contains("<post>"));
+        assertTrue(xml.contains("application/json"));
+        assertTrue(xml.contains("</rests>"));
 
         String xml2 = (String) mbeanServer.invoke(on, "dumpRoutesAsXml", null, null);
         log.info(xml2);
@@ -66,12 +68,12 @@ public class ManagedFromRestGetTest extends ManagementTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                rest()
-                    .path("/say/hello")
-                        .get().to("direct:hello")
-                    .path("/say/bye")
-                        .get().consumes("application/json").to("direct:bye")
-                        .post().to("mock:update");
+                rest("/say/hello")
+                    .get().to("direct:hello");
+
+                rest("/say/bye")
+                    .get().consumes("application/json").to("direct:bye")
+                    .post().to("mock:update");
 
                 from("direct:hello")
                     .transform().constant("Hello World");

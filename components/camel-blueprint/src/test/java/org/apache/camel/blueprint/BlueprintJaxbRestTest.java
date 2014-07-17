@@ -68,15 +68,14 @@ public class BlueprintJaxbRestTest extends TestSupport {
         assertEquals(0, ((CamelContextFactoryBean) object).getRoutes().size());
 
         CamelContextFactoryBean cfb = (CamelContextFactoryBean) object;
-        assertEquals(1, cfb.getRests().size());
-        assertEquals(2, cfb.getRests().get(0).getPaths().size());
-        assertEquals("/say/hello", cfb.getRests().get(0).getPaths().get(0).getUri());
-        assertEquals("/say/bye", cfb.getRests().get(0).getPaths().get(1).getUri());
+        assertEquals(2, cfb.getRests().size());
+        assertEquals("/say/hello", cfb.getRests().get(0).getUri());
+        assertEquals("/say/bye", cfb.getRests().get(1).getUri());
 
-        assertEquals(1, cfb.getRests().get(0).getPaths().get(0).getVerbs().size());
-        assertEquals(2, cfb.getRests().get(0).getPaths().get(1).getVerbs().size());
-        assertEquals("get", cfb.getRests().get(0).getPaths().get(0).getVerbs().get(0).asVerb());
-        assertEquals("get", cfb.getRests().get(0).getPaths().get(1).getVerbs().get(0).asVerb());
-        assertEquals("post", cfb.getRests().get(0).getPaths().get(1).getVerbs().get(1).asVerb());
+        assertEquals(1, cfb.getRests().get(0).getVerbs().size());
+        assertEquals(2, cfb.getRests().get(1).getVerbs().size());
+        assertEquals("get", cfb.getRests().get(0).getVerbs().get(0).asVerb());
+        assertEquals("get", cfb.getRests().get(1).getVerbs().get(0).asVerb());
+        assertEquals("post", cfb.getRests().get(1).getVerbs().get(1).asVerb());
     }
 }

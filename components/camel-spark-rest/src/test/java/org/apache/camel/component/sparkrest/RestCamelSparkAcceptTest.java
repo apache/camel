@@ -25,9 +25,10 @@ public class RestCamelSparkAcceptTest extends CamelSparkAcceptTest {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                rest().path("/hello").get().consumes("application/json")
-                    .to("mock:foo")
-                    .transform().constant("{ \"reply\": \"Bye World\" }");
+                rest("/hello")
+                    .get().consumes("application/json")
+                        .to("mock:foo")
+                        .transform().constant("{ \"reply\": \"Bye World\" }");
             }
         };
     }

@@ -17,7 +17,6 @@
 package org.apache.camel.test.blueprint.component.rest;
 
 import org.apache.camel.model.ToDefinition;
-import org.apache.camel.model.rest.PathDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.test.blueprint.CamelBlueprintTestSupport;
 import org.junit.Test;
@@ -37,19 +36,20 @@ public class FromRestGetTest extends CamelBlueprintTestSupport {
     public void testFromRestModel() throws Exception {
         assertEquals(getExpectedNumberOfRoutes(), context.getRoutes().size());
 
+        assertEquals(2, context.getRestDefinitions().size());
         RestDefinition rest = context.getRestDefinitions().get(0);
         assertNotNull(rest);
-
-        assertEquals(2, rest.getPaths().size());
-        PathDefinition path = rest.getPaths().get(0);
-        assertEquals("/say/hello", path.getUri());
-        ToDefinition to = assertIsInstanceOf(ToDefinition.class, path.getVerbs().get(0).getOutputs().get(0));
+        assertEquals("/say/hello", rest.getUri());
+        assertEquals(1, rest.getVerbs().size());
+        ToDefinition to = assertIsInstanceOf(ToDefinition.class, rest.getVerbs().get(0).getOutputs().get(0));
         assertEquals("direct:hello", to.getUri());
 
-        path = rest.getPaths().get(1);
-        assertEquals("/say/bye", path.getUri());
-        assertEquals("application/json", path.getVerbs().get(0).getConsumes());
-        to = assertIsInstanceOf(ToDefinition.class, path.getVerbs().get(0).getOutputs().get(0));
+        rest = context.getRestDefinitions().get(1);
+        assertNotNull(rest);
+        assertEquals("/say/bye", rest.getUri());
+        assertEquals(2, rest.getVerbs().size());
+        assertEquals("application/json", rest.getVerbs().get(0).getConsumes());
+        to = assertIsInstanceOf(ToDefinition.class, rest.getVerbs().get(0).getOutputs().get(0));
         assertEquals("direct:bye", to.getUri());
 
         // the rest becomes routes and the input is a seda endpoint created by the DummyRestConsumerFactory

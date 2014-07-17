@@ -52,7 +52,7 @@ import org.apache.camel.builder.ProcessorBuilder;
 import org.apache.camel.model.language.ConstantExpression;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.model.language.LanguageExpression;
-import org.apache.camel.model.rest.PathDefinition;
+import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.VerbDefinition;
 import org.apache.camel.processor.InterceptEndpointProcessor;
 import org.apache.camel.processor.Pipeline;
@@ -1319,33 +1319,33 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     }
 
     /**
-     * Ends the current block and returns back to the {@link PathDefinition path()} DSL.
+     * Ends the current block and returns back to the {@link org.apache.camel.model.rest.RestDefinition rest()} DSL.
      *
      * @return the builder
      */
-    public PathDefinition endPath() {
+    public RestDefinition endRest() {
         ProcessorDefinition<?> def = this;
         if (def.getParent() instanceof VerbDefinition) {
-            return ((VerbDefinition) def.getParent()).getPath();
+            return ((VerbDefinition) def.getParent()).getRest();
         }
 
         // are we already a choice?
         if (def instanceof VerbDefinition) {
-            return ((VerbDefinition) def).getPath();
+            return ((VerbDefinition) def).getRest();
         }
 
         // okay end this and get back to the choice
         def = end();
         if (def.getParent() instanceof VerbDefinition) {
-            return ((VerbDefinition) def.getParent()).getPath();
+            return ((VerbDefinition) def.getParent()).getRest();
         }
 
         // are we already a choice?
         if (def instanceof VerbDefinition) {
-            return ((VerbDefinition) def).getPath();
+            return ((VerbDefinition) def).getRest();
         }
 
-        throw new IllegalArgumentException("Cannot find VerbDefinition to allow endPath");
+        throw new IllegalArgumentException("Cannot find VerbDefinition to allow endRest");
     }
 
     /**
