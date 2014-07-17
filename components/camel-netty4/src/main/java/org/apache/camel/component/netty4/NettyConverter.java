@@ -21,6 +21,7 @@ import java.io.InputStream;
 import java.io.ObjectInput;
 import java.io.ObjectInputStream;
 import java.io.UnsupportedEncodingException;
+
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.sax.SAXSource;
 import javax.xml.transform.stax.StAXSource;
@@ -28,11 +29,13 @@ import javax.xml.transform.stream.StreamSource;
 
 import org.w3c.dom.Document;
 
+import io.netty.buffer.ByteBuf;
+import io.netty.buffer.ByteBufAllocator;
+import io.netty.buffer.ByteBufInputStream;
+
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
-import io.netty.buffer.ChannelBuffer;
-import io.netty.buffer.ChannelBufferInputStream;
-import io.netty.buffer.ChannelBuffers;
+
 
 /**
  * A set of converter methods for working with Netty types
@@ -47,12 +50,12 @@ public final class NettyConverter {
     }
 
     @Converter
-    public static byte[] toByteArray(ChannelBuffer buffer, Exchange exchange) {
+    public static byte[] toByteArray(ByteBuf buffer, Exchange exchange) {
         return buffer.array();
     }
 
     @Converter
-    public static String toString(ChannelBuffer buffer, Exchange exchange) throws UnsupportedEncodingException {
+    public static String toString(ByteBuf buffer, Exchange exchange) throws UnsupportedEncodingException {
         byte[] bytes = toByteArray(buffer, exchange);
         // use type converter as it can handle encoding set on the Exchange
         if (exchange != null) {
@@ -62,25 +65,25 @@ public final class NettyConverter {
     }
 
     @Converter
-    public static InputStream toInputStream(ChannelBuffer buffer, Exchange exchange) {
-        return new ChannelBufferInputStream(buffer);
+    public static InputStream toInputStream(ByteBuf buffer, Exchange exchange) {
+        return new ByteBufInputStream(buffer);
     }
 
     @Converter
-    public static ObjectInput toObjectInput(ChannelBuffer buffer, Exchange exchange) throws IOException {
+    public static ObjectInput toObjectInput(ByteBuf buffer, Exchange exchange) throws IOException {
         InputStream is = toInputStream(buffer, exchange);
         return new ObjectInputStream(is);
     }
 
     @Converter
-    public static ChannelBuffer toByteBuffer(byte[] bytes, Exchange exchange) {
-        ChannelBuffer buf = ChannelBuffers.dynamicBuffer(bytes.length);
+    public static ByteBuf toByteBuffer(byte[] bytes, Exchange exchange) {
+        ByteBuf buf = ByteBufAllocator.DEFAULT.buffer(bytes.length);
         buf.writeBytes(bytes);
         return buf;
     }
 
     @Converter
-    public static ChannelBuffer toByteBuffer(String s, Exchange exchange) {
+    public static ByteBuf toByteBuffer(String s, Exchange exchange) {
         byte[] bytes;
         if (exchange != null) {
             // use type converter as it can handle encoding set on the Exchange
@@ -92,31 +95,31 @@ public final class NettyConverter {
     }
 
     @Converter
-    public static Document toDocument(ChannelBuffer buffer, Exchange exchange) {
+    public static Document toDocument(ByteBuf buffer, Exchange exchange) {
         InputStream is = toInputStream(buffer, exchange);
         return exchange.getContext().getTypeConverter().convertTo(Document.class, exchange, is);
     }
 
     @Converter
-    public static DOMSource toDOMSource(ChannelBuffer buffer, Exchange exchange) {
+    public static DOMSource toDOMSource(ByteBuf buffer, Exchange exchange) {
         InputStream is = toInputStream(buffer, exchange);
         return exchange.getContext().getTypeConverter().convertTo(DOMSource.class, exchange, is);
     }
 
     @Converter
-    public static SAXSource toSAXSource(ChannelBuffer buffer, Exchange exchange) {
+    public static SAXSource toSAXSource(ByteBuf buffer, Exchange exchange) {
         InputStream is = toInputStream(buffer, exchange);
         return exchange.getContext().getTypeConverter().convertTo(SAXSource.class, exchange, is);
     }
 
     @Converter
-    public static StreamSource toStreamSource(ChannelBuffer buffer, Exchange exchange) {
+    public static StreamSource toStreamSource(ByteBuf buffer, Exchange exchange) {
         InputStream is = toInputStream(buffer, exchange);
         return exchange.getContext().getTypeConverter().convertTo(StreamSource.class, exchange, is);
     }
 
     @Converter
-    public static StAXSource toStAXSource(ChannelBuffer buffer, Exchange exchange) {
+    public static StAXSource toStAXSource(ByteBuf buffer, Exchange exchange) {
         InputStream is = toInputStream(buffer, exchange);
         return exchange.getContext().getTypeConverter().convertTo(StAXSource.class, exchange, is);
     }

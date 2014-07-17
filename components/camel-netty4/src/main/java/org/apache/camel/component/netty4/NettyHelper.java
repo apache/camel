@@ -18,11 +18,12 @@ package org.apache.camel.component.netty4;
 
 import java.net.SocketAddress;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.NoTypeConversionAvailableException;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
+
+import org.apache.camel.Exchange;
+import org.apache.camel.NoTypeConversionAvailableException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -90,7 +91,9 @@ public final class NettyHelper {
             if (log.isDebugEnabled()) {
                 log.debug("Channel: {} remote address: {} writing body: {}", new Object[]{channel, remoteAddress, body});
             }
-            future = channel.write(body, remoteAddress);
+            //TODO need to check if we don't need to set the remoteAddress for the UDP channel
+            //future = channel.write(body, remoteAddress);
+            future = channel.write(body);
         } else {
             if (log.isDebugEnabled()) {
                 log.debug("Channel: {} writing body: {}", new Object[]{channel, body});

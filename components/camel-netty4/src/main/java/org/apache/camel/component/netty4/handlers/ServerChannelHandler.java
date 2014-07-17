@@ -18,6 +18,10 @@ package org.apache.camel.component.netty4.handlers;
 
 import java.net.SocketAddress;
 
+import io.netty.channel.ChannelFutureListener;
+import io.netty.channel.ChannelHandlerContext;
+import io.netty.channel.SimpleChannelInboundHandler;
+
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
@@ -26,68 +30,61 @@ import org.apache.camel.component.netty4.NettyHelper;
 import org.apache.camel.component.netty4.NettyPayloadHelper;
 import org.apache.camel.util.CamelLogger;
 import org.apache.camel.util.IOHelper;
-import io.netty.channel.ChannelFutureListener;
-import io.netty.channel.ChannelHandlerContext;
-import io.netty.channel.ChannelStateEvent;
-import io.netty.channel.ExceptionEvent;
-import io.netty.channel.MessageEvent;
-import io.netty.channel.SimpleChannelUpstreamHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
  * Client handler which cannot be shared
  */
-public class ServerChannelHandler extends SimpleChannelUpstreamHandler {
+public class ServerChannelHandler extends SimpleChannelInboundHandler<Object> {
     // use NettyConsumer as logger to make it easier to read the logs as this is part of the consumer
     private static final Logger LOG = LoggerFactory.getLogger(NettyConsumer.class);
     private final NettyConsumer consumer;
     private final CamelLogger noReplyLogger;
 
     public ServerChannelHandler(NettyConsumer consumer) {
-        this.consumer = consumer;    
+        this.consumer = consumer;
         this.noReplyLogger = new CamelLogger(LOG, consumer.getConfiguration().getNoReplyLogLevel());
     }
 
     @Override
-    public void channelOpen(ChannelHandlerContext ctx, ChannelStateEvent e) throws Exception {
+    public void channelActive(ChannelHandlerContext ctx) {
         if (LOG.isTraceEnabled()) {
-            LOG.trace("Channel open: {}", e.getChannel());
+            LOG.trace("Channel open: {}", ctx.channel());
         }
         // to keep track of open sockets
-        consumer.getNettyServerBootstrapFactory().addChannel(e.getChannel());
+        consumer.getNettyServerBootstrapFactory().addChannel(ctx.channel());
     }
 
     @Override
-    public void channelClosed(ChannelHandlerContext ctx, ChannelStateEvent e) throws Exception {
+    public void channelInactive(ChannelHandlerContext ctx) {
         if (LOG.isTraceEnabled()) {
-            LOG.trace("Channel closed: {}", e.getChannel());
+            LOG.trace("Channel closed: {}", ctx.channel());
         }
         // to keep track of open sockets
-        consumer.getNettyServerBootstrapFactory().removeChannel(e.getChannel());
+        consumer.getNettyServerBootstrapFactory().removeChannel(ctx.channel());
     }
 
     @Override
-    public void exceptionCaught(ChannelHandlerContext ctx, ExceptionEvent exceptionEvent) throws Exception {
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
         // only close if we are still allowed to run
         if (consumer.isRunAllowed()) {
             // let the exception handler deal with it
-            consumer.getExceptionHandler().handleException("Closing channel as an exception was thrown from Netty", exceptionEvent.getCause());
+            consumer.getExceptionHandler().handleException("Closing channel as an exception was thrown from Netty", cause);
             // close channel in case an exception was thrown
-            NettyHelper.close(exceptionEvent.getChannel());
+            NettyHelper.close(ctx.channel());
         }
     }
-    
+
     @Override
-    public void messageReceived(final ChannelHandlerContext ctx, final MessageEvent messageEvent) throws Exception {
-        Object in = messageEvent.getMessage();
+    protected void channelRead0(ChannelHandlerContext ctx, Object msg) throws Exception {
+        Object in = msg;
         if (LOG.isDebugEnabled()) {
-            LOG.debug("Channel: {} received body: {}", new Object[]{messageEvent.getChannel(), in});
+            LOG.debug("Channel: {} received body: {}", new Object[]{ctx.channel(), in});
         }
 
         // create Exchange and let the consumer process it
-        final Exchange exchange = consumer.getEndpoint().createExchange(ctx, messageEvent);
-
+        final Exchange exchange = consumer.getEndpoint().createExchange(ctx, msg);
         if (consumer.getConfiguration().isSync()) {
             exchange.setPattern(ExchangePattern.InOut);
         }
@@ -103,9 +100,9 @@ public class ServerChannelHandler extends SimpleChannelUpstreamHandler {
 
         // process accordingly to endpoint configuration
         if (consumer.getEndpoint().isSynchronous()) {
-            processSynchronously(exchange, messageEvent);
+            processSynchronously(exchange, ctx, msg);
         } else {
-            processAsynchronously(exchange, messageEvent);
+            processAsynchronously(exchange, ctx, msg);
         }
     }
 
@@ -113,17 +110,18 @@ public class ServerChannelHandler extends SimpleChannelUpstreamHandler {
      * Allows any custom logic before the {@link Exchange} is processed by the routing engine.
      *
      * @param exchange       the exchange
-     * @param messageEvent   the Netty message event
+     * @param ctx            the channel handler context
+     * @param message        the message which needs to be sent
      */
-    protected void beforeProcess(final Exchange exchange, final MessageEvent messageEvent) {
+    protected void beforeProcess(final Exchange exchange, final ChannelHandlerContext ctx, final Object message) {
         // noop
     }
 
-    private void processSynchronously(final Exchange exchange, final MessageEvent messageEvent) {
+    private void processSynchronously(final Exchange exchange, final ChannelHandlerContext ctx, final Object message) {
         try {
             consumer.getProcessor().process(exchange);
             if (consumer.getConfiguration().isSync()) {
-                sendResponse(messageEvent, exchange);
+                sendResponse(message, ctx, exchange);
             }
         } catch (Throwable e) {
             consumer.getExceptionHandler().handleException(e);
@@ -132,14 +130,14 @@ public class ServerChannelHandler extends SimpleChannelUpstreamHandler {
         }
     }
 
-    private void processAsynchronously(final Exchange exchange, final MessageEvent messageEvent) {
+    private void processAsynchronously(final Exchange exchange, final ChannelHandlerContext ctx, final Object message) {
         consumer.getAsyncProcessor().process(exchange, new AsyncCallback() {
             @Override
             public void done(boolean doneSync) {
                 // send back response if the communication is synchronous
                 try {
                     if (consumer.getConfiguration().isSync()) {
-                        sendResponse(messageEvent, exchange);
+                        sendResponse(message, ctx, exchange);
                     }
                 } catch (Throwable e) {
                     consumer.getExceptionHandler().handleException(e);
@@ -150,7 +148,7 @@ public class ServerChannelHandler extends SimpleChannelUpstreamHandler {
         });
     }
 
-    private void sendResponse(MessageEvent messageEvent, Exchange exchange) throws Exception {
+    private void sendResponse(Object message, ChannelHandlerContext ctx, Exchange exchange) throws Exception {
         Object body = getResponseBody(exchange);
 
         if (body == null) {
@@ -159,9 +157,9 @@ public class ServerChannelHandler extends SimpleChannelUpstreamHandler {
                 // must close session if no data to write otherwise client will never receive a response
                 // and wait forever (if not timing out)
                 if (LOG.isTraceEnabled()) {
-                    LOG.trace("Closing channel as no payload to send as reply at address: {}", messageEvent.getRemoteAddress());
+                    LOG.trace("Closing channel as no payload to send as reply at address: {}", ctx.channel().remoteAddress());
                 }
-                NettyHelper.close(messageEvent.getChannel());
+                NettyHelper.close(ctx.channel());
             }
         } else {
             // if textline enabled then covert to a String which must be used for textline
@@ -170,11 +168,11 @@ public class ServerChannelHandler extends SimpleChannelUpstreamHandler {
             }
 
             // we got a body to write
-            ChannelFutureListener listener = createResponseFutureListener(consumer, exchange, messageEvent.getRemoteAddress());
+            ChannelFutureListener listener = createResponseFutureListener(consumer, exchange, ctx.channel().remoteAddress());
             if (consumer.getConfiguration().isTcp()) {
-                NettyHelper.writeBodyAsync(LOG, messageEvent.getChannel(), null, body, exchange, listener);
+                NettyHelper.writeBodyAsync(LOG, ctx.channel(), null, body, exchange, listener);
             } else {
-                NettyHelper.writeBodyAsync(LOG, messageEvent.getChannel(), messageEvent.getRemoteAddress(), body, exchange, listener);
+                NettyHelper.writeBodyAsync(LOG, ctx.channel(), ctx.channel().remoteAddress(), body, exchange, listener);
             }
         }
     }

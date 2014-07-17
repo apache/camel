@@ -16,20 +16,21 @@
  */
 package org.apache.camel.component.netty4;
 
+import java.nio.channels.Channels;
 import java.util.List;
 
 import javax.net.ssl.SSLContext;
 import javax.net.ssl.SSLEngine;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.util.ObjectHelper;
+import io.netty.channel.Channel;
+import io.netty.channel.ChannelHandler;
+import io.netty.channel.ChannelPipeline;
+import io.netty.handler.ssl.SslHandler;
 import org.apache.camel.component.netty4.handlers.ServerChannelHandler;
 import org.apache.camel.component.netty4.ssl.SSLEngineFactory;
 import org.apache.camel.util.ObjectHelper;
-import io.netty.channel.ChannelHandler;
-import io.netty.channel.ChannelPipeline;
-import io.netty.channel.Channels;
-import io.netty.handler.execution.ExecutionHandler;
-import io.netty.handler.ssl.SslHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -67,13 +68,14 @@ public class DefaultServerPipelineFactory extends ServerPipelineFactory {
     }
 
     @Override
-    public ChannelPipeline getPipeline() throws Exception {
-        ChannelPipeline channelPipeline = Channels.pipeline();
+    protected void initChannel(Channel ch) throws Exception {
+        // create a new pipeline
+        ChannelPipeline channelPipeline = ch.pipeline();
 
         SslHandler sslHandler = configureServerSSLOnDemand();
         if (sslHandler != null) {
-            // must close on SSL exception
-            sslHandler.setCloseOnSSLException(true);
+            //TODO  must close on SSL exception
+            //sslHandler.setCloseOnSSLException(true);
             LOG.debug("Server SSL handler configured and added as an interceptor against the ChannelPipeline: {}", sslHandler);
             addToPipeline("ssl", channelPipeline, sslHandler);
         }
@@ -112,7 +114,7 @@ public class DefaultServerPipelineFactory extends ServerPipelineFactory {
         addToPipeline("handler", channelPipeline, new ServerChannelHandler(consumer));
 
         LOG.trace("Created ChannelPipeline: {}", channelPipeline);
-        return channelPipeline;
+
     }
 
     private void addToPipeline(String name, ChannelPipeline pipeline, ChannelHandler handler) {
@@ -184,4 +186,5 @@ public class DefaultServerPipelineFactory extends ServerPipelineFactory {
     public ServerPipelineFactory createPipelineFactory(NettyConsumer consumer) {
         return new DefaultServerPipelineFactory(consumer);
     }
+
 }

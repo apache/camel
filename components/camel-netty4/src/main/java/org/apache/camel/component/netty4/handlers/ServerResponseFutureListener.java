@@ -18,13 +18,14 @@ package org.apache.camel.component.netty4.handlers;
 
 import java.net.SocketAddress;
 
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelFutureListener;
+
 import org.apache.camel.CamelExchangeException;
 import org.apache.camel.Exchange;
 import org.apache.camel.component.netty4.NettyConstants;
 import org.apache.camel.component.netty4.NettyConsumer;
 import org.apache.camel.component.netty4.NettyHelper;
-import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelFutureListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -50,7 +51,7 @@ public class ServerResponseFutureListener implements ChannelFutureListener {
     public void operationComplete(ChannelFuture future) throws Exception {
         // if it was not a success then thrown an exception
         if (!future.isSuccess()) {
-            Exception e = new CamelExchangeException("Cannot write response to " + remoteAddress, exchange, future.getCause());
+            Exception e = new CamelExchangeException("Cannot write response to " + remoteAddress, exchange, future.cause());
             consumer.getExceptionHandler().handleException(e);
         }
 
@@ -71,7 +72,7 @@ public class ServerResponseFutureListener implements ChannelFutureListener {
             if (LOG.isTraceEnabled()) {
                 LOG.trace("Closing channel when complete at address: {}", remoteAddress);
             }
-            NettyHelper.close(future.getChannel());
+            NettyHelper.close(future.channel());
         }
     }
 }

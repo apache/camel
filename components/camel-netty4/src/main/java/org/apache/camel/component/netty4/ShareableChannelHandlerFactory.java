@@ -17,6 +17,7 @@
 package org.apache.camel.component.netty4;
 
 import io.netty.channel.ChannelHandler;
+import io.netty.channel.ChannelHandlerContext;
 
 /**
  * A {@link ChannelHandlerFactory} returning a shareable {@link ChannelHandler}.
@@ -32,5 +33,23 @@ public class ShareableChannelHandlerFactory implements ChannelHandlerFactory {
     @Override
     public ChannelHandler newChannelHandler() {
         return channelHandler;
+    }
+
+    @Override
+    public void handlerAdded(ChannelHandlerContext ctx) throws Exception {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void handlerRemoved(ChannelHandlerContext ctx) throws Exception {
+        // TODO Auto-generated method stub
+        
+    }
+
+    @Override
+    public void exceptionCaught(ChannelHandlerContext ctx, Throwable cause) throws Exception {
+        // TODO Auto-generated method stub
+        
     }
 }

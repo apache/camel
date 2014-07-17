@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.netty4;
 
+
 import java.io.File;
 import java.net.URI;
 import java.nio.charset.Charset;
@@ -23,6 +24,11 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
+import io.netty.buffer.ByteBuf;
+import io.netty.channel.ChannelHandler;
+import io.netty.handler.codec.Delimiters;
+import io.netty.handler.ssl.SslHandler;
+import io.netty.util.CharsetUtil;
 import org.apache.camel.LoggingLevel;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.spi.UriParam;
@@ -30,11 +36,6 @@ import org.apache.camel.spi.UriParams;
 import org.apache.camel.util.EndpointHelper;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
-import io.netty.buffer.ChannelBuffer;
-import io.netty.channel.ChannelHandler;
-import io.netty.handler.codec.frame.Delimiters;
-import io.netty.handler.ssl.SslHandler;
-import io.netty.util.CharsetUtil;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -191,7 +192,7 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
                 if (isTextline()) {
                     Charset charset = getEncoding() != null ? Charset.forName(getEncoding()) : CharsetUtil.UTF_8;
                     encoders.add(ChannelHandlerFactories.newStringEncoder(charset));
-                    ChannelBuffer[] delimiters = delimiter == TextLineDelimiter.LINE ? Delimiters.lineDelimiter() : Delimiters.nulDelimiter();
+                    ByteBuf[] delimiters = delimiter == TextLineDelimiter.LINE ? Delimiters.lineDelimiter() : Delimiters.nulDelimiter();
                     decoders.add(ChannelHandlerFactories.newDelimiterBasedFrameDecoder(decoderMaxLineLength, delimiters));
                     decoders.add(ChannelHandlerFactories.newStringDecoder(charset));
 

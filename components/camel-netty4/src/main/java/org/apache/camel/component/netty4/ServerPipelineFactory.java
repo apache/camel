@@ -16,11 +16,13 @@
  */
 package org.apache.camel.component.netty4;
 
+import io.netty.channel.Channel;
+import io.netty.channel.ChannelInitializer;
 import io.netty.channel.ChannelPipeline;
-import io.netty.channel.ChannelPipelineFactory;
+
 
 /**
- * Factory to create {@link ChannelPipeline} for clients, eg {@link NettyConsumer}.
+ * Factory to create {@link ChannelPipeline} for servers, eg {@link NettyConsumer}.
  * <p/>
  * Implementators must support creating a new instance of this factory which is associated
  * to the given {@link NettyConsumer} using the {@link #createPipelineFactory(NettyConsumer)}
@@ -28,7 +30,7 @@ import io.netty.channel.ChannelPipelineFactory;
  *
  * @see ChannelPipelineFactory
  */
-public abstract class ServerPipelineFactory implements ChannelPipelineFactory {
+public abstract class ServerPipelineFactory extends ChannelInitializer<Channel> {
 
     /**
      * Creates a new {@link ClientPipelineFactory} using the given {@link NettyConsumer}
