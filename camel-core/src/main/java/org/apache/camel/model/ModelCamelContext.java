@@ -22,6 +22,7 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.model.rest.RestConfigurationDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 
 /**
@@ -101,6 +102,16 @@ public interface ModelCamelContext extends CamelContext {
      * @return list of the current REST definitions
      */
     List<RestDefinition> getRestDefinitions();
+
+    /**
+     * Sets the REST configuration
+     */
+    void setRestConfigurationDefinition(RestConfigurationDefinition restConfigurationDefinition);
+
+    /**
+     * Returns the REST configuration
+     */
+    RestConfigurationDefinition getRestConfigurationDefinition();
 
     /**
      * Adds a collection of rest definitions to the context

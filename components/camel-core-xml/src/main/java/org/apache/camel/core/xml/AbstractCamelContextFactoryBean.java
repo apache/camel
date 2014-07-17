@@ -60,6 +60,7 @@ import org.apache.camel.model.RouteDefinitionHelper;
 import org.apache.camel.model.ThreadPoolProfileDefinition;
 import org.apache.camel.model.config.PropertiesDefinition;
 import org.apache.camel.model.dataformat.DataFormatsDefinition;
+import org.apache.camel.model.rest.RestConfigurationDefinition;
 import org.apache.camel.model.rest.RestContainer;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.processor.interceptor.BacklogTracer;
@@ -542,6 +543,8 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
 
     public abstract List<RestDefinition> getRests();
 
+    public abstract RestConfigurationDefinition getRestConfiguration();
+
     public abstract List<? extends AbstractCamelEndpointFactoryBean> getEndpoints();
 
     public abstract List<? extends AbstractCamelRedeliveryPolicyFactoryBean> getRedeliveryPolicies();
@@ -682,6 +685,9 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         }
         if (getTypeConverterStatisticsEnabled() != null) {
             ctx.setTypeConverterStatisticsEnabled(getTypeConverterStatisticsEnabled());
+        }
+        if (getRestConfiguration() != null) {
+            ctx.setRestConfigurationDefinition(getRestConfiguration());
         }
     }
 

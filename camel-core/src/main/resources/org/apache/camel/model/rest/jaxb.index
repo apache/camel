@@ -16,6 +16,7 @@
 ## ------------------------------------------------------------------------
 GetVerbDefinition
 PostVerbDefinition
+RestConfigurationDefinition
 RestDefinition
 RestsDefinition
 VerbDefinition

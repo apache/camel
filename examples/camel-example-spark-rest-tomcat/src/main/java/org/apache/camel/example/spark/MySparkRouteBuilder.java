@@ -26,18 +26,20 @@ public class MySparkRouteBuilder extends RouteBuilder {
     @Override
     public void configure() throws Exception {
 
-        // we only have a GET service, but we have PUT, POST, and all the other REST verbs we can use
+        // configure we want to use spark-rest as the component for the rest DSL
+        restConfiguration().component("spark-rest");
 
-       rest().component("spark-rest").uri("hello/:me")
-           .get().consumes("text/plain")
-               .to("log:input")
-               .transform().simple("Hello ${header.me}").endRest()
-           .get().consumes("application/json")
-               .to("log:input")
-               .transform().simple("{ \"message\": \"Hello ${header.me}\" }").endRest()
-           .get().consumes("text/xml")
-               .to("log:input")
-               .transform().simple("<message>Hello ${header.me}</message>");
+        // use the rest DSL to define rest services
+        rest().uri("hello/:me")
+            .get().consumes("text/plain")
+                .to("log:input")
+                .transform().simple("Hello ${header.me}").endRest()
+            .get().consumes("application/json")
+                .to("log:input")
+                .transform().simple("{ \"message\": \"Hello ${header.me}\" }").endRest()
+            .get().consumes("text/xml")
+                .to("log:input")
+                .transform().simple("<message>Hello ${header.me}</message>");
     }
 
 }

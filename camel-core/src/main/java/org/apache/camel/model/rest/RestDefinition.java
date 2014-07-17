@@ -26,6 +26,7 @@ import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.ToDefinition;
@@ -41,8 +42,6 @@ public class RestDefinition {
 
     @XmlAttribute
     private String uri;
-    @XmlAttribute
-    private String component;
     @XmlElementRef
     private List<VerbDefinition> verbs = new ArrayList<VerbDefinition>();
 
@@ -52,14 +51,6 @@ public class RestDefinition {
 
     public void setUri(String uri) {
         this.uri = uri;
-    }
-
-    public String getComponent() {
-        return component;
-    }
-
-    public void setComponent(String component) {
-        this.component = component;
     }
 
     public List<VerbDefinition> getVerbs() {
@@ -78,14 +69,6 @@ public class RestDefinition {
      */
     public RestDefinition uri(String uri) {
         setUri(uri);
-        return this;
-    }
-
-    /**
-     * To use a specific Camel rest component
-     */
-    public RestDefinition component(String componentId) {
-        setComponent(componentId);
         return this;
     }
 
@@ -194,19 +177,20 @@ public class RestDefinition {
      * Camel routing engine can add and run. This allows us to define REST services using this
      * REST DSL and turn those into regular Camel routes.
      */
-    public List<RouteDefinition> asRouteDefinition(ModelCamelContext camelContext) throws Exception {
+    public List<RouteDefinition> asRouteDefinition(CamelContext camelContext, RestConfigurationDefinition configuration) throws Exception {
         List<RouteDefinition> answer = new ArrayList<RouteDefinition>();
 
         for (VerbDefinition verb : getVerbs()) {
             String from = "rest:" + verb.asVerb() + ":" + buildUri(verb);
             // append options
             Map<String, Object> options = new HashMap<String, Object>();
-            if (getComponent() != null) {
-                options.put("componentName", getComponent());
+            if (configuration.getComponent() != null) {
+                options.put("componentName", configuration.getComponent());
             }
             if (verb.getConsumes() != null) {
                 options.put("consumes", verb.getConsumes());
             }
+            // TODO: add more options here
             if (!options.isEmpty()) {
                 String query = URISupport.createQueryString(options);
                 from = from + "?" + query;

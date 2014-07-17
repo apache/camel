@@ -30,7 +30,7 @@ import org.apache.camel.model.OnCompletionDefinition;
 import org.apache.camel.model.OnExceptionDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RoutesDefinition;
-
+import org.apache.camel.model.rest.RestConfigurationDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.RestsDefinition;
 import org.slf4j.Logger;
@@ -70,6 +70,19 @@ public abstract class RouteBuilder extends BuilderSupport implements RoutesBuild
      * @throws Exception can be thrown during configuration
      */
     public abstract void configure() throws Exception;
+
+    /**
+     * Creates a new REST service
+     *
+     * @return the builder
+     */
+    public RestConfigurationDefinition restConfiguration() {
+        if (getContext().getRestConfigurationDefinition() == null) {
+            RestConfigurationDefinition config = new RestConfigurationDefinition();
+            getContext().setRestConfigurationDefinition(config);
+        }
+        return getContext().getRestConfigurationDefinition();
+    }
 
     /**
      * Creates a new REST service

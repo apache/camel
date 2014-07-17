@@ -82,6 +82,7 @@ import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RouteDefinitionHelper;
 import org.apache.camel.model.RoutesDefinition;
+import org.apache.camel.model.rest.RestConfigurationDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.processor.interceptor.BacklogDebugger;
 import org.apache.camel.processor.interceptor.BacklogTracer;
@@ -173,6 +174,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     private ManagementMBeanAssembler managementMBeanAssembler;
     private final List<RouteDefinition> routeDefinitions = new ArrayList<RouteDefinition>();
     private final List<RestDefinition> restDefinitions = new ArrayList<RestDefinition>();
+    private RestConfigurationDefinition restConfigurationDefinition = new RestConfigurationDefinition();
     private List<InterceptStrategy> interceptStrategies = new ArrayList<InterceptStrategy>();
 
     // special flags to control the first startup which can are special
@@ -1419,9 +1421,17 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         // convert rests into routes so we reuse routes for runtime
         List<RouteDefinition> routes = new ArrayList<RouteDefinition>();
         for (RestDefinition rest : restDefinitions) {
-            routes.addAll(rest.asRouteDefinition(this));
+            routes.addAll(rest.asRouteDefinition(this, restConfigurationDefinition));
         }
         addRouteDefinitions(routes);
+    }
+
+    public RestConfigurationDefinition getRestConfigurationDefinition() {
+        return restConfigurationDefinition;
+    }
+
+    public void setRestConfigurationDefinition(RestConfigurationDefinition restConfigurationDefinition) {
+        this.restConfigurationDefinition = restConfigurationDefinition;
     }
 
     public List<InterceptStrategy> getInterceptStrategies() {

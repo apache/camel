@@ -22,8 +22,15 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
+import org.apache.camel.Processor;
 import org.apache.camel.impl.HeaderFilterStrategyComponent;
+import org.apache.camel.model.ModelCamelContext;
+import org.apache.camel.spi.RestConsumerFactory;
+import org.apache.camel.util.CamelContextHelper;
+import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
 import org.restlet.Component;
@@ -44,7 +51,7 @@ import org.slf4j.LoggerFactory;
  * 
  * @version
  */
-public class RestletComponent extends HeaderFilterStrategyComponent {
+public class RestletComponent extends HeaderFilterStrategyComponent implements RestConsumerFactory {
     private static final Logger LOG = LoggerFactory.getLogger(RestletComponent.class);
 
     private final Map<String, Server> servers = new HashMap<String, Server>();
@@ -461,5 +468,34 @@ public class RestletComponent extends HeaderFilterStrategyComponent {
 
     public void setMaxQueued(Integer maxQueued) {
         this.maxQueued = maxQueued;
+    }
+
+    @Override
+    public Consumer createConsumer(CamelContext camelContext, Processor processor,
+                                   String verb, String path, String consumes, Map<String, Object> parameters) throws Exception {
+
+        path = FileUtil.stripLeadingSeparator(path);
+
+        ModelCamelContext model = (ModelCamelContext) getCamelContext();
+
+        String host = "0.0.0.0";
+        int port = 0;
+        if (model.getRestConfigurationDefinition() != null) {
+            String value = model.getRestConfigurationDefinition().getPort();
+            if (value != null) {
+                port = CamelContextHelper.parseInteger(model, value);
+            }
+            value = model.getRestConfigurationDefinition().getHost();
+            if (value != null) {
+                host = CamelContextHelper.parseText(model, value);
+            }
+        }
+
+        // get the endpoint
+        String url = String.format("restlet:http://%s:%s/%s?restletMethod=%s", host, port, path, verb);
+        RestletEndpoint endpoint = camelContext.getEndpoint(url, RestletEndpoint.class);
+        setProperties(endpoint, parameters);
+
+        return endpoint.createConsumer(processor);
     }
 }

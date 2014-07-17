@@ -25,10 +25,13 @@ public class FromRestExplicitComponentTest extends FromRestGetTest {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                rest("/say/hello").component("dummy-rest")
+                // configure to use dummy-rest
+                restConfiguration().component("dummy-rest");
+
+                rest("/say/hello")
                         .get().to("direct:hello");
 
-                rest().component("dummy-rest").uri("/say/bye")
+                rest("dummy-rest").uri("/say/bye")
                         .get().consumes("application/json").to("direct:bye").endRest()
                         .post().to("mock:update");
 

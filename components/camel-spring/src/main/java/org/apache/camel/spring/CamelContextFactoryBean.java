@@ -52,6 +52,7 @@ import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.ThreadPoolProfileDefinition;
 import org.apache.camel.model.config.PropertiesDefinition;
 import org.apache.camel.model.dataformat.DataFormatsDefinition;
+import org.apache.camel.model.rest.RestConfigurationDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.spi.PackageScanFilter;
 import org.apache.camel.spi.Registry;
@@ -169,6 +170,8 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
     private List<InterceptFromDefinition> interceptFroms = new ArrayList<InterceptFromDefinition>();
     @XmlElement(name = "interceptSendToEndpoint", required = false)
     private List<InterceptSendToEndpointDefinition> interceptSendToEndpoints = new ArrayList<InterceptSendToEndpointDefinition>();
+    @XmlElement(name = "restConfiguration", required = false)
+    private RestConfigurationDefinition restConfiguration;
     @XmlElement(name = "rest", required = false)
     private List<RestDefinition> rests = new ArrayList<RestDefinition>();
     @XmlElement(name = "route", required = false)
@@ -401,6 +404,14 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Spr
 
     public void setRests(List<RestDefinition> rests) {
         this.rests = rests;
+    }
+
+    public RestConfigurationDefinition getRestConfiguration() {
+        return restConfiguration;
+    }
+
+    public void setRestConfigurationDefinition(RestConfigurationDefinition restConfiguration) {
+        this.restConfiguration = restConfiguration;
     }
 
     public List<CamelEndpointFactoryBean> getEndpoints() {
