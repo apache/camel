@@ -20,22 +20,23 @@ import java.net.URI;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.TimeUnit;
+
+import io.netty.util.HashedWheelTimer;
+import io.netty.util.Timer;
+import io.netty.util.concurrent.DefaultEventExecutorGroup;
+import io.netty.util.concurrent.EventExecutorGroup;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.concurrent.CamelThreadFactory;
-import io.netty.handler.execution.OrderedMemoryAwareThreadPoolExecutor;
-import io.netty.util.HashedWheelTimer;
-import io.netty.util.Timer;
 
 public class NettyComponent extends UriEndpointComponent {
     // use a shared timer for Netty (see javadoc for HashedWheelTimer)
     private static volatile Timer timer;
     private NettyConfiguration configuration;
-    private OrderedMemoryAwareThreadPoolExecutor executorService;
+    private volatile EventExecutorGroup executorService;
 
     public NettyComponent() {
         super(NettyEndpoint.class);
@@ -99,7 +100,7 @@ public class NettyComponent extends UriEndpointComponent {
         return timer;
     }
 
-    public synchronized OrderedMemoryAwareThreadPoolExecutor getExecutorService() {
+    public synchronized EventExecutorGroup getExecutorService() {
         if (executorService == null) {
             executorService = createExecutorService();
         }
@@ -122,15 +123,13 @@ public class NettyComponent extends UriEndpointComponent {
         super.doStart();
     }
 
-    protected OrderedMemoryAwareThreadPoolExecutor createExecutorService() {
-        // use ordered thread pool, to ensure we process the events in order, and can send back
-        // replies in the expected order. eg this is required by TCP.
+    protected EventExecutorGroup createExecutorService() {
+        // Provide the executor service for the application 
         // and use a Camel thread factory so we have consistent thread namings
         // we should use a shared thread pool as recommended by Netty
         String pattern = getCamelContext().getExecutorServiceManager().getThreadNamePattern();
-        ThreadFactory factory = new CamelThreadFactory(pattern, "NettyOrderedWorker", true);
-        return new OrderedMemoryAwareThreadPoolExecutor(configuration.getMaximumPoolSize(),
-                0L, 0L, 30, TimeUnit.SECONDS, factory);
+        ThreadFactory factory = new CamelThreadFactory(pattern, "NettyEventExecutorGroup", true);
+        return new DefaultEventExecutorGroup(configuration.getMaximumPoolSize(), factory);
     }
 
     @Override

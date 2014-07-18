@@ -109,10 +109,10 @@ public class NettyEndpoint extends DefaultEndpoint {
     }
     
     protected SSLSession getSSLSession(ChannelHandlerContext ctx) {
-        final SslHandler sslHandler = ctx.getPipeline().get(SslHandler.class);
+        final SslHandler sslHandler = ctx.pipeline().get(SslHandler.class);
         SSLSession sslSession = null;
         if (sslHandler != null) {
-            sslSession = sslHandler.getEngine().getSession();
+            sslSession = sslHandler.engine().getSession();
         } 
         return sslSession;
     }

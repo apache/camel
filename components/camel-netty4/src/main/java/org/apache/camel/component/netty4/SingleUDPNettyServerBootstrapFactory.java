@@ -16,6 +16,15 @@
  */
 package org.apache.camel.component.netty4;
 
+import io.netty.channel.Channel;
+import io.netty.channel.ChannelInitializer;
+import io.netty.channel.EventLoopGroup;
+import io.netty.channel.group.ChannelGroup;
+import io.netty.channel.group.ChannelGroupFuture;
+import io.netty.channel.group.DefaultChannelGroup;
+import io.netty.channel.socket.DatagramChannel;
+import io.netty.util.concurrent.ImmediateEventExecutor;
+
 import java.net.InetSocketAddress;
 import java.net.NetworkInterface;
 import java.util.Map;
@@ -53,25 +62,25 @@ public class SingleUDPNettyServerBootstrapFactory extends ServiceSupport impleme
     private CamelContext camelContext;
     private ThreadFactory threadFactory;
     private NettyServerBootstrapConfiguration configuration;
-    private ChannelPipelineFactory pipelineFactory;
+    private ChannelInitializer<Channel> pipelineFactory;
     private DatagramChannelFactory datagramChannelFactory;
     private ConnectionlessBootstrap connectionlessBootstrap;
     private NetworkInterface multicastNetworkInterface;
     private DatagramChannel datagramChannel;
     private Channel channel;
-    private WorkerPool workerPool;
+    private EventLoopGroup workerGroup;
 
     public SingleUDPNettyServerBootstrapFactory() {
-        this.allChannels = new DefaultChannelGroup(SingleUDPNettyServerBootstrapFactory.class.getName());
+        this.allChannels = new DefaultChannelGroup(SingleUDPNettyServerBootstrapFactory.class.getName(), ImmediateEventExecutor.INSTANCE);
     }
 
-    public void init(CamelContext camelContext, NettyServerBootstrapConfiguration configuration, ChannelPipelineFactory pipelineFactory) {
+    public void init(CamelContext camelContext, NettyServerBootstrapConfiguration configuration, ChannelInitializer<Channel> pipelineFactory) {
         this.camelContext = camelContext;
         this.configuration = configuration;
         this.pipelineFactory = pipelineFactory;
     }
 
-    public void init(ThreadFactory threadFactory, NettyServerBootstrapConfiguration configuration, ChannelPipelineFactory pipelineFactory) {
+    public void init(ThreadFactory threadFactory, NettyServerBootstrapConfiguration configuration, ChannelInitializer<Channel> pipelineFactory) {
         this.threadFactory = threadFactory;
         this.configuration = configuration;
         this.pipelineFactory = pipelineFactory;
@@ -186,9 +195,9 @@ public class SingleUDPNettyServerBootstrapFactory extends ServiceSupport impleme
         }
 
         // and then shutdown the thread pools
-        if (workerPool != null) {
-            workerPool.shutdown();
-            workerPool = null;
+        if (workerGroup != null) {
+            workerGroup.
+            workerGroup = null;
         }
     }
 

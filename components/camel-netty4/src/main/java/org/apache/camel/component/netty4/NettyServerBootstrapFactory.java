@@ -15,13 +15,13 @@
  * limitations under the License.
  */
 package org.apache.camel.component.netty4;
-
 import java.util.concurrent.ThreadFactory;
+
+import io.netty.channel.Channel;
+import io.netty.channel.ChannelInitializer;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.SuspendableService;
-import io.netty.channel.Channel;
-import io.netty.channel.ChannelPipelineFactory;
 
 /**
  * Factory for setting up Netty {@link io.netty.bootstrap.ServerBootstrap} and all
@@ -37,18 +37,18 @@ public interface NettyServerBootstrapFactory extends SuspendableService {
      *
      * @param camelContext     the {@link CamelContext} for non-shared bootstrap factory
      * @param configuration    the bootstrap configuration
-     * @param pipelineFactory  the pipeline factory
+     * @param pipelineFactory  the channel initializer which set up the channel handler pipeline
      */
-    void init(CamelContext camelContext, NettyServerBootstrapConfiguration configuration, ChannelPipelineFactory pipelineFactory);
+    void init(CamelContext camelContext, NettyServerBootstrapConfiguration configuration, ChannelInitializer<Channel> pipelineFactory);
 
     /**
      * Initializes this <b>shared</b> {@link NettyServerBootstrapFactory}.
      *
      * @param threadFactory    the thread factory to use for shared bootstrap factory
      * @param configuration    the bootstrap configuration
-     * @param pipelineFactory  the pipeline factory
+     * @param pipelineFactory  the channel initializer which set up the channel handler pipeline
      */
-    void init(ThreadFactory threadFactory, NettyServerBootstrapConfiguration configuration, ChannelPipelineFactory pipelineFactory);
+    void init(ThreadFactory threadFactory, NettyServerBootstrapConfiguration configuration, ChannelInitializer<Channel> pipelineFactory);
 
     /**
      * When a new {@link Channel} is opened.

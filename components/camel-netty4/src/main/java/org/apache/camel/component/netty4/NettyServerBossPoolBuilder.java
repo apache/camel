@@ -16,13 +16,13 @@
  */
 package org.apache.camel.component.netty4;
 
-import java.util.concurrent.Executors;
+import io.netty.channel.EventLoopGroup;
+import io.netty.channel.nio.NioEventLoopGroup;
+import org.apache.camel.util.concurrent.CamelThreadFactory;
 
-import io.netty.channel.socket.nio.BossPool;
-import io.netty.channel.socket.nio.NioServerBossPool;
 
 /**
- * A builder to create Netty {@link EventLoopGroup } which can be used for sharing boss pools
+ * A builder to create Netty {@link io.netty.channel.EventLoopGroup} which can be used for executor boss events
  * with multiple Netty {@link org.apache.camel.component.netty4.NettyServerBootstrapFactory} server bootstrap configurations.
  */
 public final class NettyServerBossPoolBuilder {
@@ -61,7 +61,7 @@ public final class NettyServerBossPoolBuilder {
     /**
      * Creates a new boss pool.
      */
-    BossPool build() {
-        return new NioServerBossPool(Executors.newCachedThreadPool(), bossCount, new CamelNettyThreadNameDeterminer(pattern, name));
+    EventLoopGroup build() {
+        return new NioEventLoopGroup(bossCount, new CamelThreadFactory(pattern, name, false));
     }
 }

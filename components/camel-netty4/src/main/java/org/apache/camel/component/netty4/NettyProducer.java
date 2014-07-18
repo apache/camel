@@ -19,6 +19,7 @@ package org.apache.camel.component.netty4;
 import java.net.ConnectException;
 import java.net.InetSocketAddress;
 import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executors;
 import java.util.concurrent.RejectedExecutionException;
@@ -42,6 +43,7 @@ import io.netty.channel.Channel;
 import io.netty.channel.ChannelFactory;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
+import io.netty.channel.EventLoopGroup;
 import io.netty.channel.group.ChannelGroup;
 import io.netty.channel.group.ChannelGroupFuture;
 import io.netty.channel.group.DefaultChannelGroup;
@@ -53,22 +55,24 @@ import io.netty.channel.socket.nio.NioDatagramWorkerPool;
 import io.netty.channel.socket.nio.WorkerPool;
 import io.netty.util.HashedWheelTimer;
 import io.netty.util.Timer;
+import io.netty.util.concurrent.ImmediateEventExecutor;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class NettyProducer extends DefaultAsyncProducer {
     private static final Logger LOG = LoggerFactory.getLogger(NettyProducer.class);
-    private final ChannelGroup allChannels = new DefaultChannelGroup("NettyProducer");
+    private final ChannelGroup allChannels = new DefaultChannelGroup("NettyProducer", ImmediateEventExecutor.INSTANCE);
     private CamelContext context;
     private NettyConfiguration configuration;
     private ChannelFactory channelFactory;
     private DatagramChannelFactory datagramChannelFactory;
     private ClientPipelineFactory pipelineFactory;
     private CamelLogger noReplyLogger;
-    private BossPool bossPool;
-    private WorkerPool workerPool;
+    private EventLoopGroup bossGroup;
+    private EventLoopGroup workerGroup;
     private ObjectPool<Channel> pool;
     private Timer timer;
+    private Map<Channel, NettyCamelState> nettyCamelStatesMap = new ConcurrentHashMap<Channel, NettyCamelState>();
 
     public NettyProducer(NettyEndpoint nettyEndpoint, NettyConfiguration configuration) {
         super(nettyEndpoint);
@@ -157,19 +161,14 @@ public class NettyProducer extends DefaultAsyncProducer {
         ChannelGroupFuture future = allChannels.close();
         future.awaitUninterruptibly();
 
-        // and then release other resources
-        if (channelFactory != null) {
-            channelFactory.releaseExternalResources();
-        }
-
         // and then shutdown the thread pools
-        if (bossPool != null) {
-            bossPool.shutdown();
-            bossPool = null;
+        if (bossGroup != null) {
+            bossGroup.shutdownGracefully();
+            bossGroup = null;
         }
-        if (workerPool != null) {
-            workerPool.shutdown();
-            workerPool = null;
+        if (workerGroup != null) {
+            workerGroup.shutdownGracefully();
+            workerGroup = null;
         }
 
         if (pool != null) {
@@ -245,7 +244,7 @@ public class NettyProducer extends DefaultAsyncProducer {
         final AsyncCallback producerCallback = new NettyProducerCallback(channel, callback);
 
         // setup state as attachment on the channel, so we can access the state later when needed
-        channel.setAttachment(new NettyCamelState(producerCallback, exchange));
+        putState(channel, new NettyCamelState(producerCallback, exchange));
 
         // write body
         NettyHelper.writeBodyAsync(LOG, channel, null, body, exchange, new ChannelFutureListener() {
@@ -317,7 +316,7 @@ public class NettyProducer extends DefaultAsyncProducer {
      * To get the {@link NettyCamelState} from the given channel.
      */
     public NettyCamelState getState(Channel channel) {
-        return (NettyCamelState) channel.getAttachment();
+        return nettyCamelStatesMap.get(channel);
     }
 
     /**
@@ -325,7 +324,14 @@ public class NettyProducer extends DefaultAsyncProducer {
      * when no longer needed
      */
     public void removeState(Channel channel) {
-        channel.setAttachment(null);
+        nettyCamelStatesMap.remove(channel);
+    }
+
+    /**
+     * Put the {@link NettyCamelState} into the map use the given channel as the key
+     */
+    public void putState(Channel channel, NettyCamelState state) {
+        nettyCamelStatesMap.put(channel, state);
     }
 
     protected void setupTCPCommunication() throws Exception {
@@ -451,7 +457,7 @@ public class NettyProducer extends DefaultAsyncProducer {
             }
             throw cause;
         }
-        Channel answer = channelFuture.getChannel();
+        Channel answer = channelFuture.channel();
         // to keep track of all channels in use
         allChannels.add(answer);
 
@@ -532,7 +538,7 @@ public class NettyProducer extends DefaultAsyncProducer {
         @Override
         public boolean validateObject(Channel channel) {
             // we need a connected channel to be valid
-            boolean answer = channel.isConnected();
+            boolean answer = channel.isActive();
             LOG.trace("Validating channel: {} -> {}", channel, answer);
             return answer;
         }

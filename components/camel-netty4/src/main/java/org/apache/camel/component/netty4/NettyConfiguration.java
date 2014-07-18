@@ -79,6 +79,7 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
     @UriParam
     private int maximumPoolSize = 16;
     @UriParam
+    // TODO we need to rename this property
     private boolean orderedThreadPoolExecutor = true;
     @UriParam
     private int producerPoolMaxActive = -1;
@@ -197,7 +198,7 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
                     decoders.add(ChannelHandlerFactories.newStringDecoder(charset));
 
                     if (LOG.isDebugEnabled()) {
-                        LOG.debug("Using textline encoders and decoders with charset: {}, delimiter: {} and decoderMaxLineLength: {}", 
+                        LOG.debug("Using textline encoders and decoders with charset: {}, delimiter: {} and decoderMaxLineLength: {}",
                                 new Object[]{charset, delimiter, decoderMaxLineLength});
                     }
                 } else {

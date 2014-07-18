@@ -28,6 +28,7 @@ import io.netty.channel.Channel;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelPipeline;
 import io.netty.handler.ssl.SslHandler;
+import io.netty.util.concurrent.EventExecutorGroup;
 import org.apache.camel.component.netty4.handlers.ServerChannelHandler;
 import org.apache.camel.component.netty4.ssl.SSLEngineFactory;
 import org.apache.camel.util.ObjectHelper;
@@ -101,24 +102,25 @@ public class DefaultServerPipelineFactory extends ServerPipelineFactory {
         }
 
         if (consumer.getConfiguration().isOrderedThreadPoolExecutor()) {
-            // this must be added just before the ServerChannelHandler
-            // use ordered thread pool, to ensure we process the events in order, and can send back
-            // replies in the expected order. eg this is required by TCP.
-            // and use a Camel thread factory so we have consistent thread namings
-            ExecutionHandler executionHandler = new ExecutionHandler(consumer.getEndpoint().getComponent().getExecutorService());
-            addToPipeline("executionHandler", channelPipeline, executionHandler);
-            LOG.debug("Using OrderedMemoryAwareThreadPoolExecutor with core pool size: {}", consumer.getConfiguration().getMaximumPoolSize());
+            // Just use EventExecutorGroup from the Netty Component
+            EventExecutorGroup applicationExecutor = consumer.getEndpoint().getComponent().getExecutorService();
+            addToPipeline("handler", channelPipeline, applicationExecutor, new ServerChannelHandler(consumer));
+    
+        } else {
+            // still use the worker event loop group here
+            addToPipeline("handler", channelPipeline, new ServerChannelHandler(consumer));
+
         }
-
-        // our handler must be added last
-        addToPipeline("handler", channelPipeline, new ServerChannelHandler(consumer));
-
         LOG.trace("Created ChannelPipeline: {}", channelPipeline);
 
     }
 
     private void addToPipeline(String name, ChannelPipeline pipeline, ChannelHandler handler) {
         pipeline.addLast(name, handler);
+    }
+    
+    private void addToPipeline(String name, ChannelPipeline pipeline, EventExecutorGroup executor, ChannelHandler handler) {
+        pipeline.addLast(executor, name, handler);
     }
 
     private SSLContext createSSLContext(CamelContext camelContext, NettyServerBootstrapConfiguration configuration) throws Exception {

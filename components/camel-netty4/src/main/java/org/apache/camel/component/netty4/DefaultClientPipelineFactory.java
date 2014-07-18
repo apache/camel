@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.netty4;
 
-import java.nio.channels.Channels;
 import java.util.List;
 import java.util.concurrent.TimeUnit;
 
@@ -28,6 +27,7 @@ import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelPipeline;
 import io.netty.handler.ssl.SslHandler;
 import io.netty.handler.timeout.ReadTimeoutHandler;
+
 import org.apache.camel.component.netty4.handlers.ClientChannelHandler;
 import org.apache.camel.component.netty4.ssl.SSLEngineFactory;
 import org.apache.camel.util.ObjectHelper;
