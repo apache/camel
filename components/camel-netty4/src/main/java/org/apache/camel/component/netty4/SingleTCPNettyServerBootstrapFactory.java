@@ -108,7 +108,9 @@ public class SingleTCPNettyServerBootstrapFactory extends ServiceSupport impleme
             if (!future.isSuccess()) {
                 // if we cannot bind, the re-create channel
                 allChannels.remove(channel);
-                channel = serverBootstrap.bind(new InetSocketAddress(configuration.getHost(), configuration.getPort()));
+                future = serverBootstrap.bind(new InetSocketAddress(configuration.getHost(), configuration.getPort()));
+                future.awaitUninterruptibly();
+                channel = future.channel();
                 allChannels.add(channel);
             }
         }
@@ -118,7 +120,8 @@ public class SingleTCPNettyServerBootstrapFactory extends ServiceSupport impleme
     protected void doSuspend() throws Exception {
         if (channel != null) {
             LOG.debug("ServerBootstrap unbinding from {}:{}", configuration.getHost(), configuration.getPort());
-            ChannelFuture future = channel.unbind();
+            //TODO need to check if it's good way to unbinding the channel
+            ChannelFuture future = channel.close();
             future.awaitUninterruptibly();
         }
     }

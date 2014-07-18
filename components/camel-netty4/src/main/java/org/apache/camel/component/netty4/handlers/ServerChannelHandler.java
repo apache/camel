@@ -96,7 +96,7 @@ public class ServerChannelHandler extends SimpleChannelInboundHandler<Object> {
         // we want to handle the UoW
         consumer.createUoW(exchange);
 
-        beforeProcess(exchange, messageEvent);
+        beforeProcess(exchange, ctx, msg);
 
         // process accordingly to endpoint configuration
         if (consumer.getEndpoint().isSynchronous()) {
