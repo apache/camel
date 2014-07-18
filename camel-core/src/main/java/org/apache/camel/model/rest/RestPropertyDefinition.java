@@ -14,25 +14,39 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.test.blueprint.component.rest;
+package org.apache.camel.model.rest;
 
-import org.junit.Test;
+import javax.xml.bind.annotation.XmlAccessType;
+import javax.xml.bind.annotation.XmlAccessorType;
+import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlRootElement;
 
-public class FromRestConfigurationTest extends FromRestGetTest {
+/**
+ * Represents the XML type for &lt;restProperty&gt;.
+ */
+@XmlRootElement(name = "restProperty")
+@XmlAccessorType(XmlAccessType.FIELD)
+public class RestPropertyDefinition {
 
-    @Override
-    protected String getBlueprintDescriptor() {
-        return "org/apache/camel/test/blueprint/component/rest/FromRestConfigurationTest.xml";
+    @XmlAttribute(required = true)
+    String key;
+
+    @XmlAttribute(required = true)
+    String value;
+
+    public void setKey(String key) {
+        this.key = key;
     }
-
-    @Test
-    public void testFromRestModel() throws Exception {
-        super.testFromRestModel();
-
-        assertEquals("dummy-rest", context.getRestConfiguration().getComponent());
-        assertEquals("localhost", context.getRestConfiguration().getHost());
-        assertEquals(9090, context.getRestConfiguration().getPort());
-        assertEquals("bar", context.getRestConfiguration().getProperties().get("foo"));
+    
+    public String getKey() {
+        return key;
     }
-
+    
+    public void setValue(String value) {
+        this.value = value;
+    }
+    
+    public String getValue() {
+        return value;
+    }
 }

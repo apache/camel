@@ -16,9 +16,14 @@
  */
 package org.apache.camel.model.rest;
 
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.List;
+import java.util.Map;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.CamelContext;
@@ -41,10 +46,8 @@ public class RestConfigurationDefinition {
     @XmlAttribute
     private String port;
 
-    // TODO: get properties to work with JAXB in the XSD model
-
-//    @XmlElementRef
-//    private List<PropertyDefinition> properties = new ArrayList<PropertyDefinition>();
+    @XmlElementRef
+    private List<RestPropertyDefinition> properties = new ArrayList<RestPropertyDefinition>();
 
     public String getComponent() {
         return component;
@@ -68,6 +71,14 @@ public class RestConfigurationDefinition {
 
     public void setPort(String port) {
         this.port = port;
+    }
+
+    public List<RestPropertyDefinition> getProperties() {
+        return properties;
+    }
+
+    public void setProperties(List<RestPropertyDefinition> properties) {
+        this.properties = properties;
     }
 
     // Fluent API
@@ -97,10 +108,10 @@ public class RestConfigurationDefinition {
     }
 
     public RestConfigurationDefinition property(String key, String value) {
-        /*PropertyDefinition prop = new PropertyDefinition();
+        RestPropertyDefinition prop = new RestPropertyDefinition();
         prop.setKey(key);
         prop.setValue(value);
-        getProperties().add(prop);*/
+        getProperties().add(prop);
         return this;
     }
 
@@ -116,26 +127,25 @@ public class RestConfigurationDefinition {
      */
     public RestConfiguration asRestConfiguration(CamelContext context) throws Exception {
         RestConfiguration answer = new RestConfiguration();
-        if (getComponent() != null) {
-            answer.setComponent(CamelContextHelper.parseText(context, getComponent()));
+        if (component != null) {
+            answer.setComponent(CamelContextHelper.parseText(context, component));
         }
-        if (getHost() != null) {
-            answer.setHost(CamelContextHelper.parseText(context, getHost()));
+        if (host != null) {
+            answer.setHost(CamelContextHelper.parseText(context, host));
         }
-        if (getPort() != null) {
-            answer.setPort(CamelContextHelper.parseInteger(context, getPort()));
+        if (port != null) {
+            answer.setPort(CamelContextHelper.parseInteger(context, port));
         }
-        /*if (!properties.isEmpty()) {
+        if (!properties.isEmpty()) {
             Map<String, Object> props = new HashMap<String, Object>();
-            for (PropertyDefinition prop : properties) {
+            for (RestPropertyDefinition prop : properties) {
                 String key = prop.getKey();
                 String value = CamelContextHelper.parseText(context, prop.getValue());
                 props.put(key, value);
             }
             answer.setProperties(props);
-        }*/
+        }
         return answer;
-
     }
 
 }
