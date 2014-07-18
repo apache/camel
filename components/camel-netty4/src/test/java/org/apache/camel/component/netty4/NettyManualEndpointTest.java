@@ -19,10 +19,11 @@ package org.apache.camel.component.netty4;
 import java.util.ArrayList;
 import java.util.List;
 
-import org.apache.camel.builder.RouteBuilder;
 import io.netty.channel.ChannelHandler;
-import io.netty.handler.codec.frame.Delimiters;
+import io.netty.handler.codec.Delimiters;
 import io.netty.util.CharsetUtil;
+
+import org.apache.camel.builder.RouteBuilder;
 import org.junit.Test;
 
 public class NettyManualEndpointTest extends BaseNettyTest {

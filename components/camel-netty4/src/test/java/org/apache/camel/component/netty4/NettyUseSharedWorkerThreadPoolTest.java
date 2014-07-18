@@ -16,9 +16,9 @@
  */
 package org.apache.camel.component.netty4;
 
+import io.netty.channel.EventLoopGroup;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
-import io.netty.channel.socket.nio.WorkerPool;
 import org.junit.Test;
 
 /**
@@ -27,8 +27,8 @@ import org.junit.Test;
 public class NettyUseSharedWorkerThreadPoolTest extends BaseNettyTest {
 
     private JndiRegistry jndi;
-    private WorkerPool sharedServer;
-    private WorkerPool sharedClient;
+    private EventLoopGroup sharedWorkerServerGroup;
+    private EventLoopGroup sharedWorkerClientGroup;
     private int port;
     private int port2;
     private int port3;
@@ -61,8 +61,8 @@ public class NettyUseSharedWorkerThreadPoolTest extends BaseNettyTest {
 
         assertMockEndpointsSatisfied();
 
-        sharedServer.shutdown();
-        sharedClient.shutdown();
+        sharedWorkerServerGroup.shutdownGracefully().sync().await();
+        sharedWorkerClientGroup.shutdownGracefully().sync().await();
     }
 
     @Override
@@ -71,10 +71,10 @@ public class NettyUseSharedWorkerThreadPoolTest extends BaseNettyTest {
             @Override
             public void configure() throws Exception {
                 // we have 3 routes, but lets try to have only 2 threads in the pool
-                sharedServer = new NettyWorkerPoolBuilder().withWorkerCount(2).withName("NettyServer").build();
-                jndi.bind("sharedServerPool", sharedServer);
-                sharedClient = new NettyWorkerPoolBuilder().withWorkerCount(3).withName("NettyClient").build();
-                jndi.bind("sharedClientPool", sharedClient);
+                sharedWorkerServerGroup = new NettyWorkerPoolBuilder().withWorkerCount(2).withName("NettyServer").build();
+                jndi.bind("sharedServerPool", sharedWorkerServerGroup);
+                sharedWorkerClientGroup = new NettyWorkerPoolBuilder().withWorkerCount(3).withName("NettyClient").build();
+                jndi.bind("sharedClientPool", sharedWorkerClientGroup);
 
                 port = getPort();
                 port2 = getNextPort();

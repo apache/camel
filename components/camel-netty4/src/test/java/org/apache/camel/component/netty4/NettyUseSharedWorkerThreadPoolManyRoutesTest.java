@@ -16,10 +16,9 @@
  */
 package org.apache.camel.component.netty4;
 
+import io.netty.channel.EventLoopGroup;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.JndiRegistry;
-import io.netty.channel.socket.nio.BossPool;
-import io.netty.channel.socket.nio.WorkerPool;
 import org.junit.Test;
 
 /**
@@ -28,8 +27,8 @@ import org.junit.Test;
 public class NettyUseSharedWorkerThreadPoolManyRoutesTest extends BaseNettyTest {
 
     private JndiRegistry jndi;
-    private BossPool sharedBoos;
-    private WorkerPool sharedWorker;
+    private EventLoopGroup sharedBoosGroup;
+    private EventLoopGroup sharedWorkerGroup;
     private int before;
 
     @Override
@@ -56,8 +55,8 @@ public class NettyUseSharedWorkerThreadPoolManyRoutesTest extends BaseNettyTest 
         log.info("Created threads {}", delta);
         assertTrue("There should not be created so many threads: " + delta, delta < 50);
 
-        sharedWorker.shutdown();
-        sharedBoos.shutdown();
+        sharedBoosGroup.shutdownGracefully().sync().await();
+        sharedWorkerGroup.shutdownGracefully().sync().await();
     }
 
     @Override
@@ -65,10 +64,10 @@ public class NettyUseSharedWorkerThreadPoolManyRoutesTest extends BaseNettyTest 
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                sharedWorker = new NettyWorkerPoolBuilder().withWorkerCount(10).build();
-                jndi.bind("sharedWorker", sharedWorker);
-                sharedBoos = new NettyServerBossPoolBuilder().withBossCount(20).build();
-                jndi.bind("sharedBoss", sharedBoos);
+                sharedWorkerGroup = new NettyWorkerPoolBuilder().withWorkerCount(10).build();
+                jndi.bind("sharedWorker", sharedWorkerGroup);
+                sharedBoosGroup = new NettyServerBossPoolBuilder().withBossCount(20).build();
+                jndi.bind("sharedBoss", sharedBoosGroup);
 
                 for (int i = 0; i < 100; i++) {
                     from("netty:tcp://localhost:" + getNextPort() + "?textline=true&sync=true&orderedThreadPoolExecutor=false"

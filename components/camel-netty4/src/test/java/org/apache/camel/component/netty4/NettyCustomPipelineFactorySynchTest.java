@@ -16,19 +16,21 @@
  */
 package org.apache.camel.component.netty4;
 
+import java.nio.channels.Channels;
+
+import io.netty.channel.Channel;
+import io.netty.channel.ChannelPipeline;
+import io.netty.handler.codec.DelimiterBasedFrameDecoder;
+import io.netty.handler.codec.Delimiters;
+import io.netty.handler.codec.string.StringDecoder;
+import io.netty.handler.codec.string.StringEncoder;
+import io.netty.util.CharsetUtil;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.netty4.handlers.ClientChannelHandler;
 import org.apache.camel.component.netty4.handlers.ServerChannelHandler;
 import org.apache.camel.impl.JndiRegistry;
-import io.netty.channel.ChannelPipeline;
-import io.netty.channel.Channels;
-import io.netty.handler.codec.frame.DelimiterBasedFrameDecoder;
-import io.netty.handler.codec.frame.Delimiters;
-import io.netty.handler.codec.string.StringDecoder;
-import io.netty.handler.codec.string.StringEncoder;
-import io.netty.util.CharsetUtil;
 import org.junit.Test;
 
 public class NettyCustomPipelineFactorySynchTest extends BaseNettyTest {
@@ -79,17 +81,15 @@ public class NettyCustomPipelineFactorySynchTest extends BaseNettyTest {
         }
 
         @Override
-        public ChannelPipeline getPipeline() throws Exception {
+        protected void initChannel(Channel ch) throws Exception {
+            
+            ChannelPipeline channelPipeline = ch.pipeline();
             clientInvoked = true;
-
-            ChannelPipeline channelPipeline = Channels.pipeline();
-
             channelPipeline.addLast("decoder-DELIM", new DelimiterBasedFrameDecoder(maxLineSize, true, Delimiters.lineDelimiter()));
             channelPipeline.addLast("decoder-SD", new StringDecoder(CharsetUtil.UTF_8));
             channelPipeline.addLast("encoder-SD", new StringEncoder(CharsetUtil.UTF_8));
             channelPipeline.addLast("handler", new ClientChannelHandler(producer));
-
-            return channelPipeline;
+           
         }
 
         @Override
@@ -107,17 +107,14 @@ public class NettyCustomPipelineFactorySynchTest extends BaseNettyTest {
         }
 
         @Override
-        public ChannelPipeline getPipeline() throws Exception {
+        protected void initChannel(Channel ch) throws Exception {
+            
+            ChannelPipeline channelPipeline = ch.pipeline();
             serverInvoked = true;
-
-            ChannelPipeline channelPipeline = Channels.pipeline();
-
             channelPipeline.addLast("encoder-SD", new StringEncoder(CharsetUtil.UTF_8));
             channelPipeline.addLast("decoder-DELIM", new DelimiterBasedFrameDecoder(maxLineSize, true, Delimiters.lineDelimiter()));
             channelPipeline.addLast("decoder-SD", new StringDecoder(CharsetUtil.UTF_8));
-            channelPipeline.addLast("handler", new ServerChannelHandler(consumer));
-
-            return channelPipeline;
+            channelPipeline.addLast("handler", new ServerChannelHandler(consumer));          
         }
 
         @Override
