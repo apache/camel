@@ -16,18 +16,14 @@
  */
 package org.apache.camel.component.box;
 
-import com.box.boxjavalibv2.exceptions.BoxJSONException;
-import com.box.restclientv2.exceptions.BoxRestException;
+import java.io.File;
+import java.io.InputStream;
+
 import com.box.restclientv2.requestsbase.BoxFileUploadRequestObject;
 import org.apache.camel.Converter;
 import org.apache.camel.Exchange;
-import org.apache.camel.NoTypeConversionAvailableException;
 import org.apache.camel.component.box.internal.BoxConstants;
 import org.apache.camel.component.file.GenericFile;
-
-import java.io.File;
-import java.io.IOException;
-import java.io.InputStream;
 
 @Converter
 public final class BoxConverter {
@@ -37,7 +33,7 @@ public final class BoxConverter {
     }
 
     @Converter
-    public static BoxFileUploadRequestObject genericFileToBoxFileUploadRequestObject(GenericFile<?> file, Exchange exchange) throws IOException, NoTypeConversionAvailableException, BoxRestException, BoxJSONException {
+    public static BoxFileUploadRequestObject genericFileToBoxFileUploadRequestObject(GenericFile<?> file, Exchange exchange) throws Exception {
         String folderId = "0";
         if (exchange != null) {
             folderId = exchange.getProperty(BoxConstants.PROPERTY_PREFIX + "folderId", "0", String.class);

@@ -34,8 +34,8 @@ public class JettyHttpComponentConfigurationAndDocumentationTest extends CamelTe
     @Test
     public void testComponentConfiguration() throws Exception {
         JettyHttpComponent comp = context.getComponent("jetty", JettyHttpComponent.class);
-        EndpointConfiguration conf = comp.createConfiguration("jetty://http://localhost:8080/myapp?" +
-                "httpClientMinThreads=4&httpClientMaxThreads=8");
+        EndpointConfiguration conf = comp.createConfiguration("jetty://http://localhost:8080/myapp?"
+                + "httpClientMinThreads=4&httpClientMaxThreads=8");
 
         assertEquals("4", conf.getParameter("httpClientMinThreads"));
         assertEquals("8", conf.getParameter("httpClientMaxThreads"));

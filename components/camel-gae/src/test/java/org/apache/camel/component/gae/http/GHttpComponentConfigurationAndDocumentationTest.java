@@ -34,8 +34,8 @@ public class GHttpComponentConfigurationAndDocumentationTest extends CamelTestSu
     @Test
     public void testComponentConfiguration() throws Exception {
         GHttpComponent comp = context.getComponent("ghttp", GHttpComponent.class);
-        EndpointConfiguration conf = comp.createConfiguration("ghttp://somewhere.com:9090/path?" +
-                "bridgeEndpoint=false&throwExceptionOnFailure=false");
+        EndpointConfiguration conf = comp.createConfiguration("ghttp://somewhere.com:9090/path?"
+                + "bridgeEndpoint=false&throwExceptionOnFailure=false");
 
         assertEquals("false", conf.getParameter("bridgeEndpoint"));
         assertEquals("false", conf.getParameter("throwExceptionOnFailure"));

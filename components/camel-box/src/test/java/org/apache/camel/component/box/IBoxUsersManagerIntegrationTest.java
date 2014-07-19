@@ -61,7 +61,7 @@ public class IBoxUsersManagerIntegrationTest extends AbstractBoxTestSupport {
         headers.put("CamelBox.userId", testUserId);
         // parameter type is com.box.boxjavalibv2.requests.requestobjects.BoxEmailAliasRequestObject
         final BoxEmailAliasRequestObject requestObject =
-            BoxEmailAliasRequestObject.addEmailAliasRequestObject(CAMEL_EMAIL_ALIAS);
+                BoxEmailAliasRequestObject.addEmailAliasRequestObject(CAMEL_EMAIL_ALIAS);
         headers.put("CamelBox.emailAliasRequest", requestObject);
 
         BoxEmailAlias result = requestBodyAndHeaders("direct://ADDEMAILALIAS", null, headers);
@@ -75,7 +75,7 @@ public class IBoxUsersManagerIntegrationTest extends AbstractBoxTestSupport {
     public BoxUser createEnterpriseUser() throws Exception {
         // using com.box.boxjavalibv2.requests.requestobjects.BoxUserRequestObject message body for single parameter "userRequest"
         final BoxUserRequestObject enterpriseUserRequestObject =
-            BoxUserRequestObject.createEnterpriseUserRequestObject(CAMEL_EMAIL_ALIAS, CAMEL_USER_NAME);
+                BoxUserRequestObject.createEnterpriseUserRequestObject(CAMEL_EMAIL_ALIAS, CAMEL_USER_NAME);
         BoxUser result = requestBody("direct://CREATEENTERPRISEUSER", enterpriseUserRequestObject);
 
         assertNotNull("createEnterpriseUser result", result);
@@ -100,7 +100,7 @@ public class IBoxUsersManagerIntegrationTest extends AbstractBoxTestSupport {
         headers.put("CamelBox.userId", userId);
         // parameter type is com.box.boxjavalibv2.requests.requestobjects.BoxUserDeleteRequestObject
         final BoxUserDeleteRequestObject requestObject =
-            BoxUserDeleteRequestObject.deleteEnterpriseUserRequestObject(false, true);
+                BoxUserDeleteRequestObject.deleteEnterpriseUserRequestObject(false, true);
         headers.put("CamelBox.userDeleteRequest", requestObject);
 
         requestBodyAndHeaders("direct://DELETEENTERPRISEUSER", null, headers);
@@ -173,7 +173,7 @@ public class IBoxUsersManagerIntegrationTest extends AbstractBoxTestSupport {
         headers.put("CamelBox.folderId", testFolderId);
         // parameter type is com.box.boxjavalibv2.requests.requestobjects.BoxSimpleUserRequestObject
         final BoxSimpleUserRequestObject requestObject =
-            BoxSimpleUserRequestObject.moveFolderToAnotherUserRequestEntity(toUserId, false);
+                BoxSimpleUserRequestObject.moveFolderToAnotherUserRequestEntity(toUserId, false);
         headers.put("CamelBox.simpleUserRequest", requestObject);
 
         BoxFolder result = requestBodyAndHeaders("direct://MOVEFOLDERTOANOTHERUSER", null, headers);
@@ -192,7 +192,7 @@ public class IBoxUsersManagerIntegrationTest extends AbstractBoxTestSupport {
             headers.put("CamelBox.userId", enterpriseUser.getId());
             // parameter type is com.box.boxjavalibv2.requests.requestobjects.BoxUserRequestObject
             final BoxUserRequestObject requestObject =
-                BoxUserRequestObject.updateUserInfoRequestObject(false);
+                    BoxUserRequestObject.updateUserInfoRequestObject(false);
             requestObject.setJobTitle(CAMEL_JOB_TITLE);
             headers.put("CamelBox.userRequest", requestObject);
 
@@ -217,7 +217,7 @@ public class IBoxUsersManagerIntegrationTest extends AbstractBoxTestSupport {
             headers.put("CamelBox.userId", enterpriseUser.getId());
             // parameter type is com.box.boxjavalibv2.requests.requestobjects.BoxUserUpdateLoginRequestObject
             final BoxUserUpdateLoginRequestObject requestObject =
-                BoxUserUpdateLoginRequestObject.updateUserPrimaryLoginRequestObject(UPDATED_EMAIL_ALIAS);
+                    BoxUserUpdateLoginRequestObject.updateUserPrimaryLoginRequestObject(UPDATED_EMAIL_ALIAS);
             headers.put("CamelBox.userUpdateLoginRequest", requestObject);
 
             BoxUser result = requestBodyAndHeaders("direct://UPDATEUSERPRIMARYLOGIN", null, headers);
@@ -236,43 +236,43 @@ public class IBoxUsersManagerIntegrationTest extends AbstractBoxTestSupport {
             public void configure() {
                 // test route for addEmailAlias
                 from("direct://ADDEMAILALIAS")
-                  .to("box://" + PATH_PREFIX + "/addEmailAlias");
+                        .to("box://" + PATH_PREFIX + "/addEmailAlias");
 
                 // test route for createEnterpriseUser
                 from("direct://CREATEENTERPRISEUSER")
-                  .to("box://" + PATH_PREFIX + "/createEnterpriseUser?inBody=userRequest");
+                        .to("box://" + PATH_PREFIX + "/createEnterpriseUser?inBody=userRequest");
 
                 // test route for deleteEmailAlias
                 from("direct://DELETEEMAILALIAS")
-                  .to("box://" + PATH_PREFIX + "/deleteEmailAlias");
+                        .to("box://" + PATH_PREFIX + "/deleteEmailAlias");
 
                 // test route for deleteEnterpriseUser
                 from("direct://DELETEENTERPRISEUSER")
-                  .to("box://" + PATH_PREFIX + "/deleteEnterpriseUser");
+                        .to("box://" + PATH_PREFIX + "/deleteEnterpriseUser");
 
                 // test route for getAllEnterpriseUser
                 from("direct://GETALLENTERPRISEUSER")
-                  .to("box://" + PATH_PREFIX + "/getAllEnterpriseUser");
+                        .to("box://" + PATH_PREFIX + "/getAllEnterpriseUser");
 
                 // test route for getCurrentUser
                 from("direct://GETCURRENTUSER")
-                  .to("box://" + PATH_PREFIX + "/getCurrentUser?inBody=defaultRequest");
+                        .to("box://" + PATH_PREFIX + "/getCurrentUser?inBody=defaultRequest");
 
                 // test route for getEmailAliases
                 from("direct://GETEMAILALIASES")
-                  .to("box://" + PATH_PREFIX + "/getEmailAliases");
+                        .to("box://" + PATH_PREFIX + "/getEmailAliases");
 
                 // test route for moveFolderToAnotherUser
                 from("direct://MOVEFOLDERTOANOTHERUSER")
-                  .to("box://" + PATH_PREFIX + "/moveFolderToAnotherUser");
+                        .to("box://" + PATH_PREFIX + "/moveFolderToAnotherUser");
 
                 // test route for updateUserInformaiton
                 from("direct://UPDATEUSERINFORMAITON")
-                  .to("box://" + PATH_PREFIX + "/updateUserInformaiton");
+                        .to("box://" + PATH_PREFIX + "/updateUserInformaiton");
 
                 // test route for updateUserPrimaryLogin
                 from("direct://UPDATEUSERPRIMARYLOGIN")
-                  .to("box://" + PATH_PREFIX + "/updateUserPrimaryLogin");
+                        .to("box://" + PATH_PREFIX + "/updateUserPrimaryLogin");
 
             }
         };

@@ -30,7 +30,7 @@
   <packaging>pom</packaging>
   <version>2.14-SNAPSHOT</version>
 
-  <name>Camel LinkedIn Component Parent</name>
+  <name>Camel :: LinkedIn Component Parent</name>
   <description>Parent project for Camel {LinkedIn} Component</description>
 
   <modules>

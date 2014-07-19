@@ -26,8 +26,8 @@
   </parent>
 
   <artifactId>camel-linkedin-api</artifactId>
-  <name>Camel LinkedIn Component API</name>
-  <description>API for Camel LinkedIn Component</description>
+  <name>Camel :: LinkedIn Component API</name>
+  <description>Camel API for LinkedIn</description>
   <packaging>bundle</packaging>
 
   <properties>

@@ -51,11 +51,11 @@ public class IBoxCollaborationsManagerIntegrationTest extends AbstractBoxTestSup
         headers.put("CamelBox.folderId", testFolderId);
         // parameter type is com.box.boxjavalibv2.requests.requestobjects.BoxCollabRequestObject
         final BoxCollabRequestObject collabObject = BoxCollabRequestObject.createCollabObject(testFolderId, null,
-            "camel.test@localhost.com", BoxCollaborationRole.VIEWER);
+                "camel.test@localhost.com", BoxCollaborationRole.VIEWER);
         headers.put("CamelBox.collabRequest", collabObject);
 
         BoxCollaboration result = requestBodyAndHeaders("direct://CREATECOLLABORATION",
-            null, headers);
+                null, headers);
         assertNotNull("createCollaboration result", result);
         // wait a moment for collaboration to register
         Thread.sleep(2000);
@@ -76,7 +76,7 @@ public class IBoxCollaborationsManagerIntegrationTest extends AbstractBoxTestSup
     public void testGetAllCollaborations() throws Exception {
         // using com.box.boxjavalibv2.requests.requestobjects.BoxGetAllCollabsRequestObject message body for single parameter "getAllCollabsRequest"
         final BoxGetAllCollabsRequestObject collabRequest =
-            BoxGetAllCollabsRequestObject.getAllCollaborationsRequestObject(BoxCollaboration.STATUS_PENDING);
+                BoxGetAllCollabsRequestObject.getAllCollaborationsRequestObject(BoxCollaboration.STATUS_PENDING);
 
         List result = requestBody("direct://GETALLCOLLABORATIONS", collabRequest);
         assertNotNull("getAllCollaborations: " + result);
@@ -93,7 +93,7 @@ public class IBoxCollaborationsManagerIntegrationTest extends AbstractBoxTestSup
             headers.put("CamelBox.collabId", collaboration.getId());
             // parameter type is com.box.restclientv2.requestsbase.BoxDefaultRequestObject
             headers.put("CamelBox.defaultRequest", null);
-            
+
             BoxCollaboration result = requestBodyAndHeaders("direct://GETCOLLABORATION", null, headers);
             assertNotNull("getCollaboration result", result);
             LOG.debug("getCollaboration: " + result);
@@ -113,7 +113,7 @@ public class IBoxCollaborationsManagerIntegrationTest extends AbstractBoxTestSup
             headers.put("CamelBox.collabId", collaboration.getId());
             // parameter type is com.box.boxjavalibv2.requests.requestobjects.BoxCollabRequestObject
             final BoxCollabRequestObject requestObject = BoxCollabRequestObject.updateCollabObjects(
-                BoxCollaborationRole.EDITOR);
+                    BoxCollaborationRole.EDITOR);
             headers.put("CamelBox.collabRequest", requestObject);
 
             BoxCollaboration result = requestBodyAndHeaders("direct://UPDATECOLLABORATION", null, headers);
@@ -130,23 +130,23 @@ public class IBoxCollaborationsManagerIntegrationTest extends AbstractBoxTestSup
             public void configure() {
                 // test route for createCollaboration
                 from("direct://CREATECOLLABORATION")
-                  .to("box://" + PATH_PREFIX + "/createCollaboration");
+                        .to("box://" + PATH_PREFIX + "/createCollaboration");
 
                 // test route for deleteCollaboration
                 from("direct://DELETECOLLABORATION")
-                  .to("box://" + PATH_PREFIX + "/deleteCollaboration");
+                        .to("box://" + PATH_PREFIX + "/deleteCollaboration");
 
                 // test route for getAllCollaborations
                 from("direct://GETALLCOLLABORATIONS")
-                  .to("box://" + PATH_PREFIX + "/getAllCollaborations?inBody=getAllCollabsRequest");
+                        .to("box://" + PATH_PREFIX + "/getAllCollaborations?inBody=getAllCollabsRequest");
 
                 // test route for getCollaboration
                 from("direct://GETCOLLABORATION")
-                  .to("box://" + PATH_PREFIX + "/getCollaboration");
+                        .to("box://" + PATH_PREFIX + "/getCollaboration");
 
                 // test route for updateCollaboration
                 from("direct://UPDATECOLLABORATION")
-                  .to("box://" + PATH_PREFIX + "/updateCollaboration");
+                        .to("box://" + PATH_PREFIX + "/updateCollaboration");
 
             }
         };

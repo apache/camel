@@ -27,7 +27,7 @@
 
   <artifactId>camel-linkedin</artifactId>
   <packaging>bundle</packaging>
-  <name>Camel LinkedIn Component</name>
+  <name>Camel :: LinkedIn Component</name>
   <description>Camel Component for LinkedIn</description>
 
   <properties>
