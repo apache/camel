@@ -122,7 +122,7 @@ public class UnsharableCodecsConflictsTest extends BaseNettyTest {
 
         @Override
         public void process(Exchange exchange) throws Exception {
-            exchange.getOut().setBody(new String(((BigEndianHeapChannelBuffer) exchange.getIn().getBody()).array()));
+            exchange.getOut().setBody(exchange.getIn().getBody(String.class));
         }
     }
 
