@@ -43,6 +43,7 @@ public class RestRestletGetTest extends RestletTestSupport {
                 // use the rest DSL to define the rest services
                 rest("/users/")
                     .get("{id}/basic")
+                        .route()
                         .to("mock:input")
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {

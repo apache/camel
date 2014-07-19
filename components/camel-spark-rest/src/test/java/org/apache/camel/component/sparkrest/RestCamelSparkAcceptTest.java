@@ -27,6 +27,7 @@ public class RestCamelSparkAcceptTest extends CamelSparkAcceptTest {
             public void configure() throws Exception {
                 rest("/hello")
                     .get().consumes("application/json")
+                        .route()
                         .to("mock:foo")
                         .transform().constant("{ \"reply\": \"Bye World\" }");
             }

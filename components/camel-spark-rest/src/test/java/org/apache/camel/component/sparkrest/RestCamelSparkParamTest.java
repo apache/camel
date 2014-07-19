@@ -27,6 +27,7 @@ public class RestCamelSparkParamTest extends CamelSparkParamTest {
             @Override
             public void configure() throws Exception {
                 rest("/hello/{name}").get()
+                    .route()
                     .to("mock:foo")
                     .transform().simple("Bye ${header.name}");
             }

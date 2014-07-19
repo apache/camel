@@ -41,7 +41,7 @@ public class FromRestConfigurationTest extends FromRestGetTest {
                         .get().to("direct:hello");
 
                 rest("/say/bye")
-                        .get().consumes("application/json").to("direct:bye").endRest()
+                        .get().consumes("application/json").to("direct:bye")
                         .post().to("mock:update");
 
                 from("direct:hello")

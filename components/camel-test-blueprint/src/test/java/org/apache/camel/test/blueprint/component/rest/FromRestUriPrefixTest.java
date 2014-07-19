@@ -44,9 +44,9 @@ public class FromRestUriPrefixTest extends CamelBlueprintTestSupport {
         assertEquals("/hello", rest.getVerbs().get(0).getUri());
         assertEquals("bye", rest.getVerbs().get(1).getUri());
         assertEquals("/bye", rest.getVerbs().get(2).getUri());
-        ToDefinition to = assertIsInstanceOf(ToDefinition.class, rest.getVerbs().get(0).getOutputs().get(0));
+        ToDefinition to = assertIsInstanceOf(ToDefinition.class, rest.getVerbs().get(0).getTo());
         assertEquals("direct:hello", to.getUri());
-        to = assertIsInstanceOf(ToDefinition.class, rest.getVerbs().get(1).getOutputs().get(0));
+        to = assertIsInstanceOf(ToDefinition.class, rest.getVerbs().get(1).getTo());
         assertEquals("direct:bye", to.getUri());
 
         // the rest becomes routes and the input is a seda endpoint created by the DummyRestConsumerFactory

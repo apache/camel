@@ -44,6 +44,7 @@ import org.apache.camel.builder.AdviceWithTask;
 import org.apache.camel.builder.ErrorHandlerBuilderRef;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultRouteContext;
+import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.processor.interceptor.HandleFault;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.RouteContext;
@@ -81,6 +82,7 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
     // (will by default be context scoped of no explicit error handler configured)
     private boolean contextScopedErrorHandler = true;
     private Boolean rest;
+    private RestDefinition restDefinition;
 
     public RouteDefinition() {
     }
@@ -777,6 +779,15 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
     @XmlAttribute
     public Boolean isRest() {
         return rest;
+    }
+
+    public RestDefinition getRestDefinition() {
+        return restDefinition;
+    }
+
+    @XmlTransient
+    public void setRestDefinition(RestDefinition restDefinition) {
+        this.restDefinition = restDefinition;
     }
 
     @SuppressWarnings("deprecation")

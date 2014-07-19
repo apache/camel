@@ -19,14 +19,18 @@ package org.apache.camel.model.rest;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
+import javax.xml.bind.annotation.XmlElement;
+import javax.xml.bind.annotation.XmlElements;
 import javax.xml.bind.annotation.XmlRootElement;
 import javax.xml.bind.annotation.XmlTransient;
 
-import org.apache.camel.model.OutputDefinition;
+import org.apache.camel.model.OptionalIdentifiedDefinition;
+import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.model.ToDefinition;
 
 @XmlRootElement(name = "verb")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class VerbDefinition extends OutputDefinition<VerbDefinition> {
+public class VerbDefinition {
 
     @XmlAttribute
     private String method;
@@ -37,16 +41,21 @@ public class VerbDefinition extends OutputDefinition<VerbDefinition> {
     @XmlAttribute
     private String consumes;
 
+    // used by XML DSL to either select a <to> or <route>
+    // so we need to use the common type OptionalIdentifiedDefinition
+    @XmlElements({
+            @XmlElement(required = false, name = "to", type = ToDefinition.class),
+            @XmlElement(required = false, name = "route", type = RouteDefinition.class)}
+    )
+    private OptionalIdentifiedDefinition toOrRoute;
+
+    // the Java DSL uses the to or route definition directory
+    @XmlTransient
+    private ToDefinition to;
+    @XmlTransient
+    private RouteDefinition route;
     @XmlTransient
     private RestDefinition rest;
-
-    public RestDefinition getRest() {
-        return rest;
-    }
-
-    public void setRest(RestDefinition rest) {
-        this.rest = rest;
-    }
 
     public String getMethod() {
         return method;
@@ -70,6 +79,52 @@ public class VerbDefinition extends OutputDefinition<VerbDefinition> {
 
     public void setConsumes(String consumes) {
         this.consumes = consumes;
+    }
+
+    public RestDefinition getRest() {
+        return rest;
+    }
+
+    public void setRest(RestDefinition rest) {
+        this.rest = rest;
+    }
+
+    public RouteDefinition getRoute() {
+        if (route != null) {
+            return route;
+        } else if (toOrRoute instanceof RouteDefinition) {
+            return (RouteDefinition) toOrRoute;
+        } else {
+            return null;
+        }
+    }
+
+    public void setRoute(RouteDefinition route) {
+        this.route = route;
+        this.toOrRoute = route;
+    }
+
+    public ToDefinition getTo() {
+        if (to != null) {
+            return to;
+        } else if (toOrRoute instanceof ToDefinition) {
+            return (ToDefinition) toOrRoute;
+        } else {
+            return null;
+        }
+    }
+
+    public void setTo(ToDefinition to) {
+        this.to = to;
+        this.toOrRoute = to;
+    }
+
+    public OptionalIdentifiedDefinition getToOrRoute() {
+        return toOrRoute;
+    }
+
+    public void setToOrRoute(OptionalIdentifiedDefinition toOrRoute) {
+        this.toOrRoute = toOrRoute;
     }
 
     // Fluent API

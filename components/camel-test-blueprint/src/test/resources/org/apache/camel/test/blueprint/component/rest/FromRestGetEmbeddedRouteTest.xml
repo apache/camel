@@ -27,18 +27,22 @@
 
     <rest uri="/say/hello">
       <get>
-        <to uri="mock:hello"/>
-        <transform>
-          <constant>Hello World</constant>
-        </transform>
+        <route>
+          <to uri="mock:hello"/>
+          <transform>
+            <constant>Hello World</constant>
+          </transform>
+        </route>
       </get>
     </rest>
     <rest uri="/say/bye">
       <get consumes="application/json">
-        <to uri="mock:bye"/>
-        <transform>
-          <constant>Bye World</constant>
-        </transform>
+        <route>
+          <to uri="mock:bye"/>
+          <transform>
+            <constant>Bye World</constant>
+          </transform>
+        </route>
       </get>
       <post>
         <to uri="mock:update"/>

@@ -29,15 +29,18 @@ public class MySparkRouteBuilder extends RouteBuilder {
         // configure we want to use spark-rest as the component for the rest DSL
         restConfiguration().component("spark-rest");
 
-        // use the rest DSL to define rest services
+        // use the rest DSL to define rest services, and use embedded routes
         rest().uri("hello/:me")
             .get().consumes("text/plain")
+                .route()
                 .to("log:input")
                 .transform().simple("Hello ${header.me}").endRest()
             .get().consumes("application/json")
+                .route()
                 .to("log:input")
                 .transform().simple("{ \"message\": \"Hello ${header.me}\" }").endRest()
             .get().consumes("text/xml")
+                .route()
                 .to("log:input")
                 .transform().simple("<message>Hello ${header.me}</message>");
     }

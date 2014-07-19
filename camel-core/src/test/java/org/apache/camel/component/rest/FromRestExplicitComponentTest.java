@@ -32,7 +32,7 @@ public class FromRestExplicitComponentTest extends FromRestGetTest {
                         .get().to("direct:hello");
 
                 rest("dummy-rest").uri("/say/bye")
-                        .get().consumes("application/json").to("direct:bye").endRest()
+                        .get().consumes("application/json").to("direct:bye")
                         .post().to("mock:update");
 
                 from("direct:hello")

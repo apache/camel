@@ -25,7 +25,7 @@ import org.apache.camel.component.rest.DummyRestConsumerFactory;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.SimpleRegistry;
 
-public class ManagedFromRestGetTest extends ManagementTestSupport {
+public class ManagedFromRestGetEmbeddedRouteTest extends ManagementTestSupport {
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
@@ -53,6 +53,8 @@ public class ManagedFromRestGetTest extends ManagementTestSupport {
         assertTrue(xml.contains("<rest uri=\"/say/bye\">"));
         assertTrue(xml.contains("</rest>"));
         assertTrue(xml.contains("<get>"));
+        assertTrue(xml.contains("<route"));
+        assertTrue(xml.contains("<transform"));
         assertTrue(xml.contains("<post>"));
         assertTrue(xml.contains("application/json"));
         assertTrue(xml.contains("</rests>"));
@@ -62,8 +64,8 @@ public class ManagedFromRestGetTest extends ManagementTestSupport {
         // and we should have rest in the routes that indicate its from a rest dsl
         assertTrue(xml2.contains("rest=\"true\""));
 
-        // there should be 3 + 2 routes
-        assertEquals(3 + 2, context.getRouteDefinitions().size());
+        // there should be 2 + 1 routes
+        assertEquals(2 + 1, context.getRouteDefinitions().size());
     }
 
     @Override
@@ -72,17 +74,19 @@ public class ManagedFromRestGetTest extends ManagementTestSupport {
             @Override
             public void configure() throws Exception {
                 rest("/say/hello")
-                    .get().to("direct:hello");
+                    .get()
+                        .route()
+                        .to("mock:hello")
+                        .transform(constant("Hello World"));
 
                 rest("/say/bye")
-                    .get().consumes("application/json").to("direct:bye")
-                    .post().to("mock:update");
-
-                from("direct:hello")
-                    .transform().constant("Hello World");
-
-                from("direct:bye")
-                    .transform().constant("Bye World");
+                    .get().consumes("application/json")
+                        .route()
+                        .to("mock:bye")
+                        .transform(constant("Bye World"))
+                    .endRest()
+                    .post()
+                        .to("mock:update");
             }
         };
     }

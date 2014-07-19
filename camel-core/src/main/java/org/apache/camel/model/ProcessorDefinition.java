@@ -53,7 +53,6 @@ import org.apache.camel.model.language.ConstantExpression;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.model.language.LanguageExpression;
 import org.apache.camel.model.rest.RestDefinition;
-import org.apache.camel.model.rest.VerbDefinition;
 import org.apache.camel.processor.InterceptEndpointProcessor;
 import org.apache.camel.processor.Pipeline;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
@@ -1325,27 +1324,13 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      */
     public RestDefinition endRest() {
         ProcessorDefinition<?> def = this;
-        if (def.getParent() instanceof VerbDefinition) {
-            return ((VerbDefinition) def.getParent()).getRest();
+
+        RouteDefinition route = ProcessorDefinitionHelper.getRoute(def);
+        if (route != null) {
+            return route.getRestDefinition();
         }
 
-        // are we already a choice?
-        if (def instanceof VerbDefinition) {
-            return ((VerbDefinition) def).getRest();
-        }
-
-        // okay end this and get back to the choice
-        def = end();
-        if (def.getParent() instanceof VerbDefinition) {
-            return ((VerbDefinition) def.getParent()).getRest();
-        }
-
-        // are we already a choice?
-        if (def instanceof VerbDefinition) {
-            return ((VerbDefinition) def).getRest();
-        }
-
-        throw new IllegalArgumentException("Cannot find VerbDefinition to allow endRest");
+        throw new IllegalArgumentException("Cannot find RouteDefinition to allow endRest");
     }
 
     /**

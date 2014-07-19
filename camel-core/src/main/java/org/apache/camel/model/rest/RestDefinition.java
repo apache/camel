@@ -131,17 +131,39 @@ public class RestDefinition {
         return this;
     }
 
-    @Deprecated
-    public VerbDefinition to(String url) {
+    /**
+     * Routes directly to the given endpoint.
+     * <p/>
+     * If you need additional routing capabilities, then use {@link #route()} instead.
+     *
+     * @param uri the uri of the endpoint
+     * @return this builder
+     */
+    public RestDefinition to(String uri) {
         // add to last verb
         if (getVerbs().isEmpty()) {
             throw new IllegalArgumentException("Must add verb first, such as get/post/delete");
         }
 
-        VerbDefinition verb = getVerbs().get(getVerbs().size() - 1);
-        verb.addOutput(new ToDefinition(url));
+        ToDefinition to = new ToDefinition(uri);
 
-        return verb;
+        VerbDefinition verb = getVerbs().get(getVerbs().size() - 1);
+        verb.setTo(to);
+        return this;
+    }
+
+    public RouteDefinition route() {
+        // add to last verb
+        if (getVerbs().isEmpty()) {
+            throw new IllegalArgumentException("Must add verb first, such as get/post/delete");
+        }
+
+        // link them together so we can navigate using Java DSL
+        RouteDefinition route = new RouteDefinition();
+        route.setRestDefinition(this);
+        VerbDefinition verb = getVerbs().get(getVerbs().size() - 1);
+        verb.setRoute(route);
+        return route;
     }
 
     // Implementation
@@ -191,10 +213,19 @@ public class RestDefinition {
                 from = from + "?" + query;
             }
 
-            RouteDefinition route = new RouteDefinition();
+            // either the verb has a singular to or a embedded route
+            RouteDefinition route = verb.getRoute();
+            if (route == null) {
+                // it was a singular to, so add a new route and add the singular
+                // to as output to this route
+                route = new RouteDefinition();
+                route.getOutputs().add(verb.getTo());
+            }
+
+            // the route should be from this rest endpoint
             route.fromRest(from);
+            route.setRestDefinition(this);
             answer.add(route);
-            route.getOutputs().addAll(verb.getOutputs());
         }
 
         return answer;

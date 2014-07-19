@@ -17,8 +17,40 @@
 package org.apache.camel.component.rest;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.model.ToDefinition;
+import org.apache.camel.model.rest.RestDefinition;
 
 public class FromRestGetEndPathTest extends FromRestGetTest {
+
+    public void testFromRestModel() throws Exception {
+        assertEquals(getExpectedNumberOfRoutes(), context.getRoutes().size());
+
+        assertEquals(2, context.getRestDefinitions().size());
+        RestDefinition rest = context.getRestDefinitions().get(0);
+        assertNotNull(rest);
+        assertEquals("/say/hello", rest.getUri());
+        assertEquals(1, rest.getVerbs().size());
+        ToDefinition to = assertIsInstanceOf(ToDefinition.class, rest.getVerbs().get(0).getTo());
+        assertEquals("direct:hello", to.getUri());
+
+        rest = context.getRestDefinitions().get(1);
+        assertNotNull(rest);
+        assertEquals("/say/bye", rest.getUri());
+        assertEquals(2, rest.getVerbs().size());
+        assertEquals("application/json", rest.getVerbs().get(0).getConsumes());
+        to = assertIsInstanceOf(ToDefinition.class, rest.getVerbs().get(0).getRoute().getOutputs().get(0));
+        assertEquals("direct:bye", to.getUri());
+
+        // the rest becomes routes and the input is a seda endpoint created by the DummyRestConsumerFactory
+        getMockEndpoint("mock:update").expectedMessageCount(1);
+        template.sendBody("seda:post-say-bye", "I was here");
+        assertMockEndpointsSatisfied();
+
+        String out = template.requestBody("seda:get-say-hello", "Me", String.class);
+        assertEquals("Hello World", out);
+        String out2 = template.requestBody("seda:get-say-bye", "Me", String.class);
+        assertEquals("Bye World", out2);
+    }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -29,7 +61,7 @@ public class FromRestGetEndPathTest extends FromRestGetTest {
                         .get().to("direct:hello");
 
                 rest("/say/bye")
-                        .get().consumes("application/json").to("direct:bye").endRest()
+                        .get().consumes("application/json").route().to("direct:bye").endRest()
                         .post().to("mock:update");
 
                 from("direct:hello")
