@@ -30,8 +30,8 @@ public class NettyServerBootstrapConfiguration implements Cloneable {
     protected String host;
     protected int port;
     protected boolean broadcast;
-    protected long sendBufferSize = 65536;
-    protected long receiveBufferSize = 65536;
+    protected int sendBufferSize = 65536;
+    protected int receiveBufferSize = 65536;
     protected int receiveBufferSizePredictor;
     protected int bossCount = 1;
     protected int workerCount;
@@ -100,19 +100,19 @@ public class NettyServerBootstrapConfiguration implements Cloneable {
         this.broadcast = broadcast;
     }
 
-    public long getSendBufferSize() {
+    public int getSendBufferSize() {
         return sendBufferSize;
     }
 
-    public void setSendBufferSize(long sendBufferSize) {
+    public void setSendBufferSize(int sendBufferSize) {
         this.sendBufferSize = sendBufferSize;
     }
 
-    public long getReceiveBufferSize() {
+    public int getReceiveBufferSize() {
         return receiveBufferSize;
     }
 
-    public void setReceiveBufferSize(long receiveBufferSize) {
+    public void setReceiveBufferSize(int receiveBufferSize) {
         this.receiveBufferSize = receiveBufferSize;
     }
 

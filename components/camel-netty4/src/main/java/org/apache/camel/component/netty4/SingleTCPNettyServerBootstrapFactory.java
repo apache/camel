@@ -17,10 +17,8 @@
 package org.apache.camel.component.netty4;
 
 import java.net.InetSocketAddress;
-import java.util.Map;
 import java.util.concurrent.ThreadFactory;
 
-import io.netty.bootstrap.ChannelFactory;
 import io.netty.bootstrap.ServerBootstrap;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
@@ -32,6 +30,7 @@ import io.netty.channel.group.ChannelGroupFuture;
 import io.netty.channel.group.DefaultChannelGroup;
 import io.netty.channel.socket.nio.NioServerSocketChannel;
 import io.netty.util.concurrent.ImmediateEventExecutor;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.support.ServiceSupport;
 import org.slf4j.Logger;
@@ -175,7 +174,7 @@ public class SingleTCPNettyServerBootstrapFactory extends ServiceSupport impleme
 
         LOG.info("ServerBootstrap binding to {}:{}", configuration.getHost(), configuration.getPort());
         ChannelFuture channelFutrue = serverBootstrap.bind(new InetSocketAddress(configuration.getHost(), configuration.getPort()));
-        // TODO how can we make sure the server is bind rightly
+        channelFutrue.awaitUninterruptibly();
         channel = channelFutrue.channel();
         // to keep track of all channels in use
         allChannels.add(channel);

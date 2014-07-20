@@ -16,37 +16,27 @@
  */
 package org.apache.camel.component.netty4;
 
+
+import java.net.InetSocketAddress;
+import java.net.NetworkInterface;
+import java.util.concurrent.ThreadFactory;
+
+import io.netty.bootstrap.Bootstrap;
 import io.netty.channel.Channel;
+import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelInitializer;
+import io.netty.channel.ChannelOption;
 import io.netty.channel.EventLoopGroup;
 import io.netty.channel.group.ChannelGroup;
 import io.netty.channel.group.ChannelGroupFuture;
 import io.netty.channel.group.DefaultChannelGroup;
 import io.netty.channel.socket.DatagramChannel;
+import io.netty.channel.socket.nio.NioDatagramChannel;
 import io.netty.util.concurrent.ImmediateEventExecutor;
-
-import java.net.InetSocketAddress;
-import java.net.NetworkInterface;
-import java.util.Map;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadFactory;
-
 import org.apache.camel.CamelContext;
+import org.apache.camel.component.netty4.util.SubnetUtils;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
-import io.netty.bootstrap.ConnectionlessBootstrap;
-import io.netty.channel.Channel;
-import io.netty.channel.ChannelPipelineFactory;
-import io.netty.channel.FixedReceiveBufferSizePredictorFactory;
-import io.netty.channel.group.ChannelGroup;
-import io.netty.channel.group.ChannelGroupFuture;
-import io.netty.channel.group.DefaultChannelGroup;
-import io.netty.channel.socket.DatagramChannel;
-import io.netty.channel.socket.DatagramChannelFactory;
-import io.netty.channel.socket.nio.NioDatagramChannelFactory;
-import io.netty.channel.socket.nio.NioDatagramWorkerPool;
-import io.netty.channel.socket.nio.WorkerPool;
-import io.netty.handler.ipfilter.IpV4Subnet;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -63,8 +53,6 @@ public class SingleUDPNettyServerBootstrapFactory extends ServiceSupport impleme
     private ThreadFactory threadFactory;
     private NettyServerBootstrapConfiguration configuration;
     private ChannelInitializer<Channel> pipelineFactory;
-    private DatagramChannelFactory datagramChannelFactory;
-    private ConnectionlessBootstrap connectionlessBootstrap;
     private NetworkInterface multicastNetworkInterface;
     private DatagramChannel datagramChannel;
     private Channel channel;
@@ -128,45 +116,55 @@ public class SingleUDPNettyServerBootstrapFactory extends ServiceSupport impleme
     protected void startServerBootstrap() throws Exception {
         // create non-shared worker pool
         int count = configuration.getWorkerCount() > 0 ? configuration.getWorkerCount() : NettyHelper.DEFAULT_IO_THREADS;
-        workerPool = new NioDatagramWorkerPool(Executors.newCachedThreadPool(), count);
-
-        datagramChannelFactory = new NioDatagramChannelFactory(workerPool);
-
-        connectionlessBootstrap = new ConnectionlessBootstrap(datagramChannelFactory);
-        connectionlessBootstrap.setOption("child.keepAlive", configuration.isKeepAlive());
-        connectionlessBootstrap.setOption("child.tcpNoDelay", configuration.isTcpNoDelay());
-        connectionlessBootstrap.setOption("reuseAddress", configuration.isReuseAddress());
-        connectionlessBootstrap.setOption("child.reuseAddress", configuration.isReuseAddress());
-        connectionlessBootstrap.setOption("child.connectTimeoutMillis", configuration.getConnectTimeout());
-        connectionlessBootstrap.setOption("child.broadcast", configuration.isBroadcast());
-        connectionlessBootstrap.setOption("sendBufferSize", configuration.getSendBufferSize());
-        connectionlessBootstrap.setOption("receiveBufferSize", configuration.getReceiveBufferSize());
+        EventLoopGroup wg = configuration.getWorkerGroup();
+        if (wg == null) {
+            // create new pool which we should shutdown when stopping as its not shared
+            workerGroup = new NettyWorkerPoolBuilder()
+                    .withWorkerCount(configuration.getWorkerCount())
+                    .withName("NettyServerTCPWorker")
+                    .build();
+            wg = workerGroup;
+        }
+        
+        Bootstrap bootstrap = new Bootstrap();
+        bootstrap.group(wg).channel(NioDatagramChannel.class);
+        // We cannot set the child option here      
+        bootstrap.option(ChannelOption.SO_REUSEADDR, configuration.isReuseAddress());
+        bootstrap.option(ChannelOption.SO_SNDBUF, configuration.getSendBufferSize());
+        bootstrap.option(ChannelOption.SO_RCVBUF, configuration.getReceiveBufferSize());
+        bootstrap.option(ChannelOption.SO_BROADCAST, configuration.isBroadcast());
+        bootstrap.option(ChannelOption.CONNECT_TIMEOUT_MILLIS, configuration.getConnectTimeout());
+        
+        // TODO need to find the right setting of below option
         // only set this if user has specified
+        /*
         if (configuration.getReceiveBufferSizePredictor() > 0) {
-            connectionlessBootstrap.setOption("receiveBufferSizePredictorFactory",
+            bootstrap.setOption("receiveBufferSizePredictorFactory",
                     new FixedReceiveBufferSizePredictorFactory(configuration.getReceiveBufferSizePredictor()));
-        }
+        }*/
+        
         if (configuration.getBacklog() > 0) {
-            connectionlessBootstrap.setOption("backlog", configuration.getBacklog());
+            bootstrap.option(ChannelOption.SO_BACKLOG, configuration.getBacklog());
         }
 
-        // set any additional netty options
+        //TODO need to check the additional netty options
+        /*
         if (configuration.getOptions() != null) {
             for (Map.Entry<String, Object> entry : configuration.getOptions().entrySet()) {
                 connectionlessBootstrap.setOption(entry.getKey(), entry.getValue());
             }
-        }
+        }*/
 
-        LOG.debug("Created ConnectionlessBootstrap {} with options: {}", connectionlessBootstrap, connectionlessBootstrap.getOptions());
+        LOG.debug("Created ConnectionlessBootstrap {}", bootstrap);
 
         // set the pipeline factory, which creates the pipeline for each newly created channels
-        connectionlessBootstrap.setPipelineFactory(pipelineFactory);
+        bootstrap.handler(pipelineFactory);
 
         InetSocketAddress hostAddress = new InetSocketAddress(configuration.getHost(), configuration.getPort());
-        IpV4Subnet multicastSubnet = new IpV4Subnet(MULTICAST_SUBNET);
+        SubnetUtils multicastSubnet = new SubnetUtils(MULTICAST_SUBNET);
 
-        if (multicastSubnet.contains(configuration.getHost())) {
-            datagramChannel = (DatagramChannel)connectionlessBootstrap.bind(hostAddress);
+        if (multicastSubnet.getInfo().isInRange(configuration.getHost())) {
+            datagramChannel = (DatagramChannel)bootstrap.bind(hostAddress);
             String networkInterface = configuration.getNetworkInterface() == null ? LOOPBACK_INTERFACE : configuration.getNetworkInterface();
             multicastNetworkInterface = NetworkInterface.getByName(networkInterface);
             ObjectHelper.notNull(multicastNetworkInterface, "No network interface found for '" + networkInterface + "'.");
@@ -175,7 +173,9 @@ public class SingleUDPNettyServerBootstrapFactory extends ServiceSupport impleme
             allChannels.add(datagramChannel);
         } else {
             LOG.info("ConnectionlessBootstrap binding to {}:{}", configuration.getHost(), configuration.getPort());
-            channel = connectionlessBootstrap.bind(hostAddress);
+            ChannelFuture channelFuture = bootstrap.bind(hostAddress);
+            channelFuture.awaitUninterruptibly();
+            channel = channelFuture.channel();
             allChannels.add(channel);
         }
     }
@@ -188,15 +188,9 @@ public class SingleUDPNettyServerBootstrapFactory extends ServiceSupport impleme
         ChannelGroupFuture future = allChannels.close();
         future.awaitUninterruptibly();
 
-        // close server external resources
-        if (datagramChannelFactory != null) {
-            datagramChannelFactory.releaseExternalResources();
-            datagramChannelFactory = null;
-        }
-
         // and then shutdown the thread pools
         if (workerGroup != null) {
-            workerGroup.
+            workerGroup.shutdownGracefully();
             workerGroup = null;
         }
     }
