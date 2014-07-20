@@ -807,7 +807,7 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
      */
     protected void manageObject(Object me) throws Exception {
         getManagementStrategy().manageObject(me);
-        if (timerListenerManager != null && me instanceof TimerListener) {
+        if (me instanceof TimerListener) {
             TimerListener timer = (TimerListener) me;
             timerListenerManager.addTimerListener(timer);
         }
@@ -820,7 +820,7 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
      * @throws Exception is thrown if error unregistering the managed object
      */
     protected void unmanageObject(Object me) throws Exception {
-        if (timerListenerManager != null && me instanceof TimerListener) {
+        if (me instanceof TimerListener) {
             TimerListener timer = (TimerListener) me;
             timerListenerManager.removeTimerListener(timer);
         }

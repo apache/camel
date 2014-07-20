@@ -1993,40 +1993,48 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
      */
     protected void doStartOrResumeRoutes(Map<String, RouteService> routeServices, boolean checkClash,
                                          boolean startConsumer, boolean resumeConsumer, boolean addingRoutes) throws Exception {
-        // filter out already started routes
-        Map<String, RouteService> filtered = new LinkedHashMap<String, RouteService>();
-        for (Map.Entry<String, RouteService> entry : routeServices.entrySet()) {
-            boolean startable = false;
+        isStartingRoutes.set(true);
+        try {
+            // filter out already started routes
+            Map<String, RouteService> filtered = new LinkedHashMap<String, RouteService>();
+            for (Map.Entry<String, RouteService> entry : routeServices.entrySet()) {
+                boolean startable = false;
 
-            Consumer consumer = entry.getValue().getRoutes().iterator().next().getConsumer();
-            if (consumer instanceof SuspendableService) {
-                // consumer could be suspended, which is not reflected in the RouteService status
-                startable = ((SuspendableService) consumer).isSuspended();
+                Consumer consumer = entry.getValue().getRoutes().iterator().next().getConsumer();
+                if (consumer instanceof SuspendableService) {
+                    // consumer could be suspended, which is not reflected in the RouteService status
+                    startable = ((SuspendableService) consumer).isSuspended();
+                }
+
+                if (!startable && consumer instanceof StatefulService) {
+                    // consumer could be stopped, which is not reflected in the RouteService status
+                    startable = ((StatefulService) consumer).getStatus().isStartable();
+                } else if (!startable) {
+                    // no consumer so use state from route service
+                    startable = entry.getValue().getStatus().isStartable();
+                }
+
+                if (startable) {
+                    filtered.put(entry.getKey(), entry.getValue());
+                }
             }
 
-            if (!startable && consumer instanceof StatefulService) {
-                // consumer could be stopped, which is not reflected in the RouteService status
-                startable = ((StatefulService) consumer).getStatus().isStartable();
-            } else if (!startable) {
-                // no consumer so use state from route service
-                startable = entry.getValue().getStatus().isStartable();
+            if (!filtered.isEmpty()) {
+                // the context is now considered started (i.e. isStarted() == true))
+                // starting routes is done after, not during context startup
+                safelyStartRouteServices(checkClash, startConsumer, resumeConsumer, addingRoutes, filtered.values());
             }
 
-            if (startable) {
-                filtered.put(entry.getKey(), entry.getValue());
+            // we are finished starting routes, so remove flag before we emit the startup listeners below
+            isStartingRoutes.remove();
+
+            // now notify any startup aware listeners as all the routes etc has been started,
+            // allowing the listeners to do custom work after routes has been started
+            for (StartupListener startup : startupListeners) {
+                startup.onCamelContextStarted(this, isStarted());
             }
-        }
-
-        if (!filtered.isEmpty()) {
-            // the context is now considered started (i.e. isStarted() == true))
-            // starting routes is done after, not during context startup
-            safelyStartRouteServices(checkClash, startConsumer, resumeConsumer, addingRoutes, filtered.values());
-        }
-
-        // now notify any startup aware listeners as all the routes etc has been started,
-        // allowing the listeners to do custom work after routes has been started
-        for (StartupListener startup : startupListeners) {
-            startup.onCamelContextStarted(this, isStarted());
+        } finally {
+            isStartingRoutes.remove();
         }
     }
 
