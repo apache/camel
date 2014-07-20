@@ -400,6 +400,19 @@ public class BacklogDebuggerTest extends ManagementTestSupport {
         enabled = (Boolean) mbeanServer.getAttribute(on, "Enabled");
         assertEquals("Should be enabled", Boolean.TRUE, enabled);
 
+        // validate conditional breakpoint (mistake on purpose)
+        Object out = mbeanServer.invoke(on, "validateConditionalBreakpoint", new Object[]{"unknown", "${body contains 'Camel'"}, new String[]{"java.lang.String", "java.lang.String"});
+        assertEquals("No language could be found for: unknown", out);
+
+        // validate conditional breakpoint (mistake on purpose)
+        out = mbeanServer.invoke(on, "validateConditionalBreakpoint", new Object[]{"simple", "${body contains 'Camel'"}, new String[]{"java.lang.String", "java.lang.String"});
+        assertNotNull(out);
+        assertTrue(out.toString().startsWith("Invalid syntax ${body contains 'Camel'"));
+
+        // validate conditional breakpoint (is correct)
+        out = mbeanServer.invoke(on, "validateConditionalBreakpoint", new Object[]{"simple", "${body} contains 'Camel'"}, new String[]{"java.lang.String", "java.lang.String"});
+        assertNull(out);
+
         // add breakpoint at bar
         mbeanServer.invoke(on, "addConditionalBreakpoint", new Object[]{"bar", "simple", "${body} contains 'Camel'"}, new String[]{"java.lang.String", "java.lang.String", "java.lang.String"});
 
