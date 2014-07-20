@@ -80,9 +80,6 @@ public interface ManagedCamelContextMBean extends ManagedPerformanceCounterMBean
     @ManagedAttribute(description = "Tracing")
     void setTracing(Boolean tracing);
 
-    @ManagedAttribute(description = "Message History")
-    Boolean getMessageHistory();
-
     @ManagedAttribute(description = "Current number of inflight Exchanges")
     Integer getInflightExchanges();
 
