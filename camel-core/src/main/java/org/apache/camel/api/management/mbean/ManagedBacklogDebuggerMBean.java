@@ -128,4 +128,7 @@ public interface ManagedBacklogDebuggerMBean {
     @ManagedOperation(description = "Resets the debug counter")
     void resetDebugCounter();
 
+    @ManagedOperation(description = "Used for validating if a given predicate is valid or not")
+    String validateConditionalBreakpoint(String language, String predicate);
+
 }

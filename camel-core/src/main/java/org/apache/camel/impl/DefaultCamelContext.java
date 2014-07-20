@@ -1177,7 +1177,6 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
             }
         }
 
-        // no language resolved
         return answer;
     }
     
