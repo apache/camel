@@ -66,7 +66,7 @@ public class NettyUdpWithInOutUsingPlainSocketTest extends BaseNettyTest {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("netty:udp://127.0.0.1:{{port}}?textline=true&sync=true").process(new Processor() {
+                from("netty4:udp://127.0.0.1:{{port}}?textline=true&sync=true").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         String s = exchange.getIn().getBody(String.class);
                         LOG.debug("Server got: " + s);

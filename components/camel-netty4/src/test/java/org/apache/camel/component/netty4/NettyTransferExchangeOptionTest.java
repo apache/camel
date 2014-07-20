@@ -45,7 +45,7 @@ public class NettyTransferExchangeOptionTest extends BaseNettyTest {
     }
 
     private Exchange sendExchange(boolean setException) throws Exception {
-        Endpoint endpoint = context.getEndpoint("netty:tcp://localhost:{{port}}?transferExchange=true");
+        Endpoint endpoint = context.getEndpoint("netty4:tcp://localhost:{{port}}?transferExchange=true");
         Exchange exchange = endpoint.createExchange();
 
         Message message = exchange.getIn();
@@ -97,7 +97,7 @@ public class NettyTransferExchangeOptionTest extends BaseNettyTest {
     protected RouteBuilder createRouteBuilder() {
         return new RouteBuilder() {
             public void configure() {
-                from("netty:tcp://localhost:{{port}}?transferExchange=true").process(new Processor() {
+                from("netty4:tcp://localhost:{{port}}?transferExchange=true").process(new Processor() {
                     public void process(Exchange e) throws InterruptedException {
                         assertNotNull(e.getIn().getBody());
                         assertNotNull(e.getIn().getHeaders());

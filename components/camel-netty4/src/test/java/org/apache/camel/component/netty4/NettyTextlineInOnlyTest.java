@@ -28,7 +28,7 @@ public class NettyTextlineInOnlyTest extends BaseNettyTest {
     public void testTextlineInOnlyDual() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World", "how are you?");
 
-        template.sendBody("netty:tcp://localhost:{{port}}?textline=true&sync=false", "Hello World\nhow are you?\n");
+        template.sendBody("netty4:tcp://localhost:{{port}}?textline=true&sync=false", "Hello World\nhow are you?\n");
 
         assertMockEndpointsSatisfied();
     }
@@ -37,7 +37,7 @@ public class NettyTextlineInOnlyTest extends BaseNettyTest {
     public void testTextlineInOnlyAutoAppend() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
 
-        template.sendBody("netty:tcp://localhost:{{port}}?textline=true&sync=false", "Hello World");
+        template.sendBody("netty4:tcp://localhost:{{port}}?textline=true&sync=false", "Hello World");
 
         assertMockEndpointsSatisfied();
     }
@@ -46,7 +46,7 @@ public class NettyTextlineInOnlyTest extends BaseNettyTest {
     public void testTextlineInOnly() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
 
-        template.sendBody("netty:tcp://localhost:{{port}}?textline=true&sync=false", "Hello World\n");
+        template.sendBody("netty4:tcp://localhost:{{port}}?textline=true&sync=false", "Hello World\n");
 
         assertMockEndpointsSatisfied();
     }
@@ -56,7 +56,7 @@ public class NettyTextlineInOnlyTest extends BaseNettyTest {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("netty:tcp://localhost:{{port}}?textline=true&sync=false")
+                from("netty4:tcp://localhost:{{port}}?textline=true&sync=false")
                     // body should be a String when using textline codec
                     .validate(body().isInstanceOf(String.class))
                     .to("mock:result");

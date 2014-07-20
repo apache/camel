@@ -55,7 +55,7 @@ public class NettySSLClientCertHeadersTest extends BaseNettyTest {
         context.addRoutes(new RouteBuilder() {
             public void configure() {
                 // needClientAuth=true so we can get the client certificate details
-                from("netty:tcp://localhost:{{port}}?sync=true&ssl=true&passphrase=changeit&keyStoreFile=#ksf&trustStoreFile=#tsf"
+                from("netty4:tcp://localhost:{{port}}?sync=true&ssl=true&passphrase=changeit&keyStoreFile=#ksf&trustStoreFile=#tsf"
                         + "&needClientAuth=true&sslClientCertHeaders=true")
                     .to("mock:input")
                     .transform().constant("Bye World");
@@ -64,7 +64,7 @@ public class NettySSLClientCertHeadersTest extends BaseNettyTest {
         context.start();
 
         String response = template.requestBody(
-                "netty:tcp://localhost:{{port}}?sync=true&ssl=true&passphrase=changeit&keyStoreFile=#ksf&trustStoreFile=#tsf",
+                "netty4:tcp://localhost:{{port}}?sync=true&ssl=true&passphrase=changeit&keyStoreFile=#ksf&trustStoreFile=#tsf",
                 "Hello World", String.class);
         assertEquals("Bye World", response);
 

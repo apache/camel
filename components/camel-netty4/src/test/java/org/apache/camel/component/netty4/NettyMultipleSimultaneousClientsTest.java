@@ -32,7 +32,7 @@ import org.junit.Test;
  */
 public class NettyMultipleSimultaneousClientsTest extends BaseNettyTest {
 
-    private String uri = "netty:tcp://localhost:{{port}}?sync=true&reuseAddress=true&synchronous=false";
+    private String uri = "netty4:tcp://localhost:{{port}}?sync=true&reuseAddress=true&synchronous=false";
     private int clientCount = 20;
     private CountDownLatch startLatch = new CountDownLatch(1);
     private CountDownLatch finishLatch = new CountDownLatch(clientCount);

@@ -91,7 +91,7 @@ public class Netty2978IssueTest extends BaseNettyTest {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("netty:tcp://localhost:{{port}}?sync=true")
+                from("netty4:tcp://localhost:{{port}}?sync=true")
                         .process(new Processor() {
                             public void process(final Exchange exchange) {
                                 String body = exchange.getIn().getBody(String.class);
@@ -107,7 +107,7 @@ public class Netty2978IssueTest extends BaseNettyTest {
         private final ProducerTemplate producerTemplate;
 
         public CamelClient(CamelContext camelContext) {
-            this.endpoint = camelContext.getEndpoint("netty:tcp://localhost:{{port}}?sync=true");
+            this.endpoint = camelContext.getEndpoint("netty4:tcp://localhost:{{port}}?sync=true");
             this.producerTemplate = camelContext.createProducerTemplate();
         }
 

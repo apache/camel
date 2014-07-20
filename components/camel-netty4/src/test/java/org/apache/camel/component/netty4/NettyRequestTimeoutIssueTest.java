@@ -31,9 +31,9 @@ public class NettyRequestTimeoutIssueTest extends CamelTestSupport {
             @Override
             public void configure() throws Exception {
                 from("direct:out")
-                        .to("netty:tcp://localhost:8080?requestTimeout=5000");
+                        .to("netty4:tcp://localhost:8080?requestTimeout=5000");
 
-                from("netty:tcp://localhost:8080")
+                from("netty4:tcp://localhost:8080")
                         .to("log:nettyCase?showAll=true&multiline=true");
             }
         };

@@ -32,8 +32,8 @@ public class NettyComponentConfigurationAndDocumentationTest extends CamelTestSu
 
     @Test
     public void testComponentConfiguration() throws Exception {
-        NettyComponent comp = context.getComponent("netty", NettyComponent.class);
-        EndpointConfiguration conf = comp.createConfiguration("netty:tcp://localhost:5150?sync=true"
+        NettyComponent comp = context.getComponent("netty4", NettyComponent.class);
+        EndpointConfiguration conf = comp.createConfiguration("netty4:tcp://localhost:5150?sync=true"
                 + "&maximumPoolSize=32&ssl=true&passphrase=#password");
 
         assertEquals("true", conf.getParameter("sync"));
@@ -50,7 +50,7 @@ public class NettyComponentConfigurationAndDocumentationTest extends CamelTestSu
     @Test
     public void testComponentDocumentation() throws Exception {
         CamelContext context = new DefaultCamelContext();
-        String html = context.getComponentDocumentation("netty");
+        String html = context.getComponentDocumentation("netty4");
         assertNotNull("Should have found some auto-generated HTML if on Java 7", html);
     }
 

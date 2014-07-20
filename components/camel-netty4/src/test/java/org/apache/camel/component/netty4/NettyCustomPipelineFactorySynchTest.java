@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.netty4;
 
-import java.nio.channels.Channels;
-
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelPipeline;
 import io.netty.handler.codec.DelimiterBasedFrameDecoder;
@@ -51,7 +49,7 @@ public class NettyCustomPipelineFactorySynchTest extends BaseNettyTest {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("netty:tcp://localhost:{{port}}?serverPipelineFactory=#spf&sync=true&textline=true")
+                from("netty4:tcp://localhost:{{port}}?serverPipelineFactory=#spf&sync=true&textline=true")
                         .process(new Processor() {
                             public void process(Exchange exchange) throws Exception {
                                 exchange.getOut().setBody("Forrest Gump: We was always taking long walks, and we was always looking for a guy named 'Charlie'");
@@ -64,7 +62,7 @@ public class NettyCustomPipelineFactorySynchTest extends BaseNettyTest {
     @Test
     public void testCustomClientPipelineFactory() throws Exception {
         String response = (String) template.requestBody(
-                "netty:tcp://localhost:{{port}}?clientPipelineFactory=#cpf&sync=true&textline=true",
+                "netty4:tcp://localhost:{{port}}?clientPipelineFactory=#cpf&sync=true&textline=true",
                 "Forest Gump describing Vietnam...");
 
         assertEquals("Forrest Gump: We was always taking long walks, and we was always looking for a guy named 'Charlie'", response);

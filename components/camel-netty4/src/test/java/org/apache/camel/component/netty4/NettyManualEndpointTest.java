@@ -40,7 +40,7 @@ public class NettyManualEndpointTest extends BaseNettyTest {
 
         assertMockEndpointsSatisfied();
 
-        assertEquals("netty:tcp://localhost:" + getPort(), endpoint.getEndpointUri());
+        assertEquals("netty4:tcp://localhost:" + getPort(), endpoint.getEndpointUri());
     }
 
     @Override
@@ -64,7 +64,7 @@ public class NettyManualEndpointTest extends BaseNettyTest {
                 // create and start component
                 NettyComponent component = new NettyComponent(getContext());
                 component.setConfiguration(nettyConfig);
-                getContext().addComponent("netty", component);
+                getContext().addComponent("netty4", component);
                 component.start();
 
                 // create and start endpoint, pass in null as endpoint uri

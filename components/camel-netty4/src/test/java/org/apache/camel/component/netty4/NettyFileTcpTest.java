@@ -38,7 +38,7 @@ public class NettyFileTcpTest extends BaseNettyTest {
         return new RouteBuilder() {
             public void configure() {
                 // lets setup a server
-                from("netty:tcp://localhost:{{port}}?sync=false&textline=true")
+                from("netty4:tcp://localhost:{{port}}?sync=false&textline=true")
                         .to("mock:results");
 
                 from("file:src/test/data?noop=true&fileName=message1.txt").

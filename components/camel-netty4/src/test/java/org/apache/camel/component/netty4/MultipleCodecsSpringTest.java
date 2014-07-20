@@ -28,7 +28,7 @@ public class MultipleCodecsSpringTest extends CamelSpringTestSupport {
 
     @Override
     protected AbstractXmlApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("/org/apache/camel/component/netty/multiple-codecs.xml");
+        return new ClassPathXmlApplicationContext("/org/apache/camel/component/netty4/multiple-codecs.xml");
     }
 
     @Test

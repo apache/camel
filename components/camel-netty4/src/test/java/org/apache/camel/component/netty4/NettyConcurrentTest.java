@@ -64,7 +64,7 @@ public class NettyConcurrentTest extends BaseNettyTest {
             final int index = i;
             Future<String> out = executor.submit(new Callable<String>() {
                 public String call() throws Exception {
-                    String reply = template.requestBody("netty:tcp://localhost:{{port}}", index, String.class);
+                    String reply = template.requestBody("netty4:tcp://localhost:{{port}}", index, String.class);
                     log.debug("Sent {} received {}", index, reply);
                     assertEquals("Bye " + index, reply);
                     return reply;
@@ -92,7 +92,7 @@ public class NettyConcurrentTest extends BaseNettyTest {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("netty:tcp://localhost:{{port}}?sync=true").process(new Processor() {
+                from("netty4:tcp://localhost:{{port}}?sync=true").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         String body = exchange.getIn().getBody(String.class);
                         exchange.getOut().setBody("Bye " + body);

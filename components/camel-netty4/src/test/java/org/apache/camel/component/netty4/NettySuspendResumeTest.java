@@ -25,13 +25,13 @@ public class NettySuspendResumeTest extends BaseNettyTest {
     public void testSuspendResume() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Camel", "Again");
 
-        String out = template.requestBody("netty:tcp://localhost:{{port}}?sync=true&disconnect=true", "Camel", String.class);
+        String out = template.requestBody("netty4:tcp://localhost:{{port}}?sync=true&disconnect=true", "Camel", String.class);
         assertEquals("Bye Camel", out);
 
         context.suspendRoute("foo");
 
         try {
-            template.requestBody("netty:tcp://localhost:{{port}}?sync=true&disconnect=true", "World", String.class);
+            template.requestBody("netty4:tcp://localhost:{{port}}?sync=true&disconnect=true", "World", String.class);
             fail("Should not allow connecting as its suspended");
         } catch (Exception e) {
             // expected
@@ -39,7 +39,7 @@ public class NettySuspendResumeTest extends BaseNettyTest {
 
         context.resumeRoute("foo");
 
-        out = template.requestBody("netty:tcp://localhost:{{port}}?sync=true&disconnect=true", "Again", String.class);
+        out = template.requestBody("netty4:tcp://localhost:{{port}}?sync=true&disconnect=true", "Again", String.class);
         assertEquals("Bye Again", out);
 
         assertMockEndpointsSatisfied();
@@ -50,7 +50,7 @@ public class NettySuspendResumeTest extends BaseNettyTest {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("netty:tcp://localhost:{{port}}?sync=true").routeId("foo")
+                from("netty4:tcp://localhost:{{port}}?sync=true").routeId("foo")
                     .to("log:result")
                     .to("mock:result")
                     .transform(body().prepend("Bye "));

@@ -53,7 +53,7 @@ public class NettyTextlineInOutSynchronousFalseTest extends BaseNettyTest {
                             beforeThreadName = Thread.currentThread().getName();
                         }
                     })
-                    .to("netty:tcp://localhost:{{port}}?textline=true&sync=true&synchronous=false")
+                    .to("netty4:tcp://localhost:{{port}}?textline=true&sync=true&synchronous=false")
                     .process(new Processor() {
                         public void process(Exchange exchange) throws Exception {
                             afterThreadName = Thread.currentThread().getName();
@@ -62,7 +62,7 @@ public class NettyTextlineInOutSynchronousFalseTest extends BaseNettyTest {
                     .to("log:after")
                     .to("mock:result");
 
-                from("netty:tcp://localhost:{{port}}?textline=true&sync=true&synchronous=false")
+                from("netty4:tcp://localhost:{{port}}?textline=true&sync=true&synchronous=false")
                     // body should be a String when using textline codec
                     .validate(body().isInstanceOf(String.class))
                     .transform(body().regexReplaceAll("Hello", "Bye"));

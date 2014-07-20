@@ -24,7 +24,7 @@ import org.junit.Test;
  */
 public class NettyReuseConnectionTest extends BaseNettyTest {
 
-    private String uri = "netty:tcp://localhost:{{port}}?sync=true&disconnect=false";
+    private String uri = "netty4:tcp://localhost:{{port}}?sync=true&disconnect=false";
 
     @Test
     public void testReuseConnection() throws Exception {

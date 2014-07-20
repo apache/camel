@@ -27,7 +27,7 @@ public class NettyOptionTest extends NettyTCPSyncTest {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("netty:tcp://localhost:{{port}}?sync=true&option.child.keepAlive=false")
+                from("netty4:tcp://localhost:{{port}}?sync=true&option.child.keepAlive=false")
                     .process(new Processor() {
                         public void process(Exchange exchange) throws Exception {
                             if (exchange.getIn().getBody() instanceof Poetry) {

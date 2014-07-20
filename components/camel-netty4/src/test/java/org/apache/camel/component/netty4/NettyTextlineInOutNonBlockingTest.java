@@ -56,7 +56,7 @@ public class NettyTextlineInOutNonBlockingTest extends BaseNettyTest {
                             beforeThreadName = Thread.currentThread().getName();
                         }
                     })
-                    .to("netty:tcp://localhost:{{port}}?textline=true&sync=true")
+                    .to("netty4:tcp://localhost:{{port}}?textline=true&sync=true")
                     .process(new Processor() {
                         public void process(Exchange exchange) throws Exception {
                             afterThreadName = Thread.currentThread().getName();
@@ -65,7 +65,7 @@ public class NettyTextlineInOutNonBlockingTest extends BaseNettyTest {
                     .to("log:after")
                     .to("mock:result");
 
-                from("netty:tcp://localhost:{{port}}?textline=true&sync=true")
+                from("netty4:tcp://localhost:{{port}}?textline=true&sync=true")
                     .process(new Processor() {
                         public void process(Exchange exchange) throws Exception {
                             beforeThreadName2 = Thread.currentThread().getName();

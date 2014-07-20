@@ -31,13 +31,13 @@ public class SpringNettyUseSharedWorkerThreadPoolTest extends CamelSpringTestSup
         getMockEndpoint("mock:result").expectedMessageCount(30);
 
         for (int i = 0; i < 10; i++) {
-            String reply = template.requestBody("netty:tcp://localhost:5021?textline=true&sync=true", "Hello World", String.class);
+            String reply = template.requestBody("netty4:tcp://localhost:5021?textline=true&sync=true", "Hello World", String.class);
             assertEquals("Hello World", reply);
 
-            reply = template.requestBody("netty:tcp://localhost:5022?textline=true&sync=true", "Hello Camel", String.class);
+            reply = template.requestBody("netty4:tcp://localhost:5022?textline=true&sync=true", "Hello Camel", String.class);
             assertEquals("Hello Camel", reply);
 
-            reply = template.requestBody("netty:tcp://localhost:5023?textline=true&sync=true", "Hello Claus", String.class);
+            reply = template.requestBody("netty4:tcp://localhost:5023?textline=true&sync=true", "Hello Claus", String.class);
             assertEquals("Hello Claus", reply);
         }
 

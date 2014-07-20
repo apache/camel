@@ -77,9 +77,9 @@ public class MultipleCodecsTest extends BaseNettyTest {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 // START SNIPPET: routes
-                from("direct:multiple-codec").to("netty:tcp://localhost:{{port}}?encoders=#encoders&sync=false");
+                from("direct:multiple-codec").to("netty4:tcp://localhost:{{port}}?encoders=#encoders&sync=false");
                 
-                from("netty:tcp://localhost:{{port}}?decoders=#length-decoder,#string-decoder&sync=false").to("mock:multiple-codec");
+                from("netty4:tcp://localhost:{{port}}?decoders=#length-decoder,#string-decoder&sync=false").to("mock:multiple-codec");
                 // START SNIPPET: routes
             }
         };

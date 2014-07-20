@@ -28,7 +28,7 @@ public class NettyInOutCloseChannelWhenCompleteTest extends BaseNettyTest {
 
     @Test
     public void testCloseSessionWhenComplete() throws Exception {
-        Object out = template.requestBody("netty:tcp://localhost:{{port}}?sync=true", "Claus");
+        Object out = template.requestBody("netty4:tcp://localhost:{{port}}?sync=true", "Claus");
         assertEquals("Bye Claus", out);
     }
 
@@ -36,7 +36,7 @@ public class NettyInOutCloseChannelWhenCompleteTest extends BaseNettyTest {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("netty:tcp://localhost:{{port}}?sync=true").process(new Processor() {
+                from("netty4:tcp://localhost:{{port}}?sync=true").process(new Processor() {
                     public void process(Exchange exchange) throws Exception {
                         String body = exchange.getIn().getBody(String.class);
                         exchange.getOut().setBody("Bye " + body);

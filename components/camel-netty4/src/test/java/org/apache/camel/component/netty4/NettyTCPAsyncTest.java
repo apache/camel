@@ -55,7 +55,7 @@ public class NettyTCPAsyncTest extends BaseNettyTest {
     public void testTCPInOnlyWithNettyConsumer() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:result");
         mock.expectedMessageCount(1);
-        sendFile("netty:tcp://localhost:{{port}}?sync=false");
+        sendFile("netty4:tcp://localhost:{{port}}?sync=false");
         
         mock.assertIsSatisfied();
     }
@@ -65,7 +65,7 @@ public class NettyTCPAsyncTest extends BaseNettyTest {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("netty:tcp://localhost:{{port}}?sync=false")
+                from("netty4:tcp://localhost:{{port}}?sync=false")
                     .to("log:result")
                     .to("mock:result");                
             }

@@ -28,7 +28,7 @@ public class NettyTextlineInOnlyNullDelimiterTest extends BaseNettyTest {
     public void testTextlineInOnlyNull() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello World");
 
-        template.sendBody("netty:tcp://localhost:{{port}}?textline=true&delimiter=NULL&sync=false", "Hello World\u0000");
+        template.sendBody("netty4:tcp://localhost:{{port}}?textline=true&delimiter=NULL&sync=false", "Hello World\u0000");
 
         assertMockEndpointsSatisfied();
     }
@@ -38,7 +38,7 @@ public class NettyTextlineInOnlyNullDelimiterTest extends BaseNettyTest {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("netty:tcp://localhost:{{port}}?textline=true&delimiter=NULL&sync=false")
+                from("netty4:tcp://localhost:{{port}}?textline=true&delimiter=NULL&sync=false")
                     // body should be a String when using textline codec
                     .validate(body().isInstanceOf(String.class))
                     .to("mock:result");

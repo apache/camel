@@ -71,7 +71,7 @@ public class NettyUDPMulticastAsyncTest extends BaseNettyTest {
         mock.message(0).body().startsWith("Song Of A Dream".getBytes());
 
         // any IP in the range of 224.0.0.0 through 239.255.255.255 does the job
-        sendFile("netty:udp://224.1.2.3:{{port}}?sync=false");
+        sendFile("netty4:udp://224.1.2.3:{{port}}?sync=false");
 
         mock.assertIsSatisfied();
     }
@@ -81,7 +81,7 @@ public class NettyUDPMulticastAsyncTest extends BaseNettyTest {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("netty:udp://224.1.2.3:{{port}}?sync=false&networkInterface=en0")
+                from("netty4:udp://224.1.2.3:{{port}}?sync=false&networkInterface=en0")
                     .to("mock:result")
                     .to("log:Message"); 
             }

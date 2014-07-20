@@ -73,7 +73,7 @@ public class NettySSLContextParametersTest extends BaseNettyTest {
 
         context.addRoutes(new RouteBuilder() {
             public void configure() {
-                from("netty:tcp://localhost:{{port}}?sync=true&ssl=true&sslContextParameters=#sslContextParameters")
+                from("netty4:tcp://localhost:{{port}}?sync=true&ssl=true&sslContextParameters=#sslContextParameters")
                     .process(new Processor() {
                         public void process(Exchange exchange) throws Exception {
                             exchange.getOut().setBody("When You Go Home, Tell Them Of Us And Say, For Your Tomorrow, We Gave Our Today.");                           
@@ -84,7 +84,7 @@ public class NettySSLContextParametersTest extends BaseNettyTest {
         context.start();
 
         String response = template.requestBody(
-                "netty:tcp://localhost:{{port}}?sync=true&ssl=true&sslContextParameters=#sslContextParameters",
+                "netty4:tcp://localhost:{{port}}?sync=true&ssl=true&sslContextParameters=#sslContextParameters",
                 "Epitaph in Kohima, India marking the WWII Battle of Kohima and Imphal, Burma Campaign - Attributed to John Maxwell Edmonds", String.class);
         assertEquals("When You Go Home, Tell Them Of Us And Say, For Your Tomorrow, We Gave Our Today.", response);
     }

@@ -18,6 +18,7 @@ package org.apache.camel.component.netty4;
 
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
+import io.netty.buffer.PooledByteBufAllocator;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Before;
@@ -38,7 +39,7 @@ public class NettyConverterTest extends CamelTestSupport {
     @Before
     public void startUp() {
         byte[] bytes = PAYLOAD.getBytes();
-        buf = ByteBufAllocator.DEFAULT.buffer(bytes.length);
+        buf = PooledByteBufAllocator.DEFAULT.buffer(bytes.length);
         buf.writeBytes(bytes);
     }
 

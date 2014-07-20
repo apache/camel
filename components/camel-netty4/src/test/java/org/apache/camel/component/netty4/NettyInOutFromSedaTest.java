@@ -44,11 +44,11 @@ public class NettyInOutFromSedaTest extends BaseNettyTest {
             public void configure() throws Exception {
                 from("seda:start")
                     .log("before ${body}")
-                    .to("netty:tcp://localhost:{{port}}?textline=true&sync=true")
+                    .to("netty4:tcp://localhost:{{port}}?textline=true&sync=true")
                     .log("after ${body}")
                     .to("mock:result");
 
-                from("netty:tcp://localhost:{{port}}?textline=true&sync=true")
+                from("netty4:tcp://localhost:{{port}}?textline=true&sync=true")
                     .transform(body().prepend("Bye "));
             }
         };

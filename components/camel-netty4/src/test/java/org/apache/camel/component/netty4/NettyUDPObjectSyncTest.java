@@ -26,7 +26,7 @@ public class NettyUDPObjectSyncTest extends BaseNettyTest {
     @Test
     public void testUDPObjectInOutWithNettyConsumer() throws Exception {
         Poetry poetry = new Poetry();
-        Poetry response = template.requestBody("netty:udp://localhost:{{port}}?sync=true", poetry, Poetry.class);
+        Poetry response = template.requestBody("netty4:udp://localhost:{{port}}?sync=true", poetry, Poetry.class);
         assertEquals("Dr. Sarojini Naidu", response.getPoet());
     }
     
@@ -35,7 +35,7 @@ public class NettyUDPObjectSyncTest extends BaseNettyTest {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {                
-                from("netty:udp://localhost:{{port}}?sync=true")
+                from("netty4:udp://localhost:{{port}}?sync=true")
                     .process(new Processor() {
                         public void process(Exchange exchange) throws Exception {
                             Poetry poetry = (Poetry) exchange.getIn().getBody();

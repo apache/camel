@@ -168,7 +168,7 @@ public class SingleTCPNettyServerBootstrapFactory extends ServiceSupport impleme
         }*/
 
         // set the pipeline factory, which creates the pipeline for each newly created channels
-        serverBootstrap.handler(pipelineFactory);
+        serverBootstrap.childHandler(pipelineFactory);
 
         LOG.debug("Created ServerBootstrap {}", serverBootstrap);
 

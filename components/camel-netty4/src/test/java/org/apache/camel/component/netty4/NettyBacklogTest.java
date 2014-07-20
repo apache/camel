@@ -27,7 +27,7 @@ public class NettyBacklogTest extends NettyTCPSyncTest {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("netty:tcp://localhost:{{port}}?sync=true&backlog=500")
+                from("netty4:tcp://localhost:{{port}}?sync=true&backlog=500")
                     .process(new Processor() {
                         public void process(Exchange exchange) throws Exception {
                             if (exchange.getIn().getBody() instanceof Poetry) {

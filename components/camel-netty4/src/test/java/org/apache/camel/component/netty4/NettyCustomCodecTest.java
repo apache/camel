@@ -23,7 +23,7 @@ import org.junit.Test;
 
 public class NettyCustomCodecTest extends BaseNettyTest {
 
-    private String uri = "netty:tcp://localhost:{{port}}?disconnect=true&sync=false"
+    private String uri = "netty4:tcp://localhost:{{port}}?disconnect=true&sync=false"
         + "&allowDefaultCodec=false&decoders=#myCustomDecoder,#myCustomDecoder2&encoder=#myCustomEncoder";
 
     // use reaadble bytes

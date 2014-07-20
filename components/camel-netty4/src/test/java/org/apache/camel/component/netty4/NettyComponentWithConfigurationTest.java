@@ -26,15 +26,15 @@ public class NettyComponentWithConfigurationTest extends CamelTestSupport {
 
     @Test
     public void testNettyComponentWithConfiguration() throws Exception {
-        NettyComponent comp = context.getComponent("netty", NettyComponent.class);
+        NettyComponent comp = context.getComponent("netty4", NettyComponent.class);
 
         NettyConfiguration cfg = new NettyConfiguration();
 
         comp.setConfiguration(cfg);
         assertSame(cfg, comp.getConfiguration());
 
-        NettyEndpoint e1 = (NettyEndpoint) comp.createEndpoint("netty://tcp://localhost:4455");
-        NettyEndpoint e2 = (NettyEndpoint) comp.createEndpoint("netty://tcp://localhost:5566?sync=false&needClientAuth=true");
+        NettyEndpoint e1 = (NettyEndpoint) comp.createEndpoint("netty4://tcp://localhost:4455");
+        NettyEndpoint e2 = (NettyEndpoint) comp.createEndpoint("netty4://tcp://localhost:5566?sync=false&needClientAuth=true");
 
         // should not be same
         assertNotSame(e1, e2);

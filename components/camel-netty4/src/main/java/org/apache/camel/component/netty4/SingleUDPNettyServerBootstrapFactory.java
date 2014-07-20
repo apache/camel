@@ -115,7 +115,6 @@ public class SingleUDPNettyServerBootstrapFactory extends ServiceSupport impleme
 
     protected void startServerBootstrap() throws Exception {
         // create non-shared worker pool
-        int count = configuration.getWorkerCount() > 0 ? configuration.getWorkerCount() : NettyHelper.DEFAULT_IO_THREADS;
         EventLoopGroup wg = configuration.getWorkerGroup();
         if (wg == null) {
             // create new pool which we should shutdown when stopping as its not shared

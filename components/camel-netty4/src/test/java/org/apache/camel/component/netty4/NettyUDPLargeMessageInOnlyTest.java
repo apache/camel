@@ -36,7 +36,7 @@ public class NettyUDPLargeMessageInOnlyTest extends BaseNettyTest {
         String message = new String(msgBytes);
 
         getMockEndpoint("mock:result").expectedBodiesReceived(message);
-        template.sendBody("netty:udp://localhost:{{port}}?sync=false", message);
+        template.sendBody("netty4:udp://localhost:{{port}}?sync=false", message);
         assertMockEndpointsSatisfied();
     }
 
@@ -60,7 +60,7 @@ public class NettyUDPLargeMessageInOnlyTest extends BaseNettyTest {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("netty:udp://localhost:{{port}}?receiveBufferSizePredictor=2048&sync=false")
+                from("netty4:udp://localhost:{{port}}?receiveBufferSizePredictor=2048&sync=false")
                     .to("mock:result");
             }
         };

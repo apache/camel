@@ -27,14 +27,14 @@ public class NettyInOutWithForcedNoResponseTest extends BaseNettyTest {
 
     @Test
     public void testResponse() throws Exception {
-        Object out = template.requestBody("netty:tcp://localhost:{{port}}", "Copenhagen");
+        Object out = template.requestBody("netty4:tcp://localhost:{{port}}", "Copenhagen");
         assertEquals("Hello Claus", out);
     }
 
     @Test
     public void testNoResponse() throws Exception {
         try {
-            template.requestBody("netty:tcp://localhost:{{port}}", "London");
+            template.requestBody("netty4:tcp://localhost:{{port}}", "London");
             fail("Should throw an exception");
         } catch (RuntimeCamelException e) {
             assertTrue(e.getCause().getMessage().startsWith("No response"));
@@ -45,7 +45,7 @@ public class NettyInOutWithForcedNoResponseTest extends BaseNettyTest {
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             public void configure() throws Exception {
-                from("netty:tcp://localhost:{{port}}")
+                from("netty4:tcp://localhost:{{port}}")
                     .choice()
                         .when(body().isEqualTo("Copenhagen")).transform(constant("Hello Claus"))
                         .otherwise().transform(constant(null));
