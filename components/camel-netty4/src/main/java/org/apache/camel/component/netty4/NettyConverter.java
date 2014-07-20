@@ -51,7 +51,10 @@ public final class NettyConverter {
 
     @Converter
     public static byte[] toByteArray(ByteBuf buffer, Exchange exchange) {
-        return buffer.array();
+        byte[] bytes = new byte[buffer.readableBytes()];
+        int readerIndex = buffer.readerIndex();
+        buffer.getBytes(readerIndex, bytes);
+        return bytes;
     }
 
     @Converter
