@@ -368,8 +368,6 @@ public class NettyProducer extends DefaultAsyncProducer {
             Bootstrap connectionlessClientBootstrap = new Bootstrap();
             connectionlessClientBootstrap.channel(NioDatagramChannel.class);
             connectionlessClientBootstrap.group(getWorkerGroup());
-            connectionlessClientBootstrap.option(ChannelOption.SO_KEEPALIVE, configuration.isKeepAlive());
-            connectionlessClientBootstrap.option(ChannelOption.SO_REUSEADDR, configuration.isReuseAddress());
             connectionlessClientBootstrap.option(ChannelOption.CONNECT_TIMEOUT_MILLIS, configuration.getConnectTimeout());
             connectionlessClientBootstrap.option(ChannelOption.SO_BROADCAST, configuration.isBroadcast());
             connectionlessClientBootstrap.option(ChannelOption.SO_SNDBUF, configuration.getSendBufferSize());
