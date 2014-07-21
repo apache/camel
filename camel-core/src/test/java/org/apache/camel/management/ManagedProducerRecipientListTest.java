@@ -27,7 +27,7 @@ import org.apache.camel.builder.RouteBuilder;
 /**
  * @version
  */
-public class ManagedProducerTest extends ManagementTestSupport {
+public class ManagedProducerRecipientListTest extends ManagementTestSupport {
 
     public void testProducer() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
@@ -37,28 +37,13 @@ public class ManagedProducerTest extends ManagementTestSupport {
 
         // fire a message to get it running
         getMockEndpoint("mock:result").expectedMessageCount(1);
-        template.sendBody("direct:start", "Hello World");
+        template.sendBodyAndHeader("direct:start", "Hello World", "foo", "mock:result");
         assertMockEndpointsSatisfied();
 
         MBeanServer mbeanServer = getMBeanServer();
 
         Set<ObjectName> set = mbeanServer.queryNames(new ObjectName("*:type=producers,*"), null);
-        assertEquals(2, set.size());
-        Iterator<ObjectName> it = set.iterator();
-
-        for (int i = 0; i < 2; i++) {
-            ObjectName on = it.next();
-
-            boolean registered = mbeanServer.isRegistered(on);
-            assertEquals("Should be registered", true, registered);
-
-            String uri = (String) mbeanServer.getAttribute(on, "EndpointUri");
-            assertTrue(uri, uri.equals("log://foo") || uri.equals("mock://result"));
-
-            // should be started
-            String state = (String) mbeanServer.getAttribute(on, "State");
-            assertEquals("Should be started", ServiceStatus.Started.name(), state);
-        }
+        assertEquals(0, set.size());
     }
 
     @Override
@@ -66,7 +51,7 @@ public class ManagedProducerTest extends ManagementTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").routeId("foo").to("log:foo").to("mock:result");
+                from("direct:start").routeId("foo").recipientList(header("foo"));
             }
         };
     }

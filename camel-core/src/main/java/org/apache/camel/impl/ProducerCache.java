@@ -403,15 +403,9 @@ public class ProducerCache extends ServiceSupport {
             // create a new producer
             try {
                 answer = endpoint.createProducer();
-                if (getCamelContext().isStartingRoutes() && answer.isSingleton()) {
-                    // if we are currently starting a route, then add as service and enlist in JMX
-                    // - but do not enlist non-singletons in JMX
-                    // - note addService will also start the service
-                    getCamelContext().addService(answer);
-                } else {
-                    // must then start service so producer is ready to be used
-                    ServiceHelper.startService(answer);
-                }
+                // add as service which will also start the service
+                // (false => we and handling the lifecycle of the producer in this cache)
+                getCamelContext().addService(answer, false);
             } catch (Exception e) {
                 throw new FailedToCreateProducerException(endpoint, e);
             }

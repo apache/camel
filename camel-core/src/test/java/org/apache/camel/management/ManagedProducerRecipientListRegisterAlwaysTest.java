@@ -21,13 +21,22 @@ import java.util.Set;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.mock.MockEndpoint;
 
 /**
  * @version
  */
-public class ManagedProducerTest extends ManagementTestSupport {
+public class ManagedProducerRecipientListRegisterAlwaysTest extends ManagementTestSupport {
+
+    @Override
+    protected CamelContext createCamelContext() throws Exception {
+        CamelContext context = super.createCamelContext();
+        context.getManagementStrategy().getManagementAgent().setRegisterAlways(true);
+        return context;
+    }
 
     public void testProducer() throws Exception {
         // JMX tests dont work well on AIX CI servers (hangs them)
@@ -37,7 +46,7 @@ public class ManagedProducerTest extends ManagementTestSupport {
 
         // fire a message to get it running
         getMockEndpoint("mock:result").expectedMessageCount(1);
-        template.sendBody("direct:start", "Hello World");
+        template.sendBodyAndHeader("direct:start", "Hello World", "foo", "mock:result");
         assertMockEndpointsSatisfied();
 
         MBeanServer mbeanServer = getMBeanServer();
@@ -53,7 +62,7 @@ public class ManagedProducerTest extends ManagementTestSupport {
             assertEquals("Should be registered", true, registered);
 
             String uri = (String) mbeanServer.getAttribute(on, "EndpointUri");
-            assertTrue(uri, uri.equals("log://foo") || uri.equals("mock://result"));
+            assertTrue(uri, uri.equals("direct://start") || uri.equals("mock://result"));
 
             // should be started
             String state = (String) mbeanServer.getAttribute(on, "State");
@@ -66,7 +75,7 @@ public class ManagedProducerTest extends ManagementTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                from("direct:start").routeId("foo").to("log:foo").to("mock:result");
+                from("direct:start").routeId("foo").recipientList(header("foo"));
             }
         };
     }

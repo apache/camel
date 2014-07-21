@@ -954,7 +954,11 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     }
 
     public void addService(Object object) throws Exception {
-        doAddService(object, true);
+        addService(object, true);
+    }
+
+    public void addService(Object object, boolean closeOnShutdown) throws Exception {
+        doAddService(object, closeOnShutdown);
     }
 
     private void doAddService(Object object, boolean closeOnShutdown) throws Exception {
