@@ -41,6 +41,9 @@ public class RestConfigurationDefinition {
     private String component;
 
     @XmlAttribute
+    private String scheme;
+
+    @XmlAttribute
     private String host;
 
     @XmlAttribute
@@ -55,6 +58,14 @@ public class RestConfigurationDefinition {
 
     public void setComponent(String component) {
         this.component = component;
+    }
+
+    public String getScheme() {
+        return scheme;
+    }
+
+    public void setScheme(String scheme) {
+        this.scheme = scheme;
     }
 
     public String getHost() {
@@ -92,21 +103,41 @@ public class RestConfigurationDefinition {
         return this;
     }
 
+    /**
+     * To use a specific scheme such as http/https
+     */
+    public RestConfigurationDefinition scheme(String scheme) {
+        setScheme(scheme);
+        return this;
+    }
+
+    /**
+     * To define the host to use, such as 0.0.0.0 or localhost
+     */
     public RestConfigurationDefinition host(String host) {
         setHost(host);
         return this;
     }
 
+    /**
+     * To specify the port number to use for the REST service
+     */
     public RestConfigurationDefinition port(int port) {
         setPort("" + port);
         return this;
     }
 
+    /**
+     * To specify the port number to use for the REST service
+     */
     public RestConfigurationDefinition port(String port) {
         setPort(port);
         return this;
     }
 
+    /**
+     * For additional configuration options
+     */
     public RestConfigurationDefinition property(String key, String value) {
         RestPropertyDefinition prop = new RestPropertyDefinition();
         prop.setKey(key);
@@ -129,6 +160,9 @@ public class RestConfigurationDefinition {
         RestConfiguration answer = new RestConfiguration();
         if (component != null) {
             answer.setComponent(CamelContextHelper.parseText(context, component));
+        }
+        if (scheme != null) {
+            answer.setScheme(CamelContextHelper.parseText(context, scheme));
         }
         if (host != null) {
             answer.setHost(CamelContextHelper.parseText(context, host));

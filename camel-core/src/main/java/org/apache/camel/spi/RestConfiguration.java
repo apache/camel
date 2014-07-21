@@ -25,6 +25,7 @@ import java.util.Map;
 public class RestConfiguration {
 
     private String component;
+    private String scheme;
     private String host;
     private int port;
     private Map<String, Object> properties;
@@ -63,6 +64,24 @@ public class RestConfiguration {
      */
     public void setHost(String host) {
         this.host = host;
+    }
+
+    /**
+     * Gets the scheme to use by the REST consumer
+     *
+     * @return the scheme, or <tt>null</tt> to use default scheme
+     */
+    public String getScheme() {
+        return scheme;
+    }
+
+    /**
+     * Sets the scheme to use by the REST consumer
+     *
+     * @param scheme the scheme
+     */
+    public void setScheme(String scheme) {
+        this.scheme = scheme;
     }
 
     /**

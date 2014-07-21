@@ -475,23 +475,27 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
 
         path = FileUtil.stripLeadingSeparator(path);
 
-        int port = 0;
+        String scheme = "http";
         String host = "0.0.0.0";
+        int port = 0;
 
         // if no explicit port/host configured, then use port from rest configuration
         RestConfiguration config = getCamelContext().getRestConfiguration();
         if (config != null && (config.getComponent() == null || config.getComponent().equals("restlet"))) {
-            int num = config.getPort();
-            if (num > 0) {
-                port = num;
+            if (config.getScheme() != null) {
+                scheme = config.getScheme();
             }
             if (config.getHost() != null) {
                 host = config.getHost();
             }
+            int num = config.getPort();
+            if (num > 0) {
+                port = num;
+            }
         }
 
         // get the endpoint
-        String url = String.format("restlet:http://%s:%s/%s?restletMethod=%s", host, port, path, verb);
+        String url = String.format("restlet:%s://%s:%s/%s?restletMethod=%s", scheme, host, port, path, verb);
         RestletEndpoint endpoint = camelContext.getEndpoint(url, RestletEndpoint.class);
         setProperties(endpoint, parameters);
 
