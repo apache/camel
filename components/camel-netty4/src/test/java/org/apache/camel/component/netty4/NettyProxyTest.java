@@ -49,7 +49,7 @@ public class NettyProxyTest extends BaseNettyTest {
 
                 fromF("netty4:tcp://localhost:%s?sync=true&textline=true", port1)
                     .to("mock:before")
-                    .toF("netty:tcp://localhost:%s?sync=true&textline=true", port2)
+                    .toF("netty4:tcp://localhost:%s?sync=true&textline=true", port2)
                     .to("mock:after");
 
                 fromF("netty4:tcp://localhost:%s?sync=true&textline=true", port2)

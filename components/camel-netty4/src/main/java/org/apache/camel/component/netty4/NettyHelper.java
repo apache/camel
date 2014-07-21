@@ -21,7 +21,7 @@ import java.net.SocketAddress;
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
-
+import io.netty.channel.socket.DatagramPacket;
 import org.apache.camel.Exchange;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.slf4j.Logger;
@@ -91,14 +91,16 @@ public final class NettyHelper {
             if (log.isDebugEnabled()) {
                 log.debug("Channel: {} remote address: {} writing body: {}", new Object[]{channel, remoteAddress, body});
             }
-            //TODO need to check if we don't need to set the remoteAddress for the UDP channel
+            System.out.println("The remote address is " + remoteAddress);
+            // TODO Do we need to setup the remoteAddress this time
             //future = channel.write(body, remoteAddress);
-            future = channel.write(body);
+            future = channel.writeAndFlush(body);
         } else {
             if (log.isDebugEnabled()) {
                 log.debug("Channel: {} writing body: {}", new Object[]{channel, body});
             }
-            future = channel.write(body);
+            // In netty4 we need to call channel flush to send out the message 
+            future = channel.writeAndFlush(body);
         }
 
         if (listener != null) {

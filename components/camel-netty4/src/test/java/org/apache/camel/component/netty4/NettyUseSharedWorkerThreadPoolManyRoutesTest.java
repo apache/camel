@@ -55,8 +55,8 @@ public class NettyUseSharedWorkerThreadPoolManyRoutesTest extends BaseNettyTest 
         log.info("Created threads {}", delta);
         assertTrue("There should not be created so many threads: " + delta, delta < 50);
 
-        sharedBoosGroup.shutdownGracefully().sync().await();
-        sharedWorkerGroup.shutdownGracefully().sync().await();
+        sharedBoosGroup.shutdownGracefully().awaitUninterruptibly();
+        sharedWorkerGroup.shutdownGracefully().awaitUninterruptibly();
     }
 
     @Override

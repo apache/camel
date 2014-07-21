@@ -21,6 +21,7 @@ import java.util.List;
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
 import io.netty.buffer.EmptyByteBuf;
+import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.handler.codec.MessageToMessageDecoder;
@@ -28,7 +29,7 @@ import io.netty.handler.codec.MessageToMessageEncoder;
 
 public final class MyCustomCodec {
     
-    private static ByteBuf nullDelimiter = new EmptyByteBuf(ByteBufAllocator.DEFAULT);
+    private static ByteBuf nullDelimiter = Unpooled.wrappedBuffer(new byte[]{0});
     
     private MyCustomCodec() {
         // Helper class
@@ -57,8 +58,12 @@ public final class MyCustomCodec {
             } else {
                 // it may be empty, then return null
                 ByteBuf cb = (ByteBuf) msg;
-                if (cb.hasArray() && cb.isReadable()) {
-                    out.add(cb.array());
+                if (cb.isReadable()) {
+                    // ByteBuf may not expose array method for accessing the under layer bytes
+                    byte[] bytes = new byte[cb.readableBytes()];
+                    int readerIndex = cb.readerIndex();
+                    cb.getBytes(readerIndex, bytes);
+                    out.add(bytes);
                 } else {
                     out.add((Object)null);
                 }
