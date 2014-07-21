@@ -19,8 +19,10 @@ package org.apache.camel.maven;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
+import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -242,7 +244,13 @@ public class JavadocApiMethodGeneratorMojo extends AbstractApiMethodGeneratorMoj
         }
 
         private static String unescapeHtml(String htmlString) {
-            return StringEscapeUtils.unescapeHtml(htmlString).replaceAll(NON_BREAKING_SPACE, " ");
+            String result = StringEscapeUtils.unescapeHtml(htmlString).replaceAll(NON_BREAKING_SPACE, " ");
+            try {
+                result = URLDecoder.decode(result, "UTF-8");
+            } catch (UnsupportedEncodingException ignored) {
+
+            }
+            return result;
         }
 
         @Override
