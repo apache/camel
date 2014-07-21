@@ -17,10 +17,8 @@
 package org.apache.camel.component.netty4;
 
 import java.util.List;
-
 import io.netty.buffer.ByteBuf;
 import io.netty.buffer.ByteBufAllocator;
-import io.netty.buffer.EmptyByteBuf;
 import io.netty.buffer.Unpooled;
 import io.netty.channel.ChannelHandler;
 import io.netty.channel.ChannelHandlerContext;
@@ -49,43 +47,33 @@ public final class MyCustomCodec {
     }
 
     @ChannelHandler.Sharable
-    public static class BytesDecoder extends MessageToMessageDecoder<Object> {
+    public static class BytesDecoder extends MessageToMessageDecoder<ByteBuf> {
 
         @Override
-        protected void decode(ChannelHandlerContext ctx, Object msg, List<Object> out) throws Exception {
-            if (!(msg instanceof ByteBuf)) {
-                out.add(msg);
+        protected void decode(ChannelHandlerContext ctx, ByteBuf msg, List<Object> out) throws Exception {
+            // it may be empty, then return null
+            if (msg.isReadable()) {
+                // ByteBuf may not expose array method for accessing the under layer bytes
+                byte[] bytes = new byte[msg.readableBytes()];
+                int readerIndex = msg.readerIndex();
+                msg.getBytes(readerIndex, bytes);
+                out.add(bytes);
             } else {
-                // it may be empty, then return null
-                ByteBuf cb = (ByteBuf) msg;
-                if (cb.isReadable()) {
-                    // ByteBuf may not expose array method for accessing the under layer bytes
-                    byte[] bytes = new byte[cb.readableBytes()];
-                    int readerIndex = cb.readerIndex();
-                    cb.getBytes(readerIndex, bytes);
-                    out.add(bytes);
-                } else {
-                    out.add((Object)null);
-                }
+                out.add((byte[])null);
             }
-            
         }
 
     }
 
     @ChannelHandler.Sharable
-    public static class BytesEncoder extends MessageToMessageEncoder<Object> {
+    public static class BytesEncoder extends MessageToMessageEncoder<byte[]> {
 
         @Override
-        protected void encode(ChannelHandlerContext ctx, Object msg, List<Object> out) throws Exception {
-            if (msg instanceof byte[]) {
-                byte[] bytes = (byte[])msg;
-                ByteBuf buf = ByteBufAllocator.DEFAULT.buffer(bytes.length);
-                buf.writeBytes(bytes);
-                out.add(buf);
-            } else {
-                out.add(msg);
-            }
+        protected void encode(ChannelHandlerContext ctx, byte[] msg, List<Object> out) throws Exception {
+            byte[] bytes = (byte[])msg;
+            ByteBuf buf = ByteBufAllocator.DEFAULT.buffer(bytes.length);
+            buf.writeBytes(bytes);
+            out.add(buf);
         }
     }
 }
