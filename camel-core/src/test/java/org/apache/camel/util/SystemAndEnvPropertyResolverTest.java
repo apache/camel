@@ -18,15 +18,15 @@ package org.apache.camel.util;
 
 import junit.framework.TestCase;
 
-public class FilePathResolverTest extends TestCase {
+public class SystemAndEnvPropertyResolverTest extends TestCase {
 
-    public void testFilePathResolver() throws Exception {
-        assertEquals("/foo/bar", FilePathResolver.resolvePath("/foo/bar"));
+    public void testSystemAndEnvPropertyResolver() throws Exception {
+        assertEquals("/foo/bar", SystemAndEnvPropertyResolver.resolveString("/foo/bar"));
 
         String tmp = System.getProperty("java.io.tmpdir");
-        assertEquals(tmp + "foo", FilePathResolver.resolvePath("${java.io.tmpdir}foo"));
+        assertEquals(tmp + "foo", SystemAndEnvPropertyResolver.resolveString("${java.io.tmpdir}foo"));
 
         System.setProperty("beer", "Carlsberg");
-        assertEquals(tmp + "foo/Carlsberg", FilePathResolver.resolvePath("${java.io.tmpdir}foo/${beer}"));
+        assertEquals(tmp + "foo/Carlsberg", SystemAndEnvPropertyResolver.resolveString("${java.io.tmpdir}foo/${beer}"));
     }
 }
