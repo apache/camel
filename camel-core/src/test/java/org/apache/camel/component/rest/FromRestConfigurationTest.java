@@ -27,7 +27,10 @@ public class FromRestConfigurationTest extends FromRestGetTest {
         assertEquals("dummy-rest", context.getRestConfiguration().getComponent());
         assertEquals("localhost", context.getRestConfiguration().getHost());
         assertEquals(9090, context.getRestConfiguration().getPort());
-        assertEquals("bar", context.getRestConfiguration().getProperties().get("foo"));
+        assertEquals("bar", context.getRestConfiguration().getComponentProperties().get("foo"));
+        assertEquals("stuff", context.getRestConfiguration().getComponentProperties().get("other"));
+        assertEquals("200", context.getRestConfiguration().getEndpointProperties().get("size"));
+        assertEquals("1000", context.getRestConfiguration().getConsumerProperties().get("pollTimeout"));
     }
 
     @Override
@@ -35,7 +38,11 @@ public class FromRestConfigurationTest extends FromRestGetTest {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                restConfiguration().component("dummy-rest").host("localhost").port(9090).property("foo", "bar");
+                restConfiguration().component("dummy-rest").host("localhost").port(9090)
+                    .componentProperty("foo", "bar")
+                    .componentProperty("other", "stuff")
+                    .endpointProperty("size", "200")
+                    .consumerProperty("pollTimeout", "1000");
 
                 rest("/say/hello")
                         .get().to("direct:hello");

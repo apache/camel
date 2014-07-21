@@ -23,7 +23,7 @@ import java.util.Map;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
-import javax.xml.bind.annotation.XmlElementRef;
+import javax.xml.bind.annotation.XmlElement;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.CamelContext;
@@ -49,8 +49,14 @@ public class RestConfigurationDefinition {
     @XmlAttribute
     private String port;
 
-    @XmlElementRef
-    private List<RestPropertyDefinition> properties = new ArrayList<RestPropertyDefinition>();
+    @XmlElement(name = "componentProperty")
+    private List<RestPropertyDefinition> componentProperties = new ArrayList<RestPropertyDefinition>();
+
+    @XmlElement(name = "endpointProperty")
+    private List<RestPropertyDefinition> endpointProperties = new ArrayList<RestPropertyDefinition>();
+
+    @XmlElement(name = "consumerProperty")
+    private List<RestPropertyDefinition> consumerProperties = new ArrayList<RestPropertyDefinition>();
 
     public String getComponent() {
         return component;
@@ -84,12 +90,28 @@ public class RestConfigurationDefinition {
         this.port = port;
     }
 
-    public List<RestPropertyDefinition> getProperties() {
-        return properties;
+    public List<RestPropertyDefinition> getComponentProperties() {
+        return componentProperties;
     }
 
-    public void setProperties(List<RestPropertyDefinition> properties) {
-        this.properties = properties;
+    public void setComponentProperties(List<RestPropertyDefinition> componentProperties) {
+        this.componentProperties = componentProperties;
+    }
+
+    public List<RestPropertyDefinition> getEndpointProperties() {
+        return endpointProperties;
+    }
+
+    public void setEndpointProperties(List<RestPropertyDefinition> endpointProperties) {
+        this.endpointProperties = endpointProperties;
+    }
+
+    public List<RestPropertyDefinition> getConsumerProperties() {
+        return consumerProperties;
+    }
+
+    public void setConsumerProperties(List<RestPropertyDefinition> consumerProperties) {
+        this.consumerProperties = consumerProperties;
     }
 
     // Fluent API
@@ -136,13 +158,35 @@ public class RestConfigurationDefinition {
     }
 
     /**
-     * For additional configuration options
+     * For additional configuration options on component level
      */
-    public RestConfigurationDefinition property(String key, String value) {
+    public RestConfigurationDefinition componentProperty(String key, String value) {
         RestPropertyDefinition prop = new RestPropertyDefinition();
         prop.setKey(key);
         prop.setValue(value);
-        getProperties().add(prop);
+        getComponentProperties().add(prop);
+        return this;
+    }
+
+    /**
+     * For additional configuration options on endpoint level
+     */
+    public RestConfigurationDefinition endpointProperty(String key, String value) {
+        RestPropertyDefinition prop = new RestPropertyDefinition();
+        prop.setKey(key);
+        prop.setValue(value);
+        getEndpointProperties().add(prop);
+        return this;
+    }
+
+    /**
+     * For additional configuration options on consumer level
+     */
+    public RestConfigurationDefinition consumerProperty(String key, String value) {
+        RestPropertyDefinition prop = new RestPropertyDefinition();
+        prop.setKey(key);
+        prop.setValue(value);
+        getConsumerProperties().add(prop);
         return this;
     }
 
@@ -170,14 +214,32 @@ public class RestConfigurationDefinition {
         if (port != null) {
             answer.setPort(CamelContextHelper.parseInteger(context, port));
         }
-        if (!properties.isEmpty()) {
+        if (!componentProperties.isEmpty()) {
             Map<String, Object> props = new HashMap<String, Object>();
-            for (RestPropertyDefinition prop : properties) {
+            for (RestPropertyDefinition prop : componentProperties) {
                 String key = prop.getKey();
                 String value = CamelContextHelper.parseText(context, prop.getValue());
                 props.put(key, value);
             }
-            answer.setProperties(props);
+            answer.setComponentProperties(props);
+        }
+        if (!endpointProperties.isEmpty()) {
+            Map<String, Object> props = new HashMap<String, Object>();
+            for (RestPropertyDefinition prop : endpointProperties) {
+                String key = prop.getKey();
+                String value = CamelContextHelper.parseText(context, prop.getValue());
+                props.put(key, value);
+            }
+            answer.setEndpointProperties(props);
+        }
+        if (!consumerProperties.isEmpty()) {
+            Map<String, Object> props = new HashMap<String, Object>();
+            for (RestPropertyDefinition prop : consumerProperties) {
+                String key = prop.getKey();
+                String value = CamelContextHelper.parseText(context, prop.getValue());
+                props.put(key, value);
+            }
+            answer.setConsumerProperties(props);
         }
         return answer;
     }

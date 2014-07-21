@@ -28,7 +28,9 @@ public class RestConfiguration {
     private String scheme;
     private String host;
     private int port;
-    private Map<String, Object> properties;
+    private Map<String, Object> componentProperties;
+    private Map<String, Object> endpointProperties;
+    private Map<String, Object> consumerProperties;
 
     /**
      * Gets the name of the Camel component to use as the REST consumer
@@ -103,21 +105,56 @@ public class RestConfiguration {
     }
 
     /**
-     * Gets additional options to use to configure the REST consumer
+     * Gets additional options on component level
      *
      * @return additional options
      */
-    public Map<String, Object> getProperties() {
-        return properties;
+    public Map<String, Object> getComponentProperties() {
+        return componentProperties;
     }
 
     /**
-     * Sets additional options to use to configure the REST consumer
+     * Sets additional options on component level
      *
-     * @param properties the options
+     * @param componentProperties the options
      */
-    public void setProperties(Map<String, Object> properties) {
-        this.properties = properties;
+    public void setComponentProperties(Map<String, Object> componentProperties) {
+        this.componentProperties = componentProperties;
     }
 
+    /**
+     * Gets additional options on endpoint level
+     *
+     * @return additional options
+     */
+    public Map<String, Object> getEndpointProperties() {
+        return endpointProperties;
+    }
+
+    /**
+     * Sets additional options on endpoint level
+     *
+     * @param endpointProperties the options
+     */
+    public void setEndpointProperties(Map<String, Object> endpointProperties) {
+        this.endpointProperties = endpointProperties;
+    }
+
+    /**
+     * Gets additional options on consumer level
+     *
+     * @return additional options
+     */
+    public Map<String, Object> getConsumerProperties() {
+        return consumerProperties;
+    }
+
+    /**
+     * Sets additional options on consumer level
+     *
+     * @param consumerProperties the options
+     */
+    public void setConsumerProperties(Map<String, Object> consumerProperties) {
+        this.consumerProperties = consumerProperties;
+    }
 }

@@ -121,6 +121,16 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
     @Override
     protected void doStart() throws Exception {
         super.doStart();
+
+        // configure component options
+        RestConfiguration config = getCamelContext().getRestConfiguration();
+        if (config != null && (config.getComponent() == null || config.getComponent().equals("restle"))) {
+            // configure additional options on spark configuration
+            if (config.getComponentProperties() != null && !config.getComponentProperties().isEmpty()) {
+                setProperties(this, config.getComponentProperties());
+            }
+        }
+
         component.start();
     }
 
@@ -494,11 +504,33 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
             }
         }
 
+        Map<String, Object> map = new HashMap<String, Object>();
+        // build query string, and append any endpoint configuration properties
+        if (config != null && (config.getComponent() == null || config.getComponent().equals("restlet"))) {
+            // setup endpoint options
+            if (config.getEndpointProperties() != null && !config.getEndpointProperties().isEmpty()) {
+                map.putAll(config.getEndpointProperties());
+            }
+        }
+
+        String query = URISupport.createQueryString(map);
+
+        String url = "restlet:%s://%s:%s/%s?restletMethod=%s";
+        if (!query.isEmpty()) {
+            url = url + "?" + query;
+        }
+
         // get the endpoint
-        String url = String.format("restlet:%s://%s:%s/%s?restletMethod=%s", scheme, host, port, path, verb);
+        url = String.format(url, scheme, host, port, path, verb);
         RestletEndpoint endpoint = camelContext.getEndpoint(url, RestletEndpoint.class);
         setProperties(endpoint, parameters);
 
-        return endpoint.createConsumer(processor);
+        // configure consumer properties
+        Consumer consumer = endpoint.createConsumer(processor);
+        if (config != null && config.getConsumerProperties() != null && !config.getConsumerProperties().isEmpty()) {
+            setProperties(consumer, config.getConsumerProperties());
+        }
+
+        return consumer;
     }
 }

@@ -28,7 +28,10 @@
   <camelContext xmlns="http://camel.apache.org/schema/spring">
 
     <restConfiguration component="dummy-rest" host="localhost" port="9090">
-      <restProperty key="foo" value="bar"/>
+      <componentProperty key="foo" value="bar"/>
+      <componentProperty key="other" value="stuff"/>
+      <endpointProperty key="size" value="200"/>
+      <consumerProperty key="pollTimeout" value="1000"/>
     </restConfiguration>
 
     <rest uri="/say/hello">

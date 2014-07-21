@@ -32,7 +32,10 @@ public class FromRestConfigurationTest extends FromRestGetTest {
         assertEquals("dummy-rest", context.getRestConfiguration().getComponent());
         assertEquals("localhost", context.getRestConfiguration().getHost());
         assertEquals(9090, context.getRestConfiguration().getPort());
-        assertEquals("bar", context.getRestConfiguration().getProperties().get("foo"));
+        assertEquals("bar", context.getRestConfiguration().getComponentProperties().get("foo"));
+        assertEquals("stuff", context.getRestConfiguration().getComponentProperties().get("other"));
+        assertEquals("200", context.getRestConfiguration().getEndpointProperties().get("size"));
+        assertEquals("1000", context.getRestConfiguration().getConsumerProperties().get("pollTimeout"));
     }
 
 }

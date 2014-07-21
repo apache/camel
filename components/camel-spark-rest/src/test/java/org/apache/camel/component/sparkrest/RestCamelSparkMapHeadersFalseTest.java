@@ -16,9 +16,22 @@
  */
 package org.apache.camel.component.sparkrest;
 
+import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
+import org.junit.Test;
 
-public class RestCamelSparkAcceptTest extends CamelSparkAcceptTest {
+public class RestCamelSparkMapHeadersFalseTest extends BaseSparkTest {
+
+    @Test
+    public void testSparkMapHeadersFalse() throws Exception {
+        getMockEndpoint("mock:foo").expectedMessageCount(1);
+        getMockEndpoint("mock:foo").message(0).header(Exchange.HTTP_PATH).isNull();
+
+        String out2 = template.requestBodyAndHeader("http://0.0.0.0:" + getPort() + "/hello", null, "Accept", "application/json", String.class);
+        assertEquals("{ \"reply\": \"Bye World\" }", out2);
+
+        assertMockEndpointsSatisfied();
+    }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
