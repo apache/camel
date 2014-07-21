@@ -30,7 +30,7 @@ public class MySparkRouteBuilder extends RouteBuilder {
         restConfiguration().component("spark-rest");
 
         // use the rest DSL to define rest services, and use embedded routes
-        rest().uri("hello/:me")
+        rest("/hello/{me}")
             .get().consumes("text/plain")
                 .route()
                 .to("log:input")
