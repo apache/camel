@@ -122,7 +122,12 @@ public class SubnetUtils {
          * @return True if in range, false otherwise
          */
         public boolean isInRange(String address) {
-            return isInRange(toInteger(address));
+            Matcher matcher = ADDRESS_PATTERN.matcher(address);
+            if (matcher.matches()) {
+                return isInRange(toInteger(address));
+            } else {
+                return false;
+            }
         }
 
         private boolean isInRange(int address) {
