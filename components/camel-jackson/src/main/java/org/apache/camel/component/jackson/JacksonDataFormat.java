@@ -38,6 +38,7 @@ public class JacksonDataFormat extends ServiceSupport implements DataFormat {
     private Class<?> unmarshalType;
     private Class<?> jsonView;
     private String include;
+    private boolean allowJmsType;
 
     /**
      * Use the default Jackson {@link ObjectMapper} and {@link Map}
@@ -103,7 +104,18 @@ public class JacksonDataFormat extends ServiceSupport implements DataFormat {
     }
 
     public Object unmarshal(Exchange exchange, InputStream stream) throws Exception {
-        return this.objectMapper.readValue(stream, this.unmarshalType);
+
+        // is there a header with the unmarshal type?
+        Class<?> clazz = unmarshalType;
+        String type = exchange.getIn().getHeader(JackconConstants.UNMARSHAL_TYPE, String.class);
+        if (type == null && isAllowJmsType()) {
+            type = exchange.getIn().getHeader("JMSType", String.class);
+        }
+        if (type != null) {
+            clazz = exchange.getContext().getClassResolver().resolveMandatoryClass(type);
+        }
+
+        return this.objectMapper.readValue(stream, clazz);
     }
 
     // Properties
@@ -135,6 +147,19 @@ public class JacksonDataFormat extends ServiceSupport implements DataFormat {
 
     public void setInclude(String include) {
         this.include = include;
+    }
+
+    public boolean isAllowJmsType() {
+        return allowJmsType;
+    }
+
+    /**
+     * Allows jackson to use the <tt>JMSType</tt> header as an indicator what the classname is for unmarshaling json content to POJO
+     * <p/>
+     * By default this option is <tt>false</tt>.
+     */
+    public void setAllowJmsType(boolean allowJmsType) {
+        this.allowJmsType = allowJmsType;
     }
 
     @Override

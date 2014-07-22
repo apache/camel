@@ -48,6 +48,8 @@ public class JsonDataFormat extends DataFormatDefinition {
     private Class<?> jsonView;
     @XmlAttribute
     private String include;
+    @XmlAttribute
+    private Boolean allowJmsType;
 
     public JsonDataFormat() {
     }
@@ -104,6 +106,14 @@ public class JsonDataFormat extends DataFormatDefinition {
         this.include = include;
     }
 
+    public Boolean getAllowJmsType() {
+        return allowJmsType;
+    }
+
+    public void setAllowJmsType(Boolean allowJmsType) {
+        this.allowJmsType = allowJmsType;
+    }
+
     @Override
     protected DataFormat createDataFormat(RouteContext routeContext) {
         if (library == JsonLibrary.XStream) {
@@ -138,6 +148,9 @@ public class JsonDataFormat extends DataFormatDefinition {
         }
         if (include != null) {
             setProperty(camelContext, dataFormat, "include", include);
+        }
+        if (allowJmsType != null) {
+            setProperty(camelContext, dataFormat, "allowJmsType", allowJmsType);
         }
     }
 
