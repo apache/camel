@@ -46,6 +46,6 @@ public class SpringNettyUseSharedWorkerThreadPoolTest extends CamelSpringTestSup
 
     @Override
     protected AbstractApplicationContext createApplicationContext() {
-        return new ClassPathXmlApplicationContext("org/apache/camel/component/netty/SpringNettyUseSharedWorkerThreadPoolTest.xml");
+        return new ClassPathXmlApplicationContext("org/apache/camel/component/netty4/SpringNettyUseSharedWorkerThreadPoolTest.xml");
     }
 }

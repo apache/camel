@@ -71,7 +71,7 @@ public class NettyUseSharedWorkerThreadPoolManyRoutesTest extends BaseNettyTest 
 
                 for (int i = 0; i < 100; i++) {
                     from("netty4:tcp://localhost:" + getNextPort() + "?textline=true&sync=true&orderedThreadPoolExecutor=false"
-                            + "&bossPool=#sharedBoss&workerPool=#sharedWorker")
+                            + "&bossGroup=#sharedBoss&workerGroup=#sharedWorker")
                         .validate(body().isInstanceOf(String.class))
                         .to("log:result")
                         .to("mock:result")

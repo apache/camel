@@ -43,7 +43,7 @@
     </route>
 
     <route>
-      <from uri="netty:tcp://localhost:5023?textline=true&amp;sync=true&amp;workerPool=#sharedPool&amp;orderedThreadPoolExecutor=false"/>
+      <from uri="netty4:tcp://localhost:5023?textline=true&amp;sync=true&amp;workerGroup=#sharedPool&amp;orderedThreadPoolExecutor=false"/>
       <to uri="log:result"/>
       <to uri="mock:result"/>
     </route>

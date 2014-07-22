@@ -308,7 +308,7 @@ public class NettyServerBootstrapConfiguration implements Cloneable {
         return bossGroup;
     }
 
-    public void setBossPool(EventLoopGroup bossGroup) {
+    public void setBossGroup(EventLoopGroup bossGroup) {
         this.bossGroup = bossGroup;
     }
 
@@ -316,7 +316,7 @@ public class NettyServerBootstrapConfiguration implements Cloneable {
         return workerGroup;
     }
 
-    public void setWorkerPool(EventLoopGroup workerGroup) {
+    public void setWorkerGroup(EventLoopGroup workerGroup) {
         this.workerGroup = workerGroup;
     }
 
