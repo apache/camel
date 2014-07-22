@@ -42,10 +42,10 @@ public class VerbDefinition {
     private String consumes;
 
     @XmlAttribute
-    private String classType;
+    private String type;
 
     @XmlTransient
-    private Class<?> resolvedClassType;
+    private Class<?> classType;
 
     // used by XML DSL to either select a <to> or <route>
     // so we need to use the common type OptionalIdentifiedDefinition
@@ -87,20 +87,20 @@ public class VerbDefinition {
         this.consumes = consumes;
     }
 
-    public String getClassType() {
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public Class<?> getClassType() {
         return classType;
     }
 
-    public void setClassType(String classType) {
+    public void setClassType(Class<?> classType) {
         this.classType = classType;
-    }
-
-    public Class<?> getResolvedClassType() {
-        return resolvedClassType;
-    }
-
-    public void setResolvedClassType(Class<?> resolvedClassType) {
-        this.resolvedClassType = resolvedClassType;
     }
 
     public RestDefinition getRest() {

@@ -19,6 +19,7 @@ GetVerbDefinition
 HeadVerbDefinition
 PostVerbDefinition
 PutVerbDefinition
+RestBindingDefinition
 RestConfigurationDefinition
 RestDefinition
 RestPropertyDefinition

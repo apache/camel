@@ -52,7 +52,7 @@ public class RestRestletPostJsonJaxbPojoTest extends RestletTestSupport {
 
                 // use the rest DSL to define the rest services
                 rest("/users/")
-                    .post("new").as(UserJaxbPojo.class)
+                    .post("new").type(UserJaxbPojo.class)
                         .to("mock:input");
             }
         };

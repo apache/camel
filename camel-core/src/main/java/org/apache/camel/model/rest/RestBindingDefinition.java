@@ -30,6 +30,7 @@ import org.apache.camel.processor.binding.RestBindingProcessor;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.IntrospectionSupport;
+import org.apache.camel.util.ObjectHelper;
 
 @XmlRootElement(name = "restBinding")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -42,10 +43,10 @@ public class RestBindingDefinition extends NoOutputDefinition {
     private String xmlDataFormat;
 
     @XmlAttribute
-    private String classType;
+    private String type;
 
     @XmlTransient
-    private Class<?> resolvedClassType;
+    private Class<?> classType;
 
     @Override
     public String toString() {
@@ -57,10 +58,15 @@ public class RestBindingDefinition extends NoOutputDefinition {
         return "rest";
     }
 
-    // TODO: allow to configure if json/jaxb is mandatory, or optional
+    // TODO: allow to configure if json/xml only or auto detect (now)
 
     @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
+        // type must be set
+        if (ObjectHelper.isEmpty(type) && ObjectHelper.isEmpty(classType)) {
+            throw new IllegalArgumentException("Type must be configured on " + this);
+        }
+
         CamelContext context = routeContext.getCamelContext();
 
         // setup json data format
@@ -72,11 +78,11 @@ public class RestBindingDefinition extends NoOutputDefinition {
         if (json == null) {
             throw new IllegalArgumentException("DataFormat " + name + " not found.");
         }
-        if (resolvedClassType == null && classType != null) {
-            resolvedClassType = context.getClassResolver().resolveMandatoryClass(classType);
+        if (classType == null && type != null) {
+            classType = context.getClassResolver().resolveMandatoryClass(type);
         }
-        if (resolvedClassType != null) {
-            IntrospectionSupport.setProperty(context.getTypeConverter(), json, "unmarshalType", resolvedClassType);
+        if (classType != null) {
+            IntrospectionSupport.setProperty(context.getTypeConverter(), json, "unmarshalType", classType);
         }
         context.addService(json);
 
@@ -89,11 +95,11 @@ public class RestBindingDefinition extends NoOutputDefinition {
         if (jaxb == null) {
             throw new IllegalArgumentException("DataFormat " + name + " not found.");
         }
-        if (resolvedClassType == null && classType != null) {
-            resolvedClassType = context.getClassResolver().resolveMandatoryClass(classType);
+        if (classType == null && type != null) {
+            classType = context.getClassResolver().resolveMandatoryClass(type);
         }
-        if (resolvedClassType != null) {
-            JAXBContext jc = JAXBContext.newInstance(resolvedClassType);
+        if (classType != null) {
+            JAXBContext jc = JAXBContext.newInstance(classType);
             IntrospectionSupport.setProperty(context.getTypeConverter(), jaxb, "context", jc);
         }
         context.addService(jaxb);
@@ -101,20 +107,20 @@ public class RestBindingDefinition extends NoOutputDefinition {
         return new RestBindingProcessor(json, jaxb);
     }
 
-    public String getClassType() {
+    public String getType() {
+        return type;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+
+    public Class<?> getClassType() {
         return classType;
     }
 
-    public void setClassType(String classType) {
+    public void setClassType(Class<?> classType) {
         this.classType = classType;
-    }
-
-    public Class<?> getResolvedClassType() {
-        return resolvedClassType;
-    }
-
-    public void setResolvedClassType(Class<?> resolvedClassType) {
-        this.resolvedClassType = resolvedClassType;
     }
 
 }
