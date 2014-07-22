@@ -43,6 +43,8 @@ public abstract class XmlSignatureConfiguration implements Cloneable, CamelConte
 
     private Boolean clearHeaders = Boolean.TRUE;
 
+    private String schemaResourceUri;
+
     public XmlSignatureConfiguration() {
     }
 
@@ -159,6 +161,21 @@ public abstract class XmlSignatureConfiguration implements Cloneable, CamelConte
      */
     public void setClearHeaders(Boolean clearHeaders) {
         this.clearHeaders = clearHeaders;
+    }
+
+    public String getSchemaResourceUri() {
+        return schemaResourceUri;
+    }
+
+    /**
+     * Classpath to the XML Schema. Must be specified in the detached XML
+     * Signature case for determining the ID attributes, might be set in the
+     * enveloped and enveloping case. If set, then the XML document is validated
+     * with the specified XML schema. The schema resource URI can be overwritten
+     * by the header {@link XmlSignatureConstants#HEADER_SCHEMA_RESOURCE_URI}.
+     */
+    public void setSchemaResourceUri(String schemaResourceUri) {
+        this.schemaResourceUri = schemaResourceUri;
     }
 
 }

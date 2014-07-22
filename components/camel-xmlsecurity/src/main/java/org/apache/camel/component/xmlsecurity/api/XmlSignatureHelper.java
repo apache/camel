@@ -47,6 +47,7 @@ import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.TransformerFactoryConfigurationError;
 import javax.xml.transform.dom.DOMSource;
 import javax.xml.transform.stream.StreamResult;
+import javax.xml.validation.Schema;
 import javax.xml.xpath.XPath;
 import javax.xml.xpath.XPathExpression;
 import javax.xml.xpath.XPathExpressionException;
@@ -394,6 +395,11 @@ public final class XmlSignatureHelper {
     }
 
     public static DocumentBuilder newDocumentBuilder(Boolean disallowDoctypeDecl) throws ParserConfigurationException {
+        return newDocumentBuilder(disallowDoctypeDecl, null);
+    }
+
+    public static DocumentBuilder newDocumentBuilder(Boolean disallowDoctypeDecl, Schema schema)
+        throws ParserConfigurationException {
         DocumentBuilderFactory dbf = DocumentBuilderFactory.newInstance();
         dbf.setNamespaceAware(true);
         dbf.setValidating(false);
@@ -404,13 +410,16 @@ public final class XmlSignatureHelper {
         dbf.setFeature("http://apache.org/xml/features/disallow-doctype-decl", isDissalowDoctypeDecl);
         // avoid overflow attacks
         dbf.setFeature(XMLConstants.FEATURE_SECURE_PROCESSING, true);
+        if (schema != null) {
+            dbf.setSchema(schema);
+        }
 
         return dbf.newDocumentBuilder();
     }
 
     public static void transformToOutputStream(Node node, OutputStream os, boolean omitXmlDeclaration)
         throws TransformerFactoryConfigurationError, TransformerConfigurationException, TransformerException, IOException {
-        
+
         if (node.getNodeType() == Node.TEXT_NODE) {
             byte[] bytes = tranformTextNodeToByteArray(node);
             os.write(bytes);
@@ -421,7 +430,7 @@ public final class XmlSignatureHelper {
 
     public static void transformNonTextNodeToOutputStream(Node node, OutputStream os, boolean omitXmlDeclaration)
         throws TransformerFactoryConfigurationError, TransformerConfigurationException, TransformerException {
-        
+
         TransformerFactory tf = TransformerFactory.newInstance();
         Transformer trans = tf.newTransformer();
         if (omitXmlDeclaration) {

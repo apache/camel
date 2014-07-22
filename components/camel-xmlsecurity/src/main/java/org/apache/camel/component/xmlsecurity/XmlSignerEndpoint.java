@@ -19,6 +19,7 @@ package org.apache.camel.component.xmlsecurity;
 import java.util.List;
 
 import javax.xml.crypto.AlgorithmMethod;
+import javax.xml.crypto.dsig.spec.XPathFilterParameterSpec;
 
 import org.apache.camel.Processor;
 import org.apache.camel.component.xmlsecurity.api.KeyAccessor;
@@ -158,6 +159,22 @@ public class XmlSignerEndpoint extends XmlSignatureEndpoint {
 
     public void setProperties(XmlSignatureProperties properties) {
         getConfiguration().setProperties(properties);
+    }
+
+    public String getContentObjectId() {
+        return getConfiguration().getContentObjectId();
+    }
+
+    public void setContentObjectId(String contentObjectId) {
+        getConfiguration().setContentObjectId(contentObjectId);
+    }
+
+    public List<XPathFilterParameterSpec> getXpathToIdAttributes() {
+        return getConfiguration().getXpathToIdAttributes();
+    }
+
+    public void setXpathsToIdAttributes(List<XPathFilterParameterSpec> xpathsToIdAttributes) {
+        getConfiguration().setXpathsToIdAttributes(xpathsToIdAttributes);
     }
 
 }

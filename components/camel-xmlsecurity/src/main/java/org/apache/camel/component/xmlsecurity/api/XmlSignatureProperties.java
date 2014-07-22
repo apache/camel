@@ -27,7 +27,6 @@ import org.w3c.dom.Node;
 
 import org.apache.camel.Message;
 
-
 /**
  * You can provide further XML objects and references which will be added by the
  * XML signature generator to the XML signature.
@@ -59,8 +58,8 @@ public interface XmlSignatureProperties {
 
         /**
          * Returns the parent node of the signature element in the case of
-         * enveloped XML signature. <code>null</code> is returned in the case of
-         * enveloping XML signature.
+         * enveloped or detached XML signature. <code>null</code> is returned in
+         * the case of enveloping XML signature.
          * 
          * @return parent node or <code>null</code>
          */
@@ -91,6 +90,21 @@ public interface XmlSignatureProperties {
 
         /** Signature Id. Can be <code>null</code>. */
         String getSignatureId();
+
+        /**
+         * Reference URI which points to the content of the original XML
+         * document to be signed. For enveloped signature it is typically the
+         * empty string. For detached signature, it is an ID attribute value
+         * preceded by '#'. For enveloping signature, it is <code>null</code>.
+         */
+        String getContentReferenceUri();
+
+        /**
+         * Retruns the signature type.
+         * 
+         * @return signature type
+         */
+        SignatureType getSignatureType();
 
     }
 
