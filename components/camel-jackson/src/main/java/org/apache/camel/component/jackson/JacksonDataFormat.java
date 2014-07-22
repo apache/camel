@@ -21,22 +21,23 @@ import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
+import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.module.jaxb.JaxbAnnotationModule;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.spi.DataFormat;
-
+import org.apache.camel.support.ServiceSupport;
 
 /**
  * A <a href="http://camel.apache.org/data-format.html">data format</a> ({@link DataFormat})
  * using <a href="http://jackson.codehaus.org/">Jackson</a> to marshal to and from JSON.
  */
-public class JacksonDataFormat implements DataFormat {
+public class JacksonDataFormat extends ServiceSupport implements DataFormat {
 
     private final ObjectMapper objectMapper;
     private Class<?> unmarshalType;
     private Class<?> jsonView;
+    private String include;
 
     /**
      * Use the default Jackson {@link ObjectMapper} and {@link Map}
@@ -126,6 +127,27 @@ public class JacksonDataFormat implements DataFormat {
 
     public ObjectMapper getObjectMapper() {
         return this.objectMapper;
+    }
+
+    public String getInclude() {
+        return include;
+    }
+
+    public void setInclude(String include) {
+        this.include = include;
+    }
+
+    @Override
+    protected void doStart() throws Exception {
+        if (include != null) {
+            JsonInclude.Include inc = JsonInclude.Include.valueOf(include);
+            objectMapper.setSerializationInclusion(inc);
+        }
+    }
+
+    @Override
+    protected void doStop() throws Exception {
+        // noop
     }
 
 }

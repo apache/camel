@@ -359,9 +359,8 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
     }
 
     /**
-     * Uses the JSON data format
+     * Uses the Jackson JSON data format
      *
-     * @param type          the json type to use
      * @param unmarshalType unmarshal type for json jackson type
      * @param jsonView      the view type for json jackson type
      */
@@ -369,6 +368,21 @@ public class DataFormatClause<T extends ProcessorDefinition<?>> {
         JsonDataFormat json = new JsonDataFormat(JsonLibrary.Jackson);
         json.setUnmarshalType(unmarshalType);
         json.setJsonView(jsonView);
+        return dataFormat(json);
+    }
+
+    /**
+     * Uses the Jackson JSON data format
+     *
+     * @param unmarshalType unmarshal type for json jackson type
+     * @param jsonView      the view type for json jackson type
+     * @param include       include such as <tt>ALWAYS</tt>, <tt>NON_NULL</tt>, etc.
+     */
+    public T json(Class<?> unmarshalType, Class<?> jsonView, String include) {
+        JsonDataFormat json = new JsonDataFormat(JsonLibrary.Jackson);
+        json.setUnmarshalType(unmarshalType);
+        json.setJsonView(jsonView);
+        json.setInclude(include);
         return dataFormat(json);
     }
 

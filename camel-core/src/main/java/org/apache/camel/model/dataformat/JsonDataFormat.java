@@ -46,6 +46,8 @@ public class JsonDataFormat extends DataFormatDefinition {
     private Class<?> unmarshalType;
     @XmlAttribute
     private Class<?> jsonView;
+    @XmlAttribute
+    private String include;
 
     public JsonDataFormat() {
     }
@@ -94,6 +96,14 @@ public class JsonDataFormat extends DataFormatDefinition {
         this.jsonView = jsonView;
     }
 
+    public String getInclude() {
+        return include;
+    }
+
+    public void setInclude(String include) {
+        this.include = include;
+    }
+
     @Override
     protected DataFormat createDataFormat(RouteContext routeContext) {
         if (library == JsonLibrary.XStream) {
@@ -123,9 +133,11 @@ public class JsonDataFormat extends DataFormatDefinition {
         if (prettyPrint != null) {
             setProperty(camelContext, dataFormat, "prettyPrint", unmarshalType);
         }
-
         if (jsonView != null) {
             setProperty(camelContext, dataFormat, "jsonView", jsonView);
+        }
+        if (include != null) {
+            setProperty(camelContext, dataFormat, "include", include);
         }
     }
 
