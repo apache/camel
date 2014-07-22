@@ -131,6 +131,28 @@ public class RestDefinition {
         return this;
     }
 
+    public RestDefinition as(String classType) {
+        // add to last verb
+        if (getVerbs().isEmpty()) {
+            throw new IllegalArgumentException("Must add verb first, such as get/post/delete");
+        }
+
+        VerbDefinition verb = getVerbs().get(getVerbs().size() - 1);
+        verb.setClassType(classType);
+        return this;
+    }
+
+    public RestDefinition as(Class<?> classType) {
+        // add to last verb
+        if (getVerbs().isEmpty()) {
+            throw new IllegalArgumentException("Must add verb first, such as get/post/delete");
+        }
+
+        VerbDefinition verb = getVerbs().get(getVerbs().size() - 1);
+        verb.setResolvedClassType(classType);
+        return this;
+    }
+
     /**
      * Routes directly to the given endpoint.
      * <p/>
@@ -220,6 +242,14 @@ public class RestDefinition {
                 // to as output to this route
                 route = new RouteDefinition();
                 route.getOutputs().add(verb.getTo());
+            }
+
+            // add the binding
+            if (verb.getClassType() != null || verb.getResolvedClassType() != null) {
+                RestBindingDefinition binding = new RestBindingDefinition();
+                binding.setClassType(verb.getClassType());
+                binding.setResolvedClassType(verb.getResolvedClassType());
+                route.getOutputs().add(0, binding);
             }
 
             // the route should be from this rest endpoint
