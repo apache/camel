@@ -18,6 +18,8 @@ package org.apache.camel.component.zookeeper;
 
 import java.util.ArrayList;
 import java.util.List;
+import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriParams;
 
 import org.apache.camel.RuntimeCamelException;
 
@@ -28,19 +30,29 @@ import org.apache.camel.RuntimeCamelException;
  * {@link ZooKeeperComponent}. A copy of this component's configuration will be
  * injected into any {@link ZooKeeperEndpoint}s the component creates.
  */
+@UriParams
 public class ZooKeeperConfiguration implements Cloneable {
 
     private transient boolean changed;
 
+    @UriParam
     private int timeout = 5000;
+    @UriParam
     private long backoff = 5000;
     private List<String> servers;
+    @UriParam
     private String path;
+    @UriParam
     private boolean awaitExistence = true;
+    @UriParam
     private boolean repeat;
+    @UriParam
     private boolean listChildren;
+    @UriParam
     private boolean shouldCreate;
+    @UriParam
     private String createMode;
+    @UriParam
     private boolean sendEmptyMessageOnDelete = true;
 
     public void addZookeeperServer(String server) {
