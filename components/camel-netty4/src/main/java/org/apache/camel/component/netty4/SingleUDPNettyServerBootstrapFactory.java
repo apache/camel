@@ -163,7 +163,10 @@ public class SingleUDPNettyServerBootstrapFactory extends ServiceSupport impleme
         SubnetUtils multicastSubnet = new SubnetUtils(MULTICAST_SUBNET);
 
         if (multicastSubnet.getInfo().isInRange(configuration.getHost())) {
-            datagramChannel = (DatagramChannel)bootstrap.bind(hostAddress);
+            ChannelFuture channelFuture = bootstrap.bind(hostAddress);
+            channelFuture.awaitUninterruptibly();
+            channel = channelFuture.channel();
+            DatagramChannel datagramChannel = (DatagramChannel) channel;
             String networkInterface = configuration.getNetworkInterface() == null ? LOOPBACK_INTERFACE : configuration.getNetworkInterface();
             multicastNetworkInterface = NetworkInterface.getByName(networkInterface);
             ObjectHelper.notNull(multicastNetworkInterface, "No network interface found for '" + networkInterface + "'.");
