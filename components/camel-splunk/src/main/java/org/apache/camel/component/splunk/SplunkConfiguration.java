@@ -67,6 +67,12 @@ public class SplunkConfiguration {
     private String initEarliestTime;
     private SplunkConnectionFactory connectionFactory;
 
+    /**
+     * Streaming mode sends exchanges as they are received, rather than in a batch
+     */
+    @UriParam
+    private Boolean streaming;
+
     public String getInitEarliestTime() {
         return initEarliestTime;
     }
@@ -195,6 +201,26 @@ public class SplunkConfiguration {
         this.password = password;
     }
 
+    /**
+     * Returns streaming mode.
+     * <p>
+     * Streaming mode sends exchanges as they are received, rather than in a batch.
+     */
+    public boolean isStreaming() {
+        return streaming != null ? streaming : false;
+    }
+    
+    /**
+     * Sets streaming mode.
+     * <p>
+     * Streaming mode sends exchanges as they are received, rather than in a batch.
+     *  
+     * @param streaming
+     */
+    public void setStreaming(boolean streaming) {
+        this.streaming = streaming;
+    }
+    
     public int getConnectionTimeout() {
         return connectionTimeout;
     }
