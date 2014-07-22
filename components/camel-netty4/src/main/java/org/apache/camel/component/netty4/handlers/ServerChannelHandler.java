@@ -21,10 +21,10 @@ import java.net.SocketAddress;
 import io.netty.channel.ChannelFutureListener;
 import io.netty.channel.ChannelHandlerContext;
 import io.netty.channel.SimpleChannelInboundHandler;
-
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
+import org.apache.camel.component.netty4.NettyConstants;
 import org.apache.camel.component.netty4.NettyConsumer;
 import org.apache.camel.component.netty4.NettyHelper;
 import org.apache.camel.component.netty4.NettyPayloadHelper;
@@ -172,7 +172,7 @@ public class ServerChannelHandler extends SimpleChannelInboundHandler<Object> {
             if (consumer.getConfiguration().isTcp()) {
                 NettyHelper.writeBodyAsync(LOG, ctx.channel(), null, body, exchange, listener);
             } else {
-                NettyHelper.writeBodyAsync(LOG, ctx.channel(), ctx.channel().remoteAddress(), body, exchange, listener);
+                NettyHelper.writeBodyAsync(LOG, ctx.channel(), exchange.getProperty(NettyConstants.NETTY_REMOTE_ADDRESS, SocketAddress.class), body, exchange, listener);
             }
         }
     }

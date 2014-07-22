@@ -189,13 +189,16 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
         // add default encoders and decoders
         if (encoders.isEmpty() && decoders.isEmpty()) {
             if (allowDefaultCodec) {
+                if ("udp".equalsIgnoreCase(protocol)) {
+                    encoders.add(ChannelHandlerFactories.newDatagramPacketEncoder());
+                }
                 // are we textline or object?
                 if (isTextline()) {
                     Charset charset = getEncoding() != null ? Charset.forName(getEncoding()) : CharsetUtil.UTF_8;
-                    encoders.add(ChannelHandlerFactories.newStringEncoder(charset));
+                    encoders.add(ChannelHandlerFactories.newStringEncoder(charset, protocol));
                     ByteBuf[] delimiters = delimiter == TextLineDelimiter.LINE ? Delimiters.lineDelimiter() : Delimiters.nulDelimiter();
-                    decoders.add(ChannelHandlerFactories.newDelimiterBasedFrameDecoder(decoderMaxLineLength, delimiters));
-                    decoders.add(ChannelHandlerFactories.newStringDecoder(charset));
+                    decoders.add(ChannelHandlerFactories.newDelimiterBasedFrameDecoder(decoderMaxLineLength, delimiters, protocol));
+                    decoders.add(ChannelHandlerFactories.newStringDecoder(charset, protocol));
 
                     if (LOG.isDebugEnabled()) {
                         LOG.debug("Using textline encoders and decoders with charset: {}, delimiter: {} and decoderMaxLineLength: {}",
@@ -203,10 +206,13 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
                     }
                 } else {
                     // object serializable is then used
-                    encoders.add(ChannelHandlerFactories.newObjectEncoder());
-                    decoders.add(ChannelHandlerFactories.newObjectDecoder());
+                    encoders.add(ChannelHandlerFactories.newObjectEncoder(protocol));
+                    decoders.add(ChannelHandlerFactories.newObjectDecoder(protocol));
 
                     LOG.debug("Using object encoders and decoders");
+                }
+                if ("udp".equalsIgnoreCase(protocol)) {
+                    decoders.add(ChannelHandlerFactories.newDatagramPacketDecoder());
                 }
             } else {
                 LOG.debug("No encoders and decoders will be used");

@@ -35,7 +35,7 @@ public final class MyCustomCodec {
 
     public static ChannelHandlerFactory createMyCustomDecoder() {
         ByteBuf[] delimiters = new ByteBuf[]{nullDelimiter, nullDelimiter};
-        return ChannelHandlerFactories.newDelimiterBasedFrameDecoder(4096, delimiters);
+        return ChannelHandlerFactories.newDelimiterBasedFrameDecoder(4096, delimiters, "tcp");
     }
 
     public static ChannelHandler createMyCustomDecoder2() {

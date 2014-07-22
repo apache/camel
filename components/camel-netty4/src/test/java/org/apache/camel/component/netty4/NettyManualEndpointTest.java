@@ -55,10 +55,10 @@ public class NettyManualEndpointTest extends BaseNettyTest {
                 nettyConfig.setSync(false);
 
                 // need to add encoders and decoders manually
-                nettyConfig.setEncoder(ChannelHandlerFactories.newStringEncoder(CharsetUtil.UTF_8));
+                nettyConfig.setEncoder(ChannelHandlerFactories.newStringEncoder(CharsetUtil.UTF_8, "tcp"));
                 List<ChannelHandler> decoders = new ArrayList<ChannelHandler>();
-                decoders.add(ChannelHandlerFactories.newDelimiterBasedFrameDecoder(1000, Delimiters.lineDelimiter()));
-                decoders.add(ChannelHandlerFactories.newStringDecoder(CharsetUtil.UTF_8));
+                decoders.add(ChannelHandlerFactories.newDelimiterBasedFrameDecoder(1000, Delimiters.lineDelimiter(), "tcp"));
+                decoders.add(ChannelHandlerFactories.newStringDecoder(CharsetUtil.UTF_8, "tcp"));
                 nettyConfig.setDecoders(decoders);
 
                 // create and start component

@@ -228,9 +228,14 @@ public class NettyProducer extends DefaultAsyncProducer {
 
         // setup state as attachment on the channel, so we can access the state later when needed
         putState(channel, new NettyCamelState(producerCallback, exchange));
+        // here we need to setup the remote address information here
+        InetSocketAddress remoteAddress = null;
+        if (!isTcp()) {
+            remoteAddress = new InetSocketAddress(configuration.getHost(), configuration.getPort()); 
+        }
 
         // write body
-        NettyHelper.writeBodyAsync(LOG, channel, null, body, exchange, new ChannelFutureListener() {
+        NettyHelper.writeBodyAsync(LOG, channel, remoteAddress, body, exchange, new ChannelFutureListener() {
             public void operationComplete(ChannelFuture channelFuture) throws Exception {
                 LOG.trace("Operation complete {}", channelFuture);
                 if (!channelFuture.isSuccess()) {

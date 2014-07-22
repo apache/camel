@@ -27,6 +27,13 @@ import io.netty.handler.codec.serialization.ObjectDecoder;
 import io.netty.handler.codec.serialization.ObjectEncoder;
 import io.netty.handler.codec.string.StringDecoder;
 import io.netty.handler.codec.string.StringEncoder;
+import org.apache.camel.component.netty4.codec.DatagramPacketDecoder;
+import org.apache.camel.component.netty4.codec.DatagramPacketDelimiterDecoder;
+import org.apache.camel.component.netty4.codec.DatagramPacketEncoder;
+import org.apache.camel.component.netty4.codec.DatagramPacketObjectDecoder;
+import org.apache.camel.component.netty4.codec.DatagramPacketObjectEncoder;
+import org.apache.camel.component.netty4.codec.DatagramPacketStringDecoder;
+import org.apache.camel.component.netty4.codec.DatagramPacketStringEncoder;
 
 
 
@@ -38,34 +45,73 @@ public final class ChannelHandlerFactories {
     private ChannelHandlerFactories() {
     }
 
-    public static ChannelHandlerFactory newStringEncoder(Charset charset) {
-        return new ShareableChannelHandlerFactory(new StringEncoder(charset));
+    public static ChannelHandlerFactory newStringEncoder(Charset charset, String protocol) {
+        if ("udp".equalsIgnoreCase(protocol)) {
+            return new ShareableChannelHandlerFactory(new DatagramPacketStringEncoder(charset));
+        } else {
+            return new ShareableChannelHandlerFactory(new StringEncoder(charset));
+        }
     }
 
-    public static ChannelHandlerFactory newStringDecoder(Charset charset) {
-        return new ShareableChannelHandlerFactory(new StringDecoder(charset));
+    public static ChannelHandlerFactory newStringDecoder(Charset charset, String protocol) {
+        if ("udp".equalsIgnoreCase(protocol)) {
+            return new ShareableChannelHandlerFactory(new DatagramPacketStringDecoder(charset)); 
+        } else {
+            return new ShareableChannelHandlerFactory(new StringDecoder(charset));
+        }
     }
-
-    public static ChannelHandlerFactory newObjectDecoder() {
-        return new DefaultChannelHandlerFactory() {
-            @Override
-            public ChannelHandler newChannelHandler() {
-                return new ObjectDecoder(ClassResolvers.weakCachingResolver(null));
-            }
-        };
+    
+    
+    public static ChannelHandlerFactory newObjectDecoder(String protocol) {
+        if ("udp".equalsIgnoreCase(protocol)) {
+            return new DefaultChannelHandlerFactory() {
+                @Override
+                public ChannelHandler newChannelHandler() {
+                    return new DatagramPacketObjectDecoder(ClassResolvers.weakCachingResolver(null));
+                }
+            };
+        } else {
+            return new DefaultChannelHandlerFactory() {
+                @Override
+                public ChannelHandler newChannelHandler() {
+                    return new ObjectDecoder(ClassResolvers.weakCachingResolver(null));
+                }
+            };
+        }
     }
-
-    public static ChannelHandlerFactory newObjectEncoder() {
-        return new ShareableChannelHandlerFactory(new ObjectEncoder());
+    
+    public static ChannelHandlerFactory newObjectEncoder(String protocol) {
+        if ("udp".equals(protocol)) {
+            return new ShareableChannelHandlerFactory(new DatagramPacketObjectEncoder());
+        } else {
+            return new ShareableChannelHandlerFactory(new ObjectEncoder());
+        }
     }
-
-    public static ChannelHandlerFactory newDelimiterBasedFrameDecoder(final int maxFrameLength, final ByteBuf[] delimiters) {
-        return new DefaultChannelHandlerFactory() {
-            @Override
-            public ChannelHandler newChannelHandler() {
-                return new DelimiterBasedFrameDecoder(maxFrameLength, true, delimiters);
-            }
-        };
+   
+    public static ChannelHandlerFactory newDelimiterBasedFrameDecoder(final int maxFrameLength, final ByteBuf[] delimiters, String protocol) {
+        if ("udp".equals(protocol)) {
+            return new DefaultChannelHandlerFactory() {
+                @Override
+                public ChannelHandler newChannelHandler() {
+                    return new DatagramPacketDelimiterDecoder(maxFrameLength, delimiters);
+                }
+            };
+        } else {
+            return new DefaultChannelHandlerFactory() {
+                @Override
+                public ChannelHandler newChannelHandler() {
+                    return new DelimiterBasedFrameDecoder(maxFrameLength, true, delimiters);
+                }
+            };
+        }
+    }
+    
+    public static ChannelHandlerFactory newDatagramPacketDecoder() {
+        return new ShareableChannelHandlerFactory(new DatagramPacketDecoder());
+    }
+    
+    public static ChannelHandlerFactory newDatagramPacketEncoder() {
+        return new ShareableChannelHandlerFactory(new DatagramPacketEncoder());
     }
 
     public static ChannelHandlerFactory newLengthFieldBasedFrameDecoder(final int maxFrameLength, final int lengthFieldOffset,

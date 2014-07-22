@@ -16,12 +16,14 @@
  */
 package org.apache.camel.component.netty4;
 
+import java.net.InetSocketAddress;
 import java.net.SocketAddress;
 
 import io.netty.channel.Channel;
 import io.netty.channel.ChannelFuture;
 import io.netty.channel.ChannelFutureListener;
-import io.netty.channel.socket.DatagramPacket;
+import io.netty.channel.DefaultAddressedEnvelope;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.NoTypeConversionAvailableException;
 import org.slf4j.Logger;
@@ -91,10 +93,10 @@ public final class NettyHelper {
             if (log.isDebugEnabled()) {
                 log.debug("Channel: {} remote address: {} writing body: {}", new Object[]{channel, remoteAddress, body});
             }
-            System.out.println("The remote address is " + remoteAddress);
-            // TODO Do we need to setup the remoteAddress this time
-            //future = channel.write(body, remoteAddress);
-            future = channel.writeAndFlush(body);
+            // Need to create AddressedEnvelope to setup the address information here
+            DefaultAddressedEnvelope<Object, InetSocketAddress> ae =
+                new DefaultAddressedEnvelope<Object, InetSocketAddress>(body, (InetSocketAddress)remoteAddress);
+            future = channel.writeAndFlush(ae);
         } else {
             if (log.isDebugEnabled()) {
                 log.debug("Channel: {} writing body: {}", new Object[]{channel, body});
