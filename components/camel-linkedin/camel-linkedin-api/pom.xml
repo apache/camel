@@ -57,11 +57,6 @@
       <version>${cxf-version}</version>
     </dependency>
     <dependency>
-      <groupId>org.apache.cxf</groupId>
-      <artifactId>cxf-tools-wadlto-jaxrs</artifactId>
-      <version>${cxf-version}</version>
-    </dependency>
-    <dependency>
       <groupId>net.sourceforge.htmlunit</groupId>
       <artifactId>htmlunit</artifactId>
       <version>${htmlunit-version}</version>
@@ -99,6 +94,14 @@
       <artifactId>junit</artifactId>
       <scope>test</scope>
     </dependency>
+<!-- For debugging wadltojava
+    <dependency>
+      <groupId>org.apache.cxf</groupId>
+      <artifactId>cxf-tools-wadlto-jaxrs</artifactId>
+      <version>${cxf-version}</version>
+      <scope>test<scope>
+    </dependency>
+-->
   </dependencies>
 
   <build>
