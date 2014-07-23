@@ -26,12 +26,16 @@ import org.apache.camel.api.management.ManagedAttribute;
 import org.apache.camel.api.management.ManagedOperation;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.spi.UriEndpoint;
+import org.apache.camel.spi.UriParam;
 
 /**
  * <code>ZooKeeperEndpoint</code>
  */
 @ManagedResource(description = "ZooKeeper Endpoint")
+@UriEndpoint(scheme = "zookeeper", consumerClass = ZooKeeperConsumer.class)
 public class ZooKeeperEndpoint extends DefaultEndpoint {
+    @UriParam
     private ZooKeeperConfiguration configuration;
     private ZooKeeperConnectionManager connectionManager;
 
