@@ -37,6 +37,7 @@
         <camel.osgi.import.pkg>
             !org.apache.camel.component.atmosphere.websocket.*,
             javax.servlet*;version="2.5",
+            org.atmosphere.*;version="${atmosphere-version-range}",
             org.apache.catalina;resolution:=optional,
             org.apache.catalina.comet;resolution:=optional,
             org.eclipse.jetty.continuation;version="[7.6,8.2)";resolution:=optional,
