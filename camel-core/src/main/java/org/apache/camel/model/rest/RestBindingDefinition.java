@@ -45,8 +45,14 @@ public class RestBindingDefinition extends NoOutputDefinition {
     @XmlAttribute
     private String type;
 
+    @XmlAttribute
+    private String typeList;
+
     @XmlTransient
     private Class<?> classType;
+
+    @XmlTransient
+    private boolean useList;
 
     @Override
     public String toString() {
@@ -81,8 +87,12 @@ public class RestBindingDefinition extends NoOutputDefinition {
         if (classType == null && type != null) {
             classType = context.getClassResolver().resolveMandatoryClass(type);
         }
+        if (classType == null && typeList != null) {
+            classType = context.getClassResolver().resolveMandatoryClass(typeList);
+        }
         if (classType != null) {
             IntrospectionSupport.setProperty(context.getTypeConverter(), json, "unmarshalType", classType);
+            IntrospectionSupport.setProperty(context.getTypeConverter(), json, "useList", useList);
         }
         context.addService(json);
 
@@ -96,6 +106,9 @@ public class RestBindingDefinition extends NoOutputDefinition {
             throw new IllegalArgumentException("DataFormat " + name + " not found.");
         }
         if (classType == null && type != null) {
+            classType = context.getClassResolver().resolveMandatoryClass(type);
+        }
+        if (classType == null && typeList != null) {
             classType = context.getClassResolver().resolveMandatoryClass(type);
         }
         if (classType != null) {
@@ -113,6 +126,16 @@ public class RestBindingDefinition extends NoOutputDefinition {
 
     public void setType(String type) {
         this.type = type;
+        this.useList = false;
+    }
+
+    public String getTypeList() {
+        return typeList;
+    }
+
+    public void setTypeList(String typeList) {
+        this.typeList = typeList;
+        this.useList = true;
     }
 
     public Class<?> getClassType() {
@@ -123,4 +146,11 @@ public class RestBindingDefinition extends NoOutputDefinition {
         this.classType = classType;
     }
 
+    public boolean isUseList() {
+        return useList;
+    }
+
+    public void setUseList(boolean useList) {
+        this.useList = useList;
+    }
 }

@@ -150,7 +150,30 @@ public class RestDefinition {
 
         VerbDefinition verb = getVerbs().get(getVerbs().size() - 1);
         verb.setClassType(classType);
-        verb.setType(classType.getCanonicalName());
+        verb.setTypeList(classType.getCanonicalName());
+        return this;
+    }
+
+    public RestDefinition typeList(String classType) {
+        // add to last verb
+        if (getVerbs().isEmpty()) {
+            throw new IllegalArgumentException("Must add verb first, such as get/post/delete");
+        }
+
+        VerbDefinition verb = getVerbs().get(getVerbs().size() - 1);
+        verb.setType(classType);
+        return this;
+    }
+
+    public RestDefinition typeList(Class<?> classType) {
+        // add to last verb
+        if (getVerbs().isEmpty()) {
+            throw new IllegalArgumentException("Must add verb first, such as get/post/delete");
+        }
+
+        VerbDefinition verb = getVerbs().get(getVerbs().size() - 1);
+        verb.setClassType(classType);
+        verb.setTypeList(classType.getCanonicalName());
         return this;
     }
 
@@ -249,7 +272,9 @@ public class RestDefinition {
             if (verb.getType() != null || verb.getClassType() != null) {
                 RestBindingDefinition binding = new RestBindingDefinition();
                 binding.setType(verb.getType());
+                binding.setTypeList(verb.getTypeList());
                 binding.setClassType(verb.getClassType());
+                binding.setUseList(verb.isUseList());
                 route.getOutputs().add(0, binding);
             }
 
