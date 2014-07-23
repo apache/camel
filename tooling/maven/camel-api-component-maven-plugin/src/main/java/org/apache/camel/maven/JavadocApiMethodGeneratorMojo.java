@@ -19,25 +19,17 @@ package org.apache.camel.maven;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.InputStreamReader;
-import java.io.UnsupportedEncodingException;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
-import java.net.URLDecoder;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
-import javax.swing.text.ChangedCharSetException;
-import javax.swing.text.SimpleAttributeSet;
-import javax.swing.text.html.HTML;
 import javax.swing.text.html.parser.DTD;
-import javax.swing.text.html.parser.Parser;
-import javax.swing.text.html.parser.TagElement;
 
 import org.apache.camel.util.component.ApiMethodParser;
-import org.apache.commons.lang.StringEscapeUtils;
 import org.apache.maven.plugin.MojoExecutionException;
 import org.apache.maven.plugins.annotations.LifecyclePhase;
 import org.apache.maven.plugins.annotations.Mojo;
@@ -58,7 +50,6 @@ public class JavadocApiMethodGeneratorMojo extends AbstractApiMethodGeneratorMoj
     }
 
     protected static final String DEFAULT_EXCLUDE_PACKAGES = "javax?\\.lang.*";
-    private static final Pattern ARGTYPES_PATTERN = Pattern.compile("\\s*([^<\\s,]+\\s*(<[^>]+>)?)\\s*,?");
     private static final Pattern RAW_ARGTYPES_PATTERN = Pattern.compile("\\s*([^<\\s,]+)\\s*(<[^>]+>)?\\s*,?");
 
     @Parameter(property = PREFIX + "excludePackages", defaultValue = DEFAULT_EXCLUDE_PACKAGES)
@@ -139,9 +130,7 @@ public class JavadocApiMethodGeneratorMojo extends AbstractApiMethodGeneratorMoj
                         }
                         final String resultType = getResultType(aClass, name, types);
                         if (resultType != null) {
-                            final StringBuilder signature = new StringBuilder(resultType);
-                            signature.append(" ").append(name).append(methodMap.get(method));
-                            result.put(method, signature.toString());
+                            result.put(method, resultType + " " + name + methodMap.get(method));
                         }
                     }
                 }
@@ -194,152 +183,4 @@ public class JavadocApiMethodGeneratorMojo extends AbstractApiMethodGeneratorMoj
         return result;
     }
 
-    private static class JavadocParser extends Parser {
-        private static final String NON_BREAKING_SPACE = "\u00A0";
-        private String hrefPattern;
-
-        private ParserState parserState;
-        private String methodWithTypes;
-        private StringBuilder methodTextBuilder = new StringBuilder();
-
-        private List<String> methods = new ArrayList<String>();
-        private Map<String, String> methodText = new HashMap<String, String>();
-        private String errorMessage;
-
-        public JavadocParser(DTD dtd, String docPath) {
-            super(dtd);
-            this.hrefPattern = docPath + "#";
-        }
-
-        @Override
-        protected void startTag(TagElement tag) throws ChangedCharSetException {
-            super.startTag(tag);
-
-            final HTML.Tag htmlTag = tag.getHTMLTag();
-            if (htmlTag != null) {
-                if (HTML.Tag.A.equals(htmlTag)) {
-                    final SimpleAttributeSet attributes = getAttributes();
-                    final Object name = attributes.getAttribute(HTML.Attribute.NAME);
-                    if (name != null) {
-                        final String nameAttr = (String) name;
-                        if (parserState == null && "method_summary".equals(nameAttr)) {
-                            parserState = ParserState.METHOD_SUMMARY;
-                        } else if (parserState == ParserState.METHOD_SUMMARY && nameAttr.startsWith("methods_inherited_from_class_")) {
-                            parserState = null;
-                        } else if (parserState == ParserState.METHOD && methodWithTypes == null) {
-                            final Object href = attributes.getAttribute(HTML.Attribute.HREF);
-                            if (href != null) {
-                                String hrefAttr = (String) href;
-                                if (hrefAttr.contains(hrefPattern)) {
-                                    // unescape HTML
-                                    methodWithTypes = unescapeHtml(hrefAttr.substring(hrefAttr.indexOf('#') + 1));
-                                }
-                            }
-                        }
-                    }
-                } else if (parserState == ParserState.METHOD_SUMMARY && HTML.Tag.CODE.equals(htmlTag)) {
-                    parserState = ParserState.METHOD;
-                }
-            }
-        }
-
-        private static String unescapeHtml(String htmlString) {
-            String result = StringEscapeUtils.unescapeHtml(htmlString).replaceAll(NON_BREAKING_SPACE, " ");
-            try {
-                result = URLDecoder.decode(result, "UTF-8");
-            } catch (UnsupportedEncodingException ignored) {
-
-            }
-            return result;
-        }
-
-        @Override
-        protected void handleEmptyTag(TagElement tag) {
-            if (parserState == ParserState.METHOD && HTML.Tag.CODE.equals(tag.getHTMLTag())) {
-                if (methodWithTypes != null) {
-                    // process collected method data
-                    methods.add(methodWithTypes);
-                    this.methodText.put(methodWithTypes, getArgSignature());
-
-                    // clear the text builder for next method
-                    methodTextBuilder.delete(0, methodTextBuilder.length());
-                    methodWithTypes = null;
-                }
-
-                parserState = ParserState.METHOD_SUMMARY;
-            }
-        }
-
-        private String getArgSignature() {
-            final String typeString = methodWithTypes.substring(methodWithTypes.indexOf('(') + 1, methodWithTypes.indexOf(')'));
-            if (typeString.isEmpty()) {
-                return "()";
-            }
-
-            // split types list
-            final List<String> typeList = new ArrayList<String>();
-            final Matcher typeMatcher = ARGTYPES_PATTERN.matcher(typeString);
-            while (typeMatcher.find()) {
-                typeList.add(typeMatcher.group(1).replaceAll(" ", ""));
-            }
-
-            // unescape HTML method text
-            final String plainText = unescapeHtml(methodTextBuilder.toString());
-            final String argsString = plainText.substring(plainText.indexOf('(') + 1, plainText.indexOf(')'));
-            final Matcher argMatcher = ApiMethodParser.ARGS_PATTERN.matcher(argsString);
-            final List<String> argNames = new ArrayList<String>();
-            while (argMatcher.find()) {
-                argNames.add(argMatcher.group(3));
-            }
-
-            // make sure number of types and names match
-            final int nTypes = typeList.size();
-            if (nTypes != argNames.size()) {
-                throw new IllegalArgumentException("Unexpected Javadoc error, different number of arg types and names");
-            }
-
-            final String[] names = argNames.toArray(new String[nTypes]);
-            final StringBuilder builder = new StringBuilder("(");
-            int i = 0;
-            for (String type : typeList) {
-                // split on space or non-breaking space
-                builder.append(type).append(' ').append(names[i++]);
-                if (i < nTypes) {
-                    builder.append(',');
-                }
-            }
-            builder.append(')');
-            return builder.toString();
-        }
-
-        @Override
-        protected void handleText(char[] text) {
-            if (parserState == ParserState.METHOD && methodWithTypes != null) {
-                methodTextBuilder.append(text);
-            }
-        }
-
-        @Override
-        protected void handleError(int ln, String msg) {
-            if (msg.startsWith("exception ")) {
-                this.errorMessage = "Exception parsing Javadoc line " + ln + ": " + msg;
-            }
-        }
-
-        private String getErrorMessage() {
-            return errorMessage;
-        }
-
-        private List<String> getMethods() {
-            return methods;
-        }
-
-        private Map<String, String> getMethodText() {
-            return methodText;
-        }
-    }
-
-    private static enum ParserState {
-        METHOD_SUMMARY, METHOD;
-    }
 }
