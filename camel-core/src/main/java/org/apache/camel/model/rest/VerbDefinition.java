@@ -42,6 +42,9 @@ public class VerbDefinition {
     private String consumes;
 
     @XmlAttribute
+    private String produces;
+
+    @XmlAttribute
     private String type;
 
     @XmlAttribute
@@ -91,6 +94,14 @@ public class VerbDefinition {
 
     public void setConsumes(String consumes) {
         this.consumes = consumes;
+    }
+
+    public String getProduces() {
+        return produces;
+    }
+
+    public void setProduces(String produces) {
+        this.produces = produces;
     }
 
     public String getType() {

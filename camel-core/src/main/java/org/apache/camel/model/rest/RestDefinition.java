@@ -119,14 +119,26 @@ public class RestDefinition {
         return addVerb(verb, uri);
     }
 
-    public RestDefinition consumes(String accept) {
+    public RestDefinition consumes(String mediaType) {
         // add to last verb
         if (getVerbs().isEmpty()) {
             throw new IllegalArgumentException("Must add verb first, such as get/post/delete");
         }
 
         VerbDefinition verb = getVerbs().get(getVerbs().size() - 1);
-        verb.setConsumes(accept);
+        verb.setConsumes(mediaType);
+
+        return this;
+    }
+
+    public RestDefinition produces(String mediaType) {
+        // add to last verb
+        if (getVerbs().isEmpty()) {
+            throw new IllegalArgumentException("Must add verb first, such as get/post/delete");
+        }
+
+        VerbDefinition verb = getVerbs().get(getVerbs().size() - 1);
+        verb.setProduces(mediaType);
 
         return this;
     }
