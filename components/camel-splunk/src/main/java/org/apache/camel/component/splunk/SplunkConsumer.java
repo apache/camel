@@ -67,9 +67,6 @@ public class SplunkConsumer extends ScheduledBatchPollingConsumer {
                         Message message = exchange.getIn();
                         message.setBody(splunkEvent);
 
-                        exchange.setProperty(Exchange.BATCH_INDEX, 0);
-                        exchange.setProperty(Exchange.BATCH_SIZE, 1);
-                        exchange.setProperty(Exchange.BATCH_COMPLETE, true);
                         try {
                             LOG.trace("Processing exchange [{}]...", exchange);
                             getAsyncProcessor().process(exchange, new AsyncCallback() {
