@@ -26,6 +26,7 @@ import javax.xml.bind.annotation.XmlTransient;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Processor;
 import org.apache.camel.model.NoOutputDefinition;
+import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.processor.binding.RestBindingProcessor;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.RouteContext;
@@ -35,6 +36,15 @@ import org.apache.camel.util.ObjectHelper;
 @XmlRootElement(name = "restBinding")
 @XmlAccessorType(XmlAccessType.FIELD)
 public class RestBindingDefinition extends NoOutputDefinition {
+
+    @XmlAttribute
+    private String consumes;
+
+    @XmlAttribute
+    private String produces;
+
+    @XmlAttribute
+    private RestBindingMode bindingMode;
 
     @XmlAttribute
     private String jsonDataFormat;
@@ -75,14 +85,24 @@ public class RestBindingDefinition extends NoOutputDefinition {
 
         CamelContext context = routeContext.getCamelContext();
 
+        // the default binding mode can be overriden per rest verb
+        String mode = context.getRestConfiguration().getBindingMode().name();
+        if (bindingMode != null) {
+            mode = bindingMode.name();
+        }
+
+        // auto, off, json, xml, json_xml
+
         // setup json data format
         String name = jsonDataFormat;
         if (name == null) {
             name = "json-jackson";
         }
         DataFormat json = context.resolveDataFormat(name);
-        if (json == null) {
-            throw new IllegalArgumentException("DataFormat " + name + " not found.");
+
+        // is json binding required?
+        if (mode.contains("json") && json == null) {
+            throw new IllegalArgumentException("JSon DataFormat " + name + " not found.");
         }
         if (classType == null && type != null) {
             classType = context.getClassResolver().resolveMandatoryClass(type);
@@ -102,8 +122,9 @@ public class RestBindingDefinition extends NoOutputDefinition {
             name = "jaxb";
         }
         DataFormat jaxb = context.resolveDataFormat(name);
-        if (jaxb == null) {
-            throw new IllegalArgumentException("DataFormat " + name + " not found.");
+        // is xml binding required?
+        if (mode.contains("xml") && jaxb == null) {
+            throw new IllegalArgumentException("XML DataFormat " + name + " not found.");
         }
         if (classType == null && type != null) {
             classType = context.getClassResolver().resolveMandatoryClass(type);
@@ -117,7 +138,47 @@ public class RestBindingDefinition extends NoOutputDefinition {
         }
         context.addService(jaxb);
 
-        return new RestBindingProcessor(json, jaxb);
+        return new RestBindingProcessor(json, jaxb, consumes, produces, mode);
+    }
+
+    public String getConsumes() {
+        return consumes;
+    }
+
+    public void setConsumes(String consumes) {
+        this.consumes = consumes;
+    }
+
+    public String getProduces() {
+        return produces;
+    }
+
+    public void setProduces(String produces) {
+        this.produces = produces;
+    }
+
+    public RestBindingMode getBindingMode() {
+        return bindingMode;
+    }
+
+    public void setBindingMode(RestBindingMode bindingMode) {
+        this.bindingMode = bindingMode;
+    }
+
+    public String getJsonDataFormat() {
+        return jsonDataFormat;
+    }
+
+    public void setJsonDataFormat(String jsonDataFormat) {
+        this.jsonDataFormat = jsonDataFormat;
+    }
+
+    public String getXmlDataFormat() {
+        return xmlDataFormat;
+    }
+
+    public void setXmlDataFormat(String xmlDataFormat) {
+        this.xmlDataFormat = xmlDataFormat;
     }
 
     public String getType() {
@@ -153,4 +214,5 @@ public class RestBindingDefinition extends NoOutputDefinition {
     public void setUseList(boolean useList) {
         this.useList = useList;
     }
+
 }

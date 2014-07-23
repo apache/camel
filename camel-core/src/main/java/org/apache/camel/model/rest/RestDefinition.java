@@ -189,6 +189,17 @@ public class RestDefinition {
         return this;
     }
 
+    public RestDefinition bindingMode(RestBindingMode mode) {
+        // add to last verb
+        if (getVerbs().isEmpty()) {
+            throw new IllegalArgumentException("Must add verb first, such as get/post/delete");
+        }
+
+        VerbDefinition verb = getVerbs().get(getVerbs().size() - 1);
+        verb.setBindingMode(mode);
+        return this;
+    }
+
     /**
      * Routes directly to the given endpoint.
      * <p/>
@@ -287,6 +298,9 @@ public class RestDefinition {
                 binding.setTypeList(verb.getTypeList());
                 binding.setClassType(verb.getClassType());
                 binding.setUseList(verb.isUseList());
+                binding.setConsumes(verb.getConsumes());
+                binding.setProduces(verb.getProduces());
+                binding.setBindingMode(verb.getBindingMode());
                 route.getOutputs().add(0, binding);
             }
 

@@ -24,10 +24,15 @@ import java.util.Map;
  */
 public class RestConfiguration {
 
+    public enum RestBindingMode {
+        auto, off, json, xml, json_xml
+    }
+
     private String component;
     private String scheme;
     private String host;
     private int port;
+    private RestBindingMode bindingMode = RestBindingMode.auto;
     private Map<String, Object> componentProperties;
     private Map<String, Object> endpointProperties;
     private Map<String, Object> consumerProperties;
@@ -96,12 +101,39 @@ public class RestConfiguration {
     }
 
     /**
-     * Gets the port to use by the REST consumer
+     * Sets the port to use by the REST consumer
      *
      * @param port the port number
      */
     public void setPort(int port) {
         this.port = port;
+    }
+
+    /**
+     * Gets the binding mode used by the REST consumer
+     *
+     * @return the binding mode
+     */
+    public RestBindingMode getBindingMode() {
+        return bindingMode;
+    }
+
+    /**
+     * Sets the binding mode to be used by the REST consumer
+     *
+     * @param bindingMode the binding mode
+     */
+    public void setBindingMode(RestBindingMode bindingMode) {
+        this.bindingMode = bindingMode;
+    }
+
+    /**
+     * Sets the binding mode to be used by the REST consumer
+     *
+     * @param bindingMode the binding mode
+     */
+    public void setBindingMode(String bindingMode) {
+        this.bindingMode = RestBindingMode.valueOf(bindingMode);
     }
 
     /**

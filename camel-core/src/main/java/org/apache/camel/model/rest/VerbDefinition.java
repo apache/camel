@@ -45,6 +45,9 @@ public class VerbDefinition {
     private String produces;
 
     @XmlAttribute
+    private RestBindingMode bindingMode;
+
+    @XmlAttribute
     private String type;
 
     @XmlAttribute
@@ -102,6 +105,14 @@ public class VerbDefinition {
 
     public void setProduces(String produces) {
         this.produces = produces;
+    }
+
+    public RestBindingMode getBindingMode() {
+        return bindingMode;
+    }
+
+    public void setBindingMode(RestBindingMode bindingMode) {
+        this.bindingMode = bindingMode;
     }
 
     public String getType() {

@@ -49,6 +49,9 @@ public class RestConfigurationDefinition {
     @XmlAttribute
     private String port;
 
+    @XmlAttribute
+    private RestBindingMode bindingMode;
+
     @XmlElement(name = "componentProperty")
     private List<RestPropertyDefinition> componentProperties = new ArrayList<RestPropertyDefinition>();
 
@@ -88,6 +91,14 @@ public class RestConfigurationDefinition {
 
     public void setPort(String port) {
         this.port = port;
+    }
+
+    public RestBindingMode getBindingMode() {
+        return bindingMode;
+    }
+
+    public void setBindingMode(RestBindingMode bindingMode) {
+        this.bindingMode = bindingMode;
     }
 
     public List<RestPropertyDefinition> getComponentProperties() {
@@ -158,6 +169,14 @@ public class RestConfigurationDefinition {
     }
 
     /**
+     * To specify the binding mode
+     */
+    public RestConfigurationDefinition bindingMode(RestBindingMode bindingMode) {
+        setBindingMode(bindingMode);
+        return this;
+    }
+
+    /**
      * For additional configuration options on component level
      */
     public RestConfigurationDefinition componentProperty(String key, String value) {
@@ -213,6 +232,9 @@ public class RestConfigurationDefinition {
         }
         if (port != null) {
             answer.setPort(CamelContextHelper.parseInteger(context, port));
+        }
+        if (bindingMode != null) {
+            answer.setBindingMode(bindingMode.name());
         }
         if (!componentProperties.isEmpty()) {
             Map<String, Object> props = new HashMap<String, Object>();
