@@ -16,28 +16,54 @@
  */
 package org.apache.camel.component.jackson;
 
+import java.util.List;
+
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-public class JacksonMarshalUnmarshalTypeHeaderTest extends CamelTestSupport {
+public class JacksonMarshalUnmarshalListTest extends CamelTestSupport {
 
     @Test
-    public void testUnmarshalPojo() throws Exception {
+    public void testUnmarshalListPojo() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:reversePojo");
         mock.expectedMessageCount(1);
-        mock.message(0).body().isInstanceOf(TestPojo.class);
+        mock.message(0).body().isInstanceOf(List.class);
 
-        String json = "{\"name\":\"Camel\"}";
-        template.sendBodyAndHeader("direct:backPojo", json, JacksonConstants.UNMARSHAL_TYPE, TestPojo.class.getName());
+        String json = "[{\"name\":\"Camel\"}, {\"name\":\"World\"}]";
+        template.sendBody("direct:backPojo", json);
 
         assertMockEndpointsSatisfied();
 
-        TestPojo pojo = mock.getReceivedExchanges().get(0).getIn().getBody(TestPojo.class);
-        assertNotNull(pojo);
+        List list = mock.getReceivedExchanges().get(0).getIn().getBody(List.class);
+        assertNotNull(list);
+        assertEquals(2, list.size());
+
+        TestPojo pojo = (TestPojo) list.get(0);
         assertEquals("Camel", pojo.getName());
-   }
+        pojo = (TestPojo) list.get(1);
+        assertEquals("World", pojo.getName());
+    }
+
+    @Test
+    public void testUnmarshalListPojoOneElement() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:reversePojo");
+        mock.expectedMessageCount(1);
+        mock.message(0).body().isInstanceOf(List.class);
+
+        String json = "[{\"name\":\"Camel\"}]";
+        template.sendBody("direct:backPojo", json);
+
+        assertMockEndpointsSatisfied();
+
+        List list = mock.getReceivedExchanges().get(0).getIn().getBody(List.class);
+        assertNotNull(list);
+        assertEquals(1, list.size());
+
+        TestPojo pojo = (TestPojo) list.get(0);
+        assertEquals("Camel", pojo.getName());
+    }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
@@ -45,7 +71,8 @@ public class JacksonMarshalUnmarshalTypeHeaderTest extends CamelTestSupport {
 
             @Override
             public void configure() throws Exception {
-                JacksonDataFormat format = new JacksonDataFormat();
+                JacksonDataFormat format = new JacksonDataFormat(TestPojo.class);
+                format.useList();
 
                 from("direct:backPojo").unmarshal(format).to("mock:reversePojo");
 

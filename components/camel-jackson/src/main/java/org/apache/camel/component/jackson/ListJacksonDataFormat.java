@@ -16,10 +16,35 @@
  */
 package org.apache.camel.component.jackson;
 
-public final class JackconConstants {
+import com.fasterxml.jackson.databind.ObjectMapper;
 
-    public static final String UNMARSHAL_TYPE = "CamelJacksonUnmarshalType";
+/**
+ * A {@link org.apache.camel.component.jackson.JacksonDataFormat} that is using a list
+ */
+public class ListJacksonDataFormat extends JacksonDataFormat {
 
-    private JackconConstants() {
+    public ListJacksonDataFormat() {
+        useList();
     }
+
+    public ListJacksonDataFormat(Class<?> unmarshalType) {
+        super(unmarshalType);
+        useList();
+    }
+
+    public ListJacksonDataFormat(Class<?> unmarshalType, Class<?> jsonView) {
+        super(unmarshalType, jsonView);
+        useList();
+    }
+
+    public ListJacksonDataFormat(ObjectMapper mapper, Class<?> unmarshalType) {
+        super(mapper, unmarshalType);
+        useList();
+    }
+
+    public ListJacksonDataFormat(ObjectMapper mapper, Class<?> unmarshalType, Class<?> jsonView) {
+        super(mapper, unmarshalType, jsonView);
+        useList();
+    }
+
 }
