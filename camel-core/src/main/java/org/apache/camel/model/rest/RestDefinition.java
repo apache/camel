@@ -150,7 +150,7 @@ public class RestDefinition {
 
         VerbDefinition verb = getVerbs().get(getVerbs().size() - 1);
         verb.setClassType(classType);
-        verb.setTypeList(classType.getCanonicalName());
+        verb.setType(classType.getCanonicalName());
         return this;
     }
 
@@ -161,7 +161,7 @@ public class RestDefinition {
         }
 
         VerbDefinition verb = getVerbs().get(getVerbs().size() - 1);
-        verb.setType(classType);
+        verb.setTypeList(classType);
         return this;
     }
 
