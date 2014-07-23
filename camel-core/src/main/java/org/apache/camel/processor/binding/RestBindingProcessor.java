@@ -62,6 +62,9 @@ public class RestBindingProcessor extends ServiceSupport implements AsyncProcess
         AsyncProcessorHelper.process(this, exchange);
     }
 
+    // TODO: consumes/produces can be a list of media types, and prioritized 1st to last.
+    // TODO: parsing body should only be done if really needed
+
     @Override
     public boolean process(Exchange exchange, final AsyncCallback callback) {
         if (bindingMode == null || "off".equals(bindingMode)) {
@@ -92,30 +95,22 @@ public class RestBindingProcessor extends ServiceSupport implements AsyncProcess
             isJson = consumes != null && consumes.toLowerCase(Locale.US).contains("json");
         }
 
+        if (!isXml && !isJson) {
+            // read the content into memory so we can determine if its xml or json
+            String body = MessageHelper.extractBodyAsString(exchange.getIn());
+            isXml = body.startsWith("<") || body.contains("xml");
+            isJson = !isXml;
+        }
+
         // only allow xml/json if the binding mode allows that
         isXml &= bindingMode.equals("auto") || bindingMode.contains("xml");
         isJson &= bindingMode.equals("auto") || bindingMode.contains("json");
 
-        // check the header first if its xml or json
         if (isXml && xmlUnmarshal != null) {
             // add reverse operation
             exchange.addOnCompletion(new RestBindingMarshalOnCompletion(jsonMmarshal, xmlMmarshal));
             return xmlUnmarshal.process(exchange, callback);
         } else if (isJson && jsonUnmarshal != null) {
-            // add reverse operation
-            exchange.addOnCompletion(new RestBindingMarshalOnCompletion(jsonMmarshal, xmlMmarshal));
-            return jsonUnmarshal.process(exchange, callback);
-        }
-
-        // read the content into memory so we can determine if its xml or json
-        String body = MessageHelper.extractBodyAsString(exchange.getIn());
-        isXml = body.startsWith("<") || body.contains("xml");
-
-        if (isXml && xmlUnmarshal != null) {
-            // add reverse operation
-            exchange.addOnCompletion(new RestBindingMarshalOnCompletion(jsonMmarshal, xmlMmarshal));
-            return xmlUnmarshal.process(exchange, callback);
-        } else if (jsonUnmarshal != null) {
             // add reverse operation
             exchange.addOnCompletion(new RestBindingMarshalOnCompletion(jsonMmarshal, xmlMmarshal));
             return jsonUnmarshal.process(exchange, callback);
@@ -128,9 +123,9 @@ public class RestBindingProcessor extends ServiceSupport implements AsyncProcess
             return true;
         } else {
             if (bindingMode.contains("xml")) {
-                exchange.setException(new IllegalArgumentException("Cannot bind to xml as message body is not xml compatible"));
+                exchange.setException(new BindingException("Cannot bind to xml as message body is not xml compatible", exchange));
             } else {
-                exchange.setException(new IllegalArgumentException("Cannot bind to json as message body is not json compatible"));
+                exchange.setException(new BindingException("Cannot bind to json as message body is not json compatible", exchange));
             }
             callback.done(true);
             return true;

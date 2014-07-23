@@ -43,6 +43,23 @@ public class RestRestletBindingModeJsonTest extends RestletTestSupport {
         assertEquals("Donald Duck", user.getName());
     }
 
+    @Test
+    public void testBindingModeWrong() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:input");
+        mock.expectedMessageCount(0);
+
+        // we bind to json, but send in xml, which is not possible
+        String body = "<user name=\"Donald Duck\" id=\"123\"></user>";
+        try {
+            template.sendBody("http://localhost:" + portNum + "/users/new", body);
+            fail("Should have thrown exception");
+        } catch (Exception e) {
+            // expected
+        }
+
+        assertMockEndpointsSatisfied();
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
