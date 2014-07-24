@@ -131,9 +131,6 @@ public class TwitterConfiguration {
     @UriParam
     private Integer httpProxyPort;
     
-    @UriParam
-    private boolean useSSL = true;
-
     /**
      * Singleton, on demand instances of Twitter4J's Twitter & TwitterStream.
      * This should not be created by an endpoint's doStart(), etc., since
@@ -166,7 +163,6 @@ public class TwitterConfiguration {
         confBuilder.setOAuthConsumerSecret(consumerSecret);
         confBuilder.setOAuthAccessToken(accessToken);
         confBuilder.setOAuthAccessTokenSecret(accessTokenSecret);
-        confBuilder.setUseSSL(useSSL);
         if (getHttpProxyHost() != null) {
             confBuilder.setHttpProxyHost(getHttpProxyHost());
         }
@@ -215,14 +211,6 @@ public class TwitterConfiguration {
         this.accessTokenSecret = accessTokenSecret;
     }
     
-    public boolean getUseSSL() {
-        return useSSL;
-    }
-    
-    public void setUseSSL(boolean useSSL) {
-        this.useSSL = useSSL;
-    }
-
     public String getUser() {
         return user;
     }
