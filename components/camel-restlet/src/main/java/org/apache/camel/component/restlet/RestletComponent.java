@@ -73,6 +73,7 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
     private Integer threadMaxIdleTimeMs;
     private Boolean useForwardedForHeader;
     private Boolean reuseAddress;
+    private boolean disableStreamCache;
 
     public RestletComponent() {
         this(new Component());
@@ -88,6 +89,7 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
     @Override
     protected Endpoint createEndpoint(String uri, String remaining, Map<String, Object> parameters) throws Exception {
         RestletEndpoint result = new RestletEndpoint(this, remaining);
+        result.setDisableStreamCache(isDisableStreamCache());
         setEndpointHeaderFilterStrategy(result);
         setProperties(result, parameters);
         // set the endpoint uri according to the parameter
@@ -477,6 +479,14 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
 
     public void setMaxQueued(Integer maxQueued) {
         this.maxQueued = maxQueued;
+    }
+
+    public boolean isDisableStreamCache() {
+        return disableStreamCache;
+    }
+
+    public void setDisableStreamCache(boolean disableStreamCache) {
+        this.disableStreamCache = disableStreamCache;
     }
 
     @Override
