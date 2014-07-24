@@ -117,7 +117,7 @@ public final class IOConverter {
     }
 
     @Converter
-    public static File toFile(String name) throws FileNotFoundException {
+    public static File toFile(String name) {
         return new File(name);
     }
 

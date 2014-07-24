@@ -24,14 +24,20 @@ import org.junit.BeforeClass;
 public abstract class SolrTestSupport extends CamelTestSupport {
 
     private static int port;
+    private static int httpsPort;
 
     @BeforeClass
     public static void initPort() throws Exception {
         port = AvailablePortFinder.getNextAvailable(8999);
+        httpsPort = AvailablePortFinder.getNextAvailable(8999);
     }
 
     protected static int getPort() {
         return port;
+    }
+    
+    protected static int getHttpsPort() {
+        return httpsPort;
     }
 
 }

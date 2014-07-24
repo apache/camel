@@ -69,7 +69,7 @@
     <hr/>
     <p>
         The ${componentName} Component can be configured with the options below.
-        These options can be provided using the component's bean property <code>configuration</code> of type <code>$componentConfiguration.Name</code>.
+        These options can be provided using the component's bean property <code>configuration</code> of type <code>$componentConfig.Name</code>.
     </p>
     <table>
         <tr>
@@ -98,6 +98,7 @@
 #end
     <p>
         Endpoint options that are not mandatory are denoted by [].
+        When there are no mandatory options for an endpoint, one of the set of [] options MUST be provided.
         Producer endpoints can also use a special option <b><code>inBody</code></b> that in turn should contain
         the name of the endpoint option whose value will be contained in the Camel Exchange In message.
     </p>
@@ -129,6 +130,14 @@
     </table>
     <h3>URI Options</h3>
     <hr/>
+#set ( $nullableArguments = $apiHelpers.get("").NullableArguments )
+#if( !$nullableArguments.isEmpty )
+    <p>
+        If a value is not provided for one of the option(s) ${nullableArguments.toString()}
+        either in the endpoint URI or in a message header, it will be assumed to be <code>null</code>.
+        Note that the <code>null</code> value(s) will only be used if other options do not satisfy matching endpoints.
+    </p>
+#end
     <table>
         <tr>
             <th>Name</th>
@@ -159,7 +168,8 @@
             <th>Result Body Type</th>
         </tr>
 #set( $endpointConfig = $apiConfigs.get($apiName) )
-#set( $endpoints = $helper.getEndpoints($apiMethod.Value, $apiHelpers.get($apiName), $endpointConfig) )
+#set( $anApiHelper = $apiHelpers.get($apiName) )
+#set( $endpoints = $helper.getEndpoints($apiMethod.Value, $anApiHelper, $endpointConfig) )
 #foreach( $endpoint in $endpoints )
         <tr>
             <td>$endpoint.Endpoint</td>
@@ -171,6 +181,14 @@
     </table>
     <h4>URI Options for <em>$apiName</em></h4>
     <hr/>
+#set ( $nullableArguments = $anApiHelper.NullableArguments )
+#if( !$nullableArguments.Empty )
+    <p>
+        If a value is not provided for one of the option(s) ${nullableArguments.toString()}
+        either in the endpoint URI or in a message header, it will be assumed to be <code>null</code>.
+        Note that the <code>null</code> value(s) will only be used if other options do not satisfy matching endpoints.
+    </p>
+#end
     <table>
         <tr>
             <th>Name</th>

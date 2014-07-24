@@ -29,7 +29,6 @@
   <packaging>bundle</packaging>
   <name>Camel ${name} Component</name>
   <description>Camel Component for ${name}</description>
-  <url>http://www.myorganization.org</url>
 
   <properties>
     <schemeName>${scheme}</schemeName>

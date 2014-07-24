@@ -34,11 +34,18 @@ public class EmptyProducerCache extends ProducerCache {
     @Override
     public Producer acquireProducer(Endpoint endpoint) {
         // always create a new producer
-        Producer answer = null;
+        Producer answer;
         try {
             answer = endpoint.createProducer();
-            // must then start service so producer is ready to be used
-            ServiceHelper.startService(answer);
+            if (getCamelContext().isStartingRoutes() && answer.isSingleton()) {
+                // if we are currently starting a route, then add as service and enlist in JMX
+                // - but do not enlist non-singletons in JMX
+                // - note addService will also start the service
+                getCamelContext().addService(answer);
+            } else {
+                // must then start service so producer is ready to be used
+                ServiceHelper.startService(answer);
+            }
         } catch (Exception e) {
             throw new FailedToCreateProducerException(endpoint, e);
         }

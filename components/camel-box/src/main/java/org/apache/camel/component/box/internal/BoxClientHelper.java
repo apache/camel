@@ -68,9 +68,9 @@ public final class BoxClientHelper {
         LOG.debug("Creating BoxClient for login:{}, client_id:{} ...", userName, clientId);
 
         // if set, use configured connection manager builder
-        final BoxConnectionManagerBuilder configBuilder = configuration.getConnectionManagerBuilder();
-        final BoxConnectionManagerBuilder connectionManager = configBuilder != null
-            ? configBuilder : new BoxConnectionManagerBuilder();
+        final BoxConnectionManagerBuilder connectionManagerBuilder = configuration.getConnectionManagerBuilder();
+        final BoxConnectionManagerBuilder connectionManager = connectionManagerBuilder != null
+            ? connectionManagerBuilder : new BoxConnectionManagerBuilder();
 
         // create REST client for BoxClient
         final ClientConnectionManager[] clientConnectionManager = new ClientConnectionManager[1];
@@ -206,14 +206,14 @@ public final class BoxClientHelper {
 
                 LOG.debug("Revoking OAuth refresh token for {}", cachedBoxClient);
 
+                // revoke OAuth token
+                boxClient.getOAuthManager().revokeOAuth(boxClient.getAuthData().getAccessToken(),
+                    configuration.getClientId(), configuration.getClientSecret());
+
                 // notify the OAuthListener of revoked token
                 cachedBoxClient.getListener().onRefresh(null);
                 // mark auth data revoked
                 boxClient.getOAuthDataController().setOAuthData(null);
-
-                // revoke OAuth token
-                boxClient.getOAuthManager().revokeOAuth(boxClient.getAuthData().getAccessToken(),
-                    configuration.getClientId(), configuration.getClientSecret());
             }
         }
     }

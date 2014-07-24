@@ -138,6 +138,10 @@ public final class FileProcessStrategyFactory {
                 if (readLockLoggingLevel != null) {
                     strategy.setReadLockLoggingLevel(readLockLoggingLevel);
                 }
+                Boolean readLockMarkerFile = (Boolean) params.get("readLockMarkerFile");
+                if (readLockMarkerFile != null) {
+                    strategy.setMarkerFiler(readLockMarkerFile);
+                }
             }
         }
 

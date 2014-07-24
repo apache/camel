@@ -34,7 +34,7 @@ import ${packageName}.${componentName}ApiCollection;
 import ${packageName}.${enumName};
 
 /**
- * Test class for $proxyType.Name APIs.
+ * Test class for {@link ${proxyType.Name}} APIs.
  * TODO Move the file to src/test/java, populate parameter values, and remove @Ignore annotations.
  * The class source won't be generated again if the generator MOJO finds it under src/test/java.
  */

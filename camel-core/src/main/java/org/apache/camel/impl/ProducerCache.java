@@ -403,8 +403,9 @@ public class ProducerCache extends ServiceSupport {
             // create a new producer
             try {
                 answer = endpoint.createProducer();
-                // must then start service so producer is ready to be used
-                ServiceHelper.startService(answer);
+                // add as service which will also start the service
+                // (false => we and handling the lifecycle of the producer in this cache)
+                getCamelContext().addService(answer, false);
             } catch (Exception e) {
                 throw new FailedToCreateProducerException(endpoint, e);
             }
@@ -430,7 +431,14 @@ public class ProducerCache extends ServiceSupport {
     protected void doStop() throws Exception {
         // when stopping we intend to shutdown
         ServiceHelper.stopAndShutdownService(pool);
-        ServiceHelper.stopAndShutdownServices(producers.values());
+        try {
+            ServiceHelper.stopAndShutdownServices(producers.values());
+        } finally {
+            // ensure producers are removed, and also from JMX
+            for (Producer producer : producers.values()) {
+                getCamelContext().removeService(producer);
+            }
+        }
         producers.clear();
     }
 

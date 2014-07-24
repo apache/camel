@@ -29,6 +29,7 @@ import org.apache.camel.builder.ErrorHandlerBuilder;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RoutesDefinition;
+import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.spi.CamelContextNameStrategy;
 import org.apache.camel.spi.ClassResolver;
 import org.apache.camel.spi.DataFormat;
@@ -50,6 +51,7 @@ import org.apache.camel.spi.NodeIdFactory;
 import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.ProcessorFactory;
 import org.apache.camel.spi.Registry;
+import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RouteStartupOrder;
 import org.apache.camel.spi.RuntimeEndpointRegistry;
 import org.apache.camel.spi.ServicePool;
@@ -188,6 +190,23 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      * @throws Exception can be thrown when starting the service
      */
     void addService(Object object) throws Exception;
+
+    /**
+     * Adds a service to this context.
+     * <p/>
+     * The service will also have {@link CamelContext} injected if its {@link CamelContextAware}.
+     * The service will also be enlisted in JMX for management (if JMX is enabled).
+     * The service will be started, if its not already started.
+     * <p/>
+     * If the option <tt>closeOnShutdown</tt> is <tt>true</tt> then this context will control the lifecycle, ensuring
+     * the service is stopped when the context stops.
+     * If the option <tt>closeOnShutdown</tt> is <tt>false</tt> then this context will not stop the service when the context stops.
+     *
+     * @param object the service
+     * @param closeOnShutdown whether to close the service when this CamelContext shutdown.
+     * @throws Exception can be thrown when starting the service
+     */
+    void addService(Object object, boolean closeOnShutdown) throws Exception;
 
     /**
      * Removes a service from this context.
@@ -385,6 +404,38 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      */
     @Deprecated
     RouteDefinition getRouteDefinition(String id);
+
+    /**
+     * Returns a list of the current REST definitions
+     *
+     * @return list of the current REST definitions
+     * @deprecated use {@link org.apache.camel.model.ModelCamelContext#getRestDefinitions()}
+     */
+    @Deprecated
+    List<RestDefinition> getRestDefinitions();
+
+    /**
+     * Adds a collection of rest definitions to the context
+     *
+     * @param restDefinitions the rest(s) definition to add
+     * @throws Exception if the rest definitions could not be created for whatever reason
+     */
+    @Deprecated
+    void addRestDefinitions(Collection<RestDefinition> restDefinitions) throws Exception;
+
+    /**
+     * Sets a custom {@link org.apache.camel.spi.RestConfiguration}
+     *
+     * @param restConfiguration the REST configuration
+     */
+    void setRestConfiguration(RestConfiguration restConfiguration);
+
+    /**
+     * Gets the current REST configuration
+     *
+     * @return the configuration, or <tt>null</tt> if none has been configured.
+     */
+    RestConfiguration getRestConfiguration();
 
     /**
      * Returns the order in which the route inputs was started.

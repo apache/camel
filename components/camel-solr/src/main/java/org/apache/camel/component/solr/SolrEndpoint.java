@@ -16,12 +16,15 @@
  */
 package org.apache.camel.component.solr;
 
+import java.io.UnsupportedEncodingException;
 import java.net.URL;
+import java.net.URLDecoder;
 
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.solr.client.solrj.impl.CloudSolrServer;
 import org.apache.solr.client.solrj.impl.ConcurrentUpdateSolrServer;
 import org.apache.solr.client.solrj.impl.HttpSolrServer;
 
@@ -41,60 +44,94 @@ public class SolrEndpoint extends DefaultEndpoint {
     private Integer maxTotalConnections;
     private Boolean followRedirects;
     private Boolean allowCompression;
+    private String scheme = "http://";
+    private String zkHost;
+    private String collection;
 
     public SolrEndpoint(String endpointUri, SolrComponent component, String address) throws Exception {
         super(endpointUri, component);
-        URL url = new URL("http://" + address);
+        if (endpointUri.startsWith("solrs")) {
+            scheme = "https://";
+        }
+        URL url = new URL(scheme + address);
         this.url = url.toString();
+    }
+   
+    public void setZkHost(String zkHost) throws UnsupportedEncodingException {
+        String decoded = URLDecoder.decode(zkHost, "UTF-8");
+        this.zkHost = decoded;
+    }
+
+    public String getZkHost() {
+        return this.zkHost;
+    }
+
+    public void setCollection(String collection) {
+        this.collection = collection;
+    }
+
+    public String getCollection() {
+        return this.collection;
     }
 
     @Override
     public SolrComponent getComponent() {
         return (SolrComponent) super.getComponent();
     }
-
+    
+    private CloudSolrServer getCloudServer() {
+        CloudSolrServer rVal = null;
+        if (this.getZkHost() != null && this.getCollection() != null) {
+            rVal = new CloudSolrServer(zkHost);
+            rVal.setDefaultCollection(this.getCollection());
+        }
+        return rVal;
+    }
+    
     @Override
     public Producer createProducer() throws Exception {
         // do we have servers?
         SolrComponent.SolrServerReference ref = getComponent().getSolrServers(this);
         if (ref == null) {
-
             // no then create new servers
-            HttpSolrServer solrServer = new HttpSolrServer(url);
-            ConcurrentUpdateSolrServer solrStreamingServer = new ConcurrentUpdateSolrServer(url, streamingQueueSize, streamingThreadCount);
-
-            // set the properties on the solr server
-            if (maxRetries != null) {
-                solrServer.setMaxRetries(maxRetries);
-            }
-            if (soTimeout != null) {
-                solrServer.setSoTimeout(soTimeout);
-            }
-            if (connectionTimeout != null) {
-                solrServer.setConnectionTimeout(connectionTimeout);
-            }
-            if (defaultMaxConnectionsPerHost != null) {
-                solrServer.setDefaultMaxConnectionsPerHost(defaultMaxConnectionsPerHost);
-            }
-            if (maxTotalConnections != null) {
-                solrServer.setMaxTotalConnections(maxTotalConnections);
-            }
-            if (followRedirects != null) {
-                solrServer.setFollowRedirects(followRedirects);
-            }
-            if (allowCompression != null) {
-                solrServer.setAllowCompression(allowCompression);
-            }
-
             ref = new SolrComponent.SolrServerReference();
-            ref.setSolrServer(solrServer);
-            ref.setUpdateSolrServer(solrStreamingServer);
+            CloudSolrServer cloudServer = getCloudServer();
+            if (cloudServer == null) {
+                HttpSolrServer solrServer = new HttpSolrServer(url);
+                ConcurrentUpdateSolrServer solrStreamingServer = new ConcurrentUpdateSolrServer(url, streamingQueueSize, streamingThreadCount);
+
+                // set the properties on the solr server
+                if (maxRetries != null) {
+                    solrServer.setMaxRetries(maxRetries);
+                }
+                if (soTimeout != null) {
+                    solrServer.setSoTimeout(soTimeout);
+                }
+                if (connectionTimeout != null) {
+                    solrServer.setConnectionTimeout(connectionTimeout);
+                }
+                if (defaultMaxConnectionsPerHost != null) {
+                    solrServer.setDefaultMaxConnectionsPerHost(defaultMaxConnectionsPerHost);
+                }
+                if (maxTotalConnections != null) {
+                    solrServer.setMaxTotalConnections(maxTotalConnections);
+                }
+                if (followRedirects != null) {
+                    solrServer.setFollowRedirects(followRedirects);
+                }
+                if (allowCompression != null) {
+                    solrServer.setAllowCompression(allowCompression);
+                }
+                ref.setSolrServer(solrServer);
+                ref.setUpdateSolrServer(solrStreamingServer);
+            }
+            ref.setCloudSolrServer(cloudServer);
 
             getComponent().addSolrServers(this, ref);
         }
 
         ref.addReference();
-        return new SolrProducer(this, ref.getSolrServer(), ref.getUpdateSolrServer());
+        return new SolrProducer(this, ref.getSolrServer(), ref.getUpdateSolrServer(), ref.getCloudSolrServer());
     }
 
     protected void onProducerShutdown(SolrProducer producer) {

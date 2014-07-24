@@ -96,9 +96,9 @@ public class IBoxFoldersManagerIntegrationTest extends AbstractBoxTestSupport {
             headers.put("CamelBox.folderId", testFolder.getId());
             // parameter type is com.box.boxjavalibv2.requests.requestobjects.BoxSharedLinkRequestObject
             final BoxSharedLinkRequestEntity sharedLink = new BoxSharedLinkRequestEntity(
-                BoxSharedLinkAccess.COLLABORATORS);
+                    BoxSharedLinkAccess.COLLABORATORS);
             headers.put("CamelBox.sharedLinkRequest",
-                BoxSharedLinkRequestObject.createSharedLinkRequestObject(sharedLink));
+                    BoxSharedLinkRequestObject.createSharedLinkRequestObject(sharedLink));
 
             BoxFolder result = requestBodyAndHeaders("direct://CREATESHAREDLINK", null, headers);
             assertNotNull("createSharedLink result", result);
@@ -128,7 +128,7 @@ public class IBoxFoldersManagerIntegrationTest extends AbstractBoxTestSupport {
         // parameter type is String
         headers.put("CamelBox.folderId", "0");
         // parameter type is com.box.restclientv2.requestsbase.BoxDefaultRequestObject
-        headers.put("CamelBox.defaultRequest", BOX_DEFAULT_REQUEST_OBJECT);
+//        headers.put("CamelBox.defaultRequest", null);
 
         final BoxFolder result = (BoxFolder) requestBodyAndHeaders("direct://GETFOLDER", null, headers);
         assertNotNull("getFolder result", result);
@@ -145,7 +145,7 @@ public class IBoxFoldersManagerIntegrationTest extends AbstractBoxTestSupport {
             // parameter type is String
             headers.put("CamelBox.folderId", testFolder.getId());
             // parameter type is com.box.restclientv2.requestsbase.BoxDefaultRequestObject
-            headers.put("CamelBox.defaultRequest", BOX_DEFAULT_REQUEST_OBJECT);
+//            headers.put("CamelBox.defaultRequest", null);
 
             List result = requestBodyAndHeaders("direct://GETFOLDERCOLLABORATIONS", null, headers);
             assertNotNull("getFolderCollaborations result", result);
@@ -180,7 +180,7 @@ public class IBoxFoldersManagerIntegrationTest extends AbstractBoxTestSupport {
             headers.put("CamelBox.folderId", testFolder.getId());
             // parameter type is com.box.boxjavalibv2.requests.requestobjects.BoxFolderRequestObject
             final BoxFolderRequestObject folderRequestObject = BoxFolderRequestObject.getRequestObject();
-            folderRequestObject.setTags(new String[] {CAMEL_TEST_TAG} );
+            folderRequestObject.setTags(new String[]{CAMEL_TEST_TAG});
             folderRequestObject.setName(CAMEL_TEST_COPY_FOLDER);
             headers.put("CamelBox.folderRequest", folderRequestObject);
 
@@ -200,35 +200,35 @@ public class IBoxFoldersManagerIntegrationTest extends AbstractBoxTestSupport {
             public void configure() {
                 // test route for copyFolder
                 from("direct://COPYFOLDER")
-                  .to("box://" + PATH_PREFIX + "/copyFolder");
+                        .to("box://" + PATH_PREFIX + "/copyFolder");
 
                 // test route for createFolder
                 from("direct://CREATEFOLDER")
-                  .to("box://" + PATH_PREFIX + "/createFolder?inBody=folderRequest");
+                        .to("box://" + PATH_PREFIX + "/createFolder?inBody=folderRequest");
 
                 // test route for createSharedLink
                 from("direct://CREATESHAREDLINK")
-                  .to("box://" + PATH_PREFIX + "/createSharedLink");
+                        .to("box://" + PATH_PREFIX + "/createSharedLink");
 
                 // test route for deleteFolder
                 from("direct://DELETEFOLDER")
-                  .to("box://" + PATH_PREFIX + "/deleteFolder");
+                        .to("box://" + PATH_PREFIX + "/deleteFolder");
 
                 // test route for getFolder
                 from("direct://GETFOLDER")
-                  .to("box://" + PATH_PREFIX + "/getFolder");
+                        .to("box://" + PATH_PREFIX + "/getFolder");
 
                 // test route for getFolderCollaborations
                 from("direct://GETFOLDERCOLLABORATIONS")
-                  .to("box://" + PATH_PREFIX + "/getFolderCollaborations");
+                        .to("box://" + PATH_PREFIX + "/getFolderCollaborations");
 
                 // test route for getFolderItems
                 from("direct://GETFOLDERITEMS")
-                  .to("box://" + PATH_PREFIX + "/getFolderItems");
+                        .to("box://" + PATH_PREFIX + "/getFolderItems");
 
                 // test route for updateFolderInfo
                 from("direct://UPDATEFOLDERINFO")
-                  .to("box://" + PATH_PREFIX + "/updateFolderInfo");
+                        .to("box://" + PATH_PREFIX + "/updateFolderInfo");
 
             }
         };

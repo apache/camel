@@ -71,8 +71,7 @@ public abstract class ApiMethodPropertiesHelper<C> {
         return properties;
     }
 
-    public void getEndpointProperties(Object endpointConfiguration,
-                                             Map<String, Object> properties) {
+    public void getEndpointProperties(Object endpointConfiguration, Map<String, Object> properties) {
 
         Set<String> names = null;
         if (IntrospectionSupport.getProperties(endpointConfiguration, properties, null, false)) {

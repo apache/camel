@@ -45,7 +45,7 @@ public class IBoxSearchManagerIntegrationTest extends AbstractBoxTestSupport {
         // parameter type is String
         headers.put("CamelBox.searchQuery", "Test");
         // parameter type is com.box.restclientv2.requestsbase.BoxDefaultRequestObject
-        headers.put("CamelBox.defaultRequest", BOX_DEFAULT_REQUEST_OBJECT);
+//        headers.put("CamelBox.defaultRequest", null);
 
         com.box.boxjavalibv2.dao.BoxCollection result = requestBodyAndHeaders("direct://SEARCH", null, headers);
         assertNotNull("search result", result);
@@ -58,7 +58,7 @@ public class IBoxSearchManagerIntegrationTest extends AbstractBoxTestSupport {
             public void configure() {
                 // test route for search
                 from("direct://SEARCH")
-                  .to("box://" + PATH_PREFIX + "/search");
+                        .to("box://" + PATH_PREFIX + "/search");
 
             }
         };

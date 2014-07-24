@@ -76,7 +76,9 @@ public class PropertiesComponent extends DefaultComponent {
     private boolean ignoreMissingLocation;
     private boolean cache = true;
     private String propertyPrefix;
+    private String propertyPrefixResolved;
     private String propertySuffix;
+    private String propertySuffixResolved;
     private boolean fallbackToUnaugmentedProperty = true;
     private String prefixToken = DEFAULT_PREFIX_TOKEN;
     private String suffixToken = DEFAULT_SUFFIX_TOKEN;
@@ -156,7 +158,7 @@ public class PropertiesComponent extends DefaultComponent {
         
         if (propertiesParser instanceof AugmentedPropertyNameAwarePropertiesParser) {
             return ((AugmentedPropertyNameAwarePropertiesParser) propertiesParser).parseUri(uri, prop, prefixToken, suffixToken,
-                                                                                            propertyPrefix, propertySuffix, fallbackToUnaugmentedProperty);
+                                                                                            propertyPrefixResolved, propertySuffixResolved, fallbackToUnaugmentedProperty);
         } else {
             return propertiesParser.parseUri(uri, prop, prefixToken, suffixToken);
         }
@@ -204,6 +206,10 @@ public class PropertiesComponent extends DefaultComponent {
 
     public void setPropertyPrefix(String propertyPrefix) {
         this.propertyPrefix = propertyPrefix;
+        this.propertyPrefixResolved = propertyPrefix;
+        if (ObjectHelper.isNotEmpty(this.propertyPrefix)) {
+            this.propertyPrefixResolved = FilePathResolver.resolvePath(this.propertyPrefix);
+        }
     }
 
     public String getPropertySuffix() {
@@ -212,6 +218,10 @@ public class PropertiesComponent extends DefaultComponent {
 
     public void setPropertySuffix(String propertySuffix) {
         this.propertySuffix = propertySuffix;
+        this.propertySuffixResolved = propertySuffix;
+        if (ObjectHelper.isNotEmpty(this.propertySuffix)) {
+            this.propertySuffixResolved = FilePathResolver.resolvePath(this.propertySuffix);
+        }
     }
 
     public boolean isFallbackToUnaugmentedProperty() {

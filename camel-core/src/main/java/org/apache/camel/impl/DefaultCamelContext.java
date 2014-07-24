@@ -82,6 +82,7 @@ import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RouteDefinitionHelper;
 import org.apache.camel.model.RoutesDefinition;
+import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.processor.interceptor.BacklogDebugger;
 import org.apache.camel.processor.interceptor.BacklogTracer;
 import org.apache.camel.processor.interceptor.Debug;
@@ -114,6 +115,7 @@ import org.apache.camel.spi.NodeIdFactory;
 import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.ProcessorFactory;
 import org.apache.camel.spi.Registry;
+import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.RouteStartupOrder;
 import org.apache.camel.spi.RuntimeEndpointRegistry;
@@ -171,6 +173,8 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     private ManagementStrategy managementStrategy;
     private ManagementMBeanAssembler managementMBeanAssembler;
     private final List<RouteDefinition> routeDefinitions = new ArrayList<RouteDefinition>();
+    private final List<RestDefinition> restDefinitions = new ArrayList<RestDefinition>();
+    private RestConfiguration restConfiguration;
     private List<InterceptStrategy> interceptStrategies = new ArrayList<InterceptStrategy>();
 
     // special flags to control the first startup which can are special
@@ -709,6 +713,9 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     }
 
     public synchronized void addRouteDefinitions(Collection<RouteDefinition> routeDefinitions) throws Exception {
+        if (routeDefinitions == null || routeDefinitions.isEmpty()) {
+            return;
+        }
         for (RouteDefinition routeDefinition : routeDefinitions) {
             removeRouteDefinition(routeDefinition);
         }
@@ -947,7 +954,11 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     }
 
     public void addService(Object object) throws Exception {
-        doAddService(object, true);
+        addService(object, true);
+    }
+
+    public void addService(Object object, boolean closeOnShutdown) throws Exception {
+        doAddService(object, closeOnShutdown);
     }
 
     private void doAddService(Object object, boolean closeOnShutdown) throws Exception {
@@ -1057,6 +1068,13 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
             return "file/remote";
         } else if ("cxfrs".equals(componentName)) {
             return "cxf/jaxrs";
+        } else if ("gauth".equals(componentName) || "ghttp".equals(componentName) || "glogin".equals(componentName)
+                || "gmail".equals(componentName) || "gtask".equals(componentName)) {
+            return "gae/" + componentName.substring(1);
+        } else if ("atmosphere-websocket".equals(componentName)) {
+            return "atmosphere/websocket";
+        } else if ("netty-http".equals(componentName)) {
+            return "netty/http";
         }
         return componentName.replaceAll("-", "");
     }
@@ -1163,7 +1181,6 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
             }
         }
 
-        // no language resolved
         return answer;
     }
     
@@ -1398,6 +1415,33 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
             }
         }
         return null;
+    }
+
+    public synchronized List<RestDefinition> getRestDefinitions() {
+        return restDefinitions;
+    }
+
+    public void addRestDefinitions(Collection<RestDefinition> restDefinitions) throws Exception {
+        if (restDefinitions == null || restDefinitions.isEmpty()) {
+            return;
+        }
+
+        this.restDefinitions.addAll(restDefinitions);
+
+        // convert rests into routes so we reuse routes for runtime
+        List<RouteDefinition> routes = new ArrayList<RouteDefinition>();
+        for (RestDefinition rest : restDefinitions) {
+            routes.addAll(rest.asRouteDefinition(this));
+        }
+        addRouteDefinitions(routes);
+    }
+
+    public RestConfiguration getRestConfiguration() {
+        return restConfiguration;
+    }
+
+    public void setRestConfiguration(RestConfiguration restConfiguration) {
+        this.restConfiguration = restConfiguration;
     }
 
     public List<InterceptStrategy> getInterceptStrategies() {
@@ -1953,40 +1997,48 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
      */
     protected void doStartOrResumeRoutes(Map<String, RouteService> routeServices, boolean checkClash,
                                          boolean startConsumer, boolean resumeConsumer, boolean addingRoutes) throws Exception {
-        // filter out already started routes
-        Map<String, RouteService> filtered = new LinkedHashMap<String, RouteService>();
-        for (Map.Entry<String, RouteService> entry : routeServices.entrySet()) {
-            boolean startable = false;
+        isStartingRoutes.set(true);
+        try {
+            // filter out already started routes
+            Map<String, RouteService> filtered = new LinkedHashMap<String, RouteService>();
+            for (Map.Entry<String, RouteService> entry : routeServices.entrySet()) {
+                boolean startable = false;
 
-            Consumer consumer = entry.getValue().getRoutes().iterator().next().getConsumer();
-            if (consumer instanceof SuspendableService) {
-                // consumer could be suspended, which is not reflected in the RouteService status
-                startable = ((SuspendableService) consumer).isSuspended();
+                Consumer consumer = entry.getValue().getRoutes().iterator().next().getConsumer();
+                if (consumer instanceof SuspendableService) {
+                    // consumer could be suspended, which is not reflected in the RouteService status
+                    startable = ((SuspendableService) consumer).isSuspended();
+                }
+
+                if (!startable && consumer instanceof StatefulService) {
+                    // consumer could be stopped, which is not reflected in the RouteService status
+                    startable = ((StatefulService) consumer).getStatus().isStartable();
+                } else if (!startable) {
+                    // no consumer so use state from route service
+                    startable = entry.getValue().getStatus().isStartable();
+                }
+
+                if (startable) {
+                    filtered.put(entry.getKey(), entry.getValue());
+                }
             }
 
-            if (!startable && consumer instanceof StatefulService) {
-                // consumer could be stopped, which is not reflected in the RouteService status
-                startable = ((StatefulService) consumer).getStatus().isStartable();
-            } else if (!startable) {
-                // no consumer so use state from route service
-                startable = entry.getValue().getStatus().isStartable();
+            if (!filtered.isEmpty()) {
+                // the context is now considered started (i.e. isStarted() == true))
+                // starting routes is done after, not during context startup
+                safelyStartRouteServices(checkClash, startConsumer, resumeConsumer, addingRoutes, filtered.values());
             }
 
-            if (startable) {
-                filtered.put(entry.getKey(), entry.getValue());
+            // we are finished starting routes, so remove flag before we emit the startup listeners below
+            isStartingRoutes.remove();
+
+            // now notify any startup aware listeners as all the routes etc has been started,
+            // allowing the listeners to do custom work after routes has been started
+            for (StartupListener startup : startupListeners) {
+                startup.onCamelContextStarted(this, isStarted());
             }
-        }
-
-        if (!filtered.isEmpty()) {
-            // the context is now considered started (i.e. isStarted() == true))
-            // starting routes is done after, not during context startup
-            safelyStartRouteServices(checkClash, startConsumer, resumeConsumer, addingRoutes, filtered.values());
-        }
-
-        // now notify any startup aware listeners as all the routes etc has been started,
-        // allowing the listeners to do custom work after routes has been started
-        for (StartupListener startup : startupListeners) {
-            startup.onCamelContextStarted(this, isStarted());
+        } finally {
+            isStartingRoutes.remove();
         }
     }
 

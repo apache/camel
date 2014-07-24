@@ -44,6 +44,8 @@ public class ApiProxy {
 
     private ExtraOption[] extraOptions;
 
+    private String[] nullableOptions;
+
     private List<ApiMethodAlias> aliases = Collections.emptyList();
 
     public String getApiName() {
@@ -108,6 +110,14 @@ public class ApiProxy {
 
     public void setExtraOptions(ExtraOption[] extraOptions) {
         this.extraOptions = extraOptions;
+    }
+
+    public String[] getNullableOptions() {
+        return nullableOptions;
+    }
+
+    public void setNullableOptions(String[] nullableOptions) {
+        this.nullableOptions = nullableOptions;
     }
 
     public List<ApiMethodAlias> getAliases() {

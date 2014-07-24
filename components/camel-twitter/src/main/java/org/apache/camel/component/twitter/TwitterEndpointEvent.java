@@ -69,10 +69,4 @@ public class TwitterEndpointEvent extends DirectEndpoint implements TwitterEndpo
         }
     }
 
-    @Override
-    public void shutdown() throws Exception {
-        super.shutdown();
-        properties.getTwitter().shutdown();
-    }
-
 }

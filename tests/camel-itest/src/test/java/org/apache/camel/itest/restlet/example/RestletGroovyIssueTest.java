@@ -34,11 +34,11 @@ public class RestletGroovyIssueTest extends CamelTestSupport {
 
     @Test
     public void testRestletGroovy() throws Exception {
+        getMockEndpoint("mock:input").expectedMessageCount(10);
+        getMockEndpoint("mock:output").expectedBodiesReceivedInAnyOrder("0", "1", "2", "3", "4", "5", "6", "7", "8", "9");
+        
         for (int i = 0; i < 10; i++) {
             final Integer num = i;
-            getMockEndpoint("mock:input").expectedMessageCount(10);
-            getMockEndpoint("mock:output").expectedBodiesReceivedInAnyOrder("0", "1", "2", "3", "4", "5", "6", "7", "8", "9");
-
             executorService.submit(new Runnable() {
                 @Override
                 public void run() {

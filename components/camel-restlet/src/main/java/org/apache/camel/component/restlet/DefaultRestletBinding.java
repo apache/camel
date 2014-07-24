@@ -82,6 +82,15 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
             }
         }
 
+        // we need to dig a bit to grab the content-type
+        Series<Header> series = (Series<Header>) request.getAttributes().get(HeaderConstants.ATTRIBUTE_HEADERS);
+        if (series != null) {
+            String type = series.getFirstValue(Exchange.CONTENT_TYPE, true);
+            if (type != null) {
+                inMessage.setHeader(Exchange.CONTENT_TYPE, type);
+            }
+        }
+
         // copy query string to header
         String query = request.getResourceRef().getQuery();
         if (query != null) {
@@ -115,7 +124,9 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
                 }
             }
         } else {
-            inMessage.setBody(request.getEntity().getStream());
+            InputStream is = request.getEntity().getStream();
+            Object body = RestletHelper.readResponseBodyFromInputStream(is, exchange);
+            inMessage.setBody(body);
         }
 
     }

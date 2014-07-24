@@ -42,7 +42,7 @@ public class IBoxEventsManagerIntegrationTest extends AbstractBoxTestSupport {
     @Test
     public void testGetEventOptions() throws Exception {
         // using com.box.restclientv2.requestsbase.BoxDefaultRequestObject message body for single parameter "defaultRequest"
-        BoxCollection result = requestBody("direct://GETEVENTOPTIONS", BOX_DEFAULT_REQUEST_OBJECT);
+        BoxCollection result = requestBody("direct://GETEVENTOPTIONS", null);
 
         assertNotNull("getEventOptions result", result);
         LOG.debug("getEventOptions: " + result);
@@ -52,7 +52,7 @@ public class IBoxEventsManagerIntegrationTest extends AbstractBoxTestSupport {
     public void testGetEvents() throws Exception {
         // using com.box.boxjavalibv2.requests.requestobjects.BoxEventRequestObject message body for single parameter "eventRequest"
         final BoxEventRequestObject requestObject =
-            BoxEventRequestObject.getEventsRequestObject(BoxEventRequestObject.STREAM_POSITION_NOW);
+                BoxEventRequestObject.getEventsRequestObject(BoxEventRequestObject.STREAM_POSITION_NOW);
         BoxEventCollection result = requestBody("direct://GETEVENTS", requestObject);
 
         assertNotNull("getEvents result", result);
@@ -65,11 +65,11 @@ public class IBoxEventsManagerIntegrationTest extends AbstractBoxTestSupport {
             public void configure() {
                 // test route for getEventOptions
                 from("direct://GETEVENTOPTIONS")
-                  .to("box://" + PATH_PREFIX + "/getEventOptions?inBody=defaultRequest");
+                        .to("box://" + PATH_PREFIX + "/getEventOptions?inBody=defaultRequest");
 
                 // test route for getEvents
                 from("direct://GETEVENTS")
-                  .to("box://" + PATH_PREFIX + "/getEvents?inBody=eventRequest");
+                        .to("box://" + PATH_PREFIX + "/getEvents?inBody=eventRequest");
 
             }
         };

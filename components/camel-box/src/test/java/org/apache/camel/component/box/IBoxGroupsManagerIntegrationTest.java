@@ -56,7 +56,7 @@ public class IBoxGroupsManagerIntegrationTest extends AbstractBoxTestSupport {
     }
 
     @Test
-    public void testCreateGroup_1() throws Exception {
+    public void testCreateGroup1() throws Exception {
         // using String message body for single parameter "name"
         BoxGroup result = requestBody("direct://CREATEGROUP_1", CAMEL_TEST_GROUP);
 
@@ -69,7 +69,7 @@ public class IBoxGroupsManagerIntegrationTest extends AbstractBoxTestSupport {
     public BoxGroupMembership createMembership(String groupId) throws Exception {
         // using com.box.boxjavalibv2.requests.requestobjects.BoxGroupMembershipRequestObject message body for single parameter "groupMembershipRequest"
         final BoxGroupMembershipRequestObject requestObject =
-            BoxGroupMembershipRequestObject.addMembershipRequestObject(groupId, testUserId, BoxGroupMembership.ROLE_MEMBER);
+                BoxGroupMembershipRequestObject.addMembershipRequestObject(groupId, testUserId, BoxGroupMembership.ROLE_MEMBER);
         BoxGroupMembership result = requestBody("direct://CREATEMEMBERSHIP", requestObject);
 
         assertNotNull("createMembership result", result);
@@ -77,7 +77,7 @@ public class IBoxGroupsManagerIntegrationTest extends AbstractBoxTestSupport {
     }
 
     @Test
-    public void testCreateMembership_1() throws Exception {
+    public void testCreateMembership1() throws Exception {
         final BoxGroup group = createGroup();
 
         try {
@@ -103,7 +103,7 @@ public class IBoxGroupsManagerIntegrationTest extends AbstractBoxTestSupport {
         // parameter type is String
         headers.put("CamelBox.groupId", groupId);
         // parameter type is com.box.restclientv2.requestsbase.BoxDefaultRequestObject
-        headers.put("CamelBox.defaultRequest", BOX_DEFAULT_REQUEST_OBJECT);
+//        headers.put("CamelBox.defaultRequest", null);
 
         requestBodyAndHeaders("direct://DELETEGROUP", null, headers);
     }
@@ -119,7 +119,7 @@ public class IBoxGroupsManagerIntegrationTest extends AbstractBoxTestSupport {
             // parameter type is String
             headers.put("CamelBox.membershipId", membership.getId());
             // parameter type is com.box.restclientv2.requestsbase.BoxDefaultRequestObject
-            headers.put("CamelBox.defaultRequest", BOX_DEFAULT_REQUEST_OBJECT);
+//            headers.put("CamelBox.defaultRequest", null);
             requestBodyAndHeaders("direct://DELETEMEMBERSHIP", null, headers);
         } finally {
             deleteGroup(group.getId());
@@ -134,7 +134,7 @@ public class IBoxGroupsManagerIntegrationTest extends AbstractBoxTestSupport {
             // parameter type is String
             headers.put("CamelBox.groupId", group.getId());
             // parameter type is com.box.restclientv2.requestsbase.BoxDefaultRequestObject
-            headers.put("CamelBox.defaultRequest", BOX_DEFAULT_REQUEST_OBJECT);
+//            headers.put("CamelBox.defaultRequest", null);
 
             BoxCollection result = requestBodyAndHeaders("direct://GETALLCOLLABORATIONS", null, headers);
 
@@ -148,7 +148,7 @@ public class IBoxGroupsManagerIntegrationTest extends AbstractBoxTestSupport {
     @Test
     public void testGetAllGroups() throws Exception {
         // using com.box.restclientv2.requestsbase.BoxDefaultRequestObject message body for single parameter "defaultRequest"
-        BoxCollection result = requestBody("direct://GETALLGROUPS", BOX_DEFAULT_REQUEST_OBJECT);
+        BoxCollection result = requestBody("direct://GETALLGROUPS", null);
 
         assertNotNull("getAllGroups result", result);
         LOG.debug("getAllGroups: " + result);
@@ -165,7 +165,7 @@ public class IBoxGroupsManagerIntegrationTest extends AbstractBoxTestSupport {
             // parameter type is String
             headers.put("CamelBox.membershipId", membership.getId());
             // parameter type is com.box.restclientv2.requestsbase.BoxDefaultRequestObject
-            headers.put("CamelBox.defaultRequest", BOX_DEFAULT_REQUEST_OBJECT);
+//            headers.put("CamelBox.defaultRequest", null);
 
             BoxGroupMembership result = requestBodyAndHeaders("direct://GETMEMBERSHIP", null, headers);
 
@@ -206,7 +206,7 @@ public class IBoxGroupsManagerIntegrationTest extends AbstractBoxTestSupport {
             headers.put("CamelBox.groupId", group.getId());
             // parameter type is com.box.boxjavalibv2.requests.requestobjects.BoxGroupRequestObject
             final BoxGroupRequestObject requestObject =
-                BoxGroupRequestObject.updateGroupRequestObject(CAMEL_TEST_GROUP + "_Updated");
+                    BoxGroupRequestObject.updateGroupRequestObject(CAMEL_TEST_GROUP + "_Updated");
             headers.put("CamelBox.groupRequest", requestObject);
 
             BoxGroup result = requestBodyAndHeaders("direct://UPDATEGROUP", null, headers);
@@ -230,7 +230,7 @@ public class IBoxGroupsManagerIntegrationTest extends AbstractBoxTestSupport {
             headers.put("CamelBox.membershipId", membership.getId());
             // parameter type is com.box.boxjavalibv2.requests.requestobjects.BoxGroupMembershipRequestObject
             final BoxGroupMembershipRequestObject requestObject =
-                BoxGroupMembershipRequestObject.updateMembershipRequestObject(BoxGroupMembership.ROLE_ADMIN);
+                    BoxGroupMembershipRequestObject.updateMembershipRequestObject(BoxGroupMembership.ROLE_ADMIN);
             headers.put("CamelBox.groupMembershipRequest", requestObject);
 
             BoxGroupMembership result = requestBodyAndHeaders("direct://UPDATEMEMBERSHIP", null, headers);
@@ -243,7 +243,7 @@ public class IBoxGroupsManagerIntegrationTest extends AbstractBoxTestSupport {
     }
 
     @Test
-    public void testUpdateMembership_1() throws Exception {
+    public void testUpdateMembership1() throws Exception {
         final BoxGroup group = createGroup();
 
         try {
@@ -270,55 +270,55 @@ public class IBoxGroupsManagerIntegrationTest extends AbstractBoxTestSupport {
             public void configure() {
                 // test route for createGroup
                 from("direct://CREATEGROUP")
-                  .to("box://" + PATH_PREFIX + "/createGroup?inBody=groupRequest");
+                        .to("box://" + PATH_PREFIX + "/createGroup?inBody=groupRequest");
 
                 // test route for createGroup
                 from("direct://CREATEGROUP_1")
-                  .to("box://" + PATH_PREFIX + "/createGroup?inBody=name");
+                        .to("box://" + PATH_PREFIX + "/createGroup?inBody=name");
 
                 // test route for createMembership
                 from("direct://CREATEMEMBERSHIP")
-                  .to("box://" + PATH_PREFIX + "/createMembership?inBody=groupMembershipRequest");
+                        .to("box://" + PATH_PREFIX + "/createMembership?inBody=groupMembershipRequest");
 
                 // test route for createMembership
                 from("direct://CREATEMEMBERSHIP_1")
-                  .to("box://" + PATH_PREFIX + "/createMembership");
+                        .to("box://" + PATH_PREFIX + "/createMembership");
 
                 // test route for deleteGroup
                 from("direct://DELETEGROUP")
-                  .to("box://" + PATH_PREFIX + "/deleteGroup");
+                        .to("box://" + PATH_PREFIX + "/deleteGroup");
 
                 // test route for deleteMembership
                 from("direct://DELETEMEMBERSHIP")
-                  .to("box://" + PATH_PREFIX + "/deleteMembership");
+                        .to("box://" + PATH_PREFIX + "/deleteMembership");
 
                 // test route for getAllCollaborations
                 from("direct://GETALLCOLLABORATIONS")
-                  .to("box://" + PATH_PREFIX + "/getAllCollaborations");
+                        .to("box://" + PATH_PREFIX + "/getAllCollaborations");
 
                 // test route for getAllGroups
                 from("direct://GETALLGROUPS")
-                  .to("box://" + PATH_PREFIX + "/getAllGroups?inBody=defaultRequest");
+                        .to("box://" + PATH_PREFIX + "/getAllGroups?inBody=defaultRequest");
 
                 // test route for getMembership
                 from("direct://GETMEMBERSHIP")
-                  .to("box://" + PATH_PREFIX + "/getMembership");
+                        .to("box://" + PATH_PREFIX + "/getMembership");
 
                 // test route for getMemberships
                 from("direct://GETMEMBERSHIPS")
-                  .to("box://" + PATH_PREFIX + "/getMemberships");
+                        .to("box://" + PATH_PREFIX + "/getMemberships");
 
                 // test route for updateGroup
                 from("direct://UPDATEGROUP")
-                  .to("box://" + PATH_PREFIX + "/updateGroup");
+                        .to("box://" + PATH_PREFIX + "/updateGroup");
 
                 // test route for updateMembership
                 from("direct://UPDATEMEMBERSHIP")
-                  .to("box://" + PATH_PREFIX + "/updateMembership");
+                        .to("box://" + PATH_PREFIX + "/updateMembership");
 
                 // test route for updateMembership
                 from("direct://UPDATEMEMBERSHIP_1")
-                  .to("box://" + PATH_PREFIX + "/updateMembership");
+                        .to("box://" + PATH_PREFIX + "/updateMembership");
 
             }
         };

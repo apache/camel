@@ -46,6 +46,16 @@ public class JsonDataFormat extends DataFormatDefinition {
     private Class<?> unmarshalType;
     @XmlAttribute
     private Class<?> jsonView;
+    @XmlAttribute
+    private String include;
+    @XmlAttribute
+    private Boolean allowJmsType;
+    @XmlAttribute
+    private String collectionTypeName;
+    @XmlTransient
+    private Class<?> collectionType;
+    @XmlAttribute
+    private Boolean useList;
 
     public JsonDataFormat() {
     }
@@ -94,6 +104,38 @@ public class JsonDataFormat extends DataFormatDefinition {
         this.jsonView = jsonView;
     }
 
+    public String getInclude() {
+        return include;
+    }
+
+    public void setInclude(String include) {
+        this.include = include;
+    }
+
+    public Boolean getAllowJmsType() {
+        return allowJmsType;
+    }
+
+    public void setAllowJmsType(Boolean allowJmsType) {
+        this.allowJmsType = allowJmsType;
+    }
+
+    public String getCollectionTypeName() {
+        return collectionTypeName;
+    }
+
+    public void setCollectionTypeName(String collectionTypeName) {
+        this.collectionTypeName = collectionTypeName;
+    }
+
+    public Boolean getUseList() {
+        return useList;
+    }
+
+    public void setUseList(Boolean useList) {
+        this.useList = useList;
+    }
+
     @Override
     protected DataFormat createDataFormat(RouteContext routeContext) {
         if (library == JsonLibrary.XStream) {
@@ -111,6 +153,13 @@ public class JsonDataFormat extends DataFormatDefinition {
                 throw ObjectHelper.wrapRuntimeCamelException(e);
             }
         }
+        if (collectionType == null && collectionTypeName != null) {
+            try {
+                collectionType = routeContext.getCamelContext().getClassResolver().resolveMandatoryClass(collectionTypeName);
+            } catch (ClassNotFoundException e) {
+                throw ObjectHelper.wrapRuntimeCamelException(e);
+            }
+        }
 
         return super.createDataFormat(routeContext);
     }
@@ -123,9 +172,20 @@ public class JsonDataFormat extends DataFormatDefinition {
         if (prettyPrint != null) {
             setProperty(camelContext, dataFormat, "prettyPrint", unmarshalType);
         }
-
         if (jsonView != null) {
             setProperty(camelContext, dataFormat, "jsonView", jsonView);
+        }
+        if (include != null) {
+            setProperty(camelContext, dataFormat, "include", include);
+        }
+        if (allowJmsType != null) {
+            setProperty(camelContext, dataFormat, "allowJmsType", allowJmsType);
+        }
+        if (collectionType != null) {
+            setProperty(camelContext, dataFormat, "collectionType", collectionType);
+        }
+        if (useList != null) {
+            setProperty(camelContext, dataFormat, "useList", useList);
         }
     }
 

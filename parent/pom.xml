@@ -31,7 +31,7 @@
 
   <properties>
     <compiler.fork>true</compiler.fork>
-    
+
     <!-- dependency versions -->
     <abdera-version>1.1.3</abdera-version>
     <!-- Note that activemq dependency is only used for testing! -->
@@ -54,7 +54,8 @@
     <asm-bundle-version>3.3.1_1</asm-bundle-version>
     <asm-version>3.3.1</asm-version>
     <aspectj-version>1.6.2</aspectj-version>
-    <atmosphere-version>2.1.3</atmosphere-version>
+    <atmosphere-version>2.2.0</atmosphere-version>
+    <atmosphere-version-range>[2.0,3.0)</atmosphere-version-range>
     <atomikos-transactions-version>3.9.3</atomikos-transactions-version>
     <avalon-bundle-version>4.3.1_1</avalon-bundle-version>
     <avalon-version>4.3.1</avalon-version>
@@ -69,6 +70,7 @@
     <bsh-version>2.0b5</bsh-version>
     <!-- bouncycastle 1.50 does not work in OSGi - http://www.bouncycastle.org/jira/browse/BJA-476 -->
     <bouncycastle-version>1.49</bouncycastle-version>
+    <boxjavalibv2.version>3.0.9</boxjavalibv2.version>
     <build-helper-maven-plugin-version>1.8</build-helper-maven-plugin-version>
     <c3p0-version>0.9.1.2</c3p0-version>
     <castor-bundle-version>1.3.2_2</castor-bundle-version>
@@ -108,12 +110,12 @@
     <commons-vfs2-version>2.0</commons-vfs2-version>
     <concurrentlinkedhashmap.version>1.4</concurrentlinkedhashmap.version>
     <cobertura-maven-plugin-version>2.5.2</cobertura-maven-plugin-version>
-    <cxf-version>3.0.0</cxf-version>
+    <cxf-version>3.0.1</cxf-version>
     <cxf-version-range>[2.7,4.0)</cxf-version-range>
-    <cxf-xjc-utils-version>2.7.0</cxf-xjc-utils-version>
-    <deltaspike-version>1.0.0</deltaspike-version>
+    <cxf-xjc-utils-version>3.0.1</cxf-xjc-utils-version>
+    <deltaspike-version>1.0.1</deltaspike-version>
     <derby-version>10.10.2.0</derby-version>
-    <disruptor-version>3.2.1</disruptor-version>
+    <disruptor-version>3.3.0</disruptor-version>
     <dnsjava-version>2.1.1</dnsjava-version>
     <dnsjava-bundle-version>2.1.1_1</dnsjava-bundle-version>
     <dom4j-bundle-version>1.6.1_5</dom4j-bundle-version>
@@ -164,7 +166,7 @@
     <google-gdata-version>1.41.5.w1</google-gdata-version>
     <google-gdata-bundle-version>1.41.1_1</google-gdata-bundle-version>
     <google-guava-version>17.0</google-guava-version>
-    <groovy-version>2.3.3</groovy-version>
+    <groovy-version>2.3.4</groovy-version>
     <gson-version>2.2.4</gson-version>
     <guice-bundle-version>3.0_1</guice-bundle-version>
     <guice-version>3.0</guice-version>
@@ -173,21 +175,22 @@
     <hadoop2-bundle-version>2.3.0_2</hadoop2-bundle-version>
     <hadoop2-version>2.3.0</hadoop2-version>
     <hamcrest-version>1.3</hamcrest-version>
-    <hapi-version>2.1</hapi-version>
+    <hapi-version>2.2</hapi-version>
     <hawtbuf-version>1.11</hawtbuf-version>
     <hawtdb-version>1.6</hawtdb-version>
     <hawtdispatch-version>1.21</hawtdispatch-version>
-    <hazelcast-version>3.0.3</hazelcast-version>
+    <hazelcast-version>3.2.4</hazelcast-version>
     <hbase-version>0.94.10</hbase-version>
     <hbase-bundle-version>0.94.6_1</hbase-bundle-version>
     <hibernate-validator-version>5.0.3.Final</hibernate-validator-version>
     <!-- Spring 3.2.x and 4.0.x still stick to JPA 2.0. Hibernate 4.3.x upgraded to JPA 2.1. -->
     <hibernate-version>4.2.13.Final</hibernate-version>
     <hsqldb-version>2.3.2</hsqldb-version>
+    <htmlunit.version>2.15</htmlunit.version>
     <httpunit-version>1.7</httpunit-version>
     <httpcore4-version>4.3.2</httpcore4-version>
     <httpclient4-version>4.3.3</httpclient4-version>
-    <httpclient-version>3.1</httpclient-version> 
+    <httpclient-version>3.1</httpclient-version>
     <ibatis-bundle-version>2.3.4.726_4</ibatis-bundle-version>
     <ibatis-version>2.3.4.726</ibatis-version>
     <ical4j-version>1.0.5.2</ical4j-version>
@@ -197,7 +200,7 @@
     <isorelax-bundle-version>20050913_4</isorelax-bundle-version>
     <jini-version>2.1</jini-version>
     <jackson-version>1.9.12</jackson-version>
-    <jackson2-version>2.3.3</jackson2-version>
+    <jackson2-version>2.4.1</jackson2-version>
     <jackrabbit-version>2.8.0</jackrabbit-version>
     <jain-sip-ri-bundle-version>1.2.154_2</jain-sip-ri-bundle-version>
     <jasper-bundle-version>6.0.36_1</jasper-bundle-version>
@@ -311,13 +314,12 @@
     <mybatis-version>3.2.7</mybatis-version>
     <neethi-bundle-version>3.0.1</neethi-bundle-version>
     <netty3-version>3.9.2.Final</netty3-version>
-    <netty-version>4.0.20.Final</netty-version>
+    <netty-version>4.0.21.Final</netty-version>
     <noggit-bundle-version>0.5_1</noggit-bundle-version>
-    <ode-version>1.3.4</ode-version>
     <!-- should be in-sync with deltaspike -->
     <openwebbeans-version>1.1.5</openwebbeans-version>
     <ognl-version>3.0.8_1</ognl-version>
-    <openejb-version>4.5.2</openejb-version>
+    <openejb-version>4.6.0.2</openejb-version>
     <openjpa-version>2.3.0</openjpa-version>
     <opensaml-version>2.5.1_2</opensaml-version>
     <openshift-java-client-version>2.5.0.Final</openshift-java-client-version>
@@ -334,7 +336,7 @@
     <pdfbox-version>1.6.0</pdfbox-version>
     <plexus-container-default-version>1.0-alpha-48</plexus-container-default-version>
     <plexus-utils-version>1.5.6</plexus-utils-version>
-    <pojosr-version>0.2.1</pojosr-version>  
+    <pojosr-version>0.2.1</pojosr-version>
     <powermock-version>1.5.1</powermock-version>
     <protobuf-version>2.5.0</protobuf-version>
     <qpid-bundle-version>0.28_1</qpid-bundle-version>
@@ -344,20 +346,20 @@
     <quartz-version-range>[1.8,2)</quartz-version-range>
     <quartz2-version>2.2.1</quartz2-version>
     <quickfix-bundle-version>1.5.3_1</quickfix-bundle-version>
-    <rabbitmq-amqp-client-version>3.3.0</rabbitmq-amqp-client-version>
+    <rabbitmq-amqp-client-version>3.3.4</rabbitmq-amqp-client-version>
     <regexp-bundle-version>1.4_1</regexp-bundle-version>
-    <restlet-version>2.1.7</restlet-version>
+    <restlet-version>2.2.1</restlet-version>
     <rhino-bundle-version>1.7R2_3</rhino-bundle-version>
     <rhino-version>1.7R2</rhino-version>
     <rome-bundle-version>1.0_3</rome-bundle-version>
     <rome-version>1.0</rome-version>
-    <rxjava-version>0.19.1</rxjava-version>
+    <rxjava-version>0.19.6</rxjava-version>
     <saaj-impl-version>1.3.2_2</saaj-impl-version>
     <saxon-bundle-version>9.5.1-5_1</saxon-bundle-version>
     <saxon-version>9.5.1-5</saxon-version>
-    <scala-version>2.11.0</scala-version>
-    <scala-maven-plugin-version>3.1.6</scala-maven-plugin-version>
-    <scalatest-version>2.1.5</scalatest-version>
+    <scala-version>2.11.2</scala-version>
+    <scala-maven-plugin-version>3.2.0</scala-maven-plugin-version>
+    <scalatest-version>2.2.0</scalatest-version>
     <scribe-version>1.3.5</scribe-version>
     <scriptengines-version>1.1</scriptengines-version>
     <serp-bundle-version>1.14.1_1</serp-bundle-version>
@@ -372,10 +374,10 @@
     <smack-version>3.2.1</smack-version>
     <snappy-version>1.1.0.1</snappy-version>
     <snmp4j-version>2.3.0_1</snmp4j-version>
-    <solr-bundle-version>4.6.1_1</solr-bundle-version>
-    <solr-version>4.6.1</solr-version>
-    <solr-version-range>[4.5,5)</solr-version-range>
-    <spark-version>2.0.0</spark-version>
+    <solr-bundle-version>4.8.9_1</solr-bundle-version>
+    <solr-version>4.8.0</solr-version>
+    <solr-version-range>[4.8,5)</solr-version-range>
+    <spark-rest-version>2.0.0</spark-rest-version>
     <splunk-version>1.3.0_1</splunk-version>
     <spring-batch-version>2.2.5.RELEASE</spring-batch-version>
     <spring-castor-bundle-version>1.2.0</spring-castor-bundle-version>
@@ -386,9 +388,9 @@
     <spring-ldap-version>1.3.1.RELEASE</spring-ldap-version>
     <spring-ldap-bundle-version>1.3.1.RELEASE_2</spring-ldap-bundle-version>
     <spring-retry-version>1.0.3.RELEASE</spring-retry-version>
-    <!-- spring-dm does not support spring 4.x so import-range must be 3.x only until a solution in karaf exists -->  
+    <!-- spring-dm does not support spring 4.x so import-range must be 3.x only until a solution in karaf exists -->
     <spring-version-range>[3.2,4)</spring-version-range>
-    <spring-version>${spring32-version}</spring-version>   
+    <spring-version>${spring32-version}</spring-version>
     <spring32-version>3.2.9.RELEASE</spring32-version>
     <spring4-version>4.0.5.RELEASE</spring4-version>
     <spring-osgi-version>1.2.1</spring-osgi-version>
@@ -406,15 +408,15 @@
     <tagsoup-bundle-version>1.2_5</tagsoup-bundle-version>
     <tagsoup-version>1.2.1</tagsoup-version>
     <testng-version>6.8.8</testng-version>
-    <twitter4j-bundle-version>3.0.5_1</twitter4j-bundle-version>
-    <twitter4j-version>3.0.5</twitter4j-version>
+    <twitter4j-bundle-version>4.0.1_1</twitter4j-bundle-version>
+    <twitter4j-version>4.0.1</twitter4j-version>
     <urlrewritefilter-version>4.0.4</urlrewritefilter-version>
     <urlrewritefilter-bundle-version>4.0.4_1</urlrewritefilter-bundle-version>
     <validation-api-version>1.1.0.Final</validation-api-version>
     <velocity-bundle-version>1.7_6</velocity-bundle-version>
     <velocity-tools-version>2.0</velocity-tools-version>
     <velocity-version>1.7</velocity-version>
-    <vertx-version>2.0.1-final</vertx-version>
+    <vertx-version>2.1.2</vertx-version>
     <vysper-version>0.7</vysper-version>
     <!-- should be in-sync with deltaspike -->
     <weld-version>1.1.18.Final</weld-version>
@@ -912,7 +914,7 @@
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-jsonpath</artifactId>
         <version>${project.version}</version>
-      </dependency>      
+      </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-jt400</artifactId>
@@ -1160,14 +1162,14 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
-        <artifactId>camel-spark</artifactId>
+        <artifactId>camel-spark-rest</artifactId>
         <version>${project.version}</version>
-      </dependency>    
+      </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-splunk</artifactId>
         <version>${project.version}</version>
-      </dependency>      
+      </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-snmp</artifactId>
@@ -1271,6 +1273,11 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-test-spring</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-test-spring3</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -1485,6 +1492,11 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-example-simplejirabot-javadsl</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-example-spark-rest-tomcat</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>
@@ -2237,8 +2249,8 @@
             </defaultOptions>
           </configuration>
           <dependencies>
-            <!-- needed to add this to get around the following error on 
-              IBM's JDK org.apache.xerces.impl.dv.DVFactoryException: DTD factory class 
+            <!-- needed to add this to get around the following error on
+              IBM's JDK org.apache.xerces.impl.dv.DVFactoryException: DTD factory class
               org.apache.xerces.impl.dv.dtd.DTDDVFactoryImpl does not extend from DTDDVFactory. -->
             <dependency>
               <groupId>xerces</groupId>
@@ -2435,8 +2447,8 @@
           <version>${maven-war-plugin-version}</version>
           <configuration>
             <webResources>
-              <!-- HACK: Include legal files explicitly, otherwise they will 
-                end up in the wrong path or in another jar file in the war. NOTE: targetPath 
+              <!-- HACK: Include legal files explicitly, otherwise they will
+                end up in the wrong path or in another jar file in the war. NOTE: targetPath
                 is broken for webResources (as documented) -->
               <resource>
                 <directory>${project.build.outputDirectory}</directory>
@@ -2758,7 +2770,7 @@
         <activeByDefault>true</activeByDefault>
       </activation>
     </profile>
-    
+
     <profile>
       <id>fastinstall</id>
       <activation>
@@ -2772,7 +2784,7 @@
         <noassembly>true</noassembly>
       </properties>
     </profile>
-    
+
     <profile>
       <id>sourcecheck</id>
       <build>
@@ -2784,7 +2796,7 @@
         </plugins>
       </build>
     </profile>
-    
+
     <profile>
       <id>setup.eclipse</id>
       <build>
@@ -2807,7 +2819,7 @@
         </plugins>
       </build>
     </profile>
-    
+
     <!-- profiles for choosing default spring version -->
     <profile>
       <id>spring3.2</id>
@@ -2840,5 +2852,5 @@
       </dependencies>
     </profile>
   </profiles>
-  
+
 </project>

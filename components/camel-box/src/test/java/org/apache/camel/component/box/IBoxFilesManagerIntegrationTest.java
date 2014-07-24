@@ -54,7 +54,6 @@ public class IBoxFilesManagerIntegrationTest extends AbstractBoxTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(IBoxFilesManagerIntegrationTest.class);
     private static final String PATH_PREFIX = BoxApiName.FILES.getName();
-    private static final String CAMEL_TEST_FILE = "CamelTestFile";
     private static final BoxImageRequestObject BOX_IMAGE_REQUEST_OBJECT = BoxImageRequestObject.previewRequestObject();
     private static final String PNG_EXTENSION = "png";
     private static final String TEST_UPLOAD_FILE = "/log4j.properties";
@@ -66,7 +65,7 @@ public class IBoxFilesManagerIntegrationTest extends AbstractBoxTestSupport {
         headers.put("CamelBox.fileId", testFileId);
         // parameter type is com.box.boxjavalibv2.requests.requestobjects.BoxItemCopyRequestObject
         final BoxItemCopyRequestObject requestObject =
-            BoxItemCopyRequestObject.copyItemRequestObject("0");
+                BoxItemCopyRequestObject.copyItemRequestObject("0");
         requestObject.setName(CAMEL_TEST_FILE);
         headers.put("CamelBox.itemCopyRequest", requestObject);
         BoxFile result = requestBodyAndHeaders("direct://COPYFILE", null, headers);
@@ -88,7 +87,7 @@ public class IBoxFilesManagerIntegrationTest extends AbstractBoxTestSupport {
             // parameter type is com.box.boxjavalibv2.requests.requestobjects.BoxSharedLinkRequestObject
             final BoxSharedLinkRequestEntity sharedLink = new BoxSharedLinkRequestEntity(BoxSharedLinkAccess.OPEN);
             final BoxSharedLinkRequestObject requestObject =
-                BoxSharedLinkRequestObject.createSharedLinkRequestObject(sharedLink);
+                    BoxSharedLinkRequestObject.createSharedLinkRequestObject(sharedLink);
             headers.put("CamelBox.sharedLinkRequest", requestObject);
 
             BoxFile result = requestBodyAndHeaders("direct://CREATESHAREDLINK", null, headers);
@@ -115,7 +114,7 @@ public class IBoxFilesManagerIntegrationTest extends AbstractBoxTestSupport {
         // parameter type is String
         headers.put("CamelBox.fileId", testFileId);
         // parameter type is com.box.restclientv2.requestsbase.BoxDefaultRequestObject
-        headers.put("CamelBox.defaultRequest", BOX_DEFAULT_REQUEST_OBJECT);
+//        headers.put("CamelBox.defaultRequest", null);
         InputStream result = requestBodyAndHeaders("direct://DOWNLOADFILE", null, headers);
 
         assertNotNull("downloadFile result", result);
@@ -124,7 +123,7 @@ public class IBoxFilesManagerIntegrationTest extends AbstractBoxTestSupport {
     }
 
     @Test
-    public void testDownloadFile_1() throws Exception {
+    public void testDownloadFile1() throws Exception {
         final Map<String, Object> headers = new HashMap<String, Object>();
         // parameter type is String
         headers.put("CamelBox.fileId", testFileId);
@@ -135,7 +134,7 @@ public class IBoxFilesManagerIntegrationTest extends AbstractBoxTestSupport {
         final FileTransferListener fileTransferListener = new FileTransferListener();
         headers.put("CamelBox.listener", fileTransferListener);
         // parameter type is com.box.restclientv2.requestsbase.BoxDefaultRequestObject
-        headers.put("CamelBox.defaultRequest", BOX_DEFAULT_REQUEST_OBJECT);
+//        headers.put("CamelBox.defaultRequest", null);
 
         requestBodyAndHeaders("direct://DOWNLOADFILE_1", null, headers);
 
@@ -148,24 +147,24 @@ public class IBoxFilesManagerIntegrationTest extends AbstractBoxTestSupport {
         do {
             bytesTransferred = fileTransferListener.getBytesTransferred();
             Thread.sleep(2000);
-        } while(fileTransferListener.getBytesTransferred() != bytesTransferred);
+        } while (fileTransferListener.getBytesTransferred() != bytesTransferred);
 //        assertEquals("downloadFile status", "success", fileTransferListener.getStatus());
         assertNull("downloadFile exception", fileTransferListener.getException());
     }
 
     @Test
-    public void testDownloadFile_2() throws Exception {
+    public void testDownloadFile2() throws Exception {
         final Map<String, Object> headers = new HashMap<String, Object>();
         // parameter type is String
         headers.put("CamelBox.fileId", testFileId);
         // parameter type is java.io.OutputStream[]
-        final OutputStream[] outputStreams = new OutputStream[] { new ByteArrayOutputStream() } ;
+        final OutputStream[] outputStreams = new OutputStream[]{new ByteArrayOutputStream()};
         headers.put("CamelBox.outputStreams", outputStreams);
         // parameter type is com.box.boxjavalibv2.filetransfer.IFileTransferListener
         final FileTransferListener fileTransferListener = new FileTransferListener();
         headers.put("CamelBox.listener", fileTransferListener);
         // parameter type is com.box.restclientv2.requestsbase.BoxDefaultRequestObject
-        headers.put("CamelBox.defaultRequest", BOX_DEFAULT_REQUEST_OBJECT);
+//        headers.put("CamelBox.defaultRequest", null);
 
         requestBodyAndHeaders("direct://DOWNLOADFILE_2", null, headers);
 
@@ -196,9 +195,8 @@ public class IBoxFilesManagerIntegrationTest extends AbstractBoxTestSupport {
         // parameter type is String
         headers.put("CamelBox.fileId", testFileId);
         // parameter type is com.box.restclientv2.requestsbase.BoxDefaultRequestObject
-        headers.put("CamelBox.defaultRequest", BOX_DEFAULT_REQUEST_OBJECT);
+//        headers.put("CamelBox.defaultRequest", null);
 
-//        BoxFile result = requestBodyAndHeaders("direct://GETFILE", null, headers);
         BoxFile result = requestBodyAndHeaders("direct://GETFILE", null, headers);
 
         assertNotNull("getFile result", result);
@@ -211,7 +209,7 @@ public class IBoxFilesManagerIntegrationTest extends AbstractBoxTestSupport {
         // parameter type is String
         headers.put("CamelBox.fileId", testFileId);
         // parameter type is com.box.restclientv2.requestsbase.BoxDefaultRequestObject
-        headers.put("CamelBox.defaultRequest", BOX_DEFAULT_REQUEST_OBJECT);
+//        headers.put("CamelBox.defaultRequest", null);
 
         com.box.boxjavalibv2.dao.BoxCollection result = requestBodyAndHeaders("direct://GETFILECOMMENTS", null, headers);
 
@@ -225,7 +223,7 @@ public class IBoxFilesManagerIntegrationTest extends AbstractBoxTestSupport {
         // parameter type is String
         headers.put("CamelBox.fileId", testFileId);
         // parameter type is com.box.restclientv2.requestsbase.BoxDefaultRequestObject
-        headers.put("CamelBox.defaultRequest", BOX_DEFAULT_REQUEST_OBJECT);
+//        headers.put("CamelBox.defaultRequest", null);
 
         java.util.List result = requestBodyAndHeaders("direct://GETFILEVERSIONS", null, headers);
 
@@ -285,7 +283,7 @@ public class IBoxFilesManagerIntegrationTest extends AbstractBoxTestSupport {
         headers.put("CamelBox.fileId", testFileId);
         // parameter type is com.box.boxjavalibv2.requests.requestobjects.BoxFileRequestObject
         final BoxFileRequestObject requestObject = BoxFileRequestObject.getRequestObject();
-        requestObject.setTags(new String[] { CAMEL_TEST_TAG });
+        requestObject.setTags(new String[]{CAMEL_TEST_TAG});
         headers.put("CamelBox.fileRequest", requestObject);
         BoxFile result = requestBodyAndHeaders("direct://UPDATEFILEINFO", null, headers);
 
@@ -296,8 +294,8 @@ public class IBoxFilesManagerIntegrationTest extends AbstractBoxTestSupport {
     public BoxFile uploadFile() throws Exception {
         // using com.box.restclientv2.requestsbase.BoxFileUploadRequestObject message body for single parameter "fileUploadRequest"
         final BoxFileUploadRequestObject requestObject =
-            BoxFileUploadRequestObject.uploadFileRequestObject("0", CAMEL_TEST_FILE,
-                getClass().getResourceAsStream(TEST_UPLOAD_FILE));
+                BoxFileUploadRequestObject.uploadFileRequestObject("0", CAMEL_TEST_FILE,
+                        getClass().getResourceAsStream(TEST_UPLOAD_FILE));
         final FileTransferListener fileTransferListener = new FileTransferListener();
         requestObject.setListener(fileTransferListener);
 
@@ -322,8 +320,8 @@ public class IBoxFilesManagerIntegrationTest extends AbstractBoxTestSupport {
             headers.put("CamelBox.fileId", boxFile.getId());
             // parameter type is com.box.restclientv2.requestsbase.BoxFileUploadRequestObject
             final BoxFileUploadRequestObject requestObject =
-                BoxFileUploadRequestObject.uploadNewVersionRequestObject(CAMEL_TEST_FILE,
-                    getClass().getResourceAsStream(TEST_UPLOAD_FILE));
+                    BoxFileUploadRequestObject.uploadNewVersionRequestObject(CAMEL_TEST_FILE,
+                            getClass().getResourceAsStream(TEST_UPLOAD_FILE));
             final FileTransferListener fileTransferListener = new FileTransferListener();
             requestObject.setListener(fileTransferListener);
 
@@ -344,63 +342,63 @@ public class IBoxFilesManagerIntegrationTest extends AbstractBoxTestSupport {
             public void configure() {
                 // test route for copyFile
                 from("direct://COPYFILE")
-                  .to("box://" + PATH_PREFIX + "/copyFile");
+                        .to("box://" + PATH_PREFIX + "/copyFile");
 
                 // test route for createSharedLink
                 from("direct://CREATESHAREDLINK")
-                  .to("box://" + PATH_PREFIX + "/createSharedLink");
+                        .to("box://" + PATH_PREFIX + "/createSharedLink");
 
                 // test route for deleteFile
                 from("direct://DELETEFILE")
-                  .to("box://" + PATH_PREFIX + "/deleteFile");
+                        .to("box://" + PATH_PREFIX + "/deleteFile");
 
                 // test route for downloadFile
                 from("direct://DOWNLOADFILE")
-                  .to("box://" + PATH_PREFIX + "/downloadFile");
+                        .to("box://" + PATH_PREFIX + "/downloadFile");
 
                 // test route for downloadFile
                 from("direct://DOWNLOADFILE_1")
-                  .to("box://" + PATH_PREFIX + "/downloadFile");
+                        .to("box://" + PATH_PREFIX + "/downloadFile");
 
                 // test route for downloadFile
                 from("direct://DOWNLOADFILE_2")
-                  .to("box://" + PATH_PREFIX + "/downloadFile");
+                        .to("box://" + PATH_PREFIX + "/downloadFile");
 
                 // test route for downloadThumbnail
                 from("direct://DOWNLOADTHUMBNAIL")
-                  .to("box://" + PATH_PREFIX + "/downloadThumbnail");
+                        .to("box://" + PATH_PREFIX + "/downloadThumbnail");
 
                 // test route for getFile
                 from("direct://GETFILE")
-                  .to("box://" + PATH_PREFIX + "/getFile");
+                        .to("box://" + PATH_PREFIX + "/getFile");
 
                 // test route for getFileComments
                 from("direct://GETFILECOMMENTS")
-                  .to("box://" + PATH_PREFIX + "/getFileComments");
+                        .to("box://" + PATH_PREFIX + "/getFileComments");
 
                 // test route for getFileVersions
                 from("direct://GETFILEVERSIONS")
-                  .to("box://" + PATH_PREFIX + "/getFileVersions");
+                        .to("box://" + PATH_PREFIX + "/getFileVersions");
 
                 // test route for getPreview
                 from("direct://GETPREVIEW")
-                  .to("box://" + PATH_PREFIX + "/getPreview");
+                        .to("box://" + PATH_PREFIX + "/getPreview");
 
                 // test route for getThumbnail
                 from("direct://GETTHUMBNAIL")
-                  .to("box://" + PATH_PREFIX + "/getThumbnail");
+                        .to("box://" + PATH_PREFIX + "/getThumbnail");
 
                 // test route for updateFileInfo
                 from("direct://UPDATEFILEINFO")
-                  .to("box://" + PATH_PREFIX + "/updateFileInfo");
+                        .to("box://" + PATH_PREFIX + "/updateFileInfo");
 
                 // test route for uploadFile
                 from("direct://UPLOADFILE")
-                  .to("box://" + PATH_PREFIX + "/uploadFile?inBody=fileUploadRequest");
+                        .to("box://" + PATH_PREFIX + "/uploadFile?inBody=fileUploadRequest");
 
                 // test route for uploadNewVersion
                 from("direct://UPLOADNEWVERSION")
-                  .to("box://" + PATH_PREFIX + "/uploadNewVersion");
+                        .to("box://" + PATH_PREFIX + "/uploadNewVersion");
 
             }
         };

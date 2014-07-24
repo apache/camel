@@ -24,7 +24,7 @@
 
     <camelContext xmlns="http://camel.apache.org/schema/spring">
         <onException>
-            <exception>java.util.concurrent.RejectedExecutionException</exception>
+            <exception>org.apache.camel.processor.ThrottlerRejectedExecutionException</exception>
             <handled><constant>true</constant></handled>
             <to uri="mock:error"/>
         </onException>

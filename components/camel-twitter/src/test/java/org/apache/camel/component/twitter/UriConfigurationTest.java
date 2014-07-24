@@ -39,7 +39,6 @@ public class UriConfigurationTest extends Assert {
         assertTrue(!twitterEndpoint.getProperties().getConsumerSecret().isEmpty());
         assertTrue(!twitterEndpoint.getProperties().getAccessToken().isEmpty());
         assertTrue(!twitterEndpoint.getProperties().getAccessTokenSecret().isEmpty());
-        assertTrue(twitterEndpoint.getProperties().getUseSSL());
     }
     
     @Test
@@ -64,15 +63,6 @@ public class UriConfigurationTest extends Assert {
         assertEquals("pwd", twitterEndpoint.getProperties().getHttpProxyPassword());
     }
     
-    @Test
-    public void testUseSSLSetting() throws Exception {
-        Endpoint endpoint = context.getEndpoint("twitter:todo/todo?useSSL=false");
-        assertTrue("Endpoint not a TwitterEndpoint: " + endpoint, endpoint instanceof TwitterEndpoint);
-        TwitterEndpoint twitterEndpoint = (TwitterEndpoint) endpoint;
-        
-        assertFalse(twitterEndpoint.getProperties().getUseSSL());
-    }
-
     @Test
     public void testComponentConfiguration() throws Exception {
         TwitterComponent comp = context.getComponent("twitter", TwitterComponent.class);

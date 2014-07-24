@@ -200,8 +200,12 @@ public class RabbitMQProducer extends DefaultProducer {
             if (value != null) {
                 filteredHeaders.put(header.getKey(), header.getValue());
             } else if (log.isDebugEnabled()) {
-                log.debug("Ignoring header: {} of class: {} with value: {}",
-                    new Object[]{header.getKey(), header.getValue().getClass().getName(), header.getValue()});
+                if (header.getValue() == null) {
+                    log.debug("Ignoring header: {} with null value", header.getKey());
+                } else {
+                    log.debug("Ignoring header: {} of class: {} with value: {}",
+                            new Object[]{header.getKey(), ObjectHelper.classCanonicalName(header.getValue()), header.getValue()});
+                }
             }
         }
 

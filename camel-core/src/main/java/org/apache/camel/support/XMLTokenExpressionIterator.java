@@ -19,6 +19,9 @@ package org.apache.camel.support;
 import java.io.Closeable;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.io.Reader;
+import java.io.UnsupportedEncodingException;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.HashSet;
@@ -71,8 +74,19 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
         this.mode = mode != null ? mode.charAt(0) : 0;
     }
     
-    protected Iterator<?> createIterator(InputStream in, Exchange exchange) throws XMLStreamException {
-        XMLTokenIterator iterator = new XMLTokenIterator(path, nsmap, mode, in, exchange);
+    protected Iterator<?> createIterator(InputStream in, String charset) throws XMLStreamException, UnsupportedEncodingException {
+        Reader reader;
+        if (charset == null) {
+            reader = new InputStreamReader(in);
+        } else {
+            reader = new InputStreamReader(in, charset);
+        }
+        XMLTokenIterator iterator = new XMLTokenIterator(path, nsmap, mode, reader);
+        return iterator;
+    }
+
+    protected Iterator<?> createIterator(Reader in) throws XMLStreamException {
+        XMLTokenIterator iterator = new XMLTokenIterator(path, nsmap, mode, in);
         return iterator;
     }
 
@@ -101,13 +115,19 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
         InputStream in = null;
         try {
             in = exchange.getIn().getMandatoryBody(InputStream.class);
-            return createIterator(in, exchange);
+            String charset = IOHelper.getCharsetName(exchange);
+            return createIterator(in, charset);
         } catch (InvalidPayloadException e) {
             exchange.setException(e);
             // must close input stream
             IOHelper.close(in);
             return null;
         } catch (XMLStreamException e) {
+            exchange.setException(e);
+            // must close input stream
+            IOHelper.close(in);
+            return null;
+        } catch (UnsupportedEncodingException e) {
             exchange.setException(e);
             // must close input stream
             IOHelper.close(in);
@@ -122,12 +142,12 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
 
     static class XMLTokenIterator implements Iterator<Object>, Closeable {
         private static final Logger LOG = LoggerFactory.getLogger(XMLTokenIterator.class);
-        private static final Pattern NAMESPACE_PATTERN = Pattern.compile("xmlns(:\\w+|)\\s*=\\s*('[^']+'|\"[^\"]+\")");
+        private static final Pattern NAMESPACE_PATTERN = Pattern.compile("xmlns(:\\w+|)\\s*=\\s*('[^']*'|\"[^\"]*\")");
 
         private AttributedQName[] splitpath;
         private int index;
         private char mode;
-        private RecordableInputStream in;
+        private RecordableReader in;
         private XMLStreamReader reader;
         private List<QName> path;
         private List<Map<String, String>> namespaces;
@@ -141,7 +161,13 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
         
         private Object nextToken;
         
-        public XMLTokenIterator(String path, Map<String, String> nsmap, char mode, InputStream in, Exchange exchange) throws XMLStreamException {
+        public XMLTokenIterator(String path, Map<String, String> nsmap, char mode, InputStream in, String charset) 
+            throws XMLStreamException, UnsupportedEncodingException {
+            // woodstox's getLocation().etCharOffset() does not return the offset correctly for InputStream, so use Reader instead.
+            this(path, nsmap, mode, new InputStreamReader(in, charset));
+        }
+
+        public XMLTokenIterator(String path, Map<String, String> nsmap, char mode, Reader in) throws XMLStreamException {
             final String[] sl = path.substring(1).split("/");
             this.splitpath = new AttributedQName[sl.length];
             for (int i = 0; i < sl.length; i++) {
@@ -151,14 +177,13 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
                     String pfx = d > 0 ? s.substring(0, d) : "";
                     this.splitpath[i] = 
                         new AttributedQName(
-                            "*".equals(pfx) ? "*" : nsmap.get(pfx), d > 0 ? s.substring(d + 1) : s, pfx);
+                            "*".equals(pfx) ? "*" : nsmap == null ? "" : nsmap.get(pfx), d > 0 ? s.substring(d + 1) : s, pfx);
                 }
             }
             
             this.mode = mode != 0 ? mode : 'i';
-            String charset = IOHelper.getCharsetName(exchange, false);
-            this.in = new RecordableInputStream(in, charset);
-            this.reader = new StaxConverter().createXMLStreamReader(this.in, exchange);
+            this.in = new RecordableReader(in);
+            this.reader = new StaxConverter().createXMLStreamReader(this.in);
 
             LOG.trace("reader.class: {}", reader.getClass());
             int coff = reader.getLocation().getCharacterOffset();
@@ -353,6 +378,16 @@ public class XMLTokenExpressionIterator extends ExpressionAdapter implements Nam
                 int ep = token.lastIndexOf("</");
                 if (bp > 0 && ep > 0) {
                     sb.append(token.substring(bp + 1, ep));
+                }
+            } else if (mode == 't') {
+                int bp = 0;
+                for (;;) {
+                    int ep = token.indexOf('>', bp);
+                    bp = token.indexOf('<', ep);
+                    if (bp < 0) {
+                        break;
+                    }
+                    sb.append(token.substring(ep + 1, bp));
                 }
             }
 

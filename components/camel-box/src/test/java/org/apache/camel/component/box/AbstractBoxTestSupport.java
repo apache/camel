@@ -33,7 +33,6 @@ import com.box.boxjavalibv2.authorization.OAuthRefreshListener;
 import com.box.boxjavalibv2.dao.BoxOAuthToken;
 import com.box.boxjavalibv2.dao.IAuthData;
 import com.box.boxjavalibv2.requests.requestobjects.BoxPagingRequestObject;
-import com.box.restclientv2.requestsbase.BoxDefaultRequestObject;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.test.junit4.CamelTestSupport;
@@ -44,18 +43,19 @@ import org.junit.AfterClass;
 public abstract class AbstractBoxTestSupport extends CamelTestSupport {
 
     protected static final String CAMEL_TEST_TAG = "camel_was_here";
+    protected static final String CAMEL_TEST_FILE = "CamelTestFile";
+    protected static final BoxPagingRequestObject BOX_PAGING_REQUEST_OBJECT = BoxPagingRequestObject.pagingRequestObject(100, 0);
+
+    protected static String testUserId;
+    protected static String testFolderId;
+    protected static String testFileId;
+
     private static final String LINE_SEPARATOR = System.getProperty("line.separator");
     private static final String TEST_OPTIONS_PROPERTIES = "/test-options.properties";
     private static final String REFRESH_TOKEN_PROPERTY = "refreshToken";
-    protected static final BoxDefaultRequestObject BOX_DEFAULT_REQUEST_OBJECT = new BoxDefaultRequestObject();
-    protected static final BoxPagingRequestObject BOX_PAGING_REQUEST_OBJECT = BoxPagingRequestObject.pagingRequestObject(100, 0);
-    protected static String testUserId;
 
     private static String refreshToken;
     private static String propertyText;
-
-    protected static String testFolderId;
-    protected static String testFileId;
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
@@ -68,7 +68,7 @@ public abstract class AbstractBoxTestSupport extends CamelTestSupport {
         final StringBuilder builder = new StringBuilder();
         final BufferedReader reader = new BufferedReader(new InputStreamReader(in, "UTF-8"));
         String line;
-        while((line = reader.readLine()) != null) {
+        while ((line = reader.readLine()) != null) {
             builder.append(line).append(LINE_SEPARATOR);
         }
         propertyText = builder.toString();
@@ -77,9 +77,17 @@ public abstract class AbstractBoxTestSupport extends CamelTestSupport {
         try {
             properties.load(new StringReader(propertyText));
         } catch (IOException e) {
-            throw new IOException(String.format("%s could not be loaded: %s", TEST_OPTIONS_PROPERTIES, e.getMessage()),
-                e);
+            throw new IOException(String.format("%s could not be loaded: %s", TEST_OPTIONS_PROPERTIES, e.getMessage()), e);
         }
+
+        addSystemProperty("camel.box.userName", "userName", properties);
+        addSystemProperty("camel.box.userPassword", "userPassword", properties);
+        addSystemProperty("camel.box.clientId", "clientId", properties);
+        addSystemProperty("camel.box.clientSecret", "clientSecret", properties);
+        addSystemProperty("camel.box.refreshToken", "refreshToken", properties);
+        addSystemProperty("camel.box.testFolderId", "testFolderId", properties);
+        addSystemProperty("camel.box.testFileId", "testFileId", properties);
+        addSystemProperty("camel.box.testUserId", "testUserId", properties);
 
         // cache test properties
         refreshToken = properties.getProperty(REFRESH_TOKEN_PROPERTY);
@@ -135,6 +143,13 @@ public abstract class AbstractBoxTestSupport extends CamelTestSupport {
         return context;
     }
 
+    private void addSystemProperty(String sourceName, String targetName, Properties properties) {
+        String value = System.getProperty(sourceName);
+        if (value != null && !value.trim().isEmpty()) {
+            properties.put(targetName, value);
+        }
+    }
+
     @AfterClass
     public static void tearDownAfterClass() throws Exception {
         CamelTestSupport.tearDownAfterClass();
@@ -143,7 +158,7 @@ public abstract class AbstractBoxTestSupport extends CamelTestSupport {
         final URL resource = AbstractBoxTestSupport.class.getResource(TEST_OPTIONS_PROPERTIES);
         final FileOutputStream out = new FileOutputStream(new File(resource.getPath()));
         propertyText = propertyText.replaceAll(REFRESH_TOKEN_PROPERTY + "=\\S*",
-            REFRESH_TOKEN_PROPERTY + "=" + refreshToken);
+                REFRESH_TOKEN_PROPERTY + "=" + refreshToken);
         out.write(propertyText.getBytes("UTF-8"));
         out.close();
     }
@@ -154,8 +169,7 @@ public abstract class AbstractBoxTestSupport extends CamelTestSupport {
         return true;
     }
 
-    protected <T> T requestBodyAndHeaders(String endpointUri, Object body, Map<String, Object> headers)
-        throws CamelExecutionException {
+    protected <T> T requestBodyAndHeaders(String endpointUri, Object body, Map<String, Object> headers) throws CamelExecutionException {
         return (T) template().requestBodyAndHeaders(endpointUri, body, headers);
     }
 

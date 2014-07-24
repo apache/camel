@@ -24,6 +24,7 @@ import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.junit.Ignore;
 import org.junit.Test;
 import org.restlet.data.MediaType;
 import org.restlet.representation.InputRepresentation;
@@ -40,6 +41,7 @@ public class RestletSetBodyTest extends RestletTestSupport {
     }
     
     @Test
+    @Ignore
     public void testSetBodyRepresentation() throws Exception {
         HttpGet get = new HttpGet("http://0.0.0.0:" + portNum + "/images/123");
         HttpClient httpclient = new DefaultHttpClient();
@@ -71,12 +73,14 @@ public class RestletSetBodyTest extends RestletTestSupport {
             public void configure() throws Exception {
                 from("restlet:http://0.0.0.0:" + portNum + "/stock/{symbol}?restletMethods=get")
                     .setBody().constant("110");
+
                 // create ByteArrayRepresentation for response
                 byte[] image = new byte[10];
                 for (int i = 0; i < 10; i++) {
                     image[i] = (byte)(i + 1);
                 }
                 ByteArrayInputStream inputStream = new ByteArrayInputStream(image);
+
                 from("restlet:http://0.0.0.0:" + portNum + "/images/{symbol}?restletMethods=get")
                     .setBody().constant(new InputRepresentation(inputStream, MediaType.IMAGE_PNG, 10));
             }

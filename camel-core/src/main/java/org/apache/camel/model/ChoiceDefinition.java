@@ -227,7 +227,7 @@ public class ChoiceDefinition extends ProcessorDefinition<ChoiceDefinition> {
     }
 
     @Override
-    protected void configureChild(ProcessorDefinition<?> output) {
+    public void configureChild(ProcessorDefinition<?> output) {
         if (whenClauses == null || whenClauses.isEmpty()) {
             return;
         }

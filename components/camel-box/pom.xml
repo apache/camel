@@ -12,7 +12,7 @@
 
   <artifactId>camel-box</artifactId>
   <packaging>bundle</packaging>
-  <name>Camel Box.com Component</name>
+  <name>Camel :: Box.com</name>
   <description>Camel Component for Box.com</description>
 
   <properties>
@@ -20,19 +20,21 @@
     <componentName>Box</componentName>
     <componentPackage>org.apache.camel.component.box</componentPackage>
     <outPackage>org.apache.camel.component.box.internal</outPackage>
-    <boxjavalibv2.version>3.0.9</boxjavalibv2.version>
-    <htmlunit.version>2.15</htmlunit.version>
 
     <camel.osgi.export.pkg>${componentPackage}</camel.osgi.export.pkg>
+    <camel.osgi.private.pkg>${outPackage}</camel.osgi.private.pkg>
     <camel.osgi.export.service>org.apache.camel.spi.ComponentResolver;component=box</camel.osgi.export.service>
-    <httpclient.version>4.3.3</httpclient.version>
-    <httpunit.version>1.7</httpunit.version>
   </properties>
 
   <dependencies>
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-core</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.httpcomponents</groupId>
+      <artifactId>httpclient</artifactId>
+      <version>${httpclient4-version}</version>
     </dependency>
     <dependency>
       <groupId>net.box</groupId>
@@ -47,12 +49,45 @@
           <groupId>org.apache.httpcomponents</groupId>
           <artifactId>httpclient-cache</artifactId>
         </exclusion>
+        <exclusion>
+          <groupId>com.fasterxml.jackson.core</groupId>
+          <artifactId>jackson-annotations</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>com.fasterxml.jackson.core</groupId>
+          <artifactId>jackson-core</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>com.fasterxml.jackson.core</groupId>
+          <artifactId>jackson-databind</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>junit</groupId>
+          <artifactId>junit</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>org.easymock</groupId>
+          <artifactId>easymock</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>commons-io</groupId>
+          <artifactId>commons-io</artifactId>
+        </exclusion>
+        <exclusion>
+          <groupId>commons-lang</groupId>
+          <artifactId>commons-lang</artifactId>
+        </exclusion>
       </exclusions>
     </dependency>
     <dependency>
       <groupId>net.sourceforge.htmlunit</groupId>
       <artifactId>htmlunit</artifactId>
       <version>${htmlunit.version}</version>
+    </dependency>
+    <dependency>
+      <groupId>com.fasterxml.jackson.core</groupId>
+      <artifactId>jackson-databind</artifactId>
+      <version>${jackson2-version}</version>
     </dependency>
 <!--
     <dependency>
@@ -63,8 +98,33 @@
 -->
     <dependency>
       <groupId>org.apache.httpcomponents</groupId>
+      <artifactId>httpcore</artifactId>
+      <version>${httpcore4-version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.httpcomponents</groupId>
+      <artifactId>httpmime</artifactId>
+      <version>${httpcore4-version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.httpcomponents</groupId>
       <artifactId>httpclient-cache</artifactId>
-      <version>${httpclient.version}</version>
+      <version>${httpclient4-version}</version>
+    </dependency>
+    <dependency>
+      <groupId>commons-io</groupId>
+      <artifactId>commons-io</artifactId>
+      <version>${commons-io-version}</version>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.commons</groupId>
+      <artifactId>commons-lang3</artifactId>
+      <version>${commons-lang3-version}</version>
+    </dependency>
+    <dependency>
+      <groupId>commons-lang</groupId>
+      <artifactId>commons-lang</artifactId>
+      <version>${commons-lang-version}</version>
     </dependency>
 
     <!-- Camel annotations in provided scope to avoid compile errors in IDEs -->
@@ -105,6 +165,26 @@
 
   <build>
     <plugins>
+
+      <!-- compile LongPollingEventsManager before generate-sources -->
+      <plugin>
+        <groupId>org.apache.maven.plugins</groupId>
+        <artifactId>maven-compiler-plugin</artifactId>
+        <executions>
+          <execution>
+            <id>compile-long-polling-events-mnager</id>
+            <goals>
+              <goal>compile</goal>
+            </goals>
+            <phase>generate-sources</phase>
+            <configuration>
+              <includes>
+                <include>**/LongPollingEventsManager.java</include>
+              </includes>
+            </configuration>
+          </execution>
+        </executions>
+      </plugin>
 
       <!-- generate Component source and test source -->
       <plugin>
@@ -229,6 +309,13 @@
                   </aliases>
                 </api>
                 <api>
+                  <apiName>poll-events</apiName>
+                  <proxyClass>org.apache.camel.component.box.internal.LongPollingEventsManager</proxyClass>
+                  <fromSignatureFile>${project.basedir}/src/signatures/long-polling-events-manager.txt</fromSignatureFile>
+                  <excludeConfigNames>callback</excludeConfigNames>
+                  <nullableOptions/>
+                </api>
+                <api>
                   <apiName>search</apiName>
                   <proxyClass>com.box.boxjavalibv2.resourcemanagers.IBoxSearchManager</proxyClass>
                   <fromJavadoc/>
@@ -302,6 +389,9 @@
               <fromJavadoc>
                 <excludeClasses>BoxResourceManager|BoxItemsManager</excludeClasses>
               </fromJavadoc>
+              <nullableOptions>
+                <nullableOption>defaultRequest</nullableOption>
+              </nullableOptions>
               <aliases>
                 <alias>
                   <methodPattern>[gs]et(.+)</methodPattern>
@@ -396,9 +486,18 @@
               <useFile>true</useFile>
               <forkMode>once</forkMode>
               <forkedProcessTimeoutInSeconds>300</forkedProcessTimeoutInSeconds>
+              <excludes>
+                  <exclude>**/*XXXTest.java</exclude>
+              </excludes>
               <includes>
                 <include>**/*Test.java</include>
               </includes>
+              <systemPropertyVariables>
+                <camel.box.userName>${camel.box.userName}</camel.box.userName>
+                <camel.box.userPassword>${camel.box.userPassword}</camel.box.userPassword>
+                <camel.box.clientId>${camel.box.clientId}</camel.box.clientId>
+                <camel.box.clientSecret>${camel.box.clientSecret}</camel.box.clientSecret>
+              </systemPropertyVariables>
             </configuration>
           </plugin>
         </plugins>

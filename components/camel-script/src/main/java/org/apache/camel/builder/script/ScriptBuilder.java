@@ -413,6 +413,10 @@ public class ScriptBuilder implements Expression, Predicate, Processor {
                 }
             }
         }
+        // As the script could have multiple statement, we need to look up the result from the engine value set
+        if (result == null) {
+            result = engine.get("result");
+        }
         return result;
     }
 

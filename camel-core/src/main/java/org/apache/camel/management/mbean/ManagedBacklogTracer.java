@@ -54,6 +54,14 @@ public class ManagedBacklogTracer implements ManagedBacklogTracerMBean {
         return backlogTracer.isEnabled();
     }
 
+    public String getCamelId() {
+        return camelContext.getName();
+    }
+
+    public String getCamelManagementName() {
+        return camelContext.getManagementName();
+    }
+
     public void setEnabled(boolean enabled) {
         backlogTracer.setEnabled(enabled);
     }

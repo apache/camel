@@ -22,6 +22,8 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.DefaultComponent;
+import org.apache.solr.client.solrj.SolrServer;
+import org.apache.solr.client.solrj.impl.CloudSolrServer;
 import org.apache.solr.client.solrj.impl.ConcurrentUpdateSolrServer;
 import org.apache.solr.client.solrj.impl.HttpSolrServer;
 import org.slf4j.Logger;
@@ -40,6 +42,7 @@ public class SolrComponent extends DefaultComponent {
         private final AtomicInteger referenceCounter = new AtomicInteger();
         private HttpSolrServer solrServer;
         private ConcurrentUpdateSolrServer updateSolrServer;
+        private CloudSolrServer cloudSolrServer;
 
         public HttpSolrServer getSolrServer() {
             return solrServer;
@@ -55,6 +58,14 @@ public class SolrComponent extends DefaultComponent {
 
         public void setUpdateSolrServer(ConcurrentUpdateSolrServer updateSolrServer) {
             this.updateSolrServer = updateSolrServer;
+        }
+        
+        public CloudSolrServer getCloudSolrServer() {
+            return cloudSolrServer;
+        }
+
+        public void setCloudSolrServer(CloudSolrServer cloudServer) {
+            cloudSolrServer = cloudServer;
         }
 
         public int addReference() {
@@ -92,21 +103,28 @@ public class SolrComponent extends DefaultComponent {
     void shutdownServers(SolrServerReference ref) {
         shutdownServers(ref, false);
     }
+    
+    private void shutdownServer(SolrServer server) {
+        if (server != null) {
+            LOG.info("Shutting down solr server: {}", server);
+            server.shutdown();
+        }
+    }
 
     void shutdownServers(SolrServerReference ref, boolean remove) {
         try {
-            if (ref.getSolrServer() != null) {
-                LOG.info("Shutting down solr server: {}", ref.getSolrServer());
-                ref.getSolrServer().shutdown();
-            }
+            shutdownServer(ref.getSolrServer());
         } catch (Exception e) {
             LOG.warn("Error shutting down solr server. This exception is ignored.", e);
         }
         try {
-            if (ref.getUpdateSolrServer() != null) {
-                LOG.info("Shutting down update solr server: {}", ref.getUpdateSolrServer());
-                ref.getUpdateSolrServer().shutdownNow();
-            }
+            shutdownServer(ref.getUpdateSolrServer());
+        } catch (Exception e) {
+            LOG.warn("Error shutting down streaming solr server. This exception is ignored.", e);
+        }
+        
+        try {
+            shutdownServer(ref.getCloudSolrServer());
         } catch (Exception e) {
             LOG.warn("Error shutting down streaming solr server. This exception is ignored.", e);
         }

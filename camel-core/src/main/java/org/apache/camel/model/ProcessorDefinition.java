@@ -52,6 +52,7 @@ import org.apache.camel.builder.ProcessorBuilder;
 import org.apache.camel.model.language.ConstantExpression;
 import org.apache.camel.model.language.ExpressionDefinition;
 import org.apache.camel.model.language.LanguageExpression;
+import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.processor.InterceptEndpointProcessor;
 import org.apache.camel.processor.Pipeline;
 import org.apache.camel.processor.aggregate.AggregationStrategy;
@@ -641,7 +642,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      *
      * @param output the child to be added as output to this
      */
-    protected void configureChild(ProcessorDefinition<?> output) {
+    public void configureChild(ProcessorDefinition<?> output) {
         // noop
     }
 
@@ -1314,6 +1315,22 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
         } else {
             return (ChoiceDefinition) def;
         }
+    }
+
+    /**
+     * Ends the current block and returns back to the {@link org.apache.camel.model.rest.RestDefinition rest()} DSL.
+     *
+     * @return the builder
+     */
+    public RestDefinition endRest() {
+        ProcessorDefinition<?> def = this;
+
+        RouteDefinition route = ProcessorDefinitionHelper.getRoute(def);
+        if (route != null) {
+            return route.getRestDefinition();
+        }
+
+        throw new IllegalArgumentException("Cannot find RouteDefinition to allow endRest");
     }
 
     /**

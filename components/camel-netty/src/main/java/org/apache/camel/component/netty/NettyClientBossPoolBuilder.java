@@ -23,7 +23,7 @@ import org.jboss.netty.channel.socket.nio.NioClientBossPool;
 import org.jboss.netty.util.Timer;
 
 /**
- * A builder to create Netty {@link org.jboss.netty.channel.socket.nio.BossPool} which can be used for sharing boos pools
+ * A builder to create Netty {@link org.jboss.netty.channel.socket.nio.BossPool} which can be used for sharing boss pools
  * with multiple Netty {@link NettyServerBootstrapFactory} server bootstrap configurations.
  */
 public final class NettyClientBossPoolBuilder {

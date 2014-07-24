@@ -41,6 +41,10 @@ public class NettyComponent extends UriEndpointComponent {
         super(NettyEndpoint.class);
     }
 
+    public NettyComponent(Class<? extends Endpoint> endpointClass) {
+        super(endpointClass);
+    }
+
     public NettyComponent(CamelContext context) {
         super(context, NettyEndpoint.class);
     }

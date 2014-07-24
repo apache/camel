@@ -25,7 +25,6 @@ import org.w3c.dom.Document;
 
 import org.apache.camel.Message;
 
-
 /**
  * Used in the signature verifier to map the references and objects of the XML
  * signature to the output message.
@@ -46,14 +45,16 @@ public interface XmlSignature2Message {
     public interface Input {
 
         /**
-         * Returns the references.
+         * Returns the references. If there were several signatures then all
+         * references of all signatures are returned.
          * 
          * @return list of references, cannot be <code>null</code>
          */
         List<Reference> getReferences();
 
         /**
-         * Returns the objects.
+         * Returns the objects. If there were several signatures in the XML
+         * document then all objects of all signatures are returned.
          * 
          * @return objects, cannot be <code>null</code>
          */

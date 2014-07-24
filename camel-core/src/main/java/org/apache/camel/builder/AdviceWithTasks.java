@@ -143,13 +143,13 @@ public final class AdviceWithTasks {
                 while (it.hasNext()) {
                     ProcessorDefinition<?> output = it.next();
                     if (matchBy.match(output)) {
-                        ProcessorDefinition<?> parent = output.getParent();
-                        if (parent != null) {
-                            int index = parent.getOutputs().indexOf(output);
+                        List<ProcessorDefinition> outputs = getParentOutputs(output.getParent());
+                        if (outputs != null) {
+                            int index = outputs.indexOf(output);
                             if (index != -1) {
                                 match = true;
-                                parent.getOutputs().add(index + 1, replace);
-                                Object old = parent.getOutputs().remove(index);
+                                outputs.add(index + 1, replace);
+                                Object old = outputs.remove(index);
                                 LOG.info("AdviceWith (" + matchBy.getId() + ") : [" + old + "] --> replace [" + replace + "]");
                             }
                         }
@@ -192,12 +192,12 @@ public final class AdviceWithTasks {
                 while (it.hasNext()) {
                     ProcessorDefinition<?> output = it.next();
                     if (matchBy.match(output)) {
-                        ProcessorDefinition<?> parent = output.getParent();
-                        if (parent != null) {
-                            int index = parent.getOutputs().indexOf(output);
+                        List<ProcessorDefinition> outputs = getParentOutputs(output.getParent());
+                        if (outputs != null) {
+                            int index = outputs.indexOf(output);
                             if (index != -1) {
                                 match = true;
-                                Object old = parent.getOutputs().remove(index);
+                                Object old = outputs.remove(index);
                                 LOG.info("AdviceWith (" + matchBy.getId() + ") : [" + old + "] --> remove");
                             }
                         }
@@ -240,13 +240,13 @@ public final class AdviceWithTasks {
                 while (it.hasNext()) {
                     ProcessorDefinition<?> output = it.next();
                     if (matchBy.match(output)) {
-                        ProcessorDefinition<?> parent = output.getParent();
-                        if (parent != null) {
-                            int index = parent.getOutputs().indexOf(output);
+                        List<ProcessorDefinition> outputs = getParentOutputs(output.getParent());
+                        if (outputs != null) {
+                            int index = outputs.indexOf(output);
                             if (index != -1) {
                                 match = true;
-                                Object existing = parent.getOutputs().get(index);
-                                parent.getOutputs().add(index, before);
+                                Object existing = outputs.get(index);
+                                outputs.add(index, before);
                                 LOG.info("AdviceWith (" + matchBy.getId() + ") : [" + existing + "] --> before [" + before + "]");
                             }
                         }
@@ -289,14 +289,13 @@ public final class AdviceWithTasks {
                 while (it.hasNext()) {
                     ProcessorDefinition<?> output = it.next();
                     if (matchBy.match(output)) {
-
-                        ProcessorDefinition<?> parent = output.getParent();
-                        if (parent != null) {
-                            int index = parent.getOutputs().indexOf(output);
+                        List<ProcessorDefinition> outputs = getParentOutputs(output.getParent());
+                        if (outputs != null) {
+                            int index = outputs.indexOf(output);
                             if (index != -1) {
                                 match = true;
-                                Object existing = parent.getOutputs().get(index);
-                                parent.getOutputs().add(index + 1, after);
+                                Object existing = outputs.get(index);
+                                outputs.add(index + 1, after);
                                 LOG.info("AdviceWith (" + matchBy.getId() + ") : [" + existing + "] --> after [" + after + "]");
                             }
                         }
@@ -308,6 +307,27 @@ public final class AdviceWithTasks {
                 }
             }
         };
+    }
+
+    /**
+     * Gets the outputs from the given parent.
+     * <p/>
+     * This implementation deals with that outputs can be abstract and retrieves the <i>correct</i> parent output.
+     *
+     * @param parent the parent
+     * @return <tt>null</tt> if no parent
+     */
+    @SuppressWarnings("unchecked")
+    private static List<ProcessorDefinition> getParentOutputs(ProcessorDefinition parent) {
+        if (parent == null) {
+            return null;
+        }
+        List<ProcessorDefinition> outputs = parent.getOutputs();
+        if (outputs.size() == 1 && outputs.get(0).isAbstract()) {
+            // if the output is abstract then get its output, as
+            outputs = outputs.get(0).getOutputs();
+        }
+        return outputs;
     }
 
     public static AdviceWithTask replaceFromWith(final RouteDefinition route, final String uri) {
@@ -367,7 +387,7 @@ public final class AdviceWithTasks {
     }
 
     private static Iterator<ProcessorDefinition<?>> createSelectorIterator(final List<ProcessorDefinition<?>> list, final boolean selectFirst,
-                                                                        final boolean selectLast, final int selectFrom, final int selectTo) {
+                                                                           final boolean selectLast, final int selectFrom, final int selectTo) {
         return new Iterator<ProcessorDefinition<?>>() {
             private int current;
             private boolean done;

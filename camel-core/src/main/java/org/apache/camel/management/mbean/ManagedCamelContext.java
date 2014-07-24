@@ -47,6 +47,8 @@ import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.ModelHelper;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RoutesDefinition;
+import org.apache.camel.model.rest.RestDefinition;
+import org.apache.camel.model.rest.RestsDefinition;
 
 /**
  * @version 
@@ -123,10 +125,6 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
 
     public void setTracing(Boolean tracing) {
         context.setTracing(tracing);
-    }
-
-    public Boolean getMessageHistory() {
-        return context.isMessageHistory();
     }
 
     public Integer getInflightExchanges() {
@@ -210,7 +208,7 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
     }
 
     public boolean isMessageHistory() {
-        return context.isMessageHistory();
+        return context.isMessageHistory() != null ? context.isMessageHistory() : false;
     }
 
     public boolean isUseMDCLogging() {
@@ -296,6 +294,18 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
             template.stop();
         }
         return answer;
+    }
+
+    public String dumpRestsAsXml() throws Exception {
+        List<RestDefinition> rests = context.getRestDefinitions();
+        if (rests.isEmpty()) {
+            return null;
+        }
+
+        // use a routes definition to dump the rests
+        RestsDefinition def = new RestsDefinition();
+        def.setRests(rests);
+        return ModelHelper.dumpModelAsXml(def);
     }
 
     public String dumpRoutesAsXml() throws Exception {

@@ -19,13 +19,12 @@ package org.apache.camel.support;
 
 import java.io.ByteArrayInputStream;
 
-import org.junit.Assert;
-import org.junit.Test;
+import junit.framework.TestCase;
 
 /**
  * 
  */
-public class RecordableInputStreamTest extends Assert {
+public class RecordableInputStreamTest extends TestCase {
     private static final byte[] DATA;
     
     static {
@@ -35,7 +34,7 @@ public class RecordableInputStreamTest extends Assert {
             DATA[i] = (byte) (i % radix + 0x20);
         }
     }
-    @Test
+
     public void testReadAndGetTextsBufferPurge() throws Exception {
         RecordableInputStream ris = new RecordableInputStream(new ByteArrayInputStream(DATA), "utf-8");
         assertEquals(0, ris.size());
@@ -64,7 +63,7 @@ public class RecordableInputStreamTest extends Assert {
         
         ris.close();
     }
-    @Test
+
     public void testReadAndGetTextsAutoStopRecord() throws Exception {
         RecordableInputStream ris = new RecordableInputStream(new ByteArrayInputStream(DATA), "utf-8");
         assertEquals(0, ris.size());

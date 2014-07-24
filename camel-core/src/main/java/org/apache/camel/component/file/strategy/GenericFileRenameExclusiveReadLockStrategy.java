@@ -122,4 +122,9 @@ public class GenericFileRenameExclusiveReadLockStrategy<T> implements GenericFil
     public void setReadLockLoggingLevel(LoggingLevel readLockLoggingLevel) {
         this.readLockLoggingLevel = readLockLoggingLevel;
     }
+
+    @Override
+    public void setMarkerFiler(boolean markerFile) {
+        // noop - we do not use marker file with the rename strategy
+    }
 }

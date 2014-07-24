@@ -458,18 +458,21 @@ public class DocumentGeneratorMojo extends AbstractGeneratorMojo implements Mave
     private static String getCanonicalName(ParameterizedType fieldType) {
         final Type[] typeArguments = fieldType.getActualTypeArguments();
 
-        if (typeArguments.length > 0) {
+        final int nArguments = typeArguments.length;
+        if (nArguments > 0) {
             final StringBuilder result = new StringBuilder(getCanonicalName((Class<?>) fieldType.getRawType()));
             result.append("&lt;");
+            int i = 0;
             for (Type typeArg : typeArguments) {
                 if (typeArg instanceof ParameterizedType) {
                     result.append(getCanonicalName((ParameterizedType) typeArg));
                 } else {
                     result.append(getCanonicalName((Class<?>) typeArg));
                 }
-                result.append(',');
+                if (++i < nArguments) {
+                    result.append(',');
+                }
             }
-            result.deleteCharAt(result.length() - 1);
             result.append("&gt;");
             return result.toString();
         }

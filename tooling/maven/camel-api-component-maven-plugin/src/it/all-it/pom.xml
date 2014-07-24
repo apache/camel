@@ -151,6 +151,9 @@
                       <name>extraString</name>
                     </extraOption>
                   </extraOptions>
+                  <nullableOptions>
+                    <nullableOption>namesList</nullableOption>
+                  </nullableOptions>
                   <fromSignatureFile>../../../src/test/resources/test-proxy-signatures.txt</fromSignatureFile>
                 </api>
                 <api>

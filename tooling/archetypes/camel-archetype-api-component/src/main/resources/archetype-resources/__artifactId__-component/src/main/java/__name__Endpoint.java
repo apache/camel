@@ -30,6 +30,7 @@ import ${package}.api.${name}FileHello;
 import ${package}.api.${name}JavadocHello;
 import ${package}.internal.${name}ApiCollection;
 import ${package}.internal.${name}ApiName;
+import ${package}.internal.${name}Constants;
 import ${package}.internal.${name}PropertiesHelper;
 
 /**
@@ -67,10 +68,14 @@ public class ${name}Endpoint extends AbstractApiEndpoint<${name}ApiName, ${name}
         return ${name}PropertiesHelper.getHelper();
     }
 
+    protected String getThreadProfileName() {
+        return ${name}Constants.THREAD_PROFILE_NAME;
+    }
+
     @Override
     protected void afterConfigureProperties() {
         // TODO create API proxy, set connection properties, etc.
-        switch ((${name}ApiName) apiName) {
+        switch (apiName) {
             case HELLO_FILE:
                 apiProxy = new ${name}FileHello();
                 break;

@@ -24,6 +24,7 @@ import javax.xml.crypto.dsig.XMLSignature.SignatureValue;
 import javax.xml.crypto.dsig.keyinfo.KeyInfo;
 
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 
 import org.apache.camel.Message;
 
@@ -35,6 +36,12 @@ import org.apache.camel.Message;
  * Only relevant for the XML signature verifier.
  * <p>
  * See http://www.w3.org/TR/xmldsig-bestpractices/#check-what-is-signed
+ * <p>
+ * The checker is called for each XML signature contained in the XM document.
+ * You can get the total and current count of the XML signatures via the methods
+ * {@link Input#getTotalCountOfSignatures()} and
+ * {@link Input#getCurrentCountOfSignatures()}.
+ * 
  */
 public interface XmlSignatureChecker {
 
@@ -69,6 +76,28 @@ public interface XmlSignatureChecker {
 
         /** Message. */
         Message getMessage();
+
+        /**
+         * Returns true if a XML schema validation was executed during the
+         * parsing of the XML document.
+         * 
+         */
+        boolean isXmlSchemaValidationExecuted();
+
+        /**
+         * Returns the total count of XML signatures contained in the document.
+         * 
+         */
+        int getTotalCountOfSignatures();
+
+        /**
+         * Returns the current count of XML signatures starting from 1.
+         * 
+         */
+        int getCurrentCountOfSignatures();
+
+        /** Current signature element. */
+        Element getCurrentSignatureElement();
 
     }
 

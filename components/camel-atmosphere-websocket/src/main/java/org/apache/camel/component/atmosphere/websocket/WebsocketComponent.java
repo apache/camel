@@ -32,6 +32,7 @@ public class WebsocketComponent extends ServletComponent {
     
     public WebsocketComponent() {
         // override the default servlet name of ServletComponent
+        super(WebsocketEndpoint.class);
         setServletName("CamelWsServlet");
         
         this.stores = new HashMap<String, WebSocketStore>();

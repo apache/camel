@@ -48,6 +48,12 @@ public class ApiComponentGeneratorMojo extends AbstractApiMethodBaseMojo {
     protected FromJavadoc fromJavadoc = new FromJavadoc();
 
     /**
+     * Names of options that can be set to null value if not specified.
+     */
+    @Parameter
+    private String[] nullableOptions;
+
+    /**
      * Method alias patterns for all APIs.
      */
     @Parameter
@@ -101,6 +107,11 @@ public class ApiComponentGeneratorMojo extends AbstractApiMethodBaseMojo {
                 // set common aliases if needed
                 if (!aliases.isEmpty() && api.getAliases().isEmpty()) {
                     api.setAliases(aliases);
+                }
+
+                // set common nullable options if needed
+                if (api.getNullableOptions() == null) {
+                    api.setNullableOptions(nullableOptions);
                 }
             }
 
@@ -235,6 +246,24 @@ public class ApiComponentGeneratorMojo extends AbstractApiMethodBaseMojo {
                 builder.append('_');
             } else {
                 builder.append(upperCase);
+            }
+        }
+        return builder.toString();
+    }
+
+    public static String getNullableOptionValues(String[] nullableOptions) {
+
+        if (nullableOptions == null || nullableOptions.length == 0) {
+            return "";
+        }
+
+        final StringBuilder builder = new StringBuilder();
+        final int nOptions = nullableOptions.length;
+        int i = 0;
+        for (String option : nullableOptions) {
+            builder.append('"').append(option).append('"');
+            if (++i < nOptions) {
+                builder.append(", ");
             }
         }
         return builder.toString();

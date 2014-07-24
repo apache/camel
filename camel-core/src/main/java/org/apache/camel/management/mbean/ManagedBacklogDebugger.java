@@ -20,9 +20,11 @@ import java.util.Set;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.NoTypeConversionAvailableException;
+import org.apache.camel.Predicate;
 import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.api.management.mbean.ManagedBacklogDebuggerMBean;
 import org.apache.camel.processor.interceptor.BacklogDebugger;
+import org.apache.camel.spi.Language;
 import org.apache.camel.spi.ManagementStrategy;
 import org.apache.camel.util.ObjectHelper;
 
@@ -47,6 +49,14 @@ public class ManagedBacklogDebugger implements ManagedBacklogDebuggerMBean {
 
     public BacklogDebugger getBacklogDebugger() {
         return backlogDebugger;
+    }
+
+    public String getCamelId() {
+        return camelContext.getName();
+    }
+
+    public String getCamelManagementName() {
+        return camelContext.getManagementName();
     }
 
     public String getLoggingLevel() {
@@ -195,4 +205,18 @@ public class ManagedBacklogDebugger implements ManagedBacklogDebuggerMBean {
         backlogDebugger.resetDebugCounter();
     }
 
+    public String validateConditionalBreakpoint(String language, String predicate) {
+        Language lan = null;
+        try {
+            lan = camelContext.resolveLanguage(language);
+            lan.createPredicate(predicate);
+            return null;
+        } catch (Exception e) {
+            if (lan == null) {
+                return e.getMessage();
+            } else {
+                return "Invalid syntax " + predicate + " due: " + e.getMessage();
+            }
+        }
+    }
 }

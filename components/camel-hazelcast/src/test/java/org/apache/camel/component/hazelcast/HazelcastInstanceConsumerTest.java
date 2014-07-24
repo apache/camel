@@ -70,7 +70,7 @@ public class HazelcastInstanceConsumerTest extends HazelcastCamelTestSupport {
 
         MockEndpoint added = getMockEndpoint("mock:added");
         added.setExpectedMessageCount(1);
-        when(member.getInetSocketAddress()).thenReturn(new InetSocketAddress("foo.bar", 12345));
+        when(member.getSocketAddress()).thenReturn(new InetSocketAddress("foo.bar", 12345));
 
         MembershipEvent event = new MembershipEvent(cluster, member, MembershipEvent.MEMBER_ADDED, null);
         argument.getValue().memberAdded(event);
@@ -89,7 +89,7 @@ public class HazelcastInstanceConsumerTest extends HazelcastCamelTestSupport {
         MockEndpoint removed = getMockEndpoint("mock:removed");
         removed.setExpectedMessageCount(1);
 
-        when(member.getInetSocketAddress()).thenReturn(new InetSocketAddress("foo.bar", 12345));
+        when(member.getSocketAddress()).thenReturn(new InetSocketAddress("foo.bar", 12345));
 
         MembershipEvent event = new MembershipEvent(cluster, member, MembershipEvent.MEMBER_REMOVED, null);
         argument.getValue().memberRemoved(event);

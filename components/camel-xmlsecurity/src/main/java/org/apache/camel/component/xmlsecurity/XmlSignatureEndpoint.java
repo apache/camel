@@ -94,4 +94,12 @@ public abstract class XmlSignatureEndpoint extends DefaultEndpoint {
     public void setOmitXmlDeclaration(Boolean omitXmlDeclaration) {
         getConfiguration().setOmitXmlDeclaration(omitXmlDeclaration);
     }
+    
+    public String getSchemaResourceUri() {
+        return getConfiguration().getSchemaResourceUri();
+    }
+
+    public void setSchemaResourceUri(String schemaResourceUri) {
+        getConfiguration().setSchemaResourceUri(schemaResourceUri);
+    }
 }

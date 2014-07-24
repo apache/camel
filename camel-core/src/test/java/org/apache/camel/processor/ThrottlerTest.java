@@ -18,14 +18,15 @@ package org.apache.camel.processor;
 
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
-import java.util.concurrent.RejectedExecutionException;
 
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.processor.Throttler.TimeSlot;
+
 import static org.apache.camel.builder.Builder.constant;
+
 
 /**
  * @version
@@ -222,7 +223,7 @@ public class ThrottlerTest extends ContextTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 
-                onException(RejectedExecutionException.class)
+                onException(ThrottlerRejectedExecutionException.class)
                     .handled(true)
                     .to("mock:error");
                 

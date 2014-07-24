@@ -23,6 +23,8 @@ public interface BoxConstants {
 
     // suffix for parameters when passed as exchange header properties
     String PROPERTY_PREFIX = "CamelBox.";
+    String NEXT_STREAM_POSITION_PROPERTY = PROPERTY_PREFIX + "nextStreamPosition";
+    String CHUNK_SIZE_PROPERTY = PROPERTY_PREFIX + "chunkSize";
 
     // thread profile name for this component
     String THREAD_PROFILE_NAME = "CamelBox";

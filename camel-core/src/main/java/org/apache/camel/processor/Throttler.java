@@ -16,7 +16,6 @@
  */
 package org.apache.camel.processor;
 
-import java.util.concurrent.RejectedExecutionException;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.atomic.AtomicLong;
 
@@ -212,7 +211,7 @@ public class Throttler extends DelayProcessorSupport implements Traceable {
     @Override
     protected boolean processDelay(Exchange exchange, AsyncCallback callback, long delay) {
         if (isRejectExecution() && delay > 0) {
-            exchange.setException(new RejectedExecutionException("Exceed the max request limit!"));
+            exchange.setException(new ThrottlerRejectedExecutionException("Exceed the max request limit!"));
             callback.done(true);
             return true;
         } else {
