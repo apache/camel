@@ -22,17 +22,20 @@
            xmlns:http-conf="http://cxf.apache.org/transports/http/configuration"
            xmlns:cm="http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.0.0"
            xmlns:s="http://cxf.apache.org/hello_world_soap_http"
+           xmlns:enc="http://karaf.apache.org/xmlns/jasypt/v1.0.0"
            xsi:schemaLocation="
              http://camel.apache.org/schema/blueprint http://camel.apache.org/schema/blueprint/camel-blueprint.xsd
              http://camel.apache.org/schema/blueprint/cxf http://camel.apache.org/schema/blueprint/cxf/camel-cxf.xsd
              http://cxf.apache.org/transports/http/configuration http://cxf.apache.org/schemas/configuration/http-conf.xsd
              http://aries.apache.org/blueprint/xmlns/blueprint-cm/v1.0.0 http://aries.apache.org/schemas/blueprint-cm/blueprint-cm-1.0.0.xsd
              http://www.osgi.org/xmlns/blueprint/v1.0.0 http://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd">
+   
 
   <!-- blueprint property placeholders -->
   <cm:property-placeholder persistent-id="my-placeholders">
     <cm:default-properties>
-      <cm:property name="router.address" value="http://localhost:9000/routerEndpoint" />
+      <!--cm:property name="router.address" value="http://localhost:9000/routerEndpoint" /-->
+      <cm:property name="router.address" value="ENC(pYMW5lQHCwmrPJvvNb5Nx0+aoaYGymveCroZarDXcNPtQwzP6F2Jj9iBNO9+xGjx)" />
       <cm:property name="service.address" value="http://localhost:8000/serviceEndpoint" />
       <cm:property name="test.address" value="http://localhost:9000/testEndpoint" />
       <cm:property name="bindingId" value="http://schemas.xmlsoap.org/wsdl/soap12/" />
@@ -42,6 +45,17 @@
       <cm:property name="wsdlURL" value="wsdl/test.wsdl" />
     </cm:default-properties>
   </cm:property-placeholder>
+  
+  <enc:property-placeholder>
+      <enc:encryptor class="org.jasypt.encryption.pbe.StandardPBEStringEncryptor">
+           <property name="config">
+               <bean class="org.jasypt.encryption.pbe.config.EnvironmentStringPBEConfig">
+                   <property name="algorithm" value="PBEWithMD5AndDES" />
+                   <property name="password" value="password1" />
+               </bean>
+            </property>
+       </enc:encryptor>
+  </enc:property-placeholder>
 
   <cxf:cxfEndpoint id="routerEndpoint" address="{{router.address}}"
     serviceClass="org.apache.camel.component.cxf.HelloService"/>
