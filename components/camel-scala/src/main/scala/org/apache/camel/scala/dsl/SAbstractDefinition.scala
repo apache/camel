@@ -99,11 +99,10 @@ abstract class SAbstractDefinition[P <: ProcessorDefinition[_]] extends DSL with
     completion.target.end
     completion
   }
-  def onCompletion(predicate: Exchange => Boolean) = onCompletion().when(predicate).asInstanceOf[SOnCompletionDefinition]
+  def onCompletion(predicate: Exchange => Boolean) = onCompletion.when(predicate).asInstanceOf[SOnCompletionDefinition]
   def onCompletion(config: Config[SOnCompletionDefinition]) = {
-    val completion = onCompletion().asInstanceOf[SOnCompletionDefinition]
-    config.configure(completion)
-    completion
+    config.configure(onCompletion)
+    onCompletion
   }
   def otherwise: SChoiceDefinition = throw new Exception("otherwise is only supported in a choice block or after a when statement")
 
@@ -155,10 +154,9 @@ abstract class SAbstractDefinition[P <: ProcessorDefinition[_]] extends DSL with
   def to(uris: String*) = {
     uris.length match {
       case 1 => target.to(uris(0))
-      case _ => {
+      case _ =>
         val multi = multicast
         uris.foreach(multi.to(_))
-      }
     }
     this
   }

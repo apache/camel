@@ -50,11 +50,11 @@ class RouteBuilder extends Preamble with DSL with RoutesBuilder with Languages w
   val serialization = new org.apache.camel.model.dataformat.SerializationDataFormat
 
   val failureOnly = new Config[SOnCompletionDefinition] {
-    def configure(target: SOnCompletionDefinition) { target.onFailureOnly() }
+    def configure(target: SOnCompletionDefinition) { target.onFailureOnly }
   }
 
   val completeOnly = new Config[SOnCompletionDefinition] {
-    def configure(target: SOnCompletionDefinition) { target.onCompleteOnly() }
+    def configure(target: SOnCompletionDefinition) { target.onCompleteOnly }
   }
 
   /**
