@@ -64,8 +64,13 @@ public final class NettyPayloadHelper {
         } else if (payload instanceof AddressedEnvelope) {
             @SuppressWarnings("unchecked")
             AddressedEnvelope<Object, InetSocketAddress> dp = (AddressedEnvelope<Object, InetSocketAddress>)payload; 
-            // need to take out the payload here
-            exchange.getIn().setBody(dp.content());
+            // need to check if the content is ExchangeHolder
+            if (dp.content() instanceof DefaultExchangeHolder) {
+                DefaultExchangeHolder.unmarshal(exchange, (DefaultExchangeHolder) dp.content());    
+            } else {
+                // need to take out the payload here 
+                exchange.getIn().setBody(dp.content());
+            }
             // setup the sender address here for sending the response message back
             exchange.setProperty(NettyConstants.NETTY_REMOTE_ADDRESS, dp.sender());
         } else {
@@ -79,9 +84,14 @@ public final class NettyPayloadHelper {
             DefaultExchangeHolder.unmarshal(exchange, (DefaultExchangeHolder) payload);
         } else if (payload instanceof AddressedEnvelope) {
             @SuppressWarnings("unchecked")
-            AddressedEnvelope<Object, InetSocketAddress> dp = (AddressedEnvelope<Object, InetSocketAddress>)payload; 
-            // need to take out the payload here 
-            exchange.getOut().setBody(dp.content());
+            AddressedEnvelope<Object, InetSocketAddress> dp = (AddressedEnvelope<Object, InetSocketAddress>)payload;
+            // need to check if the content is ExchangeHolder
+            if (dp.content() instanceof DefaultExchangeHolder) {
+                DefaultExchangeHolder.unmarshal(exchange, (DefaultExchangeHolder) dp.content());    
+            } else {
+                // need to take out the payload here 
+                exchange.getOut().setBody(dp.content());
+            }
             // setup the sender address here for sending the response message back
             exchange.setProperty(NettyConstants.NETTY_REMOTE_ADDRESS, dp.sender());
         } else {
@@ -90,5 +100,6 @@ public final class NettyPayloadHelper {
             exchange.getOut().setBody(payload);
         }
     }
+    
 
 }
