@@ -162,6 +162,10 @@ public final class XmlSignatureHelper {
                 namespaceMap);
         return params;
     }
+    
+    public static XPathFilterParameterSpec getXpathFilter(String xpath) {
+        return getXpathFilter(xpath, null);
+    }
 
     @SuppressWarnings("unchecked")
     public static XPathExpression getXPathExpression(XPathFilterParameterSpec xpathFilter) throws XPathExpressionException {

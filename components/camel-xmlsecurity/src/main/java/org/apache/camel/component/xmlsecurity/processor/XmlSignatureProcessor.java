@@ -50,7 +50,7 @@ public abstract class XmlSignatureProcessor implements Processor {
         try {
             SantuarioUtil.initializeSantuario();
             SantuarioUtil.addSantuarioJSR105Provider();
-        } catch (Throwable t) {
+        } catch (Throwable t) { //NOPMD
             // provider not in classpath, ignore and fall back to jre default
             LOG.info("Cannot add the SantuarioJSR105Provider due to {0}, fall back to JRE default.", t);
         }
@@ -101,7 +101,7 @@ public abstract class XmlSignatureProcessor implements Processor {
     protected Schema getSchema(Message message) throws SAXException, XmlSignatureException, IOException {
 
         String schemaResourceUri = getSchemaResourceUri(message);
-        if (schemaResourceUri == null) {
+        if (schemaResourceUri == null || schemaResourceUri.isEmpty()) {
             return null;
         }
         InputStream is = ResourceHelper.resolveResourceAsInputStream(getConfiguration().getCamelContext().getClassResolver(),

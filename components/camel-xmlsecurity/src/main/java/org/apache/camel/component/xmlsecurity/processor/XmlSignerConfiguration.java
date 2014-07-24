@@ -67,6 +67,9 @@ public class XmlSignerConfiguration extends XmlSignatureConfiguration {
 
     private String contentObjectId;
 
+    // default value is null so that a unique ID is generated.
+    private String signatureId;
+
     /**
      * The URI of the content reference. This value can be overwritten by the
      * header {@link XmlSignatureConstants#HEADER_CONTENT_REFERENCE_URI}. Can
@@ -322,6 +325,22 @@ public class XmlSignerConfiguration extends XmlSignatureConfiguration {
         this.contentObjectId = contentObjectId;
     }
 
+    public String getSignatureId() {
+        return signatureId;
+    }
+
+    /**
+     * Sets the signature Id. If this parameter is not set (null value) then a
+     * unique ID is generated for the signature ID (default). If this parameter
+     * is set to "" (empty string) then no Id attribute is created in the
+     * signature element.
+     * 
+     * @param signatureId
+     */
+    public void setSignatureId(String signatureId) {
+        this.signatureId = signatureId;
+    }
+
     public String getContentReferenceUri() {
         return contentReferenceUri;
     }
@@ -421,7 +440,7 @@ public class XmlSignerConfiguration extends XmlSignatureConfiguration {
         this.propertiesName = propertiesName;
     }
 
-    public List<XPathFilterParameterSpec> getXpathToIdAttributes() {
+    public List<XPathFilterParameterSpec> getXpathsToIdAttributes() {
         return xpathsToIdAttributes;
     }
 

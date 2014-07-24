@@ -262,7 +262,7 @@
         <route>
             <from uri="direct:detached" />
             <to
-                uri="xmlsecurity:sign://detached?keyAccessor=#accessorRsa&amp;xpathsToIdAttributes=#xpathsToIdAttributes&amp;schemaResourceUri=org/apache/camel/component/xmlsecurity/Test.xsd&amp;clearHeaders=false" />
+                uri="xmlsecurity:sign://detached?keyAccessor=#accessorRsa&amp;xpathsToIdAttributes=#xpathsToIdAttributes&amp;schemaResourceUri=org/apache/camel/component/xmlsecurity/Test.xsd&amp;signatureId=&amp;clearHeaders=false" />
             <to uri="mock:result" />
             <to
                 uri="xmlsecurity:verify://detached?keySelector=#selectorRsa&amp;schemaResourceUri=org/apache/camel/component/xmlsecurity/Test.xsd" />

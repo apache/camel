@@ -169,12 +169,20 @@ public class XmlSignerEndpoint extends XmlSignatureEndpoint {
         getConfiguration().setContentObjectId(contentObjectId);
     }
 
-    public List<XPathFilterParameterSpec> getXpathToIdAttributes() {
-        return getConfiguration().getXpathToIdAttributes();
+    public List<XPathFilterParameterSpec> getXpathsToIdAttributes() {
+        return getConfiguration().getXpathsToIdAttributes();
     }
 
     public void setXpathsToIdAttributes(List<XPathFilterParameterSpec> xpathsToIdAttributes) {
         getConfiguration().setXpathsToIdAttributes(xpathsToIdAttributes);
+    }
+
+    public String getSignatureId() {
+        return getConfiguration().getSignatureId();
+    }
+
+    public void setSignatureId(String signatureId) {
+        getConfiguration().setSignatureId(signatureId);
     }
 
 }

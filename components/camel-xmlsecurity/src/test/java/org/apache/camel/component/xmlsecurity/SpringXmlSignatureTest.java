@@ -66,7 +66,7 @@ public class SpringXmlSignatureTest extends XmlSignatureTest {
         XmlSignerEndpoint endpoint = (XmlSignerEndpoint) context()
                 .getEndpoint(
                         "xmlsecurity:sign://detached?keyAccessor=#accessorRsa&xpathsToIdAttributes=#xpathsToIdAttributes&"//
-                        + "schemaResourceUri=org/apache/camel/component/xmlsecurity/Test.xsd&clearHeaders=false");
+                        + "schemaResourceUri=org/apache/camel/component/xmlsecurity/Test.xsd&signatureId=&clearHeaders=false");
         return endpoint;
     }
 }

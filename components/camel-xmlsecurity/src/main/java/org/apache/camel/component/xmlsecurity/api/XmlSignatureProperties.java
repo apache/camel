@@ -42,7 +42,7 @@ public interface XmlSignatureProperties {
      * @throws Exception
      *             if an error occurs during creating the output
      */
-    Output get(Input input) throws Exception;
+    Output get(Input input) throws Exception; //NOPMD
 
     public interface Input {
 
@@ -88,7 +88,10 @@ public interface XmlSignatureProperties {
          */
         String getContentDigestAlgorithm();
 
-        /** Signature Id. Can be <code>null</code>. */
+        /**
+         * Signature Id. Can be <code>null</code>, then no signature Id
+         * attribute is generated.
+         */
         String getSignatureId();
 
         /**

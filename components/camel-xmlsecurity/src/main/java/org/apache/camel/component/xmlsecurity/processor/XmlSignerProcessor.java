@@ -262,7 +262,13 @@ public class XmlSignerProcessor extends XmlSignatureProcessor {
                 // and this method must be called within the loop over the content reference URIs, because for each signature the key info ID must be different
                 final KeyInfo keyInfo = getConfiguration().getKeyAccessor().getKeyInfo(out, node, fac.getKeyInfoFactory());
 
-                String signatureId = "_" + UUID.randomUUID().toString();
+                String signatureId = getConfiguration().getSignatureId();
+                if (signatureId == null) {
+                    signatureId = "_" + UUID.randomUUID().toString();
+                } else if (signatureId.isEmpty()) {
+                    // indicator that no signature Id attribute shall be generated
+                    signatureId = null;
+                }
 
                 // parent only relevant for enveloping or detached signature
                 Node parent = getParentOfSignature(out, node, contentReferenceUri, signatureType);
@@ -344,7 +350,7 @@ public class XmlSignerProcessor extends XmlSignatureProcessor {
         List<XPathFilterParameterSpec> result = (List<XPathFilterParameterSpec>) message
                 .getHeader(XmlSignatureConstants.HEADER_XPATHS_TO_ID_ATTRIBUTES);
         if (result == null) {
-            result = getConfiguration().getXpathToIdAttributes();
+            result = getConfiguration().getXpathsToIdAttributes();
         }
         return result;
     }
@@ -635,7 +641,7 @@ public class XmlSignerProcessor extends XmlSignatureProcessor {
     }
 
     private List<String> getContentReferenceUrisForDetachedCase(Message message, Node messageBodyNode) throws XmlSignatureException,
-        XPathExpressionException {
+            XPathExpressionException {
         List<XPathFilterParameterSpec> xpathsToIdAttributes = getXpathToIdAttributes(message);
         if (xpathsToIdAttributes.isEmpty()) {
             // should not happen, has already been checked earlier
@@ -707,7 +713,7 @@ public class XmlSignerProcessor extends XmlSignatureProcessor {
     }
 
     private List<Transform> getTransforms(XMLSignatureFactory fac, SignatureType sigType) throws NoSuchAlgorithmException,
-        InvalidAlgorithmParameterException {
+            InvalidAlgorithmParameterException {
         List<AlgorithmMethod> configuredTrafos = getConfiguration().getTransformMethods();
         if (SignatureType.enveloped == sigType) {
             // add enveloped transform if necessary
