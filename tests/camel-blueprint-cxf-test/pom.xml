@@ -39,6 +39,24 @@
     </dependency>
 
     <dependency>
+      <groupId>org.apache.karaf.jaas</groupId>
+      <artifactId>org.apache.karaf.jaas.jasypt</artifactId>
+      <exclusions>
+          <exclusion>
+              <groupId>org.apache.servicemix.bundles</groupId>
+              <artifactId>org.apache.servicemix.bundles.jasypt</artifactId>
+          </exclusion>
+      </exclusions>
+      <version>${karaf-version}</version>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
+        <groupId>org.jasypt</groupId>
+        <artifactId>jasypt</artifactId>
+        <version>${jasypt-version}</version>
+        <scope>test</scope>
+    </dependency>
+    <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-core</artifactId>
       <scope>test</scope>
