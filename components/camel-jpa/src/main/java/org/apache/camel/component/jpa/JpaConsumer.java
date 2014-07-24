@@ -124,6 +124,8 @@ public class JpaConsumer extends ScheduledBatchPollingConsumer {
                 // commit
                 LOG.debug("Flushing EntityManager");
                 entityManager.flush();
+                // must clear after flush
+                entityManager.clear();
                 return messagePolled;
             }
         });
