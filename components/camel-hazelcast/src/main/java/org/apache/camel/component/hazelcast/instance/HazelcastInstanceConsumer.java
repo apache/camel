@@ -16,10 +16,12 @@
  */
 package org.apache.camel.component.hazelcast.instance;
 
+import java.net.InetSocketAddress;
+
 import com.hazelcast.core.HazelcastInstance;
+import com.hazelcast.core.MemberAttributeEvent;
 import com.hazelcast.core.MembershipEvent;
 import com.hazelcast.core.MembershipListener;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.component.hazelcast.HazelcastComponentHelper;
@@ -45,21 +47,30 @@ public class HazelcastInstanceConsumer extends DefaultConsumer {
             this.sendExchange(event, HazelcastConstants.REMOVED);
         }
 
+        public void memberAttributeChanged(MemberAttributeEvent event) {
+            this.sendExchange(event, HazelcastConstants.UPDATED);
+        }
+
         private void sendExchange(MembershipEvent event, String action) {
             Exchange exchange = getEndpoint().createExchange();
 
             HazelcastComponentHelper.setListenerHeaders(exchange, HazelcastConstants.INSTANCE_LISTENER, action);
 
             // instance listener header values
-            exchange.getIn().setHeader(HazelcastConstants.INSTANCE_HOST, event.getMember().getInetSocketAddress().getHostName());
-            exchange.getIn().setHeader(HazelcastConstants.INSTANCE_PORT, event.getMember().getInetSocketAddress().getPort());
+            InetSocketAddress adr = event.getMember().getSocketAddress();
+            if (adr != null) {
+                exchange.getIn().setHeader(HazelcastConstants.INSTANCE_HOST, adr.getHostName());
+                exchange.getIn().setHeader(HazelcastConstants.INSTANCE_PORT, adr.getPort());
+            }
 
             try {
                 getProcessor().process(exchange);
             } catch (Exception e) {
-                if (exchange.getException() != null) {
-                    getExceptionHandler().handleException("Error processing exchange for Hazelcast consumer on your Hazelcast cluster.", exchange, exchange.getException());
-                }
+                exchange.setException(e);
+            }
+
+            if (exchange.getException() != null) {
+                getExceptionHandler().handleException("Error processing exchange for Hazelcast consumer on your Hazelcast cluster.", exchange, exchange.getException());
             }
         }
 
