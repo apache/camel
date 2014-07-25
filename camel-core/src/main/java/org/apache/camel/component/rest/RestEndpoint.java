@@ -39,6 +39,8 @@ public class RestEndpoint extends DefaultEndpoint {
     @UriParam
     private String consumes;
     @UriParam
+    private String produces;
+    @UriParam
     private String componentName;
 
     private Map<String, Object> parameters;
@@ -74,6 +76,14 @@ public class RestEndpoint extends DefaultEndpoint {
 
     public void setConsumes(String consumes) {
         this.consumes = consumes;
+    }
+
+    public String getProduces() {
+        return produces;
+    }
+
+    public void setProduces(String produces) {
+        this.produces = produces;
     }
 
     public String getComponentName() {
@@ -141,7 +151,7 @@ public class RestEndpoint extends DefaultEndpoint {
         }
 
         if (factory != null) {
-            Consumer consumer = factory.createConsumer(getCamelContext(), processor, getVerb(), getPath(), getConsumes(), getParameters());
+            Consumer consumer = factory.createConsumer(getCamelContext(), processor, getVerb(), getPath(), getConsumes(), getProduces(), getParameters());
             configureConsumer(consumer);
             return consumer;
         } else {

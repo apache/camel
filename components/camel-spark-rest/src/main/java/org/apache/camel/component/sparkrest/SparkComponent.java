@@ -123,8 +123,8 @@ public class SparkComponent extends UriEndpointComponent implements RestConsumer
     }
 
     @Override
-    public Consumer createConsumer(CamelContext camelContext, Processor processor,
-                                   String verb, String path, String consumes, Map<String, Object> parameters) throws Exception {
+    public Consumer createConsumer(CamelContext camelContext, Processor processor, String verb, String path,
+                                   String consumes, String produces, Map<String, Object> parameters) throws Exception {
 
         if (ObjectHelper.isNotEmpty(path)) {
             // spark-rest uses :name syntax instead of {name} so we need to replace those

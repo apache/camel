@@ -501,8 +501,8 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
     }
 
     @Override
-    public Consumer createConsumer(CamelContext camelContext, Processor processor,
-                                   String verb, String path, String consumes, Map<String, Object> parameters) throws Exception {
+    public Consumer createConsumer(CamelContext camelContext, Processor processor, String verb, String path,
+                                   String consumes, String produces, Map<String, Object> parameters) throws Exception {
 
         path = FileUtil.stripLeadingSeparator(path);
 

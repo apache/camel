@@ -309,8 +309,16 @@ public class RestDefinition {
             String from = "rest:" + verb.asVerb() + ":" + buildUri(verb);
             // append options
             Map<String, Object> options = new HashMap<String, Object>();
+            // verb takes precedence over configuration on rest
             if (verb.getConsumes() != null) {
                 options.put("consumes", verb.getConsumes());
+            } else if (getConsumes() != null) {
+                options.put("consumes", getConsumes());
+            }
+            if (verb.getProduces() != null) {
+                options.put("produces", verb.getProduces());
+            } else if (getProduces() != null) {
+                options.put("produces", getProduces());
             }
             if (!options.isEmpty()) {
                 String query = URISupport.createQueryString(options);
@@ -332,6 +340,7 @@ public class RestDefinition {
             binding.setOutType(verb.getOutType());
             binding.setList(verb.getList());
             binding.setOutList(verb.getOutList());
+            // verb takes precedence over configuration on rest
             if (verb.getConsumes() != null) {
                 binding.setConsumes(verb.getConsumes());
             } else {
