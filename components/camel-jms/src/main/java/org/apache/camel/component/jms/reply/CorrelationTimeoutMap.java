@@ -50,7 +50,13 @@ public class CorrelationTimeoutMap extends DefaultTimeoutMap<String, ReplyHandle
         }
 
         // trigger timeout
-        value.onTimeout(key);
+        try {
+            value.onTimeout(key);
+        } catch (Throwable e) {
+            // must ignore so we ensure we evict the element
+            log.warn("Error processing onTimeout for correlationID: " + key + " due: " + e.getMessage() + ". This exception is ignored.", e);
+        }
+
         // return true to remove the element
         log.trace("Evicted correlationID: {}", key);
         return true;
