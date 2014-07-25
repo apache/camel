@@ -32,7 +32,7 @@ public class RestConfiguration {
     private String scheme;
     private String host;
     private int port;
-    private RestBindingMode bindingMode = RestBindingMode.auto;
+    private RestBindingMode bindingMode = RestBindingMode.off;
     private Map<String, Object> componentProperties;
     private Map<String, Object> endpointProperties;
     private Map<String, Object> consumerProperties;

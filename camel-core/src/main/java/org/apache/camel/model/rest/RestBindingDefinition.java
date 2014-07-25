@@ -71,8 +71,6 @@ public class RestBindingDefinition extends NoOutputDefinition {
         return "rest";
     }
 
-    // TODO: allow to configure if json/xml only or auto detect (now)
-
     @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
 
@@ -82,6 +80,11 @@ public class RestBindingDefinition extends NoOutputDefinition {
         String mode = context.getRestConfiguration().getBindingMode().name();
         if (bindingMode != null) {
             mode = bindingMode.name();
+        }
+
+        if (mode == null || "off".equals(mode)) {
+            // binding mode is off, so create a off mode binding processor
+            return new RestBindingProcessor(null, null, null, null, consumes, produces, mode);
         }
 
         // setup json data format

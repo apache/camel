@@ -182,6 +182,8 @@ public class DefaultSparkBinding implements SparkBinding {
         if (body != null) {
             String str = tc.mandatoryConvertTo(String.class, message.getExchange(), body);
             response.body(str);
+            // and must set body to the response body as Spark otherwise may output something else
+            message.setBody(str);
         }
     }
 

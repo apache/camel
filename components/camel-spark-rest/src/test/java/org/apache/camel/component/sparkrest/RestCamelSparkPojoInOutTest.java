@@ -14,33 +14,21 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.restlet;
+package org.apache.camel.component.sparkrest;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.model.rest.RestBindingMode;
 import org.junit.Test;
 
-/**
- * @version 
- */
-public class RestRestletPostJsonJaxbPojoTest extends RestletTestSupport {
+public class RestCamelSparkPojoInOutTest extends BaseSparkTest {
 
     @Test
-    public void testRestletPostJaxbPojo() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:input");
-        mock.expectedMessageCount(1);
-        mock.message(0).body().isInstanceOf(UserJaxbPojo.class);
-
+    public void testRestletPojoInOut() throws Exception {
         String body = "{\"id\": 123, \"name\": \"Donald Duck\"}";
-        template.sendBody("http://localhost:" + portNum + "/users/new", body);
+        String out = template.requestBody("http://localhost:" + getPort() + "/users/lives", body, String.class);
 
-        assertMockEndpointsSatisfied();
-
-        UserJaxbPojo user = mock.getReceivedExchanges().get(0).getIn().getBody(UserJaxbPojo.class);
-        assertNotNull(user);
-        assertEquals(123, user.getId());
-        assertEquals("Donald Duck", user.getName());
+        assertNotNull(out);
+        assertEquals("{\"iso\":\"EN\",\"country\":\"England\"}", out);
     }
 
     @Override
@@ -48,15 +36,17 @@ public class RestRestletPostJsonJaxbPojoTest extends RestletTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                // configure to use restlet on localhost with the given port
+                // configure to use spark on localhost with the given port
                 // and enable auto binding mode
-                restConfiguration().component("restlet").host("localhost").port(portNum).bindingMode(RestBindingMode.auto);
+                restConfiguration().component("spark-rest").host("localhost").port(getPort()).bindingMode(RestBindingMode.auto);
 
                 // use the rest DSL to define the rest services
                 rest("/users/")
-                    .post("new").type(UserJaxbPojo.class)
-                        .to("mock:input");
+                    .post("lives").type(UserPojo.class).outType(CountryPojo.class)
+                        .route()
+                        .bean(new UserService(), "livesWhere");
             }
         };
     }
+
 }
