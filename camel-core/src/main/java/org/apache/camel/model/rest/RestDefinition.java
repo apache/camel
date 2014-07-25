@@ -189,6 +189,52 @@ public class RestDefinition {
         return this;
     }
 
+    public RestDefinition outType(String classType) {
+        // add to last verb
+        if (getVerbs().isEmpty()) {
+            throw new IllegalArgumentException("Must add verb first, such as get/post/delete");
+        }
+
+        VerbDefinition verb = getVerbs().get(getVerbs().size() - 1);
+        verb.setOutType(classType);
+        return this;
+    }
+
+    public RestDefinition outType(Class<?> classType) {
+        // add to last verb
+        if (getVerbs().isEmpty()) {
+            throw new IllegalArgumentException("Must add verb first, such as get/post/delete");
+        }
+
+        VerbDefinition verb = getVerbs().get(getVerbs().size() - 1);
+        verb.setOutClassType(classType);
+        verb.setOutType(classType.getCanonicalName());
+        return this;
+    }
+
+    public RestDefinition outTypeList(String classType) {
+        // add to last verb
+        if (getVerbs().isEmpty()) {
+            throw new IllegalArgumentException("Must add verb first, such as get/post/delete");
+        }
+
+        VerbDefinition verb = getVerbs().get(getVerbs().size() - 1);
+        verb.setOutTypeList(classType);
+        return this;
+    }
+
+    public RestDefinition outTypeList(Class<?> classType) {
+        // add to last verb
+        if (getVerbs().isEmpty()) {
+            throw new IllegalArgumentException("Must add verb first, such as get/post/delete");
+        }
+
+        VerbDefinition verb = getVerbs().get(getVerbs().size() - 1);
+        verb.setOutClassType(classType);
+        verb.setOutTypeList(classType.getCanonicalName());
+        return this;
+    }
+
     public RestDefinition bindingMode(RestBindingMode mode) {
         // add to last verb
         if (getVerbs().isEmpty()) {
@@ -298,6 +344,10 @@ public class RestDefinition {
                 binding.setTypeList(verb.getTypeList());
                 binding.setClassType(verb.getClassType());
                 binding.setUseList(verb.isUseList());
+                binding.setOutType(verb.getOutType());
+                binding.setOutTypeList(verb.getOutTypeList());
+                binding.setOutClassType(verb.getOutClassType());
+                binding.setOutUseList(verb.isOutUseList());
                 binding.setConsumes(verb.getConsumes());
                 binding.setProduces(verb.getProduces());
                 binding.setBindingMode(verb.getBindingMode());

@@ -26,7 +26,6 @@ import javax.xml.bind.annotation.XmlTransient;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Processor;
 import org.apache.camel.model.NoOutputDefinition;
-import org.apache.camel.model.ProcessorDefinition;
 import org.apache.camel.processor.binding.RestBindingProcessor;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.RouteContext;
@@ -64,6 +63,18 @@ public class RestBindingDefinition extends NoOutputDefinition {
     @XmlTransient
     private boolean useList;
 
+    @XmlAttribute
+    private String outType;
+
+    @XmlAttribute
+    private String outTypeList;
+
+    @XmlTransient
+    private Class<?> outClassType;
+
+    @XmlTransient
+    private boolean outUseList;
+
     @Override
     public String toString() {
         return "RestBinding";
@@ -85,13 +96,11 @@ public class RestBindingDefinition extends NoOutputDefinition {
 
         CamelContext context = routeContext.getCamelContext();
 
-        // the default binding mode can be overriden per rest verb
+        // the default binding mode can be overridden per rest verb
         String mode = context.getRestConfiguration().getBindingMode().name();
         if (bindingMode != null) {
             mode = bindingMode.name();
         }
-
-        // auto, off, json, xml, json_xml
 
         // setup json data format
         String name = jsonDataFormat;
@@ -116,6 +125,19 @@ public class RestBindingDefinition extends NoOutputDefinition {
         }
         context.addService(json);
 
+        DataFormat outJson = context.resolveDataFormat(name);
+        if (outClassType == null && outType != null) {
+            outClassType = context.getClassResolver().resolveMandatoryClass(outType);
+        }
+        if (outClassType == null && outTypeList != null) {
+            outClassType = context.getClassResolver().resolveMandatoryClass(outTypeList);
+        }
+        if (outClassType != null) {
+            IntrospectionSupport.setProperty(context.getTypeConverter(), outJson, "unmarshalType", outClassType);
+            IntrospectionSupport.setProperty(context.getTypeConverter(), outJson, "useList", outUseList);
+        }
+        context.addService(outJson);
+
         // setup xml data format
         name = xmlDataFormat;
         if (name == null) {
@@ -138,7 +160,24 @@ public class RestBindingDefinition extends NoOutputDefinition {
         }
         context.addService(jaxb);
 
-        return new RestBindingProcessor(json, jaxb, consumes, produces, mode);
+        DataFormat outJaxb = context.resolveDataFormat(name);
+        if (outClassType == null && outType != null) {
+            outClassType = context.getClassResolver().resolveMandatoryClass(outType);
+        }
+        if (outClassType == null && outTypeList != null) {
+            outClassType = context.getClassResolver().resolveMandatoryClass(outTypeList);
+        }
+        if (outClassType != null) {
+            JAXBContext jc = JAXBContext.newInstance(outClassType);
+            IntrospectionSupport.setProperty(context.getTypeConverter(), outJaxb, "context", jc);
+        } else if (classType != null) {
+            // fallback and use the context from the input
+            JAXBContext jc = JAXBContext.newInstance(classType);
+            IntrospectionSupport.setProperty(context.getTypeConverter(), outJaxb, "context", jc);
+        }
+        context.addService(outJaxb);
+
+        return new RestBindingProcessor(json, jaxb, outJson, outJaxb, consumes, produces, mode);
     }
 
     public String getConsumes() {
@@ -213,6 +252,40 @@ public class RestBindingDefinition extends NoOutputDefinition {
 
     public void setUseList(boolean useList) {
         this.useList = useList;
+    }
+
+    public String getOutType() {
+        return outType;
+    }
+
+    public void setOutType(String type) {
+        this.outType = type;
+        this.outUseList = false;
+    }
+
+    public String getOutTypeList() {
+        return outTypeList;
+    }
+
+    public void setOutTypeList(String typeList) {
+        this.outTypeList = typeList;
+        this.outUseList = true;
+    }
+
+    public Class<?> getOutClassType() {
+        return outClassType;
+    }
+
+    public void setOutClassType(Class<?> classType) {
+        this.outClassType = classType;
+    }
+
+    public boolean isOutUseList() {
+        return outUseList;
+    }
+
+    public void setOutUseList(boolean useList) {
+        this.outUseList = useList;
     }
 
 }

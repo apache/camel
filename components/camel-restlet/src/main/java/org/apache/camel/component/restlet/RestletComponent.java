@@ -74,6 +74,7 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
     private Boolean useForwardedForHeader;
     private Boolean reuseAddress;
     private boolean disableStreamCache;
+    private int port;
 
     public RestletComponent() {
         this(new Component());
@@ -108,6 +109,8 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
         String host = u.getHost();
         if (u.getPort() > 0) {
             port = u.getPort();
+        } else {
+            port = this.port;
         }
 
         result.setProtocol(protocol);
@@ -487,6 +490,14 @@ public class RestletComponent extends HeaderFilterStrategyComponent implements R
 
     public void setDisableStreamCache(boolean disableStreamCache) {
         this.disableStreamCache = disableStreamCache;
+    }
+
+    public int getPort() {
+        return port;
+    }
+
+    public void setPort(int port) {
+        this.port = port;
     }
 
     @Override

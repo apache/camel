@@ -16,13 +16,30 @@
  */
 package org.apache.camel.component.restlet;
 
-import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.test.AvailablePortFinder;
+import org.apache.camel.test.spring.CamelSpringTestSupport;
+import org.junit.BeforeClass;
 import org.junit.Test;
+import org.springframework.context.support.AbstractApplicationContext;
+import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
  * @version 
  */
-public class RestRestletPojoInOutTest extends RestletTestSupport {
+public class SpringRestRestletPojoInOutTest extends CamelSpringTestSupport {
+
+    protected static int portNum;
+
+    @BeforeClass
+    public static void initializePortNum() {
+        portNum = AvailablePortFinder.getNextAvailable();
+        System.getProperties().setProperty("test.port", "" + portNum);
+    }
+
+    @Override
+    protected AbstractApplicationContext createApplicationContext() {
+        return new ClassPathXmlApplicationContext("org/apache/camel/component/restlet/SpringRestRestletPojoInOutTest.xml");
+    }
 
     @Test
     public void testRestletPojoInOut() throws Exception {
@@ -31,23 +48,6 @@ public class RestRestletPojoInOutTest extends RestletTestSupport {
 
         assertNotNull(out);
         assertEquals("{\"iso\":\"EN\",\"country\":\"England\"}", out);
-    }
-
-    @Override
-    protected RouteBuilder createRouteBuilder() throws Exception {
-        return new RouteBuilder() {
-            @Override
-            public void configure() throws Exception {
-                // configure to use restlet on localhost with the given port
-                restConfiguration().component("restlet").host("localhost").port(portNum);
-
-                // use the rest DSL to define the rest services
-                rest("/users/")
-                    .post("lives").type(UserPojo.class).outType(CountryPojo.class)
-                        .route()
-                        .bean(new UserService(), "livesWhere");
-            }
-        };
     }
 
 }

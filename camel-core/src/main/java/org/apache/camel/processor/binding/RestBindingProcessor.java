@@ -47,11 +47,36 @@ public class RestBindingProcessor extends ServiceSupport implements AsyncProcess
     private final String produces;
     private final String bindingMode;
 
-    public RestBindingProcessor(DataFormat jsonDataFormat, DataFormat xmlDataFormat, String consumes, String produces, String bindingMode) {
-        this.jsonUnmarshal = jsonDataFormat != null ? new UnmarshalProcessor(jsonDataFormat) : null;
-        this.jsonMmarshal = jsonDataFormat != null ? new MarshalProcessor(jsonDataFormat) : null;
-        this.xmlUnmarshal = xmlDataFormat != null ? new UnmarshalProcessor(xmlDataFormat) : null;
-        this.xmlMmarshal = xmlDataFormat != null ? new MarshalProcessor(xmlDataFormat) : null;
+    public RestBindingProcessor(DataFormat jsonDataFormat, DataFormat xmlDataFormat,
+                                DataFormat outJsonDataFormat, DataFormat outXmlDataFormat,
+                                String consumes, String produces, String bindingMode) {
+
+        if (jsonDataFormat != null) {
+            this.jsonUnmarshal = new UnmarshalProcessor(jsonDataFormat);
+        } else {
+            this.jsonUnmarshal = null;
+        }
+        if (outJsonDataFormat != null) {
+            this.jsonMmarshal = new MarshalProcessor(outJsonDataFormat);
+        } else if (jsonDataFormat != null) {
+            this.jsonMmarshal = new MarshalProcessor(jsonDataFormat);
+        } else {
+            this.jsonMmarshal = null;
+        }
+
+       if (xmlDataFormat != null) {
+            this.xmlUnmarshal = new UnmarshalProcessor(xmlDataFormat);
+        } else {
+            this.xmlUnmarshal = null;
+        }
+        if (outXmlDataFormat != null) {
+            this.xmlMmarshal = new MarshalProcessor(outXmlDataFormat);
+        } else if (xmlDataFormat != null) {
+            this.xmlMmarshal = new MarshalProcessor(xmlDataFormat);
+        } else {
+            this.xmlMmarshal = null;
+        }
+
         this.consumes = consumes;
         this.produces = produces;
         this.bindingMode = bindingMode;
@@ -163,7 +188,17 @@ public class RestBindingProcessor extends ServiceSupport implements AsyncProcess
 
         @Override
         public void onComplete(Exchange exchange) {
-            // only marshal if we succeeded
+            // only marshal if we succeeded (= onComplete)
+
+            if (bindingMode == null || "off".equals(bindingMode)) {
+                // binding is off
+                return;
+            }
+
+            // is there any marshaller at all
+            if (jsonMmarshal == null && xmlMmarshal == null) {
+                return;
+            }
 
             boolean isXml = false;
             boolean isJson = false;
