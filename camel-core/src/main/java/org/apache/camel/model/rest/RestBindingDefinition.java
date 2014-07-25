@@ -16,6 +16,8 @@
  */
 package org.apache.camel.model.rest;
 
+import java.util.HashMap;
+import java.util.Map;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
@@ -27,6 +29,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.model.NoOutputDefinition;
 import org.apache.camel.processor.binding.RestBindingProcessor;
 import org.apache.camel.spi.DataFormat;
+import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.IntrospectionSupport;
 
@@ -42,12 +45,6 @@ public class RestBindingDefinition extends NoOutputDefinition {
 
     @XmlAttribute
     private RestBindingMode bindingMode;
-
-    @XmlAttribute
-    private String jsonDataFormat;
-
-    @XmlAttribute
-    private String xmlDataFormat;
 
     @XmlAttribute
     private String type;
@@ -68,7 +65,7 @@ public class RestBindingDefinition extends NoOutputDefinition {
 
     @Override
     public String getShortName() {
-        return "rest";
+        return "restBinding";
     }
 
     @Override
@@ -88,73 +85,96 @@ public class RestBindingDefinition extends NoOutputDefinition {
         }
 
         // setup json data format
-        String name = jsonDataFormat;
+        String name = context.getRestConfiguration().getJsonDataFormat();
         if (name == null) {
             name = "json-jackson";
         }
         DataFormat json = context.resolveDataFormat(name);
+        DataFormat outJson = context.resolveDataFormat(name);
 
         // is json binding required?
         if (mode.contains("json") && json == null) {
             throw new IllegalArgumentException("JSon DataFormat " + name + " not found.");
         }
-        Class<?> clazz = null;
-        if (type != null) {
-            clazz = context.getClassResolver().resolveMandatoryClass(type);
-        }
-        if (clazz != null) {
-            IntrospectionSupport.setProperty(context.getTypeConverter(), json, "unmarshalType", clazz);
-            IntrospectionSupport.setProperty(context.getTypeConverter(), json, "useList", list != null ? list : false);
-        }
-        context.addService(json);
 
-        DataFormat outJson = context.resolveDataFormat(name);
-        Class<?> outClazz = null;
-        if (outType != null) {
-            outClazz = context.getClassResolver().resolveMandatoryClass(outType);
+        if (json != null) {
+            Class<?> clazz = null;
+            if (type != null) {
+                clazz = context.getClassResolver().resolveMandatoryClass(type);
+            }
+            if (clazz != null) {
+                IntrospectionSupport.setProperty(context.getTypeConverter(), json, "unmarshalType", clazz);
+                IntrospectionSupport.setProperty(context.getTypeConverter(), json, "useList", list != null ? list : false);
+            }
+            setAdditionalConfiguration(context, json);
+            context.addService(json);
+
+            Class<?> outClazz = null;
+            if (outType != null) {
+                outClazz = context.getClassResolver().resolveMandatoryClass(outType);
+            }
+            if (outClazz != null) {
+                IntrospectionSupport.setProperty(context.getTypeConverter(), outJson, "unmarshalType", outClazz);
+                IntrospectionSupport.setProperty(context.getTypeConverter(), outJson, "useList", outList != null ? outList : false);
+            }
+            setAdditionalConfiguration(context, outJson);
+            context.addService(outJson);
         }
-        if (outClazz != null) {
-            IntrospectionSupport.setProperty(context.getTypeConverter(), outJson, "unmarshalType", outClazz);
-            IntrospectionSupport.setProperty(context.getTypeConverter(), outJson, "useList", outList != null ? outList : false);
-        }
-        context.addService(outJson);
 
         // setup xml data format
-        name = xmlDataFormat;
+        name = context.getRestConfiguration().getXmlDataFormat();
         if (name == null) {
             name = "jaxb";
         }
         DataFormat jaxb = context.resolveDataFormat(name);
+        DataFormat outJaxb = context.resolveDataFormat(name);
         // is xml binding required?
         if (mode.contains("xml") && jaxb == null) {
             throw new IllegalArgumentException("XML DataFormat " + name + " not found.");
         }
-        clazz = null;
-        if (type != null) {
-            clazz = context.getClassResolver().resolveMandatoryClass(type);
-        }
-        if (clazz != null) {
-            JAXBContext jc = JAXBContext.newInstance(clazz);
-            IntrospectionSupport.setProperty(context.getTypeConverter(), jaxb, "context", jc);
-        }
-        context.addService(jaxb);
 
-        DataFormat outJaxb = context.resolveDataFormat(name);
-        outClazz = null;
-        if (outType != null) {
-            outClazz = context.getClassResolver().resolveMandatoryClass(outType);
+        if (jaxb != null) {
+            Class<?> clazz = null;
+            if (type != null) {
+                clazz = context.getClassResolver().resolveMandatoryClass(type);
+            }
+            if (clazz != null) {
+                JAXBContext jc = JAXBContext.newInstance(clazz);
+                IntrospectionSupport.setProperty(context.getTypeConverter(), jaxb, "context", jc);
+            }
+            if (context.getRestConfiguration().getDataFormatProperties() != null) {
+                IntrospectionSupport.setProperties(context.getTypeConverter(), jaxb, context.getRestConfiguration().getDataFormatProperties());
+            }
+            setAdditionalConfiguration(context, jaxb);
+            context.addService(jaxb);
+
+            Class<?> outClazz = null;
+            if (outType != null) {
+                outClazz = context.getClassResolver().resolveMandatoryClass(outType);
+            }
+            if (outClazz != null) {
+                JAXBContext jc = JAXBContext.newInstance(outClazz);
+                IntrospectionSupport.setProperty(context.getTypeConverter(), outJaxb, "context", jc);
+            } else if (clazz != null) {
+                // fallback and use the context from the input
+                JAXBContext jc = JAXBContext.newInstance(clazz);
+                IntrospectionSupport.setProperty(context.getTypeConverter(), outJaxb, "context", jc);
+            }
+            setAdditionalConfiguration(context, outJaxb);
+            context.addService(outJaxb);
         }
-        if (outClazz != null) {
-            JAXBContext jc = JAXBContext.newInstance(outClazz);
-            IntrospectionSupport.setProperty(context.getTypeConverter(), outJaxb, "context", jc);
-        } else if (clazz != null) {
-            // fallback and use the context from the input
-            JAXBContext jc = JAXBContext.newInstance(clazz);
-            IntrospectionSupport.setProperty(context.getTypeConverter(), outJaxb, "context", jc);
-        }
-        context.addService(outJaxb);
 
         return new RestBindingProcessor(json, jaxb, outJson, outJaxb, consumes, produces, mode);
+    }
+
+    private void setAdditionalConfiguration(CamelContext context, DataFormat dataFormat) throws Exception {
+        if (context.getRestConfiguration().getDataFormatProperties() != null && !context.getRestConfiguration().getDataFormatProperties().isEmpty()) {
+            // must use a copy as otherwise the options gets removed during introspection setProperties
+            Map<String, Object> copy = new HashMap<String, Object>();
+            copy.putAll(context.getRestConfiguration().getDataFormatProperties());
+
+            IntrospectionSupport.setProperties(context.getTypeConverter(), dataFormat, copy);
+        }
     }
 
     public String getConsumes() {
@@ -179,22 +199,6 @@ public class RestBindingDefinition extends NoOutputDefinition {
 
     public void setBindingMode(RestBindingMode bindingMode) {
         this.bindingMode = bindingMode;
-    }
-
-    public String getJsonDataFormat() {
-        return jsonDataFormat;
-    }
-
-    public void setJsonDataFormat(String jsonDataFormat) {
-        this.jsonDataFormat = jsonDataFormat;
-    }
-
-    public String getXmlDataFormat() {
-        return xmlDataFormat;
-    }
-
-    public void setXmlDataFormat(String xmlDataFormat) {
-        this.xmlDataFormat = xmlDataFormat;
     }
 
     public String getType() {

@@ -17,32 +17,33 @@
 package org.apache.camel.example.spark;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.model.rest.RestBindingMode;
 
 /**
  * Define REST services using the Camel REST DSL
  */
-public class MySparkRouteBuilder extends RouteBuilder {
+public class UserRouteBuilder extends RouteBuilder {
 
     @Override
     public void configure() throws Exception {
 
         // configure we want to use spark-rest as the component for the rest DSL
-        restConfiguration().component("spark-rest");
+        // and we enable json binding mode
+        restConfiguration().component("spark-rest").bindingMode(RestBindingMode.json)
+            // and output using pretty print
+            .dataFormatProperty("prettyPrint", "true");
 
-        // use the rest DSL to define rest services, and use embedded routes
-        rest("/hello/{me}")
-            .get().consumes("text/plain")
-                .route()
-                .to("log:input")
-                .transform().simple("Hello ${header.me}").endRest()
-            .get().consumes("application/json")
-                .route()
-                .to("log:input")
-                .transform().simple("{ \"message\": \"Hello ${header.me}\" }").endRest()
-            .get().consumes("text/xml")
-                .route()
-                .to("log:input")
-                .transform().simple("<message>Hello ${header.me}</message>");
+        // this user REST service is json only
+        rest("/user").consumes("application/json").produces("application/json")
+
+            .get("/view/{id}").outType(User.class)
+                .to("bean:userService?method=getUser(${header.id})")
+
+            .get("/list").outTypeList(User.class)
+                .to("bean:userService?method=listUsers")
+
+            .put("/update").type(User.class).outType(User.class)
+                .to("bean:userService?method=updateUser");
     }
 
 }

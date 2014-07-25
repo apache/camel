@@ -33,9 +33,12 @@ public class RestConfiguration {
     private String host;
     private int port;
     private RestBindingMode bindingMode = RestBindingMode.off;
+    private String jsonDataFormat;
+    private String xmlDataFormat;
     private Map<String, Object> componentProperties;
     private Map<String, Object> endpointProperties;
     private Map<String, Object> consumerProperties;
+    private Map<String, Object> dataFormatProperties;
 
     /**
      * Gets the name of the Camel component to use as the REST consumer
@@ -137,6 +140,42 @@ public class RestConfiguration {
     }
 
     /**
+     * Gets the name of the json data format.
+     *
+     * @return the name, or <tt>null</tt> to use default
+     */
+    public String getJsonDataFormat() {
+        return jsonDataFormat;
+    }
+
+    /**
+     * Sets a custom json data format to be used
+     *
+     * @param name name of the data format
+     */
+    public void setJsonDataFormat(String name) {
+        this.jsonDataFormat = name;
+    }
+
+    /**
+     * Gets the name of the xml data format.
+     *
+     * @return the name, or <tt>null</tt> to use default
+     */
+    public String getXmlDataFormat() {
+        return xmlDataFormat;
+    }
+
+    /**
+     * Sets a custom xml data format to be used
+     *
+     * @param name name of the data format
+     */
+    public void setXmlDataFormat(String name) {
+        this.xmlDataFormat = name;
+    }
+
+    /**
      * Gets additional options on component level
      *
      * @return additional options
@@ -188,5 +227,23 @@ public class RestConfiguration {
      */
     public void setConsumerProperties(Map<String, Object> consumerProperties) {
         this.consumerProperties = consumerProperties;
+    }
+
+    /**
+     * Gets additional options on data format level
+     *
+     * @return additional options
+     */
+    public Map<String, Object> getDataFormatProperties() {
+        return dataFormatProperties;
+    }
+
+    /**
+     * Sets additional options on data format level
+     *
+     * @param dataFormatProperties the options
+     */
+    public void setDataFormatProperties(Map<String, Object> dataFormatProperties) {
+        this.dataFormatProperties = dataFormatProperties;
     }
 }

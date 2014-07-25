@@ -29,6 +29,7 @@ import org.apache.camel.support.SynchronizationAdapter;
 import org.apache.camel.util.AsyncProcessorHelper;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.MessageHelper;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * A {@link org.apache.camel.Processor} that binds the REST DSL incoming and outgoing messages
@@ -126,10 +127,15 @@ public class RestBindingProcessor extends ServiceSupport implements AsyncProcess
             isJson = consumes != null && consumes.toLowerCase(Locale.US).contains("json");
         }
 
-        // if we do not know explicit if its json or xml, then need to check the message body to be sure what it is
+        // we have binding enabled, so we need to know if there body is empty or not\
+        // so force reading the body as a String which we can work with
+        String body = MessageHelper.extractBodyAsString(exchange.getIn());
+        if (body != null) {
+            exchange.getIn().setBody(body);
+        }
+
+        // if we do not know if its xml/json then try check if the body is xml
         if (!isXml && !isJson || isXml && isJson) {
-            // read the content into memory so we can determine if its xml or json
-            String body = MessageHelper.extractBodyAsString(exchange.getIn());
             if (body != null) {
                 isXml = body.startsWith("<");
                 isJson = !isXml;
@@ -143,11 +149,21 @@ public class RestBindingProcessor extends ServiceSupport implements AsyncProcess
         if (isXml && xmlUnmarshal != null) {
             // add reverse operation
             exchange.addOnCompletion(new RestBindingMarshalOnCompletion(jsonMmarshal, xmlMmarshal));
-            return xmlUnmarshal.process(exchange, callback);
+            if (ObjectHelper.isNotEmpty(body)) {
+                return xmlUnmarshal.process(exchange, callback);
+            } else {
+                callback.done(true);
+                return true;
+            }
         } else if (isJson && jsonUnmarshal != null) {
             // add reverse operation
             exchange.addOnCompletion(new RestBindingMarshalOnCompletion(jsonMmarshal, xmlMmarshal));
-            return jsonUnmarshal.process(exchange, callback);
+            if (ObjectHelper.isNotEmpty(body)) {
+                return jsonUnmarshal.process(exchange, callback);
+            } else {
+                callback.done(true);
+                return true;
+            }
         }
 
         // we could not bind
