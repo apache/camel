@@ -25,6 +25,7 @@ import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 import com.fasterxml.jackson.databind.type.CollectionType;
 import com.fasterxml.jackson.module.jaxb.JaxbAnnotationModule;
 import org.apache.camel.Exchange;
@@ -42,6 +43,7 @@ public class JacksonDataFormat extends ServiceSupport implements DataFormat {
     private Class<?> unmarshalType;
     private Class<?> jsonView;
     private String include;
+    private boolean prettyPrint;
     private boolean allowJmsType;
     private boolean useList;
 
@@ -170,6 +172,14 @@ public class JacksonDataFormat extends ServiceSupport implements DataFormat {
         return allowJmsType;
     }
 
+    public boolean isPrettyPrint() {
+        return prettyPrint;
+    }
+
+    public void setPrettyPrint(boolean prettyPrint) {
+        this.prettyPrint = prettyPrint;
+    }
+
     public boolean isUseList() {
         return useList;
     }
@@ -210,6 +220,9 @@ public class JacksonDataFormat extends ServiceSupport implements DataFormat {
         if (include != null) {
             JsonInclude.Include inc = JsonInclude.Include.valueOf(include);
             objectMapper.setSerializationInclusion(inc);
+        }
+        if (prettyPrint) {
+            objectMapper.enable(SerializationFeature.INDENT_OUTPUT);
         }
     }
 
