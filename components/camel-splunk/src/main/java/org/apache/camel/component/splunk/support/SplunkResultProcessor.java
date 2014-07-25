@@ -22,5 +22,5 @@ import org.apache.camel.component.splunk.event.SplunkEvent;
  * Processes splunk results
  */
 public interface SplunkResultProcessor {
-    public void process(SplunkEvent splunkData);
+    void process(SplunkEvent splunkData);
 }
