@@ -126,11 +126,12 @@ public class RestBindingProcessor extends ServiceSupport implements AsyncProcess
             isJson = consumes != null && consumes.toLowerCase(Locale.US).contains("json");
         }
 
-        if (!isXml && !isJson) {
+        // if we do not know explicit if its json or xml, then need to check the message body to be sure what it is
+        if (!isXml && !isJson || isXml && isJson) {
             // read the content into memory so we can determine if its xml or json
             String body = MessageHelper.extractBodyAsString(exchange.getIn());
             if (body != null) {
-                isXml = body.startsWith("<") || body.contains("xml");
+                isXml = body.startsWith("<");
                 isJson = !isXml;
             }
         }
@@ -231,11 +232,12 @@ public class RestBindingProcessor extends ServiceSupport implements AsyncProcess
             // need to prepare exchange first
             ExchangeHelper.prepareOutToIn(exchange);
 
-            if (!isXml && !isJson) {
+            // if we do not know explicit if its json or xml, then need to check the message body to be sure what it is
+            if (!isXml && !isJson || isXml && isJson) {
                 // read the content into memory so we can determine if its xml or json
                 String body = MessageHelper.extractBodyAsString(exchange.getIn());
                 if (body != null) {
-                    isXml = body.startsWith("<") || body.contains("xml");
+                    isXml = body.startsWith("<");
                     isJson = !isXml;
                 }
             }
@@ -249,6 +251,19 @@ public class RestBindingProcessor extends ServiceSupport implements AsyncProcess
                     xmlMmarshal.process(exchange);
                 } else if (isJson && jsonMmarshal != null) {
                     jsonMmarshal.process(exchange);
+                } else {
+                    // we could not bind
+                    if (bindingMode.equals("auto")) {
+                        // okay for auto we do not mind if we could not bind
+                        return;
+                    } else {
+                        if (bindingMode.contains("xml")) {
+                            exchange.setException(new BindingException("Cannot bind to xml as message body is not xml compatible", exchange));
+                        } else {
+                            exchange.setException(new BindingException("Cannot bind to json as message body is not json compatible", exchange));
+                        }
+                    }
+                    return;
                 }
             } catch (Throwable e) {
                 exchange.setException(e);
