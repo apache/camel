@@ -21,7 +21,6 @@ import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlAttribute;
 import javax.xml.bind.annotation.XmlRootElement;
-import javax.xml.bind.annotation.XmlTransient;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Processor;
@@ -30,7 +29,6 @@ import org.apache.camel.processor.binding.RestBindingProcessor;
 import org.apache.camel.spi.DataFormat;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.IntrospectionSupport;
-import org.apache.camel.util.ObjectHelper;
 
 @XmlRootElement(name = "restBinding")
 @XmlAccessorType(XmlAccessType.FIELD)
@@ -55,25 +53,13 @@ public class RestBindingDefinition extends NoOutputDefinition {
     private String type;
 
     @XmlAttribute
-    private String typeList;
-
-    @XmlTransient
-    private Class<?> classType;
-
-    @XmlTransient
-    private boolean useList;
-
-    @XmlAttribute
     private String outType;
 
     @XmlAttribute
-    private String outTypeList;
+    private Boolean list;
 
-    @XmlTransient
-    private Class<?> outClassType;
-
-    @XmlTransient
-    private boolean outUseList;
+    @XmlAttribute
+    private Boolean outList;
 
     @Override
     public String toString() {
@@ -89,10 +75,6 @@ public class RestBindingDefinition extends NoOutputDefinition {
 
     @Override
     public Processor createProcessor(RouteContext routeContext) throws Exception {
-        // type must be set
-        if (ObjectHelper.isEmpty(type) && ObjectHelper.isEmpty(classType)) {
-            throw new IllegalArgumentException("Type must be configured on " + this);
-        }
 
         CamelContext context = routeContext.getCamelContext();
 
@@ -113,28 +95,24 @@ public class RestBindingDefinition extends NoOutputDefinition {
         if (mode.contains("json") && json == null) {
             throw new IllegalArgumentException("JSon DataFormat " + name + " not found.");
         }
-        if (classType == null && type != null) {
-            classType = context.getClassResolver().resolveMandatoryClass(type);
+        Class<?> clazz = null;
+        if (type != null) {
+            clazz = context.getClassResolver().resolveMandatoryClass(type);
         }
-        if (classType == null && typeList != null) {
-            classType = context.getClassResolver().resolveMandatoryClass(typeList);
-        }
-        if (classType != null) {
-            IntrospectionSupport.setProperty(context.getTypeConverter(), json, "unmarshalType", classType);
-            IntrospectionSupport.setProperty(context.getTypeConverter(), json, "useList", useList);
+        if (clazz != null) {
+            IntrospectionSupport.setProperty(context.getTypeConverter(), json, "unmarshalType", clazz);
+            IntrospectionSupport.setProperty(context.getTypeConverter(), json, "useList", list != null ? list : false);
         }
         context.addService(json);
 
         DataFormat outJson = context.resolveDataFormat(name);
-        if (outClassType == null && outType != null) {
-            outClassType = context.getClassResolver().resolveMandatoryClass(outType);
+        Class<?> outClazz = null;
+        if (outType != null) {
+            outClazz = context.getClassResolver().resolveMandatoryClass(outType);
         }
-        if (outClassType == null && outTypeList != null) {
-            outClassType = context.getClassResolver().resolveMandatoryClass(outTypeList);
-        }
-        if (outClassType != null) {
-            IntrospectionSupport.setProperty(context.getTypeConverter(), outJson, "unmarshalType", outClassType);
-            IntrospectionSupport.setProperty(context.getTypeConverter(), outJson, "useList", outUseList);
+        if (outClazz != null) {
+            IntrospectionSupport.setProperty(context.getTypeConverter(), outJson, "unmarshalType", outClazz);
+            IntrospectionSupport.setProperty(context.getTypeConverter(), outJson, "useList", outList != null ? outList : false);
         }
         context.addService(outJson);
 
@@ -148,31 +126,27 @@ public class RestBindingDefinition extends NoOutputDefinition {
         if (mode.contains("xml") && jaxb == null) {
             throw new IllegalArgumentException("XML DataFormat " + name + " not found.");
         }
-        if (classType == null && type != null) {
-            classType = context.getClassResolver().resolveMandatoryClass(type);
+        clazz = null;
+        if (type != null) {
+            clazz = context.getClassResolver().resolveMandatoryClass(type);
         }
-        if (classType == null && typeList != null) {
-            classType = context.getClassResolver().resolveMandatoryClass(type);
-        }
-        if (classType != null) {
-            JAXBContext jc = JAXBContext.newInstance(classType);
+        if (clazz != null) {
+            JAXBContext jc = JAXBContext.newInstance(clazz);
             IntrospectionSupport.setProperty(context.getTypeConverter(), jaxb, "context", jc);
         }
         context.addService(jaxb);
 
         DataFormat outJaxb = context.resolveDataFormat(name);
-        if (outClassType == null && outType != null) {
-            outClassType = context.getClassResolver().resolveMandatoryClass(outType);
+        outClazz = null;
+        if (outType != null) {
+            outClazz = context.getClassResolver().resolveMandatoryClass(outType);
         }
-        if (outClassType == null && outTypeList != null) {
-            outClassType = context.getClassResolver().resolveMandatoryClass(outTypeList);
-        }
-        if (outClassType != null) {
-            JAXBContext jc = JAXBContext.newInstance(outClassType);
+        if (outClazz != null) {
+            JAXBContext jc = JAXBContext.newInstance(outClazz);
             IntrospectionSupport.setProperty(context.getTypeConverter(), outJaxb, "context", jc);
-        } else if (classType != null) {
+        } else if (clazz != null) {
             // fallback and use the context from the input
-            JAXBContext jc = JAXBContext.newInstance(classType);
+            JAXBContext jc = JAXBContext.newInstance(clazz);
             IntrospectionSupport.setProperty(context.getTypeConverter(), outJaxb, "context", jc);
         }
         context.addService(outJaxb);
@@ -226,66 +200,29 @@ public class RestBindingDefinition extends NoOutputDefinition {
 
     public void setType(String type) {
         this.type = type;
-        this.useList = false;
-    }
-
-    public String getTypeList() {
-        return typeList;
-    }
-
-    public void setTypeList(String typeList) {
-        this.typeList = typeList;
-        this.useList = true;
-    }
-
-    public Class<?> getClassType() {
-        return classType;
-    }
-
-    public void setClassType(Class<?> classType) {
-        this.classType = classType;
-    }
-
-    public boolean isUseList() {
-        return useList;
-    }
-
-    public void setUseList(boolean useList) {
-        this.useList = useList;
     }
 
     public String getOutType() {
         return outType;
     }
 
-    public void setOutType(String type) {
-        this.outType = type;
-        this.outUseList = false;
+    public void setOutType(String outType) {
+        this.outType = outType;
     }
 
-    public String getOutTypeList() {
-        return outTypeList;
+    public Boolean getList() {
+        return list;
     }
 
-    public void setOutTypeList(String typeList) {
-        this.outTypeList = typeList;
-        this.outUseList = true;
+    public void setList(Boolean list) {
+        this.list = list;
     }
 
-    public Class<?> getOutClassType() {
-        return outClassType;
+    public Boolean getOutList() {
+        return outList;
     }
 
-    public void setOutClassType(Class<?> classType) {
-        this.outClassType = classType;
+    public void setOutList(Boolean outList) {
+        this.outList = outList;
     }
-
-    public boolean isOutUseList() {
-        return outUseList;
-    }
-
-    public void setOutUseList(boolean useList) {
-        this.outUseList = useList;
-    }
-
 }

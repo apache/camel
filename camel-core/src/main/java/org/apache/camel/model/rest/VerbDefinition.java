@@ -51,25 +51,13 @@ public class VerbDefinition {
     private String type;
 
     @XmlAttribute
-    private String typeList;
-
-    @XmlAttribute
     private String outType;
 
     @XmlAttribute
-    private String outTypeList;
+    private Boolean list;
 
-    @XmlTransient
-    private Class<?> classType;
-
-    @XmlTransient
-    private Class<?> outClassType;
-
-    @XmlTransient
-    private boolean useList;
-
-    @XmlTransient
-    private boolean outUseList;
+    @XmlAttribute
+    private Boolean outList;
 
     // used by XML DSL to either select a <to> or <route>
     // so we need to use the common type OptionalIdentifiedDefinition
@@ -133,70 +121,30 @@ public class VerbDefinition {
 
     public void setType(String type) {
         this.type = type;
-        this.useList = false;
-    }
-
-    public String getTypeList() {
-        return typeList;
-    }
-
-    public void setTypeList(String typeList) {
-        this.typeList = typeList;
-        this.useList = true;
-    }
-
-    public Class<?> getClassType() {
-        return classType;
-    }
-
-    public void setClassType(Class<?> classType) {
-        this.classType = classType;
-        this.useList = false;
-    }
-
-    public void setListClassType(Class<?> classType) {
-        this.classType = classType;
-        this.useList = true;
-    }
-
-    public boolean isUseList() {
-        return useList;
     }
 
     public String getOutType() {
         return outType;
     }
 
-    public void setOutType(String type) {
-        this.outType = type;
-        this.outUseList = false;
+    public void setOutType(String outType) {
+        this.outType = outType;
     }
 
-    public String getOutTypeList() {
-        return outTypeList;
+    public Boolean getList() {
+        return list;
     }
 
-    public void setOutTypeList(String typeList) {
-        this.outTypeList = typeList;
-        this.outUseList = true;
+    public void setList(Boolean list) {
+        this.list = list;
     }
 
-    public Class<?> getOutClassType() {
-        return outClassType;
+    public Boolean getOutList() {
+        return outList;
     }
 
-    public void setOutClassType(Class<?> classType) {
-        this.outClassType = classType;
-        this.outUseList = false;
-    }
-
-    public void setOutListClassType(Class<?> classType) {
-        this.outClassType = classType;
-        this.outUseList = true;
-    }
-
-    public boolean isOutUseList() {
-        return outUseList;
+    public void setOutList(Boolean outList) {
+        this.outList = outList;
     }
 
     public RestDefinition getRest() {

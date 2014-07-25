@@ -143,17 +143,6 @@ public class RestDefinition {
         return this;
     }
 
-    public RestDefinition type(String classType) {
-        // add to last verb
-        if (getVerbs().isEmpty()) {
-            throw new IllegalArgumentException("Must add verb first, such as get/post/delete");
-        }
-
-        VerbDefinition verb = getVerbs().get(getVerbs().size() - 1);
-        verb.setType(classType);
-        return this;
-    }
-
     public RestDefinition type(Class<?> classType) {
         // add to last verb
         if (getVerbs().isEmpty()) {
@@ -161,19 +150,7 @@ public class RestDefinition {
         }
 
         VerbDefinition verb = getVerbs().get(getVerbs().size() - 1);
-        verb.setClassType(classType);
         verb.setType(classType.getCanonicalName());
-        return this;
-    }
-
-    public RestDefinition typeList(String classType) {
-        // add to last verb
-        if (getVerbs().isEmpty()) {
-            throw new IllegalArgumentException("Must add verb first, such as get/post/delete");
-        }
-
-        VerbDefinition verb = getVerbs().get(getVerbs().size() - 1);
-        verb.setTypeList(classType);
         return this;
     }
 
@@ -184,19 +161,8 @@ public class RestDefinition {
         }
 
         VerbDefinition verb = getVerbs().get(getVerbs().size() - 1);
-        verb.setClassType(classType);
-        verb.setTypeList(classType.getCanonicalName());
-        return this;
-    }
-
-    public RestDefinition outType(String classType) {
-        // add to last verb
-        if (getVerbs().isEmpty()) {
-            throw new IllegalArgumentException("Must add verb first, such as get/post/delete");
-        }
-
-        VerbDefinition verb = getVerbs().get(getVerbs().size() - 1);
-        verb.setOutType(classType);
+        verb.setType(classType.getCanonicalName());
+        verb.setList(true);
         return this;
     }
 
@@ -207,19 +173,7 @@ public class RestDefinition {
         }
 
         VerbDefinition verb = getVerbs().get(getVerbs().size() - 1);
-        verb.setOutClassType(classType);
         verb.setOutType(classType.getCanonicalName());
-        return this;
-    }
-
-    public RestDefinition outTypeList(String classType) {
-        // add to last verb
-        if (getVerbs().isEmpty()) {
-            throw new IllegalArgumentException("Must add verb first, such as get/post/delete");
-        }
-
-        VerbDefinition verb = getVerbs().get(getVerbs().size() - 1);
-        verb.setOutTypeList(classType);
         return this;
     }
 
@@ -230,8 +184,8 @@ public class RestDefinition {
         }
 
         VerbDefinition verb = getVerbs().get(getVerbs().size() - 1);
-        verb.setOutClassType(classType);
-        verb.setOutTypeList(classType.getCanonicalName());
+        verb.setOutType(classType.getCanonicalName());
+        verb.setOutList(true);
         return this;
     }
 
@@ -338,21 +292,15 @@ public class RestDefinition {
             }
 
             // add the binding
-            if (verb.getType() != null || verb.getClassType() != null) {
-                RestBindingDefinition binding = new RestBindingDefinition();
-                binding.setType(verb.getType());
-                binding.setTypeList(verb.getTypeList());
-                binding.setClassType(verb.getClassType());
-                binding.setUseList(verb.isUseList());
-                binding.setOutType(verb.getOutType());
-                binding.setOutTypeList(verb.getOutTypeList());
-                binding.setOutClassType(verb.getOutClassType());
-                binding.setOutUseList(verb.isOutUseList());
-                binding.setConsumes(verb.getConsumes());
-                binding.setProduces(verb.getProduces());
-                binding.setBindingMode(verb.getBindingMode());
-                route.getOutputs().add(0, binding);
-            }
+            RestBindingDefinition binding = new RestBindingDefinition();
+            binding.setType(verb.getType());
+            binding.setOutType(verb.getOutType());
+            binding.setList(verb.getList());
+            binding.setOutList(verb.getOutList());
+            binding.setConsumes(verb.getConsumes());
+            binding.setProduces(verb.getProduces());
+            binding.setBindingMode(verb.getBindingMode());
+            route.getOutputs().add(0, binding);
 
             // the route should be from this rest endpoint
             route.fromRest(from);

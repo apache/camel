@@ -104,6 +104,12 @@ public class RestBindingProcessor extends ServiceSupport implements AsyncProcess
             return true;
         }
 
+        // is the body empty
+        if (exchange.getIn().getBody() == null) {
+            callback.done(true);
+            return true;
+        }
+
         boolean isXml = false;
         boolean isJson = false;
 
@@ -123,8 +129,10 @@ public class RestBindingProcessor extends ServiceSupport implements AsyncProcess
         if (!isXml && !isJson) {
             // read the content into memory so we can determine if its xml or json
             String body = MessageHelper.extractBodyAsString(exchange.getIn());
-            isXml = body.startsWith("<") || body.contains("xml");
-            isJson = !isXml;
+            if (body != null) {
+                isXml = body.startsWith("<") || body.contains("xml");
+                isJson = !isXml;
+            }
         }
 
         // only allow xml/json if the binding mode allows that
@@ -200,6 +208,11 @@ public class RestBindingProcessor extends ServiceSupport implements AsyncProcess
                 return;
             }
 
+            // is the body empty
+            if (exchange.hasOut() && exchange.getOut().getBody() == null || exchange.getIn().getBody() == null) {
+                return;
+            }
+
             boolean isXml = false;
             boolean isJson = false;
 
@@ -221,8 +234,10 @@ public class RestBindingProcessor extends ServiceSupport implements AsyncProcess
             if (!isXml && !isJson) {
                 // read the content into memory so we can determine if its xml or json
                 String body = MessageHelper.extractBodyAsString(exchange.getIn());
-                isXml = body.startsWith("<") || body.contains("xml");
-                isJson = !isXml;
+                if (body != null) {
+                    isXml = body.startsWith("<") || body.contains("xml");
+                    isJson = !isXml;
+                }
             }
 
             // only allow xml/json if the binding mode allows that

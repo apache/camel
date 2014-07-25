@@ -51,7 +51,6 @@ public class FromRestGetTest extends ContextTestSupport {
         assertEquals("/say/bye", rest.getUri());
         assertEquals(2, rest.getVerbs().size());
         assertEquals("application/json", rest.getVerbs().get(0).getConsumes());
-        assertEquals("application/xml", rest.getVerbs().get(0).getProduces());
         to = assertIsInstanceOf(ToDefinition.class, rest.getVerbs().get(0).getTo());
         assertEquals("direct:bye", to.getUri());
 
@@ -75,7 +74,7 @@ public class FromRestGetTest extends ContextTestSupport {
                     .get().to("direct:hello");
 
                 rest("/say/bye")
-                    .get().consumes("application/json").produces("application/xml").to("direct:bye")
+                    .get().consumes("application/json").to("direct:bye")
                     .post().to("mock:update");
 
                 from("direct:hello")

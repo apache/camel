@@ -49,7 +49,6 @@ public class FromRestGetTest extends CamelBlueprintTestSupport {
         assertEquals("/say/bye", rest.getUri());
         assertEquals(2, rest.getVerbs().size());
         assertEquals("application/json", rest.getVerbs().get(0).getConsumes());
-        assertEquals("application/json", rest.getVerbs().get(0).getProduces());
         to = assertIsInstanceOf(ToDefinition.class, rest.getVerbs().get(0).getTo());
         assertEquals("direct:bye", to.getUri());
 

@@ -38,7 +38,7 @@ public class FromRestGetEndPathTest extends FromRestGetTest {
         assertEquals("/say/bye", rest.getUri());
         assertEquals(2, rest.getVerbs().size());
         assertEquals("application/json", rest.getVerbs().get(0).getConsumes());
-        to = assertIsInstanceOf(ToDefinition.class, rest.getVerbs().get(0).getRoute().getOutputs().get(0));
+        to = assertIsInstanceOf(ToDefinition.class, rest.getVerbs().get(0).getRoute().getOutputs().get(1));
         assertEquals("direct:bye", to.getUri());
 
         // the rest becomes routes and the input is a seda endpoint created by the DummyRestConsumerFactory
