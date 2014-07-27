@@ -26,6 +26,10 @@ import javax.servlet.ServletResponse;
 
 public class JettyRestFilter implements Filter {
 
+    // TODO: we may want to use a filter so we can reuse this for camel-servlet
+    // to have it match the request with list of accepted paths
+
+
     @Override
     public void init(FilterConfig filterConfig) throws ServletException {
         // noop
@@ -33,7 +37,6 @@ public class JettyRestFilter implements Filter {
 
     @Override
     public void doFilter(ServletRequest servletRequest, ServletResponse servletResponse, FilterChain filterChain) throws IOException, ServletException {
-        System.out.println("Doing my filter here");
         filterChain.doFilter(servletRequest, servletResponse);
     }
 

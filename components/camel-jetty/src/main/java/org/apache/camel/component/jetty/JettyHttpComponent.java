@@ -381,7 +381,6 @@ public class JettyHttpComponent extends HttpComponent implements RestConsumerFac
                 // special for rest filter
                 FilterHolder filterHolder = new FilterHolder();
                 filterHolder.setFilter(new CamelFilterWrapper(filter));
-//                context.getServletHandler().addFilter(filterHolder);
                 addFilter(context, filterHolder, "*");
             } else {
                 FilterHolder filterHolder = new FilterHolder();
@@ -997,14 +996,16 @@ public class JettyHttpComponent extends HttpComponent implements RestConsumerFac
         setProperties(endpoint, parameters);
 
         // add our filter
-        List<Filter> list = endpoint.getFilters();
-        if (list == null) {
-            list = new ArrayList<Filter>();
-        }
-        list.add(0, new JettyRestFilter());
-        endpoint.setFilters(list);
+        //List<Filter> list = endpoint.getFilters();
+        //if (list == null) {
+        //    list = new ArrayList<Filter>();
+        //}
+        //list.add(0, new JettyRestFilter());
+        //endpoint.setFilters(list);
         // disable this filter as we want to use ours
         endpoint.setEnableMultipartFilter(false);
+        // use the rest binding
+        endpoint.setBinding(new JettyRestHttpBinding());
 
         // configure consumer properties
         Consumer consumer = endpoint.createConsumer(processor);
@@ -1047,6 +1048,9 @@ public class JettyHttpComponent extends HttpComponent implements RestConsumerFac
         ServletHolder holder = new ServletHolder();
         holder.setServlet(camelServlet);
         context.addServlet(holder, "/*");
+
+        // use rest enabled resolver in case we use rest
+        camelServlet.setServletResolveConsumerStrategy(new JettyRestServletResolveConsumerStrategy());
 
         return camelServlet;
     }

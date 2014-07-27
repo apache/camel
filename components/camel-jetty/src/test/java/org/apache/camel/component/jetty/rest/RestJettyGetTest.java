@@ -20,10 +20,8 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jetty.BaseJettyTest;
-import org.junit.Ignore;
 import org.junit.Test;
 
-@Ignore
 public class RestJettyGetTest extends BaseJettyTest {
 
     @Test
@@ -37,7 +35,7 @@ public class RestJettyGetTest extends BaseJettyTest {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                // configure to use restlet on localhost with the given port
+                // configure to use jetty on localhost with the given port
                 restConfiguration().component("jetty").host("localhost").port(getPort());
 
                 // use the rest DSL to define the rest services
