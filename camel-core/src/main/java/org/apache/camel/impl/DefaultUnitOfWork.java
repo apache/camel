@@ -30,6 +30,7 @@ import org.apache.camel.CamelUnitOfWorkException;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.Processor;
+import org.apache.camel.Route;
 import org.apache.camel.Service;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.SubUnitOfWork;
@@ -254,6 +255,22 @@ public class DefaultUnitOfWork implements UnitOfWork, Service {
             // must catch exceptions to ensure synchronizations is also invoked
             log.warn("Exception occurred during event notification. This exception will be ignored.", e);
         }
+    }
+
+    @Override
+    public void beforeRoute(Exchange exchange, Route route) {
+        if (log.isTraceEnabled()) {
+            log.trace("UnitOfWork beforeRoute: {} for ExchangeId: {} with {}", new Object[]{route.getId(), exchange.getExchangeId(), exchange});
+        }
+        UnitOfWorkHelper.beforeRouteSynchronizations(route, exchange, synchronizations, log);
+    }
+
+    @Override
+    public void afterRoute(Exchange exchange, Route route) {
+        if (log.isTraceEnabled()) {
+            log.trace("UnitOfWork afterRouteL: {} for ExchangeId: {} with {}", new Object[]{route.getId(), exchange.getExchangeId(), exchange});
+        }
+        UnitOfWorkHelper.afterRouteSynchronizations(route, exchange, synchronizations, log);
     }
 
     public String getId() {

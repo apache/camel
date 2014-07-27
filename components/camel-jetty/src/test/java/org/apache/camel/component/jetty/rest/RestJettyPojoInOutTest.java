@@ -19,10 +19,8 @@ package org.apache.camel.component.jetty.rest;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.jetty.BaseJettyTest;
 import org.apache.camel.model.rest.RestBindingMode;
-import org.junit.Ignore;
 import org.junit.Test;
 
-@Ignore
 public class RestJettyPojoInOutTest extends BaseJettyTest {
 
     @Test

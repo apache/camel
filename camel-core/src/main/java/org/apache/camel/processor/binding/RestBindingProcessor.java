@@ -21,6 +21,7 @@ import java.util.Locale;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
+import org.apache.camel.Route;
 import org.apache.camel.processor.MarshalProcessor;
 import org.apache.camel.processor.UnmarshalProcessor;
 import org.apache.camel.spi.DataFormat;
@@ -148,7 +149,7 @@ public class RestBindingProcessor extends ServiceSupport implements AsyncProcess
 
         if (isXml && xmlUnmarshal != null) {
             // add reverse operation
-            exchange.addOnCompletion(new RestBindingMarshalOnCompletion(jsonMmarshal, xmlMmarshal));
+            exchange.addOnCompletion(new RestBindingMarshalOnCompletion(exchange.getFromRouteId(), jsonMmarshal, xmlMmarshal));
             if (ObjectHelper.isNotEmpty(body)) {
                 return xmlUnmarshal.process(exchange, callback);
             } else {
@@ -157,7 +158,7 @@ public class RestBindingProcessor extends ServiceSupport implements AsyncProcess
             }
         } else if (isJson && jsonUnmarshal != null) {
             // add reverse operation
-            exchange.addOnCompletion(new RestBindingMarshalOnCompletion(jsonMmarshal, xmlMmarshal));
+            exchange.addOnCompletion(new RestBindingMarshalOnCompletion(exchange.getFromRouteId(), jsonMmarshal, xmlMmarshal));
             if (ObjectHelper.isNotEmpty(body)) {
                 return jsonUnmarshal.process(exchange, callback);
             } else {
@@ -205,15 +206,28 @@ public class RestBindingProcessor extends ServiceSupport implements AsyncProcess
 
         private final AsyncProcessor jsonMmarshal;
         private final AsyncProcessor xmlMmarshal;
+        private final String routeId;
 
-        private RestBindingMarshalOnCompletion(AsyncProcessor jsonMmarshal, AsyncProcessor xmlMmarshal) {
+        private RestBindingMarshalOnCompletion(String routeId, AsyncProcessor jsonMmarshal, AsyncProcessor xmlMmarshal) {
+            this.routeId = routeId;
             this.jsonMmarshal = jsonMmarshal;
             this.xmlMmarshal = xmlMmarshal;
         }
 
         @Override
-        public void onComplete(Exchange exchange) {
-            // only marshal if we succeeded (= onComplete)
+        public void onAfterRoute(Route route, Exchange exchange) {
+            // we use the onAfterRoute callback, to ensure the data has been marshalled before
+            // the consumer writes the response back
+
+            // only trigger when it was the 1st route that was done
+            if (!routeId.equals(route.getId())) {
+                return;
+            }
+
+            // only marshal if there was no exception
+            if (exchange.getException() != null) {
+                return;
+            }
 
             if (bindingMode == null || "off".equals(bindingMode)) {
                 // binding is off
