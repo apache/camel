@@ -105,12 +105,6 @@ public class RestBindingProcessor extends ServiceSupport implements AsyncProcess
             return true;
         }
 
-        // is the body empty
-        if (exchange.getIn().getBody() == null) {
-            callback.done(true);
-            return true;
-        }
-
         boolean isXml = false;
         boolean isJson = false;
 
@@ -137,20 +131,24 @@ public class RestBindingProcessor extends ServiceSupport implements AsyncProcess
             isJson = bindingMode.equals("auto") || bindingMode.contains("json");
         }
 
-        // okay we have a binding mode, so need to check for empty body as that can cause the marshaller to fail
-        // as they assume a non-empty body
         String body = null;
-        if (isXml || isJson) {
-            // we have binding enabled, so we need to know if there body is empty or not\
-            // so force reading the body as a String which we can work with
-            body = MessageHelper.extractBodyAsString(exchange.getIn());
-            if (body != null) {
-                exchange.getIn().setBody(body);
 
-                if (isXml && isJson) {
-                    // we have still not determined between xml or json, so check the body if its xml based or not
-                    isXml = body.startsWith("<");
-                    isJson = !isXml;
+        if (exchange.getIn().getBody() != null) {
+
+           // okay we have a binding mode, so need to check for empty body as that can cause the marshaller to fail
+            // as they assume a non-empty body
+            if (isXml || isJson) {
+                // we have binding enabled, so we need to know if there body is empty or not\
+                // so force reading the body as a String which we can work with
+                body = MessageHelper.extractBodyAsString(exchange.getIn());
+                if (body != null) {
+                    exchange.getIn().setBody(body);
+
+                    if (isXml && isJson) {
+                        // we have still not determined between xml or json, so check the body if its xml based or not
+                        isXml = body.startsWith("<");
+                        isJson = !isXml;
+                    }
                 }
             }
         }
@@ -178,6 +176,7 @@ public class RestBindingProcessor extends ServiceSupport implements AsyncProcess
         // we could not bind
         if (bindingMode.equals("auto")) {
             // okay for auto we do not mind if we could not bind
+            exchange.addOnCompletion(new RestBindingMarshalOnCompletion(exchange.getFromRouteId(), jsonMarshal, xmlMarshal, false));
             callback.done(true);
             return true;
         } else {
@@ -250,7 +249,7 @@ public class RestBindingProcessor extends ServiceSupport implements AsyncProcess
             }
 
             // is the body empty
-            if (exchange.hasOut() && exchange.getOut().getBody() == null || exchange.getIn().getBody() == null) {
+            if ((exchange.hasOut() && exchange.getOut().getBody() == null) || (!exchange.hasOut() && exchange.getIn().getBody() == null)) {
                 return;
             }
 

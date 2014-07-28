@@ -17,12 +17,12 @@
 <html>
 
 <body>
-<h2>Spark REST and Apache Tomcat example</h2>
+<h2>Servlet REST and Apache Tomcat example</h2>
 
-This example shows how to use Spark REST to define REST endpoints in Camel routes using the Java DSL
+This example shows how to use Servlet REST to define REST endpoints in Camel routes using Java DSL
 
 <br/>
-The routes are defined in Java code, in the <tt>org.apache.camel.example.sparkrest.UserRouteBuilder</tt> class.
+The routes are defined in Java code, in the <tt>org.apache.camel.example.rest.UserRouteBuilder</tt> class.
 
 <p/>
 There is a <i>user</i> REST service that supports the following operations
@@ -37,18 +37,18 @@ The view and list operations are HTTP GET, and update is using HTTP PUT.
 From a web browser you can access the first two services using the following links
 
 <ul>
-  <li><a href="user/view/123">user/view/123</a> - to view the user with id 123</li>
-  <li><a href="user/list">user/list</a> - to list all users</li>
+  <li><a href="rest/user/view/123">user/view/123</a> - to view the user with id 123</li>
+  <li><a href="rest/user/list">user/list</a> - to list all users</li>
 </ul>
 
 From the command shell you can use curl to access the service as shown below:
 <pre>
-    curl -X GET -H "Accept: application/json" http://localhost:8080/camel-example-spark-rest-tomcat-{version}/user/view/123
-    curl -X GET -H "Accept: application/json" http://localhost:8080/camel-example-spark-rest-tomcat-{version}/user/list
-    curl -X PUT -d "{ \"id\": 666, \"name\": \"The devil\"}" -H "Accept: application/json" http://localhost:8080/camel-example-spark-rest-tomcat-{version}/user/update
+    curl -X GET -H "Accept: application/json" http://localhost:8080/camel-example-servlet-rest-tomcat-{version}/rest/user/view/123
+    curl -X GET -H "Accept: application/json" http://localhost:8080/camel-example-servlet-rest-tomcat-{version}/rest/user/list
+    curl -X PUT -d "{ \"id\": 666, \"name\": \"The devil\"}" -H "Accept: application/json" http://localhost:8080/camel-example-servlet-rest-tomcat-{version}/rest/user/update
 </pre>
 
-This assume you installed the example by copying the .war as <tt>camel-example-spark-rest-tomcat-VERSION.war</tt>
+This assume you installed the example by copying the .war as <tt>camel-example-servlet-rest-tomcat-VERSION.war</tt>
 , where VERSION is the Camel version such as 2.14.0, into the <b>webapps</b> directory of Apache Tomcat.
 
 <p/>
