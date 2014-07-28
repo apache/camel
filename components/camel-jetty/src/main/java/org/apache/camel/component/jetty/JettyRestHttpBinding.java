@@ -23,8 +23,6 @@ import org.apache.camel.component.http.HttpMessage;
 
 public class JettyRestHttpBinding extends DefaultHttpBinding {
 
-    // TODO: a better and faster rest pattern matcher, without the .split as they may be slower
-
     @Override
     protected void populateRequestParameters(HttpServletRequest request, HttpMessage message) throws Exception {
         super.populateRequestParameters(request, message);
@@ -40,21 +38,31 @@ public class JettyRestHttpBinding extends DefaultHttpBinding {
         JettyHttpEndpoint endpoint = (JettyHttpEndpoint) message.getExchange().getFromEndpoint();
         String consumerPath = endpoint.getPath();
 
-        String[] paths = path.split("/");
-        String[] consumerPaths = consumerPath.split("/");
+        if (useRestMatching(consumerPath)) {
 
-        for (int i = 0; i < consumerPaths.length; i++) {
-            if (paths.length < i) {
-                break;
-            }
-            String p1 = consumerPaths[i];
-            if (p1.startsWith("{") && p1.endsWith("}")) {
-                String key = p1.substring(1, p1.length() - 1);
-                String value = paths[i];
-                if (value != null) {
-                    message.setHeader(key, value);
+            // split using single char / is optimized in the jdk
+            String[] paths = path.split("/");
+            String[] consumerPaths = consumerPath.split("/");
+
+            for (int i = 0; i < consumerPaths.length; i++) {
+                if (paths.length < i) {
+                    break;
+                }
+                String p1 = consumerPaths[i];
+                if (p1.startsWith("{") && p1.endsWith("}")) {
+                    String key = p1.substring(1, p1.length() - 1);
+                    String value = paths[i];
+                    if (value != null) {
+                        message.setHeader(key, value);
+                    }
                 }
             }
         }
     }
+
+    private boolean useRestMatching(String path) {
+        // only need to do rest matching if using { } placeholders
+        return path.indexOf('{') > -1;
+    }
+
 }

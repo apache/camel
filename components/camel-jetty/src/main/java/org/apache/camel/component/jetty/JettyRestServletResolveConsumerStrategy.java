@@ -28,37 +28,56 @@ import org.apache.camel.util.ObjectHelper;
  */
 public class JettyRestServletResolveConsumerStrategy extends HttpServletResolveConsumerStrategy {
 
-    // TODO: a better and faster rest pattern matcher, without the .split as they may be slower
-
     @Override
     public HttpConsumer resolve(HttpServletRequest request, Map<String, HttpConsumer> consumers) {
-        HttpConsumer answer = super.resolve(request, consumers);
+        String path = request.getPathInfo();
+        if (path == null) {
+            return null;
+        }
 
-        if (answer == null) {
-
-            String path = request.getPathInfo();
-            if (path == null) {
-                return null;
-            }
-
-            for (String key : consumers.keySet()) {
-                String consumerPath = normalizePath(key);
-                String requestPath = normalizePath(path);
-                if (matchPaths(requestPath, consumerPath)) {
-                    answer = consumers.get(key);
-                    break;
-                }
+        for (String key : consumers.keySet()) {
+            if (useRestMatching(key) && matchRestPath(path, key)) {
+                return consumers.get(key);
             }
         }
 
-        return answer;
+        // fallback to default
+        return super.resolve(request, consumers);
     }
 
-    private boolean matchPaths(String requestPath, String consumerPath) {
+    private boolean useRestMatching(String path) {
+        // only need to do rest matching if using { } placeholders
+        return path.indexOf('{') > -1;
+    }
+
+    /**
+     * Matches the given request path with the configured consumer path
+     *
+     * @param requestPath   the request path
+     * @param consumerPath  the consumer path which may use { } tokens
+     * @return <tt>true</tt> if matched, <tt>false</tt> otherwise
+     */
+    public boolean matchRestPath(String requestPath, String consumerPath) {
+        // remove starting/ending slashes
+        if (requestPath.startsWith("/")) {
+            requestPath = requestPath.substring(1);
+        }
+        if (requestPath.endsWith("/")) {
+            requestPath = requestPath.substring(0, requestPath.length() - 1);
+        }
+        // remove starting/ending slashes
+        if (consumerPath.startsWith("/")) {
+            consumerPath = consumerPath.substring(1);
+        }
+        if (consumerPath.endsWith("/")) {
+            consumerPath = consumerPath.substring(0, consumerPath.length() - 1);
+        }
+
+        // split using single char / is optimized in the jdk
         String[] requestPaths = requestPath.split("/");
         String[] consumerPaths = consumerPath.split("/");
 
-        // must be same length
+        // must be same number of path's
         if (requestPaths.length != consumerPaths.length) {
             return false;
         }
@@ -67,7 +86,7 @@ public class JettyRestServletResolveConsumerStrategy extends HttpServletResolveC
             String p1 = requestPaths[i];
             String p2 = consumerPaths[i];
 
-            if (p2.equals("*")) {
+            if (p2.startsWith("{") && p2.endsWith("}")) {
                 // always matches
                 continue;
             }
@@ -79,23 +98,6 @@ public class JettyRestServletResolveConsumerStrategy extends HttpServletResolveC
 
         // assume matching
         return true;
-    }
-
-    protected String normalizePath(String path) {
-        StringBuilder sb = new StringBuilder();
-        String[] paths = path.split("/");
-        for (String s : paths) {
-            if (ObjectHelper.isEmpty(s)) {
-                continue;
-            }
-            sb.append("/");
-            if (s.startsWith("{") && s.endsWith("}")) {
-                sb.append("*");
-            } else {
-                sb.append(s);
-            }
-        }
-        return sb.toString();
     }
 
 }
