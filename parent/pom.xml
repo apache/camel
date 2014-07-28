@@ -1015,6 +1015,11 @@
         <version>${project.version}</version>
       </dependency>
       <dependency>
+         <groupId>org.apache.camel</groupId>
+         <artifactId>camel-netty4</artifactId>
+         <version>${project.version}</version>
+     </dependency>
+      <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-netty-http</artifactId>
         <version>${project.version}</version>
