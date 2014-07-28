@@ -65,7 +65,7 @@ public class RestBindingProcessor extends ServiceSupport implements AsyncProcess
             this.jsonMmarshal = null;
         }
 
-       if (xmlDataFormat != null) {
+        if (xmlDataFormat != null) {
             this.xmlUnmarshal = new UnmarshalProcessor(xmlDataFormat);
         } else {
             this.xmlUnmarshal = null;
