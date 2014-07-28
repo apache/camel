@@ -104,8 +104,8 @@ public class HttpServerMultiplexChannelHandler extends SimpleChannelUpstreamHand
         } else {
             // this resource is not found, so send empty response back
             HttpResponse response = new DefaultHttpResponse(HTTP_1_1, NOT_FOUND);
-            response.setHeader(Exchange.CONTENT_TYPE, "text/plain");
-            response.setHeader(Exchange.CONTENT_LENGTH, 0);
+            response.headers().set(Exchange.CONTENT_TYPE, "text/plain");
+            response.headers().set(Exchange.CONTENT_LENGTH, 0);
             response.setContent(ChannelBuffers.copiedBuffer(new byte[]{}));
             messageEvent.getChannel().write(response);
         }
