@@ -377,23 +377,16 @@ public class JettyHttpComponent extends HttpComponent implements RestConsumerFac
         ServletContextHandler context = server.getChildHandlerByClass(ServletContextHandler.class);
         List<Filter> filters = endpoint.getFilters();
         for (Filter filter : filters) {
-            if (filter instanceof JettyRestFilter) {
-                // special for rest filter
-                FilterHolder filterHolder = new FilterHolder();
-                filterHolder.setFilter(new CamelFilterWrapper(filter));
-                addFilter(context, filterHolder, "*");
-            } else {
-                FilterHolder filterHolder = new FilterHolder();
-                filterHolder.setFilter(new CamelFilterWrapper(filter));
-                String pathSpec = endpoint.getPath();
-                if (pathSpec == null || "".equals(pathSpec)) {
-                    pathSpec = "/";
-                }
-                if (endpoint.isMatchOnUriPrefix()) {
-                    pathSpec = pathSpec.endsWith("/") ? pathSpec + "*" : pathSpec + "/*";
-                }
-                addFilter(context, filterHolder, pathSpec);
+            FilterHolder filterHolder = new FilterHolder();
+            filterHolder.setFilter(new CamelFilterWrapper(filter));
+            String pathSpec = endpoint.getPath();
+            if (pathSpec == null || "".equals(pathSpec)) {
+                pathSpec = "/";
             }
+            if (endpoint.isMatchOnUriPrefix()) {
+                pathSpec = pathSpec.endsWith("/") ? pathSpec + "*" : pathSpec + "/*";
+            }
+            addFilter(context, filterHolder, pathSpec);
         }
     }
     
@@ -995,13 +988,6 @@ public class JettyHttpComponent extends HttpComponent implements RestConsumerFac
         JettyHttpEndpoint endpoint = camelContext.getEndpoint(url, JettyHttpEndpoint.class);
         setProperties(endpoint, parameters);
 
-        // add our filter
-        //List<Filter> list = endpoint.getFilters();
-        //if (list == null) {
-        //    list = new ArrayList<Filter>();
-        //}
-        //list.add(0, new JettyRestFilter());
-        //endpoint.setFilters(list);
         // disable this filter as we want to use ours
         endpoint.setEnableMultipartFilter(false);
         // use the rest binding
