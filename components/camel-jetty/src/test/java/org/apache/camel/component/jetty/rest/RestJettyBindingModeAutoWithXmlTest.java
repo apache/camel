@@ -14,17 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.restlet;
+package org.apache.camel.component.jetty.rest;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.jetty.BaseJettyTest;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.model.rest.RestBindingMode;
 import org.junit.Test;
 
-/**
- * @version 
- */
-public class RestRestletBindingModeAutoWithXmlTest extends RestletTestSupport {
+public class RestJettyBindingModeAutoWithXmlTest extends BaseJettyTest {
 
     @Test
     public void testBindingMode() throws Exception {
@@ -33,7 +31,7 @@ public class RestRestletBindingModeAutoWithXmlTest extends RestletTestSupport {
         mock.message(0).body().isInstanceOf(UserJaxbPojo.class);
 
         String body = "<user name=\"Donald Duck\" id=\"123\"></user>";
-        template.sendBody("http://localhost:" + portNum + "/users/new", body);
+        template.sendBody("http://localhost:" + getPort() + "/users/new", body);
 
         assertMockEndpointsSatisfied();
 
@@ -48,7 +46,7 @@ public class RestRestletBindingModeAutoWithXmlTest extends RestletTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                restConfiguration().component("restlet").host("localhost").port(portNum).bindingMode(RestBindingMode.auto);
+                restConfiguration().component("jetty").host("localhost").port(getPort()).bindingMode(RestBindingMode.auto);
 
                 // use the rest DSL to define the rest services
                 rest("/users/")
@@ -57,4 +55,5 @@ public class RestRestletBindingModeAutoWithXmlTest extends RestletTestSupport {
             }
         };
     }
+
 }

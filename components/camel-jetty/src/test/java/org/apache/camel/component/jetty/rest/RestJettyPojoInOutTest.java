@@ -37,7 +37,7 @@ public class RestJettyPojoInOutTest extends BaseJettyTest {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                // configure to use restlet on localhost with the given port
+                // configure to use jetty on localhost with the given port
                 // and enable auto binding mode
                 restConfiguration().component("jetty").host("localhost").port(getPort()).bindingMode(RestBindingMode.auto);
 

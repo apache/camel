@@ -14,17 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.restlet;
+package org.apache.camel.component.jetty.rest;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.jetty.BaseJettyTest;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.model.rest.RestBindingMode;
 import org.junit.Test;
 
-/**
- * @version 
- */
-public class RestRestletBindingModeAutoWithXmlTest extends RestletTestSupport {
+public class RestJettyBindingModeXmlTest extends BaseJettyTest {
 
     @Test
     public void testBindingMode() throws Exception {
@@ -33,7 +31,7 @@ public class RestRestletBindingModeAutoWithXmlTest extends RestletTestSupport {
         mock.message(0).body().isInstanceOf(UserJaxbPojo.class);
 
         String body = "<user name=\"Donald Duck\" id=\"123\"></user>";
-        template.sendBody("http://localhost:" + portNum + "/users/new", body);
+        template.sendBody("http://localhost:" + getPort() + "/users/new", body);
 
         assertMockEndpointsSatisfied();
 
@@ -43,16 +41,33 @@ public class RestRestletBindingModeAutoWithXmlTest extends RestletTestSupport {
         assertEquals("Donald Duck", user.getName());
     }
 
+    @Test
+    public void testBindingModeWrong() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:input");
+        mock.expectedMessageCount(0);
+
+        // we bind to xml, but send in json, which is not possible
+        String body = "{\"id\": 123, \"name\": \"Donald Duck\"}";
+        try {
+            template.sendBody("http://localhost:" + getPort() + "/users/new", body);
+            fail("Should have thrown exception");
+        } catch (Exception e) {
+            // expected
+        }
+
+        assertMockEndpointsSatisfied();
+    }
+
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                restConfiguration().component("restlet").host("localhost").port(portNum).bindingMode(RestBindingMode.auto);
+                restConfiguration().component("jetty").host("localhost").port(getPort()).bindingMode(RestBindingMode.xml);
 
                 // use the rest DSL to define the rest services
                 rest("/users/")
-                    .post("new").consumes("application/xml").type(UserJaxbPojo.class)
+                    .post("new").type(UserJaxbPojo.class)
                         .to("mock:input");
             }
         };

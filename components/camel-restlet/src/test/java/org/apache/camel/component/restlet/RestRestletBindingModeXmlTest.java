@@ -65,7 +65,6 @@ public class RestRestletBindingModeXmlTest extends RestletTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                // binding mode is json only
                 restConfiguration().component("restlet").host("localhost").port(portNum).bindingMode(RestBindingMode.xml);
 
                 // use the rest DSL to define the rest services
