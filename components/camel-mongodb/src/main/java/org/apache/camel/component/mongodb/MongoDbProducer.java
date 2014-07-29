@@ -338,7 +338,13 @@ public class MongoDbProducer extends DefaultProducer {
 
     protected void doCount(Exchange exchange) throws Exception {
         DBCollection dbCol = calculateCollection(exchange);
-        Long answer = Long.valueOf(dbCol.count());
+        DBObject query = exchange.getIn().getBody(DBObject.class);
+        Long answer;
+        if (query == null){
+            answer = Long.valueOf(dbCol.count());    
+        } else {
+            answer = Long.valueOf(dbCol.count(query));    
+        }
         Message resultMessage = prepareResponseMessage(exchange, MongoDbOperation.count);
         resultMessage.setBody(answer);
     }
