@@ -221,6 +221,11 @@
       <scope>test</scope>
     </dependency>
     <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-quartz2</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
       <groupId>ca.uhn.hapi</groupId>
       <artifactId>hapi-structures-v24</artifactId>
       <version>${hapi-version}</version>

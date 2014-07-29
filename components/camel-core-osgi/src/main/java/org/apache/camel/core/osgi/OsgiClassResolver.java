@@ -22,6 +22,7 @@ import java.net.URL;
 import java.util.Enumeration;
 import java.util.Vector;
 
+import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultClassResolver;
 import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.FileUtil;
@@ -35,9 +36,11 @@ import org.slf4j.LoggerFactory;
 public class OsgiClassResolver extends DefaultClassResolver {
     private static final Logger LOG = LoggerFactory.getLogger(OsgiClassResolver.class);
 
-    public BundleContext bundleContext;
-    
-    public OsgiClassResolver(BundleContext context) {
+    private final CamelContext camelContext;
+    private final BundleContext bundleContext;
+
+    public OsgiClassResolver(CamelContext camelContext, BundleContext context) {
+        this.camelContext = camelContext;
         this.bundleContext = context;
     }
 
@@ -52,7 +55,16 @@ public class OsgiClassResolver extends DefaultClassResolver {
         Class<?> clazz = ObjectHelper.loadSimpleType(name);
         if (clazz == null) {
             clazz = doLoadClass(name, bundleContext.getBundle());
-            LOG.trace("Loading class {} using BundleContext {} -> {}", new Object[]{name, bundleContext.getBundle(), clazz});
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Loading class {} using BundleContext {} -> {}", new Object[]{name, bundleContext.getBundle(), clazz});
+            }
+        }
+        if (clazz == null && camelContext != null) {
+            // fallback and load class using the application context classloader
+            clazz = super.loadClass(name, camelContext.getApplicationContextClassLoader());
+            if (LOG.isTraceEnabled()) {
+                LOG.trace("Loading class {} using CamelContext {} -> {}", new Object[]{name, camelContext, clazz});
+            }
         }
         return clazz;
     }
