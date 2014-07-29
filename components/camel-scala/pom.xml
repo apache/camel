@@ -47,6 +47,13 @@
             <version>${scala-version}</version>
             <scope>provided</scope>
         </dependency>
+        <!-- scala-libray doesn't include xml module since 2.11.x -->
+        <dependency>
+            <groupId>org.scala-lang.modules</groupId>
+            <artifactId>scala-xml_2.11</artifactId>
+            <version>${scalaxml-version}</version>
+            <scope>provided</scope>
+        </dependency>
 
         <!-- test dependencies -->
         <dependency>
@@ -71,6 +78,10 @@
                 <exclusion>
                     <groupId>org.scala-lang</groupId>
                     <artifactId>scala-reflect</artifactId>
+                </exclusion>
+                <exclusion>
+                    <groupId>org.scala-lang.modules</groupId>
+                    <artifactId>scala-xml_2.11</artifactId>
                 </exclusion>
             </exclusions>
         </dependency>
