@@ -268,7 +268,7 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, ExceptionEvent exceptionEvent) throws Exception {
-        System.out.println("Get the exception here" + exceptionEvent);
+        
         // only close if we are still allowed to run
         if (consumer.isRunAllowed()) {
 
