@@ -14,31 +14,24 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.jetty.rest;
+package org.apache.camel.component.netty.http.rest;
 
+import org.apache.camel.Exchange;
+import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.jetty.BaseJettyTest;
-import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.component.netty.http.BaseNettyTest;
 import org.apache.camel.model.rest.RestBindingMode;
 import org.junit.Test;
 
-public class RestJettyBindingModeAutoWithJsonTest extends BaseJettyTest {
+public class RestNettyHttpPojoInOutTest extends BaseNettyTest {
 
     @Test
-    public void testBindingMode() throws Exception {
-        MockEndpoint mock = getMockEndpoint("mock:input");
-        mock.expectedMessageCount(1);
-        mock.message(0).body().isInstanceOf(UserPojo.class);
-
+    public void testJettyPojoInOut() throws Exception {
         String body = "{\"id\": 123, \"name\": \"Donald Duck\"}";
-        template.sendBody("http://localhost:" + getPort() + "/users/new", body);
+        String out = template.requestBody("netty-http:http://localhost:" + getPort() + "/users/lives", body, String.class);
 
-        assertMockEndpointsSatisfied();
-
-        UserPojo user = mock.getReceivedExchanges().get(0).getIn().getBody(UserPojo.class);
-        assertNotNull(user);
-        assertEquals(123, user.getId());
-        assertEquals("Donald Duck", user.getName());
+        assertNotNull(out);
+        assertEquals("{\"iso\":\"EN\",\"country\":\"England\"}", out);
     }
 
     @Override
@@ -46,12 +39,15 @@ public class RestJettyBindingModeAutoWithJsonTest extends BaseJettyTest {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                restConfiguration().component("jetty").host("localhost").port(getPort()).bindingMode(RestBindingMode.auto);
+                // configure to use netty-http on localhost with the given port
+                // and enable auto binding mode
+                restConfiguration().component("netty-http").host("localhost").port(getPort()).bindingMode(RestBindingMode.auto);
 
                 // use the rest DSL to define the rest services
                 rest("/users/")
-                    .post("new").consumes("application/json").type(UserPojo.class)
-                        .to("mock:input");
+                    .post("lives").type(UserPojo.class).outType(CountryPojo.class)
+                        .route()
+                        .bean(new UserService(), "livesWhere");
             }
         };
     }

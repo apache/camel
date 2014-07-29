@@ -14,43 +14,61 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.jetty.rest;
+package org.apache.camel.component.netty.http.rest;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.jetty.BaseJettyTest;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.component.netty.http.BaseNettyTest;
 import org.apache.camel.model.rest.RestBindingMode;
 import org.junit.Test;
 
-public class RestJettyBindingModeAutoWithJsonTest extends BaseJettyTest {
+public class RestNettyHttpBindingModeXmlTest extends BaseNettyTest {
 
     @Test
     public void testBindingMode() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:input");
         mock.expectedMessageCount(1);
-        mock.message(0).body().isInstanceOf(UserPojo.class);
+        mock.message(0).body().isInstanceOf(UserJaxbPojo.class);
 
-        String body = "{\"id\": 123, \"name\": \"Donald Duck\"}";
-        template.sendBody("http://localhost:" + getPort() + "/users/new", body);
+        String body = "<user name=\"Donald Duck\" id=\"123\"></user>";
+        template.sendBody("netty-http:http://localhost:" + getPort() + "/users/new", body);
 
         assertMockEndpointsSatisfied();
 
-        UserPojo user = mock.getReceivedExchanges().get(0).getIn().getBody(UserPojo.class);
+        UserJaxbPojo user = mock.getReceivedExchanges().get(0).getIn().getBody(UserJaxbPojo.class);
         assertNotNull(user);
         assertEquals(123, user.getId());
         assertEquals("Donald Duck", user.getName());
     }
+
+    @Test
+    public void testBindingModeWrong() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:input");
+        mock.expectedMessageCount(0);
+
+        // we bind to xml, but send in json, which is not possible
+        String body = "{\"id\": 123, \"name\": \"Donald Duck\"}";
+        try {
+            template.sendBody("netty-http:http://localhost:" + getPort() + "/users/new", body);
+            fail("Should have thrown exception");
+        } catch (Exception e) {
+            // expected
+        }
+
+        assertMockEndpointsSatisfied();
+    }
+
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                restConfiguration().component("jetty").host("localhost").port(getPort()).bindingMode(RestBindingMode.auto);
+                restConfiguration().component("netty-http").host("localhost").port(getPort()).bindingMode(RestBindingMode.xml);
 
                 // use the rest DSL to define the rest services
                 rest("/users/")
-                    .post("new").consumes("application/json").type(UserPojo.class)
+                    .post("new").type(UserJaxbPojo.class)
                         .to("mock:input");
             }
         };

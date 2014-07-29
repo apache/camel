@@ -14,15 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.jetty.rest;
+package org.apache.camel.component.netty.http.rest;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.component.jetty.BaseJettyTest;
 import org.apache.camel.component.mock.MockEndpoint;
+import org.apache.camel.component.netty.http.BaseNettyTest;
 import org.apache.camel.model.rest.RestBindingMode;
 import org.junit.Test;
 
-public class RestJettyBindingModeAutoWithJsonTest extends BaseJettyTest {
+public class RestNettyHttpBindingModeAutoWithJsonTest extends BaseNettyTest {
 
     @Test
     public void testBindingMode() throws Exception {
@@ -31,7 +31,7 @@ public class RestJettyBindingModeAutoWithJsonTest extends BaseJettyTest {
         mock.message(0).body().isInstanceOf(UserPojo.class);
 
         String body = "{\"id\": 123, \"name\": \"Donald Duck\"}";
-        template.sendBody("http://localhost:" + getPort() + "/users/new", body);
+        template.sendBody("netty-http:http://localhost:" + getPort() + "/users/new", body);
 
         assertMockEndpointsSatisfied();
 
@@ -46,7 +46,7 @@ public class RestJettyBindingModeAutoWithJsonTest extends BaseJettyTest {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                restConfiguration().component("jetty").host("localhost").port(getPort()).bindingMode(RestBindingMode.auto);
+                restConfiguration().component("netty-http").host("localhost").port(getPort()).bindingMode(RestBindingMode.auto);
 
                 // use the rest DSL to define the rest services
                 rest("/users/")
