@@ -25,6 +25,7 @@ import org.apache.camel.component.netty.http.ContextPathMatcher;
 import org.apache.camel.component.netty.http.DefaultContextPathMatcher;
 import org.apache.camel.component.netty.http.HttpServerConsumerChannelFactory;
 import org.apache.camel.component.netty.http.NettyHttpConsumer;
+import org.apache.camel.component.netty.http.RestContextPathMatcher;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
 import org.jboss.netty.buffer.ChannelBuffers;
 import org.jboss.netty.channel.ChannelHandler;
@@ -66,14 +67,18 @@ public class HttpServerMultiplexChannelHandler extends SimpleChannelUpstreamHand
     }
 
     public void addConsumer(NettyHttpConsumer consumer) {
+        String rawPath = consumer.getConfiguration().getPath();
         String path = pathAsKey(consumer.getConfiguration().getPath());
-        ContextPathMatcher matcher = new DefaultContextPathMatcher(path, consumer.getConfiguration().isMatchOnUriPrefix());
+        // use rest path matcher in case Rest DSL is in use
+        ContextPathMatcher matcher = new RestContextPathMatcher(rawPath, path, consumer.getConfiguration().isMatchOnUriPrefix());
         consumers.put(matcher, new HttpServerChannelHandler(consumer));
     }
 
     public void removeConsumer(NettyHttpConsumer consumer) {
+        String rawPath = consumer.getConfiguration().getPath();
         String path = pathAsKey(consumer.getConfiguration().getPath());
-        ContextPathMatcher matcher = new DefaultContextPathMatcher(path, consumer.getConfiguration().isMatchOnUriPrefix());
+        // use rest path matcher in case Rest DSL is in use
+        ContextPathMatcher matcher = new RestContextPathMatcher(rawPath, path, consumer.getConfiguration().isMatchOnUriPrefix());
         consumers.remove(matcher);
     }
 
