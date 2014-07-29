@@ -35,7 +35,7 @@ public abstract class ClientPipelineFactory extends ChannelInitializer<Channel> 
      * Creates a new {@link ClientPipelineFactory} using the given {@link NettyProducer}
      *
      * @param producer the associated producers
-     * @return the {@link ClientPipelineFactory} associated to ghe given producer.
+     * @return the {@link ClientPipelineFactory} associated to the given producer.
      */
     public abstract ClientPipelineFactory createPipelineFactory(NettyProducer producer);
 
