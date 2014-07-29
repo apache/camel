@@ -32,6 +32,9 @@ import javax.xml.bind.Binder;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 
+import org.apache.camel.model.ToDefinition;
+import org.apache.camel.model.rest.RestDefinition;
+import org.apache.camel.model.rest.VerbDefinition;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
@@ -870,10 +873,27 @@ public class CamelNamespaceHandler implements NamespaceHandler {
             Set<String> components = new HashSet<String>();
             Set<String> languages = new HashSet<String>();
             Set<String> dataformats = new HashSet<String>();
+
+            // regular camel routes
             for (RouteDefinition rd : camelContext.getRouteDefinitions()) {
                 findInputComponents(rd.getInputs(), components, languages, dataformats);
                 findOutputComponents(rd.getOutputs(), components, languages, dataformats);
             }
+
+            // rest services can have embedded routes or a singular to
+            for (RestDefinition rd : camelContext.getRestDefinitions()) {
+                for (VerbDefinition vd : rd.getVerbs()) {
+                    Object o = vd.getToOrRoute();
+                    if (o instanceof RouteDefinition) {
+                        RouteDefinition route = (RouteDefinition) o;
+                        findInputComponents(route.getInputs(), components, languages, dataformats);
+                        findOutputComponents(route.getOutputs(), components, languages, dataformats);
+                    } else if (o instanceof ToDefinition) {
+                        findUriComponent(((ToDefinition) o).getUri(), components);
+                    }
+                }
+            }
+
             // We can only add service references to resolvers, but we can't make the factory depends on those
             // because the factory has already been instantiated
             try {
