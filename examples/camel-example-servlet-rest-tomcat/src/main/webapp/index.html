@@ -19,10 +19,16 @@
 <body>
 <h2>Servlet REST and Apache Tomcat example</h2>
 
-This example shows how to use Servlet REST to define REST endpoints in Camel routes using Java DSL
+This example shows how to use Servlet REST to define REST endpoints in Camel routes using the Rest DSL
 
 <br/>
-The routes are defined in Java code, in the <tt>org.apache.camel.example.rest.UserRouteBuilder</tt> class.
+
+This example is implemented in both the Java and XML DSLs. By default the Java DSL is in use.
+You can change this in the src/main/webapps/WEB-INF/web.xml file
+
+<br/>
+For Java DSL the routes are defined in Java code, in the <tt>org.apache.camel.example.rest.UserRouteBuilder</tt> class.
+And for XML DSL the routes are define in XML code, in the <tt>src/main/resources/camel-config-xml.xml</tt> file.
 
 <p/>
 There is a <i>user</i> REST service that supports the following operations

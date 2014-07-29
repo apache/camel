@@ -25,7 +25,13 @@
   <!-- location of Camel Spring xml files -->
   <context-param>
     <param-name>contextConfigLocation</param-name>
+
+    <!-- to use Java DSL -->
     <param-value>classpath:camel-config.xml</param-value>
+
+    <!-- to use XML DSL, then enable me, and disable Java DSL above
+    <param-value>classpath:camel-config-xml.xml</param-value>
+    -->
   </context-param>
 
   <!-- the listener that kick-starts Spring -->
