@@ -118,7 +118,7 @@ public class HttpServerMultiplexChannelHandler extends SimpleChannelUpstreamHand
             handler.exceptionCaught(ctx, e);
         } else {
             // we cannot throw the exception here
-            LOG.warn("HttpServerChannelHandler is not found as attachment for exception {}, send 404 back to the client.", e.getCause());
+            LOG.warn("HttpServerChannelHandler is not found as attachment to handle exception, send 404 back to the client.", e.getCause());
             // Now we just send 404 back to the client
             HttpResponse response = new DefaultHttpResponse(HTTP_1_1, NOT_FOUND);
             response.headers().set(Exchange.CONTENT_TYPE, "text/plain");
