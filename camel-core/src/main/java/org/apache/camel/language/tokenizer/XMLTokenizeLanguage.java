@@ -114,6 +114,7 @@ public class XMLTokenizeLanguage extends LanguageSupport {
     public void setMode(char mode) {
         this.mode = mode;
     }
+
     public int getGroup() {
         return group;
     }
