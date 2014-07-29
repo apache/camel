@@ -19,21 +19,18 @@ package org.apache.camel.blueprint.handler;
 import java.lang.reflect.Field;
 import java.lang.reflect.Method;
 import java.lang.reflect.Modifier;
+import java.net.URI;
+import java.net.URISyntaxException;
 import java.net.URL;
 import java.util.Arrays;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Map;
 import java.util.Set;
 import java.util.concurrent.Callable;
-
 import javax.xml.bind.Binder;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
-
-import org.w3c.dom.Document;
-import org.w3c.dom.Element;
-import org.w3c.dom.Node;
-import org.w3c.dom.NodeList;
 
 import org.apache.aries.blueprint.BeanProcessor;
 import org.apache.aries.blueprint.ComponentDefinitionRegistry;
@@ -80,13 +77,13 @@ import org.apache.camel.spi.DataFormatResolver;
 import org.apache.camel.spi.LanguageResolver;
 import org.apache.camel.spi.NamespaceAware;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.camel.util.URISupport;
 import org.apache.camel.util.blueprint.KeyStoreParametersFactoryBean;
 import org.apache.camel.util.blueprint.SSLContextParametersFactoryBean;
 import org.apache.camel.util.blueprint.SecureRandomParametersFactoryBean;
 import org.apache.camel.util.jsse.KeyStoreParameters;
 import org.apache.camel.util.jsse.SSLContextParameters;
 import org.apache.camel.util.jsse.SecureRandomParameters;
-
 import org.osgi.framework.Bundle;
 import org.osgi.service.blueprint.container.BlueprintContainer;
 import org.osgi.service.blueprint.container.ComponentDefinitionException;
@@ -96,6 +93,10 @@ import org.osgi.service.blueprint.reflect.Metadata;
 import org.osgi.service.blueprint.reflect.RefMetadata;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 
 import static org.osgi.service.blueprint.reflect.ComponentMetadata.ACTIVATION_LAZY;
 import static org.osgi.service.blueprint.reflect.ServiceReferenceMetadata.AVAILABILITY_MANDATORY;
@@ -898,6 +899,7 @@ public class CamelNamespaceHandler implements NamespaceHandler {
             if (defs != null) {
                 for (FromDefinition def : defs) {
                     findUriComponent(def.getUri(), components);
+                    findSchedulerUriComponent(def.getUri(), components);
                 }
             }
         }
@@ -974,6 +976,33 @@ public class CamelNamespaceHandler implements NamespaceHandler {
                 if (splitURI[1] != null) {
                     String scheme = splitURI[0];
                     components.add(scheme);
+                }
+            }
+        }
+
+        private void findSchedulerUriComponent(String uri, Set<String> components) {
+
+            // the input may use a scheduler which can be quartz or spring
+            if (uri != null) {
+                try {
+                    URI u = new URI(uri);
+                    Map<String, Object> parameters = URISupport.parseParameters(u);
+                    Object value = parameters.get("scheduler");
+                    if (value == null) {
+                        value = parameters.get("consumer.scheduler");
+                    }
+                    if (value != null) {
+                        // the scheduler can be quartz2 or spring based, so add reference to camel component
+                        // from these components os blueprint knows about the requirement
+                       String name = value.toString();
+                        if ("quartz2".equals(name)) {
+                            components.add("quartz2");
+                        } else if ("spring".equals(name)) {
+                            components.add("spring-event");
+                        }
+                    }
+                } catch (URISyntaxException e) {
+                    // ignore
                 }
             }
         }

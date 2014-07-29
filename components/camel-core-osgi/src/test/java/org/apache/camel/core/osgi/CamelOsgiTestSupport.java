@@ -28,7 +28,7 @@ public class CamelOsgiTestSupport extends Assert {
     private MockBundle bundle = new CamelMockBundle();
     private MockBundleContext bundleContext = new CamelMockBundleContext(bundle);
     private OsgiPackageScanClassResolver packageScanClassResolver = new OsgiPackageScanClassResolver(bundleContext);
-    private ClassResolver classResolver = new OsgiClassResolver(bundleContext);
+    private ClassResolver classResolver = new OsgiClassResolver(null, bundleContext);
 
     @Before
     public void setUp() throws Exception {        
