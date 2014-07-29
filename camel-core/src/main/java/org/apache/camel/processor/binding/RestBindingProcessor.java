@@ -153,7 +153,7 @@ public class RestBindingProcessor extends ServiceSupport implements AsyncProcess
             }
         }
 
-       if (isXml && xmlUnmarshal != null) {
+        if (isXml && xmlUnmarshal != null) {
             // add reverse operation
             exchange.addOnCompletion(new RestBindingMarshalOnCompletion(exchange.getFromRouteId(), jsonMarshal, xmlMarshal, true));
             if (ObjectHelper.isNotEmpty(body)) {
