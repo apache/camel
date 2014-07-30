@@ -260,7 +260,7 @@ Message header can be used to override `action` value specified in Metrics compo
 
 | Name                    | Description                  | Expected type                                            |
 |-------------------------|------------------------------|----------------------------------------------------------|
-| CamelMetricsTimerAction | Override timer action in URI | org.apache.camel.metrics.timer.TimerEndpoint.TimerAction |
+| CamelMetricsTimerAction | Override timer action in URI | org.apache.camel.component.timer.TimerEndpoint.TimerAction |
 
 ```java
 // sets timer action using header
