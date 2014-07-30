@@ -81,6 +81,9 @@ public class XMLTokenizerExpression extends NamespaceAwareExpression {
     @Override
     protected void configureExpression(CamelContext camelContext, Expression expression) {
         super.configureExpression(camelContext, expression);
+        if (headerName != null) {
+            setProperty(expression, "headerName", headerName);
+        }
         if (mode != null) {
             setProperty(expression, "mode", mode);
         }
@@ -89,6 +92,9 @@ public class XMLTokenizerExpression extends NamespaceAwareExpression {
     @Override
     protected void configurePredicate(CamelContext camelContext, Predicate predicate) {
         super.configurePredicate(camelContext, predicate);
+        if (headerName != null) {
+            setProperty(predicate, "headerName", headerName);
+        }
         if (mode != null) {
             setProperty(predicate, "mode", mode);
         }

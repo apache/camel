@@ -18,10 +18,10 @@ package org.apache.camel.component.zookeeper;
 
 import java.util.ArrayList;
 import java.util.List;
-import org.apache.camel.spi.UriParam;
-import org.apache.camel.spi.UriParams;
 
 import org.apache.camel.RuntimeCamelException;
+import org.apache.camel.spi.UriParam;
+import org.apache.camel.spi.UriParams;
 
 /**
  * <code>ZookeeperConfiguration</code> encapsulates the configuration used to

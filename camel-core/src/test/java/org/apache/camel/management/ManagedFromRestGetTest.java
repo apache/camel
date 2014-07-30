@@ -54,7 +54,6 @@ public class ManagedFromRestGetTest extends ManagementTestSupport {
         assertTrue(xml.contains("</rest>"));
         assertTrue(xml.contains("<get>"));
         assertTrue(xml.contains("application/json"));
-        assertTrue(xml.contains("application/xml"));
         assertTrue(xml.contains("<post>"));
         assertTrue(xml.contains("application/json"));
         assertTrue(xml.contains("</rests>"));
@@ -77,7 +76,7 @@ public class ManagedFromRestGetTest extends ManagementTestSupport {
                     .get().to("direct:hello");
 
                 rest("/say/bye")
-                    .get().consumes("application/json").produces("application/xml").to("direct:bye")
+                    .get().consumes("application/json").to("direct:bye")
                     .post().to("mock:update");
 
                 from("direct:hello")

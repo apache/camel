@@ -35,7 +35,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * Netty HTTP {@link org.apache.camel.component.netty.handlers.ClientChannelHandler} that handles the response combing
- * back from thhe HTTP server, called by this client.
+ * back from the HTTP server, called by this client.
  *
  */
 public class HttpClientChannelHandler extends ClientChannelHandler {
@@ -66,11 +66,11 @@ public class HttpClientChannelHandler extends ClientChannelHandler {
             if (msg instanceof HttpChunkTrailer) {
                 // chunk trailer only has headers
                 HttpChunkTrailer trailer = (HttpChunkTrailer) msg;
-                for (Map.Entry<String, String> entry : trailer.getHeaders()) {
+                for (Map.Entry<String, String> entry : trailer.trailingHeaders()) {
                     if (LOG.isTraceEnabled()) {
                         LOG.trace("Adding trailing header {}={}", entry.getKey(), entry.getValue());
                     }
-                    response.addHeader(entry.getKey(), entry.getValue());
+                    response.headers().add(entry.getKey(), entry.getValue());
                 }
             } else {
                 // append chunked content

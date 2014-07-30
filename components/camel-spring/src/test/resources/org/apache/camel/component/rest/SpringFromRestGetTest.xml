@@ -33,7 +33,7 @@
       </get>
     </rest>
     <rest uri="/say/bye">
-      <get consumes="application/json" produces="application/json">
+      <get consumes="application/json">
         <to uri="direct:bye"/>
       </get>
       <post>

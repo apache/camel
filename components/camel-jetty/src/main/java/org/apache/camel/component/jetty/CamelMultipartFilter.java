@@ -17,6 +17,7 @@
 package org.apache.camel.component.jetty;
 
 import javax.servlet.Filter;
+
 /**
  * Please use the CamelFilterWrapper instead of using this classs
  */

@@ -52,6 +52,12 @@ public class RestConfigurationDefinition {
     @XmlAttribute
     private RestBindingMode bindingMode;
 
+    @XmlAttribute
+    private String jsonDataFormat;
+
+    @XmlAttribute
+    private String xmlDataFormat;
+
     @XmlElement(name = "componentProperty")
     private List<RestPropertyDefinition> componentProperties = new ArrayList<RestPropertyDefinition>();
 
@@ -60,6 +66,9 @@ public class RestConfigurationDefinition {
 
     @XmlElement(name = "consumerProperty")
     private List<RestPropertyDefinition> consumerProperties = new ArrayList<RestPropertyDefinition>();
+
+    @XmlElement(name = "dataFormatProperty")
+    private List<RestPropertyDefinition> dataFormatProperties = new ArrayList<RestPropertyDefinition>();
 
     public String getComponent() {
         return component;
@@ -101,6 +110,22 @@ public class RestConfigurationDefinition {
         this.bindingMode = bindingMode;
     }
 
+    public String getJsonDataFormat() {
+        return jsonDataFormat;
+    }
+
+    public void setJsonDataFormat(String jsonDataFormat) {
+        this.jsonDataFormat = jsonDataFormat;
+    }
+
+    public String getXmlDataFormat() {
+        return xmlDataFormat;
+    }
+
+    public void setXmlDataFormat(String xmlDataFormat) {
+        this.xmlDataFormat = xmlDataFormat;
+    }
+
     public List<RestPropertyDefinition> getComponentProperties() {
         return componentProperties;
     }
@@ -123,6 +148,14 @@ public class RestConfigurationDefinition {
 
     public void setConsumerProperties(List<RestPropertyDefinition> consumerProperties) {
         this.consumerProperties = consumerProperties;
+    }
+
+    public List<RestPropertyDefinition> getDataFormatProperties() {
+        return dataFormatProperties;
+    }
+
+    public void setDataFormatProperties(List<RestPropertyDefinition> dataFormatProperties) {
+        this.dataFormatProperties = dataFormatProperties;
     }
 
     // Fluent API
@@ -177,6 +210,26 @@ public class RestConfigurationDefinition {
     }
 
     /**
+     * To use a specific json data format
+     *
+     * @param name  name of the data format to {@link org.apache.camel.CamelContext#resolveDataFormat(java.lang.String) resolve}
+     */
+    public RestConfigurationDefinition jsonDataFormat(String name) {
+        setJsonDataFormat(name);
+        return this;
+    }
+
+    /**
+     * To use a specific XML data format
+     *
+     * @param name  name of the data format to {@link org.apache.camel.CamelContext#resolveDataFormat(java.lang.String) resolve}
+     */
+    public RestConfigurationDefinition xmlDataFormat(String name) {
+        setXmlDataFormat(name);
+        return this;
+    }
+
+    /**
      * For additional configuration options on component level
      */
     public RestConfigurationDefinition componentProperty(String key, String value) {
@@ -209,6 +262,17 @@ public class RestConfigurationDefinition {
         return this;
     }
 
+    /**
+     * For additional configuration options on data format level
+     */
+    public RestConfigurationDefinition dataFormatProperty(String key, String value) {
+        RestPropertyDefinition prop = new RestPropertyDefinition();
+        prop.setKey(key);
+        prop.setValue(value);
+        getDataFormatProperties().add(prop);
+        return this;
+    }
+
     // Implementation
     //-------------------------------------------------------------------------
 
@@ -236,6 +300,12 @@ public class RestConfigurationDefinition {
         if (bindingMode != null) {
             answer.setBindingMode(bindingMode.name());
         }
+        if (jsonDataFormat != null) {
+            answer.setJsonDataFormat(jsonDataFormat);
+        }
+        if (xmlDataFormat != null) {
+            answer.setXmlDataFormat(xmlDataFormat);
+        }
         if (!componentProperties.isEmpty()) {
             Map<String, Object> props = new HashMap<String, Object>();
             for (RestPropertyDefinition prop : componentProperties) {
@@ -262,6 +332,15 @@ public class RestConfigurationDefinition {
                 props.put(key, value);
             }
             answer.setConsumerProperties(props);
+        }
+        if (!dataFormatProperties.isEmpty()) {
+            Map<String, Object> props = new HashMap<String, Object>();
+            for (RestPropertyDefinition prop : dataFormatProperties) {
+                String key = prop.getKey();
+                String value = CamelContextHelper.parseText(context, prop.getValue());
+                props.put(key, value);
+            }
+            answer.setDataFormatProperties(props);
         }
         return answer;
     }

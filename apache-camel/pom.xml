@@ -185,11 +185,11 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-eventadmin</artifactId>    
+      <artifactId>camel-eventadmin</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-exec</artifactId>    
+      <artifactId>camel-exec</artifactId>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
@@ -362,7 +362,7 @@
       <exclusions>
          <exclusion>
             <groupId>net.sf.jt400</groupId>
-            <artifactId>jt400-full</artifactId> 
+            <artifactId>jt400-full</artifactId>
          </exclusion>
       </exclusions>
     </dependency>
@@ -440,6 +440,10 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
+      <artifactId>camel-netty4</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel</groupId>
       <artifactId>camel-netty-http</artifactId>
     </dependency>
     <dependency>
@@ -453,7 +457,7 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-optaplanner</artifactId>
-    </dependency>    
+    </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-paxlogging</artifactId>
@@ -573,7 +577,7 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-spring</artifactId>
-    </dependency>	
+    </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-spring-batch</artifactId>
@@ -637,11 +641,11 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-test</artifactId>
-    </dependency>    
+    </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-test-blueprint</artifactId>
-    </dependency>    
+    </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-test-spring</artifactId>
@@ -653,7 +657,7 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-testng</artifactId>
-    </dependency>    
+    </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-twitter</artifactId>
@@ -797,7 +801,7 @@
     <dependency>
       <groupId>org.osgi</groupId>
       <artifactId>org.osgi.core</artifactId>
-      <optional>true</optional>      
+      <optional>true</optional>
     </dependency>
 
     <dependency>
@@ -859,7 +863,7 @@
                   <descriptors>
                     <descriptor>src/main/descriptors/src.xml</descriptor>
 	              </descriptors>
-                  <tarLongFileMode>gnu</tarLongFileMode> 
+                  <tarLongFileMode>gnu</tarLongFileMode>
                 </configuration>
               </execution>
             </executions>

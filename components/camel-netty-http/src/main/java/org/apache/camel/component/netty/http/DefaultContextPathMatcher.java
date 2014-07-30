@@ -42,6 +42,10 @@ public class DefaultContextPathMatcher implements ContextPathMatcher {
         }
     }
 
+    public String getPath() {
+        return path;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) {

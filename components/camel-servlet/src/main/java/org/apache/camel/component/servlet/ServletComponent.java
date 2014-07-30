@@ -17,11 +17,16 @@
 package org.apache.camel.component.servlet;
 
 import java.net.URI;
+import java.util.HashMap;
 import java.util.LinkedHashSet;
+import java.util.Locale;
 import java.util.Map;
 import java.util.Set;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
+import org.apache.camel.Processor;
 import org.apache.camel.component.http.AuthMethod;
 import org.apache.camel.component.http.HttpBinding;
 import org.apache.camel.component.http.HttpClientConfigurer;
@@ -29,13 +34,16 @@ import org.apache.camel.component.http.HttpComponent;
 import org.apache.camel.component.http.HttpConsumer;
 import org.apache.camel.component.http.HttpEndpoint;
 import org.apache.camel.spi.HeaderFilterStrategy;
+import org.apache.camel.spi.RestConfiguration;
+import org.apache.camel.spi.RestConsumerFactory;
+import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
 import org.apache.commons.httpclient.HttpConnectionManager;
 import org.apache.commons.httpclient.params.HttpClientParams;
 
-public class ServletComponent extends HttpComponent {
+public class ServletComponent extends HttpComponent implements RestConsumerFactory {
 
     private String servletName = "CamelServlet";
     private HttpRegistry httpRegistry;
@@ -156,4 +164,48 @@ public class ServletComponent extends HttpComponent {
     }
 
 
+    @Override
+    public Consumer createConsumer(CamelContext camelContext, Processor processor, String verb, String path,
+                                   String consumes, String produces, Map<String, Object> parameters) throws Exception {
+        path = FileUtil.stripLeadingSeparator(path);
+
+        // if no explicit port/host configured, then use port from rest configuration
+        RestConfiguration config = getCamelContext().getRestConfiguration();
+
+        Map<String, Object> map = new HashMap<String, Object>();
+        // build query string, and append any endpoint configuration properties
+        if (config != null && (config.getComponent() == null || config.getComponent().equals("servlet"))) {
+            // setup endpoint options
+            if (config.getEndpointProperties() != null && !config.getEndpointProperties().isEmpty()) {
+                map.putAll(config.getEndpointProperties());
+            }
+        }
+
+        String query = URISupport.createQueryString(map);
+
+        // servlet:///hello
+        String url = "servlet:///%s?httpMethodRestrict=%s";
+        if (!query.isEmpty()) {
+            url = url + "?" + query;
+        }
+
+        // must use upper case for restrict
+        String restrict = verb.toUpperCase(Locale.US);
+
+        // get the endpoint
+        url = String.format(url, path, restrict);
+        ServletEndpoint endpoint = camelContext.getEndpoint(url, ServletEndpoint.class);
+        setProperties(endpoint, parameters);
+
+        // use the rest binding
+        endpoint.setBinding(new ServletRestHttpBinding());
+
+        // configure consumer properties
+        Consumer consumer = endpoint.createConsumer(processor);
+        if (config != null && config.getConsumerProperties() != null && !config.getConsumerProperties().isEmpty()) {
+            setProperties(consumer, config.getConsumerProperties());
+        }
+
+        return consumer;
+    }
 }

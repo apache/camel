@@ -51,13 +51,13 @@ public class VerbDefinition {
     private String type;
 
     @XmlAttribute
-    private String typeList;
+    private String outType;
 
-    @XmlTransient
-    private Class<?> classType;
+    @XmlAttribute
+    private Boolean list;
 
-    @XmlTransient
-    private boolean useList;
+    @XmlAttribute
+    private Boolean outList;
 
     // used by XML DSL to either select a <to> or <route>
     // so we need to use the common type OptionalIdentifiedDefinition
@@ -121,34 +121,30 @@ public class VerbDefinition {
 
     public void setType(String type) {
         this.type = type;
-        this.useList = false;
     }
 
-    public String getTypeList() {
-        return typeList;
+    public String getOutType() {
+        return outType;
     }
 
-    public void setTypeList(String typeList) {
-        this.typeList = typeList;
-        this.useList = true;
+    public void setOutType(String outType) {
+        this.outType = outType;
     }
 
-    public Class<?> getClassType() {
-        return classType;
+    public Boolean getList() {
+        return list;
     }
 
-    public void setClassType(Class<?> classType) {
-        this.classType = classType;
-        this.useList = false;
+    public void setList(Boolean list) {
+        this.list = list;
     }
 
-    public void setListClassType(Class<?> classType) {
-        this.classType = classType;
-        this.useList = true;
+    public Boolean getOutList() {
+        return outList;
     }
 
-    public boolean isUseList() {
-        return useList;
+    public void setOutList(Boolean outList) {
+        this.outList = outList;
     }
 
     public RestDefinition getRest() {

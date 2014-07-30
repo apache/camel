@@ -85,8 +85,8 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
             LOG.debug("Consumer suspended, cannot service request {}", request);
             HttpResponse response = new DefaultHttpResponse(HTTP_1_1, SERVICE_UNAVAILABLE);
             response.setChunked(false);
-            response.setHeader(Exchange.CONTENT_TYPE, "text/plain");
-            response.setHeader(Exchange.CONTENT_LENGTH, 0);
+            response.headers().set(Exchange.CONTENT_TYPE, "text/plain");
+            response.headers().set(Exchange.CONTENT_LENGTH, 0);
             response.setContent(ChannelBuffers.copiedBuffer(new byte[]{}));
             messageEvent.getChannel().write(response);
             return;
@@ -95,8 +95,8 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
                 && !consumer.getEndpoint().getHttpMethodRestrict().contains(request.getMethod().getName())) {
             HttpResponse response = new DefaultHttpResponse(HTTP_1_1, METHOD_NOT_ALLOWED);
             response.setChunked(false);
-            response.setHeader(Exchange.CONTENT_TYPE, "text/plain");
-            response.setHeader(Exchange.CONTENT_LENGTH, 0);
+            response.headers().set(Exchange.CONTENT_TYPE, "text/plain");
+            response.headers().set(Exchange.CONTENT_LENGTH, 0);
             response.setContent(ChannelBuffers.copiedBuffer(new byte[]{}));
             messageEvent.getChannel().write(response);
             return;
@@ -104,18 +104,18 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
         if ("TRACE".equals(request.getMethod().getName()) && !consumer.getEndpoint().isTraceEnabled()) {
             HttpResponse response = new DefaultHttpResponse(HTTP_1_1, METHOD_NOT_ALLOWED);
             response.setChunked(false);
-            response.setHeader(Exchange.CONTENT_TYPE, "text/plain");
-            response.setHeader(Exchange.CONTENT_LENGTH, 0);
+            response.headers().set(Exchange.CONTENT_TYPE, "text/plain");
+            response.headers().set(Exchange.CONTENT_LENGTH, 0);
             response.setContent(ChannelBuffers.copiedBuffer(new byte[]{}));
             messageEvent.getChannel().write(response);
             return;
         }
         // must include HOST header as required by HTTP 1.1
-        if (!request.getHeaderNames().contains(HttpHeaders.Names.HOST)) {
+        if (!request.headers().names().contains(HttpHeaders.Names.HOST)) {
             HttpResponse response = new DefaultHttpResponse(HTTP_1_1, BAD_REQUEST);
             response.setChunked(false);
-            response.setHeader(Exchange.CONTENT_TYPE, "text/plain");
-            response.setHeader(Exchange.CONTENT_LENGTH, 0);
+            response.headers().set(Exchange.CONTENT_TYPE, "text/plain");
+            response.headers().set(Exchange.CONTENT_LENGTH, 0);
             response.setContent(ChannelBuffers.copiedBuffer(new byte[]{}));
             messageEvent.getChannel().write(response);
             return;
@@ -175,9 +175,9 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
                     }
                     // restricted resource, so send back 401 to require valid username/password
                     HttpResponse response = new DefaultHttpResponse(HTTP_1_1, UNAUTHORIZED);
-                    response.setHeader("WWW-Authenticate", "Basic realm=\"" + security.getRealm() + "\"");
-                    response.setHeader(Exchange.CONTENT_TYPE, "text/plain");
-                    response.setHeader(Exchange.CONTENT_LENGTH, 0);
+                    response.headers().set("WWW-Authenticate", "Basic realm=\"" + security.getRealm() + "\"");
+                    response.headers().set(Exchange.CONTENT_TYPE, "text/plain");
+                    response.headers().set(Exchange.CONTENT_LENGTH, 0);
                     response.setContent(ChannelBuffers.copiedBuffer(new byte[]{}));
                     messageEvent.getChannel().write(response);
                     return;
@@ -198,7 +198,7 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
         }
 
         // see if any of the user roles is contained in the roles list
-        Iterator it = ObjectHelper.createIterator(userRoles);
+        Iterator<Object> it = ObjectHelper.createIterator(userRoles);
         while (it.hasNext()) {
             String userRole = it.next().toString();
             if (roles.contains(userRole)) {
@@ -218,7 +218,7 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
      * @return {@link HttpPrincipal} with username and password details, or <tt>null</tt> if not possible to extract
      */
     protected static HttpPrincipal extractBasicAuthSubject(HttpRequest request) {
-        String auth = request.getHeader("Authorization");
+        String auth = request.headers().get("Authorization");
         if (auth != null) {
             String constraint = ObjectHelper.before(auth, " ");
             if (constraint != null) {
@@ -267,6 +267,7 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
 
     @Override
     public void exceptionCaught(ChannelHandlerContext ctx, ExceptionEvent exceptionEvent) throws Exception {
+        
         // only close if we are still allowed to run
         if (consumer.isRunAllowed()) {
 

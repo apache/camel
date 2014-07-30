@@ -34,7 +34,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Client handler which cannot be shared
+ * Server handler which cannot be shared
  */
 public class ServerChannelHandler extends SimpleChannelInboundHandler<Object> {
     // use NettyConsumer as logger to make it easier to read the logs as this is part of the consumer

@@ -21,6 +21,7 @@ import java.util.Locale;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.AsyncProcessor;
 import org.apache.camel.Exchange;
+import org.apache.camel.Route;
 import org.apache.camel.processor.MarshalProcessor;
 import org.apache.camel.processor.UnmarshalProcessor;
 import org.apache.camel.spi.DataFormat;
@@ -29,6 +30,7 @@ import org.apache.camel.support.SynchronizationAdapter;
 import org.apache.camel.util.AsyncProcessorHelper;
 import org.apache.camel.util.ExchangeHelper;
 import org.apache.camel.util.MessageHelper;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * A {@link org.apache.camel.Processor} that binds the REST DSL incoming and outgoing messages
@@ -41,17 +43,42 @@ public class RestBindingProcessor extends ServiceSupport implements AsyncProcess
 
     private final AsyncProcessor jsonUnmarshal;
     private final AsyncProcessor xmlUnmarshal;
-    private final AsyncProcessor jsonMmarshal;
-    private final AsyncProcessor xmlMmarshal;
+    private final AsyncProcessor jsonMarshal;
+    private final AsyncProcessor xmlMarshal;
     private final String consumes;
     private final String produces;
     private final String bindingMode;
 
-    public RestBindingProcessor(DataFormat jsonDataFormat, DataFormat xmlDataFormat, String consumes, String produces, String bindingMode) {
-        this.jsonUnmarshal = jsonDataFormat != null ? new UnmarshalProcessor(jsonDataFormat) : null;
-        this.jsonMmarshal = jsonDataFormat != null ? new MarshalProcessor(jsonDataFormat) : null;
-        this.xmlUnmarshal = xmlDataFormat != null ? new UnmarshalProcessor(xmlDataFormat) : null;
-        this.xmlMmarshal = xmlDataFormat != null ? new MarshalProcessor(xmlDataFormat) : null;
+    public RestBindingProcessor(DataFormat jsonDataFormat, DataFormat xmlDataFormat,
+                                DataFormat outJsonDataFormat, DataFormat outXmlDataFormat,
+                                String consumes, String produces, String bindingMode) {
+
+        if (jsonDataFormat != null) {
+            this.jsonUnmarshal = new UnmarshalProcessor(jsonDataFormat);
+        } else {
+            this.jsonUnmarshal = null;
+        }
+        if (outJsonDataFormat != null) {
+            this.jsonMarshal = new MarshalProcessor(outJsonDataFormat);
+        } else if (jsonDataFormat != null) {
+            this.jsonMarshal = new MarshalProcessor(jsonDataFormat);
+        } else {
+            this.jsonMarshal = null;
+        }
+
+        if (xmlDataFormat != null) {
+            this.xmlUnmarshal = new UnmarshalProcessor(xmlDataFormat);
+        } else {
+            this.xmlUnmarshal = null;
+        }
+        if (outXmlDataFormat != null) {
+            this.xmlMarshal = new MarshalProcessor(outXmlDataFormat);
+        } else if (xmlDataFormat != null) {
+            this.xmlMarshal = new MarshalProcessor(xmlDataFormat);
+        } else {
+            this.xmlMarshal = null;
+        }
+
         this.consumes = consumes;
         this.produces = produces;
         this.bindingMode = bindingMode;
@@ -63,7 +90,6 @@ public class RestBindingProcessor extends ServiceSupport implements AsyncProcess
     }
 
     // TODO: consumes/produces can be a list of media types, and prioritized 1st to last.
-    // TODO: parsing body should only be done if really needed
 
     @Override
     public boolean process(Exchange exchange, final AsyncCallback callback) {
@@ -95,30 +121,62 @@ public class RestBindingProcessor extends ServiceSupport implements AsyncProcess
             isJson = consumes != null && consumes.toLowerCase(Locale.US).contains("json");
         }
 
-        if (!isXml && !isJson) {
-            // read the content into memory so we can determine if its xml or json
-            String body = MessageHelper.extractBodyAsString(exchange.getIn());
-            isXml = body.startsWith("<") || body.contains("xml");
-            isJson = !isXml;
-        }
-
         // only allow xml/json if the binding mode allows that
         isXml &= bindingMode.equals("auto") || bindingMode.contains("xml");
         isJson &= bindingMode.equals("auto") || bindingMode.contains("json");
 
+        // if we do not yet know if its xml or json, then use the binding mode to know the mode
+        if (!isJson && !isXml) {
+            isXml = bindingMode.equals("auto") || bindingMode.contains("xml");
+            isJson = bindingMode.equals("auto") || bindingMode.contains("json");
+        }
+
+        String body = null;
+
+        if (exchange.getIn().getBody() != null) {
+
+           // okay we have a binding mode, so need to check for empty body as that can cause the marshaller to fail
+            // as they assume a non-empty body
+            if (isXml || isJson) {
+                // we have binding enabled, so we need to know if there body is empty or not\
+                // so force reading the body as a String which we can work with
+                body = MessageHelper.extractBodyAsString(exchange.getIn());
+                if (body != null) {
+                    exchange.getIn().setBody(body);
+
+                    if (isXml && isJson) {
+                        // we have still not determined between xml or json, so check the body if its xml based or not
+                        isXml = body.startsWith("<");
+                        isJson = !isXml;
+                    }
+                }
+            }
+        }
+
         if (isXml && xmlUnmarshal != null) {
             // add reverse operation
-            exchange.addOnCompletion(new RestBindingMarshalOnCompletion(jsonMmarshal, xmlMmarshal));
-            return xmlUnmarshal.process(exchange, callback);
+            exchange.addOnCompletion(new RestBindingMarshalOnCompletion(exchange.getFromRouteId(), jsonMarshal, xmlMarshal, true));
+            if (ObjectHelper.isNotEmpty(body)) {
+                return xmlUnmarshal.process(exchange, callback);
+            } else {
+                callback.done(true);
+                return true;
+            }
         } else if (isJson && jsonUnmarshal != null) {
             // add reverse operation
-            exchange.addOnCompletion(new RestBindingMarshalOnCompletion(jsonMmarshal, xmlMmarshal));
-            return jsonUnmarshal.process(exchange, callback);
+            exchange.addOnCompletion(new RestBindingMarshalOnCompletion(exchange.getFromRouteId(), jsonMarshal, xmlMarshal, false));
+            if (ObjectHelper.isNotEmpty(body)) {
+                return jsonUnmarshal.process(exchange, callback);
+            } else {
+                callback.done(true);
+                return true;
+            }
         }
 
         // we could not bind
         if (bindingMode.equals("auto")) {
             // okay for auto we do not mind if we could not bind
+            exchange.addOnCompletion(new RestBindingMarshalOnCompletion(exchange.getFromRouteId(), jsonMarshal, xmlMarshal, false));
             callback.done(true);
             return true;
         } else {
@@ -153,17 +211,47 @@ public class RestBindingProcessor extends ServiceSupport implements AsyncProcess
      */
     private final class RestBindingMarshalOnCompletion extends SynchronizationAdapter {
 
-        private final AsyncProcessor jsonMmarshal;
-        private final AsyncProcessor xmlMmarshal;
+        private final AsyncProcessor jsonMarshal;
+        private final AsyncProcessor xmlMarshal;
+        private final String routeId;
+        private boolean wasXml;
 
-        private RestBindingMarshalOnCompletion(AsyncProcessor jsonMmarshal, AsyncProcessor xmlMmarshal) {
-            this.jsonMmarshal = jsonMmarshal;
-            this.xmlMmarshal = xmlMmarshal;
+        private RestBindingMarshalOnCompletion(String routeId, AsyncProcessor jsonMarshal, AsyncProcessor xmlMarshal, boolean wasXml) {
+            this.routeId = routeId;
+            this.jsonMarshal = jsonMarshal;
+            this.xmlMarshal = xmlMarshal;
+            this.wasXml = wasXml;
         }
 
         @Override
-        public void onComplete(Exchange exchange) {
-            // only marshal if we succeeded
+        public void onAfterRoute(Route route, Exchange exchange) {
+            // we use the onAfterRoute callback, to ensure the data has been marshalled before
+            // the consumer writes the response back
+
+            // only trigger when it was the 1st route that was done
+            if (!routeId.equals(route.getId())) {
+                return;
+            }
+
+            // only marshal if there was no exception
+            if (exchange.getException() != null) {
+                return;
+            }
+
+            if (bindingMode == null || "off".equals(bindingMode)) {
+                // binding is off
+                return;
+            }
+
+            // is there any marshaller at all
+            if (jsonMarshal == null && xmlMarshal == null) {
+                return;
+            }
+
+            // is the body empty
+            if ((exchange.hasOut() && exchange.getOut().getBody() == null) || (!exchange.hasOut() && exchange.getIn().getBody() == null)) {
+                return;
+            }
 
             boolean isXml = false;
             boolean isJson = false;
@@ -180,25 +268,43 @@ public class RestBindingProcessor extends ServiceSupport implements AsyncProcess
                 isJson = produces != null && produces.toLowerCase(Locale.US).contains("json");
             }
 
-            // need to prepare exchange first
-            ExchangeHelper.prepareOutToIn(exchange);
-
-            if (!isXml && !isJson) {
-                // read the content into memory so we can determine if its xml or json
-                String body = MessageHelper.extractBodyAsString(exchange.getIn());
-                isXml = body.startsWith("<") || body.contains("xml");
-                isJson = !isXml;
-            }
-
             // only allow xml/json if the binding mode allows that
             isXml &= bindingMode.equals("auto") || bindingMode.contains("xml");
             isJson &= bindingMode.equals("auto") || bindingMode.contains("json");
 
+            // if we do not yet know if its xml or json, then use the binding mode to know the mode
+            if (!isJson && !isXml) {
+                isXml = bindingMode.equals("auto") || bindingMode.contains("xml");
+                isJson = bindingMode.equals("auto") || bindingMode.contains("json");
+            }
+
+            // in case we have not yet been able to determine if xml or json, then use the same as in the unmarshaller
+            if (isXml && isJson) {
+                isXml = wasXml;
+                isJson = !wasXml;
+            }
+
+            // need to prepare exchange first
+            ExchangeHelper.prepareOutToIn(exchange);
+
             try {
-                if (isXml && xmlMmarshal != null) {
-                    xmlMmarshal.process(exchange);
-                } else if (isJson && jsonMmarshal != null) {
-                    jsonMmarshal.process(exchange);
+                if (isXml && xmlMarshal != null) {
+                    xmlMarshal.process(exchange);
+                } else if (isJson && jsonMarshal != null) {
+                    jsonMarshal.process(exchange);
+                } else {
+                    // we could not bind
+                    if (bindingMode.equals("auto")) {
+                        // okay for auto we do not mind if we could not bind
+                        return;
+                    } else {
+                        if (bindingMode.contains("xml")) {
+                            exchange.setException(new BindingException("Cannot bind to xml as message body is not xml compatible", exchange));
+                        } else {
+                            exchange.setException(new BindingException("Cannot bind to json as message body is not json compatible", exchange));
+                        }
+                    }
+                    return;
                 }
             } catch (Throwable e) {
                 exchange.setException(e);

@@ -57,7 +57,7 @@ public class CamelContinuationServlet extends CamelServlet {
         log.trace("Service: {}", request);
 
         // is there a consumer registered for the request.
-        HttpConsumer consumer = resolve(request);
+        HttpConsumer consumer = getServletResolveConsumerStrategy().resolve(request, getConsumers());
         if (consumer == null) {
             response.sendError(HttpServletResponse.SC_NOT_FOUND);
             return;

@@ -54,6 +54,12 @@
       </exclusions>
     </dependency>
 
+    <!-- use for json binding -->
+    <dependency>
+      <groupId>org.apache.camel</groupId>
+      <artifactId>camel-jackson</artifactId>
+    </dependency>
+
     <!-- we need spring web -->
     <dependency>
       <groupId>org.springframework</groupId>

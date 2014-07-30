@@ -54,9 +54,9 @@ public class NettyHttpMapHeadersFalseTest extends BaseNettyTest {
                         assertNull(exchange.getIn().getHeader("beer"));
 
                         // but we can find them in the http request from netty
-                        assertEquals("fooBAR", exchange.getIn(NettyHttpMessage.class).getHttpRequest().getHeader("clientHeader"));
-                        assertEquals("123", exchange.getIn(NettyHttpMessage.class).getHttpRequest().getHeader("OTHER"));
-                        assertEquals("Carlsberg", exchange.getIn(NettyHttpMessage.class).getHttpRequest().getHeader("beer"));
+                        assertEquals("fooBAR", exchange.getIn(NettyHttpMessage.class).getHttpRequest().headers().get("clientHeader"));
+                        assertEquals("123", exchange.getIn(NettyHttpMessage.class).getHttpRequest().headers().get("OTHER"));
+                        assertEquals("Carlsberg", exchange.getIn(NettyHttpMessage.class).getHttpRequest().headers().get("beer"));
 
                         exchange.getOut().setBody("Bye World");
                         exchange.getOut().setHeader("MyCaseHeader", "aBc123");

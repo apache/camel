@@ -17,6 +17,7 @@
 package org.apache.camel.component.restlet;
 
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.model.rest.RestBindingMode;
 import org.junit.Test;
 
 /**
@@ -39,11 +40,12 @@ public class RestRestletPojoInOutTest extends RestletTestSupport {
             @Override
             public void configure() throws Exception {
                 // configure to use restlet on localhost with the given port
-                restConfiguration().component("restlet").host("localhost").port(portNum);
+                // and enable auto binding mode
+                restConfiguration().component("restlet").host("localhost").port(portNum).bindingMode(RestBindingMode.auto);
 
                 // use the rest DSL to define the rest services
                 rest("/users/")
-                    .post("lives").type(UserPojo.class)
+                    .post("lives").type(UserPojo.class).outType(CountryPojo.class)
                         .route()
                         .bean(new UserService(), "livesWhere");
             }

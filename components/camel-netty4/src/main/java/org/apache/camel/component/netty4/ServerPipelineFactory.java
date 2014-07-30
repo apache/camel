@@ -33,10 +33,10 @@ import io.netty.channel.ChannelPipeline;
 public abstract class ServerPipelineFactory extends ChannelInitializer<Channel> {
 
     /**
-     * Creates a new {@link ClientPipelineFactory} using the given {@link NettyConsumer}
+     * Creates a new {@link ServerPipelineFactory} using the given {@link NettyConsumer}
      *
      * @param consumer the associated consumer
-     * @return the {@link ClientPipelineFactory} associated to ghe given consumer.
+     * @return the {@link ServerPipelineFactory} associated to the given consumer.
      */
     public abstract ServerPipelineFactory createPipelineFactory(NettyConsumer consumer);
 

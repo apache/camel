@@ -54,7 +54,6 @@ public class SingleUDPNettyServerBootstrapFactory extends ServiceSupport impleme
     private NettyServerBootstrapConfiguration configuration;
     private ChannelInitializer<Channel> pipelineFactory;
     private NetworkInterface multicastNetworkInterface;
-    private DatagramChannel datagramChannel;
     private Channel channel;
     private EventLoopGroup workerGroup;
 

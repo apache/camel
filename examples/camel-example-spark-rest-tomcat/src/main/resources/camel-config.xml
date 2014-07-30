@@ -23,12 +23,14 @@
          http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
          http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
 
-  <bean id="mySparkRoutes" class="org.apache.camel.example.spark.MySparkRouteBuilder"/>
+  <!-- a rest service which uses binding to/from pojos -->
+  <bean id="userRoutes" class="org.apache.camel.example.spark.UserRouteBuilder"/>
+
+  <!-- a bean for user services -->
+  <bean id="userService" class="org.apache.camel.example.spark.UserService"/>
 
   <camelContext xmlns="http://camel.apache.org/schema/spring">
-
-    <routeBuilder ref="mySparkRoutes"/>
-
+    <routeBuilder ref="userRoutes"/>
   </camelContext>
 
 </beans>

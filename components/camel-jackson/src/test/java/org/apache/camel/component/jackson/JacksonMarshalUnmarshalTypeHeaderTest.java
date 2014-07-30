@@ -37,7 +37,7 @@ public class JacksonMarshalUnmarshalTypeHeaderTest extends CamelTestSupport {
         TestPojo pojo = mock.getReceivedExchanges().get(0).getIn().getBody(TestPojo.class);
         assertNotNull(pojo);
         assertEquals("Camel", pojo.getName());
-   }
+    }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {

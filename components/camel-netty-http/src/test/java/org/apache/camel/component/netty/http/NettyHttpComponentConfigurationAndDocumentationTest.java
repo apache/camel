@@ -19,7 +19,6 @@ package org.apache.camel.component.netty.http;
 import org.apache.camel.CamelContext;
 import org.apache.camel.ComponentConfiguration;
 import org.apache.camel.EndpointConfiguration;
-import org.apache.camel.component.netty.NettyComponent;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;

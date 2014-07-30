@@ -182,6 +182,9 @@ public class DefaultRouteContext implements RouteContext {
             // wrap in JMX instrumentation processor that is used for performance stats
             internal.addAdvice(new CamelInternalProcessor.InstrumentationAdvice("route"));
 
+            // wrap in route lifecycle
+            internal.addAdvice(new CamelInternalProcessor.RouteLifecycleAdvice());
+
             // and create the route that wraps the UoW
             Route edcr = new EventDrivenConsumerRoute(this, getEndpoint(), internal);
             edcr.getProperties().put(Route.ID_PROPERTY, routeId);
@@ -194,6 +197,10 @@ public class DefaultRouteContext implements RouteContext {
             CamelInternalProcessor.RoutePolicyAdvice task = internal.getAdvice(CamelInternalProcessor.RoutePolicyAdvice.class);
             if (task != null) {
                 task.setRoute(edcr);
+            }
+            CamelInternalProcessor.RouteLifecycleAdvice task2 = internal.getAdvice(CamelInternalProcessor.RouteLifecycleAdvice.class);
+            if (task2 != null) {
+                task2.setRoute(edcr);
             }
 
             // invoke init on route policy

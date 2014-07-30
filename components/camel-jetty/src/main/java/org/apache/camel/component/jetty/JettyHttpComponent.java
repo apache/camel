@@ -21,14 +21,18 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URI;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import javax.management.MBeanServer;
 import javax.servlet.Filter;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Consumer;
 import org.apache.camel.Endpoint;
+import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.http.CamelServlet;
 import org.apache.camel.component.http.HttpBinding;
@@ -39,6 +43,9 @@ import org.apache.camel.component.http.UrlRewrite;
 import org.apache.camel.spi.HeaderFilterStrategy;
 import org.apache.camel.spi.ManagementAgent;
 import org.apache.camel.spi.ManagementStrategy;
+import org.apache.camel.spi.RestConfiguration;
+import org.apache.camel.spi.RestConsumerFactory;
+import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
@@ -72,7 +79,7 @@ import org.slf4j.LoggerFactory;
  *
  * @version 
  */
-public class JettyHttpComponent extends HttpComponent {
+public class JettyHttpComponent extends HttpComponent implements RestConsumerFactory {
     public static final String TMP_DIR = "CamelJettyTempDir";
     
     protected static final HashMap<String, ConnectorRef> CONNECTORS = new HashMap<String, ConnectorRef>();
@@ -381,7 +388,6 @@ public class JettyHttpComponent extends HttpComponent {
             }
             addFilter(context, filterHolder, pathSpec);
         }
-        
     }
     
     private void addFilter(ServletContextHandler context, FilterHolder filterHolder, String pathSpec) {
@@ -931,6 +937,71 @@ public class JettyHttpComponent extends HttpComponent {
 
     // Implementation methods
     // -------------------------------------------------------------------------
+
+
+    @Override
+    public Consumer createConsumer(CamelContext camelContext, Processor processor, String verb, String path,
+                                   String consumes, String produces, Map<String, Object> parameters) throws Exception {
+
+        path = FileUtil.stripLeadingSeparator(path);
+
+        String scheme = "http";
+        String host = "0.0.0.0";
+        int port = 0;
+
+        // if no explicit port/host configured, then use port from rest configuration
+        RestConfiguration config = getCamelContext().getRestConfiguration();
+        if (config != null && (config.getComponent() == null || config.getComponent().equals("jetty"))) {
+            if (config.getScheme() != null) {
+                scheme = config.getScheme();
+            }
+            if (config.getHost() != null) {
+                host = config.getHost();
+            }
+            int num = config.getPort();
+            if (num > 0) {
+                port = num;
+            }
+        }
+
+        Map<String, Object> map = new HashMap<String, Object>();
+        // build query string, and append any endpoint configuration properties
+        if (config != null && (config.getComponent() == null || config.getComponent().equals("jetty"))) {
+            // setup endpoint options
+            if (config.getEndpointProperties() != null && !config.getEndpointProperties().isEmpty()) {
+                map.putAll(config.getEndpointProperties());
+            }
+        }
+
+        String query = URISupport.createQueryString(map);
+
+        String url = "jetty:%s://%s:%s/%s?httpMethodRestrict=%s";
+        if (!query.isEmpty()) {
+            url = url + "?" + query;
+        }
+
+        // must use upper case for restrict
+        String restrict = verb.toUpperCase(Locale.US);
+
+        // get the endpoint
+        url = String.format(url, scheme, host, port, path, restrict);
+        JettyHttpEndpoint endpoint = camelContext.getEndpoint(url, JettyHttpEndpoint.class);
+        setProperties(endpoint, parameters);
+
+        // disable this filter as we want to use ours
+        endpoint.setEnableMultipartFilter(false);
+        // use the rest binding
+        endpoint.setBinding(new JettyRestHttpBinding());
+
+        // configure consumer properties
+        Consumer consumer = endpoint.createConsumer(processor);
+        if (config != null && config.getConsumerProperties() != null && !config.getConsumerProperties().isEmpty()) {
+            setProperties(consumer, config.getConsumerProperties());
+        }
+
+        return consumer;
+    }
+
     protected CamelServlet createServletForConnector(Server server, Connector connector,
                                                      List<Handler> handlers, JettyHttpEndpoint endpoint) throws Exception {
         ServletContextHandler context = new ServletContextHandler(server, "/", ServletContextHandler.NO_SECURITY | ServletContextHandler.NO_SESSIONS);
@@ -963,6 +1034,9 @@ public class JettyHttpComponent extends HttpComponent {
         ServletHolder holder = new ServletHolder();
         holder.setServlet(camelServlet);
         context.addServlet(holder, "/*");
+
+        // use rest enabled resolver in case we use rest
+        camelServlet.setServletResolveConsumerStrategy(new JettyRestServletResolveConsumerStrategy());
 
         return camelServlet;
     }

@@ -174,7 +174,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     private ManagementMBeanAssembler managementMBeanAssembler;
     private final List<RouteDefinition> routeDefinitions = new ArrayList<RouteDefinition>();
     private final List<RestDefinition> restDefinitions = new ArrayList<RestDefinition>();
-    private RestConfiguration restConfiguration;
+    private RestConfiguration restConfiguration = new RestConfiguration();
     private List<InterceptStrategy> interceptStrategies = new ArrayList<InterceptStrategy>();
 
     // special flags to control the first startup which can are special

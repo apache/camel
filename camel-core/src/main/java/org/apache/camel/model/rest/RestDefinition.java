@@ -41,6 +41,16 @@ public class RestDefinition {
 
     @XmlAttribute
     private String uri;
+
+    @XmlAttribute
+    private String consumes;
+
+    @XmlAttribute
+    private String produces;
+
+    @XmlAttribute
+    private RestBindingMode bindingMode;
+
     @XmlElementRef
     private List<VerbDefinition> verbs = new ArrayList<VerbDefinition>();
 
@@ -50,6 +60,30 @@ public class RestDefinition {
 
     public void setUri(String uri) {
         this.uri = uri;
+    }
+
+    public String getConsumes() {
+        return consumes;
+    }
+
+    public void setConsumes(String consumes) {
+        this.consumes = consumes;
+    }
+
+    public String getProduces() {
+        return produces;
+    }
+
+    public void setProduces(String produces) {
+        this.produces = produces;
+    }
+
+    public RestBindingMode getBindingMode() {
+        return bindingMode;
+    }
+
+    public void setBindingMode(RestBindingMode bindingMode) {
+        this.bindingMode = bindingMode;
     }
 
     public List<VerbDefinition> getVerbs() {
@@ -120,37 +154,26 @@ public class RestDefinition {
     }
 
     public RestDefinition consumes(String mediaType) {
-        // add to last verb
         if (getVerbs().isEmpty()) {
-            throw new IllegalArgumentException("Must add verb first, such as get/post/delete");
+            this.consumes = mediaType;
+        } else {
+            // add on last verb as that is how the Java DSL works
+            VerbDefinition verb = getVerbs().get(getVerbs().size() - 1);
+            verb.setConsumes(mediaType);
         }
-
-        VerbDefinition verb = getVerbs().get(getVerbs().size() - 1);
-        verb.setConsumes(mediaType);
 
         return this;
     }
 
     public RestDefinition produces(String mediaType) {
-        // add to last verb
         if (getVerbs().isEmpty()) {
-            throw new IllegalArgumentException("Must add verb first, such as get/post/delete");
+            this.produces = mediaType;
+        } else {
+            // add on last verb as that is how the Java DSL works
+            VerbDefinition verb = getVerbs().get(getVerbs().size() - 1);
+            verb.setProduces(mediaType);
         }
 
-        VerbDefinition verb = getVerbs().get(getVerbs().size() - 1);
-        verb.setProduces(mediaType);
-
-        return this;
-    }
-
-    public RestDefinition type(String classType) {
-        // add to last verb
-        if (getVerbs().isEmpty()) {
-            throw new IllegalArgumentException("Must add verb first, such as get/post/delete");
-        }
-
-        VerbDefinition verb = getVerbs().get(getVerbs().size() - 1);
-        verb.setType(classType);
         return this;
     }
 
@@ -161,19 +184,7 @@ public class RestDefinition {
         }
 
         VerbDefinition verb = getVerbs().get(getVerbs().size() - 1);
-        verb.setClassType(classType);
         verb.setType(classType.getCanonicalName());
-        return this;
-    }
-
-    public RestDefinition typeList(String classType) {
-        // add to last verb
-        if (getVerbs().isEmpty()) {
-            throw new IllegalArgumentException("Must add verb first, such as get/post/delete");
-        }
-
-        VerbDefinition verb = getVerbs().get(getVerbs().size() - 1);
-        verb.setTypeList(classType);
         return this;
     }
 
@@ -184,19 +195,43 @@ public class RestDefinition {
         }
 
         VerbDefinition verb = getVerbs().get(getVerbs().size() - 1);
-        verb.setClassType(classType);
-        verb.setTypeList(classType.getCanonicalName());
+        verb.setType(classType.getCanonicalName());
+        verb.setList(true);
         return this;
     }
 
-    public RestDefinition bindingMode(RestBindingMode mode) {
+    public RestDefinition outType(Class<?> classType) {
         // add to last verb
         if (getVerbs().isEmpty()) {
             throw new IllegalArgumentException("Must add verb first, such as get/post/delete");
         }
 
         VerbDefinition verb = getVerbs().get(getVerbs().size() - 1);
-        verb.setBindingMode(mode);
+        verb.setOutType(classType.getCanonicalName());
+        return this;
+    }
+
+    public RestDefinition outTypeList(Class<?> classType) {
+        // add to last verb
+        if (getVerbs().isEmpty()) {
+            throw new IllegalArgumentException("Must add verb first, such as get/post/delete");
+        }
+
+        VerbDefinition verb = getVerbs().get(getVerbs().size() - 1);
+        verb.setOutType(classType.getCanonicalName());
+        verb.setOutList(true);
+        return this;
+    }
+
+    public RestDefinition bindingMode(RestBindingMode mode) {
+        if (getVerbs().isEmpty()) {
+            this.bindingMode = mode;
+        } else {
+            // add on last verb as that is how the Java DSL works
+            VerbDefinition verb = getVerbs().get(getVerbs().size() - 1);
+            verb.setBindingMode(mode);
+        }
+
         return this;
     }
 
@@ -274,8 +309,16 @@ public class RestDefinition {
             String from = "rest:" + verb.asVerb() + ":" + buildUri(verb);
             // append options
             Map<String, Object> options = new HashMap<String, Object>();
+            // verb takes precedence over configuration on rest
             if (verb.getConsumes() != null) {
                 options.put("consumes", verb.getConsumes());
+            } else if (getConsumes() != null) {
+                options.put("consumes", getConsumes());
+            }
+            if (verb.getProduces() != null) {
+                options.put("produces", verb.getProduces());
+            } else if (getProduces() != null) {
+                options.put("produces", getProduces());
             }
             if (!options.isEmpty()) {
                 String query = URISupport.createQueryString(options);
@@ -292,17 +335,28 @@ public class RestDefinition {
             }
 
             // add the binding
-            if (verb.getType() != null || verb.getClassType() != null) {
-                RestBindingDefinition binding = new RestBindingDefinition();
-                binding.setType(verb.getType());
-                binding.setTypeList(verb.getTypeList());
-                binding.setClassType(verb.getClassType());
-                binding.setUseList(verb.isUseList());
+            RestBindingDefinition binding = new RestBindingDefinition();
+            binding.setType(verb.getType());
+            binding.setOutType(verb.getOutType());
+            binding.setList(verb.getList());
+            binding.setOutList(verb.getOutList());
+            // verb takes precedence over configuration on rest
+            if (verb.getConsumes() != null) {
                 binding.setConsumes(verb.getConsumes());
-                binding.setProduces(verb.getProduces());
-                binding.setBindingMode(verb.getBindingMode());
-                route.getOutputs().add(0, binding);
+            } else {
+                binding.setConsumes(getConsumes());
             }
+            if (verb.getProduces() != null) {
+                binding.setProduces(verb.getProduces());
+            } else {
+                binding.setProduces(getProduces());
+            }
+            if (verb.getBindingMode() != null) {
+                binding.setBindingMode(verb.getBindingMode());
+            } else {
+                binding.setBindingMode(getBindingMode());
+            }
+            route.getOutputs().add(0, binding);
 
             // the route should be from this rest endpoint
             route.fromRest(from);

@@ -15,6 +15,13 @@ And then hit this url from a web browser which has further
 instructions (use correct version number)
   http://localhost:8080/camel-example-spark-rest-tomcat-{version}
 
+You can also try the example from Maven using
+   mvn jetty:run
+
+... and use the following url
+
+  http://localhost:8080/
+
 If you hit any problems please let us know on the Camel Forums
   http://camel.apache.org/discussion-forums.html
 

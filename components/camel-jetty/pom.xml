@@ -103,6 +103,17 @@
             <optional>true</optional>
             <scope>test</scope>
         </dependency>
+        <!-- for testing rest-dsl -->
+        <dependency>
+          <groupId>org.apache.camel</groupId>
+          <artifactId>camel-jackson</artifactId>
+          <scope>test</scope>
+        </dependency>
+        <dependency>
+          <groupId>org.apache.camel</groupId>
+          <artifactId>camel-jaxb</artifactId>
+          <scope>test</scope>
+        </dependency>
 
         <dependency>
             <groupId>junit</groupId>

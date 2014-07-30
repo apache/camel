@@ -39,6 +39,9 @@ public class CamelHttpTransportServlet extends CamelServlet {
     public void init(ServletConfig config) throws ServletException {
         super.init(config);
 
+        // use rest enabled resolver in case we use rest
+        this.setServletResolveConsumerStrategy(new ServletRestServletResolveConsumerStrategy());
+
         String ignore = config.getInitParameter("ignoreDuplicateServletName");
         Boolean bool = ObjectConverter.toBoolean(ignore);
         if (bool != null) {
