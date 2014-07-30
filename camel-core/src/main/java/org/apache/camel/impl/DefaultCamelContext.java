@@ -116,6 +116,7 @@ import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.ProcessorFactory;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.spi.RestConfiguration;
+import org.apache.camel.spi.RestRegistry;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.RouteStartupOrder;
 import org.apache.camel.spi.RuntimeEndpointRegistry;
@@ -175,6 +176,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     private final List<RouteDefinition> routeDefinitions = new ArrayList<RouteDefinition>();
     private final List<RestDefinition> restDefinitions = new ArrayList<RestDefinition>();
     private RestConfiguration restConfiguration = new RestConfiguration();
+    private RestRegistry restRegistry = new DefaultRestRegistry();
     private List<InterceptStrategy> interceptStrategies = new ArrayList<InterceptStrategy>();
 
     // special flags to control the first startup which can are special
@@ -1834,6 +1836,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         addService(inflightRepository);
         addService(shutdownStrategy);
         addService(packageScanClassResolver);
+        addService(restRegistry);
 
         if (runtimeEndpointRegistry != null) {
             if (runtimeEndpointRegistry instanceof EventNotifier) {
@@ -2886,6 +2889,14 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
 
     public void setStreamCachingStrategy(StreamCachingStrategy streamCachingStrategy) {
         this.streamCachingStrategy = streamCachingStrategy;
+    }
+
+    public RestRegistry getRestRegistry() {
+        return restRegistry;
+    }
+
+    public void setRestRegistry(RestRegistry restRegistry) {
+        this.restRegistry = restRegistry;
     }
 
     @Override

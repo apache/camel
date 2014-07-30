@@ -153,6 +153,10 @@ public class RestEndpoint extends DefaultEndpoint {
         if (factory != null) {
             Consumer consumer = factory.createConsumer(getCamelContext(), processor, getVerb(), getPath(), getConsumes(), getProduces(), getParameters());
             configureConsumer(consumer);
+
+            // add to rest registry so we can keep track of them, we will remove from the registry when the consumer is removed
+            getCamelContext().getRestRegistry().addRestService(consumer, null, getPath(), getVerb(), getConsumes(), getProduces());
+
             return consumer;
         } else {
             throw new IllegalStateException("Cannot find RestConsumerFactory in Registry or as a Component to use");
