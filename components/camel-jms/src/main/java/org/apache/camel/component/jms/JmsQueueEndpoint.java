@@ -95,7 +95,11 @@ public class JmsQueueEndpoint extends JmsEndpoint implements BrowsableEndpoint {
         }
         String queue = getDestinationName();
         JmsOperations template = getConfiguration().createInOnlyTemplate(this, false, queue);
-        return queueBrowseStrategy.browse(template, queue, this);
+        if (getSelector() != null) {
+            return queueBrowseStrategy.browseSelected(getSelector(), template, queue, this);
+        } else {
+            return queueBrowseStrategy.browse(template, queue, this);
+        }
     }
 
     @ManagedOperation(description = "Current number of Exchanges in Queue")
