@@ -48,6 +48,7 @@ import org.apache.camel.model.InterceptSendToEndpointDefinition;
 import org.apache.camel.model.OnCompletionDefinition;
 import org.apache.camel.model.OnExceptionDefinition;
 import org.apache.camel.model.PackageScanDefinition;
+import org.apache.camel.model.RestContextRefDefinition;
 import org.apache.camel.model.RouteBuilderDefinition;
 import org.apache.camel.model.RouteContextRefDefinition;
 import org.apache.camel.model.RouteDefinition;
@@ -142,6 +143,8 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Blu
     private List<RouteBuilderDefinition> builderRefs = new ArrayList<RouteBuilderDefinition>();
     @XmlElement(name = "routeContextRef", required = false)
     private List<RouteContextRefDefinition> routeRefs = new ArrayList<RouteContextRefDefinition>();
+    @XmlElement(name = "restContextRef", required = false)
+    private List<RestContextRefDefinition> restRefs = new ArrayList<RestContextRefDefinition>();
     @XmlElement(name = "threadPoolProfile", required = false)
     private List<ThreadPoolProfileDefinition> threadPoolProfiles;
     @XmlElement(name = "threadPool", required = false)
@@ -423,6 +426,14 @@ public class CamelContextFactoryBean extends AbstractCamelContextFactoryBean<Blu
 
     public void setRouteRefs(List<RouteContextRefDefinition> routeRefs) {
         this.routeRefs = routeRefs;
+    }
+
+    public List<RestContextRefDefinition> getRestRefs() {
+        return restRefs;
+    }
+
+    public void setRestRefs(List<RestContextRefDefinition> restRefs) {
+        this.restRefs = restRefs;
     }
 
     public List<CamelRedeliveryPolicyFactoryBean> getRedeliveryPolicies() {

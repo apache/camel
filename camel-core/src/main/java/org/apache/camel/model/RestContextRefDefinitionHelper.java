@@ -30,50 +30,51 @@ import javax.xml.bind.Unmarshaller;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.model.language.NamespaceAwareExpression;
+import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * Helper for {@link RouteContextRefDefinition}.
+ * Helper for {@link org.apache.camel.model.RestContextRefDefinition}.
  */
-public final class RouteContextRefDefinitionHelper {
+public final class RestContextRefDefinitionHelper {
 
     private static JAXBContext jaxbContext;
 
-    private RouteContextRefDefinitionHelper() {
+    private RestContextRefDefinitionHelper() {
     }
 
     /**
-     * Lookup the routes from the {@link RouteContextRefDefinition}.
+     * Lookup the rests from the {@link org.apache.camel.model.RestContextRefDefinition}.
      * <p/>
-     * This implementation must be used to lookup the routes as it performs a deep clone of the routes
-     * as a {@link RouteContextRefDefinition} can be re-used with multiple {@link CamelContext} and each
+     * This implementation must be used to lookup the rests as it performs a deep clone of the rests
+     * as a {@link org.apache.camel.model.RestContextRefDefinition} can be re-used with multiple {@link org.apache.camel.CamelContext} and each
      * context should have their own instances of the routes. This is to ensure no side-effects and sharing
      * of instances between the contexts. For example such as property placeholders may be context specific
-     * so the routes should not use placeholders from another {@link CamelContext}.
+     * so the routes should not use placeholders from another {@link org.apache.camel.CamelContext}.
      *
      * @param camelContext the CamelContext
-     * @param ref          the id of the {@link RouteContextRefDefinition} to lookup and get the routes.
-     * @return the routes.
+     * @param ref          the id of the {@link org.apache.camel.model.RestContextRefDefinition} to lookup and get the routes.
+     * @return the rests.
      */
     @SuppressWarnings("unchecked")
-    public static synchronized List<RouteDefinition> lookupRoutes(CamelContext camelContext, String ref) {
+    public static synchronized List<RestDefinition> lookupRests(CamelContext camelContext, String ref) {
         ObjectHelper.notNull(camelContext, "camelContext");
         ObjectHelper.notNull(ref, "ref");
 
-        List<RouteDefinition> answer = CamelContextHelper.lookup(camelContext, ref, List.class);
+        List<RestDefinition> answer = CamelContextHelper.lookup(camelContext, ref, List.class);
         if (answer == null) {
-            throw new IllegalArgumentException("Cannot find RouteContext with id " + ref);
+            throw new IllegalArgumentException("Cannot find RestContext with id " + ref);
         }
 
-        // must clone the route definitions as they can be reused with multiple CamelContexts
+        // must clone the rest definitions as they can be reused with multiple CamelContexts
         // and they would need their own instances of the definitions to not have side effects among
         // the CamelContext - for example property placeholder resolutions etc.
-        List<RouteDefinition> clones = new ArrayList<RouteDefinition>(answer.size());
+        List<RestDefinition> clones = new ArrayList<RestDefinition>(answer.size());
         try {
             JAXBContext jaxb = getOrCreateJAXBContext();
-            for (RouteDefinition def : answer) {
-                RouteDefinition clone = cloneRouteDefinition(jaxb, def);
+            for (RestDefinition def : answer) {
+                RestDefinition clone = cloneRestDefinition(jaxb, def);
                 if (clone != null) {
                     clones.add(clone);
                 }
@@ -93,7 +94,7 @@ public final class RouteContextRefDefinitionHelper {
         return jaxbContext;
     }
 
-    private static RouteDefinition cloneRouteDefinition(JAXBContext jaxbContext, RouteDefinition def) throws JAXBException {
+    private static RestDefinition cloneRestDefinition(JAXBContext jaxbContext, RestDefinition def) throws JAXBException {
         Marshaller marshal = jaxbContext.createMarshaller();
         ByteArrayOutputStream bos = new ByteArrayOutputStream();
         marshal.marshal(def, bos);
@@ -102,9 +103,11 @@ public final class RouteContextRefDefinitionHelper {
         Unmarshaller unmarshaller = jaxbContext.createUnmarshaller();
         Object clone = unmarshaller.unmarshal(bis);
 
-        if (clone != null && clone instanceof RouteDefinition) {
-            RouteDefinition def2 = (RouteDefinition) clone;
+        if (clone != null && clone instanceof RestDefinition) {
+            RestDefinition def2 = (RestDefinition) clone;
 
+            // TODO: revisit this
+            /*
             // need to clone the namespaces also as they are not JAXB marshalled (as they are transient)
             Iterator<ExpressionNode> it = ProcessorDefinitionHelper.filterTypeInOutputs(def.getOutputs(), ExpressionNode.class);
             Iterator<ExpressionNode> it2 = ProcessorDefinitionHelper.filterTypeInOutputs(def2.getOutputs(), ExpressionNode.class);
@@ -126,12 +129,14 @@ public final class RouteContextRefDefinitionHelper {
                     map.putAll(name.getNamespaces());
                     name2.setNamespaces(map);
                 }
-            }
+            }*/
 
             return def2;
         }
 
         return null;
     }
+
+
 
 }
