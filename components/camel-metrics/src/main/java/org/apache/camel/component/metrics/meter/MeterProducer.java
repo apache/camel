@@ -21,7 +21,8 @@ import com.codahale.metrics.MetricRegistry;
 import org.apache.camel.Exchange;
 import org.apache.camel.Message;
 import org.apache.camel.component.metrics.AbstractMetricsProducer;
-import static org.apache.camel.component.metrics.MetricsComponent.HEADER_METER_MARK;
+
+import static org.apache.camel.component.metrics.MetricsConstants.HEADER_METER_MARK;
 
 public class MeterProducer extends AbstractMetricsProducer<MeterEndpoint> {
 

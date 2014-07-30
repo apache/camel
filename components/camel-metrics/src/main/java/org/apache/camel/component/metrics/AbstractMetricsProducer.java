@@ -27,7 +27,7 @@ import org.slf4j.LoggerFactory;
 
 public abstract class AbstractMetricsProducer<T extends AbstractMetricsEndpoint> extends DefaultProducer {
 
-    public static final String HEADER_PATTERN = MetricsComponent.HEADER_PERFIX + "*";
+    public static final String HEADER_PATTERN = MetricsConstants.HEADER_PERFIX + "*";
     private static final Logger LOG = LoggerFactory.getLogger(AbstractMetricsProducer.class);
 
     public AbstractMetricsProducer(T endpoint) {
@@ -54,7 +54,7 @@ public abstract class AbstractMetricsProducer<T extends AbstractMetricsEndpoint>
     protected abstract void doProcess(Exchange exchange, T endpoint, MetricRegistry registry, String metricsName) throws Exception;
 
     public String getMetricsName(Message in, String defaultValue) {
-        return getStringHeader(in, MetricsComponent.HEADER_METRIC_NAME, defaultValue);
+        return getStringHeader(in, MetricsConstants.HEADER_METRIC_NAME, defaultValue);
     }
 
     public String getStringHeader(Message in, String header, String defaultValue) {

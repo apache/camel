@@ -39,10 +39,11 @@ import org.mockito.Mockito;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.ContextConfiguration;
-import static org.apache.camel.component.metrics.MetricsComponent.HEADER_COUNTER_DECREMENT;
-import static org.apache.camel.component.metrics.MetricsComponent.HEADER_COUNTER_INCREMENT;
-import static org.apache.camel.component.metrics.MetricsComponent.HEADER_METRIC_NAME;
+
 import static org.apache.camel.component.metrics.MetricsComponent.METRIC_REGISTRY_NAME;
+import static org.apache.camel.component.metrics.MetricsConstants.HEADER_COUNTER_DECREMENT;
+import static org.apache.camel.component.metrics.MetricsConstants.HEADER_COUNTER_INCREMENT;
+import static org.apache.camel.component.metrics.MetricsConstants.HEADER_METRIC_NAME;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.times;

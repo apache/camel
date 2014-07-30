@@ -36,9 +36,10 @@ import org.mockito.Mockito;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.test.context.ContextConfiguration;
-import static org.apache.camel.component.metrics.MetricsComponent.HEADER_METER_MARK;
-import static org.apache.camel.component.metrics.MetricsComponent.HEADER_METRIC_NAME;
+
 import static org.apache.camel.component.metrics.MetricsComponent.METRIC_REGISTRY_NAME;
+import static org.apache.camel.component.metrics.MetricsConstants.HEADER_METER_MARK;
+import static org.apache.camel.component.metrics.MetricsConstants.HEADER_METRIC_NAME;
 import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.when;

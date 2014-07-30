@@ -18,35 +18,29 @@ package org.apache.camel.component.metrics;
 
 import java.util.Map;
 import java.util.concurrent.TimeUnit;
+
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Slf4jReporter;
 import org.apache.camel.Endpoint;
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.component.metrics.counter.CounterEndpoint;
 import org.apache.camel.component.metrics.histogram.HistogramEndpoint;
 import org.apache.camel.component.metrics.meter.MeterEndpoint;
 import org.apache.camel.component.metrics.timer.TimerEndpoint;
+import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Represents the component that manages {@link MetricsEndpoint}.
+ * Represents the component that manages metrics endpoints.
  */
 public class MetricsComponent extends DefaultComponent {
 
     public static final String METRIC_REGISTRY_NAME = "metricRegistry";
     public static final MetricsType DEFAULT_METRICS_TYPE = MetricsType.METER;
     public static final long DEFAULT_REPORTING_INTERVAL_SECONDS = 60L;
-    public static final String HEADER_PERFIX = "CamelMetrics";
-    public static final String HEADER_METRIC_NAME = HEADER_PERFIX + "Name";
-    public static final String HEADER_COUNTER_INCREMENT = HEADER_PERFIX + "CounterIncrement";
-    public static final String HEADER_COUNTER_DECREMENT = HEADER_PERFIX + "CounterDecrement";
-    public static final String HEADER_HISTOGRAM_VALUE = HEADER_PERFIX + "HistogramValue";
-    public static final String HEADER_METER_MARK = HEADER_PERFIX + "MeterMark";
-    public static final String HEADER_TIMER_ACTION = HEADER_PERFIX + "TimerAction";
 
     private static final Logger LOG = LoggerFactory.getLogger(MetricsComponent.class);
 

@@ -24,7 +24,8 @@ import org.apache.camel.component.metrics.AbstractMetricsProducer;
 import org.apache.camel.component.metrics.timer.TimerEndpoint.TimerAction;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import static org.apache.camel.component.metrics.MetricsComponent.HEADER_TIMER_ACTION;
+
+import static org.apache.camel.component.metrics.MetricsConstants.HEADER_TIMER_ACTION;
 import static org.apache.camel.component.metrics.timer.TimerEndpoint.ENDPOINT_URI;
 
 public class TimerProducer extends AbstractMetricsProducer<TimerEndpoint> {
