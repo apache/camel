@@ -110,6 +110,7 @@
         <include>org.apache.camel:camel-ldap</include>
         <include>org.apache.camel:camel-leveldb</include>
         <include>org.apache.camel:camel-lucene</include>
+        <include>org.apache.camel:camel-metrics</include>
         <include>org.apache.camel:camel-mail</include>
         <include>org.apache.camel:camel-mina</include>
         <include>org.apache.camel:camel-mina2</include>
