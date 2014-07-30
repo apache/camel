@@ -35,6 +35,7 @@ public interface Route {
     String ID_PROPERTY = "id";
     String PARENT_PROPERTY = "parent";
     String GROUP_PROPERTY = "group";
+    String REST_PROPERTY = "rest";
 
     /**
      * Gets the route id
