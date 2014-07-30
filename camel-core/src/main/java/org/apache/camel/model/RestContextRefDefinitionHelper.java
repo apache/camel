@@ -31,6 +31,7 @@ import javax.xml.bind.Unmarshaller;
 import org.apache.camel.CamelContext;
 import org.apache.camel.model.language.NamespaceAwareExpression;
 import org.apache.camel.model.rest.RestDefinition;
+import org.apache.camel.model.rest.VerbDefinition;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.ObjectHelper;
 
@@ -106,37 +107,45 @@ public final class RestContextRefDefinitionHelper {
         if (clone != null && clone instanceof RestDefinition) {
             RestDefinition def2 = (RestDefinition) clone;
 
-            // TODO: revisit this
-            /*
-            // need to clone the namespaces also as they are not JAXB marshalled (as they are transient)
-            Iterator<ExpressionNode> it = ProcessorDefinitionHelper.filterTypeInOutputs(def.getOutputs(), ExpressionNode.class);
-            Iterator<ExpressionNode> it2 = ProcessorDefinitionHelper.filterTypeInOutputs(def2.getOutputs(), ExpressionNode.class);
-            while (it.hasNext() && it2.hasNext()) {
-                ExpressionNode node = it.next();
-                ExpressionNode node2 = it2.next();
+            Iterator<VerbDefinition> verbit1 = def.getVerbs().iterator();
+            Iterator<VerbDefinition> verbit2 = def2.getVerbs().iterator();
 
-                NamespaceAwareExpression name = null;
-                NamespaceAwareExpression name2 = null;
-                if (node.getExpression() instanceof NamespaceAwareExpression) {
-                    name = (NamespaceAwareExpression) node.getExpression();
-                }
-                if (node2.getExpression() instanceof NamespaceAwareExpression) {
-                    name2 = (NamespaceAwareExpression) node2.getExpression();
-                }
+            while (verbit1.hasNext() && verbit2.hasNext()) {
+                VerbDefinition verb1 = verbit1.next();
+                VerbDefinition verb2 = verbit2.next();
 
-                if (name != null && name2 != null && name.getNamespaces() != null && !name.getNamespaces().isEmpty()) {
-                    Map<String, String> map = new HashMap<String, String>();
-                    map.putAll(name.getNamespaces());
-                    name2.setNamespaces(map);
-                }
-            }*/
+                if (verb1.getToOrRoute() instanceof RouteDefinition && verb2.getToOrRoute() instanceof RouteDefinition) {
+                    RouteDefinition route1 = (RouteDefinition) verb1.getToOrRoute();
+                    RouteDefinition route2 = (RouteDefinition) verb2.getToOrRoute();
 
+                    // need to clone the namespaces also as they are not JAXB marshalled (as they are transient)
+                    Iterator<ExpressionNode> it = ProcessorDefinitionHelper.filterTypeInOutputs(route1.getOutputs(), ExpressionNode.class);
+                    Iterator<ExpressionNode> it2 = ProcessorDefinitionHelper.filterTypeInOutputs(route2.getOutputs(), ExpressionNode.class);
+                    while (it.hasNext() && it2.hasNext()) {
+                        ExpressionNode node = it.next();
+                        ExpressionNode node2 = it2.next();
+
+                        NamespaceAwareExpression name = null;
+                        NamespaceAwareExpression name2 = null;
+                        if (node.getExpression() instanceof NamespaceAwareExpression) {
+                            name = (NamespaceAwareExpression) node.getExpression();
+                        }
+                        if (node2.getExpression() instanceof NamespaceAwareExpression) {
+                            name2 = (NamespaceAwareExpression) node2.getExpression();
+                        }
+
+                        if (name != null && name2 != null && name.getNamespaces() != null && !name.getNamespaces().isEmpty()) {
+                            Map<String, String> map = new HashMap<String, String>();
+                            map.putAll(name.getNamespaces());
+                            name2.setNamespaces(map);
+                        }
+                    }
+                }
+            }
             return def2;
         }
 
         return null;
     }
-
-
 
 }
