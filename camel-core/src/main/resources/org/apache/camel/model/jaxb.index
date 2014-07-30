@@ -58,6 +58,7 @@ RemoveHeaderDefinition
 RemoveHeadersDefinition
 RemovePropertyDefinition
 ResequenceDefinition
+RestContextRefDefinition
 RollbackDefinition
 RouteBuilderDefinition
 RouteDefinition

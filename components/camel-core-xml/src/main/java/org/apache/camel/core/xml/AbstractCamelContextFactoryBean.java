@@ -52,6 +52,7 @@ import org.apache.camel.model.ModelCamelContext;
 import org.apache.camel.model.OnCompletionDefinition;
 import org.apache.camel.model.OnExceptionDefinition;
 import org.apache.camel.model.PackageScanDefinition;
+import org.apache.camel.model.RestContextRefDefinition;
 import org.apache.camel.model.RouteBuilderDefinition;
 import org.apache.camel.model.RouteContainer;
 import org.apache.camel.model.RouteContextRefDefinition;
@@ -84,7 +85,6 @@ import org.apache.camel.spi.NodeIdFactory;
 import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.PackageScanFilter;
 import org.apache.camel.spi.ProcessorFactory;
-import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RuntimeEndpointRegistry;
 import org.apache.camel.spi.ShutdownStrategy;
 import org.apache.camel.spi.StreamCachingStrategy;
@@ -314,6 +314,9 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
             findRouteBuilders();
             installRoutes();
 
+            // must init rest refs before we add the rests
+            initRestRefs();
+
             // and add the rests
             getContext().addRestDefinitions(getRests());
         }
@@ -525,6 +528,21 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         }
     }
 
+    protected void initRestRefs() throws Exception {
+        // add rest refs to existing rests
+        if (getRestRefs() != null) {
+            for (RestContextRefDefinition ref : getRestRefs()) {
+                List<RestDefinition> defs = ref.lookupRests(getContext());
+                for (RestDefinition def : defs) {
+                    LOG.debug("Adding rest from {} -> {}", ref, def);
+                    // add in top as they are most likely to be common/shared
+                    // which you may want to start first
+                    getRests().add(0, def);
+                }
+            }
+        }
+    }
+
     protected abstract <S> S getBeanForType(Class<S> clazz);
 
     public void destroy() throws Exception {
@@ -609,6 +627,8 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
     public abstract List<RouteBuilderDefinition> getBuilderRefs();
 
     public abstract List<RouteContextRefDefinition> getRouteRefs();
+
+    public abstract List<RestContextRefDefinition> getRestRefs();
 
     public abstract String getErrorHandlerRef();
 

@@ -32,6 +32,7 @@ import javax.xml.bind.Binder;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.JAXBException;
 
+import org.apache.camel.blueprint.CamelRestContextFactoryBean;
 import org.apache.camel.model.ToDefinition;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.model.rest.VerbDefinition;
@@ -116,6 +117,7 @@ public class CamelNamespaceHandler implements NamespaceHandler {
 
     private static final String CAMEL_CONTEXT = "camelContext";
     private static final String ROUTE_CONTEXT = "routeContext";
+    private static final String REST_CONTEXT = "restContext";
     private static final String KEY_STORE_PARAMETERS = "keyStoreParameters";
     private static final String SECURE_RANDOM_PARAMETERS = "secureRandomParameters";
     private static final String SSL_CONTEXT_PARAMETERS = "sslContextParameters";
@@ -158,6 +160,9 @@ public class CamelNamespaceHandler implements NamespaceHandler {
             }
             if (element.getLocalName().equals(ROUTE_CONTEXT)) {
                 return parseRouteContextNode(element, context);
+            }
+            if (element.getLocalName().equals(REST_CONTEXT)) {
+                return parseRestContextNode(element, context);
             }
             if (element.getLocalName().equals(KEY_STORE_PARAMETERS)) {
                 return parseKeyStoreParametersNode(element, context);
@@ -333,6 +338,47 @@ public class CamelNamespaceHandler implements NamespaceHandler {
         injectNamespaces(element, binder);
 
         LOG.trace("Parsing RouteContext done, returning {}", element, ctx);
+        return ctx;
+    }
+
+    private Metadata parseRestContextNode(Element element, ParserContext context) {
+        LOG.trace("Parsing RestContext {}", element);
+        // now parse the rests with JAXB
+        Binder<Node> binder;
+        try {
+            binder = getJaxbContext().createBinder();
+        } catch (JAXBException e) {
+            throw new ComponentDefinitionException("Failed to create the JAXB binder : " + e, e);
+        }
+        Object value = parseUsingJaxb(element, context, binder);
+        if (!(value instanceof CamelRestContextFactoryBean)) {
+            throw new ComponentDefinitionException("Expected an instance of " + CamelRestContextFactoryBean.class);
+        }
+
+        CamelRestContextFactoryBean rcfb = (CamelRestContextFactoryBean) value;
+        String id = rcfb.getId();
+
+        MutablePassThroughMetadata factory = context.createMetadata(MutablePassThroughMetadata.class);
+        factory.setId(".camelBlueprint.passThrough." + id);
+        factory.setObject(new PassThroughCallable<Object>(rcfb));
+
+        MutableBeanMetadata factory2 = context.createMetadata(MutableBeanMetadata.class);
+        factory2.setId(".camelBlueprint.factory." + id);
+        factory2.setFactoryComponent(factory);
+        factory2.setFactoryMethod("call");
+
+        MutableBeanMetadata ctx = context.createMetadata(MutableBeanMetadata.class);
+        ctx.setId(id);
+        ctx.setRuntimeClass(List.class);
+        ctx.setFactoryComponent(factory2);
+        ctx.setFactoryMethod("getRests");
+        // must be lazy as we want CamelContext to be activated first
+        ctx.setActivation(ACTIVATION_LAZY);
+
+        // lets inject the namespaces into any namespace aware POJOs
+        injectNamespaces(element, binder);
+
+        LOG.trace("Parsing RestContext done, returning {}", element, ctx);
         return ctx;
     }
 
