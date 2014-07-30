@@ -64,8 +64,9 @@ public class ManagedRestRegistry extends ManagedService implements ManagedRestRe
                 String verb = entry.getVerb();
                 String consumes = entry.getConsumes();
                 String produces = entry.getProduces();
-                CompositeData data = new CompositeDataSupport(ct, new String[]{"url", "path", "verb", "consumes", "produces"},
-                        new Object[]{url, path, verb, consumes, produces});
+                String state = entry.getState();
+                CompositeData data = new CompositeDataSupport(ct, new String[]{"url", "path", "verb", "consumes", "produces", "state"},
+                        new Object[]{url, path, verb, consumes, produces, state});
                 answer.put(data);
             }
             return answer;

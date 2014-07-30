@@ -36,6 +36,8 @@ public interface RestRegistry extends Service {
         String getConsumes();
 
         String getProduces();
+
+        String getState();
     }
 
     void addRestService(Consumer consumer, String url, String path, String verb, String consumes, String produces);

@@ -22,6 +22,8 @@ import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.Consumer;
+import org.apache.camel.ServiceStatus;
+import org.apache.camel.StatefulService;
 import org.apache.camel.StaticService;
 import org.apache.camel.spi.RestRegistry;
 
@@ -101,6 +103,19 @@ public class DefaultRestRegistry extends ServiceSupport implements StaticService
 
         public String getProduces() {
             return produces;
+        }
+
+        public String getState() {
+            // must use String type to be sure remote JMX can read the attribute without requiring Camel classes.
+            ServiceStatus status = null;
+            if (consumer instanceof StatefulService) {
+                status = ((StatefulService) consumer).getStatus();
+            }
+            // if no status exists then its stopped
+            if (status == null) {
+                status = ServiceStatus.Stopped;
+            }
+            return status.name();
         }
     }
 }
