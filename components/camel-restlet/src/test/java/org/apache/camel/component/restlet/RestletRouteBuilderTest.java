@@ -131,6 +131,16 @@ public class RestletRouteBuilderTest extends RestletTestSupport {
         Response response = client.handle(new Request(Method.POST, 
             "http://localhost:" + portNum + "/orders/99991/6"));
         // expect error status as no Restlet consumer to handle POST method
+        assertEquals(Status.CLIENT_ERROR_METHOD_NOT_ALLOWED, response.getStatus());
+        assertNotNull(response.getEntity().getText());
+    }
+
+    @Test
+    public void testNotFound() throws IOException {
+        Client client = new Client(Protocol.HTTP);
+        Response response = client.handle(new Request(Method.POST,
+            "http://localhost:" + portNum + "/unknown"));
+        // expect error status as no Restlet consumer to handle POST method
         assertEquals(Status.CLIENT_ERROR_NOT_FOUND, response.getStatus());
         assertNotNull(response.getEntity().getText());
     }
