@@ -53,8 +53,8 @@ class MethodBasedRouter extends Restlet {
         if (target != null) {
             target.handle(request, response);
         } else {
-            LOG.debug("No route for request method: {}", method);
-            response.setStatus(Status.CLIENT_ERROR_NOT_FOUND);
+            LOG.debug("MethodRouter ({}) method not allowed: {}", uriPattern, method);
+            response.setStatus(Status.CLIENT_ERROR_METHOD_NOT_ALLOWED);
         }
     }
 
