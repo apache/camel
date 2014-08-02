@@ -14,32 +14,30 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.schematron.engine;
+package org.apache.camel.component.schematron.processor;
 
-import java.io.File;
-import javax.xml.transform.Source;
-import javax.xml.transform.TransformerException;
-import javax.xml.transform.URIResolver;
-import javax.xml.transform.stream.StreamSource;
+import org.junit.Assert;
+import org.junit.Test;
 
+import javax.xml.transform.Templates;
 
 /**
- * Created by akhettar on 26/12/2013.
+ * TemplateFactory Unit Test.
+ *
  */
-public class ClassPathURIResolver implements URIResolver {
+public class TemplatesFactoryTest {
 
-    private String rulesDir;
+    private String rules = "sch/schematron-1.sch";
 
-    /**
-     * Constructor setter for rules directory path.
-     * @param rulesDir
-     */
-    public ClassPathURIResolver(final String rulesDir) {
-        this.rulesDir = rulesDir;
-    }
 
-    @Override
-    public Source resolve(String href, String base) throws TransformerException {
-        return new StreamSource(ClassLoader.getSystemResourceAsStream(rulesDir.concat(File.separator).concat(href)));
+    @Test
+    public void testInstantiateAnInstanceOfTemplates() throws Exception {
+
+
+        TemplatesFactory fac = TemplatesFactory.newInstance();
+        Templates templates = fac.newTemplates(ClassLoader.getSystemResourceAsStream(rules));
+        Assert.assertNotNull(templates);
+
+
     }
 }

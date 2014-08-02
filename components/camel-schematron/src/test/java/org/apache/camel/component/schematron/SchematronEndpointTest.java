@@ -22,14 +22,15 @@ import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.Producer;
 import org.apache.camel.component.schematron.exception.SchematronValidationException;
-import org.apache.camel.component.schematron.contant.Constants;
+import org.apache.camel.component.schematron.constant.Constants;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.commons.io.IOUtils;
 import org.junit.Test;
 
 /**
- * Created by akhettar on 20/12/2013.
+ * Unit test for SchematronEndpoint.
+ *
  */
 public class SchematronEndpointTest extends CamelTestSupport {
 
@@ -38,7 +39,7 @@ public class SchematronEndpointTest extends CamelTestSupport {
     public void testSchematronFileReadFromClassPath()throws Exception {
 
         String payload = IOUtils.toString(ClassLoader.getSystemResourceAsStream("xml/article-1.xml"));
-        Endpoint endpoint = context().getEndpoint("schematron://sch/sample-schematron.sch");
+        Endpoint endpoint = context().getEndpoint("schematron://sch/schematron-1.sch");
         Producer producer = endpoint.createProducer();
         Exchange exchange = new DefaultExchange(context, ExchangePattern.InOut);
 
@@ -55,7 +56,7 @@ public class SchematronEndpointTest extends CamelTestSupport {
     public void testSchematronFileReadFromFileSystem()throws Exception {
 
         String payload = IOUtils.toString(ClassLoader.getSystemResourceAsStream("xml/article-2.xml"));
-        String path = ClassLoader.getSystemResource("sch/sample-schematron.sch").getPath();
+        String path = ClassLoader.getSystemResource("sch/schematron-1.sch").getPath();
         Endpoint endpoint = context().getEndpoint("schematron://" + path);
         Producer producer = endpoint.createProducer();
         Exchange exchange = new DefaultExchange(context, ExchangePattern.InOut);
@@ -72,7 +73,7 @@ public class SchematronEndpointTest extends CamelTestSupport {
     @Test(expected = SchematronValidationException.class)
     public void testThrowSchematronValidationException() throws Exception {
         String payload = IOUtils.toString(ClassLoader.getSystemResourceAsStream("xml/article-2.xml"));
-        Endpoint endpoint = context().getEndpoint("schematron://sch/sample-schematron.sch?abort=true");
+        Endpoint endpoint = context().getEndpoint("schematron://sch/schematron-1.sch?abort=true");
         Producer producer = endpoint.createProducer();
         Exchange exchange = new DefaultExchange(context, ExchangePattern.OutIn);
 

@@ -15,6 +15,7 @@
  * limitations under the License.
  */
 package org.apache.camel.component.schematron;
+
 import java.io.File;
 import java.io.InputStream;
 
@@ -22,7 +23,7 @@ import javax.xml.transform.Templates;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.component.schematron.engine.TemplatesFactory;
+import org.apache.camel.component.schematron.processor.TemplatesFactory;
 import org.apache.camel.component.schematron.exception.SchematronConfigException;
 import org.apache.camel.impl.DefaultEndpoint;
 import org.apache.camel.util.ResourceHelper;

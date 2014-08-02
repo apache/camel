@@ -18,8 +18,8 @@ package org.apache.camel.component.schematron;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
-import org.apache.camel.component.schematron.contant.Constants;
-import org.apache.camel.component.schematron.engine.TemplatesFactory;
+import org.apache.camel.component.schematron.constant.Constants;
+import org.apache.camel.component.schematron.processor.TemplatesFactory;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.BeforeClass;
@@ -29,7 +29,6 @@ import javax.xml.transform.Templates;
 /**
  * Schematron Producer Unit Test.
  * <p/>
- * Created by akhettar on 31/12/2013.
  */
 public class SchematronProducerTest extends CamelTestSupport {
 
@@ -39,7 +38,7 @@ public class SchematronProducerTest extends CamelTestSupport {
     public static void setUP() {
         SchematronEndpoint endpoint = new SchematronEndpoint();
         Templates templates = TemplatesFactory.newInstance().newTemplates(ClassLoader.
-                getSystemResourceAsStream("sch/sample-schematron.sch"));
+                getSystemResourceAsStream("sch/schematron-1.sch"));
         endpoint.setRules(templates);
         producer = new SchematronProducer(endpoint);
     }

@@ -1,15 +1,14 @@
 <?xml version="1.0" encoding="utf-8"?>
-<doc>
-    <chapter id="c1">
-
-        <para>Chapter content</para>
-    </chapter>
-    <chapter id="c2">
-
-        <para>Content</para>
-    </chapter>
-    <chapter id="c3">
-        <title>Title</title>
-        <para>Chapter 3 content</para>
-    </chapter>
-</doc> 
+<p:doc xmlns:p="http://www.apache.org/camel/schematron">
+    <p:chapter id="c1">
+        <p:para>Chapter content</p:para>
+    </p:chapter>
+    <p:chapter id="c2">
+        <p:para>Content</p:para>
+    </p:chapter>
+    <p:chapter id="c3">
+        <p:title>Title</p:title>
+        <p:title>Title2</p:title>
+        <p:para>Chapter 3 content</p:para>
+    </p:chapter>
+</p:doc>

@@ -14,12 +14,13 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.schematron.engine;
+package org.apache.camel.component.schematron.processor;
 
 
 
 import javax.xml.parsers.SAXParserFactory;
 import javax.xml.transform.Templates;
+
 import org.xml.sax.SAXException;
 import org.xml.sax.XMLReader;
 import org.apache.camel.component.schematron.exception.SchematronConfigException;
@@ -32,16 +33,17 @@ import org.slf4j.LoggerFactory;
 /**
  * Schematron Engine Factory
  *
- * Created by akhettar on 22/12/2013.
  */
-public final class SchematronEngineFactory {
+public final class SchematronProcessorFactory {
 
-    private static final Logger LOG = LoggerFactory.getLogger(SchematronEngineFactory.class);
+    private static final Logger LOG = LoggerFactory.getLogger(SchematronProcessorFactory.class);
 
-    private SchematronEngineFactory() {
+    /**
+     * Private constructor.
+     */
+    private SchematronProcessorFactory() {
         throw new IllegalStateException();
     }
-
 
     /**
      * Creates an instance of SchematronEngine
@@ -49,13 +51,10 @@ public final class SchematronEngineFactory {
      * @param rules the given schematron rules
      * @return an instance of SchematronEngine
      */
-    public static SchematronEngine newScehamtronEngine(final Templates rules) {
+    public static SchematronProcessor newScehamtronEngine(final Templates rules) {
         try {
-            return new SchematronEngine(getXMLReader(), rules);
-        } catch (ParserConfigurationException e) {
-            LOG.error("Failed to parse the configuration file");
-            throw new SchematronConfigException(e);
-        } catch (SAXException e) {
+            return new SchematronProcessor(getXMLReader(), rules);
+        } catch (Exception e) {
             LOG.error("Failed to parse the configuration file");
             throw new SchematronConfigException(e);
         }
@@ -73,7 +72,6 @@ public final class SchematronEngineFactory {
         fac.setValidating(false);
         final SAXParser parser = fac.newSAXParser();
         XMLReader reader = parser.getXMLReader();
-        //reader.setEntityResolver(null);
         return reader;
     }
 

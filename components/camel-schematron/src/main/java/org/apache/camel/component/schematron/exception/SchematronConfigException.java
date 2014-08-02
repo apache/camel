@@ -19,7 +19,7 @@ package org.apache.camel.component.schematron.exception;
 import org.apache.camel.RuntimeCamelException;
 
 /**
- * Created by akhettar on 22/12/2013.
+ * Schematron configuration Exception.
  */
 public class SchematronConfigException extends RuntimeCamelException {
     public SchematronConfigException(Throwable e) {

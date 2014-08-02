@@ -20,8 +20,6 @@ import org.apache.camel.RuntimeCamelException;
 
 /**
  * SchematronValidationException is thrown if option is set to true.
- *
- * Created by akhettar on 25/12/2013.
  */
 public class SchematronValidationException extends RuntimeCamelException {
 

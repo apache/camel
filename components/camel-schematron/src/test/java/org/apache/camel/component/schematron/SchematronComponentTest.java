@@ -18,7 +18,7 @@ package org.apache.camel.component.schematron;
 
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
-import org.apache.camel.component.schematron.contant.Constants;
+import org.apache.camel.component.schematron.constant.Constants;
 import org.apache.camel.component.schematron.util.Utils;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.commons.io.IOUtils;
@@ -42,7 +42,7 @@ public class SchematronComponentTest extends CamelTestSupport {
         mock.expectedMinimumMessageCount(1);
 
         String payload = IOUtils.toString(ClassLoader.getSystemResourceAsStream("xml/article-1.xml"));
-        String expected = IOUtils.toString(ClassLoader.getSystemResourceAsStream("result/article-1-result.xml"));
+        String expected = IOUtils.toString(ClassLoader.getSystemResourceAsStream("result/article-1-report.xml"));
         template.sendBody("direct:start", payload);
         assertMockEndpointsSatisfied();
         String result = mock.getExchanges().get(0).getIn().getHeader(Constants.VALIDATION_REPORT, String.class);
@@ -77,7 +77,7 @@ public class SchematronComponentTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from("direct:start")
-                        .to("schematron://sch/sample-schematron.sch")
+                        .to("schematron://sch/schematron-1.sch")
                         .to("mock:result");
             }
         };

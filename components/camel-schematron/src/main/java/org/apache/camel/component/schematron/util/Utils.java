@@ -17,7 +17,7 @@
 package org.apache.camel.component.schematron.util;
 
 import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.component.schematron.contant.Constants;
+import org.apache.camel.component.schematron.constant.Constants;
 import org.apache.commons.lang.StringUtils;
 import org.custommonkey.xmlunit.SimpleNamespaceContext;
 import org.custommonkey.xmlunit.XMLUnit;
@@ -30,7 +30,6 @@ import java.util.Map;
 /**
  * Utility Class.
  * <p/>
- * Created by akhettar on 29/12/2013.
  */
 public final class Utils {
 
@@ -48,13 +47,10 @@ public final class Utils {
      * @return
      */
     public static String evaluate(final String xpath, final String xml) {
-        Map m = new HashMap();
+        Map<String, Object> m = new HashMap<String, Object>();
         m.put("svrl", Constants.HTTP_PURL_OCLC_ORG_DSDL_SVRL);
-
-        org.custommonkey.xmlunit.NamespaceContext ctx = new SimpleNamespaceContext(m);
         XpathEngine xpathEngine = XMLUnit.newXpathEngine();
-        xpathEngine.setNamespaceContext(ctx);
-
+        xpathEngine.setNamespaceContext(new SimpleNamespaceContext(m));
         try {
             return xpathEngine.evaluate(xpath, XMLUnit.buildControlDocument(xml));
         } catch (Exception e) {
@@ -62,7 +58,6 @@ public final class Utils {
             throw new RuntimeCamelException(e);
         }
     }
-
 
     /**
      * Get validation status SUCCESS OR FAILURE if there are any schematron validation errors.

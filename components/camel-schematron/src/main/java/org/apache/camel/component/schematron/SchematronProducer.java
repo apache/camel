@@ -17,13 +17,16 @@
 package org.apache.camel.component.schematron;
 
 import org.apache.camel.Exchange;
-import org.apache.camel.component.schematron.contant.Constants;
-import org.apache.camel.component.schematron.engine.SchematronEngineFactory;
+import org.apache.camel.component.schematron.constant.Constants;
+import org.apache.camel.component.schematron.processor.SchematronProcessorFactory;
 import org.apache.camel.component.schematron.exception.SchematronValidationException;
 import org.apache.camel.component.schematron.util.Utils;
 import org.apache.camel.impl.DefaultProducer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+
+import java.util.HashMap;
+import java.util.Map;
 
 /**
  * The Schematron producer.
@@ -50,12 +53,11 @@ public class SchematronProducer extends DefaultProducer {
     public void process(Exchange exchange) throws Exception {
 
         String payload = exchange.getIn().getBody(String.class);
-        String report = SchematronEngineFactory.newScehamtronEngine(endpoint.getRules()).validate(payload);
-
+        logger.debug("Applying schematron validation on payload: {}", payload);
+        String report = SchematronProcessorFactory.newScehamtronEngine(endpoint.getRules()).validate(payload);
         logger.debug("Schematron validation report \n {}", report);
         String status = getValidationStatus(report);
         logger.info("Schematron validation status : {}", status);
-
         setValidationReport(exchange, report, status);
     }
 
@@ -68,13 +70,15 @@ public class SchematronProducer extends DefaultProducer {
      */
     private void setValidationReport(Exchange exchange, String report, String status) {
         // if exchange pattern is In and Out set details on the Out message.
+        Map<String, Object> headers = new HashMap<String, Object>();
+        headers.put(Constants.VALIDATION_STATUS, status);
+        headers.put(Constants.VALIDATION_REPORT, report);
+        exchange.getOut().setHeader(Constants.VALIDATION_REPORT, report);
         if (exchange.getPattern().isOutCapable()) {
             exchange.getOut().setHeaders(exchange.getIn().getHeaders());
-            exchange.getOut().setHeader(Constants.VALIDATION_STATUS, status);
-            exchange.getOut().setHeader(Constants.VALIDATION_REPORT, report);
+            exchange.getOut().getHeaders().putAll(headers);
         } else {
-            exchange.getIn().setHeader(Constants.VALIDATION_STATUS, status);
-            exchange.getIn().setHeader(Constants.VALIDATION_REPORT, report);
+            exchange.getIn().getHeaders().putAll(headers);
         }
     }
 

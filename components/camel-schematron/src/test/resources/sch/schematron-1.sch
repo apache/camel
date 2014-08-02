@@ -1,9 +1,9 @@
 <?xml version="1.0"?>
 <sch:schema xmlns:sch="http://purl.oclc.org/dsdl/schematron"
-            xmlns:xs="http://www.w3.org/2001/XMLSchema"
             queryBinding="xslt2">
 
-    <!-- <sch:ns uri="http://apache.org/xml/xcatalog/example" prefix="art" /> -->
+    <sch:title>Sample Schematron using XPath 2.0</sch:title>
+    <sch:ns prefix="xs" uri="http://www.w3.org/2001/XMLSchema"/>
 
     <!-- Your constraints go here -->
     <sch:pattern>
