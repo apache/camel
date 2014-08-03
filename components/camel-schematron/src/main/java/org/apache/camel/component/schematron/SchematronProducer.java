@@ -90,7 +90,7 @@ public class SchematronProducer extends DefaultProducer {
      */
     private String getValidationStatus(final String report) {
         String status = StringUtils.contains(report,
-                Constants.FAILED_ASSERT) ? Constants.FAILED : Constants.SUCCESS;;
+                Constants.FAILED_ASSERT) ? Constants.FAILED : Constants.SUCCESS;
         if (this.endpoint.isAbort() && Constants.FAILED.equals(status)) {
             throw new SchematronValidationException("Schematron validation failure \n" + report);
         }

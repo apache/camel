@@ -18,24 +18,21 @@ package org.apache.camel.component.schematron.processor;
 
 import org.apache.camel.component.schematron.util.Utils;
 import org.apache.commons.io.IOUtils;
-import org.custommonkey.xmlunit.Diff;
-import org.custommonkey.xmlunit.DifferenceListener;
-import org.custommonkey.xmlunit.IgnoreTextAndAttributeValuesDifferenceListener;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import javax.xml.transform.Templates;
+
 import static junit.framework.Assert.assertEquals;
-import static junit.framework.Assert.assertTrue;
 
 /**
  * SchematronEngine Unit Test.
- *
  */
 public class SchematronProcessorTest {
 
     private Logger logger = LoggerFactory.getLogger(SchematronProcessorTest.class);
+
     @Test
     public void testValidXML() throws Exception {
 
@@ -57,7 +54,7 @@ public class SchematronProcessorTest {
         String payload = IOUtils.toString(ClassLoader.getSystemResourceAsStream("xml/article-2.xml"));
         logger.info("Validating payload: {}", payload);
         // validate
-        String result =  getProcessor("sch/schematron-2.sch").validate(payload);
+        String result = getProcessor("sch/schematron-2.sch").validate(payload);
         logger.info("Schematron Report: {}", result);
         // should throw two assertions because of the missing chapters in the XML.
         assertEquals("A chapter should have a title", Utils.evaluate("//svrl:failed-assert/svrl:text", result));
@@ -72,10 +69,8 @@ public class SchematronProcessorTest {
      * @param schematron
      * @return
      */
-    private SchematronProcessor getProcessor(final String schematron)
-    {
+    private SchematronProcessor getProcessor(final String schematron) {
         Templates rules = TemplatesFactory.newInstance().newTemplates(ClassLoader.getSystemResourceAsStream(schematron));
         return SchematronProcessorFactory.newScehamtronEngine(rules);
-
     }
 }

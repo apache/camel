@@ -17,8 +17,9 @@
 package org.apache.camel.component.schematron.processor;
 
 import java.io.StringWriter;
-
-import javax.xml.transform.*;
+import javax.xml.transform.Source;
+import javax.xml.transform.Templates;
+import javax.xml.transform.TransformerException;
 import javax.xml.transform.sax.SAXSource;
 import javax.xml.transform.stream.StreamResult;
 
@@ -29,6 +30,8 @@ import org.slf4j.LoggerFactory;
 import org.xml.sax.InputSource;
 import org.xml.sax.XMLReader;
 
+
+
 /**
  * The schematoron Engine. Validates an XML for given scheamtron rules using an XSLT implementation of the Schematron
  * Engine.
@@ -36,38 +39,38 @@ import org.xml.sax.XMLReader;
  */
 public class SchematronProcessor {
 
-  private Logger logger = LoggerFactory.getLogger(SchematronProcessor.class);
-  private XMLReader reader;
-  private Templates templates;
+    private Logger logger = LoggerFactory.getLogger(SchematronProcessor.class);
+    private XMLReader reader;
+    private Templates templates;
 
-  /**
-   * Constructor setting the XSLT schematron templates.
-   * 
-   * @param reader
-   * @param templates
-   */
-  public SchematronProcessor(XMLReader reader, Templates templates) {
+    /**
+     * Constructor setting the XSLT schematron templates.
+     *
+     * @param reader
+     * @param templates
+     */
+    public SchematronProcessor(XMLReader reader, Templates templates) {
 
-    this.reader = reader;
-    this.templates = templates;
-  }
-
-  /**
-   * Validates the given XML for given Rules.
-   * 
-   * @param xml
-   * @return
-   */
-  public String validate(final String xml) {
-
-    try {
-      final Source source = new SAXSource(reader, new InputSource(IOUtils.toInputStream(xml)));
-      final StringWriter writer = new StringWriter();
-      templates.newTransformer().transform(source, new StreamResult(writer));
-      return writer.toString();
-    } catch (TransformerException e) {
-      logger.error(e.getMessage());
-      throw new SchematronValidationException("Failed to apply Schematron validation transform", e);
+        this.reader = reader;
+        this.templates = templates;
     }
-  }
+
+    /**
+     * Validates the given XML for given Rules.
+     *
+     * @param xml
+     * @return
+     */
+    public String validate(final String xml) {
+
+        try {
+            final Source source = new SAXSource(reader, new InputSource(IOUtils.toInputStream(xml)));
+            final StringWriter writer = new StringWriter();
+            templates.newTransformer().transform(source, new StreamResult(writer));
+            return writer.toString();
+        } catch (TransformerException e) {
+            logger.error(e.getMessage());
+            throw new SchematronValidationException("Failed to apply Schematron validation transform", e);
+        }
+    }
 }
