@@ -27,6 +27,8 @@ import org.custommonkey.xmlunit.DifferenceListener;
 import org.custommonkey.xmlunit.IgnoreTextAndAttributeValuesDifferenceListener;
 import org.junit.Test;
 
+import static junit.framework.Assert.assertEquals;
+
 /**
  * Schematron Component Test.
  */
@@ -42,14 +44,12 @@ public class SchematronComponentTest extends CamelTestSupport {
         mock.expectedMinimumMessageCount(1);
 
         String payload = IOUtils.toString(ClassLoader.getSystemResourceAsStream("xml/article-1.xml"));
-        String expected = IOUtils.toString(ClassLoader.getSystemResourceAsStream("result/article-1-report.xml"));
+        String expected = IOUtils.toString(ClassLoader.getSystemResourceAsStream("report/article-1-report.xml"));
         template.sendBody("direct:start", payload);
         assertMockEndpointsSatisfied();
         String result = mock.getExchanges().get(0).getIn().getHeader(Constants.VALIDATION_REPORT, String.class);
-        DifferenceListener myDifferenceListener = new IgnoreTextAndAttributeValuesDifferenceListener();
-        Diff myDiff = new Diff(expected, result);
-        myDiff.overrideDifferenceListener(myDifferenceListener);
-        assertTrue(myDiff.similar());
+        assertEquals(0, Integer.valueOf(Utils.evaluate("count(//svrl:failed-assert)", result)).intValue());
+        assertEquals(0, Integer.valueOf(Utils.evaluate("count(//svrl:successful-report)", result)).intValue());
     }
 
     /**
@@ -67,8 +67,8 @@ public class SchematronComponentTest extends CamelTestSupport {
 
 
         // should throw two assertions because of the missing chapters in the XML.
-        assertEquals("A chapter should have a title", Utils.evaluate("//svrl:failed-assert [@location='/doc[1]/chapter[1]']/svrl:text", result));
-        assertEquals("A chapter should have a title", Utils.evaluate("//svrl:failed-assert [@location='/doc[1]/chapter[2]']/svrl:text", result));
+        assertEquals("A chapter should have a title", Utils.evaluate("//svrl:failed-assert[1]/svrl:text", result));
+        assertEquals("A chapter should have a title", Utils.evaluate("//svrl:failed-assert[2]/svrl:text", result));
 
     }
 

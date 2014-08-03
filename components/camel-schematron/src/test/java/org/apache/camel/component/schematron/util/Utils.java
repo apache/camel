@@ -18,7 +18,6 @@ package org.apache.camel.component.schematron.util;
 
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.schematron.constant.Constants;
-import org.apache.commons.lang.StringUtils;
 import org.custommonkey.xmlunit.SimpleNamespaceContext;
 import org.custommonkey.xmlunit.XMLUnit;
 import org.custommonkey.xmlunit.XpathEngine;
@@ -53,20 +52,12 @@ public final class Utils {
         xpathEngine.setNamespaceContext(new SimpleNamespaceContext(m));
         try {
             return xpathEngine.evaluate(xpath, XMLUnit.buildControlDocument(xml));
+
         } catch (Exception e) {
             LOG.error("Failed to apply xpath {} on xml {}", xpath, xml);
             throw new RuntimeCamelException(e);
         }
     }
 
-    /**
-     * Get validation status SUCCESS OR FAILURE if there are any schematron validation errors.
-     *
-     * @param report
-     * @return
-     */
-    public static String getValidationStatus(final String report) {
-        return StringUtils.contains(report,
-                Constants.FAILED_ASSERT) ? Constants.FAILED : Constants.SUCCESS;
-    }
+
 }

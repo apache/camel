@@ -16,27 +16,31 @@
  */
 package org.apache.camel.component.schematron.processor;
 
-import org.junit.Assert;
-import org.junit.Test;
+import java.io.File;
+import javax.xml.transform.Source;
+import javax.xml.transform.TransformerException;
+import javax.xml.transform.URIResolver;
+import javax.xml.transform.stream.StreamSource;
 
-import javax.xml.transform.Templates;
 
 /**
- * TemplateFactory Unit Test.
+ * Class path resolver for schematron templates
  *
  */
-public class TemplatesFactoryTest {
+public class ClassPathURIResolver implements URIResolver {
 
-    private String rules = "sch/schematron-1.sch";
+    private String rulesDir;
 
-    @Test
-    public void testInstantiateAnInstanceOfTemplates() throws Exception {
+    /**
+     * Constructor setter for rules directory path.
+     * @param rulesDir
+     */
+    public ClassPathURIResolver(final String rulesDir) {
+        this.rulesDir = rulesDir;
+    }
 
-
-        TemplatesFactory fac = TemplatesFactory.newInstance();
-        Templates templates = fac.newTemplates(ClassLoader.getSystemResourceAsStream(rules));
-        Assert.assertNotNull(templates);
-
-
+    @Override
+    public Source resolve(String href, String base) throws TransformerException {
+        return new StreamSource(ClassLoader.getSystemResourceAsStream(rulesDir.concat(File.separator).concat(href)));
     }
 }

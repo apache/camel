@@ -2,15 +2,18 @@
 <svrl:schematron-output xmlns:svrl="http://purl.oclc.org/dsdl/svrl"
                         xmlns:iso="http://purl.oclc.org/dsdl/schematron"
                         xmlns:xhtml="http://www.w3.org/1999/xhtml"
+                        xmlns:p="http://www.apache.org/camel/schematron"
                         xmlns:xsd="http://www.w3.org/2001/XMLSchema"
                         xmlns:saxon="http://saxon.sf.net/"
                         xmlns:xs="http://www.w3.org/2001/XMLSchema"
                         xmlns:schold="http://www.ascc.net/xml/schematron"
                         schemaVersion=""
-                        title=""><!--   
-		   
-		   
-		 -->
+                        title="Sample Schematron using XPath 2.0"><!--   
+           
+           
+         -->
+    <svrl:ns-prefix-in-attribute-values prefix="xs" uri="http://www.w3.org/2001/XMLSchema"/>
+    <svrl:ns-prefix-in-attribute-values prefix="p" uri="http://www.apache.org/camel/schematron"/>
     <svrl:active-pattern document=""/>
     <svrl:fired-rule context="chapter"/>
     <svrl:fired-rule context="chapter"/>

@@ -29,7 +29,6 @@ import javax.xml.transform.stream.StreamSource;
 
 import org.apache.camel.component.schematron.constant.Constants;
 import org.apache.camel.component.schematron.exception.SchematronConfigException;
-import org.apache.camel.component.schematron.util.ClassPathURIResolver;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.w3c.dom.Node;

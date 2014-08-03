@@ -46,10 +46,9 @@ public class SchematronProcessorTest {
         // validate
         String result = getProcessor("sch/schematron-1.sch").validate(payload);
         logger.info("Schematron Report: {}", result);
-        DifferenceListener myDifferenceListener = new IgnoreTextAndAttributeValuesDifferenceListener();
-        Diff myDiff = new Diff(expected, result);
-        myDiff.overrideDifferenceListener(myDifferenceListener);
-        assertTrue(myDiff.similar());
+        assertEquals(0, Integer.valueOf(Utils.evaluate("count(//svrl:failed-assert)", result)).intValue());
+        assertEquals(0, Integer.valueOf(Utils.evaluate("count(//svrl:successful-report)", result)).intValue());
+
     }
 
     @Test

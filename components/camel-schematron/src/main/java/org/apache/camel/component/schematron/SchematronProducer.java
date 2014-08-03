@@ -16,17 +16,17 @@
  */
 package org.apache.camel.component.schematron;
 
-import org.apache.camel.Exchange;
-import org.apache.camel.component.schematron.constant.Constants;
-import org.apache.camel.component.schematron.processor.SchematronProcessorFactory;
-import org.apache.camel.component.schematron.exception.SchematronValidationException;
-import org.apache.camel.component.schematron.util.Utils;
-import org.apache.camel.impl.DefaultProducer;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
-
 import java.util.HashMap;
 import java.util.Map;
+
+import org.apache.camel.Exchange;
+import org.apache.camel.component.schematron.constant.Constants;
+import org.apache.camel.component.schematron.exception.SchematronValidationException;
+import org.apache.camel.component.schematron.processor.SchematronProcessorFactory;
+import org.apache.camel.impl.DefaultProducer;
+import org.apache.commons.lang.StringUtils;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 /**
  * The Schematron producer.
@@ -89,10 +89,12 @@ public class SchematronProducer extends DefaultProducer {
      * @return
      */
     private String getValidationStatus(final String report) {
-        String status = Utils.getValidationStatus(report);
+        String status = StringUtils.contains(report,
+                Constants.FAILED_ASSERT) ? Constants.FAILED : Constants.SUCCESS;;
         if (this.endpoint.isAbort() && Constants.FAILED.equals(status)) {
             throw new SchematronValidationException("Schematron validation failure \n" + report);
         }
         return status;
     }
+
 }
