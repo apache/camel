@@ -32,6 +32,7 @@ import org.apache.camel.RuntimeExchangeException;
 import org.apache.camel.util.StringQuoteHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import org.springframework.jdbc.core.ArgumentPreparedStatementSetter;
 
 /**
  * Default {@link SqlPrepareStatementStrategy} that supports named query parameters as well index based.
@@ -146,19 +147,30 @@ public class DefaultSqlPrepareStatementStrategy implements SqlPrepareStatementSt
 
     @Override
     public void populateStatement(PreparedStatement ps, Iterator<?> iterator, int expectedParams) throws SQLException {
-        int argNumber = 1;
-        if (expectedParams > 0) {
-            while (iterator != null && iterator.hasNext()) {
-                Object value = iterator.next();
-                LOG.trace("Setting parameter #{} with value: {}", argNumber, value);
-                ps.setObject(argNumber, value);
-                argNumber++;
-            }
+        if (expectedParams <= 0) {
+            return;
         }
 
-        if (argNumber - 1 != expectedParams) {
-            throw new SQLException("Number of parameters mismatch. Expected: " + expectedParams + ", was:" + (argNumber - 1));
+        final Object[] args = new Object[expectedParams];
+        int i = 0;
+        int argNumber = 1;
+
+        while (iterator != null && iterator.hasNext()) {
+            Object value = iterator.next();
+            LOG.trace("Setting parameter #{} with value: {}", argNumber, value);
+            if (argNumber <= expectedParams) {
+                args[i] = value;
+            }
+            argNumber++;
+            i++;
         }
+        if (argNumber - 1 != expectedParams) {
+            throw new SQLException("Number of parameters mismatch. Expected: " + expectedParams + ", was: " + (argNumber - 1));
+        }
+
+        // use argument setter as it deals with various JDBC drivers setObject vs setLong/setInteger/setString etc.
+        ArgumentPreparedStatementSetter setter = new ArgumentPreparedStatementSetter(args);
+        setter.setValues(ps);
     }
 
     protected boolean hasNamedParameters(String query) {
