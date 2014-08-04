@@ -37,6 +37,7 @@ import org.apache.commons.lang.StringEscapeUtils;
 public class JavadocParser extends Parser {
 
     private static final String NON_BREAKING_SPACE = "\u00A0";
+    private static final String JAVA6_NON_BREAKING_SPACE = "&nbsp";
 
     private final String hrefPattern;
 
@@ -121,7 +122,8 @@ public class JavadocParser extends Parser {
     }
 
     private static String unescapeHtml(String htmlString) {
-        String result = StringEscapeUtils.unescapeHtml(htmlString).replaceAll(NON_BREAKING_SPACE, " ");
+        String result = StringEscapeUtils.unescapeHtml(htmlString).replaceAll(NON_BREAKING_SPACE, " ")
+            .replaceAll(JAVA6_NON_BREAKING_SPACE, " ");
         try {
             result = URLDecoder.decode(result, "UTF-8");
         } catch (UnsupportedEncodingException ignored) {
