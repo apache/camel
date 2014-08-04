@@ -102,7 +102,7 @@ public class CamelNamespaceHandler extends NamespaceHandlerSupport {
         // register restContext parser
         registerParser("restContext", new RestContextDefinitionParser());
         // register routeContext parser
-//        registerParser("routeContext", new RouteContextDefinitionParser());
+        registerParser("routeContext", new RouteContextDefinitionParser());
 
         addBeanDefinitionParser("keyStoreParameters", KeyStoreParametersFactoryBean.class, true, true);
         addBeanDefinitionParser("secureRandomParameters", SecureRandomParametersFactoryBean.class, true, true);
