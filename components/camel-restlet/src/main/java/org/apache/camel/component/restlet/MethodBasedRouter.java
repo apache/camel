@@ -55,6 +55,8 @@ class MethodBasedRouter extends Restlet {
         } else {
             LOG.debug("MethodRouter ({}) method not allowed: {}", uriPattern, method);
             response.setStatus(Status.CLIENT_ERROR_METHOD_NOT_ALLOWED);
+            // must include list of allowed methods
+            response.setAllowedMethods(routes.keySet());
         }
     }
 

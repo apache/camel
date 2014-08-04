@@ -16,9 +16,12 @@
  */
 package org.apache.camel.component.restlet;
 
+import java.util.Locale;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.http.Header;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.methods.HttpDelete;
 import org.apache.http.client.methods.HttpGet;
@@ -61,6 +64,13 @@ public class RestletMultiMethodsEndpointTest extends RestletTestSupport {
 
         // delete is not allowed so we return 405
         assertEquals(Status.CLIENT_ERROR_METHOD_NOT_ALLOWED.getCode(), response.getStatusLine().getStatusCode());
+
+        Header header = response.getFirstHeader("Allow");
+        assertNotNull(header);
+        String value = header.getValue().toUpperCase(Locale.US);
+        assertTrue("POST should be allowed", value.contains("POST"));
+        assertTrue("GET should be allowed", value.contains("GET"));
+        assertTrue("PUT should be allowed", value.contains("PUT"));
     }
 
     protected RouteBuilder createRouteBuilder() {
