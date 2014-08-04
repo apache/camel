@@ -312,7 +312,7 @@ public class JdbcProducer extends DefaultProducer {
             exchange.getOut().setBody(iterator);
             exchange.addOnCompletion(new ResultSetIteratorCompletion(iterator));
         } else if (outputType == JdbcOutputType.SelectList) {
-            List<Map<String, Object>> list = extractRows(iterator);
+            List<?> list = extractRows(iterator);
             exchange.getOut().setHeader(JdbcConstants.JDBC_ROW_COUNT, list.size());
             exchange.getOut().setBody(list);
         } else if (outputType == JdbcOutputType.SelectOne) {
@@ -320,12 +320,20 @@ public class JdbcProducer extends DefaultProducer {
         }
     }
 
-    private List<Map<String, Object>> extractRows(ResultSetIterator iterator) {
+    @SuppressWarnings("unchecked")
+    private List extractRows(ResultSetIterator iterator) throws SQLException {
         try {
-            List<Map<String, Object>> result = new ArrayList<Map<String, Object>>();
+            List result = new ArrayList();
             int maxRowCount = readSize == 0 ? Integer.MAX_VALUE : readSize;
             for (int i = 0; iterator.hasNext() && i < maxRowCount; i++) {
-                result.add(iterator.next());
+                Map<String, Object> row = iterator.next();
+                Object value;
+                if (getEndpoint().getOutputClass() != null) {
+                    value = newBeanInstance(row);
+                } else {
+                    value = row;
+                }
+                result.add(value);
             }
             return result;
         } finally {
