@@ -48,6 +48,7 @@
       javax.xml.bind.annotation.adapters;resolution:=optional,
       javax.xml.stream;resolution:=optional,
       javax.xml.transform.stax;resolution:=optional,
+      org.owasp.encoder;resolution:=optional,
       *
     </camel.osgi.import>
     <camel.osgi.export.service>
@@ -168,6 +169,12 @@
       <version>${xml-resolver-version}</version>
       <scope>test</scope>
     </dependency>
+
+      <dependency>
+          <groupId>org.owasp.encoder</groupId>
+          <artifactId>encoder</artifactId>
+      </dependency>
+
 
   </dependencies>
 

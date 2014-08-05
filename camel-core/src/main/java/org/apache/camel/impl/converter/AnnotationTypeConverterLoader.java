@@ -45,6 +45,7 @@ import org.apache.camel.util.CastUtils;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.StringHelper;
+import org.owasp.encoder.Encode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -113,7 +114,7 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
 
         // if there is any packages to scan and load @Converter classes, then do it
         if (packageNames != null && packageNames.length > 0) {
-            LOG.trace("Found converter packages to scan: {}", packageNames);
+            LOG.trace("Found converter packages to scan: {}", Encode.forJava(Arrays.toString(packageNames)));
             Set<Class<?>> scannedClasses = resolver.findAnnotated(Converter.class, packageNames);
             if (scannedClasses.isEmpty()) {
                 throw new TypeConverterLoaderException("Cannot find any type converter classes from the following packages: " + Arrays.asList(packageNames));
@@ -168,7 +169,7 @@ public class AnnotationTypeConverterLoader implements TypeConverterLoader {
                 for (ClassLoader loader : resolver.getClassLoaders()) {
                     try {
                         clazz = ObjectHelper.loadClass(name, loader);
-                        LOG.trace("Loaded {} as class {}", name, clazz);
+                        LOG.trace("Loaded {} as class {}", name, Encode.forJava(clazz.toString()));
                         classes.add(clazz);
                         // class founder, so no need to load it with another class loader
                         break;

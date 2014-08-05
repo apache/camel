@@ -21,10 +21,12 @@ import java.io.InputStream;
 import java.security.GeneralSecurityException;
 import java.security.KeyStore;
 import java.security.Security;
+import java.util.Arrays;
 import java.util.Enumeration;
 import java.util.LinkedList;
 import java.util.List;
 
+import org.owasp.encoder.Encode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -184,7 +186,7 @@ public class KeyStoreParameters extends JsseParameters {
             }
             
             LOG.debug("KeyStore [{}], initialized from [{}], is using provider [{}], has type [{}], and contains aliases {}.",
-                      new Object[] {ks, this, ks.getProvider(), ks.getType(), aliases});
+                      new Object[] {ks, this, ks.getProvider(), ks.getType(), Encode.forJava(Arrays.toString(aliases.toArray()))});
         }
         
         return ks;
