@@ -22,9 +22,9 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.component.ResourceEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.util.ObjectHelper;
+import org.optaplanner.core.api.domain.solution.Solution;
 import org.optaplanner.core.api.solver.Solver;
 import org.optaplanner.core.api.solver.SolverFactory;
-import org.optaplanner.core.impl.solution.Solution;
 
 /**
  * OptaPlanner endpoint for Camel
@@ -66,8 +66,7 @@ public class OptaPlannerEndpoint extends ResourceEndpoint {
 
         Solution planningProblem = exchange.getIn().getMandatoryBody(Solution.class);
 
-        solver.setPlanningProblem(planningProblem);
-        solver.solve();
+        solver.solve(planningProblem);
         Solution bestSolution = solver.getBestSolution();
 
         exchange.getOut().setBody(bestSolution);

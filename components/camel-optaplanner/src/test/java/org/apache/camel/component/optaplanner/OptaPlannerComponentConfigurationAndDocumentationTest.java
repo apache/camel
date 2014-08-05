@@ -33,7 +33,7 @@ public class OptaPlannerComponentConfigurationAndDocumentationTest extends Camel
     @Test
     public void testComponentConfiguration() throws Exception {
         OptaPlannerComponent component = context.getComponent("optaplanner", OptaPlannerComponent.class);
-        EndpointConfiguration configuration = component.createConfiguration("optaplanner:/org/apache/camel/component/optaplanner/solverConfig.xml?"
+        EndpointConfiguration configuration = component.createConfiguration("optaplanner:org/apache/camel/component/optaplanner/solverConfig.xml?"
                 + "synchronous=false&contentCache=true");
 
         assertEquals("true", configuration.getParameter("contentCache"));
