@@ -22,6 +22,7 @@ import javax.management.ObjectName;
 import javax.management.openmbean.TabularData;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.Route;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.rest.DummyRestConsumerFactory;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -62,6 +63,16 @@ public class ManagedRestRegistryTest extends ManagementTestSupport {
 
         TabularData data = (TabularData) mbeanServer.invoke(name, "listRestServices", null, null);
         assertEquals(3, data.size());
+
+        // remove all routes
+        for (Route route : context.getRoutes()) {
+            context.stopRoute(route.getId());
+            context.removeRoute(route.getId());
+        }
+
+        assertEquals(0, mbeanServer.getAttribute(name, "NumberOfRestServices"));
+        data = (TabularData) mbeanServer.invoke(name, "listRestServices", null, null);
+        assertEquals(0, data.size());
     }
 
     @Override

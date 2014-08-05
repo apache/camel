@@ -43,11 +43,11 @@ public final class CamelOpenMBeanTypes {
 
     public static TabularType listRestServicesTabularType() throws OpenDataException {
         CompositeType ct = listRestServicesCompositeType();
-        return new TabularType("listRestServices", "Lists all the rest services in the registry", ct, new String[]{"url"});
+        return new TabularType("listRestServices", "Lists all the rest services in the registry", ct, new String[]{"url", "method"});
     }
 
     public static CompositeType listRestServicesCompositeType() throws OpenDataException {
-        return new CompositeType("rests", "Rest Services", new String[]{"url", "method", "uri template", "consumes", "produces", "state"},
+        return new CompositeType("rests", "Rest Services", new String[]{"url", "method", "uriTemplate", "consumes", "produces", "state"},
                 new String[]{"Url", "Method", "Uri Template", "Consumes", "Produces", "State"},
                 new OpenType[]{SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING});
     }

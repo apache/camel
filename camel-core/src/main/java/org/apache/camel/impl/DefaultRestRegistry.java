@@ -21,14 +21,21 @@ import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
 
+import org.apache.camel.CamelContext;
+import org.apache.camel.CamelContextAware;
 import org.apache.camel.Consumer;
+import org.apache.camel.Route;
+import org.apache.camel.Service;
 import org.apache.camel.ServiceStatus;
 import org.apache.camel.StatefulService;
 import org.apache.camel.StaticService;
 import org.apache.camel.spi.RestRegistry;
+import org.apache.camel.support.LifecycleStrategySupport;
+import org.apache.camel.util.ObjectHelper;
 
-public class DefaultRestRegistry extends ServiceSupport implements StaticService, RestRegistry {
+public class DefaultRestRegistry extends ServiceSupport implements StaticService, RestRegistry, CamelContextAware {
 
+    private CamelContext camelContext;
     private final Map<Consumer, RestService> registry = new LinkedHashMap<Consumer, RestService>();
 
     public void addRestService(Consumer consumer, String url, String method, String uriTemplate, String consumes, String produces) {
@@ -50,9 +57,19 @@ public class DefaultRestRegistry extends ServiceSupport implements StaticService
         return registry.size();
     }
 
+    public CamelContext getCamelContext() {
+        return camelContext;
+    }
+
+    public void setCamelContext(CamelContext camelContext) {
+        this.camelContext = camelContext;
+    }
+
     @Override
     protected void doStart() throws Exception {
-        // noop
+        ObjectHelper.notNull(camelContext, "camelContext", this);
+        // add a lifecycle so we can keep track when consumers is being removed, so we can unregister them from our registry
+        camelContext.addLifecycleStrategy(new RemoveRestServiceLifecycleStrategy());
     }
 
     @Override
@@ -116,6 +133,23 @@ public class DefaultRestRegistry extends ServiceSupport implements StaticService
                 status = ServiceStatus.Stopped;
             }
             return status.name();
+        }
+    }
+
+    /**
+     * A {@link org.apache.camel.spi.LifecycleStrategy} that keeps track when a {@link Consumer} is removed
+     * and automatic un-register it from this REST registry.
+     */
+    private final class RemoveRestServiceLifecycleStrategy extends LifecycleStrategySupport {
+
+        @Override
+        public void onServiceRemove(CamelContext context, Service service, Route route) {
+            super.onServiceRemove(context, service, route);
+
+            // if its a consumer then de-register it from the rest registry
+            if (service instanceof Consumer) {
+                removeRestService((Consumer) service);
+            }
         }
     }
 }

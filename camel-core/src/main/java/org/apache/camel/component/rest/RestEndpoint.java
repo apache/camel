@@ -191,7 +191,8 @@ public class RestEndpoint extends DefaultEndpoint {
             String url = scheme + "://" + host + (port != 80 ? ":" + port : "") + path;
 
             // add to rest registry so we can keep track of them, we will remove from the registry when the consumer is removed
-            // TODO: need to be able to unregister from the registry
+            // the rest registry will automatic keep track when the consumer is removed,
+            // and un-register the REST service from the registry
             getCamelContext().getRestRegistry().addRestService(consumer, url, getVerb(), getPath(), getConsumes(), getProduces());
 
             return consumer;
