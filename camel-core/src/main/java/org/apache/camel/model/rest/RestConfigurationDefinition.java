@@ -50,6 +50,9 @@ public class RestConfigurationDefinition {
     private String port;
 
     @XmlAttribute
+    private RestHostNameResolver hostNameResolver;
+
+    @XmlAttribute
     private RestBindingMode bindingMode;
 
     @XmlAttribute
@@ -100,6 +103,14 @@ public class RestConfigurationDefinition {
 
     public void setPort(String port) {
         this.port = port;
+    }
+
+    public RestHostNameResolver getHostNameResolver() {
+        return hostNameResolver;
+    }
+
+    public void setHostNameResolver(RestHostNameResolver hostNameResolver) {
+        this.hostNameResolver = hostNameResolver;
     }
 
     public RestBindingMode getBindingMode() {
@@ -202,6 +213,14 @@ public class RestConfigurationDefinition {
     }
 
     /**
+     * To specify the hostname resolver
+     */
+    public RestConfigurationDefinition hostNameResolver(RestHostNameResolver hostNameResolver) {
+        setHostNameResolver(hostNameResolver);
+        return this;
+    }
+
+    /**
      * To specify the binding mode
      */
     public RestConfigurationDefinition bindingMode(RestBindingMode bindingMode) {
@@ -296,6 +315,9 @@ public class RestConfigurationDefinition {
         }
         if (port != null) {
             answer.setPort(CamelContextHelper.parseInteger(context, port));
+        }
+        if (hostNameResolver != null) {
+            answer.setRestHostNameResolver(hostNameResolver.name());
         }
         if (bindingMode != null) {
             answer.setBindingMode(bindingMode.name());

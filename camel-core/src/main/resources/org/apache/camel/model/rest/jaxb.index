@@ -23,6 +23,7 @@ RestBindingDefinition
 RestBindingMode
 RestConfigurationDefinition
 RestDefinition
+RestHostNameResolver
 RestPropertyDefinition
 RestsDefinition
 VerbDefinition

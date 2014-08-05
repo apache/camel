@@ -25,9 +25,12 @@ import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestConsumerFactory;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
+import org.apache.camel.util.HostUtils;
+import org.apache.camel.util.ObjectHelper;
 
 @UriEndpoint(scheme = "rest")
 public class RestEndpoint extends DefaultEndpoint {
@@ -154,10 +157,42 @@ public class RestEndpoint extends DefaultEndpoint {
             Consumer consumer = factory.createConsumer(getCamelContext(), processor, getVerb(), getPath(), getConsumes(), getProduces(), getParameters());
             configureConsumer(consumer);
 
+            // if no explicit port/host configured, then use port from rest configuration
+            String scheme = "http";
+            String host = "";
+            int port = 80;
+
+            RestConfiguration config = getCamelContext().getRestConfiguration();
+            if (config.getScheme() != null) {
+                scheme = config.getScheme();
+            }
+            if (config.getHost() != null) {
+                host = config.getHost();
+            }
+            int num = config.getPort();
+            if (num > 0) {
+                port = num;
+            }
+
+            // if no explicit hostname set then resolve the hostname
+            if (ObjectHelper.isEmpty(host)) {
+                if (config.getRestHostNameResolver() == RestConfiguration.RestHostNameResolver.localHostName) {
+                    host = HostUtils.getLocalHostName();
+                } else if (config.getRestHostNameResolver() == RestConfiguration.RestHostNameResolver.localIp) {
+                    host = HostUtils.getLocalIp();
+                }
+            }
+
+            // calculate the url to the rest service
+            String path = getPath();
+            if (!path.startsWith("/")) {
+                path = "/" + path;
+            }
+            String url = scheme + "://" + host + (port != 80 ? ":" + port : "") + path;
+
             // add to rest registry so we can keep track of them, we will remove from the registry when the consumer is removed
-            // TODO: need to get the absolute url of the service
             // TODO: need to be able to unregister from the registry
-            getCamelContext().getRestRegistry().addRestService(consumer, null, getVerb(), getPath(), getConsumes(), getProduces());
+            getCamelContext().getRestRegistry().addRestService(consumer, url, getVerb(), getPath(), getConsumes(), getProduces());
 
             return consumer;
         } else {

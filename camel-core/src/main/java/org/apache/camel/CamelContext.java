@@ -1361,11 +1361,11 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
     /**
      * Gets the {@link org.apache.camel.spi.RestRegistry} to use
      */
-    public RestRegistry getRestRegistry();
+    RestRegistry getRestRegistry();
 
     /**
      * Sets a custom {@link org.apache.camel.spi.RestRegistry} to use.
      */
-    public void setRestRegistry(RestRegistry restRegistry);
+    void setRestRegistry(RestRegistry restRegistry);
 
 }
