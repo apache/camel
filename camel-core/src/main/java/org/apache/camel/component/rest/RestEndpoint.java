@@ -155,7 +155,9 @@ public class RestEndpoint extends DefaultEndpoint {
             configureConsumer(consumer);
 
             // add to rest registry so we can keep track of them, we will remove from the registry when the consumer is removed
-            getCamelContext().getRestRegistry().addRestService(consumer, null, getPath(), getVerb(), getConsumes(), getProduces());
+            // TODO: need to get the absolute url of the service
+            // TODO: need to be able to unregister from the registry
+            getCamelContext().getRestRegistry().addRestService(consumer, null, getVerb(), getPath(), getConsumes(), getProduces());
 
             return consumer;
         } else {

@@ -31,8 +31,8 @@ public class DefaultRestRegistry extends ServiceSupport implements StaticService
 
     private final Map<Consumer, RestService> registry = new LinkedHashMap<Consumer, RestService>();
 
-    public void addRestService(Consumer consumer, String url, String path, String verb, String consumes, String produces) {
-        RestServiceEntry entry = new RestServiceEntry(consumer, url, path, verb, consumes, produces);
+    public void addRestService(Consumer consumer, String url, String method, String uriTemplate, String consumes, String produces) {
+        RestServiceEntry entry = new RestServiceEntry(consumer, url, uriTemplate, method, consumes, produces);
         registry.put(consumer, entry);
     }
 
@@ -89,11 +89,11 @@ public class DefaultRestRegistry extends ServiceSupport implements StaticService
             return url;
         }
 
-        public String getPath() {
+        public String getUriTemplate() {
             return path;
         }
 
-        public String getVerb() {
+        public String getMethod() {
             return verb;
         }
 

@@ -60,8 +60,8 @@ public class ManagedRestRegistry extends ManagedService implements ManagedRestRe
             for (RestRegistry.RestService entry : services) {
                 CompositeType ct = CamelOpenMBeanTypes.listRestServicesCompositeType();
                 String url = entry.getUrl();
-                String path = entry.getPath();
-                String verb = entry.getVerb();
+                String path = entry.getUriTemplate();
+                String verb = entry.getMethod();
                 String consumes = entry.getConsumes();
                 String produces = entry.getProduces();
                 String state = entry.getState();

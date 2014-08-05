@@ -21,29 +21,78 @@ import java.util.List;
 import org.apache.camel.Consumer;
 import org.apache.camel.Service;
 
+/**
+ * A registry of all REST services running within the {@link org.apache.camel.CamelContext} which have been defined and created
+ * using the <a href="http://camel.apache.org/rest-dsl">Rest DSL</a>.
+ */
 public interface RestRegistry extends Service {
 
+    /**
+     * Details about the REST service
+     */
     interface RestService {
 
+        /**
+         * Gets the consumer of the REST service
+         */
         Consumer getConsumer();
 
+        /**
+         * Gets the state of the REST service (started, stopped, etc)
+         */
+        String getState();
+
+        /**
+         * Gets the absolute url to the REST service
+         */
         String getUrl();
 
-        String getPath();
+        /**
+         * Gets the uri template (context path)
+         */
+        String getUriTemplate();
 
-        String getVerb();
+        /**
+         * Gets the HTTP method (GET, POST, PUT etc)
+         */
+        String getMethod();
 
+        /**
+         * Optional details about what media-types the REST service accepts
+         */
         String getConsumes();
 
+        /**
+         * Optional details about what media-types the REST service returns
+         */
         String getProduces();
 
-        String getState();
     }
 
-    void addRestService(Consumer consumer, String url, String path, String verb, String consumes, String produces);
+    /**
+     * Adds a new REST service to the registry.
+     *
+     * @param consumer    the consumer
+     * @param url         the absolute url of the REST service
+     * @param method      the HTTP method
+     * @param uriTemplate the uri template (context-path)
+     * @param consumes    optional details about what media-types the REST service accepts
+     * @param produces    optional details about what media-types the REST service returns
+     */
+    void addRestService(Consumer consumer, String url, String method, String uriTemplate, String consumes, String produces);
 
+    /**
+     * Removes the REST service from the registry
+     *
+     * @param consumer  the consumer
+     */
     void removeRestService(Consumer consumer);
 
+    /**
+     * List all REST services from this registry.
+     *
+     * @return all the REST services
+     */
     List<RestService> listAllRestServices();
 
     /**
