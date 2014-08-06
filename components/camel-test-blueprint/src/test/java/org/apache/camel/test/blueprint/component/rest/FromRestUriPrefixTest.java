@@ -39,7 +39,7 @@ public class FromRestUriPrefixTest extends CamelBlueprintTestSupport {
         assertEquals(1, context.getRestDefinitions().size());
         RestDefinition rest = context.getRestDefinitions().get(0);
         assertNotNull(rest);
-        assertEquals("/say/", rest.getUri());
+        assertEquals("/say/", rest.getPath());
         assertEquals(3, rest.getVerbs().size());
         assertEquals("/hello", rest.getVerbs().get(0).getUri());
         assertEquals("bye", rest.getVerbs().get(1).getUri());

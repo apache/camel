@@ -29,7 +29,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.camel.CamelContext;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.ToDefinition;
-import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.URISupport;
 
 /**
@@ -40,7 +39,7 @@ import org.apache.camel.util.URISupport;
 public class RestDefinition {
 
     @XmlAttribute
-    private String uri;
+    private String path;
 
     @XmlAttribute
     private String consumes;
@@ -54,12 +53,12 @@ public class RestDefinition {
     @XmlElementRef
     private List<VerbDefinition> verbs = new ArrayList<VerbDefinition>();
 
-    public String getUri() {
-        return uri;
+    public String getPath() {
+        return path;
     }
 
-    public void setUri(String uri) {
-        this.uri = uri;
+    public void setPath(String path) {
+        this.path = path;
     }
 
     public String getConsumes() {
@@ -98,10 +97,10 @@ public class RestDefinition {
     //-------------------------------------------------------------------------
 
     /**
-     * To set the uri
+     * To set the base path of this REST service
      */
-    public RestDefinition uri(String uri) {
-        setUri(uri);
+    public RestDefinition path(String path) {
+        setPath(path);
         return this;
     }
 
@@ -386,10 +385,10 @@ public class RestDefinition {
     }
 
     private String buildUri(VerbDefinition verb) {
-        if (uri != null && verb.getUri() != null) {
-            return uri + ":" + verb.getUri();
-        } else if (uri != null) {
-            return uri;
+        if (path != null && verb.getUri() != null) {
+            return path + ":" + verb.getUri();
+        } else if (path != null) {
+            return path;
         } else if (verb.getUri() != null) {
             return verb.getUri();
         } else {

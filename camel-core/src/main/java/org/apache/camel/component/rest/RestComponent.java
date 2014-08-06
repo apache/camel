@@ -36,10 +36,10 @@ public class RestComponent extends UriEndpointComponent {
         answer.setParameters(parameters);
 
         if (!remaining.contains(":")) {
-            throw new IllegalArgumentException("Invalid syntax. Must be rest:verb:path");
+            throw new IllegalArgumentException("Invalid syntax. Must be rest:method:path[:uriTemplate] where uriTemplate is optional");
         }
 
-        String verb = ObjectHelper.before(remaining, ":");
+        String method = ObjectHelper.before(remaining, ":");
         String s = ObjectHelper.after(remaining, ":");
 
         String path;
@@ -56,7 +56,7 @@ public class RestComponent extends UriEndpointComponent {
         path = FileUtil.stripTrailingSeparator(path);
         uriTemplate = FileUtil.stripTrailingSeparator(uriTemplate);
 
-        answer.setVerb(verb);
+        answer.setMethod(method);
         answer.setPath(path);
         answer.setUriTemplate(uriTemplate);
 

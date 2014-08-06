@@ -26,7 +26,7 @@ public class XmlRestParseTest extends XmlTestSupport {
 
     public void testParseSimpleRestXml() throws Exception {
         RestDefinition rest = assertOneRest("simpleRest.xml");
-        assertEquals("/users", rest.getUri());
+        assertEquals("/users", rest.getPath());
 
         assertEquals(1, rest.getVerbs().size());
         GetVerbDefinition get = (GetVerbDefinition) rest.getVerbs().get(0);

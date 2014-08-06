@@ -36,7 +36,7 @@ import org.apache.camel.util.ObjectHelper;
 public class RestEndpoint extends DefaultEndpoint {
 
     @UriParam
-    private String verb;
+    private String method;
     @UriParam
     private String path;
     @UriParam
@@ -59,12 +59,12 @@ public class RestEndpoint extends DefaultEndpoint {
         return (RestComponent) super.getComponent();
     }
 
-    public String getVerb() {
-        return verb;
+    public String getMethod() {
+        return method;
     }
 
-    public void setVerb(String verb) {
-        this.verb = verb;
+    public void setMethod(String method) {
+        this.method = method;
     }
 
     public String getPath() {
@@ -164,7 +164,7 @@ public class RestEndpoint extends DefaultEndpoint {
         }
 
         if (factory != null) {
-            Consumer consumer = factory.createConsumer(getCamelContext(), processor, getVerb(), getPath(), getUriTemplate(), getConsumes(), getProduces(), getParameters());
+            Consumer consumer = factory.createConsumer(getCamelContext(), processor, getMethod(), getPath(), getUriTemplate(), getConsumes(), getProduces(), getParameters());
             configureConsumer(consumer);
 
             // if no explicit port/host configured, then use port from rest configuration
@@ -217,7 +217,7 @@ public class RestEndpoint extends DefaultEndpoint {
             // add to rest registry so we can keep track of them, we will remove from the registry when the consumer is removed
             // the rest registry will automatic keep track when the consumer is removed,
             // and un-register the REST service from the registry
-            getCamelContext().getRestRegistry().addRestService(consumer, url, baseUrl, getPath(), getUriTemplate(), getVerb(), getConsumes(), getProduces(), inType, outType);
+            getCamelContext().getRestRegistry().addRestService(consumer, url, baseUrl, getPath(), getUriTemplate(), getMethod(), getConsumes(), getProduces(), inType, outType);
 
             return consumer;
         } else {

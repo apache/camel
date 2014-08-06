@@ -70,8 +70,8 @@ public class BlueprintJaxbRestTest extends TestSupport {
 
         CamelContextFactoryBean cfb = (CamelContextFactoryBean) object;
         assertEquals(2, cfb.getRests().size());
-        assertEquals("/say/hello", cfb.getRests().get(0).getUri());
-        assertEquals("/say/bye", cfb.getRests().get(1).getUri());
+        assertEquals("/say/hello", cfb.getRests().get(0).getPath());
+        assertEquals("/say/bye", cfb.getRests().get(1).getPath());
 
         assertEquals(1, cfb.getRests().get(0).getVerbs().size());
         assertEquals(2, cfb.getRests().get(1).getVerbs().size());

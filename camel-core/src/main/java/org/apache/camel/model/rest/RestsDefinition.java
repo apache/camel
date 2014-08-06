@@ -92,7 +92,7 @@ public class RestsDefinition extends OptionalIdentifiedDefinition<RestsDefinitio
      */
     public RestDefinition rest(String uri) {
         RestDefinition rest = createRest();
-        rest.setUri(uri);
+        rest.setPath(uri);
         return rest(rest);
     }
 
