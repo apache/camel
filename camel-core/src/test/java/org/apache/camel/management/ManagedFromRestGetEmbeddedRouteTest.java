@@ -49,8 +49,8 @@ public class ManagedFromRestGetEmbeddedRouteTest extends ManagementTestSupport {
         log.info(xml);
 
         assertTrue(xml.contains("<rests"));
-        assertTrue(xml.contains("<rest uri=\"/say/hello\">"));
-        assertTrue(xml.contains("<rest uri=\"/say/bye\">"));
+        assertTrue(xml.contains("<rest path=\"/say/hello\">"));
+        assertTrue(xml.contains("<rest path=\"/say/bye\">"));
         assertTrue(xml.contains("</rest>"));
         assertTrue(xml.contains("<get>"));
         assertTrue(xml.contains("<route"));

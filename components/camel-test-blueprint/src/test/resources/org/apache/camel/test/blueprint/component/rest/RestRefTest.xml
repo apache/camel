@@ -24,7 +24,7 @@
   <bean id="dummy-rest" class="org.apache.camel.test.blueprint.component.rest.DummyRestConsumerFactory"/>
 
   <restContext id="myCoolRest" xmlns="http://camel.apache.org/schema/blueprint">
-    <rest uri="/say/hello">
+    <rest path="/say/hello">
       <get>
         <to uri="direct:hello"/>
       </get>
@@ -35,7 +35,7 @@
 
     <restContextRef ref="myCoolRest"/>
 
-    <rest uri="/say/bye">
+    <rest path="/say/bye">
       <get consumes="application/json">
         <to uri="direct:bye"/>
       </get>

@@ -25,7 +25,7 @@
 
   <camelContext xmlns="http://camel.apache.org/schema/blueprint">
 
-    <rest uri="/say/hello">
+    <rest path="/say/hello">
       <get>
         <route>
           <to uri="mock:hello"/>
@@ -35,7 +35,7 @@
         </route>
       </get>
     </rest>
-    <rest uri="/say/bye">
+    <rest path="/say/bye">
       <get consumes="application/json">
         <route>
           <to uri="mock:bye"/>

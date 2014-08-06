@@ -31,8 +31,8 @@ public class FromRestUriPrefixTest extends FromRestGetTest {
         assertEquals("/say/", rest.getPath());
         assertEquals(3, rest.getVerbs().size());
         assertEquals("/hello", rest.getVerbs().get(0).getUri());
-        assertEquals("bye", rest.getVerbs().get(1).getUri());
-        assertEquals("/bye", rest.getVerbs().get(2).getUri());
+        assertEquals("/bye", rest.getVerbs().get(1).getUri());
+        assertEquals("/hi", rest.getVerbs().get(2).getUri());
         ToDefinition to = assertIsInstanceOf(ToDefinition.class, rest.getVerbs().get(0).getTo());
         assertEquals("direct:hello", to.getUri());
         to = assertIsInstanceOf(ToDefinition.class, rest.getVerbs().get(1).getTo());
@@ -40,7 +40,7 @@ public class FromRestUriPrefixTest extends FromRestGetTest {
 
         // the rest becomes routes and the input is a seda endpoint created by the DummyRestConsumerFactory
         getMockEndpoint("mock:update").expectedMessageCount(1);
-        template.sendBody("seda:post-say-bye", "I was here");
+        template.sendBody("seda:post-say-hi", "I was here");
         assertMockEndpointsSatisfied();
 
         String out = template.requestBody("seda:get-say-hello", "Me", String.class);
@@ -57,8 +57,8 @@ public class FromRestUriPrefixTest extends FromRestGetTest {
                 // we have logic to cleanup those paths so there is only one / between the paths
                 rest("/say/")
                     .get("/hello").to("direct:hello")
-                    .get("bye").consumes("application/json").to("direct:bye")
-                    .post("/bye").to("mock:update");
+                    .get("/bye").consumes("application/json").to("direct:bye")
+                    .post("/hi").to("mock:update");
 
                 from("direct:hello")
                     .transform().constant("Hello World");

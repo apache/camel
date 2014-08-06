@@ -49,7 +49,7 @@ public class ManagedProducerRouteAddRemoveRegisterAlwaysTest extends ManagementT
 
         // number of services
         Set<ObjectName> names = mbeanServer.queryNames(on, null);
-        assertEquals(7, names.size());
+        assertEquals(8, names.size());
 
         // number of producers
         ObjectName onP = ObjectName.getInstance("org.apache.camel:context=camel-1,type=producers,*");
@@ -74,7 +74,7 @@ public class ManagedProducerRouteAddRemoveRegisterAlwaysTest extends ManagementT
 
         // there should still be the same number of services
         names = mbeanServer.queryNames(on, null);
-        assertEquals(7, names.size());
+        assertEquals(8, names.size());
 
         // but as its recipient list which is dynamic-to we add new producers because we have register always
         namesP = mbeanServer.queryNames(onP, null);
@@ -89,7 +89,7 @@ public class ManagedProducerRouteAddRemoveRegisterAlwaysTest extends ManagementT
 
         // there should still be the same number of services
         names = mbeanServer.queryNames(on, null);
-        assertEquals(7, names.size());
+        assertEquals(8, names.size());
 
         // and we still have the other producers, but not the one from the 2nd route that was removed
         namesP = mbeanServer.queryNames(onP, null);

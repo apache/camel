@@ -32,12 +32,12 @@
       <consumerProperty key="pollTimeout" value="1000"/>
     </restConfiguration>
 
-    <rest uri="/say/hello">
+    <rest path="/say/hello">
       <get>
         <to uri="direct:hello"/>
       </get>
     </rest>
-    <rest uri="/say/bye">
+    <rest path="/say/bye">
       <get consumes="application/json">
         <to uri="direct:bye"/>
       </get>
