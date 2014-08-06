@@ -36,14 +36,14 @@ public class UserRouteBuilder extends RouteBuilder {
         // this user REST service is json only
         rest("/user").consumes("application/json").produces("application/json")
 
-            .get("/view/{id}").outType(User.class)
+            .get("/{id}").outType(User.class)
                 .to("bean:userService?method=getUser(${header.id})")
 
-            .get("/list").outTypeList(User.class)
-                .to("bean:userService?method=listUsers")
+            .put().type(User.class).outType(User.class)
+                .to("bean:userService?method=updateUser")
 
-            .put("/update").type(User.class).outType(User.class)
-                .to("bean:userService?method=updateUser");
+            .get("/findAll").outTypeList(User.class)
+                .to("bean:userService?method=listUsers");
     }
 
 }

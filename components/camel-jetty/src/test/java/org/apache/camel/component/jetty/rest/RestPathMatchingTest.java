@@ -24,32 +24,62 @@ public class RestPathMatchingTest extends TestCase {
     private JettyRestServletResolveConsumerStrategy matcher = new JettyRestServletResolveConsumerStrategy();
 
     public void testRestPathMatcher() throws Exception {
-        assertTrue(matcher.matchRestPath("/foo/", "/foo/"));
-        assertTrue(matcher.matchRestPath("/foo/", "foo/"));
-        assertTrue(matcher.matchRestPath("/foo/", "foo"));
-        assertTrue(matcher.matchRestPath("foo/", "foo"));
-        assertTrue(matcher.matchRestPath("foo", "foo"));
-        assertTrue(matcher.matchRestPath("foo/", "foo"));
-        assertTrue(matcher.matchRestPath("/foo/", "foo"));
+        assertTrue(matcher.matchRestPath("/foo/", "/foo/", true));
+        assertTrue(matcher.matchRestPath("/foo/", "foo/", true));
+        assertTrue(matcher.matchRestPath("/foo/", "foo", true));
+        assertTrue(matcher.matchRestPath("foo/", "foo", true));
+        assertTrue(matcher.matchRestPath("foo", "foo", true));
+        assertTrue(matcher.matchRestPath("foo/", "foo", true));
+        assertTrue(matcher.matchRestPath("/foo/", "foo", true));
 
-        assertTrue(matcher.matchRestPath("/foo/1234/list/2014", "/foo/1234/list/2014"));
-        assertTrue(matcher.matchRestPath("/foo/1234/list/2014/", "/foo/1234/list/2014"));
-        assertTrue(matcher.matchRestPath("/foo/1234/list/2014", "/foo/1234/list/2014/"));
-        assertTrue(matcher.matchRestPath("/foo/1234/list/2014/", "/foo/1234/list/2014/"));
-        assertTrue(matcher.matchRestPath("/foo/1234/list/2014", "/foo/{user}/list/{year}"));
+        assertTrue(matcher.matchRestPath("/foo/1234/list/2014", "/foo/1234/list/2014", true));
+        assertTrue(matcher.matchRestPath("/foo/1234/list/2014/", "/foo/1234/list/2014", true));
+        assertTrue(matcher.matchRestPath("/foo/1234/list/2014", "/foo/1234/list/2014/", true));
+        assertTrue(matcher.matchRestPath("/foo/1234/list/2014/", "/foo/1234/list/2014/", true));
+        assertTrue(matcher.matchRestPath("/foo/1234/list/2014", "/foo/{user}/list/{year}", true));
 
-        assertFalse(matcher.matchRestPath("/foo/", "/bar/"));
-        assertFalse(matcher.matchRestPath("/foo/1234/list/2014", "/foo/1234/list/2015"));
-        assertFalse(matcher.matchRestPath("/foo/1234/list/2014/", "/foo/1234/list/2015"));
-        assertFalse(matcher.matchRestPath("/foo/1234/list/2014", "/foo/1234/list/2015/"));
-        assertFalse(matcher.matchRestPath("/foo/1234/list/2014/", "/foo/1234/list/2015/"));
-        assertFalse(matcher.matchRestPath("/foo/1234/list/2014", "/foo/{user}/list/"));
+        assertFalse(matcher.matchRestPath("/foo/", "/bar/", true));
+        assertFalse(matcher.matchRestPath("/foo/1234/list/2014", "/foo/1234/list/2015", true));
+        assertFalse(matcher.matchRestPath("/foo/1234/list/2014/", "/foo/1234/list/2015", true));
+        assertFalse(matcher.matchRestPath("/foo/1234/list/2014", "/foo/1234/list/2015/", true));
+        assertFalse(matcher.matchRestPath("/foo/1234/list/2014/", "/foo/1234/list/2015/", true));
+        assertFalse(matcher.matchRestPath("/foo/1234/list/2014", "/foo/{user}/list/", true));
 
-        assertTrue(matcher.matchRestPath("/foo/1/list/2", "/foo/{user}/list/{year}"));
-        assertTrue(matcher.matchRestPath("/foo/1234567890/list/2", "/foo/{user}/list/{year}"));
-        assertTrue(matcher.matchRestPath("/foo/1234567890/list/1234567890", "/foo/{user}/list/{year}"));
+        assertTrue(matcher.matchRestPath("/foo/1/list/2", "/foo/{user}/list/{year}", true));
+        assertTrue(matcher.matchRestPath("/foo/1234567890/list/2", "/foo/{user}/list/{year}", true));
+        assertTrue(matcher.matchRestPath("/foo/1234567890/list/1234567890", "/foo/{user}/list/{year}", true));
 
-        assertTrue(matcher.matchRestPath("/123/list/2014", "/{user}/list/{year}"));
-        assertTrue(matcher.matchRestPath("/1234567890/list/2014", "/{user}/list/{year}"));
+        assertTrue(matcher.matchRestPath("/123/list/2014", "/{user}/list/{year}", true));
+        assertTrue(matcher.matchRestPath("/1234567890/list/2014", "/{user}/list/{year}", true));
+    }
+
+    public void testRestPathMatcherNoWildcard() throws Exception {
+        assertTrue(matcher.matchRestPath("/foo/", "/foo/", false));
+        assertTrue(matcher.matchRestPath("/foo/", "foo/", false));
+        assertTrue(matcher.matchRestPath("/foo/", "foo", false));
+        assertTrue(matcher.matchRestPath("foo/", "foo", false));
+        assertTrue(matcher.matchRestPath("foo", "foo", false));
+        assertTrue(matcher.matchRestPath("foo/", "foo", false));
+        assertTrue(matcher.matchRestPath("/foo/", "foo", false));
+
+        assertTrue(matcher.matchRestPath("/foo/1234/list/2014", "/foo/1234/list/2014", false));
+        assertTrue(matcher.matchRestPath("/foo/1234/list/2014/", "/foo/1234/list/2014", false));
+        assertTrue(matcher.matchRestPath("/foo/1234/list/2014", "/foo/1234/list/2014/", false));
+        assertTrue(matcher.matchRestPath("/foo/1234/list/2014/", "/foo/1234/list/2014/", false));
+        assertTrue(matcher.matchRestPath("/foo/1234/list/2014", "/foo/{user}/list/{year}", true));
+
+        assertFalse(matcher.matchRestPath("/foo/", "/bar/", false));
+        assertFalse(matcher.matchRestPath("/foo/1234/list/2014", "/foo/1234/list/2015", false));
+        assertFalse(matcher.matchRestPath("/foo/1234/list/2014/", "/foo/1234/list/2015", false));
+        assertFalse(matcher.matchRestPath("/foo/1234/list/2014", "/foo/1234/list/2015/", false));
+        assertFalse(matcher.matchRestPath("/foo/1234/list/2014/", "/foo/1234/list/2015/", false));
+        assertFalse(matcher.matchRestPath("/foo/1234/list/2014", "/foo/{user}/list/", false));
+
+        assertFalse(matcher.matchRestPath("/foo/1/list/2", "/foo/{user}/list/{year}", false));
+        assertFalse(matcher.matchRestPath("/foo/1234567890/list/2", "/foo/{user}/list/{year}", false));
+        assertFalse(matcher.matchRestPath("/foo/1234567890/list/1234567890", "/foo/{user}/list/{year}", false));
+
+        assertFalse(matcher.matchRestPath("/123/list/2014", "/{user}/list/{year}", false));
+        assertFalse(matcher.matchRestPath("/1234567890/list/2014", "/{user}/list/{year}", false));
     }
 }

@@ -33,25 +33,25 @@ And for XML DSL the routes are define in XML code, in the <tt>src/main/resources
 <p/>
 There is a <i>user</i> REST service that supports the following operations
  <ul>
-   <li>view/<i>id</i> - to view a user with the given id </li>
-   <li>list - to view all users</li>
-   <li>update - to update/create an user</li>
+   <li>GET /user/{id} - to view a user with the given id </li>
+   <li>GET /user/final - to view all users</li>
+   <li>PUT /user - to update/create an user</li>
  </ul>
 
-The view and list operations are HTTP GET, and update is using HTTP PUT.
+The view operations are HTTP GET, and update is using HTTP PUT.
 
 From a web browser you can access the first two services using the following links
 
 <ul>
-  <li><a href="rest/user/view/123">user/view/123</a> - to view the user with id 123</li>
-  <li><a href="rest/user/list">user/list</a> - to list all users</li>
+  <li><a href="rest/user/123">user/123</a> - to view the user with id 123</li>
+  <li><a href="rest/user/findAll">user/findAll</a> - to list all users</li>
 </ul>
 
 From the command shell you can use curl to access the service as shown below:
 <pre>
-    curl -X GET -H "Accept: application/json" http://localhost:8080/camel-example-servlet-rest-tomcat-{version}/rest/user/view/123
-    curl -X GET -H "Accept: application/json" http://localhost:8080/camel-example-servlet-rest-tomcat-{version}/rest/user/list
-    curl -X PUT -d "{ \"id\": 666, \"name\": \"The devil\"}" -H "Accept: application/json" http://localhost:8080/camel-example-servlet-rest-tomcat-{version}/rest/user/update
+    curl -X GET -H "Accept: application/json" http://localhost:8080/camel-example-servlet-rest-tomcat-{version}/rest/user/123
+    curl -X GET -H "Accept: application/json" http://localhost:8080/camel-example-servlet-rest-tomcat-{version}/rest/user/findAll
+    curl -X PUT -d "{ \"id\": 666, \"name\": \"The devil\"}" -H "Accept: application/json" http://localhost:8080/camel-example-servlet-rest-tomcat-{version}/rest/user
 </pre>
 
 This assume you installed the example by copying the .war as <tt>camel-example-servlet-rest-tomcat-VERSION.war</tt>

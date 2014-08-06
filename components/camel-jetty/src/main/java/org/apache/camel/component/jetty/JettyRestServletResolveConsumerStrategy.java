@@ -16,12 +16,15 @@
  */
 package org.apache.camel.component.jetty;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 
 import org.apache.camel.component.http.HttpConsumer;
 import org.apache.camel.component.http.HttpServletResolveConsumerStrategy;
-import org.apache.camel.util.ObjectHelper;
 
 /**
  * A {@link org.apache.camel.component.http.HttpServletResolveConsumerStrategy} that supports the Rest DSL.
@@ -30,24 +33,61 @@ public class JettyRestServletResolveConsumerStrategy extends HttpServletResolveC
 
     @Override
     public HttpConsumer resolve(HttpServletRequest request, Map<String, HttpConsumer> consumers) {
+        HttpConsumer answer = null;
+
         String path = request.getPathInfo();
         if (path == null) {
             return null;
         }
+        String method = request.getMethod();
+        if (method == null) {
+            return null;
+        }
 
-        for (String key : consumers.keySet()) {
-            if (useRestMatching(key) && matchRestPath(path, key)) {
-                return consumers.get(key);
+        List<HttpConsumer> candidates = new ArrayList<HttpConsumer>();
+
+        // first match by http method
+        for (Map.Entry<String, HttpConsumer> entry : consumers.entrySet()) {
+            String restrict = entry.getValue().getEndpoint().getHttpMethodRestrict();
+            if (matchRestMethod(method, restrict)) {
+                candidates.add(entry.getValue());
             }
         }
 
-        // fallback to default
-        return super.resolve(request, consumers);
-    }
+        // then see if we got a direct match
+        Iterator<HttpConsumer> it = candidates.iterator();
+        while (it.hasNext()) {
+            HttpConsumer consumer = it.next();
+            String consumerPath = consumer.getPath();
+            if (matchRestPath(path, consumerPath, false)) {
+                answer = consumer;
+                break;
+            }
+        }
 
-    private boolean useRestMatching(String path) {
-        // only need to do rest matching if using { } placeholders
-        return path.indexOf('{') > -1;
+        // then match by non wildcard path
+        if (answer == null) {
+            it = candidates.iterator();
+            while (it.hasNext()) {
+                HttpConsumer consumer = it.next();
+                String consumerPath = consumer.getPath();
+                if (!matchRestPath(path, consumerPath, true)) {
+                    it.remove();
+                }
+            }
+
+            // there should only be one
+            if (candidates.size() == 1) {
+                answer = candidates.get(0);
+            }
+        }
+
+        if (answer == null) {
+            // fallback to default
+            answer = super.resolve(request, consumers);
+        }
+
+        return answer;
     }
 
     /**
@@ -57,7 +97,7 @@ public class JettyRestServletResolveConsumerStrategy extends HttpServletResolveC
      * @param consumerPath  the consumer path which may use { } tokens
      * @return <tt>true</tt> if matched, <tt>false</tt> otherwise
      */
-    public boolean matchRestPath(String requestPath, String consumerPath) {
+    public boolean matchRestPath(String requestPath, String consumerPath, boolean wildcard) {
         // remove starting/ending slashes
         if (requestPath.startsWith("/")) {
             requestPath = requestPath.substring(1);
@@ -86,7 +126,7 @@ public class JettyRestServletResolveConsumerStrategy extends HttpServletResolveC
             String p1 = requestPaths[i];
             String p2 = consumerPaths[i];
 
-            if (p2.startsWith("{") && p2.endsWith("}")) {
+            if (wildcard && p2.startsWith("{") && p2.endsWith("}")) {
                 // always matches
                 continue;
             }
@@ -98,6 +138,21 @@ public class JettyRestServletResolveConsumerStrategy extends HttpServletResolveC
 
         // assume matching
         return true;
+    }
+
+    /**
+     * Matches the given request HTTP method with the configured HTTP method of the consumer
+     *
+     * @param method    the request HTTP method
+     * @param restrict  the consumer configured HTTP restrict method
+     * @return <tt>true</tt> if matched, <tt>false</tt> otherwise
+     */
+    public boolean matchRestMethod(String method, String restrict) {
+        if (restrict == null) {
+            return true;
+        }
+
+        return method.toLowerCase(Locale.US).endsWith(restrict.toLowerCase(Locale.US));
     }
 
 }
