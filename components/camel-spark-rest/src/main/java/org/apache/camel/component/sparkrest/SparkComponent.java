@@ -28,6 +28,7 @@ import org.apache.camel.Processor;
 import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestConsumerFactory;
+import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.URISupport;
 import spark.Spark;
@@ -98,7 +99,7 @@ public class SparkComponent extends UriEndpointComponent implements RestConsumer
         } else {
             // if no explicit port configured, then use port from rest configuration
             RestConfiguration config = getCamelContext().getRestConfiguration();
-            if (config != null && (config.getComponent() == null || config.getComponent().equals("spark-rest"))) {
+            if (config.getComponent() == null || config.getComponent().equals("spark-rest")) {
                 int port = config.getPort();
                 if (port > 0) {
                     Spark.setPort(port);
@@ -108,7 +109,7 @@ public class SparkComponent extends UriEndpointComponent implements RestConsumer
 
         // configure component options
         RestConfiguration config = getCamelContext().getRestConfiguration();
-        if (config != null && (config.getComponent() == null || config.getComponent().equals("spark-rest"))) {
+        if (config.getComponent() == null || config.getComponent().equals("spark-rest")) {
             // configure additional options on spark configuration
             if (config.getComponentProperties() != null && !config.getComponentProperties().isEmpty()) {
                 setProperties(sparkConfiguration, config.getComponentProperties());
@@ -123,8 +124,19 @@ public class SparkComponent extends UriEndpointComponent implements RestConsumer
     }
 
     @Override
-    public Consumer createConsumer(CamelContext camelContext, Processor processor, String verb, String path,
+    public Consumer createConsumer(CamelContext camelContext, Processor processor, String verb, String basePath, String uriTemplate,
                                    String consumes, String produces, Map<String, Object> parameters) throws Exception {
+
+        String path = basePath;
+        if (uriTemplate != null) {
+            // make sure to avoid double slashes
+            if (uriTemplate.startsWith("/")) {
+                path = path + uriTemplate;
+            } else {
+                path = path + "/" + uriTemplate;
+            }
+        }
+        path = FileUtil.stripLeadingSeparator(path);
 
         if (ObjectHelper.isNotEmpty(path)) {
             // spark-rest uses :name syntax instead of {name} so we need to replace those
@@ -141,7 +153,7 @@ public class SparkComponent extends UriEndpointComponent implements RestConsumer
 
         // build query string, and append any endpoint configuration properties
         RestConfiguration config = getCamelContext().getRestConfiguration();
-        if (config != null && (config.getComponent() == null || config.getComponent().equals("spark-rest"))) {
+        if (config.getComponent() == null || config.getComponent().equals("spark-rest")) {
             // setup endpoint options
             if (config.getEndpointProperties() != null && !config.getEndpointProperties().isEmpty()) {
                 map.putAll(config.getEndpointProperties());

@@ -20,6 +20,7 @@ import java.util.Map;
 
 import org.apache.camel.Endpoint;
 import org.apache.camel.impl.UriEndpointComponent;
+import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.ObjectHelper;
 
 public class RestComponent extends UriEndpointComponent {
@@ -39,10 +40,25 @@ public class RestComponent extends UriEndpointComponent {
         }
 
         String verb = ObjectHelper.before(remaining, ":");
-        String path = ObjectHelper.after(remaining, ":");
+        String s = ObjectHelper.after(remaining, ":");
+
+        String path;
+        String uriTemplate;
+        if (s != null && s.contains(":")) {
+            path = ObjectHelper.before(s, ":");
+            uriTemplate = ObjectHelper.after(s, ":");
+        } else {
+            path = s;
+            uriTemplate = null;
+        }
+
+        // remove trailing slashes
+        path = FileUtil.stripTrailingSeparator(path);
+        uriTemplate = FileUtil.stripTrailingSeparator(uriTemplate);
 
         answer.setVerb(verb);
         answer.setPath(path);
+        answer.setUriTemplate(uriTemplate);
 
         // if no explicit component name was given, then fallback and use default configured component name
         if (answer.getComponentName() == null && getCamelContext().getRestConfiguration() != null) {

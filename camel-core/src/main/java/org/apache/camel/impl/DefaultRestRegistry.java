@@ -38,9 +38,9 @@ public class DefaultRestRegistry extends ServiceSupport implements StaticService
     private CamelContext camelContext;
     private final Map<Consumer, RestService> registry = new LinkedHashMap<Consumer, RestService>();
 
-    public void addRestService(Consumer consumer, String url, String method, String uriTemplate, String consumes, String produces,
-                        String inType, String outType) {
-        RestServiceEntry entry = new RestServiceEntry(consumer, url, uriTemplate, method, consumes, produces, inType, outType);
+    public void addRestService(Consumer consumer, String url, String baseUrl, String basePath, String uriTemplate, String method,
+                               String consumes, String produces, String inType, String outType) {
+        RestServiceEntry entry = new RestServiceEntry(consumer, url, baseUrl, basePath, uriTemplate, method, consumes, produces, inType, outType);
         registry.put(consumer, entry);
     }
 
@@ -85,18 +85,22 @@ public class DefaultRestRegistry extends ServiceSupport implements StaticService
 
         private final Consumer consumer;
         private final String url;
-        private final String path;
+        private final String baseUrl;
+        private final String basePath;
+        private final String uriTemplate;
         private final String method;
         private final String consumes;
         private final String produces;
         private final String inType;
         private final String outType;
 
-        private RestServiceEntry(Consumer consumer, String url, String path, String method, String consumes, String produces,
-                                 String inType, String outType) {
+        private RestServiceEntry(Consumer consumer, String url, String baseUrl, String basePath, String uriTemplate,
+                                 String method, String consumes, String produces, String inType, String outType) {
             this.consumer = consumer;
             this.url = url;
-            this.path = path;
+            this.baseUrl = baseUrl;
+            this.basePath = basePath;
+            this.uriTemplate = uriTemplate;
             this.method = method;
             this.consumes = consumes;
             this.produces = produces;
@@ -112,8 +116,16 @@ public class DefaultRestRegistry extends ServiceSupport implements StaticService
             return url;
         }
 
+        public String getBaseUrl() {
+            return baseUrl;
+        }
+
+        public String getBasePath() {
+            return basePath;
+        }
+
         public String getUriTemplate() {
-            return path;
+            return uriTemplate;
         }
 
         public String getMethod() {

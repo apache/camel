@@ -34,7 +34,9 @@ import org.apache.camel.spi.HeaderFilterStrategyAware;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestConsumerFactory;
 import org.apache.camel.util.FileUtil;
+import org.apache.camel.util.HostUtils;
 import org.apache.camel.util.IntrospectionSupport;
+import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.ServiceHelper;
 import org.apache.camel.util.URISupport;
 import org.apache.camel.util.UnsafeUriCharactersEncoder;
@@ -213,18 +215,27 @@ public class NettyHttpComponent extends NettyComponent implements HeaderFilterSt
     }
 
     @Override
-    public Consumer createConsumer(CamelContext camelContext, Processor processor, String verb, String path,
+    public Consumer createConsumer(CamelContext camelContext, Processor processor, String verb, String basePath, String uriTemplate,
                                    String consumes, String produces, Map<String, Object> parameters) throws Exception {
 
+        String path = basePath;
+        if (uriTemplate != null) {
+            // make sure to avoid double slashes
+            if (uriTemplate.startsWith("/")) {
+                path = path + uriTemplate;
+            } else {
+                path = path + "/" + uriTemplate;
+            }
+        }
         path = FileUtil.stripLeadingSeparator(path);
 
         String scheme = "http";
-        String host = "0.0.0.0";
+        String host = "";
         int port = 0;
 
         // if no explicit port/host configured, then use port from rest configuration
         RestConfiguration config = getCamelContext().getRestConfiguration();
-        if (config != null && (config.getComponent() == null || config.getComponent().equals("netty-http"))) {
+        if (config.getComponent() == null || config.getComponent().equals("netty-http")) {
             if (config.getScheme() != null) {
                 scheme = config.getScheme();
             }
@@ -234,6 +245,15 @@ public class NettyHttpComponent extends NettyComponent implements HeaderFilterSt
             int num = config.getPort();
             if (num > 0) {
                 port = num;
+            }
+       }
+
+        // if no explicit hostname set then resolve the hostname
+        if (ObjectHelper.isEmpty(host)) {
+            if (config.getRestHostNameResolver() == RestConfiguration.RestHostNameResolver.localHostName) {
+                host = HostUtils.getLocalHostName();
+            } else if (config.getRestHostNameResolver() == RestConfiguration.RestHostNameResolver.localIp) {
+                host = HostUtils.getLocalIp();
             }
         }
 

@@ -40,6 +40,8 @@ public class RestEndpoint extends DefaultEndpoint {
     @UriParam
     private String path;
     @UriParam
+    private String uriTemplate;
+    @UriParam
     private String consumes;
     @UriParam
     private String produces;
@@ -71,6 +73,14 @@ public class RestEndpoint extends DefaultEndpoint {
 
     public void setPath(String path) {
         this.path = path;
+    }
+
+    public String getUriTemplate() {
+        return uriTemplate;
+    }
+
+    public void setUriTemplate(String uriTemplate) {
+        this.uriTemplate = uriTemplate;
     }
 
     public String getConsumes() {
@@ -154,7 +164,7 @@ public class RestEndpoint extends DefaultEndpoint {
         }
 
         if (factory != null) {
-            Consumer consumer = factory.createConsumer(getCamelContext(), processor, getVerb(), getPath(), getConsumes(), getProduces(), getParameters());
+            Consumer consumer = factory.createConsumer(getCamelContext(), processor, getVerb(), getPath(), getUriTemplate(), getConsumes(), getProduces(), getParameters());
             configureConsumer(consumer);
 
             // if no explicit port/host configured, then use port from rest configuration
@@ -188,7 +198,17 @@ public class RestEndpoint extends DefaultEndpoint {
             if (!path.startsWith("/")) {
                 path = "/" + path;
             }
-            String url = scheme + "://" + host + (port != 80 ? ":" + port : "") + path;
+            String baseUrl = scheme + "://" + host + (port != 80 ? ":" + port : "") + path;
+
+            String url = baseUrl;
+            if (uriTemplate != null) {
+                // make sure to avoid double slashes
+                if (uriTemplate.startsWith("/")) {
+                    url = url + uriTemplate;
+                } else {
+                    url = url + "/" + uriTemplate;
+                }
+            }
 
             // optional binding type information
             String inType = (String) getParameters().get("inType");
@@ -197,7 +217,7 @@ public class RestEndpoint extends DefaultEndpoint {
             // add to rest registry so we can keep track of them, we will remove from the registry when the consumer is removed
             // the rest registry will automatic keep track when the consumer is removed,
             // and un-register the REST service from the registry
-            getCamelContext().getRestRegistry().addRestService(consumer, url, getVerb(), getPath(), getConsumes(), getProduces(), inType, outType);
+            getCamelContext().getRestRegistry().addRestService(consumer, url, baseUrl, getPath(), getUriTemplate(), getVerb(), getConsumes(), getProduces(), inType, outType);
 
             return consumer;
         } else {

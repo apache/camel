@@ -387,10 +387,7 @@ public class RestDefinition {
 
     private String buildUri(VerbDefinition verb) {
         if (uri != null && verb.getUri() != null) {
-            // make sure there is only one / slash separator between the two
-            String s = FileUtil.stripTrailingSeparator(uri);
-            String s2 = FileUtil.stripLeadingSeparator(verb.getUri());
-            return s + "/" + s2;
+            return uri + ":" + verb.getUri();
         } else if (uri != null) {
             return uri;
         } else if (verb.getUri() != null) {

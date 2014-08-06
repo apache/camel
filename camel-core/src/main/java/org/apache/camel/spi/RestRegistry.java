@@ -43,12 +43,22 @@ public interface RestRegistry extends Service {
         String getState();
 
         /**
-         * Gets the absolute url to the REST service
+         * Gets the absolute url to the REST service (baseUrl + uriTemplate)
          */
         String getUrl();
 
         /**
-         * Gets the uri template (context path)
+         * Gets the base url to the REST service
+         */
+        String getBaseUrl();
+
+        /**
+         * Gets the base path to the REST service
+         */
+        String getBasePath();
+
+        /**
+         * Gets the uri template
          */
         String getUriTemplate();
 
@@ -88,12 +98,16 @@ public interface RestRegistry extends Service {
      *
      * @param consumer    the consumer
      * @param url         the absolute url of the REST service
+     * @param baseUrl     the base url of the REST service
+     * @param basePath    the base path
+     * @param uriTemplate the uri template
      * @param method      the HTTP method
-     * @param uriTemplate the uri template (context-path)
      * @param consumes    optional details about what media-types the REST service accepts
      * @param produces    optional details about what media-types the REST service returns
+     * @param inType      optional detail input binding to a FQN class name
+     * @param outType     optional detail output binding to a FQN class name
      */
-    void addRestService(Consumer consumer, String url, String method, String uriTemplate, String consumes, String produces,
+    void addRestService(Consumer consumer, String url, String baseUrl, String basePath, String uriTemplate, String method, String consumes, String produces,
                         String inType, String outType);
 
     /**
