@@ -20,8 +20,6 @@ import java.util.List;
 import javax.management.openmbean.CompositeData;
 import javax.management.openmbean.CompositeDataSupport;
 import javax.management.openmbean.CompositeType;
-import javax.management.openmbean.OpenType;
-import javax.management.openmbean.SimpleType;
 import javax.management.openmbean.TabularData;
 import javax.management.openmbean.TabularDataSupport;
 
@@ -67,8 +65,10 @@ public class ManagedRestRegistry extends ManagedService implements ManagedRestRe
                 String consumes = entry.getConsumes();
                 String produces = entry.getProduces();
                 String state = entry.getState();
-                CompositeData data = new CompositeDataSupport(ct, new String[]{"url", "method", "uriTemplate", "consumes", "produces", "state"},
-                        new Object[]{url, method, uriTemplate, consumes, produces, state});
+                String inType = entry.getInType();
+                String outType = entry.getOutType();
+                CompositeData data = new CompositeDataSupport(ct, new String[]{"url", "method", "uriTemplate", "consumes", "produces", "inType", "outType", "state"},
+                        new Object[]{url, method, uriTemplate, consumes, produces, inType, outType, state});
                 answer.put(data);
             }
             return answer;

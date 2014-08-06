@@ -38,8 +38,9 @@ public class DefaultRestRegistry extends ServiceSupport implements StaticService
     private CamelContext camelContext;
     private final Map<Consumer, RestService> registry = new LinkedHashMap<Consumer, RestService>();
 
-    public void addRestService(Consumer consumer, String url, String method, String uriTemplate, String consumes, String produces) {
-        RestServiceEntry entry = new RestServiceEntry(consumer, url, uriTemplate, method, consumes, produces);
+    public void addRestService(Consumer consumer, String url, String method, String uriTemplate, String consumes, String produces,
+                        String inType, String outType) {
+        RestServiceEntry entry = new RestServiceEntry(consumer, url, uriTemplate, method, consumes, produces, inType, outType);
         registry.put(consumer, entry);
     }
 
@@ -85,17 +86,22 @@ public class DefaultRestRegistry extends ServiceSupport implements StaticService
         private final Consumer consumer;
         private final String url;
         private final String path;
-        private final String verb;
+        private final String method;
         private final String consumes;
         private final String produces;
+        private final String inType;
+        private final String outType;
 
-        private RestServiceEntry(Consumer consumer, String url, String path, String verb, String consumes, String produces) {
+        private RestServiceEntry(Consumer consumer, String url, String path, String method, String consumes, String produces,
+                                 String inType, String outType) {
             this.consumer = consumer;
             this.url = url;
             this.path = path;
-            this.verb = verb;
+            this.method = method;
             this.consumes = consumes;
             this.produces = produces;
+            this.inType = inType;
+            this.outType = outType;
         }
 
         public Consumer getConsumer() {
@@ -111,7 +117,7 @@ public class DefaultRestRegistry extends ServiceSupport implements StaticService
         }
 
         public String getMethod() {
-            return verb;
+            return method;
         }
 
         public String getConsumes() {
@@ -120,6 +126,14 @@ public class DefaultRestRegistry extends ServiceSupport implements StaticService
 
         public String getProduces() {
             return produces;
+        }
+
+        public String getInType() {
+            return inType;
+        }
+
+        public String getOutType() {
+            return outType;
         }
 
         public String getState() {

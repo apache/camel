@@ -67,6 +67,20 @@ public interface RestRegistry extends Service {
          */
         String getProduces();
 
+        /**
+         * Optional detail about input binding to a FQN class name.
+         * <p/>
+         * If the input accepts a list, then <tt>List&lt;class name&gt;</tt> is enclosed the name.
+         */
+        String getInType();
+
+        /**
+         * Optional detail about output binding to a FQN class name.
+         * <p/>
+         * If the output accepts a list, then <tt>List&lt;class name&gt;</tt> is enclosed the name.
+         */
+        String getOutType();
+
     }
 
     /**
@@ -79,7 +93,8 @@ public interface RestRegistry extends Service {
      * @param consumes    optional details about what media-types the REST service accepts
      * @param produces    optional details about what media-types the REST service returns
      */
-    void addRestService(Consumer consumer, String url, String method, String uriTemplate, String consumes, String produces);
+    void addRestService(Consumer consumer, String url, String method, String uriTemplate, String consumes, String produces,
+                        String inType, String outType);
 
     /**
      * Removes the REST service from the registry

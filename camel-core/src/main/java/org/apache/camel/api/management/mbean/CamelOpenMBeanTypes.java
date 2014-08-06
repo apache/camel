@@ -47,10 +47,9 @@ public final class CamelOpenMBeanTypes {
     }
 
     public static CompositeType listRestServicesCompositeType() throws OpenDataException {
-        return new CompositeType("rests", "Rest Services", new String[]{"url", "method", "uriTemplate", "consumes", "produces", "state"},
-                new String[]{"Url", "Method", "Uri Template", "Consumes", "Produces", "State"},
-                new OpenType[]{SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING});
+        return new CompositeType("rests", "Rest Services", new String[]{"url", "method", "uriTemplate", "consumes", "produces", "inType", "outType", "state"},
+                new String[]{"Url", "Method", "Uri Template", "Consumes", "Produces", "Input Type", "Output Type", "State"},
+                new OpenType[]{SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING, SimpleType.STRING});
     }
-
 
 }

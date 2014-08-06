@@ -306,25 +306,6 @@ public class RestDefinition {
         List<RouteDefinition> answer = new ArrayList<RouteDefinition>();
 
         for (VerbDefinition verb : getVerbs()) {
-            String from = "rest:" + verb.asVerb() + ":" + buildUri(verb);
-            // append options
-            Map<String, Object> options = new HashMap<String, Object>();
-            // verb takes precedence over configuration on rest
-            if (verb.getConsumes() != null) {
-                options.put("consumes", verb.getConsumes());
-            } else if (getConsumes() != null) {
-                options.put("consumes", getConsumes());
-            }
-            if (verb.getProduces() != null) {
-                options.put("produces", verb.getProduces());
-            } else if (getProduces() != null) {
-                options.put("produces", getProduces());
-            }
-            if (!options.isEmpty()) {
-                String query = URISupport.createQueryString(options);
-                from = from + "?" + query;
-            }
-
             // either the verb has a singular to or a embedded route
             RouteDefinition route = verb.getRoute();
             if (route == null) {
@@ -357,6 +338,43 @@ public class RestDefinition {
                 binding.setBindingMode(getBindingMode());
             }
             route.getOutputs().add(0, binding);
+
+            // create the from endpoint uri which is using the rest component
+            String from = "rest:" + verb.asVerb() + ":" + buildUri(verb);
+
+            // append options
+            Map<String, Object> options = new HashMap<String, Object>();
+            // verb takes precedence over configuration on rest
+            if (verb.getConsumes() != null) {
+                options.put("consumes", verb.getConsumes());
+            } else if (getConsumes() != null) {
+                options.put("consumes", getConsumes());
+            }
+            if (verb.getProduces() != null) {
+                options.put("produces", verb.getProduces());
+            } else if (getProduces() != null) {
+                options.put("produces", getProduces());
+            }
+
+            // append optional type binding information
+            String inType = binding.getType();
+            if (binding.getList() != null && binding.getList()) {
+                inType = "List<" + inType + ">";
+            }
+            if (inType != null) {
+                options.put("inType", inType);
+            }
+            String outType = binding.getOutType();
+            if (binding.getOutList() != null && binding.getOutList()) {
+                outType = "List<" + outType + ">";
+            }
+            if (outType != null) {
+                options.put("outType", outType);
+            }
+            if (!options.isEmpty()) {
+                String query = URISupport.createQueryString(options);
+                from = from + "?" + query;
+            }
 
             // the route should be from this rest endpoint
             route.fromRest(from);
