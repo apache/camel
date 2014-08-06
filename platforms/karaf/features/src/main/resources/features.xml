@@ -635,7 +635,8 @@
     <feature version='${jclouds-version}'>jclouds</feature>
     <feature version='${jclouds-version}'>jclouds-blobstore</feature>
     <feature version='${jclouds-version}'>jclouds-compute</feature>
-    <feature version='${project.version}'>camel-core</feature>
+    <feature version='${project.version}'>camel-core</feature>   
+    <bundle>mvn:javax.ws.rs/jsr311-api/${jsr311-api-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-jclouds/${project.version}</bundle>
   </feature>
   <feature name='camel-jcr' version='${project.version}' resolver='(obr)' start-level='50'>
