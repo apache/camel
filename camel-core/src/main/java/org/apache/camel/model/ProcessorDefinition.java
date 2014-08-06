@@ -68,6 +68,7 @@ import org.apache.camel.spi.Policy;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.IntrospectionSupport;
 import org.apache.camel.util.ObjectHelper;
+import org.owasp.encoder.Encode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -270,15 +271,15 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
         // set the error handler, must be done after init as we can set the error handler as first in the chain
         if (defn instanceof TryDefinition || defn instanceof CatchDefinition || defn instanceof FinallyDefinition) {
             // do not use error handler for try .. catch .. finally blocks as it will handle errors itself
-            log.trace("{} is part of doTry .. doCatch .. doFinally so no error handler is applied", defn);
+            log.trace("{} is part of doTry .. doCatch .. doFinally so no error handler is applied", Encode.forJava(defn.toString()));
         } else if (ProcessorDefinitionHelper.isParentOfType(TryDefinition.class, defn, true)
                 || ProcessorDefinitionHelper.isParentOfType(CatchDefinition.class, defn, true)
                 || ProcessorDefinitionHelper.isParentOfType(FinallyDefinition.class, defn, true)) {
             // do not use error handler for try .. catch .. finally blocks as it will handle errors itself
             // by checking that any of our parent(s) is not a try .. catch or finally type
-            log.trace("{} is part of doTry .. doCatch .. doFinally so no error handler is applied", defn);
+            log.trace("{} is part of doTry .. doCatch .. doFinally so no error handler is applied", Encode.forJava(defn.toString()));
         } else if (defn instanceof OnExceptionDefinition || ProcessorDefinitionHelper.isParentOfType(OnExceptionDefinition.class, defn, true)) {
-            log.trace("{} is part of OnException so no error handler is applied", defn);
+            log.trace("{} is part of OnException so no error handler is applied", Encode.forJava(defn.toString()));
             // do not use error handler for onExceptions blocks as it will handle errors itself
         } else if (defn instanceof MulticastDefinition) {
             // do not use error handler for multicast as it offers fine grained error handlers for its outputs
@@ -288,7 +289,8 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
                 // only wrap the parent (not the children of the multicast)
                 wrapChannelInErrorHandler(channel, routeContext);
             } else {
-                log.trace("{} is part of multicast which have special error handling so no error handler is applied", defn);
+                log.trace("{} is part of multicast which have special error handling so no error handler is applied",
+                        Encode.forJava(defn.toString()));
             }
         } else {
             // use error handler by default or if configured to do so
@@ -297,7 +299,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
 
         // do post init at the end
         channel.postInitChannel(defn, routeContext);
-        log.trace("{} wrapped in Channel: {}", defn, channel);
+        log.trace("{} wrapped in Channel: {}", Encode.forJava(defn.toString()), channel);
 
         return channel;
     }
@@ -311,7 +313,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      */
     private void wrapChannelInErrorHandler(Channel channel, RouteContext routeContext) throws Exception {
         if (isInheritErrorHandler() == null || isInheritErrorHandler()) {
-            log.trace("{} is configured to inheritErrorHandler", this);
+            log.trace("{} is configured to inheritErrorHandler", Encode.forJava(this.toString()));
             Processor output = channel.getOutput();
             Processor errorHandler = wrapInErrorHandler(routeContext, output);
             // set error handler on channel

@@ -24,6 +24,7 @@ import java.util.concurrent.atomic.AtomicLong;
 
 import com.googlecode.concurrentlinkedhashmap.ConcurrentLinkedHashMap;
 import com.googlecode.concurrentlinkedhashmap.EvictionListener;
+import org.owasp.encoder.Encode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -157,7 +158,7 @@ public class LRUCache<K, V> implements Map<K, V>, EvictionListener<K, V>, Serial
     @Override
     public void onEviction(K key, V value) {
         evicted.incrementAndGet();
-        LOG.trace("onEviction {} -> {}", key, value);
+        LOG.trace("onEviction {} -> {}", Encode.forJava(key.toString()), Encode.forJava(value.toString()));
         if (stopOnEviction) {
             try {
                 // stop service as its evicted from cache

@@ -35,6 +35,7 @@ import java.nio.charset.Charset;
 import java.nio.charset.UnsupportedCharsetException;
 
 import org.apache.camel.Exchange;
+import org.owasp.encoder.Encode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -330,7 +331,7 @@ public final class IOHelper {
                     log = LOG;
                 }
                 if (name != null) {
-                    log.warn("Cannot close: " + name + ". Reason: " + e.getMessage(), e);
+                    log.warn("Cannot close: " + Encode.forJava(name) + ". Reason: " + e.getMessage(), e);
                 } else {
                     log.warn("Cannot close. Reason: " + e.getMessage(), e);
                 }

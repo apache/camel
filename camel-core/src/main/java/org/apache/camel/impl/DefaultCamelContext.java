@@ -136,6 +136,7 @@ import org.apache.camel.util.StopWatch;
 import org.apache.camel.util.StringHelper;
 import org.apache.camel.util.TimeUtils;
 import org.apache.camel.util.URISupport;
+import org.owasp.encoder.Encode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -348,7 +349,8 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
             if (component == null && autoCreateComponents) {
                 try {
                     if (log.isDebugEnabled()) {
-                        log.debug("Using ComponentResolver: {} to resolve component with name: {}", getComponentResolver(), name);
+                        log.debug("Using ComponentResolver: {} to resolve component with name: {}",
+                                Encode.forJava(getComponentResolver().toString()), name);
                     }
                     component = getComponentResolver().resolveComponent(name, this);
                     if (component != null) {
@@ -364,7 +366,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
                     throw new RuntimeCamelException("Cannot auto create component: " + name, e);
                 }
             }
-            log.trace("getComponent({}) -> {}", name, component);
+            log.trace("getComponent({}) -> {}", name, component == null ? "null" : Encode.forJava(component.toString()));
             return component;
         }
     }
@@ -1036,7 +1038,8 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         String path = CamelContextHelper.COMPONENT_DOCUMENTATION_PREFIX + packageName + "/" + componentName + ".html";
         ClassResolver resolver = getClassResolver();
         InputStream inputStream = resolver.loadResourceAsStream(path);
-        log.debug("Loading component documentation for: {} using class resolver: {} -> {}", new Object[]{componentName, resolver, inputStream});
+        log.debug("Loading component documentation for: {} using class resolver: {} -> {}", new Object[]{componentName,
+                Encode.forJava(resolver.toString()), inputStream});
         if (inputStream != null) {
             try {
                 return IOHelper.loadText(inputStream);

@@ -32,7 +32,7 @@
 
   <properties>
     <compiler.fork>true</compiler.fork>
-    
+
     <!-- dependency versions -->
     <abdera-version>1.1.3</abdera-version>
     <!-- Note that activemq dependency is only used for testing! -->
@@ -185,7 +185,7 @@
     <httpunit-version>1.7</httpunit-version>
     <httpcore4-version>4.3.2</httpcore4-version>
     <httpclient4-version>4.3.3</httpclient4-version>
-    <httpclient-version>3.1</httpclient-version> 
+    <httpclient-version>3.1</httpclient-version>
     <ibatis-bundle-version>2.3.4.726_4</ibatis-bundle-version>
     <ibatis-version>2.3.4.726</ibatis-version>
     <ical4j-version>1.0.5.2</ical4j-version>
@@ -336,7 +336,7 @@
     <pdfbox-version>1.6.0</pdfbox-version>
     <plexus-container-default-version>1.0-alpha-48</plexus-container-default-version>
     <plexus-utils-version>1.5.6</plexus-utils-version>
-    <pojosr-version>0.2.1</pojosr-version>  
+    <pojosr-version>0.2.1</pojosr-version>
     <protobuf-version>2.5.0</protobuf-version>
     <qpid-bundle-version>0.26_1</qpid-bundle-version>
     <qpid-version>0.26</qpid-version>
@@ -386,9 +386,9 @@
     <spring-javaconfig-version>1.0.0-20090215</spring-javaconfig-version>
     <spring-ldap-version>1.3.1.RELEASE</spring-ldap-version>
     <spring-ldap-bundle-version>1.3.1.RELEASE_2</spring-ldap-bundle-version>
-    <spring-retry-version>1.0.3.RELEASE</spring-retry-version>  
+    <spring-retry-version>1.0.3.RELEASE</spring-retry-version>
     <spring-version-range>[3.2,4)</spring-version-range>
-    <spring-version>${spring32-version}</spring-version>   
+    <spring-version>${spring32-version}</spring-version>
     <spring32-version>3.2.8.RELEASE</spring32-version>
     <spring4-version>4.0.2.RELEASE</spring4-version>
     <spring-osgi-version>1.2.1</spring-osgi-version>
@@ -452,6 +452,7 @@
     <xom-version>1.2.5</xom-version>
     <yammer-metrics-version>2.2.0</yammer-metrics-version>
     <zookeeper-version>3.4.6</zookeeper-version>
+    <owasp.encoder.version>1.1</owasp.encoder.version>
 
     <!-- OSGi bundles properties -->
     <camel.osgi.import.camel.version>version="[$(version;==;${camel.osgi.version.clean}),$(version;=+;${camel.osgi.version.clean}))"</camel.osgi.import.camel.version>
@@ -482,6 +483,7 @@
       javax.persistence.*;version="[1.1,3)",
       org.apache.lucene.*;version="${lucene-version-range}",
       org.apache.solr.*;version="${solr-version-range}",
+      org.owasp.encoder.*;version="[1.1,2)",
     </camel.osgi.import.defaults>
     <camel.osgi.import.before.defaults />
     <camel.osgi.import.additional />
@@ -886,7 +888,7 @@
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-jsonpath</artifactId>
         <version>${project.version}</version>
-      </dependency>      
+      </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-jt400</artifactId>
@@ -1131,7 +1133,7 @@
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-splunk</artifactId>
         <version>${project.version}</version>
-      </dependency>      
+      </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-snmp</artifactId>
@@ -2156,6 +2158,12 @@
         <version>${maven-archetype-packaging-version}</version>
       </dependency>
 
+        <dependency>
+          <groupId>org.owasp.encoder</groupId>
+          <artifactId>encoder</artifactId>
+          <version>${owasp.encoder.version}</version>
+        </dependency>
+
     </dependencies>
   </dependencyManagement>
 
@@ -2194,8 +2202,8 @@
             </defaultOptions>
           </configuration>
           <dependencies>
-            <!-- needed to add this to get around the following error on 
-              IBM's JDK org.apache.xerces.impl.dv.DVFactoryException: DTD factory class 
+            <!-- needed to add this to get around the following error on
+              IBM's JDK org.apache.xerces.impl.dv.DVFactoryException: DTD factory class
               org.apache.xerces.impl.dv.dtd.DTDDVFactoryImpl does not extend from DTDDVFactory. -->
             <dependency>
               <groupId>xerces</groupId>
@@ -2427,8 +2435,8 @@
           <version>${maven-war-plugin-version}</version>
           <configuration>
             <webResources>
-              <!-- HACK: Include legal files explicitly, otherwise they will 
-                end up in the wrong path or in another jar file in the war. NOTE: targetPath 
+              <!-- HACK: Include legal files explicitly, otherwise they will
+                end up in the wrong path or in another jar file in the war. NOTE: targetPath
                 is broken for webResources (as documented) -->
               <resource>
                 <directory>${project.build.outputDirectory}</directory>
@@ -2703,7 +2711,7 @@
         <activeByDefault>true</activeByDefault>
       </activation>
     </profile>
-    
+
     <profile>
       <id>fastinstall</id>
       <activation>
@@ -2717,7 +2725,7 @@
         <noassembly>true</noassembly>
       </properties>
     </profile>
-    
+
     <profile>
       <id>sourcecheck</id>
       <build>
@@ -2729,7 +2737,7 @@
         </plugins>
       </build>
     </profile>
-    
+
     <profile>
       <id>setup.eclipse</id>
       <build>
@@ -2752,7 +2760,7 @@
         </plugins>
       </build>
     </profile>
-    
+
     <!-- profiles for choosing default spring version -->
     <profile>
       <id>spring3.2</id>
@@ -2785,5 +2793,5 @@
       </dependencies>
     </profile>
   </profiles>
-  
+
 </project>

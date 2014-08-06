@@ -24,6 +24,7 @@ import org.apache.camel.NoFactoryAvailableException;
 import org.apache.camel.spi.ComponentResolver;
 import org.apache.camel.spi.FactoryFinder;
 import org.apache.camel.util.CamelContextHelper;
+import org.owasp.encoder.Encode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -46,9 +47,9 @@ public class DefaultComponentResolver implements ComponentResolver {
         Object bean = null;
         try {
             bean = context.getRegistry().lookupByName(name);
-            getLog().debug("Found component: {} in registry: {}", name, bean);
+            getLog().debug("Found component: {} in registry: {}", Encode.forJava(name), bean);
         } catch (Exception e) {
-            getLog().debug("Ignored error looking up bean: " + name, e);
+            getLog().debug("Ignored error looking up bean: " + Encode.forJava(name), e);
         }
         if (bean != null) {
             if (bean instanceof Component) {
@@ -79,7 +80,8 @@ public class DefaultComponentResolver implements ComponentResolver {
         }
 
         if (getLog().isDebugEnabled()) {
-            getLog().debug("Found component: {} via type: {} via: {}{}", new Object[]{name, type.getName(), factoryFinder.getResourcePath(), name});
+            String encodedName = Encode.forJava(name);
+            getLog().debug("Found component: {} via type: {} via: {}{}", new Object[]{encodedName, type.getName(), factoryFinder.getResourcePath(), encodedName});
         }
 
         // create the component

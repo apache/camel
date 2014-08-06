@@ -63,6 +63,7 @@ import org.osgi.framework.BundleContext;
 import org.osgi.framework.BundleEvent;
 import org.osgi.framework.ServiceRegistration;
 
+import org.owasp.encoder.Encode;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -316,7 +317,7 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer {
 
                     if (StringHelper.hasUpperCase(pkg)) {
                         // its a FQN class name so load it directly
-                        LOG.trace("Loading {} class", pkg);
+                        LOG.trace("Loading {} class", Encode.forJava(pkg));
                         try {
                             Class<?> clazz = bundle.loadClass(pkg);
                             if (test.matches(clazz)) {
@@ -326,7 +327,7 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer {
                             continue;
                         } catch (Throwable t) {
                             // Ignore
-                            LOG.trace("Failed to load " + pkg + " class due " + t.getMessage() + ". This exception will be ignored.", t);
+                            LOG.trace("Failed to load " + Encode.forJava(pkg) + " class due " + t.getMessage() + ". This exception will be ignored.", t);
                         }
                     }
 
@@ -386,7 +387,7 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer {
                 return null;
             }
             URL url = bundle.getEntry(path);
-            LOG.trace("The entry {}'s url is {}", name, url);
+            LOG.trace("The entry {}'s url is {}", name, Encode.forUri(url.toString()));
             return createInstance(name, url, context.getInjector());
         }
 
