@@ -26,6 +26,7 @@
     
     <bean id="jms" class="org.apache.activemq.camel.component.ActiveMQComponent">
         <property name="brokerURL" value="vm://localhost?broker.persistent=false"/>
+        <property name="acceptMessagesWhileStopping" value="true"/>
     </bean>
 
     <camelContext xmlns="http://camel.apache.org/schema/spring">
