@@ -48,7 +48,8 @@ public class SharedQueueMessageListenerContainer extends DefaultJmsMessageListen
      * @param fixedMessageSelector the fixed selector
      */
     public SharedQueueMessageListenerContainer(JmsEndpoint endpoint, String fixedMessageSelector) {
-        super(endpoint);
+        // request-reply listener container should not allow quick-stop so we can keep listening for reply messages
+        super(endpoint, false);
         this.fixedMessageSelector = fixedMessageSelector;
     }
 
@@ -59,7 +60,7 @@ public class SharedQueueMessageListenerContainer extends DefaultJmsMessageListen
      * @param creator the create to create the dynamic selector
      */
     public SharedQueueMessageListenerContainer(JmsEndpoint endpoint, MessageSelectorCreator creator) {
-        super(endpoint);
+        super(endpoint, false);
         this.creator = creator;
     }
 
