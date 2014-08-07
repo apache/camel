@@ -32,6 +32,7 @@ import java.util.Map;
 import java.util.Properties;
 import java.util.Set;
 import java.util.TreeMap;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
@@ -165,7 +166,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     private LanguageResolver languageResolver = new DefaultLanguageResolver();
     private final Map<String, Language> languages = new HashMap<String, Language>();
     private Registry registry;
-    private List<LifecycleStrategy> lifecycleStrategies = new ArrayList<LifecycleStrategy>();
+    private List<LifecycleStrategy> lifecycleStrategies = new CopyOnWriteArrayList<LifecycleStrategy>();
     private ManagementStrategy managementStrategy;
     private ManagementMBeanAssembler managementMBeanAssembler;
     private final List<RouteDefinition> routeDefinitions = new ArrayList<RouteDefinition>();
