@@ -16,8 +16,13 @@
  */
 package org.apache.camel.example.rest;
 
+import com.wordnik.swagger.config.SwaggerConfig;
+import com.wordnik.swagger.model.ApiListing;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.swagger.RestSwaggerReader;
 import org.apache.camel.model.rest.RestBindingMode;
+import org.apache.camel.model.rest.RestDefinition;
+import scala.Option;
 
 /**
  * Define REST services using the Camel REST DSL
