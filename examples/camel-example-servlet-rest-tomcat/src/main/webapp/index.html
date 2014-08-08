@@ -49,13 +49,10 @@ From a web browser you can access the first two services using the following lin
 
 From the command shell you can use curl to access the service as shown below:
 <pre>
-    curl -X GET -H "Accept: application/json" http://localhost:8080/camel-example-servlet-rest-tomcat-{version}/rest/user/123
-    curl -X GET -H "Accept: application/json" http://localhost:8080/camel-example-servlet-rest-tomcat-{version}/rest/user/findAll
-    curl -X PUT -d "{ \"id\": 666, \"name\": \"The devil\"}" -H "Accept: application/json" http://localhost:8080/camel-example-servlet-rest-tomcat-{version}/rest/user
+    curl -X GET -H "Accept: application/json" http://localhost:8080/camel-example-servlet-rest-tomcat/rest/user/123
+    curl -X GET -H "Accept: application/json" http://localhost:8080/camel-example-servlet-rest-tomcat/rest/user/findAll
+    curl -X PUT -d "{ \"id\": 666, \"name\": \"The devil\"}" -H "Accept: application/json" http://localhost:8080/camel-example-servlet-rest-tomcat/rest/user
 </pre>
-
-This assume you installed the example by copying the .war as <tt>camel-example-servlet-rest-tomcat-VERSION.war</tt>
-, where VERSION is the Camel version such as 2.14.0, into the <b>webapps</b> directory of Apache Tomcat.
 
 <p/>
 If you hit any problems please let us know on the

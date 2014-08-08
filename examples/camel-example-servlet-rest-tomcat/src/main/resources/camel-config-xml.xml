@@ -30,12 +30,17 @@
 
     <!-- configure rest to use the camel-servlet component, and use json binding mode -->
     <!-- and tell to output json in pretty print mode -->
-    <restConfiguration component="servlet" bindingMode="json">
+    <!-- setup context path and port number that Apache Tomcat will deploy this application with,
+         as we use the servlet component, then we need to aid Camel to tell it these details so Camel
+         knows the url to the REST services.
+         Notice: This is optional, but needed if the RestRegistry should enlist accurate information.
+         You can access the RestRegistry from JMX at runtime -->
+    <restConfiguration component="servlet" bindingMode="json" contextPath="camel-example-servlet-rest-tomcat/rest" port="8080">
       <dataFormatProperty key="prettyPrint" value="true"/>
     </restConfiguration>
 
     <!-- defines the rest services using the context-path /user -->
-    <rest uri="/user" consumes="application/json" produces="application/json">
+    <rest path="/user" consumes="application/json" produces="application/json">
 
       <!-- this is a rest GET to view an user by the given id -->
       <get uri="/{id}" outType="org.apache.camel.example.rest.User">
