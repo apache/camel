@@ -19,17 +19,24 @@ package org.apache.camel.example.pojo_messaging;
 import org.apache.camel.Consume;
 import org.apache.camel.RecipientList;
 import org.apache.camel.language.XPath;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 //START SNIPPET: ex
 public class DistributeRecordsBean {
+
+    private static final Logger LOG = LoggerFactory.getLogger(DistributeRecordsBean.class);
+
     @Consume(uri = "activemq:personnel.records")
     @RecipientList
     public String[] route(@XPath("/person/city/text()") String city) {
         if (city.equals("London")) {
+            LOG.info("Person is from EMEA region");
             return new String[] {"file:target/messages/emea/hr_pickup", 
                                  "file:target/messages/emea/finance_pickup"};
         } else {
-            return new String[] {"file:target/messages/amer/hr_pickup", 
+            LOG.info("Person is from AMER region");
+            return new String[] {"file:target/messages/amer/hr_pickup",
                                  "file:target/messages/amer/finance_pickup"};
         }
     }

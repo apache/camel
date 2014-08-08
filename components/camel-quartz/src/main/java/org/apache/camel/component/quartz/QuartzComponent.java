@@ -30,6 +30,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 import org.apache.camel.CamelContext;
 import org.apache.camel.StartupListener;
 import org.apache.camel.impl.DefaultComponent;
+import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.util.EndpointHelper;
 import org.apache.camel.util.IOHelper;
 import org.apache.camel.util.IntrospectionSupport;
@@ -54,7 +55,7 @@ import org.slf4j.LoggerFactory;
  *
  * @version
  */
-public class QuartzComponent extends DefaultComponent implements StartupListener {
+public class QuartzComponent extends UriEndpointComponent implements StartupListener {
     private static final Logger LOG = LoggerFactory.getLogger(QuartzComponent.class);
     private Scheduler scheduler;
     private final List<JobToAdd> jobsToAdd = new ArrayList<JobToAdd>();
@@ -84,10 +85,11 @@ public class QuartzComponent extends DefaultComponent implements StartupListener
     }
 
     public QuartzComponent() {
+        super(QuartzEndpoint.class);
     }
 
     public QuartzComponent(final CamelContext context) {
-        super(context);
+        super(context, QuartzEndpoint.class);
     }
 
     @Override

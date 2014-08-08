@@ -99,7 +99,8 @@ public class TemporaryQueueReplyManager extends ReplyManagerSupport {
     @Override
     protected AbstractMessageListenerContainer createListenerContainer() throws Exception {
         // Use DefaultMessageListenerContainer as it supports reconnects (see CAMEL-3193)
-        DefaultMessageListenerContainer answer = new DefaultJmsMessageListenerContainer(endpoint);
+        // request-reply listener container should not allow quick-stop so we can keep listening for reply messages
+        DefaultMessageListenerContainer answer = new DefaultJmsMessageListenerContainer(endpoint, false);
 
         answer.setDestinationName("temporary");
         answer.setDestinationResolver(destResolver);

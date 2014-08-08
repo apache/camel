@@ -28,10 +28,15 @@ import org.apache.camel.spi.RestConsumerFactory;
 public class DummyRestConsumerFactory implements RestConsumerFactory {
 
     @Override
-    public Consumer createConsumer(CamelContext camelContext, Processor processor, String verb, String path,
+    public Consumer createConsumer(CamelContext camelContext, Processor processor, String verb, String path, String uriTemplate,
                                    String consumes, String produces, Map<String, Object> parameters) throws Exception {
         // just use a seda endpoint for testing purpose
-        String id = ActiveMQUuidGenerator.generateSanitizedId(path);
+        String id;
+        if (uriTemplate != null) {
+            id = ActiveMQUuidGenerator.generateSanitizedId(path + uriTemplate);
+        } else {
+            id = ActiveMQUuidGenerator.generateSanitizedId(path);
+        }
         // remove leading dash as we add that ourselves
         if (id.startsWith("-")) {
             id = id.substring(1);

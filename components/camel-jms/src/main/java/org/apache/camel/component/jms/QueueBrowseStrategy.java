@@ -28,4 +28,6 @@ public interface QueueBrowseStrategy {
 
     List<Exchange> browse(JmsOperations template, String queue, JmsQueueEndpoint endpoint);
 
+    List<Exchange> browseSelected(String selector, JmsOperations template, String queue, JmsQueueEndpoint endpoint);
+
 }

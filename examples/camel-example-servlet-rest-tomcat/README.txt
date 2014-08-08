@@ -15,9 +15,8 @@ You will need to package this example first:
 To run the example deploy it in Apache Tomcat by copying the .war to the
 deploy folder of Apache Tomcat.
 
-And then hit this url from a web browser which has further
-instructions (use correct version number)
-  http://localhost:8080/camel-example-servlet-rest-tomcat-{version}
+And then hit this url from a web browser which has further instructions
+  http://localhost:8080/camel-example-servlet-rest-tomcat
 
 You can also try the example from Maven using
    mvn jetty:run

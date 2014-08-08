@@ -50,6 +50,12 @@ public class RestConfigurationDefinition {
     private String port;
 
     @XmlAttribute
+    private String contextPath;
+
+    @XmlAttribute
+    private RestHostNameResolver hostNameResolver;
+
+    @XmlAttribute
     private RestBindingMode bindingMode;
 
     @XmlAttribute
@@ -100,6 +106,22 @@ public class RestConfigurationDefinition {
 
     public void setPort(String port) {
         this.port = port;
+    }
+
+    public String getContextPath() {
+        return contextPath;
+    }
+
+    public void setContextPath(String contextPath) {
+        this.contextPath = contextPath;
+    }
+
+    public RestHostNameResolver getHostNameResolver() {
+        return hostNameResolver;
+    }
+
+    public void setHostNameResolver(RestHostNameResolver hostNameResolver) {
+        this.hostNameResolver = hostNameResolver;
     }
 
     public RestBindingMode getBindingMode() {
@@ -202,6 +224,25 @@ public class RestConfigurationDefinition {
     }
 
     /**
+     * Sets a leading context-path the REST services will be using.
+     * <p/>
+     * This can be used when using components such as <tt>camel-servlet</tt> where the deployed web application
+     * is deployed using a context-path.
+     */
+    public RestConfigurationDefinition contextPath(String contextPath) {
+        setContextPath(contextPath);
+        return this;
+    }
+
+    /**
+     * To specify the hostname resolver
+     */
+    public RestConfigurationDefinition hostNameResolver(RestHostNameResolver hostNameResolver) {
+        setHostNameResolver(hostNameResolver);
+        return this;
+    }
+
+    /**
      * To specify the binding mode
      */
     public RestConfigurationDefinition bindingMode(RestBindingMode bindingMode) {
@@ -296,6 +337,12 @@ public class RestConfigurationDefinition {
         }
         if (port != null) {
             answer.setPort(CamelContextHelper.parseInteger(context, port));
+        }
+        if (contextPath != null) {
+            answer.setContextPath(CamelContextHelper.parseText(context, contextPath));
+        }
+        if (hostNameResolver != null) {
+            answer.setRestHostNameResolver(hostNameResolver.name());
         }
         if (bindingMode != null) {
             answer.setBindingMode(bindingMode.name());

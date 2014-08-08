@@ -18,7 +18,7 @@
 <rests xmlns="http://camel.apache.org/schema/spring"
        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance">
 
-  <rest uri="/users">
+  <rest path="/users">
     <get uri="/view/{id}">
       <to uri="direct:getUser"/>
     </get>

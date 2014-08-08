@@ -28,10 +28,16 @@ public class RestConfiguration {
         auto, off, json, xml, json_xml
     }
 
+    public enum RestHostNameResolver {
+        localIp, localHostName
+    }
+
     private String component;
     private String scheme;
     private String host;
     private int port;
+    private String contextPath;
+    private RestHostNameResolver restHostNameResolver = RestHostNameResolver.localHostName;
     private RestBindingMode bindingMode = RestBindingMode.off;
     private String jsonDataFormat;
     private String xmlDataFormat;
@@ -110,6 +116,54 @@ public class RestConfiguration {
      */
     public void setPort(int port) {
         this.port = port;
+    }
+
+    /**
+     * Gets the configured context-path
+     *
+     * @return the context path, or <tt>null</tt> if none configured.
+     */
+    public String getContextPath() {
+        return contextPath;
+    }
+
+    /**
+     * Sets a leading context-path the REST services will be using.
+     * <p/>
+     * This can be used when using components such as <tt>camel-servlet</tt> where the deployed web application
+     * is deployed using a context-path.
+     *
+     * @param contextPath the context path
+     */
+    public void setContextPath(String contextPath) {
+        this.contextPath = contextPath;
+    }
+
+    /**
+     * Gets the resolver to use for resolving hostname
+     *
+     * @return the resolver
+     */
+    public RestHostNameResolver getRestHostNameResolver() {
+        return restHostNameResolver;
+    }
+
+    /**
+     * Sets the resolver to use for resolving hostname
+     *
+     * @param restHostNameResolver the resolver
+     */
+    public void setRestHostNameResolver(RestHostNameResolver restHostNameResolver) {
+        this.restHostNameResolver = restHostNameResolver;
+    }
+
+    /**
+     * Sets the resolver to use for resolving hostname
+     *
+     * @param restHostNameResolver the resolver
+     */
+    public void setRestHostNameResolver(String restHostNameResolver) {
+        this.restHostNameResolver = RestHostNameResolver.valueOf(restHostNameResolver);
     }
 
     /**

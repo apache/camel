@@ -33,7 +33,7 @@
 
     <restConfiguration bindingMode="auto" component="restlet"/>
 
-    <rest uri="/users">
+    <rest path="/users">
       <post uri="/lives" type="org.apache.camel.component.restlet.UserPojo" outType="org.apache.camel.component.restlet.CountryPojo">
         <route>
           <bean beanType="org.apache.camel.component.restlet.UserService" method="livesWhere"/>

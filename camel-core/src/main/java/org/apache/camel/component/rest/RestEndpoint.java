@@ -25,17 +25,22 @@ import org.apache.camel.NoSuchBeanException;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
 import org.apache.camel.impl.DefaultEndpoint;
+import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestConsumerFactory;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
+import org.apache.camel.util.HostUtils;
+import org.apache.camel.util.ObjectHelper;
 
 @UriEndpoint(scheme = "rest")
 public class RestEndpoint extends DefaultEndpoint {
 
     @UriParam
-    private String verb;
+    private String method;
     @UriParam
     private String path;
+    @UriParam
+    private String uriTemplate;
     @UriParam
     private String consumes;
     @UriParam
@@ -54,12 +59,12 @@ public class RestEndpoint extends DefaultEndpoint {
         return (RestComponent) super.getComponent();
     }
 
-    public String getVerb() {
-        return verb;
+    public String getMethod() {
+        return method;
     }
 
-    public void setVerb(String verb) {
-        this.verb = verb;
+    public void setMethod(String method) {
+        this.method = method;
     }
 
     public String getPath() {
@@ -68,6 +73,14 @@ public class RestEndpoint extends DefaultEndpoint {
 
     public void setPath(String path) {
         this.path = path;
+    }
+
+    public String getUriTemplate() {
+        return uriTemplate;
+    }
+
+    public void setUriTemplate(String uriTemplate) {
+        this.uriTemplate = uriTemplate;
     }
 
     public String getConsumes() {
@@ -151,8 +164,75 @@ public class RestEndpoint extends DefaultEndpoint {
         }
 
         if (factory != null) {
-            Consumer consumer = factory.createConsumer(getCamelContext(), processor, getVerb(), getPath(), getConsumes(), getProduces(), getParameters());
+            Consumer consumer = factory.createConsumer(getCamelContext(), processor, getMethod(), getPath(), getUriTemplate(), getConsumes(), getProduces(), getParameters());
             configureConsumer(consumer);
+
+            // if no explicit port/host configured, then use port from rest configuration
+            String scheme = "http";
+            String host = "";
+            int port = 80;
+
+            RestConfiguration config = getCamelContext().getRestConfiguration();
+            if (config.getScheme() != null) {
+                scheme = config.getScheme();
+            }
+            if (config.getHost() != null) {
+                host = config.getHost();
+            }
+            int num = config.getPort();
+            if (num > 0) {
+                port = num;
+            }
+
+            // if no explicit hostname set then resolve the hostname
+            if (ObjectHelper.isEmpty(host)) {
+                if (config.getRestHostNameResolver() == RestConfiguration.RestHostNameResolver.localHostName) {
+                    host = HostUtils.getLocalHostName();
+                } else if (config.getRestHostNameResolver() == RestConfiguration.RestHostNameResolver.localIp) {
+                    host = HostUtils.getLocalIp();
+                }
+            }
+
+
+            // calculate the url to the rest service
+            String path = getPath();
+            if (!path.startsWith("/")) {
+                path = "/" + path;
+            }
+
+            // there may be an optional context path configured to help Camel calculate the correct urls for the REST services
+            // this may be needed when using camel-serlvet where we cannot get the actual context-path or port number of the servlet engine
+            // during init of the servlet
+            String contextPath = config.getContextPath();
+            if (contextPath != null) {
+                if (!contextPath.startsWith("/")) {
+                    path = "/" + contextPath + path;
+                } else {
+                    path = contextPath + path;
+                }
+            }
+
+            String baseUrl = scheme + "://" + host + (port != 80 ? ":" + port : "") + path;
+
+            String url = baseUrl;
+            if (uriTemplate != null) {
+                // make sure to avoid double slashes
+                if (uriTemplate.startsWith("/")) {
+                    url = url + uriTemplate;
+                } else {
+                    url = url + "/" + uriTemplate;
+                }
+            }
+
+            // optional binding type information
+            String inType = (String) getParameters().get("inType");
+            String outType = (String) getParameters().get("outType");
+
+            // add to rest registry so we can keep track of them, we will remove from the registry when the consumer is removed
+            // the rest registry will automatic keep track when the consumer is removed,
+            // and un-register the REST service from the registry
+            getCamelContext().getRestRegistry().addRestService(consumer, url, baseUrl, getPath(), getUriTemplate(), getMethod(), getConsumes(), getProduces(), inType, outType);
+
             return consumer;
         } else {
             throw new IllegalStateException("Cannot find RestConsumerFactory in Registry or as a Component to use");
@@ -164,4 +244,8 @@ public class RestEndpoint extends DefaultEndpoint {
         return true;
     }
 
+    @Override
+    public boolean isLenientProperties() {
+        return true;
+    }
 }

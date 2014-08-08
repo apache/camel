@@ -39,11 +39,11 @@ public class FromRestUriPrefixTest extends CamelBlueprintTestSupport {
         assertEquals(1, context.getRestDefinitions().size());
         RestDefinition rest = context.getRestDefinitions().get(0);
         assertNotNull(rest);
-        assertEquals("/say/", rest.getUri());
+        assertEquals("/say/", rest.getPath());
         assertEquals(3, rest.getVerbs().size());
         assertEquals("/hello", rest.getVerbs().get(0).getUri());
-        assertEquals("bye", rest.getVerbs().get(1).getUri());
-        assertEquals("/bye", rest.getVerbs().get(2).getUri());
+        assertEquals("/bye", rest.getVerbs().get(1).getUri());
+        assertEquals("/hi", rest.getVerbs().get(2).getUri());
         ToDefinition to = assertIsInstanceOf(ToDefinition.class, rest.getVerbs().get(0).getTo());
         assertEquals("direct:hello", to.getUri());
         to = assertIsInstanceOf(ToDefinition.class, rest.getVerbs().get(1).getTo());
@@ -51,7 +51,7 @@ public class FromRestUriPrefixTest extends CamelBlueprintTestSupport {
 
         // the rest becomes routes and the input is a seda endpoint created by the DummyRestConsumerFactory
         getMockEndpoint("mock:update").expectedMessageCount(1);
-        template.sendBody("seda:post-say-bye", "I was here");
+        template.sendBody("seda:post-say-hi", "I was here");
         assertMockEndpointsSatisfied();
 
         String out = template.requestBody("seda:get-say-hello", "Me", String.class);

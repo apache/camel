@@ -31,19 +31,27 @@ public class UserRouteBuilder extends RouteBuilder {
         // and we enable json binding mode
         restConfiguration().component("servlet").bindingMode(RestBindingMode.json)
             // and output using pretty print
-            .dataFormatProperty("prettyPrint", "true");
+            .dataFormatProperty("prettyPrint", "true")
+            // setup context path and port number that Apache Tomcat will deploy
+            // this application with, as we use the servlet component, then we
+            // need to aid Camel to tell it these details so Camel knows the url
+            // to the REST services.
+            // Notice: This is optional, but needed if the RestRegistry should
+            // enlist accurate information. You can access the RestRegistry
+            // from JMX at runtime
+            .contextPath("camel-example-servlet-rest-tomcat/rest").port(8080);
 
         // this user REST service is json only
         rest("/user").consumes("application/json").produces("application/json")
 
-            .get("/view/{id}").outType(User.class)
+            .get("/{id}").outType(User.class)
                 .to("bean:userService?method=getUser(${header.id})")
 
-            .get("/list").outTypeList(User.class)
-                .to("bean:userService?method=listUsers")
+            .put().type(User.class).outType(User.class)
+                .to("bean:userService?method=updateUser")
 
-            .put("/update").type(User.class).outType(User.class)
-                .to("bean:userService?method=updateUser");
+            .get("/findAll").outTypeList(User.class)
+                .to("bean:userService?method=listUsers");
     }
 
 }

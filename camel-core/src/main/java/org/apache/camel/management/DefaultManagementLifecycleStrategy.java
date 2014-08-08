@@ -58,6 +58,7 @@ import org.apache.camel.management.mbean.ManagedConsumerCache;
 import org.apache.camel.management.mbean.ManagedEndpoint;
 import org.apache.camel.management.mbean.ManagedEndpointRegistry;
 import org.apache.camel.management.mbean.ManagedProducerCache;
+import org.apache.camel.management.mbean.ManagedRestRegistry;
 import org.apache.camel.management.mbean.ManagedRoute;
 import org.apache.camel.management.mbean.ManagedRuntimeEndpointRegistry;
 import org.apache.camel.management.mbean.ManagedService;
@@ -84,6 +85,7 @@ import org.apache.camel.spi.ManagementAware;
 import org.apache.camel.spi.ManagementNameStrategy;
 import org.apache.camel.spi.ManagementObjectStrategy;
 import org.apache.camel.spi.ManagementStrategy;
+import org.apache.camel.spi.RestRegistry;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.RuntimeEndpointRegistry;
 import org.apache.camel.spi.StreamCachingStrategy;
@@ -462,6 +464,8 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
             answer = new ManagedEndpointRegistry(context, (EndpointRegistry) service);
         } else if (service instanceof TypeConverterRegistry) {
             answer = new ManagedTypeConverterRegistry(context, (TypeConverterRegistry) service);
+        } else if (service instanceof RestRegistry) {
+            answer = new ManagedRestRegistry(context, (RestRegistry) service);
         } else if (service instanceof RuntimeEndpointRegistry) {
             answer = new ManagedRuntimeEndpointRegistry(context, (RuntimeEndpointRegistry) service);
         } else if (service instanceof StreamCachingStrategy) {

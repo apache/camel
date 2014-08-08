@@ -192,6 +192,11 @@ public class DefaultRouteContext implements RouteContext {
             if (route.getGroup() != null) {
                 edcr.getProperties().put(Route.GROUP_PROPERTY, route.getGroup());
             }
+            String rest = "false";
+            if (route.isRest() != null && route.isRest()) {
+                rest = "true";
+            }
+            edcr.getProperties().put(Route.REST_PROPERTY, rest);
 
             // after the route is created then set the route on the policy processor so we get hold of it
             CamelInternalProcessor.RoutePolicyAdvice task = internal.getAdvice(CamelInternalProcessor.RoutePolicyAdvice.class);

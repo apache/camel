@@ -115,7 +115,7 @@ public class JmsBlockedAsyncRoutingEngineTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 from("activemq:queue:test?concurrentConsumers=5&useMessageIDAsCorrelationID=true&transacted=true")
-                    .filter().simple("${in.body} = 'beSlow'")
+                    .filter().simple("${in.body} == 'beSlow'")
                         .delay(constant(2000))
                     .log(">>>>> Received message on test queue")
                     .setBody(constant("Reply"))

@@ -29,7 +29,6 @@ import javax.xml.bind.annotation.XmlRootElement;
 import org.apache.camel.CamelContext;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.ToDefinition;
-import org.apache.camel.util.FileUtil;
 import org.apache.camel.util.URISupport;
 
 /**
@@ -40,7 +39,7 @@ import org.apache.camel.util.URISupport;
 public class RestDefinition {
 
     @XmlAttribute
-    private String uri;
+    private String path;
 
     @XmlAttribute
     private String consumes;
@@ -54,12 +53,12 @@ public class RestDefinition {
     @XmlElementRef
     private List<VerbDefinition> verbs = new ArrayList<VerbDefinition>();
 
-    public String getUri() {
-        return uri;
+    public String getPath() {
+        return path;
     }
 
-    public void setUri(String uri) {
-        this.uri = uri;
+    public void setPath(String path) {
+        this.path = path;
     }
 
     public String getConsumes() {
@@ -98,10 +97,10 @@ public class RestDefinition {
     //-------------------------------------------------------------------------
 
     /**
-     * To set the uri
+     * To set the base path of this REST service
      */
-    public RestDefinition uri(String uri) {
-        setUri(uri);
+    public RestDefinition path(String path) {
+        setPath(path);
         return this;
     }
 
@@ -306,25 +305,6 @@ public class RestDefinition {
         List<RouteDefinition> answer = new ArrayList<RouteDefinition>();
 
         for (VerbDefinition verb : getVerbs()) {
-            String from = "rest:" + verb.asVerb() + ":" + buildUri(verb);
-            // append options
-            Map<String, Object> options = new HashMap<String, Object>();
-            // verb takes precedence over configuration on rest
-            if (verb.getConsumes() != null) {
-                options.put("consumes", verb.getConsumes());
-            } else if (getConsumes() != null) {
-                options.put("consumes", getConsumes());
-            }
-            if (verb.getProduces() != null) {
-                options.put("produces", verb.getProduces());
-            } else if (getProduces() != null) {
-                options.put("produces", getProduces());
-            }
-            if (!options.isEmpty()) {
-                String query = URISupport.createQueryString(options);
-                from = from + "?" + query;
-            }
-
             // either the verb has a singular to or a embedded route
             RouteDefinition route = verb.getRoute();
             if (route == null) {
@@ -358,6 +338,43 @@ public class RestDefinition {
             }
             route.getOutputs().add(0, binding);
 
+            // create the from endpoint uri which is using the rest component
+            String from = "rest:" + verb.asVerb() + ":" + buildUri(verb);
+
+            // append options
+            Map<String, Object> options = new HashMap<String, Object>();
+            // verb takes precedence over configuration on rest
+            if (verb.getConsumes() != null) {
+                options.put("consumes", verb.getConsumes());
+            } else if (getConsumes() != null) {
+                options.put("consumes", getConsumes());
+            }
+            if (verb.getProduces() != null) {
+                options.put("produces", verb.getProduces());
+            } else if (getProduces() != null) {
+                options.put("produces", getProduces());
+            }
+
+            // append optional type binding information
+            String inType = binding.getType();
+            if (binding.getList() != null && binding.getList()) {
+                inType = "List<" + inType + ">";
+            }
+            if (inType != null) {
+                options.put("inType", inType);
+            }
+            String outType = binding.getOutType();
+            if (binding.getOutList() != null && binding.getOutList()) {
+                outType = "List<" + outType + ">";
+            }
+            if (outType != null) {
+                options.put("outType", outType);
+            }
+            if (!options.isEmpty()) {
+                String query = URISupport.createQueryString(options);
+                from = from + "?" + query;
+            }
+
             // the route should be from this rest endpoint
             route.fromRest(from);
             route.setRestDefinition(this);
@@ -368,13 +385,10 @@ public class RestDefinition {
     }
 
     private String buildUri(VerbDefinition verb) {
-        if (uri != null && verb.getUri() != null) {
-            // make sure there is only one / slash separator between the two
-            String s = FileUtil.stripTrailingSeparator(uri);
-            String s2 = FileUtil.stripLeadingSeparator(verb.getUri());
-            return s + "/" + s2;
-        } else if (uri != null) {
-            return uri;
+        if (path != null && verb.getUri() != null) {
+            return path + ":" + verb.getUri();
+        } else if (path != null) {
+            return path;
         } else if (verb.getUri() != null) {
             return verb.getUri();
         } else {

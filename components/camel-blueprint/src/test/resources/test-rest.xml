@@ -23,12 +23,12 @@
 
     <restConfiguration component="dummy-rest" host="localhost" port="9090"/>
 
-    <rest uri="/say/hello">
+    <rest path="/say/hello">
       <get>
         <to uri="direct:hello"/>
       </get>
     </rest>
-    <rest uri="/say/bye">
+    <rest path="/say/bye">
       <get>
         <to uri="direct:bye"/>
       </get>

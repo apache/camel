@@ -59,7 +59,7 @@ public class JmsTransactedRouteTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() throws Exception {
                 from("activemq:test.a").to("activemq:test.b");
-                from("activemq:test.b").to("mock:result");
+                from("activemq:test.b").to("log:result", "mock:result");
             }
         };
     }

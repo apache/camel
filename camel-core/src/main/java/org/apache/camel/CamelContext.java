@@ -52,6 +52,7 @@ import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.ProcessorFactory;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.spi.RestConfiguration;
+import org.apache.camel.spi.RestRegistry;
 import org.apache.camel.spi.RouteStartupOrder;
 import org.apache.camel.spi.RuntimeEndpointRegistry;
 import org.apache.camel.spi.ServicePool;
@@ -1356,5 +1357,15 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      * Sets a custom {@link org.apache.camel.spi.RuntimeEndpointRegistry} to use.
      */
     void setRuntimeEndpointRegistry(RuntimeEndpointRegistry runtimeEndpointRegistry);
+
+    /**
+     * Gets the {@link org.apache.camel.spi.RestRegistry} to use
+     */
+    RestRegistry getRestRegistry();
+
+    /**
+     * Sets a custom {@link org.apache.camel.spi.RestRegistry} to use.
+     */
+    void setRestRegistry(RestRegistry restRegistry);
 
 }

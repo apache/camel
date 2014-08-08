@@ -25,14 +25,14 @@
 
   <camelContext xmlns="http://camel.apache.org/schema/blueprint">
 
-    <rest uri="/say/">
+    <rest path="/say/">
       <get uri="/hello">
         <to uri="direct:hello"/>
       </get>
-      <get uri="bye" consumes="application/json">
+      <get uri="/bye" consumes="application/json">
         <to uri="direct:bye"/>
       </get>
-      <post uri="/bye">
+      <post uri="/hi">
         <to uri="mock:update"/>
       </post>
     </rest>

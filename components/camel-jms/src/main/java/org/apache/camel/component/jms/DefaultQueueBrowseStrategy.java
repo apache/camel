@@ -57,4 +57,27 @@ public class DefaultQueueBrowseStrategy implements QueueBrowseStrategy {
             }
         });
     }
+
+    @Override
+    public List<Exchange> browseSelected(final String selector, final JmsOperations template, final String queue, final JmsQueueEndpoint endpoint) {
+        return template.browseSelected(queue, selector, new BrowserCallback<List<Exchange>>() {
+            public List<Exchange> doInJms(Session session, QueueBrowser browser) throws JMSException {
+                int size = endpoint.getMaximumBrowseSize();
+                if (size <= 0) {
+                    size = Integer.MAX_VALUE;
+                }
+
+                // not the best implementation in the world as we have to browse
+                // the entire queue, which could be massive
+                List<Exchange> answer = new ArrayList<Exchange>();
+                Enumeration<?> iter = browser.getEnumeration();
+                for (int i = 0; i < size && iter.hasMoreElements(); i++) {
+                    Message message = (Message) iter.nextElement();
+                    Exchange exchange = endpoint.createExchange(message);
+                    answer.add(exchange);
+                }
+                return answer;
+            }
+        });
+    }
 }

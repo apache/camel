@@ -163,10 +163,18 @@ public class ServletComponent extends HttpComponent implements RestConsumerFacto
         this.httpRegistry = httpRegistry;
     }
 
-
     @Override
-    public Consumer createConsumer(CamelContext camelContext, Processor processor, String verb, String path,
+    public Consumer createConsumer(CamelContext camelContext, Processor processor, String verb, String basePath, String uriTemplate,
                                    String consumes, String produces, Map<String, Object> parameters) throws Exception {
+        String path = basePath;
+        if (uriTemplate != null) {
+            // make sure to avoid double slashes
+            if (uriTemplate.startsWith("/")) {
+                path = path + uriTemplate;
+            } else {
+                path = path + "/" + uriTemplate;
+            }
+        }
         path = FileUtil.stripLeadingSeparator(path);
 
         // if no explicit port/host configured, then use port from rest configuration
@@ -174,7 +182,7 @@ public class ServletComponent extends HttpComponent implements RestConsumerFacto
 
         Map<String, Object> map = new HashMap<String, Object>();
         // build query string, and append any endpoint configuration properties
-        if (config != null && (config.getComponent() == null || config.getComponent().equals("servlet"))) {
+        if (config.getComponent() == null || config.getComponent().equals("servlet")) {
             // setup endpoint options
             if (config.getEndpointProperties() != null && !config.getEndpointProperties().isEmpty()) {
                 map.putAll(config.getEndpointProperties());
@@ -183,7 +191,6 @@ public class ServletComponent extends HttpComponent implements RestConsumerFacto
 
         String query = URISupport.createQueryString(map);
 
-        // servlet:///hello
         String url = "servlet:///%s?httpMethodRestrict=%s";
         if (!query.isEmpty()) {
             url = url + "?" + query;

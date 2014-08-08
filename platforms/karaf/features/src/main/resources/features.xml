@@ -635,7 +635,8 @@
     <feature version='${jclouds-version}'>jclouds</feature>
     <feature version='${jclouds-version}'>jclouds-blobstore</feature>
     <feature version='${jclouds-version}'>jclouds-compute</feature>
-    <feature version='${project.version}'>camel-core</feature>
+    <feature version='${project.version}'>camel-core</feature>   
+    <bundle>mvn:javax.ws.rs/jsr311-api/${jsr311-api-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-jclouds/${project.version}</bundle>
   </feature>
   <feature name='camel-jcr' version='${project.version}' resolver='(obr)' start-level='50'>
@@ -789,6 +790,11 @@
     <bundle dependency='true'>mvn:javax.mail/mail/${javax-mail-version}</bundle>
     <feature version='${project.version}'>camel-core</feature>
     <bundle>mvn:org.apache.camel/camel-mail/${project.version}</bundle>
+  </feature>
+  <feature name='camel-metrics' version='${project.version}' resolver='(obr)' start-level='50'>
+    <bundle dependency='true'>mvn:com.codahale.metrics/metrics-core/${metrics-version}</bundle>
+    <feature version='${project.version}'>camel-core</feature>
+    <bundle>mvn:org.apache.camel/camel-metrics/${project.version}</bundle>
   </feature>
   <feature name='camel-mina' version='${project.version}' resolver='(obr)' start-level='50'>
     <feature version='${project.version}'>camel-core</feature>

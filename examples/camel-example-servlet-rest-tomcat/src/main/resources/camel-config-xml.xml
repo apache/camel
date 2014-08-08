@@ -30,27 +30,32 @@
 
     <!-- configure rest to use the camel-servlet component, and use json binding mode -->
     <!-- and tell to output json in pretty print mode -->
-    <restConfiguration component="servlet" bindingMode="json">
+    <!-- setup context path and port number that Apache Tomcat will deploy this application with,
+         as we use the servlet component, then we need to aid Camel to tell it these details so Camel
+         knows the url to the REST services.
+         Notice: This is optional, but needed if the RestRegistry should enlist accurate information.
+         You can access the RestRegistry from JMX at runtime -->
+    <restConfiguration component="servlet" bindingMode="json" contextPath="camel-example-servlet-rest-tomcat/rest" port="8080">
       <dataFormatProperty key="prettyPrint" value="true"/>
     </restConfiguration>
 
     <!-- defines the rest services using the context-path /user -->
-    <rest uri="/user" consumes="application/json" produces="application/json">
+    <rest path="/user" consumes="application/json" produces="application/json">
 
       <!-- this is a rest GET to view an user by the given id -->
-      <get uri="/view/{id}" outType="org.apache.camel.example.rest.User">
+      <get uri="/{id}" outType="org.apache.camel.example.rest.User">
         <to uri="bean:userService?method=getUser(${header.id})"/>
       </get>
 
-      <!-- this is a rest GET to view all users -->
-      <get uri="/list" outList="true" outType="org.apache.camel.example.rest.User">
-        <to uri="bean:userService?method=listUsers"/>
-      </get>
-
       <!-- this is a rest PUT to create/update an user -->
-      <put uri="/update" type="org.apache.camel.example.rest.User" outType="org.apache.camel.example.rest.User">
+      <put type="org.apache.camel.example.rest.User" outType="org.apache.camel.example.rest.User">
         <to uri="bean:userService?method=updateUser"/>
       </put>
+
+      <!-- this is a rest GET to find all users -->
+      <get uri="/findAll" outList="true" outType="org.apache.camel.example.rest.User">
+        <to uri="bean:userService?method=listUsers"/>
+      </get>
 
     </rest>
 
