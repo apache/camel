@@ -21,6 +21,7 @@ import org.apache.camel.ComponentConfiguration;
 import org.apache.camel.EndpointConfiguration;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.test.junit4.CamelTestSupport;
+import org.apache.camel.util.ResourceHelper;
 import org.junit.Test;
 
 public class MyBatisComponentConfigurationAndDocumentationTest extends CamelTestSupport {
@@ -29,6 +30,23 @@ public class MyBatisComponentConfigurationAndDocumentationTest extends CamelTest
     @Override
     public boolean isUseRouteBuilder() {
         return false;
+    }
+
+    @Test
+    public void testProvideInputStream() throws Exception {
+        MyBatisComponent comp = context.getComponent(COMPONENT_NAME, MyBatisComponent.class);
+         comp.setConfigurationInputStream(ResourceHelper.resolveMandatoryResourceAsInputStream(context().getClassResolver(), "SqlMapConfig.xml"));
+        EndpointConfiguration conf = comp.createConfiguration("mybatis:insertAccount?statementType=Insert&maxMessagesPerPoll=5");
+
+        assertEquals("Insert", conf.getParameter("statementType"));
+        assertEquals("5", conf.getParameter("maxMessagesPerPoll"));
+
+        ComponentConfiguration compConf = comp.createComponentConfiguration();
+        String json = compConf.createParameterJsonSchema();
+        assertNotNull(json);
+
+        assertTrue(json.contains("\"maxMessagesPerPoll\": { \"type\": \"int\" }"));
+        assertTrue(json.contains("\"statement\": { \"type\": \"java.lang.String\" }"));
     }
 
     @Test
