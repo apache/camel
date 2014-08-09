@@ -18,7 +18,6 @@ package org.apache.camel.component.swagger;
 
 import com.wordnik.swagger.config.SwaggerConfig;
 import com.wordnik.swagger.model.ApiListing;
-import junit.framework.TestCase;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.impl.DefaultCamelContext;
@@ -26,9 +25,10 @@ import org.apache.camel.model.rest.RestDefinition;
 import org.junit.Ignore;
 import org.junit.Test;
 import scala.Option;
-import scala.collection.immutable.Map;
 
-public class RestSwaggerReaderTest extends TestCase {
+import static org.junit.Assert.assertNotNull;
+
+public class RestSwaggerReaderTest {
 
     @Test
     @Ignore
