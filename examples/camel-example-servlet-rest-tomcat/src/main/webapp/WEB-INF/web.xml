@@ -39,26 +39,6 @@
     <listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
   </listener>
 
-
-  <!-- swagger servlet reader -->
-  <servlet>
-    <servlet-name>DefaultServletReaderConfig</servlet-name>
-    <servlet-class>com.wordnik.swagger.servlet.config.DefaultServletReaderConfig</servlet-class>
-    <load-on-startup>1</load-on-startup>
-    <init-param>
-      <param-name>swagger.resource.package</param-name>
-      <param-value>org.apache.camel.example.rest</param-value>
-    </init-param>
-    <init-param>
-      <param-name>swagger.api.basepath</param-name>
-      <param-value>http://localhost:8082</param-value>
-    </init-param>
-    <init-param>
-      <param-name>api.version</param-name>
-      <param-value>1.0.1</param-value>
-    </init-param>
-  </servlet>
-
   <!-- to setup Camel Servlet -->
   <servlet>
     <servlet-name>CamelServlet</servlet-name>
@@ -67,11 +47,23 @@
     <load-on-startup>3</load-on-startup>
   </servlet>
 
+  <!-- to setup Camel Swagger api servlet -->
   <servlet>
     <servlet-name>ApiDeclarationServlet</servlet-name>
-    <!--<servlet-class>com.wordnik.swagger.servlet.listing.ApiDeclarationServlet</servlet-class>-->
     <servlet-class>org.apache.camel.component.swagger.RestSwaggerApiDeclarationServlet</servlet-class>
     <load-on-startup>2</load-on-startup>
+    <init-param>
+      <param-name>swagger.api.basepath</param-name>
+      <param-value>http://localhost:8080/api-docs</param-value>
+    </init-param>
+    <init-param>
+      <param-name>api.version</param-name>
+      <param-value>1.2.3</param-value>
+    </init-param>
+    <init-param>
+      <param-name>api.title</param-name>
+      <param-value>Camel Rest Example with Swagger</param-value>
+    </init-param>
   </servlet>
 
   <!-- define that url path for the Camel Servlet to use -->

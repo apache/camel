@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- * http://www.apache.org/licenses/LICENSE-2.0
+ *      http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -48,6 +48,8 @@ class RestSwaggerReader {
     }
   }
 
+  // TOOD: register classloader
+
   def read(rest: RestDefinition, config: SwaggerConfig): Option[ApiListing] = {
 
     val resourcePath = rest.getPath
@@ -87,20 +89,12 @@ class RestSwaggerReader {
         case _ => "java.lang.Void"
       }
 
-      var p = verb.getProduces
-      if (p == null) {
-        p = rest.getProduces
-      }
-      val produces = p match {
+      val produces = verb.getProduces match {
         case e: String if e != "" => e.split(",").map(_.trim).toList
         case _ => List()
       }
 
-      var c = verb.getConsumes
-      if (c == null) {
-        c = rest.getConsumes
-      }
-      val consumes = c match {
+      val consumes = verb.getConsumes match {
         case e: String if e != "" => e.split(",").map(_.trim).toList
         case _ => List()
       }
@@ -131,6 +125,16 @@ class RestSwaggerReader {
 
     if (apis.size > 0) {
 
+      val produces = rest.getProduces match {
+        case e: String if e != "" => e.split(",").map(_.trim).toList
+        case _ => List()
+      }
+
+      val consumes = rest.getConsumes match {
+        case e: String if e != "" => e.split(",").map(_.trim).toList
+        case _ => List()
+      }
+
       val models = ModelUtil.modelsFromApis(apis.toList)
       Some(
         ApiListing(
@@ -138,8 +142,8 @@ class RestSwaggerReader {
           SwaggerSpec.version,
           config.basePath,
           resourcePath,
-          List(), // produces
-          List(), // consumes
+          produces,
+          consumes,
           List(), // protocols
           List(), // authorizations
           ModelUtil.stripPackages(apis.toList),
