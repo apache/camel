@@ -17,38 +17,44 @@
 package org.apache.camel.component.swagger;
 
 import com.wordnik.swagger.config.SwaggerConfig;
+import com.wordnik.swagger.core.util.JsonSerializer;
 import com.wordnik.swagger.model.ApiListing;
-import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.impl.DefaultCamelContext;
+import org.apache.camel.impl.JndiRegistry;
 import org.apache.camel.model.rest.RestDefinition;
-import org.junit.Ignore;
+import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 import scala.Option;
 
-import static org.junit.Assert.assertNotNull;
+public class RestSwaggerReaderTest extends CamelTestSupport {
 
-public class RestSwaggerReaderTest {
+    @Override
+    protected JndiRegistry createRegistry() throws Exception {
+        JndiRegistry jndi = super.createRegistry();
+        jndi.bind("dummy-rest", new DummyRestConsumerFactory());
+        return jndi;
+    }
 
-    @Test
-    @Ignore
-    public void testReaderRead() throws Exception {
-        CamelContext context = new DefaultCamelContext();
-        context.addRoutes(new RouteBuilder() {
+    @Override
+    protected RouteBuilder createRouteBuilder() throws Exception {
+        return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                restConfiguration().component("jetty").host("localhost").port(9090);
-
                 rest("/hello")
-                    .get("/hi").to("log:hi");
+                    .get("/hi").to("log:hi")
+                    .get("/bye").to("log:bye")
+                    .post("/bye").to("log:bye");
             }
-        });
-        context.start();
+        };
+    }
 
+    @Test
+    public void testReaderRead() throws Exception {
         RestDefinition rest = context.getRestDefinitions().get(0);
         assertNotNull(rest);
 
         SwaggerConfig config = new SwaggerConfig();
+        config.setBasePath("http://localhost:8080/api");
         RestSwaggerReader reader = new RestSwaggerReader();
         Option<ApiListing> option = reader.read(rest, config);
         assertNotNull(option);
@@ -56,6 +62,8 @@ public class RestSwaggerReaderTest {
         assertNotNull(listing);
 
         System.out.println(listing);
+        String json = JsonSerializer.asJson(listing);
+        System.out.println(json);
 
         context.stop();
     }
