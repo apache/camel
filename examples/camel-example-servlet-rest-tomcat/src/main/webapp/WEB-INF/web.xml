@@ -47,13 +47,14 @@
     <load-on-startup>3</load-on-startup>
   </servlet>
 
+  <!-- START SNIPPET: e1 -->
   <!-- to setup Camel Swagger api servlet -->
   <servlet>
     <servlet-name>ApiDeclarationServlet</servlet-name>
     <servlet-class>org.apache.camel.component.swagger.RestSwaggerApiDeclarationServlet</servlet-class>
     <load-on-startup>2</load-on-startup>
     <init-param>
-      <param-name>swagger.api.basepath</param-name>
+      <param-name>base.path</param-name>
       <param-value>http://localhost:8080/api-docs</param-value>
     </init-param>
     <init-param>
@@ -62,20 +63,25 @@
     </init-param>
     <init-param>
       <param-name>api.title</param-name>
-      <param-value>Camel Rest Example with Swagger</param-value>
+      <param-value>User Services</param-value>
+    </init-param>
+    <init-param>
+      <param-name>api.description</param-name>
+      <param-value>Camel Rest Example with Swagger that provides an User REST service</param-value>
     </init-param>
   </servlet>
-
-  <!-- define that url path for the Camel Servlet to use -->
-  <servlet-mapping>
-    <servlet-name>CamelServlet</servlet-name>
-    <url-pattern>/rest/*</url-pattern>
-  </servlet-mapping>
 
   <!-- swagger api declaration -->
   <servlet-mapping>
     <servlet-name>ApiDeclarationServlet</servlet-name>
     <url-pattern>/api-docs/*</url-pattern>
+  </servlet-mapping>
+  <!-- END SNIPPET: e1 -->
+
+  <!-- define that url path for the Camel Servlet to use -->
+  <servlet-mapping>
+    <servlet-name>CamelServlet</servlet-name>
+    <url-pattern>/rest/*</url-pattern>
   </servlet-mapping>
 
 </web-app>
