@@ -136,6 +136,8 @@ public class HttpServerMultiplexChannelHandler extends SimpleChannelUpstreamHand
 
     private HttpServerChannelHandler getHandler(HttpRequest request) {
         // need to strip out host and port etc, as we only need the context-path for matching
+        String method = request.getMethod().getName();
+
         String path = request.getUri();
         int idx = path.indexOf(token);
         if (idx > -1) {
@@ -145,9 +147,11 @@ public class HttpServerMultiplexChannelHandler extends SimpleChannelUpstreamHand
         // use the path as key to find the consumer handler to use
         path = pathAsKey(path);
 
+        // TODO: improve matching like we have done in camel-servlet, eg using candidates
+
         // find the one that matches
         for (Map.Entry<ContextPathMatcher, HttpServerChannelHandler> entry : consumers.entrySet()) {
-            if (entry.getKey().matches(path)) {
+            if (entry.getKey().matches(method, path)) {
                 return entry.getValue();
             }
         }

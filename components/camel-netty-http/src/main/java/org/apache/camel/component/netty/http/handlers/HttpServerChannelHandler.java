@@ -110,8 +110,6 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
             messageEvent.getChannel().write(response);
             return;
         }
-
-
         if (consumer.getEndpoint().getHttpMethodRestrict() != null
                 && !consumer.getEndpoint().getHttpMethodRestrict().contains(request.getMethod().getName())) {
             HttpResponse response = new DefaultHttpResponse(HTTP_1_1, METHOD_NOT_ALLOWED);

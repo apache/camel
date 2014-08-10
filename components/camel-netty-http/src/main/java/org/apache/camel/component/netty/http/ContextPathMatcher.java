@@ -29,8 +29,9 @@ public interface ContextPathMatcher {
     /**
      * Whether the target context-path matches.
      *
-     * @param target  the context-path from the incoming HTTP request
+     * @param method the HTTP method such as GET, POST
+     * @param path  the context-path from the incoming HTTP request
      * @return <tt>true</tt> to match, <tt>false</tt> if not.
      */
-    boolean matches(String target);
+    boolean matches(String method, String path);
 }

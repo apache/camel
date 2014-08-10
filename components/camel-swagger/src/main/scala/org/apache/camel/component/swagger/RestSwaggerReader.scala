@@ -40,10 +40,7 @@ import scala.collection.JavaConverters._
 class RestSwaggerReader {
 
   private val LOG = LoggerFactory.getLogger(classOf[RestSwaggerReader])
-
-  // TODO: add parameters to operations
-  // - {id} is a path type, and required
-  // - type/outType is body type and required
+  // TODO: add logging
 
   def read(rest: RestDefinition, config: SwaggerConfig): Option[ApiListing] = {
 

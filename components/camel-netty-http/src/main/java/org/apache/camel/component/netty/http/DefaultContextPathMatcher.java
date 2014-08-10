@@ -31,14 +31,14 @@ public class DefaultContextPathMatcher implements ContextPathMatcher {
         this.matchOnUriPrefix = matchOnUriPrefix;
     }
 
-    public boolean matches(String target) {
-        target = target.toLowerCase(Locale.US);
+    public boolean matches(String method, String path) {
+        path = path.toLowerCase(Locale.US);
         if (!matchOnUriPrefix) {
             // exact match
-            return target.equals(path);
+            return path.equals(this.path);
         } else {
             // match on prefix, then we just need to match the start of the context-path
-            return target.startsWith(path);
+            return path.startsWith(this.path);
         }
     }
 

@@ -31,11 +31,11 @@ public class RestContextPathMatcher extends DefaultContextPathMatcher {
     }
 
     @Override
-    public boolean matches(String target) {
+    public boolean matches(String method, String path) {
         if (useRestMatching(rawPath)) {
-            return matchRestPath(target, rawPath);
+            return matchRestPath(path, rawPath);
         } else {
-            return super.matches(target);
+            return super.matches(method, path);
         }
     }
 
