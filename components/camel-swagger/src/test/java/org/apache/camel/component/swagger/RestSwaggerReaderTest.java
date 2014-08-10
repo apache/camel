@@ -61,9 +61,13 @@ public class RestSwaggerReaderTest extends CamelTestSupport {
         ApiListing listing = option.get();
         assertNotNull(listing);
 
-        System.out.println(listing);
         String json = JsonSerializer.asJson(listing);
-        System.out.println(json);
+        log.info(json);
+
+        assertTrue(json.contains("\"basePath\":\"http://localhost:8080/api\""));
+        assertTrue(json.contains("\"resourcePath\":\"/hello\""));
+        assertTrue(json.contains("\"method\":\"GET\""));
+        assertTrue(json.contains("\"nickname\":\"getHelloHi\""));
 
         context.stop();
     }
