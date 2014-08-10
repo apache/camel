@@ -54,11 +54,6 @@
     <servlet-class>org.apache.camel.component.swagger.RestSwaggerApiDeclarationServlet</servlet-class>
     <load-on-startup>2</load-on-startup>
     <init-param>
-      <!-- enable cors so people can use swagger ui to browse the apis -->
-      <param-name>cors</param-name>
-      <param-value>true</param-value>
-    </init-param>
-    <init-param>
       <param-name>base.path</param-name>
       <param-value>http://localhost:8080/rest</param-value>
     </init-param>
@@ -92,5 +87,16 @@
     <servlet-name>CamelServlet</servlet-name>
     <url-pattern>/rest/*</url-pattern>
   </servlet-mapping>
+
+  <!-- enable CORS filter so people can use swagger ui to browse and test the apis -->
+  <filter>
+    <filter-name>RestSwaggerCorsFilter</filter-name>
+    <filter-class>org.apache.camel.component.swagger.RestSwaggerCorsFilter</filter-class>
+  </filter>
+
+  <filter-mapping>
+    <filter-name>RestSwaggerCorsFilter</filter-name>
+    <url-pattern>/*</url-pattern>
+  </filter-mapping>
 
 </web-app>
