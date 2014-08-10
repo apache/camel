@@ -53,7 +53,7 @@
       </put>
 
       <!-- this is a rest GET to find all users -->
-      <get uri="/findAll" outList="true" outType="org.apache.camel.example.rest.User">
+      <get uri="/findAll" outType="org.apache.camel.example.rest.User[]">
         <to uri="bean:userService?method=listUsers"/>
       </get>
 

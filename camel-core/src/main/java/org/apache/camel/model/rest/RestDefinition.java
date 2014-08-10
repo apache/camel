@@ -194,8 +194,8 @@ public class RestDefinition {
         }
 
         VerbDefinition verb = getVerbs().get(getVerbs().size() - 1);
-        verb.setType(classType.getCanonicalName());
-        verb.setList(true);
+        // list should end with [] to indicate array
+        verb.setType(classType.getCanonicalName() + "[]");
         return this;
     }
 
@@ -217,8 +217,8 @@ public class RestDefinition {
         }
 
         VerbDefinition verb = getVerbs().get(getVerbs().size() - 1);
-        verb.setOutType(classType.getCanonicalName());
-        verb.setOutList(true);
+        // list should end with [] to indicate array
+        verb.setOutType(classType.getCanonicalName() + "[]");
         return this;
     }
 
@@ -318,8 +318,6 @@ public class RestDefinition {
             RestBindingDefinition binding = new RestBindingDefinition();
             binding.setType(verb.getType());
             binding.setOutType(verb.getOutType());
-            binding.setList(verb.getList());
-            binding.setOutList(verb.getOutList());
             // verb takes precedence over configuration on rest
             if (verb.getConsumes() != null) {
                 binding.setConsumes(verb.getConsumes());
@@ -357,16 +355,10 @@ public class RestDefinition {
 
             // append optional type binding information
             String inType = binding.getType();
-            if (binding.getList() != null && binding.getList()) {
-                inType = "List<" + inType + ">";
-            }
             if (inType != null) {
                 options.put("inType", inType);
             }
             String outType = binding.getOutType();
-            if (binding.getOutList() != null && binding.getOutList()) {
-                outType = "List<" + outType + ">";
-            }
             if (outType != null) {
                 options.put("outType", outType);
             }

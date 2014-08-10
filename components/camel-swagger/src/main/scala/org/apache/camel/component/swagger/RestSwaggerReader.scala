@@ -50,7 +50,7 @@ class RestSwaggerReader {
 
   // TODO: add parameters to operations
   // - {id} is a path type, and required
-  // - type/typeList/outType/outTypeList is body type and required
+  // - type/outType is body type and required
 
   def read(rest: RestDefinition, config: SwaggerConfig): Option[ApiListing] = {
 
@@ -99,6 +99,7 @@ class RestSwaggerReader {
       var nickName = createNickname(verb.asVerb(), buildUrl(resourcePath, path))
 
       var responseType = verb.getOutType match {
+        case e: String if e.endsWith("[]") => "List[" + e.substring(0, e.length - 2) + "]"
         case e: String => e
         case _ => "java.lang.Void"
       }

@@ -53,12 +53,6 @@ public class VerbDefinition {
     @XmlAttribute
     private String outType;
 
-    @XmlAttribute
-    private Boolean list;
-
-    @XmlAttribute
-    private Boolean outList;
-
     // used by XML DSL to either select a <to> or <route>
     // so we need to use the common type OptionalIdentifiedDefinition
     @XmlElements({
@@ -129,22 +123,6 @@ public class VerbDefinition {
 
     public void setOutType(String outType) {
         this.outType = outType;
-    }
-
-    public Boolean getList() {
-        return list;
-    }
-
-    public void setList(Boolean list) {
-        this.list = list;
-    }
-
-    public Boolean getOutList() {
-        return outList;
-    }
-
-    public void setOutList(Boolean outList) {
-        this.outList = outList;
     }
 
     public RestDefinition getRest() {

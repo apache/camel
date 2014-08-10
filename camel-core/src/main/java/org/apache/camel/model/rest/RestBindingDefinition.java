@@ -29,7 +29,6 @@ import org.apache.camel.Processor;
 import org.apache.camel.model.NoOutputDefinition;
 import org.apache.camel.processor.binding.RestBindingProcessor;
 import org.apache.camel.spi.DataFormat;
-import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.util.IntrospectionSupport;
 
@@ -51,12 +50,6 @@ public class RestBindingDefinition extends NoOutputDefinition {
 
     @XmlAttribute
     private String outType;
-
-    @XmlAttribute
-    private Boolean list;
-
-    @XmlAttribute
-    private Boolean outList;
 
     @Override
     public String toString() {
@@ -100,22 +93,24 @@ public class RestBindingDefinition extends NoOutputDefinition {
         if (json != null) {
             Class<?> clazz = null;
             if (type != null) {
-                clazz = context.getClassResolver().resolveMandatoryClass(type);
+                String typeName = type.endsWith("[]") ? type.substring(0, type.length() - 2) : type;
+                clazz = context.getClassResolver().resolveMandatoryClass(typeName);
             }
             if (clazz != null) {
                 IntrospectionSupport.setProperty(context.getTypeConverter(), json, "unmarshalType", clazz);
-                IntrospectionSupport.setProperty(context.getTypeConverter(), json, "useList", list != null ? list : false);
+                IntrospectionSupport.setProperty(context.getTypeConverter(), json, "useList", type.endsWith("[]"));
             }
             setAdditionalConfiguration(context, json);
             context.addService(json);
 
             Class<?> outClazz = null;
             if (outType != null) {
-                outClazz = context.getClassResolver().resolveMandatoryClass(outType);
+                String typeName = outType.endsWith("[]") ? outType.substring(0, outType.length() - 2) : outType;
+                outClazz = context.getClassResolver().resolveMandatoryClass(typeName);
             }
             if (outClazz != null) {
                 IntrospectionSupport.setProperty(context.getTypeConverter(), outJson, "unmarshalType", outClazz);
-                IntrospectionSupport.setProperty(context.getTypeConverter(), outJson, "useList", outList != null ? outList : false);
+                IntrospectionSupport.setProperty(context.getTypeConverter(), outJson, "useList", outType.endsWith("[]"));
             }
             setAdditionalConfiguration(context, outJson);
             context.addService(outJson);
@@ -136,7 +131,8 @@ public class RestBindingDefinition extends NoOutputDefinition {
         if (jaxb != null) {
             Class<?> clazz = null;
             if (type != null) {
-                clazz = context.getClassResolver().resolveMandatoryClass(type);
+                String typeName = type.endsWith("[]") ? type.substring(0, type.length() - 2) : type;
+                clazz = context.getClassResolver().resolveMandatoryClass(typeName);
             }
             if (clazz != null) {
                 JAXBContext jc = JAXBContext.newInstance(clazz);
@@ -150,7 +146,8 @@ public class RestBindingDefinition extends NoOutputDefinition {
 
             Class<?> outClazz = null;
             if (outType != null) {
-                outClazz = context.getClassResolver().resolveMandatoryClass(outType);
+                String typeName = outType.endsWith("[]") ? outType.substring(0, outType.length() - 2) : outType;
+                outClazz = context.getClassResolver().resolveMandatoryClass(typeName);
             }
             if (outClazz != null) {
                 JAXBContext jc = JAXBContext.newInstance(outClazz);
@@ -217,19 +214,4 @@ public class RestBindingDefinition extends NoOutputDefinition {
         this.outType = outType;
     }
 
-    public Boolean getList() {
-        return list;
-    }
-
-    public void setList(Boolean list) {
-        this.list = list;
-    }
-
-    public Boolean getOutList() {
-        return outList;
-    }
-
-    public void setOutList(Boolean outList) {
-        this.outList = outList;
-    }
 }
