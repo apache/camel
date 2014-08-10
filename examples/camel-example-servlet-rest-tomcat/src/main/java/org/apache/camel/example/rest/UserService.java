@@ -56,9 +56,8 @@ public class UserService {
      * Updates or creates the given user
      *
      * @param user the user
-     * @return the old user before it was updated, or <tt>null</tt> if creating a new user
      */
-    public User updateUser(User user) {
-        return users.put("" + user.getId(), user);
+    public void updateUser(User user) {
+        users.put("" + user.getId(), user);
     }
 }

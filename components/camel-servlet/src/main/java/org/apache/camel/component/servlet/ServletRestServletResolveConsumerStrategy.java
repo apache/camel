@@ -155,7 +155,12 @@ public class ServletRestServletResolveConsumerStrategy extends HttpServletResolv
             return true;
         }
 
-        return method.toLowerCase(Locale.US).endsWith(restrict.toLowerCase(Locale.US));
+        // always match OPTIONS as some REST clients uses that prior to calling the service
+        if ("OPTIONS".equals(method)) {
+            return true;
+        }
+
+        return restrict.toLowerCase(Locale.US).contains(method.toLowerCase(Locale.US));
     }
 
 }

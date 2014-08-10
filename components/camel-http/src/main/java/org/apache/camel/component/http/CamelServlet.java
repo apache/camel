@@ -74,9 +74,23 @@ public class CamelServlet extends HttpServlet {
             response.sendError(HttpServletResponse.SC_SERVICE_UNAVAILABLE);
             return;
         }
+
+        // if its an OPTIONS request then return which method is allowed
+        if ("OPTIONS".equals(request.getMethod())) {
+            String s;
+            if (consumer.getEndpoint().getHttpMethodRestrict() != null) {
+                s = "OPTIONS," + consumer.getEndpoint().getHttpMethodRestrict();
+            } else {
+                // allow them all
+                s = "GET,HEAD,POST,PUT,DELETE,TRACE,OPTIONS,CONNECT,PATCH";
+            }
+            response.addHeader("Allow", s);
+            response.setStatus(HttpServletResponse.SC_OK);
+            return;
+        }
         
         if (consumer.getEndpoint().getHttpMethodRestrict() != null 
-            && !consumer.getEndpoint().getHttpMethodRestrict().equals(request.getMethod())) {
+            && !consumer.getEndpoint().getHttpMethodRestrict().contains(request.getMethod())) {
             response.sendError(HttpServletResponse.SC_METHOD_NOT_ALLOWED);
             return;
         }

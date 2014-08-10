@@ -48,7 +48,7 @@
       </get>
 
       <!-- this is a rest PUT to create/update an user -->
-      <put type="org.apache.camel.example.rest.User" outType="org.apache.camel.example.rest.User">
+      <put type="org.apache.camel.example.rest.User">
         <to uri="bean:userService?method=updateUser"/>
       </put>
 

@@ -23,6 +23,8 @@ public class RestContextPathMatcher extends DefaultContextPathMatcher {
 
     private final String rawPath;
 
+    // TODO: improve matching like we have done in camel-servlet
+
     public RestContextPathMatcher(String rawPath, String path, boolean matchOnUriPrefix) {
         super(path, matchOnUriPrefix);
         this.rawPath = rawPath;
