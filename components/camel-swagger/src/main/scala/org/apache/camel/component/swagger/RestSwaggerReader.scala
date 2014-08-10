@@ -19,7 +19,7 @@ package org.apache.camel.component.swagger
 import java.util.Locale
 
 import com.wordnik.swagger.config.SwaggerConfig
-import com.wordnik.swagger.model.{ApiDescription, Operation, ApiListing}
+import com.wordnik.swagger.model._
 import com.wordnik.swagger.core.util.ModelUtil
 import com.wordnik.swagger.core.SwaggerSpec
 
@@ -28,6 +28,11 @@ import org.apache.camel.util.FileUtil
 import org.slf4j.LoggerFactory
 
 import scala.collection.mutable.ListBuffer
+import com.wordnik.swagger.model.Parameter
+import com.wordnik.swagger.model.ApiDescription
+import scala.Some
+import com.wordnik.swagger.model.Operation
+import com.wordnik.swagger.model.ApiListing
 
 // to iterate Java list using for loop
 import scala.collection.JavaConverters._
@@ -35,18 +40,6 @@ import scala.collection.JavaConverters._
 class RestSwaggerReader {
 
   private val LOG = LoggerFactory.getLogger(classOf[RestSwaggerReader])
-
-  def buildUrl(path1: String, path2: String): String = {
-    val s1 = FileUtil.stripTrailingSeparator(path1)
-    val s2 = FileUtil.stripLeadingSeparator(path2)
-    if (s1 != null && s2 != null) {
-      s1 + "/" + s2
-    } else if (path1 != null) {
-      path1
-    } else {
-      path2
-    }
-  }
 
   // TODO: add parameters to operations
   // - {id} is a path type, and required
@@ -114,6 +107,8 @@ class RestSwaggerReader {
         case _ => List()
       }
 
+
+
       operations += Operation(
         method,
         "",
@@ -125,7 +120,7 @@ class RestSwaggerReader {
         consumes,
         List(),
         List(),
-        List(),
+        createParameters(verb, buildUrl(resourcePath, path)),
         List(),
         None)
     }
@@ -169,6 +164,52 @@ class RestSwaggerReader {
     else None
   }
 
+  def createParameters(verb: VerbDefinition, absPath : String): List[Parameter] = {
+    val parameters = new ListBuffer[Parameter]
+
+    // each {} is a parameter
+    val arr = absPath.split("\\/")
+    for (a <- arr) {
+      if (a.startsWith("{") && a.endsWith("}")) {
+        var key = a.substring(1, a.length - 1)
+
+        parameters += Parameter(
+          key,
+          None,
+          None,
+          true,
+          false,
+          "string",
+          AnyAllowableValues,
+          "path",
+          None
+        )
+      }
+    }
+
+    // if we have input type then its a body parameter
+    if (verb.getType != null) {
+      var bodyType = verb.getType
+      if (bodyType.endsWith("[]")) {
+        bodyType = "List[" + bodyType.substring(0, bodyType.length - 2) + "]"
+      }
+
+      parameters += Parameter(
+        "body",
+        None,
+        None,
+        true,
+        false,
+        bodyType,
+        AnyAllowableValues,
+        "body",
+        None
+      )
+    }
+
+    parameters.toList
+  }
+
   def createNickname(method: String, absPath : String): String = {
     val s = method + "/" + absPath
     val arr = s.split("\\/")
@@ -190,6 +231,18 @@ class RestSwaggerReader {
   def sanitizeNickname(s: String): String = {
     // nick name must only be alpha chars
     s.replaceAll("\\W", "")
+  }
+
+  def buildUrl(path1: String, path2: String): String = {
+    val s1 = FileUtil.stripTrailingSeparator(path1)
+    val s2 = FileUtil.stripLeadingSeparator(path2)
+    if (s1 != null && s2 != null) {
+      s1 + "/" + s2
+    } else if (path1 != null) {
+      path1
+    } else {
+      path2
+    }
   }
 
 }
