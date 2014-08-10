@@ -6,7 +6,7 @@
  * (the "License"); you may not use this file except in compliance with
  * the License.  You may obtain a copy of the License at
  *
- *      http://www.apache.org/licenses/LICENSE-2.0
+ * http://www.apache.org/licenses/LICENSE-2.0
  *
  * Unless required by applicable law or agreed to in writing, software
  * distributed under the License is distributed on an "AS IS" BASIS,
@@ -25,7 +25,7 @@ import com.wordnik.swagger.core.SwaggerSpec
 
 import org.apache.camel.model.rest.{VerbDefinition, RestDefinition}
 import org.apache.camel.util.FileUtil
- import org.slf4j.LoggerFactory
+import org.slf4j.LoggerFactory
 
 import scala.collection.mutable.ListBuffer
 
@@ -48,11 +48,20 @@ class RestSwaggerReader {
     }
   }
 
-  // TOOD: register classloader
+  // TODO: add parameters to operations
+  // - {id} is a path type, and required
+  // - type/typeList/outType/outTypeList is body type and required
 
   def read(rest: RestDefinition, config: SwaggerConfig): Option[ApiListing] = {
 
-    val resourcePath = rest.getPath
+    var resourcePath = rest.getPath
+    // resource path must start with slash
+    if (resourcePath == null) {
+      resourcePath = ""
+    }
+    if (!resourcePath.startsWith("/")) {
+      resourcePath = "/" + resourcePath
+    }
 
     // create a list of apis
     val apis = new ListBuffer[ApiDescription]
@@ -82,7 +91,12 @@ class RestSwaggerReader {
       }
 
       path = verb.getUri
+
+      // the method must be in upper case
       var method = verb.asVerb().toUpperCase(Locale.US)
+
+      // create an unique nickname using the method and paths
+      var nickName = createNickname(verb.asVerb(), buildUrl(resourcePath, path))
 
       var responseType = verb.getOutType match {
         case e: String => e
@@ -104,7 +118,7 @@ class RestSwaggerReader {
         "",
         "",
         responseType,
-        "",
+        nickName,
         0,
         produces,
         consumes,
@@ -152,6 +166,29 @@ class RestSwaggerReader {
     }
 
     else None
+  }
+
+  def createNickname(method: String, absPath : String): String = {
+    val s = method + "/" + absPath
+    val arr = s.split("\\/")
+    val r = arr.foldLeft("") {
+      (a, b) => a + toTitleCase(sanitizeNickname(b))
+    }
+    // first char should be lower
+    r.charAt(0).toLower + r.substring(1)
+  }
+
+  def toTitleCase(s: String): String = {
+    if (s.size > 0) {
+      s.charAt(0).toUpper + s.substring(1)
+    } else {
+      s
+    }
+  }
+
+  def sanitizeNickname(s: String): String = {
+    // nick name must only be alpha chars
+    s.replaceAll("\\W", "")
   }
 
 }

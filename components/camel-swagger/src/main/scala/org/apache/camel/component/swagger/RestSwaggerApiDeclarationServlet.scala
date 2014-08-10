@@ -43,7 +43,6 @@ class RestSwaggerApiDeclarationServlet extends HttpServlet {
 
   override def init(config: ServletConfig): Unit = {
     super.init(config)
-    LOG.info("init")
 
     // configure swagger options
     var s = config.getInitParameter("api.version")
@@ -99,13 +98,12 @@ class RestSwaggerApiDeclarationServlet extends HttpServlet {
    * Renders the resource listing which is the overview of all the apis
    */
   def renderResourceListing(request: HttpServletRequest, response: HttpServletResponse) = {
-    LOG.info("renderResourceListing")
+    LOG.trace("renderResourceListing")
 
     val queryParams = Map[String, List[String]]()
     val cookies = Map[String, String]()
     val headers = Map[String, List[String]]()
 
-    LOG.info("renderResourceListing camel -> {}", camel)
     if (camel != null) {
       val f = new SpecFilter
       val listings = RestApiListingCache.listing(camel, swaggerConfig).map(specs => {
@@ -123,7 +121,7 @@ class RestSwaggerApiDeclarationServlet extends HttpServlet {
         List(),
         swaggerConfig.info
       )
-      LOG.info("renderResourceListing write response -> {}", resourceListing)
+      LOG.debug("renderResourceListing write response -> {}", resourceListing)
       response.getOutputStream.write(JsonSerializer.asJson(resourceListing).getBytes("utf-8"))
     } else {
       response.setStatus(204)
@@ -134,6 +132,8 @@ class RestSwaggerApiDeclarationServlet extends HttpServlet {
    * Renders the api listing of a single resource
    */
   def renderApiDeclaration(request: HttpServletRequest, response: HttpServletResponse) = {
+    LOG.trace("renderApiDeclaration")
+
     val route = request.getPathInfo
     val docRoot = request.getPathInfo
     val f = new SpecFilter
@@ -142,7 +142,6 @@ class RestSwaggerApiDeclarationServlet extends HttpServlet {
     val headers = Map[String, List[String]]()
     val pathPart = docRoot
 
-    LOG.info("renderApiDeclaration camel -> {}", camel)
     if (camel != null) {
       val listings = RestApiListingCache.listing(camel, swaggerConfig).map(specs => {
           (for (spec <- specs.values) yield {
@@ -151,7 +150,7 @@ class RestSwaggerApiDeclarationServlet extends HttpServlet {
       }).toList.flatten
       listings.size match {
         case 1 => {
-          LOG.info("renderResourceListing write response -> {}", listings.head)
+          LOG.debug("renderResourceListing write response -> {}", listings.head)
           response.getOutputStream.write(JsonSerializer.asJson(listings.head).getBytes("utf-8"))
         }
         case _ => response.setStatus(404)
