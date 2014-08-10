@@ -18,6 +18,9 @@ deploy folder of Apache Tomcat.
 And then hit this url from a web browser which has further instructions
   http://localhost:8080/camel-example-servlet-rest-tomcat
 
+Included in this example is an api browser using Swagger. You can see the API from this url:
+  http://localhost:8080/camel-example-servlet-rest-tomcat/api-docs
+
 You can also try the example from Maven using
    mvn jetty:run
 
