@@ -44,7 +44,7 @@
     <servlet-name>CamelServlet</servlet-name>
     <display-name>Camel Http Transport Servlet</display-name>
     <servlet-class>org.apache.camel.component.servlet.CamelHttpTransportServlet</servlet-class>
-    <load-on-startup>3</load-on-startup>
+    <load-on-startup>1</load-on-startup>
   </servlet>
 
   <!-- START SNIPPET: e1 -->
@@ -54,7 +54,16 @@
     <servlet-class>org.apache.camel.component.swagger.RestSwaggerApiDeclarationServlet</servlet-class>
     <load-on-startup>2</load-on-startup>
     <init-param>
+      <!-- enable cors so people can use swagger ui to browse the apis -->
+      <param-name>cors</param-name>
+      <param-value>true</param-value>
+    </init-param>
+    <init-param>
       <param-name>base.path</param-name>
+      <param-value>http://localhost:8080/rest</param-value>
+    </init-param>
+    <init-param>
+      <param-name>api.path</param-name>
       <param-value>http://localhost:8080/api-docs</param-value>
     </init-param>
     <init-param>

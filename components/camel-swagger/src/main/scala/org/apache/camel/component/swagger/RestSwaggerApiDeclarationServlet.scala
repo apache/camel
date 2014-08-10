@@ -40,6 +40,7 @@ class RestSwaggerApiDeclarationServlet extends HttpServlet {
   val reader = new RestSwaggerReader()
   var camel: CamelContext = null
   val swaggerConfig: SwaggerConfig = ConfigFactory.config
+  var cors: Boolean = false
 
   override def init(config: ServletConfig): Unit = {
     super.init(config)
@@ -60,6 +61,10 @@ class RestSwaggerApiDeclarationServlet extends HttpServlet {
     s = config.getInitParameter("api.path")
     if (s != null) {
       swaggerConfig.setApiPath(s)
+    }
+    s = config.getInitParameter("cors")
+    if (s != null) {
+      cors = "true".equalsIgnoreCase(s)
     }
 
     val title = config.getInitParameter("api.title")
@@ -104,6 +109,12 @@ class RestSwaggerApiDeclarationServlet extends HttpServlet {
     val cookies = Map[String, String]()
     val headers = Map[String, List[String]]()
 
+    if (cors) {
+      response.addHeader("Access-Control-Allow-Headers", "Origin, Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers")
+      response.addHeader("Access-Control-Allow-Methods", "GET, HEAD, POST, PUT, DELETE, TRACE, OPTIONS, CONNECT, PATCH")
+      response.addHeader("Access-Control-Allow-Origin", "*")
+    }
+
     if (camel != null) {
       val f = new SpecFilter
       val listings = RestApiListingCache.listing(camel, swaggerConfig).map(specs => {
@@ -141,6 +152,12 @@ class RestSwaggerApiDeclarationServlet extends HttpServlet {
     val cookies = Map[String, String]()
     val headers = Map[String, List[String]]()
     val pathPart = docRoot
+
+    if (cors) {
+      response.addHeader("Access-Control-Allow-Headers", "Origin, Accept, X-Requested-With, Content-Type, Access-Control-Request-Method, Access-Control-Request-Headers")
+      response.addHeader("Access-Control-Allow-Methods", "GET, HEAD, POST, PUT, DELETE, TRACE, OPTIONS, CONNECT, PATCH")
+      response.addHeader("Access-Control-Allow-Origin", "*")
+    }
 
     if (camel != null) {
       val listings = RestApiListingCache.listing(camel, swaggerConfig).map(specs => {
