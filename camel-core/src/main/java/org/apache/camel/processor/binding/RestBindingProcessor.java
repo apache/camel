@@ -41,6 +41,9 @@ import org.apache.camel.util.ObjectHelper;
  */
 public class RestBindingProcessor extends ServiceSupport implements AsyncProcessor {
 
+    // TODO: consumes/produces can be a list of media types, and prioritized 1st to last. (eg the q=weight option)
+    // TODO: use content-type from produces/consumes if possible to set as Content-Type if missing
+
     private final AsyncProcessor jsonUnmarshal;
     private final AsyncProcessor xmlUnmarshal;
     private final AsyncProcessor jsonMarshal;
@@ -88,8 +91,6 @@ public class RestBindingProcessor extends ServiceSupport implements AsyncProcess
     public void process(Exchange exchange) throws Exception {
         AsyncProcessorHelper.process(this, exchange);
     }
-
-    // TODO: consumes/produces can be a list of media types, and prioritized 1st to last.
 
     @Override
     public boolean process(Exchange exchange, final AsyncCallback callback) {
@@ -289,14 +290,23 @@ public class RestBindingProcessor extends ServiceSupport implements AsyncProcess
 
             try {
                 if (isXml && xmlMarshal != null) {
+                    // make sure there is a content-type with xml
+                    String type = ExchangeHelper.getContentType(exchange);
+                    if (type == null) {
+                        exchange.getIn().setHeader(Exchange.CONTENT_TYPE, "application/xml");
+                    }
                     xmlMarshal.process(exchange);
                 } else if (isJson && jsonMarshal != null) {
+                    // make sure there is a content-type with json
+                    String type = ExchangeHelper.getContentType(exchange);
+                    if (type == null) {
+                        exchange.getIn().setHeader(Exchange.CONTENT_TYPE, "application/json");
+                    }
                     jsonMarshal.process(exchange);
                 } else {
                     // we could not bind
                     if (bindingMode.equals("auto")) {
                         // okay for auto we do not mind if we could not bind
-                        return;
                     } else {
                         if (bindingMode.contains("xml")) {
                             exchange.setException(new BindingException("Cannot bind to xml as message body is not xml compatible", exchange));
@@ -304,11 +314,11 @@ public class RestBindingProcessor extends ServiceSupport implements AsyncProcess
                             exchange.setException(new BindingException("Cannot bind to json as message body is not json compatible", exchange));
                         }
                     }
-                    return;
                 }
             } catch (Throwable e) {
                 exchange.setException(e);
             }
         }
     }
+
 }

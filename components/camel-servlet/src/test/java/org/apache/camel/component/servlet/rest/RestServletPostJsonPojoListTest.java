@@ -43,6 +43,7 @@ public class RestServletPostJsonPojoListTest extends ServletCamelRouterTestSuppo
         WebResponse response = client.getResponse(req);
 
         assertEquals(200, response.getResponseCode());
+        assertEquals("application/json", response.getContentType());
 
         assertMockEndpointsSatisfied();
 
