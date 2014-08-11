@@ -33,6 +33,7 @@ import com.wordnik.swagger.model.ApiDescription
 import scala.Some
 import com.wordnik.swagger.model.Operation
 import com.wordnik.swagger.model.ApiListing
+import scala.util.Sorting
 
 // to iterate Java list using for loop
 import scala.collection.JavaConverters._
@@ -64,14 +65,9 @@ class RestSwaggerReader {
     val operations = new ListBuffer[Operation]
     var path: String = null
 
-    // must sort the verbs by uri so we group them together when an uri has multiple operations
-    // TODO: we want to sort /{xx} first, so we may need some regexp matching to trigger sorting them before non {}
-    // TODO: and then 2nd sort by http method
     var list = rest.getVerbs.asScala
-    list = list.sortBy(v => v.getUri match {
-      case v: Any => v
-      case _ => ""
-    })
+    // must sort the verbs by uri so we group them together when an uri has multiple operations
+    list = list.sorted(VerbOrdering)
 
     for (verb: VerbDefinition <- list) {
 
@@ -257,6 +253,31 @@ class RestSwaggerReader {
       path1
     } else {
       path2
+    }
+  }
+
+  /**
+   * To sort the rest operations
+   */
+  object VerbOrdering extends Ordering[VerbDefinition] {
+    def compare(a:VerbDefinition, b:VerbDefinition) = {
+      var u1 = ""
+      if (a.getUri != null) {
+        // replace { with _ which comes before a when soring by char
+        u1 = a.getUri.replace("{", "_")
+      }
+      var u2 = ""
+      if (b.getUri != null) {
+        // replace { with _ which comes before a when soring by char
+        u2 = b.getUri.replace("{", "_")
+      }
+
+      var num = u1.compareTo(u2)
+      if (num == 0) {
+        // same uri, so use http method as sorting
+        num = a.asVerb().compareTo(b.asVerb())
+      }
+      num
     }
   }
 
