@@ -16,19 +16,24 @@
  */
 package org.apache.camel.component.elasticsearch;
 
-import java.util.Map;
-
 import org.apache.camel.Exchange;
 import org.apache.camel.ExpectedBodyTypeException;
 import org.apache.camel.Message;
 import org.apache.camel.impl.DefaultProducer;
 import org.elasticsearch.action.ListenableActionFuture;
+import org.elasticsearch.action.bulk.BulkItemResponse;
+import org.elasticsearch.action.bulk.BulkRequestBuilder;
+import org.elasticsearch.action.bulk.BulkResponse;
 import org.elasticsearch.action.delete.DeleteResponse;
 import org.elasticsearch.action.get.GetResponse;
 import org.elasticsearch.action.index.IndexRequestBuilder;
 import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.common.xcontent.XContentBuilder;
+
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
 
 /**
  * Represents an Elasticsearch producer.
@@ -62,6 +67,8 @@ public class ElasticsearchProducer extends DefaultProducer {
             getById(client, exchange);
         } else if (operation.equalsIgnoreCase(ElasticsearchConfiguration.OPERATION_DELETE)) {
             deleteById(client, exchange);
+        } else if (operation.equalsIgnoreCase(ElasticsearchConfiguration.OPERATION_BULK_INDEX)) {
+            addToIndexUsingBulk(client, exchange);
         } else {
             throw new IllegalArgumentException(ElasticsearchConfiguration.PARAM_OPERATION + " value '" + operation + "' is not supported");
         }
@@ -114,7 +121,9 @@ public class ElasticsearchProducer extends DefaultProducer {
 
         IndexRequestBuilder prepareIndex = client.prepareIndex(indexName, indexType);
 
-        if (!setIndexRequestSource(exchange.getIn(), prepareIndex)) {
+        Object document = extractDocumentFromMessage(exchange.getIn());
+
+        if (!setIndexRequestSource(document, prepareIndex)) {
             throw new ExpectedBodyTypeException(exchange, XContentBuilder.class);
         }
         ListenableActionFuture<IndexResponse> future = prepareIndex.execute();
@@ -122,10 +131,45 @@ public class ElasticsearchProducer extends DefaultProducer {
         exchange.getIn().setBody(response.getId());
     }
 
-    @SuppressWarnings("unchecked")
-    private boolean setIndexRequestSource(Message msg, IndexRequestBuilder builder) {
+    public void addToIndexUsingBulk(Client client, Exchange exchange) {
+        String indexName = exchange.getIn().getHeader(ElasticsearchConfiguration.PARAM_INDEX_NAME, String.class);
+        if (indexName == null) {
+            indexName = getEndpoint().getConfig().getIndexName();
+        }
+
+        String indexType = exchange.getIn().getHeader(ElasticsearchConfiguration.PARAM_INDEX_TYPE, String.class);
+        if (indexType == null) {
+            indexType = getEndpoint().getConfig().getIndexType();
+        }
+
+        log.debug("Preparing Bulk Request");
+        BulkRequestBuilder bulkRequest = client.prepareBulk();
+
+        List<?> body = exchange.getIn().getBody(List.class);;
+
+        for (Object document : body) {
+            IndexRequestBuilder prepareIndex = client.prepareIndex(indexName, indexType);
+            log.trace("Indexing document : {}", document);
+            if (!setIndexRequestSource(document, prepareIndex)) {
+                throw new ExpectedBodyTypeException(exchange, XContentBuilder.class);
+            }
+            bulkRequest.add(prepareIndex);
+        }
+
+        ListenableActionFuture<BulkResponse> future = bulkRequest.execute();
+        BulkResponse bulkResponse = future.actionGet();
+
+        List<String> indexedIds = new LinkedList<String>();
+        for (BulkItemResponse response : bulkResponse.getItems()) {
+            indexedIds.add(response.getId());
+        }
+        log.debug("List of successfully indexed document ids : {}", indexedIds);
+        exchange.getIn().setBody(indexedIds);
+    }
+
+
+    private Object extractDocumentFromMessage(Message msg) {
         Object body = null;
-        boolean converted = false;
 
         // order is important
         Class<?>[] types = new Class[] {XContentBuilder.class, Map.class, byte[].class, String.class};
@@ -135,16 +179,25 @@ public class ElasticsearchProducer extends DefaultProducer {
             body = msg.getBody(type);
         }
 
-        if (body != null) {
+        return body;
+
+    }
+
+
+    @SuppressWarnings("unchecked")
+    private boolean setIndexRequestSource(Object document, IndexRequestBuilder builder) {
+        boolean converted = false;
+
+        if (document != null) {
             converted = true;
-            if (body instanceof byte[]) {
-                builder.setSource((byte[])body);
-            } else if (body instanceof Map) {
-                builder.setSource((Map<String, Object>) body);
-            } else if (body instanceof String) {
-                builder.setSource((String)body);
-            } else if (body instanceof XContentBuilder) {
-                builder.setSource((XContentBuilder)body);
+            if (document instanceof byte[]) {
+                builder.setSource((byte[])document);
+            } else if (document instanceof Map) {
+                builder.setSource((Map<String, Object>) document);
+            } else if (document instanceof String) {
+                builder.setSource((String)document);
+            } else if (document instanceof XContentBuilder) {
+                builder.setSource((XContentBuilder)document);
             } else {
                 converted = false;
             }
