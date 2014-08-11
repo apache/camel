@@ -88,7 +88,9 @@ public class ElasticsearchEndpoint extends DefaultEndpoint {
             LOG.info("Leaving ElasticSearch cluster " + config.getClusterName());
         }
         client.close();
-        node.close();
+        if (node != null) {
+            node.close();
+        }
         super.doStop();
     }
 
