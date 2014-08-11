@@ -428,8 +428,8 @@
     <woodstox-version>4.2.1</woodstox-version>
     <ws-commons-util-bundle-version>1.0.2_2</ws-commons-util-bundle-version>
     <wsdl4j-bundle-version>1.6.2_6</wsdl4j-bundle-version>
-    <xalan-bundle-version>2.7.1_7</xalan-bundle-version>
-    <xalan-version>2.7.1</xalan-version>
+    <xalan-bundle-version>2.7.2_1</xalan-bundle-version>
+    <xalan-version>2.7.2</xalan-version>
     <xbean-spring-version>3.18</xbean-spring-version>
     <!-- xbean-asm4-bundle is used by openjpa -->
     <xbean-asm4-bundle-version>3.14</xbean-asm4-bundle-version>
