@@ -21,7 +21,6 @@ import java.lang.reflect.Constructor;
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
 import java.net.URI;
-import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
@@ -952,7 +951,7 @@ public class JettyHttpComponent extends HttpComponent implements RestConsumerFac
             } else {
                 path = path + "/" + uriTemplate;
             }
-       }
+        }
         path = FileUtil.stripLeadingSeparator(path);
 
         String scheme = "http";

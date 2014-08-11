@@ -246,7 +246,7 @@ public class NettyHttpComponent extends NettyComponent implements HeaderFilterSt
             if (num > 0) {
                 port = num;
             }
-       }
+        }
 
         // if no explicit hostname set then resolve the hostname
         if (ObjectHelper.isEmpty(host)) {

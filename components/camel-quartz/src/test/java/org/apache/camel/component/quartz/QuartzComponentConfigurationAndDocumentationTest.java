@@ -33,8 +33,8 @@ public class QuartzComponentConfigurationAndDocumentationTest extends CamelTestS
     @Test
     public void testComponentConfiguration() throws Exception {
         QuartzComponent comp = context.getComponent("quartz", QuartzComponent.class);
-        EndpointConfiguration conf = comp.createConfiguration("quartz://myGroup/myName?trigger.repeatCount=3" +
-                "&stateful=true&deleteJob=false");
+        EndpointConfiguration conf = comp.createConfiguration("quartz://myGroup/myName?trigger.repeatCount=3" 
+            + "&stateful=true&deleteJob=false");
 
         assertEquals("true", conf.getParameter("stateful"));
         assertEquals("false", conf.getParameter("deleteJob"));
