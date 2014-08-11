@@ -41,19 +41,23 @@
 
     <!-- defines the rest services using the context-path /user -->
     <rest path="/user" consumes="application/json" produces="application/json">
+      <description>User rest service</description>
 
       <!-- this is a rest GET to view an user by the given id -->
       <get uri="/{id}" outType="org.apache.camel.example.rest.User">
+        <description>Find user by id</description>
         <to uri="bean:userService?method=getUser(${header.id})"/>
       </get>
 
       <!-- this is a rest PUT to create/update an user -->
       <put type="org.apache.camel.example.rest.User">
+        <description>Updates or create a user</description>
         <to uri="bean:userService?method=updateUser"/>
       </put>
 
       <!-- this is a rest GET to find all users -->
       <get uri="/findAll" outType="org.apache.camel.example.rest.User[]">
+        <description>Find all users</description>
         <to uri="bean:userService?method=listUsers"/>
       </get>
 

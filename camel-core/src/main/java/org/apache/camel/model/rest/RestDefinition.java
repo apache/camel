@@ -27,6 +27,7 @@ import javax.xml.bind.annotation.XmlElementRef;
 import javax.xml.bind.annotation.XmlRootElement;
 
 import org.apache.camel.CamelContext;
+import org.apache.camel.model.OptionalIdentifiedDefinition;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.ToDefinition;
 import org.apache.camel.util.URISupport;
@@ -36,7 +37,7 @@ import org.apache.camel.util.URISupport;
  */
 @XmlRootElement(name = "rest")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class RestDefinition {
+public class RestDefinition extends OptionalIdentifiedDefinition<RestDefinition> {
 
     @XmlAttribute
     private String path;
@@ -52,6 +53,11 @@ public class RestDefinition {
 
     @XmlElementRef
     private List<VerbDefinition> verbs = new ArrayList<VerbDefinition>();
+
+    @Override
+    public String getLabel() {
+        return "rest";
+    }
 
     public String getPath() {
         return path;
@@ -150,6 +156,45 @@ public class RestDefinition {
 
     public RestDefinition verb(String verb, String uri) {
         return addVerb(verb, uri);
+    }
+
+    @Override
+    public RestDefinition id(String id) {
+        if (getVerbs().isEmpty()) {
+            super.id(id);
+        } else {
+            // add on last verb as that is how the Java DSL works
+            VerbDefinition verb = getVerbs().get(getVerbs().size() - 1);
+            verb.id(id);
+        }
+
+        return this;
+    }
+
+    @Override
+    public RestDefinition description(String text) {
+        if (getVerbs().isEmpty()) {
+            super.description(text);
+        } else {
+            // add on last verb as that is how the Java DSL works
+            VerbDefinition verb = getVerbs().get(getVerbs().size() - 1);
+            verb.description(text);
+        }
+
+        return this;
+    }
+
+    @Override
+    public RestDefinition description(String id, String text, String lang) {
+        if (getVerbs().isEmpty()) {
+            super.description(id, text, lang);
+        } else {
+            // add on last verb as that is how the Java DSL works
+            VerbDefinition verb = getVerbs().get(getVerbs().size() - 1);
+            verb.description(id, text, lang);
+        }
+
+        return this;
     }
 
     public RestDefinition consumes(String mediaType) {

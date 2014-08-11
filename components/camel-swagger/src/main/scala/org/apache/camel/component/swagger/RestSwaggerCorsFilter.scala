@@ -19,6 +19,10 @@ package org.apache.camel.component.swagger
 import javax.servlet._
 import javax.servlet.http.HttpServletResponse
 
+/**
+ * A simple CORS filter that can used to allow the swagger ui or other API browsers from remote origins to access the
+ * Rest services exposes by this Camel swagger module.
+ */
 class RestSwaggerCorsFilter extends Filter {
 
   override def init(config: FilterConfig): Unit = {

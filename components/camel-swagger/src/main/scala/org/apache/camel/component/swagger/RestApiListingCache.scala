@@ -27,6 +27,9 @@ import scala.collection.mutable.ListBuffer
 // to iterate Java list using for loop
 import scala.collection.JavaConverters._
 
+/**
+ * To cache the RestSwaggerReader
+ */
 object RestApiListingCache extends ReaderUtil {
 
   var cache: Option[Map[String, ApiListing]] = None

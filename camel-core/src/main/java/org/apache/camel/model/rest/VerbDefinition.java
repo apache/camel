@@ -30,7 +30,7 @@ import org.apache.camel.model.ToDefinition;
 
 @XmlRootElement(name = "verb")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class VerbDefinition {
+public class VerbDefinition extends OptionalIdentifiedDefinition<VerbDefinition> {
 
     @XmlAttribute
     private String method;
@@ -68,6 +68,15 @@ public class VerbDefinition {
     private RouteDefinition route;
     @XmlTransient
     private RestDefinition rest;
+
+    @Override
+    public String getLabel() {
+        if (method != null) {
+            return method;
+        } else {
+            return "verb";
+        }
+    }
 
     public String getMethod() {
         return method;

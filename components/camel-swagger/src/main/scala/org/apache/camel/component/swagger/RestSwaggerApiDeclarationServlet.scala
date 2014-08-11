@@ -30,6 +30,9 @@ import org.springframework.web.context.WebApplicationContext
 import org.apache.camel.CamelContext
 import org.slf4j.LoggerFactory
 
+/**
+ * A Http Servlet to expose the REST services as Swagger APIs.
+ */
 class RestSwaggerApiDeclarationServlet extends HttpServlet {
 
   // TODO: this has spring dependency, find a way to make it work with blueprint/spring/cdi/servlet-listener etc

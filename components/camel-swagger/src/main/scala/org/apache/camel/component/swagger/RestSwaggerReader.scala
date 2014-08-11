@@ -37,10 +37,12 @@ import com.wordnik.swagger.model.ApiListing
 // to iterate Java list using for loop
 import scala.collection.JavaConverters._
 
+/**
+ * A Swagger reader that reads the Camel's Rest models and builds a Swagger ApiListing models.
+ */
 class RestSwaggerReader {
 
   private val LOG = LoggerFactory.getLogger(classOf[RestSwaggerReader])
-  // TODO: add logging
 
   def read(rest: RestDefinition, config: SwaggerConfig): Option[ApiListing] = {
 
@@ -52,6 +54,8 @@ class RestSwaggerReader {
     if (!resourcePath.startsWith("/")) {
       resourcePath = "/" + resourcePath
     }
+
+    LOG.debug("Reading rest path: {} -> {}", resourcePath, rest)
 
     // create a list of apis
     val apis = new ListBuffer[ApiDescription]
@@ -104,11 +108,16 @@ class RestSwaggerReader {
         case _ => List()
       }
 
+      var summary = verb.getDescriptionText
+      if (summary == null) {
+        summary = ""
+      }
 
+      LOG.debug("Adding operation {} {}", method, nickName)
 
       operations += Operation(
         method,
-        "",
+        summary,
         "",
         responseType,
         nickName,
@@ -143,6 +152,14 @@ class RestSwaggerReader {
       }
 
       val models = ModelUtil.modelsFromApis(apis.toList)
+
+      LOG.debug("Adding APIs with {} models", models.size)
+
+      var desc = rest.getDescriptionText
+      if (desc == null) {
+        desc = ""
+      }
+
       Some(
         ApiListing(
           config.apiVersion,
@@ -154,7 +171,8 @@ class RestSwaggerReader {
           List(), // protocols
           List(), // authorizations
           ModelUtil.stripPackages(apis.toList),
-          models)
+          models,
+          Option(desc))
       )
     }
 

@@ -47,15 +47,16 @@ public class UserRouteBuilder extends RouteBuilder {
             .contextPath("camel-example-servlet-rest-tomcat/rest").port(8080);
 
         // this user REST service is json only
-        rest("/user").consumes("application/json").produces("application/json")
+        rest("/user").description("User rest service")
+            .consumes("application/json").produces("application/json")
 
-            .get("/{id}").outType(User.class)
+            .get("/{id}").description("Find user by id").outType(User.class)
                 .to("bean:userService?method=getUser(${header.id})")
 
-            .put().type(User.class)
+            .put().description("Updates or create a user").type(User.class)
                 .to("bean:userService?method=updateUser")
 
-            .get("/findAll").outTypeList(User.class)
+            .get("/findAll").description("Find all users").outTypeList(User.class)
                 .to("bean:userService?method=listUsers");
     }
 
