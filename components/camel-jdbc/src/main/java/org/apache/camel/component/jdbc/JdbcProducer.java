@@ -396,11 +396,13 @@ public class JdbcProducer extends DefaultProducer {
         @Override
         public void onComplete(Exchange exchange) {
             iterator.close();
+            iterator.closeConnection();
         }
 
         @Override
         public void onFailure(Exchange exchange) {
             iterator.close();
+            iterator.closeConnection();
         }
     }
 }
