@@ -33,6 +33,7 @@ import org.apache.camel.model.RouteDefinition;
 /**
  * @version 
  */
+@Deprecated
 public abstract class GraphGeneratorSupport extends GraphSupport {
     protected String dir;
     protected int clusterCounter;

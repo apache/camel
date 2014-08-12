@@ -22,6 +22,8 @@ import org.apache.camel.RouteNode;
 import org.apache.camel.model.ProcessorDefinition;
 
 /**
+ * {@link org.apache.camel.RouteNode} representing do catch.
+ *
  * @version 
  */
 public class DoCatchRouteNode implements RouteNode {

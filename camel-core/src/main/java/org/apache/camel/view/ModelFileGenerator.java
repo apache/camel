@@ -48,6 +48,7 @@ import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.model.RoutesDefinition;
 import org.apache.camel.util.ObjectHelper;
 
+@Deprecated
 public class ModelFileGenerator {
 
     private static final String DEFAULT_ROOT_ELEMENT_NAME = "routes";

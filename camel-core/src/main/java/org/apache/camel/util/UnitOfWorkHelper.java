@@ -29,6 +29,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
+ * Utility methods for {@link org.apache.camel.spi.UnitOfWork}
+ *
  * @version 
  */
 public final class UnitOfWorkHelper {

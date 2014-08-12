@@ -31,6 +31,7 @@ import static org.apache.camel.util.StringHelper.xmlEncode;
 /**
  * @version 
  */
+@Deprecated
 public class XmlGraphGenerator extends GraphGeneratorSupport {
     private boolean addUrl = true;
 

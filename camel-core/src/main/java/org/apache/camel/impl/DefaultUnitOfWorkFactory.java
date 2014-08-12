@@ -20,6 +20,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.spi.UnitOfWork;
 import org.apache.camel.spi.UnitOfWorkFactory;
 
+/**
+ * Default {@link org.apache.camel.spi.UnitOfWorkFactory}
+ */
 public class DefaultUnitOfWorkFactory implements UnitOfWorkFactory {
 
     @Override

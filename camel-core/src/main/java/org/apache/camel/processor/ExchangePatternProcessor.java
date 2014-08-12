@@ -23,6 +23,9 @@ import org.apache.camel.ExchangePattern;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.AsyncProcessorHelper;
 
+/**
+ * Processor to set {@link org.apache.camel.ExchangePattern} on the {@link org.apache.camel.Exchange}.
+ */
 public class ExchangePatternProcessor extends ServiceSupport implements AsyncProcessor {
     private ExchangePattern exchangePattern = ExchangePattern.InOnly;
     
