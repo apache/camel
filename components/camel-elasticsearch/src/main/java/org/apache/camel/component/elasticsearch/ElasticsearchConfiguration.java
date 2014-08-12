@@ -16,14 +16,15 @@
  */
 package org.apache.camel.component.elasticsearch;
 
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.Map;
-
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.elasticsearch.node.Node;
 import org.elasticsearch.node.NodeBuilder;
+
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.Map;
+
 import static org.elasticsearch.node.NodeBuilder.nodeBuilder;
 
 @UriParams
@@ -31,6 +32,7 @@ public class ElasticsearchConfiguration {
 
     public static final String PARAM_OPERATION = "operation";
     public static final String OPERATION_INDEX = "INDEX";
+    public static final String OPERATION_BULK_INDEX = "BULK_INDEX";
     public static final String OPERATION_GET_BY_ID = "GET_BY_ID";
     public static final String OPERATION_DELETE = "DELETE";
     public static final String PARAM_INDEX_ID = "indexId";
