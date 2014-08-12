@@ -2569,6 +2569,26 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
         addOutput(answer);
         return (Type) this;
     }
+    
+    /**
+     * <a href="http://camel.apache.org/message-translator.html">Message Translator EIP:</a>
+     * Adds a bean which is invoked which could be a final destination, or could be a transformation in a pipeline
+     *
+     * @param bean  the bean to invoke
+     * @param method  the method name to invoke on the bean (can be used to avoid ambiguity)
+     * @param multiparameterArray if it is ture, camel will treat the message body as an object array which holds
+     *  the multi parameter 
+     * @return the builder
+     */
+    @SuppressWarnings("unchecked")
+    public Type bean(Object bean, String method, boolean multiParameterArray) {
+        BeanDefinition answer = new BeanDefinition();
+        answer.setBean(bean);
+        answer.setMethod(method);
+        answer.setMultiParameterArray(multiParameterArray);
+        addOutput(answer);
+        return (Type) this;
+    }
 
     /**
      * <a href="http://camel.apache.org/message-translator.html">Message Translator EIP:</a>
@@ -2601,6 +2621,26 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
         addOutput(answer);
         return (Type) this;
     }
+    
+    /**
+     * <a href="http://camel.apache.org/message-translator.html">Message Translator EIP:</a>
+     * Adds a bean which is invoked which could be a final destination, or could be a transformation in a pipeline
+     *
+     * @param  beanType  the bean class, Camel will instantiate an object at runtime
+     * @param method  the method name to invoke on the bean (can be used to avoid ambiguity)
+     * @param multiparameterArray if it is ture, camel will treat the message body as an object array which holds
+     *  the multi parameter 
+     * @return the builder
+     */
+    @SuppressWarnings("unchecked")
+    public Type bean(Class<?> beanType, String method, boolean multiParameterArray) {
+        BeanDefinition answer = new BeanDefinition();
+        answer.setBeanType(beanType);
+        answer.setMethod(method);
+        answer.setMultiParameterArray(multiParameterArray);
+        addOutput(answer);
+        return (Type) this;
+    }
 
     /**
      * <a href="http://camel.apache.org/message-translator.html">Message Translator EIP:</a>
@@ -2615,7 +2655,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
         addOutput(answer);
         return (Type) this;
     }
-
+    
     /**
      * <a href="http://camel.apache.org/message-translator.html">Message Translator EIP:</a>
      * Adds a bean which is invoked which could be a final destination, or could be a transformation in a pipeline
@@ -2647,7 +2687,7 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
         addOutput(answer);
         return (Type) this;
     }
-
+    
     /**
      * <a href="http://camel.apache.org/message-translator.html">Message Translator EIP:</a>
      * Adds a bean which is invoked which could be a final destination, or could be a transformation in a pipeline
@@ -2662,6 +2702,27 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     public Type beanRef(String ref, String method, boolean cache) {
         BeanDefinition answer = new BeanDefinition(ref, method);
         answer.setCache(cache);
+        addOutput(answer);
+        return (Type) this;
+    }
+
+    /**
+     * <a href="http://camel.apache.org/message-translator.html">Message Translator EIP:</a>
+     * Adds a bean which is invoked which could be a final destination, or could be a transformation in a pipeline
+     *
+     * @param ref  reference to a bean to lookup in the registry
+     * @param method  the method name to invoke on the bean (can be used to avoid ambiguity)
+     * @param cache  if enabled, Camel will cache the result of the first Registry look-up.
+     *               Cache can be enabled if the bean in the Registry is defined as a singleton scope.
+     * @param multiparameterArray if it is ture, camel will treat the message body as an object array which holds
+     *               the multi parameter 
+     * @return the builder
+     */
+    @SuppressWarnings("unchecked")
+    public Type beanRef(String ref, String method, boolean cache, boolean multiParameterArray) {
+        BeanDefinition answer = new BeanDefinition(ref, method);
+        answer.setCache(cache);
+        answer.setMultiParameterArray(multiParameterArray);
         addOutput(answer);
         return (Type) this;
     }

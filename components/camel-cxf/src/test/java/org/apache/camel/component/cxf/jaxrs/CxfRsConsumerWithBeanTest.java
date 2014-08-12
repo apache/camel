@@ -33,7 +33,8 @@ import org.junit.Test;
 public class CxfRsConsumerWithBeanTest extends CamelTestSupport {
     private static final String CXT = CXFTestSupport.getPort1() + "/CxfRsConsumerWithBeanTest";
     private static final String CXF_RS_ENDPOINT_URI = "cxfrs://http://localhost:" + CXT + "/rest?resourceClasses=org.apache.camel.component.cxf.jaxrs.testbean.CustomerServiceResource";
-
+    private static final String CXF_RS_ENDPOINT_URI_2 = "cxfrs://http://localhost:" + CXT + "/rest2?resourceClasses=org.apache.camel.component.cxf.jaxrs.testbean.CustomerServiceResource";
+    
     @Override
     protected Context createJndiContext() throws Exception {
         Context context = super.createJndiContext();
@@ -46,14 +47,19 @@ public class CxfRsConsumerWithBeanTest extends CamelTestSupport {
         return new RouteBuilder() {
             public void configure() {
                 from(CXF_RS_ENDPOINT_URI).to("bean://service?multiParameterArray=true");
+                from(CXF_RS_ENDPOINT_URI_2).bean(ServiceUtil.class, "invoke", true);
             };
         };
     }
 
     @Test
     public void testPutConsumer() throws Exception {
-        
-        HttpPut put = new HttpPut("http://localhost:" + CXT + "/rest/customerservice/c20");
+        sendPutRequest("http://localhost:" + CXT + "/rest/customerservice/c20");
+        sendPutRequest("http://localhost:" + CXT + "/rest2/customerservice/c20");
+    }
+    
+    private void sendPutRequest(String uri) throws Exception {
+        HttpPut put = new HttpPut(uri);
         StringEntity entity = new StringEntity("string");
         entity.setContentType("text/plain");
         put.setEntity(entity);

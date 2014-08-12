@@ -50,6 +50,8 @@ public class BeanDefinition extends NoOutputDefinition<BeanDefinition> {
     private String beanType;
     @XmlAttribute
     private Boolean cache;
+    @XmlAttribute
+    private Boolean multiParameterArray;
     @XmlTransient
     private Class<?> beanClass;
     @XmlTransient
@@ -138,6 +140,14 @@ public class BeanDefinition extends NoOutputDefinition<BeanDefinition> {
 
     public void setCache(Boolean cache) {
         this.cache = cache;
+    }
+    
+    public Boolean getMultiParameterArray() {
+        return multiParameterArray;
+    }
+    
+    public void setMultiParameterArray(Boolean multiParameterArray) {
+        this.multiParameterArray = multiParameterArray;
     }
 
     // Fluent API
@@ -256,6 +266,11 @@ public class BeanDefinition extends NoOutputDefinition<BeanDefinition> {
             // the holder should either be bean or type based
             beanHolder = bean != null ? new ConstantBeanHolder(bean, routeContext.getCamelContext()) : new ConstantTypeBeanHolder(clazz, routeContext.getCamelContext());
             answer = new BeanProcessor(beanHolder);
+        }
+        
+        // check for multiParameterArray setting
+        if (multiParameterArray != null) {
+            answer.setMultiParameterArray(multiParameterArray);
         }
 
         // check for method exists
