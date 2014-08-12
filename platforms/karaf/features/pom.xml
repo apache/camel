@@ -140,7 +140,7 @@
         </repository>
       </repositories>
     </profile>
-    
+
     <profile>
       <id>validate</id>
       <!-- Added the repository for the google script -->
@@ -163,6 +163,13 @@
             <groupId>org.apache.karaf.tooling</groupId>
             <artifactId>features-maven-plugin</artifactId>
             <version>${karaf-version}</version>
+            <dependencies>
+              <dependency>
+                <groupId>biz.aQute</groupId>
+                <artifactId>bndlib</artifactId>
+                <version>1.50.0</version>
+              </dependency>
+            </dependencies>
             <configuration>
               <file>${project.build.directory}/classes/${features.file}</file>
               <karafConfig>${project.build.directory}/classes/config.properties</karafConfig>
