@@ -14,25 +14,15 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel
-package scala.dsl
+package org.apache.camel.model;
 
-import org.apache.camel.processor.OnCompletionGlobalTest.MyProcessor
-import org.apache.camel.scala.dsl.builder.{RouteBuilderSupport, RouteBuilder}
-import processor.OnCompletionOnCompleteOnlyTest
+import javax.xml.bind.annotation.XmlEnum;
+import javax.xml.bind.annotation.XmlType;
 
-class SOnCompletionOnCompleteOnlyTest extends OnCompletionOnCompleteOnlyTest with RouteBuilderSupport {
+@XmlType
+@XmlEnum(String.class)
+public enum OnCompletionMode {
 
-  override def createRouteBuilder = new RouteBuilder {
-
-    "direct:start" ==> {
-      onCompletion(completeOnly).parallelProcessing {
-        to("mock:sync")
-      }
-      process(new MyProcessor())
-      to("mock:result")
-    }
-
-  }
+    AfterConsumer, BeforeConsumer
 
 }

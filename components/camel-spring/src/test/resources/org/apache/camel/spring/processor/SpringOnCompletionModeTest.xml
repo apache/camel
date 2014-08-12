@@ -22,25 +22,38 @@
        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd
     ">
 
-    <bean id="myProcessor" class="org.apache.camel.processor.OnCompletionUseOriginalBodyTest$MyProcessor"/>
+  <camelContext xmlns="http://camel.apache.org/schema/spring">
 
-    <camelContext xmlns="http://camel.apache.org/schema/spring">
-        <onCompletion useOriginalMessage="true" parallelProcessing="true">
-            <to uri="mock:before"/>
-            <delay>
-                <constant>1000</constant>
-            </delay>
-            <setBody>
-                <simple>OnComplete:${body}</simple>
-            </setBody>
-            <to uri="mock:after"/>
-        </onCompletion>
+    <route>
+      <from uri="seda:foo"/>
+      <onCompletion mode="BeforeConsumer">
+        <transform>
+          <simple>I was here ${body}</simple>
+        </transform>
+        <to uri="mock:after"/>
+      </onCompletion>
+      <to uri="mock:input"/>
+      <transform>
+        <simple>Hello ${body}</simple>
+      </transform>
+      <to uri="log:foo"/>
+    </route>
 
-        <route>
-            <from uri="direct:start"/>
-            <process ref="myProcessor"/>
-            <to uri="mock:result"/>
-        </route>
-    </camelContext>
+    <route>
+      <from uri="seda:bar"/>
+      <onCompletion mode="AfterConsumer" parallelProcessing="true">
+        <transform>
+          <simple>I was here ${body}</simple>
+        </transform>
+        <to uri="mock:after"/>
+      </onCompletion>
+      <to uri="mock:input"/>
+      <transform>
+        <simple>Hello ${body}</simple>
+      </transform>
+      <to uri="log:bar"/>
+    </route>
+
+  </camelContext>
 
 </beans>

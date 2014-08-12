@@ -26,7 +26,7 @@ class SOnCompletionOnFailureOnlyTest extends OnCompletionOnFailureOnlyTest with 
   override def createRouteBuilder = new RouteBuilder {
 
     "direct:start" ==> {
-      onCompletion(failureOnly) {
+      onCompletion(failureOnly).parallelProcessing {
         to("mock:sync")
       }
       process(new MyProcessor())

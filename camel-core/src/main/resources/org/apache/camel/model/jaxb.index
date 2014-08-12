@@ -43,6 +43,7 @@ LoopDefinition
 MarshalDefinition
 MulticastDefinition
 OnCompletionDefinition
+OnCompletionMode
 OnExceptionDefinition
 OptimisticLockRetryPolicyDefinition
 OptionalIdentifiedDefinition

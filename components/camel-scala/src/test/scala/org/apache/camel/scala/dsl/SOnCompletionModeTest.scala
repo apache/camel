@@ -14,23 +14,33 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel
-package scala.dsl
+package org.apache.camel.scala.dsl
 
-import org.apache.camel.processor.OnCompletionGlobalTest.MyProcessor
 import org.apache.camel.scala.dsl.builder.{RouteBuilderSupport, RouteBuilder}
-import processor.OnCompletionOnCompleteOnlyTest
+import org.apache.camel.processor.OnCompletionModeTest
 
-class SOnCompletionOnCompleteOnlyTest extends OnCompletionOnCompleteOnlyTest with RouteBuilderSupport {
+class SOnCompletionModeTest extends OnCompletionModeTest with RouteBuilderSupport {
 
   override def createRouteBuilder = new RouteBuilder {
 
-    "direct:start" ==> {
-      onCompletion(completeOnly).parallelProcessing {
-        to("mock:sync")
+    "seda:foo" ==> {
+      onCompletion.modeBeforeConsumer {
+        transform(simple("I was here ${body}"))
+        to("mock:after")
       }
-      process(new MyProcessor())
-      to("mock:result")
+      to("mock:input")
+      transform(simple("Hello ${body}"))
+      to("log:foo")
+    }
+
+    "seda:bar" ==> {
+      onCompletion.modeAfterConsumer {
+        transform(simple("I was here ${body}"))
+        to("mock:after")
+      }
+      to("mock:input")
+      transform(simple("Hello ${body}"))
+      to("log:bar")
     }
 
   }

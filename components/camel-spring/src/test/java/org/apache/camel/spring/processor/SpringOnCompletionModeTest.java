@@ -14,25 +14,20 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel
-package scala.dsl
+package org.apache.camel.spring.processor;
 
-import org.apache.camel.processor.OnCompletionGlobalTest.MyProcessor
-import org.apache.camel.scala.dsl.builder.{RouteBuilderSupport, RouteBuilder}
-import processor.OnCompletionOnCompleteOnlyTest
+import org.apache.camel.CamelContext;
+import org.apache.camel.processor.OnCompletionModeTest;
 
-class SOnCompletionOnCompleteOnlyTest extends OnCompletionOnCompleteOnlyTest with RouteBuilderSupport {
+import static org.apache.camel.spring.processor.SpringTestHelper.createSpringCamelContext;
 
-  override def createRouteBuilder = new RouteBuilder {
+/**
+ * @version 
+ */
+public class SpringOnCompletionModeTest extends OnCompletionModeTest {
 
-    "direct:start" ==> {
-      onCompletion(completeOnly).parallelProcessing {
-        to("mock:sync")
-      }
-      process(new MyProcessor())
-      to("mock:result")
+    protected CamelContext createCamelContext() throws Exception {
+        return createSpringCamelContext(this, "org/apache/camel/spring/processor/SpringOnCompletionModeTest.xml");
     }
-
-  }
 
 }

@@ -28,6 +28,7 @@ import org.apache.camel.Message;
 import org.apache.camel.Ordered;
 import org.apache.camel.Predicate;
 import org.apache.camel.Processor;
+import org.apache.camel.Route;
 import org.apache.camel.Traceable;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.support.SynchronizationAdapter;
@@ -53,9 +54,10 @@ public class OnCompletionProcessor extends ServiceSupport implements AsyncProces
     private final boolean onFailureOnly;
     private final Predicate onWhen;
     private final boolean useOriginalBody;
+    private final boolean afterConsumer;
 
     public OnCompletionProcessor(CamelContext camelContext, Processor processor, ExecutorService executorService, boolean shutdownExecutorService,
-                                 boolean onCompleteOnly, boolean onFailureOnly, Predicate onWhen, boolean useOriginalBody) {
+                                 boolean onCompleteOnly, boolean onFailureOnly, Predicate onWhen, boolean useOriginalBody, boolean afterConsumer) {
         notNull(camelContext, "camelContext");
         notNull(processor, "processor");
         this.camelContext = camelContext;
@@ -66,6 +68,7 @@ public class OnCompletionProcessor extends ServiceSupport implements AsyncProces
         this.onFailureOnly = onFailureOnly;
         this.onWhen = onWhen;
         this.useOriginalBody = useOriginalBody;
+        this.afterConsumer = afterConsumer;
     }
 
     @Override
@@ -97,11 +100,20 @@ public class OnCompletionProcessor extends ServiceSupport implements AsyncProces
     public boolean process(Exchange exchange, AsyncCallback callback) {
         if (processor != null) {
             // register callback
-            exchange.getUnitOfWork().addSynchronization(new OnCompletionSynchronization());
+            if (afterConsumer) {
+                exchange.getUnitOfWork().addSynchronization(new OnCompletionSynchronizationAfterConsumer());
+            } else {
+                exchange.getUnitOfWork().addSynchronization(new OnCompletionSynchronizationBeforeConsumer());
+            }
         }
 
         callback.done(true);
         return true;
+    }
+
+    protected boolean isCreateCopy() {
+        // we need to create a correlated copy if we run in parallel mode
+        return executorService != null;
     }
 
     /**
@@ -127,17 +139,22 @@ public class OnCompletionProcessor extends ServiceSupport implements AsyncProces
     protected Exchange prepareExchange(Exchange exchange) {
         Exchange answer;
 
-        // for asynchronous routing we must use a copy as we dont want it
-        // to cause side effects of the original exchange
-        // (the original thread will run in parallel)
-        answer = ExchangeHelper.createCorrelatedCopy(exchange, false);
-        if (answer.hasOut()) {
-            // move OUT to IN (pipes and filters)
-            answer.setIn(answer.getOut());
-            answer.setOut(null);
+        if (isCreateCopy()) {
+            // for asynchronous routing we must use a copy as we dont want it
+            // to cause side effects of the original exchange
+            // (the original thread will run in parallel)
+            answer = ExchangeHelper.createCorrelatedCopy(exchange, false);
+            if (answer.hasOut()) {
+                // move OUT to IN (pipes and filters)
+                answer.setIn(answer.getOut());
+                answer.setOut(null);
+            }
+            // set MEP to InOnly as this wire tap is a fire and forget
+            answer.setPattern(ExchangePattern.InOnly);
+        } else {
+            // use the exchange as-is
+            answer = exchange;
         }
-        // set MEP to InOnly as this wire tap is a fire and forget
-        answer.setPattern(ExchangePattern.InOnly);
 
         if (useOriginalBody) {
             LOG.trace("Using the original IN message instead of current");
@@ -152,7 +169,7 @@ public class OnCompletionProcessor extends ServiceSupport implements AsyncProces
         return answer;
     }
 
-    private final class OnCompletionSynchronization extends SynchronizationAdapter implements Ordered {
+    private final class OnCompletionSynchronizationAfterConsumer extends SynchronizationAdapter implements Ordered {
 
         public int getOrder() {
             // we want to be last
@@ -173,13 +190,19 @@ public class OnCompletionProcessor extends ServiceSupport implements AsyncProces
             // must use a copy as we dont want it to cause side effects of the original exchange
             final Exchange copy = prepareExchange(exchange);
 
-            executorService.submit(new Callable<Exchange>() {
-                public Exchange call() throws Exception {
-                    LOG.debug("Processing onComplete: {}", copy);
-                    doProcess(processor, copy);
-                    return copy;
-                }
-            });
+            if (executorService != null) {
+                executorService.submit(new Callable<Exchange>() {
+                    public Exchange call() throws Exception {
+                        LOG.debug("Processing onComplete: {}", copy);
+                        doProcess(processor, copy);
+                        return copy;
+                    }
+                });
+            } else {
+                // run without thread-pool
+                LOG.debug("Processing onComplete: {}", copy);
+                doProcess(processor, copy);
+            }
         }
 
         public void onFailure(final Exchange exchange) {
@@ -192,19 +215,31 @@ public class OnCompletionProcessor extends ServiceSupport implements AsyncProces
                 return;
             }
 
+
             // must use a copy as we dont want it to cause side effects of the original exchange
             final Exchange copy = prepareExchange(exchange);
+            final Exception original = copy.getException();
             // must remove exception otherwise onFailure routing will fail as well
             // the caused exception is stored as a property (Exchange.EXCEPTION_CAUGHT) on the exchange
             copy.setException(null);
 
-            executorService.submit(new Callable<Exchange>() {
-                public Exchange call() throws Exception {
-                    LOG.debug("Processing onFailure: {}", copy);
-                    doProcess(processor, copy);
-                    return null;
-                }
-            });
+            if (executorService != null) {
+                executorService.submit(new Callable<Exchange>() {
+                    public Exchange call() throws Exception {
+                        LOG.debug("Processing onFailure: {}", copy);
+                        doProcess(processor, copy);
+                        // restore exception after processing
+                        copy.setException(original);
+                        return null;
+                    }
+                });
+            } else {
+                // run without thread-pool
+                LOG.debug("Processing onFailure: {}", copy);
+                doProcess(processor, copy);
+                // restore exception after processing
+                copy.setException(original);
+            }
         }
 
         @Override
@@ -216,6 +251,52 @@ public class OnCompletionProcessor extends ServiceSupport implements AsyncProces
             } else {
                 return "onFailureOnly";
             }
+        }
+    }
+
+    private final class OnCompletionSynchronizationBeforeConsumer extends SynchronizationAdapter implements Ordered {
+
+        public int getOrder() {
+            // we want to be last
+            return Ordered.LOWEST;
+        }
+
+        @Override
+        public void onAfterRoute(Route route, Exchange exchange) {
+            if (exchange.isFailed() && onCompleteOnly) {
+                return;
+            }
+
+            if (!exchange.isFailed() && onFailureOnly) {
+                return;
+            }
+
+            if (onWhen != null && !onWhen.matches(exchange)) {
+                // predicate did not match so do not route the onComplete
+                return;
+            }
+
+            // must use a copy as we dont want it to cause side effects of the original exchange
+            final Exchange copy = prepareExchange(exchange);
+
+            if (executorService != null) {
+                executorService.submit(new Callable<Exchange>() {
+                    public Exchange call() throws Exception {
+                        LOG.debug("Processing onAfterRoute: {}", copy);
+                        doProcess(processor, copy);
+                        return copy;
+                    }
+                });
+            } else {
+                // run without thread-pool
+                LOG.debug("Processing onAfterRoute: {}", copy);
+                doProcess(processor, copy);
+            }
+        }
+
+        @Override
+        public String toString() {
+            return "onAfterRoute";
         }
     }
 
