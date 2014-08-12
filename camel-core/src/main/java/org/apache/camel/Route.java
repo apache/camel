@@ -24,7 +24,7 @@ import org.apache.camel.spi.RouteContext;
 /**
  * A <a href="http://camel.apache.org/routes.html">Route</a>
  * defines the processing used on an inbound message exchange
- * from a specific {@link org.apache.camel.Endpoint} within a {@link org.apache.camel.CamelContext}
+ * from a specific {@link org.apache.camel.Endpoint} within a {@link org.apache.camel.CamelContext}.
  * <p/>
  * Use the API from {@link org.apache.camel.CamelContext} to control the lifecycle of a route,
  * such as starting and stopping using the {@link org.apache.camel.CamelContext#startRoute(String)}
