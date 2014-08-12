@@ -431,6 +431,12 @@ public class MethodInfo {
                 boolean multiParameterArray = false;
                 if (exchange.getIn().getHeader(Exchange.BEAN_MULTI_PARAMETER_ARRAY) != null) {
                     multiParameterArray = exchange.getIn().getHeader(Exchange.BEAN_MULTI_PARAMETER_ARRAY, Boolean.class);
+                    if (multiParameterArray) {
+                        // Just change the message body to an Object array
+                        if (!(body instanceof Object[])) {
+                            body = exchange.getIn().getBody(Object[].class);
+                        }
+                    }
                 }
 
                 // if there was an explicit method name to invoke, then we should support using
