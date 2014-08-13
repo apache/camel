@@ -44,7 +44,9 @@
       <artifactId>camel-core</artifactId>
     </dependency>
 
-    <!-- TODO: we should avoid spring dependency and have some plugin/spi -->
+    <!-- 
+     TODO: we should avoid spring dependency and have some plugin/spi
+     -->
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-web</artifactId>
@@ -140,14 +142,14 @@
         <artifactId>maven-eclipse-plugin</artifactId>
         <configuration>
           <projectnatures>
-            <projectnature>ch.epfl.lamp.sdt.core.scalanature</projectnature>
+            <projectnature>org.scala-ide.sdt.core.scalanature</projectnature>
             <projectnature>org.eclipse.jdt.core.javanature</projectnature>
           </projectnatures>
           <buildcommands>
-            <buildcommand>ch.epfl.lamp.sdt.core.scalabuilder</buildcommand>
+            <buildcommand>org.scala-ide.sdt.core.scalabuilder</buildcommand>
           </buildcommands>
           <classpathContainers>
-            <classpathContainer>ch.epfl.lamp.sdt.launching.SCALA_CONTAINER</classpathContainer>
+            <classpathContainer>org.scala-ide.sdt.launching.SCALA_CONTAINER</classpathContainer>
             <classpathContainer>org.eclipse.jdt.launching.JRE_CONTAINER</classpathContainer>
           </classpathContainers>
         </configuration>
