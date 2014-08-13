@@ -390,10 +390,16 @@
               <testSourceRoot>${basedir}/target/generated/src/test/java</testSourceRoot>
               <wsdlOptions>
                 <wsdlOption>
+                  <frontEnd>jaxws21</frontEnd>
                   <wsdl>${basedir}/src/test/resources/wsdl/CustomerService-1.0.0.wsdl</wsdl>
                 </wsdlOption>
                 <wsdlOption>
+                    <frontEnd>jaxws21</frontEnd>
+                    <wsdl>${basedir}/src/test/resources/wsdl/CustomerService_noSoapAction.wsdl</wsdl>
+                </wsdlOption>
+                <wsdlOption>
                   <wsdl>${basedir}/src/test/resources/wsdl/hello_world.wsdl</wsdl>
+                  <frontEnd>jaxws21</frontEnd>
                   <bindingFiles>
                     <bindingFile>${basedir}/src/test/resources/wsdl/binding.xml</bindingFile>
                   </bindingFiles>
