@@ -18,8 +18,7 @@ package org.apache.camel.component.linkedin.api;
 
 import javax.xml.bind.annotation.adapters.XmlAdapter;
 
-public class LongAdapter extends XmlAdapter<String, Long>
-{
+public class LongAdapter extends XmlAdapter<String, Long> {
 
     public Long unmarshal(String value) {
         return new Long(value);

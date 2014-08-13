@@ -102,8 +102,8 @@ public class AbstractResourceIntegrationTest extends Assert {
 
     protected static <T> T getResource(Class<T> resourceClass) {
         if (requestFilter == null) {
-            throw new IllegalStateException(AbstractResourceIntegrationTest.class.getName() +
-                ".beforeClass must be invoked before getResource");
+            throw new IllegalStateException(AbstractResourceIntegrationTest.class.getName()
+                                            + ".beforeClass must be invoked before getResource");
         }
         final T resource = JAXRSClientFactory.create(LinkedInOAuthRequestFilter.BASE_ADDRESS, resourceClass,
 //            Arrays.asList(new Object[] { requestFilter, new LinkedInExceptionResponseFilter() } ));
