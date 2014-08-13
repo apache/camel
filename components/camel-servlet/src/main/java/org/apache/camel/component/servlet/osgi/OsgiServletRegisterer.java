@@ -20,6 +20,7 @@ import java.util.Dictionary;
 import java.util.Hashtable;
 import javax.servlet.http.HttpServlet;
 
+import org.apache.camel.util.ObjectHelper;
 import org.osgi.service.http.HttpContext;
 import org.osgi.service.http.HttpService;
 
@@ -38,8 +39,11 @@ public class OsgiServletRegisterer {
      * of the form "/" is used to denote the root alias.
      */
     private String alias;
-    
-    private String servletName;
+
+    /**
+     * The servlet name.
+     */
+    private String servletName = "CamelServlet";
 
     /**
      * Servlet to be registered
@@ -47,14 +51,16 @@ public class OsgiServletRegisterer {
     private HttpServlet servlet;
     
     /**
-     * HttpService to register with. Get this with osgi:reference in the spring
-     * context
+     * HttpService to register with. Get this with osgi:reference in the blueprint/spring-dm file
      */
     private HttpService httpService;
     
     private HttpContext httpContext;
     
     private boolean alreadyRegistered;
+
+    // The servlet will default have to match on uri prefix as some endpoints may do so
+    private volatile boolean matchOnUriPrefix = true;
     
     public void setHttpService(HttpService httpService) {
         this.httpService = httpService;
@@ -75,14 +81,20 @@ public class OsgiServletRegisterer {
     public void setHttpContext(HttpContext httpContext) {
         this.httpContext = httpContext;
     }
- 
+
+    public void setMatchOnUriPrefix(boolean matchOnUriPrefix) {
+        this.matchOnUriPrefix = matchOnUriPrefix;
+    }
+
     public void register() throws Exception {
-        HttpContext actualHttpContext = (httpContext == null) 
+        ObjectHelper.notEmpty(alias, "alias", this);
+        ObjectHelper.notEmpty(servletName, "servletName", this);
+
+        HttpContext actualHttpContext = (httpContext == null)
             ? httpService.createDefaultHttpContext()
             : httpContext;
         final Dictionary<String, String> initParams = new Hashtable<String, String>();
-        // The servlet will always have to match on uri prefix as some endpoints may do so
-        initParams.put("matchOnUriPrefix", "true");
+        initParams.put("matchOnUriPrefix", matchOnUriPrefix ? "true" : "false");
         initParams.put("servlet-name", servletName);
         httpService.registerServlet(alias, servlet, initParams, actualHttpContext);
         alreadyRegistered = true;
