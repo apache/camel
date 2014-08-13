@@ -96,16 +96,17 @@
             <scope>test</scope>
         </dependency>
 
-        <!-- Jetty for testing--> 
+        <!-- Jetty 8 for testing-->
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-websocket</artifactId>
-            <version>${jetty-version}</version>
+            <version>${jetty8-version}</version>
             <scope>test</scope>
         </dependency>
         <dependency>
             <groupId>org.eclipse.jetty</groupId>
             <artifactId>jetty-servlet</artifactId>
+            <version>${jetty8-version}</version>
             <scope>test</scope>
         </dependency>
 

@@ -252,7 +252,7 @@
 
             <!-- mvn jetty:run -->
             <plugin>
-                <groupId>org.mortbay.jetty</groupId>
+                <groupId>${jetty-runner-groupId}</groupId>
                 <artifactId>jetty-maven-plugin</artifactId>
                 <configuration>
                     <!--
