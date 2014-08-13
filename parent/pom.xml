@@ -1499,6 +1499,11 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
+        <artifactId>camel-example-servlet-rest-blueprint</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
         <artifactId>camel-example-servlet-rest-tomcat</artifactId>
         <version>${project.version}</version>
       </dependency>
