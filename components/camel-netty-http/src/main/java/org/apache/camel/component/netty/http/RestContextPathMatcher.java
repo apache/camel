@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.netty.http;
 
+import java.util.Locale;
+
 /**
  * A {@link org.apache.camel.component.netty.http.ContextPathMatcher} that supports the Rest DSL.
  */
@@ -23,25 +25,28 @@ public class RestContextPathMatcher extends DefaultContextPathMatcher {
 
     private final String rawPath;
 
-    // TODO: improve matching like we have done in camel-servlet
-
     public RestContextPathMatcher(String rawPath, String path, boolean matchOnUriPrefix) {
         super(path, matchOnUriPrefix);
         this.rawPath = rawPath;
     }
 
     @Override
-    public boolean matches(String method, String path) {
-        if (useRestMatching(rawPath)) {
-            return matchRestPath(path, rawPath);
-        } else {
-            return super.matches(method, path);
-        }
+    public boolean matchesRest(String path, boolean wildcard) {
+        return matchRestPath(path, rawPath, wildcard);
     }
 
-    private boolean useRestMatching(String path) {
-        // only need to do rest matching if using { } placeholders
-        return path.indexOf('{') > -1;
+    @Override
+    public boolean matchMethod(String method, String restrict) {
+        if (restrict == null) {
+            return true;
+        }
+
+        // always match OPTIONS as some REST clients uses that prior to calling the service
+        if ("OPTIONS".equals(method)) {
+            return true;
+        }
+
+        return restrict.toLowerCase(Locale.US).contains(method.toLowerCase(Locale.US));
     }
 
     /**
@@ -51,7 +56,7 @@ public class RestContextPathMatcher extends DefaultContextPathMatcher {
      * @param consumerPath  the consumer path which may use { } tokens
      * @return <tt>true</tt> if matched, <tt>false</tt> otherwise
      */
-    public boolean matchRestPath(String requestPath, String consumerPath) {
+    public boolean matchRestPath(String requestPath, String consumerPath, boolean wildcard) {
         // remove starting/ending slashes
         if (requestPath.startsWith("/")) {
             requestPath = requestPath.substring(1);
@@ -80,7 +85,7 @@ public class RestContextPathMatcher extends DefaultContextPathMatcher {
             String p1 = requestPaths[i];
             String p2 = consumerPaths[i];
 
-            if (p2.startsWith("{") && p2.endsWith("}")) {
+            if (wildcard && p2.startsWith("{") && p2.endsWith("}")) {
                 // always matches
                 continue;
             }

@@ -31,7 +31,8 @@ public class DefaultContextPathMatcher implements ContextPathMatcher {
         this.matchOnUriPrefix = matchOnUriPrefix;
     }
 
-    public boolean matches(String method, String path) {
+    @Override
+    public boolean matches(String path) {
         path = path.toLowerCase(Locale.US);
         if (!matchOnUriPrefix) {
             // exact match
@@ -40,6 +41,17 @@ public class DefaultContextPathMatcher implements ContextPathMatcher {
             // match on prefix, then we just need to match the start of the context-path
             return path.startsWith(this.path);
         }
+    }
+
+    @Override
+    public boolean matchesRest(String path, boolean wildcard) {
+        return false;
+    }
+
+    @Override
+    public boolean matchMethod(String method, String restrict) {
+        // always match as HttpServerChannelHandler will deal with HTTP method restrictions
+        return true;
     }
 
     public String getPath() {

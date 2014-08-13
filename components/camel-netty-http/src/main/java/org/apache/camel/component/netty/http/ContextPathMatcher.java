@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.netty.http;
 
+import java.util.Locale;
+
 /**
  * A matcher used for selecting the correct {@link org.apache.camel.component.netty.http.handlers.HttpServerChannelHandler}
  * to handle an incoming {@link org.jboss.netty.handler.codec.http.HttpRequest} when you use multiple routes on the same
@@ -27,11 +29,29 @@ package org.apache.camel.component.netty.http;
 public interface ContextPathMatcher {
 
     /**
-     * Whether the target context-path matches.
+     * Whether the target context-path matches a regular url.
      *
-     * @param method the HTTP method such as GET, POST
      * @param path  the context-path from the incoming HTTP request
      * @return <tt>true</tt> to match, <tt>false</tt> if not.
      */
-    boolean matches(String method, String path);
+    boolean matches(String path);
+
+    /**
+     * Whether the target context-path matches a REST url.
+     *
+     * @param path  the context-path from the incoming HTTP request
+     * @param wildcard whether to match strict or by wildcards
+     * @return <tt>true</tt> to match, <tt>false</tt> if not.
+     */
+    boolean matchesRest(String path, boolean wildcard);
+
+    /**
+     * Matches the given request HTTP method with the configured HTTP method of the consumer
+     *
+     * @param method    the request HTTP method
+     * @param restrict  the consumer configured HTTP restrict method
+     * @return <tt>true</tt> if matched, <tt>false</tt> otherwise
+     */
+    boolean matchMethod(String method, String restrict);
+
 }

@@ -74,6 +74,10 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
         this.consumer = consumer;
     }
 
+    public NettyHttpConsumer getConsumer() {
+        return consumer;
+    }
+
     @Override
     public void messageReceived(ChannelHandlerContext ctx, MessageEvent messageEvent) throws Exception {
         // store request, as this channel handler is created per pipeline

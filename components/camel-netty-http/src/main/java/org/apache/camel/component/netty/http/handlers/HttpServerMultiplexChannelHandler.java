@@ -16,13 +16,15 @@
  */
 package org.apache.camel.component.netty.http.handlers;
 
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.component.netty.http.ContextPathMatcher;
-import org.apache.camel.component.netty.http.DefaultContextPathMatcher;
 import org.apache.camel.component.netty.http.HttpServerConsumerChannelFactory;
 import org.apache.camel.component.netty.http.NettyHttpConsumer;
 import org.apache.camel.component.netty.http.RestContextPathMatcher;
@@ -135,27 +137,71 @@ public class HttpServerMultiplexChannelHandler extends SimpleChannelUpstreamHand
     }
 
     private HttpServerChannelHandler getHandler(HttpRequest request) {
+        HttpServerChannelHandler answer = null;
+
         // need to strip out host and port etc, as we only need the context-path for matching
         String method = request.getMethod().getName();
+        if (method == null) {
+            return null;
+        }
 
         String path = request.getUri();
         int idx = path.indexOf(token);
         if (idx > -1) {
             path = path.substring(idx + len);
         }
-
         // use the path as key to find the consumer handler to use
         path = pathAsKey(path);
 
-        // TODO: improve matching like we have done in camel-servlet, eg using candidates
 
-        // find the one that matches
+        List<Map.Entry<ContextPathMatcher, HttpServerChannelHandler>> candidates = new ArrayList<Map.Entry<ContextPathMatcher, HttpServerChannelHandler>>();
+
+        // first match by http method
         for (Map.Entry<ContextPathMatcher, HttpServerChannelHandler> entry : consumers.entrySet()) {
-            if (entry.getKey().matches(method, path)) {
-                return entry.getValue();
+            NettyHttpConsumer consumer = entry.getValue().getConsumer();
+            String restrict = consumer.getEndpoint().getHttpMethodRestrict();
+            if (entry.getKey().matchMethod(method, restrict)) {
+                candidates.add(entry);
             }
         }
-        return null;
+
+        // then see if we got a direct match
+        Iterator<Map.Entry<ContextPathMatcher, HttpServerChannelHandler>> it = candidates.iterator();
+        while (it.hasNext()) {
+            Map.Entry<ContextPathMatcher, HttpServerChannelHandler> entry = it.next();
+            if (entry.getKey().matchesRest(path, false)) {
+                answer = entry.getValue();
+                break;
+            }
+        }
+
+        // then match by non wildcard path
+        if (answer == null) {
+            it = candidates.iterator();
+            while (it.hasNext()) {
+                Map.Entry<ContextPathMatcher, HttpServerChannelHandler> entry = it.next();
+                if (!entry.getKey().matchesRest(path, true)) {
+                    it.remove();
+                }
+            }
+
+            // there should only be one
+            if (candidates.size() == 1) {
+                answer = candidates.get(0).getValue();
+            }
+        }
+
+        // fallback to regular matching
+        if (answer == null) {
+            for (Map.Entry<ContextPathMatcher, HttpServerChannelHandler> entry : consumers.entrySet()) {
+                if (entry.getKey().matches(path)) {
+                    answer = entry.getValue();
+                    break;
+                }
+            }
+        }
+
+        return answer;
     }
 
     private static String pathAsKey(String path) {
