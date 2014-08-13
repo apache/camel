@@ -105,15 +105,6 @@
   </dependencies>
 
   <build>
-    <testResources>
-      <testResource>
-        <directory>${project.basedir}/src/test/resources</directory>
-      </testResource>
-      <testResource>
-        <directory>${project.basedir}/../camel-linkedin-component/src/test/resources</directory>
-      </testResource>
-    </testResources>
-
     <plugins>
 
       <!-- uncomment to validate XSD since wadl2java doesn't report line numbers in errors -->
