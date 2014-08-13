@@ -18,6 +18,8 @@ package org.apache.camel.jsonpath;
 
 import java.io.File;
 
+import org.apache.camel.builder.ExpressionBuilder;
+import org.apache.camel.builder.PredicateBuilder;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
@@ -44,6 +46,13 @@ public class JsonPathCBRTest extends CamelTestSupport {
                             .to("mock:cheap")
                         .otherwise()
                             .to("mock:expensive");
+                
+                from("direct:bicycle2")
+                    .choice()
+                    .when(PredicateBuilder.isLessThan(ExpressionBuilder.languageExpression("JsonPath", "$.store.bicycle.price"), ExpressionBuilder.constantExpression(20)))
+                        .to("mock:cheap")
+                    .otherwise()
+                        .to("mock:expensive");
             }
         };
     }
@@ -56,11 +65,18 @@ public class JsonPathCBRTest extends CamelTestSupport {
     
     @Test
     public void testCheapBicycle() throws Exception {
+        sendMessageToBicycleRoute("direct:bicycle");
+        resetMocks();
+        sendMessageToBicycleRoute("direct:bicycle2");
+        
+    }
+    
+    private void sendMessageToBicycleRoute(String startPoint) throws Exception {
         getMockEndpoint("mock:cheap").expectedMessageCount(1);
         getMockEndpoint("mock:average").expectedMessageCount(0);
         getMockEndpoint("mock:expensive").expectedMessageCount(0);
 
-        template.sendBody("direct:bicycle", new File("src/test/resources/cheap.json"));
+        template.sendBody(startPoint, new File("src/test/resources/cheap.json"));
 
         assertMockEndpointsSatisfied();
     }
