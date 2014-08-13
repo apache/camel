@@ -157,20 +157,21 @@ public class RestBindingProcessor extends ServiceSupport implements AsyncProcess
             }
         }
 
-        if (isXml && xmlUnmarshal != null) {
-            // add reverse operation
-            exchange.addOnCompletion(new RestBindingMarshalOnCompletion(exchange.getFromRouteId(), jsonMarshal, xmlMarshal, true, accept));
-            if (ObjectHelper.isNotEmpty(body)) {
-                return xmlUnmarshal.process(exchange, callback);
-            } else {
-                callback.done(true);
-                return true;
-            }
-        } else if (isJson && jsonUnmarshal != null) {
+        // favor json over xml
+        if (isJson && jsonUnmarshal != null) {
             // add reverse operation
             exchange.addOnCompletion(new RestBindingMarshalOnCompletion(exchange.getFromRouteId(), jsonMarshal, xmlMarshal, false, accept));
             if (ObjectHelper.isNotEmpty(body)) {
                 return jsonUnmarshal.process(exchange, callback);
+            } else {
+                callback.done(true);
+                return true;
+            }
+        } else if (isXml && xmlUnmarshal != null) {
+            // add reverse operation
+            exchange.addOnCompletion(new RestBindingMarshalOnCompletion(exchange.getFromRouteId(), jsonMarshal, xmlMarshal, true, accept));
+            if (ObjectHelper.isNotEmpty(body)) {
+                return xmlUnmarshal.process(exchange, callback);
             } else {
                 callback.done(true);
                 return true;
@@ -302,20 +303,21 @@ public class RestBindingProcessor extends ServiceSupport implements AsyncProcess
             ExchangeHelper.prepareOutToIn(exchange);
 
             try {
-                if (isXml && xmlMarshal != null) {
-                    // make sure there is a content-type with xml
-                    String type = ExchangeHelper.getContentType(exchange);
-                    if (type == null) {
-                        exchange.getIn().setHeader(Exchange.CONTENT_TYPE, "application/xml");
-                    }
-                    xmlMarshal.process(exchange);
-                } else if (isJson && jsonMarshal != null) {
+                // favor json over xml
+                if (isJson && jsonMarshal != null) {
                     // make sure there is a content-type with json
                     String type = ExchangeHelper.getContentType(exchange);
                     if (type == null) {
                         exchange.getIn().setHeader(Exchange.CONTENT_TYPE, "application/json");
                     }
                     jsonMarshal.process(exchange);
+                } else if (isXml && xmlMarshal != null) {
+                    // make sure there is a content-type with xml
+                    String type = ExchangeHelper.getContentType(exchange);
+                    if (type == null) {
+                        exchange.getIn().setHeader(Exchange.CONTENT_TYPE, "application/xml");
+                    }
+                    xmlMarshal.process(exchange);
                 } else {
                     // we could not bind
                     if (bindingMode.equals("auto")) {
