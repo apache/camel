@@ -245,9 +245,10 @@
         files for modules -->
       <properties>
         <eclipse.workspace.dir>${basedir}/../workspace</eclipse.workspace.dir>
+        <maven.test.skip.exec>true</maven.test.skip.exec>
       </properties>
       <build>
-        <defaultGoal>process-test-sources</defaultGoal>
+        <defaultGoal>package</defaultGoal>
         <pluginManagement>
           <plugins>
             <plugin>
