@@ -16,6 +16,10 @@
  */
 package org.apache.camel.component.elasticsearch;
 
+import java.util.LinkedList;
+import java.util.List;
+import java.util.Map;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.ExpectedBodyTypeException;
 import org.apache.camel.Message;
@@ -30,10 +34,6 @@ import org.elasticsearch.action.index.IndexRequestBuilder;
 import org.elasticsearch.action.index.IndexResponse;
 import org.elasticsearch.client.Client;
 import org.elasticsearch.common.xcontent.XContentBuilder;
-
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Map;
 
 /**
  * Represents an Elasticsearch producer.
@@ -145,7 +145,7 @@ public class ElasticsearchProducer extends DefaultProducer {
         log.debug("Preparing Bulk Request");
         BulkRequestBuilder bulkRequest = client.prepareBulk();
 
-        List<?> body = exchange.getIn().getBody(List.class);;
+        List<?> body = exchange.getIn().getBody(List.class);
 
         for (Object document : body) {
             IndexRequestBuilder prepareIndex = client.prepareIndex(indexName, indexType);

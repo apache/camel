@@ -16,16 +16,17 @@
  */
 package org.apache.camel.component.elasticsearch;
 
+import java.net.URI;
+import java.net.URISyntaxException;
+import java.util.Map;
+
 import org.apache.camel.spi.UriParam;
 import org.apache.camel.spi.UriParams;
 import org.elasticsearch.node.Node;
 import org.elasticsearch.node.NodeBuilder;
 
-import java.net.URI;
-import java.net.URISyntaxException;
-import java.util.Map;
-
 import static org.elasticsearch.node.NodeBuilder.nodeBuilder;
+
 
 @UriParams
 public class ElasticsearchConfiguration {
