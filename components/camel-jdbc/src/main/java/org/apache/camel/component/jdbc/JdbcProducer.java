@@ -189,6 +189,9 @@ public class JdbcProducer extends DefaultProducer {
                 setResultSet(exchange, rs);
             } else {
                 int updateCount = stmt.getUpdateCount();
+                // preserve headers
+                exchange.getOut().getHeaders().putAll(exchange.getIn().getHeaders());
+                // and then set the new header
                 exchange.getOut().setHeader(JdbcConstants.JDBC_UPDATE_COUNT, updateCount);
             }
 
