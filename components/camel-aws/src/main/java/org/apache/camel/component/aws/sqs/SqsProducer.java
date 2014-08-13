@@ -16,7 +16,13 @@
  */
 package org.apache.camel.component.aws.sqs;
 
+import java.nio.ByteBuffer;
+import java.util.HashMap;
+import java.util.Map;
+import java.util.Map.Entry;
+
 import com.amazonaws.services.sqs.AmazonSQS;
+import com.amazonaws.services.sqs.model.MessageAttributeValue;
 import com.amazonaws.services.sqs.model.SendMessageRequest;
 import com.amazonaws.services.sqs.model.SendMessageResult;
 
@@ -44,6 +50,7 @@ public class SqsProducer extends DefaultProducer {
     public void process(Exchange exchange) throws Exception {
         String body = exchange.getIn().getBody(String.class);
         SendMessageRequest request = new SendMessageRequest(getQueueUrl(), body);
+        request.setMessageAttributes(translateAttributes(exchange.getIn().getHeaders()));
         addDelay(request, exchange);
 
         LOG.trace("Sending request [{}] from exchange [{}]...", request, exchange);
@@ -97,5 +104,22 @@ public class SqsProducer extends DefaultProducer {
     @Override
     public String toString() {
         return "SqsProducer[" + URISupport.sanitizeUri(getEndpoint().getEndpointUri()) + "]";
+    }
+    
+    private Map<String, MessageAttributeValue> translateAttributes(Map<String, Object> headers) {
+        Map<String, MessageAttributeValue> result = new HashMap<String, MessageAttributeValue>();
+        for (Entry<String, Object> entry : headers.entrySet()) {
+            Object value = entry.getValue();
+            MessageAttributeValue mav = new MessageAttributeValue();
+            if (value instanceof String) {
+                mav.setDataType("String");
+                mav.withStringValue((String)value);
+            } else if (value instanceof ByteBuffer) {
+                mav.setDataType("Binary");
+                mav.withBinaryValue((ByteBuffer)value);
+            }
+            result.put(entry.getKey(), mav);
+        }
+        return result;
     }
 }
