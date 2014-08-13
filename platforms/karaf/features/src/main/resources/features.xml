@@ -995,6 +995,7 @@
   </feature>
   <feature name='camel-scala' version='${project.version}' resolver='(obr)' start-level='50'>
     <bundle dependency='true'>mvn:org.scala-lang/scala-library/${scala-version}</bundle>
+    <bundle dependency='true'>mvn:org.scala-lang.modules/scala-xml_2.11/${scalaxml-version}</bundle>
     <feature version='${project.version}'>camel-core</feature>
     <bundle>mvn:org.apache.camel/camel-scala/${project.version}</bundle>
   </feature>

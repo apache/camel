@@ -31,6 +31,7 @@
 
     <properties>
         <camel.osgi.import.before.defaults>
+            scala.xml.*;version="[1.0,2)",
             scala.*;version="[2.11,2.12)"
         </camel.osgi.import.before.defaults>
         <camel.osgi.export.pkg>org.apache.camel.scala.*</camel.osgi.export.pkg>
