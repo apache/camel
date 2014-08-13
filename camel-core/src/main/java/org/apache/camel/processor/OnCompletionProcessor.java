@@ -114,8 +114,8 @@ public class OnCompletionProcessor extends ServiceSupport implements AsyncProces
     }
 
     protected boolean isCreateCopy() {
-        // we need to create a correlated copy if we run in parallel mode
-        return executorService != null;
+        // we need to create a correlated copy if we run in parallel mode or is in after consumer mode (as the UoW would be done on the original exchange otherwise)
+        return executorService != null || afterConsumer;
     }
 
     /**
