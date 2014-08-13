@@ -48,6 +48,12 @@ public class JsonPathLanguageTest extends CamelTestSupport {
         assertEquals(2, authors.size());
         assertEquals("Nigel Rees", authors.get(0));
         assertEquals("Evelyn Waugh", authors.get(1));
+        
+        exp = lan.createExpression("$.store.bicycle.price");
+        String price = exp.evaluate(exchange, String.class);
+        assertEquals("Got a wrong result", "19.95", price);
+        
+        
     }
 
     @Test

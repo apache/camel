@@ -37,8 +37,32 @@ public class JsonPathCBRTest extends CamelTestSupport {
                             .to("mock:average")
                         .otherwise()
                             .to("mock:expensive");
+                
+                from("direct:bicycle")
+                    .choice()
+                        .when().method(new BeanPredicate())
+                            .to("mock:cheap")
+                        .otherwise()
+                            .to("mock:expensive");
             }
         };
+    }
+    
+    public static class BeanPredicate {
+        public boolean checkPrice(@JsonPath("$.store.bicycle.price") double price) {
+            return price < 20;
+        }
+    }
+    
+    @Test
+    public void testCheapBicycle() throws Exception {
+        getMockEndpoint("mock:cheap").expectedMessageCount(1);
+        getMockEndpoint("mock:average").expectedMessageCount(0);
+        getMockEndpoint("mock:expensive").expectedMessageCount(0);
+
+        template.sendBody("direct:bicycle", new File("src/test/resources/cheap.json"));
+
+        assertMockEndpointsSatisfied();
     }
 
     @Test
