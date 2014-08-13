@@ -44,6 +44,8 @@ public class RestBindingProcessor extends ServiceSupport implements AsyncProcess
     // TODO: consumes/produces can be a list of media types, and prioritized 1st to last. (eg the q=weight option)
     // TODO: use content-type from produces/consumes if possible to set as Content-Type if missing
 
+    // text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8
+
     private final AsyncProcessor jsonUnmarshal;
     private final AsyncProcessor xmlUnmarshal;
     private final AsyncProcessor jsonMarshal;
@@ -109,7 +111,8 @@ public class RestBindingProcessor extends ServiceSupport implements AsyncProcess
         boolean isXml = false;
         boolean isJson = false;
 
-        // content type takes precedence, over consumes
+        String accept = exchange.getIn().getHeader("Accept", String.class);
+
         String contentType = ExchangeHelper.getContentType(exchange);
         if (contentType != null) {
             isXml = contentType.toLowerCase(Locale.US).contains("xml");
@@ -156,7 +159,7 @@ public class RestBindingProcessor extends ServiceSupport implements AsyncProcess
 
         if (isXml && xmlUnmarshal != null) {
             // add reverse operation
-            exchange.addOnCompletion(new RestBindingMarshalOnCompletion(exchange.getFromRouteId(), jsonMarshal, xmlMarshal, true));
+            exchange.addOnCompletion(new RestBindingMarshalOnCompletion(exchange.getFromRouteId(), jsonMarshal, xmlMarshal, true, accept));
             if (ObjectHelper.isNotEmpty(body)) {
                 return xmlUnmarshal.process(exchange, callback);
             } else {
@@ -165,7 +168,7 @@ public class RestBindingProcessor extends ServiceSupport implements AsyncProcess
             }
         } else if (isJson && jsonUnmarshal != null) {
             // add reverse operation
-            exchange.addOnCompletion(new RestBindingMarshalOnCompletion(exchange.getFromRouteId(), jsonMarshal, xmlMarshal, false));
+            exchange.addOnCompletion(new RestBindingMarshalOnCompletion(exchange.getFromRouteId(), jsonMarshal, xmlMarshal, false, accept));
             if (ObjectHelper.isNotEmpty(body)) {
                 return jsonUnmarshal.process(exchange, callback);
             } else {
@@ -177,7 +180,7 @@ public class RestBindingProcessor extends ServiceSupport implements AsyncProcess
         // we could not bind
         if (bindingMode.equals("auto")) {
             // okay for auto we do not mind if we could not bind
-            exchange.addOnCompletion(new RestBindingMarshalOnCompletion(exchange.getFromRouteId(), jsonMarshal, xmlMarshal, false));
+            exchange.addOnCompletion(new RestBindingMarshalOnCompletion(exchange.getFromRouteId(), jsonMarshal, xmlMarshal, false, accept));
             callback.done(true);
             return true;
         } else {
@@ -216,12 +219,14 @@ public class RestBindingProcessor extends ServiceSupport implements AsyncProcess
         private final AsyncProcessor xmlMarshal;
         private final String routeId;
         private boolean wasXml;
+        private String accept;
 
-        private RestBindingMarshalOnCompletion(String routeId, AsyncProcessor jsonMarshal, AsyncProcessor xmlMarshal, boolean wasXml) {
+        private RestBindingMarshalOnCompletion(String routeId, AsyncProcessor jsonMarshal, AsyncProcessor xmlMarshal, boolean wasXml, String accept) {
             this.routeId = routeId;
             this.jsonMarshal = jsonMarshal;
             this.xmlMarshal = xmlMarshal;
             this.wasXml = wasXml;
+            this.accept = accept;
         }
 
         @Override
@@ -257,10 +262,18 @@ public class RestBindingProcessor extends ServiceSupport implements AsyncProcess
             boolean isXml = false;
             boolean isJson = false;
 
-            String contentType = ExchangeHelper.getContentType(exchange);
-            if (contentType != null) {
-                isXml = contentType.toLowerCase(Locale.US).contains("xml");
-                isJson = contentType.toLowerCase(Locale.US).contains("json");
+            // accept takes precedence
+            if (accept != null) {
+                isXml = accept.toLowerCase(Locale.US).contains("xml");
+                isJson = accept.toLowerCase(Locale.US).contains("json");
+            }
+            // fallback to content type if still undecided
+            if (!isXml && !isJson) {
+                String contentType = ExchangeHelper.getContentType(exchange);
+                if (contentType != null) {
+                    isXml = contentType.toLowerCase(Locale.US).contains("xml");
+                    isJson = contentType.toLowerCase(Locale.US).contains("json");
+                }
             }
             // if content type could not tell us if it was json or xml, then fallback to if the binding was configured with
             // that information in the consumes
