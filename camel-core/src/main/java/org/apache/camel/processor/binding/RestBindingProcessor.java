@@ -41,11 +41,6 @@ import org.apache.camel.util.ObjectHelper;
  */
 public class RestBindingProcessor extends ServiceSupport implements AsyncProcessor {
 
-    // TODO: consumes/produces can be a list of media types, and prioritized 1st to last. (eg the q=weight option)
-    // TODO: use content-type from produces/consumes if possible to set as Content-Type if missing
-
-    // text/html,application/xhtml+xml,application/xml;q=0.9,image/webp,*/*;q=0.8
-
     private final AsyncProcessor jsonUnmarshal;
     private final AsyncProcessor xmlUnmarshal;
     private final AsyncProcessor jsonMarshal;
