@@ -486,8 +486,8 @@ public class JettyHttpComponent extends HttpComponent implements RestConsumerFac
         return sslKeystore;
     }
 
-    protected SslSelectChannelConnector getSslSocketConnector(JettyHttpEndpoint endpoint) throws Exception {
-        SslSelectChannelConnector answer = null;
+    protected Connector getSslSocketConnector(JettyHttpEndpoint endpoint) throws Exception {
+        Connector answer = null;
         if (sslSocketConnectors != null) {
             answer = sslSocketConnectors.get(endpoint.getPort());
         }
@@ -497,7 +497,7 @@ public class JettyHttpComponent extends HttpComponent implements RestConsumerFac
         return answer;
     }
     
-    protected SslSelectChannelConnector createSslSocketConnector(JettyHttpEndpoint endpoint) throws Exception {
+    protected Connector createSslSocketConnector(JettyHttpEndpoint endpoint) throws Exception {
         SslSelectChannelConnector answer = null;
         
         // Note that this was set on the endpoint when it was constructed.  It was
@@ -642,8 +642,8 @@ public class JettyHttpComponent extends HttpComponent implements RestConsumerFac
         sslSocketConnectors = connectors;
     }
 
-    public SelectChannelConnector getSocketConnector(int port) throws Exception {
-        SelectChannelConnector answer = null;
+    public Connector getSocketConnector(int port) throws Exception {
+        Connector answer = null;
         if (socketConnectors != null) {
             answer = socketConnectors.get(port);
         }
@@ -653,7 +653,7 @@ public class JettyHttpComponent extends HttpComponent implements RestConsumerFac
         return answer;
     }
 
-    protected SelectChannelConnector createSocketConnector() throws Exception {
+    protected Connector createSocketConnector() throws Exception {
         SelectChannelConnector answer = new SelectChannelConnector();
         if (getSocketConnectorProperties() != null) {
             // must copy the map otherwise it will be deleted
