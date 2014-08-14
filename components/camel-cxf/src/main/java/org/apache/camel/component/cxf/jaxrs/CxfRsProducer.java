@@ -278,20 +278,27 @@ public class CxfRsProducer extends DefaultProducer {
     }
 
     private Method findRightMethod(List<Class<?>> resourceClasses, String methodName, Class<?>[] parameterTypes) throws NoSuchMethodException {
-        Method answer = null;
         for (Class<?> clazz : resourceClasses) {
             try {
-                answer = clazz.getMethod(methodName, parameterTypes);
-            } catch (NoSuchMethodException ex) {
-                // keep looking 
+                Method[] m = clazz.getMethods();
+                iterate_on_methods: for (Method method : m) {
+                    if (!method.getName().equals(methodName))
+                        continue;
+                    Class<?>[] params = method.getParameterTypes();
+                    if (params.length != parameterTypes.length)
+                        continue;
+                    for (int i = 0; i < parameterTypes.length; i++) {
+                        if (!params[i].isAssignableFrom(parameterTypes[i])) {
+                            continue iterate_on_methods;
+                        }
+                    }
+                    return method;
+                }
             } catch (SecurityException ex) {
                 // keep looking
             }
-            if (answer != null) {
-                return answer;
-            }
         }
-        throw new NoSuchMethodException("Cannot find method with name: " + methodName + " having parameters: " + arrayToString(parameterTypes));
+        throw new NoSuchMethodException("Cannot find method with name: " + methodName + " having parameters assignable from: " + arrayToString(parameterTypes));
     }
 
     private Class<?>[] getParameterTypes(Object[] objects) {

@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:camel="http://camel.apache.org/schema/spring"
+	xmlns:cxf="http://camel.apache.org/schema/cxf" 
+	xsi:schemaLocation="http://camel.apache.org/schema/cxf http://camel.apache.org/schema/cxf/camel-cxf.xsd
+                        http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+                        http://camel.apache.org/schema/spring http://camel.apache.org/schema/spring/camel-spring.xsd">
+	<bean id="builder"
+		class="org.apache.camel.component.cxf.jaxrs.CxfRsRelayTest.CamelRouteBuilder" />
+	<camel:camelContext id="cxfrs_context">
+		<camel:routeBuilder ref="builder" />
+		<camel:endpoint id="upload1"
+			uri="cxfrs:bean:rsServer1?bindingStyle=SimpleConsumer" />
+		<camel:endpoint id="upload2"
+			uri="cxfrs:bean:rsServer2?bindingStyle=SimpleConsumer" />
+		<camel:endpoint id="upload2Client"
+			uri="cxfrs:bean:rsClient2?httpClientAPI=false" />
+	</camel:camelContext>
+	<cxf:rsServer id="rsServer1" address="http://localhost:9002/rest"
+		serviceClass="org.apache.camel.component.cxf.jaxrs.CxfRsRelayTest.UploadService"
+		loggingFeatureEnabled="true" loggingSizeLimit="5000" />
+	<cxf:rsServer id="rsServer2" address="http://localhost:9002/rast"
+		serviceClass="org.apache.camel.component.cxf.jaxrs.CxfRsRelayTest.UploadService"
+		loggingFeatureEnabled="true" loggingSizeLimit="5000" />
+	<cxf:rsClient id="rsClient2" address="http://localhost:9002/rast"
+		serviceClass="org.apache.camel.component.cxf.jaxrs.CxfRsRelayTest.UploadService"
+		loggingFeatureEnabled="true" loggingSizeLimit="5000" />
+</beans>
