@@ -59,7 +59,7 @@ public class VerbDefinition extends OptionalIdentifiedDefinition<VerbDefinition>
             @XmlElement(required = false, name = "to", type = ToDefinition.class),
             @XmlElement(required = false, name = "route", type = RouteDefinition.class)}
     )
-    private OptionalIdentifiedDefinition toOrRoute;
+    private OptionalIdentifiedDefinition<?> toOrRoute;
 
     // the Java DSL uses the to or route definition directory
     @XmlTransient
@@ -172,11 +172,11 @@ public class VerbDefinition extends OptionalIdentifiedDefinition<VerbDefinition>
         this.toOrRoute = to;
     }
 
-    public OptionalIdentifiedDefinition getToOrRoute() {
+    public OptionalIdentifiedDefinition<?> getToOrRoute() {
         return toOrRoute;
     }
 
-    public void setToOrRoute(OptionalIdentifiedDefinition toOrRoute) {
+    public void setToOrRoute(OptionalIdentifiedDefinition<?> toOrRoute) {
         this.toOrRoute = toOrRoute;
     }
 

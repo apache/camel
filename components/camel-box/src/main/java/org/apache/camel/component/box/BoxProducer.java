@@ -17,7 +17,6 @@
 package org.apache.camel.component.box;
 
 import org.apache.camel.component.box.internal.BoxApiName;
-import org.apache.camel.component.box.internal.BoxConstants;
 import org.apache.camel.component.box.internal.BoxPropertiesHelper;
 import org.apache.camel.util.component.AbstractApiProducer;
 

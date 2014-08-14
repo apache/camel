@@ -52,7 +52,7 @@ public class MockTypeConverterRegistry implements TypeConverterRegistry {
         return null;
     }
 
-    public List<Class[]> listAllTypeConvertersFromTo() {
+    public List<Class<?>[]> listAllTypeConvertersFromTo() {
         return null;
     }
 

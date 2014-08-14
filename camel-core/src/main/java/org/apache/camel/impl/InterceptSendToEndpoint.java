@@ -88,6 +88,7 @@ public class InterceptSendToEndpoint implements Endpoint {
         return delegate.createExchange(pattern);
     }
 
+    @Deprecated
     public Exchange createExchange(Exchange exchange) {
         return delegate.createExchange(exchange);
     }
@@ -112,6 +113,7 @@ public class InterceptSendToEndpoint implements Endpoint {
                 return producer.createExchange(pattern);
             }
 
+            @Deprecated
             public Exchange createExchange(Exchange exchange) {
                 return producer.createExchange(exchange);
             }

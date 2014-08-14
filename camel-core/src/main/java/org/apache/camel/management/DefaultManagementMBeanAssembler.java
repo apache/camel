@@ -47,7 +47,7 @@ public class DefaultManagementMBeanAssembler implements ManagementMBeanAssembler
 
     public DefaultManagementMBeanAssembler(CamelContext camelContext) {
         this.camelContext = camelContext;
-        this.assembler = new MBeanInfoAssembler(camelContext);
+        this.assembler = new MBeanInfoAssembler();
     }
 
     public ModelMBean assemble(MBeanServer mBeanServer, Object obj, ObjectName name) throws JMException {

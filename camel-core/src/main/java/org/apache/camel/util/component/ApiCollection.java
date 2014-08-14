@@ -25,7 +25,6 @@ import java.util.Set;
 /**
  * Base class for a collection of ApiMethods. Meant to be extended by Components to create the api name map.
  */
-@SuppressWarnings("unused")
 public abstract class ApiCollection<E extends Enum<E> & ApiName, T> {
 
     protected final Map<E, ApiMethodHelper<? extends ApiMethod>> apis = new HashMap<E, ApiMethodHelper<? extends ApiMethod>>();

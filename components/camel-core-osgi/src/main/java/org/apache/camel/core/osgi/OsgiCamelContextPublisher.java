@@ -46,7 +46,8 @@ public class OsgiCamelContextPublisher extends EventNotifierSupport {
     public static final String CONTEXT_MANAGEMENT_NAME_PROPERTY = "camel.context.managementname";
 
     private final BundleContext bundleContext;
-    private final Map<CamelContext, ServiceRegistration> registrations = new ConcurrentHashMap<CamelContext, ServiceRegistration>();
+    private final Map<CamelContext, ServiceRegistration<?>> registrations 
+        = new ConcurrentHashMap<CamelContext, ServiceRegistration<?>>();
 
     public OsgiCamelContextPublisher(BundleContext bundleContext) {
         this.bundleContext = bundleContext;
@@ -58,7 +59,7 @@ public class OsgiCamelContextPublisher extends EventNotifierSupport {
             registerCamelContext(context);
         } else if (event instanceof CamelContextStoppingEvent) {
             CamelContext context = ((CamelContextStoppingEvent) event).getContext();
-            ServiceRegistration reg = registrations.remove(context);
+            ServiceRegistration<?> reg = registrations.remove(context);
             if (reg != null) {
                 if (log.isDebugEnabled()) {
                     log.debug("Unregistering CamelContext [{}] from OSGi registry", context.getName());
@@ -92,7 +93,7 @@ public class OsgiCamelContextPublisher extends EventNotifierSupport {
         registrations.clear();
     }
 
-    public ServiceRegistration registerCamelContext(CamelContext camelContext) throws InvalidSyntaxException {
+    public ServiceRegistration<?> registerCamelContext(CamelContext camelContext) throws InvalidSyntaxException {
         // avoid registering the same service again
         // we must include unique camel management name so the symbolic name becomes unique,
         // in case the bundle has more than one CamelContext
@@ -115,7 +116,7 @@ public class OsgiCamelContextPublisher extends EventNotifierSupport {
                 log.debug("Registering CamelContext [{}] of in OSGi registry", camelContext.getName());
             }
 
-            ServiceRegistration reg = bundleContext.registerService(CamelContext.class.getName(), camelContext, props);
+            ServiceRegistration<?> reg = bundleContext.registerService(CamelContext.class.getName(), camelContext, props);
             if (reg != null) {
                 registrations.put(camelContext, reg);
             }
@@ -138,7 +139,7 @@ public class OsgiCamelContextPublisher extends EventNotifierSupport {
      */
     public static boolean lookupCamelContext(BundleContext bundleContext, String symbolicName, String contextName) throws InvalidSyntaxException {
         Version bundleVersion = getBundleVersion(bundleContext.getBundle());
-        ServiceReference[] refs = bundleContext.getServiceReferences(CamelContext.class.getName(),
+        ServiceReference<?>[] refs = bundleContext.getServiceReferences(CamelContext.class.getName(),
                 "(&(" + CONTEXT_SYMBOLIC_NAME_PROPERTY + "=" + symbolicName + ")"
                 + "(" + CONTEXT_NAME_PROPERTY + "=" + contextName + ")"
                 + "(" + CONTEXT_VERSION_PROPERTY + "=" + bundleVersion + "))");

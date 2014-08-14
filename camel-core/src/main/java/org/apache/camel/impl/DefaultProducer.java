@@ -55,6 +55,7 @@ public abstract class DefaultProducer extends ServiceSupport implements Producer
         return endpoint.createExchange(pattern);
     }
 
+    @Deprecated
     public Exchange createExchange(Exchange exchange) {
         return endpoint.createExchange(exchange);
     }

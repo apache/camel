@@ -140,7 +140,7 @@ public class OsgiTypeConverter extends ServiceSupport implements TypeConverter, 
         return getDelegate().lookup(toType, fromType);
     }
 
-    public List<Class[]> listAllTypeConvertersFromTo() {
+    public List<Class<?>[]> listAllTypeConvertersFromTo() {
         return getDelegate().listAllTypeConvertersFromTo();
     }
 

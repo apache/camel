@@ -63,9 +63,9 @@ public final class OsgiNamingHelper {
                 }
                 LOG.trace("Checking OSGi Service Registry for existence of existing CamelContext with name: {}", candidate);
 
-                ServiceReference[] refs = context.getServiceReferences(CamelContext.class.getName(), "(" + key + "=" + candidate + ")");
+                ServiceReference<?>[] refs = context.getServiceReferences(CamelContext.class.getName(), "(" + key + "=" + candidate + ")");
                 if (refs != null && refs.length > 0) {
-                    for (ServiceReference ref : refs) {
+                    for (ServiceReference<?> ref : refs) {
                         Object id = ref.getProperty(key);
                         if (id != null && candidate.equals(id)) {
                             clash = true;

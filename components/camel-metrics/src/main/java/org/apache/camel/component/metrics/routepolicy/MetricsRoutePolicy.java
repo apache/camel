@@ -43,7 +43,7 @@ public class MetricsRoutePolicy extends RoutePolicySupport {
     private final ConcurrentMap<Route, MetricsStatistics> statistics = new ConcurrentHashMap<Route, MetricsStatistics>();
     private Route route;
 
-    private final static class MetricsStatistics {
+    private static final class MetricsStatistics {
         private Counter total;
         private Counter inflight;
         private Meter requests;

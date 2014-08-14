@@ -269,7 +269,7 @@ public class BacklogDebugger extends ServiceSupport implements InterceptStrategy
             if (remove) {
                 removeMessageBodyOnBreakpoint(nodeId);
             } else {
-                Class oldType;
+                Class<?> oldType;
                 if (se.getExchange().hasOut()) {
                     oldType = se.getExchange().getOut().getBody() != null ? se.getExchange().getOut().getBody().getClass() : null;
                 } else {
@@ -280,7 +280,7 @@ public class BacklogDebugger extends ServiceSupport implements InterceptStrategy
         }
     }
 
-    public void setMessageBodyOnBreakpoint(String nodeId, Object body, Class type) {
+    public void setMessageBodyOnBreakpoint(String nodeId, Object body, Class<?> type) {
         SuspendedExchange se = suspendedBreakpoints.get(nodeId);
         if (se != null) {
             boolean remove = body == null;
@@ -321,7 +321,7 @@ public class BacklogDebugger extends ServiceSupport implements InterceptStrategy
     public void setMessageHeaderOnBreakpoint(String nodeId, String headerName, Object value) throws NoTypeConversionAvailableException {
         SuspendedExchange se = suspendedBreakpoints.get(nodeId);
         if (se != null) {
-            Class oldType;
+            Class<?> oldType;
             if (se.getExchange().hasOut()) {
                 oldType = se.getExchange().getOut().getHeader(headerName) != null ? se.getExchange().getOut().getHeader(headerName).getClass() : null;
             } else {
@@ -331,7 +331,7 @@ public class BacklogDebugger extends ServiceSupport implements InterceptStrategy
         }
     }
 
-    public void setMessageHeaderOnBreakpoint(String nodeId, String headerName, Object value, Class type) throws NoTypeConversionAvailableException {
+    public void setMessageHeaderOnBreakpoint(String nodeId, String headerName, Object value, Class<?> type) throws NoTypeConversionAvailableException {
         SuspendedExchange se = suspendedBreakpoints.get(nodeId);
         if (se != null) {
             logger.log("Breakpoint at node " + nodeId + " is updating message header on exchangeId: " + se.getExchange().getExchangeId() + " with header: " + headerName + " and value: " + value);
@@ -515,10 +515,6 @@ public class BacklogDebugger extends ServiceSupport implements InterceptStrategy
         private NodeBreakpoint(String nodeId, Predicate condition) {
             this.nodeId = nodeId;
             this.condition = condition;
-        }
-
-        public String getNodeId() {
-            return nodeId;
         }
 
         public Predicate getCondition() {

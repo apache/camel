@@ -92,8 +92,8 @@ public class ManagedTypeConverterRegistry extends ManagedService implements Mana
     public TabularData listTypeConverters() {
         try {
             TabularData answer = new TabularDataSupport(CamelOpenMBeanTypes.listTypeConvertersTabularType());
-            List<Class[]> converters = registry.listAllTypeConvertersFromTo();
-            for (Class[] entry : converters) {
+            List<Class<?>[]> converters = registry.listAllTypeConvertersFromTo();
+            for (Class<?>[] entry : converters) {
                 CompositeType ct = CamelOpenMBeanTypes.listTypeConvertersCompositeType();
                 String from = entry[0].getCanonicalName();
                 String to = entry[1].getCanonicalName();

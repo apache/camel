@@ -387,13 +387,13 @@ public final class ApiMethodHelper<T extends Enum<T> & ApiMethod> {
     // the alternative of trying to convert ApiMethod and associated classes to generic classes would a bear!!!
     @SuppressWarnings("unchecked")
     public static ApiMethod getHighestPriorityMethod(List<? extends ApiMethod> filteredMethods) {
-        ApiMethod highest = null;
+        Comparable<ApiMethod> highest = null;
         for (ApiMethod method : filteredMethods) {
-            if (highest == null || ((Enum)method).compareTo((Enum) highest) > 0) {
-                highest = method;
+            if (highest == null || highest.compareTo(method) <= 0) {
+                highest = (Comparable<ApiMethod>)method;
             }
         }
-        return highest;
+        return (ApiMethod)highest;
     }
 
     /**

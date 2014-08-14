@@ -40,7 +40,7 @@ public class CamelMockBundleContext extends MockBundleContext {
         super(bundle);
     }
 
-    public Object getService(ServiceReference reference) {
+    public Object getService(@SuppressWarnings("rawtypes") ServiceReference reference) {
         String[] classNames = (String[]) reference.getProperty(Constants.OBJECTCLASS);        
         if (classNames[0].equals("org.apache.camel.core.osgi.test.MyService")) {
             return new MyService();
@@ -67,6 +67,7 @@ public class CamelMockBundleContext extends MockBundleContext {
         }    
     }
     
+    @SuppressWarnings("rawtypes")
     public ServiceReference[] getServiceReferences(String clazz, String filter) throws InvalidSyntaxException {
         // just simulate when the bundle context doesn't have right service reference
         if (filter != null && filter.indexOf("name=test") > 0) {

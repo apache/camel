@@ -59,7 +59,7 @@ public final class ApiConsumerHelper {
                 endpoint.getCandidates(), ApiMethodHelper.MatchType.SUPER_SET, argNamesArray);
 
         if (filteredMethods.isEmpty()) {
-            ApiMethodHelper methodHelper = endpoint.getMethodHelper();
+            ApiMethodHelper<? extends ApiMethod> methodHelper = endpoint.getMethodHelper();
             throw new IllegalArgumentException(
                     String.format("Missing properties for %s/%s, need one or more from %s",
                             endpoint.getApiName().getName(), endpoint.getMethodName(),

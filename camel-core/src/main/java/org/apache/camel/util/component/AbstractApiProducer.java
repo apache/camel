@@ -40,7 +40,7 @@ public abstract class AbstractApiProducer<E extends Enum<E> & ApiName, T>
     protected final AbstractApiEndpoint<E, T> endpoint;
 
     // properties helper
-    protected final ApiMethodPropertiesHelper propertiesHelper;
+    protected final ApiMethodPropertiesHelper<T> propertiesHelper;
 
     // method helper
     protected final ApiMethodHelper<?> methodHelper;
@@ -48,10 +48,7 @@ public abstract class AbstractApiProducer<E extends Enum<E> & ApiName, T>
     // logger
     private final transient Logger log = LoggerFactory.getLogger(getClass());
 
-    // cached Endpoint executor service
-    private ExecutorService executorService;
-
-    public AbstractApiProducer(AbstractApiEndpoint<E, T> endpoint, ApiMethodPropertiesHelper propertiesHelper) {
+    public AbstractApiProducer(AbstractApiEndpoint<E, T> endpoint, ApiMethodPropertiesHelper<T> propertiesHelper) {
         super(endpoint);
         this.propertiesHelper = propertiesHelper;
         this.endpoint = endpoint;

@@ -213,7 +213,7 @@ public abstract class AbstractApiComponent<E extends Enum<E> & ApiName, T, S ext
                 Set<String> existingOptions = configuration.getParameters().keySet();
                 // get all method options
                 try {
-                    final List arguments = helper.getArguments(methodName);
+                    final List<Object> arguments = helper.getArguments(methodName);
                     final int nArgs = arguments.size();
                     final Set<String> options = new HashSet<String>();
                     for (int i = 1; i < nArgs; i += 2) {

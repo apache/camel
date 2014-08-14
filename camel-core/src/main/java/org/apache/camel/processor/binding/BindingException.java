@@ -24,6 +24,8 @@ import org.apache.camel.Exchange;
  */
 public class BindingException extends CamelExchangeException {
 
+    private static final long serialVersionUID = -3495429794010365522L;
+
     public BindingException(String message, Exchange exchange) {
         super(message, exchange);
     }

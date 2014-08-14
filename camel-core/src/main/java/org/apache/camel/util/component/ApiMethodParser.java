@@ -42,10 +42,10 @@ public abstract class ApiMethodParser<T> {
     private static final Pattern METHOD_PATTERN = Pattern.compile("\\s*([^<\\s]+)\\s*(<[^>]+>)?\\s+(\\S+)\\s*\\(\\s*([\\S\\s,]*)\\)\\s*;?\\s*");
 
     private static final String JAVA_LANG = "java.lang.";
-    private static final Map<String, Class> PRIMITIVE_TYPES;
+    private static final Map<String, Class<?>> PRIMITIVE_TYPES;
 
     static {
-        PRIMITIVE_TYPES = new HashMap<String, Class>();
+        PRIMITIVE_TYPES = new HashMap<String, Class<?>>();
         PRIMITIVE_TYPES.put("int", Integer.TYPE);
         PRIMITIVE_TYPES.put("long", Long.TYPE);
         PRIMITIVE_TYPES.put("double", Double.TYPE);

@@ -34,7 +34,7 @@ import org.apache.camel.util.IntrospectionSupport;
 
 @XmlRootElement(name = "restBinding")
 @XmlAccessorType(XmlAccessType.FIELD)
-public class RestBindingDefinition extends NoOutputDefinition {
+public class RestBindingDefinition extends NoOutputDefinition<RestBindingDefinition> {
 
     @XmlAttribute
     private String consumes;
