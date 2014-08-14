@@ -81,7 +81,7 @@ public class MetricsRoutePolicy extends RoutePolicySupport {
 
         this.route = route;
         try {
-            registry = route.getRouteContext().getCamelContext().hasServiceByType(MetricsRegistryService.class);
+            registry = route.getRouteContext().getCamelContext().hasService(MetricsRegistryService.class);
             if (registry == null) {
                 registry = new MetricsRegistryService();
                 route.getRouteContext().getCamelContext().addService(registry);
