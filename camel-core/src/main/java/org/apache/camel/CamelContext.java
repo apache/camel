@@ -235,7 +235,7 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      * @param type the class type
      * @return the service instance or <tt>null</tt> if not already added.
      */
-    public <T> T hasService(Class<T> type);
+    <T> T hasService(Class<T> type);
 
     /**
      * Adds the given listener to be invoked when {@link CamelContext} have just been started.
