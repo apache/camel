@@ -80,9 +80,8 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
                     <forkMode>perTest</forkMode>
-                    <excludes>
-                        <exclude>**/MQTTProducerTest.*</exclude>
-                    </excludes>
+                    <!--CAMEL-7662 disabling the assertion this time-->
+                    <enableAssertions>false</enableAssertions>
                 </configuration>
             </plugin>
              <plugin>
