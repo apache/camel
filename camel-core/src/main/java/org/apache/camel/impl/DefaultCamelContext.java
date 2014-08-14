@@ -66,6 +66,7 @@ import org.apache.camel.ShutdownRunningTask;
 import org.apache.camel.StartupListener;
 import org.apache.camel.StatefulService;
 import org.apache.camel.SuspendableService;
+import org.apache.camel.TypeConversionException;
 import org.apache.camel.TypeConverter;
 import org.apache.camel.VetoCamelContextStartException;
 import org.apache.camel.builder.ErrorHandlerBuilder;
@@ -161,7 +162,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     private final List<EndpointStrategy> endpointStrategies = new ArrayList<EndpointStrategy>();
     private final Map<String, Component> components = new HashMap<String, Component>();
     private final Set<Route> routes = new LinkedHashSet<Route>();
-    private final List<Service> servicesToClose = new ArrayList<Service>();
+    private final List<Service> servicesToClose = new CopyOnWriteArrayList<Service>();
     private final Set<StartupListener> startupListeners = new LinkedHashSet<StartupListener>();
     private TypeConverter typeConverter;
     private TypeConverterRegistry typeConverterRegistry;
@@ -1029,6 +1030,16 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
             return servicesToClose.contains(service);
         }
         return false;
+    }
+
+    @Override
+    public <T> T hasService(Class<T> type) {
+        for (Service service : servicesToClose) {
+            if (type.isInstance(service)) {
+                return type.cast(service);
+            }
+        }
+        return null;
     }
 
     public void addStartupListener(StartupListener listener) throws Exception {

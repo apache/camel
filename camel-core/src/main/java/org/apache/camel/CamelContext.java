@@ -230,6 +230,14 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
     boolean hasService(Object object);
 
     /**
+     * Has the given service type already been added to this context?
+     *
+     * @param type the class type
+     * @return the service instance or <tt>null</tt> if not already added.
+     */
+    public <T> T hasService(Class<T> type);
+
+    /**
      * Adds the given listener to be invoked when {@link CamelContext} have just been started.
      * <p/>
      * This allows listeners to do any custom work after the routes and other services have been started and are running.
