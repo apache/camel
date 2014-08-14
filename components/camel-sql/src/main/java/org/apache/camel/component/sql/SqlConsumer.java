@@ -36,9 +36,6 @@ import org.springframework.dao.DataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementCallback;
 
-/**
- *
- */
 public class SqlConsumer extends ScheduledBatchPollingConsumer {
 
     private final String query;
@@ -165,9 +162,8 @@ public class SqlConsumer extends ScheduledBatchPollingConsumer {
         int total = exchanges.size();
 
         // limit if needed
-        if (maxMessagesPerPoll > 0 && total > maxMessagesPerPoll) {
-            log.debug("Limiting to maximum messages to poll " + maxMessagesPerPoll + " as there was " + total + " messages in this poll.");
-            total = maxMessagesPerPoll;
+        if (maxMessagesPerPoll > 0 && total == maxMessagesPerPoll) {
+            log.debug("Limiting to maximum messages to poll " + maxMessagesPerPoll + " as there was more messages in this poll.");
         }
 
         for (int index = 0; index < total && isBatchAllowed(); index++) {
@@ -310,5 +306,14 @@ public class SqlConsumer extends ScheduledBatchPollingConsumer {
      */
     public void setBreakBatchOnConsumeFail(boolean breakBatchOnConsumeFail) {
         this.breakBatchOnConsumeFail = breakBatchOnConsumeFail;
+    }
+
+    @Override
+    public void setMaxMessagesPerPoll(int maxMessagesPerPoll) {
+        super.setMaxMessagesPerPoll(maxMessagesPerPoll);
+
+        if (jdbcTemplate != null) {
+            jdbcTemplate.setMaxRows(maxMessagesPerPoll);
+        }
     }
 }
