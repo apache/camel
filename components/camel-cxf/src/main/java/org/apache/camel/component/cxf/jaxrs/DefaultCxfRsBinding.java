@@ -59,7 +59,6 @@ public class DefaultCxfRsBinding implements CxfRsBinding, HeaderFilterStrategyAw
         camelToCxfHeaderMap.put(Exchange.HTTP_URI, org.apache.cxf.message.Message.REQUEST_URI);
         camelToCxfHeaderMap.put(Exchange.HTTP_METHOD, org.apache.cxf.message.Message.HTTP_REQUEST_METHOD);
         camelToCxfHeaderMap.put(Exchange.HTTP_PATH, org.apache.cxf.message.Message.PATH_INFO);
-        camelToCxfHeaderMap.put(Exchange.CONTENT_TYPE, org.apache.cxf.message.Message.CONTENT_TYPE);
         camelToCxfHeaderMap.put(Exchange.HTTP_CHARACTER_ENCODING, org.apache.cxf.message.Message.ENCODING);
         camelToCxfHeaderMap.put(Exchange.HTTP_QUERY, org.apache.cxf.message.Message.QUERY_STRING);
         camelToCxfHeaderMap.put(Exchange.ACCEPT_CONTENT_TYPE, org.apache.cxf.message.Message.ACCEPT_CONTENT_TYPE);
