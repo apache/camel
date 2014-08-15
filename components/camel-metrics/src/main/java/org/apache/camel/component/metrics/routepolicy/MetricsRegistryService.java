@@ -22,16 +22,26 @@ import com.codahale.metrics.JmxReporter;
 import com.codahale.metrics.MetricRegistry;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
+import org.apache.camel.spi.ManagementAgent;
 import org.apache.camel.support.ServiceSupport;
 
+/**
+ * Service holding the {@link MetricRegistry} which registers all metrics.
+ */
 public final class MetricsRegistryService extends ServiceSupport implements CamelContextAware {
 
     private CamelContext camelContext;
     private MetricRegistry registry;
     private JmxReporter reporter;
+    private boolean useJmx;
+    private String jmxDomain = "org.apache.camel.metrics";
 
     public MetricRegistry getRegistry() {
         return registry;
+    }
+
+    public void setRegistry(MetricRegistry registry) {
+        this.registry = registry;
     }
 
     public CamelContext getCamelContext() {
@@ -42,15 +52,40 @@ public final class MetricsRegistryService extends ServiceSupport implements Came
         this.camelContext = camelContext;
     }
 
+    public boolean isUseJmx() {
+        return useJmx;
+    }
+
+    public void setUseJmx(boolean useJmx) {
+        this.useJmx = useJmx;
+    }
+
+    public String getJmxDomain() {
+        return jmxDomain;
+    }
+
+    public void setJmxDomain(String jmxDomain) {
+        this.jmxDomain = jmxDomain;
+    }
+
     @Override
     protected void doStart() throws Exception {
-        registry = new MetricRegistry();
+        if (registry == null) {
+            registry = new MetricRegistry();
+        }
 
-        MBeanServer server = getCamelContext().getManagementStrategy().getManagementAgent().getMBeanServer();
-        if (server != null) {
-            String domain = "org.apache.camel.metrics." + getCamelContext().getManagementName();
-            reporter = JmxReporter.forRegistry(registry).registerWith(server).inDomain(domain).build();
-            reporter.start();
+        if (useJmx) {
+            ManagementAgent agent = getCamelContext().getManagementStrategy().getManagementAgent();
+            if (agent != null) {
+                MBeanServer server = agent.getMBeanServer();
+                if (server != null) {
+                    String domain = jmxDomain + "." + getCamelContext().getManagementName();
+                    reporter = JmxReporter.forRegistry(registry).registerWith(server).inDomain(domain).build();
+                    reporter.start();
+                }
+            } else {
+                throw new IllegalStateException("CamelContext has not enabled JMX");
+            }
         }
     }
 

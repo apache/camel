@@ -16,6 +16,7 @@
  */
 package org.apache.camel.component.metrics.routepolicy;
 
+import com.codahale.metrics.MetricRegistry;
 import org.apache.camel.CamelContext;
 import org.apache.camel.model.RouteDefinition;
 import org.apache.camel.spi.RoutePolicy;
@@ -26,8 +27,52 @@ import org.apache.camel.spi.RoutePolicyFactory;
  */
 public class MetricsRoutePolicyFactory implements RoutePolicyFactory {
 
+    private MetricRegistry registry;
+    private boolean useJmx = true;
+    private String jmxDomain = "org.apache.camel.metrics";
+
+    /**
+     * To use a specific {@link com.codahale.metrics.MetricRegistry} instance.
+     * <p/>
+     * If no instance has been configured, then Camel will create a shared instance to be used.
+     */
+    public void setRegistry(MetricRegistry registry) {
+        this.registry = registry;
+    }
+
+    public MetricRegistry getRegistry() {
+        return registry;
+    }
+
+    public boolean isUseJmx() {
+        return useJmx;
+    }
+
+    /**
+     * Whether to use JMX reported to enlist JMX MBeans with the metrics statistics.
+     */
+    public void setUseJmx(boolean useJmx) {
+        this.useJmx = useJmx;
+    }
+
+    public String getJmxDomain() {
+        return jmxDomain;
+    }
+
+    /**
+     * The JMX domain name to use for the enlisted JMX MBeans.
+     */
+    public void setJmxDomain(String jmxDomain) {
+        this.jmxDomain = jmxDomain;
+    }
+
     @Override
     public RoutePolicy createRoutePolicy(CamelContext camelContext, String routeId, RouteDefinition routeDefinition) {
-        return new MetricsRoutePolicy();
+        MetricsRoutePolicy answer = new MetricsRoutePolicy();
+        answer.setRegistry(getRegistry());
+        answer.setUseJmx(isUseJmx());
+        answer.setJmxDomain(getJmxDomain());
+        return answer;
     }
+
 }

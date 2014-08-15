@@ -16,15 +16,26 @@
  */
 package org.apache.camel.component.metrics.routepolicy;
 
+import com.codahale.metrics.MetricRegistry;
+import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
 public class MetricsRoutePolicyTest extends CamelTestSupport {
 
+    private MetricRegistry registry = new MetricRegistry();
+
     @Override
-    protected boolean useJmx() {
-        return true;
+    protected CamelContext createCamelContext() throws Exception {
+        CamelContext context = super.createCamelContext();
+
+        MetricsRoutePolicyFactory factory = new MetricsRoutePolicyFactory();
+        factory.setUseJmx(false);
+        factory.setRegistry(registry);
+        context.addRoutePolicyFactory(factory);
+
+        return context;
     }
 
     @Test
@@ -41,7 +52,8 @@ public class MetricsRoutePolicyTest extends CamelTestSupport {
 
         assertMockEndpointsSatisfied();
 
-        // TODO: assert the jmx mbeans
+        // there should be 2x4 names
+        assertEquals(8, registry.getNames().size());
     }
 
     @Override
@@ -49,14 +61,10 @@ public class MetricsRoutePolicyTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                context.addRoutePolicyFactory(new MetricsRoutePolicyFactory());
-
                 from("seda:foo").routeId("foo")
-                    .delayer(100)
                     .to("mock:result");
 
                 from("seda:bar").routeId("bar")
-                    .delayer(250)
                     .to("mock:result");
             }
         };

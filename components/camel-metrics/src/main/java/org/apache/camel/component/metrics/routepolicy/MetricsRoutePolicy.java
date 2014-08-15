@@ -18,7 +18,9 @@ package org.apache.camel.component.metrics.routepolicy;
 
 import com.codahale.metrics.Counter;
 import com.codahale.metrics.Meter;
+import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Timer;
+import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Route;
 import org.apache.camel.impl.RoutePolicySupport;
@@ -31,11 +33,10 @@ import org.apache.camel.util.ObjectHelper;
  */
 public class MetricsRoutePolicy extends RoutePolicySupport {
 
-    // TODO: allow to configure which counters/meters/timers to capture
-    // TODO: allow to configure the reporter and jmx domain etc on MetricsRegistryService
-    // TODO: allow to lookup and get hold of com.codahale.metrics.MetricRegistry from java api
-
-    private MetricsRegistryService registry;
+    private MetricRegistry registry;
+    private MetricsRegistryService registryService;
+    private boolean useJmx = true;
+    private String jmxDomain = "org.apache.camel.metrics";
     private MetricsStatistics statistics;
     private Route route;
 
@@ -71,31 +72,60 @@ public class MetricsRoutePolicy extends RoutePolicySupport {
         }
     }
 
+    public MetricRegistry getRegistry() {
+        return registry;
+    }
+
+    public void setRegistry(MetricRegistry registry) {
+        this.registry = registry;
+    }
+
+    public boolean isUseJmx() {
+        return useJmx;
+    }
+
+    public void setUseJmx(boolean useJmx) {
+        this.useJmx = useJmx;
+    }
+
+    public String getJmxDomain() {
+        return jmxDomain;
+    }
+
+    public void setJmxDomain(String jmxDomain) {
+        this.jmxDomain = jmxDomain;
+    }
+
     @Override
     public void onInit(Route route) {
         super.onInit(route);
 
         this.route = route;
         try {
-            registry = route.getRouteContext().getCamelContext().hasService(MetricsRegistryService.class);
-            if (registry == null) {
-                registry = new MetricsRegistryService();
-                route.getRouteContext().getCamelContext().addService(registry);
+            registryService = route.getRouteContext().getCamelContext().hasService(MetricsRegistryService.class);
+            if (registryService == null) {
+                registryService = new MetricsRegistryService();
+                registryService.setRegistry(getRegistry());
+                registryService.setUseJmx(isUseJmx());
+                registryService.setJmxDomain(getJmxDomain());
+                route.getRouteContext().getCamelContext().addService(registryService);
             }
         } catch (Exception e) {
             throw ObjectHelper.wrapRuntimeCamelException(e);
         }
 
         // create statistics holder
-        Counter total = registry.getRegistry().counter(createName("total"));
-        Counter inflight = registry.getRegistry().counter(createName("inflight"));
-        Meter requests = registry.getRegistry().meter(createName("requests"));
-        Timer responses = registry.getRegistry().timer(createName("responses"));
+        Counter total = registryService.getRegistry().counter(createName("total"));
+        Counter inflight = registryService.getRegistry().counter(createName("inflight"));
+        Meter requests = registryService.getRegistry().meter(createName("requests"));
+        Timer responses = registryService.getRegistry().timer(createName("responses"));
         statistics = new MetricsStatistics(total, inflight, requests, responses);
     }
 
     private String createName(String type) {
-        return route.getRouteContext().getCamelContext().getManagementName() + "-" + route.getId() + "-" + type;
+        CamelContext context = route.getRouteContext().getCamelContext();
+        String name = context.getManagementName() != null ? context.getManagementName() : context.getName();
+        return name + "-" + route.getId() + "-" + type;
     }
 
     @Override
