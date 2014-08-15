@@ -141,13 +141,6 @@
           <groupId>org.apache.maven.plugins</groupId>
           <artifactId>maven-eclipse-plugin</artifactId>
           <version>2.9</version>
-          <dependencies>
-            <dependency>
-              <groupId>org.apache.camel</groupId>
-              <artifactId>camel-buildtools</artifactId>
-              <version>${project.version}</version>
-            </dependency>
-          </dependencies>
           <configuration>
             <downloadSources>true</downloadSources>
             <downloadJavadocs>false</downloadJavadocs>
@@ -287,13 +280,6 @@
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-antrun-plugin</artifactId>
             <inherited>false</inherited>
-            <dependencies>
-              <dependency>
-                <groupId>org.apache.camel</groupId>
-                <artifactId>camel-buildtools</artifactId>
-                <version>${project.version}</version>
-              </dependency>
-            </dependencies>
             <executions>
               <execution>
                 <id>setup.workspace</id>
@@ -304,10 +290,16 @@
                     <property name="full.eclipse.workspace" refid="ecp.ws.path" />
                     <path path="${basedir}/etc" id="etc.path" />
 
-                    <whichresource resource="/camel-eclipse-pmd" property="pmd.url" />
-                    <whichresource resource="/camel-pmd-ruleset.xml" property="pmdruleset.url" />
-                    <whichresource resource="/camel-eclipse-checkstyle" property="eclipse.checkstyle.url" />
-                    <whichresource resource="/camel-checkstyle.xml" property="checkstyle.url" />
+                    <path id="buildtools.classpath">
+                        <fileset dir="${basedir}/buildingtools/target" includes="*.jar"/>
+                        <pathelement location="${basedir}/buildingtools/target/classes"/>
+                        <pathelement location="${basedir}/buildingtools/src/main/resources"/>
+                    </path>
+                    
+                    <whichresource resource="/camel-eclipse-pmd" property="pmd.url" classpathref="buildtools.classpath" />
+                    <whichresource resource="/camel-pmd-ruleset.xml" property="pmdruleset.url" classpathref="buildtools.classpath" />
+                    <whichresource resource="/camel-eclipse-checkstyle" property="eclipse.checkstyle.url" classpathref="buildtools.classpath" />
+                    <whichresource resource="/camel-checkstyle.xml" property="checkstyle.url" classpathref="buildtools.classpath" />
 
                     <mkdir dir="${full.eclipse.workspace}/.metadata/.plugins/org.eclipse.core.runtime/.settings" />
                     <mkdir dir="${full.eclipse.workspace}/.metadata/.plugins/net.sf.eclipsecs.core" />

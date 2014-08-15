@@ -2836,6 +2836,13 @@
             <groupId>org.apache.maven.plugins</groupId>
             <artifactId>maven-eclipse-plugin</artifactId>
             <inherited>true</inherited>
+            <dependencies>
+                <dependency>
+                    <groupId>org.apache.camel</groupId>
+                    <artifactId>camel-buildtools</artifactId>
+                    <version>${project.version}</version>
+                </dependency>
+            </dependencies>
             <executions>
               <execution>
                 <id>setup.eclipse.project</id>
