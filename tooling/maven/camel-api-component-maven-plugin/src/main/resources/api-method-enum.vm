@@ -32,7 +32,6 @@ import org.apache.camel.util.component.ApiMethodImpl;
 /**
  * Camel {@link ApiMethod} Enumeration for $proxyType.Name
  */
-@SuppressWarnings("unused")
 public enum $enumName implements ApiMethod {
 
 #foreach ( $model in $models )

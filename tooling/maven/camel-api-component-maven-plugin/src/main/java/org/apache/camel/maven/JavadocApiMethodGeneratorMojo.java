@@ -78,7 +78,7 @@ public class JavadocApiMethodGeneratorMojo extends AbstractApiMethodGeneratorMoj
         final Pattern excludeMethodPatterns = (excludeMethods != null) ? Pattern.compile(excludeMethods) : null;
 
         // for proxy class and super classes not matching excluded packages or classes
-        for (Class aClass = getProxyType();
+        for (Class<?> aClass = getProxyType();
              aClass != null && !packagePatterns.matcher(aClass.getPackage().getName()).matches()
                      && (classPatterns == null || !classPatterns.matcher(aClass.getSimpleName()).matches());
              aClass = aClass.getSuperclass()) {

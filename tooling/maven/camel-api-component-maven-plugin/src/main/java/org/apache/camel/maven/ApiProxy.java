@@ -25,7 +25,6 @@ import org.apache.maven.plugin.MojoExecutionException;
 /**
  * Represents an API to use for generating Camel Component.
  */
-@SuppressWarnings("unused")
 public class ApiProxy {
 
     private String apiName;
