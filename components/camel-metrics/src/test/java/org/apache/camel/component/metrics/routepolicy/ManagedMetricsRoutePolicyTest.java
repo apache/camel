@@ -71,7 +71,7 @@ public class ManagedMetricsRoutePolicyTest extends CamelTestSupport {
         // there should be 8 mbeans
         Set<ObjectName> set = getMBeanServer().queryNames(new ObjectName("org.apache.camel.metrics:*"), null);
         assertEquals(8, set.size());
-   }
+    }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
