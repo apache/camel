@@ -85,6 +85,7 @@ import org.apache.camel.spi.NodeIdFactory;
 import org.apache.camel.spi.PackageScanClassResolver;
 import org.apache.camel.spi.PackageScanFilter;
 import org.apache.camel.spi.ProcessorFactory;
+import org.apache.camel.spi.RoutePolicyFactory;
 import org.apache.camel.spi.RuntimeEndpointRegistry;
 import org.apache.camel.spi.ShutdownStrategy;
 import org.apache.camel.spi.StreamCachingStrategy;
@@ -275,6 +276,15 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
                     LOG.info("Using custom LifecycleStrategy with id: {} and implementation: {}", entry.getKey(), strategy);
                     getContext().addLifecycleStrategy(strategy);
                 }
+            }
+        }
+        // add route policy factories
+        Map<String, RoutePolicyFactory> routePolicyFactories = getContext().getRegistry().findByTypeWithName(RoutePolicyFactory.class);
+        if (routePolicyFactories != null && !routePolicyFactories.isEmpty()) {
+            for (Entry<String, RoutePolicyFactory> entry : routePolicyFactories.entrySet()) {
+                RoutePolicyFactory factory = entry.getValue();
+                LOG.info("Using custom RoutePolicyFactory with id: {} and implementation: {}", entry.getKey(), factory);
+                getContext().addRoutePolicyFactory(factory);
             }
         }
 

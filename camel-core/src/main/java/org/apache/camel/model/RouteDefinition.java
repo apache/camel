@@ -49,6 +49,7 @@ import org.apache.camel.processor.interceptor.HandleFault;
 import org.apache.camel.spi.LifecycleStrategy;
 import org.apache.camel.spi.RouteContext;
 import org.apache.camel.spi.RoutePolicy;
+import org.apache.camel.spi.RoutePolicyFactory;
 import org.apache.camel.util.CamelContextHelper;
 import org.apache.camel.util.ObjectHelper;
 
@@ -887,6 +888,15 @@ public class RouteDefinition extends ProcessorDefinition<RouteDefinition> {
                 RoutePolicy policy = CamelContextHelper.mandatoryLookup(camelContext, ref, RoutePolicy.class);
                 log.debug("RoutePolicy is enabled: {} on route: {}", policy, getId());
                 routeContext.getRoutePolicyList().add(policy);
+            }
+        }
+        if (camelContext.getRoutePolicyFactories() != null) {
+            for (RoutePolicyFactory factory : camelContext.getRoutePolicyFactories()) {
+                RoutePolicy policy = factory.createRoutePolicy(camelContext, getId(), this);
+                if (policy != null) {
+                    log.debug("RoutePolicy is enabled: {} on route: {}", policy, getId());
+                    routeContext.getRoutePolicyList().add(policy);
+                }
             }
         }
 

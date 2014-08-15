@@ -53,6 +53,7 @@ import org.apache.camel.spi.ProcessorFactory;
 import org.apache.camel.spi.Registry;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestRegistry;
+import org.apache.camel.spi.RoutePolicyFactory;
 import org.apache.camel.spi.RouteStartupOrder;
 import org.apache.camel.spi.RuntimeEndpointRegistry;
 import org.apache.camel.spi.ServicePool;
@@ -1375,5 +1376,19 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
      * Sets a custom {@link org.apache.camel.spi.RestRegistry} to use.
      */
     void setRestRegistry(RestRegistry restRegistry);
+
+    /**
+     * Adds the given route policy factory
+     *
+     * @param routePolicyFactory the factory
+     */
+    void addRoutePolicyFactory(RoutePolicyFactory routePolicyFactory);
+
+    /**
+     * Gets the route policy factories
+     *
+     * @return the list of current route policy factories
+     */
+    List<RoutePolicyFactory> getRoutePolicyFactories();
 
 }

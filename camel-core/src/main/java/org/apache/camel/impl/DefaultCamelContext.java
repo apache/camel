@@ -119,6 +119,7 @@ import org.apache.camel.spi.Registry;
 import org.apache.camel.spi.RestConfiguration;
 import org.apache.camel.spi.RestRegistry;
 import org.apache.camel.spi.RouteContext;
+import org.apache.camel.spi.RoutePolicyFactory;
 import org.apache.camel.spi.RouteStartupOrder;
 import org.apache.camel.spi.RuntimeEndpointRegistry;
 import org.apache.camel.spi.ServicePool;
@@ -179,6 +180,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     private RestConfiguration restConfiguration = new RestConfiguration();
     private RestRegistry restRegistry = new DefaultRestRegistry();
     private List<InterceptStrategy> interceptStrategies = new ArrayList<InterceptStrategy>();
+    private List<RoutePolicyFactory> routePolicyFactories = new ArrayList<RoutePolicyFactory>();
 
     // special flags to control the first startup which can are special
     private volatile boolean firstStartDone;
@@ -1479,6 +1481,18 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         } else if (interceptStrategy instanceof Delayer) {
             setDelayer(((Delayer)interceptStrategy).getDelay());
         }
+    }
+
+    public List<RoutePolicyFactory> getRoutePolicyFactories() {
+        return routePolicyFactories;
+    }
+
+    public void setRoutePolicyFactories(List<RoutePolicyFactory> routePolicyFactories) {
+        this.routePolicyFactories = routePolicyFactories;
+    }
+
+    public void addRoutePolicyFactory(RoutePolicyFactory routePolicyFactory) {
+        getRoutePolicyFactories().add(routePolicyFactory);
     }
 
     public void setStreamCaching(Boolean cache) {
