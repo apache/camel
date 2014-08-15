@@ -17,7 +17,6 @@
 package org.apache.camel.component.metrics.routepolicy;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.apache.camel.spi.RoutePolicy;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
@@ -50,13 +49,13 @@ public class MetricsRoutePolicyTest extends CamelTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                RoutePolicy policy = new MetricsRoutePolicy();
+                context.addRoutePolicyFactory(new MetricsRoutePolicyFactory());
 
-                from("seda:foo").routeId("foo").routePolicy(policy)
+                from("seda:foo").routeId("foo")
                     .delayer(100)
                     .to("mock:result");
 
-                from("seda:bar").routeId("bar").routePolicy(policy)
+                from("seda:bar").routeId("bar")
                     .delayer(250)
                     .to("mock:result");
             }

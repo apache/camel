@@ -16,9 +16,6 @@
  */
 package org.apache.camel.component.metrics.routepolicy;
 
-import java.util.concurrent.ConcurrentHashMap;
-import java.util.concurrent.ConcurrentMap;
-
 import com.codahale.metrics.Counter;
 import com.codahale.metrics.Meter;
 import com.codahale.metrics.Timer;
@@ -35,12 +32,11 @@ import org.apache.camel.util.ObjectHelper;
 public class MetricsRoutePolicy extends RoutePolicySupport {
 
     // TODO: allow to configure which counters/meters/timers to capture
-    // TODO: allow to configur the reporer and jmx domain etc on MetricsRegistryService
-    // TODO: RoutePolicyFactory to make this configurable once and apply automatic for all routes
+    // TODO: allow to configure the reporter and jmx domain etc on MetricsRegistryService
     // TODO: allow to lookup and get hold of com.codahale.metrics.MetricRegistry from java api
 
     private MetricsRegistryService registry;
-    private final ConcurrentMap<Route, MetricsStatistics> statistics = new ConcurrentHashMap<Route, MetricsStatistics>();
+    private MetricsStatistics statistics;
     private Route route;
 
     private static final class MetricsStatistics {
@@ -90,15 +86,12 @@ public class MetricsRoutePolicy extends RoutePolicySupport {
             throw ObjectHelper.wrapRuntimeCamelException(e);
         }
 
-        MetricsStatistics stats = statistics.get(route);
-        if (stats == null) {
-            Counter total = registry.getRegistry().counter(createName("total"));
-            Counter inflight = registry.getRegistry().counter(createName("inflight"));
-            Meter requests = registry.getRegistry().meter(createName("requests"));
-            Timer responses = registry.getRegistry().timer(createName("responses"));
-            stats = new MetricsStatistics(total, inflight, requests, responses);
-            statistics.putIfAbsent(route, stats);
-        }
+        // create statistics holder
+        Counter total = registry.getRegistry().counter(createName("total"));
+        Counter inflight = registry.getRegistry().counter(createName("inflight"));
+        Meter requests = registry.getRegistry().meter(createName("requests"));
+        Timer responses = registry.getRegistry().timer(createName("responses"));
+        statistics = new MetricsStatistics(total, inflight, requests, responses);
     }
 
     private String createName(String type) {
@@ -107,17 +100,15 @@ public class MetricsRoutePolicy extends RoutePolicySupport {
 
     @Override
     public void onExchangeBegin(Route route, Exchange exchange) {
-        MetricsStatistics stats = statistics.get(route);
-        if (stats != null) {
-            stats.onExchangeBegin(exchange);
+        if (statistics != null) {
+            statistics.onExchangeBegin(exchange);
         }
     }
 
     @Override
     public void onExchangeDone(Route route, Exchange exchange) {
-        MetricsStatistics stats = statistics.get(route);
-        if (stats != null) {
-            stats.onExchangeDone(exchange);
+        if (statistics != null) {
+            statistics.onExchangeDone(exchange);
         }
     }
 
