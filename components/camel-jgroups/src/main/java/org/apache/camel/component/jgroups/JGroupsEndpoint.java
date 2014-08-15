@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.jgroups;
 
+import java.util.concurrent.atomic.AtomicInteger;
+
 import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Exchange;
@@ -26,6 +28,8 @@ import org.jgroups.Channel;
 import org.jgroups.JChannel;
 import org.jgroups.Message;
 import org.jgroups.View;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public class JGroupsEndpoint extends DefaultEndpoint {
 
@@ -37,7 +41,10 @@ public class JGroupsEndpoint extends DefaultEndpoint {
 
     public static final String HEADER_JGROUPS_CHANNEL_ADDRESS = "JGROUPS_CHANNEL_ADDRESS";
 
+    private static final Logger LOG = LoggerFactory.getLogger(JGroupsEndpoint.class);
+
     private Channel channel;
+    private AtomicInteger connectCount = new AtomicInteger(0);
 
     private Channel resolvedChannel;
 
@@ -103,6 +110,7 @@ public class JGroupsEndpoint extends DefaultEndpoint {
 
     @Override
     protected void doStop() throws Exception {
+        LOG.trace("Closing JGroups Channel {}", getEndpointUri());
         resolvedChannel.close();
         super.doStop();
     }
@@ -115,6 +123,26 @@ public class JGroupsEndpoint extends DefaultEndpoint {
             return new JChannel(channelProperties);
         }
         return new JChannel();
+    }
+
+    /**
+     * Connect shared channel, called by producer and consumer.
+     * @throws Exception
+     */
+    public void connect() throws Exception {
+        connectCount.incrementAndGet();
+        LOG.trace("Connecting JGroups Channel {}", getEndpointUri());
+        resolvedChannel.connect(clusterName);
+    }
+
+    /**
+     * Disconnect shared channel, called by producer and consumer.
+     */
+    public void disconnect() {
+        if (connectCount.decrementAndGet() == 0) {
+            LOG.trace("Disconnecting JGroups Channel {}", getEndpointUri());
+            resolvedChannel.disconnect();
+        }
     }
 
     private boolean resolveEnableViewMessages() {
@@ -171,5 +199,4 @@ public class JGroupsEndpoint extends DefaultEndpoint {
     public void setResolvedEnableViewMessages(boolean resolvedEnableViewMessages) {
         this.resolvedEnableViewMessages = resolvedEnableViewMessages;
     }
-
 }
