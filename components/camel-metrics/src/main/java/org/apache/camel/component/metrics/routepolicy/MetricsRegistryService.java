@@ -79,8 +79,7 @@ public final class MetricsRegistryService extends ServiceSupport implements Came
             if (agent != null) {
                 MBeanServer server = agent.getMBeanServer();
                 if (server != null) {
-                    String domain = jmxDomain + "." + getCamelContext().getManagementName();
-                    reporter = JmxReporter.forRegistry(registry).registerWith(server).inDomain(domain).build();
+                    reporter = JmxReporter.forRegistry(registry).registerWith(server).inDomain(jmxDomain).build();
                     reporter.start();
                 }
             } else {

@@ -125,7 +125,7 @@ public class MetricsRoutePolicy extends RoutePolicySupport {
     private String createName(String type) {
         CamelContext context = route.getRouteContext().getCamelContext();
         String name = context.getManagementName() != null ? context.getManagementName() : context.getName();
-        return name + "-" + route.getId() + "-" + type;
+        return name + ":" + route.getId() + ":" + type;
     }
 
     @Override

@@ -16,22 +16,35 @@
  */
 package org.apache.camel.component.metrics.routepolicy;
 
+import java.util.Set;
+import javax.management.MBeanServer;
+import javax.management.ObjectName;
+
 import com.codahale.metrics.MetricRegistry;
 import org.apache.camel.CamelContext;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Test;
 
-public class MetricsRoutePolicyTest extends CamelTestSupport {
+public class ManagedMetricsRoutePolicyTest extends CamelTestSupport {
 
     private MetricRegistry registry = new MetricRegistry();
+
+    @Override
+    protected boolean useJmx() {
+        return true;
+    }
+
+    protected MBeanServer getMBeanServer() {
+        return context.getManagementStrategy().getManagementAgent().getMBeanServer();
+    }
 
     @Override
     protected CamelContext createCamelContext() throws Exception {
         CamelContext context = super.createCamelContext();
 
         MetricsRoutePolicyFactory factory = new MetricsRoutePolicyFactory();
-        factory.setUseJmx(false);
+        factory.setUseJmx(true);
         factory.setRegistry(registry);
         context.addRoutePolicyFactory(factory);
 
@@ -54,7 +67,11 @@ public class MetricsRoutePolicyTest extends CamelTestSupport {
 
         // there should be 2x4 names
         assertEquals(8, registry.getNames().size());
-    }
+
+        // there should be 8 mbeans
+        Set<ObjectName> set = getMBeanServer().queryNames(new ObjectName("org.apache.camel.metrics:*"), null);
+        assertEquals(8, set.size());
+   }
 
     @Override
     protected RouteBuilder createRouteBuilder() throws Exception {
