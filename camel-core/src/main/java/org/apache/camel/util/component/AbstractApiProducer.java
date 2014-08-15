@@ -20,7 +20,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.ExecutorService;
 
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.Exchange;
@@ -106,7 +105,6 @@ public abstract class AbstractApiProducer<E extends Enum<E> & ApiName, T>
     }
 
     @Override
-    @SuppressWarnings("unused")
     public void interceptProperties(Map<String, Object> properties) {
         // do nothing by default
     }
@@ -129,7 +127,6 @@ public abstract class AbstractApiProducer<E extends Enum<E> & ApiName, T>
     }
 
     @Override
-    @SuppressWarnings("unused")
     public void interceptResult(Object methodResult, Exchange resultExchange) {
         // do nothing by default
     }

@@ -16,8 +16,6 @@
  */
 package org.apache.camel.component.netty.http;
 
-import java.util.Locale;
-
 /**
  * A matcher used for selecting the correct {@link org.apache.camel.component.netty.http.handlers.HttpServerChannelHandler}
  * to handle an incoming {@link org.jboss.netty.handler.codec.http.HttpRequest} when you use multiple routes on the same

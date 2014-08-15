@@ -16,9 +16,7 @@
  */
 package org.apache.camel.component.jackson;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.test.spring.CamelSpringTestSupport;

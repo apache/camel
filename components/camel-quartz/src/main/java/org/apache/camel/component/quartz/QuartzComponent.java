@@ -29,7 +29,6 @@ import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.StartupListener;
-import org.apache.camel.impl.DefaultComponent;
 import org.apache.camel.impl.UriEndpointComponent;
 import org.apache.camel.util.EndpointHelper;
 import org.apache.camel.util.IOHelper;

@@ -80,13 +80,11 @@ public abstract class AbstractApiConsumer<E extends Enum<E> & ApiName, T>
     }
 
     @Override
-    @SuppressWarnings("unused")
     public void interceptPropertyNames(Set<String> propertyNames) {
         // do nothing by default
     }
 
     @Override
-    @SuppressWarnings("unused")
     public void interceptProperties(Map<String, Object> properties) {
         // do nothing by default
     }
@@ -114,7 +112,6 @@ public abstract class AbstractApiConsumer<E extends Enum<E> & ApiName, T>
     }
 
     @Override
-    @SuppressWarnings("unused")
     public void interceptResult(Object result, Exchange resultExchange) {
         // do nothing by default
     }
@@ -133,7 +130,6 @@ public abstract class AbstractApiConsumer<E extends Enum<E> & ApiName, T>
         return splitResult;
     }
 
-    @SuppressWarnings("unused")
     public final void setSplitResult(boolean splitResult) {
         this.splitResult = splitResult;
     }

@@ -167,13 +167,11 @@ public abstract class AbstractApiEndpoint<E extends ApiName, T>
     }
 
     @Override
-    @SuppressWarnings("unused")
     public void interceptPropertyNames(Set<String> propertyNames) {
         // do nothing by default
     }
 
     @Override
-    @SuppressWarnings("unused")
     public void interceptProperties(Map<String, Object> properties) {
         // do nothing by default
     }

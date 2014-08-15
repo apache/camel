@@ -17,7 +17,6 @@
 package org.apache.camel.component.sparkrest;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Test;
 
 public class RestCamelSparkParamTest extends CamelSparkParamTest {
 

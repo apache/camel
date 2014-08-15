@@ -24,6 +24,7 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 import java.util.concurrent.atomic.AtomicBoolean;
+
 import javax.xml.bind.annotation.XmlAccessType;
 import javax.xml.bind.annotation.XmlAccessorType;
 import javax.xml.bind.annotation.XmlTransient;
@@ -65,7 +66,6 @@ import org.apache.camel.model.rest.RestConfigurationDefinition;
 import org.apache.camel.model.rest.RestContainer;
 import org.apache.camel.model.rest.RestDefinition;
 import org.apache.camel.processor.interceptor.BacklogTracer;
-import org.apache.camel.processor.interceptor.Delayer;
 import org.apache.camel.processor.interceptor.HandleFault;
 import org.apache.camel.processor.interceptor.TraceFormatter;
 import org.apache.camel.processor.interceptor.Tracer;
@@ -192,7 +192,9 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
             LOG.info("Using custom HandleFault: {}", handleFault);
             getContext().addInterceptStrategy(handleFault);
         }
-        Delayer delayer = getBeanForType(Delayer.class);
+        @SuppressWarnings("deprecation")
+        org.apache.camel.processor.interceptor.Delayer delayer 
+            = getBeanForType(org.apache.camel.processor.interceptor.Delayer.class);
         if (delayer != null) {
             LOG.info("Using custom Delayer: {}", delayer);
             getContext().addInterceptStrategy(delayer);
@@ -468,7 +470,7 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         }
         String spoolRules = CamelContextHelper.parseText(getContext(), streamCaching.getAnySpoolRules());
         if (spoolRules != null) {
-            Iterator it = ObjectHelper.createIterator(spoolRules);
+            Iterator<Object> it = ObjectHelper.createIterator(spoolRules);
             while (it.hasNext()) {
                 String name = it.next().toString();
                 StreamCachingStrategy.SpoolRule rule = getContext().getRegistry().lookupByNameAndType(name, StreamCachingStrategy.SpoolRule.class);
