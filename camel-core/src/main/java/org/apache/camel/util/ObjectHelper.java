@@ -43,8 +43,6 @@ import java.util.Map;
 import java.util.NoSuchElementException;
 import java.util.Properties;
 import java.util.Scanner;
-import java.util.Set;
-import java.util.TreeSet;
 
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
@@ -60,7 +58,6 @@ import org.apache.camel.WrappedFile;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 /**
  * A number of useful helper methods for working with Objects
  *
@@ -69,10 +66,12 @@ import org.slf4j.LoggerFactory;
 public final class ObjectHelper {
     private static final Logger LOG = LoggerFactory.getLogger(ObjectHelper.class);
     private static final String DEFAULT_DELIMITER = ",";
-    private static final Set<Class<?>> PRIMITIVE_ARRAY_TYPES 
-        = new TreeSet<Class<?>>(Arrays.asList(byte[].class, short[].class, int[].class, long[].class,
-                                              float[].class, double[].class, char[].class, boolean[].class));
-    
+
+    // must be as-is otherwise class cannot be loaded
+    @SuppressWarnings("unchecked")
+    private static final List<?> PRIMITIVE_ARRAY_TYPES = Arrays.asList(byte[].class, short[].class, int[].class, long[].class,
+            float[].class, double[].class, char[].class, boolean[].class);
+
     /**
      * Utility classes should not have a public constructor.
      */
