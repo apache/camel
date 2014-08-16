@@ -32,7 +32,7 @@ public class MetricsRoutePolicyTest extends CamelTestSupport {
 
         MetricsRoutePolicyFactory factory = new MetricsRoutePolicyFactory();
         factory.setUseJmx(false);
-        factory.setRegistry(registry);
+        factory.setMetricsRegistry(registry);
         context.addRoutePolicyFactory(factory);
 
         return context;

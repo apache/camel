@@ -31,17 +31,17 @@ import org.apache.camel.support.ServiceSupport;
 public final class MetricsRegistryService extends ServiceSupport implements CamelContextAware {
 
     private CamelContext camelContext;
-    private MetricRegistry registry;
+    private MetricRegistry metricsRegistry;
     private JmxReporter reporter;
     private boolean useJmx;
     private String jmxDomain = "org.apache.camel.metrics";
 
-    public MetricRegistry getRegistry() {
-        return registry;
+    public MetricRegistry getMetricsRegistry() {
+        return metricsRegistry;
     }
 
-    public void setRegistry(MetricRegistry registry) {
-        this.registry = registry;
+    public void setMetricsRegistry(MetricRegistry metricsRegistry) {
+        this.metricsRegistry = metricsRegistry;
     }
 
     public CamelContext getCamelContext() {
@@ -70,8 +70,8 @@ public final class MetricsRegistryService extends ServiceSupport implements Came
 
     @Override
     protected void doStart() throws Exception {
-        if (registry == null) {
-            registry = new MetricRegistry();
+        if (metricsRegistry == null) {
+            metricsRegistry = new MetricRegistry();
         }
 
         if (useJmx) {
@@ -79,7 +79,7 @@ public final class MetricsRegistryService extends ServiceSupport implements Came
             if (agent != null) {
                 MBeanServer server = agent.getMBeanServer();
                 if (server != null) {
-                    reporter = JmxReporter.forRegistry(registry).registerWith(server).inDomain(jmxDomain).build();
+                    reporter = JmxReporter.forRegistry(metricsRegistry).registerWith(server).inDomain(jmxDomain).build();
                     reporter.start();
                 }
             } else {

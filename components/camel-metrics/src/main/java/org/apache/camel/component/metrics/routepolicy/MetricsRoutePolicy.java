@@ -33,7 +33,7 @@ import org.apache.camel.util.ObjectHelper;
  */
 public class MetricsRoutePolicy extends RoutePolicySupport {
 
-    private MetricRegistry registry;
+    private MetricRegistry metricsRegistry;
     private MetricsRegistryService registryService;
     private boolean useJmx = true;
     private String jmxDomain = "org.apache.camel.metrics";
@@ -72,12 +72,12 @@ public class MetricsRoutePolicy extends RoutePolicySupport {
         }
     }
 
-    public MetricRegistry getRegistry() {
-        return registry;
+    public MetricRegistry getMetricsRegistry() {
+        return metricsRegistry;
     }
 
-    public void setRegistry(MetricRegistry registry) {
-        this.registry = registry;
+    public void setMetricsRegistry(MetricRegistry metricsRegistry) {
+        this.metricsRegistry = metricsRegistry;
     }
 
     public boolean isUseJmx() {
@@ -105,7 +105,7 @@ public class MetricsRoutePolicy extends RoutePolicySupport {
             registryService = route.getRouteContext().getCamelContext().hasService(MetricsRegistryService.class);
             if (registryService == null) {
                 registryService = new MetricsRegistryService();
-                registryService.setRegistry(getRegistry());
+                registryService.setMetricsRegistry(getMetricsRegistry());
                 registryService.setUseJmx(isUseJmx());
                 registryService.setJmxDomain(getJmxDomain());
                 route.getRouteContext().getCamelContext().addService(registryService);
@@ -115,17 +115,18 @@ public class MetricsRoutePolicy extends RoutePolicySupport {
         }
 
         // create statistics holder
-        Counter total = registryService.getRegistry().counter(createName("total"));
-        Counter inflight = registryService.getRegistry().counter(createName("inflight"));
-        Meter requests = registryService.getRegistry().meter(createName("requests"));
-        Timer responses = registryService.getRegistry().timer(createName("responses"));
+        Counter total = registryService.getMetricsRegistry().counter(createName("total"));
+        Counter inflight = registryService.getMetricsRegistry().counter(createName("inflight"));
+        Meter requests = registryService.getMetricsRegistry().meter(createName("requests"));
+        Timer responses = registryService.getMetricsRegistry().timer(createName("responses"));
         statistics = new MetricsStatistics(total, inflight, requests, responses);
     }
 
     private String createName(String type) {
         CamelContext context = route.getRouteContext().getCamelContext();
         String name = context.getManagementName() != null ? context.getManagementName() : context.getName();
-        return name + ":" + route.getId() + ":" + type;
+        // use colon to separate context from route, and dot for the type name
+        return name + ":" + route.getId() + "." + type;
     }
 
     @Override

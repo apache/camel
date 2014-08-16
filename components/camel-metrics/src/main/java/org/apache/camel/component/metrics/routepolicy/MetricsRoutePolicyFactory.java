@@ -27,7 +27,7 @@ import org.apache.camel.spi.RoutePolicyFactory;
  */
 public class MetricsRoutePolicyFactory implements RoutePolicyFactory {
 
-    private MetricRegistry registry;
+    private MetricRegistry metricsRegistry;
     private boolean useJmx = true;
     private String jmxDomain = "org.apache.camel.metrics";
 
@@ -36,12 +36,12 @@ public class MetricsRoutePolicyFactory implements RoutePolicyFactory {
      * <p/>
      * If no instance has been configured, then Camel will create a shared instance to be used.
      */
-    public void setRegistry(MetricRegistry registry) {
-        this.registry = registry;
+    public void setMetricsRegistry(MetricRegistry metricsRegistry) {
+        this.metricsRegistry = metricsRegistry;
     }
 
-    public MetricRegistry getRegistry() {
-        return registry;
+    public MetricRegistry getMetricsRegistry() {
+        return metricsRegistry;
     }
 
     public boolean isUseJmx() {
@@ -69,7 +69,7 @@ public class MetricsRoutePolicyFactory implements RoutePolicyFactory {
     @Override
     public RoutePolicy createRoutePolicy(CamelContext camelContext, String routeId, RouteDefinition routeDefinition) {
         MetricsRoutePolicy answer = new MetricsRoutePolicy();
-        answer.setRegistry(getRegistry());
+        answer.setMetricsRegistry(getMetricsRegistry());
         answer.setUseJmx(isUseJmx());
         answer.setJmxDomain(getJmxDomain());
         return answer;
