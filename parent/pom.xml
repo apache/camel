@@ -317,7 +317,7 @@
     <mybatis-version>3.2.7</mybatis-version>
     <neethi-bundle-version>3.0.1</neethi-bundle-version>
     <netty3-version>3.9.3.Final</netty3-version>
-    <netty-version>4.0.22.Final</netty-version>
+    <netty-version>4.0.23.Final</netty-version>
     <noggit-bundle-version>0.5_1</noggit-bundle-version>
     <!-- should be in-sync with deltaspike -->
     <openwebbeans-version>1.1.5</openwebbeans-version>
