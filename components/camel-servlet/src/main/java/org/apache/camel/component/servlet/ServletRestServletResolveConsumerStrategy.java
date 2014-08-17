@@ -55,9 +55,7 @@ public class ServletRestServletResolveConsumerStrategy extends HttpServletResolv
         }
 
         // then see if we got a direct match
-        Iterator<HttpConsumer> it = candidates.iterator();
-        while (it.hasNext()) {
-            HttpConsumer consumer = it.next();
+        for (HttpConsumer consumer : candidates) {
             String consumerPath = consumer.getPath();
             if (matchRestPath(path, consumerPath, false)) {
                 answer = consumer;
@@ -67,7 +65,7 @@ public class ServletRestServletResolveConsumerStrategy extends HttpServletResolv
 
         // then match by non wildcard path
         if (answer == null) {
-            it = candidates.iterator();
+            Iterator<HttpConsumer> it = candidates.iterator();
             while (it.hasNext()) {
                 HttpConsumer consumer = it.next();
                 String consumerPath = consumer.getPath();
