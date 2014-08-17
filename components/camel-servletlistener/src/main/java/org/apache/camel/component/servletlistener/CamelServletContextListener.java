@@ -64,6 +64,11 @@ public abstract class CamelServletContextListener<R extends Registry> implements
      */
     public static ServletCamelContext instance;
 
+    /**
+     * Key to store the created {@link org.apache.camel.CamelContext} as an attribute on the {@link javax.servlet.ServletContext}.
+     */
+    public static final String CAMEL_CONTEXT_KEY = "CamelContext";
+
     protected static final Logger LOG = LoggerFactory.getLogger(CamelServletContextListener.class);
     protected ServletCamelContext camelContext;
     protected CamelContextLifecycle<R> camelContextLifecycle;
@@ -172,6 +177,9 @@ public abstract class CamelServletContextListener<R extends Registry> implements
             instance = camelContext;
         }
 
+        // store the CamelContext as an attribute
+        sce.getServletContext().setAttribute(CAMEL_CONTEXT_KEY, camelContext);
+
         LOG.info("CamelContextServletListener initialized");
     }
 
@@ -194,6 +202,10 @@ public abstract class CamelServletContextListener<R extends Registry> implements
         camelContext = null;
         registry = null;
         instance = null;
+
+        // store the CamelContext as an attribute
+        sce.getServletContext().removeAttribute(CAMEL_CONTEXT_KEY);
+
         LOG.info("CamelContextServletListener destroyed");
     }
 
