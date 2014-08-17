@@ -4,7 +4,9 @@ import groovy.util.XmlSlurper;
 import groovy.util.slurpersupport.GPathResult;
 import groovy.xml.StreamingMarkupBuilder;
 import org.apache.camel.Converter;
+import org.apache.camel.Exchange;
 import org.apache.camel.StringSource;
+import org.apache.camel.converter.jaxp.XmlConverter;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
@@ -21,21 +23,20 @@ import java.io.StringWriter;
 @Converter
 public class GPathResultConverter {
 
+    private final XmlConverter xmlConverter = new XmlConverter();
+
     @Converter
-    public static GPathResult fromString(String input) throws ParserConfigurationException, SAXException, IOException {
+    public GPathResult fromString(String input) throws ParserConfigurationException, SAXException, IOException {
         return new XmlSlurper().parseText(input);
     }
 
     @Converter
-    public static GPathResult fromStringSource(StringSource input) throws IOException, SAXException, ParserConfigurationException {
+    public GPathResult fromStringSource(StringSource input) throws IOException, SAXException, ParserConfigurationException {
         return fromString(input.getText());
     }
 
     @Converter
-    public static GPathResult fromNode(Node input) throws IOException, SAXException, ParserConfigurationException, TransformerException {
-        StringWriter writer = new StringWriter();
-        Transformer t = TransformerFactory.newInstance().newTransformer();
-        t.transform(new DOMSource(input), new StreamResult(writer));
-        return fromString(writer.toString());
+    public GPathResult fromNode(Node input, Exchange exchange) throws IOException, SAXException, ParserConfigurationException, TransformerException {
+        return fromString(xmlConverter.toString(input, exchange));
     }
 }
