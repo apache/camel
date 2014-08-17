@@ -233,8 +233,10 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
         Exchange result = send(endpoint, new Processor() {
             public void process(Exchange exchange) {
                 Message in = exchange.getIn();
-                for (Map.Entry<String, Object> header : headers.entrySet()) {
-                    in.setHeader(header.getKey(), header.getValue());
+                if (headers != null) {
+                    for (Map.Entry<String, Object> header : headers.entrySet()) {
+                        in.setHeader(header.getKey(), header.getValue());
+                    }
                 }
                 in.setBody(body);
             }
@@ -251,8 +253,10 @@ public class DefaultProducerTemplate extends ServiceSupport implements ProducerT
         Exchange exchange = send(endpoint, pattern, new Processor() {
             public void process(Exchange exchange) throws Exception {
                 Message in = exchange.getIn();
-                for (Map.Entry<String, Object> header : headers.entrySet()) {
-                    in.setHeader(header.getKey(), header.getValue());
+                if (headers != null) {
+                    for (Map.Entry<String, Object> header : headers.entrySet()) {
+                        in.setHeader(header.getKey(), header.getValue());
+                    }
                 }
                 in.setBody(body);
             }
