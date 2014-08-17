@@ -8,8 +8,9 @@ import org.apache.camel.impl.DefaultCamelContext
 import org.apache.camel.impl.DefaultExchange
 import org.junit.Test
 import org.w3c.dom.Node
-import javax.xml.parsers.DocumentBuilderFactory
 import org.xml.sax.InputSource
+
+import javax.xml.parsers.DocumentBuilderFactory
 
 import static org.junit.Assert.assertEquals
 import static org.junit.Assert.assertNotNull
@@ -38,7 +39,7 @@ public class GPathResultConverterTest {
     @Test
     void "should convert node to GPathResult"() {
         Node node = DocumentBuilderFactory.newInstance().newDocumentBuilder()
-					.parse(new InputSource(new StringReader(xml)))
+                .parse(new InputSource(new StringReader(xml)))
         Exchange exchange = new DefaultExchange(context)
         exchange.in.setBody(node, Node)
         GPathResult result = exchange.in.getBody(GPathResult)
@@ -46,7 +47,7 @@ public class GPathResultConverterTest {
     }
 
     private void checkGPathResult(GPathResult gPathResult) {
-		    assertNotNull(gPathResult)
+        assertNotNull(gPathResult)
         assertEquals(gPathResult.name(), "test")
         assertEquals(gPathResult.elem1.text(), "This is test")
     }
