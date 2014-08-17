@@ -16,25 +16,36 @@
  */
 package org.apache.camel.component.metrics.routepolicy;
 
+import java.util.concurrent.TimeUnit;
 import javax.management.MBeanServer;
 
 import com.codahale.metrics.JmxReporter;
 import com.codahale.metrics.MetricRegistry;
+import com.codahale.metrics.json.MetricsModule;
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
 import org.apache.camel.CamelContext;
 import org.apache.camel.CamelContextAware;
+import org.apache.camel.StaticService;
+import org.apache.camel.api.management.ManagedResource;
 import org.apache.camel.spi.ManagementAgent;
 import org.apache.camel.support.ServiceSupport;
+import org.apache.camel.util.ObjectHelper;
 
 /**
  * Service holding the {@link MetricRegistry} which registers all metrics.
  */
-public final class MetricsRegistryService extends ServiceSupport implements CamelContextAware {
+@ManagedResource(description = "MetricsRegistry")
+public final class MetricsRegistryService extends ServiceSupport implements CamelContextAware, StaticService, MetricsRegistryMBean {
 
     private CamelContext camelContext;
     private MetricRegistry metricsRegistry;
     private JmxReporter reporter;
     private boolean useJmx;
     private String jmxDomain = "org.apache.camel.metrics";
+    private boolean prettyPrint;
+    private transient ObjectMapper mapper;
 
     public MetricRegistry getMetricsRegistry() {
         return metricsRegistry;
@@ -68,6 +79,14 @@ public final class MetricsRegistryService extends ServiceSupport implements Came
         this.jmxDomain = jmxDomain;
     }
 
+    public boolean isPrettyPrint() {
+        return prettyPrint;
+    }
+
+    public void setPrettyPrint(boolean prettyPrint) {
+        this.prettyPrint = prettyPrint;
+    }
+
     @Override
     protected void doStart() throws Exception {
         if (metricsRegistry == null) {
@@ -86,6 +105,9 @@ public final class MetricsRegistryService extends ServiceSupport implements Came
                 throw new IllegalStateException("CamelContext has not enabled JMX");
             }
         }
+
+        // json mapper
+        this.mapper = new ObjectMapper().registerModule(new MetricsModule(TimeUnit.SECONDS, TimeUnit.SECONDS, false));
     }
 
     @Override
@@ -95,4 +117,18 @@ public final class MetricsRegistryService extends ServiceSupport implements Came
             reporter = null;
         }
     }
+
+    @Override
+    public String dumpStatisticsAsJson() {
+        ObjectWriter writer = mapper.writer();
+        if (isPrettyPrint()) {
+            writer = writer.withDefaultPrettyPrinter();
+        }
+        try {
+            return writer.writeValueAsString(getMetricsRegistry());
+        } catch (JsonProcessingException e) {
+            throw ObjectHelper.wrapRuntimeCamelException(e);
+        }
+    }
+
 }

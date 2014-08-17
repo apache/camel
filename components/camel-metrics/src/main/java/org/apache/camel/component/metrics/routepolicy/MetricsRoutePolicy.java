@@ -37,6 +37,7 @@ public class MetricsRoutePolicy extends RoutePolicySupport {
     private MetricsRegistryService registryService;
     private boolean useJmx = true;
     private String jmxDomain = "org.apache.camel.metrics";
+    private boolean prettyPrint;
     private MetricsStatistics statistics;
     private Route route;
 
@@ -96,6 +97,14 @@ public class MetricsRoutePolicy extends RoutePolicySupport {
         this.jmxDomain = jmxDomain;
     }
 
+    public boolean isPrettyPrint() {
+        return prettyPrint;
+    }
+
+    public void setPrettyPrint(boolean prettyPrint) {
+        this.prettyPrint = prettyPrint;
+    }
+
     @Override
     public void onInit(Route route) {
         super.onInit(route);
@@ -108,6 +117,7 @@ public class MetricsRoutePolicy extends RoutePolicySupport {
                 registryService.setMetricsRegistry(getMetricsRegistry());
                 registryService.setUseJmx(isUseJmx());
                 registryService.setJmxDomain(getJmxDomain());
+                registryService.setPrettyPrint(isPrettyPrint());
                 route.getRouteContext().getCamelContext().addService(registryService);
             }
         } catch (Exception e) {

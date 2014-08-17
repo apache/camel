@@ -793,6 +793,10 @@
   </feature>
   <feature name='camel-metrics' version='${project.version}' resolver='(obr)' start-level='50'>
     <bundle dependency='true'>mvn:com.codahale.metrics/metrics-core/${metrics-version}</bundle>
+    <bundle dependency='true'>mvn:com.codahale.metrics/metrics-json/${metrics-version}</bundle>
+    <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-core/${jackson2-version}</bundle>
+    <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-databind/${jackson2-version}</bundle>
+    <bundle dependency='true'>mvn:com.fasterxml.jackson.core/jackson-annotations/${jackson2-version}</bundle>
     <feature version='${project.version}'>camel-core</feature>
     <bundle>mvn:org.apache.camel/camel-metrics/${project.version}</bundle>
   </feature>

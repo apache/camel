@@ -28,8 +28,9 @@ import org.apache.camel.spi.RoutePolicyFactory;
 public class MetricsRoutePolicyFactory implements RoutePolicyFactory {
 
     private MetricRegistry metricsRegistry;
-    private boolean useJmx = true;
+    private boolean useJmx;
     private String jmxDomain = "org.apache.camel.metrics";
+    private boolean prettyPrint;
 
     /**
      * To use a specific {@link com.codahale.metrics.MetricRegistry} instance.
@@ -66,12 +67,24 @@ public class MetricsRoutePolicyFactory implements RoutePolicyFactory {
         this.jmxDomain = jmxDomain;
     }
 
+    public boolean isPrettyPrint() {
+        return prettyPrint;
+    }
+
+    /**
+     * Whether to use pretty print when outputting JSon
+     */
+    public void setPrettyPrint(boolean prettyPrint) {
+        this.prettyPrint = prettyPrint;
+    }
+
     @Override
     public RoutePolicy createRoutePolicy(CamelContext camelContext, String routeId, RouteDefinition routeDefinition) {
         MetricsRoutePolicy answer = new MetricsRoutePolicy();
         answer.setMetricsRegistry(getMetricsRegistry());
         answer.setUseJmx(isUseJmx());
         answer.setJmxDomain(getJmxDomain());
+        answer.setPrettyPrint(isPrettyPrint());
         return answer;
     }
 

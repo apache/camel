@@ -46,6 +46,7 @@ public class ManagedMetricsRoutePolicyTest extends CamelTestSupport {
         MetricsRoutePolicyFactory factory = new MetricsRoutePolicyFactory();
         factory.setUseJmx(true);
         factory.setMetricsRegistry(registry);
+        factory.setPrettyPrint(true);
         context.addRoutePolicyFactory(factory);
 
         return context;
@@ -71,6 +72,17 @@ public class ManagedMetricsRoutePolicyTest extends CamelTestSupport {
         // there should be 8 mbeans
         Set<ObjectName> set = getMBeanServer().queryNames(new ObjectName("org.apache.camel.metrics:*"), null);
         assertEquals(8, set.size());
+
+        String name = String.format("org.apache.camel:context=%s,type=services,name=MetricsRegistryService", context.getManagementName());
+        ObjectName on = ObjectName.getInstance(name);
+        String json = (String) getMBeanServer().invoke(on, "dumpStatisticsAsJson", null, null);
+        assertNotNull(json);
+        log.info(json);
+
+        assertTrue(json.contains("foo.total"));
+        assertTrue(json.contains("bar.total"));
+        assertTrue(json.contains("bar.requests"));
+        assertTrue(json.contains("foo.requests"));
     }
 
     @Override
