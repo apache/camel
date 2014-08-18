@@ -491,6 +491,13 @@ public interface CamelContext extends SuspendableService, RuntimeConfiguration {
     void startRoute(RouteDefinition route) throws Exception;
 
     /**
+     * Starts all the routes which currently is not started.
+     *
+     * @throws Exception is thrown if a route could not be started for whatever reason
+     */
+    void startAllRoutes() throws Exception;
+
+    /**
      * Starts the given route if it has been previously stopped
      *
      * @param routeId the route id
