@@ -77,6 +77,7 @@ trait DSL {
   def recipients(expression: Exchange => Any) : DSL
   def resequence(expression: Exchange => Any) : SResequenceDefinition
   def rollback : DSL
+  def routeId(id: String) : DSL
   def routingSlip(header: String) : DSL
   def routingSlip(header: String, separator: String) : DSL
   def routingSlip(expression: Exchange => Any) : DSL
