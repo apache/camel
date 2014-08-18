@@ -957,7 +957,19 @@ public class XmlConverter {
             factory.setFeature("http://xml.org/sax/features/external-general-entities", false);
         } catch (ParserConfigurationException e) {
             LOG.warn("DocumentBuilderFactory doesn't support the feature {} with value {}, due to {}."
-                     , new Object[]{"http://xml.org/sax/features/external-general-entities", true, e});
+                     , new Object[]{"http://xml.org/sax/features/external-general-entities", false, e});
+        }
+        // setup the SecurityManager by default if it's apache xerces
+        try {
+            Class<?> smClass = ObjectHelper.loadClass("org.apache.xerces.util.SecurityManager");
+            if (smClass != null) {
+                Object sm = smClass.newInstance();
+                // Here we just use the default setting of the SeurityManager
+                factory.setAttribute("http://apache.org/xml/properties/security-manager", sm);
+            }
+        } catch (Exception e) {
+            LOG.warn("DocumentBuilderFactory doesn't support the attribute {} with value {}, due to {}."
+                     , new Object[]{"http://apache.org/xml/properties/security-manager", true, e});
         }
         // setup the feature from the system property
         setupFeatures(factory);
