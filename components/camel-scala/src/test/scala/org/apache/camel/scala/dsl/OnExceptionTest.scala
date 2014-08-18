@@ -51,6 +51,8 @@ class SOnExceptionComplexRouteTest extends OnExceptionComplexRouteTest with Rout
     }.maximumRedeliveries(2).handled
 
     "direct:start" ==> {
+      routeId("start")
+
       handle[MyFunctionalException]{
       }.maximumRedeliveries(0)
 
@@ -59,6 +61,8 @@ class SOnExceptionComplexRouteTest extends OnExceptionComplexRouteTest with Rout
     }
 
     "direct:start2" ==> {
+      routeId("start2")
+
       handle[MyFunctionalException] {
         to("mock:handled")
       }.maximumRedeliveries(0).handled
