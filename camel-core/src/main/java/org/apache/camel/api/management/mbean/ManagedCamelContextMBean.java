@@ -143,6 +143,9 @@ public interface ManagedCamelContextMBean extends ManagedPerformanceCounterMBean
     @ManagedOperation(description = "Resume Camel")
     void resume() throws Exception;
 
+    @ManagedOperation(description = "Starts all the routes which currently is not started")
+    void startAllRoutes() throws Exception;
+
     @ManagedOperation(description = "Send body (in only)")
     void sendBody(String endpointUri, Object body) throws Exception;
 
