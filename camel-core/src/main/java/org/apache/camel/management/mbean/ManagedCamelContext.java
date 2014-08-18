@@ -246,6 +246,10 @@ public class ManagedCamelContext extends ManagedPerformanceCounter implements Ti
         }
     }
 
+    public void startAllRoutes() throws Exception {
+        context.startAllRoutes();
+    }
+
     public void sendBody(String endpointUri, Object body) throws Exception {
         ProducerTemplate template = context.createProducerTemplate();
         try {
