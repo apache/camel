@@ -70,6 +70,7 @@
     <module>camel-example-servlet-tomcat-no-spring</module>
     <module>camel-example-simplejirabot</module>
     <module>camel-example-spark-rest-tomcat</module>
+    <module>camel-example-splunk</module>
     <module>camel-example-spring</module>
     <module>camel-example-spring-javaconfig</module>
     <module>camel-example-spring-jms</module>
