@@ -167,7 +167,7 @@ public interface Exchange {
     String OVERRULE_FILE_NAME = "CamelOverruleFileName";
 
     String PARENT_UNIT_OF_WORK = "CamelParentUnitOfWork";
-
+    
     String RECIPIENT_LIST_ENDPOINT = "CamelRecipientListEndpoint";
     String RECEIVED_TIMESTAMP      = "CamelReceivedTimestamp";
     String REDELIVERED             = "CamelRedelivered";
@@ -178,6 +178,8 @@ public interface Exchange {
     String ROLLBACK_ONLY           = "CamelRollbackOnly";
     String ROLLBACK_ONLY_LAST      = "CamelRollbackOnlyLast";
     String ROUTE_STOP              = "CamelRouteStop";
+    
+    String SAXPARSER_FACTORY   = "CamelSAXParserFactory";
 
     String SOAP_ACTION        = "CamelSoapAction";
     String SKIP_GZIP_ENCODING = "CamelSkipGzipEncoding";
