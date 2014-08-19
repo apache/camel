@@ -70,6 +70,10 @@ public class SjmsEndpoint extends DefaultEndpoint implements MultipleConsumersSu
     private int transactionBatchCount = -1;
     @UriParam
     private long transactionBatchTimeout = 5000;
+    @UriParam
+    private boolean asyncStartListener;
+    @UriParam
+    private boolean asyncStopListener;
     private TransactionCommitStrategy transactionCommitStrategy;
 
     public SjmsEndpoint() {
@@ -448,4 +452,21 @@ public class SjmsEndpoint extends DefaultEndpoint implements MultipleConsumersSu
         this.namedReplyTo = namedReplyTo;
         this.setExchangePattern(ExchangePattern.InOut);
     }
+
+    public void setAsyncStartListener(boolean asyncStartListener) {
+        this.asyncStartListener = asyncStartListener;
+    }
+
+    public void setAsyncStopListener(boolean asyncStopListener) {
+        this.asyncStopListener = asyncStopListener;
+    }
+
+    public boolean isAsyncStartListener() {
+        return asyncStartListener;
+    }
+
+    public boolean isAsyncStopListener() {
+        return asyncStopListener;
+    }
+
 }

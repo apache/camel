@@ -147,15 +147,52 @@ public class SjmsConsumer extends DefaultConsumer {
     protected void doStart() throws Exception {
         super.doStart();
         consumers = new MessageConsumerPool();
-        consumers.fillPool();
+        if(getEndpoint().isAsyncStartListener()){
+            getEndpoint().getComponent().getAsyncStartStopExecutorService().submit(new Runnable() {
+                @Override
+                public void run() {
+                    try {
+                    	consumers.fillPool();
+                    } catch (Throwable e) {
+                        log.warn("Error starting listener container on destination: " + getDestinationName() + ". This exception will be ignored.", e);
+                    }
+                }
+
+                @Override
+                public String toString() {
+                    return "AsyncStartListenerTask[" + getDestinationName() + "]";
+                }
+            });
+        } else {
+            consumers.fillPool();
+        }
     }
 
     @Override
     protected void doStop() throws Exception {
         super.doStop();
         if (consumers != null) {
-            consumers.drainPool();
-            consumers = null;
+            if(getEndpoint().isAsyncStopListener()){
+                getEndpoint().getComponent().getAsyncStartStopExecutorService().submit(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            consumers.drainPool();
+                            consumers = null;
+                        } catch (Throwable e) {
+                            log.warn("Error stopping listener container on destination: " + getDestinationName() + ". This exception will be ignored.", e);
+                        }
+                    }
+
+                    @Override
+                    public String toString() {
+                        return "AsyncStopListenerTask[" + getDestinationName() + "]";
+                    }
+                });
+            } else {
+                consumers.drainPool();
+                consumers = null;
+            }
         }
     }
 
