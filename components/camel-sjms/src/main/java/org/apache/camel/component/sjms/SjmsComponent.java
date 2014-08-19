@@ -17,6 +17,8 @@
 package org.apache.camel.component.sjms;
 
 import java.util.Map;
+import java.util.concurrent.ExecutorService;
+
 import javax.jms.ConnectionFactory;
 
 import org.apache.camel.CamelException;
@@ -46,6 +48,7 @@ public class SjmsComponent extends UriEndpointComponent implements HeaderFilterS
     private Integer connectionCount = 1;
     private TransactionCommitStrategy transactionCommitStrategy;
     private TimedTaskManager timedTaskManager;
+    private ExecutorService asyncStartStopExecutorService;
 
     public SjmsComponent() {
         super(SjmsEndpoint.class);
@@ -150,6 +153,24 @@ public class SjmsComponent extends UriEndpointComponent implements HeaderFilterS
             }
         }
         super.doStop();
+    }
+
+    @Override
+    protected void doShutdown() throws Exception {
+        if (asyncStartStopExecutorService != null) {
+            getCamelContext().getExecutorServiceManager().shutdownNow(asyncStartStopExecutorService);
+            asyncStartStopExecutorService = null;
+        }
+        super.doShutdown();
+    }
+
+    protected synchronized ExecutorService getAsyncStartStopExecutorService() {
+        if (asyncStartStopExecutorService == null) {
+            // use a cached thread pool for async start tasks as they can run for a while, and we need a dedicated thread
+            // for each task, and the thread pool will shrink when no more tasks running
+            asyncStartStopExecutorService = getCamelContext().getExecutorServiceManager().newCachedThreadPool(this, "AsyncStartStopListener");
+        }
+        return asyncStartStopExecutorService;
     }
 
     /**
