@@ -43,13 +43,15 @@ public class ScpEndpoint extends RemoteFileEndpoint<ScpFile> {
 
     @Override
     protected RemoteFileConsumer<ScpFile> buildConsumer(Processor processor) {
-        return null; // new ScpConsumer(this, processor, createRemoteFileOperations());
+        throw new UnsupportedOperationException("This component does not support consuming from this endpoint");
     }
 
+    @Override
     protected GenericFileProducer<ScpFile> buildProducer() {
         return new ScpProducer(this, createRemoteFileOperations());
     }
 
+    @Override
     public RemoteFileOperations<ScpFile> createRemoteFileOperations() {
         ScpOperations operations = new ScpOperations();
         operations.setEndpoint(this);
