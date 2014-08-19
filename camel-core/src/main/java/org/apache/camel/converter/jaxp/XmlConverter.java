@@ -36,6 +36,8 @@ import java.util.Properties;
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
 import javax.xml.stream.XMLStreamException;
 import javax.xml.stream.XMLStreamReader;
 import javax.xml.transform.OutputKeys;
@@ -59,6 +61,7 @@ import org.w3c.dom.NodeList;
 
 import org.xml.sax.InputSource;
 import org.xml.sax.SAXException;
+import org.xml.sax.XMLReader;
 
 import org.apache.camel.BytesSource;
 import org.apache.camel.Converter;
@@ -567,7 +570,21 @@ public class XmlConverter {
         }
         inputSource.setSystemId(source.getSystemId());
         inputSource.setPublicId(source.getPublicId());
-        return new SAXSource(inputSource);
+        XMLReader xmlReader = null;
+        //Need to setup XMLReader security feature by default
+        try {
+            SAXParserFactory sfactory = SAXParserFactory.newInstance();
+            try {
+                sfactory.setFeature(javax.xml.XMLConstants.FEATURE_SECURE_PROCESSING, true);
+            } catch (Exception e) {
+                LOG.warn("SAXParser doesn't support the feature {} with value {}, due to {}.", new Object[]{javax.xml.XMLConstants.FEATURE_SECURE_PROCESSING, "true", e});
+            }
+            SAXParser parser = sfactory.newSAXParser();
+            xmlReader = parser.getXMLReader();
+        } catch (Exception ex) {
+            LOG.warn("Cannot create the SAXParser XMLReader, due to {}", ex);
+        }
+        return new SAXSource(xmlReader, inputSource);
     }
 
     /**
