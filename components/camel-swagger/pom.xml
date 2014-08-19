@@ -44,7 +44,7 @@
       <artifactId>camel-core</artifactId>
     </dependency>
 
-    <!-- 
+    <!--
      TODO: we should avoid spring dependency and have some plugin/spi
      -->
     <dependency>
@@ -57,11 +57,20 @@
       <artifactId>swagger-annotations</artifactId>
       <version>${swagger-version}</version>
     </dependency>
+
+    <!-- To override the scala-library version of swagger-jaxrs-2.10 for supporting Java8 -->
+    <dependency>
+      <groupId>org.scala-lang</groupId>
+      <artifactId>scala-library</artifactId>
+      <version>${scala-2.10-version}</version>
+    </dependency>
+
     <dependency>
       <groupId>com.wordnik</groupId>
       <artifactId>swagger-jaxrs_2.10</artifactId>
       <version>${swagger-version}</version>
     </dependency>
+
     <dependency>
       <groupId>com.wordnik</groupId>
       <artifactId>swagger-servlet_2.10</artifactId>
