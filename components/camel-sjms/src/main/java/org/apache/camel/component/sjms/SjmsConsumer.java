@@ -48,7 +48,7 @@ import org.apache.camel.spi.Synchronization;
 public class SjmsConsumer extends DefaultConsumer {
 
     protected MessageConsumerPool consumers;
-    private final ExecutorService executor;
+    private ExecutorService executor;
 
     /**
      * A pool of MessageConsumerResources created at the initialization of the associated consumer.
@@ -135,7 +135,6 @@ public class SjmsConsumer extends DefaultConsumer {
 
     public SjmsConsumer(Endpoint endpoint, Processor processor) {
         super(endpoint, processor);
-        this.executor = endpoint.getCamelContext().getExecutorServiceManager().newDefaultThreadPool(this, "SjmsConsumer");
     }
 
     @Override
@@ -146,6 +145,7 @@ public class SjmsConsumer extends DefaultConsumer {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
+        this.executor = getEndpoint().getCamelContext().getExecutorServiceManager().newDefaultThreadPool(this, "SjmsConsumer");
         consumers = new MessageConsumerPool();
         consumers.fillPool();
     }
@@ -156,6 +156,9 @@ public class SjmsConsumer extends DefaultConsumer {
         if (consumers != null) {
             consumers.drainPool();
             consumers = null;
+        }
+        if(this.executor!=null){
+            getEndpoint().getCamelContext().getExecutorServiceManager().shutdownGraceful(this.executor);
         }
     }
 

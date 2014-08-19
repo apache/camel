@@ -123,16 +123,16 @@ public abstract class SjmsProducer extends DefaultAsyncProducer {
     }
 
     private MessageProducerPool producers;
-    private final ExecutorService executor;
+    private ExecutorService executor;
 
     public SjmsProducer(Endpoint endpoint) {
         super(endpoint);
-        this.executor = endpoint.getCamelContext().getExecutorServiceManager().newDefaultThreadPool(this, "SjmsProducer");
     }
 
     @Override
     protected void doStart() throws Exception {
         super.doStart();
+        this.executor = getEndpoint().getCamelContext().getExecutorServiceManager().newDefaultThreadPool(this, "SjmsProducer");
         if (getProducers() == null) {
             setProducers(new MessageProducerPool());
             getProducers().fillPool();
@@ -145,6 +145,9 @@ public abstract class SjmsProducer extends DefaultAsyncProducer {
         if (getProducers() != null) {
             getProducers().drainPool();
             setProducers(null);
+        }
+        if(this.executor!=null){
+            getEndpoint().getCamelContext().getExecutorServiceManager().shutdownGraceful(this.executor);
         }
     }
 
