@@ -37,13 +37,16 @@ import javax.jms.Session;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelException;
 import org.apache.camel.Exchange;
+import org.apache.camel.component.sjms.MessageConsumerResources;
+import org.apache.camel.component.sjms.MessageProducerResources;
 import org.apache.camel.component.sjms.SjmsEndpoint;
 import org.apache.camel.component.sjms.SjmsExchangeMessageHelper;
 import org.apache.camel.component.sjms.SjmsProducer;
 import org.apache.camel.component.sjms.jms.JmsObjectFactory;
-import org.apache.camel.component.sjms.jms.ObjectPool;
 import org.apache.camel.component.sjms.tx.SessionTransactionSynchronization;
 import org.apache.camel.util.ObjectHelper;
+import org.apache.commons.pool.BasePoolableObjectFactory;
+import org.apache.commons.pool.impl.GenericObjectPool;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -66,20 +69,11 @@ public class InOutProducer extends SjmsProducer {
      * TODO Add Class documentation for MessageProducerPool 
      * TODO Externalize
      */
-    protected class MessageConsumerPool extends ObjectPool<MessageConsumerResource> {
-
-        /**
-         * TODO Add Constructor Javadoc
-         * 
-         * @param poolSize
-         */
-        public MessageConsumerPool(int poolSize) {
-            super(poolSize);
-        }
+    protected class MessageConsumerResourcesFactory extends BasePoolableObjectFactory<MessageConsumerResources> {
 
         @Override
-        protected MessageConsumerResource createObject() throws Exception {
-            MessageConsumerResource answer = null;
+        public MessageConsumerResources makeObject() throws Exception {
+            MessageConsumerResources answer = null;
             Connection conn = null;
             Session session = null;
             try {
@@ -101,9 +95,9 @@ public class InOutProducer extends SjmsProducer {
 
                     @Override
                     public void onMessage(Message message) {
-                        if (logger.isDebugEnabled()) {
-                            logger.debug("Message Received in the Consumer Pool");
-                            logger.debug("  Message : {}", message);
+                        if (log.isDebugEnabled()) {
+                            log.debug("Message Received in the Consumer Pool");
+                            log.debug("  Message : {}", message);
                         }
                         try {
                             Exchanger<Object> exchanger = exchangerMap.get(message.getJMSCorrelationID());
@@ -114,7 +108,7 @@ public class InOutProducer extends SjmsProducer {
 
                     }
                 });
-                answer = new MessageConsumerResource(session, messageConsumer, replyToDestination);
+                answer = new MessageConsumerResources(session, messageConsumer, replyToDestination);
             } catch (Exception e) {
                 log.error("Unable to create the MessageConsumerResource: " + e.getLocalizedMessage());
                 throw new CamelException(e);
@@ -125,7 +119,7 @@ public class InOutProducer extends SjmsProducer {
         }
 
         @Override
-        protected void destroyObject(MessageConsumerResource model) throws Exception {
+        public void destroyObject(MessageConsumerResources model) throws Exception {
             if (model.getMessageConsumer() != null) {
                 model.getMessageConsumer().close();
             }
@@ -140,39 +134,6 @@ public class InOutProducer extends SjmsProducer {
                 }
                 model.getSession().close();
             }
-        }
-    }
-
-    /**
-     * TODO Add Class documentation for MessageConsumerResource
-     */
-    protected class MessageConsumerResource {
-        private final Session session;
-        private final MessageConsumer messageConsumer;
-        private final Destination replyToDestination;
-
-        /**
-         * TODO Add Constructor Javadoc
-         * 
-         * @param session
-         * @param messageConsumer
-         */
-        public MessageConsumerResource(Session session, MessageConsumer messageConsumer, Destination replyToDestination) {
-            this.session = session;
-            this.messageConsumer = messageConsumer;
-            this.replyToDestination = replyToDestination;
-        }
-
-        public Session getSession() {
-            return session;
-        }
-
-        public MessageConsumer getMessageConsumer() {
-            return messageConsumer;
-        }
-
-        public Destination getReplyToDestination() {
-            return replyToDestination;
         }
     }
 
@@ -204,7 +165,7 @@ public class InOutProducer extends SjmsProducer {
         }
     }
 
-    private MessageConsumerPool consumers;
+    private GenericObjectPool<MessageConsumerResources> consumers;
 
     public InOutProducer(SjmsEndpoint endpoint) {
         super(endpoint);
@@ -219,8 +180,12 @@ public class InOutProducer extends SjmsProducer {
             log.debug("Using {} as the reply to destination.", getNamedReplyTo());
         }
         if (getConsumers() == null) {
-            setConsumers(new MessageConsumerPool(getConsumerCount()));
-            getConsumers().fillPool();
+            setConsumers(new GenericObjectPool<MessageConsumerResources>(new MessageConsumerResourcesFactory()));
+            getConsumers().setMaxActive(getConsumerCount());
+            getConsumers().setMaxIdle(getConsumerCount());
+            while(getConsumers().getNumIdle() < getConsumers().getMaxIdle()){
+                getConsumers().addObject();
+            }
         }
         super.doStart();
     }
@@ -229,7 +194,7 @@ public class InOutProducer extends SjmsProducer {
     protected void doStop() throws Exception {
         super.doStop();
         if (getConsumers() != null) {
-            getConsumers().drainPool();
+            getConsumers().close();
             setConsumers(null);
         }
     }
@@ -307,7 +272,7 @@ public class InOutProducer extends SjmsProducer {
             lock.writeLock().unlock();
         }
 
-        MessageConsumerResource consumer = consumers.borrowObject(getResponseTimeOut());
+        MessageConsumerResources consumer = consumers.borrowObject();
         SjmsExchangeMessageHelper.setJMSReplyTo(request, consumer.getReplyToDestination());
         consumers.returnObject(consumer);
         producer.getMessageProducer().send(request);
@@ -352,11 +317,11 @@ public class InOutProducer extends SjmsProducer {
         callback.done(isSynchronous());
     }
 
-    public void setConsumers(MessageConsumerPool consumers) {
+    public void setConsumers(GenericObjectPool<MessageConsumerResources> consumers) {
         this.consumers = consumers;
     }
 
-    public MessageConsumerPool getConsumers() {
+    public GenericObjectPool<MessageConsumerResources> getConsumers() {
         return consumers;
     }
 }
