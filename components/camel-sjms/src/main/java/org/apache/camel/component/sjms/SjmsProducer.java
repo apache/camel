@@ -204,7 +204,7 @@ public abstract class SjmsProducer extends DefaultAsyncProducer {
         }
 
         try {
-            final MessageProducerResources producer = getProducers().borrowObject(getResponseTimeOut());
+            final MessageProducerResources producer = getProducers().borrowObject();
             if(producer==null){
                 exchange.setException(new Exception("Unable to send message: connection not available"));
             } else {
