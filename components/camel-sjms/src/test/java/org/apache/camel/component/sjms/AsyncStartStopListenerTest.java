@@ -33,7 +33,7 @@ public class AsyncStartStopListenerTest extends JmsTestSupport {
 
     @Test
     public void testAsyncStartStopConsumer() throws Exception {
-       sendBodyAndAssert("sjms:queue:foo.startstop");
+        sendBodyAndAssert("sjms:queue:foo.startstop");
     }
 
     @Test
@@ -54,7 +54,7 @@ public class AsyncStartStopListenerTest extends JmsTestSupport {
     @Test
     public void testAsyncStartStopProducer() throws Exception {
         sendBodyAndAssert("sjms:queue:foo?asyncStopListener=true&asyncStartListener=true");
-     }
+    }
 
     private void sendBodyAndAssert(final String uri) throws InterruptedException {
         String body1 = "Hello World";

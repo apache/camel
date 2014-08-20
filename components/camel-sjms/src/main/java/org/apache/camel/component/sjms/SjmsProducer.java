@@ -135,7 +135,7 @@ public abstract class SjmsProducer extends DefaultAsyncProducer {
         this.executor = getEndpoint().getCamelContext().getExecutorServiceManager().newDefaultThreadPool(this, "SjmsProducer");
         if (getProducers() == null) {
             setProducers(new MessageProducerPool());
-            if(getEndpoint().isAsyncStartListener()){
+            if (getEndpoint().isAsyncStartListener()) {
                 getEndpoint().getComponent().getAsyncStartStopExecutorService().submit(new Runnable() {
                     @Override
                     public void run() {
@@ -161,7 +161,7 @@ public abstract class SjmsProducer extends DefaultAsyncProducer {
     protected void doStop() throws Exception {
         super.doStop();
         if (getProducers() != null) {
-            if(getEndpoint().isAsyncStopListener()){
+            if (getEndpoint().isAsyncStopListener()) {
                 getEndpoint().getComponent().getAsyncStartStopExecutorService().submit(new Runnable() {
                     @Override
                     public void run() {

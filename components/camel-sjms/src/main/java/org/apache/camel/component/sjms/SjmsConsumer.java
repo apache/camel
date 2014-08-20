@@ -147,12 +147,12 @@ public class SjmsConsumer extends DefaultConsumer {
         super.doStart();
         this.executor = getEndpoint().getCamelContext().getExecutorServiceManager().newDefaultThreadPool(this, "SjmsConsumer");
         consumers = new MessageConsumerPool();
-        if(getEndpoint().isAsyncStartListener()){
+        if (getEndpoint().isAsyncStartListener()) {
             getEndpoint().getComponent().getAsyncStartStopExecutorService().submit(new Runnable() {
                 @Override
                 public void run() {
                     try {
-                    	consumers.fillPool();
+                        consumers.fillPool();
                     } catch (Throwable e) {
                         log.warn("Error starting listener container on destination: " + getDestinationName() + ". This exception will be ignored.", e);
                     }
@@ -172,7 +172,7 @@ public class SjmsConsumer extends DefaultConsumer {
     protected void doStop() throws Exception {
         super.doStop();
         if (consumers != null) {
-            if(getEndpoint().isAsyncStopListener()){
+            if (getEndpoint().isAsyncStopListener()) {
                 getEndpoint().getComponent().getAsyncStartStopExecutorService().submit(new Runnable() {
                     @Override
                     public void run() {
