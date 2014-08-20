@@ -181,6 +181,7 @@ class RouteBuilder extends Preamble with DSL with RoutesBuilder with Languages w
   def setProperty(name: String, expression: Exchange => Any) = stack.top.setProperty(name, expression)
   def sort[T](expression: (Exchange) => Any, comparator: Comparator[T] = null) = stack.top.sort(expression, comparator)
   def split(expression: Exchange => Any) = stack.top.split(expression)
+  def startupOrder(startupOrder :Int) = stack.top.startupOrder(startupOrder)
   def stop = stack.top.stop
 
   def threads = stack.top.threads
