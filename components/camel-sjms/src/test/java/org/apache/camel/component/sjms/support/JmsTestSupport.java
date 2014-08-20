@@ -56,10 +56,10 @@ public class JmsTestSupport extends CamelTestSupport {
     @Override
     protected void doPreSetup() throws Exception {
         deleteDirectory("target/activemq-data");
-
-        brokerUri = "tcp://localhost:" + AvailablePortFinder.getNextAvailable(33333);
-
         broker = new BrokerService();
+        final int port = AvailablePortFinder.getNextAvailable(33333);
+        brokerUri = "tcp://localhost:" + port;
+        broker.getManagementContext().setConnectorPort(AvailablePortFinder.getNextAvailable(port + 1));
         configureBroker(broker);
         startBroker();
     }

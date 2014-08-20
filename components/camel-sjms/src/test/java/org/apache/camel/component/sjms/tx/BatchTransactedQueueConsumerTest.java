@@ -24,7 +24,7 @@ import org.junit.Test;
  */
 public class BatchTransactedQueueConsumerTest extends TransactedConsumerSupport {
     
-    private static final String BROKER_URI = "vm://btqc_test_broker?broker.persistent=false&broker.useJmx=true";
+    private static final String BROKER_URI = "vm://btqc_test_broker?broker.persistent=false&broker.useJmx=false";
 
     /**
      * We want to verify that when consuming from a single destination with

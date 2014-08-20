@@ -34,7 +34,7 @@ public class ConnectionFactoryResourceTest {
 
     @Before
     public void setup() {
-        connectionFactory = new ActiveMQConnectionFactory("vm://broker?broker.persistent=false");
+        connectionFactory = new ActiveMQConnectionFactory("vm://broker?broker.persistent=false&broker.useJmx=false");
     }
 
     @After

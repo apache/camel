@@ -62,7 +62,7 @@ public class TransactedTopicProducerTest extends CamelTestSupport {
      */
     @Override
     protected CamelContext createCamelContext() throws Exception {
-        ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory("vm://broker?broker.persistent=false&broker.useJmx=true");
+        ActiveMQConnectionFactory connectionFactory = new ActiveMQConnectionFactory("vm://broker?broker.persistent=false&broker.useJmx=false");
         ConnectionFactoryResource connectionResource = new ConnectionFactoryResource();
         connectionResource.setConnectionFactory(connectionFactory);
         connectionResource.setClientId("test-connection-1");
