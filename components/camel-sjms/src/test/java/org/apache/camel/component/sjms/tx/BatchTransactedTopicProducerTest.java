@@ -24,7 +24,7 @@ import org.junit.Test;
  * for a Topic Producer.
  */
 public class BatchTransactedTopicProducerTest extends BatchTransactedProducerSupport {
-    private static final String BROKER_URI = "vm://bttpt_test_broker?broker.persistent=false&broker.useJmx=true";
+    private static final String BROKER_URI = "vm://bttpt_test_broker?broker.persistent=false&broker.useJmx=false";
 
     /**
      * Verify that after processing a {@link BatchMessage} twice with 30

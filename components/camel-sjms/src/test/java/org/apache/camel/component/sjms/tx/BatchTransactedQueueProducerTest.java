@@ -24,7 +24,7 @@ import org.junit.Test;
  * for a Queue Producer.
  */
 public class BatchTransactedQueueProducerTest extends BatchTransactedProducerSupport {
-    private static final String BROKER_URI = "vm://btqpt_test_broker?broker.persistent=false&broker.useJmx=true";
+    private static final String BROKER_URI = "vm://btqpt_test_broker?broker.persistent=false&broker.useJmx=false";
 
     /**
      * Verify that after processing a {@link BatchMessage} twice with 30
