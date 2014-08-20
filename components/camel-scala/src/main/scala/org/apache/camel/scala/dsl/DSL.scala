@@ -88,6 +88,7 @@ trait DSL {
   def setProperty(header: String, expression: Exchange => Any) : DSL
   def sort[T](expression: Exchange => Any, comparator: Comparator[T] = null) : DSL
   def split(expression: Exchange => Any) : SSplitDefinition
+  def startupOrder(startupOrder :Int) : DSL
   def stop : DSL
 
   def threads : SThreadsDefinition
