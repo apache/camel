@@ -23,6 +23,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Locale;
 import java.util.Map;
 
 import junit.framework.TestCase;
@@ -121,6 +122,13 @@ public class XMLTokenExpressionIteratorTest extends TestCase {
         "<child some_attr='c' anotherAttr='c' xmlns='urn:c' xmlns:g='urn:g' xmlns:c='urn:c'></child>",
         "<c:child some_attr='d' anotherAttr='d' xmlns:g=\"urn:g\" xmlns:c=\"urn:c\"/>"
     };
+    
+    private static final String[] RESULTS_CHILD_MIXED_JAVA8 = {
+        "<child some_attr='a' anotherAttr='a' xmlns=\"urn:c\" xmlns:c=\"urn:c\" xmlns:g=\"urn:g\"></child>",
+        "<x:child xmlns:x='urn:c' some_attr='b' anotherAttr='b' xmlns='urn:c' xmlns:c='urn:c' xmlns:g='urn:g'/>",
+        "<child some_attr='c' anotherAttr='c' xmlns='urn:c' xmlns:g='urn:g' xmlns:c='urn:c'></child>",
+        "<c:child some_attr='d' anotherAttr='d' xmlns:g=\"urn:g\" xmlns:c=\"urn:c\"/>"
+    };
 
     private static final String[] RESULTS_CHILD_MIXED_WRAPPED = {
         "<?xml version='1.0' encoding='UTF-8'?><g:greatgrandparent xmlns:g='urn:g'><grandparent>"
@@ -145,9 +153,23 @@ public class XMLTokenExpressionIteratorTest extends TestCase {
         "<c:child some_attr='e' anotherAttr='e' xmlns:g=\"urn:g\" xmlns:d=\"urn:d\" xmlns:c=\"urn:c\"></c:child>",
         "<c:child some_attr='f' anotherAttr='f' xmlns:g=\"urn:g\" xmlns:d=\"urn:d\" xmlns:c=\"urn:c\"/>"
     };
+    
+    private static final String[] RESULTS_CHILD_JAVA8 = {
+        "<c:child some_attr='a' anotherAttr='a' xmlns:c=\"urn:c\" xmlns:d=\"urn:d\" xmlns:g=\"urn:g\"></c:child>",
+        "<c:child some_attr='b' anotherAttr='b' xmlns:c=\"urn:c\" xmlns:d=\"urn:d\" xmlns:g=\"urn:g\"/>",
+        "<c:child some_attr='c' anotherAttr='c' xmlns:c=\"urn:c\" xmlns:d=\"urn:d\" xmlns:g=\"urn:g\"></c:child>",
+        "<c:child some_attr='d' anotherAttr='d' xmlns:c=\"urn:c\" xmlns:d=\"urn:d\" xmlns:g=\"urn:g\"/>",
+        "<c:child some_attr='e' anotherAttr='e' xmlns:c=\"urn:c\" xmlns:d=\"urn:d\" xmlns:g=\"urn:g\"></c:child>",
+        "<c:child some_attr='f' anotherAttr='f' xmlns:c=\"urn:c\" xmlns:d=\"urn:d\" xmlns:g=\"urn:g\"/>"
+    };
 
     private static final String[] RESULTS_CHILD_NO_NS_MIXED = {
         "<child some_attr='a' anotherAttr='a' xmlns='' xmlns:g='urn:g' xmlns:c='urn:c'></child>",
+        "<child some_attr='c' anotherAttr='c' xmlns:g=\"urn:g\" xmlns:c=\"urn:c\"></child>",
+    };
+    
+    private static final String[] RESULTS_CHILD_NO_NS_MIXED_JAVA8 = {
+        "<child some_attr='a' anotherAttr='a' xmlns='' xmlns:c='urn:c' xmlns:g='urn:g'></child>",
         "<child some_attr='c' anotherAttr='c' xmlns:g=\"urn:g\" xmlns:c=\"urn:c\"></child>",
     };
 
@@ -163,6 +185,11 @@ public class XMLTokenExpressionIteratorTest extends TestCase {
 
     private static final String[] RESULTS_CHILD_NS_MIXED = {
         "<x:child xmlns:x='urn:c' some_attr='b' anotherAttr='b' xmlns='urn:c' xmlns:g='urn:g' xmlns:c='urn:c'/>",
+        "<c:child some_attr='d' anotherAttr='d' xmlns:g=\"urn:g\" xmlns:c=\"urn:c\"/>"
+    };
+    
+    private static final String[] RESULTS_CHILD_NS_MIXED_JAVA8 = {
+        "<x:child xmlns:x='urn:c' some_attr='b' anotherAttr='b' xmlns='urn:c' xmlns:c='urn:c' xmlns:g='urn:g'/>",
         "<c:child some_attr='d' anotherAttr='d' xmlns:g=\"urn:g\" xmlns:c=\"urn:c\"/>"
     };
 
@@ -257,7 +284,11 @@ public class XMLTokenExpressionIteratorTest extends TestCase {
     }
 
     public void testExtractChildInjected() throws Exception {
-        invokeAndVerify("//C:child", 'i', new ByteArrayInputStream(TEST_BODY), RESULTS_CHILD);
+        String[] result = RESULTS_CHILD;
+        if (isJavaVersion("1.8")) {
+            result = RESULTS_CHILD_JAVA8;
+        }
+        invokeAndVerify("//C:child", 'i', new ByteArrayInputStream(TEST_BODY), result);
     }
 
     public void testExtractChildNSMixed() throws Exception {
@@ -265,7 +296,11 @@ public class XMLTokenExpressionIteratorTest extends TestCase {
     }
 
     public void testExtractChildNSMixedInjected() throws Exception {
-        invokeAndVerify("//*:child", 'i', new ByteArrayInputStream(TEST_BODY_NS_MIXED), RESULTS_CHILD_MIXED);
+        String[] result =  RESULTS_CHILD_MIXED;
+        if (isJavaVersion("1.8")) {
+            result =  RESULTS_CHILD_MIXED_JAVA8;
+        }
+        invokeAndVerify("//*:child", 'i', new ByteArrayInputStream(TEST_BODY_NS_MIXED), result);
     }
 
     public void testExtractAnyChild() throws Exception {
@@ -273,7 +308,11 @@ public class XMLTokenExpressionIteratorTest extends TestCase {
     }
 
     public void testExtractCxxxd() throws Exception {
-        invokeAndVerify("//C:c*d", 'i', new ByteArrayInputStream(TEST_BODY), RESULTS_CHILD);
+        String[] result =  RESULTS_CHILD;
+        if (isJavaVersion("1.8")) {
+            result =  RESULTS_CHILD_JAVA8;
+        }
+        invokeAndVerify("//C:c*d", 'i', new ByteArrayInputStream(TEST_BODY), result);
     }
 
     public void testExtractUnqualifiedChild() throws Exception {
@@ -285,7 +324,11 @@ public class XMLTokenExpressionIteratorTest extends TestCase {
     }
 
     public void testExtractSomeUnqualifiedChildInjected() throws Exception {
-        invokeAndVerify("//child", 'i', new ByteArrayInputStream(TEST_BODY_NO_NS_MIXED), RESULTS_CHILD_NO_NS_MIXED);
+        String[] result = RESULTS_CHILD_NO_NS_MIXED;
+        if (isJavaVersion("1.8"))  {
+            result = RESULTS_CHILD_NO_NS_MIXED_JAVA8;
+        }
+        invokeAndVerify("//child", 'i', new ByteArrayInputStream(TEST_BODY_NO_NS_MIXED), result);
     }
 
     public void testExtractSomeQualifiedChild() throws Exception {
@@ -295,12 +338,20 @@ public class XMLTokenExpressionIteratorTest extends TestCase {
 
     public void testExtractSomeQualifiedChildInjected() throws Exception {
         nsmap.put("", "urn:c");
-        invokeAndVerify("//child", 'i', new ByteArrayInputStream(TEST_BODY_NO_NS_MIXED), RESULTS_CHILD_NS_MIXED);
+        String[] result = RESULTS_CHILD_NS_MIXED;
+        if (isJavaVersion("1.8")) {
+            result = RESULTS_CHILD_NS_MIXED_JAVA8;
+        }
+        invokeAndVerify("//child", 'i', new ByteArrayInputStream(TEST_BODY_NO_NS_MIXED), result);
     }
 
     public void testExtractWithNullNamespaceMap() throws Exception {
         nsmap = null;
-        invokeAndVerify("//child", 'i', new ByteArrayInputStream(TEST_BODY_NO_NS_MIXED), RESULTS_CHILD_NO_NS_MIXED);
+        String[] result = RESULTS_CHILD_NO_NS_MIXED;
+        if (isJavaVersion("1.8")) {
+            result = RESULTS_CHILD_NO_NS_MIXED_JAVA8;
+        }
+        invokeAndVerify("//child", 'i', new ByteArrayInputStream(TEST_BODY_NO_NS_MIXED), result);
     }
 
     public void testExtractChildWithAncestorGGPdGP() throws Exception {
@@ -389,5 +440,10 @@ public class XMLTokenExpressionIteratorTest extends TestCase {
             assertEquals("mismatch [" + i + "]", expected[i], results.get(i));
         }
 
+    }
+    
+    public static boolean isJavaVersion(String version) {
+        String javaVersion = System.getProperty("java.version");
+        return javaVersion.contains(version.toLowerCase(Locale.US));
     }
 }
