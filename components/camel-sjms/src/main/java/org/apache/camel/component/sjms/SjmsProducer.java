@@ -135,7 +135,25 @@ public abstract class SjmsProducer extends DefaultAsyncProducer {
         this.executor = getEndpoint().getCamelContext().getExecutorServiceManager().newDefaultThreadPool(this, "SjmsProducer");
         if (getProducers() == null) {
             setProducers(new MessageProducerPool());
-            getProducers().fillPool();
+            if(getEndpoint().isAsyncStartListener()){
+                getEndpoint().getComponent().getAsyncStartStopExecutorService().submit(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            getProducers().fillPool();
+                        } catch (Throwable e) {
+                            log.warn("Error starting listener container on destination: " + getDestinationName() + ". This exception will be ignored.", e);
+                        }
+                    }
+
+                    @Override
+                    public String toString() {
+                        return "AsyncStartListenerTask[" + getDestinationName() + "]";
+                    }
+                });
+            } else {
+                getProducers().fillPool();
+            }
         }
     }
 
@@ -143,12 +161,36 @@ public abstract class SjmsProducer extends DefaultAsyncProducer {
     protected void doStop() throws Exception {
         super.doStop();
         if (getProducers() != null) {
-            getProducers().drainPool();
-            setProducers(null);
+            if(getEndpoint().isAsyncStopListener()){
+                getEndpoint().getComponent().getAsyncStartStopExecutorService().submit(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            getProducers().drainPool();
+                            setProducers(null);
+                        } catch (Throwable e) {
+                            log.warn("Error stopping listener container on destination: " + getDestinationName() + ". This exception will be ignored.", e);
+                        }
+                    }
+
+                    @Override
+                    public String toString() {
+                        return "AsyncStopListenerTask[" + getDestinationName() + "]";
+                    }
+                });
+            } else {
+                getProducers().drainPool();
+                setProducers(null);
+            }
         }
         if (this.executor != null) {
             getEndpoint().getCamelContext().getExecutorServiceManager().shutdownGraceful(this.executor);
         }
+    }
+
+    @Override
+    public SjmsEndpoint getEndpoint() {
+        return (SjmsEndpoint) super.getEndpoint();
     }
 
     public abstract MessageProducerResources doCreateProducerModel() throws Exception;
