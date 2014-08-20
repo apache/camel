@@ -195,7 +195,7 @@ public abstract class SjmsProducer extends DefaultAsyncProducer {
 
     public abstract MessageProducerResources doCreateProducerModel() throws Exception;
 
-    public abstract void sendMessage(Exchange exchange, final AsyncCallback callback) throws Exception;
+    public abstract void sendMessage(Exchange exchange, final AsyncCallback callback, final MessageProducerResources producer) throws Exception;
 
     @Override
     public boolean process(final Exchange exchange, final AsyncCallback callback) {
@@ -204,25 +204,30 @@ public abstract class SjmsProducer extends DefaultAsyncProducer {
         }
 
         try {
-            if (!isSynchronous()) {
-                if (log.isDebugEnabled()) {
-                    log.debug("  Sending message asynchronously: {}", exchange.getIn().getBody());
-                }
-                getExecutor().execute(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            sendMessage(exchange, callback);
-                        } catch (Exception e) {
-                            ObjectHelper.wrapRuntimeCamelException(e);
-                        }
-                    }
-                });
+            final MessageProducerResources producer = getProducers().borrowObject();
+            if(producer==null){
+                exchange.setException(new Exception("Unable to send message: connection not available"));
             } else {
-                if (log.isDebugEnabled()) {
-                    log.debug("  Sending message synchronously: {}", exchange.getIn().getBody());
+                if (!isSynchronous()) {
+                    if (log.isDebugEnabled()) {
+                        log.debug("  Sending message asynchronously: {}", exchange.getIn().getBody());
+                    }
+                    getExecutor().execute(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                sendMessage(exchange, callback, producer);
+                            } catch (Exception e) {
+                                ObjectHelper.wrapRuntimeCamelException(e);
+                            }
+                        }
+                    });
+                } else {
+                    if (log.isDebugEnabled()) {
+                        log.debug("  Sending message synchronously: {}", exchange.getIn().getBody());
+                    }
+                    sendMessage(exchange, callback, producer);
                 }
-                sendMessage(exchange, callback);
             }
         } catch (Exception e) {
             if (log.isDebugEnabled()) {
