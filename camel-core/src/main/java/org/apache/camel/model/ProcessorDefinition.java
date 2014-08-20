@@ -2411,6 +2411,17 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
         return blocks.isEmpty() ? null : blocks.removeLast();
     }
 
+    public Type startupOrder(int startupOrder) {
+        ProcessorDefinition<?> def = this;
+
+        RouteDefinition route = ProcessorDefinitionHelper.getRoute(def);
+        if (route != null) {
+            route.startupOrder(startupOrder);
+        }
+
+        return (Type) this;
+    }
+
     /**
      * Stops continue routing the current {@link org.apache.camel.Exchange} and marks it as completed.
      *

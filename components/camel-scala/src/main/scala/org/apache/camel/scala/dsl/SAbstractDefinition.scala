@@ -131,6 +131,7 @@ abstract class SAbstractDefinition[P <: ProcessorDefinition[_]] extends DSL with
   def setProperty(name: String, expression: Exchange => Any) = wrap(target.setProperty(name, expression))
   def sort[T](expression: (Exchange) => Any, comparator: Comparator[T] = null) = wrap(target.sort(expression, comparator))
   def split(expression: Exchange => Any) = SSplitDefinition(target.split(expression))
+  def startupOrder(startupOrder :Int) = wrap(target.startupOrder(startupOrder))
   def stop = wrap(target.stop)
 
   def threads = SThreadsDefinition(target.threads)
