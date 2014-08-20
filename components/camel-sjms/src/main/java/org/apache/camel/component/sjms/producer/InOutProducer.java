@@ -282,86 +282,74 @@ public class InOutProducer extends SjmsProducer {
      * @throws Exception
      */
     @Override
-    public void sendMessage(final Exchange exchange, final AsyncCallback callback) throws Exception {
-        if (getProducers() != null) {
-            MessageProducerResources producer = null;
-            try {
-                producer = getProducers().borrowObject(getResponseTimeOut());
-            } catch (Exception e1) {
-                log.warn("The producer pool is exhausted.  Consider setting producerCount to a higher value or disable the fixed size of the pool by setting fixedResourcePool=false.");
-                exchange.setException(new Exception("Producer Resource Pool is exhausted"));
-            }
-            if (producer != null) {
-
-                if (isEndpointTransacted()) {
-                    exchange.getUnitOfWork().addSynchronization(new SessionTransactionSynchronization(producer.getSession(), getCommitStrategy()));
-                }
-
-                Message request = SjmsExchangeMessageHelper.createMessage(exchange, producer.getSession(), getSjmsEndpoint().getJmsKeyFormatStrategy());
-
-                // TODO just set the correlation id don't get it from the
-                // message
-                String correlationId = null;
-                if (exchange.getIn().getHeader("JMSCorrelationID", String.class) == null) {
-                    correlationId = UUID.randomUUID().toString().replace("-", "");
-                } else {
-                    correlationId = exchange.getIn().getHeader("JMSCorrelationID", String.class);
-                }
-                Object responseObject = null;
-                Exchanger<Object> messageExchanger = new Exchanger<Object>();
-                SjmsExchangeMessageHelper.setCorrelationId(request, correlationId);
-                try {
-                    lock.writeLock().lock();
-                    exchangerMap.put(correlationId, messageExchanger);
-                } finally {
-                    lock.writeLock().unlock();
-                }
-
-                MessageConsumerResource consumer = consumers.borrowObject(getResponseTimeOut());
-                SjmsExchangeMessageHelper.setJMSReplyTo(request, consumer.getReplyToDestination());
-                consumers.returnObject(consumer);
-                producer.getMessageProducer().send(request);
-
-                // Return the producer to the pool so another waiting producer
-                // can move forward
-                // without waiting on us to complete the exchange
-                try {
-                    getProducers().returnObject(producer);
-                } catch (Exception exception) {
-                    // thrown if the pool is full. safe to ignore.
-                }
-
-                try {
-                    responseObject = messageExchanger.exchange(null, getResponseTimeOut(), TimeUnit.MILLISECONDS);
-
-                    try {
-                        lock.writeLock().lock();
-                        exchangerMap.remove(correlationId);
-                    } finally {
-                        lock.writeLock().unlock();
-                    }
-                } catch (InterruptedException e) {
-                    log.debug("Exchanger was interrupted while waiting on response", e);
-                    exchange.setException(e);
-                } catch (TimeoutException e) {
-                    log.debug("Exchanger timed out while waiting on response", e);
-                    exchange.setException(e);
-                }
-
-                if (exchange.getException() == null) {
-                    if (responseObject instanceof Throwable) {
-                        exchange.setException((Throwable)responseObject);
-                    } else if (responseObject instanceof Message) {
-                        Message response = (Message)responseObject;
-                        SjmsExchangeMessageHelper.populateExchange(response, exchange, true);
-                    } else {
-                        exchange.setException(new CamelException("Unknown response type: " + responseObject));
-                    }
-                }
-            }
-
-            callback.done(isSynchronous());
+    public void sendMessage(final Exchange exchange, final AsyncCallback callback, final MessageProducerResources producer) throws Exception {
+        if (isEndpointTransacted()) {
+            exchange.getUnitOfWork().addSynchronization(new SessionTransactionSynchronization(producer.getSession(), getCommitStrategy()));
         }
+
+        Message request = SjmsExchangeMessageHelper.createMessage(exchange, producer.getSession(), getSjmsEndpoint().getJmsKeyFormatStrategy());
+
+        // TODO just set the correlation id don't get it from the
+        // message
+        String correlationId = null;
+        if (exchange.getIn().getHeader("JMSCorrelationID", String.class) == null) {
+            correlationId = UUID.randomUUID().toString().replace("-", "");
+        } else {
+            correlationId = exchange.getIn().getHeader("JMSCorrelationID", String.class);
+        }
+        Object responseObject = null;
+        Exchanger<Object> messageExchanger = new Exchanger<Object>();
+        SjmsExchangeMessageHelper.setCorrelationId(request, correlationId);
+        try {
+            lock.writeLock().lock();
+            exchangerMap.put(correlationId, messageExchanger);
+        } finally {
+            lock.writeLock().unlock();
+        }
+
+        MessageConsumerResource consumer = consumers.borrowObject(getResponseTimeOut());
+        SjmsExchangeMessageHelper.setJMSReplyTo(request, consumer.getReplyToDestination());
+        consumers.returnObject(consumer);
+        producer.getMessageProducer().send(request);
+
+        // Return the producer to the pool so another waiting producer
+        // can move forward
+        // without waiting on us to complete the exchange
+        try {
+            getProducers().returnObject(producer);
+        } catch (Exception exception) {
+            // thrown if the pool is full. safe to ignore.
+        }
+
+        try {
+            responseObject = messageExchanger.exchange(null, getResponseTimeOut(), TimeUnit.MILLISECONDS);
+
+            try {
+                lock.writeLock().lock();
+                exchangerMap.remove(correlationId);
+            } finally {
+                lock.writeLock().unlock();
+            }
+        } catch (InterruptedException e) {
+            log.debug("Exchanger was interrupted while waiting on response", e);
+            exchange.setException(e);
+        } catch (TimeoutException e) {
+            log.debug("Exchanger timed out while waiting on response", e);
+            exchange.setException(e);
+        }
+
+        if (exchange.getException() == null) {
+            if (responseObject instanceof Throwable) {
+                exchange.setException((Throwable)responseObject);
+            } else if (responseObject instanceof Message) {
+                Message response = (Message)responseObject;
+                SjmsExchangeMessageHelper.populateExchange(response, exchange, true);
+            } else {
+                exchange.setException(new CamelException("Unknown response type: " + responseObject));
+            }
+        }
+
+        callback.done(isSynchronous());
     }
 
     public void setConsumers(MessageConsumerPool consumers) {
