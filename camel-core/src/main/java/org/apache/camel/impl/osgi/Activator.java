@@ -387,7 +387,17 @@ public class Activator implements BundleActivator, BundleTrackerCustomizer {
             }
             URL url = bundle.getEntry(path);
             LOG.trace("The entry {}'s url is {}", name, url);
-            return createInstance(name, url, context.getInjector());
+            //Setup the TCCL with Camel context application class loader
+            ClassLoader oldClassLoader = Thread.currentThread().getContextClassLoader();
+            try {
+                ClassLoader  newClassLoader = context.getApplicationContextClassLoader();
+                if (newClassLoader != null) {
+                    Thread.currentThread().setContextClassLoader(newClassLoader);
+                }
+                return createInstance(name, url, context.getInjector());
+            } finally {
+                Thread.currentThread().setContextClassLoader(oldClassLoader);   
+            }
         }
 
         @SuppressWarnings("unchecked")
