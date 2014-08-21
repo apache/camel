@@ -26,6 +26,7 @@ import org.apache.camel.dataformat.bindy.annotation.DataField;
 import org.apache.camel.dataformat.bindy.annotation.KeyValuePairField;
 import org.apache.camel.dataformat.bindy.format.BigDecimalFormat;
 import org.apache.camel.dataformat.bindy.format.BigIntegerFormat;
+import org.apache.camel.dataformat.bindy.format.BooleanFormat;
 import org.apache.camel.dataformat.bindy.format.ByteFormat;
 import org.apache.camel.dataformat.bindy.format.BytePatternFormat;
 import org.apache.camel.dataformat.bindy.format.CharacterFormat;
@@ -102,6 +103,8 @@ public final class FormatFactory {
             return new DatePatternFormat(pattern, timezone, getLocale(locale));
         } else if (clazz == char.class || clazz == Character.class) {
             return new CharacterFormat();
+        } else if (clazz == boolean.class || clazz == Boolean.class) {
+            return new BooleanFormat();
         } else if (clazz.isEnum()) {
             return new EnumFormat(clazz);
         } else {
