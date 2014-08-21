@@ -20,7 +20,9 @@ import org.apache.camel.itest.osgi.OSGiIntegrationSpringTestSupport;
 import org.apache.http.HttpResponse;
 import org.apache.http.client.HttpClient;
 import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -41,7 +43,7 @@ public class CxfBeanSpringRouteTest extends OSGiIntegrationSpringTestSupport {
     public void testGetCustomer() throws Exception {
         HttpGet get = new HttpGet("http://localhost:9000/route/customerservice/customers/123");
         get.addHeader("Accept" , "application/json");
-        HttpClient httpclient = new DefaultHttpClient();
+        CloseableHttpClient httpclient = HttpClientBuilder.create().build();
 
         try {
             HttpResponse response = httpclient.execute(get);
@@ -49,7 +51,7 @@ public class CxfBeanSpringRouteTest extends OSGiIntegrationSpringTestSupport {
             assertEquals("{\"Customer\":{\"id\":123,\"name\":\"John\"}}",
                          EntityUtils.toString(response.getEntity()));
         } finally {
-            httpclient.getConnectionManager().shutdown();
+            httpclient.close();
         }
     }
 
