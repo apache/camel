@@ -22,17 +22,16 @@ import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.ops4j.pax.exam.Configuration;
 import org.ops4j.pax.exam.Option;
-import org.ops4j.pax.exam.junit.Configuration;
-import org.ops4j.pax.exam.junit.JUnit4TestRunner;
+import org.ops4j.pax.exam.junit.PaxExam;
 import org.osgi.framework.Constants;
 import org.osgi.service.blueprint.container.BlueprintContainer;
 
-import static org.ops4j.pax.exam.CoreOptions.scanFeatures;
 import static org.ops4j.pax.exam.OptionUtils.combine;
 import static org.ops4j.pax.swissbox.tinybundles.core.TinyBundles.newBundle;
 
-@RunWith(JUnit4TestRunner.class)
+@RunWith(PaxExam.class)
 public class CamelMultiVersionBlueprintTest extends OSGiBlueprintTestSupport {
 
     @Test

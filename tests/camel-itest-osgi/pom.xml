@@ -44,18 +44,24 @@
       <scope>test</scope>
     </dependency>
     <dependency>
-      <groupId>org.ops4j.pax.runner</groupId>
-      <artifactId>pax-runner-no-jcl</artifactId>
-      <scope>test</scope>
+        <groupId>org.ops4j.pax.exam</groupId>
+        <artifactId>pax-exam</artifactId>
+        <scope>test</scope>
     </dependency>
+    <dependency>
+        <groupId>org.ops4j.pax.exam</groupId>
+        <artifactId>pax-exam-container-karaf</artifactId>
+        <scope>test</scope>
+    </dependency>
+    <dependency>
+        <groupId>org.ops4j.pax.exam</groupId>
+        <artifactId>pax-exam-link-mvn</artifactId>
+        <scope>test</scope>
+    </dependency>
+
     <dependency>
       <groupId>org.ops4j.pax.swissbox</groupId>
       <artifactId>pax-swissbox-tinybundles</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.karaf.tooling.exam</groupId>
-      <artifactId>org.apache.karaf.tooling.exam.container</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -507,6 +513,7 @@
                         <sourceRoot>${basedir}/target/generated/src/main/java</sourceRoot>
                         <wsdlOptions>
                             <wsdlOption>
+                                <frontEnd>jaxws21</frontEnd>
                                 <wsdl>${basedir}/src/test/resources/report_incident.wsdl</wsdl>
                             </wsdlOption>
                         </wsdlOptions>

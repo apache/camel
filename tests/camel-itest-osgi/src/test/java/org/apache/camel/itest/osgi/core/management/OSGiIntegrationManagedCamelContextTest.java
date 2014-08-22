@@ -26,20 +26,16 @@ import org.apache.camel.itest.osgi.OSGiIntegrationTestSupport;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.ops4j.pax.exam.Configuration;
 import org.ops4j.pax.exam.Option;
-import org.ops4j.pax.exam.junit.Configuration;
-import org.ops4j.pax.exam.junit.JUnit4TestRunner;
+import org.ops4j.pax.exam.junit.PaxExam;
 
-import static org.ops4j.pax.exam.CoreOptions.equinox;
-import static org.ops4j.pax.exam.CoreOptions.felix;
 import static org.ops4j.pax.exam.CoreOptions.options;
-import static org.ops4j.pax.exam.CoreOptions.profile;
 import static org.ops4j.pax.exam.CoreOptions.provision;
-import static org.ops4j.pax.exam.CoreOptions.scanFeatures;
 import static org.ops4j.pax.exam.CoreOptions.workingDirectory;
 import static org.ops4j.pax.swissbox.tinybundles.core.TinyBundles.newBundle;
 
-@RunWith(JUnit4TestRunner.class)
+@RunWith(PaxExam.class)
 @Ignore("TODO: fix me")
 public class OSGiIntegrationManagedCamelContextTest extends OSGiIntegrationTestSupport {
 
@@ -75,7 +71,8 @@ public class OSGiIntegrationManagedCamelContextTest extends OSGiIntegrationTestS
         
         Option[] options = options(
             // install the spring dm profile            
-            profile("spring.dm").version("1.2.1"),    
+            //profile("spring.dm").version("1.2.1"),
+            
             // this is how you set the default log level when using pax logging (logProfile)
             org.ops4j.pax.exam.CoreOptions.systemProperty("org.ops4j.pax.logging.DefaultServiceLog.level").value("INFO"),
             

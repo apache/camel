@@ -28,14 +28,13 @@ import org.apache.hadoop.io.SequenceFile;
 import org.apache.hadoop.io.Text;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.ops4j.pax.exam.Configuration;
 import org.ops4j.pax.exam.Option;
-import org.ops4j.pax.exam.junit.Configuration;
-import org.ops4j.pax.exam.junit.JUnit4TestRunner;
+import org.ops4j.pax.exam.junit.PaxExam;
 
-import static org.ops4j.pax.exam.CoreOptions.scanFeatures;
 import static org.ops4j.pax.exam.OptionUtils.combine;
 
-@RunWith(JUnit4TestRunner.class)
+@RunWith(PaxExam.class)
 public class HdfsRouteTest extends OSGiIntegrationTestSupport {
     //Hadoop doesn't run on IBM JDK
     private static final boolean SKIP = System.getProperty("java.vendor").contains("IBM");
@@ -79,10 +78,10 @@ public class HdfsRouteTest extends OSGiIntegrationTestSupport {
     @Configuration
     public static Option[] configure() throws Exception {
         Option[] options = combine(
-                getDefaultCamelKarafOptions(),
-                // using the features to install the camel components
-                scanFeatures(getCamelKarafFeatureUrl(), "camel-hdfs2")
-            );
+            getDefaultCamelKarafOptions(),
+            // using the features to install the camel components
+            scanFeatures(getCamelKarafFeatureUrl(), "camel-hdfs2")
+        );
 
         return options;
     }
