@@ -47,7 +47,7 @@ public class AwsSdbTest extends AwsTestSupport {
     public void setUp() throws Exception {
         super.setUp();
         
-        amazonSDBClient = context.getRegistry().lookup("amazonSDBClient", AmazonSDBClientMock.class);
+        amazonSDBClient = context.getRegistry().lookupByNameAndType("amazonSDBClient", AmazonSDBClientMock.class);
     }
     
     @Override
