@@ -39,9 +39,9 @@ public class InfinispanOperation {
     private Operation getOperation(Exchange exchange) {
         String operation = exchange.getIn().getHeader(InfinispanConstants.OPERATION, String.class);
         if (operation == null) {
-            if(configuration.getCommand() != null){
+            if (configuration.getCommand() != null) {
                 operation = InfinispanConstants.OPERATION + configuration.getCommand();
-            } else{
+            } else {
                 operation = InfinispanConstants.PUT;
             }
         }
