@@ -19,7 +19,6 @@ package org.apache.camel.component.infinispan;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Assert;
 import org.junit.Test;
 
 import static org.hamcrest.CoreMatchers.nullValue;
@@ -157,7 +156,7 @@ public class InfinispanProducerTest extends InfinispanTestSupport {
         assertTrue(currentCache().isEmpty());
 
         currentCache().put(COMMAND_KEY, COMMAND_VALUE);
-        currentCache().put("keyTest","valueTest");
+        currentCache().put("keyTest", "valueTest");
 
         template.send("direct:clear", new Processor() {
             @Override
