@@ -39,6 +39,17 @@
 
   <dependencies>
     <dependency>
+      <groupId>org.osgi</groupId>
+      <artifactId>org.osgi.compendium</artifactId>
+      <scope>compile</scope>
+      <optional>true</optional>
+    </dependency>
+    <dependency>
+      <groupId>org.osgi</groupId>
+      <artifactId>org.osgi.core</artifactId>
+      <scope>test</scope>
+    </dependency>
+    <dependency>
       <groupId>org.ops4j.pax.exam</groupId>
       <artifactId>pax-exam-junit4</artifactId>
       <scope>test</scope>
@@ -75,17 +86,6 @@
           <artifactId>osgi</artifactId>
         </exclusion>
       </exclusions>
-    </dependency>
-    <dependency>
-      <groupId>org.osgi</groupId>
-      <artifactId>org.osgi.compendium</artifactId>
-      <scope>compile</scope>
-      <optional>true</optional>
-    </dependency> 
-    <dependency>
-      <groupId>org.osgi</groupId>
-      <artifactId>org.osgi.core</artifactId>
-      <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.activemq</groupId>

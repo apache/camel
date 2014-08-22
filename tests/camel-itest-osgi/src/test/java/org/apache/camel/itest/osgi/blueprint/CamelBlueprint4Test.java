@@ -26,6 +26,8 @@ import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.Configuration;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.PaxExam;
+import org.ops4j.pax.exam.spi.reactors.ExamReactorStrategy;
+import org.ops4j.pax.exam.spi.reactors.PerSuite;
 import org.ops4j.pax.tinybundles.core.TinyBundles;
 import org.osgi.framework.Constants;
 
@@ -35,6 +37,7 @@ import static org.ops4j.pax.exam.OptionUtils.combine;
  * @version 
  */
 @RunWith(PaxExam.class)
+@ExamReactorStrategy(PerSuite.class)
 public class CamelBlueprint4Test extends OSGiBlueprintTestSupport {
 
     @Test
@@ -126,6 +129,7 @@ public class CamelBlueprint4Test extends OSGiBlueprintTestSupport {
                         .add("OSGI-INF/blueprint/test.xml", OSGiBlueprintTestSupport.class.getResource("blueprint-13.xml"))
                         .set(Constants.BUNDLE_SYMBOLICNAME, "CamelBlueprintTestBundle22")
                         .add(TestRouteBuilder.class)
+                        .set(Constants.EXPORT_PACKAGE, TestRouteBuilder.class.getPackage().getName())
                         .build(TinyBundles.withBnd())).noStart(),
 
                 // using the features to install the camel components

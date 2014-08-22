@@ -74,6 +74,7 @@ public class CxfBeanSpringRouteTest extends OSGiIntegrationSpringTestSupport {
                         .add(org.apache.camel.itest.osgi.cxf.jaxrs.testbean.CustomerServiceResource.class)
                         .add(org.apache.camel.itest.osgi.cxf.jaxrs.testbean.Order.class)
                         .add(org.apache.camel.itest.osgi.cxf.jaxrs.testbean.Product.class)
+                        .set("Export-Package", "org.apache.camel.itest.osgi.cxf.jaxrs.testbean")
                         .build(TinyBundles.withBnd()))//,
                 //vmOption("-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5006")
         );
