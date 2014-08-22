@@ -20,11 +20,17 @@ import javax.jms.Connection;
 import javax.jms.ConnectionFactory;
 
 import org.apache.camel.util.ObjectHelper;
+import org.apache.commons.pool.BasePoolableObjectFactory;
+import org.apache.commons.pool.impl.GenericObjectPool;
 
 /**
  * The default {@link ConnectionResource} implementation for the SJMSComponent.
  */
-public class ConnectionFactoryResource extends ObjectPool<Connection> implements ConnectionResource {
+public class ConnectionFactoryResource extends BasePoolableObjectFactory<Connection> implements ConnectionResource {
+
+    private static final long DEFAULT_WAIT_TIMEOUT = 5 * 1000;
+    private static final int DEFAULT_POOL_SIZE = 1;
+    private GenericObjectPool<Connection> connections;
     private ConnectionFactory connectionFactory;
     private String username;
     private String password;
@@ -34,6 +40,7 @@ public class ConnectionFactoryResource extends ObjectPool<Connection> implements
      * Default Constructor
      */
     public ConnectionFactoryResource() {
+        this(DEFAULT_POOL_SIZE, null);
     }
 
     /**
@@ -53,10 +60,7 @@ public class ConnectionFactoryResource extends ObjectPool<Connection> implements
      * @param password
      */
     public ConnectionFactoryResource(int poolSize, ConnectionFactory connectionFactory, String username, String password) {
-        super(poolSize);
-        this.connectionFactory = connectionFactory;
-        this.username = username;
-        this.password = password;
+        this(poolSize, connectionFactory, username, password, null);
     }
 
     /**
@@ -64,32 +68,43 @@ public class ConnectionFactoryResource extends ObjectPool<Connection> implements
      * @param connectionFactory
      * @param username
      * @param password
+     * @param connectionId
      */
     public ConnectionFactoryResource(int poolSize, ConnectionFactory connectionFactory, String username, String password, String connectionId) {
-        super(poolSize);
+        this(poolSize, connectionFactory, username, password, null, DEFAULT_WAIT_TIMEOUT);
+    }
+
+    /**
+     * @param poolSize
+     * @param connectionFactory
+     * @param username
+     * @param password
+     * @param connectionId
+     * @param maxWait
+     */
+    public ConnectionFactoryResource(int poolSize, ConnectionFactory connectionFactory, String username, String password, String connectionId, long maxWait) {
         this.connectionFactory = connectionFactory;
         this.username = username;
         this.password = password;
         this.clientId = connectionId;
+        this.connections = new GenericObjectPool<Connection>(this);
+        this.connections.setMaxWait(maxWait);
+        this.connections.setMaxActive(poolSize);
+        this.connections.setMaxIdle(poolSize);
     }
 
     @Override
     public Connection borrowConnection() throws Exception {
-        return borrowObject();
-    }
-
-    @Override
-    public Connection borrowConnection(long timeout) throws Exception {
-        return borrowObject(timeout);
+        return connections.borrowObject();
     }
 
     @Override
     public void returnConnection(Connection connection) throws Exception {
-        returnObject(connection);
+        connections.returnObject(connection);
     }
 
     @Override
-    protected Connection createObject() throws Exception {
+    public Connection makeObject() throws Exception {
         Connection connection = null;
         if (connectionFactory != null) {
             if (getUsername() != null && getPassword() != null) {
@@ -108,7 +123,7 @@ public class ConnectionFactoryResource extends ObjectPool<Connection> implements
     }
 
     @Override
-    protected void destroyObject(Connection connection) throws Exception {
+    public void destroyObject(Connection connection) throws Exception {
         if (connection != null) {
             connection.stop();
             connection.close();
@@ -146,5 +161,19 @@ public class ConnectionFactoryResource extends ObjectPool<Connection> implements
 
     public void setClientId(String clientId) {
         this.clientId = clientId;
+    }
+
+    public int size(){
+        return connections.getNumActive() + connections.getNumIdle();
+    }
+
+    public void fillPool() throws Exception {
+        while(connections.getNumIdle() < connections.getMaxIdle()){
+            connections.addObject();
+        }
+    }
+
+    public void drainPool() throws Exception {
+        connections.close();
     }
 }

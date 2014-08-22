@@ -44,16 +44,6 @@ public interface ConnectionResource {
     Connection borrowConnection() throws Exception;
 
     /**
-     * Borrows a {@link Connection} from the connection pool.
-     * 
-     * @param timeout the amount of time to wait before throwing an
-     *            {@link Exception}
-     * @return {@link Connection}
-     * @throws Exception when no resource is available
-     */
-    Connection borrowConnection(long timeout) throws Exception;
-
-    /**
      * Returns the {@link Connection} to the connection pool.
      * 
      * @param connection the borrowed {@link Connection}

@@ -17,6 +17,7 @@
 package org.apache.camel.component.sjms;
 
 import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Future;
 
 import javax.jms.Connection;
 import javax.jms.MessageConsumer;
@@ -32,7 +33,6 @@ import org.apache.camel.component.sjms.consumer.InOnlyMessageHandler;
 import org.apache.camel.component.sjms.consumer.InOutMessageHandler;
 import org.apache.camel.component.sjms.jms.ConnectionResource;
 import org.apache.camel.component.sjms.jms.JmsObjectFactory;
-import org.apache.camel.component.sjms.jms.ObjectPool;
 import org.apache.camel.component.sjms.taskmanager.TimedTaskManager;
 import org.apache.camel.component.sjms.tx.BatchTransactionCommitStrategy;
 import org.apache.camel.component.sjms.tx.DefaultTransactionCommitStrategy;
@@ -40,6 +40,8 @@ import org.apache.camel.component.sjms.tx.SessionBatchTransactionSynchronization
 import org.apache.camel.component.sjms.tx.SessionTransactionSynchronization;
 import org.apache.camel.impl.DefaultConsumer;
 import org.apache.camel.spi.Synchronization;
+import org.apache.commons.pool.BasePoolableObjectFactory;
+import org.apache.commons.pool.impl.GenericObjectPool;
 
 /**
  * The SjmsConsumer is the base class for the SJMS MessageListener pool.
@@ -47,36 +49,32 @@ import org.apache.camel.spi.Synchronization;
  */
 public class SjmsConsumer extends DefaultConsumer {
 
-    protected MessageConsumerPool consumers;
+    protected GenericObjectPool<MessageConsumerResources> consumers;
     private ExecutorService executor;
+    private Future<?> asyncStart;
 
     /**
      * A pool of MessageConsumerResources created at the initialization of the associated consumer.
      */
-    protected class MessageConsumerPool extends ObjectPool<MessageConsumerResources> {
-
-        public MessageConsumerPool() {
-            super(getConsumerCount());
-        }
+    protected class MessageConsumerResourcesFactory extends BasePoolableObjectFactory<MessageConsumerResources> {
 
         /** 
          * Creates a new MessageConsumerResources instance.
          *
-         * @see org.apache.camel.component.sjms.jms.ObjectPool#createObject()
+         * @see org.apache.commons.pool.PoolableObjectFactory#makeObject()
          */
         @Override
-        protected MessageConsumerResources createObject() throws Exception {
-            MessageConsumerResources model = createConsumer();
-            return model;
+        public MessageConsumerResources makeObject() throws Exception {
+            return createConsumer();
         }
 
         /** 
          * Cleans up the MessageConsumerResources.
          *
-         * @see org.apache.camel.component.sjms.jms.ObjectPool#destroyObject(java.lang.Object)
+         * @see org.apache.commons.pool.PoolableObjectFactory#destroyObject(java.lang.Object)
          */
         @Override
-        protected void destroyObject(MessageConsumerResources model) throws Exception {
+        public void destroyObject(MessageConsumerResources model) throws Exception {
             if (model != null) {
                 // First clean up our message consumer
                 if (model.getMessageConsumer() != null) {
@@ -98,41 +96,6 @@ public class SjmsConsumer extends DefaultConsumer {
         }
     }
 
-    protected class MessageConsumerResources {
-        private final Session session;
-        private final MessageConsumer messageConsumer;
-
-        public MessageConsumerResources(MessageConsumer messageConsumer) {
-            this.session = null;
-            this.messageConsumer = messageConsumer;
-        }
-
-        public MessageConsumerResources(Session session, MessageConsumer messageConsumer) {
-            this.session = session;
-            this.messageConsumer = messageConsumer;
-        }
-
-        /**
-         * Gets the Session value of session for this instance of
-         * MessageProducerModel.
-         * 
-         * @return the session
-         */
-        public Session getSession() {
-            return session;
-        }
-
-        /**
-         * Gets the QueueSender value of queueSender for this instance of
-         * MessageProducerModel.
-         * 
-         * @return the queueSender
-         */
-        public MessageConsumer getMessageConsumer() {
-            return messageConsumer;
-        }
-    }
-
     public SjmsConsumer(Endpoint endpoint, Processor processor) {
         super(endpoint, processor);
     }
@@ -146,38 +109,51 @@ public class SjmsConsumer extends DefaultConsumer {
     protected void doStart() throws Exception {
         super.doStart();
         this.executor = getEndpoint().getCamelContext().getExecutorServiceManager().newDefaultThreadPool(this, "SjmsConsumer");
-        consumers = new MessageConsumerPool();
-        if (getEndpoint().isAsyncStartListener()) {
-            getEndpoint().getComponent().getAsyncStartStopExecutorService().submit(new Runnable() {
-                @Override
-                public void run() {
-                    try {
-                        consumers.fillPool();
-                    } catch (Throwable e) {
-                        log.warn("Error starting listener container on destination: " + getDestinationName() + ". This exception will be ignored.", e);
+        if(consumers == null){
+            consumers = new GenericObjectPool<MessageConsumerResources>(new MessageConsumerResourcesFactory());
+            consumers.setMaxActive(getConsumerCount());
+            consumers.setMaxIdle(getConsumerCount());
+            if(getEndpoint().isAsyncStartListener()){
+                asyncStart = getEndpoint().getComponent().getAsyncStartStopExecutorService().submit(new Runnable() {
+                    @Override
+                    public void run() {
+                        try {
+                            fillConsumersPool();
+                        } catch (Throwable e) {
+                            log.warn("Error starting listener container on destination: " + getDestinationName() + ". This exception will be ignored.", e);
+                        }
                     }
-                }
 
-                @Override
-                public String toString() {
-                    return "AsyncStartListenerTask[" + getDestinationName() + "]";
-                }
-            });
-        } else {
-            consumers.fillPool();
+                    @Override
+                    public String toString() {
+                        return "AsyncStartListenerTask[" + getDestinationName() + "]";
+                    }
+                });
+            } else {
+                fillConsumersPool();
+            }
+        }
+    }
+
+    private void fillConsumersPool() throws Exception {
+        while(consumers.getNumIdle() < consumers.getMaxIdle()){
+            consumers.addObject();
         }
     }
 
     @Override
     protected void doStop() throws Exception {
         super.doStop();
-        if (consumers != null) {
+        if(asyncStart != null && asyncStart.isDone() == false){
+            asyncStart.cancel(true);
+        }
+        if(consumers != null){
             if (getEndpoint().isAsyncStopListener()) {
                 getEndpoint().getComponent().getAsyncStartStopExecutorService().submit(new Runnable() {
                     @Override
                     public void run() {
                         try {
-                            consumers.drainPool();
+                            consumers.close();
                             consumers = null;
                         } catch (Throwable e) {
                             log.warn("Error stopping listener container on destination: " + getDestinationName() + ". This exception will be ignored.", e);
@@ -190,7 +166,7 @@ public class SjmsConsumer extends DefaultConsumer {
                     }
                 });
             } else {
-                consumers.drainPool();
+                consumers.close();
                 consumers = null;
             }
         }
