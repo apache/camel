@@ -11718,6 +11718,47 @@ public class StaticEndpointBuilders {
         return org.apache.camel.builder.endpoint.dsl.RestApiEndpointBuilderFactory.endpointBuilder(componentName, path);
     }
     /**
+     * Resteasy (camel-resteasy)
+     * Defines the Resteasy Endpoint.
+     * 
+     * Category: rest
+     * Since: 3.4
+     * Maven coordinates: org.apache.camel:camel-resteasy
+     * 
+     * Syntax: <code>resteasy:contextPath</code>
+     * 
+     * Path parameter: httpUri (required)
+     * The url of the HTTP endpoint to call.
+     * 
+     * @param path contextPath
+     */
+    static org.apache.camel.builder.endpoint.dsl.ResteasyEndpointBuilderFactory.ResteasyEndpointBuilder resteasy(
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.ResteasyEndpointBuilderFactory.endpointBuilder("resteasy",path);
+    }
+    /**
+     * Resteasy (camel-resteasy)
+     * Defines the Resteasy Endpoint.
+     * 
+     * Category: rest
+     * Since: 3.4
+     * Maven coordinates: org.apache.camel:camel-resteasy
+     * 
+     * Syntax: <code>resteasy:contextPath</code>
+     * 
+     * Path parameter: httpUri (required)
+     * The url of the HTTP endpoint to call.
+     * 
+     * @param componentName to use a custom component name for the endpoint
+     * instead of the default name
+     * @param path contextPath
+     */
+    static org.apache.camel.builder.endpoint.dsl.ResteasyEndpointBuilderFactory.ResteasyEndpointBuilder resteasy(
+            String componentName,
+            String path) {
+        return org.apache.camel.builder.endpoint.dsl.ResteasyEndpointBuilderFactory.endpointBuilder(componentName,path);
+    }
+    /**
      * REST (camel-rest)
      * Expose REST services or call external REST services.
      * 

@@ -302,6 +302,7 @@
         <include>org.apache.camel:camel-rest</include>
         <include>org.apache.camel:camel-rest-openapi</include>
         <include>org.apache.camel:camel-rest-swagger</include>
+        <include>org.apache.camel:camel-resteasy</include>
         <include>org.apache.camel:camel-ribbon</include>
         <include>org.apache.camel:camel-robotframework</include>
         <include>org.apache.camel:camel-rss</include>

@@ -305,6 +305,7 @@
         <module>camel-reactive-streams</module>
         <module>camel-reactor</module>
         <module>camel-resilience4j</module>
+        <module>camel-resteasy</module>
         <module>camel-rest-swagger</module>
         <module>camel-rest-openapi</module>
         <module>camel-robotframework</module>
