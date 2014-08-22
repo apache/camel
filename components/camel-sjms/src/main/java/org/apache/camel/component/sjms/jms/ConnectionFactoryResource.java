@@ -43,45 +43,18 @@ public class ConnectionFactoryResource extends BasePoolableObjectFactory<Connect
         this(DEFAULT_POOL_SIZE, null);
     }
 
-    /**
-     * TODO Add Constructor Javadoc
-     * 
-     * @param poolSize
-     * @param connectionFactory
-     */
     public ConnectionFactoryResource(int poolSize, ConnectionFactory connectionFactory) {
         this(poolSize, connectionFactory, null, null);
     }
 
-    /**
-     * @param poolSize
-     * @param connectionFactory
-     * @param username
-     * @param password
-     */
     public ConnectionFactoryResource(int poolSize, ConnectionFactory connectionFactory, String username, String password) {
         this(poolSize, connectionFactory, username, password, null);
     }
 
-    /**
-     * @param poolSize
-     * @param connectionFactory
-     * @param username
-     * @param password
-     * @param connectionId
-     */
     public ConnectionFactoryResource(int poolSize, ConnectionFactory connectionFactory, String username, String password, String connectionId) {
         this(poolSize, connectionFactory, username, password, null, DEFAULT_WAIT_TIMEOUT);
     }
 
-    /**
-     * @param poolSize
-     * @param connectionFactory
-     * @param username
-     * @param password
-     * @param connectionId
-     * @param maxWait
-     */
     public ConnectionFactoryResource(int poolSize, ConnectionFactory connectionFactory, String username, String password, String connectionId, long maxWait) {
         this.connectionFactory = connectionFactory;
         this.username = username;
@@ -163,12 +136,12 @@ public class ConnectionFactoryResource extends BasePoolableObjectFactory<Connect
         this.clientId = clientId;
     }
 
-    public int size(){
+    public int size() {
         return connections.getNumActive() + connections.getNumIdle();
     }
 
     public void fillPool() throws Exception {
-        while(connections.getNumIdle() < connections.getMaxIdle()){
+        while (connections.getNumIdle() < connections.getMaxIdle()) {
             connections.addObject();
         }
     }

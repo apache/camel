@@ -84,12 +84,6 @@ public class InOutTempQueueProducerTest extends JmsTestSupport {
         private String requestText;
         private String responseText;
         
-        /**
-         * TODO Add Constructor Javadoc
-         *
-         * @param request
-         * @param response
-         */
         public MyMessageListener(String request, String response) {
             this.requestText = request;
             this.responseText = response;

@@ -79,11 +79,11 @@ public abstract class SjmsProducer extends DefaultAsyncProducer {
     protected void doStart() throws Exception {
         super.doStart();
         this.executor = getEndpoint().getCamelContext().getExecutorServiceManager().newDefaultThreadPool(this, "SjmsProducer");
-        if(getProducers() == null){
+        if (getProducers() == null) {
             setProducers(new GenericObjectPool<MessageProducerResources>(new MessageProducerResourcesFactory()));
             getProducers().setMaxActive(getProducerCount());
             getProducers().setMaxIdle(getProducerCount());
-            if(getEndpoint().isAsyncStartListener()){
+            if (getEndpoint().isAsyncStartListener()) {
                 asyncStart = getEndpoint().getComponent().getAsyncStartStopExecutorService().submit(new Runnable() {
                     @Override
                     public void run() {
@@ -106,7 +106,7 @@ public abstract class SjmsProducer extends DefaultAsyncProducer {
     }
 
     private void fillProducersPool() throws Exception {
-        while(producers.getNumIdle() < producers.getMaxIdle()){
+        while (producers.getNumIdle() < producers.getMaxIdle()) {
             producers.addObject();
         }
     }
@@ -114,7 +114,7 @@ public abstract class SjmsProducer extends DefaultAsyncProducer {
     @Override
     protected void doStop() throws Exception {
         super.doStop();
-        if(asyncStart != null && asyncStart.isDone() == false){
+        if (asyncStart != null && !asyncStart.isDone()) {
             asyncStart.cancel(true);
         }
         if (getProducers() != null) {
@@ -201,7 +201,7 @@ public abstract class SjmsProducer extends DefaultAsyncProducer {
     }
 
     protected SjmsEndpoint getSjmsEndpoint() {
-        return (SjmsEndpoint)this.getEndpoint();
+        return (SjmsEndpoint) this.getEndpoint();
     }
 
     protected ConnectionResource getConnectionResource() {
@@ -210,7 +210,7 @@ public abstract class SjmsProducer extends DefaultAsyncProducer {
 
     /**
      * Gets the acknowledgment mode for this instance of DestinationProducer.
-     * 
+     *
      * @return int
      */
     public int getAcknowledgeMode() {
@@ -219,7 +219,7 @@ public abstract class SjmsProducer extends DefaultAsyncProducer {
 
     /**
      * Gets the synchronous value for this instance of DestinationProducer.
-     * 
+     *
      * @return true if synchronous, otherwise false
      */
     public boolean isSynchronous() {
@@ -228,7 +228,7 @@ public abstract class SjmsProducer extends DefaultAsyncProducer {
 
     /**
      * Gets the replyTo for this instance of DestinationProducer.
-     * 
+     *
      * @return String
      */
     public String getReplyTo() {
@@ -237,7 +237,7 @@ public abstract class SjmsProducer extends DefaultAsyncProducer {
 
     /**
      * Gets the destinationName for this instance of DestinationProducer.
-     * 
+     *
      * @return String
      */
     public String getDestinationName() {
@@ -246,7 +246,7 @@ public abstract class SjmsProducer extends DefaultAsyncProducer {
 
     /**
      * Sets the producer pool for this instance of SjmsProducer.
-     * 
+     *
      * @param producers A MessageProducerPool
      */
     public void setProducers(GenericObjectPool<MessageProducerResources> producers) {
@@ -256,7 +256,7 @@ public abstract class SjmsProducer extends DefaultAsyncProducer {
     /**
      * Gets the MessageProducerPool value of producers for this instance of
      * SjmsProducer.
-     * 
+     *
      * @return the producers
      */
     public GenericObjectPool<MessageProducerResources> getProducers() {
@@ -265,7 +265,7 @@ public abstract class SjmsProducer extends DefaultAsyncProducer {
 
     /**
      * Test to verify if this endpoint is a JMS Topic or Queue.
-     * 
+     *
      * @return true if it is a Topic, otherwise it is a Queue
      */
     public boolean isTopic() {
@@ -274,7 +274,7 @@ public abstract class SjmsProducer extends DefaultAsyncProducer {
 
     /**
      * Test to determine if this endpoint should use a JMS Transaction.
-     * 
+     *
      * @return true if transacted, otherwise false
      */
     public boolean isEndpointTransacted() {
@@ -283,7 +283,7 @@ public abstract class SjmsProducer extends DefaultAsyncProducer {
 
     /**
      * Returns the named reply to value for this producer
-     * 
+     *
      * @return true if it is a Topic, otherwise it is a Queue
      */
     public String getNamedReplyTo() {
@@ -292,7 +292,7 @@ public abstract class SjmsProducer extends DefaultAsyncProducer {
 
     /**
      * Gets the producerCount for this instance of SjmsProducer.
-     * 
+     *
      * @return int
      */
     public int getProducerCount() {
@@ -301,7 +301,7 @@ public abstract class SjmsProducer extends DefaultAsyncProducer {
 
     /**
      * Gets consumerCount for this instance of SjmsProducer.
-     * 
+     *
      * @return int
      */
     public int getConsumerCount() {
@@ -310,7 +310,7 @@ public abstract class SjmsProducer extends DefaultAsyncProducer {
 
     /**
      * Gets the executor for this instance of SjmsProducer.
-     * 
+     *
      * @return ExecutorService
      */
     public ExecutorService getExecutor() {
@@ -319,7 +319,7 @@ public abstract class SjmsProducer extends DefaultAsyncProducer {
 
     /**
      * Gets the ttl for this instance of SjmsProducer.
-     * 
+     *
      * @return long
      */
     public long getTtl() {
@@ -328,7 +328,7 @@ public abstract class SjmsProducer extends DefaultAsyncProducer {
 
     /**
      * Gets the boolean value of persistent for this instance of SjmsProducer.
-     * 
+     *
      * @return true if persistent, otherwise false
      */
     public boolean isPersistent() {
@@ -337,7 +337,7 @@ public abstract class SjmsProducer extends DefaultAsyncProducer {
 
     /**
      * Gets responseTimeOut for this instance of SjmsProducer.
-     * 
+     *
      * @return long
      */
     public long getResponseTimeOut() {
@@ -346,7 +346,7 @@ public abstract class SjmsProducer extends DefaultAsyncProducer {
 
     /**
      * Gets commitStrategy for this instance of SjmsProducer.
-     * 
+     *
      * @return TransactionCommitStrategy
      */
     public TransactionCommitStrategy getCommitStrategy() {

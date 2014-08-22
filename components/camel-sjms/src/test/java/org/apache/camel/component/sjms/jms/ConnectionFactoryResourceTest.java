@@ -16,9 +16,6 @@
  */
 package org.apache.camel.component.sjms.jms;
 
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-
 import java.util.NoSuchElementException;
 
 import org.apache.activemq.ActiveMQConnection;
@@ -27,9 +24,9 @@ import org.junit.After;
 import org.junit.Before;
 import org.junit.Test;
 
-/**
- * TODO Add Class documentation for ConnectionFactoryResourceTest
- */
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+
 public class ConnectionFactoryResourceTest {
     private ActiveMQConnectionFactory connectionFactory;
 
@@ -43,77 +40,50 @@ public class ConnectionFactoryResourceTest {
         connectionFactory = null;
     }
 
-    /**
-     * Test method for
-     * {@link org.apache.camel.component.sjms.jms.ConnectionFactoryResource#makeObject()}
-     * .
-     * 
-     * @throws Exception
-     */
     @Test
     public void testCreateObject() throws Exception {
         ConnectionFactoryResource pool = new ConnectionFactoryResource(1, connectionFactory);
         pool.fillPool();
         assertNotNull(pool);
-        ActiveMQConnection connection = (ActiveMQConnection)pool.makeObject();
+        ActiveMQConnection connection = (ActiveMQConnection) pool.makeObject();
         assertNotNull(connection);
         assertTrue(connection.isStarted());
         pool.drainPool();
     }
 
-    /**
-     * Test method for
-     * {@link org.apache.camel.component.sjms.jms.ConnectionFactoryResource#destroyObject()}
-     * .
-     * 
-     * @throws Exception
-     */
     @Test
     public void testDestroyObject() throws Exception {
         ConnectionFactoryResource pool = new ConnectionFactoryResource(1, connectionFactory);
         pool.fillPool();
         assertNotNull(pool);
-        ActiveMQConnection connection = (ActiveMQConnection)pool.makeObject();
+        ActiveMQConnection connection = (ActiveMQConnection) pool.makeObject();
         assertNotNull(connection);
         assertTrue(connection.isStarted());
         pool.drainPool();
         assertTrue(pool.size() == 0);
     }
 
-    /**
-     * Test method for
-     * {@link org.apache.camel.component.sjms.jms.ConnectionResource#borrowConnection()}.
-     * 
-     * @throws Exception
-     */
-    @Test(expected=NoSuchElementException.class)
+    @Test(expected = NoSuchElementException.class)
     public void testBorrowObject() throws Exception {
         ConnectionFactoryResource pool = new ConnectionFactoryResource(1, connectionFactory);
         pool.fillPool();
         assertNotNull(pool);
-        ActiveMQConnection connection = (ActiveMQConnection)pool.borrowConnection();
+        ActiveMQConnection connection = (ActiveMQConnection) pool.borrowConnection();
         assertNotNull(connection);
         assertTrue(connection.isStarted());
         pool.borrowConnection();
     }
 
-    /**
-     * Test method for
-     * {@link org.apache.camel.component.sjms.jms.ConnectionResource#returnConnection(java.lang.Object)}
-     * .
-     * 
-     * @throws Exception
-     */
     @Test
     public void testReturnObject() throws Exception {
         ConnectionFactoryResource pool = new ConnectionFactoryResource(1, connectionFactory);
         pool.fillPool();
         assertNotNull(pool);
-        ActiveMQConnection connection = (ActiveMQConnection)pool.borrowConnection();
+        ActiveMQConnection connection = (ActiveMQConnection) pool.borrowConnection();
         assertNotNull(connection);
         assertTrue(connection.isStarted());
         pool.returnConnection(connection);
-        ActiveMQConnection connection2 = (ActiveMQConnection)pool.borrowConnection();
+        ActiveMQConnection connection2 = (ActiveMQConnection) pool.borrowConnection();
         assertNotNull(connection2);
         pool.drainPool();
     }

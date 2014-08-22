@@ -21,16 +21,14 @@ import org.apache.camel.component.sjms.TransactionCommitStrategy;
 
 /**
  * The default commit strategy for all transaction.
- * 
  */
 public class DefaultTransactionCommitStrategy implements TransactionCommitStrategy {
 
     /**
-     * @see org.apache.camel.component.sjms.TransactionCommitStrategy#commit(org.apache.camel.Exchange)
-     *
      * @param exchange
      * @return
      * @throws Exception
+     * @see org.apache.camel.component.sjms.TransactionCommitStrategy#commit(org.apache.camel.Exchange)
      */
     @Override
     public boolean commit(Exchange exchange) throws Exception {
@@ -38,11 +36,10 @@ public class DefaultTransactionCommitStrategy implements TransactionCommitStrate
     }
 
     /**
-     * @see org.apache.camel.component.sjms.TransactionCommitStrategy#rollback(org.apache.camel.Exchange)
-     *
      * @param exchange
      * @return
      * @throws Exception
+     * @see org.apache.camel.component.sjms.TransactionCommitStrategy#rollback(org.apache.camel.Exchange)
      */
     @Override
     public boolean rollback(Exchange exchange) throws Exception {

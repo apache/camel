@@ -19,7 +19,6 @@ package org.apache.camel.component.sjms.tx;
 import java.util.TimerTask;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
-
 import javax.jms.Session;
 
 import org.apache.camel.Exchange;
@@ -135,7 +134,7 @@ public class SessionBatchTransactionSynchronization implements Synchronization {
                     if (session != null && session.getTransacted()) {
                         session.commit();
                     }
-                    ((BatchTransactionCommitStrategy)commitStrategy).reset();
+                    ((BatchTransactionCommitStrategy) commitStrategy).reset();
                 } catch (Exception e) {
                     LOG.warn("Failed to commit the session during timeout: " + e.getMessage() + ". This exception will be ignored.", e);
                 }

@@ -37,7 +37,7 @@ public interface ConnectionResource {
     /**
      * Borrows a {@link Connection} from the connection pool. An exception
      * should be thrown if no resource is available.
-     * 
+     *
      * @return {@link Connection}
      * @throws Exception when no resource is available
      */
@@ -45,7 +45,7 @@ public interface ConnectionResource {
 
     /**
      * Returns the {@link Connection} to the connection pool.
-     * 
+     *
      * @param connection the borrowed {@link Connection}
      * @throws Exception
      */

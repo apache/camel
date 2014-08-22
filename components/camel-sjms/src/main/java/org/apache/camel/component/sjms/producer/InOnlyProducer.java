@@ -19,7 +19,6 @@ package org.apache.camel.component.sjms.producer;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
-
 import javax.jms.Connection;
 import javax.jms.Message;
 import javax.jms.MessageProducer;
@@ -97,13 +96,13 @@ public class InOnlyProducer extends SjmsProducer {
             Collection<Message> messages = new ArrayList<Message>(1);
             if (exchange.getIn().getBody() != null) {
                 if (exchange.getIn().getBody() instanceof List) {
-                    Iterable<?> payload = (Iterable<?>)exchange.getIn().getBody();
+                    Iterable<?> payload = (Iterable<?>) exchange.getIn().getBody();
                     for (final Object object : payload) {
                         Message message;
                         if (BatchMessage.class.isInstance(object)) {
-                            BatchMessage<?> batchMessage = (BatchMessage<?>)object;
+                            BatchMessage<?> batchMessage = (BatchMessage<?>) object;
                             message = JmsMessageHelper.createMessage(producer.getSession(), batchMessage.getPayload(), batchMessage.getHeaders(), getSjmsEndpoint()
-                                .getJmsKeyFormatStrategy());
+                                    .getJmsKeyFormatStrategy());
                         } else {
                             message = JmsMessageHelper.createMessage(producer.getSession(), object, exchange.getIn().getHeaders(), getSjmsEndpoint().getJmsKeyFormatStrategy());
                         }
@@ -112,7 +111,7 @@ public class InOnlyProducer extends SjmsProducer {
                 } else {
                     Object payload = exchange.getIn().getBody();
                     Message message = JmsMessageHelper
-                        .createMessage(producer.getSession(), payload, exchange.getIn().getHeaders(), getSjmsEndpoint().getJmsKeyFormatStrategy());
+                            .createMessage(producer.getSession(), payload, exchange.getIn().getHeaders(), getSjmsEndpoint().getJmsKeyFormatStrategy());
                     messages.add(message);
                 }
             }

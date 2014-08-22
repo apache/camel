@@ -25,7 +25,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.concurrent.TimeoutException;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;
-
 import javax.jms.Connection;
 import javax.jms.Destination;
 import javax.jms.Message;
@@ -58,16 +57,13 @@ public class InOutProducer extends SjmsProducer {
     /**
      * We use the {@link ReadWriteLock} to manage the {@link TreeMap} in place
      * of a {@link ConcurrentMap} because due to significant performance gains.
-     * TODO Externalize the Exchanger Map to a store object
      */
     private static Map<String, Exchanger<Object>> exchangerMap = new TreeMap<String, Exchanger<Object>>();
     private ReadWriteLock lock = new ReentrantReadWriteLock();
 
     /**
      * A pool of {@link MessageConsumerResource} objects that are the reply
-     * consumers. 
-     * TODO Add Class documentation for MessageProducerPool 
-     * TODO Externalize
+     * consumers.
      */
     protected class MessageConsumerResourcesFactory extends BasePoolableObjectFactory<MessageConsumerResources> {
 
@@ -141,11 +137,6 @@ public class InOutProducer extends SjmsProducer {
         private final Logger tempLogger = LoggerFactory.getLogger(InternalTempDestinationListener.class);
         private Exchanger<Object> exchanger;
 
-        /**
-         * TODO Add Constructor Javadoc
-         * 
-         * @param exchanger
-         */
         public InternalTempDestinationListener(Exchanger<Object> exchanger) {
             this.exchanger = exchanger;
         }
@@ -183,7 +174,7 @@ public class InOutProducer extends SjmsProducer {
             setConsumers(new GenericObjectPool<MessageConsumerResources>(new MessageConsumerResourcesFactory()));
             getConsumers().setMaxActive(getConsumerCount());
             getConsumers().setMaxIdle(getConsumerCount());
-            while(getConsumers().getNumIdle() < getConsumers().getMaxIdle()){
+            while (getConsumers().getNumIdle() < getConsumers().getMaxIdle()) {
                 getConsumers().addObject();
             }
         }
@@ -206,7 +197,7 @@ public class InOutProducer extends SjmsProducer {
         try {
             MessageProducer messageProducer = null;
             Session session = null;
-            
+
             conn = getConnectionResource().borrowConnection();
             if (isEndpointTransacted()) {
                 session = conn.createSession(true, getAcknowledgeMode());
@@ -222,7 +213,7 @@ public class InOutProducer extends SjmsProducer {
             if (messageProducer == null) {
                 throw new CamelException("Message Consumer Creation Exception: MessageProducer is NULL");
             }
-            
+
             answer = new MessageProducerResources(session, messageProducer);
 
         } catch (Exception e) {
@@ -232,19 +223,13 @@ public class InOutProducer extends SjmsProducer {
                 getConnectionResource().returnConnection(conn);
             }
         }
-        
+
         return answer;
     }
 
     /**
      * TODO time out is actually double as it waits for the producer and then
      * waits for the response. Use an atomic long to manage the countdown
-     * 
-     * @see org.apache.camel.component.sjms.SjmsProducer#sendMessage(org.apache.camel.Exchange,
-     *      org.apache.camel.AsyncCallback)
-     * @param exchange
-     * @param callback
-     * @throws Exception
      */
     @Override
     public void sendMessage(final Exchange exchange, final AsyncCallback callback, final MessageProducerResources producer) throws Exception {
@@ -305,9 +290,9 @@ public class InOutProducer extends SjmsProducer {
 
         if (exchange.getException() == null) {
             if (responseObject instanceof Throwable) {
-                exchange.setException((Throwable)responseObject);
+                exchange.setException((Throwable) responseObject);
             } else if (responseObject instanceof Message) {
-                Message response = (Message)responseObject;
+                Message response = (Message) responseObject;
                 SjmsExchangeMessageHelper.populateExchange(response, exchange, true);
             } else {
                 exchange.setException(new CamelException("Unknown response type: " + responseObject));

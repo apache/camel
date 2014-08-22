@@ -18,7 +18,6 @@ package org.apache.camel.component.sjms;
 
 import java.util.Map;
 import java.util.concurrent.ExecutorService;
-
 import javax.jms.ConnectionFactory;
 
 import org.apache.camel.CamelException;
@@ -72,7 +71,7 @@ public class SjmsComponent extends UriEndpointComponent implements HeaderFilterS
     /**
      * Helper method used to detect the type of endpoint and add the "queue"
      * protocol if it is a default endpoint URI.
-     * 
+     *
      * @param uri The value passed into our call to create an endpoint
      * @return String
      * @throws Exception
@@ -106,18 +105,18 @@ public class SjmsComponent extends UriEndpointComponent implements HeaderFilterS
      * are using the InOut MEP. If namedReplyTo is defined and the MEP is InOnly
      * the endpoint won't be expecting a reply so throw an error to alert the
      * user.
-     * 
+     *
      * @param parameters {@link Endpoint} parameters
      * @throws Exception throws a {@link CamelException} when MEP equals InOnly
-     *             and namedReplyTo is defined.
+     *                   and namedReplyTo is defined.
      */
     private static void validateMepAndReplyTo(Map<String, Object> parameters) throws Exception {
         boolean namedReplyToSet = parameters.containsKey("namedReplyTo");
         boolean mepSet = parameters.containsKey("exchangePattern");
         if (namedReplyToSet && mepSet) {
             if (!parameters.get("exchangePattern").equals(ExchangePattern.InOut.toString())) {
-                String namedReplyTo = (String)parameters.get("namedReplyTo");
-                ExchangePattern mep = ExchangePattern.valueOf((String)parameters.get("exchangePattern"));
+                String namedReplyTo = (String) parameters.get("namedReplyTo");
+                ExchangePattern mep = ExchangePattern.valueOf((String) parameters.get("exchangePattern"));
                 throw new CamelException("Setting parameter namedReplyTo=" + namedReplyTo + " requires a MEP of type InOut. Parameter exchangePattern is set to " + mep);
             }
         }
@@ -137,7 +136,7 @@ public class SjmsComponent extends UriEndpointComponent implements HeaderFilterS
             connections.fillPool();
             setConnectionResource(connections);
         } else if (getConnectionResource() instanceof ConnectionFactoryResource) {
-            ((ConnectionFactoryResource)getConnectionResource()).fillPool();
+            ((ConnectionFactoryResource) getConnectionResource()).fillPool();
         }
     }
 
@@ -149,7 +148,7 @@ public class SjmsComponent extends UriEndpointComponent implements HeaderFilterS
 
         if (getConnectionResource() != null) {
             if (getConnectionResource() instanceof ConnectionFactoryResource) {
-                ((ConnectionFactoryResource)getConnectionResource()).drainPool();
+                ((ConnectionFactoryResource) getConnectionResource()).drainPool();
             }
         }
         super.doStop();
@@ -184,7 +183,7 @@ public class SjmsComponent extends UriEndpointComponent implements HeaderFilterS
     /**
      * Gets the ConnectionFactory value of connectionFactory for this instance
      * of SjmsComponent.
-     * 
+     *
      * @return the connectionFactory
      */
     public ConnectionFactory getConnectionFactory() {
@@ -228,7 +227,7 @@ public class SjmsComponent extends UriEndpointComponent implements HeaderFilterS
     /**
      * Gets the TransactionCommitStrategy value of transactionCommitStrategy for this
      * instance of SjmsComponent.
-     * 
+     *
      * @return the transactionCommitStrategy
      */
     public TransactionCommitStrategy getTransactionCommitStrategy() {
