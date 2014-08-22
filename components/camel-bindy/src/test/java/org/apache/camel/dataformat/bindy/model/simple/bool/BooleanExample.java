@@ -21,31 +21,32 @@ import org.apache.camel.dataformat.bindy.annotation.DataField;
 
 @CsvRecord(separator = ",")
 public class BooleanExample {
+
     @DataField(pos = 1)
     public String name;
 
     @DataField(pos = 2, defaultValue = "true")
     public Boolean exist;
 
-	public String getName() {
-		return name;
-	}
+    public String getName() {
+        return name;
+    }
 
-	public void setName(String name) {
-		this.name = name;
-	}
+    public void setName(String name) {
+        this.name = name;
+    }
 
-	public Boolean getExist() {
-		return exist;
-	}
+    public Boolean getExist() {
+        return exist;
+    }
 
-	public void setExist(Boolean exist) {
-		this.exist = exist;
-	}
+    public void setExist(Boolean exist) {
+        this.exist = exist;
+    }
 
-	@Override
-	public String toString() {
-		return "BoolExample [name=" + name + ", exist=" + exist + "]";
-	}
+    @Override
+    public String toString() {
+        return "BoolExample [name=" + name + ", exist=" + exist + "]";
+    }
 
 }

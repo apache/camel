@@ -25,7 +25,7 @@ public class BooleanFormat implements Format<Boolean> {
     }
 
     public Boolean parse(String string) throws Exception {
-        return new Boolean(string);
+        return Boolean.valueOf(string);
     }
 
 }
