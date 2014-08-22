@@ -37,12 +37,6 @@
             org.apache.camel.component.sjms,
             org.apache.camel.component.sjms.jms
         </camel.osgi.export.pkg>
-        <camel.osgi.import.pkg>
-            !org.apache.camel.component.sjms.*,
-            org.apache.camel.*;${camel.osgi.import.camel.version},
-            ${camel.osgi.import.defaults},
-            *
-        </camel.osgi.import.pkg>
         <camel.osgi.private.pkg>
             org.apache.camel.component.sjms.consumer,
             org.apache.camel.component.sjms.producer,
