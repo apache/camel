@@ -267,19 +267,30 @@ public class ProducerCache extends ServiceSupport {
      */
     public boolean doInAsyncProducer(final Endpoint endpoint, final Exchange exchange, final ExchangePattern pattern,
                                      final AsyncCallback callback, final AsyncProducerCallback producerCallback) {
-        boolean sync = true;
 
-        // get the producer and we do not mind if its pooled as we can handle returning it back to the pool
-        final Producer producer = doGetProducer(endpoint, true);
+        Producer target;
+        try {
+            // get the producer and we do not mind if its pooled as we can handle returning it back to the pool
+            target = doGetProducer(endpoint, true);
 
-        if (producer == null) {
-            if (isStopped()) {
-                LOG.warn("Ignoring exchange sent after processor is stopped: " + exchange);
-                return false;
-            } else {
-                throw new IllegalStateException("No producer, this processor has not been started: " + this);
+            if (target == null) {
+                if (isStopped()) {
+                    LOG.warn("Ignoring exchange sent after processor is stopped: " + exchange);
+                    callback.done(true);
+                    return true;
+                } else {
+                    exchange.setException(new IllegalStateException("No producer, this processor has not been started: " + this));
+                    callback.done(true);
+                    return true;
+                }
             }
+        } catch (Throwable e) {
+            exchange.setException(e);
+            callback.done(true);
+            return true;
         }
+
+        final Producer producer = target;
 
         // record timing for sending the exchange using the producer
         final StopWatch watch = eventNotifierEnabled && exchange != null ? new StopWatch() : null;
@@ -290,7 +301,7 @@ public class ProducerCache extends ServiceSupport {
             }
             // invoke the callback
             AsyncProcessor asyncProcessor = AsyncProcessorConverterHelper.convert(producer);
-            sync = producerCallback.doInAsyncProducer(producer, asyncProcessor, exchange, pattern, new AsyncCallback() {
+            return producerCallback.doInAsyncProducer(producer, asyncProcessor, exchange, pattern, new AsyncCallback() {
                 @Override
                 public void done(boolean doneSync) {
                     try {
@@ -322,9 +333,9 @@ public class ProducerCache extends ServiceSupport {
             if (exchange != null) {
                 exchange.setException(e);
             }
+            callback.done(true);
+            return true;
         }
-
-        return sync;
     }
 
     protected Exchange sendExchange(final Endpoint endpoint, ExchangePattern pattern,
