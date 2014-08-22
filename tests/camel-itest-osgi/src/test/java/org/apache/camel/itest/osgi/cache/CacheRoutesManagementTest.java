@@ -28,14 +28,14 @@ import org.apache.camel.component.cache.CacheManagerFactory;
 import org.apache.camel.itest.osgi.OSGiIntegrationTestSupport;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.ops4j.pax.exam.Configuration;
 import org.ops4j.pax.exam.Option;
-import org.ops4j.pax.exam.junit.Configuration;
-import org.ops4j.pax.exam.junit.JUnit4TestRunner;
+import org.ops4j.pax.exam.junit.PaxExam;
 
 import static org.ops4j.pax.exam.OptionUtils.combine;
 
 
-@RunWith(JUnit4TestRunner.class)
+@RunWith(PaxExam.class)
 public class CacheRoutesManagementTest extends OSGiIntegrationTestSupport {
     private static final String CACHE_URI = "cache:foo?cacheManagerFactory=#cacheManagerFactory";
     private static final String ROUTE1_ID = "TEST_ROUTE_1";

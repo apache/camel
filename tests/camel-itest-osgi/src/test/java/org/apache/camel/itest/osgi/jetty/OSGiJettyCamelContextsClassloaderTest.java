@@ -19,9 +19,9 @@ package org.apache.camel.itest.osgi.jetty;
 import org.apache.camel.itest.osgi.OSGiIntegrationTestSupport;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.ops4j.pax.exam.Configuration;
 import org.ops4j.pax.exam.Option;
-import org.ops4j.pax.exam.junit.Configuration;
-import org.ops4j.pax.exam.junit.JUnit4TestRunner;
+import org.ops4j.pax.exam.junit.PaxExam;
 
 import org.osgi.framework.Constants;
 
@@ -34,7 +34,7 @@ import static org.ops4j.pax.swissbox.tinybundles.core.TinyBundles.newBundle;
  * and thus, sharing the same container-wide Jetty Connector, do not share the classloader. The TCCL should
  * be different in each case, as for each route it should be the Classloader of their containing bundle.
  */
-@RunWith(JUnit4TestRunner.class)
+@RunWith(PaxExam.class)
 public class OSGiJettyCamelContextsClassloaderTest extends OSGiIntegrationTestSupport {
     
     @Test

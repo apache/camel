@@ -28,10 +28,10 @@ import org.apache.camel.component.mock.MockEndpoint;
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.ops4j.pax.exam.junit.JUnit4TestRunner;
+import org.ops4j.pax.exam.junit.PaxExam;
 import org.springframework.osgi.context.support.OsgiBundleXmlApplicationContext;
 
-@RunWith(JUnit4TestRunner.class)
+@RunWith(PaxExam.class)
 @Ignore("Test fails")
 public class AwsS3IntegrationTest extends AwsTestSupport {
     
