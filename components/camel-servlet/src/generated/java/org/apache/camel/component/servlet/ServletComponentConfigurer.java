@@ -36,7 +36,7 @@ public class ServletComponentConfigurer extends PropertyConfigurerSupport implem
         case "httpconfiguration":
         case "httpConfiguration": target.setHttpConfiguration(property(camelContext, org.apache.camel.http.common.HttpConfiguration.class, value)); return true;
         case "httpregistry":
-        case "httpRegistry": target.setHttpRegistry(property(camelContext, org.apache.camel.component.servlet.HttpRegistry.class, value)); return true;
+        case "httpRegistry": target.setHttpRegistry(property(camelContext, org.apache.camel.http.common.HttpRegistry.class, value)); return true;
         case "servletname":
         case "servletName": target.setServletName(property(camelContext, java.lang.String.class, value)); return true;
         default: return false;
@@ -54,7 +54,7 @@ public class ServletComponentConfigurer extends PropertyConfigurerSupport implem
         answer.put("headerFilterStrategy", org.apache.camel.spi.HeaderFilterStrategy.class);
         answer.put("httpBinding", org.apache.camel.http.common.HttpBinding.class);
         answer.put("httpConfiguration", org.apache.camel.http.common.HttpConfiguration.class);
-        answer.put("httpRegistry", org.apache.camel.component.servlet.HttpRegistry.class);
+        answer.put("httpRegistry", org.apache.camel.http.common.HttpRegistry.class);
         answer.put("servletName", java.lang.String.class);
         return answer;
     }

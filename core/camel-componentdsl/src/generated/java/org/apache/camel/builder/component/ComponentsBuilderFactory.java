@@ -3066,6 +3066,17 @@ public interface ComponentsBuilderFactory {
         return org.apache.camel.builder.component.dsl.RestSwaggerComponentBuilderFactory.restSwagger();
     }
     /**
+     * Resteasy (camel-resteasy)
+     * Defines the Resteasy Endpoint.
+     * 
+     * Category: rest
+     * Since: 3.4
+     * Maven coordinates: org.apache.camel:camel-resteasy
+     */
+    static org.apache.camel.builder.component.dsl.ResteasyComponentBuilderFactory.ResteasyComponentBuilder resteasy() {
+        return org.apache.camel.builder.component.dsl.ResteasyComponentBuilderFactory.resteasy();
+    }
+    /**
      * Robot Framework (camel-robotframework)
      * Pass camel exchanges to acceptence test written in Robot DSL.
      * 

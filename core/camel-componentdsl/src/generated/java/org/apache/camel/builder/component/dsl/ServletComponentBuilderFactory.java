@@ -115,12 +115,12 @@ public interface ServletComponentBuilderFactory {
          * To use a custom org.apache.camel.component.servlet.HttpRegistry.
          * 
          * The option is a:
-         * <code>org.apache.camel.component.servlet.HttpRegistry</code> type.
+         * <code>org.apache.camel.http.common.HttpRegistry</code> type.
          * 
          * Group: consumer (advanced)
          */
         default ServletComponentBuilder httpRegistry(
-                org.apache.camel.component.servlet.HttpRegistry httpRegistry) {
+                org.apache.camel.http.common.HttpRegistry httpRegistry) {
             doSetProperty("httpRegistry", httpRegistry);
             return this;
         }
@@ -217,7 +217,7 @@ public interface ServletComponentBuilderFactory {
             case "servletName": ((ServletComponent) component).setServletName((java.lang.String) value); return true;
             case "attachmentMultipartBinding": ((ServletComponent) component).setAttachmentMultipartBinding((boolean) value); return true;
             case "fileNameExtWhitelist": ((ServletComponent) component).setFileNameExtWhitelist((java.lang.String) value); return true;
-            case "httpRegistry": ((ServletComponent) component).setHttpRegistry((org.apache.camel.component.servlet.HttpRegistry) value); return true;
+            case "httpRegistry": ((ServletComponent) component).setHttpRegistry((org.apache.camel.http.common.HttpRegistry) value); return true;
             case "allowJavaSerializedObject": ((ServletComponent) component).setAllowJavaSerializedObject((boolean) value); return true;
             case "basicPropertyBinding": ((ServletComponent) component).setBasicPropertyBinding((boolean) value); return true;
             case "httpBinding": ((ServletComponent) component).setHttpBinding((org.apache.camel.http.common.HttpBinding) value); return true;

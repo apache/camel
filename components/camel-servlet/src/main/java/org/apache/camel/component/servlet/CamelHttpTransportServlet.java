@@ -21,7 +21,10 @@ import javax.servlet.ServletException;
 
 import org.apache.camel.converter.ObjectConverter;
 import org.apache.camel.http.common.CamelServlet;
+import org.apache.camel.http.common.DefaultHttpRegistry;
 import org.apache.camel.http.common.HttpConsumer;
+import org.apache.camel.http.common.HttpRegistry;
+import org.apache.camel.http.common.HttpRegistryProvider;
 import org.apache.camel.http.common.HttpRestServletResolveConsumerStrategy;
 import org.apache.camel.util.ObjectHelper;
 import org.slf4j.Logger;
@@ -62,7 +65,7 @@ public class CamelHttpTransportServlet extends CamelServlet {
 
         if (httpRegistry == null) {
             httpRegistry = DefaultHttpRegistry.getHttpRegistry(name);
-            CamelServlet existing = httpRegistry.getCamelServlet(name);
+            HttpRegistryProvider existing = httpRegistry.getCamelServlet(name);
             if (existing != null) {
                 String msg = "Duplicate ServletName detected: " + name + ". Existing: " + existing + " This: " + this.toString()
                         + ". Its advised to use unique ServletName per Camel application.";

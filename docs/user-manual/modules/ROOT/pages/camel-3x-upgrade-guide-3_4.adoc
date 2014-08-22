@@ -6,6 +6,15 @@ from both 3.0 to 3.1 and 3.1 to 3.2.
 
 == Upgrading Camel 3.3 to 3.4
 
+=== camel-servlet and camel-http-common
+HttpRegistry and DefaultHttpRegistry classes from camel-servlet are moved from camel-servlet into camel-http-common.
+HttpRegistryProvider is added and used in DefaultHttpRegistry instead of CamelServlet which is implementing HttpRegistryProvider
+since DefaultHttpRegistry is used in camel-resteasy component where CamelResteasy servlet also implementing HttpRegistryProvider.
+
+These changes had effects on camel-atmosphere-websocket and camel-servlet and also camel-resteasy.
+Users of these components where they would have custom implemetations on DefaultHttpRegistry and using CamelServlet class should 
+take this change into account.
+
 === camel-test and JMX
 
 The `camel-test` module no longer has dependency on `camel-management` out of the box.
