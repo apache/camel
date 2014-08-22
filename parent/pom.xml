@@ -58,6 +58,7 @@
         <aries-spifly-version>1.2.1</aries-spifly-version>
         <aries-util-version>1.1.3</aries-util-version>
         <arquillian-container-se-managed-version>1.0.2.Final</arquillian-container-se-managed-version>
+        <arquillian-jetty-embedded-9-version>1.0.0.CR3</arquillian-jetty-embedded-9-version>
         <arquillian-version>1.6.0.Final</arquillian-version>
         <arquillian-weld-embedded-version>2.0.0.Final</arquillian-weld-embedded-version>
         <asm-version>8.0.1</asm-version>
@@ -291,11 +292,13 @@
         <jakarta-mail-version>1.6.5</jakarta-mail-version>
         <javax-servlet-api-version>3.1.0</javax-servlet-api-version>
         <jakarta-api-version>2.1.5</jakarta-api-version>
+        <jakarta.el-version>3.0.3</jakarta.el-version>
         <jakarta-jaxb-version>2.3.2</jakarta-jaxb-version>
         <glassfish-javax-json>1.0.4</glassfish-javax-json>
         <glassfish-jaxb-runtime-version>2.3.2</glassfish-jaxb-runtime-version>
         <jaxb2-maven-plugin-version>2.5.0</jaxb2-maven-plugin-version>
         <jbpm-version>7.36.1.Final</jbpm-version>
+        <jboss-el-api_3.0_spec-version>2.0.0.Final</jboss-el-api_3.0_spec-version>
         <jboss-logging-version>3.4.0.Final</jboss-logging-version>
         <jboss-marshalling-version>1.4.10.Final</jboss-marshalling-version>
         <jboss-transaction-spi.version>7.5.1.Final</jboss-transaction-spi.version>
@@ -386,6 +389,7 @@
         <maven-jar-plugin-version>3.2.0</maven-jar-plugin-version>
         <maven-javadoc-plugin-version>3.2.0</maven-javadoc-plugin-version>
         <maven-jboss-as-maven-plugin-version>7.9.Final</maven-jboss-as-maven-plugin-version>
+        <maven-model-version>3.2.5</maven-model-version>
         <maven-plugin-plugin-version>3.6.0</maven-plugin-plugin-version>
         <maven-plugin-annotations-version>3.6.0</maven-plugin-annotations-version>
         <maven-plugin-testing-harness-version>3.3.0</maven-plugin-testing-harness-version>
@@ -469,6 +473,7 @@
         <rescu-version>2.0.2</rescu-version>
         <resilience4j-version>1.4.0</resilience4j-version>
         <rest-assured-version>4.3.0</rest-assured-version>
+        <resteasy-version>4.5.3.Final</resteasy-version>
         <revapi-java-version>0.20.0</revapi-java-version>
         <revapi-maven-plugin-version>0.11.2</revapi-maven-plugin-version>
         <rhino-version>1.7.7.1</rhino-version>
@@ -2024,6 +2029,11 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-rest-swagger</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
+        <artifactId>camel-resteasy</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>

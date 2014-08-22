@@ -276,6 +276,7 @@ public interface EndpointBuilders
             org.apache.camel.builder.endpoint.dsl.RestEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.RestOpenApiEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.RestSwaggerEndpointBuilderFactory,
+            org.apache.camel.builder.endpoint.dsl.ResteasyEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.RobotFrameworkEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.RssEndpointBuilderFactory,
             org.apache.camel.builder.endpoint.dsl.S3EndpointBuilderFactory,

@@ -14,7 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.servlet;
+package org.apache.camel.http.common;
 
 import java.util.HashMap;
 import java.util.HashSet;
@@ -24,8 +24,6 @@ import java.util.Set;
 
 import javax.servlet.Servlet;
 
-import org.apache.camel.http.common.CamelServlet;
-import org.apache.camel.http.common.HttpConsumer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -37,7 +35,7 @@ public class DefaultHttpRegistry implements HttpRegistry {
     private final Object lock = new Object();
 
     private final Set<HttpConsumer> consumers;
-    private final Set<CamelServlet> providers;
+    private final Set<HttpRegistryProvider> providers;
 
     public DefaultHttpRegistry() {
         consumers = new HashSet<>();
@@ -70,7 +68,7 @@ public class DefaultHttpRegistry implements HttpRegistry {
                 LOG.debug("Registering consumer for path {} providers present: {}", consumer.getPath(), providers.size());
             }
             consumers.add(consumer);
-            for (CamelServlet provider : providers) {
+            for (HttpRegistryProvider provider : providers) {
                 provider.connect(consumer);
             }
         }
@@ -83,7 +81,7 @@ public class DefaultHttpRegistry implements HttpRegistry {
                 LOG.debug("Unregistering consumer for path {}", consumer.getPath());
             }
             consumers.remove(consumer);
-            for (CamelServlet provider : providers) {
+            for (HttpRegistryProvider provider : providers) {
                 provider.disconnect(consumer);
             }
         }
@@ -96,12 +94,12 @@ public class DefaultHttpRegistry implements HttpRegistry {
         register(camelServlet);
     }
 
-    public void unregister(CamelServlet provider, Map<String, Object> properties) {
+    public void unregister(HttpRegistryProvider provider, Map<String, Object> properties) {
         unregister(provider);
     }
     
     @Override
-    public void register(CamelServlet provider) {
+    public void register(HttpRegistryProvider provider) {
         synchronized (lock) {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Registering CamelServlet with name {} consumers present: {}", provider.getServletName(), consumers.size());
@@ -114,7 +112,7 @@ public class DefaultHttpRegistry implements HttpRegistry {
     }
 
     @Override
-    public void unregister(CamelServlet provider) {
+    public void unregister(HttpRegistryProvider provider) {
         synchronized (lock) {
             if (LOG.isDebugEnabled()) {
                 LOG.debug("Unregistering CamelServlet with name {}", provider.getServletName());
@@ -124,9 +122,9 @@ public class DefaultHttpRegistry implements HttpRegistry {
     }
 
     @Override
-    public CamelServlet getCamelServlet(String servletName) {
+    public HttpRegistryProvider getCamelServlet(String servletName) {
         synchronized (lock) {
-            for (CamelServlet provider : providers) {
+            for (HttpRegistryProvider provider : providers) {
                 if (provider.getServletName().equals(servletName)) {
                     return provider;
                 }
@@ -139,8 +137,8 @@ public class DefaultHttpRegistry implements HttpRegistry {
         synchronized (lock) {
             providers.clear();
             for (Servlet servlet : servlets) {
-                if (servlet instanceof CamelServlet) {
-                    providers.add((CamelServlet) servlet);
+                if (servlet instanceof HttpRegistryProvider) {
+                    providers.add((HttpRegistryProvider) servlet);
                 }
             }
         }

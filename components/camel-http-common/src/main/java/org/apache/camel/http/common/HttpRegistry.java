@@ -14,10 +14,7 @@
  * See the License for the specific language governing permissions and
  * limitations under the License.
  */
-package org.apache.camel.component.servlet;
-
-import org.apache.camel.http.common.CamelServlet;
-import org.apache.camel.http.common.HttpConsumer;
+package org.apache.camel.http.common;
 
 /**
  * Keeps track of HttpConsumers and CamelServlets and
@@ -37,10 +34,10 @@ public interface HttpRegistry {
 
     void unregister(HttpConsumer consumer);
 
-    void register(CamelServlet provider);
+    void register(HttpRegistryProvider provider);
 
-    void unregister(CamelServlet provider);
+    void unregister(HttpRegistryProvider provider);
 
-    CamelServlet getCamelServlet(String servletName);
+    HttpRegistryProvider getCamelServlet(String servletName);
 
 }

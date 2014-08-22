@@ -270,6 +270,7 @@
 ** xref:rest-api-component.adoc[REST API]
 ** xref:rest-openapi-component.adoc[REST OpenApi]
 ** xref:rest-swagger-component.adoc[REST Swagger]
+** xref:resteasy-component.adoc[Resteasy]
 ** xref:robotframework-component.adoc[Robot Framework]
 ** xref:rss-component.adoc[RSS]
 ** xref:saga-component.adoc[Saga]
