@@ -16,6 +16,8 @@
  */
 package org.apache.camel.itest.osgi.cxf.blueprint;
 
+import java.io.InputStream;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.example.reportincident.InputReportIncident;
 import org.apache.camel.example.reportincident.OutputReportIncident;
@@ -25,18 +27,19 @@ import org.apache.camel.itest.osgi.cxf.ReportIncidentEndpointService;
 import org.apache.cxf.endpoint.Server;
 import org.apache.cxf.jaxws.JaxWsProxyFactoryBean;
 import org.apache.cxf.jaxws.JaxWsServerFactoryBean;
+
 import org.junit.AfterClass;
 import org.junit.BeforeClass;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
 import org.ops4j.pax.exam.Configuration;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.PaxExam;
+import org.ops4j.pax.tinybundles.core.TinyBundles;
 import org.osgi.framework.Constants;
 
 import static org.ops4j.pax.exam.OptionUtils.combine;
-import static org.ops4j.pax.swissbox.tinybundles.core.TinyBundles.newBundle;
-import static org.ops4j.pax.swissbox.tinybundles.core.TinyBundles.withBnd;
 
 @RunWith(PaxExam.class)
 public class CxfBlueprintRouterTest extends OSGiBlueprintTestSupport {
@@ -94,26 +97,33 @@ public class CxfBlueprintRouterTest extends OSGiBlueprintTestSupport {
 
     @Configuration
     public static Option[] configure() throws Exception {
-        Option[] options = combine(
-                getDefaultCamelKarafOptions(),
-                // using the features to install the camel components
-                loadCamelFeatures(
-                        "camel-blueprint", "camel-cxf"),
+        try {
+            InputStream ins = TinyBundles.bundle()
+                .add("OSGI-INF/blueprint/test.xml", CxfBlueprintRouterTest.class.getResource("CxfBlueprintRouter.xml"))
+                .add("WSDL/report_incident.wsdl", CxfBlueprintRouterTest.class.getResource("/report_incident.wsdl"))
+                .add(org.apache.camel.example.reportincident.InputReportIncident.class)
+                .add(org.apache.camel.example.reportincident.OutputReportIncident.class)
+                .add(org.apache.camel.example.reportincident.ReportIncidentEndpoint.class)
+                .add(org.apache.camel.example.reportincident.ReportIncidentEndpointService.class)
+                .add(org.apache.camel.example.reportincident.ObjectFactory.class)
+                .set(Constants.BUNDLE_SYMBOLICNAME, "CxfBlueprintRouterTest")
+                .set(Constants.DYNAMICIMPORT_PACKAGE, "*")
+                .build(TinyBundles.withBnd());
+            
+            Option[] options = combine(
+                    getDefaultCamelKarafOptions(),
+                    // using the features to install the camel components
+                    loadCamelFeatures(
+                            "camel-blueprint", "camel-cxf"),
+    
+                    bundle(ins).noStart()
+    
+            );
 
-                bundle(newBundle()
-                        .add("OSGI-INF/blueprint/test.xml", CxfBlueprintRouterTest.class.getResource("CxfBlueprintRouter.xml"))
-                        .add("WSDL/report_incident.wsdl", CxfBlueprintRouterTest.class.getResource("/report_incident.wsdl"))
-                        .add(org.apache.camel.example.reportincident.InputReportIncident.class)
-                        .add(org.apache.camel.example.reportincident.OutputReportIncident.class)
-                        .add(org.apache.camel.example.reportincident.ReportIncidentEndpoint.class)
-                        .add(org.apache.camel.example.reportincident.ReportIncidentEndpointService.class)
-                        .add(org.apache.camel.example.reportincident.ObjectFactory.class)
-                        .set(Constants.BUNDLE_SYMBOLICNAME, "CxfBlueprintRouterTest")
-                        .set(Constants.DYNAMICIMPORT_PACKAGE, "*")
-                        .build(withBnd())).noStart()
-
-        );
-
-        return options;
+            return options;
+        } catch (Throwable  ite) {
+            ite.printStackTrace();
+            throw new RuntimeException(ite);
+        }
     }
 }

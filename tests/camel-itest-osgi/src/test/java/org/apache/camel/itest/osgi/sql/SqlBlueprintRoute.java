@@ -23,27 +23,30 @@ import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Set;
+
 import javax.sql.DataSource;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.mock.MockEndpoint;
 import org.apache.camel.component.sql.SqlConstants;
 import org.apache.camel.itest.osgi.blueprint.OSGiBlueprintTestSupport;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
 import org.ops4j.pax.exam.Configuration;
 import org.ops4j.pax.exam.Customizer;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.PaxExam;
+import org.ops4j.pax.tinybundles.core.TinyBundles;
 import org.osgi.framework.Constants;
 import org.springframework.dao.DataAccessException;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 
-
 import static org.ops4j.pax.exam.OptionUtils.combine;
-import static org.ops4j.pax.swissbox.tinybundles.core.TinyBundles.modifyBundle;
 
 @RunWith(PaxExam.class)
 public class SqlBlueprintRoute extends OSGiBlueprintTestSupport {
@@ -133,7 +136,7 @@ public class SqlBlueprintRoute extends OSGiBlueprintTestSupport {
                 new Customizer() {
                     @Override
                     public InputStream customizeTestProbe(InputStream testProbe) {
-                        return modifyBundle(testProbe)
+                        return TinyBundles.bundle().read(testProbe)
                                 .add("OSGI-INF/blueprint/test.xml", SqlBlueprintRoute.class.getResource("blueprintSqlCamelContext.xml"))
                                 .set(Constants.BUNDLE_SYMBOLICNAME, "CamelBlueprintSqlTestBundle")
                                 .set(Constants.DYNAMICIMPORT_PACKAGE, "*")

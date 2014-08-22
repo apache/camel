@@ -25,17 +25,19 @@ import org.apache.camel.itest.osgi.blueprint.OSGiBlueprintTestSupport;
 import org.jclouds.ContextBuilder;
 import org.jclouds.blobstore.BlobStore;
 import org.jclouds.blobstore.BlobStoreContext;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
 import org.ops4j.pax.exam.Configuration;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.PaxExam;
+import org.ops4j.pax.tinybundles.core.TinyBundles;
 import org.osgi.framework.Constants;
 
 import static org.ops4j.pax.exam.CoreOptions.provision;
 import static org.ops4j.pax.exam.CoreOptions.workingDirectory;
 import static org.ops4j.pax.exam.OptionUtils.combine;
-import static org.ops4j.pax.swissbox.tinybundles.core.TinyBundles.newBundle;
 
 @RunWith(PaxExam.class)
 public class BlobStoreBlueprintRouteTest extends OSGiBlueprintTestSupport {
@@ -74,7 +76,7 @@ public class BlobStoreBlueprintRouteTest extends OSGiBlueprintTestSupport {
         Option[] options = combine(
                 getDefaultCamelKarafOptions(),
                 //Helper.setLogLevel("INFO"),
-                provision(newBundle()
+                provision(TinyBundles.bundle()
                         .add("META-INF/persistence.xml", BlobStoreBlueprintRouteTest.class.getResource("/META-INF/persistence.xml"))
                         .add("OSGI-INF/blueprint/test.xml", BlobStoreBlueprintRouteTest.class.getResource("blueprintCamelContext.xml"))
                         .set(Constants.BUNDLE_SYMBOLICNAME, "CamelBlueprintJcloudsTestBundle")
@@ -82,7 +84,7 @@ public class BlobStoreBlueprintRouteTest extends OSGiBlueprintTestSupport {
                         .set("Meta-Persistence", "META-INF/persistence.xml")
                         .build()),
 
-                bundle(newBundle()
+                bundle(TinyBundles.bundle()
                         .add("OSGI-INF/blueprint/test.xml", BlobStoreBlueprintRouteTest.class.getResource("blueprintBlobStoreService.xml"))
                         .set(Constants.BUNDLE_SYMBOLICNAME, "org.apache.camel.jclouds.blobstore.service")
                         .set(Constants.BUNDLE_VERSION, "1.0.0")

@@ -23,17 +23,19 @@ import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
 import org.apache.camel.itest.osgi.OSGiIntegrationTestSupport;
+
 import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
 import org.ops4j.pax.exam.Configuration;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.PaxExam;
+import org.ops4j.pax.tinybundles.core.TinyBundles;
 
 import static org.ops4j.pax.exam.CoreOptions.options;
 import static org.ops4j.pax.exam.CoreOptions.provision;
 import static org.ops4j.pax.exam.CoreOptions.workingDirectory;
-import static org.ops4j.pax.swissbox.tinybundles.core.TinyBundles.newBundle;
 
 @RunWith(PaxExam.class)
 @Ignore("TODO: fix me")
@@ -80,7 +82,7 @@ public class OSGiIntegrationManagedCamelContextTest extends OSGiIntegrationTestS
             scanFeatures(getCamelKarafFeatureUrl(),                         
                           "camel-core", "camel-spring", "camel-test"),
             //set up the camel context bundle first             
-            provision(newBundle().add("META-INF/spring/CamelContext.xml", getCamelContextInputStream())
+            provision(TinyBundles.bundle().add("META-INF/spring/CamelContext.xml", getCamelContextInputStream())
                       .set(org.osgi.framework.Constants.BUNDLE_SYMBOLICNAME, "org.apache.camel.itest.osgi.CamelContextTinyBundle")
                       .set(org.osgi.framework.Constants.BUNDLE_NAME, "CamelContextTinyBundle").build()),
             

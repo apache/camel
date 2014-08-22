@@ -19,16 +19,18 @@ package org.apache.camel.itest.osgi.blueprint;
 import java.lang.reflect.Method;
 
 import org.apache.camel.util.jsse.SSLContextParameters;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
 import org.ops4j.pax.exam.Configuration;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.PaxExam;
+import org.ops4j.pax.tinybundles.core.TinyBundles;
 import org.osgi.framework.Constants;
 import org.osgi.service.blueprint.container.BlueprintContainer;
 
 import static org.ops4j.pax.exam.OptionUtils.combine;
-import static org.ops4j.pax.swissbox.tinybundles.core.TinyBundles.newBundle;
 
 /**
  * @version 
@@ -88,7 +90,7 @@ public class CamelBlueprint8Test extends OSGiBlueprintTestSupport {
         Option[] options = combine(
                 getDefaultCamelKarafOptions(),
 
-                bundle(newBundle()
+                bundle(TinyBundles.bundle()
                         .add("OSGI-INF/blueprint/test.xml", OSGiBlueprintTestSupport.class.getResource("blueprint-10.xml"))
                         .add(TestProducer.class)
                         .set(Constants.BUNDLE_SYMBOLICNAME, "CamelBlueprintTestBundle10")
@@ -96,7 +98,7 @@ public class CamelBlueprint8Test extends OSGiBlueprintTestSupport {
                         .build()).noStart(),
 
 
-                bundle(newBundle()
+                bundle(TinyBundles.bundle()
                        .add("OSGI-INF/blueprint/test.xml", OSGiBlueprintTestSupport.class.getResource("blueprint-18.xml"))
                        .add(JsseUtilTester.class)
                        .add("localhost.ks", OSGiBlueprintTestSupport.class.getResourceAsStream("/org/apache/camel/itest/osgi/util/jsse/localhost.ks"))

@@ -18,21 +18,24 @@ package org.apache.camel.itest.osgi.blueprint;
 
 import java.lang.reflect.InvocationTargetException;
 import java.lang.reflect.Method;
+
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.ProducerTemplate;
 import org.apache.camel.component.mock.MockEndpoint;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
 import org.ops4j.pax.exam.Configuration;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.PaxExam;
+import org.ops4j.pax.tinybundles.core.TinyBundles;
 import org.osgi.framework.Bundle;
 import org.osgi.framework.Constants;
 
 import static org.ops4j.pax.exam.OptionUtils.combine;
-import static org.ops4j.pax.swissbox.tinybundles.core.TinyBundles.newBundle;
 
 /**
  * Test cases to ensure that the Blueprint component is correctly setting the Thread's context classloader when starting
@@ -80,7 +83,7 @@ public class CamelBlueprintTcclTest extends OSGiBlueprintTestSupport {
         return combine(
             getDefaultCamelKarafOptions(),
 
-            bundle(newBundle()
+            bundle(TinyBundles.bundle()
                     .add("OSGI-INF/blueprint/test.xml", OSGiBlueprintTestSupport.class.getResource("blueprint-tccl.xml"))
                     .add(ThreadContextClassLoaderBean.class)
                     .set(Constants.BUNDLE_SYMBOLICNAME, BUNDLE_SYMBOLICNAME)

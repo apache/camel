@@ -24,17 +24,18 @@ import org.apache.http.impl.client.CloseableHttpClient;
 import org.apache.http.impl.client.DefaultHttpClient;
 import org.apache.http.impl.client.HttpClientBuilder;
 import org.apache.http.util.EntityUtils;
+
 import org.junit.Test;
 import org.junit.runner.RunWith;
+
 import org.ops4j.pax.exam.Configuration;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.junit.PaxExam;
+import org.ops4j.pax.tinybundles.core.TinyBundles;
 import org.springframework.osgi.context.support.OsgiBundleXmlApplicationContext;
 
 import static org.ops4j.pax.exam.CoreOptions.provision;
 import static org.ops4j.pax.exam.OptionUtils.combine;
-import static org.ops4j.pax.swissbox.tinybundles.core.TinyBundles.newBundle;
-import static org.ops4j.pax.swissbox.tinybundles.core.TinyBundles.withBnd;
 
 @RunWith(PaxExam.class)
 public class CxfBeanSpringRouteTest extends OSGiIntegrationSpringTestSupport {
@@ -69,13 +70,13 @@ public class CxfBeanSpringRouteTest extends OSGiIntegrationSpringTestSupport {
                 loadCamelFeatures(
                         "camel-jetty", "camel-http4", "camel-cxf"),
 
-                provision(newBundle()
+                provision(TinyBundles.bundle()
                         .add(org.apache.camel.itest.osgi.cxf.jaxrs.testbean.Customer.class)
                         .add(org.apache.camel.itest.osgi.cxf.jaxrs.testbean.CustomerService.class)
                         .add(org.apache.camel.itest.osgi.cxf.jaxrs.testbean.CustomerServiceResource.class)
                         .add(org.apache.camel.itest.osgi.cxf.jaxrs.testbean.Order.class)
                         .add(org.apache.camel.itest.osgi.cxf.jaxrs.testbean.Product.class)
-                        .build(withBnd()))//,
+                        .build(TinyBundles.withBnd()))//,
                 //vmOption("-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=n,address=5006")
         );
 
