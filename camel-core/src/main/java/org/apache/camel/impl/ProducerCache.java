@@ -228,16 +228,7 @@ public class ProducerCache extends ServiceSupport {
             }
         }
 
-        StopWatch watch = null;
-        if (eventNotifierEnabled && exchange != null) {
-            // record timing for sending the exchange using the producer
-            watch = new StopWatch();
-        }
-
         try {
-            if (eventNotifierEnabled && exchange != null) {
-                EventHelper.notifyExchangeSending(exchange.getContext(), exchange, endpoint);
-            }
             // invoke the callback
             answer = callback.doInProducer(producer, exchange, pattern);
         } catch (Throwable e) {
@@ -245,11 +236,6 @@ public class ProducerCache extends ServiceSupport {
                 exchange.setException(e);
             }
         } finally {
-            if (eventNotifierEnabled && exchange != null) {
-                long timeTaken = watch.stop();
-                // emit event that the exchange was sent to the endpoint
-                EventHelper.notifyExchangeSent(exchange.getContext(), exchange, endpoint, timeTaken);
-            }
             if (producer instanceof ServicePoolAware) {
                 // release back to the pool
                 pool.release(endpoint, producer);
