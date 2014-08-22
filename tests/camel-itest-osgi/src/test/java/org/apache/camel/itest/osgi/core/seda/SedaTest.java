@@ -59,8 +59,8 @@ public class SedaTest extends OSGiIntegrationTestSupport {
         assertNotSame(name1, name2);
 
         String id = "" + bundleContext.getBundle().getBundleId();
-        assertTrue(name1.startsWith(id));
-        assertTrue(name2.startsWith(id));
+        assertTrue(name1 + " does not start with " + id, name1.startsWith(id));
+        assertTrue(name2 + " does not start with " + id, name2.startsWith(id));
     }
    
 }
