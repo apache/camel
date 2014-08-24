@@ -53,6 +53,11 @@
                     <groupId>org.apache.avalon.framework</groupId>
                     <artifactId>avalon-framework-impl</artifactId>
                 </exclusion>
+                <!-- exclude the dependency of xalan to fix CAMEL-7737 -->
+                <exclusion>
+                    <groupId>xalan</groupId>
+                    <artifactId>xalan</artifactId>
+                </exclusion>
             </exclusions>
         </dependency>
         <dependency>
