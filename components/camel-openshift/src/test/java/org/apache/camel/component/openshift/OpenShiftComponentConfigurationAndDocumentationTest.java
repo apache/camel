@@ -42,9 +42,9 @@ public class OpenShiftComponentConfigurationAndDocumentationTest extends CamelTe
         String json = compConf.createParameterJsonSchema();
         assertNotNull(json);
 
-        assertTrue(json.contains("\"application\": { \"type\": \"java.lang.String\" }"));
-        assertTrue(json.contains("\"clientId\": { \"type\": \"java.lang.String\" }"));
-        assertTrue(json.contains("\"operation\": { \"type\": \"java.lang.String\" }"));
+        assertTrue(json.contains("\"application\": { \"type\": \"string\" }"));
+        assertTrue(json.contains("\"clientId\": { \"type\": \"string\" }"));
+        assertTrue(json.contains("\"operation\": { \"type\": \"string\" }"));
     }
 
     @Test

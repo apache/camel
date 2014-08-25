@@ -43,7 +43,7 @@ public class ServletComponentConfigurationAndDocumentationTest extends CamelTest
         String json = compConf.createParameterJsonSchema();
         assertNotNull(json);
 
-        assertTrue(json.contains("\"servletName\": { \"type\": \"java.lang.String\" }"));
+        assertTrue(json.contains("\"servletName\": { \"type\": \"string\" }"));
         assertTrue(json.contains("\"matchOnUriPrefix\": { \"type\": \"boolean\" }"));
     }
 

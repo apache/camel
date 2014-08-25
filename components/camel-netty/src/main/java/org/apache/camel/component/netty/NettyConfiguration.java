@@ -74,6 +74,7 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
     private LoggingLevel serverClosedChannelExceptionCaughtLogLevel = LoggingLevel.DEBUG;
     @UriParam
     private boolean allowDefaultCodec = true;
+    @UriParam
     private ClientPipelineFactory clientPipelineFactory;
     @UriParam
     private int maximumPoolSize = 16;

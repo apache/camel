@@ -41,8 +41,8 @@ public class MockComponentConfigurationAndDocumentationTest extends ContextTestS
         String json = compConf.createParameterJsonSchema();
         assertNotNull(json);
 
-        assertTrue(json.contains("\"expectedCount\": { \"type\": \"int\" }"));
-        assertTrue(json.contains("\"retainFirst\": { \"type\": \"int\" }"));
+        assertTrue(json.contains("\"expectedCount\": { \"type\": \"integer\" }"));
+        assertTrue(json.contains("\"retainFirst\": { \"type\": \"integer\" }"));
     }
 
     @Test

@@ -16,7 +16,6 @@
  */
 package org.apache.camel.component.netty4;
 
-
 import java.io.File;
 import java.net.URI;
 import java.nio.charset.Charset;
@@ -75,6 +74,7 @@ public class NettyConfiguration extends NettyServerBootstrapConfiguration implem
     private LoggingLevel serverClosedChannelExceptionCaughtLogLevel = LoggingLevel.DEBUG;
     @UriParam
     private boolean allowDefaultCodec = true;
+    @UriParam
     private ClientPipelineFactory clientPipelineFactory;
     @UriParam
     private int maximumPoolSize = 16;

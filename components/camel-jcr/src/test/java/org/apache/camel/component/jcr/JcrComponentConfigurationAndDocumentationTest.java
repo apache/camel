@@ -45,7 +45,7 @@ public class JcrComponentConfigurationAndDocumentationTest extends CamelTestSupp
 
         assertNotNull(json);
         assertTrue(json.contains("\"deep\": { \"type\": \"boolean\" }"));
-        assertTrue(json.contains("\"eventTypes\": { \"type\": \"int\" }"));
+        assertTrue(json.contains("\"eventTypes\": { \"type\": \"integer\" }"));
         assertTrue(json.contains("\"noLocal\": { \"type\": \"boolean\" }"));
     }
 

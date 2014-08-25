@@ -41,7 +41,7 @@ public class BeanComponentConfigurationAndDocumentationTest extends ContextTestS
         String json = compConf.createParameterJsonSchema();
         assertNotNull(json);
 
-        assertTrue(json.contains("\"method\": { \"type\": \"java.lang.String\" }"));
+        assertTrue(json.contains("\"method\": { \"type\": \"string\" }"));
         assertTrue(json.contains("\"cache\": { \"type\": \"boolean\" }"));
     }
 

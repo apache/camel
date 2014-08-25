@@ -43,8 +43,8 @@ public class MyBatisComponentConfigurationAndDocumentationTest extends CamelTest
         String json = compConf.createParameterJsonSchema();
         assertNotNull(json);
 
-        assertTrue(json.contains("\"maxMessagesPerPoll\": { \"type\": \"int\" }"));
-        assertTrue(json.contains("\"statement\": { \"type\": \"java.lang.String\" }"));
+        assertTrue(json.contains("\"maxMessagesPerPoll\": { \"type\": \"integer\" }"));
+        assertTrue(json.contains("\"statement\": { \"type\": \"string\" }"));
     }
 
     @Test

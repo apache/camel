@@ -39,10 +39,12 @@ public class JdbcEndpoint extends DefaultEndpoint {
     private boolean transacted;
     @UriParam
     private boolean resetAutoCommit = true;
+    @UriParam
     private DataSource dataSource;
     private Map<String, Object> parameters;
     @UriParam
     private boolean useJDBC4ColumnNameAndLabelSemantics = true;
+    @UriParam
     private JdbcPrepareStatementStrategy prepareStatementStrategy = new DefaultJdbcPrepareStatementStrategy();
     @UriParam
     private boolean allowNamedParameters = true;
@@ -52,6 +54,7 @@ public class JdbcEndpoint extends DefaultEndpoint {
     private JdbcOutputType outputType = JdbcOutputType.SelectList;
     @UriParam
     private String outputClass;
+    @UriParam
     private BeanRowMapper beanRowMapper = new DefaultBeanRowMapper();
 
     public JdbcEndpoint() {

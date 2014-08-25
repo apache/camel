@@ -43,7 +43,7 @@ public class InfinispanComponentConfigurationAndDocumentationTest extends CamelT
         String json = compConf.createParameterJsonSchema();
         assertNotNull(json);
 
-        assertTrue(json.contains("\"command\": { \"type\": \"java.lang.String\" }"));
+        assertTrue(json.contains("\"command\": { \"type\": \"string\" }"));
         assertTrue(json.contains("\"sync\": { \"type\": \"boolean\" }"));
     }
 

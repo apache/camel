@@ -41,8 +41,8 @@ public class LogComponentConfigurationAndDocumentationTest extends ContextTestSu
         String json = compConf.createParameterJsonSchema();
         assertNotNull(json);
 
-        assertTrue(json.contains("\"level\": { \"type\": \"java.lang.String\" }"));
-        assertTrue(json.contains("\"groupInterval\": { \"type\": \"java.lang.Long\" }"));
+        assertTrue(json.contains("\"level\": { \"type\": \"string\" }"));
+        assertTrue(json.contains("\"groupInterval\": { \"type\": \"integer\" }"));
     }
 
     @Test

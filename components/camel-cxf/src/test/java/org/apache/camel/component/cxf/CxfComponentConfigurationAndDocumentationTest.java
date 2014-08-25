@@ -42,7 +42,7 @@ public class CxfComponentConfigurationAndDocumentationTest extends CamelTestSupp
         String json = compConf.createParameterJsonSchema();
         assertNotNull(json);
 
-        assertTrue(json.contains("\"serviceNameString\": { \"type\": \"java.lang.String\" }"));
+        assertTrue(json.contains("\"serviceNameString\": { \"type\": \"string\" }"));
         assertTrue(json.contains("\"isWrapped\": { \"type\": \"boolean\" }"));
     }
 

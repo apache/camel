@@ -41,7 +41,7 @@ public class GTaskComponentConfigurationAndDocumentationTest extends CamelTestSu
         String json = compConf.createParameterJsonSchema();
         assertNotNull(json);
 
-        assertTrue(json.contains("\"workerRoot\": { \"type\": \"java.lang.String\" }"));
+        assertTrue(json.contains("\"workerRoot\": { \"type\": \"string\" }"));
         assertTrue(json.contains("\"disableStreamCache\": { \"type\": \"boolean\" }"));
     }
 

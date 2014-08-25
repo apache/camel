@@ -41,7 +41,7 @@ public class DirectComponentConfigurationAndDocumentationTest extends ContextTes
         String json = compConf.createParameterJsonSchema();
         assertNotNull(json);
 
-        assertTrue(json.contains("\"timeout\": { \"type\": \"long\" }"));
+        assertTrue(json.contains("\"timeout\": { \"type\": \"integer\" }"));
         assertTrue(json.contains("\"block\": { \"type\": \"boolean\" }"));
     }
 

@@ -44,7 +44,7 @@ public class HdfsComponentConfigurationAndDocumentationTest extends CamelTestSup
         String json = compConf.createParameterJsonSchema();
         assertNotNull(json);
 
-        assertTrue(json.contains("\"pattern\": { \"type\": \"java.lang.String\" }"));
+        assertTrue(json.contains("\"pattern\": { \"type\": \"string\" }"));
         assertTrue(json.contains("\"wantAppend\": { \"type\": \"boolean\" }"));
     }
 

@@ -42,8 +42,9 @@ public class SqlComponentConfigurationAndDocumentationTest extends CamelTestSupp
         String json = compConf.createParameterJsonSchema();
         assertNotNull(json);
 
-        assertTrue(json.contains("\"onConsumeBatchComplete\": { \"type\": \"java.lang.String\" }"));
-        assertTrue(json.contains("\"parametersCount\": { \"type\": \"int\" }"));
+
+        assertTrue(json.contains("\"onConsumeBatchComplete\": { \"type\": \"string\" }"));
+        assertTrue(json.contains("\"parametersCount\": { \"type\": \"integer\" }"));
     }
 
     @Test

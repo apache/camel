@@ -42,8 +42,8 @@ public class CxfRsComponentConfigurationAndDocumentationTest extends CamelTestSu
         String json = compConf.createParameterJsonSchema();
         assertNotNull(json);
 
-        assertTrue(json.contains("\"address\": { \"type\": \"java.lang.String\" }"));
-        assertTrue(json.contains("\"maxClientCacheSize\": { \"type\": \"int\" }"));
+        assertTrue(json.contains("\"address\": { \"type\": \"string\" }"));
+        assertTrue(json.contains("\"maxClientCacheSize\": { \"type\": \"integer\" }"));
     }
 
     @Test

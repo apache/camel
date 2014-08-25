@@ -43,7 +43,7 @@ public class JettyHttpComponentConfigurationAndDocumentationTest extends CamelTe
         String json = compConf.createParameterJsonSchema();
         assertNotNull(json);
 
-        assertTrue(json.contains("\"httpClientMaxThreads\": { \"type\": \"java.lang.Integer\" }"));
+        assertTrue(json.contains("\"httpClientMaxThreads\": { \"type\": \"integer\" }"));
         assertTrue(json.contains("\"sessionSupport\": { \"type\": \"boolean\" }"));
     }
 

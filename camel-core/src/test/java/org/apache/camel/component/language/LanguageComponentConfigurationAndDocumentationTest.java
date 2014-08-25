@@ -41,7 +41,7 @@ public class LanguageComponentConfigurationAndDocumentationTest extends ContextT
         String json = compConf.createParameterJsonSchema();
         assertNotNull(json);
 
-        assertTrue(json.contains("\"script\": { \"type\": \"java.lang.String\" }"));
+        assertTrue(json.contains("\"script\": { \"type\": \"string\" }"));
         assertTrue(json.contains("\"cacheScript\": { \"type\": \"boolean\" }"));
     }
 

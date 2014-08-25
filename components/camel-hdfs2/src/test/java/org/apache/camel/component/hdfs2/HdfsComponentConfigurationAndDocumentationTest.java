@@ -44,8 +44,8 @@ public class HdfsComponentConfigurationAndDocumentationTest extends CamelTestSup
         String json = compConf.createParameterJsonSchema();
         assertNotNull(json);
 
-        assertTrue(json.contains("\"initialDelay\": { \"type\": \"long\" }"));
-        assertTrue(json.contains("\"checkIdleInterval\": { \"type\": \"int\" }"));
+        assertTrue(json.contains("\"initialDelay\": { \"type\": \"integer\" }"));
+        assertTrue(json.contains("\"checkIdleInterval\": { \"type\": \"integer\" }"));
     }
 
     @Test
