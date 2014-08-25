@@ -74,6 +74,8 @@ public class SjmsEndpoint extends DefaultEndpoint implements MultipleConsumersSu
     private boolean asyncStartListener;
     @UriParam
     private boolean asyncStopListener;
+    @UriParam
+    private boolean prefillPool = true;
     private TransactionCommitStrategy transactionCommitStrategy;
 
     public SjmsEndpoint() {
@@ -467,6 +469,14 @@ public class SjmsEndpoint extends DefaultEndpoint implements MultipleConsumersSu
 
     public boolean isAsyncStopListener() {
         return asyncStopListener;
+    }
+
+    public boolean isPrefillPool() {
+        return prefillPool;
+    }
+
+    public void setPrefillPool(boolean prefillPool) {
+        this.prefillPool = prefillPool;
     }
 
 }
