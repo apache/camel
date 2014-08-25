@@ -133,7 +133,7 @@ public class XsltComponent extends UriEndpointComponent {
         Integer cs = getAndRemoveParameter(parameters, "transformerCacheSize", Integer.class, 0);
         xslt.transformerCacheSize(cs);
 
-        ErrorListener errorListener = getAndRemoveParameter(parameters, "errorListener", ErrorListener.class);
+        ErrorListener errorListener = resolveAndRemoveReferenceParameter(parameters, "errorListener", ErrorListener.class);
         if (errorListener != null) {
             xslt.errorListener(errorListener);
         }
