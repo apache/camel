@@ -21,6 +21,8 @@ import java.io.OutputStream;
 import java.util.HashMap;
 import java.util.Map;
 
+import ca.uhn.hl7v2.DefaultHapiContext;
+import ca.uhn.hl7v2.HapiContext;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.parser.GenericParser;
 import ca.uhn.hl7v2.parser.Parser;
@@ -82,7 +84,8 @@ public class HL7DataFormat implements DataFormat {
 
     private static final Map<String, String> HEADER_MAP = new HashMap<String, String>();
 
-    private Parser parser = new GenericParser();
+    private HapiContext hapiContext = new DefaultHapiContext();
+    private Parser parser = hapiContext.getGenericParser();
     
     static {
         HEADER_MAP.put(HL7_SENDING_APPLICATION, "MSH-3");
@@ -117,20 +120,38 @@ public class HL7DataFormat implements DataFormat {
         return message;
     }
 
+    /**
+     * @deprecated configure validation by means of {@link ca.uhn.hl7v2.HapiContext}
+     */
     public boolean isValidate() {
-        return !(parser.getValidationContext() instanceof NoValidation);
+        return (parser.getValidationContext() != null && !(parser.getValidationContext() instanceof NoValidation));
     }
 
+    /**
+     * @deprecated configure validation by means of {@link ca.uhn.hl7v2.HapiContext}
+     */
     public void setValidate(boolean validate) {
         if (!validate) {
             parser.setValidationContext(new NoValidation());
         }
     }
 
+    public HapiContext getHapiContext() {
+        return hapiContext;
+    }
+
+    public void setHapiContext(HapiContext context) {
+        this.hapiContext = context;
+        this.parser = context.getGenericParser();
+    }
+
     public Parser getParser() {
         return parser;
     }
 
+    /**
+     * @deprecated configure the parser by means of {@link ca.uhn.hl7v2.HapiContext}
+     */
     public void setParser(Parser parser) {
         this.parser = parser;
     }

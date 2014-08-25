@@ -17,6 +17,7 @@
 package org.apache.camel.component.hl7;
 
 import ca.uhn.hl7v2.HL7Exception;
+import ca.uhn.hl7v2.HapiContext;
 import ca.uhn.hl7v2.model.Message;
 import ca.uhn.hl7v2.validation.MessageValidator;
 import ca.uhn.hl7v2.validation.ValidationContext;
@@ -31,6 +32,10 @@ import org.apache.camel.util.ObjectHelper;
 public class ValidationContextPredicate implements Predicate {
 
     private Expression validatorExpression;
+
+    public ValidationContextPredicate(HapiContext hapiContext) {
+        this(hapiContext.getValidationContext());
+    }
 
     public ValidationContextPredicate(ValidationContext validationContext) {
         this(ExpressionBuilder.constantExpression(validationContext));
