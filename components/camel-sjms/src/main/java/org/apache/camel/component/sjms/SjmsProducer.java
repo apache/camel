@@ -83,24 +83,26 @@ public abstract class SjmsProducer extends DefaultAsyncProducer {
             setProducers(new GenericObjectPool<MessageProducerResources>(new MessageProducerResourcesFactory()));
             getProducers().setMaxActive(getProducerCount());
             getProducers().setMaxIdle(getProducerCount());
-            if (getEndpoint().isAsyncStartListener()) {
-                asyncStart = getEndpoint().getComponent().getAsyncStartStopExecutorService().submit(new Runnable() {
-                    @Override
-                    public void run() {
-                        try {
-                            fillProducersPool();
-                        } catch (Throwable e) {
-                            log.warn("Error starting listener container on destination: " + getDestinationName() + ". This exception will be ignored.", e);
+            if (getEndpoint().isPrefillPool()) {
+                if (getEndpoint().isAsyncStartListener()) {
+                    asyncStart = getEndpoint().getComponent().getAsyncStartStopExecutorService().submit(new Runnable() {
+                        @Override
+                        public void run() {
+                            try {
+                                fillProducersPool();
+                            } catch (Throwable e) {
+                                log.warn("Error starting listener container on destination: " + getDestinationName() + ". This exception will be ignored.", e);
+                            }
                         }
-                    }
 
-                    @Override
-                    public String toString() {
-                        return "AsyncStartListenerTask[" + getDestinationName() + "]";
-                    }
-                });
-            } else {
-                fillProducersPool();
+                        @Override
+                        public String toString() {
+                            return "AsyncStartListenerTask[" + getDestinationName() + "]";
+                        }
+                    });
+                } else {
+                    fillProducersPool();
+                }
             }
         }
     }
