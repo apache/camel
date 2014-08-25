@@ -252,8 +252,14 @@ public class XsltBuilder implements Processor {
         setAllowStAX(true);
         return this;
     }
-    
-    
+
+    /**
+     * Used for caching {@link Transformer}s.
+     * <p/>
+     * By default no caching is in use.
+     *
+     * @param numberToCache  the maximum number of transformers to cache
+     */
     public XsltBuilder transformerCacheSize(int numberToCache) {
         if (numberToCache > 0) {
             transformers = new ArrayBlockingQueue<Transformer>(numberToCache);
@@ -263,7 +269,15 @@ public class XsltBuilder implements Processor {
         return this;
     }
 
-    // Properties
+    /**
+     * Uses a custom {@link javax.xml.transform.ErrorListener}.
+     */
+    public XsltBuilder errorListener(ErrorListener errorListener) {
+        setErrorListener(errorListener);
+        return this;
+    }
+
+        // Properties
     // -------------------------------------------------------------------------
 
     public Map<String, Object> getParameters() {

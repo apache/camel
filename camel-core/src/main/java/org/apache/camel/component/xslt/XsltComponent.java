@@ -17,6 +17,7 @@
 package org.apache.camel.component.xslt;
 
 import java.util.Map;
+import javax.xml.transform.ErrorListener;
 import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.URIResolver;
 
@@ -129,8 +130,13 @@ public class XsltComponent extends UriEndpointComponent {
         String output = getAndRemoveParameter(parameters, "output", String.class);
         configureOutput(xslt, output);
         
-        Integer cs = getAndRemoveParameter(parameters, "transformerCacheSize", Integer.class, Integer.valueOf(0));
+        Integer cs = getAndRemoveParameter(parameters, "transformerCacheSize", Integer.class, 0);
         xslt.transformerCacheSize(cs);
+
+        ErrorListener errorListener = getAndRemoveParameter(parameters, "errorListener", ErrorListener.class);
+        if (errorListener != null) {
+            xslt.errorListener(errorListener);
+        }
 
         // default to use the cache option from the component if the endpoint did not have the contentCache parameter
         boolean cache = getAndRemoveParameter(parameters, "contentCache", Boolean.class, contentCache);
