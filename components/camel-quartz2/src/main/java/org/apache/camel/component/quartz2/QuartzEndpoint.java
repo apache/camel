@@ -240,7 +240,7 @@ public class QuartzEndpoint extends DefaultEndpoint {
             jobDetail = createJobDetail();
             trigger = createTrigger(jobDetail);
 
-            updateJobDataMap(jobDetail);
+            QuartzHelper.updateJobDataMap(getCamelContext(), jobDetail, getEndpointUri());
 
             // Schedule it now. Remember that scheduler might not be started it, but we can schedule now.
             Date nextFireDate = scheduler.scheduleJob(jobDetail, trigger);
@@ -272,16 +272,6 @@ public class QuartzEndpoint extends DefaultEndpoint {
                 }
             }
         }
-    }
-
-    private void updateJobDataMap(JobDetail jobDetail) {
-        // Store this camelContext name into the job data
-        JobDataMap jobDataMap = jobDetail.getJobDataMap();
-        String camelContextName = QuartzHelper.getQuartzContextName(getCamelContext());
-        String endpointUri = getEndpointUri();
-        LOG.debug("Adding camelContextName={}, endpointUri={} into job data map.", camelContextName, endpointUri);
-        jobDataMap.put(QuartzConstants.QUARTZ_CAMEL_CONTEXT_NAME, camelContextName);
-        jobDataMap.put(QuartzConstants.QUARTZ_ENDPOINT_URI, endpointUri);
     }
 
     private Trigger createTrigger(JobDetail jobDetail) throws Exception {

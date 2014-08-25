@@ -20,8 +20,10 @@ import java.util.TimeZone;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Consumer;
+import org.apache.camel.Route;
 import org.apache.camel.component.quartz2.QuartzComponent;
 import org.apache.camel.component.quartz2.QuartzConstants;
+import org.apache.camel.component.quartz2.QuartzHelper;
 import org.apache.camel.spi.ScheduledPollConsumerScheduler;
 import org.apache.camel.support.ServiceSupport;
 import org.apache.camel.util.ObjectHelper;
@@ -45,6 +47,7 @@ public class QuartzScheduledPollConsumerScheduler extends ServiceSupport impleme
     private static final Logger LOG = LoggerFactory.getLogger(QuartzScheduledPollConsumerScheduler.class);
     private Scheduler quartzScheduler;
     private CamelContext camelContext;
+    private String routeId;
     private Consumer consumer;
     private Runnable runnable;
     private String cron;
@@ -57,6 +60,13 @@ public class QuartzScheduledPollConsumerScheduler extends ServiceSupport impleme
     @Override
     public void onInit(Consumer consumer) {
         this.consumer = consumer;
+        // find the route of the consumer
+        for (Route route : consumer.getEndpoint().getCamelContext().getRoutes()) {
+            if (route.getConsumer() == consumer) {
+                this.routeId = route.getId();
+                break;
+            }
+        }
     }
 
     @Override
@@ -151,7 +161,12 @@ public class QuartzScheduledPollConsumerScheduler extends ServiceSupport impleme
         }
 
         JobDataMap map = new JobDataMap();
-        map.put("task", runnable);
+        // do not store task as its not serializable, if we have route id
+        if (routeId != null) {
+            map.put("routeId", routeId);
+        } else {
+            map.put("task", runnable);
+        }
         map.put(QuartzConstants.QUARTZ_TRIGGER_TYPE, "cron");
         map.put(QuartzConstants.QUARTZ_TRIGGER_CRON_EXPRESSION, getCron());
         map.put(QuartzConstants.QUARTZ_TRIGGER_CRON_TIMEZONE, getTimeZone().getID());
@@ -159,6 +174,9 @@ public class QuartzScheduledPollConsumerScheduler extends ServiceSupport impleme
         job = JobBuilder.newJob(QuartzScheduledPollConsumerJob.class)
                 .usingJobData(map)
                 .build();
+
+        // store additional information on job such as camel context etc
+        QuartzHelper.updateJobDataMap(getCamelContext(), job, null);
 
         String id = triggerId;
         if (id == null) {
@@ -185,4 +203,5 @@ public class QuartzScheduledPollConsumerScheduler extends ServiceSupport impleme
     @Override
     protected void doShutdown() throws Exception {
     }
+
 }

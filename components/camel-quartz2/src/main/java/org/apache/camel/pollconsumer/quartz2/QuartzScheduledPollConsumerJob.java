@@ -16,13 +16,16 @@
  */
 package org.apache.camel.pollconsumer.quartz2;
 
-import org.quartz.Job;
+import org.apache.camel.CamelContext;
+import org.apache.camel.Consumer;
+import org.apache.camel.Route;
+import org.apache.camel.component.quartz2.CamelJob;
 import org.quartz.JobExecutionContext;
 import org.quartz.JobExecutionException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class QuartzScheduledPollConsumerJob implements Job {
+public class QuartzScheduledPollConsumerJob extends CamelJob {
 
     private static final Logger LOG = LoggerFactory.getLogger(QuartzScheduledPollConsumerJob.class);
 
@@ -30,10 +33,30 @@ public class QuartzScheduledPollConsumerJob implements Job {
     }
 
     @Override
-    public void execute(JobExecutionContext jobExecutionContext) throws JobExecutionException {
-        LOG.trace("Execute job: {}", jobExecutionContext);
+    public void execute(JobExecutionContext context) throws JobExecutionException {
+        LOG.trace("Execute job: {}", context);
 
-        Runnable task = (Runnable) jobExecutionContext.getJobDetail().getJobDataMap().get("task");
+        CamelContext camelContext = getCamelContext(context);
+
+        Runnable task = (Runnable) context.getJobDetail().getJobDataMap().get("task");
+
+        if (task == null) {
+            // if not task then use the route id to lookup the consumer to be used as the task
+            String routeId = (String) context.getJobDetail().getJobDataMap().get("routeId");
+            if (routeId != null && camelContext != null) {
+                // find the consumer
+                for (Route route : camelContext.getRoutes()) {
+                    if (route.getId().equals(routeId)) {
+                        Consumer consumer = route.getConsumer();
+                        if (consumer instanceof Runnable) {
+                            task = (Runnable) consumer;
+                            break;
+                        }
+                    }
+                }
+            }
+        }
+
         if (task != null) {
             LOG.trace("Running task: {}", task);
             task.run();

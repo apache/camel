@@ -17,8 +17,14 @@
 package org.apache.camel.component.quartz2;
 
 import org.apache.camel.CamelContext;
+import org.quartz.JobDataMap;
+import org.quartz.JobDetail;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 
 public final class QuartzHelper {
+
+    public static final Logger LOG = LoggerFactory.getLogger(QuartzEndpoint.class);
 
     private QuartzHelper() {
     }
@@ -30,6 +36,15 @@ public final class QuartzHelper {
         } else {
             return camelContext.getManagementNameStrategy().getName();
         }
+    }
+
+    public static void updateJobDataMap(CamelContext camelContext, JobDetail jobDetail, String endpointUri) {
+        // Store this camelContext name into the job data
+        JobDataMap jobDataMap = jobDetail.getJobDataMap();
+        String camelContextName = QuartzHelper.getQuartzContextName(camelContext);
+        LOG.debug("Adding camelContextName={}, endpointUri={} into job data map.", camelContextName, endpointUri);
+        jobDataMap.put(QuartzConstants.QUARTZ_CAMEL_CONTEXT_NAME, camelContextName);
+        jobDataMap.put(QuartzConstants.QUARTZ_ENDPOINT_URI, endpointUri);
     }
 
 }
