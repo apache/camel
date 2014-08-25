@@ -90,5 +90,17 @@
       <scope>test</scope>
     </dependency>
   </dependencies>
+  
+   <build>
+    <plugins>
+      <plugin>
+        <artifactId>maven-surefire-plugin</artifactId>
+        <configuration>
+          <forkMode>perTest</forkMode>
+          <enableAssertions>false</enableAssertions>
+        </configuration>
+      </plugin>
+    </plugins>
+  </build>
 
 </project>
