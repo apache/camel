@@ -33,6 +33,10 @@ public class ValidationContextPredicate implements Predicate {
 
     private Expression validatorExpression;
 
+    public ValidationContextPredicate() {
+        this((Expression)null);
+    }
+
     public ValidationContextPredicate(HapiContext hapiContext) {
         this(hapiContext.getValidationContext());
     }
@@ -48,12 +52,20 @@ public class ValidationContextPredicate implements Predicate {
     @Override
     public boolean matches(Exchange exchange) {
         try {
-            ValidationContext context = validatorExpression.evaluate(exchange, ValidationContext.class);
+            Message message = exchange.getIn().getBody(Message.class);
+            ValidationContext context = validatorExpression != null
+                    ? validatorExpression.evaluate(exchange, ValidationContext.class)
+                    : dynamicValidationContext(message, exchange.getIn().getHeader(HL7Constants.HL7_CONTEXT, HapiContext.class));
             MessageValidator validator = new MessageValidator(context, false);
-            return validator.validate(exchange.getIn().getBody(Message.class));
+            return validator.validate(message);
         } catch (HL7Exception e) {
             throw ObjectHelper.wrapRuntimeCamelException(e);
         }
     }
 
+    private ValidationContext dynamicValidationContext(Message message, HapiContext hapiContext) {
+        return hapiContext != null
+                ? hapiContext.getValidationContext()
+                : message.getParser().getHapiContext().getValidationContext();
+    }
 }
