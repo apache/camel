@@ -49,7 +49,7 @@ public class JsonPathCBRTest extends CamelTestSupport {
                 
                 from("direct:bicycle2")
                     .choice()
-                    .when(PredicateBuilder.isLessThan(ExpressionBuilder.languageExpression("JsonPath", "$.store.bicycle.price"), ExpressionBuilder.constantExpression(20)))
+                    .when(PredicateBuilder.isLessThan(ExpressionBuilder.languageExpression("jsonpath", "$.store.bicycle.price"), ExpressionBuilder.constantExpression(20)))
                         .to("mock:cheap")
                     .otherwise()
                         .to("mock:expensive");
