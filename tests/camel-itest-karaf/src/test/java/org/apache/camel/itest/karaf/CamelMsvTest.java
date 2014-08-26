@@ -20,10 +20,10 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.Option;
-import org.ops4j.pax.exam.junit.Configuration;
-import org.ops4j.pax.exam.junit.JUnit4TestRunner;
+import org.ops4j.pax.exam.Configuration;
+import org.ops4j.pax.exam.junit.PaxExam;
 
-@RunWith(JUnit4TestRunner.class)
+@RunWith(PaxExam.class)
 @Ignore("Fails for some unknown reason")
 public class CamelMsvTest extends AbstractFeatureTest {
 

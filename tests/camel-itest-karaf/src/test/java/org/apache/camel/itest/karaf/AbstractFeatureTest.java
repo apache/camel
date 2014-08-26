@@ -24,8 +24,8 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultRouteContext;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.osgi.CamelContextFactory;
-import org.apache.karaf.tooling.exam.options.KarafDistributionOption;
-import org.apache.karaf.tooling.exam.options.LogLevelOption;
+import org.ops4j.pax.exam.karaf.options.KarafDistributionOption;
+import org.ops4j.pax.exam.karaf.options.LogLevelOption;
 import org.junit.After;
 import org.junit.Before;
 import org.ops4j.pax.exam.Option;
@@ -34,14 +34,11 @@ import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-import static org.apache.karaf.tooling.exam.options.KarafDistributionOption.editConfigurationFilePut;
-import static org.apache.karaf.tooling.exam.options.KarafDistributionOption.karafDistributionConfiguration;
-import static org.apache.karaf.tooling.exam.options.KarafDistributionOption.logLevel;
-import static org.apache.karaf.tooling.exam.options.KarafDistributionOption.replaceConfigurationFile;
+
 import static org.junit.Assert.assertNotNull;
 import static org.ops4j.pax.exam.CoreOptions.maven;
 import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
-import static org.ops4j.pax.exam.CoreOptions.scanFeatures;
+
 
 public abstract class AbstractFeatureTest {
 
@@ -157,18 +154,18 @@ public abstract class AbstractFeatureTest {
     public static Option[] configure(String feature) {
         Option[] options = 
             new Option[]{
-                karafDistributionConfiguration().frameworkUrl(
+                    KarafDistributionOption.karafDistributionConfiguration().frameworkUrl(
                     maven().groupId("org.apache.karaf").artifactId("apache-karaf").type("tar.gz").versionAsInProject())
                     .karafVersion("2.3.6").name("Apache Karaf")
                     .unpackDirectory(new File("target/paxexam/unpack/")),
                 
                 KarafDistributionOption.keepRuntimeFolder(),
                 // override the config.properties (to fix pax-exam bug)
-                replaceConfigurationFile("etc/config.properties", new File("src/test/resources/org/apache/camel/itest/karaf/config.properties")),
-                replaceConfigurationFile("etc/custom.properties", new File("src/test/resources/org/apache/camel/itest/karaf/custom.properties")),
-                replaceConfigurationFile("etc/jre.properties", new File("../../platforms/karaf/features/src/main/resources/config.properties")),
+                KarafDistributionOption.replaceConfigurationFile("etc/config.properties", new File("src/test/resources/org/apache/camel/itest/karaf/config.properties")),
+                KarafDistributionOption.replaceConfigurationFile("etc/custom.properties", new File("src/test/resources/org/apache/camel/itest/karaf/custom.properties")),
+                KarafDistributionOption.replaceConfigurationFile("etc/jre.properties", new File("../../platforms/karaf/features/src/main/resources/config.properties")),
                 // Add apache-snapshots repository
-                editConfigurationFilePut("etc/org.ops4j.pax.url.mvn.cfg", "org.ops4j.pax.url.mvn.repositories",
+                KarafDistributionOption.editConfigurationFilePut("etc/org.ops4j.pax.url.mvn.cfg", "org.ops4j.pax.url.mvn.repositories",
                     "http://repo1.maven.org/maven2@id=central, "
                         + "http://svn.apache.org/repos/asf/servicemix/m2-repo@id=servicemix, "
                         + "http://repository.springsource.com/maven/bundles/release@id=springsource.release, "
@@ -177,9 +174,9 @@ public abstract class AbstractFeatureTest {
                         + "http://repository.apache.org/content/groups/snapshots-group@snapshots@noreleases@id=apache"),
 
                     // we need INFO logging otherwise we cannot see what happens
-                logLevel(LogLevelOption.LogLevel.INFO),
+                KarafDistributionOption.logLevel(LogLevelOption.LogLevel.INFO),
                  // install the cxf jaxb spec as the karaf doesn't provide it by default
-                scanFeatures(getCamelKarafFeatureUrl(), "cxf-jaxb", "camel-core", "camel-spring", "camel-" + feature)};
+                KarafDistributionOption.features(getCamelKarafFeatureUrl(), "cxf-jaxb", "camel-core", "camel-spring", "camel-" + feature)};
 
         return options;
     }

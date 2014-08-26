@@ -21,10 +21,10 @@ import org.apache.camel.model.dataformat.CastorDataFormat;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.ops4j.pax.exam.Option;
-import org.ops4j.pax.exam.junit.Configuration;
-import org.ops4j.pax.exam.junit.JUnit4TestRunner;
+import org.ops4j.pax.exam.Configuration;
+import org.ops4j.pax.exam.junit.PaxExam;
 
-@RunWith(JUnit4TestRunner.class)
+@RunWith(PaxExam.class)
 public class CamelCastorTest extends AbstractFeatureTest {
 
     public static final String COMPONENT = extractName(CamelCastorTest.class);
