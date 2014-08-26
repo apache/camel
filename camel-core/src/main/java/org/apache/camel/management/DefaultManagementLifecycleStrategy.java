@@ -858,6 +858,11 @@ public class DefaultManagementLifecycleStrategy extends ServiceSupport implement
             return true;
         }
 
+        // always register if we are setting up routes
+        if (getCamelContext().isSetupRoutes()) {
+            return true;
+        }
+
         // register if always is enabled
         if (agent.getRegisterAlways()) {
             return true;
