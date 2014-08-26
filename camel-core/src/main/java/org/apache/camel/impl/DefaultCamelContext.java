@@ -186,6 +186,7 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
     private volatile boolean firstStartDone;
     private volatile boolean doNotStartRoutesOnFirstStart;
     private final ThreadLocal<Boolean> isStartingRoutes = new ThreadLocal<Boolean>();
+    private final ThreadLocal<Boolean> isSetupRoutes = new ThreadLocal<Boolean>();
     private Boolean autoStartup = Boolean.TRUE;
     private Boolean trace = Boolean.FALSE;
     private Boolean messageHistory = Boolean.TRUE;
@@ -800,6 +801,11 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
 
     public boolean isStartingRoutes() {
         Boolean answer = isStartingRoutes.get();
+        return answer != null && answer;
+    }
+
+    public boolean isSetupRoutes() {
+        Boolean answer = isSetupRoutes.get();
         return answer != null && answer;
     }
 
@@ -1421,6 +1427,14 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
 
     public void addLifecycleStrategy(LifecycleStrategy lifecycleStrategy) {
         this.lifecycleStrategies.add(lifecycleStrategy);
+    }
+
+    public void setupRoutes(boolean done) {
+        if (done) {
+            isSetupRoutes.remove();
+        } else {
+            isSetupRoutes.set(true);
+        }
     }
 
     public synchronized List<RouteDefinition> getRouteDefinitions() {
