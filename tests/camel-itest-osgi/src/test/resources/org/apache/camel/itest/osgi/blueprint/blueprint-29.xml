@@ -33,6 +33,9 @@
         <property name="logLevel" value="INFO"/>
         <property name="logName" value="org.apache.camel.blueprint.log"/>
         <property name="destination" ref="traced"/>
+        <property name="traceHandler" ref="myTraceEventHandler"/>
     </bean>
+
+    <bean id="myTraceEventHandler" class="org.apache.camel.processor.interceptor.DefaultTraceEventHandler"/>
 
 </blueprint>
