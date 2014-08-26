@@ -105,7 +105,7 @@ public class Throttler extends DelayProcessorSupport implements Traceable {
     protected long calculateDelay(Exchange exchange) {
         // evaluate as Object first to see if we get any result at all
         Object result = maxRequestsPerPeriodExpression.evaluate(exchange, Object.class);
-        if (result == null) {
+        if (maximumRequestsPerPeriod == 0 && result == null) {
             throw new RuntimeExchangeException("The max requests per period expression was evaluated as null: " + maxRequestsPerPeriodExpression, exchange);
         }
 
