@@ -288,6 +288,9 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
         if (routesSetupDone.compareAndSet(false, true)) {
             LOG.debug("Setting up routes");
 
+            // mark that we are setting up routes
+            getContext().setupRoutes(false);
+
             // must init route refs before we prepare the routes below
             initRouteRefs();
 
@@ -303,6 +306,9 @@ public abstract class AbstractCamelContextFactoryBean<T extends ModelCamelContex
 
             findRouteBuilders();
             installRoutes();
+
+            // and we are now finished setting up the routes
+            getContext().setupRoutes(true);
         }
     }
 
