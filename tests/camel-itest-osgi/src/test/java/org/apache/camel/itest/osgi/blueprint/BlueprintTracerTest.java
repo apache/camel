@@ -73,7 +73,6 @@ public class BlueprintTracerTest extends OSGiBlueprintTestSupport {
                         .set(Constants.BUNDLE_SYMBOLICNAME, BlueprintTracerTest.class.getName())
                         .set(Constants.BUNDLE_VERSION, "1.0.0")
                         .set(Constants.DYNAMICIMPORT_PACKAGE, "*")
-                        .add(MyTraceEventHandler.class)
                         .build()).noStart(),
 
                 // using the features to install the camel components
