@@ -19,27 +19,21 @@ package org.apache.camel.component.swagger
 import javax.servlet.http.{HttpServlet, HttpServletResponse, HttpServletRequest}
 import javax.servlet.ServletConfig
 
-import com.wordnik.swagger.core.SwaggerContext
 import com.wordnik.swagger.core.filter.SpecFilter
 import com.wordnik.swagger.core.util.JsonSerializer
 import com.wordnik.swagger.config.{SwaggerConfig, ConfigFactory, FilterFactory}
 import com.wordnik.swagger.model.{ApiInfo, ResourceListing, ApiListingReference}
 
-import org.springframework.web.context.support.WebApplicationContextUtils
-import org.springframework.web.context.WebApplicationContext
 import org.apache.camel.CamelContext
 import org.slf4j.LoggerFactory
 
 /**
  * A Http Servlet to expose the REST services as Swagger APIs.
  */
-class RestSwaggerApiDeclarationServlet extends HttpServlet {
-
-  // TODO: this has spring dependency, find a way to make it work with blueprint/spring/cdi/servlet-listener etc
+abstract class RestSwaggerApiDeclarationServlet extends HttpServlet {
 
   private val LOG = LoggerFactory.getLogger(classOf[RestSwaggerApiDeclarationServlet])
 
-  var spring: WebApplicationContext = null
   val reader = new RestSwaggerReader()
   var camel: CamelContext = null
   val swaggerConfig: SwaggerConfig = ConfigFactory.config
@@ -80,17 +74,19 @@ class RestSwaggerApiDeclarationServlet extends HttpServlet {
     val apiInfo = new ApiInfo(title, description, termsOfServiceUrl, contact, license, licenseUrl)
     swaggerConfig.setApiInfo(apiInfo)
 
-    spring = WebApplicationContextUtils.getRequiredWebApplicationContext(config.getServletContext)
-    if (spring != null) {
-      camel = spring.getBean(classOf[CamelContext])
-      if (camel != null) {
-        // TODO: if this is not sufficient we need to use Camel's resolveClass API instead
-        SwaggerContext.registerClassLoader(camel.getApplicationContextClassLoader)
-      }
+    camel = lookupCamelContext(config)
+    if (camel == null) {
+      LOG.warn("Cannot find CamelContext to be used.")
     }
-
-    LOG.info("init found spring {}", spring)
   }
+
+  /**
+   * Used for implementations to lookup the CamelContext to be used.
+   *
+   * @param config  the servlet config
+   * @return the CamelContext to use, or <tt>null</tt> if no CamelContext was found
+   */
+  def lookupCamelContext(config: ServletConfig) : CamelContext
 
   override protected def doGet(request: HttpServletRequest, response: HttpServletResponse) = {
     val route = request.getPathInfo
