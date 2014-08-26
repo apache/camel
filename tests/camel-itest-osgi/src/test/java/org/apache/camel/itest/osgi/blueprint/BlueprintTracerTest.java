@@ -25,7 +25,7 @@ public class BlueprintTracerTest extends OSGiBlueprintTestSupport {
         getInstalledBundle(name).start();
 
         // must use the camel context from osgi
-        CamelContext ctx = getOsgiService(CamelContext.class, "(camel.context.symbolicname=" + name + ")", 10000);
+        CamelContext ctx = getOsgiService(CamelContext.class, "(camel.context.symbolicname=" + name + ")", 30000);
 
         ProducerTemplate myTemplate = ctx.createProducerTemplate();
         myTemplate.start();
@@ -73,6 +73,7 @@ public class BlueprintTracerTest extends OSGiBlueprintTestSupport {
                         .set(Constants.BUNDLE_SYMBOLICNAME, BlueprintTracerTest.class.getName())
                         .set(Constants.BUNDLE_VERSION, "1.0.0")
                         .set(Constants.DYNAMICIMPORT_PACKAGE, "*")
+                        .add(MyTraceEventHandler.class)
                         .build()).noStart(),
 
                 // using the features to install the camel components

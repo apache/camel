@@ -26,7 +26,7 @@
         </route>
     </camelContext>
 
-    <bean id="camelTracer" class="org.apache.camel.processor.interceptor.Tracer">
+<!--    <bean id="camelTracer" class="org.apache.camel.processor.interceptor.Tracer">
         <property name="traceExceptions" value="false"/>
         <property name="traceInterceptors" value="true"/>
         <property name="traceExceptions" value="true"/>
@@ -34,8 +34,8 @@
         <property name="logName" value="org.apache.camel.blueprint.log"/>
         <property name="destination" ref="traced"/>
         <property name="traceHandler" ref="myTraceEventHandler"/>
-    </bean>
+    </bean>-->
 
-    <bean id="myTraceEventHandler" class="org.apache.camel.processor.interceptor.DefaultTraceEventHandler"/>
+    <bean id="myTraceEventHandler" class="org.apache.camel.itest.osgi.blueprint.MyTraceEventHandler"/>
 
 </blueprint>
