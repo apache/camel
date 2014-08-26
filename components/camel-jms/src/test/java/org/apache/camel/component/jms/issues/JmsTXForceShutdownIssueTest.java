@@ -40,7 +40,7 @@ public class JmsTXForceShutdownIssueTest extends CamelSpringTestSupport {
     }
 
     @Test
-    //@Ignore("This is a manual test, start Apache ActiveMQ broker manually first, using bin/activemq console")
+    @Ignore("This is a manual test, start Apache ActiveMQ broker manually first, using bin/activemq console")
     // and make sure to setup tcp transport connector on the remote AMQ broker in the conf/activemq.xml file
     // <transportConnectors>
     //   <transportConnector name="openwire" uri="tcp://0.0.0.0:61616"/>
