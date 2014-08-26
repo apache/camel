@@ -1,4 +1,4 @@
-package org.apache.camel.dataformat.bindy.number;
+package org.apache.camel.dataformat.bindy.number.grouping;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Produce;
@@ -16,12 +16,10 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 import java.math.BigDecimal;
-import java.util.List;
-import java.util.Map;
 
-public class BindyFormatUnmarshallTest extends CamelTestSupport {
+public class BindyBigDecimalGroupingUnmarshallTest extends CamelTestSupport {
 
-    private static final Logger LOG = LoggerFactory.getLogger(BindyFormatUnmarshallTest.class);
+    private static final Logger LOG = LoggerFactory.getLogger(BindyBigDecimalGroupingUnmarshallTest.class);
 
     private static final String URI_MOCK_RESULT = "mock:result";
     private static final String URI_DIRECT_START = "direct:start";
@@ -35,22 +33,18 @@ public class BindyFormatUnmarshallTest extends CamelTestSupport {
     private String record;
 
     @Test
-    public void testInteger() throws Exception {
+    public void testBigDecimalPattern() throws Exception {
 
-        record = "10000,25.12";
-        String intVal = "10000";
-        String bigDecimal = "25.12";
+        record = "'123.456,234'";
+        String bigDecimal = "123456.24";
 
         template.sendBody(record);
 
         result.expectedMessageCount(1);
         result.assertIsSatisfied();
 
-        Math math = (Math)result.getExchanges().get(0).getIn().getBody();
-        Assert.assertEquals(math.getIntAmount().toString(),intVal);
-        Assert.assertEquals(math.getBigDecimal().toString(),bigDecimal);
-
-        LOG.info("Math object received : " + math);
+        NumberModel bd = (NumberModel)result.getExchanges().get(0).getIn().getBody();
+        Assert.assertEquals(bigDecimal, bd.getGrouping().toString());
     }
 
     @Override
@@ -61,7 +55,8 @@ public class BindyFormatUnmarshallTest extends CamelTestSupport {
             public void configure() throws Exception {
                 BindyDataFormat bindy = new BindyDataFormat();
                 bindy.setType(BindyType.Csv);
-                bindy.setClassType(BindyFormatUnmarshallTest.Math.class);
+                bindy.setClassType(NumberModel.class);
+                bindy.setLocale("en");
 
                 from(URI_DIRECT_START)
                    .unmarshal(bindy)
@@ -71,35 +66,28 @@ public class BindyFormatUnmarshallTest extends CamelTestSupport {
         };
     }
 
-    @CsvRecord(separator = ",")
-    public static class Math {
+    @CsvRecord(separator = ",", quote = "'")
+    public static class NumberModel {
 
-        @DataField(pos = 1, pattern = "00")
-        private Integer intAmount;
+        @DataField(pos = 1, precision = 2,
+                rounding = "CEILING",
+                pattern = "###,###.###",
+                decimalSeparator = ",",
+                groupingSeparator = ".")
+        private BigDecimal grouping;
 
-        @DataField(pos = 2, precision = 2)
-        private BigDecimal bigDecimal;
-
-        public Integer getIntAmount() {
-            return intAmount;
+        public BigDecimal getGrouping() {
+            return grouping;
         }
 
-        public void setIntAmount(Integer intAmount) {
-            this.intAmount = intAmount;
+        public void setGrouping(BigDecimal grouping) {
+            this.grouping = grouping;
         }
 
-        public BigDecimal getBigDecimal() {
-            return bigDecimal;
-        }
-
-        public void setBigDecimal(BigDecimal bigDecimal) {
-            this.bigDecimal = bigDecimal;
-        }
 
         @Override
         public String toString() {
-            return "intAmount : " + this.intAmount + ", " +
-                   "bigDecimal : " + this.bigDecimal;
+            return "bigDecimal grouping : " + this.grouping;
         }
     }
 }

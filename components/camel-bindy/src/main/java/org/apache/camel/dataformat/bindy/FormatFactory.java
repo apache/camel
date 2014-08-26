@@ -24,25 +24,7 @@ import java.util.Locale;
 
 import org.apache.camel.dataformat.bindy.annotation.DataField;
 import org.apache.camel.dataformat.bindy.annotation.KeyValuePairField;
-import org.apache.camel.dataformat.bindy.format.BigDecimalFormat;
-import org.apache.camel.dataformat.bindy.format.BigIntegerFormat;
-import org.apache.camel.dataformat.bindy.format.BooleanFormat;
-import org.apache.camel.dataformat.bindy.format.ByteFormat;
-import org.apache.camel.dataformat.bindy.format.BytePatternFormat;
-import org.apache.camel.dataformat.bindy.format.CharacterFormat;
-import org.apache.camel.dataformat.bindy.format.DatePatternFormat;
-import org.apache.camel.dataformat.bindy.format.DoubleFormat;
-import org.apache.camel.dataformat.bindy.format.DoublePatternFormat;
-import org.apache.camel.dataformat.bindy.format.EnumFormat;
-import org.apache.camel.dataformat.bindy.format.FloatFormat;
-import org.apache.camel.dataformat.bindy.format.FloatPatternFormat;
-import org.apache.camel.dataformat.bindy.format.IntegerFormat;
-import org.apache.camel.dataformat.bindy.format.IntegerPatternFormat;
-import org.apache.camel.dataformat.bindy.format.LongFormat;
-import org.apache.camel.dataformat.bindy.format.LongPatternFormat;
-import org.apache.camel.dataformat.bindy.format.ShortFormat;
-import org.apache.camel.dataformat.bindy.format.ShortPatternFormat;
-import org.apache.camel.dataformat.bindy.format.StringFormat;
+import org.apache.camel.dataformat.bindy.format.*;
 import org.apache.camel.util.ObjectHelper;
 
 
@@ -61,13 +43,17 @@ public final class FormatFactory {
      * @param pattern is the pattern to be used during the formatting of the data
      * @param locale optional locale for NumberFormat and DateFormat parsing.
      * @param precision optional scale for BigDecimal parsing.
+     * @param rounding optional rounding mode to be used to scale BigDecimal with precision value
      * @param impliedDecimalSeparator optional flag for floating-point values
+     * @param decimalSeparator optional decimal separator for BigDecimal
+     * @param groupingSeparator optional grouping separator for BigDecimal
      * @return Format the formatter
      * @throws IllegalArgumentException if not suitable formatter is found
      */
     @SuppressWarnings("unchecked")
     private static Format<?> doGetFormat(Class<?> clazz, String pattern, String locale,
-                                         String timezone, int precision, boolean impliedDecimalSeparator)
+                                         String timezone, int precision, String rounding,
+                                         boolean impliedDecimalSeparator, String decimalSeparator, String groupingSeparator)
         throws Exception {
         if (clazz == byte.class || clazz == Byte.class) {
             return ObjectHelper.isNotEmpty(pattern)
@@ -94,7 +80,9 @@ public final class FormatFactory {
                 ? new DoublePatternFormat(pattern, getLocale(locale))
                 : new DoubleFormat(impliedDecimalSeparator, precision, getLocale(locale));
         } else if (clazz == BigDecimal.class) {
-            return new BigDecimalFormat(impliedDecimalSeparator, precision, getLocale(locale));
+            return ObjectHelper.isNotEmpty(pattern)
+                ? new BigDecimalPatternFormat(pattern, getLocale(locale), precision, rounding, decimalSeparator, groupingSeparator)
+                : new BigDecimalFormat(impliedDecimalSeparator, precision, getLocale(locale));
         } else if (clazz == BigInteger.class) {
             return new BigIntegerFormat();
         } else if (clazz == String.class) {
@@ -124,8 +112,11 @@ public final class FormatFactory {
         String pattern = data.pattern();
         String timezone = data.timezone();
         int precision = data.precision();
+        String decimalSeparator = data.decimalSeparator();
+        String groupingSeparator = data.groupingSeparator();
+        String rounding = data.rounding();
 
-        return doGetFormat(clazz, pattern, locale, timezone, precision, data.impliedDecimalSeparator());
+        return doGetFormat(clazz, pattern, locale, timezone, precision, rounding, data.impliedDecimalSeparator(), decimalSeparator, groupingSeparator);
     }
 
     /**
@@ -135,13 +126,14 @@ public final class FormatFactory {
      * @param locale optional locale for NumberFormat and DateFormat parsing.
      * @return Format the formatter
      * @throws IllegalArgumentException if not suitable formatter is found
+     * TODO : Check if KeyValuePair could also use decimal/groupingSeparator/rounding for BigDecimal
      */
     public static Format<?> getFormat(Class<?> clazz, String locale, KeyValuePairField data) throws Exception {
         String pattern = data.pattern();
         String timezone = data.timezone();
         int precision = data.precision();
 
-        return doGetFormat(clazz, pattern, locale, timezone, precision, data.impliedDecimalSeparator());
+        return doGetFormat(clazz, pattern, locale, timezone, precision, null, data.impliedDecimalSeparator(), null, null);
     }
 
     private static Locale getLocale(String locale) {
