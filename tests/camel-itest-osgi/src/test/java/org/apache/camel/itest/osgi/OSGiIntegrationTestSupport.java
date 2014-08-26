@@ -137,13 +137,26 @@ public class OSGiIntegrationTestSupport extends CamelTestSupport {
                                                                    "karaf.framework",
                                                                    "equinox");
     }
+
+    private static String getKarafVersion() {
+        String karafVersion = System.getProperty("karafVersion");
+        if (karafVersion == null) {
+            // setup the default version of it
+            karafVersion = "2.3.6";
+        }
+        return karafVersion;
+    }
+
     public static Option[] getDefaultCamelKarafOptions() {
+        String karafVersion = getKarafVersion();
+        LOG.info("*** The karaf version is " + karafVersion + " ***");
+
         Option[] options =
         // Set the karaf environment with some customer configuration
             new Option[] {
                       KarafDistributionOption.karafDistributionConfiguration()
                           .frameworkUrl(maven().groupId("org.apache.karaf").artifactId("apache-karaf").type("tar.gz").versionAsInProject())
-                          .karafVersion("2.3.6")
+                          .karafVersion(karafVersion)
                           .name("Apache Karaf")
                           .useDeployFolder(false).unpackDirectory(new File("target/paxexam/unpack/")),
 

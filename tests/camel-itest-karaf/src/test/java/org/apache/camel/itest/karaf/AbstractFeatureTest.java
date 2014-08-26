@@ -176,14 +176,25 @@ public abstract class AbstractFeatureTest {
         }
     }
 
+    private static String getKarafVersion() {
+        String karafVersion = System.getProperty("karafVersion");
+        if (karafVersion == null) {
+            // setup the default version of it
+            karafVersion = "2.3.6";
+        }
+        return karafVersion;
+    }
+
     public static Option[] configure(String feature) {
         switchPlatformEncodingToUTF8();
+        String karafVersion = getKarafVersion();
+        LOG.info("*** The karaf version is " + karafVersion + " ***");
 
         Option[] options =
                 new Option[]{
                         KarafDistributionOption.karafDistributionConfiguration()
                                 .frameworkUrl(maven().groupId("org.apache.karaf").artifactId("apache-karaf").type("tar.gz").versionAsInProject())
-                                .karafVersion("2.3.6")
+                                .karafVersion(karafVersion)
                                 .name("Apache Karaf")
                                 .useDeployFolder(false).unpackDirectory(new File("target/paxexam/unpack/")),
 
