@@ -267,7 +267,7 @@
     </dependency>
     <dependency>
       <groupId>org.springframework</groupId>
-      <artifactId>spring-context-support</artifactId>      
+      <artifactId>spring-context-support</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -300,12 +300,12 @@
     </dependency>
 	<dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-mail</artifactId>      
+      <artifactId>camel-mail</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
-      <artifactId>camel-test</artifactId>      
+      <artifactId>camel-test</artifactId>
       <scope>test</scope>
     </dependency>
     <dependency>
@@ -375,19 +375,19 @@
           <artifactId>cxf-rt-rs-extension-providers</artifactId>
           <version>${cxf-version}</version>
           <scope>test</scope>
-      </dependency>  
+      </dependency>
       <dependency>
           <groupId>org.apache.cxf</groupId>
           <artifactId>cxf-rt-transports-http-jetty</artifactId>
           <version>${cxf-version}</version>
           <scope>test</scope>
-      </dependency>  
+      </dependency>
       <dependency>
-          <groupId>org.apache.cxf</groupId>
+          <groupId>org.apache.cxf</goupId>
           <artifactId>cxf-rt-ws-security</artifactId>
           <version>${cxf-version}</version>
           <scope>test</scope>
-      </dependency>  
+      </dependency>
       <dependency>
           <groupId>org.codehaus.jettison</groupId>
           <artifactId>jettison</artifactId>
@@ -486,7 +486,6 @@
               <excludes>
                   <exclude>**/FIXMETest.*</exclude>
                   <exclude>**/FtpConsumeTest.*</exclude>
-                  <exclude>**/CxfRsBlueprintRouterTest.*</exclude>
                   <exclude>**/BlobStoreRouteTest.*</exclude> <!-- CAMEL-6134 -->
                   <exclude>**/BlobStoreBlueprintRouteTest.*</exclude> <!-- CAMEL-6134 -->
               </excludes>
@@ -494,7 +493,7 @@
                   <karafVersion>${karaf-version}</karafVersion>
               </systemPropertyVariables>
           </configuration>
-      </plugin>      
+      </plugin>
 
         <!-- CXF wsdl2java generator, will plugin to the compile goal -->
         <plugin>
@@ -549,7 +548,7 @@
 		</plugin>
     </plugins>
   </build>
-   
+
   <profiles>
 	<profile>
         <id>ci-build-profile</id>
