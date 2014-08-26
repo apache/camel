@@ -163,8 +163,6 @@
                 <artifactId>maven-surefire-plugin</artifactId>
                 <configuration>
                     <forkMode>pertest</forkMode>
-                    <redirectTestOutputToFile>true</redirectTestOutputToFile>
-                    <argLine>-Xmx256m</argLine>
                     <systemPropertyVariables>
                         <karafVersion>${karaf-version}</karafVersion>
                     </systemPropertyVariables>
