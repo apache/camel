@@ -19,17 +19,18 @@ package org.apache.camel.builder.xml;
 import javax.xml.transform.ErrorListener;
 import javax.xml.transform.TransformerException;
 
-import org.apache.camel.Exchange;
 import org.xml.sax.ErrorHandler;
 import org.xml.sax.SAXException;
 import org.xml.sax.SAXParseException;
+
+import org.apache.camel.Exchange;
 
 /**
  * {@link ErrorHandler} and {@link ErrorListener} which will ignore warnings,
  * and throws error and fatal as exception, which ensures those can be caught by Camel and dealt-with.
  * <p/>
  * Also any warning, error or fatal error is stored on the {@link Exchange} as a property with the keys
- * {@link Exchange#XSLT_WARNING}, {@link Exchange#XSLT_ERROR}, and {@link Exchange#XSLT_FATAL_ERROR} which
+ * <tt>CamelXsltWarning</tt>, <tt>CamelXsltError</tt>, and <tt>CamelXsltFatalError</tt> which
  * allows end users to access those information form the exchange.
  */
 public class DefaultTransformErrorHandler implements ErrorHandler, ErrorListener {
