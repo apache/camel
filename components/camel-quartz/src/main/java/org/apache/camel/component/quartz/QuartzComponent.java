@@ -20,11 +20,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.URI;
 import java.text.ParseException;
-import java.util.ArrayList;
-import java.util.Date;
-import java.util.List;
-import java.util.Map;
-import java.util.Properties;
+import java.util.*;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import org.apache.camel.CamelContext;
@@ -169,6 +165,10 @@ public class QuartzComponent extends UriEndpointComponent implements StartupList
         if (cron != null) {
             answer.getJobDetail().getJobDataMap().put(QuartzConstants.QUARTZ_TRIGGER_TYPE, "cron");
             answer.getJobDetail().getJobDataMap().put(QuartzConstants.QUARTZ_TRIGGER_CRON_EXPRESSION, cron);
+            String timeZone = EndpointHelper.resloveStringParameter(getCamelContext(), (String)triggerParameters.get("timeZone"), String.class);
+            if (timeZone != null) {
+                answer.getJobDetail().getJobDataMap().put(QuartzConstants.QUARTZ_TRIGGER_CRON_TIMEZONE, timeZone);
+            }
         } else {
             answer.getJobDetail().getJobDataMap().put(QuartzConstants.QUARTZ_TRIGGER_TYPE, "simple");
             Long interval = EndpointHelper.resloveStringParameter(getCamelContext(), (String)triggerParameters.get("repeatInterval"), Long.class);
