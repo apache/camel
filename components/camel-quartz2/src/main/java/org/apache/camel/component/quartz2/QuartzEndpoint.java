@@ -18,6 +18,7 @@ package org.apache.camel.component.quartz2;
 
 import java.util.Date;
 import java.util.Map;
+import java.util.TimeZone;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 
@@ -282,16 +283,28 @@ public class QuartzEndpoint extends DefaultEndpoint {
         }
         if (cron != null) {
             LOG.debug("Creating CronTrigger: {}", cron);
-            result = TriggerBuilder.newTrigger()
-                    .withIdentity(triggerKey)
-                    .startAt(startTime)
-                    .withSchedule(cronSchedule(cron).withMisfireHandlingInstructionFireAndProceed())
-                    .build();
+            String timeZone = (String)triggerParameters.get("timeZone");
+            if (timeZone != null) {
+                result = TriggerBuilder.newTrigger()
+                        .withIdentity(triggerKey)
+                        .startAt(startTime)
+                        .withSchedule(cronSchedule(cron)
+                                .withMisfireHandlingInstructionFireAndProceed()
+                                .inTimeZone(TimeZone.getTimeZone(timeZone)))
+                        .build();
+                jobDetail.getJobDataMap().put(QuartzConstants.QUARTZ_TRIGGER_CRON_TIMEZONE, timeZone);
+            } else {
+                result = TriggerBuilder.newTrigger()
+                        .withIdentity(triggerKey)
+                        .startAt(startTime)
+                        .withSchedule(cronSchedule(cron)
+                                .withMisfireHandlingInstructionFireAndProceed())
+                        .build();
+            }
 
             // enrich job map with details
             jobDetail.getJobDataMap().put(QuartzConstants.QUARTZ_TRIGGER_TYPE, "cron");
             jobDetail.getJobDataMap().put(QuartzConstants.QUARTZ_TRIGGER_CRON_EXPRESSION, cron);
-
         } else {
             LOG.debug("Creating SimpleTrigger.");
             int repeat = SimpleTrigger.REPEAT_INDEFINITELY;
