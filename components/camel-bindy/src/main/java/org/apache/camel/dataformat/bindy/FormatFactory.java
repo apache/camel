@@ -24,7 +24,26 @@ import java.util.Locale;
 
 import org.apache.camel.dataformat.bindy.annotation.DataField;
 import org.apache.camel.dataformat.bindy.annotation.KeyValuePairField;
-import org.apache.camel.dataformat.bindy.format.*;
+import org.apache.camel.dataformat.bindy.format.BigDecimalFormat;
+import org.apache.camel.dataformat.bindy.format.BigDecimalPatternFormat;
+import org.apache.camel.dataformat.bindy.format.BigIntegerFormat;
+import org.apache.camel.dataformat.bindy.format.BooleanFormat;
+import org.apache.camel.dataformat.bindy.format.ByteFormat;
+import org.apache.camel.dataformat.bindy.format.BytePatternFormat;
+import org.apache.camel.dataformat.bindy.format.CharacterFormat;
+import org.apache.camel.dataformat.bindy.format.DatePatternFormat;
+import org.apache.camel.dataformat.bindy.format.DoubleFormat;
+import org.apache.camel.dataformat.bindy.format.DoublePatternFormat;
+import org.apache.camel.dataformat.bindy.format.EnumFormat;
+import org.apache.camel.dataformat.bindy.format.FloatFormat;
+import org.apache.camel.dataformat.bindy.format.FloatPatternFormat;
+import org.apache.camel.dataformat.bindy.format.IntegerFormat;
+import org.apache.camel.dataformat.bindy.format.IntegerPatternFormat;
+import org.apache.camel.dataformat.bindy.format.LongFormat;
+import org.apache.camel.dataformat.bindy.format.LongPatternFormat;
+import org.apache.camel.dataformat.bindy.format.ShortFormat;
+import org.apache.camel.dataformat.bindy.format.ShortPatternFormat;
+import org.apache.camel.dataformat.bindy.format.StringFormat;
 import org.apache.camel.util.ObjectHelper;
 
 
@@ -50,7 +69,6 @@ public final class FormatFactory {
      * @return Format the formatter
      * @throws IllegalArgumentException if not suitable formatter is found
      */
-    @SuppressWarnings("unchecked")
     private static Format<?> doGetFormat(Class<?> clazz, String pattern, String locale,
                                          String timezone, int precision, String rounding,
                                          boolean impliedDecimalSeparator, String decimalSeparator, String groupingSeparator)
@@ -94,7 +112,9 @@ public final class FormatFactory {
         } else if (clazz == boolean.class || clazz == Boolean.class) {
             return new BooleanFormat();
         } else if (clazz.isEnum()) {
-            return new EnumFormat(clazz);
+            @SuppressWarnings({"rawtypes", "unchecked"})
+            Format<?> fmt = new EnumFormat(clazz);
+            return fmt;
         } else {
             throw new IllegalArgumentException("Can not find a suitable formatter for the type: " + clazz.getCanonicalName());
         }

@@ -56,8 +56,6 @@ public class BindySimpleCsvBooleanTrueMarshallTest extends AbstractJUnit4SpringC
     public List<Map<String, Object>> generateModel() {
         Map<String, Object> modelObjects = new HashMap<String, Object>();
 
-        List<BooleanExample> list = new ArrayList<BooleanExample>();
-        
         BooleanExample example = new BooleanExample();
         
         example.setName("andrew");

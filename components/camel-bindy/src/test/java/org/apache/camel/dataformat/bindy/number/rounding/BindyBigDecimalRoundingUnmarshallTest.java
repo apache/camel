@@ -1,4 +1,22 @@
+/**
+ * Licensed to the Apache Software Foundation (ASF) under one or more
+ * contributor license agreements.  See the NOTICE file distributed with
+ * this work for additional information regarding copyright ownership.
+ * The ASF licenses this file to You under the Apache License, Version 2.0
+ * (the "License"); you may not use this file except in compliance with
+ * the License.  You may obtain a copy of the License at
+ *
+ *      http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software
+ * distributed under the License is distributed on an "AS IS" BASIS,
+ * WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
+ * See the License for the specific language governing permissions and
+ * limitations under the License.
+ */
 package org.apache.camel.dataformat.bindy.number.rounding;
+
+import java.math.BigDecimal;
 
 import org.apache.camel.EndpointInject;
 import org.apache.camel.Produce;
@@ -12,14 +30,9 @@ import org.apache.camel.model.dataformat.BindyType;
 import org.apache.camel.test.junit4.CamelTestSupport;
 import org.junit.Assert;
 import org.junit.Test;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
-import java.math.BigDecimal;
 
 public class BindyBigDecimalRoundingUnmarshallTest extends CamelTestSupport {
-
-    private static final Logger LOG = LoggerFactory.getLogger(BindyBigDecimalRoundingUnmarshallTest.class);
 
     private static final String URI_MOCK_RESULT = "mock:result";
     private static final String URI_DIRECT_START = "direct:start";
@@ -45,7 +58,7 @@ public class BindyBigDecimalRoundingUnmarshallTest extends CamelTestSupport {
         result.assertIsSatisfied();
 
         NumberModel bd = (NumberModel)result.getExchanges().get(0).getIn().getBody();
-        Assert.assertEquals(bigDecimal,bd.getRoundingUp().toString());
+        Assert.assertEquals(bigDecimal, bd.getRoundingUp().toString());
     }
 
     @Override
@@ -60,8 +73,8 @@ public class BindyBigDecimalRoundingUnmarshallTest extends CamelTestSupport {
                 bindy.setLocale("en");
 
                 from(URI_DIRECT_START)
-                   .unmarshal(bindy)
-                   .to(URI_MOCK_RESULT);
+                    .unmarshal(bindy)
+                    .to(URI_MOCK_RESULT);
             }
 
         };
