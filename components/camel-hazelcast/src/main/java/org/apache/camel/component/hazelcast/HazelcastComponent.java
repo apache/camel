@@ -32,6 +32,7 @@ import org.apache.camel.component.hazelcast.multimap.HazelcastMultimapEndpoint;
 import org.apache.camel.component.hazelcast.queue.HazelcastQueueEndpoint;
 import org.apache.camel.component.hazelcast.seda.HazelcastSedaConfiguration;
 import org.apache.camel.component.hazelcast.seda.HazelcastSedaEndpoint;
+import org.apache.camel.component.hazelcast.topic.HazelcastTopicEndpoint;
 import org.apache.camel.impl.DefaultComponent;
 
 import static org.apache.camel.util.ObjectHelper.removeStartingCharacters;
@@ -91,6 +92,12 @@ public class HazelcastComponent extends DefaultComponent {
             // remaining is anything (name it foo ;)
             remaining = removeStartingCharacters(remaining.substring(HazelcastConstants.QUEUE_PREFIX.length()), '/');
             endpoint = new HazelcastQueueEndpoint(hzInstance, uri, this, remaining);
+        }
+
+        if (remaining.startsWith(HazelcastConstants.TOPIC_PREFIX)) {
+            // remaining is anything (name it foo ;)
+            remaining = removeStartingCharacters(remaining.substring(HazelcastConstants.TOPIC_PREFIX.length()), '/');
+            endpoint = new HazelcastTopicEndpoint(hzInstance, uri, this, remaining);
         }
 
         if (remaining.startsWith(HazelcastConstants.SEDA_PREFIX)) {

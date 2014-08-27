@@ -26,6 +26,7 @@ public final class HazelcastConstants {
     public static final String ATOMICNUMBER_PREFIX = "atomicvalue:";
     public static final String INSTANCE_PREFIX = "instance:";
     public static final String QUEUE_PREFIX = "queue:";
+    public static final String TOPIC_PREFIX = "topic:";
     public static final String SEDA_PREFIX = "seda:";
     public static final String LIST_PREFIX = "list:";
 
@@ -69,6 +70,9 @@ public final class HazelcastConstants {
     public static final int OFFER_OPERATION = 32;
     public static final int PEEK_OPERATION = 33;
     public static final int POLL_OPERATION = 34;
+
+    // topic
+    public static final int PUBLISH_OPERATION = 35;
 
     /*
      * header values
