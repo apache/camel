@@ -339,8 +339,12 @@ public class XsltBuilder extends ServiceSupport implements Processor, CamelConte
      */
     public void setTransformerSource(Source source) throws TransformerConfigurationException {
         TransformerFactory factory = converter.getTransformerFactory();
-        // use a logger error listener so users can see from the logs what the error may be
-        factory.setErrorListener(new XsltErrorListener());
+        if (errorListener != null) {
+            factory.setErrorListener(errorListener);
+        } else {
+            // use a logger error listener so users can see from the logs what the error may be
+            factory.setErrorListener(new XsltErrorListener());
+        }
         if (getUriResolver() != null) {
             factory.setURIResolver(getUriResolver());
         }
