@@ -106,7 +106,7 @@ public class XsltBuilder implements Processor {
 
         Transformer transformer = getTransformer();
         configureTransformer(transformer, exchange);
-        transformer.setErrorListener(new DefaultTransformErrorHandler());
+        transformer.setErrorListener(new DefaultTransformErrorHandler(exchange));
         ResultHandler resultHandler = resultHandlerFactory.createResult(exchange);
         Result result = resultHandler.getResult();
         exchange.setProperty("isXalanTransformer", isXalanTransformer(transformer));
@@ -131,8 +131,6 @@ public class XsltBuilder implements Processor {
             LOG.trace("Transform complete with result {}", result);
             resultHandler.setBody(out);
         } finally {
-            // clean up the setting on the exchange
-            
             releaseTransformer(transformer);
             // IOHelper can handle if is is null
             IOHelper.close(is);
@@ -409,6 +407,7 @@ public class XsltBuilder implements Processor {
     private void releaseTransformer(Transformer transformer) {
         if (transformers != null) {
             transformer.reset();
+            transformer.setErrorListener(errorListener);
             transformers.offer(transformer);
         }
     }

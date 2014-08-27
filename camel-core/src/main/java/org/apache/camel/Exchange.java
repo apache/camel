@@ -210,7 +210,10 @@ public interface Exchange {
     @Deprecated
     String UNIT_OF_WORK_PROCESS_SYNC = "CamelUnitOfWorkProcessSync";
 
-    String XSLT_FILE_NAME = "CamelXsltFileName";
+    String XSLT_FILE_NAME   = "CamelXsltFileName";
+    String XSLT_ERROR       = "CamelXsltError";
+    String XSLT_FATAL_ERROR = "CamelXsltFatalError";
+    String XSLT_WARNING     = "CamelXsltWarning";
 
     /**
      * Returns the {@link ExchangePattern} (MEP) of this exchange.
