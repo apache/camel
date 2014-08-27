@@ -73,7 +73,6 @@ public class RabbitMQEndpoint extends DefaultEndpoint {
     private Boolean automaticRecoveryEnabled;
     private Integer networkRecoveryInterval;
     private Boolean topologyRecoveryEnabled;
-
     //If it is true, prefetchSize, prefetchCount, prefetchGlobal will be used for basicOqs before starting RabbitMQConsumer
     private boolean prefetchEnabled;
     //Default in RabbitMq is 0.
@@ -85,6 +84,9 @@ public class RabbitMQEndpoint extends DefaultEndpoint {
      * Number of concurrent consumer threads
      */
     private int concurrentConsumers = 1;
+    
+    //Declares a queue and exchange in RabbitMQ, then binds both.
+    private boolean declare = true;
 
     public RabbitMQEndpoint() {
     }
@@ -472,4 +474,12 @@ public class RabbitMQEndpoint extends DefaultEndpoint {
     public void setConcurrentConsumers(int concurrentConsumers) {
         this.concurrentConsumers = concurrentConsumers;
     }
+
+    public boolean isDeclare() {
+        return declare;
+    }
+
+    public void setDeclare(boolean declare) {
+        this.declare = declare;
+    }        
 }

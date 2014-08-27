@@ -86,7 +86,9 @@ public class RabbitMQConsumer extends DefaultConsumer {
     private void startConsumers() throws IOException {
         // First channel used to declare Exchange and Queue
         Channel channel = openChannel();
-        endpoint.declareExchangeAndQueue(channel);
+        if (getEndpoint().isDeclare()) {
+            endpoint.declareExchangeAndQueue(channel);
+        }
         startConsumer(channel);
         // Other channels
         for (int i = 1; i < endpoint.getConcurrentConsumers(); i++) {
