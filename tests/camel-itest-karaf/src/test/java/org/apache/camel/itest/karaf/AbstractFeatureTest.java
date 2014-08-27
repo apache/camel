@@ -26,12 +26,13 @@ import org.apache.camel.CamelContext;
 import org.apache.camel.impl.DefaultRouteContext;
 import org.apache.camel.model.DataFormatDefinition;
 import org.apache.camel.osgi.CamelContextFactory;
-import static org.ops4j.pax.exam.CoreOptions.vmOption;
-import org.ops4j.pax.exam.karaf.options.KarafDistributionOption;
-import org.ops4j.pax.exam.karaf.options.LogLevelOption;
+
 import org.junit.After;
 import org.junit.Before;
+
 import org.ops4j.pax.exam.Option;
+import org.ops4j.pax.exam.karaf.options.KarafDistributionOption;
+import org.ops4j.pax.exam.karaf.options.LogLevelOption;
 import org.ops4j.pax.exam.options.UrlReference;
 import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
@@ -41,6 +42,7 @@ import org.slf4j.LoggerFactory;
 import static org.junit.Assert.assertNotNull;
 import static org.ops4j.pax.exam.CoreOptions.maven;
 import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
+import static org.ops4j.pax.exam.CoreOptions.vmOption;
 
 
 public abstract class AbstractFeatureTest {
@@ -167,10 +169,10 @@ public abstract class AbstractFeatureTest {
 
     private static void switchPlatformEncodingToUTF8() {
         try {
-            System.setProperty("file.encoding","UTF-8");
+            System.setProperty("file.encoding", "UTF-8");
             Field charset = Charset.class.getDeclaredField("defaultCharset");
             charset.setAccessible(true);
-            charset.set(null,null);
+            charset.set(null, null);
         } catch (Exception e) {
             throw new RuntimeException(e);
         }
@@ -190,29 +192,29 @@ public abstract class AbstractFeatureTest {
         String karafVersion = getKarafVersion();
         LOG.info("*** The karaf version is " + karafVersion + " ***");
 
-        Option[] options =
-                new Option[]{
-                        KarafDistributionOption.karafDistributionConfiguration()
-                                .frameworkUrl(maven().groupId("org.apache.karaf").artifactId("apache-karaf").type("tar.gz").versionAsInProject())
-                                .karafVersion(karafVersion)
-                                .name("Apache Karaf")
-                                .useDeployFolder(false).unpackDirectory(new File("target/paxexam/unpack/")),
+        Option[] options = new Option[] {
+            KarafDistributionOption.karafDistributionConfiguration()
+                    .frameworkUrl(maven().groupId("org.apache.karaf").artifactId("apache-karaf").type("tar.gz").versionAsInProject())
+                    .karafVersion(karafVersion)
+                    .name("Apache Karaf")
+                    .useDeployFolder(false).unpackDirectory(new File("target/paxexam/unpack/")),
 
-                        vmOption("-Dfile.encoding=UTF-8"),
+            vmOption("-Dfile.encoding=UTF-8"),
 
-                        KarafDistributionOption.keepRuntimeFolder(),
-                        // override the config.properties (to fix pax-exam bug)
-                        //KarafDistributionOption.replaceConfigurationFile("etc/config.properties", new File("src/test/resources/org/apache/camel/itest/karaf/config.properties")),
-                        KarafDistributionOption.replaceConfigurationFile("etc/custom.properties", new File("src/test/resources/org/apache/camel/itest/karaf/custom.properties")),
-                        KarafDistributionOption.replaceConfigurationFile("etc/org.ops4j.pax.url.mvn.cfg", new File("src/test/resources/org/apache/camel/itest/karaf/org.ops4j.pax.url.mvn.cfg")),
-
-
-                        // we need INFO logging otherwise we cannot see what happens
-                        new LogLevelOption(LogLevelOption.LogLevel.INFO),
+            KarafDistributionOption.keepRuntimeFolder(),
+            // override the config.properties (to fix pax-exam bug)
+            //KarafDistributionOption.replaceConfigurationFile("etc/config.properties", new File("src/test/resources/org/apache/camel/itest/karaf/config.properties")),
+            KarafDistributionOption.replaceConfigurationFile("etc/custom.properties", new File("src/test/resources/org/apache/camel/itest/karaf/custom.properties")),
+            KarafDistributionOption.replaceConfigurationFile("etc/org.ops4j.pax.url.mvn.cfg", new File("src/test/resources/org/apache/camel/itest/karaf/org.ops4j.pax.url.mvn.cfg")),
 
 
-                        // install the cxf jaxb spec as the karaf doesn't provide it by default
-                        KarafDistributionOption.features(getCamelKarafFeatureUrl(), "cxf-jaxb", "camel-core", "camel-spring", "camel-" + feature)};
+            // we need INFO logging otherwise we cannot see what happens
+            new LogLevelOption(LogLevelOption.LogLevel.INFO),
+
+
+            // install the cxf jaxb spec as the karaf doesn't provide it by default
+            KarafDistributionOption.features(getCamelKarafFeatureUrl(), "cxf-jaxb", "camel-core", "camel-spring", "camel-" + feature)
+        };
 
         return options;
     }
