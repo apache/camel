@@ -324,7 +324,7 @@ public class Tracer implements InterceptStrategy, Service {
      * Remove the given tracehandler
      */
     public void removeTraceHandler(TraceEventHandler traceHandler) {
-        this.traceHandlers.add(traceHandler);
+        this.traceHandlers.remove(traceHandler);
     }
 
     public String getJpaTraceEventMessageClassName() {
