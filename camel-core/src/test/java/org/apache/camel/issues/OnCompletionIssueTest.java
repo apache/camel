@@ -27,7 +27,7 @@ public class OnCompletionIssueTest extends ContextTestSupport {
         end.expectedMessageCount(1);
 
         MockEndpoint complete = getMockEndpoint("mock:complete");
-        complete.expectedBodiesReceived("finish", "stop", "faulted", "except");
+        complete.expectedBodiesReceivedInAnyOrder("finish", "stop", "faulted", "except");
 
         template.sendBody("direct:input", "finish");
         template.sendBody("direct:input", "stop");
