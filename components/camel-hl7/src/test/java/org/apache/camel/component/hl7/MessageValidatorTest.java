@@ -69,7 +69,6 @@ public class MessageValidatorTest extends CamelTestSupport {
     }
 
     @Test(expected = CamelExecutionException.class)
-    @Ignore
     public void testCustomHapiContext() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:test5");
         mock.expectedMessageCount(0);
@@ -78,9 +77,16 @@ public class MessageValidatorTest extends CamelTestSupport {
         assertMockEndpointsSatisfied();
     }
 
+    @Test
+    public void testDefaultValidationContext() throws Exception {
+        MockEndpoint mock = getMockEndpoint("mock:test1");
+        mock.expectedMessageCount(1);
+        Message msg = createADT01Message();
+        template.sendBody("direct:test1", msg);
+        assertMockEndpointsSatisfied();
+    }
 
     @Test(expected = CamelExecutionException.class)
-    @Ignore
     public void testCustomValidationContext() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:test2");
         mock.expectedMessageCount(0);
