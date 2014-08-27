@@ -16,6 +16,7 @@
  */
 package org.apache.camel.spring.management;
 
+import java.util.Set;
 import javax.management.MBeanServer;
 import javax.management.ObjectName;
 
@@ -24,7 +25,7 @@ import org.springframework.context.support.AbstractXmlApplicationContext;
 import org.springframework.context.support.ClassPathXmlApplicationContext;
 
 /**
- * @version 
+ * @version
  */
 public class SpringJmxDumpCBRRoutesAsXmlTest extends SpringTestSupport {
 
@@ -37,10 +38,17 @@ public class SpringJmxDumpCBRRoutesAsXmlTest extends SpringTestSupport {
         return context.getManagementStrategy().getManagementAgent().getMBeanServer();
     }
 
+    static ObjectName getCamelContextObjectName(MBeanServer mbeanServer) throws Exception {
+        Set<ObjectName> set = mbeanServer.queryNames(new ObjectName("*:type=context,*"), null);
+        assertEquals(1, set.size());
+
+        return set.iterator().next();
+    }
+
     public void testJmxDumpCBRRoutesAsXml() throws Exception {
         MBeanServer mbeanServer = getMBeanServer();
-
-        ObjectName on = ObjectName.getInstance("org.apache.camel:context=camel-1,type=context,name=\"camel-1\"");
+        // We need to look up the camel context object name first
+        ObjectName on = getCamelContextObjectName(mbeanServer);
         String xml = (String) mbeanServer.invoke(on, "dumpRoutesAsXml", null, null);
         assertNotNull(xml);
         log.info(xml);
