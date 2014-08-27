@@ -33,6 +33,7 @@ import javax.ws.rs.Produces;
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
+import org.apache.camel.component.cxf.CXFTestSupport;
 import org.apache.camel.spring.Main;
 import org.apache.camel.test.junit4.TestSupport;
 import org.apache.cxf.helpers.IOUtils;
@@ -41,6 +42,7 @@ import org.apache.cxf.jaxrs.ext.multipart.Multipart;
 import org.junit.Test;
 
 public class CxfRsRelayTest extends TestSupport {
+    private static int port6 = CXFTestSupport.getPort6(); 
     /**
      * A sample service "interface" (technically, it is a class since we will
      * use proxy-client. That interface exposes three methods over-loading each
@@ -94,6 +96,22 @@ public class CxfRsRelayTest extends TestSupport {
         try {
             main.setApplicationContextUri("org/apache/camel/component/cxf/jaxrs/CxfRsSpringRelay.xml");
             main.start();
+            Thread t = new Thread(new Runnable() {
+                /**
+                 * Sends a request to the first endpoint in the route
+                 */
+                public void run() {
+                    try {
+                        JAXRSClientFactory.create("http://localhost:" + port6 + "/CxfRsRelayTest/rest", UploadService.class)
+                            .upload(CamelRouteBuilder.class.getResourceAsStream(SAMPLE_CONTENT_PATH),
+                                    SAMPLE_NAME);
+                    } catch (Exception e) {
+                        e.printStackTrace();
+                        throw new RuntimeException(e);
+                    }
+                }
+            });
+            t.start();
             LATCH.await(10, TimeUnit.SECONDS);
             assertEquals(SAMPLE_NAME, name);
             StringWriter writer = new StringWriter();
@@ -124,23 +142,7 @@ public class CxfRsRelayTest extends TestSupport {
                     LATCH.countDown();
                 }
             });
-            Thread t = new Thread(new Runnable() {
-                /**
-                 * Sends a request to the first endpoint in the route
-                 */
-                public void run() {
-                    try {
-                        JAXRSClientFactory.create(getContext().getEndpoint("upload1", CxfRsEndpoint.class)
-                                                      .getAddress(), UploadService.class)
-                            .upload(CamelRouteBuilder.class.getResourceAsStream(SAMPLE_CONTENT_PATH),
-                                    SAMPLE_NAME);
-                    } catch (Exception e) {
-                        e.printStackTrace();
-                        throw new RuntimeException(e);
-                    }
-                }
-            });
-            t.start();
+            
         }
     }
 }
