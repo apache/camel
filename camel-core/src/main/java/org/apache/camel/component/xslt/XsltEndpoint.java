@@ -17,7 +17,6 @@
 package org.apache.camel.component.xslt;
 
 import java.io.IOException;
-
 import javax.xml.transform.Source;
 import javax.xml.transform.TransformerException;
 
@@ -30,6 +29,7 @@ import org.apache.camel.builder.xml.XsltBuilder;
 import org.apache.camel.impl.ProcessorEndpoint;
 import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.spi.UriParam;
+import org.apache.camel.util.ServiceHelper;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -87,19 +87,16 @@ public class XsltEndpoint extends ProcessorEndpoint {
 
     @Override
     protected void onExchange(Exchange exchange) throws Exception {
-
         if (!cacheStylesheet || cacheCleared) {
             loadResource(resourceUri);
         }
         super.onExchange(exchange);
-
     }
 
     /**
      * Loads the resource.
      *
      * @param resourceUri  the resource to load
-     *
      * @throws TransformerException is thrown if error loading resource
      * @throws IOException is thrown if error loading resource
      */
@@ -118,11 +115,18 @@ public class XsltEndpoint extends ProcessorEndpoint {
     @Override
     protected void doStart() throws Exception {
         super.doStart();
+
+        // must load resource first which sets a template and do a stylesheet compilation to catch errors early
         loadResource(resourceUri);
+
+        // and then inject camel context and start service
+        xslt.setCamelContext(getCamelContext());
+        ServiceHelper.startService(xslt);
     }
 
     @Override
     protected void doStop() throws Exception {
         super.doStop();
+        ServiceHelper.stopService(xslt);
     }
 }
