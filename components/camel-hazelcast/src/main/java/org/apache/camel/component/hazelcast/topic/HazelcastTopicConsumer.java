@@ -17,31 +17,24 @@
 package org.apache.camel.component.hazelcast.topic;
 
 import com.hazelcast.core.HazelcastInstance;
-import org.apache.camel.Component;
-import org.apache.camel.Consumer;
+import com.hazelcast.core.IQueue;
+import com.hazelcast.core.ITopic;
+import org.apache.camel.Endpoint;
 import org.apache.camel.Processor;
-import org.apache.camel.Producer;
-import org.apache.camel.component.hazelcast.HazelcastDefaultEndpoint;
+import org.apache.camel.component.hazelcast.HazelcastDefaultConsumer;
+import org.apache.camel.component.hazelcast.listener.CamelItemListener;
+import org.apache.camel.component.hazelcast.listener.CamelMessageListener;
 
 /**
  *
  */
-public class HazelcastTopicEndpoint extends HazelcastDefaultEndpoint {
+public class HazelcastTopicConsumer extends HazelcastDefaultConsumer {
 
-    public HazelcastTopicEndpoint(HazelcastInstance hazelcastInstance, String endpointUri, Component component, String cacheName) {
-        super(hazelcastInstance, endpointUri, component, cacheName);
-    }
+    public HazelcastTopicConsumer(HazelcastInstance hazelcastInstance, Endpoint endpoint, Processor processor, String cacheName) {
+        super(hazelcastInstance, endpoint, processor, cacheName);
 
-    @Override
-    public Consumer createConsumer(Processor processor) throws Exception {
-        HazelcastTopicConsumer answer = new HazelcastTopicConsumer(hazelcastInstance, this, processor, cacheName);
-        configureConsumer(answer);
-        return answer;
-    }
-
-    @Override
-    public Producer createProducer() throws Exception {
-        return new HazelcastTopicProducer(hazelcastInstance, this, cacheName);
+        ITopic<Object> topic = hazelcastInstance.getTopic(cacheName);
+        topic.addMessageListener(new CamelMessageListener(this, cacheName));
     }
 
 }
