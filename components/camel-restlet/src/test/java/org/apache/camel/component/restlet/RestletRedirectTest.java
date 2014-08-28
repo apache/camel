@@ -20,10 +20,10 @@ import org.apache.camel.Exchange;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.http.Header;
 import org.apache.http.HttpResponse;
-import org.apache.http.client.HttpClient;
+import org.apache.http.client.config.RequestConfig;
 import org.apache.http.client.methods.HttpGet;
-import org.apache.http.client.params.ClientPNames;
-import org.apache.http.impl.client.DefaultHttpClient;
+import org.apache.http.impl.client.CloseableHttpClient;
+import org.apache.http.impl.client.HttpClientBuilder;
 import org.junit.Test;
 
 /**
@@ -37,19 +37,25 @@ public class RestletRedirectTest extends RestletTestSupport {
         HttpGet get = new HttpGet("http://localhost:" + portNum + "/users/homer");
 
         // do not follow redirects
-        HttpClient client = new DefaultHttpClient();
-        client.getParams().setBooleanParameter(ClientPNames.HANDLE_REDIRECTS, false);
-
-        HttpResponse response = client.execute(get);
-
-        for (Header header : response.getAllHeaders()) {
-            log.info("Header {}", header);
+        RequestConfig requestconfig = RequestConfig.custom().setRedirectsEnabled(false).build();
+        
+        CloseableHttpClient client = HttpClientBuilder.create().setDefaultRequestConfig(requestconfig).build();
+        
+        try {
+            
+            HttpResponse response = client.execute(get);
+    
+            for (Header header : response.getAllHeaders()) {
+                log.info("Header {}", header);
+            }
+    
+            assertEquals(302, response.getStatusLine().getStatusCode());
+            assertTrue("Should have location header", response.containsHeader("Location"));
+            assertEquals("http://somewhere.com", response.getFirstHeader("Location").getValue());
+            assertEquals("bar", response.getFirstHeader("Foo").getValue());
+        } finally {
+            client.close();
         }
-
-        assertEquals(302, response.getStatusLine().getStatusCode());
-        assertTrue("Should have location header", response.containsHeader("Location"));
-        assertEquals("http://somewhere.com", response.getFirstHeader("Location").getValue());
-        assertEquals("bar", response.getFirstHeader("Foo").getValue());
     }
 
     @Override
