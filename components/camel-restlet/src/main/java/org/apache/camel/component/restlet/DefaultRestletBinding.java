@@ -310,13 +310,17 @@ public class DefaultRestletBinding implements RestletBinding, HeaderFilterStrate
             // get content type
             MediaType mediaType = response.getEntity().getMediaType();
             if (mediaType != null) {
+                LOG.debug("Setting the Content-Type to be {}",  mediaType.toString());
                 exchange.getOut().setHeader(Exchange.CONTENT_TYPE, mediaType.toString());
             }
-
-            // get content text
-            String text = response.getEntity().getText();
-            LOG.debug("Populate exchange from Restlet response: {}", text);
-            exchange.getOut().setBody(text);
+            if (mediaType != null && mediaType.equals(MediaType.APPLICATION_OCTET_STREAM)) {
+                exchange.getOut().setBody(response.getEntity().getStream());
+            } else {
+                // get content text
+                String text = response.getEntity().getText();
+                LOG.debug("Populate exchange from Restlet response: {}", text);
+                exchange.getOut().setBody(text);
+            }
         }
 
         // preserve headers from in by copying any non existing headers
