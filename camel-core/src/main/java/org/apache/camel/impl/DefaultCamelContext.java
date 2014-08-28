@@ -36,6 +36,7 @@ import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
+
 import javax.naming.Context;
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Unmarshaller;
@@ -1782,8 +1783,13 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
 
     private void doStartCamel() throws Exception {
         if (applicationContextClassLoader == null) {
-            // use the classloader that loaded this class
-            setApplicationContextClassLoader(this.getClass().getClassLoader());
+            // Using the TCCL as the default value of ApplicationClassLoader
+            ClassLoader cl = Thread.currentThread().getContextClassLoader();
+            if (cl == null) {
+                // use the classloader that loaded this class
+                cl = this.getClass().getClassLoader();
+            }
+            setApplicationContextClassLoader(cl);
         }
 
         if (log.isDebugEnabled()) {
