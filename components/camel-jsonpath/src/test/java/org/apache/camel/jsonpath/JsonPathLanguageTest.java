@@ -74,6 +74,7 @@ public class JsonPathLanguageTest extends CamelTestSupport {
 
     @Test
     public void testPredicate() throws Exception {
+        // Test books.json file
         Exchange exchange = new DefaultExchange(context);
         exchange.getIn().setBody(new File("src/test/resources/books.json"));
 
