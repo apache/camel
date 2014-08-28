@@ -1970,6 +1970,12 @@
         <artifactId>pax-swissbox-tinybundles</artifactId>
         <version>${pax-tiny-bundle-version}</version>
       </dependency>
+      <dependency>
+          <groupId>org.ops4j.pax.exam</groupId>
+          <artifactId>pax-exam-invoker-junit</artifactId>
+          <version>${pax-exam-version}</version>
+      </dependency>
+      
 
 
       <!-- optional Saxon support -->

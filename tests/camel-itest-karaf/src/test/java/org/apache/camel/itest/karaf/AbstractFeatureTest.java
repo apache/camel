@@ -17,9 +17,11 @@
 package org.apache.camel.itest.karaf;
 
 import java.io.File;
-
+import java.io.InputStream;
 import java.lang.reflect.Field;
 import java.nio.charset.Charset;
+import java.util.Properties;
+
 import javax.inject.Inject;
 
 import org.apache.camel.CamelContext;
@@ -33,13 +35,14 @@ import org.junit.Before;
 import org.ops4j.pax.exam.Option;
 import org.ops4j.pax.exam.karaf.options.KarafDistributionOption;
 import org.ops4j.pax.exam.karaf.options.LogLevelOption;
+import org.ops4j.pax.exam.options.MavenArtifactProvisionOption;
 import org.ops4j.pax.exam.options.UrlReference;
 import org.osgi.framework.BundleContext;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-
 import static org.junit.Assert.assertNotNull;
+
 import static org.ops4j.pax.exam.CoreOptions.maven;
 import static org.ops4j.pax.exam.CoreOptions.mavenBundle;
 import static org.ops4j.pax.exam.CoreOptions.vmOption;
@@ -177,14 +180,30 @@ public abstract class AbstractFeatureTest {
             throw new RuntimeException(e);
         }
     }
-
+    
     private static String getKarafVersion() {
-        String karafVersion = System.getProperty("karafVersion");
+        InputStream ins = AbstractFeatureTest.class.getResourceAsStream("/META-INF/maven/dependencies.properties");
+        Properties p = new Properties();
+        try {
+            p.load(ins);
+        } catch (Throwable t) {
+            //
+        }
+        String karafVersion = p.getProperty("org.apache.karaf/apache-karaf/version");
+        if (karafVersion == null) {
+            karafVersion = System.getProperty("karafVersion");
+        }
         if (karafVersion == null) {
             // setup the default version of it
             karafVersion = "2.3.6";
         }
         return karafVersion;
+    }
+    public static MavenArtifactProvisionOption getJUnitBundle() {
+        MavenArtifactProvisionOption mavenOption = mavenBundle().groupId("org.apache.servicemix.bundles")
+            .artifactId("org.apache.servicemix.bundles.junit");
+        mavenOption.versionAsInProject().start(true).startLevel(10);
+        return mavenOption;
     }
 
     public static Option[] configure(String feature) {
@@ -193,6 +212,10 @@ public abstract class AbstractFeatureTest {
         LOG.info("*** The karaf version is " + karafVersion + " ***");
 
         Option[] options = new Option[] {
+            // for remote debugging
+            //org.ops4j.pax.exam.CoreOptions.vmOption("-Xdebug"),
+            //org.ops4j.pax.exam.CoreOptions.vmOption("-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5008"),
+            
             KarafDistributionOption.karafDistributionConfiguration()
                     .frameworkUrl(maven().groupId("org.apache.karaf").artifactId("apache-karaf").type("tar.gz").versionAsInProject())
                     .karafVersion(karafVersion)
@@ -206,7 +229,8 @@ public abstract class AbstractFeatureTest {
             //KarafDistributionOption.replaceConfigurationFile("etc/config.properties", new File("src/test/resources/org/apache/camel/itest/karaf/config.properties")),
             KarafDistributionOption.replaceConfigurationFile("etc/custom.properties", new File("src/test/resources/org/apache/camel/itest/karaf/custom.properties")),
             KarafDistributionOption.replaceConfigurationFile("etc/org.ops4j.pax.url.mvn.cfg", new File("src/test/resources/org/apache/camel/itest/karaf/org.ops4j.pax.url.mvn.cfg")),
-
+            
+            getJUnitBundle(),
 
             // we need INFO logging otherwise we cannot see what happens
             new LogLevelOption(LogLevelOption.LogLevel.INFO),

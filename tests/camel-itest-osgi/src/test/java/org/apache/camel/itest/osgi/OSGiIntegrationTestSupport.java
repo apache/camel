@@ -16,8 +16,10 @@
  */
 package org.apache.camel.itest.osgi;
 import java.io.File;
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Properties;
 import java.util.concurrent.atomic.AtomicInteger;
 
 import javax.inject.Inject;
@@ -80,6 +82,12 @@ public class OSGiIntegrationTestSupport extends CamelTestSupport {
         return getCamelKarafFeatureUrl(null);
     }
 
+    public static MavenArtifactProvisionOption getJUnitBundle() {
+        MavenArtifactProvisionOption mavenOption = mavenBundle().groupId("org.apache.servicemix.bundles")
+            .artifactId("org.apache.servicemix.bundles.junit");
+        mavenOption.versionAsInProject().start(true).startLevel(10);
+        return mavenOption;
+    }
     public static UrlReference getCamelKarafFeatureUrl(String version) {
 
         String type = "xml/features";
@@ -139,7 +147,17 @@ public class OSGiIntegrationTestSupport extends CamelTestSupport {
     }
 
     private static String getKarafVersion() {
-        String karafVersion = System.getProperty("karafVersion");
+        InputStream ins = OSGiIntegrationTestSupport.class.getResourceAsStream("/META-INF/maven/dependencies.properties");
+        Properties p = new Properties();
+        try {
+            p.load(ins);
+        } catch (Throwable t) {
+            //
+        }
+        String karafVersion = p.getProperty("org.apache.karaf/apache-karaf/version");
+        if (karafVersion == null) {
+            karafVersion = System.getProperty("karafVersion");
+        }
         if (karafVersion == null) {
             // setup the default version of it
             karafVersion = "2.3.6";
@@ -154,19 +172,27 @@ public class OSGiIntegrationTestSupport extends CamelTestSupport {
         Option[] options =
         // Set the karaf environment with some customer configuration
             new Option[] {
+                      // for remote debugging
+                      //org.ops4j.pax.exam.CoreOptions.vmOption("-Xdebug"),
+                      //org.ops4j.pax.exam.CoreOptions.vmOption("-Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5008"),
+
                       KarafDistributionOption.karafDistributionConfiguration()
-                          .frameworkUrl(maven().groupId("org.apache.karaf").artifactId("apache-karaf").type("tar.gz").versionAsInProject())
+                          .frameworkUrl(maven().groupId("org.apache.karaf")
+                                        .artifactId("apache-karaf").type("tar.gz").versionAsInProject())
                           .karafVersion(karafVersion)
                           .name("Apache Karaf")
-                          .useDeployFolder(false).unpackDirectory(new File("target/paxexam/unpack/")),
+                          .useDeployFolder(false)
+                          .unpackDirectory(new File("target/paxexam/unpack/")),
 
                       //KarafDistributionOption.keepRuntimeFolder(),
                       // override the config.properties (to fix pax-exam bug)
                       // KarafDistributionOption.replaceConfigurationFile("etc/config.properties", new File("src/test/resources/org/apache/camel/itest/karaf/config.properties")),
                       KarafDistributionOption.replaceConfigurationFile("etc/custom.properties", new File("src/test/resources/org/apache/camel/itest/karaf/custom.properties")),
                       KarafDistributionOption.replaceConfigurationFile("etc/org.ops4j.pax.url.mvn.cfg", new File("src/test/resources/org/apache/camel/itest/karaf/org.ops4j.pax.url.mvn.cfg")),
-
-
+               
+                //Grab JUnit and put it very early in the startup to make sure any bundles that are loaded 
+                //will use the same version/bundle
+                getJUnitBundle(),
                 // we need INFO logging otherwise we cannot see what happens
                 new LogLevelOption(LogLevelOption.LogLevel.INFO),
                 // install the cxf jaxb spec as the karaf doesn't provide it by default
@@ -179,10 +205,8 @@ public class OSGiIntegrationTestSupport extends CamelTestSupport {
     @Configuration
     public static Option[] configure() throws Exception {
         Option[] options = combine(
-            getDefaultCamelKarafOptions());
-
-        // for remote debugging
-        // vmOption("-Xdebug -Xrunjdwp:transport=dt_socket,server=y,suspend=y,address=5008"),
+            getDefaultCamelKarafOptions()
+        );
 
         return options;
     }
