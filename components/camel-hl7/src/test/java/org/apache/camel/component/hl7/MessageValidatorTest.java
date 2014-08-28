@@ -46,6 +46,8 @@ public class MessageValidatorTest extends CamelTestSupport {
     protected void doPreSetup() throws Exception {
         defaultValidationContext = ValidationContextFactory.defaultValidation();
         defaultContext = new DefaultHapiContext(defaultValidationContext);
+        // we validate separately, not during parsing or rendering
+        defaultContext.getParserConfiguration().setValidating(false);
 
         ValidationRuleBuilder builder = new ValidationRuleBuilder() {
             @Override
@@ -57,6 +59,8 @@ public class MessageValidatorTest extends CamelTestSupport {
         };
         customValidationContext = ValidationContextFactory.fromBuilder(builder);
         customContext = new DefaultHapiContext(customValidationContext);
+        // we validate separately, not during parsing or rendering
+        customContext.getParserConfiguration().setValidating(false);
     }
 
     @Test
@@ -115,10 +119,9 @@ public class MessageValidatorTest extends CamelTestSupport {
     }
 
     @Test(expected = CamelExecutionException.class)
-    @Ignore
     public void testDynamicCustomHapiContext() throws Exception {
         MockEndpoint mock = getMockEndpoint("mock:test6");
-        mock.expectedMessageCount(1);
+        mock.expectedMessageCount(0);
         Message msg = createADT01Message();
         msg.setParser(customContext.getPipeParser());
         template.sendBody("direct:test6", msg);
