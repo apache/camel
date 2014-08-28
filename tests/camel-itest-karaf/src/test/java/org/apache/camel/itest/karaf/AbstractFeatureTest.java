@@ -201,7 +201,7 @@ public abstract class AbstractFeatureTest {
 
             vmOption("-Dfile.encoding=UTF-8"),
 
-            KarafDistributionOption.keepRuntimeFolder(),
+            //KarafDistributionOption.keepRuntimeFolder(),
             // override the config.properties (to fix pax-exam bug)
             //KarafDistributionOption.replaceConfigurationFile("etc/config.properties", new File("src/test/resources/org/apache/camel/itest/karaf/config.properties")),
             KarafDistributionOption.replaceConfigurationFile("etc/custom.properties", new File("src/test/resources/org/apache/camel/itest/karaf/custom.properties")),
