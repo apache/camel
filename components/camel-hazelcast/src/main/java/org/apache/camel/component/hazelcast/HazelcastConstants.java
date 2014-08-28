@@ -84,6 +84,9 @@ public final class HazelcastConstants {
     public static final String UPDATED = "updated";
     public static final String ADDED = "added";
 
+    // message listener actions (topic)
+    public static final String RECEIVED = "received";
+
     // storage types (map, queue, topic, multimap)
     public static final String MAP = "map";
     public static final String MULTIMAP = "multimap";

@@ -58,7 +58,7 @@ public class HazelcastTopicProducerTest extends HazelcastCamelTestSupport {
     }
 
     @Test
-    public void add() {
+    public void publish() {
         template.sendBody("direct:publish", "bar");
         verify(topic).publish("bar");
     }
