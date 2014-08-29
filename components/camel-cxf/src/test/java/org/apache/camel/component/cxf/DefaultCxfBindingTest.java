@@ -27,10 +27,17 @@ import java.util.TreeMap;
 
 import javax.activation.DataHandler;
 import javax.activation.FileDataSource;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.ExchangePattern;
 import org.apache.camel.component.cxf.common.message.CxfConstants;
+import org.apache.camel.converter.IOConverter;
 import org.apache.camel.impl.DefaultCamelContext;
 import org.apache.camel.impl.DefaultExchange;
 import org.apache.camel.impl.DefaultHeaderFilterStrategy;
@@ -43,6 +50,7 @@ import org.apache.cxf.endpoint.Endpoint;
 import org.apache.cxf.helpers.CastUtils;
 import org.apache.cxf.message.Attachment;
 import org.apache.cxf.message.Message;
+import org.apache.cxf.message.MessageImpl;
 import org.easymock.EasyMock;
 import org.easymock.IMocksControl;
 import org.junit.Assert;
@@ -52,6 +60,11 @@ import org.junit.Test;
  * 
  */
 public class DefaultCxfBindingTest extends Assert {
+    
+    private static final String SOAP_MESSAGE = "<soap:Envelope xmlns:soap=\"http://schemas.xmlsoap.org/soap/envelope/\""
+        + " xmlns=\"http://www.mycompany.com/test/\" xmlns:ns1=\"http://www.mycompany.com/test/1/\">"
+        + " <soap:Body> <request> <ns1:identifier>TEST</ns1:identifier> </request>"
+        + " </soap:Body> </soap:Envelope>";
     private DefaultCamelContext context = new DefaultCamelContext();
 
     @Test
@@ -61,6 +74,28 @@ public class DefaultCxfBindingTest extends Assert {
         
         cxfBinding.setHeaderFilterStrategy(hfs);        
         assertSame("The header filter strategy is set", hfs, cxfBinding.getHeaderFilterStrategy());
+    }
+    
+    @Test
+    public void testPayloadBodyNamespace() throws Exception {
+        MessageImpl message = new MessageImpl();
+        DocumentBuilderFactory documentBuilderFactory = DocumentBuilderFactory.newInstance();
+        documentBuilderFactory.setNamespaceAware(true);
+        DocumentBuilder documentBuilder = documentBuilderFactory.newDocumentBuilder();
+        Document document = documentBuilder.parse(IOConverter.toInputStream(SOAP_MESSAGE, null));
+        document.getDocumentElement().normalize();
+        message.setContent(Node.class, document);
+        Map<String, String> nsMap = new HashMap<String, String>();
+        DefaultCxfBinding.getPayloadBodyElements(message, nsMap);
+        
+        assertEquals(2, nsMap.size());
+        assertEquals("http://www.mycompany.com/test/", nsMap.get("xmlns"));
+        
+        document = documentBuilder.newDocument();
+        Element element = document.createElement("tag");
+        DefaultCxfBinding.addNamespace(element, nsMap);
+        assertEquals("http://www.mycompany.com/test/", element.getAttribute("xmlns"));
+        assertEquals("http://www.mycompany.com/test/1/", element.getAttribute("xmlns:ns1"));
     }
     
     @Test
