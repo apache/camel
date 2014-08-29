@@ -889,6 +889,7 @@
     <bundle dependency='true'>mvn:commons-lang/commons-lang/${commons-lang-version}</bundle>
     <bundle dependency='true'>mvn:commons-io/commons-io/${commons-io-version}</bundle>
     <bundle dependency='true'>mvn:commons-collections/commons-collections/${commons-collections-version}</bundle>
+    <bundle dependency='true'>mvn:org.apache.commons/commons-math3/${commons-math-version}</bundle>
     <bundle dependency='true'>mvn:org.optaplanner/optaplanner-core/${optaplanner-version}</bundle>
     <bundle dependency='true'>mvn:org.kie/kie-api/${kie-version}</bundle>
     <bundle dependency='true'>mvn:org.kie/kie-internal/${kie-version}</bundle>
@@ -900,6 +901,7 @@
     <bundle dependency='true'>mvn:org.mvel/mvel2/${mvel-version}</bundle>
     <bundle dependency='true'>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.xstream/${xstream-bundle-version}</bundle>
     <bundle dependency='true'>mvn:com.google.protobuf/protobuf-java/${protobuf-version}</bundle>
+    <bundle dependency='true'>mvn:com.google.guava/guava/${google-guava-version}</bundle>
     <bundle>mvn:org.apache.servicemix.bundles/org.apache.servicemix.bundles.javax-inject/${javax-inject-bundle-version}</bundle>
     <bundle>mvn:org.apache.camel/camel-optaplanner/${project.version}</bundle>
   </feature>
