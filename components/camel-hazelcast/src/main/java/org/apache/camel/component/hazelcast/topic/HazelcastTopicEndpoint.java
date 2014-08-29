@@ -21,12 +21,13 @@ import org.apache.camel.Component;
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
+import org.apache.camel.MultipleConsumersSupport;
 import org.apache.camel.component.hazelcast.HazelcastDefaultEndpoint;
 
 /**
  *
  */
-public class HazelcastTopicEndpoint extends HazelcastDefaultEndpoint {
+public class HazelcastTopicEndpoint extends HazelcastDefaultEndpoint implements MultipleConsumersSupport {
 
     public HazelcastTopicEndpoint(HazelcastInstance hazelcastInstance, String endpointUri, Component component, String cacheName) {
         super(hazelcastInstance, endpointUri, component, cacheName);
@@ -42,6 +43,11 @@ public class HazelcastTopicEndpoint extends HazelcastDefaultEndpoint {
     @Override
     public Producer createProducer() throws Exception {
         return new HazelcastTopicProducer(hazelcastInstance, this, cacheName);
+    }
+
+    @Override
+    public boolean isMultipleConsumersSupported() {
+        return true;
     }
 
 }
