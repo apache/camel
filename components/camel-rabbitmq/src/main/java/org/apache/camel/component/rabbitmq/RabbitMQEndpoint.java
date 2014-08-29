@@ -86,7 +86,15 @@ public class RabbitMQEndpoint extends DefaultEndpoint {
     private int concurrentConsumers = 1;
     
     //Declares a queue and exchange in RabbitMQ, then binds both.
-    private boolean declare = true;
+    private boolean declare = true;    
+    //Declare dead letter exchange.
+    private String deadLetterExchange;
+    //Declare dead letter routhing key.
+    private String deadLetterRoutingKey;
+    //Declare dead letter queue to declare.
+    private String deadLetterQueue;
+    //Dead letter exchange type.
+    private String deadLetterExchangeType = "direct";
 
     public RabbitMQEndpoint() {
     }
@@ -146,15 +154,32 @@ public class RabbitMQEndpoint extends DefaultEndpoint {
      * If needed, declare Exchange, declare Queue and bind them with Routing Key
      */
     public void declareExchangeAndQueue(Channel channel) throws IOException {
+        HashMap<String, Object> queueArgs = null;
+        if (deadLetterExchange != null) {
+            queueArgs = new HashMap<String, Object>();
+            queueArgs.put(RabbitMQConstants.RABBITMQ_DEAD_LETTER_EXCHANGE, getDeadLetterExchange());
+            queueArgs.put(RabbitMQConstants.RABBITMQ_DEAD_LETTER_ROUTING_KEY, getDeadLetterRoutingKey());
+            
+            channel.exchangeDeclare(getDeadLetterExchange(),
+                    getDeadLetterExchangeType(),
+                    isDurable(),
+                    isAutoDelete(),
+                    new HashMap<String, Object>());
+            channel.queueDeclare(getDeadLetterQueue(), isDurable(), false,
+                    isAutoDelete(), null);
+            channel.queueBind(
+                    getDeadLetterQueue(),
+                    getDeadLetterExchange(),
+                    getDeadLetterRoutingKey() == null ? "" : getDeadLetterRoutingKey());
+        }
         channel.exchangeDeclare(getExchangeName(),
                 getExchangeType(),
                 isDurable(),
-                isAutoDelete(),
-                new HashMap<String, Object>());
+                isAutoDelete(), new HashMap<String, Object>());
         if (getQueue() != null) {
             // need to make sure the queueDeclare is same with the exchange declare
             channel.queueDeclare(getQueue(), isDurable(), false,
-                    isAutoDelete(), null);
+                    isAutoDelete(), queueArgs);
             channel.queueBind(
                     getQueue(),
                     getExchangeName(),
@@ -481,5 +506,37 @@ public class RabbitMQEndpoint extends DefaultEndpoint {
 
     public void setDeclare(boolean declare) {
         this.declare = declare;
-    }        
+    }
+    
+    public String getDeadLetterExchange() {
+        return deadLetterExchange;
+    }
+
+    public void setDeadLetterExchange(String deadLetterExchange) {
+        this.deadLetterExchange = deadLetterExchange;
+    }
+
+    public String getDeadLetterQueue() {
+        return deadLetterQueue;
+    }
+
+    public void setDeadLetterQueue(String deadLetterQueue) {
+        this.deadLetterQueue = deadLetterQueue;
+    }
+
+    public String getDeadLetterRoutingKey() {
+        return deadLetterRoutingKey;
+    }
+
+    public void setDeadLetterRoutingKey(String deadLetterRoutingKey) {
+        this.deadLetterRoutingKey = deadLetterRoutingKey;
+    }
+
+    public String getDeadLetterExchangeType() {
+        return deadLetterExchangeType;
+    }
+
+    public void setDeadLetterExchangeType(String deadLetterExchangeType) {
+        this.deadLetterExchangeType = deadLetterExchangeType;
+    }
 }
