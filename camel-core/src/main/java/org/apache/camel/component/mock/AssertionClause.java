@@ -142,10 +142,16 @@ public abstract class AssertionClause extends ExpressionClauseSupport<ValueBuild
             super(expression);
         }
 
+        @Override
         protected Predicate onNewPredicate(Predicate predicate) {
             predicate = super.onNewPredicate(predicate);
             addPredicate(predicate);
             return predicate;
+        }
+
+        @Override
+        protected ValueBuilder onNewValueBuilder(Expression exp) {
+            return new PredicateValueBuilder(exp);
         }
     }
 }

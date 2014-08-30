@@ -174,17 +174,17 @@ public class ValueBuilder implements Expression, Predicate {
 
     public ValueBuilder tokenize(String token) {
         Expression newExp = ExpressionBuilder.tokenizeExpression(expression, token);
-        return new ValueBuilder(newExp);
+        return onNewValueBuilder(newExp);
     }
 
     public ValueBuilder tokenizeXML(String tagName, String inheritNamespaceTagName) {
         Expression newExp = ExpressionBuilder.tokenizeXMLExpression(tagName, inheritNamespaceTagName);
-        return new ValueBuilder(newExp);
+        return onNewValueBuilder(newExp);
     }
 
     public ValueBuilder tokenizePair(String startToken, String endToken, boolean includeTokens) {
         Expression newExp = ExpressionBuilder.tokenizePairExpression(startToken, endToken, includeTokens);
-        return new ValueBuilder(newExp);
+        return onNewValueBuilder(newExp);
     }
 
     /**
@@ -193,7 +193,7 @@ public class ValueBuilder implements Expression, Predicate {
      */
     public ValueBuilder regexTokenize(String regex) {
         Expression newExp = ExpressionBuilder.regexTokenizeExpression(expression, regex);
-        return new ValueBuilder(newExp);
+        return onNewValueBuilder(newExp);
     }
 
     /**
@@ -202,7 +202,7 @@ public class ValueBuilder implements Expression, Predicate {
      */
     public ValueBuilder regexReplaceAll(String regex, String replacement) {
         Expression newExp = ExpressionBuilder.regexReplaceAll(expression, regex, replacement);
-        return new ValueBuilder(newExp);
+        return onNewValueBuilder(newExp);
     }
 
     /**
@@ -211,7 +211,7 @@ public class ValueBuilder implements Expression, Predicate {
      */
     public ValueBuilder regexReplaceAll(String regex, Expression replacement) {
         Expression newExp = ExpressionBuilder.regexReplaceAll(expression, regex, replacement);
-        return new ValueBuilder(newExp);
+        return onNewValueBuilder(newExp);
     }
 
     /**
@@ -223,7 +223,7 @@ public class ValueBuilder implements Expression, Predicate {
      */
     public ValueBuilder convertTo(Class<?> type) {
         Expression newExp = ExpressionBuilder.convertToExpression(expression, type);
-        return new ValueBuilder(newExp);
+        return onNewValueBuilder(newExp);
     }
 
     /**
@@ -242,7 +242,8 @@ public class ValueBuilder implements Expression, Predicate {
      * @return the current builder
      */
     public ValueBuilder append(Object value) {
-        return new ValueBuilder(ExpressionBuilder.append(expression, asExpression(value)));
+        Expression newExp = ExpressionBuilder.append(expression, asExpression(value));
+        return onNewValueBuilder(newExp);
     }
 
     /**
@@ -252,7 +253,8 @@ public class ValueBuilder implements Expression, Predicate {
      * @return the current builder
      */
     public ValueBuilder prepend(Object value) {
-        return new ValueBuilder(ExpressionBuilder.prepend(expression, asExpression(value)));
+        Expression newExp = ExpressionBuilder.prepend(expression, asExpression(value));
+        return onNewValueBuilder(newExp);
     }
 
     /**
@@ -264,7 +266,7 @@ public class ValueBuilder implements Expression, Predicate {
      */
     public ValueBuilder sort(Comparator<?> comparator) {
         Expression newExp = ExpressionBuilder.sortExpression(expression, comparator);
-        return new ValueBuilder(newExp);
+        return onNewValueBuilder(newExp);
     }
 
     /**
@@ -298,5 +300,9 @@ public class ValueBuilder implements Expression, Predicate {
         } else {
             return ExpressionBuilder.constantExpression(value);
         }
+    }
+
+    protected ValueBuilder onNewValueBuilder(Expression exp) {
+        return new ValueBuilder(exp);
     }
 }
