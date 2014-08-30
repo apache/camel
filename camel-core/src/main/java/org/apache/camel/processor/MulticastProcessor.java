@@ -555,7 +555,9 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
             
             total.incrementAndGet();
         }
-
+        if (original.getException() != null) {
+            throw original.getException();
+        }
         LOG.debug("Done sequential processing {} exchanges", total);
 
         return true;

@@ -26,7 +26,9 @@ import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.main.Main;
+import org.apache.camel.model.SplitDefinition;
 import org.junit.Assert;
+import org.junit.Before;
 import org.junit.Test;
 
 /**
@@ -48,9 +50,20 @@ public class OnExceptionInSplitTest {
     
     static boolean exceptionThrownInSecondRoute;
     static boolean exceptionPropagatedToMainRoute;
-    
+    @Before
+    public void init(){
+        exceptionThrownInSecondRoute=false;
+        exceptionPropagatedToMainRoute=false;
+    }
     @Test
-    public void test() throws Exception {
+    public void testWithStopOnException() throws Exception{
+        test(true);
+    }
+    @Test
+    public void testWithoutStopOnException() throws Exception{
+        test(false);
+    }
+    public void test(final boolean stopOnException) throws Exception {
         final CountDownLatch latch = new CountDownLatch(1);
         final Path tempDir = Files.createTempDirectory(".camelTmp");
         FileWriter writer = new FileWriter(Files.createTempFile(tempDir, "test", ".tmp").toFile());
@@ -63,12 +76,16 @@ public class OnExceptionInSplitTest {
                 onException(TestException.class).process(new Processor() {
                     @Override
                     public void process(Exchange exchange) throws Exception {
-                        System.out.println("TestException in main route !");
+                        System.out.println("TestException in main route ! " + exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class));
                         exceptionPropagatedToMainRoute = true;
                         latch.countDown();
                     }
                 });
-                from("file:///" + tempDir.toString() + "?delay=10000").split().tokenize("@").stopOnException().setHeader(Exchange.FILE_NAME).simple("${body}").to("direct://next").end();
+                SplitDefinition splitDef = from("file:///" + tempDir.toString() + "?delay=10000").split().tokenize("@");
+                if (stopOnException) {
+                    splitDef = splitDef.stopOnException();
+                }
+                splitDef.setHeader(Exchange.FILE_NAME).simple("${body}").to("direct://next").end();
             }
         });
         main.addRouteBuilder(new RouteBuilder() {
@@ -78,10 +95,10 @@ public class OnExceptionInSplitTest {
                 onException(TestException.class).process(new Processor() {
                     @Override
                     public void process(Exchange exchange) throws Exception {
-                        System.out.println("TestException in second route ! ");
+                        System.out.println("TestException in second route ! " + exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class));
                         exceptionThrownInSecondRoute = true;
                     }
-                }).handled(false);
+                });
                 from("direct://next").process(new Processor() {
                     int i = 0;
                     
