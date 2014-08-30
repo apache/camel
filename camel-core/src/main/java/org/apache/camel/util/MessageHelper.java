@@ -17,6 +17,7 @@
 package org.apache.camel.util;
 
 import java.io.File;
+import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.Reader;
@@ -285,12 +286,15 @@ public final class MessageHelper {
             }
         }
 
-        // is the body a stream cache
-        StreamCache cache;
+        // is the body a stream cache or input stream
+        StreamCache cache = null;
+        InputStream is = null;
         if (obj instanceof StreamCache) {
             cache = (StreamCache)obj;
-        } else {
+            is = null;
+        } else if (obj instanceof InputStream) {
             cache = null;
+            is = (InputStream) obj;
         }
 
         // grab the message body as a string
@@ -309,6 +313,12 @@ public final class MessageHelper {
         // reset stream cache after use
         if (cache != null) {
             cache.reset();
+        } else if (is != null && is.markSupported()) {
+            try {
+                is.reset();
+            } catch (IOException e) {
+                // ignore
+            }
         }
 
         if (body == null) {
