@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.metrics.routepolicy;
 
+import java.util.concurrent.TimeUnit;
+
 import com.codahale.metrics.MetricRegistry;
 import org.apache.camel.CamelContext;
 import org.apache.camel.model.RouteDefinition;
@@ -31,6 +33,8 @@ public class MetricsRoutePolicyFactory implements RoutePolicyFactory {
     private boolean useJmx;
     private String jmxDomain = "org.apache.camel.metrics";
     private boolean prettyPrint;
+    private TimeUnit rateUnit = TimeUnit.SECONDS;
+    private TimeUnit durationUnit = TimeUnit.MILLISECONDS;
 
     /**
      * To use a specific {@link com.codahale.metrics.MetricRegistry} instance.
@@ -78,6 +82,28 @@ public class MetricsRoutePolicyFactory implements RoutePolicyFactory {
         this.prettyPrint = prettyPrint;
     }
 
+    public TimeUnit getRateUnit() {
+        return rateUnit;
+    }
+
+    /**
+     * Sets the time unit to use for requests per unit (eg requests per second)
+     */
+    public void setRateUnit(TimeUnit rateUnit) {
+        this.rateUnit = rateUnit;
+    }
+
+    public TimeUnit getDurationUnit() {
+        return durationUnit;
+    }
+
+    /**
+     * Sets the time unit to use for timing the duration of processing a message in the route
+     */
+    public void setDurationUnit(TimeUnit durationUnit) {
+        this.durationUnit = durationUnit;
+    }
+
     @Override
     public RoutePolicy createRoutePolicy(CamelContext camelContext, String routeId, RouteDefinition routeDefinition) {
         MetricsRoutePolicy answer = new MetricsRoutePolicy();
@@ -85,6 +111,8 @@ public class MetricsRoutePolicyFactory implements RoutePolicyFactory {
         answer.setUseJmx(isUseJmx());
         answer.setJmxDomain(getJmxDomain());
         answer.setPrettyPrint(isPrettyPrint());
+        answer.setRateUnit(getRateUnit());
+        answer.setDurationUnit(getDurationUnit());
         return answer;
     }
 

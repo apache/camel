@@ -16,6 +16,8 @@
  */
 package org.apache.camel.component.metrics.routepolicy;
 
+import java.util.concurrent.TimeUnit;
+
 import com.codahale.metrics.Counter;
 import com.codahale.metrics.Meter;
 import com.codahale.metrics.MetricRegistry;
@@ -38,6 +40,8 @@ public class MetricsRoutePolicy extends RoutePolicySupport {
     private boolean useJmx = true;
     private String jmxDomain = "org.apache.camel.metrics";
     private boolean prettyPrint;
+    private TimeUnit rateUnit = TimeUnit.SECONDS;
+    private TimeUnit durationUnit = TimeUnit.MILLISECONDS;
     private MetricsStatistics statistics;
     private Route route;
 
@@ -105,6 +109,22 @@ public class MetricsRoutePolicy extends RoutePolicySupport {
         this.prettyPrint = prettyPrint;
     }
 
+    public TimeUnit getRateUnit() {
+        return rateUnit;
+    }
+
+    public void setRateUnit(TimeUnit rateUnit) {
+        this.rateUnit = rateUnit;
+    }
+
+    public TimeUnit getDurationUnit() {
+        return durationUnit;
+    }
+
+    public void setDurationUnit(TimeUnit durationUnit) {
+        this.durationUnit = durationUnit;
+    }
+
     @Override
     public void onInit(Route route) {
         super.onInit(route);
@@ -118,6 +138,8 @@ public class MetricsRoutePolicy extends RoutePolicySupport {
                 registryService.setUseJmx(isUseJmx());
                 registryService.setJmxDomain(getJmxDomain());
                 registryService.setPrettyPrint(isPrettyPrint());
+                registryService.setRateUnit(getRateUnit());
+                registryService.setDurationUnit(getDurationUnit());
                 route.getRouteContext().getCamelContext().addService(registryService);
             }
         } catch (Exception e) {

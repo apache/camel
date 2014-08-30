@@ -45,6 +45,8 @@ public final class MetricsRegistryService extends ServiceSupport implements Came
     private boolean useJmx;
     private String jmxDomain = "org.apache.camel.metrics";
     private boolean prettyPrint;
+    private TimeUnit rateUnit = TimeUnit.SECONDS;
+    private TimeUnit durationUnit = TimeUnit.MILLISECONDS;
     private transient ObjectMapper mapper;
 
     public MetricRegistry getMetricsRegistry() {
@@ -87,6 +89,22 @@ public final class MetricsRegistryService extends ServiceSupport implements Came
         this.prettyPrint = prettyPrint;
     }
 
+    public TimeUnit getRateUnit() {
+        return rateUnit;
+    }
+
+    public void setRateUnit(TimeUnit rateUnit) {
+        this.rateUnit = rateUnit;
+    }
+
+    public TimeUnit getDurationUnit() {
+        return durationUnit;
+    }
+
+    public void setDurationUnit(TimeUnit durationUnit) {
+        this.durationUnit = durationUnit;
+    }
+
     @Override
     protected void doStart() throws Exception {
         if (metricsRegistry == null) {
@@ -107,7 +125,7 @@ public final class MetricsRegistryService extends ServiceSupport implements Came
         }
 
         // json mapper
-        this.mapper = new ObjectMapper().registerModule(new MetricsModule(TimeUnit.SECONDS, TimeUnit.SECONDS, false));
+        this.mapper = new ObjectMapper().registerModule(new MetricsModule(getRateUnit(), getDurationUnit(), false));
     }
 
     @Override
