@@ -31,7 +31,7 @@ public class TryCatchWithSplitIssueTest extends ContextTestSupport {
         MockEndpoint error = getMockEndpoint("mock:error");
         error.expectedBodiesReceived("James");
         error.message(0).property(Exchange.EXCEPTION_CAUGHT).isNotNull();
-        error.message(0).property(Exchange.EXCEPTION_CAUGHT).convertTo(String.class).isEqualTo("This is a dummy error James!");
+        error.message(0).property(Exchange.EXCEPTION_CAUGHT).convertTo(String.class).contains("This is a dummy error James!");
 
         MockEndpoint result = getMockEndpoint("mock:result");
         result.expectedBodiesReceived("Hi Claus", "Hi Willem");
@@ -45,7 +45,7 @@ public class TryCatchWithSplitIssueTest extends ContextTestSupport {
         MockEndpoint error = getMockEndpoint("mock:error");
         error.expectedBodiesReceived("James");
         error.message(0).property(Exchange.EXCEPTION_CAUGHT).isNotNull();
-        error.message(0).property(Exchange.EXCEPTION_CAUGHT).convertTo(String.class).isEqualTo("This is a dummy error James!");
+        error.message(0).property(Exchange.EXCEPTION_CAUGHT).convertTo(String.class).contains("This is a dummy error James!");
 
         template.sendBody("direct:start", "James");
 
