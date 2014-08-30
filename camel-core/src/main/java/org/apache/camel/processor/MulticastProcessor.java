@@ -536,6 +536,7 @@ public class MulticastProcessor extends ServiceSupport implements AsyncProcessor
                     // wrap in exception to explain where it failed
                     CamelExchangeException cause = new CamelExchangeException("Sequential processing failed for number " + total.get(), subExchange, subExchange.getException());
                     subExchange.setException(cause);
+                    throw new CamelExchangeException("Sequential processing failed for number " + total.get(), subExchange, subExchange.getException());
                 }
                 // we want to stop on exception, and the exception was handled by the error handler
                 // this is similar to what the pipeline does, so we should do the same to not surprise end users
