@@ -65,7 +65,8 @@ public class HandleFaultInterceptor extends DelegateAsyncProcessor {
                     exchange.setException((Throwable) faultBody);
                 } else {
                     // wrap it in an exception
-                    exchange.setException(new CamelException(faultBody.toString()));
+                    String data = exchange.getContext().getTypeConverter().convertTo(String.class, exchange, faultBody);
+                    exchange.setException(new CamelException(data));
                 }
             }
         }
