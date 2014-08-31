@@ -1978,7 +1978,7 @@
           <artifactId>pax-exam-invoker-junit</artifactId>
           <version>${pax-exam-version}</version>
       </dependency>
-      
+
 
 
       <!-- optional Saxon support -->
@@ -2919,23 +2919,6 @@
       </dependencies>
     </profile>
 
-    <profile>
-      <id>jdk1.8</id>
-        <activation>
-          <jdk>1.8</jdk>
-        </activation>
-
-        <properties>
-          <jaxb-version>2.2.10-b140310.1920</jaxb-version>
-        </properties>
-
-        <dependencies>
-          <dependency>
-            <groupId>com.sun.xml.bind</groupId>
-            <artifactId>jaxb-impl</artifactId>
-          </dependency>
-        </dependencies>
-    </profile>
   </profiles>
 
 </project>
