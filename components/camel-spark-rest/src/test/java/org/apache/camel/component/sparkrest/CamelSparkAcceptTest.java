@@ -28,14 +28,14 @@ public class CamelSparkAcceptTest extends BaseSparkTest {
         getMockEndpoint("mock:foo").expectedMessageCount(1);
 
         try {
-            template.requestBodyAndHeader("http://0.0.0.0:" + getPort() + "/hello", null, "Accept", "text/plain", String.class);
+            template.requestBodyAndHeader("http://127.0.0.1:" + getPort() + "/hello", null, "Accept", "text/plain", String.class);
             fail("Should fail");
         } catch (CamelExecutionException e) {
             HttpOperationFailedException cause = assertIsInstanceOf(HttpOperationFailedException.class, e.getCause());
             assertEquals(404, cause.getStatusCode());
         }
 
-        String out2 = template.requestBodyAndHeader("http://0.0.0.0:" + getPort() + "/hello", null, "Accept", "application/json", String.class);
+        String out2 = template.requestBodyAndHeader("http://127.0.0.1:" + getPort() + "/hello", null, "Accept", "application/json", String.class);
         assertEquals("{ \"reply\": \"Bye World\" }", out2);
 
         assertMockEndpointsSatisfied();

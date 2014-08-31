@@ -21,6 +21,7 @@ import org.apache.camel.test.AvailablePortFinder;
 import org.apache.camel.test.junit4.CamelTestSupport;
 
 public abstract class BaseSparkTest extends CamelTestSupport {
+    //static int count;
 
     protected int port;
 
@@ -30,7 +31,8 @@ public abstract class BaseSparkTest extends CamelTestSupport {
 
     @Override
     public void setUp() throws Exception {
-        port = AvailablePortFinder.getNextAvailable(24500);
+        //count++;
+        port = AvailablePortFinder.getNextAvailable(4500);
         super.setUp();
     }
 
@@ -40,6 +42,7 @@ public abstract class BaseSparkTest extends CamelTestSupport {
 
         SparkComponent spark = context.getComponent("spark-rest", SparkComponent.class);
         spark.setPort(port);
+        spark.setIpAddress("127.0.0.1");
 
         return context;
     }

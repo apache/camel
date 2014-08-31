@@ -25,7 +25,7 @@ public class RestCamelSparkPojoInOutTest extends BaseSparkTest {
     @Test
     public void testRestletPojoInOut() throws Exception {
         String body = "{\"id\": 123, \"name\": \"Donald Duck\"}";
-        String out = template.requestBody("http://localhost:" + getPort() + "/users/lives", body, String.class);
+        String out = template.requestBody("http://127.0.0.1:" + getPort() + "/users/lives", body, String.class);
 
         assertNotNull(out);
         assertEquals("{\"iso\":\"EN\",\"country\":\"England\"}", out);
@@ -38,7 +38,7 @@ public class RestCamelSparkPojoInOutTest extends BaseSparkTest {
             public void configure() throws Exception {
                 // configure to use spark on localhost with the given port
                 // and enable auto binding mode
-                restConfiguration().component("spark-rest").host("localhost").port(getPort()).bindingMode(RestBindingMode.auto);
+                restConfiguration().component("spark-rest").host("127.0.0.1").port(getPort()).bindingMode(RestBindingMode.auto);
 
                 // use the rest DSL to define the rest services
                 rest("/users/")
