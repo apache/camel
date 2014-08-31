@@ -50,20 +50,35 @@ public class OnExceptionInSplitTest {
     
     static boolean exceptionThrownInSecondRoute;
     static boolean exceptionPropagatedToMainRoute;
+    
     @Before
-    public void init(){
-        exceptionThrownInSecondRoute=false;
-        exceptionPropagatedToMainRoute=false;
+    public void init() {
+        exceptionThrownInSecondRoute = false;
+        exceptionPropagatedToMainRoute = false;
     }
+    
     @Test
-    public void testWithStopOnException() throws Exception{
-        test(true);
+    public void testWithStopOnExceptionWithoutShareUnitOfWork() throws Exception {
+        test(true, false);
     }
+    
     @Test
-    public void testWithoutStopOnException() throws Exception{
-        test(false);
+    public void testWithoutStopOnExceptionWithoutShareUnitOfWork() throws Exception {
+        test(false, false);
     }
-    public void test(final boolean stopOnException) throws Exception {
+    
+    @Test
+    public void testWithStopOnExceptionWithShareUnitOfWork() throws Exception {
+        test(true, true);
+        
+    }
+    
+    @Test
+    public void testWithoutStopOnExceptionWithShareUnitOfWork() throws Exception {
+        test(false, true);
+    }
+    
+    public void test(final boolean stopOnException, final boolean shareUnitOfWork) throws Exception {
         final CountDownLatch latch = new CountDownLatch(1);
         final Path tempDir = Files.createTempDirectory(".camelTmp");
         FileWriter writer = new FileWriter(Files.createTempFile(tempDir, "test", ".tmp").toFile());
@@ -73,7 +88,7 @@ public class OnExceptionInSplitTest {
         main.addRouteBuilder(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                onException(TestException.class).process(new Processor() {
+                onException(Exception.class).process(new Processor() {
                     @Override
                     public void process(Exchange exchange) throws Exception {
                         System.out.println("TestException in main route ! " + exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class));
@@ -85,6 +100,9 @@ public class OnExceptionInSplitTest {
                 if (stopOnException) {
                     splitDef = splitDef.stopOnException();
                 }
+                if (shareUnitOfWork) {
+                    splitDef = splitDef.shareUnitOfWork();
+                }
                 splitDef.setHeader(Exchange.FILE_NAME).simple("${body}").to("direct://next").end();
             }
         });
@@ -92,7 +110,7 @@ public class OnExceptionInSplitTest {
             
             @Override
             public void configure() throws Exception {
-                onException(TestException.class).process(new Processor() {
+                onException(Exception.class).process(new Processor() {
                     @Override
                     public void process(Exchange exchange) throws Exception {
                         System.out.println("TestException in second route ! " + exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class));
@@ -112,7 +130,11 @@ public class OnExceptionInSplitTest {
         });
         main.start();
         latch.await(10, TimeUnit.SECONDS);
-        Assert.assertTrue("exception not thrown", exceptionThrownInSecondRoute);
+        if (shareUnitOfWork) {
+            Assert.assertFalse("exception thrown", exceptionThrownInSecondRoute);
+        } else {
+            Assert.assertTrue("exception not thrown", exceptionThrownInSecondRoute);
+        }
         Assert.assertTrue("exception not propagated", exceptionPropagatedToMainRoute);
         main.stop();
     }
