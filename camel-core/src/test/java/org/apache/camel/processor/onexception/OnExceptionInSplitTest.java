@@ -88,7 +88,7 @@ public class OnExceptionInSplitTest {
         main.addRouteBuilder(new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                onException(Exception.class).process(new Processor() {
+                onException(TestException.class).process(new Processor() {
                     @Override
                     public void process(Exchange exchange) throws Exception {
                         System.out.println("TestException in main route ! " + exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class));
@@ -110,7 +110,7 @@ public class OnExceptionInSplitTest {
             
             @Override
             public void configure() throws Exception {
-                onException(Exception.class).process(new Processor() {
+                onException(TestException.class).process(new Processor() {
                     @Override
                     public void process(Exchange exchange) throws Exception {
                         System.out.println("TestException in second route ! " + exchange.getProperty(Exchange.EXCEPTION_CAUGHT, Exception.class));
