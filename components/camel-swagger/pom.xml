@@ -32,7 +32,7 @@
 
   <properties>
     <camel.osgi.import.before.defaults>
-      scala.*;version="[2.10,2.12)"
+      scala.*;version="[2.10,2.11)"
     </camel.osgi.import.before.defaults>
     <camel.osgi.export.pkg>org.apache.camel.component.swagger.*</camel.osgi.export.pkg>
   </properties>
