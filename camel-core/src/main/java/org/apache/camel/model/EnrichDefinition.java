@@ -50,6 +50,8 @@ public class EnrichDefinition extends NoOutputDefinition<EnrichDefinition> imple
     private String aggregationStrategyMethodName;
     @XmlAttribute(name = "strategyMethodAllowNull")
     private Boolean aggregationStrategyMethodAllowNull;
+    @XmlAttribute
+    private Boolean aggregateOnException;
     @XmlTransient
     private AggregationStrategy aggregationStrategy;
     
@@ -114,6 +116,9 @@ public class EnrichDefinition extends NoOutputDefinition<EnrichDefinition> imple
             enricher.setDefaultAggregationStrategy();
         } else {
             enricher.setAggregationStrategy(strategy);
+        }
+        if (getAggregateOnException() != null) {
+            enricher.setAggregateOnException(getAggregateOnException());
         }
         return enricher;
     }
@@ -189,5 +194,13 @@ public class EnrichDefinition extends NoOutputDefinition<EnrichDefinition> imple
 
     public void setAggregationStrategy(AggregationStrategy aggregationStrategy) {
         this.aggregationStrategy = aggregationStrategy;
+    }
+
+    public Boolean getAggregateOnException() {
+        return aggregateOnException;
+    }
+
+    public void setAggregateOnException(Boolean aggregateOnException) {
+        this.aggregateOnException = aggregateOnException;
     }
 }

@@ -52,6 +52,8 @@ public class PollEnrichDefinition extends NoOutputDefinition<PollEnrichDefinitio
     private String aggregationStrategyMethodName;
     @XmlAttribute(name = "strategyMethodAllowNull")
     private Boolean aggregationStrategyMethodAllowNull;
+    @XmlAttribute
+    private Boolean aggregateOnException;
     @XmlTransient
     private AggregationStrategy aggregationStrategy;
 
@@ -119,6 +121,9 @@ public class PollEnrichDefinition extends NoOutputDefinition<PollEnrichDefinitio
             enricher.setDefaultAggregationStrategy();
         } else {
             enricher.setAggregationStrategy(strategy);
+        }
+        if (getAggregateOnException() != null) {
+            enricher.setAggregateOnException(getAggregateOnException());
         }
 
         return enricher;
@@ -203,5 +208,13 @@ public class PollEnrichDefinition extends NoOutputDefinition<PollEnrichDefinitio
 
     public void setAggregationStrategy(AggregationStrategy aggregationStrategy) {
         this.aggregationStrategy = aggregationStrategy;
+    }
+
+    public Boolean getAggregateOnException() {
+        return aggregateOnException;
+    }
+
+    public void setAggregateOnException(Boolean aggregateOnException) {
+        this.aggregateOnException = aggregateOnException;
     }
 }

@@ -2920,6 +2920,23 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
     /**
      * The <a href="http://camel.apache.org/content-enricher.html">Content Enricher EIP</a>
      * enriches an exchange with additional data obtained from a <code>resourceUri</code>.
+     *
+     * @param resourceUri           URI of resource endpoint for obtaining additional data.
+     * @param aggregationStrategy   aggregation strategy to aggregate input data and additional data.
+     * @return the builder
+     * @see org.apache.camel.processor.Enricher
+     */
+    @SuppressWarnings("unchecked")
+    public Type enrich(String resourceUri, AggregationStrategy aggregationStrategy, boolean aggregateOnException) {
+        EnrichDefinition enrich = new EnrichDefinition(aggregationStrategy, resourceUri);
+        enrich.setAggregateOnException(aggregateOnException);
+        addOutput(enrich);
+        return (Type) this;
+    }
+
+    /**
+     * The <a href="http://camel.apache.org/content-enricher.html">Content Enricher EIP</a>
+     * enriches an exchange with additional data obtained from a <code>resourceUri</code>.
      * <p/>
      * The difference between this and {@link #pollEnrich(String)} is that this uses a producer
      * to obatin the additional data, where as pollEnrich uses a polling consumer.
@@ -2951,6 +2968,30 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
         EnrichDefinition enrich = new EnrichDefinition();
         enrich.setResourceRef(resourceRef);
         enrich.setAggregationStrategyRef(aggregationStrategyRef);
+        addOutput(enrich);
+        return (Type) this;
+    }
+
+    /**
+     * The <a href="http://camel.apache.org/content-enricher.html">Content Enricher EIP</a>
+     * enriches an exchange with additional data obtained from a <code>resourceUri</code>.
+     * <p/>
+     * The difference between this and {@link #pollEnrich(String)} is that this uses a producer
+     * to obtain the additional data, where as pollEnrich uses a polling consumer.
+     *
+     * @param resourceRef            Reference of resource endpoint for obtaining additional data.
+     * @param aggregationStrategyRef Reference of aggregation strategy to aggregate input data and additional data.
+     * @param aggregateOnException   whether to call {@link org.apache.camel.processor.aggregate.AggregationStrategy#aggregate(org.apache.camel.Exchange, org.apache.camel.Exchange)} if
+     *                               an exception was thrown.
+     * @return the builder
+     * @see org.apache.camel.processor.Enricher
+     */
+    @SuppressWarnings("unchecked")
+    public Type enrichRef(String resourceRef, String aggregationStrategyRef, boolean aggregateOnException) {
+        EnrichDefinition enrich = new EnrichDefinition();
+        enrich.setResourceRef(resourceRef);
+        enrich.setAggregationStrategyRef(aggregationStrategyRef);
+        enrich.setAggregateOnException(aggregateOnException);
         addOutput(enrich);
         return (Type) this;
     }
@@ -3036,6 +3077,34 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
      *
      * @param resourceUri           URI of resource endpoint for obtaining additional data.
      * @param timeout               timeout in millis to wait at most for data to be available.
+     * @param aggregationStrategy   aggregation strategy to aggregate input data and additional data.
+     * @param aggregateOnException   whether to call {@link org.apache.camel.processor.aggregate.AggregationStrategy#aggregate(org.apache.camel.Exchange, org.apache.camel.Exchange)} if
+     *                               an exception was thrown.
+     * @return the builder
+     * @see org.apache.camel.processor.PollEnricher
+     */
+    @SuppressWarnings("unchecked")
+    public Type pollEnrich(String resourceUri, long timeout, AggregationStrategy aggregationStrategy, boolean aggregateOnException) {
+        PollEnrichDefinition pollEnrich = new PollEnrichDefinition(aggregationStrategy, resourceUri, timeout);
+        pollEnrich.setAggregateOnException(aggregateOnException);
+        addOutput(pollEnrich);
+        return (Type) this;
+    }
+
+    /**
+     * The <a href="http://camel.apache.org/content-enricher.html">Content Enricher EIP</a>
+     * enriches an exchange with additional data obtained from a <code>resourceUri</code>
+     * using a {@link org.apache.camel.PollingConsumer} to poll the endpoint.
+     * <p/>
+     * The difference between this and {@link #enrich(String)} is that this uses a consumer
+     * to obtain the additional data, where as enrich uses a producer.
+     * <p/>
+     * The timeout controls which operation to use on {@link org.apache.camel.PollingConsumer}.
+     * If timeout is negative, we use <tt>receive</tt>. If timeout is 0 then we use <tt>receiveNoWait</tt>
+     * otherwise we use <tt>receive(timeout)</tt>.
+     *
+     * @param resourceUri           URI of resource endpoint for obtaining additional data.
+     * @param timeout               timeout in millis to wait at most for data to be available.
      * @return the builder
      * @see org.apache.camel.processor.PollEnricher
      */
@@ -3069,6 +3138,37 @@ public abstract class ProcessorDefinition<Type extends ProcessorDefinition<Type>
         pollEnrich.setResourceRef(resourceRef);
         pollEnrich.setTimeout(timeout);
         pollEnrich.setAggregationStrategyRef(aggregationStrategyRef);
+        addOutput(pollEnrich);
+        return (Type) this;
+    }
+
+    /**
+     * The <a href="http://camel.apache.org/content-enricher.html">Content Enricher EIP</a>
+     * enriches an exchange with additional data obtained from a <code>resourceUri</code>
+     * using a {@link org.apache.camel.PollingConsumer} to poll the endpoint.
+     * <p/>
+     * The difference between this and {@link #enrich(String)} is that this uses a consumer
+     * to obtain the additional data, where as enrich uses a producer.
+     * <p/>
+     * The timeout controls which operation to use on {@link org.apache.camel.PollingConsumer}.
+     * If timeout is negative, we use <tt>receive</tt>. If timeout is 0 then we use <tt>receiveNoWait</tt>
+     * otherwise we use <tt>receive(timeout)</tt>.
+     *
+     * @param resourceRef            Reference of resource endpoint for obtaining additional data.
+     * @param timeout                timeout in millis to wait at most for data to be available.
+     * @param aggregationStrategyRef Reference of aggregation strategy to aggregate input data and additional data.
+     * @param aggregateOnException   whether to call {@link org.apache.camel.processor.aggregate.AggregationStrategy#aggregate(org.apache.camel.Exchange, org.apache.camel.Exchange)} if
+     *                               an exception was thrown.
+     * @return the builder
+     * @see org.apache.camel.processor.PollEnricher
+     */
+    @SuppressWarnings("unchecked")
+    public Type pollEnrichRef(String resourceRef, long timeout, String aggregationStrategyRef, boolean aggregateOnException) {
+        PollEnrichDefinition pollEnrich = new PollEnrichDefinition();
+        pollEnrich.setResourceRef(resourceRef);
+        pollEnrich.setTimeout(timeout);
+        pollEnrich.setAggregationStrategyRef(aggregationStrategyRef);
+        pollEnrich.setAggregateOnException(aggregateOnException);
         addOutput(pollEnrich);
         return (Type) this;
     }
