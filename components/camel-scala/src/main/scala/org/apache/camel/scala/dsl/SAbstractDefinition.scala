@@ -71,6 +71,7 @@ abstract class SAbstractDefinition[P <: ProcessorDefinition[_]] extends DSL with
   def dynamicRouter(expression: Exchange => Any) = wrap(target.dynamicRouter(expression))
 
   def enrich(uri: String, strategy: AggregationStrategy) = wrap(target.enrich(uri, strategy))
+  def enrich(uri: String, strategy: AggregationStrategy, aggregateOnException: Boolean) = wrap(target.enrich(uri, strategy, aggregateOnException))
 
   def filter(predicate: Exchange => Any) = SFilterDefinition(target.filter(predicateBuilder(predicate)))
 
@@ -110,6 +111,8 @@ abstract class SAbstractDefinition[P <: ProcessorDefinition[_]] extends DSL with
   def policy(policy: Policy) = wrap(target.policy(policy))
   def pollEnrich(uri: String, strategy: AggregationStrategy = null, timeout: Long = -1) =
     wrap(target.pollEnrich(uri, timeout, strategy))
+  def pollEnrich(uri: String, strategy: AggregationStrategy, timeout: Long, aggregateOnException: Boolean) =
+    wrap(target.pollEnrich(uri, timeout, strategy, aggregateOnException))
   def process(function: Exchange => Unit) = wrap(target.process(new ScalaProcessor(function)))
   def process(processor: Processor) = wrap(target.process(processor))
 

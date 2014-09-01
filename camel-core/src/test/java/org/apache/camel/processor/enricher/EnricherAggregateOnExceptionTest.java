@@ -85,21 +85,24 @@ public class EnricherAggregateOnExceptionTest extends ContextTestSupport {
                     .to("mock:result");
 
                 from("direct:foo")
-                    .process(new Processor() {
-                        @Override
-                        public void process(Exchange exchange) throws Exception {
-                            String body = exchange.getIn().getBody(String.class);
-                            if (body.startsWith("Kaboom")) {
-                                throw new IllegalArgumentException("I cannot do this");
-                            }
-                            exchange.getIn().setBody("Hello " + body);
-                        }
-                    });
+                    .process(new MyProcessor());
             }
         };
     }
 
-    private class MyAggregationStrategy implements AggregationStrategy {
+    public static class MyProcessor implements Processor {
+
+        @Override
+        public void process(Exchange exchange) throws Exception {
+            String body = exchange.getIn().getBody(String.class);
+            if (body.startsWith("Kaboom")) {
+                throw new IllegalArgumentException("I cannot do this");
+            }
+            exchange.getIn().setBody("Hello " + body);
+        }
+    }
+
+    public static class MyAggregationStrategy implements AggregationStrategy {
 
         @Override
         public Exchange aggregate(Exchange oldExchange, Exchange newExchange) {
