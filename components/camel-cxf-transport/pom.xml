@@ -28,7 +28,7 @@
   <packaging>bundle</packaging>
   <name>Camel :: CXF :: Transport</name>
   <description>Camel Transport for CXF </description>
-  
+
    <properties>
     <camel.osgi.import>
       !org.apache.camel.component.cxf.*,
@@ -63,13 +63,13 @@
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-core</artifactId>
     </dependency>
-    
+
     <dependency>
       <groupId>org.apache.cxf</groupId>
       <artifactId>cxf-rt-bindings-soap</artifactId>
       <version>${cxf-version}</version>
     </dependency>
-    
+
     <dependency>
       <groupId>org.springframework</groupId>
       <artifactId>spring-beans</artifactId>
@@ -96,8 +96,13 @@
       <artifactId>org.apache.aries.blueprint.core</artifactId>
       <scope>provided</scope>
     </dependency>
-    
+
     <!-- for testing -->
+    <dependency>
+       <groupId>com.sun.xml.bind</groupId>
+       <artifactId>jaxb-impl</artifactId>
+       <scope>test</scope>
+    </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-spring</artifactId>
@@ -152,14 +157,14 @@
       <artifactId>spring-test</artifactId>
       <scope>test</scope>
     </dependency>
-    <!-- logging -->      
+    <!-- logging -->
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-log4j12</artifactId>
       <scope>test</scope>
     </dependency>
   </dependencies>
-  
+
   <build>
     <plugins>
       <plugin>
@@ -194,24 +199,5 @@
       </plugin>
     </plugins>
   </build>
-  <profiles>
-      <profile>
-      <id>jdk1.8</id>
-        <activation>
-          <jdk>1.8</jdk>
-        </activation>
 
-        <properties>
-          <jaxb-version>2.2.10-b140310.1920</jaxb-version>
-        </properties>
-
-        <dependencies>
-          <dependency>
-            <groupId>com.sun.xml.bind</groupId>
-            <artifactId>jaxb-impl</artifactId>
-          </dependency>
-        </dependencies>
-    </profile>
-  </profiles>
-  
 </project>
