@@ -131,7 +131,7 @@ public abstract class AbstractApiProducer<E extends Enum<E> & ApiName, T>
         // do nothing by default
     }
 
-    private ApiMethod findMethod(Exchange exchange, Map<String, Object> properties) {
+    protected ApiMethod findMethod(Exchange exchange, Map<String, Object> properties) {
 
         ApiMethod method = null;
         final List<ApiMethod> candidates = endpoint.getCandidates();
