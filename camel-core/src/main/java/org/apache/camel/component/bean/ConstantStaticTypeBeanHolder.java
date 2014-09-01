@@ -21,22 +21,15 @@ import org.apache.camel.Processor;
 import org.apache.camel.util.ObjectHelper;
 
 /**
- * A constant (singleton) bean implementation of {@link BeanTypeHolder}
+ * A constant {@link org.apache.camel.component.bean.BeanHolder} for a class or static class
+ * where the intention is to only invoke static methods, without the need for creating an instance of the type.
  *
  * @version
  */
 public class ConstantStaticTypeBeanHolder extends ConstantTypeBeanHolder {
 
-    public ConstantStaticTypeBeanHolder(Class<?> type, BeanInfo beanInfo) {
-        super(type, beanInfo);
-    }
-
     public ConstantStaticTypeBeanHolder(Class<?> type, CamelContext context) {
         super(type, context);
-    }
-
-    public ConstantStaticTypeBeanHolder(Class<?> type, CamelContext context, ParameterMappingStrategy parameterMappingStrategy) {
-        super(type, context, parameterMappingStrategy);
     }
 
     @Override

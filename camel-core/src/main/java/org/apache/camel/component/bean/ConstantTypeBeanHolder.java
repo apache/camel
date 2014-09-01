@@ -61,12 +61,7 @@ public class ConstantTypeBeanHolder implements BeanTypeHolder {
     }
 
     public Object getBean()  {
-        // create a new bean
-        if (ObjectHelper.hasDefaultPublicNoArgConstructor(type)) {
-            return getBeanInfo().getCamelContext().getInjector().newInstance(type);
-        } else {
-            return null;
-        }
+        return getBeanInfo().getCamelContext().getInjector().newInstance(type);
     }
 
     public Processor getProcessor() {

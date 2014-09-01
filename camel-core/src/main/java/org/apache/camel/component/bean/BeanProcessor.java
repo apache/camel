@@ -90,8 +90,8 @@ public class BeanProcessor extends ServiceSupport implements AsyncProcessor {
         // do we have a custom adapter for this POJO to a Processor
         // but only do this if allowed
         if (allowProcessor(explicitMethodName, beanInfo)) {
-            // see if there is a processor for the given bean
-            Processor processor = exchange.getContext().getTypeConverter().convertTo(Processor.class, exchange, bean);
+            // so if there is a custom type converter for the bean to processor
+            Processor processor = exchange.getContext().getTypeConverter().tryConvertTo(Processor.class, exchange, bean);
             if (processor != null) {
                 LOG.trace("Using a custom adapter as bean invocation: {}", processor);
                 try {
