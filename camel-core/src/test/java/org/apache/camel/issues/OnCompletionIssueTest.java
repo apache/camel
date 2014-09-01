@@ -16,7 +16,9 @@
  */
 package org.apache.camel.issues;
 
+import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.RollbackExchangeException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
@@ -27,12 +29,30 @@ public class OnCompletionIssueTest extends ContextTestSupport {
         end.expectedMessageCount(1);
 
         MockEndpoint complete = getMockEndpoint("mock:complete");
-        complete.expectedBodiesReceived("finish", "stop", "faulted", "except");
+        complete.expectedBodiesReceivedInAnyOrder("finish", "stop", "ile", "markRollback");
+
+        MockEndpoint failed = getMockEndpoint("mock:failed");
+        failed.expectedBodiesReceivedInAnyOrder("faulted", "npe", "rollback");
 
         template.sendBody("direct:input", "finish");
         template.sendBody("direct:input", "stop");
         template.sendBody("direct:input", "fault");
-        template.sendBody("direct:input", "except");
+        template.sendBody("direct:input", "ile");
+        template.sendBody("direct:input", "markRollback");
+
+        try {
+            template.sendBody("direct:input", "npe");
+            fail("Should have thrown exception");
+        } catch (CamelExecutionException e) {
+            assertEquals("Darn NPE", e.getCause().getMessage());
+        }
+
+        try {
+            template.sendBody("direct:input", "rollback");
+            fail("Should have thrown exception");
+        } catch (CamelExecutionException e) {
+            assertIsInstanceOf(RollbackExchangeException.class, e.getCause());
+        }
 
         setAssertPeriod(2000);
 
@@ -44,12 +64,16 @@ public class OnCompletionIssueTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                onCompletion()
+                onCompletion().onFailureOnly()
+                    .log("failing ${body}")
+                    .to("mock:failed");
+
+                onCompletion().onCompleteOnly()
                     .log("completing ${body}")
                     .to("mock:complete");
 
                 from("direct:input")
-                    .onException(Exception.class)
+                    .onException(IllegalArgumentException.class)
                         .handled(true)
                     .end()
                     .choice()
@@ -59,12 +83,21 @@ public class OnCompletionIssueTest extends ContextTestSupport {
                         .when(simple("${body} == 'fault'"))
                             .log("faulting")
                             .setFaultBody(constant("faulted"))
-                        .when(simple("${body} == 'except'"))
+                        .when(simple("${body} == 'ile'"))
                             .log("excepting")
-                            .throwException(new Exception("Exception requested"))
+                            .throwException(new IllegalArgumentException("Exception requested"))
+                        .when(simple("${body} == 'npe'"))
+                            .log("excepting")
+                            .throwException(new NullPointerException("Darn NPE"))
+                        .when(simple("${body} == 'rollback'"))
+                            .log("rollback")
+                            .rollback()
+                        .when(simple("${body} == 'markRollback'"))
+                            .log("markRollback")
+                            .markRollbackOnly()
                         .end()
-                        .log("finishing")
-                        .to("mock:end");
+                    .log("finishing")
+                    .to("mock:end");
             }
         };
     }
