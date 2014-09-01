@@ -16,6 +16,7 @@
  */
 package org.apache.camel.issues;
 
+import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
@@ -27,12 +28,22 @@ public class OnCompletionIssueTest extends ContextTestSupport {
         end.expectedMessageCount(1);
 
         MockEndpoint complete = getMockEndpoint("mock:complete");
-        complete.expectedBodiesReceivedInAnyOrder("finish", "stop", "faulted", "except");
+        complete.expectedBodiesReceivedInAnyOrder("finish", "stop", "ile");
+
+        MockEndpoint failed = getMockEndpoint("mock:failed");
+        failed.expectedBodiesReceivedInAnyOrder("faulted", "npe");
 
         template.sendBody("direct:input", "finish");
         template.sendBody("direct:input", "stop");
         template.sendBody("direct:input", "fault");
-        template.sendBody("direct:input", "except");
+        template.sendBody("direct:input", "ile");
+
+        try {
+            template.sendBody("direct:input", "npe");
+            fail("Should have thrown exception");
+        } catch (CamelExecutionException e) {
+            assertEquals("Darn NPE", e.getCause().getMessage());
+        }
 
         setAssertPeriod(2000);
 
@@ -44,12 +55,16 @@ public class OnCompletionIssueTest extends ContextTestSupport {
         return new RouteBuilder() {
             @Override
             public void configure() throws Exception {
-                onCompletion().parallelProcessing()
+                onCompletion().onFailureOnly().parallelProcessing()
+                    .log("failing ${body}")
+                    .to("mock:failed");
+
+                onCompletion().onCompleteOnly().parallelProcessing()
                     .log("completing ${body}")
                     .to("mock:complete");
 
                 from("direct:input")
-                    .onException(Exception.class)
+                    .onException(IllegalArgumentException.class)
                         .handled(true)
                     .end()
                     .choice()
@@ -59,9 +74,12 @@ public class OnCompletionIssueTest extends ContextTestSupport {
                         .when(simple("${body} == 'fault'"))
                             .log("faulting")
                             .setFaultBody(constant("faulted"))
-                        .when(simple("${body} == 'except'"))
+                        .when(simple("${body} == 'ile'"))
                             .log("excepting")
-                            .throwException(new Exception("Exception requested"))
+                            .throwException(new IllegalArgumentException("Exception requested"))
+                        .when(simple("${body} == 'npe'"))
+                            .log("excepting")
+                            .throwException(new NullPointerException("Darn NPE"))
                         .end()
                         .log("finishing")
                         .to("mock:end");
