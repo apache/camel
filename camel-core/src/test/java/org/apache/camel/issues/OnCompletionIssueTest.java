@@ -18,6 +18,7 @@ package org.apache.camel.issues;
 
 import org.apache.camel.CamelExecutionException;
 import org.apache.camel.ContextTestSupport;
+import org.apache.camel.RollbackExchangeException;
 import org.apache.camel.builder.RouteBuilder;
 import org.apache.camel.component.mock.MockEndpoint;
 
@@ -28,21 +29,29 @@ public class OnCompletionIssueTest extends ContextTestSupport {
         end.expectedMessageCount(1);
 
         MockEndpoint complete = getMockEndpoint("mock:complete");
-        complete.expectedBodiesReceivedInAnyOrder("finish", "stop", "ile");
+        complete.expectedBodiesReceivedInAnyOrder("finish", "stop", "ile", "markRollback");
 
         MockEndpoint failed = getMockEndpoint("mock:failed");
-        failed.expectedBodiesReceivedInAnyOrder("faulted", "npe");
+        failed.expectedBodiesReceivedInAnyOrder("faulted", "npe", "rollback");
 
         template.sendBody("direct:input", "finish");
         template.sendBody("direct:input", "stop");
         template.sendBody("direct:input", "fault");
         template.sendBody("direct:input", "ile");
+        template.sendBody("direct:input", "markRollback");
 
         try {
             template.sendBody("direct:input", "npe");
             fail("Should have thrown exception");
         } catch (CamelExecutionException e) {
             assertEquals("Darn NPE", e.getCause().getMessage());
+        }
+
+        try {
+            template.sendBody("direct:input", "rollback");
+            fail("Should have thrown exception");
+        } catch (CamelExecutionException e) {
+            assertIsInstanceOf(RollbackExchangeException.class, e.getCause());
         }
 
         setAssertPeriod(2000);
@@ -80,6 +89,12 @@ public class OnCompletionIssueTest extends ContextTestSupport {
                         .when(simple("${body} == 'npe'"))
                             .log("excepting")
                             .throwException(new NullPointerException("Darn NPE"))
+                        .when(simple("${body} == 'rollback'"))
+                            .log("rollback")
+                            .rollback()
+                        .when(simple("${body} == 'markRollback'"))
+                            .log("markRollback")
+                            .markRollbackOnly()
                         .end()
                         .log("finishing")
                         .to("mock:end");
