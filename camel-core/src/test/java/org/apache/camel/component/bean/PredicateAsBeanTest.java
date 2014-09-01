@@ -66,8 +66,5 @@ public class PredicateAsBeanTest extends ContextTestSupport {
             return (null != body) && (body.equals("Wobble"));
         }
 
-        public void assertMatches(String text, Exchange exchange) throws AssertionError {
-            LOG.info("assertMatches(text, exchange) called with: " + text + ", " + exchange);
-        }
     }
 }
