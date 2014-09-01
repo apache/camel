@@ -1971,6 +1971,14 @@ public class DefaultCamelContext extends ServiceSupport implements ModelCamelCon
         // but clear any suspend routes
         suspendedRouteServices.clear();
 
+        // stop consumers from the services to close first, such as POJO consumer (eg @Consumer)
+        // which we need to stop after the routes, as a POJO consumer is essentially a route also
+        for (Service service : servicesToClose) {
+            if (service instanceof Consumer) {
+                shutdownServices(service);
+            }
+        }
+
         // the stop order is important
 
         // shutdown default error handler thread pool
