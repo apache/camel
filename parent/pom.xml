@@ -193,6 +193,7 @@
     <httpunit-version>1.7</httpunit-version>
     <httpcore4-version>4.3.2</httpcore4-version>
     <httpclient4-version>4.3.3</httpclient4-version>
+    <httpasyncclient-version>4.0.2</httpasyncclient-version>
     <httpclient-version>3.1</httpclient-version>
     <ibatis-bundle-version>2.3.4.726_4</ibatis-bundle-version>
     <ibatis-version>2.3.4.726</ibatis-version>
@@ -325,6 +326,7 @@
     <noggit-bundle-version>0.5_1</noggit-bundle-version>
     <!-- should be in-sync with deltaspike -->
     <openwebbeans-version>1.1.5</openwebbeans-version>
+    <olingo2-version>2.0.0</olingo2-version>
     <ognl-version>3.0.8_1</ognl-version>
     <openejb-version>4.6.0.2</openejb-version>
     <openjpa-version>2.3.0</openjpa-version>

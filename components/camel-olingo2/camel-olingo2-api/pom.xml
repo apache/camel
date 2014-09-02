@@ -32,8 +32,6 @@
 
   <properties>
     <camel.osgi.export.pkg>org.apache.camel.component.olingo2.api*</camel.osgi.export.pkg>
-    <olingo2-version>2.0.0</olingo2-version>
-    <http-asyncclient-version>4.0.2</http-asyncclient-version>
   </properties>
 
   <dependencies>
@@ -56,7 +54,7 @@
     <dependency>
       <groupId>org.apache.httpcomponents</groupId>
       <artifactId>httpasyncclient</artifactId>
-      <version>${http-asyncclient-version}</version>
+      <version>${httpasyncclient-version}</version>  
     </dependency>
 
     <!-- logging -->
