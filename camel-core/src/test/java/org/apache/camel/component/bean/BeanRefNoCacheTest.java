@@ -26,7 +26,7 @@ import org.apache.camel.builder.RouteBuilder;
  */
 public class BeanRefNoCacheTest extends ContextTestSupport {
 
-    private static final AtomicInteger counter = new AtomicInteger();
+    private static final AtomicInteger COUNTER = new AtomicInteger();
 
     public void testBeanRefNoCache() throws Exception {
         getMockEndpoint("mock:result").expectedBodiesReceived("Hello1", "Bye2", "Camel3");
@@ -55,7 +55,7 @@ public class BeanRefNoCacheTest extends ContextTestSupport {
         private final int count;
 
         public MyCoolBean() {
-            count = counter.incrementAndGet();
+            count = COUNTER.incrementAndGet();
         }
 
         public int getCount() {
