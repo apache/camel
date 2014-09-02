@@ -17,12 +17,10 @@
 package org.apache.camel.component.olingo2;
 
 import java.util.Map;
-
 import javax.net.ssl.SSLContext;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
-import org.apache.camel.component.olingo2.api.Olingo2App;
 import org.apache.camel.component.olingo2.api.impl.Olingo2AppImpl;
 import org.apache.camel.component.olingo2.internal.Olingo2ApiCollection;
 import org.apache.camel.component.olingo2.internal.Olingo2ApiName;
@@ -39,7 +37,7 @@ import org.apache.http.impl.nio.client.HttpAsyncClientBuilder;
 public class Olingo2Component extends AbstractApiComponent<Olingo2ApiName, Olingo2Configuration, Olingo2ApiCollection> {
 
     // component level shared proxy
-    private Olingo2App apiProxy;
+    private Olingo2AppWrapper apiProxy;
 
     public Olingo2Component() {
         super(Olingo2Endpoint.class, Olingo2ApiName.class, Olingo2ApiCollection.getCollection());
@@ -90,8 +88,8 @@ public class Olingo2Component extends AbstractApiComponent<Olingo2ApiName, Oling
         return new Olingo2Endpoint(uri, this, apiName, methodName, endpointConfiguration);
     }
 
-    public Olingo2App createApiProxy(Olingo2Configuration endpointConfiguration) {
-        final Olingo2App result;
+    public Olingo2AppWrapper createApiProxy(Olingo2Configuration endpointConfiguration) {
+        final Olingo2AppWrapper result;
         if (endpointConfiguration.equals(this.configuration)) {
             synchronized (this) {
                 if (apiProxy == null) {
@@ -105,7 +103,7 @@ public class Olingo2Component extends AbstractApiComponent<Olingo2ApiName, Oling
         return result;
     }
 
-    private Olingo2App createOlingo2App(Olingo2Configuration configuration) {
+    private Olingo2AppWrapper createOlingo2App(Olingo2Configuration configuration) {
 
         HttpAsyncClientBuilder clientBuilder = configuration.getHttpAsyncClientBuilder();
         if (clientBuilder == null) {
@@ -130,13 +128,13 @@ public class Olingo2Component extends AbstractApiComponent<Olingo2ApiName, Oling
             }
         }
 
-        apiProxy = new Olingo2AppImpl(configuration.getServiceUri(), clientBuilder);
-        apiProxy.setContentType(configuration.getContentType());
+        apiProxy = new Olingo2AppWrapper(new Olingo2AppImpl(configuration.getServiceUri(), clientBuilder));
+        apiProxy.getOlingo2App().setContentType(configuration.getContentType());
 
         return apiProxy;
     }
 
-    public void closeApiProxy(Olingo2App apiProxy) {
+    public void closeApiProxy(Olingo2AppWrapper apiProxy) {
         if (this.apiProxy != apiProxy) {
             // not a shared proxy
             apiProxy.close();

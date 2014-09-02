@@ -21,14 +21,10 @@ import java.util.HashSet;
 import java.util.Iterator;
 import java.util.Map;
 import java.util.Set;
-import java.util.concurrent.CountDownLatch;
 
 import org.apache.camel.Consumer;
 import org.apache.camel.Processor;
 import org.apache.camel.Producer;
-import org.apache.camel.RuntimeCamelException;
-import org.apache.camel.component.olingo2.api.Olingo2App;
-import org.apache.camel.component.olingo2.api.Olingo2ResponseHandler;
 import org.apache.camel.component.olingo2.internal.Olingo2ApiCollection;
 import org.apache.camel.component.olingo2.internal.Olingo2ApiName;
 import org.apache.camel.component.olingo2.internal.Olingo2Constants;
@@ -37,7 +33,6 @@ import org.apache.camel.spi.UriEndpoint;
 import org.apache.camel.util.component.AbstractApiEndpoint;
 import org.apache.camel.util.component.ApiMethod;
 import org.apache.camel.util.component.ApiMethodPropertiesHelper;
-import org.apache.olingo.odata2.api.edm.Edm;
 
 /**
  * Represents a Olingo2 endpoint.
@@ -58,9 +53,7 @@ public class Olingo2Endpoint extends AbstractApiEndpoint<Olingo2ApiName, Olingo2
 
     private final Set<String> endpointPropertyNames;
 
-    private Olingo2App apiProxy;
-
-    private volatile Edm edm;
+    private Olingo2AppWrapper apiProxy;
 
     public Olingo2Endpoint(String uri, Olingo2Component component,
                            Olingo2ApiName apiName, String methodName, Olingo2Configuration endpointConfiguration) {
@@ -120,7 +113,7 @@ public class Olingo2Endpoint extends AbstractApiEndpoint<Olingo2ApiName, Olingo2
 
     @Override
     public synchronized Object getApiProxy(ApiMethod method, Map<String, Object> args) {
-        return apiProxy;
+        return apiProxy.getOlingo2App();
     }
 
     @Override
@@ -158,7 +151,7 @@ public class Olingo2Endpoint extends AbstractApiEndpoint<Olingo2ApiName, Olingo2
     public void interceptProperties(Map<String, Object> properties) {
 
         // read Edm if not set yet
-        properties.put(EDM_PROPERTY, readEdm());
+        properties.put(EDM_PROPERTY, apiProxy.getEdm());
 
         // handle keyPredicate
         final String keyPredicate = (String) properties.get(KEY_PREDICATE_PROPERTY);
@@ -218,66 +211,5 @@ public class Olingo2Endpoint extends AbstractApiEndpoint<Olingo2ApiName, Olingo2
             }
 
         }
-    }
-
-    /// double checked locking based singleton Edm reader
-    private Edm readEdm() {
-
-        Edm localEdm = edm;
-        if (localEdm == null) {
-
-            synchronized (this) {
-
-                localEdm = edm;
-                if (localEdm == null) {
-
-                    final CountDownLatch latch = new CountDownLatch(1);
-                    final Exception[] error = new Exception[1];
-                    apiProxy.read(null, "$metadata", null, new Olingo2ResponseHandler<Edm>() {
-
-                        @Override
-                        public void onResponse(Edm response) {
-                            edm = response;
-                            latch.countDown();
-                        }
-
-                        @Override
-                        public void onException(Exception ex) {
-                            error[0] = ex;
-                            latch.countDown();
-                        }
-
-                        @Override
-                        public void onCanceled() {
-                            error[0] = new RuntimeCamelException("OData HTTP request cancelled!");
-                            latch.countDown();
-                        }
-                    });
-
-                    try {
-                        // wait until response or timeout
-                        latch.await();
-
-                        final Exception ex = error[0];
-                        if (ex != null) {
-                            if (ex instanceof RuntimeCamelException) {
-                                throw (RuntimeCamelException) ex;
-                            } else {
-                                final String message = ex.getMessage() != null
-                                    ? ex.getMessage() : ex.getClass().getName();
-                                throw new RuntimeCamelException("Error reading EDM: " + message, ex);
-                            }
-                        }
-
-                    } catch (InterruptedException e) {
-                        throw new RuntimeCamelException(e.getMessage(), e);
-                    }
-
-                    localEdm = edm;
-                }
-            }
-        }
-
-        return localEdm;
     }
 }
