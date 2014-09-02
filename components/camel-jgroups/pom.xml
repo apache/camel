@@ -68,5 +68,18 @@
           <scope>test</scope>
         </dependency>
     </dependencies>
-
+    
+    <build>
+       <plugins>
+          <plugin>
+             <artifactId>maven-surefire-plugin</artifactId>
+             <configuration>
+                <systemPropertyVariables>
+                    <!-- force jgroup to use loopback interface to fix the CI build -->
+                    <jgroups.bind_addr>127.0.0.1</jgroups.bind_addr>
+                </systemPropertyVariables>
+             </configuration>
+          </plugin>
+       </plugins>
+    </build>
 </project>
