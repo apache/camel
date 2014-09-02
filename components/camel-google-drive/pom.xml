@@ -5,7 +5,7 @@
 
   <parent>
     <groupId>org.apache.camel</groupId>
-    <artifactId>camel-google-drive-parent</artifactId>
+    <artifactId>components</artifactId>
     <version>2.14-SNAPSHOT</version>
   </parent>
 
@@ -13,7 +13,6 @@
   <packaging>bundle</packaging>
   <name>Camel GoogleDrive Component</name>
   <description>Camel Component for GoogleDrive</description>
-  <url>http://www.myorganization.org</url>
 
   <properties>
     <schemeName>google-drive</schemeName>
@@ -28,34 +27,33 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-core</artifactId>
-      <version>2.14-SNAPSHOT</version>
     </dependency>
     <dependency>
         <groupId>com.google.api-client</groupId>
         <artifactId>google-api-client</artifactId>
-        <version>1.18.0-rc</version>
+        <version>${google-api-client-version}</version>
     </dependency>
     <dependency>
         <groupId>com.google.oauth-client</groupId>
         <artifactId>google-oauth-client-jetty</artifactId>
-        <version>1.18.0-rc</version>
+        <version>${google-api-client-version}</version>
     </dependency>
     <dependency>
         <groupId>com.google.http-client</groupId>
         <artifactId>google-http-client-jackson2</artifactId>
-        <version>1.18.0-rc</version>
+        <version>${google-api-client-version}</version>
     </dependency>
     <dependency>
         <groupId>com.google.apis</groupId>
         <artifactId>google-api-services-drive</artifactId>
-        <version>v2-rev123-1.18.0-rc</version>
+        <version>${google-api-services-drive-version}</version>
     </dependency>
 
     <!-- Camel annotations in provided scope to avoid compile errors in IDEs -->
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>spi-annotations</artifactId>
-      <version>2.14-SNAPSHOT</version>
+    <version>2.14-SNAPSHOT</version>
       <scope>provided</scope>
     </dependency>
 
@@ -63,7 +61,7 @@
     <dependency>
         <groupId>com.google.apis</groupId>
         <artifactId>google-api-services-drive</artifactId>
-        <version>v2-rev123-1.18.0-rc</version>
+        <version>${google-api-services-drive-version}</version>
       <classifier>javadoc</classifier>
       <scope>provided</scope>
     </dependency>
@@ -72,18 +70,15 @@
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-api</artifactId>
-      <version>1.7.7</version>
     </dependency>
     <dependency>
       <groupId>org.slf4j</groupId>
       <artifactId>slf4j-log4j12</artifactId>
-      <version>1.7.7</version>
       <scope>test</scope>
     </dependency>
     <dependency>
       <groupId>log4j</groupId>
       <artifactId>log4j</artifactId>
-      <version>1.2.17</version>
       <scope>test</scope>
     </dependency>
 
@@ -91,7 +86,6 @@
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-test</artifactId>
-      <version>2.14-SNAPSHOT</version>
       <scope>test</scope>
     </dependency>
   </dependencies>
