@@ -249,7 +249,7 @@ public class Olingo2Endpoint extends AbstractApiEndpoint<Olingo2ApiName, Olingo2
 
                         @Override
                         public void onCanceled() {
-                            error[0] = new RuntimeCamelException("OData HTTP request cancelled");
+                            error[0] = new RuntimeCamelException("OData HTTP request cancelled!");
                             latch.countDown();
                         }
                     });
@@ -263,7 +263,9 @@ public class Olingo2Endpoint extends AbstractApiEndpoint<Olingo2ApiName, Olingo2
                             if (ex instanceof RuntimeCamelException) {
                                 throw (RuntimeCamelException) ex;
                             } else {
-                                throw new RuntimeCamelException("Error reading EDM " + ex.getMessage(), ex);
+                                final String message = ex.getMessage() != null
+                                    ? ex.getMessage() : ex.getClass().getName();
+                                throw new RuntimeCamelException("Error reading EDM: " + message, ex);
                             }
                         }
 

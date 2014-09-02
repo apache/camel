@@ -75,8 +75,7 @@ public class Olingo2Producer extends AbstractApiProducer<Olingo2ApiName, Olingo2
 
             @Override
             public void onCanceled() {
-                exchange.setException(new RuntimeCamelException("HTTP Request cancelled for "
-                    + endpoint.getEndpointUri()));
+                exchange.setException(new RuntimeCamelException("OData HTTP Request cancelled!"));
                 callback.done(false);
             }
         });

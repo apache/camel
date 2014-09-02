@@ -61,6 +61,7 @@ import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNotNull;
 import static org.junit.Assert.assertTrue;
 import static org.junit.Assert.fail;
+
 /**
  * Integration test for {@link org.apache.camel.component.olingo2.api.impl.Olingo2AppImpl}.
  * To test run the sample Olingo2 Server as outlined at
@@ -94,8 +95,8 @@ public class Olingo2AppIntegrationTest {
     private static final String COUNT_OPTION = "/$count";
 
     private static final String TEST_SERVICE_URL = "http://localhost:8080/MyFormula.svc";
-    //    private static String TEST_SERVICE_URL = "http://localhost:8080/cars-annotations-sample/MyFormula.svc";
-//    private static ContentType TEST_FORMAT = ContentType.APPLICATION_XML_CS_UTF_8;
+    //    private static final String TEST_SERVICE_URL = "http://localhost:8080/cars-annotations-sample/MyFormula.svc";
+//    private static final ContentType TEST_FORMAT = ContentType.APPLICATION_XML_CS_UTF_8;
     private static final ContentType TEST_FORMAT = ContentType.APPLICATION_JSON_CS_UTF_8;
     private static final String INDEX = "/index.jsp";
 
@@ -119,6 +120,9 @@ public class Olingo2AppIntegrationTest {
 
         edm = responseHandler.await();
         LOG.info("Read default EntityContainer:  {}", responseHandler.await().getDefaultEntityContainer().getName());
+
+        // wait for generated data to be registered in server
+        Thread.sleep(2000);
     }
 
     @AfterClass

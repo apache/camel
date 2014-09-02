@@ -68,7 +68,7 @@ public class Olingo2Consumer extends AbstractApiConsumer<Olingo2ApiName, Olingo2
 
                 @Override
                 public void onCanceled() {
-                    error[0] = new RuntimeCamelException("Http Request cancelled");
+                    error[0] = new RuntimeCamelException("OData HTTP Request cancelled");
                     latch.countDown();
                 }
             });
