@@ -173,6 +173,10 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
+      <artifactId>camel-dropbox</artifactId>
+    </dependency>    
+    <dependency>
+      <groupId>org.apache.camel</groupId>
       <artifactId>camel-eclipse</artifactId>
     </dependency>
     <dependency>
@@ -305,6 +309,10 @@
     </dependency>
     <dependency>
       <groupId>org.apache.camel</groupId>
+      <artifactId>camel-jclouds</artifactId>
+    </dependency>    
+    <dependency>
+      <groupId>org.apache.camel</groupId>
       <artifactId>camel-jcr</artifactId>
     </dependency>
     <dependency>
@@ -395,6 +403,14 @@
       <artifactId>camel-leveldb</artifactId>
     </dependency>
     <dependency>
+      <groupId>org.apache.camel.component.linkedin</groupId>
+      <artifactId>camel-linkedin-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel.component.linkedin</groupId>
+      <artifactId>camel-linkedin</artifactId>
+    </dependency>    
+    <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-mail</artifactId>
     </dependency>
@@ -454,6 +470,14 @@
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-ognl</artifactId>
     </dependency>
+    <dependency>
+      <groupId>org.apache.camel.component.olingo2</groupId>
+      <artifactId>camel-olingo2-api</artifactId>
+    </dependency>
+    <dependency>
+      <groupId>org.apache.camel.component.olingo2</groupId>
+      <artifactId>camel-olingo2</artifactId>
+    </dependency>    
     <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-openshift</artifactId>

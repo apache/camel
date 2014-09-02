@@ -698,6 +698,11 @@
       </dependency>
       <dependency>
         <groupId>org.apache.camel</groupId>
+        <artifactId>camel-dropbox</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel</groupId>
         <artifactId>camel-eclipse</artifactId>
         <version>${project.version}</version>
       </dependency>
@@ -972,6 +977,16 @@
         <version>${project.version}</version>
       </dependency>
       <dependency>
+        <groupId>org.apache.camel.component.linkedin</groupId>
+        <artifactId>camel-linkedin-api</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel.component.linkedin</groupId>
+        <artifactId>camel-linkedin</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-mail</artifactId>
         <version>${project.version}</version>
@@ -1044,6 +1059,16 @@
       <dependency>
         <groupId>org.apache.camel</groupId>
         <artifactId>camel-ognl</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel.component.olingo2</groupId>
+        <artifactId>camel-olingo2-api</artifactId>
+        <version>${project.version}</version>
+      </dependency>
+      <dependency>
+        <groupId>org.apache.camel.component.olingo2</groupId>
+        <artifactId>camel-olingo2</artifactId>
         <version>${project.version}</version>
       </dependency>
       <dependency>

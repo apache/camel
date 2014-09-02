@@ -12,3 +12,5 @@ target
 test-salesforce-login.properties
 dependency-reduced-pom.xml
 id_file
+components/camel-solr/data
+*.epoch

@@ -56,6 +56,7 @@
         <include>org.apache.camel:camel-disruptor</include>
         <include>org.apache.camel:camel-dns</include>
         <include>org.apache.camel:camel-dozer</include>
+        <include>org.apache.camel:camel-dropbox</include>
         <include>org.apache.camel:camel-eclipse</include>
         <include>org.apache.camel:camel-ejb</include>
         <include>org.apache.camel:camel-elasticsearch</include>
@@ -90,6 +91,7 @@
         <include>org.apache.camel:camel-javaspace</include>
         <include>org.apache.camel:camel-jaxb</include>
         <include>org.apache.camel:camel-jcr</include>
+        <include>org.apache.camel:camel-jclouds</include>
         <include>org.apache.camel:camel-jdbc</include>
         <include>org.apache.camel:camel-jetty</include>
         <include>org.apache.camel:camel-jgroups</include>
@@ -109,6 +111,8 @@
         <include>org.apache.camel:camel-krati</include>
         <include>org.apache.camel:camel-ldap</include>
         <include>org.apache.camel:camel-leveldb</include>
+        <include>org.apache.camel.component.linkedin:camel-linkedin-api</include>
+        <include>org.apache.camel.component.linkedin:camel-linkedin</include>
         <include>org.apache.camel:camel-lucene</include>
         <include>org.apache.camel:camel-metrics</include>
         <include>org.apache.camel:camel-mail</include>
@@ -125,6 +129,8 @@
         <include>org.apache.camel:camel-netty4</include>
         <include>org.apache.camel:camel-netty-http</include>
         <include>org.apache.camel:camel-ognl</include>
+        <include>org.apache.camel.component.olingo2:camel-olingo2-api</include>
+        <include>org.apache.camel.component.olingo2:camel-olingo2</include>
         <include>org.apache.camel:camel-openshift</include>
         <include>org.apache.camel:camel-optaplanner</include>
         <include>org.apache.camel:camel-paxlogging</include>
