@@ -23,9 +23,9 @@ import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Queue;
-
 import javax.persistence.Entity;
 import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
 import javax.persistence.LockModeType;
 import javax.persistence.OptimisticLockException;
 import javax.persistence.PersistenceException;
@@ -49,8 +49,9 @@ import org.springframework.transaction.support.TransactionTemplate;
 public class JpaConsumer extends ScheduledBatchPollingConsumer {
     private static final Logger LOG = LoggerFactory.getLogger(JpaConsumer.class);
     private static final Map<String, Object> NOWAIT;
-    private final EntityManager entityManager;
+    private final EntityManagerFactory entityManagerFactory;
     private final TransactionTemplate transactionTemplate;
+    private EntityManager entityManager;
     private QueryFactory queryFactory;
     private DeleteHandler<Object> deleteHandler;
     private DeleteHandler<Object> preDeleteHandler;
@@ -78,7 +79,7 @@ public class JpaConsumer extends ScheduledBatchPollingConsumer {
 
     public JpaConsumer(JpaEndpoint endpoint, Processor processor) {
         super(endpoint, processor);
-        this.entityManager = endpoint.createEntityManager();
+        this.entityManagerFactory = endpoint.getEntityManagerFactory();
         this.transactionTemplate = endpoint.createTransactionTemplate();
     }
 
@@ -477,10 +478,21 @@ public class JpaConsumer extends ScheduledBatchPollingConsumer {
     }
 
     @Override
-    protected void doShutdown() throws Exception {
-        super.doShutdown();
-        entityManager.close();
-        LOG.trace("closed the EntityManager {} on {}", entityManager, this);
+    protected void doStart() throws Exception {
+        super.doStart();
+        this.entityManager = entityManagerFactory.createEntityManager();
+        LOG.trace("Created EntityManager {} on {}", entityManager, this);
     }
 
+    @Override
+    protected void doStop() throws Exception {
+        // noop
+    }
+
+    @Override
+    protected void doShutdown() throws Exception {
+        super.doShutdown();
+        this.entityManager.close();
+        LOG.trace("Closed EntityManager {} on {}", entityManager, this);
+    }
 }

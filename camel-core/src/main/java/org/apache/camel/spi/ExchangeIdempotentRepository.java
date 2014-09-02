@@ -16,7 +16,7 @@
  */
 package org.apache.camel.spi;
 
-import org.apache.camel.Service;
+import org.apache.camel.Exchange;
 
 /**
  * Access to a repository of Message IDs to implement the
@@ -31,13 +31,12 @@ import org.apache.camel.Service;
  * </ul>
  * Notice the remove callback, can be configured to be disabled.
  * <p/>
- * Implementations for the <a href="http://camel.apache.org/idempotent-consumer.html">idempotent consumer EIP</a>
- * should favor using {@link org.apache.camel.spi.ExchangeIdempotentRepository} instead.
+ * This repository supports the operations to pass in the current exchange, which can be needed by some implementations
+ * such as the JPA idempotent consumer.
  *
- * @version
- * @see org.apache.camel.spi.ExchangeIdempotentRepository
+ * @version 
  */
-public interface IdempotentRepository<E> extends Service {
+public interface ExchangeIdempotentRepository<E> extends IdempotentRepository<E> {
 
     /**
      * Adds the key to the repository.
@@ -47,7 +46,7 @@ public interface IdempotentRepository<E> extends Service {
      * @param key the key of the message for duplicate test
      * @return <tt>true</tt> if this repository did <b>not</b> already contain the specified element
      */
-    boolean add(E key);
+    boolean add(Exchange exchange, E key);
 
     /**
      * Returns <tt>true</tt> if this repository contains the specified element.
@@ -57,7 +56,7 @@ public interface IdempotentRepository<E> extends Service {
      * @param key the key of the message
      * @return <tt>true</tt> if this repository contains the specified element
      */
-    boolean contains(E key);
+    boolean contains(Exchange exchange, E key);
 
     /**
      * Removes the key from the repository.
@@ -69,7 +68,7 @@ public interface IdempotentRepository<E> extends Service {
      * @param key the key of the message for duplicate test
      * @return <tt>true</tt> if the key was removed
      */
-    boolean remove(E key);
+    boolean remove(Exchange exchange, E key);
 
     /**
      * Confirms the key, after the exchange has been processed successfully.
@@ -79,6 +78,6 @@ public interface IdempotentRepository<E> extends Service {
      * @param key the key of the message for duplicate test
      * @return <tt>true</tt> if the key was confirmed
      */
-    boolean confirm(E key);
+    boolean confirm(Exchange exchange, E key);
 
 }

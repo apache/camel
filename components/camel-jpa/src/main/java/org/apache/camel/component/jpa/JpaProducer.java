@@ -17,8 +17,8 @@
 package org.apache.camel.component.jpa;
 
 import java.util.Collection;
-
 import javax.persistence.EntityManager;
+import javax.persistence.EntityManagerFactory;
 
 import org.apache.camel.Exchange;
 import org.apache.camel.Expression;
@@ -29,19 +29,21 @@ import org.springframework.transaction.TransactionStatus;
 import org.springframework.transaction.support.TransactionCallback;
 import org.springframework.transaction.support.TransactionTemplate;
 
+import static org.apache.camel.component.jpa.JpaHelper.getTargetEntityManager;
+
 /**
  * @version 
  */
 public class JpaProducer extends DefaultProducer {
     private static final Logger LOG = LoggerFactory.getLogger(JpaProducer.class);
-    private final EntityManager entityManager;
+    private final EntityManagerFactory entityManagerFactory;
     private final TransactionTemplate transactionTemplate;
     private final Expression expression;
 
     public JpaProducer(JpaEndpoint endpoint, Expression expression) {
         super(endpoint);
         this.expression = expression;
-        this.entityManager = endpoint.createEntityManager();
+        this.entityManagerFactory = endpoint.getEntityManagerFactory();
         this.transactionTemplate = endpoint.createTransactionTemplate();
     }
 
@@ -51,16 +53,17 @@ public class JpaProducer extends DefaultProducer {
     }
 
     public void process(final Exchange exchange) {
-        final EntityManager targetEntityManager = getTargetEntityManager(exchange);
-        exchange.getIn().setHeader(JpaConstants.ENTITYMANAGER, targetEntityManager);
-
         final Object values = expression.evaluate(exchange, Object.class);
+
         if (values != null) {
+            final EntityManager entityManager = getTargetEntityManager(exchange, entityManagerFactory, getEndpoint().isUsePassedInEntityManager());
+
             transactionTemplate.execute(new TransactionCallback<Object>() {
                 public Object doInTransaction(TransactionStatus status) {
                     if (getEndpoint().isJoinTransaction()) {
-                        targetEntityManager.joinTransaction();
+                        entityManager.joinTransaction();
                     }
+
                     if (values.getClass().isArray()) {
                         Object[] array = (Object[])values;
                         for (Object element : array) {
@@ -79,50 +82,28 @@ public class JpaProducer extends DefaultProducer {
                     }
 
                     if (getEndpoint().isFlushOnSend()) {
-                        // there may be concurrency so need to join tx before flush
-                        if (getEndpoint().isJoinTransaction()) {
-                            targetEntityManager.joinTransaction();
-                        }
-                        targetEntityManager.flush();
+                        entityManager.flush();
                     }
 
                     return null;
                 }
 
                 /**
-                 * save the given entity end return the managed entity
+                 * Save the given entity end return the managed entity
+                 *
                  * @return the managed entity
                  */
                 private Object save(final Object entity) {
-                    // there may be concurrency so need to join tx before persist/merge
-                    targetEntityManager.joinTransaction();
+                    LOG.debug("save: {}", entity);
                     if (getEndpoint().isUsePersist()) {
-                        targetEntityManager.persist(entity);
+                        entityManager.persist(entity);
                         return entity;
                     } else {
-                        return targetEntityManager.merge(entity);
+                        return entityManager.merge(entity);
                     }
                 }
             });
         }
-    }
-
-    private EntityManager getTargetEntityManager(Exchange exchange) {
-        EntityManager em = this.entityManager;
-        if (getEndpoint().isUsePassedInEntityManager()) {
-            EntityManager passedIn = exchange.getIn().getHeader(JpaConstants.ENTITYMANAGER, EntityManager.class);
-            if (passedIn != null) {
-                em = passedIn;
-            }
-        }
-        return em;
-    }
-
-    @Override
-    protected void doShutdown() throws Exception {
-        super.doShutdown();
-        entityManager.close();
-        LOG.trace("closed the EntityManager {} on {}", entityManager, this);
     }
 
 }

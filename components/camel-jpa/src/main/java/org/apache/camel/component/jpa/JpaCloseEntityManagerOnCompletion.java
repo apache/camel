@@ -16,23 +16,28 @@
  */
 package org.apache.camel.component.jpa;
 
-/**
- * JPA constants
- *
- * @version 
- */
-public final class JpaConstants {
+import javax.persistence.EntityManager;
 
-    public static final String ENTITY_MANAGER = "CamelEntityManager";
+import org.apache.camel.Exchange;
+import org.apache.camel.Ordered;
+import org.apache.camel.support.SynchronizationAdapter;
 
-    /**
-     * @deprecated use {@link #ENTITY_MANAGER}
-     */
-    @Deprecated
-    public static final String ENTITYMANAGER = ENTITY_MANAGER;
+public class JpaCloseEntityManagerOnCompletion extends SynchronizationAdapter {
 
-    private JpaConstants() {
-        // utility class
+    private final EntityManager entityManager;
+
+    public JpaCloseEntityManagerOnCompletion(EntityManager entityManager) {
+        this.entityManager = entityManager;
     }
 
+    @Override
+    public void onDone(Exchange exchange) {
+        entityManager.close();
+    }
+
+    @Override
+    public int getOrder() {
+        // we want to run as last as possible
+        return Ordered.LOWEST;
+    }
 }
