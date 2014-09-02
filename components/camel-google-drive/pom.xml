@@ -133,7 +133,6 @@
             <Export-Service>org.apache.camel.spi.ComponentResolver;component=${schemeName}</Export-Service>
             <Export-Package>${componentPackage};version=${project.version}</Export-Package>
             <Import-Package>
-              ${componentPackage}.api;version=${project.version},
               ${componentPackage};version=${project.version},
               org.apache.camel.*;version=2.14-SNAPSHOT,
               *
