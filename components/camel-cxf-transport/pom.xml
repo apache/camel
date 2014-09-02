@@ -99,11 +99,6 @@
 
     <!-- for testing -->
     <dependency>
-       <groupId>com.sun.xml.bind</groupId>
-       <artifactId>jaxb-impl</artifactId>
-       <scope>test</scope>
-    </dependency>
-    <dependency>
       <groupId>org.apache.camel</groupId>
       <artifactId>camel-spring</artifactId>
       <scope>test</scope>
