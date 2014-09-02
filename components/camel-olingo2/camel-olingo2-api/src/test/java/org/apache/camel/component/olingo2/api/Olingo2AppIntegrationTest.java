@@ -28,11 +28,6 @@ import java.util.Set;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 
-import static org.junit.Assert.assertEquals;
-import static org.junit.Assert.assertFalse;
-import static org.junit.Assert.assertNotNull;
-import static org.junit.Assert.assertTrue;
-import static org.junit.Assert.fail;
 import org.apache.camel.component.olingo2.api.batch.Olingo2BatchChangeRequest;
 import org.apache.camel.component.olingo2.api.batch.Olingo2BatchQueryRequest;
 import org.apache.camel.component.olingo2.api.batch.Olingo2BatchRequest;
@@ -61,6 +56,11 @@ import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
+import static org.junit.Assert.assertEquals;
+import static org.junit.Assert.assertFalse;
+import static org.junit.Assert.assertNotNull;
+import static org.junit.Assert.assertTrue;
+import static org.junit.Assert.fail;
 /**
  * Integration test for {@link org.apache.camel.component.olingo2.api.impl.Olingo2AppImpl}.
  * To test run the sample Olingo2 Server as outlined at
@@ -93,10 +93,10 @@ public class Olingo2AppIntegrationTest {
     private static final String TEST_CAR_LINK_MANUFACTURER = "Cars('1')/$links/Manufacturer";
     private static final String COUNT_OPTION = "/$count";
 
-    private static String TEST_SERVICE_URL = "http://localhost:8080/MyFormula.svc";
+    private static final String TEST_SERVICE_URL = "http://localhost:8080/MyFormula.svc";
     //    private static String TEST_SERVICE_URL = "http://localhost:8080/cars-annotations-sample/MyFormula.svc";
 //    private static ContentType TEST_FORMAT = ContentType.APPLICATION_XML_CS_UTF_8;
-    private static ContentType TEST_FORMAT = ContentType.APPLICATION_JSON_CS_UTF_8;
+    private static final ContentType TEST_FORMAT = ContentType.APPLICATION_JSON_CS_UTF_8;
     private static final String INDEX = "/index.jsp";
 
     private static Olingo2App olingoApp;

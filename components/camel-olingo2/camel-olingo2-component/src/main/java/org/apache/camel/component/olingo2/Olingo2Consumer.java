@@ -23,10 +23,9 @@ import java.util.concurrent.CountDownLatch;
 import org.apache.camel.Processor;
 import org.apache.camel.RuntimeCamelException;
 import org.apache.camel.component.olingo2.api.Olingo2ResponseHandler;
+import org.apache.camel.component.olingo2.internal.Olingo2ApiName;
 import org.apache.camel.util.ObjectHelper;
 import org.apache.camel.util.component.AbstractApiConsumer;
-
-import org.apache.camel.component.olingo2.internal.Olingo2ApiName;
 import org.apache.camel.util.component.ApiConsumerHelper;
 
 /**

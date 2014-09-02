@@ -205,15 +205,15 @@ public class Olingo2AppIntegrationTest extends AbstractOlingo2TestSupport {
 
                 // test route for create
                 from("direct://CREATE")
-                  .to("olingo2://create/Manufacturers");
+                    .to("olingo2://create/Manufacturers");
 
                 // test route for update
                 from("direct://UPDATE")
-                  .to("olingo2://update/Manufacturers('123')");
+                    .to("olingo2://update/Manufacturers('123')");
 
                 // test route for delete
                 from("direct://DELETE")
-                  .to("olingo2://delete/Manufacturers('123')");
+                    .to("olingo2://delete/Manufacturers('123')");
 
 /*
                 // test route for merge
