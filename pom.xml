@@ -212,7 +212,7 @@
             <useReleaseProfile>false</useReleaseProfile>
             <preparationGoals>clean install</preparationGoals>
             <goals>deploy</goals>
-            <arguments>-Prelease,enable-schemagen,apt,sourcecheck,validate,hibernate</arguments>
+            <arguments>-Prelease,enable-schemagen,apt,sourcecheck,hibernate</arguments>
             <autoVersionSubmodules>true</autoVersionSubmodules>
           </configuration>
         </plugin>
