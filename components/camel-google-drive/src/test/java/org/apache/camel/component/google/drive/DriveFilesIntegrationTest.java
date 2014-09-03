@@ -124,7 +124,7 @@ public class DriveFilesIntegrationTest extends AbstractGoogleDriveTestSupport {
     @Ignore
     @Test
     public void testPatch() throws Exception {
-        // TODO have to support setting patch parameters before callinfg execute like:
+        // TODO have to support setting patch parameters before calling execute like:
         /*
       File file = new File();
       file.setTitle(newTitle);
@@ -197,11 +197,10 @@ public class DriveFilesIntegrationTest extends AbstractGoogleDriveTestSupport {
 
         // File's new metadata.
         file.setTitle("camel.png");
-        file.setMimeType("application/vnd.google-apps.photo");
 
         // File's new content.
         java.io.File fileContent = new java.io.File(TEST_UPLOAD_IMG);
-        FileContent mediaContent = new FileContent("application/vnd.google-apps.photo", fileContent);
+        FileContent mediaContent = new FileContent(null, fileContent);
 
         // Send the request to the API.
         
