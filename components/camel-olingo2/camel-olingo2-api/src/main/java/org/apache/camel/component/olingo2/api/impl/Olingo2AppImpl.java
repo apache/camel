@@ -348,7 +348,7 @@ public final class Olingo2AppImpl implements Olingo2App {
 
         case URI1:
         case URI6B:
-            if (uriInfo.getCustomQueryOptions().containsKey("!deltaToken")) {
+            if (uriInfo.getCustomQueryOptions().containsKey("!deltatoken")) {
                 // ODataDeltaFeed
                 response = (T) EntityProvider.readDeltaFeed(
                     getContentType(),
