@@ -184,7 +184,7 @@
                 <exclude>**/.*</exclude>
                 <exclude>**/.settings/**/*</exclude>
                 <exclude>**/*.iml</exclude>
-                <exclude>.idea/**/*</exclude>
+                <exclude>**/.idea/**/*</exclude>
                 <exclude>**/avro/**/*.avpr</exclude>
                 <exclude>**/OSGI-INF/bundle.info</exclude>
                 <exclude>**/test_rsa*</exclude>
@@ -295,7 +295,7 @@
                         <pathelement location="${basedir}/buildingtools/target/classes"/>
                         <pathelement location="${basedir}/buildingtools/src/main/resources"/>
                     </path>
-                    
+
                     <whichresource resource="/camel-eclipse-pmd" property="pmd.url" classpathref="buildtools.classpath" />
                     <whichresource resource="/camel-pmd-ruleset.xml" property="pmdruleset.url" classpathref="buildtools.classpath" />
                     <whichresource resource="/camel-eclipse-checkstyle" property="eclipse.checkstyle.url" classpathref="buildtools.classpath" />
