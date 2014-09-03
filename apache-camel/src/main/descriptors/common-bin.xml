@@ -69,6 +69,7 @@
         <include>org.apache.camel:camel-ftp</include>
         <include>org.apache.camel:camel-gae</include>
         <include>org.apache.camel:camel-geocoder</include>
+        <include>org.apache.camel:camel-google-drive</include>
         <include>org.apache.camel:camel-gora</include>
         <include>org.apache.camel:camel-groovy</include>
         <include>org.apache.camel:camel-guava-eventbus</include>
