@@ -39,13 +39,10 @@ public class GoogleDriveConsumer extends AbstractApiConsumer<GoogleDriveApiName,
     @Override
     protected Object doInvokeMethod(Map<String, Object> properties) throws RuntimeCamelException {
         AbstractGoogleClientRequest request = (AbstractGoogleClientRequest) super.doInvokeMethod(properties);
-        // TODO set any generic params, like OAuth token, etc.
         try {
             return request.execute();
         } catch (IOException e) {
-            // TODO Auto-generated catch block
-            e.printStackTrace();
+            throw new RuntimeCamelException(e);
         }
-        return null;
     }    
 }
