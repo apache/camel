@@ -146,6 +146,9 @@ public interface ManagedCamelContextMBean extends ManagedPerformanceCounterMBean
     @ManagedOperation(description = "Starts all the routes which currently is not started")
     void startAllRoutes() throws Exception;
 
+    @ManagedOperation(description = "Whether its possible to send to the endpoint (eg the endpoint has a producer)")
+    boolean canSendToEndpoint(String endpointUri);
+
     @ManagedOperation(description = "Send body (in only)")
     void sendBody(String endpointUri, Object body) throws Exception;
 
