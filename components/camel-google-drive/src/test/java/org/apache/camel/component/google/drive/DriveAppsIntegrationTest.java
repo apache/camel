@@ -4,9 +4,6 @@
  */
 package org.apache.camel.component.google.drive;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.apache.camel.builder.RouteBuilder;
 import org.junit.Ignore;
 import org.junit.Test;
@@ -18,8 +15,6 @@ import org.apache.camel.component.google.drive.internal.DriveAppsApiMethod;
 
 /**
  * Test class for com.google.api.services.drive.Drive$Apps APIs.
- * TODO Move the file to src/test/java, populate parameter values, and remove @Ignore annotations.
- * The class source won't be generated again if the generator MOJO finds it under src/test/java.
  */
 public class DriveAppsIntegrationTest extends AbstractGoogleDriveTestSupport {
 
@@ -37,10 +32,10 @@ public class DriveAppsIntegrationTest extends AbstractGoogleDriveTestSupport {
         LOG.debug("get: " + result);
     }
 
-    @Ignore
+    // TODO getting permission errors for this one
     @Test
     public void testList() throws Exception {
-        final com.google.api.services.drive.Drive.Apps.List result = requestBody("direct://LIST", null);
+        final com.google.api.services.drive.model.App result = requestBody("direct://LIST", null);
 
         assertNotNull("list result", result);
         LOG.debug("list: " + result);

@@ -18,8 +18,6 @@ import org.apache.camel.component.google.drive.internal.DriveChangesApiMethod;
 
 /**
  * Test class for com.google.api.services.drive.Drive$Changes APIs.
- * TODO Move the file to src/test/java, populate parameter values, and remove @Ignore annotations.
- * The class source won't be generated again if the generator MOJO finds it under src/test/java.
  */
 public class DriveChangesIntegrationTest extends AbstractGoogleDriveTestSupport {
 
@@ -37,10 +35,9 @@ public class DriveChangesIntegrationTest extends AbstractGoogleDriveTestSupport 
         LOG.debug("get: " + result);
     }
 
-    @Ignore
     @Test
     public void testList() throws Exception {
-        final com.google.api.services.drive.Drive.Changes.List result = requestBody("direct://LIST", null);
+        final com.google.api.services.drive.model.ChangeList result = requestBody("direct://LIST", null);
 
         assertNotNull("list result", result);
         LOG.debug("list: " + result);

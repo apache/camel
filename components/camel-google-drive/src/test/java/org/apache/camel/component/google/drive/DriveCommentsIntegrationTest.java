@@ -12,9 +12,12 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
+import org.apache.camel.component.google.drive.internal.DriveFilesApiMethod;
 import org.apache.camel.component.google.drive.internal.GoogleDriveApiCollection;
 import org.apache.camel.component.google.drive.internal.DriveCommentsApiMethod;
+
+import com.google.api.client.http.FileContent;
+import com.google.api.services.drive.model.File;
 
 /**
  * Test class for com.google.api.services.drive.Drive$Comments APIs.
@@ -25,7 +28,10 @@ public class DriveCommentsIntegrationTest extends AbstractGoogleDriveTestSupport
 
     private static final Logger LOG = LoggerFactory.getLogger(DriveCommentsIntegrationTest.class);
     private static final String PATH_PREFIX = GoogleDriveApiCollection.getCollection().getApiName(DriveCommentsApiMethod.class).getName();
-
+    private static final String TEST_UPLOAD_FILE = "src/test/resources/log4j.properties";
+    private static final String TEST_UPLOAD_IMG = "src/test/resources/camel-box-small.png";
+    private static final java.io.File UPLOAD_FILE = new java.io.File(TEST_UPLOAD_FILE);
+    
     // TODO provide parameter values for delete
     @Ignore
     @Test
@@ -74,12 +80,28 @@ public class DriveCommentsIntegrationTest extends AbstractGoogleDriveTestSupport
         LOG.debug("insert: " + result);
     }
 
-    // TODO provide parameter values for list
-    @Ignore
+    private File uploadTestFile() {
+        File fileMetadata = new File();
+        fileMetadata.setTitle(UPLOAD_FILE.getName());
+        FileContent mediaContent = new FileContent(null, UPLOAD_FILE);
+        
+        final Map<String, Object> headers = new HashMap<String, Object>();
+        // parameter type is com.google.api.services.drive.model.File
+        headers.put("CamelGoogleDrive.content", fileMetadata);
+        // parameter type is com.google.api.client.http.AbstractInputStreamContent
+        headers.put("CamelGoogleDrive.mediaContent", mediaContent);
+
+        File result = requestBodyAndHeaders("direct://INSERT_1", null, headers);
+        return result;
+    }
+    
     @Test
     public void testList() throws Exception {
+        File testFile = uploadTestFile();
+        String fileId = testFile.getId();
+        
         // using String message body for single parameter "fileId"
-        final com.google.api.services.drive.Drive.Comments.List result = requestBody("direct://LIST", null);
+        final com.google.api.services.drive.model.CommentList result = requestBody("direct://LIST", fileId);
 
         assertNotNull("list result", result);
         LOG.debug("list: " + result);
@@ -148,6 +170,10 @@ public class DriveCommentsIntegrationTest extends AbstractGoogleDriveTestSupport
                 // test route for update
                 from("direct://UPDATE")
                   .to("google-drive://" + PATH_PREFIX + "/update");
+                
+                // just used to upload file for test
+                from("direct://INSERT_1")
+                  .to("google-drive://" + GoogleDriveApiCollection.getCollection().getApiName(DriveFilesApiMethod.class).getName() + "/insert");
 
             }
         };

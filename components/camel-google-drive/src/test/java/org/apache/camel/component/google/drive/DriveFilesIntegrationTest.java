@@ -5,7 +5,6 @@
 package org.apache.camel.component.google.drive;
 
 import java.util.HashMap;
-import java.util.Iterator;
 import java.util.Map;
 
 import org.apache.camel.builder.RouteBuilder;

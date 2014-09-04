@@ -1,6 +1,8 @@
 package org.apache.camel.component.google.drive;
 
+import java.util.Arrays;
 import java.util.Collections;
+import java.util.List;
 import java.util.Map;
 
 import org.apache.camel.Consumer;
@@ -38,11 +40,12 @@ public class GoogleDriveEndpoint extends AbstractApiEndpoint<GoogleDriveApiName,
     private JacksonFactory jsonFactory = new JacksonFactory();
     private FileDataStoreFactory dataStoreFactory;
     
-    // Directory to store user credentials
+    // TODO Directory to store user credentials
     private static final java.io.File DATA_STORE_DIR = new java.io.File(
-        System.getProperty("user.home"), ".store/drive_sample");
-    
+        System.getProperty("user.home"), ".store/drive_sample");    
 
+    private static final List<String> DEFAULT_SCOPES = Arrays.asList(DriveScopes.DRIVE_FILE, DriveScopes.DRIVE_APPS_READONLY, DriveScopes.DRIVE_METADATA_READONLY,
+            DriveScopes.DRIVE);    
     
     public GoogleDriveEndpoint(String uri, GoogleDriveComponent component,
                          GoogleDriveApiName apiName, String methodName, GoogleDriveConfiguration endpointConfiguration) {
@@ -78,10 +81,10 @@ public class GoogleDriveEndpoint extends AbstractApiEndpoint<GoogleDriveApiName,
     private Credential authorize() throws Exception {
       dataStoreFactory = new FileDataStoreFactory(DATA_STORE_DIR);
       // set up authorization code flow
-      // TODO refresh token support too
-      GoogleAuthorizationCodeFlow flow =
+      // TODO refresh token support too      
+    GoogleAuthorizationCodeFlow flow =
           new GoogleAuthorizationCodeFlow.Builder(transport, jsonFactory, configuration.getClientId(), configuration.getClientSecret(),
-              Collections.singleton(DriveScopes.DRIVE_FILE)).setDataStoreFactory(dataStoreFactory)
+                  DEFAULT_SCOPES).setDataStoreFactory(dataStoreFactory)
               .build();
       // authorize
       return new AuthorizationCodeInstalledApp(flow, new LocalServerReceiver()).authorize("user");
@@ -96,7 +99,43 @@ public class GoogleDriveEndpoint extends AbstractApiEndpoint<GoogleDriveApiName,
             case DRIVE_FILES:
                 apiProxy = getClient().files();
                 break;
-                // TODO add extra APIs here
+            case DRIVE_ABOUT:
+                apiProxy = getClient().about();
+                break;                
+            case DRIVE_APPS:
+                apiProxy = getClient().apps();
+                break;         
+            case DRIVE_CHANGES:
+                apiProxy = getClient().changes();
+                break;                
+            case DRIVE_COMMENTS:
+                apiProxy = getClient().comments();
+                break;                
+            case DRIVE_PERMISSIONS:
+                apiProxy = getClient().permissions();                
+                break;                    
+            case DRIVE_PROPERTIES:
+                apiProxy = getClient().properties();                
+                break;                
+// Still need to support these drive APIs
+//              case DRIVE_CHANNELS:
+//              apiProxy = getClient().channels();
+//              break;                
+//          case DRIVE_CHILDREN:
+//              apiProxy = getClient().children();
+//              break;                
+//              case DRIVE_PARENTS:
+//              apiProxy = getClient().parents();                
+//              break;                
+//            case DRIVE_REALTIME:
+//                apiProxy = getClient().realtime();                
+//                break;                    
+            case DRIVE_REPLIES:
+                apiProxy = getClient().replies();                
+                break;                    
+            case DRIVE_REVISIONS:
+                apiProxy = getClient().revisions();                
+                break;                    
             default:
                 throw new IllegalArgumentException("Invalid API name " + apiName);
         } 

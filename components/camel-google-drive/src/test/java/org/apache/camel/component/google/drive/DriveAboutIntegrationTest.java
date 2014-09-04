@@ -4,11 +4,7 @@
  */
 package org.apache.camel.component.google.drive;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -18,18 +14,15 @@ import org.apache.camel.component.google.drive.internal.DriveAboutApiMethod;
 
 /**
  * Test class for com.google.api.services.drive.Drive$About APIs.
- * TODO Move the file to src/test/java, populate parameter values, and remove @Ignore annotations.
- * The class source won't be generated again if the generator MOJO finds it under src/test/java.
  */
 public class DriveAboutIntegrationTest extends AbstractGoogleDriveTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(DriveAboutIntegrationTest.class);
     private static final String PATH_PREFIX = GoogleDriveApiCollection.getCollection().getApiName(DriveAboutApiMethod.class).getName();
 
-    @Ignore
     @Test
     public void testGet() throws Exception {
-        final com.google.api.services.drive.Drive.About.Get result = requestBody("direct://GET", null);
+        final com.google.api.services.drive.model.About result = requestBody("direct://GET", null);
 
         assertNotNull("get result", result);
         LOG.debug("get: " + result);
