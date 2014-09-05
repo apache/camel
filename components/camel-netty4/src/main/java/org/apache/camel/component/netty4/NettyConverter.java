@@ -79,7 +79,7 @@ public final class NettyConverter {
     }
 
     @Converter
-    public static ByteBuf toByteBuffer(byte[] bytes, Exchange exchange) {
+    public static ByteBuf toByteBuffer(byte[] bytes) {
         ByteBuf buf = ByteBufAllocator.DEFAULT.buffer(bytes.length);
         buf.writeBytes(bytes);
         return buf;
@@ -94,7 +94,7 @@ public final class NettyConverter {
         } else {
             bytes = s.getBytes();
         }
-        return toByteBuffer(bytes, exchange);
+        return toByteBuffer(bytes);
     }
 
     @Converter
