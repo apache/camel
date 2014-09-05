@@ -16,17 +16,16 @@
  */
 package org.apache.camel.component.google.drive;
 
-import java.util.HashMap;
-import java.util.Map;
+import java.util.List;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.apache.camel.component.google.drive.internal.GoogleDriveApiCollection;
 import org.apache.camel.component.google.drive.internal.DriveChangesApiMethod;
+
+import com.google.api.services.drive.model.Change;
 
 /**
  * Test class for com.google.api.services.drive.Drive$Changes APIs.
@@ -36,15 +35,20 @@ public class DriveChangesIntegrationTest extends AbstractGoogleDriveTestSupport 
     private static final Logger LOG = LoggerFactory.getLogger(DriveChangesIntegrationTest.class);
     private static final String PATH_PREFIX = GoogleDriveApiCollection.getCollection().getApiName(DriveChangesApiMethod.class).getName();
 
-    // TODO provide parameter values for get
-    @Ignore
     @Test
     public void testGet() throws Exception {
-        // using String message body for single parameter "changeId"
-        final com.google.api.services.drive.Drive.Changes.Get result = requestBody("direct://GET", null);
-
-        assertNotNull("get result", result);
-        LOG.debug("get: " + result);
+        final com.google.api.services.drive.model.ChangeList list = requestBody("direct://LIST", null);
+        List<Change> items = list.getItems();
+        if (!items.isEmpty()) {
+            Change change = items.get(0);
+            Long id = change.getId();
+    
+            // using String message body for single parameter "changeId"
+            final com.google.api.services.drive.model.Change result = requestBody("direct://GET", id);
+    
+            assertNotNull("get result", result);
+            LOG.debug("get: " + result);
+        }
     }
 
     @Test
@@ -53,17 +57,6 @@ public class DriveChangesIntegrationTest extends AbstractGoogleDriveTestSupport 
 
         assertNotNull("list result", result);
         LOG.debug("list: " + result);
-    }
-
-    // TODO provide parameter values for watch
-    @Ignore
-    @Test
-    public void testWatch() throws Exception {
-        // using com.google.api.services.drive.model.Channel message body for single parameter "contentChannel"
-        final com.google.api.services.drive.Drive.Changes.Watch result = requestBody("direct://WATCH", null);
-
-        assertNotNull("watch result", result);
-        LOG.debug("watch: " + result);
     }
 
     @Override

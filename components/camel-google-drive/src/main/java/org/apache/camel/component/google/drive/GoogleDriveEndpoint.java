@@ -114,7 +114,7 @@ public class GoogleDriveEndpoint extends AbstractApiEndpoint<GoogleDriveApiName,
     
     private Drive getClient() {
         if (client == null) {
-            getClientFactory().makeClient(configuration.getClientId(), configuration.getClientSecret(), DEFAULT_SCOPES);
+            client = getClientFactory().makeClient(configuration.getClientId(), configuration.getClientSecret(), DEFAULT_SCOPES);
         }
         return client;
     }

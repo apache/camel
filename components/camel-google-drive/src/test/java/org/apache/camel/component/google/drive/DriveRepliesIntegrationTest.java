@@ -24,9 +24,12 @@ import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
+import org.apache.camel.component.google.drive.internal.DriveFilesApiMethod;
 import org.apache.camel.component.google.drive.internal.GoogleDriveApiCollection;
 import org.apache.camel.component.google.drive.internal.DriveRepliesApiMethod;
+
+import com.google.api.services.drive.model.Comment;
+import com.google.api.services.drive.model.File;
 
 /**
  * Test class for com.google.api.services.drive.Drive$Replies APIs.
@@ -38,114 +41,59 @@ public class DriveRepliesIntegrationTest extends AbstractGoogleDriveTestSupport 
     private static final Logger LOG = LoggerFactory.getLogger(DriveRepliesIntegrationTest.class);
     private static final String PATH_PREFIX = GoogleDriveApiCollection.getCollection().getApiName(DriveRepliesApiMethod.class).getName();
 
-    // TODO provide parameter values for delete
-    @Ignore
     @Test
-    public void testDelete() throws Exception {
-        final Map<String, Object> headers = new HashMap<String, Object>();
+    public void testReplyToComment() throws Exception {
+        // 1. create test file
+        File testFile = uploadTestFile();
+        String fileId = testFile.getId();
+        
+        // 2. comment on that file
+        Map<String, Object> headers = new HashMap<String, Object>();
         // parameter type is String
-        headers.put("CamelGoogleDrive.fileId", null);
-        // parameter type is String
-        headers.put("CamelGoogleDrive.commentId", null);
-        // parameter type is String
-        headers.put("CamelGoogleDrive.replyId", null);
+        headers.put("CamelGoogleDrive.fileId", fileId);
+        // parameter type is com.google.api.services.drive.model.Comment
+        com.google.api.services.drive.model.Comment comment = new com.google.api.services.drive.model.Comment();
+        comment.setContent("Camel rocks!");
+        headers.put("CamelGoogleDrive.content", comment);
 
-        final com.google.api.services.drive.Drive.Replies.Delete result = requestBodyAndHeaders("direct://DELETE", null, headers);
+        requestBodyAndHeaders("direct://INSERT_COMMENT", null, headers);
 
-        assertNotNull("delete result", result);
-        LOG.debug("delete: " + result);
-    }
+        // 3. get a list of comments on the file
+        // using String message body for single parameter "fileId"
+        com.google.api.services.drive.model.CommentList result1 = requestBody("direct://LIST_COMMENTS", fileId);
 
-    // TODO provide parameter values for get
-    @Ignore
-    @Test
-    public void testGet() throws Exception {
-        final Map<String, Object> headers = new HashMap<String, Object>();
+        assertNotNull(result1.get("items"));
+        LOG.debug("list: " + result1);
+        
+        Comment comment2 = result1.getItems().get(0);
+        String commentId = comment2.getCommentId();
+        
+        // 4. add reply
+        headers = new HashMap<String, Object>();
         // parameter type is String
-        headers.put("CamelGoogleDrive.fileId", null);
+        headers.put("CamelGoogleDrive.fileId", fileId);
         // parameter type is String
-        headers.put("CamelGoogleDrive.commentId", null);
-        // parameter type is String
-        headers.put("CamelGoogleDrive.replyId", null);
-
-        final com.google.api.services.drive.Drive.Replies.Get result = requestBodyAndHeaders("direct://GET", null, headers);
-
-        assertNotNull("get result", result);
-        LOG.debug("get: " + result);
-    }
-
-    // TODO provide parameter values for insert
-    @Ignore
-    @Test
-    public void testInsert() throws Exception {
-        final Map<String, Object> headers = new HashMap<String, Object>();
-        // parameter type is String
-        headers.put("CamelGoogleDrive.fileId", null);
-        // parameter type is String
-        headers.put("CamelGoogleDrive.commentId", null);
+        headers.put("CamelGoogleDrive.commentId", commentId);
         // parameter type is com.google.api.services.drive.model.CommentReply
-        headers.put("CamelGoogleDrive.content", null);
+        com.google.api.services.drive.model.CommentReply reply = new com.google.api.services.drive.model.CommentReply();
+        reply.setContent("I know :-)");
+        headers.put("CamelGoogleDrive.content", reply);
 
-        final com.google.api.services.drive.Drive.Replies.Insert result = requestBodyAndHeaders("direct://INSERT", null, headers);
+        requestBodyAndHeaders("direct://INSERT", null, headers);
 
-        assertNotNull("insert result", result);
-        LOG.debug("insert: " + result);
-    }
-
-    // TODO provide parameter values for list
-    @Ignore
-    @Test
-    public void testList() throws Exception {
-        final Map<String, Object> headers = new HashMap<String, Object>();
+        // 5. list replies on comment to file
+        
+        headers = new HashMap<String, Object>();
         // parameter type is String
-        headers.put("CamelGoogleDrive.fileId", null);
+        headers.put("CamelGoogleDrive.fileId", fileId);
         // parameter type is String
-        headers.put("CamelGoogleDrive.commentId", null);
+        headers.put("CamelGoogleDrive.commentId", commentId);
 
-        final com.google.api.services.drive.Drive.Replies.List result = requestBodyAndHeaders("direct://LIST", null, headers);
+        final com.google.api.services.drive.model.CommentReplyList result = requestBodyAndHeaders("direct://LIST", null, headers);
 
         assertNotNull("list result", result);
         LOG.debug("list: " + result);
-    }
 
-    // TODO provide parameter values for patch
-    @Ignore
-    @Test
-    public void testPatch() throws Exception {
-        final Map<String, Object> headers = new HashMap<String, Object>();
-        // parameter type is String
-        headers.put("CamelGoogleDrive.fileId", null);
-        // parameter type is String
-        headers.put("CamelGoogleDrive.commentId", null);
-        // parameter type is String
-        headers.put("CamelGoogleDrive.replyId", null);
-        // parameter type is com.google.api.services.drive.model.CommentReply
-        headers.put("CamelGoogleDrive.content", null);
-
-        final com.google.api.services.drive.Drive.Replies.Patch result = requestBodyAndHeaders("direct://PATCH", null, headers);
-
-        assertNotNull("patch result", result);
-        LOG.debug("patch: " + result);
-    }
-
-    // TODO provide parameter values for update
-    @Ignore
-    @Test
-    public void testUpdate() throws Exception {
-        final Map<String, Object> headers = new HashMap<String, Object>();
-        // parameter type is String
-        headers.put("CamelGoogleDrive.fileId", null);
-        // parameter type is String
-        headers.put("CamelGoogleDrive.commentId", null);
-        // parameter type is String
-        headers.put("CamelGoogleDrive.replyId", null);
-        // parameter type is com.google.api.services.drive.model.CommentReply
-        headers.put("CamelGoogleDrive.content", null);
-
-        final com.google.api.services.drive.Drive.Replies.Update result = requestBodyAndHeaders("direct://UPDATE", null, headers);
-
-        assertNotNull("update result", result);
-        LOG.debug("update: " + result);
     }
 
     @Override
@@ -175,6 +123,18 @@ public class DriveRepliesIntegrationTest extends AbstractGoogleDriveTestSupport 
                 // test route for update
                 from("direct://UPDATE")
                   .to("google-drive://" + PATH_PREFIX + "/update");
+                
+                // just used to upload file for test
+                from("direct://INSERT_1")
+                  .to("google-drive://" + GoogleDriveApiCollection.getCollection().getApiName(DriveFilesApiMethod.class).getName() + "/insert");
+                
+                // test route for insert
+                from("direct://INSERT_COMMENT")
+                  .to("google-drive://drive-comments/insert");
+
+                // test route for list
+                from("direct://LIST_COMMENTS")
+                  .to("google-drive://drive-comments/list?inBody=fileId");
 
             }
         };

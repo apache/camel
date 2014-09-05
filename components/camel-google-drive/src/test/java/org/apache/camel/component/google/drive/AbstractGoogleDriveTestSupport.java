@@ -31,6 +31,9 @@ import org.apache.camel.test.junit4.CamelTestSupport;
 import org.apache.camel.util.IntrospectionSupport;
 import org.junit.AfterClass;
 
+import com.google.api.client.http.FileContent;
+import com.google.api.services.drive.model.File;
+
 public abstract class AbstractGoogleDriveTestSupport extends CamelTestSupport {
 
     protected static final String CAMEL_TEST_TAG = "camel_was_here";
@@ -46,6 +49,25 @@ public abstract class AbstractGoogleDriveTestSupport extends CamelTestSupport {
     protected static String testFolderId;
     protected static String testFileId;
 
+    protected static final String TEST_UPLOAD_FILE = "src/test/resources/log4j.properties";
+    protected static final String TEST_UPLOAD_IMG = "src/test/resources/camel-box-small.png";
+    protected static final java.io.File UPLOAD_FILE = new java.io.File(TEST_UPLOAD_FILE);
+    
+    protected File uploadTestFile() {
+        File fileMetadata = new File();
+        fileMetadata.setTitle(UPLOAD_FILE.getName());
+        FileContent mediaContent = new FileContent(null, UPLOAD_FILE);
+        
+        final Map<String, Object> headers = new HashMap<String, Object>();
+        // parameter type is com.google.api.services.drive.model.File
+        headers.put("CamelGoogleDrive.content", fileMetadata);
+        // parameter type is com.google.api.client.http.AbstractInputStreamContent
+        headers.put("CamelGoogleDrive.mediaContent", mediaContent);
+
+        File result = requestBodyAndHeaders("direct://INSERT_1", null, headers);
+        return result;
+    }
+    
     @Override
     protected CamelContext createCamelContext() throws Exception {
 

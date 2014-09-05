@@ -39,9 +39,6 @@ public class DriveFilesIntegrationTest extends AbstractGoogleDriveTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(DriveFilesIntegrationTest.class);
     private static final String PATH_PREFIX = GoogleDriveApiCollection.getCollection().getApiName(DriveFilesApiMethod.class).getName();
-    private static final String TEST_UPLOAD_FILE = "src/test/resources/log4j.properties";
-    private static final String TEST_UPLOAD_IMG = "src/test/resources/camel-box-small.png";
-    private static final java.io.File UPLOAD_FILE = new java.io.File(TEST_UPLOAD_FILE);
     
     @Test
     public void testCopy() throws Exception {
@@ -64,7 +61,7 @@ public class DriveFilesIntegrationTest extends AbstractGoogleDriveTestSupport {
         LOG.debug("copy: " + result);
     }
 
-    @Test
+    @Test    
     public void testDelete() throws Exception {
         File testFile = uploadTestFile();
         String fileId = testFile.getId();
@@ -72,9 +69,13 @@ public class DriveFilesIntegrationTest extends AbstractGoogleDriveTestSupport {
         // using String message body for single parameter "fileId"
         sendBody("direct://DELETE", fileId);
 
-        // the file should be gone now
-        final File result = requestBody("direct://GET", fileId);
-        assertNull("get result", result);
+        try {
+            // the file should be gone now
+            final File result = requestBody("direct://GET", fileId);
+            assertTrue("Should have not found deleted file.", false);
+        } catch (Exception e) {               
+            e.printStackTrace();
+        }        
     }
 
     @Test
@@ -97,21 +98,6 @@ public class DriveFilesIntegrationTest extends AbstractGoogleDriveTestSupport {
         File result = requestBody("direct://INSERT", file);
         assertNotNull("insert result", result);
         LOG.debug("insert: " + result);
-    }
-
-    private File uploadTestFile() {
-        File fileMetadata = new File();
-        fileMetadata.setTitle(UPLOAD_FILE.getName());
-        FileContent mediaContent = new FileContent(null, UPLOAD_FILE);
-        
-        final Map<String, Object> headers = new HashMap<String, Object>();
-        // parameter type is com.google.api.services.drive.model.File
-        headers.put("CamelGoogleDrive.content", fileMetadata);
-        // parameter type is com.google.api.client.http.AbstractInputStreamContent
-        headers.put("CamelGoogleDrive.mediaContent", mediaContent);
-
-        File result = requestBodyAndHeaders("direct://INSERT_1", null, headers);
-        return result;
     }
 
     @Test

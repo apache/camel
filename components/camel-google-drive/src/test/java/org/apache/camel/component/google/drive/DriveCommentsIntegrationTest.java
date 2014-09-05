@@ -20,7 +20,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -28,131 +27,78 @@ import org.apache.camel.component.google.drive.internal.DriveFilesApiMethod;
 import org.apache.camel.component.google.drive.internal.GoogleDriveApiCollection;
 import org.apache.camel.component.google.drive.internal.DriveCommentsApiMethod;
 
-import com.google.api.client.http.FileContent;
+import com.google.api.services.drive.model.Comment;
 import com.google.api.services.drive.model.File;
 
 /**
  * Test class for com.google.api.services.drive.Drive$Comments APIs.
- * TODO Move the file to src/test/java, populate parameter values, and remove @Ignore annotations.
- * The class source won't be generated again if the generator MOJO finds it under src/test/java.
  */
 public class DriveCommentsIntegrationTest extends AbstractGoogleDriveTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(DriveCommentsIntegrationTest.class);
     private static final String PATH_PREFIX = GoogleDriveApiCollection.getCollection().getApiName(DriveCommentsApiMethod.class).getName();
-    private static final String TEST_UPLOAD_FILE = "src/test/resources/log4j.properties";
-    private static final String TEST_UPLOAD_IMG = "src/test/resources/camel-box-small.png";
-    private static final java.io.File UPLOAD_FILE = new java.io.File(TEST_UPLOAD_FILE);
-    
-    // TODO provide parameter values for delete
-    @Ignore
-    @Test
-    public void testDelete() throws Exception {
-        final Map<String, Object> headers = new HashMap<String, Object>();
-        // parameter type is String
-        headers.put("CamelGoogleDrive.fileId", null);
-        // parameter type is String
-        headers.put("CamelGoogleDrive.commentId", null);
-
-        final com.google.api.services.drive.Drive.Comments.Delete result = requestBodyAndHeaders("direct://DELETE", null, headers);
-
-        assertNotNull("delete result", result);
-        LOG.debug("delete: " + result);
-    }
-
-    // TODO provide parameter values for get
-    @Ignore
-    @Test
-    public void testGet() throws Exception {
-        final Map<String, Object> headers = new HashMap<String, Object>();
-        // parameter type is String
-        headers.put("CamelGoogleDrive.fileId", null);
-        // parameter type is String
-        headers.put("CamelGoogleDrive.commentId", null);
-
-        final com.google.api.services.drive.Drive.Comments.Get result = requestBodyAndHeaders("direct://GET", null, headers);
-
-        assertNotNull("get result", result);
-        LOG.debug("get: " + result);
-    }
-
-    // TODO provide parameter values for insert
-    @Ignore
-    @Test
-    public void testInsert() throws Exception {
-        final Map<String, Object> headers = new HashMap<String, Object>();
-        // parameter type is String
-        headers.put("CamelGoogleDrive.fileId", null);
-        // parameter type is com.google.api.services.drive.model.Comment
-        headers.put("CamelGoogleDrive.content", null);
-
-        final com.google.api.services.drive.Drive.Comments.Insert result = requestBodyAndHeaders("direct://INSERT", null, headers);
-
-        assertNotNull("insert result", result);
-        LOG.debug("insert: " + result);
-    }
-
-    private File uploadTestFile() {
-        File fileMetadata = new File();
-        fileMetadata.setTitle(UPLOAD_FILE.getName());
-        FileContent mediaContent = new FileContent(null, UPLOAD_FILE);
-        
-        final Map<String, Object> headers = new HashMap<String, Object>();
-        // parameter type is com.google.api.services.drive.model.File
-        headers.put("CamelGoogleDrive.content", fileMetadata);
-        // parameter type is com.google.api.client.http.AbstractInputStreamContent
-        headers.put("CamelGoogleDrive.mediaContent", mediaContent);
-
-        File result = requestBodyAndHeaders("direct://INSERT_1", null, headers);
-        return result;
-    }
     
     @Test
-    public void testList() throws Exception {
+    public void testComment() throws Exception {
+        // 1. create test file
         File testFile = uploadTestFile();
         String fileId = testFile.getId();
         
+        // 2. comment on that file
+        Map<String, Object> headers = new HashMap<String, Object>();
+        // parameter type is String
+        headers.put("CamelGoogleDrive.fileId", fileId);
+        // parameter type is com.google.api.services.drive.model.Comment
+        com.google.api.services.drive.model.Comment comment = new com.google.api.services.drive.model.Comment();
+        comment.setContent("Camel rocks!");
+        headers.put("CamelGoogleDrive.content", comment);
+
+        requestBodyAndHeaders("direct://INSERT", null, headers);
+
+        // 3. get a list of comments on the file
         // using String message body for single parameter "fileId"
-        final com.google.api.services.drive.model.CommentList result = requestBody("direct://LIST", fileId);
+        com.google.api.services.drive.model.CommentList result1 = requestBody("direct://LIST", fileId);
 
-        assertNotNull("list result", result);
-        LOG.debug("list: " + result);
-    }
-
-    // TODO provide parameter values for patch
-    @Ignore
-    @Test
-    public void testPatch() throws Exception {
-        final Map<String, Object> headers = new HashMap<String, Object>();
+        assertNotNull(result1.get("items"));
+        LOG.debug("list: " + result1);
+        
+        Comment comment2 = result1.getItems().get(0);
+        
+        // 4. now try and get that comment 
+        headers = new HashMap<String, Object>();
         // parameter type is String
-        headers.put("CamelGoogleDrive.fileId", null);
+        headers.put("CamelGoogleDrive.fileId", fileId);
         // parameter type is String
-        headers.put("CamelGoogleDrive.commentId", null);
-        // parameter type is com.google.api.services.drive.model.Comment
-        headers.put("CamelGoogleDrive.content", null);
+        headers.put("CamelGoogleDrive.commentId", comment2.getCommentId());
 
-        final com.google.api.services.drive.Drive.Comments.Patch result = requestBodyAndHeaders("direct://PATCH", null, headers);
+        final com.google.api.services.drive.model.Comment result3 = requestBodyAndHeaders("direct://GET", null, headers);
 
-        assertNotNull("patch result", result);
-        LOG.debug("patch: " + result);
-    }
-
-    // TODO provide parameter values for update
-    @Ignore
-    @Test
-    public void testUpdate() throws Exception {
-        final Map<String, Object> headers = new HashMap<String, Object>();
+        assertNotNull("get result", result3);
+        
+        // 5. delete the comment
+        
+        headers = new HashMap<String, Object>();
         // parameter type is String
-        headers.put("CamelGoogleDrive.fileId", null);
+        headers.put("CamelGoogleDrive.fileId", fileId);
         // parameter type is String
-        headers.put("CamelGoogleDrive.commentId", null);
-        // parameter type is com.google.api.services.drive.model.Comment
-        headers.put("CamelGoogleDrive.content", null);
+        headers.put("CamelGoogleDrive.commentId", comment2.getCommentId());
 
-        final com.google.api.services.drive.Drive.Comments.Update result = requestBodyAndHeaders("direct://UPDATE", null, headers);
+        requestBodyAndHeaders("direct://DELETE", null, headers);
 
-        assertNotNull("update result", result);
-        LOG.debug("update: " + result);
+        // 6. ensure the comment is gone
+        
+        headers = new HashMap<String, Object>();
+        // parameter type is String
+        headers.put("CamelGoogleDrive.fileId", fileId);
+        // parameter type is String
+        headers.put("CamelGoogleDrive.commentId", comment2.getCommentId());
+
+        try {
+            final com.google.api.services.drive.model.Comment result4 = requestBodyAndHeaders("direct://GET", null, headers);
+            assertTrue("Should have thrown an exception.", false);
+        } catch (Exception e) {
+            e.printStackTrace();
+        }
     }
 
     @Override

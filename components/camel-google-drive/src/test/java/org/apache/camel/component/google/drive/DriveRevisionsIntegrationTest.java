@@ -16,105 +16,33 @@
  */
 package org.apache.camel.component.google.drive;
 
-import java.util.HashMap;
-import java.util.Map;
-
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-
 import org.apache.camel.component.google.drive.internal.GoogleDriveApiCollection;
 import org.apache.camel.component.google.drive.internal.DriveRevisionsApiMethod;
 
+import com.google.api.services.drive.model.File;
+
 /**
  * Test class for com.google.api.services.drive.Drive$Revisions APIs.
- * TODO Move the file to src/test/java, populate parameter values, and remove @Ignore annotations.
- * The class source won't be generated again if the generator MOJO finds it under src/test/java.
  */
 public class DriveRevisionsIntegrationTest extends AbstractGoogleDriveTestSupport {
 
     private static final Logger LOG = LoggerFactory.getLogger(DriveRevisionsIntegrationTest.class);
     private static final String PATH_PREFIX = GoogleDriveApiCollection.getCollection().getApiName(DriveRevisionsApiMethod.class).getName();
 
-    // TODO provide parameter values for delete
-    @Ignore
-    @Test
-    public void testDelete() throws Exception {
-        final Map<String, Object> headers = new HashMap<String, Object>();
-        // parameter type is String
-        headers.put("CamelGoogleDrive.fileId", null);
-        // parameter type is String
-        headers.put("CamelGoogleDrive.revisionId", null);
-
-        final com.google.api.services.drive.Drive.Revisions.Delete result = requestBodyAndHeaders("direct://DELETE", null, headers);
-
-        assertNotNull("delete result", result);
-        LOG.debug("delete: " + result);
-    }
-
-    // TODO provide parameter values for get
-    @Ignore
-    @Test
-    public void testGet() throws Exception {
-        final Map<String, Object> headers = new HashMap<String, Object>();
-        // parameter type is String
-        headers.put("CamelGoogleDrive.fileId", null);
-        // parameter type is String
-        headers.put("CamelGoogleDrive.revisionId", null);
-
-        final com.google.api.services.drive.Drive.Revisions.Get result = requestBodyAndHeaders("direct://GET", null, headers);
-
-        assertNotNull("get result", result);
-        LOG.debug("get: " + result);
-    }
-
-    // TODO provide parameter values for list
-    @Ignore
     @Test
     public void testList() throws Exception {
+        File testFile = uploadTestFile();
+        String fileId = testFile.getId();
+        
         // using String message body for single parameter "fileId"
-        final com.google.api.services.drive.Drive.Revisions.List result = requestBody("direct://LIST", null);
+        final com.google.api.services.drive.model.RevisionList result = requestBody("direct://LIST", fileId);
 
         assertNotNull("list result", result);
         LOG.debug("list: " + result);
-    }
-
-    // TODO provide parameter values for patch
-    @Ignore
-    @Test
-    public void testPatch() throws Exception {
-        final Map<String, Object> headers = new HashMap<String, Object>();
-        // parameter type is String
-        headers.put("CamelGoogleDrive.fileId", null);
-        // parameter type is String
-        headers.put("CamelGoogleDrive.revisionId", null);
-        // parameter type is com.google.api.services.drive.model.Revision
-        headers.put("CamelGoogleDrive.content", null);
-
-        final com.google.api.services.drive.Drive.Revisions.Patch result = requestBodyAndHeaders("direct://PATCH", null, headers);
-
-        assertNotNull("patch result", result);
-        LOG.debug("patch: " + result);
-    }
-
-    // TODO provide parameter values for update
-    @Ignore
-    @Test
-    public void testUpdate() throws Exception {
-        final Map<String, Object> headers = new HashMap<String, Object>();
-        // parameter type is String
-        headers.put("CamelGoogleDrive.fileId", null);
-        // parameter type is String
-        headers.put("CamelGoogleDrive.revisionId", null);
-        // parameter type is com.google.api.services.drive.model.Revision
-        headers.put("CamelGoogleDrive.content", null);
-
-        final com.google.api.services.drive.Drive.Revisions.Update result = requestBodyAndHeaders("direct://UPDATE", null, headers);
-
-        assertNotNull("update result", result);
-        LOG.debug("update: " + result);
     }
 
     @Override
@@ -141,6 +69,9 @@ public class DriveRevisionsIntegrationTest extends AbstractGoogleDriveTestSuppor
                 from("direct://UPDATE")
                   .to("google-drive://" + PATH_PREFIX + "/update");
 
+                // just used to upload file for test
+                from("direct://INSERT_1")
+                  .to("google-drive://drive-files/insert");
             }
         };
     }

@@ -45,6 +45,7 @@ public class DriveAppsIntegrationTest extends AbstractGoogleDriveTestSupport {
     }
 
     // TODO getting permission errors for this one
+    @Ignore    
     @Test
     public void testList() throws Exception {
         final com.google.api.services.drive.model.App result = requestBody("direct://LIST", null);
