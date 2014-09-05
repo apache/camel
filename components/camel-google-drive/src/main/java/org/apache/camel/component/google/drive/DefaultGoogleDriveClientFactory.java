@@ -47,11 +47,11 @@ public class DefaultGoogleDriveClientFactory implements GoogleDriveClientFactory
      * (java.lang.String, java.lang.String, java.util.Collection)
      */
     @Override
-    public Drive makeClient(String clientId, String clientSecret, Collection<String> scopes) {
+    public Drive makeClient(String clientId, String clientSecret, Collection<String> scopes, String applicationName) {
         Credential credential;
         try {
             credential = authorize(clientId, clientSecret, scopes);
-            return new Drive.Builder(transport, jsonFactory, credential).build();
+            return new Drive.Builder(transport, jsonFactory, credential).setApplicationName(applicationName).build();
         } catch (Exception e) {
             // TODO Auto-generated catch block
             e.printStackTrace();

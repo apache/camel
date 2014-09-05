@@ -20,7 +20,6 @@ import java.util.HashMap;
 import java.util.Map;
 
 import org.apache.camel.builder.RouteBuilder;
-import org.junit.Ignore;
 import org.junit.Test;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -33,8 +32,6 @@ import com.google.api.services.drive.model.File;
 
 /**
  * Test class for com.google.api.services.drive.Drive$Replies APIs.
- * TODO Move the file to src/test/java, populate parameter values, and remove @Ignore annotations.
- * The class source won't be generated again if the generator MOJO finds it under src/test/java.
  */
 public class DriveRepliesIntegrationTest extends AbstractGoogleDriveTestSupport {
 

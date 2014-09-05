@@ -33,18 +33,8 @@ public class DriveAppsIntegrationTest extends AbstractGoogleDriveTestSupport {
     private static final Logger LOG = LoggerFactory.getLogger(DriveAppsIntegrationTest.class);
     private static final String PATH_PREFIX = GoogleDriveApiCollection.getCollection().getApiName(DriveAppsApiMethod.class).getName();
 
-    // TODO provide parameter values for get
-    @Ignore
-    @Test
-    public void testGet() throws Exception {
-        // using String message body for single parameter "appId"
-        final com.google.api.services.drive.Drive.Apps.Get result = requestBody("direct://GET", null);
-
-        assertNotNull("get result", result);
-        LOG.debug("get: " + result);
-    }
-
     // TODO getting permission errors for this one
+    // May have to adjust scopes used
     @Ignore    
     @Test
     public void testList() throws Exception {
