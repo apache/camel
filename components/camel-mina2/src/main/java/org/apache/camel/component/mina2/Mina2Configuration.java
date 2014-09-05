@@ -53,6 +53,7 @@ public class Mina2Configuration implements Cloneable {
     private boolean autoStartTls = true;
     private int maximumPoolSize = 16; // 16 is the default mina setting
     private boolean orderedThreadPoolExecutor = true;
+    private boolean cachedAddress = true;
 
     /**
      * Returns a copy of this configuration
@@ -263,7 +264,19 @@ public class Mina2Configuration implements Cloneable {
     public void setOrderedThreadPoolExecutor(boolean orderedThreadPoolExecutor) {
         this.orderedThreadPoolExecutor = orderedThreadPoolExecutor;
     }
-    
+
+    public void setCachedAddress(boolean shouldCacheAddress){
+        this.cachedAddress = shouldCacheAddress;
+    }
+
+    public boolean getCachedAddress(){
+        return this.cachedAddress;
+    }
+
+    public boolean isCachedAddress(){
+        return this.getCachedAddress();
+    }
+
     // here we just shows the option setting of host, port, protocol 
     public String getUriString() {
         return "mina2:" + getProtocol() + ":" + getHost() + ":" + getPort();
