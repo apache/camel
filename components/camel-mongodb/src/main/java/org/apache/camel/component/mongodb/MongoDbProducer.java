@@ -340,10 +340,10 @@ public class MongoDbProducer extends DefaultProducer {
         DBCollection dbCol = calculateCollection(exchange);
         DBObject query = exchange.getIn().getBody(DBObject.class);
         Long answer;
-        if (query == null){
-            answer = Long.valueOf(dbCol.count());    
+        if (query == null) {
+            answer = dbCol.count();
         } else {
-            answer = Long.valueOf(dbCol.count(query));    
+            answer = dbCol.count(query);
         }
         Message resultMessage = prepareResponseMessage(exchange, MongoDbOperation.count);
         resultMessage.setBody(answer);
