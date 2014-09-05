@@ -75,6 +75,7 @@ public interface Exchange {
     String ACCEPT_CONTENT_TYPE              = "CamelAcceptContentType";
     String AGGREGATED_SIZE                  = "CamelAggregatedSize";
     String AGGREGATED_TIMEOUT               = "CamelAggregatedTimeout";
+    String AGGREGATED_MAX_TIMEOUT           = "CamelAggregatedMaxTimeout";
     String AGGREGATED_COMPLETED_BY          = "CamelAggregatedCompletedBy";
     String AGGREGATED_CORRELATION_KEY       = "CamelAggregatedCorrelationKey";
     String AGGREGATION_STRATEGY             = "CamelAggregationStrategy";

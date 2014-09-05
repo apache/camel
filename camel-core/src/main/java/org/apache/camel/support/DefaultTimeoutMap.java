@@ -46,8 +46,6 @@ import org.slf4j.LoggerFactory;
  * if its being stopped.
  * You must also invoke {@link #start()} to startup the timeout map, before its ready to be used.
  * And you must invoke {@link #stop()} to stop the map when no longer in use.
- *
- * @version 
  */
 public class DefaultTimeoutMap<K, V> extends ServiceSupport implements TimeoutMap<K, V>, Runnable {
 
@@ -82,26 +80,22 @@ public class DefaultTimeoutMap<K, V> extends ServiceSupport implements TimeoutMa
         }
         try {
             entry = map.get(key);
-            if (entry == null) {
-                return null;
-            }
-            updateExpireTime(entry);
         } finally {
             if (useLock) {
                 lock.unlock();
             }
         }
-        return entry.getValue();
+        return entry != null ? entry.getValue() : null;
     }
 
-    public void put(K key, V value, long timeoutMillis) {
-        TimeoutMapEntry<K, V> entry = new TimeoutMapEntry<K, V>(key, value, timeoutMillis);
+    public void put(K key, V value, long keyTimeout, long valueTimeout) {
+        TimeoutMapEntry<K, V> entry = new TimeoutMapEntry<K, V>(key, value, keyTimeout, valueTimeout);
         if (useLock) {
             lock.lock();
         }
         try {
-            map.put(key, entry);
-            updateExpireTime(entry);
+            TimeoutMapEntry<K, V> previous = map.put(key, entry);
+            entry.updateKeyExpireTimeWithPrevious(previous);
         } finally {
             if (useLock) {
                 lock.unlock();
@@ -142,7 +136,7 @@ public class DefaultTimeoutMap<K, V> extends ServiceSupport implements TimeoutMa
         }
         return keys;
     }
-    
+
     public int size() {
         return map.size();
     }
@@ -171,8 +165,8 @@ public class DefaultTimeoutMap<K, V> extends ServiceSupport implements TimeoutMa
         if (map.isEmpty()) {
             return;
         }
-        
-        long now = currentTime();
+
+        long now = System.currentTimeMillis();
 
         List<TimeoutMapEntry<K, V>> expired = new ArrayList<TimeoutMapEntry<K, V>>();
 
@@ -211,7 +205,7 @@ public class DefaultTimeoutMap<K, V> extends ServiceSupport implements TimeoutMa
                         try {
                             evict = onEviction(entry.getKey(), entry.getValue());
                         } catch (Throwable t) {
-                            log.warn("Exception happened during eviction of entry ID {}, won't evict and will continue trying: {}", 
+                            log.warn("Exception happened during eviction of entry ID {}, won't evict and will continue trying: {}",
                                     entry.getValue(), t);
                         }
                         if (evict) {
@@ -235,7 +229,7 @@ public class DefaultTimeoutMap<K, V> extends ServiceSupport implements TimeoutMa
 
     // Properties
     // -------------------------------------------------------------------------
-    
+
     public long getPurgePollTime() {
         return purgePollTime;
     }
@@ -263,15 +257,6 @@ public class DefaultTimeoutMap<K, V> extends ServiceSupport implements TimeoutMa
 
     public boolean onEviction(K key, V value) {
         return true;
-    }
-
-    protected void updateExpireTime(TimeoutMapEntry<K, V> entry) {
-        long now = currentTime();
-        entry.setExpireTime(entry.getTimeout() + now);
-    }
-
-    protected long currentTime() {
-        return System.currentTimeMillis();
     }
 
     @Override

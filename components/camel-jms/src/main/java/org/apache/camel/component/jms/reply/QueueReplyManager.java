@@ -26,6 +26,7 @@ import javax.jms.Session;
 import org.apache.camel.AsyncCallback;
 import org.apache.camel.CamelContext;
 import org.apache.camel.Exchange;
+import org.apache.camel.TimeoutMap;
 import org.apache.camel.component.jms.DefaultSpringErrorHandler;
 import org.apache.camel.component.jms.ReplyToType;
 import org.springframework.jms.listener.AbstractMessageListenerContainer;
@@ -34,8 +35,6 @@ import org.springframework.jms.support.destination.DestinationResolver;
 
 /**
  * A {@link ReplyManager} when using regular queues.
- *
- * @version 
  */
 public class QueueReplyManager extends ReplyManagerSupport {
 
@@ -51,7 +50,7 @@ public class QueueReplyManager extends ReplyManagerSupport {
         // add to correlation map
         QueueReplyHandler handler = new QueueReplyHandler(replyManager, exchange, callback,
                 originalCorrelationId, correlationId, requestTimeout);
-        correlation.put(correlationId, handler, requestTimeout);
+        correlation.put(correlationId, handler, TimeoutMap.NO_TIMEOUT, requestTimeout);
         return correlationId;
     }
 
@@ -64,7 +63,7 @@ public class QueueReplyManager extends ReplyManagerSupport {
             return;
         }
 
-        correlation.put(newCorrelationId, handler, requestTimeout);
+        correlation.put(newCorrelationId, handler, TimeoutMap.NO_TIMEOUT, requestTimeout);
     }
 
     protected void handleReplyMessage(String correlationID, Message message) {
@@ -112,7 +111,7 @@ public class QueueReplyManager extends ReplyManagerSupport {
             }
             return destination;
         }
-    };
+    }
 
     protected AbstractMessageListenerContainer createListenerContainer() throws Exception {
         DefaultMessageListenerContainer answer;
@@ -154,7 +153,7 @@ public class QueueReplyManager extends ReplyManagerSupport {
         } else {
             throw new IllegalArgumentException("ReplyToType " + type + " is not supported for reply queues");
         }
-        
+
         String replyToCacheLevelName = endpoint.getConfiguration().getReplyToCacheLevelName();
         if (replyToCacheLevelName != null) {
             answer.setCacheLevelName(replyToCacheLevelName);
