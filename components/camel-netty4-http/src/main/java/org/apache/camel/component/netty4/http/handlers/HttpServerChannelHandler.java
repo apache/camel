@@ -191,6 +191,8 @@ public class HttpServerChannelHandler extends ServerChannelHandler {
                     response.headers().set(Exchange.CONTENT_TYPE, "text/plain");
                     response.headers().set(Exchange.CONTENT_LENGTH, 0);
                     ctx.writeAndFlush(response);
+                    // close the channel
+                    ctx.channel().close();
                     return;
                 } else {
                     LOG.debug("Http Basic Auth authorized for username: {}", principal.getUsername());

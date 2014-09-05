@@ -36,8 +36,17 @@ public class NettyHttpSimpleBasicAuthTest extends BaseNettyTest {
 
     @Test
     public void testBasicAuth() throws Exception {
+        
+        try {
+            template.requestBody("netty4-http:http://localhost:{{port}}/foo", "Hello World", String.class);
+            fail("Should send back 401");
+        } catch (CamelExecutionException e) {
+            NettyHttpOperationFailedException cause = assertIsInstanceOf(NettyHttpOperationFailedException.class, e.getCause());
+            assertEquals(401, cause.getStatusCode());
+        }
+        
         getMockEndpoint("mock:input").expectedBodiesReceived("Hello World");
-
+        
         // username:password is scott:secret
         String auth = "Basic c2NvdHQ6c2VjcmV0";
         String out = template.requestBodyAndHeader("netty4-http:http://localhost:{{port}}/foo", "Hello World", "Authorization", auth, String.class);
