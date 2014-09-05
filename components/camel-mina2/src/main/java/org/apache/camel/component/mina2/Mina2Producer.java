@@ -251,7 +251,7 @@ public class Mina2Producer extends DefaultProducer implements ServicePoolAware {
     }
 
     private void openConnection() {
-        if(this.address == null || !this.configuration.isCachedAddress()){
+        if (this.address == null || !this.configuration.isCachedAddress()) {
             setSocketAddress(this.configuration.getProtocol());
         }
         if (LOG.isDebugEnabled()) {
@@ -450,12 +450,12 @@ public class Mina2Producer extends DefaultProducer implements ServicePoolAware {
         }
     }
 
-    private void setSocketAddress(String protocol){
-        if(protocol.equals("tcp")){
+    private void setSocketAddress(String protocol) {
+        if (protocol.equals("tcp")) {
             this.address = new InetSocketAddress(configuration.getHost(), configuration.getPort());
-        }else if(configuration.isDatagramProtocol()){
+        } else if (configuration.isDatagramProtocol()) {
             this.address = new InetSocketAddress(configuration.getHost(), configuration.getPort());
-        }else if(protocol.equals("vm")){
+        } else if (protocol.equals("vm")) {
             this.address = new VmPipeAddress(configuration.getPort());
         }
     }

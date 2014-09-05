@@ -265,16 +265,12 @@ public class Mina2Configuration implements Cloneable {
         this.orderedThreadPoolExecutor = orderedThreadPoolExecutor;
     }
 
-    public void setCachedAddress(boolean shouldCacheAddress){
+    public void setCachedAddress(boolean shouldCacheAddress) {
         this.cachedAddress = shouldCacheAddress;
     }
 
-    public boolean getCachedAddress(){
-        return this.cachedAddress;
-    }
-
-    public boolean isCachedAddress(){
-        return this.getCachedAddress();
+    public boolean isCachedAddress() {
+        return cachedAddress;
     }
 
     // here we just shows the option setting of host, port, protocol 
