@@ -61,6 +61,7 @@ public class JmsTestSupport extends CamelTestSupport {
         brokerUri = "tcp://localhost:" + port;
         //Disable the JMX by default
         broker.setUseJmx(false);
+        broker.getManagementContext().setConnectorPort(AvailablePortFinder.getNextAvailable(port + 1));
         configureBroker(broker);
         startBroker();
     }
