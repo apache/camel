@@ -18,8 +18,6 @@ package org.apache.camel.component.metrics.routepolicy;
 
 import java.util.concurrent.TimeUnit;
 
-import com.codahale.metrics.Counter;
-import com.codahale.metrics.Meter;
 import com.codahale.metrics.MetricRegistry;
 import com.codahale.metrics.Timer;
 import org.apache.camel.CamelContext;
@@ -46,30 +44,18 @@ public class MetricsRoutePolicy extends RoutePolicySupport {
     private Route route;
 
     private static final class MetricsStatistics {
-        private Counter total;
-        private Counter inflight;
-        private Meter requests;
         private Timer responses;
 
-        private MetricsStatistics(Counter total, Counter inflight, Meter requests, Timer responses) {
-            this.total = total;
-            this.inflight = inflight;
-            this.requests = requests;
+        private MetricsStatistics(Timer responses) {
             this.responses = responses;
         }
 
         public void onExchangeBegin(Exchange exchange) {
-            total.inc();
-            inflight.inc();
-            requests.mark();
-
             Timer.Context context = responses.time();
             exchange.setProperty("MetricsRoutePolicy", context);
         }
 
         public void onExchangeDone(Exchange exchange) {
-            inflight.dec();
-
             Timer.Context context = exchange.getProperty("MetricsRoutePolicy", Timer.Context.class);
             if (context != null) {
                 context.stop();
@@ -147,11 +133,10 @@ public class MetricsRoutePolicy extends RoutePolicySupport {
         }
 
         // create statistics holder
-        Counter total = registryService.getMetricsRegistry().counter(createName("total"));
-        Counter inflight = registryService.getMetricsRegistry().counter(createName("inflight"));
-        Meter requests = registryService.getMetricsRegistry().meter(createName("requests"));
+        // for know we record only all the timings of a complete exchange (responses)
+        // we have in-flight / total statistics already from camel-core
         Timer responses = registryService.getMetricsRegistry().timer(createName("responses"));
-        statistics = new MetricsStatistics(total, inflight, requests, responses);
+        statistics = new MetricsStatistics(responses);
     }
 
     private String createName(String type) {
