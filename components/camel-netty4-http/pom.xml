@@ -62,17 +62,17 @@
 			<artifactId>junit</artifactId>
 			<scope>test</scope>
 		</dependency>
-    <!-- for testing rest-dsl -->
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-jackson</artifactId>
-      <scope>test</scope>
-    </dependency>
-    <dependency>
-      <groupId>org.apache.camel</groupId>
-      <artifactId>camel-jaxb</artifactId>
-      <scope>test</scope>
-    </dependency>
+        <!-- for testing rest-dsl -->
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-jackson</artifactId>
+            <scope>test</scope>
+        </dependency>
+        <dependency>
+            <groupId>org.apache.camel</groupId>
+            <artifactId>camel-jaxb</artifactId>
+            <scope>test</scope>
+        </dependency>
 
 		<!-- logging -->
 		<dependency>
@@ -80,7 +80,16 @@
 			<artifactId>slf4j-log4j12</artifactId>
 			<scope>test</scope>
 		</dependency>
-
-	</dependencies>
+    </dependencies>
+    <build>
+      <plugins>
+        <plugin>
+          <artifactId>maven-surefire-plugin</artifactId>
+          <configuration>
+            <forkMode>perTest</forkMode>
+          </configuration>
+        </plugin>
+      </plugins>
+    </build>
 
 </project>
