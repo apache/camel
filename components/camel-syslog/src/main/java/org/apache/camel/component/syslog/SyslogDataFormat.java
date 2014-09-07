@@ -24,6 +24,7 @@ import org.apache.camel.spi.DataFormat;
 import org.apache.camel.util.ExchangeHelper;
 
 public class SyslogDataFormat implements DataFormat {
+
     @Override
     public void marshal(Exchange exchange, Object body, OutputStream stream) throws Exception {
         SyslogMessage message = ExchangeHelper.convertToMandatoryType(exchange, SyslogMessage.class, body);
@@ -32,7 +33,6 @@ public class SyslogDataFormat implements DataFormat {
 
     @Override
     public Object unmarshal(Exchange exchange, InputStream inputStream) throws Exception {
-
         String body = ExchangeHelper.convertToMandatoryType(exchange, String.class, inputStream);
         SyslogMessage message = SyslogConverter.parseMessage(body.getBytes());
 
