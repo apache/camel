@@ -160,7 +160,7 @@ public class OSGiIntegrationTestSupport extends CamelTestSupport {
         }
         if (karafVersion == null) {
             // setup the default version of it
-            karafVersion = "2.3.6";
+            karafVersion = "2.3.7";
         }
         return karafVersion;
     }
