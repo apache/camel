@@ -19,13 +19,17 @@ package org.apache.camel.karaf.commands.internal;
 import java.util.ArrayList;
 import java.util.Collections;
 import java.util.Comparator;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 
 import org.apache.camel.CamelContext;
 import org.apache.camel.Endpoint;
 import org.apache.camel.Route;
 import org.apache.camel.karaf.commands.CamelController;
 import org.apache.camel.model.RouteDefinition;
+import org.apache.camel.model.rest.RestDefinition;
+import org.apache.camel.spi.RestRegistry;
 import org.osgi.framework.BundleContext;
 import org.osgi.framework.ServiceReference;
 import org.slf4j.Logger;
@@ -147,6 +151,14 @@ public class CamelControllerImpl implements CamelController {
         return context.getRouteDefinition(routeId);
     }
 
+    public List<RestDefinition> getRestDefinitions(String camelContextName) {
+        CamelContext context = this.getCamelContext(camelContextName);
+        if (context == null) {
+            return null;
+        }
+        return context.getRestDefinitions();
+    }
+
     public List<Endpoint> getEndpoints(String camelContextName) {
         List<Endpoint> answer = new ArrayList<Endpoint>();
 
@@ -178,7 +190,38 @@ public class CamelControllerImpl implements CamelController {
                 answer.addAll(endpoints);
             }
         }
-        // already sorted
+        return answer;
+    }
+
+    public Map<String, List<RestRegistry.RestService>> getRestServices(String camelContextName) {
+        Map<String, List<RestRegistry.RestService>> answer = new LinkedHashMap<String, List<RestRegistry.RestService>>();
+
+        if (camelContextName != null) {
+            CamelContext context = this.getCamelContext(camelContextName);
+            if (context != null) {
+                List<RestRegistry.RestService> services = new ArrayList<RestRegistry.RestService>(context.getRestRegistry().listAllRestServices());
+                Collections.sort(services, new Comparator<RestRegistry.RestService>() {
+                    @Override
+                    public int compare(RestRegistry.RestService o1, RestRegistry.RestService o2) {
+                        return o1.getUrl().compareTo(o2.getUrl());
+                    }
+                });
+                answer.put(camelContextName, services);
+            }
+        } else {
+            // already sorted by camel context
+            List<CamelContext> camelContexts = this.getCamelContexts();
+            for (CamelContext camelContext : camelContexts) {
+                List<RestRegistry.RestService> services = new ArrayList<RestRegistry.RestService>(camelContext.getRestRegistry().listAllRestServices());
+                Collections.sort(services, new Comparator<RestRegistry.RestService>() {
+                    @Override
+                    public int compare(RestRegistry.RestService o1, RestRegistry.RestService o2) {
+                        return o1.getUrl().compareTo(o2.getUrl());
+                    }
+                });
+                answer.put(camelContext.getName(), services);
+            }
+        }
         return answer;
     }
 }
