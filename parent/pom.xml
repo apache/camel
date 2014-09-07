@@ -402,7 +402,7 @@
     <!-- spring-dm does not support spring 4.x so import-range must be 3.x only until a solution in karaf exists -->
     <spring-version-range>[3.2,4)</spring-version-range>
     <spring-version>${spring32-version}</spring-version>
-    <spring32-version>3.2.10.RELEASE</spring32-version>
+    <spring32-version>3.2.11.RELEASE</spring32-version>
     <spring4-version>4.0.7.RELEASE</spring4-version>
     <spring-osgi-version>1.2.1</spring-osgi-version>
     <spring-security-version>3.1.7.RELEASE</spring-security-version>
