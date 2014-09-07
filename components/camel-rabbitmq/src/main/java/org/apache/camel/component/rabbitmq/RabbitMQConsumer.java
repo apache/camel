@@ -27,9 +27,12 @@ import com.rabbitmq.client.AMQP;
 import com.rabbitmq.client.Channel;
 import com.rabbitmq.client.Connection;
 import com.rabbitmq.client.Envelope;
+
 import org.apache.camel.Exchange;
 import org.apache.camel.Processor;
 import org.apache.camel.impl.DefaultConsumer;
+
+import com.rabbitmq.client.ShutdownSignalException;
 
 public class RabbitMQConsumer extends DefaultConsumer {
     ExecutorService executor;
@@ -178,21 +181,65 @@ public class RabbitMQConsumer extends DefaultConsumer {
             Exchange exchange = consumer.endpoint.createRabbitExchange(envelope, properties, body);
             mergeAmqpProperties(exchange, properties);
             log.trace("Created exchange [exchange={}]", exchange);
-
+            long deliveryTag = 0; 
             try {
-                consumer.getProcessor().process(exchange);
-
-                long deliveryTag = envelope.getDeliveryTag();
+                deliveryTag = envelope.getDeliveryTag();
+                consumer.getProcessor().process(exchange);                
                 if (!consumer.endpoint.isAutoAck()) {
-                    log.trace("Acknowledging receipt [delivery_tag={}]", deliveryTag);
-                    channel.basicAck(deliveryTag, false);
+                    if (exchange.getException() == null) {
+                        log.trace("Acknowledging receipt [delivery_tag={}]",
+                                deliveryTag);
+                        channel.basicAck(deliveryTag, false);
+                    } else {
+                        log.trace("Unacknowledging receipt [delivery_tag={}]",
+                                deliveryTag);
+                        rejectQuicly(String.valueOf(deliveryTag));
+                    }
                 }
 
             } catch (Exception e) {
+                if (deliveryTag != 0 && !consumer.endpoint.isAutoAck()) {
+                    channel.basicReject(deliveryTag, false);
+                }
                 getExceptionHandler().handleException("Error processing exchange", exchange, e);
             }
         }
+        
+        /**
+         * Reject a message without throw exceptions.
+         * @param deliveryTagString Message tag to reject.
+         */
+        protected void rejectQuicly(String deliveryTagString) {
+            try {
+                long deliveryTag = Long.valueOf(deliveryTagString);
+                if (deliveryTag != 0 && !consumer.endpoint.isAutoAck()) {
+                    channel.basicReject(deliveryTag, false);
+                }
+            } catch (Exception e) {
+                log.error("Fail to reject message [delivery_tag={}]", deliveryTagString);
+            }           
+        }
+        
+        @Override
+        public void handleCancel(String consumerTag) throws IOException {
+            rejectQuicly(consumerTag);
+        }
 
+        @Override
+        public void handleCancelOk(String consumerTag) {
+            rejectQuicly(consumerTag);
+        }
+
+        @Override
+        public void handleConsumeOk(String consumerTag) {
+            rejectQuicly(consumerTag);
+        }
+
+        @Override
+        public void handleShutdownSignal(String consumerTag,
+                ShutdownSignalException sig) {
+            rejectQuicly(consumerTag);
+        }
         /**
          * Will take an {@link Exchange} and add header values back to the {@link Exchange#getIn()}
          */
