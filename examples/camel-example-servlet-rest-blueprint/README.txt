@@ -23,7 +23,7 @@ First you need to install the following features in Karaf/ServiceMix with:
 
 Then you can install the Camel example:
 
-  osgi:install -s mvn:org.apache.camel/camel-example-servlet-rest-blueprintt/${project.version}
+  osgi:install -s mvn:org.apache.camel/camel-example-servlet-rest-blueprint/${project.version}
 
 And you can see the application running by tailing the logs
 
